@@ -1,7 +1,6 @@
 //o-----------------------------------------------------------------------------------------------o
 //| File		-	Queue.cpp
 //| Date		-	March 15th, 2000
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Implementation (vector based) of the GM and counselor queue class
 //o-----------------------------------------------------------------------------------------------o
@@ -10,15 +9,12 @@
 #include "PageVector.h"
 #include "gump.h"
 
-namespace UOX
-{
-
 PageVector *GMQueue;
 PageVector *CounselorQueue;
 
 inline bool operator==( const HelpRequest& x, const HelpRequest& y )
 {
-    return ( x.Priority() == y.Priority() );
+	return ( x.Priority() == y.Priority() );
 }
 
 inline bool operator<( const HelpRequest& x, const HelpRequest& y )
@@ -236,7 +232,7 @@ SERIAL PageVector::GetCallNum( void ) const
 //|	Purpose		-	Gets position of page with specified call number/help request ID
 //o-----------------------------------------------------------------------------------------------o
 SI32 PageVector::FindCallNum( SERIAL callNum )
-{ 
+{
 	for( size_t counter = 0; counter < Queue.size(); ++counter )
 	{
 		if( Queue[counter]->RequestID() == callNum )
@@ -294,19 +290,17 @@ bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	~HelpRequest()
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Deconstructor for HelpRequest class - cleans up anything allocated
 //o-----------------------------------------------------------------------------------------------o
 HelpRequest::~HelpRequest()
 {
 }
-	
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SERIAL WhoPaging( void ) const
 //|					void WhoPaging( SERIAL pPaging )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who paged
 //o-----------------------------------------------------------------------------------------------o
@@ -323,7 +317,6 @@ void HelpRequest::WhoPaging( SERIAL pPaging )
 //|	Function	-	SERIAL WhoHandling( void ) const
 //|					void WhoHandling( SERIAL pHandling )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who is handling the request
 //o-----------------------------------------------------------------------------------------------o
@@ -340,7 +333,6 @@ void HelpRequest::WhoHandling( SERIAL pHandling )
 //|	Function	-	SI08 Priority( void ) const
 //|					void Priority( SI08 pPriority )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the priority of the request
 //o-----------------------------------------------------------------------------------------------o
@@ -357,7 +349,6 @@ void HelpRequest::Priority( SI08 pPriority )
 //|	Function	-	bool IsHandled( void ) const
 //|					void IsHandled( bool pHandled )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets true if the request is being handled
 //o-----------------------------------------------------------------------------------------------o
@@ -374,7 +365,6 @@ void HelpRequest::IsHandled( bool pHandled )
 //|	Function	-	time_t TimeOfPage( void ) const
 //|					void TimeOfPage( time_t pTime )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the number of seconds since Jan 1, 1970 that the
 //|					page was recorded
@@ -392,7 +382,6 @@ void HelpRequest::TimeOfPage( time_t pTime )
 //|	Function	-	std::string Reason( void )
 //|					void Reason( const std::string &pReason )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the reason that the request was made
 //o-----------------------------------------------------------------------------------------------o
@@ -409,7 +398,6 @@ void HelpRequest::Reason( const std::string &pReason )
 //|	Function	-	SERIAL RequestID( void ) const
 //|					void RequestID( SERIAL hrid )
 //|	Date		-	10 September 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the ID # of the request
 //o-----------------------------------------------------------------------------------------------o
@@ -420,6 +408,4 @@ SERIAL HelpRequest::RequestID( void ) const
 void HelpRequest::RequestID( SERIAL hrid )
 {
 	helpReqID = hrid;
-}
-
 }

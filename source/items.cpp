@@ -11,12 +11,8 @@
 #include "classes.h"
 #include "regions.h"
 #include "ObjectFactory.h"
+#include "StringUtility.hpp"
 
-#undef DBGFILE
-#define DBGFILE "items.cpp"
-
-namespace UOX
-{
 
 cItem *Items = NULL;
 
@@ -25,7 +21,7 @@ ItemTypes FindItemTypeFromTag( const UString& strToFind );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Load item data from script sections and apply to spawner objects 
+//|	Purpose		-	Load item data from script sections and apply to spawner objects
 //o-----------------------------------------------------------------------------------------------o
 bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
 {
@@ -34,15 +30,15 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 n
 
 	switch( tag )
 	{
-	case DFNTAG_SPAWNOBJLIST:				applyTo->IsSectionAList( true );
-	case DFNTAG_SPAWNOBJ:
-											applyTo->SetSpawnSection( cdata );
-											return true;
-	case DFNTAG_INTERVAL:
-											applyTo->SetInterval( 0, static_cast<UI08>(ndata) );
-											applyTo->SetInterval( 1, static_cast<UI08>(odata) );
-											return true;
-	default:								break;
+		case DFNTAG_SPAWNOBJLIST:				applyTo->IsSectionAList( true );
+		case DFNTAG_SPAWNOBJ:
+			applyTo->SetSpawnSection( cdata );
+			return true;
+		case DFNTAG_INTERVAL:
+			applyTo->SetInterval( 0, static_cast<UI08>(ndata) );
+			applyTo->SetInterval( 1, static_cast<UI08>(odata) );
+			return true;
+		default:								break;
 	}
 	return false;
 }
@@ -76,31 +72,32 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 		switch( tag )
 		{
 			case DFNTAG_AMMO:
-										applyTo->SetAmmoID( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
-										if( cdata.sectionCount( " " ) > 0 )
-											applyTo->SetAmmoHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
-										break;
+				applyTo->SetAmmoID( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+				if( cdata.sectionCount( " " ) > 0 )
+					applyTo->SetAmmoHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
+				break;
 			case DFNTAG_AMMOFX:
-										applyTo->SetAmmoFX( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
-										if( cdata.sectionCount( " " ) > 0 )
-										{
-											applyTo->SetAmmoFXHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
-											if( cdata.sectionCount( " " ) > 1 )
-												applyTo->SetAmmoFXRender( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() );
-										}
-										break;
-			case DFNTAG_AMOUNT:			
-										if( ndata && odata )
-										{
-											UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
-											applyTo->SetAmount( rndAmount );
-										}
-										else if( ndata > 0 )
-											applyTo->SetAmount( ndata );					
-										break;
+				applyTo->SetAmmoFX( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+				if( cdata.sectionCount( " " ) > 0 )
+				{
+					applyTo->SetAmmoFXHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
+					if( cdata.sectionCount( " " ) > 1 )
+						applyTo->SetAmmoFXRender( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() );
+				}
+				break;
+			case DFNTAG_AMOUNT:
+				if( ndata && odata )
+				{
+
+					UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
+					applyTo->SetAmount( rndAmount );
+				}
+				else if( ndata > 0 )
+					applyTo->SetAmount( ndata );
+				break;
 			case DFNTAG_ATT:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );
-										applyTo->SetHiDamage( static_cast<SI16>(odata) ); 
-										break;
+				applyTo->SetHiDamage( static_cast<SI16>(odata) );
+				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>(ndata) );	break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
 			case DFNTAG_COLOUR:			applyTo->SetColour( static_cast<UI16>(ndata) );			break;
@@ -108,28 +105,28 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_CORPSE:			applyTo->SetCorpse( ndata != 0 )		;				break;
 			case DFNTAG_COLD:			applyTo->SetWeatherDamage( COLD, ndata != 0 );			break;
 			case DFNTAG_DAMAGE:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );
-										applyTo->SetHiDamage( static_cast<SI16>(odata) );
-										break;
+				applyTo->SetHiDamage( static_cast<SI16>(odata) );
+				break;
 			case DFNTAG_ELEMENTRESIST:
-										if( cdata.sectionCount( " " ) == 3 )
-										{
-											applyTo->SetResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), HEAT );
-											applyTo->SetResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), COLD );
-											applyTo->SetResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), LIGHTNING );
-											applyTo->SetResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
-										}
-										break;
+				if( cdata.sectionCount( " " ) == 3 )
+				{
+					applyTo->SetResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), HEAT );
+					applyTo->SetResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), COLD );
+					applyTo->SetResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), LIGHTNING );
+					applyTo->SetResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
+				}
+				break;
 			case DFNTAG_DEF:			applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );	break;
 			case DFNTAG_DEX:			applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
 			case DFNTAG_DIR:			applyTo->SetDir( cdata.toByte() );			break;
 			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
-			case DFNTAG_DECAY:			
-										if( ndata == 1 )
-											applyTo->SetDecayable( true );
-										else
-											applyTo->SetDecayable( false );
-										break;
+			case DFNTAG_DECAY:
+				if( ndata == 1 )
+					applyTo->SetDecayable( true );
+				else
+					applyTo->SetDecayable( false );
+				break;
 			case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
 			case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
 			case DFNTAG_DOORFLAG:		break;
@@ -139,15 +136,15 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_GLOWTYPE:		applyTo->SetGlowEffect( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_GET:
 			{
-										ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
-										if( toFind == NULL )
-											Console.Warning( "Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial() );
-										else if( toFind == toApply )
-											Console.Warning( "Infinite loop avoided with GET tag inside item script %s", cdata.c_str() );
-										else
-											ApplyItemSection( applyTo, toFind );
+				ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
+				if( toFind == NULL )
+					Console.warning( format("Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial()));
+				else if( toFind == toApply )
+					Console.warning( format("Infinite loop avoided with GET tag inside item script %s", cdata.c_str() ));
+				else
+					ApplyItemSection( applyTo, toFind );
 			}
-										break;
+				break;
 			case DFNTAG_HP:				applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>(ndata) );		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
@@ -174,10 +171,10 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );						break;
 			case DFNTAG_PRIV:			applyTo->SetPriv( static_cast<UI08>(ndata) );			break;
 			case DFNTAG_RANK:
-										applyTo->SetRank( static_cast<SI08>(ndata) );
-										if( applyTo->GetRank() <= 0 ) 
-											applyTo->SetRank( 10 );
-										break;
+				applyTo->SetRank( static_cast<SI08>(ndata) );
+				if( applyTo->GetRank() <= 0 )
+					applyTo->SetRank( 10 );
+				break;
 			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>(ndata) );			break;
 			case DFNTAG_RESTOCK:		applyTo->SetRestock( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
@@ -187,26 +184,26 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>(ndata) );			break;
 			case DFNTAG_SNOW:			applyTo->SetWeatherDamage( SNOW, ndata != 0 );			break;
 			case DFNTAG_SCRIPT:			applyTo->SetScriptTrigger( static_cast<UI16>(ndata) );	break;
-			case DFNTAG_TYPE:			
-										ItemTypes iType;
-										iType = FindItemTypeFromTag( cdata );
-										if( iType == IT_COUNT )
-											iType = static_cast<ItemTypes>(ndata);
-										if( iType < IT_COUNT )
-											applyTo->SetType( iType );
-										break;
+			case DFNTAG_TYPE:
+				ItemTypes iType;
+				iType = FindItemTypeFromTag( cdata );
+				if( iType == IT_COUNT )
+					iType = static_cast<ItemTypes>(ndata);
+				if( iType < IT_COUNT )
+					applyTo->SetType( iType );
+				break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
 			case DFNTAG_VALUE:
-										applyTo->SetBuyValue( ndata );
-										applyTo->SetSellValue( odata );
-										break;
+				applyTo->SetBuyValue( ndata );
+				applyTo->SetSellValue( odata );
+				break;
 			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );
-										applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
-										break;
+				applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
+				break;
 			case DFNTAG_WEIGHTMAX:		applyTo->SetWeightMax( ndata );				break;
 			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
 			case DFNTAG_ADDMENUITEM:
-				Console.Print(cdata.c_str());
+				Console.print(cdata);
 				break;
 			case DFNTAG_CUSTOMSTRINGTAG:
 				customTagName			= cdata.section( " ", 0, 0 );
@@ -235,14 +232,14 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:
 				break;
-			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break; 
+			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break;
 			case DFNTAG_PACKITEM:
 				if( cdata.sectionCount( "," ) != 0 )
 					Items->AddRespawnItem( applyTo, cdata.section( ",", 0, 0 ), true, false, cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort() ); //section 0 = id, section 1 = amount
 				else
 					Items->AddRespawnItem( applyTo, cdata, true, false, 1 );
 				break;
-			default:					Console.Warning( "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata );	break;
+			default:					Console.warning( format("Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));	break;
 		}
 	}
 	return true;
@@ -251,8 +248,6 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, const bool inPack )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item and gives it an ID, Colour, and amount, also will
 //|					automatically look for an entry in harditems.dfn and set its location (be it in
@@ -262,7 +257,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
-		Console.Warning( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() );
+		Console.warning(format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial()) );
 		return NULL;
 	}
 
@@ -300,11 +295,9 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, 
+//|	Function	-	CItem *CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item,
 //|						const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a script item, gives it an amount, and sets
 //|					its location (be it in a pack or on the ground).
@@ -313,7 +306,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
-		Console.Warning( "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() );
+		Console.warning( format("CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() ));
 		return NULL;
 	}
 
@@ -347,8 +340,6 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file,
 //|						gives it a random buy/sell value, and places it
@@ -368,7 +359,7 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 		iCreated->SetBuyValue( RandomNum( static_cast<UI32>(1), iCreated->GetBuyValue() ) );
 		iCreated->SetSellValue( static_cast<UI32>(iCreated->GetBuyValue() / 2) );
 	}
-	if( iCreated->GetHP() != 0 ) 
+	if( iCreated->GetHP() != 0 )
 		iCreated->SetHP( static_cast<SI16>(RandomNum( static_cast<SI16>(1), iCreated->GetHP() )) );
 
 	return PlaceItem( mSock, mChar, iCreated, true );
@@ -377,8 +368,6 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *CreateRandomItem( const std::string& sItemList, const UI08 worldNum, const UI16 instanceID )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file
 //o-----------------------------------------------------------------------------------------------o
@@ -388,7 +377,7 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 	UString sect		= "ITEMLIST " + sItemList;
 	sect				= sect.stripWhiteSpace();
 
-	if( sect == "blank" ) // The itemlist-entry is just a blank filler item 
+	if( sect == "blank" ) // The itemlist-entry is just a blank filler item
 		return NULL;
 
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
@@ -413,15 +402,13 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj *CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a multi, and looks for an entry in harditems.dfn
 //o-----------------------------------------------------------------------------------------------o
 CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
 {
 	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
-	if( mCreated == NULL ) 
+	if( mCreated == NULL )
 		return NULL;
 
 	mCreated->SetID( iID );
@@ -438,8 +425,6 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *CreateBaseItem( const UI08 worldNum, const ObjectType itemType, const UI16 instanceID )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item
 //o-----------------------------------------------------------------------------------------------o
@@ -462,8 +447,6 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, c
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item from the scripts
 //o-----------------------------------------------------------------------------------------------o
@@ -477,7 +460,7 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 	ScriptSection *itemCreate	= FileLookup->FindEntry( ourItem, items_def );
 	if( itemCreate == NULL )
 	{
-		Console.Error( "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str() );
+		Console.error( format("CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str()) );
 		return NULL;
 	}
 
@@ -497,9 +480,9 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 		}
 
 		if( !ApplyItemSection( iCreated, itemCreate ) )
-			Console.Error( "Trying to apply an item section failed" );
-		
-		if( !iCreated->GetMaxHP() && iCreated->GetHP() ) 
+			Console.error( "Trying to apply an item section failed" );
+
+		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
 			iCreated->SetMaxHP( iCreated->GetHP() );
 
 		cScript *toGrab = JSMapping->GetScript( iCreated->GetScriptTrigger() );
@@ -515,8 +498,6 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void GetScriptItemSettings( CItem *iCreated )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs item entries from harditems.dfn
 //o-----------------------------------------------------------------------------------------------o
@@ -532,8 +513,6 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem * PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack )
 //|	Date		-	10/12/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Places an item that was just created
 //o-----------------------------------------------------------------------------------------------o
@@ -562,18 +541,18 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 //o-----------------------------------------------------------------------------------------------o
 bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 {
-	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() ) 
+	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
 	{
 		toDecay.SetDecayTime( nextDecayItems );
 		return false;
 	}
 	const bool isCorpse = toDecay.isCorpse();
-		
+
 	// Multis
 	if( !toDecay.IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
 	{
-		if( toDecay.IsLockedDown() || toDecay.isDoorOpen() || 
-			( ValidateObject( toDecay.GetMultiObj() ) && 
+		if( toDecay.IsLockedDown() || toDecay.isDoorOpen() ||
+		   ( ValidateObject( toDecay.GetMultiObj() ) &&
 			( toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses() ) ) )
 		{
 			toDecay.SetDecayTime( nextDecayItems );
@@ -606,7 +585,6 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	PackTypes getPackType( CItem *i )
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the pack type based on ID
 //o-----------------------------------------------------------------------------------------------o
@@ -878,7 +856,6 @@ PackTypes cItem::getPackType( CItem *i )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem, const UI16 itemAmount )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spawning of items from spawn objects/containers
 //o-----------------------------------------------------------------------------------------------o
@@ -922,7 +899,7 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 	else
 		c->SetLocation( s );
 	c->SetSpawn( s->GetSerial() );
-	
+
 	if( inCont )
 	{
 		CItem *spawnPack = static_cast<CItem *>(c->GetSpawnObj());
@@ -971,8 +948,8 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 				case PT_PACK2:
 				case PT_BANK:
 				case PT_UNKNOWN:
-				default:	
-					Console.Warning( " A non-container item was set as container spawner" );
+				default:
+					Console.warning( " A non-container item was set as container spawner" );
 					break;
 			}
 		}
@@ -1033,10 +1010,10 @@ void cItem::GlowItem( CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 void cItem::CheckEquipment( CChar *p )
 {
-	if( ValidateObject( p ) ) 
+	if( ValidateObject( p ) )
 	{
 		CSocket *pSock = p->GetSocket();
-		if( pSock == NULL ) 
+		if( pSock == NULL )
 			return;
 
 		const SI16 StrengthToCompare = p->GetStrength();
@@ -1047,14 +1024,14 @@ void cItem::CheckEquipment( CChar *p )
 				if( i->GetStrength() > StrengthToCompare )//if strength required > character's strength
 				{
 					std::string itemname;
-					if( i->GetName() == "#" ) 
+					if( i->GetName() == "#" )
 						getTileName( (*i), itemname );
-					else 
+					else
 						itemname = i->GetName();
 
 					i->SetCont( NULL );
 					i->SetLocation( p );
-					
+
 					SOCKLIST nearbyChars = FindNearbyPlayers( p );
 					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 					{
@@ -1075,7 +1052,7 @@ void cItem::CheckEquipment( CChar *p )
 //o-----------------------------------------------------------------------------------------------o
 void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 {
-	if( i->GetGood() < 0 ) 
+	if( i->GetGood() < 0 )
 		return;
 	if( tReg == NULL )
 	{
@@ -1085,10 +1062,10 @@ void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 		if( tReg == NULL )
 			return;
 	}
-	
+
 	const SI32 min = tReg->GetGoodRnd1( static_cast<UI08>(i->GetGood()) );
 	const SI32 max = tReg->GetGoodRnd2( static_cast<UI08>(i->GetGood()) );
-	
+
 	if( max != 0 || min != 0 )
 		i->SetRndValueRate( RandomNum( min, max ) );
 }
@@ -1106,7 +1083,7 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 
 	if( !ValidateObject( mChar ) || i->isCorpse() || ( !ValidateObject( iCont ) && !ValidateObject( charPack ) ) )
 		return NULL;
-	
+
 	CItem *c = i->Dupe();
 	if( c == NULL )
 		return NULL;
@@ -1127,6 +1104,4 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 		toGrab->OnCreate( c, false );
 
 	return c;
-}
-
 }

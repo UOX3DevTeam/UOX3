@@ -1,18 +1,13 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	UOXJSPropertyFuncts.cpp
 //|	Date		-	12/14/2001
-//|	Programmer	-	Abaddon / EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	1.0		Abaddon		14th December, 2001 Initial implementation
+//|	Purpose		-	1.0		14th December, 2001 Initial implementation
 //|							Includes property getters for CItem and CChar, and property
 //|							setters for CChar
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertyFuncs__
 #define __UOXJSPropertyFuncs__
-
-namespace UOX
-{
 
 typedef JSBool (JSPropertyFunc)( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 
@@ -67,14 +62,5 @@ JSPropertyFunc CResourceProps_setProperty;
 JSPropertyFunc CPartyProps_getProperty;
 JSPropertyFunc CPartyProps_setProperty;
 JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
-
-#if P_ODBC == 1
-
-JSPropertyFunc CODBCProps_getProperty;
-JSPropertyFunc CODBCProps_setProperty;
-
-#endif
-
-}
 
 #endif

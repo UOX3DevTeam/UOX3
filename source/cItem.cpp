@@ -1,35 +1,33 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File			-	cItem.cpp
 //|	Date			-	2nd April, 2000
-//|	Programmer		-	Abaddon/EviLDeD
-//| Team			-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose			-	New class written based upon old UOX item_st.  Number of old members removed
 //|						and a number of members types modified as well
 //|
 //|	Version History -
-//|									
-//|						1.0		Abaddon		2nd April, 2000
+//|
+//|						1.0		 		2nd April, 2000
 //|						Initial implementation
 //|						Bools reduced down to a single short with get/set mechanisms for setting/clearings bits
 //|						No documentation currently done, all functions obvious so far
 //|						Note:  individual byte setting within longs/shorts need speeding up
 //|						consider memcpy into correct word, note that this will be endian specific!
 //|
-//|						1.1		Abaddon		23rd July, 2000
+//|						1.1		 		23rd July, 2000
 //|						Addition of SaveItem routine for text mode only
 //|
-//|						1.2		Abaddon		25th July, 2000
+//|						1.2		 		25th July, 2000
 //|						All Accessor funcs plus a few others are now flagged as const functions, meaning that
 //|						those functions GUARENTEE never to alter data, at compile time
 //|						Thoughts about CBaseObject and prelim plans made
 //|
-//|						1.3		Abaddon		28th July, 2000
+//|						1.3		 		28th July, 2000
 //|						CBaseObject initial implementation plus rework of CItem to deal with only what it needs to
 //|						Proper constructor written
 //|						Plans for CItem derived classes thought upon
 //|
-//|						1.4		giwo		17th July, 2004
+//|						1.4		 		17th July, 2004
 //|						Added CSpawnItem to begin breaking CItem into smaller subclasses
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
@@ -47,15 +45,13 @@
 #include "msgboard.h"
 #include "books.h"
 #include "power.h"
-
-namespace UOX
-{
+#include "StringUtility.hpp"
 
 const UI32 BIT_DOOROPEN		=	1;
 const UI32 BIT_PILEABLE		=	2;
 const UI32 BIT_DYEABLE		=	3;
 const UI32 BIT_CORPSE		=	4;
-const UI32 BIT_UNUSED		=	5; //was wipeable
+//const UI32 BIT_UNUSED		=	5; //was wipeable
 const UI32 BIT_GUARDED		=	6;
 const UI32 BIT_SPAWNERLIST	=	7;
 
@@ -89,11 +85,11 @@ const SI32			DEFITEM_BASEWEIGHT		= 0;
 //|	Purpose		-	Constructor
 //o-----------------------------------------------------------------------------------------------o
 CItem::CItem() : CBaseObject(),
-contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
-madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ), 
-restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
-spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), 
-layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
+contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ),
+madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ),
+restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ),
+spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
+layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT )
 {
 	spells[0] = spells[1] = spells[2] = 0;
@@ -120,7 +116,6 @@ CItem::~CItem()
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject * GetCont( void ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container object
 //o-----------------------------------------------------------------------------------------------o
@@ -131,7 +126,6 @@ CBaseObject * CItem::GetCont( void ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SERIAL GetContSerial( void ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container's serial
 //o-----------------------------------------------------------------------------------------------o
@@ -146,7 +140,6 @@ SERIAL CItem::GetContSerial( void ) const
 //|	Function	-	SI08 GetGridLocation( void ) const
 //|					void SetGridLocation( SI08 newLoc )
 //|	Date		-	7-23-2007
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets "Grid Location" - for UOKR
 //o-----------------------------------------------------------------------------------------------o
@@ -163,7 +156,6 @@ void CItem::SetGridLocation( SI08 newLoc )
 //|	Function	-	UI32 GetTempVar( CITempVars whichVar ) const
 //|					void SetTempVar( CITempVars whichVar, UI32 newVal )
 //|	Date		-	7/6/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temp value of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -186,7 +178,6 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 //|	Function	-	UI08 GetTempVar( CITempVars whichVar, UI08 part ) const
 //|					void SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 //|	Date		-	7/6/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets one of the words of the temp value
 //|	Notes		-	Valid values for part are 1->4.  If outside that, behaves as if it were 1
@@ -233,7 +224,6 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool SetCont( CBaseObject *newCont )
 //|					bool SetContSerial( SERIAL newSerial )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set's the item's container value to newValue
 //|						Takes it out of the old container, and puts in the new
@@ -295,7 +285,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 			if( itemHolder != NULL )
 			{
 				contIsGround = false;
-				// ok heres what hair/beards should be handled like (sereg)
+				// ok heres what hair/beards should be handled like
 				if( ( ( GetLayer() == IL_HAIR ) || ( GetLayer() == IL_FACIALHAIR ) ) && !itemHolder->isCorpse() )
 				{
 					CChar *itemPackOwner = FindItemOwner( itemHolder );
@@ -331,7 +321,6 @@ bool CItem::SetCont( CBaseObject *newCont )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isDoorOpen( void ) const
 //|					void SetDoorOpen( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets door's open state
 //o-----------------------------------------------------------------------------------------------o
@@ -347,7 +336,6 @@ void CItem::SetDoorOpen( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isPileable( void ) const
 //|					void SetPileable( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's pileable state
 //o-----------------------------------------------------------------------------------------------o
@@ -363,7 +351,6 @@ void CItem::SetPileable( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isDyeable( void ) const
 //|					void SetDye( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's dyeable state
 //o-----------------------------------------------------------------------------------------------o
@@ -379,7 +366,6 @@ void CItem::SetDye( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isCorpse( void ) const
 //|					void SetCorpse( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's corpse state
 //o-----------------------------------------------------------------------------------------------o
@@ -395,7 +381,6 @@ void CItem::SetCorpse( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isGuarded( void ) const
 //|					void SetGuarded( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's guarded state
 //o-----------------------------------------------------------------------------------------------o
@@ -411,7 +396,6 @@ void CItem::SetGuarded( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isSpawnerList( void ) const
 //|					void SetSpawnerList( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether spawner points to a a NPCLIST/ITEMLIST instead of an NPC/Item
 //o-----------------------------------------------------------------------------------------------o
@@ -492,7 +476,7 @@ void CItem::IncLocation( SI16 xInc, SI16 yInc )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Updates item's old location 
+//|	Purpose		-	Updates item's old location
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 {
@@ -565,7 +549,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 insta
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	ItemLayers GetLayer( void ) const
-//|					void SetLayer( ItemLayers newValue ) 
+//|					void SetLayer( ItemLayers newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's layer property
 //o-----------------------------------------------------------------------------------------------o
@@ -651,7 +635,7 @@ void CItem::SetAmount( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool :IncAmount( SI32 incValue, bool noDelete )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Increases item's amount property by specified amount, 
+//|	Purpose		-	Increases item's amount property by specified amount,
 //|					adjusts weight according to new value
 //o-----------------------------------------------------------------------------------------------o
 bool CItem::IncAmount( SI32 incValue, bool noDelete )
@@ -1167,7 +1151,7 @@ void CItem::RemoveSelfFromCont( void )
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
-			CChar *targChar = static_cast<CChar *>(contObj);
+			CChar *targChar = dynamic_cast<CChar *>(contObj);
 			if( ValidateObject( targChar ) )
 			{
 				Weight->subtractItemWeight( targChar, this );
@@ -1176,7 +1160,7 @@ void CItem::RemoveSelfFromCont( void )
 		}
 		else
 		{
-			CItem *targItem = static_cast<CItem *>(contObj);
+			CItem *targItem = dynamic_cast<CItem *>(contObj);
 			if( ValidateObject( targItem ) )
 			{
 				Weight->subtractItemWeight( targItem, this );
@@ -1184,8 +1168,9 @@ void CItem::RemoveSelfFromCont( void )
 			}
 		}
 	}
-	else
+	else {
 		MapRegion->RemoveItem( this );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1609,7 +1594,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					SetWeatherDamage( COLD, data.section( ",", 3, 3 ).stripWhiteSpace().toUByte() == 1 );
 					SetWeatherDamage( SNOW, data.section( ",", 4, 4 ).stripWhiteSpace().toUByte() == 1 );
 					SetWeatherDamage( LIGHTNING, data.section( ",", 5, 5 ).stripWhiteSpace().toUByte() == 1 );
-					rvalue = true;	
+					rvalue = true;
 				}
 				else if( UTag == "RANK" )
 				{
@@ -1691,7 +1676,6 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool LoadRemnants( void )
 //|	Date		-	21st January, 2002
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	After handling data specific load, other parts go here
 //o-----------------------------------------------------------------------------------------------o
@@ -1725,8 +1709,8 @@ bool CItem::IsContType( void ) const
 		case IT_SPAWNCONT:
 		case IT_LOCKEDSPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-		case IT_TRASHCONT:	
-					return true;
+		case IT_TRASHCONT:
+			return true;
 		default:	return false;
 	}
 	return false;
@@ -1771,24 +1755,24 @@ void CItem::CheckItemIntegrity( void )
 	SERIAL getSerial = GetSerial();
 	if( getSerial == INVALIDSERIAL )
 	{
-		Console.Warning( "Item (%s) has an invalid serial number, Deleting", GetName().c_str() );
+		Console.warning(format( "Item (%s) has an invalid serial number, Deleting", GetName().c_str()) );
 		Delete();
 		return;
 	}
 
 	if( getSerial == GetContSerial() )
 	{
-		Console.Warning( "Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str() );
+		Console.warning( format("Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str()) );
 		SetCont( NULL );
 	}
 	if( getSerial == GetOwner() )
 	{
-		Console.Warning( "Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str() );
+		Console.warning( format("Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str()) );
 		SetOwner( NULL );
 	}
 	if( getSerial == GetSpawn() )
 	{
-		Console.Warning( "Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() );
+		Console.warning( format("Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() ));
 		SetSpawn( INVALIDSERIAL );
 	}
 }
@@ -1865,7 +1849,6 @@ void CItem::SetDevineLock( bool newValue )
 //|	Function	-	UI16 EntryMadeFrom( void ) const
 //|					void EntryMadeFrom( UI16 newValue )
 //|	Date		-	13 September, 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Create-DFNs entry the item was made from
 //o-----------------------------------------------------------------------------------------------o
@@ -1888,7 +1871,7 @@ void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 	CBaseObject *checkCont = NULL;
 	if( isPostLoaded() && doWeightUpdate )
 		checkCont = GetCont();
-	
+
 	if( ValidateObject( checkCont ) )
 		Weight->subtractItemWeight( checkCont, this );
 
@@ -1901,7 +1884,6 @@ void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool IsMetalType( void ) const
 //|	Date		-	13 November, 2001
-//|	Programmer	-	Bel-CMC
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if it's a metal object
 //o-----------------------------------------------------------------------------------------------o
@@ -1936,7 +1918,6 @@ bool CItem::IsMetalType( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool IsLeatherType( void ) const
 //|	Date		-	13 November, 2001
-//|	Programmer	-	Bel-CMC
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if it's a leather object
 //o-----------------------------------------------------------------------------------------------o
@@ -1966,7 +1947,6 @@ inline bool operator>(const CItem& x, const CItem& y )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
-//|	Programmer	-	UOX DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display "speech" over an item
 //o-----------------------------------------------------------------------------------------------o
@@ -2004,7 +1984,6 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Update( CSocket *mSock )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o-----------------------------------------------------------------------------------------------o
@@ -2016,7 +1995,7 @@ void CItem::Update( CSocket *mSock )
 	RemoveFromSight( mSock );
 	if( GetCont() == this )
 	{
-		Console.Warning( "Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() );
+		Console.warning( format("Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));
 		SetCont( NULL );
 	}
 
@@ -2068,12 +2047,11 @@ void CItem::Update( CSocket *mSock )
 			return;
 		}
 	}
-	Console.Error( " CItem::Update(0x%X): cannot determine container type!", GetSerial() );
+	Console.error(format( " CItem::Update(0x%X): cannot determine container type!", GetSerial() ));
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SendToSocket( CSocket *mSock )
-//|	Programmer	-	giwo
 //|	Date		-	July 27, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates an item on the ground to specified socket
@@ -2118,7 +2096,6 @@ void CItem::SendToSocket( CSocket *mSock )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SendPackItemToSocket( CSocket *mSock )
-//|	Programmer	-	giwo
 //|	Date		-	July 27, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates an item contained in a pack to specified socket
@@ -2151,7 +2128,6 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RemoveFromSight( CSocket *mSock )
 //|	Date		-	September 7th, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all online chars and removes the item from their sight
 //o-----------------------------------------------------------------------------------------------o
@@ -2223,14 +2199,15 @@ void CItem::RemoveFromSight( CSocket *mSock )
 			mSock->Send( &toRemove );
 		else
 		{
-			Network->PushConn();
+			std::scoped_lock lock(Network->internallock);
+			Network->pushConn();
 			for( CSocket *nSock = Network->FirstSocket(); !Network->FinishedSockets(); nSock = Network->NextSocket() )
 			{
 				if( !nSock->LoginComplete() )
 					continue;
 				nSock->Send( &toRemove );
 			}
-			Network->PopConn();
+			Network->popConn();
 		}
 	}
 }
@@ -2238,7 +2215,6 @@ void CItem::RemoveFromSight( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlaceInPack( void )
 //|	Date		-	October 18th, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Puts an item at a random location inside a pack
 //o-----------------------------------------------------------------------------------------------o
@@ -2271,7 +2247,6 @@ void CItem::SetSpell( UI08 part, UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Cleanup( void )
 //|	Date		-	11/6/2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cleans up after item
 //o-----------------------------------------------------------------------------------------------o
@@ -2310,14 +2285,14 @@ void CItem::Cleanup( void )
 			}
 			SetSpawn( INVALIDSERIAL );
 		}
-		if( GetSpawnObj() != NULL ) 
+		if( GetSpawnObj() != NULL )
 			SetSpawn( INVALIDSERIAL );
 
 		if( GetGlow() != INVALIDSERIAL )
 		{
 			CItem *j = calcItemObjFromSer( GetGlow() );
 			if( ValidateObject( j ) )
-				j->Delete();  // LB glow stuff, deletes the glower of a glowing stuff automatically
+				j->Delete();  // glow stuff, deletes the glower of a glowing stuff automatically
 		}
 
 		if( isGuarded() )
@@ -2348,7 +2323,6 @@ void CItem::Cleanup( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 //o-----------------------------------------------------------------------------------------------o
@@ -2366,7 +2340,6 @@ bool CItem::CanBeObjType( ObjectType toCompare ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Delete( void )
 //|	Date		-	11/6/2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character to deletion queue
 //o-----------------------------------------------------------------------------------------------o
@@ -2389,12 +2362,10 @@ CDataList< CItem * > * CItem::GetContainsList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Class		-	CSpawnItem() : CItem()
 //|	Date		-	29th June, 2004
-//|	Programmer	-	giwo
-//| Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Version History
-//|									
-//|						1.0		giwo		29th June, 2004
+//|
+//|						1.0		 		29th June, 2004
 //|						Original implementation
 //|						First attempt to begin breaking CItem into multiple smaller
 //|						classes, reducing overall memory usage. Currently stores all
@@ -2413,7 +2384,6 @@ isSectionAList( false )
 //|	Function	-	UI08 GetInterval( UI08 part ) const
 //|					void SetInterval( UI08 part, UI08 newVal )
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Min and Max interval for spawner to respawn
 //o-----------------------------------------------------------------------------------------------o
@@ -2434,7 +2404,6 @@ void CSpawnItem::SetInterval( UI08 part, UI08 newVal )
 //|	Function	-	std::string GetSpawnSection( void ) const
 //|					void SetSpawnSection( const std::string &newVal )
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Script section to spawn from
 //o-----------------------------------------------------------------------------------------------o
@@ -2451,7 +2420,6 @@ void CSpawnItem::SetSpawnSection( const std::string &newVal )
 //|	Function	-	bool IsSectionAList( void ) const
 //|					void IsSectionAList( bool newVal )
 //|	Date		-	7/05/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets script section as a spawner list
 //o-----------------------------------------------------------------------------------------------o
@@ -2467,7 +2435,6 @@ void CSpawnItem::IsSectionAList( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpHeader( std::ofstream &outStream ) const
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Header to Worldfile
 //o-----------------------------------------------------------------------------------------------o
@@ -2480,7 +2447,6 @@ bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpBody( std::ofstream &outStream ) const
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Spawn Item to Worldfile
 //o-----------------------------------------------------------------------------------------------o
@@ -2496,7 +2462,6 @@ bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool HandleLine( UString &UTag, UString &data )
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads data from Worldfile into the class
 //o-----------------------------------------------------------------------------------------------o
@@ -2535,7 +2500,6 @@ bool CSpawnItem::HandleLine( UString &UTag, UString &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DoRespawn( void )
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Will eventually take the place of RespawnItem()
 //o-----------------------------------------------------------------------------------------------o
@@ -2551,8 +2515,8 @@ bool CSpawnItem::DoRespawn( void )
 		case IT_SPAWNCONT:
 		case IT_LOCKEDSPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:	rValue = HandleSpawnContainer();		break;
-        default:
-            break;
+		default:
+			break;
 	}
 
 	return rValue;
@@ -2581,10 +2545,10 @@ bool CSpawnItem::HandleItemSpawner( void )
 		if( !listObj.empty() )
 			Items->AddRespawnItem( this, listObj, false, IsSectionAList(), 1 );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), false, 1 );
+			Items->AddRespawnItem( this, str_number( GetTempVar( CITV_MOREX ) ), false, 1 );
 		else
 		{
-			Console.Warning( "Bad Item Spawner Found, Deleting" );
+			Console.warning( "Bad Item Spawner Found, Deleting" );
 			Delete();
 			return true;
 		}
@@ -2600,10 +2564,10 @@ bool CSpawnItem::HandleNPCSpawner( void )
 		if( !listObj.empty() )
 			Npcs->CreateNPC( this, listObj );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Npcs->CreateNPC( this, UString::number( GetTempVar( CITV_MOREX ) ) );
+			Npcs->CreateNPC( this, str_number( GetTempVar( CITV_MOREX ) ) );
 		else
 		{
-			Console.Warning( "Bad Npc/Area Spawner found; Spawnsection or MOREX values missing! Deleting Spawner." );
+			Console.warning( "Bad Npc/Area Spawner found; Spawnsection or MOREX values missing! Deleting Spawner." );
 			Delete();
 			return true;
 		}
@@ -2620,10 +2584,10 @@ bool CSpawnItem::HandleSpawnContainer( void )
 		if( !listObj.empty() )
 			Items->AddRespawnItem( this, listObj, true, IsSectionAList(), 1 );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), true, 1 );
+			Items->AddRespawnItem( this, str_number( GetTempVar( CITV_MOREX ) ), true, 1 );
 		else
 		{
-			Console.Warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner." );
+			Console.warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner." );
 			Delete();
 			return true;
 		}
@@ -2634,7 +2598,6 @@ bool CSpawnItem::HandleSpawnContainer( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Cleanup( void )
 //|	Date		-	6/29/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cleans up after spawner item
 //o-----------------------------------------------------------------------------------------------o
@@ -2652,7 +2615,6 @@ void CSpawnItem::Cleanup( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 //o-----------------------------------------------------------------------------------------------o
@@ -2670,7 +2632,6 @@ bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnItem * Dupe( void )
 //|	Date		-	7/11/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new CSpawnItem and copies all of this objects properties to the new one
 //o-----------------------------------------------------------------------------------------------o
@@ -2688,7 +2649,6 @@ CSpawnItem * CSpawnItem::Dupe( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CopyData( CSpawnItem *target )
 //|	Date		-	7/11/2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Copies all of this objects properties to the new one
 //o-----------------------------------------------------------------------------------------------o
@@ -2700,6 +2660,4 @@ void CSpawnItem::CopyData( CSpawnItem *target )
 	target->IsSectionAList( IsSectionAList() );
 	target->SetInterval( 0, GetInterval( 0 ) );
 	target->SetInterval( 1, GetInterval( 1 ) );
-}
-
 }

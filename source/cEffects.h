@@ -1,9 +1,6 @@
 #ifndef __CEFFECTS_H__
 #define __CEFFECTS_H__
 
-namespace UOX
-{
-
 class cEffects
 {
 private:
@@ -38,7 +35,5 @@ public:
 };
 
 extern cEffects *Effects;
-
-}
 
 #endif

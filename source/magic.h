@@ -1,9 +1,6 @@
 #ifndef __MAGIC_H
 #define __MAGIC_H
 
-namespace UOX
-{
-
 class CMagicMove
 {
 private:
@@ -57,30 +54,30 @@ private:
 	UI08	speed;
 	UI08	loop;
 public:
-			CMagicStat() : effect( INVALIDID ), speed( 0xFF ), loop( 0xFF )
-			{
-			}
-	UI16	Effect( void ) const		
+	CMagicStat() : effect( INVALIDID ), speed( 0xFF ), loop( 0xFF )
+	{
+	}
+	UI16	Effect( void ) const
 	{
 		return effect;
 	}
-	UI08	Speed( void ) const			
+	UI08	Speed( void ) const
 	{
 		return speed;
 	}
-	UI08	Loop( void ) const			
+	UI08	Loop( void ) const
 	{
 		return loop;
 	}
-	void	Effect( UI08 p1, UI08 p2 )	
+	void	Effect( UI08 p1, UI08 p2 )
 	{
 		effect = (UI16)((p1<<8) + p2);
 	}
-	void	Speed( UI08 newVal )		
+	void	Speed( UI08 newVal )
 	{
 		speed = newVal;
 	}
-	void	Loop( UI08 newVal )			
+	void	Loop( UI08 newVal )
 	{
 		loop = newVal;
 	}
@@ -125,8 +122,8 @@ private:
 	UI16		jsScript;
 	SI16		baseDmg;
 public:
-	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ), 
-		circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
+	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
+	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
 
@@ -251,7 +248,7 @@ public:
 	{
 		return (flags&0x80) == 0x80;
 	}
-	bool Resistable( void ) const	
+	bool Resistable( void ) const
 	{
 		return (flags&0x100) == 0x100;
 	}
@@ -352,7 +349,7 @@ public:
 
 #define MAGIC_DEFN bool (*) ()
 
-struct MagicTable_s 
+struct MagicTable_s
 {
 	SI32			spell_name;
 	bool			(*mag_extra) ();	// extra data - see above
@@ -439,8 +436,6 @@ MAG_CHARHANDLER( splNecro4 );
 MAG_CHARHANDLER( splNecro5 );
 
 // All command_ functions take an SI32 value of the player that triggered the command.
-
-}
 
 #endif
 

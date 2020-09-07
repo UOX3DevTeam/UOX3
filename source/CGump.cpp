@@ -6,9 +6,8 @@
 #include "uox3.h"
 #include "gump.h"
 #include "CPacketSend.h"
+#include <cstdint>
 
-namespace UOX
-{
 
 CGump::CGump( bool myNoMove, bool myNoClose )
 {
@@ -50,10 +49,10 @@ void CGump::Send( CSocket *target )
 
 	STRINGLIST_CITERATOR tIter;
 	for( tIter = TagList.begin(); tIter != TagList.end(); ++tIter )
-		toSend.AddCommand( (*tIter) );
+		toSend.addCommand( (*tIter) );
 
 	for( tIter = TextList.begin(); tIter != TextList.end(); ++tIter )
-		toSend.AddText( (*tIter) );
+		toSend.addText( (*tIter) );
 
 	toSend.Finalize();
 	target->Send( &toSend );
@@ -61,7 +60,6 @@ void CGump::Send( CSocket *target )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetNoMove( bool myNoMove )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Toggle whether a gump can be moved or not
 //o-----------------------------------------------------------------------------------------------o
@@ -72,7 +70,6 @@ void CGump::SetNoMove( bool myNoMove )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetNoClose( bool myNoClose )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Toggle whether a gump can be closed or not
 //o-----------------------------------------------------------------------------------------------o
@@ -83,7 +80,6 @@ void CGump::SetNoClose( bool myNoClose )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetType( UI32 newType )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets Gump's Type
 //o-----------------------------------------------------------------------------------------------o
@@ -94,7 +90,6 @@ void CGump::SetType( UI32 newType )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetSerial( UI32 newSerial )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets Gump's Serial
 //o-----------------------------------------------------------------------------------------------o
@@ -110,9 +105,7 @@ void CGump::SetSerial( UI32 newSerial )
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height )
 {
-	char temp[64];
-	sprintf( temp, "resizepic %u %u %u %u %u", x, y, GumpID, width, height );
-	TagList.push_back( temp );
+	TagList.push_back( format("resizepic %u %u %u %u %u", x, y, GumpID, width, height ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -122,9 +115,7 @@ void CGump::AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height 
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddGump( UI16 x, UI16 y, UI16 GumpID )
 {
-	char temp[64];
-	sprintf( temp, "gumppic %u %u %u", x, y, GumpID );
-	TagList.push_back( temp );
+	TagList.push_back( format( "gumppic %u %u %u", x, y, GumpID ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -134,9 +125,7 @@ void CGump::AddGump( UI16 x, UI16 y, UI16 GumpID )
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page, UI32 UniqueID  )
 {
-	char temp[128];
-	sprintf( temp, "button %u %u %u %u %u %u %u", x, y, ImageUp, ImageDown, Behaviour, Page, UniqueID );
-	TagList.push_back( temp );
+	TagList.push_back( format("button %u %u %u %u %u %u %u", x, y, ImageUp, ImageDown, Behaviour, Page, UniqueID ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -146,12 +135,10 @@ void CGump::AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behavi
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 {
-	char temp[128];
-	UI32 TextID = TextList.size();
-	sprintf( temp, "text %u %u %u %u", x, y, hue, TextID );
+	UI32 TextID = static_cast<std::uint32_t>(TextList.size());
 
 	TextList.push_back( Text );
-	TagList.push_back( temp );
+	TagList.push_back( format( "text %u %u %u %u", x, y, hue, TextID ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -161,9 +148,7 @@ void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 //o-----------------------------------------------------------------------------------------------o
 UI16 CGump::StartPage( void )
 {
-	char temp[32];
-	sprintf( temp, "page %u", PageCount );
-	TagList.push_back( temp );
+	TagList.push_back( format( "page %u", PageCount ) );
 
 	++PageCount;
 	return PageCount - 1;
@@ -181,13 +166,10 @@ void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button )
 
 	switch( GumpSerial )
 	{
-		// Custom Gump Callbacks
+			// Custom Gump Callbacks
 		case 1:
-			{
-
-			}
+		{
+		}
 	};
-}
-
 }
 

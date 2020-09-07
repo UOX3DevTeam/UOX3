@@ -1,9 +1,6 @@
 #ifndef __POWER_H__
 #define __POWER_H__
 
-namespace UOX
-{
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 power( SI32 base, SI32 exponent )
 //o-----------------------------------------------------------------------------------------------o
@@ -21,8 +18,6 @@ inline UI32 power( UI32 base, UI32 exponent )
 		return total;
 	}
 	return 0;
-}
-
 }
 
 #endif

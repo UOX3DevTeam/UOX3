@@ -3,8 +3,6 @@
 
 #include "cmdtable.h"
 
-namespace UOX
-{
 
 const UI32 BIT_STRIPHAIR	= 1;
 const UI32 BIT_STRIPITEMS	= 2;
@@ -20,7 +18,7 @@ struct commandLevel_st
 	UI16				bodyColour;		// target body colour
 	std::bitset< 8 >	stripOff;		// strips off hair, beard and clothes
 	commandLevel_st() : name( "" ), commandLevel( 0 ), defaultPriv( 0 ), nickColour( 0 ),
-		allSkillVals( 0 ), targBody( 0 ), bodyColour( 0 )
+	allSkillVals( 0 ), targBody( 0 ), bodyColour( 0 )
 	{
 		stripOff.reset();
 	}
@@ -65,8 +63,6 @@ public:
 };
 
 extern cCommands	*Commands;
-
-}
 
 #endif
 

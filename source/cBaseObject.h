@@ -1,14 +1,13 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	cBaseObject.h
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Defines the property specifications for the base object class
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
-
-namespace UOX
-{
+#include "ustring.h"
+#include "typedefs.h"
+#include "uoxstruct.h"
 
 enum TAGMAPOBJECT_TYPE
 {
@@ -43,8 +42,6 @@ enum UpdateTypes
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Class		-	class CBaseObject
-//|	Programmer	-	Abaddon/EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	BaseObject class with common, shared properties for all object types
 //o-----------------------------------------------------------------------------------------------o
@@ -113,7 +110,7 @@ public:
 	point3					GetOldLocation( void );
 
 	size_t 					GetNumTags( void ) const;
-	
+
 	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
 
@@ -130,7 +127,7 @@ public:
 	SI32					SetFilePosition( SI32 filepos );
 
 	virtual					~CBaseObject();
-							CBaseObject( void );
+	CBaseObject( void );
 
 	SI16					GetOldTargLocX( void ) const;
 	SI16					GetOldTargLocY( void ) const;
@@ -285,6 +282,5 @@ public:
 
 };
 
-}
 #endif
 

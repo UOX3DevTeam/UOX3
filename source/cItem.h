@@ -1,16 +1,14 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
-
-namespace UOX
+#include "CDataList.h"
+enum CITempVars
 {
-	enum CITempVars
-	{
-		CITV_MORE	= 0,
-		CITV_MOREX,
-		CITV_MOREY,
-		CITV_MOREZ,
-		CITV_COUNT
-	};
+	CITV_MORE	= 0,
+	CITV_MOREX,
+	CITV_MOREY,
+	CITV_MOREZ,
+	CITV_COUNT
+};
 
 class CItem : public CBaseObject
 {
@@ -43,16 +41,16 @@ protected:
 	UI32			value[2];	// Price a shopkeep buys and sells items for
 	UI16			restock; // Number up to which shopkeeper should restock this item
 	ARMORCLASS		armorClass;
-	SI08			rank;	// Magius(CHE) --- for rank system, this value is the LEVEL of the item from 1 to 10.  Simply multiply t he rank*10 and calculate the MALUS this item has from the original.
-									// for example: RANK 5 --> 5*10 = 50% of malus
-									// this item has same values decreased by 50%..
-									// RANK 1 --> 1*10=10% this item has 90% of malus!
-									// RANK 10 --> 10*10 = 100% this item has no malus! RANK 10 is automatically setted if you select RANKSYSTEM 0.
-									// Vars: LODAMAGE, HIDAMAGE, ATT, DEF, HP, MAXHP
-	SI16			good; // Store type of GOODs to trade system! (Plz not set as UNSIGNED) --- Magius(CHE)
-	SI32			rndvaluerate; // Store the value calculated base on RANDOMVALUE in region.dfn. ---- MAgius(CHE) (2)
-	SI08			madewith; // Store the skills used to make this item -- Magius(CHE)
-	SERIAL			glow;	// LB identifies glowing objects
+	SI08			rank;	// for rank system, this value is the LEVEL of the item from 1 to 10.  Simply multiply t he rank*10 and calculate the MALUS this item has from the original.
+	// for example: RANK 5 --> 5*10 = 50% of malus
+	// this item has same values decreased by 50%..
+	// RANK 1 --> 1*10=10% this item has 90% of malus!
+	// RANK 10 --> 10*10 = 100% this item has no malus! RANK 10 is automatically setted if you select RANKSYSTEM 0.
+	// Vars: LODAMAGE, HIDAMAGE, ATT, DEF, HP, MAXHP
+	SI16			good; // Store type of GOODs to trade system! (Plz not set as UNSIGNED)
+	SI32			rndvaluerate; // Store the value calculated base on RANDOMVALUE in region.dfn
+	SI08			madewith; // Store the skills used to make this item
+	SERIAL			glow;	// identifies glowing objects
 	COLOUR			glowColour;
 	UI08			glow_effect;
 	UI16			ammo[2]; // Ammo ID and Hue
@@ -164,7 +162,7 @@ public:
 
 	SI08			GetMovable( void ) const;
 	void			SetMovable( SI08 newValue );
-	
+
 	TIMERVAL		GetTempTimer(   void ) const;
 	TIMERVAL		GetDecayTime(  void ) const;
 
@@ -211,21 +209,21 @@ public:
 
 	UI16			GetAmmoFXRender( void ) const;
 	void			SetAmmoFXRender( UI16 newValue );
-	
+
 	SI32			GetWeightMax( void ) const;
 	void			SetWeightMax( SI32 newValue );
 
 	SI32			GetBaseWeight( void ) const;
 	void			SetBaseWeight( SI32 newValue );
 
-	// Note by Magius: Value range to -ALLSKILLS-1 to ALLSKILLS+1
+	// Note: Value range to -ALLSKILLS-1 to ALLSKILLS+1
 	// To calculate skill used to made this item:
 	// if is a positive value, substract 1 it.
 	//    Ex) madewith = 34, 34 - 1 = 33, 33 = STEALING
 	// if is a negative value, add 1 from it and invert value.
 	//    Ex) madewith = -34, -34 + 1 = -33, Abs(-33) = 33 = STEALING.
 	// 0 = NULL
-	// So... a positive value is used when the item is made by a 
+	// So... a positive value is used when the item is made by a
 	// player with 95.0+ at that skill. Infact in this way when
 	// you click on the item appear its name and the name of the
 	// creator. A negative value if the play is not skilled
@@ -240,7 +238,7 @@ public:
 	UI08			GetGlowEffect( void ) const;
 	void			SetGlowEffect( UI08 newValue );
 
-					CItem();
+	CItem();
 	virtual			~CItem();
 
 	UI08			IsFieldSpell( void ) const;
@@ -281,10 +279,10 @@ protected:
 public:
 	CDataList< CBaseObject * >		spawnedList;
 
-						CSpawnItem();
+	CSpawnItem();
 	virtual				~CSpawnItem()
-						{
-						}
+	{
+	}
 
 	UI08				GetInterval( UI08 part ) const;
 	void				SetInterval( UI08 part, UI08 newVal );
@@ -309,8 +307,6 @@ public:
 
 	CSpawnItem *		Dupe( void );
 };
-
-}
 
 #endif
 

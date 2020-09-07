@@ -34,9 +34,6 @@
 #include "cSpawnRegion.h"
 
 
-namespace UOX
-{
-
 void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );
 void		LoadRegions( void );
@@ -47,21 +44,20 @@ void		LoadSkills( void );
 #define __EXTREMELY_VERBOSE__
 
 #ifdef __EXTREMELY_VERBOSE__
-void DoSEErrorMessage( const char *txt, ... )
+void DoSEErrorMessage( const std::string& txt )
 {
-	va_list argptr;
-	char msg[512];
-#ifdef __NONANSI_VASTART__
-	va_start( argptr );
-#else
-	va_start( argptr, txt );
-#endif
-	vsprintf( msg, txt, argptr );
-	va_end( argptr );
-	Console.Error( msg );
+	if (!txt.empty()){
+		auto msg = txt ;
+		if (msg.size()>512){
+			msg = msg.substr(0,512);
+			Console.error( msg );
+		}
+
+	}
+
 }
 #else
-void DoSEErrorMessage( char *txt, ... )
+void DoSEErrorMessage( const std::string& txt )
 {
 	return;
 }
@@ -131,7 +127,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		DoSEErrorMessage( "DoTempEffect: Invalid src" );
 		return JS_FALSE;
 	}
-	
+
 	if( iType == 0 )	// character
 	{
 		JSObject *mydestc = JSVAL_TO_OBJECT( argv[2] );
@@ -157,7 +153,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			DoSEErrorMessage( "DoTempEffect: Invalid target " );
 			return JS_FALSE;
 		}
-			Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
+		Effects->tempeffect( mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3 );
 	}
 	return JS_TRUE;
 }
@@ -179,7 +175,7 @@ JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	std::string trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( trgMessage.empty() || trgMessage.length() == 0 )
 	{
-		DoSEErrorMessage( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() );
+		DoSEErrorMessage( format("BroadcastMessage: Invalid string (%s)", trgMessage.c_str()) );
 		return JS_FALSE;
 	}
 	sysBroadcast( trgMessage );
@@ -347,7 +343,7 @@ JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	createEntry *toFind = Skills->FindItem( itemMenu );
 	if( toFind == NULL )
 	{
-		DoSEErrorMessage( "MakeItem: Invalid make item (%i)", itemMenu );
+		DoSEErrorMessage( format("MakeItem: Invalid make item (%i)", itemMenu) );
 		return JS_FALSE;
 	}
 	Skills->MakeItem( *toFind, player, sock, itemMenu );
@@ -463,10 +459,10 @@ JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( argc != 3 )
 	{
 		DoSEErrorMessage( "  RegisterCommand: Invalid number of arguments (takes 4)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
- 	UI08 execLevel			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+	UI08 execLevel			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 
@@ -474,17 +470,17 @@ JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	{
 		DoSEErrorMessage( " RegisterCommand: JS Script has an Invalid ScriptID" );
 		return JS_FALSE;
-	}	
+	}
 
 	Commands->Register( toRegister, scriptID, execLevel, isEnabled );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	If called from within SpellRegistration() function in a script registered under
-//|					the MAGIC_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP, will register the 
+//|					the MAGIC_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP, will register the
 //|					onSpellCast() event in the same script as a global listener for use of the
 //|					specified magic spell.
 //o-----------------------------------------------------------------------------------------------o
@@ -493,20 +489,20 @@ JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc != 2 )
 	{
 		DoSEErrorMessage( "RegisterSpell: Invalid number of arguments (takes 2)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI32 spellNumber			= JSVAL_TO_INT( argv[0] );
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 	cScript *myScript		= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	Magic->Register( myScript, spellNumber, isEnabled );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register JS script as a global listener for use of specified skill, and
-//|					triggers onSkill() event in same script when specified skill is used, if 
+//|					triggers onSkill() event in same script when specified skill is used, if
 //|					script is added under the SKILLUSE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a SkillRegistration() function
 //o-----------------------------------------------------------------------------------------------o
@@ -515,7 +511,7 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc != 2 )
 	{
 		DoSEErrorMessage( "RegisterSkill: Invalid number of arguments (takes 2)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI32 skillNumber			= JSVAL_TO_INT( argv[0] );
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
@@ -523,41 +519,41 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( scriptID != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( " " );
+		Console.print( " " );
 		Console.MoveTo( 15 );
-		Console.Print( "Registering skill number " );
+		Console.print( "Registering skill number " );
 		Console.TurnYellow();
-		Console.Print( "%i", skillNumber );
+		Console.print( format("%i", skillNumber ));
 		if( !isEnabled )
 		{
 			Console.TurnRed();
-			Console.Print( " [DISABLED]" );
+			Console.print( " [DISABLED]" );
 		}
-		Console.Print( "\n" );
+		Console.print( "\n" );
 		Console.TurnNormal();
 #endif
-		// If skill is not enabled, unset scriptID from skill data 
+		// If skill is not enabled, unset scriptID from skill data
 		if( !isEnabled )
 		{
-			cwmWorldState->skill[skillNumber].jsScript = NULL;
+			cwmWorldState->skill[skillNumber].jsScript = 0;
 			return JS_FALSE;
 		}
 
-		// Skillnumber above ALLSKILLS refers to STR, INT, DEX, Fame and Karma,  
+		// Skillnumber above ALLSKILLS refers to STR, INT, DEX, Fame and Karma,
 		if( skillNumber < 0 || skillNumber >= ALLSKILLS )
 			return JS_TRUE;
 
 		// Both scriptID and skillNumber seem valid; assign scriptID to this skill
 		cwmWorldState->skill[skillNumber].jsScript = scriptID;
 	}
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register JS script as a global listener for a specific network packet, and
-//|					triggers onPacketReceive() event in same script when this network packet is sent, 
+//|					triggers onPacketReceive() event in same script when this network packet is sent,
 //|					if script is added under the PACKET_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a PacketRegistration() function
 //o-----------------------------------------------------------------------------------------------o
@@ -566,7 +562,7 @@ JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc != 2 )
 	{
 		DoSEErrorMessage( "RegisterPacket: Invalid number of arguments (takes 2)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	UI08 packet			= static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
 	UI08 subCmd			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
@@ -574,11 +570,11 @@ JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( scriptID != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( "Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd );
+		Console.print( format("Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd) );
 #endif
 		Network->RegisterPacket( packet, subCmd, scriptID );
 	}
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -594,7 +590,7 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	if( argc != 2 )
 	{
 		DoSEErrorMessage( "RegisterKey: Invalid number of arguments (takes 2)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &(argv[0]) );
 	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
@@ -604,7 +600,7 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	{
 		DoSEErrorMessage( "RegisterKey: JS Script has an Invalid ScriptID" );
 		return JS_FALSE;
-	}	
+	}
 	SI32 toPass = 0;
 	if( encaps.isType( JSOT_STRING ) )
 	{
@@ -620,7 +616,7 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	else
 		toPass = encaps.toInt();
 	Console.RegisterKey( toPass, toRegister, scriptID );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -633,7 +629,7 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	if( argc != 2 )
 	{
 		DoSEErrorMessage( "RegisterConsoleFunc: Invalid number of arguments (takes 2)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	std::string funcToRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	std::string toRegister		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
@@ -643,10 +639,10 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	{
 		DoSEErrorMessage( "RegisterConsoleFunc: JS Script has an Invalid ScriptID" );
 		return JS_FALSE;
-	}	
+	}
 
 	Console.RegisterFunc( funcToRegister, toRegister, scriptID );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -659,11 +655,11 @@ JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "DisableCommand: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	std::string toDisable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	Commands->SetCommandStatus( toDisable, false );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -676,11 +672,11 @@ JSBool SE_DisableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "DisableKey: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI32 toDisable = JSVAL_TO_INT( argv[0] );
 	Console.SetKeyStatus( toDisable, false );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -693,11 +689,11 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "DisableConsoleFunc: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	std::string toDisable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	Console.SetFuncStatus( toDisable, false );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -710,11 +706,11 @@ JSBool SE_DisableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "DisableSpell: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
 	Magic->SetSpellStatus( spellNumber, false );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -727,11 +723,11 @@ JSBool SE_EnableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "EnableCommand: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	std::string toEnable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	Commands->SetCommandStatus( toEnable, true );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -744,11 +740,11 @@ JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "EnableSpell: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
 	Magic->SetSpellStatus( spellNumber, true );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -761,11 +757,11 @@ JSBool SE_EnableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "EnableKey: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI32 toEnable = JSVAL_TO_INT( argv[0] );
 	Console.SetKeyStatus( toEnable, true );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -778,11 +774,11 @@ JSBool SE_EnableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "EnableConsoleFunc: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	std::string toEnable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	Console.SetFuncStatus( toEnable, false );
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -835,7 +831,7 @@ JSBool SE_SecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( argc > 1 )
 	{
 		DoSEErrorMessage( "SecondsPerUOMinute: Invalid number of arguments (takes 0 or 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	else if( argc == 1 )
 	{
@@ -926,7 +922,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	if( argc > 5 )
 		bInPack					= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-	
+
 	CItem *newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
 	if( newItem != NULL )
 	{
@@ -1103,7 +1099,6 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	12 February, 2006
-//|	Programmer	-	grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item closest to specified coordinates
 //o-----------------------------------------------------------------------------------------------o
@@ -1118,7 +1113,7 @@ JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	SI08 zLoc = 0;
 	UI08 worldNumber = 0;
 	UI16 instanceID = 0;
-	
+
 	xLoc		= (SI16)JSVAL_TO_INT( argv[0] );
 	yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
 	zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
@@ -1127,7 +1122,7 @@ JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	{
 		instanceID = (UI16)JSVAL_TO_INT( argv[4] );
 	}
-	
+
 	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber, instanceID );
 	if( ValidateObject( item ) )
 	{
@@ -1142,7 +1137,6 @@ JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	12 February, 2006
-//|	Programmer	-	grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item of given ID that is closest to specified coordinates
 //o-----------------------------------------------------------------------------------------------o
@@ -1158,7 +1152,7 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	UI08 worldNumber = 0;
 	UI16 id = 0;
 	UI16 instanceID = 0;
-	
+
 	xLoc		= (SI16)JSVAL_TO_INT( argv[0] );
 	yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
 	zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
@@ -1168,7 +1162,7 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	{
 		instanceID = (UI16)JSVAL_TO_INT( argv[5] );
 	}
-	
+
 	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceID );
 	if( ValidateObject( item ) )
 	{
@@ -1305,7 +1299,7 @@ JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //|	Function	-	JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers a an event/function in a different JS
-//|	Notes		-	Takes at least 2 parameters, which is the script number to trigger and the 
+//|	Notes		-	Takes at least 2 parameters, which is the script number to trigger and the
 //|					function name to call. Any extra parameters are extra parameters to the JS event
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -1316,7 +1310,7 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	UI16 scriptNumberToFire = (UI16)JSVAL_TO_INT( argv[0] );
- 	char *eventToFire		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	char *eventToFire		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
 	if( toExecute == NULL || eventToFire == NULL )
@@ -1391,7 +1385,7 @@ JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		DoSEErrorMessage( "CalcTargetedItem: Invalid socket" );
 		return JS_FALSE;
 	}
-	
+
 	CItem *calcedItem = calcItemObjFromSer( sChar->GetDWord( 7 ) );
 	if( !ValidateObject( calcedItem ) )
 		*rval = JSVAL_NULL;
@@ -1423,7 +1417,7 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		DoSEErrorMessage( "CalcTargetedChar: Invalid socket" );
 		return JS_FALSE;
 	}
-	
+
 	CChar *calcedChar = calcCharObjFromSer( sChar->GetDWord( 7 ) );
 	if( !ValidateObject( calcedChar ) )
 		*rval = JSVAL_NULL;
@@ -1459,7 +1453,6 @@ JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	17th August, 2005
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for static within specified range of given location
 //o-----------------------------------------------------------------------------------------------o
@@ -1501,7 +1494,6 @@ JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	17th August, 2005
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for static at specified location
 //|	Notes		-	tile argument is optional; if not specified, will match ANY static found at location
@@ -1542,7 +1534,6 @@ JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	27th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts string to number
 //o-----------------------------------------------------------------------------------------------o
@@ -1563,7 +1554,6 @@ JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	27th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to string
 //o-----------------------------------------------------------------------------------------------o
@@ -1576,7 +1566,7 @@ JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
-	UString str = UString::number( num );
+	auto str = str_number( num );
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
 }
@@ -1584,7 +1574,6 @@ JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	27th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to hex string
 //o-----------------------------------------------------------------------------------------------o
@@ -1597,7 +1586,7 @@ JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
-	UString str = UString::number( num, 16 );
+	auto str = str_number( num, 16 );
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
@@ -1606,7 +1595,6 @@ JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	November 9, 2001
-//|	Programmer	-	DarkStorm
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of races found in the server
 //o-----------------------------------------------------------------------------------------------o
@@ -1624,7 +1612,6 @@ JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	January 27, 2003
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of characters
 //o-----------------------------------------------------------------------------------------------o
@@ -1640,7 +1627,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	// Do parameter validation here
 	JSObject *srcSocketObj		= NULL;
 	CSocket *srcSocket			= NULL;
- 	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( trgFunc == NULL )
 	{
 		DoSEErrorMessage( "AreaCharacterFunction: Argument 0 not a valid string" );
@@ -1661,7 +1648,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
 		srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
 	}
-	
+
 	UI16 retCounter				= 0;
 	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcObject );
@@ -1691,8 +1678,6 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	17th August, 2004
-//|	Programmer	-	Maarc
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of items
 //o-----------------------------------------------------------------------------------------------o
@@ -1708,7 +1693,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	// Do parameter validation here
 	JSObject *srcSocketObj		= NULL;
 	CSocket *srcSocket			= NULL;
- 	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( trgFunc == NULL )
 	{
 		DoSEErrorMessage( "AreaItemFunction: Argument 0 not a valid string" );
@@ -1730,7 +1715,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
 		srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
 	}
-	
+
 	UI16 retCounter					= 0;
 	cScript *myScript				= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcObject );
@@ -1760,8 +1745,6 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	7/17/2004
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows the JSScripts to pull entries from the dictionaries and convert them to a string.
 //o-----------------------------------------------------------------------------------------------o
@@ -1788,8 +1771,6 @@ JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	7/17/2004
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Globally yell a message from JS (Based on Commandlevel)
 //o-----------------------------------------------------------------------------------------------o
@@ -1810,10 +1791,10 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 	std::string yellTo = "";
 	switch( (CommandLevels)commandLevel )
 	{
-	case CL_PLAYER:			yellTo = " (GLOBAL YELL): ";	break;
-	case CL_CNS:			yellTo = " (CNS YELL): ";		break;
-	case CL_GM:				yellTo = " (GM YELL): ";		break;
-	case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
+		case CL_PLAYER:			yellTo = " (GLOBAL YELL): ";	break;
+		case CL_CNS:			yellTo = " (CNS YELL): ";		break;
+		case CL_GM:				yellTo = " (GM YELL): ";		break;
+		case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
 	}
 
 	UString tmpString = myChar->GetName() + yellTo + textToYell;
@@ -1838,54 +1819,52 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	29 Dec 2003
-//|	Programmer	-	Maarc
-//|	Org/Team	-	Independent
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads certain server subsystems
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{ 	
-	if( argc != 1 ) 	
-	{ 		
-		DoSEErrorMessage( "Reload: needs 1 argument!" ); 		
-		return JS_FALSE; 	
-	} 	
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "Reload: needs 1 argument!" );
+		return JS_FALSE;
+	}
 
 	SI32 toLoad = JSVAL_TO_INT( argv[0] );
 
 	switch( toLoad )
 	{
-	case 0:	// Reload regions
+		case 0:	// Reload regions
 			UnloadRegions();
 			LoadRegions();
 			LoadTeleportLocations();
 			break;
-	case 1:	// Reload spawn regions
+		case 1:	// Reload spawn regions
 			UnloadSpawnRegions();
 			LoadSpawnRegions();
 			break;
-	case 2:	// Reload Spells
+		case 2:	// Reload Spells
 			Magic->LoadScript();
 			break;
-	case 3: // Reload Commands
+		case 3: // Reload Commands
 			Commands->Load();
 			break;
-	case 4:	// Reload DFNs
+		case 4:	// Reload DFNs
 			FileLookup->Reload();
 			LoadSkills();
 			Skills->Load();
 			break;
-	case 5: // Reload JScripts
+		case 5: // Reload JScripts
 			messageLoop << MSG_RELOADJS;
 			break;
-	case 6: // Reload HTMLTemplates
+		case 6: // Reload HTMLTemplates
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();
 			break;
-	case 7:	// Reload INI
+		case 7:	// Reload INI
 			cwmWorldState->ServerData()->Load();
 			break;
-	case 8: // Reload Everything
+		case 8: // Reload Everything
 			FileLookup->Reload();
 			UnloadRegions();
 			LoadRegions();
@@ -1900,29 +1879,28 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			HTMLTemplates->Load();
 			cwmWorldState->ServerData()->Load();
 			break;
-	case 9: // Reload Accounts
+		case 9: // Reload Accounts
 			Accounts->Load();
 			break;
-	default:
-		break;
+		default:
+			break;
 	}
-	return JS_TRUE; 
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	25th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Builds an info gump for specified static or map tile
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{ 	
-	if( argc != 1 ) 	
-	{ 		
-		DoSEErrorMessage( "SendStaticStats: needs 1 argument!" ); 		
-		return JS_FALSE; 	
-	} 
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "SendStaticStats: needs 1 argument!" );
+		return JS_FALSE;
+	}
 
 	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock			= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
@@ -1999,7 +1977,7 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 				//7.0.8.2 data and earlier
 				CLand& land = Map->SeekLand( map1.id );
 				mapStat.AddData( "Name", land.Name() );
-			}	
+			}
 			mapStat.Send( 4, false, INVALIDSERIAL );
 		}
 	}
@@ -2013,10 +1991,10 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetTileHeight( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 ) 	
-	{ 		
-		DoSEErrorMessage( "GetTileHeight: needs 1 argument!" ); 		
-		return JS_FALSE; 	
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetTileHeight: needs 1 argument!" );
+		return JS_FALSE;
 	}
 
 	UI16 tileNum = (UI16)JSVAL_TO_INT( argv[0] );
@@ -2033,16 +2011,15 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	July 25th, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all world objects
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 ) 	
-	{ 		
-		DoSEErrorMessage( "IterateOver: needs 1 argument!" ); 		
-		return JS_FALSE; 	
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "IterateOver: needs 1 argument!" );
+		return JS_FALSE;
 	}
 
 	UI32 b				= 0;
@@ -2067,7 +2044,6 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	July, 2020
-//|	Programmer	-	Xuri
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops over all spawn regions in the world
 //o-----------------------------------------------------------------------------------------------o
@@ -2100,7 +2076,6 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsv
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world bright level - brightest part of the regular day/night cycle
 //o-----------------------------------------------------------------------------------------------o
@@ -2108,7 +2083,7 @@ JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( "WorldBrightLevel: Unknown Count of Arguments: %d", argc );
+		DoSEErrorMessage(format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2123,7 +2098,6 @@ JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world dark level - darkest part of the regular day/night cycle
 //o-----------------------------------------------------------------------------------------------o
@@ -2131,7 +2105,7 @@ JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( "WorldDarkLevel: Unknown Count of Arguments: %d", argc );
+		DoSEErrorMessage( format("WorldDarkLevel: Unknown Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2146,7 +2120,6 @@ JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th July, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets default light level in dungeons
 //o-----------------------------------------------------------------------------------------------o
@@ -2154,7 +2127,7 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( "WorldDungeonLevel: Unknown Count of Arguments: %d", argc );
+		DoSEErrorMessage( format("WorldDungeonLevel: Unknown Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2169,7 +2142,6 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	3rd August, 2004
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns socket based on provided index, from list of connected clients
 //o-----------------------------------------------------------------------------------------------o
@@ -2201,7 +2173,6 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	5th February, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reload specified JS file by scriptID
 //o-----------------------------------------------------------------------------------------------o
@@ -2210,24 +2181,23 @@ JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "ReloadJSFile: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	UI16 scriptID			= static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
 	if( scriptID == JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ) )
 	{
-		DoSEErrorMessage( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptID );
+		DoSEErrorMessage( format("ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptID) );
 		return JS_FALSE;
 	}
 
 	JSMapping->Reload( scriptID );
 
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th September, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resource areas to split the world into
 //o-----------------------------------------------------------------------------------------------o
@@ -2235,7 +2205,7 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( "ResourceArea: Invalid Count of Arguments: %d", argc );
+		DoSEErrorMessage( format("ResourceArea: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 
@@ -2260,7 +2230,6 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th September, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resources (logs/ore) in each resource area on the server
 //o-----------------------------------------------------------------------------------------------o
@@ -2268,7 +2237,7 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( "ResourceAmount: Invalid Count of Arguments: %d", argc );
+		DoSEErrorMessage( format("ResourceAmount: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 
@@ -2293,7 +2262,6 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th September, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets respawn timers for ore/log resources on server
 //o-----------------------------------------------------------------------------------------------o
@@ -2301,7 +2269,7 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( "ResourceTime: Invalid Count of Arguments: %d", argc );
+		DoSEErrorMessage( format("ResourceTime: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 
@@ -2326,7 +2294,6 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th September, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a resource object allowing JS to modify resource data.
 //o-----------------------------------------------------------------------------------------------o
@@ -2335,7 +2302,7 @@ JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc != 3 )
 	{
 		DoSEErrorMessage( "ResourceRegion: Invalid number of arguments (takes 3)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
 	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
@@ -2353,13 +2320,12 @@ JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	*rval = OBJECT_TO_JSVAL( jsResource );
 
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	26th January, 2006
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object is a valid and not NULL or marked for deletion
 //o-----------------------------------------------------------------------------------------------o
@@ -2368,12 +2334,12 @@ JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "ValidateObject: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 
 	JSEncapsulate myClass( cx, &(argv[0]) );
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" ) 
+	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 	{
 		CBaseObject *myObj	= static_cast<CBaseObject *>(myClass.toObject());
 		*rval				= BOOLEAN_TO_JSVAL( ValidateObject( myObj ) );
@@ -2381,13 +2347,12 @@ JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	else
 		*rval = JSVAL_FALSE;
 
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	17th March, 2006
-//|	Programmer	-	grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage bonuses based on race/weather weakness and character skills
 //o-----------------------------------------------------------------------------------------------o
@@ -2396,9 +2361,9 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( argc != 6 )
 	{
 		DoSEErrorMessage( "ApplyDamageBonuses: Invalid number of arguments (takes 6)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
-	
+
 	CChar *attacker	= NULL, *defender = NULL;
 	SI16 damage = 0;
 
@@ -2460,7 +2425,6 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	17th March, 2006
-//|	Programmer	-	grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns defense modifiers based on shields/parrying, armor values and elemental damage
 //o-----------------------------------------------------------------------------------------------o
@@ -2469,9 +2433,9 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 	if( argc != 7 )
 	{
 		DoSEErrorMessage( "ApplyDefenseModifiers: Invalid number of arguments (takes 7)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
-	
+
 	CChar *attacker	= NULL, *defender = NULL;
 	SI16 damage = 0;
 
@@ -2529,7 +2493,6 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	21st September, 2006
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a party with specified character as the party leader
 //o-----------------------------------------------------------------------------------------------o
@@ -2538,12 +2501,12 @@ JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	if( argc != 1 )
 	{
 		DoSEErrorMessage( "CreateParty: Invalid number of arguments (takes 1, the leader)" );
- 		return JS_FALSE;
+		return JS_FALSE;
 	}
 
 	JSEncapsulate myClass( cx, &(argv[0]) );
 
-	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" ) 
+	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" )
 	{	// it's a character or socket, fantastic
 		CChar *leader		= NULL;
 		CSocket *leaderSock	= NULL;
@@ -2572,13 +2535,12 @@ JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	else	// anything else isn't a valid leader people
 		*rval = JSVAL_NULL;
 
- 	return JS_TRUE;
+	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	25th May, 2007
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets or sets Moon phases on server
 //o-----------------------------------------------------------------------------------------------o
@@ -2586,7 +2548,7 @@ JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( "Moon: Invalid Count of Arguments: %d", argc );
+		DoSEErrorMessage( format("Moon: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 
@@ -2605,7 +2567,6 @@ JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetSpawnRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	June 22, 2020
-//|	Programmer	-	Xuri
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified spawn region object
 //o-----------------------------------------------------------------------------------------------o
@@ -2641,7 +2602,6 @@ JSBool SE_GetSpawnRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetSpawnRegionCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	June 22, 2020
-//|	Programmer	-	Xuri
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of spawn regions found in the server
 //o-----------------------------------------------------------------------------------------------o
@@ -2654,6 +2614,4 @@ JSBool SE_GetSpawnRegionCount( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->spawnRegions.size() );
 	return JS_TRUE;
-}
-
 }

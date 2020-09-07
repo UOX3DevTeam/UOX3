@@ -7,16 +7,14 @@
 #include "speech.h"
 #include "scriptc.h"
 #include "ssection.h"
-
-namespace UOX
-{
+#include "StringUtility.hpp"
 
 CDictionaryContainer *Dictionary;
 
 const SI32 dictCANTOPEN			= -1;
-const SI32 dictDUPESECTION		= -2;
-const SI32 dictDUPEOPENBRACE	= -3;
-const SI32 dictNOOPENBRACE		= -4;
+//const SI32 dictDUPESECTION		= -2;
+//const SI32 dictDUPEOPENBRACE	= -3;
+//const SI32 dictNOOPENBRACE		= -4;
 
 
 //////////////////////////////////////////////////////////////////////
@@ -33,10 +31,8 @@ CDictionary::~CDictionary()
 {
 }
 
-CDictionary::CDictionary( const std::string& filepath, const std::string& language )
+CDictionary::CDictionary( const std::string& filepath, const std::string& language ) : CDictionary()
 {
-	CDictionary();	//	Call default constructor for this Class
-#pragma note( "Is the above line valid? You supposedly cannot call constructors from constructors in c++..." )
 
 	if( language.empty() )
 		Language = "ZRO";
@@ -50,7 +46,7 @@ CDictionary::CDictionary( const std::string& filepath, const std::string& langua
 		PathToDictionary = filepath;
 }
 
-const UI16 DICT_MAX_TEXTBUFFERSIZE = 1024;
+//const UI16 DICT_MAX_TEXTBUFFERSIZE = 1024;
 
 SI32 CDictionary::LoadDictionary( void )
 {
@@ -81,7 +77,7 @@ SI32 CDictionary::LoadDictionary( void )
 			dictData = NULL;
 		}
 		IsValid = true;
-		Console.Print( " " );
+		Console.print( " " );
 		Console.MoveTo( 15 );
 		Console << "Dictionary." << Language;
 		Console.PrintSpecial( CGREEN, "loaded" );
@@ -132,7 +128,7 @@ std::string CDictionary::GetEntry( const SI32 Num )
 		if( toFind != Text2.end() )
 			rvalue = toFind->second;
 		else
-			Console.Warning( "Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() );
+			Console.warning( format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
 	}
 	return rvalue;
 }
@@ -172,7 +168,7 @@ SI32 CDictionaryContainer::LoadDictionary( void )
 	}
 	if( !dictList[LanguageCodesLang[ZERO]]->GetValid() )
 	{
-		Console.Error( "Dictionary.ZRO is bad or nonexistant" );
+		Console.error( "Dictionary.ZRO is bad or nonexistant" );
 		Shutdown( FATAL_UOX3_BAD_DEF_DICT );
 		rvalue = -1;
 	}
@@ -186,12 +182,16 @@ std::string CDictionaryContainer::operator[]( const SI32 Num )
 
 std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes toDisp )
 {
+	auto typetouse = toDisp ;
+	if ((static_cast<SI32>(toDisp) < 0) || (static_cast<SI32>(toDisp)>= UnicodeTypes::TOTAL_LANGUAGES)){
+		typetouse = ZERO ;
+	}
 	std::string RetVal;
-	const DistinctLanguage mLanguage = LanguageCodesLang[toDisp];
+	const DistinctLanguage mLanguage = LanguageCodesLang[typetouse];
 
 	if( mLanguage < DL_COUNT )
 		RetVal = dictList[mLanguage]->GetEntry( Num );
-	if( RetVal.empty() && toDisp != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
+	if( RetVal.empty() && typetouse != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
 		RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
 
 	return RetVal;
@@ -200,7 +200,5 @@ std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes t
 void CDictionaryContainer::SetDefaultLang( const UnicodeTypes newType )
 {
 	if( dictList[LanguageCodesLang[newType]]->GetValid() )
-        defaultLang = newType;
-}
-
+		defaultLang = newType;
 }

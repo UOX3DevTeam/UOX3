@@ -1,6 +1,5 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	calcfuncs.cpp
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Various functions to calculate objects from serials
 //o-----------------------------------------------------------------------------------------------o
@@ -9,12 +8,9 @@
 #include "network.h"
 #include "ObjectFactory.h"
 
-namespace UOX
-{
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar *calcCharObjFromSer( SERIAL targSerial )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the character object based on the calling serial
 //o-----------------------------------------------------------------------------------------------o
@@ -32,7 +28,6 @@ CChar *calcCharObjFromSer( SERIAL targSerial )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *calcItemObjFromSer( SERIAL targSerial )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the item object based on the calling serial
 //o-----------------------------------------------------------------------------------------------o
@@ -62,7 +57,6 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 
 //o--------------------------------------------------------------------------
 //|	Function	-	CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
-//|	Programmer	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------
 //|	Purpose		-	Find what region x and y are in
 //o--------------------------------------------------------------------------
@@ -89,7 +83,5 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 		++tIter;
 	}
 	return cwmWorldState->townRegions[0xFF];
-}
-
 }
 

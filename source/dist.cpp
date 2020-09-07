@@ -4,9 +4,6 @@
 #include "cRaces.h"
 #include "regions.h"
 
-namespace UOX
-{
-	
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool checkItemRange( CChar *mChar, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
@@ -41,7 +38,6 @@ bool checkItemRange( CChar *mChar, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance )
 //|	Date		-	2/12/2003
-//| Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if BaseObject obj is within a certain distance
 //o-----------------------------------------------------------------------------------------------o
@@ -91,7 +87,7 @@ bool charInRange( CChar *a, CChar *b )
 //o-----------------------------------------------------------------------------------------------o
 UI16 getDist( CBaseObject *a, CBaseObject *b )
 {
-	if( !ValidateObject( a ) || !ValidateObject( b ) ) 
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
 		return DIST_OUTOFRANGE;
 	if( a == b )
 		return DIST_SAMETILE;
@@ -108,7 +104,7 @@ UI16 getDist( point3 a, point3 b )
 
 UI16 getOldDist( CBaseObject *a, CBaseObject *b )
 {
-	if( !ValidateObject( a ) || !ValidateObject( b ) ) 
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
 		return DIST_OUTOFRANGE;
 	if( a == b )
 		return DIST_SAMETILE;
@@ -132,6 +128,4 @@ UI16 getDist3D( CBaseObject *a, CBaseObject *b )
 		return DIST_OUTOFRANGE;
 	point3 difference = a->GetLocation() - b->GetLocation();
 	return static_cast<UI16>(difference.Mag3D());
-}
-
 }

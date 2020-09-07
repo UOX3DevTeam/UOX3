@@ -8,9 +8,6 @@
 #ifndef __PAGEVECTOR_H__
 #define __PAGEVECTOR_H__
 
-namespace UOX
-{
-
 class HelpRequest
 {
 private:
@@ -23,12 +20,12 @@ private:
 	std::string		reason;				// reason for the page
 
 public:
-					HelpRequest() : helpReqID( INVALIDSERIAL ), playerPaging( INVALIDSERIAL ), playerHandling( INVALIDSERIAL ), priority( 0 ), handled( false ), timeOfPage( 0 )
-					{
-						reason= "";
-					}
-					~HelpRequest();
-	
+	HelpRequest() : helpReqID( INVALIDSERIAL ), playerPaging( INVALIDSERIAL ), playerHandling( INVALIDSERIAL ), priority( 0 ), handled( false ), timeOfPage( 0 )
+	{
+		reason= "";
+	}
+	~HelpRequest();
+
 	SERIAL			WhoPaging( void ) const;
 	SERIAL			WhoHandling( void ) const;
 	SI08			Priority( void ) const;
@@ -50,7 +47,7 @@ class PageVector
 {
 private:
 	std::vector< HelpRequest * >			Queue;
-	std::vector< HelpRequest * >::iterator	currentPos; 
+	std::vector< HelpRequest * >::iterator	currentPos;
 	std::string								title;	// GM/Counselor Queue
 
 	R32						avgEntryTime, maxEntryTime, minEntryTime;
@@ -65,9 +62,9 @@ public:
 	HelpRequest *	Current( void );
 	bool			AtEnd( void ) const;
 	size_t			NumEntries( void ) const;
-					PageVector();
-					PageVector( const std::string &newTitle );
-					~PageVector();
+	PageVector();
+	PageVector( const std::string &newTitle );
+	~PageVector();
 	void			SendAsGump( CSocket *toSendTo );
 	void			SetTitle( const std::string &newTitle );
 	bool			GotoPos( SI32 pos );
@@ -79,8 +76,6 @@ public:
 
 extern PageVector	*GMQueue;
 extern PageVector	*CounselorQueue;
-
-}
 
 #endif
 

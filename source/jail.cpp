@@ -3,9 +3,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
-
-namespace UOX
-{
+#include "StringUtility.hpp"
 
 JailSystem *JailSys;
 
@@ -24,18 +22,18 @@ JailCell::~JailCell()
 //|	Purpose		-	Checks if jailcell is empty
 //o-----------------------------------------------------------------------------------------------o
 bool JailCell::IsEmpty( void ) const
-{ 
-	return playersInJail.empty(); 
+{
+	return playersInJail.empty();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	size_t JailCell::JailedPlayers( void ) const 
+//|	Function	-	size_t JailCell::JailedPlayers( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns number of players in jailcell
 //o-----------------------------------------------------------------------------------------------o
-size_t JailCell::JailedPlayers( void ) const 
-{ 
-	return playersInJail.size(); 
+size_t JailCell::JailedPlayers( void ) const
+{
+	return playersInJail.size();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -45,12 +43,12 @@ size_t JailCell::JailedPlayers( void ) const
 //|	Purpose		-	Gets/Sets X coordinate for jailcell
 //o-----------------------------------------------------------------------------------------------o
 SI16 JailCell::X( void ) const
-{ 
-	return x; 
+{
+	return x;
 }
 void JailCell::X( SI16 nVal )
-{ 
-	x = nVal; 
+{
+	x = nVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -59,13 +57,13 @@ void JailCell::X( SI16 nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Y coordinate for jailcell
 //o-----------------------------------------------------------------------------------------------o
-SI16 JailCell::Y( void ) const	
-{ 
-	return y; 
+SI16 JailCell::Y( void ) const
+{
+	return y;
 }
 void JailCell::Y( SI16 nVal )
-{ 
-	y = nVal; 
+{
+	y = nVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -75,12 +73,12 @@ void JailCell::Y( SI16 nVal )
 //|	Purpose		-	Gets/Sets Z coordinate for jailcell
 //o-----------------------------------------------------------------------------------------------o
 SI08 JailCell::Z( void ) const
-{ 
-	return z; 
+{
+	return z;
 }
 void JailCell::Z( SI08 nVal )
-{ 
-	z = nVal; 
+{
+	z = nVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -114,17 +112,17 @@ void JailCell::InstanceID( UI16 nVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void AddOccupant( CChar *pAdd, SI32 secsFromNow ) 
+//|	Function	-	void AddOccupant( CChar *pAdd, SI32 secsFromNow )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add player to jail for a certain amount of time
 //o-----------------------------------------------------------------------------------------------o
-void JailCell::AddOccupant( CChar *pAdd, SI32 secsFromNow ) 
-{ 
+void JailCell::AddOccupant( CChar *pAdd, SI32 secsFromNow )
+{
 	if( !ValidateObject( pAdd ) )
 		return;
-	JailOccupant *toAdd = new JailOccupant; 
-	time( &(toAdd->releaseTime) ); 
-	toAdd->releaseTime += secsFromNow; 
+	JailOccupant *toAdd = new JailOccupant;
+	time( &(toAdd->releaseTime) );
+	toAdd->releaseTime += secsFromNow;
 	toAdd->pSerial = pAdd->GetSerial();
 	toAdd->x = pAdd->GetX();
 	toAdd->y = pAdd->GetY();
@@ -153,8 +151,8 @@ void JailCell::EraseOccupant( size_t occupantID )
 	delete playersInJail[occupantID];
 	playersInJail.erase( playersInJail.begin() + occupantID );
 }
-JailOccupant *JailCell::Occupant( size_t occupantID ) 
-{ 
+JailOccupant *JailCell::Occupant( size_t occupantID )
+{
 	if( occupantID >= playersInJail.size() )
 		return NULL;
 	return playersInJail[occupantID];
@@ -258,10 +256,10 @@ void JailSystem::ReadSetup( void )
 			{
 				case 'X':	toAdd.X( data.toShort() );	break;
 				case 'Y':	toAdd.Y( data.toShort() );	break;
-				case 'Z':	
-							toAdd.Z( data.toByte() );
-							jails.push_back( toAdd );
-							break;
+				case 'Z':
+					toAdd.Z( data.toByte() );
+					jails.push_back( toAdd );
+					break;
 			}
 		}
 	}
@@ -345,7 +343,7 @@ void JailSystem::WriteData( void )
 	std::ofstream jailsDestination( jailsFile.c_str() );
 	if( !jailsDestination )
 	{
-		Console.Error( "Failed to open %s for writing", jailsFile.c_str() );
+		Console.error( format("Failed to open %s for writing", jailsFile.c_str() ));
 		return;
 	}
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )
@@ -419,6 +417,4 @@ bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 	jails[minCell].AddOccupant( toJail, numSecsToJail );
 	toJail->SetCell( minCell );
 	return true;
-}
-
 }

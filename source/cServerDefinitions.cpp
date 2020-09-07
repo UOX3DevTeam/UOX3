@@ -3,9 +3,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include <filesystem>
-
-namespace UOX
-{
+#include "StringUtility.hpp"
 
 CServerDefinitions *FileLookup;
 
@@ -40,7 +38,7 @@ std::string ShortDirectory( std::string sPath )
 	return building;
 }
 
-const std::string dirnames[NUM_DEFS] = 
+const std::string dirnames[NUM_DEFS] =
 {
 	"items",
 	"npc",
@@ -85,10 +83,10 @@ CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPri
 {
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts...." << myendl;
-	
+
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
-	
+
 	Console.PrintSectionBegin();
 }
 
@@ -96,11 +94,9 @@ CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPri
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool Reload( void )
 //|	Date		-	04/17/2002
-//|	Programmer	-	EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reload the dfn files.
-//|	Changes		-	04042004 - EviLDeD - Added the code to clear out the 
+//|	Changes		-	04042004 - Added the code to clear out the
 //|									Auto-AddMenu items so there isn't any duplication in the
 //|									multimap
 //o-----------------------------------------------------------------------------------------------o
@@ -250,31 +246,31 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 	if( !mSort.empty() )
 	{
 		std::sort( mSort.begin(), mSort.end() );
-		Console.Print( "Section %20s : %6i", dirnames[toLoad].c_str(), 0 );
+		Console.print( format("Section %20s : %6i", dirnames[toLoad].c_str(), 0 ));
 		size_t iTotal = 0;
 		Console.TurnYellow();
 
 		std::vector< PrioScan >::const_iterator mIter;
 		for( mIter = mSort.begin(); mIter != mSort.end(); ++mIter )
 		{
-			Console.Print( "\b\b\b\b\b\b" );
+			Console.print( "\b\b\b\b\b\b" );
 			ScriptListings[toLoad].push_back( new Script( (*mIter).filename, toLoad, false ) );
 			iTotal += ScriptListings[toLoad].back()->NumEntries();
-			Console.Print( "%6i", iTotal );
+			Console.print( format("%6i", iTotal) );
 		}
 
-		Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad ) );
+		Console.print( format("\b\b\b\b\b\b%6i", CountOfEntries( toLoad )) );
 		Console.TurnNormal();
-		Console.Print( " entries" );
+		Console.print( " entries" );
 		switch( wasPriod )
 		{
 			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
-			case 1:	
-				Console.PrintSpecial( CGREEN,		"done" );		
+			case 1:
+				Console.PrintSpecial( CGREEN,		"done" );
 				break;	// file exist, no section
 			default:
-			case 2:	
-				Console.PrintSpecial( CBLUE,	"done" );		
+			case 2:
+				Console.PrintSpecial( CBLUE,	"done" );
 				break;	// no file
 		};
 	}
@@ -378,7 +374,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-//	Console.Warning( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
+	//	Console.Warning( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
 #endif
 	wasPrioritized = 2;
 }
@@ -421,13 +417,13 @@ bool cDirectoryListing::PushDir( std::string toMove )
 	{
 		std::filesystem::current_path( path );
 		currentDir = toMove;
-		UString::replaceSlash( toMove );
+		replaceSlash( toMove );
 		shortCurrentDir = ShortDirectory( toMove );
 		return true;
 	}
 	else
 	{
-		Console.Error( "DFN directory %s does not exist", toMove.c_str() );
+		Console.error(format( "DFN directory %s does not exist", toMove.c_str()) );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return false;
@@ -436,7 +432,7 @@ void cDirectoryListing::PopDir( void )
 {
 	if( dirs.empty() )
 	{
-		Console.Error( "cServerDefinition::PopDir called, but dirs is empty" );
+		Console.error( "cServerDefinition::PopDir called, but dirs is empty" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	else
@@ -592,6 +588,4 @@ void cDirectoryListing::ClearFlatten( void )
 {
 	flattenedFull.clear();
 	flattenedShort.clear();
-}
-
 }

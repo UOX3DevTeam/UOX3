@@ -8,15 +8,15 @@
 #include "classes.h"
 #include "Dictionary.h"
 #include "CJSEngine.h"
+#include "StringUtility.hpp"
+#include "typedefs.h"
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-	#include <sys/ioctl.h>
+#include <sys/ioctl.h>
 #endif
 
-namespace UOX
-{
 
-//	1.0		Abaddon		29th November, 2000
+//	1.0		29th November, 2000
 //			Initial implementation
 //			Stores almost all information currently separated into different vars
 //			Also has logging support, and non-blocking IO support
@@ -132,7 +132,6 @@ socket_error::socket_error( const UI32 errorNumber ) : errorNum( errorNumber ), 
 //|	Function	-	size_t CliSocket( void ) const
 //|					void CliSocket( size_t newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets socket identifier for our socket
 //o-----------------------------------------------------------------------------------------------o
@@ -152,7 +151,6 @@ void CSocket::CliSocket( size_t newValue )
 //|	Function	-	bool CryptClient( void ) const
 //|					void CryptClient( bool newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether socket is set to crypt mode
 //o-----------------------------------------------------------------------------------------------o
@@ -169,7 +167,6 @@ void CSocket::CryptClient( bool newValue )
 //|	Function	-	std::string XText( void )
 //|					void XText( const std::string &newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the socket's xtext buffer
 //o-----------------------------------------------------------------------------------------------o
@@ -186,7 +183,6 @@ void CSocket::XText( const std::string &newValue )
 //|	Function	-	CBaseObject TempObj( void ) const
 //|					void TempObj( CBaseObject *newValue )
 //|	Date		-	October 31, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets temporary storage for CChar and CItem objects
 //o-----------------------------------------------------------------------------------------------o
@@ -218,7 +214,6 @@ void CSocket::TempObj2( CBaseObject *newValue )
 //|	Function	-	SI32 TempInt( void ) const
 //|					void TempInt( SI32 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets tempint of the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -250,7 +245,6 @@ void CSocket::TempInt2( SI32 newValue )
 //|	Function	-	SI08 ClickZ( void ) const
 //|					void ClickZ( SI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the socket's addz
 //o-----------------------------------------------------------------------------------------------o
@@ -267,7 +261,6 @@ void CSocket::ClickZ( SI08 newValue )
 //|	Function	-	void AddID( UI32 newValue )
 //|					UI32 AddID( void ) const
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the addid associated with the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -287,7 +280,6 @@ UI32 CSocket::AddID( void ) const
 //|	Function	-	UI08 AddID1( void ) const
 //|					void AddID1( UI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the first addid associated with the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -304,7 +296,6 @@ void CSocket::AddID1( UI08 newValue )
 //|	Function	-	UI08 AddID2( void ) const
 //|					void AddID2( UI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second addid associated with the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -321,7 +312,6 @@ void CSocket::AddID2( UI08 newValue )
 //|	Function	-	UI08 AddID3( void ) const
 //|					void AddID3( UI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the third addid associated with the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -337,7 +327,6 @@ void CSocket::AddID3( UI08 newValue )
 //|	Function	-	UI08 AddID4( void ) const
 //|					void AddID4( UI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the fourth addid associated with the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -354,7 +343,6 @@ void CSocket::AddID4( UI08 newValue )
 //|	Function	-	UI08 DyeAll( void ) const
 //|					void DyeAll( UI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets DyeAll status of a socket
 //o-----------------------------------------------------------------------------------------------o
@@ -370,7 +358,6 @@ void CSocket::DyeAll( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CloseSocket( void )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes the open socket
 //o-----------------------------------------------------------------------------------------------o
@@ -383,7 +370,6 @@ void CSocket::CloseSocket( void )
 //|	Function	-	bool FirstPacket( void ) const
 //|					void FirstPacket( bool newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the socket has received its first packet yet
 //o-----------------------------------------------------------------------------------------------o
@@ -400,9 +386,8 @@ void CSocket::FirstPacket( bool newValue )
 //|	Function	-	bool ForceOffline( void ) const
 //|					void ForceOffline( bool newValue )
 //|	Date		-	March 1st, 2012
-//|	Programmer	-	Xuri
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets socket's forceOffline property. Used by client-restriction code to 
+//|	Purpose		-	Gets/Sets socket's forceOffline property. Used by client-restriction code to
 //|					mark connections for delayed kicking
 //o-----------------------------------------------------------------------------------------------o
 bool CSocket::ForceOffline( void ) const
@@ -418,7 +403,6 @@ void CSocket::ForceOffline( bool newValue )
 //|	Function	-	SI32 IdleTimeout( void ) const
 //|					void IdleTimeout( SI32 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time point at which the char times out
 //o-----------------------------------------------------------------------------------------------o
@@ -482,7 +466,6 @@ void CSocket::NegotiatedWithAssistant( bool value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 Buffer( void )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the buffer of the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -494,7 +477,6 @@ UI08 *CSocket::Buffer( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 OutBuffer( void )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the outgoing buffer of the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -507,7 +489,6 @@ UI08 *CSocket::OutBuffer( void )
 //|	Function	-	SI16 WalkSequence( void )
 //|					void WalkSequence( SI16 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the walk sequence value of the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -617,12 +598,12 @@ const bool				DEFSOCK_LOGINCOMPLETE			= false;
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 //o-----------------------------------------------------------------------------------------------o
-CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ), 
-tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
-range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
-currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
-postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
-pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
+CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
+tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ),
+range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ),
+currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ),
+postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
+pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ),
 bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), tmpObj2( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
 {
 	InternalReset();
@@ -673,7 +654,6 @@ void CSocket::InternalReset( void )
 //|	Function	-	bool LoginComplete( void ) const
 //|					void LoginComplete( bool newVal )
 //|	Date		-	August 26th, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether this socket has fully logged in
 //o-----------------------------------------------------------------------------------------------o
@@ -690,7 +670,6 @@ void CSocket::LoginComplete( bool newVal )
 //|	Function	-	UI08 CurrentSpellType( void ) const
 //|					void CurrentSpellType( UI08 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the current spell type of the socket
 //|						0 - Normal spellcast
@@ -731,7 +710,7 @@ bool CSocket::FlushBuffer( bool doLog )
 				toPrint = INVALIDSERIAL;
 			else
 				toPrint = currCharObj->GetSerial();
-			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".snd";
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".snd");
 			std::ofstream logDestination;
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
@@ -741,7 +720,7 @@ bool CSocket::FlushBuffer( bool doLog )
 				logDestination.close();
 			}
 			else
-				Console.Error( "Failed to open socket log %s", logFile.c_str() );
+				Console.error( format("Failed to open socket log %s", logFile.c_str() ));
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -776,7 +755,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 				toPrint = INVALIDSERIAL;
 			else
 				toPrint = currCharObj->GetSerial();
-			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".snd";
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".snd");
 			std::ofstream logDestination;
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
@@ -786,7 +765,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 				logDestination.close();
 			}
 			else
-				Console.Error( "Failed to open socket log %s", logFile.c_str() );
+				Console.error( format("Failed to open socket log %s", logFile.c_str() ));
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -799,38 +778,38 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 // Huffman Code Table - used with Huffman algorithm for compressing outgoing network packets
 static UI32 bit_table[257][2] =
 {
-	{0x02, 0x00}, 	{0x05, 0x1F}, 	{0x06, 0x22}, 	{0x07, 0x34}, 	{0x07, 0x75}, 	{0x06, 0x28}, 	{0x06, 0x3B}, 	{0x07, 0x32}, 
-	{0x08, 0xE0}, 	{0x08, 0x62}, 	{0x07, 0x56}, 	{0x08, 0x79}, 	{0x09, 0x19D},	{0x08, 0x97}, 	{0x06, 0x2A}, 	{0x07, 0x57}, 
-	{0x08, 0x71}, 	{0x08, 0x5B}, 	{0x09, 0x1CC},	{0x08, 0xA7}, 	{0x07, 0x25}, 	{0x07, 0x4F}, 	{0x08, 0x66}, 	{0x08, 0x7D}, 
-	{0x09, 0x191},	{0x09, 0x1CE}, 	{0x07, 0x3F}, 	{0x09, 0x90}, 	{0x08, 0x59}, 	{0x08, 0x7B}, 	{0x08, 0x91}, 	{0x08, 0xC6}, 
-	{0x06, 0x2D}, 	{0x09, 0x186}, 	{0x08, 0x6F}, 	{0x09, 0x93}, 	{0x0A, 0x1CC},	{0x08, 0x5A}, 	{0x0A, 0x1AE},	{0x0A, 0x1C0}, 
-	{0x09, 0x148},	{0x09, 0x14A}, 	{0x09, 0x82}, 	{0x0A, 0x19F}, 	{0x09, 0x171},	{0x09, 0x120}, 	{0x09, 0xE7}, 	{0x0A, 0x1F3}, 
-	{0x09, 0x14B},	{0x09, 0x100},	{0x09, 0x190},	{0x06, 0x13}, 	{0x09, 0x161},	{0x09, 0x125},	{0x09, 0x133},	{0x09, 0x195}, 
-	{0x09, 0x173},	{0x09, 0x1CA},	{0x09, 0x86}, 	{0x09, 0x1E9}, 	{0x09, 0xDB}, 	{0x09, 0x1EC},	{0x09, 0x8B}, 	{0x09, 0x85}, 
-	{0x05, 0x0A}, 	{0x08, 0x96}, 	{0x08, 0x9C}, 	{0x09, 0x1C3}, 	{0x09, 0x19C},	{0x09, 0x8F}, 	{0x09, 0x18F},	{0x09, 0x91}, 
-	{0x09, 0x87}, 	{0x09, 0xC6}, 	{0x09, 0x177},	{0x09, 0x89}, 	{0x09, 0xD6}, 	{0x09, 0x8C}, 	{0x09, 0x1EE},	{0x09, 0x1EB}, 
-	{0x09, 0x84}, 	{0x09, 0x164}, 	{0x09, 0x175},	{0x09, 0x1CD}, 	{0x08, 0x5E}, 	{0x09, 0x88}, 	{0x09, 0x12B},	{0x09, 0x172}, 
-	{0x09, 0x10A},	{0x09, 0x8D}, 	{0x09, 0x13A},	{0x09, 0x11C}, 	{0x0A, 0x1E1},	{0x0A, 0x1E0}, 	{0x09, 0x187},	{0x0A, 0x1DC}, 
-	{0x0A, 0x1DF},	{0x07, 0x74}, 	{0x09, 0x19F},	{0x08, 0x8D},	{0x08, 0xE4}, 	{0x07, 0x79}, 	{0x09, 0xEA}, 	{0x09, 0xE1}, 
-	{0x08, 0x40}, 	{0x07, 0x41}, 	{0x09, 0x10B},	{0x09, 0xB0}, 	{0x08, 0x6A}, 	{0x08, 0xC1}, 	{0x07, 0x71}, 	{0x07, 0x78}, 
-	{0x08, 0xB1}, 	{0x09, 0x14C}, 	{0x07, 0x43}, 	{0x08, 0x76}, 	{0x07, 0x66}, 	{0x07, 0x4D}, 	{0x09, 0x8A}, 	{0x06, 0x2F}, 
-	{0x08, 0xC9},	{0x09, 0xCE}, 	{0x09, 0x149},	{0x09, 0x160}, 	{0x0A, 0x1BA}, 	{0x0A, 0x19E}, 	{0x0A, 0x39F}, 	{0x09, 0xE5}, 
-	{0x09, 0x194}, 	{0x09, 0x184}, 	{0x09, 0x126}, 	{0x07, 0x30}, 	{0x08, 0x6C}, 	{0x09, 0x121}, 	{0x09, 0x1E8}, 	{0x0A, 0x1C1}, 
-	{0x0A, 0x11D}, 	{0x0A, 0x163}, 	{0x0A, 0x385}, 	{0x0A, 0x3DB}, 	{0x0A, 0x17D}, 	{0x0A, 0x106}, 	{0x0A, 0x397}, 	{0x0A, 0x24E}, 
-	{0x07, 0x2E}, 	{0x08, 0x98}, 	{0x0A, 0x33C}, 	{0x0A, 0x32E}, 	{0x0A, 0x1E9}, 	{0x09, 0xBF}, 	{0x0A, 0x3DF}, 	{0x0A, 0x1DD}, 
-	{0x0A, 0x32D}, 	{0x0A, 0x2ED}, 	{0x0A, 0x30B}, 	{0x0A, 0x107}, 	{0x0A, 0x2E8}, 	{0x0A, 0x3DE}, 	{0x0A, 0x125}, 	{0x0A, 0x1E8}, 
-	{0x09, 0xE9}, 	{0x0A, 0x1CD}, 	{0x0A, 0x1B5}, 	{0x09, 0x165}, 	{0x0A, 0x232}, 	{0x0A, 0x2E1}, 	{0x0B, 0x3AE}, 	{0x0B, 0x3C6}, 
-	{0x0B, 0x3E2}, 	{0x0A, 0x205}, 	{0x0A, 0x29A}, 	{0x0A, 0x248}, 	{0x0A, 0x2CD}, 	{0x0A, 0x23B}, 	{0x0B, 0x3C5}, 	{0x0A, 0x251}, 
-	{0x0A, 0x2E9}, 	{0x0A, 0x252}, 	{0x09, 0x1EA}, 	{0x0B, 0x3A0}, 	{0x0B, 0x391}, 	{0x0A, 0x23C}, 	{0x0B, 0x392}, 	{0x0B, 0x3D5}, 
-	{0x0A, 0x233}, 	{0x0A, 0x2CC}, 	{0x0B, 0x390}, 	{0x0A, 0x1BB}, 	{0x0B, 0x3A1}, 	{0x0B, 0x3C4}, 	{0x0A, 0x211}, 	{0x0A, 0x203}, 
-	{0x09, 0x12A}, 	{0x0A, 0x231}, 	{0x0B, 0x3E0}, 	{0x0A, 0x29B}, 	{0x0B, 0x3D7}, 	{0x0A, 0x202}, 	{0x0B, 0x3AD}, 	{0x0A, 0x213}, 
-	{0x0A, 0x253}, 	{0x0A, 0x32C}, 	{0x0A, 0x23D}, 	{0x0A, 0x23F}, 	{0x0A, 0x32F}, 	{0x0A, 0x11C}, 	{0x0A, 0x384}, 	{0x0A, 0x31C}, 
-	{0x0A, 0x17C}, 	{0x0A, 0x30A}, 	{0x0A, 0x2E0}, 	{0x0A, 0x276}, 	{0x0A, 0x250}, 	{0x0B, 0x3E3}, 	{0x0A, 0x396}, 	{0x0A, 0x18F}, 
-	{0x0A, 0x204}, 	{0x0A, 0x206}, 	{0x0A, 0x230}, 	{0x0A, 0x265}, 	{0x0A, 0x212}, 	{0x0A, 0x23E}, 	{0x0B, 0x3AC}, 	{0x0B, 0x393}, 
-	{0x0B, 0x3E1}, 	{0x0A, 0x1DE}, 	{0x0B, 0x3D6}, 	{0x0A, 0x31D}, 	{0x0B, 0x3E5}, 	{0x0B, 0x3E4}, 	{0x0A, 0x207}, 	{0x0B, 0x3C7}, 
-	{0x0A, 0x277}, 	{0x0B, 0x3D4}, 	{0x08, 0xC0},	{0x0A, 0x162}, 	{0x0A, 0x3DA}, 	{0x0A, 0x124}, 	{0x0A, 0x1B4}, 	{0x0A, 0x264}, 
-	{0x0A, 0x33D}, 	{0x0A, 0x1D1}, 	{0x0A, 0x1AF}, 	{0x0A, 0x39E}, 	{0x0A, 0x24F}, 	{0x0B, 0x373}, 	{0x0A, 0x249}, 	{0x0B, 0x372}, 
-	{0x09, 0x167}, 	{0x0A, 0x210}, 	{0x0A, 0x23A}, 	{0x0A, 0x1B8}, 	{0x0B, 0x3AF}, 	{0x0A, 0x18E}, 	{0x0A, 0x2EC}, 	{0x07, 0x62}, 
+	{0x02, 0x00}, 	{0x05, 0x1F}, 	{0x06, 0x22}, 	{0x07, 0x34}, 	{0x07, 0x75}, 	{0x06, 0x28}, 	{0x06, 0x3B}, 	{0x07, 0x32},
+	{0x08, 0xE0}, 	{0x08, 0x62}, 	{0x07, 0x56}, 	{0x08, 0x79}, 	{0x09, 0x19D},	{0x08, 0x97}, 	{0x06, 0x2A}, 	{0x07, 0x57},
+	{0x08, 0x71}, 	{0x08, 0x5B}, 	{0x09, 0x1CC},	{0x08, 0xA7}, 	{0x07, 0x25}, 	{0x07, 0x4F}, 	{0x08, 0x66}, 	{0x08, 0x7D},
+	{0x09, 0x191},	{0x09, 0x1CE}, 	{0x07, 0x3F}, 	{0x09, 0x90}, 	{0x08, 0x59}, 	{0x08, 0x7B}, 	{0x08, 0x91}, 	{0x08, 0xC6},
+	{0x06, 0x2D}, 	{0x09, 0x186}, 	{0x08, 0x6F}, 	{0x09, 0x93}, 	{0x0A, 0x1CC},	{0x08, 0x5A}, 	{0x0A, 0x1AE},	{0x0A, 0x1C0},
+	{0x09, 0x148},	{0x09, 0x14A}, 	{0x09, 0x82}, 	{0x0A, 0x19F}, 	{0x09, 0x171},	{0x09, 0x120}, 	{0x09, 0xE7}, 	{0x0A, 0x1F3},
+	{0x09, 0x14B},	{0x09, 0x100},	{0x09, 0x190},	{0x06, 0x13}, 	{0x09, 0x161},	{0x09, 0x125},	{0x09, 0x133},	{0x09, 0x195},
+	{0x09, 0x173},	{0x09, 0x1CA},	{0x09, 0x86}, 	{0x09, 0x1E9}, 	{0x09, 0xDB}, 	{0x09, 0x1EC},	{0x09, 0x8B}, 	{0x09, 0x85},
+	{0x05, 0x0A}, 	{0x08, 0x96}, 	{0x08, 0x9C}, 	{0x09, 0x1C3}, 	{0x09, 0x19C},	{0x09, 0x8F}, 	{0x09, 0x18F},	{0x09, 0x91},
+	{0x09, 0x87}, 	{0x09, 0xC6}, 	{0x09, 0x177},	{0x09, 0x89}, 	{0x09, 0xD6}, 	{0x09, 0x8C}, 	{0x09, 0x1EE},	{0x09, 0x1EB},
+	{0x09, 0x84}, 	{0x09, 0x164}, 	{0x09, 0x175},	{0x09, 0x1CD}, 	{0x08, 0x5E}, 	{0x09, 0x88}, 	{0x09, 0x12B},	{0x09, 0x172},
+	{0x09, 0x10A},	{0x09, 0x8D}, 	{0x09, 0x13A},	{0x09, 0x11C}, 	{0x0A, 0x1E1},	{0x0A, 0x1E0}, 	{0x09, 0x187},	{0x0A, 0x1DC},
+	{0x0A, 0x1DF},	{0x07, 0x74}, 	{0x09, 0x19F},	{0x08, 0x8D},	{0x08, 0xE4}, 	{0x07, 0x79}, 	{0x09, 0xEA}, 	{0x09, 0xE1},
+	{0x08, 0x40}, 	{0x07, 0x41}, 	{0x09, 0x10B},	{0x09, 0xB0}, 	{0x08, 0x6A}, 	{0x08, 0xC1}, 	{0x07, 0x71}, 	{0x07, 0x78},
+	{0x08, 0xB1}, 	{0x09, 0x14C}, 	{0x07, 0x43}, 	{0x08, 0x76}, 	{0x07, 0x66}, 	{0x07, 0x4D}, 	{0x09, 0x8A}, 	{0x06, 0x2F},
+	{0x08, 0xC9},	{0x09, 0xCE}, 	{0x09, 0x149},	{0x09, 0x160}, 	{0x0A, 0x1BA}, 	{0x0A, 0x19E}, 	{0x0A, 0x39F}, 	{0x09, 0xE5},
+	{0x09, 0x194}, 	{0x09, 0x184}, 	{0x09, 0x126}, 	{0x07, 0x30}, 	{0x08, 0x6C}, 	{0x09, 0x121}, 	{0x09, 0x1E8}, 	{0x0A, 0x1C1},
+	{0x0A, 0x11D}, 	{0x0A, 0x163}, 	{0x0A, 0x385}, 	{0x0A, 0x3DB}, 	{0x0A, 0x17D}, 	{0x0A, 0x106}, 	{0x0A, 0x397}, 	{0x0A, 0x24E},
+	{0x07, 0x2E}, 	{0x08, 0x98}, 	{0x0A, 0x33C}, 	{0x0A, 0x32E}, 	{0x0A, 0x1E9}, 	{0x09, 0xBF}, 	{0x0A, 0x3DF}, 	{0x0A, 0x1DD},
+	{0x0A, 0x32D}, 	{0x0A, 0x2ED}, 	{0x0A, 0x30B}, 	{0x0A, 0x107}, 	{0x0A, 0x2E8}, 	{0x0A, 0x3DE}, 	{0x0A, 0x125}, 	{0x0A, 0x1E8},
+	{0x09, 0xE9}, 	{0x0A, 0x1CD}, 	{0x0A, 0x1B5}, 	{0x09, 0x165}, 	{0x0A, 0x232}, 	{0x0A, 0x2E1}, 	{0x0B, 0x3AE}, 	{0x0B, 0x3C6},
+	{0x0B, 0x3E2}, 	{0x0A, 0x205}, 	{0x0A, 0x29A}, 	{0x0A, 0x248}, 	{0x0A, 0x2CD}, 	{0x0A, 0x23B}, 	{0x0B, 0x3C5}, 	{0x0A, 0x251},
+	{0x0A, 0x2E9}, 	{0x0A, 0x252}, 	{0x09, 0x1EA}, 	{0x0B, 0x3A0}, 	{0x0B, 0x391}, 	{0x0A, 0x23C}, 	{0x0B, 0x392}, 	{0x0B, 0x3D5},
+	{0x0A, 0x233}, 	{0x0A, 0x2CC}, 	{0x0B, 0x390}, 	{0x0A, 0x1BB}, 	{0x0B, 0x3A1}, 	{0x0B, 0x3C4}, 	{0x0A, 0x211}, 	{0x0A, 0x203},
+	{0x09, 0x12A}, 	{0x0A, 0x231}, 	{0x0B, 0x3E0}, 	{0x0A, 0x29B}, 	{0x0B, 0x3D7}, 	{0x0A, 0x202}, 	{0x0B, 0x3AD}, 	{0x0A, 0x213},
+	{0x0A, 0x253}, 	{0x0A, 0x32C}, 	{0x0A, 0x23D}, 	{0x0A, 0x23F}, 	{0x0A, 0x32F}, 	{0x0A, 0x11C}, 	{0x0A, 0x384}, 	{0x0A, 0x31C},
+	{0x0A, 0x17C}, 	{0x0A, 0x30A}, 	{0x0A, 0x2E0}, 	{0x0A, 0x276}, 	{0x0A, 0x250}, 	{0x0B, 0x3E3}, 	{0x0A, 0x396}, 	{0x0A, 0x18F},
+	{0x0A, 0x204}, 	{0x0A, 0x206}, 	{0x0A, 0x230}, 	{0x0A, 0x265}, 	{0x0A, 0x212}, 	{0x0A, 0x23E}, 	{0x0B, 0x3AC}, 	{0x0B, 0x393},
+	{0x0B, 0x3E1}, 	{0x0A, 0x1DE}, 	{0x0B, 0x3D6}, 	{0x0A, 0x31D}, 	{0x0B, 0x3E5}, 	{0x0B, 0x3E4}, 	{0x0A, 0x207}, 	{0x0B, 0x3C7},
+	{0x0A, 0x277}, 	{0x0B, 0x3D4}, 	{0x08, 0xC0},	{0x0A, 0x162}, 	{0x0A, 0x3DA}, 	{0x0A, 0x124}, 	{0x0A, 0x1B4}, 	{0x0A, 0x264},
+	{0x0A, 0x33D}, 	{0x0A, 0x1D1}, 	{0x0A, 0x1AF}, 	{0x0A, 0x39E}, 	{0x0A, 0x24F}, 	{0x0B, 0x373}, 	{0x0A, 0x249}, 	{0x0B, 0x372},
+	{0x09, 0x167}, 	{0x0A, 0x210}, 	{0x0A, 0x23A}, 	{0x0A, 0x1B8}, 	{0x0B, 0x3AF}, 	{0x0A, 0x18E}, 	{0x0A, 0x2EC}, 	{0x07, 0x62},
 	{0x04, 0x0D}
 };
 
@@ -903,12 +882,12 @@ void CSocket::Send( const void *point, SI32 length )
 	if( outlength + length > MAXBUFFER )
 		FlushBuffer();
 	if( outlength > 0 )
-		Console.Print( "Fragmented packet! [packet: %i]\n", outbuffer[0] );
-		// sometimes we send enormous packets... oh what fun
+		Console.print( format("Fragmented packet! [packet: %i]\n", outbuffer[0]) );
+	// sometimes we send enormous packets... oh what fun
 	if( length > MAXBUFFER )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( "Large packet found [%i]\n", outbuffer[0] );
+		Console.print( format("Large packet found [%i]\n", outbuffer[0]) );
 #endif
 		largeBuffer.resize( length );
 		memcpy( &largeBuffer[0], point, length );
@@ -957,12 +936,12 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 			toPrint = INVALIDSERIAL;
 		else
 			toPrint = currCharObj->GetSerial();
-		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".rcv";
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".rcv");
 		std::ofstream logDestination;
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( "Failed to open socket log %s", logFile.c_str() );
+			Console.error( format("Failed to open socket log %s", logFile.c_str()));
 			return;
 		}
 		if( toLog != NULL )
@@ -994,15 +973,15 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 		{
 			inlength += count;
 		}
-		else if( count == SOCKET_ERROR )
+		else if( count == -1 )
 		{
 			SI32 lastError = GrabLastError();
 #if UOX_PLATFORM != PLATFORM_WIN32
 			if( lastError != EWOULDBLOCK )
 #else
-			if( lastError != WSAEWOULDBLOCK )
+				if( lastError != WSAEWOULDBLOCK )
 #endif
-				throw socket_error( lastError );
+					throw socket_error( lastError );
 			UOXSleep( 20 );
 		}
 		++recvAttempts;
@@ -1010,7 +989,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 		// You will find the values for the following in the uox.ini file as NETRCVTIMEOUT, and NETRETRYCOUNT respectivly
 		if( recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() || (nexTime - curTime) > (SI32)(cwmWorldState->ServerData()->ServerNetRcvTimeout() * 1000) )
 		{ // looks like we're not going to get it!
-			// April 3, 2004 - EviLDeD - If we have some data, then we need to return it. Some of the network logic is looking at count size. this way we can also validate on the calling side so we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it, if we call for 4 and get get NOTHING then throw... Just my thoughts - EviLDeD
+			// April 3, 2004 - If we have some data, then we need to return it. Some of the network logic is looking at count size. this way we can also validate on the calling side so we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it, if we call for 4 and get get NOTHING then throw... Just my thoughts -
 			if( count <= 0 )
 				throw socket_error( "Socket receive error" );
 		}
@@ -1093,8 +1072,6 @@ void CSocket::CurrcharObj( CChar *newValue )
 //|	Function	-	CAccountBlock& GetAccount( void )
 //|					void SetAccount( CAccountBlock& actbBlock )
 //|	Date		-	1/17/2003 6:21:59 AM
-//|	Programmer	-	EviLDeD
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the socket's account reference
 //o-----------------------------------------------------------------------------------------------o
@@ -1111,8 +1088,7 @@ void CSocket::SetAccount( CAccountBlock& actbBlock )
 //|	Function	-	UI16 AcctNo( void ) const
 //|					void AcctNo( UI16 newValue )
 //|	Date		-	November 29th, 2000
-//|	Programmer	-	Abaddon
-//|	Changes		-	Maarc, February 3, 2003 - reduced to UI16 to deal with accounts changes
+//|	Changes		-	February 3, 2003 - reduced to UI16 to deal with accounts changes
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the account ID socket belongs to
 //o-----------------------------------------------------------------------------------------------o
@@ -1209,7 +1185,7 @@ UI32 CSocket::GetDWord( size_t offset )
 {
 	UI32 retVal = 0;
 	if( offset+3 >= MAXBUFFER )
-		Console.Error( "GetDWord was passed an invalid offset value 0x%X", offset );
+		Console.error( format("GetDWord was passed an invalid offset value 0x%X", offset) );
 	else
 		retVal = calcserial( buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3] );
 	return retVal;
@@ -1224,7 +1200,7 @@ UI16 CSocket::GetWord( size_t offset )
 {
 	UI16 retVal = 0;
 	if( offset+1 >= MAXBUFFER )
-		Console.Error( "GetWord was passed an invalid offset value 0x%X", offset );
+		Console.error( format("GetWord was passed an invalid offset value 0x%X", offset ));
 	else
 		retVal = (UI16)((buffer[offset]<<8) + buffer[offset+1]);
 	return retVal;
@@ -1239,7 +1215,7 @@ UI08 CSocket::GetByte( size_t offset )
 {
 	UI08 retVal = 0;
 	if( offset >= MAXBUFFER )
-		Console.Error( "GetByte was passed an invalid offset value 0x%X", offset );
+		Console.error( format("GetByte was passed an invalid offset value 0x%X", offset) );
 	else
 		retVal = buffer[offset];
 	return retVal;
@@ -1340,7 +1316,6 @@ SI16 CSocket::ClickY( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SERIAL FirstPostAck( void )
 //|	Date		-	July 14, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to the start of the post ack list
 //o-----------------------------------------------------------------------------------------------o
@@ -1356,7 +1331,6 @@ SERIAL CSocket::FirstPostAck( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SERIAL NextPostAck( void )
 //|	Date		-	July 14, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to the next post to ack in the list
 //o-----------------------------------------------------------------------------------------------o
@@ -1375,7 +1349,6 @@ SERIAL CSocket::NextPostAck( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FinishedPostAck( void )
 //|	Date		-	July 14, 2005
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the iterator is at the end of the list
 //o-----------------------------------------------------------------------------------------------o
@@ -1387,7 +1360,6 @@ bool CSocket::FinishedPostAck( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-  void RemovePostAck( void )
 //|	Date		-  July 16, 2005
-//|	Programmer  -  giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-  Removes post from the queue
 //o-----------------------------------------------------------------------------------------------o
@@ -1440,7 +1412,7 @@ void CSocket::PostClear( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PostAcked( SERIAL newValue )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Adds serial of messageboard post to list of posts waiting 
+//|	Purpose		-	Adds serial of messageboard post to list of posts waiting
 //|					to be acknowledged by the client
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::PostAcked( SERIAL newValue )
@@ -1483,12 +1455,12 @@ void CSocket::Send( CPUOXBuffer *toSend )
 			toPrint = INVALIDSERIAL;
 		else
 			toPrint = currCharObj->GetSerial();
-		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".snd";
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".snd");
 		std::ofstream logDestination;
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( "Failed to open socket log %s", logFile.c_str() );
+			Console.error( format("Failed to open socket log %s", logFile.c_str() ));
 			return;
 		}
 		toSend->Log( logDestination );
@@ -1587,7 +1559,6 @@ void CSocket::PickupLocation( SI16 x, SI16 y, SI08 z )
 //|	Function	-	CItem *GetCursorItem( void ) const
 //|					void SetCursorItem( CItem *newCursorItem )
 //|	Date		-	March 20th, 2012
-//|	Programmer	-	Xuri
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item being held on a player's mouse cursor
 //o-----------------------------------------------------------------------------------------------o
@@ -1757,25 +1728,24 @@ void CSocket::Range( UI08 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void sysmessage( const char *txt, ... )
+//|	Function	-	void sysmessage( const std::string txt, ... )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified system message in lower left corner of client screen
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::sysmessage( const char *txt, ... )
+void CSocket::sysmessage( const std::string txt, ... )
 {
 	va_list argptr;
-	if( txt == NULL )
+	if( txt.empty() )
 		return;
 
 	CChar *mChar = CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
-
-	char msg[512];
 	va_start( argptr, txt );
-	vsprintf( msg, txt, argptr );
-	va_end( argptr );
-	
+	auto msg = format(txt,argptr);
+	if (msg.size()>512){
+		msg = msg.substr(0,512);
+	}
 	CSpeechEntry& toAdd = SpeechSys->Add();
 	toAdd.Speech( msg );
 	toAdd.Font( FNT_NORMAL );
@@ -1802,11 +1772,11 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
 	if( txt.empty() )
 		return;
-	char msg[512];
 	va_start( argptr, dictEntry );
-	vsprintf( msg, txt.c_str(), argptr );
-	va_end( argptr );
-
+	auto msg = format(txt,argptr);
+	if (msg.size()>512){
+		msg = msg.substr(0,512);
+	}
 	CSpeechEntry& toAdd = SpeechSys->Add();
 	toAdd.Speech( msg );
 	toAdd.Font( FNT_NORMAL );
@@ -1821,11 +1791,10 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
 //|	Date		-	2/11/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Shows information on items when clicked or guild info (if any) for players
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
+void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI32 Colour, ... )
 {
 	if( !ValidateObject( getObj ) )
 		return;
@@ -1835,30 +1804,31 @@ void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 		return;
 
 	va_list argptr;
-
-	char msg[512];
 	va_start( argptr, Colour );
-	vsprintf( msg, txt.c_str(), argptr );
-	va_end( argptr );
-	objMessage( msg, getObj, secsFromNow, Colour );
+
+	objMessage( format(txt,argptr).c_str(), getObj, secsFromNow, Colour );
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
 //|	Date		-	2/11/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Shows information on items when clicked or guild info (if any) for players
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
+void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
 {
 	UI16 targColour = Colour;
 
-	if( txt == NULL )
+	if( txt.empty() ){
 		return;
+	}
+	auto temp = txt ;
+	if (temp.size()>=512){
+		temp = txt.substr(0,512);
+	}
 	CChar *mChar		= CurrcharObj();
 	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( txt );
+	toAdd.Speech( temp );
 	toAdd.Font( FNT_NORMAL );
 	toAdd.Speaker( getObj->GetSerial() );
 	toAdd.SpokenTo( mChar->GetSerial() );
@@ -1914,21 +1884,21 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	{
 		if( i->GetSquelched() )
 			objMessage( 1736, i );
-		if( i->GetCommandLevel() < CL_CNS && i->GetFame() >= 10000 )	// Morollan, only normal players have titles now
+		if( i->GetCommandLevel() < CL_CNS && i->GetFame() >= 10000 )	//  only normal players have titles now
 		{
 			if( i->GetID( 2 ) == 0x91 )
-				newName = UString::sprintf( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead
+				newName = format( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead
 			else if( i->GetID( 1 ) == 0x90 )
-				newName = UString::sprintf( Dictionary->GetEntry( 1739, Language() ).c_str(), newName.c_str() );
+				newName = format( Dictionary->GetEntry( 1739, Language() ).c_str(), newName.c_str() );
 		}
-		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race (Abaddon)
+		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race ( )
 		{
 			newName += " (";
 			newName += Races->Name( i->GetRace() );
 			newName += ")";
 		}
 		if( i->GetTownPriv() == 2 )
-			newName = UString::sprintf( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
+			newName = format( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
 		if( !isOnline( (*i) ) )
 			newName += " (OFF)";
 	}
@@ -1945,7 +1915,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		newName += " (guarded)";
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
 		GuildSys->DisplayTitle( this, i );
-	
+
 	CSpeechEntry& toAdd = SpeechSys->Add();
 	toAdd.Speech( newName );
 	toAdd.Font( FNT_NORMAL );
@@ -1967,14 +1937,14 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 	COLOUR retVal = 0x0058;
 	switch( trg->FlagColour( src ) )
 	{
-	case FC_INNOCENT:		retVal = 0x0058;		break;	// Blue
-	case FC_NEUTRAL:
-	case FC_CRIMINAL:
-	default:				retVal = 0x03B2;		break;	// Gray
-	case FC_MURDERER:		retVal = 0x0026;		break;	// Red
-	case FC_FRIEND:			retVal = 0x0043;		break;	// Green
-	case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
-	case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
+		case FC_INNOCENT:		retVal = 0x0058;		break;	// Blue
+		case FC_NEUTRAL:
+		case FC_CRIMINAL:
+		default:				retVal = 0x03B2;		break;	// Gray
+		case FC_MURDERER:		retVal = 0x0026;		break;	// Red
+		case FC_FRIEND:			retVal = 0x0043;		break;	// Green
+		case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
+		case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
 	}
 
 	return retVal;
@@ -1982,11 +1952,10 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void target( UI08 targType, UI08 targID, const char *txt )
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a system message
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::target( UI08 targType, UI08 targID, const char *txt )
+void CSocket::target( UI08 targType, UI08 targID, const std::string& txt )
 {
 	CPTargetCursor toSend;
 	toSend.ID( calcserial( 0, 1, targType, targID ) );
@@ -2008,11 +1977,11 @@ void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
 		return;
 
 	va_list argptr;
-
-	char msg[512];
 	va_start( argptr, dictEntry );
-	vsprintf( msg, txt.c_str(), argptr );
-	va_end( argptr );
+	auto msg = format(txt,argptr);
+	if (msg.size()>512) {
+		msg = msg.substr(0,512) ;
+	}
 	target( targType, targID, msg );
 }
 
@@ -2075,7 +2044,6 @@ UI32 CSocket::BytesReceived( void ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void statwindow( CChar *targChar )
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the status window
 //o-----------------------------------------------------------------------------------------------o
@@ -2089,16 +2057,16 @@ void CSocket::statwindow( CChar *targChar )
 
 	CChar *mChar = CurrcharObj();
 
-	if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS && 
-		(targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
+	if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS &&
+	   (targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
 		return;
 
 	CPHealthBarStatus hpBarStatus( (*targChar), (*this ));
 	Send( &hpBarStatus );
 
 	CPStatWindow toSend( (*targChar), (*this) );
-	
-	//Zippy 9/17/01 : fixed bug of your name on your own stat window
+
+	// 9/17/01 : fixed bug of your name on your own stat window
 	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
 	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
 	toSend.AC( Combat->calcDef( targChar, 0, false ) );
@@ -2111,7 +2079,6 @@ void CSocket::statwindow( CChar *targChar )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void updateskill( UI08 skillnum )
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Update a certain skill
 //o-----------------------------------------------------------------------------------------------o
@@ -2131,7 +2098,7 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 {
 	if( !ValidateObject( i ) )
 	{
-		Console.Warning( "openPack() was passed an invalid item" );
+		Console.warning( "openPack() was passed an invalid item" );
 		return;
 	}
 	CPDrawContainer contSend = (*i);
@@ -2281,7 +2248,7 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 				contSend.Model( 0x11A ); // Square gray mailbox
 				break;
 			case PT_UNKNOWN:
-				Console.Warning( "openPack() passed an invalid container type: 0x%X", i->GetSerial() );
+				Console.warning( format("openPack() passed an invalid container type: 0x%X", i->GetSerial()) );
 				return;
 		}
 	}
@@ -2295,14 +2262,13 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void openBank( CChar *i )
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens players bank box
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::openBank( CChar *i )
 {
 	CItem *bankBox = NULL;
-	char temp[1024];
+
 
 	bankBox = i->GetItemAtLayer( IL_BANKBOX );
 	if( ValidateObject( bankBox ) )
@@ -2315,8 +2281,8 @@ void CSocket::openBank( CChar *i )
 			return;
 		}
 	}
-	
-	sprintf( temp, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
+
+	auto temp = format(1024, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
 	bankBox = Items->CreateItem( NULL, i, 0x09AB, 1, 0, OT_ITEM );
 	bankBox->SetName( temp );
 	bankBox->SetLayer( IL_BANKBOX );
@@ -2335,7 +2301,6 @@ void CSocket::openBank( CChar *i )
 //|	Function	-	TIMERVAL GetTimer( cS_TID timerID ) const
 //|					void SetTimer( cS_TID timerID, TIMERVAL value )
 //|	Date		-	September 25, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets temporary Timer values associated with character connected to the socket
 //o-----------------------------------------------------------------------------------------------o
@@ -2355,7 +2320,6 @@ void CSocket::SetTimer( cS_TID timerID, TIMERVAL value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ClearTimers( void )
 //|	Date		-	September 25, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets all timers (but mutetime) to 0 used when player logs out
 //o-----------------------------------------------------------------------------------------------o
@@ -2500,4 +2464,3 @@ void CPInputBuffer::SetSocket( CSocket *toSet )
 	tSock = toSet;
 }
 
-}

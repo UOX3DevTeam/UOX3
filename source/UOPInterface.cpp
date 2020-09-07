@@ -1,7 +1,6 @@
 //	UOPInterface.cpp
 //
-//	Created by Charles Kerr
-//
+///
 //
 
 #include "UOPInterface.hpp"
@@ -21,11 +20,11 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
 
     // we have some max's we use to improve performance
     constexpr std::uint32_t maxhashes = 200;
-    
+
     char* mapdata = nullptr ;
     std::map<std::uint64_t,std::uint32_t> chunkids ;
     // add the number to our has format
-    
+
     std::fstream uopstream(uopname,std::ifstream::binary|std::ifstream::in);
     if (!uopstream.is_open()){
         throw std::runtime_error(std::string("Unable to open uop file: ")+uopname);
@@ -38,7 +37,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
     }
     // If we cared, we would get the version, and format
     uopstream.seekg(8,std::ifstream::cur);
-    
+
     auto hashwithmap = std::string(hashformat).replace(9, 1, std::to_string(mapnum)) ;
     for (std::uint32_t i = 0 ; i < maxhashes ; ++i) {
         auto index = UOP::fixedWidth(i) ;
@@ -47,7 +46,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
         hash.replace(pos, 1, index);
         auto hashvalue = UOP::HashLittle2(hash);
         chunkids.insert_or_assign(hashvalue, i);
-        
+
     }
     // Hashes made
     std::int64_t table = 0;
@@ -58,7 +57,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
     // we are not going to loop, but we do the next read to align
     uopstream.read(reinterpret_cast<char*>(&table),sizeof(table));
     std::vector<UOP::UTableEntry> offsets(entries);
-    
+
     for (std::uint32_t i = 0 ; i< entries;++i){
         uopstream.read(reinterpret_cast<char*>(&offsets[i].m_Offset),sizeof(offsets[i].m_Offset));
         // header length
@@ -73,7 +72,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
         std::int16_t compression ;
         uopstream.read(reinterpret_cast<char*>(&compression),sizeof(compression)); // compression method (0 = none, 1 = zlib)
     }
-    
+
     // We loop through now and get the max file size
     std::uintmax_t filesize = 0 ;
     for (std::uint32_t i = 0 ; i<entries ; ++i){
@@ -81,7 +80,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
             auto hashiter = chunkids.find(offsets[i].m_Identifier);
             if (hashiter == chunkids.end()){
                 uopstream.close();
-                
+
                 throw std::runtime_error(std::string("hash not found in uop file ")+uopname);
             }
             auto chunkid = hashiter->second ;
@@ -89,20 +88,20 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
         }
     }
     // we now have the file size
-    
+
     mapdata = new char[filesize] ;
-    
+
     for (std::uint32_t i = 0 ; i<entries ; ++i){
         if (offsets[i].m_Offset != 0){
             auto hashiter = chunkids.find(offsets[i].m_Identifier);
             auto offset = (hashiter->second)*0xC4000;
-            
+
             uopstream.seekg(offsets[i].m_Offset +offsets[i].m_HeaderLength,std::ifstream::beg);
             uopstream.read(reinterpret_cast<char*>(mapdata+offset),offsets[i].m_Size);
         }
     }
     uopstream.close();
-    
+
     return std::tuple(filesize,mapdata);
 
 }
@@ -120,20 +119,20 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 std::uint64_t UOP::HashLittle2(const std::string& s) {
-    
+
     std::uint32_t length = static_cast<std::uint32_t>(s.size()) ;
     std::uint32_t a ;
     std::uint32_t b ;
     std::uint32_t c ;
-    
+
     c = 0xDEADBEEF + static_cast<std::uint32_t>(length) ;
     a = c;
     b = c ;
     std::uint32_t k = 0 ;
-    
+
     while (length > 12){
         a += static_cast<std::uint32_t>(s[k]) ;
-        
+
         a += static_cast<std::uint32_t>(s[k+1]) << 8 ;
         a += static_cast<std::uint32_t>(s[k+2]) << 16 ;
         a += static_cast<std::uint32_t>(s[k+3]) << 24 ;
@@ -145,18 +144,18 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
         c += static_cast<std::uint32_t>(s[k+9]) << 8 ;
         c += static_cast<std::uint32_t>(s[k+10]) << 16 ;
         c += static_cast<std::uint32_t>(s[k+11]) << 24 ;
-        
+
         a -= c; a ^= c << 4 | c >> 28; c += b;
         b -= a; b ^= a << 6 | a >> 26; a += c;
         c -= b; c ^= b << 8 | b >> 24; b += a;
         a -= c; a ^= c << 16 | c >> 16; c += b;
         b -= a; b ^= a << 19 | a >> 13; a += c;
         c -= b; c ^= b << 4 | b >> 28; b += a;
-        
+
         length -= 12 ;
         k += 12 ;
     }
-    
+
     // Notice the lack of breaks!  we actually want it to fall through
     switch (length) {
         case 12: {
@@ -206,11 +205,11 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
 
         default:
             break;
-            
+
     }
-    
+
     return (static_cast<std::uint64_t>(b) << 32) | static_cast<std::uint64_t>(c) ;
-    
+
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++

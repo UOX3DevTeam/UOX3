@@ -1,19 +1,16 @@
 #include "uox3.h"
 #include "scriptc.h"
 #include "ssection.h"
-
+#include <filesystem>
+#include <cstdint>
+#include <limits>
 #if UOX_PLATFORM != PLATFORM_WIN32
-	#include <dirent.h>
-#else
-	#include <direct.h>
-#endif
+#include <netdb.h>
 
-#if P_ODBC == 1
-	#include "ODBCManager.h"
+#include <arpa/inet.h>
 #endif
+#include "StringUtility.hpp"
 
-namespace UOX
-{
 #define	MAX_TRACKINGTARGETS	128
 #define SKILLTOTALCAP		7000
 #define SKILLCAP			1000
@@ -65,44 +62,44 @@ const UI32 BIT_CLASSICUOMAPTRACKER = 42;
 
 
 // New uox3.ini format lookup
-// (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
-// (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
-// (September 22 2002 - EviLDeD) Added the  "HIDEWILEMOUNTED" tag to support Xuri hide fix
-// (September 06 2003 - Maarc)	Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
-// (October 16, 2003 - giwo)	Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
-// (April 3, 2004 = EviLDeD)	Added new tags, for UOG support, as well as new facet tags etc.
-// (June 15, 2004 - EviLDeD)	Added the new tags for the xFTPd, and xFTPc support.
-// (April 2, 2005 - giwo)		Removed superfluous tags (BEGGINGTIMER, HUNGERDAMAGERATE, HUNGERTHRESHOLD, BEGGINGRANGE)
-// (September 13, 2005 - giwo)	Added MAPCOUNT to the uox.ini to specify the number of maps UOX3 uses.
-// (November 20, 2005 - giwo) 	Removed USEFACETSAVES, MAP0, MAP1, MAP2, MAP3, USERMAP, FTPDENABLED,
+// January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
+// February 26 2002 	- 	Modified: to support the AccountIsolation, and left out dir3ectory tags
+// September 22 2002 	- 	Added the  "HIDEWILEMOUNTED" tag to support hide fix
+// September 06 2003 	- 	Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
+// October 16, 2003 	- 	Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
+// April 3, 2004 		- 	Added new tags, for UOG support, as well as new facet tags etc.
+// June 15, 2004 		- 	Added the new tags for the xFTPd, and xFTPc support.
+// April 2, 2005 		- 	Removed superfluous tags (BEGGINGTIMER, HUNGERDAMAGERATE, HUNGERTHRESHOLD, BEGGINGRANGE)
+// September 13, 2005 	- 	Added MAPCOUNT to the uox.ini to specify the number of maps UOX3 uses.
+// November 20, 2005 	- 	Removed USEFACETSAVES, MAP0, MAP1, MAP2, MAP3, USERMAP, FTPDENABLED,
 //								FTPDUSER, FTPDUSERLIMIT, FTPDBIND, FTPDROOT, FTPCENABLED, FTPCHOST,
 //								FTPCPORT, FTPCUSER, FTPCULFLAGS, and MAPCOUNT as they were unused.
 //								Added OVERLOADPACKETS option to uox.ini to toggle JS packet handling.
-// (December 13, 2005 - giwo)	Changed uox.ini entry SHOWHIDDENNPCS to SHOWOFFLINEPCS to better reflect its function.
+// December 13, 2005 	- 	Changed uox.ini entry SHOWHIDDENNPCS to SHOWOFFLINEPCS to better reflect its function.
 //								Removed CACHEMULS from the uox.ini as it is no longer used.
-// (February 12, 2006 - giwo)	Added NPCMOVEMENTSPEED to the UOX.ini to allow customization of NPC movement speeds.
-// (July 7, 2006 - Xuri)		PLAYERPERSECUTION in uox.ini (allows ghosts to drain mana from other players) set to 0 by default
-// (July 18, 2006 - giwo)		Added uox.ini flag to disable/enable the A* Pathfinding routine: ADVANCEDPATHFINDING=0/1
-// (July 24, 2006 - giwo)		Simplified many entries in uox.ini, making them easier to read.
-// (January 28, 2007 - giwo)	Moved dynamic parts of [worldlight] section from uox.ini to their own output file in the /shared/ directory
-// (March 3, 2007 - giwo)		Removed CLIENTSUPPORT from the uox.ini
-//								Allowed customization of supported client features via uox.ini
+// February 12, 2006	- 	Added NPCMOVEMENTSPEED to the UOX.ini to allow customization of NPC movement speeds.
+// July 7, 2006 		- 	PLAYERPERSECUTION in uox.ini (allows ghosts to drain mana from other players) set to 0 by default
+// July 18, 2006 		- 	Added uox.ini flag to disable/enable the A* Pathfinding routine: ADVANCEDPATHFINDING=0/1
+// July 24, 2006 		- 	Simplified many entries in uox.ini, making them easier to read.
+// January 28, 2007 	- 	Moved dynamic parts of [worldlight] section from uox.ini to their own output file in the /shared/ directory
+// March 3, 2007 		- 	Removed CLIENTSUPPORT from the uox.ini
+//						  	Allowed customization of supported client features via uox.ini
 //									CLIENTFEATURES
 //									SERVERFEATURES
-// (April 9, 2007 - grimson)	Added a new setting to the uox.ini, LOOTINGISCRIME. If you set it to 0 looting corpses of innocent chars is not taken as a crime.
-// (June 10, 2007 - grimson)	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they work the same way as NPCMOVEMENTSPEED.
-// (July 28, 2007 - grimson)	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the tooltips will only contain basic information, like the name and the weight of an item.
-// (February 7, 2010 - Xuri)	Added new UOX.INI settings:
+// April 9, 2007 		- 	Added a new setting to the uox.ini, LOOTINGISCRIME. If you set it to 0 looting corpses of innocent chars is not taken as a crime.
+// June 10, 2007 		- 	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they work the same way as NPCMOVEMENTSPEED.
+// July 28, 2007 		- 	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the tooltips will only contain basic information, like the name and the weight of an item.
+// February 7, 2010 	- 	Added new UOX.INI settings:
 //									GLOBALITEMDECAY - Toggles on / off item decay on a global scale.Note that it does not remove the decay - status from items, it just resets the decay - timer when it reaches 0
 //									SCRIPTITEMSDECAYABLE - Toggles whether DFN - items will decay by default or not.Can be overriden by DECAY tag in item - DFNs
 //									BASEITEMSDECAYABLE - Toggles whether base - items will decay by default or not.Can be overriden by DECAY tag in harditems.dfn
 //									ITEMDECAYINHOUSES - Toggles default decay of non - locked down items inside multis( houses and boats )
-// (December 14, 20011 - Xuri)	Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
-// (March 19, 2012 - Xuri)		Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
+// December 14, 20011 	- 	Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
+// March 19, 2012 		- 	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
 //									Can be enabled / disabled through UOX.INI setting PAPERDOLLGUILDBUTTON = 0 / 1. Defaults to 0.
-//								Added new UOX.INI option to determine whether attack - speed bonuses are gained from Stamina( default ) or Dexterity: ATTACKSPEEDFROMSTAMINA = 1 / 0
-//								Added new UOX.INI option to control the displaying of damage - numbers in combat( previously used DISPLAYHITMSG for numbers too ) : DISPLAYDAMAGENUMBERS = 1 / 0
-//								Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client - versions for the server :
+//							Added new UOX.INI option to determine whether attack - speed bonuses are gained from Stamina( default ) or Dexterity: ATTACKSPEEDFROMSTAMINA = 1 / 0
+//							Added new UOX.INI option to control the displaying of damage - numbers in combat( previously used DISPLAYHITMSG for numbers too ) : DISPLAYDAMAGENUMBERS = 1 / 0
+//							Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client - versions for the server :
 //									CLIENTSUPPORT4000 = 0 / 1
 //									CLIENTSUPPORT5000 = 0 / 1
 //									CLIENTSUPPORT6000 = 0 / 1
@@ -114,48 +111,260 @@ const UI32 BIT_CLASSICUOMAPTRACKER = 42;
 //									NOTE: Each of these settings represent a range of clients, not just the individual versions mentioned.This means that CLIENTSUPPORT4000, for instance,
 //									will allow or disallow connections from clients 4.0.0 to 4.0.11f.Also note that while it is possible to enable support for all clients at the same time,
 //									it highly recommended to restrict support for client versions that match up to what the server is running.
-//								Added new UOX.INI option : EXTENDEDSTARTINGSTATS = 0 / 1
+//							Added new UOX.INI option : EXTENDEDSTARTINGSTATS = 0 / 1
 //									If enabled, makes new characters start with 90 statpoints( selectable in clients 7.0.16.0 + only, lower versions only get 90 if using templates ) instead of 80.
-//								Added new UOX.INI option : EXTENDEDSTARTINGSKILLS = 0 / 1
+//							Added new UOX.INI option : EXTENDEDSTARTINGSKILLS = 0 / 1
 //									If enabled, allows for four starting skills( selectable in clients 7.0.16.0 + only, lower versions only get 4th skill if using templates ) instead of three
-// (November 14, 2012 - Xuri)	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
-// (November 10, 2013 - Xuri)	Added new UOX.INI settings for adjusting combat-speed on a global scale:
+// November 14, 2012	-	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
+// November 10, 2013	-	Added new UOX.INI settings for adjusting combat-speed on a global scale:
 //									GLOBALATTACKSPEED = 1 	// for adjusting speed of melee and ranged attacks globally for all chars
 //									NPCSPELLCASTSPEED = 1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
-//								Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable :
+//							Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable :
 //									WEAPONDAMAGECHANCE = 17 	// Chance of weapons taking damage when attacking
 //									WEAPONDAMAGEMIN = 0		// Minimum amount of damage a weapon takes if damaged in combat
 //									WEAPONDAMAGEMAX = 1		// Maximum amount of damage a weapon takes if damaged in combat
 //									ARMORDAMAGECHANCE = 25	// Chance of armor taking damage when defending
 //									ARMORDAMAGEMIN = 0		// Minimum amount of damage armor can take if damaged in combat
 //									ARMORDAMAGEMAX = 1		// Maximum amount of damage armor can take if damaged in combat
-// (September 12, 2015 - Xuri)	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
+// September 12, 2015 	- 	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
 //									FISHINGSTAMINALOSS = 2	// The amount of stamina lost when using the fishing skill
-// (November 24, 2019 - Xuri)	Added new uox.ini flag for choosing a random starting location for new players (from list in uox.ini)
+// November 24, 2019 	- 	Added new uox.ini flag for choosing a random starting location for new players (from list in uox.ini)
 //									RANDOMSTARTINGLOCATION = 0	// 0 to disable (default), 1 to enable
 
 // NOTE:	Very important the first lookups required duplication or the search fails on them
-const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESTIMER|"
-	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|ARMORAFFECTMANAREGEN|CORPSEDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
-	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
-	"DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
-	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|INTERNALACCOUNTCREATION|SHOWOFFLINEPCS|ROGUESENABLED|PLAYERPERSECUTION|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
-	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|CUTSCROLLREQUIREMENTS|CHECKITEMS|CHECKBOATS|CHECKNPCAI|"
-	"CHECKSPAWNREGIONS|POSTINGLEVEL|REMOVALLEVEL|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|MOON1|MOON2|"
-	"DUNGEONLEVEL|CURRENTLEVEL|BRIGHTLEVEL|BASERANGE|BASETIMER|MAXTARGETS|MSGREDISPLAYTIME|"
-	"MURDERDECAYTIMER|MAXKILLS|CRIMINALTIMER|MINECHECK|OREPERAREA|ORERESPAWNTIMER|ORERESPAWNAREA|LOGSPERAREA|LOGSRESPAWNTIMER|LOGSRESPAWNAREA|HUNGERRATE|HUNGERDMGVAL|"
-	"MAXRANGE|SPELLMAXRANGE|DISPLAYHITMSG|MONSTERSVSANIMALS|"
-	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|DARKLEVEL|"
-	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
-	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
-	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
-	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|CLIENTSUPPORT70240|CLIENTSUPPORT70300|CLIENTSUPPORT70331|CLIENTSUPPORT704565|CLIENTSUPPORT70610|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|WEAPONDAMAGECHANCE|"
-	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|RANDOMSTARTINGLOCATION|ASSISTANTNEGOTIATION|KICKONASSISTANTSILENCE|"
-	"AF_FILTERWEATHER|AF_FILTERLIGHT|AF_SMARTTARGET|AF_RANGEDTARGET|AF_AUTOOPENDOORS|AF_DEQUIPONCAST|AF_AUTOPOTIONEQUIP|AF_POISONEDCHECKS|AF_LOOPEDMACROS|AF_USEONCEAGENT|AF_RESTOCKAGENT|"
-	"AF_SELLAGENT|AF_BUYAGENT|AF_POTIONHOTKEYS|AF_RANDOMTARGETS|AF_CLOSESTTARGETS|AF_OVERHEADHEALTH|AF_AUTOLOOTAGENT|AF_BONECUTTERAGENT|AF_JSCRIPTMACROS|AF_AUTOREMOUNT|AF_ALL|CLASSICUOMAPTRACKER|"
-	"ODBCDSN|ODBCUSER|ODBCPASS|"
-);
+
+//+++++++++++++++++++++++++++++++++++++++++++++++
+std::int32_t CServerData::lookupINIValue(const std::string& tag) {
+	auto iter = uox3inicasevalue.find(tag) ;
+	if (iter != uox3inicasevalue.end()){
+		return iter->second ;
+	}
+	return std::numeric_limits<std::int32_t>::max();
+}
+//+++++++++++++++++++++++++++++++++++++++++++++++
+void	CServerData::regAllINIValues() {
+
+	// these numbers dont have to be in order, and can skip aound
+	// they just CANT be repeated (now we could add some protection
+	// but they dont change that much, and there are a lot, so if you delete one
+	// dont worry about reusing it. Just keep adding up from the last one would
+	// be easiest.
+	// They key is that number HAS to match the case statement number
+	// in
+	//bool CServerData::HandleLine( const UString& tag, const UString& value )
+	// in cServerData.cpp (this file).
+	regINIValue("SERVERNAME", 1);
+	regINIValue("CONSOLELOG", 2);
+	regINIValue("COMMANDPREFIX", 3);
+	regINIValue("ANNOUNCEWORLDSAVES", 4);
+	regINIValue("BACKUPSENABLED", 5);
+	regINIValue("SAVESTIMER", 6);
+	regINIValue("SKILLCAP", 7);
+	regINIValue("SKILLDELAY", 8);
+	regINIValue("STATCAP", 9);
+	regINIValue("MAXSTEALTHMOVEMENTS", 10);
+	regINIValue("MAXSTAMINAMOVEMENTS", 11);
+	regINIValue("ARMORAFFECTMANAREGEN", 12);
+	regINIValue("CORPSEDECAYTIMER", 13);
+	regINIValue("WEATHERTIMER", 14);
+	regINIValue("SHOPSPAWNTIMER", 15);
+	regINIValue("DECAYTIMER", 16);
+	regINIValue("INVISIBILITYTIMER", 17);
+	regINIValue("OBJECTUSETIMER", 18);
+	regINIValue("GATETIMER", 19);
+	regINIValue("POISONTIMER", 20);
+	regINIValue("LOGINTIMEOUT", 21);
+	regINIValue("HITPOINTREGENTIMER", 22);
+	regINIValue("STAMINAREGENTIMER", 23);
+	regINIValue("BASEFISHINGTIMER",24);
+	regINIValue("SCRIPTSDIRECTORY", 25);
+	regINIValue("JOINPARTMSGS", 26);
+	//HERE
+	regINIValue("MANAREGENTIMER", 37);
+	regINIValue("RANDOMFISHINGTIMER", 38);
+	regINIValue("SPIRITSPEAKTIMER", 39);
+	regINIValue("DIRECTORY", 40);
+	regINIValue("DATADIRECTORY", 41);
+	regINIValue("DEFSDIRECTORY", 42);
+	regINIValue("ACTSDIRECTORY", 43);
+	regINIValue("BACKUPDIRECTORY", 44);
+	regINIValue("MSGBOARDDIRECTORY", 45);
+	regINIValue("SHAREDDIRECTORY", 46);
+	regINIValue("LOOTDECAYSWITHCORPSE", 47);
+	regINIValue("GUARDSACTIVE", 49);
+	regINIValue("DEATHANIMATION", 27);
+	regINIValue("AMBIENTSOUNDS", 50);
+	regINIValue("AMBIENTFOOTSTEPS", 51);
+	regINIValue("INTERNALACCOUNTCREATION", 52);
+	regINIValue("SHOWOFFLINEPCS", 53);
+	regINIValue("ROGUESENABLED", 54);
+	regINIValue("PLAYERPERSECUTION", 55);
+	regINIValue("ACCOUNTFLUSH", 56);
+	regINIValue("HTMLSTATUSENABLED", 57);
+	regINIValue("SELLBYNAME", 58);
+	regINIValue("SELLMAXITEMS", 59);
+	regINIValue("TRADESYSTEM", 60);
+	regINIValue("RANKSYSTEM", 61);
+	regINIValue("CUTSCROLLREQUIREMENTS", 62);
+	regINIValue("CHECKITEMS", 63);
+	regINIValue("CHECKBOATS", 64);
+	regINIValue("CHECKNPCAI", 65);
+	regINIValue("CHECKSPAWNREGIONS", 66);
+	regINIValue("POSTINGLEVEL", 67);
+	regINIValue("REMOVALLEVEL", 68);
+	regINIValue("ESCORTENABLED", 69);
+	regINIValue("ESCORTINITEXPIRE", 70);
+	regINIValue("ESCORTACTIVEEXPIRE", 71);
+	regINIValue("MOON1", 72);
+	regINIValue("MOON2", 73);
+	regINIValue("DUNGEONLEVEL", 74);
+	regINIValue("CURRENTLEVEL", 75);
+	regINIValue("BRIGHTLEVEL", 76);
+	regINIValue("BASERANGE", 77);
+	regINIValue("BASETIMER", 78);
+	regINIValue("MAXTARGETS", 79);
+	regINIValue("MSGREDISPLAYTIME", 80);
+	regINIValue("MURDERDECAYTIMER", 81);
+	regINIValue("MAXKILLS", 82);
+	regINIValue("CRIMINALTIMER", 83);
+	regINIValue("MINECHECK", 84);
+	regINIValue("OREPERAREA", 85);
+	regINIValue("ORERESPAWNTIMER", 86);
+	regINIValue("ORERESPAWNAREA", 87);
+	regINIValue("LOGSPERAREA", 88);
+	regINIValue("LOGSRESPAWNTIMER", 89);
+	regINIValue("LOGSRESPAWNAREA", 90);
+	regINIValue("HUNGERRATE", 91);
+	regINIValue("HUNGERDMGVAL", 92);
+	regINIValue("MAXRANGE", 93);
+	regINIValue("SPELLMAXRANGE",94);
+	regINIValue("DISPLAYHITMSG", 95);
+	regINIValue("MONSTERSVSANIMALS", 96);
+	regINIValue("ANIMALATTACKCHANCE", 97);
+	regINIValue("ANIMALSGUARDED", 98);
+	regINIValue("NPCDAMAGERATE", 99);
+	regINIValue("NPCBASEFLEEAT", 100);
+	regINIValue("NPCBASEREATTACKAT", 101);
+	regINIValue("ATTACKSTAMINA", 102);
+	regINIValue("LOCATION", 103);
+	regINIValue("STARTGOLD", 104);
+	regINIValue("STARTPRIVS", 105);
+	regINIValue("ESCORTDONEEXPIRE", 106);
+	regINIValue("DARKLEVEL", 107);
+	regINIValue("TITLECOLOUR", 108);
+	regINIValue("LEFTTEXTCOLOUR", 109);
+	regINIValue("RIGHTTEXTCOLOUR", 110);
+	regINIValue("BUTTONCANCEL", 111);
+	regINIValue("BUTTONLEFT", 112);
+	regINIValue("BUTTONRIGHT", 113);
+	regINIValue("BACKGROUNDPIC", 114);
+	regINIValue("POLLTIME", 115);
+	regINIValue("MAYORTIME", 116);
+	regINIValue("TAXPERIOD", 117);
+	regINIValue("GUARDSPAID", 118);
+	regINIValue("DAY", 119);
+	regINIValue("HOURS", 120);
+	regINIValue("MINUTES", 121);
+	regINIValue("SECONDS", 122);
+	regINIValue("AMPM", 123);
+	regINIValue("SKILLLEVEL", 124);
+	regINIValue("SNOOPISCRIME", 125);
+	regINIValue("BOOKSDIRECTORY", 126);
+	regINIValue("SERVERLIST", 127);
+	regINIValue("PORT", 128);
+	regINIValue("ACCESSDIRECTORY", 129);
+	regINIValue("LOGSDIRECTORY", 130);
+	regINIValue("ACCOUNTISOLATION", 131);
+	regINIValue("HTMLDIRECTORY", 132);
+	regINIValue("SHOOTONANIMALBACK", 133);
+	regINIValue("NPCTRAININGENABLED", 134);
+	regINIValue("DICTIONARYDIRECTORY", 135);
+	regINIValue("BACKUPSAVERATIO", 136);
+	regINIValue("HIDEWILEMOUNTED", 137);
+	regINIValue("SECONDSPERUOMINUTE", 138);
+	regINIValue("WEIGHTPERSTR", 139);
+	regINIValue("POLYDURATION", 140);
+	regINIValue("UOGENABLED", 141);
+	regINIValue("NETRCVTIMEOUT", 142);
+	regINIValue("NETSNDTIMEOUT", 143);
+	regINIValue("NETRETRYCOUNT", 144);
+	regINIValue("CLIENTFEATURES", 145);
+	regINIValue("OVERLOADPACKETS", 146);
+	regINIValue("NPCMOVEMENTSPEED", 147);
+	regINIValue("PETHUNGEROFFLINE", 148);
+	regINIValue("PETOFFLINETIMEOUT", 149);
+	regINIValue("PETOFFLINECHECKTIMER", 150);
+	regINIValue("ARCHERRANGE", 151);
+	regINIValue("ADVANCEDPATHFINDING", 152);
+	regINIValue("SERVERFEATURES", 153);
+	regINIValue("LOOTINGISCRIME", 154);
+	regINIValue("NPCRUNNINGSPEED", 155);
+	regINIValue("NPCFLEEINGSPEED", 156);
+	regINIValue("BASICTOOLTIPSONLY", 157);
+	regINIValue("GLOBALITEMDECAY", 158);
+	regINIValue("SCRIPTITEMSDECAYABLE", 159);
+	regINIValue("BASEITEMSDECAYABLE", 160);
+	regINIValue("ITEMDECAYINHOUSES", 161);
+	regINIValue("COMBATEXPLODEDELAY", 162);
+	regINIValue("PAPERDOLLGUILDBUTTON", 163);
+	regINIValue("ATTACKSPEEDFROMSTAMINA", 164);
+	regINIValue("DISPLAYDAMAGENUMBERS", 169);
+	regINIValue("CLIENTSUPPORT4000", 170);
+	regINIValue("CLIENTSUPPORT5000", 171);
+	regINIValue("CLIENTSUPPORT6000", 172);
+	regINIValue("CLIENTSUPPORT6050", 173);
+	regINIValue("CLIENTSUPPORT7000", 174);
+	regINIValue("CLIENTSUPPORT7090", 175);
+	regINIValue("CLIENTSUPPORT70160", 176);
+	regINIValue("CLIENTSUPPORT70240", 177);
+	regINIValue("CLIENTSUPPORT70300", 178);
+	regINIValue("CLIENTSUPPORT70331", 179);
+	regINIValue("CLIENTSUPPORT704565", 180);
+	regINIValue("CLIENTSUPPORT70610", 181);
+	regINIValue("EXTENDEDSTARTINGSTATS", 182);
+	regINIValue("EXTENDEDSTARTINGSKILLS", 183);
+	regINIValue("WEAPONDAMAGECHANCE", 184);
+	regINIValue("ARMORDAMAGECHANCE", 185);
+	regINIValue("WEAPONDAMAGEMIN", 186);
+	regINIValue("WEAPONDAMAGEMAX", 187);
+	regINIValue("ARMORDAMAGEMIN", 188);
+	regINIValue("ARMORDAMAGEMAX", 189);
+	regINIValue("GLOBALATTACKSPEED", 190);
+	regINIValue("NPCSPELLCASTSPEED", 191);
+	regINIValue("FISHINGSTAMINALOSS", 192);
+	regINIValue("RANDOMSTARTINGLOCATION", 193);
+	regINIValue("ASSISTANTNEGOTIATION", 194);
+	regINIValue("KICKONASSISTANTSILENCE", 195);
+	regINIValue("AF_FILTERWEATHER", 196);
+	regINIValue("AF_FILTERLIGHT", 197);
+	regINIValue("AF_SMARTTARGET", 198);
+	regINIValue("AF_RANGEDTARGET", 199);
+	regINIValue("AF_AUTOOPENDOORS", 200);
+	regINIValue("AF_DEQUIPONCAST", 201);
+	regINIValue("AF_AUTOPOTIONEQUIP", 202);
+	regINIValue("AF_POISONEDCHECKS", 203);
+	regINIValue("AF_LOOPEDMACROS", 204);
+	regINIValue("AF_USEONCEAGENT", 205);
+	regINIValue("AF_RESTOCKAGENT", 206);
+	regINIValue("AF_SELLAGENT", 207);
+	regINIValue("AF_BUYAGENT", 208);
+	regINIValue("AF_POTIONHOTKEYS", 209);
+	regINIValue("AF_RANDOMTARGETS", 210);
+	regINIValue("AF_CLOSESTTARGETS", 211);
+	regINIValue("AF_OVERHEADHEALTH", 212);
+	regINIValue("AF_AUTOLOOTAGENT", 213);
+	regINIValue("AF_BONECUTTERAGENT", 214);
+	regINIValue("AF_JSCRIPTMACROS", 215);
+	regINIValue("AF_AUTOREMOUNT", 216);
+	regINIValue("AF_ALL", 217);
+	regINIValue("CLASSICUOMAPTRACKER", 218);
+
+}
+//+++++++++++++++++++++++++++++++++++++++++++++++
+void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
+	uox3inicasevalue.insert_or_assign(tag,value);
+}
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ResetDefaults( void )
@@ -187,7 +396,6 @@ void CServerData::ResetDefaults( void )
 	ServerTimeSeconds( 0 );
 	ServerTimeAMPM( 0 );
 
-	ServerCrashProtection( 1 );
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
 	CombatArcherRange( 7 );
@@ -251,34 +459,34 @@ void CServerData::ResetDefaults( void )
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2.0 );
 
-	char curWorkingDir[1024];
-	GetCurrentDirectory( 1024, curWorkingDir );
-	UString wDir( curWorkingDir );
-	wDir = wDir.fixDirectory();
-	UString tDir;
+
+	auto curWorkingDir = std::filesystem::current_path().string();
+
+	auto wDir = fixDirectory(curWorkingDir);
+	std::string tDir;
 	Directory( CSDDP_ROOT, wDir );
-	tDir = wDir + "muldata/";
+	tDir = wDir + std::string("muldata/");
 	Directory( CSDDP_DATA, tDir );
-	tDir = wDir + "dfndata/";
+	tDir = wDir + std::string("dfndata/");
 	Directory( CSDDP_DEFS, tDir );
-	tDir = wDir + "accounts/";
+	tDir = wDir + std::string("accounts/");
 	Directory( CSDDP_ACCOUNTS, tDir );
 	Directory( CSDDP_ACCESS, tDir );
-	tDir = wDir + "js/";
+	tDir = wDir + std::string("js/");
 	Directory( CSDDP_SCRIPTS, tDir );
-	tDir = wDir + "archives/";
+	tDir = wDir + std::string("archives/");
 	Directory( CSDDP_BACKUP, tDir );
-	tDir = wDir + "msgboards/";
+	tDir = wDir + std::string("msgboards/");
 	Directory( CSDDP_MSGBOARD, tDir );
-	tDir = wDir + "shared/";
+	tDir = wDir + std::string("shared/");
 	Directory( CSDDP_SHARED, tDir );
-	tDir = wDir + "html/";
+	tDir = wDir + std::string("html/");
 	Directory( CSDDP_HTML, tDir );
-	tDir = wDir + "books/";
+	tDir = wDir + std::string("books/");
 	Directory( CSDDP_BOOKS, tDir );
-	tDir = wDir + "dictionaries/";
+	tDir = wDir + std::string("dictionaries/");
 	Directory( CSDDP_DICTIONARIES, tDir );
-	tDir = wDir + "logs/";
+	tDir = wDir + std::string("logs/");
 	Directory( CSDDP_LOGS, tDir );
 
 	BuyThreshold( 2000 );
@@ -345,8 +553,6 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_FISHINGBASE, 10 );
 	SystemTimer( tSERVER_FISHINGRANDOM, 5 );
 	SystemTimer( tSERVER_SPIRITSPEAK, 30 );
-
-	// Abaddon, March 21, 2000
 
 	TitleColour( 0 );
 	LeftTextColour( 0 );
@@ -428,6 +634,7 @@ void CServerData::ResetDefaults( void )
 CServerData::CServerData( void )
 {
 	ResetDefaults();
+	regAllINIValues();
 }
 CServerData::~CServerData()
 {
@@ -552,20 +759,6 @@ void CServerData::ServerConsoleLog( UI08 setting )
 	consolelogenabled = setting;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 ServerCrashProtectionStatus( void ) const
-//|					void ServerCrashProtection( UI08 setting )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set crash protection enabled/disabled state
-//o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::ServerCrashProtectionStatus( void ) const
-{
-	return crashprotectionenabled;
-}
-void CServerData::ServerCrashProtection( UI08 setting )
-{
-	crashprotectionenabled = (setting > 5 && !(setting < 1)) ? 1 : setting;
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	char ServerCommandPrefix( void ) const
@@ -616,7 +809,7 @@ void CServerData::ServerJoinPartAnnouncements( bool newVal )
 //|	Function	-	bool ServerBackupStatus( void ) const
 //|					void ServerBackups( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets enabled status of server worldsave backups 
+//|	Purpose		-	Gets/Sets enabled status of server worldsave backups
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::ServerBackupStatus( void ) const
 {
@@ -749,7 +942,7 @@ TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
 //|	Function	-	UI16 SystemTimer( cSD_TID timerid ) const
 //|					void SystemTimer( cSD_TID timerid, UI16 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets a specific server timer 
+//|	Purpose		-	Gets/Sets a specific server timer
 //o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::SystemTimer( cSD_TID timerid ) const
 {
@@ -797,12 +990,13 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			default:					verboseDirectory = "Unknown directory";			break;
 		};
 		// First, let's normalize the path name and fix common errors
-		UString sText( value );
+		//UString sText( value );
 		// remove all trailing and leading spaces...
-		sText = sText.stripWhiteSpace();
+		auto sText = trim(value) ;
+
 		if( sText.empty() )
 		{
-			Console.Error( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() );
+			Console.error( format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 			return;
 		}
@@ -811,30 +1005,32 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		// Just incase it's not set in the .ini
 		// and convert the windows backward slashes to forward slashes
 
-		sText = sText.fixDirectory();
+		sText = fixDirectory(sText);
 
 		bool error = false;
 		if( !resettingDefaults )
 		{
-			char curWorkingDir[1024];
-			GetCurrentDirectory( 1024, curWorkingDir );
-			SI32 iResult = _chdir( sText.c_str() );
-			if( iResult != 0 )
-				error = true;
-			else
-				_chdir( curWorkingDir );	// move back to where we were
+			error = true ;
+			//auto curWorkingDir = fixDirectory(std::filesystem::current_path().string());
+
+			auto npath = std::filesystem::path(sText);
+
+			if (std::filesystem::exists(npath)) {
+				//std::filesystem::current_path(npath) ;
+				error = false ;
+			}
 		}
 
 		if( error )
 		{
-				Console.Error( "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() );
-				Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+			Console.error( format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()) );
+			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
 		{
 			// There was a check to see if text was empty, to set to "./".  However, if text was blank, we bailed out in the
 			// beginning of the routine
-			serverDirectories[dp] = value;
+			serverDirectories[dp] = sText;
 		}
 	}
 }
@@ -872,10 +1068,8 @@ void CServerData::NPCTrainingStatus( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void dumpPaths( void )
 //|	Date		-	02/26/2002
-//|	Programmer	-	EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Needed a function that would dump out the paths. If you add any paths to the 
+//|	Purpose		-	Needed a function that would dump out the paths. If you add any paths to the
 //|					server please make sure that you place exports to the console here to please
 //|					 so it can be looked up if needed.
 //o-----------------------------------------------------------------------------------------------o
@@ -1505,8 +1699,6 @@ void CServerData::BasicTooltipsOnly( bool newVal )
 //|	Function	-	bool GlobalItemDecay( void ) const
 //|					void GlobalItemDecay( bool newVal )
 //|	Date		-	2/07/2010
-//|	Programmer	-	Xuri
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether decay is enabled or disabled, on a global scale
 //o-----------------------------------------------------------------------------------------------o
@@ -1523,8 +1715,6 @@ void CServerData::GlobalItemDecay( bool newVal )
 //|	Function	-	bool ScriptItemsDecayable( void ) const
 //|					void ScriptItemsDecayable( bool newVal )
 //|	Date		-	2/07/2010
-//|	Programmer	-	Xuri
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items added through scripts decay or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1541,8 +1731,6 @@ void CServerData::ScriptItemsDecayable( bool newVal )
 //|	Function	-	bool BaseItemsDecayable( void ) const
 //|					void BaseItemsDecayable( bool newVal )
 //|	Date		-	2/07/2010
-//|	Programmer	-	Xuri
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether base items added will decay or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1559,8 +1747,6 @@ void CServerData::BaseItemsDecayable( bool newVal )
 //|	Function	-	bool ItemDecayInHouses( void ) const
 //|					void ItemDecayInHouses( bool newVal )
 //|	Date		-	2/07/2010
-//|	Programmer	-	Xuri
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items inside houses will decay or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1779,8 +1965,6 @@ void CServerData::BuyThreshold( SI16 value )
 //|	Function	-	bool CharHideWhileMounted( void ) const
 //|					void CharHideWhileMounted( bool newVal )
 //|	Date		-	09/22/2002
-//|	Programmer	-	EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can hide while mounted or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1797,8 +1981,6 @@ void CServerData::CharHideWhileMounted( bool newVal )
 //|	Function	-	R32 WeightPerStr( void ) const
 //|					void WeightPerStr( R32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of weight one can hold per point of STR
 //o-----------------------------------------------------------------------------------------------o
@@ -1815,8 +1997,6 @@ void CServerData::WeightPerStr( R32 newVal )
 //|	Function	-	bool ServerOverloadPackets( void ) const
 //|					void ServerOverloadPackets( bool newVal )
 //|	Date		-	11/20/2005
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether packet handling in JS is enabled or disabled
 //o-----------------------------------------------------------------------------------------------o
@@ -1833,8 +2013,6 @@ void CServerData::ServerOverloadPackets( bool newVal )
 //|	Function	-	bool ArmorAffectManaRegen( void ) const
 //|					void ArmorAffectManaRegen( bool newVal )
 //|	Date		-	3/20/2005
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether armor affects mana regeneration or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1851,8 +2029,6 @@ void CServerData::ArmorAffectManaRegen( bool newVal )
 //|	Function	-	bool AdvancedPathfinding( void ) const
 //|					void AdvancedPathfinding( bool newVal )
 //|	Date		-	7/16/2005
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether NPCs use the A* Pathfinding routine or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1869,8 +2045,6 @@ void CServerData::AdvancedPathfinding( bool newVal )
 //|	Function	-	bool LootingIsCrime( void ) const
 //|					void LootingIsCrime( bool newVal )
 //|	Date		-	4/09/2007
-//|	Programmer	-	grimson
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether looting of corpses can be a crime or not
 //o-----------------------------------------------------------------------------------------------o
@@ -2420,7 +2594,7 @@ void CServerData::SetAssistantNegotiation( bool nVal )
 //|	Function	-	bool GetClassicUOMapTracker( void ) const
 //|					void SetClassicUOMapTracker( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server should respond to ClassicUO's WorldMap Tracker packets 
+//|	Purpose		-	Gets/Sets whether server should respond to ClassicUO's WorldMap Tracker packets
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::GetClassicUOMapTracker( void ) const
 {
@@ -2489,7 +2663,6 @@ void CServerData::KickOnAssistantSilence( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CServerData::save( void )
 //|	Date		-	02/21/2002
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save the uox.ini out. This is the default save
 //o-----------------------------------------------------------------------------------------------o
@@ -2504,8 +2677,6 @@ bool CServerData::save( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CServerData::save( std::string filename )
-//|	Programmer	-	EviLDeD/Unknown
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This is the full uox.ini save routing.
 //|
@@ -2543,7 +2714,9 @@ bool CServerData::save( std::string filename )
 	ofsOutput.open( filename.c_str(), std::ios::out );
 	if( ofsOutput.is_open() )
 	{
-		ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 1 ) << '\n' << "//================================" << '\n' << '\n';
+
+		ofsOutput << "// UOX Initialization File. V";
+		ofsOutput << (static_cast<std::uint16_t>(1)<<8 | static_cast<std::uint16_t>(2)) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
@@ -2551,7 +2724,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
 		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
 		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << '\n';
-		ofsOutput << "CRASHPROTECTION=" << static_cast<UI16>(ServerCrashProtectionStatus()) << '\n';
 		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
 		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << '\n';
 		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << '\n';
@@ -2816,21 +2988,17 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "AF_ALL=" << GetDisabledAssistantFeature( AF_ALL ) << '\n';
 		ofsOutput << "}" << '\n';
 
-#if P_ODBC == 1
-		ODBCManager::getSingleton().SaveSettings( ofsOutput );
-#endif
 
 		ofsOutput.close();
 		rvalue = true;
 	}
 	else
-		Console.Error( "Unable to open file %s for writing", filename.c_str() );
+		Console.error( format("Unable to open file %s for writing", filename.c_str()) );
 	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	Load()
-//|	Programmer	-	EviLDeD
 //|	Date		-	January 13, 2001
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load up the uox.ini file and parse it into the internals
@@ -2847,7 +3015,7 @@ void CServerData::Load( void )
 //|	Function	-	UI16 TrackingBaseRange( void ) const
 //|					void TrackingBaseRange( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the base (minimum) range even beginner trackers can track at 
+//|	Purpose		-	Gets/Sets the base (minimum) range even beginner trackers can track at
 //o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::TrackingBaseRange( void ) const
 {
@@ -2906,47 +3074,10 @@ void CServerData::TrackingRedisplayTime( UI16 value )
 	trackingmsgredisplaytimer = value;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void dumpLookup( SI32 lookupid )
-//|	Date		-	January 31, 2001
-//|	Programmer	-	EviLDeD
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	This simply outputs a text file that contains the index
-//|					and lookup name found in the lookuptables. Saves having
-//|					to do it by hand if you make changes. Must be called from
-//|					within the class if used.
-//o-----------------------------------------------------------------------------------------------o
-void CServerData::dumpLookup( SI32 lookupid )
-{
-	// lookup is no longer needed, as we don't support server.scp any more
-
-	std::ofstream ofsOutput;
-	char buffer[81];
-	SI32 count = 0;
-
-	ofsOutput.open( "uox.ini.lookup.txt", std::ios::out );
-	if( !ofsOutput.is_open() )
-	{
-		Console << "-o [DLOOKUP]: Unable to open file \"uox3.ini.lookup.txt\" for writing.." << myendl;
-		return;
-	}
-
-	UString tokens( UOX3INI_LOOKUP );
-	SI32 numTokens = tokens.sectionCount( "|" );
-	for( SI32 i = 0; i <= numTokens; i++ )
-	{
-		UString tokenStr = tokens.section( "|", i, i );
-        sprintf( buffer, "case 0x%04lX:\t // %s[%04i]\n\tCServerData:\n\tbreak;\n", UOX3INI_LOOKUP.find( tokenStr.c_str(), tokenStr.length() ), tokenStr.c_str(), count++ );
-		ofsOutput << buffer;
-	}
-	ofsOutput.close();
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ParseINI( const std::string filename )
 //|	Date		-	02/26/2001
-//|	Programmer	-	EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Parse the uox.ini file into its required information.
 //|
@@ -2958,6 +3089,7 @@ bool CServerData::ParseINI( const std::string& filename )
 	bool rvalue = false;
 	if( !filename.empty() )
 	{
+
 		Console << "Processing INI Settings  ";
 
 		Script toParse( filename, NUM_DEFS, false );
@@ -2976,7 +3108,7 @@ bool CServerData::ParseINI( const std::string& filename )
 					data = sect->GrabData().simplifyWhiteSpace();
 					if( !HandleLine( tag, data ) )
 					{
-						Console.Warning( "Unhandled tag '%s'", tag.c_str() );
+						Console.warning( format("Unhandled tag '%s'", tag.c_str()) );
 					}
 				}
 			}
@@ -2985,7 +3117,7 @@ bool CServerData::ParseINI( const std::string& filename )
 		}
 		else
 		{
-			Console.Warning( "%s File not found, Using default settings.", filename.c_str() );
+			Console.warning( format("%s File not found, Using default settings.", filename.c_str() ));
 			cwmWorldState->ServerData()->save();
 		}
 	}
@@ -2995,684 +3127,687 @@ bool CServerData::ParseINI( const std::string& filename )
 bool CServerData::HandleLine( const UString& tag, const UString& value )
 {
 	bool rvalue = true;
-	std::string::size_type lFind = UOX3INI_LOOKUP.find( tag.c_str() );
-	switch( lFind )
-	{
-	case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
-	case 0x000C:	 // SERVERNAME[0002]
-		break;
-	case 0x0017:	 // CONSOLELOG[0003]
-		ServerConsoleLog( value.toUByte() );
-		break;
-	case 0x0022:	 // CRASHPROTECTION[0004]
-		ServerCrashProtection( value.toUByte() );
-		break;
-	case 0x0032:	 // COMMANDPREFIX[0005]
-		ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
-		break;
-	case 0x0040:	 // ANNOUNCEWORLDSAVES[0006]
-		ServerAnnounceSaves( (value.toUShort()==1?true:false) );
-		break;
-	case 0x0053:	 // JOINPARTMSGS[0007]
-		ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
-		break;
-	case 0x0060:	 // MULCACHING[0008]
-		break;
-	case 0x006B:	 // BACKUPSENABLED[0009]
-		ServerBackups( (value.toUShort()>0?true:false) );
-		break;
-	case 0x007A:	 // SAVESTIMER[0010]
-		ServerSavesTimer( value.toUInt() );
-		break;
-	case 0x0085:	 // SKILLCAP[0011]
-		ServerSkillTotalCap( value.toUShort() );
-		break;
-	case 0x008E:	 // SKILLDELAY[0012]
-		ServerSkillDelay( value.toUByte() );
-		break;
-	case 0x0099:	 // STATCAP[0013]
-		ServerStatCap( value.toUShort() );
-		break;
-	case 0x00A1:	 // MAXSTEALTHMOVEMENTS[0014]
-		MaxStealthMovement( value.toShort() );
-		break;
-	case 0x00B5:	 // MAXSTAMINAMOVEMENTS[0015]
-		MaxStaminaMovement( value.toShort() );
-		break;
-	case 0x00C9:	 // ARMORAFFECTMANAREGEN[0016]
-		ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
-		break;
-	case 0x00DE:	 // CORPSEDECAYTIMER[0017]
-		SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
-		break;
-	case 0x00EF:	 // WEATHERTIMER[0018]
-		SystemTimer( tSERVER_WEATHER, value.toUShort() );
-		break;
-	case 0x00FC:	 // SHOPSPAWNTIMER[0019]
-		SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
-		break;
-	case 0x00E4:	 // DECAYTIMER[0020]
-		SystemTimer( tSERVER_DECAY, value.toUShort() );
-		break;
-	case 0x0116:	 // INVISIBILITYTIMER[0021]
-		SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
-		break;
-	case 0x0128:	 // OBJECTUSETIMER[0022]
-		SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
-		break;
-	case 0x0137:	 // GATETIMER[0023]
-		SystemTimer( tSERVER_GATE, value.toUShort() );
-		break;
-	case 0x0141:	 // POISONTIMER[0024]
-		SystemTimer( tSERVER_POISON, value.toUShort() );
-		break;
-	case 0x014D:	 // LOGINTIMEOUT[0025]
-		SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
-		break;
-	case 0x015A:	 // HITPOINTREGENTIMER[0026]
-		SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
-		break;
-	case 0x016D:	 // STAMINAREGENTIMER[0027]
-		SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
-		break;
-	case 0x017F:	 // MANAREGENTIMER[0028]
-		SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
-		break;
-	case 0x018E:	 // BASEFISHINGTIMER[0029]
-		SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
-		break;
-	case 0x019F:	 // RANDOMFISHINGTIMER[0030]
-		SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
-		break;
-	case 0x01B2:	 // SPIRITSPEAKTIMER[0031]
-		SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
-		break;
-	case 0x01C3:	 // DIRECTORY[0032]
-		Directory( CSDDP_ROOT, value );
-		break;
-	case 0x01CD:	 // DATADIRECTORY[0033]
-		Directory( CSDDP_DATA, value );
-		break;
-	case 0x01DB:	 // DEFSDIRECTORY[0034]
-		Directory( CSDDP_DEFS, value );
-		break;
-	case 0x01E9:	 // ACTSDIRECTORY[0035]
-		Directory( CSDDP_ACCOUNTS, value );
-		break;
-	case 0x01F7:	 // SCRIPTSDIRECTORY[0036]
-		Directory( CSDDP_SCRIPTS, value );
-		break;
-	case 0x0208:	 // BACKUPDIRECTORY[0037]
-		Directory( CSDDP_BACKUP, value );
-		break;
-	case 0x0218:	 // MSGBOARDDIRECTORY[0038]
-		Directory( CSDDP_MSGBOARD, value );
-		break;
-	case 0x022A:	 // SHAREDDIRECTORY[0039]
-		Directory( CSDDP_SHARED, value );
-		break;
-	case 0x023A:	 // LOOTDECAYSWITHCORPSE[0040]
-		CorpseLootDecay( value.toUShort() != 0 );
-		break;
-	case 0x024F:	 // GUARDSACTIVE[0041]
-		GuardStatus( value.toUShort() != 0 );
-		break;
-	case 0x025C:	 // DEATHANIMATION[0042]
-		DeathAnimationStatus( value.toUShort() != 0 );
-		break;
-	case 0x026B:	 // AMBIENTSOUNDS[0043]
-		WorldAmbientSounds( value.toShort() );
-		break;
-	case 0x0279:	 // AMBIENTFOOTSTEPS[0044]
-		AmbientFootsteps( value.toUShort() != 0 );
-		break;
-	case 0x028A:	 // INTERNALACCOUNTCREATION[0045]
-		InternalAccountStatus( value.toUShort() != 0 );
-		break;
-	case 0x02A2:	 // SHOWOFFLINEPCS[0046]
-		ShowOfflinePCs( value.toUShort() != 0 );
-		break;
-	case 0x02B1:	 // ROGUESENABLED[0047]
-		RogueStatus( value.toUShort() != 0 );
-		break;
-	case 0x02BF:	 // PLAYERPERSECUTION[0048]
-		PlayerPersecutionStatus( value.toUShort() != 0 );
-		break;
-	case 0x02D1:	 // ACCOUNTFLUSH[0049]
-		AccountFlushTimer( value.toDouble() );
-		break;
-	case 0x02DE:	 // HTMLSTATUSENABLED[0050]
-		HtmlStatsStatus( value.toShort() );
-		break;
-	case 0x02F0:	 // SELLBYNAME[0051]
-		SellByNameStatus( value.toUShort() == 1 );
-		break;
-	case 0x02FB:	 // SELLMAXITEMS[0052]
-		SellMaxItemsStatus( value.toShort() );
-		break;
-	case 0x0308:	 // TRADESYSTEM[0053]
-		TradeSystemStatus( value.toUShort() != 0 );
-		break;
-	case 0x0314:	 // RANKSYSTEM[0054]
-		RankSystemStatus( value.toUShort() != 0 );
-		break;
-	case 0x031F:	 // CUTSCROLLREQUIREMENTS[0055]
-		CutScrollRequirementStatus( (value.toUShort() != 0) );
-		break;
-	case 0x0335:	 // CHECKITEMS[0056]
-		CheckItemsSpeed( value.toDouble() );
-		break;
-	case 0x0340:	 // CHECKBOATS[0057]
-		CheckBoatSpeed( value.toDouble() );
-		break;
-	case 0x034B:	 // CHECKNPCAI[0058]
-		CheckNpcAISpeed( value.toDouble() );
-		break;
-	case 0x0356:	 // CHECKSPAWNREGIONS[0059]
-		CheckSpawnRegionSpeed( value.toDouble() );
-		break;
-	case 0x0368:	 // POSTINGLEVEL[0060]
-		MsgBoardPostingLevel( value.toUByte() );
-		break;
-	case 0x0375:	 // REMOVALLEVEL[0061]
-		MsgBoardPostRemovalLevel( value.toUByte() );
-		break;
-	case 0x0382:	 // ESCORTENABLED[0062]
-		EscortsEnabled( value.toUShort() == 1 );
-		break;
-	case 0x0390:	 // ESCORTINITEXPIRE[0063]
-		SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
-		break;
-	case 0x03A1:	 // ESCORTACTIVEEXPIRE[0064]
-		SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
-		break;
-	case 0x03B4:	 // MOON1[0065]
-		ServerMoon( 0, value.toShort() );
-		break;
-	case 0x03BA:	 // MOON2[0066]
-		ServerMoon( 1, value.toShort() );
-		break;
-	case 0x03C0:	 // DUNGEONLEVEL[0067]
-		DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
-		break;
-	case 0x03CD:	 // CURRENTLEVEL[0068]
-		WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
-		break;
-	case 0x03DA:	 // BRIGHTLEVEL[0069]
-		WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
-		break;
-	case 0x03E6:	 // BASERANGE[0070]
-		TrackingBaseRange( value.toUShort() );
-		break;
-	case 0x03F0:	 // BASETIMER[0071]
-		TrackingBaseTimer( value.toUShort() );
-		break;
-	case 0x03FA:	 // MAXTARGETS[0072]
-		TrackingMaxTargets( value.toUByte() );
-		break;
-	case 0x0405:	 // MSGREDISPLAYTIME[0073]
-		TrackingRedisplayTime( value.toUShort() );
-		break;
-	case 0x0416:	 // MURDERDECAYTIMER[0074]
-		SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
-		break;
-	case 0x0427:	 // MAXKILLS[0075]
-		RepMaxKills( value.toUShort() );
-		break;
-	case 0x0430:	 // CRIMINALTIMER[0076]
-		SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
-		break;
-	case 0x043E:	 // MINECHECK[0077]
-		MineCheck( value.toUByte() );
-		break;
-	case 0x0448:	 // OREPERAREA[0078]
-		ResOre( value.toShort() );
-		break;
-	case 0x0453:	 // ORERESPAWNTIMER[0079]
-		ResOreTime( value.toUShort() );
-		break;
-	case 0x0463:	 // ORERESPAWNAREA[0080]
-		ResOreArea( value.toUShort() );
-		break;
-	case 0x0472:	 // LOGSPERAREA[0081]
-		ResLogs( value.toShort() );
-		break;
-	case 0x047E:	 // LOGSRESPAWNTIMER[0082]
-		ResLogTime( value.toUShort() );
-		break;
-	case 0x048F:	 // LOGSRESPAWNAREA[0083]
-		ResLogArea( value.toUShort() );
-		break;
-	case 0x049F:	 // HUNGERRATE[0084]
-		SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
-		break;
-	case 0x04AA:	 // HUNGERDMGVAL[0085]
-		HungerDamage( value.toShort() );
-		break;
-	case 0x04B7:	 // MAXRANGE[0086]
-		CombatMaxRange( value.toShort() );
-		break;
-	case 0x04C0:	 // SPELLMAXRANGE[0087]
-		CombatMaxSpellRange( value.toShort() );
-		break;
-	case 0x04CE:	 // DISPLAYHITMSG[0088]
-		CombatDisplayHitMessage( value.toUShort() == 1 );
-		break;
-	case 0x04DC:	 // MONSTERSVSANIMALS[0089]
-		CombatMonstersVsAnimals( value.toUShort() == 1 );
-		break;
-	case 0x04EE:	 // ANIMALATTACKCHANCE[0090]
-		CombatAnimalsAttackChance( value.toUByte() );
-		break;
-	case 0x0501:	 // ANIMALSGUARDED[0091]
-		CombatAnimalsGuarded( value.toUShort() == 1 );
-		break;
-	case 0x0510:	 // NPCDAMAGERATE[0092]
-		CombatNPCDamageRate( value.toShort() );
-		break;
-	case 0x051E:	 // NPCBASEFLEEAT[0093]
-		CombatNPCBaseFleeAt( value.toShort() );
-		break;
-	case 0x052C:	 // NPCBASEREATTACKAT[0094]
-		CombatNPCBaseReattackAt( value.toShort() );
-		break;
-	case 0x053E:	 // ATTACKSTAMINA[0095]
-		CombatAttackStamina( value.toShort() );
-		break;
-	case 0x054C:	 // LOCATION[0096]
-		ServerLocation( value );
-		break;
-	case 0x0555:	 // STARTGOLD[0097]
-		ServerStartGold( value.toShort() );
-		break;
-	case 0x055F:	 // STARTPRIVS[0098]
-		ServerStartPrivs( value.toUShort() );
-		break;
-	case 0x056A:	 // ESCORTDONEEXPIRE[0099]
-		SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
-		break;
-	case 0x057B:	 // DARKLEVEL[0100]
-		WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
-		break;
-	case 0x0585:	 // TITLECOLOUR[0101]
-		TitleColour( value.toUShort() );
-		break;
-	case 0x0591:	 // LEFTTEXTCOLOUR[0102]
-		LeftTextColour( value.toUShort() );
-		break;
-	case 0x05A0:	 // RIGHTTEXTCOLOUR[0103]
-		RightTextColour( value.toUShort() );
-		break;
-	case 0x05B0:	 // BUTTONCANCEL[0104]
-		ButtonCancel( value.toUShort() );
-		break;
-	case 0x05BD:	 // BUTTONLEFT[0105]
-		ButtonLeft( value.toUShort() );
-		break;
-	case 0x05C8:	 // BUTTONRIGHT[0106]
-		ButtonRight( value.toUShort() );
-		break;
-	case 0x05D4:	 // BACKGROUNDPIC[0107]
-		BackgroundPic( value.toUShort() );
-		break;
-	case 0x05E2:	 // POLLTIME[0108]
-		TownNumSecsPollOpen( value.toUInt() );
-		break;
-	case 0x05EB:	 // MAYORTIME[0109]
-		TownNumSecsAsMayor( value.toUInt() );
-		break;
-	case 0x05F5:	 // TAXPERIOD[0110]
-		TownTaxPeriod( value.toUInt() );
-		break;
-	case 0x05FF:	 // GUARDSPAID[0111]
-		TownGuardPayment( value.toUInt() );
-		break;
-	case 0x060A:	 // DAY[0112]
-		ServerTimeDay( value.toShort() );
-		break;
-	case 0x060E:	 // HOURS[0113]
-		ServerTimeHours( value.toUByte() );
-		break;
-	case 0x0614:	 // MINUTES[0114]
-		ServerTimeMinutes( value.toUByte() );
-		break;
-	case 0x061C:	 // SECONDS[0115]
-		ServerTimeSeconds( value.toUByte() );
-		break;
-	case 0x0624:	 // AMPM[0116]
-		ServerTimeAMPM( value.toUShort() != 0 );
-		break;
-	case 0x0629:	 // SKILLLEVEL[0117]
-		SkillLevel( value.toUByte() );
-		break;
-	case 0x0634:	 // SNOOPISCRIME[0118]
-		SnoopIsCrime( value.toUShort() != 0 );
-		break;
-	case 0x0641:	 // BOOKSDIRECTORY[0119]
-		Directory( CSDDP_BOOKS, value );
-		break;
-	case 0x0650:	 // SERVERLIST[0120]
-	{
-		UString sname, sip, sport;
-		physicalServer toAdd;
-		if( value.sectionCount( "," ) == 2 )
-		{
-			struct hostent *lpHostEntry = NULL;
-			sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
-			sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
-			sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
-
-			toAdd.setName( sname );
-			// Ok look up the data here see if its a number
-			bool bDomain = true;
-			if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
-			{
-				// this was not a domain name so check for IP address
-				if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
-				{
-					// We get here it wasn't a valid IP either.
-					Console.Warning( "Failed to translate %s", sip.c_str() );
-					Console.Warning( "This shard will not show up on the shard listing" );
-					break;
-				}
-				bDomain = false;
-			}
-			// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
-			if( bDomain )	// Store the domain name for later then seeing as its a valid one
-				toAdd.setDomain( sip );
-			else			// this was a valid ip address so we will use an ip instead so clear the domain string.
-				toAdd.setDomain( "" );
-
-			// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once
-			struct in_addr *pinaddr;
-			pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
-			toAdd.setIP( inet_ntoa(*pinaddr) );
-			toAdd.setPort( sport.toUShort() );
-			serverList.push_back( toAdd );
-		}
-		else
-		{
-			Console.Warning( "Malformend Serverlist entry: %s", value.c_str() );
-			Console.Warning( "This shard will not show up on the shard listing" );
-		}
-		break;
+	auto titer = uox3inicasevalue.find(tag) ;
+	if (titer == uox3inicasevalue.end()){
+		return false ;
 	}
-	case 0x065B:	 // PORT[0121]
-		ServerPort( value.toUShort() );
-		break;
-	case 0x0660:	 // ACCESSDIRECTORY[0122]
-		Directory( CSDDP_ACCESS, value );
-		break;
-	case 0x0670:	 // LOGSDIRECTORY[0123]
-		Directory( CSDDP_LOGS, value );
-		break;
-	case 0x067E:	 // ACCOUNTISOLATION[0124]
-		break;
-	case 0x068F:	 // HTMLDIRECTORY[0125]
-		Directory( CSDDP_HTML, value );
-		break;
-	case 0x069D:	 // SHOOTONANIMALBACK[0126]
-		ShootOnAnimalBack( value.toUShort() == 1 );
-		break;
-	case 0x06AF:	 // NPCTRAININGENABLED[0127]
-		NPCTrainingStatus( value.toUShort() == 1 );
-		break;
-	case 0x06C2:	 // DICTIONARYDIRECTORY[0128]
-		Directory( CSDDP_DICTIONARIES, value );
-		break;
-	case 0x06D6:	 // BACKUPSAVERATIO[0129]
-		BackupRatio( value.toShort() );
-		break;
-	case 0x06E6:	 // HIDEWILEMOUNTED[0130]
-		CharHideWhileMounted( value.toShort() == 1 );
-		break;
-	case 0x06F6:	 // SECONDSPERUOMINUTE[0131]
-		ServerSecondsPerUOMinute( value.toUShort() );
-		break;
-	case 0x0709:	 // WEIGHTPERSTR[0132]
-		//WeightPerStr( value.toUByte() );
-		WeightPerStr( value.toFloat() );
-		break;
-	case 0x0716:	 // POLYDURATION[0133]
-		SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
-		break;
-	case 0x0723:	 // UOGENABLED[0134]
-		ServerUOGEnabled( value.toShort()==1 );
-		break;
-	case 0x072E:	 // NETRCVTIMEOUT[0135]
-		ServerNetRcvTimeout( value.toUInt() );
-		break;
-	case 0x073C:	 // NETSNDTIMEOUT[0136]
-		ServerNetSndTimeout( value.toUInt() );
-		break;
-	case 0x074A:	 // NETRETRYCOUNT[0137]
-		ServerNetRetryCount( value.toUInt() );
-		break;
-	case 0x0758:	 // CLIENTFEATURES[0138]
-		SetClientFeatures( value.toUInt() );
-		break;
-	case 0x0767:	 // PACKETOVERLOADS[0139]
-		ServerOverloadPackets( (value.toByte() == 1) );
-		break;
-	case 0x0777:	 // NPCMOVEMENTSPEED[0140]
-		NPCWalkingSpeed( value.toFloat() );
-		break;
-	case 0x0788:	 // PETHUNGEROFFLINE[0141]
-		PetHungerOffline( (value.toByte() == 1) );
-		break;
-	case 0x0799:	 // PETOFFLINETIMEOUT[0142]
-		PetOfflineTimeout( value.toUShort() );
-		break;
-	case 0x07AB:	 // PETOFFLINECHECKTIMER[0143]
-		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
-		break;
-	case 0x07C0:	 // ARCHERRANGE[0144]
-		CombatArcherRange( value.toShort() );
-		break;
-	case 0x07CC:	 // ADVANCEDPATHFINDING[0145]
-		AdvancedPathfinding( (value.toByte() == 1) );
-		break;
-	case 0x07E0:	 // SERVERFEATURES[0146]
-		SetServerFeatures( value.toUInt() );
-		break;
-	case 0x07EF:	 // LOOTINGISCRIME[0147]
-		LootingIsCrime( (value.toByte() == 1) );
-		break;
-	case 0x07FE:	 // NPCRUNNINGSPEED[0148]
-		NPCRunningSpeed( value.toFloat() );
-		break;
-	case 0x080E:	 // NPCFLEEINGSPEED[0149]
-		NPCFleeingSpeed( value.toFloat() );
-		break;
-	case 0x081E:	 // BASICTOOLTIPSONLY[0150]
-		BasicTooltipsOnly( (value.toByte() == 1) );
-		break;
-	case 0x0830:	 // GLOBALITEMDECAY[0151]
-		GlobalItemDecay( (value.toByte() == 1) );
-		break;
-	case 0x0840:	 // SCRIPTITEMSDECAYABLE[0152]
-		ScriptItemsDecayable( (value.toByte() == 1) );
-		break;
-	case 0x0855:	 // BASEITEMSDECAYABLE[0152]
-		BaseItemsDecayable( (value.toByte() == 1) );
-		break;
-	case 0x0868:	 // ITEMDECAYINHOUSES[0153]
-		ItemDecayInHouses( (value.toByte() == 1) );
-		break;
-	case 0x087a:	// COMBATEXPLODEDELAY[0154]
-		CombatExplodeDelay( value.toUShort() );
-		break;
-	case 0x088d:	// PAPERDOLLGUILDBUTTON[0155]
-		PaperdollGuildButton( value.toByte() == 1 );
-		break;
-	case 0x08a2:	// ATTACKSPEEDFROMSTAMINA[0156]
-		CombatAttackSpeedFromStamina( value.toUShort() == 1 );
-		break;
-	case 0x08b9:	 // DISPLAYDAMAGENUMBERS[0157]
-		CombatDisplayDamageNumbers( value.toUShort() == 1 );
-		break;
-	case 0x08ce:	 // CLIENTSUPPORT4000[0158]
-		ClientSupport4000( value.toUShort() == 1 );
-		break;
-	case 0x08e0:	 // CLIENTSUPPORT5000[0159]
-		ClientSupport5000( value.toUShort() == 1 );
-		break;
-	case 0x08f2:	 // CLIENTSUPPORT6000[0160]
-		ClientSupport6000( value.toUShort() == 1 );
-		break;
-	case 0x0904:	 // CLIENTSUPPORT6050[0161]
-		ClientSupport6050( value.toUShort() == 1 );
-		break;
-	case 0x0916:	 // CLIENTSUPPORT7000[0162]
-		ClientSupport7000( value.toUShort() == 1 );
-		break;
-	case 0x0928:	 // CLIENTSUPPORT7090[0163]
-		ClientSupport7090( value.toUShort() == 1 );
-		break;
-	case 0x093a:	 // CLIENTSUPPORT70160[0164]
-		ClientSupport70160( value.toUShort() == 1 );
-		break;
-	case 0x094d:	// CLIENTSUPPORT70240[0165]
-		ClientSupport70240( value.toUShort() == 1 );
-		break;
-	case 0x0960:	// CLIENTSUPPORT70300[0166]
-		ClientSupport70300( value.toUShort() == 1 );
-		break;
-	case 0x0973:	// CLIENTSUPPORT70331[0167]
-		ClientSupport70331( value.toUShort() == 1 );
-		break;
-	case 0x0986:	// CLIENTSUPPORT704565[0168]
-		ClientSupport704565( value.toUShort() == 1 );
-		break;
-	case 0x099a:	// CLIENTSUPPORT70610[0169]
-		ClientSupport70610( value.toUShort() == 1 );
-		break;
-	case 0x09ad:	 // EXTENDEDSTARTINGSTATS[0170]
-		ExtendedStartingStats( value.toUShort() == 1 );
-		break;
-	case 0x09c3:	 // EXTENDEDSTARTINGSKILLS[0171]
-		ExtendedStartingSkills( value.toUShort() == 1 );
-		break;
-	case 0x09da:	// WEAPONDAMAGECHANCE[0172]
-		CombatWeaponDamageChance( value.toUByte() );
-		break;
-	case 0x09ed:	// ARMORDAMAGECHANCE[0173]
-		CombatArmorDamageChance( value.toUByte() );
-		break;
-	case 0x09ff:	// WEAPONDAMAGEMIN[0174]
-		CombatWeaponDamageMin( value.toUByte() );
-		break;
-	case 0x0a0f:	// WEAPONDAMAGEMAX[0175]
-		CombatWeaponDamageMax( value.toUByte() );
-		break;
-	case 0x0a1f:	// ARMORDAMAGEMIN[0176]
-		CombatArmorDamageMin( value.toUByte() );
-		break;
-	case 0x0a2e:	// ARMORDAMAGEMAX[0177]
-		CombatArmorDamageMax( value.toUByte() );
-		break;
-	case 0x0a3d:	// GLOBALATTACKSPEED[0178]
-		GlobalAttackSpeed( value.toFloat() );
-		break;
-	case 0x0a4f:	// NPCSPELLCASTSPEED[0179]
-		NPCSpellCastSpeed( value.toFloat() );
-		break;
-	case 0x0a61:	// FISHINGSTAMINALOSS[0180]
-		FishingStaminaLoss( value.toFloat() );
-		break;
-	case 0x0a74:	// RANDOMSTARTINGLOCATION[0181]
-		ServerRandomStartingLocation( value.toUShort() == 1 );
-		break;
-	case 0x0a8b:	// ASSISTANTNEGOTIATION[0183]
-		SetAssistantNegotiation( (value.toByte() == 1) );
-		break;
-	case 0x0aa0:	// KICKONASSISTANTSILENCE[0184]
-		KickOnAssistantSilence( (value.toByte() == 1) );
-		break;
-	case 0x0ab7:	// AF_FILTERWEATHER[0185]
-		SetDisabledAssistantFeature( AF_FILTERWEATHER, value.toByte() == 1 );
-		break;
-	case 0x0ac8:	// AF_FILTERLIGHT[0186]
-		SetDisabledAssistantFeature( AF_FILTERLIGHT, value.toByte() == 1 );
-		break;
-	case 0x0ad7:	// AF_SMARTTARGET[0187]
-		SetDisabledAssistantFeature( AF_SMARTTARGET, value.toByte() == 1 );
-		break;
-	case 0x0ae6:	// AF_RANGEDTARGET[0188]
-		SetDisabledAssistantFeature( AF_RANGEDTARGET, value.toByte() == 1 );
-		break;
-	case 0x0af6:	// AF_AUTOOPENDOORS[0189]
-		SetDisabledAssistantFeature( AF_AUTOOPENDOORS, value.toByte() == 1 );
-		break;
-	case 0x0b07:	// AF_DEQUIPONCAST[0190]
-		SetDisabledAssistantFeature( AF_DEQUIPONCAST, value.toByte() == 1 );
-		break;
-	case 0x0b17:	// AF_AUTOPOTIONEQUIP[0191]
-		SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, value.toByte() == 1 );
-		break;
-	case 0x0b2a:	// AF_POISONEDCHECKS[0192]
-		SetDisabledAssistantFeature( AF_POISONEDCHECKS, value.toByte() == 1 );
-		break;
-	case 0x0b3c:	// AF_LOOPEDMACROS[0193]
-		SetDisabledAssistantFeature( AF_LOOPEDMACROS, value.toByte() == 1 );
-		break;
-	case 0x0b4c:	// AF_USEONCEAGENT[0194]
-		SetDisabledAssistantFeature( AF_USEONCEAGENT, value.toByte() == 1 );
-		break;
-	case 0x0b5c:	// AF_RESTOCKAGENT[0195]
-		SetDisabledAssistantFeature( AF_RESTOCKAGENT, value.toByte() == 1 );
-		break;
-	case 0x0b6c:	// AF_SELLAGENT[0196]
-		SetDisabledAssistantFeature( AF_SELLAGENT, value.toByte() == 1 );
-		break;
-	case 0x0b79:	// AF_BUYAGENT[0197]
-		SetDisabledAssistantFeature( AF_BUYAGENT, value.toByte() == 1 );
-		break;
-	case 0x0b85:	// AF_POTIONHOTKEYS[0198]
-		SetDisabledAssistantFeature( AF_POTIONHOTKEYS, value.toByte() == 1 );
-		break;
-	case 0x0b96:	// AF_RANDOMTARGETS[0199]
-		SetDisabledAssistantFeature( AF_RANDOMTARGETS, value.toByte() == 1 );
-		break;
-	case 0x0ba7:	// AF_CLOSESTTARGETS[0200]
-		SetDisabledAssistantFeature( AF_CLOSESTTARGETS, value.toByte() == 1 );
-		break;
-	case 0x0bb9:	// AF_OVERHEADHEALTH[0201]
-		SetDisabledAssistantFeature( AF_OVERHEADHEALTH, value.toByte() == 1 );
-		break;
-	case 0x0bcb:	// AF_AUTOLOOTAGENT[0202]
-		SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, value.toByte() == 1 );
-		break;
-	case 0x0bdc:	// AF_BONECUTTERAGENT[0203]
-		SetDisabledAssistantFeature( AF_BONECUTTERAGENT, value.toByte() == 1 );
-		break;
-	case 0x0bef:	// AF_JSCRIPTMACROS[0204]
-		SetDisabledAssistantFeature( AF_JSCRIPTMACROS, value.toByte() == 1 );
-		break;
-	case 0x0c00:	// AF_AUTOREMOUNT[0205]
-		SetDisabledAssistantFeature( AF_AUTOREMOUNT, value.toByte() == 1 );
-		break;
-	case 0x0c0f:	// AF_ALL[0206]
-		SetDisabledAssistantFeature( AF_ALL, value.toByte() == 1 );
-		break;
-	case 0x0c16:	// CLASSICUOMAPTRACKER[0207]
-		SetClassicUOMapTracker( (value.toByte() == 1) );
-		break;
-	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
-#if P_ODBC == 1
-	case 0x0c2a:	 // ODBCDSN[0208]
-		ODBCManager::getSingleton(0168.SetDatabase( value );
-		break;
-	case 0x0c32:	 // ODBCUSER[0209]
-		ODBCManager::getSingleton().SetUsername( value );
-		break;
-	case 0x0c3b:	// ODBCPASS[0210]
-		ODBCManager::getSingleton().SetPassword( value );
-		break;
-#endif
-	default:
-		rvalue = false;
-		break;
+
+	switch( titer->second )
+	{
+		case 1:	 // SERVERNAME[0002]
+			break;
+		case 2:	 // CONSOLELOG[0003]
+			ServerConsoleLog( value.toUByte() );
+			break;
+		case 3:	 // COMMANDPREFIX[0005]
+			ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
+			break;
+		case 4:	 // ANNOUNCEWORLDSAVES[0006]
+			ServerAnnounceSaves( (value.toUShort()==1?true:false) );
+			break;
+		case 26:	 // JOINPARTMSGS[0007]
+			ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
+			break;
+		case 5:	 // BACKUPSENABLED[0009]
+			ServerBackups( (value.toUShort()>0?true:false) );
+			break;
+		case 6:	 // SAVESTIMER[0010]
+			ServerSavesTimer( value.toUInt() );
+			break;
+		case 7:	 // SKILLCAP[0011]
+			ServerSkillTotalCap( value.toUShort() );
+			break;
+		case 8:	 // SKILLDELAY[0012]
+			ServerSkillDelay( value.toUByte() );
+			break;
+		case 9:	 // STATCAP[0013]
+			ServerStatCap( value.toUShort() );
+			break;
+		case 10:	 // MAXSTEALTHMOVEMENTS[0014]
+			MaxStealthMovement( value.toShort() );
+			break;
+		case 11:	 // MAXSTAMINAMOVEMENTS[0015]
+			MaxStaminaMovement( value.toShort() );
+			break;
+		case 12:	 // ARMORAFFECTMANAREGEN[0016]
+			ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
+			break;
+		case 13:	 // CORPSEDECAYTIMER[0017]
+			SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
+			break;
+		case 14:	 // WEATHERTIMER[0018]
+			SystemTimer( tSERVER_WEATHER, value.toUShort() );
+			break;
+		case 15:	 // SHOPSPAWNTIMER[0019]
+			SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
+			break;
+		case 16:	 // DECAYTIMER[0020]
+			SystemTimer( tSERVER_DECAY, value.toUShort() );
+			break;
+		case 17:	 // INVISIBILITYTIMER[0021]
+			SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
+			break;
+		case 18:	 // OBJECTUSETIMER[0022]
+			SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
+			break;
+		case 19:	 // GATETIMER[0023]
+			SystemTimer( tSERVER_GATE, value.toUShort() );
+			break;
+		case 20:	 // POISONTIMER[0024]
+			SystemTimer( tSERVER_POISON, value.toUShort() );
+			break;
+		case 21:	 // LOGINTIMEOUT[0025]
+			SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
+			break;
+		case 22:	 // HITPOINTREGENTIMER[0026]
+			SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
+			break;
+		case 23:	 // STAMINAREGENTIMER[0027]
+			SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
+			break;
+		case 37:	 // MANAREGENTIMER[0028]
+			SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
+			break;
+		case 24:	 // BASEFISHINGTIMER[0029]
+			SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
+			break;
+		case 38:	 // RANDOMFISHINGTIMER[0030]
+			SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
+			break;
+		case 39:	 // SPIRITSPEAKTIMER[0031]
+			SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
+			break;
+		case 40:	 // DIRECTORY[0032]
+		{
+			Directory( CSDDP_ROOT, value );
+			break;
+		}
+		case 41:	 // DATADIRECTORY[0033]
+		{
+			Directory( CSDDP_DATA, value );
+			break;
+		}
+		case 42:	 // DEFSDIRECTORY[0034]
+		{
+			Directory( CSDDP_DEFS, value );
+			break;
+		}
+		case 43:	 // ACTSDIRECTORY[0035]
+		{
+			Directory( CSDDP_ACCOUNTS, value );
+			break;
+		}
+		case 25:	 // SCRIPTSDIRECTORY[0036]
+		{
+			Directory( CSDDP_SCRIPTS, value );
+			break;
+		}
+		case 44:	 // BACKUPDIRECTORY[0037]
+		{
+			Directory( CSDDP_BACKUP, value );
+			break;
+		}
+		case 45:	 // MSGBOARDDIRECTORY[0038]
+		{
+			Directory( CSDDP_MSGBOARD, value );
+			break;
+		}
+		case 46:	 // SHAREDDIRECTORY[0039]
+		{
+			Directory( CSDDP_SHARED, value );
+			break;
+		}
+		case 47:	 // LOOTDECAYSWITHCORPSE[0040]
+			CorpseLootDecay( value.toUShort() != 0 );
+			break;
+		case 49:	 // GUARDSACTIVE[0041]
+			GuardStatus( value.toUShort() != 0 );
+			break;
+		case 27:	 // DEATHANIMATION[0042]
+			DeathAnimationStatus( value.toUShort() != 0 );
+			break;
+		case 50:	 // AMBIENTSOUNDS[0043]
+			WorldAmbientSounds( value.toShort() );
+			break;
+		case 51:	 // AMBIENTFOOTSTEPS[0044]
+			AmbientFootsteps( value.toUShort() != 0 );
+			break;
+		case 52:	 // INTERNALACCOUNTCREATION[0045]
+			InternalAccountStatus( value.toUShort() != 0 );
+			break;
+		case 53:	 // SHOWOFFLINEPCS[0046]
+			ShowOfflinePCs( value.toUShort() != 0 );
+			break;
+		case 54:	 // ROGUESENABLED[0047]
+			RogueStatus( value.toUShort() != 0 );
+			break;
+		case 55:	 // PLAYERPERSECUTION[0048]
+			PlayerPersecutionStatus( value.toUShort() != 0 );
+			break;
+		case 56:	 // ACCOUNTFLUSH[0049]
+			AccountFlushTimer( value.toDouble() );
+			break;
+		case 57:	 // HTMLSTATUSENABLED[0050]
+			HtmlStatsStatus( value.toShort() );
+			break;
+		case 58:	 // SELLBYNAME[0051]
+			SellByNameStatus( value.toUShort() == 1 );
+			break;
+		case 59:	 // SELLMAXITEMS[0052]
+			SellMaxItemsStatus( value.toShort() );
+			break;
+		case 60:	 // TRADESYSTEM[0053]
+			TradeSystemStatus( value.toUShort() != 0 );
+			break;
+		case 61:	 // RANKSYSTEM[0054]
+			RankSystemStatus( value.toUShort() != 0 );
+			break;
+		case 62:	 // CUTSCROLLREQUIREMENTS[0055]
+			CutScrollRequirementStatus( (value.toUShort() != 0) );
+			break;
+		case 63:	 // CHECKITEMS[0056]
+			CheckItemsSpeed( value.toDouble() );
+			break;
+		case 64:	 // CHECKBOATS[0057]
+			CheckBoatSpeed( value.toDouble() );
+			break;
+		case 65:	 // CHECKNPCAI[0058]
+			CheckNpcAISpeed( value.toDouble() );
+			break;
+		case 66:	 // CHECKSPAWNREGIONS[0059]
+			CheckSpawnRegionSpeed( value.toDouble() );
+			break;
+		case 67:	 // POSTINGLEVEL[0060]
+			MsgBoardPostingLevel( value.toUByte() );
+			break;
+		case 68:	 // REMOVALLEVEL[0061]
+			MsgBoardPostRemovalLevel( value.toUByte() );
+			break;
+		case 69:	 // ESCORTENABLED[0062]
+			EscortsEnabled( value.toUShort() == 1 );
+			break;
+		case 70:	 // ESCORTINITEXPIRE[0063]
+			SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
+			break;
+		case 71:	 // ESCORTACTIVEEXPIRE[0064]
+			SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
+			break;
+		case 72:	 // MOON1[0065]
+			ServerMoon( 0, value.toShort() );
+			break;
+		case 73:	 // MOON2[0066]
+			ServerMoon( 1, value.toShort() );
+			break;
+		case 74:	 // DUNGEONLEVEL[0067]
+			DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
+			break;
+		case 75:	 // CURRENTLEVEL[0068]
+			WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
+			break;
+		case 76:	 // BRIGHTLEVEL[0069]
+			WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
+			break;
+		case 77:	 // BASERANGE[0070]
+			TrackingBaseRange( value.toUShort() );
+			break;
+		case 78:	 // BASETIMER[0071]
+			TrackingBaseTimer( value.toUShort() );
+			break;
+		case 79:	 // MAXTARGETS[0072]
+			TrackingMaxTargets( value.toUByte() );
+			break;
+		case 80:	 // MSGREDISPLAYTIME[0073]
+			TrackingRedisplayTime( value.toUShort() );
+			break;
+		case 81:	 // MURDERDECAYTIMER[0074]
+			SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
+			break;
+		case 82:	 // MAXKILLS[0075]
+			RepMaxKills( value.toUShort() );
+			break;
+		case 83:	 // CRIMINALTIMER[0076]
+			SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
+			break;
+		case 84:	 // MINECHECK[0077]
+			MineCheck( value.toUByte() );
+			break;
+		case 85:	 // OREPERAREA[0078]
+			ResOre( value.toShort() );
+			break;
+		case 86:	 // ORERESPAWNTIMER[0079]
+			ResOreTime( value.toUShort() );
+			break;
+		case 87:	 // ORERESPAWNAREA[0080]
+			ResOreArea( value.toUShort() );
+			break;
+		case 88:	 // LOGSPERAREA[0081]
+			ResLogs( value.toShort() );
+			break;
+		case 89:	 // LOGSRESPAWNTIMER[0082]
+			ResLogTime( value.toUShort() );
+			break;
+		case 90:	 // LOGSRESPAWNAREA[0083]
+			ResLogArea( value.toUShort() );
+			break;
+		case 91:	 // HUNGERRATE[0084]
+			SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
+			break;
+		case 92:	 // HUNGERDMGVAL[0085]
+			HungerDamage( value.toShort() );
+			break;
+		case 93:	 // MAXRANGE[0086]
+			CombatMaxRange( value.toShort() );
+			break;
+		case 94:	 // SPELLMAXRANGE[0087]
+			CombatMaxSpellRange( value.toShort() );
+			break;
+		case 95:	 // DISPLAYHITMSG[0088]
+			CombatDisplayHitMessage( value.toUShort() == 1 );
+			break;
+		case 96:	 // MONSTERSVSANIMALS[0089]
+			CombatMonstersVsAnimals( value.toUShort() == 1 );
+			break;
+		case 97:	 // ANIMALATTACKCHANCE[0090]
+			CombatAnimalsAttackChance( value.toUByte() );
+			break;
+		case 98:	 // ANIMALSGUARDED[0091]
+			CombatAnimalsGuarded( value.toUShort() == 1 );
+			break;
+		case 99:	 // NPCDAMAGERATE[0092]
+			CombatNPCDamageRate( value.toShort() );
+			break;
+		case 100:	 // NPCBASEFLEEAT[0093]
+			CombatNPCBaseFleeAt( value.toShort() );
+			break;
+		case 101:	 // NPCBASEREATTACKAT[0094]
+			CombatNPCBaseReattackAt( value.toShort() );
+			break;
+		case 102:	 // ATTACKSTAMINA[0095]
+			CombatAttackStamina( value.toShort() );
+			break;
+		case 103:	 // LOCATION[0096]
+			ServerLocation( value );
+			break;
+		case 104:	 // STARTGOLD[0097]
+			ServerStartGold( value.toShort() );
+			break;
+		case 105:	 // STARTPRIVS[0098]
+			ServerStartPrivs( value.toUShort() );
+			break;
+		case 106:	 // ESCORTDONEEXPIRE[0099]
+			SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
+			break;
+		case 107:	 // DARKLEVEL[0100]
+			WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
+			break;
+		case 108:	 // TITLECOLOUR[0101]
+			TitleColour( value.toUShort() );
+			break;
+		case 109:	 // LEFTTEXTCOLOUR[0102]
+			LeftTextColour( value.toUShort() );
+			break;
+		case 110:	 // RIGHTTEXTCOLOUR[0103]
+			RightTextColour( value.toUShort() );
+			break;
+		case 111:	 // BUTTONCANCEL[0104]
+			ButtonCancel( value.toUShort() );
+			break;
+		case 112:	 // BUTTONLEFT[0105]
+			ButtonLeft( value.toUShort() );
+			break;
+		case 113:	 // BUTTONRIGHT[0106]
+			ButtonRight( value.toUShort() );
+			break;
+		case 114:	 // BACKGROUNDPIC[0107]
+			BackgroundPic( value.toUShort() );
+			break;
+		case 115:	 // POLLTIME[0108]
+			TownNumSecsPollOpen( value.toUInt() );
+			break;
+		case 116:	 // MAYORTIME[0109]
+			TownNumSecsAsMayor( value.toUInt() );
+			break;
+		case 117:	 // TAXPERIOD[0110]
+			TownTaxPeriod( value.toUInt() );
+			break;
+		case 118:	 // GUARDSPAID[0111]
+			TownGuardPayment( value.toUInt() );
+			break;
+		case 119:	 // DAY[0112]
+			ServerTimeDay( value.toShort() );
+			break;
+		case 120:	 // HOURS[0113]
+			ServerTimeHours( value.toUByte() );
+			break;
+		case 121:	 // MINUTES[0114]
+			ServerTimeMinutes( value.toUByte() );
+			break;
+		case 122:	 // SECONDS[0115]
+			ServerTimeSeconds( value.toUByte() );
+			break;
+		case 123:	 // AMPM[0116]
+			ServerTimeAMPM( value.toUShort() != 0 );
+			break;
+		case 124:	 // SKILLLEVEL[0117]
+			SkillLevel( value.toUByte() );
+			break;
+		case 125:	 // SNOOPISCRIME[0118]
+			SnoopIsCrime( value.toUShort() != 0 );
+			break;
+		case 126:	 // BOOKSDIRECTORY[0119]
+			Directory( CSDDP_BOOKS, value );
+			break;
+		case 127:	 // SERVERLIST[0120]
+		{
+			UString sname, sip, sport;
+			physicalServer toAdd;
+			if( value.sectionCount( "," ) == 2 )
+			{
+				struct hostent *lpHostEntry = NULL;
+				sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
+				sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
+				sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
+
+				toAdd.setName( sname );
+				// Ok look up the data here see if its a number
+				bool bDomain = true;
+				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
+				{
+					// this was not a domain name so check for IP address
+					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
+					{
+						// We get here it wasn't a valid IP either.
+						Console.warning( format("Failed to translate %s", sip.c_str() ));
+						Console.warning( "This shard will not show up on the shard listing" );
+						break;
+					}
+					bDomain = false;
+				}
+				// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
+				if( bDomain )	// Store the domain name for later then seeing as its a valid one
+					toAdd.setDomain( sip );
+				else			// this was a valid ip address so we will use an ip instead so clear the domain string.
+					toAdd.setDomain( "" );
+
+				// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once
+				struct in_addr *pinaddr;
+				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+				toAdd.setIP( inet_ntoa(*pinaddr) );
+				toAdd.setPort( sport.toUShort() );
+				serverList.push_back( toAdd );
+			}
+			else
+			{
+				Console.warning(format("Malformend Serverlist entry: %s", value.c_str() ));
+				Console.warning( "This shard will not show up on the shard listing" );
+			}
+			break;
+		}
+		case 128:	 // PORT[0121]
+			ServerPort( value.toUShort() );
+			break;
+		case 129:	 // ACCESSDIRECTORY[0122]
+			Directory( CSDDP_ACCESS, value );
+			break;
+		case 130:	 // LOGSDIRECTORY[0123]
+			Directory( CSDDP_LOGS, value );
+			break;
+		case 131:	 // ACCOUNTISOLATION[0124]
+			break;
+		case 132:	 // HTMLDIRECTORY[0125]
+			Directory( CSDDP_HTML, value );
+			break;
+		case 133:	 // SHOOTONANIMALBACK[0126]
+			ShootOnAnimalBack( value.toUShort() == 1 );
+			break;
+		case 134:	 // NPCTRAININGENABLED[0127]
+			NPCTrainingStatus( value.toUShort() == 1 );
+			break;
+		case 135:	 // DICTIONARYDIRECTORY[0128]
+			Directory( CSDDP_DICTIONARIES, value );
+			break;
+		case 136:	 // BACKUPSAVERATIO[0129]
+			BackupRatio( value.toShort() );
+			break;
+		case 137:	 // HIDEWILEMOUNTED[0130]
+			CharHideWhileMounted( value.toShort() == 1 );
+			break;
+		case 138:	 // SECONDSPERUOMINUTE[0131]
+			ServerSecondsPerUOMinute( value.toUShort() );
+			break;
+		case 139:	 // WEIGHTPERSTR[0132]
+			//WeightPerStr( value.toUByte() );
+			WeightPerStr( value.toFloat() );
+			break;
+		case 140:	 // POLYDURATION[0133]
+			SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
+			break;
+		case 141:	 // UOGENABLED[0134]
+			ServerUOGEnabled( value.toShort()==1 );
+			break;
+		case 142:	 // NETRCVTIMEOUT[0135]
+			ServerNetRcvTimeout( value.toUInt() );
+			break;
+		case 143:	 // NETSNDTIMEOUT[0136]
+			ServerNetSndTimeout( value.toUInt() );
+			break;
+		case 144:	 // NETRETRYCOUNT[0137]
+			ServerNetRetryCount( value.toUInt() );
+			break;
+		case 145:	 // CLIENTFEATURES[0138]
+			SetClientFeatures( value.toUInt() );
+			break;
+		case 146:	 // PACKETOVERLOADS[0139]
+			ServerOverloadPackets( (value.toByte() == 1) );
+			break;
+		case 147:	 // NPCMOVEMENTSPEED[0140]
+			NPCWalkingSpeed( value.toFloat() );
+			break;
+		case 148:	 // PETHUNGEROFFLINE[0141]
+			PetHungerOffline( (value.toByte() == 1) );
+			break;
+		case 149:	 // PETOFFLINETIMEOUT[0142]
+			PetOfflineTimeout( value.toUShort() );
+			break;
+		case 150:	 // PETOFFLINECHECKTIMER[0143]
+			SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
+			break;
+		case 151:	 // ARCHERRANGE[0144]
+			CombatArcherRange( value.toShort() );
+			break;
+		case 152:	 // ADVANCEDPATHFINDING[0145]
+			AdvancedPathfinding( (value.toByte() == 1) );
+			break;
+		case 153:	 // SERVERFEATURES[0146]
+			SetServerFeatures( value.toUInt() );
+			break;
+		case 154:	 // LOOTINGISCRIME[0147]
+			LootingIsCrime( (value.toByte() == 1) );
+			break;
+		case 155:	 // NPCRUNNINGSPEED[0148]
+			NPCRunningSpeed( value.toFloat() );
+			break;
+		case 156:	 // NPCFLEEINGSPEED[0149]
+			NPCFleeingSpeed( value.toFloat() );
+			break;
+		case 157:	 // BASICTOOLTIPSONLY[0150]
+			BasicTooltipsOnly( (value.toByte() == 1) );
+			break;
+		case 158:	 // GLOBALITEMDECAY[0151]
+			GlobalItemDecay( (value.toByte() == 1) );
+			break;
+		case 159:	 // SCRIPTITEMSDECAYABLE[0152]
+			ScriptItemsDecayable( (value.toByte() == 1) );
+			break;
+		case 160:	 // BASEITEMSDECAYABLE[0152]
+			BaseItemsDecayable( (value.toByte() == 1) );
+			break;
+		case 161:	 // ITEMDECAYINHOUSES[0153]
+			ItemDecayInHouses( (value.toByte() == 1) );
+			break;
+		case 162:	// COMBATEXPLODEDELAY[0154]
+			CombatExplodeDelay( value.toUShort() );
+			break;
+		case 163:	// PAPERDOLLGUILDBUTTON[0155]
+			PaperdollGuildButton( value.toByte() == 1 );
+			break;
+		case 164:	// ATTACKSPEEDFROMSTAMINA[0156]
+			CombatAttackSpeedFromStamina( value.toUShort() == 1 );
+			break;
+		case 169:	 // DISPLAYDAMAGENUMBERS[0157]
+			CombatDisplayDamageNumbers( value.toUShort() == 1 );
+			break;
+		case 170:	 // CLIENTSUPPORT4000[0158]
+			ClientSupport4000( value.toUShort() == 1 );
+			break;
+		case 171:	 // CLIENTSUPPORT5000[0159]
+			ClientSupport5000( value.toUShort() == 1 );
+			break;
+		case 172:	 // CLIENTSUPPORT6000[0160]
+			ClientSupport6000( value.toUShort() == 1 );
+			break;
+		case 173:	 // CLIENTSUPPORT6050[0161]
+			ClientSupport6050( value.toUShort() == 1 );
+			break;
+		case 174:	 // CLIENTSUPPORT7000[0162]
+			ClientSupport7000( value.toUShort() == 1 );
+			break;
+		case 175:	 // CLIENTSUPPORT7090[0163]
+			ClientSupport7090( value.toUShort() == 1 );
+			break;
+		case 176:	 // CLIENTSUPPORT70160[0164]
+			ClientSupport70160( value.toUShort() == 1 );
+			break;
+		case 177:	// CLIENTSUPPORT70240[0165]
+			ClientSupport70240( value.toUShort() == 1 );
+			break;
+		case 178:	// CLIENTSUPPORT70300[0166]
+			ClientSupport70300( value.toUShort() == 1 );
+			break;
+		case 179:	// CLIENTSUPPORT70331[0167]
+			ClientSupport70331( value.toUShort() == 1 );
+			break;
+		case 180:	// CLIENTSUPPORT704565[0168]
+			ClientSupport704565( value.toUShort() == 1 );
+			break;
+		case 181:	// CLIENTSUPPORT70610[0169]
+			ClientSupport70610( value.toUShort() == 1 );
+			break;
+		case 182:	 // EXTENDEDSTARTINGSTATS[0170]
+			ExtendedStartingStats( value.toUShort() == 1 );
+			break;
+		case 183:	 // EXTENDEDSTARTINGSKILLS[0171]
+			ExtendedStartingSkills( value.toUShort() == 1 );
+			break;
+		case 184:	// WEAPONDAMAGECHANCE[0172]
+			CombatWeaponDamageChance( value.toUByte() );
+			break;
+		case 185:	// ARMORDAMAGECHANCE[0173]
+			CombatArmorDamageChance( value.toUByte() );
+			break;
+		case 186:	// WEAPONDAMAGEMIN[0174]
+			CombatWeaponDamageMin( value.toUByte() );
+			break;
+		case 187:	// WEAPONDAMAGEMAX[0175]
+			CombatWeaponDamageMax( value.toUByte() );
+			break;
+		case 188:	// ARMORDAMAGEMIN[0176]
+			CombatArmorDamageMin( value.toUByte() );
+			break;
+		case 189:	// ARMORDAMAGEMAX[0177]
+			CombatArmorDamageMax( value.toUByte() );
+			break;
+		case 190:	// GLOBALATTACKSPEED[0178]
+			GlobalAttackSpeed( value.toFloat() );
+			break;
+		case 191:	// NPCSPELLCASTSPEED[0179]
+			NPCSpellCastSpeed( value.toFloat() );
+			break;
+		case 192:	// FISHINGSTAMINALOSS[0180]
+			FishingStaminaLoss( value.toFloat() );
+			break;
+		case 193:	// RANDOMSTARTINGLOCATION[0181]
+			ServerRandomStartingLocation( value.toUShort() == 1 );
+			break;
+		case 194:	// ASSISTANTNEGOTIATION[0183]
+			SetAssistantNegotiation( (value.toByte() == 1) );
+			break;
+		case 195:	// KICKONASSISTANTSILENCE[0184]
+			KickOnAssistantSilence( (value.toByte() == 1) );
+			break;
+		case 196:	// AF_FILTERWEATHER[0185]
+			SetDisabledAssistantFeature( AF_FILTERWEATHER, value.toByte() == 1 );
+			break;
+		case 197:	// AF_FILTERLIGHT[0186]
+			SetDisabledAssistantFeature( AF_FILTERLIGHT, value.toByte() == 1 );
+			break;
+		case 198:	// AF_SMARTTARGET[0187]
+			SetDisabledAssistantFeature( AF_SMARTTARGET, value.toByte() == 1 );
+			break;
+		case 199:	// AF_RANGEDTARGET[0188]
+			SetDisabledAssistantFeature( AF_RANGEDTARGET, value.toByte() == 1 );
+			break;
+		case 200:	// AF_AUTOOPENDOORS[0189]
+			SetDisabledAssistantFeature( AF_AUTOOPENDOORS, value.toByte() == 1 );
+			break;
+		case 201:	// AF_DEQUIPONCAST[0190]
+			SetDisabledAssistantFeature( AF_DEQUIPONCAST, value.toByte() == 1 );
+			break;
+		case 202:	// AF_AUTOPOTIONEQUIP[0191]
+			SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, value.toByte() == 1 );
+			break;
+		case 203:	// AF_POISONEDCHECKS[0192]
+			SetDisabledAssistantFeature( AF_POISONEDCHECKS, value.toByte() == 1 );
+			break;
+		case 204:	// AF_LOOPEDMACROS[0193]
+			SetDisabledAssistantFeature( AF_LOOPEDMACROS, value.toByte() == 1 );
+			break;
+		case 205:	// AF_USEONCEAGENT[0194]
+			SetDisabledAssistantFeature( AF_USEONCEAGENT, value.toByte() == 1 );
+			break;
+		case 206:	// AF_RESTOCKAGENT[0195]
+			SetDisabledAssistantFeature( AF_RESTOCKAGENT, value.toByte() == 1 );
+			break;
+		case 207:	// AF_SELLAGENT[0196]
+			SetDisabledAssistantFeature( AF_SELLAGENT, value.toByte() == 1 );
+			break;
+		case 208:	// AF_BUYAGENT[0197]
+			SetDisabledAssistantFeature( AF_BUYAGENT, value.toByte() == 1 );
+			break;
+		case 209:	// AF_POTIONHOTKEYS[0198]
+			SetDisabledAssistantFeature( AF_POTIONHOTKEYS, value.toByte() == 1 );
+			break;
+		case 210:	// AF_RANDOMTARGETS[0199]
+			SetDisabledAssistantFeature( AF_RANDOMTARGETS, value.toByte() == 1 );
+			break;
+		case 211:	// AF_CLOSESTTARGETS[0200]
+			SetDisabledAssistantFeature( AF_CLOSESTTARGETS, value.toByte() == 1 );
+			break;
+		case 212:	// AF_OVERHEADHEALTH[0201]
+			SetDisabledAssistantFeature( AF_OVERHEADHEALTH, value.toByte() == 1 );
+			break;
+		case 213:	// AF_AUTOLOOTAGENT[0202]
+			SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, value.toByte() == 1 );
+			break;
+		case 214:	// AF_BONECUTTERAGENT[0203]
+			SetDisabledAssistantFeature( AF_BONECUTTERAGENT, value.toByte() == 1 );
+			break;
+		case 215:	// AF_JSCRIPTMACROS[0204]
+			SetDisabledAssistantFeature( AF_JSCRIPTMACROS, value.toByte() == 1 );
+			break;
+		case 216:	// AF_AUTOREMOUNT[0205]
+			SetDisabledAssistantFeature( AF_AUTOREMOUNT, value.toByte() == 1 );
+			break;
+		case 217:	// AF_ALL[0206]
+			SetDisabledAssistantFeature( AF_ALL, value.toByte() == 1 );
+			break;
+		case 218:	// CLASSICUOMAPTRACKER[0207]
+			SetClassicUOMapTracker( (value.toByte() == 1) );
+			break;
+			// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
+		default:
+			rvalue = false;
+			break;
 	}
 	return rvalue;
 }
@@ -3856,7 +3991,7 @@ void CServerData::ServerLocation( std::string toSet )
 	}
 	else
 	{
-		Console.Error( "Malformed location entry in ini file" );
+		Console.error( "Malformed location entry in ini file" );
 	}
 }
 
@@ -3883,8 +4018,6 @@ void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SaveTime( void )
 //|	Date		-	January 28th, 2007
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Outputs server time information to time.wsc in the /shared/ directory
 //o-----------------------------------------------------------------------------------------------o
@@ -3894,7 +4027,7 @@ void CServerData::SaveTime( void )
 	std::ofstream	timeDestination( timeFile.c_str() );
 	if( !timeDestination )
 	{
-		Console.Error( "Failed to open %s for writing", timeFile.c_str() );
+		Console.error( format("Failed to open %s for writing", timeFile.c_str()) );
 		return;
 	}
 
@@ -4085,35 +4218,33 @@ UI16 CServerData::ServerCount( void ) const
 
 void physicalServer::setName(const std::string& newName)
 {
-  name = newName;
+	name = newName;
 }
 void physicalServer::setDomain(const std::string& newDomain)
 {
-  domain = newDomain;
+	domain = newDomain;
 }
 void physicalServer::setIP(const std::string& newIP)
 {
-  ip = newIP;
+	ip = newIP;
 }
 void physicalServer::setPort(UI16 newPort)
 {
-  port = newPort;
+	port = newPort;
 }
 std::string physicalServer::getName( void ) const
 {
-  return name;
+	return name;
 }
 std::string physicalServer::getDomain( void ) const
 {
-  return domain;
+	return domain;
 }
 std::string physicalServer::getIP( void ) const
 {
-  return ip;
+	return ip;
 }
 UI16 physicalServer::getPort( void ) const
 {
-  return port;
-}
-
+	return port;
 }

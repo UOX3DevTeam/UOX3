@@ -7,23 +7,20 @@
 #include "CPacketSend.h"
 #include "regions.h"
 
-namespace UOX
-{
 
 cEffects *Effects;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays sound effect for player, echo's to all players if allHear is true
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 {
-	if( mSock == NULL ) 
+	if( mSock == NULL )
 		return;
 	CChar *mChar = mSock->CurrcharObj();
-	if( !ValidateObject( mChar ) ) 
+	if( !ValidateObject( mChar ) )
 		return;
 
 	CPPlaySoundEffect toSend = (*mChar);
@@ -41,7 +38,6 @@ void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays sound effect originating from object for all players nearby(default) or originator only
 //o-----------------------------------------------------------------------------------------------o
@@ -72,7 +68,6 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void itemSound( CSocket *s, CItem *item, bool allHear )
-//|	Programmer	-	Dupois
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play item drop sound based on ID (Gems, Gold, or Default)
 //o-----------------------------------------------------------------------------------------------o
@@ -131,23 +126,21 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void goldSound( CSocket *s, UI32 goldtotal, bool allHear )
-//|	Programmer	-	Dupois
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play gold drop sound based on Amount
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 {
-	if( goldtotal <= 1 ) 
+	if( goldtotal <= 1 )
 		PlaySound( s, 0x0035, allHear );
-	else if( goldtotal < 6 ) 
+	else if( goldtotal < 6 )
 		PlaySound( s, 0x0036, allHear );
-	else 
+	else
 		PlaySound( s, 0x0037, allHear );
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void playDeathSound( CChar *i )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send death sound to all sockets in range
 //o-----------------------------------------------------------------------------------------------o
@@ -173,7 +166,6 @@ void cEffects::playDeathSound( CChar *i )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void playMusic( CSocket *s, UI16 number )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays midi/mp3 in client
 //o-----------------------------------------------------------------------------------------------o
@@ -185,7 +177,6 @@ void cEffects::playMusic( CSocket *s, UI16 number )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlayBGSound( CSocket& mSock, CChar& mChar )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play background sounds based on location
 //o-----------------------------------------------------------------------------------------------o
@@ -238,7 +229,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	}
 	else // play random mystic-sounds also if no creature is in range
 	{
-		if( RandomNum( 0, 3332 ) == 33 ) 
+		if( RandomNum( 0, 3332 ) == 33 )
 		{
 			switch( RandomNum( 0, 6 ) )
 			{
@@ -246,12 +237,12 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 				case 1: basesound = 287;	break; // bigfoot 1
 				case 2: basesound = 288;	break; // bigfoot 2
 				case 3: basesound = 639;	break; // old snake sound
-				case 4: basesound = 179;	break; // lion sound 
+				case 4: basesound = 179;	break; // lion sound
 				case 5: basesound = 246;	break; // mystic
 				case 6: basesound = 253;	break; // mystic II
 			}
 			if( basesound != 0 )
-			{ 
+			{
 				CPPlaySoundEffect toSend = mChar;
 				toSend.Model( basesound );
 				mSock.Send( &toSend );
@@ -262,7 +253,6 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void doSocketMusic( CSocket *s )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play specific midi/mp3
 //o-----------------------------------------------------------------------------------------------o
@@ -285,7 +275,7 @@ void cEffects::doSocketMusic( CSocket *s )
 	if( mChar->IsAtWar() )
 		sect = "MUSICLIST COMBAT";
 	else
-		sect = "MUSICLIST " + UString::number( musicList );
+		sect = std::string("MUSICLIST ") + str_number( musicList );
 
 	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
 	if( MusicList == NULL )
@@ -306,7 +296,6 @@ void cEffects::doSocketMusic( CSocket *s )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void playTileSound( CSocket *mSock )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play a sound based on the tile character is on
 //o-----------------------------------------------------------------------------------------------o
@@ -333,7 +322,7 @@ void cEffects::playTileSound( CSocket *mSock )
 	bool onHorse = false;
 	if( mChar->IsOnHorse() )
 		onHorse = true;
-	
+
 	if( mChar->GetStep() == 1 || mChar->GetStep() == 0 )	// if we play a sound
 	{
 		CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
@@ -386,63 +375,61 @@ void cEffects::playTileSound( CSocket *mSock )
 	UI16 soundID = 0;
 	switch( mChar->GetStep() )	// change step info
 	{
-	case 0:
-		mChar->SetStep( 3 );	// step 2
-		switch( tileType )
-		{
-			case TT_NORMAL:
-				if( onHorse )
-					soundID = 0x024C;
-				else
-					soundID = 0x012B; 
-				break;
-			case TT_WATER:	// water
-				break;
-			case TT_STONE: // stone
-				soundID = 0x0130;
-				break;
-			case TT_OTHER: // other
-			case TT_WOODEN: // wooden
-				soundID = 0x0123;
-				break;
-			case TT_GRASS: // grass
-				soundID = 0x012D;
-				break;
-		}
-		break;
-	case 1:
-		mChar->SetStep( 0 );	// step 1
-		switch( tileType )
-		{
-		case TT_NORMAL:
-			if( onHorse )
-				soundID = 0x024B;
-			else
-				soundID = 0x012C; 
+		case 0:
+			mChar->SetStep( 3 );	// step 2
+			switch( tileType )
+			{
+				case TT_NORMAL:
+					if( onHorse )
+						soundID = 0x024C;
+					else
+						soundID = 0x012B;
+					break;
+				case TT_WATER:	// water
+					break;
+				case TT_STONE: // stone
+					soundID = 0x0130;
+					break;
+				case TT_OTHER: // other
+				case TT_WOODEN: // wooden
+					soundID = 0x0123;
+					break;
+				case TT_GRASS: // grass
+					soundID = 0x012D;
+					break;
+			}
 			break;
-		case TT_WATER:	// water
+		case 1:
+			mChar->SetStep( 0 );	// step 1
+			switch( tileType )
+			{
+				case TT_NORMAL:
+					if( onHorse )
+						soundID = 0x024B;
+					else
+						soundID = 0x012C;
+					break;
+				case TT_WATER:	// water
+					break;
+				case TT_STONE: // stone
+					soundID = 0x012F;
+					break;
+				case TT_OTHER: // other
+				case TT_WOODEN: // wooden
+					soundID = 0x0122;
+					break;
+				case TT_GRASS: // grass
+					soundID = 0x012E;
+					break;
+			}
 			break;
-		case TT_STONE: // stone
-			soundID = 0x012F;
+		case 2:
+		case 3:
+		default:
+			mChar->SetStep( 1 );	// pause
 			break;
-		case TT_OTHER: // other
-		case TT_WOODEN: // wooden
-			soundID = 0x0122;
-			break;
-		case TT_GRASS: // grass
-			soundID = 0x012E;
-			break;
-		}
-		break;
-	case 2:
-	case 3:
-	default:
-		mChar->SetStep( 1 );	// pause
-		break;
 	}
 	if( soundID )			// if we have a valid sound
 		PlaySound( mSock, soundID, true );
-}
-
 }
 

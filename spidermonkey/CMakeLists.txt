@@ -16,6 +16,7 @@ add_library(js32
 		jsgc.c
 		jshash.c
 		jsinterp.c
+		jsiter.c
 		jslock.c
 		jslog2.c
 		jslong.c

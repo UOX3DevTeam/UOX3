@@ -75,7 +75,7 @@ function onCallback0( socket, ourObj )
 		addEntry( myGump, "Decay:", ourObj.decayable?1:0 );
 		addEntry( myGump, "Buy Value:", ourObj.buyvalue );
 		addEntry( myGump, "Sell Value:", ourObj.sellvalue );
-		
+
 		addEntry( myGump, "Is Corpse:", ourObj.corpse?1:0 );
 		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
 		addEntry( myGump, "Direction:", ourObj.dir );

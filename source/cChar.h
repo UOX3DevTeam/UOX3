@@ -1,15 +1,13 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
-
-namespace UOX
+#include "cBaseObject.h"
+#include "cAccountClass.h"
+enum cNPC_FLAG
 {
-
-	enum cNPC_FLAG
-	{
-		fNPC_NEUTRAL = 0,
-		fNPC_INNOCENT,
-		fNPC_EVIL
-	};
+	fNPC_NEUTRAL = 0,
+	fNPC_INNOCENT,
+	fNPC_EVIL
+};
 
 enum cC_TID
 {
@@ -55,7 +53,7 @@ private:
 
 	struct NPCValues_st
 	{
-							NPCValues_st();
+		NPCValues_st();
 		void				DumpBody( std::ofstream& outStream );
 
 		SI16				aiType;
@@ -85,7 +83,7 @@ private:
 		UI08				questType;
 		UI08				questDestRegion;
 		UI08				questOrigRegion;
-			
+
 		SI16				fleeAt;		// HP Level to flee at
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
@@ -97,7 +95,7 @@ private:
 		SERIAL				fTarg; // NPC Follow Target
 
 		cNPC_FLAG			npcFlag;
-		
+
 		std::bitset< 8 >	boolFlags;
 
 		R32					walkingSpeed;
@@ -107,7 +105,7 @@ private:
 
 	struct PlayerValues_st
 	{
-					PlayerValues_st();
+		PlayerValues_st();
 		void		DumpBody( std::ofstream& outStream );
 
 		CSocket *	socket;
@@ -136,7 +134,7 @@ private:
 		SERIAL		callNum;		// Callnum GM or Counsellor is on
 		SERIAL		playerCallNum;	// Players call number in GM or Counsellor Queue
 
-		UI08		squelched; // zippy  - squelching
+		UI08		squelched; // Squelching
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 		UI16		deaths;
 
@@ -162,7 +160,7 @@ private:
 		// 8 Sign renaming
 		// 9 JavaScript speech
 	};
-// Base Characters
+	// Base Characters
 protected:
 	NPCValues_st	*	mNPC;
 	PlayerValues_st	*	mPlayer;
@@ -195,7 +193,7 @@ protected:
 	SI08		cell; // Reserved for jailing players
 	UI08		running; // Stamina Loose while running
 	UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
-		
+
 	CItem *		packitem; // Characters backpack
 	SERIAL		targ; // Current combat target
 	SERIAL		attacker; // Character who attacked this character
@@ -463,7 +461,7 @@ public:
 	CSocket *	GetSocket( void ) const;
 	void		SetSocket( CSocket *newVal );
 
-				CChar();
+	CChar();
 	virtual		~CChar();
 
 	CChar *			Dupe( void );
@@ -545,7 +543,7 @@ public:
 	void			ToggleCombat( void );
 
 	virtual void	SetPoisoned( UI08 newValue ) override;
-		
+
 	bool			inDungeon( void );
 	bool			inBuilding( void );
 
@@ -555,7 +553,7 @@ public:
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;
 	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
-	
+
 	FlagColors		FlagColour( CChar *toCompare );
 	void			Heal( SI16 healValue, CChar *healer = NULL );
 	void			Damage( SI16 damageValue, CChar *attacker = NULL, bool doRepsys = false );
@@ -568,7 +566,7 @@ public:
 	void			InParty( bool value );
 	bool			InParty( void ) const;
 
-// NPC Characters
+	// NPC Characters
 protected:
 	virtual void	RemoveSelfFromOwner( void ) override;
 	virtual void	AddSelfToOwner( void ) override;
@@ -655,7 +653,7 @@ public:
 	R32			GetFleeingSpeed( void ) const;
 	void		SetFleeingSpeed( R32 newValue );
 
-// Player Characters
+	// Player Characters
 public:
 	void					SetAccount( CAccountBlock& actbAccount );
 	CAccountBlock &			GetAccount(void);
@@ -725,7 +723,6 @@ public:
 	void		SetSkillLock( SkillLock newValue, UI08 skillToSet );
 };
 
-}
 
 #endif
 

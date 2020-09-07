@@ -1,24 +1,22 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File			-	cBaseobject.cpp
 //|	Date			-	7/26/2000
-//|	Programmer		-	Abaddon/EviLDeD
-//|	Team			-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Handles base object stuff shared between characters, items and multis
 //|
 //|	Version History	-
 //|
-//|							1.0		Abaddon		26th July, 2000
+//|							1.0		26th July, 2000
 //|							Initial implementation.  Most, if not all, common between
 //|							items and chars is now implemented here	Functions declared
 //|							as const where possible
-//|									
-//|							1.1		EviLDeD		Unknown
-//|							Significant fraction of things moved to CBO to support 
+//|
+//|							1.1		Unknown
+//|							Significant fraction of things moved to CBO to support
 //|							future functionality
-//|									
-//|							1.2		Abaddon		August 27th, 2000
-//|							Addition of basic script trigger stuff. Function documentation 
+//|
+//|							1.2		August 27th, 2000
+//|							Addition of basic script trigger stuff. Function documentation
 //|							finished for all functions
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
@@ -30,8 +28,6 @@
 #include "weight.h"
 #include <bitset>
 
-namespace UOX
-{
 
 const UI32 BIT_FREE			=	0;
 const UI32 BIT_DELETED		=	1;
@@ -45,7 +41,6 @@ const UI32 BIT_WIPEABLE		=	6;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject destructor
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function is does basically what the name implies
 //o-----------------------------------------------------------------------------------------------o
@@ -96,17 +91,16 @@ const UI16			DEFBASE_RESIST 		= 0;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 //o-----------------------------------------------------------------------------------------------o
-CBaseObject::CBaseObject( void ) : objType( DEFBASE_OBJTYPE ), race( DEFBASE_RACE ), x( DEFBASE_X ), y( DEFBASE_Y ), 
-z( DEFBASE_Z ), id( DEFBASE_ID ), colour( DEFBASE_COLOUR ), dir( DEFBASE_DIR ), serial( DEFBASE_SERIAL ), 
+CBaseObject::CBaseObject( void ) : objType( DEFBASE_OBJTYPE ), race( DEFBASE_RACE ), x( DEFBASE_X ), y( DEFBASE_Y ),
+z( DEFBASE_Z ), id( DEFBASE_ID ), colour( DEFBASE_COLOUR ), dir( DEFBASE_DIR ), serial( DEFBASE_SERIAL ),
 multis( DEFBASE_MULTIS ), spawnserial( DEFBASE_SPAWNSER ), owner( DEFBASE_OWNER ),
-worldNumber( DEFBASE_WORLD ), instanceID( DEFBASE_INSTANCEID), strength( DEFBASE_STR ), dexterity( DEFBASE_DEX ), intelligence( DEFBASE_INT ), 
+worldNumber( DEFBASE_WORLD ), instanceID( DEFBASE_INSTANCEID), strength( DEFBASE_STR ), dexterity( DEFBASE_DEX ), intelligence( DEFBASE_INT ),
 hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), hidamage( DEFBASE_HIDAMAGE ),
-lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ), 
-mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
+lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
+mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
@@ -122,22 +116,20 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	size_t GetNumTags( void ) const
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return the number of tags in an object's tag map
 //o-----------------------------------------------------------------------------------------------o
-size_t CBaseObject::GetNumTags( void ) const 
+size_t CBaseObject::GetNumTags( void ) const
 {
 	return tags.size();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	TAGMAPOBJECT GetTag( std::string tagname ) const 
-//|	Team		-	UOX3 DevTeam
+//|	Function	-	TAGMAPOBJECT GetTag( std::string tagname ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetch custom tag with specified name from object's tag map
 //o-----------------------------------------------------------------------------------------------o
-TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const 
+TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const
 {
 	TAGMAPOBJECT localObject;
 	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
@@ -152,17 +144,15 @@ TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SetTag( std::string tagname, TAGMAPOBJECT tagval ) 
+//|	Function	-	void SetTag( std::string tagname, TAGMAPOBJECT tagval )
 //|	Date		-	Unknown / Feb 3, 2005
-//|	Programmer	-	Unknown / EviLDeD
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Store custom string/int tag in an object's tag map
 //o-----------------------------------------------------------------------------------------------o
 //| Changes		-	Updated the function to use the internal tagmap object instead of using some
 //|					stored jsval in a context that may or may not change when reloaded.
 //o-----------------------------------------------------------------------------------------------o
-void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval ) 
+void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 {
 	TAGMAP2_ITERATOR I = tags.find( tagname );
 	if( I != tags.end() )
@@ -183,7 +173,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			I->second.m_IntValue	= tagval.m_StringValue.length();
 		}
 		else
-		{	
+		{
 			I->second.m_Destroy		= FALSE;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= "";
@@ -192,7 +182,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 	}
 	else
 	{	// We need to create a TAGMAPOBJECT and initialize and store into the tagmap
-		if( !tagval.m_Destroy ) 
+		if( !tagval.m_Destroy )
 			tags[tagname] = tagval;
 	}
 }
@@ -201,7 +191,6 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 //|	Function	-	SI16 GetOldTargLocX( void ) const
 //|					void SetOldTargLocX( SI16 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets old target X location for object - used in pathfinding
 //o-----------------------------------------------------------------------------------------------o
@@ -218,7 +207,6 @@ void CBaseObject::SetOldTargLocX( SI16 newValue )
 //|	Function	-	SI16 GetOldTargLocY( void ) const
 //|					void SetOldTargLocY( SI16 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets old target Y location for object - used in pathfinding
 //o-----------------------------------------------------------------------------------------------o
@@ -235,7 +223,6 @@ void CBaseObject::SetOldTargLocY( SI16 newValue )
 //|	Function	-	SI16 GetX( void ) const
 //|					void SetX( SI16 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets X location of object, but also stores old location
 //o-----------------------------------------------------------------------------------------------o
@@ -253,7 +240,6 @@ void CBaseObject::SetX( SI16 newValue )
 //|	Function	-	SI16 GetY( void ) const
 //|					void SetY( SI16 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Y location of object, but also stores old location
 //o-----------------------------------------------------------------------------------------------o
@@ -272,7 +258,6 @@ void CBaseObject::SetY( SI16 newValue )
 //|	Function	-	SI08 GetZ( void ) const
 //|					void SetZ( SI08 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Z location of object, but also stores old location
 //o-----------------------------------------------------------------------------------------------o
@@ -304,7 +289,6 @@ void CBaseObject::WalkXY( SI16 newX, SI16 newY )
 //|	Function	-	UI16 GetResist( WeatherType damage ) const
 //|					void SetResist( UI16 newValue, WeatherType damage )
 //|	Date		-	19. Mar, 2006
-//|	Programmer	-	Grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets object's resistances versus different damage types
 //o-----------------------------------------------------------------------------------------------o
@@ -321,7 +305,6 @@ void CBaseObject::SetResist( UI16 newValue, WeatherType damage )
 //|	Function	-	UI16 GetID( void ) const
 //|					void SetID( UI16 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the ID of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -350,7 +333,6 @@ void CBaseObject::SetID( UI16 newValue )
 //|	Function	-	UI08 GetID( UI08 part ) const
 //|					void SetID( UI08 newValue, UI08 part )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets part of the ID
 //o-----------------------------------------------------------------------------------------------o
@@ -379,7 +361,6 @@ void CBaseObject::SetID( UI08 newValue, UI08 part )
 //|	Function	-	UI16 GetColour( void ) const
 //|					void SetColour( UI16 newValue )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the colour of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -396,7 +377,6 @@ void CBaseObject::SetColour( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 GetColour( UI08 part ) const
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns part of the colour
 //o-----------------------------------------------------------------------------------------------o
@@ -411,7 +391,6 @@ UI08 CBaseObject::GetColour( UI08 part ) const
 //o-----------------------------------------------------------------------------------------------o
 //|   Function    -  SI32 GetWeight( void ) const
 //|   Date        -  Unknown
-//|   Programmer  -  Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|   Purpose     -  Weight of the CHARACTER
 //o-----------------------------------------------------------------------------------------------o
@@ -423,7 +402,6 @@ SI32 CBaseObject::GetWeight( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj *GetMultiObj( void ) const
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the multi object that the object is inside
 //o-----------------------------------------------------------------------------------------------o
@@ -436,7 +414,6 @@ CMultiObj *CBaseObject::GetMultiObj( void ) const
 //|	Function	-	SERIAL GetMulti( void ) const
 //|					void SetMulti( SERIAL newSerial, bool fireTrigger )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the serial of the multi the object is inside
 //o-----------------------------------------------------------------------------------------------o
@@ -467,7 +444,6 @@ void CBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 //|	Function	-	SERIAL GetSerial( void ) const
 //|					void SetSerial( SERIAL newSerial )
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sers serial of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -487,7 +463,6 @@ void CBaseObject::SetSerial( SERIAL newSerial )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SERIAL GetSpawn( void ) const
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns SERIAL of thing that spawned it
 //o-----------------------------------------------------------------------------------------------o
@@ -499,7 +474,6 @@ SERIAL CBaseObject::GetSpawn( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnItem *GetSpawnObj( void ) const
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns thing that spawned us - cannot be a character!
 //o-----------------------------------------------------------------------------------------------o
@@ -514,7 +488,6 @@ CSpawnItem *CBaseObject::GetSpawnObj( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SERIAL GetOwner( void ) const
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns SERIAL of thing that owns us
 //o-----------------------------------------------------------------------------------------------o
@@ -526,7 +499,6 @@ SERIAL CBaseObject::GetOwner( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar *GetOwnerObj( void ) const
 //|	Date		-	26 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns thing that owns us
 //o-----------------------------------------------------------------------------------------------o
@@ -538,7 +510,6 @@ CChar *CBaseObject::GetOwnerObj( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetOwner( CChar *newOwner )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the object's owner to newOwner
 //o-----------------------------------------------------------------------------------------------o
@@ -554,7 +525,6 @@ void CBaseObject::SetOwner( CChar *newOwner )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpBody( std::ofstream &outStream ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out body information of the object
 //|					This is tag/data pairing information
@@ -602,7 +572,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	{
 		CChar *myChar = (CChar*)(this);
 
-		// For every equipped item 
+		// For every equipped item
 		// We need to reduce Str2+Dex2+Int2
 		for( CItem *myItem = myChar->FirstItem(); !myChar->FinishedItems(); myItem = myChar->NextItem() )
 		{
@@ -614,7 +584,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 			}
 		}
 	}
-	//=========== BUGFIX END (by Dark-Storm)
+	//=========== BUGFIX END
 	outStream << "Weight="  << weight << '\n';
 	outStream << "Mana=" << mana << '\n';
 	outStream << "Stamina=" << stamina << '\n';
@@ -662,7 +632,6 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 //|	Function	-	RACEID GetRace( void ) const
 //|					void SetRace( RACEID newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the race ID associaed with the object
 //o-----------------------------------------------------------------------------------------------o
@@ -679,7 +648,6 @@ void CBaseObject::SetRace( RACEID newValue )
 //|	Function	-	std::string GetName( void ) const
 //|					void SetName( std::string newName )
 //|	Date		-	28 July, 2000
-//|	Programmer		Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the name of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -697,7 +665,6 @@ void CBaseObject::SetName( std::string newName )
 //|	Function	-	SI16 GetStrength( void ) const
 //|					void SetStrength( SI16 newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the strength of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -714,7 +681,6 @@ void CBaseObject::SetStrength( SI16 newValue )
 //|	Function	-	SI16 GetDexterity( void ) const
 //|					void SetDexterity( SI16 newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the dexterity of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -731,7 +697,6 @@ void CBaseObject::SetDexterity( SI16 newValue )
 //|	Function	-	SI16 GetIntelligence( void ) const
 //|					void SetIntelligence( SI16 newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the intelligence of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -748,7 +713,6 @@ void CBaseObject::SetIntelligence( SI16 newValue )
 //|	Function	-	SI16 GetHP( void ) const
 //|					void SetHP( SI16 newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the hitpoints of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -764,7 +728,6 @@ void CBaseObject::SetHP( SI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void IncHP( SI16 amtToChange )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the hitpoints of the object by the specified value
 //o-----------------------------------------------------------------------------------------------o
@@ -777,7 +740,6 @@ void CBaseObject::IncHP( SI16 amtToChange )
 //|	Function	-	UI08 GetDir( void ) const
 //|					void SetDir( UI08 newDir )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the direction of the object
 //o-----------------------------------------------------------------------------------------------o
@@ -795,7 +757,6 @@ void CBaseObject::SetDir( UI08 newDir )
 //|	Function	-	VisibleTypes GetVisible( void ) const
 //|					void SetVisible( VisibleTypes newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the visibility property of the object
 //|	Notes		-	Generally it is
@@ -817,7 +778,6 @@ void CBaseObject::SetVisible( VisibleTypes newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	ObjectType GetObjType( void ) const
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns an ObjectType that indicates the item's type
 //o-----------------------------------------------------------------------------------------------o
@@ -829,7 +789,6 @@ ObjectType CBaseObject::GetObjType( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 //o-----------------------------------------------------------------------------------------------o
@@ -843,7 +802,6 @@ bool CBaseObject::CanBeObjType( ObjectType toCompare ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RemoveFromMulti( bool fireTrigger )
 //|	Date		-	15 December, 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes object from a multi, selectively firing the trigger
 //o-----------------------------------------------------------------------------------------------o
@@ -862,14 +820,13 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 			}
 		}
 		else
-			Console.Error( "Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial() );
+			Console.error( format("Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial()) );
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void AddToMulti( bool fireTrigger )
 //|	Date		-	15 December, 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds object to multi
 //o-----------------------------------------------------------------------------------------------o
@@ -893,14 +850,13 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 			}
 		}
 		else
-			Console.Error( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() );
+			Console.error(format( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() ));
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetMulti( CMultiObj *newMulti, bool fireTrigger )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the object's multi to newMulti
 //o-----------------------------------------------------------------------------------------------o
@@ -914,7 +870,6 @@ void CBaseObject::SetMulti( CMultiObj *newMulti, bool fireTrigger )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetSpawn( SERIAL newSpawn )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the object's spawner to newSpawn
 //o-----------------------------------------------------------------------------------------------o
@@ -935,7 +890,6 @@ void CBaseObject::SetSpawn( SERIAL newSpawn )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 GetSerial( UI08 part ) const
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns part of a serial #
 //o-----------------------------------------------------------------------------------------------o
@@ -954,7 +908,6 @@ UI08 CBaseObject::GetSerial( UI08 part ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 GetSpawn( UI08 part ) const
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns part of the item's spawner serial
 //o-----------------------------------------------------------------------------------------------o
@@ -975,7 +928,6 @@ UI08 CBaseObject::GetSpawn( UI08 part ) const
 //|	Function	-	SI16 GetHiDamage( void ) const
 //|					void SetHiDamage( SI16 newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's high damage value (for randomization purposes)
 //o-----------------------------------------------------------------------------------------------o
@@ -992,7 +944,6 @@ void CBaseObject::SetHiDamage( SI16 newValue )
 //|	Function	-	SI16 GetLoDamage( void ) const
 //|					void SetLoDamage( SI16 newValue )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's low damage value (for randomization purposes)
 //o-----------------------------------------------------------------------------------------------o
@@ -1008,7 +959,6 @@ void CBaseObject::SetLoDamage( SI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 SetFilePosition( SI32 filepos )
 //|					SI32 GetFilePosition( void ) const
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's file position
 //o-----------------------------------------------------------------------------------------------o
@@ -1025,7 +975,6 @@ SI32 CBaseObject::SetFilePosition( SI32 filepos )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetStamina( void ) const
 //|					void SetStamina( SI16 stam )
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's stamina
 //o-----------------------------------------------------------------------------------------------o
@@ -1041,11 +990,10 @@ void CBaseObject::SetStamina( SI16 stam )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetMana( void ) const
 //|					void SetMana( SI16 mn )
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's mana
 //o-----------------------------------------------------------------------------------------------o
-SI16 CBaseObject::GetMana( void ) const 
+SI16 CBaseObject::GetMana( void ) const
 {
 	return mana;
 }
@@ -1057,7 +1005,6 @@ void CBaseObject::SetMana( SI16 mn )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string GetTitle( void ) const
 //|					void SetTitle( std::string newtitle )
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's title
 //o-----------------------------------------------------------------------------------------------o
@@ -1074,7 +1021,6 @@ void CBaseObject::SetTitle( std::string newtitle )
 //|	Function	-	UI16 GetScriptTrigger( void ) const
 //|					void SetScriptTrigger( UI16 newValue )
 //|	Date		-	August 27th, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's script trigger value
 //o-----------------------------------------------------------------------------------------------o
@@ -1089,7 +1035,6 @@ void CBaseObject::SetScriptTrigger( UI16 newValue )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	point3 GetLocation( void ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a point3 structure pointing to the object's current location
 //o-----------------------------------------------------------------------------------------------o
@@ -1101,7 +1046,6 @@ point3 CBaseObject::GetLocation( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetStrength2( void ) const
 //|					void SetStrength2( SI16 nVal )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second strength var associated with the object. For chars, it's the
 //|					bonuses (via armour and such)
@@ -1118,7 +1062,6 @@ void CBaseObject::SetStrength2( SI16 nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetDexterity2( void ) const
 //|					void SetDexterity2( SI16 nVal )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second dexterity var associated with the object. For chars, it's
 //|					the bonuses (via armour and such)
@@ -1135,7 +1078,6 @@ void CBaseObject::SetDexterity2( SI16 nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetIntelligence2( void ) const
 //|					void SetIntelligence2( SI16 nVal )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second intelligence var associated with the object. For chars,
 //|					it's the bonuses (via armour and such)
@@ -1151,7 +1093,6 @@ void CBaseObject::SetIntelligence2( SI16 nVal )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void IncStrength( SI16 toInc )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's strength value
 //o-----------------------------------------------------------------------------------------------o
@@ -1162,7 +1103,6 @@ void CBaseObject::IncStrength( SI16 toInc )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void IncDexterity( SI16 toInc )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's dexterity value
 //o-----------------------------------------------------------------------------------------------o
@@ -1173,7 +1113,6 @@ void CBaseObject::IncDexterity( SI16 toInc )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void IncIntelligence( SI16 toInc )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the object's intelligence value
 //o-----------------------------------------------------------------------------------------------o
@@ -1184,7 +1123,6 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpFooter( std::ofstream &outStream ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out footer information so that a logical break between entries can
 //|					be found without moving file pointers
@@ -1200,8 +1138,7 @@ bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool Load( std::ifstream &inStream )
 //|	Date		-	28 July, 2000
-//|	Programmer	-	Abaddon
-//|	Changes		-	Zippy (1/9/02) no longer needs mode
+//|	Changes		-	(1/9/02) no longer needs mode
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads object from disk based on mode
 //o-----------------------------------------------------------------------------------------------o
@@ -1216,7 +1153,7 @@ bool CBaseObject::Load( std::ifstream &inStream )
 		{
 			UTag = tag.upper();
 			if( !HandleLine( UTag, data ) )
-				Console.Warning( "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() );
+				Console.warning( format("Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()) );
 		}
 	}
 	return LoadRemnants();
@@ -1224,9 +1161,8 @@ bool CBaseObject::Load( std::ifstream &inStream )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool HandleLine( UString &UTag, UString &data )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Used to handle world lines. Returns true if the tag is known. If known, 
+//|	Purpose		-	Used to handle world lines. Returns true if the tag is known. If known,
 //|					internal information updated and load routine continues to next tag.
 //|					Otherwise, passed up inheritance tree (if any)
 //o-----------------------------------------------------------------------------------------------o
@@ -1261,8 +1197,8 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'D':
 			if( UTag == "DAMAGE" )
 			{
-				hidamage	= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
-				lodamage	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
+				hidamage	= str_value<std::int16_t>(trim(extractSection(data, ",", 1, 1 )));
+				lodamage	= str_value<std::int16_t>(trim(extractSection(data, ",", 0, 0 )));
 			}
 			else if( UTag == "DIRECTION" )
 			{
@@ -1272,8 +1208,8 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				if( data.sectionCount( "," ) != 0 )
 				{
-					dexterity	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-					dx2			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
+					dexterity	= str_value<std::int16_t>(trim(extractSection(data, ",", 0, 0 )));
+					dx2			= str_value<std::int16_t>(trim(extractSection(data, ",", 1, 1 )));
 				}
 				else
 					dexterity = data.toShort();
@@ -1289,18 +1225,18 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				{
 					for( UI08 resist = 0; resist < numSections; ++resist )
 					{
-						if( data.section( ",", resist, resist ).empty() )
+						if( extractSection(data, ",", resist, resist ).empty() )
 							break;
 
-						SetResist( data.section( ",", resist, resist ).stripWhiteSpace().toUShort(), (WeatherType)(resist + 1) );
+						SetResist( str_value<std::int16_t>(trim(extractSection( data,",", resist, resist ))), (WeatherType)(resist + 1) );
 					}
 				}
 				else
-					SetResist( data.toUShort(), PHYSICAL );
+					SetResist( str_value<std::int16_t>(data), PHYSICAL );
 			}
 			else if( UTag == "DISABLED" )
 			{
-				SetDisabled( data.toUShort() == 1 );
+				SetDisabled( str_value<std::int16_t>(data) == 1 );
 			}
 			else
 				rvalue = false;
@@ -1308,19 +1244,19 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'F':
 			if( UTag == "FAME" )
 			{
-				SetFame( data.toShort() );
+				SetFame( str_value<std::int16_t>(data) );
 			}
 			else
-				rvalue = false; 
+				rvalue = false;
 			break;
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
-				hitpoints	= data.toShort();
+				hitpoints	= str_value<std::int16_t>(data);
 			}
 			else if( UTag == "HIDAMAGE" )
 			{
-				hidamage	= data.toShort();
+				hidamage	= str_value<std::int16_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1328,7 +1264,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'I':
 			if( UTag == "ID" )
 			{
-				id		= data.toUShort();
+				id		= str_value<std::int16_t>(data);
 			}
 			else if( UTag == "INTELLIGENCE" )
 			{
@@ -1338,25 +1274,25 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 					in2				= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
 				}
 				else
-					intelligence = data.toShort();
+					intelligence = str_value<std::int16_t>(data);
 			}
 			else if( UTag == "INTELLIGENCE2" )
 			{
-				in2		= data.toShort();
+				in2		= str_value<std::int16_t>(data);
 			}
-			else 
+			else
 				rvalue = false;
 			break;
 		case 'K':
 			if( UTag == "KARMA" )
 			{
-				SetKarma( data.toShort() );
+				SetKarma( str_value<std::int16_t>(data) );
 			}
 			else if( UTag == "KILLS" )
 			{
-				SetKills( data.toShort() );
+				SetKills( str_value<std::int16_t>(data) );
 			}
-			else 
+			else
 				rvalue = false;
 			break;
 		case 'L':
@@ -1379,19 +1315,19 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "LODAMAGE" )
 			{
-				lodamage	= data.toShort();
+				lodamage	= str_value<std::int16_t>(data);
 			}
-			else 
+			else
 				rvalue = false;
 			break;
 		case 'M':
 			if( UTag == "MANA" )
 			{
-				mana	= data.toShort();
+				mana	= str_value<std::int16_t>(data);
 			}
 			else if( UTag == "MULTIID" )
 			{
-				multis = (CMultiObj *)data.toUInt();
+				multis = calcMultiFromSer((str_value<std::uint32_t>(data)));
 			}
 			else
 				rvalue = false;
@@ -1401,29 +1337,29 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				name = data.substr( 0, MAX_NAME );
 			}
-			else 
-				rvalue = false;			
+			else
+				rvalue = false;
 			break;
 		case 'O':
 			if( UTag == "OWNERID" )
 			{
-				owner	= data.toUInt();
+				owner	= str_value<std::uint32_t>(data);
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		case 'P':
 			if( UTag == "POISONED" )
 			{
-				poisoned	= data.toUByte();
+				poisoned	= str_value<std::uint8_t>(data);
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		case 'R':
 			if( UTag == "RACE" )
 			{
-				race	= data.toUShort();
+				race	= str_value<std::uint16_t>(data);
 			}
 			else if( UTag == "REPUTATION" )
 			{
@@ -1435,20 +1371,20 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				}
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		case 'S':
 			if( UTag == "STAMINA" )
 			{
-				stamina	= data.toShort();
+				stamina	= str_value<std::int16_t>(data);
 			}
 			else if( UTag == "SPAWNERID" )
 			{
-				spawnserial = data.toUInt();
+				spawnserial = str_value<std::uint32_t>(data);
 			}
 			else if( UTag == "SERIAL" )
 			{
-				serial = data.toUInt();
+				serial = str_value<std::uint32_t>(data);
 			}
 			else if( UTag == "STRENGTH" )
 			{
@@ -1458,18 +1394,18 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 					st2			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
 				}
 				else
-					strength = data.toShort();
+					strength = str_value<std::int16_t>(data);
 			}
 			else if( UTag == "STRENGTH2" )
 			{
-				st2		= data.toShort();
+				st2		= str_value<std::int16_t>(data);
 			}
 			else if( UTag == "SCPTRIG" )
 			{
-				scriptTrig	= data.toUShort();
+				scriptTrig	= str_value<std::uint16_t>(data);
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		case 'T':
 			if( UTag == "TITLE" )
@@ -1501,7 +1437,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		case 'V':
 			if( UTag == "VISIBLE" )
@@ -1514,18 +1450,18 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'W':
 			if( UTag == "WEIGHT" )
 			{
-				SetWeight( data.toInt() );
+				SetWeight( str_value<std::int32_t>(data) );
 			}
 			else if( UTag == "WIPE" )
 			{
-				SetWipeable( data.toUByte() == 1 );
+				SetWipeable( str_value<std::uint8_t>(data) == 1 );
 			}
 			else if( UTag == "WORLDNUMBER" )
 			{
-				worldNumber = data.toUByte();
+				worldNumber = str_value<std::uint8_t>(data);
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		case 'X':
 			if( UTag == "XYZ" )
@@ -1535,7 +1471,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				z		= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
 			}
 			else
-				rvalue = false;			
+				rvalue = false;
 			break;
 		default:
 			rvalue = false;
@@ -1545,7 +1481,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PostLoadProcessing( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to setup any pointers that may need adjustment
 //|					following the loading of the world
@@ -1581,7 +1516,6 @@ void CBaseObject::PostLoadProcessing( void )
 //|	Function	-	UI08 WorldNumber( void ) const
 //|					void WorldNumber( UI08 value )
 //|	Date		-	26th September, 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the world number that the object is in
 //o-----------------------------------------------------------------------------------------------o
@@ -1599,7 +1533,6 @@ void CBaseObject::WorldNumber( UI08 value )
 //|	Function	-	UI16 GetInstanceID( void ) const
 //|					void SetInstanceID( UI16 value )
 //|	Date		-	24th June, 2020
-//|	Programmer	-	Xuri
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the instance ID the object is in
 //o-----------------------------------------------------------------------------------------------o
@@ -1616,7 +1549,6 @@ void CBaseObject::SetInstanceID( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 GetPoisoned( void ) const
 //|					void SetPoisoned( UI08 newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets an object's poisoned status
 //o-----------------------------------------------------------------------------------------------o
@@ -1632,7 +1564,6 @@ void CBaseObject::SetPoisoned( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetCarve( void ) const
 //|					void SetCarve( SI16 newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets an object's carve ID from carve DFN
 //o-----------------------------------------------------------------------------------------------o
@@ -1738,7 +1669,6 @@ void CBaseObject::SetDisabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool Cleanup()
 //|	Date		-	11/6/2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cleans up after the object
 //o-----------------------------------------------------------------------------------------------o
@@ -1775,14 +1705,13 @@ void CBaseObject::Cleanup( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Dirty( void ) const
 //|	Date		-	25 July, 2003
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces the object onto the global refresh queue
 //o-----------------------------------------------------------------------------------------------o
 void CBaseObject::Dirty( UpdateTypes updateType )
 {
 	if( isDeleted() )
-		Console.Error( "Attempt was made to add deleted item to refreshQueue!" );
+		Console.error( "Attempt was made to add deleted item to refreshQueue!" );
 	else if( isPostLoaded() )
 		++(cwmWorldState->refreshQueue[this]);
 }
@@ -1829,7 +1758,6 @@ point3 CBaseObject::GetOldLocation( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetKarma( void ) const
 //|					void SetKarma( SI16 value )
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's karma
 //o-----------------------------------------------------------------------------------------------o
@@ -1845,7 +1773,6 @@ void CBaseObject::SetKarma( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetFame( void ) const
 //|					void SetFame( SI16 value )
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's fame
 //o-----------------------------------------------------------------------------------------------o
@@ -1861,7 +1788,6 @@ void CBaseObject::SetFame( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 GetKills( void ) const
 //|					void SetKills( SI16 value )
-//|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets an object's kill/murder count
 //o-----------------------------------------------------------------------------------------------o
@@ -1877,7 +1803,6 @@ void CBaseObject::SetKills( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isWipeable( void ) const
 //|					void SetWipeable( bool newValue )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether an item is affected by wipe command or not
 //o-----------------------------------------------------------------------------------------------o
@@ -1890,5 +1815,3 @@ void CBaseObject::SetWipeable( bool newValue )
 	objSettings.set( BIT_WIPEABLE, newValue );
 }
 
-
-}

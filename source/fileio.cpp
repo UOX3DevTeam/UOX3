@@ -21,8 +21,6 @@
 #  include <sys/mman.h>  // mmap, mmunmap
 #endif
 
-namespace UOX
-{
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UOXFile::UOXFile( const char* const fileName, const char * const )
@@ -33,44 +31,44 @@ namespace UOX
 UOXFile::UOXFile( const char* const fileName, const char * const )
 : memPtr( 0 ), fileSize( 0 ), bIndex( 0 ), usingUOP( false )
 {
-    auto strfilename = std::string( fileName );
-    auto filepath = std::filesystem::path( strfilename );
-    if( filepath.extension() == ".uop" )
+	auto strfilename = std::string( fileName );
+	auto filepath = std::filesystem::path( strfilename );
+	if( filepath.extension() == ".uop" )
 	{
-        // UOP File, get the map #
+		// UOP File, get the map #
 		auto nameonly = filepath.filename();
 		auto mapnum = std::stoi( nameonly.string().substr( 3, 1 ));
-        try {
-            auto rvalue = UOP::loadUOP( strfilename, mapnum );
-            this->memPtr = std::get<1>( rvalue );
-            if( this->memPtr != nullptr )
+		try {
+			auto rvalue = UOP::loadUOP( strfilename, mapnum );
+			this->memPtr = std::get<1>( rvalue );
+			if( this->memPtr != nullptr )
 			{
-                this->fileSize = std::get<0>( rvalue );
-                usingUOP = true;
-            }
-        }
-        catch (...) {
-            if( this->memPtr != nullptr )
+				this->fileSize = std::get<0>( rvalue );
+				usingUOP = true;
+			}
+		}
+		catch (...) {
+			if( this->memPtr != nullptr )
 			{
-                delete[] memPtr;
-                memPtr=nullptr;
-            }
-            this->memPtr= nullptr;
-            this->fileSize = 0;
-        }
-        return;
-    }
-        
+				delete[] memPtr;
+				memPtr=nullptr;
+			}
+			this->memPtr= nullptr;
+			this->fileSize = 0;
+		}
+		return;
+	}
+
 #if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE hFile = ::CreateFileA(
-				fileName,
-				GENERIC_READ,
-				FILE_SHARE_READ,
-				NULL,
-				OPEN_EXISTING,
-				FILE_FLAG_SEQUENTIAL_SCAN,
-				NULL
-			);
+								 fileName,
+								 GENERIC_READ,
+								 FILE_SHARE_READ,
+								 NULL,
+								 OPEN_EXISTING,
+								 FILE_FLAG_SEQUENTIAL_SCAN,
+								 NULL
+								 );
 
 	if( hFile == INVALID_HANDLE_VALUE )
 		return;
@@ -79,74 +77,74 @@ UOXFile::UOXFile( const char* const fileName, const char * const )
 	//  the end iterator
 	fileSize = ::GetFileSize( hFile, NULL );
 
-    HANDLE hMap = ::CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
-        
-    if( hMap == NULL )
-    {
-        ::CloseHandle( hFile );
-        return;
-    }
-        
-    memPtr = (char*)::MapViewOfFile( hMap, FILE_MAP_READ, 0, 0, 0 );
-        
-    // We hold both the file handle and the memory pointer.
-    // We can close the hMap handle now because Windows holds internally
-    //  a reference to it since there is a view mapped.
-    ::CloseHandle( hMap );
-        
-    // It seems like we can close the file handle as well (because
-    //  a reference is hold by the filemap object).
-    ::CloseHandle( hFile );
-        
+	HANDLE hMap = ::CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
+
+	if( hMap == NULL )
+	{
+		::CloseHandle( hFile );
+		return;
+	}
+
+	memPtr = (char*)::MapViewOfFile( hMap, FILE_MAP_READ, 0, 0, 0 );
+
+	// We hold both the file handle and the memory pointer.
+	// We can close the hMap handle now because Windows holds internally
+	//  a reference to it since there is a view mapped.
+	::CloseHandle( hMap );
+
+	// It seems like we can close the file handle as well (because
+	//  a reference is hold by the filemap object).
+	::CloseHandle( hFile );
+
 #else
-    // postfix version
-    // open the file
-    SI32 fd = open(fileName,
+	// postfix version
+	// open the file
+	SI32 fd = open(fileName,
 #ifdef O_NOCTTY
-				O_NOCTTY | // if stdin was closed then opening a file
-								// would cause the file to become the controlling
-								// terminal if the filename refers to a tty. Setting
-								// O_NOCTTY inhibits this.
+				   O_NOCTTY | // if stdin was closed then opening a file
+				   // would cause the file to become the controlling
+				   // terminal if the filename refers to a tty. Setting
+				   // O_NOCTTY inhibits this.
 #endif
-                    O_RDONLY);
-        
-    if( fd == -1 )
-        return;
-        
-    // call fstat to find get information about the file just
-    // opened (size and file type)
-    struct stat stat_buf;
-    if(( fstat( fd, &stat_buf ) != 0 ) || !S_ISREG( stat_buf.st_mode ))
-    {	// if fstat returns an error or if the file isn't a
-        // regular file we give up.
-        close( fd );
-        return;
-    }
-        
-    fileSize = stat_buf.st_size;
-    // perform the actual mapping
-    memPtr = (char*)mmap( 0, stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0 );
-    // it is safe to close() here. POSIX requires that the OS keeps a
-    // second handle to the file while the file is mmapped.
-    close( fd );
+				   O_RDONLY);
+
+	if( fd == -1 )
+		return;
+
+	// call fstat to find get information about the file just
+	// opened (size and file type)
+	struct stat stat_buf;
+	if(( fstat( fd, &stat_buf ) != 0 ) || !S_ISREG( stat_buf.st_mode ))
+	{	// if fstat returns an error or if the file isn't a
+		// regular file we give up.
+		close( fd );
+		return;
+	}
+
+	fileSize = stat_buf.st_size;
+	// perform the actual mapping
+	memPtr = (char*)mmap( 0, stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0 );
+	// it is safe to close() here. POSIX requires that the OS keeps a
+	// second handle to the file while the file is mmapped.
+	close( fd );
 #endif
 }
 
 UOXFile::~UOXFile()
 {
-    if( usingUOP )
+	if( usingUOP )
 	{
-        delete[] memPtr;
-        memPtr = nullptr;
-    }
-    if( memPtr )
-    {
+		delete[] memPtr;
+		memPtr = nullptr;
+	}
+	if( memPtr )
+	{
 #if UOX_PLATFORM == PLATFORM_WIN32
-        UnmapViewOfFile( memPtr );
+		UnmapViewOfFile( memPtr );
 #else
-        munmap(memPtr, fileSize);
+		munmap(memPtr, fileSize);
 #endif
-    }
+	}
 }
 
 void UOXFile::seek( size_t offset, UI08 whence )
@@ -166,10 +164,10 @@ SI32 UOXFile::getch( void )
 
 void UOXFile::getUChar( UI08 *buff, UI32 number )
 {
-    memcpy( buff, memPtr+bIndex, number);
-    bIndex += number;
-}   
-    
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
+}
+
 void UOXFile::getChar( SI08 *buff, UI32 number )
 {
 	memcpy( buff, memPtr+bIndex, number);
@@ -185,9 +183,9 @@ void UOXFile::getUShort( UI16 *buff, UI32 number )
 
 void UOXFile::getShort( SI16 *buff, UI32 number )
 {
-    number *= sizeof(SI16);
-    memcpy( buff, memPtr+bIndex, number);
-    bIndex += number;
+	number *= sizeof(SI16);
+	memcpy( buff, memPtr+bIndex, number);
+	bIndex += number;
 }
 
 void UOXFile::getULong( UI32 *buff, UI32 number )
@@ -206,12 +204,11 @@ void UOXFile::getLong( SI32 *buff, UI32 number )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadCustomTitle( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads players titles (Karma, Fame, Murder, ect)
 //o-----------------------------------------------------------------------------------------------o
 void LoadCustomTitle( void )
-{ 
+{
 	size_t titlecount = 0;
 	UString tag;
 	UString data;
@@ -243,7 +240,7 @@ void LoadCustomTitle( void )
 		++titlecount;
 	}
 
-	// Murder tags now scriptable in SECTION MURDER - Titles.dfn - Thanks Ab - Zane
+	// Murder tags now scriptable in SECTION MURDER - Titles.dfn
 	CustomTitle = FileLookup->FindEntry( "MURDERER", titles_def );
 	if( CustomTitle == NULL )
 		return;
@@ -258,7 +255,6 @@ void LoadCustomTitle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadSkills( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load skills from definition files
 //o-----------------------------------------------------------------------------------------------o
@@ -311,7 +307,7 @@ void LoadSkills( void )
 						else if( UTag == "NAME" )
 							cwmWorldState->skill[i].name = data.stripWhiteSpace();
 						else
-							Console.Warning( "Unknown tag in skills.dfn: %s", data.stripWhiteSpace().c_str() );
+							Console.warning( format("Unknown tag in skills.dfn: %s", data.stripWhiteSpace().c_str() ));
 					}
 				}
 			}
@@ -321,7 +317,6 @@ void LoadSkills( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadSpawnRegions( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads spawning regions from definition files
 //o-----------------------------------------------------------------------------------------------o
@@ -347,7 +342,7 @@ void LoadSpawnRegions( void )
 					cwmWorldState->spawnRegions[i]->Load( toScan );
 				}
 				else
-					Console.Warning( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i );
+					Console.warning( format("spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i) );
 			}
 		}
 	}
@@ -355,7 +350,6 @@ void LoadSpawnRegions( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadRegions( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load regions from regions.dfn and townregions from regions.wsc
 //o-----------------------------------------------------------------------------------------------o
@@ -395,7 +389,7 @@ void LoadRegions( void )
 						cwmWorldState->townRegions[i]->Load( ourRegions );
 				}
 				else
-					Console.Warning( "regions.dfn has a duplicate REGION entry, Entry Number: %u", i );
+					Console.warning( format("regions.dfn has a duplicate REGION entry, Entry Number: %u", i) );
 			}
 		}
 	}
@@ -412,7 +406,7 @@ void LoadRegions( void )
 		ourRegions = NULL;
 	}
 	ScriptSection *InstaLog = FileLookup->FindEntry( "INSTALOG", regions_def );
-	if( InstaLog == NULL ) 
+	if( InstaLog == NULL )
 		return;
 	LogoutLocationEntry toAdd;
 	UString data, UTag;
@@ -420,9 +414,9 @@ void LoadRegions( void )
 	{
 		UTag = tag.upper();
 		data	= InstaLog->GrabData();
-		if( UTag == "X1" ) 
+		if( UTag == "X1" )
 			toAdd.x1 = data.toShort();
-		else if( UTag == "Y1" ) 
+		else if( UTag == "Y1" )
 			toAdd.y1 = data.toShort();
 		else if( UTag == "X2" )
 			toAdd.x2 = data.toShort();
@@ -438,20 +432,19 @@ void LoadRegions( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadTeleportLocations( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load teleport locations from definition files
 //o-----------------------------------------------------------------------------------------------o
 void LoadTeleportLocations( void )
 {
-	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "teleport.scp"; 
+	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "teleport.scp";
 	cwmWorldState->teleLocs.resize( 0 );
-	
+
 	if( !FileExists( filename ) )
 	{
 		Console << myendl;
-		Console.Error( " Failed to open teleport data script %s", filename.c_str() );
-		Console.Error( " Teleport Data not found" );
+		Console.error(format(" Failed to open teleport data script %s", filename.c_str()) );
+		Console.error(format( " Teleport Data not found") );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -504,7 +497,7 @@ void LoadTeleportLocations( void )
 							cwmWorldState->teleLocs.push_back( toAdd );
 						}
 						else
-							Console.Error( "Insufficient parameters for teleport entry" );
+							Console.error( "Insufficient parameters for teleport entry" );
 					}
 				}
 			}
@@ -515,7 +508,6 @@ void LoadTeleportLocations( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	LoadCreatures()
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads creatures from creature definition files
 //o-----------------------------------------------------------------------------------------------o
@@ -637,7 +629,6 @@ void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadPlaces( void )
-//|	Org/team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load locations from location definition files
 //o-----------------------------------------------------------------------------------------------o
@@ -660,7 +651,7 @@ void LoadPlaces( void )
 			if( entryName.section( " ", 0, 0 ).upper() == "LOCATION" && entryNum )
 			{
 				if( cwmWorldState->goPlaces.find( entryNum ) != cwmWorldState->goPlaces.end() )
-					Console.Warning( "Doubled up entry in Location.dfn (%u)", entryNum );
+					Console.warning( format("Doubled up entry in Location.dfn (%u)", entryNum) );
 				toAdd = &cwmWorldState->goPlaces[entryNum];
 				if( toAdd != NULL )
 				{
@@ -710,8 +701,6 @@ void LoadPlaces( void )
 //o-----------------------------------------------------------------------------------------------o
 bool FileExists( const std::string& filepath )
 {
-    auto temp = std::filesystem::path( filepath );
-    return std::filesystem::exists(temp);
-}
-
+	auto temp = std::filesystem::path( filepath );
+	return std::filesystem::exists(temp);
 }

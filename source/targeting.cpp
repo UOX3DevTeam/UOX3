@@ -19,12 +19,9 @@
 
 #include "ObjectFactory.h"
 #include "PartySystem.h"
+#include "StringUtility.hpp"
 
-#undef DBGFILE
-#define DBGFILE "targeting.cpp"
 
-namespace UOX
-{
 
 void tweakItemMenu( CSocket *s, CItem *j );
 void tweakCharMenu( CSocket *s, CChar *c );
@@ -42,23 +39,23 @@ void PlVBuy( CSocket *s )
 
 	CChar *vChar = static_cast<CChar *>(s->TempObj());
 	s->TempObj( NULL );
-	if( !ValidateObject( vChar ) || vChar->isFree() ) 
+	if( !ValidateObject( vChar ) || vChar->isFree() )
 		return;
 
 	CChar *mChar	= s->CurrcharObj();
 	UI32 gleft		= GetItemAmount( mChar, 0x0EED );
 
 	CItem *p		= mChar->GetPackItem();
-	if( !ValidateObject( p ) ) 
+	if( !ValidateObject( p ) )
 	{
-		s->sysmessage( 773 ); 
-		return; 
+		s->sysmessage( 773 );
+		return;
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) || i->GetCont() == NULL ) 
+	if( !ValidateObject( i ) || i->GetCont() == NULL )
 		return;
-	
+
 	if( FindItemOwner( i ) != vChar )
 		return;
 	if( vChar->GetNPCAiType() != AI_PLAYERVENDOR )
@@ -71,18 +68,18 @@ void PlVBuy( CSocket *s )
 	if ( i->GetBuyValue() <= 0 )
 		return;
 
-	if( gleft < i->GetBuyValue() ) 
+	if( gleft < i->GetBuyValue() )
 	{
 		vChar->TextMessage( s, 1000, TALK, false );
 		return;
-	} 
-	else 
+	}
+	else
 	{
-		UI32 tAmount = DeleteItemAmount( mChar, i->GetBuyValue(), 0x0EED );
+		DeleteItemAmount( mChar, i->GetBuyValue(), 0x0EED );
 		// tAmount > 0 indicates there wasn't enough money...
 		// could be expanded to take money from bank too...
 	}
-	
+
 	vChar->TextMessage( s, 1001, TALK, false );
 	vChar->SetHoldG( vChar->GetHoldG() + i->GetBuyValue() );
 
@@ -247,7 +244,6 @@ void BuildHouseTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void AddScriptNpc( CSocket *s )
 //|	Date		-	17th February, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add NPC at targeted location
 //| Notes		-	Need to return the character we've made, else summon creature at least will fail
@@ -258,12 +254,12 @@ void AddScriptNpc( CSocket *s )
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
-	
+
 	CChar *mChar			= s->CurrcharObj();
 	const SI16 coreX		= s->GetWord( 11 );
 	const SI16 coreY		= s->GetWord( 13 );
 	const SI08 coreZ		= static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
-	CChar *cCreated			= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceID() );
+	Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceID() );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -301,7 +297,7 @@ void TeleTarget( CSocket *s )
 	}
 	CChar *mChar = s->CurrcharObj();
 
-	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false ) )	
+	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false ) )
 	{
 		if( s->CurrentSpellType() != 2 )  // not a wand cast
 		{
@@ -314,12 +310,12 @@ void TeleTarget( CSocket *s )
 				Magic->DelReagents( mChar, toDel );
 			}
 		}
-		
+
 		Effects->PlaySound( s, 0x01FE, true );
-		
+
 		mChar->SetLocation( targX, targY, targZ );
 		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
-	} 
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -369,8 +365,8 @@ void DyeTarget( CSocket *s )
 				if( colour < 0x0002 || colour > 0x03E9 )
 					colour = 0x03E9;
 			}
-			
-			SI32 b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
+
+			SI32 b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);
 			if( !b )
 				i->SetColour( colour );
 		}
@@ -382,11 +378,11 @@ void DyeTarget( CSocket *s )
 			UI16 body = c->GetID();
 			UI16 k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
 
-			if( (k&0x4000) == 0x4000 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
+			if( (k&0x4000) == 0x4000 && ( body >= 0x0190 && body <= 0x03E1 ) )
 				k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
-			
+
 			if( k != 0x8000 ) // 0x8000 also crashes client ...
-			{	
+			{
 				c->SetSkin( k );
 				c->SetOrgSkin( k );
 			}
@@ -397,7 +393,7 @@ void DyeTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void WstatsTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Show NPC wander information for targeted NPC 
+//|	Purpose		-	Show NPC wander information for targeted NPC
 //o-----------------------------------------------------------------------------------------------o
 void WstatsTarget( CSocket *s )
 {
@@ -414,9 +410,9 @@ void WstatsTarget( CSocket *s )
 	wStat.AddData( "Name", i->GetName() );
 	wStat.AddData( "X", i->GetX() );
 	wStat.AddData( "Y", i->GetY() );
-	char temp[15];
-	sprintf( temp, "%d", i->GetZ() );
-	wStat.AddData( "Z", temp );
+
+
+	wStat.AddData( "Z", format( "%d", i->GetZ() ) );
 	wStat.AddData( "Wander", i->GetNpcWander() );
 	wStat.AddData( "FX1", i->GetFx( 0 ) );
 	wStat.AddData( "FY1", i->GetFy( 0 ) );
@@ -447,7 +443,7 @@ void ColorsTarget( CSocket *s )
 			return;
 		}
 	}
-	
+
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) )
 		return;
@@ -553,9 +549,9 @@ void InfoTarget( CSocket *s )
 			CLand& land = Map->SeekLand( map1.id );
 			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
 			mapStat.AddData( "Name", land.Name() );
-		}		
+		}
 		mapStat.Send( 4, false, INVALIDSERIAL );
-	} 
+	}
 	else
 	{
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
@@ -685,7 +681,7 @@ void TweakTarget( CSocket *s )
 	CChar *c		= calcCharObjFromSer( serial );
 	if( ValidateObject( c ) )
 		tweakCharMenu( s, c );
-	else 
+	else
 	{
 		CItem *i = calcItemObjFromSer( serial );
 		if( ValidateObject( i ) )
@@ -696,7 +692,6 @@ void TweakTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Tiling( CSocket *s )
 //|	Date		-	01/11/1999
-//|	Programmer	-	Crwth
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clicking the corners of tiling calls this function. Will fill up each tile
 //|					of targeted area with specified item
@@ -721,29 +716,29 @@ void Tiling( CSocket *s )
 
 	s->ClickX( -1 );
 	s->ClickY( -1 );
-	
-	if( x1 > x2 ) 
-	{ 
+
+	if( x1 > x2 )
+	{
 		j = x1;
 		x1 = x2;
 		x2 = j;
 	}
-	if( y1 > y2 ) 
-	{ 
-		j = y1; 
-		y1 = y2; 
+	if( y1 > y2 )
+	{
+		j = y1;
+		y1 = y2;
 		y2 = j;
 	}
-	
+
 	UI16 addid = (UI16)(( ( s->AddID1() ) << 8 ) + s->AddID2());
 
 	CItem *c = NULL;
 	for( SI16 x = x1; x <= x2; ++x )
 	{
-		for( SI16 y = y1; y <= y2; ++y ) 
+		for( SI16 y = y1; y <= y2; ++y )
 		{
 			c = Items->CreateItem( NULL, s->CurrcharObj(), addid, 1, 0, OT_ITEM );
-			if( !ValidateObject( c ) ) 
+			if( !ValidateObject( c ) )
 				return;
 			c->SetDecayable( false );
 			c->SetLocation( x, y, s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
@@ -761,9 +756,9 @@ void Tiling( CSocket *s )
 bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 {
 	CItem *toCreate = Items->CreateItem( NULL, mChar, partID, 1, 0, OT_ITEM );
-	if( !ValidateObject( toCreate ) ) 
+	if( !ValidateObject( toCreate ) )
 		return false;
-	toCreate->SetName( UString::sprintf( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetName( format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
 	toCreate->SetLocation( corpse );
 	toCreate->SetOwner( corpse->GetOwnerObj() );
 	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
@@ -773,16 +768,15 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void newCarveTarget( CSocket *s, CItem *i )
 //|	Date		-	09/22/2002
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Target carving system.
-//|									
+//|
 //|	Changes		-	unknown   	-	Human-corpse carving code added
-//|									
+//|
 //|	Changes		-	unknown   	-	Scriptable carving product added
-//|									
-//|	Changes		-	09/22/2002	-	Xuri - Fixed erroneous names for body parts 
-//|									& made all body parts that are carved from human corpse	
+//|
+//|	Changes		-	09/22/2002	-	Fixed erroneous names for body parts
+//|									& made all body parts that are carved from human corpse
 //|									lie in same direction.
 //o-----------------------------------------------------------------------------------------------o
 void newCarveTarget( CSocket *s, CItem *i )
@@ -791,14 +785,14 @@ void newCarveTarget( CSocket *s, CItem *i )
 
 	CChar *mChar = s->CurrcharObj();
 	CItem *c = Items->CreateItem( NULL, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
-	if( c == NULL ) 
+	if( c == NULL )
 		return;
 	c->SetLocation( i );
 	c->SetMovable( 2 );
 	c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 
 	// if it's a human corpse
-	// Sept 22, 2002 - Xuri - Corrected the alignment of body parts that are carved.
+	// Sept 22, 2002 - Corrected the alignment of body parts that are carved.
 	if( i->GetTempVar( CITV_MOREY, 2 ) )
 	{
 		ScriptSection *toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
@@ -833,10 +827,10 @@ void newCarveTarget( CSocket *s, CItem *i )
 			}
 		}
 		i->Delete();
-	} 
+	}
 	else
 	{
-		UString sect			= "CARVE " + UString::number( i->GetCarve() );
+		UString sect			= std::string("CARVE ") + str_number( i->GetCarve() );
 		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
 		if( toFind == NULL )
 			return;
@@ -867,8 +861,8 @@ void AttackTarget( CSocket *s )
 	CChar *target	= static_cast<CChar *>(s->TempObj());
 	CChar *target2	= calcCharObjFromSer( s->GetDWord( 7 ) );
 	s->TempObj( NULL );
-	
-	if( !ValidateObject( target2 ) || !ValidateObject( target ) ) 
+
+	if( !ValidateObject( target2 ) || !ValidateObject( target ) )
 		return;
 	if( target2 == target )
 	{
@@ -906,7 +900,7 @@ void FollowTarget( CSocket *s )
 	s->TempObj( NULL );
 	if( !ValidateObject( char1 ) || !ValidateObject( char2 ) )
 		return;
-	
+
 	char1->SetFTarg( char2 );
 	char1->SetNpcWander( WT_FOLLOW );
 }
@@ -922,7 +916,7 @@ void TransferTarget( CSocket *s )
 	CChar *char1 = static_cast<CChar *>(s->TempObj());
 	CChar *char2 = calcCharObjFromSer( s->GetDWord( 7 ) );
 	s->TempObj( NULL );
-	
+
 	if( !ValidateObject( char1 ) )
 		return;
 
@@ -940,7 +934,7 @@ void TransferTarget( CSocket *s )
 	Npcs->stopPetGuarding( char1 );
 
 	char1->TextMessage( NULL, 1074, TALK, false, char1->GetName().c_str(), char2->GetName().c_str() );
-	
+
 	char1->SetOwner( char2 );
 	char1->SetFTarg( NULL );
 	char1->SetNpcWander( WT_FREE );
@@ -969,7 +963,7 @@ bool BuyShop( CSocket *s, CChar *c )
 
 	CItem *sellPack		= c->GetItemAtLayer( IL_SELLCONTAINER );
 	CItem *boughtPack	= c->GetItemAtLayer( IL_BOUGHTCONTAINER );
-	
+
 	if( !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
 		return false;
 
@@ -1005,11 +999,10 @@ bool BuyShop( CSocket *s, CChar *c )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void NpcResurrectTarget( CChar *i )
-//|	Programmer	-	UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resurrects a character
 //o-----------------------------------------------------------------------------------------------o
-//|	Changes		-	09/22/2002	-	Xuri - Made players not appear with full 
+//|	Changes		-	09/22/2002	-	Made players not appear with full
 //|									health/stamina after being resurrected by NPC Healer
 //o-----------------------------------------------------------------------------------------------o
 void NpcResurrectTarget( CChar *i )
@@ -1019,7 +1012,7 @@ void NpcResurrectTarget( CChar *i )
 
 	if( i->IsNpc() )
 	{
-		Console.Error( Dictionary->GetEntry( 1079 ).c_str(), i );
+		Console.error( format(Dictionary->GetEntry( 1079 ), i));
 		return;
 	}
 	CSocket *mSock = i->GetSocket();
@@ -1066,7 +1059,7 @@ void NpcResurrectTarget( CChar *i )
 				beardItem->SetCont( i );
 			}
 
-			// Sept 22, 2002 - Xuri
+			// Sept 22, 2002 -
 			i->SetHP( i->GetMaxHP() / 10 );
 			i->SetStamina( i->GetMaxStam() / 10 );
 			//
@@ -1082,13 +1075,13 @@ void NpcResurrectTarget( CChar *i )
 				{
 					if( j->GetLayer() == IL_BUYCONTAINER )
 					{
-						j->SetLayer( IL_PACKITEM );	
+						j->SetLayer( IL_PACKITEM );
 						i->SetPackItem( j );
 					}
 					if( j->GetSerial() == i->GetRobe() )
 					{
 						j->Delete();
-						
+
 						c = Items->CreateScriptItem( NULL, i, "resurrection_robe", 1, OT_ITEM );
 						if( c != NULL )
 							c->SetCont( i );
@@ -1100,7 +1093,7 @@ void NpcResurrectTarget( CChar *i )
 			mSock->sysmessage( 1080 );
 	}
 	else
-		Console.Warning( "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() );
+		Console.warning( format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()) );
 }
 
 void killKeys( SERIAL targSerial );
@@ -1121,7 +1114,7 @@ void HouseOwnerTarget( CSocket *s )
 		return;
 
 	SERIAL o_serial = s->GetDWord( 7 );
-	if( o_serial == INVALIDSERIAL ) 
+	if( o_serial == INVALIDSERIAL )
 		return;
 
 	CChar *own = calcCharObjFromSer( o_serial );
@@ -1166,7 +1159,7 @@ void HouseEjectTarget( CSocket *s )
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
 	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) ) 
+	if( ValidateObject( c ) && ValidateObject( h ) )
 	{
 		SI16 x1, y1, x2, y2;
 		Map->MultiArea( h, x1, y1, x2, y2 );
@@ -1175,7 +1168,7 @@ void HouseEjectTarget( CSocket *s )
 			c->SetLocation( x2, (y2+1), c->GetZ() );
 			s->sysmessage( 1083 );
 		}
-		else 
+		else
 			s->sysmessage( 1084 );
 	}
 }
@@ -1192,14 +1185,14 @@ void HouseBanTarget( CSocket *s )
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
 	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) ) 
+	if( ValidateObject( c ) && ValidateObject( h ) )
 	{
 		UI08 r = AddToHouse( h, c, 1 );
-		if( r == 1 ) 
+		if( r == 1 )
 			s->sysmessage( 1085, c->GetName().c_str() );
-		else if( r == 2 ) 
+		else if( r == 2 )
 			s->sysmessage( 1086 );
-		else 
+		else
 			s->sysmessage( 1087 );
 	}
 }
@@ -1215,19 +1208,19 @@ void HouseFriendTarget( CSocket *s )
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
 	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) ) 
+	if( ValidateObject( c ) && ValidateObject( h ) )
 	{
 		UI08 r = AddToHouse( h, c );
-		if( r == 1 ) 
+		if( r == 1 )
 		{
 			CSocket *cSock = c->GetSocket();
 			if( cSock != NULL )
 				cSock->sysmessage( 1089 );
 			s->sysmessage( 1088, c->GetName().c_str() );
-		} 
-		else if( r == 2 ) 
+		}
+		else if( r == 2 )
 			s->sysmessage( 1090 );
-		else 
+		else
 			s->sysmessage( 1091 );
 	}
 }
@@ -1244,12 +1237,12 @@ void HouseUnlistTarget( CSocket *s )
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
 	CMultiObj *h	=  static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) ) 
+	if( ValidateObject( c ) && ValidateObject( h ) )
 	{
 		bool r = DeleteFromHouseList( h, c, static_cast<UI08>(s->TempInt()) );
 		if( r )
 			s->sysmessage( 1092, c->GetName().c_str() );
-		else 
+		else
 			s->sysmessage( 1093 );
 	}
 }
@@ -1281,8 +1274,9 @@ void ShowSkillTarget( CSocket *s )
 		else
 			skillVal = mChar->GetSkill( i );
 
-		if( skillVal > 0 || dispType%2 == 0 )
-			showSkills.AddData( cwmWorldState->skill[i].name, UString::number( (R32)skillVal/10 ), 8 );
+		if( skillVal > 0 || dispType%2 == 0 ){
+			showSkills.AddData( cwmWorldState->skill[i].name, str_number( (R32)skillVal/10 ), 8 );
+		}
 	}
 	showSkills.Send( 4, false, INVALIDSERIAL );
 }
@@ -1341,7 +1335,6 @@ void FriendTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void GuardTarget( CSocket *s )
 //|	Date		-	October 3rd, ????
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Command pet to guard target object
 //|	Notes		-	PRE: Pet has been commanded to guard
@@ -1395,7 +1388,6 @@ void GuardTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HouseLockdown( CSocket *s )
 //|	Date		-	17th December, 1999
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attempt to lock down targeted item inside house
 //|	Notes		-	PRE: S is the socket of a valid owner/coowner and is in a valid house
@@ -1445,7 +1437,6 @@ void HouseLockdown( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HouseRelease( CSocket *s )
 //|	Date		-	17th December, 1999
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attempt to release targeted item inside house, if locked down
 //|	Notes		-	PRE: S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
@@ -1512,7 +1503,7 @@ void MakeTownAlly( CSocket *s )
 	UI16 srcTown = mChar->GetTown();
 	UI16 trgTown = targetChar->GetTown();
 
-	if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )	
+	if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )
 		s->sysmessage( 1111 );
 }
 
@@ -1534,19 +1525,20 @@ void MakeStatusTarget( CSocket *sock )
 	UI08 origCommand			= targetChar->GetCommandLevel();
 	commandLevel_st *targLevel	= Commands->GetClearance( sock->XText() );
 	commandLevel_st *origLevel	= Commands->GetClearance( origCommand );
-	
+
 	if( targLevel == NULL )
 	{
 		sock->sysmessage( 1112 );
 		return;
 	}
 	CChar *mChar = sock->CurrcharObj();
-	char temp[1024], temp2[1024];
+	//char temp[1024], temp2[1024];
 
 	UI08 targetCommand = targLevel->commandLevel;
-	sprintf( temp, "account%i.log", mChar->GetAccount().wAccountIndex );
-	sprintf( temp2, "%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
-	Console.Log( temp2, temp );
+	auto temp = format("account%i.log", mChar->GetAccount().wAccountIndex );
+	auto temp2 = format("%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
+
+	Console.log( temp2, temp );
 
 	DismountCreature( targetChar );
 
@@ -1563,7 +1555,7 @@ void MakeStatusTarget( CSocket *sock )
 
 	targetChar->SetPriv( targLevel->defaultPriv );
 	targetChar->SetCommandLevel( targetCommand );
-	
+
 	if( targLevel->allSkillVals != 0 )
 	{
 		for( UI08 j = 0; j < ALLSKILLS; ++j )
@@ -1586,10 +1578,12 @@ void MakeStatusTarget( CSocket *sock )
 		if( position != std::string::npos )
 			playerName.replace( position, origLevel->name.size(), "" );
 	}
-	if( targetCommand != 0 && targetCommand != origCommand )
-		targetChar->SetName( UString::sprintf( "%s %s", targLevel->name.c_str(), playerName.stripWhiteSpace().c_str() ).stripWhiteSpace() );
-	else if( origCommand != 0 )
-		targetChar->SetName( playerName.stripWhiteSpace() );
+	if( targetCommand != 0 && targetCommand != origCommand ) {
+		targetChar->SetName( trim(format("%s %s", targLevel->name.c_str(), trim(playerName).c_str() )) );
+	}
+	else if( origCommand != 0 ){
+		targetChar->SetName( trim(playerName) );
+	}
 
 	CItem *mypack	= targetChar->GetPackItem();
 
@@ -1619,7 +1613,7 @@ void MakeStatusTarget( CSocket *sock )
 							if( !ValidateObject( mypack ) )
 							{
 								CItem *iMade = Items->CreateItem( NULL, targetChar, 0x0E75, 1, 0, OT_ITEM );
-								if( !ValidateObject( iMade ) ) 
+								if( !ValidateObject( iMade ) )
 									return;
 								targetChar->SetPackItem( iMade );
 								iMade->SetDecayable( false );
@@ -1697,12 +1691,12 @@ void SmeltTarget( CSocket *s )
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		UString itemID = UString::number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
+		UString itemID = str_number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
 		Items->CreateScriptItem( s, mChar, "0x"+itemID, amtToRestore, OT_ITEM, true, itemColour );
 	}
-	
+
 	s->sysmessage( 1116, sumAmountRestored );
 	i->Delete();
 }
@@ -1736,7 +1730,7 @@ void VialTarget( CSocket *mSock )
 		}
 
 		CItem *nDagger = Combat->getWeapon( mChar );
-		if( !ValidateObject( nDagger ) ) 
+		if( !ValidateObject( nDagger ) )
 		{
 			mSock->sysmessage( 742 );
 			return;
@@ -1763,7 +1757,7 @@ void VialTarget( CSocket *mSock )
 					Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
 					targItem->SetTempVar( CITV_MORE, 2, targItem->GetTempVar( CITV_MORE, 2 ) + 1 );
 				}
-				else 
+				else
 					mSock->sysmessage( 751 );
 			}
 		}
@@ -1782,7 +1776,7 @@ void VialTarget( CSocket *mSock )
 				if( targChar->IsNpc() )
 				{
 					if( targChar->GetID( 1 ) == 0x00 && ( targChar->GetID( 2 ) == 0x0C ||
-						( targChar->GetID( 2 ) >= 0x3B && targChar->GetID( 2 ) <= 0x3D ) ) )
+														 ( targChar->GetID( 2 ) >= 0x3B && targChar->GetID( 2 ) <= 0x3D ) ) )
 						nVialID->SetTempVar( CITV_MORE, 1, 1 );
 				}
 				else
@@ -1802,16 +1796,15 @@ void VialTarget( CSocket *mSock )
 			targChar->Damage( RandomNum( 0, 5 ) + 2 );
 			Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
 		}
-	}	
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPITargetCursor::Handle( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs various commands based upon the target ID we sent to the socket
 //o-----------------------------------------------------------------------------------------------o
-//| Changes		-	Overhauled to use an enum allowing simple modification (Zane)
+//| Changes		-	Overhauled to use an enum allowing simple modification
 //o-----------------------------------------------------------------------------------------------o
 bool CPITargetCursor::Handle( void )
 {
@@ -1822,10 +1815,10 @@ bool CPITargetCursor::Handle( void )
 		{
 			if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
 				mChar->StopSpell();
-			return true; // do nothing if user cancels, avoids CRASH! - Morrolan
+			return true; // do nothing if user cancels, avoids CRASH!
 		}
 		if( tSock->GetByte( 1 ) == 1 && !tSock->GetDWord( 7 ) )
-			tSock->SetDWord( 7, INVALIDSERIAL );	// Client sends TargSer as 0 when we target an XY/Static, use INVALIDSERIAL as 0 could be a valid Serial - giwo
+			tSock->SetDWord( 7, INVALIDSERIAL );	// Client sends TargSer as 0 when we target an XY/Static, use INVALIDSERIAL as 0 could be a valid Serial -
 
 		UI08 a1 = tSock->GetByte( 2 );
 		UI08 a2 = tSock->GetByte( 3 );
@@ -1848,18 +1841,20 @@ bool CPITargetCursor::Handle( void )
 			}
 			else if( a3 == 1 )	// CustomTarget
 			{
-				cScript *tScript	= reinterpret_cast<cScript *>(tSock->TempInt());
+				///not a great fix, but better then assuming a ptr size .
+				cScript *tScript = tSock->scriptForCallBack ;
+				//cScript *tScript	= reinterpret_cast<cScript *>(tSock->TempInt());
 				if( tScript != NULL )
 					tScript->DoCallback( tSock, tSock->GetDWord( 7 ), static_cast<UI08>(targetID) );
 				return true;
 			}
- 			else if( a3 == 0 )
+			else if( a3 == 0 )
 			{
 				switch( targetID )
 				{
 					case TARGET_ADDSCRIPTNPC:	AddScriptNpc( tSock );					break;
 					case TARGET_BUILDHOUSE:		BuildHouseTarget( tSock );				break;
-					case TARGET_TELE:			TeleTarget( tSock );					break;	
+					case TARGET_TELE:			TeleTarget( tSock );					break;
 					case TARGET_DYE:			DyeTarget( tSock );						break;
 					case TARGET_DYEALL:			ColorsTarget( tSock );					break;
 					case TARGET_DVAT:			DvatTarget( tSock );					break;
@@ -1872,12 +1867,12 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;
 					case TARGET_SHOWSKILLS:		ShowSkillTarget( tSock );				break;
-					// Vendors
+						// Vendors
 					case TARGET_PLVBUY:			PlVBuy( tSock );						break;
-					// Town Stuff
+						// Town Stuff
 					case TARGET_TOWNALLY:		MakeTownAlly( tSock );					break;
 					case TARGET_VOTEFORMAYOR:	cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor( tSock ); break;
-					// House Functions
+						// House Functions
 					case TARGET_HOUSEOWNER:		HouseOwnerTarget( tSock );				break;
 					case TARGET_HOUSEEJECT:		HouseEjectTarget( tSock );				break;
 					case TARGET_HOUSEBAN:		HouseBanTarget( tSock );				break;
@@ -1885,15 +1880,15 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_HOUSEUNLIST:	HouseUnlistTarget( tSock );				break;
 					case TARGET_HOUSELOCKDOWN:	HouseLockdown( tSock );					break;
 					case TARGET_HOUSERELEASE:	HouseRelease( tSock );					break;
-					// Pets
+						// Pets
 					case TARGET_FOLLOW:			FollowTarget( tSock );					break;
 					case TARGET_ATTACK:			AttackTarget( tSock );					break;
 					case TARGET_TRANSFER:		TransferTarget( tSock );				break;
 					case TARGET_GUARD:			GuardTarget( tSock );					break;
 					case TARGET_FRIEND:			FriendTarget( tSock );					break;
-					// Magic
-					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;					
-					// Skills Functions
+						// Magic
+					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;
+						// Skills Functions
 					case TARGET_ITEMID:			Skills->ItemIDTarget( tSock );			break;
 					case TARGET_FISH:			Skills->FishTarget( tSock );			break;
 					case TARGET_SMITH:			Skills->Smith( tSock );					break;
@@ -1911,6 +1906,4 @@ bool CPITargetCursor::Handle( void )
 	}
 	mChar->BreakConcentration( tSock );
 	return true;
-}
-
 }

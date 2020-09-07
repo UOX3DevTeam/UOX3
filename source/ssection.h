@@ -7,19 +7,18 @@
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 
-namespace UOX
-{
+#include "ustring.h"
 
 // 04302004 - Added a new tag DFNTAG_ADDMENUITEM to support the auto generation of the addmenu based on items that are contained in the DFN's
-//						We will still use the menu group item and group/subgroup stuff, however we will no longer have a list of items in a dfn that 
-//						we display in the addmenu. 
+//						We will still use the menu group item and group/subgroup stuff, however we will no longer have a list of items in a dfn that
+//						we display in the addmenu.
 //						Format: ADDMENUITEM=Group/SubGroupID,ImageID,PositionWeight,Type,Flags
 //						Where:
 //							Group				: Actual group owner that this item will be listed under on the addmenu gump
-//							TileID				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display 
+//							TileID				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display
 //							PositionWeight		:	Basic measure in which is used to base the items location in the addmenu page.
 //													Basically a value of 0 - 8/10 which ever max amount of entries we get on an addgump page
-//													(0) having the highest priority, etc. To kind of help sorting Otherwise items will be listed 
+//													(0) having the highest priority, etc. To kind of help sorting Otherwise items will be listed
 //													as they are read in from the DFN's at parsing time.
 //							Flags				:	(0) not visible on the addmenu  (1) Visible on the addmenu
 //							ObjectID			: This is the ID number that is added via the addmenu. ADDITEM=ObjectID escentially
@@ -232,8 +231,8 @@ typedef struct __ADDMENUITEM__
 	UI32	weightPosition;
 	UI32	objectFlags;
 	UI32	objectID;
-	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ), 
-		weightPosition( 0 ), objectFlags( 0 ), objectID( 0 )
+	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ),
+	weightPosition( 0 ), objectFlags( 0 ), objectID( 0 )
 	{
 	}
 } ADDMENUITEM, *LPADDMENUITEM;
@@ -278,9 +277,9 @@ private:
 	UString					itemListData;
 
 public:
-							ScriptSection( void );
-							ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
-							~ScriptSection();
+	ScriptSection( void );
+	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
+	~ScriptSection();
 	const UString			First( void );
 	DFNTAGS					FirstTag( void );
 	const UString			Next( void );
@@ -303,8 +302,6 @@ public:
 	const UString			NpcListData( void ) const;
 	void					createSection( std::fstream& inputbuf );
 };
-
-}
 
 #endif
 

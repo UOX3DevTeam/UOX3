@@ -4,8 +4,6 @@
 #include <cstdint>
 #include <fstream>
 #include <tuple>
-namespace UOX
-{
 
 class UOXFile
 {
@@ -34,10 +32,7 @@ private:
 	size_t		fileSize;	// file size
 	size_t		bIndex;		// current position
 
-    bool usingUOP;
-    
+	bool usingUOP;
 };
-
-}
 
 #endif

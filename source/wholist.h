@@ -1,9 +1,6 @@
 #ifndef __WHOLIST_H__
 #define __WHOLIST_H__
 
-namespace UOX
-{
-
 class cWhoList
 {
 private:
@@ -20,8 +17,8 @@ private:
 	void Delete( void );
 	void Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed );
 public:
-			cWhoList( bool trulyOnline = true );
-			~cWhoList();
+	cWhoList( bool trulyOnline = true );
+	~cWhoList();
 	void	FlagUpdate( void );
 	void	SendSocket( CSocket *toSendTo );
 	void	GMEnter( void );
@@ -33,8 +30,6 @@ public:
 
 extern cWhoList *WhoList;
 extern cWhoList *OffList;
-
-}
 
 #endif
 

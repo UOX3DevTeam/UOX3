@@ -9,10 +9,6 @@
 #include "PartySystem.h"
 #include "cGuild.h"
 
-namespace UOX
-{
-
-
 // Unknown bytes
 // 5->8
 // 18->27
@@ -27,31 +23,31 @@ namespace UOX
 //|					Size: 37 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] player id 
-//|						BYTE[4] unknown1 
-//|						BYTE[2] bodyType 
-//|						BYTE[2] xLoc 
-//|						BYTE[2] yLoc 
-//|						BYTE[2] zLoc 
-//|						BYTE direction 
-//|						BYTE[2] unknown2 
-//|						BYTE[4] unknown3 (usually has FF somewhere in it) 
-//|						BYTE[4] unknown4 
-//|						BYTE flag byte 
-//|						BYTE highlight color 
-//|						BYTE[7] unknown5 
+//|						BYTE cmd
+//|						BYTE[4] player id
+//|						BYTE[4] unknown1
+//|						BYTE[2] bodyType
+//|						BYTE[2] xLoc
+//|						BYTE[2] yLoc
+//|						BYTE[2] zLoc
+//|						BYTE direction
+//|						BYTE[2] unknown2
+//|						BYTE[4] unknown3 (usually has FF somewhere in it)
+//|						BYTE[4] unknown4
+//|						BYTE flag byte
+//|						BYTE highlight color
+//|						BYTE[7] unknown5
 //|
 //|					Newer, more up to date version of the packet. When did it change?
-//|						BYTE cmd 
-//|						BYTE[4] player id 
-//|						BYTE[4] unknown1 
-//|						BYTE[2] bodyType 
-//|						BYTE[2] xLoc 
+//|						BYTE cmd
+//|						BYTE[4] player id
+//|						BYTE[4] unknown1
+//|						BYTE[2] bodyType
+//|						BYTE[2] xLoc
 //|						BYTE[2] yLoc
 //|						BYTE Unknown (0x0)
-//|						BYTE zLoc 
-//|						BYTE direction 
+//|						BYTE zLoc
+//|						BYTE direction
 //|						BYTE[4] unknown2 (0x0, Described as X in Jerrith's old docs)
 //|						BYTE[4] unknown3 (0x0, Described as Y in Jerrith's old docs)
 //|						BYTE unknown4 (0x0)
@@ -150,14 +146,14 @@ void CPCharLocBody::HighlightColour( UI08 color )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[4] itemID (FF FF FF FF = system) 
-//|						BYTE[2] model (item hex # - FF FF = system) 
-//|						BYTE Type 
-//|						BYTE[2] Text Color 
-//|						BYTE[2] Font 
-//|						BYTE[30] Name 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[4] itemID (FF FF FF FF = system)
+//|						BYTE[2] model (item hex # - FF FF = system)
+//|						BYTE Type
+//|						BYTE[2] Text Color
+//|						BYTE[2] Font
+//|						BYTE[30] Name
 //|						BYTE[?] Null-Terminated Message (? = blockSize - 44)
 //o-----------------------------------------------------------------------------------------------o
 void CPacketSpeech::InternalReset( void )
@@ -196,35 +192,35 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 	Type( toCopy.Type() );
 	switch( toCopy.SpkrType() )
 	{
-	case SPK_UNKNOWN:
-	case SPK_SYSTEM:
-		SpeakerName( "System" );
-		SpeakerModel( INVALIDID );
-		if( toCopy.Colour() == 0 )
-			Colour( 0x0040 );
-		break;
-	case SPK_CHARACTER:
-		CChar *ourChar;
-		ourChar = calcCharObjFromSer( toCopy.Speaker() );
-		if( ValidateObject( ourChar ) )
-		{
-			SpeakerName( ourChar->GetName() );
-			SpeakerModel( ourChar->GetID() );
-		}
-		else
+		case SPK_UNKNOWN:
+		case SPK_SYSTEM:
+			SpeakerName( "System" );
 			SpeakerModel( INVALIDID );
-		break;
-	case SPK_ITEM:
-		CItem *ourItem;
-		ourItem = calcItemObjFromSer( toCopy.Speaker() );
-		if( ValidateObject( ourItem ) )
-		{
-			SpeakerName( ourItem->GetName() );
-			SpeakerModel( ourItem->GetID() );
-		}
-		else
-			SpeakerModel( INVALIDID );
-		break;
+			if( toCopy.Colour() == 0 )
+				Colour( 0x0040 );
+			break;
+		case SPK_CHARACTER:
+			CChar *ourChar;
+			ourChar = calcCharObjFromSer( toCopy.Speaker() );
+			if( ValidateObject( ourChar ) )
+			{
+				SpeakerName( ourChar->GetName() );
+				SpeakerModel( ourChar->GetID() );
+			}
+			else
+				SpeakerModel( INVALIDID );
+			break;
+		case SPK_ITEM:
+			CItem *ourItem;
+			ourItem = calcItemObjFromSer( toCopy.Speaker() );
+			if( ValidateObject( ourItem ) )
+			{
+				SpeakerName( ourItem->GetName() );
+				SpeakerModel( ourItem->GetID() );
+			}
+			else
+				SpeakerModel( INVALIDID );
+			break;
 	}
 	if( toCopy.SpeakerName().length() != 0 )
 		SpeakerName( toCopy.SpeakerName() );
@@ -320,12 +316,12 @@ void CPacketSpeech::Speech( const std::string& toPut )
 //|					Size: 8 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE sequence # 
-//|						BYTE[2] xLoc 
-//|						BYTE[2] yLoc 
-//|						BYTE direction 
-//|						BYTE zLoc 
+//|						BYTE cmd
+//|						BYTE sequence #
+//|						BYTE[2] xLoc
+//|						BYTE[2] yLoc
+//|						BYTE direction
+//|						BYTE zLoc
 //o-----------------------------------------------------------------------------------------------o
 CPWalkDeny::CPWalkDeny()
 {
@@ -362,9 +358,9 @@ void CPWalkDeny::Direction( char newValue )
 //|					Size: 3 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE sequence (matches sent sequence) 
-//|						BYTE notoriety (updates the notoriety of the char) 
+//|						BYTE cmd
+//|						BYTE sequence (matches sent sequence)
+//|						BYTE notoriety (updates the notoriety of the char)
 //o-----------------------------------------------------------------------------------------------o
 CPWalkOK::CPWalkOK()
 {
@@ -389,15 +385,15 @@ void CPWalkOK::FlagColour( UI08 newValue )
 //|					Size: 17 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] player id 
+//|						BYTE cmd
+//|						BYTE[4] player id
 //|						BYTE[2] model
-//|						BYTE[2] xLoc 
-//|						BYTE[2] yLoc 
-//|						BYTE zLoc 
-//|						BYTE direction 
-//|						BYTE[2] hue/skin color 
-//|						BYTE flag (bit field) 
+//|						BYTE[2] xLoc
+//|						BYTE[2] yLoc
+//|						BYTE zLoc
+//|						BYTE direction
+//|						BYTE[2] hue/skin color
+//|						BYTE flag (bit field)
 //|						BYTE highlight color
 //o-----------------------------------------------------------------------------------------------o
 CPExtMove::CPExtMove()
@@ -430,9 +426,9 @@ void CPExtMove::SetFlags( CChar &toCopy )
 	std::bitset< 8 > flag( 0 );
 
 	if( cwmWorldState->ServerData()->ClientSupport7000() || cwmWorldState->ServerData()->ClientSupport7090() ||
-		cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
-		cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
-		cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+	   cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
+	   cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
+	   cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
 	{
 		// Clients 7.0.0.0 and later
 		const UI08 BIT_FROZEN = 0;	//	0x01, frozen/paralyzed
@@ -491,8 +487,8 @@ void CPExtMove::CopyData( CChar &toCopy )
 //|					Size: 5 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] CharID being attacked 
+//|						BYTE cmd
+//|						BYTE[4] CharID being attacked
 //|							ID is set to 00 00 00 00 when attack is refused.
 //o-----------------------------------------------------------------------------------------------o
 void CPAttackOK::CopyData( CChar &toCopy )
@@ -529,8 +525,8 @@ CPAttackOK &CPAttackOK::operator=( CChar &toCopy )
 //|					Size: 5 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] item/char id 
+//|						BYTE cmd
+//|						BYTE[4] item/char id
 //o-----------------------------------------------------------------------------------------------o
 void CPRemoveItem::CopyData( CBaseObject &toCopy )
 {
@@ -566,7 +562,7 @@ CPRemoveItem &CPRemoveItem::operator=( CBaseObject &toCopy )
 //|					Size: 3 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE id1
 //|						BYTE id2
 //|
@@ -604,11 +600,11 @@ void CPWorldChange::Cursor( UI08 newCursor )
 //|					Size: 2 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE level 
-//|							0x00 - day 
+//|						BYTE cmd
+//|						BYTE level
+//|							0x00 - day
 //|							0x09 - OSI night
-//|							0x1F - Black 
+//|							0x1F - Black
 //|							Max normal val = 0x1F
 //o-----------------------------------------------------------------------------------------------o
 CPLightLevel::CPLightLevel()
@@ -707,16 +703,16 @@ void CPUpdIndSkill::Cap( SI16 capVal )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[4] vendorID 
-//|						BYTE flag 
-//|							0x00 - no items following 
-//|							0x02 - items following 
-//|						For each item 
-//|							BYTE (0x1A) 
-//|							BYTE[4] itemID (from 3C packet) 
-//|							BYTE[2] # bought 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[4] vendorID
+//|						BYTE flag
+//|							0x00 - no items following
+//|							0x02 - items following
+//|						For each item
+//|							BYTE (0x1A)
+//|							BYTE[4] itemID (from 3C packet)
+//|							BYTE[2] # bought
 //o-----------------------------------------------------------------------------------------------o
 void CPBuyItem::CopyData( CBaseObject &i )
 {
@@ -749,7 +745,7 @@ void CPBuyItem::InternalReset( void )
 	pStream.WriteByte(  7, 0x00 );
 }
 
-const UI32 loopbackIP = (127<<24) + 1;
+//const UI32 loopbackIP = (127<<24) + 1;
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPRelay()
 //o-----------------------------------------------------------------------------------------------o
@@ -759,10 +755,10 @@ const UI32 loopbackIP = (127<<24) + 1;
 //|					Size: 11 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] gameServer IP 
-//|						BYTE[2] gameServer port 
-//|						BYTE[4] new key 
+//|						BYTE cmd
+//|						BYTE[4] gameServer IP
+//|						BYTE[2] gameServer port
+//|						BYTE[4] new key
 //o-----------------------------------------------------------------------------------------------o
 CPRelay::CPRelay()
 {
@@ -807,13 +803,13 @@ void CPRelay::InternalReset( void )
 //|					Size: 15 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[4] item serial
-//|						BYTE[2] model (item hex #) 
-//|						BYTE (0x00) 
+//|						BYTE[2] model (item hex #)
+//|						BYTE (0x00)
 //|						BYTE layer
-//|						BYTE[4] playerID 
-//|						BYTE[2] color/hue 
+//|						BYTE[4] playerID
+//|						BYTE[2] color/hue
 //o-----------------------------------------------------------------------------------------------o
 CPWornItem::CPWornItem()
 {
@@ -873,52 +869,52 @@ CPWornItem &CPWornItem::operator=( CItem &toCopy )
 //|					Size: 14 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] item/char ID 
-//|						BYTE[2] movement model 
-//|							0x00 = walk 
-//|							0x01 = walk faster 
-//|							0x02 = run 
-//|							0x03 = run (faster?) 
-//|							0x04 = nothing 
-//|							0x05 = shift shoulders 
-//|							0x06 = hands on hips 
-//|							0x07 = attack stance (short) 
-//|							0x08 = attack stance (longer) 
-//|							0x09 = swing (attack with knife) 
-//|							0x0a = stab (underhanded) 
-//|							0x0b = swing (attack overhand with sword) 
-//|							0x0c = swing (attack with sword over and side) 
-//|							0x0d = swing (attack with sword side) 
-//|							0x0e = stab with point of sword 
-//|							0x0f = ready stance 
-//|							0x10 = magic (butter churn!) 
-//|							0x11 = hands over head (balerina) 
-//|							0x12 = bow shot 
-//|							0x13 = crossbow 
-//|							0x14 = get hit 
-//|							0x15 = fall down and die (backwards) 
-//|							0x16 = fall down and die (forwards) 
-//|							0x17 = ride horse (long) 
-//|							0x18 = ride horse (medium) 
-//|							0x19 = ride horse (short) 
-//|							0x1a = swing sword from horse 
-//|							0x1b = normal bow shot on horse 
-//|							0x1c = crossbow shot 
-//|							0x1d = block #2 on horse with shield 
-//|							0x1e = block on ground with shield 
-//|							0x1f = swing, and get hit in middle 
-//|							0x20 = bow (deep) 
-//|							0x21 = salute 
-//|							0x22 = scratch head 
-//|							0x23 = 1 foot forward for 2 secs 
-//|							0x24 = same 
-//|						BYTE unknown1 (0x00) 
-//|						BYTE direction 
-//|						BYTE[2] repeat (1 = once / 2 = twice / 0 = repeat forever) 
-//|						BYTE forward/backwards(0x00=forward, 0x01=backwards) 
-//|						BYTE repeat Flag (0 - Don't repeat / 1 repeat) 
-//|						BYTE frame Delay (0x00 - fastest / 0xFF - Too slow to watch) 
+//|						BYTE cmd
+//|						BYTE[4] item/char ID
+//|						BYTE[2] movement model
+//|							0x00 = walk
+//|							0x01 = walk faster
+//|							0x02 = run
+//|							0x03 = run (faster?)
+//|							0x04 = nothing
+//|							0x05 = shift shoulders
+//|							0x06 = hands on hips
+//|							0x07 = attack stance (short)
+//|							0x08 = attack stance (longer)
+//|							0x09 = swing (attack with knife)
+//|							0x0a = stab (underhanded)
+//|							0x0b = swing (attack overhand with sword)
+//|							0x0c = swing (attack with sword over and side)
+//|							0x0d = swing (attack with sword side)
+//|							0x0e = stab with point of sword
+//|							0x0f = ready stance
+//|							0x10 = magic (butter churn!)
+//|							0x11 = hands over head (balerina)
+//|							0x12 = bow shot
+//|							0x13 = crossbow
+//|							0x14 = get hit
+//|							0x15 = fall down and die (backwards)
+//|							0x16 = fall down and die (forwards)
+//|							0x17 = ride horse (long)
+//|							0x18 = ride horse (medium)
+//|							0x19 = ride horse (short)
+//|							0x1a = swing sword from horse
+//|							0x1b = normal bow shot on horse
+//|							0x1c = crossbow shot
+//|							0x1d = block #2 on horse with shield
+//|							0x1e = block on ground with shield
+//|							0x1f = swing, and get hit in middle
+//|							0x20 = bow (deep)
+//|							0x21 = salute
+//|							0x22 = scratch head
+//|							0x23 = 1 foot forward for 2 secs
+//|							0x24 = same
+//|						BYTE unknown1 (0x00)
+//|						BYTE direction
+//|						BYTE[2] repeat (1 = once / 2 = twice / 0 = repeat forever)
+//|						BYTE forward/backwards(0x00=forward, 0x01=backwards)
+//|						BYTE repeat Flag (0 - Don't repeat / 1 repeat)
+//|						BYTE frame Delay (0x00 - fastest / 0xFF - Too slow to watch)
 //o-----------------------------------------------------------------------------------------------o
 void CPCharacterAnimation::CopyData( CChar &toCopy )
 {
@@ -987,23 +983,23 @@ void CPCharacterAnimation::InternalReset( void )
 //|					Size: 19 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] creature id 
-//|						BYTE[2] bodyType 
-//|						BYTE unknown1 (0) 
-//|						BYTE[2] skin color / hue 
-//|						BYTE flag byte 
-//|						BYTE[2] xLoc 
-//|						BYTE[2] yLoc 
+//|						BYTE cmd
+//|						BYTE[4] creature id
+//|						BYTE[2] bodyType
+//|						BYTE unknown1 (0)
+//|						BYTE[2] skin color / hue
+//|						BYTE flag byte
+//|						BYTE[2] xLoc
+//|						BYTE[2] yLoc
 //|						BYTE[2] unknown2 (0)
-//|						BYTE direction 
-//|						BYTE zLoc 
+//|						BYTE direction
+//|						BYTE zLoc
 //|
 //|						Note: Only used with the character being played by the client.
 //|						Ancient client version Flags:
 //|							0x01 = Unknown
 //|							0x02 = CanAlterPaperdoll
-//|							0x04 = Posioned					
+//|							0x04 = Posioned
 //|							0x08 = Yellow HealthBar
 //|							0x10 = Unknown
 //|							0x20 = Unknown
@@ -1046,9 +1042,9 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 	std::bitset< 8 > flag( 0 );
 
 	if( cwmWorldState->ServerData()->ClientSupport7000() || cwmWorldState->ServerData()->ClientSupport7090() ||
-		cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
-		cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
-		cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+	   cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
+	   cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
+	   cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
 	{
 		// Clients 7.0.0.0 and later
 		const UI08 BIT_FROZEN	= 0;	//	0x01, frozen/paralyzed
@@ -1069,7 +1065,7 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 		const UI08 BIT_POISON	= 2;	//	0x04, poison
 		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
 		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
-				
+
 		flag.set( BIT_INVUL, toCopy.IsInvulnerable() );
 		flag.set( BIT_DEAD, toCopy.IsDead() );
 		flag.set( BIT_POISON, ( toCopy.GetPoisoned() != 0 ) );
@@ -1104,9 +1100,9 @@ CPDrawGamePlayer::CPDrawGamePlayer()
 //|					Size: 6 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] creature id 
-//|						BYTE level 
+//|						BYTE cmd
+//|						BYTE[4] creature id
+//|						BYTE level
 //o-----------------------------------------------------------------------------------------------o
 void CPPersonalLightLevel::CopyData( CChar &toCopy )
 {
@@ -1150,12 +1146,12 @@ CPPersonalLightLevel &CPPersonalLightLevel::operator=( CChar &toCopy )
 //|					Size: 12 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE mode (0x00=quiet, repeating, 0x01=single normally played sound effect) 
-//|						BYTE[2] SoundModel 
-//|						BYTE[2] unknown3 (speed/volume modifier? Line of sight stuff?) 
-//|						BYTE[2] xLoc 
-//|						BYTE[2] yLoc 
+//|						BYTE cmd
+//|						BYTE mode (0x00=quiet, repeating, 0x01=single normally played sound effect)
+//|						BYTE[2] SoundModel
+//|						BYTE[2] unknown3 (speed/volume modifier? Line of sight stuff?)
+//|						BYTE[2] xLoc
+//|						BYTE[2] yLoc
 //|						BYTE[2] zLoc / Or not z at all? Could be related to sequences when sent after packet 0x7B
 //o-----------------------------------------------------------------------------------------------o
 CPPlaySoundEffect::CPPlaySoundEffect()
@@ -1218,9 +1214,9 @@ CPPlaySoundEffect::CPPlaySoundEffect( CBaseObject &toCopy )
 //|					Size: 66 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] charid 
-//|						BYTE[60] text 
+//|						BYTE cmd
+//|						BYTE[4] charid
+//|						BYTE[60] text
 //|						BYTE flag byte
 //o-----------------------------------------------------------------------------------------------o
 void CPPaperdoll::CopyData( CChar &toCopy )
@@ -1274,19 +1270,19 @@ CPPaperdoll &CPPaperdoll::operator=( CChar &toCopy )
 //|					Size: 4 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE type (0x00 – “It starts to rain”, 0x01 – “A fierce storm approaches.”, 0x02 – “It begins to snow”, 0x03 - “A storm is brewing.”, 0xFF – None (turns off sound effects), 0xFE (no effect?? Set temperature?) 
+//|						BYTE cmd
+//|						BYTE type (0x00 – “It starts to rain”, 0x01 – “A fierce storm approaches.”, 0x02 – “It begins to snow”, 0x03 - “A storm is brewing.”, 0xFF – None (turns off sound effects), 0xFE (no effect?? Set temperature?)
 //|						BYTE num (number of weather effects on screen)
-//|						BYTE temperature 
+//|						BYTE temperature
 //|
 //|					Note: Temperature has no effect at present.
 //|					Note: Maximum number of weather effects on screen is 70.
-//|					Note: If it is raining, you can add snow by setting the num to the num of rain 
-//|						currently going, plus the number of snow you want. 
+//|					Note: If it is raining, you can add snow by setting the num to the num of rain
+//|						currently going, plus the number of snow you want.
 //|					Note: Weather messages are only displayed when weather starts.
 //|					Note: Weather will end automatically after 6 minutes without any weather change packets.
 //|					Note: You can totally end weather (to display a new message) by teleporting.
-//|						I think it’s either the 0x78 or 0x20 messages that reset it, though I 
+//|						I think it’s either the 0x78 or 0x20 messages that reset it, though I
 //|						haven’t checked to be sure (other possibilities, 0x4F or 0x4E)
 //o-----------------------------------------------------------------------------------------------o
 void CPWeather::InternalReset( void )
@@ -1346,26 +1342,26 @@ void CPWeather::Temperature( UI08 nTemp )
 //|					Size: 28 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE direction type 
-//|							00 = go from source to dest 
-//|							01 = lightning strike at source 
-//|							02 = stay at current x,y,z 
-//|							03 = stay with current source character id 
-//|						BYTE[4] character id 
+//|						BYTE cmd
+//|						BYTE direction type
+//|							00 = go from source to dest
+//|							01 = lightning strike at source
+//|							02 = stay at current x,y,z
+//|							03 = stay with current source character id
+//|						BYTE[4] character id
 //|						BYTE[4] target id
 //|						BYTE[2] model of the first frame of the effect
-//|						BYTE[2] xLoc 
-//|						BYTE[2] yLoc 
-//|						BYTE zLoc 
-//|						BYTE[2] xLoc of target 
-//|						BYTE[2] yLoc of target 
-//|						BYTE zLoc of target 
+//|						BYTE[2] xLoc
+//|						BYTE[2] yLoc
+//|						BYTE zLoc
+//|						BYTE[2] xLoc of target
+//|						BYTE[2] yLoc of target
+//|						BYTE zLoc of target
 //|						BYTE speed of the animation
 //|						BYTE duration (0=really long, 1= shortest)
 //|						BYTE[2] unknown2 (0 works)
 //|						BYTE adjust direction during animation (1=no)
-//|						BYTE explode on impact  
+//|						BYTE explode on impact
 //o-----------------------------------------------------------------------------------------------o
 void CPGraphicalEffect::InternalReset( void )
 {
@@ -1490,9 +1486,9 @@ void CPGraphicalEffect::TargetLocation( SI16 x, SI16 y, SI08 z )
 //|					Size: 9 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] playerID 
-//|						BYTE[2] maxHealth/maxMana/maxStamina 
+//|						BYTE cmd
+//|						BYTE[4] playerID
+//|						BYTE[2] maxHealth/maxMana/maxStamina
 //|						BYTE[2] currentHealth/currentMana/currentStamina
 //o-----------------------------------------------------------------------------------------------o
 void CPUpdateStat::InternalReset( void )
@@ -1507,14 +1503,14 @@ CPUpdateStat::CPUpdateStat( CChar &toUpdate, UI08 statNum )
 	switch( statNum )
 	{
 		case 0:	MaxVal( toUpdate.GetMaxHP() );
-				CurVal( toUpdate.GetHP() );
-				break;
+			CurVal( toUpdate.GetHP() );
+			break;
 		case 2:	MaxVal( toUpdate.GetMaxStam() );
-				CurVal( toUpdate.GetStamina() );
-				break;
+			CurVal( toUpdate.GetStamina() );
+			break;
 		case 1:	MaxVal( toUpdate.GetMaxMana() );
-				CurVal( toUpdate.GetMana() );
-				break;
+			CurVal( toUpdate.GetMana() );
+			break;
 	}
 	pStream.WriteByte( 0, (pStream.GetByte( 0 ) + statNum) );
 }
@@ -1540,7 +1536,7 @@ void CPUpdateStat::CurVal( SI16 curVal )
 //|					Size: 13 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[4] player id
 //|						BYTE[4] corpse id
 //|						BYTE[4] unknown (all 0)
@@ -1595,8 +1591,8 @@ CPDeathAction &CPDeathAction::operator=( CItem &corpse )
 //|					Size: 3 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] musicID 
+//|						BYTE cmd
+//|						BYTE[2] musicID
 //o-----------------------------------------------------------------------------------------------o
 void CPPlayMusic::InternalReset( void )
 {
@@ -1626,12 +1622,12 @@ void CPPlayMusic::MusicID( SI16 musicID )
 //|					Size: 3 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] item id 
-//|						BYTE[2] model-Gump 
-//|							0x003c = backpack 
-//|						BYTE[2] container type // added in UO:HS clients, 0x00 for vendors, 0x7D 
-//|							for spellbooks and containers 
+//|						BYTE cmd
+//|						BYTE[4] item id
+//|						BYTE[2] model-Gump
+//|							0x003c = backpack
+//|						BYTE[2] container type // added in UO:HS clients, 0x00 for vendors, 0x7D
+//|							for spellbooks and containers
 //o-----------------------------------------------------------------------------------------------o
 void CPDrawContainer::InternalReset( void )
 {
@@ -1683,14 +1679,14 @@ void CPDrawContainer::Serial( SERIAL toSet )
 //|						BYTE[2] blockSize
 //|						BYTE[4] dialogID (echo'd back to the server in 7d)
 //|						BYTE[2] menuid (echo'd back to server in 7d)
-//|						BYTE length of question	
+//|						BYTE length of question
 //|						BYTE[length of question] question text
-//|						BYTE # of responses 
-//|						Then for each response: 
-//|							BYTE[2] model id # of shown item (if grey menu -- then always 0x00 as msb) 
+//|						BYTE # of responses
+//|						Then for each response:
+//|							BYTE[2] model id # of shown item (if grey menu -- then always 0x00 as msb)
 //|							BYTE[2] color of shown item
-//|							BYTE response text length 
-//|							BYTE[response text length] response text 
+//|							BYTE response text length
+//|							BYTE[response text length] response text
 //o-----------------------------------------------------------------------------------------------o
 void CPOpenGump::Log( std::ofstream &outStream, bool fullHeader )
 {
@@ -1729,7 +1725,7 @@ void CPOpenGump::Question( std::string toAdd )
 	pStream.WriteString( 10, toAdd, toAdd.length() );
 #if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
-		Console.Error( "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() );
+		Console.error( format("CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length()) );
 #endif
 	pStream.WriteByte( 9, static_cast< UI08 >(toAdd.length() + 1) );
 	responseBaseOffset	= (pStream.GetSize() - 1);
@@ -1740,7 +1736,7 @@ void CPOpenGump::AddResponse( UI16 modelNum, UI16 colour, std::string responseTe
 	pStream.WriteByte( responseBaseOffset, pStream.GetByte( responseBaseOffset ) + 1 ); // increment number of responses
 #if defined( UOX_DEBUG_MODE )
 	if( responseText.length() >= 255 )
-		Console.Error( "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() );
+		Console.error( format("CPOpenGump::AddResponse responseText is too long (%i)", responseText.length()) );
 #endif
 	UI16 toAdd = static_cast< UI16 >(5 + responseText.length());
 	pStream.ReserveSize( pStream.GetSize() + toAdd );
@@ -1807,19 +1803,19 @@ void CPOpenGump::Serial( SERIAL toSet )
 //|					Size: 19 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE type 
+//|						BYTE cmd
+//|						BYTE type
 //|							0x00 = Select Object
-//|							0x01 = Select X, Y, Z 
-//|						BYTE[4] cursorID 
-//|						BYTE Cursor Type 
-//|							Always 0 now  
-//|						The following are always sent but are only valid if sent by client 
-//|						BYTE[4] Clicked On ID 
-//|						BYTE[2] click xLoc 
-//|						BYTE[2] click yLoc 
-//|						BYTE unknown (0x00) 
-//|						BYTE click zLoc 
+//|							0x01 = Select X, Y, Z
+//|						BYTE[4] cursorID
+//|						BYTE Cursor Type
+//|							Always 0 now
+//|						The following are always sent but are only valid if sent by client
+//|						BYTE[4] Clicked On ID
+//|						BYTE[2] click xLoc
+//|						BYTE[2] click yLoc
+//|						BYTE unknown (0x00)
+//|						BYTE click zLoc
 //|						BYTE[2] model # (if a static tile, 0 if a map/landscape tile)
 //|							Note: the model # shouldn’t be trusted.
 //o-----------------------------------------------------------------------------------------------o
@@ -1851,12 +1847,12 @@ void CPTargetCursor::CursorType( UI08 nType )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] packet length 
-//|						BYTE[4] player id 
-//|						BYTE[30] playerName 
-//|						BYTE[2] currentHitpoints 
-//|						BYTE[2] maxHitpoints 
+//|						BYTE cmd
+//|						BYTE[2] packet length
+//|						BYTE[4] player id
+//|						BYTE[30] playerName
+//|						BYTE[2] currentHitpoints
+//|						BYTE[2] maxHitpoints
 //|						BYTE name change flag (0x1 = allowed, 0 = not allowed)
 //|						BYTE Status Flag/Supported Features
 //|							Status Flag
@@ -1871,15 +1867,15 @@ void CPTargetCursor::CursorType( UI08 nType )
 //|							1: Female Human
 //|							2: Male Elf
 //|							3: Female Elf
-//|						BYTE[2] str 
-//|						BYTE[2] dex 
-//|						BYTE[2] int 
-//|						BYTE[2] currentStamina 
-//|						BYTE[2] maxStamina 
-//|						BYTE[2] currentMana 
-//|						BYTE[2] maxMana 
-//|						BYTE[4] gold 
-//|						BYTE[2] armor class 
+//|						BYTE[2] str
+//|						BYTE[2] dex
+//|						BYTE[2] int
+//|						BYTE[2] currentStamina
+//|						BYTE[2] maxStamina
+//|						BYTE[2] currentMana
+//|						BYTE[2] maxMana
+//|						BYTE[4] gold
+//|						BYTE[2] armor class
 //|						BYTE[2] weight
 //|						If (flag 5 or higher - ML attributes 5.0+)
 //|							BYTE[2] Max Weight
@@ -1892,16 +1888,16 @@ void CPTargetCursor::CursorType( UI08 nType )
 //|							BYTE[2]  statcap
 //|							BYTE  pets current
 //|							BYTE pets max
-//|						If (flag == 4 - AoS attributes 4.0+) 
+//|						If (flag == 4 - AoS attributes 4.0+)
 //|							BYTE[2]	fireresist
 //|							BYTE[2]	coldresist
 //|							BYTE[2]	poisonresist
 //|							BYTE[2]	energyresist
 //|							BYTE[2]	luck
-//|							BYTE[2]	damage max 
+//|							BYTE[2]	damage max
 //|							BYTE[2]	damage min
 //|							BYTE[4]	Tithing points (Paladin Books)
-//|						If (flag 6 or higher - KR attributes) 
+//|						If (flag 6 or higher - KR attributes)
 //|							BYTE[2] Hit Chance Increase
 //|							BYTE[2] Swing Speed Increase
 //|							BYTE[2] Damage Chance Increase
@@ -1926,8 +1922,8 @@ void CPTargetCursor::CursorType( UI08 nType )
 //|							BYTE[2] Maximum Stamina Increase
 //|							BYTE[2] Maximum Mana Increase
 //|
-//|					Note: For characters other than the player, currentHitpoints and maxHitpoints 
-//|					are not the actual values.  MaxHitpoints is a fixed value, and currentHitpoints 
+//|					Note: For characters other than the player, currentHitpoints and maxHitpoints
+//|					are not the actual values.  MaxHitpoints is a fixed value, and currentHitpoints
 //|					works like a percentage.
 //o-----------------------------------------------------------------------------------------------o
 void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
@@ -1935,7 +1931,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	if( target.ReceivedVersion() )
 	{
 		/*if( target.ClientVersionMajor() >= 6 )
-		{ 
+		{
 			// Extended stats not implemented yet
 			extended3 = true;
 			extended4 = true;
@@ -2063,23 +2059,23 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		UI16 bodyID = toCopy.GetID();
 		switch( bodyID )
 		{
-		case 0x0190:
-		case 0x0191:
-		case 0x0192:
-		case 0x0193:
-			Race( 0x01 ); break; //human
-		case 0x025D:
-		case 0x025E:
-		case 0x025F:
-		case 0x0260:
-			Race( 0x02 ); break; //elf
-		case 0x029A:
-		case 0x029B:
-		case 0x02B6:
-		case 0x02B7:
-			Race( 0x03 ); break; //gargoyle
-		default:
-			Race( 0x01 ); break;
+			case 0x0190:
+			case 0x0191:
+			case 0x0192:
+			case 0x0193:
+				Race( 0x01 ); break; //human
+			case 0x025D:
+			case 0x025E:
+			case 0x025F:
+			case 0x0260:
+				Race( 0x02 ); break; //elf
+			case 0x029A:
+			case 0x029B:
+			case 0x02B6:
+			case 0x02B7:
+				Race( 0x03 ); break; //gargoyle
+			default:
+				Race( 0x01 ); break;
 		}
 	}
 	if( extended3 )
@@ -2200,7 +2196,7 @@ void CPStatWindow::Weight( UI16 nValue )
 //extended5
 void CPStatWindow::MaxWeight( UI16 value )
 {
-	pStream.WriteShort( byteOffset, value ); 
+	pStream.WriteShort( byteOffset, value );
 	byteOffset += 2;
 }
 void CPStatWindow::Race( UI08 value )
@@ -2278,8 +2274,8 @@ void CPStatWindow::Unknown( UI32 value )
 //|					Size: 2 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE value 
+//|						BYTE cmd
+//|						BYTE value
 //|							0x07 idle
 //|							0x05 another character is online
 //|								"Another character from this account is currently online in this world.
@@ -2313,10 +2309,10 @@ void CPIdleWarning::Error( UI08 errorNum )
 //|					Size: 4 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE hour 
-//|						BYTE minute 
-//|						BYTE second 
+//|						BYTE cmd
+//|						BYTE hour
+//|						BYTE minute
+//|						BYTE second
 //o-----------------------------------------------------------------------------------------------o
 CPTime::CPTime()
 {
@@ -2373,11 +2369,11 @@ CPLoginComplete::CPLoginComplete()
 //|					Size: 5 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[2] unknown1 
-//|					The client sends two of these independent of the color chosen. It sends two of 
-//|						them in quick succession as part of the "same" packet. The unknown1 is 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[2] unknown1
+//|					The client sends two of these independent of the color chosen. It sends two of
+//|						them in quick succession as part of the "same" packet. The unknown1 is
 //|						0x00 0x01 in the first and 0x00 0x02 in the second.
 //|					Note, this message has been removed.  It is no longer used.
 //o-----------------------------------------------------------------------------------------------o
@@ -2405,11 +2401,11 @@ void CPTextEmoteColour::Unknown( SI16 newValue )
 //|					Size: 5 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE flag 
-//|							0x00 - Normal 
-//|							0x01 - Fighting 
-//|						BYTE[3] unknown1 (always 00 32 00 in testing) 
+//|						BYTE cmd
+//|						BYTE flag
+//|							0x00 - Normal
+//|							0x01 - Fighting
+//|						BYTE[3] unknown1 (always 00 32 00 in testing)
 //|
 //|					Server also replies with 0x77 packet to update player after changing war mode
 //o-----------------------------------------------------------------------------------------------o
@@ -2445,7 +2441,7 @@ CPWarMode::CPWarMode( UI08 nFlag )
 //|					Size: 2 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE pause/resume (0=pause, 1=resume)
 //o-----------------------------------------------------------------------------------------------o
 void CPPauseResume::InternalReset( void )
@@ -2473,21 +2469,21 @@ bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_DEFAULT:
-	case CV_T2A:
-	case CV_UO3D:
-	case CV_ML:
-	case CV_KR2D:
-	case CV_KR3D:
-	case CV_SA2D:
-	case CV_SA3D:
-	case CV_HS2D:
-	case CV_HS3D:
-		if( mSock->ClientVersionMajor() >= 4 )
-			return false;
-		break;
-	default:
-		break;
+		case CV_DEFAULT:
+		case CV_T2A:
+		case CV_UO3D:
+		case CV_ML:
+		case CV_KR2D:
+		case CV_KR3D:
+		case CV_SA2D:
+		case CV_SA3D:
+		case CV_HS2D:
+		case CV_HS3D:
+			if( mSock->ClientVersionMajor() >= 4 )
+				return false;
+			break;
+		default:
+			break;
 	}
 	return true;
 }
@@ -2501,9 +2497,9 @@ bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[blockSize-3] null terminated full web address 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[blockSize-3] null terminated full web address
 //o-----------------------------------------------------------------------------------------------o
 void CPWebLaunch::InternalReset( void )
 {
@@ -2543,7 +2539,7 @@ void CPWebLaunch::SetSize( SI16 newSize )
 //|					Packet Build
 //|						BYTE cmd
 //|						BYTE active (1=on, 0=off)
-//|						BYTE[2] xLoc 
+//|						BYTE[2] xLoc
 //|						BYTE[2] yLoc
 //|						if HSA client
 //|							BYTE[4] serial
@@ -2596,8 +2592,8 @@ CPTrackingArrow::CPTrackingArrow( CBaseObject &toCopy )
 //|					Size: 2 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE unknown1 (0x00) 
+//|						BYTE cmd
+//|						BYTE unknown1 (0x00)
 //o-----------------------------------------------------------------------------------------------o
 void CPBounce::InternalReset( void )
 {
@@ -2627,10 +2623,10 @@ void CPBounce::Mode( UI08 mode )
 //|					Size: 2 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[4] itemID of dye target
 //|						BYTE[2] ignored on send, model on return
-//|						BYTE[2] model on send, color on return  (default on server send is 0x0FAB) 
+//|						BYTE[2] model on send, color on return  (default on server send is 0x0FAB)
 //|
 //|					NOTE: This packet is sent by both the server and client
 //o-----------------------------------------------------------------------------------------------o
@@ -2676,9 +2672,9 @@ CPDyeVat &CPDyeVat::operator=( CBaseObject &target )
 //|					Size: 26 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE request (0x01 from server, 0x00 from client) 
-//|						BYTE[4] ID of deed 
+//|						BYTE cmd
+//|						BYTE request (0x01 from server, 0x00 from client)
+//|						BYTE[4] ID of deed
 //|						BYTE[12] unknown (all 0)
 //|						BYTE[2] multi model (item model - 0x4000)
 //|						BYTE[6] unknown (all 0)
@@ -2774,9 +2770,9 @@ CPMultiPlacementView::CPMultiPlacementView( SERIAL toSet )
 //|						0x80000	Enable Rustic housing tiles
 //|
 //|						Example
-//|						0	neither T2A NOR LBR, equal to not sending it at all, 
-//|						1	is T2A, chatbutton, 
-//|						2	is LBR without chatbutton, 
+//|						0	neither T2A NOR LBR, equal to not sending it at all,
+//|						1	is T2A, chatbutton,
+//|						2	is LBR without chatbutton,
 //|						3	is LBR with chatbutton…
 //|						8013	LBR + chatbutton + AOS enabled
 //|
@@ -2872,7 +2868,7 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 //|					Size: 12 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] length
 //|						BYTE 0xFE
 //|						BYTE[8] Feature bits from enum
@@ -2908,15 +2904,15 @@ void CPNegotiateAssistantFeatures::Log( std::ofstream &outStream, bool fullHeade
 //|					Size: 20/21 bytes
 //|
 //|					Packet Build (Before 6.0.1.7, 2D client)
-//|						BYTE cmd 
-//|						BYTE[4] serial if item to add 
+//|						BYTE cmd
+//|						BYTE[4] serial if item to add
 //|						BYTE[2] model ID
 //|						BYTE model ID offset (0)
 //|						BYTE[2] # of items in stack
-//|						BYTE[2] xLoc in container 
-//|						BYTE[2] yLoc in container 
-//|						BYTE[4] serial of container 
-//|						BYTE[2] color 
+//|						BYTE[2] xLoc in container
+//|						BYTE[2] yLoc in container
+//|						BYTE[4] serial of container
+//|						BYTE[2] color
 //|
 //|					Packet Build (After 6.0.1.7, UOKR+ and 2D client)
 //|						BYTE cmd
@@ -3011,8 +3007,8 @@ void CPAddItemToCont::Object( CItem &toAdd )
 //|					Size: 5 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[4] serial of GM who issued kick? 
+//|						BYTE cmd
+//|						BYTE[4] serial of GM who issued kick?
 //o-----------------------------------------------------------------------------------------------o
 void CPKickPlayer::InternalReset( void )
 {
@@ -3051,7 +3047,7 @@ CPKickPlayer &CPKickPlayer::operator=( CChar &toCopy )
 //|					Size: 2 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE action (2=ghost, 1=resurrect, 0=from server)
 //|
 //|					Note: Resurrection menu has been removed from UO.
@@ -3084,10 +3080,10 @@ void CPResurrectMenu::Action( UI08 action )
 //|					Size: 10 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE unknown1 (0)
-//|						BYTE[4] ID of attacker 
-//|						BYTE[4] ID of attacked 
+//|						BYTE[4] ID of attacker
+//|						BYTE[4] ID of attacked
 //|
 //|					This packet is sent when there is a fight going on somewhere on screen.
 //o-----------------------------------------------------------------------------------------------o
@@ -3137,8 +3133,8 @@ void CPFightOccurring::Defender( CChar &defender )
 //|						BYTE cmd
 //|						BYTE[2] Length
 //|						BYTE Type
-//|							0x00 - Full List of skills, 
-//|							0xFF - Single skill update, 
+//|							0x00 - Full List of skills,
+//|							0xFF - Single skill update,
 //|							0x02 - Full List of skills with skill cap for each skill
 //|							0xDF - Single skill update with skill cap for skill
 //|						Repeat for each skill:
@@ -3205,7 +3201,7 @@ void CPSkillsValues::SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal,
 	pStream.WriteShort( offset, skillID + 1 );
 	pStream.WriteShort( offset + 2, skillVal );
 	pStream.WriteShort( offset + 4, baseSkillVal );
-	pStream.WriteByte(  offset + 6, skillLock ); 
+	pStream.WriteByte(  offset + 6, skillLock );
 	pStream.WriteShort( offset + 7, (UI16)cwmWorldState->ServerData()->ServerSkillCapStatus() );
 }
 CPSkillsValues &CPSkillsValues::operator=( CChar &toCopy )
@@ -3223,7 +3219,7 @@ CPSkillsValues &CPSkillsValues::operator=( CChar &toCopy )
 //|					Size: 19 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[4] key used/map serial
 //|						BYTE[2] gump art id (0x139D), corner image
 //|						BYTE[2] upper left x location of map
@@ -3272,17 +3268,17 @@ void CPMapMessage::KeyUsed( UI32 key )
 //|					Size: 99 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[4] book serial
-//|						BYTE write flag 
-//|							0x00 - non-writable 
-//|							0x01 - writable 
+//|						BYTE write flag
+//|							0x00 - non-writable
+//|							0x01 - writable
 //|						BYTE new flag/unknown (0x1)
-//|						BYTE[2] # of pages 
-//|						BYTE[60] title 
-//|						BYTE[30] author 
+//|						BYTE[2] # of pages
+//|						BYTE[60] title
+//|						BYTE[30] author
 //|
-//|					NOTE: Client sends a 0x93 message on book close. Update packet for the server 
+//|					NOTE: Client sends a 0x93 message on book close. Update packet for the server
 //|						to handle changes. Write Flag through Page Count are all 0's on client response
 //|					NOTE: Replaced with 0xD4 in newer clients?
 //o-----------------------------------------------------------------------------------------------o
@@ -3337,7 +3333,7 @@ void CPBookTitlePage::Author( const std::string& txt )
 //|					Size: 9 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[4] id1 (source serial)
 //|						BYTE[4] id2 (target serial)
 //o-----------------------------------------------------------------------------------------------o
@@ -3734,7 +3730,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 			pStream.ReserveSize( byteOffset );
 			break;
 		}
-		default: 
+		default:
 			break;
 	}
 }
@@ -3762,8 +3758,8 @@ void CPKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[2] Length
 //|						BYTE[2] Subcommand (0x8)
 //|						Subcommand details
-//|							BYTE hue  
-//|								0x00 = Felucca, unhued / BRITANNIA map.  
+//|							BYTE hue
+//|								0x00 = Felucca, unhued / BRITANNIA map.
 //|								0x01 = Trammel, hued gold / BRITANNIA map
 //|								0x02 = Ilshenar
 //|								0x03 = Malas
@@ -3979,8 +3975,9 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << pStream.GetULong( baseOffset ) << std::endl;
 		outStream << "      Model     : " << "0x" << pStream.GetUShort( baseOffset+=4 ) << std::endl;
 		outStream << "      Amount    : " << std::dec << pStream.GetUShort( baseOffset+=3 ) << std::endl;
-		outStream << "      XY        : " << pStream.GetUShort( baseOffset+=2 ) << "," <<
-			pStream.GetUShort( baseOffset+=2 ) << std::endl;
+		outStream << "      XY        : " << pStream.GetUShort( baseOffset+=2 ) ;
+		outStream << "," <<
+		pStream.GetUShort( baseOffset+=2 ) << std::endl;
 		outStream << "      Container : " << "0x" << std::hex << pStream.GetULong( baseOffset+=2 ) << std::endl;
 		outStream << "      Color     : " << "0x" << pStream.GetUShort( baseOffset+=4 ) << std::endl;
 		baseOffset += 2;
@@ -3999,20 +3996,20 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[4] (vendorID | 0x40000000) 
-//|						BYTE # of items 
-//|						# of items worth of item segments 
-//|							BYTE[4] price 
-//|							BYTE length of text description 
-//|							BYTE[text length] item description 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[4] (vendorID | 0x40000000)
+//|						BYTE # of items
+//|						# of items worth of item segments
+//|							BYTE[4] price
+//|							BYTE length of text description
+//|							BYTE[text length] item description
 //|
-//|						NOTE: This packet is always preceded by a describe contents packet (0x3c) 
-//|							with the container id as the (vendorID | 0x40000000) and then an open 
-//|							container packet (0x24?) with the vendorID only and a model number of 
+//|						NOTE: This packet is always preceded by a describe contents packet (0x3c)
+//|							with the container id as the (vendorID | 0x40000000) and then an open
+//|							container packet (0x24?) with the vendorID only and a model number of
 //|							0x0030 (probably the model # for the buy screen)
-//|						NOTE: The client displays items in the buy window from top left to bottom 
+//|						NOTE: The client displays items in the buy window from top left to bottom
 //|							right. This means we need to sort the items logically before sending packets.
 //o-----------------------------------------------------------------------------------------------o
 void CPOpenBuyWindow::InternalReset( void )
@@ -4062,7 +4059,7 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	temp			= temp.simplifyWhiteSpace();
 	if( temp.substr( 0, 1 ) == "#" )
 	{
-		itemname = UString::number( 1020000 + toAdd->GetID() );
+		itemname = str_number( 1020000 + toAdd->GetID() );
 		sLen = static_cast<UI08>(itemname.size() + 1);
 	}
 	else
@@ -4157,14 +4154,14 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] length
 //|						BYTE # of characters (5, 6 or 7 slots)
 //|						Following repeated for each character slot
-//|							BYTE[30] character name 
-//|							BYTE[30] character password 
-//|						BYTE number of starting locations 
-//|						Repeat the following for as many locations as you have 
+//|							BYTE[30] character name
+//|							BYTE[30] character password
+//|						BYTE number of starting locations
+//|						Repeat the following for as many locations as you have
 //|							if client version >= 7.0.13.0
 //|								BYTE locationIndex (0-based)
 //|								BYTE[32] city name(general name)
@@ -4176,10 +4173,10 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //|								BYTE[4] Cliloc Description
 //|								BYTE[4] Always 0
 //|							if client version < 7.0.13.0
-//|								BYTE locationIndex (0-based) 
-//|								BYTE[31] town (general name) 
-//|								BYTE[31] exact name 
-//|						BYTE[4] Flags 
+//|								BYTE locationIndex (0-based)
+//|								BYTE[31] town (general name)
+//|								BYTE[31] exact name
+//|						BYTE[4] Flags
 //|							0x01	= unknown
 //|							0x02	= send config/req logout (IGR?)
 //|							0x04	= single character (siege) (alternative seen, Limit Characters)
@@ -4323,20 +4320,20 @@ CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock& actbBlock, UI08 numCharacte
 {
 	InternalReset();
 
-	UI08 noLoopBytes = 9; 
+	UI08 noLoopBytes = 9;
 	if( mSock->ClientType() == CV_SA3D || mSock->ClientType() == CV_HS3D )
 		noLoopBytes = 11;
 
 	UI08 charSlots = 5;
 	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_SIXCHARS ) &&
-		cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SIXCHARS ) && 
-		mSock->ClientVersionMajor() >= 4 )
+	   cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SIXCHARS ) &&
+	   mSock->ClientVersionMajor() >= 4 )
 		charSlots = 6;
 	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_SEVENCHARS ) &&
-		cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SEVENCHARS ) && 
-		mSock->ClientVersionMajor() >= 7 )
+	   cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SEVENCHARS ) &&
+	   mSock->ClientVersionMajor() >= 7 )
 		charSlots = 7;
-	
+
 	if( mSock->ClientType() >= CV_HS2D && mSock->ClientVersionSub() >= 13 )
 	{
 		packetSize = (UI16)( noLoopBytes + ( charSlots * 60 ) + ( numLocations * 89 ));
@@ -4444,10 +4441,10 @@ CPCharAndStartLoc& CPCharAndStartLoc::operator=( CAccountBlock& actbBlock )
 //|					Size: 5
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] len
-//|						BYTE subcmd 
-//|						BYTE[len - 4] data 
+//|						BYTE subcmd
+//|						BYTE[len - 4] data
 //|
 //|					Subcommand 0: Acknowledge login (1 byte (for 5 total))
 //|						BYTE ack
@@ -4475,15 +4472,15 @@ CPKAccept::CPKAccept( UI08 Response )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE flag 
-//|							0x00 - tips window 
-//|							0x01 - notice window 
-//|						BYTE[2] unknown1 
-//|						BYTE[2] tip # 
-//|						BYTE[2] msgSize 
-//|						BYTE[?] message (? = blockSize - 10) 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE flag
+//|							0x00 - tips window
+//|							0x01 - notice window
+//|						BYTE[2] unknown1
+//|						BYTE[2] tip #
+//|						BYTE[2] msgSize
+//|						BYTE[?] message (? = blockSize - 10)
 //|
 //|					*Null terminated I think (Gimli)
 //o-----------------------------------------------------------------------------------------------o
@@ -4522,12 +4519,6 @@ void CPUpdScroll::AddString( const char *toAdd )
 {
 	strcat( tipData, toAdd );
 }
-void CPUpdScroll::AddStrings( const char *tag, const char *data )
-{
-	char temp[1024];
-	sprintf( temp, "%s %s", tag, data );
-	AddString( temp );
-}
 void CPUpdScroll::TipType( UI08 tType )
 {
 	pStream.WriteByte( 3, tType );
@@ -4559,31 +4550,31 @@ void CPUpdScroll::SetLength( UI16 len )
 //|					Size: 36 bytes
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE type 
-//|						BYTE[4] sourceSerial 
-//|						BYTE[4] targetSerial 
-//|						BYTE[2] itemID 
-//|						BYTE[2] xSource 
-//|						BYTES[2] ySource 
-//|						BYTE zSource 
-//|						BYTE[2] xTarget 
-//|						BYTE[2] yTarget 
-//|						BYTE zTarget 
-//|						BYTE speed 
-//|						BYTE duration 
-//|						BYTE[2] unk // On OSI, flamestrikes are 0x0100 
-//|						BYTE fixedDirection 
-//|						BYTE explodes 
-//|						BYTE[4] hue 
-//|						BYTE[4] renderMode 
+//|						BYTE cmd
+//|						BYTE type
+//|						BYTE[4] sourceSerial
+//|						BYTE[4] targetSerial
+//|						BYTE[2] itemID
+//|						BYTE[2] xSource
+//|						BYTES[2] ySource
+//|						BYTE zSource
+//|						BYTE[2] xTarget
+//|						BYTE[2] yTarget
+//|						BYTE zTarget
+//|						BYTE speed
+//|						BYTE duration
+//|						BYTE[2] unk // On OSI, flamestrikes are 0x0100
+//|						BYTE fixedDirection
+//|						BYTE explodes
+//|						BYTE[4] hue
+//|						BYTE[4] renderMode
 //|						Rendermode details:
-//|							One 	 Darken 
-//|							Two 	 Lighten 
-//|							Three 	 Transparent to dark colors to emphasize the bright colors 
-//|							Four 	 Semi-transparent (high transparency) 
-//|							Five 	 Translucent (near the present) 
-//|							Six 	 "Negapoji" (???) reversal 
+//|							One 	 Darken
+//|							Two 	 Lighten
+//|							Three 	 Transparent to dark colors to emphasize the bright colors
+//|							Four 	 Semi-transparent (high transparency)
+//|							Five 	 Translucent (near the present)
+//|							Six 	 "Negapoji" (???) reversal
 //|							Seven 	 Invert background "Negapoji Keta"(???)
 //o-----------------------------------------------------------------------------------------------o
 void CPGraphicalEffect2::InternalReset( void )
@@ -4630,13 +4621,13 @@ void CPGraphicalEffect2::RenderMode( UI32 mode )
 //|						BYTE cmd
 //|						BYTE[4] map object serial
 //|						BYTE map action
-//|							1 = add map point, 
-//|							2 = add new pin with pin number. (insertion. other pins after the number are pushed back.) 
+//|							1 = add map point,
+//|							2 = add new pin with pin number. (insertion. other pins after the number are pushed back.)
 //|							3 = change pin
 //|							4 = remove pin
-//|							5 = remove all pins on the map 
-//|							6 = toggle the 'editable' state of the map. 
-//|							7 = return msg from the server to the request 6 of the client. 
+//|							5 = remove all pins on the map
+//|							6 = toggle the 'editable' state of the map.
+//|							7 = return msg from the server to the request 6 of the client.
 //|						BYTE plotting state (1=on, 0=off, valid only if command 7)
 //|						BYTE[2] x location (relative to upper left corner of the map, in pixels, for points)
 //|						BYTE[2] y location (relative to upper left corner of the map, in pixels, for points)
@@ -4673,29 +4664,29 @@ void CPMapRelated::ID( SERIAL key )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
 //|						BYTE[4] item/character serial
-//|						BYTE[2] model (item hex #) 
-//|						if (itemID & 0x80000000) 
-//|							BYTE[2] amount/Corpse Model Num 
-//|						BYTE[2] xLoc (only 15 lsb) 
-//|						BYTE[2] yLoc 
-//|						if (xLoc & 0x8000) 
-//|							BYTE direction 
-//|						BYTE zLoc 
-//|						BYTE direction 
-//|						BYTE[2] dye/skin color 
-//|						BYTE flag 
-//|						BYTE notoriety (2's complement signed) 
-//|						if (BYTE[4] == 0x00 0x00 0x00 0x00) 
-//|							DONE 
+//|						BYTE[2] model (item hex #)
+//|						if (itemID & 0x80000000)
+//|							BYTE[2] amount/Corpse Model Num
+//|						BYTE[2] xLoc (only 15 lsb)
+//|						BYTE[2] yLoc
+//|						if (xLoc & 0x8000)
+//|							BYTE direction
+//|						BYTE zLoc
+//|						BYTE direction
+//|						BYTE[2] dye/skin color
+//|						BYTE flag
+//|						BYTE notoriety (2's complement signed)
+//|						if (BYTE[4] == 0x00 0x00 0x00 0x00)
+//|							DONE
 //|						else loop this until above if statement is satisified
-//|							BYTE[4] item serial 
-//|							BYTE[2] model (item hex # - only 15 lsb) 
-//|							BYTE layer 
-//|							if (model & 0x8000) 
-//|								BYTE[2] hue 
+//|							BYTE[4] item serial
+//|							BYTE[2] model (item hex # - only 15 lsb)
+//|							BYTE layer
+//|							if (model & 0x8000)
+//|								BYTE[2] hue
 //o-----------------------------------------------------------------------------------------------o
 CPDrawObject::CPDrawObject()
 {
@@ -4786,9 +4777,9 @@ void CPDrawObject::CopyData( CChar& mChar )
 	std::bitset< 8 > flag( 0 );
 
 	if( cwmWorldState->ServerData()->ClientSupport7000() || cwmWorldState->ServerData()->ClientSupport7090() ||
-		cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
-		cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
-		cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+	   cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
+	   cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
+	   cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
 	{
 		// Clients 7.0.0.0 and later
 		const UI08 BIT_FROZEN = 0;	//	0x01, frozen/paralyzed
@@ -4832,11 +4823,11 @@ void CPDrawObject::CopyData( CChar& mChar )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] blockSize
 //|						BYTE[4] corpse serial
 //|						Then, for each item to equip on corpse, loop this:
-//|							BYTE itemLayer 
+//|							BYTE itemLayer
 //|							BYTE[4] itemID
 //|						BYTE terminator (0x00)
 //|
@@ -4929,7 +4920,7 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 //|						Required to to display items with IDs over 0x3FFF (old 0x1A packet only works with items up to that ID)
 //o-----------------------------------------------------------------------------------------------o
 void CPNewObjectInfo::InternalReset( void )
-{	
+{
 	pStream.ReserveSize( 24 );
 	pStream.WriteByte( 0, 0xF3 );
 	pStream.WriteShort( 1, 0x1 );
@@ -5051,22 +5042,22 @@ void CPNewObjectInfo::Objects( CItem& mItem, CChar& mChar )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[4] itemID 
-//|						BYTE[2] model # 
-//|						if (itemID & 0x80000000) 
-//|							BYTE[2] item count (or model # for corpses) 
-//|						if (model & 0x8000) 
-//|							BYTE Incr Counter (increment model by this #) 
-//|						BYTE[2] xLoc (only use lowest significant 15 bits) 
-//|						BYTE[2] yLoc 
-//|						if (xLoc & 0x8000) 
-//|							BYTE direction 
-//|						BYTE zLoc 
-//|						if (yLoc & 0x8000) 
-//|							BYTE[2] dye 
-//|						if (yLoc & 0x4000) 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[4] itemID
+//|						BYTE[2] model #
+//|						if (itemID & 0x80000000)
+//|							BYTE[2] item count (or model # for corpses)
+//|						if (model & 0x8000)
+//|							BYTE Incr Counter (increment model by this #)
+//|						BYTE[2] xLoc (only use lowest significant 15 bits)
+//|						BYTE[2] yLoc
+//|						if (xLoc & 0x8000)
+//|							BYTE direction
+//|						BYTE zLoc
+//|						if (yLoc & 0x8000)
+//|							BYTE[2] dye
+//|						if (yLoc & 0x4000)
 //|							BYTE flag byte
 //|
 //|					Flag:
@@ -5191,7 +5182,7 @@ void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 		if( isInvisible )
 			pStream.WriteByte( byteNum, (pStream.GetByte( byteNum ) | 0x80) );
 
-		if( isMovable ) 
+		if( isMovable )
 			pStream.WriteByte( byteNum, (pStream.GetByte( byteNum ) | 0x20) );
 	}
 }
@@ -5220,7 +5211,7 @@ void CPObjectInfo::Objects( CItem& mItem, CChar& mChar )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] blockSize
 //|						BYTE[4] ID
 //|						BYTE[2] Model
@@ -5385,22 +5376,22 @@ void CPUnicodeSpeech::GhostIt( UI08 method )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE System Info Flag 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE System Info Flag
 //|							0xCC - Don't send
 //|							0x5D - ???
-//|							0x64 - Send Video card 
-//|							?? - 
-//|						BYTE[2] # of servers 
-//|						Then each server -- 
-//|							BYTE[2] serverIndex (0-based) 
-//|							BYTE[32] serverName 
-//|							BYTE percentFull 
-//|							BYTE timezone 
+//|							0x64 - Send Video card
+//|							?? -
+//|						BYTE[2] # of servers
+//|						Then each server --
+//|							BYTE[2] serverIndex (0-based)
+//|							BYTE[32] serverName
+//|							BYTE percentFull
+//|							BYTE timezone
 //|							BYTE[4] pingIP
 //|
-//|					Note: System Info Flags: 0xCC - Do not send video card info. 0x64 - Send Video card. 
+//|					Note: System Info Flags: 0xCC - Do not send video card info. 0x64 - Send Video card.
 //|					Note: Server IP has to be sent in reverse order. For example, 192.168.0.1 is sent as 0100A8C0.
 //o-----------------------------------------------------------------------------------------------o
 void CPGameServerList::InternalReset( void )
@@ -5444,8 +5435,8 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
 //|						BYTE action
 //|							0x00: Start
 //|							0x01: Cancel
@@ -5454,8 +5445,8 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 //|						BYTE[4] id2
 //|						BYTE[4] id3
 //|						BYTE nameFollowing (0 or 1)
-//|						If (nameFollowing = 1) 
-//|							BYTE[?] charName 
+//|						If (nameFollowing = 1)
+//|							BYTE[?] charName
 //o-----------------------------------------------------------------------------------------------o
 void CPSecureTrading::InternalReset( void )
 {
@@ -5510,10 +5501,10 @@ void CPSecureTrading::Name( const std::string& nameFollowing )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] blocksize
 //|						BYTE[4] ID
-//|						If (server-reply) 
+//|						If (server-reply)
 //|							BYTE[30] name (0 terminated)
 //|
 //|						NOTE: Only 3D clients (used to) send this packet. Now both 2D and 3D do!
@@ -5525,7 +5516,7 @@ void CPSecureTrading::Name( const std::string& nameFollowing )
 //|						Hence it only asks only for NPC/Player names nearby, but shows bars of items plus NPC’s.
 //|
 //|						Client request has 7 bytes, server-reply 37
-//|						Triggered by Crtl + Shift. 
+//|						Triggered by Crtl + Shift.
 //o-----------------------------------------------------------------------------------------------o
 void CPAllNames3D::InternalReset( void )
 {
@@ -5561,19 +5552,19 @@ void CPAllNames3D::Object( CBaseObject& obj )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] blockSize 
-//|						BYTE[4] bookID 
-//|						BYTE[2] # of pages in this packet 
-//|						For each page: 
-//|							BYTE[2] page # 
-//|							BYTE[2] # of lines on page 
-//|							Repeated for each line: 
-//|								BYTE[var] null terminated line 
-//|						Note: 
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[4] bookID
+//|						BYTE[2] # of pages in this packet
+//|						For each page:
+//|							BYTE[2] page #
+//|							BYTE[2] # of lines on page
+//|							Repeated for each line:
+//|								BYTE[var] null terminated line
+//|						Note:
 //|						server side: # of pages equals value given in 0x93/0xd4
 //|						EACH page # given. If empty: # lines: 0 + terminator (=3 0’s)
-//|						client side:  # of pages always 1. if 2 pages changed, client generates 2 packets. 
+//|						client side:  # of pages always 1. if 2 pages changed, client generates 2 packets.
 //o-----------------------------------------------------------------------------------------------o
 void CPBookPage::IncLength( UI08 amount )
 {
@@ -5692,69 +5683,35 @@ void CPSendGumpMenu::Y( UI32 value )
 {
 	pStream.WriteLong( 15, value );
 }
-void CPSendGumpMenu::AddCommand( const char *actualCommand, ... )
+void CPSendGumpMenu::addCommand( const std::string& msg )
 {
-	va_list argptr;
-	char msg[1024];
-	std::memset( msg, 0, sizeof( msg ));
-#ifdef __NONANSI_VASTART__
-	va_start( argptr );
-#else
-	va_start( argptr, actualCommand );
-#endif
-	vsnprintf( msg, sizeof( msg ) - 1, actualCommand, argptr );
-	va_end( argptr );
 
-	if( strlen( msg ) == 0 )
+
+	if( msg.empty() ){
 		throw new std::runtime_error( "Blank command field added!" );
+	}
+	auto temp = msg ;
+	if (temp.size() > 1024){
+		temp = temp.substr(0,1024) ;
+	}
 
 #if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;
+	Console << temp << myendl;
 #endif
-
-	commands.push_back( msg );
+	commands.push_back( temp );
 }
 
-void CPSendGumpMenu::AddCommand( const std::string& actualCommand, ... )
+
+void CPSendGumpMenu::addText( const std::string& msg )
 {
-	va_list argptr;
-	char msg[1024];
-	std::memset( msg, 0, sizeof( msg ));
-#ifdef __NONANSI_VASTART__
-	va_start( argptr, actualCommand.c_str() );
-#else
-	va_start( argptr, actualCommand );
-	
-#endif
-	vsnprintf( msg, sizeof( msg ) - 1, actualCommand.c_str(), argptr );
-	va_end( argptr );
 
-	if( strlen( msg ) == 0 )
-		throw new std::runtime_error( "Blank command field added!" );
 
-#if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;
-#endif
-
-	commands.push_back( std::string( msg ));
-}
-
-void CPSendGumpMenu::AddText( const char *actualText, ... )
-{
-	va_list argptr;
-	char msg[512];
-	std::memset( msg, 0, sizeof( msg ));
-#ifdef __NONANSI_VASTART__
-	va_start( argptr );
-#else
-	va_start( argptr, actualText );
-#endif
-	vsnprintf( msg, sizeof( msg ) - 1, actualText, argptr );
-	va_end( argptr );
-
-	if( strlen( msg ) == 0 )
+	if( msg.empty() )
 		throw new std::runtime_error( "Blank text field added!" );
-
+	auto temp = msg ;
+	if (temp.size() > 512){
+		temp = temp.substr(0,512) ;
+	}
 #if defined( UOX_DEBUG_MODE )
 	Console << msg << myendl;
 #endif
@@ -5762,28 +5719,7 @@ void CPSendGumpMenu::AddText( const char *actualText, ... )
 	text.push_back( msg );
 }
 
-void CPSendGumpMenu::AddText( std::string actualText, ... )
-{
-	va_list argptr;
-	char msg[512];
-	std::memset( msg, 0, sizeof( msg ));
-#ifdef __NONANSI_VASTART__
-	va_start( argptr, actualText.c_str() );
-#else
-	va_start( argptr, actualText );
-#endif
-	vsnprintf( msg, sizeof( msg ) - 1, actualText.c_str(), argptr );
-	va_end( argptr );
 
-	if( strlen( msg ) == 0 )
-		throw new std::runtime_error( "Blank text field added!" );
-
-#if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;
-#endif
-
-	text.push_back( std::string( msg ));
-}
 
 void CPSendGumpMenu::Finalize( void )
 {
@@ -5801,7 +5737,7 @@ void CPSendGumpMenu::Finalize( void )
 		increment = static_cast<UI16>(lineLen + 4);
 		if( (length + increment) >= 0xFFFF )
 		{
-			Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+			Console.warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 			break;
 		}
 
@@ -5832,7 +5768,7 @@ void CPSendGumpMenu::Finalize( void )
 		increment	= lineLen * 2 + 2;
 		if( (length + increment) >= 0xFFFF )
 		{
-			Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+			Console.warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 			break;
 		}
 
@@ -5843,7 +5779,7 @@ void CPSendGumpMenu::Finalize( void )
 		length += increment;
 		++tlines;
 	}
-	
+
 	if( length > 65536 )
 		throw std::runtime_error( "Packet 0xB0 is far too large" );
 
@@ -5885,13 +5821,13 @@ void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[2] Length
 //|						BYTE[2] Subcommand (0x1B)
 //|						Subcommand details
-//|							BYTE[2] unknown, always 1 
-//|							BYTE[4] Spellbook serial 
-//|							BYTE[2] Item Id       
+//|							BYTE[2] unknown, always 1
+//|							BYTE[4] Spellbook serial
+//|							BYTE[2] Item Id
 //|							BYTE[2] scroll offset
 //|								1 = regular
 //|								101 = necro
-//|								201 = paladin 
+//|								201 = paladin
 //|								401 = bushido
 //|								501 = ninjitsu
 //|								601 = spellweaving
@@ -5938,14 +5874,14 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_DEFAULT:
-	case CV_T2A:
-	case CV_UO3D:
-		if( mSock->ClientVersionMajor() < 4 )
-			return false;
-		break;
-	default:
-		break;
+		case CV_DEFAULT:
+		case CV_T2A:
+		case CV_UO3D:
+			if( mSock->ClientVersionMajor() < 4 )
+				return false;
+			break;
+		default:
+			break;
 	}
 	return true;
 }
@@ -5964,9 +5900,9 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 //|						BYTE[2] Length
 //|						BYTE[2] Subcommand (0x22)
 //|						Subcommand details
-//|							BYTE[2]	unknown, always 1 
-//|							BYTE[4]	Serial 
-//|							BYTE Damage // how much damage was done ? 
+//|							BYTE[2]	unknown, always 1
+//|							BYTE[4]	Serial
+//|							BYTE Damage // how much damage was done ?
 //|
 //|						Note: displays damage above the npc/player’s head.
 //o-----------------------------------------------------------------------------------------------o
@@ -6000,14 +5936,14 @@ bool CPDisplayDamage::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_DEFAULT:
-	case CV_T2A:
-	case CV_UO3D:
-		if( mSock->ClientVersionMajor() < 4 )
-			return false;
-		break;
-	default:
-		break;
+		case CV_DEFAULT:
+		case CV_T2A:
+		case CV_UO3D:
+			if( mSock->ClientVersionMajor() < 4 )
+				return false;
+			break;
+		default:
+			break;
 	}
 	return true;
 }
@@ -6071,14 +6007,14 @@ bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_DEFAULT:
-	case CV_T2A:
-	case CV_UO3D:
-		if( mSock->ClientVersionMajor() < 4 )
-			return false;
-		break;
-	default:
-		break;
+		case CV_DEFAULT:
+		case CV_T2A:
+		case CV_UO3D:
+			if( mSock->ClientVersionMajor() < 4 )
+				return false;
+			break;
+		default:
+			break;
 	}
 	return true;
 }
@@ -6092,18 +6028,18 @@ bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
-//|						BYTE[2] length 
-//|						BYTE[2] unknown1, always 0x001 
+//|						BYTE cmd
+//|						BYTE[2] length
+//|						BYTE[2] unknown1, always 0x001
 //|						BYTE[4] serial of item/creature
-//|						BYTE unknown2, always 0 
+//|						BYTE unknown2, always 0
 //|						BYTE unknown3, always 0
 //|						BYTE[4] list ID (see notes)
 //|						Loop
 //|							BYTE[4] cliloc#
 //|							if cliloc# is 0, break loop
 //|							BYTE[2] text length
-//|							BYTE[text length] little endian Unicode text, not 0 terminated 
+//|							BYTE[text length] little endian Unicode text, not 0 terminated
 //|						End Loop
 //|						BYTE[4] 00000000 - Sent as end of packet/loop
 //o-----------------------------------------------------------------------------------------------o
@@ -6132,17 +6068,21 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	{
 		std::string temp;
 		getTileName( cItem, temp );
-		if( cItem.GetAmount() > 1 && addAmount )
-			tempEntry.ourText = UString::sprintf( " \t%s : %i\t ", temp.c_str(), cItem.GetAmount() );
-		else
-			tempEntry.ourText = UString::sprintf( " \t%s\t ",temp.c_str() );
+		if( cItem.GetAmount() > 1 && addAmount ) {
+			tempEntry.ourText = format( " \t%s : %i\t ", temp.c_str(), cItem.GetAmount() );
+		}
+		else{
+			tempEntry.ourText = format(" \t%s\t ",temp.c_str() );
+		}
 	}
 	else
 	{
-		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
-	    	tempEntry.ourText = UString::sprintf( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
-		else
-			tempEntry.ourText = UString::sprintf( " \t%s\t ",cItem.GetName().c_str() );
+		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT ){
+			tempEntry.ourText = format( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
+		}
+		else{
+			tempEntry.ourText = format(" \t%s\t ",cItem.GetName().c_str() );
+		}
 	}
 	tempEntry.stringNum = 1050045;
 	FinalizeData( tempEntry, totalStringLen );
@@ -6155,7 +6095,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{
 		tempEntry.stringNum = 1050044;
-		tempEntry.ourText = UString::sprintf( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
+		tempEntry.ourText = format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
 		FinalizeData( tempEntry, totalStringLen );
 		if( ( cItem.GetWeightMax() / 100 ) >= 1 )
 		{
@@ -6163,7 +6103,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			//tempEntry.stringNum = 1072226;
 			//tempEntry.ourText = UString::sprintf( "%u\t%i", 0, ( cItem.GetWeightMax() / 100 ) );
 			tempEntry.stringNum = 1060658;
-			tempEntry.ourText = UString::sprintf( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
+			tempEntry.ourText = format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -6183,7 +6123,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
 	{
 		tempEntry.stringNum = 1060584;
-		tempEntry.ourText = UString::number( cItem.GetTempVar( CITV_MOREZ ) );
+		tempEntry.ourText = str_number( cItem.GetTempVar( CITV_MOREZ ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
@@ -6192,7 +6132,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			tempEntry.stringNum = 1072788;
 		else
 			tempEntry.stringNum = 1072789;
-		tempEntry.ourText = UString::number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
+		tempEntry.ourText = str_number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )
@@ -6200,28 +6140,28 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetLayer() != IL_NONE )
 		{
 			if( cItem.GetHiDamage() > 0 )
-			{	
+			{
 				tempEntry.stringNum = 1060403;
-				tempEntry.ourText = UString::number( 100 );
+				tempEntry.ourText = str_number( 100 );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetHiDamage() > 0 )
-			{	
+			{
 				tempEntry.stringNum = 1061168;
-				tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
+				tempEntry.ourText = format( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetSpeed() > 0 )
-			{	
+			{
 				tempEntry.stringNum = 1061167;
-				tempEntry.ourText = UString::number( cItem.GetSpeed() );
+				tempEntry.ourText = str_number( cItem.GetSpeed() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetHiDamage() > 0 )
-			{	
+			{
 				if( cItem.GetLayer() == IL_RIGHTHAND )
 					tempEntry.stringNum = 1061824;
 				else
@@ -6250,42 +6190,42 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			}
 
 			if( cItem.GetResist( PHYSICAL ) > 0 )
-			{	
+			{
 				tempEntry.stringNum = 1060448;
-				tempEntry.ourText = UString::number( cItem.GetResist( PHYSICAL ) );
+				tempEntry.ourText = str_number( cItem.GetResist( PHYSICAL ) );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetMaxHP() > 1 )
-			{	
+			{
 				tempEntry.stringNum = 1060639;
-				tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
+				tempEntry.ourText = format( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetStrength2() > 0 )
 			{
 				tempEntry.stringNum = 1060485;
-				tempEntry.ourText = UString::number( cItem.GetStrength2() );
+				tempEntry.ourText = str_number( cItem.GetStrength2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 			if( cItem.GetDexterity2() > 0 )
 			{
 				tempEntry.stringNum = 1060409;
-				tempEntry.ourText = UString::number( cItem.GetDexterity2() );
+				tempEntry.ourText = str_number( cItem.GetDexterity2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 			if( cItem.GetIntelligence2() > 0 )
 			{
 				tempEntry.stringNum = 1060432;
-				tempEntry.ourText = UString::number( cItem.GetIntelligence2() );
+				tempEntry.ourText = str_number( cItem.GetIntelligence2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetStrength() > 1 )
-			{	
+			{
 				tempEntry.stringNum = 1061170;
-				tempEntry.ourText = UString::number( cItem.GetStrength() );
+				tempEntry.ourText = str_number( cItem.GetStrength() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}
@@ -6322,7 +6262,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
 	toolTipEntry tempEntry = {};
 	tempEntry.stringNum = 1050045;
-	tempEntry.ourText = UString::sprintf( " \t%s\t ",mChar.GetName().c_str() );
+	tempEntry.ourText = format( " \t%s\t ",mChar.GetName().c_str() );
 	FinalizeData( tempEntry, totalStringLen );
 }
 
@@ -6390,7 +6330,7 @@ CPToolTip::CPToolTip( SERIAL objSer, bool addAmount, bool playerVendor )
 //|					Size: Variable
 //|
 //|					Packet Build
-//|						BYTE cmd 
+//|						BYTE cmd
 //|						BYTE[2] blockSize
 //|						BYTE[4] shopkeeper serial
 //|						BYTE[2] numItems
@@ -6445,7 +6385,7 @@ void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 			if( opItem->GetType() == IT_CONTAINER )
 				AddContainer( tReg, spItem, opItem, packetLen );
 			else if( opItem->GetID() == spItem->GetID() && opItem->GetType() == spItem->GetType() &&
-				( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) )
+					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) )
 			{
 				AddItem( tReg, spItem, opItem, packetLen );
 				++numItems;
@@ -6511,7 +6451,7 @@ void CPOpenMessageBoard::InternalReset( void )
 	pStream.WriteByte(   0, 0x71 );
 	pStream.WriteShort(	 1, 38 );
 	pStream.WriteByte(   3, 0x00 ); //was 38
-//	pStream.WriteString( 8, "Bulletin Board", 22 ); //was 15
+	//	pStream.WriteString( 8, "Bulletin Board", 22 ); //was 15
 }
 
 void CPOpenMessageBoard::CopyData( CSocket *mSock )
@@ -6540,15 +6480,15 @@ void CPOpenMessageBoard::CopyData( CSocket *mSock )
 			pStream.WriteString( 8, "Bulletin Board", 29 ); //was 15
 		}
 		pStream.WriteByte( 37, 0x00 );
-	/*	pStream.WriteLong( 4, msgBoard->GetSerial() );
-		// If the name the item (Bulletin Board) has been defined, display it
-		// instead of the default "Bulletin Board" title.
-		if( msgBoard->GetName() != "#" )
-			pStream.WriteString( 8, msgBoard->GetName(), 22 ); //was 21
-		else
-			pStream.WriteString( 8, "Bulletin Board", 22 ); //was 15
-		pStream.WriteLong( 30, 0x402000FF );
-		pStream.WriteLong( 34, 0x00 );*/
+		/*	pStream.WriteLong( 4, msgBoard->GetSerial() );
+		 // If the name the item (Bulletin Board) has been defined, display it
+		 // instead of the default "Bulletin Board" title.
+		 if( msgBoard->GetName() != "#" )
+		 pStream.WriteString( 8, msgBoard->GetName(), 22 ); //was 21
+		 else
+		 pStream.WriteString( 8, "Bulletin Board", 22 ); //was 15
+		 pStream.WriteLong( 30, 0x402000FF );
+		 pStream.WriteLong( 34, 0x00 );*/
 	}
 }
 
@@ -6787,7 +6727,7 @@ CPSendMsgBoardPosts::CPSendMsgBoardPosts()
 //|							BYTE[4] serial
 //|							BYTE unknown // always 0 ?
 //|							BYTE lockBits
-//|								Bits: XXSS DDII 
+//|								Bits: XXSS DDII
 //|									s=strength, d=dex, i=int
 //|									0 = up, 1 = down, 2 = locked, FF = update mobile status animation (KR only)
 //|							if subsubcommand is 0x5
@@ -6848,7 +6788,7 @@ void CPExtendedStats::CopyData( CChar& mChar )
 //|						BYTE[2] Status Color (0x01 = Green, 0x02 = Yellow, sends only if extended == 1)
 //|						BYTE Flag (0x00 = Remove Status Color, 0x01 = Enable Status Color, sends only if extended == 1)
 //|						If mobile is poisoned, flag value > 0x00 - poison level.
-//|						Since 4.0.7.0/7.0.7.0, sends to both 2d and 3d but works only in 3d. Server 
+//|						Since 4.0.7.0/7.0.7.0, sends to both 2d and 3d but works only in 3d. Server
 //|							sends it as response for 0x34 Mobile Status Query.
 //o-----------------------------------------------------------------------------------------------o
 //|					Packet: 0x17 (Mobile Health Bar Status Update)
@@ -6958,7 +6898,7 @@ void CPHealthBarStatus::CopyData( CChar& mChar )
 //|							BYTE[4] Number of maps
 //|							For each map
 //|								BYTE[4] Number of map patches in this map
-//|								BYTE[4] Number of static patches in this map 
+//|								BYTE[4] Number of static patches in this map
 //o-----------------------------------------------------------------------------------------------o
 void CPEnableMapDiffs::InternalReset( void )
 {
@@ -7022,7 +6962,7 @@ void CPEnableMapDiffs::CopyData( void )
 //|							server sends 0xd4(title + author)
 //|							server sends 0x66 with all book data "beyond" title + author
 //|							if title + author changed: client side 0xd4 send
-//|							if other book pages changed: 0x66 client side send. 
+//|							if other book pages changed: 0x66 client side send.
 //o-----------------------------------------------------------------------------------------------o
 CPNewBookHeader::CPNewBookHeader()
 {
@@ -7112,7 +7052,7 @@ void CPNewBookHeader::Finalize( void )
 //|									BYTE[2] Flags 0x00=enabled, 0x01=disabled, 0x02=arrow, 0x20 = color
 //|									If (Flags &0x20)
 //|										BYTE[2] color
-//|											rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 
+//|											rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black,
 //|											0x1F = blue, 0x3E0 = green, 0x7C00 = red)
 //|							if subsubcommand is 0x02:
 //|								Loop for each entry:
@@ -7219,7 +7159,7 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 //|						BYTE[4] serial (0xffff for system message)
 //|						BYTE[2] body/id (0xff for system message)
 //|						BYTE type (6 - lower left, 7 on player)
-//|							Message Type 
+//|							Message Type
 //|								0x00 = Regular, 0x01 = System, 0x02 = Emote, 0x06 = Label,
 //|								0x07 = Focus, 0x08 = Whisper, 0x09 = Yell, 0x0A = Spell,
 //|								0x0D = Guild, 0x0E = Alliance, 0x0F = GM Request, 0x10 = GM Response,
@@ -7581,7 +7521,7 @@ CPClientVersion::CPClientVersion()
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPDropItemApproved()
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles outgoing packet 
+//| Purpose		-	Handles outgoing packet
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x29 (Drop Item Approved)
 //|					Size: 1 bytes
@@ -7599,6 +7539,4 @@ CPDropItemApproved::CPDropItemApproved()
 {
 	pStream.ReserveSize( 1 );
 	pStream.WriteByte( 0, 0x29 );
-}
-
 }

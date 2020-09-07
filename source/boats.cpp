@@ -5,9 +5,8 @@
 #include "regions.h"
 #include "CResponse.h"
 #include "Dictionary.h"
+#include "StringUtility.hpp"
 
-namespace UOX
-{
 
 #define XP 0
 #define YP 1
@@ -38,44 +37,43 @@ enum ShipItems
 //[2]=Coord (x,y) offsets
 const SI16 iSmallShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
-{ 
+{
 	{ {-2,0},	{2,0},	{0,-4},	{1,4} },//Dir
 	{ {0,-2},	{0,2},	{4,0},	{-4,0}},
 	{ {2,0},	{-2,0},	{ 0,4},	{0,-4}},
-	{ {0,2},	{0,-2},	{-4,0},	{4,0} } 
+	{ {0,2},	{0,-2},	{-4,0},	{4,0} }
 };
 //  P1    P2   Hold  Tiller
 const SI16 iMediumShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
-{ 
-    { {-2,0},	{2,0},	{0,-4},	{1,5} },
-    { {0,-2},	{0,2},	{4,0},	{-5,0}},
-    { {2,0},	{-2,0},	{0,4},	{0,-5}},
-    { {0,2},	{0,-2},	{-4,0},	{5,0} } 
+{
+	{ {-2,0},	{2,0},	{0,-4},	{1,5} },
+	{ {0,-2},	{0,2},	{4,0},	{-5,0}},
+	{ {2,0},	{-2,0},	{0,4},	{0,-5}},
+	{ {0,2},	{0,-2},	{-4,0},	{5,0} }
 };
 const SI16 iLargeShipOffsets[4][4][2] =
 //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
-{ 
-    { {-2,-1},	{2,-1},	{0,-5},	{1,5} },
-    { {1,-2},	{1,2},	{5,0},	{-5,0}},
-    { {2,1},	{-2,1},	{0,5},	{0,-5} },
-    { {-1,2},	{-1,-2},{-5, 0},{5,0} } 
+{
+	{ {-2,-1},	{2,-1},	{0,-5},	{1,5} },
+	{ {1,-2},	{1,2},	{5,0},	{-5,0}},
+	{ {2,1},	{-2,1},	{0,5},	{0,-5} },
+	{ {-1,2},	{-1,-2},{-5, 0},{5,0} }
 };
 //Ship Items
 //[4] = direction
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
 const UI08 cShipItems[4][6]=
 {
-    {0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
-    {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
+	{0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
+	{0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
 	{0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B},
-	{0x85, 0x84, 0x8A, 0x89, 0x93, 0x50} 
+	{0x85, 0x84, 0x8A, 0x89, 0x93, 0x50}
 };
 //============================================================================================
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj * GetBoat( CSocket *s )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the boat a character is on
 //o-----------------------------------------------------------------------------------------------o
@@ -90,7 +88,6 @@ CBoatObj * GetBoat( CSocket *s )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LeaveBoat( CSocket *s, CItem *p )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Leave a boat
 //o-----------------------------------------------------------------------------------------------o
@@ -132,7 +129,6 @@ void LeaveBoat( CSocket *s, CItem *p )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlankStuff( CSocket *s, CItem *p )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	If not on a boat, will send character to the plank, other
 //|					wise will call OpenPlank to open/close the plank
@@ -169,7 +165,6 @@ void PlankStuff( CSocket *s, CItem *p )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void OpenPlank( CItem *p )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Open / Close a plank
 //o-----------------------------------------------------------------------------------------------o
@@ -177,7 +172,7 @@ void OpenPlank( CItem *p )
 {
 	switch( p->GetID( 2 ) )
 	{
-		//Open plank->
+			//Open plank->
 		case 0xE9: p->SetID( 0x84, 2 ); break;
 		case 0xB1: p->SetID( 0xD5, 2 ); break;
 		case 0xB2: p->SetID( 0xD4, 2 ); break;
@@ -188,14 +183,13 @@ void OpenPlank( CItem *p )
 		case 0xD5: p->SetID( 0xB1, 2 ); break;
 		case 0xD4: p->SetID( 0xB2, 2 ); break;
 		case 0x89: p->SetID( 0x8A, 2 ); break;
-		default: 	Console.Warning( "Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetID() );
+		default: 	Console.warning( format("Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetID() ));
 			break;
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat can move to a certain loc
 //o-----------------------------------------------------------------------------------------------o
@@ -268,7 +262,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 		}
 	}
 
-	//small = 5,11 
+	//small = 5,11
 	//medium = 5, 13
 	//large = 5, 15
 	switch( moveDir&0x0F )
@@ -290,7 +284,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves N/S
 						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves N/S
 						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves N/S
-						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console.error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
 				case EAST: // E
@@ -304,10 +298,10 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves N/S
 						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves N/S
 						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves N/S
-						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console.error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
-				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
+				default:	Console.error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		case EAST: // E
@@ -327,7 +321,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves E/W
 						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves E/W
 						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves E/W
-						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console.error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
 				case NORTHEAST:	// U
@@ -341,10 +335,10 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves E/W
 						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves E/W
 						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves E/W
-						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console.error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
-				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
+				default:	Console.error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		default: return true;
@@ -374,7 +368,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 					CLand& land = Map->SeekLand( map.id );
 					if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
 						return true;
-				}		
+				}
 			}
 			else
 			{ //static tile
@@ -402,7 +396,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 							delete msi;
 							return true;
 						}
-					}		
+					}
 				}
 				delete msi;
 			}
@@ -413,7 +407,6 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a boat
 //o-----------------------------------------------------------------------------------------------o
@@ -449,7 +442,7 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	const UI16 instanceID = b->GetInstanceID();
 	const SI16 x = b->GetX(), y = b->GetY();
 	SI08 z = Map->MapElevation( x, y, worldNumber );
-		
+
 	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, 20, instanceID );
 	if( ILLEGAL_Z != dynz )
 		z = dynz;
@@ -544,7 +537,6 @@ void CheckDirection( UI08 dir, SI16& tx, SI16& ty )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void MoveBoat( UI08 dir, CBoatObj *boat )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Move the boat and everything on it 1 tile
 //o-----------------------------------------------------------------------------------------------o
@@ -627,7 +619,6 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn an item on a boat
 //o-----------------------------------------------------------------------------------------------o
@@ -647,7 +638,6 @@ void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void TurnBoat( CItem *b, bool rightTurn )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn the boat and use TurnStuff() to turn all items/chars on it
 //o-----------------------------------------------------------------------------------------------o
@@ -767,7 +757,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 			tiller->IncLocation( iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP] );
 			hold->IncLocation( iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP] );
 			break;
-		default: Console.Error( "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) );
+		default: Console.error( format("TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) ));
 	}
 
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
@@ -787,12 +777,11 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 	else
 	{
 		myBoat->SetMoveType( 0 );
-		tiller->TextMessage( mSock, 9 ); 
+		tiller->TextMessage( mSock, 9 );
 	}
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for boat commands
 //o-----------------------------------------------------------------------------------------------o
@@ -804,7 +793,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	CBoatObj *boat = GetBoat( mSock );
 	if( !ValidateObject( boat ) )
 		return;
-	
+
 	UI08 dir = boat->GetDir()&0x0F;
 
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
@@ -812,76 +801,74 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	UnicodeTypes mLang = mSock->Language();
 	switch( trigWord )
 	{
-	case TW_BOATTURNRIGHT:
-	case TW_BOATSTARBOARD:
-		if( dir >= 2 )
-			dir -= 2;
-		else
-			dir	+= 6;
-		TurnBoat( mSock, boat, tiller, dir, true );
-		break;
-	case TW_BOATTURNLEFT:
-	case TW_BOATPORT:
-		dir += 2;
-		if( dir > 7 )
-			dir -= 8;
-		TurnBoat( mSock, boat, tiller, dir, false );
-		break;
-	case TW_BOATTURNAROUND:
-		tiller->TextMessage( mSock, 10 );
-		TurnBoat( boat, true );
-		TurnBoat( boat, true );
-		break;
-	case TW_BOATLEFT:
-		if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+		case TW_BOATTURNRIGHT:
+		case TW_BOATSTARBOARD:
+			if( dir >= 2 )
+				dir -= 2;
+			else
+				dir	+= 6;
+			TurnBoat( mSock, boat, tiller, dir, true );
 			break;
-		else
-			mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
-
-		if( dir >= 2 )
-			dir -= 2;
-		else
-			dir	+= 6;
-		tiller->TextMessage( mSock, 10 );
-		MoveBoat( dir, boat );
-		break;
-	case TW_BOATRIGHT:
-		if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+		case TW_BOATTURNLEFT:
+		case TW_BOATPORT:
+			dir += 2;
+			if( dir > 7 )
+				dir -= 8;
+			TurnBoat( mSock, boat, tiller, dir, false );
 			break;
-		else
-			mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+		case TW_BOATTURNAROUND:
+			tiller->TextMessage( mSock, 10 );
+			TurnBoat( boat, true );
+			TurnBoat( boat, true );
+			break;
+		case TW_BOATLEFT:
+			if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+				break;
+			else
+				mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
 
-		dir += 2;
-		if( dir > 7 )
-			dir -= 8;
-		tiller->TextMessage( mSock, 10 );
-		MoveBoat( dir, boat );
-		break;
-	case TW_SETNAME:
-		char msg[512];
-		strcpy( msg, UString( ourText ).upper().c_str() );
-		char *cmd; 
-		cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
-		if( !cmd )
-		{
-			tiller->TextMessage( mSock, 11 );
-			return;
-		}
-		cmd += 9;
-		while( *cmd && *cmd == ' ' )
-			++cmd; // remove any extra spaces
-		if( !(*cmd) )
-		{
-			tiller->TextMessage( mSock, 12 );
-			return;
-		}
+			if( dir >= 2 )
+				dir -= 2;
+			else
+				dir	+= 6;
+			tiller->TextMessage( mSock, 10 );
+			MoveBoat( dir, boat );
+			break;
+		case TW_BOATRIGHT:
+			if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+				break;
+			else
+				mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
 
-		char tempname[512];
-		sprintf( tempname, Dictionary->GetEntry( 1426, mLang ).c_str(), &ourText[msg - cmd] );
-		tiller->SetName( tempname );
-		break;
-	default:
-		break;
+			dir += 2;
+			if( dir > 7 )
+				dir -= 8;
+			tiller->TextMessage( mSock, 10 );
+			MoveBoat( dir, boat );
+			break;
+		case TW_SETNAME:
+			char msg[512];
+			strcpy( msg, UString( ourText ).upper().c_str() );
+			char *cmd;
+			cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
+			if( !cmd )
+			{
+				tiller->TextMessage( mSock, 11 );
+				return;
+			}
+			cmd += 9;
+			while( *cmd && *cmd == ' ' )
+				++cmd; // remove any extra spaces
+			if( !(*cmd) )
+			{
+				tiller->TextMessage( mSock, 12 );
+				return;
+			}
+
+			tiller->SetName( format(Dictionary->GetEntry( 1426, mLang ), &ourText[msg - cmd] ) );
+			break;
+		default:
+			break;
 	}
 }
 
@@ -917,7 +904,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		CItem *model = Items->CreateItem( s, mChar, 0x14f3, 1, 0, OT_ITEM, true );
 		if( model == NULL )
 		{
-			Console.Error( " Turning boat into model failed on model creation, attempted by character serial %X", mChar->GetSerial() );
+			Console.error( format(" Turning boat into model failed on model creation, attempted by character serial %X", mChar->GetSerial() ));
 			return;
 		}
 
@@ -937,4 +924,4 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 	}
 }
 
-}
+

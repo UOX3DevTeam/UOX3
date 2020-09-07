@@ -1,9 +1,6 @@
 #ifndef __UOXJSPropertyEnums__
 #define __UOXJSPropertyEnums__
 
-namespace UOX
-{
-
 const uint8 JSPROP_ENUMANDPERM	= JSPROP_ENUMERATE | JSPROP_PERMANENT;
 const uint8 JSPROP_ENUMPERMRO	= JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY;
 const uint8 JSPROP_ENUMPERMIDX	= JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_INDEX;
@@ -136,8 +133,8 @@ enum CGuild_Properties
 
 enum CC_Properties
 {
-	CCP_NAME = 0, 
-	CCP_TITLE, 
+	CCP_NAME = 0,
+	CCP_TITLE,
 	CCP_X,
 	CCP_Y,
 	CCP_Z,
@@ -452,17 +449,5 @@ enum CPartyProperties
 	CPARTYP_ISNPC,
 	CPARTYP_COUNT
 };
-
-#if P_ODBC == 1
-
-enum CODBCProperties
-{
-	CODBCP_LASTSUCCEEDED = 0,
-	CODBCP_COUNT
-};
-
-#endif
-
-}
 
 #endif

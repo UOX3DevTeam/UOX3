@@ -1,16 +1,13 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	ai.cpp
 //|	Date		-	Pre-1999
-//|	Programmer	-	Unknown
-//|	Org/Team	-	UOX3 DevTeam
-//|	Status		-	Currently under development
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	All AI-Related Code goes here (Should eventually be
 //|							moved out to JavaScript code).
 //o-----------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|
-//|						1.1			Zane		30th December, 2003
+//|						1.1			 		30th December, 2003
 //|						Updated to move the majority of AI functionality
 //|						into several smaller functions. Should simplify the
 //|						process of moving it out to JavaScript in the future.
@@ -20,18 +17,15 @@
 #include "cEffects.h"
 #include "regions.h"
 #include "combat.h"
+#include "StringUtility.hpp"
 
 #undef DBGFILE
 #define DBGFILE "ai.cpp"
 
-namespace UOX
-{
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isValidAttackTarget( CChar *mChar, CChar *cTarget )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if cTarget is a valid attack target for mChar
 //o-----------------------------------------------------------------------------------------------o
@@ -66,8 +60,6 @@ bool isValidAttackTarget( CChar& mChar, CChar *cTarget )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool checkForValidOwner( CChar& mChar, CChar *cTarget )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if mChar owns cTarget or vise-versa
 //o-----------------------------------------------------------------------------------------------o
@@ -83,8 +75,6 @@ bool checkForValidOwner( CChar& mChar, CChar *cTarget )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleGuardAI( CChar& mChar )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Guard AI Type
 //o-----------------------------------------------------------------------------------------------o
@@ -121,8 +111,6 @@ void HandleGuardAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleFighterAI( CChar& mChar )
 //|	Date		-	06/15/2005
-//|	Programmer	-	Xuri
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Fighter AI Type
 //o-----------------------------------------------------------------------------------------------o
@@ -160,8 +148,6 @@ void HandleFighterAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleHealerAI( CChar& mChar )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Wandering Healer AI Type (Raises Innocents)
 //o-----------------------------------------------------------------------------------------------o
@@ -195,8 +181,6 @@ void HandleHealerAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleEvilHealerAI( CChar& mChar )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Evil Healer AI Type (Raises Murderers)
 //o-----------------------------------------------------------------------------------------------o
@@ -216,7 +200,7 @@ void HandleEvilHealerAI( CChar& mChar )
 					Effects->PlayCharacterAnimation( &mChar, 0x10 );
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-					mChar.TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false ); 
+					mChar.TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
 				}
 				else
 					mChar.TextMessage( NULL, 329, TALK, true );
@@ -228,8 +212,6 @@ void HandleEvilHealerAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleEvilAI( CChar& mChar )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Evil creature AI Type (Attacks innocents)
 //o-----------------------------------------------------------------------------------------------o
@@ -278,8 +260,6 @@ void HandleEvilAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleChaoticAI( CChar& mChar )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Chaotic creature AI Type (Attacks everything)
 //o-----------------------------------------------------------------------------------------------o
@@ -314,8 +294,6 @@ void HandleChaoticAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleAnimalAI( CChar& mChar )
 //|	Date		-	21. Feb, 2006
-//|	Programmer	-	grimson
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles Animal AI Type
 //o-----------------------------------------------------------------------------------------------o
@@ -357,8 +335,6 @@ void HandleAnimalAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CheckAI( CChar& mChar )
 //|	Date		-	12/30/2003
-//|	Programmer	-	Zane
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Switch to easily handle AI types
 //o-----------------------------------------------------------------------------------------------o
@@ -367,32 +343,31 @@ void CheckAI( CChar& mChar )
 	CChar *realChar			= NULL;
 	switch( mChar.GetNPCAiType() )
 	{
-	case AI_BANKER:													// Banker
-	case AI_PLAYERVENDOR:											// Player Vendors.
-	case AI_NONE:													// No special AI, default NPC behavior
-	case AI_DUMMY:												// Passive AI - doesn't attack nor fight back
-		break;	// No AI for these special NPC's.
-	case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
-	case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
-	case AI_GUARD:			HandleGuardAI( mChar );			break;	// Guard
-	case AI_FIGHTER:		HandleFighterAI( mChar );		break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
-	case AI_ANIMAL:			HandleAnimalAI( mChar );		break;	// Hungry animals
-	case AI_CHAOTIC:		HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
-	case AI_HEALER_E:		HandleEvilHealerAI( mChar );	break;	// Evil Healers
-	case AI_PET_GUARD:												// Pet Guarding AI
-		realChar = mChar.GetOwnerObj();
-		if( !ValidateObject( realChar ) )
-		{
-			mChar.SetNPCAiType( AI_NONE );
+		case AI_BANKER:													// Banker
+		case AI_PLAYERVENDOR:											// Player Vendors.
+		case AI_NONE:													// No special AI, default NPC behavior
+		case AI_DUMMY:												// Passive AI - doesn't attack nor fight back
+			break;	// No AI for these special NPC's.
+		case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
+		case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
+		case AI_GUARD:			HandleGuardAI( mChar );			break;	// Guard
+		case AI_FIGHTER:		HandleFighterAI( mChar );		break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
+		case AI_ANIMAL:			HandleAnimalAI( mChar );		break;	// Hungry animals
+		case AI_CHAOTIC:		HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
+		case AI_HEALER_E:		HandleEvilHealerAI( mChar );	break;	// Evil Healers
+		case AI_PET_GUARD:												// Pet Guarding AI
+			realChar = mChar.GetOwnerObj();
+			if( !ValidateObject( realChar ) )
+			{
+				mChar.SetNPCAiType( AI_NONE );
+				return;
+			}
+			if( ValidateObject( realChar->GetTarg() ) )
+				Combat->AttackTarget( &mChar, realChar->GetTarg() );
+			break;
+		default:
+			Console.error( format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
 			return;
-		}
-		if( ValidateObject( realChar->GetTarg() ) )
-			Combat->AttackTarget( &mChar, realChar->GetTarg() );
-		break;
-	default:
-		Console.Error( " CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() );	//Morrolan
-		return;
 	}
 }
 
-}

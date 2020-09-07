@@ -1,9 +1,6 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
 
-namespace UOX
-{
-
 enum IUEEntries
 {
 	IUE_RACE = 0,
@@ -35,9 +32,6 @@ enum JSPrototypes
 	JSP_CONSOLE,
 	JSP_FILE,
 	JSP_PARTY,
-#if P_ODBC == 1
-	JSP_ODBC,
-#endif
 	JSP_COUNT
 };
 
@@ -54,9 +48,6 @@ private:
 	JSObject * spellsObj;
 	JSObject * accountsObj;
 	JSObject * consoleObj;
-#if P_ODBC == 1
-	JSObject * odbcObj;
-#endif
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;
@@ -67,9 +58,9 @@ private:
 	void		Cleanup( void );
 	void		InitializePrototypes( void );
 public:
-				CJSRuntime();
-				CJSRuntime( UI32 engineSize );
-				~CJSRuntime();
+	CJSRuntime();
+	CJSRuntime( UI32 engineSize );
+	~CJSRuntime();
 
 	void		Reload( void );
 	void		CollectGarbage( void );
@@ -114,7 +105,5 @@ public:
 };
 
 extern CJSEngine *JSEngine;
-
-}
 
 #endif

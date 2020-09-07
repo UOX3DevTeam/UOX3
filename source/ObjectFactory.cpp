@@ -1,8 +1,6 @@
 #include "ObjectFactory.h"
 #include "uox3.h"
-
-namespace UOX
-{
+#include <mutex>
 
 #define HASHMAX 2477 // hashmax must be a prime for maximum performce.
 
@@ -12,22 +10,21 @@ inline SERIAL HashSerial( SERIAL toHash )
 }
 
 /** This class is responsible for the creation and destruction of ingame
-	objects and should mean that we can take chars[] and items[] out of scope
-*/
+ objects and should mean that we can take chars[] and items[] out of scope
+ */
 
 //o-----------------------------------------------------------------------------------------------o
-template<> ObjectFactory * Singleton< ObjectFactory >::ms_Singleton = 0;
-ObjectFactory* ObjectFactory::getSingletonPtr( void )
-{
-    return ms_Singleton;
-}
+
 ObjectFactory& ObjectFactory::getSingleton( void )
-{  
-    assert( ms_Singleton );  return ( *ms_Singleton );  
+{
+	std::mutex lock;
+	std::scoped_lock scope(lock) ;
+	static ObjectFactory instance ;
+	return instance ;
 }
 //o-----------------------------------------------------------------------------------------------o
 
-// Starting Characters with a serial of 1, rather than 0. The UO Client doesn't always respond well to a serial of 0 - giwo 6/21/08
+// Starting Characters with a serial of 1, rather than 0. The UO Client doesn't always respond well to a serial of 0 -   6/21/08
 ObjectFactory::ObjectFactory() : nextPC( 1 ), nextNPC( 1 ), nextItem( BASEITEMSERIAL ), nextMulti( BASEITEMSERIAL )
 {
 }
@@ -144,7 +141,7 @@ CBaseObject *ObjectFactory::CreateObject( ObjectType createType )
 	}
 	// assign serial here
 	if( created != NULL )
-		created->SetSerial( NextFreeSerial( createType ) );	// SetSerial() will register our object - giwo
+		created->SetSerial( NextFreeSerial( createType ) );	// SetSerial() will register our object -
 
 	return created;
 }
@@ -237,8 +234,8 @@ CBaseObject *ObjectFactory::FindObject( SERIAL toFind )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DestroyObject( CBaseObject *toDestroy )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	This function unregisters the object and destroys it from memory.  
-//|					Essentially, it's either a server shutdown or the object has been deleted, 
+//|	Purpose		-	This function unregisters the object and destroys it from memory.
+//|					Essentially, it's either a server shutdown or the object has been deleted,
 //|					and is no longer part of the world.
 //o-----------------------------------------------------------------------------------------------o
 bool ObjectFactory::DestroyObject( CBaseObject *toDestroy )
@@ -279,25 +276,25 @@ bool ObjectFactory::RegisterObject( CBaseObject *toRegister, SERIAL toAttach )
 	ObjectType reg = toRegister->GetObjType();
 	switch( reg )
 	{
-	default:
-		break;
-	case OT_MULTI:
-	case OT_BOAT:
-		if( toAttach >= nextItem )
-			nextItem = toAttach + 1;
-		multis.insert( std::make_pair( HashSerial( toAttach ), toRegister ) );
-		break;
-	case OT_ITEM:
-	case OT_SPAWNER:
-		if( toAttach >= nextItem )
-			nextItem = toAttach + 1;
-		items.insert( std::make_pair( HashSerial( toAttach ), toRegister ) );
-		break;
-	case OT_CHAR:
-		if( toAttach >= nextNPC )
-			nextNPC = toAttach + 1;
-		chars.insert( std::make_pair( HashSerial( toAttach ), toRegister ) );
-		break;
+		default:
+			break;
+		case OT_MULTI:
+		case OT_BOAT:
+			if( toAttach >= nextItem )
+				nextItem = toAttach + 1;
+			multis.insert( std::make_pair( HashSerial( toAttach ), toRegister ) );
+			break;
+		case OT_ITEM:
+		case OT_SPAWNER:
+			if( toAttach >= nextItem )
+				nextItem = toAttach + 1;
+			items.insert( std::make_pair( HashSerial( toAttach ), toRegister ) );
+			break;
+		case OT_CHAR:
+			if( toAttach >= nextNPC )
+				nextNPC = toAttach + 1;
+			chars.insert( std::make_pair( HashSerial( toAttach ), toRegister ) );
+			break;
 	}
 	return true;
 }
@@ -316,26 +313,26 @@ bool ObjectFactory::UnregisterObject( CBaseObject *toRemove )
 	SERIAL hashValue = HashSerial( toRemove->GetSerial() );
 	switch( toRemove->GetObjType() )
 	{
-	default:
-		throw new std::runtime_error( "Damn, bad bad work here!" );
-		break;
-	case OT_MULTI:
-	case OT_BOAT:
-		rIter	= multis.find( hashValue );
-		rUpper	= multis.upper_bound( hashValue );
-		rEnd	= multis.end();
-		break;
-	case OT_ITEM:
-	case OT_SPAWNER:
-		rIter	= items.find( hashValue );
-		rUpper	= items.upper_bound( hashValue );
-		rEnd	= items.end();
-		break;
-	case OT_CHAR:
-		rIter	= chars.find( hashValue );
-		rUpper	= chars.upper_bound( hashValue );
-		rEnd	= chars.end();
-		break;
+		default:
+			throw new std::runtime_error( "Damn, bad bad work here!" );
+			break;
+		case OT_MULTI:
+		case OT_BOAT:
+			rIter	= multis.find( hashValue );
+			rUpper	= multis.upper_bound( hashValue );
+			rEnd	= multis.end();
+			break;
+		case OT_ITEM:
+		case OT_SPAWNER:
+			rIter	= items.find( hashValue );
+			rUpper	= items.upper_bound( hashValue );
+			rEnd	= items.end();
+			break;
+		case OT_CHAR:
+			rIter	= chars.find( hashValue );
+			rUpper	= chars.upper_bound( hashValue );
+			rEnd	= chars.end();
+			break;
 	}
 	while( rIter != rUpper && rIter != rEnd )
 	{
@@ -344,13 +341,13 @@ bool ObjectFactory::UnregisterObject( CBaseObject *toRemove )
 			// let's remove it from the hash table
 			switch( toRemove->GetObjType() )
 			{
-			case OT_MULTI:
-			case OT_BOAT:		multis.erase( rIter );	break;
-			case OT_ITEM:
-			case OT_SPAWNER:	items.erase( rIter );	break;
-			case OT_CHAR:		chars.erase( rIter );	break;
-                default:
-                    break;
+				case OT_MULTI:
+				case OT_BOAT:		multis.erase( rIter );	break;
+				case OT_ITEM:
+				case OT_SPAWNER:	items.erase( rIter );	break;
+				case OT_CHAR:		chars.erase( rIter );	break;
+				default:
+					break;
 			}
 			break;
 		}
@@ -360,7 +357,7 @@ bool ObjectFactory::UnregisterObject( CBaseObject *toRemove )
 	return true;
 }
 
-	
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void GarbageCollect( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -384,28 +381,28 @@ UI32 ObjectFactory::IterateOver( ObjectType toIterOver, UI32 &b, void *extraData
 	OBJECTMAP_ITERATOR mBegin, mEnd;
 	switch( toIterOver )
 	{
-	case OT_MULTI:
-	case OT_BOAT:		
+		case OT_MULTI:
+		case OT_BOAT:
 		{
 			mBegin	= multis.begin();
 			mEnd	= multis.end();
 		}
-		break;
-	case OT_ITEM:
-	case OT_SPAWNER:	
+			break;
+		case OT_ITEM:
+		case OT_SPAWNER:
 		{
 			mBegin	= items.begin();
 			mEnd	= items.end();
 		}
-		break;
-	case OT_CHAR:
+			break;
+		case OT_CHAR:
 		{
 			mBegin	= chars.begin();
 			mEnd	= chars.end();
 		}
-		break;
-	default:
-		return 0xFFFFFFFF;
+			break;
+		default:
+			return 0xFFFFFFFF;
 	}
 	bool stillContinue = true;
 	while( mBegin != mEnd && stillContinue )
@@ -414,5 +411,4 @@ UI32 ObjectFactory::IterateOver( ObjectType toIterOver, UI32 &b, void *extraData
 		++mBegin;
 	}
 	return 0;
-}
 }

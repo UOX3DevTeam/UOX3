@@ -1,8 +1,6 @@
 #ifndef __SKILLS_H__
 #define __SKILLS_H__
 
-namespace UOX
-{
 
 // create DFN revisions
 struct resAmountPair
@@ -53,15 +51,15 @@ struct createEntry
 		resourceNeeded.resize( 0 );
 		skillReqs.resize( 0 );
 	}
-	R32 AverageMinSkill( void ) 
-	{ 
+	R32 AverageMinSkill( void )
+	{
 		R32 sum = 0;
 		for( size_t i = 0; i < skillReqs.size(); ++i )
 			sum += skillReqs[i].minSkill;
 		return sum / skillReqs.size();
 	}
-	R32 AverageMaxSkill( void ) 
-	{ 
+	R32 AverageMaxSkill( void )
+	{
 		R32 sum = 0;
 		for( size_t i = 0; i < skillReqs.size(); ++i )
 			sum += skillReqs[i].maxSkill;
@@ -139,8 +137,8 @@ private:
 	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused );
 
 public:
-			cSkills( void );
-			~cSkills( void );
+	cSkills( void );
+	~cSkills( void );
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
@@ -183,8 +181,6 @@ public:
 };
 
 extern cSkills *Skills;
-
-}
 
 #endif
 
