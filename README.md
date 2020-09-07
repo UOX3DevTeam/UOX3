@@ -42,19 +42,19 @@ Once these are in place, navigate to the **UOX3/source/** directory in your term
 
   If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does):
 
-	**cd spidermonkey**
-	**make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc**
-    ### Linux ###
-    	**ar -r libjs32.a Linux_All_DBG.OBJ/*.o**
-    	**cp Linux_All_DBG.OBJ/jsautocfg.h ./**
-    ### MacOS ###
-    	**ar rcs libjs32.a Darwin_DBG.OBJ/*.o**
-    	**cp Darwin_DBG.OBJ/jsautocfg.h ./**
+  - **cd spidermonkey**
+  - **make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc**
+  ### Linux ###
+  - **ar -r libjs32.a Linux_All_DBG.OBJ/*.o**
+  - **cp Linux_All_DBG.OBJ/jsautocfg.h ./**
+  ### MacOS ###
+  - **ar rcs libjs32.a Darwin_DBG.OBJ/*.o**
+  - **cp Darwin_DBG.OBJ/jsautocfg.h ./**
 
-	*At the point, now cd to the main UOX3 source directory and build UOX3. This will put the uox3 binary in the same directory as the source.*
+  *At the point, now cd to the main UOX3 source directory and build UOX3. This will put the uox3 binary in the same directory as the source.*
 
-    **cd ../source**
-    **make**
+  - **cd ../source**
+  - **make**
 
 </details>
 
@@ -83,13 +83,17 @@ Once this process is done, you can copy your new uox3 binary to the root of the 
 2) Select **Build -> Configuration Manager** and choose whether you want to compile a Debug or Release-version of UOX3. Debug can be useful if you want to insert break-points in the code to debug what's happening in real time, but for performance and stability, make a Release-version.
 3) Select **Build -> Build UOX3_Official** to start compiling UOX3. When done, you'll find **uox3.exe** either in **UOX3\source\release** or in **UOX3\source\debug**, depending on your choice in the previous step.
 
-#### Adding SpiderMonkey references in Configuration Manager ####
+<details>
+  <summary>Adding SpiderMonkey references in Configuration Manager</summary>
+
 <sub>*These steps are only required if the default UOX3 VS solution/project files don't already have references to SpiderMonkey setup (they should). If the steps above to compile UOX3 should fail, try the following to verify or re-add the SpiderMonkey references:*</sub>
 * <sub>Click **Project -> UOX3_Official Properties -> VC++ Directories**.</sub>
 * <sub>If references to SpiderMonkey are already included in the **Include Directories**, **Library Directories** and **Source Directories** sections in the form of *..\spidermonkey*, you can close the project property panel and **skip to step 4**. If not, follow the next few steps to add those references yourself.</sub>
 * <sub>Select the dropdown arrow behind **Include Directories** and choose **Edit**, then click the **New Line** button and add a reference to the **UOX3\spidermonkey** folder.</sub>
 * <sub>In the same manner, add a reference to **UOX3\spidermonkey\debug** in the **Library Directories** section, and a reference to **UOX3\spidermonkey** in the **Source Directories** section. Then press apply.</sub>
 * <sub> Repeat this process for both Release and Debug configurations (chosen at top of panel).</sub>
+
+</details>
 
 ### Option B) Visual Studio 2017/2019 and CMake ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
 *This option requires installing the Visual Studio toolset named **Linux development with C++** and the component called **Visual C++ tools for CMake and Linux**. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed!*
