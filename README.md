@@ -22,19 +22,41 @@ Join us on the [Ultima Offline eXperiment 3](https://discord.gg/uBAXxhF) server 
 ## Step 1: Clone the UOX3 Git Repository
 First step, open a new terminal and enter the commands below:
 
-1) **sudo apt install git** - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
+1) (Linux) **sudo apt install git** - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
+1) (Mac) **xcode-select --install** - This will install git if not already installed, as well as the necessary make and gcc tools
 2) **git clone https://github.com/UOX3DevTeam/UOX3.git** - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7) is also included.
 
 ## Step 2: Compile UOX3
 You'll need a couple tools before you can compile UOX3 on Linux: **GNU Make** (*v4.2.1* or higher recommended) and **gcc**. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal commands (which are specific to Debian/Ubuntu):
 
-1) **sudo apt install make**
-2) **sudo apt install gcc**
+1) (Linux) **sudo apt install make**
+2) (Linux) **sudo apt install gcc**
 
 Once these are in place, navigate to the **UOX3/source/** directory in your terminal and execute the following commands, in order:
 
 1) **chmod +x automake.sh** - Makes the automake.sh bash script executable.
 2) **./automake.sh** - First compiles the Spidermonkey JS library bundled with UOX3, then makes the actual UOX3 build
+
+<details>
+  <summary>Manual Instructions</summary>
+
+  If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does):
+
+	**cd spidermonkey**
+	**make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc**
+    ### Linux ###
+    	**ar -r libjs32.a Linux_All_DBG.OBJ/*.o**
+    	**cp Linux_All_DBG.OBJ/jsautocfg.h ./**
+    ### MacOS ###
+    	**ar rcs libjs32.a Darwin_DBG.OBJ/*.o**
+    	**cp Darwin_DBG.OBJ/jsautocfg.h ./**
+
+	*At the point, now cd to the main UOX3 source directory and build UOX3. This will put the uox3 binary in the same directory as the source.*
+
+    **cd ../source**
+    **make**
+
+</details>
 
 Once this process is done, you can copy your new uox3 binary to the root of the directory you intend to be the working directory for your UOX3 shard. Along with the binary, you'll also need to copy the files and folders contained in the data subdirectory. Once you have all the files in place, you can follow the regular steps listed under **Installation and Setup > Configuring Your UOX3 Shard** in the UOX3 documentation (see docs folder, or visit https://www.uox3.org/docs) to finish your UOX3 setup.
 
