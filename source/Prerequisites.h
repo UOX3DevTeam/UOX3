@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
-This file is an adaptation of the file OgrePrerequisites.h from OGRE
-and customised to our own needs
--------------------------------------------------------------------------*/
+ This file is an adaptation of the file OgrePrerequisites.h from OGRE
+ and customised to our own needs
+ -------------------------------------------------------------------------*/
 #ifndef __Prerequisites_H__
 #define __Prerequisites_H__
 
@@ -29,18 +29,18 @@ and customised to our own needs
 #   pragma warning (disable : 4275)
 
 // disable: "C++ Exception Specification ignored"
-// This is because MSVC 6 did not implement all the C++ exception 
+// This is because MSVC 6 did not implement all the C++ exception
 // specifications in the ANSI C++ draft.
 #   pragma warning( disable : 4290 )
 
-// disable: "no suitable definition provided for explicit template 
-// instantiation request" Occurs in VC7 for no justifiable reason on all 
+// disable: "no suitable definition provided for explicit template
+// instantiation request" Occurs in VC7 for no justifiable reason on all
 // #includes of Singleton
 #   pragma warning( disable: 4661)
 
-	#pragma warning( disable : 4511 )	// copy constructor could not be generated
-	#pragma warning( disable : 4512 )	// assignment operator could not be generated
-	#pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
+#pragma warning( disable : 4511 )	// copy constructor could not be generated
+#pragma warning( disable : 4512 )	// assignment operator could not be generated
+#pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
 
 #endif
 
@@ -54,115 +54,113 @@ and customised to our own needs
 #endif
 
 /* Include all the standard header *after* all the configuration
-   settings have been made.
-*/
+ settings have been made.
+ */
 #include "UOXStdHeaders.h"
 
 // define the real number values to be used
 // default to use 'float' unless precompiler option set
-namespace UOX {
-    // Define UOX version
-    #define UOX_VERSION_MAJOR 0
-    #define UOX_VERSION_MINOR 14
-    #define UOX_VERSION_PATCH 0
 
-    // define the Char type as either char or wchar_t
-    #if UOX_WCHAR_T_STRINGS == 1
-    #   define UOXChar wchar_t
-    #	define _TO_CHAR( x ) L##x
-    #else
-    #   define UOXChar char
-    #	define _TO_CHAR( x ) x
-    #endif
+// Define UOX version
+#define UOX_VERSION_MAJOR 0
+#define UOX_VERSION_MINOR 14
+#define UOX_VERSION_PATCH 0
 
-    /// Useful macros
-    #define UOX_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
-    #define UOX_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+// define the Char type as either char or wchar_t
+#if UOX_WCHAR_T_STRINGS == 1
+#   define UOXChar wchar_t
+#	define _TO_CHAR( x ) L##x
+#else
+#   define UOXChar char
+#	define _TO_CHAR( x ) x
+#endif
+
+/// Useful macros
+#define UOX_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
+#define UOX_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 
 
 // Pre-declare classes
 // Allows use of pointers in header files without including individual .h
 // so decreases dependencies between files
-	class CBaseTile;
-	class cAccountClass;
-	class CBaseObject;
-	class cBooks;
-	class CBoatObj;
-	class CChar;
-	class cCharStuff;
-	class cCommands;
-	class CConsole;
-	class cDice;
-	class CDictionary;
-	class CDictionaryContainer;
-	class cDirectoryListing;
-	class CEndL;
-	class cEffects;
-	class CEnvoke;
-	class CGuild;
-	class CGuildCollection;
-	class CGump;
-	class cHTMLTemplate;
-	class cHTMLTemplates;
-	class cItem;
-	class CItem;
-	class CJSMapping;
-	class CJSMappingSection;
-	class CLand;
-	class CLandHS;
-	class cMagic;
-	class CMagicMove;
-	class CMagicStat;
-	class CMapHandler;
-	class CMapRegion;
-	class CMulHandler;
-	class cMovement;
-	class CMultiObj;
-	class cNetworkStuff;
-	class CPUOXBuffer;
-	class CPInputBuffer;
-	class cRaces;
-	class CRace;
-	class cScript;
-	class CServerData;
-	class CServerDefinitions;
-	class CServerProfile;
-	class cSkillClass;
-	class cSkills;
-	class CSocket;
-	class CSpawnItem;
-	class CSpawnRegion;
-	class CSpeechEntry;
-	class CSpeechQueue;
-	class CTEffect;
-	class CThreadQueue;
-	class CTile;
-	class CTileHS;
-	class CTileUni;
-	class CTownRegion;
-	class CVersionClass;
-	class CWeather;
-	class cWeatherAb;
-	class CWeight;
-	class cWhoList;
-	class CWorldMain;
-	class GumpDisplay;
-	class HelpRequest;
-	class JailCell;
-	class JailSystem;
-	class ObjectFactory;
-	class Script;
-	class ScriptSection;
-	class SpellInfo;
-	class UOXFile;
-	class UString;
+class CBaseTile;
+class cAccountClass;
+class CBaseObject;
+class cBooks;
+class CBoatObj;
+class CChar;
+class cCharStuff;
+class cCommands;
+class CConsole;
+class cDice;
+class CDictionary;
+class CDictionaryContainer;
+class cDirectoryListing;
+class CEndL;
+class cEffects;
+class CEnvoke;
+class CGuild;
+class CGuildCollection;
+class CGump;
+class cHTMLTemplate;
+class cHTMLTemplates;
+class cItem;
+class CItem;
+class CJSMapping;
+class CJSMappingSection;
+class CLand;
+class CLandHS;
+class cMagic;
+class CMagicMove;
+class CMagicStat;
+class CMapHandler;
+class CMapRegion;
+class CMulHandler;
+class cMovement;
+class CMultiObj;
+class cNetworkStuff;
+class CPUOXBuffer;
+class CPInputBuffer;
+class cRaces;
+class CRace;
+class cScript;
+class CServerData;
+class CServerDefinitions;
+class CServerProfile;
+class cSkillClass;
+class cSkills;
+class CSocket;
+class CSpawnItem;
+class CSpawnRegion;
+class CSpeechEntry;
+class CSpeechQueue;
+class CTEffect;
+class CThreadQueue;
+class CTile;
+class CTileHS;
+class CTileUni;
+class CTownRegion;
+class CVersionClass;
+class CWeather;
+class cWeatherAb;
+class CWeight;
+class cWhoList;
+class CWorldMain;
+class GumpDisplay;
+class HelpRequest;
+class JailCell;
+class JailSystem;
+class ObjectFactory;
+class Script;
+class ScriptSection;
+class SpellInfo;
+class UOXFile;
+class UString;
 
-    /** In order to avoid finger-aches :)
-    */
+/** In order to avoid finger-aches :)
+ */
 #include "enums.h"
 #include "typedefs.h"
-
-}
 
 #endif // __Prerequisites_H__
 

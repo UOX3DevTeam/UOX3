@@ -5,13 +5,11 @@
 #ifndef __books_h
 #define __books_h
 
-namespace UOX
-{
-
+#include "cChar.h"
 class cBooks
 {
 public:
-	void CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook ); // "formats and creates a new bok file"	
+	void CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook ); // "formats and creates a new bok file"
 
 	void OpenPreDefBook( CSocket *s, CItem *i ); // opens old-readonly books, takes data from misc.dfn
 	void OpenBook( CSocket *s, CItem *i, bool isWriteable ); // opens new books
@@ -20,7 +18,5 @@ public:
 };
 
 extern cBooks *Books;
-
-}
 
 #endif

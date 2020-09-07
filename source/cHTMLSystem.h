@@ -13,9 +13,6 @@
 #endif // _MSC_VER > 1000
 #endif
 
-namespace UOX
-{
-
 enum ETemplateType
 {
 	ETT_ALLTEMPLATES = -1,
@@ -40,8 +37,8 @@ private:
 	UI32			ScheduledUpdate;
 
 public:
-					cHTMLTemplate();
-					~cHTMLTemplate();
+	cHTMLTemplate();
+	~cHTMLTemplate();
 	void			Process( void );
 	void			Poll( void );
 	void			LoadTemplate( void );
@@ -52,7 +49,7 @@ public:
 	std::string		GetName( void ) const;
 	std::string		GetOutput( void ) const;
 	std::string		GetInput( void ) const;
-	ETemplateType	GetTemplateType( void ) const;	
+	ETemplateType	GetTemplateType( void ) const;
 	UI32			GetScheduledUpdate( void ) const;
 	UI32			GetUpdateTimer( void ) const;
 };
@@ -63,8 +60,8 @@ private:
 	std::vector < cHTMLTemplate* > Templates;
 
 public:
-		cHTMLTemplates();
-		~cHTMLTemplates();
+	cHTMLTemplates();
+	~cHTMLTemplates();
 
 	void Load( void );
 	void Unload( void );
@@ -73,7 +70,5 @@ public:
 };
 
 extern cHTMLTemplates	*HTMLTemplates;
-
-}
 
 #endif

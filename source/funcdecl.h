@@ -4,15 +4,27 @@
 //| Purpose		-	This header file contains all of our globally declared functions
 //o-----------------------------------------------------------------------------------------------o
 //| Notes		-	Version History
-//|						2.0		giwo	10/16/2003
+//|						2.0		10/16/2003
 //|						Many functions removed, overall reorganization and updated to match
 //|						the rest of UOX3.
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __FUNCDECLS_H__
 #define __FUNCDECLS_H__
+#include <chrono>
+#include <thread>
+#include <random>
+#include "uoxstruct.h"
+#include "StringUtility.hpp"
+#include <iostream>
+#include <type_traits>
+#include <algorithm>
 
-namespace UOX
-{
+#include "cBaseObject.h"
+#include "cConsole.h"
+#include "worldmain.h"
+extern CConsole Console;
+extern CWorldMain   *cwmWorldState;
+extern std::mt19937 generator;
 
 //o-----------------------------------------------------------------------------------------------o
 // Range check functions
@@ -107,27 +119,23 @@ void	callGuards( CChar *mChar );
 //o-----------------------------------------------------------------------------------------------o
 // Time Functions
 //o-----------------------------------------------------------------------------------------------o
-inline TIMERVAL BuildTimeValue( R32 timeFromNow ) 
-{ 
-	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );	
+inline TIMERVAL BuildTimeValue( R32 timeFromNow )
+{
+	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );
 }
 
 UI32	getclock( void );
 inline char *	RealTime( char *time_str )
 {
-	struct tm *curtime;
-	time_t bintime;
-	time( &bintime );
-	curtime = localtime( &bintime );
+	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	auto curtime = std::localtime(&timet);
 	strftime( time_str, 256, "%B %d %I:%M:%S %p", curtime );
 	return time_str;
 }
 inline char *	RealTime24( char *time_str )
 {
-	struct tm *curtime;
-	time_t bintime;
-	time( &bintime );
-	curtime = localtime( &bintime );
+	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	auto curtime = std::localtime(&timet);
 	strftime( time_str, 256, "%B %d %H:%M:%S", curtime );
 	return time_str;
 }
@@ -147,43 +155,27 @@ inline std::string TimeStamp( void )
 	return "";
 }
 #endif
-#if UOX_PLATFORM != PLATFORM_WIN32
-	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds )
-	{
-		struct timeval t;
-		gettimeofday( &t, NULL );
-		Seconds			= t.tv_sec;
-		Milliseconds	= t.tv_usec / 1000;
-	}
-	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) 
-	{ 
-		struct timeval t; 
-		gettimeofday( &t, NULL ); 
-		return ( 1000 * ( t.tv_sec - Seconds ) + ( (t.tv_usec/1000) - Milliseconds ) ); 
-	}
-	inline void UOXSleep( SI32 toSleep )
-	{
-		usleep( toSleep * 1000 );
-	}
-#else
-	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) 
-	{ 
-		struct timeb t; 
-		ftime( &t ); 
-		Seconds = t.time; 
-		Milliseconds = t.millitm; 
-	};
-	inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds ) 
-	{ 
-		struct timeb t; 
-		ftime( &t ); 
-		return ( 1000 * ( t.time - Seconds ) + ( t.millitm - Milliseconds ) ); 
-	};
-	inline void UOXSleep( SI32 toSleep )
-	{
-		Sleep( toSleep );
-	}
-#endif
+inline void StartMilliTimer( std::uint32_t &Seconds, std::uint32_t &Milliseconds )
+{
+	auto timenow = std::chrono::system_clock::now().time_since_epoch() ;
+	auto sec = std::chrono::duration_cast<std::chrono::seconds>(timenow).count() ;
+	auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000*sec);
+	Seconds            =  static_cast<std::uint32_t>(sec) ;
+	Milliseconds    =  static_cast<std::uint32_t>(milli);
+}
+inline std::uint32_t CheckMilliTimer( std::uint32_t &Seconds, std::uint32_t &Milliseconds )
+{
+	auto timenow = std::chrono::system_clock::now().time_since_epoch() ;
+	auto sec = std::chrono::duration_cast<std::chrono::seconds>(timenow).count() ;
+	auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000*sec);
+	return static_cast<std::uint32_t>((1000 *(sec - Seconds)) + (milli - Milliseconds));
+}
+inline void UOXSleep( SI32 toSleep )
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(toSleep));
+
+}
+
 
 //o-----------------------------------------------------------------------------------------------o
 // Misc Functions
@@ -207,11 +199,11 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 			rvalue = false;
 		else if( toValidate->isDeleted() )
 			rvalue = false;
-	} 
+	}
 	catch( ... )
 	{
 		rvalue = false;
-		Console.Error( "Invalid Object found: 0x%X", (UI64)toValidate ); 
+		Console.error( format("Invalid Object found: 0x%X", (UI64)toValidate) );
 	}
 	return rvalue;
 }
@@ -219,18 +211,23 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 template< class T >
 inline T RandomNum( T nLowNum, T nHighNum )
 {
-	if( nHighNum - nLowNum + 1 )
-		return static_cast<T>((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
-	else
-		return nLowNum;
+	auto high = std::max<T>(nLowNum,nHighNum);
+	auto low = std::min<T>(nLowNum,nHighNum);
+	if (std::is_floating_point<T>::value){
+		auto distribution = std::uniform_real_distribution<double>(low, high);
+		return distribution(generator);
+
+	}
+	auto distribution = std::uniform_int_distribution<T>(low, high);
+	return distribution(generator);
+
 }
+
 template< class T >
 inline T HalfRandomNum( T HighRange )
 {
 	T halfSize = static_cast< T >(HighRange / 2);
 	return RandomNum( halfSize, HighRange );
-}
-
 }
 
 #endif

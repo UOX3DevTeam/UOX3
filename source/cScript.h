@@ -2,9 +2,6 @@
 #define __CSCRIPT_H__
 
 
-namespace UOX
-{
-
 class CPIGumpMenuSelect;
 class CPIGumpInput;
 
@@ -143,13 +140,13 @@ public:
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-				cScript( std::string targFile, UI08 runTime );
-				~cScript();
+	cScript( std::string targFile, UI08 runTime );
+	~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
 
-	
-	//|	Modification	-	08162003 - EviLDeD - Added these event to handle any script initialization and clean up as the server starts, and is shut down
+
+	//|	Modification	-	08162003 - Added these event to handle any script initialization and clean up as the server starts, and is shut down
 	bool		OnStart( void );
 	bool		OnStop( void );
 	//
@@ -157,7 +154,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
-	bool		OnCommand( CSocket *mSock ); 
+	bool		OnCommand( CSocket *mSock );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo );
 	bool		InRange( CChar *person, CBaseObject *objInRange );
@@ -224,7 +221,7 @@ public:
 	bool		ScriptRegistration( std::string scriptType );
 
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
-	
+
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
 	SI08		OnSkillGump( CChar *mChar );
@@ -233,7 +230,7 @@ public:
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
-	
+
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill );
 	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
@@ -248,8 +245,6 @@ public:
 	void		Firing( void );
 	void		Stop( void );
 };
-
-}
 
 #endif
 

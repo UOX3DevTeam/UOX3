@@ -5,11 +5,6 @@
 #include "ssection.h"
 #include "scriptc.h"
 
-#undef DBGFILE
-#define DBGFILE "mapstuff.cpp"
-
-namespace UOX
-{
 
 CMulHandler *Map				= NULL;
 
@@ -22,41 +17,40 @@ const UI32 MultiRecordSizeHS		= 16L;
 const UI32 TileRecordSize			= 26L;
 const UI32 TileRecordSizeHS			= 41L;
 const UI32 MapRecordSize			= 3L;
-const UI32 MapRecordSizeHS			= 4L;
+//const UI32 MapRecordSizeHS			= 4L;
 const UI32 MultiIndexRecordSize		= 12L;
 const UI32 StaticRecordSize			= 7L;
 const UI32 StaticIndexRecordSize	= 12L;
 const UI32 MapBlockSize				= 196L;
 
 /*! New Notes: 11/3/1999
-** I changed all of the places where z was handled as a signed char and
-** upped them to an int. While the basic terrain never goes above 127, 
-** calculations sure can. For example, if you are at a piece of land at 100
-** and put a 50 high static object, its going to roll over. - fur
-*/
+ ** I changed all of the places where z was handled as a signed char and
+ ** upped them to an int. While the basic terrain never goes above 127,
+ ** calculations sure can. For example, if you are at a piece of land at 100
+ ** and put a 50 high static object, its going to roll over.
+ */
 
 /*!
-** New rewrite plans, its way confusing having every function in here using 'Height' to mean
-** elevation or actual height of a tile.  Here's the new renaming plan:
-** Elevation - the z value of the bottom edge of an item
-** Height - the height of the item, it is independant of the elevation, like a person is 6ft tall
-** Top - the z value of the top edge of an item, is always Elevation + Height of item
-** -fur
-*/
+ ** New rewrite plans, its way confusing having every function in here using 'Height' to mean
+ ** elevation or actual height of a tile.  Here's the new renaming plan:
+ ** Elevation - the z value of the bottom edge of an item
+ ** Height - the height of the item, it is independant of the elevation, like a person is 6ft tall
+ ** Top - the z value of the top edge of an item, is always Elevation + Height of item
+ */
 
 /*!
-** I thought it might be helpful to others to include a quick guide to what things
-** meant in this code.
-** Tile - a single item in the game, maybe static or dynamic
-** Land - a single square from the map, the ground/water
-** Static - a single item that comes as part of the basic map. NOTE: Land and Statics are both
-**			saved in the same .mul file!  A lot of statics look like land as well.
-** Dynamic - any item added that doesn't come as part of the basic map
-** Single - an item in the game that will fit in a single cell
-** Multi - any item in the game that is composed of multiple single items across multiple cells
-**			maybe static or dynamic, may have multiple singles within same cell
-**
-*/
+ ** I thought it might be helpful to others to include a quick guide to what things
+ ** meant in this code.
+ ** Tile - a single item in the game, maybe static or dynamic
+ ** Land - a single square from the map, the ground/water
+ ** Static - a single item that comes as part of the basic map. NOTE: Land and Statics are both
+ **			saved in the same .mul file!  A lot of statics look like land as well.
+ ** Dynamic - any item added that doesn't come as part of the basic map
+ ** Single - an item in the game that will fit in a single cell
+ ** Multi - any item in the game that is composed of multiple single items across multiple cells
+ **			maybe static or dynamic, may have multiple singles within same cell
+ **
+ */
 
 MapData_st::~MapData_st()
 {
@@ -94,11 +88,11 @@ MapData_st::~MapData_st()
 //o-----------------------------------------------------------------------------------------------o
 void CMulHandler::MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
 {
-	if( x < lx ) 
+	if( x < lx )
 		lx = x;
-	if( x > hx ) 
+	if( x > hx )
 		hx = x;
-	if( y < ly ) 
+	if( y < ly )
 		ly = y;
 	if( y > hy )
 		hy = y;
@@ -115,11 +109,11 @@ void CMulHandler::MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
 //o-----------------------------------------------------------------------------------------------o
 void CMulHandler::MultiItemsIndexHS_st::Include( SI16 x, SI16 y, SI08 z )
 {
-	if( x < lx ) 
+	if( x < lx )
 		lx = x;
-	if( x > hx ) 
+	if( x > hx )
 		hx = x;
-	if( y < ly ) 
+	if( y < ly )
 		ly = y;
 	if( y > hy )
 		hy = y;
@@ -131,12 +125,11 @@ void CMulHandler::MultiItemsIndexHS_st::Include( SI16 x, SI16 y, SI08 z )
 
 
 /*! Use Memory-Mapped file to do caching instead
-** 'verdata.mul', 'tiledata.mul', 'multis.mul' and 'multi.idx' is changed so
-**  it will reads into main memory and access directly.  'map*.mul', 'statics*.mul' and
-**  'staidx.mul' is being managed by memory-mapped files, it faster than manual caching 
-**  and less susceptible to bugs.
-** -lingo
-*/
+ ** 'verdata.mul', 'tiledata.mul', 'multis.mul' and 'multi.idx' is changed so
+ **  it will reads into main memory and access directly.  'map*.mul', 'statics*.mul' and
+ **  'staidx.mul' is being managed by memory-mapped files, it faster than manual caching
+ **  and less susceptible to bugs.
+ */
 CMulHandler::CMulHandler() : landTile( 0 ), landTileHS( 0 ), staticTile( 0 ), staticTileHS( 0 ), multiItems( 0 ), multiItemsHS( 0 ), multiIndex( 0 ), multiIndexHS( 0 ), multiIndexSize( 0 ), multiSize( 0 ), tileDataSize( 0 )
 {
 	LoadMapsDFN();
@@ -148,11 +141,11 @@ CMulHandler::~CMulHandler()
 		delete[] landTile;
 	if ( landTileHS )
 		delete[] landTileHS;
-	if ( staticTile )   
+	if ( staticTile )
 		delete[] staticTile;
-	if ( staticTileHS )   
+	if ( staticTileHS )
 		delete[] staticTileHS;
-	if ( multiItems )  
+	if ( multiItems )
 		delete[] multiItems;
 	if( multiItemsHS )
 		delete[] multiItemsHS;
@@ -185,36 +178,36 @@ void CMulHandler::LoadMapsDFN( void )
 			data = toFind->GrabData();
 			switch( (UTag.data()[0]) )
 			{
-			case 'M':
-				if( UTag == "MAP" )
-					toAdd.mapFile = data;
-				else if( UTag == "MAPDIFF" )
-					toAdd.mapDiffFile = data;
-				else if( UTag == "MAPDIFFLIST" )
-					toAdd.mapDiffListFile = data;
-				else if( UTag == "MAPUOPWRAP" )
-					toAdd.mapFileUOPWrap = data;
-				break;
-			case 'S':
-				if( UTag == "STATICS" )
-					toAdd.staticsFile = data;
-				else if( UTag == "STAIDX" )
-					toAdd.staidxFile = data;
-				else if( UTag == "STATICSDIFF" )
-					toAdd.staticsDiffFile = data;
-				else if( UTag == "STATICSDIFFLIST" )
-					toAdd.staticsDiffListFile = data;
-				else if( UTag == "STATICSDIFFINDEX" )
-					toAdd.staticsDiffIndexFile = data;
-				break;
-			case 'X':
-				if( UTag == "X" )
-					toAdd.xBlock = data.toUShort();
-				break;
-			case 'Y':
-				if( UTag == "Y" )
-					toAdd.yBlock = data.toUShort();
-				break;
+				case 'M':
+					if( UTag == "MAP" )
+						toAdd.mapFile = data;
+					else if( UTag == "MAPDIFF" )
+						toAdd.mapDiffFile = data;
+					else if( UTag == "MAPDIFFLIST" )
+						toAdd.mapDiffListFile = data;
+					else if( UTag == "MAPUOPWRAP" )
+						toAdd.mapFileUOPWrap = data;
+					break;
+				case 'S':
+					if( UTag == "STATICS" )
+						toAdd.staticsFile = data;
+					else if( UTag == "STAIDX" )
+						toAdd.staidxFile = data;
+					else if( UTag == "STATICSDIFF" )
+						toAdd.staticsDiffFile = data;
+					else if( UTag == "STATICSDIFFLIST" )
+						toAdd.staticsDiffListFile = data;
+					else if( UTag == "STATICSDIFFINDEX" )
+						toAdd.staticsDiffIndexFile = data;
+					break;
+				case 'X':
+					if( UTag == "X" )
+						toAdd.xBlock = data.toUShort();
+					break;
+				case 'Y':
+					if( UTag == "Y" )
+						toAdd.yBlock = data.toUShort();
+					break;
 			}
 		}
 		MapList.push_back( toAdd );
@@ -399,7 +392,7 @@ void CMulHandler::LoadTileData( const std::string& basePath )
 
 		landTile		= new CLand[LANDDATA_SIZE];
 		CLand *landPtr	= landTile;
-		for( UI16 i = 0; i < 512; ++i )	
+		for( UI16 i = 0; i < 512; ++i )
 		{
 			tileFile.seek(4, SEEK_CUR);			// skip the dummy header
 			for( j = 0; j < 32; ++j )
@@ -425,8 +418,6 @@ void CMulHandler::LoadTileData( const std::string& basePath )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Load( void )
 //|	Date		-	03/12/2002
-//|	Programmer	-	Unknown / EviLDeD 
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prepare access streams to the server required mul files. This function basicaly
 //|					just opens the streams and validates that the file is open and available
@@ -446,8 +437,8 @@ void CMulHandler::Load( void )
 	if( totalMaps == 0 )
 	{
 		// Hmm, no maps were valid, so not much sense in continuing
-		Console.Error( " Fatal Error: No maps found" );
-		Console.Error( " Check the settings for DATADIRECTORY in uox.ini" );
+		Console.error( " Fatal Error: No maps found" );
+		Console.error( " Check the settings for DATADIRECTORY in uox.ini" );
 		Shutdown( FATAL_UOX3_MAP_NOT_FOUND );
 	}
 
@@ -467,7 +458,7 @@ void CMulHandler::Load( void )
 void CMulHandler::LoadMultis( const std::string& basePath )
 {
 	// now main memory multiItems
-	Console << "Caching Multis....  "; 
+	Console << "Caching Multis....  ";
 
 	// only turn it off for now because we are trying to fill the cache.
 	UString lName	= basePath + "multi.idx";
@@ -475,7 +466,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	if( !multiIDX.ready() )
 	{
 		Console.PrintFailed();
-		Console.Error( "Can't cache %s!  File cannot be opened", lName.c_str() );
+		Console.error( format("Can't cache %s!  File cannot be opened", lName.c_str()) );
 		return;
 	}
 	lName			= basePath + "multi.mul";
@@ -483,7 +474,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	if( !multis.ready() )
 	{
 		Console.PrintFailed();
-		Console.Error( "Can't cache %s!  File cannot be opened", lName.c_str() );
+		Console.error( format("Can't cache %s!  File cannot be opened", lName.c_str()) );
 		return;
 	}
 
@@ -615,7 +606,7 @@ SI08 CMulHandler::TileHeight( UI16 tilenum )
 		//7.0.9.0 tiledata and later
 		CTileHS& tile = SeekTileHS( tilenum );
 		// For Stairs+Ladders
-		if( tile.CheckFlag( TF_CLIMBABLE ) ) 
+		if( tile.CheckFlag( TF_CLIMBABLE ) )
 			return static_cast<SI08>(tile.Height()/2);
 		return tile.Height();
 	}
@@ -624,10 +615,10 @@ SI08 CMulHandler::TileHeight( UI16 tilenum )
 		//7.0.8.2 tiledata and earlier
 		CTile& tile = SeekTile( tilenum );
 		// For Stairs+Ladders
-		if( tile.CheckFlag( TF_CLIMBABLE ) ) 
+		if( tile.CheckFlag( TF_CLIMBABLE ) )
 			return static_cast<SI08>(tile.Height()/2);
 		return tile.Height();
-	}		
+	}
 }
 
 
@@ -690,8 +681,7 @@ MultiHS_st& CMulHandler::SeekIntoMultiHS( UI16 multinum, SI32 number )
 //o--------------------------------------------------------------------------
 //|	Function	-	void MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
 //|	Date		-	6th September, 1999
-//|	Programmer	-	Crackerjack
-//|	Changes		-	Abaddon, 26th September, 2001 - fetches from cache
+//|	Changes		-	26th September, 2001 - fetches from cache
 //o--------------------------------------------------------------------------
 //|	Purpose		-	Finds the corners of a multi object
 //o--------------------------------------------------------------------------
@@ -709,7 +699,7 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 	{
 		//7.0.9.0 tiledata and later
-		x1 = static_cast<SI16>(multiIndexHS[multiNum].lx + xAdd); 
+		x1 = static_cast<SI16>(multiIndexHS[multiNum].lx + xAdd);
 		x2 = static_cast<SI16>(multiIndexHS[multiNum].hx + xAdd);
 		y1 = static_cast<SI16>(multiIndexHS[multiNum].ly + yAdd);
 		y2 = static_cast<SI16>(multiIndexHS[multiNum].hy + yAdd);
@@ -717,7 +707,7 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 	else
 	{
 		//7.0.8.2 tiledata and earlier
-		x1 = static_cast<SI16>(multiIndex[multiNum].lx + xAdd); 
+		x1 = static_cast<SI16>(multiIndex[multiNum].lx + xAdd);
 		x2 = static_cast<SI16>(multiIndex[multiNum].hx + xAdd);
 		y1 = static_cast<SI16>(multiIndex[multiNum].ly + yAdd);
 		y2 = static_cast<SI16>(multiIndex[multiNum].hy + yAdd);
@@ -727,7 +717,7 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Return the height of a multi item at the given x, y. 
+//|	Purpose		-	Return the height of a multi item at the given x, y.
 //|					This seems to actually return a height
 //o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
@@ -736,10 +726,10 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 	SI32 length = 0;
 	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 		length = SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
-	else 
+	else
 		length = SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
 
-	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)                                                                                                                          
+	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (13 Sept 1999)
 		length = 0;
 
 	const SI16 baseX = i->GetX();
@@ -755,7 +745,7 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 				SI08 tmpTop = static_cast<SI08>(baseZ + multi.z);
 				if( abs( tmpTop - oldz ) <= maxZ )
 					return tmpTop + TileHeight( multi.tile );
-			}                                                                                                                 
+			}
 		}
 	}
 	else
@@ -768,11 +758,11 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 				SI08 tmpTop = static_cast<SI08>(baseZ + multi.z);
 				if( abs( tmpTop - oldz ) <= maxZ )
 					return tmpTop + TileHeight( multi.tile );
-			}                                                                                                                 
+			}
 		}
 	}
-	return ILLEGAL_Z;                                                                                                                     
-} 
+	return ILLEGAL_Z;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ, UI16 instanceID )
@@ -782,7 +772,7 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ, UI16 instanceID )
 {
 	SI08 z = ILLEGAL_Z;
-	
+
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return z;
@@ -820,7 +810,7 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		length = SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
 	else
 		length = SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
-	if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
+	if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (13 Sept 1999)
 	{
 		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		const map_st map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
@@ -841,7 +831,7 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 				i->SetID( 0x4001 );
 			else
 				i->SetID( 0x4064 );
-		}		
+		}
 		length = 0;
 	}
 
@@ -851,7 +841,7 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		{
 			MultiHS_st& multi = SeekIntoMultiHS( multiID, j );
 			if( ( multi.visible && ( i->GetX() + multi.x == x) && (i->GetY() + multi.y == y)
-				&& ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
+				 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
 			{
 				return multi.tile;
 			}
@@ -863,7 +853,7 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		{
 			Multi_st& multi = SeekIntoMulti( multiID, j );
 			if( ( multi.visible && ( i->GetX() + multi.x == x) && (i->GetY() + multi.y == y)
-				&& ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
+				 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
 			{
 				return multi.tile;
 			}
@@ -915,9 +905,9 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 	const map_st map = SeekMap( x, y, worldNumber );
 	// make sure nothing can move into black areas
 	if( 430 == map.id || 431 == map.id || 432 == map.id ||
-		433 == map.id || 434 == map.id || 475 == map.id ||
-		580 == map.id || 610 == map.id || 611 == map.id ||
-		612 == map.id || 613 == map.id )
+	   433 == map.id || 434 == map.id || 475 == map.id ||
+	   580 == map.id || 610 == map.id || 611 == map.id ||
+	   612 == map.id || 613 == map.id )
 		return ILLEGAL_Z;
 	return map.z;
 }
@@ -946,7 +936,7 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 	//7.0.8.2 tiledata and earlier
 	if( !IsValidTile( tileNum ) )
 	{
-		Console.Warning( "Invalid tile access, the offending tile number is %u", tileNum );
+		Console.warning( format("Invalid tile access, the offending tile number is %u", tileNum) );
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -964,7 +954,7 @@ CTileHS& CMulHandler::SeekTileHS( UI16 tileNum )
 	//7.0.9.2 tiledata and later
 	if( !IsValidTile( tileNum ) )
 	{
-		Console.Warning( "Invalid tile access, the offending tile number is %u", tileNum );
+		Console.warning( format("Invalid tile access, the offending tile number is %u", tileNum ));
 		static CTileHS emptyTile;
 		return emptyTile;
 	}
@@ -981,7 +971,7 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
 	{
-		Console.Warning( "Invalid land access, the offending land number is %u", landNum );
+		Console.warning( format("Invalid land access, the offending land number is %u", landNum) );
 		static CLand emptyTile;
 		return emptyTile;
 	}
@@ -998,7 +988,7 @@ CLandHS& CMulHandler::SeekLandHS( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
 	{
-		Console.Warning( "Invalid land access, the offending land number is %u", landNum );
+		Console.warning( format("Invalid land access, the offending land number is %u", landNum) );
 		static CLandHS emptyTile;
 		return emptyTile;
 	}
@@ -1020,20 +1010,20 @@ bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
-//|					baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ), 
+//|	Function	-	CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ),
+//|					baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ),
 //|					index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Use this iterator class anywhere you would have used SeekInit() and SeekStatic()
 //|					Unlike those functions however, it will only return the location of tiles that match your
 //|					(x,y) EXACTLY.  They also should be significantly faster since the iterator saves
-//|					a lot of info that was recomputed over and over and it returns a pointer instead 
+//|					a lot of info that was recomputed over and over and it returns a pointer instead
 //|					of an entire structure on the stack.  You can call First() if you need to reset it.
 //|					This iterator hides all of the map implementation from other parts of the program.
 //|					If you supply the exact variable, it tells it whether to iterate over those items
 //|					with your exact (x,y) otherwise it will loop over all items in the same cell as you.
 //|					(Thats normally only used for filling the cache)
-//| 
+//|
 //|					Usage:
 //|						CStaticIterator msi( x, y, worldNumber );
 //|
@@ -1043,13 +1033,13 @@ bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 //|							... your code here...
 //|						}
 //o-----------------------------------------------------------------------------------------------o
-CStaticIterator::CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
-baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ), 
+CStaticIterator::CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ),
+baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ),
 index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 {
 	if( !Map->InsideValidWorld( x, y, world ) )
 	{
-		Console.Error( "ASSERT: CStaticIterator(); Not inside a valid world" );
+		Console.error( "ASSERT: CStaticIterator(); Not inside a valid world" );
 		return;
 	}
 
@@ -1061,7 +1051,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 	if( diffIter != mMap.staticsDiffIndex.end() )
 	{
 		const StaticsIndex_st &sdiRecord = diffIter->second;
-		
+
 		if( sdiRecord.offset == INVALIDSERIAL )
 		{
 			length = 0;
@@ -1108,7 +1098,7 @@ Static_st *CStaticIterator::Next( void )
 
 	MapData_st& mMap = Map->GetMapData( worldNumber );
 	UOXFile *mFile = NULL;
-	
+
 	if( useDiffs )
 		mFile = mMap.staticsDiffObj;
 	else
@@ -1143,7 +1133,7 @@ Static_st *CStaticIterator::Next( void )
 			return &staticArray;
 		}
 	} while( index < length );
-	
+
 	return NULL;
 }
 
@@ -1184,7 +1174,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	if( mFile->eof() )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Warning( "SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y );
+		Console.warning( format("SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y ));
 #endif
 	}
 	else
@@ -1314,8 +1304,8 @@ bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 ins
 //o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk )
 {
-    // get the tile id of any dynamic tiles at this spot
-    const UI16 dt = DynTile( x, y, z, worldNumber, instanceID );
+	// get the tile id of any dynamic tiles at this spot
+	const UI16 dt = DynTile( x, y, z, worldNumber, instanceID );
 	if( IsValidTile( dt ) )
 	{
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
@@ -1399,7 +1389,7 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 					if( land.CheckFlag( TF_WET ) )
 						return true;
 				}
-			}		
+			}
 		}
 	}
 	return false;
@@ -1416,7 +1406,7 @@ bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, 
 	if( !InsideValidWorld( x, y, worldNumber ) )
 		return false;
 
-    // get the tile id of any dynamic tiles at this spot
+	// get the tile id of any dynamic tiles at this spot
 	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, !checkWater, instanceID ) )
 		return false;
 
@@ -1444,7 +1434,7 @@ bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 	if( !InsideValidWorld( x, y, worldNumber ) )
 		return false;
 
-    const SI08 elev = Height( x, y, oldz, worldNumber, instanceID );
+	const SI08 elev = Height( x, y, oldz, worldNumber, instanceID );
 	if( ILLEGAL_Z == elev )
 		return false;
 
@@ -1457,7 +1447,7 @@ bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 			return false;
 	}
 
-    // get the tile id of any dynamic tiles at this spot
+	// get the tile id of any dynamic tiles at this spot
 	if( DoesDynamicBlock( x, y, elev, worldNumber, checkWater, instanceID, false ) )
 		return false;
 
@@ -1474,7 +1464,6 @@ bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool MapExists( UI08 worldNumber )
 //|	Date		-	27th September, 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the server has that map in memory
 //o-----------------------------------------------------------------------------------------------o
@@ -1522,8 +1511,8 @@ void CMulHandler::LoadDFNOverrides( void )
 			if( toScan == NULL )
 				continue;
 			entryName	= mapScp->EntryName();
-			entryNum	= entryName.section( " ", 1, 1 ).toUInt();
-			titlePart	= entryName.section( " ", 0, 0 ).upper();
+			entryNum	= str_value<std::uint16_t>(extractSection(entryName," ", 1, 1 ));
+			titlePart	= str_toupper(extractSection(entryName, " ", 0, 0 ));
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
@@ -1857,6 +1846,4 @@ void CLandHS::Read( UOXFile *toRead )
 	toRead->getULong( &unknown1 );
 	toRead->getUShort( &textureID );
 	toRead->getChar( name, 20 );
-}
-
 }

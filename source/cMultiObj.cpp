@@ -1,33 +1,28 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	cMultiObj.cpp
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon/EviLDeD
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
-//|									
-//|						1.0		Abaddon		28th July, 2000
+//|
+//|						1.0		28th July, 2000
 //|						Very basically fleshed out
 //|						Owner, ban list and object inside support included
 //|						Note that lockdown stuff is NOT persistent yet, needs support later on
 //|						Best place would be world loading, any locked down objects flagged at time added to multi
 //|
-//|						1.1		Abaddon		28th August, 2000
+//|						1.1		28th August, 2000
 //|						Function declaration headers
 //|						Addition of SetMaxLockDowns
 //|
-//|						1.2		Abaddon		30th November, 2000
+//|						1.2		30th November, 2000
 //|						Changed lock downs to a vector, and full vector support added
 //|						Save needs modification
 //|
-//| 					1.3		giwo		25th September 2003
+//| 					1.3		25th September 2003
 //|						Added CBoatObj as a derived class of CMultiObj to simplify some processes in the cBoat class
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "mapstuff.h"
-
-namespace UOX
-{
 
 const UI16	DEFMULTI_MAXLOCKEDDOWN	= 256;
 
@@ -48,7 +43,6 @@ CMultiObj::~CMultiObj()
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void AddToBanList( CChar *toBan )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a character to the ban list, if he's not already on it
 //o-----------------------------------------------------------------------------------------------o
@@ -61,7 +55,6 @@ void CMultiObj::AddToBanList( CChar *toBan )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RemoveFromBanList( CChar *toRemove )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a character from a ban list
 //o-----------------------------------------------------------------------------------------------o
@@ -78,7 +71,6 @@ void CMultiObj::RemoveFromBanList( CChar *toRemove )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void AddAsOwner( CChar *newOwner )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a player as an owner, so long as they aren't already
 //|						and aren't already on the ban list
@@ -92,7 +84,6 @@ void CMultiObj::AddAsOwner( CChar *newOwner )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RemoveAsOwner( CChar *toRemove )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a character from the owner's list
 //o-----------------------------------------------------------------------------------------------o
@@ -109,7 +100,6 @@ void CMultiObj::RemoveAsOwner( CChar *toRemove )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool IsOnBanList( CChar *toBan ) const
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a character is on the ban list
 //o-----------------------------------------------------------------------------------------------o
@@ -127,7 +117,6 @@ bool CMultiObj::IsOnBanList( CChar *toBan ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool IsOwner( CChar *toFind ) const
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the character is an owner
 //o-----------------------------------------------------------------------------------------------o
@@ -145,7 +134,6 @@ bool CMultiObj::IsOwner( CChar *toFind ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void AddToMulti( CBaseObject *toAdd )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds an item or character to the multi
 //o-----------------------------------------------------------------------------------------------o
@@ -160,7 +148,6 @@ void CMultiObj::AddToMulti( CBaseObject *toAdd )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RemoveFromMulti( CBaseObject *toRemove )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes an item or character from the multi, if possible
 //o-----------------------------------------------------------------------------------------------o
@@ -179,7 +166,6 @@ void CMultiObj::RemoveFromMulti( CBaseObject *toRemove )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	size_t GetLockDownCount( void ) const
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the locked down items
 //o-----------------------------------------------------------------------------------------------o
@@ -191,7 +177,6 @@ size_t CMultiObj::GetLockDownCount( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 GetMaxLockDowns( void ) const
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible lockdowns
 //o-----------------------------------------------------------------------------------------------o
@@ -203,7 +188,6 @@ UI32 CMultiObj::GetMaxLockDowns( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LockDownItem( CItem *toLock )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks down an item toLock
 //o-----------------------------------------------------------------------------------------------o
@@ -225,7 +209,6 @@ void CMultiObj::LockDownItem( CItem *toLock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RemoveLockDown( CItem *toRemove )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unlocks a locked down item
 //o-----------------------------------------------------------------------------------------------o
@@ -246,7 +229,6 @@ void CMultiObj::RemoveLockDown( CItem *toRemove )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool Save( std::ofstream &outStream )
 //|	Date		-	28th July, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves a multi out to disk. outStream is the file to write to
 //o-----------------------------------------------------------------------------------------------o
@@ -270,7 +252,6 @@ bool CMultiObj::Save( std::ofstream &outStream )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool LoadRemnants( void )
 //|	Date		-	20th January, 2002
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	After handling data specific load, other parts go here
 //o-----------------------------------------------------------------------------------------------o
@@ -287,7 +268,6 @@ bool CMultiObj::LoadRemnants( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetMaxLockDowns( UI16 newValue )
 //|	Date		-	28th August, 2000
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of lockdowns possible
 //o-----------------------------------------------------------------------------------------------o
@@ -298,7 +278,6 @@ void CMultiObj::SetMaxLockDowns( UI16 newValue )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpHeader( std::ofstream &outStream ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out the header for the CMultiObj
 //o-----------------------------------------------------------------------------------------------o
@@ -310,7 +289,6 @@ bool CMultiObj::DumpHeader( std::ofstream &outStream ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpBody( std::ofstream &outStream ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes out all CMultiObj specific information to a world
 //|					file.  Also prints out the Item and BaseObject portions
@@ -355,7 +333,6 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool HandleLine( UString &UTag, UString &data )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Processes a tag/data pair if it can.  If it can, returns
 //|					true.  Otherwise, returns false.
@@ -415,7 +392,6 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetOwner( CChar *newOwner )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Ensures that newOwner is also on the house ownership list.
 //o-----------------------------------------------------------------------------------------------o
@@ -433,7 +409,6 @@ void CMultiObj::SetOwner( CChar *newOwner )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Cleanup( void )
 //|	Date		-	26th September, 2001
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes sure that any items and chars inside the multi are removed
 //o-----------------------------------------------------------------------------------------------o
@@ -484,7 +459,6 @@ void CMultiObj::SetDeed( const std::string &newDeed )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 //o-----------------------------------------------------------------------------------------------o
@@ -512,17 +486,15 @@ CDataList< CItem * > * CMultiObj::GetItemsInMultiList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Class		-	CBoatObj
 //|	Date		-	25th September, 2003
-//|	Programmer	-	giwo
-//|	Team		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
-//|									
-//|					1.0		giwo		25th September, 2003
+//|
+//|					1.0		 		25th September, 2003
 //|					Very basic, currently
 //|					Simplifies some processes in cBoat class, eventually should allow
 //|					easy removal of some generic containers in CItem class
 //|
-//|					1.1		giwo		28th October, 2003
+//|					1.1		 		28th October, 2003
 //|					Added MoveType() to remove the need for CItem::Type2()
 //|					Added MoveTime() instead of using CItem::GateTime()
 //|					Changed Plank1() and Plank2() to Plank() using an array
@@ -533,7 +505,7 @@ const SERIAL		DEFBOAT_HOLD		= INVALIDSERIAL;
 const UI08			DEFBOAT_MOVETYPE	= 0;
 const TIMERVAL		DEFBOAT_MOVETIME	= 0;
 
-CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD ), 
+CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD ),
 moveType( DEFBOAT_MOVETYPE ), nextMoveTime( DEFBOAT_MOVETIME )
 {
 	planks[0] = planks[1] = INVALIDSERIAL;
@@ -546,7 +518,6 @@ CBoatObj::~CBoatObj()
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpHeader( std::ofstream &outStream ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out the header for the CMultiObj
 //o-----------------------------------------------------------------------------------------------o
@@ -558,7 +529,6 @@ bool CBoatObj::DumpHeader( std::ofstream &outStream ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DumpBody( std::ofstream &outStream ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes out all CMultiObj specific information to a world
 //|					file.  Also prints out the Item and BaseObject portions
@@ -581,7 +551,6 @@ bool CBoatObj::DumpBody( std::ofstream &outStream ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool HandleLine( UString &UTag, UString &data )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Processes a tag/data pair if it can.  If it can, returns
 //|					true.  Otherwise, returns false.
@@ -608,15 +577,15 @@ bool CBoatObj::HandleLine( UString &UTag, UString &data )
 			case 'P':
 				if( UTag == "PLANKS" )
 				{
-					SetPlank( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-					SetPlank( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
+					SetPlank( 0, str_value<std::uint32_t>(trim(extractSection(data, ",", 0, 0 ))) );
+					SetPlank( 1, str_value<std::uint32_t>(trim(extractSection(data, ",", 1, 1 ))));
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TILLER" )
 				{
-					SetTiller( data.toUInt() );
+					SetTiller( str_value<std::uint16_t>(data) );
 					rvalue = true;
 				}
 				break;
@@ -629,7 +598,6 @@ bool CBoatObj::HandleLine( UString &UTag, UString &data )
 //|	Function	-	SERIAL GetTiller( void ) const
 //|					void SetTiller( SERIAL newVal )
 //|	Date		-	September 25, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Tiller item reference
 //o-----------------------------------------------------------------------------------------------o
@@ -646,7 +614,6 @@ void CBoatObj::SetTiller( SERIAL newVal )
 //|	Function	-	SERIAL GetPlank( UI08 plankNum ) const
 //|					void SetPlank( UI08 plankNum, SERIAL newVal )
 //|	Date		-	September 25, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Plank item reference
 //o-----------------------------------------------------------------------------------------------o
@@ -667,7 +634,6 @@ void CBoatObj::SetPlank( UI08 plankNum, SERIAL newVal )
 //|	Function	-	SERIAL GetHold( void ) const
 //|					void SetHold( SERIAL newVal )
 //|	Date		-	September 25, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Hold item reference
 //o-----------------------------------------------------------------------------------------------o
@@ -684,7 +650,6 @@ void CBoatObj::SetHold( SERIAL newVal )
 //|	Function	-	UI08 GetMoveType( void ) const
 //|					void SetMoveType( UI08 newVal )
 //|	Date		-	October 28, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's movement type (0 = Not moving, 1 = Moving forward, 2 = Moving backward)
 //o-----------------------------------------------------------------------------------------------o
@@ -701,7 +666,6 @@ void CBoatObj::SetMoveType( UI08 newVal )
 //|	Function	-	TIMERVAL GetMoveTime( void ) const
 //|					void SetMoveTime( TIMERVAL newVal )
 //|	Date		-	October 28, 2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for when boat will move next
 //o-----------------------------------------------------------------------------------------------o
@@ -716,7 +680,6 @@ void CBoatObj::SetMoveTime( TIMERVAL newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 //o-----------------------------------------------------------------------------------------------o
@@ -729,6 +692,4 @@ bool CBoatObj::CanBeObjType( ObjectType toCompare ) const
 			rvalue = true;
 	}
 	return rvalue;
-}
-
 }

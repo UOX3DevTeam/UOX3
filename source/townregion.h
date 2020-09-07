@@ -1,9 +1,6 @@
 #ifndef __TownRegion__
 #define __TownRegion__
 
-namespace UOX
-{
-
 struct	miningData;
 
 struct orePref
@@ -51,8 +48,8 @@ private:
 	UI08				worldNumber;
 	UI16				instanceID;
 	std::bitset< 10 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
-								// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
-								// 0x80 Dungeon region
+	// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
+	// 0x80 Dungeon region
 	std::string					guardowner;
 	std::vector< std::string >	guards;
 	std::vector< orePref >		orePreferences;
@@ -93,8 +90,8 @@ private:
 
 public:
 
-						CTownRegion( UI16 region );
-						~CTownRegion();
+	CTownRegion( UI16 region );
+	~CTownRegion();
 
 	bool				DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag = -1 );
 	bool				VoteForMayor( CSocket *sock );
@@ -183,8 +180,6 @@ public:
 
 	std::string			GetTownMemberSerials( void ) const;
 };
-
-}
 
 #endif
 

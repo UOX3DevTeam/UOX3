@@ -1,8 +1,6 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
 
-namespace UOX
-{
 
 class CMultiObj : public CItem
 {
@@ -20,7 +18,7 @@ protected:
 	CDataList< CChar * >	charInMulti;
 
 public:
-						CMultiObj();
+	CMultiObj();
 	virtual				~CMultiObj();
 
 	void				AddToBanList( CChar *toBan );
@@ -76,7 +74,7 @@ private:
 	virtual bool		HandleLine( UString &UTag, UString &data ) override;
 
 public:
-						CBoatObj();
+	CBoatObj();
 	virtual				~CBoatObj();
 
 	SERIAL				GetTiller( void ) const;
@@ -94,8 +92,6 @@ public:
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 };
-
-}
 
 #endif
 

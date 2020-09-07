@@ -1,10 +1,8 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	UOXJSPropertyFuncts.cpp
 //|	Date		-	12/14/2001
-//|	Programmer	-	Abaddon / EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
-//|	Notes		-	1.0		Abaddon		14th December, 2001 Initial implementation
+//|	Notes		-	1.0		14th December, 2001 Initial implementation
 //|							Defines the property specifications for race, region, guild,
 //|							item and chars
 //o-----------------------------------------------------------------------------------------------o
@@ -14,10 +12,8 @@
 #include "UOXJSPropertyEnums.h"
 #include "enums.h"
 
-namespace UOX
-{
 
-static JSPropertySpec CSpellProperties[] = 
+static JSPropertySpec CSpellProperties[] =
 {
 	{ "id",					CSP_ID,					JSPROP_ENUMANDPERM },
 	{ "action",				CSP_ACTION,				JSPROP_ENUMANDPERM },
@@ -56,7 +52,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ NULL,					(SI08)NULL,				(UI08)0			   }
 };
 
-static JSPropertySpec CRaceProperties[] = 
+static JSPropertySpec CRaceProperties[] =
 {
 	{ "id",					CRP_ID,					JSPROP_ENUMANDPERM },
 	{ "name",				CRP_NAME,				JSPROP_ENUMANDPERM },
@@ -76,7 +72,7 @@ static JSPropertySpec CRaceProperties[] =
 };
 
 
-static JSPropertySpec CRegionProperties[] = 
+static JSPropertySpec CRegionProperties[] =
 {
 	{ "name",				CREGP_NAME,					JSPROP_ENUMANDPERM },
 	{ "mayor",				CREGP_MAYOR,				JSPROP_ENUMANDPERM },
@@ -128,7 +124,7 @@ static JSPropertySpec CSpawnRegionProperties[] =
 	{ NULL,					(SI08)NULL,					(UI08)0			   }
 };
 
-static JSPropertySpec CGuildProperties[] = 
+static JSPropertySpec CGuildProperties[] =
 {
 	{ "name",			CGP_NAME,			JSPROP_ENUMANDPERM },
 	{ "type",			CGP_TYPE,			JSPROP_ENUMANDPERM },
@@ -144,7 +140,7 @@ static JSPropertySpec CGuildProperties[] =
 	{ NULL,				(SI08)NULL,			(UI08)0}
 };
 
-static JSPropertySpec CCharacterProps[] = 
+static JSPropertySpec CCharacterProps[] =
 {
 	{ "name",			CCP_NAME,			JSPROP_ENUMANDPERM },
 	{ "title",			CCP_TITLE,			JSPROP_ENUMANDPERM },
@@ -281,7 +277,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
-static JSPropertySpec CItemProps[] = 
+static JSPropertySpec CItemProps[] =
 {
 	{ "name",			CIP_NAME,			JSPROP_ENUMANDPERM },
 	{ "title",			CIP_TITLE,			JSPROP_ENUMANDPERM },
@@ -367,7 +363,7 @@ static JSPropertySpec CItemProps[] =
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
-static JSPropertySpec CSocketProps[] = 
+static JSPropertySpec CSocketProps[] =
 {
 	{ "account",			CSOCKP_ACCOUNT,				JSPROP_ENUMANDPERM },
 	{ "currentChar",		CSOCKP_CURRENTCHAR,			JSPROP_ENUMANDPERM },
@@ -408,7 +404,7 @@ static JSPropertySpec CSocketProps[] =
 	{ NULL,					(SI08)NULL,				(UI08)0}
 };
 
-static JSPropertySpec CSkillsProps[] = 
+static JSPropertySpec CSkillsProps[] =
 {
 	{ "alchemy",			ALCHEMY,			JSPROP_ENUMANDPERM },
 	{ "anatomy",			ANATOMY,			JSPROP_ENUMANDPERM },
@@ -527,17 +523,5 @@ static JSPropertySpec CPartyProperties[] =
 	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM	},
 	{	NULL,			(SI08)NULL,				(UI08)0				}
 };
-
-#if P_ODBC == 1
-
-static JSPropertySpec CODBCProperties[] =
-{
-	{ "lastOK",			CODBCP_LASTSUCCEEDED,	JSPROP_ENUMPERMRO	},
-	{	NULL,			(SI08)NULL,				(UI08)0				}
-};
-
-#endif
-
-}
 
 #endif

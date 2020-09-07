@@ -21,8 +21,6 @@
 #include "cSkillClass.h"
 #include "Dictionary.h"
 
-namespace UOX
-{
 
 void		sendTradeStatus( CItem *cont1, CItem *cont2 );
 CItem *		startTrade( CSocket *mSock, CChar *i );
@@ -36,7 +34,6 @@ void		ModelBoat( CSocket *s, CBoatObj *i );
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Bounce( CSocket *bouncer, CItem *bouncing )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back from where they came
 //o-----------------------------------------------------------------------------------------------o
@@ -51,7 +48,7 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 	{
 		default:
 		case PL_NOWHERE:	break;
-		case PL_GROUND:		
+		case PL_GROUND:
 		{
 			SI16 x = bouncer->PickupX();
 			SI16 y = bouncer->PickupY();
@@ -71,7 +68,7 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 		case PL_OWNPACK:
 		case PL_OTHERPACK:
 		case PL_PAPERDOLL:
-			bouncing->SetContSerial( spot );	
+			bouncing->SetContSerial( spot );
 			break;
 	}
 	bouncing->Dirty( UT_UPDATE );
@@ -82,7 +79,6 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PickupBounce( CSocket *bouncer )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back if pickup is illegal. Doesn't require updating item.
 //o-----------------------------------------------------------------------------------------------o
@@ -98,7 +94,6 @@ void PickupBounce( CSocket *bouncer )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 //|	Date		-	8/14/01
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Searches pack for pileable items that match the item being
 //|					dropped into said pack (only if it's pileable), if found
@@ -106,9 +101,9 @@ void PickupBounce( CSocket *bouncer )
 //|					an item can stack) then stacks it. If the item is not stackable
 //|					or it cannot stack the item with a pile and have an amount that
 //|					is <= 65355 then it creates a new pile.
-//|								
-//|	Changes		-	09/09/2001 - Abaddon - returns true if item deleted
-//|					09/25/2002 - Brakthus - Weight fixes
+//|
+//|	Changes		-	09/09/2001 - returns true if item deleted
+//|					09/25/2002 - Weight fixes
 //o-----------------------------------------------------------------------------------------------o
 CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 {
@@ -131,7 +126,6 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
-//|	Org/Team	-	UOX3 DevTeam
 //|	Status		-	Modified to v2
 //|					v2 - accepts a possible NULL socket to deal with the JSE
 //|					v3 - returns a CItem * (stack if stacked, item otherwise)
@@ -161,8 +155,8 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 			if( !ValidateObject( stack ) )
 				continue;
 
-			if( stack->isPileable() && stack->GetAmount() < MAX_STACK && 
-				stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol )
+			if( stack->isPileable() && stack->GetAmount() < MAX_STACK &&
+			   stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol )
 			{ // Autostack
 				if( doStacking( mSock, mChar, iToStack, stack ) == stack )	// compare to stack, if doStacking returned the stack, then the raw object was deleted
 					return stack;	// return the stack
@@ -179,7 +173,6 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIGetItem::Handle( void )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when a player picks up an item
 //o-----------------------------------------------------------------------------------------------o
@@ -345,7 +338,7 @@ bool CPIGetItem::Handle( void )
 		//7.0.9.2 tiledata and later
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
-			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			PickupBounce( tSock );
 			return true;
@@ -356,7 +349,7 @@ bool CPIGetItem::Handle( void )
 		//7.0.8.2 tiledata and earlier
 		CTile& tile = Map->SeekTile( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
-			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			PickupBounce( tSock );
 			return true;
@@ -420,7 +413,6 @@ bool CPIGetItem::Handle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIEquipItem::Handle( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped on a players paperdoll
 //o-----------------------------------------------------------------------------------------------o
@@ -445,7 +437,7 @@ bool CPIEquipItem::Handle( void )
 		if( pOType == OT_CHAR )
 		{
 			CChar *pOChar = static_cast<CChar *>(pOwner);
-			if( pOChar != ourChar && ( ( !ourChar->IsGM() && pOChar->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, pOwner, DIST_NEARBY ) )
+			if( ((pOChar != ourChar) && ( ( !ourChar->IsGM() && (pOChar->GetOwnerObj() != ourChar) ) )) || !objInRange( ourChar, pOwner, DIST_NEARBY ) )
 			{
 				Bounce( tSock, i );
 				return true;
@@ -534,7 +526,7 @@ bool CPIEquipItem::Handle( void )
 		//7.0.9.2 tiledata and later
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
-			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			Bounce( tSock, i );
 			return true;
@@ -545,7 +537,7 @@ bool CPIEquipItem::Handle( void )
 		//7.0.8.2 tiledata and earlier
 		CTile& tile = Map->SeekTile( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
-			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			Bounce( tSock, i );
 			return true;
@@ -555,7 +547,7 @@ bool CPIEquipItem::Handle( void )
 	if( i->GetLayer() == IL_NONE )
 		i->SetLayer( static_cast<ItemLayers>(tSock->GetByte( 5 )) );
 
-	// 1/13/2003 - Xuri - Fix for equipping an item to more than one hand, or multiple equipping.
+	// 1/13/2003 - Fix for equipping an item to more than one hand, or multiple equipping.
 	if( i->GetCont() != k )
 	{
 		bool conflictItem = true;
@@ -567,7 +559,7 @@ bool CPIEquipItem::Handle( void )
 			else if( i->GetLayer() == IL_LEFTHAND )
 				j = k->GetItemAtLayer( IL_RIGHTHAND );
 
-			// GetDir-check is to allow for torches and lanterns, 
+			// GetDir-check is to allow for torches and lanterns,
 			// which use left-hand layer but are not 2-handers or shields
 			if( ValidateObject( j ) && !i->IsShieldType() && i->GetDir() == 0 )
 			{
@@ -607,10 +599,9 @@ bool CPIEquipItem::Handle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
-//|	Programmer	-	UOX3 DevTeam
-//|	Changes		-	Abaddon, September 14th, 2001, returns true if item deleted
-//|				-	Xuri/Brakthus, September 25, 2002, Weight fixes
-//|				-	Zane, September 21st, 2003, moved into seperate file and few other minor tweaks
+//|	Changes		-	September 14th, 2001, returns true if item deleted
+//|				-	September 25, 2002, Weight fixes
+//|				-	September 21st, 2003, moved into seperate file and few other minor tweaks
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped on a character
 //o-----------------------------------------------------------------------------------------------o
@@ -624,7 +615,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 		{
 			i->SetCont( NULL );
 			i->SetLocation( mChar );
-		} 
+		}
 		else
 			stackDeleted = ( autoStack( mSock, i, pack ) != i );
 	}
@@ -741,7 +732,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	}
 
 	if( targNPC->IsTamed() && ( isGM || targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) // do food stuff
-	{	
+	{
 		if( targNPC->WillHunger() && IsOnFoodList( targNPC->GetFood(), i->GetID() ) )
 		{
 			if( targNPC->GetHunger() < 6 )
@@ -784,7 +775,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		{
 			UI08 trainedIn = targNPC->GetTrainingPlayerIn();
 			targNPC->TextMessage( mSock, 1198, TALK, false );
-			UI16 oldskill = mChar->GetBaseSkill( trainedIn ); 
+			UI16 oldskill = mChar->GetBaseSkill( trainedIn );
 			mChar->SetBaseSkill( (UI16)( mChar->GetBaseSkill( trainedIn ) + i->GetAmount() ), trainedIn );
 			if( mChar->GetBaseSkill( trainedIn ) > 250 )
 				mChar->SetBaseSkill( 250, trainedIn );
@@ -818,21 +809,21 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 
 	switch( dropResult )
 	{
-	default:
-	case 0:		// Do nothing;
-		break;
-	case 1:		// Bounce
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, i );
+		default:
+		case 0:		// Do nothing;
+			break;
+		case 1:		// Bounce
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, i );
 
-		Bounce( mSock, i );
-		break;
-	case 2:		// Stack
-		CItem *pack;
-		pack = targNPC->GetPackItem();
-		if( ValidateObject( pack ) )
-			stackDeleted = ( autoStack( mSock, i, pack ) != i );
-		break;
+			Bounce( mSock, i );
+			break;
+		case 2:		// Stack
+			CItem *pack;
+			pack = targNPC->GetPackItem();
+			if( ValidateObject( pack ) )
+				stackDeleted = ( autoStack( mSock, i, pack ) != i );
+			break;
 	}
 	return stackDeleted;
 }
@@ -865,7 +856,6 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Item is dropped on the ground or on a character
 //o-----------------------------------------------------------------------------------------------o
@@ -898,7 +888,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		//7.0.9.2 tiledata and later
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
 		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
-			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+								  ( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
@@ -911,7 +901,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		//7.0.8.2 tiledata and earlier
 		CTile& tile = Map->SeekTile( i->GetID() );
 		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
-			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+								  ( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
@@ -1177,9 +1167,9 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 				return false;
 			}
 		}
-		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() || 
-			( contOwner->GetID() != 0x0123 && contOwner->GetID() != 0x0124 ) ||
-			( contOwner->GetOwnerObj() != &mChar && !Npcs->checkPetFriend( &mChar, contOwner ) ) ) )
+		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() ||
+													  ( contOwner->GetID() != 0x0123 && contOwner->GetID() != 0x0124 ) ||
+													  ( contOwner->GetOwnerObj() != &mChar && !Npcs->checkPetFriend( &mChar, contOwner ) ) ) )
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( &mChar, &iDropped );
@@ -1306,7 +1296,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		//7.0.9.0 data and later
 		CTileHS& tile = Map->SeekTileHS( nItem->GetID() );
 		if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
-			( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
+								  ( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( mChar, nItem );
@@ -1319,7 +1309,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		//7.0.8.2 data and earlier
 		CTile& tile = Map->SeekTile( nItem->GetID() );
 		if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
-			( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
+								  ( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( mChar, nItem );
@@ -1389,7 +1379,7 @@ bool CPIDropItem::Handle( void )
 
 	if( dest >= BASEITEMSERIAL && dest != INVALIDSERIAL )
 		DropOnItem( tSock, item, dest, x, y, z, gridLoc );
-	else 
+	else
 		Drop( tSock, item, dest, x, y, z, gridLoc );
 
 	// Display overloaded message if character is overloaded as a result of the above
@@ -1412,7 +1402,6 @@ bool CPIDropItem::Handle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return characters highest skill
 //o-----------------------------------------------------------------------------------------------o
@@ -1434,7 +1423,6 @@ UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches the characters "prowess" and "skill" title based upon titles.dfn
 //|                 entries and characters best skill
@@ -1462,7 +1450,6 @@ void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void getFameTitle( CChar *p, std::string& FameTitle )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns players reputation title based on their Fame and Karma
 //o-----------------------------------------------------------------------------------------------o
@@ -1607,33 +1594,38 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 		if( p->GetRace() != 0 && p->GetRace() != 65535 )
 			thetitle = thetitle + Races->Name( p->GetRace() ) + " ";
 
-		if( f >= 10000 ) // Morollans bugfix for repsys
+		if( f >= 10000 ) // bugfix for repsys
 		{
 			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 			{
-				if( p->GetID( 2 ) == 0x91 )
-					FameTitle = UString::sprintf( Dictionary->GetEntry( 1177 ).c_str(), Races->Name( p->GetRace() ).c_str() ) + " ";
-				else
-					FameTitle = UString::sprintf( Dictionary->GetEntry( 1178 ).c_str(), Races->Name( p->GetRace() ).c_str() ) + " ";
+				if( p->GetID( 2 ) == 0x91 ){
+					FameTitle = format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
+				}
+				else{
+					FameTitle = format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
+				}
 			}
-			else if( p->GetID( 2 ) == 0x91 )
-				FameTitle = UString::sprintf( Dictionary->GetEntry( 1179 ).c_str(), thetitle.c_str() ) + " ";
-			else
-				FameTitle = UString::sprintf( Dictionary->GetEntry( 1180 ).c_str(), thetitle.c_str() ) + " ";
+			else if( p->GetID( 2 ) == 0x91 ) {
+				FameTitle = format( Dictionary->GetEntry( 1179 ), thetitle.c_str() ) + std::string(" ");
+			}
+			else {
+				FameTitle = format( Dictionary->GetEntry( 1180 ), thetitle.c_str() ) + std::string(" ");
+			}
 		}
 		else
 		{
-			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-				FameTitle = Dictionary->GetEntry( 1181 ) + " ";
-			else if( !thetitle.stripWhiteSpace().empty() )
-				FameTitle = UString::sprintf( Dictionary->GetEntry( 1182 ).c_str(), thetitle.c_str() );
+			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() ){
+				FameTitle = Dictionary->GetEntry( 1181 ) + std::string(" ");
+			}
+			else if( !thetitle.stripWhiteSpace().empty() ) {
+				FameTitle = format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
+			}
 		}
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PaperDoll( CSocket *s, CChar *pdoll )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Open a characters paperdoll and show titles based on skill,
 //|					reputation, murder counts, race, ect.
@@ -1666,11 +1658,11 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		tempstr = FameTitle + pdoll->GetName() + " " + pdoll->GetTitle();
 	else if( pdoll->IsDead() )
 		tempstr = pdoll->GetName();
-	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn - Thanks Ab - Zane
+	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
 		if( cwmWorldState->murdererTags.empty() )
-			tempstr = UString::sprintf( Dictionary->GetEntry( 374, sLang ).c_str(), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+			tempstr = format( Dictionary->GetEntry( 374, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 			bContinue = true;
 		else
@@ -1689,7 +1681,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 	}
 	else if( pdoll->IsCriminal() )
-		tempstr = UString::sprintf( Dictionary->GetEntry( 373, sLang ).c_str(), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+		tempstr = format( Dictionary->GetEntry( 373, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 	else
 		bContinue = true;
 	if( bContinue )
@@ -1698,7 +1690,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		if( pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2 )	// TownTitle
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
-				tempstr = UString::sprintf( Dictionary->GetEntry( 379, sLang ).c_str(), pdoll->GetName().c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
+				tempstr = format( Dictionary->GetEntry( 379, sLang ), pdoll->GetName().c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
 			else	// is Resident
 				tempstr = pdoll->GetName() + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
 		}
@@ -1717,7 +1709,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		pd.FlagByte( 0x02 | ( mChar->IsAtWar() ? 0x01 : 0x00 ));
 	else if( ValidateObject( mChar ) && mChar->IsGM() )
 		pd.FlagByte( 0x02 );
-	
+
 	s->Send( &pd );
 
 	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); wearItem = pdoll->NextItem() )
@@ -1733,7 +1725,6 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 void MountCreature( CSocket *mSock, CChar *s, CChar *x );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles double-clicks on a character
 //o-----------------------------------------------------------------------------------------------o
@@ -1774,7 +1765,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 			}
 			else
 				mSock->sysmessage( 1214 );
-			return; 
+			return;
 		}
 		else if( !cwmWorldState->creatures[c->GetID()].IsHuman() && !c->IsDead() )
 		{
@@ -1802,7 +1793,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				}
 				return;
 			}
-			return; 
+			return;
 		}
 		else if( c->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 		{
@@ -1830,7 +1821,6 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType )
 //|	Date		-	2/11/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs a switch to match an item type to a function
 //o-----------------------------------------------------------------------------------------------o
@@ -1895,9 +1885,9 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 							else
 								Skills->Snooping( mSock, iChar, iUsed );
 						}
-						packOpened = true;	
+						packOpened = true;
 					}
-						
+
 				}
 			}
 			if( packOpened )
@@ -1943,28 +1933,28 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			return true;
 		case IT_MAP: // Map
-			{
-				CPMapMessage m1;
-				CPMapRelated m2;
-				m1.KeyUsed( iUsed->GetSerial() );
-				m1.GumpArt( 0x139D );
-				m1.UpperLeft( 0, 0 );
-				m1.LowerRight( 0x13FF, 0x0FA0 );
-				m1.Dimensions( 0x0190, 0x0190 );
-				mSock->Send( &m1 );
+		{
+			CPMapMessage m1;
+			CPMapRelated m2;
+			m1.KeyUsed( iUsed->GetSerial() );
+			m1.GumpArt( 0x139D );
+			m1.UpperLeft( 0, 0 );
+			m1.LowerRight( 0x13FF, 0x0FA0 );
+			m1.Dimensions( 0x0190, 0x0190 );
+			mSock->Send( &m1 );
 
-				m2.ID( iUsed->GetSerial() );
-				m2.Command( 5 );
-				m2.Location( 0, 0 );
-				m2.PlotState( 0 );
-				mSock->Send( &m2 );
-				return true;
-			}
+			m2.ID( iUsed->GetSerial() );
+			m2.Command( 5 );
+			m2.Location( 0, 0 );
+			m2.PlotState( 0 );
+			mSock->Send( &m2 );
+			return true;
+		}
 		case IT_READABLEBOOK:	// Readable book
 			if( iUsed->GetTempVar( CITV_MOREX ) != 666 && iUsed->GetTempVar( CITV_MOREX ) != 999 )
 				Books->OpenPreDefBook( mSock, iUsed );
 			else
-				Books->OpenBook( mSock, iUsed, ( iUsed->GetTempVar( CITV_MOREX ) == 666 ) ); 
+				Books->OpenBook( mSock, iUsed, ( iUsed->GetTempVar( CITV_MOREX ) == 666 ) );
 			return true;
 		case IT_MAGICWAND: // Magic Wands
 			if( iUsed->GetTempVar( CITV_MOREZ ) != 0 )
@@ -2035,7 +2025,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 399 );
 			return true;
 		case IT_FIREWORKSWAND: //Fireworks wands
-			srand( cwmWorldState->GetUICurrentTime() );
+			//srand( cwmWorldState->GetUICurrentTime() );
 			if( iUsed->GetTempVar( CITV_MOREX ) == 0 )
 			{
 				mSock->sysmessage( 396 );
@@ -2153,7 +2143,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_MININGTOOL:	// Mining
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_MINE, 446 );
-			return true; 
+			return true;
 		case IT_EMPTYVIAL:	// empty vial
 			i = mChar->GetPackItem();
 			if( ValidateObject( i ) )
@@ -2328,7 +2318,7 @@ void InitIDToItemType( void )
 			{
 				for( SI32 i = 0; i <= sectionCount; i++ )
 				{
-					idToItemType[data.section( ",", i, i ).toUShort( 0, 16 )] = iType;
+					idToItemType[ str_value<std::uint16_t>(extractSection(data, ",", i, i ), 16 )] = iType;
 				}
 			}
 			else
@@ -2403,8 +2393,8 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		if( iUsed->GetCont() != NULL )
 		{
 			iChar = FindItemOwner( iUsed );
-			if( ValidateObject( iChar ) && iChar != ourChar && 
-				!( iUsed->IsContType() && cwmWorldState->ServerData()->RogueStatus() ) )
+			if( ValidateObject( iChar ) && iChar != ourChar &&
+			   !( iUsed->IsContType() && cwmWorldState->ServerData()->RogueStatus() ) )
 			{
 				tSock->sysmessage( 387 );	// Can't use stuff that isn't in your pack.
 				return false;
@@ -2462,10 +2452,9 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIDblClick::Handle( void )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Player double clicks on a character or item
-//|	Changes		-	09/22/2002 - Xuri - Removed piece of code which is not needed. Cooking of raw 
+//|	Changes		-	09/22/2002 - Removed piece of code which is not needed. Cooking of raw
 //|						fish shouldn't produce cooked ribs, people can cook the fish after filleting with a knife.
 //o-----------------------------------------------------------------------------------------------o
 bool CPIDblClick::Handle( void )
@@ -2555,7 +2544,6 @@ bool CPIDblClick::Handle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const char *AppendData( CItem *i, std::string currentName )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add data onto the end of the string in singleclick() based on an items type
 //o-----------------------------------------------------------------------------------------------o
@@ -2567,13 +2555,13 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = " (" + UString::number( (SI32)i->GetContainsList()->Num() ) + " items, ";
-			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones)";
+			dataToAdd = std::string(" (") + str_number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
+			dataToAdd += str_number( ( i->GetWeight() / 100 ) ) + std::string(" stones)");
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = " (" + UString::number( (SI32)i->GetContainsList()->Num() ) + " items, ";
-			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones) [Locked]";
+			dataToAdd = std::string(" (") + str_number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
+			dataToAdd += str_number( ( i->GetWeight() / 100 ) ) + std::string(" stones) [Locked]");
 			break;
 		case IT_LOCKEDDOOR:
 			dataToAdd = " [Locked]";
@@ -2583,11 +2571,11 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_OBJTELEPORTER:
 		{
 			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber(), i->GetInstanceID() );
-			dataToAdd = " (" + newRegion->GetName() + ")";
+			dataToAdd = std::string(" (") + newRegion->GetName() + std::string(")");
 			break;
 		}
-        default:
-            break;
+		default:
+			break;
 	}
 	currentName += dataToAdd;
 	// Question: Do we put the creator thing here, saves some redundancy a bit later
@@ -2596,7 +2584,6 @@ const char *AppendData( CItem *i, std::string currentName )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPISingleClick::Handle( void )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item or character is single-clicked (also used for AllNames macro)
 //o-----------------------------------------------------------------------------------------------o
@@ -2614,7 +2601,7 @@ bool CPISingleClick::Handle( void )
 		return true;
 	}
 
-	char temp2[200];
+	std::string temp2 ;
 	std::string realname;
 
 	CChar *mChar = tSock->CurrcharObj();
@@ -2627,7 +2614,7 @@ bool CPISingleClick::Handle( void )
 	CItem *i	= calcItemObjFromSer( objectID );
 	if( !ValidateObject( i ) )		// invalid item
 		return true;
-	// October 6, 2002 - Brakhtus - Added support for the onClick event
+	// October 6, 2002 - Added support for the onClick event
 	cScript *onClickScp = JSMapping->GetScript( i->GetScriptTrigger() );
 	if( onClickScp != NULL )
 		onClickScp->OnClick( tSock, i );
@@ -2643,18 +2630,21 @@ bool CPISingleClick::Handle( void )
 		{
 			if( w->GetNPCAiType() == AI_PLAYERVENDOR )
 			{
-				char temp[512];
+				std::string temp ;
 				if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 				{
 					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
-					if( ValidateObject( mCreater ) )
-						sprintf( temp2, "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
-					else
-						strcpy( temp2, i->GetDesc().c_str() );
+					if( ValidateObject( mCreater ) ){
+						temp2 = format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+					}
+					else{
+						temp2 =  i->GetDesc();
+					}
 				}
-				else
-					strcpy( temp2, i->GetDesc().c_str() );
-				sprintf( temp, "%s at %ugp", temp2, i->GetBuyValue() );
+				else{
+					temp2= i->GetDesc();
+				}
+				temp = temp2 + std::string(" at ")+std::to_string(i->GetBuyValue())+std::string("gp");
 				tSock->objMessage( AppendData( i, temp ), i );
 				return true;
 			}
@@ -2667,22 +2657,22 @@ bool CPISingleClick::Handle( void )
 	if( i->GetName()[0] != '#' )
 	{
 		if( i->GetID() == 0x0ED5 )//guildstone
-			realname = UString::sprintf( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetName().c_str() );
+			realname = format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetName().c_str() );
 		if( !i->isPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->isCorpse() && getAmount > 1 )
-				realname = UString::sprintf( "%s (%u)", i->GetName().c_str(), getAmount );
+				realname = format( "%s (%u)", i->GetName().c_str(), getAmount );
 			else
 				realname = i->GetName();
 		}
 		else
-			realname = UString::sprintf( "%u %ss", getAmount, i->GetName().c_str() );
+			realname = format( "%u %ss", getAmount, i->GetName().c_str() );
 	}
 	else
 	{
 		getTileName( (*i), realname );
 		if( i->GetAmount() > 1 )
-			realname = UString::number( getAmount ) + " " + realname;
+			realname = std::to_string( getAmount ) + std::string(" ") + realname;
 	}
 
 	if( i->GetType() == IT_MAGICWAND )
@@ -2691,29 +2681,30 @@ bool CPISingleClick::Handle( void )
 		realname += " of ";
 		realname += Dictionary->GetEntry( magic_table[spellNum].spell_name, tSock->Language() );
 		realname += " with ";
-		realname += UString::number( i->GetTempVar( CITV_MOREZ ) );
+		realname += std::to_string( i->GetTempVar( CITV_MOREZ ) );
 		realname += " charges";
 	}
 	else if( i->IsContType() )
 	{
-		realname += UString::sprintf( ", (%u items, %u stones)", i->GetContainsList()->Num(), (i->GetWeight()/100) );
+		realname += format( ", (%u items, %u stones)", i->GetContainsList()->Num(), (i->GetWeight()/100) );
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{
 		CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
-		if( ValidateObject( mCreater ) )
-			sprintf( temp2, "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
-		else
-			strcpy( temp2, realname.c_str() );
+		if( ValidateObject( mCreater ) ){
+			temp2=format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+		}
+		else{
+			temp2= realname;
+		}
 	}
-	else
-		strcpy( temp2, realname.c_str() );
+	else{
+		temp2= realname;
+	}
 	tSock->objMessage( temp2, i );
 	if( i->IsLockedDown() )
 		tSock->objMessage( "[Locked down]", i );
 	if( i->isGuarded() )
 		tSock->objMessage( "[Guarded]", i );
 	return true;
-}
-
 }

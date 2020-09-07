@@ -2,9 +2,7 @@
 #include "uox3.h"
 #include "network.h"
 #include "CPacketSend.h"
-
-namespace UOX
-{
+#include <mutex>
 // PartyEntry code goes here
 const size_t BIT_LEADER		= 0;
 const size_t BIT_LOOTABLE		= 1;
@@ -185,16 +183,15 @@ void Party::IsNPC( bool value )
 }
 
 /** This class is responsible for the creation and destruction of parties
-*/
+ */
 //-------------------------------------------------------------------------------------------------
-template<> PartyFactory * Singleton< PartyFactory >::ms_Singleton = 0;
-PartyFactory* PartyFactory::getSingletonPtr( void )
-{
-    return ms_Singleton;
-}
+
 PartyFactory& PartyFactory::getSingleton( void )
-{  
-    assert( ms_Singleton );  return ( *ms_Singleton );  
+{
+	std::mutex lock;
+	std::scoped_lock scope(lock) ;
+	static PartyFactory instance ;
+	return instance ;
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -293,7 +290,8 @@ void PartyFactory::CreateInvite( CSocket *inviter )
 	Party *ourParty = Get( inviterChar );
 	if( ourParty == NULL )
 	{
-		Party *tParty = Create( inviterChar );
+		//Party *tParty = Create( inviterChar );
+		Create( inviterChar);
 	}
 	CSocket *targSock = toInvite->GetSocket();
 	if( targSock != NULL )
@@ -339,6 +337,5 @@ void PartyFactory::Kick( CSocket *inviter )
 		ourParty->RemoveMember( toRemove );
 		inviter->sysmessage( "The player has been removed" );
 	}
-}
 }
 

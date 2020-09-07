@@ -2,9 +2,7 @@
 #define __UOXMAP_CLASSES_H__
 
 #include "power.h"
-
-namespace UOX
-{
+#include <cstdint>
 
 #define PACK_NEEDED
 
@@ -14,7 +12,7 @@ struct Static_st
 	UI08 xoff;
 	UI08 yoff;
 	SI08 zoff;
-	char align;	// force word alignment by hand to avoid bus errors - fur
+	char align;	// force word alignment by hand to avoid bus errors
 } PACK_NEEDED;
 
 struct map_st
@@ -32,7 +30,7 @@ struct MultiIndex_st
 
 struct Multi_st
 {
-	SI32 visible;  // this needs to be first so it is word aligned to avoid bus errors - fur
+	SI32 visible;  // this needs to be first so it is word aligned to avoid bus errors
 	UI16 tile;
 	SI16 x;
 	SI16 y;
@@ -42,7 +40,7 @@ struct Multi_st
 
 struct MultiHS_st
 {
-	SI32 visible;  // this needs to be first so it is word aligned to avoid bus errors - fur
+	SI32 visible;  // this needs to be first so it is word aligned to avoid bus errors
 	UI16 tile;
 	SI16 x;
 	SI16 y;
@@ -102,7 +100,7 @@ public:
 	}
 	UI08 Flag( UI08 part ) const
 	{
-		UI32 mFlags = flags.to_ulong();
+		UI32 mFlags = static_cast<std::uint32_t>(flags.to_ulong());
 		UI08 retVal = 0;
 		switch( part )
 		{
@@ -113,7 +111,7 @@ public:
 		}
 		return retVal;
 	}
-	UI32 FlagsNum( void ) const					{	return flags.to_ulong();	}
+	UI32 FlagsNum( void ) const					{	return static_cast<std::uint32_t>(flags.to_ulong());	}
 	std::bitset< TF_COUNT > Flags( void ) const	{	return flags;				}
 	void Flags( std::bitset< TF_COUNT > newVal ){	flags = newVal;				}
 
@@ -331,8 +329,6 @@ public:
 	void Height(SI08 nval)      {   height  = nval; }
 	void SetID(UI16 nval)      {   mID  = nval; }
 };
-
-}
 
 #endif
 

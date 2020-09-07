@@ -7,17 +7,15 @@
 #include "CPacketSend.h"
 #include "Dictionary.h"
 #include "CJSEngine.h"
-
+#include "StringUtility.hpp"
 #ifndef va_start
-	#include <cstdarg>
+#include <cstdarg>
 #endif
 
-namespace UOX
-{
 
 CGuildCollection *GuildSys;
 
-#define DEFAULTCHARTER "UOX3 DevTeam Guildstone"
+#define DEFAULTCHARTER "UOX3 Guildstone"
 #define DEFAULTWEBPAGE "http://www.uox3.org/"
 
 CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" ), stone( INVALIDSERIAL ), master( INVALIDSERIAL )
@@ -42,7 +40,6 @@ CGuild::~CGuild()
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	GUILDID FirstWar( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Moves to start of the relation list and returns the next
 //|					relation which is at war
@@ -55,9 +52,8 @@ GUILDID CGuild::FirstWar( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	GUILDID NextWar( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Moves through relation list, returning guild ID of next 
+//| Purpose		-	Moves through relation list, returning guild ID of next
 //|					guild at war, or -1 if no war
 //o-----------------------------------------------------------------------------------------------o
 GUILDID CGuild::NextWar( void )
@@ -74,7 +70,6 @@ GUILDID CGuild::NextWar( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool FinishedWar( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if at end of war list, or false if not
 //|					Must iterate through war list if not at end of relation list
@@ -94,7 +89,6 @@ bool CGuild::FinishedWar( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	GUILDID FirstAlly( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Moves to start of the relation list and returns the next
 //|					relation which is at ally
@@ -107,9 +101,8 @@ GUILDID CGuild::FirstAlly( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	GUILDID NextAlly( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Moves through relation list, returning guild ID of next 
+//| Purpose		-	Moves through relation list, returning guild ID of next
 //|					guild as ally, or -1 if no ally
 //o-----------------------------------------------------------------------------------------------o
 GUILDID CGuild::NextAlly( void )
@@ -126,7 +119,6 @@ GUILDID CGuild::NextAlly( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool FinishedAlly( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if at end of ally list, or false if not
 //|					Must iterate through ally list if not at end of relation list
@@ -147,9 +139,8 @@ bool CGuild::FinishedAlly( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	const std::string Name( void ) const
 //|					void Name( std::string txt )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Gets/Sets the name of the guild. 
+//| Purpose		-	Gets/Sets the name of the guild.
 //|					Setting also updates name of guildstone, if it exists
 //o-----------------------------------------------------------------------------------------------o
 const std::string CGuild::Name( void ) const
@@ -170,7 +161,6 @@ void CGuild::Name( std::string txt )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	const char *Abbreviation( void ) const
 //|					void Abbreviation( const char *txt )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the abbreviation of the guild
 //o-----------------------------------------------------------------------------------------------o
@@ -192,7 +182,6 @@ void CGuild::Abbreviation( const char *txt )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	GuildType Type( void ) const
 //|					void Type( GuildType nType )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the guild's type
 //|					 GT_STANDARD = 0,
@@ -213,7 +202,6 @@ void CGuild::Type( GuildType nType )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	const std::string Charter( void ) const
 //|					void Charter( const std::string &txt )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the charter of the guild
 //o-----------------------------------------------------------------------------------------------o
@@ -229,7 +217,6 @@ void CGuild::Charter( const std::string &txt )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	const std::string Webpage( void ) const
 //|					void Webpage( const std::string &txt )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the webpage of the guild
 //o-----------------------------------------------------------------------------------------------o
@@ -245,7 +232,6 @@ void CGuild::Webpage( const std::string &txt )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL Stone( void ) const
 //|					void Stone( SERIAL newStone )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the guild stone
 //o-----------------------------------------------------------------------------------------------o
@@ -261,7 +247,6 @@ void CGuild::Stone( SERIAL newStone )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL Master( void ) const
 //|					void Master( SERIAL newMaster )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the guild master (if any)
 //o-----------------------------------------------------------------------------------------------o
@@ -276,7 +261,6 @@ void CGuild::Master( SERIAL newMaster )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL FirstRecruit( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the serial of the first recruit in the recruit list
 //|					If no recruits, returns INVALIDSERIAL
@@ -292,7 +276,6 @@ SERIAL CGuild::FirstRecruit( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL NextRecruit( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the serial of the next recruit in the recruit list
 //|					If there are no more, it returns INVALIDSERIAL
@@ -311,7 +294,6 @@ SERIAL CGuild::NextRecruit( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool FinishedRecruits( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if there are no more recruits left
 //o-----------------------------------------------------------------------------------------------o
@@ -322,7 +304,6 @@ bool CGuild::FinishedRecruits( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL RecruitNumber( size_t rNum ) const
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the serial of the recruit in slot rNum
 //|					If rNum is invalid, it returns INVALIDSERIAL
@@ -337,7 +318,6 @@ SERIAL CGuild::RecruitNumber( size_t rNum ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL MemberNumber( size_t rNum ) const
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the serial of the member in slot rNum
 //|					If rNum is invalid, it returns INVALIDSERIAL
@@ -352,7 +332,6 @@ SERIAL CGuild::MemberNumber( size_t rNum ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL FirstMember( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the serial of the first member of the guild
 //|					If no members, returns INVALIDSERIAL
@@ -368,7 +347,6 @@ SERIAL CGuild::FirstMember( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL NextMember( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the serial of the next member of the guild, if any
 //|					If none, it returns INVALIDSERIAL
@@ -387,7 +365,6 @@ SERIAL CGuild::NextMember( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool FinishedMember( void )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if there are no more members left
 //o-----------------------------------------------------------------------------------------------o
@@ -398,7 +375,6 @@ bool CGuild::FinishedMember( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void Stone( CItem &newStone )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets the guild's stone serial to the CItem newStone
 //o-----------------------------------------------------------------------------------------------o
@@ -409,7 +385,6 @@ void CGuild::Stone( CItem &newStone )
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void Master( CChar &newMaster )
-//| Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets the guild's master serial to CChar newMaster's serial
 //o-----------------------------------------------------------------------------------------------o
@@ -790,7 +765,7 @@ void CGuild::CalcMaster( void )
 //o-----------------------------------------------------------------------------------------------o
 void CGuild::TellMembers( SI32 dictEntry, ... )
 {
-	char tmpMsg[512];
+
 
 	SERLIST_CITERATOR cIter;
 	for( cIter = members.begin(); cIter != members.end(); ++cIter )
@@ -804,11 +779,9 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 
 			va_list argptr;
 			va_start( argptr, dictEntry );
-			vsprintf( tmpMsg, txt.c_str(), argptr );
-			va_end( argptr );
 
 			CSpeechEntry& toAdd = SpeechSys->Add();
-			toAdd.Speech( tmpMsg );
+			toAdd.Speech(format(512,txt,argptr));
 			toAdd.Font( FNT_NORMAL );
 			toAdd.Speaker( INVALIDSERIAL );
 			toAdd.SpokenTo( (*cIter) );
@@ -849,7 +822,7 @@ void CGuild::SetGuildFaction( GuildType newFaction )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const std::string TypeName( void )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets guild type as a string 
+//|	Purpose		-	Gets guild type as a string
 //o-----------------------------------------------------------------------------------------------o
 const std::string CGuild::TypeName( void )
 {
@@ -1006,13 +979,13 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 	toSend.GumpID( menu );
 	toSend.UserID( INVALIDSERIAL );
 
-	toSend.AddCommand( "nomove" );
-	toSend.AddCommand( "noclose" );
-	toSend.AddCommand( "page 0" );
-	toSend.AddCommand( "resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic() );
-	toSend.AddCommand( "button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
-	toSend.AddCommand( "text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour() );
-	toSend.AddCommand( "page 1" );
+	toSend.addCommand( "nomove" );
+	toSend.addCommand( "noclose" );
+	toSend.addCommand( "page 0" );
+	toSend.addCommand( format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()) );
+	toSend.addCommand( format("button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
+	toSend.addCommand(format( "text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));
+	toSend.addCommand( "page 1" );
 
 	SERIAL gMaster	= gList[trgGuild]->Master();
 	CChar *mChar	= s->CurrcharObj();
@@ -1031,13 +1004,13 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 		mChar->SetGuildFealty( mChar->GetSerial() );
 	switch( gList[trgGuild]->Type() )
 	{
-		case 0:	
+		case 0:
 			strcpy( guildt, " Standard" );
 			break;
-		case 1:	
+		case 1:
 			strcpy( guildt, "n Order" );
 			break;
-		case 2:	
+		case 2:
 			strcpy( guildt, " Chaos" );
 			break;
 		default:
@@ -1063,105 +1036,105 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 		case -1:			break;
 		case BasePage:		break;
 		case BasePage+1:	numButtons = 10;			// Main menu
-			toSend.AddText( Dictionary->GetEntry( 102, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 103, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 104, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 105, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 106, sLang ), guildfealty );
-			toSend.AddText( Dictionary->GetEntry( 107, sLang ), toggle );
-			toSend.AddText( Dictionary->GetEntry( 108, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 109, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 110, sLang ), gName.c_str() );
-			toSend.AddText( Dictionary->GetEntry( 111, sLang ), gName.c_str() );
-			toSend.AddText( Dictionary->GetEntry( 112, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 102, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 103, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 104, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 105, sLang ) );
+			toSend.addText( format(Dictionary->GetEntry( 106, sLang ), guildfealty ));
+			toSend.addText( format(Dictionary->GetEntry( 107, sLang ), toggle ));
+			toSend.addText( Dictionary->GetEntry( 108, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 109, sLang ) );
+			toSend.addText( format(Dictionary->GetEntry( 110, sLang ), gName.c_str()) );
+			toSend.addText( format(Dictionary->GetEntry( 111, sLang ), gName.c_str() ));
+			toSend.addText( Dictionary->GetEntry( 112, sLang ) );
 
 			if( mChar->GetSerial() == gMaster || mChar->IsGM() )	// Guildmaster Access?
 			{
 				++numButtons;
-				toSend.AddText( Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str() );
+				toSend.addText( format(Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str()) );
 			}
 			break;
 		case BasePage+2:	numButtons = 16;		// Guildmaster menu
-			toSend.AddText( Dictionary->GetEntry( 114, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 115, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 116, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 117, sLang ), guildt );
+			toSend.addText( Dictionary->GetEntry( 114, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 115, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 116, sLang ) );
+			toSend.addText(format( Dictionary->GetEntry( 117, sLang ), guildt ));
 			for( tCounter = 118; tCounter <= 130; ++tCounter )
-				toSend.AddText( Dictionary->GetEntry( tCounter, sLang ) );
+				toSend.addText( Dictionary->GetEntry( tCounter, sLang ) );
 			break;
 		case BasePage+3:	numButtons = 4;			// Guild type
-			toSend.AddText( Dictionary->GetEntry( 131, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 133, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 134, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 135, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 131, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 133, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 134, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 135, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+4:	numButtons = 3;			// Set charter
-			toSend.AddText( Dictionary->GetEntry( 136, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 138, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 139, sLang ) );
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 136, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 138, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 139, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+5:	numButtons = 3;			// View charter
-			toSend.AddText( Dictionary->GetEntry( 140, sLang ) );
-			toSend.AddText( gList[trgGuild]->Charter() );
-			toSend.AddText( Dictionary->GetEntry( 142, sLang ), gList[trgGuild]->Webpage().c_str() );
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 140, sLang ) );
+			toSend.addText( gList[trgGuild]->Charter() );
+			toSend.addText( format(Dictionary->GetEntry( 142, sLang ), gList[trgGuild]->Webpage().c_str()) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+6:								// List of recruits
-			toSend.AddText( Dictionary->GetEntry( 143, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 143, sLang ) );
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.AddText( calcCharObjFromSer( tChar )->GetName() );
+				toSend.addText( calcCharObjFromSer( tChar )->GetName() );
 				++tCtr;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;
 			break;
 		case BasePage+7:								// List of members
-			toSend.AddText( Dictionary->GetEntry( 144, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 144, sLang ) );
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 			{
-				toSend.AddText( calcCharObjFromSer( tChar )->GetName() );
+				toSend.addText( calcCharObjFromSer( tChar )->GetName() );
 				++tCtr;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;
 			break;
 		case BasePage+8:								// Member dismiss
-			toSend.AddText( Dictionary->GetEntry( 145, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 145, sLang ) );
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 			{
-				toSend.AddText( calcCharObjFromSer( tChar )->GetName() );
+				toSend.addText( calcCharObjFromSer( tChar )->GetName() );
 				++tCtr;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+9:								// Dismiss recruit
-			toSend.AddText( Dictionary->GetEntry( 146, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 146, sLang ) );
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.AddText( calcCharObjFromSer( tChar )->GetName() );
+				toSend.addText( calcCharObjFromSer( tChar )->GetName() );
 				++tCtr;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+10:								// Accept recruit
-			toSend.AddText( Dictionary->GetEntry( 147, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 147, sLang ) );
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.AddText( calcCharObjFromSer( tChar )->GetName() );
+				toSend.addText( calcCharObjFromSer( tChar )->GetName() );
 				++tCtr;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+11:								// War list
-			toSend.AddText( Dictionary->GetEntry( 148, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 148, sLang ) );
 			tCtr	= 0;
 			ourList = gList[trgGuild]->GuildRelationList();
 			toCheck = ourList->begin();
@@ -1169,20 +1142,20 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			{
 				if( toCheck->second == GR_WAR )
 				{
-					toSend.AddText( gList[toCheck->first]->Name() );
+					toSend.addText( gList[toCheck->first]->Name() );
 					++tCtr;
 				}
 				++toCheck;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+12:								// Grant title
 			numButtons = 1;
-			toSend.AddText( "Unfilled functionality" );
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( "Unfilled functionality" );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+13:								// Declare war list
-			toSend.AddText( Dictionary->GetEntry( 149, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 149, sLang ) );
 			tCtr	= 0;
 			ourList = gList[trgGuild]->GuildRelationList();
 			toCheck = ourList->begin();
@@ -1190,15 +1163,15 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			{
 				if( toCheck->second != GR_WAR )
 				{
-					toSend.AddText( gList[toCheck->first]->Name() );
+					toSend.addText( gList[toCheck->first]->Name() );
 					++tCtr;
 				}
 				++toCheck;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+14:								// Declare peace list
-			toSend.AddText( Dictionary->GetEntry( 150, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 150, sLang ) );
 			tCtr	= 0;
 			ourList = gList[trgGuild]->GuildRelationList();
 			toCheck = ourList->begin();
@@ -1206,44 +1179,43 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			{
 				if( toCheck->second == GR_WAR )
 				{
-					toSend.AddText( gList[toCheck->first]->Name() );
+					toSend.addText( gList[toCheck->first]->Name() );
 					++tCtr;
 				}
 				++toCheck;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+15:								// List of guilds warring on us
 		case BasePage+16:								// Display recruit information
 			numButtons = 1;
-			toSend.AddText( "Unfilled functionality" );
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( "Unfilled functionality" );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+17:								// Display member information
 			CChar *kChar;
 			kChar = calcCharObjFromSer( plID );
 			if( ValidateObject( kChar ) )
 			{
-				char temp[128];
-				sprintf( temp, "%s (", kChar->GetName().c_str() );
+				auto temp = kChar->GetName();
 				if( kChar->IsInnocent() )
-					strcat( temp, "Innocent) " );
+					temp += std::string(" Innocent");
 				else if( kChar->IsMurderer() )
-					strcat( temp, "Murderer) " );
+					temp += std::string(" Murderer");
 				else
-					strcat( temp, "Criminal) " );
-				toSend.AddText( temp );
+					temp += std::string(" Criminal");
+				toSend.addText( temp );
 				// To display: Name, str, dex, int, # kills, # deaths, status (criminal, murderer, innocent), top x skills
-				toSend.AddText( "Strength" );
-				toSend.AddText( "%i", kChar->GetStrength() );
-				toSend.AddText( "Dexterity" );
-				toSend.AddText( "%i", kChar->GetDexterity() );
-				toSend.AddText( "Intelligence" );
-				toSend.AddText( "%i", kChar->GetIntelligence() );
-				toSend.AddText( "Kills" );
-				toSend.AddText( "%i", kChar->GetKills() );
-				toSend.AddText( "Deaths" );
-				toSend.AddText( "%u", kChar->GetDeaths() );
+				toSend.addText( "Strength" );
+				toSend.addText( format("%i", kChar->GetStrength()) );
+				toSend.addText( "Dexterity" );
+				toSend.addText( format("%i", kChar->GetDexterity() ));
+				toSend.addText( "Intelligence" );
+				toSend.addText( format("%i", kChar->GetIntelligence()) );
+				toSend.addText( "Kills" );
+				toSend.addText( format("%i", kChar->GetKills() ));
+				toSend.addText( "Deaths" );
+				toSend.addText( format("%u", kChar->GetDeaths()) );
 				numText = 10;
 				numColumns = 2;
 				numButtons = 1;
@@ -1251,12 +1223,12 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			else
 			{
 				numButtons = 1;
-				toSend.AddText( "Unknown player" );
+				toSend.addText( "Unknown player" );
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+18:								// Ally list
-			toSend.AddText( Dictionary->GetEntry( 151, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 151, sLang ) );
 			tCtr	= 0;
 			ourList = gList[trgGuild]->GuildRelationList();
 			toCheck = ourList->begin();
@@ -1264,15 +1236,15 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			{
 				if( toCheck->second == GR_ALLY )
 				{
-					toSend.AddText( gList[toCheck->first]->Name() );
+					toSend.addText( gList[toCheck->first]->Name() );
 					++tCtr;
 				}
 				++toCheck;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 		case BasePage+19:								// Declare Ally list
-			toSend.AddText( Dictionary->GetEntry( 152, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 152, sLang ) );
 			tCtr	= 0;
 			ourList = gList[trgGuild]->GuildRelationList();
 			toCheck = ourList->begin();
@@ -1280,28 +1252,28 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			{
 				if( toCheck->second != GR_ALLY )
 				{
-					toSend.AddText( gList[toCheck->first]->Name() );
+					toSend.addText( gList[toCheck->first]->Name() );
 					++tCtr;
 				}
 				++toCheck;
 			}
-			toSend.AddText( Dictionary->GetEntry( 130, sLang ) );
+			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
 	}
 
 	for( UI16 iCtr = 0; iCtr < numButtons; ++iCtr )
 	{
-		toSend.AddCommand( "button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2 );
-		toSend.AddCommand( "text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1 );
+		toSend.addCommand( format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2) );
+		toSend.addCommand( format("text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1) );
 	}
 	if( numText != 0 )
 	{
 		for( UI16 iCtr = 0; iCtr < numText; ++iCtr )
 		{
 			if( numColumns == 1 )
-				toSend.AddCommand( "text 50 %i %i %i", 30 + 20 * ( iCtr + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1 );
+				toSend.addCommand( format("text 50 %i %i %i", 30 + 20 * ( iCtr + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1 ));
 			else
-				toSend.AddCommand( "text %i %i %i %i", 50 + (iCtr % numColumns) * 100, 30 + 20 * ( ( iCtr / 2 ) + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1 );
+				toSend.addCommand(format( "text %i %i %i %i", 50 + (iCtr % numColumns) * 100, 30 + 20 * ( ( iCtr / 2 ) + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1) );
 		}
 	}
 	toSend.Finalize();
@@ -1690,7 +1662,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( nGuild == NULL )
 		{
 			s->objMessage( 174, deed );
-			Console.Error( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() );
+			Console.error(format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
 		mChar->SetGuildNumber( gNum );
@@ -1700,7 +1672,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed );
-			Console.Error( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() );
+			Console.error( format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
 		stone->SetName( Dictionary->GetEntry( 175 ) );
@@ -1766,33 +1738,33 @@ void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 	GUILDID sGuild = src->GetGuildNumber();
 	if( sGuild != -1 && src->GetGuildToggle() )
 	{
-		char title[150];
-		char abbreviation[5];
-		
+		std::string title;
+
 		CGuild *mGuild = Guild( sGuild );
 		if( mGuild == NULL )
 			return;
-		strcpy( abbreviation, mGuild->Abbreviation() );
-		if( abbreviation[0] == 0 ) // 0 length string
-			strcpy( abbreviation, "none" );
+		auto abbreviation = std::string(mGuild->Abbreviation()) ;
+		if( abbreviation.empty() ) // 0 length string
+			abbreviation="none" ;
 		if( mGuild->Type() != GT_STANDARD )
 		{
-			char guildtype[10] = { 0, };
-			strcpy( guildtype, GTypeNames[mGuild->Type()].c_str() );
-			if( src->GetGuildTitle()[0] != 0 )
-				sprintf( title, "[%s, %s] [%s]", src->GetGuildTitle().c_str(), abbreviation, guildtype );
-			else
-				sprintf( title, "[%s] [%s]", abbreviation, guildtype );
+			auto guildtype= GTypeNames[mGuild->Type()] ;
+			if( src->GetGuildTitle().empty() ){
+				title= format( "[%s, %s] [%s]", src->GetGuildTitle().c_str(), abbreviation.c_str(), guildtype.c_str() );
+			}
+			else{
+				title = format(  "[%s] [%s]", abbreviation.c_str(), guildtype.c_str() );
+			}
 		}
 		else
 		{
-			if( src->GetGuildTitle()[0] != 0 )
-				sprintf( title,"[%s, %s]", src->GetGuildTitle().c_str(), abbreviation );
-			else
-				sprintf( title, "[%s]", abbreviation );
+			if( src->GetGuildTitle().empty() ){
+				title = format("[%s, %s]", src->GetGuildTitle().c_str(), abbreviation.c_str() );
+			}
+			else{
+				title = format( "[%s]", abbreviation.c_str() );
+			}
 		}
 		s->objMessage( title, src );
 	}
-}
-
 }

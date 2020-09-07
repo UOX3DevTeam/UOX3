@@ -1,23 +1,20 @@
 #ifndef __CMAGIC_H__
 #define __CMAGIC_H__
 
-namespace UOX
-{
-
 struct reag_st;
 
 class cMagic
 {
 public:
 
-	//:Terrin: adding constructor/destructor
+	// adding constructor/destructor
 	cMagic();
 	~cMagic(); // no need for a virtual destructor as long as no subclasses us
 	bool HasSpell( CItem *book, SI32 spellNum );
 	void AddSpell( CItem *book, SI32 spellNum );
 	void RemoveSpell( CItem *book, SI32 spellNum );
 
-	void LoadScript( void ); //:Terrin: adding function for spell system "cache"
+	void LoadScript( void ); // adding function for spell system "cache"
 	void SpellBook( CSocket *mSock );
 	void GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type );
 	bool SelectSpell( CSocket *mSock, SI32 num );
@@ -25,7 +22,7 @@ public:
 	void doStaticEffect( CChar *source, SI32 num );
 	void playSound( CChar *source, SI32 num );
 	void DelReagents( CChar *s, reag_st reags );
-	void CastSpell( CSocket *s, CChar *caster );	// changed for NPC casting - Hanse
+	void CastSpell( CSocket *s, CChar *caster );	// changed for NPC casting
 	bool CheckResist( CChar *attacker, CChar *defender, SI32 circle );
 	void PoisonDamage( CChar *p, SI32 posion );
 	void CheckFieldEffects( CChar& mChar );
@@ -48,7 +45,7 @@ public:
 	void SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z );
 	void PolymorphMenu( CSocket *s, UI16 gmindex );
 
-	std::vector< SpellInfo >	spells;		//:Terrin: adding variable for spell system "cache"
+	std::vector< SpellInfo >	spells;		// adding variable for spell system "cache"
 
 	void	Register( cScript *toRegister, SI32 spellNumber, bool isEnabled );
 	void	SetSpellStatus( SI32 spellNumber, bool isEnabled );
@@ -62,8 +59,6 @@ private:
 };
 
 extern cMagic *Magic;
-
-}
 
 #endif
 

@@ -7,18 +7,12 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 
-#undef DBGFILE
-#define DBGFILE "vendor.cpp"
 
 #include "ObjectFactory.h"
 
-namespace UOX
-{
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 calcValue( CItem *i, UI32 value )
-//|	Org/team	-	UOX3 DevTeam
-//o-----------------------------------------------------------------------------------------------o
+///o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of an item
 //o-----------------------------------------------------------------------------------------------o
 UI32 calcValue( CItem *i, UI32 value )
@@ -53,7 +47,6 @@ UI32 calcValue( CItem *i, UI32 value )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
-//|	Org/team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
 //o-----------------------------------------------------------------------------------------------o
@@ -88,7 +81,6 @@ UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIBuyItem::Handle( void )
-//|	Org/team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player buys an item from a vendor
 //o-----------------------------------------------------------------------------------------------o
@@ -99,7 +91,7 @@ bool CPIBuyItem::Handle( void )
 	bool soldout	= false, clear = false;
 	CChar *mChar	= tSock->CurrcharObj();
 	CItem *p		= mChar->GetPackItem();
-	if( !ValidateObject( p ) ) 
+	if( !ValidateObject( p ) )
 		return true;
 
 	ITEMLIST bitems;
@@ -111,7 +103,7 @@ bool CPIBuyItem::Handle( void )
 
 	CChar *npc		= calcCharObjFromSer( tSock->GetDWord( 3 ) );
 	UI16 itemtotal	= static_cast<UI16>((tSock->GetWord( 1 ) - 8) / 7);
-	if( itemtotal > 511 ) 
+	if( itemtotal > 511 )
 		return true;
 
 	boughtItems.reserve( itemtotal );
@@ -171,9 +163,9 @@ bool CPIBuyItem::Handle( void )
 
 				Effects->goldSound( tSock, goldtotal );
 			}
-			
+
 			clear = true;
-			if( !mChar->IsGM() ) 
+			if( !mChar->IsGM() )
 			{
 				if( useBank )
 					DeleteBankItem( mChar, goldtotal, 0x0EED );
@@ -270,7 +262,7 @@ bool CPIBuyItem::Handle( void )
 							}
 							break;
 						default:
-							Console.Error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
+							Console.error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
 							break;
 					}
 				}
@@ -288,7 +280,7 @@ bool CPIBuyItem::Handle( void )
 	}
 	else
 		npc->TextMessage( NULL, 1340, TALK, false );
-	
+
 	if( clear )
 	{
 		CPBuyItem clrSend;
@@ -300,7 +292,6 @@ bool CPIBuyItem::Handle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPISellItem::Handle( void )
-//|	Org/team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Player sells an item to the vendor
 //o-----------------------------------------------------------------------------------------------o
@@ -396,7 +387,7 @@ bool CPISellItem::Handle( void )
 					//Otherwise, move this item to the vendor's boughtPack
 					totgold += ( amt * value );
 
-					if( j->GetAmount() != amt ) 
+					if( j->GetAmount() != amt )
 					{
 						l = Items->DupeItem( tSock, j, amt );
 						j->SetAmount( j->GetAmount() - amt );
@@ -413,7 +404,7 @@ bool CPISellItem::Handle( void )
 					if( toGrab != NULL )
 						toGrab->OnSoldToVendor( tSock, n, l );
 				}
-			} 
+			}
 		}
 
 		Effects->goldSound( tSock, totgold );
@@ -425,7 +416,7 @@ bool CPISellItem::Handle( void )
 		if( totgold > 0 )
 			Items->CreateScriptItem( tSock, mChar, "0x0EED", totgold, OT_ITEM, true );
 	}
-	
+
 	CPBuyItem clrSend;
 	clrSend.Serial( tSock->GetDWord( 3 ) );
 	tSock->Send( &clrSend );
@@ -434,8 +425,7 @@ bool CPISellItem::Handle( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void restockNPC( CChar *i, bool stockAll )
-//|	Org/team	-	UOX3 DevTeam
-//o-----------------------------------------------------------------------------------------------o
+///o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Restock NPC Vendors
 //o-----------------------------------------------------------------------------------------------o
 void restockNPC( CChar& i, bool stockAll )
@@ -462,7 +452,7 @@ void restockNPC( CChar& i, bool stockAll )
 					c->IncAmount( stockAmt );
 					c->SetRestock( c->GetRestock() - stockAmt );
 				}
-				if( cwmWorldState->ServerData()->TradeSystemStatus() ) 
+				if( cwmWorldState->ServerData()->TradeSystemStatus() )
 				{
 					CTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber(), i.GetInstanceID() );
 					Items->StoreItemRandomValue( c, tReg );
@@ -477,14 +467,13 @@ bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	bool retVal = true;
 	CChar *c = static_cast< CChar * >(a);
 	if( ValidateObject( c ) )
-			restockNPC( (*c), (b == 1) );
+		restockNPC( (*c), (b == 1) );
 
 	return retVal;
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void restock( bool stockAll )
 //|	Date		-	3/15/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Restock all NPC Vendors
 //o-----------------------------------------------------------------------------------------------o
@@ -492,6 +481,4 @@ void restock( bool stockAll )
 {
 	UI32 b = (stockAll ? 1 : 0);
 	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &restockFunctor );
-}
-
 }

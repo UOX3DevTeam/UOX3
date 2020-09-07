@@ -1,7 +1,7 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	regions.h
 //o-----------------------------------------------------------------------------------------------o
-//|	Notes		-	Region class  Added by Tauriel 3/6/1999 To lookup items by region
+//|	Notes		-	Region class  Added 3/6/1999 To lookup items by region
 //|						This should help for now. BTW- my first attempt at C++
 //|						So forgive any newbie mistakes :)
 //|					Side note, I wanted regions to be more generic, but
@@ -13,111 +13,106 @@
 
 #include "mapstuff.h"
 
-namespace UOX
-{
-
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
 
 const SI16 UpperX = static_cast<SI16>(7168 / MapColSize);
 const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 
-	struct MapResource_st
-	{
-		SI16	oreAmt;
-		UI32	oreTime;
-		SI16	logAmt;
-		UI32	logTime;
+struct MapResource_st
+{
+	SI16	oreAmt;
+	UI32	oreTime;
+	SI16	logAmt;
+	UI32	logTime;
 
-		MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
-		{
-		}
+	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
+	{
+	}
+};
+
+class CMapRegion
+{
+private:
+	CDataList< CItem * >	itemData;
+	CDataList< CChar * >	charData;
+public:
+	CDataList< CItem * > *	GetItemList( void );
+	CDataList< CChar * > *	GetCharList( void );
+
+	CMapRegion()
+	{
+	};
+	~CMapRegion()
+	{
 	};
 
-	class CMapRegion
-	{
-	private:
-		CDataList< CItem * >	itemData;
-		CDataList< CChar * >	charData;
-	public:
-		CDataList< CItem * > *	GetItemList( void );
-		CDataList< CChar * > *	GetCharList( void );
+	void					SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
+};
 
-								CMapRegion()
-								{
-								};
-								~CMapRegion()
-								{
-								};
+class CMapWorld
+{
+private:
+	SI16								upperArrayX;
+	SI16								upperArrayY;
+	UI16								resourceX;
+	UI16								resourceY;
+	std::vector< CMapRegion >			mapRegions;
+	std::vector< MapResource_st >		mapResources;
+public:
+	CMapWorld( void );
+	CMapWorld( UI08 worldNum );
+	~CMapWorld( void );
 
-		void					SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
-	};
+	CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
 
-	class CMapWorld
-	{
-	private:
-		SI16								upperArrayX;
-		SI16								upperArrayY;
-		UI16								resourceX;
-		UI16								resourceY;
-		std::vector< CMapRegion >			mapRegions;
-		std::vector< MapResource_st >		mapResources;
-	public:
-						CMapWorld( void );
-						CMapWorld( UI08 worldNum );
-						~CMapWorld( void );
+	MapResource_st&	GetResource( SI16 x, SI16 y );
 
-		CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
+	void			LoadResources( UI08 worldNum );
+	void			SaveResources( UI08 worldNUm );
+};
 
-		MapResource_st&	GetResource( SI16 x, SI16 y );
+class CMapHandler
+{
+private:
+	typedef std::vector< CMapWorld * >				WORLDLIST;
+	typedef std::vector< CMapWorld * >::iterator	WORLDLIST_ITERATOR;
 
-		void			LoadResources( UI08 worldNum );
-		void			SaveResources( UI08 worldNUm );
-	};
+	WORLDLIST		mapWorlds;
+	CMapRegion		overFlow;
 
-	class CMapHandler
-	{
-	private:
-		typedef std::vector< CMapWorld * >				WORLDLIST;
-		typedef std::vector< CMapWorld * >::iterator	WORLDLIST_ITERATOR;
+	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize );
+public:
+	CMapHandler();
+	~CMapHandler();
 
-		WORLDLIST		mapWorlds;
-		CMapRegion		overFlow;
+	void		Save( void );
+	void		Load( void );
 
-		void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize );
-	public:
-					CMapHandler();
-					~CMapHandler();
+	bool		AddItem( CItem *nItem );
+	bool		RemoveItem( CItem *nItem );
 
-		void		Save( void );
-		void		Load( void );
+	bool		AddChar( CChar *toAdd );
+	bool		RemoveChar( CChar *toRemove );
 
-		bool		AddItem( CItem *nItem );
-		bool		RemoveItem( CItem *nItem );
+	bool		ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum );
+	bool		ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum );
 
-		bool		AddChar( CChar *toAdd );
-		bool		RemoveChar( CChar *toRemove );
+	CMapRegion *GetMapRegion( CBaseObject *mObj );
+	CMapRegion *GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber );
 
-		bool		ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum );
-		bool		ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum );
+	SI16		GetGridX( SI16 x );
+	SI16		GetGridY( SI16 y );
 
-		CMapRegion *GetMapRegion( CBaseObject *mObj );
-		CMapRegion *GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber );
+	REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
+	REGIONLIST	PopulateList( CBaseObject *mObj );
 
-		SI16		GetGridX( SI16 x );
-		SI16		GetGridY( SI16 y );
+	CMapWorld *	GetMapWorld( UI08 worldNum );
 
-		REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
-		REGIONLIST	PopulateList( CBaseObject *mObj );
+	MapResource_st * GetResource( SI16 x, SI16 y, UI08 worldNum );
+};
 
-		CMapWorld *	GetMapWorld( UI08 worldNum );
-
-		MapResource_st * GetResource( SI16 x, SI16 y, UI08 worldNum );
-	};
-
-	extern CMapHandler *MapRegion;
-
-}
+extern CMapHandler *MapRegion;
 
 #endif
 

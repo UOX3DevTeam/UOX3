@@ -2,8 +2,6 @@
 #include "cmath"
 #include "regions.h"
 
-namespace UOX
-{
 
 #define MAX_COLLISIONS 1024
 #define LOSXYMAX		256		// Maximum items UOX can handle on one X/Y square
@@ -51,7 +49,7 @@ General algorithm:
 
 	// Only pass 1 and 2 are different based on each of these cases
 Different Xs algorithm
-	
+
 PASS 1
 	if map check
 		For each x between src and trg
@@ -102,7 +100,7 @@ PASS 1
 PASS 2
 	for each static tile at x/y
 		if z is not between min z and max z, discard
-		if flag overlap, blocked	
+		if flag overlap, blocked
 	next tile
 PASS 3
 	For each item in the same map area
@@ -198,15 +196,15 @@ struct line2D
 inline vector2D line2D::CollideLines2D( line2D toCollide ) const
 {
 	if( ( ( dir.x == 0 ) && ( toCollide.dir.x == 0 ) ) ||
-		( ( dir.y == 0 ) && ( toCollide.dir.y == 0 ) ) )
+	   ( ( dir.y == 0 ) && ( toCollide.dir.y == 0 ) ) )
 		return vector2D( -1.0f, -1.0f ); // error, parallel or invalid lines
 	if( ( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) == 0 )
 		return vector2D( -1.0f, -1.0f ); // error, parallel lines
-		
+
 	R32 t = 0.0f; // parameter of toCollide-line
 	// linear evaluation of extended 2x2 matrix
 	t = ( ( ( ( loc.x - toCollide.loc.x ) * (- dir.y) ) + ( dir.x * ( loc.y - toCollide.loc.y ) ) ) /
-		( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) );
+		 ( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) );
 
 	return vector2D( ( toCollide.loc.x + t * toCollide.dir.x ), ( toCollide.loc.y + t * toCollide.dir.y ) );
 }
@@ -268,13 +266,13 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 		const SI16 mz2	= trgMap.z;
 		// Mountain walls
 		if( ( mz1 < mz2 && z <= mz2 && z >= mz1 ) ||									// 1) Collides with a map "wall"
-			( mz1 > mz2 && z <= mz1 && z >= mz2 ) ||
-			( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
-			( stat == NULL &&															// Ensure there is no static item
+		   ( mz1 > mz2 && z <= mz1 && z >= mz2 ) ||
+		   ( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
+		   ( stat == NULL &&															// Ensure there is no static item
 			( ( mID1 >= 431  && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 475  ) ||
-			(   mID1 >= 543  && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
-			(   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
-			(   mID1 >= 1851 && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
+			 (   mID1 >= 543  && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
+			 (   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
+			 (   mID1 >= 1851 && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
 		{
 			if( mSock != NULL )
 				mSock->sysmessage( 683 );
@@ -294,10 +292,12 @@ bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, b
 	switch( typeToCheck )
 	{
 		case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags listed below, assume it's a tree! :P
-			if( toCheck->CheckFlag( TF_FOLIAGE ) || ( toCheck->CheckFlag( TF_BLOCKING ) && 
-				!toCheck->CheckFlag( TF_WALL ) && !toCheck->CheckFlag( TF_SURFACE ) && !toCheck->CheckFlag( TF_WINDOW ) ||
-				!toCheck->CheckFlag( TF_CLIMBABLE ) && !toCheck->CheckFlag( TF_WET ) && !toCheck->CheckFlag( TF_ROOF ) ||
-				!toCheck->CheckFlag( TF_CONTAINER )))
+
+
+			if( toCheck->CheckFlag( TF_FOLIAGE ) || ( (toCheck->CheckFlag( TF_BLOCKING ) &&
+													   !toCheck->CheckFlag( TF_WALL ) && !toCheck->CheckFlag( TF_SURFACE ) && !toCheck->CheckFlag( TF_WINDOW )) ||
+													 (!toCheck->CheckFlag( TF_CLIMBABLE ) && !toCheck->CheckFlag( TF_WET ) && !toCheck->CheckFlag( TF_ROOF )) ||
+													 !toCheck->CheckFlag( TF_CONTAINER )))
 				return false;
 			break;
 		case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
@@ -397,7 +397,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 			length = Map->SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
 		else
 			length = Map->SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
-		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
+		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (13 Sept 1999)
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
@@ -418,7 +418,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 					toCheck->SetID( 0x4001 );
 				else
 					toCheck->SetID( 0x4064 );
-			}		
+			}
 			length = 0;
 		}
 
@@ -442,10 +442,10 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 							{
 								checkLoc = &collisions[i];
 								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
 									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 								{
-										return multi.tile;
+									return multi.tile;
 								}
 							}
 						}
@@ -457,10 +457,10 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 							{
 								checkLoc = &collisions[i];
 								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
 									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 								{
-										return multi.tile;
+									return multi.tile;
 								}
 							}
 						}
@@ -488,10 +488,10 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 							{
 								checkLoc = &collisions[i];
 								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
 									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 								{
-										return multi.tile;
+									return multi.tile;
 								}
 							}
 						}
@@ -503,10 +503,10 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 							{
 								checkLoc = &collisions[i];
 								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
 									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 								{
-										return multi.tile;
+									return multi.tile;
 								}
 							}
 						}
@@ -520,14 +520,13 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ )
 //|	Date		-	03 July, 2001
-//|	Programmer	-	Abaddon
-//|	Changes		-	18 March, 2002, sereg
+//|	Changes		-	18 March, 2002
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if there is line of sight between src and trg
 //|
 //|	Notes		-	Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
 //|					s is for pc's, in case a message needs to be sent.
-//|					the checkfor is what is checked for along the line of sight.  
+//|					the checkfor is what is checked for along the line of sight.
 //|					Look at uox3.h to see options. Works like npc magic.
 //|
 //|					#define TREES_BUSHES 1 // Trees and other large vegetaion in the way
@@ -542,7 +541,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 //|
 //|					if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS | DOORS | ROOFING_SLANTED ) )
 //|
-//|					it WAS based on the P.T., now its based on linear algebra ;) (sereg)
+//|					it WAS based on the P.T., now its based on linear algebra ;)
 //o-----------------------------------------------------------------------------------------------o
 bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ )
 {
@@ -620,40 +619,40 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			++collisioncount;
 		}
 	}
-	else if( distX == distY ) // if we're on a perfect diagonal, we can just go up all coords in both x and y at the same time 
-	{ 
-		for( i = 1; i <= distX; ++i ) 
-		{ 
-			collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) ); 
-			++collisioncount; 
-		} 
+	else if( distX == distY ) // if we're on a perfect diagonal, we can just go up all coords in both x and y at the same time
+	{
+		for( i = 1; i <= distX; ++i )
+		{
+			collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) );
+			++collisioncount;
+		}
 	}
-	else 
-	{      
-		R32 steps = 0; 
-		if(distX > distY) 
-		{ 
+	else
+	{
+		R32 steps = 0;
+		if(distX > distY)
+		{
 			steps = (R32)distX/(R32)distY;
 			if( steps == 0 )
 				steps = 1;
-			for( i = 1; i < distX; ++i ) 
-			{ 
-				collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY + (sgn_y * (R32)roundNumber(i/steps)), (SI08)(startZ + (dz * (R32)i * sgn_z)) ); 
-				++collisioncount; 
-			} 
-		} 
+			for( i = 1; i < distX; ++i )
+			{
+				collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY + (sgn_y * (R32)roundNumber(i/steps)), (SI08)(startZ + (dz * (R32)i * sgn_z)) );
+				++collisioncount;
+			}
+		}
 		else if(distY > distX)
-		{ 
+		{
 			steps = (R32)distY/(R32)distX;
 			if( steps == 0 )
 				steps = 1;
-			for( i = 1; i < distY; ++i ) 
-			{ 
-				collisions[collisioncount] = vector3D( startX + (sgn_x * (R32)roundNumber(i/steps)), startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) ); 
-				++collisioncount; 
-			} 
-		} 
-	} 
+			for( i = 1; i < distY; ++i )
+			{
+				collisions[collisioncount] = vector3D( startX + (sgn_x * (R32)roundNumber(i/steps)), startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) );
+				++collisioncount;
+			}
+		}
+	}
 
 	////////////////////////////////////////////////////////
 	////////////////  This determines what to check for
@@ -734,7 +733,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		// Texture mapping
 		if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber ) )
 			return blocked;
-			
+
 		// Statics
 		while( stat != NULL )
 		{
@@ -743,7 +742,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 				//7.0.9.0 data and later
 				CTileHS& tile = Map->SeekTileHS( stat->itemid );
 				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-					( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
+				   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
 				{
 					losItemList[itemCount].Height(tile.Height());
 					losItemList[itemCount].SetID( stat->itemid );
@@ -755,7 +754,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 				//7.0.8.2 data and earlier
 				CTile& tile = Map->SeekTile( stat->itemid );
 				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-					( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
+				   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
 				{
 					losItemList[itemCount].Height(tile.Height());
 					losItemList[itemCount].SetID( stat->itemid );
@@ -786,7 +785,6 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool checkItemLineOfSight( CChar *mChar, CItem *i)
-//|	Programmer	-	grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if an item is within line of sight
 //o-----------------------------------------------------------------------------------------------o
@@ -808,7 +806,7 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 		if( iOwner != NULL )
 			itemOwner = iOwner;
 	}
-	
+
 	if( itemOwner == mChar )
 		inSight = true;
 	else
@@ -836,5 +834,4 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 	}
 
 	return inSight;
-}
 }

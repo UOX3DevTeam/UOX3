@@ -7,9 +7,13 @@
 
 // NOTE: I wish Error, and Log, to subclass from CConsole, so we have multiple streams that we can write to, in essence
 //#pragma note( "I wish Error, and Log, to subclass from CConsole, so we have multiple streams that we can write to, in essence" )
-
-namespace UOX
-{
+#if UOX_PLATFORM != PLATFORM_WIN32
+#include <termios.h>
+#else
+#include <windows.h>
+#undef min
+#undef max
+#endif
 
 #define MAX_CONSOLE_BUFF 512
 
@@ -44,10 +48,7 @@ public:
 	CConsole& operator<<( const SI64 &outPut );
 	CConsole& operator<<( const CBaseObject *outPut );
 	CConsole& operator<<( const std::string &outPut );
-	//CConsole& operator<<( const std::ostream& outPut );
-//#if defined( _MSC_VER )
-	//CConsole& operator<<( const std::size_t &output );
-//#endif
+
 
 	CConsole& operator<<( CBaseObject *outPut );
 	//CConsole& operator<<( std::ostream& outPut );
@@ -56,11 +57,12 @@ public:
 	CConsole& operator<<( const R32 &outPut );
 	CConsole& operator<<( const R64 &outPut );
 
-	void	Print( const char *toPrint, ... );
-	void	Log( const char *toLog, const char *filename, ... );
-	void	Log( const char *toLog, ... );
-	void	Error( const char *toWrite, ... );
-	void	Warning( const char *toWrite, ... );
+
+	void    print(const std::string& toPrint);
+	void	log( const std::string& msg, const std::string& filename);
+	void	log( const std::string& msg );
+	void	error( const std::string& msg);
+	void	warning( const std::string& msg );
 
 	UI08	CurrentMode( void ) const;
 	void	CurrentMode( UI08 value );
@@ -78,13 +80,13 @@ public:
 	void	PrintPassed( void );
 
 	void	ClearScreen( void );
-	void	Start( char *temp );
+	void	Start( const std::string& temp );
 	void	PrintBasedOnVal( bool value );
 	void	MoveTo( SI32 x, SI32 y = -1 );//y=-1 will move on the current line
 
 	bool	LogEcho( void );
-	void	LogEcho( bool value );	
-	void	PrintSpecial( UI08 color, const char *toPrint, ... );
+	void	LogEcho( bool value );
+	void	PrintSpecial( UI08 color, const std::string& msg );
 	void	Poll( void );
 	void	Cloak( char *callback );
 
@@ -127,6 +129,8 @@ private:
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
 #else
 	bool			forceNL;
+	struct termios resetio;
+
 #endif
 	void	PrintStartOfLine( void );
 	void	StartOfLineCheck(void);
@@ -135,21 +139,19 @@ private:
 	void	DisplaySettings( void );
 };
 
-class CEndL
-{
-public:
-	void Action( CConsole& test )
-	{
-		test << "\n"; test.Flush();
-	}
-private:
+    class CEndL
+    {
+    public:
+        void Action( CConsole& test )
+        {
+            test << "\n"; test.Flush();
+        }
+    private:
 
-};
+    };
 
-extern CConsole								Console;
-extern CEndL								myendl;
-
-}
+    extern CConsole								Console;
+    extern CEndL								myendl;
 
 #endif
 

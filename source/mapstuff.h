@@ -4,9 +4,6 @@
 #include "mapclasses.h"
 #include <climits>
 
-namespace UOX
-{
-
 const UI08 MAX_Z_STEP	= 9;
 const UI08 MAX_Z_FALL	= 20;
 
@@ -54,9 +51,9 @@ struct MapData_st
 	std::map< UI32, UI32 > mapDiffList;
 	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
 
-	MapData_st() : mapFile( "" ), mapFileUOPWrap( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ), 
-		staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( NULL ), staticsObj( NULL ), 
-		staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
+	MapData_st() : mapFile( "" ), mapFileUOPWrap( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ),
+	staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( NULL ), staticsObj( NULL ),
+	staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
 	{
 		mapDiffList.clear();
 		staticsDiffIndex.clear();
@@ -77,10 +74,10 @@ private:
 	UI08		worldNumber;
 	bool		useDiffs;
 public:
-				CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
-				~CStaticIterator()
-				{
-				};
+	CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
+	~CStaticIterator()
+	{
+	};
 
 	Static_st *	First( void );
 	Static_st *	Next( void );
@@ -97,11 +94,11 @@ private:
 		SI32		size;				// # of items.
 		SI16		lx, ly, hx, hy;
 		SI08		lz, hz;
-					MultiItemsIndex_st() : items( NULL ), size( -1 ), 
-						lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ), 
-						lz( SCHAR_MAX ), hz( SCHAR_MIN )
-					{}
-		void		Include( SI16 x, SI16 y, SI08 z );	
+		MultiItemsIndex_st() : items( NULL ), size( -1 ),
+		lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ),
+		lz( SCHAR_MAX ), hz( SCHAR_MIN )
+		{}
+		void		Include( SI16 x, SI16 y, SI08 z );
 	};
 
 	struct MultiItemsIndexHS_st
@@ -110,17 +107,17 @@ private:
 		SI32		size;				// # of items.
 		SI16		lx, ly, hx, hy;
 		SI08		lz, hz;
-					MultiItemsIndexHS_st() : items( NULL ), size( -1 ), 
-						lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ), 
-						lz( SCHAR_MAX ), hz( SCHAR_MIN )
-					{}
-		void		Include( SI16 x, SI16 y, SI08 z );	
+		MultiItemsIndexHS_st() : items( NULL ), size( -1 ),
+		lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ),
+		lz( SCHAR_MAX ), hz( SCHAR_MIN )
+		{}
+		void		Include( SI16 x, SI16 y, SI08 z );
 	};
 
 	typedef std::vector< MapData_st >					MAPLIST;
 	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
 
-//Variables
+	//Variables
 	// all the world's map and static Items.
 	// multiItem, tileSet, and verdata(patches really)
 	CLand    *			landTile;			// the 512*32 pieces of land tile
@@ -137,7 +134,7 @@ private:
 
 	MAPLIST				MapList;
 
-// Functions
+	// Functions
 	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ );
 	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
 
@@ -155,8 +152,8 @@ private:
 	void			LoadTileData( const std::string& basePath );
 
 public:
-					CMulHandler();
-					~CMulHandler();
+	CMulHandler();
+	~CMulHandler();
 
 	void			Load( void );
 
@@ -167,7 +164,7 @@ public:
 	SI08			TileHeight( UI16 tilenum );
 	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID );
 	bool			inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID );
-	bool IsIgnored(UI16 landnum) { 
+	bool IsIgnored(UI16 landnum) {
 		if (landnum == 2 || landnum == 0x1DB || ( landnum >= 0x1AE && landnum <= 0x1B5 ))
 			return true;
 		else
@@ -201,8 +198,6 @@ public:
 };
 
 extern CMulHandler *Map;
-
-}
 
 #endif
 

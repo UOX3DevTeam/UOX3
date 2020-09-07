@@ -1,9 +1,6 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
 
-namespace UOX
-{
-
 enum TargetIDs;
 
 enum TriggerWords
@@ -88,22 +85,22 @@ enum TriggerWords
 class CBaseResponse
 {
 public:
-					CBaseResponse( void )
-					{
-					}
+	CBaseResponse( void )
+	{
+	}
 	virtual			~CBaseResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) = 0;
 };
 
 class CKillsResponse : public CBaseResponse
 {
 public:
-					CKillsResponse( void );
+	CKillsResponse( void );
 	virtual			~CKillsResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
@@ -112,10 +109,10 @@ class CEscortResponse : public CBaseResponse
 protected:
 	bool			findDest;
 public:
-					CEscortResponse( bool newVal = false );
+	CEscortResponse( bool newVal = false );
 	virtual			~CEscortResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
@@ -124,10 +121,10 @@ class CBankResponse : public CBaseResponse
 protected:
 	bool			checkBalance;
 public:
-					CBankResponse( bool newVal = false );
+	CBankResponse( bool newVal = false );
 	virtual			~CBankResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
@@ -136,10 +133,10 @@ class CTrainingResponse : public CBaseResponse
 protected:
 	std::string		ourText;
 public:
-					CTrainingResponse( const std::string &text );
+	CTrainingResponse( const std::string &text );
 	virtual			~CTrainingResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
@@ -148,10 +145,10 @@ class CBasePetResponse : public CBaseResponse
 protected:
 	std::string		ourText;
 public:
-					CBasePetResponse( const std::string &text );
+	CBasePetResponse( const std::string &text );
 	virtual			~CBasePetResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
 	bool			canControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false );
@@ -164,20 +161,20 @@ protected:
 	TargetIDs		targID;
 	bool			isRestricted;
 public:
-					CPetMultiResponse( const std::string &text, bool isRestricted, TargetIDs targVal, SI32 dictVal );
+	CPetMultiResponse( const std::string &text, bool isRestricted, TargetIDs targVal, SI32 dictVal );
 	virtual			~CPetMultiResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetReleaseResponse : public CBasePetResponse
 {
 public:
-					CPetReleaseResponse( const std::string &text );
+	CPetReleaseResponse( const std::string &text );
 	virtual			~CPetReleaseResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
@@ -186,49 +183,49 @@ class CPetAllResponse : public CBasePetResponse
 protected:
 	bool			saidAll;
 public:
-					CPetAllResponse( bool saidAll, const std::string &text );
+	CPetAllResponse( bool saidAll, const std::string &text );
 	virtual			~CPetAllResponse()
-					{
-					}
+	{
+	}
 };
 
 class CPetGuardResponse : public CPetAllResponse
 {
 public:
-					CPetGuardResponse( bool allVal, const std::string &text );
+	CPetGuardResponse( bool allVal, const std::string &text );
 	virtual			~CPetGuardResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetAttackResponse : public CPetAllResponse
 {
 public:
-					CPetAttackResponse( bool allVal, const std::string &text );
+	CPetAttackResponse( bool allVal, const std::string &text );
 	virtual			~CPetAttackResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetComeResponse : public CPetAllResponse
 {
 public:
-					CPetComeResponse( bool allVal, const std::string &text );
+	CPetComeResponse( bool allVal, const std::string &text );
 	virtual			~CPetComeResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetStayResponse : public CPetAllResponse
 {
 public:
-					CPetStayResponse( bool allVal, const std::string &text );
+	CPetStayResponse( bool allVal, const std::string &text );
 	virtual			~CPetStayResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
@@ -238,10 +235,10 @@ protected:
 	bool			saidVendor;
 	std::string		ourText;
 public:
-					CBaseVendorResponse( bool vendVal, const std::string &text );
+	CBaseVendorResponse( bool vendVal, const std::string &text );
 	virtual			~CBaseVendorResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
 };
@@ -249,60 +246,60 @@ public:
 class CVendorBuyResponse : public CBaseVendorResponse
 {
 public:
-					CVendorBuyResponse( bool vendVal, const std::string &text );
+	CVendorBuyResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorBuyResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorSellResponse : public CBaseVendorResponse
 {
 public:
-					CVendorSellResponse( bool vendVal, const std::string &text );
+	CVendorSellResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorSellResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorViewResponse : public CBaseVendorResponse
 {
 public:
-					CVendorViewResponse( bool vendVal, const std::string &text );
+	CVendorViewResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorViewResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorGoldResponse : public CBaseVendorResponse
 {
 public:
-					CVendorGoldResponse( bool vendVal, const std::string &text );
+	CVendorGoldResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorGoldResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorStatusResponse : public CBaseVendorResponse
 {
 public:
-					CVendorStatusResponse( bool vendVal, const std::string &text );
+	CVendorStatusResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorStatusResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorDismissResponse : public CBaseVendorResponse
 {
 public:
-					CVendorDismissResponse( bool vendVal, const std::string &text );
+	CVendorDismissResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorDismissResponse()
-					{
-					}
+	{
+	}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
@@ -312,10 +309,10 @@ protected:
 	SI32			dictEntry;
 	TargetIDs		targID;
 public:
-					CHouseMultiResponse( TargetIDs newTarg, SI32 newDict );
+	CHouseMultiResponse( TargetIDs newTarg, SI32 newDict );
 	virtual			~CHouseMultiResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
@@ -325,10 +322,10 @@ protected:
 	std::string		ourText;
 	UI16			trigWord;
 public:
-					CBoatResponse( const std::string &text, UI16 tW );
+	CBoatResponse( const std::string &text, UI16 tW );
 	virtual			~CBoatResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
@@ -337,14 +334,12 @@ class CBoatMultiResponse : public CBaseResponse
 protected:
 	UI08			moveType;
 public:
-					CBoatMultiResponse( UI08 mType );
+	CBoatMultiResponse( UI08 mType );
 	virtual			~CBoatMultiResponse()
-					{
-					}
+	{
+	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
-
-}
 
 #endif
 

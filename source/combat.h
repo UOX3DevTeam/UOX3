@@ -1,9 +1,6 @@
 #ifndef __COMBAT_H__
 #define __COMBAT_H__
 
-namespace UOX
-{
-
 enum WeaponTypes
 {
 	DEF_SWORDS = 1,
@@ -66,7 +63,7 @@ public:
 	UI08	getCombatSkill( CItem *wItem );
 	UI08	getBowType( CItem *bItem );
 	UI08	getWeaponType( CItem *i );
-	
+
 	CItem *	getShield( CChar *mChar );
 	CItem *	getWeapon( CChar *mChar );
 
@@ -75,15 +72,13 @@ public:
 
 	SI16	AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc, UI08 getFightSkill );
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
-	
+
 	// Combat Animations & Sound Effects
 	void	CombatOnHorse( CChar *mChar );
 	void	CombatOnFoot( CChar *mChar );
 };
 
 extern CHandleCombat *Combat;
-
-}
 
 #endif
 

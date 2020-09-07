@@ -1,5 +1,5 @@
-//	
-//	Cache script section locations by <erwin@andreasen.com>
+//
+//	Cache script section locations
 //	Reads through the contents of the file and saves location of each
 //	SECTION XYZ entry
 
@@ -9,12 +9,8 @@
 #include "uox3.h"
 #include "ssection.h"
 #include "scriptc.h"
+#include "StringUtility.hpp"
 
-#undef DBGFILE
-#define DBGFILE "scriptc.cpp"
-
-namespace UOX
-{
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool get_modification_date( const std::string& filename, time_t* mod_time )
@@ -34,12 +30,11 @@ bool get_modification_date( const std::string& filename, time_t* mod_time )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	void reload( bool disp )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose			-	Reload's the scripts data.  If disp is true, then information is output to 
+//|	Purpose			-	Reload's the scripts data.  If disp is true, then information is output to
 //|						the console (# of sections). Will not run if the script is in an erroneous state
 //o-----------------------------------------------------------------------------------------------o
-void Script::reload( bool disp ) 
+void Script::reload( bool disp )
 {
 	if( !errorState )
 	{
@@ -84,13 +79,14 @@ void Script::reload( bool disp )
 		}
 		else
 		{
-			fprintf( stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
+			std::cerr<< "Cannot open "<< filename<<": "<< std::string(strerror( errno )) <<std::endl;
 			errorState = true;
 		}
 	}
-	if( disp )
-		Console.Print( "Reloading %-15s: ", filename.c_str() );
-		
+	if( disp ){
+		Console.print( format("Reloading %-15s: ", filename.c_str()) );
+	}
+
 	fflush( stdout );
 }
 
@@ -102,9 +98,9 @@ void Script::reload( bool disp )
 Script::Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp ) : errorState( false ), dfnCat( d )
 {
 	filename = _filename;
-	if( !get_modification_date( filename, &last_modification ) ) 
+	if( !get_modification_date( filename, &last_modification ) )
 	{
-		fprintf( stderr, "Cannot open %s: %s", filename.c_str(), strerror( errno ) );
+		std::cerr<< "Cannot open "<< filename<< ": "<< std::string(strerror( errno )) << std::endl;;
 		errorState = true;
 	}
 	reload( disp );
@@ -131,12 +127,11 @@ bool Script::isin( const std::string& section )
 	SSMAP::const_iterator iSearch = defEntries.find( temp.upper() );
 	if( iSearch != defEntries.end() )
 		return true;
-    return false;
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	ScriptSection *FindEntry( const std::string& section )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns a ScriptSection * to the section named "section"
 //|						if it exists, otherwise returning NULL
@@ -147,12 +142,11 @@ ScriptSection *Script::FindEntry( const std::string& section )
 	SSMAP::const_iterator iSearch = defEntries.find( section );
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
-    return rvalue;
+	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	ScriptSection *FindEntrySubStr( const std::string& section )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Find the first ScriptSection * (if any) that has the
 //|						string section in the section name
@@ -160,8 +154,8 @@ ScriptSection *Script::FindEntry( const std::string& section )
 ScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
 	ScriptSection *rvalue = NULL;
-	UString usection( section );
-	usection = usection.upper();
+	auto usection = std::string( section );
+	usection = str_toupper(usection);
 	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
 	{
 		if( iSearch->first.find( usection ) != std::string::npos )	// FOUND IT!
@@ -170,12 +164,11 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 			break;
 		}
 	}
-    return rvalue;
+	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	ScriptSection *FirstEntry( void )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns the first ScriptSection in the Script (if any)
 //o-----------------------------------------------------------------------------------------------o
@@ -185,12 +178,11 @@ ScriptSection *Script::FirstEntry( void )
 	iSearch					= defEntries.begin();
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
-    return rvalue;
+	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	ScriptSection *NextEntry( void )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns the next ScriptSection (if any) in the Script
 //o-----------------------------------------------------------------------------------------------o
@@ -208,7 +200,6 @@ ScriptSection *Script::NextEntry( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	deleteMap( void )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Destroys any memory that has been allocated
 //o-----------------------------------------------------------------------------------------------o
@@ -221,7 +212,6 @@ void Script::deleteMap( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	std::string EntryName( void )
-//|	Programmer		-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns the section name for the current entry (if any)
 //o-----------------------------------------------------------------------------------------------o
@@ -231,6 +221,4 @@ std::string Script::EntryName( void )
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->first;
 	return rvalue;
-}
-
 }

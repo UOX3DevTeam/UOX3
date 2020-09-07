@@ -7,9 +7,6 @@
 #include "uox3.h"
 #include "ssection.h"
 
-namespace UOX
-{
-
 const UI08 DFN_STRING		= 0;
 const UI08 DFN_NUMERIC		= 1;
 const UI08 DFN_UPPERSTRING	= 2;
@@ -295,7 +292,7 @@ void InitStrToDFN( void )
 	strToDFNTag["FX1"]				=	DFNTAG_FX1;
 	strToDFNTag["FX2"]				=	DFNTAG_FX2;
 	strToDFNTag["FY1"]				=	DFNTAG_FY1;
-	strToDFNTag["FY2"]				=	DFNTAG_FY2; 
+	strToDFNTag["FY2"]				=	DFNTAG_FY2;
 	strToDFNTag["FZ1"]				=	DFNTAG_FZ1;
 	strToDFNTag["FOOD"]				=	DFNTAG_FOOD;
 	strToDFNTag["GET"]				=	DFNTAG_GET;
@@ -447,7 +444,7 @@ void CleanupStrToDFN( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	DFNTAGS FindDFNTagFromStr( UString strToFind )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	
+//|	Purpose		-
 //o-----------------------------------------------------------------------------------------------o
 DFNTAGS FindDFNTagFromStr( UString strToFind )
 {
@@ -460,12 +457,11 @@ DFNTAGS FindDFNTagFromStr( UString strToFind )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ScriptSection( void ) : dfnCat( NUM_DEFS ), 
-//|	Programmer	-	Abaddon
+//|	Function	-	ScriptSection( void ) : dfnCat( NUM_DEFS ),
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
 //o-----------------------------------------------------------------------------------------------o
-ScriptSection::ScriptSection( void ) : dfnCat( NUM_DEFS ), 
+ScriptSection::ScriptSection( void ) : dfnCat( NUM_DEFS ),
 npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 {
 	data.resize( 0 );
@@ -476,12 +472,11 @@ npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	ScriptSection( FILE *targfile, DefinitionCategories d )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 //o-----------------------------------------------------------------------------------------------o
-ScriptSection::ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d ) : 
+ScriptSection::ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d ) :
 dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
@@ -494,7 +489,6 @@ dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListDat
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool AtEnd( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if at end of the section
 //o-----------------------------------------------------------------------------------------------o
@@ -507,7 +501,6 @@ bool ScriptSection::AtEnd( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString First( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the first tag at the start of the section
 //o-----------------------------------------------------------------------------------------------o
@@ -524,7 +517,6 @@ const UString ScriptSection::First( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString Next( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the next tag in the section, or NULL if no more
 //o-----------------------------------------------------------------------------------------------o
@@ -542,7 +534,6 @@ const UString ScriptSection::Next( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString MoveTo( size_t position )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to position in the section and returns the tag there
 //o-----------------------------------------------------------------------------------------------o
@@ -562,7 +553,6 @@ const UString ScriptSection::MoveTo( size_t position )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString GrabData( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the data for the current tag
 //o-----------------------------------------------------------------------------------------------o
@@ -578,7 +568,6 @@ const UString ScriptSection::GrabData( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	~ScriptSection()
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default deconstructor, removing any allocated memory
 //|						and closing any files that may be open
@@ -586,12 +575,11 @@ const UString ScriptSection::GrabData( void )
 ScriptSection::~ScriptSection()
 {
 	if( !FlushData() )
-		Console.Error( "Section unable to flush data!" );
+		Console.error( "Section unable to flush data!" );
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FlushData( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes all tag/data pairs and resizes array to 0
 //o-----------------------------------------------------------------------------------------------o
@@ -612,7 +600,6 @@ bool ScriptSection::FlushData( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	size_t NumEntries( void ) const
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the number of entries in the section
 //o-----------------------------------------------------------------------------------------------o
@@ -623,7 +610,6 @@ size_t ScriptSection::NumEntries( void ) const
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString Prev( void )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the previous tag, or NULL if at start
 //o-----------------------------------------------------------------------------------------------o
@@ -641,8 +627,7 @@ const UString ScriptSection::Prev( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Remove( size_t position )
-//|	Programmer	-	Abaddon
-//|	Changes		-   Mr. Fixit (11-15-2001)
+//|	Changes		-   (11-15-2001)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes the tag/data pair at position in the array
 //o-----------------------------------------------------------------------------------------------o
@@ -658,7 +643,6 @@ void ScriptSection::Remove( size_t position )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Append( UString tagToAdd, UString dataToAdd )
-//|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new tag/data pair at the end of the section
 //o-----------------------------------------------------------------------------------------------o
@@ -725,7 +709,6 @@ DFNTAGS ScriptSection::FirstTag( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ItemListExist( void ) const
 //|	Date		-	12 January, 2003
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if an item list tag exists in section
 //o-----------------------------------------------------------------------------------------------o
@@ -737,7 +720,6 @@ bool ScriptSection::ItemListExist( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool NpcListExist( void ) const
 //|	Date		-	12 January, 2003
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if an npc list tag exists in section
 //o-----------------------------------------------------------------------------------------------o
@@ -749,7 +731,6 @@ bool ScriptSection::NpcListExist( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString ItemListData( void ) const
 //|	Date		-	12 January, 2003
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the itemlist data
 //o-----------------------------------------------------------------------------------------------o
@@ -761,7 +742,6 @@ const UString ScriptSection::ItemListData( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const UString NpcListData( void ) const
 //|	Date		-	12 January, 2003
-//|	Programmer	-	Maarc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the npclist data
 //o-----------------------------------------------------------------------------------------------o
@@ -815,7 +795,7 @@ void ScriptSection::createSection( std::fstream& input )
 
 							switch( dfnDataTypes[mTag] )
 							{
-								case DFN_UPPERSTRING:	
+								case DFN_UPPERSTRING:
 									value = value.upper();
 									if( tag.upper() == "ADDMENUITEM" )
 									{
@@ -839,12 +819,12 @@ void ScriptSection::createSection( std::fstream& input )
 										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toUInt();
 										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toUInt();
 										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toUInt();
-										if( amiLocalCopy.tileID == INVALIDSERIAL ) 
+										if( amiLocalCopy.tileID == INVALIDSERIAL )
 											amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
 										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));
 									}
-										toAdd2->cdata = value;
+									toAdd2->cdata = value;
 									break;
 								case DFN_STRING:
 									if(tag.upper()=="NAME")
@@ -869,10 +849,10 @@ void ScriptSection::createSection( std::fstream& input )
 									}
 									break;
 								case DFN_NODATA:
-								case DFN_UNKNOWN:	
+								case DFN_UNKNOWN:
 									toAdd2->cdata = "";
 									break;
-							}					
+							}
 							dataV2.push_back( toAdd2 );
 						}
 						else
@@ -916,6 +896,4 @@ void ScriptSection::createSection( std::fstream& input )
 	// Now some cleanup
 	if( data.empty() && dataV2.empty() )
 		currentPos = data.end();
-}
-
 }

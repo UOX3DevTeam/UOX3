@@ -1,10 +1,9 @@
 #ifndef __CTHREADQUEUE_H__
 #define __CTHREADQUEUE_H__
 
-#include "threadsafeobject.h"
-
-namespace UOX
-{
+#include <string>
+#include <queue>
+#include <mutex>
 
 enum MessageType
 {
@@ -24,16 +23,17 @@ enum MessageType
 struct MessagePassed
 {
 	MessageType		actualMessage;
-	char			data[128];
+	std::string			data;
 };
 
-class CThreadQueue : public ThreadSafeObject
+class CThreadQueue
 {
 private:
 	std::queue< MessagePassed >	internalQueue;
+	std::mutex queuelock;
 public:
-					CThreadQueue();
-	void			NewMessage( MessageType toAdd, const char *data = NULL );
+	CThreadQueue();
+	void			NewMessage( MessageType toAdd, const std::string& data="" );
 	MessagePassed	GrabMessage( void );
 	bool			Empty( void );
 	CThreadQueue &	operator<<( MessageType newMessage );
@@ -43,8 +43,6 @@ public:
 };
 
 extern CThreadQueue							messageLoop;
-
-}
 
 #endif
 

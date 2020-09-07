@@ -12,9 +12,7 @@
 #include "combat.h"
 #include "CJSMapping.h"
 #include "townregion.h"
-
-namespace UOX
-{
+#include "StringUtility.hpp"
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void deathAction( CChar *s, CItem *x, UI08 fallDirection )
@@ -34,14 +32,14 @@ void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, 
+//|	Function	-	void PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect,
 //|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source object to target object
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
-	if( !ValidateObject( source ) || !ValidateObject( dest ) ) 
+	if( !ValidateObject( source ) || !ValidateObject( dest ) )
 		return;
 
 	CPGraphicalEffect2 toSend( 0, (*source), (*dest) );
@@ -53,24 +51,27 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 	toSend.ExplodeOnImpact( explode );
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
-	Network->PushConn();
+
+	std::scoped_lock lock(Network->internallock);
+
+	Network->pushConn();
 	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
 		if( objInRange( tSock, source, DIST_SAMESCREEN ) && objInRange( tSock, dest, DIST_SAMESCREEN ) )
 			tSock->Send( &toSend );
 	}
-	Network->PopConn();
+	Network->popConn();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, 
+//|	Function	-	void PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect,
 //|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source object to target location
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
-	if( !ValidateObject( source ) ) 
+	if( !ValidateObject( source ) )
 		return;
 
 	CPGraphicalEffect2 toSend( 0, (*source) );
@@ -110,7 +111,6 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDe
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
 //o-----------------------------------------------------------------------------------------------o
@@ -133,7 +133,7 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
-	if( !ValidateObject( target ) ) 
+	if( !ValidateObject( target ) )
 		return;
 
 	CPGraphicalEffect toSend( 3, (*target) );
@@ -172,12 +172,13 @@ void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 sp
 	toSend.Duration( loop );
 	toSend.AdjustDir( false );
 	toSend.ExplodeOnImpact( explode );
-	Network->PushConn();
+	std::scoped_lock lock(Network->internallock);
+	Network->pushConn();
 	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{  // if inrange of effect and online send effect
 		tSock->Send( &toSend );
 	}
-	Network->PopConn();
+	Network->popConn();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -187,7 +188,7 @@ void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 sp
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::bolteffect( CChar *player )
 {
-	if( !ValidateObject( player ) ) 
+	if( !ValidateObject( player ) )
 		return;
 
 	CPGraphicalEffect toSend( 1, (*player) );
@@ -224,9 +225,10 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		Effects->PlayStaticAnimation( nItem, 0x36B0, 0x00, 0x09, 0x00 );
 		Effects->PlaySound( nItem, 0x0207 );
 	}
+	
 	UI32 len	= nItem->GetTempVar( CITV_MOREX ) / 250; //4 square max damage at 100 alchemy
 	dmg			= RandomNum( nItem->GetTempVar( CITV_MOREZ ) * 5, nItem->GetTempVar( CITV_MOREZ ) * 10 );
-	
+
 	if( dmg < 5 )
 		dmg = RandomNum( 5, 10 );  // 5 points minimum damage
 	if( len < 2 )
@@ -237,7 +239,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	{
 		CMapRegion *Cell = (*rIter);
 		bool chain = false;
-	
+
 		CDataList< CChar * > *regChars = Cell->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
@@ -277,7 +279,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 				dx = abs( nItem->GetX() - tempItem->GetX() );
 				dy = abs( nItem->GetY() - tempItem->GetY() );
 				dz = abs( nItem->GetZ() - tempItem->GetZ() );
-		
+
 				if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ) // only trigger if in a 2*2*2 cube
 				{
 					if( !( dx == 0 && dy == 0 && dz == 0 ) )
@@ -315,8 +317,8 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	UI16 amount		= 1;
 	if( addItem.sectionCount( "," ) != 0 )
 	{
-		amount		= addItem.section( ",", 1, 1 ).toUShort();
-		addItem		= addItem.section( ",", 0, 0 );
+		amount		= str_value<std::uint16_t>(extractSection(addItem, ",", 1, 1 ));
+		addItem		= extractSection(addItem, ",", 0, 0 );
 	}
 
 	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true );
@@ -324,7 +326,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == NULL )
 	{
-		Console.Error( "cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial() );
+		Console.error( format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
 		return;
 	}
 	else
@@ -333,7 +335,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		SI32 rank = Skills->CalcRankAvg( src, (*toMake) );
 		SI32 maxrank = toMake->maxRank;
 		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank), static_cast<UI08>(maxrank) );
-		
+
 		// if we're not a GM, see if we should store our creator
 		if( !src->IsGM() && !toMake->skillReqs.empty() )
 		{
@@ -343,9 +345,9 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 			for( size_t resCounter = 0; resCounter < toMake->skillReqs.size(); ++resCounter )
 				sumSkill += src->GetSkill( toMake->skillReqs[resCounter].skillNumber );
 			avgSkill = sumSkill / toMake->skillReqs.size();
-			if( avgSkill > 950 ) 
+			if( avgSkill > 950 )
 				targItem->SetMadeWith( toMake->skillReqs[0].skillNumber + 1 );
-			else 
+			else
 				targItem->SetMadeWith( -(toMake->skillReqs[0].skillNumber + 1) );
 		}
 		else
@@ -367,7 +369,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void checktempeffects( void )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Checks timer-controlled temporary effects 
+//|	Purpose		-	Checks timer-controlled temporary effects
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::checktempeffects( void )
 {
@@ -484,10 +486,10 @@ void cEffects::checktempeffects( void )
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
 					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
-					UString mTemp = UString::number( Effect->More3() );
+					UString mTemp = str_number( Effect->More3() );
 					if( tSock != NULL )
 						tSock->sysmessage( mTemp.c_str() );
-				} 
+				}
 				break;
 			case 17: // Explosion effect (JS and code)
 				src = calcCharObjFromSer( Effect->Source() );
@@ -499,12 +501,12 @@ void cEffects::checktempeffects( void )
 				break;
 			case 19: // Incognito Spell
 				s->SetID( s->GetOrgID() );
-				
+
 				// ------ NAME -----
 				s->SetName( s->GetOrgName() );
-				
+
 				i = s->GetItemAtLayer( IL_HAIR );
-				if( ValidateObject( i ) ) 
+				if( ValidateObject( i ) )
 				{
 					i->SetColour( s->GetHairColour() );
 					i->SetID( s->GetHairStyle() );
@@ -529,7 +531,7 @@ void cEffects::checktempeffects( void )
 				equipCheckNeeded = true;
 				break;
 			case 25: // Temporarily set item as disabled
-					Effect->ObjPtr()->SetDisabled( false );
+				Effect->ObjPtr()->SetDisabled( false );
 				break;
 			case 26: // Disallow immediately using another potion (JS)
 				s->SetUsingPotion( false );
@@ -604,7 +606,7 @@ void cEffects::checktempeffects( void )
 				src->SetID( 0xCF ); // Thats all we need to do
 				break;
 			default:
-				Console.Error( " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
+				Console.error( format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
 				break;
 		}
 		if( ValidateObject( s ) && equipCheckNeeded )
@@ -654,7 +656,7 @@ void reverseEffect( CTEffect *Effect )
 				break;
 			case 19: // Incognito Spell
 				CItem *j;
-				
+
 				// ------ SEX ------
 				s->SetID( s->GetOrgID() );
 				s->SetName( s->GetOrgName() );
@@ -688,7 +690,7 @@ void reverseEffect( CTEffect *Effect )
 				s->SetUsingPotion( false );
 				break;
 			default:
-				Console.Error( " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
+				Console.error( " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
 				break;
 		}
 	}
@@ -876,18 +878,18 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		case 18: // Polymorph Spell
 			toAdd->ExpireTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
 			toAdd->Dispellable( false );
-			
+
 			UI16 k;
 			// Grey flag when polymorphed
 			dest->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
-			if( dest->IsOnHorse() ) 
+			if( dest->IsOnHorse() )
 				DismountCreature( dest );
 			k = ( more1<<8 ) + more2;
-			
-			if( k <= 0x03e2 ) // lord binary, body-values >0x3e1 crash the client
+
+			if( k <= 0x03e2 ) // body-values >0x3e1 crash the client
 				dest->SetID( k );
 			break;
-		case 19: // Incognito Spell - AntiChrist (10/99)
+		case 19: // Incognito Spell
 			toAdd->ExpireTime( BuildTimeValue( 90.0f ) ); // 90 seconds
 			toAdd->Dispellable( false );
 			break;
@@ -927,7 +929,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) ) );
 			break;
 		default:
-			Console.Error( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num );
+			Console.error( format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -982,7 +984,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			toAdd->More2( 0 );
 			break;
 		default:
-			Console.Error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
+			Console.error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -991,7 +993,6 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SaveEffects( void )
 //|	Date		-	16 March, 2002
-//|	Programmer	-	sereg
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out the TempEffects to effects.wsc
 //o-----------------------------------------------------------------------------------------------o
@@ -1008,7 +1009,7 @@ void cEffects::SaveEffects( void )
 	effectDestination.open( filename.c_str() );
 	if( !effectDestination )
 	{
-		Console.Error( "Failed to open %s for writing", filename.c_str() );
+		Console.error( format("Failed to open %s for writing", filename.c_str()) );
 		return;
 	}
 
@@ -1027,14 +1028,13 @@ void cEffects::SaveEffects( void )
 	Console.PrintDone();
 
 	SI32 e_t = getclock();
-	Console.Print( "Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f );
+	Console.print( format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
 }
 
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadEffects( void )
 //|	Date		-	16 March, 2002
-//|	Programmer	-	sererg
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in Effects from disk
 //o-----------------------------------------------------------------------------------------------o
@@ -1131,7 +1131,7 @@ void cEffects::LoadEffects( void )
 										toLoad->Source( data.toUInt() );
 									break;
 								default:
-									Console.Error( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() );
+									Console.error( format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
 									break;
 							}
 						}
@@ -1148,9 +1148,8 @@ void cEffects::LoadEffects( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool Save( std::ofstream &effectDestination ) const
 //|	Date		-	March 16, 2002
-//|	Programmer	-	sereg
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Output the effect data to the effect destination. Returns true/false 
+//|	Purpose		-	Output the effect data to the effect destination. Returns true/false
 //|					indicating the success of the write operation
 //o-----------------------------------------------------------------------------------------------o
 bool CTEffect::Save( std::ofstream &effectDestination ) const
@@ -1182,6 +1181,4 @@ bool CTEffect::Save( std::ofstream &effectDestination ) const
 	effectDestination << "AssocScript=" << AssocScript() << '\n';
 	effectDestination << '\n' << "o---o" << '\n' << '\n';
 	return true;
-}
-
 }

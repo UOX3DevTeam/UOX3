@@ -3,16 +3,10 @@
 #include "CPacketSend.h"
 #include "ObjectFactory.h"
 
-#undef DBGFILE
-#define DBGFILE "trade.cpp"
-
-namespace UOX
-{
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the status of the secure trade buttons (checked or unchecked) to both clients
 //o-----------------------------------------------------------------------------------------------o
@@ -21,7 +15,7 @@ void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CIt
 	CPSecureTrading cpstOne( (*tradeWindowOne), (tradeWindowOne->GetTempVar( CITV_MOREZ ) % 256), (tradeWindowTwo->GetTempVar( CITV_MOREZ ) % 256) );
 	cpstOne.Action( 2 );
 	mSock->Send( &cpstOne );
-	
+
 	CPSecureTrading cpstTwo( (*tradeWindowTwo), (tradeWindowTwo->GetTempVar( CITV_MOREZ ) % 256), (tradeWindowOne->GetTempVar( CITV_MOREZ ) % 256) );
 	cpstTwo.Action( 2 );
 	nSock->Send( &cpstTwo );
@@ -42,7 +36,6 @@ void sendTradeStatus( CItem *tradeWindowOne, CItem *tradeWindowTwo )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a TradeWindow and sends it to the clients
 //o-----------------------------------------------------------------------------------------------o
@@ -78,7 +71,6 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *startTrade( CSocket *mSock, CChar *nChar )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles everything necesarry to start a secure trade
 //o-----------------------------------------------------------------------------------------------o
@@ -113,7 +105,7 @@ CItem *startTrade( CSocket *mSock, CChar *nChar )
 	CPSecureTrading cpstOne( (*nChar), tw1Serial, tw2Serial );
 	cpstOne.Name( nChar->GetName() );
 	mSock->Send( &cpstOne );
-	
+
 	CPSecureTrading cpstTwo( (*mChar), tw2Serial, tw1Serial );
 	cpstTwo.Name( mChar->GetName() );
 	nSock->Send( &cpstTwo );
@@ -164,7 +156,6 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void clearTrades( void )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all items to clear any active trades
 //o-----------------------------------------------------------------------------------------------o
@@ -177,7 +168,6 @@ void clearTrades( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSuccess )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles everything necesarry to complete a trade
 //o-----------------------------------------------------------------------------------------------o
@@ -189,14 +179,14 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 		return;
 
 	CSocket *mSock = p1->GetSocket();
-	if( mSock != NULL ) 
+	if( mSock != NULL )
 	{
 		CPSecureTrading cpstOne( (*tradeWindowOne) );
 		cpstOne.Action( 1 );
 		mSock->Send( &cpstOne );
 	}
 	CSocket *nSock = p2->GetSocket();
-	if( nSock != NULL ) 
+	if( nSock != NULL )
 	{
 		CPSecureTrading cpstTwo( (*tradeWindowTwo) );
 		cpstTwo.Action( 1 );
@@ -241,7 +231,6 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void cancelTrade( CItem *tradeWindowOne )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cancels a secure trade
 //o-----------------------------------------------------------------------------------------------o
@@ -282,7 +271,7 @@ bool CPITradeMessage::Handle( void )
 				cancelTrade( tradeWindowOne );
 				break;
 			default:
-				Console.Error( " Fallout of switch statement without default. trade.cpp, trademsg()" );
+				Console.error( " Fallout of switch statement without default. trade.cpp, trademsg()" );
 				break;
 		}
 	}
@@ -316,7 +305,6 @@ bool killTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void killTrades( CChar *i )
 //|	Date		-	February 2, 2006
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cancels any active trades associated with a character.
 //o-----------------------------------------------------------------------------------------------o
@@ -324,6 +312,4 @@ void killTrades( CChar *i )
 {
 	UI32 b = 0;
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, i, &killTradesFunctor );
-}
-
 }

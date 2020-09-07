@@ -1,8 +1,6 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 
-namespace UOX
-{
 
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING
@@ -88,8 +86,6 @@ private:
 };
 
 extern cMovement *Movement;
-
-}
 
 #endif
 

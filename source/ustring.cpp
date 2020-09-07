@@ -1,25 +1,23 @@
 #if defined(_MSC_VER)
-	#if _MSC_VER < 1300
-		#pragma warning( disable : 4786 )
-		#pragma warning( disable : 4514 )
-		#pragma warning( disable : 4097 )
-		#define UOXVALIST va_list
-		#define NOSIZETYPE
-	#else
-		#define UOXVALIST std::va_list
-	#endif
+#if _MSC_VER < 1300
+#pragma warning( disable : 4786 )
+#pragma warning( disable : 4514 )
+#pragma warning( disable : 4097 )
+#define UOXVALIST va_list
+#define NOSIZETYPE
 #else
-	#define UOXVALIST std::va_list
+#define UOXVALIST std::va_list
+#endif
+#else
+#define UOXVALIST std::va_list
 #endif
 
 #include "Prerequisites.h"
-#include "ustring.h" 
+#include "ustring.h"
 
-namespace UOX
-{
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString::UString(): stdstring() 
+UString::UString(): stdstring()
 {
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -29,17 +27,17 @@ UString::UString(const std::string& str) : stdstring(str)
 #if !defined( NOSIZETYPE )
 UString::UString( const std::string& str, std::string::size_type str_idx ) : stdstring( str, str_idx )
 {
-} 
+}
 #endif
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString::UString(const std::string& str, std::string::size_type str_idx, 
+UString::UString(const std::string& str, std::string::size_type str_idx,
 				 std::string::size_type str_num) : stdstring(str,str_idx,str_num)
 {
-} 
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString::UString(const char* cstr) : stdstring(cstr)
 {
-} 
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString::UString(const char* chars, std::string::size_type chars_len) :
 stdstring(chars,chars_len)
@@ -48,7 +46,7 @@ stdstring(chars,chars_len)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString::UString(std::string::size_type num, char c) : stdstring(num,c)
 {
-} 
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::stripWhiteSpace() const
 {
@@ -66,7 +64,7 @@ UString UString::stripWhiteSpace() const
 	}
 	return ( data );
 }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++    
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::simplifyWhiteSpace() const
 {
 	UString working = (*this).stripWhiteSpace() ;
@@ -334,21 +332,21 @@ UString UString::number (double n)
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::number ( long n, int base  ) 
+UString UString::number ( long n, int base  )
 {
 	UString data;
 	std::stringstream input;
 	switch( base )
 	{
-	case 10:
-		input << std::dec << n;
-		break;
-	case 16:
-		input << std::hex << n;
-		break;
-	case 8:
-		input << std::oct << n;
-		break;
+		case 10:
+			input << std::dec << n;
+			break;
+		case 16:
+			input << std::hex << n;
+			break;
+		case 8:
+			input << std::oct << n;
+			break;
 	}
 	input >> data;
 	return ( data );
@@ -360,15 +358,15 @@ UString UString::number ( unsigned long n, int base )
 	std::stringstream input;
 	switch( base )
 	{
-	case 10:
-		input << std::dec << n;
-		break;
-	case 16:
-		input << std::hex << n;
-		break;
-	case 8:
-		input << std::oct << n;
-		break;
+		case 10:
+			input << std::dec << n;
+			break;
+		case 16:
+			input << std::hex << n;
+			break;
+		case 8:
+			input << std::oct << n;
+			break;
 	}
 	input >> data;
 	return ( data );
@@ -380,35 +378,35 @@ UString UString::number ( int n, int base  )
 	std::stringstream input;
 	switch( base )
 	{
-	case 10:
-		input << std::dec << n;
-		break;
-	case 16:
-		input << std::hex << n;
-		break;
-	case 8:
-		input << std::oct << n;
-		break;
+		case 10:
+			input << std::dec << n;
+			break;
+		case 16:
+			input << std::hex << n;
+			break;
+		case 8:
+			input << std::oct << n;
+			break;
 	}
 	input >> data;
 	return ( data );
 }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-UString UString::number ( unsigned int n, int base  ) 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+UString UString::number ( unsigned int n, int base  )
 {
 	UString data;
 	std::stringstream input;
 	switch( base )
 	{
-	case 10:
-		input << std::dec << n;
-		break;
-	case 16:
-		input << std::hex << n;
-		break;
-	case 8:
-		input << std::oct << n;
-		break;
+		case 10:
+			input << std::dec << n;
+			break;
+		case 16:
+			input << std::hex << n;
+			break;
+		case 8:
+			input << std::oct << n;
+			break;
 	}
 	input >> data;
 	return ( data );
@@ -416,7 +414,7 @@ UString UString::number ( unsigned int n, int base  )
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::lower() const
 {
-	UString sReturn(this->c_str()); 
+	UString sReturn(this->c_str());
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::tolower);
 	return ( sReturn );
 }
@@ -439,7 +437,7 @@ float UString::toFloat(bool * ok) const
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-double UString::toDouble(bool * ok)  const  
+double UString::toDouble(bool * ok)  const
 {
 	double data ;
 	std::stringstream input ;
@@ -460,7 +458,7 @@ unsigned char UString::toUByte( bool *ok, int base ) const
 	return static_cast< unsigned char >( toUShort( ok, base ) );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-short UString::toShort ( bool * ok , int base  ) const 
+short UString::toShort ( bool * ok , int base  ) const
 {
 	short data ;
 	std::stringstream input ;
@@ -720,7 +718,7 @@ std::string& UString::replaceSlash( std::string& data )
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::fixDirectory() 
+UString UString::fixDirectory()
 {
 	UString temp = *this;
 	temp = temp.stripWhiteSpace() ;
@@ -732,7 +730,7 @@ UString UString::fixDirectory()
 	return (temp );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::operator+(const char * input ) 
+UString UString::operator+(const char * input )
 {
 	UString temp(input) ;
 	UString base = *this ;
@@ -741,7 +739,7 @@ UString UString::operator+(const char * input )
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::sprintf(const char* format,...)
 {
-	char buffer[2048] ;	// yes, we are limiting to 2k buffers 
+	char buffer[2048] ;	// yes, we are limiting to 2k buffers
 	memset(buffer,0,2048) ;
 
 	UOXVALIST marker;
@@ -751,7 +749,7 @@ UString UString::sprintf(const char* format,...)
 #else
 	vsnprintf( buffer, 2048, format, marker );
 #endif
-	va_end( marker );			   // Reset variable arguments.  
+	va_end( marker );			   // Reset variable arguments.
 	UString status = buffer ;
 
 
@@ -794,6 +792,4 @@ bool UString::operator==( const char *input )
 		rvalue = true;
 	}
 	return rvalue;
-}
-
 }

@@ -2,28 +2,22 @@
 #define __UOXTYPES_H
 
 #ifdef __NEED_VALIST__
-	typedef void *  va_list;
+typedef void *  va_list;
 #endif
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-	#define MAKEWORD(a, b)      ((UI16)(((UI08)(a)) | ((UI16)((UI08)(b))) << 8))
-	#define MAKELONG(a, b)      ((UI32)(((UI16)(a)) | ((UI32)((UI16)(b))) << 16))
-	#define LOWORD(l)           ((UI16)(l))
-	#define HIWORD(l)           ((UI16)(((UI32)(l) >> 16) & 0xFFFF))
-	#define LOBYTE(w)           ((UI08)(w))
-	#define HIBYTE(w)           ((UI08)(((UI16)(w) >> 8) & 0xFF))
-	#define MAX_PATH			268
+#define MAX_PATH			268
 #endif
 
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == NULL ) \
-	{ \
-		Console.Print( "Socket failure at %s", __FILE__LINE__ );	\
-		return;	\
-	}
+{ \
+Console.print( format("Socket failure at %s", __FILE__LINE__) );	\
+return;	\
+}
 #else
 #define VALIDATESOCKET( s ) if( s == NULL ) \
-	return;
+return;
 #endif
 
 typedef float				R32;
@@ -114,11 +108,11 @@ typedef struct __STARTLOCATIONDATA__
 	UI32	clilocDesc;
 
 } STARTLOCATION, *LPSTARTLOCATION;
-//	EviLDeD	-	End
+//	 	-	End
 
 // Max values
 const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
-								// Xuri - Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
+								// Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 18;
@@ -152,3 +146,4 @@ const UI08 FLOORS_FLAT_ROOFING	= 16;	// For attacking between floors
 const UI08 LAVA_WATER			= 32;	// Don't know what all to use this for yet
 
 #endif
+

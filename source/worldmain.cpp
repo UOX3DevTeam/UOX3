@@ -1,17 +1,15 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	worldmain.cpp
-//|	Programmer	-	Zane/EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
-//|									
-//|						1.0		UOX3 DevTeam
+//|
+//|						1.0
 //|						Initial implementation.
-//|									
-//|						1.1		Zane		March 12, 2003
+//|
+//|						1.1		March 12, 2003
 //|						Most global variables moved from uox3.h to the CWorldMain class
-//|									
-//|						1.2		giwo		October 16, 2003
+//|
+//|						1.2		October 16, 2003
 //|						Added quite a few more vectors to remove them from global scope
 //|						Removed many members that were no longer necesarry and moved
 //|							others to more appropriate locations.
@@ -31,8 +29,6 @@
 #include "Dictionary.h"
 #include "ObjectFactory.h"
 
-namespace UOX
-{
 
 CWorldMain						*cwmWorldState = NULL;
 
@@ -42,7 +38,7 @@ CWorldMain						*cwmWorldState = NULL;
 const bool			DEFWORLD_KEEPRUN			= true;
 const bool			DEFWORLD_ERROR				= false;
 const bool			DEFWORLD_SECURE				= true;
-const UI32			DEFWORLD_ERRORCOUNT			= 0;
+
 const bool			DEFWORLD_LOADED				= false;
 const UI32			DEFWORLD_UICURRENTTIME		= 0;
 const UI32			DEFWORLD_UOTICKCOUNT		= 1;
@@ -58,11 +54,11 @@ const SaveStatus	DEFWORLD_SAVEPROGRESS		= SS_NOTSAVING;
 const bool			DEFWORLD_RELOADINGSCRIPTS	= false;
 const bool			DEFWORLD_CLASSESINITIALIZED	= false;
 
-CWorldMain::CWorldMain() : error( DEFWORLD_ERROR ), 
-keeprun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ), ErrorCount( DEFWORLD_ERRORCOUNT ), Loaded( DEFWORLD_LOADED ), 
-uotickcount( DEFWORLD_UOTICKCOUNT ), starttime( DEFWORLD_STARTTIME ), endtime( DEFWORLD_ENDTIME ), lclock( DEFWORLD_LCLOCK ), 
-overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime( DEFWORLD_OLDTIME ), newtime( DEFWORLD_NEWTIME ), 
-autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ), 
+CWorldMain::CWorldMain() : error( DEFWORLD_ERROR ),
+keeprun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ),  Loaded( DEFWORLD_LOADED ),
+uotickcount( DEFWORLD_UOTICKCOUNT ), starttime( DEFWORLD_STARTTIME ), endtime( DEFWORLD_ENDTIME ), lclock( DEFWORLD_LCLOCK ),
+overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime( DEFWORLD_OLDTIME ), newtime( DEFWORLD_NEWTIME ),
+autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ),
 reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLASSESINITIALIZED )
 {
 	for( SI32 mTID = (SI32)tWORLD_NEXTFIELDEFFECT; mTID < (SI32)tWORLD_COUNT; ++mTID )
@@ -103,7 +99,6 @@ CWorldMain::~CWorldMain()
 //|	Function	-	TIMERVAL GetTimer( CWM_TID timerID ) const
 //|					void SetTimer( CWM_TID timerID, TIMERVAL newVal )
 //|	Date		-	10/17/2003
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles all the world timers (next time we check NPC AI, etc)
 //o-----------------------------------------------------------------------------------------------o
@@ -124,7 +119,6 @@ void CWorldMain::SetTimer( CWM_TID timerID, TIMERVAL newVal )
 //|	Function	-	bool GetError( void ) const
 //|					void SetError( bool newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets if we have generated an error
 //o-----------------------------------------------------------------------------------------------o
@@ -141,7 +135,6 @@ void CWorldMain::SetError( bool newVal )
 //|	Function	-	bool GetKeepRun( void ) const
 //|					void SetKeepRun( bool newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets if server should be kept running
 //o-----------------------------------------------------------------------------------------------o
@@ -158,7 +151,6 @@ void CWorldMain::SetKeepRun( bool newVal )
 //|	Function	-	bool GetSecure( void ) const
 //|					void SetSecure( bool newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether console "secure" mode is enabled/disabled
 //o-----------------------------------------------------------------------------------------------o
@@ -171,33 +163,12 @@ void CWorldMain::SetSecure( bool newVal )
 	secure = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function		-	UI32 GetErrorCount( void ) const
-//|						void SetErrorCount( UI32 newVal )
-//|						void IncErrorCount( void )
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose			-	Total number of errors on a server (for crash protection)
-//o-----------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetErrorCount( void ) const
-{
-	return ErrorCount;
-}
-void CWorldMain::SetErrorCount( UI32 newVal )
-{
-	ErrorCount = newVal;
-}
-void CWorldMain::IncErrorCount( void )
-{
-	++ErrorCount;
-}
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool GetLoaded( void ) const
 //|					void SetLoaded( bool newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether UOX has been loaded
 //o-----------------------------------------------------------------------------------------------o
@@ -214,7 +185,6 @@ void CWorldMain::SetLoaded( bool newVal )
 //|	Function	-	UI32 GetUICurrentTime( void ) const
 //|					void SetUICurrentTime( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current time
 //o-----------------------------------------------------------------------------------------------o
@@ -231,7 +201,6 @@ void CWorldMain::SetUICurrentTime( UI32 newVal )
 //|	Function	-	UI32 GetUOTickCount( void ) const
 //|					void SetUOTickCount( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets UO Minutes
 //o-----------------------------------------------------------------------------------------------o
@@ -248,7 +217,6 @@ void CWorldMain::SetUOTickCount( UI32 newVal )
 //|	Function	-	bool GetOverflow( void ) const
 //|					void SetOverflow( bool newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether we overflowed the time
 //o-----------------------------------------------------------------------------------------------o
@@ -265,7 +233,6 @@ void CWorldMain::SetOverflow( bool newVal )
 //|	Function	-	UI32 CWorldMain::GetStartTime( void ) const
 //|					void CWorldMain::SetStartTime( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server started up
 //o-----------------------------------------------------------------------------------------------o
@@ -282,7 +249,6 @@ void CWorldMain::SetStartTime( UI32 newVal )
 //|	Function	-	UI32 GetEndTime( void ) const
 //|					void SetEndTime( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server will shutdown
 //o-----------------------------------------------------------------------------------------------o
@@ -299,7 +265,6 @@ void CWorldMain::SetEndTime( UI32 newVal )
 //|	Function	-	UI32 GetLClock( void ) const
 //|					void SetLClock( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets end time
 //o-----------------------------------------------------------------------------------------------o
@@ -316,7 +281,6 @@ void CWorldMain::SetLClock( UI32 newVal )
 //|	Function	-	UI32 GetNewTime( void ) const
 //|					void SetNewTime( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto worldsave
 //o-----------------------------------------------------------------------------------------------o
@@ -333,7 +297,6 @@ void CWorldMain::SetNewTime( UI32 newVal )
 //|	Function	-	UI32 GetOldTime( void ) const
 //|					void SetOldTime( UI32 newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto worldsave
 //o-----------------------------------------------------------------------------------------------o
@@ -350,7 +313,6 @@ void CWorldMain::SetOldTime( UI32 newVal )
 //|	Function	-	bool GetAutoSaved( void ) const
 //|					void SetAutoSaved( bool newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether world was autosaved
 //o-----------------------------------------------------------------------------------------------o
@@ -367,8 +329,7 @@ void CWorldMain::SetAutoSaved( bool newVal )
 //|	Function	-	SaveStatus GetWorldSaveProgress( void ) const
 //|					void SetWorldSaveProgress( SaveStatus newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
-//|	Changes		-	giwo - 10/10/2003 - Now uses enum SaveStatus for ease of use
+//|	Changes		-	10/10/2003 - Now uses enum SaveStatus for ease of use
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets status of World saves (Not Saving, Saving, Just Saved)
 //o-----------------------------------------------------------------------------------------------o
@@ -385,7 +346,6 @@ void CWorldMain::SetWorldSaveProgress( SaveStatus newVal )
 //|	Function	-	size_t GetPlayersOnline( void ) const
 //|					void SetPlayersOnline( size_t newVal )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total Players Online
 //o-----------------------------------------------------------------------------------------------o
@@ -414,7 +374,6 @@ void CWorldMain::DecPlayersOnline( void )
 //|	Function	-	bool GetReloadingScripts( void ) const
 //|					void SetReloadingScripts( bool newVal )
 //|	Date		-	6/22/2004
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server is reloading its scripts
 //o-----------------------------------------------------------------------------------------------o
@@ -437,7 +396,7 @@ void CWorldMain::CheckTimers( void )
 	SetOverflow( ( GetLClock() > GetUICurrentTime() ) );
 	if( GetEndTime() )
 	{
-		if( GetEndTime() <= GetUICurrentTime() ) 
+		if( GetEndTime() <= GetUICurrentTime() )
 			SetKeepRun( false );
 	}
 	SetLClock( GetUICurrentTime() );
@@ -446,7 +405,6 @@ void CWorldMain::CheckTimers( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 GetNewIPTime( void ) const
 //|					void SetNewIPTime( UI32 newVal )
-//|	Programmer	-	Grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto IP update
 //o-----------------------------------------------------------------------------------------------o
@@ -462,7 +420,6 @@ void CWorldMain::SetNewIPTime( UI32 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 GetOldIPTime( void ) const
 //|					void SetOldIPTime( UI32 newVal )
-//|	Programmer	-	Grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto IP update
 //o-----------------------------------------------------------------------------------------------o
@@ -478,7 +435,6 @@ void CWorldMain::SetOldIPTime( UI32 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool GetIPUpdated( void ) const
 //|					void SetIPUpdated( bool newVal )
-//|	Programmer	-	Grimson
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether IPs have been updated
 //o-----------------------------------------------------------------------------------------------o
@@ -494,7 +450,6 @@ void CWorldMain::SetIPUpdated( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ClassesInitialized( void ) const
 //|					void ClassesInitialized( bool newVal )
-//|	Programmer	-	giwo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether base classes been initialized (in case of early shut down)
 //o-----------------------------------------------------------------------------------------------o
@@ -519,7 +474,7 @@ void CWorldMain::doWorldLight( void )
 	bool ampm				= ServerData()->ServerTimeAMPM();
 	UI08 currentHour		= ServerData()->ServerTimeHours();
 	UI08 currentMinute		= ServerData()->ServerTimeMinutes();
-	
+
 	R32 currentTime			= R32( currentHour + ( currentMinute / 60.0f) );
 	R32 hourIncrement		= R32( fabs( ( worlddarklevel - worldbrightlevel ) / 12.0f ) );	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
 
@@ -535,12 +490,10 @@ void sysBroadcast( const std::string& txt );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SaveNewWorld( bool x )
 //|	Date		-	1997
-//|	Programmer	-	EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves the UOX world
-//|	
-//|	Changes		-	10/21/2002	-	Xuri fix for archiving. Now it wont always archive :)
+//|
+//|	Changes		-	10/21/2002	-	fix for archiving. Now it wont always archive :)
 //o-----------------------------------------------------------------------------------------------o
 void CWorldMain::SaveNewWorld( bool x )
 {
@@ -569,9 +522,9 @@ void CWorldMain::SaveNewWorld( bool x )
 
 		if( x )
 			Console << "Starting manual world data save...." << myendl;
-		else 
+		else
 			Console << "Starting automatic world data save...." << myendl;
-		
+
 		if( ServerData()->ServerBackupStatus() && ServerData()->Directory( CSDDP_BACKUP ).length() > 1 )
 		{
 			++save_counter;
@@ -583,10 +536,10 @@ void CWorldMain::SaveNewWorld( bool x )
 		}
 		Console << "Saving Misc. data... ";
 		ServerData()->save();
-		Console.Log( "Server data save", "server.log" );
+		Console.log( "Server data save", "server.log" );
 		RegionSave();
 		Console.PrintDone();
-		MapRegion->Save(); 
+		MapRegion->Save();
 		GuildSys->Save();
 		JailSys->WriteData();
 		Effects->SaveEffects();
@@ -611,18 +564,16 @@ void CWorldMain::SaveNewWorld( bool x )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void RegionSave( void )
-//|	Programmer	-	Abaddon
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all town regions and saves them to disk
-//o-----------------------------------------------------------------------------------------------o	
+//o-----------------------------------------------------------------------------------------------o
 void CWorldMain::RegionSave( void )
 {
 	std::string regionsFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc";
 	std::ofstream regionsDestination( regionsFile.c_str() );
-	if( !regionsDestination ) 
+	if( !regionsDestination )
 	{
-		Console.Error( "Failed to open %s for writing", regionsFile.c_str() );
+		Console.error( format("Failed to open %s for writing", regionsFile.c_str()) );
 		return;
 	}
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -650,19 +601,17 @@ CServerProfile *CWorldMain::ServerProfile( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SaveStatistics( void )
 //|	Date		-	February 5th, 2005
-//|	Programmer	-	Maarc
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out some useful statistics so that some tools
-//|						such as Xuri's WB can do some memory reserve shortcuts
-//o-----------------------------------------------------------------------------------------------o	
+//|						such as WorldBuilder can do some memory reserve shortcuts
+//o-----------------------------------------------------------------------------------------------o
 void CWorldMain::SaveStatistics( void )
 {
 	std::string		statsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "statistics.wsc";
 	std::ofstream	statsDestination( statsFile.c_str() );
-	if( !statsDestination ) 
+	if( !statsDestination )
 	{
-		Console.Error( "Failed to open %s for writing", statsFile.c_str() );
+		Console.error( format("Failed to open %s for writing", statsFile.c_str()) );
 		return;
 	}
 	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
@@ -677,12 +626,10 @@ void CWorldMain::SaveStatistics( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Class		-	CServerProfile
 //|	Date		-	2004
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
-//|									
-//|						1.0		giwo		2004
+//|
+//|						1.0		 		2004
 //|						Original implementation
 //|						Moving all profiling variables into their own class managed
 //|						by CWorldMain in order to take them out of global scope
@@ -884,6 +831,4 @@ SI32 CServerProfile::GlobalSent( void ) const
 void CServerProfile::GlobalSent( SI32 newVal )
 {
 	globalSent = newVal;
-}
-
 }

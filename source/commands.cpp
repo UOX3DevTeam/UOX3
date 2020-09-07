@@ -5,12 +5,8 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
+#include "StringUtility.hpp"
 
-#undef DBGFILE
-#define DBGFILE "commands.cpp"
-
-namespace UOX
-{
 
 cCommands *Commands			= NULL;
 
@@ -34,8 +30,7 @@ cCommands::~cCommands()
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 NumArguments( void )
 //|	Date		-	3/12/2003
-//|	Programmer	-	Zane
-//|	Changes		-	4/2/2003 - Reduced to a UI08 - Zane
+//|	Changes		-	4/2/2003 - Reduced to a UI08
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Number of arguments in a command
 //o-----------------------------------------------------------------------------------------------o
@@ -46,7 +41,6 @@ UI08 cCommands::NumArguments( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 Argument( UI08 argNum )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs argument argNum and converts it to an integer
 //o-----------------------------------------------------------------------------------------------o
@@ -63,7 +57,6 @@ SI32 cCommands::Argument( UI08 argNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UString CommandString( UI08 section, UI08 end )
 //|	Date		-	4/02/2003
-//|	Programmer	-	Zane
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
 //o-----------------------------------------------------------------------------------------------o
@@ -71,9 +64,9 @@ UString cCommands::CommandString( UI08 section, UI08 end )
 {
 	UString retString;
 	if( end != 0 )
-		retString = commandString.section( " ", section - 1, end - 1 );
+		retString = extractSection(commandString, " ", section - 1, end - 1 );
 	else
-		retString = commandString.section( " ", section - 1 );
+		retString = extractSection(commandString, " ", section - 1 );
 	return retString;
 }
 void cCommands::CommandString( UString newValue )
@@ -83,8 +76,6 @@ void cCommands::CommandString( UString newValue )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Command( CSocket *s, CChar *mChar, UString text )
-//|	Programmer	-	EviLDeD
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles commands sent from client
 //o-----------------------------------------------------------------------------------------------o
@@ -116,7 +107,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 			if( toExecute != NULL )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.Print( "Executing JS command %s\n", command.c_str() );
+				Console.print( format("Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
@@ -257,7 +248,7 @@ void cCommands::Load( void )
 			++tablePos;
 		}
 	}
-	
+
 	Console << "   o Loading command levels" << myendl;
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == NULL )
@@ -327,7 +318,7 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( "Unable to open command log file %s!", logName.c_str() );
+		Console.error( format("Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -512,6 +503,4 @@ CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 	if( toFind == CommandMap.end() )
 		return NULL;
 	return &(toFind->second);
-}
-
 }

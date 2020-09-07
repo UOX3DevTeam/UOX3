@@ -2,9 +2,6 @@
 #ifndef __JAIL_H__
 #define __JAIL_H__
 
-namespace UOX
-{
-
 struct JailOccupant
 {
 	SERIAL pSerial;
@@ -29,10 +26,10 @@ private:
 	UI16 instanceID;
 	std::vector< JailOccupant * > playersInJail;
 public:
-			JailCell() : x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceID( 0 )
-			{
-			}
-			~JailCell();
+	JailCell() : x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceID( 0 )
+	{
+	}
+	~JailCell();
 	bool	IsEmpty( void ) const;
 	size_t	JailedPlayers( void ) const;
 	SI16	X( void ) const;
@@ -58,8 +55,8 @@ class JailSystem
 private:
 	std::vector< JailCell > jails;
 public:
-			JailSystem();
-			~JailSystem();
+	JailSystem();
+	~JailSystem();
 	void	ReadSetup( void );
 	void	ReadData( void );
 	void	WriteData( void );
@@ -69,8 +66,6 @@ public:
 };
 
 extern JailSystem *JailSys;
-
-}
 
 #endif
 

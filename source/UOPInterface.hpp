@@ -1,6 +1,5 @@
 //	UOPInterface.hpp
 //
-//	Created by Charles Kerr
 //
 //
 
@@ -19,7 +18,7 @@
 
 namespace  UOP
 {
-    
+
     struct UTableEntry {
         std::int64_t m_Offset ;
         std::int32_t m_HeaderLength ;
@@ -32,7 +31,7 @@ namespace  UOP
     static constexpr auto hashformat = "build/map?legacymul/#.dat";
     std::string fixedWidth(std::uint32_t value,int digitsCount=8 );
     std::tuple<std::uintmax_t,char*> loadUOP(const std::string& uopname, std::uint16_t mapnum);
-    
+
 };
 
 #endif /* UOPInterface_hpp */

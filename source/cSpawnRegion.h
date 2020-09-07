@@ -1,9 +1,6 @@
 #ifndef __SpawnRegion__
 #define __SpawnRegion__
 
-namespace UOX
-{
-
 class CSpawnRegion	//Regionspawns
 {
 private:
@@ -14,11 +11,11 @@ private:
 
 	UI16		regionnum;			// Region Number
 
-// These two will replace maxspawn
+	// These two will replace maxspawn
 	size_t		maxcspawn;			// Maximum amount of characters to spawn
 	size_t		maxispawn;			// Maximum amount of items to spawn
 
-// These two will replace current
+	// These two will replace current
 	SI32		curcspawn;			// Current amount of spawned characters
 	SI32		curispawn;			// Current amount of spawned items
 
@@ -26,12 +23,12 @@ private:
 	UI08		maxtime;			// Maximum spawn time
 	TIMERVAL	nexttime;			// Nextspawn time for this region
 
-// Box values
+	// Box values
 	SI16		x1;					// Top left X
 	SI16		x2;					// Bottom right x
 	SI16		y1;					// Top left y
 	SI16		y2;					// Bottom right y
-	
+
 	SI08		prefZ;				// Maximum Z influence static and dynamic items can have on spawning.
 
 	bool		onlyOutside;		// Should Chars, Items only spawn outside of buildings
@@ -48,8 +45,8 @@ private:
 
 
 public:
-				CSpawnRegion( UI16 spawnregion );
-				~CSpawnRegion();
+	CSpawnRegion( UI16 spawnregion );
+	~CSpawnRegion();
 
 	void		Load( ScriptSection *toScan );
 	void		doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned );
@@ -118,9 +115,6 @@ private:
 	void		LoadNPCList( const std::string &npcList );
 	void		LoadItemList( const std::string &itemList );
 };
-
-}
-
 #endif
 
 

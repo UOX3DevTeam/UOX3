@@ -7,14 +7,12 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
-#if defined(_MSC_VER)
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#include "CDataList.h"
+#if UOX_PLATFORM == PLATFORM_WIN32
+#include <winsock2.h>
+#undef min
+#undef max
 #endif
-
-namespace UOX
-{
 
 enum CWM_TID
 {
@@ -42,8 +40,8 @@ private:
 	SI32 globalRecv;
 	SI32 globalSent;
 public:
-			CServerProfile();
-			~CServerProfile();
+	CServerProfile();
+	~CServerProfile();
 
 	UI32	NetworkTime( void ) const;
 	UI32	TimerTime( void ) const;
@@ -82,7 +80,7 @@ public:
 	void	GlobalSent( SI32 newVal );
 };
 
-class CWorldMain  
+class CWorldMain
 {
 private:
 	struct skill_st
@@ -127,7 +125,6 @@ private:
 	bool		error;
 	bool		keeprun;
 	bool		secure; // Secure mode
-	UI32		ErrorCount;
 	bool		Loaded;
 
 	// Time Functions
@@ -140,7 +137,7 @@ private:
 	UI32		oldtime, newtime;
 	bool		autosaved;
 	SaveStatus	worldSaveProgress;
-	
+
 	// IP Update
 	UI32		oldIPtime, newIPtime;
 	bool		ipupdated;
@@ -162,9 +159,6 @@ public:
 	bool		GetKeepRun( void ) const;
 	void		SetSecure( bool newVal );
 	bool		GetSecure( void ) const;
-	void		SetErrorCount( UI32 newVal );
-	UI32		GetErrorCount( void ) const;
-	void		IncErrorCount( void );
 	void		SetLoaded( bool newVal );
 	bool		GetLoaded( void ) const;
 
@@ -181,7 +175,7 @@ public:
 	UI32		GetEndTime( void ) const;
 	void		SetLClock( UI32 newVal );
 	UI32		GetLClock( void ) const;
-	
+
 	// Worldsave
 	void		SetNewTime( UI32 newVal );
 	UI32		GetNewTime( void ) const;
@@ -191,7 +185,7 @@ public:
 	bool		GetAutoSaved( void ) const;
 	void		SetWorldSaveProgress( SaveStatus newVal );
 	SaveStatus	GetWorldSaveProgress( void ) const;
-	
+
 	// IP update
 	UI32		GetNewIPTime( void ) const;
 	void		SetNewIPTime( UI32 newVal );
@@ -233,8 +227,8 @@ public:
 	void		doWorldLight( void );
 	void		SaveNewWorld( bool x );
 
-					CWorldMain();
-					~CWorldMain();
+	CWorldMain();
+	~CWorldMain();
 	CServerData *	ServerData( void );
 	CServerProfile * ServerProfile( void );
 private:
@@ -246,7 +240,5 @@ private:
 };
 
 extern CWorldMain								*cwmWorldState;
-
-}
 
 #endif

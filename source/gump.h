@@ -1,9 +1,6 @@
 #ifndef __GUMP_H__
 #define __GUMP_H__
 
-namespace UOX
-{
-
 void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 
 class CGump
@@ -22,7 +19,7 @@ public:
 
 	void Add( const std::string& Tag, const std::string& Text );
 	void Send( CSocket *target );
-	
+
 	// Common add functions
 	void AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height );
 	void AddGump( UI16 x, UI16 y, UI16 GumpID );
@@ -72,8 +69,6 @@ public:
 	void Send( UI32 gumpNum, bool isMenu, SERIAL serial );
 	void Delete( void );
 };
-
-}
 
 #endif
 

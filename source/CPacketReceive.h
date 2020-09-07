@@ -3,9 +3,6 @@
 
 #include "network.h"
 
-namespace UOX
-{
-
 class CPIFirstLogin : public CPInputBuffer
 {
 protected:
@@ -17,8 +14,8 @@ public:
 	virtual				~CPIFirstLogin()
 	{
 	}
-						CPIFirstLogin();
-						CPIFirstLogin( CSocket *s );
+	CPIFirstLogin();
+	CPIFirstLogin( CSocket *s );
 	virtual void		Receive( void ) override;
 	virtual const std::string Name( void );
 	virtual const std::string Pass( void );
@@ -35,8 +32,8 @@ public:
 	virtual			~CPIServerSelect()
 	{
 	}
-					CPIServerSelect();
-					CPIServerSelect( CSocket *s );
+	CPIServerSelect();
+	CPIServerSelect( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual SI16	ServerNum( void );
 	virtual bool	Handle( void ) override;
@@ -54,8 +51,8 @@ public:
 	virtual				~CPISecondLogin()
 	{
 	}
-						CPISecondLogin();
-						CPISecondLogin( CSocket *s );
+	CPISecondLogin();
+	CPISecondLogin( CSocket *s );
 	virtual void		Receive( void ) override;
 	virtual UI32		Account( void );
 	virtual const std::string Name( void );
@@ -74,8 +71,8 @@ public:
 	virtual			~CPIClientVersion()
 	{
 	}
-					CPIClientVersion();
-					CPIClientVersion( CSocket *s );
+	CPIClientVersion();
+	CPIClientVersion( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -98,8 +95,8 @@ public:
 	virtual			~CPINewClientVersion()
 	{
 	}
-					CPINewClientVersion();
-					CPINewClientVersion( CSocket *s );
+	CPINewClientVersion();
+	CPINewClientVersion( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -113,8 +110,8 @@ public:
 	virtual			~CPIUpdateRangeChange()
 	{
 	}
-					CPIUpdateRangeChange();
-					CPIUpdateRangeChange( CSocket *s );
+	CPIUpdateRangeChange();
+	CPIUpdateRangeChange( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -146,8 +143,8 @@ public:
 	virtual			~CPITips()
 	{
 	}
-					CPITips();
-					CPITips( CSocket *s );
+	CPITips();
+	CPITips( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -160,8 +157,8 @@ public:
 	virtual			~CPIRename()
 	{
 	}
-					CPIRename();
-					CPIRename( CSocket *s );
+	CPIRename();
+	CPIRename( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -172,8 +169,8 @@ public:
 	virtual			~CPIKeepAlive()
 	{
 	}
-					CPIKeepAlive();
-					CPIKeepAlive( CSocket *s );
+	CPIKeepAlive();
+	CPIKeepAlive( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -187,8 +184,8 @@ public:
 	virtual			~CPIStatusRequest()
 	{
 	}
-					CPIStatusRequest();
-					CPIStatusRequest( CSocket *s );
+	CPIStatusRequest();
+	CPIStatusRequest( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -200,8 +197,8 @@ public:
 	virtual			~CPISpy()
 	{
 	}
-					CPISpy();
-					CPISpy( CSocket *s );
+	CPISpy();
+	CPISpy( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -212,8 +209,8 @@ public:
 	virtual			~CPIGodModeToggle()
 	{
 	}
-					CPIGodModeToggle();
-					CPIGodModeToggle( CSocket *s );
+	CPIGodModeToggle();
+	CPIGodModeToggle( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -226,8 +223,8 @@ public:
 	virtual			~CPIDblClick()
 	{
 	}
-					CPIDblClick();
-					CPIDblClick( CSocket *s );
+	CPIDblClick();
+	CPIDblClick( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -241,8 +238,8 @@ public:
 	virtual			~CPISingleClick()
 	{
 	}
-					CPISingleClick();
-					CPISingleClick( CSocket *s );
+	CPISingleClick();
+	CPISingleClick( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -254,8 +251,8 @@ public:
 	virtual			~CPIMoveRequest()
 	{
 	}
-					CPIMoveRequest();
-					CPIMoveRequest( CSocket *s );
+	CPIMoveRequest();
+	CPIMoveRequest( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -267,8 +264,8 @@ public:
 	virtual			~CPIResyncReq()
 	{
 	}
-					CPIResyncReq();
-					CPIResyncReq( CSocket *s );
+	CPIResyncReq();
+	CPIResyncReq( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -279,8 +276,8 @@ public:
 	virtual			~CPIResMenuChoice()
 	{
 	}
-					CPIResMenuChoice();
-					CPIResMenuChoice( CSocket *s );
+	CPIResMenuChoice();
+	CPIResMenuChoice( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -291,8 +288,8 @@ public:
 	virtual			~CPIAttack()
 	{
 	}
-					CPIAttack();
-					CPIAttack( CSocket *s );
+	CPIAttack();
+	CPIAttack( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -303,8 +300,8 @@ public:
 	virtual			~CPITargetCursor()
 	{
 	}
-					CPITargetCursor();
-					CPITargetCursor( CSocket *s );
+	CPITargetCursor();
+	CPITargetCursor( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader ) override;
@@ -316,8 +313,8 @@ public:
 	virtual			~CPIEquipItem()
 	{
 	}
-					CPIEquipItem();
-					CPIEquipItem( CSocket *s );
+	CPIEquipItem();
+	CPIEquipItem( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -328,8 +325,8 @@ public:
 	virtual			~CPIGetItem()
 	{
 	}
-					CPIGetItem();
-					CPIGetItem( CSocket *s );
+	CPIGetItem();
+	CPIGetItem( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -345,8 +342,8 @@ public:
 	virtual			~CPIDropItem()
 	{
 	}
-					CPIDropItem();
-					CPIDropItem( CSocket *s );
+	CPIDropItem();
+	CPIDropItem( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -354,8 +351,8 @@ public:
 class CPIGumpMenuSelect : public CPInputBuffer
 {
 public:
-					CPIGumpMenuSelect();
-					CPIGumpMenuSelect( CSocket *s );
+	CPIGumpMenuSelect();
+	CPIGumpMenuSelect( CSocket *s );
 	virtual			~CPIGumpMenuSelect()
 	{
 	}
@@ -397,8 +394,8 @@ protected:
 	virtual void		InternalReset( void );
 	bool				HandleCommon( void );
 public:
-						CPITalkRequest();
-						CPITalkRequest( CSocket *s );
+	CPITalkRequest();
+	CPITalkRequest( CSocket *s );
 	virtual				~CPITalkRequest()
 	{
 	}
@@ -418,8 +415,8 @@ public:
 class CPITalkRequestAscii : public CPITalkRequest
 {
 public:
-						CPITalkRequestAscii();
-						CPITalkRequestAscii( CSocket *s );
+	CPITalkRequestAscii();
+	CPITalkRequestAscii( CSocket *s );
 	virtual				~CPITalkRequestAscii()
 	{
 	}
@@ -432,8 +429,8 @@ protected:
 	char unicodeTxt[8192];
 	char langCode[4];
 public:
-						CPITalkRequestUnicode();
-						CPITalkRequestUnicode( CSocket *s );
+	CPITalkRequestUnicode();
+	CPITalkRequestUnicode( CSocket *s );
 	virtual				~CPITalkRequestUnicode()
 	{
 	}
@@ -451,8 +448,8 @@ public:
 	virtual			~CPIAllNames3D()
 	{
 	}
-					CPIAllNames3D();
-					CPIAllNames3D( CSocket *s );
+	CPIAllNames3D();
+	CPIAllNames3D( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -463,8 +460,8 @@ public:
 	virtual			~CPIGumpChoice()
 	{
 	}
-					CPIGumpChoice();
-					CPIGumpChoice( CSocket *s );
+	CPIGumpChoice();
+	CPIGumpChoice( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -475,8 +472,8 @@ public:
 	virtual			~CPIBuyItem()
 	{
 	}
-					CPIBuyItem();
-					CPIBuyItem( CSocket *s );
+	CPIBuyItem();
+	CPIBuyItem( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -487,8 +484,8 @@ public:
 	virtual			~CPISellItem()
 	{
 	}
-					CPISellItem();
-					CPISellItem( CSocket *s );
+	CPISellItem();
+	CPISellItem( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -499,8 +496,8 @@ public:
 	virtual			~CPIDeleteCharacter()
 	{
 	}
-					CPIDeleteCharacter();
-					CPIDeleteCharacter( CSocket *s );
+	CPIDeleteCharacter();
+	CPIDeleteCharacter( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -530,7 +527,7 @@ protected:
 	UI32	ipAddress;
 	COLOUR	shirtColour;
 	COLOUR	pantsColour;
-	
+
 	//extra for 3DCharCreate - 0x8D
 	UI08	packetSize;
 	UI08	profession;
@@ -554,8 +551,8 @@ public:
 	virtual			~CPICreateCharacter()
 	{
 	}
-					CPICreateCharacter();
-					CPICreateCharacter( CSocket *s );
+	CPICreateCharacter();
+	CPICreateCharacter( CSocket *s );
 	virtual void	Create2DCharacter( void );
 	virtual void	Create3DCharacter( void );
 	virtual void	Receive( void ) override;
@@ -577,8 +574,8 @@ public:
 	virtual			~CPIPlayCharacter()
 	{
 	}
-					CPIPlayCharacter();
-					CPIPlayCharacter( CSocket *s );
+	CPIPlayCharacter();
+	CPIPlayCharacter( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -600,8 +597,8 @@ public:
 	virtual			~CPIGumpInput()
 	{
 	}
-					CPIGumpInput();
-					CPIGumpInput( CSocket *s );
+	CPIGumpInput();
+	CPIGumpInput( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 
@@ -621,8 +618,8 @@ public:
 	virtual			~CPIHelpRequest()
 	{
 	}
-					CPIHelpRequest( CSocket *s, UI16 menuVal );
-					CPIHelpRequest( CSocket *s );
+	CPIHelpRequest( CSocket *s, UI16 menuVal );
+	CPIHelpRequest( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -633,8 +630,8 @@ public:
 	virtual			~CPITradeMessage()
 	{
 	}
-					CPITradeMessage();
-					CPITradeMessage( CSocket *s );
+	CPITradeMessage();
+	CPITradeMessage( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 };
@@ -649,8 +646,8 @@ public:
 	virtual			~CPIDyeWindow()
 	{
 	}
-					CPIDyeWindow();
-					CPIDyeWindow( CSocket *s );
+	CPIDyeWindow();
+	CPIDyeWindow( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -662,9 +659,9 @@ public:
 	virtual			~CPIMsgBoardEvent()
 	{
 	}
-					CPIMsgBoardEvent();
-					CPIMsgBoardEvent( CSocket *s );
-					CPIMsgBoardEvent( CSocket *s, bool receive );
+	CPIMsgBoardEvent();
+	CPIMsgBoardEvent( CSocket *s );
+	CPIMsgBoardEvent( CSocket *s, bool receive );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -676,8 +673,8 @@ public:
 	virtual			~CPINewBookHeader()
 	{
 	}
-					CPINewBookHeader();
-					CPINewBookHeader( CSocket *s );
+	CPINewBookHeader();
+	CPINewBookHeader( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -689,8 +686,8 @@ public:
 	virtual			~CPIBookPage()
 	{
 	}
-					CPIBookPage();
-					CPIBookPage( CSocket *s );
+	CPIBookPage();
+	CPIBookPage( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -702,8 +699,8 @@ public:
 	virtual			~CPIMetrics()
 	{
 	}
-					CPIMetrics();
-					CPIMetrics( CSocket *s );
+	CPIMetrics();
+	CPIMetrics( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -722,8 +719,8 @@ public:
 	virtual			~CPISubcommands()
 	{
 	}
-					CPISubcommands();
-					CPISubcommands( CSocket *s );
+	CPISubcommands();
+	CPISubcommands( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
@@ -735,8 +732,8 @@ public:
 	virtual			~CPIPartyCommand()
 	{
 	}
-					CPIPartyCommand();
-					CPIPartyCommand( CSocket *s );
+	CPIPartyCommand();
+	CPIPartyCommand( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -750,8 +747,8 @@ public:
 	virtual			~CPITrackingArrow()
 	{
 	}
-					CPITrackingArrow();
-					CPITrackingArrow( CSocket *s );
+	CPITrackingArrow();
+	CPITrackingArrow( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -767,8 +764,8 @@ public:
 	virtual			~CPIClientLanguage()
 	{
 	}
-					CPIClientLanguage();
-					CPIClientLanguage( CSocket *s );
+	CPIClientLanguage();
+	CPIClientLanguage( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -784,8 +781,8 @@ public:
 	virtual			~CPIUOTDActions()
 	{
 	}
-					CPIUOTDActions();
-					CPIUOTDActions( CSocket *s );
+	CPIUOTDActions();
+	CPIUOTDActions( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -801,8 +798,8 @@ public:
 	virtual			~CPIToolTipRequest()
 	{
 	}
-					CPIToolTipRequest();
-					CPIToolTipRequest( CSocket *s );
+	CPIToolTipRequest();
+	CPIToolTipRequest( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -818,8 +815,8 @@ public:
 	virtual			~CPIPopupMenuRequest()
 	{
 	}
-					CPIPopupMenuRequest();
-					CPIPopupMenuRequest( CSocket *s );
+	CPIPopupMenuRequest();
+	CPIPopupMenuRequest( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -836,8 +833,8 @@ public:
 	virtual			~CPIPopupMenuSelect()
 	{
 	}
-					CPIPopupMenuSelect();
-					CPIPopupMenuSelect( CSocket *s );
+	CPIPopupMenuSelect();
+	CPIPopupMenuSelect( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -854,8 +851,8 @@ public:
 	virtual			~CPIExtendedStats()
 	{
 	}
-					CPIExtendedStats();
-					CPIExtendedStats( CSocket *s );
+	CPIExtendedStats();
+	CPIExtendedStats( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -872,8 +869,8 @@ public:
 	CPIBandageMacro();
 	CPIBandageMacro(CSocket *s);
 
-	virtual void	Receive(void);
-	virtual bool	Handle(void);
+	virtual void	Receive(void) override;
+	virtual bool	Handle(void) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 
 };
@@ -884,8 +881,8 @@ public:
 	virtual			~CPISpellbookSelect()
 	{
 	}
-					CPISpellbookSelect();
-					CPISpellbookSelect( CSocket *s );
+	CPISpellbookSelect();
+	CPISpellbookSelect( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
@@ -899,16 +896,14 @@ public:
 	virtual			~CPIAOSCommand()
 	{
 	}
-					CPIAOSCommand();
-					CPIAOSCommand( CSocket *s );
+	CPIAOSCommand();
+	CPIAOSCommand( CSocket *s );
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 
 };
-
-}
 
 #endif
 

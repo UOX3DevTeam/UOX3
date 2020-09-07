@@ -4,9 +4,6 @@
 #include "cRaces.h"
 #include "classes.h"
 
-namespace UOX
-{
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 //o-----------------------------------------------------------------------------------------------o
@@ -15,7 +12,8 @@ namespace UOX
 SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
-	Network->PushConn();
+	std::scoped_lock lock(Network->internallock);
+	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -25,7 +23,7 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 				nearbyChars.push_back( mSock );
 		}
 	}
-	Network->PopConn();
+	Network->popConn();
 	return nearbyChars;
 }
 
@@ -37,7 +35,8 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
-	Network->PushConn();
+	std::scoped_lock lock(Network->internallock);
+	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -47,7 +46,7 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 				nearbyChars.push_back( mSock );
 		}
 	}
-	Network->PopConn();
+	Network->popConn();
 	return nearbyChars;
 }
 
@@ -59,7 +58,8 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 {
 	SOCKLIST nearbyChars;
-	Network->PushConn();
+	std::scoped_lock lock(Network->internallock);
+	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -69,7 +69,7 @@ SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 				nearbyChars.push_back( mSock );
 		}
 	}
-	Network->PopConn();
+	Network->popConn();
 	return nearbyChars;
 }
 SOCKLIST FindNearbyPlayers( CChar *mChar )
@@ -80,7 +80,6 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the root container object, returns it, and sets objType
 //|					to the objects type
@@ -106,7 +105,6 @@ CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *FindRootContainer( CItem *i )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the root container item and returns it
 //o-----------------------------------------------------------------------------------------------o
@@ -127,7 +125,6 @@ CItem *FindRootContainer( CItem *i )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar *FindItemOwner( CItem *p )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the character who owns the item (if any)
 //o-----------------------------------------------------------------------------------------------o
@@ -146,7 +143,6 @@ CChar *FindItemOwner( CItem *p )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search character's subpacks for items of specific ID
 //o-----------------------------------------------------------------------------------------------o
@@ -160,7 +156,7 @@ CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 			if( toCheck->GetID() == itemID )	// it's in our hand
 				return toCheck;					// we've found the first occurance on the person!
 			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )	// search any subpacks, specifically pack and locked containers
-			{ 
+			{
 				CItem *packSearchResult = SearchSubPackForItem( toCheck, itemID );
 				if( ValidateObject( packSearchResult ) )
 					return packSearchResult;
@@ -172,7 +168,6 @@ CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *FindItem( CChar *toFind, UI16 itemID )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Look for items of a certain ID in character's pack
 //o-----------------------------------------------------------------------------------------------o
@@ -197,7 +192,6 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *SearchSubPackForItem( CItem *toSearch, ItemTypes type )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search character's subpacks for items of specific type
 //o-----------------------------------------------------------------------------------------------o
@@ -211,7 +205,7 @@ CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 			if( toCheck->GetType() == type )	// it's in our hand
 				return toCheck;					// we've found the first occurance on the person!
 			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )	// search any subpacks, specifically pack and locked containers
-			{ 
+			{
 				CItem *packSearchResult = SearchSubPackForItemOfType( toCheck, type );
 				if( ValidateObject( packSearchResult ) )
 					return packSearchResult;
@@ -223,7 +217,6 @@ CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *FindItemOfType( CChar *toFind, ItemTypes type )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Look for items of a certain type in character's pack
 //o-----------------------------------------------------------------------------------------------o
@@ -248,7 +241,6 @@ CItem *FindItemOfType( CChar *toFind, ItemTypes type )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if item is in a multi
 //o-----------------------------------------------------------------------------------------------o
@@ -299,7 +291,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 			}
 			else
 				m->SetID( 0x4064 );
-		}	
+		}
 	}
 
 	UI08 zOff = 1;
@@ -342,7 +334,6 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj *findMulti( CBaseObject *i )
-//|	Programmer	-	Zippy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find multi at an object's location
 //o-----------------------------------------------------------------------------------------------o
@@ -363,8 +354,7 @@ inline T hypotenuse( T sideA, T sideB )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
-//|	Programmer	-	Zippy
-//|	Changes		-	Xuri - (06/07/2020) Added instanceID support
+//|	Changes		-	(06/07/2020) Added instanceID support
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find multis at specified location
 //o-----------------------------------------------------------------------------------------------o
@@ -474,5 +464,4 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 		regItems->Pop();
 	}
 	return currItem;
-}
 }

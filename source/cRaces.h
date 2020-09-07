@@ -1,23 +1,20 @@
 #ifndef __Races__
 #define __Races__
 
-namespace UOX
-{
-
-class CRace 
+class CRace
 {
 private:
-struct ColourPair
-{
-	COLOUR cMin;
-	COLOUR cMax;
-	ColourPair( COLOUR a, COLOUR b ) : cMin( a ), cMax( b )
+	struct ColourPair
 	{
-	}
-	ColourPair() : cMin( 0 ), cMax( 0 )
-	{
-	}
-};
+		COLOUR cMin;
+		COLOUR cMax;
+		ColourPair( COLOUR a, COLOUR b ) : cMin( a ), cMax( b )
+		{
+		}
+		ColourPair() : cMin( 0 ), cMax( 0 )
+		{
+		}
+	};
 
 	typedef std::vector< ColourPair >	COLOURLIST;
 	typedef std::vector< RaceRelate >	RACEIDLIST;
@@ -48,7 +45,7 @@ private:
 	std::bitset< WEATHNUM >	weatherAffected;
 	SECONDS					weathSecs[WEATHNUM];
 	SI08					weathDamage[WEATHNUM];
-	
+
 	SKILLVAL		languageMin;
 	RANGE			visDistance;
 	R32				poisonResistance;	// % of poison to cancel
@@ -59,9 +56,9 @@ private:
 
 public:
 
-					CRace();
-					CRace( SI32 numRaces );
-					~CRace();
+	CRace();
+	CRace( SI32 numRaces );
+	~CRace();
 
 	SKILLVAL		Skill( SI32 skillNum ) const;
 	const std::string Name( void ) const;
@@ -141,104 +138,102 @@ public:
 	CRace&			operator =( CRace& trgRace );
 };
 
-class cRaces 
+class cRaces
 {
-	private:
-		struct combatModifiers
-		{
-			UI08 value;
-		};
-		typedef std::vector< CRace * >			RACELIST;
-		typedef std::vector< combatModifiers >	MODIFIERLIST;
-		// data
-		RACELIST		races;
-		MODIFIERLIST	combat;
+private:
+	struct combatModifiers
+	{
+		UI08 value;
+	};
+	typedef std::vector< CRace * >			RACELIST;
+	typedef std::vector< combatModifiers >	MODIFIERLIST;
+	// data
+	RACELIST		races;
+	MODIFIERLIST	combat;
 
-		void			DefaultInitCombat( void );
+	void			DefaultInitCombat( void );
 
-		// functions - accessors
+	// functions - accessors
 
 
-		// Mutators
-		void			RacialInfo( RACEID race, RACEID toSet, RaceRelate value );
+	// Mutators
+	void			RacialInfo( RACEID race, RACEID toSet, RaceRelate value );
 
-		bool			InvalidRace( RACEID x ) const;
+	bool			InvalidRace( RACEID x ) const;
 
-	public:
-		// Functions
-						~cRaces();
-						cRaces( void );
-		void			load( void );					// loads races
-		RaceRelate		Compare( CChar *player1, CChar *player2 ) const;
-		RaceRelate		CompareByRace( RACEID race1, RACEID race2 ) const;	// compares chars
-		void			gate( CChar *s, RACEID x, bool always = false ); // Race Gate
-		bool			beardInRange( COLOUR color, RACEID x ) const;
-		bool			skinInRange( COLOUR color, RACEID x ) const;
-		bool			hairInRange( COLOUR color, RACEID x ) const;
-		bool			beardRestricted( RACEID x ) const; 
-		bool			hairRestricted( RACEID x ) const; 
-		bool			skinRestricted( RACEID x ) const; 
+public:
+	// Functions
+	~cRaces();
+	cRaces( void );
+	void			load( void );					// loads races
+	RaceRelate		Compare( CChar *player1, CChar *player2 ) const;
+	RaceRelate		CompareByRace( RACEID race1, RACEID race2 ) const;	// compares chars
+	void			gate( CChar *s, RACEID x, bool always = false ); // Race Gate
+	bool			beardInRange( COLOUR color, RACEID x ) const;
+	bool			skinInRange( COLOUR color, RACEID x ) const;
+	bool			hairInRange( COLOUR color, RACEID x ) const;
+	bool			beardRestricted( RACEID x ) const;
+	bool			hairRestricted( RACEID x ) const;
+	bool			skinRestricted( RACEID x ) const;
 
-		CRace *			Race( RACEID x );
+	CRace *			Race( RACEID x );
 
-		// Accessors
-		SECONDS			Secs( RACEID race, WeatherType element ) const;
-		SI08			Damage( RACEID race, WeatherType element ) const;
-		bool			Affect( RACEID race, WeatherType element ) const;
-		const std::string Name( RACEID race ) const;	// Returns race name of player
-		SKILLVAL		Skill( SI32 skill, RACEID race ) const; 
-		GENDER			GenderRestrict( RACEID race ) const; 
-		bool			RequireBeard( RACEID race ) const;
-		bool			IsPlayerRace( RACEID race ) const;
-		LIGHTLEVEL		LightLevel( RACEID race ) const;
-		COLDLEVEL		ColdLevel( RACEID race ) const;
-		HEATLEVEL		HeatLevel( RACEID race ) const;
-		bool			DoesHunger( RACEID race ) const;
-		UI16			GetHungerRate( RACEID race ) const;
-		SI16			GetHungerDamage( RACEID race ) const;
-		ARMORCLASS		ArmorRestrict( RACEID race ) const; 
-		COLOUR			RandomSkin( RACEID x ) const; 
-		COLOUR			RandomHair( RACEID x ) const; 
-		COLOUR			RandomBeard( RACEID x ) const;
-		SI32			DamageFromSkill( SI32 skill, RACEID x ) const;
-		SI32			FightPercent( SI32 skill, RACEID x ) const;
-		SKILLVAL		LanguageMin( RACEID x ) const;
-		LIGHTLEVEL		VisLevel( RACEID x ) const;
-		RANGE			VisRange( RACEID x ) const;
-		bool			NoBeard( RACEID x ) const;
+	// Accessors
+	SECONDS			Secs( RACEID race, WeatherType element ) const;
+	SI08			Damage( RACEID race, WeatherType element ) const;
+	bool			Affect( RACEID race, WeatherType element ) const;
+	const std::string Name( RACEID race ) const;	// Returns race name of player
+	SKILLVAL		Skill( SI32 skill, RACEID race ) const;
+	GENDER			GenderRestrict( RACEID race ) const;
+	bool			RequireBeard( RACEID race ) const;
+	bool			IsPlayerRace( RACEID race ) const;
+	LIGHTLEVEL		LightLevel( RACEID race ) const;
+	COLDLEVEL		ColdLevel( RACEID race ) const;
+	HEATLEVEL		HeatLevel( RACEID race ) const;
+	bool			DoesHunger( RACEID race ) const;
+	UI16			GetHungerRate( RACEID race ) const;
+	SI16			GetHungerDamage( RACEID race ) const;
+	ARMORCLASS		ArmorRestrict( RACEID race ) const;
+	COLOUR			RandomSkin( RACEID x ) const;
+	COLOUR			RandomHair( RACEID x ) const;
+	COLOUR			RandomBeard( RACEID x ) const;
+	SI32			DamageFromSkill( SI32 skill, RACEID x ) const;
+	SI32			FightPercent( SI32 skill, RACEID x ) const;
+	SKILLVAL		LanguageMin( RACEID x ) const;
+	LIGHTLEVEL		VisLevel( RACEID x ) const;
+	RANGE			VisRange( RACEID x ) const;
+	bool			NoBeard( RACEID x ) const;
 
-		// Mutators
-		void			Secs( RACEID race, WeatherType element, SECONDS value );
-		void			Damage( RACEID race, WeatherType element, SI08 value );
-		void			Affect( RACEID race, WeatherType element, bool value );
-		void			Skill( SI32 skill, SI32 value, RACEID race );
-		void			GenderRestrict( GENDER gender, RACEID race ); 
-		void			RequireBeard( bool value, RACEID race ); 
-		void			NoBeard( bool value, RACEID race );
-		void			LightLevel( RACEID race, LIGHTLEVEL value ); 
-		void			ColdLevel( RACEID race, COLDLEVEL value ); 
-		void			HeatLevel( RACEID race, HEATLEVEL value ); 
-		void			DoesHunger( RACEID race, bool value );
-		void			SetHungerRate( RACEID race, UI16 value ); 
-		void			SetHungerDamage( RACEID race, SI16 value );
-		void			ArmorRestrict( RACEID race, ARMORCLASS value ); 
-		void			RacialEnemy( RACEID race, RACEID enemy );
-		void			RacialAlly( RACEID race, RACEID ally );
-		void			RacialNeutral( RACEID race, RACEID neutral );
-		void			LanguageMin( SKILLVAL toSetTo, RACEID race );
+	// Mutators
+	void			Secs( RACEID race, WeatherType element, SECONDS value );
+	void			Damage( RACEID race, WeatherType element, SI08 value );
+	void			Affect( RACEID race, WeatherType element, bool value );
+	void			Skill( SI32 skill, SI32 value, RACEID race );
+	void			GenderRestrict( GENDER gender, RACEID race );
+	void			RequireBeard( bool value, RACEID race );
+	void			NoBeard( bool value, RACEID race );
+	void			LightLevel( RACEID race, LIGHTLEVEL value );
+	void			ColdLevel( RACEID race, COLDLEVEL value );
+	void			HeatLevel( RACEID race, HEATLEVEL value );
+	void			DoesHunger( RACEID race, bool value );
+	void			SetHungerRate( RACEID race, UI16 value );
+	void			SetHungerDamage( RACEID race, SI16 value );
+	void			ArmorRestrict( RACEID race, ARMORCLASS value );
+	void			RacialEnemy( RACEID race, RACEID enemy );
+	void			RacialAlly( RACEID race, RACEID ally );
+	void			RacialNeutral( RACEID race, RACEID neutral );
+	void			LanguageMin( SKILLVAL toSetTo, RACEID race );
 
-		void			VisLevel( RACEID x, LIGHTLEVEL bonus );
-		void			VisRange( RACEID x, RANGE range );
-		void			IsPlayerRace( RACEID x, bool value );
+	void			VisLevel( RACEID x, LIGHTLEVEL bonus );
+	void			VisRange( RACEID x, RANGE range );
+	void			IsPlayerRace( RACEID x, bool value );
 
-		void			debugPrint( RACEID race );
-		void			debugPrintAll( void );
+	void			debugPrint( RACEID race );
+	void			debugPrintAll( void );
 
-		size_t			Count( void ) const;
+	size_t			Count( void ) const;
 };
 
 extern cRaces *Races;
-
-}
 
 #endif

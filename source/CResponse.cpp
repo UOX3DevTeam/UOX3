@@ -1,16 +1,14 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	CResponse.cpp
 //|	Date		-	11/15/2003
-//|	Programmer	-	giwo
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Changes		-	Version History
-//|									
-//|							1.0		giwo		15th November, 2003
+//|
+//|							1.0		 		15th November, 2003
 //|							Initial implementation.  Ripped out 99% of cSpeech::response
 //|							and relocated contents here in individual handler classes
 //|
-//|							1.1		giwo		16th November, 2003
+//|							1.1		 		16th November, 2003
 //|							Changed CBaseResponse::Handle() overload to WhichResponse(), and
 //|								locally declared it wherever it was used, also handles different
 //|								languages in WhichResponse() now.
@@ -20,7 +18,7 @@
 //|							Also handles all currently supported house speech using a single
 //|								class, enabling the removal of HouseSpeech().
 //|
-//|							1.2		giwo		17th November, 2003
+//|							1.2		 		17th November, 2003
 //|							We now make use of OSI's trigger words (the few that we actually handle,
 //|								currently), to remove the need to search through the text string
 //o-----------------------------------------------------------------------------------------------o
@@ -37,9 +35,8 @@
 #include "cScript.h"
 #include "regions.h"
 #include "cGuild.h"
+#include "StringUtility.hpp"
 
-namespace UOX
-{
 
 bool BuyShop( CSocket *s, CChar *c );
 void callGuards( CChar *mChar );
@@ -51,7 +48,6 @@ inline bool findString( std::string toCheck, std::string toFind )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
-//|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of NPCs that are within a certain distance
 //o-----------------------------------------------------------------------------------------------o
@@ -81,7 +77,6 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if nearby NPCs run scripts that react to speech
 //o-----------------------------------------------------------------------------------------------o
@@ -101,10 +96,10 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 			cScript *toExecute	= JSMapping->GetScript( speechTrig );
 			if( toExecute != NULL )
 			{
-//|				-1	=> No such function or bad call
-//|				0	=> Let other NPCs and PCs see it
-//|				1	=> Let other PCs see it
-//|				2	=> Let no one else see it
+				//|				-1	=> No such function or bad call
+				//|				0	=> Let other NPCs and PCs see it
+				//|				1	=> Let other PCs see it
+				//|				2	=> Let no one else see it
 				SI08 rVal = -1;
 				if( Npc->isDisabled() )
 					Npc->TextMessage( NULL, 1291, TALK, false );
@@ -112,14 +107,14 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 					rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
 				switch( rVal )
 				{
-				case 1:		// No other NPCs to see it, but PCs should
-					return true;
-				case 2:		// no one else to see it
-					return false;
-				case 0:		// Other NPCs and PCs to see it
-				case -1:	// no function, so do nothing... NOT handled!
-				default:
-					break;
+					case 1:		// No other NPCs to see it, but PCs should
+						return true;
+					case 2:		// no one else to see it
+						return false;
+					case 0:		// Other NPCs and PCs to see it
+					case -1:	// no function, so do nothing... NOT handled!
+					default:
+						break;
 				}
 			}
 		}
@@ -129,7 +124,6 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
-//|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle responses to keywords in player speech
 //o-----------------------------------------------------------------------------------------------o
@@ -144,81 +138,81 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 	{
 		switch( trigWord )
 		{
-		case TW_COUNT:																						break;
-		case TW_GUARDS:				callGuards( mChar );													break;
-		case TW_KILLS:				tResp = new CKillsResponse();											break;
-		case TW_BANK:				tResp = new CBankResponse();											break;
-		case TW_BALANCE:			tResp = new CBankResponse( true );										break;
-		case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
-		case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
-		case TW_TRAIN:				tResp = new CTrainingResponse( text );									break;
-		case TW_FOLLOW:
-		case TW_FOLLOW2:			tResp = new CPetMultiResponse( text, false, TARGET_FOLLOW, 1310 );		break;
-		case TW_COME:
-		case TW_FOLLOWME:			tResp = new CPetComeResponse( false, text );							break;
-		case TW_ALLCOME:
-		case TW_ALLFOLLOW:
-		case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, text );								break;
-		case TW_KILL:
-		case TW_ATTACK:				tResp = new CPetAttackResponse( false, text );							break;
-		case TW_ALLKILL:
-		case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, text );							break;
-		case TW_FETCH:
-		case TW_GET:
-		case TW_BRING:				tResp = new CPetMultiResponse( text, false, TARGET_GUARD, 1316 );		break;
-		case TW_FRIEND:				tResp = new CPetMultiResponse( text, true, TARGET_FRIEND, 1620 );		break;
-		case TW_GUARD:				tResp = new CPetMultiResponse( text, true, TARGET_GUARD, 1104 );		break;
-		case TW_ALLGUARD:
-		case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, text );							break;
-		case TW_STOP:
-		case TW_STAY:				tResp = new CPetStayResponse( false, text );							break;
-		case TW_ALLSTOP:
-		case TW_ALLSTAY:			tResp = new CPetStayResponse( true, text );								break;
-		case TW_TRANSFER:			tResp = new CPetMultiResponse( text, true, TARGET_TRANSFER, 1323 );		break;
-		case TW_RELEASE:			tResp = new CPetReleaseResponse( text );								break;
-		case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, text );							break;
-		case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
-		case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
-		case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
-		case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, text );							break;
-		case TW_VIEW:				tResp = new CVendorViewResponse( false, text );							break;
-		case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
-		case TW_COLLECT:
-		case TW_GOLD:				tResp = new CVendorGoldResponse( false, text );							break;
-		case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, text );						break;
-		case TW_STATUS:				tResp = new CVendorStatusResponse( false, text );						break;
-		case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, text );						break;
-		case TW_DISMISS:			tResp = new CVendorDismissResponse( false, text );						break;
-		case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
-		case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
-		case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
-		case TW_HOUSERELEASE:		tResp = new CHouseMultiResponse( TARGET_HOUSERELEASE, 591 );			break;
-		case TW_BOATFORWARD:
-		case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
-		case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
-		case TW_BOATSTOP:
-		case TW_STOP2:
-		case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
-		case TW_BOATTURNRIGHT:
-		case TW_BOATSTARBOARD:
-		case TW_BOATTURNLEFT:
-		case TW_BOATPORT:
-		case TW_BOATTURNAROUND:
-		case TW_BOATLEFT:
-		case TW_BOATRIGHT:
-		case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );							break;
-		case TW_RESIGN:				GuildSys->Resign( mSock );												break;
-		default:
-			//This is to handle the "train <skill>" keywords
-			if(( trigWord >= 0x006D && trigWord <= 0x009C ) || trigWord == 0x154 || trigWord == 0x115 ||
-				trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E )
-			{
-				tResp = new CTrainingResponse( text );									break;
-			}
+			case TW_COUNT:																						break;
+			case TW_GUARDS:				callGuards( mChar );													break;
+			case TW_KILLS:				tResp = new CKillsResponse();											break;
+			case TW_BANK:				tResp = new CBankResponse();											break;
+			case TW_BALANCE:			tResp = new CBankResponse( true );										break;
+			case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
+			case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
+			case TW_TRAIN:				tResp = new CTrainingResponse( text );									break;
+			case TW_FOLLOW:
+			case TW_FOLLOW2:			tResp = new CPetMultiResponse( text, false, TARGET_FOLLOW, 1310 );		break;
+			case TW_COME:
+			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, text );							break;
+			case TW_ALLCOME:
+			case TW_ALLFOLLOW:
+			case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, text );								break;
+			case TW_KILL:
+			case TW_ATTACK:				tResp = new CPetAttackResponse( false, text );							break;
+			case TW_ALLKILL:
+			case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, text );							break;
+			case TW_FETCH:
+			case TW_GET:
+			case TW_BRING:				tResp = new CPetMultiResponse( text, false, TARGET_GUARD, 1316 );		break;
+			case TW_FRIEND:				tResp = new CPetMultiResponse( text, true, TARGET_FRIEND, 1620 );		break;
+			case TW_GUARD:				tResp = new CPetMultiResponse( text, true, TARGET_GUARD, 1104 );		break;
+			case TW_ALLGUARD:
+			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, text );							break;
+			case TW_STOP:
+			case TW_STAY:				tResp = new CPetStayResponse( false, text );							break;
+			case TW_ALLSTOP:
+			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, text );								break;
+			case TW_TRANSFER:			tResp = new CPetMultiResponse( text, true, TARGET_TRANSFER, 1323 );		break;
+			case TW_RELEASE:			tResp = new CPetReleaseResponse( text );								break;
+			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, text );							break;
+			case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
+			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
+			case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
+			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, text );							break;
+			case TW_VIEW:				tResp = new CVendorViewResponse( false, text );							break;
+			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
+			case TW_COLLECT:
+			case TW_GOLD:				tResp = new CVendorGoldResponse( false, text );							break;
+			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, text );						break;
+			case TW_STATUS:				tResp = new CVendorStatusResponse( false, text );						break;
+			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, text );						break;
+			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, text );						break;
+			case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
+			case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
+			case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
+			case TW_HOUSERELEASE:		tResp = new CHouseMultiResponse( TARGET_HOUSERELEASE, 591 );			break;
+			case TW_BOATFORWARD:
+			case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
+			case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
+			case TW_BOATSTOP:
+			case TW_STOP2:
+			case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
+			case TW_BOATTURNRIGHT:
+			case TW_BOATSTARBOARD:
+			case TW_BOATTURNLEFT:
+			case TW_BOATPORT:
+			case TW_BOATTURNAROUND:
+			case TW_BOATLEFT:
+			case TW_BOATRIGHT:
+			case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );							break;
+			case TW_RESIGN:				GuildSys->Resign( mSock );												break;
+			default:
+				//This is to handle the "train <skill>" keywords
+				if(( trigWord >= 0x006D && trigWord <= 0x009C ) || trigWord == 0x154 || trigWord == 0x115 ||
+				   trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E )
+				{
+					tResp = new CTrainingResponse( text );									break;
+				}
 #if defined( UOX_DEBUG_MODE )
-			Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n", trigWord );
+				Console.print( format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
 #endif
-			break;
+				break;
 		}
 
 		if( tResp != NULL )
@@ -243,7 +237,7 @@ CEscortResponse::CEscortResponse( bool newVal )
 void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	// If the PC is dead then break out, The dead cannot accept quests
-	if( mChar->IsDead() ) 
+	if( mChar->IsDead() )
 		return;
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_NEARBY );
 	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
@@ -261,7 +255,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->SetFTarg( mChar );			// Set the NPC to follow the PC
 					Npc->SetNpcWander( WT_FOLLOW );
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
-		
+
 					// Send out the rant about accepting the escort
 					Npc->TextMessage( NULL, 1294, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
 
@@ -286,7 +280,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->TextMessage( NULL, 1297, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
-			}		
+			}
 		}
 	}
 }
@@ -360,8 +354,9 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( cwmWorldState->ServerData()->NPCTrainingStatus() ) //if the player wants to train
 	{
-		char temp[512];
-		char temp2[512];
+		constexpr auto maxsize = 512 ;
+		std::string temp ;
+		std::string temp2 ;
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 		UString UText = UString( ourText ).upper();
 		UString skillName = "";
@@ -389,7 +384,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					//Then combine first 4 letters in each
 					if( skill == -1 )
 					{
-						UText = (UText.section( " ", 1, 1 )).substr(0,4); //search using first three letters only
+						UText = (extractSection(UText, " ", 1, 1 )).substr(0,4); //search using first three letters only
 						for( UI08 i = 0; i < ALLSKILLS; ++i )
 						{
 							skillName = (cwmWorldState->skill[i].name).substr(0,4); //search using first three letters only
@@ -424,28 +419,29 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 						continue;
 					}
 					Npc->SetTrainingPlayerIn( 255 ); // Like above, this is to prevent  errors when a player says "train <skill>" then doesn't pay the npc
-					strcpy( temp, Dictionary->GetEntry( 1303 ).c_str() );
+					temp =  Dictionary->GetEntry( 1303 );
 					UI08 skillsToTrainIn = 0;
 					for( UI08 j = 0; j < ALLSKILLS; ++j )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
-							sprintf( temp2, " %s,", UString( cwmWorldState->skill[j].name ).lower().c_str() );
-							if( !skillsToTrainIn ) 
+							temp2= str_tolower(cwmWorldState->skill[j].name);
+							if( !skillsToTrainIn ) {
 								temp2[1] = toupper( temp2[1] ); // If it's the first skill,  capitalize it.
+							}
 							if( skillsToTrainIn > 10 ) // to stop UOX3 from crashing/sentence being cut off if NPC is too knowledgable!
 							{
-								sprintf( temp2, " and possibly more " );
-								strcat( temp, temp2 );
+								temp += std::string(" and possibly more ");
+
 								break;
 							}
-							strcat( temp, temp2 );
+							temp += temp2 ;
 							++skillsToTrainIn;
 						}
 					}
 					if( skillsToTrainIn )
 					{
-						temp[strlen( temp ) - 1] = '.'; // Make last character a . not a ,  just to look nicer
+						temp[temp.size()- 1] = '.'; // Make last character a . not a ,  just to look nicer
 						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
@@ -460,23 +456,26 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					}
 					if( Npc->GetBaseSkill( (UI08)skill ) > 10 )
 					{
-						sprintf( temp, Dictionary->GetEntry( 1304 ).c_str(), UString( cwmWorldState->skill[skill].name ).lower().c_str() );
-						if( mChar->GetBaseSkill( (UI08)skill ) >= 250 )
-							strcat( temp, Dictionary->GetEntry( 1305 ).c_str() );
+						temp = format(maxsize, Dictionary->GetEntry( 1304 ), str_tolower(cwmWorldState->skill[skill].name ).c_str() );
+						if( mChar->GetBaseSkill( (UI08)skill ) >= 250 ){
+							temp += Dictionary->GetEntry( 1305 );
+						}
 						else
 						{
-							if( Npc->GetBaseSkill( (UI08)skill ) <= 250)
-								sprintf( temp2, Dictionary->GetEntry( 1306 ).c_str(),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
-							else
-								sprintf( temp2, Dictionary->GetEntry( 1306 ).c_str(), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
-							strcat( temp, temp2 );
+							if( Npc->GetBaseSkill( (UI08)skill ) <= 250){
+								temp2=format(maxsize, Dictionary->GetEntry( 1306 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
+							}
+							else {
+								temp2 = format(maxsize, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
+							}
+							temp += temp2 ;
 							mSock->TempObj( Npc );
 							Npc->SetTrainingPlayerIn( (UI08)skill );
 						}
 						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
-						Npc->TextMessage( mSock, 1307, TALK, false ); 
+						Npc->TextMessage( mSock, 1307, TALK, false );
 				}
 				break;
 			}
@@ -665,7 +664,7 @@ bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( NULL );
 			Npc->SetTarg( NULL );
-			if( Npc->IsAtWar() ) 
+			if( Npc->IsAtWar() )
 				Npc->ToggleCombat();
 			Npc->SetNpcWander( WT_NONE );
 			if( !saidAll )
@@ -722,8 +721,8 @@ bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		Npc->TextMessage( mSock, 1333, TALK, false );
 		mSock->target( 0, TARGET_PLVBUY, " " );
 		return false;
-	} 
-	else if( BuyShop( mSock, Npc ) ) 
+	}
+	else if( BuyShop( mSock, Npc ) )
 		return false;
 	return true;
 }
@@ -801,22 +800,22 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			{
 				Npc->TextMessage( mSock, 1326, TALK, false );
 				Npc->SetHoldG( 0 );
-			} 
+			}
 			else if( Npc->GetHoldG() > 0 && Npc->GetHoldG() <= MAX_STACK )
 			{
 				if( Npc->GetHoldG() > 9 )
 				{
 					pay = (SI32)( Npc->GetHoldG() / 10 );
 					give = Npc->GetHoldG() - pay;
-				} 
-				else 
+				}
+				else
 				{
 					pay = Npc->GetHoldG();
 					give = 0;
 				}
 				Npc->SetHoldG( 0 );
 			}
-			else 
+			else
 			{
 				UI32 t = Npc->GetHoldG() - MAX_STACK;	// yank of 65 grand, then do calculations
 				Npc->SetHoldG( t );
@@ -825,12 +824,12 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				if( t > 0 )
 					Npc->TextMessage( mSock, 1327, TALK, false );
 			}
-			if( give ) 
+			if( give )
 				Items->CreateScriptItem( mSock, mChar, "0x0EED", give, OT_ITEM, true );
-			
+
 			Npc->TextMessage( mSock, 1328, TALK, false, earned, pay, give );
-		} 
-		else 
+		}
+		else
 			Npc->TextMessage( mSock, 1329, TALK, false );
 	}
 	if( !saidVendor )
@@ -856,22 +855,22 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			if( Npc->GetHoldG() <= 0 )
 			{
 				Npc->TextMessage( mSock, 1326, TALK, false );
-			} 
+			}
 			else
 			{
 				UI32 pay = 0;
 				if( Npc->GetHoldG() > 9 )
 				{
 					pay = (SI32)( Npc->GetHoldG() / 10 );
-				} 
-				else 
+				}
+				else
 				{
 					pay = Npc->GetHoldG();
 				}
 				Npc->TextMessage( mSock, 1782, TALK, false, Npc->GetHoldG(), pay );
 			}
-		} 
-		else 
+		}
+		else
 			Npc->TextMessage( mSock, 1329, TALK, false );
 	}
 	if( !saidVendor )
@@ -895,8 +894,8 @@ bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		if( mChar == Npc->GetOwnerObj() )
 		{
 			Npc->Delete();
-		} 
-		else 
+		}
+		else
 			Npc->TextMessage( mSock, 1329, TALK, false );
 	}
 	if( !saidVendor )
@@ -917,7 +916,7 @@ CHouseMultiResponse::CHouseMultiResponse( TargetIDs targVal, SI32 dictVal )
 void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CMultiObj *realHouse = findMulti( mChar );
-	if( ValidateObject( realHouse ) ) 
+	if( ValidateObject( realHouse ) )
 	{
 		if( realHouse->CanBeObjType( OT_MULTI ) && realHouse->IsOwner( mChar ) )
 		{
@@ -955,6 +954,4 @@ void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
 	if( ValidateObject( tiller ) )
 		tiller->TextMessage( mSock, 10 );
-}
-
 }
