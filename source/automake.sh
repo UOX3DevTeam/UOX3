@@ -6,7 +6,7 @@ make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc
 if [ "$(uname)" = "Darwin" ]
 then
         # Mac OS X
-        ar rcs libjs32.a Dawrwin_DBG.OBJ/*.o
+        ar rcs libjs32.a Darwin_DBG.OBJ/*.o
         cp Darwin_DBG.OBJ/jsautocfg.h ./
 elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]
 then
