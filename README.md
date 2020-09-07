@@ -23,19 +23,18 @@ Join us on the [Ultima Offline eXperiment 3](https://discord.gg/uBAXxhF) server 
 First step, open a new terminal and enter the commands below:
 
 1) (Linux) **sudo apt install git** - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
-1) (Mac) **xcode-select --install** - This will install git if not already installed, as well as the necessary make and gcc tools
+1) (Mac) **xcode-select --install** - This will install git if not already installed, along with required make and gcc tools
 2) **git clone https://github.com/UOX3DevTeam/UOX3.git** - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7) is also included.
 
 ## Step 2: Compile UOX3
-You'll need a couple tools before you can compile UOX3 on Linux: **GNU Make** (*v4.2.1* or higher recommended) and **gcc**. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal commands (which are specific to Debian/Ubuntu):
+You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc**. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):
 
-1) (Linux) **sudo apt install make**
-2) (Linux) **sudo apt install gcc**
+1) (Linux) **sudo apt install build-essential**
 
-Once these are in place, navigate to the **UOX3/source/** directory in your terminal and execute the following commands, in order:
+Once these are in place, navigate to the **UOX3** project folder in your terminal and execute the following commands from the project's root directory, in order:
 
 1) **chmod +x automake.sh** - Makes the automake.sh bash script executable.
-2) **./automake.sh** - First compiles the Spidermonkey JS library bundled with UOX3, then makes the actual UOX3 build
+2) **./automake.sh** - First compiles the Spidermonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
 
 <details>
   <summary>Manual Instructions</summary>
@@ -51,14 +50,30 @@ Once these are in place, navigate to the **UOX3/source/** directory in your term
   - **ar rcs libjs32.a Darwin_DBG.OBJ/*.o**
   - **cp Darwin_DBG.OBJ/jsautocfg.h ./**
 
-  *At the point, now cd to the main UOX3 source directory and build UOX3. This will put the uox3 binary in the same directory as the source.*
+  *At this point, now cd to the root UOX3 project directory and build UOX3:*
 
   - **cd ../source**
   - **make**
 
 </details>
 
-Once this process is done, you can copy your new uox3 binary to the root of the directory you intend to be the working directory for your UOX3 shard. Along with the binary, you'll also need to copy the files and folders contained in the data subdirectory. Once you have all the files in place, you can follow the regular steps listed under **Installation and Setup > Configuring Your UOX3 Shard** in the UOX3 documentation (see docs folder, or visit https://www.uox3.org/docs) to finish your UOX3 setup.
+Once this process is done, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.
+
+**It is recommended** to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.
+
+<details>
+  <summary>Copying Required Files to Dedicated UOX3 Directory</summary>
+
+This is an example of how to copy all required files to a directory called UOX3 in your user account's home directory
+1) *navigate to root UOX3 project directory*
+2) **mkdir ~/UOX3**
+3) **cp uox3 ~/UOX3**
+4) **cp -r data/\* ~/UOX3**
+5) **cd ~/UOX3**
+
+</details>
+
+Once you have all the required files in place, you can follow the regular steps listed under **Installation and Setup > Configuring Your UOX3 Shard** in the UOX3 documentation (see docs folder, or visit https://www.uox3.org/docs/index.html#configureUOX3) to finish your UOX3 setup.
 
 ---
 
@@ -103,4 +118,8 @@ Once this process is done, you can copy your new uox3 binary to the root of the 
 3) When Visual Studio is done switching to the new configuration, select **CMake > Build All** from the toolbar menu to start compiling UOX3.
 4) When done, you'll find **uox3.exe** and **js32.dll** in a subfolder named **out** of the root project folder, more specifically **/UOX3/out/build/x86-Debug** or **x86-Release**, based on the selected configuration.
 
-Once this process is done, you can copy your new **uox3.exe** and **js32.dll** files from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these. Once you have all the files in place, you can follow the regular steps listed under **Installation and Setup > Configuring Your UOX3 Shard** in the UOX3 documentation (see docs folder, or visit https://www.uox3.org/docs) to finish your UOX3 setup!
+Once this process is done, you can copy your new **uox3.exe** and **js32.dll** files from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these.
+
+**It is recommended** to run your UOX3 shard from a separate, dedicated folder instead of the data folder in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.
+
+Once you have all the required files in place, you can follow the regular steps listed under **Installation and Setup > Configuring Your UOX3 Shard** in the UOX3 documentation (see docs folder, or visit https://www.uox3.org/docs) to finish your UOX3 setup!

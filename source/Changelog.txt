@@ -1,3 +1,12 @@
+08/09/2002 - Xuri (0.99.3-RC2)
+	Fixed grammar mistake in automake.sh that prevented compiling SpiderMonkey on MacOS (Xuri)
+	Updated readme with extended compiling details in spoiler tags (Xuri)
+	Undid static cast in jsapi.h (Xuri)
+	Fixed issue with two different versions of cPlayerAction.cpp with different case in name causing issues (Xuri)
+	The UOX3/shared/ directory will now be created automatically on startup if it doesn't already exist (punt)
+	Updated README.md and UOX3 documentation with improved instructions for installing necessary build tools on Linux and how to copy files to working directory after compiling. (Xuri)
+	Moved automake.sh from source directory to project root, and made it copy binary to project root directory after compiling (Xuri)
+
 07/09/2020 - Xuri (0.99.3-RC1)
 	Added new Makefile that handles compiling UOX3 and Spidermonkey on both Linux and MacOS (punt)
 	Added VS solution (SpiderMonkey.sln) and VC++ project files for compiling SpiderMonkey on Windows (Xuri)
