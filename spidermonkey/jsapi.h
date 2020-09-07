@@ -100,8 +100,8 @@ JS_BEGIN_EXTERN_C
 #define JSVAL_INT_MIN           ((jsval)1 - JSVAL_INT_POW2(30))
 #define JSVAL_INT_MAX           (JSVAL_INT_POW2(30) - 1)
 #define INT_FITS_IN_JSVAL(i)    ((jsuint)((i)+JSVAL_INT_MAX) <= 2*JSVAL_INT_MAX)
-#define JSVAL_TO_INT(v)         static_cast<int>((static_cast<unsigned int>((jsint)(v)) >> 1))
-#define INT_TO_JSVAL(i)         static_cast<int>(((static_cast<unsigned int>((jsval)(i)) << 1) | JSVAL_INT))
+#define JSVAL_TO_INT(v)         ((jsint)(v) >> 1)
+#define INT_TO_JSVAL(i)         (((jsval)(i) << 1) | JSVAL_INT)
 
 /* Convert between boolean and jsval. */
 #define JSVAL_TO_BOOLEAN(v)     ((JSBool)((v) >> JSVAL_TAGBITS))
