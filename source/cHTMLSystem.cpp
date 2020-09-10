@@ -1,8 +1,5 @@
 // HTML Template
 
-// Code added to update when shutting down  -avtotar (16/09/02) 
-// Slight modification on avotars fix (19/09/02)
-
 #include "uox3.h"
 #include "cHTMLSystem.h"
 #include "cVersionClass.h"
@@ -15,8 +12,6 @@
 #include "scriptc.h"
 #include "CPacketSend.h"
 #include "ObjectFactory.h"
-namespace UOX
-{
 
 cHTMLTemplates *HTMLTemplates;
 
@@ -44,14 +39,14 @@ UString GetUptime( void )
 	total		= 0;
 	UString builtString = "";
 	if( ho < 10 )
-		builtString += "0";
-	builtString += UString::number( ho ) + ":";
+		builtString += std::string("0");
+	builtString += str_number( ho ) + ":";
 	if( mi < 10 )
-		builtString += "0";
-	builtString += UString::number( mi ) + ":";
+		builtString += std::string("0");
+	builtString += str_number( mi ) + std::string(":");
 	if( se < 10 )
-		builtString += "0";
-	builtString += UString::number( se );
+		builtString += std::string("0");
+	builtString += str_number( se );
 	return builtString;
 }
 
@@ -67,21 +62,16 @@ bool CountNPCFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	return retVal;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cHTMLTemplate::Process( void )
-//|	Date			-	1/18/2003 4:43:17 AM
-//|	Developers		-	DarkStorm / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//|									
-//|	Modification	-	08062003 - EviLDeD - For the record this is some of the 
-//|									most fucked up shit I	have EVER SEEN!! Written to truely
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cHTMLTemplate::Process( void )
+//|	Date		-	1/18/2003 4:43:17 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-
+//|
+//|	Changes		-	08062003 -  For the record this is some of the
+//|									most fucked up shit I have EVER SEEN!! Written to truely
 //|									handle multiple Templates.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Process( void )
 {
 	// Need to check to see if the server is actually running, of so we do not want to process the offline template.
@@ -98,8 +88,8 @@ void cHTMLTemplate::Process( void )
 	// Replacing Placeholders
 
 	// Account-Count
-	UString AccountCount	= UString::number( Accounts->size() );
-	size_t Pos				= ParsedContent.find( "%accounts" ); 
+	UString AccountCount	= str_number( (Accounts->size()) );
+	size_t Pos				= ParsedContent.find( "%accounts" );
 	while( Pos != std::string::npos )
 	{
 		ParsedContent.replace( Pos, 9, AccountCount );
@@ -114,15 +104,15 @@ void cHTMLTemplate::Process( void )
 	Version += OS_STR;
 	Version += "]";
 
-	Pos = ParsedContent.find( "%version" ); 
+	Pos = ParsedContent.find( "%version" );
 	while( Pos != std::string::npos )
 	{
 		ParsedContent.replace( Pos, 8, Version );
 		Pos = ParsedContent.find( "%version" );
 	}
 	// Character Count
-	UString CharacterCount	= UString::number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
-	Pos						= ParsedContent.find( "%charcount" ); 
+	UString CharacterCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+	Pos						= ParsedContent.find( "%charcount" );
 	while( Pos != std::string::npos )
 	{
 		ParsedContent.replace( Pos, 10, CharacterCount );
@@ -130,7 +120,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Item Count
-	UString ItemCount	= UString::number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
+	UString ItemCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
 	Pos					= ParsedContent.find( "%itemcount" );
 	while( Pos != std::string::npos )
 	{
@@ -140,28 +130,31 @@ void cHTMLTemplate::Process( void )
 
 	// Connection Count (GMs, Counselors, Player)
 	UI32 gm = 0, cns = 0, ccount = 0;
-
-	// Get all Network Connections
-	Network->PushConn();
 	CSocket *tSock	= NULL;
 	CChar *tChar	= NULL;
-	for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-	{
-		tChar = tSock->CurrcharObj();
-		if( !ValidateObject( tChar ) )
-			continue;
 
-		if( tChar->IsGM() )
-			++gm;
-		else if( tChar->IsCounselor() )
-			++cns;
-		else
-			++ccount;
+	// Get all Network Connections
+	{
+		std::scoped_lock lock(Network->internallock);
+		Network->pushConn();
+		for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+		{
+			tChar = tSock->CurrcharObj();
+			if( !ValidateObject( tChar ) )
+				continue;
+
+			if( tChar->IsGM() )
+				++gm;
+			else if( tChar->IsCounselor() )
+				++cns;
+			else
+				++ccount;
+		}
+		Network->popConn();
 	}
-	Network->PopConn();
 
 	// GMs
-	UString GMCount = UString::number( gm );
+	UString GMCount = str_number( gm );
 	Pos				= ParsedContent.find( "%online_gms" );
 	while( Pos != std::string::npos )
 	{
@@ -170,8 +163,8 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Counselor
-	UString CounsiCount	= UString::number( cns );
-	Pos					= ParsedContent.find( "%online_couns" ); 
+	UString CounsiCount	= str_number( cns );
+	Pos					= ParsedContent.find( "%online_couns" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 13, CounsiCount ):ParsedContent.replace( Pos, 13, "0");
@@ -179,8 +172,8 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Player
-	UString PlayerCount	= UString::number( ccount );
-	Pos					= ParsedContent.find( "%online_player" ); 
+	UString PlayerCount	= str_number( ccount );
+	Pos					= ParsedContent.find( "%online_player" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 14, PlayerCount ):ParsedContent.replace( Pos, 14, "0" );
@@ -188,18 +181,18 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Total
-	UString AllCount	= UString::number( (ccount + gm + cns) );
-	Pos					= ParsedContent.find( "%online_all" ); 
+	UString AllCount	= str_number( (ccount + gm + cns) );
+	Pos					= ParsedContent.find( "%online_all" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, AllCount ):ParsedContent.replace( Pos, 11, "0" );
 		Pos = ParsedContent.find( "%online_all" );
 	}
-	
+
 	// Time
 	char time_str[80];
 	RealTime( time_str );
-	Pos = ParsedContent.find( "%time" ); 
+	Pos = ParsedContent.find( "%time" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 5, time_str ):ParsedContent.replace( Pos, 5, "Down" );
@@ -208,7 +201,7 @@ void cHTMLTemplate::Process( void )
 
 	// 24Time
 	RealTime24( time_str );
-	Pos = ParsedContent.find( "%24time" ); 
+	Pos = ParsedContent.find( "%24time" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 7, time_str ):ParsedContent.replace( Pos, 7, "Down" );
@@ -219,8 +212,8 @@ void cHTMLTemplate::Process( void )
 	time_t currTime;
 	time( &currTime );
 	currTime = mktime( gmtime( &currTime ) );
-	UString timestamp = UString::number( static_cast<size_t>(currTime) );
-	Pos = ParsedContent.find( "%tstamp" ); 
+	UString timestamp = str_number( currTime );
+	Pos = ParsedContent.find( "%tstamp" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 7, timestamp ):ParsedContent.replace( Pos, 7, "Down" );
@@ -234,48 +227,58 @@ void cHTMLTemplate::Process( void )
 		for( UI16 i = 0; i < ServerCount; ++i )
 		{
 			physicalServer *mServ = cwmWorldState->ServerData()->ServerEntry( i );
-			char ipToken[8]; // i think we'll never get higher than 2 digits, anyway...
-			sprintf( ipToken, "%%ip%i", i+1 );
+			auto ipToken = format( "%%ip%i", i+1 );
 
 			if( mServ != NULL )
 			{
-				Pos = ParsedContent.find( ipToken ); 
+				Pos = ParsedContent.find( ipToken );
 				while( Pos != std::string::npos )
 				{
-					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, strlen(ipToken), mServ->getIP().c_str()):ParsedContent.replace( Pos, strlen(ipToken), "Down" );
+					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, ipToken.size(), mServ->getIP().c_str()):ParsedContent.replace( Pos, ipToken.size(), "Down" );
 					Pos = ParsedContent.find( ipToken );
 				}
 			}
 
-			char portToken[10];	// i think we'll never get higher than 2 digits, anyway...
-			sprintf( portToken, "%%port%i", i+1 );
+			// i think we'll never get higher than 2 digits, anyway...
+			auto portToken = format( "%%port%i", i+1 );
 
 			if( mServ != NULL )
 			{
-				Pos = ParsedContent.find( portToken ); 
+				Pos = ParsedContent.find( portToken );
 				while( Pos != std::string::npos )
 				{
-					UString myPort = UString::number( mServ->getPort() );
-					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, strlen( portToken ), myPort ):ParsedContent.replace( Pos, strlen( portToken ), "NA" );
+
+					auto myPort = std::to_string(mServ->getPort());
+					if (cwmWorldState->GetKeepRun()){
+						ParsedContent.replace(Pos, portToken.size(), myPort);
+					}
+					else {
+						ParsedContent.replace(Pos, portToken.size(), myPort);
+					}
 					Pos = ParsedContent.find( portToken );
 				}
 			}
-			char serverToken[10]; // i think we'll never get higher than 2 digits, anyway...
-			sprintf( serverToken, "%%server%i", i+1 );
+
+			auto serverToken= format( "%%server%i", i+1 );
 
 			if( mServ != NULL )
 			{
 				Pos = ParsedContent.find( serverToken );
 				while( Pos != std::string::npos )
 				{
-					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, strlen( serverToken ), mServ->getName().c_str() ):ParsedContent.replace( Pos, strlen( serverToken ), "Down" );
+					if (cwmWorldState->GetKeepRun()) {
+						ParsedContent.replace(Pos, serverToken.size(), mServ->getName());
+					}
+					else {
+						ParsedContent.replace(Pos, serverToken.size(), "Down");
+					}
 					Pos = ParsedContent.find( serverToken );
 				}
 			}
 		}
 	}
 	// PLAYERLIST
-	Pos = ParsedContent.find( "%playerlist%" ); 
+	Pos = ParsedContent.find( "%playerlist%" );
 	while( Pos != std::string::npos )
 	{
 		size_t SecondPos		= ParsedContent.find( "%playerlist%", Pos+1 );
@@ -283,134 +286,137 @@ void cHTMLTemplate::Process( void )
 			break;
 		std::string myInline	= ParsedContent.substr( Pos, SecondPos - Pos + 12 );
 		std::string PlayerList;
-
-		Network->PushConn();
-		for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
-			try
+			std::scoped_lock lock(Network->internallock);
+
+			Network->pushConn();
+			for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
-				if( tSock != NULL )
+				try
 				{
-					CChar *tChar = tSock->CurrcharObj();
-					if( ValidateObject( tChar ) )
+					if( tSock != NULL )
 					{
-						std::string parsedInline = myInline;
-						parsedInline.replace( 0, 12, "" );
-						parsedInline.replace( parsedInline.length()-12, 12, "" );
-
-						//					Tokens for the PlayerList
-						//					%playername
-						//					%playertitle
-						//					%playerip
-						//					%playeraccount
-						//					%playerx
-						//					%playery
-						//					%playerz
-						//					%playerrace
-						//					%playerregion
-
-						// PlayerName
-						size_t sPos = parsedInline.find( "%playername" );
-						while( sPos != std::string::npos )
+						CChar *tChar = tSock->CurrcharObj();
+						if( ValidateObject( tChar ) )
 						{
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
-							sPos = parsedInline.find( "%playername" );
-						}
+							std::string parsedInline = myInline;
+							parsedInline.replace( 0, 12, "" );
+							parsedInline.replace( parsedInline.length()-12, 12, "" );
 
-						// PlayerTitle
-						sPos = parsedInline.find( "%playertitle" ); 
-						while( sPos != std::string::npos )
-						{
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
+							//					Tokens for the PlayerList
+							//					%playername
+							//					%playertitle
+							//					%playerip
+							//					%playeraccount
+							//					%playerx
+							//					%playery
+							//					%playerz
+							//					%playerrace
+							//					%playerregion
+
+							// PlayerName
+							size_t sPos = parsedInline.find( "%playername" );
+							while( sPos != std::string::npos )
+							{
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
+								sPos = parsedInline.find( "%playername" );
+							}
+
+							// PlayerTitle
 							sPos = parsedInline.find( "%playertitle" );
-						}
+							while( sPos != std::string::npos )
+							{
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
+								sPos = parsedInline.find( "%playertitle" );
+							}
 
-						// PlayerIP
-						sPos = parsedInline.find( "%playerip" ); 
-						while( sPos != std::string::npos )
-						{
-							CSocket *mySock = tChar->GetSocket();
-							char ClientIP[32];
-							sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
+							// PlayerIP
 							sPos = parsedInline.find( "%playerip" );
-						}
+							while( sPos != std::string::npos )
+							{
+								CSocket *mySock = tChar->GetSocket();
 
-						// PlayerAccount
-						sPos = parsedInline.find( "%playeraccount" ); 
-						while( sPos != std::string::npos )
-						{
-							CAccountBlock& toScan = tChar->GetAccount();
-							if( toScan.wAccountIndex != AB_INVALID_ID )
-								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
+								auto ClientIP = format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
+								sPos = parsedInline.find( "%playerip" );
+							}
+
+							// PlayerAccount
 							sPos = parsedInline.find( "%playeraccount" );
-						}
+							while( sPos != std::string::npos )
+							{
+								CAccountBlock& toScan = tChar->GetAccount();
+								if( toScan.wAccountIndex != AB_INVALID_ID )
+									(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
+								sPos = parsedInline.find( "%playeraccount" );
+							}
 
-						// PlayerX
-						sPos = parsedInline.find( "%playerx" ); 
-						while( sPos != std::string::npos )
-						{
-							UString myX = UString::number( tChar->GetX() );
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
+							// PlayerX
 							sPos = parsedInline.find( "%playerx" );
-						}
+							while( sPos != std::string::npos )
+							{
+								UString myX = str_number( tChar->GetX() );
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
+								sPos = parsedInline.find( "%playerx" );
+							}
 
-						// PlayerY
-						sPos = parsedInline.find( "%playery" ); 
-						while( sPos != std::string::npos )
-						{
-							UString myY = UString::number( tChar->GetY() );
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
+							// PlayerY
 							sPos = parsedInline.find( "%playery" );
-						}
+							while( sPos != std::string::npos )
+							{
+								UString myY = str_number( tChar->GetY() );
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
+								sPos = parsedInline.find( "%playery" );
+							}
 
-						// PlayerZ
-						sPos = parsedInline.find( "%playerz" );
-						while( sPos != std::string::npos )
-						{
-							UString myZ = UString::number( tChar->GetZ() );
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
+							// PlayerZ
 							sPos = parsedInline.find( "%playerz" );
-						}
+							while( sPos != std::string::npos )
+							{
+								UString myZ = str_number( tChar->GetZ() );
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
+								sPos = parsedInline.find( "%playerz" );
+							}
 
-						// PlayerRace -- needs testing
-						sPos = parsedInline.find( "%playerrace" );
-						while( sPos != std::string::npos )
-						{
-							RACEID myRace			= tChar->GetRace();
-							const std::string rName	= Races->Name( myRace );
-							size_t raceLenName		= rName.length();
-
-							if( raceLenName > 0 ) 
-								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, rName ):parsedInline.replace( sPos, 11, "");
+							// PlayerRace -- needs testing
 							sPos = parsedInline.find( "%playerrace" );
-						}
+							while( sPos != std::string::npos )
+							{
+								RACEID myRace			= tChar->GetRace();
+								const std::string rName	= Races->Name( myRace );
+								size_t raceLenName		= rName.length();
 
-						// PlayerRegion
-						sPos = parsedInline.find( "%playerregion" );
-						while( sPos != std::string::npos )
-						{
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 13, tChar->GetRegion()->GetName() ):parsedInline.replace( sPos, 13, "");
+								if( raceLenName > 0 )
+									(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, rName ):parsedInline.replace( sPos, 11, "");
+								sPos = parsedInline.find( "%playerrace" );
+							}
+
+							// PlayerRegion
 							sPos = parsedInline.find( "%playerregion" );
-						}
+							while( sPos != std::string::npos )
+							{
+								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 13, tChar->GetRegion()->GetName() ):parsedInline.replace( sPos, 13, "");
+								sPos = parsedInline.find( "%playerregion" );
+							}
 
-						PlayerList += parsedInline;
+							PlayerList += parsedInline;
+						}
 					}
 				}
+				catch( ... )
+				{
+					Console << "| EXCEPTION: Invalid character/socket pointer found. Ignored." << myendl;
+				}
 			}
-			catch( ... )
-			{
-				Console << "| EXCEPTION: Invalid character/socket pointer found. Ignored." << myendl;
-			}
+			Network->popConn();
 		}
-		Network->PopConn();
 
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, myInline.length(), PlayerList ):ParsedContent.replace( Pos, myInline.length(), "");
 		Pos = ParsedContent.find( "%playerlist%" );
 	}
 
 	// GuildCount
-	UString GuildCount	= UString::number( GuildSys->NumGuilds() );
+	UString GuildCount	= str_number( (SI32)GuildSys->NumGuilds() );
 	Pos					= ParsedContent.find( "%guildcount" );
 	while( Pos != std::string::npos )
 	{
@@ -434,16 +440,16 @@ void cHTMLTemplate::Process( void )
 			parsedInline.replace( 0, 11, "" );
 			parsedInline.replace( parsedInline.length()-11, 11, "" );
 
-//			Tokens for the GuildList
-//			%guildid
-//			%guildname
+			//			Tokens for the GuildList
+			//			%guildid
+			//			%guildname
 
 			// GuildID
 			size_t sPos;
 			CGuild *myGuild = GuildSys->Guild( i );
 
-			UString GuildID	= UString::number( i );
-			sPos			= parsedInline.find( "%guildid" ); 
+			UString GuildID	= str_number( i );
+			sPos			= parsedInline.find( "%guildid" );
 			while( sPos != std::string::npos )
 			{
 				(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, GuildID ):parsedInline.replace( sPos, 8, "" );
@@ -451,7 +457,7 @@ void cHTMLTemplate::Process( void )
 			}
 
 			// GuildName
-			sPos = parsedInline.find( "%guildname" ); 
+			sPos = parsedInline.find( "%guildname" );
 			while( sPos != std::string::npos )
 			{
 				(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 10, myGuild->Name() ):parsedInline.replace( sPos, 10, "" );
@@ -467,12 +473,12 @@ void cHTMLTemplate::Process( void )
 
 	//NPCCount
 	UI32 npccount = 0;
-		UI32 b		= 0;
-		ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
-		npccount	= b;
+	UI32 b		= 0;
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
+	npccount	= b;
 
-	UString npcs	= UString::number( npccount );
-	Pos				= ParsedContent.find( "%npcs" ); 
+	UString npcs	= str_number( npccount );
+	Pos				= ParsedContent.find( "%npcs" );
 	while( Pos != std::string::npos )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 5, npcs ):ParsedContent.replace( Pos, 5, "0" );
@@ -481,7 +487,7 @@ void cHTMLTemplate::Process( void )
 
 	// Performance Dump
 	R64 eps	= 0.00000000001;
-	Pos		= ParsedContent.find( "%performance" ); 
+	Pos		= ParsedContent.find( "%performance" );
 	while( Pos != std::string::npos )
 	{
 		std::string performance;
@@ -545,10 +551,10 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Update Time in SECONDS
-	Pos = ParsedContent.find( "%updatetime" ); 
+	Pos = ParsedContent.find( "%updatetime" );
 	while( Pos != std::string::npos )
 	{
-		UString strUpdateTimer = UString::number( UpdateTimer );
+		UString strUpdateTimer = str_number( UpdateTimer );
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, strUpdateTimer ):ParsedContent.replace( Pos, 11, "0" );
 		Pos = ParsedContent.find( "%updatetime" );
 	}
@@ -564,15 +570,14 @@ void cHTMLTemplate::Process( void )
 		Output.close();
 	}
 	else
-		Console.Error( " Couldn't open the template file %s for writing", OutputFile.c_str() );
+		Console.error( format(" Couldn't open the template file %s for writing", OutputFile.c_str()) );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Poll
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Poll( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the page if needed
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Poll( void )
 {
 	if( ScheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun() )
@@ -582,15 +587,14 @@ void cHTMLTemplate::Poll( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::LoadTemplate
-//|	Programmer	-	Dark-Storm
-//|
-//|	Modification	-	08062003 - Updated this member function to actually handle
-//|									loading the different templates for use later.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadTemplate( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the Template into memory
-//o---------------------------------------------------------------------------o
+//|
+//|	Changes		-	08062003 - Updated this member function to actually handle
+//|									loading the different templates for use later.
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::LoadTemplate( void )
 {
 	Content = "";
@@ -599,7 +603,7 @@ void cHTMLTemplate::LoadTemplate( void )
 
 	if( !InputFile1.is_open() )
 	{
-		Console.Error( "Couldn't open HTML Template File %s", InputFile.c_str() );
+		Console.error( format("Couldn't open HTML Template File %s", InputFile.c_str()) );
 		return;
 	}
 
@@ -615,28 +619,26 @@ void cHTMLTemplate::LoadTemplate( void )
 	Loaded = true;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::UnloadTemplate
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void UnloadTemplate( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unloads the Template (i.e. for reloading)
-//|									
-//|	Modification	-	08062003 - EviLDeD - Updated to properly unload a template
-//|									and to unload the correect template, instead of just the
-//|									status template.
-//o---------------------------------------------------------------------------o
+//|
+//|	Changes		-	08062003 - Updated to properly unload a template
+//|								and to unload the correect template, instead of just the
+//|								status template.
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::UnloadTemplate( void )
 {
 	Content="";
 	Loaded = false;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Load
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Load( ScriptSection *found )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Template from a ScriptSection
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
 	UString tag, data, UTag, UData, fullPath;
@@ -647,7 +649,7 @@ void cHTMLTemplate::Load( ScriptSection *found )
 		UTag = tag.upper();
 
 		if( UTag == "UPDATE" )
-			UpdateTimer = data.toULong();
+			UpdateTimer = data.toUInt();
 		else if( UTag == "TYPE" )
 		{
 			UData = data.upper();
@@ -665,12 +667,14 @@ void cHTMLTemplate::Load( ScriptSection *found )
 		else if( UTag == "INPUT" )
 		{
 			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) + "html/" + data;
-			InputFile = fullPath.stripWhiteSpace().substr( 0, MAX_PATH - 1 );
+			//LOOKATME
+			InputFile = trim(fullPath).substr( 0, MAX_PATH - 1 );
 		}
 		else if( UTag == "OUTPUT" )
 		{
 			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_HTML ) + data;
-			OutputFile = fullPath.stripWhiteSpace().substr( 0, MAX_PATH - 1 );
+			//LOOKATME
+			OutputFile = trim(fullPath).substr( 0, MAX_PATH - 1 );
 		}
 		else if( UTag == "NAME" )
 			Name = data;
@@ -690,12 +694,11 @@ cHTMLTemplates::~cHTMLTemplates()
 	Unload();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Load
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Load( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Templates from the scripts
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::Load( void )
 {
 	for( Script *toCheck = FileLookup->FirstScript( html_def ); !FileLookup->FinishedScripts( html_def ); toCheck = FileLookup->NextScript( html_def ) )
@@ -716,12 +719,11 @@ void cHTMLTemplates::Load( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Unload
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Unload( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unloads all Templates
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::Unload( void )
 {
 	if( Templates.empty() )
@@ -735,12 +737,11 @@ void cHTMLTemplates::Unload( void )
 	Templates.clear();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Poll
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Poll( ETemplateType nTemplateID )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Polls the templates for updates
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 {
 	std::vector< cHTMLTemplate* >::const_iterator tIter;
@@ -755,12 +756,11 @@ void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::TemplateInfoGump
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TemplateInfoGump( CSocket *mySocket )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Shows an information gump about current templates
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 {
 	CGump InfoGump = CGump( false, false );
@@ -777,7 +777,7 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 	UI32 Entries = 0; // Entries per page
 	UI16 CurrentPage = 0; // Page
 
-	for( unsigned int i = 0; i < Templates.size(); ++i )
+	for( UI32 i = 0; i < Templates.size(); ++i )
 	{
 		if( Entries == 0 )
 		{
@@ -795,10 +795,8 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 		++Entries;
 
 		// ~25 pixel per entry
-		char tmpName[256];
-		sprintf( tmpName, "%s (%i)", Templates[ i ]->GetName().c_str(), i );
 
-		InfoGump.AddText( 40, static_cast<UI16>( 40 + (Entries-1)*25 ), cwmWorldState->ServerData()->LeftTextColour(), tmpName );
+		InfoGump.AddText( 40, static_cast<UI16>( 40 + (Entries-1)*25 ), cwmWorldState->ServerData()->LeftTextColour(), format( "%s (%i)", Templates[ i ]->GetName().c_str(), i ) );
 
 		if( Entries == 5 )
 			Entries = 0;
@@ -807,71 +805,63 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 	InfoGump.Send( mySocket );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetName
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetName( void ) const
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the Template
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 std::string cHTMLTemplate::GetName( void ) const
 {
-	return Name; 
+	return Name;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetOutput
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetOutput( void ) const
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Output Filename
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 std::string cHTMLTemplate::GetOutput( void ) const
 {
-	return OutputFile; 
+	return OutputFile;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetInput
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetInput( void ) const
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Input Filename
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 std::string cHTMLTemplate::GetInput( void ) const
 {
 	return InputFile;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::TemplateInfoGump
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetScheduledUpdate( void ) const
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next scheduled Update time
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 cHTMLTemplate::GetScheduledUpdate( void ) const
 {
-	return ScheduledUpdate; 
+	return ScheduledUpdate;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetUpdateTimer
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetUpdateTimer( void ) const
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Update timer
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 cHTMLTemplate::GetUpdateTimer( void ) const
 {
 	return UpdateTimer;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::GetTemplateType
-//|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ETemplateType GetTemplateType( void ) const
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Template Type
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 ETemplateType cHTMLTemplate::GetTemplateType( void ) const
 {
-	return Type;   
-}
-
+	return Type;
 }
 

@@ -1,6 +1,8 @@
-// cHTMLSystem.h: Schnittstelle für die Klasse cHTMLSystem.
-//
-//////////////////////////////////////////////////////////////////////
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	cHTMLSystem.h
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Interface for the cHTMLSystem class
+//o-----------------------------------------------------------------------------------------------o
 
 #ifndef __CHTMLSYSTEM_H__
 #define __CHTMLSYSTEM_H__
@@ -10,9 +12,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 #endif
-
-namespace UOX
-{
 
 enum ETemplateType
 {
@@ -38,8 +37,8 @@ private:
 	UI32			ScheduledUpdate;
 
 public:
-					cHTMLTemplate();
-					~cHTMLTemplate();
+	cHTMLTemplate();
+	~cHTMLTemplate();
 	void			Process( void );
 	void			Poll( void );
 	void			LoadTemplate( void );
@@ -50,7 +49,7 @@ public:
 	std::string		GetName( void ) const;
 	std::string		GetOutput( void ) const;
 	std::string		GetInput( void ) const;
-	ETemplateType	GetTemplateType( void ) const;	
+	ETemplateType	GetTemplateType( void ) const;
 	UI32			GetScheduledUpdate( void ) const;
 	UI32			GetUpdateTimer( void ) const;
 };
@@ -61,8 +60,8 @@ private:
 	std::vector < cHTMLTemplate* > Templates;
 
 public:
-		cHTMLTemplates();
-		~cHTMLTemplates();
+	cHTMLTemplates();
+	~cHTMLTemplates();
 
 	void Load( void );
 	void Unload( void );
@@ -71,7 +70,5 @@ public:
 };
 
 extern cHTMLTemplates	*HTMLTemplates;
-
-}
 
 #endif

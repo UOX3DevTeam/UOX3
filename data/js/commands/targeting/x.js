@@ -66,12 +66,21 @@ function command_XGO( socket, cmdString )
 			socket.clickY = parseInt( splitString[1] );
 			socket.clickZ = parseInt( splitString[2] );
 
+			if( splitString[3] ) // world
+			{
+				socket.xText = splitString[3];
+			}
+			if( splitString[4] ) // instance
+			{
+				socket.xText += " " + splitString[4];
+			}
+
 			targMsg = GetDictionaryEntry( 198, socket.Language );
 			socket.CustomTarget( 1, targMsg );
 		}
 		else if( splitString[0] )
 		{
-			socket.tempint = parseInt( cmdString );
+			socket.clickX = parseInt( cmdString );
 
 			targMsg = GetDictionaryEntry( 20, socket.Language );
 			socket.CustomTarget( 2, targMsg );
@@ -82,17 +91,30 @@ function command_XGO( socket, cmdString )
 function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) )
-		ourObj.SetLocation( socket.clickX, socket.clickY, socket.clickZ );
+	{
+		// Defaults to same world/instance as GM unless anything else is specified
+		var worldNum = socket.currentChar.worldnumber;
+		var instanceID = socket.currentChar.instanceid;
+
+		var splitString = socket.xText.split( " " );
+		if( splitString[0] )
+			worldNum = parseInt( splitString[0] );
+		if( splitString[1] )
+			instanceID = parseInt( splitString[1] );
+
+		ourObj.SetLocation( socket.clickX, socket.clickY, socket.clickZ, worldNum, instanceID );
+	}
 
 	socket.clickX = -1;
 	socket.clickY = -1;
 	socket.clickZ = -1;
+	socket.xText = null;
 }
 
 function onCallback2( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) )
-		ourObj.SetLocation( socket.tempint );
+		ourObj.SetLocation( socket.clickX );
 
-	socket.tempint = 0;
+	socket.clickX = -1;
 }

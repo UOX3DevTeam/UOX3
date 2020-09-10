@@ -1,9 +1,6 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
-namespace UOX
-{
-
 class CPIGumpInput;
 
 enum GuildType
@@ -62,8 +59,8 @@ public:
 	GUILDID		NextAlly( void );
 	bool		FinishedAlly( void );
 
-				CGuild();
-				~CGuild();
+	CGuild();
+	~CGuild();
 	const std::string	Name( void ) const;
 	const char *		Abbreviation( void ) const;
 	GuildType			Type( void ) const;
@@ -138,7 +135,7 @@ private:
 	GUILDID			MaximumGuild( void );
 public:
 	void			Resign( CSocket *s );
-					CGuildCollection();
+	CGuildCollection();
 	size_t			NumGuilds( void ) const;
 	GUILDID			NewGuild( void );
 	CGuild *		Guild( GUILDID num ) const;
@@ -154,12 +151,10 @@ public:
 	bool			ResultInCriminal( GUILDID srcGuild, GUILDID trgGuild ) const;
 	bool			ResultInCriminal( CChar *src, CChar *trg ) const;
 	void			DisplayTitle( CSocket *s, CChar *src ) const;
-					~CGuildCollection();
+	~CGuildCollection();
 };
 
 extern CGuildCollection	*GuildSys;
-
-}
 
 #endif
 

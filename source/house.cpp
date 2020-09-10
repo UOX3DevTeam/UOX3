@@ -1,4 +1,4 @@
-// House code for deed creation by Tal Strake, revised by Cironian
+// House code for deed creation
 
 #include "uox3.h"
 #include "mapstuff.h"
@@ -8,32 +8,26 @@
 #include "classes.h"
 #include "regions.h"
 #include "Dictionary.h"
+#include "StringUtility.hpp"
 
-#undef DBGFILE
-#define DBGFILE "house.cpp"
 
 #include "ObjectFactory.h"
 
-namespace UOX
-{
-
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void buildHouse( CSocket *s, UI08 i )
-//|   Date        -  UnKnown - Rewrite Date 1/24/99
-//|   Programmer  -  UnKnown - Rewrite by Zippy (onlynow@earthlink.net)
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Triggered by double clicking a deed-> the deed's moreX is read
-//|						for the house section in house.scp. Extra items can be added
-//|						using HOUSE ITEM, (this includes all doors!) and locked "LOCK"
-//|						Space around the house with SPACEX/Y and CHAR offset CHARX/Y/Z
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggered by double clicking a deed-> the deed's moreX is read for the house
+//|					section in house.dfn. Extra items can be added using HOUSE ITEM, (this includes
+//|					all doors!) and locked "LOCK" Space around the house with SPACEX/Y and CHAR
+//|					offset CHARX/Y/Z
+//o-----------------------------------------------------------------------------------------------o
 void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 {
 	UI16 houseID = 0;
 	UString tag, data;
-	UString sect			= "HOUSE " + UString::number( houseEntry );
+	UString sect			= std::string("HOUSE ") + str_number( houseEntry );
 	ScriptSection *House	= FileLookup->FindEntry( sect, house_def );
 	if( House == NULL )
 		return;
@@ -47,7 +41,7 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 		}
 	}
 	if( !houseID )
-		Console.Error( "Bad house script: #%u\n", houseEntry );
+		Console.error(format( "Bad house script: #%u\n", houseEntry) );
 	else
 	{
 		mSock->AddID1( houseEntry );
@@ -57,6 +51,12 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 			mSock->target( 0, TARGET_BUILDHOUSE, 576 );
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create key for tent/house/boat
+//o-----------------------------------------------------------------------------------------------o
 void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseID )
 {
 	if( houseID >= 0x4000 )
@@ -77,6 +77,12 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 		}
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create items for house as defined in house.dfn
+//o-----------------------------------------------------------------------------------------------o
 void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 {
 	UString tag, data, UTag;
@@ -92,6 +98,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 			SI16 hiX = x, hiY = y;
 			SI08 hiZ = z;
 			UI08 hWorld = house->WorldNumber();
+			UI16 hInstanceID = house->GetInstanceID();
 			hItem = NULL;	// clear it out
 			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
@@ -99,7 +106,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 				data = HouseItem->GrabData();
 				if( UTag == "ITEM" )
 				{
-					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1 );
+					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1, hInstanceID );
 					if( hItem == NULL )
 					{
 						Console << "Error in house creation, item " << data << " could not be made" << myendl;
@@ -136,14 +143,20 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 					hiZ += data.toShort();
 			}
 			if( ValidateObject( hItem ) && hItem->GetCont() == NULL )
-				hItem->SetLocation( hiX, hiY, hiZ, hWorld );
+				hItem->SetLocation( hiX, hiY, hiZ, hWorld, hInstanceID );
 		}
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check whether the chosen location is valid for house placement
+//o-----------------------------------------------------------------------------------------------o
 bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti )
 {
 	const UI08 worldNum = mChar->WorldNumber();
+	const UI16 instanceID = mChar->GetInstanceID();
 
 	MapData_st& mMap = Map->GetMapData( worldNum );
 	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() )
@@ -161,11 +174,11 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 		for( SI16 l = -spaceY; l <= spaceY; ++l )
 		{
 			curY = y+l;
-			if( ( !Map->ValidMultiLocation( curX, curY, z, worldNum, !isBoat ) && ( charX != curX && charY != curY ) ) ||
-				( isMulti && findMulti( curX, curY, z, worldNum ) != NULL ) )// Lets not place a multi on/in another multi
-//			This will take the char making the house out of the space check, be careful 
-//			you don't build a house on top of your self..... this had to be done So you 
-//			could extra space around houses, (12+) and they would still be buildable.
+			if( ( !Map->ValidMultiLocation( curX, curY, z, worldNum, instanceID, !isBoat ) && ( charX != curX && charY != curY ) ) ||
+			   ( isMulti && findMulti( curX, curY, z, worldNum, instanceID ) != NULL ) )// Lets not place a multi on/in another multi
+				//			This will take the char making the house out of the space check, be careful
+				//			you don't build a house on top of your self..... this had to be done So you
+				//			could extra space around houses, (12+) and they would still be buildable.
 			{
 				if( isBoat )
 					mSock->sysmessage( 7 );
@@ -177,7 +190,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 			{
 				if( mChar->GetCommandLevel() < CL_GM )
 				{
-					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum );
+					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum, instanceID );
 					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) )
 					{
 						mSock->sysmessage( "This object must be placed in your house" );
@@ -190,6 +203,11 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void BuildHouse( CSocket *mSock, UI08 houseEntry )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player attempts to place a tent/house/boat
+//o-----------------------------------------------------------------------------------------------o
 void BuildHouse( CSocket *mSock, UI08 houseEntry )
 {
 	if( mSock->GetDWord( 11 ) == INVALIDSERIAL )
@@ -204,7 +222,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	const SI16 x = mSock->GetWord( 11 );
 	const SI16 y = mSock->GetWord( 13 );
 	SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
-	UI32 targetSerial = mSock->GetDWord( 7 );
+	//UI32 targetSerial = mSock->GetDWord( 7 );
+	mSock->GetDWord( 7 );
 	if( mSock->GetDWord( 7 ) != INVALIDSERIAL || getDist( mChar->GetLocation(), point3( x, y, z ) ) >= DIST_BUILDRANGE )
 	{
 		mSock->sysmessage( 577 );
@@ -248,13 +267,13 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			houseItems.push_back( data );
 		else if( UTag == "HOUSE_DEED" )
 			houseDeed = data;
-		else if( UTag == "BOAT" ) 
+		else if( UTag == "BOAT" )
 			isBoat = true;	//Boats
 	}
 
 	if( !houseID )
 	{
-		Console.Error( "Bad house script # %u!", houseEntry );
+		Console.error( format("Bad house script # %u!", houseEntry) );
 		return;
 	}
 
@@ -262,15 +281,18 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat, isMulti ) )
 		return;
 
-	char temp[1024];
+	constexpr std::uint16_t maxsize = 1024 ;
+	std::string temp ;
 	CMultiObj *house = NULL;
 	CItem *fakeHouse = NULL;
 	if( isMulti )
 	{
-		if( (houseID%256) > 18 ) 
-			sprintf( temp, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
-		else 
-			strcpy( temp, "a mast" );
+		if( (houseID%256) > 18 ){
+			temp = format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
+		}
+		else{
+			temp =  "a mast" ;
+		}
 		house = Items->CreateMulti( mChar, temp, houseID, isBoat );
 		if( house == NULL )
 			return;
@@ -297,7 +319,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		{
 			house->Delete();
 			return;
-		} 
+		}
 	}
 
 	mChar->GetSpeechItem()->Delete();
@@ -310,7 +332,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			fakeHouse = house;
 		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
 	}
-	mChar->SetLocation( x + cx, y + cy, z + cz );
+
+	if( isMulti || isBoat )
+		mChar->SetLocation( x + cx, y + cy, z + cz );
 
 	//Teleport pets as well
 	CDataList< CChar * > *myPets = mChar->GetPetList();
@@ -324,6 +348,15 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
+//|					void killKeys( SERIAL targSerial )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when turning a house/boat into a deed, or when transferring to new owner
+//|
+//|	Notes		-	This function is rather CPU-expensive, but AFAIK there is no
+//|					better way to find all keys than to do it this way.. :/
+//o-----------------------------------------------------------------------------------------------o
 bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	UI32 *ourData		= (UI32 *)extraData;
@@ -337,8 +370,6 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	return true;
 }
 void killKeys( SERIAL targSerial )
-// This function is rather CPU-expensive, but AFAIK there is no
-// better way to find all keys than to do it this way.. :/
 {
 	UI32 toPass[1];
 	toPass[0]	= targSerial;
@@ -346,10 +377,14 @@ void killKeys( SERIAL targSerial )
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, toPass, &KillKeysFunctor );
 }
 
-// turn a house into a deed if possible. - crackerjack 8/9/99
-// s = socket of player
-// i = house object
-// morex on the house item must be set to deed item # in items.scp.
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void deedHouse( CSocket *s, CMultiObj *i )
+//|	Date		-	8/9/1999
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player (CSocket *s) tries to turn a house (CMultiObj *i) into a deed
+//|
+//|	Notes		-	morex on the house item must be set to deed item # in the ITEM DFNs
+//o-----------------------------------------------------------------------------------------------o
 void deedHouse( CSocket *s, CMultiObj *i )
 {
 	if( !ValidateObject( i ) )
@@ -360,12 +395,12 @@ void deedHouse( CSocket *s, CMultiObj *i )
 	if( i->GetOwnerObj() == mChar || mChar->IsGM() )
 	{
 		CItem *pvDeed = NULL;
-		char temp[1024];
+		constexpr std::uint16_t maxsize = 1024 ;
 
 		CItem *ii = Items->CreateScriptItem( s, mChar, i->GetDeed(), 1, OT_ITEM, true );	// need to make before delete
-		if( ii == NULL ) 
+		if( ii == NULL )
 			return;
-        
+
 		s->sysmessage( 578, i->GetName().c_str() );
 		s->sysmessage( 579, ii->GetName().c_str() );
 
@@ -379,7 +414,7 @@ void deedHouse( CSocket *s, CMultiObj *i )
 				// Delete Player Vendors
 				if( tChar->GetNPCAiType() == AI_PLAYERVENDOR ) // player vendor in right place
 				{
-					sprintf( temp, Dictionary->GetEntry( 580 ).c_str(), tChar->GetName().c_str() );
+					auto temp = format(maxsize,Dictionary->GetEntry( 580 ), tChar->GetName().c_str() );
 					pvDeed = Items->CreateItem( NULL, mChar, 0x14F0, 1, 0, OT_ITEM, true );
 					if( ValidateObject( pvDeed ) )
 					{
@@ -402,6 +437,11 @@ void deedHouse( CSocket *s, CMultiObj *i )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when adding another player to the owner/ban list of the house
+//o-----------------------------------------------------------------------------------------------o
 UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 {
 	if( !ValidateObject( house ) || !ValidateObject( toAdd ) )
@@ -430,6 +470,12 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 	else
 		return 3;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when removing another player from the owner/ban list of the house
+//o-----------------------------------------------------------------------------------------------o
 bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode )
 {
 	if( !ValidateObject( house ) || !ValidateObject( toDelete ) )
@@ -442,15 +488,13 @@ bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode )
 	const UI08 BAN		= 1;
 	switch( mode )
 	{
-		default:
-		case OWNER:	// owner
-			house->RemoveAsOwner( toDelete );
-			break;
 		case BAN:	// ban
 			house->RemoveFromBanList( toDelete );
 			break;
+		case OWNER:    // owner is the same as default
+		default:
+			house->RemoveAsOwner( toDelete );
+			break;
 	}
 	return true;
-}
-
 }

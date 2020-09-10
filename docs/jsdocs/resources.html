@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+<h3><a name="ResourceFuncs">Resource Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ResourceRegion" id="SE_ResourceRegion">ResourceRegion</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>RESOURCEOBJ ResourceRegion( x, y, worldnumber );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Returns a resource object allowing JS to modify resource data
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mResource = ResourceRegion( pUser.x, pUser.y, pUser.worldnumber );</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ResourceTime" id="SE_ResourceTime">ResourceTime</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int ResourceTime( resourceType );
+void ResourceTime( resourceType, int );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Used to get/set the spawn timer of a resourceType (&quot;ORE&quot; or &quot;LOGS&quot;).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var logTimer = ResourceTime( &quot;LOGS&quot; );
+//or...
+
+ResourceTime( &quot;LOGS&quot;, 600 );</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ResourceAmount" id="SE_ResourceAmount">ResourceAmount</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int ResourceAmount( resourceType );
+void ResourceArea( resourceType, int );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Used to get/set the maximum amount of resources per area of a specific resourceType (&quot;ORE&quot; or &quot;LOGS&quot;).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var maxLogAmount = ResourceAmount( &quot;LOGS&quot; );
+//or...
+ResourceAmount( &quot;LOGS&quot;, 10 );</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ResourceArea" id="SE_ResourceArea">ResourceArea</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int ResourceArea( resourceType );
+void ResourceArea( resourceType, int );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Used to get/set the amount of resourceareas to split the world into for a specific resourceType (&quot;ORE&quot; and &quot;LOGS&quot;).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var resourceAreas = ResourceArea( &quot;ORE&quot; );
+//or...
+ResourceArea( &quot;ORE&quot;, 10 );</pre>
+</table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+
+</center>
+
+</body>

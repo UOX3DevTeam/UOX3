@@ -8,22 +8,22 @@ function onBoughtFromVendor( pSock, Vendor, iBought )
 		onUseChecked( pSock.currentChar, iBought );
 }
 
-function onUseChecked( pUser, iUsed ) 
-{ 
+function onUseChecked( pUser, iUsed )
+{
 	// randomize the horse given
-	var look = RollDice( 1, 4, 0 ); 
-	if( look == 1 ) 
-		var nSpawned = SpawnNPC( "horse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
-	else if( look == 2 ) 
-		var nSpawned = SpawnNPC( "brownhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
-	else if( look == 3 ) 
-		var nSpawned = SpawnNPC( "grayhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
-	else if( look == 4 ) 
-		var nSpawned = SpawnNPC( "darkhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+	var look = RollDice( 1, 4, 0 );
+	if( look == 1 )
+		var nSpawned = SpawnNPC( "horse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	else if( look == 2 )
+		var nSpawned = SpawnNPC( "brownhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	else if( look == 3 )
+		var nSpawned = SpawnNPC( "grayhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	else if( look == 4 )
+		var nSpawned = SpawnNPC( "darkhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( nSpawned )
 	{
 		// set owner to the envoker
-		nSpawned.owner = pUser; 
+		nSpawned.owner = pUser;
 		// make pet follow owner by default
 		nSpawned.Follow( pUser );
 		nSpawned.wandertype = 1;

@@ -1,10 +1,8 @@
 #ifndef __SKILLS_H__
 #define __SKILLS_H__
 
-namespace UOX
-{
 
-// create.scp revisions
+// create DFN revisions
 struct resAmountPair
 {
 	std::vector< UI16 > idList;
@@ -53,15 +51,15 @@ struct createEntry
 		resourceNeeded.resize( 0 );
 		skillReqs.resize( 0 );
 	}
-	R32 AverageMinSkill( void ) 
-	{ 
+	R32 AverageMinSkill( void )
+	{
 		R32 sum = 0;
 		for( size_t i = 0; i < skillReqs.size(); ++i )
 			sum += skillReqs[i].minSkill;
 		return sum / skillReqs.size();
 	}
-	R32 AverageMaxSkill( void ) 
-	{ 
+	R32 AverageMaxSkill( void )
+	{
 		R32 sum = 0;
 		for( size_t i = 0; i < skillReqs.size(); ++i )
 			sum += skillReqs[i].maxSkill;
@@ -75,7 +73,7 @@ struct miningData
 	UI16 colour;		// colour of the ore, for colour of ingot
 	UI16 minSkill;		// minimum skill needed to make the ingot
 	std::string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
-	int makemenu;		// the makemenu required for making with
+	SI32 makemenu;		// the makemenu required for making with
 
 	miningData() : colour( 0 ), minSkill( 0 ), name( "" ), makemenu( 0 )
 	{
@@ -130,7 +128,7 @@ private:
 
 	TargetFunc RandomSteal;
 
-	SI08 FindSkillPoint( UI08 sk, int value );
+	SI08 FindSkillPoint( UI08 sk, SI32 value );
 	void AnvilTarget( CSocket *s, CItem& item, miningData *oreType );
 	void HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success );
 
@@ -139,8 +137,8 @@ private:
 	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused );
 
 public:
-			cSkills( void );
-			~cSkills( void );
+	cSkills( void );
+	~cSkills( void );
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
@@ -156,16 +154,16 @@ public:
 
 	void Load( void );
 
-	void NewMakeMenu( CSocket *s, int menu, UI08 skill );
+	void NewMakeMenu( CSocket *s, SI32 menu, UI08 skill );
 	createEntry *FindItem( UI16 itemNum );
 	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry );
 	void ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank );
-	void HandleMakeMenu( CSocket *s, int button, int menu );
+	void HandleMakeMenu( CSocket *s, SI32 button, SI32 menu );
 
 	void CreateTrackingMenu( CSocket *s, UI16 m );
 	void TrackingMenu( CSocket *s, UI16 gmindex );
 	void Track( CChar *i );
-	void Tracking( CSocket *s, int selection );
+	void Tracking( CSocket *s, SI32 selection );
 	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
 	void Fish( CSocket *mSock, CChar *mChar );
 
@@ -183,8 +181,6 @@ public:
 };
 
 extern cSkills *Skills;
-
-}
 
 #endif
 

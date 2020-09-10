@@ -3,9 +3,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
-
-namespace UOX
-{
+#include "StringUtility.hpp"
 
 JailSystem *JailSys;
 
@@ -18,59 +16,120 @@ JailCell::~JailCell()
 	playersInJail.resize( 0 );
 }
 
-bool JailCell::IsEmpty( void ) const		
-{ 
-	return playersInJail.empty(); 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsEmpty( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if jailcell is empty
+//o-----------------------------------------------------------------------------------------------o
+bool JailCell::IsEmpty( void ) const
+{
+	return playersInJail.empty();
 }
-size_t JailCell::JailedPlayers( void ) const 
-{ 
-	return playersInJail.size(); 
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t JailCell::JailedPlayers( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns number of players in jailcell
+//o-----------------------------------------------------------------------------------------------o
+size_t JailCell::JailedPlayers( void ) const
+{
+	return playersInJail.size();
 }
-SI16 JailCell::X( void ) const				
-{ 
-	return x; 
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 X( void ) const
+//|					void X( SI16 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets X coordinate for jailcell
+//o-----------------------------------------------------------------------------------------------o
+SI16 JailCell::X( void ) const
+{
+	return x;
 }
-SI16 JailCell::Y( void ) const				
-{ 
-	return y; 
+void JailCell::X( SI16 nVal )
+{
+	x = nVal;
 }
-SI08 JailCell::Z( void ) const				
-{ 
-	return z; 
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 Y( void ) const
+//|					void Y( SI16 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets Y coordinate for jailcell
+//o-----------------------------------------------------------------------------------------------o
+SI16 JailCell::Y( void ) const
+{
+	return y;
 }
+void JailCell::Y( SI16 nVal )
+{
+	y = nVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 Z( void ) const
+//|					void Z( SI08 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets Z coordinate for jailcell
+//o-----------------------------------------------------------------------------------------------o
+SI08 JailCell::Z( void ) const
+{
+	return z;
+}
+void JailCell::Z( SI08 nVal )
+{
+	z = nVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 World( void ) const
+//|					void World( UI08 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets world number for jailcell
+//o-----------------------------------------------------------------------------------------------o
 UI08 JailCell::World( void ) const
 {
 	return world;
-}
-void JailCell::X( SI16 nVal )				
-{ 
-	x = nVal; 
-}
-void JailCell::Y( SI16 nVal )				
-{ 
-	y = nVal; 
-}
-void JailCell::Z( SI08 nVal )				
-{ 
-	z = nVal; 
 }
 void JailCell::World( UI08 nVal )
 {
 	world = nVal;
 }
-void JailCell::AddOccupant( CChar *pAdd, SI32 secsFromNow ) 
-{ 
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 InstanceID( void ) const
+//|					void InstanceID( UI16 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets instanceID for jailcell
+//o-----------------------------------------------------------------------------------------------o
+UI16 JailCell::InstanceID( void ) const
+{
+	return instanceID;
+}
+void JailCell::InstanceID( UI16 nVal )
+{
+	instanceID = nVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddOccupant( CChar *pAdd, SI32 secsFromNow )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add player to jail for a certain amount of time
+//o-----------------------------------------------------------------------------------------------o
+void JailCell::AddOccupant( CChar *pAdd, SI32 secsFromNow )
+{
 	if( !ValidateObject( pAdd ) )
 		return;
-	JailOccupant *toAdd = new JailOccupant; 
-	time( &(toAdd->releaseTime) ); 
-	toAdd->releaseTime += secsFromNow; 
+	JailOccupant *toAdd = new JailOccupant;
+	time( &(toAdd->releaseTime) );
+	toAdd->releaseTime += secsFromNow;
 	toAdd->pSerial = pAdd->GetSerial();
 	toAdd->x = pAdd->GetX();
 	toAdd->y = pAdd->GetY();
 	toAdd->z = pAdd->GetZ();
 	toAdd->world = pAdd->WorldNumber();
-	pAdd->SetLocation( x, y, z, world );
+	toAdd->instanceID = pAdd->GetInstanceID();
+	pAdd->SetLocation( x, y, z, world, instanceID );
 	SendMapChange( pAdd->WorldNumber(), pAdd->GetSocket(), false );
 	playersInJail.push_back( toAdd );
 }
@@ -80,6 +139,11 @@ void JailCell::AddOccupant( JailOccupant *toAdd )
 	playersInJail.push_back( toAdd );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void EraseOccupant( size_t occupantID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove player from jail
+//o-----------------------------------------------------------------------------------------------o
 void JailCell::EraseOccupant( size_t occupantID )
 {
 	if( occupantID >= playersInJail.size() )
@@ -87,12 +151,18 @@ void JailCell::EraseOccupant( size_t occupantID )
 	delete playersInJail[occupantID];
 	playersInJail.erase( playersInJail.begin() + occupantID );
 }
-JailOccupant *JailCell::Occupant( size_t occupantID ) 
-{ 
+JailOccupant *JailCell::Occupant( size_t occupantID )
+{
 	if( occupantID >= playersInJail.size() )
 		return NULL;
 	return playersInJail[occupantID];
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PeriodicCheck( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform period check of each player in jailcell, and release them if time is up
+//o-----------------------------------------------------------------------------------------------o
 void JailCell::PeriodicCheck( void )
 {
 	time_t now;
@@ -106,7 +176,7 @@ void JailCell::PeriodicCheck( void )
 				EraseOccupant( i );
 			else
 			{
-				toRelease->SetLocation( playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z, playersInJail[i]->world );
+				toRelease->SetLocation( playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z, playersInJail[i]->world, playersInJail[i]->instanceID );
 				toRelease->SetCell( -1 );
 				EraseOccupant( i );
 			}
@@ -114,6 +184,11 @@ void JailCell::PeriodicCheck( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WriteData( std::ofstream &outStream, size_t cellNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Save out data on jailed players to stream
+//o-----------------------------------------------------------------------------------------------o
 void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 {
 	std::vector< JailOccupant * >::const_iterator jIter;
@@ -128,7 +203,8 @@ void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 			outStream << "OLDX=" << std::dec << mOccupant->x << '\n';
 			outStream << "OLDY=" << mOccupant->y << '\n';
 			outStream << "OLDZ=" << (SI16)mOccupant->z << '\n';
-			outStream << "WORLD=" << (UI08)mOccupant->world << '\n';
+			outStream << "WORLD=" << mOccupant->world << '\n';
+			outStream << "INSTANCEID=" << mOccupant->instanceID << '\n';
 			outStream << "RELEASE=" << mOccupant->releaseTime << '\n';
 			outStream << "}" << '\n' << '\n';
 		}
@@ -143,6 +219,12 @@ JailSystem::~JailSystem()
 {
 	jails.clear();
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ReadSetup( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load jail-cell setup from regions DFNs, otherwise use default, hardcoded setup
+//o-----------------------------------------------------------------------------------------------o
 void JailSystem::ReadSetup( void )
 {
 	ScriptSection *Regions = FileLookup->FindEntry( "JAILS", regions_def );
@@ -174,14 +256,20 @@ void JailSystem::ReadSetup( void )
 			{
 				case 'X':	toAdd.X( data.toShort() );	break;
 				case 'Y':	toAdd.Y( data.toShort() );	break;
-				case 'Z':	
-							toAdd.Z( data.toByte() );
-							jails.push_back( toAdd );
-							break;
+				case 'Z':
+					toAdd.Z( data.toByte() );
+					jails.push_back( toAdd );
+					break;
 			}
 		}
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ReadData( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load data on jailed players from jails.wsc in shared folder
+//o-----------------------------------------------------------------------------------------------o
 void JailSystem::ReadData( void )
 {
 	if( jails.empty() )
@@ -226,11 +314,11 @@ void JailSystem::ReadData( void )
 							break;
 						case 'R':
 							if( UTag == "RELEASE" )
-								toPush.releaseTime = data.toLong();
+								toPush.releaseTime = data.toInt();
 							break;
 						case 'S':
 							if( UTag == "SERIAL" )
-								toPush.pSerial = data.toULong();
+								toPush.pSerial = data.toUInt();
 							break;
 					}
 				}
@@ -243,13 +331,19 @@ void JailSystem::ReadData( void )
 		delete jailData;
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WriteData( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Save out details about jailed players to jails.wsc in shared folder
+//o-----------------------------------------------------------------------------------------------o
 void JailSystem::WriteData( void )
 {
 	std::string jailsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc";
 	std::ofstream jailsDestination( jailsFile.c_str() );
 	if( !jailsDestination )
 	{
-		Console.Error( "Failed to open %s for writing", jailsFile.c_str() );
+		Console.error( format("Failed to open %s for writing", jailsFile.c_str() ));
 		return;
 	}
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )
@@ -258,12 +352,24 @@ void JailSystem::WriteData( void )
 	}
 	jailsDestination.close();
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PeriodicCheck( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Perform period check of each jailcell
+//o-----------------------------------------------------------------------------------------------o
 void JailSystem::PeriodicCheck( void )
 {
 	std::vector< JailCell >::iterator jIter;
 	for( jIter = jails.begin(); jIter != jails.end(); ++jIter )
 		(*jIter).PeriodicCheck();
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ReleasePlayer( CChar *toRelease )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Release player from jail
+//o-----------------------------------------------------------------------------------------------o
 void JailSystem::ReleasePlayer( CChar *toRelease )
 {
 	if( !ValidateObject( toRelease ) )
@@ -278,7 +384,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 			continue;
 		if( mOccupant->pSerial == toRelease->GetSerial() )
 		{
-			toRelease->SetLocation( mOccupant->x, mOccupant->y, mOccupant->z, mOccupant->world );
+			toRelease->SetLocation( mOccupant->x, mOccupant->y, mOccupant->z, mOccupant->world, mOccupant->instanceID );
 			SendMapChange( mOccupant->world, toRelease->GetSocket(), false );
 			toRelease->SetCell( -1 );
 			jails[cellNum].EraseOccupant( iCounter );
@@ -286,6 +392,12 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 		}
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool JailPlayer( CChar *toJail, SI32 numSecsToJail )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Send player to jail for a certain amount of time
+//o-----------------------------------------------------------------------------------------------o
 bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 {
 	if( jails.empty() || toJail == NULL )
@@ -305,6 +417,4 @@ bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 	jails[minCell].AddOccupant( toJail, numSecsToJail );
 	toJail->SetCell( minCell );
 	return true;
-}
-
 }

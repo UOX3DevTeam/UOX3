@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3>ODBC Related Methods</h3>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="BeginTransaction" id="BeginTransaction">BeginTransaction</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>bool BeginTransaction( void );</pre>			</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">Begins a new transaction.  It should only occur for CUD (Create, Update, Delete) statements, and it is used to aggregate multiple statements into a single transaction that commits as one.  It returns true if successful.				</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>var didStart = ODBC.BeginTransaction();</pre>		</td>
+</tr>
+</table>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="FinaliseTransaction" id="FinaliseTransaction">FinaliseTransaction</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>bool FinaliseTransaction( bool commit );</pre>				</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">Commits (commit == true) or rolls back (commit == false) the queries in the transaction.  Returns true if successful.	</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>var didStart = ODBC.BeginTransaction();
+if( didStart )
+{
+	var i = 0;
+	var anyProbs = false;
+	for( i = 0; i < 10 && !anyProbs; ++i )
+	{
+		var iSQL = "INSERT INTO Account( AccountID, Username, Password, ContactDetails, ";
+		iSQL += "IsBanned, IsSuspended, IsPublic, IsOnline, IsSeer, IsCounselor, IsGM, LastUpdated ) VALUES( ";
+		iSQl += " " + (10 + i) + ", 'tempguest" + (i+1) + "', 'tempguest" + (i+1) + "', '', 0, 0, 0, 0, 0, 0, 0";
+		iSQL += ", getdate() );";
+		ODBC.ExecuteQuery( iSQL );
+		if( !ODBC.lastOK )
+			anyProbs = true;
+	}
+	// If we have issues (anyProbs == true), we want to rollback (commit == false) and add NONE
+	ODBC.FinaliseTransaction( !anyProbs );
+}</pre>	</td>
+</tr>
+</table>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="ExecuteQuery" id="ExecuteQuery">ExecuteQuery</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>int ExecuteQuery( string sql );</pre>				</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">Attempts to execute query that is specified in sql, and returns a statement index.  If lastOK == false, the returned index is not trustable.  This index MUST be stored if the query is a select, so that rows and columns can be fetched.	</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>var iResult = ODBC.ExecuteQuery( "SELECT Count(*) FROM Account;" );</pre>	</td>
+</tr>
+</table>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="QueryRelease" id="QueryRelease">QueryRelease</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>bool QueryRelease( void );</pre>				</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">This releases the statement handle associated with your last query.  <b>DO NOT</b> execute this from within a transaction, as it will force a rollback.  Otherwise, you should call thiswhen you have finished with your query.				</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>ODBC.QueryRelease();</pre>	</td>
+</tr>
+</table>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="FetchRow" id="FetchRow">FetchRow</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>bool FetchRow( int index );</pre>			</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">This method will fetch the next row in a resultset, associated with the statement handle you pass in, and retrieved on ExecuteQuery.				</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>ODBC.FetchRow( iResult );</pre>	</td>
+</tr>
+</table>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="GetColumn" id="GetColumn">GetColumn</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>string GetColumn( int colNumber, int iResult );</pre>		</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">Returns the data from the row, at column colNumber from result set iResult.  Note, columns <B>MUST</b> be fetched in ascending order starting from 0, and can only be retrieved once.  Check lastOK if true, as the returned data is invalid if it is false.				</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>var colData = ODBC.GetColumn( 0, iResult );</pre>	</td>
+</tr>
+</table>
+
+<table class="method">
+<tr>	<th colspan=2 class="method"><a name="LastOK" id="LastOK">LastOK</a>		</tr>
+<tr>
+	<td class="property"><b>Prototype</b>						</td>
+	<td class="value"><pre>bool LastOK( void );</pre>				</td>
+</tr>
+<tr>
+	<td class="property"><b>Purpose</b>						</td>
+	<td class="value">Method equivalent of lastOK.  Only created for testing purposes, use the property instead.				</td>
+</tr>
+<tr>
+	<td class="property"><b>Example of Usage</b>					</td>
+	<td class="value"><pre>var isOK = ODBC.LastOK();</pre>	</td>
+</tr>
+</table>
+
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

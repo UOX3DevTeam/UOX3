@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3>Console Related Methods</h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="Print" id="Print">Print</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Print( string );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Note: Include \n at the end of the string unless you're sending multiple messages
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.Print( &quot;Hello World!\n&quot; );</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="Log" id="Log">Log</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Log( logMsg );
+void Log( logMsg, filename );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+  <td>Logs a message either in default log file or in specified file. Note: Include \n at the end of the string unless you're sending multiple messages<br>Optional second parameter is the name of the file to log the message into
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.Log( &quot;Logging a custom message to default logfile!&quot; );
+console.Log( &quot;Logging a custom message to a specific logfile!&quot;, &quot;myCustomLogFile.log&quot; );</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="Error" id="Error">Error</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Error( errorMsg );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Logs an error-message in default error log file
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.Error( &quot;I found an error, and I'm logging it!&quot; );</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="Warning" id="Warning">Warning</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Warning( warningMsg );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Logs a warning-message in default log file
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.Warning( &quot;Logging a warning message!&quot; );
+</pre></table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="PrintSectionBegin" id="PrintSectionBegin">PrintSectionBegin</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PrintSectionBegin();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Prints a section separator in the console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.PrintSectionBegin();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="TurnYellow" id="TurnYellow">TurnYellow</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnYellow();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Activates yellow text in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.TurnYellow();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="TurnRed" id="TurnRed">TurnRed</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnRed();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Activates red text in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.TurnRed();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="TurnGreen" id="TurnGreen">TurnGreen</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnGreen();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Activates green text in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.TurnGreen();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="TurnBlue" id="TurnBlue">TurnBlue</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnBlue();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Activates blue text in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>TurnBlue();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="TurnNormal" id="TurnNormal">TurnNormal</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnNormal();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Activates normal text in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.TurnNormal();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="TurnBrightWhite" id="TurnBrightWhite">TurnBrightWhite</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void TurnBrightWhite();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Activates bright white text in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.TurnBrightWhite();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="PrintDone" id="PrintDone">PrintDone</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PrintDone();
+void PrintDone( bool );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Prints colored [done] message in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.PrintDone();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="PrintFailed" id="PrintFailed">PrintFailed</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PrintFailed();
+void PrintFailed( bool);</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Prints colored [failed] message in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.PrintFailed();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="PrintPassed" id="PrintPassed">PrintPassed</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PrintPassed();
+void PrintPassed( bool );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Prints colored [skipped] message in console
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.PrintPassed();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="ClearScreen" id="ClearScreen">ClearScreen</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void ClearScreen()</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Clear the console screen
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.ClearScreen();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="PrintBasedOnVal" id="PrintBasedOnVal">PrintBasedOnVal</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PrintBasedOnVal( boolean );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Prints [done] or [failed] based on provided boolean (true/false)
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.PrintBasedOnVal( true );</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="MoveTo" id="MoveTo">MoveTo</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void MoveTo( x, y );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Moves console cursor position to specified x, y location. If you want the same line,  y == -1
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.MoveTo( 100, 100 );</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="PrintSpecial" id="PrintSpecial">PrintSpecial</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PrintSpecial( textColour, string );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Prints a special tag in console similar to [done] and [failed], but with custom text and colour
+Available colours:
+0 - Normal
+1 - Blue
+2 - Red
+3 - Green
+4 - Yellow
+5 - Bright White
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.PrintSpecial( 3, "Success" );</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="BeginShutDown" id="BeginShutDown">BeginShutDown</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void BeginShutdown();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Start the UOX3 shutdown sequence
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.BeginShutdown();</pre>
+</table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="Reload" id="Reload">Reload</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Reload( reloadType )</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td><p>Reloads server data from console. Available reload types:<br>
+0 Reload INI<br>
+1 Reload Accounts<br>
+2 Reload Regions<br>
+3 Reload Spawn Regions<br>
+4 Reload Spells<br>
+5 Reload Commands<br>
+6 Reload Definition Files<br>
+7 Reload JS<br>
+8 Reload HTML </p>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>console.Reload( 4 ); //Reloads spells</pre>
+</table>
+
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

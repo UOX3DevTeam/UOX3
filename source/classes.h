@@ -1,9 +1,6 @@
 #ifndef __Classes_h
 #define __Classes_h
 
-namespace UOX
-{
-
 enum PackTypes
 {
 	PT_UNKNOWN = 0,
@@ -42,7 +39,18 @@ enum PackTypes
 	PT_SEBASKET,
 	PT_SEARMOIRE1,
 	PT_SEARMOIRE2,
-	PT_SEARMOIRE3
+	PT_SEARMOIRE3,
+	PT_GAME_BACKGAMMON,
+	PT_GAME_CHESS,
+	PT_MAILBOX1,
+	PT_MAILBOX2,
+	PT_MAILBOX3,
+	PT_MAILBOX4,
+	PT_MAILBOX5,
+	PT_MAILBOX6,
+	PT_MAILBOX7,
+	PT_MAILBOX8,
+	PT_MAILBOX9,
 };
 
 class cItem
@@ -57,21 +65,21 @@ public:
 
 	CItem *		CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack = false );
 	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, const bool inPack = false, const UI16 iColor = 0xFFFF );
-	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const UI16 iAmount, const ObjectType itemType = OT_ITEM );
-	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat ); 
+	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const UI16 iAmount, const UI16 instanceID = 0, const ObjectType itemType = OT_ITEM );
+	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat );
 	CItem *		CreateRandomItem( CSocket *mSock, const std::string& itemList );
-	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM );
+	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM, const UI16 instanceID = 0 );
 
 private:
 	void		GetScriptItemSettings( CItem *iCreated );
 	CItem *		PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack );
-	CItem *		CreateRandomItem( const std::string& sItemList, const UI08 worldNumber );
+	CItem *		CreateRandomItem( const std::string& sItemList, const UI08 worldNumber, const UI16 instanceID = 0 );
 };
 
 class cCharStuff
 {
 private:
-	void		FindSpotForNPC( CChar *c, const SI16 originX, const SI16 originY, const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber );
+	void		FindSpotForNPC( CChar *c, const SI16 originX, const SI16 originY, const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber, const UI16 instanceID );
 	void		LoadShopList( const std::string& list, CChar *c );
 	CItem *		addRandomLoot( CItem *s, const std::string& lootlist );
 
@@ -80,7 +88,7 @@ public:
 	CChar *		CreateRandomNPC( const std::string& npcList );
 
 	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );
-	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID );
 	void		PostSpawnUpdate( CChar *cCreated );
 	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate = false );
 	CChar *		getGuardingPet( CChar *mChar, CBaseObject *guarded );
@@ -90,8 +98,6 @@ public:
 
 extern cItem *Items;
 extern cCharStuff *Npcs;
-
-}
 
 #endif
 

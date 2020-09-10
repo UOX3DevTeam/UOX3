@@ -1,3 +1,28 @@
+function onUseCheckedTriggered( pUser, targChar, iUsed )
+{
+	if( pUser && iUsed && iUsed.isItem )
+	{
+		var socket = pUser.socket;
+		if( socket )
+		{
+			if( pUser.skillsused.healing || pUser.skillsused.veterinary )
+			{
+				socket.SysMessage( "You are too busy to do that." );
+			}
+			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			{
+				socket.tempObj = iUsed;
+				socket.SetTimer( 0, 5000 );
+				onCallback1( socket, targChar );
+			}
+			else
+			{
+				socket.SysMessage( GetDictionaryEntry( 473, socket.Language ) );
+			}
+		}
+	}
+	return true;
+}
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -61,8 +86,7 @@ function onCallback1( socket, ourObj )
 				return;
 			}
 
-/*			// Commented out until the multi-functions actually work.
-			var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, 0 );
+			var iMulti = FindMulti( ourObj );
 			if( iMulti )
 			{
 				if( iMulti.IsInMulti( ourObj ) )
@@ -73,9 +97,9 @@ function onCallback1( socket, ourObj )
 						return;
 					}
 				}
-			}*/
+			}
 			var anatSkill = mChar.baseskills.anatomy;
-			if( ourObj.dead )	// Resurrection	
+			if( ourObj.dead )	// Resurrection
 			{
 				if( healSkill >= 800 && anatSkill >= 800 )
 				{
@@ -148,7 +172,7 @@ function onCallback1( socket, ourObj )
 				{
 					var healTimer;
 					if( mChar.serial == ourObj.serial ) // Healing yourself has a 9 to 16 second delay, depending on your dexterity.
-						healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);					
+						healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);
 					else
 						healTimer = 5000; // Healing others has a 5 second delay
 

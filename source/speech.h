@@ -1,9 +1,6 @@
 #ifndef __SPEECH_H__
 #define __SPEECH_H__
 
-namespace UOX
-{
-
 enum SpeechTarget
 {
 	SPTRG_INDIVIDUAL = 0,		// aimed at individual person
@@ -66,7 +63,7 @@ const std::string LanguageCodes[TOTAL_LANGUAGES] =
 	"DEA",	// German Austria
 	"DEL",	// German Luxembourg
 	"DEC",	// German Liechtenstein
-	"ELL",	// Greek Greece 
+	"ELL",	// Greek Greece
 	"ENU",	// English United States
 	"ENG",	// English United Kingdom
 	"ENA",	// English Australia
@@ -148,7 +145,7 @@ const std::string LanguageCodes[TOTAL_LANGUAGES] =
 	"EUQ",	// Basque Spain
 	"MKI",	// Macedonian Macedonia
 	"AFK",	// Afrikaans South Africa
-	"KAT",	// Georgian Georgia   
+	"KAT",	// Georgian Georgia
 	"FOS",	// Faeroese Faeroe Islands
 	"HIN",	// Hindi India
 	"MSL",	// Malay Malaysia
@@ -168,7 +165,7 @@ const std::string LanguageCodes[TOTAL_LANGUAGES] =
 	"ASM",	// Assamese India
 	"MAR",	// Marathi India
 	"SAN",	// Sanskrit India
-	"KOK"	// Konkani India 
+	"KOK"	// Konkani India
 };
 
 const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
@@ -204,7 +201,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_GERMAN,	// German Austria
 	DL_GERMAN,	// German Luxembourg
 	DL_GERMAN,	// German Liechtenstein
-	DL_UNKNOWN,	// Greek Greece 
+	DL_UNKNOWN,	// Greek Greece
 	DL_ENGLISH,	// English United States
 	DL_ENGLISH,	// English United Kingdom
 	DL_ENGLISH,	// English Australia
@@ -286,7 +283,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_UNKNOWN,	// Basque Spain
 	DL_UNKNOWN,	// Macedonian Macedonia
 	DL_UNKNOWN,	// Afrikaans South Africa
-	DL_UNKNOWN,	// Georgian Georgia   
+	DL_UNKNOWN,	// Georgian Georgia
 	DL_UNKNOWN,	// Faeroese Faeroe Islands
 	DL_UNKNOWN,	// Hindi India
 	DL_UNKNOWN,	// Malay Malaysia
@@ -306,7 +303,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_UNKNOWN,	// Assamese India
 	DL_UNKNOWN,	// Marathi India
 	DL_UNKNOWN,	// Sanskrit India
-	DL_UNKNOWN	// Konkani India 
+	DL_UNKNOWN	// Konkani India
 };
 
 #define MAX_SPEECH 255
@@ -392,28 +389,26 @@ typedef std::vector< CSpeechEntry * >::const_iterator SPEECHLIST_CITERATOR;
 class CSpeechQueue
 {
 private:
-	int				pollTime;		// MILLISECONDS How often to poll the queue
+	SI32				pollTime;		// MILLISECONDS How often to poll the queue
 	SPEECHLIST		speechList;
 	bool			runAsThread;
 
 	void			SayIt( CSpeechEntry& toSay );
 	bool			InternalPoll( void );
 public:
-					CSpeechQueue( void );
-					~CSpeechQueue();
+	CSpeechQueue( void );
+	~CSpeechQueue();
 
 	bool			Poll( void );		// Send out any pending speech, returning true if entries were sent
 	CSpeechEntry& 	Add( void );		// Make space in queue, and return pointer to new entry
-	int				PollTime( void ) const;
-	void			PollTime( int value );
+	SI32			PollTime( void ) const;
+	void			PollTime( SI32 value );
 	void			RunAsThread( bool newValue );
 	bool			RunAsThread( void ) const;
 	void			DumpInFile( void );
 };
 
 extern CSpeechQueue *SpeechSys;
-
-}
 
 #endif
 

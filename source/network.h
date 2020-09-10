@@ -1,22 +1,26 @@
 #ifndef __CNETWORK_H__
 #define __CNETWORK_H__
 
-#include "threadsafeobject.h"
-
-namespace UOX
-{
-
-//#define __LOGIN_THREAD__
-
+#include <mutex>
+#if UOX_PLATFORM != PLATFORM_WIN32
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#else
+#include <winsock2.h>
+#undef min
+#undef max
+#endif
 class socket_error : public std::runtime_error
 {
 private:
-	long		errorNum;
+	UI32		errorNum;
 public:
-				socket_error( const std::string& what_arg );
-				socket_error( const long errorNumber );
-				socket_error( void );
-	long		ErrorNumber( void ) const;
+	socket_error( const std::string& what_arg );
+	socket_error( const UI32 errorNumber );
+	socket_error( void );
+	UI32		ErrorNumber( void ) const;
 	const char *what( void ) const throw();
 };
 
@@ -132,9 +136,9 @@ protected:
 	virtual void			InternalReset( void );
 
 public:
-							CPUOXBuffer();
+	CPUOXBuffer();
 	virtual					~CPUOXBuffer();
-							CPUOXBuffer( CPUOXBuffer *initBuffer );
+	CPUOXBuffer( CPUOXBuffer *initBuffer );
 	CPUOXBuffer &operator=( CPUOXBuffer &copyFrom );
 
 	UI32					Pack( void );
@@ -153,8 +157,8 @@ protected:
 	CSocket *				tSock;
 
 public:
-							CPInputBuffer();
-							CPInputBuffer( CSocket *input );
+	CPInputBuffer();
+	CPInputBuffer( CSocket *input );
 	virtual					~CPInputBuffer()
 	{
 	}
@@ -168,9 +172,10 @@ public:
 
 class cNetworkStuff
 {
+
 public:
-				cNetworkStuff();
-				~cNetworkStuff();
+	cNetworkStuff();
+	~cNetworkStuff();
 	void		Disconnect( UOXSOCKET s );
 	void		Disconnect( CSocket *s );
 	void		ClearBuffers( void );
@@ -190,48 +195,48 @@ public:
 	void		CheckConnections( void );
 	void		CheckMessages( void );
 
-	void		On( void )
-	{
-		InternalControl.On();
-	}
-	void		Off( void )
-	{
-		InternalControl.Off();
-	}
 	void		Transfer( CSocket *s );
 
 	size_t		PeakConnectionCount( void ) const;
 
 	void		PushConn( void );
 	void		PopConn( void );
+	void 		pushConn(void) ;
+	void 		popConn(void) ;
+
+	void		pushLogg() ;
+	void 		popLogg() ;
 
 	void		PushLogg( void );
 	void		PopLogg( void );
-	
+
 	// Login Specific
 	void		LoginDisconnect(UOXSOCKET s);
 	void		LoginDisconnect(CSocket *s);
 
 	void		RegisterPacket( UI08 packet, UI08 subCmd, UI16 scriptID );
-	
+
+	// We don't want to do this, but given we have outside classes
+	// we can either friend a lot of things, or just put it out here
+	std::mutex				internallock;
+
 private:
 	struct FirewallEntry
 	{
 		SI16 b[4];
 		FirewallEntry( SI16 p1, SI16 p2, SI16 p3, SI16 p4 )
 		{
-			b[0] = p1; b[1] = p2; b[2] = p3; b[3] = p4; 
+			b[0] = p1; b[1] = p2; b[2] = p3; b[3] = p4;
 		}
 	};
 
 	std::map< UI16, UI16 >			packetOverloads;
 	std::vector< FirewallEntry >	slEntries;
-	int						a_socket;
+	SI32					a_socket;
 	SOCKLIST				connClients, loggedInClients;
 
 	struct sockaddr_in		client_addr;
 
-	ThreadSafeObject		InternalControl;
 	size_t					peakConnectionCount;
 
 	std::vector< SOCKLIST_ITERATOR >	connIteratorBackup, loggIteratorBackup;
@@ -251,8 +256,6 @@ private:
 };
 
 extern cNetworkStuff *Network;
-
-}
 
 #endif
 

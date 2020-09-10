@@ -1,26 +1,27 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	msgboard.cpp
-//|	Date			-	Pre 1999
-//|	Developers		-	Original Developer Unknown, Complete Rewrite by giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Message Board Handling
-//o--------------------------------------------------------------------------o
-//| Modifications	-	Version History
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	msgboard.cpp
+//|	Date		-	16/04/1999
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Message Board Handling
+//o-----------------------------------------------------------------------------------------------o
+//| Changes		-	Version History
 //|
-//|							1.0			Unknown		Pre 1999
-//|							Initial implimentation
+//|						1.0			16th April 1999 - 0.69.03
+//|						Initial implimentation
 //|
-//|							2.0			giwo		10th August 2005
-//|							Complete rewrite of msgboard.cpp
-//|							Modified file i/o to use fstreams for faster file reads/writes.
-//|							Completely re-formatted the message board files to remove the need for two files, and reduce waste.
-//|							Made use of packet classes to simplify sending & receiving data from the client.
-//|							Added a maintenance function that will automatically clean up the message board files.
-//|							Added support for message board file deletion upon deleting the associated world object.
+//|						1.1			19th January 2000 - 0.70.02
+//|						Additional features added to messageboard
+//|						Escort quests added / integrated with message board enhancements
 //|
-//o--------------------------------------------------------------------------o
+//|						2.0			10th August 2005 - 0.98-3.0g
+//|						Complete rewrite of msgboard.cpp
+//|						Modified file i/o to use fstreams for faster file reads/writes.
+//|						Completely re-formatted the message board files to remove the need for two files, and reduce waste.
+//|						Made use of packet classes to simplify sending & receiving data from the client.
+//|						Added a maintenance function that will automatically clean up the message board files.
+//|						Added support for message board file deletion upon deleting the associated world object.
+//|
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "msgboard.h"
 #include "townregion.h"
@@ -30,18 +31,15 @@
 #include "CPacketSend.h"
 #include "classes.h"
 #include "Dictionary.h"
+#include "StringUtility.hpp"
 
-namespace UOX
-{
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
-//|	Date			-	8/6/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates the proper MessageBoard filename based on the messageType and Borad Serial
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
+//|	Date		-	8/6/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates the proper MessageBoard filename based on the messageType and Borad Serial
+//o-----------------------------------------------------------------------------------------------o
 std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 {
 	std::string fileName;
@@ -49,26 +47,24 @@ std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 	{
 		case PT_GLOBAL:			fileName = "global.bbf";												break;
 		case PT_REGIONAL:		CItem *msgBoard;
-								CTownRegion *mbRegion;
-								msgBoard = calcItemObjFromSer( msgBoardSer );
-								mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber() );
-								fileName = "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
-																										break;
-		case PT_LOCAL:			fileName = UString::number( msgBoardSer, 16 ) + ".bbf";					break;
-		default:				Console.Error( "GetMsgBoardFile() Invalid post type, aborting" );
-																										break;
+			CTownRegion *mbRegion;
+			msgBoard = calcItemObjFromSer( msgBoardSer );
+			mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber(), msgBoard->GetInstanceID() );
+			fileName = std::string("region") + str_number( mbRegion->GetRegionNum() ) + std::string(".bbf");
+			break;
+		case PT_LOCAL:			fileName = str_number( msgBoardSer, 16 ) + std::string(".bbf");					break;
+		default:				Console.error( "GetMsgBoardFile() Invalid post type, aborting" );
+			break;
 	}
 	return fileName;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardOpen( CSocket *mSock )
-//|	Date			-	7/16/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Opens the Messageboard and Advises the client of the messages
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardOpen( CSocket *mSock )
+//|	Date		-	7/16/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens the Messageboard and Advises the client of the messages
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardOpen( CSocket *mSock )
 {
 	const SERIAL boardSer = mSock->GetDWord( 1 );
@@ -89,7 +85,6 @@ void MsgBoardOpen( CSocket *mSock )
 
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
 		dirPath = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
-
 
 	for( UI08 currentFile = 1; currentFile < 4 && mSock->PostCount() < MAXPOSTS; ++currentFile )
 	{
@@ -142,14 +137,12 @@ void MsgBoardOpen( CSocket *mSock )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardList( CSocket *mSock )
-//|	Date			-	7/16/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Sends the summary of each message to the client
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardList( CSocket *mSock )
+//|	Date		-	7/16/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends the summary of each message to the client
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardList( CSocket *mSock )
 {
 	char buffer[4];
@@ -213,7 +206,7 @@ void MsgBoardList( CSocket *mSock )
 
 						if( file.fail() )
 						{
-							Console.Warning( "Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial );
+							Console.warning( format("Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial ));
 							file.close();
 						}
 						else
@@ -238,18 +231,16 @@ void MsgBoardList( CSocket *mSock )
 	if( !mSock->FinishedPostAck() )
 	{
 		mSock->PostClear();
-		Console.Error( "Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 ) );
+		Console.error( format("Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )) );
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool GetMaxSerial( std::string fileName, UI08 *nextMsgID, PostTypes msgType )
-//|	Date			-	7/22/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Updates nextMsgID with the next available message serial.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes msgType )
+//|	Date		-	7/22/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates nextMsgID with the next available message serial.
+//o-----------------------------------------------------------------------------------------------o
 bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes msgType )
 {
 	SERIAL msgIDSer = ( calcserial( nextMsgID[0], nextMsgID[1], nextMsgID[2], nextMsgID[3] ) );
@@ -257,9 +248,9 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes
 	{
 		switch( msgType )
 		{
-		case PT_GLOBAL:		msgIDSer = BASEGLOBALPOST;		break;
-		case PT_REGIONAL:	msgIDSer = BASEREGIONPOST;		break;
-		case PT_LOCAL:		msgIDSer = BASELOCALPOST;		break;
+			case PT_GLOBAL:		msgIDSer = BASEGLOBALPOST;		break;
+			case PT_REGIONAL:	msgIDSer = BASEREGIONPOST;		break;
+			case PT_LOCAL:		msgIDSer = BASELOCALPOST;		break;
 		}
 	}
 	else
@@ -272,21 +263,19 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes
 
 	if( nextMsgID[1] == 0xFF && nextMsgID[2] == 0xFF && nextMsgID[3] == 0xFF )
 	{
-		Console.Warning( 0, "Maximum Posts reached for board %s, no further posts can be created", fileName.c_str() );
+		Console.warning(format("Maximum Posts reached for board %s, no further posts can be created", fileName.c_str()) );
 		return false;
 	}
 
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPost )
-//|	Date			-	8/10/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes a new post to the .bbf file
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPost )
+//|	Date		-	8/10/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes a new post to the .bbf file
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPost )
 {
 	char wBuffer[4];
@@ -326,14 +315,12 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 	mFile.write( (const char *)&wBuffer, 4 );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string fileName, PostTypes msgType )
-//|	Date			-	7/22/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes a new post to the .bbf file, returning the messages SERIAL
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& fileName, const PostTypes msgType )
+//|	Date		-	7/22/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes a new post to the .bbf file, returning the messages SERIAL
+//o-----------------------------------------------------------------------------------------------o
 SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& fileName, const PostTypes msgType )
 {
 	SERIAL msgID = INVALIDSERIAL;
@@ -358,10 +345,9 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	else
 		msgID = calcserial( nextMsgID[0], nextMsgID[1], nextMsgID[2], nextMsgID[3] );
 
-	time_t now;
-	time( &now );
-	tm timeOfPost			= *localtime( &now );
-	UString time			= UString::sprintf( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
+	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	auto timeOfPost = *std::localtime(&timet);
+	auto time			= format( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
 	time.resize( time.size()+1 );
 	const UI08 timeSize		= static_cast<UI08>(time.size());
 	const UI08 posterSize	= static_cast<UI08>(msgBoardPost.PosterLen);
@@ -385,14 +371,12 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	return msgID;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardPost( CSocket *tSock )
-//|	Date			-	7/22/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Handles the client requesting to post a new message
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardPost( CSocket *tSock )
+//|	Date		-	7/22/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles the client requesting to post a new message
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardPost( CSocket *tSock )
 {
 	CChar *tChar = tSock->CurrcharObj();
@@ -472,14 +456,12 @@ void MsgBoardPost( CSocket *tSock )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
-//|	Date			-	8/10/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Reads in a post from its specified file.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
+//|	Date		-	8/10/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reads in a post from its specified file.
+//o-----------------------------------------------------------------------------------------------o
 bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
 {
 	char buffer[4];
@@ -534,14 +516,12 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 	return false;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardOpenPost( CSocket *mSock )
-//|	Date			-	7/16/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Opens a post on a message board when double clicked.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardOpenPost( CSocket *mSock )
+//|	Date		-	7/16/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens a post on a message board when double clicked.
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardOpenPost( CSocket *mSock )
 {
 	std::string fileName = GetMsgBoardFile( mSock->GetDWord( 4 ), (mSock->GetByte( 8 ) - 0x40) );
@@ -570,7 +550,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 		file.close();
 	}
 	else
-		Console.Error( "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial );
+		Console.error( format("Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
 
 	if( foundEntry )
 	{
@@ -578,21 +558,19 @@ void MsgBoardOpenPost( CSocket *mSock )
 		mSock->Send( &mbPost );
 	}
 	else
-		Console.Warning( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial );
+		Console.warning(format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardRemovePost( CSocket *mSock )
-//|	Date			-	7/17/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Removes a post from a message board
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardRemovePost( CSocket *mSock )
+//|	Date		-	7/17/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a post from a message board
 //|
 //|						Note: The client should trigger this function, but I have
 //|						been unable to find a way through the client to send the
 //|						remove post packet.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardRemovePost( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
@@ -625,7 +603,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 		UI16 tmpSize		= 0;
 		char rBuffer[4];
 		bool removeReply	= true;
-		
+
 		while( !file.eof() )
 		{
 			removeReply = false;
@@ -673,7 +651,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 		file.close();
 	}
 	else
-		Console.Error( "Could not open file %s for reading", fileName.c_str() );
+		Console.error( format("Could not open file %s for reading", fileName.c_str()) );
 
 	if( foundPost )
 	{
@@ -683,14 +661,12 @@ void MsgBoardRemovePost( CSocket *mSock )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool CPIMsgBoardEvent::Handle( void )
-//|	Date			-	7/22/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Handles a mesage board event from the client.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIMsgBoardEvent::Handle( void )
+//|	Date		-	7/22/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles a mesage board event from the client.
+//o-----------------------------------------------------------------------------------------------o
 bool CPIMsgBoardEvent::Handle( void )
 {
 	UI08 msgType = tSock->GetByte( 3 );
@@ -700,118 +676,116 @@ bool CPIMsgBoardEvent::Handle( void )
 
 	switch( msgType )
 	{
-	case 0:			MsgBoardOpen( tSock );				break;
-	case 3:			MsgBoardOpenPost( tSock );			break;
-	case 4:
-					tSock->PostAckCount( tSock->PostAckCount() + 1 );
-					if( tSock->PostAckCount() != tSock->PostCount() )
-						return true;
+		case 0:			MsgBoardOpen( tSock );				break;
+		case 3:			MsgBoardOpenPost( tSock );			break;
+		case 4:
+			tSock->PostAckCount( tSock->PostAckCount() + 1 );
+			if( tSock->PostAckCount() != tSock->PostCount() )
+				return true;
 
-					tSock->PostAckCount( 0 );
-					MsgBoardList( tSock );
-														break;
-	case 5:			MsgBoardPost( tSock );				break;
-	case 6:			MsgBoardRemovePost( tSock );		break;
-	default:											break;
+			tSock->PostAckCount( 0 );
+			MsgBoardList( tSock );
+			break;
+		case 5:			MsgBoardPost( tSock );				break;
+		case 6:			MsgBoardRemovePost( tSock );		break;
+		default:											break;
 	}
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool MsgBoardPostQuest( CChar *mNPC, QuestTypes questType )
-//|	Date			-	7/23/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates an escort quest post on regional messageboards
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
+//|	Date		-	7/23/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates an escort quest post on regional messageboards
+//o-----------------------------------------------------------------------------------------------o
 bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 {
 	msgBoardPost_st msgBoardPost;
 	UString sect, tag, data;
-	std::string fileName		= "region" + UString::number( mNPC->GetQuestOrigRegion() ) + ".bbf";
+	std::string fileName		= std::string("region") + str_number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
 	ScriptSection *EscortData	= NULL, *Escort = NULL;
 	size_t totalEntries			= 0;
 	std::string tmpSubject		= "";
 
 	switch( questType )
 	{
-	case QT_ESCORTQUEST:
-		msgBoardPost.Toggle		= QT_ESCORTQUEST;
-		tmpSubject				= Dictionary->GetEntry( 735 );
-		Escort					= FileLookup->FindEntry( "ESCORTS", msgboard_def );
-		if( Escort == NULL )
-			return false;
+		case QT_ESCORTQUEST:
+			msgBoardPost.Toggle		= QT_ESCORTQUEST;
+			tmpSubject				= Dictionary->GetEntry( 735 );
+			Escort					= FileLookup->FindEntry( "ESCORTS", msgboard_def );
+			if( Escort == NULL )
+				return false;
 
-		totalEntries = Escort->NumEntries();
-		if( totalEntries == 0 )
-		{
-			Console.Error( "MsgBoardPostQuest() No msgboard dfn entries found" );
-			return false;
-		}
-
-		Escort->MoveTo( RandomNum( static_cast<size_t>(0), totalEntries-1 ) );
-		sect		= "ESCORT " + Escort->GrabData();
-		EscortData	= FileLookup->FindEntry( sect, msgboard_def );
-		if( EscortData == NULL )
-		{
-			Console.Error( "MsgBoardPostQuest() Couldn't find entry %s", sect.c_str() );
-			return false;
-		}
-		for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
-		{
-			std::string fullLine = tag;
-
-			size_t position = fullLine.find( "%n" );
-			while( position != std::string::npos )
+			totalEntries = Escort->NumEntries();
+			if( totalEntries == 0 )
 			{
-				fullLine.replace( position, 2, mNPC->GetName() );
-				position = fullLine.find( "%n" );
+				Console.error( "MsgBoardPostQuest() No msgboard dfn entries found" );
+				return false;
 			}
 
-			position = fullLine.find( "%l" );
-			while( position != std::string::npos )
+			Escort->MoveTo( RandomNum( static_cast<size_t>(0), totalEntries-1 ) );
+			sect		= "ESCORT " + Escort->GrabData();
+			EscortData	= FileLookup->FindEntry( sect, msgboard_def );
+			if( EscortData == NULL )
 			{
-				fullLine.replace( position, 2, UString::sprintf( "%d %d", mNPC->GetX(), mNPC->GetY() ) );
+				Console.error( format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
+				return false;
+			}
+			for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
+			{
+				std::string fullLine = tag;
+
+				size_t position = fullLine.find( "%n" );
+				while( position != std::string::npos )
+				{
+					fullLine.replace( position, 2, mNPC->GetName() );
+					position = fullLine.find( "%n" );
+				}
+
 				position = fullLine.find( "%l" );
-			}
+				while( position != std::string::npos )
+				{
+					fullLine.replace( position, 2, format( "%d %d", mNPC->GetX(), mNPC->GetY() ) );
+					position = fullLine.find( "%l" );
+				}
 
-			position = fullLine.find( "%t" );
-			while( position != std::string::npos )
-			{
-				fullLine.replace( position, 2, mNPC->GetTitle() );
 				position = fullLine.find( "%t" );
-			}
+				while( position != std::string::npos )
+				{
+					fullLine.replace( position, 2, mNPC->GetTitle() );
+					position = fullLine.find( "%t" );
+				}
 
-			position = fullLine.find( "%r" );
-			while( position != std::string::npos )
-			{
-				fullLine.replace( position, 2, cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName() );
 				position = fullLine.find( "%r" );
-			}
+				while( position != std::string::npos )
+				{
+					fullLine.replace( position, 2, cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName() );
+					position = fullLine.find( "%r" );
+				}
 
-			position = fullLine.find( "%R" );
-			while( position != std::string::npos )
-			{
-				fullLine.replace( position, 2, mNPC->GetRegion()->GetName() );
 				position = fullLine.find( "%R" );
-			}
+				while( position != std::string::npos )
+				{
+					fullLine.replace( position, 2, mNPC->GetRegion()->GetName() );
+					position = fullLine.find( "%R" );
+				}
 
-			fullLine.resize( fullLine.size() + 1 );
-			msgBoardPost.msgBoardLine.push_back( fullLine );
-		}
-		break;
-	case QT_BOUNTYQUEST:
-		tmpSubject				= Dictionary->GetEntry( 736 );
-		msgBoardPost.Toggle		= QT_BOUNTYQUEST;
-		break;
-	case QT_ITEMQUEST:
-		tmpSubject				= Dictionary->GetEntry( 737 );
-		msgBoardPost.Toggle		= QT_ITEMQUEST;
-		break;
-	default:
-		Console.Error( "MsgBoardPostQuest() Invalid questType %d", questType );
-		return false;
+				fullLine.resize( fullLine.size() + 1 );
+				msgBoardPost.msgBoardLine.push_back( fullLine );
+			}
+			break;
+		case QT_BOUNTYQUEST:
+			tmpSubject				= Dictionary->GetEntry( 736 );
+			msgBoardPost.Toggle		= QT_BOUNTYQUEST;
+			break;
+		case QT_ITEMQUEST:
+			tmpSubject				= Dictionary->GetEntry( 737 );
+			msgBoardPost.Toggle		= QT_ITEMQUEST;
+			break;
+		default:
+			Console.error( format("MsgBoardPostQuest() Invalid questType %d", questType) );
+			return false;
 	}
 
 	msgBoardPost.Lines = static_cast<UI08>(msgBoardPost.msgBoardLine.size());
@@ -830,14 +804,12 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 	return false;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardQuestEscortCreate( CChar *mNPC )
-//|	Date			-	7/23/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates an escort quest assigning it a valid escort region
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardQuestEscortCreate( CChar *mNPC )
+//|	Date		-	7/23/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates an escort quest assigning it a valid escort region
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortCreate( CChar *mNPC )
 {
 	const UI16 npcRegion		= mNPC->GetRegionNum();
@@ -852,39 +824,37 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 
 	if( destRegion == 0 || destRegion == npcRegion )
 	{
-		Console.Error( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" );
+		Console.error( format("MsgBoardQuestEscortCreate() No valid regions defined for escort quests") );
 		mNPC->Delete();
 		return;
 	}
 
 	mNPC->SetQuestDestRegion( destRegion );
-	
+
 	// Set quest type to escort
 	mNPC->SetQuestType( QT_ESCORTQUEST );
-	
+
 	// Make sure they don't move until an player accepts the quest
 	mNPC->SetNpcWander( WT_NONE );
 	mNPC->SetNPCAiType( AI_NONE );
 	mNPC->SetQuestOrigRegion( npcRegion );
-	
+
 	if( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT ) )
 		mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTWAIT ) );
 
 	if( !MsgBoardPostQuest( mNPC, QT_ESCORTQUEST ) )
 	{
-		Console.Error( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() );
+		Console.error(format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
 		mNPC->Delete();
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
-//|	Date			-	7/23/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Handles payment and release upon arrival of the escort
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
+//|	Date		-	7/23/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles payment and release upon arrival of the escort
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 {
 	CChar *mChar = mSock->CurrcharObj();
@@ -902,42 +872,40 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	else // Otherwise pay the poor sod for his time
 	{
 		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
-		if( servicePay < 75 ) 
+		if( servicePay < 75 )
 			servicePay += RandomNum( 75, 100 );
 		Items->CreateScriptItem( mSock, mChar, "0x0EED", servicePay, OT_ITEM, true );
 		Effects->goldSound( mSock, servicePay );
 		mNPC->TextMessage( mSock, 739, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}
-	
+
 	// Inform the PC of what he has just been given as payment
 	mSock->sysmessage( 740, servicePay, mNPC->GetName().c_str(), mNPC->GetTitle().c_str() );
-	
+
 	// Take the NPC out of quest mode
 	mNPC->SetNpcWander( WT_FREE );         // Wander freely
 	mNPC->SetFTarg( NULL );			 // Reset follow target
 	mNPC->SetQuestType( 0 );         // Reset quest type
 	mNPC->SetQuestDestRegion( 0 );   // Reset quest destination region
-	
+
 	// Set a timer to automatically delete the NPC
 	mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
 	mNPC->SetOwner( NULL );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardQuestEscortRemovePost( CChar *mNPC )
-//|	Date			-	7/23/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Removes an escort quest post on regional messageboards
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardQuestEscortRemovePost( CChar *mNPC )
+//|	Date		-	7/23/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes an escort quest post on regional messageboards
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 {
 	UString fileName;
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 
-	fileName += "region" + UString::number( mNPC->GetQuestOrigRegion() ) + ".bbf";
+	fileName += std::string("region") + str_number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
 
 
 	std::fstream file;
@@ -974,17 +942,15 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 		file.close();
 	}
 	else
-		Console.Error( "Could not open file %s for reading", fileName.c_str() );
+		Console.error( format("Could not open file %s for reading", fileName.c_str()) );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardRemoveFile( const SERIAL msgBoardSer )
-//|	Date			-	8/10/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Removes the MessageBoard .bbf file attached to the specified serial
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardRemoveFile( const SERIAL msgBoardSer )
+//|	Date		-	8/10/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes the MessageBoard .bbf file attached to the specified serial
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 {
 	std::string fileName;
@@ -992,22 +958,20 @@ void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 
-	fileName += UString::number( msgBoardSer, 16 ) + ".bbf";
+	fileName += str_number( msgBoardSer, 16 ) + std::string(".bbf");
 
 	remove( fileName.c_str() );
 
-	Console.Print( "Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer );
+	Console.print( format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer) );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MsgBoardMaintenance()
-//|	Date			-	8/10/2005
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Finds all .bbf files and cleans any deleted posts from them
-//|							It will also remove any empty .bbf files if necesarry.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MsgBoardMaintenance( void )
+//|	Date		-	8/10/2005
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Finds all .bbf files and cleans any deleted posts from them
+//|							It will also remove any empty .bbf files if necessary.
+//o-----------------------------------------------------------------------------------------------o
 void MsgBoardMaintenance( void )
 {
 	std::vector< msgBoardPost_st > mbMessages;
@@ -1053,8 +1017,6 @@ void MsgBoardMaintenance( void )
 			mbMessages.clear();
 		}
 		else
-			Console.Error( "Failed to open MessageBoard file for reading: %s", (*fIter).c_str() );
+			Console.error( format("Failed to open MessageBoard file for reading: %s", (*fIter).c_str() ));
 	}
-}
-
 }

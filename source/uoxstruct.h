@@ -1,9 +1,6 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
 
-namespace UOX
-{
-
 const UI08 BIT_ANIMAL		=	2;
 const UI08 BIT_ANTIBLINK	=	1;
 const UI08 BIT_CANFLY		=	0;
@@ -15,8 +12,8 @@ class CCreatures
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying)
-    //             1: birds .. only one "bird-shape" and zillions of sounds ...
-	//             2: only 3 sounds ->  (attack,defence,dying)    
+	//             1: birds .. only one "bird-shape" and zillions of sounds ...
+	//             2: only 3 sounds ->  (attack,defence,dying)
 	//             3: only 4 sounds ->   (attack-started,attack,defnce,dying)
 	//             4: only 1 sound !!
 	//
@@ -27,20 +24,20 @@ class CCreatures
 	//              # 4 water creatures
 	//				# 5 amphibians (water + land)
 	//				# 6 human-bit
-	//				
+	//
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 	UI16				soundList[SND_COUNT];
-	std::bitset< 6 >	who_am_i; 
+	std::bitset< 6 >	who_am_i;
 	UI16				icon;
 	UI16				mountID;
 public:
-			CCreatures() : icon( 0 ), mountID( 0 )
-			{
-				who_am_i.reset();
-				memset( soundList, 0x00, SND_COUNT );
-			}
+	CCreatures() : icon( 0 ), mountID( 0 )
+	{
+		who_am_i.reset();
+		memset( soundList, 0x00, SND_COUNT );
+	}
 	UI16	GetSound( monsterSound soundType ) const
 	{
 		return soundList[static_cast<UI08>(soundType)];
@@ -89,15 +86,15 @@ public:
 struct point3
 {
 	R32		x, y, z;
-			point3(): x( 0 ), y( 0 ), z( 0 )
-			{
-			}
-			point3( UI16 X, UI16 Y, SI08 Z ) : x( X ), y( Y ), z( Z )
-			{
-			}
-			point3( R32 X, R32 Y, R32 Z ) : x( X ), y( Y ), z( Z )
-			{
-			}
+	point3(): x( 0 ), y( 0 ), z( 0 )
+	{
+	}
+	point3( UI16 X, UI16 Y, SI08 Z ) : x( X ), y( Y ), z( Z )
+	{
+	}
+	point3( R32 X, R32 Y, R32 Z ) : x( X ), y( Y ), z( Z )
+	{
+	}
 	void	Assign( UI16 X, UI16 Y, SI08 Z );
 	void	Assign( R32 X, R32 Y, R32 Z );
 	R64		Mag( void ) const;
@@ -182,7 +179,8 @@ struct GoPlaces_st
 	SI16 y;
 	SI08 z;
 	UI08 worldNum;
-	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 )
+	UI16 instanceID;
+	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 ), instanceID( 0 )
 	{
 	}
 };
@@ -268,6 +266,4 @@ struct TitlePair_st
 		toDisplay = toDisp;
 	}
 };
-
-}
 #endif

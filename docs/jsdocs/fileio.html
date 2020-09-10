@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+        <h1>UOX3 Script Engine</h1>
+        <h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h3><a name="CharFuncs">File I/O Methods</a></h3>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Open">Open</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Open( string filename, string accessMethod );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens a file for reading, writing or appending.
+<tr><td valign="top" width="25%"><b>Notes</b><td>accessMethod is a one byte string, which contains either "a" (append), "r" (read) or "w" (write).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mFile = new UOXCFile;<br>mFile.Open( "test.dat", "a" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Close">Close</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Close();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Closes a file that is currently open.
+<tr><td valign="top" width="25%"><b>Notes</b><td>Closing an unopened file is undefined.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mFile.Close();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Write">Write</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Write( string toWrite );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Writes a string out to the file.
+<tr><td valign="top" width="25%"><b>Notes</b><td>A file cannot be longer than 1MB in size.  If opened for reading, this will not work.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mFile.Write( "Hello cruel world\n" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Read">Read</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string Read( int numBytes );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns a string of length numBytes, reading numBytes from the opened file.
+<tr><td valign="top" width="25%"><b>Notes</b><td>numBytes must be at least 1 and less than or equal to 512.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mLine = mFile.Read( 80 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="ReadUntil">ReadUntil</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string ReadUntil( string delimeter );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Reads a string until it encounters a newline or the string specified by delimeter.
+<tr><td valign="top" width="25%"><b>Notes</b><td>delimiter is at most a 2 character string (for C style character escapes, where \n is a newline, \' is a quote and so on).<br>Will not read more than 512 bytes.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var untilT = mFile.ReadUntil( "t" );<br> // reads a line until it hits the letter t, a newline, or 512 bytes in length.
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Free">Free</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool Free()
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Deallocates the memory associated with creating the variable.
+<tr><td valign="top" width="25%"><b>Notes</b><td>This must be called otherwise a slow memory leak will occur.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mFile.Free();
+</pre></table><br>
+
+<h2><a name="properties">File I/O Properties</a></h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Property
+    <th bgcolor="maroon">Purpose
+  <tr>
+    <td>pos (read/write)
+    <td>The current position that you are at in the file.  This property can be read and set, where setting it moves relative to the start of file (ie if you set it to 5, it would be 5 bytes from the start, not 5 bytes from it's current location).  You cannot seek a location if you have opened the file for append.
+  <tr>
+    <td>length (read)
+    <td>The length of the file
+  <tr>
+    <td>eof (read)
+    <td>A boolean value returning true if the file pointer is at the end of the file.
+</table>
+
+
+<p>&nbsp;</p><center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+</body>

@@ -1,6 +1,6 @@
-//AI3.0-UV0.98-4-BD0h-DS1309077854-ED0
+//AI3.0-UV0.99-BD2q-DS1599237009-ED0
 //------------------------------------------------------------------------------
-// UAD Path: /uox3/accounts/admin/
+// UAD Path: ./accounts/admin/
 //------------------------------------------------------------------------------
 // UOX3 uses this file to store any extra administration info
 //------------------------------------------------------------------------------
@@ -9,7 +9,7 @@ NAME admin
 PASS admin
 BANTIME 0x0
 LASTIP 127.0.0.1
-CONTACT na
+CONTACT unknown
 //------------------------------------------------------------------------------
 CHARACTER-1 0xffffffff [INVALID]
 CHARACTER-2 0xffffffff [INVALID]
@@ -17,3 +17,4 @@ CHARACTER-3 0xffffffff [INVALID]
 CHARACTER-4 0xffffffff [INVALID]
 CHARACTER-5 0xffffffff [INVALID]
 CHARACTER-6 0xffffffff [INVALID]
+CHARACTER-7 0xffffffff [INVALID]

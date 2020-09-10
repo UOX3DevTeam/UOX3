@@ -1,26 +1,24 @@
-namespace UOX
-{
 
 #ifndef __SEFuncs_h__
 #define __SEFuncs_h__
 // Function prototypes exposed to the Script Engine
 
 // Version History
-// 1.0		Abaddon		12th September, 2000
+// 1.0		12th September, 2000
 //			Initial implementation, not many functions added
-// 1.1		Abaddon		14th September, 2000
+// 1.1		14th September, 2000
 //			Declaration of 90 API functions and implementation of around 20 of them
-// 1.2		Abaddon		18th September, 2000
+// 1.2		18th September, 2000
 //			Addition of more API functions and declarations of them
-// 1.3		Zippy		28th October, 2001
+// 1.3		28th October, 2001
 //			Addition of File i/o functions.
-// 1.4 		Shadowlord	3rd  November, 2001
+// 1.4 		3rd  November, 2001
 //			Addition of Tag functions.
 
 typedef JSBool (SEngineFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // 90 functions so far
-// *	== prototype 
+// *	== prototype
 // **	== active function
 
 // Character related functions (9)
@@ -116,6 +114,7 @@ SEngineFunc SE_Yell;
 SEngineFunc SE_SendStaticStats;
 SEngineFunc SE_GetTileHeight;
 SEngineFunc SE_IterateOver;
+SEngineFunc SE_IterateOverSpawnRegions;
 SEngineFunc SE_WorldBrightLevel;
 SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
@@ -125,6 +124,9 @@ SEngineFunc SE_ResourceAmount;
 SEngineFunc SE_ResourceTime;
 SEngineFunc SE_ResourceRegion;
 SEngineFunc SE_Moon;
+
+SEngineFunc SE_GetSpawnRegion;
+SEngineFunc SE_GetSpawnRegionCount;
 
 SEngineFunc SE_ReloadJSFile;
 SEngineFunc SE_StaticInRange;
@@ -137,5 +139,3 @@ SEngineFunc SE_ApplyDefenseModifiers;
 SEngineFunc SE_CreateParty;
 
 #endif
-
-}

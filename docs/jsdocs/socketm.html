@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="SocketFuncs">Socket Related Methods</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SysMessage">SysMessage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SysMessage( string message );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends a string as a sysmessage.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.SysMessage( "Isn't the world great?" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Disconnect">Disconnect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Disconnect();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Disconnect a client.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.Disconnect();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SoundEffect">SoundEffect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SoundEffect( sound, bAllHear );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>To play the selected sound to this socket or all in range.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>pSock.SoundEffect( 0x01, false);
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="CustomTarget">CustomTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void CustomTarget( tNum, toSay );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Very similar to PopUpTarget.  It's a callback situation instead.  tNum must be between 0 and 255.  Says toSay, and shows a cursor.  Reenters the script associated with the socket's player (ie player who gets the cursor).  Enters function name based on the value of tNum.  if tNum is 0, then the function would be onCallback0.  Prototype of callback is: <pre>function onCallback0( tSock, targSerial )</pre>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.CustomTarget( 0, "Select your custom target:" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="PopUpTarget">PopUpTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void PopUpTarget( tNum, toSay );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Provides a call to an inbuilt popup target.  tNum must be between 0 and 255 inclusive.  Says toSay, and shows a cursor.  Note that this allows access potentially to GM functions.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.PopUpTarget( 2, "Where do you wish to teleport to?" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="OpenUrl">OpenURL</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenURL( UrlString );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens a specified URL in player's browser
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.OpenURL( "http://www.uox3.org" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="OpenGump">OpenGump</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenGump( gumpMenuID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens specified gumpmenu from dfndata\misc\gumps.dfn for socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.OpenGump( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SellTo">SellTo</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SellTo( targNPC );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Brings up the shopkeeper gump for selling to a vendor targNPC.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.SellTo( myNPC );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="BuyFrom">BuyFrom</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void BuyFrom( targNPC );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Brings up the shopkeeper gump or PV backpack for buying for vendor targNPC.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.BuyFrom( myNPC );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="WhoList">WhoList</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void WhoList( bSendOnList );
+void WhoList();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sends the WhoList populated with all online characters or all offline characters.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.WhoList( true );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Music">Music</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Music( musicNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Plays the specified music.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.Music( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetTimer">GetTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void GetTimer( timerID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the specified timer value
+<tr><td valign="top" width="25%"><b>Extra Info</b><td>Current valid Socket timers are:<pre>
+	tPC_SKILLDELAY		= 0
+	tPC_OBJDELAY		= 1
+	tPC_SPIRITSPEAK		= 2
+	tPC_TRACKING		= 3
+	tPC_FISHING		= 4
+	tPC_MUTETIME		= 5
+	tPC_TRACKINGDISPLAY	= 6</pre>
+
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.GetTimer( 3 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetTimer">SetTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetTimer( timerID, numMilliSeconds );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the specified timer with the amount of miliseconds until it expires.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.SetTimer( 3, 1000 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetByte">GetByte</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned char GetByte( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a byte from a socket at offset, positive value assumed
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetByte( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSByte">GetSByte</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>signed char GetSByte( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a byte from a socket at offset, negative valus accepted
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetSByte( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetWord">GetWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return 2 bytes of data from socket at offset, positive value assumed
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetWord( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSWord">GetSWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>signed short GetSWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Retur 2 bytes of data from socket at offset, negative value accepted
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetSWord( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetDWord">GetDWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetDWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return 4 bytes of data from socket at offset, positive value assumed
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetDWord( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSDWord">GetSDWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetSDWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return 4 bytes of data from socket at offset, negative value accepted
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetSDWord( 0 );
+</pre></table>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetString">GetString</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetString( offset [, len] );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a string from a socket at offset with optional length len
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var sName = sock.GetString( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetByte">SetByte</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetByte( offset, value );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the byte at offset for socket to value
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetByte( 0, 64 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetWord">SetWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetWord( offset, value );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the 16bit word at offset for socket to value
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetWord( 0, 0164 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetDWord">SetDWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetDWord( offset, value );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the 32bit word at offset for socket to value
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetDWord( 0, 01640164 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetString">SetString</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetString( offset, value );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the string at offset for socket to value
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetString( 0, "Die!" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="ReadBytes">ReadBytes</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ReadBytes( bytecount );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Reads bytecount bytes from socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.ReadBytes( 12 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="DisplayDamage" id="DisplayDamage">DisplayDamage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void DisplayDamage( pUser, damage );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Displays specified damage value over character's head
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>socket.DisplayDamage( pUser, 15 );</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="SendAddMenu" id="SendAddMenu">SendAddMenu</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool SendAddMenu( menuNum );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Send the Add-menu to the character
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>socket.SendAddMenu( 1 );</pre>
+</table>
+
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font>
+</center>
+
+</body>

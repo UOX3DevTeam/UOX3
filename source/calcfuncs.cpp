@@ -1,28 +1,19 @@
-//o--------------------------------------------------------------------------o
-//|	File					-	calcfuncs.cpp
-//|	Date					-	
-//|	Developers		-	
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	calcfuncs.cpp
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Various functions to calculate objects from serials
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "townregion.h"
 #include "network.h"
 #include "ObjectFactory.h"
 
-namespace UOX
-{
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar *calcCharObjFromSer( SERIAL targSerial )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the character object based on the calling serial
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CChar *calcCharObjFromSer( SERIAL targSerial )
 {
 	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
@@ -35,12 +26,11 @@ CChar *calcCharObjFromSer( SERIAL targSerial )
 	return toRet;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *calcItemObjFromSer( SERIAL targSerial )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the item object based on the calling serial
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CItem *calcItemObjFromSer( SERIAL targSerial )
 {
 	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
@@ -66,14 +56,11 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	UI08 calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
-//|	Date			-	Unknown
-//|	Programmer		-	UOX3 DevTeam
-//|	Modified		-
+//|	Function	-	CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 //o--------------------------------------------------------------------------
-//|	Purpose			-	Find what region x and y are in
+//|	Purpose		-	Find what region x and y are in
 //o--------------------------------------------------------------------------
-CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID )
 {
 	const regLocs *getLoc	= NULL;
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -81,7 +68,7 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 	while( tIter != tEnd )
 	{
 		CTownRegion *myReg = tIter->second;
-		if( myReg != NULL && myReg->WorldNumber() == worldNumber )
+		if( myReg != NULL && myReg->WorldNumber() == worldNumber && myReg->GetInstanceID() == instanceID )
 		{
 			for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
 			{
@@ -96,7 +83,5 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 		++tIter;
 	}
 	return cwmWorldState->townRegions[0xFF];
-}
-
 }
 

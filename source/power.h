@@ -1,17 +1,11 @@
 #ifndef __POWER_H__
 #define __POWER_H__
 
-namespace UOX
-{
-
-//o--------------------------------------------------------------------------
-//|	Function		-	UI32 power( SI32 base, SI32 exponent )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Integer based version of the pow() function
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 power( SI32 base, SI32 exponent )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Integer based version of the pow() function
+//o-----------------------------------------------------------------------------------------------o
 inline UI32 power( UI32 base, UI32 exponent )
 {
 	if( exponent == 0 )
@@ -24,8 +18,6 @@ inline UI32 power( UI32 base, UI32 exponent )
 		return total;
 	}
 	return 0;
-}
-
 }
 
 #endif

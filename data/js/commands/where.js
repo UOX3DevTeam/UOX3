@@ -18,6 +18,7 @@ function command_WHERE( socket, cmdString )
 		var y 		= mChar.y.toString();
 		var z 		= mChar.z.toString();
 		var worldNum 	= mChar.worldnumber.toString();
-		socket.SysMessage( x + " " + y + " " + z + " " + worldNum );
+		var instanceID 	= mChar.instanceID;
+		socket.SysMessage( x + " " + y + " " + z + " " + worldNum + " " + instanceID );
 	}
 }

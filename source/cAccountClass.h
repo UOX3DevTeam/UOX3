@@ -1,38 +1,17 @@
-//o--------------------------------------------------------------------------o
-//|	File					-	cAccountClass.h
-//|	Date					-	12/6/2002 4:33:44 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Header file for the cAccountClass class. See xRFC0004.txt
-//|									for more details.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	cAccountClass.h
+//|	Date		-	12/6/2002 4:33:44 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Header file for the cAccountClass class. See xRFC0004.txt for more details.
+//o-----------------------------------------------------------------------------------------------o
 #ifndef __CACCOUNTCLASS_H__
 #define __CACCOUNTCLASS_H__
 
-#if defined(_MSC_VER)
-#pragma warning(disable : 4786 )
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-#endif
 
 #include <iosfwd>
+#include "typedefs.h"
 
-#if UOX_PLATFORM != PLATFORM_WIN32
-	#include <dirent.h>
-	#define _stat stat
-	#define _mkdir mkdir
-	#define _rmdir rmdir
-#else
-	#include <direct.h>
-	#define _mkdir(s1,s2) _mkdir(s1)
-#endif
 
-namespace UOX
-{
 
 // Enums
 
@@ -62,32 +41,26 @@ enum CAccountBlock_Flags
 	AB_FLAGS_GM			=	15,
 	AB_FLAGS_ALL		=	16
 };
-//
 
-//o--------------------------------------------------------------------------o
-//|	Class/Struct	-	typedef struct CAccountBlock
-//|	Date			-	12/6/2002 5:46:10 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	All the data has been moved to once again stored in the
-//|									accounts.adm file. So changes to this typedef were needed
-//|									to reflect the members being moved back, and the inclusion
-//|									of PATH, and FLAGS to cover the storage locations.
-//|									
-//|									sUsername: username for this account
-//|									sPassword: password for this account
-//|									aPath    : path to where the username.uad file will be stored
-//|									sContact : typically the email address for this account
-//|									wAccountIndex: which block is this accounts.
-//|									wFlags   : flags controlling the allowed accounts functions
-//|									dwLastIP : ip address of the last connection from this account
-//|									dwCharacters[5]: straight ID number for this account
-//|									lpCharacters[5]: 
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Struct		-	typedef struct CAccountBlock
+//|	Date		-	12/6/2002 5:46:10 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	All the data has been moved to once again stored in the
+//|						accounts.adm file. So changes to this typedef were needed
+//|						to reflect the members being moved back, and the inclusion
+//|						of PATH, and FLAGS to cover the storage locations.
+//|
+//|						sUsername: username for this account
+//|						sPassword: password for this account
+//|						aPath    : path to where the username.uad file will be stored
+//|						sContact : typically the email address for this account
+//|						wAccountIndex: which block is this accounts.
+//|						wFlags   : flags controlling the allowed accounts functions
+//|						dwLastIP : ip address of the last connection from this account
+//|						dwCharacters[5]: straight ID number for this account
+//|						lpCharacters[5]:
+//o-----------------------------------------------------------------------------------------------o
 typedef struct CAccountBlock
 {
 #if _NOACTCOPY_
@@ -97,11 +70,8 @@ private:
 #endif
 public:
 	CAccountBlock( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
-		wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
-		dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 )
-#if UOX_PLATFORM == WIN32
-		, dbRetrieved( false )
-#endif
+	wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
+	dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 )
 	{
 		for( UI08 i = 0; i < 7; ++i )
 		{
@@ -126,9 +96,6 @@ public:
 			lpCharacters[i] = NULL;
 		}
 		wFlags.reset();
-#if UOX_PLATFORM == WIN32
-		dbRetrieved = false;
-#endif
 	}
 	std::string					sUsername;
 	std::string					sPassword;
@@ -145,9 +112,6 @@ public:
 	bool						bChanged;
 	UI32						dwCharacters[7];
 	CChar *						lpCharacters[7];
-#if UOX_PLATFORM == WIN32
-	bool						dbRetrieved;
-#endif
 } CAccountBlock;
 
 // Class typdefs to help simplify the use of map STL
@@ -157,18 +121,13 @@ typedef std::map< std::string, CAccountBlock * >::iterator			MAPUSERNAME_ITERATO
 typedef std::map< std::string, CAccountBlock * >::const_iterator	MAPUSERNAME_CITERATOR;
 typedef std::map< UI16, CAccountBlock >::iterator					MAPUSERNAMEID_ITERATOR;
 typedef std::map< UI16, CAccountBlock >::const_iterator				MAPUSERNAMEID_CITERATOR;
-//o--------------------------------------------------------------------------o
-//|	Class/Struct	-	class cAccountClass
-//|	Date			-	12/6/2002 5:46:02 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-class cAccountClass  
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	class cAccountClass
+//|	Date		-	12/6/2002 5:46:02 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-
+//o-----------------------------------------------------------------------------------------------o
+class cAccountClass
 {
 public:
 	// Construction/Destruction
@@ -177,7 +136,7 @@ public:
 	~cAccountClass();
 	// Operator overloads
 	cAccountClass& operator++();
-	cAccountClass& operator--(int);
+	cAccountClass& operator--(SI32);
 	UI16					CreateAccountSystem( void );
 	UI16					ImportAccounts( void );
 	void					WriteAccountSection( CAccountBlock& actbTemp, std::fstream& fsOut );
@@ -188,7 +147,7 @@ public:
 	std::string				GetPath( void );
 	UI16					Save( bool bForceLoad = false );
 	UI16					Load( void );
-	size_t					size( void );
+	UI32					size( void );
 	bool					clear( void );
 	bool					isUser( std::string sUsername );
 	bool					AddCharacter( UI16 wAccountID, CChar *lpObject );
@@ -215,17 +174,9 @@ private:
 	MAPUSERNAMEID	m_mapUsernameIDMap;
 	UI16			m_wHighestAccount;
 	std::string		m_sAccountsDirectory;
-
-#if UOX_PLATFORM == WIN32
-	bool					LoadFromDB( UI16& numLoaded );
-	bool					SaveToDB( UI16& numSaved );
-	bool					FinaliseBlock( CAccountBlock& toFinalise );
-#endif
 };
 
 extern cAccountClass *Accounts;
-
-}
 
 #endif // __CACCOUNTCLASS_H__
 

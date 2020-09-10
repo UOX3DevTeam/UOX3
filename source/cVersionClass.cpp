@@ -1,35 +1,25 @@
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	
-//|	Date			-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status			-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns			-
-//o--------------------------------------------------------------------------o
-//|	Notes			-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	cVersionClass.cpp
+//|	Date		-	10/17/2002
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles version info for builds
+//o-----------------------------------------------------------------------------------------------o
 #include <string>
 #include "cVersionClass.h"
 
-namespace UOX
-{
-
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 // product info
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 const std::string VER				= "0.99";
-const std::string BUILD				= "2k";
+const std::string BUILD				= "3";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";
 const std::string IVER				= "2.0";
 const std::string PRODUCT			= "Ultima Offline eXperiment 3";
-const std::string NAME				= "The UOX3 DevTeam";
+const std::string NAME				= "UOX3";
 const std::string EMAIL				= "https://www.uox3.org/";
-const std::string PROGRAMMERS		= "UOX3 DevTeam";
+const std::string PROGRAMMERS		= "Countless! See UOX3 Hall of Fame in documentation!";
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -37,7 +27,7 @@ const std::string PROGRAMMERS		= "UOX3 DevTeam";
 CVersionClass::CVersionClass()
 {
 }
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CVersionClass::~CVersionClass()
 {
 
@@ -91,6 +81,4 @@ std::string CVersionClass::GetEmail( void )
 std::string CVersionClass::GetProgrammers( void )
 {
 	return PROGRAMMERS;
-}
-
 }

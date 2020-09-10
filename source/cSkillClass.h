@@ -3,9 +3,6 @@
 
 #include <algorithm>
 
-namespace UOX
-{
-
 class cSkillClass
 {
 public:
@@ -19,7 +16,7 @@ public:
 
 inline bool operator==(const cSkillClass& x, const cSkillClass& y)
 {
-    return ( x.value == y.value );
+	return ( x.value == y.value );
 }
 
 inline bool operator<(const cSkillClass& x, const cSkillClass& y)
@@ -30,8 +27,6 @@ inline bool operator<(const cSkillClass& x, const cSkillClass& y)
 inline bool operator>(const cSkillClass& x, const cSkillClass& y)
 {
 	return ( ( x.value == y.value ) ? ( x.skill > y.skill ) : ( x.value > y.value ) );
-}
-
 }
 
 #endif

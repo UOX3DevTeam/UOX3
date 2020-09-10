@@ -1,7 +1,3 @@
-// Abaddon:  I have a VERY set idea of features and plans for races
-// Please DO NOT TOUCH THEM, because I will be working on them quite
-// solidly, along with EviLDeD, over the next few months.  
-
 #include "uox3.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
@@ -11,16 +7,14 @@
 #include "CJSEngine.h"
 #include "power.h"
 
-namespace UOX
-{
 
 cRaces *Races = NULL;
 
 const UI08 MALE = 1;
 const UI08 FEMALE = 2;
 
-const RACEREL MAX_ENEMY = -100;
-const RACEREL MAX_ALLY  = 100;
+//const RACEREL MAX_ENEMY = -100;
+//const RACEREL MAX_ALLY  = 100;
 
 const UI32 BIT_REQBEARD		= 0;
 const UI32 BIT_NOBEARD		= 1;
@@ -74,7 +68,7 @@ void cRaces::DefaultInitCombat( void )
 }
 
 void cRaces::load( void )
-// PRE:		races.scp exists
+// PRE:		races.dfn exists
 // POST:	class loaded and populated, dynamically
 {
 	UI32 i = 0;
@@ -87,7 +81,7 @@ void cRaces::load( void )
 
 	while( !done )
 	{
-		sect					= "RACE " + UString::number( raceCount );
+		sect					= std::string("RACE ") + str_number( raceCount );
 		ScriptSection *tempSect = FileLookup->FindEntry( sect, race_def );
 		if( tempSect == NULL )
 			done = true;
@@ -98,7 +92,7 @@ void cRaces::load( void )
 	for( i = 0; i < raceCount; ++i )
 		races.push_back( new CRace( raceCount ) );
 
-	ScriptSection *CombatMods = FileLookup->FindEntry( "COMBAT MODS", race_def );
+	ScriptSection *CombatMods = FileLookup->FindEntry( std::string("COMBAT MODS"), race_def );
 	if( CombatMods != NULL )
 	{
 		tag = CombatMods->First();
@@ -115,7 +109,7 @@ void cRaces::load( void )
 			}
 			else
 			{
-				UI32 modifierCount = CombatMods->GrabData().toULong();
+				UI32 modifierCount = CombatMods->GrabData().toUInt();
 				if( modifierCount < 4 )
 				{
 					Console << "MODCOUNT must be more >= 4, or it uses the defaults!" << myendl;
@@ -198,7 +192,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 		lossMap[STRENGTH] = "strength";
 		lossMap[DEXTERITY] = "speed";
 		lossMap[INTELLECT] = "wisdom";
-	
+
 		beardobject = s->GetItemAtLayer( IL_FACIALHAIR );
 		hairobject	= s->GetItemAtLayer( IL_HAIR );
 		if( pRace->GenderRestriction() != 0 )
@@ -229,7 +223,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				mSock->sysmessage( 371, lossMap[counter].c_str() );
 				stats[counter-STRENGTH] = pRace->Skill( counter );
 			}
-			else 
+			else
 				stats[counter-STRENGTH] = 0;
 		}
 		if( stats[0] != 0 )
@@ -302,7 +296,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 		Effects->PlayStaticAnimation( s, 0x373A, 0, 15 );
 		Effects->PlaySound( s, 0x01E9 );
 	}
-	else 
+	else
 		mSock->sysmessage( 372 );
 }
 
@@ -331,19 +325,19 @@ bool cRaces::hairInRange( COLOUR color, RACEID x ) const
 	return races[x]->IsValidHair( color );
 }
 
-SKILLVAL cRaces::Skill( int skill, RACEID race ) const
+SKILLVAL cRaces::Skill( SI32 skill, RACEID race ) const
 // PRE:	skill is valid, race is valid
 // POST:	returns skill bonus associated with race
-{ 
+{
 	if( InvalidRace( race ) || skill >= ALLSKILLS )
 		return 0;
 	return races[race]->Skill( skill );
 }
 
-void cRaces::Skill( int skill, int value, RACEID race )
+void cRaces::Skill( SI32 skill, SI32 value, RACEID race )
 // PRE:	skill is valid, value is valid, race is valid
 // POST:	sets race's skill bonus to value
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
 	races[race]->Skill( value, skill );
@@ -353,7 +347,7 @@ GENDER cRaces::GenderRestrict( RACEID race ) const
 // PRE:	Race is valid
 // POST:	returns whether race's gender is restricted, and if so, which gender
 //		0 - none 1 - male 2 - female
-{ 
+{
 	if( InvalidRace( race ) )
 		return MALE;
 	return races[race]->GenderRestriction();
@@ -362,7 +356,7 @@ GENDER cRaces::GenderRestrict( RACEID race ) const
 void cRaces::GenderRestrict( GENDER gender, RACEID race )
 // PRE:	Race is valid, gender is valid
 // POST:	Sets race's gender restriction
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
 	races[race]->GenderRestriction( gender );
@@ -371,7 +365,7 @@ void cRaces::GenderRestrict( GENDER gender, RACEID race )
 bool cRaces::RequireBeard( RACEID race ) const
 // PRE:	race is valid
 // POST:	returns whether race must have beard
-{ 
+{
 	if( InvalidRace( race ) )
 		return false;
 	return races[race]->RequiresBeard();
@@ -380,25 +374,25 @@ bool cRaces::RequireBeard( RACEID race ) const
 void cRaces::RequireBeard( bool value, RACEID race )
 // PRE:	Race is valid, and value is true or false
 // POST:	sets whether race requires a beard
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->RequiresBeard( value ); 
+	races[race]->RequiresBeard( value );
 }
 
 void cRaces::ArmorRestrict( RACEID race, ARMORCLASS value )
 // PRE:	Race is valid, value is a valid armorclass
 // POST:	sets the armor class of race
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->ArmourClassRestriction( value ); 
+	races[race]->ArmourClassRestriction( value );
 }
 
 ARMORCLASS cRaces::ArmorRestrict( RACEID race ) const
 // PRE:	Race is valid
 // POST:	Returns armor class of race
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
 	return races[race]->ArmourClassRestriction();
@@ -407,7 +401,7 @@ ARMORCLASS cRaces::ArmorRestrict( RACEID race ) const
 COLOUR cRaces::RandomSkin( RACEID x ) const
 // PRE:	Race is valid
 // POST:	returns a valid skin colour for the race
-{ 
+{
 	if( InvalidRace( x ) )
 		return 0000;
 	return races[x]->RandomSkin();
@@ -416,7 +410,7 @@ COLOUR cRaces::RandomSkin( RACEID x ) const
 COLOUR cRaces::RandomHair( RACEID x ) const
 // PRE:	Race is valid
 // POST:	returns a valid hair colour for the race
-{ 
+{
 	if( InvalidRace( x ) )
 		return 0000;
 	return races[x]->RandomHair();
@@ -425,7 +419,7 @@ COLOUR cRaces::RandomHair( RACEID x ) const
 COLOUR cRaces::RandomBeard( RACEID x ) const
 // PRE:	Race is valid
 // POST:	returns a valid beard colour for the race
-{ 
+{
 	if( InvalidRace( x ) )
 		return 0;
 	return races[x]->RandomBeard();
@@ -434,7 +428,7 @@ COLOUR cRaces::RandomBeard( RACEID x ) const
 bool cRaces::beardRestricted( RACEID x ) const
 // PRE:	race is valid
 // POST:	returns true if race's beard colour is restricted
-{ 
+{
 	if( InvalidRace( x ) )
 		return false;
 	return races[x]->IsBeardRestricted();
@@ -443,7 +437,7 @@ bool cRaces::beardRestricted( RACEID x ) const
 bool cRaces::hairRestricted( RACEID x ) const
 // PRE:	race is valid
 // POST:	returns true if race's hair colour is restricted
-{ 
+{
 	if( InvalidRace( x ) )
 		return false;
 	return races[x]->IsHairRestricted();
@@ -452,13 +446,13 @@ bool cRaces::hairRestricted( RACEID x ) const
 bool cRaces::skinRestricted( RACEID x ) const
 // PRE:	race is valid
 // POST:	returns true if race's skin colour is restricted
-{ 
+{
 	if( InvalidRace( x ) )
 		return false;
 	return races[x]->IsSkinRestricted();
 }
 
-SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
+SI32 cRaces::DamageFromSkill( SI32 skill, RACEID x ) const
 // PRE:	x is valid, skill is valid
 // POST:	returns chance difference to race x in skill skill
 {
@@ -474,21 +468,21 @@ SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
 	return 0;
 }
 
-SI32 cRaces::FightPercent( int skill, RACEID x ) const
+SI32 cRaces::FightPercent( SI32 skill, RACEID x ) const
 // PRE:	x is valid, skill is valid
 // POST:	returns positive/negative fight damage bonus for race x with skill skill
 {
 	if( InvalidRace( x ) )
 		return 100;
 	SKILLVAL modifier = races[x]->Skill( skill );
-	int divValue = combat[modifier].value / 10;
+	SI32 divValue = combat[modifier].value / 10;
 	divValue = divValue / 10;
 	if( divValue == 0 )
 		return 100;
-	if( modifier >= static_cast<int>(combat.size()) )
-		return -(int)(100/(R32)divValue);
+	if( modifier >= static_cast<SI32>(combat.size()) )
+		return -(SI32)(100/(R32)divValue);
 	else
-		return (int)(100/(R32)divValue);
+		return (SI32)(100/(R32)divValue);
 	return 100;
 }
 
@@ -545,94 +539,94 @@ void cRaces::LanguageMin( SKILLVAL toSetTo, RACEID race )
 void cRaces::LightLevel( RACEID race, LIGHTLEVEL value )
 // PRE:	Race is valid, value is a valid light level
 // POST:	the light level that race burns at is set to value
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->LightLevel( value ); 
+	races[race]->LightLevel( value );
 }
 
 LIGHTLEVEL cRaces::LightLevel( RACEID race ) const
 // PRE:	Race is valid
 // POST:	Returns the light level that race burns at
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
-	return races[race]->LightLevel(); 
+	return races[race]->LightLevel();
 }
 
 void cRaces::ColdLevel( RACEID race, COLDLEVEL value )
 // PRE:	Race is valid, value is a valid cold level
 // POST:	the cold level that race burns at is set to value
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->ColdLevel( value ); 
+	races[race]->ColdLevel( value );
 }
 
 COLDLEVEL cRaces::ColdLevel( RACEID race ) const
 // PRE:	Race is valid
 // POST:	Returns the cold level that race burns at
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
-	return races[race]->ColdLevel(); 
+	return races[race]->ColdLevel();
 }
 
 void cRaces::HeatLevel( RACEID race, HEATLEVEL value )
 // PRE:	Race is valid, value is a valid heat level
 // POST:	the light heat that race burns at is set to value
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->HeatLevel( value ); 
+	races[race]->HeatLevel( value );
 }
 
 HEATLEVEL cRaces::HeatLevel( RACEID race ) const
 // PRE:	Race is valid
 // POST:	Returns the heat level that race burns at
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
-	return races[race]->HeatLevel(); 
+	return races[race]->HeatLevel();
 }
 
 void cRaces::DoesHunger( RACEID race, bool value )
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->DoesHunger( value ); 
+	races[race]->DoesHunger( value );
 }
 bool cRaces::DoesHunger( RACEID race ) const
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
-	return races[race]->DoesHunger(); 
+	return races[race]->DoesHunger();
 }
 
 void cRaces::SetHungerRate( RACEID race, UI16 value )
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->SetHungerRate( value ); 
+	races[race]->SetHungerRate( value );
 }
 UI16 cRaces::GetHungerRate( RACEID race ) const
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
-	return races[race]->GetHungerRate(); 
+	return races[race]->GetHungerRate();
 }
 
 void cRaces::SetHungerDamage( RACEID race, SI16 value )
-{ 
+{
 	if( InvalidRace( race ) )
 		return;
-	races[race]->SetHungerDamage( value ); 
+	races[race]->SetHungerDamage( value );
 }
 SI16 cRaces::GetHungerDamage( RACEID race ) const
-{ 
+{
 	if( InvalidRace( race ) )
 		return 0;
-	return races[race]->GetHungerDamage(); 
+	return races[race]->GetHungerDamage();
 }
 
 bool cRaces::Affect( RACEID race, WeatherType element ) const
@@ -742,17 +736,17 @@ void cRaces::debugPrint( RACEID x )
 		return;
 	Console << "Race ID: " << x << myendl;
 	Console << "Race: " << races[x]->Name() << myendl;
-	if( races[x]->RequiresBeard() ) 
+	if( races[x]->RequiresBeard() )
 		Console << "Req Beard: Yes" << myendl;
-	else 
+	else
 		Console << "Req Beard: No" << myendl;
-	if( races[x]->NoBeard() ) 
+	if( races[x]->NoBeard() )
 		Console << "No Beard: Yes" << myendl;
-	else 
+	else
 		Console << "No Beard: No" << myendl;
-	if( races[x]->IsPlayerRace() ) 
+	if( races[x]->IsPlayerRace() )
 		Console << "Player Race: Yes" << myendl;
-	else 
+	else
 		Console << "Player Race: No" << myendl;
 	Console << "Restrict Gender: " << races[x]->GenderRestriction() << myendl;
 	Console << "LightLevel: " << races[x]->LightLevel() << myendl;
@@ -784,7 +778,7 @@ void cRaces::IsPlayerRace( RACEID x, bool value )
 	races[x]->IsPlayerRace( value );
 }
 
-SKILLVAL CRace::Skill( int skillNum ) const
+SKILLVAL CRace::Skill( SI32 skillNum ) const
 {
 	return iSkills[skillNum];
 }
@@ -851,7 +845,7 @@ RANGE CRace::VisibilityRange( void ) const
 	return visDistance;
 }
 
-void CRace::Skill( SKILLVAL newValue, int iNum )
+void CRace::Skill( SKILLVAL newValue, SI32 iNum )
 {
 	iSkills[iNum] = newValue;
 }
@@ -958,7 +952,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
 	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
 	memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
-	
+
 	Skill( 100, STRENGTH );
 	Skill( 100, DEXTERITY );
 	Skill( 100, INTELLECT );
@@ -971,7 +965,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 }
 
 
-CRace::CRace( int numRaces ) : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
+CRace::CRace( SI32 numRaces ) : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
 {
 	NumEnemyRaces( numRaces );
@@ -991,7 +985,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	SetHungerDamage( 0 );
 	weatherAffected.reset();
 }
-void CRace::NumEnemyRaces( int iNum )
+void CRace::NumEnemyRaces( SI32 iNum )
 {
 	racialEnemies.resize( iNum );
 }
@@ -1004,6 +998,7 @@ COLOUR CRace::RandomSkin( void ) const
 {
 	if( !IsSkinRestricted() )
 		return 0;
+
 	size_t sNum = RandomNum( static_cast< size_t >(0), skinColours.size() - 1 );
 	return (COLOUR)RandomNum( skinColours[sNum].cMin, skinColours[sNum].cMax );
 }
@@ -1012,6 +1007,7 @@ COLOUR CRace::RandomHair( void ) const
 	if( !IsHairRestricted() )
 		return 0;
 	size_t sNum = RandomNum( static_cast< size_t >(0), hairColours.size() - 1 );
+
 	return (COLOUR)RandomNum( hairColours[sNum].cMin, hairColours[sNum].cMax );
 }
 COLOUR CRace::RandomBeard( void ) const
@@ -1113,13 +1109,13 @@ void CRace::StamModifier( SI16 value )
 		StamMod = -99;
 }
 
-void CRace::Load( size_t sectNum, int modCount )
+void CRace::Load( size_t sectNum, SI32 modCount )
 {
 	UString tag;
 	UString data;
 	UString UTag;
 	SI32 raceDiff = 0;
-	UString sect = "RACE " + UString::number( sectNum );
+	UString sect = std::string("RACE ") + str_number( sectNum );
 	ScriptSection *RacialPart = FileLookup->FindEntry( sect, race_def );
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
@@ -1177,21 +1173,28 @@ void CRace::Load( size_t sectNum, int modCount )
 
 			case 'h':
 			case 'H':
-				if( UTag == "HAIRMIN" )
+				if( UTag == "HAIRMIN" ){
 					hairMin = data.toUShort();
-				else if( UTag == "HAIRMAX" )
+				}
+				else if( UTag == "HAIRMAX" ){
 					hairColours.push_back( ColourPair( hairMin, data.toUShort() ) );
-				else if( UTag == "HEATAFFECT" )	// are we affected by light?
+				}
+				else if( UTag == "HEATAFFECT" )	{// are we affected by light?
 					AffectedBy( true, HEAT );
-				else if( UTag == "HEATDAMAGE" )	// how much damage to take from light
+				}
+				else if( UTag == "HEATDAMAGE" )	{// how much damage to take from light
 					WeatherDamage( data.toUShort(), HEAT );
-				else if( UTag == "HEATLEVEL" )	// heat level at which to take damage
+				}
+				else if( UTag == "HEATLEVEL" ){	// heat level at which to take damage
 					HeatLevel( data.toUShort() );
-				else if( UTag == "HEATSECS" )		// how often light affects in secs
+				}
+				else if( UTag == "HEATSECS" ){		// how often light affects in secs
 					WeatherSeconds( data.toUShort(), HEAT );
-				else if( UTag == "HPMOD" ) // how much additional percent of strength are hitpoints
+				}
+				else if( UTag == "HPMOD" ) {// how much additional percent of strength are hitpoints
 					HPModifier( data.toShort() );
-				else if( UTag == "HUNGER" )	// does race suffer from hunger
+				}
+				else if( UTag == "HUNGER" )	{// does race suffer from hunger
 					if( data.sectionCount( "," ) != 0 )
 					{
 						SetHungerRate( static_cast<UI16>(data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() ) );
@@ -1202,10 +1205,13 @@ void CRace::Load( size_t sectNum, int modCount )
 						SetHungerRate( 0 );
 						SetHungerDamage( 0 );
 					}
-					if( GetHungerRate() > 0 )
+					if( GetHungerRate() > 0 ){
 						DoesHunger( true );
-					else
+					}
+					else{
 						DoesHunger( false );
+					}
+				}
 				break;
 
 			case 'i':
@@ -1231,8 +1237,8 @@ void CRace::Load( size_t sectNum, int modCount )
 					WeatherDamage( data.toUShort(), LIGHTNING );
 				else if( UTag == "LIGHTNINGCHANCE" )		// how big is the chance to get hit by a lightning
 					WeatherSeconds( data.toUShort(), LIGHTNING );
-				else if( UTag == "LANGUAGEMIN" ) // set language min 
-					LanguageMin( data.toUShort() ); 
+				else if( UTag == "LANGUAGEMIN" ) // set language min
+					LanguageMin( data.toUShort() );
 				break;
 
 			case 'm':
@@ -1284,7 +1290,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				}
 				else if( UTag == "RACIALENEMY" )
 				{
-					raceDiff = data.toLong();
+					raceDiff = data.toInt();
 					if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
 						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid enemy race " << raceDiff << myendl;
 					else
@@ -1292,7 +1298,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				}
 				else if( UTag == "RACIALAID" )
 				{
-					raceDiff = data.toLong();
+					raceDiff = data.toInt();
 					if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
 						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid ally race " <<  raceDiff << myendl;
 					else
@@ -1331,7 +1337,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				break;
 		}
 
-		for( int iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
+		for( SI32 iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
 		{
 			UString skillthing = cwmWorldState->skill[iCountA].name;
 			skillthing += "G";
@@ -1422,6 +1428,4 @@ CRace& CRace::operator =( CRace& trgRace )
 size_t cRaces::Count( void ) const
 {
 	return races.size();
-}
-
 }

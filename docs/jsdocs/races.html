@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="Race">Race Related Functions</a><br>
+  <br>
+</h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceCount">GetRaceCount</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetRaceCount();</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Counts all Races available on the Server.
+<tr><td valign="top" width="25%"><b>Example of Usage</b>
+<td> Could be used for a RaceSelector using a Gump... <br>
+<pre>
+for (var i = 0; i &lt; GetRaceCount(); i++) {
+	if (IsPlayerRace(i)) {
+      		// Display the race on the gump
+      	}
+} </pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsRaceWeakToWeather">IsRaceWeakToWeather</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsRaceWeakToWeather( race, weatherType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if race is weak to weatherType.  The list of weather types are:<br>0 - Light<br>1 - Rain<br>2 - Cold<br>3 - Heat<br>4 - Lightning<br>5 - Snow
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( IsRaceWeakToWeather( GetRace( pTalking ), 0 ) )
+<br>{
+<br>	TextMessage( pTalkingTo, "I call forth the power of heaven!" );
+<br>	// TO DO: Change light level brighter here
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceRequiresBeard">RaceRequiresBeard</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool RaceRequiresBeard( raceID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if raceID requires a beard
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( RaceRequiresBeard( GetRace( pTalking ) ) )
+<br>{
+<br>	TextMessage( pTalkingTo, "Oh, I wish I could be like you, just for the beard!" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceRequiresNoBeard">RaceRequiresNoBeard</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool RaceRequiresNoBeard( raceID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the race requires the person has no beard.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( RaceRequiresNoBeard( GetRace( pTalking ) ) )
+<br>{
+<br>	TextMessage( pTalkingTo, "Oh dear, I don't want to give up my beard" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CanWearArmour">CanWearArmour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CanWearArmour( tItem );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the race raceID can equip the item tItem.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.CanWearArmour( tItem )
+{
+	pTalking.TextMessage( "Whoo hoo, I can wear it" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetRaceSkillAdjustment">GetRaceSkillAdjustment</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>signed char GetRaceSkillAdjustment( raceID, skillNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the % increase that raceID gets for skillNum.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetRaceSkillAdjustment( GetRace( pTalking ), 32 ) > 10 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Wow, that's a big increase in spirit speak you get there" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidHairColour">IsValidHairColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidHairColour( tColour );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the hair colour is valid for raceID.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.IsValidHairColour( 1 ))
+<br>{
+<br>	pTalking.TextMessage( "awww, my hair can't be this colour?" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidSkinColour">IsValidSkinColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidSkinColour( tColour );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the skin colour is valid for raceID.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.IsValidSkinColour( 1 ))
+<br>{
+<br>	pTalking.TextMessage( "awww, my skin can't be this colour?" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidBeardColour">IsValidBeardColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidBeardColour( tColour );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the beard colour is valid for raceID.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.IsValidBeardColour( 1 ))
+<br>{
+<br>	pTalking.TextMessage( "awww, my beard can't be this colour?" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceCompare">RaceCompare</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>char RaceCompare( srcChar, trgChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the relationship between the races of the 2 characters.  If it's 0, then they're neutral.  If it's bigger than 0 and less than 100, then they're allies.  If it's less than 0 and greater than -100, then it's an enemy.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( RaceCompare( pTalkingTo, pTalking ) < 0 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Oh my god, get away from me!" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceCompareByRace">RaceCompareByRace</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>char RaceCompareByRace( srcRace, trgRace );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the relationship of the two races.  If it's 0, then they're neutral.  If it's greater than 0 and less than 100, then they're allies.  If it's less than 0 and greater than -100, then they're enemies.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( RaceCompareByRace( GetRace( pTalkingTo ), GetRace( pTalking ) ) < 0 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Oh my god, get away from me!" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceGate">RaceGate</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void RaceGate( socket, character, raceID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the characters race.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>RaceGate( mSock, mChar, newRace );
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

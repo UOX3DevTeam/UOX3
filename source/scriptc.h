@@ -1,19 +1,13 @@
 #ifndef __SCRIPTC_H__
 #define __SCRIPTC_H__
 
-namespace UOX
-{
-
-#if defined( _MSC_VER )
-#pragma warning( disable : 4786 )
-#endif
 
 typedef std::map< std::string, ScriptSection * >	SSMAP;
 
-class Script 
+class Script
 {
 public:
-	long lastModTime;
+	UI32 lastModTime;
 	Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp = true );
 	~Script();
 
@@ -46,7 +40,5 @@ private:
 	DEFINITIONCATEGORIES	dfnCat;
 	std::fstream			input;
 };
-
-}
 
 #endif

@@ -1,5 +1,6 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.98                       *
+//*                         UOX3 DFNs v0.99.3                     *
+//*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
 //* Last Update : 1/4/2003                                        *
 //* Script : misc.dfn                                             *
@@ -106,84 +107,84 @@ Four
 Five
 Six
 }
-[GUMPMENU 4] 
-{ 
-type 5 
-page 0                                          // Page 0 
+[GUMPMENU 4]
+{
+type 5
+page 0                                          // Page 0
 resizepic 0 0 5120 420 400                      // Tile Dark Gray Background (third number)
 resizepic 10 10 3000 400 380                    // Tile White Background (third number)
 gumppic 120 25 10452                            // Sign Image (third number)
 
 button 35 105 4011 4012 0 1 0                   // Button - Info (width, height, gump, gump...)
-button 35 350 4005 4006 1 0 10005               // Button - Change house sign 
-button 195 105 4008 4009 0 2 0                  // Button - Friends 
-button 300 105 4029 4030 0 3 0                  // Button - Options 
-button 330 350 4017 4018 1 0 0                  // Button - Exit 
+button 35 350 4005 4006 1 0 10005               // Button - Change house sign
+button 195 105 4008 4009 0 2 0                  // Button - Friends
+button 300 105 4029 4030 0 3 0                  // Button - Options
+button 330 350 4017 4018 1 0 0                  // Button - Exit
 
-htmlgump 70 105 90 20 0 0 0                     // Info 
-htmlgump 230 105 65 20 1 0 0                    // Friends 
-htmlgump 335 105 75 20 2 0 0                    // Options 
-htmlgump 70 354 175 20 3 0 0                    // Change House Sign 
+htmlgump 70 105 90 20 0 0 0                     // Info
+htmlgump 230 105 65 20 1 0 0                    // Friends
+htmlgump 335 105 75 20 2 0 0                    // Options
+htmlgump 70 354 175 20 3 0 0                    // Change House Sign
 
-htmlgump 300 354 40 20 4 0 0                    // Exit 
+htmlgump 300 354 40 20 4 0 0                    // Exit
 
-page 1 
+page 1
 
-htmlgump 35 145 350  20 5 0 0                   // Owned by: 
-htmlgump 35 180 350 20 6 0 0                    // Number of locked down items: 
-htmlgump 35 200 350 20 7 0 0                    // Maximum locked down items: 
-htmlgump 35 220 350 20 8 0 0                    // Number of secure containers: 
-htmlgump 35 240 350 20 9 0 0                    // Maximum number of secure containers: 
-htmlgump 35 265 350 20 10                       // Decay Status : 
+htmlgump 35 145 350  20 5 0 0                   // Owned by:
+htmlgump 35 180 350 20 6 0 0                    // Number of locked down items:
+htmlgump 35 200 350 20 7 0 0                    // Maximum locked down items:
+htmlgump 35 220 350 20 8 0 0                    // Number of secure containers:
+htmlgump 35 240 350 20 9 0 0                    // Maximum number of secure containers:
+htmlgump 35 265 350 20 10                       // Decay Status :
 
-page 2 
+page 2
 
-button 65 145 2714 2715 1 0 17                  // Button - List of co-owners 
-button 65 165 2714 2715 1 0 10                  // Button - Add a co-owner 
-button 65 185 2714 2715 1 0 8                   // Button - Remove a co-owner 
-button 65 205 2714 2715 1 0 11                  // Button - Clear co-owner list 
+button 65 145 2714 2715 1 0 17                  // Button - List of co-owners
+button 65 165 2714 2715 1 0 10                  // Button - Add a co-owner
+button 65 185 2714 2715 1 0 8                   // Button - Remove a co-owner
+button 65 205 2714 2715 1 0 11                  // Button - Clear co-owner list
 
-htmlgump 90 145 170 20 11 0 0                   // List of co-owners 
-htmlgump 90 165 170 20 12 0 0                   // Add a co-owner 
-htmlgump 90 185 170 20 13 0 0                   // Remove a co-owner 
-htmlgump 90 205 170 20 14 0 0                   // Clear co-owner list 
+htmlgump 90 145 170 20 11 0 0                   // List of co-owners
+htmlgump 90 165 170 20 12 0 0                   // Add a co-owner
+htmlgump 90 185 170 20 13 0 0                   // Remove a co-owner
+htmlgump 90 205 170 20 14 0 0                   // Clear co-owner list
 
-button 225 145 2714 2715 1 0 12                 // Button - List of Friends 
-button 225 165 2714 2715 1 0 7                  // Button - Add a Friend 
-button 225 185 2714 2715 1 0 9                  // Button - Remove a Friend 
-button 225 205 2714 2715 1 0 13                 // Button - Clear Friends list 
+button 225 145 2714 2715 1 0 12                 // Button - List of Friends
+button 225 165 2714 2715 1 0 7                  // Button - Add a Friend
+button 225 185 2714 2715 1 0 9                  // Button - Remove a Friend
+button 225 205 2714 2715 1 0 13                 // Button - Clear Friends list
 
-htmlgump 250 145 170 20 15 0 0                  // List of Friends 
-htmlgump 250 165 170 20 16 0 0                  // Add a Friend 
-htmlgump 250 185 170 20 17 0 0                  // Remove a Friend 
-htmlgump 250 205 170 20 18 0 0                  // Clear Friends list 
+htmlgump 250 145 170 20 15 0 0                  // List of Friends
+htmlgump 250 165 170 20 16 0 0                  // Add a Friend
+htmlgump 250 185 170 20 17 0 0                  // Remove a Friend
+htmlgump 250 205 170 20 18 0 0                  // Clear Friends list
 
-button 110 245 2714 2715 1 0 5                  // Button - Ban someone from the house 
-button 110 265 2714 2715 1 0 4                  // Button - Eject someone from the house 
-button 110 285 2714 2715 1 0 14                 // Button - View a list of banned people 
-button 110 305 2714 2715 1 0 6                  // Button - Lift a ban 
+button 110 245 2714 2715 1 0 5                  // Button - Ban someone from the house
+button 110 265 2714 2715 1 0 4                  // Button - Eject someone from the house
+button 110 285 2714 2715 1 0 14                 // Button - View a list of banned people
+button 110 305 2714 2715 1 0 6                  // Button - Lift a ban
 
-htmlgump 135 245 200 20 19 0 0                  // Ban someone from the house 
-htmlgump 135 265 200 20 20 0 0                  // Eject someone from the house 
-htmlgump 135 285 200 20 21 0 0                  // View a list of banned people 
-htmlgump 135 305 200 20 22 0 0                  // Lift a ban 
+htmlgump 135 245 200 20 19 0 0                  // Ban someone from the house
+htmlgump 135 265 200 20 20 0 0                  // Eject someone from the house
+htmlgump 135 285 200 20 21 0 0                  // View a list of banned people
+htmlgump 135 305 200 20 22 0 0                  // Lift a ban
 
-page 3 
+page 3
 
-button 35 155 2714 2715 1 0 2                   // Button - Transfer ownership of the house 
-button 35 185 2714 2715 1 0 3                   // Button - Demolish the house and get a deed back 
-button 35 215 2714 2715 1 0 15                  // Button - Change the house locks 
-button 35 245 2714 2715 1 0 16                  // Button - Declare this building to be public. This will make your doors unlockable 
+button 35 155 2714 2715 1 0 2                   // Button - Transfer ownership of the house
+button 35 185 2714 2715 1 0 3                   // Button - Demolish the house and get a deed back
+button 35 215 2714 2715 1 0 15                  // Button - Change the house locks
+button 35 245 2714 2715 1 0 16                  // Button - Declare this building to be public. This will make your doors unlockable
 
-htmlgump 60 155 350 20 23 0 0                   // Transfer ownership of the house 
-htmlgump 60 185 350 20 24 0 0                   // Demolish the house and get a deed back 
-htmlgump 60 215 350 20 25 0 0                   // Change the house locks 
-htmlgump 60 245 350 20 26 0 0                   // Declare this building to be public. This will make your 
-//htmlgump 45 260 350 20 27 0 0                 // front door unlockable. 
-} 
+htmlgump 60 155 350 20 23 0 0                   // Transfer ownership of the house
+htmlgump 60 185 350 20 24 0 0                   // Demolish the house and get a deed back
+htmlgump 60 215 350 20 25 0 0                   // Change the house locks
+htmlgump 60 245 350 20 26 0 0                   // Declare this building to be public. This will make your
+//htmlgump 45 260 350 20 27 0 0                 // front door unlockable.
+}
 
 [GUMPTEXT 4]
-{ 
+{
 INFORMATION
 FRIENDS
 OPTIONS
@@ -211,158 +212,158 @@ Transfer ownership of the house
 Demolish the house and get a deed back
 Change the house locks
 Declare this building to be public. This will make your front door unlockable.
-} 
+}
 
-[GUMPMENU 5] 
-{ 
-type 5 
-nomove 
-page 0 
-button 50 350 5223 5223 0 1 
+[GUMPMENU 5]
+{
+type 5
+nomove
+page 0
+button 50 350 5223 5223 0 1
 resizepic 0 0 5120 350 370                       // Tile Dark Gray Background (third number)
 resizepic 10 10 3000 330 350                     // Tile White Background (third number)
-htmlgump 100 13 255 20 0 0 0 
-button 150 330 2130 2129 1 0 20 
-page 1 
-radio 27 45 4005 4006 0 2966 
-tilepic 55 40 2966 
-radio 27 85 4005 4006 0 2980 
-tilepic 55 80 2980 
-radio 27 125 4005 4006 0 2982 
-tilepic 55 120 2982 
-radio 27 165 4005 4006 0 2984 
-tilepic 55 160 2984 
-radio 27 205 4005 4006 0 2986 
-tilepic 55 200 2986 
-radio 27 245 4005 4006 0 2988 
-tilepic 55 240 2988 
-radio 27 285 4005 4006 0 2990 
-tilepic 55 280 2990 
+htmlgump 100 13 255 20 0 0 0
+button 150 330 2130 2129 1 0 20
+page 1
+radio 27 45 4005 4006 0 2966
+tilepic 55 40 2966
+radio 27 85 4005 4006 0 2980
+tilepic 55 80 2980
+radio 27 125 4005 4006 0 2982
+tilepic 55 120 2982
+radio 27 165 4005 4006 0 2984
+tilepic 55 160 2984
+radio 27 205 4005 4006 0 2986
+tilepic 55 200 2986
+radio 27 245 4005 4006 0 2988
+tilepic 55 240 2988
+radio 27 285 4005 4006 0 2990
+tilepic 55 280 2990
 
 
-radio 103 45 4005 4006 0 2992 
-tilepic 130 40 2992 
-radio 103 85 4005 4006 0 2994 
-tilepic 130 80 2994 
-radio 103 125 4005 4006 0 2996 
-tilepic 130 120 2996 
-radio 103 165 4005 4006 0 2998 
-tilepic 130 160 2998 
-radio 103 205 4005 4006 0 3000 
-tilepic 130 200 3000 
-radio 103 245 4005 4006 0 3002 
-tilepic 130 240 3002 
-radio 103 285 4005 4006 0 3004 
-tilepic 130 280 3004 
+radio 103 45 4005 4006 0 2992
+tilepic 130 40 2992
+radio 103 85 4005 4006 0 2994
+tilepic 130 80 2994
+radio 103 125 4005 4006 0 2996
+tilepic 130 120 2996
+radio 103 165 4005 4006 0 2998
+tilepic 130 160 2998
+radio 103 205 4005 4006 0 3000
+tilepic 130 200 3000
+radio 103 245 4005 4006 0 3002
+tilepic 130 240 3002
+radio 103 285 4005 4006 0 3004
+tilepic 130 280 3004
 
 
-radio 183 45 4005 4006 0 3006 
-tilepic 210 40 3006 
-radio 183 85 4005 4006 0 3008 
-tilepic 210 80 3008 
-radio 183 125 4005 4006 0 3010 
-tilepic 210 120 3010 
-radio 183 165 4005 4006 0 3012 
-tilepic 210 160 3012 
-radio 183 205 4005 4006 0 3014 
-tilepic 210 200 3014 
-radio 183 245 4005 4006 0 3016 
-tilepic 210 240 3016 
-radio 183 285 4005 4006 0 3018 
-tilepic 210 280 3018 
+radio 183 45 4005 4006 0 3006
+tilepic 210 40 3006
+radio 183 85 4005 4006 0 3008
+tilepic 210 80 3008
+radio 183 125 4005 4006 0 3010
+tilepic 210 120 3010
+radio 183 165 4005 4006 0 3012
+tilepic 210 160 3012
+radio 183 205 4005 4006 0 3014
+tilepic 210 200 3014
+radio 183 245 4005 4006 0 3016
+tilepic 210 240 3016
+radio 183 285 4005 4006 0 3018
+tilepic 210 280 3018
 
 
-radio 263 45 4005 4006 0 3020 
-tilepic 290 40 3020 
-radio 263 85 4005 4006 0 3022 
-tilepic 290 80 3022 
-radio 263 125 4005 4006 0 3024 
-tilepic 290 120 3024 
-radio 263 165 4005 4006 0 3026 
-tilepic 290 160 3026 
-radio 263 205 4005 4006 0 3028 
-tilepic 290 200 3028 
-radio 263 245 4005 4006 0 3030 
-tilepic 290 240 3030 
-radio 263 285 4005 4006 0 3032 
-tilepic 290 280 3032 
+radio 263 45 4005 4006 0 3020
+tilepic 290 40 3020
+radio 263 85 4005 4006 0 3022
+tilepic 290 80 3022
+radio 263 125 4005 4006 0 3024
+tilepic 290 120 3024
+radio 263 165 4005 4006 0 3026
+tilepic 290 160 3026
+radio 263 205 4005 4006 0 3028
+tilepic 290 200 3028
+radio 263 245 4005 4006 0 3030
+tilepic 290 240 3030
+radio 263 285 4005 4006 0 3032
+tilepic 290 280 3032
 
 
 text 246 329 4 1
-button 310 335 2224 2224 0 2 
+button 310 335 2224 2224 0 2
 
 
-page 2 
+page 2
 radio 27 45 4005 4006 0 3034
 tilepic 55 40 3034
-radio 27 85 4005 4006 0 3036 
+radio 27 85 4005 4006 0 3036
 tilepic 55 80 3036
 radio 27 125 4005 4006 0 3038
 tilepic 55 120 3038
-radio 27 165 4005 4006 0 3040 
+radio 27 165 4005 4006 0 3040
 tilepic 55 160 3040
 radio 27 205 4005 4006 0 3042
-tilepic 55 200 3042 
+tilepic 55 200 3042
 radio 27 245 4005 4006 0 3044
-tilepic 55 240 3044 
-radio 27 285 4005 4006 0 3046 
+tilepic 55 240 3044
+radio 27 285 4005 4006 0 3046
 tilepic 55 280 3046
 
 
 radio 103 45 4005 4006 0 3048
-tilepic 130 40 3048 
+tilepic 130 40 3048
 radio 103 85 4005 4006 0 3050
 tilepic 130 80 3050
 radio 103 125 4005 4006 0 3052
 tilepic 130 120 3052
 radio 103 165 4005 4006 0 3054
-tilepic 130 160 3054 
-radio 103 205 4005 4006 0 3056 
+tilepic 130 160 3054
+radio 103 205 4005 4006 0 3056
 tilepic 130 200 3056
 radio 103 245 4005 4006 0 3058
 tilepic 130 240 3058
-radio 103 285 4005 4006 0 3060 
-tilepic 130 280 3060 
+radio 103 285 4005 4006 0 3060
+tilepic 130 280 3060
 
 
 radio 183 45 4005 4006 0 3062
-tilepic 210 40 3062 
-radio 183 85 4005 4006 0 3064 
+tilepic 210 40 3062
+radio 183 85 4005 4006 0 3064
 tilepic 210 80 3064
 radio 183 125 4005 4006 0 3066
 tilepic 210 120 3066
-radio 183 165 4005 4006 0 3068 
+radio 183 165 4005 4006 0 3068
 tilepic 210 160 3068
-radio 183 205 4005 4006 0 3070 
+radio 183 205 4005 4006 0 3070
 tilepic 210 200 3070
 radio 183 245 4005 4006 0 3072
 tilepic 210 240 3072
-radio 183 285 4005 4006 0 3074 
+radio 183 285 4005 4006 0 3074
 tilepic 210 280 3074
 
 
-radio 263 45 4005 4006 0 3076 
-tilepic 290 40 3076 
+radio 263 45 4005 4006 0 3076
+tilepic 290 40 3076
 radio 263 85 4005 4006 0 3078
-tilepic 290 80 3078 
-radio 263 125 4005 4006 0 3080 
+tilepic 290 80 3078
+radio 263 125 4005 4006 0 3080
 tilepic 290 120 3080
 radio 263 165 4005 4006 0 3082
 tilepic 290 160 3082
-radio 263 205 4005 4006 0 3084 
+radio 263 205 4005 4006 0 3084
 tilepic 290 200 3084
-radio 263 245 4005 4006 0 3086 
+radio 263 245 4005 4006 0 3086
 tilepic 290 240 3086
-radio 263 285 4005 4006 0 3140 
-tilepic 290 280 3140 
+radio 263 285 4005 4006 0 3140
+tilepic 290 280 3140
 
 
-text 44 331 4 2 
-button 19 335 2223 2223 0 1 
-} 
+text 44 331 4 2
+button 19 335 2223 2223 0 1
+}
 
-[GUMPTEXT 5] 
-{ 
+[GUMPTEXT 5]
+{
 Select new house sign:
 Next page
 Previous Page
@@ -1188,7 +1189,7 @@ button 20 300 4017 4018 1 0 1
 button 0 40 4005 4006 1 0 10
 button 0 80 4005 4006 1 0 20
 button 0 120 4005 4006 1 0 21
-button 0 160 4005 4006 1 0 22 
+button 0 160 4005 4006 1 0 22
 button 0 200 4005 4006 1 0 23
 
 text 200 20 0 0
@@ -1283,7 +1284,7 @@ View roster
 View charter
 Declare fealty
 Toggle abbreviation
-Resign 
+Resign
 View candidates
 View list of guilds that we have declared war on
 View list of guilds that declared war on us

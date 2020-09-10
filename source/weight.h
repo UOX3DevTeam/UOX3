@@ -1,9 +1,6 @@
 #ifndef __WEIGHT_H__
 #define __WEIGHT_H__
 
-namespace UOX
-{
-
 const SI32 MAX_WEIGHT = 6553500;	// Max weight (This number / 100, thus max actual weight is 65535.00)
 
 class CWeight
@@ -31,8 +28,6 @@ public:
 };
 
 extern CWeight *Weight;
-
-}
 
 #endif
 

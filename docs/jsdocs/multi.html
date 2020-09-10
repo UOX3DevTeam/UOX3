@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+<h3><a name="Multi Functions">Multi Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindMulti">FindMulti</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>multiID FindMulti( ourObj );
+multiID FindMulti( x, y, z, worldNumber );
+multiID FindMulti( x, y, z, worldNumber, instanceID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the multi that is in the area of the coordinates (x, y, z) in world worldNumber (0 == Britannia, 2 == ilshenar) in instanceID (optional), or in the area of the specified object
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar );
+if( iMulti )
+{
+	pChar.TextMessage( "You know, I'm standing in the same spot as a multi!" );
+}
+
+var iMulti = FindMulti( myItem.x, myItem.y, myItem.z, myItem.worldnumber );
+if( iMulti )
+{
+	myItem.TextMessage( "I am an item, in the same spot as a multi!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsInMulti">IsInMulti</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsInMulti( ourObj );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the object is in the multi.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, pChar.worldnumber );
+if( iMulti )
+{
+	if( iMulti.IsInMulti( ourObj ) )
+	{
+		ourObj.TextMessage( "I am in a multi!" );
+	}
+{
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsMulti">IsMulti</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsMulti( iToCheck );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the item iToCheck is actually a multi
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( IsMulti( GetCharPack( pTalking ) ) )
+<br>{
+<br>	TextMessage( pTalkingTo, "Sir, do you realize you have a house on your back?" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsOnBanList">IsOnBanList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsOnBanList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the character pChar is on the multi's ban list
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, pChar.worldnumber );
+if( iMulti.IsOnBanList( pChar ))
+{
+	pChar.TextMessage( "Oops, I appear to be on the banlist of this house!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsOnOwnerList">IsOnOwnerList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsOnOwnerList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the character pChar is an owner of the multi
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+if( iMulti.IsOnOwnerList( pChar ))
+{
+	pChar.TextMessage( "Ahh, I appear to be on the owner-list of this house!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToBanList">AddToBanList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool AddToBanList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the character pChar to the multi's ban list. Returns true if the parameters are valid.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "I'm getting banned from this house!" );
+iMulti.AddToBanList( pChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToOwnerList">AddToOwnerList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool AddToOwnerList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the character pChar to the multi's owner list. Doesn't remove existing owners at all. Won't duplicate if already on the list.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "Awww, I'm being added as an owner of this house!" );
+iMulti.AddToOwnerList( pChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromBanList">RemoveFromBanList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool RemoveFromBanList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes pChar from the multi's ban list. Returns true on correct parameters.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "Yay! I've been removed from the ban-list of this house!" );
+iMulti.RemoveFromBanList( pChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromOwnerList">RemoveFromOwnerList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool RemoveFromOwnerList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes pChar from the multi's owner list. Returns true on correct parameters.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "Oops! I am being removed as owner of this house!" );
+iMulti.RemoveFromOwnerList( pChar );
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

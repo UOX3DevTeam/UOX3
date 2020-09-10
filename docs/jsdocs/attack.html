@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+
+<h3><a name="AttackFuncs">Attack Related Functions</a></h3>
+
+<p><table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="SE_AttackTarget">ApplyDefenseModifiers</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ApplyDefenseModifiers( dmgType, pAtt, pDef, skillNum, hitLoc, baseDmg, armorDmg );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Returns a netDmg value after applying defense modifiers to baseDmg, with a boolean at the end deciding whether or not armor gets damaged.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var netDmg = ApplyDefenseModifiers( dmgType, pAtt, pDef, fightSkill, hitLoc, baseDmg, true );</pre>
+</table>
+
+<p><table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="SE_AttackTarget">ApplyDamageBonuses</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ApplyDamageBonuses( dmgType, pAttacker, pDefender, fightSkill, hitLoc, baseDmg );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Returns a newDmg value after applying combat bonus modifiers to baseDmg
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var newDmg = ApplyDamageBonuses( dmgType, pAttacker, pDefender, fightSkill, hitLoc, baseDmg );
+</pre></table>
+
+<p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AttackTarget">AttackTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>AttackTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes pChar to attack it's current target
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetTarget( pTalking, pTalkingTo );
+<br>AttackTarget( pTalking );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Attack">Attack</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Attack( attacker, target );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Causes attacker to attack target.  target becomes the target of attacker.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pTalking, pTalkingTo );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindNearestTarget">FindNearestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindNearestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the nearest target to pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindNearestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindStrongestTarget">FindStrongestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindStrongestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the strongest target near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindStrongestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindWeakestTarget">FindWeakestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindWeakestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the weakest target near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindWeakestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindFirstTarget">FindFirstTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindFirstTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the first target near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindFirstTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindLastTarget">FindLastTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindLastTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the last target near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindLastTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindSmartestTarget">FindSmartestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindSmartestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the smartest target near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindSmartestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindDumbestTarget">FindDumbestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindDumbestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the dumbest target near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindDumbestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindQuickestTarget">FindQuickestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindQuickestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the character with highest dexterity near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindQuickestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_FindSlowestTarget">FindSlowestTarget</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER FindSlowestTarget( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the slowest character near pChar (not including pChar).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Attack( pChar, FindSlowestTarget( pChar ) );
+</pre></table>
+
+<p>&nbsp;</p><center>
+  <p><font face="Tahoma,Arial,MS Sans Serif" size="1">©</font><font face="Tahoma,Arial,MS Sans Serif" size="1">Copyright
+    2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew
+    Randall)</font> </p>
+  </center>
+
+</body>

@@ -3,9 +3,6 @@
 
 #include <stack>
 
-namespace UOX
-{
-
 typedef std::vector< Script * > VECSCRIPTLIST;
 typedef std::vector< Script * >::iterator VECSCRIPTLIST_ITERATOR;
 typedef std::vector< Script * >::const_iterator VECSCRIPTLIST_CITERATOR;
@@ -34,10 +31,10 @@ private:
 	void			InternalRetrieve( void );
 
 public:
-					cDirectoryListing( bool recurse = true );
-					cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse = true );
-					cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse = true );
-					~cDirectoryListing();
+	cDirectoryListing( bool recurse = true );
+	cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse = true );
+	cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse = true );
+	~cDirectoryListing();
 
 	void			Extension( const std::string &extent );
 	void			Retrieve( const std::string &dir );
@@ -69,9 +66,9 @@ private:
 
 	void				Cleanup( void );
 public:
-						CServerDefinitions();
-						CServerDefinitions( const char *indexfilename );
-						~CServerDefinitions();
+	CServerDefinitions();
+	CServerDefinitions( const char *indexfilename );
+	~CServerDefinitions();
 	bool				Reload( void );
 	bool				Dispose( DEFINITIONCATEGORIES toDispose );
 
@@ -87,8 +84,6 @@ public:
 };
 
 extern CServerDefinitions *FileLookup;
-
-}
 
 #endif
 

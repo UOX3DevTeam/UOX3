@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="SkillFuncs">Skill related functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_MakeMenu">MakeMenu</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>MakeMenu( sock, mnu );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens up make menu mnu and sends it to sock
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>MakeMenu( sock, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_MakeItem">MakeItem</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>MakeItem( sock, player, itemNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Player makes the item itemNum.  itemNum points to a create.scp (SECTION ITEM itemNum) entry.  Sock can be -1
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>MakeItem( sock, player, 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcRank">CalcRank</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>NOT IMPLEMENTED YET - int CalcRank( minRank, maxRank, minSkill, skillNum, playerChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>NOT IMPLEMENTED YET - Calculates the rankage of a player char when making an item with skill skillNum.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>NOT IMPLEMENTED YET
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ApplyRank">ApplyRank</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void ApplyRank( rank, maxRank );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Modifies item properties based on item's rank (could be calculated based on player's crafting skill, but is always 10 if rank system not enabled. Higher values will increase base properties of item, lower will decrease base properties). maxRank is the maximum amount of ranks in the rank system (10 by default).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>tItem.ApplyRank( 5, 10 );
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>
