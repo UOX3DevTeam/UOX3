@@ -11,7 +11,7 @@
 // product info
 //o-----------------------------------------------------------------------------------------------o
 const std::string VER				= "0.99";
-const std::string BUILD				= "3-RC3";
+const std::string BUILD				= "3";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";
@@ -19,7 +19,7 @@ const std::string IVER				= "2.0";
 const std::string PRODUCT			= "Ultima Offline eXperiment 3";
 const std::string NAME				= "UOX3";
 const std::string EMAIL				= "https://www.uox3.org/";
-const std::string PROGRAMMERS		= "Countless! See UOX3 Hall of Fame";
+const std::string PROGRAMMERS		= "Countless! See UOX3 Hall of Fame in documentation!";
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
