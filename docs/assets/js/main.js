@@ -64,7 +64,7 @@
 			Util.addClass(content, 'cd-faq__content--visible');
 			var initHeight = bool ? content.offsetHeight: 0,
 				finalHeight = bool ? 0 : content.offsetHeight;
-			
+
 			if(window.requestAnimationFrame) {
 				Util.setHeight(initHeight, finalHeight, content, 200, function(){
 					heighAnimationCb(content, bool);
@@ -73,13 +73,13 @@
 				heighAnimationCb(content, bool);
 			}
 		});
-		
+
 		if(window.requestAnimationFrame) {
 			// on scroll -> update selected category
 			window.addEventListener('scroll', function(){
 				if(getMq(faqs) != 'desktop' || faqs.scrolling) return;
 				faqs.scrolling = true;
-				window.requestAnimationFrame(updateCategory.bind(faqs)); 
+				window.requestAnimationFrame(updateCategory.bind(faqs));
 			});
 		}
   };
@@ -91,7 +91,7 @@
   };
 
   function getMq(faqs) {
-		//get MQ value ('desktop' or 'mobile') 
+		//get MQ value ('desktop' or 'mobile')
 		return window.getComputedStyle(faqs.element, '::before').getPropertyValue('content').replace(/'|"/g, "");
   };
 
@@ -112,11 +112,45 @@
 		if(bool) Util.removeClass(content, 'cd-faq__content--visible');
   };
 
+  if( location.hash != '' ) {
+  	// Open section referred to in hash in url and clear away hash
+  	var link = document.getElementById(window.location.href.split('#')[1]);
+	setTimeout(function(){
+		link.click();
+		history.replaceState(null, null, ' ');
+	}, 1);
+	setTimeout(function(){ link.scrollIntoView(true); }, 200);
+  }
+
+  function callback(e) {
+    var e = window.e || e;
+
+    if (e.target.tagName !== 'A' || e.target.classList.contains("cd-faq__trigger") )
+        return;
+
+    // Close current section
+	var parentElement = e.target.closest(".cd-faq__item");
+	if( parentElement )
+    	parentElement.getElementsByClassName('cd-faq__trigger')[0].click();
+
+    // Open new section and clear away hash
+	var targetLink = document.getElementById(e.target.href.split('#')[1]);
+    setTimeout(function(){
+    	targetLink.click();
+    	history.replaceState(null, null, ' ');
+    }, 1);
+  }
+
+  if (document.addEventListener)
+	document.addEventListener('click', callback, false);
+  else
+	document.attachEvent('onclick', callback);
+
   var faqTemplate = document.getElementsByClassName('js-cd-faq'),
   	faqArray = [];
   if(faqTemplate.length > 0) {
 		for(var i = 0; i < faqTemplate.length; i++) {
-			faqArray.push(new FaqTemplate(faqTemplate[i])); 
+			faqArray.push(new FaqTemplate(faqTemplate[i]));
 		}
   };
 })();

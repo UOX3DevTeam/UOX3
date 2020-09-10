@@ -968,6 +968,8 @@ std::string CServerData::Directory( CSDDirectoryPaths dp )
 }
 void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 {
+	bool create_dir = false;
+
 	if( dp != CSDDP_COUNT )
 	{
 		std::string verboseDirectory;
@@ -981,7 +983,9 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			case CSDDP_SCRIPTS:			verboseDirectory = "Scripts directory";			break;
 			case CSDDP_BACKUP:			verboseDirectory = "Backup directory";			break;
 			case CSDDP_MSGBOARD:		verboseDirectory = "Messageboard directory";	break;
-			case CSDDP_SHARED:			verboseDirectory = "Shared directory";			break;
+			case CSDDP_SHARED:			verboseDirectory = "Shared directory";
+				create_dir = true;
+				break;
 			case CSDDP_HTML:			verboseDirectory = "HTML directory";			break;
 			case CSDDP_LOGS:			verboseDirectory = "Logs directory";			break;
 			case CSDDP_DICTIONARIES:	verboseDirectory = "Dictionary directory";		break;
@@ -1010,14 +1014,18 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		bool error = false;
 		if( !resettingDefaults )
 		{
-			error = true ;
+			error = true;
 			//auto curWorkingDir = fixDirectory(std::filesystem::current_path().string());
 
 			auto npath = std::filesystem::path(sText);
 
 			if (std::filesystem::exists(npath)) {
-				//std::filesystem::current_path(npath) ;
-				error = false ;
+				error = false;
+			}
+			else if (create_dir) {
+				// Create missing directory
+				std::filesystem::create_directory(npath);
+				error = false;
 			}
 		}
 

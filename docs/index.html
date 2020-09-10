@@ -21,12 +21,12 @@
 
 <div class="text-component text-center navbar-container">
 	<div class="navbar-wrapper">
-		<p class="navbar"><a href="https://www.uox3.org">UOX3.org</a> | <a href="https://www.github.com/UOX3DevTeam/UOX3">UOX3@GitHub</a> | <a href="https://discord.gg/uBAXxhF">UOX3@Discord</a></p>
+		<p class="navbar"><a href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a></p>
 	</div>
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 7. September, 2020</small></p>
+	<p style="margin:0"><small>Last Updated: 10. September, 2020</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md">
@@ -47,7 +47,7 @@
 		<ul id="about" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>About UOX3</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Introduction to UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="aboutUOX3"><span>Introduction to UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>UOX3 - or <strong>Ultima Offline eXperiment 3</strong> - is an open-source server emulator for Ultima Online that allows you to run your own private (or public) UO server where <em>you</em> are in control of what rules apply, what features are available and what type of players will inhibit Britannia.</p>
@@ -60,7 +60,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Feature Highlights</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Features"><span>Feature Highlights</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <!--<h4>Core Server Features</h4>-->
@@ -70,7 +70,7 @@
 					<div class="spoiler">
 		            	<ul>
 		            		<li><strong>Open Source (C/C++)</strong> - You can download, experiment with and make changes to the source code to fit the particular needs of your UOX3 shard, or branch off to create a spin-off emulator that can be successful in its own right (see UO Emulator timeline for a history of such spin-offs).</li>
-		            		<li><strong>Cross-Platform Support</strong> UOX3 strives to maintain cross-platform support, so it can run on a variety of Windows, Linux and MacOS versions.</li>
+		            		<li><strong>Cross-Platform Support</strong> UOX3 strives to maintain cross-platform support, so it can run on a variety of Windows, Linux and macOS versions and configurations (including 64-bit ones).</li>
 		            		<li><strong>JavaScript-based Scripting Engine</strong> - UOX3's JS-based scripting engine is a powerful tool that allows anyone with a rudimentary understanding of JavaScript to create new features or enhance existing ones, all without having to dig deep into the C/C++ core of UOX3. Also includes a "packet hook" system that allows intercepting network packets sent by connected clients, and to send custom network packets in response.</li>
 		            		<li><strong>Dynamic Reloading of Scripts</strong> - Any scripts, definition files and config files used by UOX3 can be reloaded on the fly while the server is already running. This makes it easy for shard admins and developers to quickly iterate on changes and additions, without having to restart the server from scratch and reconnect the client to see each change.</li>
 		            		<li><strong>UO Client Support</strong> - UOX3 supports a wide range of UO client versions, all the way from the 4.x versions originally introduced with the Age of Shadows expansion in 2003, to the most recent 7.0.x series available today.</li>
@@ -110,10 +110,10 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>UOX3 Support and Community</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Support"><span>UOX3 Support and Community</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>If at any point during your adventures with UOX3 you feel you could use someone to talk to, whether to help you resolve an issue you've encountered or just to have someone to share your journey with, feel free to join and post at the <a href="https://www.uox3.org/forums">community forums</a> at UOX3.org, or hop onto the <a href="https://discord.gg/uBAXxhF">UOX3 Discord server</a> if you'd rather have a more direct line of communication with fellow UOX3 users and developers. Or do both!</p>
+		            <p>If at any point during your adventures with UOX3 you feel you could use someone to talk to, whether to help you resolve an issue you've encountered or just to have someone to share your journey with, feel free to join and post at the <a href="https://www.uox3.org/forums" target="_blank" title="UOX3 Community Forums">community forums</a> at UOX3.org, or hop onto the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord server</a> if you'd rather have a more direct line of communication with fellow UOX3 users and developers. Or do both!</p>
 		            <h4>Contributing to UOX3</h4>
 		          	<p>So, you want to contribute to UOX3, and have your name written into the history books - well, at least into the UOX3 Hall of Fame - for all eternity? Then read on, because you've come to the right place!</p>
 		            <p>It doesn't matter if you're not the world's best programmer, or if you are not well versed in scripting - contributions to UOX3 can come in many forms, and all are equally well received and appreciated.</p>
@@ -126,14 +126,14 @@
 		            	<li>Forum Support</li>
 		            	<li>Discord Discussions</li>
 		            </ul>
-		            <p>Any contributions that involve making changes to UOX3 can either be posted in the <a href="https://www.uox3.org/forums/viewforum.php?f=20">Submissions - Fixes & Improvements</a> section of the UOX3.org forums, or can be submitted as a Pull Request on <a href="https://www.github.com/UOX3DevTeam/UOX3">UOX3's GitHub page</a>, for those familiar with that workflow. Do note that any such contributions will be reviewed for quality and fit with the project before being accepted and merged into the core UOX3 project.</p>
+		            <p>Any contributions that involve making changes to UOX3 can either be posted in the <a href="https://www.uox3.org/forums/viewforum.php?f=20" target="_blank" title="UOX3 Community Forums - Submissions - Fixes & Improvements">Submissions - Fixes & Improvements</a> section of the UOX3.org forums, or can be submitted as a Pull Request on <a href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub">UOX3's GitHub page</a>, for those familiar with that workflow. Do note that any such contributions will be reviewed for quality and fit with the project before being accepted and merged into the core UOX3 project.</p>
 		            <p>If it so happens, that your code or script contribution is not approved for inclusion in the core UOX3 project, you can still post it as custom additions/tweaks in other parts of the UOX3.org forums, for other users to download! Alternatively, if your changes are extensive enough, you can do what many others have done before you and branch off the main UOX3 project to create something else entirely!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>UOX3 Story</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Story"><span>UOX3 Story</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>"Story? You mean UOX3 has <strong><em>LORE</em></strong>?"</p>
@@ -141,7 +141,7 @@
 					<input type="checkbox" id="spoiler_uox3_story_1"/>
   					<label for="spoiler_uox3_story_1">Chapter One - Death <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p class="pStory">You knew that the world was ending right now before your eyes, and there was nothing you could do about it anymore. Lord British was dead and the Guardians demon legions were swarming all through the once proud city of Britain. Bodies were lying all around the streets, thieves next to nobles and the former castle guards.</p>
+						<p class="pStory"><span class="cmdHighlight">Y</span>ou knew that the world was ending right now before your eyes, and there was nothing you could do about it anymore. Lord British was dead and the Guardians demon legions were swarming all through the once proud city of Britain. Bodies were lying all around the streets, thieves next to nobles and the former castle guards.</p>
 
 						<p>That body which you used to call your own is still bleeding at your slightly transparent feet but it is obviously too late for any kind of medical treatment. Your spells have allowed you to take two of those red abnormities with you, but when the Shadowlord Astaroth approached you, you knew that your last minute has come. You stood paralysed as his dark finger stretched out to your chest and when it touched you, you had left your body even before it hit the ground. You notice that some of those who are falling to the assault of the demons don't even leave a spirit behind anymore; it seems like after his death the magic that Lord British gave to his citizens to survive past their own death is beginning to fade.</p>
 
@@ -152,7 +152,7 @@
 					<input type="checkbox" id="spoiler_uox3_story_2"/>
   					<label for="spoiler_uox3_story_2">Chapter Two - End of the world <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p class="pStory">Inside the building you can make out a few people in grey robes, sitting around a candle like it could protect them from the Guardians assault outside. One of the people seems to note your presense and turns around:</p>
+						<p class="pStory"><span class="cmdHighlight">I</span>nside the building you can make out a few people in grey robes, sitting around a candle like it could protect them from the Guardians assault outside. One of the people seems to note your presense and turns around:</p>
 
 						<p>"Ah, another lost soul that has found the way here. With the forces of chaos drawing into this realm, my healing powers are fading from minute to minute, but I might try to give you a new body if you assist me".
 						The healer is beginning to make arcane gestures and you feel a wave of restoring energy rush through your astral body. With the rest of your powers you finally succeed to become physical again.</p>
@@ -174,7 +174,7 @@
 					<input type="checkbox" id="spoiler_uox3_story_3"/>
   					<label for="spoiler_uox3_story_3">Chapter Three - The lost splinter <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p class="pStory">You awaken. You are lying on a perfectly ordinary bed in an absolutely normal room of an inn. You rise to your feet and look out of the window to see the wonderful town of Britain, still quite unharmed as if that which you remember never happened. You get dressed and walk down the stairs of the inn. The first thing you notice is the lack of people that are usually shoving past each other here. On the street you see that this phenomenon is not limited to the inn, but seems to be present all around Britain.</p>
+						<p class="pStory"><span class="cmdHighlight">Y</span>ou awaken. You are lying on a perfectly ordinary bed in an absolutely normal room of an inn. You rise to your feet and look out of the window to see the wonderful town of Britain, still quite unharmed as if that which you remember never happened. You get dressed and walk down the stairs of the inn. The first thing you notice is the lack of people that are usually shoving past each other here. On the street you see that this phenomenon is not limited to the inn, but seems to be present all around Britain.</p>
 
 						<p>You spin around as you notice a movement in the corner of your eye. Your eyes widen as you see Lord Blackthorne himself standing there as if the Guardians attack on Britannia never happened.</p>
 
@@ -183,6 +183,7 @@
 						<p>"He lives?", you exclaim. "Well, in fact the two of us ended up here when we were fleeing from the world that later became the Shadowlord Nosfentor." His face turns sad: "How fitting to run away from that world which became the embodiment of cowardice... But now I must hasten to the castle. Feel free to take a look around this world. There are not many people here, but at least the ecology yield more than enough food and resources for us few."</p>
 
 						<p>As you watch the Lord disappear down the street you start to think. At least you would be safe from the Guardian here - for now. You start to walk through an unusually empty Britain; there is so much to learn about this world, so you might as well start right now.</p>
+						<img src="logo.gif"/>
 					</div>
 		          </div>
 				</div> <!-- cd-faq__content -->
@@ -192,11 +193,11 @@
 		<ul id="installation" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Installation and Setup</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Requirements</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Requirements"><span>Requirements</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<h3>OS / Platform</h3>
-		            <p>UOX3 comes with cross-platform support for running on a variety of <strong>Windows</strong> (~Win7 to Win10), <strong>Linux</strong> and <strong>Mac</strong> versions, in both 32bit and 64bit.</p>
+		            <p>UOX3 comes with cross-platform support for running on a variety of <strong>Windows</strong> (~Win7 to Win10), <strong>Linux</strong> and <strong>macOS</strong> versions, in both 32bit and 64bit.</p>
 		          	<h3>Hardware</h3>
 		          	<p>Default install size for UOX3 alone clocks in at under 8MB, with an additional 400-500 MB being required for data files from Ultima Online. Total size will grow based on amount of content added to shard. Minimum 1+ GB free storage space recommended.</p>
 		          	<p>Default memory usage for an empty shard ranges from 35-50 MB, but will grow based on amount of content added to shard and number of players connected at any given time. Minimum 1+ GB RAM recommended.</p>
@@ -206,32 +207,34 @@
 					<input type="checkbox" id="spoiler_mulvsuop"/>
   					<label for="spoiler_mulvsuop">Bonus Tip - MUL vs UOP Map Files <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Clients after v7.0.24.2 started using new file format for map files - uop - that previously required conversion to mul format in order to be loaded by UOX3, leading to a recommendation of using a client version earlier than this. However, starting with v0.99.3, UOX3 <strong>can</strong> now load these uop files directly. <strong>No need to convert!</strong> If for whatever reason you still want to convert files between the .mul and .uop formats, check out the <a href="#additionalInfo">Additional UOX3 Info > Converting UOP to MUL</a> section!</p>
+						<p>Clients after v7.0.24.2 started using new file format for map files - uop - that previously required conversion to mul format in order to be loaded by UOX3, leading to a recommendation of using a client version earlier than this. However, starting with v0.99.3, UOX3 <strong>can</strong> now load these uop files directly. <strong>No need to convert!</strong> If for whatever reason you still want to convert files between the .mul and .uop formats, check out the <a href="#convertUOP">Additional UOX3 Info > Converting UOP to MUL</a> section!</p>
 					</div>
-		            <p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289">the community forums</a> to read more about UOX3's compatibility with various UO Client versions.</p>
-		            <p>While you're at it, go grab the <a href="http://www.uor-razor.com/">UO:R Community Edition of Razor</a>, a tool you'll need later to remove the encryption from the UO client, allowing it to connect to UOX3 - which only accepts encryption-less connections.</p>
+		            <p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">the community forums</a> to read more about UOX3's compatibility with various UO Client versions.</p>
+		            <p>While you're at it, go grab the <a href="http://www.uor-razor.com/" target="_blank">UO:R Community Edition of Razor</a>, a tool you'll need later to remove the encryption from the UO client, allowing it to connect to UOX3 - which only accepts encryption-less connections.</p>
+		            <h3>Linux/macOS Platforms</h3>
+		            <p>While UOX3 supports both Linux and macOS, neither the UO client nor Razor run natively on these platforms. As an alternative, have a look at <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source, cross-platform client that supports both Linux and macOS, and which does not rely on Razor to work.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#downloadingUOX3"><span>Downloading UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="downloadUOX3"><span>Downloading UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>To get started with UOX3, you have a couple of different options:</p>
 		          	<h3>1) Stable All-in-One (Windows only)</h3>
-		          	<p>The first, and most straight-forward option - as a <strong>Windows user</strong> - is to download the latest stable <strong>All-in-One UOX3 package</strong> from the <a href="https://www.uox3.org/downloads.shtml">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
+		          	<p>The first, and most straight-forward option - as a <strong>Windows user</strong> - is to download the latest stable <strong>All-in-One UOX3 package</strong> from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
 		          	<h3>2) Experimental Build (Windows only)</h3>
-		          	<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825">forums at UOX3.org</a>. This version contains all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to its "cutting edge" nature.</p>
-		          	<div style="background-color: lightgrey; padding: 10px 10px 2px 10px; margin-bottom: 5px"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3.</p></div>
-		          	<h3>3) Compile Source Yourself (Linux/MacOS/Windows)</h3>
-		            <p>The third option, for more advanced users - and the default for <strong>Linux/MacOS users</strong>, would be to <strong>download the UOX3 sourcecode directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, this might be the option for you. See <a href="#additionalInfo">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
+		          	<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. This version contains all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to its "cutting edge" nature.</p>
+		          	<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3.</p></div>
+		          	<h3>3) Compile Source Yourself (Linux/macOS/Windows)</h3>
+		            <p>The third option, for more advanced users - and the default for <strong>Linux/macOS users</strong>, would be to <strong>download the UOX3 sourcecode directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Configuring Your UOX3 Shard</span></a>
+				<a class="cd-faq__trigger" href="#0" id="configureUOX3"><span>Configuring Your UOX3 Shard</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <input type="checkbox" id="spoiler_tldr_config"/>
@@ -239,8 +242,8 @@
 					<div class="spoiler">
 						<p>If you think the detailed instructions below are too wordy, try this quick start guide instead, and refer to the full setup guide if you run into any problems along the way:</p>
 						<ol>
-							<li>Download the <a href="https://uo.com/client-download/">UO Client</a>, and <a href="http://www.uor-razor.com/">Razor</a>.</li>
-							<li>Download <a href="https://www.uox3.org/downloads.shtml">UOX3</a>.</li>
+							<li>Download the <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">UO Client</a>, and <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a>.</li>
+							<li>Download <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3</a>.</li>
 							<li>Set client versions allowed on your shard via <strong>CLIENTSUPPORT#</strong> lines in <em>[clientsupport]</em> section of <strong>UOX.INI</strong>.</li>
 							<li>Update <strong>shard name</strong> and IP (if other than local) in <em>[play server list]</em> section of <strong>UOX.INI</strong></li>
 							<li>Update <strong>DATADIRECTORY</strong> path in <em>[directories]</em> section of <strong>UOX.INI</strong>; point it to UO folder, or folder with UO data files.</li>
@@ -251,26 +254,26 @@
 					</div>
 		            <p>Assuming you now have a UOX3 folder that contains <em>uox3.exe/js32.dll</em> (Windows only), <em>uox3 binary</em> (Linux only), some .ini files and a bunch of folders like <em>accounts</em>, <em>dfndata</em> and <em>js</em>, it's time to dig in and get your hands dirty with some ini editing!</p>
 		            <h3>Step 1) Open UOX.INI</h3>
-		            <p>Open <strong>UOX.INI</strong> from the root UOX3 folder using your favourite text editor (Notepad, <a href="https://notepad-plus-plus.org/">Notepad++</a>, <a href="https://www.sublimetext.com/">Sublime Text</a>, Vim, nano, etc.)
+		            <p>Open <span class="cmdHighlight">UOX.INI</span> from the root UOX3 folder using your favourite text editor (Notepad, <a href="https://notepad-plus-plus.org/" target="_blank" title="Notepad++ homepage">Notepad++</a>, <a href="https://www.sublimetext.com/" target="_blank" title="Sublime Text Editor homepage">Sublime Text</a>, Vim, nano, etc.)
 		            <h3>Step 2) Limit Allowed Client Versions</h3>
-		            <p>Under the <strong>[clientsupport]</strong> section, enable or disable specific UO client version ranges to determine which versions of the UO client are allowed to connect to your UOX3 shard. As a general rule, try to keep the allowed ranges as narrow as possible to avoid potential issues with different client versions behaving differently.</p>
+		            <p>Under the <span class="cmdHighlight">[clientsupport]</span> section, enable or disable specific UO client version ranges to determine which versions of the UO client are allowed to connect to your UOX3 shard. As a general rule, try to keep the allowed ranges as narrow as possible to avoid potential issues with different client versions behaving differently. Any clientversion you enable here also enable a range of versions up to the version in the next available setting.</p>
 		            <h3>Step 3) Name your Shard</h3>
 		            <p>Locate the section called <strong>[play server list]</strong>, which should contain a line similar to this:</p>
-		            <p style="margin-left: 20px"><strong>SERVERLIST=Default UOX3 Server,127.0.0.1,2593</strong></p>
-					<p>Replace <strong>"Default UOX3 Server"</strong> with the name you'd like to use for your UOX3 shard. Keep the name short (below 30 chars); the longer it is, the less likely it will show up in the UO client's server list without being truncated.</p>
+		            <p style="margin-left: 20px"><span class="cmdHighlight">SERVERLIST=Default UOX3 Server,127.0.0.1,2593</span></p>
+					<p>Replace <span class="cmdHighlight">"Default UOX3 Server"</span> with the name you'd like to use for your UOX3 shard. Keep the name short (below 30 chars); the longer it is, the less likely it will show up in the UO client's server list without being truncated.</p>
 					<h3>Step 4) Set the IP Address</h3>
 					<p>If you are running UOX3 on the same computer as your UO client, and you only intend to access the server locally, you can leave the IP address in the <strong>SERVERLIST</strong> line as is (127.0.0.1). If you intend to have the shard accessible over LAN or the Internet, you need to replace 127.0.0.1 with with your LAN or public Internet IP.</p>
 					<p>However, instead of replacing the local IP with a LAN/Internet IP, which will restrict you from connecting to the shard locally, you can alternatively add multiple SERVERLIST= lines in the .ini file, each one with a different IP assigned. The below example would allow connections from both local, LAN and Internet sources:</p>
-					<p style="margin-left: 20px"><strong>[play server list]<br>
+					<p style="margin-left: 20px"><span class="cmdHighlight">[play server list]<br>
 					{<br>
 					SERVERLIST=Local UOX3 Shard,127.0.0.1,2593<br>
 					SERVERLIST=LAN UOX3 Shard,192.168.1.X,2593<br>
 					SERVERLIST=Online UOX3 Shard,X.X.X.X,2593<br>
-					}</strong></p>
+					}</span></p>
 					<p><em>2593</em> is the Port address that your UOX3 shard will be listening for connections on, and can be left as the default value unless you have a specific reason to use another Port.</p>
 					<h3>Step 5) Set the path to UO files</h3>
 					<p>Scroll down to the <strong>[directories]</strong> section of the ini file, and locate this line:</p>
-					<p style="margin-left: 20px"><strong>DATADIRECTORY=c:/program files/ultima online/</strong></p>
+					<p style="margin-left: 20px"><span class="cmdHighlight">DATADIRECTORY=c:/program files/ultima online/</span></p>
 					<p>If you're running UOX3 on the same computer as your UO client, point the DATADIRECTORY filepath to the folder where you installed Ultima Online.</p>
 					<p>If you're running UOX3 on a computer without the UO client installed, point the DATADIRECTORY filepath to a folder that contains the following data-files, copied from the UO Client:</p>
 		            <input type="checkbox" id="spoiler_config_requiredfiles"/>
@@ -286,7 +289,7 @@
 							<li><span class="cmdHighlight">statics*.mul</span></li>
 							<li><span class="cmdHighlight">tiledata.mul</span></li>
 						</ul>
-						<div style="background-color: lightgrey; padding: 10px 10px 2px 10px; margin-bottom: 5px">
+						<div class="note">
 							<p style="color: black; font-style: italic">NOTE: The * in the above filenames indicate that there's more than one similarly named files, and the different numbers in each filename represents a different world/facet. If you want your shard to support all the available worlds/facets in the client, make sure to copy all of these files. Alternatively, just copy the files with a 0 in the name, if you just want the original UO map and nothing else - although be aware that in this case players will be unable to go to those additional worlds!</p>
 						</div>
 					</div>
@@ -323,10 +326,10 @@
 					<div class="spoiler">
 						<p><strong>Tip #1 - Adding accounts through newaccounts.adm</strong></p>
 						<p>A second, alternate way of adding new accounts is to edit - or create, if it doesn't already exist, a file called <strong>newaccounts.adm</strong> in the same folder, and adding in one line of the following lines (pressing Enter after each) for each account you want to create:</p>
-						<p style="margin-left: 20px"><strong>USER=username,password,flags,email</strong></p>
+						<p style="margin-left: 20px"><span class="cmdHighlight">USER=username,password,flags,email</span></p>
 						<p>Note that additions to newaccounts.adm only go into effect when the server is restarted.</p>
 						<p><strong>Tip #2 - Enabling auto-creation of accounts</strong></p>
-						<p>Finally, you can enable <strong>auto-creation of accounts on login</strong> by setting the UOX.INI setting INTERNALACCOUNTCREATION from 0 to 1 and restarting your UOX3 shard (or reloading the INI from the UOX3 console menu).</p>
+						<p>Finally, you can enable <strong>auto-creation of accounts on login</strong> by setting the UOX.INI setting <span class="cmdHighlight">INTERNALACCOUNTCREATION</span> from 0 to 1 and restarting your UOX3 shard (or reloading the INI from the UOX3 console menu).</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dirStructure"/>
   					<label for="spoiler_dirStructure">Bonus Tips - UOX3 Directory Structure Overview <i class="fas fa-angle-down"></i></label>
@@ -381,26 +384,26 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>(Optional) Populating Your UOX3 Shard</span></a>
+				<a class="cd-faq__trigger" href="#0" id="populateUOX3"><span>(Optional) Populating Your UOX3 Shard</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>By default, UOX3 comes as a blank slate - a tabula rasa - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you can use of the "Default UOX3 Worldfiles" to add basic decorations such as doors and signs for all the mainland UO towns on the Felucca facet (world 0), and/or the "Community-made Spawn.dfn" file that will populate your world with all kinds of NPCs, from animals and monsters to shopkeepers and townfolk.</p>
 		            <h3>Default UOX3 Worldfiles</h3>
 		            <p><em>Note: It is recommended that you download and add these default worldfiles to your shard BEFORE your first startup and before you create your first character, as applying these will essentially overwrite your existing worldfiles and erase any characters or items you might have created already.</em></p>
-		            <p>Click the <strong>Default UOX3 Worldfiles</strong> link over at the <a href="https://www.uox3.org/downloads.shtml">UOX3.org Downloads-page</a> to download a zip-file containing a default set of world decorations for your shard. Once the download is complete, unzip this file into your <em>UOX3/SHARED/</em> folder, overwriting any existing files in that folder.</p>
+		            <p>Click the <strong>Default UOX3 Worldfiles</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file containing a default set of world decorations for your shard. Once the download is complete, unzip this file into your <em>UOX3/SHARED/</em> folder, overwriting any existing files in that folder.</p>
 		            <h3>Community-made Spawn.dfn</h3>
-		            <p>Click the <strong>Community-made Spawn.dfn</strong> link over at the <a href="https://www.uox3.org/downloads.shtml">UOX3.org Downloads-page</a> to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the UOX3/DFNDATA/SPAWN folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
+		            <p>Click the <strong>Community-made Spawn.dfn</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the UOX3/DFNDATA/SPAWN folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Starting Up Your UOX3 Shard</span></a>
+				<a class="cd-faq__trigger" href="#0" id="startUpUOX3"><span>Starting Up Your UOX3 Shard</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <h3>Windows</h3>
 		            <p>Navigate to the root of your UOX3 folder, and double-click on uox3.exe to start UOX3.</p>
-		            <h3>Linux/MacOS</h3>
+		            <h3>Linux/macOS</h3>
 		            <p>Open a new terminal window, navigate to the root of your UOX3 directory, and start UOX3 by entering the following command: <strong>./uox3</strong></p>
 		            <h3>Common</h3>
 		            <p>UOX3 should now start up, and a barrage of text should scroll off your screen as UOX3 loads the various UO data files, DFNs and scripts. Barring any errors during this process, the scrolling should come to a halt with the following lines displayed at the bottom:</p>
@@ -412,27 +415,29 @@
   					<label for="spoiler_shutdown">Bonus Tip - Shutting down UOX3 <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p>Should you ever need to shut down UOX3 for any reason, it's important that you do it correctly to avoid any loss of data. If you simply close UOX3 using the 'x' in the corner of the window, any changes made since the last worldsave will be permanently lost.</p>
-						<p>Instead, either use the in-game GM command <strong>'shutdown #</strong> (where # is the number of seconds until shutdown), or press <strong>*</strong> in the UOX3 console to disable safe-mode, followed by either <strong>Q</strong> or <strong>Esc</strong>. This will prompt UOX3 to initiate the shutdown process, saving the game world and freeing up used memory.</p>
+						<p>Instead, either use the in-game GM command <span class="cmdHighlight">'shutdown #</span> (where # is the number of seconds until shutdown), or press <span class="cmdHighlight">*</span> in the UOX3 console to disable safe-mode, followed by either <span class="cmdHighlight">Q</span> or <span class="cmdHighlight">Esc</span>. This will prompt UOX3 to initiate the shutdown process, saving the game world and freeing up used memory.</p>
 					</div>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Connecting to UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="connectToUOX3"><span>Connecting to UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>A couple of things are required to connect and login to your UOX3 shard; an <strong>Ultima Online</strong> client, and a <strong>tool that can remove encryption</strong> from said client. Such a tool is needed since UOX3 does not accept connections from encrypted clients.</p>
 		            <h3>Ultima Online</h3>
-		            <p>If you followed the recommendations in the Requirements section up above, you will already have an Ultima Online client installed, and can skip to the next step about Razor. If not - don't panic! Go grab the latest client download - titled <em>Classic Client</em> - from <a href="https://uo.com/client-download/">the official UO website</a> and install it, or visit the UOX3 community forums to read more about different <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289">UO client versions/expansions and compatibility with UOX3</a>.</p>
+		            <p>If you followed the recommendations in the Requirements section up above, you will already have an Ultima Online client installed, and can skip to the next step about Razor. If not - don't panic! Go grab the latest client download - titled <em>Classic Client</em> - from <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">the official UO website</a> and install it, or visit the UOX3 community forums to read more about different <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">UO client versions/expansions and compatibility with UOX3</a>.</p>
 		            <h3>Removing the Client Encryption with Razor</h3>
-		            <p>With a UO client downloaded and installed, it's time to take care of the encryption. Go grab the <a href="http://www.uor-razor.com/">UO:R Community Edition of Razor</a> if you haven't already. It's being regularly maintained and updated, unlike the original Razor. Once installed, start it!</p>
+		            <p>With a UO client downloaded and installed, it's time to take care of the encryption. Go grab the <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">UO:R Community Edition of Razor</a> if you haven't already. It's being regularly maintained and updated, unlike the original Razor. Once installed, start it!</p>
 		            <p>After a short wait, you'll be greeted by a welcome screen. Unless you encounter any issues, or you have multiple UO Client versions installed, just leave the <strong>Load Client</strong> part at <em>2D Client (Auto Detect)</em>. Make sure <strong>Patch client encryption</strong> is checked, and that the <strong>IP and Port</strong> matches what you setup for UOX3 in UOX.INI. If running client and server on same computer, the default UOX3 settings are <strong>127.0.0.1</strong> as IP and <strong>2593</strong> as Port.</p>
 		            <p>Once basic setup of Razor is complete, click the <strong>Okay</strong> button to launch the UO client. At this point you are now ready to enter your UOX3 username and password and log in!</p>
+		            <h3>Alternative for Linux/macOS users - Use ClassicUO Client</h3>
+	          		<p>Note for <span class="cmdHighlight">Linux/macOS</span> (and even Windows) users: An alternative to the regular UO client and Razor, neither of which run natively on Linux or macOS, is the <strong>ClassicUO</strong> client - an open-source, cross-platform client that can be used to connect to UOX3 without Razor - though it still requires the original UO data files to run.</p>
 		            <input type="checkbox" id="spoiler_classicUO"/>
-  					<label for="spoiler_classicUO">Bonus Tip - Try the ClassicUO Client <i class="fas fa-angle-down"></i></label>
+  					<label for="spoiler_classicUO">ClassicUO Client <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p><a href="https://github.com/andreakarasho/ClassicUO">ClassicUO</a> is a cross-platform (Windows, Linux, Mac), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client. Some of the interesting features it offers:</p>
+						<p><a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a> is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client. Some of the interesting features it offers:</p>
 						<ul>
 							<li>Run client at up to 250 FPS</li>
 							<li>Run at any resolution, and any window size</li>
@@ -442,7 +447,7 @@
 							<li>Show network stats</li>
 							<li>Various quality of life features that have been available in various assist tools for decades... like showing stumps instead of trees, hiding roofs (a bit dubious...), etc.</li>
 						</ul>
-						<p>Check it out at the <a href="https://www.classicuo.eu/">ClassicUO Website</a> or <a href="https://github.com/andreakarasho/ClassicUO">@ GitHub</a>!</p>
+						<p>Check it out at the <a href="https://www.classicuo.eu/" target="_blank" title="ClassicUO - open source UO client">ClassicUO Website</a> or <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO @ GitHub">@ GitHub</a>!</p>
 					</div>
 		          </div>
 				</div> <!-- cd-faq__content -->
@@ -452,21 +457,21 @@
 		<ul id="firstFiveMinutes" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>First Five Minutes</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Logging In and Creating a Character</span></a>
+				<a class="cd-faq__trigger" href="#0" id="logInAndCreateChar"><span>Logging In and Creating a Character</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>Once your UOX3 shard has successfully started up (and importantly, <strong>remains running</strong>), and the UO client has loaded the login screen after you started it using a tool like Razor, you are ready to log in to your UOX3 shard for the first time.</p>
-		            <p>Enter the same <strong>username</strong> and <strong>password</strong> that you added in <em>UOX3/ACCOUNTS/accounts.adm</em> during the initial UOX3 setup, and click <strong>Login</strong>. Select your UOX3 shard from the server listing that appears, and proceed through character creation to create your first character. Note that if you are logging in using the first account listed in accounts.adm - account 0 - all characters created on this account will automatically receive GM powers!</p>
+		            <p>Enter the same <span class="cmdHighlight">username</span> and <span class="cmdHighlight">password</span> that you added in <strong>UOX3/ACCOUNTS/accounts.adm</strong> during the initial UOX3 setup, and click <span class="cmdHighlight">Login</span>. Select your UOX3 shard from the server listing that appears, and proceed through character creation to create your first character. Note that if you are logging in using the first account listed in accounts.adm - account 0 - all characters created on this account will automatically receive GM powers!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Using Your First GM Commands</span></a>
+				<a class="cd-faq__trigger" href="#0" id="useFirstGMCommands"><span>Using Your First GM Commands</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>Great! You have a character. Now what?</p>
-					<p>If you're playing on the first account listed in <em>UOX3\ACCOUNTS\accounts.adm</em> (as you should), your characters will be classified as "admin" characters with automatic access to all Game Master and Admin powers and commands. However, the character doesn't quite look the part yet!</p>
+					<p>If you're playing on the first account listed in <strong>UOX3\ACCOUNTS\accounts.adm</strong> (as you should), your characters will be classified as "admin" characters with automatic access to all Game Master and Admin powers and commands. However, the character doesn't quite look the part yet!</p>
 					<h3>Becoming a GM</h3>
 					<p>Let's start by turning your character into a proper Game Master. Type the following command into the UO client (don't forget the command prefix at the start of the command!):<br>
 					<span class="cmdHighlight">'make gm</span></p>
@@ -474,7 +479,7 @@
 					<input type="checkbox" id="spoiler_commandprefix">
 					<label for="spoiler_commandprefix">Bonus Tip - Changing the Command Prefix <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>By default, the command prefix character used at the start of every GM command in UOX3 is set to '. You can change this command prefix via a setting called COMMANDPREFIX in UOX.INI if you'd rather use something else.</p>
+						<p>By default, the command prefix character used at the start of every GM command in UOX3 is set to '. You can change this command prefix via a setting called <span class="cmdHighlight">COMMANDPREFIX</span> in UOX.INI if you'd rather use something else.</p>
 					</div>
 					<h3>Changing Colour of GM Robe</h3>
 					<p>Should you not be happy with the colour of your new robe, you can give it a facelift using the following command:<br>
@@ -503,7 +508,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Getting Around the World</span></a>
+				<a class="cd-faq__trigger" href="#0" id="gettingAroundTheWorld"><span>Getting Around the World</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>Some of the most important GM commands to learn are the ones that allow you to traverse across Britannia and other realms in the blink of an eye, and the ones that provide you with information about where you are at any given point of time.</p>
@@ -521,7 +526,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Adding Items and NPCs</span></a>
+				<a class="cd-faq__trigger" href="#0" id="addingItemsAndNPCs"><span>Adding Items and NPCs</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>With the basics of travel commands under your belt already, it's time to move on to something a bit more interesting: Learning how to add objects like items and NPCs to your UOX3 shard! Your go-to tool for this will be the <strong>add</strong> command, which is a multi-purpose command that can be used in a variety of ways.</p>
@@ -570,21 +575,21 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Next Steps to Master UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="nextStepsToMasterUOX3"><span>Next Steps to Master UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>What is covered in the previous few sections of this document just barely scratches the surface of all there is to learn, know and do in UOX3, and it would be impossible to cover everything without writing a long novel of an instruction manual.</p>
 					<p>From here on out, it's up to <strong>you</strong> to really dig into the guts of UOX3 to <strong>explore</strong>, <strong>discover</strong>, <strong>learn</strong> and eventually <strong>grok UOX3 completely</strong>. Fret not, however! You still have tools like these your disposal to ease your journey:</p>
 					<h3>The UOX3 Command List</h3>
-					<p>The command list contains detailed information on each and every command available in UOX3. If you're unsure about the specifics of a certain command, this is where you go. It can be found in the next section below, titled <a href="#additionalInfo">Additional UOX3 Info</a>.</p>
+					<p>The <a href="#commandList">command list</a> contains detailed information on each and every command available in UOX3. If you're unsure about the specifics of a certain command, this is where you go. It can be found in the next section below, titled <a href="#additionalInfo">Additional UOX3 Info</a>.</p>
 					<h3>The Feature Documentation</h3>
 					<p>Extensive documentation is also available for each major feature supported by UOX3. Go to the <a href="#featureDocs">Feature Documentation</a> section of this document if you want to dig into the various systems.</p>
 					<h3>The JS Engine Docs</h3>
-					<p>The <a href="https://www.uox3.org/jsdocs/">JS Engine docs</a> provide details of all the various events/triggers, methods, functions and properties that you can make use of in your JS scripts to make your shard come to life.</p>
+					<p>The <a href="https://www.uox3.org/jsdocs/" target="_blank" title="UOX3 JS Engine Documentation">JS Engine docs</a> provide details of all the various events/triggers, methods, functions and properties that you can make use of in your JS scripts to make your shard come to life.</p>
 					<h3>The Community Forums</h3>
-					<p>The <a href="https://www.uox3.org/forums">community forums</a> at UOX3.org contains many resources for both coding, scripting and managing your UOX3 shard. It can also be a great place to have a discussion on topics that don't require an immediate and instant response.</p>
+					<p>The <a href="https://www.uox3.org/forums" target="_blank" title="UOX3 Community Forums">community forums</a> at UOX3.org contains many resources for both coding, scripting and managing your UOX3 shard. It can also be a great place to have a discussion on topics that don't require an immediate and instant response.</p>
 					<h3>The Community Discord</h3>
-					<p>Join the <a href="https://discord.gg/uBAXxhF">UOX3 community on Discord</a> for a more direct line of communication with fellow UOX3 users and developers. Forums are great, but often it can be more efficient to have direct, near real-time conversations with other people.</p>
+					<p>Join the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 community on Discord</a> for a more direct line of communication with fellow UOX3 users and developers. Forums are great, but often it can be more efficient to have direct, near real-time conversations with other people.</p>
 					<p>Using the above tools, and through the magic of friendship and community, there is nothing you cannot accomplish in UOX3 if you set your mind to it.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
@@ -594,9 +599,10 @@
 		<ul id="additionalInfo" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Additional UOX3 Info</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>UOX.INI Settings</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uoxINISettings"><span>UOX.INI Settings</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
+		          	<p>The settings listed below can be found in <span class="cmdHighlight">uox.ini</span> in the root UOX3 data folder, and can be modified and reloaded dynamically while UOX3 is running. After making a change, simply use the <span class="cmdHighlight">'reloadini</span> command in-game, or console command '<span class="cmdHighlight">1</span>' after unlocking the UOX3 console by pressing '<span class="cmdHighlight">*</span>'.</p>
 		            <input type="checkbox" id="spoiler_ini_system">
 					<label for="spoiler_ini_system">[system] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -1557,9 +1563,11 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Command List</span></a>
+				<a class="cd-faq__trigger" id="commandList"><span>Command List</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
+		          	<p>Most of the commands below can be executed by GameMasters or Administrators only, but some are also usable by regular players. To make changes to who can access a particular command, check the RegisterCommand() line at the top of every command script in the <strong>UOX3\js\commands</strong> folder, or the <strong>UOX3\dfndata\commands\commands.dfn</strong> file for commands that are still hardcoded.</p>
+		          	<p>In both cases, the number associated with a given command makes it available to either admins (<span class="cmdHighlight">5</span>), GMs (<span class="cmdHighlight">2</span>), Counselors (<span class="cmdHighlight">1</span>) or Players (<span class="cmdHighlight">0</span>). These default command levels can be modified in <strong>UOX3\dfndata\commands\commands.dfn</strong>.</p>
 		            <input type="checkbox" id="spoiler_cmd_legacy">
 					<label for="spoiler_cmd_legacy">Legacy <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -3082,7 +3090,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Console Command List</span></a>
+				<a class="cd-faq__trigger" href="#0" id="consoleCommandList"><span>Console Command List</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>The UOX3 server console provides some useful commands for shard admins that can be executed locally without logging onto the shard with a client. These commands can be executed with shortcut keys after the console has been unlocked by pressing the * key on your keyboard. Note that the shortcut keys below are not case-sensitive.</p>
@@ -3135,7 +3143,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Maps, Statics and Tiledata</span></a>
+				<a class="cd-faq__trigger" href="#0" id="mapsStaticsTiledata"><span>Maps, Statics and Tiledata</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<h3>Maps and Statics</h3>
@@ -3203,12 +3211,12 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>(Bonus) Converting UOP to MUL</span></a>
+				<a class="cd-faq__trigger" href="#0" id="convertUOP"><span>(Bonus) Converting UOP to MUL</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<h3>Brief History of UOP Format</h3>
 		          	<p>In UO Client v7.0.24.2, a new fileformat was introduced - UOP, that would eventually replace some of the files using the old MUL format. Amongst the files converted were the various <em>map*.mul</em> files, which became <em>map*LegacyMUL.uop</em> files. At the time, and before the different UO emulators (including UOX3) added support to load this new fileformat, prospective shard admins had to convert those .uop files <em>back</em> to .mul files before they could be used.</p>
-		          	<p>Thankfully, creative souls came up with several tools that could be used to convert UO data files between these two file formats, for instance <a href="https://github.com/polserver/UOFiddler/releases">UOFiddler</a> and <a href="https://github.com/cbnolok/LegacyMULConverter-N">LegacyMULConverter-N</a>.</p>
+		          	<p>Thankfully, creative souls came up with several tools that could be used to convert UO data files between these two file formats, for instance <a href="https://github.com/polserver/UOFiddler/releases" target="_blank" title="UOFiddler - viewer and editor of UO data files">UOFiddler</a> and <a href="https://github.com/cbnolok/LegacyMULConverter-N" target="_blank" title="LegacyMULConverter-N - a tool to convert MUL files to UOP">LegacyMULConverter-N</a>.</p>
 		          	<h4>Conversion not Needed for UOX3 v0.99.3 and Above</h4>
 		          	<p><strong>Do take note</strong>, that starting with <strong>UOX3 v0.99.3</strong>, these .uop files can be read by UOX3 directly <strong>without a need</strong> to convert them to back to the original format first. <strong>No need to convert!</strong> Should you for whatever reason still want to convert the map files back to .mul files, for instance to use them with an older version of UOX3, or to load them in a map-editing tool that doesn't support the newer format, here follows a quick guide on how you can do just that, using UOFiddler:</p>
 		          	<h3>Step 1 - Backup UOP Files</h3>
@@ -3222,118 +3230,170 @@
 		          	<p>Once this is done, either use the small arrow buttons in the top right corner of UOFiddler to navigate to the <strong>far right tab called UOP Packer</strong>, or expand the size of the window until you see and can click that tab.</p>
 		          	<p>Select the folder you copied the .UOP files into previously, using the file picker or by typing the path into the text-field, then select <strong>Extract UOP to MUL</strong> and hit <strong>Start</strong>.</p>
 		          	<p>After around 15-30 seconds, UOFiddler should have finished converting the UOP files in your temporary folder to MUL files!</p>
-		          	<div style="background-color: lightgrey; padding: 10px 10px 2px 10px; margin-bottom: 5px"><p>Note that this process also works in reverse! If you have made any changes to the .mul files and want to convert them back to .uop to have them be read by the client, just follow the same procedure except choose <strong>Pack MUL to UOP</strong> in the last step instead!</p></div>
+		          	<div class="note"><p>Note that this process also works in reverse! If you have made any changes to the .mul files and want to convert them back to .uop to have them be read by the client, just follow the same procedure except choose <strong>Pack MUL to UOP</strong> in the last step instead!</p></div>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#compilingUOX3"><span>Compiling UOX3 Source</span></a>
+				<a class="cd-faq__trigger" href="#0" id="compilingUOX3"><span>Compiling UOX3 Source</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>Follow the steps below for your preferred platform if you wish to download and compile the UOX3 source directly from GitHub yourself.</p>
 		            <h3>Windows Users</h3>
 		            <h4>Step 1 - Clone the UOX3 Git Repository</h4>
 		            <input type="checkbox" id="spoiler_compile_windows_0">
-		            <label for="spoiler_compile_windows_0">Example using GitHub Desktop <i class="fas fa-angle-down"></i></label>
+		            <label for="spoiler_compile_windows_0">Using GitHub Desktop <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
 			            <ol>
-			            	<li>Download and install <a href="https://desktop.github.com/">GitHub Desktop</a>. If you already have another tool for git installed, you can use that instead.</li>
+			            	<li>Download and install <a href="https://desktop.github.com/" target="_blank" title="GitHub Desktop homepage">GitHub Desktop</a>. If you already have another tool for git installed, you can use that instead.</li>
 			            	<li>Run GitHub Desktop (or your preferred git tool) and click <strong>File->Clone Repository</strong> from the menu.</li>
 			            	<li>Click the <strong>URL</strong> tab, enter <strong>https://github.com/UOX3DevTeam/UOX3.git</strong>, then provide a local path for where you want the UOX3 git repository cloned on your drive.</li>
-			            	<li>Hit the <strong>Clone</strong> button!</li>
+			            	<li>Hit the <strong>Clone</strong> button to clone the stable branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (v1.7).</li>
 			            </ol>
+			            <input type="checkbox" id="spoiler_compile_other_branches_0">
+			            <label for="spoiler_compile_other_branches_0">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
+			            <div class="spoiler">
+							<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can click the <strong>Current branch</strong> dropdown menu in GitHub Desktop and select the branch you wish to check out.</p>
+			            </div>
 		            </div>
-		            <h4>Step 2 - Compile UOX3 using your favourite compiler</h4>
+		            <h4>Step 2 - Compile UOX3</h4>
 		            <input type="checkbox" id="spoiler_compile_windows_1">
 		            <label for="spoiler_compile_windows_1">Option A - Visual Studio 2017/2019 <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
-		            	<p><em>This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the <a href="https://visualstudio.microsoft.com/downloads/" target="_blank">Free Community Edition</a> of Visual Studio if you don't have it already.</em></p>
+		            	<p><em>This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the <a href="https://visualstudio.microsoft.com/downloads/" target="_blank" title="Visual Studio download page">Free Community Edition</a> of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either <span class="cmdHighlight">32-bit or 64-bit (default)</span> versions of UOX3.</em></p>
 		            	<h4>SpiderMonkey</h4>
 			            <ol>
 			            	<li>Navigate to the <strong>UOX3\spidermonkey</strong> folder and open <span class="cmdHighlight">SpiderMonkey.sln</span> in Visual Studio.</li>
-			            	<li>Click <span class="cmdHighlight">Build > Batch Build</span> from the menu, select <strong>js32 Debug</strong> and <strong>js32 Release</strong> from the panel that pops up, then click the Build button.</li>
-			            	<li>Visual Studio will compile SpiderMonkey and create <strong>spidermonkey\Debug</strong> and <strong>spidermonkey\Release</strong> folders with <span class="cmdHighlight">js32.dll</span> and <span class="cmdHighlight">js32.lib</span> files in them.</li>
+			            	<li>Make sure you have <span class="cmdHighlight">js32</span> selected in the Solution Explorer, then select <span class="cmdHighlight">Release</span> and either <span class="cmdHighlight">x64</span> (64-bit) or <span class="cmdHighlight">Win32</span> (32-bit) in the Solution Configuration/Platform dropdown menus</li>
+			            	<li>Click <span class="cmdHighlight">Build > Build js32</span> from the menu.</li>
+			            	<li>Visual Studio will compile SpiderMonkey and create <strong>spidermonkey\Release\x64</strong> (64-bit) or <strong>spidermonkey\Release\x86</strong> (32-bit) folders with the compiled <span class="cmdHighlight">js32.lib</span> library file contained within. No further actions are necessary here, so you can close the SpiderMonkey VS Solution.</li>
 			            </ol>
 			            <h4>UOX3</h4>
 			            <ol>
 			            	<li>Open <span class="cmdHighlight">UOX3_Official.sln</span> from the <strong>UOX3\source</strong> folder.</li>
-			            	<li>Click <span class="cmdHighlight">Project -> UOX3_Official Properties -> VC++ Directories</span>.</li>
-			            	<li>If references to SpiderMonkey are already included in the <strong>Include Directories</strong>, <strong>Library Directories</strong> and <strong>Source Directories</strong> sections in the form of <span class="cmdHighlight">..\spidermonkey</span>, you can close the project property panel and skip to step 4. If not, follow the next few steps to add those references yourself.</li>
-				            <input type="checkbox" id="spoiler_compile_windows_1b">
-				            <label for="spoiler_compile_windows_1b">Adding SpiderMonkey References <i class="fas fa-angle-down"></i></label>
-				            <div class="spoiler">
-				            	<ul>
-				            		<li>Select the dropdown arrow behind  <span class="cmdHighlight">Include Directories</span> and choose  <span class="cmdHighlight">Edit</span>, then click the  <span class="cmdHighlight">New Line</span> button and add a reference to the <strong>UOX3\spidermonkey</strong> folder.</li>
-				            		<li>In the same manner, add a reference to <strong>UOX3\spidermonkey\debug</strong> in the  <span class="cmdHighlight">Library Directories</span> section, and a reference to <strong>UOX3\spidermonkey</strong> in the  <span class="cmdHighlight">Source Directories</span> section. Then press apply.</li>
-				            		<li>Repeat this process for both Release and Debug configurations (chosen at top of panel).</li>
-				            	</ul>
-			            	</div>
-			            	<li>Next, select <span class="cmdHighlight">Build -> Configuration Manager</span> and choose whether you want to compile a Debug or Release-version of UOX3. Debug can be useful if you want to insert break-points in the code to debug what's happening in real time, but for performance and stability, make a Release-version.</li>
-			            	<li>Select <span class="cmdHighlight">Build -> Build UOX3_Official</span> to start compiling UOX3. When done, you'll find <span class="cmdHighlight">UOX3.exe</span> either in <strong>UOX3\source\release</strong> or in <strong>UOX3\source\debug</strong>, depending on your choice in the previous step.</li>
+			            	<li>Make sure you have <span class="cmdHighlight">UOX3_Official</span> selected in the Solution Explorer, then select either <span class="cmdHighlight">Release</span> or <span class="cmdHighlight">Debug</span>, and either <span class="cmdHighlight">x64</span> (64-bit) or <span class="cmdHighlight">Win32</span> (32-bit) in the <em>Solution Configuration/Platform dropdown menus</em>, or via <em>Build -> Configuration Manager</em>.</li>
+			            	<li>Select <span class="cmdHighlight">Build -> Build UOX3_Official</span> to start compiling UOX3. When done, you'll find <span class="cmdHighlight">UOX3.exe</span> in either <strong>UOX3\source\Release\x64</strong> (or <strong>\x86)</strong> or <strong>UOX3\source\Debug\x64</strong> (or <strong>\x86)</strong>, depending on your choices in the previous step.</li>
 			            </ol>
+			            <input type="checkbox" id="spoiler_compile_windows_1b">
+			            <label for="spoiler_compile_windows_1b">Adding Missing SpiderMonkey References <i class="fas fa-angle-down"></i></label>
+			            <div class="spoiler">
+			            	<p>If VS give you link errors when attempting to build UOX3, references to SpiderMonkey might have gone missing! Try the following steps to add them back.</p>
+			            	<ol>
+		            			<li>Right click on <span class="cmdHighlight">UOX3_Official</span> in the Solution Explorer, and select <span class="cmdHighlight">Properties</span>.</li>
+		            			<li>With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey in these sections:</li>
+		            			<ul>
+		            				<li><em>VC++ Directories ></em> <strong>Include Directories</strong> (add path to SpiderMonkey root folder)</li>
+		            				<li><em>VC++ Directories ></em> <strong>Library Directories</strong> (add path to SpiderMonkey <strong>release\x64</strong> or <strong>\x86</strong> folder depending on desired configuration)</li>
+		            				<li><em>VC++ Directories ></em> <strong>Source Directories</strong> (add path to SpiderMonkey root folder)</li>
+		            				<li><em>Linker ></em> <strong>Additional Library Dependencies</strong> (add path to SpiderMonkey <strong>release\x64</strong> or <strong>\x86</strong> folder depending on desired configuration)</li>
+		            			</ul>
+			            		<li>Press apply!</li>
+			            		<li>Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!</li>
+			            	</ol>
+		            	</div>
 		            </div>
 		            <input type="checkbox" id="spoiler_compile_windows_2">
 		            <label for="spoiler_compile_windows_2">Option B - Visual Studio 2017/2019 and CMake <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
-			            <p><em>This option requires installing the Visual Studio toolset named <strong>Linux development with C++</strong> and the component called <strong>Visual C++ tools for CMake and Linux</strong>. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed!</em></p>
+			            <p><em>This option requires installing the Visual Studio toolset named <strong>Linux development with C++</strong> and the component called <strong>Visual C++ tools for CMake and Linux</strong>. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed! This approach compiles SpiderMonkey to a separate DLL (<span class="cmdHighlight">js32.dll</span>) file that needs to live inside the same folder as the main UOX3 executable, and currently only supports compiling a <span class="cmdHighlight">32-bit</span> version of UOX3.</em></p>
 			            <ol>
-			            	<li>Start Visual Studio 2017 and use <strong>File > Open > CMake</strong> and select <strong>CMakeLists.txt</strong> in the root project folder (Example: D:\UOX3)</li>
-			            	<li>After Visual Studio is done loading the project and has generated some necessary files, select <strong>CMake > Change CMake Settings > UOX3</strong> from the toolbar menu, and select either <strong>x86-Debug</strong> or <strong>x86-Release</strong> depending on what kind of build you want to make.</li>
+			            	<li>Start Visual Studio and use <strong>File > Open > CMake</strong> and select <strong>CMakeLists.txt</strong> in the root project folder (Example: D:\UOX3). <strong>Don't</strong> open the similarly named file in the source folder directly.</li>
+			            	<li>After Visual Studio is done loading the project and has generated some necessary files, select <strong>CMake > Change CMake Settings > UOX3</strong> from the toolbar menu, and select either <strong>x86-Debug</strong> or <strong>x86-Release</strong> depending on what kind of build you want to make - or do this using the Solution Configuration select menu.</li>
 			            	<li>When Visual Studio is done switching to the new configuration, select <strong>CMake > Build All</strong> from the toolbar menu to start compiling UOX3.</li>
 			            	<li>When done, you'll find <span class="cmdHighlight">UOX3.exe</span> and <span class="cmdHighlight">js32.dll</span> in a subfolder named <strong>out</strong> of the root project folder, more specifically <strong>/UOX3/out/build/x86-Debug</strong> or <strong>x86-Release</strong>, based on the selected configuration.</li>
+			            	<li>Note that the <strong>js32.dll</strong> file must be copied to the same folder as UOX3.exe.</li>
 			            </ol>
 		            </div>
-					<p>Once this process is done, you can copy your new UOX3.exe and js32.dll files from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the <strong>data subfolder</strong> of the UOX3 repository, if you don't already have these. Once you have all the files in place, you can follow the regular steps listed under <a href="#installation">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup!</p>
-		            <h3>Linux/MacOS Users</h3>
+					<p>Once this process is done, you can copy your new <span class="cmdHighlight">UOX3.exe</span> (and if using CMake, <strong>js32.dll</strong>) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the <strong>data</strong> subfolder of the UOX3 repository, if you don't already have these.</p>
+					<p><strong>It is recommended </strong> to run your UOX3 shard from a separate, dedicated folder instead of the data folder in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
+					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup!</p>
+		            <h3>Linux/macOS Users</h3>
 					<h4>Step 1 - Clone the UOX3 Git Repository</h4>
 		            <input type="checkbox" id="spoiler_compile_linux_1">
-		            <label for="spoiler_compile_linux_1">git and Terminal  <i class="fas fa-angle-down"></i></label>
+		            <label for="spoiler_compile_linux_1">Using git and Terminal  <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
 						<p>First step, open a new terminal and enter the following commands:
 			            <ol>
-			            	<li><span class="cmdHighlight">sudo apt install git</span> - This will install git if not already installed.</li>
-			            	<li><span class="cmdHighlight">git clone https://github.com/UOX3DevTeam/UOX3</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3.</li>
-			            	<li>If you'd rather clone another branch of the git repository, like the develop branch where most updates get pushed first before being merged into the stable branch, you can use the following command instead of (NOT in addition to) the previous step: <strong>git clone -b develop https://github.com/UOX3DevTeam/UOX3</strong></li>
+			            	<li><strong>(Linux)</strong> <span class="cmdHighlight">sudo apt install git</span> - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.</li>
+			            	<li><strong>(macOS)</strong> <span class="cmdHighlight">xcode-select --install</span> - This will install git if not already installed, along with required make and gcc tools</li>
+			            	<li><span class="cmdHighlight">git clone https://github.com/UOX3DevTeam/UOX3.git</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (1.7) is also included.</li>
+			            </ol>
+			            <input type="checkbox" id="spoiler_compile_other_branches">
+			            <label for="spoiler_compile_other_branches">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
+			            <div class="spoiler">
+							<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step: <span class="cmdHighlight">git checkout develop</span></p>
+			            </div>
+		            </div>
+		            <input type="checkbox" id="spoiler_compile_macos_githubdesktop">
+		            <label for="spoiler_compile_macos_githubdesktop">(macOS alternative) Using GitHub Desktop <i class="fas fa-angle-down"></i></label>
+		            <div class="spoiler">
+			            <ol>
+			            	<li>Download and install the macOS version of <a href="https://desktop.github.com/" target="_blank" title="GitHub Desktop homepage">GitHub Desktop</a>.</li>
+			            	<li>Run GitHub Desktop and click <strong>File->Clone Repository</strong> from the menu.</li>
+			            	<li>Click the <strong>URL</strong> tab, enter <strong>https://github.com/UOX3DevTeam/UOX3.git</strong>, then provide a local path for where you want the UOX3 git repository cloned on your drive.</li>
+			            	<li>Hit the <strong>Clone</strong> button!</li>
 			            </ol>
 		            </div>
 		            <h4>Step 2 - Compile UOX3</h4>
 		            <input type="checkbox" id="spoiler_compile_linux_2">
 		            <label for="spoiler_compile_linux_2">GNU Make and GCC <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
-			            <p>You'll need a couple tools before you can compile UOX3 on Linux: GNU Make (4.2.1 or higher recommended) and gcc. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal commands (which are specific to Debian/Ubuntu):</p>
+			            <p>You'll need a couple tools before you can compile UOX3 on Linux, like <strong>GNU Make</strong> (4.2.1 or higher recommended) and <strong>gcc</strong>. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):</p>
 			            <ul>
-			            	<li><span class="cmdHighlight">sudo apt install make</span></li>
-			            	<li><span class="cmdHighlight">sudo apt install gcc</span></li>
+			            	<li><strong>(Linux only)</strong> <span class="cmdHighlight">sudo apt install build-essential</span></li>
 			            </ul>
-			            <p>Once these are in place, navigate to the UOX3/source/ directory in your terminal and execute the following commands, in order:</p>
+			            <p>Once these tools are in place, navigate to the <strong>UOX3</strong> project directory in your terminal and execute the following commands from the project's root directory, in order:</p>
 			            <ol>
 			            	<li><span class="cmdHighlight">chmod +x automake.sh</span> - Makes the automake.sh bash script executable.</li>
-			            	<li><span class="cmdHighlight">./automake.sh</span> - First compiles the Spidermonkey JS library bundled with UOX3, then makes the actual UOX3 build</li>
+			            	<li><span class="cmdHighlight">./automake.sh</span> - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the <strong>root</strong> UOX3 project directory.</li>
 			            </ol>
 			            <input type="checkbox" id="spoiler_compile_linux_3">
-			            <label for="spoiler_compile_linux_3">Manual Steps <i class="fas fa-angle-down"></i></label>
+			            <label for="spoiler_compile_linux_3">Manual Instructions <i class="fas fa-angle-down"></i></label>
 			            <div class="spoiler">
-				            <p>If you'd rather go through each step of the process manually, try the following commands:</p>
+				            <p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does):</p>
 				            <ul>
-				            	<li><span class="cmdHighlight">cd ../spidermonkey</span></li>
+				            	<li><span class="cmdHighlight">cd spidermonkey</span></li>
 				            	<li><span class="cmdHighlight">make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc</span></li>
-				            	<li><span class="cmdHighlight">(Linux) ar -r libjs32.a Linux_All_DBG.OBJ/*.o</span></li>
-				            	<li><span class="cmdHighlight">(Linux) cp Linux_All_DBG.OBJ/jsautocfg.h ./</span></li>
-				            	<li><span class="cmdHighlight">(MacOS) ar rcs libjs32.a Darwin_DBG.OBJ/*.o</span></li>
-				            	<li><span class="cmdHighlight">(MacOS) cp Darwin_DBG.OBJ/jsautocfg.h ./</span></li>
+				            	<li>Linux</li>
+				            	<ul>
+				            		<li><span class="cmdHighlight">ar -r libjs32.a Linux_All_DBG.OBJ/*.o</span></li>
+				            		<li><span class="cmdHighlight">cp Linux_All_DBG.OBJ/jsautocfg.h ./</span></li>
+				            	</ul>
+				            	<li>macOS</li>
+				            	<ul>
+				            		<li><span class="cmdHighlight">ar rcs libjs32.a Darwin_DBG.OBJ/*.o</span></li>
+				            		<li><span class="cmdHighlight">cp Darwin_DBG.OBJ/jsautocfg.h ./</span></li>
+				            	</ul>
 				            	<li><span class="cmdHighlight">cd ../source</span></li>
 				            	<li><span class="cmdHighlight">make</span></li>
 				            </ul>
 			            </div>
 		            </div>
-					<p>Once this process is done, you can copy your new uox3 binary to the root of the directory you intend to be the working directory for your UOX3 shard. Along with the binary, you'll also need to copy the files and folders contained in the <strong>data subdirectory</strong>. Once you have all the files in place, you can follow the regular steps listed under <a href="#installation">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup.</p>
+					<p>Once this process is done, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.</p>
+
+					<p><strong>It is recommended </strong> to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
+
+					<input type="checkbox" id="spoiler_faq_uox3purpose"/>
+  					<label for="spoiler_faq_uox3purpose">Copying Required Files to Dedicated UOX3 Directory <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>This is an example of how to copy all required files to a directory called UOX3 in your user account's home directory
+						<ol>
+							<li><em>navigate to root UOX3 project directory</em></li>
+							<li><span class="cmdHighlight">mkdir ~/UOX3</span></li>
+							<li><span class="cmdHighlight">cp uox3 ~/UOX3</span></li>
+							<li><span class="cmdHighlight">cp -r data/* ~/UOX3</span></li>
+							<li><span class="cmdHighlight">cd ~/UOX3</span></li>
+						</p>
+					</div>
+
+					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Frequently Asked Questions</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3FAQ"><span>Frequently Asked Questions</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>Why? Where? Who? When? What?</p>
@@ -3352,376 +3412,10 @@
 					<div class="spoiler">
 						<p>UOX3 is licensed under v2 of the GNU General Public License (GPL), with the following addendum:</p>
 						<p>"In addition to that license, if you are running this program or modified versions of it on a public system you HAVE TO make the complete source of the version used by you available or provide people with a location to download it."</p>
-						<input type="checkbox" id="spoiler_faq_license_full"/>
-	  					<label for="spoiler_faq_license_full">Full GNU General Public License Text <i class="fas fa-angle-down"></i></label>
+			            <input type="checkbox" id="spoiler_gpl_license"/>
+	  					<label for="spoiler_gpl_license">Full GNU General Public License Text <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<pre>  	-- Ultima Offline eXperiment III (UOX3) --
-  		UO Server Emulation Program
-
-	Copyright 1997, 98 by Marcus Rating (Cironian)
-
-UOX3 is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
-
-<strong>* * * In addition to that license, if you are running this program or modified
-versions of it on a public system you HAVE TO make the complete source of
-the version used by you available or provide people with a location to
-download it. * * *</strong>
-
-/////////////////////////////////////////////////////////////////////////////
-
-GNU GENERAL PUBLIC LICENSE
-       Version 2, June 1991
-
- Copyright (C) 1989, 1991 Free Software Foundation, Inc.
-                       51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
-
-    Preamble
-
-  The licenses for most software are designed to take away your
-freedom to share and change it.  By contrast, the GNU General Public
-License is intended to guarantee your freedom to share and change free
-software--to make sure the software is free for all its users.  This
-General Public License applies to most of the Free Software
-Foundation's software and to any other program whose authors commit to
-using it.  (Some other Free Software Foundation software is covered by
-the GNU Library General Public License instead.)  You can apply it to
-your programs, too.
-
-  When we speak of free software, we are referring to freedom, not
-price.  Our General Public Licenses are designed to make sure that you
-have the freedom to distribute copies of free software (and charge for
-this service if you wish), that you receive source code or can get it
-if you want it, that you can change the software or use pieces of it
-in new free programs; and that you know you can do these things.
-
-  To protect your rights, we need to make restrictions that forbid
-anyone to deny you these rights or to ask you to surrender the rights.
-These restrictions translate to certain responsibilities for you if you
-distribute copies of the software, or if you modify it.
-
-  For example, if you distribute copies of such a program, whether
-gratis or for a fee, you must give the recipients all the rights that
-you have.  You must make sure that they, too, receive or can get the
-source code.  And you must show them these terms so they know their
-rights.
-
-  We protect your rights with two steps: (1) copyright the software, and
-(2) offer you this license which gives you legal permission to copy,
-distribute and/or modify the software.
-
-  Also, for each author's protection and ours, we want to make certain
-that everyone understands that there is no warranty for this free
-software.  If the software is modified by someone else and passed on, we
-want its recipients to know that what they have is not the original, so
-that any problems introduced by others will not reflect on the original
-authors' reputations.
-
-  Finally, any free program is threatened constantly by software
-patents.  We wish to avoid the danger that redistributors of a free
-program will individually obtain patent licenses, in effect making the
-program proprietary.  To prevent this, we have made it clear that any
-patent must be licensed for everyone's free use or not licensed at all.
-
-  The precise terms and conditions for copying, distribution and
-modification follow.
-
-    GNU GENERAL PUBLIC LICENSE
-   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-
-  0. This License applies to any program or other work which contains
-a notice placed by the copyright holder saying it may be distributed
-under the terms of this General Public License.  The "Program", below,
-refers to any such program or work, and a "work based on the Program"
-means either the Program or any derivative work under copyright law:
-that is to say, a work containing the Program or a portion of it,
-either verbatim or with modifications and/or translated into another
-language.  (Hereinafter, translation is included without limitation in
-the term "modification".)  Each licensee is addressed as "you".
-
-Activities other than copying, distribution and modification are not
-covered by this License; they are outside its scope.  The act of
-running the Program is not restricted, and the output from the Program
-is covered only if its contents constitute a work based on the
-Program (independent of having been made by running the Program).
-Whether that is true depends on what the Program does.
-
-  1. You may copy and distribute verbatim copies of the Program's
-source code as you receive it, in any medium, provided that you
-conspicuously and appropriately publish on each copy an appropriate
-copyright notice and disclaimer of warranty; keep intact all the
-notices that refer to this License and to the absence of any warranty;
-and give any other recipients of the Program a copy of this License
-along with the Program.
-
-You may charge a fee for the physical act of transferring a copy, and
-you may at your option offer warranty protection in exchange for a fee.
-
-  2. You may modify your copy or copies of the Program or any portion
-of it, thus forming a work based on the Program, and copy and
-distribute such modifications or work under the terms of Section 1
-above, provided that you also meet all of these conditions:
-
-    a) You must cause the modified files to carry prominent notices
-    stating that you changed the files and the date of any change.
-
-    b) You must cause any work that you distribute or publish, that in
-    whole or in part contains or is derived from the Program or any
-    part thereof, to be licensed as a whole at no charge to all third
-    parties under the terms of this License.
-
-    c) If the modified program normally reads commands interactively
-    when run, you must cause it, when started running for such
-    interactive use in the most ordinary way, to print or display an
-    announcement including an appropriate copyright notice and a
-    notice that there is no warranty (or else, saying that you provide
-    a warranty) and that users may redistribute the program under
-    these conditions, and telling the user how to view a copy of this
-    License.  (Exception: if the Program itself is interactive but
-    does not normally print such an announcement, your work based on
-    the Program is not required to print an announcement.)
-
-These requirements apply to the modified work as a whole.  If
-identifiable sections of that work are not derived from the Program,
-and can be reasonably considered independent and separate works in
-themselves, then this License, and its terms, do not apply to those
-sections when you distribute them as separate works.  But when you
-distribute the same sections as part of a whole which is a work based
-on the Program, the distribution of the whole must be on the terms of
-this License, whose permissions for other licensees extend to the
-entire whole, and thus to each and every part regardless of who wrote it.
-
-Thus, it is not the intent of this section to claim rights or contest
-your rights to work written entirely by you; rather, the intent is to
-exercise the right to control the distribution of derivative or
-collective works based on the Program.
-
-In addition, mere aggregation of another work not based on the Program
-with the Program (or with a work based on the Program) on a volume of
-a storage or distribution medium does not bring the other work under
-the scope of this License.
-
-  3. You may copy and distribute the Program (or a work based on it,
-under Section 2) in object code or executable form under the terms of
-Sections 1 and 2 above provided that you also do one of the following:
-
-    a) Accompany it with the complete corresponding machine-readable
-    source code, which must be distributed under the terms of Sections
-    1 and 2 above on a medium customarily used for software interchange; or,
-
-    b) Accompany it with a written offer, valid for at least three
-    years, to give any third party, for a charge no more than your
-    cost of physically performing source distribution, a complete
-    machine-readable copy of the corresponding source code, to be
-    distributed under the terms of Sections 1 and 2 above on a medium
-    customarily used for software interchange; or,
-
-    c) Accompany it with the information you received as to the offer
-    to distribute corresponding source code.  (This alternative is
-    allowed only for noncommercial distribution and only if you
-    received the program in object code or executable form with such
-    an offer, in accord with Subsection b above.)
-
-The source code for a work means the preferred form of the work for
-making modifications to it.  For an executable work, complete source
-code means all the source code for all modules it contains, plus any
-associated interface definition files, plus the scripts used to
-control compilation and installation of the executable.  However, as a
-special exception, the source code distributed need not include
-anything that is normally distributed (in either source or binary
-form) with the major components (compiler, kernel, and so on) of the
-operating system on which the executable runs, unless that component
-itself accompanies the executable.
-
-If distribution of executable or object code is made by offering
-access to copy from a designated place, then offering equivalent
-access to copy the source code from the same place counts as
-distribution of the source code, even though third parties are not
-compelled to copy the source along with the object code.
-
-  4. You may not copy, modify, sublicense, or distribute the Program
-except as expressly provided under this License.  Any attempt
-otherwise to copy, modify, sublicense or distribute the Program is
-void, and will automatically terminate your rights under this License.
-However, parties who have received copies, or rights, from you under
-this License will not have their licenses terminated so long as such
-parties remain in full compliance.
-
-  5. You are not required to accept this License, since you have not
-signed it.  However, nothing else grants you permission to modify or
-distribute the Program or its derivative works.  These actions are
-prohibited by law if you do not accept this License.  Therefore, by
-modifying or distributing the Program (or any work based on the
-Program), you indicate your acceptance of this License to do so, and
-all its terms and conditions for copying, distributing or modifying
-the Program or works based on it.
-
-  6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
-
-  7. If, as a consequence of a court judgment or allegation of patent
-infringement or for any other reason (not limited to patent issues),
-conditions are imposed on you (whether by court order, agreement or
-otherwise) that contradict the conditions of this License, they do not
-excuse you from the conditions of this License.  If you cannot
-distribute so as to satisfy simultaneously your obligations under this
-License and any other pertinent obligations, then as a consequence you
-may not distribute the Program at all.  For example, if a patent
-license would not permit royalty-free redistribution of the Program by
-all those who receive copies directly or indirectly through you, then
-the only way you could satisfy both it and this License would be to
-refrain entirely from distribution of the Program.
-
-If any portion of this section is held invalid or unenforceable under
-any particular circumstance, the balance of the section is intended to
-apply and the section as a whole is intended to apply in other
-circumstances.
-
-It is not the purpose of this section to induce you to infringe any
-patents or other property right claims or to contest validity of any
-such claims; this section has the sole purpose of protecting the
-integrity of the free software distribution system, which is
-implemented by public license practices.  Many people have made
-generous contributions to the wide range of software distributed
-through that system in reliance on consistent application of that
-system; it is up to the author/donor to decide if he or she is willing
-to distribute software through any other system and a licensee cannot
-impose that choice.
-
-This section is intended to make thoroughly clear what is believed to
-be a consequence of the rest of this License.
-
-  8. If the distribution and/or use of the Program is restricted in
-certain countries either by patents or by copyrighted interfaces, the
-original copyright holder who places the Program under this License
-may add an explicit geographical distribution limitation excluding
-those countries, so that distribution is permitted only in or among
-countries not thus excluded.  In such case, this License incorporates
-the limitation as if written in the body of this License.
-
-  9. The Free Software Foundation may publish revised and/or new versions
-of the General Public License from time to time.  Such new versions will
-be similar in spirit to the present version, but may differ in detail to
-address new problems or concerns.
-
-Each version is given a distinguishing version number.  If the Program
-specifies a version number of this License which applies to it and "any
-later version", you have the option of following the terms and conditions
-either of that version or of any later version published by the Free
-Software Foundation.  If the Program does not specify a version number of
-this License, you may choose any version ever published by the Free Software
-Foundation.
-
-  10. If you wish to incorporate parts of the Program into other free
-programs whose distribution conditions are different, write to the author
-to ask for permission.  For software which is copyrighted by the Free
-Software Foundation, write to the Free Software Foundation; we sometimes
-make exceptions for this.  Our decision will be guided by the two goals
-of preserving the free status of all derivatives of our free software and
-of promoting the sharing and reuse of software generally.
-
-    NO WARRANTY
-
-  11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
-OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
-TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
-PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
-REPAIR OR CORRECTION.
-
-  12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
-INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
-OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
-TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
-YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
-PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGES.
-
-     END OF TERMS AND CONDITIONS
-
-    How to Apply These Terms to Your New Programs
-
-  If you develop a new program, and you want it to be of the greatest
-possible use to the public, the best way to achieve this is to make it
-free software which everyone can redistribute and change under these terms.
-
-  To do so, attach the following notices to the program.  It is safest
-to attach them to the start of each source file to most effectively
-convey the exclusion of warranty; and each file should have at least
-the "copyright" line and a pointer to where the full notice is found.
-
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-
-Also add information on how to contact you by electronic and paper mail.
-
-If the program is interactive, make it output a short notice like this
-when it starts in an interactive mode:
-
-    Gnomovision version 69, Copyright (C) year name of author
-    Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-    This is free software, and you are welcome to redistribute it
-    under certain conditions; type `show c' for details.
-
-The hypothetical commands `show w' and `show c' should show the appropriate
-parts of the General Public License.  Of course, the commands you use may
-be called something other than `show w' and `show c'; they could even be
-mouse-clicks or menu items--whatever suits your program.
-
-You should also get your employer (if you work as a programmer) or your
-school, if any, to sign a "copyright disclaimer" for the program, if
-necessary.  Here is a sample; alter the names:
-
-  Yoyodyne, Inc., hereby disclaims all copyright interest in the program
-  `Gnomovision' (which makes passes at compilers) written by James Hacker.
-
-  <signature of Ty Coon>, 1 April 1989
-  Ty Coon, President of Vice
-
-This General Public License does not permit incorporating your program into
-proprietary programs.  If your program is a subroutine library, you may
-consider it more useful to permit linking proprietary applications with the
-library.  If this is what you want to do, use the GNU Library General
-Public License instead of this License.
-							</pre>
+							<embed src="gpl-license.txt" style="width: 100%; min-height: 500px">
 						</div>
 					</div>
 
@@ -3744,7 +3438,7 @@ Public License instead of this License.
 					<div class="spoiler">
 						<p>There can be a number of different reasons for why you are unable to connect to a UOX3 shard. Here are some of the most common ones:</p>
 						<p><strong>You're trying to connect to UOX3 using an encrypted UO client</strong><br>
-						Make sure you remove/patch away the UO client encryption through the use of <a href="https://github.com/markdwags/Razor">Razor</a> or a similar programs before trying to connect to a UOX3 shard. UOX3 will only accept clients with no encryption.</p>
+						Make sure you remove/patch away the UO client encryption through the use of <a href="https://github.com/markdwags/Razor" target="_blank" title="UO:R Community Edition of Razor">Razor</a> or a similar programs before trying to connect to a UOX3 shard. UOX3 will only accept clients with no encryption.</p>
 						<p><strong>You set the IP and/or Port incorrectly in UOX.INI</strong><br>
 						Having the wrong IP or Port in UOX.INI will give you a connection-error when you try to select the UOX3 shard in your client's server-list. The initial connection that checks for user-name/password might still go through, but not the server-selection part.</p>
 						<p><strong>You set the IP and/or Port incorrectly in Razor/other tool used to start the client</strong><br>
@@ -3760,7 +3454,7 @@ Public License instead of this License.
 					<input type="checkbox" id="spoiler_faq_uox3era"/>
   					<label for="spoiler_faq_uox3era">What era of UO is UOX3 based on? <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Various parts of UOX3 such as combat calculations, weapon/armor values etc are roughly <a href="http://web.archive.org/web/20020806221331/http://uo.stratics.com:80/content/arms-armor/arms.shtml">based around UO from the time just before</a> (archive.org) the Age of Shadows expansion (Publish 17) was released. NPC stats less so, due to the lack of accurate data on such stats from back then.</p>
+						<p>Various parts of UOX3 such as combat calculations, weapon/armor values etc are roughly <a href="http://web.archive.org/web/20020806221331/http://uo.stratics.com:80/content/arms-armor/arms.shtml" target="_blank" title="UO Stratics Arms info from archive.org">based around UO from the time just before</a> (archive.org) the Age of Shadows expansion (Publish 17) was released. NPC stats less so, due to the lack of accurate data on such stats from back then.</p>
 						<p>Note that the combat calculations are hardcoded, but can be overridden through the JavaScript system (or changed in code, of course). The stats of gear and NPCs can be easily tweaked with any text editor, and there are UOX.INI settings that can globally increase/decrease combat difficulty and/or speed.</p>
 					</div>
 
@@ -3775,12 +3469,12 @@ Public License instead of this License.
 		            <input type="checkbox" id="spoiler_faq_portforward"/>
   					<label for="spoiler_faq_portforward">How do I setup Port Forwarding on my router? <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If the server you intend to run your UOX3 shard on is behind a NAT router, then you might have to forward any incoming connections on port 2593 (or whichever other port you decided to use for UOX3) to the internal LAN-IP given to your server by the router. This is called <a href="https://en.wikipedia.org/wiki/Port_forwarding">Port Forwarding (Wikipedia)</a>, and whether or not it is required depends on the router and how it is setup. The easiest way to find out is to have someone try to connect to your UOX3 server over the Internet. If they are unable to connect, and you've ruled out all other options (mis-configuration of UOX3/UO Client, firewalls running on host/client computers, etc), then you might have to setup port-forwarding on your router.</p>
+						<p>If the server you intend to run your UOX3 shard on is behind a NAT router, then you might have to forward any incoming connections on port 2593 (or whichever other port you decided to use for UOX3) to the internal LAN-IP given to your server by the router. This is called <a href="https://en.wikipedia.org/wiki/Port_forwarding" target="_blank" title="Wikipedia - Port Forwarding">Port Forwarding (Wikipedia)</a>, and whether or not it is required depends on the router and how it is setup. The easiest way to find out is to have someone try to connect to your UOX3 server over the Internet. If they are unable to connect, and you've ruled out all other options (mis-configuration of UOX3/UO Client, firewalls running on host/client computers, etc), then you might have to setup port-forwarding on your router.</p>
 						<p>How do I do Port Forwarding?</p>
 						<p>The exact procedure varies from router to router, but in general it involves connecting to the router's IP through your browser/Windows Explorer/Linux equivalent, entering the user-name and password required to log on to the router (these can either be default to the router-brand, or custom depending on your Internet-provider), and then adding the UOX3 port to whatever port-forwarding configuration exists for your router.</p>
-						<p>Various sites on the World Wide Web include step-by-step instructions for how to setup port-forwarding on different types of routers. One such site is <a href="https://www.portforward.com/">PortForward.com</a>. If the default username/password specific to your router (usually mentioned on these sites) is not working, you might have to consult the documentation that came along with the router, or contact your ISP to get them to provide the username and password.</p>
+						<p>Various sites on the World Wide Web include step-by-step instructions for how to setup port-forwarding on different types of routers. One such site is <a href="https://www.portforward.com/" target="_blank" title="PortForward.com - Guides on port forwarding">PortForward.com</a>. If the default username/password specific to your router (usually mentioned on these sites) is not working, you might have to consult the documentation that came along with the router, or contact your ISP to get them to provide the username and password.</p>
 						<p>How can I check if I set it up correctly?</p>
-						<p>To quickly check if you setup your port-forwarding correctly, you can visit <a href="https://canyouseeme.org/">CanYouSeeMe.org</a> (Open Port Check Tool) and just enter the port you're trying to forward. Click the 'check' button, and the tool should tell you whether or not it can see a service running on your server through said port.</p>
+						<p>To quickly check if you setup your port-forwarding correctly, you can visit <a href="https://canyouseeme.org/" target="_blank" title="CanYouSeeMee.org - tools for testing port-forwarding setup">CanYouSeeMe.org</a> (Open Port Check Tool) and just enter the port you're trying to forward. Click the 'check' button, and the tool should tell you whether or not it can see a service running on your server through said port.</p>
 						<p>The other option is of course to have someone actually try to connect to your shard! :)</p>
 					</div>
 		          </div>
@@ -3791,7 +3485,7 @@ Public License instead of this License.
 		<ul id="featureDocs" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Feature Documentation</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Advanced Trade System</span></a>
+				<a class="cd-faq__trigger" href="#0" id="advancedTradeSystem"><span>Advanced Trade System</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 					<p>The Advanced Trade System was originally created by <strong>Magius(CHE)</strong>, and can be used to set up a system with <strong>fluctuating prices</strong> for <strong>goods</strong> (items bought and sold by NPC vendors) across <strong>different regions</strong> of the game world. Every time the vendors restock their goods, the prices will be adjusted positively or negatively depending on a random range set for each type of good.</p>
@@ -3886,11 +3580,11 @@ Public License instead of this License.
 
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Advancement Gates</span></a>
+				<a class="cd-faq__trigger" href="#0" id="advancementGates"><span>Advancement Gates</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p><em>Advancement Gates is a concept in UOX3 that allows you to set up automated shortcuts for giving players a boost to stats, skills and items in-game without GM intervention. They can for instance be used to create custom class templates beyond what is offered during character creation in the client, can be used for events where you'd like to give players some special items, and can even be combined with another concept such as <strong>Monster Gates</strong> and the <strong>Race System</strong> to allow players to take on the roles of monsters on your shard.</em></p>
-		          	<div style="background-color: lightgrey; padding: 10px 10px 2px 10px; margin-bottom: 5px"><p style="color: black; font-style: italic">Note: Although they're called advancement "gates", they can actually be any object the player is able to walk onto/collide with!</p></div>
+		          	<div class="note"><p style="color: black; font-style: italic">Note: Although they're called advancement "gates", they can actually be any object the player is able to walk onto/collide with!</p></div>
 		          	<h3>advance.dfn</h3>
 		            <p>The basis for the advancement gates lies in DFNDATA/ADVANCE/advance.dfn. Below is an example of an entry from that file, with explanations for what each line does (click to expand):</p>
 		            <input type="checkbox" id="spoiler_advance_1">
@@ -3954,21 +3648,34 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Dictionaries</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Dictionaries"><span>Dictionaries</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>UOX3 comes with a <strong>custom dictionary system</strong> that allows shard admins to set up and translate their own system and script messages to any language supported by the UO client. This system has some pros and cons over the usual "cliloc" (client localization, also supported!) system UO uses, in that it allows shard admins to send completely customized messages to the client, at the cost of using more bandwith than the built-in cliloc system in the client.</p>
+		            <p>UOX3 comes with a <strong>custom dictionary system</strong> that allows shard admins to set up and translate their own system and script messages to any language supported by the UO client. This system has some pros and cons over the usual "cliloc" (client localization, also supported!) system UO uses, in that it allows shard admins to send completely customized messages to the client (even if not setting up for multiple languages), at the cost of using more bandwith than the built-in cliloc system in the client.</p>
+		            <p>The dictionaries are set up in the UOX3/dictionaries folder, with each language contained in its own dictionary file with a file-ending matching the language code used in the UO client. The exceptions are the files with a .ZRO and .UNK extensions. These are used as default files when no/an unknown language is returned from the client.</p>
+		            <p>In older client versions, it is possible to change the client language by changing a setting - <strong>UserLanguageCodeString</strong> - in the uo.cfg file. <em>Syntax: UserLanguageCodeString=[language code] (minus brackets)</em>.</p>
+		            <p>In modern client versions, the language seems to be dictated automatically by the regional settings in Windows, meaning the above uo.cfg setting might not work.</p>
+		            <h4>Language codes supported in the UO Client (depending on version):</h4>
+					<span class="cmdHighlight">ENU</span> (English)<br>
+					<span class="cmdHighlight">DEU</span> (German)<br>
+					<span class="cmdHighlight">ESP</span> (Spanish)<br>
+					<span class="cmdHighlight">FRA</span> (French)<br>
+					<span class="cmdHighlight">CHT</span> (Chinese)<br>
+					<span class="cmdHighlight">CHS</span> (Non-Traditional Chinese)<br>
+					<span class="cmdHighlight">JPN</span> (Japanese)<br>
+					<span class="cmdHighlight">KOR</span> (Korean)<br>
+		            </p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>NPC AI</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3NPCAI"><span>NPC AI</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>NPCs can be assigned an AI type that will make them behave or react to events around them in particular ways. Some of these AI types are combat-oriented (guards, monsters), and some are more service-oriented (bankers, healers, playervendors).</p>
 		            <p>NPC AI types can be assigned at spawn-time through the <span class="cmdHighlight">npcai=#</span> tag in NPC DFNs, or at run-time via the <span class="cmdHighlight">'set npcai #</span> GM command or the <span class="cmdHighlight">aitype</span> JS character property.</p>
-		          	<div style="background-color: lightgrey; padding: 10px 10px 2px 10px; margin-bottom: 5px"><p style="color: black; font-style: italic">Example: The Orc NPC contains the tag <strong>npcai=2</strong> in its definition in DFNDATA/NPC/humanoids.dfn. This assigns it the "evil" AI that most monsters use, which makes it attack innocent characters (including players) on sight.</p></div>
+		          	<div class="note"><p style="color: black; font-style: italic">Example: The Orc NPC contains the tag <strong>npcai=2</strong> in its definition in DFNDATA/NPC/humanoids.dfn. This assigns it the "evil" AI that most monsters use, which makes it attack innocent characters (including players) on sight.</p></div>
 		            <h3>Available NPC AI types</h3>
 						<p><span class="cmdHighlight">0</span> - <strong>AI_NONE</strong><br>
 						Default - no AI.</p>
@@ -4000,7 +3707,16 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>NPC Movement and Pathfinding</span></a>
+				<a class="cd-faq__trigger" href="#0" id="npcEscortQuests"><span>NPC Escort Quests</span></a>
+				<div class="cd-faq__content">
+		          <div class="text-component">
+		            <p>NPC Escort Quests allow players to earn a bit of extra gold by escorting NPCs from one location to another (gold paid upon safe arrival in target region). More details on this system coming soon!</p>
+		          </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#0" id="npcMovement"><span>NPC Movement and Pathfinding</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<h3>WanderModes Overview</h3>
@@ -4052,13 +3768,13 @@ Public License instead of this License.
 		          	<p style="margin-left: 20px"><span class="cmdHighlight">npcwander=5</span> (Frozen)<br>
 		          	NPCs in wanderMode 5 are cool as cucumbers, so cool, in fact, that they remain frozen in place on the same spot, unable to move. Come hell or high water, they will remain steadfast and stick to their spot no matter what.</p>
 		          	<h3>Altering WanderMode through JavaScript</h3>
-		          	<p>In addition to DFNs and code, an NPC's wanderMode can also be adjusted in JavaScripts used with UOX3's JS Engine, either via JS Methods for characters like <span class="cmdHighlight">Wander( x1, y1, x2 (radius), y2 )</span> and <span class="cmdHighlight">Wander ( x1, y1, radius )</span>, or the <span class="cmdHighlight">wandertype</span> JS property for characters. See the <a href="https://www.uox3.org/jsdocs/index.html">UOX3 JS Docs</a> for more details on syntax and some examples!</p>
+		          	<p>In addition to DFNs and code, an NPC's wanderMode can also be adjusted in JavaScripts used with UOX3's JS Engine, either via JS Methods for characters like <span class="cmdHighlight">Wander( x1, y1, x2 (radius), y2 )</span> and <span class="cmdHighlight">Wander ( x1, y1, radius )</span>, or the <span class="cmdHighlight">wandertype</span> JS property for characters. See the <a href="https://www.uox3.org/jsdocs/index.html" target="_blank" title="UOX3 JS Engine Documentation">UOX3 JS Docs</a> for more details on syntax and some examples!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Race System</span></a>
+				<a class="cd-faq__trigger" href="#0" id="raceSystem"><span>Race System</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>More details on UOX3 race system coming here soon! Check out <strong>UOX3/DFNDATA/RACE/races.dfn</strong> for examples.</p>
@@ -4067,7 +3783,16 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Skill and Stat Gain</span></a>
+				<a class="cd-faq__trigger" href="#0" id="regionSystem"><span>Regions</span></a>
+				<div class="cd-faq__content">
+		          <div class="text-component">
+		            <p>More details on UOX3 region system coming here soon! Until then, check out <strong>UOX3/dfndata/regions/regions.dfn</strong> for examples.</p>
+		          </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#0" id="skillAndStatGain"><span>Skill and Stat Gain</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>The gain of skills and stats in UOX3 is governed by a system setup in <strong>UOX3/DFNDATA/SKILLS/skills.dfn</strong>, where each skill has a setup similar to this:</p>
@@ -4106,18 +3831,18 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Spawn Regions</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3SpawnRegions"><span>Spawn Regions</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>UOX3's regional spawning system allows the spawning of thousands of NPCs and items without affecting world saving or loading times negatively, as anything spawned through this system is not saved, and will not persist through a server restart, but will respawn on every server startup. This is useful for generic monster spawns, NPC shopkeepers and townsfolk, random item spawns like magic reagents, etc.</p>
-		            <p>The spawning system is setup through <strong>UOX3/DFNDATA/SPAWN/spawn.dfn</strong>, and an example of a setup for this can be seen by downloading the <a href="https://www.uox3.org/downloads.shtml">Community-made spawn.dfn</a>.</p>
+		            <p>The spawning system is setup through <strong>UOX3/DFNDATA/SPAWN/spawn.dfn</strong>, and an example of a setup for this can be seen by downloading the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3 Community-made spawn files">Community-made spawn.dfn</a>.</p>
 		            <p>More details coming soon!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Spellcasting NPCs</span></a>
+				<a class="cd-faq__trigger" href="#0" id="spellcastingNPCs"><span>Spellcasting NPCs</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>The spattack= setting in npc.dfn's matches the circle you want an NPC to be able to cast up to (IE a setting of 8 means he can cast any spell from Circle 1 all the way to circle 8 ). Notably, NPC's can currently only cast certain spells, and theese will be chosen at random when the NPC is able to cast spells during its combat cycle.</p>
@@ -4137,7 +3862,7 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Teleport Locations</span></a>
+				<a class="cd-faq__trigger" href="#0" id="teleportLocations"><span>Teleport Locations</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p><strong>Fixed teleport locations</strong> can be setup via <strong>UOX3/JS/teleport.scp</strong> using the following format:</p>
@@ -4165,7 +3890,7 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Townstones</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Townstones"><span>Townstones</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>UOX3 comes with a system for townstones that allows players to setup their own player-run governments in different regions of the world.</p>
@@ -4206,7 +3931,7 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Weather System</span></a>
+				<a class="cd-faq__trigger" href="#0" id="weatherSystem"><span>Weather System</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>UOX3 comes with an extensive weather system that ties in with regions and player races.</p>
@@ -4219,7 +3944,7 @@ Public License instead of this License.
 		<ul id="scriptingDFN" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Scripting - DFN System</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Introduction to DFN System in UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="dfnSystem"><span>Introduction to DFN System in UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>DFNs - or "definition files" are essentially "templates" or "blueprints" that define the properties of various objects and systems in UOX3, which can be customized by shard admins with any text editor and be reloaded by UOX3 on the fly (only applies to select types of DFNs).</p>
@@ -4227,98 +3952,146 @@ Public License instead of this License.
 		            <input type="checkbox" id="spoiler_dfnsystem_advance">
 		            <label for="spoiler_dfnsystem_advance">advance <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\advance\advance.dfn</span><br>
+						Used to setup advancement gates/objects that can quickly boost players skills and stats to desired level.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_carve">
 		            <label for="spoiler_dfnsystem_carve">carve <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\carve\carve.dfn</span><br>
+						Used to setup lists of items that players will gain when carving particular creatures with bladed items.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_colors">
 		            <label for="spoiler_dfnsystem_colors">colors <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\colors\colors.dfn</span><br>
+						Contains random colorlists that can be used with color tags in various other DFNs to provide random colors for items and NPCs.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_command">
 		            <label for="spoiler_dfnsystem_command">command <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\command\commands.dfn</span><br>
+						Contains setup of roles like Administrator, GM, Counselor and Player, as well as the privileges and access to commands that each role will have.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_create">
 		            <label for="spoiler_dfnsystem_create">create <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\create\*.dfn</span><br>
+						Contains crafting menus with resource costs for crafting each individual item.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_creatures">
 		            <label for="spoiler_dfnsystem_creatures">creatures <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\creatures\creatures.dfn</span><br>
+						Used to setup things like sound effects, movement types and more for each creature type in the game.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_harditems">
 		            <label for="spoiler_dfnsystem_harditems">harditems <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\harditems\harditems.dfn</span><br>
+						Used to override properties of "hard/raw" (non-scripted) items added to the world. Normally they get all their properties directly from tiledata.mul, but this file allows overriding the properties for such items, to ensure they all get the proper weight they should have, etc.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_house">
 		            <label for="spoiler_dfnsystem_house">house <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\house\house.dfn</span><br>
+						Contains the setup for multis/houses/boats in UOX3, and what items (like doors, or signs) are added along with these when players place them in the world using deeds.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_html">
 		            <label for="spoiler_dfnsystem_html">html <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\html\default_templates.dfn / *.htf</span><br>
+						Used to setup HTML templates for server status, information pages, etc. that can be automatically written by the server on worldsaves. Useful to show status of server on shard homepage, for instance.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_items">
 		            <label for="spoiler_dfnsystem_items">items <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\items\*.dfn</span><br>
+						Contains all item definitions in the game - the scripted versions of "hard" items, these get all their properties set in these definition files instead of from tiledata.mul. Also contains the contents of the menu shown when using the 'add command, lootlists for NPCs, shoplists for NPC shopkeepers, and more.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_location">
 		            <label for="spoiler_dfnsystem_location">location <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\location\location.dfn</span><br>
+						Contains definitions of locations in the world - points of interest that GMs can travel directly to using the 'goplace # command, where # aligns with location IDs in this file.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_maps">
 		            <label for="spoiler_dfnsystem_maps">maps <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\maps\maps.dfn / tiles.dfn</span><br>
+						maps.dfn is used to define what kind of mapfiles UOX3 should be attempting to load - their names, their sizes, etc. tiles.dfn is used to override tiledata properties of items in the game world - useful for marking unclimbable ladders as climbable, for instance.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_menus">
 		            <label for="spoiler_dfnsystem_menus">menus <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\menus\menus.dfn / polymorph.dfn / tracking.dfn</span><br>
+						Contains various gump menus used in the game, such as menu used by polymorph spell, tracking skill and basic server info gumps.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_misc">
 		            <label for="spoiler_dfnsystem_misc">misc <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\misc\books.dfn / gumps.dfn / motdtips.dfn</span><br>
+						Contains hardcoded books, message of the day login tips, housing/guild/account management gump menus.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_msgboard">
 		            <label for="spoiler_dfnsystem_msgboard">msgboard <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\msgboard\msgboard.dfn</span><br>
+						Used to setup NPC escort quests. See <a href="#npcEscortQuests">separate feature documentation</a> for more info.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_newbie">
 		            <label for="spoiler_dfnsystem_newbie">newbie <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\newbie\newbie.dfn</span><br>
+						Used to setup newbie items given out to new characters upon creation, based on the skills they choose.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_npc">
 		            <label for="spoiler_dfnsystem_npc">npc <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\npc\*.dfn</span><br>
+						Contains definitions for all NPCs that can be added in-game; their body IDs, their names, their skills and stats, items equipped (if human), etc. Also contains namelists (namelists.dfn) with random NPC names for humans, orcs, lizardmen, etc.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_race">
 		            <label for="spoiler_dfnsystem_race">race <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\race\races.dfn</span><br>
+						Used to define races in the game (including player-accessible ones); their strengths and weaknesses, their skill bonuses and penalties, and so forth. See <a href="#raceSystem">separate feature documentation</a> for more info.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_regions">
 		            <label for="spoiler_dfnsystem_regions">regions <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\regions\regions.dfn</span><br>
+						Used to define the various regions of the game world and their properties, like whether they are considered safe zones where no harm can befall the players, whether travel spells are enabled or not, whether the guard system is enabled or not. See <a href="#regionSystem">separate feature documentation</a> for more info.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_skills">
 		            <label for="spoiler_dfnsystem_skills">skills <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\skills\skills.dfn</span><br>
+						Contains definitions for all the skills in the game, and their skill/stat advancement rates. See <a href="#skillAndStatGain">separate feature documentation</a> for more info.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_spawn">
 		            <label for="spoiler_dfnsystem_spawn">spawn <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\spawn\spawn.dfn</span><br>
+						Used to setup spawn regions - areas in the world where NPCs of a particular type will spawn, how many of them will spawn, how often, and so forth. See <a href="#uox3SpawnRegions">separate feature documentation</a> for more info.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_spells">
 		            <label for="spoiler_dfnsystem_spells">spells <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\spells\spells.dfn</span><br>
+						Contains definitions for all spells in the game, their requirements in skills, stats and resources, their words of power and other special properties.</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_titles">
 		            <label for="spoiler_dfnsystem_titles">titles <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\titles\titles.dfn</span><br>
+						Used to define skill titles (such as Blacksmith, Tailor, Swordsman), proficiency titles (such as Apprentice, Master, Grandmaster) and fame/karma related titles (such as Glorious, Infamous, Dread).</p>
 					</div>
 		            <input type="checkbox" id="spoiler_dfnsystem_weather">
 		            <label for="spoiler_dfnsystem_weather">weather <i class="fas fa-angle-down"></i></label>
 		            <div class="spoiler">
+						<p><strong>Location:</strong> <span class="cmdHighlight">UOX3\dfndata\weather\weather.dfn</span><br>
+						Contains definitions of weather systems, used by the region system to setup different weather across different regions in the game world. See <a href="#weatherSystem">separate feature documentation</a> for more info.</p>
 					</div>
 		            </p>
 		          </div>
@@ -4326,16 +4099,16 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>DFN Tag Overview</span></a>
+				<a class="cd-faq__trigger" href="#0" id="dfnTagSystem"><span>DFN Tag Overview</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>For an overview of all DFN tags supported in UOX3 for characters, items, regions, weather-regions, create-scripts, creatures and houses, check the <a href="UOX3DFNTags.html" target="_blank">DFN Tag List</a> (separate document). You can also find this document in your UOX3/DOCS/ folder, or at <a href="https://www.uox3.org/docs/UOX3DFNTags.html">UOX3.org</a>.</p>
+		            <p>For an overview of all DFN tags supported in UOX3 for characters, items, regions, weather-regions, create-scripts, creatures and houses, check the <a href="UOX3DFNTags.html" target="_blank" title="UOX3 DFN Tag list">DFN Tag List</a> (separate document). You can also find this document in your UOX3/DOCS/ folder, or at <a href="https://www.uox3.org/docs/UOX3DFNTags.html" target="_blank" title="UOX3 DFN Tag list at UOX3.org">UOX3.org</a>.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>DFN Priority System</span></a>
+				<a class="cd-faq__trigger" href="#0" id="dfnPrioritySystem"><span>DFN Priority System</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>Say you, as a shard admin, want to customize some of the DFNs that come with UOX3, but you worry about those changes being overwritten when time comes to update the default UOX3 package with a newer version, or about going through conflict/merge hell trying to weave all your custom changes into a newer version of the scripts.</p>
@@ -4365,7 +4138,7 @@ Public License instead of this License.
 		<ul id="scriptingJS" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Scripting - JavaScript Engine</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Introduction to JS Engine in UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="jsIntro"><span>Introduction to JS Engine in UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (v1.6.0). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
@@ -4394,17 +4167,17 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>JS Engine Documentation</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3JsDocs"><span>JS Engine Documentation</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>The <a href="jsdocs/index.html">UOX3 JS documentation</a> documents all the various events, triggers, methods, functions and properties available to script writers.</p>
-		            <p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF">UOX3 Discord chat</a>!</p>
+		            <p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>JSE File, Object and Type-associations</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3JSE"><span>JSE File, Object and Type-associations</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>In the UOX3/JS/ folder, you can find three files that are used to map UOX3 JavaScript files to script IDs, and map item IDs or item Types to script IDs.</p>
@@ -4438,48 +4211,48 @@ Public License instead of this License.
 		<ul id="resources" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Resources and Links</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Community Links</span></a>
+				<a class="cd-faq__trigger" href="#0" id="communityLinks"><span>Community Links</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		          	<h4><a href="https://github.com/UOX3DevTeam" target="_blank">UOX3 @ GitHub</a></h4>
+		          	<h4><a href="https://github.com/UOX3DevTeam" target="_blank" title="UOX3 @ GitHub">UOX3 @ GitHub</a></h4>
 		            <p>GitHub is the current home for UOX3's sourcecode, and where to go to check up on the latest, cutting-edge developments for UOX3.</p>
-		            <h4><a href="https://discord.gg/uBAXxhF" target="_blank">UOX3 @ Discord</a></h4>
+		            <h4><a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 @ Discord</a></h4>
 		            <p>For live chat, support and discussions with other UOX3 users and/or developers, head on over to the UOX3 Discord!</p>
-		            <h4><a href="https://www.uox3.org" target="_blank">UOX3.org</a></h4>
+		            <h4><a href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a></h4>
 		            <p>Main community site for UOX3 can be found at UOX3.org. There you'll find downloads, support forums, useful tools and guides beyond what is covered by these docs.</p>
-		            <h4><a href="https://guide.uox3.org/" target="_blank">Xuri's UOX3 Guide</a></h4>
+		            <h4><a href="https://guide.uox3.org/" target="_blank" title="Xuri's UOX3 Guide">Xuri's UOX3 Guide</a></h4>
 		            <p>Xuri's UOX3 Guide, while originally written for a different era of UOX3, still offers a myriad of tips, tricks and advice for shard admins and GMs, as well as lists of various data such as IDs, light-settings, etc. Recommended read for both novices and veterans.</p>
 		            <h4>Legacy SourceForge Repositories</h4>
-		            <p>Legacy, ready-only CVS repositories for older versions of UOX3 can be found at <a href="https://www.sf.net/projects/openuo" target="_blank">OpenUO @ SourceForge</a> and <a href="" target="_blank"></a>.</p>
+		            <p>Legacy, ready-only CVS repositories for older versions of UOX3 can be found at <a href="https://www.sf.net/projects/openuo" target="_blank" title="OpenUO @ SourceForge">OpenUO @ SourceForge</a> and <a href="https://www.sf.net/projects/uox3" target="_blank" title="UOX3 @ SourceForge">UOX3 @ SourceForge</a>.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Third Party Tools</span></a>
+				<a class="cd-faq__trigger" href="#0" id="thirdPartyTools"><span>Third Party Tools</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <h4><a href="https://wb.uox3.org/" target="_blank">Xuri's WorldBuilder</a></h4>
+		            <h4><a href="https://wb.uox3.org/" target="_blank" title="Xuri's WorldBuilder - a GM Tool for UOX3">Xuri's WorldBuilder</a></h4>
 		            <p>Xuri's WorldBuilder is a GM Tool for UOX3 that allows GMs to easily create custom houses, add decorations and even plant entire forests. Mainly focusing on worldbuilding, it also functions as a traditional GM Tool, giving the user easy access to all the most used commands in UOX3.</p>
-		            <h4><a href="http://www.uor-razor.com/">UO:R Community Edition of Razor</a></h4>
+		            <h4><a href="http://www.uor-razor.com/" title="UO:R Community Edition of Razor">UO:R Community Edition of Razor</a></h4>
 		            <p>Razor is both a necessary tool to remove encryption from the UO client, allowing you to actually connect to UOX3, as well as a tool that can provide many quality-of-life improvements over the regular old UO client.</p>
-					<h4><a href="https://github.com/andreakarasho/ClassicUO">ClassicUO</a></h4>
-					<p>ClassicUO is a cross-platform (Windows, Linux, Mac), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client.</p>
-					<h4><a href="https://github.com/polserver/UOFiddler/releases">UOFiddler</a></h4>
-					<p>UOFiddler is the spiritual successor of <a href="https://uo.stratics.com/heptazane/insideuo/index.shtml" target="_blank">InsideUO</a>, though it has gone far beyond that by now. Tool that can be used to view and alter almost every file in the UO client.</p>
-		            <h4><a href="http://dev.uoquint.ru/projects/centred" target="_blank">CentrED+</a></h4>
+					<h4><a href="https://github.com/andreakarasho/ClassicUO" title="ClassicUO - open source UO client">ClassicUO</a></h4>
+					<p>ClassicUO is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client.</p>
+					<h4><a href="https://github.com/polserver/UOFiddler/releases" title="UOFiddler - UO viewing/editing tool">UOFiddler</a></h4>
+					<p>UOFiddler is the spiritual successor of <a href="https://uo.stratics.com/heptazane/insideuo/index.shtml" target="_blank" title="InsideUO homepage">InsideUO</a>, though it has gone far beyond that by now. Tool that can be used to view and alter almost every file in the UO client.</p>
+		            <h4><a href="http://dev.uoquint.ru/projects/centred" target="_blank" title="CentrED+ - server/client based map editor that allows multiple people to collaborate on the same map">CentrED+</a></h4>
 		            <p>CentrED+ is a Client/Server based map-editor, which gives the ability for several people to work on both terrain and statics together at the same time.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Other UO Emulator Resources</span></a>
+				<a class="cd-faq__trigger" href="#0" id="otherUOEmuResources"><span>Other UO Emulator Resources</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		          	<h4><a href="https://www.ryandor.com/" target="_blank">Ryandor.com</a></h4>
+		          	<h4><a href="https://www.ryandor.com/" target="_blank" title="Ryandor.com UO MapMaking Forums">Ryandor.com</a></h4>
 		            <p>Ryandor.com is the homepage of Ryandor, a true artist when it comes to map-making for UO. His forums are crawling with map-makers from all corners of the world, and if you have a question about map-editing that you cannot get an answer for on these forums - there is no answer ;)</p>
-		          	<h4><a href="http://www.uo-pixel.de/" target="_blank">UO-Pixel</a></h4>
+		          	<h4><a href="http://www.uo-pixel.de/" target="_blank" title="UO-Pixel - custom artwork assets for UO client">UO-Pixel</a></h4>
 		            <p>Another nice (German) website focusing on providing custom artwork for UO shards. Amongst other things, it has some very nice animated item artwork (including a moving water-mill).</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
@@ -4491,10 +4264,10 @@ Public License instead of this License.
 
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>UOX3 Changelog</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3Changelog"><span>UOX3 Changelog</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		          	<p>Click the changelog below to view the detailed update notes for the latest UOX3 version (and many, many versions before that). To stay up-to-date with developments outside of stable releases, check out the sticky topic in the <a href="https://www.uox3.org/forums" target="_blank">UOX3.org forums</a> titled <strong>Changelog for next UOX3 version</strong>. It is continuously updated with details of the latest commits to GitHub.</p>
+		          	<p>Click the changelog below to view the detailed update notes for the latest UOX3 version (and many, many versions before that). To stay up-to-date with developments outside of stable releases, check out the sticky topic in the <a href="https://www.uox3.org/forums" target="_blank" title="UOX3.org Community Forums">UOX3.org forums</a> titled <strong>Changelog for next UOX3 version</strong>. It is continuously updated with details of the latest commits to GitHub.</p>
 		            <input type="checkbox" id="spoiler_changelog"/>
   					<label for="spoiler_changelog">UOX3 Changelog <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -4505,12 +4278,12 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>History of UOX3</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3History"><span>History of UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<h3>UOX3 History Crash Course</h3>
 	            	<p>UOX was originally created by <strong>Denny Zuko</strong> aka <strong>Jaegermeister</strong> in 1997 for the pre-alpha version of Ultima Online, and was subsequently abandoned, rewritten from scratch by <strong>Marcus Rating</strong> aka <strong>Cironian</strong> and released in closed-source form as UOX2 the same year.</p>
-	            	<p><strong>UOX3</strong> is, as the number in the name implies, the <em>third iteration</em> of UOX, and when released by Cironian in 1998 it become the first open-source UO server emulator. While he is no longer involved with the project, hundreds of other people have since contributed to updating and maintaining UOX3, and those efforts are still ongoing, with <a href="https://www.uox3.org">UOX3.org</a> now acting as a central hub for ongoing development and support.</p>
+	            	<p><strong>UOX3</strong> is, as the number in the name implies, the <em>third iteration</em> of UOX, and when released by Cironian in 1998 it become the first open-source UO server emulator. While he is no longer involved with the project, hundreds of other people have since contributed to updating and maintaining UOX3, and those efforts are still ongoing, with <a href="https://www.uox3.org" title="UOX3 Community Homepage">UOX3.org</a> now acting as a central hub for ongoing development and support.</p>
 	            	<p>Due to the open-source nature of UOX3, there have been numerous spin-off projects over the years, all with their own rich history. Most of these have gone dormant, but the "main UOX3 branch" has been around for nearly 22 years (as of 2020), and is here for the long run.</p>
 	            	<h3>UOX Version Timeline</h3>
 		            <input type="checkbox" id="spoiler_history_UOX2_timeline"/>
@@ -6621,18 +6394,18 @@ Public License instead of this License.
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>History of UO Emulation</span></a>
+				<a class="cd-faq__trigger" href="#0" id="UOEmuHistory"><span>History of UO Emulation</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <h3>How it Got Started</h3>
 		            <p>Emulation of the Ultima Online servers started all the way back in the days of the Alpha version of UO, when Denny Zuko (Jaegermeister) created the initial version of UOX (now lost to time). Since then, a great number of different emulators have come into existence, and although some of them were like fireflies that faded away after only a brief existence, others stuck around longer, spawned derivatives, forks and alternate versions along the way.</p>
-		            <p>For a more extensive and detailed overview, check out the <a href="https://www.uox3.org/history/timeline.shtml">General UO Emulator Timeline over at UOX3.org</a>!</p>
+		            <p>For a more extensive and detailed overview, check out the <a href="https://www.uox3.org/history/timeline.shtml" target="_blank" title="General UO Emulator Timeline at UOX3.org">General UO Emulator Timeline over at UOX3.org</a>!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#0"><span>Credits / UOX3 Hall of Fame</span></a>
+				<a class="cd-faq__trigger" href="#0" id="uox3HallOfFame"><span>Credits / UOX3 Hall of Fame</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>The UOX3 Hall of Fame is simply a list of people (or their nicknames) known to have contributed to UOX3, in what capacity they (primarily) contributed, sorted in chronological order based on the estimated time of their first contribution.</p>
@@ -6668,6 +6441,7 @@ Public License instead of this License.
 							<p><span class="cmdHighlight">RofGilead</span><br> Programmer, 0.67q</p>
 							<p><span class="cmdHighlight">Maytrix</span><br> Programmer, 0.67w</p>
 							<p><span class="cmdHighlight">Tal Strake</span><br> Programmer</p>
+							<p><span class="cmdHighlight">Fearicon</span><br> Scripter, 0.67x</p>
 							<p><span class="cmdHighlight">Ashran</span><br> Programmer, creator of EQ Emu, and UOisc, a tool that allowed copying items to UOX3 worldfiles by walking around on OSI servers</p>
 							<p><span class="cmdHighlight">Beosil</span><br> Bruno Heidelberger, Programmer, Encryption Guru</p>
 							<p><span class="cmdHighlight">Krozy</span><br> Lucas Moten, Programmer</p>
@@ -6757,7 +6531,7 @@ Public License instead of this License.
 							<p><span class="cmdHighlight">Quippl</span><br> Programmer, v0.69.03 -> v0.70.01.07t</p>
 							<p><span class="cmdHighlight">Mithos</span><br> Programmer, v0.69.03 -> v0.70.01.07t</p>
 							<p><span class="cmdHighlight">Lord Binary</span><br> Programmer, v0.69.03 -> v0.70.01.07t</p>
-							<p><span class="cmdHighlight">JustMichael</span><br> Michael Horton, Programmer/Tools Programmer, v0.69.03 -> v0.70.01.07t</p>
+							<p><span class="cmdHighlight">JustMichael</span><br> Michael Horton, Programmer, Tool Programmer, v0.69.03 -> v0.70.01.07t</p>
 							<p><span class="cmdHighlight">Tseramed</span><br> Programmer, 04/10/1999, v0.69.03 -> v0.70.01.07t</p>
 							<p><span class="cmdHighlight">Terrin</span><br> Programmer, 08/10/1999, v0.69.03 -> v0.70.01.07t</p>
 							<p><span class="cmdHighlight">Kashyyyk</span><br> Programmer, v0.69.03 -> v0.70.01.07t</p>
@@ -6773,7 +6547,8 @@ Public License instead of this License.
 	  					<label for="spoiler_history_halloffame_2000"><h3>2000</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<p><span class="cmdHighlight">Xuri</span><br> Geir Ove Alnes, Scripter/Programmer, Tool Programmer, Web Admin, 21/01/2000</p>
-							<p><span class="cmdHighlight">punt</span><br> Charles Kerr, Programmer, 28/01/2000</p>
+							<p><span class="cmdHighlight">punt</span><br> Charles Kerr, Programmer, Tool Programmer, 28/01/2000</p>
+							<p><span class="cmdHighlight">Skyfire</span><br> Scripter/Programmer, ~March 2000, 0.70.x era</p>
 							<p><span class="cmdHighlight">Shrike</span><br> Scripter, 12/04/2000</p>
 							<p><span class="cmdHighlight">Jerelith</span><br> Scripter, 12/04/2000</p>
 							<p><span class="cmdHighlight">Hanse</span><br> Thomas Edison, Programmer, 04/05/2000</p>
@@ -6789,6 +6564,9 @@ Public License instead of this License.
 							<p><span class="cmdHighlight">GM Azrael</span><br> Scripter, 24/10/2000</p>
 							<p><span class="cmdHighlight">Oakwood</span><br> Programmer, 06/11/2000, 0.70.03.20d</p>
 							<p><span class="cmdHighlight">KKung</span><br> Programmer, 06/12/2000, 0.70.03.20f</p>
+							<p><span class="cmdHighlight">Rain-</span><br> Programmer, ~January 2000</p>
+							<p><span class="cmdHighlight">Lord Vader</span><br> Programmer, ~2000</p>
+							<p><span class="cmdHighlight">Grady</span><br> Programmer, ~2000</p>
 						</div>
 
 			            <input type="checkbox" id="spoiler_history_halloffame_2001"/>
@@ -6912,11 +6690,7 @@ Public License instead of this License.
 			            <input type="checkbox" id="spoiler_history_halloffame_toplace"/>
 	  					<label for="spoiler_history_halloffame_toplace"><h3>To Place in Timeline</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><span class="cmdHighlight">Skyfire</span><br> Scripter/Programmer, 0.70.x era</p>
-							<p><span class="cmdHighlight">Grady</span></p>
-							<p><span class="cmdHighlight">Rain-</span><br> ??, On dev team around January 2000</p>
-							<p><span class="cmdHighlight">Lord Vader</span><br> - recall rune fix in source somewhere before 0.70.x versions</p>
-							<p><span class="cmdHighlight">Fearicon</span><br> Scripter, 0.67x</p>
+							<p><span class="cmdHighlight">Allmight</span><br> Documentation</p>
 						</div>
 					</div>
 		          </div>
@@ -6931,8 +6705,8 @@ Public License instead of this License.
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Documentation provided by Geir Ove Alnes</small></p>
-	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" target="_blank">FAQ Template framwork provided by CodyHouse</a>.</small></p>
+	<p><small>Documentation revamp by Geir Ove Alnes @ Copyright 2020</small></p>
+	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->
 <script src="assets/js/main.js"></script>

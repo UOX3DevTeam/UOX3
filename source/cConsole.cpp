@@ -352,7 +352,7 @@ void CConsole::PrintSectionBegin( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::Start( const std::string& temp )
 {
-#if UOX_PLATFORM == WIN32
+#if UOX_PLATFORM == PLATFORM_WIN32
 	hco		= GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &csbi );
 	width	= csbi.dwSize.X;

@@ -16,13 +16,21 @@
 
 <table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_FindMulti">FindMulti</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>multiID FindMulti( x, y, z, worldNumber );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the multi that is in the area of the coordinates (x, y, z) in world worldNumber (0 == Britannia, 2 == ilshenar)
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
-<br>if( iMulti )
-<br>{
-<br>	pChar.TextMessage( "You know, I'm standing in a house!" );
-<br>}
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>multiID FindMulti( ourObj );
+multiID FindMulti( x, y, z, worldNumber );
+multiID FindMulti( x, y, z, worldNumber, instanceID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the multi that is in the area of the coordinates (x, y, z) in world worldNumber (0 == Britannia, 2 == ilshenar) in instanceID (optional), or in the area of the specified object
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar );
+if( iMulti )
+{
+	pChar.TextMessage( "You know, I'm standing in the same spot as a multi!" );
+}
+
+var iMulti = FindMulti( myItem.x, myItem.y, myItem.z, myItem.worldnumber );
+if( iMulti )
+{
+	myItem.TextMessage( "I am an item, in the same spot as a multi!" );
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">

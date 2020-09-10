@@ -1,13 +1,13 @@
 //*****************************************************************
-//* UOX3 DFNs v0.99 *
-//* http://www.uox3.org *
-//* *
-//* Last Update : 17 March, 2012 *
-//* Script : regions.dfn *
+//*                         UOX3 DFNs v0.99.3                     *
+//*                https://github.com/UOX3DevTeam/UOX3         	  *
+//*                                                               *
+//* Last Update : 17 March, 2012                                  *
+//* Script : regions.dfn                                          *
 //*****************************************************************
 //* Switches GUARDED,MARK,GATE,RECALL,ESCORTS,MAGICDAMAGE: 0=off/no; 1=on/yes *
-//* Set weather with ABWEATH from weather.dfn file. *
-//* *
+//* Set weather with ABWEATH from weather.dfn file.               *
+//*                                                               *
 //* IMPORTANT: The bare minimum amount of regions that must be present
 //* 	for UOX3 to work properly are the base-regions covering the various
 //*		available maps in their entirety (See regions 250-255). These
