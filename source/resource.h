@@ -1,7 +1,8 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by uox3.rc
 //
+#define VS_VERSION_INFO                 1
 #define IDI_MAINFRAME                   101
 
 // Next default values for new objects

@@ -2,6 +2,277 @@ UOX3 Changelog
 ------------------------
 
 -==============================-
+-= 10/09/2020 - UOX3 0.99.3   =-
+-==============================-
+Contributors: Xuri, punt, Tuan H Truong
+
+Source Changes/Fixes:
+	Updated CMakeSettings.json to include options for 64-bit Debug/Release builds
+	Updated build notes in documentation and readme
+	Added version info and other details to uox3.rc
+	Minor updates to JS docs and UOX3DFNTags
+	Renamed FRE and ENG dictionary file extensions to FRA and ENU
+	Updated VS Solutions/Projects for UOX3 and SpiderMonkey to support compiling 64-bit version of UOX3 for Windows 8/10
+	Fixed an issue in cConsole.cpp that prevented compiling 64bit version of UOX3 for Windows
+	Fixed grammar mistake in automake.sh that prevented compiling SpiderMonkey on MacOS
+	Updated readme with extended compiling details in spoiler tags
+	Undid static cast in jsapi.h
+	Fixed issue with two different versions of cPlayerAction.cpp with different case in name causing issues
+	The UOX3/shared/ directory will now be created automatically on startup if it doesn't already exist
+	Updated README.md and UOX3 documentation with improved instructions for installing necessary build tools on Linux and how to copy files to working directory after compiling.
+	Moved automake.sh from source directory to project root, and made it copy binary to project root directory after compiling
+	Added new Makefile that handles compiling UOX3 and Spidermonkey on both Linux and MacOS
+	Added VS solution (SpiderMonkey.sln) and VC++ project files for compiling SpiderMonkey on Windows
+	Updated SpiderMonkey from v1.6.0 to v1.7.0
+	Added optimization flag -O2 for release build in CMakeLists.txt in project root
+	Added StringUtility file with general common string manipulation functions
+	Updated RandomNum function to use a "seedless" random number generator from C++11 instead of the old C rand() function.
+	Overall code cleanup to remove/replace platform-dependent code
+	Replaced potentially unsafe usage of C string stuff like sprintf, vsprintf, vsnprintf, strncat, strcpy and strlen throughout the code with calls to a format() function containing only a single, safe use of vsnprintf, ensuring there's a single place of failure if there's anything to fix and and making it easy to potentially replace this with std::format from C++20 when the time comes.
+	Replaced usage of char in many places with std::string
+	Started process of replacing UString usage with functions provided through StringUtility instead
+	Replaced platform specific fileIO handling in Windows/Linux with cross-platform C++17 standard std::filesystem
+	Replaced platform specific time handling by using cross-platform chrono library
+	Removed UOX namespace to reduce complexity
+	Elimitated template code approach to singletons for more modern c++ constructs, removing dependices in the process
+	Removed ODBC support; it hasn't been touched since the initial implementation in 2008, and there is a lack of someone to maintain the code.
+	Removed some platform specific files like uoxlinux.h, which is no longer required
+	Removed legacy crash protection code, and removed support for cluox
+	Removed legacy "support" for Borland compiler
+	Removed legacy VC++ 6 Workspace/Project files, VS2005 Solution/Project files, as these are no longer supported
+	Removed legacy BUILD folder with outdated compilation instructions
+	Removed old Changelog file (merged into Changelog.txt)
+	Fixed a pointer bug for items in multis on world load
+	Fixed a dictionary related issue that caused segmentation faults on Linux/MacOS
+	Fixed an issue with callbacks to JS scripts that caused segmentation faults on Linux/MacOS
+	Paths in uox.ini should now load properly on all platforms regardless of whether those paths use slashes or backslashes, and whether or not they end in a slash/backslash
+	Moved to c++17 style of threading, and got rid of threadsafeobject.cpp/h
+	Replaced parsing of UOX.INI tags with a system that's more easily maintainable
+	Misc code cleanup to reduce amount of warnings and increase cross-platform compatibility
+	Removed Platform.h from project, select portions moved to Config.h
+	Improvements to handling of UOP format; now takes a cleaner approach, loads files faster
+	All references in code and scripts to "midi" changed to "music", to reflect fact that modern clients don't actually even have midi files. This change covers both GM commands, DFN tags in regions.dfn and JS methods/properties.
+	Added new socket property for storing temporary int in JS - tempInt2
+	Added new socket property for storing temporary object in JS - tempObj2
+	Fixed an issue that prevented characters from vanishing from the the sight of players when teleporting to a different instance
+	Added support for ClassicUO client's WorldMap tracking packet (0xf0) for guildmembers/partymembers. This is the same packet as Razor uses for feature negotiation, so merged the handling of those two packets together into CPIKrriosClientSpecial, which can also be extended to handle other uses of this packet.
+	Added new UOX.INI setting  whether shard should respond to ClassicUO client's WorldMap tracking packets for guildmembers/partymembers
+		CLASSICUOMAPTRACKER=0
+	Added support (UOPInterface.cpp/hpp) for loading map files in UOP format, allowing UOX3 to use map files from clients up to at least v7.0.86.2 without requiring files to be converted to mul format first. Loading of UOP files is slower than for equivalent mul files, but after startup, the performance of lookups remains the same for both
+	Updated TWEAK, INFO in code and ISTATS, CSTATS in gumps.js to display 4-digit hex-ids for IDs consistently in the format of 0x####
+	Fixed issue that would disconnect ClassicUO users if they used WorldMap feature in the client, via CPIKrriosClientSpecial() handler in CPacketReceive.cpp/h, which will handle all things packet 0xF0. As of yet it doesn't respond correctly to the WorldMap-related version of the packet, but at least it no longer disconnects this client from the server.
+	Fixed an issue with CPSendGumpMenu::AddText() that caused guildstones and townstones to crash server when used
+	Fixed an issue with CTownRegion::DisplayTownMenu() that prevented players from joining a town when interacting with a townstone for the first time
+	Replaced platform specific ways of looking up and loading DFN files in cServerDefinitions.cpp with a common, cross-platform method using std::filesystem. This also fixes an issue with loading of map0.mul on Linux when maps.4xclients.old is present in dfndata/maps/ directory
+	Misc changes to address errors and warnings when compiling on 64bit Linux
+		%li changed to %i
+		%lu changed to %u
+		Some (SERIAL) changed to (UI64)
+		Some size_t changed to UI32
+	Embraced the usage of R32, R64, SI16, UI16, SI32, UI32, SI64 and UI64 typedef aliases as replacement for built-in types throughout the sourcecode:
+		typedef float				R32;
+		typedef double				R64;
+		typedef signed char			SI08;
+		typedef unsigned char		UI08;
+		typedef signed short int	SI16;
+		typedef unsigned short int	UI16;
+		typedef signed int			SI32;
+		typedef unsigned int		UI32;
+		typedef signed long long	SI64;
+		typedef unsigned long long	UI64;
+	As part of this process, UI32 was redefined from unsigned long int to unsigned int, and SI32 from signed long int to signed int to ensure the size of variables using these remain the same (32bit) across both Windows, Linux and MacOS for both 32bit and 64bit platforms
+	Replaced instances of toLong() with toInt(), and toULong() to toUInt()
+	Replaced instances of "long" and "int" with SI32 where possible
+	Replaced instances of "unsigned long" and "unsigned int" with UI32 where possible
+	Replaced instances of "float" with R32 where possible
+	Fixed an issue with void CSpawnRegion::SetNPCList() and void CSpawnRegion::SetItemList() that could cause compilation to fail on Linux
+	Added an FX playing for successful uses of the parrying skill
+	Successfully parrying an attack will send a sysmessage to the player informing them of their feat, if DISPLAYHITMSG is enabled in UOX.INI
+	Fixed placing a house addon teleporting player to the location of the addon
+	Added support for TELEPORT tag to regions.dfn. If set to 0, use of the Teleport spell is not allowed in a given region. Defaults to 1 if not specified.
+	Exposed canTeleport JS property for regions
+	Added missing UOX.INI settings for feature negotation, as mentioned in previous commit!
+	Added support for feature negotiation with Razor, AssistUO and other assistant tools that support this feature via new UOX.INI settings:
+		ASSISTANTNEGOTIATION=0 		// If enabled (1), sends a request (packet 0xF0) to negotiate features with assistant tools upon login. Defaults to (0)
+		KICKONASSISTANTSILENCE=0 	// If enabled (1), disconnects clients that don't respond (with packet 0xF0) to request via assistant tool within 30 seconds. Defaults to (0)
+	Added new section at bottom of UOX.INI to allow shard admins to control which assistant features get disabled:
+		[disabled assistant features]
+		{
+		AF_FILTERWEATHER=0 		// Weather Filter
+		AF_FILTERLIGHT=0 		// Light Filter
+		AF_SMARTTARGET=0 		// Smart Last Target
+		AF_RANGEDTARGET=0 		// Range Check Last Target
+		AF_AUTOOPENDOORS=0 		// Automatically Open Doors
+		AF_DEQUIPONCAST=0 		// Unequip Weapon on spell cast
+		AF_AUTOPOTIONEQUIP=0 	// Un/Re-equip weapon on potion use
+		AF_POISONEDCHECKS=0 	// Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self
+		AF_LOOPEDMACROS=0 		// Disallow Looping macros, For loops, and macros that call other macros
+		AF_USEONCEAGENT=0 		// The use once agent
+		AF_RESTOCKAGENT=0 		// The restock agent
+		AF_SELLAGENT=0 			// The sell agent
+		AF_BUYAGENT=0 			// The buy agent
+		AF_POTIONHOTKEYS=0 		// All potion hotkeys
+		AF_RANDOMTARGETS=0 		// All random target hotkeys (Not target next, last target, target self)
+		AF_CLOSESTTARGETS=0 	// All closest target hotkeys
+		AF_OVERHEADHEALTH=0 	// Health and Mana/Stam messages shown over player's heads
+		AF_AUTOLOOTAGENT=0 		// (AssistUO only) The autoloot agent
+		AF_BONECUTTERAGENT=0 	// (AssistUO only) The bone cutter agent
+		AF_JSCRIPTMACROS=0 		// (AssistUO only) Javascript macro engine
+		AF_AUTOREMOUNT=0 		// (AssistUO only) Auto remount after dismount
+		AF_ALL=0 				// All features
+		}
+	Misc code and documentation cleanup:
+		Updated and standardized function comment blocks throughout entire codebase
+		Grouped getters and setters together in pairs and documented them as one
+		Removed empty and/or non-useful information from comment blocks
+		Removed unused function from cItem.cpp/h - IncID() - formerly used to change IDs for doors
+	Added new feature - Instances
+		Objects (characters, items, multis, spawnregions) can now make use of a 5th parameter to determine their location in the game world. In addition to the traditional X, Y, Z and WORLDNUMBER parameters, a new one has been added - INSTANCEID - that allows objects to exist at the same coordinates in the same world, but in different "dimensions". Code has been updated in multiple places to support this, and a default instanceID of 0 is assumed if nothing else is specified.
+	Added support for new DFN tag in town regions, spawn regions and locations - INSTANCEID (defaults to 0 if not present)
+	Added support for another start location parameter after worldNum in UOX.INI representing instanceID (defaults to 0 if not present)
+	Updated TWEAK menu to include WorldNumber and instanceID
+	Fixed BaseWeight option in TWEAK menu
+	Updated CBase_Teleport - now takes an optional 5th parameter instanceID
+	Updated SE_SpawnNPC now takes an optional 5th parameter - instanceID
+	Updated SE_FindMulti now takes an optional 5th parameter - instanceID
+	Updated SE_GetItem now takes an optional 5th parameter - instanceID
+	Updated SE_FindItem now takes an optional 6th parameter - instanceID
+	Added new JS property for Items, Characters, Regions: .instanceID
+	Added JS property for Regions: .members - returns comma-separated list of town member serials
+	Exposed SpawnRegions to JS engine, and updated JS docs with details:
+		SpawnRegion JS Functions
+			IterateOverSpawnRegions()
+			GetSpawnRegion( spawnRegNum )
+			GetSpawnRegionCount()
+		SpawnRegion JS Properties
+			name
+			regionNum
+			itemList
+			npcList
+			item
+			npc
+			maxItems
+			maxNpcs
+			itemCount
+			npcCount
+			onlyOutside
+			prefZ
+			x1
+			y1
+			x2
+			y2
+			world
+			instanceID
+			minTime
+			maxTime
+			call
+	Updated CGump_AddToolTip() gump method - now accepts up to 10 optional cliloc arguments to go with specified cliloc. Can also be used to display custom tooltip text if used with a cliloc like 1114778. Cliloc arguments and custom tooltips only work in client version 7.0.16.0 or above.
+	Updated CPSendGumpMenu::AddCommand() to use the safer vsnprintf instead of vsprintf, and increased msg buffer size from 512 to 1024
+	Updated CPIUpdateRangeChange::Handle() to include additional client definitions: CV_HS2D and CV_HS3D
+	Added new pack types in PackTypes enum:
+		PT_GAME_BACKGAMMON, PT_GAME_CHESS, PT_MAILBOX1, PT_MAILBOX2, PT_MAILBOX3, PT_MAILBOX4, PT_MAILBOX5, PT_MAILBOX6, PT_MAILBOX7, PT_MAILBOX8, PT_MAILBOX9, PT_WALLSAFE, PT_SAFE
+	Updated getPackType() with additional container definitions for the following pack types:
+		PT_RBASKET - winnoning basket (0x1882)
+		PT_GCHEST - gargoyle chests (0x4025, 0x4026), metal chests (0xA304, 0xA305), rusty metal chests (0xA306, 0xA307), gold chests (0xA308, 0xA309), barnacle metal chests (0xA30A, 0xA30B)
+		PT_GAME_BACKGAMMON - backgammon boards (0x0E1C, 0x0FAD)
+		PT_GAME_CHESS - chess board (0x0FA6)
+		PT_MAILBOX1 - dolphin mailbox (0xA202, 0xA203, 0xA204, 0xA205)
+		PT_MAILBOX2 - squirrel mailbox (0xA206, 0xA207, 0xA208, 0xA209)
+		PT_MAILBOX3 - barrel mailbox (0xA1F5, 0xA1F6, 0xA1F7, 0xA1F8)
+		PT_MAILBOX4 - light mailbox (0xA268, 0xA269, 0xA26A, 0xA26B, 0xA26C, 0xA26D, 0xA26E, 0xA26F)
+		PT_MAILBOX5 - sitting kitten mailbox (0xA3EB, 0xA3EC, 0xA3ED, 0xA3EE)
+		PT_MAILBOX6 - standing kitten mailbox (0xA3EF, 0xA3F0, 0xA3F1, 0xA3F2)
+		PT_MAILBOX7 - scarecrow mailbox (0xA3F3, 0xA3F4, 0xA3F5, 0xA3F6)
+		PT_MAILBOX8 - lion mailbox (0xA3F7, 0xA3F8, 0xA3F9, 0xA3FA)
+		PT_MAILBOX9 - square gray mailbox (0x4141, 0x4142, 0x4143, 0x4144)
+		PT_WALLSAFE - wall safe (0x8B8F, 0x8B90)
+		PT_SAFE - safe (0x9C18, 0x9C19)
+	Updated CItem::IsShieldType() to include shield IDs from SA expansion
+	Added IL_TALISMAN (0x09) and IL_FACE (0x0F) to ItemLayers enum to allow equipping talismans and faces in clients that support this
+	Updated getWeaponType() (in both code and JS) with additional weapon definitions:
+		ONEHND_LG_SWORDS - anquique sword 1 (0xA33B, 0xA33C), antique sword 2 (0xA33D, 0xA33E), antique sword 3 (0xA33F, 0xA340), skull sword (0xA341, 0xA342), gargoyle skull sword (0xA345, 0xA346)
+		LG_MACES - skull staff (0xA343, 0xA344), gargoyle skull staff (0xA347, 0xA348)
+	Added new JS Gump Methods:
+		AddPicInPic( x, y, gumpID, width, height, spriteX, spriteY ) // Add sprite image in dialogs, requires client v7.0.80.0 or above
+		AddImageProperty( serial ) // Add properties(?) of a specific item
+	Fixed a server crash related to world saves, where items being cleaned up were not being removed properly from the 	MapRegions they were in, resulting in a crash when attempting to save non-existent items out to the worldfiles.
+	Fixed an issue that could cause GMs to become permanently squelched
+	Fixed an issue where the newStatus parameter for the onFlagChange JS event was overwritten with oldStatus, and oldStatus parameter was never set
+	Updated onDeath JS Event to include a second parameter - iCorpse:
+		onDeath( pDeath, iCorpse ) // iCorpse is a reference to the newly created corpse of pDead
+	Disabled detailed logging of spells loaded from spells.dfn on startup - was causing unnecessary slowdown
+	Removed void Wiping( CSocket *s ) from cmdtable.cpp - unused and unreferenced function without a definition
+	Removed handling of IT_KEY doubleclicking in code, as this is now handled in JS
+	Removed bool isDoorBlocked( CItem *door ) from cPlayerAction.cpp - unused and unreferenced function without a definition
+	Removed void CorpseTarget( CSocket *s ) from targeting.cpp - now handled in JS
+	Removed broken cannon loading and spelldamage code - this should be done in JS instead
+	Items that initiate a target cursor on use are now stored in tempObj property of player's socket, and distance to these items are checked again after player targets something
+	House and boat deeds must now be in the player's inventory in order to successfully place a house or boat
+	Updated AddButton and AddPageButton JS Methods (and Docs) to include an optional argument for ID of button when pressed. If the extra argument is not provided, the methods behave like before, using buttonImage + 1 for the pressed button:
+		void AddButton( topHeight, topLeft, buttonImage, (buttonPressedImage) unk1, unk2, unk3 )
+		void AddPageButton( topHeight, topLeft, buttonImage, (buttonPressedImage), pageNum )
+	Fixed an issue where hair and beard values for characters created prior to 0.99.2j were never stored properly, by updating these values upon login
+	Added additional ClientVersion enum values to start implementing support for clients above 7.0.24.0. Ini settings disabled by default.
+	Updated packet 0x78 to always send item colour for clients above 7.0.33.1, which also fixes rendering of items on paperdoll for these clients
+	Client requests sent by the Bandage Self macro (packet 0xBF, subcommand 0x2C) can now be handled in the JS engine via the onUseBandageMacro( socket, targetChar, bandageItem ) JS event (JS Docs updated with details).
+	Removed a restriction on speech that prevented onSpeech JS event from triggering based on speech from dead player characters
+	Fixed hairs and beards not being restored properly on player characters after dying and being resurrected (and then relogging)
+	Updated vcx project files
+	Added UOX3 CMake build system for Windows
+	Updated repository readme to include build instructions for CMake
+	Preparation for dragging UOX3 kicking and screaming into the 64bit Century
+	Filepaths to spidermonkey in MSVC project are now relative to source folder
+	Default language standard in MSVC project set to stdcpp17
+	Added a check for compiler to fix 64bit Linux compiling
+	Cleaned up some warnings
+	Added c++17 flag to configure.ac
+	CPU neutral fix
+	Die parser rewritten and fuzzed, replaced with cxx17 features
+	Fixed an Z-movement issue where NPCs could fall through upper-story floors of buildings and start walking at ground level instead
+	Movement speed of pets and other NPCs following the player out of combat increased by 1.5 to make it easier for them to keep up
+	Pets will now teleport to keep up with their owners if pathfinding fails
+	NPCs with EVIL flag set, who highlight in red, will no longer highlight in grey if they are flagged as a criminal
+	Criminal timer (and murder count decay) now keeps ticking even while a player is dead
+	Fixed a spelling error in console.cpp
+	Made Earthquake spell resistable
+	Restored some code in magic.cpp that caused errors when casting spells
+	Fixed an issue that prevented VALUE tags from being loaded properly from worldfiles, which broke persistent NPC vendors on server restart
+
+JScript Changes/Fixes:
+	Added some new commands to js/commands/custom/misc-cmd.js
+		cont		// Targeted item will be made a container, set to nondecay and movable 2
+		endfight	// Targeted character (and character being fought) will stop fighting
+		getmulti	// Get multiObject for targeted item
+		finditem	// Find item at layer X
+		movespeed	// Set movement speed of target player (0x0 Normal, 0x1 Mounted, 0x2 Slow (walk only), 0x3 Hybrid ("jog"?), 0x4 Frozen)
+	Fixed a issue in JS/COMMANDS/TARGETING/add.js that would display 'undefined' in system message when adding raw/base items
+	Updated default jail time in JS/COMMANDS/TARGETING/jail.js (and in code) from 100000 seconds to 86400 seconds (24 hours)
+	Expanded XGO command in JS/COMMANDS/TARGETING/x.js to support optional world and instance parameters
+	Updated healing.js to disallow usage of healing skill if target is in a house/multi not owned by either healer or healee
+	Updated JS scripts making use of the above-mentioned JS Methods/Functions
+	Updates keys.js with some distance checks
+	Fixed superfluous arugment passed to switchGobletID function in js/server/resource/pitchers.js
+	Removed some duplicate/unused local variables in js/commands/custom/misc-cmd.js
+	Removed an unused local variable in js/commands/targeting/dupe.js
+	Fixed an issue with setting item type through the SET command
+	Fixed an issue where the number of arrows or bolts in player's inventory was potentially miscalculated in js/item/archerybutte.js
+	Fixed issue where pickpocket-dummy item visuals potentially didn't get updated properly in js/item/pickpocketdip.js
+	Fixed an unreachable return statement in js/npc/ai/stablemaster.js
+	Fixed incorrect ID for gargish maul in js/server/data/weapontypes.js
+	Added some missing variable declarations in js/commands/custom/repeatingcmds.js, js/commands/delid.js, js/commands/targeting/hide.js, js/item/food.js, js/item/key.js, js/npc/ai/stablemaster.js
+
+DFN Changes/Fixes:
+	Updated regions.dfn to disable usage of Teleport spell within level 3 of the Wisp dungeon
+	Updated regions.dfn to enable usage of RECALL spell in city/dungeon of Wind (so players can recall out of there)
+
+Misc Changes/Fixes:
+	Added new HTML based documentation in docs folder, and removed many old legacy docs that are either incorporated into this document already or no longer relevant for the current UOX3 version
+	Fixed broken starting locations in UOX.INI
+	Updated dictionary files with new entry about blocking attacks using parrying skill
+	Updated dictionaries with new tweak menu entry texts
+	Misc updates to JS Docs
+
+-==============================-
 -= 24/11/2019 - UOX3 0.99.2h  =-
 -==============================-
 Contributors: Xuri, Kitiara
