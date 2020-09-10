@@ -1,8 +1,8 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.98	                  *
-//*                   http://uox3.sourceforge.net                 *
+//*                         UOX3 DFNs v0.99.3                     *
+//*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
-//* Last Update : 10/10/2005	                	          *
+//* Last Update : 10/10/2005	                                  *
 //* Script : creatures.dfn                                        *
 //*****************************************************************
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -413,7 +413,7 @@ MOVEMENT=LAND
 }
 
 [CREATURE 0x24]
-{ Mace Lizardman 
+{ Mace Lizardman
 ICON=0x20de
 SOUND_STARTATTACK=0x1a1
 SOUND_IDLE=0x1a2
@@ -3764,7 +3764,7 @@ MOVEMENT=LAND
 }
 
 [CREATURE 0x2eb]
-{ Wailing Banshee 
+{ Wailing Banshee
 ICON=0x262a
 SOUND_STARTATTACK=0x482
 SOUND_IDLE=0x483
@@ -3775,7 +3775,7 @@ MOVEMENT=LAND
 }
 
 [CREATURE 0x2ec]
-{ Ghost 
+{ Ghost
 ICON=0x25c7
 SOUND_STARTATTACK=0x482
 SOUND_IDLE=0x483
@@ -3786,7 +3786,7 @@ MOVEMENT=LAND
 }
 
 [CREATURE 0x2ed]
-{ Liche 
+{ Liche
 ICON=0x25a4
 SOUND_STARTATTACK=0x19c
 SOUND_IDLE=0x19d

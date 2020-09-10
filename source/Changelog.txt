@@ -1,3 +1,10 @@
+10/09/2020 - Xuri (0.99.3)
+	Updated CMakeSettings.json to include options for 64-bit Debug/Release builds
+	Updated build notes in documentation and readme
+	Added version info and other details to uox3.rc
+	Minor updates to JS docs and UOX3DFNTags
+	Renamed FRE and ENG dictionary file extensions to FRA and ENU
+
 09/09/2020 - Xuri (0.99.3-RC3)
 	Updated VS Solutions/Projects for UOX3 and SpiderMonkey to support compiling 64-bit version of UOX3 for Windows 8/10
 	Fixed an issue in cConsole.cpp that prevented compiling 64bit version of UOX3 for Windows

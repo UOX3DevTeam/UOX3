@@ -1,6 +1,6 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.98                       *
-//*                   http://www.uox3dev.net                      *
+//*                         UOX3 DFNs v0.99.3                     *
+//*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
 //* Last Update : 1/4/2003                                        *
 //* Script : races.dfn                                            *
@@ -131,7 +131,7 @@ HUNGER=300,5
 
 [RACE 9]
 {
-NAME=Animal 
+NAME=Animal
 PLAYERRACE=1
 }
 

@@ -27,8 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <SccProjectName>"$/UOX3", BAAAAAAA</SccProjectName>
-    <SccLocalPath>.</SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
     <ProjectGuid>{82A66DAD-C555-416B-94DF-9784AFBB11FC}</ProjectGuid>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>

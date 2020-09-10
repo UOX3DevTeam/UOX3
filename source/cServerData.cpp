@@ -1014,18 +1014,18 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		bool error = false;
 		if( !resettingDefaults )
 		{
-			error = true ;
+			error = true;
 			//auto curWorkingDir = fixDirectory(std::filesystem::current_path().string());
 
 			auto npath = std::filesystem::path(sText);
 
 			if (std::filesystem::exists(npath)) {
-				error = false ;
+				error = false;
 			}
 			else if (create_dir) {
 				// Create missing directory
 				std::filesystem::create_directory(npath);
-				error = false ;
+				error = false;
 			}
 		}
 
