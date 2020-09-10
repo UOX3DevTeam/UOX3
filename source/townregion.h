@@ -1,9 +1,6 @@
 #ifndef __TownRegion__
 #define __TownRegion__
 
-namespace UOX
-{
-
 struct	miningData;
 
 struct orePref
@@ -47,11 +44,12 @@ private:
 
 	UI16				regionNum;
 	std::string			name;
-	UI16				midilist;
+	UI16				musicList;
 	UI08				worldNumber;
+	UI16				instanceID;
 	std::bitset< 10 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
-								// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
-								// 0x80 Dungeon region
+	// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
+	// 0x80 Dungeon region
 	std::string					guardowner;
 	std::vector< std::string >	guards;
 	std::vector< orePref >		orePreferences;
@@ -66,12 +64,12 @@ private:
 	weathID				weather;				// weather system the region belongs to
 	SI32				goldReserved;			// amount of gold belonging to the town's treasury
 
-	long				timeSinceGuardsPaid;	// time since the guards were last paid
-	long				timeSinceTaxedMembers;	// time since we last taxed our own members
-	long				timeToElectionClose;	// time since the last election was completed
-	long				timeToNextPoll;			// time since the polling booth was opened
+	SI32				timeSinceGuardsPaid;	// time since the guards were last paid
+	SI32				timeSinceTaxedMembers;	// time since we last taxed our own members
+	SI32				timeToElectionClose;	// time since the last election was completed
+	SI32				timeToNextPoll;			// time since the polling booth was opened
 	SI16				guardsPurchased;
-	long				resourceCollected;		// how much we have gotten from taxes
+	SI32				resourceCollected;		// how much we have gotten from taxes
 	UI16				taxedResource;			// item # of the taxed resource
 	UI16				taxedAmount;			// how much to tax
 	WorldType			visualAppearance;		// seasonal choice, basically.  Each of the 4 seasons, or "dead"
@@ -92,8 +90,8 @@ private:
 
 public:
 
-						CTownRegion( UI16 region );
-						~CTownRegion();
+	CTownRegion( UI16 region );
+	~CTownRegion();
 
 	bool				DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag = -1 );
 	bool				VoteForMayor( CSocket *sock );
@@ -110,6 +108,7 @@ public:
 	bool				CanMark( void ) const;
 	bool				CanGate( void ) const;
 	bool				CanRecall( void ) const;
+	bool				CanTeleport( void ) const;
 	bool				CanCastAggressive( void ) const;
 	bool				IsSafeZone( void ) const;
 	bool				IsDungeon( void ) const;
@@ -121,6 +120,7 @@ public:
 	void				CanMark( bool value );
 	void				CanGate( bool value );
 	void				CanRecall( bool value );
+	void				CanTeleport( bool value );
 	void				CanCastAggressive( bool value );
 	void				IsSafeZone( bool value );
 	void				IsDungeon( bool value );
@@ -131,8 +131,8 @@ public:
 	void				SendEnemyTowns( CSocket *sock );
 	void				ForceEarlyElection( void );
 	void				Possess( CTownRegion *possessorTown );
-	void				SetTaxesLeft( long newValue );
-	void				SetReserves( long newValue );
+	void				SetTaxesLeft( UI32 newValue );
+	void				SetReserves( UI32 newValue );
 	void				CalcNewMayor( void );				// calculates the new mayor
 	void				DisplayTownMembers( CSocket *sock );
 	void				ViewTaxes( CSocket *s );
@@ -151,7 +151,7 @@ public:
 	SI16				GetHealth( void ) const;
 	CChar *				GetMayor( void );						// returns the mayor character
 	SERIAL				GetMayorSerial( void ) const;			// returns the mayor's serial
-	UI16				GetMidiList( void ) const;
+	UI16				GetMusicList( void ) const;
 	std::string			GetName( void ) const;
 	size_t				GetNumOrePreferences( void ) const;
 	const orePref *		GetOrePreference( size_t targValue ) const;
@@ -160,13 +160,14 @@ public:
 	size_t				GetPopulation( void ) const;
 	RACEID				GetRace( void ) const;
 	CChar *				GetRandomGuard( void );			// returns a random guard from guard list
-	long				GetReserves( void ) const;
+	UI32				GetReserves( void ) const;
 	UI16				GetResourceID( void ) const;
-	long				GetTaxes( void ) const;
+	UI32				GetTaxes( void ) const;
 	weathID				GetWeather( void ) const;
 	UI16				NumGuards( void ) const;
 	UI16				TaxedAmount( void ) const;
 	UI08				WorldNumber( void ) const;
+	UI16				GetInstanceID( void ) const;
 
 	UI16				GetScriptTrigger( void ) const;
 	void				SetScriptTrigger( UI16 newValue );
@@ -176,9 +177,9 @@ public:
 
 	size_t				GetNumLocations( void ) const;
 	const regLocs *		GetLocation( size_t locNum ) const;
-};
 
-}
+	std::string			GetTownMemberSerials( void ) const;
+};
 
 #endif
 

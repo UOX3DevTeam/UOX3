@@ -1,44 +1,37 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	cAccountClass.cpp
-//|	Date			-	12/6/2002 4:16:33 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Seeing as I had screwed up accounts so bad, I started from
-//|							scratch. The concept of how they work has been reevaluated
-//|							and will be changed to suit a more understandable direction.
-//|							See xRFC0004 for complete specification and implementaion
-//|							information.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	cAccountClass.cpp
+//|	Date		-	12/6/2002 4:16:33 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Seeing as I had screwed up accounts so bad, I started from
+//|					scratch. The concept of how they work has been reevaluated
+//|					and will be changed to suit a more understandable direction.
+//|					See xRFC0004 for complete specification and implementaion
+//|					information.
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "cVersionClass.h"
-#if P_ODBC == 1
-#include "ODBCManager.h"
+#include <cstdint>
+#include <filesystem>
+#include "StringUtility.hpp"
+#if UOX_PLATFORM != PLATFORM_WIN32
+#include <arpa/inet.h>
 #endif
-
-namespace UOX
-{
 
 cAccountClass *Accounts;
 
 const UI08 CHARACTERCOUNT = 7;
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	Class Construction and Desctruction
-//|	Date			-	12/6/2002 4:18:58 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Classic class construction and destruction
-//|									
-//|	Modification	-	Added the member to handle the stream to packet packing
-//|							symantics. I put it here because from most levels of 
-//|							object the pointer to accounts data is fairly consistant
-//|							and readily available
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	Class Construction and Desctruction
+//|	Date		-	12/6/2002 4:18:58 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Classic class construction and destruction
+//|
+//|	Changes		-	Added the member to handle the stream to packet packing
+//|					symantics. I put it here because from most levels of
+//|					object the pointer to accounts data is fairly consistant
+//|					and readily available
+//o-----------------------------------------------------------------------------------------------o
 cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
 {
 	m_wHighestAccount = 0x0000;
@@ -46,7 +39,7 @@ cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
 	actbInvalid.wAccountIndex = AB_INVALID_ID;
 }
 //
-cAccountClass::cAccountClass(const std::string &sAccountsPath)
+cAccountClass::cAccountClass( const std::string &sAccountsPath )
 {
 	// Call into the initialize
 	cAccountClass();
@@ -67,28 +60,23 @@ cAccountClass::~cAccountClass()
 }
 //
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 cAccountClass::CreateAccountSystem(string sActPath)
-//|	Date			-	12/6/2002 4:19:53 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Instead of expecting end users to fix the accounts by hand
-//|							the idea of a member function that would provide some means
-//|							to automate the process was devised.
-//|									
-//|							This function is intended for use in uox3 v0.97.0 and 
-//|							v0.97.1+ builds for converting them to the new system. This 
-//|							member function will also create a new account system for 
-//|							pre v0.97.00 versions. However pre UOX3 v0.97.00 characters 
-//|							will be lost even if world files have been converted and 
-//|							unable to locate the respective character ID number when
-//|							converting the world.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-UI16 cAccountClass::CreateAccountSystem(void)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 CreateAccountSystem( void )
+//|	Date		-	12/6/2002 4:19:53 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Instead of expecting end users to fix the accounts by hand
+//|					the idea of a member function that would provide some means
+//|					to automate the process was devised.
+//|
+//|					This function is intended for use in uox3 v0.97.0 and
+//|					v0.97.1+ builds for converting them to the new system. This
+//|					member function will also create a new account system for
+//|					pre v0.97.00 versions. However pre UOX3 v0.97.00 characters
+//|					will be lost even if world files have been converted and
+//|					unable to locate the respective character ID number when
+//|					converting the world.
+//o-----------------------------------------------------------------------------------------------o
+UI16 cAccountClass::CreateAccountSystem( void )
 {
 	// Get the system account path. Should have been set at construction.
 	std::string sActPath = m_sAccountsDirectory;
@@ -108,7 +96,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 	// Following is commented out, as it only serves to set bIsNew=false at the moment, which is not used anywhere
 	//if( !fs1.is_open() )
 	//{
-		// Ok there was no access.adm this implies that this is a pre v0.97.00 release
+	// Ok there was no access.adm this implies that this is a pre v0.97.00 release
 	//	bIsNew=false;
 	//}
 
@@ -122,7 +110,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		// ok there was some error. Either the file  doesn't exist or a system error.
 		if( fs1.is_open() )
 			fs1.close();
-		return 0x0000; 
+		return 0x0000;
 	}
 	// We need to read from the stream once before entering the loop
 	UString sLine;
@@ -159,7 +147,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			// Increment the account acount
 			++wAccountCount;
 			// Ok the section block was found, Tokenize the string to get the account #
-			actb.wAccountIndex = wAccountID = sLine.section( " ", 2, 2 ).toInt();
+			actb.wAccountIndex = wAccountID = str_value<std::int32_t>(extractSection(sLine, " ", 2, 2 ));
 			// Ok, we have parsed out the account ID, Set bBraces[2] to true to allow block reading
 			bBraces[0] = false;
 			bBraces[1] = false;
@@ -185,7 +173,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			sLine = sLine.removeComment().stripWhiteSpace();
 			continue;
 		}
-		if( sLine[0] == '{' && bBraces[0] || sLine[0] == '{' && bBraces[1] )
+		if( ((sLine[0] == '{') && bBraces[0]) || ((sLine[0] == '{') && bBraces[1] ))
 		{
 			fs2.close();
 			fs1.close();
@@ -207,8 +195,8 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			continue;
 		}
 		// Set up the tokenizing
-		UString l = sLine.section( " ", 0, 0 );
-		UString r = sLine.section( " ", 1 );
+		UString l = extractSection( sLine," ", 0, 0 );
+		UString r = extractSection( sLine, " ", 1 );
 		// Parse and store based on tag
 		if( "NAME" == l )
 		{
@@ -245,7 +233,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 						if( sLine2.substr( 0, 14 ) ==  "SECTION ACCESS" )
 						{
 							// Ok the section block was found, Tokenize the string to get the account #
-							wAccessID = sLine2.section( " ", 2 ).toInt();
+							wAccessID = str_value<std::int32_t>(extractSection(sLine2, " ", 2 ));
 							// Ok, we have parsed out the account ID, Set bBraces[2] to true to allow block reading
 							bBraces2[0] = false;
 							bBraces2[1] = false;
@@ -267,7 +255,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 							std::getline( fs1, sLine2 );
 							continue;
 						}
-						if( sLine2[0] == '{' && bBraces2[0] || sLine2[0] == '{' && bBraces2[1] )
+						if( ((sLine2[0] == '{') && bBraces2[0]) || ((sLine2[0] == '{') && bBraces2[1]) )
 						{
 							fs2.close();
 							fs1.close();
@@ -286,8 +274,8 @@ UI16 cAccountClass::CreateAccountSystem(void)
 								bBraces2[2] = false;
 								break;
 							}
-							UString l2 = sLine2.section( " ", 0, 0 );
-							UString r2 = sLine2.section( " ", 1 );
+							UString l2 = extractSection(sLine2, " ", 0, 0 );
+							UString r2 = extractSection(sLine2," ", 1 );
 							// Parse and store based on tag
 							if( "PATH" == l2 )
 							{
@@ -302,7 +290,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 								if( !r2.empty() && r2.length() != 0 )
 								{
 									// Ok strip the flags and store it. We need to make it all the same case for comparisons
-									actb.wFlags = r2.toUShort();	//<-- Uses internal conversion code
+									actb.wFlags = r2.toUShort();	//  -- Uses internal conversion code
 									if( actb.wAccountIndex == 0 )
 										actb.wFlags.set( AB_FLAGS_GM, true );
 								}
@@ -326,7 +314,8 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					sTemp += "/";
 					actb.sPath=sTemp;
 					// Need to create the directory for this entry as an access.adm isn't available
-					_mkdir(actb.sPath.c_str(),0777);
+					std::filesystem::create_directory(std::filesystem::path(actb.sPath));
+
 					// Now build the uad filename, and path,
 					sTemp += actb.sUsername;
 					sTemp += ".uad";
@@ -341,7 +330,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					// Need to write out the charcters
 					for( UI08 ii = 1; ii < CHARACTERCOUNT; ++ii )
 					{
-						fsUADFile << "CHARACTER-" << std::dec << (int)ii << " 0xffffffff [UNKNOWN]" << std::endl;
+						fsUADFile << "CHARACTER-" << std::dec << (SI32)ii << " 0xffffffff [UNKNOWN]" << std::endl;
 					}
 					fsUADFile.close();
 					// Flood fill the actb class for accounts
@@ -405,7 +394,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		{
 			if( nLockCount <= 5 )
 			{
-				if( r.toLong() > 0 )
+				if( r.toInt() > 0 )
 					actb.wFlags.set( (AB_FLAGS_CHARACTER1 + nLockCount), true );
 			}
 			++nLockCount;
@@ -425,14 +414,14 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		}
 		else if( l.substr( 0, 10 ) == "CHARACTER-" )
 		{
-			int charNum = UString( l.substr( 10 ) ).toInt();
+			SI32 charNum = UString( l.substr( 10 ) ).toInt();
 			if( charNum < 1 || charNum > CHARACTERCOUNT )
-				Console.Error( "Invalid character found in accounts" );
+				Console.error( "Invalid character found in accounts" );
 			else
 			{
 				if( !r.empty() && r.length() != 0 )
 				{
-					actb.dwCharacters[charNum-1] = r.toULong();
+					actb.dwCharacters[charNum-1] = r.toUInt();
 					actb.lpCharacters[charNum-1] = calcCharObjFromSer( actb.dwCharacters[charNum-1] );
 				}
 				else
@@ -474,26 +463,21 @@ UI16 cAccountClass::CreateAccountSystem(void)
 				sNewPath += "/";
 			}
 			// Create the accounts directory now that we have the username added. If it exists it doesn't matter.
-			int nDummy = _mkdir(sNewPath.c_str(), 0777);
-			if( nDummy<0 )
-			{
-				// if directory exists then we just skip this.
-	#ifdef WIN32
-				if( GetLastError() != 183 )
-	#else
-				if( errno != EEXIST )
-	#endif
-				{
-					Console.Error( "CreateAccountSystem(): Couldn't create directory %s: errorcode %d", sNewPath.c_str(), errno );
+			if (!std::filesystem::exists(std::filesystem::path(sNewPath))) {
+				auto create_status = std::filesystem::create_directory(std::filesystem::path(sNewPath));
+				if (!create_status) {
+					Console.error( format("CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str()) );
 					m_mapUsernameIDMap.clear();
 					m_mapUsernameMap.clear();
 					return 0L;
+
 				}
 			}
+
 			// Now open and copy the files. to their new location.
 			if( !actbTemp.sPath.length() )
 			{
-				// the file/path was not found so we should make an entry 
+				// the file/path was not found so we should make an entry
 				std::string sOutFile(sNewPath);
 				if( sOutFile[sOutFile.length()-1]!='\\'&&sOutFile[sOutFile.length()-1]!='/' )
 					sOutFile += "/";
@@ -507,9 +491,9 @@ UI16 cAccountClass::CreateAccountSystem(void)
 				// Ok we have to write the new username.uad file in the directory
 				WriteUADHeader( fsOut, actbTemp );
 				// Ok write out the characters and the charcter names if we know them
-				for( int i = 0; i < CHARACTERCOUNT; ++i )
+				for( SI32 i = 0; i < CHARACTERCOUNT; ++i )
 				{
-					fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.lpCharacters[i]->GetSerial() : INVALIDSERIAL ) << " [" << (char*)(actbTemp.lpCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName().c_str() : "UNKNOWN" ) << "]\n"; 
+					fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.lpCharacters[i]->GetSerial() : INVALIDSERIAL ) << " [" << (char*)(actbTemp.lpCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName().c_str() : "UNKNOWN" ) << "]\n";
 				}
 				// Close the files since we dont need them anymore
 				fsOut.close();
@@ -522,7 +506,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					sOutFile += "/";
 				sOutFile += actbTemp.sUsername;
 				sOutFile += ".uad";
-				UString::replaceSlash( sOutFile );
+				replaceSlash( sOutFile );
 				std::fstream fsOut(sOutFile.c_str(),std::ios::out);
 				if( !fsOut.is_open() )
 				{
@@ -554,16 +538,16 @@ UI16 cAccountClass::CreateAccountSystem(void)
 	sBUAccess += ".bu";
 	rename(sAccessAdm.c_str(),sBUAccess.c_str());
 	//
-	int kk=0;
-	char szltoa2[15];
+	SI32 kk=0;
+	std::string szltoa2 ;
 	std::string sBUPath(sAccountsAdm);
 	sBUPath += ".bu";
-	int nResp= rename(sAccountsAdm.c_str(),sBUPath.c_str());
+	SI32 nResp= rename(sAccountsAdm.c_str(),sBUPath.c_str());
 	std::string sNewPath = sBUPath;
 	while( nResp == -1 )
 	{
 		// Loop through 255 numbers, these will be added to the end of the bu in case a bu exists.
-		sprintf( szltoa2, "%d", kk++ );
+		szltoa2 = format( "%d", kk++ );
 		sNewPath += szltoa2;
 		nResp= rename(sAccountsAdm.c_str(),sNewPath.c_str());
 		sNewPath = sBUPath;
@@ -594,9 +578,9 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 	fsOut << "NAME " << actbTemp.sUsername << std::endl;
 	fsOut << "PASS " << actbTemp.sPassword << std::endl;
 	fsOut << "FLAGS 0x" << std::hex << actbTemp.wFlags.to_ulong() << std::dec << std::endl;
-	fsOut << "PATH " << UString::replaceSlash(actbTemp.sPath) << std::endl;
+	fsOut << "PATH " << replaceSlash(actbTemp.sPath) << std::endl;
 	fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
-	fsOut << "LASTIP " << (int)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (int)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (int)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (int)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
+	fsOut << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
 	fsOut << "CONTACT " << (actbTemp.sContact.length()?actbTemp.sContact:"NA") << std::endl;
 	for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
 	{
@@ -614,47 +598,38 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 
 }
 
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std::string sContact)
-//|						UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std::string sContact,UI16 wAttributes)
-//|	Date			-	12/12/2002 11:15:20 PM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	This function creates in memory as well as on disk a new
-//|							account that will allow access to the server from external
-//|							clients. The basic goal of this function is to create a
-//|							new account record with no characters. Because this function
-//|							may be called from in game a hard copy will be made as well
-//|							instead of waiting for a save to make the changes perminent.
-//|									
-//|							sUsername:   Name of the account
-//|							sPassword:   Password of the account
-//|							sContact:    Historically this is the valid email address 
-//|							             for this account
-//|							wAttributes: What attributes should this account start with
-//o--------------------------------------------------------------------------o
-//|	Returns			-	[UI16] Containing the account number of new accounts or 0
-//o--------------------------------------------------------------------------o
-//|	NOTE			-	This function does NOT add this account to the accounts
-//|							map. This function ONLY creates the directories, and entries
-//|							required to load these new accounts. The idea was not to 
-//|							have to rely on the accounts in memory, so that accounts
-//|							that are added, are added immediatly to the hard copy.
-//|	NOTE			-	For any new accounts to be loaded into the internal accounts
-//|							map structure, accounts must be reloaded!
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, const std::string &sContact,UI16 wAttributes)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact,UI16 wAttributes )
+//|					UI16 AddAccount( std::string sUsername, std::string sPassword, std::string sContact,UI16 wAttributes )
+//|	Date		-	12/12/2002 11:15:20 PM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This function creates in memory as well as on disk a new account that will
+//|					allow access to the server from external clients. The basic goal of this
+//|					function is to create a new account record with no characters. Because this
+//|					function may be called from in game a hard copy will be made as well instead of
+//|					waiting for a save to make the changes perminent.
+//|
+//|						sUsername:   Name of the account
+//|						sPassword:   Password of the account
+//|						sContact:    Historically this is the valid email address for this account
+//|						wAttributes: What attributes should this account start with
+//o-----------------------------------------------------------------------------------------------o
+//|	Returns		-	[UI16] Containing the account number of new accounts or 0
+//o-----------------------------------------------------------------------------------------------o
+//|	NOTE		-	This function does NOT add this account to the accounts map. This function ONLY
+//|					creates the directories, and entries required to load these new accounts. The
+//|					idea was not to have to rely on the accounts in memory, so that accounts that
+//|					are added, are added immediatly to the hard copy.
+//|	NOTE		-	For any new accounts to be loaded into the internal accounts map structure,
+//|					accounts must be reloaded!
+//o-----------------------------------------------------------------------------------------------o
+UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact, UI16 wAttributes )
 {
 	// First were going to make sure that the needed fields are sent in with at least data
 	if( sUsername.length() < 4 || sPassword.length() < 4 )
 	{
 		// Username, and or password must both be 4 characters or more in length
-		Console.Log("ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short","accounts.log",sUsername.c_str(),sPassword.c_str());
+		Console.log(format("ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short",sUsername.c_str(),sPassword.c_str()),"accounts.log");
 		return 0x0000;
 	}
 	// Next thing were going to do is make sure there isn't a duplicate username.
@@ -686,7 +661,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, con
 		UString szTempBuff	= UString( sUsername ).lower();
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
-		UString::replaceSlash( sTempPath );
+		replaceSlash( sTempPath );
 		actbTemp.sPath		= sTempPath;
 	}
 	else
@@ -695,24 +670,19 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, con
 		sTempPath			+= "/";
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
-		UString::replaceSlash( sTempPath );
+		replaceSlash( sTempPath );
 		actbTemp.sPath = sTempPath;
 	}
 	// Ok now that we got here we need to make the directory, and create the username.uad file
-	int nDummy=_mkdir(actbTemp.sPath.c_str(), 0777);
-	if( nDummy<0 )
-	{
-		// if directory exists then we just skip this.
-#ifdef WIN32
-		if( GetLastError() != 183 )
-#else
-		if( errno != EEXIST )
-#endif
-		{
-			Console.Error( "AddAccount(): Couldn't create directory %s: errorcode %d", actbTemp.sPath.c_str(), errno );
+	if (!std::filesystem::exists(std::filesystem::path(actbTemp.sPath))) {
+		auto create_status = std::filesystem::create_directory(std::filesystem::path(actbTemp.sPath));
+		if (!create_status) {
+			Console.error( format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
 			return 0x0000;
+
 		}
 	}
+
 	// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
 	std::string sUsernameUADPath(actbTemp.sPath);
 	if( sUsernameUADPath[sUsernameUADPath.length()-1]=='\\'||sUsernameUADPath[sUsernameUADPath.length()-1]=='/' )
@@ -727,7 +697,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, con
 		sUsernameUADPath += ".uad";
 	}
 	// Fix the paths to make sure that all the characters are unified
-	UString::replaceSlash(sUsernameUADPath);
+	replaceSlash(sUsernameUADPath);
 	// Open the file in APPEND to end mode.
 	std::fstream fsAccountsUAD(sUsernameUADPath.c_str(),std::ios::out|std::ios::trunc);
 	if( !fsAccountsUAD.is_open() )
@@ -746,13 +716,13 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, con
 	fsAccountsUAD << "//------------------------------------------------------------------------------\n";
 	fsAccountsUAD << "ID " << actbTemp.wAccountIndex << "\n";
 	fsAccountsUAD << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << "\n";
-	fsAccountsUAD << "LASTIP " << (int)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (int)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (int)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (int)((actbTemp.dwLastIP&0x000000FF)%256) << "\n";
+	fsAccountsUAD << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << "\n";
 	fsAccountsUAD << "CONTACT " << actbTemp.sContact << "\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------\n";
 	// Ok write out the characters and the charcter names if we know them
 	for( UI08 i = 0; i < CHARACTERCOUNT; ++i )
 	{
-		fsAccountsUAD << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i]:INVALIDSERIAL) << " [" << (char*)(actbTemp.lpCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName().c_str() : "INVALID" ) << "]\n"; 
+		fsAccountsUAD << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i]:INVALIDSERIAL) << " [" << (char*)(actbTemp.lpCharacters[i] != NULL ? actbTemp.lpCharacters[i]->GetName().c_str() : "INVALID" ) << "]\n";
 	}
 	// Close the files since we dont need them anymore
 	fsAccountsUAD.close();
@@ -779,273 +749,57 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, con
 	return (UI16)m_mapUsernameIDMap.size();
 }
 
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::isUser(string sUsername)
-//|	Date			-	12/16/2002 12:09:13 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	The only function that this function member servers is to 
-//|							return a response based on the existance of the specified
-//|							username.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::isUser(std::string sUsername)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isUser( string sUsername )
+//|	Date		-	12/16/2002 12:09:13 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	The only function that this function member servers is to return a response
+//|					based on the existance of the specified username.
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::isUser( std::string sUsername )
 {
 	MAPUSERNAME_ITERATOR I	= m_mapUsernameMap.find( sUsername );
 	return( I != m_mapUsernameMap.end() );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 cAccountClass::size()
-//|	Date			-	12/17/2002 3:35:31 PM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Returns the current count of accounts that are currently
-//|							stored in the account map. 
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-size_t cAccountClass::size()
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t cAccountClass::size()
+//|	Date		-	12/17/2002 3:35:31 PM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the current count of accounts that are currently stored in the account map.
+//o-----------------------------------------------------------------------------------------------o
+UI32 cAccountClass::size()
 {
-	return m_mapUsernameMap.size();
+	return static_cast<std::uint32_t>(m_mapUsernameMap.size());
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 cAccountClass::Load()
-//|	Date			-	12/17/2002 4:00:47 PM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Load the internal accounts structure from the accounts.adm
+
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 cAccountClass::Load()
+//|	Date		-	12/17/2002 4:00:47 PM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load the internal accounts structure from the accounts.adm
 //|							file. Due to the nature of this function we will empty the
 //|							previous contents of the account map, and reload them.
-//|									
-//|	Modification	-	1/20/2003 - Forgot to put in place the lookup to see if 
-//|									accounts need to be updated to the v3 format. Should only
-//|									need to check the first line of the accounts.adm file.
-//|									NOTE: Do not remove this line if you wish to convert 
-//|									properly. Without the first line this function will assume
-//|									that the accounts file is a v2 format file(UOX3 v0.97.0).
-//|									
-//|	Modification	-	1/20/2003 - Added support for the DTL libs, and create a
-//|									general SQL query for MSAccess, MSSQL, and mySQL
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-#if P_ODBC == 1
-bool cAccountClass::FinaliseBlock( CAccountBlock& toFinalise )
-{
-	for( int y = 0; y < CHARACTERCOUNT; ++y )
-	{
-		if( toFinalise.dwCharacters[y] != INVALIDSERIAL )
-		{
-			toFinalise.lpCharacters[y] = calcCharObjFromSer( toFinalise.dwCharacters[y] );
-			if( toFinalise.lpCharacters[y] != NULL )
-				toFinalise.lpCharacters[y]->SetAccount( toFinalise );
-		}
-	}
-	m_mapUsernameIDMap[toFinalise.wAccountIndex]	= toFinalise;
-	m_mapUsernameMap[toFinalise.sUsername]			= &m_mapUsernameIDMap[toFinalise.wAccountIndex];
-	return true;
-}
-bool cAccountClass::SaveToDB( UI16& numSaved )
-{
-	bool rvalue = true;
-	numSaved	= 0;
-
-	ODBCManager::getSingleton().BeginTransaction();
-	for( MAPUSERNAMEID_CITERATOR i = m_mapUsernameIDMap.begin(); i != m_mapUsernameIDMap.end(); ++i )
-	{
-		const CAccountBlock *curr = &(i->second);
-		if( curr->dbRetrieved )
-		{	// From DB, so UPDATE
-			std::string uSQL = "UPDATE Account SET";
-			uSQL			+= " Password = '" + curr->sPassword + "'";
-			uSQL			+= ", ContactDetails = '" + curr->sContact + "'";
-			uSQL			+= ", IsBanned = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_BANNED )?"1":"0");
-			uSQL			+= ", IsSuspended = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_SUSPENDED )?"1":"0");
-			uSQL			+= ", IsPublic = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_PUBLIC )?"1":"0");
-			uSQL			+= ", IsOnline = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_ONLINE )?"1":"0");
-			uSQL			+= ", IsSeer = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_SEER )?"1":"0");
-			uSQL			+= ", IsCounselor = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_COUNSELOR )?"1":"0");
-			uSQL			+= ", IsGM = ";
-			uSQL			+= (curr->wFlags.test( AB_FLAGS_GM )?"1":"0");
-			uSQL			+= ", LastUpdated = getdate()";
-			uSQL			+= " WHERE AccountID = " + UString::number( curr->wAccountIndex ) + ";";
-			Console.Warning( uSQL.c_str() );
-			ODBCManager::getSingleton().ExecuteQuery( uSQL );
-			uSQL			= "DELETE FROM AccountCharacters WHERE AccountID = " + UString::number( curr->wAccountIndex ) + ";";
-			Console.Warning( uSQL.c_str() );
-			ODBCManager::getSingleton().ExecuteQuery( uSQL );
-		}
-		else
-		{	// Not from DB, so INSERT
-			std::string iSQL = "INSERT INTO Account( AccountID, Username, Password, ContactDetails, IsBanned, IsSuspended, IsPublic, IsOnline, IsSeer, IsCounselor, IsGM, LastUpdated ) VALUES( ";
-			iSQL			+= "  " + UString::number( curr->wAccountIndex );
-			iSQL			+= ", '" + curr->sUsername + "'";
-			iSQL			+= ", '" + curr->sPassword + "'";
-			iSQL			+= ", '" + curr->sContact + "'";
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_BANNED )?"1":"0");
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_SUSPENDED )?"1":"0");
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_PUBLIC )?"1":"0");
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_ONLINE )?"1":"0");
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_SEER )?"1":"0");
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_COUNSELOR )?"1":"0");
-			iSQL			+= ", ";
-			iSQL			+= (curr->wFlags.test( AB_FLAGS_GM )?"1":"0");
-			iSQL			+= ", getdate()";
-			Console.Warning( iSQL.c_str() );
-			ODBCManager::getSingleton().ExecuteQuery( iSQL );
-		}
-		for( int z = 0; z < CHARACTERCOUNT; ++z )
-		{
-			if( curr->lpCharacters[z] != NULL )
-			{
-				std::string cSQL	= "INSERT INTO AccountCharacters( AccountID, Serial ) VALUES( ";
-				cSQL				+= UString::number( curr->wAccountIndex ) + ", " + UString::number( curr->lpCharacters[z]->GetSerial() ) + " );";
-				Console.Warning( cSQL.c_str() );
-				ODBCManager::getSingleton().ExecuteQuery( cSQL );
-			}
-		}
-		++numSaved;
-	}
-	ODBCManager::getSingleton().FinaliseTransaction( true );
-	return rvalue;
-}
-bool cAccountClass::LoadFromDB( UI16& numLoaded )
-{
-	bool rvalue = true;
-	UString values[13];
-	bool valueFound[13];
-
-	int index = -1;
-	std::string sql	= "SELECT Account.AccountID, Account.Username, Account.Password, Account.ContactDetails, Account.IsBanned, Account.IsSuspended, Account.IsPublic, Account.IsOnline, Account.IsSeer, Account.IsCounselor, Account.IsGM, Account.LastUpdated, AccountCharacters.Serial FROM         Account LEFT OUTER JOIN AccountCharacters ON Account.AccountID = AccountCharacters.AccountID ORDER BY Account.AccountID, AccountCharacters.Serial";
-	bool execQuery	= ODBCManager::getSingleton().ExecuteQuery( sql, &index );
-	if( execQuery )
-	{
-		CAccountBlock actB;
-		int prevID		= -1;
-		numLoaded		= 0;
-		bool bRetrieved = false;
-		int charCount	= -1;
-		int iTemp		= 0;
-		while( ODBCManager::getSingleton().FetchRow( index ) )
-		{
-			// 0	Account.AccountID
-			// 1	Account.Username
-			// 2	Account.Password
-			// 3	Account.ContactDetails
-			// 4	Account.IsBanned
-			// 5	Account.IsSuspended
-			// 6	Account.IsPublic
-			// 7	Account.IsOnline
-			// 8	Account.IsSeer
-			// 9	Account.IsCounselor
-			// 10	Account.IsGM
-			// 11	Account.LastUpdated
-			// 12	AccountCharacters.Serial
-			for( int x = 0; x < 13; ++x )
-			{
-				valueFound[x] = ODBCManager::getSingleton().GetColumn( x, values[x], index );
-				if( !valueFound[x] )
-					Console.Warning( "ODBC: Error retrieving column %i on record %i", x, numLoaded );
-			}
-			if( valueFound[0] )
-			{	// we have an ID
-				int realID = values[0].toInt();
-				if( realID != prevID )
-				{	// next account retrieved
-					if( bRetrieved )
-					{	// tidy up previous account
-						FinaliseBlock( actB );
-					}
-					actB.reset();
-					actB.dbRetrieved	= true;
-					actB.wAccountIndex	= realID;
-					bRetrieved			= true;
-					prevID				= realID;
-					charCount			= -1;
-					++numLoaded;
-					if( valueFound[1] )
-						actB.sUsername = values[1].stripWhiteSpace();
-					else
-						Console.Warning( "ODBC: Account with no username! [%i]", actB.wAccountIndex );
-					if( valueFound[2] )
-						actB.sPassword = values[2].stripWhiteSpace();
-					else
-						Console.Warning( "ODBC: Account with no username! [%i]", actB.wAccountIndex );
-					if( valueFound[3] )
-						actB.sContact = values[3];
-					if( valueFound[4] )
-						actB.wFlags.set( AB_FLAGS_BANNED,	( values[4].toInt() != 0 ) );
-					if( valueFound[5] )
-						actB.wFlags.set( AB_FLAGS_SUSPENDED,( values[5].toInt() != 0 ) );
-					if( valueFound[6] )
-						actB.wFlags.set( AB_FLAGS_PUBLIC,	( values[6].toInt() != 0 ) );
-					if( valueFound[8] )
-						actB.wFlags.set( AB_FLAGS_SEER,		( values[8].toInt() != 0 ) );
-					if( valueFound[9] )
-						actB.wFlags.set( AB_FLAGS_COUNSELOR,( values[9].toInt() != 0 ) );
-					if( valueFound[10] )
-						actB.wFlags.set( AB_FLAGS_GM,		( values[10].toInt() != 0 ) );
-				}
-				++charCount;
-				if( charCount < CHARACTERCOUNT )
-				{
-					if( valueFound[12] && values[12] != "NULL" )
-						actB.dwCharacters[charCount] = values[12].toInt();
-					else
-						actB.dwCharacters[charCount] = INVALIDSERIAL;
-				}
-				else
-				{
-					Console.Warning( "ODBC: Too many characters on account" );
-				}
-			}
-		}
-		if( bRetrieved )
-		{	// tidy up previous account
-			FinaliseBlock( actB );
-		}
-		ODBCManager::getSingleton().QueryRelease();
-	}
-	else
-		rvalue = false;
-	return rvalue;
-}
-#endif
-
+//|
+//|	Changes		-	1/20/2003 - Forgot to put in place the lookup to see if
+//|							accounts need to be updated to the v3 format. Should only
+//|							need to check the first line of the accounts.adm file.
+//|							NOTE: Do not remove this line if you wish to convert
+//|							properly. Without the first line this function will assume
+//|							that the accounts file is a v2 format file(UOX3 v0.97.0).
+//|
+//|	Changes		-	1/20/2003 - Added support for the DTL libs, and create a
+//|							general SQL query for MSAccess, MSSQL, and mySQL
+//o-----------------------------------------------------------------------------------------------o
 UI16 cAccountClass::Load(void)
 {
-#if P_ODBC == 1
-	UI16 retVal = 0;
-	if( LoadFromDB( retVal ) )
-		return retVal;
-#endif
 
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
-	UString::replaceSlash(sAccountsADM);
+	replaceSlash(sAccountsADM);
 	// Check to see what version the current accounts.adm file is.
 	UString sLine;
 	std::fstream fsAccountsADMTest(sAccountsADM.c_str(),std::ios::in);
@@ -1104,7 +858,7 @@ UI16 cAccountClass::Load(void)
 		{
 			// Increment the account acount
 			++wAccountCount;
-			actb.wAccountIndex = wAccountID = sLine.section( " ", 2 ).toInt();
+			actb.wAccountIndex = wAccountID = str_value<std::int32_t>(extractSection(sLine, " ", 2 ));
 
 			// Scan for hiegest account. Needed for additional accounts.
 			if( actb.wAccountIndex>m_wHighestAccount )
@@ -1134,7 +888,7 @@ UI16 cAccountClass::Load(void)
 			sLine = sLine.removeComment().stripWhiteSpace();
 			continue;
 		}
-		if( sLine[0]=='{'&&bBraces[0]||sLine[0]=='{'&&bBraces[1] )
+		if( ((sLine[0]=='{') &&bBraces[0]) ||((sLine[0]=='{')&&bBraces[1]) )
 		{
 			fsAccountsADM.close();
 			return 0x0000;
@@ -1202,8 +956,8 @@ UI16 cAccountClass::Load(void)
 			}
 			continue;
 		}
-		UString l	= sLine.section( " ", 0, 0 );
-		UString r	= sLine.section( " ", 1 );
+		UString l	= extractSection(sLine, " ", 0, 0 );
+		UString r	= extractSection(sLine, " ", 1 );
 		r			= r.removeComment();
 		// Parse and store based on tag
 		if( l == "NAME" )
@@ -1289,7 +1043,7 @@ UI16 cAccountClass::Load(void)
 		else if( l == "LASTIP" )
 		{
 			if( !r.empty() && r.length() != 0 && r.sectionCount(".") == 3 )
-				actb.dwLastIP = calcserial( r.section( ".", 0, 0 ).toByte(), r.section( ".", 1, 1 ).toByte(), r.section( ".", 2, 2 ).toByte(), r.section( ".", 3, 3 ).toByte() );
+				actb.dwLastIP = calcserial( str_value<char>(extractSection(r,".", 0, 0 )), str_value<char>(extractSection(r, ".", 1, 1 )), str_value<char>(extractSection(r, ".", 2, 2 )), str_value<char>(extractSection(r, ".", 3, 3 )) );
 			else
 				actb.dwLastIP = 0x00000000;
 
@@ -1301,13 +1055,13 @@ UI16 cAccountClass::Load(void)
 		{
 			UI08 charNum = UString( l.substr( 10 ) ).toUByte();
 			if( charNum < 1 || charNum > CHARACTERCOUNT )
-				Console.Error( "Invalid character found in accounts" );
+				Console.error( "Invalid character found in accounts" );
 			else
 			{
 				if( !r.empty() && r.length() != 0 )
 				{
 					// Ok strip the name and store it. We need to make it all the same case for comparisons
-					dwChars[charNum-1] = r.toULong();
+					dwChars[charNum-1] = r.toUInt();
 					std::getline( fsAccountsADM, sLine );
 					continue;
 				}
@@ -1331,21 +1085,16 @@ UI16 cAccountClass::Load(void)
 	return m_mapUsernameMap.size();
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID)
-//|	Date			-	1/7/2003 5:39:12 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Transfer a character from a known slot on a specified 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool TransCharacter( UI16 wSAccountID, UI16 wSSlot, UI16 wDAccountID )
+//|	Date		-	1/7/2003 5:39:12 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Transfer a character from a known slot on a specified
 //|							account, to a new account and slot.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID)
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::TransCharacter( UI16 wSAccountID, UI16 wSSlot, UI16 wDAccountID )
 {
-	// Abaddon please leave these declarations alone. When we do this VC autocompetion doesn't work cause this isn't shoved on the stack with type info
+	//   please leave these declarations alone. When we do this VC autocompetion doesn't work cause this isn't shoved on the stack with type info
 	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wSAccountID);
 	//
 	if( I==m_mapUsernameIDMap.end() )
@@ -1355,7 +1104,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 	}
 	// Get the account block for this ID
 	CAccountBlock& actbID	= I->second;
-	// Ok now we need to get the matching username map 
+	// Ok now we need to get the matching username map
 	MAPUSERNAME_ITERATOR J	= m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 	{
@@ -1376,7 +1125,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 	}
 	// Get the account block for this ID
 	CAccountBlock& actbIID	= II->second;
-	// Ok now we need to get the matching username map 
+	// Ok now we need to get the matching username map
 	MAPUSERNAME_ITERATOR JJ	= m_mapUsernameMap.find(actbIID.sUsername);
 	if( JJ==m_mapUsernameMap.end() )
 	{
@@ -1389,26 +1138,21 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 	if( AddCharacter( wDAccountID, actbID.dwCharacters[wSSlot], actbID.lpCharacters[wSSlot] ) )
 	{
 		// OK the character was added, need to remove it from the source.
-		DelCharacter( wSAccountID, (int)wSSlot );
+		DelCharacter( wSAccountID, (SI32)wSSlot );
 		Save( false );
 		return true;
 	}
 	return false;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::AddCharacter(UI16 accountid, CChar *object)
-//|						bool cAccountClass::AddCharacter(UI16 accountid, void *object)
-//|	Date			-	12/18/2002 2:09:04 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Add a character object to the in memory storage. 
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AddCharacter( UI16 wAccountID, CChar *lpObject )
+//|					bool AddCharacter( UI16 wAccountID, UI32 dwCharacterID, CChar *lpObject )
+//|	Date		-	12/18/2002 2:09:04 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add a character object to the in memory storage.
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::AddCharacter( UI16 wAccountID, CChar *lpObject )
 {
 	// Make sure that the lpObject pointer is valid
 	if( lpObject==NULL )
@@ -1422,7 +1166,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	}
 	// Get the account block for this ID
 	CAccountBlock& actbID	= I->second;
-	// Ok now we need to get the matching username map 
+	// Ok now we need to get the matching username map
 	MAPUSERNAME_ITERATOR J	= m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 	{
@@ -1444,7 +1188,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 			actbName.dwCharacters[i]=lpObject->GetSerial();
 			// we do not need to continue throught this loop anymore.
 			bExit=true;
-			break; 
+			break;
 		}
 	}
 	// If we were successfull then we return true
@@ -1457,7 +1201,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	return false;
 }
 //
-bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject)
+bool cAccountClass::AddCharacter( UI16 wAccountID, UI32 dwCharacterID, CChar *lpObject )
 {
 	// Make sure that the lpObject pointer is valid
 	if( lpObject==NULL )
@@ -1472,7 +1216,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 	}
 	// Get the account block for this ID
 	CAccountBlock& actbID = I->second;
-	// Ok now we need to get the matching username map 
+	// Ok now we need to get the matching username map
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 	{
@@ -1494,7 +1238,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 			actbName.dwCharacters[i]	= dwCharacterID;
 			// we do not need to continue throught this loop anymore.
 			bExit=true;
-			break; 
+			break;
 		}
 	}
 	// If we were successfull then we return true
@@ -1507,19 +1251,14 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 	}
 	return false;
 }
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::clear(void)
-//|	Date			-	12/18/2002 2:24:07 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	This function is used to clear out all entries contained
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cAccountClass::clear( void )
+//|	Date		-	12/18/2002 2:24:07 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This function is used to clear out all entries contained
 //|						in both the Username, and UsernameID map structures.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::clear(void)
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::clear( void )
 {
 	// First we should check to make sure that we can even use the objects, or they are not already cleared
 	try
@@ -1540,22 +1279,17 @@ bool cAccountClass::clear(void)
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::DelAccount(std::string sUsername)
-//|						bool cAccountClass::DelAccount(UI16 wAccountID)
-//|	Date			-	12/18/2002 2:56:34 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Remove an account from the internal account storage map.
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cAccountClass::DelAccount( std::string sUsername )
+//|					bool cAccountClass::DelAccount( UI16 wAccountID )
+//|	Date		-	12/18/2002 2:56:34 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove an account from the internal account storage map.
 //|						At this point this function will only remove the account
 //|						block from the accounts.adm and not the physical files
 //|						on the storage medium.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::DelAccount(std::string sUsername)
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::DelAccount( std::string sUsername )
 {
 	// Ok were just going to get the ID number for this account and make the ID function do all the work
 	MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
@@ -1565,8 +1299,8 @@ bool cAccountClass::DelAccount(std::string sUsername)
 	// Ok lets do the work now
 	return DelAccount( actbTemp.wAccountIndex );
 }
-//o--------------------------------------------------------------------------o
-bool cAccountClass::DelAccount(UI16 wAccountID)
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::DelAccount( UI16 wAccountID )
 {
 	// Ok we need to get the ID block again as it wasn't passed in
 	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
@@ -1604,7 +1338,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	{
 		// If this slot is 0xffffffff or (-1) then we dont need to put it into the orphans.adm
 		if( actbID.dwCharacters[jj] != INVALIDSERIAL ) // Ok build then write what we need to the file
-			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," << (int)actbID.lpCharacters[jj]->GetZ() << std::endl;
+			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," << (SI32)actbID.lpCharacters[jj]->GetZ() << std::endl;
 	}
 	fsOrphansADM.close();
 	// Ok we have both the map iterators pointing to the right place. Erase these entries
@@ -1627,20 +1361,15 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::SetPath(std::string sPath)
-//|	Date			-	12/19/2002 12:29:59 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Set the internal string to contain the path to the accounts
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SetPath( std::string sPath )
+//|	Date		-	12/19/2002 12:29:59 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set the internal string to contain the path to the accounts
 //|						directory. This path much not contain a filename, As there
-//|						is no checking implemented. 
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::SetPath( const std::string &sPath)
+//|						is no checking implemented.
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::SetPath( const std::string &sPath )
 {
 	try
 	{
@@ -1653,45 +1382,35 @@ bool cAccountClass::SetPath( const std::string &sPath)
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	std::string cAccountClass::GetPath(void)
-//|	Date			-	12/19/2002 12:34:01 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Return a copy of the current accounts directory stored
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string cAccountClass::GetPath( void )
+//|	Date		-	12/19/2002 12:34:01 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return a copy of the current accounts directory stored
 //|						internally
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-std::string cAccountClass::GetPath(void)
+//o-----------------------------------------------------------------------------------------------o
+std::string cAccountClass::GetPath( void )
 {
 	return m_sAccountsDirectory;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
-//|	Date			-	12/19/2002 12:45:10 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Remove a character from the accounts map. Currently this
-//|						character object resource is not freed. The Character ID, 
-//|						and CChar object holders will be set to -1, and NULL 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DelCharacter( UI16 wAccountID, UI08 nSlot )
+//|	Date		-	12/19/2002 12:45:10 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove a character from the accounts map. Currently this
+//|						character object resource is not freed. The Character ID,
+//|						and CChar object holders will be set to -1, and NULL
 //|						respectivly. As a consolation the characters will be for
 //|						the interim listed in the orphan.adm file. This file will
-//|						contain simply the username, and character ID that was 
+//|						contain simply the username, and character ID that was
 //|						removed. For those that are wondering why this might be.
 //|						Until the system itself deletes the character and items
 //|						at least we will have a listing of orphaned character in
 //|						game that a GM can use to locate, or even assign to another
 //|						account.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::DelCharacter(UI16 wAccountID, UI08 nSlot)
+//o-----------------------------------------------------------------------------------------------o
+bool cAccountClass::DelCharacter( UI16 wAccountID, UI08 nSlot )
 {
 	// Do the simple here, save us some work
 	if( nSlot > CHARACTERCOUNT )
@@ -1737,7 +1456,7 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, UI08 nSlot)
 		WriteOrphanHeader(fsOrphansADM);
 	}
 	// Ok build then write what we need to the file
-	fsOrphansADM << actbID.sUsername << "=0x" << std::hex << actbID.dwCharacters[nSlot] << "," << (actbID.lpCharacters[nSlot]!=NULL?actbID.lpCharacters[nSlot]->GetName():"UNKNOWN") << ",0x" << (actbID.lpCharacters[nSlot]!=NULL?actbID.lpCharacters[nSlot]->GetX():0) << ",0x" << (actbID.lpCharacters[nSlot]!=NULL?actbID.lpCharacters[nSlot]->GetY():0) << "," << std::dec << (actbID.lpCharacters[nSlot]!=NULL?(int)actbID.lpCharacters[nSlot]->GetZ():(int)0) << std::endl;
+	fsOrphansADM << actbID.sUsername << "=0x" << std::hex << actbID.dwCharacters[nSlot] << "," << (actbID.lpCharacters[nSlot]!=NULL?actbID.lpCharacters[nSlot]->GetName():"UNKNOWN") << ",0x" << (actbID.lpCharacters[nSlot]!=NULL?actbID.lpCharacters[nSlot]->GetX():0) << ",0x" << (actbID.lpCharacters[nSlot]!=NULL?actbID.lpCharacters[nSlot]->GetY():0) << "," << std::dec << (actbID.lpCharacters[nSlot]!=NULL?(SI32)actbID.lpCharacters[nSlot]->GetZ():(SI32)0) << std::endl;
 	fsOrphansADM.close();
 	// Ok there is something in this slot so we should remove it.
 	actbID.dwCharacters[nSlot]=actbName.dwCharacters[nSlot]=INVALIDSERIAL;
@@ -1746,13 +1465,13 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, UI08 nSlot)
 	CAccountBlock actbScratch;
 	actbScratch.reset();
 	actbScratch = actbID;
-	int kk=0;
+	SI32 kk=0;
 	// Dont mind this loop, becuase we needed a copy of the data too we need to invalidate actbScracthes pointers, and indexs
 	for( UI08 ll = 0; ll < CHARACTERCOUNT; ++ll )
 	{
 		if( actbID.dwCharacters[ll]!=INVALIDSERIAL && actbID.lpCharacters[ll]!=NULL )
 		{
-			// OK we keep this entry 
+			// OK we keep this entry
 			actbScratch.dwCharacters[kk]=actbID.dwCharacters[ll];
 			actbScratch.lpCharacters[kk]=actbID.lpCharacters[ll];
 			kk+=1;
@@ -1776,7 +1495,8 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, UI08 nSlot)
 	try
 	{
 		I->second = actbID;
-		MAPUSERNAMEID_ITERATOR Q = m_mapUsernameIDMap.find(actbID.wAccountIndex);
+		//MAPUSERNAMEID_ITERATOR Q = m_mapUsernameIDMap.find(actbID.wAccountIndex);
+		m_mapUsernameIDMap.find(actbID.wAccountIndex);
 		Save(false);
 	}
 	catch( ... )
@@ -1786,18 +1506,12 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, UI08 nSlot)
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CAccountBlock& GetAccountByName( std::string sUsername )
-//|	Date			-	12/19/2002 2:16:37 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Search the map for an account but the username that was
-//|						specified.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CAccountBlock& GetAccountByName( std::string sUsername )
+//|	Date		-	12/19/2002 2:16:37 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Search the map for an account but the username that was specified.
+//o-----------------------------------------------------------------------------------------------o
 CAccountBlock& cAccountClass::GetAccountByName( std::string sUsername )
 {
 	// Ok now we need to get the map blocks for this account.
@@ -1818,18 +1532,12 @@ CAccountBlock& cAccountClass::GetAccountByName( std::string sUsername )
 	return actbInvalid;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CAccountBlock& cAccountClass::GetAccountByName( UI16 wAccountID )
-//|	Date			-	12/19/2002 2:17:31 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Search the map for an account but the username that was
-//|						specified.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CAccountBlock& cAccountClass::GetAccountByName( UI16 wAccountID )
+//|	Date		-	12/19/2002 2:17:31 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Search the map for an account but the username that was specified.
+//o-----------------------------------------------------------------------------------------------o
 CAccountBlock& cAccountClass::GetAccountByID( UI16 wAccountID )
 {
 	// Ok now we need to get the map blocks for this account.
@@ -1850,36 +1558,26 @@ CAccountBlock& cAccountClass::GetAccountByID( UI16 wAccountID )
 	return actbInvalid;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 cAccountClass::Save(void)
-//|	Date			-	12/19/2002 2:45:39 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Save the contents of the internal structures out to a flat
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 Save( bool bForceLoad )
+//|	Date		-	12/19/2002 2:45:39 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Save the contents of the internal structures out to a flat
 //|							file where it can be loaded later, and archived for later
 //|							use should a crash occur and the userfile is damaged. At
 //|							this stage this function will only write out the accounts.adm
 //|							file, even though the access.adm will still eventually
 //|							be used for server sharing.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-UI16 cAccountClass::Save(bool bForceLoad)
+//o-----------------------------------------------------------------------------------------------o
+UI16 cAccountClass::Save( bool bForceLoad )
 {
-#if P_ODBC == 1
-	UI16 numSaved = 0;
-	if( SaveToDB( numSaved ) )
-		return numSaved;
-#endif
 	// Ok were not going to mess around. so we open truncate the file and write
 	std::string sTemp(m_sAccountsDirectory);
 	if( sTemp[sTemp.length()-1]=='\\'||sTemp[sTemp.length()-1]=='/' )
 		sTemp += "accounts.adm";
 	else
 		sTemp += "/accounts.adm";
-	UString::replaceSlash(sTemp);
+	replaceSlash(sTemp);
 	// Ok we have the path, now open the file and start saving
 	std::fstream fsAccountsADM(sTemp.c_str(),std::ios::out|std::ios::trunc);
 	if( !fsAccountsADM.is_open() )
@@ -1899,7 +1597,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
 			// there was an error between blocks
-			Console.Error( "Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str() );
+			Console.error( format("Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str()) );
 			fsAccountsADM.close();
 			return 0xFFFF;
 		}
@@ -1918,7 +1616,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 				UString szTempBuff	= UString( actbID.sUsername ).lower();
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
-				UString::replaceSlash( sTempPath );
+				replaceSlash( sTempPath );
 				actbID.sPath		= sTempPath;
 			}
 			else
@@ -1927,27 +1625,22 @@ UI16 cAccountClass::Save(bool bForceLoad)
 				sTempPath			+= "/";
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
-				UString::replaceSlash( sTempPath );
+				replaceSlash( sTempPath );
 				actbID.sPath		= sTempPath;
 			}
 		}
 		// Close the test path
 		// Ok now that we got here we need to make the directory, and create the username.uad file
-		int nDummy=_mkdir(actbID.sPath.c_str(), 0777);
-		if( nDummy<0 )
-		{
-			// if directory exists then we just skip this.
-#ifdef WIN32
-			if( GetLastError() != 183 )
-#else
-			if( errno != EEXIST )
-#endif
-			{
-				Console.Error( "Save(): Couldn't create directory %s: errorcode %d", actbID.sPath.c_str(), errno );
+		if (!std::filesystem::exists(std::filesystem::path(actbID.sPath))) {
+			auto create_status = std::filesystem::create_directory(std::filesystem::path(actbID.sPath));
+			if (!create_status) {
+				Console.error( format("Save(): Couldn't create directory %s", actbID.sPath.c_str()));
 				fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
 				continue;
+
 			}
 		}
+
 		// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
 		std::string sUsernameUADPath(actbID.sPath);
 		if( sUsernameUADPath[sUsernameUADPath.length()-1]=='\\'||sUsernameUADPath[sUsernameUADPath.length()-1]=='/' )
@@ -1962,22 +1655,22 @@ UI16 cAccountClass::Save(bool bForceLoad)
 			sUsernameUADPath += ".uad";
 		}
 		// Fix the paths to make sure that all the characters are unified
-		UString::replaceSlash(sUsernameUADPath);
+		replaceSlash(sUsernameUADPath);
 		// Open the file in APPEND to end mode.
 		std::fstream fsAccountsUAD(sUsernameUADPath.c_str(),std::ios::out|std::ios::trunc);
 		if( !fsAccountsUAD.is_open() )
 		{
 			// Ok we were unable to open the file so this user will not be added.
-			Console.Error( "Save(): Couldn't open file %s", sUsernameUADPath.c_str() );
+			Console.error( format("Save(): Couldn't open file %s", sUsernameUADPath.c_str() ));
 			fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
-			continue; 
+			continue;
 		}
 		// Ok we have to write the new username.uad file in the directory
 		WriteUADHeader(fsAccountsUAD,actbID);
 		// Ok write out the characters and the charcter names if we know them
 		for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
 		{
-			fsAccountsUAD << "CHARACTER-" << (ii+1) << " 0x" << std::hex << (actbID.dwCharacters[ii] != INVALIDSERIAL ? actbID.dwCharacters[ii]:INVALIDSERIAL) << " [" << (char*)(actbID.lpCharacters[ii] != NULL ? actbID.lpCharacters[ii]->GetName().c_str() : "INVALID" ) << "]\n"; 
+			fsAccountsUAD << "CHARACTER-" << (ii+1) << " 0x" << std::hex << (actbID.dwCharacters[ii] != INVALIDSERIAL ? actbID.dwCharacters[ii]:INVALIDSERIAL) << " [" << (char*)(actbID.lpCharacters[ii] != NULL ? actbID.lpCharacters[ii]->GetName().c_str() : "INVALID" ) << "]\n";
 		}
 		// Close the files since we dont need them anymore
 		fsAccountsUAD.close();
@@ -1987,36 +1680,30 @@ UI16 cAccountClass::Save(bool bForceLoad)
 	return m_mapUsernameIDMap.size();
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 cAccountClass::ImportAccounts(void)
-//|	Date			-	4/30/2003 2:32:13 PM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Scan for a file with the name of "newaccounts.adm" and if
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ImportAccounts( void )
+//|	Date		-	4/30/2003 2:32:13 PM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Scan for a file with the name of "newaccounts.adm" and if
 //|						this file exists then parsed for the new accounts which
 //|						will be added to the internal account maps. If this file
 //|						does not exist then no action will take place and will
 //|						return 0. Otherwise this function will return the total
-//|						count of accounts that were added. Please note that the 
+//|						count of accounts that were added. Please note that the
 //|						file will be deleted after it is parsed, and duplicates
 //|						will not be allowed.
-//|									
-//|	NOTES       	-	Format: user=username,password,flags,emailaddress
-//|									
-//|							Where:. Username, Password, Flags, and Email are all 
-//|							        selfexplanitory.
-//|									
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-UI16 cAccountClass::ImportAccounts(void)
+//|
+//|	NOTES       -	Format: user=username,password,flags,emailaddress
+//|
+//|						Where:. Username, Password, Flags, and Email are all selfexplanitory.
+//|
+//o-----------------------------------------------------------------------------------------------o
+UI16 cAccountClass::ImportAccounts( void )
 {
 	// Prepare to load in the newaccounts.adm file. This file if it exists will contain new accounts to be added to the server.
 	std::string sImportAccounts(m_sAccountsDirectory);
 	sImportAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"newaccounts.adm":"/newaccounts.adm";
-	UString::replaceSlash(sImportAccounts);
+	replaceSlash(sImportAccounts);
 	// Check to see what version the current accounts.adm file is.
 	UString sLine;
 	std::fstream fsInputAccountsTest( sImportAccounts.c_str(), std::ios::in );
@@ -2039,14 +1726,14 @@ UI16 cAccountClass::ImportAccounts(void)
 			sLine = sLine.removeComment().stripWhiteSpace();
 			continue;
 		}
-		UString l = sLine.section( "=", 0, 0 );
-		UString r = sLine.section( "=", 1 );
+		UString l = extractSection(sLine, "=", 0, 0 );
+		UString r = extractSection(sLine, "=", 1 );
 		if( l == "USER" )
 		{
 			// OK we have an account to import, start parsing it.
 			std::string user, pass;
-			user = r.section( ",", 0, 0 );
-			pass = r.section( ",", 1, 1 );
+			user = extractSection(r,",", 0, 0 );
+			pass = extractSection(r, ",", 1, 1 );
 
 			if( user.empty() || user.length() == 0 || pass.empty() || pass.length() == 0 )
 			{
@@ -2056,12 +1743,12 @@ UI16 cAccountClass::ImportAccounts(void)
 				sLine = sLine.removeComment().stripWhiteSpace();
 				continue;
 			}
-			UString flags = r.section( ",", 2, 2 );
+			UString flags = extractSection(r, ",", 2, 2 );
 			if( flags.empty() || flags.length() == 0 ) // Set flags to a default value. and in this case I believe that its 0x00000004
 				wCurrentFlags = 0x0000;
 			else
 				wCurrentFlags = flags.toUShort();
-			UString email = r.section( ",", 3 );
+			UString email = extractSection(r, ",", 3 );
 			if( email.empty() || email.length() == 0 )
 				email = "N/A";
 			if( AddAccount( user, pass, email, wCurrentFlags ) == 0x0000 )
@@ -2069,7 +1756,7 @@ UI16 cAccountClass::ImportAccounts(void)
 				// As requested we are going to stuff back accounts into their own file
 				std::string sOutputBadAccounts(m_sAccountsDirectory);
 				sOutputBadAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"failed_accounts.log":"/failed_accounts.log";
-				UString::replaceSlash(sOutputBadAccounts);
+				replaceSlash(sOutputBadAccounts);
 				// Open the file and append this to the end
 				std::fstream fsOutputBadAccounts(sOutputBadAccounts.c_str(),std::ios::app);
 				if( !fsOutputBadAccounts.is_open() )
@@ -2110,84 +1797,64 @@ UI16 cAccountClass::ImportAccounts(void)
 	return wAccountCount;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MAPUSERNAME_ITERATOR cAccountClass::Begin(void)
-//|	Date			-	1/14/2003 5:47:28 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Returns the First iterator in a set. If there is no record
-//|							then END() will be returned. This function will set the 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	MAPUSERNAME_ITERATOR Begin( void )
+//|	Date		-	1/14/2003 5:47:28 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the First iterator in a set. If there is no record
+//|							then END() will be returned. This function will set the
 //|							internal Iterator to the first record or will indicate
 //|							end().
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 MAPUSERNAMEID_ITERATOR& cAccountClass::begin( void )
 {
 	I = m_mapUsernameIDMap.begin();
 	return I;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MAPUSERNAME_ITERATOR cAccountClass::End(void)
-//|	Date			-	1/14/2003 5:48:32 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Returns the Last iterator in a set. This function forces
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	MAPUSERNAME_ITERATOR End( void )
+//|	Date		-	1/14/2003 5:48:32 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the Last iterator in a set. This function forces
 //|						the internal iterator to one past the last record. It
 //|						will also return End() as a result.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR& cAccountClass::end(void)
+//o-----------------------------------------------------------------------------------------------o
+MAPUSERNAMEID_ITERATOR& cAccountClass::end( void )
 {
 	I = m_mapUsernameIDMap.end();
 	return I;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	MAPUSERNAMEID_ITERATOR& cAccountClass::Last(void)
-//|	Date			-	1/14/2003 6:03:22 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	For those that need a means to get the last valid record
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	MAPUSERNAMEID_ITERATOR& Last( void )
+//|	Date		-	1/14/2003 6:03:22 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	For those that need a means to get the last valid record
 //|						in the container, without having to process the Iterator
 //|						and back it up one record. By default the map will return
-//|						end() when there is no record to return for us;
-//|									
-//|						NOTE: This will update the current internal iterator to 
+//|						end() when there is no record to return for us.
+//|
+//|						NOTE: This will update the current internal iterator to
 //|						the last record as well.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR& cAccountClass::last(void)
+//o-----------------------------------------------------------------------------------------------o
+MAPUSERNAMEID_ITERATOR& cAccountClass::last( void )
 {
 	I = m_mapUsernameIDMap.end();
 	--I;
 	return I;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	cAccountClass& cAccountClass::operator++()
-//|						cAccountClass& cAccountClass::operator--(int)
-//|	Date			-	1/14/2003 5:33:13 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Use this operators to control the internal iterator that
-//|						points into the UsernameID map. This will work only on 
-//|						this map. It will be assumed that the UsernameMap will 
-//|						be matching this exactally. 
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	cAccountClass& cAccountClass::operator++()
+//|					cAccountClass& cAccountClass::operator--(SI32)
+//|	Date		-	1/14/2003 5:33:13 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Use this operators to control the internal iterator that
+//|						points into the UsernameID map. This will work only on
+//|						this map. It will be assumed that the UsernameMap will
+//|						be matching this exactally.
+//o-----------------------------------------------------------------------------------------------o
 cAccountClass& cAccountClass::operator++()
 {
 	// just increment I, the rest will be handled internally
@@ -2195,25 +1862,20 @@ cAccountClass& cAccountClass::operator++()
 	return (*this);
 }
 //
-cAccountClass& cAccountClass::operator--(int)
-{	
+cAccountClass& cAccountClass::operator--(SI32)
+{
 	I--;
 	return (*this);
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cAccountClass::AccountsHeader(fstream &fsOut)
-//|	Date			-	12/19/2002 2:56:36 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes the Accounts.Adm header to the specified output
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AccountsHeader( fstream &fsOut )
+//|	Date		-	12/19/2002 2:56:36 AM
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes the Accounts.Adm header to the specified output
 //|						stream.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
+//o-----------------------------------------------------------------------------------------------o
+void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 {
 	fsOut << "//AV3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2253,11 +1915,13 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 	fsOut << "//      The last IP this account was used from." << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes the Access.Adm header to the specified output
-//|									stream.
-//o--------------------------------------------------------------------------o
-void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WriteAccessHeader( std::fstream &fsOut )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes the Access.Adm header to the specified output stream.
+//o-----------------------------------------------------------------------------------------------o
+void cAccountClass::WriteAccessHeader( std::fstream &fsOut )
 {
 	fsOut << "//SA3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2280,11 +1944,13 @@ void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 	fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account" << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes the Orphan.Adm header to the specified output
-//|									stream.
-//o--------------------------------------------------------------------------o
-void cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WriteOrphanHeader( std::fstream &fsOut )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes the Orphan.Adm header to the specified output stream.
+//o-----------------------------------------------------------------------------------------------o
+void cAccountClass::WriteOrphanHeader( std::fstream &fsOut )
 {
 	fsOut << "//OI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << "\n";
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2303,10 +1969,12 @@ void cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
 	fsOut << "// NOTE: CharacterName, and Coordinates may not be available." << std::endl;
 	fsOut << "//------------------------------------------------------------------------------\n";
 }
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes the Username.uad header to the specified output
-//|									stream.
-//o--------------------------------------------------------------------------o
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes the Username.uad header to the specified output stream.
+//o-----------------------------------------------------------------------------------------------o
 void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp )
 {
 	fsOut << "//AI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
@@ -2319,15 +1987,17 @@ void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp
 	fsOut << "NAME " << actbTemp.sUsername << std::endl;
 	fsOut << "PASS " << actbTemp.sPassword << std::endl;
 	fsOut << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << std::endl;
-	fsOut << "LASTIP " << (int)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (int)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (int)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (int)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
+	fsOut << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
 	fsOut << "CONTACT " << actbTemp.sContact << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
-//o--------------------------------------------------------------------------o
-//|	Description		-	Writes the Username.uad header to the specified output
-//|									stream.
-//o--------------------------------------------------------------------------o
-void cAccountClass::WriteImportHeader(std::fstream &fsOut)
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WriteImportHeader( std::fstream &fsOut )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes the Username.uad header to the specified output stream.
+//o-----------------------------------------------------------------------------------------------o
+void cAccountClass::WriteImportHeader( std::fstream &fsOut )
 {
 	fsOut << "//AIMP3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2346,6 +2016,4 @@ void cAccountClass::WriteImportHeader(std::fstream &fsOut)
 	fsOut << "// NOTE: Flags, and contact values are not required, defaults will be used." << std::endl;
 	fsOut << "// NOTE: Please ensure you press ENTER after your last line for proper loading." << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
-}
-
 }

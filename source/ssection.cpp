@@ -1,14 +1,11 @@
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //| ssection.cpp
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //| Script Section class implementation
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 
 #include "uox3.h"
 #include "ssection.h"
-
-namespace UOX
-{
 
 const UI08 DFN_STRING		= 0;
 const UI08 DFN_NUMERIC		= 1;
@@ -295,7 +292,7 @@ void InitStrToDFN( void )
 	strToDFNTag["FX1"]				=	DFNTAG_FX1;
 	strToDFNTag["FX2"]				=	DFNTAG_FX2;
 	strToDFNTag["FY1"]				=	DFNTAG_FY1;
-	strToDFNTag["FY2"]				=	DFNTAG_FY2; 
+	strToDFNTag["FY2"]				=	DFNTAG_FY2;
 	strToDFNTag["FZ1"]				=	DFNTAG_FZ1;
 	strToDFNTag["FOOD"]				=	DFNTAG_FOOD;
 	strToDFNTag["GET"]				=	DFNTAG_GET;
@@ -444,6 +441,11 @@ void CleanupStrToDFN( void )
 	strToDFNTag.clear();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	DFNTAGS FindDFNTagFromStr( UString strToFind )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-
+//o-----------------------------------------------------------------------------------------------o
 DFNTAGS FindDFNTagFromStr( UString strToFind )
 {
 	if( strToDFNTag.empty() ) // if we haven't built our array yet
@@ -454,15 +456,12 @@ DFNTAGS FindDFNTagFromStr( UString strToFind )
 	return DFNTAG_COUNTOFTAGS;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	ScriptSection( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Default constructor, initializing all variables
-//o--------------------------------------------------------------------------
-ScriptSection::ScriptSection( void ) : dfnCat( NUM_DEFS ), 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ScriptSection( void ) : dfnCat( NUM_DEFS ),
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Default constructor, initializing all variables
+//o-----------------------------------------------------------------------------------------------o
+ScriptSection::ScriptSection( void ) : dfnCat( NUM_DEFS ),
 npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 {
 	data.resize( 0 );
@@ -471,16 +470,13 @@ npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 	currentPos2	= dataV2.end();
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	ScriptSection( FILE *targfile, DefinitionCategories d )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Default constructor, initializing all variables
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ScriptSection( FILE *targfile, DefinitionCategories d )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
-//o--------------------------------------------------------------------------
-ScriptSection::ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d ) : 
+//o-----------------------------------------------------------------------------------------------o
+ScriptSection::ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d ) :
 dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
@@ -491,14 +487,11 @@ dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListDat
 }
 
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool AtEnd( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if at end of the section
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AtEnd( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if at end of the section
+//o-----------------------------------------------------------------------------------------------o
 bool ScriptSection::AtEnd( void )
 // PRE:		vector loaded and init'd
 // POST:	returns true if at end of array now
@@ -506,14 +499,11 @@ bool ScriptSection::AtEnd( void )
 	return ( currentPos == data.end() );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString First( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the first tag at the start of the section
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString First( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the first tag at the start of the section
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::First( void )
 // PRE:		vector loaded and init'd
 // POST:	returns string (tag) of first entry
@@ -525,14 +515,11 @@ const UString ScriptSection::First( void )
 	return rvalue;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString Next( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the next tag in the section, or NULL if no more
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString Next( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the next tag in the section, or NULL if no more
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::Next( void )
 {
 	UString rvalue;
@@ -545,14 +532,11 @@ const UString ScriptSection::Next( void )
 	return rvalue;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString MoveTo( size_t position )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-   
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Moves to position in the section and returns the tag there
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString MoveTo( size_t position )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Moves to position in the section and returns the tag there
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::MoveTo( size_t position )
 // PRE:		vector loaded and init'd
 // POST:	returns string (tag) of next entry
@@ -567,14 +551,11 @@ const UString ScriptSection::MoveTo( size_t position )
 	return rvalue;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString GrabData( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the data for the current tag
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString GrabData( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the data for the current tag
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::GrabData( void )
 // PRE:		At a valid location, init'd data
 // POST:	returns string of data of current entry
@@ -585,29 +566,23 @@ const UString ScriptSection::GrabData( void )
 	return rvalue;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	~ScriptSection()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Default deconstructor, removing any allocated memory
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	~ScriptSection()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Default deconstructor, removing any allocated memory
 //|						and closing any files that may be open
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 ScriptSection::~ScriptSection()
 {
 	if( !FlushData() )
-		Console.Error( "Section unable to flush data!" );
+		Console.error( "Section unable to flush data!" );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool FlushData( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Deletes all tag/data pairs and resizes array to 0
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FlushData( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Deletes all tag/data pairs and resizes array to 0
+//o-----------------------------------------------------------------------------------------------o
 bool ScriptSection::FlushData( void )
 {
 	for( size_t i = 0; i < data.size(); ++i )
@@ -623,27 +598,21 @@ bool ScriptSection::FlushData( void )
 	return true;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	size_t NumEntries( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the number of entries in the section
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t NumEntries( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the number of entries in the section
+//o-----------------------------------------------------------------------------------------------o
 size_t ScriptSection::NumEntries( void ) const
 {
 	return data.size();
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString Prev( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the previous tag, or NULL if at start
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString Prev( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the previous tag, or NULL if at start
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::Prev( void )
 {
 	UString rvalue;
@@ -656,14 +625,12 @@ const UString ScriptSection::Prev( void )
 	return rvalue;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	Remove( size_t position )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-   Mr. Fixit (11-15-2001)
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Removes the tag/data pair at position in the array
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Remove( size_t position )
+//|	Changes		-   (11-15-2001)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes the tag/data pair at position in the array
+//o-----------------------------------------------------------------------------------------------o
 void ScriptSection::Remove( size_t position )
 // PRE:		vector loaded and init'd
 // POST:	removes thing at position
@@ -674,14 +641,11 @@ void ScriptSection::Remove( size_t position )
 	data.erase( data.begin() + position );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	Append( UString tagToAdd, UString dataToAdd )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Adds a new tag/data pair at the end of the section
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Append( UString tagToAdd, UString dataToAdd )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a new tag/data pair at the end of the section
+//o-----------------------------------------------------------------------------------------------o
 void ScriptSection::Append( UString tagToAdd, UString dataToAdd )
 {
 	sectData *toAdd	= new sectData;
@@ -742,70 +706,58 @@ DFNTAGS ScriptSection::FirstTag( void )
 	return (*currentPos2)->tag;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool ItemListExist( void ) const
-//|	Date			-	12 January, 2003
-//|	Programmer		-	Maarc
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if an item list tag exists in section
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemListExist( void ) const
+//|	Date		-	12 January, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if an item list tag exists in section
+//o-----------------------------------------------------------------------------------------------o
 bool ScriptSection::ItemListExist( void ) const
 {
 	return itemList;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool NpcListExist( void ) const
-//|	Date			-	12 January, 2003
-//|	Programmer		-	Maarc
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if an npc list tag exists in section
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool NpcListExist( void ) const
+//|	Date		-	12 January, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if an npc list tag exists in section
+//o-----------------------------------------------------------------------------------------------o
 bool ScriptSection::NpcListExist( void ) const
 {
 	return npcList;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString ItemListData( void ) const
-//|	Date			-	12 January, 2003
-//|	Programmer		-	Maarc
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the itemlist data
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString ItemListData( void ) const
+//|	Date		-	12 January, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the itemlist data
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::ItemListData( void ) const
 {
 	return itemListData;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UString NpcListData( void ) const
-//|	Date			-	12 January, 2003
-//|	Programmer		-	Maarc
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the npclist data
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const UString NpcListData( void ) const
+//|	Date		-	12 January, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the npclist data
+//o-----------------------------------------------------------------------------------------------o
 const UString ScriptSection::NpcListData( void ) const
 {
 	return npcListData;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	void createSection( std::fstream& input )
-//|	Date			-	Unknown
-//|	Programmer		-	
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Creates section data from the input stream passed in
-//o--------------------------------------------------------------------------
 
 UI32 groupHolder = 0;
 UI32 itemIndexHolder = 0;
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void createSection( std::fstream& input )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates section data from the input stream passed in
+//o-----------------------------------------------------------------------------------------------o
 void ScriptSection::createSection( std::fstream& input )
 {
 	char line[2048];
@@ -843,7 +795,7 @@ void ScriptSection::createSection( std::fstream& input )
 
 							switch( dfnDataTypes[mTag] )
 							{
-								case DFN_UPPERSTRING:	
+								case DFN_UPPERSTRING:
 									value = value.upper();
 									if( tag.upper() == "ADDMENUITEM" )
 									{
@@ -852,7 +804,7 @@ void ScriptSection::createSection( std::fstream& input )
 										ADDMENUITEM amiLocalCopy;
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = localName;
-										amiLocalCopy.groupID = value.section(",",0,0).stripWhiteSpace().toULong();
+										amiLocalCopy.groupID = value.section(",",0,0).stripWhiteSpace().toUInt();
 										if(amiLocalCopy.groupID != groupHolder)
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -863,16 +815,16 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = value.section(",",1,1).stripWhiteSpace().toULong();
-										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toULong();
-										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toULong();
-										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toULong();
-										if( amiLocalCopy.tileID == INVALIDSERIAL ) 
+										amiLocalCopy.tileID = value.section(",",1,1).stripWhiteSpace().toUInt();
+										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toUInt();
+										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toUInt();
+										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toUInt();
+										if( amiLocalCopy.tileID == INVALIDSERIAL )
 											amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
 										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));
 									}
-										toAdd2->cdata = value;
+									toAdd2->cdata = value;
 									break;
 								case DFN_STRING:
 									if(tag.upper()=="NAME")
@@ -880,27 +832,27 @@ void ScriptSection::createSection( std::fstream& input )
 									toAdd2->cdata = value;
 									break;
 								case DFN_NUMERIC:
-									toAdd2->ndata = value.toLong();
+									toAdd2->ndata = value.toInt();
 									break;
 								case DFN_DOUBLENUMERIC:
 									// Best I can tell the seperator here is a space
 									value = value.simplifyWhiteSpace();
 									if( value.sectionCount( " " ) != 0 )
 									{
-										toAdd2->ndata = value.section( " ", 0, 0 ).toLong();
-										toAdd2->odata = value.section( " ", 1, 1 ).toLong();
+										toAdd2->ndata = value.section( " ", 0, 0 ).toInt();
+										toAdd2->odata = value.section( " ", 1, 1 ).toInt();
 									}
 									else
 									{
-										toAdd2->ndata = value.toLong();
+										toAdd2->ndata = value.toInt();
 										toAdd2->odata = toAdd2->ndata;
 									}
 									break;
 								case DFN_NODATA:
-								case DFN_UNKNOWN:	
+								case DFN_UNKNOWN:
 									toAdd2->cdata = "";
 									break;
-							}					
+							}
 							dataV2.push_back( toAdd2 );
 						}
 						else
@@ -944,6 +896,4 @@ void ScriptSection::createSection( std::fstream& input )
 	// Now some cleanup
 	if( data.empty() && dataV2.empty() )
 		currentPos = data.end();
-}
-
 }

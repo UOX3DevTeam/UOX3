@@ -8,13 +8,13 @@ function onBoughtFromVendor( pSock, Vendor, iBought )
 		onUseChecked( pSock.currentChar, iBought );
 }
 
-function onUseChecked( pUser, iUsed ) 
-{ 
-	var nSpawned = SpawnNPC( "llama", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+function onUseChecked( pUser, iUsed )
+{
+	var nSpawned = SpawnNPC( "llama", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( nSpawned )
 	{
 		// set owner to the envoker
-		nSpawned.owner = pUser;   
+		nSpawned.owner = pUser;
 		// make pet follow owner by default
 		nSpawned.Follow( pUser );
 		nSpawned.wandertype = 1;

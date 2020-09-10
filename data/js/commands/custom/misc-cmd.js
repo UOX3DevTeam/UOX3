@@ -1,6 +1,6 @@
-// Miscellaneous Custom Commands || by Xuri (xuri at sensewave.com)
-// v1.08
-// Last Updated: 15. January 2006
+// Miscellaneous Custom Commands || by Xuri (xuri at uox3.org)
+// v1.09
+// Last Updated: 5. September 2020
 //
 // This script contains some commands I scripted after the command-reorganization in the UOX3 source code,
 // as well as some I've "invented" on my own.
@@ -12,6 +12,7 @@
 // 15. January 2006 - Cleaned up the script, removed redundant return-statements, etc.
 // 19. May 2007 - Added LINKDOORS and UNLINKDOORS commands
 // 22. Sept 2018 - Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands
+// 5. Sept 2020 - Added CONT, ENDFIGHT, GETMULTI, FINDITEM and MOVESPEED commands
 
 function CommandRegistration()
 {
@@ -36,6 +37,11 @@ function CommandRegistration()
 	RegisterCommand( "undress", 2, true ); //Character will completely undress all equipped items
 	RegisterCommand( "regioninfo", 2, true ); // Get information on current region player is in
 	RegisterCommand( "xregioninfo", 2, true ); // Get information on current region a target character is in
+	RegisterCommand( "cont", 2, true ); //Targeted item will be made a container, set to nondecay and movable 2
+	RegisterCommand( "endfight", 2, true ); //Targeted character (and character being fought) will stop fighting
+	RegisterCommand( "getmulti", 2, true ); //Get multiObject for targeted item
+	RegisterCommand( "finditem", 2, true ); //Find item at layer
+	RegisterCommand( "movespeed", 2, true ); //Set movement speed of target player
 }
 
 function command_RENAME( pSock, execString )
@@ -584,4 +590,139 @@ function onCallback19( pSock, myTarget )
 	pSock.SysMessage( "xIsGuarded: " + myTargetRegion.isGuarded );
 	pSock.SysMessage( "xCanCastAggressive: " + myTargetRegion.canCastAggressive );
 	pSock.SysMessage( "xIsSafeZone: " + myTargetRegion.isSafeZone );
+}
+
+function command_CONT( pSock, execString )
+{
+	pSock.CustomTarget( 20, "Set which item as nonmovable container?" );
+}
+
+function onCallback20( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{
+		pUser.SysMessage( "You must select a container!" );
+	}
+	else if( !pSock.GetWord( 1 ) && myTarget.isItem  )
+	{
+		myTarget.movable = 2;
+		myTarget.decayable = false;
+		myTarget.type = 1;
+		pUser.SysMessage( "The selected item has been nonmovable container'd." );
+	}
+	else
+		pUser.SysMessage( "Impossible!" );
+}
+
+function command_ENDFIGHT( pSock, execString )
+{
+	pSock.CustomTarget( 21, "Subdue which fight?" );
+}
+
+function onCallback21( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{
+		if( myTarget.atWar == true )
+		{
+			pUser.SysMessage( myTarget.attacker );
+			var opponent = myTarget.target;
+			opponent.target = null;
+			opponent.atWar = null;
+			opponent.attacker = null;
+			myTarget.target = null;
+			myTarget.atWar = false;
+			myTarget.attacker = null;
+			pUser.SysMessage( "Fight has been subdued." );
+		}
+		else
+			pUser.SysMessage( "That character is not in a fight." );
+	}
+	else if( !pSock.GetWord( 1 ) && myTarget.isItem  )
+	{
+		pUser.SysMessage( "You must select a character!" );
+	}
+	else
+		pUser.SysMessage( "Impossible!" );
+}
+
+function command_GETMULTI( pSock )
+{
+	pSock.CustomTarget( 22, "Get MultiObj from which item?" );
+}
+
+function onCallback22( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isItem )
+	{
+		var multiObj = myTarget.multi;
+		if( multiObj )
+			pUser.SysMessage( "Serial of multiObj: "+multiObj.serial );
+		else
+			pUser.SysMessage( "Target does not belong to a multiObj." );
+	}
+	else
+		pUser.SysMessage( "Target is not an item." );
+}
+
+function command_FINDITEM( pSock, execString )
+{
+	pSock.CustomTarget( 23, "Find item at layer "+execString+" on which character?" );
+	pSock.xText = execString;
+}
+
+function onCallback23( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{
+		var myText = pSock.xText;
+		var myInt = parseInt( myText );
+		var equippedItem = pUser.FindItemLayer( myInt );
+		if( equippedItem )
+			pUser.SysMessage( "Target has item with ID "+equippedItem.id+" equipped at layer "+myInt+"." );
+		else
+			pUser.SysMessage( "Target has no item equipped at layer "+myInt+"." );
+	}
+	else
+		pUser.SysMessage( "Target is not a character." );
+}
+
+function command_MOVESPEED( pSock, execString )
+{
+	switch( execString )
+	{
+		case "0x0": // Normal mode
+		case "0x1": // Mounted mode
+		case "0x2": // Slow mode (walk only)
+		case "0x3": // Hybrid mode ("jog"?)
+		case "0x4": // Frozen
+			pSock.CustomTarget( 24, "Choose target to set movement speed "+execString+" for:" );
+			pSock.xText = execString;
+			break;
+		default:
+			pSock.SysMessage( "Only values between 0x0 to 0x4 are supported!" );
+			break; // Unsupported
+	}
+}
+
+function onCallback24( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{
+		var toSend = new Packet;
+		toSend.ReserveSize( 6 )
+		toSend.WriteByte( 0, 0xbf ) // Packet
+		toSend.WriteShort( 1, 0x06 ) // length
+		toSend.WriteShort( 3, 0x26 ) // SubCmd
+		toSend.WriteByte( 5, parseInt(pSock.xText) ) // Mode
+		pSock.Send( toSend );
+		toSend.Free();
+	}
+	else
+		pUser.SysMessage( "Target is not a character." );
 }

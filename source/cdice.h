@@ -2,30 +2,27 @@
 #define __CDICE__
 
 #include <string>
-
-namespace UOX
-{
+#include "Prerequisites.h"
+#include "typedefs.h"
 
 class cDice
 {
 private:
-	int		dice;
-	int		sides;
-	int		addition;
+	SI32	dice;
+	SI32	sides;
+	SI32	addition;
 
 	bool	convStringToDice( std::string dieString );
 public:
-			cDice();
-			cDice( const std::string &dieString );
-			cDice( int d, int s, int a );
-			~cDice();
+	cDice();
+	cDice( const std::string &dieString );
+	cDice( SI32 d, SI32 s, SI32 a );
+	~cDice();
 
-	int		roll( void );
-	void	setDice( int newDice );
-	void	setSides( int newSides );
-	void	setAddition( int newAddition );
+	SI32	roll( void );
+	void	setDice( SI32 newDice );
+	void	setSides( SI32 newSides );
+	void	setAddition( SI32 newAddition );
 };
-
-}
 
 #endif

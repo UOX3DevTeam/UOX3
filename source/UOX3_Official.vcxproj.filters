@@ -101,9 +101,6 @@
     <ClCompile Include="queue.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-    <ClCompile Include="threadsafeobject.cpp">
-      <Filter>Source Files\Base Objects</Filter>
-    </ClCompile>
     <ClCompile Include="townregion.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
@@ -269,6 +266,12 @@
     <ClCompile Include="network.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <ClCompile Include="UOPInterface.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtility.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PartySystem.h">
@@ -281,9 +284,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Prerequisites.h">
@@ -329,9 +329,6 @@
       <Filter>Header Files\Base Objects No. 1</Filter>
     </ClInclude>
     <ClInclude Include="speech.h">
-      <Filter>Header Files\Base Objects No. 1</Filter>
-    </ClInclude>
-    <ClInclude Include="threadsafeobject.h">
       <Filter>Header Files\Base Objects No. 1</Filter>
     </ClInclude>
     <ClInclude Include="uoxstruct.h">
@@ -501,6 +498,12 @@
     </ClInclude>
     <ClInclude Include="network.h">
       <Filter>Header Files\Network No. 1</Filter>
+    </ClInclude>
+    <ClInclude Include="UOPInterface.hpp">
+      <Filter>Header Files\Other No. 1</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtility.hpp">
+      <Filter>Header Files\Other No. 1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+<h2>Revision History</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Version
+    <th bgcolor="maroon">Change
+  <tr>
+    <td>0.01
+    <td>Initial document. 21 Events and approximately 90 functions listed
+  <tr>
+    <td>0.02
+    <td>Updated with 3 more events from Xuri. Added a few more API calls
+  <tr>
+    <td>0.03
+    <td>Updated with a number of events from EviLDeD
+  <tr>
+    <td>0.04
+    <td>Table layout format changed. Addition of tables for each event. # of events
+      have detailed information
+  <tr>
+    <td>0.05
+    <td>More API functions documented
+  <tr>
+    <td valign="top">0.06
+    <td>Visited link colour changed from <font color="#BF00BF">purple</font> to
+      <font color="4040DF">blue</font><br>
+      Documented around 20-30 more functions
+  <tr>
+    <td>0.07
+    <td>Proposed a further 41 API functions, some slim only
+  <tr>
+    <td>0.08
+    <td>Hefty updates. Most proposed functions moved into categories in contents
+      list. Provided example code for a number of events. Documented some more
+      events.
+  <tr>
+    <td>0.09
+    <td>More functions/events. Functions added: GetRace, SetRace, SubStringSearch,
+      IsCriminal, IsMurderer, IsInnocent, MakeCriminal, MakeInnocent, GetMurderCount,
+      GetMurderThreshold, GetGender, SetGender, and IsDead. Events added: OnDeath,
+      OnResurrect, OnFlagChange. FAQ added.
+  <tr>
+    <td>0.10
+    <td>Added RollDice function
+  <tr>
+    <td>0.11
+    <td>Added StartTimer function. Documented onTimer event, with example
+  <tr>
+    <td>0.12
+    <td>Added IsNPC, IsOnline, TurnToward, DirectionTo functions.
+  <tr>
+    <td>0.13
+    <td>GetDir, SetDir, RaceCompare and RaceCompareByRace functions added.
+  <tr>
+    <td>0.14
+    <td>FindItemOnLayer function added.
+  <tr>
+    <td>0.15
+    <td>Added whole new section of functions, for multis. Funcs are: FindMulti,
+      IsInMulti, IsOnBanList, IsOnOwnerList, AddToBanList, AddToOwnerList, RemoveFromBanList,
+      RemoveFromOwnerList, IsMulti.
+  <tr>
+    <td height="103">0.16
+    <td height="103">Added whole slew of functions. IsRegionGuarded, CanMarkInRegion,
+      CanRecallInRegion, CanGateInRegion, GetGuildType, GetGuildName, GetGuildMaster,
+      SetGuildType, SetGuildName, SetGuildMaster, GetNumGuildMembers, AddToGuild,
+      RemoveFromGuild, CompareGuild, CompareGuildByGuild, GetGuildStone, IsMemberOfTown,
+      GetTownMayor, GetTownRace, SetTownRace, PossessTown, GetTownTax, GetTownTaxResource,
+      SetTownTax, SetTownTaxResource, GetRaceName, IsRaceWeakToWeather, RaceRequiresBeard,
+      RaceRequiresNoBeard, IsPlayerRace, GetRacialGenderRestrict, GetRacialArmourClass,
+      CanRaceWearArmour, GetRaceLanguageSkill, GetRaceSkillAdjustment, GetRacePoisonResistance,
+      GetRaceMagicResistance, GetRaceVisibleDistance, GetRaceNightVision, IsValidRaceHairColour,
+      IsValidRaceSkinColour, IsValidRaceBeardColour, GetTown, SetTown, GetRegion,
+      SetRegion.
+  <tr>
+    <td>0.17
+    <td>Added information for Attack, AttackTarget and RemoveSpell. Also added
+      elementary examples to them. Split functions across number of pages (reduce
+      load time, easier search).
+  <tr>
+    <td>0.18
+    <td>Added event onHungerChange. Allows customization when hunger levels change
+      for a character.
+  <tr>
+    <td>0.19
+    <td>Added some new functions and events. Events added: onSnooped, onStolenFrom.
+      Functions added: FirstItemInCont, NextItemInCont, FinishedItemInCont, UseDoor,
+      GetLayer, SetLayer.
+  <tr>
+    <td>0.20
+    <td>Added a few more functions: VendorBuy, VendorSell, GetGuild. Defined details
+      on a few other functions (all the Find*Functions, the Guild functions, and
+      GetRaceVisibleDistance and GetRaceNightVision). Contemplated callback based
+      find algorithm (ie supply a JS snippet that compares 2 characters, and returns
+      true if finished) for custom search potentials.
+  <tr>
+    <td>0.21
+    <td>Added functions: GetPrivateBit, SetPrivateBit, GetPrivateWord, SetPrivateWord,
+      GetPrivateBitRange, SetPrivateBitRange, SkillBeingUsed, SetSkillUse, TriggerEvent.
+  <tr>
+    <td>0.22
+    <td>Updated magic functions to reflect proper spell funcs and added information
+      on all gump functions.
+  <tr>
+    <td>0.23
+    <td>Updated documentation on CommandLevelReq, CommandExists, FirstCommand,
+      NextCommand, FinishedCommandList, SpawnNPC and SpawnItem.
+  <tr>
+    <td>0.24
+    <td>Updated documentation, adding in documentation for SetMoreX/SetMoreY/SetMoreZ
+      and GetMoreX/GetMoreY/GetMoreZ.
+  <tr>
+    <td>0.25
+    <td>Updated documentation, updating SpawnNPC to reflect the changes required
+      creating items in other worlds than Ilshenar. Also added the GetTileIDAtMapCoord
+      function, as well as GetWorldNumber and GetBaseSkill.
+  <tr>
+    <td>0.26
+    <td>Fixed some Example-errors and added GetRaceCount and the Tag System. Added
+      documentation for the onGumpPress Event.
+  </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

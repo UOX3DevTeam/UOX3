@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <string>
 
-namespace UOX
-{
+#include "funcdecl.h"
 
 cDice::cDice() : dice( 1 ), sides( 1 ), addition( 0 )
 {
@@ -16,7 +15,7 @@ cDice::cDice( const std::string &dieString )
 	convStringToDice( dieString );
 }
 
-cDice::cDice( int d, int s, int a ) : dice( d ), sides( s ), addition( a )
+cDice::cDice( SI32 d, SI32 s, SI32 a ) : dice( d ), sides( s ), addition( a )
 {
 }
 
@@ -24,41 +23,24 @@ cDice::~cDice()
 {
 }
 
-void cDice::setDice( int newDice )
+void cDice::setDice( SI32 newDice )
 {
 	dice = newDice;
 }
 
-void cDice::setSides( int newSides )
+void cDice::setSides( SI32 newSides )
 {
 	sides = newSides;
 }
 
-void cDice::setAddition( int newAddition )
+void cDice::setAddition( SI32 newAddition )
 {
 	addition = newAddition;
 }
-
-namespace {
-
-auto random_device = std::random_device{};
-
-auto generator = std::mt19937{random_device()};
-
-auto RandomNum(int lower_bound, int upper_bound) -> int {
-    auto distribution = std::uniform_int_distribution<int>{
-        lower_bound, upper_bound
-    };
-
-    return distribution(generator);
-}
-
-}//namespace
-
-int cDice::roll( void )
+SI32 cDice::roll( void )
 {
-	int sum = 0;
-	for( int rolls = 0; rolls < dice; ++rolls )
+	SI32 sum = 0;
+	for( SI32 rolls = 0; rolls < dice; ++rolls )
 	{
 		sum += RandomNum( 1, sides );
 	}
@@ -68,63 +50,61 @@ int cDice::roll( void )
 
 bool cDice::convStringToDice( std::string dieString )
 {
-    dice = 1;
-    sides = 1;
-    addition = 0;
+	dice = 1;
+	sides = 1;
+	addition = 0;
 
-    auto const d_position = dieString.find("d");
+	auto const d_position = dieString.find("d");
 
-    auto const is_invalid_d_position = bool{d_position >=  dieString.size()};
+	auto const is_invalid_d_position = bool{d_position >=  dieString.size()};
 
-    if (is_invalid_d_position) {
-        return false;
-    }
+	if (is_invalid_d_position) {
+		return false;
+	}
 
-    auto const plus_position = std::clamp(
-        dieString.find("+"), std::size_t{0}, dieString.size()
-    );
+	auto const plus_position = std::clamp(
+										  dieString.find("+"), std::size_t{0}, dieString.size()
+										  );
 
-    auto const is_invalid_plus_position = bool{plus_position < d_position};
+	auto const is_invalid_plus_position = bool{plus_position < d_position};
 
-    if (is_invalid_plus_position) {
-        return false;
-    }
+	if (is_invalid_plus_position) {
+		return false;
+	}
 
-    auto const parsed_value = [&] (
-        int position, int count, int value = 0
-    ) -> int {
-        try {
-            return std::stoi(dieString.substr(position, count));
-        } catch (...) {
-            return value;
-        }
-    };
+	auto const parsed_value = [&] (
+								   SI32 position, SI32 count, SI32 value = 0
+								   ) -> SI32 {
+		try {
+			return std::stoi(dieString.substr(position, count));
+		} catch (...) {
+			return value;
+		}
+	};
 
-    auto const is_to_parse_size = bool{d_position > 0};
+	auto const is_to_parse_size = bool{d_position > 0};
 
-    if(is_to_parse_size) {
-        auto const position = std::size_t{0};
-        auto const count = d_position;
-        dice = parsed_value(position, count, 1);
-    }
+	if(is_to_parse_size) {
+		auto const position = std::size_t{0};
+		auto const count = d_position;
+		dice = parsed_value(position, count, 1);
+	}
 
-    auto const is_to_parse_sides = bool{plus_position > d_position + 1};
+	auto const is_to_parse_sides = bool{plus_position > d_position + 1};
 
-    if(is_to_parse_sides) {
-        auto const position = d_position + 1;
-        auto const count = plus_position - position;
-        sides = parsed_value(position, count, 1);
-    }
+	if(is_to_parse_sides) {
+		auto const position = d_position + 1;
+		auto const count = plus_position - position;
+		sides = parsed_value(position, count, 1);
+	}
 
-    auto const is_to_parse_plus = bool{dieString.size() > plus_position + 1};
+	auto const is_to_parse_plus = bool{dieString.size() > plus_position + 1};
 
-    if(is_to_parse_plus) {
-        auto const position = plus_position + 1;
-        auto const count = dieString.size() - position;
-        addition = parsed_value(position, count);
-    }
+	if(is_to_parse_plus) {
+		auto const position = plus_position + 1;
+		auto const count = dieString.size() - position;
+		addition = parsed_value(position, count);
+	}
 
-    return true;
-}
-
+	return true;
 }

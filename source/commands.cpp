@@ -5,12 +5,8 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
+#include "StringUtility.hpp"
 
-#undef DBGFILE
-#define DBGFILE "commands.cpp"
-
-namespace UOX
-{
 
 cCommands *Commands			= NULL;
 
@@ -31,49 +27,46 @@ cCommands::~cCommands()
 	}
 	clearance.clear();
 }
-//o---------------------------------------------------------------------------o
-//|	Function		-	UI08 NumArguments( void )
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-	4/2/2003 - Reduced to a UI08 - Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose			-	Number of arguments in a command
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 NumArguments( void )
+//|	Date		-	3/12/2003
+//|	Changes		-	4/2/2003 - Reduced to a UI08
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Number of arguments in a command
+//o-----------------------------------------------------------------------------------------------o
 UI08 cCommands::NumArguments( void )
 {
 	return static_cast<UI08>(commandString.sectionCount( " " ) + 1 );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI32 cCommands::Argument( UI08 argNum )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 Argument( UI08 argNum )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs argument argNum and converts it to an integer
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 SI32 cCommands::Argument( UI08 argNum )
 {
 	SI32 retVal = 0;
 	UString tempString = CommandString( argNum + 1, argNum + 1 );
 	if( !tempString.empty() )
-		retVal = tempString.toLong();
+		retVal = tempString.toInt();
 
 	return retVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	UString cCommands::CommandString( UI08 section, UI08 end )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UString CommandString( UI08 section, UI08 end )
 //|	Date		-	4/02/2003
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UString cCommands::CommandString( UI08 section, UI08 end )
 {
 	UString retString;
 	if( end != 0 )
-		retString = commandString.section( " ", section - 1, end - 1 );
+		retString = extractSection(commandString, " ", section - 1, end - 1 );
 	else
-		retString = commandString.section( " ", section - 1 );
+		retString = extractSection(commandString, " ", section - 1 );
 	return retString;
 }
 void cCommands::CommandString( UString newValue )
@@ -81,19 +74,15 @@ void cCommands::CommandString( UString newValue )
 	commandString = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cCommands::Command( CSocket *s )
-//|	Date			-	
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Handles commands sent from client
-//o--------------------------------------------------------------------------o
-//| Modifications	-	25 June, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Command( CSocket *s, CChar *mChar, UString text )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles commands sent from client
+//o-----------------------------------------------------------------------------------------------o
+//| Changes		-	25 June, 2003
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 {
 	CommandString( text.simplifyWhiteSpace() );
@@ -118,7 +107,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 			if( toExecute != NULL )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.Print( "Executing JS command %s\n", command.c_str() );
+				Console.print( format("Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
@@ -212,12 +201,11 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::Load( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Load( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load the command table
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::Load( void )
 {
 	SI16 commandCount = 0;
@@ -260,7 +248,7 @@ void cCommands::Load( void )
 			++tablePos;
 		}
 	}
-	
+
 	Console << "   o Loading command levels" << myendl;
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == NULL )
@@ -318,12 +306,11 @@ void cCommands::Load( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes toLog to a file
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo )
 {
 	std::string logName	= cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + "command.log";
@@ -331,7 +318,7 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( "Unable to open command log file %s!", logName.c_str() );
+		Console.error( format("Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -346,12 +333,11 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.close();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *cCommands::GetClearance( UString clearName )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	commandLevel_st *GetClearance( UString clearName )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 commandLevel_st *cCommands::GetClearance( UString clearName )
 {
 	if( clearance.empty() )
@@ -367,12 +353,11 @@ commandLevel_st *cCommands::GetClearance( UString clearName )
 	return NULL;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	UI16 cCommands::GetColourByLevel( UI08 commandLevel )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetColourByLevel( UI08 commandLevel )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a players nick color based on his command level
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI16 cCommands::GetColourByLevel( UI08 commandLevel )
 {
 	size_t clearanceSize = clearance.size();
@@ -389,12 +374,11 @@ UI16 cCommands::GetColourByLevel( UI08 commandLevel )
 	return clearance[clearanceSize - 1]->nickColour;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::InitClearance( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void InitClearance( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initialize command levels
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::InitClearance( void )
 {
 	clearance.push_back( new commandLevel_st );	// 0 -> 2
@@ -436,12 +420,11 @@ void cCommands::InitClearance( void )
 	clearance[1]->stripOff.set( BIT_STRIPITEMS, true );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	commandLevel_st *GetClearance( UI08 commandLevel )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Geta characters command level
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 {
 	size_t clearanceSize = clearance.size();
@@ -458,24 +441,22 @@ commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 	return clearance[clearanceSize - 1];
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool cCommands::CommandExists( const std::string cmdName )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CommandExists( const std::string cmdName )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a command is valid
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool cCommands::CommandExists( const std::string& cmdName )
 {
 	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
 	return ( toFind != CommandMap.end() );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	const std::string cCommands::FirstCommand( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const std::string FirstCommand( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get first command in cmd_table
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 const std::string cCommands::FirstCommand( void )
 {
 	cmdPointer = CommandMap.begin();
@@ -484,12 +465,11 @@ const std::string cCommands::FirstCommand( void )
 	return cmdPointer->first;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	const std::string cCommands::NextCommand( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const std::string NextCommand( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get next command in cmd_table
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 const std::string cCommands::NextCommand( void )
 {
 	if( FinishedCommandList() )
@@ -500,23 +480,21 @@ const std::string cCommands::NextCommand( void )
 	return cmdPointer->first;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool cCommands::FinishedCommandList( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FinishedCommandList( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get end of cmd_table
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool cCommands::FinishedCommandList( void )
 {
 	return ( cmdPointer == CommandMap.end() );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cmdtable_mapentry *cCommands::CommandDetails( const std::string cmdName )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	cmdtable_mapentry *CommandDetails( const std::string cmdName )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get command info
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 {
 	if( !CommandExists( cmdName ) )
@@ -525,6 +503,4 @@ CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 	if( toFind == CommandMap.end() )
 		return NULL;
 	return &(toFind->second);
-}
-
 }

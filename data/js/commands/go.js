@@ -50,9 +50,17 @@ function command_GO( socket, cmdString )
 			break;
 		default:
 			var x = 0, y = 0, z = 0;
-			var worldnum = mChar.worldnumber;
+			var worldNumber = mChar.worldnumber;
+			var instanceID = mChar.instanceID;
+			if( splitString[4] )
+			{
+				instanceID = parseInt( splitString[4] );
+			}
+
 			if( splitString[3] )
-				worldnum = parseInt( splitString[3] );
+			{
+				worldNumber = parseInt( splitString[3] );
+			}
 
 			if( splitString[2] )
 			{
@@ -61,8 +69,10 @@ function command_GO( socket, cmdString )
 				z = parseInt( splitString[2] );
 			}
 			else
+			{
 				return;
-			mChar.SetLocation( x, y, z, worldnum );
+			}
+			mChar.SetLocation( x, y, z, worldNumber, instanceID );
 			break;
 		}
 	}

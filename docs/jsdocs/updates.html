@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h2>Revision History - Last Update: 24th August 2020 </h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Version</th>
+    <th bgcolor="maroon">Change</th>
+  </tr>
+  <tr>
+    <td>0.52</td>
+    <td>
+      <b>SpawnRegion Functions Added:</b> GetSpawnRegion, GetSpawnRegionCount, IterateOverSpawnRegions<br>
+      <b>SpawnRegion Properties Added:</b> name, regionNum, itemList, npcList, item, npc, maxItems, maxNPCs, itemCount, npcCount, onlyOutside, prefZ, x1, y1, x2, y2, world, minTime, maxTime, call<br>
+      <b>Region Properties Updated:</b> members, mayor, numOrePrefs<br>
+      <b>Socket Functions Updated:</b> Midi (now Music)
+    </td>
+  </tr>
+  <tr>
+    <td>0.51</td>
+    <td>
+      <b>Events Added></b> onUseBandageMacro<br>
+      <b>Socket Methods Added></b> OpenGump, GetSByte, GetSWord, GetSDWord<br>
+      <b>Character Methods Updated:</b> TurnToward, DirectionTo, InRange, Gate<br>
+      <b>Item Methods Updated:</b> InRange<br>
+      <b>Multi Methods Updated:</b> IsInMulti, IsMulti, IsOnBanList, IsOnOwnerList, AddToBanList, AddToOwnerList, RemoveFromBanList, RemoveFromOwnerList<br>
+      <b>Socket Methods Updated:</b> OpenURL<br>
+      <b>Race Methods Updated:</b> CanWearArmour, IsValidHairColour, IsValidSkinColour, IsValidBeardColour<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.50</td>
+    <td>
+      <b>Spell Properties Added:</b> name, baseDmg<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.49</td>
+    <td>
+      <b>Character Properties Added:</b> canAttack, singClickSer, poisonStrength, stabled, hungerWildChance, tamedHungerRate, party, partyLootable<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.48</td>
+    <td>
+      <b>Gump Methods Added:</b> AddButtonTileArt, AddGumpColor, AddPictureColor, AddTextEntryLimited, AddToolTip, AddXMFHTMLTok<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.47</td>
+    <td>
+    	<b>Events Added:</b> onVirtueGumpPress, onDropItemOnItem, onWeatherChange, onTempChange, onCallback#, onGumpInput, onEnterRegion, onLeaveRegion, onSpellGain, onSpellLoss, onCommand, onPacketReceive, onBuy, onBuyFromVendor, onBoughtFromVendor, onSell, onSellToVendor, onSoldToVendor<br>
+    	<b>Events Updated:</b> onDeathBlow<br>
+    	<b>Events Removed:</b> onPortal (unused), onXYZEvent (unused)<br>
+    	<b>Character Methods Updated:</b> AddSpell, SpellFail, SpellMoveEffect, SpellStaticEffect, BreakConcentration, FindItemType, InitWanderArea, ReactOnDamage, Damage, Heal<br>
+    	<b>Item Methods Added:</b> Refresh <br>
+    	<b>Race Functions Added:</b> CanWearArmor <br>
+    	<b>Socket Methods Added:</b> SendAddMenu <br>
+    	<b>Common Methods Updated:</b> ApplySection, CanSee <br>
+    	<b>Packet Methods Added:</b> RegisterPacket, ReserveSize, WriteByte, WriteShort, WriteLong, WriteString, Send, Free <br>
+    	<b>Misc Methods Added:</b> GetTimer, SetTimer, Moon, CreateParty, GetSocketFromIndex, AreaItemFunction<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.46</td>
+    <td>
+	<b>Updated:</b> All references to onUse() changed to onUseChecked()<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.45</td>
+    <td>
+	<b>Added:</b> ODBC object<br>
+	<b>ODBC Methods Added:</b>	BeginTransaction, FinaliseTransaction, ExecuteQuery, QueryRelease, FetchRow, GetColumn, LastOK<br />
+	<b>ODBC Properties Added:</b> lastOK<br>
+	<b>Updated:</b> CSS of this documentation.  Updated DOCTYPE of the pages.  Updated contact on FAQ to point to uox3.org forums.<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.44</td>
+    <td>
+	<b>Events Added:</b> onCombatDamageCalc, onDamage, onDeathBlow<br>
+	<b>Functions Added:</b> ApplyDefenseModifiers, ApplyDamageBonuses, ValidateObject, ResourceRegion, ResourceTime, ResourceAmount, ResourceArea, ReloadJSFile<br>
+	<b>Character Methods Added:</b>	Defense<br>
+	<b>Item Methods Added:</b> Carve<br>
+	<b>Common Methods Added:</b> Resist<br>
+	<b>Socket Methods Added:</b> DisplayDamage<br>
+	<b>Console Methods Added:</b> Print, Log, Error, Warning, PrintSectionBegin, TurnYellow, TurnRed, TurnGreen, TurnBlue, TurnNormal, TurnBrightWhite, PrintDone, PrintFailed, PrintPassed, ClearScreen, PrintBasedOnVal, MoveTo, PrintSpecial, BeginShutdown, Reload
+	<b>Resource Functions Added:</b> ResourceRegion, ResourceTime, ResourceArea, ResourceAmount<br>
+	<b>Console Properties Added:</b> mode, logEcho<br>
+	<b>Character Properties Added:</b> orgID, orgSkin, isAnimal, isHuman, isShop, attackFirst<br>
+	<b>Item Properties Added:</b> carveSection, tempTimer<br>
+	<b>Resource Properties Added:</b> logAmount, logTime, oreAmount, oreTime
+    </td>
+  </tr>
+  <tr>
+    <td>0.43</td>
+    <td>
+	<b>Events Added:</b> onCharDoubleClick, onSkillGump, onCombatStart, onCombatEnd<br>
+    </td>
+  </tr>
+  <tr>
+    <td>0.42</td>
+    <td>
+	<b>Item Methods Added:</b> LockDown<br>
+	<b>Item Properties Added:</b> isNewbie, isDispellable, isPileable, isDyeable, isWipeable, isGuarded, isDoorOpen, isFieldSpell, isLockedDown, isShieldType, isMetalType, isLeatherType, canBeLockedDown, isContType, madeWith, entryMadeFrom<br>
+	<b>Character Properties Updated:</b> isPolymorphed, isIncognito, canRun, isMeditating, isGM, canBroadcast, singClickSer, noSkillTitles, isGMPageable, canSnoop, isCounselor, noNeedMana, isDispellable, noNeedReags
+    </td>
+  </tr>
+  <tr>
+    <td>0.41</td>
+    <td><b>Events Changed:</b> onCreateDFN &amp; onCreateTile instead of onCreate, onDrop<br>
+	<b>Socket Properties Updated:</b> wasIdleWarned, firstPacket, cryptClient, walkSequence, currentSpellType, pickupX, pickupY, pickupZ, pickupSpot, language, target<br>
+	<b>Item Properties Updated:</b> scripttrigger, worldnumber, movable, raceID, race, rank, desc, <br>
+	<b>Character Properties Updated:</b> scripttrigger, worldnumber, charpack, hunger, race, criminal, murderer, innocent, gender, region, town, guild, socket, raceID, magicReflect, tamed, isUsingPotion, stealth, skillToTame<br>
+	<b>Guild Properties Updated:</b> name, type, numMembers, numRecruits, charter, abbreviation, webpage<br>
+	<b>Race Properties Added:</b> id, name, weakToWeather, requiresBeard, requiresNoBeard, isPlayerRace, genderRestrict, armourClass, languageSkillMin, skillAdjustment, poisonReistance, magicResistance, visibleDistance, nightVision<br>
+	<b>Region Properties Added:</b> name, mayor, race, tax, taxResource, canMark, canRecall, canGate, isGuarded, canCastAggressive, health, isDungeon, chanceBigOre, chanceColourOre, numOrePrefs, orePrefs, population, members<br>
+	<b>Spell Properties Added:</b> id, action, delay, health, stamina, mana, mantra, strToSay, scrollLow, scrollHigh, circle, loSkill, highSkill, ginseng, moss, drake, pearl, silk, ash, shade, garlic, requireTarget, requireItem, requireLocation, requireChar, travelSpell, fieldSpell, reflectable, agressiveSpell, resistable, soundEffect, enabled<br>
+	<b>Account Properties Added:</b> username, password, flags, path, comment, character1, character2, character3, character4, character5, character6
+    </td>
+  </tr>
+
+  <tr>
+    <td>0.40</td>
+    <td><b>Events Added:</b> onIterate<br>
+	<b>Functions Added:</b> GetDictionaryEntry, NumToString, NumToHexString, StringToNum, Yell, RaceGate, SendStaticStats, GetTileHeight, IterateOver, WorldBrightLevel, WorldDarkLevel, WorldDungeonLevel<br>
+	<b>Functions Updated:</b> SetSecondsPerUOMinute renamed to SecondsPerUOMinute<br>
+	<b>Gump Methods Added:</b> AddPageButton<br>
+	<b>Socket Methods Added:</b> BuyFrom, SellTo, WhoList, Midi, GetTimer, SetTimer<br>
+	<b>Character Methods Added:</b> DistanceTo, OpenLayer, BoltEffect, Gate, Recall, Mark, SetSkillByName, Kill, Resurrect, Jail, Release<br>
+	<b>Item Methods Added:</b> DistanceTo, Glow, UnGlow, PlaceInPack, Dupe<br>
+	<b>Methods Updated:</b> (Character)WanderBox renamed to Wander<br>
+	<b>Character Properties:</b> isSpawner, willhunger, lodamage, hidamage, atWar, spellCast, isCasting, townPriv, guildTitle, fontType, sayColour, emoteColour, attacker, raceGate, skillLock, deaths, nextAct, petCount, ownedItemsCount, cell, allmove, houseicons, spattack, spdelay, aitype, split, splitchance, trainer, weight, squelch, isJailed<br>
+	<b>Item Properties:</b> isSpawner, dir, wipable, buyvalue, sellvalue, restock, devinelock, weight, strength, corpse, spawnsection, sectionalist, mininterval, maxinterval
+    </td>
+  </tr>
+  <tr>
+    <td>0.37
+    <td><b>Events Added:</b> onSpeechInput, onGumpPress<br>
+	<b>Methods Added:</b> AddHTMLGump<br>
+	<b>Methods Updated:</b> AddTextEntry, CreateDFNItem, CreateBlankItem<br>
+  <tr>
+    <td>0.37
+    <td><b>Events Updated:</b> onDropItemOnNpc<br>
+  <tr>
+    <td>0.36
+    <td><b>Methods Added:</b> ExecuteCommand<br>
+	<b>Methods Updated:</b> WalkTo, RunTo
+  <tr>
+    <td>0.35
+    <td><b>Methods Updated:</b> DoStaticEffect is now StaticEffect, FirstIteminCont->FirstItem, NextItemInCont->NextItem, FinishedItemInCont->FinishedItems, BuyFrom, SellTo<br>
+	<b>Events Updated:</b> onUsage has been merged into onUse, onDropItemOnNpc
+  <tr>
+    <td>0.34
+    <td><b>Events Added:</b> onScrollCast, onSkillCheck, onSpellCast, onSpellTarget, onSpellSuccess<br>
+	<b>Methods Added:</b> (Gumps)AddCheckerTrans, AddCroppedText, AddGroup, AddTiledGump, AddXMFHTMLGump, AddXMFHTMLGumpColor, NoDispose, NoResize<br>
+	<b>Updated:</b> Sorted Events alphabetically<br>
+  <tr>
+    <td>0.33
+    <td><b>Added:</b> Gump-Example, Method/Function/Property Index<br>
+	<b>Methods Added:</b> CreateDFNItem, CreateBlankItem (these two replace SpawnItem)<br>
+	<b>Methods Updated:</b> SpawnNPC
+	<b>File-Object Methods:</b> Open, Close, Write, Read, ReadUntil, Free<br>
+	<b>File-Object Properties:</b> pos, length, eof<br>
+    	<b>Removed:</b> SpawnItem method, many obsolote Race-related functions<br>
+  <tr>
+    <td>0.32
+    <td><b>Added:</b> AreaCharacterFunction to function-index...forgot in last upate.<br>
+    		<b>Methods Updated:</b> DoMovingEffect<br>
+
+  <tr>
+    <td>0.31
+    <td><b>Methods Added:</b> TriggerEvent, AreaCharacterFunction, NoMove(Gumps)<br>
+		<b>Methods Updated:</b> CustomTarget, PopUpTarget, SpeechInput, MagicEffect, SetPoisoned, SetPoison, ExplodeItem, SetInvisible, GetTag & SetTag(for Items) <br>
+		<b>Methods Removed:</b> SetLocation (See Teleport)<br>
+		<b>Events Updated:</b> onStatGain, onStatLoss, onStatChange, onLeaving, onEntrance, onEquip, onUnequip, onUse, onClick, onLogin, onAISliver<br>
+		<b>Currently Broken</b>-comment added to: onDecay, onFall, onSwing, onTransfer, onDeath, onResurrect
+
+  <tr>
+    <td>0.30
+    <td><b>Added:</b> onTalk event. <br>
+	<b>Updated Events:</b> onCreate, onDelete, onCollide, onSteal, onDispel, onSkill, onSkillGain, onSkillLoss<br>
+	  	<b>Currently Broken</b>-comment added to: inRange(event), onAttack, onDefense
+
+  <tr>
+    <td>0.29
+    <td><b>Updated</b> UseResource<br>
+
+  <tr>
+    <td>0.28
+    <td><b>Added</b> onLogout event, onClick event, OpenUrl function<br>
+
+  <tr>
+    <td>0.27
+    <td>!!Beta-Version!!<br>
+		<b>Added:</b> A few methods and properties list, but still a lot of missing.<br>
+		<b>Updated:</b> A lot of examples.<br>
+		<b>Removed:</b> Old functions.<br>
+		NOTE: In this version are a lot of bugs, missing things etc. I've just released it in the hope, that
+		the already existing stuff will help you.
+  <tr>
+    <td>before 0.27
+    <td>See old news <a href="oldupdates.html">here</a>
+
+  </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3dev.net">WWW.UOX3dev.NET</a> (Daniel Stratton/Matthew Randall)</font>
+
+</center>
+
+
+</body>

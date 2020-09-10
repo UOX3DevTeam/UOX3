@@ -241,7 +241,7 @@ function onCallback10( pSock, myTarget )
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
 		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
-		var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber );
+		var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber, pUser.instanceID );
 		pUser.CustomTarget( 10, "Select target location for the ["+TempNPCID+"]:" );
 	}
 	else

@@ -1,4 +1,4 @@
-//AV3.0-UV0.98-4-BD0h-DS1309077854-ED0
+//AV3.0-UV0.99-BD2q-DS1599237009-ED0
 //------------------------------------------------------------------------------
 //accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers
 //
@@ -40,7 +40,7 @@ SECTION ACCOUNT 0
 NAME admin
 PASS admin
 FLAGS 0x8000
-PATH /uox3/accounts/admin/
+PATH ./accounts/admin/
 TIMEBAN 0x0
 LASTIP 127.0.0.1
 CONTACT unknown
@@ -50,6 +50,7 @@ CHARACTER-3 0xffffffff [UNKNOWN]
 CHARACTER-4 0xffffffff [UNKNOWN]
 CHARACTER-5 0xffffffff [UNKNOWN]
 CHARACTER-6 0xffffffff [UNKNOWN]
+CHARACTER-7 0xffffffff [UNKNOWN]
 }
 
 SECTION ACCOUNT 1
@@ -57,7 +58,7 @@ SECTION ACCOUNT 1
 NAME guest1
 PASS guest1
 FLAGS 0x0
-PATH /uox3/accounts/guest1/
+PATH ./accounts/guest1/
 TIMEBAN 0x0
 CONTACT unknown
 CHARACTER-1 0xffffffff [UNKNOWN]
@@ -65,5 +66,7 @@ CHARACTER-2 0xffffffff [UNKNOWN]
 CHARACTER-3 0xffffffff [UNKNOWN]
 CHARACTER-4 0xffffffff [UNKNOWN]
 CHARACTER-5 0xffffffff [UNKNOWN]
+CHARACTER-6 0xffffffff [UNKNOWN]
+CHARACTER-7 0xffffffff [UNKNOWN]
 }
 

@@ -1,15 +1,13 @@
 // Version History
-// 1.0		Abaddon		14th December, 2001
+// 1.0		 		14th December, 2001
 //			Initial implementation
 //			Defines the JSClass objects for Char, Item, Race, Guild and Region
 
-#include "UOXJSPropertyFuncs.h"
 
-namespace UOX
-{
 
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
+#include "UOXJSPropertyFuncs.h"
 
 static JSClass global_class =
 {
@@ -35,8 +33,8 @@ static JSClass uox_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
 static JSClass UOXSpell_class =
 {
@@ -49,7 +47,7 @@ static JSClass UOXSpell_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
 static  JSClass UOXSpells_class =
@@ -63,13 +61,13 @@ static  JSClass UOXSpells_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
-static JSExtendedClass UOXChar_class = 
-{ 
+static JSExtendedClass UOXChar_class =
+{
 	{	"UOXChar",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
 		JS_PropertyStub,
 		JS_PropertyStub,
 		CCharacterProps_getProperty,
@@ -85,12 +83,12 @@ static JSExtendedClass UOXChar_class =
 	NULL,
 	NULL,
 	JSCLASS_NO_RESERVED_MEMBERS
-}; 
+};
 
-static JSExtendedClass UOXItem_class = 
-{ 
+static JSExtendedClass UOXItem_class =
+{
 	{	"UOXItem",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
 		JS_PropertyStub,
 		JS_PropertyStub,
 		CItemProps_getProperty,
@@ -113,60 +111,60 @@ static JSExtendedClass UOXItem_class =
 // Returns the skill-values for a character
 // and is able to set them too
 //
-static JSClass UOXSkills_class = 
-{ 
+static JSClass UOXSkills_class =
+{
 	"UOXSkills",
-	JSCLASS_HAS_PRIVATE, 
+	JSCLASS_HAS_PRIVATE,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CSkillsProps_getProperty,
-	CSkillsProps_setProperty, 
+	CSkillsProps_setProperty,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
-static JSClass UOXBaseSkills_class = 
-{ 
+static JSClass UOXBaseSkills_class =
+{
 	"UOXBaseSkills",
-	JSCLASS_HAS_PRIVATE, 
+	JSCLASS_HAS_PRIVATE,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CSkillsProps_getProperty,
-	CSkillsProps_setProperty, 
+	CSkillsProps_setProperty,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
-static JSClass UOXSkillsUsed_class = 
-{ 
+static JSClass UOXSkillsUsed_class =
+{
 	"UOXSkillsUsed",
-	JSCLASS_HAS_PRIVATE, 
+	JSCLASS_HAS_PRIVATE,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CSkillsProps_getProperty,
-	CSkillsProps_setProperty, 
+	CSkillsProps_setProperty,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
-static JSClass UOXSkillsLock_class = 
-{ 
+static JSClass UOXSkillsLock_class =
+{
 	"UOXSkillsLock",
-	JSCLASS_HAS_PRIVATE, 
+	JSCLASS_HAS_PRIVATE,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	CSkillsProps_getProperty,
-	CSkillsProps_setProperty, 
+	CSkillsProps_setProperty,
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
 static JSClass UOXRace_class =
@@ -180,8 +178,8 @@ static JSClass UOXRace_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
 static JSClass UOXGuild_class =
 {
@@ -194,8 +192,8 @@ static JSClass UOXGuild_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
 static JSClass UOXGuilds_class =
 {
@@ -208,8 +206,8 @@ static JSClass UOXGuilds_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
 static JSClass UOXRegion_class =
 {
@@ -222,13 +220,27 @@ static JSClass UOXRegion_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
+
+static JSClass UOXSpawnRegion_class =
+{
+	"UOXSpawnRegion",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CSpawnRegionProps_getProperty,
+	CSpawnRegionProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
 
 static JSExtendedClass UOXSocket_class =
 {
 	{	"UOXSocket",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
 		JS_PropertyStub,
 		JS_PropertyStub,
 		CSocketProps_getProperty,
@@ -244,7 +256,7 @@ static JSExtendedClass UOXSocket_class =
 	NULL,
 	NULL,
 	JSCLASS_NO_RESERVED_MEMBERS
-}; 
+};
 
 static JSClass UOXFile_class =
 {
@@ -257,10 +269,9 @@ static JSClass UOXFile_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
-// Added by DarkStorm, 
 // var myGump = new Gump; // should be possible
 static JSClass UOXGump_class =
 {
@@ -273,20 +284,13 @@ static JSClass UOXGump_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
-//o--------------------------------------------------------------------------o
-//|	Class/Struct	-	static JSClass UOXGumpData_class =
-//|	Date					-	1/21/2003 7:35:37 AM
-//|	Developers		-	Punt
-//|	Organization	-	UOXe Project
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	static JSClass UOXGumpData_class =
+//|	Date		-	1/21/2003 7:35:37 AM
+//o-----------------------------------------------------------------------------------------------o
 static JSClass UOXGumpData_class =
 {
 	"GumpData",
@@ -301,7 +305,7 @@ static JSClass UOXGumpData_class =
 	JS_FinalizeStub
 };
 
-static JSClass UOXAccount_class = 
+static JSClass UOXAccount_class =
 {
 	"CAccountClass",
 	JSCLASS_HAS_PRIVATE,
@@ -315,7 +319,7 @@ static JSClass UOXAccount_class =
 	JS_FinalizeStub
 };
 
-static JSClass UOXConsole_class = 
+static JSClass UOXConsole_class =
 {
 	"CConsoleClass",
 	JSCLASS_HAS_PRIVATE,
@@ -340,7 +344,7 @@ static JSClass UOXScriptSection_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
 static JSClass UOXResource_class =
@@ -354,7 +358,7 @@ static JSClass UOXResource_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
+	JS_FinalizeStub
 };
 
 static JSClass UOXPacket_class =
@@ -368,13 +372,13 @@ static JSClass UOXPacket_class =
 	JS_EnumerateStub,
 	JS_ResolveStub,
 	JS_ConvertStub,
-	JS_FinalizeStub 
-}; 
+	JS_FinalizeStub
+};
 
-static JSExtendedClass UOXParty_class = 
-{ 
+static JSExtendedClass UOXParty_class =
+{
 	{	"UOXParty",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
 		JS_PropertyStub,
 		JS_PropertyStub,
 		CPartyProps_getProperty,
@@ -390,26 +394,6 @@ static JSExtendedClass UOXParty_class =
 	NULL,
 	NULL,
 	JSCLASS_NO_RESERVED_MEMBERS
-}; 
-
-#if P_ODBC == 1
-
-static JSClass UOXODBC_class =
-{
-	"UOXODBC",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CODBCProps_getProperty,
-	CODBCProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub 
 };
-
-#endif
-
-}
 
 #endif

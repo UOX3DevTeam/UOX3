@@ -6,28 +6,30 @@
 #include "jail.h"
 #include "commands.h"
 
-namespace UOX
-{
 
 cWhoList *WhoList;
 cWhoList *OffList;
 
 void	TweakTarget( CSocket *s );
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ResetUpdateFlag( void )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Disables the WhoList update flag
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::ResetUpdateFlag( void )
-// PRE:		WhoList class is active
-// POST:	Resets the update flag
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	needsUpdating = false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	cWhoList( bool trulyOnline )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Initializes the variables of the wholist on creation
+//o-----------------------------------------------------------------------------------------------o
 cWhoList::cWhoList( bool trulyOnline )
-// PRE:		On creation
-// POST:	Initializes the variables of the wholist
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	FlagUpdate();					// first use will force it to update
 	gmCount = 0;					// no GMs currently using it
@@ -38,26 +40,30 @@ cWhoList::cWhoList( bool trulyOnline )
 cWhoList::~cWhoList()
 // PRE:		WhoList class is active
 // POST:	Memory cleared/destroyed
-// CODER:	Abaddon
 // DATE:	12th February, 2000
 {
 	ResetUpdateFlag();
 	gmCount = 0;
 	Delete();
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ResetUpdateFlag( void )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Flags the WhoList as needing to be updated
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::FlagUpdate( void )
-// PRE:		WhoList class is active
-// POST:	Flags the who list as needing to be updated
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	needsUpdating = true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendSocket( CSocket *toSendTo )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends the WhoList to a player's socket
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::SendSocket( CSocket *toSendTo )
-// PRE:		WhoList class is active
-// POST:	Sends the wholist to the socket
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	GMEnter();
 	if( needsUpdating && gmCount <= 1 )	// If we need to update, do it now while we still can
@@ -69,30 +75,36 @@ void cWhoList::SendSocket( CSocket *toSendTo )
 		SendVecsAsGump( toSendTo, one, two, 11, INVALIDSERIAL );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GMEnter( void )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the GM counter
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::GMEnter( void )
-// PRE:		WhoList class is active
-// POST:	Increments the GM counter
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	++gmCount;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GMLeave( void )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Decrements the GM counter
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::GMLeave( void )
-// PRE:		WhoList class is active
-// POST:	Decrements the GM counter
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	if( gmCount != 0 )
 		--gmCount;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Delete( void )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Deletes all the entries in the WhoList
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::Delete( void )
-// PRE:		WhoList class is active
-// POST:	Deletes all the entries
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	one.resize( 0 );
 	two.resize( 0 );
@@ -100,25 +112,29 @@ void cWhoList::Delete( void )
 
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddSerial( SERIAL toAdd )
+//|	Date		-	23rd February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds an entry into the whoMenuData array
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::AddSerial( SERIAL toAdd )
-// PRE:		WhoList class is active
-// POST:	Adds an entry into the whoMenuData array
-// CODER:	Abaddon
-// DATE:	23rd February, 2000
 {
 	whoMenuData.push_back( toAdd );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
+//|	Date		-	23rd February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Does action based upon button selected
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
-// PRE:		WhoList class is active
-// POST:	Does action based upon button selected
-// CODER:	Abaddon
-// DATE:	23rd February, 2000
 {
 	CChar *sourceChar = toSendTo->CurrcharObj();
 
 	if( buttonPressed < 200 )
-	{		
+	{
 		buttonPressed -= 7;
 		toSendTo->AddID( buttonPressed );
 		Command( toSendTo, type, buttonPressed );
@@ -192,7 +208,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				else if( !JailSys->JailPlayer( targetChar, 0xFFFFFFFF ) )
 					toSendTo->sysmessage( 1072 );
 				break;
-			}						 
+			}
 		case 203://release
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
@@ -215,7 +231,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			else
 			{
-				if( !UOX::isOnline( (*targetChar) ) )	// local var overloads it
+				if( !isOnline( (*targetChar) ) )	// local var overloads it
 				{
 					toSendTo->sysmessage( 1394 );		// you realize the break isn't necessary?
 					break;
@@ -257,11 +273,16 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			TweakTarget( toSendTo );
 			break;
 		default:
-			Console.Error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
+			Console.error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
 			break;
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Builds the WhoList gump and sends it to the player
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 {
 	SERIAL serial = whoMenuData[buttonPressed];
@@ -272,7 +293,7 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 		toSendTo->sysmessage( 1387 );
 		return;
 	}
-	
+
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
 	toSend.GumpID( type );
@@ -282,44 +303,44 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	UI16 tColour		= cwmWorldState->ServerData()->TitleColour();
 	UI16 butRight		= cwmWorldState->ServerData()->ButtonRight();
 	//--static pages
-	toSend.AddCommand( "nomove" );
-	toSend.AddCommand( "noclose" );
-	toSend.AddCommand( "page 0" );
-	toSend.AddCommand( "resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic() );
-	toSend.AddCommand( "button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
-	toSend.AddCommand( "text 30 40 %u 0", tColour );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.AddCommand( "text 30 60 %u 1", tColour );
-	toSend.AddCommand( "page 1" );
+	toSend.addCommand( "nomove" );
+	toSend.addCommand( "noclose" );
+	toSend.addCommand( "page 0" );
+	toSend.addCommand( format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()) );
+	toSend.addCommand( format("button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
+	toSend.addCommand( format("text 30 40 %u 0", tColour ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.addCommand( format("text 30 60 %u 1", tColour) );
+	toSend.addCommand( "page 1" );
 
-	toSend.AddCommand( "text 50 90 %u 2", lColour );	//goto text
-	toSend.AddCommand( "text 50 110 %u 3", lColour );	//gettext
-	toSend.AddCommand( "text 50 130 %u 4", lColour );	//Jail text
-	toSend.AddCommand( "text 50 150 %u 5", lColour );	//Release text
-	toSend.AddCommand( "text 50 170 %u 6", lColour );	//Kick user text
-	toSend.AddCommand( "text 50 190 %u 7", lColour );
-	toSend.AddCommand( "text 50 210 %u 8", lColour );
-	toSend.AddCommand( "text 50 230 %u 9", lColour );
-	toSend.AddCommand( "text 50 270 %u 10", lColour );
-	toSend.AddCommand( "button 20 90 %u %i 1 0 200", butRight, butRight + 1 ); //goto button
-	toSend.AddCommand( "button 20 110 %u %i 1 0 201", butRight, butRight + 1 ); //get button
-	toSend.AddCommand( "button 20 130 %u %i 1 0 202", butRight, butRight + 1 ); //Jail button
-	toSend.AddCommand( "button 20 150 %u %i 1 0 203", butRight, butRight + 1 ); //Release button
-	toSend.AddCommand( "button 20 170 %u %i 1 0 204", butRight, butRight + 1 ); //kick button
-	toSend.AddCommand( "button 20 190 %u %i 1 0 205", butRight, butRight + 1 ); //Where button
-	toSend.AddCommand( "button 20 210 %u %i 1 0 206", butRight, butRight + 1 ); //Cstats button
-	toSend.AddCommand( "button 20 230 %u %i 1 0 207", butRight, butRight + 1 ); //Tweak button
+	toSend.addCommand( format("text 50 90 %u 2", lColour) );	//goto text
+	toSend.addCommand( format("text 50 110 %u 3", lColour) );	//gettext
+	toSend.addCommand( format("text 50 130 %u 4", lColour ));	//Jail text
+	toSend.addCommand( format("text 50 150 %u 5", lColour ));	//Release text
+	toSend.addCommand( format("text 50 170 %u 6", lColour ));	//Kick user text
+	toSend.addCommand( format("text 50 190 %u 7", lColour ));
+	toSend.addCommand( format("text 50 210 %u 8", lColour ));
+	toSend.addCommand( format("text 50 230 %u 9", lColour) );
+	toSend.addCommand( format("text 50 270 %u 10", lColour ));
+	toSend.addCommand( format("button 20 90 %u %i 1 0 200", butRight, butRight + 1 )); //goto button
+	toSend.addCommand( format("button 20 110 %u %i 1 0 201", butRight, butRight + 1 )); //get button
+	toSend.addCommand( format("button 20 130 %u %i 1 0 202", butRight, butRight + 1 )); //Jail button
+	toSend.addCommand( format("button 20 150 %u %i 1 0 203", butRight, butRight + 1 )); //Release button
+	toSend.addCommand( format("button 20 170 %u %i 1 0 204", butRight, butRight + 1 )); //kick button
+	toSend.addCommand( format("button 20 190 %u %i 1 0 205", butRight, butRight + 1 )); //Where button
+	toSend.addCommand( format("button 20 210 %u %i 1 0 206", butRight, butRight + 1 )); //Cstats button
+	toSend.addCommand( format("button 20 230 %u %i 1 0 207", butRight, butRight + 1 )); //Tweak button
 
-	toSend.AddText( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex);
-	toSend.AddText( "Name: %s", targetChar->GetName().c_str() );   
-	toSend.AddText( Dictionary->GetEntry( 1400, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1401, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1402, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1403, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1404, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1405, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1406, sLang ) );
-	toSend.AddText( Dictionary->GetEntry( 1407, sLang ) );
-	toSend.AddText( "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 ) );   
+	toSend.addText(format( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex));
+	toSend.addText( format("Name: %s", targetChar->GetName().c_str() ));
+	toSend.addText( Dictionary->GetEntry( 1400, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1401, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1402, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1403, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1404, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1405, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1406, sLang ) );
+	toSend.addText( Dictionary->GetEntry( 1407, sLang ) );
+	toSend.addText( format("Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )) );
 
 	toSend.Finalize();
 	toSendTo->Send( &toSend );
@@ -331,14 +352,17 @@ void cWhoList::ZeroWho( void )
 	gmCount = 0;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Update( void )
+//|	Date		-	12th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	If multiple GMs using, doesn't actually update (deferred update)
+//|						Otherwise updates the arrays, and resets the update flag
+//|
+//|	Changes		-	1.1 June 29th, 2000
+//|						Written to use SendVecsAsGump, as well as making it flexible enough to show offline players
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::Update( void )
-// PRE:		WhoList class is active
-// POST:	If multiple GMs using, doesn't actually update (deferred update)
-//			Otherwise updates the arrays, and resets the update flag
-// CODER:	Abaddon
-// DATE:	12th February, 2000
-// REVISION 1.1 June 29th, 2000
-//				Written to use SendVecsAsGump, as well as making it flexible enough to show offline players
 {
 	if( gmCount > 1 )
 	{
@@ -346,36 +370,36 @@ void cWhoList::Update( void )
 	}
 	// do code
 	Delete();
+	constexpr std::uint16_t maxsize = 512 ;
 
-	char temp[512];
 	size_t i				= 0;
 	const UI32 numPerPage	= 13;
 	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
-	
+
 	size_t k		= cwmWorldState->GetPlayersOnline();
-	int realCount	= 1;
+	SI32 realCount	= 1;
 	//--static pages
 	one.push_back( "noclose" );
 	one.push_back( "page 0"  );
-	sprintf( temp, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 );
-	one.push_back( temp );
-	sprintf( temp, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() );
-	one.push_back( temp );
 
-	sprintf( temp, "page %lu", pagenum );
-	one.push_back( temp );
+	one.push_back( format(maxsize, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ) );
 
-	sprintf( temp, "Wholist" );
-	two.push_back( temp );
+	one.push_back( format(maxsize,"button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ) );
+
+	one.push_back( format(maxsize, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() ) );
+
+
+	one.push_back( format(maxsize, "page %u", pagenum ) );
+
+
+	two.push_back( "Wholist" );
 
 	//--Start User List
 	if( online )
 	{
 		for( i = 0; i < k; ++i )
 		{
-			CSocket *tSock	= Network->GetSockPtr( i );
+			CSocket *tSock	= Network->GetSockPtr( static_cast<std::uint32_t>(i) );
 			CChar *tChar	= tSock->CurrcharObj();
 			if( !ValidateObject( tChar ) )
 				continue;
@@ -383,15 +407,15 @@ void cWhoList::Update( void )
 			{
 				position = 40;
 				++pagenum;
-				sprintf(temp, "page %lu", pagenum );
-				one.push_back( temp );
+
+				one.push_back( format(maxsize, "page %u", pagenum ) );
 			}
-			sprintf( temp, "text 50 %lu %u %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
-			one.push_back( temp );
-			sprintf( temp, "button 20 %lu %u %i %lu 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
-			one.push_back( temp );
-			sprintf( temp, " %s", tChar->GetName().c_str() );
-			two.push_back( temp );
+
+			one.push_back( format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
+
+			one.push_back( format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
+
+			two.push_back( format(maxsize, " %s", tChar->GetName().c_str() ) );
 			AddSerial( tChar->GetSerial() );
 
 			position += 20;
@@ -399,25 +423,25 @@ void cWhoList::Update( void )
 			++buttonnum;
 			++realCount;
 		}
-		
-		sprintf( temp, "Wholist [%i online]", realCount - 1 );
-		two[0] = temp;
 
-		pagenum = 1; 
+
+		two[0] = format(maxsize, "Wholist [%i online]", realCount - 1 );
+
+		pagenum = 1;
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
-			sprintf( temp, "page %lu", pagenum );
-			one.push_back( temp );
+
+			one.push_back( format(maxsize, "page %u", pagenum ) );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
-				one.push_back( temp );
+				 //back button
+				one.push_back( format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
-				one.push_back( temp );
+
+				one.push_back( format(maxsize, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
 			}
 			++pagenum;
 		}
@@ -436,22 +460,22 @@ void cWhoList::Update( void )
 				ourChar = actbSearch.lpCharacters[i];
 				if( ValidateObject( ourChar ) )
 				{
-					if( !UOX::isOnline( (*ourChar) ) )
+					if( !isOnline( (*ourChar) ) )
 					{
 						if( realCount > 0 && !(realCount%numPerPage) )
 						{
 							position = 40;
 							++pagenum;
-							sprintf(temp, "page %lu", pagenum );
-							one.push_back( temp );
-						}
-						sprintf( temp, "text 50 %lu %u %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
-						one.push_back( temp );
-						sprintf( temp, "button 20 %lu %u %i %lu 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
-						one.push_back( temp );
 
-						sprintf( temp, " %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() );
-						two.push_back( temp );
+							one.push_back( format(maxsize,"page %u", pagenum ) );
+						}
+
+						one.push_back( format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
+
+						one.push_back( format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
+
+
+						two.push_back( format(maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ) );
 						AddSerial( ourChar->GetSerial() );
 
 						position += 20;
@@ -462,29 +486,26 @@ void cWhoList::Update( void )
 				}
 			}
 		}
-		sprintf( temp, "Wholist [%i offline]", realCount-1 );
-		two[0] = temp;
 
-		pagenum = 1; 
+		two[0] = format(maxsize,"Wholist [%i offline]", realCount-1 );
+
+		pagenum = 1;
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
-			sprintf( temp, "page %lu", pagenum );
-			one.push_back( temp );
+
+			one.push_back( format(maxsize,"page %u", pagenum ) );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
-				one.push_back( temp );
+				 //back button
+				one.push_back( format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
-				one.push_back( temp );
+				one.push_back( format(maxsize,"button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
 			}
 			++pagenum;
 		}
-	}		
+	}
 	ResetUpdateFlag();
-}
-
 }

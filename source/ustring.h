@@ -1,17 +1,10 @@
 #ifndef __USTRING_H
 #define __USTRING_H
-// Ssytem Includes
-//#include <string>
-//#include <cstdarg>
-//#include <cstdio> 
-//#include "stream.h"
-//#include <algorithm>
+
 
 
 typedef std::string stdstring ;
 
-namespace UOX
-{
 
 // Defines
 
@@ -19,21 +12,21 @@ namespace UOX
 #define COMMENTTAG "//"
 
 //! String class with extensions
-/*! This string class mimics many of the capaiblities provided by QString in the 
+/*! This string class mimics many of the capaiblities provided by QString in the
 	Trolltech QT library.  It has methods to handle number conversion's, convert
-	to upper and lower, spit a string into sections based on delimitors, and 
+	to upper and lower, spit a string into sections based on delimitors, and
 	remove comment strings.
 */
 class UString : public stdstring
 {
 public:
-	//! Base constructor 
+	//! Base constructor
 	UString() ;
 	//! Create a UString from another string
 	UString(const std::string& str) ;
 	//! Create a UString from another string, starting at the specified index
 	UString(const std::string& str, std::string::size_type str_idx) ;
-	//! Create a UString from another string, starting at the specified index and for the specified number of characters 
+	//! Create a UString from another string, starting at the specified index and for the specified number of characters
 	UString(const std::string& str, std::string::size_type str_idx, std::string::size_type str_num) ;
 	//! Create a UString from a char delimited string
 	UString(const char* cstr) ;
@@ -100,6 +93,5 @@ public:
 	static UString sprintf(const char* format,...) ;
 };
 
-}
 
 #endif

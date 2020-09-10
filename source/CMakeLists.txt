@@ -19,7 +19,6 @@ add_library(uox
 		cBaseobject.cpp
 		cVersionClass.cpp
 		magic.cpp
-		threadsafeobject.cpp
 		CPacketSend.cpp
 		cChar.cpp
 		cWeather.cpp
@@ -40,7 +39,6 @@ add_library(uox
 		combat.cpp
 		network.cpp
 		ustring.cpp
-		ODBCManager.cpp
 		cHTMLSystem.cpp
 		commands.cpp
 		npcs.cpp
@@ -76,6 +74,8 @@ add_library(uox
 		cServerDefinitions.cpp
 		house.cpp
 		sound.cpp
+		UOPInterface.cpp
+		StringUtility.cpp
 )
 
 target_include_directories(uox

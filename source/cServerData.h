@@ -1,59 +1,92 @@
 
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
+#include <map>
+#include <string>
+#include <cstdint>
+#include "StringUtility.hpp"
 
-namespace UOX
+enum ClientFeatures
 {
-	enum ClientFeatures
-	{
-		CF_BIT_CHAT = 0,		// 0x01
-		CF_BIT_UOR,				// 0x02
-		CF_BIT_TD,				// 0x04
-		CF_BIT_LBR,				// 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
-		CF_BIT_AOS,				// 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+
-		CF_BIT_SIXCHARS,		// 0x20
-		CF_BIT_SE,				// 0x40
-		CF_BIT_ML,				// 0x80
-		CF_BIT_EIGHTAGE,		// 0x100
-		CF_BIT_NINTHAGE,		// 0x200
-		CF_BIT_TENTHAGE,		// 0x400
-		CF_BIT_UNKNOWN1,		// 0x800 - Increased housing/bank storage?
-		CF_BIT_SEVENCHARS,		// 0x1000
-		//CF_BIT_KRFACES,		// 0x2000
-		//CF_BIT_TRIAL,			// 0x4000
-		CF_BIT_EXPANSION = 15,	// 0x8000
-		CF_BIT_SA,				// 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
-		CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
-		CF_BIT_GOTHHOUSE,		// 0x40000
-		CF_BIT_RUSTHOUSE,		// 0x80000
-		CF_BIT_JUNGLEHOUSE,		// 0x100000 - Enable Jungle housing tiles
-		CF_BIT_SHADOWHOUSE,		// 0x200000 - Enable Shadowguard housing tiles
-		CF_BIT_TOLHOUSE,		// 0x400000 - Enable Time of Legends features
-		CF_BIT_ENDLESSHOUSE,	// 0x800000 - Enable Endless Journey account
-		CF_BIT_COUNT
-	};
+	CF_BIT_CHAT = 0,		// 0x01
+	CF_BIT_UOR,				// 0x02
+	CF_BIT_TD,				// 0x04
+	CF_BIT_LBR,				// 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
+	CF_BIT_AOS,				// 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+
+	CF_BIT_SIXCHARS,		// 0x20
+	CF_BIT_SE,				// 0x40
+	CF_BIT_ML,				// 0x80
+	CF_BIT_EIGHTAGE,		// 0x100
+	CF_BIT_NINTHAGE,		// 0x200
+	CF_BIT_TENTHAGE,		// 0x400
+	CF_BIT_UNKNOWN1,		// 0x800 - Increased housing/bank storage?
+	CF_BIT_SEVENCHARS,		// 0x1000
+	//CF_BIT_KRFACES,		// 0x2000
+	//CF_BIT_TRIAL,			// 0x4000
+	CF_BIT_EXPANSION = 15,	// 0x8000
+	CF_BIT_SA,				// 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
+	CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
+	CF_BIT_GOTHHOUSE,		// 0x40000
+	CF_BIT_RUSTHOUSE,		// 0x80000
+	CF_BIT_JUNGLEHOUSE,		// 0x100000 - Enable Jungle housing tiles
+	CF_BIT_SHADOWHOUSE,		// 0x200000 - Enable Shadowguard housing tiles
+	CF_BIT_TOLHOUSE,		// 0x400000 - Enable Time of Legends features
+	CF_BIT_ENDLESSHOUSE,	// 0x800000 - Enable Endless Journey account
+	CF_BIT_COUNT
+};
 
-	enum ServerFeatures
-	{
-		SF_BIT_UNKNOWN1 = 0,	// 0x01
-		SF_BIT_IGR,				// 0x02
-		SF_BIT_ONECHAR,			// 0x04 - One char only, Siege-server style
-		SF_BIT_CONTEXTMENUS,	// 0x08
-		SF_BIT_LIMITCHAR,		// 0x10 - Limit amount of chars, combine with OneChar
-		SF_BIT_AOS,				// 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
-		SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
-		SF_BIT_SE,				// 0x80 - Samurai and Ninja classes
-		SF_BIT_ML,				// 0x100 - Elven race
-		// Uncomment when adding support for newer client versions
-		SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
-		SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
-		SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA
-		SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
-		SF_BIT_UNKNOWN5,		// 0x2000 - added with UO:SA launch
-		SF_BIT_NEWMOVE,			// 0x4000 - new movement system
-		SF_BIT_FACTIONAREAS = 15,	// 0x8000 - Unlock new Felucca faction-areas
-		SF_BIT_COUNT
-	};
+
+enum ServerFeatures
+{
+	SF_BIT_UNKNOWN1 = 0,	// 0x01
+	SF_BIT_IGR,				// 0x02
+	SF_BIT_ONECHAR,			// 0x04 - One char only, Siege-server style
+	SF_BIT_CONTEXTMENUS,	// 0x08
+	SF_BIT_LIMITCHAR,		// 0x10 - Limit amount of chars, combine with OneChar
+	SF_BIT_AOS,				// 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
+	SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
+	SF_BIT_SE,				// 0x80 - Samurai and Ninja classes
+	SF_BIT_ML,				// 0x100 - Elven race
+	SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
+	SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
+	SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA
+	SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
+	SF_BIT_UNKNOWN5,		// 0x2000 - added with UO:SA launch
+	SF_BIT_NEWMOVE,			// 0x4000 - new movement system
+	SF_BIT_FACTIONAREAS = 15,	// 0x8000 - Unlock new Felucca faction-areas
+	SF_BIT_COUNT
+};
+
+enum AssistantFeatures : UI64
+{
+	AF_NONE = 0,
+
+	// Razor
+	AF_FILTERWEATHER = 1 << 0, // Weather Filter
+	AF_FILTERLIGHT = 1 << 1, // Light Filter
+	AF_SMARTTARGET = 1 << 2, // Smart Last Target
+	AF_RANGEDTARGET = 1 << 3, // Range Check Last Target
+	AF_AUTOOPENDOORS = 1 << 4, // Automatically Open Doors
+	AF_DEQUIPONCAST = 1 << 5, // Unequip Weapon on spell cast
+	AF_AUTOPOTIONEQUIP = 1 << 6, // Un/Re-equip weapon on potion use
+	AF_POISONEDCHECKS = 1 << 7, // Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self
+	AF_LOOPEDMACROS = 1 << 8, // Disallow Looping macros, For loops, and macros that call other macros
+	AF_USEONCEAGENT = 1 << 9, // The use once agent
+	AF_RESTOCKAGENT = 1 << 10, // The restock agent
+	AF_SELLAGENT = 1 << 11, // The sell agent
+	AF_BUYAGENT = 1 << 12, // The buy agent
+	AF_POTIONHOTKEYS = 1 << 13, // All potion hotkeys
+	AF_RANDOMTARGETS = 1 << 14, // All random target hotkeys (Not target next, last target, target self)
+	AF_CLOSESTTARGETS = 1 << 15, // All closest target hotkeys
+	AF_OVERHEADHEALTH = 1 << 16, // Health and Mana/Stam messages shown over player's heads
+
+	// AssistUO Only
+	AF_AUTOLOOTAGENT = 1 << 17, // The autoloot agent
+	AF_BONECUTTERAGENT = 1 << 18, // The bone cutter agent
+	AF_JSCRIPTMACROS = 1 << 19, // Javascript macro engine
+	AF_AUTOREMOUNT = 1 << 20, // Auto remount after dismount
+	AF_ALL = 0xFFFFFFFFFFFFFFFF // Every feature possible
+};
 
 enum cSD_TID
 {
@@ -106,14 +139,14 @@ enum CSDDirectoryPaths
 class physicalServer
 {
 public:
-  void setName(const std::string& newName);
-  void setDomain(const std::string& newDomain);
-  void setIP(const std::string& newIP);
-  void setPort(UI16 newPort);
-  std::string getName( void ) const;
-  std::string getDomain( void ) const;
-  std::string getIP( void ) const;
-  UI16 getPort( void ) const;
+	void setName(const std::string& newName);
+	void setDomain(const std::string& newDomain);
+	void setIP(const std::string& newIP);
+	void setPort(UI16 newPort);
+	std::string getName( void ) const;
+	std::string getDomain( void ) const;
+	std::string getIP( void ) const;
+	UI16 getPort( void ) const;
 
 private:
 	std::string name;
@@ -128,14 +161,13 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 46 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 43 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
 	UI16		port;							//	Port number that the server listens on, for connections
 	std::vector< physicalServer > serverList;	//	Series of server entries for shard list
 	UI08		consolelogenabled;				//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
-	UI08		crashprotectionenabled;			//	Level of crash protection - number of crash restart attempts before stopping - NEVER ACTIVELY USED
 	char		commandprefix;					//	Character that acts as the command prefix
 	SI16		backupRatio;					//	Number of saves before a backup occurs
 	UI32		serversavestimer;				//	Number of seconds between world saves
@@ -147,17 +179,17 @@ private:
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
-	bool		Clients5000Enabled;				// Allow client connections from 5.0.0.0 to 5.0.8.2
+	bool		Clients5000Enabled;				// Allow client connections from 5.0.0.0 to 5.0.8.2 (Mondain's Legacy)
 	bool		Clients6000Enabled;				// Allow client connections from 6.0.0.0 to 6.0.4.0
 	bool		Clients6050Enabled;				// Allow client connections from 6.0.5.0 to 6.0.14.2
 	bool		Clients7000Enabled;				// Allow client connections from 7.0.0.0 to 7.0.8.2
-	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1
+	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1 (High Seas)
 	bool		Clients70160Enabled;			// Allow client connections from 7.0.16.0 to 7.0.23.1
 	bool		Clients70240Enabled;			// Allow client connections from 7.0.24.0+
 	bool		Clients70300Enabled;			// Allow client connections from 7.0.30.0+
 	bool		Clients70331Enabled;			// Allow client connections from 7.0.33.1+
-	bool		Clients704565Enabled;			// Allow client connections from 7.0.45.65+
-	bool		Clients70610Enabled;			// Allow client connections from 7.0.61.0+
+	bool		Clients704565Enabled;			// Allow client connections from 7.0.45.65+ (Time of Legends)
+	bool		Clients70610Enabled;			// Allow client connections from 7.0.61.0+ (Endless Journey)
 
 	// facet block
 	bool		useFacetSaves;
@@ -281,7 +313,13 @@ private:
 
 	void	PostLoadDefaults( void );
 
+	std::map<std::string,std::int32_t>   	uox3inicasevalue;
+	std::int32_t lookupINIValue(const std::string& tag);
+	void		regAllINIValues() ;
+	void		regINIValue(const std::string& tag, std::int32_t value);
 public:
+	UI64		DisabledAssistantFeatures;
+
 	void		SetServerFeature( ServerFeatures, bool );
 	void		SetServerFeatures( size_t );
 	bool		GetServerFeature( ServerFeatures ) const;
@@ -291,6 +329,17 @@ public:
 	void		SetClientFeatures( UI32 );
 	bool		GetClientFeature( ClientFeatures ) const;
 	UI32		GetClientFeatures( void ) const;
+
+	void		SetDisabledAssistantFeature( AssistantFeatures, bool );
+	void		SetDisabledAssistantFeatures( UI64 );
+	bool		GetDisabledAssistantFeature( AssistantFeatures ) const;
+	UI64		GetDisabledAssistantFeatures( void ) const;
+
+	void		SetAssistantNegotiation( bool value );
+	bool		GetAssistantNegotiation( void ) const;
+
+	void		SetClassicUOMapTracker( bool value );
+	bool		GetClassicUOMapTracker( void ) const;
 
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel( void ) const;
@@ -318,8 +367,8 @@ public:
 
 	void		RefreshIPs( void );
 
-				CServerData( void );
-				~CServerData();
+	CServerData( void );
+	~CServerData();
 	void		ServerName( std::string setname );
 	void		ServerDomain( std::string setdomain );
 	void		ServerIP( std::string setip );
@@ -408,8 +457,6 @@ public:
 	void		Directory( CSDDirectoryPaths dp, std::string value );
 	std::string Directory( CSDDirectoryPaths dp );
 
-	void		ServerCrashProtection( UI08 setting );
-	UI08		ServerCrashProtectionStatus( void ) const;
 
 	void		CorpseLootDecay( bool value );
 	bool		CorpseLootDecay( void ) const;
@@ -678,7 +725,7 @@ public:
 	void		TrackingRedisplayTime( UI16 value );
 	UI16		TrackingRedisplayTime( void ) const;
 
-	// Sept 22, 2002 - EviLDeD - Support for Xuri's HideWhileMounted fix.
+	// Sept 22, 2002 - Support for HideWhileMounted fix.
 	void		CharHideWhileMounted( bool value );
 	bool		CharHideWhileMounted( void ) const;
 
@@ -694,13 +741,12 @@ public:
 	void		AdvancedPathfinding( bool value );
 	bool		AdvancedPathfinding( void ) const;
 
-	void		MapIsUOPWrapped( UI08 mapNum, bool value );
-	bool		MapIsUOPWrapped( UI08 mapNum ) const;
-
 	void		LootingIsCrime( bool value );
 	bool		LootingIsCrime( void ) const;
 
-	void		dumpLookup( int lookupid );
+	void		KickOnAssistantSilence( bool value );
+	bool		KickOnAssistantSilence( void ) const;
+
 	void		dumpPaths( void );
 
 	void			ServerLocation( std::string toSet );
@@ -733,7 +779,7 @@ public:
 	bool			incHour( void );
 	bool			incDay( void );
 
-	void			incMoon( int mNumber );
+	void			incMoon( SI32 mNumber );
 
 	physicalServer *ServerEntry( UI16 entryNum );
 	UI16			ServerCount( void ) const;
@@ -742,8 +788,6 @@ private:
 	bool			resettingDefaults;
 
 };
-
-}
 
 #endif
 

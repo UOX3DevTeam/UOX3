@@ -1,7 +1,6 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.98                       *
-//*                                                               *
-//*                   http://www.uox3dev.net                      *
+//*                         UOX3 DFNs v0.99.3                     *
+//*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
 //* Last Update : 1/4/2003                                        *
 //* Script : msgboard.dfn                                         *
@@ -22,7 +21,7 @@
 //
 //   Note:
 //      A typical line displayed in the post window consists of 20
-//      characters.  Some characters are larger and will therefore 
+//      characters.  Some characters are larger and will therefore
 //      make the total number of characters visible on a single line
 //      smaller.  A ruler has been provided to use in the creation of
 //      message templates.  I recommend not going beyond 20-25 chars
@@ -51,14 +50,14 @@ ESCORT=4
 If you are good of heart
 and desire some honest
 work, then maybe you can
-escort me to 
+escort me to
 %r.
- 
+
 Currently I am in
-%R 
+%R
 near this location:
 %l.
- 
+
 Thank you,
 %n %t
 }
@@ -69,13 +68,13 @@ Urgent, I require a
 companion to travel
 with me to
 %r.
- 
+
 If you can help, I
 can be found in
 %R
 at this location:
 %l.
- 
+
 Please hurry,
 %n %t
 }
@@ -84,15 +83,15 @@ Please hurry,
 {
 Travelling companion needed
 near %R
- 
+
 Please contact
 %n %t
 for further details.
- 
+
 I can be found near
 the following location:
 %l.
- 
+
 Thank you.
 }
 
@@ -100,20 +99,20 @@ Thank you.
 {
 Tis a grim day indeed. My
 closest friend hath just
-been killed. I need to 
+been killed. I need to
 find out information about
-his death near 
+his death near
 %r
- 
+
 Please contact %n
 of %R
 as quickly as possible, as
 I have very little time to
 waste.
- 
-I can be found near 
+
+I can be found near
 %l.
- 
+
 Thank thee.
 }
 

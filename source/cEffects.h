@@ -1,9 +1,6 @@
 #ifndef __CEFFECTS_H__
 #define __CEFFECTS_H__
 
-namespace UOX
-{
-
 class cEffects
 {
 private:
@@ -33,12 +30,10 @@ public:
 	void	goldSound( CSocket *s, UI32 goldtotal, bool bAllHear = false);
 	void	playTileSound( CSocket *mSock );
 	void	playDeathSound( CChar *i );
-	void	playMidi( CSocket *s, UI16 number );
-	void	dosocketmidi( CSocket *s );
+	void	playMusic( CSocket *s, UI16 number );
+	void	doSocketMusic( CSocket *s );
 };
 
 extern cEffects *Effects;
-
-}
 
 #endif

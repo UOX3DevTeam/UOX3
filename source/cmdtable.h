@@ -2,18 +2,16 @@
 //	This code is an attempt to clean up the messy "if/then/else" routines
 //	currently in use for GM commands, as well as adding more functionality
 //	and more potential for functionality.
-//	
+//
 //	Current features:
 //	- Actual table of commands to execute, what perms are required, dialog
 //	  messages for target commands, etc handled by a central system
-//	
+//
 //
 
 #ifndef __CMDTABLE_H
 #define __CMDTABLE_H
 
-namespace UOX
-{
 
 // Types of commands
 enum commandTypes
@@ -43,8 +41,8 @@ struct TargetMapEntry
 {
 	UI08			cmdLevelReq;
 	UI08			cmdType;
-    TargetIDs		targID;
-    SI32			dictEntry;
+	TargetIDs		targID;
+	SI32			dictEntry;
 	TargetMapEntry() : cmdLevelReq( 0 ), cmdType( CMD_TARGET ), targID( TARGET_NOFUNC ), dictEntry( 0 )
 	{
 	}
@@ -82,7 +80,5 @@ extern	TARGETMAP											TargetMap;
 typedef std::map< std::string, JSCommandEntry >				JSCOMMANDMAP;
 typedef std::map< std::string, JSCommandEntry >::iterator	JSCOMMANDMAP_ITERATOR;
 extern JSCOMMANDMAP											JSCommandMap;
-
-}
 
 #endif // __CMDTABLE_H

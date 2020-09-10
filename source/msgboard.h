@@ -1,8 +1,6 @@
 #ifndef __MSGBOARD_H__
 #define __MSGBOARD_H__
 
-namespace UOX
-{
 // Different types of user posts
 enum PostTypes
 {
@@ -59,6 +57,5 @@ void    MsgBoardQuestEscortRemovePost( CChar *mNPC );
 void	MsgBoardRemoveFile( const SERIAL msgBoardSer );
 void    MsgBoardMaintenance( void );
 
-}
 
 #endif

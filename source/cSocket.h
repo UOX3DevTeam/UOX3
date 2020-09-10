@@ -1,9 +1,6 @@
 #ifndef __CSOCKET_H__
 #define __CSOCKET_H__
 
-namespace UOX
-{
-
 enum ClientTypes
 {
 	CV_DEFAULT = 0,
@@ -12,7 +9,7 @@ enum ClientTypes
 	CV_T2A,		// From 4.0.0p to 4.0.11c
 	CV_UO3D,	// Third Dawn 3D client
 	CV_ML,		// From 4.0.11f to 5.0.9.1
-	CV_KR2D,	// From 6.0.0.0+ to 6.0.14.1, first packet sent is 0xEF. 
+	CV_KR2D,	// From 6.0.0.0+ to 6.0.14.1, first packet sent is 0xEF.
 	CV_KR3D,
 	CV_SA2D,	// From 6.0.14.2 to 7.0.8.2, Stygian Abyss expansion client. First patcket sent is 0xEF, requires 0xB9 size-change from 3 to 5, new 0xF3 packet replacex 0x1A
 	CV_SA3D,
@@ -79,6 +76,8 @@ private:
 	CChar *			currCharObj;
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
+	SI32			negotiateTimeout;
+	bool			negotiatedWithAssistant;
 
 	UI08			buffer[MAXBUFFER];
 	UI08			outbuffer[MAXBUFFER];
@@ -93,9 +92,11 @@ private:
 
 	//	Temporary variables (For targeting commands, etc)
 	CBaseObject *	tmpObj;
+	CBaseObject *	tmpObj2;
 	SI08			clickz;
 	UI08			addid[4];
 	SI32			tempint;
+	SI32			tempint2;
 	UI08			dyeall;
 
 	bool			newClient;
@@ -109,8 +110,8 @@ private:
 
 	UI08			currentSpellType;
 
-	int				outlength;
-	int				inlength;
+	SI32			outlength;
+	SI32			inlength;
 
 	bool			logging;
 
@@ -134,7 +135,7 @@ private:
 	CItem *			cursorItem; //pointer to item held on mouse cursor
 
 
-	UI32			Pack( void *pvIn, void *pvOut, int len );
+	UI32			Pack( void *pvIn, void *pvOut, SI32 len );
 
 	UnicodeTypes	lang;
 	UI32			clientVersion;
@@ -148,8 +149,8 @@ private:
 	// Timer Vals moved here from CChar due to their inherently temporary nature and to reduce wasted memory
 	TIMERVAL		pcTimers[tPC_COUNT];
 public:
-					CSocket( size_t sockNum );
-					~CSocket();
+	CSocket( size_t sockNum );
+	~CSocket();
 
 	UI32			ClientVersion( void ) const;
 	void			ClientVersion( UI32 newVer );
@@ -187,6 +188,8 @@ public:
 	bool			FirstPacket( void ) const;
 	SI32			IdleTimeout( void ) const;
 	bool			WasIdleWarned( void ) const;
+	SI32			NegotiateTimeout( void ) const;
+	bool			NegotiatedWithAssistant( void ) const;
 	UI08 *			Buffer( void );
 	UI08 *			OutBuffer( void );
 	SI16			WalkSequence( void ) const;
@@ -195,8 +198,8 @@ public:
 	bool			CryptClient( void ) const;
 	size_t			CliSocket( void ) const;
 	UI08			CurrentSpellType( void ) const;
-	int				OutLength( void ) const;
-	int				InLength( void ) const;
+	SI32			OutLength( void ) const;
+	SI32			InLength( void ) const;
 	bool			Logging( void ) const;
 	CChar *			CurrcharObj( void ) const;
 	UI08			ClientIP1( void ) const;
@@ -213,7 +216,9 @@ public:
 
 	// Temporary Variables
 	CBaseObject *	TempObj( void ) const;
+	CBaseObject *	TempObj2( void ) const;
 	SI32			TempInt( void ) const;
+	SI32			TempInt2( void ) const;
 	UI32			AddID( void ) const;
 	UI08			AddID1( void ) const;
 	UI08			AddID2( void ) const;
@@ -249,13 +254,15 @@ public:
 	void			FirstPacket( bool newValue );
 	void			IdleTimeout( SI32 newValue );
 	void			WasIdleWarned( bool value );
+	void			NegotiateTimeout( SI32 newValue );
+	void			NegotiatedWithAssistant( bool value );
 	void			WalkSequence( SI16 newValue );
 	void			AcctNo( UI16 newValue );
 	void			CryptClient( bool newValue );
 	void			CliSocket( size_t newValue );
 	void			CurrentSpellType( UI08 newValue );
-	void			OutLength( int newValue );
-	void			InLength( int newValue );
+	void			OutLength( SI32 newValue );
+	void			InLength( SI32 newValue );
 	void			Logging( bool newValue );
 	void			CurrcharObj( CChar *newValue );
 	void			ClientIP1( UI08 );
@@ -267,8 +274,15 @@ public:
 	void			ForceOffline( bool newValue );
 
 	//	Temporary Variables
+
+	// Under protest I add, NEVER NEVER Do this
+	cScript 		*scriptForCallBack ;
+	// Get rid of above as soon as possible, horible.
+
 	void			TempObj( CBaseObject *newValue );
+	void			TempObj2( CBaseObject *newValue );
 	void			TempInt( SI32 newValue );
+	void			TempInt2( SI32 newValue );
 	void			AddID( UI32 newValue );
 	void			AddID1( UI08 newValue );
 	void			AddID2( UI08 newValue );
@@ -280,8 +294,8 @@ public:
 	bool			FlushBuffer( bool doLog = true );
 	bool			FlushLargeBuffer( bool doLog = true );
 	void			FlushIncoming( void );
-	void			Send( const void *point, int length );
-	int				Receive( int x, bool doLog = true );
+	void			Send( const void *point, SI32 length );
+	SI32			Receive( SI32 x, bool doLog = true );
 	void			ReceiveLogging( CPInputBuffer *toLog );
 
 	UI32			GetDWord( size_t offset );
@@ -305,14 +319,14 @@ public:
 	UnicodeTypes	Language( void ) const;
 	void			Language( UnicodeTypes newVal );
 
-	void			sysmessage( const char *txt, ... );
+	void			sysmessage( const std::string txt, ... );
 	void			sysmessage( SI32 dictEntry, ... );
-	void			objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
-	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2, ... );
+	void			objMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
+	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI32 Color = 0x03B2, ... );
 
 	void			ShowCharName( CChar *i, bool showSer  );
 
-	void			target( UI08 targType, UI08 targID, const char *txt );
+	void			target( UI08 targType, UI08 targID, const std::string& txt );
 	void			target( UI08 targType, UI08 targID,  SI32 dictEntry, ... );
 	void			mtarget( UI16 itemID, SI32 dictEntry );
 
@@ -335,10 +349,7 @@ public:
 private:
 
 	COLOUR			GetFlagColour( CChar *src, CChar *trg );
-	
+
 };
-
-}
-
 #endif
 

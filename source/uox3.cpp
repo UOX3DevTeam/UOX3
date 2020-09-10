@@ -1,32 +1,35 @@
 /*
 
-  Ultima Offline eXperiment III (UOX3)
-  UO Server Emulation Program
-  
-	Copyright 1997, 98 by Marcus Rating (Cironian)
-	
-	  This program is free software; you can redistribute it and/or modify
-	  it under the terms of the GNU General Public License as published by
-	  the Free Software Foundation; either version 2 of the License, or
-	  (at your option) any later version.
-	  
-		This program is distributed in the hope that it will be useful,
-		but WITHOUT ANY WARRANTY; without even the implied warranty of
-		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-		GNU General Public License for more details.
-		
-		  You should have received a copy of the GNU General Public License
-		  along with this program; if not, write to the Free Software
-		  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-		  
-			* In addition to that license, if you are running this program or modified  *
-			* versions of it on a public system you HAVE TO make the complete source of *
-			* the version used by you available or provide people with a location to    *
-			* download it.                                                              *
-			
-			  You can contact the author by sending email to <cironian@stratics.com>.
-			  
-*/
+ Ultima Offline eXperiment III (UOX3)
+ UO Server Emulation Program
+
+ Copyright 1997, 98 by Marcus Rating (Cironian)
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+ * In addition to that license, if you are running this program or modified  *
+ * versions of it on a public system you HAVE TO make the complete source of *
+ * the version used by you available or provide people with a location to    *
+ * download it.                                                              *
+
+ You can contact the author by sending email to <cironian@stratics.com>.
+
+ */
+#include <chrono>
+#include <random>
+#include <thread>
 
 #include "uox3.h"
 #include "weight.h"
@@ -64,37 +67,26 @@
 #include "ObjectFactory.h"
 #include "PartySystem.h"
 #include "CJSEngine.h"
-#include <chrono>
+#include "StringUtility.hpp"
 
-#if P_ODBC == 1
-#include "ODBCManager.h"
+std::thread cons ;
+std::thread netw;
+
+#if UOX_PLATFORM == PLATFORM_WIN32
+#include <process.h>
+#include <conio.h>
 #endif
 
-namespace UOX
-{
-
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_t cons, netw;
-#else
-	#include <process.h>
-	#include <conio.h>
-#endif
-
-timeval current;
-
-#undef DBGFILE
-#define DBGFILE "uox3.cpp"
-
-ObjectFactory *	objFactory;
-PartyFactory *	partySys;
-#if P_ODBC == 1
-ODBCManager *	odbcMan;
-#endif
+std::chrono::time_point<std::chrono::system_clock> current;
 
 
-//o---------------------------------------------------------------------------o
+
+
+std::mt19937 generator;
+
+//o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void		LoadCustomTitle( void );
 void		LoadSkills( void );
 void		LoadSpawnRegions( void );
@@ -103,9 +95,9 @@ void		LoadTeleportLocations( void );
 void		LoadCreatures( void );
 void		LoadPlaces( void );
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 // Misc Pre-Declarations
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
 void		sysBroadcast( const std::string& txt );
@@ -113,6 +105,11 @@ void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems );
 void		CheckAI( CChar& mChar );
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void UnloadSpawnRegions( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Unload spawn regions on server shutdown or when reloading spawn regions
+//o-----------------------------------------------------------------------------------------------o
 void UnloadSpawnRegions( void )
 {
 	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
@@ -126,6 +123,11 @@ void UnloadSpawnRegions( void )
 	cwmWorldState->spawnRegions.clear();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void UnloadRegions( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Unload town regions on server shutdown or when reloading town regions
+//o-----------------------------------------------------------------------------------------------o
 void UnloadRegions( void )
 {
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -139,13 +141,11 @@ void UnloadRegions( void )
 	cwmWorldState->townRegions.clear();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void DoMessageLoop( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Watch for messages thrown by UOX
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DoMessageLoop( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Watch for messages thrown by UOX
+//o-----------------------------------------------------------------------------------------------o
 void DoMessageLoop( void )
 {
 	while( !messageLoop.Empty() )
@@ -154,83 +154,79 @@ void DoMessageLoop( void )
 		switch( tVal.actualMessage )
 		{
 			case MSG_SHUTDOWN:		cwmWorldState->SetKeepRun( false );				break;
-			case MSG_COUNT:															break; 
+			case MSG_COUNT:															break;
 			case MSG_WORLDSAVE:		cwmWorldState->SetOldTime( 0 );					break;
 			case MSG_PRINT:			Console << tVal.data << myendl;					break;
 			case MSG_RELOADJS:		JSEngine->Reload();
-									JSMapping->Reload();
-									Console.PrintDone();
-									Commands->Load();								break;
+				JSMapping->Reload();
+				Console.PrintDone();
+				Commands->Load();								break;
 			case MSG_CONSOLEBCAST:	sysBroadcast( tVal.data );						break;
 			case MSG_PRINTDONE:		Console.PrintDone();							break;
 			case MSG_PRINTFAILED:	Console.PrintFailed();							break;
 			case MSG_SECTIONBEGIN:	Console.PrintSectionBegin();					break;
-			case MSG_RELOAD:		
+			case MSG_RELOAD:
 				if( !cwmWorldState->GetReloadingScripts() )
 				{
 					cwmWorldState->SetReloadingScripts( true );
 					switch( tVal.data[0] )
 					{
-					case '0':	cwmWorldState->ServerData()->Load();		break;	// Reload INI file
-					case '1':	Accounts->Load();							break;	// Reload accounts
-					case '2':	UnloadRegions();
-								LoadRegions(); 
-								LoadTeleportLocations();					break;	// Reload regions/TeleportLocations
-					case '3':	UnloadSpawnRegions();	LoadSpawnRegions();	break;	// Reload spawn regions
-					case '4':	Magic->LoadScript();						break;	// Reload spells
-					case '5':	JSMapping->Reload( SCPT_COMMAND );	
-								Commands->Load();							break;	// Reload commands
-					case '6':	FileLookup->Reload();
-								LoadCreatures();
-								LoadCustomTitle();
-								LoadSkills();
-								LoadPlaces();
-								Skills->Load();								break;	// Reload definition files
-					case '7':	JSEngine->Reload();
-								JSMapping->Reload();	
-								Console.PrintDone(); 	
-								Commands->Load();
-								Skills->Load();								break;	// Reload JS
-					case '8':	HTMLTemplates->Unload();
-								HTMLTemplates->Load();						break;	// Reload HTML
+						case '0':	cwmWorldState->ServerData()->Load();		break;	// Reload INI file
+						case '1':	Accounts->Load();							break;	// Reload accounts
+						case '2':	UnloadRegions();
+							LoadRegions();
+							LoadTeleportLocations();					break;	// Reload regions/TeleportLocations
+						case '3':	UnloadSpawnRegions();	LoadSpawnRegions();	break;	// Reload spawn regions
+						case '4':	Magic->LoadScript();						break;	// Reload spells
+						case '5':	JSMapping->Reload( SCPT_COMMAND );
+							Commands->Load();							break;	// Reload commands
+						case '6':	FileLookup->Reload();
+							LoadCreatures();
+							LoadCustomTitle();
+							LoadSkills();
+							LoadPlaces();
+							Skills->Load();								break;	// Reload definition files
+						case '7':	JSEngine->Reload();
+							JSMapping->Reload();
+							Console.PrintDone();
+							Commands->Load();
+							Skills->Load();								break;	// Reload JS
+						case '8':	HTMLTemplates->Unload();
+							HTMLTemplates->Load();						break;	// Reload HTML
 					}
 					cwmWorldState->SetReloadingScripts( false );
 				}
 				break;
 			case MSG_UNKNOWN:
-			default:				Console.Error( "Unknown message type" );		break;
+			default:				Console.error( "Unknown message type" );		break;
 		}
 	}
 }
 //------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-//	EviLDeD	-	June 21, 1999
+// June 21, 1999
 //	Ok here is thread number one its a simple thread for the checkkey() function
-//	EviLDeD	-	June 12, 2004 (<-- LOL must be an omen)
-//	xFTPd - Initial implementation of a very light weight FTP server for UOX3. 
-//					Expected functionality to provide file up/download access to shard
-//					operators that may not have direct access to their servers. 
-//					
-//					Commands supported: 
-#if UOX_PLATFORM == PLATFORM_WIN32
-CRITICAL_SECTION sc;	//
-#endif
+// June 12, 2004 (<-- LOL must be an omen)
+//	xFTPd - Initial implementation of a very light weight FTP server for UOX3.
+//	Expected functionality to provide file up/download access to shard
+//	operators that may not have direct access to their servers.
+//Nov 20, 2005
+//	Removed xFTP Server code as UOX3 should be a game server, not an FTP server.
+//
+//					Commands supported:
+
 
 bool conthreadcloseok	= false;
 bool netpollthreadclose	= false;
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void NetworkPollConnectionThread( void *params )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Watch for new connections
-//o---------------------------------------------------------------------------o
-#if UOX_PLATFORM != PLATFORM_WIN32
-void *NetworkPollConnectionThread( void *params )
-#else
-void NetworkPollConnectionThread( void *params )
-#endif
+//o-----------------------------------------------------------------------------------------------o
+void NetworkPollConnectionThread(  )
+
 {
 	messageLoop << "Thread: NetworkPollConnection has started";
 	netpollthreadclose = false;
@@ -238,21 +234,19 @@ void NetworkPollConnectionThread( void *params )
 	{
 		Network->CheckConnections();
 		Network->CheckLoginMessage();
-		UOXSleep( 20 );
+		std::this_thread::sleep_for(std::chrono::microseconds(20));
 	}
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_exit( NULL );
-#else
-	_endthread();
-#endif
 	messageLoop << "Thread: NetworkPollConnection has Closed";
+
+
 }
 
-#if UOX_PLATFORM != PLATFORM_WIN32
-void *CheckConsoleKeyThread( void *params )
-#else
-void CheckConsoleKeyThread( void *params )
-#endif
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckConsoleKeyThread( void *params )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Listen for key inputs in server console
+//o-----------------------------------------------------------------------------------------------o
+void CheckConsoleKeyThread(  )
 {
 	messageLoop << "Thread: CheckConsoleThread has started";
 	Console.Registration();
@@ -260,38 +254,16 @@ void CheckConsoleKeyThread( void *params )
 	while( !conthreadcloseok )
 	{
 		Console.Poll();
-		UOXSleep( 500 );
+		std::this_thread::sleep_for(std::chrono::microseconds(500));
 	}
-#if UOX_PLATFORM == PLATFORM_WIN32
-	_endthread();		// linux will kill the thread when it returns
-#endif
 	messageLoop << "Thread: CheckConsoleKeyThread Closed";
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_exit( NULL );
-#endif
 }
-//	EviLDeD	-	End
 
-#if UOX_PLATFORM != PLATFORM_WIN32
-
-void closesocket( UOXSOCKET s )
-{
-	shutdown( s, 2 );
-	close( s );
-}
-#endif
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool isOnline( CChar& mChar )
-//|	Date			-	
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Check if the socket owning character c is still connected
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isOnline( CChar& mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if the socket owning character c is still connected
+//o-----------------------------------------------------------------------------------------------o
 bool isOnline( CChar& mChar )
 {
 	if( mChar.IsNpc() )
@@ -302,25 +274,27 @@ bool isOnline( CChar& mChar )
 		if( actbTemp.dwInGame == mChar.GetSerial() )
 			return true;
 	}
-	Network->PushConn();
-	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{
-		if( tSock->CurrcharObj() == &mChar )
+		std::scoped_lock lock(Network->internallock);
+		Network->pushConn();
+		for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = 	Network->NextSocket() )
 		{
-			Network->PopConn();
-			return true;
+			if( tSock->CurrcharObj() == &mChar )
+			{
+				Network->popConn();
+				return true;
+			}
 		}
+		Network->popConn();
 	}
-	Network->PopConn();
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void updateStats( CChar *c, char x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates characters stats
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void updateStats( CChar *mChar, UI08 x )
 {
 	CPUpdateStat toSend( (*mChar), x );
@@ -335,12 +309,11 @@ void updateStats( CChar *mChar, UI08 x )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CollectGarbage( void )
-//|	Programmer	-	giwo
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes objects in the Deletion Queue
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CollectGarbage( void )
 {
 	Console << "Performing Garbage Collection...";
@@ -353,7 +326,7 @@ void CollectGarbage( void )
 		++delqIter;
 		if( mObj == NULL || mObj->isFree() || !mObj->isDeleted() )
 		{
-			Console.Warning( "Invalid object found in Deletion Queue" );
+			Console.warning( "Invalid object found in Deletion Queue" );
 			continue;
 		}
 		ObjectFactory::getSingleton().DestroyObject( mObj );
@@ -366,16 +339,13 @@ void CollectGarbage( void )
 	JSEngine->CollectGarbage();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void MountCreature( CChar *s, CChar *x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Mount a ridable creature
-//|									
-//|	Modification	-	09/22/2002	-	Xuri - Unhide players when mounting horses etc.
-//o---------------------------------------------------------------------------o
-//|	Returns			- N/A
-//o--------------------------------------------------------------------------o	
+//|
+//|	Changes		-	09/22/2002	-	Unhide players when mounting horses etc.
+//o-----------------------------------------------------------------------------------------------o
 void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 {
 	if( s->IsOnHorse() )
@@ -440,12 +410,11 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 		sockPtr->sysmessage( 1214 );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void DismountCreature( CChar *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dismount a ridable creature
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void DismountCreature( CChar *s )
 {
 	if( !ValidateObject( s ) )
@@ -470,47 +439,45 @@ void DismountCreature( CChar *s )
 	ci->Delete();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void endmessage( int x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void endmessage( SI32 x )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Global message players with shutdown message
-//o---------------------------------------------------------------------------o
-void endmessage( int x )
+//o-----------------------------------------------------------------------------------------------o
+void endmessage( SI32 x )
 {
 	x = 0;
 	const UI32 igetclock = cwmWorldState->GetUICurrentTime();
 	if( cwmWorldState->GetEndTime() < igetclock )
 		cwmWorldState->SetEndTime( igetclock );
-	char temp[1024];
-	sprintf( temp, Dictionary->GetEntry( 1209 ).c_str(), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 );
-	sysBroadcast( temp );
+
+
+	sysBroadcast( format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
 }
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-void illinst( int x = 0 ) //Thunderstorm linux fix
+void illinst( SI32 x = 0 ) //Thunderstorm linux fix
 {
 	sysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
-	Console.Error( "Illegal Instruction Signal caught - attempting shutdown" );
+	Console.error( "Illegal Instruction Signal caught - attempting shutdown" );
 	endmessage( x );
 }
 
-void aus( int signal )
+void aus( SI32 signal )
 {
-	Console.Error( "Server crash averted! Floating point exception caught." );
-} 
+	Console.error( "Server crash averted! Floating point exception caught." );
+}
 
 #endif
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void callguards( CChar *mChar )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used when a character calls "Guards" Will look for a criminal
 //|					first checking for anyone attacking him. If no one is attacking
 //|					him it will look for any people nearby who are criminal or
 //|					murderers
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void callGuards( CChar *mChar )
 {
 	if( !ValidateObject( mChar ) )
@@ -554,15 +521,14 @@ void callGuards( CChar *mChar )
 	regChars->Pop();
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void callguards( CChar *mChar, CChar *targChar )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used when a character calls guards on another character, will
 //|					ensure that character is not dead and is either a criminal or
 //|					murderer, and that he is in visual range of the victim, will
 //|					then spawn a guard to take care of the criminal.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void callGuards( CChar *mChar, CChar *targChar )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( targChar ) )
@@ -578,12 +544,11 @@ void callGuards( CChar *mChar, CChar *targChar )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool genericCheck( CSocket *mSock, CChar *mChar )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather )
 {
 	UI16 dbScript = 0;
@@ -591,103 +556,103 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	UI16 c;
 	if( !mChar.IsDead() )
 	{
-	if( mChar.GetHP() > mChar.GetMaxHP() )
-		mChar.SetHP( mChar.GetMaxHP() );
-	if( mChar.GetStamina() > mChar.GetMaxStam() )
-		mChar.SetStamina( mChar.GetMaxStam() );
-	if( mChar.GetMana() > mChar.GetMaxMana() )
-		mChar.SetMana( mChar.GetMaxMana() );
+		if( mChar.GetHP() > mChar.GetMaxHP() )
+			mChar.SetHP( mChar.GetMaxHP() );
+		if( mChar.GetStamina() > mChar.GetMaxStam() )
+			mChar.SetStamina( mChar.GetMaxStam() );
+		if( mChar.GetMana() > mChar.GetMaxMana() )
+			mChar.SetMana( mChar.GetMaxMana() );
 
-	if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-	{
-		if( mChar.GetHP() < mChar.GetMaxHP() )
+		if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetHunger() > 0 || ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
+			if( mChar.GetHP() < mChar.GetMaxHP() )
 			{
-				for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
+				if( mChar.GetHunger() > 0 || ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
-						if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
+					for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 					{
-						if( mChar.GetSkill( HEALING ) < 500 )
-							mChar.IncHP( 1 );
-						else if( mChar.GetSkill( HEALING ) < 800 )
-							mChar.IncHP( 2 );
-						else 
-							mChar.IncHP( 3 );
-						if( mChar.GetHP() >= mChar.GetMaxHP() )
+						if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
 						{
-							mChar.SetHP( mChar.GetMaxHP() ); 
+							if( mChar.GetSkill( HEALING ) < 500 )
+								mChar.IncHP( 1 );
+							else if( mChar.GetSkill( HEALING ) < 800 )
+								mChar.IncHP( 2 );
+							else
+								mChar.IncHP( 3 );
+							if( mChar.GetHP() >= mChar.GetMaxHP() )
+							{
+								mChar.SetHP( mChar.GetMaxHP() );
+								break;
+							}
+						}
+						else			// either we're all healed up, or all time periods have passed
+							break;
+					}
+				}
+			}
+			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_HITPOINTREGEN ), 0 );
+		}
+		if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		{
+			if( mChar.GetStamina() < mChar.GetMaxStam() )
+			{
+				for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
+				{
+					if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
+					{
+						mChar.IncStamina( 1 );
+						if( mChar.GetStamina() >= mChar.GetMaxStam() )
+						{
+							mChar.SetStamina( mChar.GetMaxStam() );
 							break;
 						}
 					}
-					else			// either we're all healed up, or all time periods have passed
+					else
 						break;
 				}
 			}
+			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
 		}
-		mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_HITPOINTREGEN ), 0 );
-	}
-	if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-	{
-		if( mChar.GetStamina() < mChar.GetMaxStam() )
-		{
-			for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
-			{
-					if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
-				{
-					mChar.IncStamina( 1 );
-					if( mChar.GetStamina() >= mChar.GetMaxStam() )
-					{
-						mChar.SetStamina( mChar.GetMaxStam() );
-						break;
-					}
-				}
-				else
-					break;
-			}
-		}
-		mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
-	}
 
-	// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
-	if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-	{
-		if( mChar.GetMana() < mChar.GetMaxMana() )
+		// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
+		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
+			if( mChar.GetMana() < mChar.GetMaxMana() )
 			{
-					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
+				for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
 				{
-						Skills->CheckSkill( ( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
-					mChar.IncMana( 1 );	// Gain a mana point
-					if( mChar.GetMana() == mChar.GetMaxMana() )
+					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
 					{
-						if( mChar.IsMeditating() ) // Morrolan = Meditation
+						Skills->CheckSkill( ( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
+						mChar.IncMana( 1 );	// Gain a mana point
+						if( mChar.GetMana() == mChar.GetMaxMana() )
 						{
-							if( mSock != NULL )
-								mSock->sysmessage( 969 );
-							mChar.SetMeditating( false );
+							if( mChar.IsMeditating() ) // Morrolan = Meditation
+							{
+								if( mSock != NULL )
+									mSock->sysmessage( 969 );
+								mChar.SetMeditating( false );
+							}
+							break;
 						}
-						break;
 					}
 				}
 			}
-		}
-		const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
-			int NextManaRegen = static_cast<int>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
-		if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )	// If armor effects mana regeneration...
-		{
+			const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
+			SI32 NextManaRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
+			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )	// If armor effects mana regeneration...
+			{
 				R32 ArmorPenalty = Combat->calcDef( ( &mChar ), 0, false );	// Penalty taken due to high def
-			if( ArmorPenalty > 100 )	// For def higher then 100, penalty is the same...just in case
-				ArmorPenalty = 100;
+				if( ArmorPenalty > 100 )	// For def higher then 100, penalty is the same...just in case
+					ArmorPenalty = 100;
 				ArmorPenalty = 1 + ( ArmorPenalty / 25 );
-				NextManaRegen = static_cast<int>( NextManaRegen * ArmorPenalty );
+				NextManaRegen = static_cast<SI32>( NextManaRegen * ArmorPenalty );
+			}
+			if( mChar.IsMeditating() )	// If player is meditation...
+				mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
+			else
+				mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
 		}
-		if( mChar.IsMeditating() )	// If player is meditation...
-			mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
-		else
-			mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
-	}
 	}
 	// CUSTOM END
 	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
@@ -703,88 +668,88 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	// Hunger Code
 	if( !mChar.IsDead() )
 	{
-	mChar.DoHunger( mSock );
-	
-	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
-	{
-		if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		mChar.DoHunger( mSock );
+
+		if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
 		{
-			if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
+			if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
-				SI16 pcalc = 0;
-				switch( mChar.GetPoisoned() )
+				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
-					case 1:
-						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
-						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-						{
-							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar.TextMessage( NULL, 1240, EMOTE, true, mChar.GetName().c_str() );
-						}
-						mChar.Damage( (SI16)RandomNum( 1, 2 ) );
-						break;
-					case 2:
-						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
-						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-						{
-							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar.TextMessage( NULL, 1241, EMOTE, true, mChar.GetName().c_str() );
-						}
-						pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
-						mChar.Damage( (SI16)pcalc );
-						break;
-					case 3:
-						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
-						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-						{
-							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar.TextMessage( NULL, 1242, EMOTE, true, mChar.GetName().c_str() );
-						}
-						pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
-						mChar.Damage( (SI16)pcalc );
-						break;
-					case 4:
-						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
-						if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-						{
-							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-							mChar.TextMessage( NULL, 1243, EMOTE, true, mChar.GetName().c_str() );
-						}
-						pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-						mChar.Damage( (SI16)pcalc );
-						break;
-					default:
-						Console.Error( " Fallout of switch statement without default. uox3.cpp, genericCheck(), mChar.GetPoisoned() not within valid range." );
-						mChar.SetPoisoned( 0 );
-						break;
-				}
-				if( mChar.GetHP() < 1 && !mChar.IsDead() )
-				{
-					dbScript		= mChar.GetScriptTrigger();
-					cScript *toExecute	= JSMapping->GetScript( dbScript );
-					if( toExecute != NULL )
+					SI16 pcalc = 0;
+					switch( mChar.GetPoisoned() )
 					{
-						if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
-							return false;
+						case 1:
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							{
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+								mChar.TextMessage( NULL, 1240, EMOTE, true, mChar.GetName().c_str() );
+							}
+							mChar.Damage( (SI16)RandomNum( 1, 2 ) );
+							break;
+						case 2:
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							{
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+								mChar.TextMessage( NULL, 1241, EMOTE, true, mChar.GetName().c_str() );
+							}
+							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
+							mChar.Damage( (SI16)pcalc );
+							break;
+						case 3:
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							{
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+								mChar.TextMessage( NULL, 1242, EMOTE, true, mChar.GetName().c_str() );
+							}
+							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
+							mChar.Damage( (SI16)pcalc );
+							break;
+						case 4:
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							{
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+								mChar.TextMessage( NULL, 1243, EMOTE, true, mChar.GetName().c_str() );
+							}
+							pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
+							mChar.Damage( (SI16)pcalc );
+							break;
+						default:
+							Console.error( " Fallout of switch statement without default. uox3.cpp, genericCheck(), mChar.GetPoisoned() not within valid range." );
+							mChar.SetPoisoned( 0 );
+							break;
 					}
+					if( mChar.GetHP() < 1 && !mChar.IsDead() )
+					{
+						dbScript = mChar.GetScriptTrigger();
+						cScript *toExecute = JSMapping->GetScript( dbScript );
+						if( toExecute != NULL )
+						{
+							if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
+								return false;
+						}
 
 						HandleDeath( ( &mChar ) );
-					if( mSock != NULL )
-						mSock->sysmessage( 1244 );
-				} 
+						if( mSock != NULL )
+							mSock->sysmessage( 1244 );
+					}
+				}
 			}
 		}
-	}
 
-	if( mChar.GetTimer( tCHAR_POISONWEAROFF ) <= cwmWorldState->GetUICurrentTime() )
-	{
-		if( mChar.GetPoisoned() > 0 )
+		if( mChar.GetTimer( tCHAR_POISONWEAROFF ) <= cwmWorldState->GetUICurrentTime() )
 		{
-            mChar.SetPoisoned( 0 );
-			if( mSock != NULL )
-				mSock->sysmessage( 1245 );
+			if( mChar.GetPoisoned() > 0 )
+			{
+				mChar.SetPoisoned( 0 );
+				if( mSock != NULL )
+					mSock->sysmessage( 1245 );
+			}
 		}
-	}
 	}
 
 	if( !mChar.GetCanAttack() && mChar.GetTimer( tCHAR_PEACETIMER ) <= cwmWorldState->GetUICurrentTime() )
@@ -793,7 +758,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		if( mSock != NULL )
 			mSock->sysmessage( 1779 );
 	}
-	
+
 	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
 		if( mSock != NULL )
@@ -816,31 +781,31 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 
 	if( !mChar.IsDead() )
 	{
-	if( doWeather )
-	{
-		const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-		LIGHTLEVEL toShow;
-		if( Races->VisLevel( mChar.GetRace() ) > curLevel )
-			toShow = 0;
-		else
-			toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ) );
-		if( mChar.IsNpc() )
-			doLight( &mChar, toShow );
-		else
-			doLight( mSock, toShow );
-	}
+		if( doWeather )
+		{
+			const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+			LIGHTLEVEL toShow;
+			if( Races->VisLevel( mChar.GetRace() ) > curLevel )
+				toShow = 0;
+			else
+				toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ) );
+			if( mChar.IsNpc() )
+				doLight( &mChar, toShow );
+			else
+				doLight( mSock, toShow );
+		}
 
-	Weather->doLightEffect( mSock, mChar );
-	Weather->doWeatherEffect( mSock, mChar, RAIN );
-	Weather->doWeatherEffect( mSock, mChar, SNOW );
-	Weather->doWeatherEffect( mSock, mChar, HEAT );
-	Weather->doWeatherEffect( mSock, mChar, COLD );
-	Weather->doWeatherEffect( mSock, mChar, STORM );
+		Weather->doLightEffect( mSock, mChar );
+		Weather->doWeatherEffect( mSock, mChar, RAIN );
+		Weather->doWeatherEffect( mSock, mChar, SNOW );
+		Weather->doWeatherEffect( mSock, mChar, HEAT );
+		Weather->doWeatherEffect( mSock, mChar, COLD );
+		Weather->doWeatherEffect( mSock, mChar, STORM );
 
-	if( checkFieldEffects )
-		Magic->CheckFieldEffects( mChar );
+		if( checkFieldEffects )
+			Magic->CheckFieldEffects( mChar );
 
-	mChar.UpdateDamageTrack();
+		mChar.UpdateDamageTrack();
 	}
 
 	if( mChar.IsDead() )
@@ -861,16 +826,15 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void checkPC( CChar& mChar, bool doWeather )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void checkPC( CSocket *mSock, CChar& mChar )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check a PC's status
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void checkPC( CSocket *mSock, CChar& mChar )
 {
 	Combat->CombatLoop( mSock, mChar );
-	
+
 	if( mChar.GetSquelched() == 2 )
 	{
 		if( mSock->GetTimer( tPC_MUTETIME ) != 0 && ( mSock->GetTimer( tPC_MUTETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
@@ -899,7 +863,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 				mChar.SetTimer( tCHAR_SPELLTIME, 0 );
 				mChar.SetFrozen( false );
 			}
-		} 
+		}
 		else if( mChar.GetNextAct() <= 0 )//redo the spell action
 		{
 			mChar.SetNextAct( 75 );
@@ -907,7 +871,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 				Effects->PlaySpellCastingAnimation( &mChar, Magic->spells[mChar.GetSpellCast()].Action() );
 		}
 	}
-	
+
 	if( cwmWorldState->ServerData()->WorldAmbientSounds() >= 1 )
 	{
 		if( cwmWorldState->ServerData()->WorldAmbientSounds() > 10 )
@@ -916,10 +880,10 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		if( !mChar.IsDead() && ( RandomNum( 0, soundTimer - 1 ) ) == ( soundTimer / 2 ) )
 			Effects->PlayBGSound( (*mSock), mChar );
 	}
-	
+
 	if( mSock->GetTimer( tPC_SPIRITSPEAK ) > 0 && mSock->GetTimer( tPC_SPIRITSPEAK) < cwmWorldState->GetUICurrentTime() )
 		mSock->SetTimer( tPC_SPIRITSPEAK, 0 );
-	
+
 	if( mSock->GetTimer( tPC_TRACKING ) > cwmWorldState->GetUICurrentTime() )
 	{
 		if( mSock->GetTimer( tPC_TRACKINGDISPLAY ) <= cwmWorldState->GetUICurrentTime() )
@@ -943,7 +907,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 			}
 		}
 	}
-	
+
 	if( mSock->GetTimer( tPC_FISHING ) )
 	{
 		if( mSock->GetTimer( tPC_FISHING ) <= cwmWorldState->GetUICurrentTime() )
@@ -952,7 +916,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 			mSock->SetTimer( tPC_FISHING, 0 );
 		}
 	}
-	
+
 	if( mChar.IsOnHorse() )
 	{
 		CItem *horseItem = mChar.GetItemAtLayer( IL_MOUNT );
@@ -966,12 +930,11 @@ void checkPC( CSocket *mSock, CChar& mChar )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
-//|	Programmer	-	UOX Devteam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check NPC's status
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck )
 {
 	// okay, this will only ever trigger after we check an npc...  Question is:
@@ -1002,10 +965,10 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	{
 		if( mChar.GetTimer( tNPC_SUMMONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			// Dupois - Added Dec 20, 1999
+			// Added Dec 20, 1999
 			// QUEST expire check - after an Escort quest is created a timer is set
 			// so that the NPC will be deleted and removed from the game if it hangs around
-			// too long without every having its quest accepted by a player so we have to remove 
+			// too long without every having its quest accepted by a player so we have to remove
 			// its posting from the messageboard before icing the NPC
 			// Only need to remove the post if the NPC does not have a follow target set
 			if( mChar.GetQuestType() == QT_ESCORTQUEST && !ValidateObject( mChar.GetFTarg() ) )
@@ -1014,7 +977,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 				mChar.Delete();
 				return;
 			}
-			// Dupois - End
+
 			if( mChar.GetNPCAiType() == AI_GUARD && mChar.IsAtWar() )
 			{
 				mChar.SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
@@ -1026,12 +989,12 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 			return;
 		}
 	}
-	
+
 	if( mChar.GetFleeAt() == 0 )
 		mChar.SetFleeAt( cwmWorldState->ServerData()->CombatNPCBaseFleeAt() );
 	if( mChar.GetReattackAt() == 0 )
 		mChar.SetReattackAt( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() );
-	
+
 	if( mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_FROZEN && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ) )
 	{
 		mChar.SetOldNpcWander( mChar.GetNpcWander() );
@@ -1047,6 +1010,11 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	Combat->CombatLoop( NULL, mChar );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check item decay, spawn timers and boat movement in a given region
+//o-----------------------------------------------------------------------------------------------o
 void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 {
 	CDataList< CItem * > *regItems = toCheck->GetItemList();
@@ -1067,51 +1035,51 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			}
 			switch( itemCheck->GetType() )
 			{
-			case IT_ITEMSPAWNER:
-			case IT_NPCSPAWNER:
-			case IT_SPAWNCONT:
-			case IT_LOCKEDSPAWNCONT:
-			case IT_UNLOCKABLESPAWNCONT:
-			case IT_AREASPAWNER:
-			case IT_ESCORTNPCSPAWNER:
-				if( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-				{
-					if( itemCheck->GetObjType() == OT_SPAWNER )
+				case IT_ITEMSPAWNER:
+				case IT_NPCSPAWNER:
+				case IT_SPAWNCONT:
+				case IT_LOCKEDSPAWNCONT:
+				case IT_UNLOCKABLESPAWNCONT:
+				case IT_AREASPAWNER:
+				case IT_ESCORTNPCSPAWNER:
+					if( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 					{
-						CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
-						if( spawnItem->DoRespawn() )
-						continue;
-						spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
-					}
-					else
-					{
-						itemCheck->SetType( IT_NOTYPE );
-						Console.Warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command.", "server.log" );
-					}
-				}
-				break;
-			case IT_SOUNDOBJECT:
-				if( itemCheck->GetTempVar( CITV_MOREY ) < 25 )
-				{
-					if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) )
-					{
-						SOCKLIST nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
-						for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+						if( itemCheck->GetObjType() == OT_SPAWNER )
 						{
-							Effects->PlaySound( (*cIter), static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
+							CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
+							if( spawnItem->DoRespawn() )
+								continue;
+							spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
+						}
+						else
+						{
+							itemCheck->SetType( IT_NOTYPE );
+							Console.warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command." );
 						}
 					}
-				}
-				break;
-			default:
-				break;
+					break;
+				case IT_SOUNDOBJECT:
+					if( itemCheck->GetTempVar( CITV_MOREY ) < 25 )
+					{
+						if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) )
+						{
+							SOCKLIST nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
+							for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+							{
+								Effects->PlaySound( (*cIter), static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
+							}
+						}
+					}
+					break;
+				default:
+					break;
 			}
-		} 
+		}
 		if( itemCheck->CanBeObjType( OT_BOAT ) )
 		{
 			CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
-			if( ValidateObject( mBoat ) && mBoat->GetMoveType() && 
-				( mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+			if( ValidateObject( mBoat ) && mBoat->GetMoveType() &&
+			   ( mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 			{
 				if( mBoat->GetMoveType() == 1 )
 					MoveBoat( itemCheck->GetDir(), mBoat );
@@ -1129,15 +1097,14 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 	regItems->Pop();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void checkauto( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckAutoTimers( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check automatic and timer controlled functions
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CWorldMain::CheckAutoTimers( void )
 {
-	static UI32 nextCheckSpawnRegions	= 0; 
+	static UI32 nextCheckSpawnRegions	= 0;
 	static UI32 nextCheckTownRegions	= 0;
 	static UI32 nextCheckItems			= 0;
 	static UI32 nextDecayItems			= 0;
@@ -1161,16 +1128,19 @@ void CWorldMain::CheckAutoTimers( void )
 			if( actbTemp.wFlags.test( AB_FLAGS_ONLINE ) )
 			{
 				reallyOn = false;	// to start with, there's no one really on
-				Network->PushConn();
-				for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 				{
-					CChar *tChar = tSock->CurrcharObj();
-					if( !ValidateObject( tChar ) )
-						continue;
-					if( tChar->GetAccount().wAccountIndex == actbTemp.wAccountIndex )
-						reallyOn = true;
+					std::scoped_lock lock(Network->internallock);
+					Network->pushConn();
+					for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
+					{
+						CChar *tChar = tSock->CurrcharObj();
+						if( !ValidateObject( tChar ) )
+							continue;
+						if( tChar->GetAccount().wAccountIndex == actbTemp.wAccountIndex )
+							reallyOn = true;
+					}
+					Network->popConn();
 				}
-				Network->PopConn();
 				if( !reallyOn )	// no one's really on, let's set that
 				{
 					actbTemp.wFlags.reset( AB_FLAGS_ONLINE );
@@ -1179,52 +1149,83 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 		accountFlush = BuildTimeValue( (R32)ServerData()->AccountFlushTimer() );
 	}
-	Network->On();
+	//Network->On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
+					// PushConn and PopConn lock and unlock as well (yes, bad)
+					// But now we are doing recursive lock here
 
 	if( GetWorldSaveProgress() == SS_NOTSAVING )
 	{
-		Network->PushConn();
-		for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
-			if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= GetUICurrentTime() )
+			std::scoped_lock lock(Network->internallock);
+			Network->pushConn();
+			for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
-				CChar *tChar = tSock->CurrcharObj();
-				if( !ValidateObject( tChar ) )
-					continue;
-				if( !tChar->IsGM() )
+				if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= GetUICurrentTime() )
 				{
-					tSock->IdleTimeout( -1 );
-					tSock->sysmessage( 1246 );
-					Network->Disconnect( tSock );
+					CChar *tChar = tSock->CurrcharObj();
+					if( !ValidateObject( tChar ) )
+						continue;
+					if( !tChar->IsGM() )
+					{
+						tSock->IdleTimeout( -1 );
+						tSock->sysmessage( 1246 );
+						Network->Disconnect( tSock );
+					}
+				}
+				else if( ( ( (UI32)( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime() && (UI32)( tSock->IdleTimeout()+200*1000) >= GetUICurrentTime() ) || GetOverflow() ) && !tSock->WasIdleWarned()  )
+				{//is their idle time between 3 and 5 minutes, and they haven't been warned already?
+					CPIdleWarning warn( 0x07 );
+					tSock->Send( &warn );
+					tSock->WasIdleWarned( true );
+				}
+
+				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+				{
+					if( tSock->NegotiateTimeout() != -1 && (UI32)tSock->NegotiateTimeout() <= GetUICurrentTime() )
+					{
+						const CChar *tChar = tSock->CurrcharObj();
+						if( !ValidateObject( tChar ) )
+							continue;
+						if( !tChar->IsGM() )
+						{
+							tSock->IdleTimeout( -1 );
+							tSock->sysmessage( "Failed to negotiate features with assistant tool. Disconnecting client..." );
+							Network->Disconnect( tSock );
+						}
+					}
 				}
 			}
-			else if( ( ( (UI32)( tSock->IdleTimeout() + 300 * 1000 ) <= GetUICurrentTime() && (UI32)( tSock->IdleTimeout()+200*1000) >= GetUICurrentTime() ) || GetOverflow() ) && !tSock->WasIdleWarned()  )
-			{//is their idle time between 3 and 5 minutes, and they haven't been warned already?
-				CPIdleWarning warn( 0x07 );
-				tSock->Send( &warn );
-				tSock->WasIdleWarned( true );
-			}
+			Network->popConn();
 		}
-		Network->PopConn();
 	}
 	else if( GetWorldSaveProgress() == SS_JUSTSAVED )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
 	{
-		Network->PushConn();
-		for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 		{
-			if( wsSocket != NULL )
+			std::scoped_lock lock(Network->internallock);
+			Network->pushConn();
+			for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 			{
-				if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() )
+				if( wsSocket != NULL )
 				{
-					wsSocket->IdleTimeout( BuildTimeValue( 60.0f ) );
-					wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
+					if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() )
+					{
+						wsSocket->IdleTimeout( BuildTimeValue( 60.0F ) );
+						wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
+					}
+					if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+					{
+						if( (UI32)wsSocket->NegotiateTimeout() < GetUICurrentTime() )
+						{
+							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ) );
+						}
+					}
 				}
 			}
+			Network->popConn();
 		}
-		Network->PopConn();
 		SetWorldSaveProgress( SS_NOTSAVING );
 	}
-	Network->Off();
+	//Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
 		TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -1252,13 +1253,13 @@ void CWorldMain::CheckAutoTimers( void )
 			if( spawnReg != NULL )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
-                    spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
+					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 			}
 			++spIter;
 		}
 		nextCheckSpawnRegions = BuildTimeValue( (R32)ServerData()->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
 	}
-	
+
 	HTMLTemplates->Poll( ETT_ALLTEMPLATES );
 
 	const UI32 saveinterval = ServerData()->ServerSavesTimerStatus();
@@ -1277,7 +1278,7 @@ void CWorldMain::CheckAutoTimers( void )
 
 		if( difftime( GetNewTime(), GetOldTime() ) >= saveinterval )
 		{
-			// Dupois - Added Dec 20, 1999
+			// Added Dec 20, 1999
 			// After an automatic world save occurs, lets check to see if
 			// anyone is online (clients connected).  If nobody is connected
 			// Lets do some maintenance on the bulletin boards.
@@ -1298,7 +1299,7 @@ void CWorldMain::CheckAutoTimers( void )
 			SaveNewWorld( false );
 		}
 	}
-	
+
 	time_t oldIPTime = GetOldIPTime();
 	if( !GetIPUpdated() )
 	{
@@ -1309,13 +1310,13 @@ void CWorldMain::CheckAutoTimers( void )
 	time_t newIPTime = GetNewIPTime();
 	time(&newIPTime);
 	SetNewIPTime( newIPTime );
-	
+
 	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
 	{
 		ServerData()->RefreshIPs();
 		SetIPUpdated( false );
 	}
-	
+
 	//Time functions
 	if( GetUOTickCount() <= GetUICurrentTime() || ( GetOverflow() ) )
 	{
@@ -1327,7 +1328,7 @@ void CWorldMain::CheckAutoTimers( void )
 
 		SetUOTickCount( BuildTimeValue( ServerData()->ServerSecondsPerUOMinute() ) );
 	}
-	
+
 	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() || GetOverflow() )
 	{
 		doWorldLight();  //Changes lighting, if it is currently time to.
@@ -1349,35 +1350,39 @@ void CWorldMain::CheckAutoTimers( void )
 		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
 	}
 	std::set< CMapRegion * > regionList;
-	Network->PushConn();
-	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
-		if( iSock == NULL )
-			continue;
-		CChar *mChar		= iSock->CurrcharObj();
-		if( !ValidateObject( mChar ) )
-			continue;
-		UI08 worldNumber	= mChar->WorldNumber();
-		if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
-		{
-			genericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
-			checkPC( iSock, (*mChar) );
+		std::scoped_lock lock(Network->internallock);
 
-			SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
-			SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
-			for( SI08 counter = -1; counter <= 1; ++counter ) // Check 3 x colums
+		Network->pushConn();
+		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
+		{
+			if( iSock == NULL )
+				continue;
+			CChar *mChar		= iSock->CurrcharObj();
+			if( !ValidateObject( mChar ) )
+				continue;
+			UI08 worldNumber	= mChar->WorldNumber();
+			if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
 			{
-				for( SI08 ctr2 = -1; ctr2 <= 1; ++ctr2 ) // Check 3 y colums
+				genericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
+				checkPC( iSock, (*mChar) );
+
+				SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
+				SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
+				for( SI08 counter = -1; counter <= 1; ++counter ) // Check 3 x colums
 				{
-					CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
-					if( tC == NULL )
-						continue;
-					regionList.insert( tC );
+					for( SI08 ctr2 = -1; ctr2 <= 1; ++ctr2 ) // Check 3 y colums
+					{
+						CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
+						if( tC == NULL )
+							continue;
+						regionList.insert( tC );
+					}
 				}
 			}
 		}
+		Network->popConn();
 	}
-	Network->PopConn();
 
 	// Reduce some lag checking these timers constantly in the loop
 	bool setNPCFlags = false, checkItems = false, checkAI = false, doRestock = false;
@@ -1496,12 +1501,11 @@ void CWorldMain::CheckAutoTimers( void )
 	cwmWorldState->refreshQueue.clear();
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void InitClasses( void )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initialize UOX classes
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void InitClasses( void )
 {
 	cwmWorldState->ClassesInitialized( true );
@@ -1509,22 +1513,19 @@ void InitClasses( void )
 	JSMapping		= NULL;	Effects		= NULL;
 	Commands		= NULL;	Combat		= NULL;
 	Items			= NULL;	Map			= NULL;
-	Npcs			= NULL;	Skills		= NULL;	
+	Npcs			= NULL;	Skills		= NULL;
 	Weight			= NULL;	JailSys		= NULL;
-	Network			= NULL;	Magic		= NULL;		
+	Network			= NULL;	Magic		= NULL;
 	Races			= NULL;	Weather		= NULL;
 	Movement		= NULL;	GuildSys	= NULL;
 	WhoList			= NULL;	OffList		= NULL;
-	Books			= NULL;	GMQueue		= NULL;	
+	Books			= NULL;	GMQueue		= NULL;
 	Dictionary		= NULL;	Accounts	= NULL;
 	MapRegion		= NULL;	SpeechSys	= NULL;
 	CounselorQueue	= NULL;
 	HTMLTemplates	= NULL;
 	FileLookup		= NULL;
-	objFactory		= NULL; partySys	= NULL;
 
-	objFactory		= new ObjectFactory;
-	partySys		= new PartyFactory;
 	JSEngine		= new CJSEngine;
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
 	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
@@ -1559,40 +1560,24 @@ void InitClasses( void )
 	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void ParseArgs( int argc, char *argv[] )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Unknown
-//o---------------------------------------------------------------------------o
-void ParseArgs( int argc, char *argv[] )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ParseArgs( SI32 argc, char *argv[] )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle command-line arguments on startup
+//o-----------------------------------------------------------------------------------------------o
+void ParseArgs( SI32 argc, char *argv[] )
 {
-	for( int i = 1; i < argc; ++i )
+	for( SI32 i = 1; i < argc; ++i )
 	{
-		if( !strcmp( argv[i], "-ERROR" ) )
-		{
-			cwmWorldState->SetErrorCount( UString( argv[i+1] ).toULong() );
-			++i;
-		}
-		else if( !strcmp( argv[i], "-dumptags" ) )
-		{
-			cwmWorldState->ServerData()->dumpLookup( 0 );
-			cwmWorldState->ServerData()->save( "./uox.tst.ini" );
-			Shutdown( FATAL_UOX3_SUCCESS );
-		}
-		else if( !strcmp( argv[i], "-cluox100" ) )
-		{
-			++i;
-			if( i > argc )
-			{
-				Console.Error( "Fatal error in CLUOX arguments" );
-				Shutdown( 10 );
-			}
-			Console.Cloak( argv[i] );
-		}
+		// FIXME why is this for loop remaining?
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Looks for a multi at object's location and assigns any multi found to object
+//o-----------------------------------------------------------------------------------------------o
 bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
@@ -1606,12 +1591,11 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void InitMultis( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initialize Multis
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void InitMultis( void )
 {
 	Console << "Initializing multis            ";
@@ -1623,19 +1607,18 @@ void InitMultis( void )
 	Console.PrintDone();
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void DisplayBanner( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	UOX startup stuff
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display some information at the end of UOX startup
+//o-----------------------------------------------------------------------------------------------o
 void DisplayBanner( void )
 {
 	Console.PrintSectionBegin();
 
-	char idname[256];
-	sprintf( idname, "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
- 
+
+	//auto idName = format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
+
 	Console.TurnYellow();
 	Console << "Compiled on ";
 	Console.TurnNormal();
@@ -1650,66 +1633,25 @@ void DisplayBanner( void )
 	Console << "Contact: ";
 	Console.TurnNormal();
 	Console << CVersionClass::GetEmail() << myendl;
-	
+
 	Console.PrintSectionBegin();
 }
 
-//o---------------------------------------------------------------------------o
-//|            Function     - Restart()
-//|            Date         - 1/7/00
-//|            Programmer   - Zippy
-//o---------------------------------------------------------------------------o
-//|            Purpose      - Restarts the server, passes the server number of 
-//|								Number of crashes so far, if < 10 then the
-//|								Server will restart itself.
-//o---------------------------------------------------------------------------o
-void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
-{
-	if( !ErrorCode )
-		return;
-	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() > 1 )
-	{		
-		if( cwmWorldState->GetErrorCount() < 10 )
-		{
-			char temp[1024];
-			cwmWorldState->IncErrorCount();
-			
-			sprintf( temp, "Server crash #%lu from unknown error, restarting.", cwmWorldState->GetErrorCount() );
-			Console.Log( temp, "server.log" );
-			Console << temp << myendl;
-			
-			sprintf(temp, "uox.exe -ERROR %lu", cwmWorldState->GetErrorCount() );
-			
-			delete cwmWorldState;
-			system( temp );
-			exit(ErrorCode); // Restart successful Don't give them key presses or anything, just go out.
-		} 
-		else 
-		{
-			Console.Log( "10th Server crash, server shutting down.", "server.log" );
-			Console << "10th Server crash, server shutting down" << myendl;
-		}
-	} 
-	else 
-		Console.Log( "Server crash!", "server.log" );
-}
 
-//o---------------------------------------------------------------------------o
-//|            Function     - void Shutdown( int retCode )
-//|            Date         - Oct. 09, 1999
-//|            Programmer   - Krazyglue
-//o---------------------------------------------------------------------------o
-//|            Purpose      - Handled deleting / free() ing of pointers as neccessary
-//|                                   as well as closing open file handles to avoid file
-//|                                   file corruption.
-//|                                   Exits with proper error code.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Shutdown( SI32 retCode )
+//|	Date		-	Oct. 09, 1999
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handled deleting / free() ing of pointers as neccessary
+//|					as well as closing open file handles to avoid file file corruption.
+//|					Exits with proper error code.
+//o-----------------------------------------------------------------------------------------------o
 void Shutdown( SI32 retCode )
 {
 	Console.PrintSectionBegin();
 	Console << myendl << "Beginning UOX final shut down sequence..." << myendl;
 
-	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() >= 1 && retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
+	if( retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 		do
 		{
@@ -1778,37 +1720,21 @@ void Shutdown( SI32 retCode )
 	}
 
 	//Lets wait for console thread to quit here
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_join( cons, NULL );
-#ifdef __LOGIN_THREAD__
-	pthread_join( netw, NULL );
-#endif
-#endif
+	cons.join();
 
 	// don't leave file pointers open, could lead to file corruption
 
 	Console.PrintSectionBegin();
-	if( retCode && cwmWorldState->GetLoaded() )//do restart unless we have crashed with some error.
-		Restart( (UI16)retCode );
-	else
-		delete cwmWorldState;
+	delete cwmWorldState;
 
 	Console.TurnGreen();
-
-	delete partySys;
-	delete objFactory;
-#if P_ODBC == 1
-	ODBCManager::getSingleton().Disconnect();
-	delete odbcMan;
-#endif
-
 	Console << "Server shutdown complete!" << myendl;
 	Console << "Thank you for supporting " << CVersionClass::GetName() << myendl;
 	Console.TurnNormal();
 	Console.PrintSectionBegin();
-	
+
 	// dispay what error code we had
-	// don't report errorlevel for no errors, this is confusing ppl - fur
+	// don't report errorlevel for no errors, this is confusing ppl
 	if( retCode )
 	{
 		Console.TurnRed();
@@ -1826,17 +1752,16 @@ void Shutdown( SI32 retCode )
 		Console << "Exiting UOX with no errors..." << myendl;
 		Console.TurnNormal();
 	}
-	
+
 	Console.PrintSectionBegin();
 	exit(retCode);
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void advanceObj( CChar *s, UI16 x, bool multiUse )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle advancement objects (stat / skill gates)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 {
 	if( applyTo->GetAdvObj() == 0 || multiUse )
@@ -1844,7 +1769,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlayStaticAnimation( applyTo, 0x373A, 0, 15);
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
-		UString sect				= "ADVANCEMENT " + UString::number( advObj );
+		UString sect				= std::string("ADVANCEMENT ") + str_number( advObj );
 		sect						= sect.stripWhiteSpace();
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == NULL )
@@ -1883,26 +1808,26 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_DEX:				applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 				case DFNTAG_DETECTINGHIDDEN:	skillToSet = DETECTINGHIDDEN;					break;
 				case DFNTAG_DYEHAIR:
-												if( ValidateObject( hairobject ) )
-													hairobject->SetColour( static_cast<UI16>(ndata) );
-												break;
+					if( ValidateObject( hairobject ) )
+						hairobject->SetColour( static_cast<UI16>(ndata) );
+					break;
 				case DFNTAG_DYEBEARD:
-												if( ValidateObject( beardobject ) )
-													beardobject->SetColour( static_cast<UI16>(ndata) );
-												break;
+					if( ValidateObject( beardobject ) )
+						beardobject->SetColour( static_cast<UI16>(ndata) );
+					break;
 				case DFNTAG_ENTICEMENT:			skillToSet = ENTICEMENT;						break;
 				case DFNTAG_EVALUATINGINTEL:	skillToSet = EVALUATINGINTEL;					break;
 				case DFNTAG_EQUIPITEM:
-												retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-												if( retitem != NULL )
-												{
-													if( !retitem->SetCont( applyTo ) )
-													{
-														retitem->SetCont( applyTo->GetPackItem() );
-														retitem->PlaceInPack();
-													}
-												}
-												break;
+					retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+					if( retitem != NULL )
+					{
+						if( !retitem->SetCont( applyTo ) )
+						{
+							retitem->SetCont( applyTo->GetPackItem() );
+							retitem->PlaceInPack();
+						}
+					}
+					break;
 				case DFNTAG_FAME:				applyTo->SetFame( static_cast<SI16>(ndata) );	break;
 				case DFNTAG_FENCING:			skillToSet = FENCING;							break;
 				case DFNTAG_FISHING:			skillToSet = FISHING;							break;
@@ -1917,20 +1842,20 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;						break;
 				case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );	break;
 				case DFNTAG_KILLHAIR:
-												retitem = applyTo->GetItemAtLayer( IL_HAIR );
-												if( ValidateObject( retitem ) )
-													retitem->Delete();
-												break;
+					retitem = applyTo->GetItemAtLayer( IL_HAIR );
+					if( ValidateObject( retitem ) )
+						retitem->Delete();
+					break;
 				case DFNTAG_KILLBEARD:
-												retitem = applyTo->GetItemAtLayer( IL_FACIALHAIR );
-												if( ValidateObject( retitem ) )
-													retitem->Delete();
-												break;
+					retitem = applyTo->GetItemAtLayer( IL_FACIALHAIR );
+					if( ValidateObject( retitem ) )
+						retitem->Delete();
+					break;
 				case DFNTAG_KILLPACK:
-												retitem = applyTo->GetItemAtLayer( IL_PACKITEM );
-												if( ValidateObject( retitem ) )
-													retitem->Delete();
-												break;
+					retitem = applyTo->GetItemAtLayer( IL_PACKITEM );
+					if( ValidateObject( retitem ) )
+						retitem->Delete();
+					break;
 				case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;					break;
 				case DFNTAG_LUMBERJACKING:		skillToSet = LUMBERJACKING;					break;
 				case DFNTAG_MAGERY:				skillToSet = MAGERY;						break;
@@ -1948,19 +1873,19 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_PROVOCATION:		skillToSet = PROVOCATION;					break;
 				case DFNTAG_POLY:				applyTo->SetID( static_cast<UI16>(ndata) );	break;
 				case DFNTAG_PACKITEM:
-												if( ValidateObject( applyTo->GetPackItem() ) )
-												{
-													if( !cdata.empty() )
-													{
-														if( cdata.sectionCount( "," ) != 0 )
-															retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort(), OT_ITEM, true );
-														else
-															retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
-													}
-												}
-												else
-													Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
-												break;
+					if( ValidateObject( applyTo->GetPackItem() ) )
+					{
+						if( !cdata.empty() )
+						{
+							if( cdata.sectionCount( "," ) != 0 )
+								retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), str_value<std::uint16_t>(trim(extractSection(cdata, ",", 1, 1 ))), OT_ITEM, true );
+							else
+								retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
+						}
+					}
+					else
+						Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
+					break;
 				case DFNTAG_REMOVETRAPS:		skillToSet = REMOVETRAPS;					break;
 				case DFNTAG_STRENGTH:			applyTo->SetStrength( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
 				case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) );	break;
@@ -1998,46 +1923,22 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 getclock( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return CPU time used, Emulates clock()
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 getclock( void )
 {
-	struct timeval tv;
-#if UOX_PLATFORM != PLATFORM_WIN32
-	gettimeofday( &tv, NULL );
-#else
-	timeb local;
-	ftime( &local );
-	tv.tv_sec	= local.time;
-	tv.tv_usec	= local.millitm * 1000;
-#endif
-	// We want to normalise our timer to that we established at the start.
-	// System start up time becomes 0, even though it's not. So we have to
-	// subtract the original timer value from our current reading, to get 
-	// a process start normalised time.
-	tv.tv_usec	-= current.tv_usec;
-	if( tv.tv_usec < 0 )	// Start microseconds were higher than our current value
-	{
-		tv.tv_sec -= 1;		// remove a second and add a second's worth of microseconds
-		tv.tv_usec += 1000000;
-	}
-	// Now we have a microsecond correct seconds value, we normalise our seconds value too
-	tv.tv_sec	-= current.tv_sec;
-	// We're wanting to return a millisecond value
-	// Milliseconds = seconds * 1000 + microseconds / 1000
-	return ( tv.tv_sec * 1000 ) + ( tv.tv_usec / 1000 );
+	auto now = std::chrono::system_clock::now() ;
+	return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(now-current).count());
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	R32 roundNumber( R32 toRound )
-//|	Programmer	-	Grimson
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	rounds a number up or down depending on it's value
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 R32 roundNumber( R32 toRound)
 {
 	R32 flVal = floor( toRound );
@@ -2046,12 +1947,11 @@ R32 roundNumber( R32 toRound)
 	return flVal;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void doLight( CSocket *s, UI08 level )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send light level to players client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets light level for player and applies relevant effects
+//o-----------------------------------------------------------------------------------------------o
 void doLight( CSocket *s, UI08 level )
 {
 	if( s == NULL )
@@ -2059,10 +1959,10 @@ void doLight( CSocket *s, UI08 level )
 
 	CChar *mChar = s->CurrcharObj();
 	CPLightLevel toSend( level );
-	
+
 	if( (Races->Affect( mChar->GetRace(), LIGHT )) && mChar->GetWeathDamage( LIGHT ) == 0 )
 		mChar->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar->GetRace(), LIGHT )) )), LIGHT );
-	
+
 	if( mChar->GetFixedLight() != 255 )
 	{
 		toSend.Level( mChar->GetFixedLight() );
@@ -2073,7 +1973,7 @@ void doLight( CSocket *s, UI08 level )
 
 	CTownRegion *curRegion	= mChar->GetRegion();
 	CWeather *wSys = Weather->Weather( curRegion->GetWeather() );
-	LIGHTLEVEL toShow;
+	LIGHTLEVEL toShow = cwmWorldState->ServerData()->WorldLightCurrentLevel();
 
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 	// we have a valid weather system
@@ -2107,12 +2007,13 @@ void doLight( CSocket *s, UI08 level )
 	s->Send( &toSend );
 
 	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onLightChangeScp != NULL )
+	if( onLightChangeScp != NULL ) {
 		onLightChangeScp->OnLightChange( mChar, toShow );
-	else 
+	}
+	else
 	{
 		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
-		
+
 		if( onLightChangeScp != NULL )
 			onLightChangeScp->OnLightChange( mChar, toShow );
 	}
@@ -2120,24 +2021,23 @@ void doLight( CSocket *s, UI08 level )
 	Weather->DoPlayerStuff( s, mChar );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void doLight( CSocket *s, UI08 level )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send light level to players client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void doLight( CChar *mChar, UI08 level )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets light level for character and applies relevant effects
+//o-----------------------------------------------------------------------------------------------o
 void doLight( CChar *mChar, UI08 level )
 {
 	if( (Races->Affect( mChar->GetRace(), LIGHT )) && mChar->GetWeathDamage( LIGHT ) == 0 )
 		mChar->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar->GetRace(), LIGHT )) )), LIGHT );
-	
+
 	CTownRegion *curRegion	= mChar->GetRegion();
 	CWeather *wSys			= Weather->Weather( curRegion->GetWeather() );
-	
+
 	LIGHTLEVEL toShow = level;
 
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
-	
+
 	// we have a valid weather system
 	if( wSys != NULL )
 	{
@@ -2166,26 +2066,25 @@ void doLight( CChar *mChar, UI08 level )
 	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
 	if( onLightChangeScp != NULL )
 		onLightChangeScp->OnLightChange( mChar, toShow );
-	else 
+	else
 	{
 		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
-		
+
 		if( onLightChangeScp != NULL )
 			onLightChangeScp->OnLightChange( mChar, toShow );
 	}
 	Weather->DoNPCStuff( mChar );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	size_t getTileName( CItem& mItem, std::string& itemname )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of an items name from tiledata.mul and
 //|					sets itemname to the name.
 //|					The format it accepts is same as UO style - %plural/single% or %plural%
 //|						arrow%s%
 //|						loa%ves/f% of bread
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	UString temp	= mItem.GetName() ;
@@ -2199,7 +2098,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		{
 			temp =  static_cast< UString >( tile.Name() );
 		}
-		
+
 		if( getAmount == 1 )
 		{
 			if( tile.CheckFlag( TF_DISPLAYAN ) )
@@ -2216,7 +2115,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		{
 			temp =  static_cast< UString >( tile.Name() );
 		}
-		
+
 		if( getAmount == 1 )
 		{
 			if( tile.CheckFlag( TF_DISPLAYAN ) )
@@ -2224,19 +2123,19 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 			else if( tile.CheckFlag( TF_DISPLAYA ) )
 				temp = "a " + temp;
 		}
-	}	
+	}
 
 	// Find out if the name has a % in it
 	if( temp.sectionCount( "%" ) > 0 )
 	{
 		UString single;
-		const UString first	= temp.section( "%", 0, 0 );
-		UString plural		= temp.section( "%", 1, 1 );
-		const UString rest	= temp.section( "%", 2 );
+		const UString first	= extractSection(temp,"%", 0, 0 );
+		UString plural		= extractSection( temp,"%", 1, 1 );
+		const UString rest	= extractSection( temp, "%", 2 );
 		if( plural.sectionCount( "/" ) > 0 )
 		{
-			single = plural.section( "/", 1 );
-			plural = plural.section( "/", 0, 0 );
+			single = extractSection(plural, "/", 1 );
+			plural = extractSection(plural, "/", 0, 0 );
 		}
 		if( getAmount < 2 )
 			temp = first + single + rest;
@@ -2247,16 +2146,15 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 	return itemname.size() + 1;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void checkRegion( CChar& mChar )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check what region a character is in, updating it if necesarry.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
 	CTownRegion *iRegion	= mChar.GetRegion();
-	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber() );
+	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
 	if( iRegion == NULL && calcReg != NULL )
 		mChar.SetRegion( calcReg->GetRegionNum() );
 	else if( calcReg != iRegion )
@@ -2283,7 +2181,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 							mSock->sysmessage( 1360 );
 						else
 							mSock->sysmessage( 1361, calcReg->GetOwner().c_str() );
-					} 
+					}
 					else
 					{
 						if( iRegion->GetOwner().empty() )
@@ -2348,10 +2246,10 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 			mChar.SetRegion( calcReg->GetRegionNum() );
 		if( mSock != NULL )
 		{
-			Effects->dosocketmidi( mSock );
+			Effects->doSocketMusic( mSock );
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
-	} 
+	}
 	else if( forceUpdateLight )
 	{
 		if( mSock != NULL )
@@ -2361,39 +2259,46 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if a character is inside a building before applying weather effects
+//o-----------------------------------------------------------------------------------------------o
 void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
 {
 	if( c->GetMounted() || c->GetStabled() )
 		return;
 
 	bool wasInBuilding = c->inBuilding();
-	bool isInBuilding = Map->inBuilding( c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber() );
+	bool isInBuilding = Map->inBuilding( c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber(), c->GetInstanceID() );
 	if( wasInBuilding != isInBuilding )
 	{
 		c->SetInBuilding( isInBuilding );
-		if( doWeatherStuff )
-			if( c->IsNpc() )
+		if( doWeatherStuff ){
+			if( c->IsNpc() ) {
 				Weather->DoNPCStuff( c );
-			else
+			}
+			else {
 				Weather->DoPlayerStuff( mSock, c );
+			}
+		}
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool WillResultInCriminal( CChar *mChar, CChar *targ )
-//|	Programmer	-	UOX DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check flagging, race, and guild info to find if character
 //|					should be flagged criminal (returns true if so)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool WillResultInCriminal( CChar *mChar, CChar *targ )
 {
 	CChar *tOwner = targ->GetOwnerObj();
 	CChar *mOwner = mChar->GetOwnerObj();
 	Party *mCharParty = PartyFactory::getSingleton().Get( mChar );
-	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
+	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ )
 		return false;
-	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) <= RACE_ENEMY ) 
+	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) <= RACE_ENEMY )
 		return false;
 	else if( mCharParty && mCharParty->HasMember( targ ) )
 		return false;
@@ -2414,12 +2319,11 @@ bool WillResultInCriminal( CChar *mChar, CChar *targ )
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void criminal( CChar *c )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Make character a criminal
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void criminal( CChar *c )
 {
 	c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
@@ -2432,12 +2336,11 @@ void criminal( CChar *c )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void setcharflag( CChar *c )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Set characters flag
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void UpdateFlag( CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates character flags
+//o-----------------------------------------------------------------------------------------------o
 void UpdateFlag( CChar *mChar )
 {
 	if( !ValidateObject( mChar ) )
@@ -2453,7 +2356,7 @@ void UpdateFlag( CChar *mChar )
 		else
 		{
 			mChar->SetFlagBlue();
-			Console.Warning( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() );
+			Console.warning( format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
 		}
 	}
 	else
@@ -2480,21 +2383,21 @@ void UpdateFlag( CChar *mChar )
 				{
 					switch( mChar->GetNPCFlag() )
 					{
-					case fNPC_NEUTRAL:
-					default:
-						mChar->SetFlagNeutral();
-						break;
-					case fNPC_INNOCENT:
-						mChar->SetFlagBlue();
-						break;
-					case fNPC_EVIL:
-						mChar->SetFlagRed();
-						break;
+						case fNPC_NEUTRAL:
+						default:
+							mChar->SetFlagNeutral();
+							break;
+						case fNPC_INNOCENT:
+							mChar->SetFlagBlue();
+							break;
+						case fNPC_EVIL:
+							mChar->SetFlagRed();
+							break;
 					}
 				}
 			}
 			else
-				mChar->SetFlagBlue();	
+				mChar->SetFlagBlue();
 		}
 	}
 
@@ -2507,8 +2410,13 @@ void UpdateFlag( CChar *mChar )
 			toExecute->OnFlagChange( mChar, newFlag, oldFlag );
 		mChar->Dirty( UT_UPDATE );
 	}
-} 
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Send mapchange packet to client to teleport player to new world/map
+//o-----------------------------------------------------------------------------------------------o
 void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 {
 	if( sock == NULL )
@@ -2531,11 +2439,17 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 		mChar->Teleport();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if conditions are right to send a map change packet to the client
+//o-----------------------------------------------------------------------------------------------o
 void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 {
 	if( !ValidateObject( gate ) || ( sock == NULL && !ValidateObject( charMoving ) ) )
 		return;
 	UI08 tWorldNum = (UI08)gate->GetTempVar( CITV_MORE );
+	UI16 tInstanceID = gate->GetInstanceID();
 	if( !Map->MapExists( tWorldNum ) )
 		return;
 	CChar *toMove = charMoving;
@@ -2547,23 +2461,22 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 	{
 		case CV_UO3D:
 		case CV_KRRIOS:
-			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum );
+			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum, tInstanceID );
 			break;
 		default:
-			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum );
+			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum, tInstanceID );
 			break;
 	}
 	SendMapChange( tWorldNum, sock );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	DoorMacro( CSocket *s )
-//|	Date			-	11th October, 1999
-//|	Programmer		-	Zippy
-//|	Modified		-	Abaddon (support CSocket *s and door blocking)
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Door use macro support.
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DoorMacro( CSocket *s )
+//|	Date		-	11th October, 1999
+//|	Changes		-	(support CSocket *s and door blocking)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Door use macro support.
+//o-----------------------------------------------------------------------------------------------o
 void DoorMacro( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -2590,7 +2503,7 @@ void DoorMacro( CSocket *s )
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
-			if( !ValidateObject( itemCheck ) )
+			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
 				continue;
 			SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
 			if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
@@ -2614,17 +2527,13 @@ void DoorMacro( CSocket *s )
 	}
 }
 
-}
 
-using namespace UOX;
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	int main( int argc, char *argv[] )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	UOX startup stuff
-//o---------------------------------------------------------------------------o
-int main( int argc, char *argv[] )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	int main( SI32 argc, char *argv[] )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Main UOX startup
+//o-----------------------------------------------------------------------------------------------o
+int main( SI32 argc, char *argv[] )
 {
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
@@ -2632,54 +2541,41 @@ int main( int argc, char *argv[] )
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
 
-	// EviLDeD: 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
+	// 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD( 2, 0 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
 	if( err )
 	{
-		Console.Error( "Winsock 2.0 not found on your system..." );
+		Console.error( "Winsock 2.0 not found on your system..." );
 		return 1;
 	}
 #endif
 
-	char temp[1024];
 #ifdef _CRASH_PROTECT_
-	try 
-	{// Zippy - Error trapping....
+	try
+	{// Error trapping....
 #endif
-#if UOX_PLATFORM != PLATFORM_WIN32
-		gettimeofday( &current, NULL );
-#else
-		timeb local;
-		::ftime( &local );
-		current.tv_sec = local.time;
-		current.tv_usec = local.millitm * 1000;
-#endif
+		current = std::chrono::system_clock::now();
 		const UI32 currentTime = 0;
 
-		sprintf( temp, "%s v%s.%s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str() );
-		Console.Start( temp );
+		Console.Start( format("%s v%s.%s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str() ) );
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
-		signal( SIGTERM, &endmessage );
-		signal( SIGQUIT, &endmessage );
-		signal( SIGINT, &endmessage ); 
-		signal( SIGILL, &illinst );
-		signal( SIGFPE, &aus );
+//		signal( SIGTERM, &endmessage );
+//		signal( SIGQUIT, &endmessage );
+//		signal( SIGINT, &endmessage );
+//		signal( SIGILL, &illinst );
+//		signal( SIGFPE, &aus );
 #endif
 		Console.PrintSectionBegin();
 		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << myendl;
 		Console.PrintSectionBegin();
 
-		if(( cwmWorldState = new CWorldMain ) == NULL ) 
+		if(( cwmWorldState = new CWorldMain ) == NULL )
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
-#if P_ODBC == 1
-		odbcMan			= NULL;
-		odbcMan			= new ODBCManager();
-#endif
 		cwmWorldState->ServerData()->Load();
 
 		Console << "Initializing and creating class pointers... " << myendl;
@@ -2689,19 +2585,12 @@ int main( int argc, char *argv[] )
 		ParseArgs( argc, argv );
 		Console.PrintSectionBegin();
 
-#if P_ODBC == 1
-		Console << "Connecting to database ... ";
-		if( ODBCManager::getSingleton().Connect() )
-			Console.PrintDone();
-		else
-			Console.PrintFailed();
-#endif
 		cwmWorldState->ServerData()->LoadTime();
 
 		Console << "Loading skill advancement      ";
 		LoadSkills();
 		Console.PrintDone();
-		
+
 		// Moved BulkStartup here, dunno why that function was there...
 		Console << "Loading dictionaries...        " << myendl ;
 		Console.PrintBasedOnVal( Dictionary->LoadDictionary() >= 0 );
@@ -2713,8 +2602,10 @@ int main( int argc, char *argv[] )
 		Console << "Loading GoPlaces               ";
 		LoadPlaces();
 		Console.PrintDone();
-		
-		srand( current.tv_sec ); // initial randomization call
+		std::random_device rd;  //Will be used to obtain a seed for the random number engine
+		generator = std::mt19937(rd()); //Standard mersenne_twister_engine seeded with rd()
+
+		//srand( current.tv_sec ); // initial randomization call
 
 		CJSMappingSection *packetSection = JSMapping->GetSection( SCPT_PACKET );
 		for( cScript *ourScript = packetSection->First(); !packetSection->Finished(); ourScript = packetSection->Next() )
@@ -2723,11 +2614,11 @@ int main( int argc, char *argv[] )
 				ourScript->ScriptRegistration( "Packet" );
 		}
 
-		// moved all the map loading into CMulHandler - fur
+		// moved all the map loading into CMulHandler
 		Map->Load();
-		
+
 		Skills->Load();
-		
+
 		Console << "Loading Spawn Regions          ";
 		LoadSpawnRegions();
 		Console.PrintDone();
@@ -2737,7 +2628,7 @@ int main( int argc, char *argv[] )
 		Console.PrintDone();
 
 		Magic->LoadScript();
-		
+
 		Console << "Loading Races                  ";
 		Races->load();
 		Console.PrintDone();
@@ -2751,7 +2642,7 @@ int main( int argc, char *argv[] )
 		Console << "Loading Commands               " << myendl;
 		Commands->Load();
 		Console.PrintDone();
-		
+
 		// Rework that...
 		Console << "Loading World now              ";
 		MapRegion->Load();
@@ -2765,19 +2656,19 @@ int main( int argc, char *argv[] )
 		clearTrades();
 		Console.PrintDone();
 		InitMultis();
-		
+
 		cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
 
 		cwmWorldState->SetEndTime( 0 );
 		cwmWorldState->SetLClock( 0 );
 
 		// no longer Que, because that's taken care of by PageVector
-		Console << "Initializing Jail system       ";	
+		Console << "Initializing Jail system       ";
 		JailSys->ReadSetup();
 		JailSys->ReadData();
 		Console.PrintDone();
-		
-		Console << "Initializing Status system     ";	
+
+		Console << "Initializing Status system     ";
 		HTMLTemplates->Load();
 		Console.PrintDone();
 
@@ -2799,7 +2690,7 @@ int main( int argc, char *argv[] )
 		cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
 		cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
 		cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
-		
+
 		Console.PrintDone();
 
 		DisplayBanner();
@@ -2807,21 +2698,15 @@ int main( int argc, char *argv[] )
 		Console << "Loading Accounts               ";
 		Accounts->Load();
 
-		Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
+		Console.log( "-=Server Startup=-\n=======================================================================", "server.log" );
 
 		Console << myendl << "Creating and Initializing Console Thread      ";
-	#if UOX_PLATFORM != PLATFORM_WIN32
-		int conthreadok = pthread_create(&cons,NULL,CheckConsoleKeyThread , NULL );
-	#else
-		int conthreadok = _beginthread( CheckConsoleKeyThread , 0 , NULL );
-	#endif
+
+		cons = std::thread(&CheckConsoleKeyThread);
 #ifdef __LOGIN_THREAD__
 		Console << myendl << "Creating and Initializing xLOGINd Thread      ";
-	#if UOX_PLATFORM != PLATFORM_WIN32
-		pthread_create( &netw, NULL, NetworkPollConnectionThread,  NULL );
-	#else
-		_beginthread( NetworkPollConnectionThread, 0, NULL );
-	#endif
+		netw = std::thread(&NetworkPollConnectionThread);
+
 #else
 		TIMERVAL uiNextCheckConn = 0;
 #endif
@@ -2843,27 +2728,22 @@ int main( int argc, char *argv[] )
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
-			//	EviLDeD	-	February 27, 2000
-			//	Just in case the thread doesn't start then use the main threaded copy
-			if( conthreadok == -1 )
-				Console.Poll();
-			UOXSleep( (cwmWorldState->GetPlayersOnline() ? 10 : 90 ) );
-			//	EviLDeD	-	End
+			UOXSleep( (cwmWorldState->GetPlayersOnline() ? 5 : 90 ) );
 			if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
 				cwmWorldState->ServerProfile()->LoopTime( 0 );
 			}
 			cwmWorldState->ServerProfile()->IncLoopTimeCount();
-			
+
 			StartMilliTimer( loopSecs, loopMilli );
-			
+
 			if( cwmWorldState->ServerProfile()->NetworkTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->NetworkTimeCount( 0 );
 				cwmWorldState->ServerProfile()->NetworkTime( 0 );
 			}
-			
+
 			StartMilliTimer( tempSecs, tempMilli );
 #ifndef __LOGIN_THREAD__
 			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Cut lag on CheckConn by not doing it EVERY loop.
@@ -2875,35 +2755,35 @@ int main( int argc, char *argv[] )
 #else
 			Network->CheckMessage();
 #endif
-			
+
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			cwmWorldState->ServerProfile()->IncNetworkTimeCount();
-			
+
 			if( cwmWorldState->ServerProfile()->TimerTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->TimerTimeCount( 0 );
 				cwmWorldState->ServerProfile()->TimerTime( 0 );
 			}
-			
+
 			StartMilliTimer( tempSecs, tempMilli );
-			
+
 			cwmWorldState->CheckTimers();
 			cwmWorldState->SetUICurrentTime( getclock() );
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
 			cwmWorldState->ServerProfile()->IncTimerTimeCount();
-			
+
 			if( cwmWorldState->ServerProfile()->AutoTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->AutoTimeCount( 0 );
 				cwmWorldState->ServerProfile()->AutoTime( 0 );
 			}
 			StartMilliTimer( tempSecs, tempMilli );
-			
+
 			if( !cwmWorldState->GetReloadingScripts() )
 				cwmWorldState->CheckAutoTimers();
-			
+
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
 			cwmWorldState->ServerProfile()->IncAutoTimeCount();
@@ -2916,40 +2796,44 @@ int main( int argc, char *argv[] )
 			DoMessageLoop();
 		}
 
-		
+
 		Console.PrintSectionBegin();
 		sysBroadcast( "The server is shutting down." );
 		Console.PrintDone();
 		Console << "Closing sockets...";
 		netpollthreadclose = true;
-		UOXSleep( 1000 );
+		///HERE
+#ifdef __LOGIN_THREAD__
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		netw.join();
+#endif
 		Network->SockClose();
 		Console.PrintDone();
 
 		if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 		{
-			do 
+			do
 			{
 				cwmWorldState->SaveNewWorld( true );
 			} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
 		}
-		
+
 		cwmWorldState->ServerData()->save();
 
-		Console.Log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
+		Console.log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
 
 		conthreadcloseok = true;	//	This will signal the console thread to close
 		Shutdown( 0 );
 
 #ifdef _CRASH_PROTECT_
 	}
-	catch ( ... ) 
+	catch ( ... )
 	{//Crappy error handling...
 		Console << "Unknown exception caught, hard crash avioded!" << myendl;
 		Shutdown( UNKNOWN_ERROR );
 	}
 #endif
-	
-	return ( 0 );	
+
+	return ( 0 );
 }
 

@@ -50,7 +50,7 @@ function CallWipe( socket, cmdString )
 				Console.Print( "Item wipe deleted " + counterStr + " items.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " items" );
 			}
-			if( saidAll || uKey == "NPCS" )
+			else if( saidAll || uKey == "NPCS" )
 			{
 				Console.Print( mChar.name + " has initiated a npc wipe.\n" );
 				isItem 		= false;
@@ -60,7 +60,7 @@ function CallWipe( socket, cmdString )
 				Console.Print( "NPC wipe deleted " + counterStr + " npcs.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " npcs" );
 			}
-			if( saidAll || uKey == "SPAWNERS" )
+			else if( saidAll || uKey == "SPAWNERS" )
 			{
 				Console.Print( mChar.name + " has initiated a spawner wipe.\n" );
 				isItem		= false;
@@ -69,6 +69,10 @@ function CallWipe( socket, cmdString )
 				counterStr 	= counter.toString();
 				Console.Print( "Spawner wipe deleted " + counterStr + " spawners.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " spawners" );
+			}
+			else
+			{
+				socket.SysMessage( "Invalid parameter. Valid params: all / items / npcs / spawners / (x1 y1 x2 y2)")
 			}
 			Console.PrintDone();
 		}

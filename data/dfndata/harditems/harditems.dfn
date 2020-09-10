@@ -1,9 +1,8 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.98                       *
+//*                         UOX3 DFNs v0.99.3                     *
+//*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
-//*                   http://www.uox3dev.net			  *
-//*                                                               *
-//* Last Update : 31/12/2004                                       *
+//* Last Update : 31/12/2004                                      *
 //* Script : harditems.dfn                                        *
 //*****************************************************************
 //*                        How to use this script                 *
@@ -135,12 +134,12 @@ type=12
 type=12
 }
 
-//Arrows and Crossbow-bolts 
-[0xf3fx1bfb] 
-{ 
-weight=1 
-pileable=1 
-decay=1 
+//Arrows and Crossbow-bolts
+[0xf3fx1bfb]
+{
+weight=1
+pileable=1
+decay=1
 }
 
 EOF

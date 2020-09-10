@@ -2,12 +2,12 @@
 //	This code is an attempt to clean up the messy "if/then/else" routines
 //	currently in use for GM commands, as well as adding more functionality
 //	and more potential for functionality.
-//	
+//
 //	Current features:
 //	- Actual table of commands to execute, what perms are required, dialog
 //	messages for target commands, etc handled by a central system
-//	
-//	
+//
+//
 #include "uox3.h"
 #include "commands.h"
 #include "msgboard.h"
@@ -28,25 +28,22 @@
 #include "magic.h"
 #include "ObjectFactory.h"
 #include "cRaces.h"
+#include "StringUtility.hpp"
 
 #include "Dictionary.h"
 
-namespace UOX
-{
-
 void CollectGarbage( void );
-void endmessage( int x );
+void endmessage( SI32 x );
 void HandleGumpCommand( CSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string& txt );
-void HandleHowTo( CSocket *sock, int cmdNumber );
+void HandleHowTo( CSocket *sock, SI32 cmdNumber );
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::closeCall( CSocket *s, bool isGM )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void closeCall( CSocket *s, bool isGM )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes an open call in the Que
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void closeCall( CSocket *s, bool isGM )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -73,6 +70,11 @@ void closeCall( CSocket *s, bool isGM )
 		s->sysmessage( 1287 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void currentCall( CSocket *s, bool isGM )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Send GM/Counselor to the current call in the queue
+//o-----------------------------------------------------------------------------------------------o
 void currentCall( CSocket *s, bool isGM )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -103,12 +105,11 @@ void currentCall( CSocket *s, bool isGM )
 		s->sysmessage( 72 );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::nextCall( CSocket *s, bool isGM )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void nextCall( CSocket *s, bool isGM )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send GM/Counsellor to next call in the que
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void nextCall( CSocket *s, bool isGM )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -117,15 +118,20 @@ void nextCall( CSocket *s, bool isGM )
 	if( isGM )
 	{
 		if( !GMQueue->AnswerNextCall( s, mChar ) )
-			s->sysmessage( 347 );	
+			s->sysmessage( 347 );
 	}
 	else //Player is a counselor
 	{
 		if( !CounselorQueue->AnswerNextCall( s, mChar ) )
-			s->sysmessage( 348 );		
+			s->sysmessage( 348 );
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Replaces legacy spawner objects that have incorrect item type
+//o-----------------------------------------------------------------------------------------------o
 bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	bool retVal = true;
@@ -134,8 +140,8 @@ bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		CItem *i = static_cast< CItem * >(a);
 		ItemTypes iType = i->GetType();
 		if( iType == IT_ITEMSPAWNER		|| iType == IT_NPCSPAWNER			|| iType == IT_SPAWNCONT ||
-			iType == IT_LOCKEDSPAWNCONT	|| iType == IT_UNLOCKABLESPAWNCONT	||
-			iType == IT_AREASPAWNER		|| iType == IT_ESCORTNPCSPAWNER )
+		   iType == IT_LOCKEDSPAWNCONT	|| iType == IT_UNLOCKABLESPAWNCONT	||
+		   iType == IT_AREASPAWNER		|| iType == IT_ESCORTNPCSPAWNER )
 		{
 			if( i->GetObjType() != OT_SPAWNER )
 			{
@@ -160,26 +166,19 @@ void command_fixspawn( void )
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &FixSpawnFunctor );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	void command_addaccount( CSocket *s)
-//|	Date			-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status			-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns			-
-//o--------------------------------------------------------------------------o
-//|	Notes			-	
-//o--------------------------------------------------------------------------o	
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_addaccount( CSocket *s)
+//|	Date		-	10/17/2002
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	GM command for adding new user accounts while in-game
+//o-----------------------------------------------------------------------------------------------o
 void command_addaccount( CSocket *s)
 {
 	VALIDATESOCKET( s );
 	CAccountBlock actbTemp;
 	if( Commands->NumArguments() > 1 )
 	{
-		char szBuffer[128];
+
 		char *szCommandLine	= NULL;
 		char *szCommand		= NULL;
 		char *szUsername	= NULL;
@@ -201,8 +200,8 @@ void command_addaccount( CSocket *s)
 		{
 			Accounts->AddAccount( szUsername, szPassword, "NA", nFlags );
 			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
-			sprintf( szBuffer, "Account Added: %s:%s:%i", szUsername, szPassword, nFlags );
-			s->sysmessage( szBuffer );
+
+			s->sysmessage( format( "Account Added: %s:%s:%i", szUsername, szPassword, nFlags ) );
 		}
 		else
 		{
@@ -212,8 +211,14 @@ void command_addaccount( CSocket *s)
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_getlight( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays current in-game light level as a system message
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Needs redoing to support new lighting system
+//o-----------------------------------------------------------------------------------------------o
 void command_getlight( CSocket *s )
-// needs redoing to support new lighting system
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -241,6 +246,11 @@ void command_getlight( CSocket *s )
 		s->sysmessage( 1632, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_setpost( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets bulletin board posting mode for user
+//o-----------------------------------------------------------------------------------------------o
 void command_setpost( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -251,24 +261,29 @@ void command_setpost( CSocket *s )
 
 	PostTypes type = PT_LOCAL;
 	UString upperCommand = Commands->CommandString( 2, 2 ).upper();
-	if( upperCommand == "GLOBAL" )
+	if( upperCommand == "GLOBAL" ) // user's next post appears in ALL bulletin boards
 		type = PT_GLOBAL;
-	else if( upperCommand == "REGIONAL" )
+	else if( upperCommand == "REGIONAL" ) // user's next post appears in all bulletin boards in current region
 		type = PT_REGIONAL;
-	else if( upperCommand == "LOCAL" )
+	else if( upperCommand == "LOCAL" ) // user's next post appears only locally in the next bulletin board used
 		type = PT_LOCAL;
 
 	mChar->SetPostType( static_cast<UI08>(type) );
-	
+
 	switch ( type )
 	{
-	case PT_LOCAL:				s->sysmessage( 726 );			break;
-	case PT_REGIONAL:			s->sysmessage( 727 );			break;
-	case PT_GLOBAL:				s->sysmessage( 728 );			break;
-	default:					s->sysmessage( 725 );			break;
+		case PT_LOCAL:				s->sysmessage( 726 );			break;
+		case PT_REGIONAL:			s->sysmessage( 727 );			break;
+		case PT_GLOBAL:				s->sysmessage( 728 );			break;
+		default:					s->sysmessage( 725 );			break;
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_getpost( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns current bulletin board posting mode for user
+//o-----------------------------------------------------------------------------------------------o
 void command_getpost( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -279,15 +294,19 @@ void command_getpost( CSocket *s )
 
 	switch( mChar->GetPostType() )
 	{
-	case PT_LOCAL:				s->sysmessage( 722 );			break;
-	case PT_REGIONAL:			s->sysmessage( 723 );			break;
-	case PT_GLOBAL:				s->sysmessage( 724 );			break;
-	default:					s->sysmessage( 725 );			break;
+		case PT_LOCAL:				s->sysmessage( 722 );			break;
+		case PT_REGIONAL:			s->sysmessage( 723 );			break;
+		case PT_GLOBAL:				s->sysmessage( 724 );			break;
+		default:					s->sysmessage( 725 );			break;
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_showids( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display the serial number of every item on user's screen
+//o-----------------------------------------------------------------------------------------------o
 void command_showids( CSocket *s )
-// Display the serial number of every item on your screen.
 {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
@@ -306,12 +325,16 @@ void command_showids( CSocket *s )
 	regChars->Pop();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_tile( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(h) Tiles the item specified over a square area.
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	To find the hexidecimal ID code for an item to tile,
+//|					either create the item with /add or find it in the
+//|					world, and get /ISTATS on the object to get its ID code.
+//o-----------------------------------------------------------------------------------------------o
 void command_tile( CSocket *s )
-// (h) Tiles the item specified over a square area.
-// To find the hexidecimal ID code for an item to tile,
-// either create the item with /add or find it in the
-// world, and get /ISTATS on the object to get it's ID
-// code.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 0 )
@@ -332,7 +355,7 @@ void command_tile( CSocket *s )
 			for( SI16 y = y1; y <= y2; ++y )
 			{
 				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), targID, 1, 0, OT_ITEM );
-				if( ValidateObject( a ) )	// Antichrist crash prevention
+				if( ValidateObject( a ) )	// crash prevention
 				{
 					a->SetLocation( x, y, z );
 					a->SetDecayable( false );
@@ -351,15 +374,24 @@ void command_tile( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_save( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Saves the current world data into .WSC files
+//o-----------------------------------------------------------------------------------------------o
 void command_save( void )
-// Saves the current world data into ITEMS.WSC and CHARS.WSC.
 {
 	if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 		cwmWorldState->SaveNewWorld( true );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_dye( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(h h/nothing) Dyes an item a specific color, or brings up
+//|					a dyeing menu if no color is specified.
+//o-----------------------------------------------------------------------------------------------o
 void command_dye( CSocket *s )
-// (h h/nothing) Dyes an item a specific color, or brings up a dyeing menu if no color is specified.
 {
 	VALIDATESOCKET( s );
 	s->DyeAll( 1 );
@@ -382,8 +414,12 @@ void command_dye( CSocket *s )
 	s->target( 0, TARGET_DYE, 31 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_settime( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d d) Sets the current UO time in hours and minutes.
+//o-----------------------------------------------------------------------------------------------o
 void command_settime( void )
-// (d d) Sets the current UO time in hours and minutes.
 {
 	if( Commands->NumArguments() == 3 )
 	{
@@ -401,8 +437,13 @@ void command_settime( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_shutdown( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d) Shuts down the server. Argument is how many minutes
+//|					until shutdown.
+//o-----------------------------------------------------------------------------------------------o
 void command_shutdown( void )
-// (d) Shuts down the server. Argument is how many minutes until shutdown.
 {
 	if( Commands->NumArguments() == 2 )
 	{
@@ -417,8 +458,12 @@ void command_shutdown( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_tell( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d text) Sends an anonymous message to the user logged in under the specified slot.
+//o-----------------------------------------------------------------------------------------------o
 void command_tell( CSocket *s )
-// (d text) Sends an anonymous message to the user logged in under the specified slot.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 2 )
@@ -449,8 +494,12 @@ void command_tell( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_gmmenu( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d) Opens the specified GM Menu from dfndata/menus.dfn
+//o-----------------------------------------------------------------------------------------------o
 void command_gmmenu( CSocket *s )
-// (d) Opens the specified GM Menu.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
@@ -460,16 +509,24 @@ void command_gmmenu( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_command( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Executes a trigger scripting command.
+//o-----------------------------------------------------------------------------------------------o
 void command_command( CSocket *s )
-// Executes a trigger scripting command.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 1 )
 		HandleGumpCommand( s, Commands->CommandString( 2, 2 ).upper(), Commands->CommandString( 3 ).upper() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_memstats( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display some information about cache and memory usage.
+//o-----------------------------------------------------------------------------------------------o
 void command_memstats( CSocket *s )
-// Display some information about the cache.
 {
 	VALIDATESOCKET( s );
 	size_t cacheSize		= Map->GetTileMem() + Map->GetMultisMem();
@@ -503,11 +560,14 @@ void command_memstats( CSocket *s )
 	cacheStats.AddData( "  Allocated Memory: ", spawnregionsSize );
 	cacheStats.AddData( "  CSpawnRegion: ", sizeof( CSpawnRegion ) );
 	cacheStats.Send( 0, false, INVALIDSERIAL );
-
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_restock( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(nothing / s) Forces a manual vendor restock
+//o-----------------------------------------------------------------------------------------------o
 void command_restock( CSocket *s )
-// Forces a manual vendor restock.
 {
 	VALIDATESOCKET( s );
 	if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
@@ -522,8 +582,12 @@ void command_restock( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_restock( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d) Sets the universe's shop restock rate
+//o-----------------------------------------------------------------------------------------------o
 void command_setshoprestockrate( CSocket *s )
-// (d) Sets the universe's shop restock rate.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
@@ -543,8 +607,8 @@ bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		CItem *i = static_cast< CItem * >(a);
 		ItemTypes iType = i->GetType();
 		if( iType == IT_ITEMSPAWNER		|| iType == IT_NPCSPAWNER			|| iType == IT_SPAWNCONT ||
-			iType == IT_LOCKEDSPAWNCONT	|| iType == IT_UNLOCKABLESPAWNCONT	||
-			iType == IT_AREASPAWNER		|| iType == IT_ESCORTNPCSPAWNER )
+		   iType == IT_LOCKEDSPAWNCONT	|| iType == IT_UNLOCKABLESPAWNCONT	||
+		   iType == IT_AREASPAWNER		|| iType == IT_ESCORTNPCSPAWNER )
 		{
 			if( i->GetObjType() == OT_SPAWNER )
 			{
@@ -559,8 +623,12 @@ bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_respawn( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Forces a respawn of all spawn regions
+//o-----------------------------------------------------------------------------------------------o
 void command_respawn( void )
-// Forces a respawn.
 {
 	UI16 spawnedItems	= 0;
 	UI16 spawnedNpcs	= 0;
@@ -578,7 +646,11 @@ void command_respawn( void )
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &RespawnFunctor );
 }
 
-// (s/d) Forces a region spawn, First argument is region number or "ALL"
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_regspawn( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(s/d) Forces a region spawn, First argument is region number or "ALL"
+//o-----------------------------------------------------------------------------------------------o
 void command_regspawn( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -625,26 +697,35 @@ void command_regspawn( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_loaddefaults( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads the hardcoded server defaults for various settings in uox.ini
+//o-----------------------------------------------------------------------------------------------o
 void command_loaddefaults( void )
-// Loads the server defaults.
 {
 	cwmWorldState->ServerData()->ResetDefaults();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_cq( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display the Counselor queue when used with no arguments
+//|					Can trigger other queue-related commands when arguments are provided
+//o-----------------------------------------------------------------------------------------------o
 void command_cq( CSocket *s )
-// Display the counselor queue.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
 		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
-		if( upperCommand == "NEXT" )
+		if( upperCommand == "NEXT" ) // Go to next call in Counselor queue
 			nextCall( s, false );
-		else if( upperCommand == "CLEAR" )
+		else if( upperCommand == "CLEAR" ) // Close and clear current call as resolved
 			closeCall( s, false );
-		else if( upperCommand == "CURR" )
+		else if( upperCommand == "CURR" ) // Take Counselor to current call they are on
 			currentCall( s, false );
-		else if( upperCommand == "TRANSFER" )
+		else if( upperCommand == "TRANSFER" ) // Transfer call from Counselor queue to GM queue
 		{
 			CChar *mChar = s->CurrcharObj();
 			if( mChar->GetCallNum() != 0 )
@@ -673,33 +754,49 @@ void command_cq( CSocket *s )
 		CounselorQueue->SendAsGump( s );	// Show the Counselor queue, not GM queue
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_gq( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display the GM queue when used with no arguments
+//|					Can trigger other queue-related commands when arguments are provided
+//o-----------------------------------------------------------------------------------------------o
 void command_gq( CSocket *s )
-// Display the GM queue.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
 		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
-		if( upperCommand == "NEXT" )
+		if( upperCommand == "NEXT" ) // Go to next call in GM queue
 			nextCall( s, true );
-		else if( upperCommand == "CLEAR" )
+		else if( upperCommand == "CLEAR" ) // Close and clear current call as resolved
 			closeCall( s, true );
-		else if( upperCommand == "CURR" )
+		else if( upperCommand == "CURR" ) // Take GM to current call they are on
 			currentCall( s, true );
 	}
 	else
 		GMQueue->SendAsGump( s );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_minecheck( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d) Set the server mine check status to determine where mining will work
+//|						0 - allow mining everywhere
+//|						1 - mountainsides and cave floors
+//|						2 - mining regions only
+//o-----------------------------------------------------------------------------------------------o
 void command_minecheck( void )
-// (d) Set the server mine check interval in minutes.
 {
 	if( Commands->NumArguments() == 2 )
 		cwmWorldState->ServerData()->MineCheck( static_cast<UI08>(Commands->Argument( 1 )) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_guards( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables (ON) or disables (OFF) town guards globally
+//o-----------------------------------------------------------------------------------------------o
 void command_guards( void )
-// Activates town guards.
 {
 	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
 	{
@@ -713,8 +810,12 @@ void command_guards( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_announce( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables (ON) or disables (OFF) announcement of world saves
+//o-----------------------------------------------------------------------------------------------o
 void command_announce( void )
-// Enable announcement of world saves.
 {
 	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
 	{
@@ -728,8 +829,12 @@ void command_announce( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_pdump( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display some performance information
+//o-----------------------------------------------------------------------------------------------o
 void command_pdump( CSocket *s )
-// Display some performance information.
 {
 	VALIDATESOCKET( s );
 	UI32 networkTimeCount	= cwmWorldState->ServerProfile()->NetworkTimeCount();
@@ -744,9 +849,12 @@ void command_pdump( CSocket *s )
 	s->sysmessage( "Loop Time: %fmsec [%i]", (R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount), loopTimeCount );
 	s->sysmessage( "Simulation Cycles/Sec: %f", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount ) ) ) );
 }
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_spawnkill( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	(d) Kills spawns from the specified spawn region in SPAWN.DFN
+//o-----------------------------------------------------------------------------------------------o
 void command_spawnkill( CSocket *s )
-// (d) Kills spawns from the specified spawn region in SPAWN.SCP.
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
@@ -757,7 +865,7 @@ void command_spawnkill( CSocket *s )
 		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[regNum];
 		if( spawnReg == NULL )
 			return;
-		int killed	= 0;
+		SI32 killed	= 0;
 
 		s->sysmessage( 349 );
 		CDataList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
@@ -778,45 +886,64 @@ void command_spawnkill( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Build and send a gump with a list of players based on provided criteria
+//o-----------------------------------------------------------------------------------------------o
 void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 {
 	UI16 j = 0;
-	char temp[512];
 
 	GumpDisplay Who( s, 400, 300 );
 	Who.SetTitle( title );
-
-	Network->PushConn();
-	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
-		CChar *iChar = iSock->CurrcharObj();
-		if( iChar->GetCommandLevel() >= commandLevel )
+		std::scoped_lock lock(Network->internallock);
+		Network->pushConn();
+		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 		{
-			sprintf( temp, "%i) %s", j, iChar->GetName().c_str() );
-			Who.AddData( temp, iChar->GetSerial(), 3 );
+			CChar *iChar = iSock->CurrcharObj();
+			if( iChar->GetCommandLevel() >= commandLevel )
+			{
+				auto temp = format("%i) %s", j, iChar->GetName().c_str() );
+				Who.AddData( temp, iChar->GetSerial(), 3 );
+			}
+			++j;
 		}
-		++j;
+		Network->popConn();
 	}
-	Network->PopConn();
 	Who.Send( 4, false, INVALIDSERIAL );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_who( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays a list of users currently online
+//o-----------------------------------------------------------------------------------------------o
 void command_who( CSocket *s )
-// Displays a list of users currently online.
 {
 	VALIDATESOCKET( s );
 	BuildWhoGump( s, 0, "Who's Online" );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_gms( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays a list of server staff currently online
+//o-----------------------------------------------------------------------------------------------o
 void command_gms( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	BuildWhoGump( s, CL_CNS, Dictionary->GetEntry( 77, s->Language() ) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_reportbug( CSocket *s )
+//| Date		-	9th February, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes out a bug reported by player to the bug file
+//o-----------------------------------------------------------------------------------------------o
 void command_reportbug( CSocket *s )
-// DESC:	Writes out a bug to the bug file
-// DATE:	9th February, 2000
-// CODER:	Abaddon
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -827,7 +954,7 @@ void command_reportbug( CSocket *s )
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( "Unable to open bugs log file %s!", logName.c_str() );
+		Console.error( format("Unable to open bugs log file %s!", logName.c_str()) );
 		return;
 	}
 	char dateTime[1024];
@@ -840,33 +967,45 @@ void command_reportbug( CSocket *s )
 
 	s->sysmessage( 87 );
 	bool x = false;
-	Network->PushConn();
-	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
-		CChar *iChar = iSock->CurrcharObj();
-		if( !ValidateObject( iChar ) )
-			continue;
-		if( iChar->IsGMPageable() )
+		std::scoped_lock lock(Network->internallock);
+		Network->pushConn();
+		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 		{
-			x = true;
-			iSock->sysmessage( 277, mChar->GetName().c_str(), Commands->CommandString( 2 ).c_str() );
+			CChar *iChar = iSock->CurrcharObj();
+			if( !ValidateObject( iChar ) )
+				continue;
+			if( iChar->IsGMPageable() )
+			{
+				x = true;
+				iSock->sysmessage( 277, mChar->GetName().c_str(), Commands->CommandString( 2 ).c_str() );
+			}
 		}
+		Network->popConn();
 	}
-	Network->PopConn();
 	if( x )
 		s->sysmessage( 88 );
 	else
 		s->sysmessage( 89 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_forcewho( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Brings up an interactive listing of online users.
+//o-----------------------------------------------------------------------------------------------o
 void command_forcewho( CSocket *s )
-// Brings up an interactive listing of online users.
 {
 	VALIDATESOCKET( s );
 	WhoList->ZeroWho();
 	WhoList->SendSocket( s );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_validcmd( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays all valid commands for the user's character
+//o-----------------------------------------------------------------------------------------------o
 void command_validcmd( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -894,6 +1033,11 @@ void command_validcmd( CSocket *s )
 	targetCmds.Send( 4, false, INVALIDSERIAL );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_howto( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens a list of commands, with explanations of how to use each specific command
+//o-----------------------------------------------------------------------------------------------o
 void command_howto( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -904,8 +1048,8 @@ void command_howto( CSocket *s )
 		if( !ValidateObject( mChar ) )
 			return;
 
-		int iCmd = 2;
-		int numAdded = 0;
+		SI32 iCmd = 2;
+		SI32 numAdded = 0;
 		UI08 pagenum = 1;
 		UI16 position = 40;
 		UI16 linenum = 1;
@@ -914,19 +1058,19 @@ void command_howto( CSocket *s )
 		toSend.UserID( INVALIDSERIAL );
 		toSend.GumpID( 13 );
 
-		toSend.AddCommand( "noclose" );
-		toSend.AddCommand( "resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic() );
-		toSend.AddCommand( "page 0" );
-		toSend.AddCommand( "text 200 20 0 0" );
-		toSend.AddText( "HOWTO" );
-		toSend.AddCommand( "button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 );
+		toSend.addCommand( "noclose" );
+		toSend.addCommand( format("resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic()) );
+		toSend.addCommand( "page 0" );
+		toSend.addCommand( "text 200 20 0 0" );
+		toSend.addText( "HOWTO" );
+		toSend.addCommand( format("button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
 
 		UI08 currentLevel			= mChar->GetCommandLevel();
 		COMMANDMAP_ITERATOR gAdd	= CommandMap.begin();
 		TARGETMAP_ITERATOR tAdd		= TargetMap.begin();
 		JSCOMMANDMAP_ITERATOR jAdd	= JSCommandMap.begin();
 
-		toSend.AddCommand( "page 1" );
+		toSend.addCommand( "page 1" );
 
 		bool justDonePageAdd = false;
 		while( gAdd != CommandMap.end() )
@@ -935,15 +1079,15 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.AddCommand( "page %u", pagenum );
+				toSend.addCommand( format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( gAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.AddCommand( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
-				toSend.AddCommand( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd );
-				toSend.AddText( gAdd->first );
+				toSend.addCommand( format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addText( gAdd->first );
 				++numAdded;
 				++linenum;
 				position += 20;
@@ -957,15 +1101,15 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.AddCommand( "page %u", pagenum );
+				toSend.addCommand( format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( tAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.AddCommand( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
-				toSend.AddCommand( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd );
-				toSend.AddText( tAdd->first );
+				toSend.addCommand( format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addText( tAdd->first );
 				++numAdded;
 				++linenum;
 				position += 20;
@@ -979,15 +1123,15 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.AddCommand( "page %u", pagenum );
+				toSend.addCommand( format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( jAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.AddCommand( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
-				toSend.AddCommand( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd );
-				toSend.AddText( jAdd->first );
+				toSend.addCommand( format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addText( jAdd->first );
 				++numAdded;
 				++linenum;
 				position += 20;
@@ -995,17 +1139,17 @@ void command_howto( CSocket *s )
 			++iCmd;
 			++jAdd;
 		}
-		pagenum = 1; 
-		for( int i = 0; i < numAdded; i += 10 )
+		pagenum = 1;
+		for( SI32 i = 0; i < numAdded; i += 10 )
 		{
-			toSend.AddCommand( "page %u", pagenum );
+			toSend.addCommand( format("page %u", pagenum ));
 			if( i >= 10 )
 			{
-				toSend.AddCommand( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
+				toSend.addCommand(format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
 			}
 			if( ( numAdded > 10 ) && ( ( i + 10 ) < numAdded ) )
 			{
-				toSend.AddCommand( "button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
+				toSend.addCommand( format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
 			}
 			++pagenum;
 		}
@@ -1014,7 +1158,7 @@ void command_howto( CSocket *s )
 	}
 	else
 	{
-		int i = 0;
+		SI32 i = 0;
 		COMMANDMAP_ITERATOR toFind;
 		for( toFind = CommandMap.begin(); toFind != CommandMap.end(); ++toFind )
 		{
@@ -1051,7 +1195,11 @@ void command_howto( CSocket *s )
 	}
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_temp( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays the current temperature in user's current townregion
+//o-----------------------------------------------------------------------------------------------o
 void command_temp( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1068,8 +1216,12 @@ void command_temp( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void command_status( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens the HTML status information gump
+//o-----------------------------------------------------------------------------------------------o
 void command_status( CSocket *s )
-// Opens the HTML status information gump
 {
 	VALIDATESOCKET( s );
 	HTMLTemplates->TemplateInfoGump( s );
@@ -1180,10 +1332,15 @@ void cCommands::CommandReset( void )
 	//Z
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void UnRegister( const std::string &cmdName, cScript *toRegister )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Unregisters a command from JS command table
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( "   UnRegistering command %s\n", cmdName.c_str());
+	Console.print(format( "   UnRegistering command %s\n", cmdName.c_str()));
 #endif
 	UString upper		= cmdName;
 	upper				= upper.upper();
@@ -1192,23 +1349,28 @@ void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 		JSCommandMap.erase( p );
 #if defined( UOX_DEBUG_MODE )
 	else
-		Console.Print( "         Command \"%s\" was not found.\n", cmdName.c_str());
+		Console.print( format("         Command \"%s\" was not found.\n", cmdName.c_str()));
 #endif
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resgisters a new command in JS command table
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( " " );
+	Console.print( " " );
 	Console.MoveTo( 15 );
-	Console.Print( "Registering " );
+	Console.print( "Registering " );
 	Console.TurnYellow();
-	Console.Print( cmdName.c_str() );
+	Console.print( cmdName );
 	Console.TurnNormal();
 	Console.MoveTo( 50 );
-	Console.Print( "@ command level " );
+	Console.print( "@ command level " );
 	Console.TurnYellow();
-	Console.Print( "%i\n", cmdLevel );
+	Console.print( format("%i\n", cmdLevel) );
 	Console.TurnNormal();
 #endif
 	UString upper		= cmdName;
@@ -1216,6 +1378,11 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetCommandStatus( const std::string &cmdName, bool isEnabled )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables or disables a command in JS command table
+//o-----------------------------------------------------------------------------------------------o
 void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
 	UString upper					= cmdName;
@@ -1225,6 +1392,4 @@ void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 	{
 		toFind->second.isEnabled = isEnabled;
 	}
-}
-
 }

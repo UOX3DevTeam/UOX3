@@ -1,9 +1,6 @@
 #ifndef __TEFFECT_H__
 #define __TEFFECT_H__
 
-namespace UOX
-{
-
 class CTEffect
 {
 private:
@@ -47,8 +44,6 @@ public:
 
 	bool	Save( std::ofstream &effectDestination ) const; // saves the current effect
 };
-
-}
 
 #endif
 

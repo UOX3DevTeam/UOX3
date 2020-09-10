@@ -1360,16 +1360,16 @@ dig_done:
               case 'i':
               case 'I':
                 if (match(&s,"nfinity")) {
-                    word0(rv) = 0x7ff00000;
-                    word1(rv) = 0;
+                    set_word0(rv, 0x7ff00000);
+                    set_word1(rv, 0);
                     goto ret;
                     }
                 break;
               case 'n':
               case 'N':
                 if (match(&s, "an")) {
-                    word0(rv) = NAN_WORD0;
-                    word1(rv) = NAN_WORD1;
+                    set_word0(rv, NAN_WORD0);
+                    set_word1(rv, NAN_WORD1);
                     goto ret;
                     }
               }
@@ -1439,8 +1439,8 @@ dig_done:
                 rv = HUGE_VAL;
 #else
                 /* Can't trust HUGE_VAL */
-                word0(rv) = Exp_mask;
-                word1(rv) = 0;
+                set_word0(rv, Exp_mask);
+                set_word1(rv, 0);
 #endif
                 if (bd0)
                     goto retfree;
@@ -1826,6 +1826,7 @@ dig_done:
     }
 #ifdef Avoid_Underflow
     if (scale) {
+        rv0 = 0.;
         set_word0(rv0, Exp_1 - P*Exp_msk1);
         set_word1(rv0, 0);
         if ((word0(rv) & Exp_mask) <= P*Exp_msk1
@@ -1864,6 +1865,7 @@ nomem:
     Bfree(bs);
     Bfree(bd0);
     Bfree(delta);
+    RELEASE_DTOA_LOCK();
     *err = JS_DTOA_ENOMEM;
     return 0;
 }
@@ -2970,6 +2972,8 @@ JS_dtobasestr(int base, double d)
             if (!b) {
               nomem1:
                 Bfree(b);
+                RELEASE_DTOA_LOCK();
+                free(buffer);
                 return NULL;
             }
             do {
@@ -3004,6 +3008,8 @@ JS_dtobasestr(int base, double d)
                 if (mlo != mhi)
                     Bfree(mlo);
                 Bfree(mhi);
+                RELEASE_DTOA_LOCK();
+                free(buffer);
                 return NULL;
             }
             JS_ASSERT(e < 0);

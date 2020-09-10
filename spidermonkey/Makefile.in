@@ -60,7 +60,10 @@ PACKAGE_FILE = js.pkg
 # other modules which are always built shared. Failure to do so results in
 # the js code getting copied into xpinstall and jsd as well as mozilla-bin,
 # and then the static data cells used for locking no longer work.
+
+ifndef JS_STATIC_BUILD
 FORCE_SHARED_LIB = 1
+endif
 
 CSRCS		= \
 		jsapi.c \
@@ -79,6 +82,7 @@ CSRCS		= \
 		jsgc.c \
 		jshash.c \
 		jsinterp.c \
+		jsiter.c \
 		jslock.c \
 		jslog2.c \
 		jslong.c \
@@ -101,6 +105,7 @@ CSRCS		= \
 
 EXPORTS		= \
 		jsautocfg.h \
+		jsautokw.h \
 		js.msg \
 		jsapi.h \
 		jsarray.h \
@@ -120,6 +125,7 @@ EXPORTS		= \
 		jsgc.h \
 		jshash.h \
 		jsinterp.h \
+		jsiter.h \
 		jslock.h \
 		jslong.h \
 		jsmath.h \
@@ -131,6 +137,7 @@ EXPORTS		= \
 		jsotypes.h \
 		jsparse.h \
 		jsprf.h \
+		jsproto.tbl \
 		jsprvtd.h \
 		jspubtd.h \
 		jsregexp.h \
@@ -149,8 +156,6 @@ ifeq (,$(filter-out WINNT WINCE,$(OS_ARCH)))
 EXPORTS		+= jscpucfg.h
 endif
 
-FDLIBM_LIBRARY	= fdlibm/$(LIB_PREFIX)fdm.$(LIB_SUFFIX)
-JSMATH_PRELINK	= jsmathtemp.o
 JS_SAFE_ARENA	= 1
 
 DASH_R		= -r
@@ -158,10 +163,6 @@ DASH_R		= -r
 include $(topsrcdir)/config/config.mk
 
 EXTRA_DSO_LDOPTS += $(NSPR_LIBS)
-
-ifeq (,$(filter-out OS2 WINNT WINCE,$(OS_ARCH)))
-SHARED_LIBRARY_LIBS += $(FDLIBM_LIBRARY)
-endif
 
 # When using gcc the assembly is inlined in the C-file (see jslock.c)
 ifeq ($(OS_ARCH),SunOS)
@@ -190,6 +191,11 @@ JSJAVA_CFLAGS	= \
 		-I$(topsrcdir)/sun-java/include \
 		$(JSJAVA_STUBHEADERS)
 
+# Define keyword generator before rules.mk, see bug 323979 comment 50
+
+HOST_SIMPLE_PROGRAMS += host_jskwgen$(HOST_BIN_SUFFIX)
+GARBAGE += jsautokw.h host_jskwgen$(HOST_BIN_SUFFIX)
+
 include $(topsrcdir)/config/rules.mk
 
 DEFINES		+= -DEXPORT_JS_API 
@@ -209,7 +215,7 @@ LDFLAGS         += -OPT:NOICF
 endif
 endif
 
-GARBAGE		+= $(JSMATH_PRELINK) jscpucfg.o jsautocfg.h jsautocfg.tmp jscpucfg
+GARBAGE		+= jscpucfg.o jsautocfg.h jsautocfg.tmp jscpucfg
 
 ifneq (,$(CROSS_COMPILE)$(filter-out WINNT,$(OS_ARCH)))
 TARGETS		+= jscpucfg$(HOST_BIN_SUFFIX)
@@ -288,13 +294,6 @@ LDFLAGS		+= -lposix4 -ldl -lnsl -lsocket
 endif
 endif
 
-ifeq ($(OS_ARCH),QNX)
-ifneq ($(OS_TARGET),NTO)
-# Don't use wildcard here, because we only want this resolved at link time.
-OBJS		+= fdlibm/*.o
-endif
-endif
-
 ifeq ($(OS_ARCH),IRIX)
 ifndef GNU_CC
 _COMPILE_CFLAGS  = $(patsubst -O%,-O1,$(COMPILE_CFLAGS))
@@ -303,31 +302,6 @@ jsapi.o jsarena.o jsarray.o jsatom.o jsemit.o jsfun.o jsinterp.o jsregexp.o jspa
 	@$(MAKE_DEPS_AUTO)
 	$(CC) -o $@ -c $(_COMPILE_CFLAGS) $<
 endif
-endif
-
-# On OS/2 & win32 we are already linking against fdlibm, so don't bother
-# creating jsmathtemp
-ifeq (,$(filter OS2 WINNT OpenVMS,$(OS_ARCH)))
-# special rule for jsmath.o since we want to incrementally link
-# against fdlibm to pull in only what is needed
-# Do this in a single step to avoid dependency problems
-jsmath.o: jsmath.c $(FDLIBM_LIBRARY) Makefile.in
-	$(REPORT_BUILD)
-	@$(MAKE_DEPS_AUTO)
-	$(ELOG) $(CC) $(OUTOPTION)$(JSMATH_PRELINK) -c $(COMPILE_CFLAGS) $<
-ifeq ($(OS_ARCH),QNX)
-ifneq ($(OS_TARGET),NTO)
-	@cp $(JSMATH_PRELINK) $@
-else
-	$(LD) $(DASH_R) -o $@ $(JSMATH_PRELINK) $(FDLIBM_LIBRARY)
-endif
-else
-	$(LD) $(DASH_R) -o $@ $(JSMATH_PRELINK) $(FDLIBM_LIBRARY)
-endif
-	@$(RM) -f $(JSMATH_PRELINK)
-else
-# Create dependency so we build fdlibm
-jsmath.o: $(FDLIBM_LIBRARY) Makefile.in
 endif
 
 # An AIX Optimization bug causes PR_dtoa() & JS_dtoa to produce wrong result.
@@ -342,9 +316,6 @@ jsdtoa.o: jsdtoa.c Makefile.in
 	@$(MAKE_DEPS_AUTO)
 	$(CC) -o $@ -c $(filter-out $(MOZ_OPTIMIZE_FLAGS), $(COMPILE_CFLAGS)) $<
 endif
-
-$(FDLIBM_LIBRARY):
-	$(MAKE) -C $(@D) $(@F)
 
 jsopcode.h jsopcode.c: jsopcode.tbl
 
@@ -408,3 +379,10 @@ jscpucfg$(HOST_BIN_SUFFIX): jscpucfg.c Makefile.in
 endif
 endif
 
+# Extra dependancies and rules for keyword switch code
+jsscan.$(OBJ_SUFFIX): jsautokw.h jskeyword.tbl
+
+host_jskwgen.$(OBJ_SUFFIX): jsconfig.h jskeyword.tbl
+
+jsautokw.h: host_jskwgen$(HOST_BIN_SUFFIX)
+	./host_jskwgen$(HOST_BIN_SUFFIX) $@
