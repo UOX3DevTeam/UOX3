@@ -305,6 +305,9 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				c->SetPathFail( 0 );
 		}
 
+		if( cwmWorldState->ServerData()->AmbientFootsteps() )
+			Effects->playTileSound( c, mSock );
+
 		MoveCharForDirection( c, myx, myy, myz );
 
 		// i actually moved this for now after the z =  illegal_z, in the end of CrazyXYBlockStuff()
@@ -317,10 +320,6 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		//
 		//	 That means any bugs concerning if a move was legal must be before this point!
 		//
-
-		// i moved this down after we are certain we are moving
-		if( cwmWorldState->ServerData()->AmbientFootsteps() )
-			Effects->playTileSound( mSock );
 	}
 
 	// do all of the following regardless of whether turning or moving i guess
@@ -939,7 +938,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 	UI16 instanceID		= c->GetInstanceID();
 
 	CPExtMove toSend	= (*c);
-	std::scoped_lock lock(Network->internallock);
+	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
 	{	// lets see, its much cheaper to call perm[i] first so i'm reordering this

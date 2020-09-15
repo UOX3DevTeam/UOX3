@@ -982,7 +982,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 				if( lastError != WSAEWOULDBLOCK )
 #endif
 					throw socket_error( lastError );
-			UOXSleep( 20 );
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 		}
 		++recvAttempts;
 		nexTime = getclock();

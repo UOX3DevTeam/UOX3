@@ -898,7 +898,7 @@ void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 	GumpDisplay Who( s, 400, 300 );
 	Who.SetTitle( title );
 	{
-		std::scoped_lock lock(Network->internallock);
+		//std::scoped_lock lock(Network->internallock);
 		Network->pushConn();
 		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 		{
@@ -968,7 +968,7 @@ void command_reportbug( CSocket *s )
 	s->sysmessage( 87 );
 	bool x = false;
 	{
-		std::scoped_lock lock(Network->internallock);
+		//std::scoped_lock lock(Network->internallock);
 		Network->pushConn();
 		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 		{

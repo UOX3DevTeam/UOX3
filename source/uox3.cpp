@@ -234,7 +234,7 @@ void NetworkPollConnectionThread(  )
 	{
 		Network->CheckConnections();
 		Network->CheckLoginMessage();
-		std::this_thread::sleep_for(std::chrono::microseconds(20));
+		std::this_thread::sleep_for(std::chrono::milliseconds( 20 ));
 	}
 	messageLoop << "Thread: NetworkPollConnection has Closed";
 
@@ -254,7 +254,7 @@ void CheckConsoleKeyThread(  )
 	while( !conthreadcloseok )
 	{
 		Console.Poll();
-		std::this_thread::sleep_for(std::chrono::microseconds(500));
+		std::this_thread::sleep_for(std::chrono::milliseconds( 500 ));
 	}
 	messageLoop << "Thread: CheckConsoleKeyThread Closed";
 }
@@ -275,7 +275,7 @@ bool isOnline( CChar& mChar )
 			return true;
 	}
 	{
-		std::scoped_lock lock(Network->internallock);
+		//std::scoped_lock lock(Network->internallock);
 		Network->pushConn();
 		for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = 	Network->NextSocket() )
 		{
@@ -1129,7 +1129,7 @@ void CWorldMain::CheckAutoTimers( void )
 			{
 				reallyOn = false;	// to start with, there's no one really on
 				{
-					std::scoped_lock lock(Network->internallock);
+					//std::scoped_lock lock(Network->internallock);
 					Network->pushConn();
 					for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 					{
@@ -1156,7 +1156,7 @@ void CWorldMain::CheckAutoTimers( void )
 	if( GetWorldSaveProgress() == SS_NOTSAVING )
 	{
 		{
-			std::scoped_lock lock(Network->internallock);
+			//std::scoped_lock lock(Network->internallock);
 			Network->pushConn();
 			for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 			{
@@ -1201,7 +1201,7 @@ void CWorldMain::CheckAutoTimers( void )
 	else if( GetWorldSaveProgress() == SS_JUSTSAVED )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
 	{
 		{
-			std::scoped_lock lock(Network->internallock);
+			//std::scoped_lock lock(Network->internallock);
 			Network->pushConn();
 			for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 			{
@@ -1351,7 +1351,7 @@ void CWorldMain::CheckAutoTimers( void )
 	}
 	std::set< CMapRegion * > regionList;
 	{
-		std::scoped_lock lock(Network->internallock);
+		//std::scoped_lock lock(Network->internallock);
 
 		Network->pushConn();
 		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
@@ -2728,7 +2728,7 @@ int main( SI32 argc, char *argv[] )
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
-			UOXSleep( (cwmWorldState->GetPlayersOnline() ? 5 : 90 ) );
+			std::this_thread::sleep_for(std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
 			if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->LoopTimeCount( 0 );

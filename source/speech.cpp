@@ -471,7 +471,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 		case SPTRG_BROADCASTPC:			// ALL PCs everywhere + NPCs in range
 		case SPTRG_BROADCASTALL:
 		{
-			std::scoped_lock lock(Network->internallock);
+			//std::scoped_lock lock(Network->internallock);
 			Network->pushConn();
 			for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 			{
@@ -538,7 +538,7 @@ bool CSpeechQueue::Poll( void )
 		while( RunAsThread() )
 		{
 			InternalPoll();
-			UOXSleep( pollTime );	// so that it's never 0 (and number of milliseconds)
+			std::this_thread::sleep_for(std::chrono::milliseconds( pollTime ));	// so that it's never 0 (and number of milliseconds)
 		}
 		return true;
 	}

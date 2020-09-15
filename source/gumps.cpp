@@ -1015,7 +1015,7 @@ void CPage( CSocket *s, const std::string& reason )
 			bool x = false;
 
 			{
-				std::scoped_lock lock(Network->internallock);
+				//std::scoped_lock lock(Network->internallock);
 				Network->pushConn();
 				for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 				{
@@ -1067,7 +1067,7 @@ void GMPage( CSocket *s, const std::string& reason )
 		{
 			bool x = false;
 			{
-				std::scoped_lock lock(Network->internallock);
+				//std::scoped_lock lock(Network->internallock);
 				Network->pushConn();
 				for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 				{

@@ -26,10 +26,11 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 10. September, 2020</small></p>
+	<p style="margin:0"><small>Last Updated: 16. September, 2020</small></p>
+	<p style="margin:0"><small>UOX3 Version: v0.99.3a</small></p>
 </div>
 
-<section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md">
+<section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
 	<ul class="cd-faq__categories">
 		<!--<img src="../gfx/docs.jpg" style="width:100%"/>-->
 		<li><a class="cd-faq__category cd-faq__category-selected truncate" href="#about">About UOX3</a></li>
@@ -222,13 +223,13 @@
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>To get started with UOX3, you have a couple of different options:</p>
-		          	<h3>1) Stable All-in-One (Windows only)</h3>
-		          	<p>The first, and most straight-forward option - as a <strong>Windows user</strong> - is to download the latest stable <strong>All-in-One UOX3 package</strong> from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
-		          	<h3>2) Experimental Build (Windows only)</h3>
-		          	<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. This version contains all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to its "cutting edge" nature.</p>
+		          	<h3>1) Stable All-in-One</h3>
+		          	<p>The first, and most straight-forward option is to download the latest stable <strong>All-in-One UOX3 package</strong> for your platform (Windows/Linux/macOS) from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
+		          	<h3>2) Experimental Build</h3>
+		          	<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to the "cutting edge" nature.</p>
 		          	<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3.</p></div>
-		          	<h3>3) Compile Source Yourself (Linux/macOS/Windows)</h3>
-		            <p>The third option, for more advanced users - and the default for <strong>Linux/macOS users</strong>, would be to <strong>download the UOX3 sourcecode directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
+		          	<h3>3) Compile Source Yourself</h3>
+		            <p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -242,17 +243,17 @@
 					<div class="spoiler">
 						<p>If you think the detailed instructions below are too wordy, try this quick start guide instead, and refer to the full setup guide if you run into any problems along the way:</p>
 						<ol>
-							<li>Download the <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">UO Client</a>, and <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a>.</li>
+							<li>Download the <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">UO Client</a>, and <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a>. For Linux/macOS users, find a way of copying the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on ClassicUO client instead of the UO+Razor combination.</li>
 							<li>Download <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3</a>.</li>
 							<li>Set client versions allowed on your shard via <strong>CLIENTSUPPORT#</strong> lines in <em>[clientsupport]</em> section of <strong>UOX.INI</strong>.</li>
 							<li>Update <strong>shard name</strong> and IP (if other than local) in <em>[play server list]</em> section of <strong>UOX.INI</strong></li>
 							<li>Update <strong>DATADIRECTORY</strong> path in <em>[directories]</em> section of <strong>UOX.INI</strong>; point it to UO folder, or folder with UO data files.</li>
-							<li>Change default <strong>username</strong>/<strong>password</strong> for <em>account 0</em> in <strong>UOX3/ACCOUNT/accounts.adm</strong>.</li>
+							<li>Change default <strong>username</strong>/<strong>password</strong> for <em>account 0</em> in <strong>UOX3/accounts/accounts.adm</strong>.</li>
 							<li>Start UOX3!</li>
 							<li>Start Razor, and use it to load up the UO client, then log in!</li>
 						</ol>
 					</div>
-		            <p>Assuming you now have a UOX3 folder that contains <em>uox3.exe/js32.dll</em> (Windows only), <em>uox3 binary</em> (Linux only), some .ini files and a bunch of folders like <em>accounts</em>, <em>dfndata</em> and <em>js</em>, it's time to dig in and get your hands dirty with some ini editing!</p>
+		            <p>Assuming you now have a UOX3 folder that contains <em>UOX3.exe</em> (Windows only), <em>uox3 binary</em> (Linux/macOS only), some .ini files and a bunch of folders like <em>accounts</em>, <em>dfndata</em> and <em>js</em>, it's time to dig in and get your hands dirty with some ini editing!</p>
 		            <h3>Step 1) Open UOX.INI</h3>
 		            <p>Open <span class="cmdHighlight">UOX.INI</span> from the root UOX3 folder using your favourite text editor (Notepad, <a href="https://notepad-plus-plus.org/" target="_blank" title="Notepad++ homepage">Notepad++</a>, <a href="https://www.sublimetext.com/" target="_blank" title="Sublime Text Editor homepage">Sublime Text</a>, Vim, nano, etc.)
 		            <h3>Step 2) Limit Allowed Client Versions</h3>
@@ -294,7 +295,7 @@
 						</div>
 					</div>
 					<h3>Step 6) Setting up the Admin Account</h3>
-					<p>The final step in the UOX3 setup process is to setup the administrator account for your shard! Save and close UOX.INI, and instead navigate your way to the UOX3/ACCOUNTS/ folder, where you open the file called <strong>accounts.adm</strong> in your text editor, before locating this section of the file:</p>
+					<p>The final step in the UOX3 setup process is to setup the administrator account for your shard! Save and close UOX.INI, and instead navigate your way to the <em>UOX3/accounts/</em> folder, where you open the file called <strong>accounts.adm</strong> in your text editor, before locating this section of the file:</p>
 		            <input type="checkbox" id="spoiler_config_accountsetup"/>
   					<label for="spoiler_config_accountsetup">accounts.adm <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -374,9 +375,8 @@
 			        	  |		<em>Where world data about characters, items, time, resource regions etc is stored</em><br>
 			        	  |<br>
 			        	  | <em>banlist.ini</em><br>
-			        	  | <em>js32.dll</em> (Windows only)<br>
 			        	  | <em>uox.ini</em><br>
-			        	  | <em>uox3.exe</em> (Windows only)<br>
+			        	  | <em>UOX3.exe</em> (Windows only)<br>
 			        	  | <em>uox3</em> (Linux only)<br>
 					</div>
 		          </div>
@@ -390,9 +390,9 @@
 		            <p>By default, UOX3 comes as a blank slate - a tabula rasa - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you can use of the "Default UOX3 Worldfiles" to add basic decorations such as doors and signs for all the mainland UO towns on the Felucca facet (world 0), and/or the "Community-made Spawn.dfn" file that will populate your world with all kinds of NPCs, from animals and monsters to shopkeepers and townfolk.</p>
 		            <h3>Default UOX3 Worldfiles</h3>
 		            <p><em>Note: It is recommended that you download and add these default worldfiles to your shard BEFORE your first startup and before you create your first character, as applying these will essentially overwrite your existing worldfiles and erase any characters or items you might have created already.</em></p>
-		            <p>Click the <strong>Default UOX3 Worldfiles</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file containing a default set of world decorations for your shard. Once the download is complete, unzip this file into your <em>UOX3/SHARED/</em> folder, overwriting any existing files in that folder.</p>
+		            <p>Click the <strong>Default UOX3 Worldfiles</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file containing a default set of world decorations for your shard. Once the download is complete, unzip this file into your <em>UOX3/shared/</em> folder, overwriting any existing files in that folder.</p>
 		            <h3>Community-made Spawn.dfn</h3>
-		            <p>Click the <strong>Community-made Spawn.dfn</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the UOX3/DFNDATA/SPAWN folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
+		            <p>Click the <strong>Community-made Spawn.dfn</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the <em>UOX3/dfndata/spawn/</em> folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -402,7 +402,7 @@
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <h3>Windows</h3>
-		            <p>Navigate to the root of your UOX3 folder, and double-click on uox3.exe to start UOX3.</p>
+		            <p>Navigate to the root of your UOX3 folder, and double-click on UOX3.exe to start UOX3.</p>
 		            <h3>Linux/macOS</h3>
 		            <p>Open a new terminal window, navigate to the root of your UOX3 directory, and start UOX3 by entering the following command: <strong>./uox3</strong></p>
 		            <h3>Common</h3>
@@ -433,7 +433,7 @@
 		            <p>After a short wait, you'll be greeted by a welcome screen. Unless you encounter any issues, or you have multiple UO Client versions installed, just leave the <strong>Load Client</strong> part at <em>2D Client (Auto Detect)</em>. Make sure <strong>Patch client encryption</strong> is checked, and that the <strong>IP and Port</strong> matches what you setup for UOX3 in UOX.INI. If running client and server on same computer, the default UOX3 settings are <strong>127.0.0.1</strong> as IP and <strong>2593</strong> as Port.</p>
 		            <p>Once basic setup of Razor is complete, click the <strong>Okay</strong> button to launch the UO client. At this point you are now ready to enter your UOX3 username and password and log in!</p>
 		            <h3>Alternative for Linux/macOS users - Use ClassicUO Client</h3>
-	          		<p>Note for <span class="cmdHighlight">Linux/macOS</span> (and even Windows) users: An alternative to the regular UO client and Razor, neither of which run natively on Linux or macOS, is the <strong>ClassicUO</strong> client - an open-source, cross-platform client that can be used to connect to UOX3 without Razor - though it still requires the original UO data files to run.</p>
+	          		<p>Note for <span class="cmdHighlight">Linux/macOS</span> (and even Windows) users: An alternative to the regular UO client and Razor, neither of which run natively on Linux or macOS, is the <strong>ClassicUO</strong> client - an open-source, cross-platform client that can be used to connect to UOX3 without Razor - though it still requires the original UO data files to run, so you'll need to figure out a way to get those files over to your Linux/macOS machine.</p>
 		            <input type="checkbox" id="spoiler_classicUO"/>
   					<label for="spoiler_classicUO">ClassicUO Client <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -461,7 +461,7 @@
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>Once your UOX3 shard has successfully started up (and importantly, <strong>remains running</strong>), and the UO client has loaded the login screen after you started it using a tool like Razor, you are ready to log in to your UOX3 shard for the first time.</p>
-		            <p>Enter the same <span class="cmdHighlight">username</span> and <span class="cmdHighlight">password</span> that you added in <strong>UOX3/ACCOUNTS/accounts.adm</strong> during the initial UOX3 setup, and click <span class="cmdHighlight">Login</span>. Select your UOX3 shard from the server listing that appears, and proceed through character creation to create your first character. Note that if you are logging in using the first account listed in accounts.adm - account 0 - all characters created on this account will automatically receive GM powers!</p>
+		            <p>Enter the same <span class="cmdHighlight">username</span> and <span class="cmdHighlight">password</span> that you added in <strong>UOX3/accounts/accounts.adm</strong> during the initial UOX3 setup, and click <span class="cmdHighlight">Login</span>. Select your UOX3 shard from the server listing that appears, and proceed through character creation to create your first character. Note that if you are logging in using the first account listed in accounts.adm - account 0 - all characters created on this account will automatically receive GM powers!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -1563,7 +1563,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" id="commandList"><span>Command List</span></a>
+				<a class="cd-faq__trigger" href="#0" id="commandList"><span>Command List</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<p>Most of the commands below can be executed by GameMasters or Administrators only, but some are also usable by regular players. To make changes to who can access a particular command, check the RegisterCommand() line at the top of every command script in the <strong>UOX3\js\commands</strong> folder, or the <strong>UOX3\dfndata\commands\commands.dfn</strong> file for commands that are still hardcoded.</p>
@@ -2689,7 +2689,7 @@
 							<span class="cmdHighlight"><em>restock (d)</em></span> - Sets amount of a targeted item to restock on a shopkeeper.<br>
 							<span class="cmdHighlight"><em>sellvalue (d)</em></span> - Sets item sell value<br>
 							<span class="cmdHighlight"><em>type (d)</em></span> - Sets item's TYPE.<br>
-							<span class="cmdHighlight"><em>weight (d)</em></span> - Sets an item's weight in stones (100 = 1.00 stone)<br>
+							<span class="cmdHighlight"><em>weight (d)</em></span> - Sets an item's weight (100 = 1.00 stone)<br>
 							<span class="cmdHighlight"><em>wipable (d)</em></span> - Toggles items wipeable status (0 = false, 1 = true)<br>
 							<p><strong>Spawners</strong><br>
 							<span class="cmdHighlight"><em>spawnsection (s)</em></span> - Sets the script section for spawner to pull data from.<br>
@@ -3074,6 +3074,19 @@
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_cmd_Y">
+					<label for="spoiler_cmd_Y">Y <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+			            <input type="checkbox" id="spoiler_cmd_yell">
+						<label for="spoiler_cmd_yell">yell <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Broadcasts text to all players online with command level of 0 and above.</p>
+							<p>Command: <span class="cmdHighlight">'yell</span><br>
+							Parameters: <span class="cmdHighlight"><em>(text)</em></span></p>
+							<p>Example: <strong>'yell Hello all players!</strong></p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_cmd_Z">
 					<label for="spoiler_cmd_Z">Z <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -3143,14 +3156,40 @@
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#0" id="itemTypes"><span>Item Types</span></a>
+				<div class="cd-faq__content">
+		          <div class="text-component">
+		          	<p>TODO</p>
+		            <input type="checkbox" id="spoiler_console_cmd_network">
+					<label for="spoiler_console_cmd_network">List of Item Types <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					</div>
+				  </div>
+				</div>
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#0" id="itemLayers"><span>Item Layers</span></a>
+				<div class="cd-faq__content">
+		          <div class="text-component">
+		          	<p>TODO</p>
+		            <input type="checkbox" id="spoiler_console_cmd_network">
+					<label for="spoiler_console_cmd_network">List of Item Layers <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					</div>
+				  </div>
+				</div>
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#0" id="mapsStaticsTiledata"><span>Maps, Statics and Tiledata</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		          	<h3>Maps and Statics</h3>
-		            <p>Upon startup, UOX3 will attempt to load map and statics files based on the parameters provided in <strong>UOX3/DFNDATA/MAPS/maps.dfn</strong>. It is important that the map sizes (in height and width) defined in this file match up to the actual files being loaded. Note that the default sizes match up with map files present in v5.0.0a and newer.</p>
+		            <p>Upon startup, UOX3 will attempt to load map and statics files based on the parameters provided in <strong>UOX3/dfndata/maps/maps.dfn</strong>. It is important that the map sizes (in height and width) defined in this file match up to the actual files being loaded. Note that the default sizes match up with map files present in v5.0.0a and newer.</p>
 		            <p>To make UOX3 load maps of a different size, make sure to update the X and Y sizes in this file accordingly!</p>
 		            <h3>Tiledata</h3>
-		            <p><strong>UOX3/DFNDATA/MAPS/tiles.dfn</strong> allows overriding flags/properties stored in <strong>tiledata.mul</strong> for different tiles in UO, which UOX3 uses for various purposes such as determining whether a surface is walkable, climbable (ladders) or blocks line of sight. It is most commonly used to address various issues with tiles, such as missing or incorrect flags, without having to modify the tiledata.mul file itself.</p>
+		            <p><strong>UOX3/dfndata/maps/tiles.dfn</strong> allows overriding flags/properties stored in <strong>tiledata.mul</strong> for different tiles in UO, which UOX3 uses for various purposes such as determining whether a surface is walkable, climbable (ladders) or blocks line of sight. It is most commonly used to address various issues with tiles, such as missing or incorrect flags, without having to modify the tiledata.mul file itself.</p>
 		            <p>Example of syntax:<br>
 		            <span class="cmdHighlight">[TILE 0x0AA4]</span> // Tile ID<br>
 					<span class="cmdHighlight">{</span><br>
@@ -3249,7 +3288,7 @@
 			            	<li>Download and install <a href="https://desktop.github.com/" target="_blank" title="GitHub Desktop homepage">GitHub Desktop</a>. If you already have another tool for git installed, you can use that instead.</li>
 			            	<li>Run GitHub Desktop (or your preferred git tool) and click <strong>File->Clone Repository</strong> from the menu.</li>
 			            	<li>Click the <strong>URL</strong> tab, enter <strong>https://github.com/UOX3DevTeam/UOX3.git</strong>, then provide a local path for where you want the UOX3 git repository cloned on your drive.</li>
-			            	<li>Hit the <strong>Clone</strong> button to clone the stable branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (v1.7).</li>
+			            	<li>Hit the <strong>Clone</strong> button to clone the stable branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>).</li>
 			            </ol>
 			            <input type="checkbox" id="spoiler_compile_other_branches_0">
 			            <label for="spoiler_compile_other_branches_0">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
@@ -3317,7 +3356,7 @@
 			            <ol>
 			            	<li><strong>(Linux)</strong> <span class="cmdHighlight">sudo apt install git</span> - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.</li>
 			            	<li><strong>(macOS)</strong> <span class="cmdHighlight">xcode-select --install</span> - This will install git if not already installed, along with required make and gcc tools</li>
-			            	<li><span class="cmdHighlight">git clone https://github.com/UOX3DevTeam/UOX3.git</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (1.7) is also included.</li>
+			            	<li><span class="cmdHighlight">git clone https://github.com/UOX3DevTeam/UOX3.git</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>) is also included.</li>
 			            </ol>
 			            <input type="checkbox" id="spoiler_compile_other_branches">
 			            <label for="spoiler_compile_other_branches">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
@@ -3370,7 +3409,7 @@
 				            </ul>
 			            </div>
 		            </div>
-					<p>Once this process is done, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.</p>
+					<p>Once this process is done, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the <em>UOX3/data/</em> subdirectory.</p>
 
 					<p><strong>It is recommended </strong> to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
 
@@ -3652,19 +3691,94 @@
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>UOX3 comes with a <strong>custom dictionary system</strong> that allows shard admins to set up and translate their own system and script messages to any language supported by the UO client. This system has some pros and cons over the usual "cliloc" (client localization, also supported!) system UO uses, in that it allows shard admins to send completely customized messages to the client (even if not setting up for multiple languages), at the cost of using more bandwith than the built-in cliloc system in the client.</p>
-		            <p>The dictionaries are set up in the UOX3/dictionaries folder, with each language contained in its own dictionary file with a file-ending matching the language code used in the UO client. The exceptions are the files with a .ZRO and .UNK extensions. These are used as default files when no/an unknown language is returned from the client.</p>
-		            <p>In older client versions, it is possible to change the client language by changing a setting - <strong>UserLanguageCodeString</strong> - in the uo.cfg file. <em>Syntax: UserLanguageCodeString=[language code] (minus brackets)</em>.</p>
-		            <p>In modern client versions, the language seems to be dictated automatically by the regional settings in Windows, meaning the above uo.cfg setting might not work.</p>
-		            <h4>Language codes supported in the UO Client (depending on version):</h4>
-					<span class="cmdHighlight">ENU</span> (English)<br>
+		            <p>The dictionaries are set up in the <em>UOX3/dictionaries/</em> folder, with each language contained in its own dictionary file with a file-ending matching a <strong>group</strong> of language codes used in the UO client. ENG, for instance, covers all English language codes, and FRE does the same for French ones. The exceptions are the files with a .ZRO and .UNK extensions. These are used as default files when no/an unknown language is returned from the client.</p>
+		            <h4>Language Groups supported in UOX3's Dictionary System:</h4>
+					<p><span class="cmdHighlight">UNK</span> (Unknown - Used when unknown language code is returned from client)<br>
+					<span class="cmdHighlight">ZRO</span> (Default - Used )<br>
+					<span class="cmdHighlight">ENG</span> (English - ENU, ENG, ENA, ENC, ENZ, ENI, ENS, ENJ, ENB, ENL, ENT, ENW, ENP)<br>
+					<span class="cmdHighlight">GER</span> (German - DEU, DES, DEA, DEL, DEC)<br>
+					<span class="cmdHighlight">SPA</span> (Spanish - ESP, ESM, ESN, ESG, ESC, ESA, ESD, ESV, ESO, ESR, ESS, ESF, ESL, ESY, ESZ, ESB, ESE, ESH, ESI, ESU)<br>
+					<span class="cmdHighlight">FRE</span> (French - FRA, FRB, FRC, FRS, FRL, FRM)<br>
+					<span class="cmdHighlight">JAP</span> (Japanese - JPN)<br></p>
+		            <h4>Language Codes supported by UO client via cliloc system (depending on client version):</h4>
+					<p><span class="cmdHighlight">ENG</span> (English)<br>
 					<span class="cmdHighlight">DEU</span> (German)<br>
 					<span class="cmdHighlight">ESP</span> (Spanish)<br>
 					<span class="cmdHighlight">FRA</span> (French)<br>
 					<span class="cmdHighlight">CHT</span> (Chinese)<br>
 					<span class="cmdHighlight">CHS</span> (Non-Traditional Chinese)<br>
 					<span class="cmdHighlight">JPN</span> (Japanese)<br>
-					<span class="cmdHighlight">KOR</span> (Korean)<br>
-		            </p>
+					<span class="cmdHighlight">KOR</span> (Korean)<br></p>
+		            <p>In older client versions, it is possible to change the client language by changing a setting - <strong>UserLanguageCodeString</strong> - in the uo.cfg file. <strong>Example: UserLanguageCodeString=DEU</strong>. In modern client versions, this seems to instead be dictated automatically by the regional settings in Windows, meaning the above uo.cfg setting might not work.</p>
+		          </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#0" id="uox3mining"><span>Mining and Ore System</span></a>
+				<div class="cd-faq__content">
+		          <div class="text-component">
+		            <p>By default, UOX3 is setup with a very simple, yet customizable mining system, with some options in uox.ini to determine certain basic things.</p>
+		            <input type="checkbox" id="spoiler_mining_settings">
+		            <label for="spoiler_mining_settings">Mining Settings in uox.ini <i class="fas fa-angle-down"></i></label>
+		            <div class="spoiler">
+		            	<p><strong>[resources]<br>
+						{</strong><br>
+						<span class="cmdHighlight">MINECHECK=1</span> // Determines where players can mine for ore (0 = Anywhere, 1 = Mountains and cave floors, 2 = Region based)<br>
+						<span class="cmdHighlight">OREPERAREA=10</span> // Maximum number of ores to spawn in a given resource area<br>
+						<span class="cmdHighlight">ORERESPAWNTIMER=600</span> // Amount of time it takes for 1 ore to respawn/regenerate in a resource area<br>
+						<span class="cmdHighlight">ORERESPAWNAREA=10</span> // Number of resource areas to split the world into<br>
+						<strong>LOGSPERAREA=3</strong><br>
+						<strong>LOGSRESPAWNTIMER=600</strong><br>
+						<strong>LOGSRESPAWNAREA=10</strong><br>
+						<strong>}</strong></p>
+		            </div>
+		            <h4>Customizable Ore Types</h4>
+		            <p>The different types of ore a player can mine are defined at the bottom of skills.dfn, in a section called <strong>[ORE_LIST]</strong>. Shard admins can easily add or remove ore types to/from this list.</p>
+		            <input type="checkbox" id="spoiler_mining_orelist">
+		            <label for="spoiler_mining_orelist">Ore List in skills.dfn <i class="fas fa-angle-down"></i></label>
+		            <div class="spoiler">
+		            	<p><span class="cmdHighlight">[ORE_LIST]<br>
+						{<br>
+						Iron<br>
+						DullCopper<br>
+						ShadowIron<br>
+						Copper<br>
+						Bronze<br>
+						Golden<br>
+						Agapite<br>
+						Verite<br>
+						Valorite<br>
+						}</p>
+		            </div>
+		            <p>Each of the ores in that list is then defined and fleshed out in more detail in a section of their own, below the list. If adding new ore types to the above list, remember to add a definition for your ore here, as well!</p>
+					<input type="checkbox" id="spoiler_mining_ores">
+					<label for="spoiler_mining_ores">Ore Definitions in skills.dfn <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>
+						<span class="cmdHighlight">[Iron]</span> // Section ID of ore type, matching the name given in ORE_LIST<br>
+						<span class="cmdHighlight">{</span><br>
+						<span class="cmdHighlight">COLOUR=0x0</span> // Color of the ore<br>
+						<span class="cmdHighlight">MAKEMENU=1</span> // Crafting menu to open when smelting this ore type?<br>
+						<span class="cmdHighlight">MINSKILL=0</span> // Minimum skill needed to mine this ore type<br>
+						<span class="cmdHighlight">NAME=iron</span> // Name of the ore, shown to player when they find some while mining<br>
+						<span class="cmdHighlight">}</span><br><br>
+
+						<span class="cmdHighlight">[DullCopper]</span> // A second ore type, with a different section ID<br>
+						<span class="cmdHighlight">{</span><br>
+						<span class="cmdHighlight">COLOUR=0x0973</span><br>
+						<span class="cmdHighlight">MAKEMENU=200</span><br>
+						<span class="cmdHighlight">MINSKILL=650</span><br>
+						<span class="cmdHighlight">NAME=dull copper</span><br>
+						<span class="cmdHighlight">}</span></p>
+					</div>
+					<h4>Region Based Mining</h4>
+					<p>By default, players can mine any ore from anywhere, as long as their Mining skill surpasses the minimum skill requirement for mining a given type of ore. This means, however, that high level miners can mine the most valuable ore from any old mountain/cave, even if it's just outside the safe zone of a major city.</p>
+					<p>For shard admins who want it to require some more effort than that, there's the regional based mining option. Firstly, change the MINECHECK setting in uox.ini (see Mining Settings in uox.ini section above) to 2. Secondly, go to UOX3/dfndata/regions/regions.dfn and make use of the "orepref" and "chanceforbigore" tags to setup ore type preferences and chances in various regions.</p>
+					<input type="checkbox" id="spoiler_mining_region">
+					<label for="spoiler_mining_region">Example Setup in regions.dfn<i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					</div>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -3777,7 +3891,7 @@
 				<a class="cd-faq__trigger" href="#0" id="raceSystem"><span>Race System</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>More details on UOX3 race system coming here soon! Check out <strong>UOX3/DFNDATA/RACE/races.dfn</strong> for examples.</p>
+		            <p>More details on UOX3 race system coming here soon! Check out <strong>UOX3/dfndata/race/races.dfn</strong> for examples.</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -3795,7 +3909,7 @@
 				<a class="cd-faq__trigger" href="#0" id="skillAndStatGain"><span>Skill and Stat Gain</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>The gain of skills and stats in UOX3 is governed by a system setup in <strong>UOX3/DFNDATA/SKILLS/skills.dfn</strong>, where each skill has a setup similar to this:</p>
+		            <p>The gain of skills and stats in UOX3 is governed by a system setup in <strong>UOX3/dfndata/skills/skills.dfn</strong>, where each skill has a setup similar to this:</p>
 		            <p><strong>// Alchemy</strong><br>
 					<strong>[SKILL 0]</strong><br>
 					<strong>{</strong><br>
@@ -3831,12 +3945,93 @@
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#0" id="spawnObjects"><span>Spawn Objects</span></a>
+				<div class="cd-faq__content">
+		          <div class="text-component">
+		            <p>UOX3's Spawn Object system lets shard admins setup item or NPC spawns in-game using GM commands, or setup predefined spawn objects in the DFNs that GMs can then add anywhere they want something to spawn.</p>
+		            <p>Unlike objects spawned via <a href="#uox3SpawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Regions</a>, ones spawned from Spawn Objects have a persistent state and will be saved during world saves and will be loaded again if server restarts.</p>
+		            <p>More details coming soon!</p>
+		          </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#0" id="uox3SpawnRegions"><span>Spawn Regions</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
+		          	<h4>Spawn Regions</h4>
 		            <p>UOX3's regional spawning system allows the spawning of thousands of NPCs and items without affecting world saving or loading times negatively, as anything spawned through this system is not saved, and will not persist through a server restart, but will respawn on every server startup. This is useful for generic monster spawns, NPC shopkeepers and townsfolk, random item spawns like magic reagents, etc.</p>
-		            <p>The spawning system is setup through <strong>UOX3/DFNDATA/SPAWN/spawn.dfn</strong>, and an example of a setup for this can be seen by downloading the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3 Community-made spawn files">Community-made spawn.dfn</a>.</p>
-		            <p>More details coming soon!</p>
+		            <p>The spawning system is setup through <strong>UOX3/dfndata/spawn/spawn.dfn</strong>, and an example of a setup for this can be seen below, or by examining the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3 Community-made spawn files">Community-made spawn.dfn</a> file.</p>
+		            <input type="checkbox" id="spoiler_dfnsystem_regionspawn">
+		            <label for="spoiler_dfnsystem_regionspawn">Example Setup for a Spawn Region <i class="fas fa-angle-down"></i></label>
+		            <div class="spoiler">
+		            	<p>The following spawn region was taken from the above-mentioned Community-made spawn.dfn file, and is responsible for spawning orcs in the Yew Orc Fort:</p>
+			            <p><span class="cmdHighlight">[REGIONSPAWN 283]<br>
+						{</span><br>
+						<span class="cmdHighlight">NAME=Yew Orc fort</span> // Internal name for spawn region<br>
+						<span class="cmdHighlight">NPC=orc</span> // npcSectionID to spawn from NPC DFNs<br>
+						<span class="cmdHighlight">MAXNPCS=10</span> // Max amount of NPCs spawn region is allowed to spawn<br>
+						<span class="cmdHighlight">X1=626</span> // Top left corner of coordinate set<br>
+						<span class="cmdHighlight">Y1=1481</span> // Top left corner of coordinate set<br>
+						<span class="cmdHighlight">X2=638</span> // Bottom right corner of coordinate set<br>
+						<span class="cmdHighlight">Y2=1487</span> // Bottom right corner of coordinate set<br>
+						<span class="cmdHighlight">WORLD=0</span> // Worldnumber to apply spawn region in<br>
+						<span class="cmdHighlight">MINTIME=5</span> // Min time between respawns<br>
+						<span class="cmdHighlight">MAXTIME=15</span> // Max time between respawns<br>
+						<span class="cmdHighlight">CALL=5</span> // Max amount of orcs to spawn during each respawn<br>
+						}</span></p>
+						<p>For a full list of DFN tags supported in Spawn Regions, take a look at <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview > SpawnRegion DFN Tags</a>!</p>
+					</div>
+		            <h4>Predefined Spawns</h4>
+		            <p>In addition to dedicated spawn regions, this system also supports setting up generic, <strong>predefined spawns</strong> that can be applied directly in regions in <strong>UOX3/dfndata/regions/regions.dfn</strong>. The benefit of such predefined spawns is that they can be re-used in different regions, and can piggy-back on the regions that already exist instead of having to create new dedicated spawn regions with coordinates etc.</p>
+		            <input type="checkbox" id="spoiler_dfnsystem_predefinedspawn">
+		            <label for="spoiler_dfnsystem_predefinedspawn">Example Setup for a Predefined Spawn <i class="fas fa-angle-down"></i></label>
+		            <div class="spoiler">
+			            <p>The following section is added either at the bottom of an existing DFN file in <strong>UOX3/dfndata/spawn/</strong> (below spawnregion entries), or in its own, separate file in the same folder:</p>
+			            <p><span class="cmdHighlight">[PREDEFINED_SPAWN orcInvasion]<br>
+						{<br>
+						NAME=Orc Spawn<br>
+						NPCLIST=allorc<br>
+						MAXNPCS=50<br>
+						MINTIME=0<br>
+						MAXTIME=1<br>
+						CALL=10<br>
+						}<br></span></p>
+						<p>This is then applied to specific sets of coordinates (X1, Y1 -> X2, Y2) within a region in <strong>UOX3/dfndata/regions/regions.dfn</strong> by adding a <span class="cmdHighlight">SPAWN=orcInvasion</span> tag below the coordinate sets in question:</p>
+						<p><span class="cmdHighlight">[REGION 4]<br>
+						{<br>
+						NAME=Britain's farmlands<br>
+						MUSICLIST=21<br>
+						GUARDED=1<br>
+						GUARDLIST=guard<br>
+						GUARDOWNER=The Town<br>
+						MAGICDAMAGE=0<br>
+						MARK=1<br>
+						GATE=1<br>
+						RECALL=1<br>
+						X1=1085<br>
+						Y1=1530<br>
+						X2=1200<br>
+						Y2=1695<br>
+						SPAWN=orcs<br>
+						X1=1200<br>
+						Y1=1555<br>
+						X2=1295<br>
+						Y2=1695<br>
+						SPAWN=orcs<br>
+						X1=1295<br>
+						Y1=1695<br>
+						X2=1330<br>
+						Y2=1850<br>
+						SPAWN=orcs<br>
+						X1=1100<br>
+						Y1=1695<br>
+						X2=1295<br>
+						Y2=1915<br>
+						SPAWN=orcs<br>
+						}<br></span></p>
+						<p>Note that in this case, the guards have also been disabled via the <strong>GUARDED=0</strong> line, to prevent the orcs spawning in the Britain farmlands from getting instant-killed by the town guards!</p>
+					</div>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -3865,7 +4060,7 @@
 				<a class="cd-faq__trigger" href="#0" id="teleportLocations"><span>Teleport Locations</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p><strong>Fixed teleport locations</strong> can be setup via <strong>UOX3/JS/teleport.scp</strong> using the following format:</p>
+		            <p><strong>Fixed teleport locations</strong> can be setup via <strong>UOX3/js/teleport.scp</strong> using the following format:</p>
 		            <p><pre>
 		<em>From 			To 		Optional</em>
 		<strong>X,Y,Z(or ALL), 	X,Y,Z  	[,World,World]</strong></pre>
@@ -4102,7 +4297,1148 @@
 				<a class="cd-faq__trigger" href="#0" id="dfnTagSystem"><span>DFN Tag Overview</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>For an overview of all DFN tags supported in UOX3 for characters, items, regions, weather-regions, create-scripts, creatures and houses, check the <a href="UOX3DFNTags.html" target="_blank" title="UOX3 DFN Tag list">DFN Tag List</a> (separate document). You can also find this document in your UOX3/DOCS/ folder, or at <a href="https://www.uox3.org/docs/UOX3DFNTags.html" target="_blank" title="UOX3 DFN Tag list at UOX3.org">UOX3.org</a>.</p>
+		          	<p>Here you'll find an overview of all <strong>DFN tags</strong> that can be used in UOX3, depending on context (characters, items, regions, etc.). The DFNs can be safely modified and dynamically reloaded while UOX3 is running, as the only other time UOX3 reads from these files (and never writes) is on server startup. After making a change, simply use the <span class="cmdHighlight">'reloaddefs</span> command in-game, or console command '<span class="cmdHighlight">7</span>' after unlocking the UOX3 console by pressing '<span class="cmdHighlight">*</span>'.</p>
+		            <input type="checkbox" id="spoiler_dfn_tags_chars">
+					<label for="spoiler_dfn_tags_chars">Character DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">alchemy</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Alchstrongy skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">anatomy</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Anatomy skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">animallore</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Animal Lore skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">archery</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Archery skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">armslore</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Arms Lore skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">backpack</span><br>
+							If tag is present, add backpack to NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">begging</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Begging skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">blacksmithing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Blacksmithing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">bowcraft</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Bowcraft/Fletching skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">bushido</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Bushido skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">camping</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Camping skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">carpentry</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Carpentry skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">cartography</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Cartography skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">carve</span>=<strong>[carvelist-ID]</strong><br>
+							Set section from UOX3/dfndata/carve/carve.dfn to use when adding items for carved/butchered corpses</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">chivalry</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Chivalry skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">color/colour</span>=<strong>[color]</strong><br>
+							Set Color by hex-id or decimal value</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">colorlist/colourlist</span>=<strong>[colorlist-ID]</strong><br>
+							Set Colorlist from UOX3/dfndata/colors/colors.dfn to pick random color from list</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">colormatchhair/colourmatchhair</span><br>
+							If tag is present, makes color of character's beard (if they have one) same as for their hair</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">cooking<</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Cooking skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">custominttag</span>=<strong>[tagname] [value]</strong><br>
+							Adds custom JS int tag to character.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">customstringtag</span>=<strong>[tagname] [text]</strong><br>
+							Adds custom JS string tag to character.</p>
+						</div>
+
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">damage/att</span>=<strong>[damage]</strong> or [lowdmg highdmg]<br>
+							Set damage/attack values - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">def</span>=<strong>[defense]</strong> or [lowdef highdef]<br>
+							Set Physical-resist/defense value - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">detectinghidden</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Detecting Hidden skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dex</span>=<strong>[statpoints]</strong> or <strong>[lowstat highstat]</strong><br>
+							Set Dexterity stat for NPC - either fixed or randomg range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dir</span>=<strong>[direction]</strong><br>
+							Set default direction upon spawning (NE, E, SE, S, SW, W, NW, N - or RND to randomize)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">elstrongentresist</span>=<strong>[fire cold energy poison]</strong><br>
+							Set Elstrongent-resist stats (0 - 1000 for each stat)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">strongotecolour</span>==<strong>[color]</strong><br>
+							Set the default color (in hex or decimal) for the NPC's strongote text</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">enticstrongent</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Enticstrongent skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">equipitem</span>=<strong>[itemSectionID]</strong><br>
+							Equip item with specified itemSectionID from item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">evaluatingintel</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Evaluating Intelligence skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fame</span>=<strong>[fame value]</strong><br>
+							Set amount of fame given to/taken from the player if they kill the NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fencing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Fencing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fishing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Fishing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">flag</span>=<strong>[neutral/innocent/evil]</strong><br>
+							Flag NPC as Neutral, Innocent or Evil</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fleeat</span>=<strong>[percentage]</strong><br>
+							Set percentage of health at which NPC will start to flee in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fleeingspeed</span>=<strong>[movstrongentspeed]</strong><br>
+							Set the speed at which the NPC flees (0.4 by default, lower = faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">focus</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Focus skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">food</span>=<strong>[foodlist-ID]</strong><br>
+							Define which food this NPC eats, from UOX3/dfndata/items/foodlists.dfn (primarily used to feed pets)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">forensics</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Forensics skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fx1</span>=<strong>[X coordinate]</strong><br>
+							Coordinate used with NPC Wander-modes</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fx2</span>=<strong>[X coordinate]</strong><br>
+							Coordinate used with NPC Wander-modes</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fy1</span>=<strong>[Y coordinate]</strong><br>
+							Coordinate used with NPC Wander-modes</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fy2</span>=<strong>[Y coordinate]</strong><br>
+							Coordinate used with NPC Wander-modes</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">fz1</span>=<strong>[Z coordinate]</strong><br>
+							Coordinate used with NPC Wander-modes</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">get</span>=<strong>[npcSectionID]</strong><br>
+							Inherit properties from NPC defined by npcSectionID in NPC DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">gold</span>=<strong>[gold]</strong> or <strong>[mingold maxgold]</strong><br>
+							Set the amount of gold this NPC carries - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">haircolor/haircolour</span>=<strong>[color]</strong><br>
+							Set the haircolor of the NPC in hex or decimal</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">healing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Healing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">herding</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Herding skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">hidamage</span>=<strong>[hidamage]</strong><br>
+							Set max damage/attack value</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">hiding</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Hiding skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">hp</span>=<strong>[hitpoints]</strong> or <strong>[lowhp highhp]</strong><br>
+							Set starting Hitpoints of NPC when spawned - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">hpmax</span>=<strong>[hitpoints]</strong> or <strong>[lowhp highhp]</strong><br>
+							Set maximum Hitpoints of NPC when spawned - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">id</span>=<strong>[bodyID]</strong><br>
+							Set body ID of creature, in hex. Also determines origID property.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">imbuing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Imbuing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">inscription</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Inscription skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">intelligence</span>=<strong>[statpoints]</strong> or <strong>[lowstat highstat]</strong><br>
+							Set Intelligence stat for NPC - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">itemid</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Item Identification skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">karma</span>=<strong>[karma value]</strong><br>
+							Set amount of Karma given to/taken from the player if they kill the NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lockpicking</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Lockpicking skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lodamage</span>=<strong>[lodamage]</strong><br>
+							Set minimum damage/attack value</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">loot</span>=<strong>[lootlist-ID]</strong> or <strong>[lootlist-ID],[amount]</strong> or <strong>[lootlist-ID],[minamount maxamount]</strong><br>
+							Add random loot to NPC based on specified lootlist from UOX3/dfndata/items/lootlists.dfn. Supports (optionally) specifying a fixed amount or a random amount of the specified ID.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lumberjacking</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Lumberjacking skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">macefighting</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Macefighting skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">magery</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Magery skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">magicresistance</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Magic Resistance skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">mana</span>=<strong>[statpoints]</strong> or <em>[lowstat highstat]</em><br>
+							Set starting Mana of NPC - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">manamax</span>=<strong>[statpoints]</strong> or <em>[lowstat highstat]</em><br>
+							Set maximum Mana of NPC - either fixed or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">meditation</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Meditation skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">mining</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Mining skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">musicianship</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Musicianship skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">mysticism</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Mysticism skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">name</span>=<strong>[text]</strong><br>
+							Set NPC name</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">namelist</span>=<strong>[namelistID]</strong><br>
+							Set random NPC name based on specified namelist from UOX3/dfndata/npc/namelists.dfn</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">necromancy</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Necromancy skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">ninjitsu</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Ninjitsu skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">notrain</span><br>
+							If tag is present, NPC won't train skills to players</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">npcai</span>=<strong>[npcAI]</strong><br>
+							Set AI of NPC (0 = none, 1 = Healer, 2 = Evil/Monster, 4 = Guard, 5 = Fighter, 6 = Animal, 7 = Dummy, 8 = Banker, 17 = PlayerVendor, 32 = Pet Guard, 88 = Chaotic, 666 = Evil Healer)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">npcwander</span>=<strong>[wanderMode]</strong><br>
+							Set NPC wander-mode (0 = immobile, 1 = follow target, 2 = wander freely, 3 = wander in box, 4 = wander in circle, 5 = frozen). See <a href="#npcMovement" title="UOX3 Documentation - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> for more details.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">packitem</span>=<strong>[itemSectionID]</strong> or <strong>[itemSectionID],[amount]</strong> or <strong>[itemSectionID],[minamount maxamount]</strong><br>
+							Add specified item from Item DFNs to NPC's backpack (must come after <strong>backpack</strong> tag!). Supports optional value for amount, or random amount values.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">parrying</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Parrying skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">peacemaking</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Peacemaking skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">poisoning</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Poisoning skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">poisonstrength</span>=<strong>[poisonStrength]</strong><br>
+							Set poison strength for NPC (1 = weak, 4 = deadly)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">priv</span>=<strong>[priv]</strong><br>
+							Used to set the NPC's starting privileges. Not working at the moment.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">provocation</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Provocation skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">race</span>=<strong>[raceID]</strong><br>
+							Set Race ID of NPC, from UOX3/dfndata/race/races.dfn.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">reattackat</span>=<strong>[percentage]</strong><br>
+							Defines percentage of health at which NPC will return to combat if fleeing</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">removetraps</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Remove Traps skill - either fixed value or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">rshopitem</span>=<strong>[itemSectionID]</strong><br>
+							NPC will purchase item defined here. itemSectionID is from the Item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">runningspeed</span>=<strong>[movementspeed]</strong><br>
+							Defines running-speed for the NPC (0.2 by default, lower = faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">runs</span><br>
+							If tag is present, NPC will play running animations during combat, and will move at <strong>runningspeed</strong> instead of <strong>walkingspeed</strong></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">saycolor/saycolour</span>=<strong>[color]</strong><br>
+							Set NPC speech color in hex or decimal</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">script</span>=<strong>[scriptID]</strong><br>
+							Set scriptID of JS to attach to NPC on creation</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">sellitem</span>=<strong>[itemSectionID]</strong><br>
+							NPC will sell item defined here. itemSectionID comes from Item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">shopitem</span>=<strong>[itemSectionID]</strong><br>
+							NPC will have item defined here added to their "already bought"-items pack. itemSectionID from item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">shopkeeper</span><br>
+							If tag is present, NPC will be turned into a shopkeeper on creation</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">shoplist</span>=<strong>[NPC will buy/sell items defined in the shoplist from UOX3/dfndata/items/shoplist.dfn]</strong><br>
+							Not in use.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">skill</span>=<strong>[skillNum] [skillValue]</strong><br>
+							Set specified skill for NPC (skillValue 0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">skin</span>=<strong>[color]</strong><br>
+							Defines skin-color for NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">skinlist</span>=<strong>[colorlistID]</strong><br>
+							Randomly set NPC skincolor based on colorlist in UOX3/dfndata/colors/colors.dfn</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">snooping</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Snooping skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spadelay</span>=<strong>[seconds]</strong><br>
+							Set minimum delay in seconds between each time an NPC can cast spells in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spattack</span>=<strong>[spellCircle]</strong><br>
+							Defines which spellcircles of spells the NPC has access to.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spellweaving</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Spellweaving skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spiritspeak</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Spirit Speak skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">split</span>=<strong>[0/1]</strong><br>
+							If set to 1, NPC will split into two NPCs when hit in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">splitchance</span>=<strong>[percentage]</strong><br>
+							Set the chance for NPC to split when hit, if split tag is enabled</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stamina</span>=<strong>[statpoints]</strong> or <strong>[lowstat highstat]</strong><br>
+							Set starting Stamina for NPC on creation - either fixed value or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">staminamax</span>=<strong>[statpoints]</strong> or <strong>[lowstat highstat]</strong><br>
+							Set maximum Stamina for NPC on creation - either fixed value or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stealing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Stealing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stealth</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Stealth skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">strength</span>=<strong>[statpoints]</strong> or <strong>[lowstat highstat]</strong><br>
+							Set Strength of NPC on creation - either fixed value or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">swordsmanship</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Swordsmanship skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">tactics</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Tactics skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">tailoring</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Tailoring skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">tamedhunger</span>=<strong>[hungerrate percentage]</strong><br>
+							Set hunger-rate and chance to become wild (600 default for hungerrate, 30 for chance to go wild!)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">taming<</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Animal Taming skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">tasteid</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Taste Identification skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">throwing</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Throwing skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">tinkering</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Tinkering skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">title</span>=<strong>[text]</strong><br>
+							Set NPC's title</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">topeace</span>=<strong>[skillpoints]</strong><br>
+							Set minimum skill to succesfully use peacemaking against this NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">toprov</span>=<strong>[skillpoints]</strong><br>
+							Set minimum skill to succesfully use provocation against this NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">totame</span>=<strong>[skillpoints]</strong><br>
+							Set minimum skill to succesfully tame this NPC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">tracking</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Tracking skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">veterinary</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Veterinary skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">walkingspeed</span>=<strong>[movementspeed]</strong><br>
+							Set NPC walk speed (0.7 default, uses global uox.ini settings if not set)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">willhunger</span>=<strong>[0/1]</strong><br>
+							If 1, NPC is affected by hunger, and will never need food.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">wrestling</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Wrestling skill (0 - 1000)</p>
+						</div>
+					</div>
+
+		            <input type="checkbox" id="spoiler_dfn_tags_items">
+					<label for="spoiler_dfn_tags_items">Item DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">ac</span>=<strong>[armorclass]</strong></strong><br>
+							Set armorclass of item (higher = better)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">addmenuitem</span>=<strong>[itemmenuID,tileID,weightPosition,objectFlags,sectionItemID]</strong><br>
+							Automatically add item to add-menu when said menu is generated. Needs to be combined with <span class="cmdHighlight">insertaddmenuitems</span> tag in associated itemmenu inside UOX3/dfndata/ItemMenu.bulk.dfn (BROKEN)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">ammo</span>=<strong>[id]</strong> or <strong>[id][color]</strong><br>
+							Used with ranged weapons to specify required ammo. Color is optional</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">ammofx</span>=<strong>[id]</strong> or <strong>[id][color][rendermode]</strong><br>
+							Used with ranged weapons to specify missile-FX</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">amount</span>=<strong>[amount]</strong> or <strong>[minamount maxamount]</strong><br>
+							Set amount of items - either fixed amount or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">att</span>=<strong>[lodamage hidamage]</strong><br>
+							Used to set minimum and maximum damage values for weapons</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">baseweight</span>=<strong>[weight]</strong><br>
+							Set base-weight of item (100 = 1 stone). Primarily used to keep a reference to the weight of empty containers, before they contain any items</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">cold</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks item with elemental type Cold, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">color/colour</span>=<strong>[color]</strong><br>
+							Color of item in hex or decimal</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">colorlist/colourlist</span>=<strong>[colorListID]</strong><br>
+							Color of item randomly picked from specified colorList in UOX3/dfndata/colors/colors.dfn</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">corpse</span>=<strong>[0/1]</strong><br>
+							If set to 1, defines item as a corpse!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">creator</span>=<strong>[character serial]</strong><br>
+							Serial of character that created item. Primarily applied during crafting</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">custominttag</span>=<strong>[tagname][value]</strong><br>
+							Adds custom JS int tag to character.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">customstringtag</span>=<strong>[tagname][text]</strong><br>
+							Adds custom JS string tag to character.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">damage</span>=<strong>[lodamage hidamage]</strong><br>
+							Same as <strong>Att</strong> tag. Used to set minimum and maximum damage values for weapons</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">decay</span>=<strong>[0/1]</strong><br>
+							If set to 1, item decays based on normal item decay rules. If set to 0, it never decays</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">def</span>=<strong>[defense]</strong><br>
+							Set physical defense value of item. Primarily used with wearables like armor</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dex</span>=<strong>[statpoints]</strong><br>
+							Minimum dexterity required to equip item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dexadd<</span>=<strong>[statpoints]</strong><br>
+							Temporary dexterity bonus applied to character while they have item equipped</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dir</span>=<strong>[direction]</strong><br>
+							Direction, but used to define light pattern/radius (0-56?) for light sources</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">disabled</span>=<strong>[0/1]</strong><br>
+							If set to 1, item is disabled. Primarily used in code to make some items temporarily disabled so they cannot be used again for a short amount of time.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dispellable</span><br>
+							If tag is present, marks the item as dispellable. Primarily applied to things like magical field spells that can be dispelled (firefields, poisonfields, etc)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dye</span><br>
+							If tag is present, marks the item as dyeable (with dye tubs)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">elementresist</span>=<strong>[fire cold energy poison]</strong><br>
+							Set fire, cold, energy and poison resistance values (0 - 1000, where 1000 = 100.0)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">get</span>=<strong>[itemSectionID]</strong><br>
+							Inherit properties of item with specified itemSectionID from item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">glow</span>=<strong>[0/1]</strong><br>
+							Attaches a hidden lightsource to the item to make it appear to glow</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">glowbc</span>=<strong>[glowColor]</strong><br>
+							Sets the color (in decimal or hex) of the glow effect (same as color tag on regular light sources)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">glowtype</span>=<strong>[glowType]</strong><br>
+							Set the type of glow-effect to use (same as direction tag on regular light sources)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">good</span>=<strong>[goodValue]</strong><br>
+							Set a category of goods used for the <a href="#advancedTradeSystem" title="UOX3 Documentation - Advanced Trade System">Advanced Trade System</a></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">heat</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks item with elemental type Heat, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">hidamage</span>=<strong>[hidamage]</strong><br>
+							Maximum damage value of a weapon (randomized between this and lodamage)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">hp</span>=<strong>[hitpoints]</strong> or <strong>[lowhp highhp]</strong><br>
+							Set hitpoints of item - either fixed value or random range</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">id</span>=<strong>[tileID]</strong><br>
+							Set tileID of item art in decimal or hex</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">intadd</span>=<strong>[statpoints]</strong><br>
+							Temporary intelligence bonus applied to character while they have item equipped</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">intelligence</span>=<strong>[statpoints]</strong><br>
+							Minimum intelligence required to equip item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">interval</span>=<strong>[mintime maxtime]</strong><br>
+							Used by <a href="#spawnerObjects" title="UOX3 Documentation - Spawner Objects">Spawner Objects</a> to determine interval (in minutes) between the spawning of objects</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">layer</span>=<strong>[layer]</strong><br>
+							Defines which layer (See <a href="#layerList" title="UOX3 Documentation - Layer List">Layer List</a> NPC should equip item on - if it's equippable</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">light</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks item with elemental type Light, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lightning</span>=<strong>[0/1]</strong> or <strong>[lowskill highskill]</strong><br>
+							If set to 1, marks item with elemental type Lightning, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lodamage</span>=<strong>[lodamage]</strong><br>
+							Minimum damage value of a weapon (randomized between this and hidamage)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">loot</span>=<strong>[lootListID]</strong><br>
+							Adds random loot to a container based on specified lootListID in UOX3/dfndata/items/lootlists.dfn</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">maxhp</span>=<strong>[hitpoints]</strong><br>
+							Set maximum hitpoints of item - generally used as durability for armor or items with a limited number of uses.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">more</span>=<strong>[hex value]</strong><br>
+							Generic variable whose purpose changes depending on context. For instance:<br>
+							<ul>
+								<li>Spellbooks can be locked by setting their <strong>more</strong> variable to 1. Locked spellbooks cannot have spells added to them</li>
+								<li>Order/Chaos Gate openers store the serial of the associated castle gates in the <strong>more</strong> variable</li>
+								<li>The <strong>more</strong> variable is used by books to specify which pre-defined book text to load from UOX3/dfndata/misc/books.dfn. Such books cannot be altered in-game.</li>
+								<li>Guildstones use a <strong>more</strong> value to store the ID/guild number of the guild it belongs to</li>
+								<li>House keys store the serial of the house they belong to in their <strong>more</strong> variable</li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">morexyz</span>=<strong>[morex],[morey],[morez]</strong><br>
+							Generic, comma separated variables whose purpose changes depending on context. For instance:<br>
+							<ul>
+								<li>Light sources store their "on" direction value in the <strong>morex</strong> portion of this variable when the light source is turned off, and applies it to the direction variable again when turned back on</li>
+								<li>For compatibility with older worldfiles, Spawner Objects alternatively use the value of <strong>morex</strong> to determine object to spawn if the <strong>spawnsection</strong> variable is not set.</li>
+								<li><strong>morez</strong> is used to store "flag colors" of characters on the corpses created when they die, to indicate to other players whether the corpse is safe to loot or not (belonged to a red player, a criminal player, etc)</li>
+								<li>Containers used as bank boxes are only valid as bank boxes if their <strong>morex</strong> value is set to 1</li>
+								<li><strong>Morex</strong>, <strong>morey</strong>, <strong>morez</strong> (and <strong>more</strong>) are used to store destination x, y and z (and world) coordinates on recall runes using the Mark spell, later to be used by the Recall/Gate spells</li>
+								<li><strong>Morex</strong>, <strong>morey</strong> and <strong>morez</strong> are used by magic wands and items with magical spell charges to store spell circle, spell number and spell charges, respectively</li>
+								<li>Containers with a <strong>morez</strong> value set to 1 are <em>trapped containers</em> that will damage players who open them</li>
+								<li>Order/Chaos Gate openers use <strong>morez</strong> to indicate whether the linked castle gates (serial stored on <strong>more</strong> variable) are closed (1) or open (1)</li>
+								<li>Books use the <strong>morey</strong> value to set the number of pages of the book, and this has to be set before the book is opened and written. They also use a <strong>morex</strong> value of <em>666</em> to indicate that they're writable, or a value of <em>999</em> to indicate that they're read-only (most often set AFTER the book has been written)</li>
+								<li>Object Teleporters (type 60) use <strong>morex</strong>, <strong>morey</strong> and <strong>morez</strong> to store teleport destination coordinates (x, y and z) on the item</li>
+								<li>Items of morphobject type use <strong>morex</strong> to store bodyID of creature to morph into when the item is used</li>
+								<li>Items of type fireworks wands use <strong>morex</strong> to store the number of charges on the item</li>
+								<li>House signs use <strong>morez</strong> to define which gump from UOX3/dfndata/misc/misc.dfn to open when item is used</li>
+								<li>Moongates store the serial of the linked moongate on the other end in the <strong>morex</strong> variable</li>
+								<li>Field spells such as firefield, poisonfield store the caster's magery skill in the <strong>morex</strong> variable to use for damage calculations, and the caster's serial in the <strong>morey</strong> variable</li>
+								<li>Advancement Gates (types 80/81) use <strong>morex</strong> to store a reference to the advancementSectionID from UOX3/dfndata/advance/advance.dfn</li>
+								<li>Damage Objects (type 85) use <strong>morex</strong> to store base damage value applied to characters, and adds a randomized amount on top based on values in <strong>morey</strong> and <strong>morez</strong></li>
+								<li>Sound Objects (type 88) use <strong>morex</strong> to store the sound effect ID to play, and <strong>morez</strong> to store the percentage chance of a sound effect playing for nearby players</li>
+								<li>WorldChange Gates (type 90) use <strong>morex</strong> to store the destination world number</li>
+							</ul></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">movable</span>=<strong>[movable]</strong><br>
+							Set movable status of item (0 = Default according to tiledata, 1 = Movable, 2 = GM only, 3 = Locked down, 4 = Owner only)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">name</span>=<strong>[text]</strong><br>
+							Name of item. Maximum length: 128 characters</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">name2</span>=<strong>[text]</strong><br>
+							Secondary, hidden name of item. Revealed with Item Identification. Maximum length: 128 characters</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">newbie</span><br>
+							If present, marks item as a blessed/newbie item that cannot be stolen, and will stay with player even after they die and get resurrected.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">offspell</span>=<strong>[value]</strong><br>
+							Can be set to a value between -128 and 127,  but is currently not used for anything. In the olden days, this was a part of UOX3's unique armor/weapon engraving system that allowed you to engrave spells on equipment with the Inscription skill.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">packitem</span>=<strong>[itemSectionID]</strong><br>
+							Add specified item from item DFNs to container</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">pileable</span>=<strong>[0/1]</strong><br>
+							If set to 1, item is pileable/stackable. Not all items can be stacked, however!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">poisondamage</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks item with elemental type Poison, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">poisoned</span>=<strong>[poisonStrength]</strong><br>
+							Sets poison strength applied to item such as weapons and food (1 to 4, where 1 = Weak, 4 = Deadly)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">priv</span>=<strong>[value]</strong><br>
+							Set priv value for item - primarily set via code to make item decayable, blessed or dispellable</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">race</span>=<strong>[raceID]</strong><br>
+							Set ID of race that a weapon will deal double damage against in combat</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">rain</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks item with elemental type Rain, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">rank</span>=<strong>[rank]</strong><br>
+							Used by crafting system to determine quality of item made</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">restock</span>=<strong>[amount]</strong><br>
+							Shopkeepers who stock this item will restock specified amount of it</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">script</span>=<strong>[scriptID]</strong><br>
+							Set scriptID of JS to attach to item on creation</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">sk_made</span>=<strong>[skillID]</strong><br>
+							Defines the skill that is used to create the item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">snow</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks item with elemental type Snow, which defines the type of damage dealt if it's a weapon</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spawnobj</span>=<strong>[itemSectionID]</strong> or <strong>[npcSectionID]</strong><br>
+							Used by <a href="#spawnerObjects" title="UOX3 Documentation - Spawner Objects">Spawner Objects</a> to determine which object to spawn from item or NPC DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spawnobjlist</span>=<strong>[itemListID]</strong> or <strong>[npcListID]</strong><br>
+							Used by <a href="#spawnerObjects" title="UOX3 Documentation - Spawner Objects">Spawner Objects</a> to determine which item or NPC from itemlists in UOX3/dfndata/items/itemlists.dfn or NPClists in UOX3/dfndata/npc/npclists.dfn to spawn</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spd</span>=<strong>[speed]</strong><br>
+							Set attack speed of weapon (higher is faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stradd</span>=<strong>[statpoints]</strong><br>
+							Set how much strength the item temporarily grants players who equip it</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">strength</span>=<strong>[statpoints]</strong><br>
+							Set Strength requirement for equipping item</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">type</span>=<strong>[itemType]</strong><br>
+							Set itemType of item. See <a href="#itemTypes" title="UOX3 Documentation - Item Types">Item Types</a> section</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">value</span>=<strong>[buyValue sellValue]</strong><br>
+							Set item's buyvalue (how much shopkeepers will pay for item from players) and sellvalue (how much shopkeepers will sell item to players for)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">visible</span>=<strong>[visibility]</strong><br>
+							Set visibility of item (0 = Visible, 1 = Temporary hidden but visible to owner, 2 = Invisible by magic, 3 = Permanently hidden by GM)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">weight</span>=<strong>[weight]</strong><br>
+							Set weight of item (100 = 1 stone)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">weightmax</span>=<strong>[weight]</strong><br>
+							Maximum weight-capacity of a container (100 = 1 stone)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">wipe</span>=<strong>[0/1]</strong><br>
+							Determines if item is affected by item-wipes or not</p>
+						</div>
+					</div>
+
+		            <input type="checkbox" id="spoiler_dfn_tags_regions">
+					<label for="spoiler_dfn_tags_regions">Region DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">abweath</span>=<strong>[weatherSystemID]</strong></strong><br>
+							Assign a weather system from UOX3/dfndata/weather/weather.dfn to this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">appearance</span>=<strong>[value]</strong><br>
+							Set the appreanace of this region (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">buyable</span>=<strong>[number]</strong><br>
+							See <a href="#advancedTradeSystem" title="UOX3 Documentation - Advanced Trade System">Advanced Trade System</a> for details</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">chanceforbigore</span>=<strong>[percentage]</strong><br>
+							Chance from 0 to 100 of finding 5 ores instead of 1 while mining in this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">dungeon</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks this region as a dungeon, which is used to determine light level for players who enter</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">escorts</span>=<strong>[0/1]</strong><br>
+							If set to 1, marks this region as a potential target region for <a href="#npcEscortQuests" title="UOX3 Documentation - NPC Escort Quests">NPC Escort Quests</a></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">gate</span>=<strong>[0/1]</strong><br>
+							If set to 1, allows players to Gate in and out of this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">good</span>=<strong>[goodID]</strong><br>
+							See <a href="#advancedTradeSystem" title="UOX3 Documentation - Advanced Trade System">Advanced Trade System</a> for details</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">guarded</span>=<strong>[0/1]</strong><br>
+							If set to 1, this region is protected by guards</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">guardlist</span>=<strong>[npcListID]</strong><br>
+							If region is guarded, this sets the NPC list (from UOX3/dfndata/npc/npclists.dfn) to choose from when spawning guards</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">guardowner</span>=<strong>[text]</strong><br>
+							Set name of guard owner, which is used in a system message to players who enter/leave the region, in the shape of "You are now under the protection of [text] guards"</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">instanceid</span>=<strong>[instanceID]</strong><br>
+							Set which instance of a world this region should exist in</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">magicdamage</span>=<strong>[0/1]</strong><br>
+							If set to 1, hostile spells are castable in this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">mark</span>=<strong>[0/1]</strong><br>
+							If set to 1, the Mark spell is usable to mark recall runes in this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">musiclist</span>=<strong>[musicListID]</strong><br>
+							Specifies default music to play in this region, based on sections of music lists (MUSICLIST #) setup in regions.dfn based on entries from config.txt in UO client's music folder</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">name</span>=<strong>[text]</strong><br>
+							Set name of this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">orepref</span>=<strong>[oreName percentage]</strong><br>
+							Set one of these lines for each ore-type you want players to be able to find in this region, with an optional percentage chance from 0 to 100 of finding said ore</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">race<</span>=<strong>[raceID]</strong><br>
+							Set the ID of the race this region belongs to. Members of a race can freely perform hostile actions against enemies of said race within this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">randomvalue</span>=<strong>[lowvalue highvalue]</strong><br>
+							See <a href="#advancedTradeSystem" title="UOX3 Documentation - Advanced Trade System">Advanced Trade System</a> for details</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">recall</span>=<strong>[0/1]</strong><br>
+							If set to 1, players are able to recall in and out of this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">safezone</span>=<strong>[0/1]</strong><br>
+							If set to 1, any and all hostile actions are disallowed within this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">script</span>=<strong>[scriptID]</strong><br>
+							Specifies JS script to assign to this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">sellable</span>=<strong>[lowvalue highvalue]</strong><br>
+							See <a href="#advancedTradeSystem" title="UOX3 Documentation - Advanced Trade System">Advanced Trade System</a> for details</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">spawn</span>=<strong>[predefinedSpawnID]</strong><br>
+							Set ID of a predefined spawn section setup in <strong>UOX3/dfndata/spawn/</strong>. See <a href="#spawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Regions</a> for details</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">teleport</span>=<strong>[0/1]</strong><br>
+							If set to 1 (default if not specified), Teleport spell is enabled within this region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">world</span>=<strong>[worldNumber]</strong><br>
+							Specifies which world number the region belongs in</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">x1</span>=<strong>[x coordinate]</strong><br>
+							Defines boundary of region. Multiple X1 Y1 -> X2 Y2 blocks can be set for a single region.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">x2</span>=<strong>[x coordinate]</strong><br>
+							Defines boundary of region. Multiple X1 Y1 -> X2 Y2 blocks can be set for a single region.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">y1</span>=<strong>[y coordinate]</strong><br>
+							Defines boundary of region. Multiple X1 Y1 -> X2 Y2 blocks can be set for a single region.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">y2</span>=<strong>[y coordinate]</strong><br>
+							Defines boundary of region. Multiple X1 Y1 -> X2 Y2 blocks can be set for a single region.</p>
+						</div>
+					</div>
+
+		            <input type="checkbox" id="spoiler_dfn_tags_spawnregions">
+					<label for="spoiler_dfn_tags_spawnregions">Spawn Region DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">call</span>=<strong>[amount]</strong></strong><br>
+							Max amount of objects to spawn in one batch during respawns</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">instanceid</span>=<strong>[instanceID]</strong><br>
+							Set ID of instance of a world this spawnregion should be spawning objects in</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">item</span>=<strong>[itemSectionID]</strong><br>
+							Set sectionID of item to spawn from Item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">itemlist</span>=<strong>[itemListID]</strong><br>
+							Set which itemlist from UOX3/dfndata/items/itemlists.dfn to randomly spawn an item from. Can be used instead of <strong>item</strong> tag</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">maxitems</span>=<strong>[amount]</strong><br>
+							Total amount of items spawn region is allowed to spawn </p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">maxnpcs</span>=<strong>[amount]</strong><br>
+							Total amount of NPCs spawn region is allowed to spawn</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">maxtime</span>=<strong>[maxTime]</strong><br>
+							Max time between respawns for this spawn region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">mintime</span>=<strong>[minTime]</strong><br>
+							Min time between respawns for this spawn region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">name</span>=<strong>[text]</strong><br>
+							Set name of the spawn region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">npc</span>=<strong>[npcSectionID]</strong><br>
+							Set sectionID of NPC to spawn from NPC DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">npclist</span>=<strong>[npcListID]</strong><br>
+							Set which npclist from UOX3/dfndata/npc/npclists.dfn to randomly spawn an NPC from. Can be used instead of <strong>npc</strong> tag</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">onlyoutside</span>=<strong>[0/1]</strong><br>
+							If set to 1, UOX3 will attempt to only spawn objects from this spawn region outside buildings</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">prefz</span>=<strong>[value]</strong><br>
+							Set the maximum Z influence a dynamic or static item can have on spawning</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">validlandpos</span>=<strong>[x],[y],[z]</strong><br>
+							Can be used to pre-define valid spawn locations on land for this spawn region. Useful in case it's an area with few valid spawn locations, to ensure the server can always find one</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">validwaterpos</span>=<strong>[x],[y],[z]</strong><br>
+							Can be used to pre-define valid spawn locations on water for this spawn region. Useful in case it's an area with few valid spawn locations, to ensure the server can always find one</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">world</span>=<strong>[worldNumber]</strong><br>
+							Set the world that this spawn region should be spawning objects in</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">x1</span>=<strong>[x coordinate]</strong><br>
+							Upper left corner of coordinate set</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">x2</span>=<strong>[x coordinate]</strong><br>
+							Lower right corner of coordinate set</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">y1</span>=<strong>[y coordinate]</strong><br>
+							Upper left corner of coordinate set</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">y2</span>=<strong>[y coordinate]</strong><br>
+							Lower right corner of coordinate set</p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_dfn_tags_weather">
+					<label for="spoiler_dfn_tags_weather">Weather System DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">coldchance</span>=<strong>[percentage]</strong></strong><br>
+							Chance for a cold day. If it passes, temperature will be fixed at a value between <span class="cmdHighlight">mintemp</span> and <span class="cmdHighlight">coldintensity</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">coldintensity</span>=<strong>[temperature]</strong><br>
+							???</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">heatchance</span>=<strong>[percentage]</strong><br>
+							Chance for a hot day. If it passes, temperature will be fixed at a value between <span class="cmdHighlight">maxtemp</span> and <span class="cmdHighlight">heatintensity</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">heatintensity</span>=<strong>[temperature]</strong><br>
+							???</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lightmin</span>=<strong>[lightLevel]</strong><br>
+							Set minimum light level (0-20)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">lightmax</span>=<strong>[lightLevel]</strong><br>
+							Set maximum light level (0-20)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">maxtemp</span>=<strong>[temperature]</strong><br>
+							Set maximum temperature of the day. Can be affected by heat waves</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">mintemp</span>=<strong>[temperature]</strong><br>
+							Set minimum temperature of the day. Can be affected by cold snaps.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">maxwind</span>=<strong>[text]</strong><br>
+							Set name of the spawn region</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">minwind</span>=<strong>[npcSectionID]</strong><br>
+							Set sectionID of NPC to spawn from NPC DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">rainchance</span>=<strong>[npcListID]</strong><br>
+							Set which npclist from UOX3/dfndata/npc/npclists.dfn to randomly spawn an NPC from. Can be used instead of <strong>npc</strong> tag</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">rainintensity</span>=<strong>[0/1]</strong><br>
+							If set to 1, UOX3 will attempt to only spawn objects from this spawn region outside buildings</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">raintempdrop</span>=<strong>[value]</strong><br>
+							Set the maximum Z influence a dynamic or static item can have on spawning</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">snowchance</span>=<strong>[x],[y],[z]</strong><br>
+							Can be used to pre-define valid spawn locations on land for this spawn region. Useful in case it's an area with few valid spawn locations, to ensure the server can always find one</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">snowintensity</span>=<strong>[x],[y],[z]</strong><br>
+							Can be used to pre-define valid spawn locations on water for this spawn region. Useful in case it's an area with few valid spawn locations, to ensure the server can always find one</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">snowthreshold</span>=<strong>[worldNumber]</strong><br>
+							Set the world that this spawn region should be spawning objects in</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stormchance</span>=<strong>[x coordinate]</strong><br>
+							Upper left corner of coordinate set</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stormintensity</span>=<strong>[x coordinate]</strong><br>
+							Lower right corner of coordinate set</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="cmdHighlight">stormtempdrop<</span>=<strong>[y coordinate]</strong><br>
+							Upper left corner of coordinate set</p>
+						</div>
+					</div>
 		          </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -4141,7 +5477,7 @@
 				<a class="cd-faq__trigger" href="#0" id="jsIntro"><span>Introduction to JS Engine in UOX3</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		          	<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (v1.6.0). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
+		          	<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
 		          	<p>UOX3's JavaScripts can be reloaded dynamically without restarting the server, making it very easy to iterate on new features or modify existing ones.</p>
 		          	<p>Example of a simple JavaScript in UOX3, used with the Dice and Cup object to allow players to roll a dice and have the number displayed for others to see:<br>
 		          	<pre>
@@ -4171,6 +5507,7 @@
 				<div class="cd-faq__content">
 		          <div class="text-component">
 		            <p>The <a href="jsdocs/index.html">UOX3 JS documentation</a> documents all the various events, triggers, methods, functions and properties available to script writers.</p>
+		            <p>UOX3 comes with <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (such as <em>let</em>, or browser-specific features) might not be fully supported.</p>
 		            <p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 		          </div>
 				</div> <!-- cd-faq__content -->
@@ -4180,7 +5517,7 @@
 				<a class="cd-faq__trigger" href="#0" id="uox3JSE"><span>JSE File, Object and Type-associations</span></a>
 				<div class="cd-faq__content">
 		          <div class="text-component">
-		            <p>In the UOX3/JS/ folder, you can find three files that are used to map UOX3 JavaScript files to script IDs, and map item IDs or item Types to script IDs.</p>
+		            <p>In the <em>UOX3/js/</em> folder, you can find three files that are used to map UOX3 JavaScript files to script IDs, and map item IDs or item Types to script IDs.</p>
 		            <p><span class="cmdHighlight">jse_fileassociations.scp</span><br>
 		            Through this file you can assign script IDs to JavaScripts for use either with objects, commands, spells, skills, network packets or the console. You'll need to assign your script a scriptID in here before you can assign it to an object or use it in either of the other two files mentioned below. Syntax: <strong>[scriptID]=[filepath and name]</strong></p>
 		            <input type="checkbox" id="spoiler_jsefileassociations">
@@ -4269,9 +5606,16 @@
 		          <div class="text-component">
 		          	<p>Click the changelog below to view the detailed update notes for the latest UOX3 version (and many, many versions before that). To stay up-to-date with developments outside of stable releases, check out the sticky topic in the <a href="https://www.uox3.org/forums" target="_blank" title="UOX3.org Community Forums">UOX3.org forums</a> titled <strong>Changelog for next UOX3 version</strong>. It is continuously updated with details of the latest commits to GitHub.</p>
 		            <input type="checkbox" id="spoiler_changelog"/>
-  					<label for="spoiler_changelog">UOX3 Changelog <i class="fas fa-angle-down"></i></label>
+  					<label for="spoiler_changelog">UOX3 Changelog - Current <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<embed src="UOX3_Changelog.txt" style="width: 100%; min-height: 500px">
+					</div>
+		            <input type="checkbox" id="spoiler_changelog_archive"/>
+  					<label for="spoiler_changelog_archive">Archived UOX3 Changelogs <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><a href="https://www.uox3.org/history/updates3.txt">Updates from 0.95.00 to 0.97.00</a></p>
+						<p><a href="https://www.uox3.org/history/updates2.txt">Updates from 0.70.03 to 0.70.03.24b</a></p>
+						<p><a href="https://www.uox3.org/history/updates1.txt">Updates from 0.37 to 0.70.02</a></p>
 					</div>
 				  </div>
 				</div>
@@ -4312,7 +5656,6 @@
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_alpha_era"/>
 	  					<label for="spoiler_history_UOX3_timeline_alpha_era">Alpha Versions (1997 - 1998)<i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><a href="#">Changelog</a></p>
 							<h4>October 1997</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_037"/>
 		  					<label for="spoiler_history_UOX3_037">UOX3 v0.37 Alpha <i class="fas fa-angle-down"></i></label>
@@ -4550,7 +5893,6 @@
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_067_era"/>
 	  					<label for="spoiler_history_UOX3_timeline_067_era">0.67 Versions - 1998 <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><a href="#">Changelog</a></p>
 				            <input type="checkbox" id="spoiler_history_UOX3_067a_original"/>
 		  					<label for="spoiler_history_UOX3_067a_original">UOX3 v0.67a Original<i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -4911,10 +6253,11 @@
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_068_era"/>
 	  					<label for="spoiler_history_UOX3_timeline_068_era">0.68 Versions - 1998 <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
+							<h4>August, 1998</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_068"/>
 		  					<label for="spoiler_history_UOX3_068">UOX3 v0.68 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17 August, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
 								<p><strong>Contributors:</strong> Beosil</p>
 								<p><strong>Fun Facts:</strong> Item limit increased from 4096 to 16384!</p>
@@ -4982,7 +6325,7 @@
 				            <input type="checkbox" id="spoiler_history_UOX3_068.010"/>
 		  					<label for="spoiler_history_UOX3_068.010">UOX3 v0.68.010 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> 24 August, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
 								<p><strong>Fun Facts:</strong> No range checks for GMs!</p>
 							</div>
@@ -5481,7 +6824,7 @@
 				            <input type="checkbox" id="spoiler_history_UOX3_069.03"/>
 		  					<label for="spoiler_history_UOX3_069.03">UOX3 v0.69.03 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ~November-December, 1998</p>
+								<p><strong>Release date:</strong> 16 April, 1999</p>
 								<p><strong>Released by:</strong> Tauriel</p>
 								<p><strong>Contributors:</strong> Dupois, Revana, EviLDeD</p>
 							</div>
@@ -5536,6 +6879,12 @@
 								<p><strong>Released by:</strong> UOX Dev Team/Freelancers</p>
 								<p><strong>Contributors:</strong> Dupois, Zippy, Abaddon, AntiChrist, JustMichael, Magius</p>
 								<p><strong>Fun Facts:</strong> Moongates! Escort quests!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_070_02tplus"/>
+		  					<label for="spoiler_history_UOX3_070_02tplus">UOX3 v0.70.02t+ <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 4 February, 2000</p>
+								<p><strong>Released by:</strong> UOX Dev Team/Freelancers</p>
 							</div>
 							<h4>March, 2000</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_070_03_15g"/>
@@ -5697,13 +7046,13 @@
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 28 February, 2001</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Fun Facts:</strong> Players can no longer beg from offline players!</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_070_03_23"/>
 		  					<label for="spoiler_history_UOX3_070_03_23">UOX3 v0.70.03.23 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 21 March, 2001</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
-								<p><strong>Fun Facts:</strong> </p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_070_03_24"/>
 		  					<label for="spoiler_history_UOX3_070_03_24">UOX3 v0.70.03.24 <i class="fas fa-angle-down"></i></label>
@@ -5735,83 +7084,83 @@
 		  					<label for="spoiler_history_UOX3_095_00_01">UOX3 v0.95.00 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 3 June, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_00_02"/>
 		  					<label for="spoiler_history_UOX3_095_00_02">UOX3 v0.95.00 Build 2 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> ~3-11 June, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_00_03"/>
 		  					<label for="spoiler_history_UOX3_095_00_03">UOX3 v0.95.00 Build 3 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> ~3-11 June, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_01"/>
 		  					<label for="spoiler_history_UOX3_095_01">UOX3 v0.95.01 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> ~3-11 June, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_02_01"/>
 		  					<label for="spoiler_history_UOX3_095_02_01">UOX3 v0.95.02 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 11 June, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_03_01"/>
 		  					<label for="spoiler_history_UOX3_095_03_01">UOX3 v0.95.03 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 30 June, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<h4>August, 2001</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_03_02"/>
 		  					<label for="spoiler_history_UOX3_095_03_02">UOX3 v0.95.03 Build 2 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 August, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_04_00"/>
 		  					<label for="spoiler_history_UOX3_095_04_00">UOX3 v0.95.04 Build 0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 20 August, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<h4>September, 2001</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_04_01"/>
 		  					<label for="spoiler_history_UOX3_095_04_01">UOX3 v0.95.04 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 14 September, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_04_02"/>
 		  					<label for="spoiler_history_UOX3_095_04_02">UOX3 v0.95.04 Build 2 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 19 September, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<h4>November, 2001</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_07_02"/>
 		  					<label for="spoiler_history_UOX3_095_07_02">UOX3 v0.95.07 Build 0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 November, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<h4>January, 2002</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_10_00"/>
 		  					<label for="spoiler_history_UOX3_095_10_00">UOX3 v0.95.10 Build 0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 8 January, 2002</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_095_11_00"/>
 		  					<label for="spoiler_history_UOX3_095_11_00">UOX3 v0.95.11 Build 0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 9 January, 2002</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 						</div>
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_096_era"/>
@@ -5822,24 +7171,43 @@
 		  					<label for="spoiler_history_UOX3_096_00_0">UOX3 v0.96.00 Build 0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 22 January, 2002</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_096_01_0"/>
 		  					<label for="spoiler_history_UOX3_096_01_0">UOX3 v0.96.01 Build 0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 4 February, 2002</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 						</div>
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_097_era"/>
 	  					<label for="spoiler_history_UOX3_timeline_097_era">0.97 Versions (2002 - 2004) <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
+							<h4>April, 2002</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_097_0"/>
+		  					<label for="spoiler_history_UOX3_097_0">UOX3 v0.97.0 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 26 April, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+
+							<h4>October, 2002</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_097_1"/>
+		  					<label for="spoiler_history_UOX3_097_1">UOX3 v0.97.1 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> ~6 October, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+
 							<h4>December, 2002</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_01_16a"/>
 		  					<label for="spoiler_history_UOX3_097_01_16a">UOX3 v0.97.01.16a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 18 December, 2002</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>March, 2003</h4>
@@ -5847,25 +7215,29 @@
 		  					<label for="spoiler_history_UOX3_097_03_1">UOX3 v0.97.03.1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 March, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_03_1f"/>
 		  					<label for="spoiler_history_UOX3_097_03_1f">UOX3 v0.97.03.1f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 11 March, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_03_1h"/>
 		  					<label for="spoiler_history_UOX3_097_03_1h">UOX3 v0.97.03.1h <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 15 March, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_04_1a"/>
 		  					<label for="spoiler_history_UOX3_097_04_1a">UOX3 v0.97.04.1a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 23 March, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>May, 2003</h4>
@@ -5873,13 +7245,22 @@
 		  					<label for="spoiler_history_UOX3_097_05_1b">UOX3 v0.97.05.1b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 4 May, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_097_05_3a"/>
+		  					<label for="spoiler_history_UOX3_097_05_3a">UOX3 v0.97.05.3a <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 10 May, 2003</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_05_3e"/>
 		  					<label for="spoiler_history_UOX3_097_05_3e">UOX3 v0.97.05.3e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 14 May, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>June, 2003</h4>
@@ -5887,19 +7268,22 @@
 		  					<label for="spoiler_history_UOX3_097_06_1c">UOX3 v0.97.06.1c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 18 June, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_1e"/>
 		  					<label for="spoiler_history_UOX3_097_06_1e">UOX3 v0.97.06.1e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 29 June, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_1f"/>
 		  					<label for="spoiler_history_UOX3_097_06_1f">UOX3 v0.97.06.1f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 30 June, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>July, 2003</h4>
@@ -5907,7 +7291,8 @@
 		  					<label for="spoiler_history_UOX3_097_06_1i">UOX3 v0.97.06.1i <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 27 July, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>August, 2003</h4>
@@ -5915,25 +7300,29 @@
 		  					<label for="spoiler_history_UOX3_097_06_1j">UOX3 v0.97.06.1j <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 1 August, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_1jb"/>
 		  					<label for="spoiler_history_UOX3_097_06_1jb">UOX3 v0.97.06.1j(b) <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 2 August, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_1l"/>
 		  					<label for="spoiler_history_UOX3_097_06_1l">UOX3 v0.97.06.1l <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 8 August, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_1m"/>
 		  					<label for="spoiler_history_UOX3_097_06_1m">UOX3 v0.97.06.1m <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 14 August, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>September, 2003</h4>
@@ -5941,25 +7330,29 @@
 		  					<label for="spoiler_history_UOX3_097_06_3d">UOX3 v0.97.06.3d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 September, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_5f"/>
 		  					<label for="spoiler_history_UOX3_097_06_5f">UOX3 v0.97.06.5f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 14 September, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_8g"/>
 		  					<label for="spoiler_history_UOX3_097_06_8g">UOX3 v0.97.06.8g <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 19 September, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_097_06_9r"/>
 		  					<label for="spoiler_history_UOX3_097_06_9r">UOX3 v0.97.06.9r <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 28 September, 2003</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>March, 2004</h4>
@@ -5967,7 +7360,8 @@
 		  					<label for="spoiler_history_UOX3_097_06_9u">UOX3 v0.97.06.9u <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 23 March, 2004</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 						</div>
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_098_era"/>
@@ -5978,13 +7372,15 @@
 		  					<label for="spoiler_history_UOX3_098_2_5a">UOX3 v0.98-2.5a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 30 December, 2004</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> giwo, Xuri, che, Maarc</p>
+								<p><strong>Fun Facts:</strong> Support for new door types! Many GM commands move to JS!</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_5b"/>
 		  					<label for="spoiler_history_UOX3_098_2_5b">UOX3 v0.98-2.5b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 31 December, 2004</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
 							</div>
 
 							<h4>January, 2005</h4>
@@ -5992,7 +7388,16 @@
 		  					<label for="spoiler_history_UOX3_098_2_5d">UOX3 v0.98-2.5d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 1 January, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> giwo</p>
+							</div>
+
+				            <input type="checkbox" id="spoiler_history_UOX3_098_2_6f"/>
+		  					<label for="spoiler_history_UOX3_098_2_6f">UOX3 v0.98-2.6f <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 30 January, 2005</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> giwo, Maarc, Rynet</p>
 							</div>
 
 							<h4>February, 2005</h4>
@@ -6000,49 +7405,50 @@
 		  					<label for="spoiler_history_UOX3_098_2_7">UOX3 v0.98-2.7 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Contributors:</strong> Maarc</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_7a"/>
 		  					<label for="spoiler_history_UOX3_098_2_7a">UOX3 v0.98-2.7a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 8 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_7b"/>
 		  					<label for="spoiler_history_UOX3_098_2_7b">UOX3 v0.98-2.7b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 10 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_7c"/>
 		  					<label for="spoiler_history_UOX3_098_2_7c">UOX3 v0.98-2.7c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 18 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_7d"/>
 		  					<label for="spoiler_history_UOX3_098_2_7d">UOX3 v0.98-2.7d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 18 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8"/>
 		  					<label for="spoiler_history_UOX3_098_2_8">UOX3 v0.98-2.8 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 26 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8a"/>
 		  					<label for="spoiler_history_UOX3_098_2_8a">UOX3 v0.98-2.8a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 27 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8b"/>
 		  					<label for="spoiler_history_UOX3_098_2_8b">UOX3 v0.98-2.8b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 28 February, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>March, 2005</h4>
@@ -6050,13 +7456,13 @@
 		  					<label for="spoiler_history_UOX3_098_2_8c">UOX3 v0.98-2.8c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 5 March, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8d"/>
 		  					<label for="spoiler_history_UOX3_098_2_8d">UOX3 v0.98-2.8d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 11 March, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>April, 2005</h4>
@@ -6064,25 +7470,28 @@
 		  					<label for="spoiler_history_UOX3_098_2_8e">UOX3 v0.98-2.8e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 2 April, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8f"/>
 		  					<label for="spoiler_history_UOX3_098_2_8f">UOX3 v0.98-2.8f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 14 April, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8g"/>
 		  					<label for="spoiler_history_UOX3_098_2_8g">UOX3 v0.98-2.8g <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 16 April, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_2_8h"/>
 		  					<label for="spoiler_history_UOX3_098_2_8h">UOX3 v0.98-2.8h <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 22 April, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
 							</div>
 
 							<h4>June, 2005</h4>
@@ -6090,19 +7499,22 @@
 		  					<label for="spoiler_history_UOX3_098_3_0">UOX3 v0.98-3.0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 12 June, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson, Xuri, ShadowBranch</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0a"/>
 		  					<label for="spoiler_history_UOX3_098_3_0a">UOX3 v0.98-3.0a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 14 June, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Release date:</strong> 15 June, 2005</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0b"/>
 		  					<label for="spoiler_history_UOX3_098_3_0b">UOX3 v0.98-3.0b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 16 June, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri, ShadowBranch</p>
 							</div>
 
 							<h4>July, 2005</h4>
@@ -6110,13 +7522,15 @@
 		  					<label for="spoiler_history_UOX3_098_3_0c">UOX3 v0.98-3.0c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 14 July, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, ShadowBranch</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0d"/>
 		  					<label for="spoiler_history_UOX3_098_3_0d">UOX3 v0.98-3.0d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 16 July, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo</p>
 							</div>
 
 							<h4>August, 2005</h4>
@@ -6124,19 +7538,22 @@
 		  					<label for="spoiler_history_UOX3_098_3_0e">UOX3 v0.98-3.0e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 4 August, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Maarc, Grimson, Xuri, Sydius</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0f"/>
 		  					<label for="spoiler_history_UOX3_098_3_0f">UOX3 v0.98-3.0f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 August, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, punt</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0g"/>
 		  					<label for="spoiler_history_UOX3_098_3_0g">UOX3 v0.98-3.0g <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 13 August, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
 							</div>
 
 							<h4>September, 2005</h4>
@@ -6144,43 +7561,43 @@
 		  					<label for="spoiler_history_UOX3_098_3_0h">UOX3 v0.98-3.0h <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 13 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0i"/>
 		  					<label for="spoiler_history_UOX3_098_3_0i">UOX3 v0.98-3.0i <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 13 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0j"/>
 		  					<label for="spoiler_history_UOX3_098_3_0j">UOX3 v0.98-3.0j <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 20 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0k"/>
 		  					<label for="spoiler_history_UOX3_098_3_0k">UOX3 v0.98-3.0k <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 23 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0l"/>
 		  					<label for="spoiler_history_UOX3_098_3_0l">UOX3 v0.98-3.0l <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 27 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0m"/>
 		  					<label for="spoiler_history_UOX3_098_3_0m">UOX3 v0.98-3.0m <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 27 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0n"/>
 		  					<label for="spoiler_history_UOX3_098_3_0n">UOX3 v0.98-3.0n <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 29 September, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>October, 2005</h4>
@@ -6188,19 +7605,27 @@
 		  					<label for="spoiler_history_UOX3_098_3_0o">UOX3 v0.98-3.0o <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 5 October, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0p"/>
 		  					<label for="spoiler_history_UOX3_098_3_0p">UOX3 v0.98-3.0p <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 15 October, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_0q"/>
 		  					<label for="spoiler_history_UOX3_098_3_0q">UOX3 v0.98-3.0q <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 17 October, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1"/>
+		  					<label for="spoiler_history_UOX3_098_3_1">UOX3 v0.98-3.1 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 22 October, 2005</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Maarc, Xuri</p>
+								<p><strong>Fun Facts:</strong> Improved map support! World save optimizations! 5.0.x clients supported!</p>
 							</div>
 
 							<h4>November, 2005</h4>
@@ -6208,31 +7633,31 @@
 		  					<label for="spoiler_history_UOX3_098_3_1a">UOX3 v0.98-3.1a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 1 November, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1b"/>
 		  					<label for="spoiler_history_UOX3_098_3_1b">UOX3 v0.98-3.1b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong>31 November, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1c"/>
 		  					<label for="spoiler_history_UOX3_098_3_1c">UOX3 v0.98-3.1c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 5 November, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1d"/>
 		  					<label for="spoiler_history_UOX3_098_3_1d">UOX3 v0.98-3.1d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 20 November, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1e"/>
 		  					<label for="spoiler_history_UOX3_098_3_1e">UOX3 v0.98-3.1e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 23 November, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>December, 2005</h4>
@@ -6240,13 +7665,13 @@
 		  					<label for="spoiler_history_UOX3_098_3_1f">UOX3 v0.98-3.1f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 13 December, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1g"/>
 		  					<label for="spoiler_history_UOX3_098_3_1g">UOX3 v0.98-3.1g <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 16 December, 2005</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>January, 2006</h4>
@@ -6254,31 +7679,39 @@
 		  					<label for="spoiler_history_UOX3_098_3_1h">UOX3 v0.98-3.1h <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 28 January, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_1i"/>
 		  					<label for="spoiler_history_UOX3_098_3_1i">UOX3 v0.98-3.1i <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 28 January, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_2"/>
+		  					<label for="spoiler_history_UOX3_098_3_2">UOX3 v0.98-3.2 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 29 January, 2006</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri, Maarc, Grimson, longshot</p>
+								<p><strong>Fun Facts:</strong> Elven characters! LoS checks in JS engine!</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_2a"/>
 		  					<label for="spoiler_history_UOX3_098_3_2a">UOX3 v0.98-3.2a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 29 January, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_2b"/>
 		  					<label for="spoiler_history_UOX3_098_3_2b">UOX3 v0.98-3.2b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 30 January, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_2c"/>
 		  					<label for="spoiler_history_UOX3_098_3_2c">UOX3 v0.98-3.2c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 31 January, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 
 							<h4>February, 2006</h4>
@@ -6286,19 +7719,27 @@
 		  					<label for="spoiler_history_UOX3_098_3_2d">UOX3 v0.98-3.2d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 1 February, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_2e"/>
 		  					<label for="spoiler_history_UOX3_098_3_2e">UOX3 v0.98-3.2e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 2 February, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_3"/>
 		  					<label for="spoiler_history_UOX3_098_3_3">UOX3 v0.98-3.3 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 12 February, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Maarc, Xuri, Grimson</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_4"/>
+		  					<label for="spoiler_history_UOX3_098_3_4">UOX3 v0.98-3.4 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 20 February, 2006</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson, Maarc, Xuri</p>
 							</div>
 
 							<h4>March, 2006</h4>
@@ -6306,7 +7747,8 @@
 		  					<label for="spoiler_history_UOX3_098_3_5">UOX3 v0.98-3.5 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 8 March, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson, Maarc, Xuri</p>
 							</div>
 
 							<h4>April, 2006</h4>
@@ -6314,13 +7756,15 @@
 		  					<label for="spoiler_history_UOX3_098_3_6">UOX3 v0.98-3.6 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 5 April, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson, Maarc, Xuri</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_098_3_6b"/>
 		  					<label for="spoiler_history_UOX3_098_3_6b">UOX3 v0.98-3.6b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 7 April, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson</p>
 							</div>
 
 							<h4>July, 2006</h4>
@@ -6328,15 +7772,273 @@
 		  					<label for="spoiler_history_UOX3_098_3_7">UOX3 v0.98-3.7 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 8 July, 2006</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson, Xuri</p>
+							</div>
+
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7a"/>
+		  					<label for="spoiler_history_UOX3_098_3_7a">UOX3 v0.98-3.7a <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 9 July, 2006</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7b"/>
+		  					<label for="spoiler_history_UOX3_098_3_7b">UOX3 v0.98-3.7b <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 10 July, 2006</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7c"/>
+		  					<label for="spoiler_history_UOX3_098_3_7c">UOX3 v0.98-3.7c <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 15 July, 2006</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7d"/>
+		  					<label for="spoiler_history_UOX3_098_3_7d">UOX3 v0.98-3.7d <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 18 July, 2006</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7e"/>
+		  					<label for="spoiler_history_UOX3_098_3_7e">UOX3 v0.98-3.7e (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 24 July, 2006</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>August, 2006</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7f"/>
+		  					<label for="spoiler_history_UOX3_098_3_7f">UOX3 v0.98-3.7f <small>(CVS Only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 11 August, 2006</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7g"/>
+		  					<label for="spoiler_history_UOX3_098_3_7g">UOX3 v0.98-3.7g <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 12 August, 2006</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>January, 2007</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7i"/>
+		  					<label for="spoiler_history_UOX3_098_3_7i">UOX3 v0.98-3.7i <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 25 January, 2007</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Grimson, Maarc, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7j"/>
+		  					<label for="spoiler_history_UOX3_098_3_7j">UOX3 v0.98-3.7j <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 25 January, 2007</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7k"/>
+		  					<label for="spoiler_history_UOX3_098_3_7k">UOX3 v0.98-3.7k <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 28 January, 2007</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>March, 2007</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7l"/>
+		  					<label for="spoiler_history_UOX3_098_3_7l">UOX3 v0.98-3.7l <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 3 March, 2007</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>April, 2007</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7m"/>
+		  					<label for="spoiler_history_UOX3_098_3_7m">UOX3 v0.98-3.7m <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 9 April, 2007</p>
+								<p><strong>Released by:</strong> Grimson</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>May, 2007</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7n"/>
+		  					<label for="spoiler_history_UOX3_098_3_7n">UOX3 v0.98-3.7n <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 25 May, 2007</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri, Grimson</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7o"/>
+		  					<label for="spoiler_history_UOX3_098_3_7o">UOX3 v0.98-3.7o <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 26 May, 2007</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>June, 2007</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7p"/>
+		  					<label for="spoiler_history_UOX3_098_3_7p">UOX3 v0.98-3.7p <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 12 June, 2007</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Grimson, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>July, 2007</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7q"/>
+		  					<label for="spoiler_history_UOX3_098_3_7q">UOX3 v0.98-3.7q (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 23 July, 2007</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>June, 2008</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7r"/>
+		  					<label for="spoiler_history_UOX3_098_3_7r">UOX3 v0.98-3.7r (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 20 June, 2008</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri, Grimson</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7s"/>
+		  					<label for="spoiler_history_UOX3_098_3_7s">UOX3 v0.98-3.7s <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 21 June, 2008</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7t"/>
+		  					<label for="spoiler_history_UOX3_098_3_7t">UOX3 v0.98-3.7t <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 22 June, 2008</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
+							<h4>November, 2008</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7u"/>
+		  					<label for="spoiler_history_UOX3_098_3_7u">UOX3 v0.98-3.7u (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 12 November, 2008</p>
+								<p><strong>Released by:</strong> Maarc</p>
+								<p><strong>Fun Facts:</strong> Experimental OBDC database support! Included in v0.98-4.0 release!</p>
 							</div>
 
 							<h4>January, 2009</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_098_3_7v"/>
+		  					<label for="spoiler_history_UOX3_098_3_7v">UOX3 v0.98-3.7v <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 16 January, 2009</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> giwo, Xuri, Maarc</p>
+								<p><strong>Fun Facts:</strong> Included in v0.98-4.0 release!</p>
+							</div>
+
 				            <input type="checkbox" id="spoiler_history_UOX3_098_4_0"/>
 		  					<label for="spoiler_history_UOX3_098_4_0">UOX3 v0.98-4.0 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 17 January, 2009</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Grimson, Xuri, giwo, Maarc, Cavalier, supermoleet</p>
+								<p><strong>Fun Facts:</strong> First iteration of Parties! Customizable Client/Server Features! Movement speed per NPC!</p>
+							</div>
+
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0a"/>
+							<label for="spoiler_history_UOX3_098_4_0a">UOX3 v0.98-4.0a <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 18 January, 2009</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0b"/>
+							<label for="spoiler_history_UOX3_098_4_0b">UOX3 v0.98-4.0b <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 19 January, 2009</p>
+								<p><strong>Released by:</strong> giwo</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+
+							<h4>March, 2009</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0c"/>
+							<label for="spoiler_history_UOX3_098_4_0c">UOX3 v0.98-4.0c <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 22 March, 2009</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, Ghostwolf</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+
+							<h4>January, 2010</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0d"/>
+							<label for="spoiler_history_UOX3_098_4_0d">UOX3 v0.98-4.0d <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 28 January, 2010</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, Shudderz, Ghostwolf, dragon slayer, Jediman</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0e"/>
+							<label for="spoiler_history_UOX3_098_4_0e">UOX3 v0.98-4.0e (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 31 January, 2010</p>
+								<p><strong>Released by:</strong> Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+
+							<h4>February, 2010</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0f"/>
+							<label for="spoiler_history_UOX3_098_4_0f">UOX3 v0.98-4.0f (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 1 February, 2010</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, Shudderz</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0g"/>
+							<label for="spoiler_history_UOX3_098_4_0g">UOX3 v0.98-4.0g (Experimental Build) <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 1 February, 2010</p>
+								<p><strong>Released by:</strong> Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0h"/>
+							<label for="spoiler_history_UOX3_098_4_0h">UOX3 v0.98-4.0h <small>(CVS only)</small> <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 7 February, 2010</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, Puck</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
+							</div>
+
+							<h4>December, 2011</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_098_4_0i"/>
+							<label for="spoiler_history_UOX3_098_4_0i">UOX3 v0.98-4.0i (Experimental Build) </small><i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 14 December, 2011</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, giwo, spdddmn</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99 release!</p>
 							</div>
 						</div>
 			            <input type="checkbox" id="spoiler_history_UOX3_timeline_099_era"/>
@@ -6347,21 +8049,47 @@
 		  					<label for="spoiler_history_UOX3_099">UOX3 v0.99 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 19 March, 2012</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, giwo, Ghostwholf, dragon slayer, xantier, Eolirin, puck, spdddmn, Shudderz, Jediman</p>
+								<p><strong>Fun Facts:</strong> New vendor related JS Events! Support for item names up to 128 characters! Revamped spell-damage and resist system! CombatExplodeDelay setting! Gargoyles!</p>
 							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_099_1"/>
 		  					<label for="spoiler_history_UOX3_099_1">UOX3 v0.99.1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 21 March, 2012</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, dragon slayer</p>
 							</div>
 
 							<h4>November, 2012</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_099_2"/>
+		  					<label for="spoiler_history_UOX3_099_2">UOX3 v0.99.2 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 3 November, 2012</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, dragon slayer</p>
+								<p><strong>Fun Facts:</strong> NPCs can spawn facing in random directions! Max region count increased from 255 to 65535! Amount support for LOOT and PACKITEM tags!</p>
+							</div>
 				            <input type="checkbox" id="spoiler_history_UOX3_099_2b"/>
 		  					<label for="spoiler_history_UOX3_099_2b">UOX3 v0.99.2b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 4 November, 2012</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> Xuri</p>
+							</div>
+				            <input type="checkbox" id="spoiler_history_UOX3_099_2c"/>
+		  					<label for="spoiler_history_UOX3_099_2c">UOX3 v0.99.2c <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 10 November, 2012</p>
+								<p><strong>Released by:</strong> Xuri</p>
+								<p><strong>Fun Facts:</strong> Global modifiers for combat speed/NPC spellcast speed!</p>
+							</div>
+
+							<h4>September, 2018</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_099_2d"/>
+		  					<label for="spoiler_history_UOX3_099_2d">UOX3 v0.99.2d <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 13 September, 2018</p>
+								<p><strong>Released by:</strong> Xuri</p>
 							</div>
 
 							<h4>November, 2019</h4>
@@ -6369,23 +8097,37 @@
 		  					<label for="spoiler_history_UOX3_099_2h">UOX3 v0.99.2h <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 24 November, 2019</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, Kitiara</p>
+								<p><strong>Fun Facts:</strong> Custom tags can have negative values! Safezone region tag!</p>
 							</div>
 
 							<h4>April, 2020</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_099_2i"/>
-		  					<label for="spoiler_history_UOX3_099_2i">UOX3 v0.99.2i <i class="fas fa-angle-down"></i></label>
+		  					<label for="spoiler_history_UOX3_099_2i">UOX3 v0.99.2i (Experimental Build) <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 12 April, 2020</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> Xuri</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99.3 release!</p>
 							</div>
 
 							<h4>August, 2020</h4>
 				            <input type="checkbox" id="spoiler_history_UOX3_099_2m"/>
-		  					<label for="spoiler_history_UOX3_099_2m">UOX3 v0.99.2m <i class="fas fa-angle-down"></i></label>
+		  					<label for="spoiler_history_UOX3_099_2m">UOX3 v0.99.2m (Experimental Build)<i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 8 August, 2020</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Fun Facts:</strong> Included in v0.99.3 release!</p>
+							</div>
+
+							<h4>September, 2020</h4>
+				            <input type="checkbox" id="spoiler_history_UOX3_099_3"/>
+		  					<label for="spoiler_history_UOX3_099_3">UOX3 v0.99.3 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 10 September, 2020</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, punt, tuanhtrng</p>
+								<p><strong>Fun Facts:</strong> 64-bit cross-platform support across Windows, Linux and macOS! Full UOP map support! Instances! Revamped documentation!</p>
 							</div>
 						</div>
 		            </div>
@@ -6479,7 +8221,7 @@
 							<p><span class="cmdHighlight">Moongraven</span><br> Programmer</p>
 							<p><span class="cmdHighlight">Gerry</span><br> Gerry Thibodeau, Programmer</p>
 							<p><span class="cmdHighlight">Lord Slayer</span><br> Programmer</p>
-							<p><span class="cmdHighlight">Zadius</span><br> Programmer</p>
+							<p><span class="cmdHighlight">Zadius</span><br> Programmer, Trigger System</p>
 							<p><span class="cmdHighlight">Max Wulf</span><br> Programmer</p>
 							<p><span class="cmdHighlight">Genesis</span><br> Scripter/Programmer</p>
 							<p><span class="cmdHighlight">Myca</span><br> Programmer</p>
@@ -6618,6 +8360,7 @@
 						<div class="spoiler">
 							<p><span class="cmdHighlight">Malketh</span><br> Programmer, 19/03/2003</p>
 							<p><span class="cmdHighlight">Philantrop</span><br> Programmer, 19/03/2003</p>
+							<p><span class="cmdHighlight">almiller1963</span><br> Programmer, 07/05/2003, v0.97.5.2g</p>
 						</div>
 
 			            <input type="checkbox" id="spoiler_history_halloffame_2004"/>
@@ -6690,7 +8433,9 @@
 			            <input type="checkbox" id="spoiler_history_halloffame_toplace"/>
 	  					<label for="spoiler_history_halloffame_toplace"><h3>To Place in Timeline</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><span class="cmdHighlight">Allmight</span><br> Documentation</p>
+							<p><span class="cmdHighlight">Allmight</span><br> Documentation, ~November 1998</p>
+							<p><span class="cmdHighlight">TeHb</span><br> Scripter, ~November 2002</p>
+							<p><span class="cmdHighlight">Tim</span><br> ???</p>
 						</div>
 					</div>
 		          </div>
