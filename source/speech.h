@@ -27,7 +27,7 @@ const std::string DistinctLanguageNames[DL_COUNT] =
 	"GER",
 	"SPA",
 	"FRE",
-	"JAP"
+	"JPN"
 };
 
 const std::string LanguageCodes[TOTAL_LANGUAGES] =

@@ -135,7 +135,7 @@ void cHTMLTemplate::Process( void )
 
 	// Get all Network Connections
 	{
-		std::scoped_lock lock(Network->internallock);
+		//std::scoped_lock lock(Network->internallock);
 		Network->pushConn();
 		for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 		{
@@ -287,7 +287,7 @@ void cHTMLTemplate::Process( void )
 		std::string myInline	= ParsedContent.substr( Pos, SecondPos - Pos + 12 );
 		std::string PlayerList;
 		{
-			std::scoped_lock lock(Network->internallock);
+			//std::scoped_lock lock(Network->internallock);
 
 			Network->pushConn();
 			for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )

@@ -25,6 +25,7 @@ void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 
 	CPPlaySoundEffect toSend = (*mChar);
 	toSend.Model( soundID );
+
 	if( allHear )
 	{
 		SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
@@ -47,6 +48,7 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 		return;
 	CPPlaySoundEffect toSend = (*baseObj);
 	toSend.Model( soundID );
+
 	if( allHear )
 	{
 		SOCKLIST nearbyChars = FindPlayersInVisrange( baseObj );
@@ -299,13 +301,12 @@ void cEffects::doSocketMusic( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play a sound based on the tile character is on
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::playTileSound( CSocket *mSock )
+void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 {
-	if( mSock == NULL )
+	if( !ValidateObject( mChar ) )
 		return;
 
-	CChar *mChar = mSock->CurrcharObj();
-	if( mChar->GetVisible() != VT_VISIBLE || mChar->GetCommandLevel() >= CL_CNS )
+	if( mChar->GetVisible() != VT_VISIBLE || ( mChar->IsGM() || mChar->IsCounselor() ))
 		return;
 
 	enum TileType
@@ -323,51 +324,53 @@ void cEffects::playTileSound( CSocket *mSock )
 	if( mChar->IsOnHorse() )
 		onHorse = true;
 
-	if( mChar->GetStep() == 1 || mChar->GetStep() == 0 )	// if we play a sound
+	bool isRunning = false;
+	if( mChar->GetRunning() > 0 )
+		isRunning = true;
+
+	CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+	Static_st *stat = msi.Next();
+
+	if( stat )
 	{
-		CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
-		Static_st *stat = msi.Next();
-		if( stat )
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 		{
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			//7.0.9.0 data and later
+			CTileHS& tile = Map->SeekTileHS( stat->itemid );
+			if( tile.CheckFlag( TF_WET ) )
+				tileType = TT_WATER;
+			else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
 			{
-				//7.0.9.0 data and later
-				CTileHS& tile = Map->SeekTileHS( stat->itemid );
-				if( tile.CheckFlag( TF_WET ) )
-					tileType = TT_WATER;
-				else
-				{
-					char search1[10];
-					strcpy( search1, "wood" );
-					if( strstr( tile.Name(), search1 ) )
-						tileType = TT_WOODEN;
-					strcpy( search1, "ston" );
-					if( strstr( tile.Name(), search1 ) )
-						tileType = TT_STONE;
-					strcpy( search1, "gras" );
-					if( strstr( tile.Name(), search1 ) )
-						tileType = TT_GRASS;
-				}
+				char search1[10];
+				strcpy( search1, "wood" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_WOODEN;
+				strcpy( search1, "ston" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_STONE;
+				strcpy( search1, "gras" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_GRASS;
 			}
-			else
+		}
+		else
+		{
+			//7.0.8.2 data and earlier
+			CTile& tile = Map->SeekTile( stat->itemid );
+			if( tile.CheckFlag( TF_WET ) )
+				tileType = TT_WATER;
+			else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
 			{
-				//7.0.8.2 data and earlier
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if( tile.CheckFlag( TF_WET ) )
-					tileType = TT_WATER;
-				else
-				{
-					char search1[10];
-					strcpy( search1, "wood" );
-					if( strstr( tile.Name(), search1 ) )
-						tileType = TT_WOODEN;
-					strcpy( search1, "ston" );
-					if( strstr( tile.Name(), search1 ) )
-						tileType = TT_STONE;
-					strcpy( search1, "gras" );
-					if( strstr( tile.Name(), search1 ) )
-						tileType = TT_GRASS;
-				}
+				char search1[10];
+				strcpy( search1, "wood" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_WOODEN;
+				strcpy( search1, "ston" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_STONE;
+				strcpy( search1, "gras" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_GRASS;
 			}
 		}
 	}
@@ -376,12 +379,20 @@ void cEffects::playTileSound( CSocket *mSock )
 	switch( mChar->GetStep() )	// change step info
 	{
 		case 0:
-			mChar->SetStep( 3 );	// step 2
+			if( !isRunning || ( isRunning && onHorse ) )
+				mChar->SetStep( 1 );	// step 2
+			else if( isRunning || ( !isRunning && onHorse ) )
+				mChar->SetStep( 2 );	// Running step 2
 			switch( tileType )
 			{
 				case TT_NORMAL:
 					if( onHorse )
-						soundID = 0x024C;
+					{
+						if( isRunning )
+							soundID = 0x012A;
+						else		
+							soundID = 0x024C;
+					}
 					else
 						soundID = 0x012B;
 					break;
@@ -400,12 +411,20 @@ void cEffects::playTileSound( CSocket *mSock )
 			}
 			break;
 		case 1:
-			mChar->SetStep( 0 );	// step 1
+			if( !isRunning || ( isRunning && onHorse ) )
+				mChar->SetStep( 0 );	// step 1
+			else if( isRunning || ( !isRunning && onHorse ) )
+				mChar->SetStep( 3 );	// Running step 4
 			switch( tileType )
 			{
 				case TT_NORMAL:
 					if( onHorse )
-						soundID = 0x024B;
+					{
+						if( isRunning )
+							soundID = 0x0129;
+						else
+							soundID = 0x024B;
+					}
 					else
 						soundID = 0x012C;
 					break;
@@ -424,12 +443,33 @@ void cEffects::playTileSound( CSocket *mSock )
 			}
 			break;
 		case 2:
+			mChar->SetStep( 1 ); // Running step 3
+			break;
 		case 3:
+			mChar->SetStep( 0 ); // Running step 0
+			break;
 		default:
 			mChar->SetStep( 1 );	// pause
 			break;
 	}
+
 	if( soundID )			// if we have a valid sound
-		PlaySound( mSock, soundID, true );
+	{
+		if( mSock == NULL && ValidateObject( mChar ) )
+		{
+			// It's an NPC!
+			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			{
+				PlaySound( (*cIter), soundID, false );
+			}
+			return;
+		}
+		else
+		{
+			// It's a player!
+			PlaySound( mSock, soundID, true );
+		}
+	}
 }
 

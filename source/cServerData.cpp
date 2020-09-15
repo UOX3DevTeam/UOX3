@@ -529,8 +529,8 @@ void CServerData::ResetDefaults( void )
 
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCWalkingSpeed( 0.5 );
-	NPCRunningSpeed( 0.2 );
+	NPCWalkingSpeed( 0.6 );
+	NPCRunningSpeed( 0.3 );
 	NPCFleeingSpeed( 0.4 );
 	AccountFlushTimer( 0.0 );
 

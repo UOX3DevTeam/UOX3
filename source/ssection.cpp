@@ -800,10 +800,10 @@ void ScriptSection::createSection( std::fstream& input )
 									if( tag.upper() == "ADDMENUITEM" )
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
-										// Format: ADDMENUITEM=CategoryID,GroupID,SubGroupID,TileID,WeightPosition,TypeID,ObjectFlags, ObjectID
+										// Format: ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
 										ADDMENUITEM amiLocalCopy;
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
-										amiLocalCopy.itemName = localName;
+										amiLocalCopy.itemName = std::string(localName);
 										amiLocalCopy.groupID = value.section(",",0,0).stripWhiteSpace().toUInt();
 										if(amiLocalCopy.groupID != groupHolder)
 										{
@@ -818,9 +818,9 @@ void ScriptSection::createSection( std::fstream& input )
 										amiLocalCopy.tileID = value.section(",",1,1).stripWhiteSpace().toUInt();
 										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toUInt();
 										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toUInt();
-										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toUInt();
-										if( amiLocalCopy.tileID == INVALIDSERIAL )
-											amiLocalCopy.tileID = amiLocalCopy.objectID;
+										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().c_str();
+										//if( amiLocalCopy.tileID == INVALIDSERIAL )
+											//amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
 										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));
 									}

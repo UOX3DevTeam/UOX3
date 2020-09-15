@@ -19,14 +19,15 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ### Using git and Terminal ###
 First step, open a new terminal and enter the commands below:
 
-1) (Linux) **sudo apt install git** - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
-1) (macOS) **xcode-select --install** - This will install git if not already installed, along with required make and gcc tools
-2) **git clone https://github.com/UOX3DevTeam/UOX3.git** - This will clone the stable master branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7) is also included.
+1) (Linux) `sudo apt install git` - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
+1) (macOS) `xcode-select --install` - This will install git if not already installed, along with required make and gcc tools
+2) `git clone https://github.com/UOX3DevTeam/UOX3.git` - This will clone the stable master branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7) is also included.
 
 <details>
   <summary>Checking out Other Branches</summary>
 
-  If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step: **git checkout develop**
+  If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step:
+  `git checkout develop`
 
 </details>
 
@@ -44,35 +45,35 @@ First step, open a new terminal and enter the commands below:
 ### GNU Make and GCC ###
 You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc**. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):
 
-1) (Linux only) **sudo apt install build-essential**
+1) (Linux only) `sudo apt install build-essential`
 
 Once these are in place, navigate to the **UOX3** project folder in your terminal and execute the following commands from the project's root directory, in order:
 
-1) **chmod +x automake.sh** - Makes the automake.sh bash script executable.
-2) **./automake.sh** - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
+1) `chmod +x automake.sh` - Makes the automake.sh bash script executable.
+2) `./automake.sh` - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
 
 <details>
   <summary>Manual Instructions</summary>
 
   If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does):
 
-  - **cd spidermonkey**
-  - **make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc**
+  - `cd spidermonkey`
+  - `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc`
   ### Linux ###
-  - **ar -r libjs32.a Linux_All_DBG.OBJ/*.o**
-  - **cp Linux_All_DBG.OBJ/jsautocfg.h ./**
+  - `ar -r libjs32.a Linux_All_DBG.OBJ/*.o`
+  - `cp Linux_All_DBG.OBJ/jsautocfg.h ./`
   ### macOS ###
-  - **ar rcs libjs32.a Darwin_DBG.OBJ/*.o**
-  - **cp Darwin_DBG.OBJ/jsautocfg.h ./**
+  - `ar rcs libjs32.a Darwin_DBG.OBJ/*.o`
+  - `cp Darwin_DBG.OBJ/jsautocfg.h ./`
 
   *At this point, now cd to the root UOX3 project directory and build UOX3:*
 
-  - **cd ../source**
-  - **make**
+  - `cd ../source`
+  - `make`
 
 </details>
 
-Once this process is done, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.
+Once done compiling, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.
 
 **It is recommended** to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.
 
@@ -81,10 +82,10 @@ Once this process is done, you will find the compiled uox3 binary in the root UO
 
 This is an example of how to copy all required files to a directory called UOX3 in your user account's home directory
 1) *navigate to root UOX3 project directory*
-2) **mkdir ~/UOX3**
-3) **cp uox3 ~/UOX3**
-4) **cp -r data/\* ~/UOX3**
-5) **cd ~/UOX3**
+2) `mkdir ~/UOX3`
+3) `cp uox3 ~/UOX3`
+4) `cp -r data/* ~/UOX3`
+5) `cd ~/UOX3`
 
 </details>
 
@@ -96,10 +97,10 @@ Once you have all the required files in place, you can follow the regular steps 
 ## Step 1: Clone the UOX3 Git Repository
 1) Download and install [GitHub Desktop](https://desktop.githubc.om). If you already have another tool for git installed, you can use that instead.
 2) Run GitHub Desktop (or your preferred git tool) and click **File->Clone Repository** from the menu.
-3) Click the **URL** tab, enter **https://github.com/UOX3DevTeam/UOX3.git**, then provide a local path for where you want the UOX3 git repository cloned on your drive.
+3) Click the **URL** tab, enter `https://github.com/UOX3DevTeam/UOX3.git`, then provide a local path for where you want the UOX3 git repository cloned on your drive.
 4) Hit the **Clone** button to clone the stable master branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (v1.7).
 
-## Step 2: Compile UOX3 using your favourite compiler
+## Step 2: Compile UOX3
 ### Option A) Visual Studio 2017/2019 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
 *This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the [Free Community edition](https://visualstudio.microsoft.com/downloads/) of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either **32-bit** or **64-bit** (default) versions of UOX3.*
 
@@ -131,7 +132,10 @@ Repeat process for both Release and Debug configurations (chosen at top of panel
 </details>
 
 ### Option B) Visual Studio 2017/2019 and CMake ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
-*his option requires installing the Visual Studio toolset named **Linux development with C++** and the component called **Visual C++ tools for CMake and Linux**. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed! This approach compiles SpiderMonkey to a separate DLL (**js32.dll**) file that needs to live inside the same folder as the main UOX3 executable, and currently only supports compiling a **32-bit** version of UOX3.*
+<details>
+  <summary>Visual Studio 2017/2019 and CMake</summary>
+
+*This option requires installing the Visual Studio toolset named **Linux development with C++** and the component called **Visual C++ tools for CMake and Linux**. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed! This approach compiles SpiderMonkey to a separate DLL (**js32.dll**) file that needs to live inside the same folder as the main UOX3 executable, and currently only supports compiling a **32-bit** version of UOX3.*
 
 1) Start Visual Studio and use **File > Open > CMake** and select *CMakeLists.txt* in the root project folder (*Example: **D:\UOX3***). **Don't** open the similarly named file in the source folder directly.
 2) After Visual Studio is done loading the project and has generated some necessary files, select **CMake > Change CMake Settings > UOX3** from the toolbar menu, and select either *x86-Debug* or *x86-Release* depending on what kind of build you want to make - or do this using the Solution Configuration select menu.
@@ -139,7 +143,9 @@ Repeat process for both Release and Debug configurations (chosen at top of panel
 4) When done, you'll find **uox3.exe** and **js32.dll** in a subfolder named **out** of the root project folder, more specifically **/UOX3/out/build/x86-Debug** or **x86-Release**, based on the selected configuration.
 5) Note that the **js32.dll** file must be copied to the same folder as UOX3.exe.
 
-Once this process is done, you can copy your new **uox3.exe** (and if using CMake, **js32.dll**) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these.
+</details>
+
+Once done compiling, you can copy your new **uox3.exe** (and if using CMake, **js32.dll**) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these.
 
 **It is recommended** to run your UOX3 shard from a separate, dedicated folder instead of the data folder in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.
 
