@@ -16,7 +16,7 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 		{
 			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )
 				total += GetSubItemAmount( i, realID, realColour );
-			else if( i->GetID() == realID && ( realColour == 0 || i->GetColour() == realColour ) )
+			else if( i->GetID() == realID && i->GetColour() == realColour )
 				total += i->GetAmount();
 		}
 	}

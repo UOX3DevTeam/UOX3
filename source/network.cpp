@@ -984,7 +984,7 @@ void cNetworkStuff::Transfer( CSocket *mSock )
 	UOXSOCKET s = FindLoginPtr( mSock );
 	if( s >= loggedInClients.size() )
 		return;
-	std::scoped_lock lock(internallock);
+	//std::scoped_lock lock(internallock);
 	connClients.push_back( loggedInClients[s] );
 	loggedInClients.erase( loggedInClients.begin() + s );
 	cwmWorldState->SetPlayersOnline( connClients.size() );

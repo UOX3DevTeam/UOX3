@@ -606,7 +606,7 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 		}
 	}
 
-	SetNextTime( BuildTimeValue( (R32)( 60 * RandomNum( static_cast<std::uint16_t>(GetMinTime()), static_cast<std::uint16_t>(GetMaxTime()) ) ) ) );
+	SetNextTime( BuildTimeValue( (R32)( RandomNum( static_cast<std::uint16_t>(GetMinTime()*60), static_cast<std::uint16_t>(GetMaxTime()*60) ) ) ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o

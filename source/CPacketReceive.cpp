@@ -1990,7 +1990,7 @@ bool CPITalkRequest::HandleCommon( void )
 				auto temp = format("GM Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPage->Reason().c_str() );
 				bool x = false;
 				{
-					std::scoped_lock lock(Network->internallock);
+					//std::scoped_lock lock(Network->internallock);
 					Network->pushConn();
 					for( tmpSock = Network->FirstSocket(); !Network->FinishedSockets(); tmpSock = Network->NextSocket() )
 					{
@@ -2028,7 +2028,7 @@ bool CPITalkRequest::HandleCommon( void )
 				auto temp = format( "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPageCns->Reason().c_str() );
 				bool x = false;
 				{
-					std::scoped_lock lock(Network->internallock);
+					//std::scoped_lock lock(Network->internallock);
 					Network->pushConn();
 					for( tmpSock = Network->FirstSocket(); !Network->FinishedSockets(); tmpSock = Network->NextSocket() )
 					{

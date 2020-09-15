@@ -52,7 +52,7 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 
-	std::scoped_lock lock(Network->internallock);
+	//std::scoped_lock lock(Network->internallock);
 
 	Network->pushConn();
 	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
@@ -172,7 +172,7 @@ void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 sp
 	toSend.Duration( loop );
 	toSend.AdjustDir( false );
 	toSend.ExplodeOnImpact( explode );
-	std::scoped_lock lock(Network->internallock);
+	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
 	{  // if inrange of effect and online send effect
