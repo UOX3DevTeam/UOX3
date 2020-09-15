@@ -57,6 +57,7 @@
 #include "combat.h"
 #include "StringUtility.hpp"
 
+#define DEBUGMOVEMULTIPLIER 1.75
 
 // Bitmask bits
 
@@ -5723,6 +5724,9 @@ R32 CChar::GetWalkingSpeed( void ) const
 		if( mNPC->walkingSpeed > 0 )
 			retVal = mNPC->walkingSpeed;
 
+#if defined( UOX_DEBUG_MODE )
+	retVal = (retVal * DEBUGMOVEMULTIPLIER );
+#endif
 	return retVal;
 }
 void CChar::SetWalkingSpeed( R32 newValue )
@@ -5749,6 +5753,9 @@ R32 CChar::GetRunningSpeed( void ) const
 		if( mNPC->runningSpeed > 0 )
 			retVal = mNPC->runningSpeed;
 
+#if defined( UOX_DEBUG_MODE )
+	retVal = (retVal * DEBUGMOVEMULTIPLIER );
+#endif
 	return retVal;
 }
 void CChar::SetRunningSpeed( R32 newValue )
@@ -5775,6 +5782,9 @@ R32 CChar::GetFleeingSpeed( void ) const
 		if( mNPC->fleeingSpeed > 0 )
 			retVal = mNPC->fleeingSpeed;
 
+#if defined( UOX_DEBUG_MODE )
+	retVal = (retVal * DEBUGMOVEMULTIPLIER );
+#endif
 	return retVal;
 }
 void CChar::SetFleeingSpeed( R32 newValue )

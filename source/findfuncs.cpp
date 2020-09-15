@@ -12,7 +12,7 @@
 SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
-	std::scoped_lock lock(Network->internallock);
+	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
@@ -35,7 +35,7 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 {
 	SOCKLIST nearbyChars;
-	std::scoped_lock lock(Network->internallock);
+	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{
@@ -58,7 +58,7 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 {
 	SOCKLIST nearbyChars;
-	std::scoped_lock lock(Network->internallock);
+	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 	{

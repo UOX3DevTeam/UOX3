@@ -230,9 +230,9 @@ typedef struct __ADDMENUITEM__
 	UI32	tileID;
 	UI32	weightPosition;
 	UI32	objectFlags;
-	UI32	objectID;
+	UString	objectID;
 	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ),
-	weightPosition( 0 ), objectFlags( 0 ), objectID( 0 )
+	weightPosition( 0 ), objectFlags( 0 ), objectID( "" )
 	{
 	}
 } ADDMENUITEM, *LPADDMENUITEM;

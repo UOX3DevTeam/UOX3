@@ -2199,7 +2199,7 @@ void CItem::RemoveFromSight( CSocket *mSock )
 			mSock->Send( &toRemove );
 		else
 		{
-			std::scoped_lock lock(Network->internallock);
+			//std::scoped_lock lock(Network->internallock);
 			Network->pushConn();
 			for( CSocket *nSock = Network->FirstSocket(); !Network->FinishedSockets(); nSock = Network->NextSocket() )
 			{

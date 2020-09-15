@@ -28,7 +28,7 @@ public:
 	void	PlayBGSound( CSocket& mSock, CChar& mChar );
 	void	itemSound( CSocket *s, CItem *item, bool bAllHear = false );
 	void	goldSound( CSocket *s, UI32 goldtotal, bool bAllHear = false);
-	void	playTileSound( CSocket *mSock );
+	void	playTileSound( CChar *mChar, CSocket *mSock );
 	void	playDeathSound( CChar *i );
 	void	playMusic( CSocket *s, UI16 number );
 	void	doSocketMusic( CSocket *s );

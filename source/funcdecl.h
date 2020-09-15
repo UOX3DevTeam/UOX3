@@ -170,11 +170,6 @@ inline std::uint32_t CheckMilliTimer( std::uint32_t &Seconds, std::uint32_t &Mil
 	auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000*sec);
 	return static_cast<std::uint32_t>((1000 *(sec - Seconds)) + (milli - Milliseconds));
 }
-inline void UOXSleep( SI32 toSleep )
-{
-	std::this_thread::sleep_for(std::chrono::milliseconds(toSleep));
-
-}
 
 
 //o-----------------------------------------------------------------------------------------------o

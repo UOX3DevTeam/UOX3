@@ -1061,7 +1061,7 @@ void CConsole::Process( SI32 c )
 				// Display logged in chars
 				messageLoop << "CMD: Current Users in the World:";
 				CSocket *iSock;
-				{	std::scoped_lock lock(Network->internallock);
+				{	//std::scoped_lock lock(Network->internallock);
 					Network->pushConn();
 
 					for( iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
@@ -1147,7 +1147,7 @@ void CConsole::Process( SI32 c )
 			{
 				bool loggingEnabled = false;
 				{
-					std::scoped_lock lock(Network->internallock);
+					//std::scoped_lock lock(Network->internallock);
 					// Log socket activity
 					Network->pushConn();
 
