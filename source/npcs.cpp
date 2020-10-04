@@ -622,8 +622,21 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_ARCHERY:			skillToSet = ARCHERY;				break;
 			case DFNTAG_DAMAGE:
 			case DFNTAG_ATT:
-				applyTo->SetLoDamage( static_cast<SI16>(ndata) );
-				applyTo->SetHiDamage( static_cast<SI16>(odata) );
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
+						applyTo->SetHiDamage( static_cast<SI16>( odata ) );
+					}
+					else
+					{
+						applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
+						applyTo->SetHiDamage( static_cast<SI16>( ndata ) );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside NPC script %s", cdata.c_str() ));
 				break;
 			case DFNTAG_BACKPACK:
 				if( !isGate )
@@ -688,11 +701,37 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 				}
 				break;
 			case DFNTAG_DEX:
-				applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );
-				applyTo->SetStamina( applyTo->GetMaxStam() );
-				break;
+				if( ndata && ndata > 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetDexterity( ndata );
+					}
+					applyTo->SetStamina( applyTo->GetMaxStam() );
+				}
+				else
+					Console.warning( format("Invalid data found in DEX tag inside NPC script %s", cdata.c_str() ));
+				break;	
 			case DFNTAG_DETECTINGHIDDEN:	skillToSet = DETECTINGHIDDEN;			break;
-			case DFNTAG_DEF:				applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL ); break;
+			case DFNTAG_DEF:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, PHYSICAL );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in DEF tag inside NPC script %s", cdata.c_str() ));
+				break;
 			case DFNTAG_DIR:
 				if( !isGate )
 				{
@@ -820,9 +859,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			{
 				ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );
 				if( toFind == NULL )
-					Console.warning(format( "Invalid script entry called with GET tag, character serial 0x%X" , applyTo->GetSerial()) );
+					Console.warning(format( "Invalid script entry (%s) called with GET tag, NPC serial 0x%X", cdata.c_str(), applyTo->GetSerial()) );
 				else if( toFind == NpcCreation )
-					Console.warning( format("Infinite loop avoided with GET tag inside character script %s", cdata.c_str() ));
+					Console.warning( format("Infinite loop avoided with GET tag inside NPC script %s", cdata.c_str() ));
 				else
 					ApplyNpcSection( applyTo, toFind, isGate );
 			}
@@ -833,7 +872,21 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					if( !ValidateObject( mypack ) )
 						mypack = applyTo->GetPackItem();
 					if( ValidateObject( mypack ) )
-						retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
+					{
+						if( ndata && ndata >= 0 )
+						{
+							if( odata && odata > ndata )
+							{
+								retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
+							}
+							else
+							{
+								retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", ndata, OT_ITEM, true );
+							}
+						}
+						else
+							Console.warning( format("Invalid data found in GOLD tag inside NPC script %s", cdata.c_str() ));
+					}
 					else
 						Console.warning( "Bad NPC Script with problem no backpack for gold" );
 				}
@@ -847,8 +900,36 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_HERDING:			skillToSet = HERDING;					break;
 			case DFNTAG_HIDING:				skillToSet = HIDING;					break;
 			case DFNTAG_HIDAMAGE:			applyTo->SetHiDamage( static_cast<SI16>(ndata) );	break;
-			case DFNTAG_HP:					applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
-			case DFNTAG_HPMAX:				applyTo->SetFixedMaxHP( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
+			case DFNTAG_HP:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetHP( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in HP tag inside NPC script %s", cdata.c_str() ));				
+				break;
+			case DFNTAG_HPMAX:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetFixedMaxHP( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetFixedMaxHP( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in HPMAX tag inside NPC script %s", cdata.c_str() ));				
+				break;
 			case DFNTAG_ID:
 				applyTo->SetID( static_cast<UI16>(ndata) );
 				applyTo->SetOrgID( static_cast<UI16>(ndata) );
@@ -856,8 +937,20 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_IMBUING:			skillToSet = IMBUING;					break;
 			case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;				break;
 			case DFNTAG_INTELLIGENCE:
-				applyTo->SetIntelligence( static_cast<SI16>(RandomNum( ndata, odata )) );
-				applyTo->SetMana( applyTo->GetMaxMana() );
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetIntelligence( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetIntelligence( ndata );
+					}
+					applyTo->SetMana( applyTo->GetMaxMana() );
+				}
+				else
+					Console.warning( format("Invalid data found in INTELLIGENCE tag inside NPC script %s", cdata.c_str() ));				
 				break;
 			case DFNTAG_ITEMID:				skillToSet = ITEMID;					break;
 			case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );		break;
@@ -902,8 +995,36 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_MACEFIGHTING:		skillToSet = MACEFIGHTING;				break;
 			case DFNTAG_MAGERY:				skillToSet = MAGERY;					break;
 			case DFNTAG_MAGICRESISTANCE:	skillToSet = MAGICRESISTANCE;			break;
-			case DFNTAG_MANA:				applyTo->SetMana( static_cast<SI16>(RandomNum( ndata, odata )) );		break;
-			case DFNTAG_MANAMAX:			applyTo->SetFixedMaxMana( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
+			case DFNTAG_MANA:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetMana( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetMana( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in MANA tag inside NPC script %s", cdata.c_str() ));				
+				break;
+			case DFNTAG_MANAMAX:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetFixedMaxMana( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetFixedMaxMana( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in MANAMAX tag inside NPC script %s", cdata.c_str() ));				
+				break;
 			case DFNTAG_MEDITATION:			skillToSet = MEDITATION;				break;
 			case DFNTAG_MINING:				skillToSet = MINING;					break;
 			case DFNTAG_MUSICIANSHIP:		skillToSet = MUSICIANSHIP;				break;
@@ -1072,12 +1193,52 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_SPIRITSPEAK:		skillToSet = SPIRITSPEAK;				break;
 			case DFNTAG_STEALING:			skillToSet = STEALING;					break;
 			case DFNTAG_STRENGTH:
-				applyTo->SetStrength( static_cast<SI16>(RandomNum( ndata, odata )) );
-				applyTo->SetHP( applyTo->GetMaxHP() );
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetStrength( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetStrength( ndata );
+					}
+					applyTo->SetHP( applyTo->GetMaxHP() );
+				}
+				else
+					Console.warning( format("Invalid data found in STRENGTH tag inside NPC script %s", cdata.c_str() ));				
 				break;
 			case DFNTAG_SWORDSMANSHIP:		skillToSet = SWORDSMANSHIP;				break;
-			case DFNTAG_STAMINA:			applyTo->SetStamina( static_cast<SI16>(RandomNum( ndata, odata )) );		break;
-			case DFNTAG_STAMINAMAX:			applyTo->SetFixedMaxStam( static_cast<SI16>(RandomNum( ndata, odata )) );		break;
+			case DFNTAG_STAMINA:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetStamina( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetStamina( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", cdata.c_str() ));				
+				break;
+			case DFNTAG_STAMINAMAX:
+				if( ndata && ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetFixedMaxStam( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetFixedMaxStam( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", cdata.c_str() ));				
+				break;				
 			case DFNTAG_STEALTH:			skillToSet = STEALTH;					break;
 			case DFNTAG_SKINLIST:			applyTo->SetSkin( addRandomColor( cdata ) );			break;
 			case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) ); break;

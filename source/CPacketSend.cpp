@@ -2091,9 +2091,9 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		EnergyResist( Combat->calcDef( &toCopy, 0, false, LIGHTNING ) );
 		PoisonResist( Combat->calcDef( &toCopy, 0, false, POISON ) );
 		Luck( 0 );
-		Unknown( 0 );
 		DamageMin( Combat->calcLowDamage( &toCopy ) );
 		DamageMax( Combat->calcHighDamage( &toCopy ) );
+		TithingPoints( 0 );
 	}
 }
 void CPStatWindow::InternalReset( void )
@@ -2258,7 +2258,7 @@ void CPStatWindow::DamageMax( UI16 value )
 	pStream.WriteShort( byteOffset, value );
 	byteOffset += 2;
 }
-void CPStatWindow::Unknown( UI32 value )
+void CPStatWindow::TithingPoints( UI32 value )
 {
 	pStream.WriteLong( byteOffset, value );
 	byteOffset += 4;
@@ -3555,6 +3555,131 @@ CPLoginDeny::CPLoginDeny( LoginDenyReason reason )
 void CPLoginDeny::DenyReason( LoginDenyReason reason )
 {
 	pStream.WriteByte( 1, reason );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPKREncryptionRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with encryption request for KR3D client
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xE3 (KR Encryption Request)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE[1] 0xE3
+//|						BYTE[2] Length
+//|						BYTE[4] Key 1 Length
+//|						BYTE[Key 1 Length] Key 1
+//|						BYTE[4] Key 2 Length
+//|						BYTE[Key 2 Length] Key 2
+//|						BYTE[4] Key 3 Length
+//|						BYTE[Key 3 Length] Key 3
+//|						BYTE[4] Unknown
+//|						BYTE[4] Key 4 Length
+//|						BYTE[Key 4 Length] Key 4
+//|
+//|					Notes
+//|						Unverified encryption method of keys is AES in CFB Mode
+//|						As of 08/02/2009, this is the current encryption known for KR clients up to date:
+//|							0xe3,
+//|							0x4d00,
+//|							0x03000000,
+//|							0x02, 0x01, 0x03,
+//|							0x13000000,
+//|							0x02, 0x11, 0x00, 0xfc, 0x2f, 0xe3, 0x81, 0x93, 0xcb, 0xaf, 0x98, 0xdd, 0x83, 0x13, 0xd2, 0x9e, 0xea, 0xe4, 0x13,
+//|							0x10000000,
+//|							0x78, 0x13, 0xb7, 0x7b, 0xce, 0xA8, 0xd7, 0xbc, 0x52, 0xde, 0x38, 0x30, 0xea, 0xe9, 0x1e, 0xa3,
+//|							0x20000000,
+//|							0x10000000,
+//|							0x5a, 0xce, 0x3e, 0xe3, 0x97, 0x92, 0xe4, 0x8a, 0xf1, 0x9a, 0xd3, 0x04, 0x41, 0x03, 0xcb, 0x53
+//o-----------------------------------------------------------------------------------------------o
+CPKREncryptionRequest::CPKREncryptionRequest( CSocket* s)
+{
+	pStream.ReserveSize( 77 );
+	pStream.WriteByte( 0, 0xE3 );
+
+	// Size
+	pStream.WriteByte( 1, 0x00 );
+	pStream.WriteByte( 2, 0x4D );
+
+	pStream.WriteByte( 3, 0x00 );
+	pStream.WriteByte( 4, 0x00 );
+	pStream.WriteByte( 5, 0x00 );
+	pStream.WriteByte( 6, 0x03 );
+	pStream.WriteByte( 7, 0x02 );
+	pStream.WriteByte( 8, 0x01 );
+	pStream.WriteByte( 9, 0x03 );
+	pStream.WriteByte( 10, 0x00 );
+	pStream.WriteByte( 11, 0x00 );
+	pStream.WriteByte( 12, 0x00 );
+	pStream.WriteByte( 13, 0x13 );
+	pStream.WriteByte( 14, 0x02 );
+	pStream.WriteByte( 15, 0x11 );
+
+	pStream.WriteByte( 16, 0x00 );
+	pStream.WriteByte( 17, 0xFC );
+	pStream.WriteByte( 18, 0x2F );
+	pStream.WriteByte( 19, 0xE3 );
+	pStream.WriteByte( 20, 0x81 );
+	pStream.WriteByte( 21, 0x93 );
+	pStream.WriteByte( 22, 0xCB );
+	pStream.WriteByte( 23, 0xAF );
+	pStream.WriteByte( 24, 0x98 );
+	pStream.WriteByte( 25, 0xDD );
+	pStream.WriteByte( 26, 0x83 );
+	pStream.WriteByte( 27, 0x13 );
+	pStream.WriteByte( 28, 0xD2 );
+	pStream.WriteByte( 29, 0x9E );
+	pStream.WriteByte( 30, 0xEA );
+	pStream.WriteByte( 31, 0xE4 );
+
+	pStream.WriteByte( 32, 0x13 );
+	pStream.WriteByte( 33, 0x00 );
+	pStream.WriteByte( 34, 0x00 );
+	pStream.WriteByte( 35, 0x00 );
+	pStream.WriteByte( 36, 0x10 );
+	pStream.WriteByte( 37, 0x78 );
+	pStream.WriteByte( 38, 0x13 );
+	pStream.WriteByte( 39, 0xB7 );
+	pStream.WriteByte( 40, 0x7B );
+	pStream.WriteByte( 41, 0xCE );
+	pStream.WriteByte( 42, 0xA8 );
+	pStream.WriteByte( 43, 0xD7 );
+	pStream.WriteByte( 44, 0xBC );
+	pStream.WriteByte( 45, 0x52 );
+	pStream.WriteByte( 46, 0xDE );
+	pStream.WriteByte( 47, 0x38 );
+
+	pStream.WriteByte( 48, 0x30 );
+	pStream.WriteByte( 49, 0xEA );
+	pStream.WriteByte( 50, 0xE9 );
+	pStream.WriteByte( 51, 0x1E );
+	pStream.WriteByte( 52, 0xA3 );
+	pStream.WriteByte( 53, 0x00 );
+	pStream.WriteByte( 54, 0x00 );
+	pStream.WriteByte( 55, 0x00 );
+	pStream.WriteByte( 56, 0x20 );
+	pStream.WriteByte( 57, 0x00 );
+	pStream.WriteByte( 58, 0x00 );
+	pStream.WriteByte( 59, 0x00 );
+	pStream.WriteByte( 60, 0x10 );
+	pStream.WriteByte( 61, 0x5A );
+	pStream.WriteByte( 62, 0xCE );
+	pStream.WriteByte( 63, 0x3E );
+
+	pStream.WriteByte( 64, 0xE3 );
+	pStream.WriteByte( 65, 0x97 );
+	pStream.WriteByte( 66, 0x92 );
+	pStream.WriteByte( 67, 0xE4 );
+	pStream.WriteByte( 68, 0x8A );
+	pStream.WriteByte( 69, 0xF1 );
+	pStream.WriteByte( 70, 0x9A );
+	pStream.WriteByte( 71, 0xD3 );
+	pStream.WriteByte( 72, 0x04 );
+	pStream.WriteByte( 73, 0x41 );
+	pStream.WriteByte( 74, 0x03 );
+	pStream.WriteByte( 75, 0xCB );
+	pStream.WriteByte( 76, 0x53 );
 }
 
 //o-----------------------------------------------------------------------------------------------o

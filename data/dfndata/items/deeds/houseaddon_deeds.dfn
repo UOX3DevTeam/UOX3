@@ -4,3 +4,31 @@ NAME=pentagram deed
 ID=0x14F0
 MOREX=18
 }
+
+[brownbearrugdeedeast]
+{
+name=brown bear rug (east)
+id=0x14F0
+morex=40
+}
+
+[brownbearrugdeedsouth]
+{
+name=brown bear rug (south)
+id=0x14F0
+morex=41
+}
+
+[polarbearrugdeedeast]
+{
+name=polar bear rug (east)
+id=0x14F0
+morex=42
+}
+
+[polarbearrugdeedsouth]
+{
+name=polar bear rug (south)
+id=0x14F0
+morex=43
+}

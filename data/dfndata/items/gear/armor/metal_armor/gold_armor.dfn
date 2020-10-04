@@ -323,6 +323,20 @@ id=0x1b76
 color=0x8a5
 }
 
+[0x1b78-g]
+{ Wooden kite Shield
+get=0x1b78
+id=0x1b78
+color=0x8a5
+}
+
+[0x1b79-g]
+{ Wooden kite Shield
+get=0x1b78
+id=0x1b79
+color=0x8a5
+}
+
 [0x1b7b-g]
 { Metal shield
 get=metal_shield

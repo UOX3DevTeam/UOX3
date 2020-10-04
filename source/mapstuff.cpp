@@ -597,7 +597,7 @@ size_t CMulHandler::GetMultisMem( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 TileHeight( UI16 tilenum )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Height of a gien tile (If climbable we return 1/2 its height).
+//|	Purpose		-	Height of a given tile (If climbable we return 1/2 its height).
 //o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::TileHeight( UI16 tilenum )
 {

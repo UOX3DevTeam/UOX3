@@ -2,6 +2,37 @@ UOX3 Changelog
 ------------------------
 
 -==============================-
+-= 16/09/2020 - UOX3 0.99.3a  =-
+-==============================-
+Contributors: Xuri
+
+Source Changes/Fixes:
+	Refined build notes
+	Updated Debug Information Format for Debug x64 platform in VS project properties to Program Database for Edit and Continue
+	Minor fix for a half-broken system (automatic adding of items to add-menu) that needs to be revamped or removed
+	Commented out some thread-locking code that was causing UOX3 to crash under certain circumstances
+	Fixed a few cases of threads sleeping for microseconds instead of milliseconds
+	Replaced all calls to UOXSleep with direct call to std::this_thread::sleep_for(), and removed UOXSleep function from funcdecl.h
+	Fixed an issue where crafting skills might consume the wrong resource if additional resources of the same ID but different color were present in player's backpack
+	Improved AmbientFootsteps feature so footstep sounds are played more in tune with character movement
+	AmbientFootsteps now also play for NPC movement
+	Changed how code handles randomizing between MINTIME and MAXTIME values from region spawners; now multiplies values by 60 (to get seconds) before randomizing, instead of after, to make use of full range of seconds between the values (which are in minutes)
+	Added a DEBUGMOVEMULTIPLIER define in cChar.cpp used to multiply NPC movement delays by the specified value (1.75 by default) when running UOX3 in debug mode, due to reduced server performance in debug mode
+
+DFN Changes/Fixes:
+	Fixed an issue with "Gold" ore/ingot type, which was mislabelled as "Golden" in the ORE_LIST section of skills.dfn
+
+Misc Changes/Fixes:
+	Undid dictionary rename from ENG to ENU and FRE to FRA; these are not actual language codes, but groups of language codes - ENU covers all English language codes, FRA covers all French ones.
+	Adjusted default global NPC movement speeds in [speedup} section of uox.ini to use less extreme values
+	Documentation updates:
+		Added section on DFN tags for Character, Item, Region, SpawnRegion and Weather DFNs.
+		Added Feature documentation for Mining and customizable ores
+		Added More details in feature documentation for Spawn Regions
+		Updated feature documentation for Dictionaries
+		Added more details in UOX3 history section
+
+-==============================-
 -= 10/09/2020 - UOX3 0.99.3   =-
 -==============================-
 Contributors: Xuri, punt, Tuan H Truong

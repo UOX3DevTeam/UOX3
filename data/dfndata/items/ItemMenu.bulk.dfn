@@ -9204,6 +9204,14 @@ ITEMMENU=4
 houseaddon_deeds.dfn
 0x14F0=pentagram deed
 ADDITEM=pentagramdeed
+0x14F0=brown bear rug
+ADDITEM=brownbearrugdeedeast
+0x14F0=brown bear rug
+ADDITEM=brownbearrugdeedsouth
+0x14F0=polar bear rug
+ADDITEM=polarbearrugdeedeast
+0x14F0=polar bear rug
+ADDITEM=polarbearrugdeedsouth
 <=Previous Menu
 ITEMMENU=4
 }

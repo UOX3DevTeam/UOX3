@@ -31,6 +31,7 @@ enum ClientVersions
 	CVS_6000,
 	CVS_6017,
 	CVS_6050,
+	CVS_25302, // UOKR3D 2.53.0.2
 	CVS_60142,
 	CVS_7000,
 	CVS_7090,

@@ -2158,8 +2158,18 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			return true;
 		case IT_ORE:	// smelt ore
-			mSock->TempObj( iUsed );
-			mSock->target( 0, TARGET_SMELTORE, 460 );
+			if( iUsed->GetID() == 0x19B7 && iUsed->GetAmount() < 2 )
+			{
+				mSock->sysmessage( 1814 ); // Too little ore to smelt!
+			}
+			else
+			{
+				mSock->TempObj( iUsed );
+				if( iUsed->GetID() == 0x19B7 )
+					mSock->target( 0, TARGET_SMELTORE, 460 ); // Select the forge on which to smelt the ore.
+				else
+					mSock->target( 0, TARGET_SMELTORE, 1815 ); // Select the forge on which to smelt the ore, or another pile of ore with which to combine it.
+			}
 			return true;
 		case IT_MESSAGEBOARD:	// Message board opening
 			if( objInRange( mChar, iUsed, DIST_NEARBY ) )
@@ -2347,6 +2357,7 @@ ItemTypes findItemType( CItem *i )
 			iType = FindItemTypeFromID( i->GetID() );	break;
 		default:										break;
 	}
+
 	return iType;
 }
 
