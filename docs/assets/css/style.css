@@ -84,6 +84,11 @@ input[id^="spoiler"] + label:hover {
 	color: white;
 }
 
+.styleguide {
+	background-color: #b20000 !important;
+	color: white !important;
+}
+
 .text-component {
 	padding-top: 10px;
 }
