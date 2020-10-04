@@ -387,8 +387,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	UString tag;
 	UString data;
 	UString UTag;
-	SI32 actgood				= -1;
-	bool orePrefLoaded		= false;
+	SI32 actgood = -1;
+	bool orePrefLoaded = false;
 
 	// Some default values
 	numGuards			= 10;
@@ -485,14 +485,26 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					std::string oreName;
 					orePref toPush;
 					data			= data.simplifyWhiteSpace();
-					oreName			= extractSection(data, " ", 0, 0 );
+					oreName			= extractSection(data, ",", 0, 0 );
 					toPush.oreIndex = Skills->FindOre( oreName );
 					if( toPush.oreIndex != NULL )
 					{
-						if( data.sectionCount( " " ) == 0 )
-							toPush.percentChance = 100 / Skills->GetNumberOfOres();
+						if( data.sectionCount( "," ) > 0 )
+						{
+							// Use chance specified in orepref
+							toPush.percentChance = data.section( ",", 1, 1 ).toUShort();
+						}
+						else if( toPush.oreIndex->oreChance > 0 )
+						{
+							// No chance specified in orepref, use default chance of ore type
+							toPush.percentChance = toPush.oreIndex->oreChance;
+						}
 						else
-							toPush.percentChance = data.section( " ", 1, 1 ).toByte();
+						{
+							// Fallback for older skills.dfn setups
+							toPush.percentChance = 1000 / static_cast<UI16>(Skills->GetNumberOfOres());
+						}
+
 						orePreferences.push_back( toPush );
 						orePrefLoaded = true;
 					}
@@ -596,6 +608,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				break;
 		}
 	}
+
+	// No ore preference tags found for this region, apply default chance to find ores
 	if( !orePrefLoaded )
 	{
 		orePref toLoad;
@@ -603,7 +617,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 		for( size_t myCounter = 0; myCounter < numOres; ++myCounter )
 		{
 			toLoad.oreIndex			= Skills->GetOre( myCounter );
-			toLoad.percentChance	= (UI08)(100 / numOres);
+			toLoad.percentChance	= toLoad.oreIndex->oreChance;
 			orePreferences.push_back( toLoad );
 		}
 	}

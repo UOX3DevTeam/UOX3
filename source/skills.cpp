@@ -17,6 +17,7 @@
 #include "Dictionary.h"
 #include "movement.h"
 #include "StringUtility.hpp"
+#include "weight.h"
 
 bool checkItemRange( CChar *mChar, CItem *i );
 
@@ -144,7 +145,7 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 		return;
 
 	const UI16 getSkill			= mChar->GetSkill( MINING );
-	const SI32 oreChance			= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
+	const SI32 findOreChance	= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
 	SI32 sumChance				= 0;
 	bool oreFound				= false;
 	const orePref *toFind		= NULL;
@@ -160,14 +161,17 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 			continue;
 
 		sumChance += toFind->percentChance;
-		if( sumChance > oreChance )
+		if( sumChance > findOreChance )
 		{
 			if( getSkill >= found->minSkill )
 			{
 				UI08 amtToMake = 1;
 				if( targRegion->GetChanceBigOre() >= RandomNum( 0, 100 ) )
 					amtToMake = 5;
-				CItem *oreItem = Items->CreateItem( &mSock, mChar, 0x19B9, amtToMake, found->colour, OT_ITEM, true );
+
+				// Randomize the size of ore found
+				UI16 oreID = RandomNum( 0x19B7, 0x19BA );
+				CItem *oreItem = Items->CreateItem( &mSock, mChar, oreID, amtToMake, found->colour, OT_ITEM, true );
 				if( ValidateObject( oreItem ) )
 				{
 					const std::string oreName = found->name + " ore";
@@ -494,19 +498,127 @@ void cSkills::SmeltOre( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *chr			= s->CurrcharObj();
-	CItem *smeltedItem	= static_cast<CItem *>(s->TempObj());
+	CItem *itemToSmelt	= static_cast<CItem *>(s->TempObj());
 	s->TempObj( NULL );
 	CItem *forge		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our forge
 
 	if( ValidateObject( forge ) )					// if we have a forge
 	{
-		if( !checkItemRange( chr, smeltedItem ) )
+		if( !objInRange( chr, forge, DIST_NEARBY ) || !checkItemRange( chr, itemToSmelt ) ) // Check if forge & item to melt are in range
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
 		}
 
-		switch( forge->GetID() )	// Check to ensure it is a forge
+		UI16 smeltItemID = itemToSmelt->GetID();
+		UI16 forgeID = forge->GetID();
+
+		// Is player trying to combine ore?
+		//if( forgeID == 0x19B7 || forgeID == 0x19B8 || forgeID == 0x19BA )
+		if( forgeID >= 0x19B7 && forgeID <= 0x19BA )
+		{
+			if( forgeID == smeltItemID )
+			{
+				s->sysmessage( 1806 ); // You cannot combine these ore types
+				return;
+			}
+
+			if( forge->GetColour() != itemToSmelt->GetColour() )
+			{
+				s->sysmessage( 1807 ); // You cannot combine ores of different metals.
+				return;
+			}
+
+			if( forge->GetMovable() == 2 || forge->GetMovable() == 3 )
+			{
+				s->sysmessage( 1808 ); // You cannot do that.
+				return;
+			}
+
+			// Player targeted some small or medium ore! Combine ores, if possible
+			SI32 sourceAmount = itemToSmelt->GetAmount();
+			SI32 targetAmount = forge->GetAmount();
+			UI08 amountMultiplier = 1;
+
+			if( smeltItemID == 0x19B9 && forgeID == 0x19B7 ) // Large ore, targeted small ore
+			{
+				amountMultiplier = 4;
+			}
+			else if( smeltItemID == 0x19B9 && ( forgeID == 0x19B8 || forgeID == 0x19BA )) // Large ore, targeted medium ore
+			{
+				amountMultiplier = 2;
+			}
+			else if( ( smeltItemID == 0x19B8 || smeltItemID == 0x19BA ) && forgeID == 0x19B7 ) // Medium ore, targeted small ore
+			{
+				amountMultiplier = 2;
+			}
+			else
+			{
+				// Small ore, targeted at larger ore
+				s->sysmessage( 1809 ); // You can only combine larger ores with smaller ores!
+				return;
+			}
+
+			// Combine source stack into target stack, if it fits
+			if( targetAmount + ( sourceAmount * amountMultiplier ) <= MAX_STACK )
+			{
+				CChar * forgeOwner = FindItemOwner( forge );
+
+				SI32 newTargetWeight = ( targetAmount + ( sourceAmount * amountMultiplier )) * forge->GetBaseWeight();
+				SI32 subtractWeight = ( targetAmount * forge->GetBaseWeight() ) + ( sourceAmount * itemToSmelt->GetBaseWeight() );
+
+				if( ValidateObject( forgeOwner ) && forgeOwner == chr )
+				{
+					if( ( newTargetWeight + chr->GetWeight() - subtractWeight ) > 200000 ) // 2000 stones
+					{
+						s->sysmessage( 1743 ); // That person can not possibly hold more weight
+						return;	
+					}
+				}
+				else if( forge->GetCont() != NULL )
+				{
+					if( ( newTargetWeight + forge->GetCont()->GetWeight() - subtractWeight ) > 200000 ) // 2000 stones
+					{
+						s->sysmessage( 1810 ); // The weight is too great to combine in a container.
+						return;
+					}
+				}
+
+				// Good to go, combine ores and remove source stack!
+				forge->SetAmount( targetAmount + ( sourceAmount * amountMultiplier ) );
+				itemToSmelt->Delete();
+				s->sysmessage( 1811 ); // You combine the ore with the stack of smaller ore.
+			}
+			else if( targetAmount < MAX_STACK )
+			{
+				// New targetStack would exceed MAX_STACK, but there might still be some room left! Cap amount at MAX_STACK
+				UI16 amountLeft = MAX_STACK - targetAmount;
+				if( amountLeft < amountMultiplier )
+				{
+					// Not enough space left in stack to combine any more ore
+					s->sysmessage( 1812 ); // That stack cannot hold any more items
+					return;
+				}
+				else
+				{
+					// There's still some room
+					UI16 amountToRemove = static_cast<UI16>(floor( amountLeft / amountMultiplier ));
+					itemToSmelt->SetAmount( sourceAmount - amountToRemove );
+					forge->SetAmount( MAX_STACK );
+					s->sysmessage( 1813 ); // You combine a portion of your ore into the stack of smaller ore.
+				}
+			}
+			else
+			{
+				// targetStack is already at max cap and cannot hold any more ore
+				s->sysmessage( 1812 ); // That stack cannot hold any more items
+				return;
+			}
+
+			return;
+		}
+
+		switch( forgeID )	// Check to ensure it is a forge
 		{
 			case 0x0FB1:
 			case 0x197A:
@@ -524,47 +636,70 @@ void cSkills::SmeltOre( CSocket *s )
 			case 0x199E:
 				if( objInRange( chr, forge, DIST_NEARBY ) ) //Check if the forge is in range
 				{
-					UI16 targColour		= smeltedItem->GetColour();
+					UI16 targColour		= itemToSmelt->GetColour();
 					miningData *oreType	= FindOre( targColour );
 					if( oreType == NULL )
 					{
-						s->sysmessage( 814 );
+						s->sysmessage( 814 ); // That material is foreign to you.
 						return;
 					}
 
 					if( chr->GetSkill( MINING ) < oreType->minSkill )
 					{
-						s->sysmessage( 815 );
+						s->sysmessage( 815 ); // You have no idea what to do with this strange ore.
 						return;
 					}
+
 					if( !CheckSkill( chr, MINING, oreType->minSkill, 1000 ) )	// if we do not have minimum skill to use it
 					{
-						if( smeltedItem->GetAmount() > 1 )	// If more than 1 ore, half it
+						if( itemToSmelt->GetAmount() > 1 )	// If more than 1 ore, half it
 						{
-							s->sysmessage( 817 );
-							smeltedItem->SetAmount( smeltedItem->GetAmount() / 2 );
+							s->sysmessage( 817 ); // Your hand slips and some of your materials are destroyed.
+							itemToSmelt->SetAmount( itemToSmelt->GetAmount() / 2 );
 						}
 						else
 						{
-							s->sysmessage( 816 );
-							smeltedItem->Delete();
+							s->sysmessage( 816 ); // Your hand slips and the last of your materials are destroyed.
+							itemToSmelt->Delete();
 						}
 						return;
 					}
-					UI16 ingotNum = smeltedItem->GetAmount() * 2;	// 2 Ingots per ore pile.... shouldn't this be variable based on quality of ore?
+
+					UI16 ingotNum = 1;
+					switch( smeltItemID )
+					{
+						case 0x19B7: // Small ore
+							ingotNum = itemToSmelt->GetAmount() / 2; // 0.5 ingot per ore
+							break;
+						case 0x19B8: // Medium ore
+						case 0x19BA: // Medium ore
+							ingotNum = itemToSmelt->GetAmount(); // 1.0 ingot per ore
+							break;
+						case 0x19B9: // Large ore
+							ingotNum = itemToSmelt->GetAmount() * 2; // 2.0 ingot per ore
+							break;
+					}
 
 					CItem *ingot = Items->CreateScriptItem( s, chr, "0x1BF2", ingotNum, OT_ITEM, true, oreType->colour );
 					if( ingot != NULL ){
 						ingot->SetName( format("%s Ingot", oreType->name.c_str() ) );
 					}
 
-					s->sysmessage( 818 );
-					s->sysmessage( 819, oreType->name.c_str() );
-					smeltedItem->Delete();	// delete the ore
+					if( smeltItemID == 0x19B7 && itemToSmelt->GetAmount() % 2 != 0 )
+					{
+						itemToSmelt->SetAmount( 1 ); // There's still some ore left, as the pile of small ore is not divisible by two
+					}
+					else
+					{
+						itemToSmelt->Delete();	// delete the ore
+					}
+
+					s->sysmessage( 818 ); // You have smelted your ore.
+					s->sysmessage( 819, oreType->name.c_str() ); // You place some %s ingots in your pack.
 				}
 				break;
 			default:
-				s->sysmessage( 820 );
+				s->sysmessage( 820 ); // You can't smelt here.
 				break;
 		}
 	}
@@ -1703,6 +1838,8 @@ bool cSkills::LoadMiningData( void )
 					toAdd.makemenu	= 0;
 					toAdd.minSkill	= 0;
 					toAdd.name		= oreName;
+					toAdd.oreName	= oreName;
+					toAdd.oreChance = 0;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
 						UTag = tag.upper();
@@ -1724,6 +1861,10 @@ bool cSkills::LoadMiningData( void )
 							case 'N':
 								if( UTag == "NAME" )
 									toAdd.name = data;
+								break;
+							case 'O':
+								if( UTag == "ORECHANCE" )
+									toAdd.oreChance = data.toUShort();
 								break;
 							default:
 								Console << "Unknown mining tag " << tag << " with data " << data << " in SECTION " << oreName << myendl;
@@ -1801,7 +1942,7 @@ miningData *cSkills::FindOre( std::string const &name )
 	std::vector< miningData >::iterator	oreIter;
 	for( oreIter = ores.begin(); oreIter != ores.end(); ++oreIter )
 	{
-		if( (*oreIter).name == name )
+		if( (*oreIter).oreName == name )
 			return &(*oreIter);
 	}
 	return NULL;

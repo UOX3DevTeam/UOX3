@@ -1101,3 +1101,363 @@ X=3
 Y=-5
 Z=29
 }
+
+//brown bear rug (east)
+[HOUSE 40]
+{
+ID=0x1E44
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=386
+HOUSE_ITEM=387
+HOUSE_ITEM=388
+HOUSE_ITEM=389
+HOUSE_ITEM=390
+HOUSE_ITEM=391
+HOUSE_ITEM=392
+HOUSE_ITEM=393
+HOUSE_ITEM=394
+}
+
+//brown bear rug (south)
+[HOUSE 41]
+{
+ID=0x1E3A
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=395
+HOUSE_ITEM=396
+HOUSE_ITEM=397
+HOUSE_ITEM=398
+HOUSE_ITEM=399
+HOUSE_ITEM=400
+HOUSE_ITEM=401
+HOUSE_ITEM=402
+HOUSE_ITEM=403
+}
+
+//polar bear rug (east)
+[HOUSE 42]
+{
+ID=0x1E57
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=404
+HOUSE_ITEM=405
+HOUSE_ITEM=406
+HOUSE_ITEM=407
+HOUSE_ITEM=408
+HOUSE_ITEM=409
+HOUSE_ITEM=410
+HOUSE_ITEM=411
+HOUSE_ITEM=412
+}
+
+//polar bear rug (south)
+[HOUSE 43]
+{
+ID=0x1E4D
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_ITEM=413
+HOUSE_ITEM=414
+HOUSE_ITEM=415
+HOUSE_ITEM=416
+HOUSE_ITEM=417
+HOUSE_ITEM=418
+HOUSE_ITEM=419
+HOUSE_ITEM=420
+HOUSE_ITEM=421
+}
+
+[HOUSE ITEM 386]
+{ brown bear rug east 1/9
+ITEM=brownbearrug1
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 387]
+{ brown bear rug east 2/9
+ITEM=brownbearrug2
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 388]
+{ brown bear rug east 3/9
+ITEM=brownbearrug3
+X=1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 389]
+{ brown bear rug east 4/9
+ITEM=brownbearrug4
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 390]
+{ brown bear rug east 5/9
+ITEM=brownbearrug5
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 391]
+{ brown bear rug east 6/9
+ITEM=brownbearrug6
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 392]
+{ brown bear rug east 7/9
+ITEM=brownbearrug7
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 393]
+{ brown bear rug east 8/9
+ITEM=brownbearrug8
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 394]
+{ brown bear rug east 9/9
+ITEM=brownbearrug9
+X=-1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 395]
+{ brown bear rug south 1/9
+ITEM=brownbearrug10
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 396]
+{ brown bear rug south 2/9
+ITEM=brownbearrug11
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 397]
+{ brown bear rug south 3/9
+ITEM=brownbearrug12
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 398]
+{ brown bear rug south 4/9
+ITEM=brownbearrug13
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 399]
+{ brown bear rug south 5/9
+ITEM=brownbearrug14
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 400]
+{ brown bear rug south 6/9
+ITEM=brownbearrug15
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 401]
+{ brown bear rug south 7/9
+ITEM=brownbearrug16
+X=1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 402]
+{ brown bear rug south 8/9
+ITEM=brownbearrug17
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 403]
+{ brown bear rug south 9/9
+ITEM=brownbearrug18
+X=-1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 404]
+{ polar bear rug east 1/9
+ITEM=polarbearrug1
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 405]
+{ polar bear rug east 2/9
+ITEM=polarbearrug2
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 406]
+{ polar bear rug east 3/9
+ITEM=polarbearrug3
+X=1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 407]
+{ polar bear rug east 4/9
+ITEM=polarbearrug4
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 408]
+{ polar bear rug east 5/9
+ITEM=polarbearrug5
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 409]
+{ polar bear rug east 6/9
+ITEM=polarbearrug6
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 410]
+{ polar bear rug east 7/9
+ITEM=polarbearrug7
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 411]
+{ polar bear rug east 8/9
+ITEM=polarbearrug8
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 412]
+{ polar bear rug east 9/9
+ITEM=polarbearrug9
+X=-1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 413]
+{ polar bear rug south 1/9
+ITEM=polarbearrug10
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 414]
+{ polar bear rug south 2/9
+ITEM=polarbearrug11
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 415]
+{ polar bear rug south 3/9
+ITEM=polarbearrug12
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 416]
+{ polar bear rug south 4/9
+ITEM=polarbearrug13
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 417]
+{ polar bear rug south 5/9
+ITEM=polarbearrug14
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 418]
+{ polar bear rug south 6/9
+ITEM=polarbearrug15
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 419]
+{ polar bear rug south 7/9
+ITEM=polarbearrug16
+X=1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 420]
+{ polar bear rug south 8/9
+ITEM=polarbearrug17
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 421]
+{ polar bear rug south 9/9
+ITEM=polarbearrug18
+X=-1
+Y=-1
+Z=0
+}

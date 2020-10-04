@@ -448,7 +448,7 @@
 457=Select dough to put this on.
 458=Select your spin wheel to spin wool.
 459=Select material to use.
-460=Select forge to smelt ore on.
+460=Select the forge on which to smelt the ore.
 461=You are too far away.
 462=What would you like to use that on?
 463=You fail to light a fire.
@@ -1775,5 +1775,15 @@
 1803=Enter the new WorldNumber value for the character in decimal.
 1804=Enter the new Instance ID for the item character decimal.
 1805=You blocked the attack!
+1806=You cannot combine these ore types.
+1807=You cannot combine ores of different metals.
+1808=You cannot do that.
+1809=You can only combine larger ores with smaller ores!
+1810=The weight is too great to combine in a container.
+1811=You combine the ore with the stack of smaller ore.
+1812=That stack cannot hold any more items.
+1813=You combine a portion of your ore into the stack of smaller ore.
+1814=Too little ore to smelt!
+1815=Select the forge on which to smelt the ore, or another pile of ore with which to combine it.
 }
 EOF

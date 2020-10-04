@@ -314,12 +314,25 @@ id=0x1b74
 color=0x8a9
 }
 
-
 [0x1b76-b]
 { Heater Shield
 get=heater_shield
 name=heater shield
 id=0x1b76
+color=0x8a9
+}
+
+[0x1b78-b]
+{ Wooden kite Shield
+get=0x1b78
+id=0x1b78
+color=0x8a9
+}
+
+[0x1b79-b]
+{ Wooden kite Shield
+get=0x1b78
+id=0x1b79
 color=0x8a9
 }
 

@@ -6,7 +6,7 @@ struct	miningData;
 struct orePref
 {
 	miningData *oreIndex;
-	UI08		percentChance;
+	UI16		percentChance;
 };
 
 struct regLocs

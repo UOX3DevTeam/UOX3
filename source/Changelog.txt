@@ -1,3 +1,21 @@
+05/10/2020 - Xuri
+	Updated warning messages printed in UOX3 when attempting to inherit an invalid/non-existent item or character script entry using the GET tag, to also include the name of the script entry being inherited
+	Added new tag for ore types in skills.dfn that determines default chance of finding a particular ore (can be overridden via OREPREFS tag in regions.dfn):
+		ORECHANCE - takes a value from 0 to 1000, where 1000 equals 100.0%
+	Added default ORECHANCE values for each ore type in skills.dfn, based on estimated chance of finding these ore types around the era of Publish 15/16 in Official UO
+	OREPREFS tag in regions.dfn now uses [sectionName] of ore type from skills.dfn instead of actual name of the ore
+	OREPREFS tag in regions.dfn now uses comma as separator instead of space. New syntax: OREPREFS=[oreType,oreChance]
+	Added chance of getting different ore sizes when mining
+	Added functionality to combine and transform larger ores into smaller ores by double-clicking some ore and targeting other ore instead of a forge
+	Added functionality to return different amount of ingots when smelting ore, based on the size of ore being melted
+	Fixed a bug introduced in 0.99.3 that would set invalid values for certain properties on newly created items and NPCs if the tag for that property in the DFNs accepted random values, but only supplied one value. Example: Amount=1, vs Amount=10 20. As part of the fix for this, added sanity checking for all item and character DFN tags that accept two values.
+	Fixed weapon damage not appearing in status gump
+	Fixed a spidermonkey compilation issue with xcode 12.0.1/Apple clang v 12.0.0 (clang-1200.0.32.2) (punt)
+	Added missing layer tag to fishing pole items in DFNs (dragon slayer)
+	Added missing item definitions for wooden kite shields (0x1b78 and 0x1b79) based on coloured ingots
+	Added house addon deeds for bear rugs (dragon slayer)
+	Updated dictionary files with various new strings related to mining
+
 16/09/2020 - Xuri (0.99.3a)
 	Undid dictionary rename from ENG to ENU and FRE to FRA; these are not actual language codes, but groups of language codes - ENU covers all English language codes, FRA covers all French ones.
 	Refined build notes
