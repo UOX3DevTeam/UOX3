@@ -6595,6 +6595,59 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void GetMultiCorner( cornerID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets coordinates for specified corner ("NW", "NE", "SW" or "SE") of multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "GetMultiCorner: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(GetMultiCorner) Invalid object referenced - multi required" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	UI08 cornerToFind = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+	SI16 x1 = 0;
+	SI16 y1 = 0;
+	SI16 x2 = 0;
+	SI16 y2 = 0;
+
+	Map->MultiArea( multiObject, x1, y1, x2, y2 );
+	switch( cornerToFind )
+	{
+		case 0: // NW
+			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, (std::to_string( x1 ) + "," + std::to_string( y1 )).c_str() ) );
+			break;
+		case 1: // NE
+			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, (std::to_string( x2 ) + "," + std::to_string( y1 )).c_str() ) );
+			break;
+		case 2: // SW
+			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, (std::to_string( x1 ) + "," + std::to_string( y2 )).c_str() ) );
+			break;
+		case 3: // SE
+		{
+			*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, (std::to_string( x2 ) + "," + std::to_string( y2 )).c_str() ) );
+			break;
+		}
+		default:
+			break;
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool CanSee( object )
 //|					bool CanSee( x, y, z )

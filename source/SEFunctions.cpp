@@ -212,6 +212,35 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CalcMultiFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates and returns item object based on provided serial
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_CalcMultiFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 4 )
+	{
+		DoSEErrorMessage( "CalcMultiFromSer: Invalid number of arguments (takes 1 or 4)" );
+		return JS_FALSE;
+	}
+	SERIAL targSerial;
+	if( argc == 1 )
+		targSerial = (SERIAL)JSVAL_TO_INT( argv[0] );
+	else
+		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
+
+	CItem *newMulti		= calcMultiFromSer( targSerial );
+	if( newMulti != NULL )
+	{
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns character object based on provided serial
@@ -2613,5 +2642,164 @@ JSBool SE_GetSpawnRegionCount( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->spawnRegions.size() );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetMapElevation( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns map elevation at given coordinates
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetMapElevation( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "GetMapElevation: Invalid number of arguments (takes 3: X, Y and WorldNumber)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[2] ));
+	SI08 mapElevation = Map->MapElevation( x, y, worldNum );
+	*rval = INT_TO_JSVAL( mapElevation );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_IsInBuilding( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if specified location is inside a building
+//| Notes		-	First checks if player is in a static building. If false, checks if there's a multi
+//|					at the same location as the player, and assumes they are in the building if true
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_IsInBuilding( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		DoSEErrorMessage( "IsInBuilding: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber and instanceID)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	SI08 z			= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	UI08 instanceID = static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
+	bool checkHeight = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool isInBuilding = Map->inBuilding( x, y, z, worldNum, instanceID );
+	if( !isInBuilding )
+	{
+		// No static building was detected. How about a multi?
+		CMultiObj *multi = findMulti( x, y, z, worldNum, instanceID );
+		if( ValidateObject( multi ) )
+		{
+			if( checkHeight )
+			{
+				// Check if there's multi-items over the player's head
+				SI08 multiZ = Map->MultiHeight( multi, x, y, z, 127, checkHeight );
+				if( multiZ > z )
+					isInBuilding = true;
+			}
+			else
+				isInBuilding = true;
+		}
+	}
+	*rval = BOOLEAN_TO_JSVAL( isInBuilding );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CheckStaticFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_CheckStaticFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		DoSEErrorMessage( "CheckStaticFlag: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and TileFlagID)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	TileFlags toCheck	= static_cast<TileFlags>(JSVAL_TO_INT( argv[4] ));
+	bool hasStaticFlag = Map->CheckStaticFlag( x, y, z, worldNum, toCheck );
+	*rval = BOOLEAN_TO_JSVAL( hasStaticFlag );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoesStaticBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoesStaticBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		DoSEErrorMessage( "DoesStaticBlock: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and checkWater)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	bool staticBlocks = Map->DoesStaticBlock( x, y, z, worldNum, checkWater );
+	*rval = BOOLEAN_TO_JSVAL( staticBlocks );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoesDynamicBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if dynamics at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoesDynamicBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 7 )
+	{
+		DoSEErrorMessage( "DoesDynamicBlock: Invalid number of arguments (takes 7: X, Y, Z, WorldNumber, instanceID, checkWater and waterWalk)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	UI08 instanceID	= static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
+	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	bool dynamicBlocks = Map->DoesDynamicBlock( x, y, z, worldNum, instanceID, checkWater, waterWalk );
+	*rval = BOOLEAN_TO_JSVAL( dynamicBlocks );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoesMapBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if map tile at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoesMapBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		DoSEErrorMessage( "DoesMapBlock: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber, checkWater and waterWalk)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool mapBlocks = Map->DoesMapBlock( x, y, z, worldNum, checkWater, waterWalk );
+	*rval = BOOLEAN_TO_JSVAL( mapBlocks );
 	return JS_TRUE;
 }

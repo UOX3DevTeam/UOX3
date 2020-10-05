@@ -53,6 +53,7 @@ static JSFunctionSpec my_functions[] =
 	{ "RandomNumber",				SE_RandomNumber,			2, 0, 0 },
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
 	{ "CalcItemFromSer",			SE_CalcItemFromSer,			1, 0, 0 },
+	{ "CalcMultiFromSer",			SE_CalcMultiFromSer,		1, 0, 0 },
 	{ "GetHour",					SE_GetHour,					0, 0, 0 },
 	{ "GetMinute",					SE_GetMinute,				0, 0, 0 },
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
@@ -100,6 +101,14 @@ static JSFunctionSpec my_functions[] =
 	{ "GetSocketFromIndex",			SE_GetSocketFromIndex,		1, 0, 0 },
 	{ "StaticAt",					SE_StaticAt,				4, 0, 0 },
 	{ "StaticInRange",				SE_StaticInRange,			5, 0, 0 },
+
+	{ "GetMapElevation",			SE_GetMapElevation,			3, 0, 0 },
+	{ "IsInBuilding",				SE_IsInBuilding,			6, 0, 0 },
+	{ "CheckStaticFlag",			SE_CheckStaticFlag,			5, 0, 0 },
+	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		5, 0, 0 },
+	{ "DoesStaticBlock",			SE_DoesStaticBlock,			7, 0, 0 },
+	{ "DoesMapBlock",				SE_DoesMapBlock,			6, 0, 0 },
+
 	{ "ResourceArea",				SE_ResourceArea,			2, 0, 0 },
 	{ "ResourceAmount",				SE_ResourceAmount,			2, 0, 0 },
 	{ "ResourceTime",				SE_ResourceTime,			2, 0, 0 },

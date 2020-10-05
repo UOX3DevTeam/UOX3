@@ -197,7 +197,18 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				}
 				break;
 			case CIP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
-			case CIP_SERIAL:		*vp = INT_TO_JSVAL( gPriv->GetSerial() );			break;
+			case CIP_SERIAL:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ) )
+				{
+					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetSerial() );
+				}
+				break;
+			}
 			case CIP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 			case CIP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
 			case CIP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
@@ -240,10 +251,54 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				}
 				break;
 			case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI08>(gPriv->GetType()) );		break;
-			case CIP_MORE:			*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE ) );			break;
-			case CIP_MOREX:			*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREX ) );			break;
-			case CIP_MOREY:			*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREY ) );			break;
-			case CIP_MOREZ:			*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREZ ) );			break;
+			case CIP_MORE:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE ) ) )
+				{
+					 JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE ) );
+				}
+				break;
+			}
+			case CIP_MOREX:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREX ) ) )
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREX ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREX ) );
+				}
+				break;
+			}
+			case CIP_MOREY:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREY ) ) )
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREY ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREY ) );
+				}
+				break;
+			}
+			case CIP_MOREZ:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREZ ) ) )
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MOREZ ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREZ ) );
+				}
+				break;
+			}
 			case CIP_MOVABLE:		*vp = INT_TO_JSVAL( gPriv->GetMovable() );			break;
 			case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ) );	break;
 			case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
@@ -537,7 +592,18 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			case CCP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
-			case CCP_SERIAL:		*vp = INT_TO_JSVAL( gPriv->GetSerial() );			break;
+			case CCP_SERIAL:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetSerial() ) )
+				{
+					JS_NewNumberValue( cx, gPriv->GetSerial(), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetSerial() );
+				}
+				break;
+			}
 			case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 			case CCP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
 			case CCP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
@@ -1559,13 +1625,13 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 			case CSOCKP_WASIDLEWARNED:		gPriv->WasIdleWarned( encaps.toBool() );				break;
 			case CSOCKP_TEMPINT:			gPriv->TempInt( encaps.toInt() );						break;
-			case CSOCKP_TEMPINT2:			gPriv->TempInt2( encaps.toInt() );						break;
+			case CSOCKP_TEMPINT2:			gPriv->TempInt2( encaps.toInt() );						break; // Reserved for JS usage
 			case CSOCKP_TEMPOBJ:
 				if( *vp == JSVAL_NULL )
 					gPriv->TempObj( NULL );
 				else
 					gPriv->TempObj( static_cast<CBaseObject *>(encaps.toObject() ));		break;
-			case CSOCKP_TEMPOBJ2:
+			case CSOCKP_TEMPOBJ2: // Reserved for JS usage
 				if( *vp == JSVAL_NULL )
 					gPriv->TempObj2( NULL );
 				else

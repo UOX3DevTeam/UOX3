@@ -42,6 +42,7 @@ SEngineFunc SE_BroadcastMessage;	//											***
 SEngineFunc SE_RandomNumber;		// Calculates a random number				***
 SEngineFunc SE_CalcCharFromSer;		//											***
 SEngineFunc SE_CalcItemFromSer;		//											***
+SEngineFunc SE_CalcMultiFromSer;	//											***
 
 SEngineFunc SE_MakeItem;			//											***
 
@@ -131,6 +132,12 @@ SEngineFunc SE_GetSpawnRegionCount;
 SEngineFunc SE_ReloadJSFile;
 SEngineFunc SE_StaticInRange;
 SEngineFunc SE_StaticAt;
+SEngineFunc SE_GetMapElevation;
+SEngineFunc SE_IsInBuilding;
+SEngineFunc SE_CheckStaticFlag;
+SEngineFunc SE_DoesStaticBlock;
+SEngineFunc SE_DoesDynamicBlock;
+SEngineFunc SE_DoesMapBlock;
 
 SEngineFunc SE_ValidateObject;
 SEngineFunc SE_ApplyDamageBonuses;
