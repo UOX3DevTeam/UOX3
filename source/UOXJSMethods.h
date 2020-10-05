@@ -159,6 +159,8 @@ JSMethodFunc CBase_Resist;
 JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
 
+// Multi Methods
+JSMethodFunc CMulti_GetMultiCorner;
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
 JSMethodFunc CSocket_OpenURL;
@@ -407,6 +409,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Carve",				CItem_Carve,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
+	{ "GetMultiCorner",		CMulti_GetMultiCorner,		1, 0, 0 },	
 	{ NULL,					NULL,						0, 0, 0 }
 };
 

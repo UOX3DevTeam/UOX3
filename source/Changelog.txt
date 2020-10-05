@@ -1,4 +1,21 @@
 05/10/2020 - Xuri
+	Updated JS item properties MORE, MOREX, MOREY, MOREZ and SERIAL, and character property SERIAL, to pass values to JS scripts using JS_NewNumberValue() instead of INT_TO_JSVAL if the property value cannot fit inside JSVAL (checked with INT_FITS_IN_JSVAL)
+	Added support in CResponse.cpp for client trigger word for securing containers in houses - TW_HOUSESECURE
+	Updated CMulHandler::CheckStaticFlag() to match with statics that cover/extend across the specified Z coordinate, not just ones that have the same base Z level
+	Updated CMulHandler::DoesMapBlock() to not deem map tiles as blocking if they are more than 16 Z (height of a character) higher than the specified Z coordinate to check
+	Exposed method for finding corners of a multi to JS engine:
+		.GetMultiCorner( cornerID ) - Gets coordinates for specified corner of multi (0 = NW, 1 = NE, 2 = SW, 3 = SE)
+	Exposed various functions related to map, statics and multis to JS engine:
+		CalcMultiFromSer( serial ) - Find a multi from a provided serial
+		GetMapElevation( x, y, z, world) - Returns the map elevation at specified coordinates
+		IsInBuilding( x, y, z, world, instance, checkHeight ) - Returns true if the specified location is inside a static building (underneath static items), or if player is inside a multi. If the checkHeight argument is true, player is only deemed inside a multi if there are multi-items above the player's head. If player is in a courtyard/on a rooftop, they will be deemed to be NOT in the building. checkHeight is not used for the static part of the function.
+		CheckStaticFlag( x, y, z, world, tileFlagID ) - Checks to see if any statics at given coordinates has specified tile flag
+		DoesStaticBlock( x, y, z, world, checkWater ) - Checks if statics at/above given location blocks characters
+		DoesDynamicBlock( x, y, z, world, instance, checkWater, waterWalk ) - Checks if dynamics at/above given location blocks characters
+		DoesMapBlock( x, y, z, world, checkWater, waterWalk ) - Checks if map tile at/above given location blocks characters
+
+
+05/10/2020 - Xuri
 	Updated warning messages printed in UOX3 when attempting to inherit an invalid/non-existent item or character script entry using the GET tag, to also include the name of the script entry being inherited
 	Added new tag for ore types in skills.dfn that determines default chance of finding a particular ore (can be overridden via OREPREFS tag in regions.dfn):
 		ORECHANCE - takes a value from 0 to 1000, where 1000 equals 100.0%

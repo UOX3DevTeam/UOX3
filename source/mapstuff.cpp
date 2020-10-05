@@ -720,7 +720,7 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 //|	Purpose		-	Return the height of a multi item at the given x, y.
 //|					This seems to actually return a height
 //o-----------------------------------------------------------------------------------------------o
-SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
+SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldZ, SI08 maxZ, bool checkHeight )
 {
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
 	SI32 length = 0;
@@ -735,33 +735,56 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 	const SI16 baseX = i->GetX();
 	const SI16 baseY = i->GetY();
 	const SI08 baseZ = i->GetZ();
+	SI08 mHeight = ILLEGAL_Z;
+	SI08 tmpTop = ILLEGAL_Z;
 	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 	{
 		for( SI32 j = 0; j < length; ++j )
 		{
 			MultiHS_st& multi = SeekIntoMultiHS( multiID, j );
-			if( multi.visible && (baseX + multi.x) == x && (baseY + multi.y) == y )
+			if(( checkHeight || multi.visible ) && ( baseX + multi.x ) == x && ( baseY + multi.y ) == y )
 			{
-				SI08 tmpTop = static_cast<SI08>(baseZ + multi.z);
-				if( abs( tmpTop - oldz ) <= maxZ )
+				if( checkHeight )
+				{
+					// Returns height of highest point of multi
+					tmpTop = static_cast<SI08>(baseZ + multi.z);
+					if( ( tmpTop <= oldZ + maxZ ) && tmpTop > oldZ && tmpTop > mHeight )
+						mHeight = tmpTop;
+				}
+				else
+				{
+					tmpTop = static_cast<SI08>( baseZ + multi.z );
+					if( abs( tmpTop - oldZ ) <= maxZ )
 					return tmpTop + TileHeight( multi.tile );
 			}
 		}
+	}
 	}
 	else
 	{
 		for( SI32 j = 0; j < length; ++j )
 		{
 			Multi_st& multi = SeekIntoMulti( multiID, j );
-			if( multi.visible && (baseX + multi.x) == x && (baseY + multi.y) == y )
+			if(( checkHeight || multi.visible ) && ( baseX + multi.x ) == x && ( baseY + multi.y ) == y )
 			{
-				SI08 tmpTop = static_cast<SI08>(baseZ + multi.z);
-				if( abs( tmpTop - oldz ) <= maxZ )
+				if( checkHeight )
+				{
+					// Returns height of highest point of multi
+					tmpTop = static_cast<SI08>(baseZ + multi.z);
+					if( ( tmpTop <= oldZ + maxZ ) && tmpTop > oldZ && tmpTop > mHeight )
+						mHeight = tmpTop;
+				}
+				else
+				{
+					tmpTop = static_cast<SI08>( baseZ + multi.z );
+					if( abs( tmpTop - oldZ ) <= maxZ )
 					return tmpTop + TileHeight( multi.tile );
 			}
 		}
 	}
-	return ILLEGAL_Z;
+
+	}
+	return mHeight;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1241,21 +1264,23 @@ bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, Til
 	CStaticIterator msi( x, y, worldNumber );
 	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
-		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
+		//const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
+		const SI08 elev = static_cast<SI08>( stat->zoff );
+		const SI08 tileHeight = static_cast<SI08>( TileHeight( stat->itemid ) );
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 		{
 			//7.0.9.0 data and later
-			if( elev == z && !SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
-				return false;
+			if(( z >= elev && z < ( elev + tileHeight )) && SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
+				return true;
 		}
 		else
 		{
 			//7.0.8.2 data and earlier
-			if( elev == z && !SeekTile( stat->itemid ).CheckFlag( toCheck ) )
-				return false;
+			if(( z >= elev && z < ( elev + tileHeight )) && SeekTile( stat->itemid ).CheckFlag( toCheck ) )
+				return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1352,7 +1377,7 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 	if( checkWater || waterWalk )
 	{
 		const map_st map = SeekMap( x, y, worldNumber );
-		if( map.z == z )
+		if( map.z == z || ( map.z > z && map.z - z < 16 ))
 		{
 			if( z == ILLEGAL_Z )
 				return true;
