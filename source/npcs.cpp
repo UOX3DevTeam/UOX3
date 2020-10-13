@@ -114,7 +114,7 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 		cCreated->SetResist( 1, PHYSICAL );
 		cCreated->SetSpawn( INVALIDSERIAL );
 
-		if( !ApplyNpcSection( cCreated, npcCreate ) )
+		if( !ApplyNpcSection( cCreated, npcCreate, ourNPC ) )
 			Console.error( "Trying to apply an npc section failed" );
 
 		cScript *toGrab = JSMapping->GetScript( cCreated->GetScriptTrigger() );
@@ -593,7 +593,7 @@ void MakeShop( CChar *c )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Apply NPC DFN sections to an NPC
 //o-----------------------------------------------------------------------------------------------o
-bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate )
+bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, std::string sectionID, bool isGate )
 {
 	if( NpcCreation == NULL || !ValidateObject( applyTo ) )
 		return false;
@@ -622,7 +622,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_ARCHERY:			skillToSet = ARCHERY;				break;
 			case DFNTAG_DAMAGE:
 			case DFNTAG_ATT:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -636,7 +636,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside NPC script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside NPC script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_BACKPACK:
 				if( !isGate )
@@ -701,7 +701,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 				}
 				break;
 			case DFNTAG_DEX:
-				if( ndata && ndata > 0 )
+				if( ndata > 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -714,11 +714,11 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					applyTo->SetStamina( applyTo->GetMaxStam() );
 				}
 				else
-					Console.warning( format("Invalid data found in DEX tag inside NPC script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in DEX tag inside NPC script %s", sectionID.c_str() ));
 				break;	
 			case DFNTAG_DETECTINGHIDDEN:	skillToSet = DETECTINGHIDDEN;			break;
 			case DFNTAG_DEF:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -730,7 +730,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in DEF tag inside NPC script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in DEF tag inside NPC script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_DIR:
 				if( !isGate )
@@ -797,7 +797,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					if( retitem != NULL )
 					{
 						if( retitem->GetLayer() == IL_NONE )
-							Console << "Warning: Bad NPC Script with problem item " << cdata << " executed!" << myendl;
+							Console << "Warning: Bad NPC Script (" << sectionID.c_str() << ") with problem item " << cdata << " executed!" << myendl;
 						else if( !retitem->SetCont( applyTo ) )
 						{
 							if( !retitem->SetCont( applyTo->GetPackItem() ) )
@@ -863,7 +863,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 				else if( toFind == NpcCreation )
 					Console.warning( format("Infinite loop avoided with GET tag inside NPC script %s", cdata.c_str() ));
 				else
-					ApplyNpcSection( applyTo, toFind, isGate );
+					ApplyNpcSection( applyTo, toFind, cdata, isGate );
 			}
 				break;
 			case DFNTAG_GOLD:
@@ -873,7 +873,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 						mypack = applyTo->GetPackItem();
 					if( ValidateObject( mypack ) )
 					{
-						if( ndata && ndata >= 0 )
+						if( ndata >= 0 )
 						{
 							if( odata && odata > ndata )
 							{
@@ -885,10 +885,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 							}
 						}
 						else
-							Console.warning( format("Invalid data found in GOLD tag inside NPC script %s", cdata.c_str() ));
+							Console.warning( format("Invalid data found in GOLD tag inside NPC script %s", sectionID.c_str() ));
 					}
 					else
-						Console.warning( "Bad NPC Script with problem no backpack for gold" );
+						Console.warning( format("Bad NPC Script (%s) with problem no backpack for gold", sectionID.c_str() ));
 				}
 				break;
 			case DFNTAG_HAIRCOLOUR:
@@ -901,7 +901,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_HIDING:				skillToSet = HIDING;					break;
 			case DFNTAG_HIDAMAGE:			applyTo->SetHiDamage( static_cast<SI16>(ndata) );	break;
 			case DFNTAG_HP:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -913,10 +913,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in HP tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in HP tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_HPMAX:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -928,7 +928,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in HPMAX tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in HPMAX tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_ID:
 				applyTo->SetID( static_cast<UI16>(ndata) );
@@ -937,7 +937,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_IMBUING:			skillToSet = IMBUING;					break;
 			case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;				break;
 			case DFNTAG_INTELLIGENCE:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -950,7 +950,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					applyTo->SetMana( applyTo->GetMaxMana() );
 				}
 				else
-					Console.warning( format("Invalid data found in INTELLIGENCE tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in INTELLIGENCE tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_ITEMID:				skillToSet = ITEMID;					break;
 			case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );		break;
@@ -986,7 +986,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 						}
 					}
 					else
-						Console.warning( format("Bad NPC Script with problem no backpack for loot") );
+						Console.warning( format("Bad NPC Script (%s) with problem no backpack for loot", sectionID.c_str() ) );
 				}
 				break;
 			case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;				break;
@@ -996,7 +996,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_MAGERY:				skillToSet = MAGERY;					break;
 			case DFNTAG_MAGICRESISTANCE:	skillToSet = MAGICRESISTANCE;			break;
 			case DFNTAG_MANA:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -1008,10 +1008,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in MANA tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in MANA tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_MANAMAX:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -1023,7 +1023,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in MANAMAX tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in MANAMAX tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_MEDITATION:			skillToSet = MEDITATION;				break;
 			case DFNTAG_MINING:				skillToSet = MINING;					break;
@@ -1074,7 +1074,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 						}
 					}
 					else
-						Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
+						Console << "Warning: Bad NPC Script (" << sectionID.c_str() << ") with problem no backpack for packitem" << myendl;
 				}
 				break;
 			case DFNTAG_POISONSTRENGTH:		applyTo->SetPoisonStrength( static_cast<UI08>(ndata) ); break;
@@ -1103,7 +1103,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 						}
 					}
 					else
-						Console.warning( format("Bad NPC Script with no Vendor Buy Pack for item") );
+						Console.warning( format("Bad NPC Script (%s) with no Vendor Buy Pack for item", sectionID.c_str() ) );
 				}
 				break;
 			case DFNTAG_REATTACKAT:
@@ -1145,7 +1145,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 						}
 					}
 					else
-						Console.warning( format("Bad NPC Script with no Vendor SellPack for item" ));
+						Console.warning( format("Bad NPC Script (%s) with no Vendor SellPack for item", sectionID.c_str() ));
 				}
 				break;
 			case DFNTAG_SHOPITEM:
@@ -1165,7 +1165,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 						}
 					}
 					else
-						Console.warning(format( "Bad NPC Script with no Vendor Bought Pack for item") );
+						Console.warning(format( "Bad NPC Script (%s) with no Vendor Bought Pack for item", sectionID.c_str() ) );
 				}
 				break;
 			case DFNTAG_SAYCOLOUR:
@@ -1193,7 +1193,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_SPIRITSPEAK:		skillToSet = SPIRITSPEAK;				break;
 			case DFNTAG_STEALING:			skillToSet = STEALING;					break;
 			case DFNTAG_STRENGTH:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -1206,11 +1206,11 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					applyTo->SetHP( applyTo->GetMaxHP() );
 				}
 				else
-					Console.warning( format("Invalid data found in STRENGTH tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in STRENGTH tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_SWORDSMANSHIP:		skillToSet = SWORDSMANSHIP;				break;
 			case DFNTAG_STAMINA:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -1222,10 +1222,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", sectionID.c_str() ));				
 				break;
 			case DFNTAG_STAMINAMAX:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -1237,7 +1237,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", cdata.c_str() ));				
+					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", sectionID.c_str() ));				
 				break;				
 			case DFNTAG_STEALTH:			skillToSet = STEALTH;					break;
 			case DFNTAG_SKINLIST:			applyTo->SetSkin( addRandomColor( cdata ) );			break;
@@ -1444,7 +1444,7 @@ void MonsterGate( CChar *s, const std::string& scriptEntry )
 		}
 	}
 
-	Npcs->ApplyNpcSection( s, Monster, true );
+	Npcs->ApplyNpcSection( s, Monster, scriptEntry, true );
 	//Now find real 'skill' based on 'baseskill' (stat modifiers)
 	for( UI08 j = 0; j < ALLSKILLS; ++j )
 		Skills->updateSkillLevel( s, j );

@@ -90,7 +90,7 @@ public:
 	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );
 	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID );
 	void		PostSpawnUpdate( CChar *cCreated );
-	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate = false );
+	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, std::string sectionID, bool isGate = false );
 	CChar *		getGuardingPet( CChar *mChar, CBaseObject *guarded );
 	bool		checkPetFriend( CChar *mChar, CChar *pet );
 	void		stopPetGuarding( CChar *pet );
