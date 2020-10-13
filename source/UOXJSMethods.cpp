@@ -4585,7 +4585,7 @@ JSBool CRace_IsValidBeardColour( JSContext *cx, JSObject *obj, uintN argc, jsval
 }
 
 
-bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply );
+bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void ApplySection( scriptSection )
@@ -4620,7 +4620,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 			return JS_FALSE;
 		}
 		ScriptSection *toFind = FileLookup->FindEntry( trgSection, items_def );
-		ApplyItemSection( myItem, toFind );
+		ApplyItemSection( myItem, toFind, trgSection );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -4632,7 +4632,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		}
 
 		ScriptSection *toFind = FileLookup->FindEntry( trgSection, npc_def );
-		Npcs->ApplyNpcSection( myChar, toFind );
+		Npcs->ApplyNpcSection( myChar, toFind, trgSection );
 	}
 
 	return JS_TRUE;

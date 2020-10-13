@@ -45,11 +45,11 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 n
 
 UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
+//|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load items from the script sections to the array
 //o-----------------------------------------------------------------------------------------------o
-bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
+bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID )
 {
 	if( toApply == NULL || !ValidateObject( applyTo ) )
 		return false;
@@ -86,7 +86,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				}
 				break;
 			case DFNTAG_AMOUNT:
-				if( ndata && ndata > 0 )
+				if( ndata > 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -99,11 +99,11 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in AMOUNT tag inside item script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in AMOUNT tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_DAMAGE:
 			case DFNTAG_ATT:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -117,7 +117,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside item script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>(ndata) );	break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
@@ -135,7 +135,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				}
 				break;
 			case DFNTAG_DEF:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -147,10 +147,10 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in DEF tag inside item script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in DEF tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_DEX:
-				if( ndata && ndata > 0 )
+				if( ndata > 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -162,7 +162,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in DEX tag inside item script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in DEX tag inside item script %s", sectionID.c_str() ));
 				break;				
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
 			case DFNTAG_DIR:			applyTo->SetDir( cdata.toByte() );			break;
@@ -188,11 +188,11 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				else if( toFind == toApply )
 					Console.warning( format("Infinite loop avoided with GET tag inside item script %s", cdata.c_str() ));
 				else
-					ApplyItemSection( applyTo, toFind );
+					ApplyItemSection( applyTo, toFind, cdata );
 			}
 				break;
 			case DFNTAG_HP:
-				if( ndata && ndata > 0 )
+				if( ndata > 0 )
 				{
 					if( odata && odata > ndata )
 					{
@@ -204,7 +204,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in HP tag inside item script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in HP tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>(ndata) );		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
@@ -254,7 +254,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
 			case DFNTAG_VALUE:
-				if( ndata && ndata >= 0 )
+				if( ndata >= 0 )
 				{
 					if( odata && odata >= 0 )
 					{
@@ -269,7 +269,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in VALUE tag inside item script %s", cdata.c_str() ));
+					Console.warning( format("Invalid data found in VALUE tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );
 				applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
@@ -553,7 +553,7 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 			iCreated->SetDecayable( true );
 		}
 
-		if( !ApplyItemSection( iCreated, itemCreate ) )
+		if( !ApplyItemSection( iCreated, itemCreate, ourItem ) )
 			Console.error( "Trying to apply an item section failed" );
 
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
@@ -580,7 +580,7 @@ void cItem::GetScriptItemSettings( CItem *iCreated )
 	const UString item = "x" + UString::number( iCreated->GetID(), 16 );
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
 	if( toFind != NULL )
-		ApplyItemSection( iCreated, toFind );
+		ApplyItemSection( iCreated, toFind, item );
 }
 
 CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );

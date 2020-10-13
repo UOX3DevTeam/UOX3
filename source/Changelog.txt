@@ -1,3 +1,8 @@
+14/10/2020 - Xuri
+	Fixed an issue with validation of DFN tags for items and NPCs being loaded from scripts
+	Fixed UOX3 not writing out names of item/NPC DFN sections with invalid data in tags
+	Gave NPCs [f_murderer-archmage] and [m_murderer-archmage] some dexterity
+
 05/10/2020 - Xuri
 	Updated JS item properties MORE, MOREX, MOREY, MOREZ and SERIAL, and character property SERIAL, to pass values to JS scripts using JS_NewNumberValue() instead of INT_TO_JSVAL if the property value cannot fit inside JSVAL (checked with INT_FITS_IN_JSVAL)
 	Added support in CResponse.cpp for client trigger word for securing containers in houses - TW_HOUSESECURE
