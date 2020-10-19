@@ -1,3 +1,6 @@
+19/10/2020 - Xuri
+	Fixed an issue where non-GM characters could not open their own backpacks or take items from other containers or corpses due to some flawed comparisons of worldnumber/instanceID between character and items
+
 14/10/2020 - Xuri
 	Fixed an issue with validation of DFN tags for items and NPCs being loaded from scripts
 	Fixed UOX3 not writing out names of item/NPC DFN sections with invalid data in tags
