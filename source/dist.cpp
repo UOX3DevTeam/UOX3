@@ -14,9 +14,6 @@ bool checkItemRange( CChar *mChar, CItem *i )
 	if( mChar->IsGM() || mChar->IsCounselor() )
 		return true;
 
-	if( mChar->GetInstanceID() != i->GetInstanceID() || mChar->WorldNumber() != i->WorldNumber() )
-		return false;
-
 	CBaseObject *itemOwner	= i;
 	bool checkRange			= false;
 
@@ -30,7 +27,20 @@ bool checkItemRange( CChar *mChar, CItem *i )
 	if( itemOwner == mChar )
 		checkRange = true;
 	else
+	{
+		if( ValidateObject( itemOwner ) )
+		{
+			if( mChar->GetInstanceID() != itemOwner->GetInstanceID() || mChar->WorldNumber() != itemOwner->WorldNumber() )
+				return false;
+		}
+		else
+		{
+			if( mChar->GetInstanceID() != i->GetInstanceID() || mChar->WorldNumber() != i->WorldNumber() )
+				return false;
+		}
+
 		checkRange = objInRange( mChar, itemOwner, DIST_NEARBY );
+	}
 
 	return checkRange;
 }

@@ -299,6 +299,7 @@ bool CPIGetItem::Handle( void )
 		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
 		if( !ourChar->IsGM() && ( !objInRange( ourChar, i, DIST_NEARBY ) || !LineOfSight( tSock, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS, true )))
 		{
+			tSock->sysmessage( 683 );
 			PickupBounce( tSock );
 			return true;
 		}
@@ -916,6 +917,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
 			Bounce( mSock, i );
+			mSock->sysmessage( 683 );
 			return;
 		}
 		i->SetCont( NULL );
