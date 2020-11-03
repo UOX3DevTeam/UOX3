@@ -602,13 +602,12 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	CreatedItems[BANK] = Items->CreateItem( tSock, mChar, 0x09AB, 1, 0, OT_ITEM );
 	if( CreatedItems[BANK] != NULL )
 	{
-
-
 		CreatedItems[BANK]->SetName( format(1024,Dictionary->GetEntry( 1283 ), mChar->GetName().c_str() ) );
 		CreatedItems[BANK]->SetDecayable( false );
 		CreatedItems[BANK]->SetLayer( IL_BANKBOX );
 		CreatedItems[BANK]->SetType( IT_CONTAINER );
 		CreatedItems[BANK]->SetTempVar( CITV_MOREX, 1 );
+		CreatedItems[BANK]->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerBankItems() );
 		CreatedItems[BANK]->SetOwner( mChar );
 		CreatedItems[BANK]->SetCont( mChar );
 	}
@@ -1278,8 +1277,6 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 		if( !ValidateObject( iCorpse ) )
 			return NULL;
 
-
-
 		iCorpse->SetName( format(512, Dictionary->GetEntry( 1612 ), mChar.GetName().c_str() ) );
 		iCorpse->SetCarve( mChar.GetCarve() );
 		iCorpse->SetMovable( 2 );//non-movable
@@ -1290,6 +1287,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 
 		iCorpse->SetAmount( mChar.GetID() );
 		iCorpse->SetWeightMax( 50000 ); // 500 stones
+		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
 		iCorpse->SetCorpse( true );
 	}
 	else
@@ -1299,6 +1297,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 			return NULL;
 
 		iCorpse->SetName( Dictionary->GetEntry( 1611 ) );
+		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
 	}
 
 	UI08 canCarve = 0;

@@ -90,7 +90,8 @@ enum ScriptEvent
 	seOnGumpInput,
 	seOnDropItemOnItem,
 	seOnVirtueGumpPress,
-	seOnUseBandageMacro		//	**	allows overriding what happens when client uses bandage macros
+	seOnUseBandageMacro,	//	**	allows overriding what happens when client uses bandage macros
+	seOnHouseCommand		//	**	allows overriding what happens when player speaks house commands
 };
 
 struct SEGump
@@ -156,7 +157,7 @@ public:
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
 	bool		OnCommand( CSocket *mSock );
 	bool		OnDelete( CBaseObject *thingDestroyed );
-	SI08		OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo );
+	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
 	bool		InRange( CChar *person, CBaseObject *objInRange );
 	bool		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	bool		OnSteal( CChar *thief, CItem *theft );
@@ -239,6 +240,7 @@ public:
 	SI08		OnSell( CSocket *targSock, CChar *objVendor );
 	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
 	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targID );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

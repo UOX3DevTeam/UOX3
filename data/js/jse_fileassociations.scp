@@ -193,6 +193,14 @@
 5019=item/bola.js
 5020=item/diceandcup.js
 5021=item/bedroll.js
+
+// House Scripts [15000-15500]
+15000=server/house/house.js
+15001=server/house/houseSign.js
+15002=server/house/houseCommands.js
+15003=server/house/houseDeed.js
+15004=server/house/trashbarrel.js
+15005=server/house/strongbox.js
 }
 
 //-------------------------------------------

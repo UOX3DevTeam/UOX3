@@ -249,7 +249,7 @@ inline line2D line3D::Projection2D( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
+//|	Function	-	bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, bool showBlockedMsg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 //o-----------------------------------------------------------------------------------------------o
@@ -274,8 +274,6 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 			 (   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
 			 (   mID1 >= 1851 && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
 		{
-			if( mSock != NULL )
-				mSock->sysmessage( 683 );
 			return true;
 		}
 	}
@@ -793,9 +791,6 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 	if( mChar->IsGM() || mChar->IsCounselor() )
 		return true;
 
-	if( mChar->GetInstanceID() != i->GetInstanceID() )
-		return false;
-
 	CBaseObject *itemOwner	= i;
 	bool inSight			= false;
 
@@ -811,6 +806,9 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 		inSight = true;
 	else
 	{
+		if( mChar->GetInstanceID() != i->GetInstanceID() )
+			return false;
+
 		const SI08 height = Map->TileHeight( itemOwner->GetID() ); // Retrieves actual height of item, unrelated to world-coordinate
 		// Can we see the top or bottom of the item
 		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )

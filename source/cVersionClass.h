@@ -22,6 +22,7 @@ public:
     static std::string	GetName( void );
     static std::string	GetEmail( void );
     static std::string	GetProgrammers( void );
+	static std::string	GetEnvironment( void );
 };
 
 #endif // __CVERSIONCLASS_H__

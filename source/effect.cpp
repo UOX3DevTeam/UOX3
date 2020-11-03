@@ -363,7 +363,8 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	if( toMake->soundPlayed )
 		PlaySound( sock, toMake->soundPlayed, true );
 
-	sock->sysmessage( 985 );
+	if( FindItemOwner( targItem ) == src )
+		sock->sysmessage( 985 ); // You create the item and place it in your backpack.
 }
 
 //o-----------------------------------------------------------------------------------------------o

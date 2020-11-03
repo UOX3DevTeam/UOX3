@@ -95,6 +95,7 @@ enum cSD_TID
 	tSERVER_WEATHER,			// Amount of time between changing light levels (day cycles).
 	tSERVER_SHOPSPAWN,			// Amount of time between shopkeeper restocks.
 	tSERVER_DECAY,				// Amount of time a decayable item will remain on the ground before dissapearing.
+	tSERVER_DECAYINHOUSE,		// Amount of time a decayable item will remain on the floor of a house before dissapearing, if not locked down.
 	tSERVER_INVISIBILITY,		// Duration of the invisibility spell.
 	tSERVER_OBJECTUSAGE,		// Amount of time a player must wait between using objects.
 	tSERVER_GATE,				// Duration of a summoned moongate.
@@ -161,7 +162,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 43 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 49 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -217,6 +218,8 @@ private:
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	UI16		maxPlayerPackItems;				//	The max amount of items a player's backpack can contain
+	UI16		maxPlayerBankItems;				//	The max amount of items a player's bankbox can contain
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -305,6 +308,10 @@ private:
 	UI16		buttonRight;					//	Default Button ID for right button in gumps
 	UI16		backgroundPic;					//	Default Gump ID for background gump
 
+	// Houses
+	UI16		maxHousesOwnable;				//	Max amount of houses that a player can own
+	UI16		maxHousesCoOwnable;				//	Max amount of houses that a player can co-own
+
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
 	UI32		numSecsAsMayor;					//	Time (in seconds) that a PC would be a mayor
@@ -314,10 +321,10 @@ private:
 	void	PostLoadDefaults( void );
 
 	std::map<std::string,std::int32_t>   	uox3inicasevalue;
-	std::int32_t lookupINIValue(const std::string& tag);
 	void		regAllINIValues() ;
 	void		regINIValue(const std::string& tag, std::int32_t value);
 public:
+	std::int32_t lookupINIValue(const std::string& tag);
 	UI64		DisabledAssistantFeatures;
 
 	void		SetServerFeature( ServerFeatures, bool );
@@ -566,6 +573,15 @@ public:
 	void		EscortsEnabled( bool value );
 	bool		EscortsEnabled( void ) const;
 
+	void		ItemsDetectSpeech( bool value );
+	bool		ItemsDetectSpeech( void ) const;
+
+	void		MaxPlayerPackItems( UI16 value );
+	UI16		MaxPlayerPackItems( void ) const;
+
+	void		MaxPlayerBankItems( UI16 value );
+	UI16		MaxPlayerBankItems( void ) const;
+
 	void		BasicTooltipsOnly( bool value );
 	bool		BasicTooltipsOnly( void ) const;
 
@@ -580,6 +596,24 @@ public:
 
 	void		ItemDecayInHouses( bool value );
 	bool		ItemDecayInHouses( void ) const;
+
+	void		ProtectPrivateHouses( bool value );
+	bool		ProtectPrivateHouses( void ) const;
+
+	void		TrackHousesPerAccount( bool value );
+	bool		TrackHousesPerAccount( void ) const;
+
+	void		CanOwnAndCoOwnHouses( bool value );
+	bool		CanOwnAndCoOwnHouses( void ) const;
+
+	void		CoOwnHousesOnSameAccount( bool value );
+	bool		CoOwnHousesOnSameAccount( void ) const;
+
+	void		MaxHousesOwnable( UI16 value );
+	UI16		MaxHousesOwnable( void ) const;
+
+	void		MaxHousesCoOwnable( UI16 value );
+	UI16		MaxHousesCoOwnable( void ) const;
 
 	void		PaperdollGuildButton( bool value );
 	bool		PaperdollGuildButton( void) const;

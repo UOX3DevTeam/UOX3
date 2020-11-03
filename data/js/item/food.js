@@ -21,10 +21,9 @@ function onUseChecked( pUser, iUsed )
 			var iPoison = iUsed.poison;
 			if( iPoison && pUser.poison < iPoison )
 			{
+				pUser.SetPoisoned( iPoison, GetServerSetting( "POISONTIMER" ) * 1000 );
 				socket.SysMessage( GetDictionaryEntry( (416 + RandomNumber( 0, 2 )), socket.Language ) ); //You feel disoriented and nauseous.
 				pUser.SoundEffect( 0x0246, true );
-				pUser.poison = iPoison;
-				pUser.SetTimer( 5, 180000 );	// Set the Poison Timer (Need to use uox.ini eventually)
 			}
 
 			// Don't eat the crockery!

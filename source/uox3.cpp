@@ -102,7 +102,7 @@ void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
 void		sysBroadcast( const std::string& txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
-bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems );
+bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems, const UI32 nextDecayItemsInHouses );
 void		CheckAI( CChar& mChar );
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1011,11 +1011,11 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
+//|	Function	-	void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check item decay, spawn timers and boat movement in a given region
 //o-----------------------------------------------------------------------------------------------o
-void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
+void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 {
 	CDataList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
@@ -1027,9 +1027,14 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 		{
 			if( itemCheck->isDecayable() && itemCheck->GetCont() == NULL )
 			{
+				if( itemCheck->GetType() == IT_HOUSESIGN && itemCheck->GetTempVar( CITV_MORE ) > 0 )
+				{
+					// Don't decay signs that belong to houses
+					itemCheck->SetDecayable( false );
+				}
 				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
-					if( DecayItem( (*itemCheck), nextDecayItems ) )
+					if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) )
 						continue;
 				}
 			}
@@ -1108,6 +1113,7 @@ void CWorldMain::CheckAutoTimers( void )
 	static UI32 nextCheckTownRegions	= 0;
 	static UI32 nextCheckItems			= 0;
 	static UI32 nextDecayItems			= 0;
+	static UI32 nextDecayItemsInHouses	= 0;
 	static UI32 nextSetNPCFlagTime		= 0;
 	static UI32 accountFlush			= 0;
 	bool doWeather						= false;
@@ -1395,6 +1401,7 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		nextCheckItems = BuildTimeValue( static_cast<R32>(ServerData()->CheckItemsSpeed()) );
 		nextDecayItems = ServerData()->BuildSystemTimeValue( tSERVER_DECAY );
+		nextDecayItemsInHouses = ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE );
 		checkItems = true;
 	}
 	if( GetTimer( tWORLD_NEXTNPCAI ) <= GetUICurrentTime() || GetOverflow() )
@@ -1449,7 +1456,7 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 		regChars->Pop();
 
-		checkItem( toCheck, checkItems, nextDecayItems );
+		checkItem( toCheck, checkItems, nextDecayItems, nextDecayItemsInHouses );
 		++tcCheck;
 	}
 
@@ -1582,6 +1589,20 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
 	{
+		// Special case for house signs
+		if( a->GetObjType() == OT_ITEM
+			&& ( ( a->GetID() >= 0x0b95 && a->GetID() <= 0x0c0e ) || a->GetID() == 0x1f28 || a->GetID() == 0x1f29 ) )
+		{
+			// Reunite house signs with their multis
+			SERIAL houseSerial = static_cast<CItem *>( a )->GetTempVar( CITV_MORE );
+			CMultiObj *multi = calcMultiFromSer( houseSerial );
+			if( ValidateObject( multi ) )
+			{
+				a->SetMulti( multi );
+				return true;
+			}
+		}
+
 		CMultiObj *multi = findMulti( a );
 		if( multi != NULL )
 			a->SetMulti( multi );
@@ -2560,7 +2581,7 @@ int main( SI32 argc, char *argv[] )
 		current = std::chrono::system_clock::now();
 		const UI32 currentTime = 0;
 
-		Console.Start( format("%s v%s.%s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str() ) );
+		Console.Start( format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), CVersionClass::GetEnvironment().c_str() ) );
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
@@ -2571,7 +2592,7 @@ int main( SI32 argc, char *argv[] )
 //		signal( SIGFPE, &aus );
 #endif
 		Console.PrintSectionBegin();
-		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << myendl;
+		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << CVersionClass::GetEnvironment() << ")" << myendl;
 		Console.PrintSectionBegin();
 
 		if(( cwmWorldState = new CWorldMain ) == NULL )

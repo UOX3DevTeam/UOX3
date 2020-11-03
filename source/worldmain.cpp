@@ -555,7 +555,13 @@ void CWorldMain::SaveNewWorld( bool x )
 		// Make sure to import the new accounts so they have access too.
 		Console << "New accounts processed: " << Accounts->ImportAccounts() << myendl;
 		SetWorldSaveProgress( SS_JUSTSAVED );
-		Console << "World save complete." << myendl;
+
+		char saveTimestamp[100];
+		time_t tempTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		tm *curtime = new tm( *std::localtime( &tempTimestamp ) );
+		strftime( saveTimestamp, 50, "%F at %T", curtime );
+
+		Console << "World save complete on " << saveTimestamp << myendl;
 		Console.PrintSectionBegin();
 	}
 	CollectGarbage();

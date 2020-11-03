@@ -3,6 +3,12 @@ function onUseChecked( pUser, iUsed )
 	var pSock = pUser.socket;
 	if( pSock && iUsed && iUsed.isItem )
 	{
+		if( iUsed.movable == 2 || iUsed.movable == 3 )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
+			return;
+		}
+
 		pSock.tempObj = iUsed;
 		pSock.CustomTarget( 0, GetDictionaryEntry( 475, pSock.Language ) );
 	}

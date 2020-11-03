@@ -12,6 +12,8 @@
 //|									- Item
 //|									- Socket
 //o-----------------------------------------------------------------------------------------------o
+#include <variant>
+#include <filesystem>
 #include "uox3.h"
 #include "UOXJSPropertySpecs.h"
 #include "SEFunctions.h"
@@ -65,7 +67,7 @@ void MethodError( const char *txt, ... )
 //|	Purpose		-	Adds speech entry of specified type, font, color, etc to the speech queue
 //| Notes		-	Copied that here from SEFunctions.cpp. Default paramters weren't working !?
 //o-----------------------------------------------------------------------------------------------o
-void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC )
+void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC, SERIAL spokenTo = INVALIDSERIAL )
 {
 	CSpeechEntry& toAdd = SpeechSys->Add();
 	toAdd.Font( fType );
@@ -73,6 +75,8 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 	toAdd.Speaker( speaker.GetSerial() );
 	toAdd.Type( sType );
 	toAdd.TargType( spTrg );
+	if( spTrg == SPTRG_INDIVIDUAL || spTrg == SPTRG_ONLYRECEIVER )
+		toAdd.SpokenTo( spokenTo );
 
 	// Added that because transparent text could cause trouble
 	if( sColour != 0x1700 && sColour != 0x0)
@@ -1618,9 +1622,9 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o-----------------------------------------------------------------------------------------------o
 JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 1 || argc > 3 )
+	if( argc < 1 || argc > 6 )
 	{
-		MethodError( "TextMessage: Invalid number of arguments (takes 1 - 3)" );
+		MethodError( "TextMessage: Invalid number of arguments (takes 1 - 6)" );
 		return JS_FALSE;
 	}
 
@@ -1636,8 +1640,20 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	UI16 txtHue = 0x0000;
-	if( argc == 3 )
+	if( argc >= 3 )
 		txtHue = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
+
+	SpeechTarget speechTarget = SPTRG_PCNPC;
+	if( argc >= 4 )
+		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+
+	SERIAL speechTargetSerial = INVALIDSERIAL;
+	if( argc >= 5 )
+		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+
+	FontType speechFontType = FNT_UNKNOWN;
+	if( argc == 6 )
+		speechFontType = static_cast<FontType>( JSVAL_TO_INT( argv[5] ));
 
 	if( myClass.ClassName() == "UOXItem" )
 	{
@@ -1649,7 +1665,9 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 		if( !txtHue )
 			txtHue = 0x047F;
-		MethodSpeech( *myItem, trgMessage, OBJ, txtHue, FNT_NORMAL );
+		if( speechFontType == FNT_UNKNOWN )
+			speechFontType = FNT_NORMAL;
+		MethodSpeech( *myItem, trgMessage, OBJ, txtHue, speechFontType, speechTarget, speechTargetSerial );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -1660,21 +1678,23 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			return JS_FALSE;
 		}
 
-		SpeechTarget spTrg = SPTRG_PCNPC;
-		if( argc >= 2 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
-			spTrg = SPTRG_INDIVIDUAL;
+		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
+			speechTarget = SPTRG_INDIVIDUAL;
+
+		if( speechFontType == FNT_UNKNOWN )
+			speechFontType = (FontType)myChar->GetFontType();
 
 		if( myChar->GetNPCAiType() == AI_EVIL )
 		{
 			if( !txtHue )
 				txtHue = 0x0026;
-			MethodSpeech( *myChar, trgMessage, TALK, txtHue, (FontType)myChar->GetFontType(), spTrg );
+			MethodSpeech( *myChar, trgMessage, TALK, txtHue, speechFontType, speechTarget, speechTargetSerial );
 		}
 		else
 		{
 			if( !txtHue )
 				txtHue = myChar->GetSayColour();
-			MethodSpeech( *myChar, trgMessage, TALK, txtHue, (FontType)myChar->GetFontType(), spTrg );
+			MethodSpeech( *myChar, trgMessage, TALK, txtHue, speechFontType, speechTarget, speechTargetSerial );
 		}
 	}
 
@@ -1896,23 +1916,23 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc == 0 || argc > 10 )
 	{
-		MethodError( "SysMessage: Invalid number of arguments (takes 1)" );
+		MethodError( "SysMessage: Invalid number of arguments (takes at least 1, and at most 10)" );
 		return JS_FALSE;
 	}
 
-	CSocket *mySock		= NULL;
+	CSocket *mySock = NULL;
 	JSEncapsulate myClass( cx, obj );
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar	= static_cast<CChar*>(myClass.toObject());
-		mySock			= myChar->GetSocket();
+		CChar *myChar = static_cast<CChar*>( myClass.toObject() );
+		mySock = myChar->GetSocket();
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		mySock			= static_cast<CSocket*>(myClass.toObject());
+		mySock = static_cast<CSocket*>( myClass.toObject() );
 	}
 
 	if( mySock == NULL )
@@ -1921,15 +1941,25 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
-	char *trgMessage		= JS_GetStringBytes( targMessage );
+	JSString *targMessage = JS_ValueToString( cx, argv[0] );
+	char *trgMessage = JS_GetStringBytes( targMessage );
 
 	if( trgMessage == NULL )
 	{
 		MethodError( "SysMessage: Invalid speech (%s)", targMessage );
 		return JS_FALSE;
 	}
-	mySock->sysmessage( trgMessage );
+
+	std::string msgArg;
+	for( int i = 1; i < argc; i++ )
+	{
+		if( msgArg.empty() )
+			msgArg += JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
+		else
+			msgArg += std::string(",") + JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
+	}
+
+	mySock->sysmessageJS( trgMessage, msgArg );
 	return JS_TRUE;
 }
 
@@ -3678,12 +3708,40 @@ JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool IsBoat()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if item is a boat
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(IsBoat) Invalid Number of Arguments %d, needs: 0", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CBaseObject *myObject = static_cast<CBaseObject *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myObject ) )
+	{
+		MethodError( "(IsMulti) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool IsInMulti( object )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the object is in the multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3713,12 +3771,12 @@ JSBool CItem_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CMulti_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool IsOnBanList( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the ban-list of the multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3748,12 +3806,82 @@ JSBool CItem_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CMulti_IsOnFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool IsOnFriendList( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if pChar is on the friend-list of the multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_IsOnFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(IsOnFriendList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(IsOnFriendList) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_IsOnGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool IsOnGuestList( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if pChar is on the guest-list of the multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_IsOnGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(IsOnGuestList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(IsOnGuestList) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool IsOnOwnerList( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the owner-list of the multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3778,17 +3906,52 @@ JSBool CItem_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_TRUE;
 	}
 
+	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_IsOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool IsOwner( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if pChar is the actual owner of the multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_IsOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(IsOwner) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(IsOwner) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
 	*rval = BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind ) );
 	return JS_TRUE;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CMulti_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool AddToBanList( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to banlist of multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3816,12 +3979,84 @@ JSBool CItem_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CMulti_AddToFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool AddToFriendList( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds character pChar to the friend-list of multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_AddToFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(AddToFriendList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(AddToFriendList) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->AddAsFriend( toFind );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_AddToGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool AddToGuestList( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds character pChar to the guest-list of multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_AddToGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(AddToGuestList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(AddToGuestList) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->AddAsGuest( toFind );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool AddToOwnerList( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the owner-list of multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3852,12 +4087,12 @@ JSBool CItem_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CMulti_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool RemoveFromBanList( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the ban-list of multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3888,12 +4123,84 @@ JSBool CItem_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval 
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CMulti_RemoveFromFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool RemoveFromFriendList( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes character pChar from the friend-list of multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_RemoveFromFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(RemoveFromFriendList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(RemoveFromFriendList) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->RemoveAsFriend( toFind );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_RemoveFromGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool RemoveFromGuestList( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes character pChar from the guest-list of multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_RemoveFromGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(RemoveFromGuestList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+	CChar *toFind = static_cast<CChar *>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( toFind ) )
+	{
+		MethodError( "(RemoveFromGuestList) Invalid character" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->RemoveAsGuest( toFind );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	bool RemoveFromOwnerList( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the owner-list of multi
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3920,6 +4227,122 @@ JSBool CItem_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsva
 
 	*rval = JSVAL_TRUE;
 	myItem->RemoveAsOwner( toFind );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool ClearBanList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears multi's list of banned players
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(ClearBanList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->ClearBanList();
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool ClearFriendList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears the multi's list of friends
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(ClearFriendList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->ClearFriendList();
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool ClearGuestList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears the multi's list of guests
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(ClearGuestList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->ClearGuestList();
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool ClearOwnerList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears the multi's list of co-owners
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(ClearOwnerList) Invalid object assigned" );
+		*rval = JSVAL_FALSE;
+		return JS_TRUE;
+	}
+
+	*rval = JSVAL_TRUE;
+	myItem->ClearOwnerList();
 	return JS_TRUE;
 }
 
@@ -4913,28 +5336,52 @@ JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o-----------------------------------------------------------------------------------------------o
 JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 2 )
+	if( argc != 2 && argc != 3 )
 	{
-		MethodError( "Open: Invalid number of arguments (takes 2)" );
+		MethodError( "Open: Invalid number of arguments (takes 2 or 3 - filename, file mode and - optionally - folderName)" );
 		return JS_FALSE;
 	}
 	UOXFileWrapper *mFile	= static_cast<UOXFileWrapper *>(JS_GetPrivate( cx, obj ));
 
-	char *filename	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	UString mode	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	UString mode = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	char *folderName = (argc == 3 ? JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) ) : "" );
+
 	if( mode.lower().find_first_of("rwa",0,3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
 	}
-	if( strstr( filename, ".." ) || strstr( filename, "\\" ) || strstr( filename, "/" ) )
+	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ) )
 	{
 		MethodError( "Open: file names may not contain \"..\", \"\\\", or \"/\"." );
 		return JS_FALSE;
 	}
 
-	mFile->mWrap = fopen( filename, mode.lower().substr(0,1).c_str() );
+	std::string filePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
+	// if folderName argument was supplied, use it, and create the appropriate folder under the /shared/ folder
+	if( folderName[0] != '\0' )
+	{
+		// However, don't allow special characters in the folder name
+		if( strstr( folderName, ".." ) || strstr( folderName, "\\" ) || strstr( folderName, "/" ) )
+		{
+			MethodError( "Open: folder names may not contain \"..\", \"\\\", or \"/\"." );
+			return JS_FALSE;
+		}
+
+		filePath.append( folderName );
+		if( !std::filesystem::exists( filePath ))
+		{
+			// Create missing directory
+			std::filesystem::create_directory( filePath );
+		}
+
+		filePath += std::filesystem::path::preferred_separator;
+	}
+
+	filePath.append( fileName );
+	mFile->mWrap = fopen( filePath.c_str(), mode.lower().substr(0,1).c_str() );
 	return JS_TRUE;
 }
 
@@ -5120,7 +5567,10 @@ JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	UOXFileWrapper *mFile	= static_cast<UOXFileWrapper *>(JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap )
-		return JS_FALSE;
+	{
+		*rval = INT_TO_JSVAL( -1 );
+		return JS_TRUE;
+	}
 
 	long fpos = ftell( mFile->mWrap );
 	fseek( mFile->mWrap, 0, SEEK_END );
@@ -5180,8 +5630,16 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	CItem *firstItem = NULL;
 	if( myObj->GetObjType() == OT_CHAR )
 		firstItem = ( static_cast< CChar * >(myObj) )->FirstItem();
-	else
+	else if( myObj->GetObjType() == OT_ITEM )
 		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->First();
+	else if( myObj->GetObjType() == OT_MULTI )
+		firstItem = ( static_cast< CMultiObj * >(myObj) )->GetItemsInMultiList()->First();
+	else
+	{
+		MethodError( "FirstItem: Unknown object type assigned." );
+		return JS_FALSE;
+	}
+
 	if( ValidateObject( firstItem ) )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -5212,14 +5670,22 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		MethodError( "NextItem: Invalid object assigned." );
 		return JS_FALSE;
 	}
-	CItem *firstItem = NULL;
+	CItem *nextItem = NULL;
 	if( myObj->GetObjType() == OT_CHAR )
-		firstItem = ( static_cast< CChar * >(myObj) )->NextItem();
+		nextItem = ( static_cast< CChar * >(myObj) )->NextItem();
+	else if( myObj->GetObjType() == OT_ITEM )
+		nextItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->Next();
+	else if( myObj->GetObjType() == OT_MULTI )
+		nextItem = ( static_cast< CMultiObj * >(myObj) )->GetItemsInMultiList()->Next();
 	else
-		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->Next();
-	if( ValidateObject( firstItem ) )
 	{
-		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+		MethodError( "NextItem: Unknown object type assigned." );
+		return JS_FALSE;
+	}
+
+	if( ValidateObject( nextItem ) )
+	{
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, nextItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -5249,8 +5715,10 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 	if( myObj->GetObjType() == OT_CHAR )
 		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CChar * >(myObj) )->FinishedItems() );
-	else
+	else if( myObj->GetObjType() == OT_ITEM )
 		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CItem * >(myObj) )->GetContainsList()->Finished() );
+	else if( myObj->GetObjType() == OT_MULTI )
+		*rval = BOOLEAN_TO_JSVAL( ( static_cast< CMultiObj * >(myObj) )->GetItemsInMultiList()->Finished() );
 	return JS_TRUE;
 }
 
@@ -5913,7 +6381,9 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		MethodError( "Dupe: Bad parameters passed" );
 		return JS_FALSE;
 	}
-	Items->DupeItem( mSock, mItem, mItem->GetAmount() );
+
+	JSObject *dupeItem		= JSEngine->AcquireObject( IUE_ITEM, Items->DupeItem( mSock, mItem, mItem->GetAmount()), JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+	*rval = OBJECT_TO_JSVAL( dupeItem );
 	return JS_TRUE;
 }
 
@@ -6642,6 +7112,491 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		}
 		default:
 			break;
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_SecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void SecureContainer( itemToSecure )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Secures a container in a multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_SecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "SecureContainer: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(SecureContainer) Invalid object referenced - multi required" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(SecureContainer) Invalid Object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToSecure = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( itemToSecure ))
+	{
+		MethodError( "(SecureContainer) Invalid Object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->SecureContainer( itemToSecure );
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_UnsecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void UnsecureContainer( itemToUnsecure )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Unsecures a secured container in a multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_UnsecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "UnsecureContainer: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(UnsecureContainer) Invalid object referenced - multi required" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(UnsecureContainer) Invalid Object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToUnsecure = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( itemToUnsecure ))
+	{
+		MethodError( "(UnsecureContainer) Invalid Object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->UnsecureContainer( itemToUnsecure );
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_IsSecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void IsSecureContainer( itemToCheck )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if specified item is a secure container in the multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_IsSecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "IsSecureContainer: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(IsSecureContainer) Invalid object referenced - multi required" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(IsSecureContainer) Invalid Object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToCheck = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject( itemToCheck ))
+	{
+		MethodError( "(IsSecureContainer) Invalid Object passed" );
+		return JS_FALSE;
+	}
+
+	
+	bool isSecureContainer = multiObject->IsSecureContainer( itemToCheck );
+	*rval = BOOLEAN_TO_JSVAL( isSecureContainer );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_LockDownItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void LockDownItem( itemToLockDown )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Locks down an item in a multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_LockDownItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "LockDownItem: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(LockDownItem) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(LockDownItem) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToLockDown = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject(itemToLockDown) )
+	{
+		MethodError( "(LockDownItem) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->LockDownItem( itemToLockDown );
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_ReleaseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void ReleaseItem( itemToRemove )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Releases a locked down item in a multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_ReleaseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "ReleaseItem: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(ReleaseItem) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(ReleaseItem) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToRemove = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject(itemToRemove) )
+	{
+		MethodError( "(ReleaseItem) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->ReleaseItem( itemToRemove );
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_AddTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void AddTrashCont( itemToLockDown )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Locks down an item in a multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_AddTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddTrashCont: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(AddTrashCont) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(AddTrashCont) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToLockDown = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject(itemToLockDown) )
+	{
+		MethodError( "(AddTrashCont) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->AddTrashContainer( itemToLockDown );
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_RemoveTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void RemoveTrashCont( itemToRemove )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Releases a locked down item in a multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_RemoveTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "RemoveTrashCont: Invalid number of arguments (1 required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(RemoveTrashCont) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_OBJECT( argv[0] ) )
+	{
+		MethodError( "(RemoveTrashCont) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	CItem *itemToRemove = static_cast<CItem*>(JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ));
+	if( !ValidateObject(itemToRemove) )
+	{
+		MethodError( "(RemoveTrashCont) Invalid item object passed" );
+		return JS_FALSE;
+	}
+
+	multiObject->RemoveTrashContainer( itemToRemove );
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+void killKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void KillKeys()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Kills all keys in the world associated with the particular multi
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 && argc != 1 )
+	{
+		MethodError( "KillKeys: Invalid number of arguments (0 or 1 (character) required)" );
+		return JS_FALSE;
+	}
+
+	*rval = JSVAL_FALSE;
+	CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ) )
+	{
+		MethodError( "(KillKeys) Invalid multi object referenced" );
+		return JS_FALSE;
+	}
+
+	if( argc == 1 )
+	{
+		JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
+		CChar *myObj = static_cast<CChar *>(JS_GetPrivate( cx, jsObj ));
+		
+		if( !ValidateObject( myObj ) )
+		{
+			MethodError( "(KillKeys) Invalid character object provided" );
+			return JS_FALSE;
+		}
+		killKeys( multiObject->GetSerial(), myObj->GetSerial() );
+	}
+	else
+	{
+		killKeys( multiObject->GetSerial() );
+	}
+
+	*rval = JSVAL_TRUE;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_FirstChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Prototype	-	bool FirstChar()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns first char in the multi's list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_FirstChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "FirstChar: Invalid count of arguments :%d, needs :0 or 1", argc );
+		return JS_FALSE;
+	}
+	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "FirstChar: Invalid object assigned - multi required." );
+		return JS_FALSE;
+	}
+
+	std::string listType;
+	if( argc == 1 )
+		listType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	else
+		listType = "visitor"; // default for existing scripts that provide no argument
+
+	CChar *firstChar = NULL;
+	if( listType == "visitor" ) // All chars inside the multi
+		firstChar = myObj->GetCharsInMultiList()->First();
+	else if( listType == "owner" ) // Owners
+		firstChar = myObj->GetOwnersOfMultiList( true )->First(); // true to clear list before it is regenerated
+	else if( listType == "friend" ) // Friends
+		firstChar = myObj->GetFriendsOfMultiList( true )->First(); // true to clear list before it is regenerated
+	else if( listType == "guest" ) // Guests
+		firstChar = myObj->GetGuestsOfMultiList( true )->First(); // true to clear list before it is regenerated
+	else if( listType == "banned" ) // Banned
+		firstChar = myObj->GetBannedFromMultiList( true )->First(); // true to clear list before it is regenerated
+	else
+	{
+		MethodError( "FirstChar: Unknown listType provided. Supported listTypes: visitor (default), owner, friend or banned" );
+		return JS_FALSE;
+	}
+
+	if( ValidateObject( firstChar ) )
+	{
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, firstChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_NextChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Prototype	-	bool NextChar()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns next char in the multi's list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_NextChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "NextChar: Invalid count of arguments :%d, needs :0 or 1", argc );
+		return JS_FALSE;
+	}
+	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "NextChar: Invalid object assigned - multi required." );
+		return JS_FALSE;
+	}
+
+	std::string listType;
+	if( argc == 1 )
+		listType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	else
+		listType = "visitor"; // default for existing scripts that provide no argument
+
+	CChar *nextChar = NULL;
+	if( listType == "visitor" ) // All chars inside the multi
+		nextChar = myObj->GetCharsInMultiList()->Next();
+	else if( listType == "owner" ) // Owners
+		nextChar = myObj->GetOwnersOfMultiList()->Next();
+	else if( listType == "friend" ) // Friends
+		nextChar = myObj->GetFriendsOfMultiList()->Next();
+	else if( listType == "guest" ) // Guests
+		nextChar = myObj->GetGuestsOfMultiList()->Next();
+	else if( listType == "banned" ) // Banned
+		nextChar = myObj->GetBannedFromMultiList()->Next();
+	else
+	{
+		MethodError( "FinishedChars: Unknown listType provided. Supported listTypes: visitor (default), owner, friend or banned" );
+		return JS_FALSE;
+	}
+
+	if( ValidateObject( nextChar ) )
+	{
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, nextChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CMulti_FinishedChars( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Prototype	-	bool FinishedChars()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if finished all characters in multi's list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CMulti_FinishedChars( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "FinishedChars: Invalid count of arguments :%d, needs :0 or 1", argc );
+		return JS_FALSE;
+	}
+	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "FinishedChars: Invalid object assigned - multi required." );
+		return JS_FALSE;
+	}
+
+	//char *listType;
+	std::string listType;
+	if( argc == 1 )
+		listType = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	else
+		listType = "visitor"; // default for existing scripts that provide no argument
+
+	if( listType == "visitor" ) // All chars inside the multi
+		*rval = BOOLEAN_TO_JSVAL( myObj->GetCharsInMultiList()->Finished() );
+	else if( listType == "owner" ) // Owners
+		*rval = BOOLEAN_TO_JSVAL( myObj->GetOwnersOfMultiList()->Finished() );
+	else if( listType == "friend" ) // Friends
+		*rval = BOOLEAN_TO_JSVAL( myObj->GetFriendsOfMultiList()->Finished() );
+	else if( listType == "guest" ) // Guests
+		*rval = BOOLEAN_TO_JSVAL( myObj->GetGuestsOfMultiList()->Finished() );
+	else if( listType == "banned" ) // Banned
+		*rval = BOOLEAN_TO_JSVAL( myObj->GetBannedFromMultiList()->Finished() );
+	else
+	{
+		MethodError( "FinishedChars: Unknown listType provided. Supported listTypes: visitor (default), owner, friend or banned" );
+		return JS_FALSE;
 	}
 
 	return JS_TRUE;

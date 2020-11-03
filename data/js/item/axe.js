@@ -6,7 +6,7 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
+			pUser.SysMessage( GetDictionaryEntry( 1763, socket.Language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 		else if( iUsed.type != 15 )
@@ -15,7 +15,7 @@ function onUseChecked( pUser, iUsed )
 			socket.CustomTarget( 1, targMsg );
 		}
 		else
-			return true;		
+			return true;
 	}
 	return false;
 }
@@ -35,32 +35,133 @@ function onCallback1( socket, ourObj )
 		}
 		else if( ourObj && ourObj.isItem )
 			tileID = ourObj.id;
-			
 
 		if( tileID != 0 )
 		{
-			if( 	tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA || 
-				tileID == 0x0CDD || tileID == 0x0CE0 || tileID == 0x0CE3 || tileID == 0x0CE6 || tileID == 0x0D58 || 
+			if( tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA ||
+				tileID == 0x0CDD || tileID == 0x0CE0 || tileID == 0x0CE3 || tileID == 0x0CE6 || tileID == 0x0D58 ||
 				( tileID >= 0x0CCA && tileID <= 0x0CCE ) || ( tileID >= 0x12B8 && tileID <= 0x12BB ) || tileID == 0x0D42 ||
-				tileID == 0x0D43 || tileID == 0x0D58 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 || 
+				tileID == 0x0D43 || tileID == 0x0D58 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 ||
 				tileID == 0x0D94 || tileID == 0x0D95 || tileID == 0x0D98 || tileID == 0x0DA4 || tileID == 0x0DA8 ) // Trees
 			{
 				ChopTree( socket, mChar );
 			}
 			else if( ourObj )
 			{
-				if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
+				if( ourObj.type == 1 && ourObj.movable == 2 ) // Strongbox
+				{
+					var objMulti = ourObj.multi;
+					if( ValidateObject( objMulti ))
+					{
+						if( ourObj.owner == mChar || objMulti.owner == mChar ) // Only allow house owner or co-owner who owns strongbox to destroy it
+						{
+							if( ourObj.itemsinside > 0 )
+							{
+								socket.SysMessage( GetDictionaryEntry( 1964, socket.Language )); // You must empty the strongbox before you can destroy it!
+								return;
+							}
+							else
+							{
+								socket.SoundEffect( 0x3B3, true);
+								socket.SysMessage( GetDictionaryEntry( 1965, socket.Language )); // You destroy the item.
+								ourObj.Delete();
+							}
+						}
+					}
+				}
+				else if( ourObj.type == 87 ) // Trash barrel/container
+				{
+					var objMulti = ourObj.multi;
+					if( ValidateObject( objMulti ))
+					{
+						if( objMulti.IsOnOwnerList( socket.currentChar ))
+						{
+							if( objMulti.IsSecureContainer( ourObj ))
+								socket.SysMessage( GetDictionaryEntry( 1966, socket.Language )); // You must unsecure the trash barrel before you can destroy it!
+							else
+							{
+								socket.SoundEffect( 0x3B3, true);
+								socket.SysMessage( GetDictionaryEntry( 1965, socket.Language )); // You destroy the item.
+								objMulti.RemoveTrashCont( ourObj );
+								ourObj.Delete();
+							}
+						}
+						else
+							socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+					}
+					else
+						socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+				}
+				else if( ourObj.type == 201 )
+				{
+					var addonParent;
+					if( ourObj.more == 0 )
+						addonParent = ourObj;
+					else if( ourObj.more > 0 )
+					{
+						// Calculate add-on parent based on serial stored in .more value of each add-on piece
+						var addonParentSerial = ourObj.more;
+						var serialPart1 = ( addonParentSerial >> 24 );
+						var serialPart2 = ( addonParentSerial >> 16 );
+						var serialPart3 = ( addonParentSerial >> 8 );
+						var serialPart4 = ( addonParentSerial % 256 );
+						addonParent = CalcItemFromSer( serialPart1, serialPart2, serialPart3, serialPart4 );
+					}
+
+					var objMulti = addonParent.multi;
+					if( !ValidateObject( objMulti ))
+						socket.SysMessage( GetDictionaryEntry( 1969, socket.Language )); // This house add-on does not appear to be in a house.
+					else if( !objMulti.IsOwner( mChar ))
+						socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+					else
+					{
+						objMulti.ReleaseItem( addonParent );
+						var lockdownsLeft = objMulti.maxLockdowns - objMulti.lockdowns;
+						socket.SysMessage( GetDictionaryEntry( 1902, socket.Language ), lockdownsLeft ); // You release the item (%i lockdown(s) remaining).
+
+						var addonDeed = addonParent.GetTag( "deed" );
+						if( addonDeed )
+						{
+							var newDeed = CreateDFNItem( socket, socket.currentChar, addonDeed, 1, "ITEM", true );
+							if( newDeed )
+							{
+								socket.SysMessage( GetDictionaryEntry( 1970, socket.Language )); // A deed for the house add-on has been placed in your backpack.
+							}
+						}
+
+						// Loop through items belonging to the house add-on and remove them
+						var tempItem;
+						for( tempItem = objMulti.FirstItem(); !objMulti.FinishedItems(); tempItem = objMulti.NextItem() )
+						{
+							if( !ValidateObject( tempItem ))
+								continue;
+
+							if( !ValidateObject( tempItem.multi ))
+								continue;
+
+							if( tempItem.type != 201 )
+								continue;
+
+							if( tempItem.more == addonParent.serial )
+								tempItem.Delete();
+						}
+
+						// Finally delete the parent item for the house add-on
+						addonParent.Delete();
+					}
+				}
+				else if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
 					BowCraft( socket, mChar, ourObj, tileID );
 				else if( tileID == 0x2006 )
 					CarveCorpse( socket, mChar, ourObj );
 				else
-					socket.SysMessage( "You cannot carve that." );
+					socket.SysMessage( GetDictionaryEntry( 1968, socket.Language )); // You cannot carve that.
 			}
 			else
-				socket.SysMessage( "You cannot chop that" );
+				socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
 		}
 		else
-			socket.SysMessage( "You cannot chop that" );
+			socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
 	}
 }
 
@@ -70,29 +171,29 @@ function BowCraft( socket, mChar, ourObj, tileID )
 	if( ownerObj && mChar.serial == ownerObj.serial )
 		socket.MakeMenu( 49, 8 );
 	else
-		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) ); // You can't use lumber outside your backpack.
 }
 
 function ChopTree( socket, mChar )
 {
 	if( mChar.skillsused.lumberjacking )
 	{
-		socket.SysMessage( "You are too busy to do that" );
+		socket.SysMessage( GetDictionaryEntry( 1971, socket.Language ) ); // You are too busy to do that.
 		return;
 	}
 	if( !CheckDistance( socket, mChar ) )
 	{
-		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); // That is too far away.
 		return;
 	}
-	
+
 	var targX = socket.GetWord( 11 );
 	var targY = socket.GetWord( 13 );
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateLog( mResource, socket );
 	if( mResource.logAmount <= 0 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 840, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 840, socket.Language ) ); // There is no more wood here to chop.
 		return;
 	}
 
@@ -129,7 +230,7 @@ function onTimer( mChar, timerID )
 		{
 			if( !CheckDistance( socket, mChar ) )
 			{
-				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); // That is too far away.
 				return;
 			}
 			var mResource = ResourceRegion( socket.clickX, socket.clickY, mChar.worldnumber );
@@ -140,11 +241,11 @@ function onTimer( mChar, timerID )
 			{
 				mResource.logAmount = mResource.logAmount-1;
 				CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
-				socket.SysMessage( GetDictionaryEntry( 1435, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1435, socket.Language ) ); // You place some logs in your pack.
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 842, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 842, socket.Language ) ); // =You chop for a while, but fail to produce any usable wood.
 				if( RandomNumber( 0, 1 ) )	// 50% chance to destroy some resources
 					mResource.logAmount = mResource.logAmount-1;
 			}
@@ -155,7 +256,7 @@ function onTimer( mChar, timerID )
 		{
 			if( !CheckDistance( socket, mChar ) )
 			{
-				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); // That is too far away.
 				mChar.skillsused.lumberjacking = false;
 				return;
 			}
@@ -164,7 +265,7 @@ function onTimer( mChar, timerID )
 			mChar.DoAction( 0x1C );
 		else
 			mChar.DoAction( 0x0D );
-	
+
 		mChar.SoundEffect( 0x013E, true );
 
 		mChar.StartTimer( 1500, 0, true );
@@ -174,10 +275,10 @@ function onTimer( mChar, timerID )
 			mChar.DoAction( 0x1C );
 		else
 			mChar.DoAction( 0x0D );
-	
+
 		mChar.SoundEffect( 0x013E, true );
-		
-		mChar.StartTimer( 1300, 1, true );	
+
+		mChar.StartTimer( 1300, 1, true );
 		break;
 	}
 }
@@ -218,8 +319,8 @@ function CarveCorpse( socket, mChar, ourObj )
 				ourObj.Carve( socket );
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 1051, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1051, socket.Language )); // You carve the corpse but find nothing useful.
 	}
 	else
-		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 393, socket.Language )); // That is too far away.
 }

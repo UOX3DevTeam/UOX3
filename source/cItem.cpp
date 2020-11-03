@@ -78,6 +78,7 @@ const SI08			DEFITEM_GRIDLOC			= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 const SI32			DEFITEM_WEIGHTMAX		= 0;
 const SI32			DEFITEM_BASEWEIGHT		= 0;
+const UI16			DEFITEM_MAXITEMS		= 125;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -90,7 +91,7 @@ madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_G
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ),
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
-creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT )
+creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -529,9 +530,19 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 	{
 		if( !CanBeObjType( OT_MULTI ) )
 		{
-			CMultiObj *mMulti = findMulti( newX, newY, newZ, world, instance_id );
-			if( GetMultiObj() != mMulti )
-				SetMulti( mMulti );
+			// If it's a sign with a more value, assume that the more value contains the serial of the multi the sign belongs to
+			if((( id >= 0x0b95 && id <= 0x0c0e ) || id == 0x1f28 || id == 0x1f29 ) && GetTempVar( CITV_MORE ) != 0 )
+			{
+				CMultiObj *mMulti = calcMultiFromSer( GetTempVar( CITV_MORE ) );
+				if( ValidateObject( mMulti ) )
+					SetMulti( mMulti );
+			}
+			else
+			{
+				CMultiObj *mMulti = findMulti( newX, newY, newZ, world, instance_id );
+				if( GetMultiObj() != mMulti )
+					SetMulti( mMulti );
+			}
 		}
 	}
 	Dirty( UT_LOCATION );
@@ -1018,6 +1029,21 @@ void CItem::SetBaseWeight( SI32 newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetMaxItems( void ) const
+//|					void SetMaxItems( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets maximum amount of items a container can hold
+//o-----------------------------------------------------------------------------------------------o
+UI16 CItem::GetMaxItems( void ) const
+{
+	return maxItems;
+}
+void CItem::SetMaxItems( UI16 newValue )
+{
+	maxItems = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 IsFieldSpell( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether item belongs to a field spell - and if so - which one
@@ -1266,6 +1292,7 @@ void CItem::CopyData( CItem *target )
 	target->SetWeight( GetWeight() );
 	target->SetWeightMax( GetWeightMax() );
 	target->SetBaseWeight( GetBaseWeight() );
+	target->SetMaxItems( GetMaxItems() );
 	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
@@ -1331,6 +1358,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "Amount=" << GetAmount() << '\n';
 	outStream << "WeightMax=" << GetWeightMax() << '\n';
 	outStream << "BaseWeight=" << GetBaseWeight() << '\n';
+	outStream << "MaxItems=" << GetMaxItems() << '\n';
 	outStream << "MaxHP=" << GetMaxHP() << '\n';
 	outStream << "Speed=" << (SI16)GetSpeed() << '\n';
 	outStream << "Movable=" << (SI16)GetMovable() << '\n';
@@ -1509,7 +1537,12 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				break;
 			case 'M':
-				if( UTag == "MORE" )
+				if( UTag == "MAXITEMS" )
+				{
+					SetMaxItems( data.toUInt() );
+					rvalue = true;
+				}
+				else if( UTag == "MORE" )
 				{
 					if( data.sectionCount( "," ) != 0 )
 						SetTempVar( CITV_MORE, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
@@ -2165,7 +2198,9 @@ void CItem::RemoveFromSight( CSocket *mSock )
 
 					tChar = (*cIter)->CurrcharObj();
 					if( ValidateObject( tChar ) )
+					{
 						(*cIter)->Send( &toRemove );
+					}
 				}
 			}
 		}
@@ -2260,6 +2295,7 @@ void CItem::Cleanup( void )
 
 		CBaseObject::Cleanup();
 
+		CBaseObject *iCont = GetCont();
 		RemoveFromSight();
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();
@@ -2317,6 +2353,35 @@ void CItem::Cleanup( void )
 
 		if( GetType() == IT_READABLEBOOK && ( GetTempVar( CITV_MOREX ) == 666 || GetTempVar( CITV_MOREX ) == 999 ) )
 			Books->DeleteBook( this );
+
+		// Update container tooltip for nearby players
+		if( ValidateObject( iCont ) && iCont->GetObjType() == OT_ITEM )
+		{
+			CChar *rootOwner = FindItemOwner( static_cast<CItem *>(iCont) );
+			if( ValidateObject( rootOwner ) && rootOwner->GetObjType() == OT_CHAR )
+			{
+				CSocket *ownerSocket = rootOwner->GetSocket();
+				if( ownerSocket != NULL )
+				{
+					// Refresh container tooltip
+					CPToolTip pSend( iCont->GetSerial() );
+					ownerSocket->Send(&pSend);
+				}
+			}
+			else
+			{
+				SOCKLIST nearbyChars = FindNearbyPlayers( iCont, DIST_NEARBY );
+				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+				{
+					if( !(*cIter)->LoginComplete() )
+						continue;
+
+					// Refresh container tooltip
+					CPToolTip pSend( iCont->GetSerial() );
+					(*cIter)->Send(&pSend);
+				}
+			}
+		}
 	}
 }
 
@@ -2341,7 +2406,7 @@ bool CItem::CanBeObjType( ObjectType toCompare ) const
 //|	Function	-	void Delete( void )
 //|	Date		-	11/6/2003
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Adds character to deletion queue
+//|	Purpose		-	Adds item to deletion queue
 //o-----------------------------------------------------------------------------------------------o
 void CItem::Delete( void )
 {

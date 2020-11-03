@@ -24,6 +24,18 @@ function onUseChecked( pUser, iUsed )
 		pUser.SysMessage( "You are too far away to reach that!" );
 		return false;
 	}
+
+	if( iUsed.movable == 3 )
+	{
+		// Item is locked down, make sure only owners, co-owners or friends can use it
+		var iMulti = iUsed.multi;
+		if( !ValidateObject( iMulti ) || ( !iMulti.IsOnOwnerList( pUser ) && !iMulti.IsOnFriendList( pUser )))
+		{
+			pSock.SysMessage( GetDictionaryEntry( 1032, pSock.Language )); // That is not yours!
+			return false;
+		}
+	}
+
 	pSock.tempObj = iUsed;
 	if( !iUsed.GetTag( "ContentsType" ))
 	{

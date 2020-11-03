@@ -586,18 +586,6 @@ bool cMovement::CheckForHouseBan( CChar *c, CSocket *mSock )
 	{
 		if( c->GetMultiObj() != house )
 			c->SetMulti( house );//Set them inside the multi!
-		if( house->IsOnBanList( c ) )
-		{
-			SI16 sx, sy, ex, ey;
-			Map->MultiArea( house, sx, sy, ex, ey );
-			c->SetLocation( ex, ey + 1, c->GetZ() );
-			if( mSock != NULL )
-			{
-				mSock->sysmessage( 1639 );
-				mSock->WalkSequence( -1 );
-			}
-			return false;
-		}
 	}
 	else
 	{

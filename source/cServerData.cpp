@@ -59,6 +59,11 @@ const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
 const UI32 BIT_ASSISTANTNEGOTIATION = 40;
 const UI32 BIT_KICKONASSISTANTSILENCE = 41;
 const UI32 BIT_CLASSICUOMAPTRACKER = 42;
+const UI32 BIT_PROTECTPRIVATEHOUSES = 43;
+const UI32 BIT_TRACKHOUSESPERACCOUNT = 44;
+const UI32 BIT_CANOWNANDCOOWNHOUSES = 45;
+const UI32 BIT_COOWNHOUSESONSAMEACCOUNT = 46;
+const UI32 BIT_ITEMSDETECTSPEECH = 47;
 
 
 // New uox3.ini format lookup
@@ -358,6 +363,16 @@ void	CServerData::regAllINIValues() {
 	regINIValue("AF_AUTOREMOUNT", 216);
 	regINIValue("AF_ALL", 217);
 	regINIValue("CLASSICUOMAPTRACKER", 218);
+	regINIValue("DECAYTIMERINHOUSE", 219);
+	regINIValue("PROTECTPRIVATEHOUSES", 220);
+	regINIValue("TRACKHOUSESPERACCOUNT", 221);
+	regINIValue("MAXHOUSESOWNABLE", 222);
+	regINIValue("MAXHOUSESCOOWNABLE", 223);
+	regINIValue("CANOWNANDCOOWNHOUSES", 224);
+	regINIValue("COOWNHOUSESONSAMEACCOUNT", 225);
+	regINIValue("ITEMSDETECTSPEECH", 226);
+	regINIValue("MAXPLAYERPACKITEMS", 227);
+	regINIValue("MAXPLAYERBANKITEMS", 228);
 
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
@@ -406,6 +421,7 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
 	SystemTimer( tSERVER_POISON, 180 );
 	SystemTimer( tSERVER_DECAY, 300 );
+	SystemTimer( tSERVER_DECAYINHOUSE, 3600 );
 	ServerSkillTotalCap( 7000 );
 	ServerSkillCap( 1000 );
 	ServerStatCap( 325 );
@@ -505,6 +521,9 @@ void CServerData::ResetDefaults( void )
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
 	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
+	ItemsDetectSpeech( false );
+	MaxPlayerPackItems( 125 );
+	MaxPlayerBankItems( 125 );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -520,7 +539,6 @@ void CServerData::ResetDefaults( void )
 	GlobalItemDecay( true );
 	ScriptItemsDecayable( true );
 	BaseItemsDecayable( false );
-	ItemDecayInHouses( false );
 	SystemTimer( tSERVER_ESCORTWAIT, 900 );
 	SystemTimer( tSERVER_ESCORTACTIVE, 600 );
 	SystemTimer( tSERVER_ESCORTDONE, 600 );
@@ -562,6 +580,16 @@ void CServerData::ResetDefaults( void )
 	ButtonRight( 4005 );
 	BackgroundPic( 2600 );
 
+	// Houses
+	ItemDecayInHouses( true );
+	ProtectPrivateHouses( true );
+	TrackHousesPerAccount( true );
+	CanOwnAndCoOwnHouses( true );
+	CoOwnHousesOnSameAccount( true );
+	MaxHousesOwnable( 1 );
+	MaxHousesCoOwnable( 10 );
+
+	// Towns
 	TownNumSecsPollOpen( 3600 );	// one hour
 	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
 	TownTaxPeriod( 1800 );			// taxed every 30 minutes
@@ -1689,6 +1717,51 @@ void CServerData::EscortsEnabled( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemsDetectSpeech( void ) const
+//|					void ItemsDetectSpeech( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items can trigger onSpeech JS event
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ItemsDetectSpeech( void ) const
+{
+	return boolVals.test( BIT_ITEMSDETECTSPEECH );
+}
+void CServerData::ItemsDetectSpeech( bool newVal )
+{
+	boolVals.set( BIT_ITEMSDETECTSPEECH, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 MaxPlayerPackItems( void ) const
+//|					void MaxPlayerPackItems( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max item capacity for player (and NPC) backpacks
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::MaxPlayerPackItems( void ) const
+{
+	return maxPlayerPackItems;
+}
+void CServerData::MaxPlayerPackItems( UI16 newVal )
+{
+	maxPlayerPackItems = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 MaxPlayerBankItems( void ) const
+//|					void MaxPlayerBankItems( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max item capacity for player bankboxes
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::MaxPlayerBankItems( void ) const
+{
+	return maxPlayerBankItems;
+}
+void CServerData::MaxPlayerBankItems( UI16 newVal )
+{
+	maxPlayerBankItems = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool BasicTooltipsOnly( void ) const
 //|					void BasicTooltipsOnly( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -1768,6 +1841,67 @@ void CServerData::ItemDecayInHouses( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ProtectPrivateHouses( void ) const
+//|					void ProtectPrivateHouses( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether players without explicit access are prevented from entering private houses
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ProtectPrivateHouses( void ) const
+{
+	return boolVals.test( BIT_PROTECTPRIVATEHOUSES);
+}
+void CServerData::ProtectPrivateHouses( bool newVal )
+{
+	boolVals.set( BIT_PROTECTPRIVATEHOUSES, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool TrackHousesPerAccount( void ) const
+//|					void TrackHousesPerAccount( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether house ownership is tracked per account (true) or character (false)
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TrackHousesPerAccount( void ) const
+{
+	return boolVals.test( BIT_TRACKHOUSESPERACCOUNT);
+}
+void CServerData::TrackHousesPerAccount( bool newVal )
+{
+	boolVals.set( BIT_TRACKHOUSESPERACCOUNT, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanOwnAndCoOwnHouses( void ) const
+//|					void CanOwnAndCoOwnHouses( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether players can both own and co-own houses at the same time
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CanOwnAndCoOwnHouses( void ) const
+{
+	return boolVals.test( BIT_CANOWNANDCOOWNHOUSES);
+}
+void CServerData::CanOwnAndCoOwnHouses( bool newVal )
+{
+	boolVals.set( BIT_CANOWNANDCOOWNHOUSES, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CoOwnHousesOnSameAccount( void ) const
+//|					void CoOwnHousesOnSameAccount( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether characters on same account as house owner will be treated as
+//|					if they are co-owners of the house
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CoOwnHousesOnSameAccount( void ) const
+{
+	return boolVals.test( BIT_COOWNHOUSESONSAMEACCOUNT);
+}
+void CServerData::CoOwnHousesOnSameAccount( bool newVal )
+{
+	boolVals.set( BIT_COOWNHOUSESONSAMEACCOUNT, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool PaperdollGuildButton( void ) const
 //|					void PaperdollGuildButton( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -1795,6 +1929,36 @@ bool CServerData::CombatMonstersVsAnimals( void ) const
 void CServerData::CombatMonstersVsAnimals( bool newVal )
 {
 	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 MaxHousesOwnable( void ) const
+//|					void MaxHousesOwnable( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max amount of houses that a player can own
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::MaxHousesOwnable( void ) const
+{
+	return maxHousesOwnable;
+}
+void CServerData::MaxHousesOwnable( UI16 value )
+{
+	maxHousesOwnable = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 MaxHousesCoOwnable( void ) const
+//|					void MaxHousesCoOwnable( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max amount of houses that a player can co-own
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::MaxHousesCoOwnable( void ) const
+{
+	return maxHousesCoOwnable;
+}
+void CServerData::MaxHousesCoOwnable( UI16 value )
+{
+	maxHousesCoOwnable = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2793,6 +2957,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
 		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
 		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
+		ofsOutput << "DECAYTIMERINHOUSE=" << SystemTimer( tSERVER_DECAYINHOUSE ) << '\n';
 		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << '\n';
 		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << '\n';
 		ofsOutput << "GATETIMER=" << SystemTimer( tSERVER_GATE ) << '\n';
@@ -2854,9 +3019,11 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << '\n';
 		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << '\n';
 		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
-		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << '\n';
 		ofsOutput << "PAPERDOLLGUILDBUTTON=" << (PaperdollGuildButton()?1:0) << '\n';
 		ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
+		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
+		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
+		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -2962,6 +3129,16 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BUTTONLEFT=" << ButtonLeft() << '\n';
 		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
 		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[houses]" << '\n' << "{" << '\n';
+		ofsOutput << "TRACKHOUSESPERACCOUNT=" << (TrackHousesPerAccount()?1:0) << '\n';
+		ofsOutput << "CANOWNANDCOOWNHOUSES=" << (CanOwnAndCoOwnHouses()?1:0) << '\n';
+		ofsOutput << "COOWNHOUSESONSAMEACCOUNT=" << (CoOwnHousesOnSameAccount()?1:0) << '\n';
+		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << '\n';
+		ofsOutput << "PROTECTPRIVATEHOUSES=" << (ProtectPrivateHouses()?1:0) << '\n';
+		ofsOutput << "MAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
+		ofsOutput << "MAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
@@ -3812,7 +3989,36 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		case 218:	// CLASSICUOMAPTRACKER[0207]
 			SetClassicUOMapTracker( (value.toByte() == 1) );
 			break;
-			// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
+		case 219:	// DECAYTIMERINHOUSE[0208]
+			SystemTimer( tSERVER_DECAYINHOUSE, value.toUShort() );
+			break;
+		case 220:	// PROTECTPRIVATEHOUSES[0209]
+			ProtectPrivateHouses( value.toUShort() == 1 );
+			break;
+		case 221:	// TRACKHOUSESPERACCOUNT[0210]
+			TrackHousesPerAccount( value.toUShort() == 1 );
+			break;
+		case 222:	// MAXHOUSESOWNABLE[0211]
+			MaxHousesOwnable( value.toUShort() );
+			break;
+		case 223:	// MAXHOUSESCOOWNABLE[0212]
+			MaxHousesCoOwnable( value.toUShort() );
+			break;
+		case 224:	// CANOWNANDCOOWNHOUSES[0213]
+			CanOwnAndCoOwnHouses( value.toUShort() == 1 );
+			break;
+		case 225:	// COOWNHOUSESONSAMEACCOUNT[0214]
+			CoOwnHousesOnSameAccount( value.toUShort() == 1 );
+			break;
+		case 226:	// ITEMSDETECTSPEECH[0215]
+			ItemsDetectSpeech( value.toUShort() == 1 );
+			break;
+		case 227:	// MAXPLAYERPACKITEMS[0216]
+			MaxPlayerPackItems( value.toUShort() );
+			break;
+		case 228:	// MAXPLAYERBANKITEMS[0217]
+			MaxPlayerBankItems( value.toUShort() );
+			break;
 		default:
 			rvalue = false;
 			break;

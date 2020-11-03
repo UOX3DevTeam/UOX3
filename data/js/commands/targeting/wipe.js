@@ -38,23 +38,44 @@ function CallWipe( socket, cmdString )
 			var saidAll 	= ( uKey == "ALL" );
 			var counter	= 0;
 			var counterStr	= "";
+			isItem = false;
+			isSpawner = false;
+			isMulti = false;
+			isBoat = false;
+			isNPC = false;
 			socket.SysMessage( "Wiping " + uKey );
 			Console.PrintSectionBegin();
 			if( saidAll || uKey == "ITEMS" )
 			{
 				Console.Print( mChar.name + " has initiated an item wipe.\n" );
 				isItem 		= true;
-				isSpawner	= false;
 				counter 	= IterateOver( "ITEM" );
 				counterStr 	= counter.toString();
 				Console.Print( "Item wipe deleted " + counterStr + " items.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " items" );
 			}
+			else if( uKey == "MULTIS" )
+			{
+				Console.Print( mChar.name + " has initiated a multi wipe.\n" );
+				isMulti 	= true;
+				counter 	= IterateOver( "MULTI" );
+				counterStr 	= counter.toString();
+				Console.Print( "Multi wipe deleted " + counterStr + " multis.\n" );
+				socket.SysMessage( "Wiped " + counterStr + " multis" );
+			}
+			else if( uKey == "BOATS" )
+			{
+				Console.Print( mChar.name + " has initiated a boat wipe.\n" );
+				isBoat 	= true;
+				counter 	= IterateOver( "BOAT" );
+				counterStr 	= counter.toString();
+				Console.Print( "Boat wipe deleted " + counterStr + " boats.\n" );
+				socket.SysMessage( "Wiped " + counterStr + " boats" );
+			}
 			else if( saidAll || uKey == "NPCS" )
 			{
 				Console.Print( mChar.name + " has initiated a npc wipe.\n" );
-				isItem 		= false;
-				isSpawner	= false;
+				isNPC 		= true;
 				counter 	= IterateOver( "CHARACTER" );
 				counterStr 	= counter.toString();
 				Console.Print( "NPC wipe deleted " + counterStr + " npcs.\n" );
@@ -63,7 +84,6 @@ function CallWipe( socket, cmdString )
 			else if( saidAll || uKey == "SPAWNERS" )
 			{
 				Console.Print( mChar.name + " has initiated a spawner wipe.\n" );
-				isItem		= false;
 				isSpawner	= true;
 				counter 	= IterateOver( "SPAWNER" );
 				counterStr 	= counter.toString();
@@ -161,6 +181,16 @@ function onIterate( toCheck )
 				}
 			}
 			else if( isSpawner && toCheck.isSpawner == true && toCheck.wipable )
+			{
+				toCheck.Delete();
+				return true;
+			}
+			else if( isMulti && toCheck.IsMulti() )
+			{
+				toCheck.Delete();
+				return true;
+			}
+			else if( isBoat && toCheck.IsBoat() )
 			{
 				toCheck.Delete();
 				return true;

@@ -25,6 +25,12 @@ function onCallback1( socket, ourObj )
 			return;
 		}
 
+		if( ourObj.movable == 2 || ourObj.movable == 3 )
+		{
+			socket.SysMessage( "This has to be in your backpack before you can use it." );
+			return;
+		}
+
 		var resID = ourObj.id;
 		if( resID >= 0x0F95 && resID <= 0x0F9C )
 		{

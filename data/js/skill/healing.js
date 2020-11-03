@@ -2,6 +2,12 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 {
 	if( pUser && iUsed && iUsed.isItem )
 	{
+		if( iUsed.movable == 2 || iUsed.movable == 3 )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
+			return;
+		}
+
 		var socket = pUser.socket;
 		if( socket )
 		{
@@ -28,6 +34,12 @@ function onUseChecked( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
+		if( iUsed.movable == 2 || iUsed.movable == 3 )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
+			return;
+		}
+
 		if( pUser.skillsused.healing || pUser.skillsused.veterinary )
 			socket.SysMessage( "You are too busy to do that." );
 		else if( socket.GetTimer( 0 ) <= GetCurrentClock() )	// Skill timer

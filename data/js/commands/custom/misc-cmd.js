@@ -323,6 +323,7 @@ function onCallback6( pSock, myTarget )
 			newPack.container = pUser;
 			newPack.layer = 21;
 			newPack.weight = 0;
+			newPack.maxItems = parseInt( GetServerSetting( "MAXPLAYERPACKITEMS" ));
 			if( AddFromHex != "Yep" )
 				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", false );
 			else
