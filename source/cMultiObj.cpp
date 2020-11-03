@@ -34,6 +34,7 @@ const UI16	DEFMULTI_MAXVENDORS = 10;
 const UI16	DEFMULTI_MAXTRASHCONTAINERS = 1;
 const UI16	DEFMULTI_BANX = 0;
 const UI16	DEFMULTI_BANY = 0;
+const time_t DEFMULTI_TRADETIMESTAMP = (time_t)(-1);
 
 const UI08 HOUSEPRIV_OWNER	= 0;
 const UI08 HOUSEPRIV_BANNED = 1;
@@ -42,7 +43,7 @@ const UI08 HOUSEPRIV_GUEST = 3;
 
 CMultiObj::CMultiObj() : CItem(), deed( "" ), maxLockdowns( DEFMULTI_MAXLOCKDOWNS ), maxSecureContainers( DEFMULTI_MAXSECURECONTAINERS ),
 			maxFriends( DEFMULTI_MAXFRIENDS ), maxGuests( DEFMULTI_MAXGUESTS ), maxOwners( DEFMULTI_MAXOWNERS ), maxBans( DEFMULTI_MAXBANS ), maxVendors( DEFMULTI_MAXVENDORS ), 
-			maxTrashContainers( DEFMULTI_MAXTRASHCONTAINERS ), banX( DEFMULTI_BANX ), banY( DEFMULTI_BANY ), isPublic( false )
+			maxTrashContainers( DEFMULTI_MAXTRASHCONTAINERS ), banX( DEFMULTI_BANX ), banY( DEFMULTI_BANY ), isPublic( false ), tradeTimestamp( DEFMULTI_TRADETIMESTAMP )
 {
 	objType = OT_MULTI;
 	housePrivList.clear();
@@ -708,8 +709,7 @@ UString CMultiObj::GetTradeTimestamp( void ) const
 }
 void CMultiObj::SetTradeTimestamp( time_t newTime )
 {
-	if( newTime && newTime > 0 )
-		tradeTimestamp = newTime;
+	tradeTimestamp = newTime;
 }
 
 //o-----------------------------------------------------------------------------------------------o

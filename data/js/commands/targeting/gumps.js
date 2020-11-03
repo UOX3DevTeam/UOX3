@@ -6,7 +6,7 @@ function CommandRegistration()
 
 function command_ISTATS( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 182, socket.Language );
+	var targMsg = GetDictionaryEntry( 182, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -99,7 +99,7 @@ function onCallback0( socket, ourObj )
 
 function command_CSTATS( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 183, socket.Language );
+	var targMsg = GetDictionaryEntry( 183, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 

@@ -4,7 +4,7 @@ function onUseChecked( pUser, iUsed )
 	if( socket && iUsed && iUsed.isItem )
 	{
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 484, socket.Language );
+		var targMsg = GetDictionaryEntry( 484, socket.language );
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;
@@ -21,7 +21,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 942, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 942, socket.language ) );
 			return;
 		}
 
@@ -40,10 +40,10 @@ function onCallback1( socket, ourObj )
 				if( resID != 0x1BDD && resID != 0x1BE0 )
 					socket.MakeMenu( 59, 37 );
 				else
-					socket.SysMessage( GetDictionaryEntry( 941, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 941, socket.language ) );
 			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 775, socket.language ) );
 		}
 		else
 			socket.SysMessage( "You can't make anything from that material." );

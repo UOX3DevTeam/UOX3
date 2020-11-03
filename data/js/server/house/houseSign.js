@@ -42,7 +42,7 @@ function onUseUnChecked( pUser, iUsed )
 		// Perform a range check, making sure player can only use it within reasonable distance from the sign
 		if( !pUser.InRange( iUsed, 18 ))
 		{
-			pUser.SysMessage( GetDictionaryEntry( 393, pUser.socket.Language ) ); // That is too far away.
+			pUser.SysMessage( GetDictionaryEntry( 393, pUser.socket.language ) ); // That is too far away.
 		}
 		else
 		{
@@ -155,7 +155,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 							newID -= 1;
 							iSign.id = newID;
 						}
-						pSocket.SysMessage( GetDictionaryEntry( 556, pUser.socket.Language )); // House sign changed.
+						pSocket.SysMessage( GetDictionaryEntry( 556, pUser.socket.language )); // House sign changed.
 					}
 				}
 				else

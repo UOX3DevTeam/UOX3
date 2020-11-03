@@ -23,7 +23,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 473, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 473, socket.language ) );
 			}
 		}
 	}
@@ -45,12 +45,12 @@ function onUseChecked( pUser, iUsed )
 		else if( socket.GetTimer( 0 ) <= GetCurrentClock() )	// Skill timer
 		{
 			socket.tempObj = iUsed;
-			var targMsg = GetDictionaryEntry( 472, socket.Language );
+			var targMsg = GetDictionaryEntry( 472, socket.language );
 			socket.CustomTarget( 1, targMsg );
 			socket.SetTimer( 0, 5000 );		// Reset the skill timer
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 473, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 473, socket.language ) );
 	}
 	return false;
 }
@@ -130,10 +130,10 @@ function onCallback1( socket, ourObj )
 						mChar.StartTimer( healTimer, 0, true );
 					}
 					else
-						socket.SysMessage( GetDictionaryEntry( 1492, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1492, socket.language ) );
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 1493, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 1493, socket.language ) );
 			}
 			else if( ourObj.poison > 0 )	// Cure Poison
 			{
@@ -158,17 +158,17 @@ function onCallback1( socket, ourObj )
 						mChar.StartTimer( healTimer, 1, true );
 					}
 					else
-						socket.SysMessage( GetDictionaryEntry( 1494, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1494, socket.language ) );
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 1495, socket.Language ) );
-					socket.SysMessage( GetDictionaryEntry( 1496, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 1495, socket.language ) );
+					socket.SysMessage( GetDictionaryEntry( 1496, socket.language ) );
 				}
 
 			}
 			else if( ourObj.health == ourObj.maxhp )
-				socket.SysMessage( GetDictionaryEntry( 1497, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1497, socket.language ) );
 			else	// Heal
 			{
 				if( bItem.amount > 1 )
@@ -197,14 +197,14 @@ function onCallback1( socket, ourObj )
 					ourObj.health = ourObj.health+1;
 
 					if( skillNum == 17 ) // Healing
-						socket.SysMessage( GetDictionaryEntry( 1499, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1499, socket.language ) );
 					else
-						socket.SysMessage( GetDictionaryEntry( 1500, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 1500, socket.language ) );
 				}
 			}
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 1498, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1498, socket.language ) );
 	}
 }
 
@@ -245,7 +245,7 @@ function onTimer( mChar, timerID )
 	{
 		if( mChar.dead )
 		{
-			socket.SysMessage( GetDictionaryEntry( 330, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 330, socket.language ) );
 		}
 		else if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) )
 		{
@@ -253,16 +253,16 @@ function onTimer( mChar, timerID )
 			{
 			case 0:	// Resurrect
 				ourObj.Resurrect();
-				socket.SysMessage( GetDictionaryEntry( 1272, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1272, socket.language ) );
 				break;
 			case 1:	// Cure Poison
 				ourObj.SetPoisoned( 0, 0 );
 				ourObj.StaticEffect( 0x373A, 0, 15 );
 				ourObj.SoundEffect( 0x01E0, true );
-				socket.SysMessage( GetDictionaryEntry( 1274, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1274, socket.language ) );
 				var objSock = ourObj.socket;
 				if( objSock )
-					objSock.SysMessage( GetDictionaryEntry( 1273, objSock.Language ) );
+					objSock.SysMessage( GetDictionaryEntry( 1273, objSock.language ) );
 				break;
 			case 2:	// Heal
 				var healSkill;
@@ -272,7 +272,7 @@ function onTimer( mChar, timerID )
 					healSkill = mChar.skills.veterinary;
 
 				ourObj.Heal( (RandomNumber( 3, 10 ) + parseInt(mChar.skills.anatomy / 50) + RandomNumber( parseInt(healSkill / 50), parseInt(healSkill / 20) )), mChar );
-				socket.SysMessage( GetDictionaryEntry( 1271, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1271, socket.language ) );
 				break;
 			}
 		}

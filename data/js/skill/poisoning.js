@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 869, pSock.Language ) ); // What poison do you want to apply?
+		pSock.CustomTarget( 0, GetDictionaryEntry( 869, pSock.language ) ); // What poison do you want to apply?
 
 	return true;
 }
@@ -19,11 +19,11 @@ function onCallback0( pSock, ourObj )
 	{
 		if( ourObj.type != 19 || ourObj.morey != 6 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 918, pSock.Language ) ); // That is not a valid poison!
+			pSock.SysMessage( GetDictionaryEntry( 918, pSock.language ) ); // That is not a valid poison!
 			return;
 		}
 		pSock.tempObj = ourObj;
-		pSock.CustomTarget( 1, GetDictionaryEntry( 1613, pSock.Language ) ); // What item do you want to poison?
+		pSock.CustomTarget( 1, GetDictionaryEntry( 1613, pSock.language ) ); // What item do you want to poison?
 	}
 }
 
@@ -39,7 +39,7 @@ function onCallback1( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
 			return;
 		}
-		var pLanguage 	= pSock.Language;
+		var pLanguage 	= pSock.language;
 		var ourLoDmg 	= ourObj.lodamage;
 		var ourHiDmg 	= ourObj.hidamage;
 		var ourID	= ourObj.id;
@@ -85,5 +85,5 @@ function onCallback1( pSock, ourObj )
 		}
 	}
 	else
-		pSock.SysMessage( GetDictionaryEntry( 920, pSock.Language ) ); // You can't poison that item.
+		pSock.SysMessage( GetDictionaryEntry( 920, pSock.language ) ); // You can't poison that item.
 }

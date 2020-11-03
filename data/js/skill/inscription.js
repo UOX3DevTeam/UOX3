@@ -15,7 +15,7 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 		else
-			socket.CustomTarget( 0, GetDictionaryEntry( 865, socket.Language ) );
+			socket.CustomTarget( 0, GetDictionaryEntry( 865, socket.language ) );
 	}
 	return false;
 }
@@ -41,18 +41,18 @@ function onCallback0( pSock, ourObj )
 			{
 				if( !ValidateObject( pUser.FindItemType( 9 ) ) )	// Do they have a spellbook?
 				{
-					pSock.SysMessage( GetDictionaryEntry( 921, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 921, pSock.language ) );
 					return;
 				}
-	
+
 				var ownerObj = GetPackOwner( ourObj, 0 );
 				if( ownerObj && pUser.serial == ownerObj.serial )
 					pSock.MakeMenu( 99, 23 );
 				else
-					pSock.SysMessage( GetDictionaryEntry( 778, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 778, pSock.language ) );
 			}
 			else
-				pSock.SysMessage( GetDictionaryEntry( 773, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 773, pSock.language ) );
 		}
 		else
 			pSock.SysMessage( "You can make nothing useful from that." );

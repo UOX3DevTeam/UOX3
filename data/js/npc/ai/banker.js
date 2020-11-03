@@ -278,7 +278,7 @@ function onCallback0( pSock, ourObj )
 			}
 			else
 			{
-				pTalking.SysMessage( GetDictionaryEntry( 778, pSock.Language )); //You can't use items outside your backpack
+				pTalking.SysMessage( GetDictionaryEntry( 778, pSock.language )); //You can't use items outside your backpack
 			}
 		}
 	}

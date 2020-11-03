@@ -44,7 +44,7 @@ function command_XTELEPORT( socket, cmdString )
 		}
 	}
 
-	var targMsg = GetDictionaryEntry( 21, socket.Language );
+	var targMsg = GetDictionaryEntry( 21, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -75,14 +75,14 @@ function command_XGO( socket, cmdString )
 				socket.xText += " " + splitString[4];
 			}
 
-			targMsg = GetDictionaryEntry( 198, socket.Language );
+			targMsg = GetDictionaryEntry( 198, socket.language );
 			socket.CustomTarget( 1, targMsg );
 		}
 		else if( splitString[0] )
 		{
 			socket.clickX = parseInt( cmdString );
 
-			targMsg = GetDictionaryEntry( 20, socket.Language );
+			targMsg = GetDictionaryEntry( 20, socket.language );
 			socket.CustomTarget( 2, targMsg );
 		}
 	}

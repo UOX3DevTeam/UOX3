@@ -1392,7 +1392,7 @@ function DemolishHouse( pSocket, iMulti )
 
 				if( charInHouse.aitype == 17 ) // player vendor AI
 				{
-					var tempName = GetDictionaryEntry( 580, pSocket.Language ); // A vendor deed for %s.
+					var tempName = GetDictionaryEntry( 580, pSocket.language ); // A vendor deed for %s.
 					tempName = ( tempName.replace(/%s/gi, charInHouse.name ));
 
 					var pvDeed = CreateBlankItem( pSocket, pSocket.currentChar, 1, tempName, 0x14F0, 0x0, "ITEM", true );
@@ -1400,7 +1400,7 @@ function DemolishHouse( pSocket, iMulti )
 					{
 						pvDeed.type = 217; // Player Vendor Deed
 						pvDeed.buyValue = 2000;
-						pSocket.SysMessage( GetDictionaryEntry( 581, pSocket.Language ), newDeed.name ); // Packed up vendor %s.
+						pSocket.SysMessage( GetDictionaryEntry( 581, pSocket.language ), newDeed.name ); // Packed up vendor %s.
 						charInHouse.Delete();
 					}
 				}
@@ -1463,15 +1463,15 @@ function DemolishHouse( pSocket, iMulti )
 			var newDeed = CreateDFNItem( pSocket, pSocket.currentChar, iMulti.deed, 1, "ITEM", true );
 			if( newDeed )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 578, pSocket.Language ), iMulti.name ); // Demolishing House %s.
-				pSocket.SysMessage( GetDictionaryEntry( 579, pSocket.Language ), newDeed.name ); // Converted into a %s.
+				pSocket.SysMessage( GetDictionaryEntry( 578, pSocket.language ), iMulti.name ); // Demolishing House %s.
+				pSocket.SysMessage( GetDictionaryEntry( 579, pSocket.language ), newDeed.name ); // Converted into a %s.
 			}
 
 			// Finally, delete the house!
 			iMulti.Delete();
 		}
 		else
-			pSocket.SysMessage( GetDictionaryEntry( 1911, pSocket.Language )); // Only the primary house owner can demolish the house!
+			pSocket.SysMessage( GetDictionaryEntry( 1911, pSocket.language )); // Only the primary house owner can demolish the house!
 	}
 }
 
@@ -1789,13 +1789,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 
 	if( !ValidateObject( iMulti ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1820, pSocket.Language )); // Unable to detect house! Try again, or contact a GM if problem persists.
+		pSocket.SysMessage( GetDictionaryEntry( 1820, pSocket.language )); // Unable to detect house! Try again, or contact a GM if problem persists.
 		return;
 	}
 
 	if( !ValidateObject( oldMultiOwner ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1929, pSocket.Language )); // Cannot find previous owner! Try again or contact a GM for assistance.
+		pSocket.SysMessage( GetDictionaryEntry( 1929, pSocket.language )); // Cannot find previous owner! Try again or contact a GM for assistance.
 		return;
 	}
 
@@ -1808,7 +1808,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		{
 			if( !ValidateObject( iSign ))
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 1821, pSocket.Language )); // Unable to detect house sign! Try again, or contact a GM if problem persists.
+				pSocket.SysMessage( GetDictionaryEntry( 1821, pSocket.language )); // Unable to detect house sign! Try again, or contact a GM if problem persists.
 				return;
 			}
 
@@ -1830,7 +1830,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 
 			// Kill all old keys associated with house
 			iMulti.KillKeys();
-			oldMultiOwner.SysMessage( GetDictionaryEntry( 1913, oldMultiOwner.socket.Language )) // All old house keys associated with house have been deleted.
+			oldMultiOwner.SysMessage( GetDictionaryEntry( 1913, oldMultiOwner.socket.language )) // All old house keys associated with house have been deleted.
 
 			// Add the new owner to ownerList
 			iMulti.AddToOwnerList( pUser );
@@ -1893,13 +1893,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 				}
 				else
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 1930, pSocket.Language )); // Something went wrong when copying house key - unable to deposit extra key in bankbox!
+					pSocket.SysMessage( GetDictionaryEntry( 1930, pSocket.language )); // Something went wrong when copying house key - unable to deposit extra key in bankbox!
 				}
 
 				if( oldMultiOwner.online )
-					oldMultiOwner.socket.SysMessage( GetDictionaryEntry( 1081, oldMultiOwner.socket.Language ), pUser.name ); // You have transferred your house to %s.
+					oldMultiOwner.socket.SysMessage( GetDictionaryEntry( 1081, oldMultiOwner.socket.language ), pUser.name ); // You have transferred your house to %s.
 				if( pUser.online )
-					pSocket.SysMessage( GetDictionaryEntry( 1082, pSocket.Language ), pUser.name ); // %s has transferred a house to you.
+					pSocket.SysMessage( GetDictionaryEntry( 1082, pSocket.language ), pUser.name ); // %s has transferred a house to you.
 			}
 			break;
 		}
@@ -1916,8 +1916,8 @@ function onGumpPress( pSocket, pButton, gumpData )
 				newKey.type = 7; // IT_KEY item type
 			}
 
-			oldMultiOwner.socket.SysMessage( GetDictionaryEntry( 1931, oldMultiOwner.socket.Language ), pUser.name ); // You have added %s as a co-owner of your house!
-			pSocket.SysMessage( GetDictionaryEntry( 1932, pSocket.Language ), oldMultiOwner.name, iMulti.name ); // You have been added by %s as a co-owner of %s!
+			oldMultiOwner.socket.SysMessage( GetDictionaryEntry( 1931, oldMultiOwner.socket.language ), pUser.name ); // You have added %s as a co-owner of your house!
+			pSocket.SysMessage( GetDictionaryEntry( 1932, pSocket.language ), oldMultiOwner.name, iMulti.name ); // You have been added by %s as a co-owner of %s!
 			break;
 		}
 	}

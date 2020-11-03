@@ -41,12 +41,12 @@ function command_GO( socket, cmdString )
 			if( teleTo )
 			{
 				if( teleTo.commandLevel > mChar.commandLevel )
-					socket.SysMessage( GetDictionaryEntry( 19, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 19, socket.language ) );
 				else
 					mChar.SetLocation( teleTo );
 			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 1110, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1110, socket.language ) );
 			break;
 		default:
 			var x = 0, y = 0, z = 0;

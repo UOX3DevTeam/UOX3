@@ -1,3 +1,9 @@
+04/11/2020 - Xuri (0.99.4[RC3])
+	Fixed an issue with tradetimestamp for houses
+	Fixed an issue with 'teleport and 'telestuff commands that could cause character to end up outside of map when using ClassicUO client
+	Updated JS command set to support setting language for player characters directly instead of getting it from UO client - though it will still attempt to do this if selected language is ZERO. Useful for testing multiple languages, and also opens up for possibility of letting players/GMs choose a language manually!
+	Updated a bunch of .js files to use the proper .language socket property instead of the erroneous .Language!
+
 04/11/2020 - Xuri (0.99.4[RC2])
 	Fixed some a couple of issues with compiling on Linux.
 	Committed missing js files for houses to repository!

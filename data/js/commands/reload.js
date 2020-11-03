@@ -15,21 +15,21 @@ function CommandRegistration()
 
 function command_RELOADACCOUNTS( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 86, socket.Language );
+	var dictMessage = GetDictionaryEntry( 86, socket.language );
 	socket.SysMessage( dictMessage );
 	Reload( 9 );
 }
 
 function command_RELOADDEFS( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 1748, socket.Language );
+	var dictMessage = GetDictionaryEntry( 1748, socket.language );
 	socket.SysMessage( dictMessage );
 	Reload( 4 );
 }
 
 function command_RELOADINI( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 45, socket.Language );
+	var dictMessage = GetDictionaryEntry( 45, socket.language );
 	socket.SysMessage( dictMessage );
 	Reload( 7 );
 }
@@ -55,14 +55,14 @@ function command_RELOADREGIONS( socket, cmdString )
 
 function command_RELOADSPAWNREGIONS( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 68, socket.Language );
+	var dictMessage = GetDictionaryEntry( 68, socket.language );
 	socket.SysMessage( dictMessage );
 	Reload( 1 );
 }
 
 function command_RELOADALL( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 1746, socket.Language );
+	var dictMessage = GetDictionaryEntry( 1746, socket.language );
 	BroadcastMessage( dictMessage );
 	Reload( 8 );
 }

@@ -6,7 +6,7 @@ function onUseChecked( pUser, iUsed )
 		//Check to see if it's locked down
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.Language ) ); //That is locked down and you cannot use it
+			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
 			return false;
 		}
 		var pHunger = pUser.hunger;
@@ -14,15 +14,15 @@ function onUseChecked( pUser, iUsed )
 		{
 			pUser.SoundEffect( (0x003A + RandomNumber( 0, 2 )), true );
 			if( pHunger >= 0 )
-				socket.SysMessage( GetDictionaryEntry( (408 + pHunger), socket.Language ) ); //You eat the food, but are still extremely hungry.
+				socket.SysMessage( GetDictionaryEntry( (408 + pHunger), socket.language ) ); //You eat the food, but are still extremely hungry.
 			else
-				socket.SysMessage( GetDictionaryEntry( 415, socket.Language ) ); //You are simply too full to eat any more!
+				socket.SysMessage( GetDictionaryEntry( 415, socket.language ) ); //You are simply too full to eat any more!
 
 			var iPoison = iUsed.poison;
 			if( iPoison && pUser.poison < iPoison )
 			{
 				pUser.SetPoisoned( iPoison, GetServerSetting( "POISONTIMER" ) * 1000 );
-				socket.SysMessage( GetDictionaryEntry( (416 + RandomNumber( 0, 2 )), socket.Language ) ); //You feel disoriented and nauseous.
+				socket.SysMessage( GetDictionaryEntry( (416 + RandomNumber( 0, 2 )), socket.language ) ); //You feel disoriented and nauseous.
 				pUser.SoundEffect( 0x0246, true );
 			}
 
@@ -67,7 +67,7 @@ function onUseChecked( pUser, iUsed )
 			}
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 407, socket.Language ) ); //You are simply too full to eat any more!
+			socket.SysMessage( GetDictionaryEntry( 407, socket.language ) ); //You are simply too full to eat any more!
 	}
 	return false;
 }

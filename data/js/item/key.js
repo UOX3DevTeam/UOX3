@@ -35,7 +35,7 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
 			{
-				pUser.socket.SysMessage( GetDictionaryEntry( 1032, pUser.socket.Language )); // That is not yours!
+				pUser.socket.SysMessage( GetDictionaryEntry( 1032, pUser.socket.language )); // That is not yours!
 				return false;
 			}
 		}
@@ -84,7 +84,7 @@ function onCallback0( pSock, myTarget )
 		// If targeting an item that is out of range, return
 		if( !pUser.InRange( myTarget, 3 ))
 		{
-			pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+			pUser.SysMessage( GetDictionaryEntry( 393, pSock.language )); //That is too far away.
 		}
 
 		//If targeting a full keyring
@@ -99,7 +99,7 @@ function onCallback0( pSock, myTarget )
 		{
 			if( myTarget.container.serial != pUser.pack.serial )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1763, pSock.Language )); //That item must be in your backpack before it can be used.
+				pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language )); //That item must be in your backpack before it can be used.
 			}
 			else
 			{
@@ -150,20 +150,20 @@ function onCallback0( pSock, myTarget )
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1026, pSock.Language )); //The key does not fit into that lock.
+				pUser.SysMessage( GetDictionaryEntry( 1026, pSock.language )); //The key does not fit into that lock.
 			}
 			return;
 		}
 		//If targeting key itself, rename key
 		else if( myTarget.serial == Key.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1019, pSock.Language )); //Enter new name for key.
+			pUser.SysMessage( GetDictionaryEntry( 1019, pSock.language )); //Enter new name for key.
 			pUser.socket.tempObj2 = Key;
 			pUser.SpeechInput(1);
 			return;
 		}
 	}
-	pUser.SysMessage( GetDictionaryEntry( 1025, pSock.Language )); //That does not have a lock.
+	pUser.SysMessage( GetDictionaryEntry( 1025, pSock.language )); //That does not have a lock.
 }
 
 function onCallback1( pSock, myTarget )
@@ -179,7 +179,7 @@ function onCallback1( pSock, myTarget )
 		// If targeting an item that is out of range, return
 		if( myTarget.type != 203 && !pUser.InRange( myTarget, 3 ))
 		{
-			pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+			pUser.SysMessage( GetDictionaryEntry( 393, pSock.language )); //That is too far away.
 		}
 
 		if( myTarget.serial == Keyring.serial )
@@ -238,7 +238,7 @@ function onCallback1( pSock, myTarget )
 			return;
 		}
 	}
-	pUser.SysMessage( GetDictionaryEntry( 1025, pSock.Language )); //That does not have a lock.
+	pUser.SysMessage( GetDictionaryEntry( 1025, pSock.language )); //That does not have a lock.
 }
 
 function onCallback2( pSock, myTarget )
@@ -252,7 +252,7 @@ function onCallback2( pSock, myTarget )
 		// If targeting an item that is out of range, return
 		if( !pUser.InRange( myTarget, 3 ))
 		{
-			pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+			pUser.SysMessage( GetDictionaryEntry( 393, pSock.language )); //That is too far away.
 		}
 
 		if(( myTarget.id >= keyID1 && myTarget.id <= keyID3 ) || myTarget.id == keyID4 || myTarget.id == keyID5 )
@@ -260,7 +260,7 @@ function onCallback2( pSock, myTarget )
 			var itemOwner = GetPackOwner( myTarget, 0 );
 			if( !itemOwner || itemOwner != pUser )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 1763, pSock.Language )); //That item must be in your backpack before it can be used.
+				pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language )); //That item must be in your backpack before it can be used.
 			}
 			if( !myTarget.more )
 			{ //If key isn't associated with any key, cancel
@@ -305,14 +305,14 @@ function onCallback3( pSock, myTarget )
 		var itemOwner = GetPackOwner( myTarget, 0 );
 		if( itemOwner && itemOwner != pUser )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, pSock.Language )); //That item must be in your backpack before it can be used.
+			pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language )); //That item must be in your backpack before it can be used.
 			return;
 		}
 		else
 		{
 			if( !pUser.InRange( myTarget, 3 ))
 			{
-				pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+				pUser.SysMessage( GetDictionaryEntry( 393, pSock.language )); //That is too far away.
 				return;
 			}
 			else
@@ -323,12 +323,12 @@ function onCallback3( pSock, myTarget )
 					{
 						if( pUser.CheckSkill( 37, 400, 1000 ) )
 						{
-							pUser.SysMessage( GetDictionaryEntry( 1017, pSock.Language )); //You copy the key.
+							pUser.SysMessage( GetDictionaryEntry( 1017, pSock.language )); //You copy the key.
 							keyBlank.more = myTarget.more;
 						}
 						else
 						{
-							pUser.SysMessage( GetDictionaryEntry( 1016, pSock.Language )); //You fail and destroy the key blank.
+							pUser.SysMessage( GetDictionaryEntry( 1016, pSock.language )); //You fail and destroy the key blank.
 							keyBlank.Delete();
 						}
 					}
@@ -392,14 +392,14 @@ function changeLockStatus( pUser, myTarget )
 	{
 		case 1: //Unlocked container
 			myTarget.type = 8;
-			pUser.SysMessage( GetDictionaryEntry( 1018, pSock.Language )); //You lock the container.
+			pUser.SysMessage( GetDictionaryEntry( 1018, pSock.language )); //You lock the container.
 			break;
 		case 8: //Locked container
 			myTarget.type = 1;
-			pUser.SysMessage( GetDictionaryEntry( 1020, pSock.Language )); //You unlock the container.
+			pUser.SysMessage( GetDictionaryEntry( 1020, pSock.language )); //You unlock the container.
 			break;
 		case 12: //Unlocked door
-			pUser.SysMessage( GetDictionaryEntry( 1021, pSock.Language )); //You lock the door.
+			pUser.SysMessage( GetDictionaryEntry( 1021, pSock.language )); //You lock the door.
 			myTarget.type = 13;
 			if( myTarget.isDoorOpen )
 			{
@@ -408,15 +408,15 @@ function changeLockStatus( pUser, myTarget )
 			}
 			break;
 		case 13: //Locked door
-			pUser.SysMessage( GetDictionaryEntry( 1022, pSock.Language )); //You unlock the door.
+			pUser.SysMessage( GetDictionaryEntry( 1022, pSock.language )); //You unlock the door.
 			myTarget.type = 12;
 			break;
 		case 63: //spawn-container
-			pUser.SysMessage( GetDictionaryEntry( 1018, pSock.Language )); //You lock the container.
+			pUser.SysMessage( GetDictionaryEntry( 1018, pSock.language )); //You lock the container.
 			myTarget.type = 64;
 			break;
 		case 64: //locked spawn-container
-			pUser.SysMessage( GetDictionaryEntry( 1020, pSock.Language )); //You unlock the container.
+			pUser.SysMessage( GetDictionaryEntry( 1020, pSock.language )); //You unlock the container.
 			myTarget.type = 63;
 			break;
 		case 117: //The plank on a boat
@@ -451,7 +451,7 @@ function changeLockStatus( pUser, myTarget )
 			if( signMulti.IsOwner( pUser ))
 			{
 				pUser.socket.tempObj2 = myTarget;
-				pUser.SysMessage( GetDictionaryEntry( 1023, pSock.Language )); //What do you wish the sign to say?
+				pUser.SysMessage( GetDictionaryEntry( 1023, pSock.language )); //What do you wish the sign to say?
 				pUser.SpeechInput(3);
 			}
 			else
