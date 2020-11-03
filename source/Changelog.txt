@@ -1,3 +1,7 @@
+04/11/2020 - Xuri (0.99.4[RC2])
+	Fixed some a couple of issues with compiling on Linux.
+	Committed missing js files for houses to repository!
+
 04/11/2020 - Xuri (0.99.4[RC])
 	Updated JS SysMessage function to accept up to 10 extra, optional arguments, which can be used with dictionary messages that require additional parameters like %s or %i
 	Added new type of house privilege in cMultiObj.cpp to keep track of friends of the multi - HOUSEPRIV_FRIEND - which is stored during worldsaves as one or more Friend=<player serial> tags in house.wsc

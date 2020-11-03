@@ -5345,7 +5345,9 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	UString mode = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	char *folderName = (argc == 3 ? JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) ) : "" );
+	char *folderName = "\0";
+	if( argc == 3 )
+		folderName = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
 
 	if( mode.lower().find_first_of("rwa",0,3) == std::string::npos )
 	{

@@ -11,7 +11,7 @@
 // product info
 //o-----------------------------------------------------------------------------------------------o
 const std::string VER				= "0.99";
-const std::string BUILD				= "4[RC]";
+const std::string BUILD				= "4[RC2]";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";
@@ -94,13 +94,13 @@ std::string CVersionClass::GetEnvironment( void )
 #endif
 #elif __linux__	
 #if INTPTR_MAX == INT64_MAX
-	rVal = "Linux 64"
+	rVal = "Linux 64";
 #elif INTPTR_MAX == INT32_MAX
 	rVal = "Linux 32";
 #endif
 #elif TARGET_OS_MAC
 #if INTPTR_MAX == INT64_MAX
-	rVal = "MacOS 64"
+	rVal = "MacOS 64";
 #elif INTPTR_MAX == INT32_MAX
 	rVal = "MacOS 32";
 #endif
