@@ -10,8 +10,8 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 		else if( iUsed.type != 15 )
-		{		
-			var targMsg = GetDictionaryEntry( 462, socket.Language );
+		{
+			var targMsg = GetDictionaryEntry( 462, socket.language );
 			socket.CustomTarget( 1, targMsg );
 		}
 		else
@@ -43,10 +43,10 @@ function onCallback1( socket, ourObj )
 
 		if( tileID != 0 )
 		{
-			if( 	tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA || 
-				tileID == 0x0CDD || tileID == 0x0CE0 || tileID == 0x0CE3 || tileID == 0x0CE6 || tileID == 0x0D58 || 
+			if( 	tileID == 0x0CD0 || tileID == 0x0CD3 || tileID == 0x0CD6 || tileID == 0x0CD8 || tileID == 0x0CDA ||
+				tileID == 0x0CDD || tileID == 0x0CE0 || tileID == 0x0CE3 || tileID == 0x0CE6 || tileID == 0x0D58 ||
 				( tileID >= 0x0CCA && tileID <= 0x0CCE ) || ( tileID >= 0x12B8 && tileID <= 0x12BB ) || tileID == 0x0D42 ||
-				tileID == 0x0D43 || tileID == 0x0D58 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 || 
+				tileID == 0x0D43 || tileID == 0x0D58 || tileID == 0x0D59 || tileID == 0x0D70 || tileID == 0x0D85 ||
 				tileID == 0x0D94 || tileID == 0x0D95 || tileID == 0x0D98 || tileID == 0x0DA4 || tileID == 0x0DA8 ) // Trees
 			{
 				MakeKindling( socket, mChar );
@@ -72,7 +72,7 @@ function BowCraft( socket, mChar, ourObj, tileID )
 	if( ownerObj && mChar.serial == ownerObj.serial )
 		socket.MakeMenu( 49, 8 );
 	else
-		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 781, socket.language ) );
 }
 
 function MakeFishSteaks( socket, mChar, ourObj )
@@ -88,7 +88,7 @@ function MakeFishSteaks( socket, mChar, ourObj )
 			ourObj.Delete();
 	}
 	else
-		socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 775, socket.language ) );
 }
 
 function MakeKindling( socket, mChar )
@@ -99,7 +99,7 @@ function MakeKindling( socket, mChar )
 
 	if( distX > 5 || distY > 5 || distZ > 9 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 393, socket.language ) );
 		return;
 	}
 
@@ -110,7 +110,7 @@ function MakeKindling( socket, mChar )
 
 	mChar.SoundEffect( 0x013E, true );
 	CreateDFNItem( socket, mChar, "0x0DE1", 1, "ITEM", true );
-	socket.SysMessage( GetDictionaryEntry( 1049, socket.Language ) );
+	socket.SysMessage( GetDictionaryEntry( 1049, socket.language ) );
 }
 
 function CarveCorpse( socket, mChar, ourObj )
@@ -130,8 +130,8 @@ function CarveCorpse( socket, mChar, ourObj )
 				ourObj.Carve( socket );
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 1051, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1051, socket.language ) );
 	}
 	else
-		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+		socket.SysMessage( GetDictionaryEntry( 393, socket.language ) );
 }

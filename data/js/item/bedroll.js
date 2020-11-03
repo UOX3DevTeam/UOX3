@@ -1,17 +1,17 @@
-function onUseChecked( pUser, iUsed ) 
-{ 
-	var srcSock = pUser.socket; 
+function onUseChecked( pUser, iUsed )
+{
+	var srcSock = pUser.socket;
 	var campfire = 0;
-	
+
 	// Store gumpID for gumps opened by this script in a global variable for later use
 	if( iUsed )
 		gumpID = iUsed.scripttrigger+0xffff;
 	else
 		return false;
-		
+
 	// Find owner of root container iUsed is contained in, if any
 	var packOwner = GetPackOwner( iUsed, 0 );
-	
+
 	// If bedroll is rolled up
 	if( iUsed.id == 0x0a57 || iUsed.id == 0x0a58 || iUsed.id == 0x0a59 )
 	{
@@ -26,11 +26,11 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( !iUsed.InRange( pUser, 2 ) )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 482, pSock.Language )); //You need to be closer to use that.
+				pUser.SysMessage( GetDictionaryEntry( 482, pSock.language )); //You need to be closer to use that.
 				return false;
 			}
 		}
-		
+
 		// Unroll bedroll
 		if( iUsed.id == 0x0a57 || iUsed.id == 0x0a58 )
 			iUsed.id = 0x0a55;
@@ -60,17 +60,17 @@ function onUseChecked( pUser, iUsed )
 						displayGump( srcSock, pUser );
 					}
 					else
-						pUser.SysMessage( "There are no secure campfires nearby." );						
+						pUser.SysMessage( "There are no secure campfires nearby." );
 				}
 				else
-					pUser.SysMessage( GetDictionaryEntry( 482, pSock.Language )); //You need to be closer to use that.
+					pUser.SysMessage( GetDictionaryEntry( 482, pSock.language )); //You need to be closer to use that.
 			}
 			else
 				pUser.SysMessage( "This needs to be lying on the ground." );
 		}
 		else
 			pUser.SysMessage( "You cannot do this while in combat, or while having a criminal flag." );
-			
+
 		// Roll up bedroll
 		if( iUsed.id == 0x0a55 )
 			iUsed.id = 0x0a58;
@@ -95,13 +95,13 @@ function findCampfire( pUser, trgItem )
 	return false;
 }
 
-function displayGump(srcSock, pUser) 
+function displayGump(srcSock, pUser)
 {
 	var myGump = new Gump;
 
 	myGump.AddPage(0);
 	myGump.AddBackground( 0, 0, 400, 350, 0xA28 );
-	myGump.AddText( 65, 10, 0, "Logging out via camping" );                        
+	myGump.AddText( 65, 10, 0, "Logging out via camping" );
 	myGump.AddButton( 26, 300, 0xfa5, 1, 0, 1);
 	myGump.AddButton( 280, 300, 0xfa5, 1, 0, 0);
 	myGump.AddText( 60, 300, 0, "CONTINUE" );
@@ -111,12 +111,12 @@ function displayGump(srcSock, pUser)
 	myGump.Free();
 }
 
-function onGumpPress(srcSock, myButtonID) 
-{ 
+function onGumpPress(srcSock, myButtonID)
+{
 	var srcChar = srcSock.currentChar;
 	var iUsed = srcSock.tempObj;
-	switch( myButtonID ) 
-	{ 
+	switch( myButtonID )
+	{
 		case 0: // User cancelled manually, so kill timer to auto-close gump, and reset tempObj
 			srcSock.SysMessage( "You cancel the logout." );
 			srcSock.tempObj = null;
@@ -125,11 +125,11 @@ function onGumpPress(srcSock, myButtonID)
 				iUsed.KillTimers();
 				iUsed.SetTag( "inuseby", null );
 			}
-			break; 
+			break;
 		case 1: // Log out button
-			srcSock.SysMessage( "Logging out.") ; 
+			srcSock.SysMessage( "Logging out.") ;
 			if( iUsed )
-			{	
+			{
 				iUsed.KillTimers();
 				iUsed.SetTag( "inuseby", null );
 			}
@@ -155,7 +155,7 @@ function onTimer( timerObj, timerID )
 		pStream.WriteLong( 5, gumpID ); //dialogID - which gump to destroy
 		pStream.WriteLong( 9, 0x0 ); //buttonID // response buttonID for packet 0xB1
 		socket.Send( pStream );
-		pStream.Free();				
+		pStream.Free();
 		onGumpPress( socket, 0 ); //Fake-push button 0, response buttonID in packet seems broken
 	}
 }

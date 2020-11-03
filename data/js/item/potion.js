@@ -5,14 +5,14 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( pUser.isUsingPotion )
 		{
-			socket.SysMessage( GetDictionaryEntry( 430, socket.Language ) ); //You must wait a while before using another potion.
+			socket.SysMessage( GetDictionaryEntry( 430, socket.language ) ); //You must wait a while before using another potion.
 			return false;
 		}
 
 		//Check to see if it's locked down
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.Language ) ); //That is locked down and you cannot use it
+			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
 			return false;
 		}
 		switch( iUsed.morey )
@@ -24,17 +24,17 @@ function onUseChecked( pUser, iUsed )
 				{
 					case 1:
 						DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 6, 15 ), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1608, socket.Language ) ); //You feel more agile!
+						socket.SysMessage( GetDictionaryEntry( 1608, socket.language ) ); //You feel more agile!
 						break;
 					case 2:
 						DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 11, 30 ), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1609, socket.Language ) ); //You feel much more agile!
+						socket.SysMessage( GetDictionaryEntry( 1609, socket.language ) ); //You feel much more agile!
 						break;
 					default:
 						break;
 				}
 				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion				
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 2:		// Cure Potion
 				var pPoison = pUser.poison;
@@ -63,16 +63,16 @@ function onUseChecked( pUser, iUsed )
 					}
 
 					if( pUser.poison )
-						socket.SysMessage( GetDictionaryEntry( 1345, socket.Language ) ); //The potion was not able to cure this poison.
+						socket.SysMessage( GetDictionaryEntry( 1345, socket.language ) ); //The potion was not able to cure this poison.
 					else
 					{
 						pUser.StaticEffect( 0x373A, 0, 15 );
 						pUser.SoundEffect( 0x01E0, true );
-						socket.SysMessage( GetDictionaryEntry( 1346, socket.Language ) ); //The poison was cured!
+						socket.SysMessage( GetDictionaryEntry( 1346, socket.language ) ); //The poison was cured!
 					}
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 1344, socket.Language ) ); //The potion had no effect.
+					socket.SysMessage( GetDictionaryEntry( 1344, socket.language ) ); //The potion had no effect.
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
@@ -80,11 +80,11 @@ function onUseChecked( pUser, iUsed )
 				var pRegion = pUser.region;
 				if( pRegion.isSafeZone )
 				{
-					socket.SysMessage( GetDictionaryEntry( 1799, socket.Language ) ); // Hostile actions are not permitted in this safe area.
+					socket.SysMessage( GetDictionaryEntry( 1799, socket.language ) ); // Hostile actions are not permitted in this safe area.
 				}
 				else if( pRegion.isGuarded )
 				{
-					socket.SysMessage( GetDictionaryEntry( 1347, socket.Language ) ); //You can't use that in town!
+					socket.SysMessage( GetDictionaryEntry( 1347, socket.language ) ); //You can't use that in town!
 					return false;
 				}
 				else
@@ -94,7 +94,7 @@ function onUseChecked( pUser, iUsed )
 					DoTempEffect( 0, pUser, pUser, 16, 0, 2, 2 );
 					DoTempEffect( 0, pUser, pUser, 16, 0, 3, 1 );
 					DoTempEffect( 1, pUser, iUsed, 17, 0, 4, 0 );
-					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.Language ) ); //Now would be a good time to throw it!
+					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
 				}
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
@@ -104,15 +104,15 @@ function onUseChecked( pUser, iUsed )
 				{
 					case 1:
 						pUser.health = (pUser.health + 5 + RandomNumber( 1, 5 ));
-						pUser.SysMessage( GetDictionaryEntry( 1349, socket.Language ) ); //You feel a little better!
+						pUser.SysMessage( GetDictionaryEntry( 1349, socket.language ) ); //You feel a little better!
 						break;
 					case 2:
 						pUser.health = (pUser.health + 15 + RandomNumber( 1, 10 ));
-						pUser.SysMessage( GetDictionaryEntry( 1350, socket.Language ) ); //You feel better!
+						pUser.SysMessage( GetDictionaryEntry( 1350, socket.language ) ); //You feel better!
 						break;
 					case 3:
 						pUser.health = (pUser.health + 20 + RandomNumber( 1, 20 ));
-						pUser.SysMessage( GetDictionaryEntry( 1351, socket.Language ) ); //You feel much better!
+						pUser.SysMessage( GetDictionaryEntry( 1351, socket.language ) ); //You feel much better!
 						break;
 					default:
 						break;
@@ -127,27 +127,27 @@ function onUseChecked( pUser, iUsed )
 				pUser.SoundEffect( 0x01E3, true );
 				DoTempEffect( 0, pUser, pUser, 2, 0, 0, 0 );
 				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion				
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 6:		// Poison Potion
 				if( pUser.poison < iUsed.morez )
 					pUser.SetPoisoned( iUsed.morez, 180*1000 );
-				
+
 				pUser.SoundEffect( 0x0246, true );
-				socket.SysMessage( GetDictionaryEntry( 1352, socket.Language ) ); //You poisoned yourself! *sigh*
+				socket.SysMessage( GetDictionaryEntry( 1352, socket.language ) ); //You poisoned yourself! *sigh*
 				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion				
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 7:		// Refresh Potion
 				switch( iUsed.morez )
 				{
 					case 1:
 						pUser.stamina = (pUser.stamina + 20 + RandomNumber( 1, 10 ));
-						socket.SysMessage( GetDictionaryEntry( 1353, socket.Language ) ); //You feel more energetic!
+						socket.SysMessage( GetDictionaryEntry( 1353, socket.language ) ); //You feel more energetic!
 						break;
 					case 2:
 						pUser.stamina = (pUser.stamina + 40 + RandomNumber( 1, 30 ));
-						socket.SysMessage( GetDictionaryEntry( 1354, socket.Language ) ); //You feel much more energetic!
+						socket.SysMessage( GetDictionaryEntry( 1354, socket.language ) ); //You feel much more energetic!
 						break;
 					default:
 						break;
@@ -155,18 +155,18 @@ function onUseChecked( pUser, iUsed )
 				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
 				pUser.SoundEffect( 0x01F2, true );
 				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion			
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 8:		// Strength Potion
 				switch( iUsed.morez )
 				{
 					case 1:
 						DoTempEffect( 0, pUser, pUser, 8, (5 + RandomNumber( 1, 10 )), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1355, socket.Language ) ); //You feel stronger!
+						socket.SysMessage( GetDictionaryEntry( 1355, socket.language ) ); //You feel stronger!
 						break;
 					case 2:
 						DoTempEffect( 0, pUser, pUser, 8, (10 + RandomNumber( 1, 20 )), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1356, socket.Language ) ); //You feel much stronger!
+						socket.SysMessage( GetDictionaryEntry( 1356, socket.language ) ); //You feel much stronger!
 						break;
 					default:
 						break;
@@ -247,7 +247,7 @@ function onCallback0( socket, ourObj )
 		else
 		{
 			// Disallow explosion effect from potion, some targets are in safe zone
-			socket.SysMessage( GetDictionaryEntry( 1799, socket.Language ) ); // Hostile actions are not permitted in this safe area.
+			socket.SysMessage( GetDictionaryEntry( 1799, socket.language ) ); // Hostile actions are not permitted in this safe area.
 			iUsed.Delete();
 		}
 	}

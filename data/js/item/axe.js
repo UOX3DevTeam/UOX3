@@ -6,12 +6,12 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1763, socket.Language )); // That item must be in your backpack before it can be used.
+			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 			return false;
 		}
 		else if( iUsed.type != 15 )
 		{
-			var targMsg = GetDictionaryEntry( 443, socket.Language );
+			var targMsg = GetDictionaryEntry( 443, socket.language ); // What would you like to use that on?
 			socket.CustomTarget( 1, targMsg );
 		}
 		else
@@ -57,13 +57,13 @@ function onCallback1( socket, ourObj )
 						{
 							if( ourObj.itemsinside > 0 )
 							{
-								socket.SysMessage( GetDictionaryEntry( 1964, socket.Language )); // You must empty the strongbox before you can destroy it!
+								socket.SysMessage( GetDictionaryEntry( 1964, socket.language )); // You must empty the strongbox before you can destroy it!
 								return;
 							}
 							else
 							{
 								socket.SoundEffect( 0x3B3, true);
-								socket.SysMessage( GetDictionaryEntry( 1965, socket.Language )); // You destroy the item.
+								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
 								ourObj.Delete();
 							}
 						}
@@ -77,20 +77,20 @@ function onCallback1( socket, ourObj )
 						if( objMulti.IsOnOwnerList( socket.currentChar ))
 						{
 							if( objMulti.IsSecureContainer( ourObj ))
-								socket.SysMessage( GetDictionaryEntry( 1966, socket.Language )); // You must unsecure the trash barrel before you can destroy it!
+								socket.SysMessage( GetDictionaryEntry( 1966, socket.language )); // You must unsecure the trash barrel before you can destroy it!
 							else
 							{
 								socket.SoundEffect( 0x3B3, true);
-								socket.SysMessage( GetDictionaryEntry( 1965, socket.Language )); // You destroy the item.
+								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
 								objMulti.RemoveTrashCont( ourObj );
 								ourObj.Delete();
 							}
 						}
 						else
-							socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+							socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 					}
 					else
-						socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+						socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 				}
 				else if( ourObj.type == 201 )
 				{
@@ -110,14 +110,14 @@ function onCallback1( socket, ourObj )
 
 					var objMulti = addonParent.multi;
 					if( !ValidateObject( objMulti ))
-						socket.SysMessage( GetDictionaryEntry( 1969, socket.Language )); // This house add-on does not appear to be in a house.
+						socket.SysMessage( GetDictionaryEntry( 1969, socket.language )); // This house add-on does not appear to be in a house.
 					else if( !objMulti.IsOwner( mChar ))
-						socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+						socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 					else
 					{
 						objMulti.ReleaseItem( addonParent );
 						var lockdownsLeft = objMulti.maxLockdowns - objMulti.lockdowns;
-						socket.SysMessage( GetDictionaryEntry( 1902, socket.Language ), lockdownsLeft ); // You release the item (%i lockdown(s) remaining).
+						socket.SysMessage( GetDictionaryEntry( 1902, socket.language ), lockdownsLeft ); // You release the item (%i lockdown(s) remaining).
 
 						var addonDeed = addonParent.GetTag( "deed" );
 						if( addonDeed )
@@ -125,7 +125,7 @@ function onCallback1( socket, ourObj )
 							var newDeed = CreateDFNItem( socket, socket.currentChar, addonDeed, 1, "ITEM", true );
 							if( newDeed )
 							{
-								socket.SysMessage( GetDictionaryEntry( 1970, socket.Language )); // A deed for the house add-on has been placed in your backpack.
+								socket.SysMessage( GetDictionaryEntry( 1970, socket.language )); // A deed for the house add-on has been placed in your backpack.
 							}
 						}
 
@@ -155,13 +155,13 @@ function onCallback1( socket, ourObj )
 				else if( tileID == 0x2006 )
 					CarveCorpse( socket, mChar, ourObj );
 				else
-					socket.SysMessage( GetDictionaryEntry( 1968, socket.Language )); // You cannot carve that.
+					socket.SysMessage( GetDictionaryEntry( 1968, socket.language )); // You cannot carve that.
 			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+				socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 1967, socket.Language )); // You cannot chop that.
+			socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 	}
 }
 
@@ -171,19 +171,19 @@ function BowCraft( socket, mChar, ourObj, tileID )
 	if( ownerObj && mChar.serial == ownerObj.serial )
 		socket.MakeMenu( 49, 8 );
 	else
-		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) ); // You can't use lumber outside your backpack.
+		socket.SysMessage( GetDictionaryEntry( 781, socket.language ) ); // You can't use lumber outside your backpack.
 }
 
 function ChopTree( socket, mChar )
 {
 	if( mChar.skillsused.lumberjacking )
 	{
-		socket.SysMessage( GetDictionaryEntry( 1971, socket.Language ) ); // You are too busy to do that.
+		socket.SysMessage( GetDictionaryEntry( 1971, socket.language ) ); // You are too busy to do that.
 		return;
 	}
 	if( !CheckDistance( socket, mChar ) )
 	{
-		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); // That is too far away.
+		socket.SysMessage( GetDictionaryEntry( 393, socket.language ) ); // That is too far away.
 		return;
 	}
 
@@ -193,7 +193,7 @@ function ChopTree( socket, mChar )
 	RegenerateLog( mResource, socket );
 	if( mResource.logAmount <= 0 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 840, socket.Language ) ); // There is no more wood here to chop.
+		socket.SysMessage( GetDictionaryEntry( 840, socket.language ) ); // There is no more wood here to chop.
 		return;
 	}
 
@@ -230,7 +230,7 @@ function onTimer( mChar, timerID )
 		{
 			if( !CheckDistance( socket, mChar ) )
 			{
-				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); // That is too far away.
+				socket.SysMessage( GetDictionaryEntry( 393, socket.language ) ); // That is too far away.
 				return;
 			}
 			var mResource = ResourceRegion( socket.clickX, socket.clickY, mChar.worldnumber );
@@ -241,11 +241,11 @@ function onTimer( mChar, timerID )
 			{
 				mResource.logAmount = mResource.logAmount-1;
 				CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
-				socket.SysMessage( GetDictionaryEntry( 1435, socket.Language ) ); // You place some logs in your pack.
+				socket.SysMessage( GetDictionaryEntry( 1435, socket.language ) ); // You place some logs in your pack.
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 842, socket.Language ) ); // =You chop for a while, but fail to produce any usable wood.
+				socket.SysMessage( GetDictionaryEntry( 842, socket.language ) ); // =You chop for a while, but fail to produce any usable wood.
 				if( RandomNumber( 0, 1 ) )	// 50% chance to destroy some resources
 					mResource.logAmount = mResource.logAmount-1;
 			}
@@ -256,7 +256,7 @@ function onTimer( mChar, timerID )
 		{
 			if( !CheckDistance( socket, mChar ) )
 			{
-				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) ); // That is too far away.
+				socket.SysMessage( GetDictionaryEntry( 393, socket.language ) ); // That is too far away.
 				mChar.skillsused.lumberjacking = false;
 				return;
 			}
@@ -319,8 +319,8 @@ function CarveCorpse( socket, mChar, ourObj )
 				ourObj.Carve( socket );
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 1051, socket.Language )); // You carve the corpse but find nothing useful.
+			socket.SysMessage( GetDictionaryEntry( 1051, socket.language )); // You carve the corpse but find nothing useful.
 	}
 	else
-		socket.SysMessage( GetDictionaryEntry( 393, socket.Language )); // That is too far away.
+		socket.SysMessage( GetDictionaryEntry( 393, socket.language )); // That is too far away.
 }

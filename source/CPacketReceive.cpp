@@ -2237,7 +2237,8 @@ void CPITalkRequestUnicode::Receive( void )
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
 
-	tSock->Language( FindLanguage( tSock, 8 ) );
+	if( tSock->Language() == ZERO )
+		tSock->Language( FindLanguage( tSock, 8 ) );
 
 	CChar *mChar	= tSock->CurrcharObj();
 	mChar->setUnicode( true );

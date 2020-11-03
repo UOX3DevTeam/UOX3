@@ -161,9 +161,9 @@ function PreventMultiAccess( iMulti, charEntering, ejectReason, dictEntry )
 	if( charEntering.online )
 	{
 		if( ejectReason == 0 )
-			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.Language )); // You are banned from that location
+			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.language )); // You are banned from that location
 		else if( ejectReason == 1 )
-			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.Language )); // This is a private home
+			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.language )); // This is a private home
 	}
 }
 

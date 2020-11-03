@@ -14,7 +14,7 @@ function command_SET( socket, cmdString )
 			var uKey = splitString[0].toUpperCase();
 			if( uKey != "OWNER" ) // SET OWNER requires no additional arguments
 			{
-				socket.SysMessage( GetDictionaryEntry( 1755, socket.Language )); //Additional arguments required
+				socket.SysMessage( GetDictionaryEntry( 1755, socket.language )); //Additional arguments required
 				return;
 			}
 		}
@@ -463,6 +463,13 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.hunger = nVal;
 		okMsg( socket );
 		break;
+	case "LANGUAGE":
+		if( !ourChar.npc && ourChar.online )
+		{
+			ourChar.socket.language = nVal;
+			okMsg ( socket );
+		}
+		break;
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
@@ -487,7 +494,7 @@ function command_SETPOISONED( socket, cmdString )
 {
 	if( cmdString )
 	{
-		var targMsg = GetDictionaryEntry( 240, socket.Language );
+		var targMsg = GetDictionaryEntry( 240, socket.language );
 		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 2, targMsg );
 	}
@@ -506,5 +513,5 @@ function onCallback2( socket, ourObj )
 
 function okMsg( socket )
 { //Sends verification to the player that the specified value was successfully set.
-	socket.SysMessage( GetDictionaryEntry( 1756, socket.Language ));
+	socket.SysMessage( GetDictionaryEntry( 1756, socket.language ));
 }

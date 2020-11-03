@@ -9,12 +9,12 @@ function onSkill( pUser, objType, skillUsed )
 	if( pSock )
 	{
 		if( pUser.isonhorse )
-			pSock.SysMessage( GetDictionaryEntry( 837, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 837, pSock.language ) );
 		else if( pUser.visible != 1 )
-			pSock.SysMessage( GetDictionaryEntry( 836, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 836, pSock.language ) );
 		else if( pUser.skills.hiding < 700 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 838, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 838, pSock.language ) );
 			pUser.visible = 0;
 			pUser.stealth = -1;
 		}
@@ -25,7 +25,7 @@ function onSkill( pUser, objType, skillUsed )
 		}
 		else
 		{
-			pSock.SysMessage( GetDictionaryEntry( 839, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 839, pSock.language ) );
 			pUser.visible = 1;
 			pUser.stealth = 0;
 		}

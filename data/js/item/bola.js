@@ -7,7 +7,7 @@ function onUseChecked( pUser, iUsed )
 		//Check to see if it's locked down
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.Language ) ); //That is locked down and you cannot use it
+			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
 			return false;
 		}
 		var itemOwner = GetPackOwner( iUsed, 0 );
@@ -22,13 +22,13 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 		if(pUser.GetTag("bola") == null || pUser.GetTag("bola") == 0)
-		{ 
+		{
 			socket.tempObj = iUsed;
 			pUser.SetTag("bola", 1);
-			
+
 			//the addition of the false-flag in the TextMessage below tells the server to only
 			//send the message to this character
-			pUser.TextMessage("* You begin to swing the bola...*", false ); 
+			pUser.TextMessage("* You begin to swing the bola...*", false );
 			pUser.StartTimer(3000, 0, true);
 		}
 		else if(pUser.GetTag("bola") == 1)

@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 860, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 860, pSock.language ) );
 
 	return true;
 }
@@ -21,7 +21,7 @@ function onCallback0( pSock, ourObj )
 		var detectRange   = parseInt((((15 - 1) / 1000) * pUser.skills.detectinghidden) + 1);
 		var detectCounter = AreaCharacterFunction( "DetectHiddenLoop", pUser, detectRange, pSock );
 		if( detectCounter != 0 )
-			pSock.SysMessage( GetDictionaryEntry( 1437, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1437, pSock.language ) );
 	}
 }
 
@@ -42,7 +42,7 @@ function DetectHiddenLoop( srcChar, trgChar, pSock )
 			trgChar.stealth = -1;
 			var tSock = trgChar.socket;
 			if( tSock )
-				tSock.SysMessage( GetDictionaryEntry( 1436, tSock.Language ) );
+				tSock.SysMessage( GetDictionaryEntry( 1436, tSock.language ) );
 			return true;
 		}
 		else
@@ -63,7 +63,7 @@ function DetectHiddenLoop( srcChar, trgChar, pSock )
 				trgChar.stealth = -1;
 				var tSock = trgChar.socket;
 				if( tSock )
-					tSock.SysMessage( GetDictionaryEntry( 1436, tSock.Language ) );
+					tSock.SysMessage( GetDictionaryEntry( 1436, tSock.language ) );
 				return true;
 			}
 		}

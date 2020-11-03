@@ -7,10 +7,10 @@ function onUseChecked( pUser, iUsed )
 		if( pOwner && pOwner.serial == pUser.serial )
 		{
 			pSock.tempObj = iUsed;
-			pSock.CustomTarget( 0, GetDictionaryEntry( 477, pSock.Language ) );
+			pSock.CustomTarget( 0, GetDictionaryEntry( 477, pSock.language ) );
 		}
 		else
-			pSock.SysMessage( GetDictionaryEntry( 775, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 775, pSock.language ) );
 	}
 	return false;
 }
@@ -27,18 +27,18 @@ function onCallback0( pSock, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 962, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 962, pSock.language ) );
 			return;
 		}
 		if( ourObj.serial == bItem.serial )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 958, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 958, pSock.language ) );
 			return;
 		}
 
 		var pOwner = GetPackOwner( ourObj, 0 );
 		if( pOwner && pOwner.serial == pUser.serial )
-		{	
+		{
 			var useID = bItem.id;
 			var resID = ourObj.id;
 			switch( useID )
@@ -59,17 +59,17 @@ function onCallback0( pSock, ourObj )
 		}
 		else
 		{
-			pSock.SysMessage( GetDictionaryEntry( 963, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 963, pSock.language ) );
 			return;
 		}
 
 		if( canCombine )
 		{
 			if( !pUser.CheckSkill( 37, 0, 1000 ) )
-				pSock.SysMessage( GetDictionaryEntry( 959, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 959, pSock.language ) );
 			else
 			{
-				pSock.SysMessage( GetDictionaryEntry( 960, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 960, pSock.language ) );
 				if( ourObj.amount > 1 )
 					ourObj.amount = ourObj.amount - 1;
 				else

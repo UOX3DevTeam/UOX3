@@ -56,7 +56,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
       	if( goldAmount > 0 )
       	{
 			var newGold = CreateDFNItem( pSocket, pDropper, "0x0EED", goldAmount, "ITEM", true );
-			var outMessage = GetDictionaryEntry( 1938, pSocket.Language ); // The trash container disposes of unwanted junk and spits out %i gold coins in return!
+			var outMessage = GetDictionaryEntry( 1938, pSocket.language ); // The trash container disposes of unwanted junk and spits out %i gold coins in return!
 			iDroppedOn.TextMessage( outMessage.replace(/%i/gi, goldAmount ), false, 0x7ef, 0, pDropper.serial );
       	}
 	    else
@@ -96,7 +96,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 
 		// Start timer for deleting items in trash container
 		iDroppedOn.StartTimer( trashDisposeTimer, 1, true );
-		var outMessage = GetDictionaryEntry( 1939, pSocket.Language ); // The item will be deleted in %i minutes.
+		var outMessage = GetDictionaryEntry( 1939, pSocket.language ); // The item will be deleted in %i minutes.
 		var timeToDisposal = (trashDisposeTimer / 1000 / 60);
 		iDroppedOn.TextMessage( outMessage.replace(/%i/gi, timeToDisposal ), false, 0x7ef, 0, pDropper.serial );
    	}

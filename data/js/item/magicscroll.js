@@ -7,7 +7,7 @@ function onUseChecked( pUser, iUsed ) // Handling for using a Magic Scroll
 		var iMulti = iUsed.multi;
 		if( !ValidateObject( iMulti ) || ( !iMulti.IsOnOwnerList( pUser ) && !iMulti.IsOnFriendList( pUser )))
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1032, pSock.Language )); // That is not yours!
+			pSock.SysMessage( GetDictionaryEntry( 1032, pSock.language )); // That is not yours!
 			return false;
 		}
 	}

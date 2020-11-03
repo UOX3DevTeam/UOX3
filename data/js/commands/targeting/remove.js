@@ -14,7 +14,7 @@ function command_REMOVE( socket, cmdString )
 	}
 	else
 	{
-		var targMsg = GetDictionaryEntry( 188, socket.Language );
+		var targMsg = GetDictionaryEntry( 188, socket.language );
 		socket.CustomTarget( 0, targMsg );
 	}
 }
@@ -68,7 +68,7 @@ function onCallback0( socket, ourObj )
 
 function command_DELETECHAR( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 1618, socket.Language );
+	var targMsg = GetDictionaryEntry( 1618, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 

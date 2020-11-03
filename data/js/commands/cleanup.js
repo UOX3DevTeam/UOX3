@@ -5,9 +5,9 @@ function CommandRegistration()
 
 function command_CLEANUP( socket, cmdString )
 {
-	socket.SysMessage( GetDictionaryEntry( 83, socket.Language ) );
+	socket.SysMessage( GetDictionaryEntry( 83, socket.language ) );
 	var count = IterateOver( "ITEM" );
-	socket.SysMessage( GetDictionaryEntry( 84, socket.Language ) );
+	socket.SysMessage( GetDictionaryEntry( 84, socket.language ) );
 	socket.SysMessage( count.toString() + " corpses or gates have been deleted" );
 }
 
