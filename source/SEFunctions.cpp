@@ -2881,7 +2881,9 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	}
 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	char *subFolderName = (argc == 2 ? JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) : "" );
+	char *subFolderName = "\0";
+	if( argc == 2 )
+		subFolderName = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 
 	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ) )
 	{
