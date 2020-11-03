@@ -81,6 +81,7 @@ void	doLight( CChar *mChar, UI08 level );
 // Amount related
 //o-----------------------------------------------------------------------------------------------o
 UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000 );
+UI32	GetTotalItemCount( CItem *objCont );
 UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
 UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
 UI32	GetBankCount( CChar *p, UI16 itemID, UI16 realColour = 0x0000 );

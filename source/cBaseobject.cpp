@@ -814,6 +814,12 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 			multis->RemoveFromMulti( this );
 			if( fireTrigger )
 			{
+				// First, trigger the onEntrance event for the multi an object is removed from
+				cScript *onMultiLeaving = JSMapping->GetScript( multis->GetScriptTrigger() );
+				if( onMultiLeaving != NULL )
+					onMultiLeaving->OnLeaving( multis, this );
+
+				// Then, trigger the same event for the object being removed
 				cScript *onLeaving = JSMapping->GetScript( GetScriptTrigger() );
 				if( onLeaving != NULL )
 					onLeaving->OnLeaving( multis, this );
@@ -844,6 +850,12 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 			multis->AddToMulti( this );
 			if( fireTrigger )
 			{
+				// First, trigger the onEntrance script attached to the multi, if any
+				cScript *onMultiEntrance = JSMapping->GetScript( multis->GetScriptTrigger() );
+				if( onMultiEntrance != NULL )
+					onMultiEntrance->OnEntrance( multis, this );
+
+				// Then, trigger the onEntrance script attached to the object entering the multi
 				cScript *onEntrance = JSMapping->GetScript( GetScriptTrigger() );
 				if( onEntrance != NULL )
 					onEntrance->OnEntrance( multis, this );

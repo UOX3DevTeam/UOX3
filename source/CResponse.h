@@ -12,6 +12,8 @@ enum TriggerWords
 	TW_QUESTTAKE		= 0x001E,		// I will take thee
 	TW_HOUSELOCKDOWN	= 0x0023,		// I wish to lock this down
 	TW_HOUSERELEASE		= 0x0024,		// I wish to release this
+	TW_HOUSESECURE		= 0x0025,		// I wish to secure this
+	TW_HOUSESTRONGBOX	= 0x0027,		// I wish to place a strongbox
 	TW_RESIGN			= 0x002A,		// I resign from my guild
 	TW_KILLS			= 0x0032,		// I must consider my sins
 	TW_HOUSEEJECT		= 0x0033,		// Remove Thyself
@@ -49,6 +51,7 @@ enum TriggerWords
 
 	TW_FOLLOW2			= 0x00E8,		// Follow
 	TW_GOLD				= 0x0134,		// Gold
+	TW_TRASHBARREL		= 0x013E,		// I wish to place a trash barrel
 	TW_VENDORSELL		= 0x014D,		// Vendor Sell
 	TW_COME				= 0x0155,		// Come
 	TW_FETCH			= 0x0157,		// Fetch

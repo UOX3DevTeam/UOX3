@@ -14,13 +14,13 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 389, socket.Language ) ); // That is too far away and you cannot reach it.
 			return false;
 		}
-		socket.tempObj = iUsed;		
+		socket.tempObj = iUsed;
 		pUser.socket.CustomTarget( 0, "What should I use these scissors on?" );
 	}
 	return false;
 }
 
-function onCallback0( pSock, myTarget ) 
+function onCallback0( pSock, myTarget )
 {
 	var pUser 	= pSock.currentChar;
 	var StrangeByte	= pSock.GetWord( 1 );
@@ -57,7 +57,7 @@ function onCallback0( pSock, myTarget )
 			{
 				pSock.SysMessage( "Locked down resources cannot be used!" );
 				return;
-			} 
+			}
 
 			var iPackOwner = GetPackOwner( myTarget, 0 );
 			if( ValidateObject( iPackOwner ) ) // Is the target item in a backpack?

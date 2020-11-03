@@ -270,16 +270,6 @@ bool CPIGetItem::Handle( void )
 				return true;
 			}
 
-			if( x->IsLockedDown() )
-			{
-				CMultiObj *ourMulti = x->GetMultiObj();
-				if( ValidateObject( ourMulti ) && !ourMulti->IsOwner( ourChar ) )
-				{
-					PickupBounce( tSock );
-					return true;
-				}
-			}
-
 			if( x->isCorpse() )
 			{
 				CChar *corpseTargChar = x->GetOwnerObj();
@@ -295,6 +285,7 @@ bool CPIGetItem::Handle( void )
 	}
 	else
 	{
+		// Picking up item from ground - check that character is in range and can see the item!
 		tSock->PickupSpot( PL_GROUND );
 		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
 		if( !ourChar->IsGM() && ( !objInRange( ourChar, i, DIST_NEARBY ) || !LineOfSight( tSock, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS, true )))
@@ -381,6 +372,8 @@ bool CPIGetItem::Handle( void )
 			{
 				c->IncAmount( -amount );
 				c->SetCont( i->GetCont() );
+				
+				c->SetLocation( c->GetX(), c->GetY(), c->GetZ(), 0, c->WorldNumber(), c->GetInstanceID() );
 			}
 			i->SetAmount( amount );
 		}
@@ -840,19 +833,37 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 	if( !ValidateObject( mChar ) )
 		return false;
 
-	if( !Weight->checkCharWeight( mChar, targChar, i ) )
+	CItem *packItem = targChar->GetPackItem();
+	if( ValidateObject( packItem ) )
 	{
-		mSock->sysmessage( 1743 );
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, i );
-		Bounce( mSock, i );
-		return false;
+		// Can character's backpack hold any more items?
+		if( mSock->PickupSpot() != PL_OWNPACK && ( GetTotalItemCount( packItem ) >= packItem->GetMaxItems() ||
+			GetTotalItemCount( packItem ) + std::max( static_cast<UI32>(1), 1 + GetTotalItemCount( i )) > packItem->GetMaxItems() ))
+		{
+			mSock->sysmessage( 1818 ); // The container is already at capacity.
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, i );
+			Bounce( mSock, i );
+			return false;
+		}
+
+		// Can character's backpack hold any more weight?
+		if( !Weight->checkCharWeight( mChar, targChar, i ) )
+		{
+			mSock->sysmessage( 1743 );
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, i );
+			Bounce( mSock, i );
+			return false;
+		}
+
+		if( !targChar->IsNpc() )
+			return DropOnPC( mSock, mChar, targChar, i );
+
+		return DropOnNPC( mSock, mChar, targChar, i );
 	}
+	return false;
 
-	if( !targChar->IsNpc() )
-		return DropOnPC( mSock, mChar, targChar, i );
-
-	return DropOnNPC( mSock, mChar, targChar, i );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -925,6 +936,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	}
 	else
 	{
+		// Dropped on a character
 		CChar *t = calcCharObjFromSer( dest );
 		if( ValidateObject( t ) )
 			stackDeleted = DropOnChar( mSock, t, i );
@@ -943,15 +955,21 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( nChar, i );
 
-		if( i->isDecayable() )
-			i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-
 		if( nChar->GetMultiObj() != NULL )
 		{
 			CMultiObj *multi = findMulti( i );
 			if( ValidateObject( multi ) )
+			{
+				if( i->isDecayable() )
+					i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE ) );
 				i->SetMulti( multi );
+			}
+			else if( i->isDecayable() )
+				i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 		}
+		else if( i->isDecayable() )
+			i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+
 		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
 	// IF client-version is above 6.0.1.7, send approval packet for dropping item. If not, don't.
@@ -991,6 +1009,23 @@ void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CIt
 				Effects->itemSound( tw2Sock, &tradeWindowOne, ( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND ) );
 		}
 	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ValidateLockdownAccess( CChar *mChar, CSocket *mSock, CItem *itemToCheck, bool checkFriend )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if player has access to a locked down item as an owner, co-owner or friend
+//o-----------------------------------------------------------------------------------------------o
+bool ValidateLockdownAccess( CChar *mChar, CSocket *mSock, CItem *itemToCheck, bool checkFriend )
+{
+	CMultiObj *iMulti = itemToCheck->GetMultiObj();
+	if( ValidateObject( iMulti ) && !iMulti->IsOwner( mChar ) && !iMulti->IsOnOwnerList( mChar ) 
+		&& ( checkFriend && !iMulti->IsOnFriendList( mChar )))
+	{
+		mSock->sysmessage( 1032 ); // This is not yours!
+		return false;
+	}
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1078,6 +1113,15 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 //o-----------------------------------------------------------------------------------------------o
 bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted )
 {
+	// Check if player is allowed to drop item on a locked down stack of items
+	if( droppedOn.IsLockedDown() && !ValidateLockdownAccess( &mChar, &mSock, &droppedOn, true ) )
+	{
+		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( &mChar, &iDropped );
+		Bounce( &mSock, &iDropped );
+		return false;
+	}
+
 	bool canHold = true;
 	if( droppedOn.GetCont() != NULL )
 	{
@@ -1180,6 +1224,34 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			return false;
 		}
 	}
+
+	// Check if player is allowed to drop item on container
+	if( droppedOn.IsLockedDown() )
+	{
+		auto iMultiObj = droppedOn.GetMultiObj();
+		if( ValidateObject( iMultiObj ) && iMultiObj->IsSecureContainer( &droppedOn ) )
+		{
+			if( !ValidateLockdownAccess( &mChar, &mSock, &droppedOn, true ) )
+			{
+				if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( &mChar, &iDropped );
+				Bounce( &mSock, &iDropped );
+				return false;
+			}
+		}
+	}
+
+	// Check if container can hold more items
+	if( mSock.PickupSpot() != PL_OWNPACK && ( GetTotalItemCount( &droppedOn ) >= droppedOn.GetMaxItems() ||
+		GetTotalItemCount( &droppedOn ) + std::max(static_cast<UI32>(1), 1 + GetTotalItemCount( &iDropped )) > droppedOn.GetMaxItems() ))
+	{
+		mSock.sysmessage( 1818 ); // The container is already at capacity.
+		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( &mChar, &iDropped );
+		Bounce( &mSock, &iDropped );
+		return false;
+	}
+
 	if( mSock.GetByte( 5 ) != 0xFF )	// In a specific spot in a container
 	{
 		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
@@ -1201,7 +1273,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		CPToolTip pSend(droppedOn.GetSerial());
 		mSock.Send(&pSend);
 	}
-	else
+	else // Drop directly on a container, placing it randomly inside
 	{
 		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
 		{
@@ -1855,10 +1927,20 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			{
 				if( baseCont->CanBeObjType( OT_ITEM ) )
 				{
-					if( baseCont->GetMultiObj() == NULL || mChar->GetMultiObj() == baseCont->GetMultiObj() )
+					CMultiObj * baseContMultiObj = baseCont->GetMultiObj();
+
+					if( baseContMultiObj == NULL || mChar->GetMultiObj() == baseContMultiObj )
 					{
-						mSock->openPack( iUsed );
-						packOpened = true;
+						if( baseContMultiObj && baseContMultiObj->IsSecureContainer( static_cast<CItem *>( baseCont ) ) && !mChar->GetMultiObj()->IsOnOwnerList( mChar ) )
+						{
+							mSock->sysmessage( "That container is secure. You cannot use this unless you are the owner." );
+							return true;
+						}
+						else
+						{
+							mSock->openPack( iUsed );
+							packOpened = true;
+						}
 					}
 				}
 				else
@@ -1959,6 +2041,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				Books->OpenBook( mSock, iUsed, ( iUsed->GetTempVar( CITV_MOREX ) == 666 ) );
 			return true;
 		case IT_MAGICWAND: // Magic Wands
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			if( iUsed->GetTempVar( CITV_MOREZ ) != 0 )
 			{
 				mSock->CurrentSpellType( 2 );
@@ -1980,6 +2066,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_TOWNSTONE: // Townstone and Townstone Deed
 			if( itemID == 0x14F0 )		// Check for Deed
 			{
+				// If item is locked down, check if player has access to use it
+				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+					return true;
+
 				Items->CreateScriptItem( NULL, mChar, "townstone", 1, OT_ITEM );
 				iUsed->Delete();
 			}
@@ -1995,6 +2085,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 431 );
 			else
 			{
+				// If item is locked down, check if player has access to use it
+				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+					return true;
+
 				mSock->sysmessage( 432 );
 				mChar->SetSpeechItem( iUsed );
 				mChar->SetSpeechMode( 7 );
@@ -2027,7 +2121,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 399 );
 			return true;
 		case IT_FIREWORKSWAND: //Fireworks wands
-			//srand( cwmWorldState->GetUICurrentTime() );
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			if( iUsed->GetTempVar( CITV_MOREX ) == 0 )
 			{
 				mSock->sysmessage( 396 );
@@ -2055,6 +2152,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			return true;
 		case IT_RENAMEDEED: // Rename Deed
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+				return true;
+
 			mChar->SetSpeechItem( iUsed );
 			mChar->SetSpeechMode( 6 );
 			mSock->sysmessage( 434 );
@@ -2066,10 +2167,18 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( ValidateObject( boat ) )
 					ModelBoat( mSock, boat );
 			}
+			else
+			{
+				mSock->sysmessage( "You must be onboard the boat to use this." );
+			}
 			return true;
 		case IT_GUILDSTONE:	// Guildstone Deed
 			if( itemID == 0x14F0 || itemID == 0x1869 )	// Check for Deed/Teleporter + Guild Type
 			{
+				// If item is locked down, check if player has access to use it
+				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+					return true;
+
 				mChar->SetSpeechItem( iUsed );		// we're using this as a generic item
 				GuildSys->PlaceStone( mSock, iUsed );
 				return true;
@@ -2086,7 +2195,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			else
 				Console << "Unhandled guild item type named: " << iUsed->GetName() << " with ID of: " << itemID << myendl;
 			return true;
-		case IT_HOUSESIGN: // Open Housing Gump
+		/*case IT_HOUSESIGN: // Open Housing Gump
 			bool canOpen;
 			canOpen = (  iUsed->GetOwnerObj() == mChar || mChar->IsGM() );
 			if( !canOpen && iUsed->GetTempVar( CITV_MOREZ ) == 0 )
@@ -2099,8 +2208,12 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREZ ) );
 			else
 				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREX ) );
-			return true;
+			return true;*/
 		case IT_METALREPAIRTOOL:
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_REPAIRMETAL, 485 );	// What do we wish to repair?
 			return true;
@@ -2109,11 +2222,19 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			mSock->target( 0, TARGET_SMELT, 440 );
 			return true;
 		case IT_DYE:	// Dye
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+				return true;
+
 			mSock->TempObj( iUsed );
 			mSock->DyeAll( 0 );
 			mSock->target( 0, TARGET_DYEALL, 441 );
 			return true;
 		case IT_DYEVAT:	// Dye vat
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			mSock->TempObj( iUsed );
 			mSock->AddID1( iUsed->GetColour( 1 ) );
 			mSock->AddID2( iUsed->GetColour( 2 ) );
@@ -2122,13 +2243,22 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_MODELMULTI:	// Model boat/Houses
 			if( iType != IT_TOWNSTONE && iType != IT_GUILDSTONE )
 			{
+				// If item is locked down, check if player has access to use it
+				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+					return true;
+
 				if( iUsed->GetTempVar( CITV_MOREX ) == 0 )
 					break;
+
 				mChar->SetSpeechItem( iUsed );
 				DoHouseTarget( mSock, static_cast<UI08>(iUsed->GetTempVar( CITV_MOREX )) );
 			}
 			return true;
 		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+				return true;
+
 			CChar *m;
 			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), mChar->GetInstanceID() );
 			m->SetNPCAiType( AI_PLAYERVENDOR );
@@ -2139,14 +2269,26 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			m->TextMessage( mSock, 388, TALK, false, m->GetName().c_str() );
 			return true;
 		case IT_SMITHYTOOL:
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_SMITH, 444 );
 			return true;
 		case IT_MININGTOOL:	// Mining
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_MINE, 446 );
 			return true;
 		case IT_EMPTYVIAL:	// empty vial
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			i = mChar->GetPackItem();
 			if( ValidateObject( i ) )
 			{
@@ -2160,6 +2302,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			return true;
 		case IT_ORE:	// smelt ore
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+				return true;
+
 			if( iUsed->GetID() == 0x19B7 && iUsed->GetAmount() < 2 )
 			{
 				mSock->sysmessage( 1814 ); // Too little ore to smelt!
@@ -2206,6 +2352,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 466 );
 			return true;
 		case IT_FISHINGPOLE:	// fishing
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
+				return true;
+
 			if( mSock->GetTimer( tPC_FISHING ) )
 				mSock->sysmessage( 467 );
 			else
@@ -2218,6 +2368,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );
 			return true;
 		case IT_HAIRDYE:	// Hair Dye
+			// If item is locked down, check if player has access to use it
+			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
+				return true;
+
 			mSock->TempObj( iUsed );
 			BuildGumpFromScripts( mSock, 6 );
 			return true;
@@ -2716,7 +2870,13 @@ bool CPISingleClick::Handle( void )
 	}
 	tSock->objMessage( temp2, i );
 	if( i->IsLockedDown() )
-		tSock->objMessage( "[Locked down]", i );
+	{
+		auto iMultiObj = i->GetMultiObj();
+		if( ValidateObject( iMultiObj ) && iMultiObj->IsSecureContainer( i ) )
+			tSock->objMessage( "[locked down & secure]", i );
+		else
+			tSock->objMessage( "[locked down]", i );
+	}
 	if( i->isGuarded() )
 		tSock->objMessage( "[Guarded]", i );
 	return true;

@@ -80,6 +80,7 @@ name=forge
 id=0x197e
 weight=10000
 movable=2
+dir=1
 }
 
 [0x1982]
@@ -134,6 +135,7 @@ name=forge
 id=0x198a
 weight=10000
 movable=2
+dir=1
 }
 
 [0x198e]

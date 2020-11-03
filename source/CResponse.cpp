@@ -75,6 +75,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	return ourNpcs;
 }
 
+ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 //o-----------------------------------------------------------------------------------------------o
@@ -115,6 +116,48 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 					case -1:	// no function, so do nothing... NOT handled!
 					default:
 						break;
+				}
+			}
+		}
+	}
+
+	// How about items?
+	if( cwmWorldState->ServerData()->ItemsDetectSpeech() )
+	{
+		CItem *Item			= NULL;
+		ITEMLIST nearbyItems = findNearbyItems( mChar, DIST_INRANGE );
+		for( ITEMLIST_ITERATOR nIter = nearbyItems.begin(); nIter != nearbyItems.end(); ++nIter )
+		{
+			Item = (*nIter);
+			if( !ValidateObject( Item ) )
+				continue;
+
+			if( abs( mChar->GetZ() - Item->GetZ() ) <= 9 )
+			{
+				UI16 speechTrig		= Item->GetScriptTrigger();
+				cScript *toExecute	= JSMapping->GetScript( speechTrig );
+				if( toExecute != NULL )
+				{
+					//|				-1	=> No such function or bad call
+					//|				0	=> Let other NPCs and PCs see it
+					//|				1	=> Let other PCs see it
+					//|				2	=> Let no one else see it
+					SI08 rVal = -1;
+					if( Item->isDisabled() )
+						Item->TextMessage( NULL, 1291, TALK, false );
+					else
+						rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
+					switch( rVal )
+					{
+					case 1:		// No other NPCs to see it, but PCs should
+						return true;
+					case 2:		// no one else to see it
+						return false;
+					case 0:		// Other NPCs and PCs to see it
+					case -1:	// no function, so do nothing... NOT handled!
+					default:
+						break;
+					}
 				}
 			}
 		}
@@ -187,6 +230,18 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
 			case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
 			case TW_HOUSERELEASE:		tResp = new CHouseMultiResponse( TARGET_HOUSERELEASE, 591 );			break;
+			case TW_HOUSESECURE:		tResp = new CHouseMultiResponse( TARGET_HOUSESECURE, 1816 );			break;
+			case TW_HOUSESTRONGBOX:
+			{
+				// Special case because the phrase "I wish to place a strongbox" will also trigger
+				// the triggerword for placing a trash barrel!
+				tResp = new CHouseMultiResponse( TARGET_HOUSESTRONGBOX, -1 );
+				tResp->Handle( mSock, mChar );
+				delete tResp;
+				tResp = NULL;
+				goto endResponseCheck; // :
+			}
+			case TW_TRASHBARREL:		tResp = new CHouseMultiResponse( TARGET_HOUSETRASHBARREL, -1 );			break;
 			case TW_BOATFORWARD:
 			case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
 			case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
@@ -222,6 +277,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			tResp = NULL;
 		}
 	}
+	endResponseCheck:
 	return true;
 }
 
@@ -918,10 +974,23 @@ void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	CMultiObj *realHouse = findMulti( mChar );
 	if( ValidateObject( realHouse ) )
 	{
-		if( realHouse->CanBeObjType( OT_MULTI ) && realHouse->IsOwner( mChar ) )
+		if( realHouse->CanBeObjType( OT_MULTI ))
 		{
-			mSock->TempObj( realHouse );
-			mSock->target( 0, targID, dictEntry );
+			UI16 targTrig		= realHouse->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnHouseCommand( mSock, realHouse, targID ) )
+				{
+					return;
+				}
+			}
+
+			if( realHouse->IsOwner( mChar ) )
+			{
+				mSock->TempObj( realHouse );
+				mSock->target( 0, targID, dictEntry );
+			}
 		}
 	}
 }

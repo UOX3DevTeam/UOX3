@@ -302,7 +302,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOVABLE:		*vp = INT_TO_JSVAL( gPriv->GetMovable() );			break;
 			case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ) );	break;
 			case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
-			case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->GetContainsList()->Num() );		break;
+			case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->GetContainsList()->Num() );	break;
+			case CIP_TOTALITEMCOUNT: *vp = INT_TO_JSVAL( GetTotalItemCount( gPriv ) );	break;
 			case CIP_DECAYABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDecayable() );		break;
 			case CIP_DECAYTIME:		*vp = INT_TO_JSVAL( gPriv->GetDecayTime() );		break;
 			case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
@@ -344,6 +345,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
 			case CIP_WEIGHTMAX:		*vp = INT_TO_JSVAL( gPriv->GetWeightMax() );	break;
 			case CIP_BASEWEIGHT:	*vp = INT_TO_JSVAL( gPriv->GetBaseWeight() );	break;
+			case CIP_MAXITEMS:		*vp = INT_TO_JSVAL( gPriv->GetMaxItems() );		break;
 			case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
 			case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
 			case CIP_DESC:
@@ -405,6 +407,104 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 					*vp = OBJECT_TO_JSVAL( myObj );
 				}
+				break;
+				// The following entries are specifically for CMultiObj objects
+			case CIP_LOCKDDOWNS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetLockdownCount() ) );
+				break;
+			case CIP_MAXLOCKDOWNS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxLockdowns() ) );
+				break;
+			case CIP_TRASHCONTAINERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetTrashContainerCount() ) );
+				break;
+			case CIP_MAXTRASHCONTAINERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxTrashContainers() ) );
+				break;
+			case CIP_SECURECONTAINERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetSecureContainerCount() ) );
+				break;
+			case CIP_MAXSECURECONTAINERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxSecureContainers() ) );
+				break;
+			case CIP_FRIENDS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetFriendCount() ) );
+				break;
+			case CIP_MAXFRIENDS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxFriends() ) );
+				break;
+			case CIP_GUESTS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetGuestCount() ) );
+				break;
+			case CIP_MAXGUESTS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxGuests() ) );
+				break;
+			case CIP_OWNERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetOwnerCount() ) );
+				break;
+			case CIP_MAXOWNERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxOwners() ) );
+				break;
+			case CIP_BANS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetBanCount() ) );
+				break;
+			case CIP_MAXBANS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxBans() ) );
+				break;
+			case CIP_VENDORS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetVendorCount() ) );
+				break;
+			case CIP_MAXVENDORS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxVendors() ) );
+				break;
+			case CIP_DEED:
+				if( gPriv->GetObjType() == OT_MULTI )
+				{
+					tString = JS_NewStringCopyZ( cx, (static_cast<CMultiObj *>(gPriv))->GetDeed().c_str() );
+					*vp = STRING_TO_JSVAL( tString );
+				}
+				break;
+			case CIP_ISPUBLIC:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = BOOLEAN_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetPublicStatus() ) );
+				break;
+			case CIP_BUILDTIMESTAMP:
+				if( gPriv->GetObjType() == OT_MULTI )
+				{
+					tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ) )->GetBuildTimestamp().c_str() );
+					*vp = STRING_TO_JSVAL( tString );
+				}
+				break;
+			case CIP_TRADETIMESTAMP:
+				if( gPriv->GetObjType() == OT_MULTI )
+				{
+					tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ) )->GetTradeTimestamp().c_str() );
+					*vp = STRING_TO_JSVAL( tString );
+				}
+				break;
+			case CIP_BANX:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetBanX() ) );
+				break;
+			case CIP_BANY:
+				if( gPriv->GetObjType() == OT_MULTI )
+					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetBanY() ) );
 				break;
 			default:
 				break;
@@ -504,6 +604,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
 			case CIP_WEIGHTMAX:		gPriv->SetWeightMax( (SI32)encaps.toInt() );				break;
 			case CIP_BASEWEIGHT:	gPriv->SetBaseWeight( (SI32)encaps.toInt() );				break;
+			case CIP_MAXITEMS:		gPriv->SetMaxItems( (UI16)encaps.toInt() );					break;
 			case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
 			case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 			case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
@@ -545,6 +646,73 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				if( gPriv->GetObjType() == OT_SPAWNER )
 					(static_cast<CSpawnItem *>(gPriv))->SetInterval( 1, (UI08)encaps.toInt() );
 				break;
+				// Multis only
+			case CIP_MAXLOCKDOWNS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxLockdowns( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXTRASHCONTAINERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxTrashContainers( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXSECURECONTAINERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxSecureContainers( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXFRIENDS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxFriends( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXGUESTS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxGuests( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXOWNERS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxOwners( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXBANS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxBans( (UI16)encaps.toInt() );
+				break;
+			case CIP_MAXVENDORS:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetMaxVendors( (UI16)encaps.toInt() );
+				break;
+			case CIP_DEED:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetDeed( encaps.toString() );
+				break;
+			case CIP_ISPUBLIC:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetPublicStatus( encaps.toBool() );	
+				break;
+			case CIP_BUILDTIMESTAMP:
+			{
+				if( gPriv->GetObjType() == OT_MULTI )
+				{
+					time_t buildTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+					(static_cast<CMultiObj *>( gPriv ) )->SetBuildTimestamp( buildTimestamp );
+				}
+				break;
+			}
+			case CIP_TRADETIMESTAMP:
+			{
+				if( gPriv->GetObjType() == OT_MULTI )
+				{
+					time_t tradeTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+					(static_cast<CMultiObj *>( gPriv ) )->SetTradeTimestamp( tradeTimestamp );
+				}
+				break;
+			}
+			case CIP_BANX:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetBanX( (SI16)encaps.toInt() );
+				break;
+			case CIP_BANY:
+				if( gPriv->GetObjType() == OT_MULTI )
+					(static_cast<CMultiObj *>(gPriv))->SetBanY( (SI16)encaps.toInt() );
+				break;
 			default:
 				break;
 		}
@@ -565,6 +733,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		JSString *tString = NULL;
 		switch( JSVAL_TO_INT( id ) )
 		{
+			case CCP_ACCOUNTNUM:	*vp = INT_TO_JSVAL( gPriv->GetAccountNum() );	break;
 			case CCP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -716,8 +885,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				{
 					JSObject *myTown = JSEngine->AcquireObject( IUE_REGION, myReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 					*vp = OBJECT_TO_JSVAL( myTown );
-					break;
 				}
+				break;
 			}
 			case CCP_TOWN:
 			{
@@ -761,9 +930,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					JSObject *mySock	= JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 					*vp = OBJECT_TO_JSVAL( mySock );
 				}
-
-			}
 				break;
+			}
 			case CCP_ISCHAR:		*vp = JSVAL_TRUE;									break;
 			case CCP_ISITEM:		*vp = JSVAL_FALSE;									break;
 			case CCP_ISSPAWNER:		*vp = JSVAL_FALSE;									break;
@@ -807,8 +975,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, tempChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 					*vp = OBJECT_TO_JSVAL( myChar );
 				}
-			}
 				break;
+			}
 			case CCP_RACEGATE:		*vp = INT_TO_JSVAL( gPriv->GetRaceGate() );			break;
 			case CCP_SKILLLOCK:
 				TempObject	= JS_NewObject( cx, &UOXSkillsLock_class, NULL, obj );
@@ -882,8 +1050,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					else
 						*vp = BOOLEAN_TO_JSVAL( toScan->IsLootable() );
 				}
-			}
 				break;
+			}
 			case CCP_PARTY:
 			{
 				// Hm Quite funny, same thing as .owner
@@ -898,8 +1066,23 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					JSObject *myParty = JSEngine->AcquireObject( IUE_PARTY, tempParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 					*vp = OBJECT_TO_JSVAL( myParty );
 				}
-			}
 				break;
+			}
+			case CCP_MULTI:
+				CMultiObj *multi;
+				multi = gPriv->GetMultiObj();
+
+				if( !ValidateObject( multi ) )
+					*vp = JSVAL_NULL;
+				else
+				{
+					// Otherwise Acquire an object
+					JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					*vp = OBJECT_TO_JSVAL( myObj );
+				}
+				break;
+			case CCP_HOUSESOWNED:		*vp = INT_TO_JSVAL( gPriv->CountHousesOwned( false ) );					break;
+			case CCP_HOUSESCOOWNED:		*vp = INT_TO_JSVAL( gPriv->CountHousesOwned( true ) );					break;
 			default:
 				break;
 		}
@@ -919,6 +1102,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	{
 		switch( JSVAL_TO_INT( id ) )
 		{
+			case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( (UI16)encaps.toInt() );						break;
 			case CCP_NAME:	gPriv->SetName( encaps.toString() );										break;
 			case CCP_TITLE:	gPriv->SetTitle( encaps.toString() );										break;
 			case CCP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );	break;
@@ -1245,6 +1429,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_CANRECALL:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanRecall() );			break;
 			case CREGP_CANGATE:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanGate() );				break;
 			case CREGP_CANTELEPORT:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanTeleport() );			break;
+			case CREGP_CANPLACEHOUSE:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanPlaceHouse() );	break;
 			case CREGP_ISGUARDED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
 			case CREGP_WORLDNUMBER:			*vp = INT_TO_JSVAL( gPriv->WorldNumber() );				break;
 			case CREGP_INSTANCEID:			*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );			break;
@@ -1287,6 +1472,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_CANRECALL:			gPriv->CanRecall( encaps.toBool() );				break;
 			case CREGP_CANGATE:				gPriv->CanGate( encaps.toBool() );					break;
 			case CREGP_CANTELEPORT:			gPriv->CanTeleport( encaps.toBool() );				break;
+			case CREGP_CANPLACEHOUSE:		gPriv->CanPlaceHouse( encaps.toBool() );			break;
 			case CREGP_ISGUARDED:			gPriv->IsGuarded( encaps.toBool() );				break;
 			case CREGP_CANCASTAGGRESSIVE:	gPriv->CanCastAggressive( encaps.toBool() );		break;
 			case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );				break;

@@ -6,27 +6,63 @@ function CommandRegistration()
 
 function command_REMOVE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 188, socket.Language );
-	socket.CustomTarget( 0, targMsg );
+	socket.tempint = null;
+	if( cmdString )
+	{
+		socket.tempint = parseInt( cmdString );
+		socket.CustomTarget( 0, "Select container to remove item (" + cmdString + ") from: " );
+	}
+	else
+	{
+		var targMsg = GetDictionaryEntry( 188, socket.Language );
+		socket.CustomTarget( 0, targMsg );
+	}
 }
 
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) )
 	{
-		if( ourObj.isChar )
+		if( ourObj )
 		{
-			if( ourObj.npc )
+			if( ourObj.isChar )
 			{
-				socket.SysMessage( GetDictionaryEntry( 1015 ) );
-				ourObj.Delete();
+				if( ourObj.npc )
+				{
+					socket.SysMessage( GetDictionaryEntry( 1015 ) );
+					ourObj.Delete();
+				}
+			}
+			else if( ourObj.isItem )
+			{
+				var itemIdToRemove = socket.tempint;
+				socket.tempint = null;
+				if( itemIdToRemove )
+				{
+					if( ourObj.itemsinside > 0 )
+					{
+						for( mItem = ourObj.FirstItem(); !ourObj.FinishedItems(); mItem = ourObj.NextItem() )
+						{
+							if( ValidateObject( mItem ) && mItem.id == itemIdToRemove )
+							{
+								mItem.Delete();
+							}
+						}
+					}
+					else
+					{
+						socket.SysMessage( "Unable to find any items of that ID to remove from the container!" );
+					}
+				}
+				else
+				{
+					socket.SysMessage( GetDictionaryEntry( 1013 ) );
+					ourObj.Delete();
+				}
 			}
 		}
-		else if( ourObj.isItem )
-		{
-			socket.SysMessage( GetDictionaryEntry( 1013 ) );
-			ourObj.Delete();
-		}
+		else
+			socket.SysMessage( "Invalid target" );
 	}
 }
 

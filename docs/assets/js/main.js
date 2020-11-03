@@ -129,9 +129,9 @@
         return;
 
     // Close current section
-	var parentElement = e.target.closest(".cd-faq__item");
-	if( parentElement )
-    	parentElement.getElementsByClassName('cd-faq__trigger')[0].click();
+	// var parentElement = e.target.closest(".cd-faq__item");
+	// if( parentElement )
+    	// parentElement.getElementsByClassName('cd-faq__trigger')[0].click();
 
     // Open new section and clear away hash
 	var targetLink = document.getElementById(e.target.href.split('#')[1]);

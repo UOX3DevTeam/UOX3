@@ -345,7 +345,7 @@ bool CPISellItem::Handle( void )
 				{
 					if( toExecute->OnSellToVendor( tSock, n, j ) )
 					{
-						return true;
+						return true; // LOOKATME - Should this be continue instead?
 					}
 				}
 

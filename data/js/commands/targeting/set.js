@@ -88,6 +88,10 @@ function onCallback0( socket, ourObj )
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, "Choose character to own this object" );
 		break;
+	case "POISON":
+		ourObj.poison = nVal;
+		okMsg( socket );
+		break;
 	case "X":
 		ourObj.x = nVal;
 		okMsg( socket );
@@ -166,6 +170,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		break;
 	case "RESTOCK":
 		ourItem.restock = nVal;
+		okMsg( socket );
+		break;
+	case "MAXITEMS":
+		ourItem.maxItems = nVal;
 		okMsg( socket );
 		break;
 	case "MORE":
@@ -361,10 +369,6 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.spdelay = nVal;
 		okMsg( socket );
 		break;
-	case "POISON":
-		ourChar.poison = nVal;
-		okMsg( socket );
-		break;
 	case "TITLE":
 		ourChar.title = socket.xText.substring( 6 );
 		okMsg( socket );
@@ -453,6 +457,10 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		break;
 	case "MAXSTAMINA":
 		ourChar.maxstamina = nVal;
+		okMsg( socket );
+		break;
+	case "HUNGER":
+		ourChar.hunger = nVal;
 		okMsg( socket );
 		break;
 	default:

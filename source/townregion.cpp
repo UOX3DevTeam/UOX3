@@ -29,6 +29,7 @@ const UI32 BIT_AGGRESSIVE	=	6;
 const UI32 BIT_DUNGEON		=	7;
 const UI32 BIT_SAFEZONE		=	8;
 const UI32 BIT_TELEPORT		=	9;
+const UI32 BIT_HOUSING		=	10;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
@@ -394,6 +395,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	numGuards			= 10;
 	chanceFindBigOre	= 80;
 	CanTeleport( true );
+	CanPlaceHouse( false );
 
 	regLocs ourLoc;
 	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
@@ -458,6 +460,10 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					CanGate( (data.toUByte() == 1) );
 				else if( UTag == "GOOD" )
 					actgood = data.toInt();
+				break;
+			case 'H':
+				if( UTag == "HOUSING" )
+					CanPlaceHouse( (data.toUByte() == 1) );
 				break;
 			case 'I':
 				if( UTag == "INSTANCEID" )
@@ -639,6 +645,21 @@ bool CTownRegion::IsGuarded( void ) const
 void CTownRegion::IsGuarded( bool value )
 {
 	priv.set( BIT_GUARDED, value );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanPlaceHouse( void ) const
+//|					void CanPlaceHouse( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the townregion allows player houses
+//o-----------------------------------------------------------------------------------------------o
+bool CTownRegion::CanPlaceHouse( void ) const
+{
+	return priv.test( BIT_HOUSING );
+}
+void CTownRegion::CanPlaceHouse( bool value )
+{
+	priv.set( BIT_HOUSING, value );
 }
 
 //o-----------------------------------------------------------------------------------------------o

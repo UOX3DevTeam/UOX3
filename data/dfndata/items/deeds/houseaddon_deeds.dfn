@@ -32,3 +32,10 @@ name=polar bear rug (south)
 id=0x14F0
 morex=43
 }
+
+[loomdeed]
+{
+NAME=loom deed
+ID=0x14F0
+MOREX=19
+}

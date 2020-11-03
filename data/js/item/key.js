@@ -1,6 +1,6 @@
-// Keys and Keyrings - by Xuri (xuri@sensewave.com)
-// Version 1.5
-// Last updated: July 6. 2006
+// Keys and Keyrings
+// Version 1.6
+// Last updated: October 25. 2020
 //
 // Can add up to 5 keys to each key-ring, and can use keyring
 // to unlock any of the locks that it holds keys for. To release
@@ -22,9 +22,25 @@ var KeyringID3 = 0x176b; //full keyring
 
 var KeyScriptID = 5013; //Script-ID from JSE_FILEASSOCIATIONS.SCP! Change to match your own setting.
 
+const coOwnHousesOnSameAccount = GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ); //CoOwnHousesOnSameAccount();
+
 // Adding keys to keyrings
 function onUseChecked( pUser, iUsed )
 {
+	if( iUsed.movable == 3 )
+	{
+		// Key is locked down, make sure only owners, co-owners or friends can use it
+		var iMulti = iUsed.multi;
+		if( !ValidateObject( iMulti ) || ( !iMulti.IsOnOwnerList( pUser ) && !iMulti.IsOnFriendList( pUser )))
+		{
+			if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+			{
+				pUser.socket.SysMessage( GetDictionaryEntry( 1032, pUser.socket.Language )); // That is not yours!
+				return false;
+			}
+		}
+	}
+
 	pUser.socket.tempObj = iUsed;
 	if(( iUsed.id >= keyID1 && iUsed.id <= keyID3 ) || iUsed.id == keyID4 || iUsed.id == keyID5 )
 	{
@@ -72,6 +88,7 @@ function onCallback0( pSock, myTarget )
 		}
 
 		//If targeting a full keyring
+		var targetType = myTarget.type;
 		if( myTarget.id == KeyringID3 )
 		{
  			pUser.SysMessage("Sorry, that keyring is full ");
@@ -97,7 +114,7 @@ function onCallback0( pSock, myTarget )
 				}
 				keys++;
 				myTarget.SetTag( "keys", keys );
-				myTarget.SetTag( "key"+keys+"more", Key.more );
+				myTarget.SetTag( "key"+keys+"more", (Key.more).toString() );
 				myTarget.SetTag( "key"+keys+"name", Key.name );
 				myTarget.SetTag( "keyid"+keys, Key.id );
 				pUser.SysMessage( "You've added the key to the keyring." );
@@ -115,10 +132,20 @@ function onCallback0( pSock, myTarget )
 			return;
 		}
 		//If targeting a lock
-		else if( myTarget.type == 1 || myTarget.type == 8 || myTarget.type == 12 || myTarget.type == 13 || myTarget.type == 117 || myTarget.type == 63 || myTarget.type == 64 || myTarget.type == 203 )
+		else if( targetType == 1 || targetType == 8 || targetType == 12 || targetType == 13 || targetType == 117 || targetType == 63 || targetType == 64 || targetType == 203 )
 		{
 			if( myTarget.more == Key.more || Key.more == 255 ) //Key.more == 255 is a universal key
 			{
+				if( targetType == 12 || targetType == 13 )
+				{
+					// Don't allow changing lock status on FRONT doors in public houses
+					var lockMulti = myTarget.multi
+					if( ValidateObject( lockMulti ) && lockMulti.isPublic && myTarget.GetTag( "DoorType" ) == "front" )
+					{
+						pSock.SysMessage( "You cannot lock the front door of a public house!" );
+						return;
+					}
+				}
 				changeLockStatus( pUser, myTarget );
 			}
 			else
@@ -131,7 +158,7 @@ function onCallback0( pSock, myTarget )
 		else if( myTarget.serial == Key.serial )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 1019, pSock.Language )); //Enter new name for key.
-			pUser.socket.tempObj = Key;
+			pUser.socket.tempObj2 = Key;
 			pUser.SpeechInput(1);
 			return;
 		}
@@ -158,19 +185,40 @@ function onCallback1( pSock, myTarget )
 		if( myTarget.serial == Keyring.serial )
 		{ //If targeting keyring itself, release all keys
 			keys = Keyring.GetTag( "keys" );
+			var totalKeys = keys;
+			var KeyringCont = Keyring.container;
 			i = 1;
-			for( i = 1; i < keys + 1; i++ )
+			for( i = 1; i < totalKeys + 1; i++ )
 			{
+				if( ValidateObject( KeyringCont ))
+				{
+					if( KeyringCont.totalItemCount >= KeyringCont.maxItems )
+					{
+						pSock.SysMessage( GetDictionaryEntry( 1819 ), pSock.language ); // Your backpack cannot hold any more items!
+						break;
+					}
+				}
 				var keyID = Keyring.GetTag( "keyid"+i );
 				var HexKeyID = keyID.toString(16);
 				var newKey = CreateDFNItem( pUser.socket, pUser, "0x"+HexKeyID, 1, "ITEM", true );
-				newKey.more = Keyring.GetTag( "key"+i+"more" );
-				newKey.name = Keyring.GetTag( "key"+i+"name" );
-				newKey.scripttrigger = KeyScriptID;
+				keys--;
 			}
-			Keyring.id = emptyKeyringID;
-			Keyring.SetTag( "keys", 0 );
-			pUser.SysMessage( "You release all keys from the keyring." );
+			if( keys <= 0 )
+			{
+				Keyring.id = emptyKeyringID;
+				Keyring.SetTag( "keys", 0 );
+				pUser.SysMessage( "You release all keys from the keyring." );
+			}
+			else
+			{
+				Keyring.SetTag( "keys", keys );
+				if( keys == 1 )
+					Keyring.id == KeyringID1;
+				else if( keys > 1 && keys < 5 )
+					Keyring.id = KeyringID2;
+				else if( keys >= 5 )
+					Keyring.id = KeyringID3;
+			}
 			return;
 		}
 		else if( myTarget.type == 1 || myTarget.type == 8 || myTarget.type == 12 || myTarget.type == 13 || myTarget.type == 117 || myTarget.type == 63 || myTarget.type == 64 || myTarget.type == 203 )
@@ -226,7 +274,7 @@ function onCallback2( pSock, myTarget )
 				}
 				emptyKeyring.id = KeyringID1;
 				emptyKeyring.SetTag( "keys", 1 );
-				emptyKeyring.SetTag( "keys1more", myTarget.more );
+				emptyKeyring.SetTag( "keys1more", (myTarget.more).toString() );
 				emptyKeyring.SetTag( "keys1name", myTarget.name );
 				emptyKeyring.SetTag( "keyid1", myTarget.id );
 				pUser.SysMessage( "You've added the key to the keyring." );
@@ -237,7 +285,7 @@ function onCallback2( pSock, myTarget )
 		else if( myTarget.serial == emptyKeyring.serial )
 		{ //If targeting empty keyring, rename it
 			pUser.SysMessage( "Enter the new name for this keyring:" );
-			pUser.socket.tempObj = emptyKeyring;
+			pUser.socket.tempObj2 = emptyKeyring;
 			pUser.SpeechInput(2);
 			return;
 		}
@@ -298,8 +346,8 @@ function onCallback3( pSock, myTarget )
 
 function onSpeechInput(pUser, pItem, pSpeech, pSpeechID)
 {
-	var KeyItem = pUser.socket.tempObj;
-	pUser.socket.tempObj = null;
+	var KeyItem = pUser.socket.tempObj2;
+	pUser.socket.tempObj2 = null;
 	if( pSpeech )
 	{
     	switch(pSpeechID)
@@ -313,9 +361,26 @@ function onSpeechInput(pUser, pItem, pSpeech, pSpeechID)
 				pUser.SysMessage( "The new name for this keyring is: "+pSpeech );
 				break;
 			case 3: //Rename house-sign
-				KeyItem.name = pSpeech;
-				pUser.SysMessage( "Renamed to: " + pSpeech );
+			{
+				var keyItemMulti = KeyItem.multi;
+				if( keyItemMulti.IsOwner( pUser ))
+				{
+					if( pSpeech.length > 60 )
+					{
+						pUser.SysMessage( "House name must shorter than 60 characters long!" );
+					}
+					else
+					{
+						KeyItem.name = pSpeech;
+						pUser.SysMessage( "Renamed to: " + pSpeech );
+					}
+				}
+				else
+				{
+					pUser.SysMessage( "Only the house owner can rename the house!" );
+				}
 				break;
+			}
 		}
 	}
 }
@@ -381,10 +446,20 @@ function changeLockStatus( pUser, myTarget )
 			}
 			break;
 		case 203: //A house sign
-			pUser.socket.tempObj = myTarget;
-			pUser.SysMessage( GetDictionaryEntry( 1023, pSock.Language )); //What do you wish the sign to say?
-			pUser.SpeechInput(3);
+		{
+			var signMulti = myTarget.multi;
+			if( signMulti.IsOwner( pUser ))
+			{
+				pUser.socket.tempObj2 = myTarget;
+				pUser.SysMessage( GetDictionaryEntry( 1023, pSock.Language )); //What do you wish the sign to say?
+				pUser.SpeechInput(3);
+			}
+			else
+			{
+				pUser.SysMessage( "Only the house owner can rename the house!" );
+			}
 			break;
+		}
 	}
 	pUser.SoundEffect( 0x241, 1 );
 }

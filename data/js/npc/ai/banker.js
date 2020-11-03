@@ -39,7 +39,7 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 				var itemAmount = parseInt( bankContents[0], 10 );
 				var stones = parseInt( bankContents[1], 10 );
 				stones = stones.toFixed( 2 );
-				pTalking.TextMessage( "Bank container has " + bankContents[0] + " items, " + stones + " stones", false, 0x096a );	
+				pTalking.TextMessage( "Bank container has " + bankContents[0] + " items, " + stones + " stones", false, 0x096a );
 			}
 			break;
 		case "BALANCE":
@@ -51,7 +51,12 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 			}
 			break;
 		case "CHECK":
-			if( splitString[1] && ( parseInt( splitString[1], 10 ) >= 5000 ))
+			if( bankBox.totalItemCount >= bankBox.maxItems )
+			{
+				pTalking.socket.SysMessage( GetDictionaryEntry( 1818, pTalking.socket.language )); // The container is already at capacity.
+				return false;
+			}
+			else if( splitString[1] && ( parseInt( splitString[1], 10 ) >= 5000 ))
 			{
 				var checkSize = parseInt( splitString[1], 10 );
 				if( bankBox )
@@ -85,6 +90,12 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 			}
 			break;
 		case "WITHDRAW":
+			var playerPack = pTalking.charpack;
+			if( playerPack.totalItemCount >= playerPack.maxItems )
+			{
+				pTalking.socket.SysMessage( 1819 ); // Your backpack cannot hold any more items!
+				return false;
+			}
 			if( splitString[1] && splitString[1] != 0 )
 			{
 				var withdrawAmt = parseInt( splitString[1], 10 );
@@ -120,6 +131,11 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 			}
 			break;
 		case "DEPOSIT": //uox3 specific command
+			if( bankBox.totalItemCount >= bankBox.maxItems )
+			{
+				pTalking.socket.SysMessage( GetDictionaryEntry( 1818, pTalking.socket.language )); // The container is already at capacity.
+				return false;
+			}
 			if( !splitString[1])
 			{
 				pTalking.tempObj = pTalkingTo;
@@ -153,7 +169,7 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 							}
 						}
 					}
-				}	
+				}
 			}
 			else
 			{
@@ -170,7 +186,7 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 /* Checks to see if the player already has a bank box.
 function checkForBankBox( pTalking )
 {
-	var bankBox = pTalking.FindItemLayer( 29 ); 
+	var bankBox = pTalking.FindItemLayer( 29 );
     if( bankBox == null || !bankBox.isItem )
     {
     	return false;
@@ -180,13 +196,14 @@ function checkForBankBox( pTalking )
 // Creates a new bank box for players that, for some reason, do not already have one
 function createNewBankBox( pTalking )
 {
-	// Create a new bankbox for the player 
-	var newBankBox = CreateDFNItem( pTalking.socket, pTalking, "0x09ab", 1, "ITEM", false ); 
-	newBankBox.name = pTalking.name + "'s bank box";    
-	newBankBox.layer = 29; 
-	newBankBox.owner = pTalking; 
-	newBankBox.container = pTalking; 
-	newBankBox.type = 1; 
+	// Create a new bankbox for the player
+	var newBankBox = CreateDFNItem( pTalking.socket, pTalking, "0x09ab", 1, "ITEM", false );
+	newBankBox.name = pTalking.name + "'s bank box";
+	newBankBox.layer = 29;
+	newBankBox.owner = pTalking;
+	newBankBox.container = pTalking;
+	newBankBox.maxItems = parseInt(GetServerSetting( "MAXPLAYERBANKITEMS" ));
+	newBankBox.type = 1;
 	newBankBox.morex = 1;
 	if( newBankBox )
 	{
@@ -290,7 +307,7 @@ function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 			continue;
 		}
 	}
-}	
+}
 
 //Divide gold to be deposited into several piles of max 65535 each
 function divideDepositedGold( pTalking, bankBox, depositAmt )
@@ -313,4 +330,4 @@ function divideDepositedGold( pTalking, bankBox, depositAmt )
 			continue;
 		}
 	}
-}	
+}

@@ -19,7 +19,12 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ) )
 		{
-			if( objInOldRange( myObj, mChar, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
+			if( myObj->GetObjType() == OT_MULTI )
+			{
+				if( objInOldRange( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ))
+					nearbyChars.push_back( mSock );
+			}
+			else if( objInOldRange( myObj, mChar, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
 				nearbyChars.push_back( mSock );
 		}
 	}
@@ -76,6 +81,35 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 {
 	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ));
 	return FindNearbyPlayers( mChar, visRange );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CHARLIST findNearbyChars( CChar *mChar, distLocs distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a list of characters (PC or NPC) that are within a certain distance
+//o-----------------------------------------------------------------------------------------------o
+CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+{
+	CHARLIST ourChars;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == NULL )
+			continue;
+
+		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		regChars->Push();
+		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+		{
+			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
+				continue;
+			if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance )
+				ourChars.push_back( tempChar );
+		}
+		regChars->Pop();
+	}
+	return ourChars;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -242,7 +276,7 @@ CItem *FindItemOfType( CChar *toFind, ItemTypes type )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Check if item is in a multi
+//|	Purpose		-	Check if object is in a multi
 //o-----------------------------------------------------------------------------------------------o
 bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 {
@@ -294,24 +328,36 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		}
 	}
 
-	UI08 zOff = 1;
-	if( m->CanBeObjType( OT_BOAT ) )
-		zOff = 3;
-
+	UI08 zOff = m->CanBeObjType( OT_BOAT ) ? 3 : 20;
 	const SI16 baseX = m->GetX();
 	const SI16 baseY = m->GetY();
 	const SI08 baseZ = m->GetZ();
+
 	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 	{
 		for( SI32 j = 0; j < length; ++j )
 		{
 			MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, j );
 
+			// Ignore signs and signposts sticking out of buildings
+			if( multi.tile >= 0x0b95 && multi.tile <= 0x0c0e || multi.tile == 0x1f28 || multi.tile == 0x1f29 )
+				continue;
+
 			if( (baseX + multi.x) == x && (baseY + multi.y) == y )
 			{
+				// Find the top Z level of the multi section being examined
 				const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
-				if( abs( multiZ - z ) <= zOff )
-					return true;
+				if( m->GetObjType() == OT_BOAT )
+				{
+					// We're on a boat!
+					if( abs( multiZ - z ) <= zOff )
+						return true;
+				}
+				else
+				{
+					if( z >= multiZ || abs( multiZ - z ) <= zOff )
+						return true;
+				}
 			}
 		}
 	}
@@ -321,11 +367,25 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		{
 			Multi_st& multi = Map->SeekIntoMulti( multiID, j );
 
+			// Ignore signs and signposts sticking out of buildings
+			if( multi.tile >= 0x0b95 && multi.tile <= 0x0c0e || multi.tile == 0x1f28 || multi.tile == 0x1f29 )
+				continue;
+
 			if( (baseX + multi.x) == x && (baseY + multi.y) == y )
 			{
+				// Find the top Z level of the multi section being examined
 				const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
-				if( abs( multiZ - z ) <= zOff )
-					return true;
+				if( m->GetObjType() == OT_BOAT )
+				{
+					// We're on a boat!
+					if( abs( multiZ - z ) <= zOff )
+						return true;
+				}
+				else
+				{
+					if( z >= multiZ || abs( multiZ - z ) <= zOff )
+						return true;
+				}
 			}
 		}
 	}
@@ -384,7 +444,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 				if( ret <= lastdist )
 				{
 					lastdist = ret;
-					multi = static_cast<CMultiObj *>(itemCheck);
+					multi = static_cast<CMultiObj *>( itemCheck );
 					if( inMulti( x, y, z, multi ) )
 					{
 						regItems->Pop();
@@ -464,4 +524,62 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 		regItems->Pop();
 	}
 	return currItem;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a list of Items that are within a certain distance of a given object
+//o-----------------------------------------------------------------------------------------------o
+ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
+{
+	ITEMLIST ourItems;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( mObj );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == NULL )
+			continue;
+
+		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		regItems->Push();
+		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+		{
+			if( !ValidateObject( Item ) || Item->GetInstanceID() != mObj->GetInstanceID() )
+				continue;
+			if( objInRange( mObj, Item, distance ) )
+				ourItems.push_back( Item );
+		}
+		regItems->Pop();
+	}
+	return ourItems;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ITEMLIST findNearbyItems( CChar *mChar, distLocs distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a list of Items that are within a certain distance
+//o-----------------------------------------------------------------------------------------------o
+ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+{
+	ITEMLIST ourItems;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == NULL )
+			continue;
+
+		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		regItems->Push();
+		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+		{
+			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+				continue;
+			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+				ourItems.push_back( Item );
+		}
+		regItems->Pop();
+	}
+	return ourItems;
 }

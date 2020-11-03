@@ -25,6 +25,12 @@ function onCallback1( socket, ourObj )
 			return;
 		}
 
+		if( ourObj.movable == 2 || ourObj.movable == 3 )
+		{
+			socket.SysMessage( "This has to be in your backpack before you can use it." );
+			return;
+		}
+
 		var resID = ourObj.id;
 		if( resID == 0x1BEF || resID == 0x1BF2 || resID == 0x1BDD || resID == 0x1BE0 )	// A valid tinker resource
 		{

@@ -216,6 +216,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<SI16>(ndata) );			break;
+			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
 			case DFNTAG_MORE:			applyTo->SetTempVar( CITV_MORE, ndata );				break;
 			case DFNTAG_MORE2:																	break;
@@ -327,12 +328,27 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 //|					automatically look for an entry in harditems.dfn and set its location (be it in
 //|					a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, const bool inPack )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
 		Console.warning(format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial()) );
 		return NULL;
+	}
+
+	if( inPack )
+	{
+		// Check if character's backpack can hold more items before creating any item
+		CItem *playerPack = mChar->GetPackItem();
+		if( ValidateObject( playerPack ) )
+		{
+			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+			{
+				if( mSock != NULL )
+					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+				inPack = false; // Spawn item at character's feet instead
+			}
+		}
 	}
 
 	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID() );
@@ -376,12 +392,27 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 //|	Purpose		-	Creates a script item, gives it an amount, and sets
 //|					its location (be it in a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack, const UI16 iColor )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
 		Console.warning( format("CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() ));
 		return NULL;
+	}
+
+	if( inPack )
+	{
+		// Check if character's backpack can hold more items before creating any item
+		CItem *playerPack = mChar->GetPackItem();
+		if( ValidateObject( playerPack ) )
+		{
+			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+			{
+				if( mSock != NULL )
+					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+				inPack = false; // Spawn item at character's feet instead
+			}
+		}
 	}
 
 	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType );
@@ -601,6 +632,10 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 			iCreated->SetCont( mChar->GetPackItem() );
 			iCreated->PlaceInPack();
 		}
+
+		// Refresh container tooltip
+		CPToolTip pSend( iCreated->GetContSerial() );
+		mSock->Send(&pSend);
 	}
 	else
 		iCreated->SetLocation( mChar );
@@ -609,15 +644,18 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
+//|	Function	-	bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o-----------------------------------------------------------------------------------------------o
-bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
+bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 {
 	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
 	{
-		toDecay.SetDecayTime( nextDecayItems );
+		if( toDecay.GetMulti() == INVALIDSERIAL )
+			toDecay.SetDecayTime( nextDecayItems );
+		else
+			toDecay.SetDecayTime( nextDecayItemsInHouses );
 		return false;
 	}
 	const bool isCorpse = toDecay.isCorpse();
@@ -629,7 +667,7 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 		   ( ValidateObject( toDecay.GetMultiObj() ) &&
 			( toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses() ) ) )
 		{
-			toDecay.SetDecayTime( nextDecayItems );
+			toDecay.SetDecayTime( nextDecayItemsInHouses );
 			return false;
 		}
 	}
