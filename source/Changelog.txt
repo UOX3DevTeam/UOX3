@@ -1,3 +1,6 @@
+05/11/2020 - Xuri (0.99.4[RC4])
+	Fixed a server crash caused by container tooltip updates being attempted sent to invalid sockets in PlaceItem() function of items.cpp
+
 04/11/2020 - Xuri (0.99.4[RC3])
 	Fixed an issue with tradetimestamp for houses
 	Fixed an issue with 'teleport and 'telestuff commands that could cause character to end up outside of map when using ClassicUO client
