@@ -633,9 +633,12 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 			iCreated->PlaceInPack();
 		}
 
-		// Refresh container tooltip
-		CPToolTip pSend( iCreated->GetContSerial() );
-		mSock->Send(&pSend);
+		if( mSock != NULL )
+		{
+			// Refresh container tooltip
+			CPToolTip pSend( iCreated->GetContSerial() );
+			mSock->Send(&pSend);
+		}
 	}
 	else
 		iCreated->SetLocation( mChar );
