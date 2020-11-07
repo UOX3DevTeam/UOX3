@@ -578,7 +578,8 @@ CPRemoveItem &CPRemoveItem::operator=( CBaseObject &toCopy )
 //|						BYTE id2
 //|
 //|					Note: Server message
-//|					Note: if id2 = 1, then this is a season change.
+//|					Note: if id2 = 1, then this is a season change. Although, this could also just
+//|							be a flag to play a sound FX on season change or not...
 //|					Note: if season change, then id1 = (0=spring, 1=summer, 2=fall, 3=winter, 4 = desolation)
 //o-----------------------------------------------------------------------------------------------o
 CPWorldChange::CPWorldChange()
@@ -4613,10 +4614,12 @@ CPKAccept::CPKAccept( UI08 Response )
 //|						BYTE flag
 //|							0x00 - tips window
 //|							0x01 - notice window
+//|							0x02 - update window
 //|						BYTE[2] unknown1
 //|						BYTE[2] tip #
 //|						BYTE[2] msgSize
-//|						BYTE[?] message (? = blockSize - 10)
+//|						BYTE[msgSize] message (ascii, not null terminated)
+//|						OR BYTE[?] message (? = blockSize - 10)
 //|
 //|					*Null terminated I think (Gimli)
 //o-----------------------------------------------------------------------------------------------o

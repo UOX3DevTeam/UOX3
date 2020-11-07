@@ -1184,12 +1184,10 @@ void startChar( CSocket *mSock, bool onCreate )
 
 			CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
 
-			mSock->sysmessage( "%s v%s.%s [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str()) ;
-			mSock->sysmessage( "Programmed by: %s", CVersionClass::GetProgrammers().c_str() );
+			mSock->sysmessage( "%s v%s.%s [%s] ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) ;
 
 			if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 			{
-
 				//message upon entering a server
 				sysBroadcast( format(1024,Dictionary->GetEntry( 1208 ), mChar->GetName().c_str() ) );//message upon entering a server
 			}

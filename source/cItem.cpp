@@ -2351,7 +2351,7 @@ void CItem::Cleanup( void )
 		if( GetType() == IT_MESSAGEBOARD )
 			MsgBoardRemoveFile( GetSerial() );
 
-		if( GetType() == IT_READABLEBOOK && ( GetTempVar( CITV_MOREX ) == 666 || GetTempVar( CITV_MOREX ) == 999 ) )
+		if( GetType() == IT_BOOK && ( GetTempVar( CITV_MOREX ) == 666 || GetTempVar( CITV_MOREX ) == 999 ) )
 			Books->DeleteBook( this );
 
 		// Update container tooltip for nearby players

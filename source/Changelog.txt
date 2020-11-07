@@ -1,3 +1,20 @@
+08/11/2020 - Xuri (0.99.4[RC5])
+	Fixed an issue with books where server could get stuck in an infinite loop if number of lines per page was higher than 8. Now capped at 8 lines per page.
+	Renamed item type enum IT_READABLEBOOK to IT_BOOK, since it's the item type used by both readable and writeable books.
+	Changed ANIMALATTACKCHANCE to use a scale of 1 to 1000 instead of 1 to 100, for additional granularity in setting the chance for animals to get attacked by monsters. An INI value of 15 now translates as 1.5% chance (per NPC AI cycle!) instead of the previous 15%
+	Removed new GetEnvironment() function and expanded on the use of the existing OS_STR define in Config.h
+	Updated fireworks wand (IT_FIREWORKSWAND) so effects no longer play permanently in ClassicUO client
+	Fixed an issue with converting a house from public to private while there were player vendors in the house
+	Ported player vendor deeds and placement of player vendors to JS (UOX3/js/server/house/playerVendorDeed.js) and added checks to make sure player is in a house they own, that can hold more player vendors, and that they are trying to add the vendor in a location that's not blocking any doors.
+	Partially ported guildstone deed functionality to JS (UOX3/js/item/guildstone.js) and added various additional checks to make sure player is in a house they own, they're not already in a guild, no other guildstones exist in the house and they're not trying to place it in a location that blocks any doors. Main guild creation code is still hardcoded, though.
+	Removed some unused item types that have been marked as candidates for deletion for over 15 years (IT_CHAOSGATEOPENER, IT_CHAOSGATE, IT_GUILLOTINEANIM, IT_TRAININGDUMMYANIM)!
+	Updated UOX3 documentation with complete list of item types, and item layers, in addition to other small additions.
+	Fixed an issue with advanced pathfinding where NPCs in some cases would stop 1 tile before reaching the target location
+	Fixed an issue where no crafting resources would ever be lost if failing to craft an item that only required 1 of a given crafting resource
+	Fixed an issue with pathfinding that could cause NPCs to queue up in long rows when attempting to reach the same target in combat when advanced pathfinding was disabled
+	Added functionality to allow guild masters to move guildstones by transforming these into portable stones that can be used to place the guildstones in new locations
+	Updated timestamp for packet logs to include milliseconds for greater granularity
+
 05/11/2020 - Xuri (0.99.4[RC4])
 	Fixed a server crash caused by container tooltip updates being attempted sent to invalid sockets in PlaceItem() function of items.cpp
 

@@ -451,14 +451,12 @@ enum ItemTypes
     IT_CONTAINER			= 1,
     IT_CASTLEGATEOPENER		= 2,
     IT_CASTLEGATE			= 3,
-    IT_CHAOSGATEOPENER		= 4,	// Candidate for deletion
-    IT_CHAOSGATE			= 5,	// Candidate for deletion
     IT_TELEPORTITEM			= 6,
     IT_KEY 					= 7,
     IT_LOCKEDCONTAINER 		= 8,
     IT_SPELLBOOK 			= 9,
     IT_MAP 					= 10,
-    IT_READABLEBOOK			= 11,
+    IT_BOOK					= 11,
     IT_DOOR					= 12,
     IT_LOCKEDDOOR			= 13,
     IT_FOOD					= 14,
@@ -533,9 +531,8 @@ enum ItemTypes
     IT_CAMPING				= 234,
     IT_MAGICSTATUE			= 235,
     IT_GUILLOTINE			= 236,
-    IT_GUILLOTINEANIM		= 237,	// Candidate for deletion
     IT_FLOURSACK			= 238,
-    IT_OPENFLOURSACK		= 239,	// Candidate for deletion
+    IT_OPENFLOURSACK		= 239,
     IT_FISHINGPOLE			= 240,
     IT_CLOCK				= 241,
     IT_MORTAR				= 242,
@@ -550,7 +547,6 @@ enum ItemTypes
     IT_TINKERCLOCK			= 251,
     IT_TINKERSEXTANT		= 252,
     IT_TRAININGDUMMY		= 253,
-    IT_TRAININGDUMMYANIM	= 254,	// Candidate for deletion
     IT_COUNT				= 255,
 };
 

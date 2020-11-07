@@ -1610,7 +1610,8 @@ function DeclareHousePrivate( pSocket, iMulti )
 					{
 						// Eject character from house
 						EjectPlayerActual( iMulti, charInHouse );
-						charInHouse.SysMessage( GetDictionaryEntry( 1920, charInHouse.socket.language )); // 1920=You have been ejected due to a change in public status of the house.
+						if( charInHouse.online )
+							charInHouse.SysMessage( GetDictionaryEntry( 1920, charInHouse.socket.language )); // 1920=You have been ejected due to a change in public status of the house.
 					}
 				}
 			}
