@@ -654,7 +654,7 @@ function houseOwnerGump( pUser )
 	else
 		houseOwnerGump.AddButton( 35, 245, 2714, 2715, 1, 0, 54);	// Button - Declare this building to be private.
 	houseOwnerGump.AddHTMLGump( 60, 155, 350, 20, 23, 0, "Transfer ownership of the house");
-	houseOwnerGump.AddHTMLGump( 60, 185, 350, 20, 24, 0, "<BASEFONT color=#FF0000>Demolish</BASEFONT> the house and get a deed back");
+	houseOwnerGump.AddHTMLGump( 60, 185, 350, 20, 24, 0, "Demolish the house and get a deed back");
 	houseOwnerGump.AddHTMLGump( 60, 215, 350, 20, 25, 0, "Change the house locks");
 	if( !houseIsPublic )
 		houseOwnerGump.AddHTMLGump( 60, 245, 350, 40, 26, 0, "Declare this building to be public. This will make your front door unlockable.");

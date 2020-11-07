@@ -376,7 +376,7 @@
 385=Take a look at my goods.
 386=You must wait to perform another action.
 387=You cannot use items equipped by other players.
-388=Hello sir! My name is %s and i will be working for you.
+388=Hello sir! My name is %s and I will be working for you.
 389=That is too far away and you cannot reach it.
 390=You have been resurrected.
 391=You are already living!
@@ -1925,7 +1925,7 @@
 1953=Only the house owner can clear the guest list!
 1954=Friend list for this house has been cleared!
 1955=Are you sure you want to <I>transfer ownership</I> of this house?
-1956=Are you sure you want to <BASEFONT color=#FF0000><I>demolish</I></BASEFONT> this house?
+1956=Are you sure you want to <I>demolish</I> this house?
 1957=Only the primary house owner can demolish the house!
 1958=Are you sure you want to <I>change the locks</I> on this house?
 1959=Only the primary house owner can change the house locks!
@@ -1941,5 +1941,6 @@
 1969=This house add-on does not appear to be in a house.
 1970=A deed for the house add-on has been placed in your backpack.
 1971=You are too busy to do that.
+1972=A guildstone transporter object has been placed in your backpack. Use it to move the guildstone to a new location.
 }
 EOF

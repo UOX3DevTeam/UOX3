@@ -93,17 +93,19 @@ input[id^="spoiler"] + label:hover {
 	padding-top: 10px;
 }
 
-.cmdHighlight {
+.highlight {
 	color: #BD0000;
 	font-weight: bold;
 }
 
+.itemTypesDiv,
 .settingsDiv {
 	clear:both !important;
 	border-bottom: 1px dashed lightgrey !important;
 	padding: 5px 0;
 }
 
+.itemTypesDiv,
 .settingsDiv p {
 	margin-bottom: 0 !important;
 }
@@ -161,4 +163,8 @@ pre {
  	background-color: #E6E6E6;
  	padding: 10px 10px 2px 10px;
  	margin-bottom: 5px;
+}
+
+.indent {
+	margin-left: 20px;
 }

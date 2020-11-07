@@ -1741,7 +1741,8 @@ void Shutdown( SI32 retCode )
 	}
 
 	//Lets wait for console thread to quit here
-	cons.join();
+	if( retCode != FATAL_UOX3_ALLOC_NETWORK )
+		cons.join();
 
 	// don't leave file pointers open, could lead to file corruption
 
@@ -2581,7 +2582,7 @@ int main( SI32 argc, char *argv[] )
 		current = std::chrono::system_clock::now();
 		const UI32 currentTime = 0;
 
-		Console.Start( format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), CVersionClass::GetEnvironment().c_str() ) );
+		Console.Start( format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
@@ -2592,7 +2593,7 @@ int main( SI32 argc, char *argv[] )
 //		signal( SIGFPE, &aus );
 #endif
 		Console.PrintSectionBegin();
-		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << CVersionClass::GetEnvironment() << ")" << myendl;
+		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
 		Console.PrintSectionBegin();
 
 		if(( cwmWorldState = new CWorldMain ) == NULL )

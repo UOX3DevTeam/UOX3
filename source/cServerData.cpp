@@ -455,7 +455,7 @@ void CServerData::ResetDefaults( void )
 	LootingIsCrime( true );
 
 	CombatMonstersVsAnimals( true );
-	CombatAnimalsAttackChance( 15 );
+	CombatAnimalsAttackChance( 5 );
 	CombatAnimalsGuarded( false );
 	CombatNPCBaseFleeAt( 20 );
 	CombatNPCBaseReattackAt( 40 );
@@ -1962,19 +1962,19 @@ void CServerData::MaxHousesCoOwnable( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 CombatAnimalsAttackChance( void ) const
-//|					void CombatAnimalsAttackChance( UI08 value )
+//|	Function	-	UI16 CombatAnimalsAttackChance( void ) const
+//|					void CombatAnimalsAttackChance( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of monsters attacking animals
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatAnimalsAttackChance( void ) const
+UI16 CServerData::CombatAnimalsAttackChance( void ) const
 {
 	return combatanimalattackchance;
 }
-void CServerData::CombatAnimalsAttackChance( UI08 value )
+void CServerData::CombatAnimalsAttackChance( UI16 value )
 {
-	if( value > 100 )
-		value = 100;
+	if( value > 1000 )
+		value = 1000;
 	combatanimalattackchance = value;
 }
 
@@ -3593,7 +3593,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			CombatMonstersVsAnimals( value.toUShort() == 1 );
 			break;
 		case 97:	 // ANIMALATTACKCHANCE[0090]
-			CombatAnimalsAttackChance( value.toUByte() );
+			CombatAnimalsAttackChance( value.toUShort() );
 			break;
 		case 98:	 // ANIMALSGUARDED[0091]
 			CombatAnimalsGuarded( value.toUShort() == 1 );

@@ -621,8 +621,8 @@ public:
 	void		CombatMonstersVsAnimals( bool value );
 	bool		CombatMonstersVsAnimals( void ) const;
 
-	void		CombatAnimalsAttackChance( UI08 value );
-	UI08		CombatAnimalsAttackChance( void ) const;
+	void		CombatAnimalsAttackChance( UI16 value );
+	UI16		CombatAnimalsAttackChance( void ) const;
 
 	void		CombatWeaponDamageChance( UI08 value );
 	UI08		CombatWeaponDamageChance( void ) const;

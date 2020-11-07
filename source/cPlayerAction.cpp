@@ -1983,7 +1983,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 400 );
 			return true;
 		case IT_CASTLEGATEOPENER:	// Order gate opener
-		case IT_CHAOSGATEOPENER:	// Chaos gate opener
 			i = calcItemObjFromSer( iUsed->GetTempVar( CITV_MORE ) );
 			if( ValidateObject( i ) )
 			{
@@ -2034,7 +2033,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			mSock->Send( &m2 );
 			return true;
 		}
-		case IT_READABLEBOOK:	// Readable book
+		case IT_BOOK:	// Readable book
 			if( iUsed->GetTempVar( CITV_MOREX ) != 666 && iUsed->GetTempVar( CITV_MOREX ) != 999 )
 				Books->OpenPreDefBook( mSock, iUsed );
 			else
@@ -2135,8 +2134,8 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			UI08 j;
 			for( j = 0; j < static_cast< UI08 >( RandomNum( 0, 3 ) + 2 ); ++j )
 			{
-				SI16 wx = ( mChar->GetX() + RandomNum( 0, 10 ) - 5 );
-				SI16 wy = ( mChar->GetY() + RandomNum( 0, 10 ) - 5 );
+				SI16 wx = ( mChar->GetX() + RandomNum( 0, 5 ) - 5 );
+				SI16 wy = ( mChar->GetY() - RandomNum( 0, 7 ) );
 				Effects->PlayMovingAnimation( mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
 				UI16 animID;
 				switch( RandomNum( 0, 4 ) )
@@ -2148,7 +2147,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					case 3:	animID = 0x376A;		break;
 					case 4:	animID = 0x377A;		break;
 				}
-				Effects->PlayStaticAnimation( wx, wy, mChar->GetZ() + 10, animID, 0x09, 0, 0 );
+				Effects->PlayStaticAnimation( wx, wy, mChar->GetZ() + 10, animID, RandomNum( 0x04, 0x09 ), 30, 0 );
 			}
 			return true;
 		case IT_RENAMEDEED: // Rename Deed
@@ -2195,20 +2194,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			else
 				Console << "Unhandled guild item type named: " << iUsed->GetName() << " with ID of: " << itemID << myendl;
 			return true;
-		/*case IT_HOUSESIGN: // Open Housing Gump
-			bool canOpen;
-			canOpen = (  iUsed->GetOwnerObj() == mChar || mChar->IsGM() );
-			if( !canOpen && iUsed->GetTempVar( CITV_MOREZ ) == 0 )
-			{
-				mSock->sysmessage( 439 );
-				return true;
-			}
-			mSock->TempObj( iUsed );
-			if( !canOpen )
-				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREZ ) );
-			else
-				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREX ) );
-			return true;*/
 		case IT_METALREPAIRTOOL:
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
@@ -2253,20 +2238,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mChar->SetSpeechItem( iUsed );
 				DoHouseTarget( mSock, static_cast<UI08>(iUsed->GetTempVar( CITV_MOREX )) );
 			}
-			return true;
-		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
-			// If item is locked down, check if player has access to use it
-			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
-				return true;
-
-			CChar *m;
-			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), mChar->GetInstanceID() );
-			m->SetNPCAiType( AI_PLAYERVENDOR );
-			m->SetInvulnerable( true );
-			m->SetDir( mChar->GetDir() );
-			m->SetOwner( mChar );
-			iUsed->Delete();
-			m->TextMessage( mSock, 388, TALK, false, m->GetName().c_str() );
 			return true;
 		case IT_SMITHYTOOL:
 			// If item is locked down, check if player has access to use it
@@ -2340,7 +2311,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 465 );
 			return true;
 		case IT_GUILLOTINE:
-		case IT_GUILLOTINEANIM:
 			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
 			{
 				if( itemID == 0x1245 )
@@ -2395,7 +2365,7 @@ void InitTagToItemType( void )
 	tagToItemType["LOCKEDCONTAINER"]		= IT_LOCKEDCONTAINER;
 	tagToItemType["SPELLBOOK"]				= IT_SPELLBOOK;
 	tagToItemType["MAP"]					= IT_MAP;
-	tagToItemType["READABLEBOOK"]			= IT_READABLEBOOK;
+	tagToItemType["BOOK"]					= IT_BOOK;
 	tagToItemType["DOOR"]					= IT_DOOR;
 	tagToItemType["LOCKEDDOOR"]				= IT_LOCKEDDOOR;
 	tagToItemType["FOOD"]					= IT_FOOD;

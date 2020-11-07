@@ -2605,7 +2605,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		if( !canMake )
-			toDelete = RandomNum( 0, toDelete / 2 );
+			toDelete = RandomNum( 0, UOX_MAX(1, toDelete / 2 ));
 		targColour	= resEntry.colour;
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{

@@ -3228,7 +3228,7 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatMonstersVsAnimals() );
 				break;
 			case 97:	 // ANIMALATTACKCHANCE[0090]
-				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatAnimalsAttackChance()));
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->CombatAnimalsAttackChance()));
 				break;
 			case 98:	 // ANIMALSGUARDED[0091]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatAnimalsGuarded() );
