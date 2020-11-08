@@ -14,6 +14,9 @@
 	Fixed an issue with pathfinding that could cause NPCs to queue up in long rows when attempting to reach the same target in combat when advanced pathfinding was disabled
 	Added functionality to allow guild masters to move guildstones by transforming these into portable stones that can be used to place the guildstones in new locations
 	Updated timestamp for packet logs to include milliseconds for greater granularity
+	Added missing guildstone.js and playerVendorDeed.js
+	Another attempt at fixing a crash on shutdowns caused by encountering fatal errors
+	Updated JS Documentation
 
 05/11/2020 - Xuri (0.99.4[RC4])
 	Fixed a server crash caused by container tooltip updates being attempted sent to invalid sockets in PlaceItem() function of items.cpp
