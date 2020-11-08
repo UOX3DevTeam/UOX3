@@ -11,7 +11,7 @@ function command_MUTE( socket, cmdString )
 	else
 		socket.tempint = 0;
 
-	var targMsg = GetDictionaryEntry( 71, socket.Language );
+	var targMsg = GetDictionaryEntry( 71, socket.language );
 	socket.tempint = parseInt( cmdString );
 	socket.CustomTarget( 0, targMsg );
 }
@@ -23,7 +23,7 @@ function command_SQUELCH( socket, cmdString )
 	else
 		socket.tempint = 0;
 
-	var targMsg = GetDictionaryEntry( 71, socket.Language );
+	var targMsg = GetDictionaryEntry( 71, socket.language );
 	socket.tempint = parseInt( cmdString );
 	socket.CustomTarget( 0, targMsg );
 }
@@ -34,7 +34,7 @@ function onCallback0( socket, ourObj )
 	{
 		var ourSock = ourObj.socket;
 		if( ourObj.commandlevel > 0 )
-			socket.SysMessage( GetDictionaryEntry( 1042, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1042, socket.language ) );
 		else
 		{
 			if( ourObj.squelch )
@@ -56,8 +56,8 @@ function onCallback0( socket, ourObj )
 					ourObj.squelch = 1;
 					ourSock.SetTimer( 5, 0 );
 				}
-				socket.SysMessage( GetDictionaryEntry( 761, socket.Language ) );
-				ourSock.SysMessage( GetDictionaryEntry( 1044, ourSock.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 761, socket.language ) );
+				ourSock.SysMessage( GetDictionaryEntry( 1044, ourSock.language ) );
 			}
 		}
 	}

@@ -7,7 +7,7 @@ function CommandRegistration()
 
 function command_FOLLOW( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 228, socket.Language );
+	var targMsg = GetDictionaryEntry( 228, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -15,7 +15,7 @@ function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
-		var targMsg = GetDictionaryEntry( 1742, socket.Language );
+		var targMsg = GetDictionaryEntry( 1742, socket.language );
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, targMsg );
 	}

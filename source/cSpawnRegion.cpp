@@ -686,7 +686,19 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 	const size_t waterPosSize = validWaterPos.size();
 	bool waterCreature = cwmWorldState->creatures[c->GetID()].IsWater();
 	bool amphiCreature = cwmWorldState->creatures[c->GetID()].IsAmphibian();
-	for( UI08 a = 0; a < 100; ++a )
+
+	// By default, let's attempt - at most - this many times to find a valid spawn point for the NPC
+	UI08 maxSpawnAttempts = 100;
+
+	// However, if we have found some valid spawn points already, reduce the amount of attempts to find MORE
+	// valid spawn points, and increase the chance of using those valid spots instead! Always make some attempts to
+	// find new spots, though
+	if( !waterCreature && landPosSize > 0 ) // land creature
+		maxSpawnAttempts = std::max( static_cast<SI16>( 25 ), static_cast<SI16>( maxSpawnAttempts - landPosSize ) );
+	else if(( waterCreature || amphiCreature ) && waterPosSize > 0 )  // water or amphibian creature
+		maxSpawnAttempts = std::max( static_cast<SI16>( 25 ), static_cast<SI16>( maxSpawnAttempts - waterPosSize ) );
+
+	for( UI08 a = 0; a < maxSpawnAttempts; ++a )
 	{
 		x = RandomNum( x1, x2 );
 		y = RandomNum( y1, y2 );
@@ -738,7 +750,8 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 			}
 		}
 
-		if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ) && !waterCreature )
+		//if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ) && !waterCreature )
+		if( !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ))
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber, instanceID ) )
 			{
@@ -751,7 +764,8 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				}
 			}
 		}
-		else if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ) && ( waterCreature || amphiCreature ) )
+		//else if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ) && ( waterCreature || amphiCreature ) )
+		else if(( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ))
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber, instanceID ) )
 			{
@@ -822,7 +836,15 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 	std::map<UI32, SI08>::const_iterator checkValid;
 	const size_t landPosSize = validLandPos.size();
 
-	for( UI08 a = 0; a < 100; ++a )
+	// By default, let's try - at most - this many times to find a valid spawn point for the item
+	UI08 maxSpawnAttempts = 100;
+
+	// However, if we have found some valid spawn points already, reduce the amount of attempts to find MORE
+	// valid spawn points, and increase the chance of using those valid spots instead!
+	if( landPosSize > 0 )
+		maxSpawnAttempts = std::max( static_cast<SI16>( 25 ), static_cast<SI16>( maxSpawnAttempts - landPosSize ) );
+
+	for( UI08 a = 0; a < maxSpawnAttempts; ++a )
 	{
 		x = RandomNum( x1, x2 );
 		y = RandomNum( y1, y2 );

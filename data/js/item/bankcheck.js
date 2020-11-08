@@ -1,11 +1,11 @@
 // Bank Checks (by Xuri)
-// v1.00
-// Last Updated: 16. August 2006
+// v1.01
+// Last Updated: 4. November 2020
 
 function onUseChecked( pUser, iUsed )
 {
 	var bankBox = pUser.FindItemLayer( 29 );
-	if( bankBox && iUsed.container && iUsed.container.serial == bankBox.serial )			
+	if( ValidateObject( bankBox ) && iUsed.container && iUsed.container.serial == bankBox.serial )
 	{
 		var checkSize = iUsed.GetTag( "CheckSize" );
 		if( checkSize > 65535 )
@@ -13,6 +13,14 @@ function onUseChecked( pUser, iUsed )
 			var numOfGoldPiles = ( checkSize / 65535 );
 			var i = 0; var newGoldPile;
 			var remainingGold = checkSize;
+
+			// Check that player's bankbox can hold all the piles of gold
+			if(( bankBox.totalItemCount + numOfGoldPiles ) >= bankBox.maxItems )
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1818 ), pSock.language ); // That container is already at max capacity
+				return false;
+			}
+
 			for( i = 1; i < numOfGoldPiles + 1; i++ )
 			{
 				if( remainingGold >= 65535 )
@@ -31,10 +39,17 @@ function onUseChecked( pUser, iUsed )
 		}
 		else
 		{
+			// Check that player's bankbox can hold all the piles of gold
+			if( bankBox.totalItemCount >= bankBox.maxItems )
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1818 ), pSock.language ); // That container is already at max capacity
+				return false;
+			}
+
 			var newGoldPile = CreateDFNItem( pUser.socket, pUser, "0x0EED", checkSize, "ITEM", false );
 			newGoldPile.container = bankBox;
 		}
-		pUser.TextMessage( "Gold was deposited in your account: " + checkSize, false, 0x096a );		
+		pUser.TextMessage( "Gold was deposited in your account: " + checkSize, false, 0x096a );
 		iUsed.Delete();
 	}
 	else

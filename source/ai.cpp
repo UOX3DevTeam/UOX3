@@ -237,7 +237,7 @@ void HandleEvilAI( CChar& mChar )
 					{
 						if( !cwmWorldState->ServerData()->CombatMonstersVsAnimals() )
 							continue;
-						else if( cwmWorldState->ServerData()->CombatAnimalsAttackChance() < RandomNum( 1, 100 ) )
+						else if( cwmWorldState->ServerData()->CombatAnimalsAttackChance() < RandomNum( 1, 1000 ) )
 							continue;
 					}
 					if( mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum( 0, 100 ) >= 10 )	// 10% chance of turning on own race

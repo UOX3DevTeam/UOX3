@@ -104,7 +104,10 @@ public:
 	{
 		return objData.size();
 	}
-
+	void Clear()
+	{
+		objData.clear();
+	}
 	bool Add( T toAdd )
 	{
 		if( FindEntry( toAdd ) != objData.end() )

@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 855, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 855, pSock.language ) );
 
 	return true;
 }
@@ -17,7 +17,7 @@ function onCallback0( pSock, ourObj )
 	var pUser = pSock.currentChar;
 	if( ourObj && ourObj.isItem && pUser )
 	{
-		var pLanguage = pSock.Language;
+		var pLanguage = pSock.language;
 		var ourDef = ourObj.Resist( 1 );
 		var ourLoDmg = ourObj.lodamage;
 		var ourHiDmg = ourObj.hidamage;
@@ -67,7 +67,7 @@ function onCallback0( pSock, ourObj )
 							dmgString = dmgString + " " + GetDictionaryEntry( 1522 - offset, pLanguage );
 						else
 							dmgString = dmgString + " " + GetDictionaryEntry( 1516, pLanguage );
-			
+
 						if( pUser.skills.armslore > 250 )
 						{
 							var spString;
@@ -87,7 +87,7 @@ function onCallback0( pSock, ourObj )
 						var defString;
 						// Items Defense + 1 / 2 ( 0 = 0, 1-2 = 1, 3-4 = 2, ect)
 						offset = parseInt( (ourDef + 1) / 2 );
-			
+
 						if( offset <= 6 )
 							defString = GetDictionaryEntry( 1534 - offset, pLanguage );
 						else
@@ -103,5 +103,5 @@ function onCallback0( pSock, ourObj )
 		}
 	}
 	else
-		pSock.SysMessage( GetDictionaryEntry( 1569, pSock.Language ) );
+		pSock.SysMessage( GetDictionaryEntry( 1569, pSock.language ) );
 }

@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 867, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 867, pSock.language ) );
 
 	return true;
 }
@@ -24,7 +24,7 @@ function onCallback0( pSock, ourObj )
 		else if( ourObj.tamed || pUser.skills.animallore >= 700 )
 		{
 			if( !pUser.CheckSkill( 2, 0, 1000 ) )
-				pSock.SysMessage( GetDictionaryEntry( 908, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 908, pSock.language ) );
 			else
 			{
 				position 	= 20;

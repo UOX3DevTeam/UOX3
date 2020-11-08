@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 866, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 866, pSock.language ) );
 
 	return true;
 }
@@ -17,7 +17,7 @@ function onCallback0( pSock, ourObj )
 	var pUser = pSock.currentChar;
 	if( ourObj && ourObj.isChar && pUser )
 	{
-		var pLanguage 	= pSock.Language;
+		var pLanguage 	= pSock.language;
 		if( !ourObj.InRange( pUser, 3 ) )
 			pSock.SysMessage( GetDictionaryEntry( 901, pLanguage ) );
 		else if( !ourObj.npc )

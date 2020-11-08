@@ -38,6 +38,7 @@ std::string format(std::size_t maxsize, const std::string fmtstring,va_list &lis
 
 std::string format(const std::string fmtstring,...) ;
 std::string format(const std::string fmtstring,va_list &list);
+std::string formatMessage(const std::string& uformat, const std::string& data) ;
 
 std::string simplify(const std::string& input);
 

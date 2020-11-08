@@ -14,11 +14,11 @@ function onSkill( pUser, objType, skillUsed )
 			if( pRegion.isSafeZone )
 			{
 				// Player is in a safe zone where no aggressive actions can be taken, disallow
-				pSock.SysMessage( GetDictionaryEntry( 1799, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language ) );
 			}
 			else
 			{
-		pSock.CustomTarget( 0, GetDictionaryEntry( 862, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 862, pSock.language ) );
 			}
 		}
 	}
@@ -30,9 +30,9 @@ function onCallback0( pSock, ourObj )
 	if( ValidateObject( ourObj ) && ourObj.isChar )
 	{
 		if( !ourObj.npc )
-			pSock.SysMessage( GetDictionaryEntry( 1445, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1445, pSock.language ) );
 		else if( ourObj.aitype == 17 || ourObj.aitype == 4 || !ourObj.vulnerable )
-			pSock.SysMessage( GetDictionaryEntry( 1642, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1642, pSock.language ) );
 		else
 		{
 			var ourObjRegion = ourObj.region;
@@ -41,7 +41,7 @@ function onCallback0( pSock, ourObj )
 				if( ourObjRegion.isSafeZone )
 				{
 					// Target is in a safe zone where no aggressive actions can be taken, disallow
-					pSock.SysMessage( GetDictionaryEntry( 1799, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language ) );
 					return;
 				}
 			}
@@ -52,11 +52,11 @@ function onCallback0( pSock, ourObj )
 				if( ValidateObject( myInstrument ) )
 				{
 					pSock.tempObj = ourObj;
-					pSock.CustomTarget( 1, GetDictionaryEntry( 1446, pSock.Language ) );
+					pSock.CustomTarget( 1, GetDictionaryEntry( 1446, pSock.language ) );
 					PlayInstrument( pSock, myInstrument, true );
 				}
 				else
-					pSock.SysMessage( GetDictionaryEntry( 1444, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 1444, pSock.language ) );
 			}
 		}
 	}
@@ -67,7 +67,7 @@ function onCallback1( pSock, toFollow )
 	if( ValidateObject( toFollow ) )
 	{
 		if( toFollow.aitype == 17 || toFollow.aitype == 4 || !toFollow.vulnerable )
-			pSock.SysMessage( GetDictionaryEntry( 1642, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1642, pSock.language ) );
 		else
 		{
 			var pUser = pSock.currentChar;
@@ -84,17 +84,17 @@ function onCallback1( pSock, toFollow )
 						{
 							pUser.criminal = true;
 							pFollower.Follow( toFollow );
-							pSock.SysMessage( GetDictionaryEntry( 1447, pSock.Language ) );
+							pSock.SysMessage( GetDictionaryEntry( 1447, pSock.language ) );
 						}
 					}
 					else
 					{
 						PlayInstrument( pSock, myInstrument, false );
-						pSock.SysMessage( GetDictionaryEntry( 1448, pSock.Language ) );
+						pSock.SysMessage( GetDictionaryEntry( 1448, pSock.language ) );
 					}
 				}
 				else
-					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language ) );
 			}
 		}
 	}

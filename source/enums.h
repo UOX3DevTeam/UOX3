@@ -433,7 +433,7 @@ enum distLocs
     DIST_NEXTTILE,
     DIST_NEARBY,
     DIST_INRANGE	= 7,
-    DIST_SAMESCREEN = 18,
+    DIST_SAMESCREEN = 24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
     DIST_BUILDRANGE = 31,
     DIST_OUTOFRANGE	= 0xFFFF
 };
@@ -451,14 +451,12 @@ enum ItemTypes
     IT_CONTAINER			= 1,
     IT_CASTLEGATEOPENER		= 2,
     IT_CASTLEGATE			= 3,
-    IT_CHAOSGATEOPENER		= 4,	// Candidate for deletion
-    IT_CHAOSGATE			= 5,	// Candidate for deletion
     IT_TELEPORTITEM			= 6,
     IT_KEY 					= 7,
     IT_LOCKEDCONTAINER 		= 8,
     IT_SPELLBOOK 			= 9,
     IT_MAP 					= 10,
-    IT_READABLEBOOK			= 11,
+    IT_BOOK					= 11,
     IT_DOOR					= 12,
     IT_LOCKEDDOOR			= 13,
     IT_FOOD					= 14,
@@ -498,6 +496,7 @@ enum ItemTypes
     IT_LEATHERREPAIRTOOL	= 190,
     IT_BOWREPAIRTOOL		= 191,
     IT_TILLER				= 200,
+	IT_HOUSEADDON			= 201,
     IT_GUILDSTONE			= 202,
     IT_HOUSESIGN			= 203,
     IT_TINKERTOOL			= 204,
@@ -532,9 +531,8 @@ enum ItemTypes
     IT_CAMPING				= 234,
     IT_MAGICSTATUE			= 235,
     IT_GUILLOTINE			= 236,
-    IT_GUILLOTINEANIM		= 237,	// Candidate for deletion
     IT_FLOURSACK			= 238,
-    IT_OPENFLOURSACK		= 239,	// Candidate for deletion
+    IT_OPENFLOURSACK		= 239,
     IT_FISHINGPOLE			= 240,
     IT_CLOCK				= 241,
     IT_MORTAR				= 242,
@@ -549,7 +547,6 @@ enum ItemTypes
     IT_TINKERCLOCK			= 251,
     IT_TINKERSEXTANT		= 252,
     IT_TRAININGDUMMY		= 253,
-    IT_TRAININGDUMMYANIM	= 254,	// Candidate for deletion
     IT_COUNT				= 255,
 };
 
@@ -631,11 +628,14 @@ enum TargetIDs
     TARGET_HOUSEUNLIST,
     TARGET_HOUSELOCKDOWN,
     TARGET_HOUSERELEASE,
+	TARGET_HOUSESECURE,
     TARGET_SMELT,
     TARGET_SHOWSKILLS,
     TARGET_BUILDHOUSE,
     TARGET_PARTYADD,
     TARGET_PARTYREMOVE,
+	TARGET_HOUSETRASHBARREL,
+	TARGET_HOUSESTRONGBOX,
     TARGET_NOFUNC
 };
 

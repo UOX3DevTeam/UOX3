@@ -14,7 +14,7 @@ function command_SET( socket, cmdString )
 			var uKey = splitString[0].toUpperCase();
 			if( uKey != "OWNER" ) // SET OWNER requires no additional arguments
 			{
-				socket.SysMessage( GetDictionaryEntry( 1755, socket.Language )); //Additional arguments required
+				socket.SysMessage( GetDictionaryEntry( 1755, socket.language )); //Additional arguments required
 				return;
 			}
 		}
@@ -87,6 +87,10 @@ function onCallback0( socket, ourObj )
 	case "OWNER":
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, "Choose character to own this object" );
+		break;
+	case "POISON":
+		ourObj.poison = nVal;
+		okMsg( socket );
 		break;
 	case "X":
 		ourObj.x = nVal;
@@ -166,6 +170,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		break;
 	case "RESTOCK":
 		ourItem.restock = nVal;
+		okMsg( socket );
+		break;
+	case "MAXITEMS":
+		ourItem.maxItems = nVal;
 		okMsg( socket );
 		break;
 	case "MORE":
@@ -361,10 +369,6 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.spdelay = nVal;
 		okMsg( socket );
 		break;
-	case "POISON":
-		ourChar.poison = nVal;
-		okMsg( socket );
-		break;
 	case "TITLE":
 		ourChar.title = socket.xText.substring( 6 );
 		okMsg( socket );
@@ -455,6 +459,17 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.maxstamina = nVal;
 		okMsg( socket );
 		break;
+	case "HUNGER":
+		ourChar.hunger = nVal;
+		okMsg( socket );
+		break;
+	case "LANGUAGE":
+		if( !ourChar.npc && ourChar.online )
+		{
+			ourChar.socket.language = nVal;
+			okMsg ( socket );
+		}
+		break;
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
@@ -479,7 +494,7 @@ function command_SETPOISONED( socket, cmdString )
 {
 	if( cmdString )
 	{
-		var targMsg = GetDictionaryEntry( 240, socket.Language );
+		var targMsg = GetDictionaryEntry( 240, socket.language );
 		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 2, targMsg );
 	}
@@ -498,5 +513,5 @@ function onCallback2( socket, ourObj )
 
 function okMsg( socket )
 { //Sends verification to the player that the specified value was successfully set.
-	socket.SysMessage( GetDictionaryEntry( 1756, socket.Language ));
+	socket.SysMessage( GetDictionaryEntry( 1756, socket.language ));
 }

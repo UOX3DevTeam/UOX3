@@ -50,7 +50,13 @@
 
 #define XP_WIN            // JS API Requires we define OS we compile with
 #define XP_PC
+#ifdef _WIN32 // Includes both 32 bit and 64 bit
+#ifdef _WIN64
+#define OS_STR "Win64"
+#else 
 #define OS_STR "Win32"
+#endif
+#endif
 
 #define UOX_COMPILER COMPILER_MSVC
 #define UOX_COMP_VER _MSC_VER
@@ -73,7 +79,21 @@
 #else       // A unix type system
 
 #define XP_UNIX            // JS API Requires we define OS we compile with
-#define OS_STR "Linux"
+#ifdef __linux__	
+#if INTPTR_MAX == INT64_MAX
+#define OS_STR "Linux64"
+#elif INTPTR_MAX == INT32_MAX
+#define OS_STR "Linux32"
+#endif
+#elif TARGET_OS_MAC
+#if INTPTR_MAX == INT64_MAX
+#define OS_STR "MacOS64"
+#elif INTPTR_MAX == INT32_MAX
+#define OS_STR "MacOS32"
+#endif
+#else
+#define OS_STR "Unknown"
+#endif
 
 #define UOX_COMPILER COMPILER_GNUC
 #define UOX_COMP_VER __VERSION__

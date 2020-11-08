@@ -107,7 +107,7 @@ void LeaveBoat( CSocket *s, CItem *p )
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
 			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceID );
-			if( Map->ValidMultiLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID ) )
+			if( Map->ValidMultiLocation( x, y, z, worldNumber, instanceID, true, false, false, false ) == 1 && !findMulti( x, y, z, worldNumber, instanceID ) )
 			{
 				mChar->SetLocation( x, y, z, worldNumber, instanceID );
 				CDataList< CChar * > *myPets = mChar->GetPetList();
@@ -872,7 +872,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-void killKeys( SERIAL targSerial );
+void killKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ModelBoat( CSocket *s, CBoatObj *i )
 //o-----------------------------------------------------------------------------------------------o
@@ -887,9 +887,29 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 
 	CChar *mChar = s->CurrcharObj();
 
+	if( !ValidateObject( tiller ) || !ValidateObject( p1 ) || !ValidateObject( p2 ) || !ValidateObject( hold ) )
+	{
+		s->sysmessage( "Something is not right - unable to find tiller, planks or hold! This boat might be bugged..." );
+		return;
+	}
+
 	SERIAL serial = i->GetSerial();
 	if( i->GetOwnerObj() == mChar )
 	{
+		// Check if character's backpack can hold more items
+		// By default, CreateItem drops item at character's feet if it cannot hold more items, but
+		// this is a high-value item, so let's prevent the action instead of dropping the item on the ground!
+		CItem *playerPack = mChar->GetPackItem();
+		if( ValidateObject( playerPack ) )
+		{
+			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+			{
+				if( s != NULL )
+					s->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+				return;
+			}
+		}
+
 		if( mChar->GetMultiObj() == i && getDist( mChar, p1 ) <= getDist( mChar, p2 ))
 			LeaveBoat( s, p1 );
 		else if( mChar->GetMultiObj() == i && getDist( mChar, p2 ) <= getDist( mChar, p1 ))
@@ -903,10 +923,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 
 		CItem *model = Items->CreateItem( s, mChar, 0x14f3, 1, 0, OT_ITEM, true );
 		if( model == NULL )
-		{
-			Console.error( format(" Turning boat into model failed on model creation, attempted by character serial %X", mChar->GetSerial() ));
 			return;
-		}
 
 		model->SetTempVar( CITV_MOREX, tiller->GetTempVar( CITV_MOREX ) );
 		Weight->subtractItemWeight( mChar, model );

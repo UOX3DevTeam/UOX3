@@ -57,6 +57,7 @@ protected:
 	UI16			ammoFX[3]; // Ammo-effect ID, Hue and rendermode
 	SI32			weightMax; //Maximum weight a container can hold
 	SI32			baseWeight; //Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
+	UI16			maxItems; // Maximum amount of items a container can hold
 
 	std::bitset< WEATHNUM >	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
@@ -215,6 +216,9 @@ public:
 
 	SI32			GetBaseWeight( void ) const;
 	void			SetBaseWeight( SI32 newValue );
+
+	UI16			GetMaxItems( void ) const;
+	void			SetMaxItems( UI16 newValue );
 
 	// Note: Value range to -ALLSKILLS-1 to ALLSKILLS+1
 	// To calculate skill used to made this item:

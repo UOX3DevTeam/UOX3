@@ -22,7 +22,6 @@
 <li><a href="#SpawnRegionMethods" target="_self">SpawnRegion Methods</a>
 <li><a href="#RaceMethods" target="_self">Race Methods</a>
 <li><a href="#ConsoleMethods" target="_self">Console Methods</a>
-<li><a href="#ODBCMethods" target="_self">ODBC Methods</a>
 <li><a href="#EffectFuncs" target="_self">Effect Related Functions</a>
 <li><a href="#MagicFuncs" target="_self">Magic Related Functions</a>
 <li><a href="#SpeechFuncs" target="_self">Speech Related Functions</a>
@@ -51,9 +50,8 @@
 <li><a href="resourcesp.html">Resources</a>
 <li><a href="consolep.html">Console</a>
 <li><a href="spellp.html">Spells</a>
+<li><a href="multip.html">Multis</a>
 <li><a href="accountp.html">Accounts</a>
-<li><a href="fileio.html#properties">File I/O</a>
-<li><a href="ODBCp.html">ODBC</a>
 </font></ul>
 <br>
 <hr>
@@ -211,6 +209,7 @@
 <ul>
 	<li><a href="itemm.html#CreateDFNItem">CreateDFNItem</a>
 	<li><a href="itemm.html#CreateBlankItem">CreateBlankItem</a>
+	<li><a href="itemm.html#FindRootContainer">FindRootContainer</a>
 </ul>
 <li><p><a href="common.html">Common Methods</a>
 <ul>
@@ -374,21 +373,6 @@
 </ul>
 </ul>
 
-<p><h3><a name="ODBCMethods" href="ODBCm.html">ODBC Methods</a> - (<a href="#index" target="_self">goto Top</a>)</h3>
-<ul>
-<li><p><a href="ODBCp.html">ODBC Property List</a>
-<li><p><a href="ODBCm.html">ODBC Methods</a>
-<ul>
-	<li><a href="ODBCm.html#BeginTransaction">BeginTransaction</a>
-	<li><a href="ODBCm.html#FinaliseTransaction">FinaliseTransaction</a>
-	<li><a href="ODBCm.html#ExecuteQuery">ExecuteQuery</a>
-	<li><a href="ODBCm.html#QueryRelease">QueryRelease</a>
-	<li><a href="ODBCm.html#FetchRow">FetchRow</a>
-	<li><a href="ODBCm.html#GetColumn">GetColumn</a>
-	<li><a href="ODBCm.html#LastOK">LastOK</a>
-</ul>
-</ul>
-
 <p><a name="EffectFuncs" href="effect.html#EffectFuncs"></a><h3>Effect Related Functions - (<a href="#index" target="_self">goto Top</a>)</h3>
 <ul>
 	<li><a href="effect.html#SE_DoMovingEffect">DoMovingEffect</a>
@@ -464,6 +448,17 @@
 	<li><a href="misc.html#SE_Moon">Moon</a>
 	<li><a href="misc.html#SE_CreateParty">CreateParty</a>
 	<li><a href="misc.html#SE_GetSocketFromIndex">GetSocketFromIndex</a>
+	<li><a href="misc.html#SE_GetClientFeature">GetClientFeature</a>
+	<li><a href="misc.html#SE_GetServerFeature">GetServerFeature</a>
+	<li><a href="misc.html#SE_GetServerSetting">GetServerSetting</a>
+	<li><a href="misc.html#SE_CheckTileFlag">CheckTileFlag</a>
+	<li><a href="misc.html#SE_GetMapElevation">GetMapElevation</a>
+	<li><a href="misc.html#SE_IsInBuilding">IsInBuilding</a>
+	<li><a href="misc.html#SE_CheckStaticFlag">CheckStaticFlag</a>
+	<li><a href="misc.html#SE_DoesStaticBlock">DoesStaticBlock</a>
+	<li><a href="misc.html#SE_DoesDynamicBlock">DoesDynamicBlock</a>
+	<li><a href="misc.html#SE_DoesMapBlock">DoesMapBlock</a>
+
 </ul>
 <p><a name="CommandFuncs" href="command.html"></a><h3>Command Functions - (<a href="#index" target="_self">goto Top</a>)</h3>
 <ul>
@@ -491,19 +486,50 @@
 	<li><a href="time.html#SE_SecondsPerUOMinute">SecondsPerUOMinute</a>
 	<li><a href="time.html#SE_GetCurrentClock">GetCurrentClock</a>
 </ul>
+
 <p><a name="MultiFuncs" href="multi.html"></a><h3>Multi Functions - (<a href="#index" target="_self">goto Top</a>)</h3>
+<ul>
+<li><p><a href="multi.html">Multi Methods</a></p></li>
 <ul>
 	<li><a href="multi.html#SE_FindMulti">FindMulti</a>
 	<li><a href="multi.html#SE_IsInMulti">IsInMulti</a>
-	<li><a href="multi.html#SE_IsOnBanList">IsOnBanList</a>
+	<li><a href="multi.html#SE_IsMulti">IsMulti</a>
+	<li><a href="multi.html#SE_IsBoat">IsBoat</a>
+	<li><a href="multi.html#SE_IsOwner">IsOwner</a>
 	<li><a href="multi.html#SE_IsOnOwnerList">IsOnOwnerList</a>
+	<li><a href="multi.html#SE_IsOnBanList">IsOnBanList</a>
+	<li><a href="multi.html#SE_IsOnFriendList">IsOnFriendList</a>
+	<li><a href="multi.html#SE_IsOnGuestList">IsOnGuestList</a>
 	<li><a href="multi.html#SE_AddToBanList">AddToBanList</a>
 	<li><a href="multi.html#SE_AddToOwnerList">AddToOwnerList</a>
+	<li><a href="multi.html#SE_AddToFriendList">AddToFriendList</a>
+	<li><a href="multi.html#SE_AddToGuestList">AddToGuestList</a>
 	<li><a href="multi.html#SE_RemoveFromBanList">RemoveFromBanList</a>
 	<li><a href="multi.html#SE_RemoveFromOwnerList">RemoveFromOwnerList</a>
-	<li><a href="multi.html#SE_IsMulti">IsMulti</a>
+	<li><a href="multi.html#SE_RemoveFromFriendList">RemoveFromFriendList</a>
+	<li><a href="multi.html#SE_RemoveFromGuestList">RemoveFromGuestList</a>
+	<li><a href="multi.html#SE_ClearOwnerList">ClearOwnerList</a>
+	<li><a href="multi.html#SE_ClearFriendList">ClearFriendList</a>
+	<li><a href="multi.html#SE_ClearGuestList">ClearGuestList</a>
+	<li><a href="multi.html#SE_ClearBanList">ClearBanList</a>
+	<li><a href="multi.html#SE_SecureContainer">SecureContainer</a>
+	<li><a href="multi.html#SE_UnsecureContainer">UnsecureContainer</a>
+	<li><a href="multi.html#SE_IsSecureContainer">IsSecureContainer</a>
+	<li><a href="multi.html#SE_LockDownItem">LockDownItem</a>
+	<li><a href="multi.html#SE_ReleaseItem">ReleaseItem</a>
+	<li><a href="multi.html#SE_KillKeys">KillKeys</a>
+	<li><a href="multi.html#SE_AddTrashCont">AddTrashCont</a>
+	<li><a href="multi.html#SE_RemoveTrashCont">RemoveTrashCont</a>
+	<li><a href="multi.html#SE_FirstChar">FirstChar</a>
+	<li><a href="multi.html#SE_NextChar">NextChar</a>
+	<li><a href="multi.html#SE_FinishedChar">FinishedChar</a>
 </ul>
-
+<li><p><a href="multi.html">Multi Functions</a></p></li>
+<ul>
+	<li><a href="multi.html#SE_GetMultiCorner">GetMultiCorner</a>
+	<li><a href="multi.html#SE_CalcMultiFromSer">CalcMultiFromSer</a>
+</ul>
+</ul>
 
 <p><a name="TownFuncs" href="towns.html"></a><h3>Town Functions - (<a href="#index" target="_self">goto Top</a>)</h3>
 <ul>
@@ -519,14 +545,23 @@
 </ul>
 
 <p><a name="FileMethods" href="fileio.html"></a><h3>File I/O Methods - (<a href="#index" target="_self">goto Top</a>)</h3>
-<li><p><a href="fileio.html#properties">File I/O Property List</a>
 <ul>
-	<li><a href="fileio.html#Open">Open</a>
-	<li><a href="fileio.html#Close">Close</a>
-	<li><a href="fileio.html#Write">Write</a>
-	<li><a href="fileio.html#Read">Read</a>
-	<li><a href="fileio.html#ReadUntil">ReadUntil</a>
-	<li><a href="fileio.html#Free">Free</a>
+<li><p><a href="fileio.html">File I/O Methods</a></p></li>
+<ul>
+	<li><a href="fileio.html#Open">Open</a></li>
+	<li><a href="fileio.html#Close">Close</a></li>
+	<li><a href="fileio.html#Write">Write</a></li>
+	<li><a href="fileio.html#Read">Read</a></li>
+	<li><a href="fileio.html#ReadUntil">ReadUntil</a></li>
+	<li><a href="fileio.html#Length">Length</a></li>
+	<li><a href="fileio.html#Pos">Pos</a></li>
+	<li><a href="fileio.html#EOF">EOF</a></li>
+	<li><a href="fileio.html#Free">Free</a></li>
+</ul>
+<li><p><a href="fileio.html">File I/O Functions</a></p></li>
+<ul>
+	<li><a href="fileio.html#DeleteFile">DeleteFile</a></li>
+</ul>
 </ul>
 
 <p><a name="StringFuncs" href="string.html"></a><h3>String Functions - (<a href="#index" target="_self">goto Top</a>)</h3>

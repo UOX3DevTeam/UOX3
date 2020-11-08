@@ -2225,7 +2225,7 @@ bool CChar::WearItem( CItem *toWear )
 		if( ValidateObject( GetItemAtLayer( tLayer ) ) )
 		{
 #if defined( UOX_DEBUG_MODE )
-			Console.warning( format("Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial ));
+			Console.warning( format("Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial ));
 #endif
 			rvalue = false;
 		}
@@ -6114,4 +6114,98 @@ void CChar::InParty( bool value )
 bool CChar::InParty( void ) const
 {
 	return bools.test( BIT_INPARTY );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CountHousesOwnedFunctor( CBaseObject *a, UI32 &b, void *extraData )
+//|					void CountHousesOwned( CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Used to count the houses owned by a given character
+//o-----------------------------------------------------------------------------------------------o
+bool CountHousesOwnedFunctor( CBaseObject *a, UI32 &b, void *extraData )
+{
+	UI32 *ourData		= (UI32 *)extraData;
+	CChar *mChar		= calcCharObjFromSer( ourData[0] );
+	bool trackHousesPerAccount = ourData[1];
+	bool countCoOwnedHouses = ourData[2];
+	if( ValidateObject( mChar ) && ValidateObject( a ) && a->CanBeObjType( OT_MULTI ) )
+	{
+		CMultiObj *i = static_cast< CMultiObj * >(a);
+		if( i->GetObjType() == OT_BOAT )
+			return false;
+
+		if( trackHousesPerAccount )
+		{
+			if( countCoOwnedHouses )
+			{
+				// Count house co-ownership per account
+				if( i->GetOwnerObj()->GetAccountNum() != mChar->GetAccountNum() && i->IsOnOwnerList( mChar ) )
+				{
+					++b;
+					return true;
+				}
+				else
+				{
+					// Loop through characters in house's ownerlist to see if any other characters
+					// on the same account co-owns the house
+					bool coOwnedByOtherCharOnAccount = i->CheckForAccountCoOwnership( mChar );
+					if( coOwnedByOtherCharOnAccount )
+					{
+						++b;
+						return true;
+					}
+				}
+			}
+			else if( !countCoOwnedHouses && i->GetOwnerObj()->GetAccountNum() == mChar->GetAccountNum() )
+			{
+				// Count house ownership per account
+				++b;
+				return true;
+			}
+		}
+		else
+		{
+			if( countCoOwnedHouses && ( i->GetOwnerObj()->GetAccountNum() != mChar->GetAccountNum() && i->IsOnOwnerList( mChar )))
+			{
+				// Count house co-ownership per character
+				++b;
+				return true;
+			}
+			else if( !countCoOwnedHouses && i->GetOwnerObj() == mChar )
+			{
+				// Count house ownership per character
+				++b;
+				return true;
+			}
+		}
+	}
+	return true;
+}
+UI32 CChar::CountHousesOwned( bool countCoOwnedHouses )
+{
+	UI32 b		= 0;
+	if( cwmWorldState->ServerData()->TrackHousesPerAccount() || countCoOwnedHouses )
+	{
+		// Count all houses owned by characters on player's account by iterating over all multis on the server(!)
+		UI32 toPass[3];
+		toPass[0] = GetSerial();
+		toPass[1] = cwmWorldState->ServerData()->TrackHousesPerAccount();
+		toPass[2] = countCoOwnedHouses;
+		ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, toPass, &CountHousesOwnedFunctor );
+	}
+	else
+	{
+		// Count all houses owned by player by checking list of character's owned items!
+		ITEMLIST *ownedItems = GetOwnedItems();
+		for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
+		{
+			CBaseObject *oItem = ( *I );
+			if( ValidateObject( oItem ) && oItem->GetObjType() == OT_MULTI )
+			{
+				if( oItem->GetOwnerObj() == this )
+					b++;
+			}
+		}
+	}
+	return b;
 }
