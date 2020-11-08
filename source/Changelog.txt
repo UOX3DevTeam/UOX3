@@ -1,3 +1,6 @@
+08/11/2020 - Xuri (0.99.4)
+	Updated version number and release changelog
+
 08/11/2020 - Xuri (0.99.4[RC5])
 	Fixed an issue with books where server could get stuck in an infinite loop if number of lines per page was higher than 8. Now capped at 8 lines per page.
 	Renamed item type enum IT_READABLEBOOK to IT_BOOK, since it's the item type used by both readable and writeable books.
