@@ -316,6 +316,8 @@ void TeleTarget( CSocket *s )
 		mChar->SetLocation( targX, targY, targZ );
 		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 	}
+	else if( s != NULL )
+		s->sysmessage( 687 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -487,12 +489,21 @@ void DvatTarget( CSocket *s )
 
 	if( i->isDyeable() )
 	{
+		if( i->IsLockedDown() )
+		{
+			CMultiObj *iMulti = i->GetMultiObj();
+			if( ValidateObject( iMulti ) && !iMulti->IsOnOwnerList( mChar ) )
+			{
+				s->sysmessage( 1032 ); // This is not yours!
+				return;
+			}
+		}
 		if( i->GetCont() != NULL )
 		{
 			CChar *c = FindItemOwner( i );
 			if( ValidateObject( c ) && c != mChar )
 			{
-				s->sysmessage( 1032 );
+				s->sysmessage( 1032 ); // This is not yours!
 				return;
 			}
 		}
@@ -1096,157 +1107,6 @@ void NpcResurrectTarget( CChar *i )
 		Console.warning( format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()) );
 }
 
-void killKeys( SERIAL targSerial );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseOwnerTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Transfer house ownership to targeted player
-//o-----------------------------------------------------------------------------------------------o
-void HouseOwnerTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-
-	CItem *sign = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
-
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
-
-	SERIAL o_serial = s->GetDWord( 7 );
-	if( o_serial == INVALIDSERIAL )
-		return;
-
-	CChar *own = calcCharObjFromSer( o_serial );
-	if( !ValidateObject( own ) )
-		return;
-
-	CSocket *oSock = own->GetSocket();
-	if( oSock == NULL )
-		return;
-
-	if( !ValidateObject( sign ) )
-		return;
-
-	CItem *house = calcItemObjFromSer( sign->GetTempVar( CITV_MORE ) );;
-	if( !ValidateObject( house ) )
-		return;
-
-	sign->SetOwner( own );
-	house->SetOwner( own );
-
-	killKeys( house->GetSerial() );
-
-	CItem *key = Items->CreateScriptItem( oSock, own, "0x100F", 1, OT_ITEM, true );	// gold key for everything else
-	if( key == NULL )
-		return;
-	key->SetName( "a house key" );
-	key->SetTempVar( CITV_MORE, house->GetSerial() );
-	key->SetType( IT_KEY );
-
-	s->sysmessage( 1081, own->GetName().c_str() );
-	oSock->sysmessage( 1082, mChar->GetName().c_str() );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseEjectTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Eject targeted player from house
-//o-----------------------------------------------------------------------------------------------o
-void HouseEjectTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
-	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
-	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) )
-	{
-		SI16 x1, y1, x2, y2;
-		Map->MultiArea( h, x1, y1, x2, y2 );
-		if( c->GetX() >= x1 && c->GetY() >= y1 && c->GetX() <= x2 && c->GetY() <= y2 )
-		{
-			c->SetLocation( x2, (y2+1), c->GetZ() );
-			s->sysmessage( 1083 );
-		}
-		else
-			s->sysmessage( 1084 );
-	}
-}
-
-UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode = 0 );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseBanTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Ban targeted player from house
-//o-----------------------------------------------------------------------------------------------o
-void HouseBanTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
-	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
-	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) )
-	{
-		UI08 r = AddToHouse( h, c, 1 );
-		if( r == 1 )
-			s->sysmessage( 1085, c->GetName().c_str() );
-		else if( r == 2 )
-			s->sysmessage( 1086 );
-		else
-			s->sysmessage( 1087 );
-	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseFriendTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Add targeted player to house friendslist
-//o-----------------------------------------------------------------------------------------------o
-void HouseFriendTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
-	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
-	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) )
-	{
-		UI08 r = AddToHouse( h, c );
-		if( r == 1 )
-		{
-			CSocket *cSock = c->GetSocket();
-			if( cSock != NULL )
-				cSock->sysmessage( 1089 );
-			s->sysmessage( 1088, c->GetName().c_str() );
-		}
-		else if( r == 2 )
-			s->sysmessage( 1090 );
-		else
-			s->sysmessage( 1091 );
-	}
-}
-
-bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseUnlistTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Remove targeted player to house friendslist
-//o-----------------------------------------------------------------------------------------------o
-void HouseUnlistTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
-	CMultiObj *h	=  static_cast<CMultiObj *>(s->TempObj());
-	s->TempObj( NULL );
-	if( ValidateObject( c ) && ValidateObject( h ) )
-	{
-		bool r = DeleteFromHouseList( h, c, static_cast<UI08>(s->TempInt()) );
-		if( r )
-			s->sysmessage( 1092, c->GetName().c_str() );
-		else
-			s->sysmessage( 1093 );
-	}
-}
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ShowSkillTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
@@ -1383,103 +1243,6 @@ void GuardTarget( CSocket *s )
 		else
 			s->sysmessage( 1628 );
 	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseLockdown( CSocket *s )
-//|	Date		-	17th December, 1999
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Attempt to lock down targeted item inside house
-//|	Notes		-	PRE: S is the socket of a valid owner/coowner and is in a valid house
-//|					POST: either locks down the item, or puts a message to the owner saying he's a moron
-//o-----------------------------------------------------------------------------------------------o
-void HouseLockdown( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());
-	s->TempObj( NULL );
-
-	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( itemToLock ) )
-	{
-		if( !itemToLock->CanBeLockedDown() )
-		{
-			s->sysmessage( 1106 );
-			return;
-		}
-		// time to lock it down!
-		CMultiObj *multi = findMulti( itemToLock );
-		if( ValidateObject( multi ) )
-		{
-			if( multi != house )
-			{
-				s->sysmessage( 1105 );
-				return;
-			}
-			if( multi->GetLockDownCount() < multi->GetMaxLockDowns() )
-			{
-				multi->LockDownItem( itemToLock );
-				UI16 lockDownsLeft = multi->GetMaxLockDowns() - multi->GetLockDownCount();
-				s->sysmessage( 1786 ); //You lock down the targeted item
-				s->sysmessage( 1788, lockDownsLeft ); //%i lockdowns remaining
-			}
-			else
-				s->sysmessage( "You have too many locked down items" );
-			return;
-		}
-		// not in a multi!
-		s->sysmessage( 1107 );
-	}
-	else
-		s->sysmessage( 1108 );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HouseRelease( CSocket *s )
-//|	Date		-	17th December, 1999
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Attempt to release targeted item inside house, if locked down
-//|	Notes		-	PRE: S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
-//|					POST: either releases the item from lockdown, or puts a message to the owner saying he's a moron
-//o-----------------------------------------------------------------------------------------------o
-void HouseRelease( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
-	s->TempObj( NULL );
-
-	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
-
-	if( ValidateObject( itemToLock ) ) // || !itemToLock->IsLockedDown() )
-	{
-		if( itemToLock->IsLockedDown() )
-		{
-			// time to release it!
-			CMultiObj *multi = findMulti( itemToLock );
-			if( ValidateObject( multi ) )
-			{
-				if( multi != house )
-				{
-					s->sysmessage( 1109 );
-					return;
-				}
-				if( multi->GetLockDownCount() > 0 )
-				{
-					multi->RemoveLockDown( itemToLock );	// Default as stored by the client, perhaps we should keep a backup?
-					UI16 lockDownsLeft = multi->GetMaxLockDowns() - multi->GetLockDownCount();
-					s->sysmessage( 1787 ); //You lock down the targeted item
-					s->sysmessage( 1788, lockDownsLeft ); //%i lockdowns remaining
-				}
-				return;
-			}
-			// not in a multi!
-			s->sysmessage( 1107 );
-		}
-		else
-			s->sysmessage( 1785 );
-	}
-	else
-		s->sysmessage( 1108 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1872,14 +1635,6 @@ bool CPITargetCursor::Handle( void )
 						// Town Stuff
 					case TARGET_TOWNALLY:		MakeTownAlly( tSock );					break;
 					case TARGET_VOTEFORMAYOR:	cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor( tSock ); break;
-						// House Functions
-					case TARGET_HOUSEOWNER:		HouseOwnerTarget( tSock );				break;
-					case TARGET_HOUSEEJECT:		HouseEjectTarget( tSock );				break;
-					case TARGET_HOUSEBAN:		HouseBanTarget( tSock );				break;
-					case TARGET_HOUSEFRIEND:	HouseFriendTarget( tSock );				break;
-					case TARGET_HOUSEUNLIST:	HouseUnlistTarget( tSock );				break;
-					case TARGET_HOUSELOCKDOWN:	HouseLockdown( tSock );					break;
-					case TARGET_HOUSERELEASE:	HouseRelease( tSock );					break;
 						// Pets
 					case TARGET_FOLLOW:			FollowTarget( tSock );					break;
 					case TARGET_ATTACK:			AttackTarget( tSock );					break;

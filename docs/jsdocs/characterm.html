@@ -17,9 +17,18 @@
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan="3" class="method"><a name="TextMessage">TextMessage</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void TextMessage( message );<br>void TextMessage( message, allHear, txtHue );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes the Char to say a message.<br>The extended version of TextMessage has two optional arguments:<br> allHear (broadcast true/false)<br>txtHue (color of the text sent to the client).
-<tr><td class="property">Example of Usage	<td class="value"><pre>myChar.TextMessage( "Hello world!" );<br>myChar.TextMessage( "Public, ice-colored message sent to everyone as if I said it.", true, 0x0480 );<br>myChar.TextMessage( "Private, ice-colored message just for me!", false, 0x0480 );</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>void TextMessage( message );<br>void TextMessage( message, allHear, txtHue );<br>void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial, speechFontType );</pre>
+<tr><td class="property">Purpose		<td class="value">Causes the object to say a message.<br><br>The function has 5 extra optional arguments (if including an optional parameter, make sure to also include the preceding argument):<br>
+<strong>allHear</strong> (broadcast true/false)<br>
+<strong>txtHue</strong> (colour of the text sent to the client)<br>
+<strong>speechTarget</strong> (intended target of message. 0 = only visible to sender and receiver, 1 = visible to all players in range, 2 = visible to all NPCs and players in range, 3 = visible to all PCs everywhere + NPCs in range, 4 = visible to all PCs everywhere (broadcast), 5 = only visible to receiver)<br>
+<strong>speechTargetSerial</strong> (serial of the receiver of the message, used if speechTarget is 0 or 5)<br>
+<strong>speechFontType</strong> (type of font to use. Defaults to normal. 0 = bold, 1 = normal with shadow, 2 = bold with shadow, 3 = normal, 4 = gothic, 5 = italic, 6 = small and dark, 7 = colourful, 8 = runic (only works with CAPS), 9 = small and light)
+<tr><td class="property">Example of Usage	<td class="value"><pre>myChar.TextMessage( "Hello world!" );<br>
+myChar.TextMessage( "Public, ice-coloured message sent to everyone as if I said it.", true, 0x0480 );<br>
+myChar.TextMessage( "Private, ice-coloured message just for me!", false, 0x0480 );
+myNPC.TextMessage( "This is a private message from one character to a character!", false, 0, 0, myChar.serial );
+myNPC.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0, 3, null, 8 );</pre>
 </table>
 
 <p>&nbsp;</p>
@@ -250,9 +259,10 @@ myChar.SpeechInput( 1 );
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SysMessage">SysMessage</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void SysMessage( string message );</pre>
-<tr><td class="property">Purpose		<td class="value">Sends a string as a sysmessage.
+<tr><td class="property">Prototype		<td class="value"><pre>void SysMessage( string message, ... );</pre>
+<tr><td class="property">Purpose		<td class="value">Sends a string as a sysmessage. Accepts up to 10 additional arguments which can be injected into the string as needed.
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.SysMessage( "Isn't the world great?" );
+myChar.SysMessage( GetDictionaryEntry(388), myNPC.name ); // Hello sir! My name is %s and I will be working for you.
 </pre></table>
 
 <p>&nbsp;</p>

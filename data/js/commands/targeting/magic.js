@@ -7,7 +7,7 @@ function CommandRegistration()
 
 function command_GATE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 226, socket.Language );
+	var targMsg = GetDictionaryEntry( 226, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -18,7 +18,7 @@ function onCallback0( socket, ourObj )
 	{
 		if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
-			var txtMessage = GetDictionaryEntry( 679, socket.Language );
+			var txtMessage = GetDictionaryEntry( 679, socket.language );
 			socket.SysMessage( txtMessage );
 		}
 		else
@@ -28,7 +28,7 @@ function onCallback0( socket, ourObj )
 
 function command_RECALL( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 224, socket.Language );
+	var targMsg = GetDictionaryEntry( 224, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 
@@ -40,12 +40,12 @@ function onCallback1( socket, ourObj )
 		var txtMessage;
 		if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
-			txtMessage = GetDictionaryEntry( 431, socket.Language );
+			txtMessage = GetDictionaryEntry( 431, socket.language );
 			socket.SysMessage( txtMessage );
 		}
 		else
 		{
-			txtMessage = GetDictionaryEntry( 682, socket.Language );
+			txtMessage = GetDictionaryEntry( 682, socket.language );
 			socket.SysMessage( txtMessage );
 			mChar.Recall( ourObj );
 		}

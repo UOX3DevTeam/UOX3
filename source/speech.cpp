@@ -339,12 +339,19 @@ bool CPITalkRequest::Handle( void )
 				nearbyChars = FindNearbyPlayers( mChar, ( DIST_SAMESCREEN * 1.5 ));
 			else
 				nearbyChars = FindNearbyPlayers( mChar );
+
+			SI16 mCharX = mChar->GetX();
+			SI16 mCharY = mChar->GetY();
+			SI08 mCharZ = mChar->GetZ();
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				CSocket *tSock	= (*cIter);
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
+					// Line of Sight check!
+					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+						continue;
 					if( mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
 					{
 						if( mChar->IsDead() && !tChar->IsDead() )  // Ghost can talk normally to other ghosts

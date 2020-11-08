@@ -2,7 +2,7 @@
 // Last Updated: January 24th 2005
 // bale of cotton : spinning wheel : six spools of thread
 
-function onUseChecked ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed )
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -13,12 +13,12 @@ function onUseChecked ( pUser, iUsed )
 		if( iPackOwner && pUser.serial == iPackOwner.serial )
 		{
 			srcSock.tempObj = iUsed;
-			srcSock.CustomTarget( 0, GetDictionaryEntry( 449, srcSock.Language ) ); //Select spinning wheel to spin cotton.
+			srcSock.CustomTarget( 0, GetDictionaryEntry( 449, srcSock.language ) ); //Select spinning wheel to spin cotton.
 		}
 		else
-			pUser.SysMessage( GetDictionaryEntry( 775, srcSock.Language ) ); //You can't use material outside your backpack.
+			pUser.SysMessage( GetDictionaryEntry( 775, srcSock.language ) ); //You can't use material outside your backpack.
 	}
-	return false;	
+	return false;
 }
 
 function onCallback0( tSock, myTarget )
@@ -43,7 +43,7 @@ function onCallback0( tSock, myTarget )
 	}
 	if( !pUser.InRange( myTarget, 3 ) )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 393, tSock.Language ) ); //That is too far away
+		pUser.SysMessage( GetDictionaryEntry( 393, tSock.language ) ); //That is too far away
 		return;
 	}
     	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
@@ -55,14 +55,14 @@ function onCallback0( tSock, myTarget )
 	if( pUser.CheckSkill( 34, 0, 1000 ) )
 	{
 		pUser.UseResource( 1, iUsed.id ); 	// remove cotton
-		pUser.SoundEffect( 0x021b, true );        
+		pUser.SoundEffect( 0x021b, true );
 		myTarget.id++;
 		myTarget.StartTimer( 2000, 0, true );
 		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fa0", 6, "ITEM", true );  // makes some spools of thread
 		pUser.SysMessage( "You spin some spools of thread, and put them in your backpack." );
 	}
 	else
-		pUser.SysMessage( GetDictionaryEntry( 821, tSock.Language ) ); //You failed to spin your material.
+		pUser.SysMessage( GetDictionaryEntry( 821, tSock.language ) ); //You failed to spin your material.
         return;
 }
 

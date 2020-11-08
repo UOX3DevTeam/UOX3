@@ -411,3 +411,363 @@ id=0x0b44
 weight=1000
 movable=2
 }
+
+[brownbearrug1]
+{ east 1/9
+get=base_item
+name=a bearskin rug
+id=0x1E40
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug2]
+{ east 2/9
+get=base_item
+name=a bearskin rug
+id=0x1E41
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug3]
+{ east 3/9
+get=base_item
+name=a bearskin rug
+id=0x1E42
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug4]
+{ east 4/9
+get=base_item
+name=a bearskin rug
+id=0x1E43
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug5]
+{ east 5/9
+get=base_item
+name=a bearskin rug
+id=0x1E44
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug6]
+{ east 6/9
+get=base_item
+name=a bearskin rug
+id=0x1E45
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug7]
+{ east 7/9
+get=base_item
+name=a bearskin rug
+id=0x1E46
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug8]
+{ east 8/9
+get=base_item
+name=a bearskin rug
+id=0x1E47
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug9]
+{ east 9/9
+get=base_item
+name=a bearskin rug
+id=0x1E48
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug10]
+{ south 1/9
+get=base_item
+name=a bearskin rug
+id=0x1E36
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug11]
+{ south 2/9
+get=base_item
+name=a bearskin rug
+id=0x1E37
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug12]
+{ south 3/9
+get=base_item
+name=a bearskin rug
+id=0x1E38
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug13]
+{ south 4/9
+get=base_item
+name=a bearskin rug
+id=0x1E39
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug14]
+{ south 5/9
+get=base_item
+name=a bearskin rug
+id=0x1E3A
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug15]
+{ south 6/9
+get=base_item
+name=a bearskin rug
+id=0x1E3B
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug16]
+{ south 7/9
+get=base_item
+name=a bearskin rug
+id=0x1E3C
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug17]
+{ south 8/9
+get=base_item
+name=a bearskin rug
+id=0x1E3D
+weight=1000
+movable=2
+decay=0
+}
+
+[brownbearrug18]
+{ south 9/9
+get=base_item
+name=a bearskin rug
+id=0x1E3E
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug1]
+{ east 1/9
+get=base_item
+name=a bearskin rug
+id=0x1E53
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug2]
+{ east 2/9
+get=base_item
+name=a bearskin rug
+id=0x1E54
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug3]
+{ east 3/9
+get=base_item
+name=a bearskin rug
+id=0x1E55
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug4]
+{ east 4/9
+get=base_item
+name=a bearskin rug
+id=0x1E56
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug5]
+{ east 5/9
+get=base_item
+name=a bearskin rug
+id=0x1E57
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug6]
+{ east 6/9
+get=base_item
+name=a bearskin rug
+id=0x1E58
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug7]
+{ east 7/9
+get=base_item
+name=a bearskin rug
+id=0x1E59
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug8]
+{ east 8/9
+get=base_item
+name=a bearskin rug
+id=0x1E5A
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug9]
+{ east 9/9
+get=base_item
+name=a bearskin rug
+id=0x1E5B
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug10]
+{ south 1/9
+get=base_item
+name=a bearskin rug
+id=0x1E49
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug11]
+{ south 2/9
+get=base_item
+name=a bearskin rug
+id=0x1E4A
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug12]
+{ south 3/9
+get=base_item
+name=a bearskin rug
+id=0x1E4B
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug13]
+{ south 4/9
+get=base_item
+name=a bearskin rug
+id=0x1E4C
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug14]
+{ south 5/9
+get=base_item
+name=a bearskin rug
+id=0x1E4D
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug15]
+{ south 6/9
+get=base_item
+name=a bearskin rug
+id=0x1E4E
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug16]
+{ south 7/9
+get=base_item
+name=a bearskin rug
+id=0x1E4F
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug17]
+{ south 8/9
+get=base_item
+name=a bearskin rug
+id=0x1E50
+weight=1000
+movable=2
+decay=0
+}
+
+[polarbearrug18]
+{ south 9/9
+get=base_item
+name=a bearskin rug
+id=0x1E51
+weight=1000
+movable=2
+decay=0
+}

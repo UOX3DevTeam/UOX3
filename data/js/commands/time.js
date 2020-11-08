@@ -14,8 +14,8 @@ function TellTime( pSock )
 	{
 		var hour	= GetHour();
 		var minute	= GetMinute();
-		var pLang	= pSock.Language;
-	
+		var pLang	= pSock.language;
+
 		var tempString;
 		if( minute <= 14 )
 			tempString = GetDictionaryEntry( 1248, pLang );
@@ -31,9 +31,9 @@ function TellTime( pSock )
 			else
 				++hour;
 		}
-	
+
 		tempString += " ";
-	
+
 		if( hour == 12 )
 			tempString += GetDictionaryEntry( 1264, pLang );
 		else if( hour == 24 )
@@ -49,7 +49,7 @@ function TellTime( pSock )
 
 			if( hour >= 21 || ( hour >= 1 && hour < 5 ) )
 				tempString += GetDictionaryEntry( 1267, pLang );
-			else if( hour >= 5 && hour < 13 ) 
+			else if( hour >= 5 && hour < 13 )
 				tempString += GetDictionaryEntry( 1269, pLang );
 			else if( hour >= 13 && hour < 18 )
 				tempString += GetDictionaryEntry( 1265, pLang );

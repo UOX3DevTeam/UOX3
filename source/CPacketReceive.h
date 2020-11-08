@@ -203,6 +203,30 @@ public:
 	virtual bool	Handle( void ) override;
 };
 
+class CPIKRSeed : public CPInputBuffer
+{
+public:
+	virtual			~CPIKRSeed()
+	{
+	}
+	CPIKRSeed();
+	CPIKRSeed( CSocket *s );
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+};
+
+class CPIKREncryptionVerification : public CPInputBuffer
+{
+public:
+	virtual			~CPIKREncryptionVerification()
+	{
+	}
+	CPIKREncryptionVerification();
+	CPIKREncryptionVerification( CSocket *s );
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+};
+
 class CPIGodModeToggle : public CPInputBuffer
 {
 public:

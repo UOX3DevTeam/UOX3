@@ -1039,7 +1039,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		}
 		else
 		{
-			if( mSock->Buffer()[0] == 0xEF || mSock->Buffer()[0] == 0xC0 )
+			if( mSock->Buffer()[0] == 0xEF || mSock->Buffer()[0] == 0xC0 || mSock->Buffer()[0] == 0xFF )
 			{
 				WhichLoginPacket( mSock->Buffer()[0], mSock );
 				//mSock->Receive( 21, false );
@@ -1059,7 +1059,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		{
 
 			UI08 packetID = buffer[0];
-			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
+			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 && packetID != 0xE4 )
 			{
 				// April 5, 2004 - Hmmm there are two of these ?
 				if(cwmWorldState->ServerData()->ServerUOGEnabled()){

@@ -9,11 +9,11 @@ function onSkill( pUser, objType, skillUsed )
 	if( pSock )
 	{
 		if( !pUser.CheckSkill( 32, 0, 1000 ) )
-			pSock.SysMessage( GetDictionaryEntry( 1501, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1501, pSock.language ) );
 		else
 		{
 			pUser.SoundEffect( 0x024A, true );
-			pSock.SysMessage( GetDictionaryEntry( 1502, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1502, pSock.language ) );
 			pSock.SetTimer( 2, (1000 * (30 + (pUser.skills.spiritspeak / 10) + pUser.intelligence)) );
 		}
 	}

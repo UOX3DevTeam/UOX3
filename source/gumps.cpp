@@ -23,7 +23,6 @@
 
 
 void CollectGarbage( void );
-void deedHouse( CSocket *s, CMultiObj *i );
 UString GetUptime( void );
 
 //o-----------------------------------------------------------------------------------------------o
@@ -469,48 +468,6 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		return;
 	}
 	Console.print( format("Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str()) );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleHouseButton( CSocket *s, UI32 button, CItem *j )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles button pressed in house gump
-//o-----------------------------------------------------------------------------------------------o
-void HandleHouseButton( CSocket *s, UI32 button, CItem *j )
-{
-	if( !ValidateObject( j ) )
-		return;
-
-	CMultiObj *house = calcMultiFromSer( j->GetTempVar( CITV_MORE ) );
-
-	if( button == 2 )
-		s->TempObj( j );
-	else if( button != 20 )
-		s->TempObj( house );
-	switch( button )
-	{
-		case 20: if( s->GetWord( 21 ) > 0 )								// Change house sign's appearance
-		{
-			j->SetID( s->GetWord( 21 ) );
-			s->sysmessage( 556 );
-		}												break;
-		case 0:													break;
-		case 1:													break;
-		case 2:	s->target( 0, TARGET_HOUSEOWNER, 557 );			break;  // Bestow ownership upon someone else
-		case 3:	deedHouse( s, house );							break;  // Turn house into a deed
-		case 4:	s->target( 0, TARGET_HOUSEEJECT, 558 );			break;  // Kick someone out of house
-		case 5:	s->target( 0, TARGET_HOUSEBAN, 559 );			break;  // Ban somebody
-		case 6: s->TempInt( 1 );
-			s->target( 0, TARGET_HOUSEUNLIST, 560 );		break; // Remove someone from ban list
-		case 7:	s->target( 0, TARGET_HOUSEFRIEND, 561 );		break; // Make someone a friend
-		case 8:	s->TempInt( 0 );
-			s->target( 0, TARGET_HOUSEUNLIST, 560 );		break; // Remove someone from house list
-		default:
-
-
-			s->sysmessage( format( "HouseGump Called - Button=%i", button ) );
-			break;
-	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1462,13 +1419,11 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	// gump types
 	// TBD  To Be Done
-	// TBR  To Be Replaced
 	// TBDU To Be Decided Upon
 	// 1	Tweak Item
 	// 2	Tweak Char
 	// 3	Townstones
 	// 4	WhoList
-	// 5	House functions (TBR)
 	// 6	Hair Dye Menu
 	// 7	Accounts (TBR)
 	// 8	Racial editor (TBDU)
@@ -1489,12 +1444,6 @@ bool CPIGumpMenuSelect::Handle( void )
 		case 2:	HandleTweakCharButton( tSock, buttonID, id, gumpID );			break;	// Tweak Char
 		case 3:	HandleTownstoneButton( tSock, buttonID, id, gumpID );			break;	// Townstones
 		case 4:	WhoList->ButtonSelect( tSock, static_cast<UI16>(buttonID), static_cast<UI08>(gumpID) );					break;	// Wholist
-		case 5:																		// House Functions
-			j = static_cast<CItem *>(tSock->TempObj());
-			tSock->TempObj( NULL );
-			if( ValidateObject( j ) )
-				HandleHouseButton( tSock, buttonID, j );
-			break;
 		case 6:																		// Hair Dye Menu
 			j = static_cast<CItem *>(tSock->TempObj());
 			tSock->TempObj( NULL );
@@ -1512,6 +1461,8 @@ bool CPIGumpMenuSelect::Handle( void )
 		case 11: OffList->ButtonSelect( tSock, static_cast<UI16>(buttonID), static_cast<UI08>(gumpID) );				break;	// Who's Offline
 		case 12: Skills->HandleMakeMenu( tSock, buttonID, static_cast<SI32>(tSock->AddID()));	break;	// New Make Menu
 		case 13: HandleHowToButton( tSock, buttonID );							break;	// Howto
+		default:
+			break;
 	}
 	return true;
 }

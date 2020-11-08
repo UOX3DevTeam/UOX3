@@ -14,11 +14,11 @@ function onSkill( pUser, objType, skillUsed )
 			if( pRegion.isSafeZone )
 			{
 				// Player is in a safe zone where no aggressive actions can be taken, disallow
-				pSock.SysMessage( GetDictionaryEntry( 1799, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language ) );
 			}
 			else
 			{
-		pSock.CustomTarget( 0, GetDictionaryEntry( 861, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 861, pSock.language ) );
 			}
 		}
 	}
@@ -31,9 +31,9 @@ function onCallback0( pSock, ourObj )
 	if( ValidateObject( ourObj ) && ourObj.isChar )
 	{
 		if( !ourObj.npc )
-			pSock.SysMessage( GetDictionaryEntry( 1442, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1442, pSock.language ) );
 		else if( ourObj.aitype == 17 || ourObj.aitype == 4 || !ourObj.vulnerable )
-			pSock.SysMessage( GetDictionaryEntry( 830, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 830, pSock.language ) );
 		else
 		{
 			var ourObjRegion = ourObj.region;
@@ -42,7 +42,7 @@ function onCallback0( pSock, ourObj )
 				if( ourObjRegion.isSafeZone )
 				{
 					// Target is in a safe zone where no aggressive actions can be taken, disallow
-					pSock.SysMessage( GetDictionaryEntry( 1799, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language ) );
 					return;
 				}
 			}
@@ -53,11 +53,11 @@ function onCallback0( pSock, ourObj )
 				if( ValidateObject( myInstrument ) )
 				{
 					pSock.tempObj = ourObj;
-					pSock.CustomTarget( 1, GetDictionaryEntry( 1443, pSock.Language ) );
+					pSock.CustomTarget( 1, GetDictionaryEntry( 1443, pSock.language ) );
 					PlayInstrument( pSock, myInstrument, true );
 				}
 				else
-					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.Language ) );
+					pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language ) );
 			}
 		}
 	}
@@ -68,7 +68,7 @@ function onCallback1( pSock, toAttack )
 	if( ValidateObject( toAttack ) )
 	{
 		if( toAttack.aitype == 17 || toAttack.aitype == 4 || !toAttack.vulnerable )
-			pSock.SysMessage( GetDictionaryEntry( 1730, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1730, pSock.language ) );
 		else
 		{
 			var pUser = pSock.currentChar;
@@ -78,7 +78,7 @@ function onCallback1( pSock, toAttack )
 				if( ValidateObject( pAttacker ) )
 				{
 					if( pAttacker == toAttack )
-						pSock.SysMessage( GetDictionaryEntry( 1449, pSock.Language ) );
+						pSock.SysMessage( GetDictionaryEntry( 1449, pSock.language ) );
 					else
 					{
 						var myInstrument = GetInstrument( pUser );
@@ -93,7 +93,7 @@ function onCallback1( pSock, toAttack )
 									willAttack = toAttack;
 									if( toAttack.innocent )
 										pUser.criminal = true;
-									pSock.SysMessage( GetDictionaryEntry( 1450, pSock.Language ) );
+									pSock.SysMessage( GetDictionaryEntry( 1450, pSock.language ) );
 								}
 								else
 									willAttack = pUser;
@@ -105,11 +105,11 @@ function onCallback1( pSock, toAttack )
 							else
 							{
 								PlayInstrument( pSock, myInstrument, false );
-								pSock.SysMessage( GetDictionaryEntry( 1452, pSock.Language ) );
+								pSock.SysMessage( GetDictionaryEntry( 1452, pSock.language ) );
 							}
 						}
 						else
-							pSock.SysMessage( GetDictionaryEntry( 1438, pSock.Language ) );
+							pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language ) );
 					}
 				}
 			}
@@ -193,7 +193,7 @@ function BeginAttack( charOne, charTwo, attackFirst )
 	charOne.attackFirst = attackFirst;
 	charOne.attacker = charTwo;
 	charOne.target = charTwo;
-	
+
 	if( charOne.visible == 1 || charOne.visible == 2 )
 	{
 		charOne.visible = 0;

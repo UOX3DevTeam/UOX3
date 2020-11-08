@@ -135,14 +135,7 @@ private:
 	MAPLIST				MapList;
 
 	// Functions
-	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ );
-	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
-
-	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID );
-	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
-	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk );
-	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk );
-	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck );
+	CItem *			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis );
 
 	// caching functions
 	void			LoadMapsDFN( void );
@@ -156,6 +149,15 @@ public:
 	~CMulHandler();
 
 	void			Load( void );
+
+	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ, bool checkHeight = false );
+	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisible = true );
+
+	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
+	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis );
+	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad );
+	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface = false );
+	bool			CheckTileFlag( UI16 itemID, TileFlags flagToCheck );
 
 	// height functions
 	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
@@ -186,7 +188,8 @@ public:
 
 	// misc functions
 	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater = true );
-	bool			ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater );
+	UI08			ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater, 
+						bool checkOnlyOtherMultis, bool checkOnlyNonMultis, bool checkForRoads );
 	bool			MapExists( UI08 worldNumber );
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 

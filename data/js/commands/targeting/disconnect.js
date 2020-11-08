@@ -6,13 +6,13 @@ function CommandRegistration()
 
 function command_KICK( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 196, socket.Language );
+	var targMsg = GetDictionaryEntry( 196, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
 function command_DISCONNECT( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 196, socket.Language );
+	var targMsg = GetDictionaryEntry( 196, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -23,8 +23,8 @@ function onCallback0( socket, ourObj )
 		var targSock = ourObj.socket;
 		if( targSock && targSock != socket )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1029, socket.Language ) );
-			targSock.SysMessage( GetDictionaryEntry( 1030, targSock.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1029, socket.language ) );
+			targSock.SysMessage( GetDictionaryEntry( 1030, targSock.language ) );
 			targSock.Disconnect();
 		}
 	}

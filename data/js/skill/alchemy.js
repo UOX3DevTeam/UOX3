@@ -4,11 +4,11 @@ function onUseChecked( pUser, iUsed )
 	if( socket && iUsed && iUsed.isItem )
 	{
 		if( pUser.skillsused.alchemy )
-			socket.SysMessage( GetDictionaryEntry( 1631, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1631, socket.language ) );
 		else
 		{
 			socket.tempObj = iUsed;
-			socket.CustomTarget( 1, GetDictionaryEntry( 470, socket.Language ) );
+			socket.CustomTarget( 1, GetDictionaryEntry( 470, socket.language ) );
 		}
 	}
 	return false;

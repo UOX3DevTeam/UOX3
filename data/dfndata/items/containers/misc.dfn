@@ -74,3 +74,16 @@ decay=1
 good=7
 }
 
+[trash_barrel]
+{
+get=0x0e77
+name=trash barrel
+id=0x0e77
+color=0x03b2
+weight=500
+weightmax=40000
+type=87
+movable=2
+decay=0
+script=15004
+}

@@ -586,18 +586,6 @@ bool cMovement::CheckForHouseBan( CChar *c, CSocket *mSock )
 	{
 		if( c->GetMultiObj() != house )
 			c->SetMulti( house );//Set them inside the multi!
-		if( house->IsOnBanList( c ) )
-		{
-			SI16 sx, sy, ex, ey;
-			Map->MultiArea( house, sx, sy, ex, ey );
-			c->SetLocation( ex, ey + 1, c->GetZ() );
-			if( mSock != NULL )
-			{
-				mSock->sysmessage( 1639 );
-				mSock->WalkSequence( -1 );
-			}
-			return false;
-		}
 	}
 	else
 	{
@@ -1661,7 +1649,16 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 				newx = GetXfromDir( pf_dir, newx );	// moved inside if to reduce calculations
 				newy = GetYfromDir( pf_dir, newy );
 				if( ( pn < P_PF_MRV ) && CheckForCharacterAtXYZ( c, newx, newy, newz ) )
-					continue;
+				{
+					// Character is blocking the way. Let's try to find a way around by
+					// randomizing the direction a bit!
+					SI08 rndDir = pf_dir + RandomNum( -2, 2 );
+					if( rndDir < 0 )
+						rndDir = 7 + ( rndDir + 1 );
+					else if( rndDir > 7 )
+						rndDir = 0 + abs( 7 - ( rndDir - 1 ) );
+					pf_dir = rndDir;
+				}
 
 				UI08 dirToPush = pf_dir;
 				if( willRun )
@@ -2578,6 +2575,7 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	UI16 curY			= mChar->GetY();
 	SI08 curZ			= mChar->GetZ();
 	UI08 dirToPush		= UNKNOWNDIR;
+	UI08 oldDir			= mChar->GetDir();
 	size_t loopCtr		= 0;
 	size_t maxSteps		= 500; //default
 
@@ -2621,11 +2619,11 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 				if( willRun )
 					newDir |= 0x80;
 
-				if( dirToPush != UNKNOWNDIR && dirToPush != newDir )
+				if( oldDir != UNKNOWNDIR && oldDir != newDir )
 					mChar->PushDirection( newDir, true );	// NPC's need to "walk" twice when turning
 				mChar->PushDirection( newDir, true );
 
-				dirToPush	= newDir;
+				oldDir		= newDir;
 				targX		= curX;
 				targY		= curY;
 				parentSer 	= closedList[parentSer];
@@ -2640,7 +2638,8 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	}
 #if defined( UOX_DEBUG_MODE )
 	if( loopCtr == maxSteps )
-		Console.warning( format("AdvancedPathfinding: Unable to find a path, max steps limit (%i) reached, aborting.\n", maxSteps) );
+		Console.warning( format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n", 
+			mChar->GetName().c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
 	else if( loopCtr == 0 && getDist( mChar->GetLocation(), point3( targX, targY, curZ )) > 1 )
 		Console.warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
 	else

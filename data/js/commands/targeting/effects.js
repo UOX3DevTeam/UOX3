@@ -2,7 +2,7 @@ function CommandRegistration()
 {
 	RegisterCommand( "action", 2, true );
 	RegisterCommand( "bolt", 2, true );
-	RegisterCommand( "npcaction", 2, true );	
+	RegisterCommand( "npcaction", 2, true );
 }
 
 function command_ACTION( socket, cmdString )
@@ -14,7 +14,7 @@ function command_ACTION( socket, cmdString )
 
 function command_BOLT( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 195, socket.Language );
+	var targMsg = GetDictionaryEntry( 195, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 
@@ -31,7 +31,7 @@ function command_NPCACTION( socket, cmdString )
 {
 	if( cmdString )
 	{
-		var targMsg = GetDictionaryEntry( 213, socket.Language );
+		var targMsg = GetDictionaryEntry( 213, socket.language );
 		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 0, targMsg );
 	}

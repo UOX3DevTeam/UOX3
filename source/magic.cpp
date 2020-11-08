@@ -3162,6 +3162,8 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 					else if( validSocket )
 						s->sysmessage( 710 );
 				}
+				else if( validSocket )
+					s->sysmessage( 683 );
 			}
 			else if( validSocket )
 				s->sysmessage( 710 );

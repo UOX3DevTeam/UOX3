@@ -10,6 +10,7 @@
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __FUNCDECLS_H__
 #define __FUNCDECLS_H__
+#include <iostream>
 #include <chrono>
 #include <thread>
 #include <random>
@@ -18,6 +19,7 @@
 #include <iostream>
 #include <type_traits>
 #include <algorithm>
+#include <sstream>
 
 #include "cBaseObject.h"
 #include "cConsole.h"
@@ -81,6 +83,7 @@ void	doLight( CChar *mChar, UI08 level );
 // Amount related
 //o-----------------------------------------------------------------------------------------------o
 UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000 );
+UI32	GetTotalItemCount( CItem *objCont );
 UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
 UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
 UI32	GetBankCount( CChar *p, UI16 itemID, UI16 realColour = 0x0000 );
@@ -139,15 +142,33 @@ inline char *	RealTime24( char *time_str )
 	strftime( time_str, 256, "%B %d %H:%M:%S", curtime );
 	return time_str;
 }
+inline char *	RealTimeDate( char *time_str )
+{
+	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	auto curtime = std::localtime(&timet);
+	strftime( time_str, 256, "%B %d", curtime );
+	return time_str;
+}
+
 #if P_TIMESTAMP
 inline std::string TimeStamp( void )
 {
-	char timeStamp[512];
-	RealTime( timeStamp );
-	std::string retVal = " [";
-	retVal += timeStamp;
-	retVal += "]";
-	return retVal;
+	auto stamp = []() {  
+		auto milli = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::system_clock::now().time_since_epoch() ).count();
+		auto hours = ( ( ( milli / 1000 ) / 60 ) / 60 );
+		milli = milli - ( hours * 60 * 60 * 1000 );
+		auto minutes = ( ( milli / 1000 ) / 60 );
+		milli = milli - ( minutes * 1000 * 60 );
+		auto seconds = milli / 1000;
+		milli = milli - ( seconds * 1000 );
+		std::stringstream value;
+		char timeStamp[512];
+		RealTime( timeStamp );
+		value << " [" << timeStamp << "][" << milli << "]";
+		return value.str();
+	};
+
+	return stamp();
 }
 #else
 inline std::string TimeStamp( void )

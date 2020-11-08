@@ -1,4 +1,5 @@
 // Here are the functions that are exposed to the Script Engine
+#include <filesystem>
 #include "uox3.h"
 #include "cdice.h"
 #include "SEFunctions.h"
@@ -204,6 +205,35 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( newItem != NULL )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CalcMultiFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates and returns item object based on provided serial
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_CalcMultiFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 4 )
+	{
+		DoSEErrorMessage( "CalcMultiFromSer: Invalid number of arguments (takes 1 or 4)" );
+		return JS_FALSE;
+	}
+	SERIAL targSerial;
+	if( argc == 1 )
+		targSerial = (SERIAL)JSVAL_TO_INT( argv[0] );
+	else
+		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
+
+	CItem *newMulti		= calcMultiFromSer( targSerial );
+	if( newMulti != NULL )
+	{
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -1358,6 +1388,43 @@ JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( ValidateObject( pOwner ) )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+		*rval = JSVAL_NULL;
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_FindRootContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns root container an item is contained in (if any)
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_FindRootContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "FindRootContainer: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+
+	UI08 mType		= (UI08)JSVAL_TO_INT( argv[1] );
+	CItem *iRoot	= NULL;
+
+	if( mType == 0 )	// item
+	{
+		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
+		CItem *myItem	= static_cast<CItem *>(JS_GetPrivate( cx, mItem ));
+		iRoot			= FindRootContainer( myItem );
+	}
+	else				// serial
+	{
+		SI32 mSerItem	= JSVAL_TO_INT( argv[0] );
+		iRoot			= FindRootContainer( calcItemObjFromSer( mSerItem ) );
+	}
+	if( ValidateObject( iRoot ) )
+	{
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, iRoot, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -2613,5 +2680,982 @@ JSBool SE_GetSpawnRegionCount( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->spawnRegions.size() );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetMapElevation( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns map elevation at given coordinates
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetMapElevation( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		DoSEErrorMessage( "GetMapElevation: Invalid number of arguments (takes 3: X, Y and WorldNumber)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[2] ));
+	SI08 mapElevation = Map->MapElevation( x, y, worldNum );
+	*rval = INT_TO_JSVAL( mapElevation );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_IsInBuilding( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if specified location is inside a building
+//| Notes		-	First checks if player is in a static building. If false, checks if there's a multi
+//|					at the same location as the player, and assumes they are in the building if true
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_IsInBuilding( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		DoSEErrorMessage( "IsInBuilding: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber and instanceID)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	SI08 z			= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	UI08 instanceID = static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
+	bool checkHeight = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool isInBuilding = Map->inBuilding( x, y, z, worldNum, instanceID );
+	if( !isInBuilding )
+	{
+		// No static building was detected. How about a multi?
+		CMultiObj *multi = findMulti( x, y, z, worldNum, instanceID );
+		if( ValidateObject( multi ) )
+		{
+			if( checkHeight )
+			{
+				// Check if there's multi-items over the player's head
+				SI08 multiZ = Map->MultiHeight( multi, x, y, z, 127, checkHeight );
+				if( multiZ > z )
+					isInBuilding = true;
+			}
+			else
+				isInBuilding = true;
+		}
+	}
+	*rval = BOOLEAN_TO_JSVAL( isInBuilding );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CheckStaticFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_CheckStaticFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		DoSEErrorMessage( "CheckStaticFlag: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and TileFlagID)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	TileFlags toCheck	= static_cast<TileFlags>(JSVAL_TO_INT( argv[4] ));
+	bool hasStaticFlag = Map->CheckStaticFlag( x, y, z, worldNum, toCheck, false );
+	*rval = BOOLEAN_TO_JSVAL( hasStaticFlag );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CheckTileFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether tile with given ID has a specific flag
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_CheckTileFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "CheckTileFlag: Invalid number of arguments (takes 2: itemID and tileFlagID)" );
+		return JS_FALSE;
+	}
+
+	UI16 itemID = (UI16)JSVAL_TO_INT( argv[0] );
+	TileFlags flagToCheck	= static_cast<TileFlags>(JSVAL_TO_INT( argv[1] ));
+
+	bool tileHasFlag = Map->CheckTileFlag( itemID, flagToCheck );
+	*rval = BOOLEAN_TO_JSVAL( tileHasFlag );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoesStaticBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoesStaticBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		DoSEErrorMessage( "DoesStaticBlock: Invalid number of arguments (takes 5: X, Y, Z, WorldNumber and checkWater)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	bool staticBlocks = Map->DoesStaticBlock( x, y, z, worldNum, checkWater );
+	*rval = BOOLEAN_TO_JSVAL( staticBlocks );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoesDynamicBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if dynamics at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoesDynamicBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 8 )
+	{
+		DoSEErrorMessage( "DoesDynamicBlock: Invalid number of arguments (takes 8: X, Y, Z, WorldNumber, instanceID, checkWater, waterWalk, checkOnlyMultis and checkOnlyNonMultis)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	UI08 instanceID	= static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
+	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	bool checkOnlyMultis = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	bool checkOnlyNonMultis = ( JSVAL_TO_BOOLEAN( argv[8] ) == JS_TRUE );
+	bool dynamicBlocks = Map->DoesDynamicBlock( x, y, z, worldNum, instanceID, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis );
+	*rval = BOOLEAN_TO_JSVAL( dynamicBlocks );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoesMapBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if map tile at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoesMapBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		DoSEErrorMessage( "DoesMapBlock: Invalid number of arguments (takes 8: X, Y, Z, WorldNumber, checkWater, waterWalk, checkMultiPlacement and checkForRoad)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool checkMultiPlacement = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	bool checkForRoad = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	bool mapBlocks = Map->DoesMapBlock( x, y, z, worldNum, checkWater, waterWalk, checkMultiPlacement, checkForRoad );
+	*rval = BOOLEAN_TO_JSVAL( mapBlocks );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Deletes a file from the server's harddrive...
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc!= 1 && argc != 2 )
+	{
+		DoSEErrorMessage( "DeleteFile: Invalid number of arguments (takes 1 or 2 - fileName and (optionally) subFolderName)" );
+		return JS_FALSE;
+	}
+
+	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	char *subFolderName = "\0";
+	if( argc == 2 )
+		subFolderName = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+
+	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ) )
+	{
+		DoSEErrorMessage( "Open: file names may not contain \".\", \"..\", \"\\\", or \"/\"." );
+		return JS_FALSE;
+	}
+
+	std::string pathString	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
+
+	// if subFolderName argument was supplied, use it
+	if( subFolderName[0] != '\0' )
+	{
+		// However, don't allow special characters in the folder name
+		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ) )
+		{
+			DoSEErrorMessage( "Open: folder names may not contain \".\", \"..\", \"\\\", or \"/\"." );
+			return JS_FALSE;
+		}
+
+		pathString.append( subFolderName );
+		if( !std::filesystem::exists( pathString ))
+		{
+			// Create missing directory
+			std::filesystem::create_directory( pathString );
+		}
+
+		pathString += std::filesystem::path::preferred_separator;
+	}
+
+	pathString.append( fileName );
+
+	std::filesystem::path filePath = pathString;
+	*rval = std::filesystem::remove( filePath );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets value of specified server setting
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = NULL;
+
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetServerSetting: Invalid number of arguments (takes 1 - serverSettingName)" );
+		return JS_FALSE;
+	}
+
+	JSString *tString;
+	std::string settingName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( !settingName.empty() )
+	{
+		auto settingID = cwmWorldState->ServerData()->lookupINIValue( settingName );
+		switch( settingID )
+		{
+			//case 1:	 // SERVERNAME[0002]
+				//break;
+			case 2:	 // CONSOLELOG[0003]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerConsoleLogStatus()));
+				break;
+			case 3:	 // COMMANDPREFIX[0005]
+			{
+				std::string tempString = { cwmWorldState->ServerData()->ServerCommandPrefix() };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 4:	 // ANNOUNCEWORLDSAVES[0006]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerAnnounceSavesStatus() );
+				break;
+			case 26:	 // JOINPARTMSGS[0007]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() );
+				break;
+			case 5:	 // BACKUPSENABLED[0009]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerBackupStatus() );
+				break;
+			case 6:	 // SAVESTIMER[0010]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->ServerSavesTimerStatus()));
+				break;
+			case 7:	 // SKILLCAP[0011]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ServerSkillTotalCapStatus()));
+				break;
+			case 8:	 // SKILLDELAY[0012]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerSkillDelayStatus()));
+				break;
+			case 9:	 // STATCAP[0013]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ServerStatCapStatus()));
+				break;
+			case 10:	 // MAXSTEALTHMOVEMENTS[0014]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->MaxStealthMovement()));
+				break;
+			case 11:	 // MAXSTAMINAMOVEMENTS[0015]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->MaxStaminaMovement()));
+				break;
+			case 12:	 // ARMORAFFECTMANAREGEN[0016]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ArmorAffectManaRegen() );
+				break;
+			case 13:	 // CORPSEDECAYTIMER[0017]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY )));
+				break;
+			case 14:	 // WEATHERTIMER[0018]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_WEATHER )));
+				break;
+			case 15:	 // SHOPSPAWNTIMER[0019]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_SHOPSPAWN )));
+				break;
+			case 16:	 // DECAYTIMER[0020]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY )));
+				break;
+			case 17:	 // INVISIBILITYTIMER[0021]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_INVISIBILITY )));
+				break;
+			case 18:	 // OBJECTUSETIMER[0022]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_OBJECTUSAGE )));
+				break;
+			case 19:	 // GATETIMER[0023]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_GATE )));
+				break;
+			case 20:	 // POISONTIMER[0024]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON )));
+				break;
+			case 21:	 // LOGINTIMEOUT[0025]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT )));
+				break;
+			case 22:	 // HITPOINTREGENTIMER[0026]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN )));
+				break;
+			case 23:	 // STAMINAREGENTIMER[0027]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN )));
+				break;
+			case 37:	 // MANAREGENTIMER[0028]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN )));
+				break;
+			case 24:	 // BASEFISHINGTIMER[0029]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE )));
+				break;
+			case 38:	 // RANDOMFISHINGTIMER[0030]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM )));
+				break;
+			case 39:	 // SPIRITSPEAKTIMER[0031]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_SPIRITSPEAK )));
+				break;
+			case 40:	 // DIRECTORY[0032]
+			{
+				JSString *tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ROOT ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 41:	 // DATADIRECTORY[0033]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_DATA ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 42:	 // DEFSDIRECTORY[0034]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_DEFS ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 43:	 // ACTSDIRECTORY[0035]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 25:	 // SCRIPTSDIRECTORY[0036]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 44:	 // BACKUPDIRECTORY[0037]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_BACKUP ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 45:	 // MSGBOARDDIRECTORY[0038]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 46:	 // SHAREDDIRECTORY[0039]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 47:	 // LOOTDECAYSWITHCORPSE[0040]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CorpseLootDecay() );
+				break;
+			case 49:	 // GUARDSACTIVE[0041]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GuardsStatus() );
+				break;
+			case 27:	 // DEATHANIMATION[0042]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->DeathAnimationStatus() );
+				break;
+			case 50:	 // AMBIENTSOUNDS[0043]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds()));
+				break;
+			case 51:	 // AMBIENTFOOTSTEPS[0044]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AmbientFootsteps() );
+				break;
+			case 52:	 // INTERNALACCOUNTCREATION[0045]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->InternalAccountStatus() );
+				break;
+			case 53:	 // SHOWOFFLINEPCS[0046]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowOfflinePCs() );
+				break;
+			case 54:	 // ROGUESENABLED[0047]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->RogueStatus() );
+				break;
+			case 55:	 // PLAYERPERSECUTION[0048]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PlayerPersecutionStatus() );
+				break;
+			case 56:	 // ACCOUNTFLUSH[0049]
+				*rval = INT_TO_JSVAL( static_cast<R64>(cwmWorldState->ServerData()->AccountFlushTimer()));
+				break;
+			case 57:	 // HTMLSTATUSENABLED[0050]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->HtmlStatsStatus()));
+				break;
+			case 58:	 // SELLBYNAME[0051]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SellByNameStatus() );
+				break;
+			case 59:	 // SELLMAXITEMS[0052]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->SellMaxItemsStatus()));
+				break;
+			case 60:	 // TRADESYSTEM[0053]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TradeSystemStatus() );
+				break;
+			case 61:	 // RANKSYSTEM[0054]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->RankSystemStatus() );
+				break;
+			case 62:	 // CUTSCROLLREQUIREMENTS[0055]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CutScrollRequirementStatus() );
+				break;
+			case 63:	 // CHECKITEMS[0056]
+				*rval = INT_TO_JSVAL( static_cast<R64>(cwmWorldState->ServerData()->CheckItemsSpeed()));
+				break;
+			case 64:	 // CHECKBOATS[0057]
+				*rval = INT_TO_JSVAL( static_cast<R64>(cwmWorldState->ServerData()->CheckBoatSpeed()));
+				break;
+			case 65:	 // CHECKNPCAI[0058]
+				*rval = INT_TO_JSVAL( static_cast<R64>(cwmWorldState->ServerData()->CheckNpcAISpeed()));
+				break;
+			case 66:	 // CHECKSPAWNREGIONS[0059]
+				*rval = INT_TO_JSVAL( static_cast<R64>(cwmWorldState->ServerData()->CheckSpawnRegionSpeed()));
+				break;
+			case 67:	 // POSTINGLEVEL[0060]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->MsgBoardPostingLevel()));
+				break;
+			case 68:	 // REMOVALLEVEL[0061]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->MsgBoardPostRemovalLevel()));
+				break;
+			case 69:	 // ESCORTENABLED[0062]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EscortsEnabled() );
+				break;
+			case 70:	 // ESCORTINITEXPIRE[0063]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT )));
+				break;
+			case 71:	 // ESCORTACTIVEEXPIRE[0064]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTACTIVE )));
+				break;
+			case 72:	 // MOON1[0065]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ServerMoon( 0 )));
+				break;
+			case 73:	 // MOON2[0066]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ServerMoon( 1 )));
+				break;
+			case 74:	 // DUNGEONLEVEL[0067]
+				*rval = INT_TO_JSVAL( static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->DungeonLightLevel()));
+				break;
+			case 75:	 // CURRENTLEVEL[0068]
+				*rval = INT_TO_JSVAL( static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightCurrentLevel()));
+				break;
+			case 76:	 // BRIGHTLEVEL[0069]
+				*rval = INT_TO_JSVAL( static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightBrightLevel()));
+				break;
+			case 77:	 // BASERANGE[0070]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->TrackingBaseRange()));
+				break;
+			case 78:	 // BASETIMER[0071]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->TrackingBaseTimer()));
+				break;
+			case 79:	 // MAXTARGETS[0072]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->TrackingMaxTargets()));
+				break;
+			case 80:	 // MSGREDISPLAYTIME[0073]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->TrackingRedisplayTime()));
+				break;
+			case 81:	 // MURDERDECAYTIMER[0074]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_MURDERDECAY )));
+				break;
+			case 82:	 // MAXKILLS[0075]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->RepMaxKills()));
+				break;
+			case 83:	 // CRIMINALTIMER[0076]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_CRIMINAL )));
+				break;
+			case 84:	 // MINECHECK[0077]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->MineCheck()));
+				break;
+			case 85:	 // OREPERAREA[0078]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ResOre()));
+				break;
+			case 86:	 // ORERESPAWNTIMER[0079]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResOreTime()));
+				break;
+			case 87:	 // ORERESPAWNAREA[0080]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResOreArea()));
+				break;
+			case 88:	 // LOGSPERAREA[0081]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ResLogs()));
+				break;
+			case 89:	 // LOGSRESPAWNTIMER[0082]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResLogTime()));
+				break;
+			case 90:	 // LOGSRESPAWNAREA[0083]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResLogArea()));
+				break;
+			case 91:	 // HUNGERRATE[0084]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE )));
+				break;
+			case 92:	 // HUNGERDMGVAL[0085]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->HungerDamage()));
+				break;
+			case 93:	 // MAXRANGE[0086]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatMaxRange()));
+				break;
+			case 94:	 // SPELLMAXRANGE[0087]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatMaxSpellRange()));
+				break;
+			case 95:	 // DISPLAYHITMSG[0088]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatDisplayHitMessage() );
+				break;
+			case 96:	 // MONSTERSVSANIMALS[0089]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatMonstersVsAnimals() );
+				break;
+			case 97:	 // ANIMALATTACKCHANCE[0090]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->CombatAnimalsAttackChance()));
+				break;
+			case 98:	 // ANIMALSGUARDED[0091]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatAnimalsGuarded() );
+				break;
+			case 99:	 // NPCDAMAGERATE[0092]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatNPCDamageRate()));
+				break;
+			case 100:	 // NPCBASEFLEEAT[0093]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatNPCBaseFleeAt()));
+				break;
+			case 101:	 // NPCBASEREATTACKAT[0094]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatNPCBaseReattackAt()));
+				break;
+			case 102:	 // ATTACKSTAMINA[0095]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatAttackStamina()));
+				break;
+			//case 103:	 // LOCATION[0096]
+				//break;
+			case 104:	 // STARTGOLD[0097]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ServerStartGold()));
+				break;
+			case 105:	 // STARTPRIVS[0098]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ServerStartPrivs()));
+				break;
+			case 106:	 // ESCORTDONEEXPIRE[0099]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTDONE )));
+				break;
+			case 107:	 // DARKLEVEL[0100]
+				*rval = INT_TO_JSVAL( static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightDarkLevel()));
+				break;
+			case 108:	 // TITLECOLOUR[0101]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->TitleColour()));
+				break;
+			case 109:	 // LEFTTEXTCOLOUR[0102]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->LeftTextColour()));
+				break;
+			case 110:	 // RIGHTTEXTCOLOUR[0103]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->RightTextColour()));
+				break;
+			case 111:	 // BUTTONCANCEL[0104]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ButtonCancel()));
+				break;
+			case 112:	 // BUTTONLEFT[0105]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ButtonLeft()));
+				break;
+			case 113:	 // BUTTONRIGHT[0106]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ButtonRight()));
+				break;
+			case 114:	 // BACKGROUNDPIC[0107]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->BackgroundPic()));
+				break;
+			case 115:	 // POLLTIME[0108]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->TownNumSecsPollOpen()));
+				break;
+			case 116:	 // MAYORTIME[0109]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->TownNumSecsAsMayor()));
+				break;
+			case 117:	 // TAXPERIOD[0110]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->TownTaxPeriod()));
+				break;
+			case 118:	 // GUARDSPAID[0111]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->TownGuardPayment()));
+				break;
+			case 119:	 // DAY[0112]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ServerTimeDay()));
+				break;
+			case 120:	 // HOURS[0113]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerTimeHours()));
+				break;
+			case 121:	 // MINUTES[0114]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerTimeMinutes()));
+				break;
+			case 122:	 // SECONDS[0115]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerTimeSeconds()));
+				break;
+			case 123:	 // AMPM[0116]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerTimeAMPM() );
+				break;
+			case 124:	 // SKILLLEVEL[0117]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->SkillLevel()));
+				break;
+			case 125:	 // SNOOPISCRIME[0118]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SnoopIsCrime() );
+				break;
+			case 126:	 // BOOKSDIRECTORY[0119]
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			//case 127:	 // SERVERLIST[0120]
+				//break;
+			case 128:	 // PORT[0121]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ServerPort()));
+				break;
+			case 129:	 // ACCESSDIRECTORY[0122]
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_ACCESS ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			case 130:	 // LOGSDIRECTORY[0123]
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_LOGS ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			case 132:	 // HTMLDIRECTORY[0125]
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_HTML ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			case 133:	 // SHOOTONANIMALBACK[0126]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShootOnAnimalBack() );
+				break;
+			case 134:	 // NPCTRAININGENABLED[0127]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NPCTrainingStatus() );
+				break;
+			case 135:	 // DICTIONARYDIRECTORY[0128]
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			case 136:	 // BACKUPSAVERATIO[0129]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->BackupRatio()));
+				break;
+			case 137:	 // HIDEWILEMOUNTED[0130]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CharHideWhileMounted() );
+				break;
+			case 138:	 // SECONDSPERUOMINUTE[0131]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ServerSecondsPerUOMinute()));
+				break;
+			case 139:	 // WEIGHTPERSTR[0132]
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->WeightPerStr()));
+				break;
+			case 140:	 // POLYDURATION[0133]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_POLYMORPH )));
+				break;
+			case 141:	 // UOGENABLED[0134]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerUOGEnabled() );
+				break;
+			case 142:	 // NETRCVTIMEOUT[0135]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->ServerNetRcvTimeout()));
+				break;
+			case 143:	 // NETSNDTIMEOUT[0136]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->ServerNetSndTimeout()));
+				break;
+			case 144:	 // NETRETRYCOUNT[0137]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->ServerNetRetryCount()));
+				break;
+			case 145:	 // CLIENTFEATURES[0138]
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->GetClientFeatures()));
+				break;
+			case 146:	 // PACKETOVERLOADS[0139]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerOverloadPackets() );
+				break;
+			case 147:	 // NPCMOVEMENTSPEED[0140]
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->NPCWalkingSpeed()));
+				break;
+			case 148:	 // PETHUNGEROFFLINE[0141]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetHungerOffline() );
+				break;
+			case 149:	 // PETOFFLINETIMEOUT[0142]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->PetOfflineTimeout()));
+				break;
+			case 150:	 // PETOFFLINECHECKTIMER[0143]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_PETOFFLINECHECK ))));
+				break;
+			case 151:	 // ARCHERRANGE[0144]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatArcherRange()));
+				break;
+			case 152:	 // ADVANCEDPATHFINDING[0145]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AdvancedPathfinding() );
+				break;
+			case 153:	 // SERVERFEATURES[0146]
+				*rval = INT_TO_JSVAL( static_cast<size_t>(cwmWorldState->ServerData()->GetServerFeatures()));
+				break;
+			case 154:	 // LOOTINGISCRIME[0147]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->LootingIsCrime() );
+				break;
+			case 155:	 // NPCRUNNINGSPEED[0148]
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->NPCRunningSpeed()));
+				break;
+			case 156:	 // NPCFLEEINGSPEED[0149]
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->NPCFleeingSpeed()));
+				break;
+			case 157:	 // BASICTOOLTIPSONLY[0150]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BasicTooltipsOnly() );
+				break;
+			case 158:	 // GLOBALITEMDECAY[0151]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GlobalItemDecay() );
+				break;
+			case 159:	 // SCRIPTITEMSDECAYABLE[0152]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ScriptItemsDecayable() );
+				break;
+			case 160:	 // BASEITEMSDECAYABLE[0152]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BaseItemsDecayable() );
+				break;
+			case 161:	 // ITEMDECAYINHOUSES[0153]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemDecayInHouses() );
+				break;
+			case 162:	// COMBATEXPLODEDELAY[0154]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatExplodeDelay() );
+				break;
+			case 163:	// PAPERDOLLGUILDBUTTON[0155]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PaperdollGuildButton() );
+				break;
+			case 164:	// ATTACKSPEEDFROMSTAMINA[0156]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() );
+				break;
+			case 169:	 // DISPLAYDAMAGENUMBERS[0157]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatDisplayDamageNumbers() );
+				break;
+			case 170:	 // CLIENTSUPPORT4000[0158]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport4000() );
+				break;
+			case 171:	 // CLIENTSUPPORT5000[0159]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport5000() );
+				break;
+			case 172:	 // CLIENTSUPPORT6000[0160]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport6000() );
+				break;
+			case 173:	 // CLIENTSUPPORT6050[0161]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport6050() );
+				break;
+			case 174:	 // CLIENTSUPPORT7000[0162]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport7000() );
+				break;
+			case 175:	 // CLIENTSUPPORT7090[0163]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport7090() );
+				break;
+			case 176:	 // CLIENTSUPPORT70160[0164]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70160() );
+				break;
+			case 177:	// CLIENTSUPPORT70240[0165]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70240() );
+				break;
+			case 178:	// CLIENTSUPPORT70300[0166]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70300() );
+				break;
+			case 179:	// CLIENTSUPPORT70331[0167]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70331() );
+				break;
+			case 180:	// CLIENTSUPPORT704565[0168]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport704565() );
+				break;
+			case 181:	// CLIENTSUPPORT70610[0169]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70610() );
+				break;
+			case 182:	 // EXTENDEDSTARTINGSTATS[0170]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ExtendedStartingStats() );
+				break;
+			case 183:	 // EXTENDEDSTARTINGSKILLS[0171]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ExtendedStartingSkills() );
+				break;
+			case 184:	// WEAPONDAMAGECHANCE[0172]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatWeaponDamageChance()));
+				break;
+			case 185:	// ARMORDAMAGECHANCE[0173]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatArmorDamageChance()));
+				break;
+			case 186:	// WEAPONDAMAGEMIN[0174]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatWeaponDamageMin()));
+				break;
+			case 187:	// WEAPONDAMAGEMAX[0175]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatWeaponDamageMax()));
+				break;
+			case 188:	// ARMORDAMAGEMIN[0176]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatArmorDamageMin()));
+				break;
+			case 189:	// ARMORDAMAGEMAX[0177]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatArmorDamageMax()));
+				break;
+			case 190:	// GLOBALATTACKSPEED[0178]
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->GlobalAttackSpeed()));
+				break;
+			case 191:	// NPCSPELLCASTSPEED[0179]
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->NPCSpellCastSpeed()));
+				break;
+			case 192:	// FISHINGSTAMINALOSS[0180]
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->FishingStaminaLoss()));
+				break;
+			case 193:	// RANDOMSTARTINGLOCATION[0181]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerRandomStartingLocation() );
+				break;
+			case 194:	// ASSISTANTNEGOTIATION[0183]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetAssistantNegotiation() );
+				break;
+			case 195:	// KICKONASSISTANTSILENCE[0184]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KickOnAssistantSilence() );
+				break;
+			case 196:	// AF_FILTERWEATHER[0185]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERWEATHER ) );
+				break;
+			case 197:	// AF_FILTERLIGHT[0186]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERLIGHT ) );
+				break;
+			case 198:	// AF_SMARTTARGET[0187]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SMARTTARGET ) );
+				break;
+			case 199:	// AF_RANGEDTARGET[0188]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RANGEDTARGET ) );
+				break;
+			case 200:	// AF_AUTOOPENDOORS[0189]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOOPENDOORS ) );
+				break;
+			case 201:	// AF_DEQUIPONCAST[0190]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_DEQUIPONCAST ) );
+				break;
+			case 202:	// AF_AUTOPOTIONEQUIP[0191]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP ) );
+				break;
+			case 203:	// AF_POISONEDCHECKS[0192]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_POISONEDCHECKS ) );
+				break;
+			case 204:	// AF_LOOPEDMACROS[0193]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_LOOPEDMACROS ) );
+				break;
+			case 205:	// AF_USEONCEAGENT[0194]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_USEONCEAGENT ) );
+				break;
+			case 206:	// AF_RESTOCKAGENT[0195]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RESTOCKAGENT ) );
+				break;
+			case 207:	// AF_SELLAGENT[0196]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SELLAGENT ) );
+				break;
+			case 208:	// AF_BUYAGENT[0197]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_BUYAGENT ) );
+				break;
+			case 209:	// AF_POTIONHOTKEYS[0198]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_POTIONHOTKEYS ) );
+				break;
+			case 210:	// AF_RANDOMTARGETS[0199]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_RANDOMTARGETS ) );
+				break;
+			case 211:	// AF_CLOSESTTARGETS[0200]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_CLOSESTTARGETS ) );
+				break;
+			case 212:	// AF_OVERHEADHEALTH[0201]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_OVERHEADHEALTH ) );
+				break;
+			case 213:	// AF_AUTOLOOTAGENT[0202]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOLOOTAGENT ) );
+				break;
+			case 214:	// AF_BONECUTTERAGENT[0203]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_BONECUTTERAGENT ) );
+				break;
+			case 215:	// AF_JSCRIPTMACROS[0204]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_JSCRIPTMACROS ) );
+				break;
+			case 216:	// AF_AUTOREMOUNT[0205]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOREMOUNT ) );
+				break;
+			case 217:	// AF_ALL[0206]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_ALL ) );
+				break;
+			case 218:	// CLASSICUOMAPTRACKER[0207]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetClassicUOMapTracker() );
+				break;
+			case 219:	// DECAYTIMERINHOUSE[0208]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_DECAYINHOUSE ))));
+				break;
+			case 220:	// PROTECTPRIVATEHOUSES[0209]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ProtectPrivateHouses() );
+				break;
+			case 221:	// TRACKHOUSESPERACCOUNT[0210]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TrackHousesPerAccount() );
+				break;
+			case 222:	// MAXHOUSESOWNABLE[0211]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->MaxHousesOwnable()));
+				break;
+			case 223:	// MAXHOUSESCOOWNABLE[0212]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->MaxHousesCoOwnable()));
+				break;
+			case 224:	// CANOWNANDCOOWNHOUSES[0213]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CanOwnAndCoOwnHouses() );
+				break;
+			case 225:	// COOWNHOUSESONSAMEACCOUNT[0214]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CoOwnHousesOnSameAccount() );
+				break;
+			case 226:	// ITEMSDETECTSPEECH[0215]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemsDetectSpeech() );
+				break;
+			case 227:	// MAXPLAYERPACKITEMS[0216]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->MaxPlayerPackItems()));
+				break;
+			case 228:	// MAXPLAYERBANKITEMS[0217]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->MaxPlayerBankItems()));
+				break;
+			default:
+				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
+				return false;
+		}
+	}
+	else
+	{
+		DoSEErrorMessage( "GetServerSetting: Provided argument contained no valid string data" );
+		return JS_FALSE;
+	}
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetClientFeature( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if a specific client feature is enabled on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetClientFeature( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetClientFeature: Invalid number of arguments (takes 1 - feature ID)" );
+		return JS_FALSE;
+	}
+
+	ClientFeatures clientFeature = static_cast<ClientFeatures>(JSVAL_TO_INT( argv[0] ));
+	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetClientFeature( clientFeature ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetServerFeature( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if a specific Server feature is enabled on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetServerFeature( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetServerFeature: Invalid number of arguments (takes 1 - feature ID)" );
+		return JS_FALSE;
+	}
+
+	ServerFeatures serverFeature = static_cast<ServerFeatures>(JSVAL_TO_INT( argv[0] ));
+	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetServerFeature( serverFeature ) );
 	return JS_TRUE;
 }

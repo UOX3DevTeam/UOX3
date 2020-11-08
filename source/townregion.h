@@ -6,7 +6,7 @@ struct	miningData;
 struct orePref
 {
 	miningData *oreIndex;
-	UI08		percentChance;
+	UI16		percentChance;
 };
 
 struct regLocs
@@ -47,7 +47,7 @@ private:
 	UI16				musicList;
 	UI08				worldNumber;
 	UI16				instanceID;
-	std::bitset< 10 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
+	std::bitset< 11 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
 	// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 	// 0x80 Dungeon region
 	std::string					guardowner;
@@ -105,6 +105,7 @@ public:
 	bool				AddAsTownMember( CChar& toAdd );	// toAdd is the character to add
 	bool				RemoveTownMember( CChar& toAdd );	// toAdd is the character to remove
 	bool				IsGuarded( void ) const;
+	bool				CanPlaceHouse( void ) const;
 	bool				CanMark( void ) const;
 	bool				CanGate( void ) const;
 	bool				CanRecall( void ) const;
@@ -117,6 +118,7 @@ public:
 	bool				MakeAlliedTown( UI16 townToMake );
 
 	void				IsGuarded( bool value );
+	void				CanPlaceHouse( bool value );
 	void				CanMark( bool value );
 	void				CanGate( bool value );
 	void				CanRecall( bool value );

@@ -6,7 +6,7 @@ function CommandRegistration()
 
 function command_TELESTUFF( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 250, socket.Language );
+	var targMsg = GetDictionaryEntry( 250, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -16,9 +16,9 @@ function onCallback0( socket, ourObj )
 	if( !socket.GetWord( 1 ) )
 	{
 		if( ourObj.isChar )
-			targMsg = GetDictionaryEntry( 1045, socket.Language );
+			targMsg = GetDictionaryEntry( 1045, socket.language );
 		else
-			targMsg = GetDictionaryEntry( 1046, socket.Language );
+			targMsg = GetDictionaryEntry( 1046, socket.language );
 
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, targMsg );
@@ -27,52 +27,60 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
-	var dictMsg;
-	var toTele = socket.tempObj;
-	if( toTele )
+	var cancelCheck = parseInt( socket.GetDWord( 11 ));
+	if( cancelCheck != -1 )
 	{
-		if( toTele.isChar )
-			dictMsg = GetDictionaryEntry( 1047, socket.Language );
-		else
-			dictMsg = GetDictionaryEntry( 1048, socket.Language );
+		var dictMsg;
+		var toTele = socket.tempObj;
+		if( toTele )
+		{
+			if( toTele.isChar )
+				dictMsg = GetDictionaryEntry( 1047, socket.language );
+			else
+				dictMsg = GetDictionaryEntry( 1048, socket.language );
 
-		var x = socket.GetWord( 11 );
-		var y = socket.GetWord( 13 );
-		var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
-		doTele( toTele, x, y, z );
+			var x = socket.GetWord( 11 );
+			var y = socket.GetWord( 13 );
+			var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			doTele( toTele, x, y, z );
 
-		socket.SysMessage( dictMsg );
+			socket.SysMessage( dictMsg );
+		}
 	}
 	socket.tempObj = null;
 }
 
 function command_TELE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 185, socket.Language );
+	var targMsg = GetDictionaryEntry( 185, socket.language );
 	socket.CustomTarget( 2, targMsg );
 }
 
 function onCallback2( socket, ourObj )
 {
-	var mChar = socket.currentChar;
-	if( mChar )
+	var cancelCheck = parseInt( socket.GetDWord( 11 ));
+	if( cancelCheck != -1 )
 	{
-		var targX;
-		var targY;
-		var targZ;
-		if( !socket.GetWord( 1 ) && ourObj )
+		var mChar = socket.currentChar;
+		if( mChar )
 		{
-			targX = ourObj.x;
-			targY = ourObj.y;
-			targZ = ourObj.z;
+			var targX;
+			var targY;
+			var targZ;
+			if( !socket.GetWord( 1 ) && ourObj )
+			{
+				targX = ourObj.x;
+				targY = ourObj.y;
+				targZ = ourObj.z;
+			}
+			else
+			{
+				targX = socket.GetWord( 11 );
+				targY = socket.GetWord( 13 );
+				targZ = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			}
+			doTele( mChar, targX, targY, targZ );
 		}
-		else
-		{
-			targX = socket.GetWord( 11 );
-			targY = socket.GetWord( 13 );
-			targZ = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
-		}
-		doTele( mChar, targX, targY, targZ );
 	}
 }
 

@@ -6,7 +6,7 @@ function CommandRegistration()
 
 function command_HIDE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 244, socket.Language );
+	var targMsg = GetDictionaryEntry( 244, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -15,7 +15,7 @@ function onCallback0( socket, ourObj )
 	if( !socket.GetWord( 1 ) )
 	{
 		if( ourObj.visible )
-			socket.SysMessage( GetDictionaryEntry( 833, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 833, socket.language ) );
 		else
 			ourObj.visible = 3;
 	}
@@ -23,7 +23,7 @@ function onCallback0( socket, ourObj )
 
 function command_UNHIDE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 245, socket.Language );
+	var targMsg = GetDictionaryEntry( 245, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 

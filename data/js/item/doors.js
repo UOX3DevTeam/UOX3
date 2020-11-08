@@ -1,6 +1,6 @@
 doorTypes = new Array (
-	0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685, 
-	0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839, 
+	0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685,
+	0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839,
 	0x084C, 0x0866, 0x190E, 0x1FED
 );
 
@@ -11,7 +11,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( !pUser.InRange( iUsed, 3 ) )
 		{
-			socket.SysMessage( GetDictionaryEntry( 1183, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1183, socket.language ) );
 			return false;
 		}
 	}
@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 		if( !CloseDoor( iUsed ) )
 		{
 			if( socket )
-				socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.language ) );
 		}
 		return false;
 	}
@@ -31,7 +31,7 @@ function onUseChecked( pUser, iUsed )
 		if( !FindKey( pUser, iUsed ) )
 		{
 			if( socket )
-				socket.SysMessage( GetDictionaryEntry( 406, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 406, socket.language ) );
 			return false;
 		}
 	}
@@ -102,8 +102,8 @@ function onUseChecked( pUser, iUsed )
 		canOpen = OpenDoor( iUsed, 2, 0, 0 );
 		isDoor = true;
 	}
-	else if( doorID == 0x2990 || doorID == 0x299E || doorID == 0x2A05 || doorID == 0x2A07 || 
-		 doorID == 0x2A09 || doorID == 0x2A0B || doorID == 0x2A0D || doorID == 0x2A0F || 
+	else if( doorID == 0x2990 || doorID == 0x299E || doorID == 0x2A05 || doorID == 0x2A07 ||
+		 doorID == 0x2A09 || doorID == 0x2A0B || doorID == 0x2A0D || doorID == 0x2A0F ||
 		 doorID == 0x2A11 || doorID == 0x2A13 || doorID == 0x2A15 || doorID == 0x2A17 ||
 		 doorID == 0x2A19 || doorID == 0x2A1B || doorID == 0x2D48 || doorID == 0x2D63 ||
 		 doorID == 0x2D67 || doorID == 0x2D6B || doorID == 0x2FE2 )
@@ -132,12 +132,12 @@ function onUseChecked( pUser, iUsed )
 		if( !canOpen )
 		{
 			if( socket )
-				socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.language ) );
 		}
 		else if( iUsed.type == 13 )
 		{
 			if( socket )
-				pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ), false, 0x047e );
+				pUser.TextMessage( GetDictionaryEntry( 405, socket.language ), false, 0x047e );
 		}
 	}
 
@@ -333,7 +333,7 @@ function FindKey( pUser, iUsed )
 		if( pPack != null )
 			foundKey = FindKeyInPack( pUser, pPack, iUsed );
 	}
-	
+
 	return foundKey;
 }
 
@@ -351,8 +351,8 @@ function FindKeyInPack( pUser, pPack, iUsed )
 		else if( toCheck.id >= 0x1769 && toCheck.id <= 0x176b )
 		{ //If it's a keyring, check to see if any of the keys there match the lock on the door
 			var keyAmount = toCheck.GetTag( "keys" );
-			var i = 1;	
-			for( i = 1; i < keyAmount + 1; i++ ) 
+			var i = 1;
+			for( i = 1; i < keyAmount + 1; i++ )
 			{
 				var KeyItemMore = toCheck.GetTag( "key"+i+"more" );
 				if( KeyItemMore == iUsed.more || KeyItemMore == 255 )

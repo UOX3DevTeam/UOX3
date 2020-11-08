@@ -4,7 +4,7 @@ function onUseChecked( pUser, iUsed )
 	if( socket && iUsed && iUsed.isItem )
 	{
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 485, socket.Language );
+		var targMsg = GetDictionaryEntry( 485, socket.language );
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;
@@ -20,7 +20,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 986, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 986, socket.language ) );
 			return;
 		}
 
@@ -49,27 +49,27 @@ function onCallback1( socket, ourObj )
 					}
 					else
 					{
-						socket.SysMessage( GetDictionaryEntry( 987, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 987, socket.language ) );
 						return;
 					}
 
 					if( mChar.CheckSkill( 8, minSkill, maxSkill ) )
 					{
 						ourObj.health = ourObj.maxhp;
-						socket.SysMessage( GetDictionaryEntry( 989, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 989, socket.language ) );
 						socket.SoundEffect( 0x002A, true );
 					}
 					else
-						socket.SysMessage( GetDictionaryEntry( 990, socket.Language ) );
+						socket.SysMessage( GetDictionaryEntry( 990, socket.language ) );
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 988, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 988, socket.language ) );
 			}
 			else
 				socket.SysMessage( "You must have that item in your pack to repair it!" );
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 986, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 986, socket.language ) );
 	}
 }
 

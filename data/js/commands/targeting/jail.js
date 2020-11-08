@@ -10,7 +10,7 @@ function command_JAIL( socket, cmdString )
 	if( cmdString )
 		socket.tempint = parseInt( cmdString );
 
-	var targMsg = GetDictionaryEntry( 180, socket.Language );
+	var targMsg = GetDictionaryEntry( 180, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -19,7 +19,7 @@ function onCallback0( socket, ourObj )
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		if( ourObj.isJailed )
-			socket.SysMessage( GetDictionaryEntry( 1070, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1070, socket.language ) );
 		else
 		{
 			ourObj.Jail( socket.tempint );
@@ -31,7 +31,7 @@ function onCallback0( socket, ourObj )
 
 function command_RELEASE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 181, socket.Language );
+	var targMsg = GetDictionaryEntry( 181, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 
@@ -40,7 +40,7 @@ function onCallback1( socket, ourObj )
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		if( ourObj.isJailed == false )
-			socket.SysMessage( GetDictionaryEntry( 1064, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 1064, socket.language ) );
 		else
 		{
 			ourObj.Release();

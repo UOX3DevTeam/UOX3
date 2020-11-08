@@ -131,6 +131,7 @@ private:
 	GUILDLIST		gList;
 
 	void			ToggleAbbreviation( CSocket *s );
+	void			TransportGuildStone( CSocket *s, GUILDID guildID );
 	void			Erase( GUILDID toErase );
 	GUILDID			MaximumGuild( void );
 public:
