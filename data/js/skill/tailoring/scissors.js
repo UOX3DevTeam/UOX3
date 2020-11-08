@@ -11,16 +11,16 @@ function onUseChecked( pUser, iUsed )
 		var isInRange = pUser.InRange( iUsed, 3 );
 		if( !isInRange )
 	 	{
-			pUser.SysMessage( GetDictionaryEntry( 389, socket.Language ) ); // That is too far away and you cannot reach it.
+			pUser.SysMessage( GetDictionaryEntry( 389, socket.language ) ); // That is too far away and you cannot reach it.
 			return false;
 		}
-		socket.tempObj = iUsed;		
+		socket.tempObj = iUsed;
 		pUser.socket.CustomTarget( 0, "What should I use these scissors on?" );
 	}
 	return false;
 }
 
-function onCallback0( pSock, myTarget ) 
+function onCallback0( pSock, myTarget )
 {
 	var pUser 	= pSock.currentChar;
 	var StrangeByte	= pSock.GetWord( 1 );
@@ -37,7 +37,7 @@ function onCallback0( pSock, myTarget )
 			var isInRange = pUser.InRange( myTarget, 3 );
 			if( !isInRange )
 		 	{
-				pSock.SysMessage( GetDictionaryEntry( 461, pSock.Language ) ); // You are too far away.
+				pSock.SysMessage( GetDictionaryEntry( 461, pSock.language ) ); // You are too far away.
 				return;
 			}
 			else if( myTarget.id == 0x00df || myTarget.id == 0x00cf )
@@ -57,7 +57,7 @@ function onCallback0( pSock, myTarget )
 			{
 				pSock.SysMessage( "Locked down resources cannot be used!" );
 				return;
-			} 
+			}
 
 			var iPackOwner = GetPackOwner( myTarget, 0 );
 			if( ValidateObject( iPackOwner ) ) // Is the target item in a backpack?

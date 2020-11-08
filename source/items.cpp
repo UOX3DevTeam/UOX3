@@ -45,11 +45,11 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 n
 
 UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
+//|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load items from the script sections to the array
 //o-----------------------------------------------------------------------------------------------o
-bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
+bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID )
 {
 	if( toApply == NULL || !ValidateObject( applyTo ) )
 		return false;
@@ -86,17 +86,38 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				}
 				break;
 			case DFNTAG_AMOUNT:
-				if( ndata && odata )
+				if( ndata > 0 )
 				{
-
-					UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
-					applyTo->SetAmount( rndAmount );
+					if( odata && odata > ndata )
+					{
+						UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
+						applyTo->SetAmount( rndAmount );
+					}
+					else
+					{
+						applyTo->SetAmount( ndata );
+					}
 				}
-				else if( ndata > 0 )
-					applyTo->SetAmount( ndata );
+				else
+					Console.warning( format("Invalid data found in AMOUNT tag inside item script %s", sectionID.c_str() ));
 				break;
-			case DFNTAG_ATT:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );
-				applyTo->SetHiDamage( static_cast<SI16>(odata) );
+			case DFNTAG_DAMAGE:
+			case DFNTAG_ATT:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
+						applyTo->SetHiDamage( static_cast<SI16>( odata ) );
+					}
+					else
+					{
+						applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
+						applyTo->SetHiDamage( static_cast<SI16>( ndata ) );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>(ndata) );	break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
@@ -104,9 +125,6 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_COLOURLIST:		applyTo->SetColour( addRandomColor( cdata ) );			break;
 			case DFNTAG_CORPSE:			applyTo->SetCorpse( ndata != 0 )		;				break;
 			case DFNTAG_COLD:			applyTo->SetWeatherDamage( COLD, ndata != 0 );			break;
-			case DFNTAG_DAMAGE:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );
-				applyTo->SetHiDamage( static_cast<SI16>(odata) );
-				break;
 			case DFNTAG_ELEMENTRESIST:
 				if( cdata.sectionCount( " " ) == 3 )
 				{
@@ -116,8 +134,36 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 					applyTo->SetResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
 				}
 				break;
-			case DFNTAG_DEF:			applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );	break;
-			case DFNTAG_DEX:			applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
+			case DFNTAG_DEF:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, PHYSICAL );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in DEF tag inside item script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_DEX:
+				if( ndata > 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetDexterity( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in DEX tag inside item script %s", sectionID.c_str() ));
+				break;				
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
 			case DFNTAG_DIR:			applyTo->SetDir( cdata.toByte() );			break;
 			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
@@ -138,14 +184,28 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			{
 				ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
 				if( toFind == NULL )
-					Console.warning( format("Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial()));
+					Console.warning( format("Invalid script entry (%s) called with GET tag, item serial 0x%X", cdata.c_str(), applyTo->GetSerial()));
 				else if( toFind == toApply )
 					Console.warning( format("Infinite loop avoided with GET tag inside item script %s", cdata.c_str() ));
 				else
-					ApplyItemSection( applyTo, toFind );
+					ApplyItemSection( applyTo, toFind, cdata );
 			}
 				break;
-			case DFNTAG_HP:				applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
+			case DFNTAG_HP:
+				if( ndata > 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );
+					}
+					else
+					{
+						applyTo->SetHP( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in HP tag inside item script %s", sectionID.c_str() ));
+				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>(ndata) );		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
 			case DFNTAG_ID:				applyTo->SetID( static_cast<UI16>(ndata) );				break;
@@ -156,6 +216,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<SI16>(ndata) );			break;
+			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
 			case DFNTAG_MORE:			applyTo->SetTempVar( CITV_MORE, ndata );				break;
 			case DFNTAG_MORE2:																	break;
@@ -194,8 +255,22 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
 			case DFNTAG_VALUE:
-				applyTo->SetBuyValue( ndata );
-				applyTo->SetSellValue( odata );
+				if( ndata >= 0 )
+				{
+					if( odata && odata >= 0 )
+					{
+						applyTo->SetBuyValue( ndata );
+						applyTo->SetSellValue( odata );
+					}
+					else
+					{
+						// Only one value was specified in DFN tag - use it for both buy and sell value
+						applyTo->SetBuyValue( ndata );
+						applyTo->SetSellValue( ndata );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in VALUE tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );
 				applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
@@ -253,12 +328,27 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|					automatically look for an entry in harditems.dfn and set its location (be it in
 //|					a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, const bool inPack )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
 		Console.warning(format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial()) );
 		return NULL;
+	}
+
+	if( inPack )
+	{
+		// Check if character's backpack can hold more items before creating any item
+		CItem *playerPack = mChar->GetPackItem();
+		if( ValidateObject( playerPack ) )
+		{
+			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+			{
+				if( mSock != NULL )
+					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+				inPack = false; // Spawn item at character's feet instead
+			}
+		}
 	}
 
 	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID() );
@@ -302,12 +392,27 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 //|	Purpose		-	Creates a script item, gives it an amount, and sets
 //|					its location (be it in a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack, const UI16 iColor )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
 		Console.warning( format("CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() ));
 		return NULL;
+	}
+
+	if( inPack )
+	{
+		// Check if character's backpack can hold more items before creating any item
+		CItem *playerPack = mChar->GetPackItem();
+		if( ValidateObject( playerPack ) )
+		{
+			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+			{
+				if( mSock != NULL )
+					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+				inPack = false; // Spawn item at character's feet instead
+			}
+		}
 	}
 
 	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType );
@@ -479,7 +584,7 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 			iCreated->SetDecayable( true );
 		}
 
-		if( !ApplyItemSection( iCreated, itemCreate ) )
+		if( !ApplyItemSection( iCreated, itemCreate, ourItem ) )
 			Console.error( "Trying to apply an item section failed" );
 
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
@@ -506,7 +611,7 @@ void cItem::GetScriptItemSettings( CItem *iCreated )
 	const UString item = "x" + UString::number( iCreated->GetID(), 16 );
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
 	if( toFind != NULL )
-		ApplyItemSection( iCreated, toFind );
+		ApplyItemSection( iCreated, toFind, item );
 }
 
 CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );
@@ -527,6 +632,13 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 			iCreated->SetCont( mChar->GetPackItem() );
 			iCreated->PlaceInPack();
 		}
+
+		if( mSock != NULL )
+		{
+			// Refresh container tooltip
+			CPToolTip pSend( iCreated->GetContSerial() );
+			mSock->Send(&pSend);
+		}
 	}
 	else
 		iCreated->SetLocation( mChar );
@@ -535,15 +647,18 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
+//|	Function	-	bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o-----------------------------------------------------------------------------------------------o
-bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
+bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 {
 	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
 	{
-		toDecay.SetDecayTime( nextDecayItems );
+		if( toDecay.GetMulti() == INVALIDSERIAL )
+			toDecay.SetDecayTime( nextDecayItems );
+		else
+			toDecay.SetDecayTime( nextDecayItemsInHouses );
 		return false;
 	}
 	const bool isCorpse = toDecay.isCorpse();
@@ -555,7 +670,7 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 		   ( ValidateObject( toDecay.GetMultiObj() ) &&
 			( toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses() ) ) )
 		{
-			toDecay.SetDecayTime( nextDecayItems );
+			toDecay.SetDecayTime( nextDecayItemsInHouses );
 			return false;
 		}
 	}

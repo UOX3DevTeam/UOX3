@@ -29,7 +29,7 @@ function onCallback0( socket, ourObj )
 		case "PACK":	layer = 0x15;			break;
 		case "LAYER":
 				if( splitString[1] )
-					layer = parseInt( splitString[1] ); 
+					layer = parseInt( splitString[1] );
 				break;
 		case "CHAR":
 				if( !ourObj.dead )
@@ -56,7 +56,7 @@ function onCallback0( socket, ourObj )
 
 function command_RESURRECT( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 194, socket.Language );
+	var targMsg = GetDictionaryEntry( 194, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 

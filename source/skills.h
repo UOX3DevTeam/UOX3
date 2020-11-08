@@ -70,12 +70,14 @@ struct createEntry
 
 struct miningData
 {
+	std::string oreName; // ore name from ORE_LIST in skills.dfn
 	UI16 colour;		// colour of the ore, for colour of ingot
 	UI16 minSkill;		// minimum skill needed to make the ingot
-	std::string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
+	std::string name;	// name of the ingot: no need to be fixed, as we're loading it dynamically
 	SI32 makemenu;		// the makemenu required for making with
+	UI16 oreChance; // default chance of finding ore type if nothing else is specified
 
-	miningData() : colour( 0 ), minSkill( 0 ), name( "" ), makemenu( 0 )
+	miningData() : oreName( "" ), colour( 0 ), minSkill( 0 ), name( "" ), makemenu( 0 ), oreChance( 0 )
 	{
 	}
 };

@@ -53,6 +53,7 @@ static JSFunctionSpec my_functions[] =
 	{ "RandomNumber",				SE_RandomNumber,			2, 0, 0 },
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
 	{ "CalcItemFromSer",			SE_CalcItemFromSer,			1, 0, 0 },
+	{ "CalcMultiFromSer",			SE_CalcMultiFromSer,		1, 0, 0 },
 	{ "GetHour",					SE_GetHour,					0, 0, 0 },
 	{ "GetMinute",					SE_GetMinute,				0, 0, 0 },
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
@@ -80,6 +81,7 @@ static JSFunctionSpec my_functions[] =
 	{ "CreateBlankItem",			SE_CreateBlankItem,			8, 0, 0 },
 	{ "SpawnNPC",					SE_SpawnNPC,				5, 0, 0 },
 	{ "GetPackOwner",				SE_GetPackOwner,			2, 0, 0 },
+	{ "FindRootContainer",			SE_FindRootContainer,		2, 0, 0 },
 	{ "CalcTargetedItem",			SE_CalcTargetedItem,		1, 0, 0 },
 	{ "CalcTargetedChar",			SE_CalcTargetedChar,		1, 0, 0 },
 	{ "GetTileIDAtMapCoord",		SE_GetTileIDAtMapCoord,		3, 0, 0 },
@@ -100,6 +102,15 @@ static JSFunctionSpec my_functions[] =
 	{ "GetSocketFromIndex",			SE_GetSocketFromIndex,		1, 0, 0 },
 	{ "StaticAt",					SE_StaticAt,				4, 0, 0 },
 	{ "StaticInRange",				SE_StaticInRange,			5, 0, 0 },
+
+	{ "GetMapElevation",			SE_GetMapElevation,			3, 0, 0 },
+	{ "IsInBuilding",				SE_IsInBuilding,			6, 0, 0 },
+	{ "CheckStaticFlag",			SE_CheckStaticFlag,			5, 0, 0 },
+	{ "CheckTileFlag",				SE_CheckTileFlag,			2, 0, 0 },
+	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		7, 0, 0 },
+	{ "DoesStaticBlock",			SE_DoesStaticBlock,			7, 0, 0 },
+	{ "DoesMapBlock",				SE_DoesMapBlock,			8, 0, 0 },
+
 	{ "ResourceArea",				SE_ResourceArea,			2, 0, 0 },
 	{ "ResourceAmount",				SE_ResourceAmount,			2, 0, 0 },
 	{ "ResourceTime",				SE_ResourceTime,			2, 0, 0 },
@@ -136,6 +147,12 @@ static JSFunctionSpec my_functions[] =
 	{ "ApplyDefenseModifiers",		SE_ApplyDefenseModifiers,	7, 0, 0 },
 
 	{ "CreateParty",				SE_CreateParty,				1, 0, 0 },
+
+	{ "GetClientFeature",			SE_GetClientFeature,		1, 0, 0 },
+	{ "GetServerFeature",			SE_GetServerFeature,		1, 0, 0 },
+	{ "GetServerSetting",			SE_GetServerSetting,		1, 0, 0 },
+
+	{ "DeleteFile",					SE_DeleteFile,				2, 0, 0 },
 
 	{ NULL,							NULL,						0, 0, 0 },
 };
@@ -367,7 +384,7 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 //| Changes		-	22 June, 2003 17:30 (making it version 3)
 //|						Changed return values from bool to SI08
 //o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo )
+SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( speech == NULL || !ValidateObject( personTalking ) || !ValidateObject( talkingTo ) )
@@ -382,7 +399,11 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CChar *talking
 	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech.lower().c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
-	JSObject *ttObj = JSEngine->AcquireObject( IUE_CHAR, talkingTo, runTime );
+	JSObject *ttObj;
+	if( talkingTo->CanBeObjType( OT_CHAR ) )
+		ttObj = JSEngine->AcquireObject( IUE_CHAR, talkingTo, runTime );
+	else if( talkingTo->CanBeObjType( OT_ITEM ) )
+		ttObj = JSEngine->AcquireObject( IUE_ITEM, talkingTo, runTime );
 
 	params[0] = STRING_TO_JSVAL( strSpeech );
 	params[1] = OBJECT_TO_JSVAL( ptObj );
@@ -3234,5 +3255,32 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnSoldToVendor, false );
+	return ( retVal == JS_TRUE );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnHouseCommand( CSocket *tSock, CMultiObj *objMulti )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows overriding house commands via JS script attached to multi
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
+{
+	if( !ValidateObject( objMulti ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnHouseCommand, "onHouseCommand" ) )
+		return false;
+
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *multiObj	= JSEngine->AcquireObject( IUE_ITEM, objMulti, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( multiObj );
+	params[2] = INT_TO_JSVAL( cmdID );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onHouseCommand", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnHouseCommand, false );
 	return ( retVal == JS_TRUE );
 }

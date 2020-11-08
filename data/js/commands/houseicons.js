@@ -12,8 +12,8 @@ function command_HOUSEICONS( socket, cmdString )
 	pUser.houseicons = value;
 	pUser.Teleport();
 	if( value )
-		sysMessage = GetDictionaryEntry( 41, socket.Language );
+		sysMessage = GetDictionaryEntry( 41, socket.language );
 	else
-		sysMessage = GetDictionaryEntry( 42, socket.Language );
+		sysMessage = GetDictionaryEntry( 42, socket.language );
 	socket.SysMessage( sysMessage );
 }

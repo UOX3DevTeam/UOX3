@@ -67,8 +67,9 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xEF:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients after 6.0.x
+		//case 0xE4:	return ( new CPIKREncryptionVerification( s ) ); // KR Encryption Response verification
 		case 0xF8:	return ( new CPICreateCharacter( s )	);	// New Character Create - minor difference from original
-		case 0xFF:	return NULL;								// Firt packet in old clients?
+		case 0xFF:	return NULL;								// new CPIKRSeed( s ) - KR client request for encryption response
 		default:	break;
 	}
 	throw socket_error( "Bad packet request" );
@@ -217,7 +218,7 @@ bool CPIFirstLogin::Handle( void )
 					Console << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
 				}
 			}
-			else if( tSock->ClientType() <= CV_KR3D )
+			else if( tSock->ClientType() == CV_KR3D )
 			{
 				if( !cwmWorldState->ServerData()->ClientSupport6050() )
 				{
@@ -225,7 +226,7 @@ bool CPIFirstLogin::Handle( void )
 					Console << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..." << myendl;
 				}
 			}
-			else if( tSock->ClientType() <= CV_SA3D )
+			else if( tSock->ClientType() <= CV_SA3D && tSock->ClientType() != CV_DEFAULT )
 			{
 				if( !cwmWorldState->ServerData()->ClientSupport7000() )
 				{
@@ -233,7 +234,7 @@ bool CPIFirstLogin::Handle( void )
 					Console << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..." << myendl;
 				}
 			}
-			else if( tSock->ClientType() <= CV_HS3D )
+			else if( tSock->ClientType() <= CV_HS3D && tSock->ClientType() != CV_DEFAULT  )
 			{
 				if( tSock->ClientVerShort() < CVS_70160 )
 				{
@@ -656,15 +657,24 @@ void CPINewClientVersion::Receive( void )
 		{
 			if( tSock->ClientVersion() >= 1000000000 ) // 1124079360 is 4.0.23.1?
 			{
-				//UO Enhanced client 4.0.23.1 and above
-				//should use same version numbering scheme as classic client internally
-				tSock->ClientType( CV_HS3D );
-				if( clientRevision <= 15 )
-					tSock->ClientVerShort( CVS_70151 );
-				else if( clientRevision < 24 )
-					tSock->ClientVerShort( CVS_70160 );
+				if( tSock->ClientVersion() == 1110912768 )
+				{
+					// Kingdom Reborn 3D client, build 2.53.0.2
+					tSock->ClientType( CV_KR3D );
+					tSock->ClientVerShort( CVS_25302 );
+				}
 				else
-					tSock->ClientVerShort( CVS_70240 );
+				{
+					//UO Enhanced client 4.0.23.1 and above
+					//should use same version numbering scheme as classic client internally
+					tSock->ClientType( CV_HS3D );
+					if( clientRevision <= 15 )
+						tSock->ClientVerShort( CVS_70151 );
+					else if( clientRevision < 24 )
+						tSock->ClientVerShort( CVS_70160 );
+					else
+						tSock->ClientVerShort( CVS_70240 );
+				}
 			}
 			else if( tSock->ClientVersion() <= 117442562 && clientRevision >= 0 && clientRevision < 9 )
 				tSock->ClientType( CV_SA2D );
@@ -1276,6 +1286,69 @@ void CPISpy::Receive( void )
 	tSock->Receive( 0x95, false );
 }
 bool CPISpy::Handle( void )
+{
+	return true;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIKRSeed()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet by KR client with client signal, server responds with
+//|					encryption request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xFF (KR Client Signal/Seed)
+//|					Size: 4 bytes
+//|
+//|					Packet Build
+//|						Byte cmd (0xff)
+//|						Byte 0xff
+//|						Byte 0xff
+//|						Byte 0xff
+//o-----------------------------------------------------------------------------------------------o
+CPIKRSeed::CPIKRSeed()
+{
+}
+CPIKRSeed::CPIKRSeed( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+void CPIKRSeed::Receive( void )
+{
+	// This would need to be a server option. No way to tell which client is sending this packet
+	CPKREncryptionRequest encryptionRequest( tSock );
+	tSock->Send( &encryptionRequest );
+}
+bool CPIKRSeed::Handle( void )
+{
+	return true;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIKREncryptionVerification()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet by KR client response to encryption request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xE4 (KR Encryption Verification/Response)
+//|					Size: 23 bytes
+//|
+//|					Packet Build
+//|						Byte ID (E4)
+//|						BYTE[2] Size
+//|						dword length A
+//|						byte[lengthA] A
+//o-----------------------------------------------------------------------------------------------o
+CPIKREncryptionVerification::CPIKREncryptionVerification()
+{
+}
+CPIKREncryptionVerification::CPIKREncryptionVerification( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+void CPIKREncryptionVerification::Receive( void )
+{
+	tSock->Receive( 23, false );
+}
+bool CPIKREncryptionVerification::Handle( void )
 {
 	return true;
 }
@@ -2164,7 +2237,8 @@ void CPITalkRequestUnicode::Receive( void )
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
 
-	tSock->Language( FindLanguage( tSock, 8 ) );
+	if( tSock->Language() == ZERO )
+		tSock->Language( FindLanguage( tSock, 8 ) );
 
 	CChar *mChar	= tSock->CurrcharObj();
 	mChar->setUnicode( true );

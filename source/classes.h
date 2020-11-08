@@ -64,7 +64,7 @@ public:
 	PackTypes	getPackType( CItem *i );
 
 	CItem *		CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack = false );
-	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, const bool inPack = false, const UI16 iColor = 0xFFFF );
+	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack = false, const UI16 iColor = 0xFFFF );
 	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const UI16 iAmount, const UI16 instanceID = 0, const ObjectType itemType = OT_ITEM );
 	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat );
 	CItem *		CreateRandomItem( CSocket *mSock, const std::string& itemList );
@@ -90,7 +90,7 @@ public:
 	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );
 	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID );
 	void		PostSpawnUpdate( CChar *cCreated );
-	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate = false );
+	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, std::string sectionID, bool isGate = false );
 	CChar *		getGuardingPet( CChar *mChar, CBaseObject *guarded );
 	bool		checkPetFriend( CChar *mChar, CChar *pet );
 	void		stopPetGuarding( CChar *pet );

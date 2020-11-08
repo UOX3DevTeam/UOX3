@@ -19,11 +19,11 @@ function onSkill( pUser, objType, skillUsed )
 			else
 			{
 				PlayInstrument( pSock, myInstrument, false );
-				pSock.SysMessage( GetDictionaryEntry( 1441, pSock.Language ) );
+				pSock.SysMessage( GetDictionaryEntry( 1441, pSock.language ) );
 			}
 		}
 		else
-			pSock.SysMessage( GetDictionaryEntry( 1438, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language ) );
 	}
 	return true;
 }
@@ -113,11 +113,11 @@ function PeaceMakeArea( pUser, targChar )
 		return;
 
 	var targSock = targChar.socket;
-	
+
 	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ) )
 	{
 		if( targSock )
-			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.Language ) );
+			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.language ) );
 		targChar.setPeace = 60;
 		return true;
 	}

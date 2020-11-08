@@ -41,6 +41,23 @@ function onUseChecked( pUser, iUsed )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="FindRootContainer">FindRootContainer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ITEM FindRootContainer( iObj );
+ITEM FindRootContainer( iObjSerial );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the root container of a provided item object, or item object serial - if any
+<tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>iObj - item to find root container for<br>iObjSerial - item serial to find root container for
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUseChecked( pUser, iUsed )
+{
+	var rootContainer = FindRootContainer( iUsed );
+	if( ValidateObject( rootContainer ))
+		pUser.TextMessage( "The item is in a container! The root container's name is " + rootContainer.name );
+	else
+		pUser.TextMessage( "The item has no root container." );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="GetSerial">GetSerial</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetSerial( part );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Gets part (1-4) of an object's serial.

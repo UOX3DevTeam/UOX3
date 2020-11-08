@@ -501,7 +501,7 @@ public:
 	virtual void	Luck( UI16 value );
 	virtual void	DamageMax( UI16 value );
 	virtual void	DamageMin( UI16 value );
-	virtual void	Unknown( UI32 value );
+	virtual void	TithingPoints( UI32 value );
 };
 
 class CPIdleWarning : public CPUOXBuffer
@@ -1101,6 +1101,12 @@ public:
 	CPLoginDeny();
 	CPLoginDeny( LoginDenyReason reason );
 	virtual void	DenyReason( LoginDenyReason reason );
+};
+
+class CPKREncryptionRequest : public CPUOXBuffer
+{
+public:
+	CPKREncryptionRequest( CSocket *mSock );
 };
 
 class CPClientVersion : public CPUOXBuffer

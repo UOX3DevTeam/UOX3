@@ -5,9 +5,9 @@ function CommandRegistration()
 
 function command_ZEROKILLS( socket, cmdString )
 {
-	socket.SysMessage( GetDictionaryEntry( 22, socket.Language ) );
+	socket.SysMessage( GetDictionaryEntry( 22, socket.language ) );
 	var count = IterateOver( "CHARACTER" );
-	socket.SysMessage( GetDictionaryEntry( 23, socket.Language ) );
+	socket.SysMessage( GetDictionaryEntry( 23, socket.language ) );
 }
 
 function onIterate( toCheck )

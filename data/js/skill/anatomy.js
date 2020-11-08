@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 856, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 856, pSock.language ) );
 
 	return true;
 }
@@ -17,7 +17,7 @@ function onCallback0( pSock, ourObj )
 	var pUser = pSock.currentChar;
 	if( ourObj && ourObj.isChar && pUser )
 	{
-		var pLanguage = pSock.Language;
+		var pLanguage = pSock.language;
 		if( ourObj.dead )
 			pSock.SysMessage( GetDictionaryEntry( 1571, pLanguage ) );
 		else if( !ourObj.InRange( pUser, 7 ) )
@@ -44,5 +44,5 @@ function onCallback0( pSock, ourObj )
 		}
 	}
 	else
-		pSock.SysMessage( GetDictionaryEntry( 1569, pSock.Language ) );
+		pSock.SysMessage( GetDictionaryEntry( 1569, pSock.language ) );
 }

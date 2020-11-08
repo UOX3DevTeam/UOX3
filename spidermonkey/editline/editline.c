@@ -81,6 +81,7 @@
 #if	!defined(HIST_SIZE)
 #define HIST_SIZE	20
 #endif	/* !defined(HIST_SIZE) */
+int getpid();
 
 /*
 **  Command status codes.

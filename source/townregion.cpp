@@ -29,6 +29,7 @@ const UI32 BIT_AGGRESSIVE	=	6;
 const UI32 BIT_DUNGEON		=	7;
 const UI32 BIT_SAFEZONE		=	8;
 const UI32 BIT_TELEPORT		=	9;
+const UI32 BIT_HOUSING		=	10;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
@@ -387,13 +388,14 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	UString tag;
 	UString data;
 	UString UTag;
-	SI32 actgood				= -1;
-	bool orePrefLoaded		= false;
+	SI32 actgood = -1;
+	bool orePrefLoaded = false;
 
 	// Some default values
 	numGuards			= 10;
 	chanceFindBigOre	= 80;
 	CanTeleport( true );
+	CanPlaceHouse( false );
 
 	regLocs ourLoc;
 	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
@@ -459,6 +461,10 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "GOOD" )
 					actgood = data.toInt();
 				break;
+			case 'H':
+				if( UTag == "HOUSING" )
+					CanPlaceHouse( (data.toUByte() == 1) );
+				break;
 			case 'I':
 				if( UTag == "INSTANCEID" )
 					instanceID = data.toUShort();
@@ -485,14 +491,26 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					std::string oreName;
 					orePref toPush;
 					data			= data.simplifyWhiteSpace();
-					oreName			= extractSection(data, " ", 0, 0 );
+					oreName			= extractSection(data, ",", 0, 0 );
 					toPush.oreIndex = Skills->FindOre( oreName );
 					if( toPush.oreIndex != NULL )
 					{
-						if( data.sectionCount( " " ) == 0 )
-							toPush.percentChance = 100 / Skills->GetNumberOfOres();
+						if( data.sectionCount( "," ) > 0 )
+						{
+							// Use chance specified in orepref
+							toPush.percentChance = data.section( ",", 1, 1 ).toUShort();
+						}
+						else if( toPush.oreIndex->oreChance > 0 )
+						{
+							// No chance specified in orepref, use default chance of ore type
+							toPush.percentChance = toPush.oreIndex->oreChance;
+						}
 						else
-							toPush.percentChance = data.section( " ", 1, 1 ).toByte();
+						{
+							// Fallback for older skills.dfn setups
+							toPush.percentChance = 1000 / static_cast<UI16>(Skills->GetNumberOfOres());
+						}
+
 						orePreferences.push_back( toPush );
 						orePrefLoaded = true;
 					}
@@ -596,6 +614,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				break;
 		}
 	}
+
+	// No ore preference tags found for this region, apply default chance to find ores
 	if( !orePrefLoaded )
 	{
 		orePref toLoad;
@@ -603,7 +623,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 		for( size_t myCounter = 0; myCounter < numOres; ++myCounter )
 		{
 			toLoad.oreIndex			= Skills->GetOre( myCounter );
-			toLoad.percentChance	= (UI08)(100 / numOres);
+			toLoad.percentChance	= toLoad.oreIndex->oreChance;
 			orePreferences.push_back( toLoad );
 		}
 	}
@@ -625,6 +645,21 @@ bool CTownRegion::IsGuarded( void ) const
 void CTownRegion::IsGuarded( bool value )
 {
 	priv.set( BIT_GUARDED, value );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanPlaceHouse( void ) const
+//|					void CanPlaceHouse( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the townregion allows player houses
+//o-----------------------------------------------------------------------------------------------o
+bool CTownRegion::CanPlaceHouse( void ) const
+{
+	return priv.test( BIT_HOUSING );
+}
+void CTownRegion::CanPlaceHouse( bool value )
+{
+	priv.set( BIT_HOUSING, value );
 }
 
 //o-----------------------------------------------------------------------------------------------o

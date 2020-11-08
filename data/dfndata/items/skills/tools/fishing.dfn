@@ -8,6 +8,7 @@ value=15 7
 restock=20
 decay=1
 good=54
+layer=0x02
 }
 
 [0x0dc0]
@@ -20,6 +21,7 @@ value=15 7
 restock=20
 decay=1
 good=54
+layer=0x02
 }
 
 [0x0dc8]

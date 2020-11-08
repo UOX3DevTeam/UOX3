@@ -2,6 +2,321 @@ UOX3 Changelog
 ------------------------
 
 -==============================-
+-= 08/11/2020 - UOX3 0.99.4  =-
+-==============================-
+Contributors: Xuri, punt, dragon slayer
+
+Source Changes/Fixes:
+	Updated warning messages printed in UOX3 when attempting to inherit an invalid/non-existent item or character script entry using the GET tag, to also include the name of the script entry being inherited
+	Added new tag for ore types in skills.dfn that determines default chance of finding a particular ore (can be overridden via OREPREFS tag in regions.dfn):
+		ORECHANCE - takes a value from 0 to 1000, where 1000 equals 100.0%
+	OREPREFS tag in regions.dfn now uses [sectionName] of ore type from skills.dfn instead of actual name of the ore
+	OREPREFS tag in regions.dfn now uses comma as separator instead of space. New syntax: OREPREFS=[oreType,oreChance]
+	Added chance of getting different ore sizes when mining
+	Added functionality to combine and transform larger ores into smaller ores by double-clicking some ore and targeting other ore instead of a forge
+	Added functionality to return different amount of ingots when smelting ore, based on the size of ore being melted
+	Fixed a bug introduced in 0.99.3 that would set invalid values for certain properties on newly created items and NPCs if the tag for that property in the DFNs accepted random values, but only supplied one value. Example: Amount=1, vs Amount=10 20. As part of the fix for this, added sanity checking for all item and character DFN tags that accept two values.
+	Fixed weapon damage not appearing in status gump
+	Fixed a spidermonkey compilation issue with xcode 12.0.1/Apple clang v 12.0.0 (clang-1200.0.32.2) (punt)
+	Updated JS item properties MORE, MOREX, MOREY, MOREZ and SERIAL, and character property SERIAL, to pass values to JS scripts using JS_NewNumberValue() instead of INT_TO_JSVAL if the property value cannot fit inside JSVAL (checked with INT_FITS_IN_JSVAL)
+	Added support in CResponse.cpp for client trigger word for securing containers in houses - TW_HOUSESECURE
+	Updated CMulHandler::CheckStaticFlag() to match with statics that cover/extend across the specified Z coordinate, not just ones that have the same base Z level
+	Updated CMulHandler::DoesMapBlock() to not deem map tiles as blocking if they are more than 16 Z (height of a character) higher than the specified Z coordinate to check
+	Exposed method for finding corners of a multi to JS engine:
+		.GetMultiCorner( cornerID ) - Gets coordinates for specified corner of multi (0 = NW, 1 = NE, 2 = SW, 3 = SE)
+	Exposed various functions related to map, statics and multis to JS engine:
+		CalcMultiFromSer( serial ) - Find a multi from a provided serial
+		GetMapElevation( x, y, z, world) - Returns the map elevation at specified coordinates
+		IsInBuilding( x, y, z, world, instance, checkHeight ) - Returns true if the specified location is inside a static building (underneath static items), or if player is inside a multi. If the checkHeight argument is true, player is only deemed inside a multi if there are multi-items above the player's head. If player is in a courtyard/on a rooftop, they will be deemed to be NOT in the building. checkHeight is not used for the static part of the function.
+		CheckStaticFlag( x, y, z, world, tileFlagID ) - Checks to see if any statics at given coordinates has specified tile flag
+		DoesStaticBlock( x, y, z, world, checkWater ) - Checks if statics at/above given location blocks characters
+		DoesDynamicBlock( x, y, z, world, instance, checkWater, waterWalk ) - Checks if dynamics at/above given location blocks characters
+		DoesMapBlock( x, y, z, world, checkWater, waterWalk ) - Checks if map tile at/above given location blocks characters
+	Fixed an issue with validation of DFN tags for items and NPCs being loaded from scripts
+	Fixed UOX3 not writing out names of item/NPC DFN sections with invalid data in tags
+	Fixed an issue where non-GM characters could not open their own backpacks or take items from other containers or corpses due to some flawed comparisons of worldnumber/instanceID between character and items
+	Updated JS SysMessage function to accept up to 10 extra, optional arguments, which can be used with dictionary messages that require additional parameters like %s or %i
+	Added new type of house privilege in cMultiObj.cpp to keep track of friends of the multi - HOUSEPRIV_FRIEND - which is stored during worldsaves as one or more Friend=<player serial> tags in house.wsc
+	Added new type of house privilege in cMultiObj.cpp to keep track of guests of the multi - HOUSEPRIV_GUEST - which is stored during worldsaves as one or more Guest=<player serial> tags in house.wsc
+	When items are created for houses upon house placement, a reference to the multi's serial is now stored in the house sign's MORE property to allow easier tracking of which house a particular sign belongs to
+	Added tracking of new, persistent properties for houses via cMultiObj.cpp/h:
+		lockdowns, secure containers, vendors, guests, friends, owners, ban location, public status, number of visits, timestamps
+	Added a multitude of  new methods in cMultiObj.cpp/h to assist in improving the functionality of houses
+	Added new tags for houses in house.dfn (default values applied if tag not specified):
+		MAXSECURECONTAINERS=4 - Max amount of secure containers allowed in a multi
+		MAXLOCKDOWNS=256 - Max amount of lockdowns allowed in a multi
+		MAXVENDORS=10 - Max amount of vendors allowed in a multi
+		MAXBANS=50 - Max amount of bans in a multi's ban list
+		MAXFRIENDS=50 - Max amount of friends in a multi's friend list
+		MAXGUESTS=50 - Max amount of guests in a multi's guest list
+		MAXOWNERS=8 - Max amount of owners and co-owners in a multi's owner list
+		MAXTRASHCONTAINERS=1 - Max amount of trash containers allowed in multi
+		SCRIPT=<scriptID> - Assign a JS script-ID directly to a multi
+		FRONTDOOR - indicates that a door is the front door of a house. Cannot be locked in public houses!
+		INTERIORDOOR - indicates that a door is an interior door of a house. Can be locked in public houses.
+		BANX - Location X offset for multi's ban location, if not used, will try to use SE corner of multi instead
+		BANY - Location Y offset for multi's ban location, if not used, will try to use SE corner of multi instead
+	Added JS Event:
+		onHouseCommand( tSock, multiObj, cmdID ) - For handling spoken house commands via JS scripts attached to multi.
+	Updated JS Events:
+		onEntrance() - can now trigger both for multi being entered and/or object entering
+		onLeaving() - can now trigger both for multi being left and/or object entering
+		onSpeech() - can now also trigger for items (in addition to chars) with event & script attached, if UOX.INI setting ITEMSDETECTSPEECH is enabled
+	Added JS Multi methods:
+		.IsBoat() - Returns whether the item (or multi) is a boat
+		.IsOwner( playerToCheck ) - Returns whether a player is the owner of a multi
+		.IsOnOwnerList( playerToCheck ) - Returns whether a player is on the (co-)owner list of a multi
+		.IsOnFriendList( playerToCheck ) - Returns whether a player is on the friend list of a multi
+		.IsOnGuestList( playerToCheck ) - Returns whether a player is on the guest list of a multi
+		.IsOnBanList( playerToCheck ) - Returns whether a player is on the ban list of a multi
+		.AddToFriendList( playertoAdd ) - Adds player to the friend list of a multi
+		.RemoveFromFriendList( playertoRemove ) - Removes player from the friend list of a multi
+		.AddToGuestList( playertoAdd ) - Adds player to the guest list of a multi
+		.RemoveFromGuestList( playertoRemove ) - Removes player from the guest list of a multi
+		.ClearOwnerList() - Clears all entries from a multi's (co-)owner list
+		.ClearFriendList() - Clears all entries from a multi's friend list
+		.ClearGuestList() - Clears all entries from a multi's guest list
+		.ClearBanList() - Clears all entries from a multi's ban list
+		.SecureContainer( itemToSecure ) - Secures a container in a multi
+		.UnsecureContainer( itemToUnsecure ) - Unsecures a container in a multi
+		.IsSecureContainer( itemToCheck ) - Checks if specified item is a secure container in a multi
+		.LockDownItem( itemToLockDown) - Locks down an item in a multi
+		.ReleaseItem( itemToRelease ) - Releases a locked down item in a multi
+		.KillKeys() - Deletes ALL keys associated with a multi
+		.AddTrashCont( itemToAdd ) - Add trash container to multi's list of trash containers
+		.RemoveTrashCont( itemToRemove ) - Remove trash container from multi's list of trash containers
+	Added JS Item (Multi only) properties:
+		.lockdowns - Get the number of lockdowns in a multi
+		.maxLockdowns - Get/Set the max number of lockdowns allowed in a multi
+		.secureContainers - Get the number of secure containers in a multi
+		.maxSecureContainers - Get/Set the max number of secure containers allowed in a multi
+		.trashContainers - Get the number of trash containers in a multi
+		.maxTrashContainers - Get/Set the max number of trash containers allowed in a multi
+		.friends - Get the number of friends in a multi's friend list
+		.maxFriends - Get/Set the max number of friends allowed in a multi's friend list
+		.guests - Get the number of guests in a multi's guest list
+		.maxGuests - Get/Set the max number of guests allowed in a multi's guest list
+		.owners - Get the number of owners in a multi's owner list
+		.maxOwners - Get/Set the max number of owners allowed in a multi's owner list
+		.bans - Get the number of banned players in a multi's ban list
+		.maxBans - Get/Set the max number of banned players allowed in a multi's ban list
+		.vendors - Get the number of player vendors in a multi
+		.maxVendors - Get the max number of player vendors allowed in a multi
+		.deed - Get the item sectionID for deed used to place multi
+		.isPublic - Get/Set the private/public state of a multi
+		.buildTimestamp - Get the timestamp for when the house was originally placed
+		.tradeTimestamp - Get the timestamp for when the house was last traded to another player
+		.banX - Get/Set the ban location X offset for the multi
+		.banY - Get/Set the ban location Y offset for the multi
+	Added JS Character properties:
+		.multi = Get/Set the multi object the character is in
+		.accountNum = Get the account number the character belongs to
+		.housesOwned = Get a count of houses owned by the character
+		.housesCoOwned = Get a count of houses co-owned by the character
+	Updated JS cBaseObject Methods .FirstItem(), .NextItem() and .FinishedItems() to also support iterating through items in multis
+	Updated JS multi Methods .FirstChar(), .NextChar() and .FinishedChars() to support an additional parameter to specify what kind of characters to loop through:
+		"default" or no parameter - all characters inside the multi
+		"owner" - players on multi's owner list
+		"friend" - players on multi's friend list
+		"guest" - players on multi's guest list
+		"banned" - players on multi's ban list
+	Added new INI tags to a new section of uox.ini called [houses]
+		DECAYTIMERINHOUSE=3600 // Decay timer in seconds for non-locked down items inside houses
+		PROTECTPRIVATEHOUSES=1 // Toggles whether private houses will automatically boot unauthorized visitors (1) or not (0)
+		TRACKHOUSESPERACCOUNT=1 // Toggles whether to track (and restrict) house ownership per account (1) or per character (0)
+		MAXHOUSESOWNABLE=1 // Specifies the max amount of houses a player can own per account/char, depending on how house ownership is tracked
+		MAXHOUSESCOOWNABLE=10 // Specifies the max amount of houses a player can co-own per character
+		CANOWNANDCOOWNHOUSES=1 // Toggles whether players can own and co-own houses at the same time
+		COOWNHOUSESONSAMEACCOUNT=1 // Toggles whether characters on same account as house owner will be treated as co-owners
+	Added new INI tags in [settings] section of uox.ini:
+		ITEMSDETECTSPEECH=0 // If enabled, server will search for nearby items with onSpeech JS event running whenever a character speaks. Disabled by default.
+		MAXPLAYERPACKITEMS=125 // Defines max item capacity for player (and NPC) backpacks. Defaults to 125.
+	Moved most of the existing house functionality to JS and expanded upon it to reach feature parity with houses in regular UO around Publish 15/16, with various extras thrown in for good measure and all functionality being customizable:
+		All house-related menus now fully handled through JS
+		All house commands and other functionality now fully handled through JS
+		Removed redundant hard-coded house functionality
+		Implemented Co-owners, friends, guests for houses, with access rules in place for entry, lockdowns, house commands, etc.
+		Implemented Private and Public houses
+		Implemented Secure Containers and Trash Barrels
+		Definable max lockdowns, secure containers, player vendors, bans, friends, guests, owners, trash containers and more - per house type
+		JS scripts can now be attached directly to houses
+		Doors in houses can be marked as front doors or interior doors, and will be treated differently with regards to private and public houses
+		Fixed an issue with house doors being left behind after demolishing houses while their doors were open
+		Fixed an issue where GMs could be banned from player houses
+		Added Line of Sight checks to speech, to give players some privacy in their own homes
+		Updated house placement code to more accurately check for other multis, dynamic and static objects when placing houses; now requires free space around each house that cannot be blocked by other houses or items that can block player movement, and disallows placement of houses on roads
+		Updated house placement code to move characters blocking house placement to SE corner of the house
+		Updated house placement code to disallow placing houses in guarded regions, or in dungeons
+		Added new DFN tag for regions to enable/disable player houses in specific regions: HOUSING=0/1
+		Added new JS property to Regions that can be used to determine or change state of player housing in a region: .canPlaceHouse()
+		Updated rules for usage of dye tubs to dye locked down items; now only house owners or co-owners may dye locked down items
+		Updated rules for usage of the following locked down items in a house, which are now only usable by house owners and co-owners
+			Dyes, Guildstone Deeds, Recall Runes (renaming), Rename Deeds, Townstone Deeds, House Deeds, Boat Models, Player Vendor Deeds, Ore, Hair Dye
+		Updated rules for usage of the following locked down items in a house, which are now only usable by house owners, co-owners	and friends:
+			Keys, Dye Tubs, Magic Scrolls, Fireworks Wands, Magic Wands, Smithing Tools, Mining Tools, Fishing Poles
+		Updated item lockdown rules to allow locking down (and releasing) items in a container as long as the container is locked down, and to only allow releasing a locked down container if it's empty of locked down items
+		Updated item lockdown rules to only allow locking down movement-blocking items further than 2 tiles away from doors
+		Updated rules for releasing items in houses - now the house owner can release any locked down items, co-owners can release items locked down by themselves or by friends, while friends can release only items locked down by themselves
+		Added some feedback to player about why their attempted house placement failed
+		Items added by GMs directly into multis will now decay based on the house-specific decay timer instead of the regular one
+		Fixed an issue that could cause items to almost instantly decay after being released from lockdown in a house
+		Placing house add-ons now properly takes into account SPACEX and SPACEY values when checking if they can fit in selected area of houses
+		House add-ons can now be converted back into house add-on deeds by chopping them with an axe
+		Added new item type - IT_HOUSEADDON (201) - used by house add-ons placed in player houses
+		Fixed a bug where keys would stop working after being added to a keyring, and would turn into blank keys upon release from the keyring
+		Added visitor count for public player houses, which keeps track of how many visits a public house has received, with each player counted max 1 time every 24 hours
+		Fixed an issue with FindPlayersInOldVisrange() where it didn't take into account that players could see buildings further away than the standard update range. This could cause players to see ghost images of buildings if they were at the "right" distance when the building was being demolished
+	Fixed a bug when checking if dynamic items were blocking valid spawn locations for NPCs, some function arguments were in the wrong order!
+	Improved code that finds valid spawn locations for items and NPCs spawned via spawn regions. As server gradually builds up lists of valid spawn locations per region over time, it will start using these lists more often, rather than always look for brand new spawn locations.
+	Fixed a bug with CMulHandler::CheckStaticFlag() that prevented NPCs from spawning inside buildings with no static floors!
+	Exposed character property .accountNum to JS engine
+	Extended CDataList class to include a Clear() method for clearing lists
+	Updated JS File method .Open() to support an optional, third argument - subFolderName - that defines in which sub-folder of UOX3/shared/ to store/look for a file. If no third argument is supplied, UOX3 will default to using the shared folder itself.
+	Updated JS File method .Length() to return a value of -1 for files that don't exist
+	Added new code function, exposed to JS engine with same parameters, which simply checks if a given tile ID has a specific flag
+		bool CheckTileFlag( UI16 itemID, TILEFLAG flagToCheck )
+	Added JS function used to find the root container of an item (if any)
+		FindRootContainer( itemSerial )
+		FindRootContainer( item )
+	Added new JS function that allows deleting files from UOX3/shared/ folder or subfolders of shared folder. If no subFolderName is provided, looks for file directly in shared folder itself. Restrictions on file- and folder-names apply.
+		bool DeleteFile( fileName, subFolderName )
+	Added new JS functions for checking if a specific client or server feature is enabled. See documentation for full list of client/server features.
+		GetClientFeature( bitNum ) // Returns true if specified client feature is enabled on server
+		GetServerFeature( bitNum ) // Returns true if specified server feature is enabled on server
+	Added new JS function for returning the value of almost any server setting from UOX.INI
+		GetServerSetting( settingNameInDoubleQuotes )
+	Updated JS function DoesDynamicBlock() with two new parameters - checkOnlyMultis and checkOnlyNonMultis
+	Updated JS function DoesMapBlock() with two new parameters - checkMultiPlacement and checkForRoad
+	Fixed an issue where a LoS check would prevent players from accessing containers in their own backpack
+	Added new functions in findfuncs.cpp to make it easier to find items near another object or location:
+		findNearbyItems( object, distance )
+		findNearbyItems( x, y, worldNumber, instanceID, distance )
+	Added new Item property - maxItems - used by containers to determine their max item capacity
+	Added new Item property - totalItemCount - used to get total item count in a container (including sub-containers)
+	Added check for max item capacity when creating new items that are added to a character's backpack - items will be created below character's feet if backpack is full!
+	Added new DFN tag for items, used by containers to determine item capacity for a given container:
+		MAXITEMS=# // 125 is the default for all containers if not set
+	Added new JS Item properties:
+		.maxItems // gets/sets item capacity for a given container
+		.totalItemCount // gets total item count in a container, including sub-containers
+	Updated item tooltips for containers to show accurate total item count, as well as to display max item capacity
+	Fixed a bug where picking up items from a non-locked down pile of items on the floor inside a multi could cause the remaining pile to be seen as no longer inside the multi, disallowing locking it back down and causing it to decay based on regular decay timer instead of house-specific one
+	Updated various JS scripts and hardcoded targeting functions to disallow the targeting of locked down resources using skills and tools
+	Updated JS Method TextMessage() to support three extra, optional parameters. Note that if one optional parameter is included, all preceding optional parameters are also required!
+		speechTarget - What kind of target is this message intended for?
+			0 - Only visible for sender and receiver of message
+			1 - Visible to all players in range
+			2 - Visible to all NPCs and players in range
+			3 - Visible to all PCs everywhere + NPCs in range
+			4 - Visible to all PCs everywhere (broadcast)
+			5 - Only visible for the receiver of the message
+		speechTargetSerial - The serial of the receiver of the message, used if speechTarget is 0 or 5
+		speechFontType - The type of font to display the text in. Defaults to normal.
+		    0 - Bold
+		    1 - Normal with shadow
+		    2 - Bold with shadow
+		    3 - Normal
+		    4 - Gothic
+		    5 - Italic
+		    6 - Small, dark
+		    7 - Colourful
+		    8 - Runic (only works with CAPS)
+		    9 - Small, light
+	Added timestamp to worldsaves in console, to make it easier to see when a particular world-save was done
+	Added info about compiler/environment displayed at the top of the UOX3 console during startup
+	Fixed some a couple of issues with compiling on Linux.
+	Fixed an issue with tradetimestamp for houses
+	Updated JS command set to support setting language for player characters directly instead of getting it from UO client - though it will still attempt to do this if selected language is ZERO. Useful for testing multiple languages, and also opens up for possibility of letting players/GMs choose a language manually!
+	Fixed a server crash caused by container tooltip updates being attempted sent to invalid sockets in PlaceItem() function of items.cpp
+	Fixed an issue with books where server could get stuck in an infinite loop if number of lines per page was higher than 8. Now capped at 8 lines per page.
+	Renamed item type enum IT_READABLEBOOK to IT_BOOK, since it's the item type used by both readable and writeable books.
+	Changed ANIMALATTACKCHANCE to use a scale of 1 to 1000 instead of 1 to 100, for additional granularity in setting the chance for animals to get attacked by monsters. An INI value of 15 now translates as 1.5% chance (per NPC AI cycle!) instead of the previous 15%
+	Removed new GetEnvironment() function and expanded on the use of the existing OS_STR define in Config.h
+	Updated fireworks wand (IT_FIREWORKSWAND) so effects no longer play permanently in ClassicUO client
+	Removed some unused item types that have been marked as candidates for deletion for over 15 years (IT_CHAOSGATEOPENER, IT_CHAOSGATE, IT_GUILLOTINEANIM, IT_TRAININGDUMMYANIM)!
+	Fixed an issue with advanced pathfinding where NPCs in some cases would stop 1 tile before reaching the target location
+	Fixed an issue where no crafting resources would ever be lost if failing to craft an item that only required 1 of a given crafting resource
+	Fixed an issue with pathfinding that could cause NPCs to queue up in long rows when attempting to reach the same target in combat when advanced pathfinding was disabled
+	Added functionality to allow guild masters to move guildstones by transforming these into portable stones that can be used to place the guildstones in new locations
+	Updated timestamp for packet logs to include milliseconds for greater granularity
+	Another attempt at fixing a crash on shutdowns caused by encountering fatal errors
+
+JScript Changes/Fixes:
+	js/server/house/house.js (15000) - handles detection of house commands and characters entering/leaving houses
+	js/server/house/houseSign.js (15001) - contains and handles all house-related gumps/menus and what is shown when players interact with house sign
+	js/server/house/houseCommands.js (15002) - handles functionality of house commands and other functionality such as transfer of ownership, demolishing house, etc.
+	js/server/house/houseDeed.js (15003) - handles initial rules that allow/disallow placement of additional houses for players
+	Added new JS script (js/items/trashbarrel.js) with trash barrel functionality for houses. Trash barrels that are marked as secure containers are only accessible by owners, co-owners and friends of the house. Various options available at top of script.
+	Updated js/items/axe.js to support chopping up trash barrels and house add-ons in houses owned by the player
+	Implemented strongboxes (js/server/house/strongbox.js) for co-owners of a house, which can be placed with the house command "i wish to place a strongbox". Max capacity is 25 items
+	Updated 'REMOVE command to take an optional parameter - itemID. If supplied, the command will remove all items with this itemID from a targeted container
+	Fixed an issue with repeating commands that prevented GMs from being able to cancel them when using the ClassicUO client
+	Updated JS command set to allow setting poison-level on items ('set poison #) and hunger-level on characters ('set hunger #)
+	Fixed an issue with js/item/food.js that prevented poisoned food from poisoning characters when eaten
+	Fixed an issue with js/skill/poisoning.js that prevented players from poisoning food!
+	Committed missing js files for houses to repository!
+	Fixed an issue with 'teleport and 'telestuff commands that could cause character to end up outside of map when using ClassicUO client
+	Updated a bunch of .js files to use the proper .language socket property instead of the erroneous .Language!
+	Fixed an issue with converting a house from public to private while there were player vendors in the house
+	Ported player vendor deeds and placement of player vendors to JS (UOX3/js/server/house/playerVendorDeed.js) and added checks to make sure player is in a house they own, that can hold more player vendors, and that they are trying to add the vendor in a location that's not blocking any doors.
+	Partially ported guildstone deed functionality to JS (UOX3/js/item/guildstone.js) and added various additional checks to make sure player is in a house they own, they're not already in a guild, no other guildstones exist in the house and they're not trying to place it in a location that blocks any doors. Main guild creation code is still hardcoded, though.
+	Added missing guildstone.js and playerVendorDeed.js
+	Updated version number and release changelog
+
+DFN Changes/Fixes:
+	Added default ORECHANCE values for each ore type in skills.dfn, based on estimated chance of finding these ore types around the era of Publish 15/16 in Official UO
+	Added missing layer tag to fishing pole items in DFNs (dragon slayer)
+	Added missing item definitions for wooden kite shields (0x1b78 and 0x1b79) based on coloured ingots
+	Added house addon deeds for bear rugs (dragon slayer)
+	Gave NPCs [f_murderer-archmage] and [m_murderer-archmage] some dexterity
+	Added new item to dfndata/items/containers/misc.dfn - [trashbarrel]
+	Added new region (247) that covers path to Valley of Eodon in Felucca
+	Added new region (248) that covers Valley of Eodon in Ter-Mur, with player housing disabled
+	Added new region (249) that covers entire T2A lands, with player housing disabled
+	Updated SPACEX and SPACEY values for all houses in dfndata/house/house.dfn to match updated house placement code
+	Re-added SPACEX and SPACEY values for Pentagram and Loom house add-ons
+	Added NODECAY tag to all signs and doors in dfndata/house/house.dfn
+	Added FRONTDOOR or INTERIORDOOR (as appropriate) to all doors in dfndata/house/house.dfn
+	Added BANX and BANY to specify ban location for some houses in dfndata/house/house.dfn instead of relying on finding SE corner automatically
+
+Misc Changes/Fixes:
+	Updated dictionary files with various new strings related to mining
+	Updated dictionary files with new messages primarily related to housing
+	Updated UOX3 documentation with complete list of item types, and item layers, in addition to other small additions.
+	Updated JS Documentation
+
+-==============================-
+-= 16/09/2020 - UOX3 0.99.3a  =-
+-==============================-
+Contributors: Xuri
+
+Source Changes/Fixes:
+	Refined build notes
+	Updated Debug Information Format for Debug x64 platform in VS project properties to Program Database for Edit and Continue
+	Minor fix for a half-broken system (automatic adding of items to add-menu) that needs to be revamped or removed
+	Commented out some thread-locking code that was causing UOX3 to crash under certain circumstances
+	Fixed a few cases of threads sleeping for microseconds instead of milliseconds
+	Replaced all calls to UOXSleep with direct call to std::this_thread::sleep_for(), and removed UOXSleep function from funcdecl.h
+	Fixed an issue where crafting skills might consume the wrong resource if additional resources of the same ID but different color were present in player's backpack
+	Improved AmbientFootsteps feature so footstep sounds are played more in tune with character movement
+	AmbientFootsteps now also play for NPC movement
+	Changed how code handles randomizing between MINTIME and MAXTIME values from region spawners; now multiplies values by 60 (to get seconds) before randomizing, instead of after, to make use of full range of seconds between the values (which are in minutes)
+	Added a DEBUGMOVEMULTIPLIER define in cChar.cpp used to multiply NPC movement delays by the specified value (1.75 by default) when running UOX3 in debug mode, due to reduced server performance in debug mode
+
+DFN Changes/Fixes:
+	Fixed an issue with "Gold" ore/ingot type, which was mislabelled as "Golden" in the ORE_LIST section of skills.dfn
+
+Misc Changes/Fixes:
+	Undid dictionary rename from ENG to ENU and FRE to FRA; these are not actual language codes, but groups of language codes - ENU covers all English language codes, FRA covers all French ones.
+	Adjusted default global NPC movement speeds in [speedup} section of uox.ini to use less extreme values
+	Documentation updates:
+		Added section on DFN tags for Character, Item, Region, SpawnRegion and Weather DFNs.
+		Added Feature documentation for Mining and customizable ores
+		Added More details in feature documentation for Spawn Regions
+		Updated feature documentation for Dictionaries
+		Added more details in UOX3 history section
+
+-==============================-
 -= 10/09/2020 - UOX3 0.99.3   =-
 -==============================-
 Contributors: Xuri, punt, Tuan H Truong

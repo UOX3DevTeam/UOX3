@@ -2,6 +2,43 @@
 #include "weight.h"
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetSubTotalItemCount( CItem *objCont )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get the total amount of items in a container
+//o-----------------------------------------------------------------------------------------------o
+UI32 GetSubTotalItemCount( CItem *objCont )
+{
+	UI32 total = 0;
+	CDataList< CItem * > *pCont = objCont->GetContainsList();
+	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
+	{
+		if( ValidateObject( i ) )
+		{
+			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )
+			{
+				total += 1; // Also count the container
+				total += GetSubTotalItemCount( i );
+			}
+			else
+				total += 1;
+		}
+	}
+	return total;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetTotalItemCount( CItem *objCont )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get the total amount of items in a container
+//o-----------------------------------------------------------------------------------------------o
+UI32 GetTotalItemCount( CItem *objCont )
+{
+	if( !ValidateObject( objCont ) || ( objCont->GetType() != IT_CONTAINER && objCont->GetType() != IT_LOCKEDCONTAINER ))
+		return 0;
+	return GetSubTotalItemCount( objCont );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack

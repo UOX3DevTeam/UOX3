@@ -6,7 +6,7 @@ function CommandRegistration()
 
 function command_OPENBANK( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 186, socket.Language );
+	var targMsg = GetDictionaryEntry( 186, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -18,7 +18,7 @@ function onCallback0( socket, ourObj )
 
 function command_OPENLAYER( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 53, socket.Language );
+	var targMsg = GetDictionaryEntry( 53, socket.language );
 	if( !cmdString )
 		socket.tempint = 0x15;
 	else

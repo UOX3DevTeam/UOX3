@@ -27,6 +27,16 @@ movable=1
 good=6
 }
 
+[strongbox]
+{ E (strong box used in player houses)
+get=0x0e80
+name=strongbox
+id=0x0e80
+movable=2
+maxitems=25
+script=15005
+}
+
 [0x09ab]
 { S
 get=base_item

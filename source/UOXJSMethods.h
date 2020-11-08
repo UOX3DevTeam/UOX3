@@ -118,14 +118,6 @@ JSMethodFunc CChar_Defense;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
-JSMethodFunc CItem_IsMulti;
-JSMethodFunc CItem_IsInMulti;
-JSMethodFunc CItem_IsOnBanList;
-JSMethodFunc CItem_IsOnOwnerList;
-JSMethodFunc CItem_AddToBanList;
-JSMethodFunc CItem_AddToOwnerList;
-JSMethodFunc CItem_RemoveFromBanList;
-JSMethodFunc CItem_RemoveFromOwnerList;
 JSMethodFunc CItem_SetCont;
 JSMethodFunc CItem_Refresh;
 JSMethodFunc CItem_ApplyRank;
@@ -155,9 +147,42 @@ JSMethodFunc CBase_FinishedItems;
 JSMethodFunc CBase_DistanceTo;
 JSMethodFunc CBase_GetSerial;
 JSMethodFunc CBase_Resist;
-
+JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
+
+// Multi Methods
+JSMethodFunc CMulti_GetMultiCorner;
+JSMethodFunc CMulti_SecureContainer;
+JSMethodFunc CMulti_UnsecureContainer;
+JSMethodFunc CMulti_IsSecureContainer;
+JSMethodFunc CMulti_LockDownItem;
+JSMethodFunc CMulti_ReleaseItem;
+JSMethodFunc CMulti_AddTrashCont;
+JSMethodFunc CMulti_RemoveTrashCont;
+JSMethodFunc CMulti_KillKeys;
+JSMethodFunc CItem_IsMulti;
+JSMethodFunc CMulti_IsInMulti;
+JSMethodFunc CMulti_IsOnBanList;
+JSMethodFunc CMulti_IsOnFriendList;
+JSMethodFunc CMulti_IsOnGuestList;
+JSMethodFunc CMulti_IsOnOwnerList;
+JSMethodFunc CMulti_IsOwner;
+JSMethodFunc CMulti_AddToBanList;
+JSMethodFunc CMulti_AddToFriendList;
+JSMethodFunc CMulti_AddToGuestList;
+JSMethodFunc CMulti_AddToOwnerList;
+JSMethodFunc CMulti_RemoveFromBanList;
+JSMethodFunc CMulti_RemoveFromFriendList;
+JSMethodFunc CMulti_RemoveFromGuestList;
+JSMethodFunc CMulti_RemoveFromOwnerList;
+JSMethodFunc CMulti_ClearBanList;
+JSMethodFunc CMulti_ClearFriendList;
+JSMethodFunc CMulti_ClearGuestList;
+JSMethodFunc CMulti_ClearOwnerList;
+JSMethodFunc CMulti_FirstChar;
+JSMethodFunc CMulti_NextChar;
+JSMethodFunc CMulti_FinishedChars;
 
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
@@ -319,7 +344,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "CheckSkill",			CChar_CheckSkill,		3, 0, 0 },
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },
-	{ "SysMessage",			CMisc_SysMessage,		1, 0, 0 },
+	{ "SysMessage",			CMisc_SysMessage,		10, 0, 0 },
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0, 0 },
 	{ "GetSerial",			CBase_GetSerial,		1, 0, 0 },
 	{ "MakeMenu",			CMisc_MakeMenu,			2, 0, 0 },
@@ -383,13 +408,25 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "StartTimer",			CBase_StartTimer,			2, 0, 0 },
 	{ "OpenPlank",			CItem_OpenPlank,			0, 0, 0 },
 	{ "IsMulti",			CItem_IsMulti,				0, 0, 0 },
-	{ "IsInMulti",			CItem_IsInMulti,			1, 0, 0 },
-	{ "IsOnBanList",		CItem_IsOnBanList,			1, 0, 0 },
-	{ "IsOnOwnerList",		CItem_IsOnOwnerList,		1, 0, 0 },
-	{ "AddToBanList",		CItem_AddToBanList,			1, 0, 0 },
-	{ "AddToOwnerList",		CItem_AddToOwnerList,		1, 0, 0 },
-	{ "RemoveFromBanList",	CItem_RemoveFromBanList,	1, 0, 0 },
-	{ "RemoveFromOwnerList",CItem_RemoveFromOwnerList,	1, 0, 0 },
+	{ "IsBoat",				CBase_IsBoat,				0, 0, 0 },
+	{ "IsInMulti",			CMulti_IsInMulti,			1, 0, 0 },
+	{ "IsOnBanList",		CMulti_IsOnBanList,			1, 0, 0 },
+	{ "IsOnFriendList",		CMulti_IsOnFriendList,		1, 0, 0 },
+	{ "IsOnGuestList",		CMulti_IsOnGuestList,		1, 0, 0 },
+	{ "IsOwner",			CMulti_IsOwner,				1, 0, 0 },
+	{ "IsOnOwnerList",		CMulti_IsOnOwnerList,		1, 0, 0 },
+	{ "AddToBanList",		CMulti_AddToBanList,		1, 0, 0 },
+	{ "AddToFriendList",	CMulti_AddToFriendList,		1, 0, 0 },
+	{ "AddToGuestList",		CMulti_AddToGuestList,		1, 0, 0 },
+	{ "AddToOwnerList",		CMulti_AddToOwnerList,		1, 0, 0 },
+	{ "RemoveFromBanList",		CMulti_RemoveFromBanList,		1, 0, 0 },
+	{ "RemoveFromFriendList",	CMulti_RemoveFromFriendList,	1, 0, 0 },
+	{ "RemoveFromGuestList",	CMulti_RemoveFromGuestList,		1, 0, 0 },
+	{ "RemoveFromOwnerList",	CMulti_RemoveFromOwnerList,		1, 0, 0 },
+	{ "ClearBanList",		CMulti_ClearBanList,		1, 0, 0 },
+	{ "ClearFriendList",	CMulti_ClearFriendList,		1, 0, 0 },
+	{ "ClearGuestList",		CMulti_ClearGuestList,		1, 0, 0 },
+	{ "ClearOwnerList",		CMulti_ClearOwnerList,		1, 0, 0 },
 	{ "GetSerial",			CBase_GetSerial,			1, 0, 0 },
 	{ "SetCont",			CItem_SetCont,				1, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,			1, 0, 0 },
@@ -407,6 +444,22 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Carve",				CItem_Carve,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
+	{ "GetMultiCorner",		CMulti_GetMultiCorner,		1, 0, 0 },
+	{ "SecureContainer",	CMulti_SecureContainer,		1, 0, 0 },
+	{ "UnsecureContainer",	CMulti_UnsecureContainer,	1, 0, 0 },
+	{ "IsSecureContainer",	CMulti_IsSecureContainer,	1, 0, 0 },
+	{ "LockDownItem",		CMulti_LockDownItem,		1, 0, 0 },
+	{ "ReleaseItem",		CMulti_ReleaseItem,			1, 0, 0 },
+	{ "AddTrashCont",		CMulti_AddTrashCont,		1, 0, 0 },
+	{ "RemoveTrashCont",	CMulti_RemoveTrashCont,		1, 0, 0 },
+
+	{ "KillKeys",			CMulti_KillKeys,			1, 0, 0 },
+
+	{ "FirstChar",			CMulti_FirstChar,			1, 0, 0 },
+	{ "NextChar",			CMulti_NextChar,			1, 0, 0 },
+	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
+	
+	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 
@@ -417,7 +470,7 @@ static JSFunctionSpec CRegion_Methods[] =
 
 static JSFunctionSpec CSocket_Methods[] =
 {
-	{ "SysMessage",			CMisc_SysMessage,	1, 0, 0 },
+	{ "SysMessage",			CMisc_SysMessage,	10, 0, 0 },
 	{ "Disconnect",			CSocket_Disconnect,	0, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,	2, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget, 1, 0, 0 },

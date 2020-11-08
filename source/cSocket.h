@@ -31,6 +31,7 @@ enum ClientVersions
 	CVS_6000,
 	CVS_6017,
 	CVS_6050,
+	CVS_25302, // UOKR3D 2.53.0.2
 	CVS_60142,
 	CVS_7000,
 	CVS_7090,
@@ -41,6 +42,7 @@ enum ClientVersions
 	CVS_70300,
 	CVS_70331,
 	CVS_704565,
+	CVS_705527, // Max update range increase from 18 to 24
 	CVS_70610,
 	CVS_COUNT
 };
@@ -320,6 +322,7 @@ public:
 	void			Language( UnicodeTypes newVal );
 
 	void			sysmessage( const std::string txt, ... );
+	void			sysmessageJS( const std::string& uformat,const std::string& data );
 	void			sysmessage( SI32 dictEntry, ... );
 	void			objMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
 	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI32 Color = 0x03B2, ... );

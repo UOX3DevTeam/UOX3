@@ -10,27 +10,27 @@ function onSkill( pUser, objType, skillUsed )
 	{
 		if( pUser.Defense( 0, 1, false ) > 10 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 967, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 967, pSock.language ) );
 			pUser.isMeditating = false;
 		}
 		else if( CheckHands( pUser ) )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 968, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 968, pSock.language ) );
 			pUser.isMeditating = false;
 		}
 		else if( pUser.mana == pUser.maxMana )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 969, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 969, pSock.language ) );
 			pUser.isMeditating = false;
 		}
 		else if( !pUser.CheckSkill( 46, 0, 1000 ) )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 970, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 970, pSock.language ) );
 			pUser.isMeditating = false;
 		}
 		else
 		{
-			pSock.SysMessage( GetDictionaryEntry( 971, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 971, pSock.language ) );
 			pUser.isMeditating = true;
 			pUser.SoundEffect( 0x00F9, true );
 		}

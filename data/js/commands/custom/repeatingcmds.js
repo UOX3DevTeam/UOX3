@@ -1,6 +1,6 @@
-// Repeating Commands || by Xuri (xuri at sensewave.com)
-// v1.09
-// Last updated: April 16th 2006
+// Repeating Commands || by Xuri (xuri at uox3.org)
+// v1.10
+// Last updated: October 23rd 2020
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -25,225 +25,272 @@ function CommandRegistration()
 //Repeated Command: INCX <value>
 function command_RINCX( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
-		pUser.CustomTarget( 0, "Select target to reposition by "+execString+" X:" );
+		pSock.CustomTarget( 0, "Select target to reposition by "+execString+" X:" );
 	}
 	else
-		pUser.SysMessage( ReqNum );
+		pSock.SysMessage( ReqNum );
 }
 function onCallback0( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var incXValue = pSock.xText;
-	var incXValue = Number(incXValue);
-	if( !pSock.GetWord( 1 ))
-			myTarget.x+= incXValue;
-	pUser.CustomTarget( 0, "Select target to reposition by "+incXValue+" X:" );
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
+	{
+		var incXValue = pSock.xText;
+		var incXValue = Number(incXValue);
+		if( !pSock.GetWord( 1 ))
+				myTarget.x+= incXValue;
+		pSock.CustomTarget( 0, "Select target to reposition by "+incXValue+" X:" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: INCY <value>
 function command_RINCY( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
-		pUser.CustomTarget( 1, "Select target to reposition by "+execString+" Y:" );
+		pSock.CustomTarget( 1, "Select target to reposition by "+execString+" Y:" );
 	}
 	else
-		pUser.SysMessage( ReqNum );
+		pSock.SysMessage( ReqNum );
 }
 function onCallback1( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var incYValue = pSock.xText;
-	var incYValue = Number(incYValue);
-	if( !pSock.GetWord( 1 ))
-			myTarget.y += incYValue;
-	pUser.CustomTarget( 1, "Select target to reposition by "+incYValue+" Y:" );
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
+	{
+		var incYValue = pSock.xText;
+		var incYValue = Number(incYValue);
+		if( !pSock.GetWord( 1 ))
+				myTarget.y += incYValue;
+		pSock.CustomTarget( 1, "Select target to reposition by "+incYValue+" Y:" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
+
 //Repeated Command: INCZ <value>
 function command_RINCZ( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
-		pUser.CustomTarget( 2, "Select target to reposition by "+execString+" Z:" );
+		pSock.CustomTarget( 2, "Select target to reposition by "+execString+" Z:" );
 	}
 	else
-		pUser.SysMessage( ReqNum );
+		pSock.SysMessage( ReqNum );
 }
 function onCallback2( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var incZValue = pSock.xText;
-	var incZValue = Number(incZValue);
-	if( !pSock.GetWord( 1 ))
-			myTarget.z += incZValue;
-	pUser.CustomTarget( 2, "Select target to reposition by "+incZValue+" Z:" );
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
+	{
+		var incZValue = pSock.xText;
+		var incZValue = Number(incZValue);
+		if( !pSock.GetWord( 1 ))
+				myTarget.z += incZValue;
+		pSock.CustomTarget( 2, "Select target to reposition by "+incZValue+" Z:" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: SET TYPE <type>
 function command_RTYPE( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
-		pUser.CustomTarget( 4, "Select target to make TYPE "+execString+":" );
+		pSock.CustomTarget( 4, "Select target to make TYPE "+execString+":" );
 	}
 	else
-		pUser.SysMessage( ReqNum );
+		pSock.SysMessage( ReqNum );
 }
 function onCallback4( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var TempType = pSock.xText;
-	var TempType = Number(TempType);
-	if( !pSock.GetWord( 1 ))
-			myTarget.type = TempType;
-	pUser.CustomTarget( 4, "Select target to make TYPE "+TempType+":" );
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
+	{
+		var TempType = pSock.xText;
+		var TempType = Number(TempType);
+		if( !pSock.GetWord( 1 ))
+				myTarget.type = TempType;
+		pSock.CustomTarget( 4, "Select target to make TYPE "+TempType+":" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: DYE <hex-id>
 function command_RDYE( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
-		pUser.CustomTarget( 5, "Select target to DYE "+execString+":" );
+		pSock.CustomTarget( 5, "Select target to DYE "+execString+":" );
 	}
 	else
-		pUser.SysMessage( ReqNum );
+		pSock.SysMessage( ReqNum );
 }
 function onCallback5( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var TempDye = pSock.xText;
-	var TempDye = Number(TempDye);
-	if( !pSock.GetWord( 1 ))
-			myTarget.colour = TempDye;
-	pUser.CustomTarget( 5, "Select target to DYE "+TempDye+":" );
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
+	{
+		var TempDye = pSock.xText;
+		var TempDye = Number(TempDye);
+		if( !pSock.GetWord( 1 ))
+				myTarget.colour = TempDye;
+		pSock.CustomTarget( 5, "Select target to DYE "+TempDye+":" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: ADD <hex-id>
 function command_RADD( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
-		pUser.CustomTarget( 6, "Select target location for item "+execString+":" );
+		pSock.CustomTarget( 6, "Select target location for item "+execString+":" );
 	}
 	else
-		pUser.SysMessage( ReqNum );
+		pSock.SysMessage( ReqNum );
 }
 function onCallback6( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var TempItemID = pSock.xText;
-	var TempItemID = Number(TempItemID);
-	var targX = pSock.GetWord( 11 );
-	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
-
-	var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );
-	if( tempItem )
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
 	{
-		tempItem.SetLocation( targX, targY, targZ );
-		tempItem.decayable = false;
-	}
+		var TempItemID = pSock.xText;
+		var TempItemID = Number(TempItemID);
+		var targX = pSock.GetWord( 11 );
+		var targY = pSock.GetWord( 13 );
+		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 
-	pUser.CustomTarget( 6, "Select target location for item "+TempItemID+":" );
+		var pUser = pSock.currentChar;
+		var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );
+		if( tempItem )
+		{
+			tempItem.SetLocation( targX, targY, targZ );
+			tempItem.decayable = false;
+		}
+
+		pSock.CustomTarget( 6, "Select target location for item "+TempItemID+":" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: REMOVE
 function command_RREMOVE( pSock, execString )
 {
-	var pUser = pSock.currentChar;
-	pUser.CustomTarget( 7, "Which object do you wish to remove?" );
+	pSock.CustomTarget( 7, "Which object do you wish to remove?" );
 }
 function onCallback7( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	if( !pSock.GetWord( 1 ))
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
 	{
-		if( myTarget.npc || myTarget.isItem )
-			myTarget.Delete();
+		if( !pSock.GetWord( 1 ))
+		{
+			if( myTarget.npc || myTarget.isItem )
+				myTarget.Delete();
+			else
+				pSock.SysMessage( "You can only remove items or NPCs." );
+		}
 		else
-			pUser.SysMessage( "You can only remove items or NPCs." );
+			pSock.SysMessage( "You can only remove items or NPCs." );
+
+		pSock.CustomTarget( 7, "Which object do you wish to remove?" );
 	}
 	else
-		pUser.SysMessage( "You can only remove items or NPCs." );
-	pUser.CustomTarget( 7, "Which object do you wish to remove?" );
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: ADD ITEM <item-id from dfns>
 function command_RADDITEM( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	pSock.xText = execString;
-	pUser.CustomTarget( 8, "Select target location for item "+execString+":" );
+	pSock.CustomTarget( 8, "Select target location for item "+execString+":" );
 }
 function onCallback8( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var TempItemID = pSock.xText;
-	if( !(TempItemID == null) )
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
 	{
-		var targX = pSock.GetWord( 11 );
-		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
-		var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
-		tempItem.x = targX;
-		tempItem.y = targY;
-		tempItem.z = targZ;
-		pUser.CustomTarget( 8, "Select target location for item "+TempItemID+":" );
+		var pUser = pSock.currentChar;
+		var TempItemID = pSock.xText;
+		if( !(TempItemID == null) )
+		{
+			var targX = pSock.GetWord( 11 );
+			var targY = pSock.GetWord( 13 );
+			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+			var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
+			tempItem.x = targX;
+			tempItem.y = targY;
+			tempItem.z = targZ;
+			pSock.CustomTarget( 8, "Select target location for item "+TempItemID+":" );
+		}
+		else
+			pSock.SysMessage( "That doesn't seem to be a valid item-id from the DFNs." );
 	}
 	else
-		pUser.SysMessage( "That doesn't seem to be a valid item-id from the DFNs." );
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: TELE <select target location>
 function command_RTELE( pSock, execString )
 {
-	var pUser = pSock.currentChar;
-	pUser.CustomTarget( 9, "Select location to teleport to:" );
+	pSock.CustomTarget( 9, "Select location to teleport to:" );
 }
 function onCallback9( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var targX = pSock.GetWord( 11 );
-	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
-	pUser.Teleport( targX, targY, targZ );
-	pUser.CustomTarget( 9, "Select location to teleport to:" );
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));
+	if( cancelCheck != -1 )
+	{
+		var pUser = pSock.currentChar;
+		var targX = pSock.GetWord( 11 );
+		var targY = pSock.GetWord( 13 );
+		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+
+		pUser.Teleport( targX, targY, targZ );
+		pSock.CustomTarget( 9, "Select location to teleport to:" );
+	}
+	else
+		pSock.SysMessage( "Repeating command ended." );
 }
 
 //Repeated Command: ADD NPC <npc-id from DFNs>
 function command_RADDNPC( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	pSock.xText = execString;
-	pUser.CustomTarget( 10, "Select target location for the ["+execString+"]:" );
+	pSock.CustomTarget( 10, "Select target location for the ["+execString+"]:" );
 }
 function onCallback10( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
-	var TempNPCID = pSock.xText;
-	if( !(TempNPCID == null ) )
+	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
+	if( cancelCheck != -1 )
 	{
-		var targX = pSock.GetWord( 11 );
-		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
-		var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber, pUser.instanceID );
-		pUser.CustomTarget( 10, "Select target location for the ["+TempNPCID+"]:" );
+		var pUser = pSock.currentChar;
+		var TempNPCID = pSock.xText;
+		if( !(TempNPCID == null ) )
+		{
+			var targX = pSock.GetWord( 11 );
+			var targY = pSock.GetWord( 13 );
+			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+			var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber, pUser.instanceID );
+			pSock.CustomTarget( 10, "Select target location for the ["+TempNPCID+"]:" );
+		}
+		else
+			pSock.SysMessage( "That doesn't seem to be a valid NPC-id from the DFNs." );
 	}
 	else
-		pUser.SysMessage( "That doesn't seem to be a valid NPC-id from the DFNs." );
+		pSock.SysMessage( "Repeating command ended." );
 }
