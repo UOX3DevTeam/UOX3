@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 859, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 859, pSock.language ) );
 
 	return true;
 }
@@ -18,10 +18,10 @@ function onCallback0( pSock, ourObj )
 	if( ourObj && ourObj.isChar && pUser )
 	{
 		var skillToTame = ourObj.skillToTame;
-		var pLanguage 	= pSock.Language;
+		var pLanguage 	= pSock.language;
 		if( !ourObj.InRange( pUser, 3 ) )
 			pSock.SysMessage( GetDictionaryEntry( 393, pLanguage ) );
-		else if( !skillToTame || skillToTame > 1000 )		
+		else if( !skillToTame || skillToTame > 1000 )
 			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage ) ); //You can't tame that creature
 		else if( ourObj.tamed )
 		{

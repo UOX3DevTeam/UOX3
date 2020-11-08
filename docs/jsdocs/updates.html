@@ -12,11 +12,30 @@
 	<h1>UOX3 Script Engine</h1>
 	<h3>Functions, Methods, Properties and Event handling</h3>
 </center>
-<h2>Revision History - Last Update: 24th August 2020 </h2>
+<h2>Revision History - Last Update: 8th November 2020 </h2>
 <table border="1" width="100%" cellspacing="0" cellpadding="2">
   <tr>
     <th bgcolor="maroon">Version</th>
     <th bgcolor="maroon">Change</th>
+  </tr>
+  <tr>
+    <td>0.53</td>
+    <td>
+      <b>Events Added:</b> onHouseCommand<br>
+      <b>Events Updated:</b> onEntrance, onLeaving, onSpeech<br>
+      <b>File I/O Methods Added:</b> Length, Pos, EOF (previously listed as File I/O properties)<br>
+      <b>File I/O Functions Added:</b> DeleteFile<br>
+      <b>Socket Methods Updated:</b> SysMessage<br>
+      <b>Character Methods Updated:</b> SysMessage, TextMessage<br>
+      <b>Character Properties Added:</b> multi, accountNum, housesOwned, housesCoOwned<br>
+      <b>Multi Methods Added:</b> IsBoat, IsOwner, IsOnOwnerList, IsOnFriendList, IsOnGuestList, AddToFriendList, RemoveFromFriendList, AddToGuestList, RemoveFromGuestList, ClearOwnerList, ClearFriendList, ClearGuestList, ClearBanList, SecureContainer, UnsecureContainer, IsSecureContainer, LockDownItem, ReleaseItem, KillKeys, AddTrashCont, RemoveTrashCont, FirstChar, NextChar, FinishedChars<br>
+      <b>Multi Functions Added:</b> GetMultiCorner, CalcMultiFromSer<br>
+      <b>Multi Properties Added:</b> lockdowns, maxLockdowns, secureContainers, maxSecureContainers, trashContainers, maxTrashContainers, friends, maxFriends, guests, maxGuests, owners, maxOwners, bans, maxBans, vendors, maxVendors, deed, isPublic, buildTimestamp, tradeTimestamp, banX, banY<br>
+      <b>Misc Functions Added:</b> CheckTileFlag, GetClientFeature, GetServerFeature, GetServerSetting, GetMapElevation, IsInBuilding, CheckStaticFlag, DoesStaticBlock, DoesDynamicBlock, DoesMapBlock<br>
+      <b>Item Functions Added:</b> FindRootContainer<br>
+      <b>Item Properties Added:</b> maxItems, totalItemCount<br>
+      <b>Speech Methods Updated</b> TextMessage<br>
+    </td>
   </tr>
   <tr>
     <td>0.52</td>
@@ -30,7 +49,8 @@
   <tr>
     <td>0.51</td>
     <td>
-      <b>Events Added></b> onUseBandageMacro<br>
+
+      <b>Events Added:</b> onUseBandageMacro<br>
       <b>Socket Methods Added></b> OpenGump, GetSByte, GetSWord, GetSDWord<br>
       <b>Character Methods Updated:</b> TurnToward, DirectionTo, InRange, Gate<br>
       <b>Item Methods Updated:</b> InRange<br>

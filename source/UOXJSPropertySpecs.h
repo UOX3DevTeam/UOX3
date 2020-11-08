@@ -83,6 +83,7 @@ static JSPropertySpec CRegionProperties[] =
 	{ "canRecall",			CREGP_CANRECALL,			JSPROP_ENUMANDPERM },
 	{ "canGate",			CREGP_CANGATE,				JSPROP_ENUMANDPERM },
 	{ "canTeleport",		CREGP_CANTELEPORT,			JSPROP_ENUMANDPERM },
+	{ "canPlaceHouse",		CREGP_CANPLACEHOUSE,		JSPROP_ENUMANDPERM },
 	{ "isGuarded",			CREGP_ISGUARDED,			JSPROP_ENUMANDPERM },
 	{ "canCastAggressive",	CREGP_CANCASTAGGRESSIVE,	JSPROP_ENUMANDPERM },
 	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM },
@@ -273,6 +274,10 @@ static JSPropertySpec CCharacterProps[] =
 
 	{ "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM },
 	{ "party",			CCP_PARTY,			JSPROP_ENUMPERMRO  },
+	{ "multi",			CCP_MULTI,			JSPROP_ENUMANDPERM },
+	{ "accountNum",		CCP_ACCOUNTNUM,		JSPROP_ENUMANDPERM },
+	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM },
+	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
@@ -304,6 +309,7 @@ static JSPropertySpec CItemProps[] =
 	{ "att",			CIP_ATT,			JSPROP_ENUMANDPERM },
 	{ "layer",			CIP_LAYER,			JSPROP_ENUMANDPERM },
 	{ "itemsinside",	CIP_ITEMSINSIDE,	JSPROP_ENUMANDPERM },
+	{ "totalItemCount",	CIP_TOTALITEMCOUNT,	JSPROP_ENUMANDPERM },	
 	{ "decayable",		CIP_DECAYABLE,		JSPROP_ENUMANDPERM },
 	{ "decaytime",		CIP_DECAYTIME,		JSPROP_ENUMANDPERM },
 	{ "lodamage",		CIP_LODAMAGE,		JSPROP_ENUMANDPERM },
@@ -325,6 +331,7 @@ static JSPropertySpec CItemProps[] =
 	{ "baseWeight",		CIP_BASEWEIGHT,		JSPROP_ENUMANDPERM },
 	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM },
 	{ "weightMax",		CIP_WEIGHTMAX,		JSPROP_ENUMANDPERM },
+	{ "maxItems",		CIP_MAXITEMS,		JSPROP_ENUMANDPERM },
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
@@ -360,6 +367,32 @@ static JSPropertySpec CItemProps[] =
 	{ "maxinterval",	CIP_MAXINTERVAL,	JSPROP_ENUMANDPERM },
 	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM },
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM },
+	// The Following vars are specific to cMultiObj objects
+
+	{ "lockdowns",		CIP_LOCKDDOWNS,		JSPROP_ENUMANDPERM },
+	{ "maxLockdowns",	CIP_MAXLOCKDOWNS,	JSPROP_ENUMANDPERM },
+	{ "trashContainers",	CIP_TRASHCONTAINERS,	JSPROP_ENUMANDPERM },
+	{ "maxTrashContainers",	CIP_MAXTRASHCONTAINERS,	JSPROP_ENUMANDPERM },
+	{ "secureContainers",	CIP_SECURECONTAINERS,	JSPROP_ENUMANDPERM },
+	{ "maxSecureContainers",CIP_MAXSECURECONTAINERS,JSPROP_ENUMANDPERM },
+	{ "friends",		CIP_FRIENDS,		JSPROP_ENUMANDPERM },
+	{ "maxFriends",		CIP_MAXFRIENDS,		JSPROP_ENUMANDPERM },
+	{ "guests",			CIP_GUESTS,			JSPROP_ENUMANDPERM },
+	{ "maxGuests",		CIP_MAXGUESTS,		JSPROP_ENUMANDPERM },
+	{ "owners",			CIP_OWNERS,			JSPROP_ENUMANDPERM },
+	{ "maxOwners",		CIP_MAXOWNERS,		JSPROP_ENUMANDPERM },
+	{ "bans",			CIP_BANS,			JSPROP_ENUMANDPERM },
+	{ "maxBans",		CIP_MAXBANS,		JSPROP_ENUMANDPERM },
+	{ "vendors",		CIP_VENDORS,		JSPROP_ENUMANDPERM },
+	{ "maxVendors",		CIP_MAXVENDORS,		JSPROP_ENUMANDPERM },
+	{ "deed",			CIP_DEED,			JSPROP_ENUMANDPERM },
+	{ "isPublic",		CIP_ISPUBLIC,		JSPROP_ENUMANDPERM },
+	{ "buildTimestamp",	CIP_BUILDTIMESTAMP,	JSPROP_ENUMANDPERM },
+	{ "tradeTimestamp",	CIP_TRADETIMESTAMP,	JSPROP_ENUMANDPERM },
+	{ "banX",			CIP_BANX,			JSPROP_ENUMANDPERM },
+	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM },
+
+
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 

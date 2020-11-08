@@ -9,7 +9,7 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 454, socket.Language );
+		var targMsg = GetDictionaryEntry( 454, socket.language );
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;
@@ -26,7 +26,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 779, socket.Language ) );
+			socket.SysMessage( GetDictionaryEntry( 779, socket.language ) );
 			return;
 		}
 
@@ -39,7 +39,7 @@ function onCallback1( socket, ourObj )
 			if( ownerObj && mChar.serial == ownerObj.serial )
 				socket.MakeMenu( 51, 8 );
 			else
-				socket.SysMessage( GetDictionaryEntry( 778, socket.Language ) );
+				socket.SysMessage( GetDictionaryEntry( 778, socket.language ) );
 		}
 		else
 			socket.SysMessage( "You can't make anything from that material." );

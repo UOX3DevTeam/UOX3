@@ -11,7 +11,7 @@ function command_INCX( socket, cmdString )
 		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
-	var targMsg = GetDictionaryEntry( 254, socket.Language );
+	var targMsg = GetDictionaryEntry( 254, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -28,7 +28,7 @@ function command_INCY( socket, cmdString )
 		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
-	var targMsg = GetDictionaryEntry( 254, socket.Language );
+	var targMsg = GetDictionaryEntry( 254, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 
@@ -45,7 +45,7 @@ function command_INCZ( socket, cmdString )
 		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
-	var targMsg = GetDictionaryEntry( 268, socket.Language );
+	var targMsg = GetDictionaryEntry( 268, socket.language );
 	socket.CustomTarget( 2, targMsg );
 }
 

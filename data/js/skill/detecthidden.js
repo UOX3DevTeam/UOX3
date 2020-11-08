@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 860, pSock.Language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 860, pSock.language ) );
 
 	return true;
 }
@@ -21,7 +21,7 @@ function onCallback0( pSock, ourObj )
 		var detectRange   = parseInt((((15 - 1) / 1000) * pUser.skills.detectinghidden) + 1);
 		var detectCounter = AreaCharacterFunction( "DetectHiddenLoop", pUser, detectRange, pSock );
 		if( detectCounter != 0 )
-			pSock.SysMessage( GetDictionaryEntry( 1437, pSock.Language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1437, pSock.language ) );
 	}
 }
 
@@ -29,25 +29,41 @@ function DetectHiddenLoop( srcChar, trgChar, pSock )
 {
 	if( srcChar && srcChar.isChar && trgChar && trgChar.isChar )
 	{
-		if( trgChar.visible == 1 )
+		if( trgChar.visible == 0 || trgChar.visible == 3 )
+			return false;
+
+		var trgMulti = trgChar.multi;
+		var srcMulti = srcChar.multi;
+
+		if( ValidateObject( trgMulti ) && ( trgMulti.IsOnOwnerList( srcChar ) || trgMulti.IsOnFriendList( srcChar )))
+		{
+			// Guaranteed success when detecting stealthed players house you own/are friend of
+			trgChar.visible = 0;
+			trgChar.stealth = -1;
+			var tSock = trgChar.socket;
+			if( tSock )
+				tSock.SysMessage( GetDictionaryEntry( 1436, tSock.language ) );
+			return true;
+		}
+		else
 		{
 			var distance       = srcChar.DistanceTo( trgChar );
 			var checkSkill     = 0;
 			var hidingSkill    = trgChar.skills.hiding;
 			var chanceToDetect = parseInt( (distance * 25) + (hidingSkill / 2) );
-	
+
 			if( chanceToDetect >= hidingSkill )
 				checkSkill = hidingSkill;
 			else
 				checkSkill = RandomNumber( chanceToDetect, hidingSkill );
-	
+
 			if( srcChar.CheckSkill( 14, checkSkill, 1000 ) )
 			{
 				trgChar.visible = 0;
 				trgChar.stealth = -1;
 				var tSock = trgChar.socket;
 				if( tSock )
-					tSock.SysMessage( GetDictionaryEntry( 1436, tSock.Language ) );
+					tSock.SysMessage( GetDictionaryEntry( 1436, tSock.language ) );
 				return true;
 			}
 		}

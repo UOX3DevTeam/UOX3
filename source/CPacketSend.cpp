@@ -151,6 +151,17 @@ void CPCharLocBody::HighlightColour( UI08 color )
 //|						BYTE[4] itemID (FF FF FF FF = system)
 //|						BYTE[2] model (item hex # - FF FF = system)
 //|						BYTE Type
+//|							0x00 - Normal
+//|							0x01 - Broadcast/System
+//|							0x02 - Emote
+//|							0x06 - System/Lower Corner
+//|							0x07 - Message/Corner With Name
+//|							0x08 - Whisper
+//|							0x09 - Yell
+//|							0x0A - Spell
+//|							0x0D - Guild Chat
+//|							0x0E - Alliance Chat
+//|							0x0F - Command Prompts
 //|						BYTE[2] Text Color
 //|						BYTE[2] Font
 //|						BYTE[30] Name
@@ -567,7 +578,8 @@ CPRemoveItem &CPRemoveItem::operator=( CBaseObject &toCopy )
 //|						BYTE id2
 //|
 //|					Note: Server message
-//|					Note: if id2 = 1, then this is a season change.
+//|					Note: if id2 = 1, then this is a season change. Although, this could also just
+//|							be a flag to play a sound FX on season change or not...
 //|					Note: if season change, then id1 = (0=spring, 1=summer, 2=fall, 3=winter, 4 = desolation)
 //o-----------------------------------------------------------------------------------------------o
 CPWorldChange::CPWorldChange()
@@ -4602,10 +4614,12 @@ CPKAccept::CPKAccept( UI08 Response )
 //|						BYTE flag
 //|							0x00 - tips window
 //|							0x01 - notice window
+//|							0x02 - update window
 //|						BYTE[2] unknown1
 //|						BYTE[2] tip #
 //|						BYTE[2] msgSize
-//|						BYTE[?] message (? = blockSize - 10)
+//|						BYTE[msgSize] message (ascii, not null terminated)
+//|						OR BYTE[?] message (? = blockSize - 10)
 //|
 //|					*Null terminated I think (Gimli)
 //o-----------------------------------------------------------------------------------------------o
@@ -6214,21 +6228,32 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 
 	if( cItem.IsLockedDown() )
 	{
-		tempEntry.stringNum = 501643;
-		FinalizeData( tempEntry, totalStringLen );
+		if( ValidateObject( cItem.GetMultiObj() ) && cItem.GetMultiObj()->IsSecureContainer( &cItem ) )
+		{
+			// Locked down and secure
+			tempEntry.stringNum = 501644;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+		else
+		{
+			// Locked down
+			tempEntry.stringNum = 501643;
+			FinalizeData( tempEntry, totalStringLen );
+		}
 	}
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{
 		tempEntry.stringNum = 1050044;
-		tempEntry.ourText = format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
+		//tempEntry.ourText = format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
+		tempEntry.ourText = format( "%u\t%i", GetTotalItemCount( &cItem ), (cItem.GetWeight()/100) );
 		FinalizeData( tempEntry, totalStringLen );
 		if( ( cItem.GetWeightMax() / 100 ) >= 1 )
 		{
 			//Uncomment and replace 0 with maxitem value if we ever implement it
-			//tempEntry.stringNum = 1072226;
-			//tempEntry.ourText = UString::sprintf( "%u\t%i", 0, ( cItem.GetWeightMax() / 100 ) );
-			tempEntry.stringNum = 1060658;
-			tempEntry.ourText = format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
+			tempEntry.stringNum = 1072226;
+			tempEntry.ourText = format( "%u\t%i", cItem.GetMaxItems(), ( cItem.GetWeightMax() / 100 ) );
+			//tempEntry.stringNum = 1060658;
+			//tempEntry.ourText = format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}

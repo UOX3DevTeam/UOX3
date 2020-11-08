@@ -8,7 +8,7 @@ function command_AREACOMMAND( socket, cmdString )
 	if( cmdString )
 	{
 		socket.xText 	= cmdString;
-		var targMsg 	= GetDictionaryEntry( 25, socket.Language );
+		var targMsg 	= GetDictionaryEntry( 25, socket.language );
 		socket.CustomTarget( 0, targMsg );
 	}
 	else
@@ -17,7 +17,7 @@ function command_AREACOMMAND( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	var targMsg	= GetDictionaryEntry( 1040, socket.Language );
+	var targMsg	= GetDictionaryEntry( 1040, socket.language );
 	socket.clickX 	= socket.GetWord( 11 );
 	socket.clickY 	= socket.GetWord( 13 );
 	socket.CustomTarget( 1, targMsg );

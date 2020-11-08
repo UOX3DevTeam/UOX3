@@ -172,11 +172,12 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 				// Randomize the size of ore found
 				UI16 oreID = RandomNum( 0x19B7, 0x19BA );
 				CItem *oreItem = Items->CreateItem( &mSock, mChar, oreID, amtToMake, found->colour, OT_ITEM, true );
-				if( ValidateObject( oreItem ) )
+				if( ValidateObject( oreItem ))
 				{
 					const std::string oreName = found->name + " ore";
 					oreItem->SetName( oreName );
-					mSock.sysmessage( 982, oreName.c_str() );
+					if( oreItem->GetCont() != NULL )
+						mSock.sysmessage( 982, oreName.c_str() );
 				}
 				oreFound = true;
 				break;
@@ -586,6 +587,11 @@ void cSkills::SmeltOre( CSocket *s )
 
 				// Good to go, combine ores and remove source stack!
 				forge->SetAmount( targetAmount + ( sourceAmount * amountMultiplier ) );
+
+				// Remove from multi before deleting
+				if( itemToSmelt->IsLockedDown() && ValidateObject( itemToSmelt->GetMultiObj() ))
+					itemToSmelt->GetMultiObj()->ReleaseItem( itemToSmelt );
+
 				itemToSmelt->Delete();
 				s->sysmessage( 1811 ); // You combine the ore with the stack of smaller ore.
 			}
@@ -660,6 +666,10 @@ void cSkills::SmeltOre( CSocket *s )
 						else
 						{
 							s->sysmessage( 816 ); // Your hand slips and the last of your materials are destroyed.
+							// Remove from multi before deleting
+							if( itemToSmelt->IsLockedDown() && ValidateObject( itemToSmelt->GetMultiObj() ))
+								itemToSmelt->GetMultiObj()->ReleaseItem( itemToSmelt );
+
 							itemToSmelt->Delete();
 						}
 						return;
@@ -691,6 +701,10 @@ void cSkills::SmeltOre( CSocket *s )
 					}
 					else
 					{
+						// Remove from multi before deleting
+						if( itemToSmelt->IsLockedDown() && ValidateObject( itemToSmelt->GetMultiObj() ))
+							itemToSmelt->GetMultiObj()->ReleaseItem( itemToSmelt );
+
 						itemToSmelt->Delete();	// delete the ore
 					}
 
@@ -2591,7 +2605,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		if( !canMake )
-			toDelete = RandomNum( 0, toDelete / 2 );
+			toDelete = RandomNum( 0, UOX_MAX(1, toDelete / 2 ));
 		targColour	= resEntry.colour;
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
@@ -2766,6 +2780,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 {
 	CItem *iItem = NULL;
 	CChar *iCharID = nSocket->CurrcharObj();
+
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
 		iCharID->TextMessage( NULL, 741, EMOTE, true, iCharID->GetName().c_str() );

@@ -314,7 +314,13 @@ bool CPIBookPage::Handle( void )
 		}
 
 		const std::string fileName	= cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( mBook->GetSerial(), 16 ) + std::string(".bok");
-		const UI16 totalLines		= tSock->GetWord( 11 );
+		UI16 totalLines		= tSock->GetWord( 11 );
+
+		// Cap amount of lines sent in one go at 8 per page
+		if( totalLines > 8 )
+			totalLines = 8;
+
+		// Each page has 8 lines of 34 bytes for each line
 		char tempLines[8][34];
 
 		UI16 bufferCount = 0;

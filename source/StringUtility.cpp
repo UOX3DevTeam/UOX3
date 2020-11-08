@@ -115,6 +115,29 @@ std::string format(const std::string fmtstring,va_list& list){
 	return std::string(msg) ;
 }
 //++++++++++++++++++++++++++++++++++++++++
+std::string formatMessage(const std::string& uformat,const std::string& data){
+
+	auto values = sections(data,",");
+	auto format = uformat ;
+	auto pos = format.find_first_of("%") ;
+	if (pos == std::string::npos) {
+		return format ;
+	}
+	auto index = 0 ;
+	while ( pos != std::string::npos) {
+		if (index >= values.size() ){
+			break;
+		}
+		auto temp = values[index];
+		index++;
+		// now, we assume the formatting was done before the string, so basically we
+		// replace the format specifier, with the string
+		format.replace(pos, 2, temp);
+		pos = format.find_first_of("%") ;
+	}
+	return format ;
+}
+//++++++++++++++++++++++++++++++++++++++++
 std::string simplify(const std::string& input){
 	std::regex re("\\s{2,}");
 	std::string fmt = " ";

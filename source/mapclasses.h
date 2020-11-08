@@ -144,7 +144,7 @@ private:
 	UI08 unknown4;
 	UI08 unknown5;
 	SI08 height;
-	SI08 name[20];
+	SI08 name[30];
 
 public:
 	CTileHS() : unknown0( 0 ), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
@@ -184,7 +184,7 @@ public:
 	void Quantity( UI08 newVal )	{	quantity = newVal;		}
 	void Name( const char *newVal )
 	{
-		strncpy( (char *)name, newVal, 20 );
+		strncpy( (char *)name, newVal, 30 );
 	}
 
 };
@@ -203,7 +203,7 @@ private:
 	UI08 unknown4;
 	UI08 unknown5;
 	SI08 height;
-	SI08 name[20];
+	SI08 name[30];
 
 public:
 	CTile() : weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
@@ -241,7 +241,7 @@ public:
 	void Quantity( UI08 newVal )	{	quantity = newVal;		}
 	void Name( const char *newVal )
 	{
-		strncpy( (char *)name, newVal, 20 );
+		strncpy( (char *)name, newVal, 30 );
 	}
 
 };
@@ -251,7 +251,7 @@ class CLandHS : public CBaseTile
 private:
 	UI32 unknown1;
 	UI16 textureID;
-	SI08 name[20];
+	SI08 name[30];
 public:
 	CLandHS() : unknown1( 0 ), textureID( 0 )
 	{
@@ -269,10 +269,10 @@ public:
 	char *Name( void ) const		{	return (char *)name;	}
 
 	void Unknown1( UI32 newVal )	{	unknown1 = newVal;		}
-	void TextureID( UI08 newVal )	{	textureID = newVal;		}
+	void TextureID( UI16 newVal )	{	textureID = newVal;		}
 	void Name( char *newVal )
 	{
-		strncpy( (char *)name, newVal, 20 );
+		strncpy( (char *)name, newVal, 30 );
 	}
 };
 
@@ -280,7 +280,7 @@ class CLand : public CBaseTile
 {
 private:
 	UI16 textureID;
-	SI08 name[20];
+	SI08 name[30];
 public:
 	CLand() : textureID( 0 )
 	{
@@ -299,7 +299,7 @@ public:
 	void TextureID( UI08 newVal )	{	textureID = newVal;		}
 	void Name( char *newVal )
 	{
-		strncpy( (char *)name, newVal, 20 );
+		strncpy( (char *)name, newVal, 30 );
 	}
 };
 

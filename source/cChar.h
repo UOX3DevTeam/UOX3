@@ -721,6 +721,8 @@ public:
 	SkillLock	GetSkillLock( UI08 skillToGet ) const;
 	void		SetAtrophy( UI08 newValue, UI08 skillToSet );
 	void		SetSkillLock( SkillLock newValue, UI08 skillToSet );
+
+	UI32		CountHousesOwned( bool countCoOwnedHouses );
 };
 
 

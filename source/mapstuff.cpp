@@ -1,5 +1,6 @@
 #include "uox3.h"
 #include "regions.h"
+#include "townregion.h"
 #include "fileio.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
@@ -755,10 +756,10 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldZ, SI08 maxZ, b
 				{
 					tmpTop = static_cast<SI08>( baseZ + multi.z );
 					if( abs( tmpTop - oldZ ) <= maxZ )
-					return tmpTop + TileHeight( multi.tile );
+						return tmpTop + TileHeight( multi.tile );
+				}
 			}
 		}
-	}
 	}
 	else
 	{
@@ -778,10 +779,10 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldZ, SI08 maxZ, b
 				{
 					tmpTop = static_cast<SI08>( baseZ + multi.z );
 					if( abs( tmpTop - oldZ ) <= maxZ )
-					return tmpTop + TileHeight( multi.tile );
+						return tmpTop + TileHeight( multi.tile );
+				}
 			}
 		}
-	}
 
 	}
 	return mHeight;
@@ -805,7 +806,7 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 	{
 		if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID )
 			continue;
-		if( tempItem->GetID( 1 ) >= 0x40 )
+		if( tempItem->GetID( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
 			z = MultiHeight( tempItem, x, y, oldz, maxZ );
 		else if( tempItem->GetX() == x && tempItem->GetY() == y )
 		{
@@ -823,7 +824,7 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns ID of tile in multi at specified coordinates
 //o-----------------------------------------------------------------------------------------------o
-UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
+UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisible )
 {
 	if( !i->CanBeObjType( OT_MULTI ) )
 		return 0;
@@ -857,16 +858,27 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		}
 		length = 0;
 	}
-
+	
 	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 	{
+		// Loop through each item that makes up the multi
+		// If any of those items intersect with area were are checking, return the ID of that tile
 		for( SI32 j = 0; j < length; ++j )
 		{
 			MultiHS_st& multi = SeekIntoMultiHS( multiID, j );
-			if( ( multi.visible && ( i->GetX() + multi.x == x) && (i->GetY() + multi.y == y)
-				 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
+			if( !checkVisible )
 			{
-				return multi.tile;
+				if( ( i->GetX() + multi.x == x ) && ( i->GetY() + multi.y == y ) )
+				{
+					return multi.tile;
+				}
+			}
+			else if( multi.visible > 0 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) )
+			{
+				if( ( i->GetX() + multi.x == x ) && ( i->GetY() + multi.y == y ) )
+				{
+					return multi.tile;
+				}
 			}
 		}
 	}
@@ -875,46 +887,55 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		for( SI32 j = 0; j < length; ++j )
 		{
 			Multi_st& multi = SeekIntoMulti( multiID, j );
-			if( ( multi.visible && ( i->GetX() + multi.x == x) && (i->GetY() + multi.y == y)
-				 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
-			{
+			if(( !checkVisible || ( multi.visible > 0 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ))) 
+				&& (( i->GetX() + multi.x == x ) && ( i->GetY() + multi.y == y )))
 				return multi.tile;
-			}
 		}
 	}
 	return 0;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID )
+//|	Function	-	UI16 DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns which dynamic tile is present at (x,y) or -1 if no tile exists
 //o-----------------------------------------------------------------------------------------------o
-UI16 CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID )
+CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis )
 {
-	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( MapArea == NULL )	// no valid region
-		return INVALIDID;
-
-	CDataList< CItem * > *regItems = MapArea->GetItemList();
-	regItems->Push();
-	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID )
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == NULL )
 			continue;
-		if( tempItem->GetID( 1 ) >= 0x40 )
+
+		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		regItems->Push();
+		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
-			regItems->Pop();
-			return MultiTile( tempItem, x, y, oldz );
+			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+				continue;
+			if( !checkOnlyNonMultis && Item->GetID( 1 ) >= 0x40 && Item->GetObjType() == OT_MULTI )
+			{
+				auto deetee = MultiTile( Item, x, y, oldz, false );
+				if( deetee > 0 )
+				{
+					regItems->Pop();
+					return Item;
+				}
+				else
+					continue;
+			}
+			else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
+			{
+				regItems->Pop();
+				return Item;
+			}
+
 		}
-		else if( tempItem->GetX() == x && tempItem->GetY() == y )
-		{
-			regItems->Pop();
-			return tempItem->GetID();
-		}
+		regItems->Pop();
 	}
-	regItems->Pop();
-	return INVALIDID;
+	return NULL;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1255,32 +1276,73 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck )
+//|	Function	-	bool CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
 //o-----------------------------------------------------------------------------------------------o
-bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck )
+bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface )
 {
 	CStaticIterator msi( x, y, worldNumber );
 	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
-		//const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
 		const SI08 elev = static_cast<SI08>( stat->zoff );
 		const SI08 tileHeight = static_cast<SI08>( TileHeight( stat->itemid ) );
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 		{
 			//7.0.9.0 data and later
-			if(( z >= elev && z < ( elev + tileHeight )) && SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
-				return true;
+			if( checkSpawnSurface )
+			{
+				// Special case used when checking for spawn surfaces
+				if(( z >= elev && z <= ( elev + tileHeight )) && !SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
+					return false;
+			}
+			else
+			{
+				// Generic check exposed to JS
+				if(( z >= elev && z <= ( elev + tileHeight )) && SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
+					return true; // Found static with specified flag
+			}
 		}
 		else
 		{
 			//7.0.8.2 data and earlier
-			if(( z >= elev && z < ( elev + tileHeight )) && SeekTile( stat->itemid ).CheckFlag( toCheck ) )
-				return true;
+			if( checkSpawnSurface )
+			{
+				// Special case used when checking for spawn surfaces
+				if( ( z >= elev && z <= ( elev + tileHeight ) ) && !SeekTile( stat->itemid ).CheckFlag( toCheck ) )
+					return false;
+			}
+			else
+			{
+				// Generic check exposed to JS
+				if( ( z >= elev && z <= ( elev + tileHeight ) ) && SeekTile( stat->itemid ).CheckFlag( toCheck ) )
+					return true; // Found static with specified flag
+			}
 		}
 	}
-	return false;
+	return checkSpawnSurface;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckTileFlag( UI16 itemID, TileFlags flagToCheck )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether given tile ID has a specified flag
+//o-----------------------------------------------------------------------------------------------o
+bool CMulHandler::CheckTileFlag( UI16 itemID, TileFlags flagToCheck )
+{
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	{
+		//7.0.9.0 data and later
+		if( !SeekTileHS( itemID ).CheckFlag( flagToCheck ))
+			return false;
+	}
+	else
+	{
+		//7.0.8.2 data and earlier
+		if(!SeekTile( itemID ).CheckFlag( flagToCheck ))
+			return false;
+	}
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1323,44 +1385,58 @@ bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 ins
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk )
+//|	Function	-	bool DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, 
+//|							bool checkWater, bool waterWalk, bool checkOnlyMultis )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if there are any dynamic tiles at given coordinates that block movement
 //o-----------------------------------------------------------------------------------------------o
-bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk )
+bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, 
+	bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis )
 {
 	// get the tile id of any dynamic tiles at this spot
-	const UI16 dt = DynTile( x, y, z, worldNumber, instanceID );
-	if( IsValidTile( dt ) )
+	CItem * dtItem = DynTile( x, y, z, worldNumber, instanceID, checkOnlyMultis, checkOnlyNonMultis );
+	if( ValidateObject( dtItem ))
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		// Don't allow placing houses on top of immovable, visible dynamic items
+		if( dtItem->GetMovable() == 2 && dtItem->GetVisible() == 0 )
+			return true;
+		
+		// Ignore items that are permanently invisible or visible to GMs only
+		if( dtItem->GetVisible() == 1 || dtItem->GetVisible() == 3 )
+			return false;
+
+		const UI16 dt = dtItem->GetID();
+		if( IsValidTile( dt ) && dt != 0 )
 		{
-			//7.0.9.0 data and later
-			CTileHS &tile = SeekTileHS( dt );
-			if( waterWalk )
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 			{
-				if( !tile.CheckFlag( TF_WET ) )
-					return true;
+				//7.0.9.0 data and later
+				CTileHS &tile = SeekTileHS( dt );
+				if( waterWalk )
+				{
+					if( !tile.CheckFlag( TF_WET ) )
+						return true;
+				}
+				else
+				{
+					if( tile.CheckFlag( TF_ROOF ) || tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
+						return true;
+				}
 			}
 			else
 			{
-				if( tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
-					return true;
-			}
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			CTile &tile = SeekTile( dt );
-			if( waterWalk )
-			{
-				if( !tile.CheckFlag( TF_WET ) )
-					return true;
-			}
-			else
-			{
-				if( tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
-					return true;
+				//7.0.8.2 data and earlier
+				CTile &tile = SeekTile( dt );
+				if( waterWalk )
+				{
+					if( !tile.CheckFlag( TF_WET ) )
+						return true;
+				}
+				else
+				{
+					if( tile.CheckFlag( TF_ROOF ) ||  tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
+						return true;
+				}
 			}
 		}
 	}
@@ -1368,19 +1444,21 @@ bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+//|	Function	-	bool DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if the map tile at the given coordinates block movement
 //o-----------------------------------------------------------------------------------------------o
-bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad )
 {
 	if( checkWater || waterWalk )
 	{
 		const map_st map = SeekMap( x, y, worldNumber );
-		if( map.z == z || ( map.z > z && map.z - z < 16 ))
+		if( checkMultiPlacement && map.z == z || ( !checkMultiPlacement && map.z > z && map.z - z < 16 ))
 		{
 			if( z == ILLEGAL_Z )
 				return true;
+
+			UI16 landID;
 			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 			{
 				//7.0.9.0 tiledata and later
@@ -1397,6 +1475,8 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 					if( land.CheckFlag( TF_WET ) )
 						return true;
 				}
+
+				landID = land.TextureID();
 			}
 			else
 			{
@@ -1412,6 +1492,31 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 				else
 				{
 					if( land.CheckFlag( TF_WET ) )
+						return true;
+				}
+
+				landID = land.TextureID();
+			}
+
+			// Check that player is not attempting to place a multi on a road
+			if( checkWater && checkMultiPlacement && checkForRoad )
+			{
+				// List of road tiles, or road-related tiles, on which houses cannot be placed
+				std::vector<UI16> roadIDs = {
+					0x0009, 0x0015, // furrows
+					0x0071, 0x0078, // dirt
+					0x00E8, 0x00EB, // dirt
+					0x0150, 0x015C, // furrows
+					0x0442, 0x0479, // sand stone
+					0x0501, 0x0510, // sand stone
+					0x07AE, 0x07B1, // dirt
+					0x3FF4, 0x3FF4, // dirt
+					0x3FF8, 0x3FFB	// dirt
+				};
+
+				for( int i = 0; i < roadIDs.size(); i += 2 )
+				{
+					if( landID >= roadIDs[i] && landID <= roadIDs[i + 1] )
 						return true;
 				}
 			}
@@ -1432,7 +1537,7 @@ bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, 
 		return false;
 
 	// get the tile id of any dynamic tiles at this spot
-	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, !checkWater, instanceID ) )
+	if( DoesDynamicBlock( x, y, z, worldNumber, instanceID, checkWater, !checkWater, false, false ) )
 		return false;
 
 	// if there's a static block here in our way, return false
@@ -1440,50 +1545,67 @@ bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, 
 		return false;
 
 	// if the static isn't a surface return false
-	if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ) ) )
+	if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ), true ) )
 		return false;
 
-	if( DoesMapBlock( x, y, z, worldNumber, checkWater, !checkWater ) )
+	if( DoesMapBlock( x, y, z, worldNumber, checkWater, !checkWater, false, false ) )
 		return false;
 
 	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater )
+//|	Function	-	bool ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater, bool checkOnlyMultis )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether given location is valid for house/boat placement
 //o-----------------------------------------------------------------------------------------------o
-bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater )
+UI08 CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, 
+					bool checkWater, bool checkOnlyMultis, bool checkOnlyNonMultis, bool checkForRoad )
 {
 	if( !InsideValidWorld( x, y, worldNumber ) )
-		return false;
+		return 0;
 
 	const SI08 elev = Height( x, y, oldz, worldNumber, instanceID );
 	if( ILLEGAL_Z == elev )
-		return false;
+		return 0;
 
 	// We don't want the house to be halfway embedded in a hill... or hanging off one for that matter.
 	if( oldz != ILLEGAL_Z )
 	{
 		if( elev - oldz > MAX_Z_STEP )
-			return false;
+		{
+			return 0;
+		}
 		else if( oldz - elev > MAX_Z_FALL )
-			return false;
+		{
+			return 0;
+		}
 	}
 
 	// get the tile id of any dynamic tiles at this spot
-	if( DoesDynamicBlock( x, y, elev, worldNumber, checkWater, instanceID, false ) )
-		return false;
+	if( !checkOnlyNonMultis && DoesDynamicBlock( x, y, elev, worldNumber, instanceID, checkWater, false, checkOnlyMultis, checkOnlyNonMultis ) )
+	{
+		return 2;
+	}
 
 	// if there's a static block here in our way, return false
-	if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
-		return false;
+	if( !checkOnlyMultis && DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
+	{
+		return 2;
+	}
 
-	if( DoesMapBlock( x, y, elev, worldNumber, checkWater, false ) )
-		return false;
+	if( DoesMapBlock( x, y, elev, worldNumber, checkWater, false, true, checkForRoad ) )
+	{
+		return 0;
+	}
 
-	return true;
+	// Check if house placement is allowed in region
+	CTownRegion *calcReg = calcRegionFromXY( x, y, worldNumber, instanceID );
+	if( !calcReg->CanPlaceHouse() || calcReg->IsDungeon() || calcReg->IsGuarded() )
+		return 3;
+
+	// Else, all good!
+	return 1;
 }
 
 //o-----------------------------------------------------------------------------------------------o

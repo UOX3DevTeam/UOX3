@@ -5,7 +5,7 @@ function CommandRegistration()
 
 function command_DUPE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 38, socket.Language );
+	var targMsg = GetDictionaryEntry( 38, socket.language );
 	if( cmdString )
 		socket.tempint = parseInt( cmdString );
 	else

@@ -8,6 +8,7 @@ MOREX=2
 VALUE=43800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallstonehousedeed]
@@ -18,6 +19,7 @@ MOREX=3
 VALUE=43800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallbrickhousedeed]
@@ -28,6 +30,7 @@ MOREX=1
 VALUE=43800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallwoodhousedeed]
@@ -38,6 +41,7 @@ MOREX=4
 VALUE=43800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallwnphousedeed]
@@ -48,6 +52,7 @@ MOREX=5
 VALUE=43800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallwoodstrawhousedeed]
@@ -58,6 +63,7 @@ MOREX=6
 VALUE=43800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [bluetentdeed]
@@ -68,6 +74,7 @@ MOREX=7
 VALUE=22800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [greententdeed]
@@ -78,6 +85,7 @@ MOREX=8
 VALUE=22800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [3roombrickhousedeed]
@@ -88,6 +96,7 @@ MOREX=9
 VALUE=144500
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [2storywnphousedeed]
@@ -98,6 +107,7 @@ MOREX=10
 VALUE=192400
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [2storysnphousedeed]
@@ -108,6 +118,7 @@ MOREX=11
 VALUE=192400
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [towerdeed]
@@ -118,6 +129,7 @@ MOREX=12
 VALUE=433200
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [keepdeed]
@@ -128,6 +140,7 @@ MOREX=13
 VALUE=665200
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [castledeed]
@@ -138,6 +151,7 @@ MOREX=14
 VALUE=1022800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [largeshoppatio]
@@ -148,6 +162,7 @@ MOREX=15
 VALUE=152800
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [largesmithydeed]
@@ -158,13 +173,7 @@ MOREX=16
 VALUE=152800
 RESTOCK=5
 GOOD=9
-}
-
-[pentagramdeed]
-{
-NAME=pentagram deed
-ID=0x14F0
-MOREX=18
+SCRIPT=15003
 }
 
 [smalltowerdeed]
@@ -175,6 +184,7 @@ MOREX=26
 VALUE=88000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallmarbleshopdeed]
@@ -185,6 +195,7 @@ MOREX=27
 VALUE=63000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [smallstoneshopdeed]
@@ -195,6 +206,7 @@ MOREX=28
 VALUE=60000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [2storyvilladeed]
@@ -205,6 +217,7 @@ MOREX=29
 VALUE=136000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [sandstonepatiohousedeed]
@@ -215,6 +228,7 @@ MOREX=30
 VALUE=90000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [2storylogcabindeed]
@@ -225,6 +239,7 @@ MOREX=31
 VALUE=97000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [largemarblepatiohousedeed]
@@ -235,6 +250,7 @@ MOREX=32
 VALUE=192000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 [farmerscabindeed]
@@ -245,6 +261,7 @@ MOREX=17
 VALUE=55000
 RESTOCK=5
 GOOD=9
+SCRIPT=15003
 }
 
 EOF

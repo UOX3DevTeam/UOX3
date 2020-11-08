@@ -9,7 +9,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( GetDictionaryEntry( 393, pUser.socket.Language ) ); //That is too far away
+		pUser.SysMessage( GetDictionaryEntry( 393, pUser.socket.language ) ); //That is too far away
 		return false;
 	}
 
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	}
 	var Cotton = iUsed.GetTag("Cotton");
 	if (Cotton == 0)
-	{	
+	{
 		pUser.SysMessage( "You find no cotton to pick. Try again later." );
 	}
 	if( Cotton == 1 )

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "uox3.h"
 #include "CPacketSend.h"
 #include "speech.h"
@@ -1724,7 +1725,10 @@ UI08 CSocket::Range( void ) const
 }
 void CSocket::Range( UI08 value )
 {
-	range = value;
+	if( ClientVerShort() < CVS_705527 )
+		range = std::min( value, static_cast<UI08>(18) ); // 18 is max range for 2D clients prior to 7.0.55.27
+	else
+		range = std::min( value, static_cast<UI08>(24) ); // 24 is max range for 2D clients after that, or enhanced client
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1757,6 +1761,32 @@ void CSocket::sysmessage( const std::string txt, ... )
 	toAdd.TargType( SPTRG_INDIVIDUAL );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void sysmessageJS( const std::string& uformat, const std::string& data )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays specified system message in lower left corner of client screen
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::sysmessageJS( const std::string& uformat, const std::string& data )
+{
+	CChar *mChar = CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	auto msg = formatMessage( uformat, data );
+	if( msg.size() > 512 )
+	{
+		msg = msg.substr( 0, 512 );
+	}
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( msg );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( INVALIDSERIAL );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( 0x0040 );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
+}
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void sysmessage( SI32 dictEntry, ... )
 //o-----------------------------------------------------------------------------------------------o
@@ -2268,8 +2298,6 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 void CSocket::openBank( CChar *i )
 {
 	CItem *bankBox = NULL;
-
-
 	bankBox = i->GetItemAtLayer( IL_BANKBOX );
 	if( ValidateObject( bankBox ) )
 	{
@@ -2281,17 +2309,21 @@ void CSocket::openBank( CChar *i )
 			return;
 		}
 	}
-
+	
+	// No bankbox was found, so let's create one!
 	auto temp = format(1024, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
 	bankBox = Items->CreateItem( NULL, i, 0x09AB, 1, 0, OT_ITEM );
 	bankBox->SetName( temp );
 	bankBox->SetLayer( IL_BANKBOX );
 	bankBox->SetOwner( i );
 	bankBox->SetDecayable( false );
+	bankBox->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerBankItems() );
 	if( !bankBox->SetCont( i ) )
 		return;
 	bankBox->SetTempVar( CITV_MOREX, 1 );
 	bankBox->SetType( IT_CONTAINER );
+
+	// Make another attempt to open bank box
 	CPWornItem toWear = (*bankBox);
 	Send( &toWear );
 	openPack( bankBox );

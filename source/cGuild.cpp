@@ -1324,6 +1324,35 @@ void CGuildCollection::ToggleAbbreviation( CSocket *s )
 	}
 }
 
+void CGuildCollection::TransportGuildStone( CSocket *s, GUILDID guildID )
+{
+	CChar *mChar = s->CurrcharObj();
+	if( guildID == -1 )
+		return;
+
+	if( gList[guildID]->Stone() == INVALIDSERIAL )
+		return;
+	
+	// Make sure this is the guild master
+	if( gList[guildID]->Master() == mChar->GetSerial() )
+	{
+		CItem *gTransportStone = Items->CreateItem( s, mChar, 0x1869, 1, 0, OT_ITEM, true );
+		if( ValidateObject( gTransportStone ) )
+		{
+			gTransportStone->SetTempVar( CITV_MORE, guildID );
+			gTransportStone->SetNewbie( true );
+			gTransportStone->SetWeight( 1, true );
+			gTransportStone->SetType( IT_GUILDSTONE );
+			gTransportStone->SetName( format( Dictionary->GetEntry( 101 ), gList[guildID]->Name().c_str() ));
+			CItem *gStone = calcItemObjFromSer( gList[guildID]->Stone() );
+			gStone->Delete();
+
+			// A guildstone transporter object has been placed in your backpack. Use it to move the guildstone to a new location.
+			s->sysmessage( 1972 );
+		}
+	}
+}
+
 void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void GumpChoice( CSocket *s )
@@ -1388,7 +1417,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 #if defined( _MSC_VER )
 #pragma note( "Move guildstone functionality goes here" )
 #endif
-				case 16:											break;	// move guildstone
+				case 16:	TransportGuildStone( s, trgGuild );		break;	// move guildstone
 				case 17:	Menu( s, BasePage + 1, trgGuild );		break;	// return to main menu
 			}
 			break;
@@ -1691,6 +1720,38 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		nGuild->Master( (*mChar) );
 		nGuild->Stone( (*stone) );
 		TextEntryGump( s, mChar->GetSerial(), 100, 1, 30, 158 );
+	}
+	else if( deed->GetID() == 0x1869 )
+	{
+		// Transporter stone for guildstone
+		if( mChar->GetGuildNumber() == -1 )	// not in a guild
+		{
+			s->objMessage( "You don't appear to be in a guild", deed ); // You don't appear to be in a guild
+			return;
+		}
+		GUILDID gNum = deed->GetTempVar( CITV_MORE );
+		CGuild *nGuild = Guild( gNum );
+		if( nGuild == NULL )
+		{
+			s->objMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
+			Console.error(format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
+			return;
+		}
+		CItem *stone = Items->CreateItem( NULL, mChar, 0x0ED5, 1, 0, OT_ITEM );
+		if( !ValidateObject( stone ) )
+		{
+			s->objMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
+			Console.error( format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()) );
+			return;
+		}
+		stone->SetName( format( Dictionary->GetEntry( 101 ), nGuild->Name().c_str() ));
+		stone->SetLocation( mChar );
+		stone->SetType( IT_GUILDSTONE );
+		stone->SetTempVar( CITV_MORE, gNum );
+		stone->SetWipeable( false );
+		stone->SetDecayable( false );
+		deed->Delete();
+		nGuild->Stone( (*stone) );
 	}
 	else
 		s->sysmessage( 177 );

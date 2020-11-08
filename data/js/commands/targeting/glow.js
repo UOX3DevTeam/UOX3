@@ -6,7 +6,7 @@ function CommandRegistration()
 
 function command_GLOW( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 258, socket.Language );
+	var targMsg = GetDictionaryEntry( 258, socket.language );
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -18,7 +18,7 @@ function onCallback0( socket, ourObj )
 
 function command_UNGLOW( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 259, socket.Language );
+	var targMsg = GetDictionaryEntry( 259, socket.language );
 	socket.CustomTarget( 1, targMsg );
 }
 
