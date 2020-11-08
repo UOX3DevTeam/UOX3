@@ -279,6 +279,146 @@ var myParty = CreateParty( pUser ); //create a new party (myParty) with pUser as
 var socket = GetSocketFromIndex( 0 ); //fetch whatever socket is connected to the server as socket/connection 0
 </pre></table>
 
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetClientFeature">GetClientFeature</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool GetClientFeature( ClientFeaturesBitNum );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Check if a specific client features is enabled. For a list of features that can be checked this way, see <strong>[settings]->clientFeatures List</strong> in the <a href="https://www.uox3.org/docs/index.html#uoxINISettings" target="_blank" title="UOX3 Documentation - UOX.INI Settings">UOX.INI Settings section of the UOX3 Documentation</a>.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var aosFeaturesEnabled = GetClientFeature( 0x10 ); // AoS bit from list of client features
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetServerFeature">GetServerFeature</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool GetServerFeature( ServerFeaturesBitNum );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Check if a specific server features is enabled. For a list of features that can be checked this way, see <strong>[settings]->serverFeatures List</strong> in the <a href="https://www.uox3.org/docs/index.html#uoxINISettings" target="_blank" title="UOX3 Documentation - UOX.INI Settings">UOX.INI Settings section of the UOX3 Documentation</a>.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var contextMenusEnabled = GetServerFeature( 0x08 ); // ContextMenus bit from list of server features
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetServerSetting">GetServerSetting</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetServerSetting( serverSettingString );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Fetches the value of a specified server setting and returns it as a string. Wrap in parseInt() if expected value returned is an int.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var guardsActive = GetServerSetting( "GUARDSACTIVE" ); // Returns 1 if GUARDSACTIVE is set to 1 in UOX.INI, or 0 if set to 0.
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CheckTileFlag">CheckTileFlag</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CheckTileFlag( tileID, tileflag );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Check if a specific tile ID has given flag
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var doesTileBlock = CheckTileFlag( iUsed.id, 6 ); //6 = TF_BLOCKING
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetMapElevation">GetMapElevation</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool GetMapElevation( x, y, z, world );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the map elevation at specified coordinates
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var mapElev = GetMapElevation( pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsInBuilding">IsInBuilding</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsInBuilding( x, y, z, world, instance, checkHeight );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if specified location is inside a static building (underneath static items), or if player is inside a multi. If checkHeight argument is true, player is only deemed inside a multi if there are multi-items above the player's head. If player is in a courtyard/on a rooftop, they will be deemed to be NOT in the building. checkHeight is not used for the static part of the function, only for multis.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var isCharInBuilding = IsInBuilding( myChar.x, myChar.y, myChar.z, myChar.worldnumber, myChar.instanceID, true );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CheckStaticFlag">CheckStaticFlag</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CheckStaticFlag( x, y, z, world, tileFlagID );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Check if any statics at given coordinates has specified tile flag.<br><br>
+Parameters:<br>
+x, y, z, world = coordinates and worldnumber<br>
+tileFlagID = tileFlag from sourceCode<br>
+<pre>	TF_FLOORLEVEL	= 0,
+	TF_HOLDABLE = 1,
+	TF_TRANSPARENT = 2,
+	TF_TRANSLUCENT = 3,
+	TF_WALL = 4,
+	TF_DAMAGING = 5,
+	TF_BLOCKING = 6 ,
+	TF_WET = 7,
+	TF_UNKNOWN1 = 8,
+	TF_SURFACE = 9,
+	TF_CLIMBABLE = 10,
+	TF_STACKABLE = 11,
+	TF_WINDOW = 12,
+	TF_NOSHOOT = 13,
+	TF_DISPLAYA = 14,
+	TF_DISPLAYAN = 15,
+	TF_DESCRIPTION = 16,
+	TF_FOLIAGE = 17,
+	TF_PARTIALHUE = 18,
+	TF_UNKNOWN2 = 19,
+	TF_MAP = 20,
+	TF_CONTAINER = 21,
+	TF_WEARABLE = 22,
+	TF_LIGHT = 23,
+	TF_ANIMATED = 24,
+	TF_NODIAGONAL = 25, //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyles
+	TF_UNKNOWN3 = 26,
+	TF_ARMOR = 27,
+	TF_ROOF = 28,
+	TF_DOOR = 29,
+	TF_STAIRBACK = 30,
+	TF_STAIRRIGHT = 31</pre>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var tileFlagFound = CheckStaticFlag( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 10 ); // Is there a tile with TF_CLIMBABLE flag?
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoesStaticBlock">DoesStaticBlock</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool DoesStaticBlock( x, y, z, world, checkWater );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Check if statics at/above given location blocks character movement<br><br>
+Parameters:<br>
+x, y, z, world = coordinates and worldnumber<br>
+checkWater = true if water should block, false if not (for creatures that can swim, for instance)
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var doesStaticBlock = DoesStaticBlock( pUser.x + 1, pUser.y, pUser.z, pUser.worldnumber, false );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoesDynamicBlock">DoesDynamicBlock</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool DoesDynamicBlock( x, y, z, world, instance, checkWater, waterWalk, checkOnlyMultis, checkOnlyNonMultis );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Checks if dynamics at/above given location blocks character movement.<br><br>
+Parameters:<br>
+x, y, z, world, instance = coordinates, worldnumber and instanceID<br>
+checkWater = true if water should block, false if not (for creatures that can swim, for instance)<br>
+waterWalk = true if creature can move on water surfaces, false if not<br>
+checkOnlyMultis = only multis will be checked, other dynamic items are ignored<br>
+checkOnlyNonMultis = multis are ignored, all other dynamic items are checked
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var doesDynamicBlock = DoesDynamicBlock( pUser.x + 1, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID, false, false, false, false );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DoesMapBlock">DoesMapBlock</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool DoesMapBlock( x, y, z, world, checkWater, waterWalk, checkMultiPlacement, checkForRoad );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Checks if map tile at given coordinates would block character movement.<br><br>
+Parameters:<br>
+x, y, z, world = coordinates and worldnumber<br>
+checkWater = true if water should block, false if not (for creatures that can swim, for instance)<br>
+waterWalk = true if creature can move on water surfaces, false if not<br>
+checkMultiPlacement = if true, map tile has to be at exact same Z as provided coordinate, or it will count as blocked<br>
+checkForRoad = true if roads and paths should count as blocking. checkMultiPlacement must be true for this to be checked
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var doesMapBlock = DoesMapBlock( pUser.x + 1, pUser.y, pUser.z, pUser.worldnumber, false, false, true, true );
+</pre></table>
+
 <center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
 </center>

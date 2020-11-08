@@ -16,10 +16,10 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="Open">Open</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Open( string filename, string accessMethod );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>Open( string filename, string accessMethod, string subFolder );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens a file for reading, writing or appending.
-<tr><td valign="top" width="25%"><b>Notes</b><td>accessMethod is a one byte string, which contains either "a" (append), "r" (read) or "w" (write).
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mFile = new UOXCFile;<br>mFile.Open( "test.dat", "a" );
+<tr><td valign="top" width="25%"><b>Notes</b><td>accessMethod is a one byte string, which contains either "a" (append), "r" (read) or "w" (write). Subfolder is a subfolder under UOX3/shared/, which will be created if it doesn't exist.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mFile = new UOXCFile;<br>mFile.Open( "test.dat", "a", "subFolder" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -55,6 +55,28 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Length">Length</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int Length();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the length of the file
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var fileLength = mFile.Length();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Pos">Pos</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int Pos();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns or sets the position we are at in the file
+<tr><td valign="top" width="25%"><b>Notes</b><td>The current position that you are at in the file. This can be read and set, where setting it moves relative to the start of file (i.e. if you set it to 5, it would be 5 bytes from the start, not 5 bytes from it's current location). You cannot seek a location if you have opened the file for append.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var filePos = mFile.Pos();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="EOF">EOF</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool EOF();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>A boolean value returning true if the file pointer is at the end of the file.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>while( !mFileRead.EOF() ) { ... }
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="Free">Free</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool Free()
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Deallocates the memory associated with creating the variable.
@@ -62,22 +84,16 @@
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mFile.Free();
 </pre></table><br>
 
-<h2><a name="properties">File I/O Properties</a></h2>
-<table border="1" width="100%" cellspacing="0" cellpadding="2">
-  <tr>
-    <th bgcolor="maroon">Property
-    <th bgcolor="maroon">Purpose
-  <tr>
-    <td>pos (read/write)
-    <td>The current position that you are at in the file.  This property can be read and set, where setting it moves relative to the start of file (ie if you set it to 5, it would be 5 bytes from the start, not 5 bytes from it's current location).  You cannot seek a location if you have opened the file for append.
-  <tr>
-    <td>length (read)
-    <td>The length of the file
-  <tr>
-    <td>eof (read)
-    <td>A boolean value returning true if the file pointer is at the end of the file.
-</table>
 
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="DeleteFile">DeleteFile</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool DeleteFile( fileName(, subFolderName ))
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Deletes a specified file, either in root of shared folder, or inside a subfolder.
+<tr><td valign="top" width="25%"><b>Notes</b><td>File and subfolder names cannot contain some characters such as forward or backwards slashes, double dots, etc.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var fileName = "myFile.jsdata";
+var folderName = "mySubFolder";
+DeleteFile( fileName, folderName );
+</pre></table><br>
 
 <p>&nbsp;</p><center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>

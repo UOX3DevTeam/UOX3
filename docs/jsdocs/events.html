@@ -462,7 +462,7 @@ function onEnterRegion( pEntering, regionEntered )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnEntranceEvent">onEntrance</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEntrance( iEntered, objEntering, objType )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objEntering enters the multi object iEntered
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objEntering is a character<br>objType == 1 indicates objEntering is an item<br>iEntered's script is activated
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objEntering is a character<br>objType == 1 indicates objEntering is an item<br>iEntered's script is activated, objEntering's script is entered
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onEntrance( iEntered, objEntering, objType )
@@ -560,6 +560,31 @@ function onGumpPress( pSock, pButton, gumpData )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnHouseCommand">onHouseCommand</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onHouseCommand( pSocket, iMulti, cmdID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player speaks a house command while inside a house
+<tr><td valign="top" width="25%"><b>Notes</b><td>cmdID is the ID of a triggerword uttered by the player. These triggerwords are defined client-side.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To bring house command handling from hard code to JS engine, making it easier to adjust and extend the housing system in the future.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onHouseCommand( pSocket, iMulti, cmdID )
+{
+	if( ValidateObject( iMulti ) && iMulti.IsInMulti( pSocket.currentChar ))
+	{
+		switch( cmdID )
+		{
+			case 34: // Remove Thyself
+				pSocket.CustomTarget( 0, "Who do you want to remove from your house?" );
+				break;
+			default:
+				Console.Log( "Unhandled house command detected with cmdID: " + cmdID );
+				return false;
+		}
+	}
+
+	return true;
+}</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnHungerChangeEvent">onHungerChange</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onHungerChange( pChanging, newStatus );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player's hunger level changes goes down.
@@ -617,7 +642,7 @@ function onLeaveRegion( pLeaver, regionLeft )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnLeavingEvent">onLeaving</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLeaving( iLeft, objLeaving, objType )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when objLeaving leaves the multi object iLeft
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objLeaving is a character<br>objType == 1 indicates objLeaving is an item<br>iLeft's script is activated
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objLeaving is a character<br>objType == 1 indicates objLeaving is an item<br>iLeft's script is activated, objLeaving's script is activated
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onLeaving( iLeft, objLeaving, objType )
@@ -945,7 +970,7 @@ function onSkill( objUsing, skillUsed, objType )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSpeechEvent">onSpeech</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpeech( strSaid, pTalking, pTalkingTo )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pTalking says strSaid to pTalkingTo.  pTalkingTo's script is activated
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pTalking says strSaid to pTalkingTo. pTalkingTo's script is activated. Can also trigger for items with script and this event attached, if ITEMSDETECTSPEECH is enabled in UOX.INI.
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Greatly improve the speech handling capabilities
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSpeech( strSaid, pTalking, pTalkingTo )

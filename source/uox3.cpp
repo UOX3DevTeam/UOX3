@@ -1741,7 +1741,7 @@ void Shutdown( SI32 retCode )
 	}
 
 	//Lets wait for console thread to quit here
-	if( retCode != FATAL_UOX3_ALLOC_NETWORK )
+	if( !retCode )
 		cons.join();
 
 	// don't leave file pointers open, could lead to file corruption
