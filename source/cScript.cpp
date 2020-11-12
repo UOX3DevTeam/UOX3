@@ -70,7 +70,7 @@ static JSFunctionSpec my_functions[] =
 	{ "PossessTown",				SE_PossessTown,				2, 0, 0 },
 	{ "IsRaceWeakToWeather",		SE_IsRaceWeakToWeather,		2, 0, 0 },
 	{ "GetRaceSkillAdjustment",		SE_GetRaceSkillAdjustment,	2, 0, 0 },
-	{ "UseDoor",					SE_UseDoor,					2, 0, 0 },
+	{ "UseItem",					SE_UseItem,					2, 0, 0 },
 	{ "CompareGuildByGuild",		SE_CompareGuildByGuild,		2, 0, 0 },
 	{ "CommandLevelReq",			SE_CommandLevelReq,			1, 0, 0 },
 	{ "CommandExists",				SE_CommandExists,			1, 0, 0 },
