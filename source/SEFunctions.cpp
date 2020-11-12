@@ -1284,42 +1284,81 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsva
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool SE_UseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Uses specified door
+//|	Purpose		-	Uses specified item
 //o-----------------------------------------------------------------------------------------------o
-JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_UseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
 	{
-		DoSEErrorMessage( "UseDoor: Invalid number of arguments (takes 2)" );
+		DoSEErrorMessage( "UseItem: Invalid number of arguments (takes 2 - socket/char, and item used)" );
 		return JS_FALSE;
 	}
-	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
-	JSObject *mDoor	= JSVAL_TO_OBJECT( argv[1] );
 
-	CSocket *mySock	= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
-	CItem *myDoor	= static_cast<CItem *>(JS_GetPrivate( cx, mDoor ));
+	CChar *mChar = NULL;
+	CSocket *mySocket = NULL;
 
-	if( !ValidateObject( myDoor ) )
+	JSEncapsulate myClass( cx, &(argv[0]) );
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		DoSEErrorMessage( "UseDoor: Invalid door" );
+		if( myClass.isType( JSOT_OBJECT ))
+		{
+			mChar	= static_cast<CChar *>(myClass.toObject());
+			if( !ValidateObject( mChar )  )
+			{
+				mChar = NULL;
+			}
+		}
+	}
+	else if( myClass.ClassName() == "UOXSocket" )
+	{
+		if( myClass.isType( JSOT_OBJECT ))
+		{
+			mySocket	= static_cast<CSocket *>(myClass.toObject());
+			if( mySocket != NULL )
+				mChar = mySocket->CurrcharObj();
+		}
+	}
+
+	JSObject *mItem	= JSVAL_TO_OBJECT( argv[1] );
+	CItem *myItem	= static_cast<CItem *>(JS_GetPrivate( cx, mItem ));
+
+	if( !ValidateObject( myItem ) )
+	{
+		DoSEErrorMessage( "UseItem: Invalid item" );
 		return JS_FALSE;
 	}
 
-	CChar *mChar = mySock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 	{
-		DoSEErrorMessage( "UseDoor: Invalid character" );
+		DoSEErrorMessage( "UseItem: Invalid character" );
 		return JS_FALSE;
 	}
 
-	if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(myDoor->GetType()) ) )
+	ItemTypes iType		= myItem->GetType();
+	UI16 itemID			= myItem->GetID();
+	UI16 itemTrig		= myItem->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( itemTrig );
+	if( itemTrig == 0 || toExecute == NULL )
 	{
-		UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(myDoor->GetType()) );
-		cScript *envExecute = JSMapping->GetScript( envTrig );
-		if( envExecute != NULL )
-			envExecute->OnUseChecked( mChar, myDoor );
+		UI16 envTrig		= 0;
+		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
+		{
+			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+		else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
+		{
+			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+	}
+
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnUseChecked( mChar, myItem ) == -1 )
+			toExecute->OnUseUnChecked( mChar, myItem );
 	}
 
 	return JS_TRUE;

@@ -92,7 +92,7 @@ SEngineFunc SE_PossessTown;				//										***
 SEngineFunc SE_IsRaceWeakToWeather;		//										***
 SEngineFunc SE_GetRaceSkillAdjustment;	//										***
 
-SEngineFunc SE_UseDoor;					//										***
+SEngineFunc SE_UseItem;					//										***
 
 SEngineFunc SE_TriggerEvent;			//										*
 
