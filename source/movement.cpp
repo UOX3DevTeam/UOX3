@@ -296,13 +296,27 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		{
 			c->SetPathFail( c->GetPathFail() + 1 );
 
-			if( c->GetPathFail() < 10 || !c->IsEvading() )
+			if( c->GetPathFail() < 10 && !c->IsEvading() )
 			{
 				c->FlushPath();
+
+				// If advanced pathfinding is enabled, calculate a new path!
+				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+				{
+					bool newPath = false;
+					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), (c->GetRunning() > 0) );
+					if( !newPath )
+						c->SetPathResult( 0 ); // partial success
+				}
 				return;
 			}
 			else
+			{
+				c->FlushPath();
+				c->SetPathResult( 0 ); // partial success
 				c->SetPathFail( 0 );
+				return;
+			}
 		}
 
 		if( cwmWorldState->ServerData()->AmbientFootsteps() )
@@ -1619,6 +1633,10 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 	if( c->StillGotDirs() )
 		return;
 
+	// Set target location in NPC's mind
+	c->SetPathTargX( gx );
+	c->SetPathTargY( gy );
+
 	// 2000.09.21
 	// initial rewrite of pathfinding...
 
@@ -1865,7 +1883,14 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 				Walking( NULL, &mChar, j, 256 );
 			}
 			else
+			{
 				mChar.SetNpcWander( mChar.GetOldNpcWander() );
+
+				UI16 targTrig		= mChar.GetScriptTrigger();
+				cScript *toExecute	= JSMapping->GetScript( targTrig );
+				if( toExecute != NULL )
+					toExecute->OnPathfindEnd( &mChar, mChar.GetPathResult() ); // Reached end of pathfinding
+			}
 			break;
 		default:
 			break;
@@ -2579,6 +2604,10 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	size_t loopCtr		= 0;
 	size_t maxSteps		= 500; //default
 
+	// Set target location in NPC's mind
+	mChar->SetPathTargX( targX );
+	mChar->SetPathTargY( targY );
+
 	// Modify maxSteps to fit different scenarios. Might need tweaking/additional scenarios.
 	if( mChar->GetNpcWander() == WT_FLEE )
 		maxSteps = 50;
@@ -2636,16 +2665,32 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			break;
 		++loopCtr;
 	}
-#if defined( UOX_DEBUG_MODE )
 	if( loopCtr == maxSteps )
+	{
+#if defined( UOX_DEBUG_MODE )
 		Console.warning( format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n", 
 			mChar->GetName().c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
-	else if( loopCtr == 0 && getDist( mChar->GetLocation(), point3( targX, targY, curZ )) > 1 )
+#endif
+		mChar->SetPathResult( -1 ); // Pathfinding failed
+		return false;
+	}
+	else if( loopCtr == 0 && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
+	{
+#if defined( UOX_DEBUG_MODE )
 		Console.warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
+#endif
+		mChar->SetPathResult( -1 ); // Pathfinding failed
+		return false;
+	}
 	else
+	{
+#if defined( UOX_DEBUG_MODE )
 		Console.print( format("AdvancedPathfinding: %u loops to find path.\n", loopCtr) );
 #endif
-	if( loopCtr == maxSteps || ( loopCtr == 0 && getDist( mChar->GetLocation(), point3( targX, targY, curZ )) > 1 ))
-		return false;
+		if( getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
+			mChar->SetPathResult( 0 ); // Partial pathfinding success
+		else
+			mChar->SetPathResult( 1 ); // Pathfinding success
+	}
 	return true;
 }

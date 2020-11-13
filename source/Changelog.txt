@@ -1,3 +1,10 @@
+14/11/2020 - Xuri (0.99.4a)
+	Improved JS NPC methods WalkTo()/RunTo() so path is recalculated when blocked by other characters after original calculation took place. Only applies while advanced pathfinding is enabled in uox.ini.
+	Added new JS event that triggers when pathfinding comes to an end after using WalkTo/RunTo JS methods:
+		onPathfindEnd( mNPC, pathfindResult ) // pathfindResult returns result of pathfinding (-1 = failure, 0 = partial success, 1 = success)
+	Disallowed invulnerable players/admins from attacking other characters, with a complimentary system message explaining why they can't attack
+	Fixed a bug where NPC's original npvWander mode could get overwritten if multiple pathfinding actions overlapped
+
 13/11/2020 - Xuri
 	Fixed an edge case with 'time command that would not display time correctly (UOX3/js/commands/time.js)
 	Updated UseDoor() JS function - now called UseItem() instead, and now supports both socket and character as first argument, to allow NPC use.
