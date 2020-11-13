@@ -720,6 +720,38 @@ function onPacketReceive( socket, packetNum )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnPathfindEnd">onPathfindEnd</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPathfindEnd( tChar, pathfindResult )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When NPC pathfinding after JS methods WalkTo()/RunTo() comes to an end
+<tr><td valign="top" width="25%"><b>Notes</b><td>pathfindResult parameter returns -1 if pathfinding failed, 0 if pathfinding partially succeeded but final location was blocked by a character, and 1 if pathfinding succeeded and NPC reached target location
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Can be used to detect when NPC pathfinding comes to an end
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onPathfindEnd( tChar, pathfindResult )
+{
+	if( ValidateObject( tChar ))
+	{
+		tChar.TextMessage( "Pathfinding ended! Result of pathfinding was... ");
+		switch( pathfindResult )
+		{
+			case -1: // Pathfinding failed
+				tChar.TextMessage( "...a failure! I couldn't move at all." );
+				break;
+			case 0: // Pathfinding partially succeeded, but didn't make it all the way to target destination
+				tChar.TextMessage( "...a partial success! I made it part of the way there." );
+				break;
+			case 1: // Reached end of the path
+				tChar.TextMessage( "...a success! I reached my target location." );
+				break;
+			default:
+				tChar.TextMessage( "...a success? A failure? I have no idea. Result unknown!" );
+				break;
+		}
+
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnPickupEvent">onPickup</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPickup( iPickedUp, pGrabber )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pGrabber picks up iPickedUp
