@@ -3284,3 +3284,29 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
 		SetEventExists( seOnHouseCommand, false );
 	return ( retVal == JS_TRUE );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool OnPathfindEnd( CChar *thief, CItem *theft )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for NPCs after their pathfinding efforts come to and end
+//|	Notes		-	pathfindResult gives a value that represents how the pathfinding ended				
+//o-----------------------------------------------------------------------------------------------o
+bool cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
+{
+	if( !ValidateObject( npc ) )
+		return false;
+	if( !ExistAndVerify( seOnPathfindEnd, "onPathfindEnd" ) )
+		return false;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
+
+	jsval params[2], rval;
+	params[0] = OBJECT_TO_JSVAL( charObj );;
+	params[1] = INT_TO_JSVAL( pathfindResult );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onPathfindEnd", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnPathfindEnd, false );
+
+	return ( retVal == JS_TRUE );
+}

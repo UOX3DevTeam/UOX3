@@ -152,6 +152,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 	if( !ValidateObject( ourChar ) )
 		return;
 
+	// Don't allow attacking other characters if invulnerable
+	if( ourChar->IsInvulnerable() )
+	{
+		s->sysmessage( 1973 ); // You cannot engage in combat while invulnerable!
+		return;
+	}
+
 	SERIAL serial = s->GetDWord( 1 );
 	if( serial == INVALIDSERIAL )
 	{

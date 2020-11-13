@@ -345,6 +345,61 @@ void CChar::SetPathFail( SI08 newValue )
 	if( IsValidNPC() )
 		mNPC->pathFail = newValue;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 GetPathResult( void ) const
+//|					void SetPathResult( SI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get/Set the end result of pathfinding, to pass on to onPathfindEnd event
+//o-----------------------------------------------------------------------------------------------o
+SI08 CChar::GetPathResult( void ) const
+{
+	SI08 rVal = DEFNPC_PATHFAIL;
+	rVal = mNPC->pathResult;
+	return rVal;
+}
+void CChar::SetPathResult( SI08 newValue )
+{
+	if( IsValidNPC() )
+		mNPC->pathResult = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetPathTargX( void ) const
+//|					void SetPathTargX( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get/Set the final target X location NPC is pathfinding towards
+//o-----------------------------------------------------------------------------------------------o
+UI16 CChar::GetPathTargX( void ) const
+{
+	UI16 rVal = DEFNPC_PATHFAIL;
+	rVal = mNPC->pathTargX;
+	return rVal;
+}
+void CChar::SetPathTargX( UI16 newValue )
+{
+	if( IsValidNPC() )
+		mNPC->pathTargX = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetPathTargY( void ) const
+//|					void SetPathTargY( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get/Set the final target Y location NPC is pathfinding towards
+//o-----------------------------------------------------------------------------------------------o
+UI16 CChar::GetPathTargY( void ) const
+{
+	UI16 rVal = DEFNPC_PATHFAIL;
+	rVal = mNPC->pathTargY;
+	return rVal;
+}
+void CChar::SetPathTargY( UI16 newValue )
+{
+	if( IsValidNPC() )
+		mNPC->pathTargY = newValue;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 GetHunger( void ) const
 //|					bool SetHunger( SI08 newValue )

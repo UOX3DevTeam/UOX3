@@ -91,7 +91,8 @@ enum ScriptEvent
 	seOnDropItemOnItem,
 	seOnVirtueGumpPress,
 	seOnUseBandageMacro,	//	**	allows overriding what happens when client uses bandage macros
-	seOnHouseCommand		//	**	allows overriding what happens when player speaks house commands
+	seOnHouseCommand,		//	**	allows overriding what happens when player speaks house commands
+	seOnPathfindEnd
 };
 
 struct SEGump
@@ -161,6 +162,7 @@ public:
 	bool		InRange( CChar *person, CBaseObject *objInRange );
 	bool		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	bool		OnSteal( CChar *thief, CItem *theft );
+	bool		OnPathfindEnd( CChar *npc, SI08 pathfindResult );
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );

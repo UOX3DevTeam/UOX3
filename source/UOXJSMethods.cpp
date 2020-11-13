@@ -5799,7 +5799,11 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 #if defined( UOX_DEBUG_MODE )
 	Console.print( format("WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps) );
 #endif
-	cMove->SetOldNpcWander( cMove->GetNpcWander() );
+	if( cMove->GetNpcWander() != WT_PATHFIND )
+	{
+		// Only update oldNpcWander if NPC is not already pathfinding
+		cMove->SetOldNpcWander( cMove->GetNpcWander() );
+	}
 	cMove->SetNpcWander( WT_PATHFIND );
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 		Movement->AdvancedPathfinding( cMove, gx, gy, false );
@@ -5883,7 +5887,11 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 #if defined( UOX_DEBUG_MODE )
 	Console.print(format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps) );
 #endif
-	cMove->SetOldNpcWander( cMove->GetNpcWander() );
+	if( cMove->GetNpcWander() != WT_PATHFIND )
+	{
+		// Only update oldNpcWander if NPC is not already pathfinding
+		cMove->SetOldNpcWander( cMove->GetNpcWander() );
+	}
 	cMove->SetNpcWander( WT_PATHFIND );
 
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )

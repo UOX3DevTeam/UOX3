@@ -68,6 +68,9 @@ private:
 		UI08				splitChance;
 
 		SI08				pathFail;
+		SI08				pathResult;
+		UI16				pathTargX;
+		UI16				pathTargY;
 
 		SI16				fx[2]; //NPC Wander Point x
 		SI16				fy[2]; //NPC Wander Point y
@@ -596,6 +599,14 @@ public:
 
 	SI08		GetPathFail( void ) const;
 	void		SetPathFail( SI08 newValue );
+
+	SI08		GetPathResult( void ) const;
+	void		SetPathResult( SI08 newValue );
+
+	UI16		GetPathTargX( void ) const;
+	void		SetPathTargX( UI16 newValue );
+	UI16		GetPathTargY( void ) const;
+	void		SetPathTargY( UI16 newValue );
 
 	void			SetGuarding( CBaseObject *newValue );
 
