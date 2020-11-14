@@ -14,6 +14,7 @@
 	Spellcasting NPCs that cannot pathfind all the way to their target in combat will now attempt to pathfind to an area near the target instead
 	Fixed an issue that prevented tiller-men from being correctly associated with their boats after a server restart
 	Fixed an issue with combat where ranged characters could shoot bows further than the allowed max range for archery specified in uox.ini
+	Fixed a compiler issue with GCC versions below 9.x in various Linux distros, by including iomanip library in UOPInterface.cpp and adding -lstdc++fs to CXXFLAGS in Makefile
 
 14/11/2020 - Xuri (0.99.4a)
 	Improved JS NPC methods WalkTo()/RunTo() so path is recalculated when blocked by other characters after original calculation took place. Only applies while advanced pathfinding is enabled in uox.ini.

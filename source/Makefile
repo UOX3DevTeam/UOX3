@@ -1,7 +1,7 @@
 BASE		:= ..
 SPIDER		:= $(BASE)/spidermonkey
 CXX			:= g++
-CXXFLAGS	:= -std=c++17 -O2 -pthread
+CXXFLAGS	:= -std=c++17 -O2 -pthread -lstdc++fs
 LDFLAGS		:= -L$(SPIDER)  -ljs32
 TARGET		:= uox3
 INCLUDE		:=  -I$(SPIDER) -I.
@@ -22,7 +22,7 @@ $(BUILD)/%.o: %.cpp
 $(BUILD)/%.o: %.cpp $(DEPDIR)/%.d | $(DEPDIR)
 	@mkdir -p $(@D)
 	$(CXX)  $(DEPFLAGS) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-	
+
 $(DEPDIR): ; @mkdir -p $@
 
 DEPFILES := $(SRC:%.cpp=$(DEPDIR)/%.d)
@@ -37,7 +37,7 @@ $(TARGET): $(OBJECTS)
 
 build:
 	@mkdir -p $(BUILD)
-	
+
 
 .PHONY clean:
 	-@rm -rf $(BUILD)
