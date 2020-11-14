@@ -938,6 +938,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );			break;
 			case CCP_MAXSTAMINA:	*vp = INT_TO_JSVAL( gPriv->GetMaxStam() );			break;
 			case CCP_MAXMANA:		*vp = INT_TO_JSVAL( gPriv->GetMaxMana() );			break;
+			case CCP_OLDWANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetOldNpcWander() );		break;
 			case CCP_WANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetNpcWander() );		break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
 			case CCP_TDEXTERITY:	*vp = INT_TO_JSVAL( gPriv->GetDexterity2() );		break;
@@ -1266,7 +1267,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					myGuild->NewRecruit( gPriv->GetSerial() );
 				}
 				break;
-			case CCP_WANDERTYPE:	gPriv->SetNpcWander( (SI08)encaps.toInt() );		break;
+			case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( (SI08)encaps.toInt() ); 	break;
+			case CCP_WANDERTYPE: 	gPriv->SetNpcWander( (SI08)encaps.toInt() );		break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );				break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );			break;
 			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );				break;

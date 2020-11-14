@@ -442,6 +442,20 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnEnterEvadeStateEvent">onEnterEvadeState</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEnterEvadeState( mNPC, enemyChar )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When mNPC enters evasion state in combat due to being unable to reach enemyChar
+<tr><td valign="top" width="25%"><b>Notes</b><td>As part of entering evasion state, the NPC's health will automatically be reset to maximum
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow custom reactions when NPCs enter evasion state. Could for instance have the NPC lash out in panic and destroy nearby dynamic, non-locked down and blocking items...
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onEnterEvadeState( mNPC, enemyChar )
+{
+	mChar.TextMessage( "I've entered the Evade state! My HP will be replenished..." );
+	enemyChar.TextMessage( "Oops, I caused the NPC to enter Evade state!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnEnterRegionEvent">onEnterRegion</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEnterRegion( pEntering, regionEntered )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pEntering enters regionEntered
@@ -925,10 +939,13 @@ function onSkill( objUsing, skillUsed, objType )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="onSkillCheck">onSkillCheck</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillCheck( pUser, skillID, lowSkill, highSkill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggers for character with event attached when a skillcheck is performed
+<tr><td valign="top" width="25%"><b>Notes</b><td> Does not currently reflect the result of the skill-check, nor allow overriding the hardcoded skillcheck.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking additional action when skillchecks are performed.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillCheck( pUser, skillID, lowSkill, highSkill )
+{
+	pUser.TextMessage( "A skillcheck is being done for skill with ID " + skillID + "!" );
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">

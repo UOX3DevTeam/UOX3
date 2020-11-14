@@ -3286,7 +3286,7 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnPathfindEnd( CChar *thief, CItem *theft )
+//|	Function	-	bool OnPathfindEnd( CChar *ncp, SI08 pathfindResult )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs after their pathfinding efforts come to and end
 //|	Notes		-	pathfindResult gives a value that represents how the pathfinding ended				
@@ -3301,12 +3301,39 @@ bool cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
 
 	jsval params[2], rval;
-	params[0] = OBJECT_TO_JSVAL( charObj );;
+	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( pathfindResult );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onPathfindEnd", 2, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnPathfindEnd, false );
+
+	return ( retVal == JS_TRUE );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool OnEnterEvadeState( CChar *npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for NPCs when they enter the evade state after failing to pathfind to
+//|					a target in combat
+//o-----------------------------------------------------------------------------------------------o
+bool cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
+{
+	if( !ValidateObject( npc ) || !ValidateObject( enemy ))
+		return false;
+	if( !ExistAndVerify( seOnEnterEvadeState, "onEnterEvadeState" ) )
+		return false;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
+	JSObject *enemyObj = JSEngine->AcquireObject( IUE_CHAR, enemy, runTime );
+
+	jsval params[2], rval;
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( enemyObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEnterEvadeState", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnEnterEvadeState, false );
 
 	return ( retVal == JS_TRUE );
 }

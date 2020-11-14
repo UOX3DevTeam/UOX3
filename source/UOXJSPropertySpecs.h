@@ -198,6 +198,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "maxhp",			CCP_MAXHP,			JSPROP_ENUMANDPERM },
 	{ "maxstamina",		CCP_MAXSTAMINA,		JSPROP_ENUMANDPERM },
 	{ "maxmana",		CCP_MAXMANA,		JSPROP_ENUMANDPERM },
+	{ "oldWandertype",	CCP_OLDWANDERTYPE,	JSPROP_ENUMANDPERM },
 	{ "wandertype",		CCP_WANDERTYPE,		JSPROP_ENUMANDPERM },
 	{ "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM },
 	{ "tempdex",		CCP_TDEXTERITY,		JSPROP_ENUMANDPERM },

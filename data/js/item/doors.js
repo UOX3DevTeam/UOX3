@@ -343,7 +343,7 @@ function FindKeyInPack( pUser, pPack, iUsed )
 	{
 		if( toCheck.isContType )
 		{
-			if( FindKeyInPack( toCheck, iUsed ) )
+			if( FindKeyInPack( pUser, toCheck, iUsed ) )
 				return true;
 		}
 		else if( toCheck.more == iUsed.more )

@@ -1451,7 +1451,7 @@ bool CBoatObj::HandleLine( UString &UTag, UString &data )
 			case 'T':
 				if( UTag == "TILLER" )
 				{
-					SetTiller( str_value<std::uint16_t>(data) );
+					SetTiller( str_value<std::uint32_t>(data) );
 					rvalue = true;
 				}
 				break;

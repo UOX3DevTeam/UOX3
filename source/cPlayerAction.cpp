@@ -2160,17 +2160,17 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			mSock->sysmessage( 434 );
 			return true;
 		case IT_TILLER:	// Tillerman
-			if( ValidateObject( GetBoat( mSock ) ) )
+		{
+			CBoatObj *boat = static_cast<CBoatObj *>( iUsed->GetMultiObj() );
+			if( ValidateObject( boat ))
 			{
-				CBoatObj *boat = static_cast<CBoatObj *>(iUsed->GetMultiObj());
-				if( ValidateObject( boat ) )
+				if( objInRange( mChar, boat, DIST_INRANGE ))
 					ModelBoat( mSock, boat );
-			}
-			else
-			{
-				mSock->sysmessage( "You must be onboard the boat to use this." );
+				else
+					mSock->sysmessage( 461 ); // You are too far away.
 			}
 			return true;
+		}
 		case IT_GUILDSTONE:	// Guildstone Deed
 			if( itemID == 0x14F0 || itemID == 0x1869 )	// Check for Deed/Teleporter + Guild Type
 			{
@@ -2506,7 +2506,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		return false;
 	}
 	// Range check for double clicking on items
-	if( iType != IT_PLANK && iType != IT_HOUSESIGN )
+	if( iType != IT_PLANK && iType != IT_TILLER && iType != IT_HOUSESIGN )
 	{
 		bool canUse = checkItemRange( ourChar, iUsed );
 		if( canUse )
@@ -2538,7 +2538,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 			}
 		}
 		// Check if item is in a house?
-		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK && iType != IT_HOUSESIGN )
+		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK && iType != IT_HOUSESIGN && iType != IT_TILLER )
 		{
 			if( iUsed->GetMultiObj() != NULL && iUsed->GetMultiObj() != ourChar->GetMultiObj() )
 			{

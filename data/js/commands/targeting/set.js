@@ -395,6 +395,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		}
 		break;
 	case "NPCWANDER":
+		ourChar.oldwandertype = nVal;
 		ourChar.wandertype = nVal;
 		okMsg( socket );
 		break;

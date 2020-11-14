@@ -1,3 +1,20 @@
+15/11/2020 - Xuri (0.99.4b)
+	Fixed an issue with NPC trainers where they would list incorrectly the available skills players could train
+	Fixed an issue where house key could not be used to open locked doors if key was not contained in root of player's backpack (UOX3/js/item/doors.js)
+	When NPCs in wanderTypes WT_BOX, WT_CIRCLE or WT_FREE are blocked too many times from moving by other characters, they will now pause for 60 seconds before attempting to move again
+	Exposed .oldWanderType NPC property to JS engine, and updated 'set command to also update this property when manually changing NPC wanderType
+	Reduced max attempts at calculating path for NPCs in wanderTypes WT_BOX, WT_CIRCLE or WT_FREE to 25 steps, unless they are evading and attempting to move back into their original wander box/circle
+	NPCs who enter "evasion" state because they are unable to find a valid path to an attacker will now have their health reset to maximum, to prevent an exploit to take down any NPCs without risk of taking any damage in return
+	JS Methods WalkTo() and RunTo() now actually make use of the provided maxSteps parameter when advanced pathfinding is enabled; previously it would default to 500 steps.
+	Added new JS event that triggers when an NPC enters evasion state in combat due to being unable to reach their target
+		onEnterEvadeState( mNPC, enemyChar ) // enemyChar would be the character they are unable to reach
+	Added a new command - 'cure - that can cure a targeted character of any poisons (UOX3/js/commands/targeting/stats.js)
+	NPCs of same race will no longer attack one another if hit by each other's AoE spells
+	Fixed an issue with NPC pathfinding in combat that prevented ranged NPCs from closing in on their targets when losing LoS
+	Spellcasting NPCs that cannot pathfind all the way to their target in combat will now attempt to pathfind to an area near the target instead
+	Fixed an issue that prevented tiller-men from being correctly associated with their boats after a server restart
+	Fixed an issue with combat where ranged characters could shoot bows further than the allowed max range for archery specified in uox.ini
+
 14/11/2020 - Xuri (0.99.4a)
 	Improved JS NPC methods WalkTo()/RunTo() so path is recalculated when blocked by other characters after original calculation took place. Only applies while advanced pathfinding is enabled in uox.ini.
 	Added new JS event that triggers when pathfinding comes to an end after using WalkTo/RunTo JS methods:

@@ -92,7 +92,8 @@ enum ScriptEvent
 	seOnVirtueGumpPress,
 	seOnUseBandageMacro,	//	**	allows overriding what happens when client uses bandage macros
 	seOnHouseCommand,		//	**	allows overriding what happens when player speaks house commands
-	seOnPathfindEnd
+	seOnPathfindEnd,
+	seOnEnterEvadeState
 };
 
 struct SEGump
@@ -163,6 +164,7 @@ public:
 	bool		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	bool		OnSteal( CChar *thief, CItem *theft );
 	bool		OnPathfindEnd( CChar *npc, SI08 pathfindResult );
+	bool		OnEnterEvadeState( CChar *npc, CChar *enemy );
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
