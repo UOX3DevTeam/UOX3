@@ -5806,7 +5806,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	cMove->SetNpcWander( WT_PATHFIND );
 	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-		Movement->AdvancedPathfinding( cMove, gx, gy, false );
+		Movement->AdvancedPathfinding( cMove, gx, gy, false, maxSteps );
 	else
 		Movement->PathFind( cMove, gx, gy, false, maxSteps );
 	return JS_TRUE;

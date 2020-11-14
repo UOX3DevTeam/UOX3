@@ -55,6 +55,8 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		return false;
 	if( cAttack->GetNPCAiType() == AI_DUMMY ) // If passive, don't allow attack
 		return false;
+	if( cAttack->IsNpc() && cTarget->IsNpc() && cAttack->GetRace() == cTarget->GetRace() ) // Don't allow combat between NPCs of the same race
+		return false;
 
 	// Check if combat is allowed in attacker AND target's regions, but allow it if it's a guard
 	if( cAttack->GetNPCAiType() != AI_GUARD && ( cAttack->GetRegion()->IsSafeZone() || cTarget->GetRegion()->IsSafeZone() ))
@@ -2256,6 +2258,14 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 			{
 				if( charInRange( &mChar, ourTarg ) )
 				{
+					if( getCombatSkill( getWeapon( &mChar ) ) == ARCHERY )
+					{
+						if( getDist( &mChar, ourTarg ) > cwmWorldState->ServerData()->CombatArcherRange() )
+						{
+							return;
+						}
+					}
+
 					validTarg = true;
 					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 2 ) )
 						HandleNPCSpellAttack( &mChar, ourTarg, getDist( &mChar, ourTarg ) );

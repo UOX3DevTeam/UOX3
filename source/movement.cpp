@@ -250,7 +250,8 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				{
 					UI16 fx2Actual = 0;
 					UI16 fy2Actual = 0;
-					if( c->GetNpcWander() == WT_FLEE )
+					SI08 npcWanderType = c->GetNpcWander();
+					if( npcWanderType == WT_FLEE )
 					{
 						// If NPC fails to flee, make him re-attack instead!
 						c->SetFleeAt( 0 );
@@ -259,7 +260,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 						c->SetTimer( tNPC_MOVETIME, BuildTimeValue( c->GetRunningSpeed() ) );
 						c->SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
 					}
-					else if( c->GetNpcWander() == WT_FOLLOW )
+					else if( npcWanderType == WT_FOLLOW )
 					{
 						// If NPC following fails to follow, make it stop
 						c->SetOldTargLocX( 0 );
@@ -267,13 +268,13 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 						c->SetNpcWander( WT_NONE );
 						c->TextMessage( NULL, "[Stops following]", SYSTEM, false );
 					}
-					else if( c->GetNpcWander() == WT_BOX )
+					else if( npcWanderType == WT_BOX )
 					{
 						fx2Actual = fx2;
 						fy2Actual = fy2;
 						BoundingBoxTeleport( c, fx2Actual, fy2Actual, oldx, oldy );
 					}
-					else if( c->GetNpcWander() == WT_CIRCLE )
+					else if( npcWanderType == WT_CIRCLE )
 					{
 						fx2Actual = fx1 + fx2;
 						fy2Actual = fy1 + fx2;
@@ -313,8 +314,18 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			else
 			{
 				c->FlushPath();
-				c->SetPathResult( 0 ); // partial success
+				c->SetPathResult( 0 ); // partial success, but blocked by character
 				c->SetPathFail( 0 );
+
+				// Pause attempts to move if pathfind keeps failing
+				// Wandermode will be restored in HandleNPCWander()
+				auto npcWanderType = c->GetNpcWander();
+				if( npcWanderType == WT_BOX || npcWanderType == WT_CIRCLE || npcWanderType == WT_FREE )
+				{
+					c->SetOldNpcWander( npcWanderType );
+					c->SetNpcWander( WT_NONE );
+					c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 30 ) );
+				}
 				return;
 			}
 		}
@@ -1718,9 +1729,12 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 	bool canRun		= false;
 	CChar *kChar	= NULL;
 	UI08 j;
-	switch( mChar.GetNpcWander() )
+	SI08 npcWanderType = mChar.GetNpcWander();
+	switch( npcWanderType )
 	{
 		case WT_NONE: // No movement
+			if( mChar.GetOldNpcWander() != WT_NONE && mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() )
+				mChar.SetNpcWander( mChar.GetOldNpcWander() );
 			break;
 		case WT_FOLLOW: // Follow the follow target
 			kChar = mChar.GetFTarg();
@@ -1798,7 +1812,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			else	// Move in the same direction the majority of the time
 				j = mChar.GetDir();
 			shouldRun = (( j&0x80 ) != 0);
-			NpcWalk( &mChar, j, mChar.GetNpcWander() );
+			NpcWalk( &mChar, j, npcWanderType );
 			break;
 		case WT_FROZEN:			// No movement whatsoever!
 			break;
@@ -1872,7 +1886,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 				else	// Move in the same direction the majority of the time
 					j = mChar.GetDir();
 				shouldRun = (( j&0x80 ) != 0);
-				NpcWalk( &mChar, j, mChar.GetNpcWander() );
+				NpcWalk( &mChar, j, npcWanderType );
 			}
 			break;
 		case WT_PATHFIND:		// Pathfinding!!!!
@@ -1926,69 +1940,158 @@ void cMovement::NpcMovement( CChar& mChar )
 			if( ValidateObject( l ) && ( isOnline( (*l) ) || l->IsNpc() ) )
 			{
 				const UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
-
 				const UI16 charDist	= getDist( &mChar, l );
+
+				// NPC is using a ranged weapon, and is within range to shoot at the target
 				if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= cwmWorldState->ServerData()->CombatArcherRange() ) ) )
 				{
-					mChar.FlushPath();
-
 					bool los = LineOfSight( NULL, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
-					if( los && charDir != mChar.GetDir() )
+					if( los )
 					{
-						mChar.SetDir( charDir );
-						Walking( NULL, &mChar, charDir, 256 );
+						// Turn towards target
+						if( charDir != mChar.GetDir() )
+							mChar.SetDir( charDir );
+
+						// No need to move any closer
+						mChar.FlushPath();
+						mChar.SetOldTargLocX( 0 );
+						mChar.SetOldTargLocY( 0 );
 						return;
 					}
 					else if(( !los && charDist <= 1 ) || ( !los && mChar.GetZ() - l->GetZ() >= 20 ))
 					{
+						// We're right next to target, but still have no LoS - or height difference is too large
+						mChar.FlushPath();
 						mChar.SetOldTargLocX( 0 );
 						mChar.SetOldTargLocY( 0 );
-						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 5 ) );
-						mChar.SetEvadeState( true );
+						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ) );
 						mChar.TextMessage( NULL, "[Evading]", SYSTEM, false );
+						mChar.SetHP( mChar.GetMaxHP() );
+						mChar.SetEvadeState( true );
 						Combat->InvalidateAttacker( &mChar );
 						//Console.Warning( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+
+						UI16 targTrig		= mChar.GetScriptTrigger();
+						cScript *toExecute	= JSMapping->GetScript( targTrig );
+						if( toExecute != NULL )
+							toExecute->OnEnterEvadeState( &mChar, l );
+						return;
+					}
+				}
+
+				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+				{
+					// Don't always re-calculate pathfinding on every step
+					// Update some of the time if target moves, but also use what we already have
+					SI16 targX = 0;
+					SI16 targY = 0;
+					SI16 oldTargX = 0;
+					SI16 oldTargY = 0;
+					oldTargX = mChar.GetOldTargLocX();
+					oldTargY = mChar.GetOldTargLocY();
+
+					if( mChar.GetPathFail() > 10 && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange() )
+					{
+						// NPC already within spellcasting distance, we can forgive a lack of pathfinding to target
+						UI08 NewDir = Direction( &mChar, l->GetX(), l->GetY() );
+						
+						// Turn towards target
+						if( NewDir != mChar.GetDir() )
+							mChar.SetDir( NewDir );
+
+						// Clear pathfinding data
+						mChar.FlushPath();
+						mChar.SetOldTargLocX( 0 );
+						mChar.SetOldTargLocY( 0 );
+						mChar.SetPathFail( 0 );
+
+						// Temporary change NPC's wandermode to none, and try pathfinding again in 5 seconds
+						if( mChar.GetNpcWander() != WT_NONE )
+							mChar.SetOldNpcWander( mChar.GetNpcWander() );
+						mChar.SetNpcWander( WT_NONE );
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 5 ) );
+						return;
+					}
+					else if( mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 )
+					{
+						targX = mChar.GetPathTargX();
+						targY = mChar.GetPathTargY();
+					}
+					else
+					{
+						targX = l->GetX();
+						targY = l->GetY();
+					}
+
+					if( !mChar.StillGotDirs() || (( oldTargX != targX || oldTargY != targY ) && RandomNum( 0, 10 ) >= 6 ))
+					{
+						if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun ) )
+						{
+							mChar.SetPathFail( mChar.GetPathFail() + 1 );
+
+							if( mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 )
+							{
+								// What if we try another location that's nearby the target, but not exactly the target?
+								SI16 rndNum1 = RandomNum( -2, 2 );
+								SI16 rndNum2 = RandomNum( -2, 2 );
+								SI16 rndTargX = l->GetX() + rndNum1;
+								SI16 rndTargY = l->GetY() + rndNum2;
+
+								if( AdvancedPathfinding( &mChar, rndTargX, rndTargY, canRun ) )
+								{
+									mChar.SetPathFail( 0 );
+									mChar.SetOldTargLocX( rndTargX );
+									mChar.SetOldTargLocY( rndTargY );
+									mChar.SetPathTargX( static_cast<UI16>( rndTargX ));
+									mChar.SetPathTargY( static_cast<UI16>( rndTargY ));
+								}
+								else
+								{
+									mChar.SetPathFail( mChar.GetPathFail() + 1 );
+								}
+							}
+
+							if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
+							{
+								if( mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange() )
+								{
+									// NPC already within spellcasting distance, we can forgive a lack of pathfinding to target
+									UI08 NewDir = Direction( &mChar, l->GetX(), l->GetY() );
+									if( NewDir != mChar.GetDir() )
+										mChar.SetDir( NewDir );
+									return;
+								}
+
+								mChar.FlushPath();
+								mChar.SetOldTargLocX( 0 );
+								mChar.SetOldTargLocY( 0 );
+								mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ) );
+								mChar.TextMessage( NULL, "[Evading]", SYSTEM, false );
+								mChar.SetHP( mChar.GetMaxHP() );
+								mChar.SetEvadeState( true );
+								Combat->InvalidateAttacker( &mChar );
+								//Console.Warning( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+
+								UI16 targTrig		= mChar.GetScriptTrigger();
+								cScript *toExecute	= JSMapping->GetScript( targTrig );
+								if( toExecute != NULL )
+									toExecute->OnEnterEvadeState( &mChar, l );
+							}
+						}
+						else
+						{
+							// Pathfinding ok!
+							mChar.SetPathFail( 0 );
+							mChar.SetOldTargLocX( l->GetX() );
+							mChar.SetOldTargLocY( l->GetY() );
+						}
 					}
 				}
 				else
-				{
-					if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-					{
-						// Don't always re-calculate pathfinding on every step
-						// Update some of the time if target moves, but also use what we already have
-						SI16 oldTargX = 0;
-						SI16 oldTargY = 0;
-						oldTargX = mChar.GetOldTargLocX();
-						oldTargY = mChar.GetOldTargLocY();
-
-						if( !mChar.StillGotDirs() || (( oldTargX != l->GetX() || oldTargY != l->GetY() ) && RandomNum( 0, 10 ) >= 6 ))
-						{
-							if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun ) )
-							{
-								if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
-								{
-									mChar.SetOldTargLocX( 0 );
-									mChar.SetOldTargLocY( 0 );
-									mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 5 ) );
-									mChar.SetEvadeState( true );
-									mChar.TextMessage( NULL, "[Evading]", SYSTEM, false );
-									Combat->InvalidateAttacker( &mChar );
-									//Console.Warning( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
-								}
-							}
-							else
-							{
-								mChar.SetOldTargLocX( l->GetX() );
-								mChar.SetOldTargLocY( l->GetY() );
-							}
-						}
-					}
-					else
-						PathFind( &mChar, l->GetX(), l->GetY(), canRun );
-					const UI08 j	= mChar.PopDirection();
-					shouldRun		= (( j&0x80 ) != 0);
-					Walking( NULL, &mChar, j, 256 );
-				}
+					PathFind( &mChar, l->GetX(), l->GetY(), canRun ); // Non-advanced pathfinding
+				const UI08 j	= mChar.PopDirection();
+				shouldRun		= (( j&0x80 ) != 0);
+				Walking( NULL, &mChar, j, 256 );
 			}
 			else
 				mChar.FlushPath();
@@ -1996,15 +2099,18 @@ void cMovement::NpcMovement( CChar& mChar )
 		else
 			shouldRun = HandleNPCWander( mChar );
 
+		SI08 npcWanderType = mChar.GetNpcWander();
 		if( shouldRun )
 		{
-			if ( mChar.GetNpcWander() == WT_FOLLOW )
+			if( npcWanderType == WT_FOLLOW )
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 ) ); // Increase follow speed so NPC pets/escorts can keep up with players
-			else if ( mChar.GetNpcWander() != WT_FLEE )
+			else if( npcWanderType != WT_FLEE )
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
 			else
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
 		}
+		else if( npcWanderType == WT_NONE && mChar.GetOldNpcWander() != WT_NONE && !mChar.IsAtWar() )
+			return;
 		else
 			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
 	}
@@ -2594,27 +2700,40 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 //|	Purpose		-	Handle the advanced variant of NPC pathfinding
 //|					Enabled/Disabled throuugh UOX.INI setting - ADVANCEDPATHFINDING=0/1
 //o-----------------------------------------------------------------------------------------------o
-bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun )
+bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, UI16 maxSteps )
 {
 	UI16 curX			= mChar->GetX();
 	UI16 curY			= mChar->GetY();
-	SI08 curZ			= mChar->GetZ();
-	UI08 dirToPush		= UNKNOWNDIR;
+	SI08 curZ			= mChar->GetZ();;
 	UI08 oldDir			= mChar->GetDir();
-	size_t loopCtr		= 0;
-	size_t maxSteps		= 500; //default
+	UI16 loopCtr		= 0;
 
 	// Set target location in NPC's mind
 	mChar->SetPathTargX( targX );
 	mChar->SetPathTargY( targY );
 
-	// Modify maxSteps to fit different scenarios. Might need tweaking/additional scenarios.
-	if( mChar->GetNpcWander() == WT_FLEE )
-		maxSteps = 50;
-	else if( mChar->GetNpcWander() == WT_FOLLOW )
-		maxSteps = 150;
-	else if( mChar->IsAtWar() )
-		maxSteps = 300;
+	// If no maxSteps was provided, set appropriate value based on current scenario
+	if( maxSteps == 0 )
+	{
+		SI08 npcWanderType = mChar->GetNpcWander();
+		if( npcWanderType == WT_FREE || npcWanderType == WT_BOX || npcWanderType == WT_CIRCLE )
+		{
+			if( mChar->IsEvading() ) // If they are evading, they might be attempting to move back to original wanderZone
+				maxSteps = 100;
+			else
+				maxSteps = 30;
+		}
+		else if( npcWanderType == WT_FLEE )
+			maxSteps = 75;
+		else if( npcWanderType == WT_FOLLOW )
+			maxSteps = 150;
+		else if( mChar->IsAtWar() && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) >= 30 )
+			maxSteps = 200;
+		else if( mChar->IsAtWar() )
+			maxSteps = 75;
+		else
+			maxSteps = 500;
+	}
 
 	std::map< UI32, pfNode >	openList;
 	std::map< UI32, UI32 >		closedList;

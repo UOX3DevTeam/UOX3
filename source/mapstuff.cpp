@@ -1601,7 +1601,7 @@ UI08 CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 
 	// Check if house placement is allowed in region
 	CTownRegion *calcReg = calcRegionFromXY( x, y, worldNumber, instanceID );
-	if( !calcReg->CanPlaceHouse() || calcReg->IsDungeon() || calcReg->IsGuarded() )
+	if(( !calcReg->CanPlaceHouse() && checkWater) || calcReg->IsDungeon() || ( calcReg->IsGuarded() && checkWater ))
 		return 3;
 
 	// Else, all good!

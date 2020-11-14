@@ -471,33 +471,44 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				{
 					if( !Npc->CanTrain() )
 					{
-						Npc->TextMessage( mSock, 1302, TALK, false );
+						Npc->TextMessage( mSock, 1302, TALK, false ); // I am sorry, but I have nothing to teach thee.
 						continue;
 					}
 					Npc->SetTrainingPlayerIn( 255 ); // Like above, this is to prevent  errors when a player says "train <skill>" then doesn't pay the npc
-					temp =  Dictionary->GetEntry( 1303 );
+					temp =  Dictionary->GetEntry( 1303 ); // I can teach thee the following skills:
 					UI08 skillsToTrainIn = 0;
+					UI08 lastCommaPos = 0;
 					for( UI08 j = 0; j < ALLSKILLS; ++j )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
 							temp2= str_tolower(cwmWorldState->skill[j].name);
 							if( !skillsToTrainIn ) {
-								temp2[1] = toupper( temp2[1] ); // If it's the first skill,  capitalize it.
+								temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it, and add a space in front.
+								temp += (" " + temp2);
 							}
-							if( skillsToTrainIn > 10 ) // to stop UOX3 from crashing/sentence being cut off if NPC is too knowledgable!
+							else if( skillsToTrainIn <= 10 )
 							{
-								temp += std::string(" and possibly more ");
-
+								// Additional skills
+								lastCommaPos = static_cast<UI08>(temp.size()) + 1;
+								temp += (", " + temp2);
+							}
+							else if( skillsToTrainIn > 10 ) // to stop UOX3 from crashing/sentence being cut off if NPC is too knowledgable!
+							{
+								temp += std::string(" and possibly more");
 								break;
 							}
-							temp += temp2 ;
 							++skillsToTrainIn;
 						}
 					}
+					if( skillsToTrainIn <= 10 )
+					{
+						// Replace last comma with " and "
+						temp.replace( lastCommaPos, 1, " and " );
+					}
 					if( skillsToTrainIn )
 					{
-						temp[temp.size()- 1] = '.'; // Make last character a . not a ,  just to look nicer
+						temp += '.'; // Make last character a . just to look nicer
 						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else

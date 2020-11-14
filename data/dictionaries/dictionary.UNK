@@ -1942,5 +1942,7 @@
 1970=A deed for the house add-on has been placed in your backpack.
 1971=You are too busy to do that.
 1972=A guildstone transporter object has been placed in your backpack. Use it to move the guildstone to a new location.
+1973=You cannot engage in combat while invulnerable!
+1974=Select person to cure.
 }
 EOF
