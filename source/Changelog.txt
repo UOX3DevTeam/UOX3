@@ -1,5 +1,5 @@
 15/11/2020 - Xuri
-	Fixed a compiler issue with GCC versions below 9.x in various Linux distros, by including iomanip library in UOPInterface.cpp and adding -lstdc++fs to CXXFLAGS in Makefile
+	Fixed a compiler issue with GCC versions below 9.x in various Linux distros, by including iomanip library in UOPInterface.cpp and adding -lstdc++fs to the Makefile
 
 15/11/2020 - Xuri (0.99.4b)
 	Fixed an issue with NPC trainers where they would list incorrectly the available skills players could train
