@@ -1,7 +1,7 @@
 BASE		:= ..
 SPIDER		:= $(BASE)/spidermonkey
 CXX			:= g++
-CXXFLAGS	:= -std=c++17 -O2 -pthread -lstdc++fs
+CXXFLAGS	:= -std=c++17 -O2 -pthread
 LDFLAGS		:= -L$(SPIDER)  -ljs32
 TARGET		:= uox3
 INCLUDE		:=  -I$(SPIDER) -I.
@@ -31,7 +31,7 @@ $(DEPFILES):
 include $(wildcard $(DEPFILES))
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs
 
 .PHONY: all build clean
 
