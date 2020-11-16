@@ -211,6 +211,8 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 2:		// Name
 		case 3:		// Name 2
 		case 35:	// Creator
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 495 + button );
+			break;
 		case 43:	// BaseWeight
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 1800 );	// allow 0x for hex value
 			break;
@@ -1564,7 +1566,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 		CItem *j = calcItemObjFromSer( id );
 		if( !ValidateObject( j ) )
 			return;
-		if( unk[0] == 0 )
+		if( unk[0] == 0 ) // cancel button was pressed
 		{
 			tweakItemMenu( tSock, j );
 			return;
@@ -1576,18 +1578,21 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 3:		j->SetName2( reply.c_str() );				break;	// Name 2
 			case 4:		j->SetColour( reply.toUShort() );			break;	// Colour
 			case 5:		j->SetLayer( static_cast<ItemLayers>(reply.toUByte()) );		break;	// Layer
-			case 6:
+			case 6: // Type
 				if( ( reply.toUByte() >= 61 && reply.toUByte() <= 65 ) || reply.toUByte() == 69 || reply.toUByte() == 125 )
 				{
 					if( j->GetObjType() == OT_SPAWNER )
 					{
-						j->SetType( static_cast<ItemTypes>( reply.toUByte() ) );			break;	// Type
+						j->SetType( static_cast<ItemTypes>( reply.toUByte() ) );
 					}
 					else
 					{
 						tSock->sysmessage( "This item type can only be set on spawner objects added with the 'ADD SPAWNER # command." );
 					}
 				}
+				else
+					j->SetType( static_cast<ItemTypes>( reply.toUByte() ) );
+				break;
 			case 7:		j->SetMovable( reply.toByte() );			break;	// Moveable
 			case 8:		j->SetLocation( reply.toShort(), j->GetY(), j->GetZ() );			break;	// X
 			case 9:		j->SetLocation( j->GetX(), reply.toShort(), j->GetZ() );			break;	// Y

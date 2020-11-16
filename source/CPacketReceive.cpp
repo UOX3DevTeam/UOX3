@@ -2894,10 +2894,14 @@ void CPIGumpInput::Receive( void )
 	id		= tSock->GetDWord( 3 );
 	type	= tSock->GetByte( 7 );
 	index	= tSock->GetByte( 8 );
-	unk[0]	= tSock->GetByte( 9 );
+	unk[0]	= tSock->GetByte( 9 ); // 1 == ok, 0 == cancel
 	unk[1]	= tSock->GetByte( 10 );
-	unk[2]	= tSock->GetByte( 11 );
+	unk[2]	= tSock->GetByte( 11 ); // Length of reply
 	reply	= (char *)&(tSock->Buffer()[12]);
+
+	// If no value was actually returned, treat it as a cancel!
+	if( unk[0] == 1 && reply == "" )
+		unk[0] = 0;
 }
 
 UI32 CPIGumpInput::ID( void ) const

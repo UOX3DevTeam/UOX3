@@ -1,3 +1,8 @@
+16/11/2020 - Xuri
+	Fixed an issue with the 'tweak command that would set an item's movable property instead of type if used on non-spawnerobjects
+	Fixed an issue with the 'tweak command that would trigger the wrong gump dialog when attempting to set an item's name, name2 and creator properties
+	Fixed an issue with the 'tweak command where clicking ok in gump dialog with no value entered would reset chosen property to default value
+
 15/11/2020 - Xuri
 	Fixed a compiler issue with GCC versions below 9.x in various Linux distros, by including iomanip library in UOPInterface.cpp and adding -lstdc++fs to the Makefile
 
