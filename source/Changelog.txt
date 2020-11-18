@@ -1,3 +1,17 @@
+19/11/2020 - Xuri (0.99.4c)
+	Exposed Item properties to JS Engine:
+		.dexterity // dexterity required to equip item
+		.intelligence // intelligence required to equip item
+	Fixed issue where changing worldnumber of an item via tweak command would not remove the item from sight of nearby players in the original location
+	Fixed issue where characters teleporting to a new world would sometimes not be removed from sight of nearby players in the original location
+	Fixed issue where being released from jail cells to a location in a different world would not send map change packet
+	Fixed issue where changing worldnumber of a player character via tweak command would not send map change packet
+	Fixed issue where teleporting GM/Counselor to a player's location when responding to a help request would not send map change packet
+	Fixed issue where recalling off a recall rune in a different world would not send map change packet
+	Fixed issue where using travel menu or 'go place # command would not send map change packet when going to a location in a different world
+	When marking recall runes, they will now get a hue reflecting the facet they were marked in (UOX3/js/commands/targeting/magic.js)
+	Tooltips for recall runes will now show the name of the facet they were marked in, with facet names being pulled from entries 1975 to 1980 in the dictionary files
+
 16/11/2020 - Xuri
 	Fixed an issue with the 'tweak command that would set an item's movable property instead of type if used on non-spawnerobjects
 	Fixed an issue with the 'tweak command that would trigger the wrong gump dialog when attempting to set an item's name, name2 and creator properties

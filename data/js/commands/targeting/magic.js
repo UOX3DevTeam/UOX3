@@ -66,5 +66,29 @@ function onCallback2( socket, ourObj )
 		var txtMessage = GetDictionaryEntry( 686 );
 		socket.SysMessage( txtMessage );
 		mChar.Mark( ourObj );
+
+		var worldNum = mChar.worldnumber;
+		switch( worldNum )
+		{
+			case 1: // Trammel
+				ourObj.colour = ( mChar.multi != null ? 1151 : 50 );
+				break;
+			case 2: // Ilshenar
+				ourObj.colour = ( mChar.multi != null ? 1375 : 1102 );
+				break;
+			case 3: // Malas
+				ourObj.colour = ( mChar.multi != null ? 1375 : 1102 );
+				break;
+			case 4: // Tokuno
+				ourObj.colour = ( mChar.multi != null ? 7956 : 1154 );
+				break;
+			case 5: // TerMur
+				ourObj.colour = 1162;
+				break;
+			default: // Felucca
+				ourObj.colour = ( mChar.multi != null ? 1645 : 0 );
+				break;
+		}
+
 	}
 }

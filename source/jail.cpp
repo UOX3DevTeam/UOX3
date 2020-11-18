@@ -177,6 +177,7 @@ void JailCell::PeriodicCheck( void )
 			else
 			{
 				toRelease->SetLocation( playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z, playersInJail[i]->world, playersInJail[i]->instanceID );
+				SendMapChange( toRelease->WorldNumber(), toRelease->GetSocket(), false );
 				toRelease->SetCell( -1 );
 				EraseOccupant( i );
 			}

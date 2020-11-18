@@ -26,7 +26,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 8. November, 2020</small></p>
+	<p style="margin:0"><small>Last Updated: 13. November, 2020</small></p>
 	<p style="margin:0"><small>UOX3 Version: v0.99.4</small></p>
 </div>
 
@@ -57,6 +57,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>November 13th, 2020</h4>
+						<ul>
+							<li>Added dos2unix instructions for Linux/MacOS users downloading default worldfiles/spawnfiles</li>
+						</ul>
 						<h4>November 7th, 2020</h4>
 						<ul>
 							<li>Added complete list of item types</li>
@@ -484,9 +488,11 @@
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>By default, UOX3 comes as a blank slate - a tabula rasa - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you can use of the "Default UOX3 Worldfiles" to add basic decorations such as doors and signs for all the mainland UO towns on the Felucca facet (world 0), and/or the "Community-made Spawn.dfn" file that will populate your world with all kinds of NPCs, from animals and monsters to shopkeepers and townfolk.</p>
+					<p><span class="highlight">Linux/MacOS users take note:</span> you might need to run the default worldfiles and/or spawn files through dos2unix to convert the line breaks to the correct format for your platform, or UOX3 might not be able to read them properly. Just run the command "<span class="highlight">dos2unix *</span>" on the files before copying them into the UOX3/shared and/or UOX3/dfndata/spawn directories.</p>
 					<h3>Default UOX3 Worldfiles</h3>
 					<p><em>Note: It is recommended that you download and add these default worldfiles to your shard BEFORE your first startup and before you create your first character, as applying these will essentially overwrite your existing worldfiles and erase any characters or items you might have created already.</em></p>
 					<p>Click the <strong>Default UOX3 Worldfiles</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file containing a default set of world decorations for your shard. Once the download is complete, unzip this file into your <em>UOX3/shared/</em> folder, overwriting any existing files in that folder.</p>
+
 					<h3>Community-made Spawn.dfn</h3>
 					<p>Click the <strong>Community-made Spawn.dfn</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the <em>UOX3/dfndata/spawn/</em> folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
 				  </div>
@@ -6579,27 +6585,28 @@
 							<input type="checkbox" id="spoiler_history_UOX3_065"/>
 							<label for="spoiler_history_UOX3_065">UOX3 v0.65 Alpha <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> 20th of May, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
+								<p><strong>Fun Facts:</strong> 'SET command added!</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_066"/>
 							<label for="spoiler_history_UOX3_066">UOX3 v0.66 Alpha <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> 26th of May, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
-								<p><strong>Fun Facts:</strong> First iteration of combat system enabled! License update.</p>
+								<p><strong>Fun Facts:</strong> First iteration of combat system enabled (melee only)! License update.</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_067"/>
 							<label for="spoiler_history_UOX3_067">UOX3 v0.67 Alpha <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> 28th of June, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
 								<p><strong>Fun Facts:</strong> First edible food appears! Item type 14. First code contributions by third parties included!</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_067a"/>
 							<label for="spoiler_history_UOX3_067a">UOX3 v0.67a Alpha <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> 29th of June, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
 							</div>
 						</div>
@@ -6609,13 +6616,13 @@
 							<input type="checkbox" id="spoiler_history_UOX3_067a_original"/>
 							<label for="spoiler_history_UOX3_067a_original">UOX3 v0.67a Original<i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> ~1-10th of July, 1998</p>
 								<p><strong>Released by:</strong> Cironian</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_067c"/>
 							<label for="spoiler_history_UOX3_067c">UOX3 v0.67c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> ~1-10th of July, 1998</p>
 								<p><strong>Released by:</strong> Morac</p>
 								<p><strong>Contributors:</strong> Jerrith the Healer, Anthtracks, TMB, Cray XMP1</p>
 								<p><strong>Fun Facts:</strong> First version release coordinated by someone other than Cironian! Teleporters, create food and NPC movement appears!</p>
@@ -6623,20 +6630,20 @@
 							<input type="checkbox" id="spoiler_history_UOX3_067d"/>
 							<label for="spoiler_history_UOX3_067d">UOX3 v0.67d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> ~1-10th of July, 1998</p>
 								<p><strong>Released by:</strong> Jerrith</p>
 								<p><strong>Fun Facts:</strong> NPCWander system introduced, as well as stamina cost for shoving characters!</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_067e"/>
 							<label for="spoiler_history_UOX3_067e">UOX3 v0.67e <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> ~1-10th of July, 1998</p>
 								<p><strong>Released by:</strong> Anthracks</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_067f"/>
 							<label for="spoiler_history_UOX3_067f">UOX3 v0.67f <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> ~1-10th of July, 1998</p>
 								<p><strong>Released by:</strong> Jerrith</p>
 								<p><strong>Contributors:</strong> Morac</p>
 								<p><strong>Fun Facts:</strong> Visibility modes added!</p>
@@ -6644,7 +6651,7 @@
 							<input type="checkbox" id="spoiler_history_UOX3_067g"/>
 							<label for="spoiler_history_UOX3_067g">UOX3 v0.67g <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> Unknown, 1998</p>
+								<p><strong>Release date:</strong> ~1-10th of July, 1998</p>
 								<p><strong>Released by:</strong> Jerrith</p>
 								<p><strong>Fun Facts:</strong> Functional spellbooks!</p>
 							</div>
@@ -6978,20 +6985,20 @@
 							<input type="checkbox" id="spoiler_history_UOX3_068.001"/>
 							<label for="spoiler_history_UOX3_068.001">UOX3 v0.68.001 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Morac</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.002"/>
 							<label for="spoiler_history_UOX3_068.002">UOX3 v0.68.002 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Sir Joseph</p>
 								<p><strong>Contributors:</strong> Krozy</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.003"/>
 							<label for="spoiler_history_UOX3_068.003">UOX3 v0.68.003 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Sir Joseph</p>
 								<p><strong>Contributors:</strong> Morac</p>
 								<p><strong>Fun Facts:</strong> Combat with viking swords now has sound!</p>
@@ -6999,39 +7006,39 @@
 							<input type="checkbox" id="spoiler_history_UOX3_068.004"/>
 							<label for="spoiler_history_UOX3_068.004">UOX3 v0.68.004 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Anthracks</p>
 								<p><strong>Contributors:</strong> Morac, Jerrith, Halin Talismoon</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.005"/>
 							<label for="spoiler_history_UOX3_068.005">UOX3 v0.68.005 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Maytrix</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.006"/>
 							<label for="spoiler_history_UOX3_068.006">UOX3 v0.68.006 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Tal Strake</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.007"/>
 							<label for="spoiler_history_UOX3_068.007">UOX3 v0.68.007 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Maytrix</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.008"/>
 							<label for="spoiler_history_UOX3_068.008">UOX3 v0.68.008 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Maytrix</p>
 								<p><strong>Contributors:</strong> Morac</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_068.009"/>
 							<label for="spoiler_history_UOX3_068.009">UOX3 v0.68.009 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ???, 1998</p>
+								<p><strong>Release date:</strong> ~17th-24th August, 1998</p>
 								<p><strong>Released by:</strong> Maytrix</p>
 								<p><strong>Fun Facts:</strong> Container spawners and ITEMLISTS implemented!</p>
 							</div>
@@ -7636,6 +7643,7 @@
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 1 August, 2000</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Fun Facts:</strong> Also included revamped scripts (v37)!</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_19"/>
 							<label for="spoiler_history_UOX3_070_03_19">UOX3 v0.70.03.19 <i class="fas fa-angle-down"></i></label>
@@ -7656,7 +7664,7 @@
 							<label for="spoiler_history_UOX3_070_03_19b">UOX3 v0.70.03.19b <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 25 September, 2000</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
 								<p><strong>Contributors:</strong> Thyme, Chaos, Gunther, Knoxos, WIG</p>
 							</div>
 							<h4>October, 2000</h4>
@@ -7664,15 +7672,15 @@
 							<label for="spoiler_history_UOX3_070_03_19c">UOX3 v0.70.03.19c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 9 October, 2000</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
 								<p><strong>Contributors:</strong> Dodger, Knoxos, Zippy, Thyme</p>
-								<p><strong>Fun Facts:</strong> Binary based spellbook spell storage!</p>
+								<p><strong>Fun Facts:</strong> Binary based spellbook spell storage! NPCs from spawn regions not saved!</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20"/>
 							<label for="spoiler_history_UOX3_070_03_20">UOX3 v0.70.03.20 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 24 October, 2000</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
 								<p><strong>Contributors:</strong> Thaliq, Gunther, Chaos, Abaddon</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20a"/>
@@ -7681,6 +7689,20 @@
 								<p><strong>Release date:</strong> 25 October, 2000</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
 								<p><strong>Contributors:</strong> Knoxos</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_070_03_20c"/>
+							<label for="spoiler_history_UOX3_070_03_20c">UOX3 v0.70.03.20c <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 26 October, 2000</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
+								<p><strong>Contributors:</strong> Knoxos, Oakwood</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_070_03_20d"/>
+							<label for="spoiler_history_UOX3_070_03_20d">UOX3 v0.70.03.20d <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 4 November, 2000</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
+								<p><strong>Contributors:</strong> Oakwood, Knoxos</p>
 							</div>
 							<h4>November, 2000</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20e_TR1"/>
@@ -7707,7 +7729,7 @@
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20g"/>
 							<label for="spoiler_history_UOX3_070_03_20g">UOX3 v0.70.03.20g <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 20 December, 2000</p>
+								<p><strong>Release date:</strong> 17 December, 2000</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
 								<p><strong>Fun Facts:</strong> CLUOX support added!</p>
 							</div>
@@ -7718,12 +7740,13 @@
 								<p><strong>Release date:</strong> 17 January, 2001</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
 								<p><strong>Contributors:</strong> Xuri, Retalin, Jedda, Tom2, Correa, Knox</p>
+								<p><strong>Fun Facts:</strong> Random combat animations!</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_21a"/>
 							<label for="spoiler_history_UOX3_070_03_21a">UOX3 v0.70.03.21a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 31 January, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers & NW Devs</p>
 								<p><strong>Contributors:</strong> Raftina, Jedda, Chaos, Thyme</p>
 							</div>
 							<h4>February, 2001</h4>
@@ -7752,7 +7775,7 @@
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 16 February, 2001</p>
 								<p><strong>Released by:</strong> UOX Dev Team</p>
-								<p><strong>Contributors:</strong> Thunderstorm.</p>
+								<p><strong>Contributors:</strong> Thunderstorm</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_22"/>
 							<label for="spoiler_history_UOX3_070_03_22">UOX3 v0.70.03.22 <i class="fas fa-angle-down"></i></label>
@@ -7792,41 +7815,41 @@
 						<input type="checkbox" id="spoiler_history_UOX3_timeline_095_era"/>
 						<label for="spoiler_history_UOX3_timeline_095_era">0.95 Versions (2001 - 2002) <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<h4>June, 2001</h4>
+							<h4>July, 2001</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_095_00_01"/>
 							<label for="spoiler_history_UOX3_095_00_01">UOX3 v0.95.00 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 3 June, 2001</p>
+								<p><strong>Release date:</strong> 3 July, 2001</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_095_00_02"/>
 							<label for="spoiler_history_UOX3_095_00_02">UOX3 v0.95.00 Build 2 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ~3-11 June, 2001</p>
+								<p><strong>Release date:</strong> ~3-11 July, 2001</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_095_00_03"/>
 							<label for="spoiler_history_UOX3_095_00_03">UOX3 v0.95.00 Build 3 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ~3-11 June, 2001</p>
+								<p><strong>Release date:</strong> ~3-11 July, 2001</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_095_01"/>
 							<label for="spoiler_history_UOX3_095_01">UOX3 v0.95.01 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ~3-11 June, 2001</p>
+								<p><strong>Release date:</strong> ~3-11 July, 2001</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_095_02_01"/>
 							<label for="spoiler_history_UOX3_095_02_01">UOX3 v0.95.02 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 11 June, 2001</p>
+								<p><strong>Release date:</strong> 11 July, 2001</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_095_03_01"/>
 							<label for="spoiler_history_UOX3_095_03_01">UOX3 v0.95.03 Build 1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 30 June, 2001</p>
+								<p><strong>Release date:</strong> 30 July, 2001</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
 							</div>
 							<h4>August, 2001</h4>
