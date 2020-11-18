@@ -334,6 +334,8 @@ static JSPropertySpec CItemProps[] =
 	{ "weightMax",		CIP_WEIGHTMAX,		JSPROP_ENUMANDPERM },
 	{ "maxItems",		CIP_MAXITEMS,		JSPROP_ENUMANDPERM },
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
+	{ "dexterity",		CIP_DEXTERITY,		JSPROP_ENUMANDPERM },
+	{ "intelligence",	CIP_INTELLIGENCE,	JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
 	{ "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM },

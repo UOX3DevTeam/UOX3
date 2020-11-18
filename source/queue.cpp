@@ -277,7 +277,13 @@ bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 				QNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
 				QNext.Send( 4, false, INVALIDSERIAL );
 				tempPage->IsHandled( true );
-				mChar->SetLocation( isPaging );
+				if( mChar->WorldNumber() != isPaging->WorldNumber() )
+				{
+					mChar->SetLocation( isPaging );
+					SendMapChange( mChar->WorldNumber(), mSock );
+				}
+				else
+					mChar->SetLocation( isPaging );
 				mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
 				retVal = true;
 				break;

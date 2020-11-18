@@ -5843,10 +5843,12 @@ void CPSendGumpMenu::addCommand( const std::string& msg )
 
 void CPSendGumpMenu::addText( const std::string& msg )
 {
-
-
-	if( msg.empty() )
-		throw new std::runtime_error( "Blank text field added!" );
+	if( msg.empty() || msg.size() == 0 )
+	{
+		//throw new std::runtime_error( "Blank text field added!" );
+		Console.error( "Blank text field added!" );
+		return;
+	}
 	auto temp = msg ;
 	if (temp.size() > 512){
 		temp = temp.substr(0,512) ;
@@ -6274,6 +6276,38 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	{
 		tempEntry.stringNum = 1060584;
 		tempEntry.ourText = str_number( cItem.GetTempVar( CITV_MOREZ ) );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+	else if( cItem.GetType() == IT_RECALLRUNE )
+	{
+		// Add a tooltip that says something about where the recall rune is marked
+		switch( cItem.GetTempVar( CITV_MORE ) )
+		{
+			case 1: // Trammel
+				tempEntry.stringNum = 1114778;
+				tempEntry.ourText = "(Trammel)";
+				break;
+			case 2: // Ilshenar
+				tempEntry.stringNum = 1114778;
+				tempEntry.ourText = "(Ilshenar)";
+				break;
+			case 3: // Malas
+				tempEntry.stringNum = 1114778;
+				tempEntry.ourText = "(Malas)";
+				break;
+			case 4: // Tokuno
+				tempEntry.stringNum = 1114778;
+				tempEntry.ourText = "(Tokuno Islands)";
+				break;
+			case 5: // TerMur
+				tempEntry.stringNum = 1114778;
+				tempEntry.ourText = "(Ter Mur)";
+				break;
+			default: // Felucca
+				tempEntry.stringNum = 1114778;
+				tempEntry.ourText = "(Felucca)";
+				break;
+		}
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
@@ -7047,7 +7081,7 @@ void CPHealthBarStatus::CopyData( CChar& mChar )
 //|						Subcommand details
 //|							BYTE[4] Number of maps
 //|							For each map
-//|								BYTE[4] Number of map patches in this map
+//|								BYTE[4] Number of map patches in this map (these two lines are in reverse order!)
 //|								BYTE[4] Number of static patches in this map
 //o-----------------------------------------------------------------------------------------------o
 void CPEnableMapDiffs::InternalReset( void )
@@ -7075,8 +7109,8 @@ void CPEnableMapDiffs::CopyData( void )
 	for( UI08 i = 0; i < mapCount; ++i )
 	{
 		MapData_st &mMap = Map->GetMapData( i );
-		pStream.WriteLong( 9+(i*8), mMap.mapDiffList.size() );
-		pStream.WriteLong( 13+(i*8), mMap.staticsDiffIndex.size() );
+		pStream.WriteLong( 9+(i*8), mMap.staticsDiffIndex.size() );
+		pStream.WriteLong( 13+(i*8), mMap.mapDiffList.size() );	
 	}
 }
 

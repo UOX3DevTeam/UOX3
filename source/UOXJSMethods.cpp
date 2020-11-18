@@ -2141,15 +2141,13 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			}
 			if( myChar->GetInstanceID() != instanceID )
 			{
-				// Remove character from nearby players
-				myChar->RemoveFromSight();
+				// Remove all objects in visible range from sight
 				myChar->RemoveAllObjectsFromSight( mySock );
-				myChar->SetLocation( x, y, z, world, instanceID );
 			}
-			else
-			{
-				myChar->SetLocation( x, y, z, world, instanceID );
-			}
+
+			// Remove character being teleported from nearby players sight
+			myChar->RemoveFromSight();
+			myChar->SetLocation( x, y, z, world, instanceID );
 			SendMapChange( world, mySock );
 		}
 		else
@@ -6227,7 +6225,15 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( !Map->MapExists( destWorld ) )
 		destWorld = mChar->WorldNumber();
 
-	mChar->SetLocation( destX, destY, destZ, destWorld, mChar->GetInstanceID() );
+	if( mChar->WorldNumber() != destWorld && mChar->GetSocket() != NULL )
+	{
+		mChar->SetLocation( destX, destY, destZ, destWorld, mChar->GetInstanceID() );
+		SendMapChange( destWorld, mChar->GetSocket() );
+	}
+	else
+	{
+		mChar->SetLocation( destX, destY, destZ, destWorld, mChar->GetInstanceID() );
+	}
 
 	return JS_TRUE;
 }

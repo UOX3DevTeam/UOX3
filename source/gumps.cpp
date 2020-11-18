@@ -1124,7 +1124,18 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
-					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceID() );
+
+					if( toGoTo.worldNum == 0 && mChar->WorldNumber() <= 1 )
+					{
+						// Stay in same world if already in world 0 or 1
+						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(), mChar->GetInstanceID() );
+					}
+					else if( toGoTo.worldNum != mChar->WorldNumber() )
+					{
+						// Change map!
+						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceID() );
+						SendMapChange( toGoTo.worldNum, s );
+					}
 				}
 			}
 			else if( cmd == "GUIINFORMATION" )
@@ -1630,7 +1641,14 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 41:	j->SetAmmoFXRender( reply.toUShort() );		break; //AmmoFXRender
 			case 42:	j->SetWeightMax( reply.toInt() );			break; //WeightMax
 			case 43:	j->SetBaseWeight( reply.toUInt() );			break; //BaseWeight
-			case 44:	j->WorldNumber( reply.toUByte() );			break; //WorldNumber
+			case 44:
+			{
+				//WorldNumber
+				j->RemoveFromSight();
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), reply.toUByte(), j->GetInstanceID() );
+				j->WorldNumber( reply.toUByte() );
+				break;
+			}
 			case 45:
 			{
 				//InstanceID
@@ -1791,7 +1809,16 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
 			case 28:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
 			case 29:	j->SetScriptTrigger( reply.toUShort() );		break;	// ScriptTrigger ID
-			case 30:	j->WorldNumber( reply.toUByte() );				break; //WorldNumber
+			case 30:	
+			{
+				//WorldNumber
+				j->RemoveFromSight();
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), reply.toUByte(), j->GetInstanceID() );
+				j->WorldNumber( reply.toUByte() );
+				if( j->GetSocket() != NULL )
+					SendMapChange( reply.toUByte(), tSock );
+				break;
+			}
 			case 31:
 			{
 				//InstanceID
