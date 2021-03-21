@@ -1898,7 +1898,7 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ShowCharName( CChar *i, bool showSer )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Shows character name/text on single click
+//|	Purpose		-	Shows character name/text on single click (and via all-names macro)
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::ShowCharName( CChar *i, bool showSer )
 {

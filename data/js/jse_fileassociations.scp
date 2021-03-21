@@ -265,6 +265,7 @@
 1052=commands/time.js
 1053=commands/accountlogins.js
 1054=commands/fixcontweight.js
+1055=commands/targeting/tweak.js
 }
 
 //-------------------------------------------
@@ -300,6 +301,7 @@
 
 [PACKET_SCRIPTS]
 { // 1500-1999
+1500=server/network/0xf1_connectUoServerPoll.js
 }
 
 [CONSOLE_SCRIPTS]

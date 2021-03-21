@@ -593,6 +593,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	if( CreatedItems[PACK] != NULL )
 	{
 		mChar->SetPackItem( CreatedItems[PACK] );
+		CreatedItems[PACK]->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
 		CreatedItems[PACK]->SetDecayable( false );
 		CreatedItems[PACK]->SetLayer( IL_PACKITEM );
 		CreatedItems[PACK]->SetCont( mChar );
@@ -1151,8 +1152,11 @@ void startChar( CSocket *mSock, bool onCreate )
 
 			SendMapChange( mChar->WorldNumber(), mSock, true );
 
-			CPEnableMapDiffs mDiff;
-			mSock->Send( &mDiff );
+			if( cwmWorldState->ServerData()->MapDiffsEnabled() )
+			{
+				CPEnableMapDiffs mDiff;
+				mSock->Send( &mDiff );
+			}
 
 			CPWorldChange wrldChange( mChar->GetRegion()->GetAppearance(), 1 );
 			mSock->Send( &wrldChange );	// need to add this?

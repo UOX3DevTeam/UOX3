@@ -1,8 +1,8 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.99.3                     *
+//*                         UOX3 DFNs v0.99.4d                    *
 //*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
-//* Last Update : 31/12/2004                                      *
+//* Last Update : 19/03/2021                                      *
 //* Script : harditems.dfn                                        *
 //*****************************************************************
 //*                        How to use this script                 *
@@ -18,11 +18,16 @@
 //* NOTE : these settings only work if you add the item via       *
 //*        /add 0x#### NOT /add item <item_number>                *
 //*                                                               *
+//* NOTE2: IDs in headers need to match specific item IDs, in     *
+//*        the format of [x####] (including leading zeroes).      *
+//*        Multiple IDs can be entered for same section using the *
+//*        format [x####x####x####]. Example: x0de1, NOT xde1     *
 //*****************************************************************
 
 //Blood puddle gotten from corpse carving
 [x122A]
 {
+name=blood puddle
 decay=1
 }
 
@@ -34,16 +39,16 @@ type=232
 }
 
 //Kindling
-[0xde1]
+[x0de1]
 {
 pileable=1
 decay=1
 weight=100
-value=0,1
+value=0 1
 }
 
 //Gold
-[xeed]
+[x0eed]
 {
 pileable=1
 decay=1
@@ -74,7 +79,7 @@ decay=1
 
 // Ores
 // Small Ore Pile
-[0x19b7]
+[x19b7]
 {
 weight=200
 pileable=1
@@ -82,7 +87,7 @@ decay=1
 }
 
 // Medium Ore Pile
-[0x19b8]
+[x19b8]
 {
 weight=700
 pileable=1
@@ -90,7 +95,7 @@ decay=1
 }
 
 // Large Ore Pile
-[0x19b9]
+[x19b9]
 {
 weight=1200
 pileable=1
@@ -98,7 +103,7 @@ decay=1
 }
 
 // Medium-small Ore Pile
-[0x19ba]
+[x19ba]
 {
 weight=700
 pileable=1
@@ -107,35 +112,35 @@ decay=1
 
 // T2A/UOR/UO3D/LBR/AOS Doors
 
-[0x6750x6770x6790x67b0x67d0x67f0x6810x6830x6850x6870x6890x68b0x68d0x68f0x6910x6930x6950x6970x6990x6930x69d0x69f0x6a10x6a3]
+[x0675x0677x0679x067bx067dx067fx0681x0683x0685x0687x0689x068bx068dx068fx0691x0693x0695x0697x0699x0693x069dx069fx06a1x06a3]
 {
 type=12
 }
 
-[0x6a50x6a70x6a90x6ab0x6ad0x6af0x6b10x6b30x6b50x6b70x6b90x6bb0x6bd0x6bf0x6c10x6c30x6c50x6c70x6c90x6cb0x6cd0x6cf0x6d10x6d3]
+[x06a5x06a7x06a9x06abx06adx06afx06b1x06b3x06b5x06b7x06b9x06bbx06bdx06bfx06c1x06c3x06c5x06c7x06c9x06cbx06cdx06cfx06d1x06d3]
 {
 type=12
 }
 
-[0x6d50x6d70x6d90x6db0x6dd0x6df0x6e10x6e30x6e50x6e70x6e90x6eb0x6ed0x6ef0x6f10x6f30x8240x8260x8280x82a0x82c0x82e0x8300x832]
+[x06d5x06d7x06d9x06dbx06ddx06dfx06e1x06e3x06e5x06e7x06e9x06ebx06edx06efx06f1x06f3x0824x0826x0828x082ax082cx082ex0830x0832]
 {
 type=12
 }
 
 // Gates
-[0x8390x83b0x83d0x83f0x8410x8430x8450x8470x84c0x84e0x8500x8520x8540x8560x8580x85a0x8660x8680x86a0x86c0x86e0x8700x8720x8740x190e]
+[x0839x083bx083dx083fx0841x0843x0845x0847x084cx084ex0850x0852x0854x0856x0858x085ax0866x0868x086ax086cx086ex0870x0872x0874x190e]
 {
 type=12
 }
 
 // Samuri Expansion. Most of these are sliding doors.
-[0x241f0x24210x24230x26f40x29900x29910x299e0x299f0x2a050x2a070x2a090x2a0b0x2a0d0x2a0f0x2a110x2a130x2a150x2a170x2a190x2a1b]
+[x241fx2421x2423x26f4x2990x2991x299ex299fx2a05x2a07x2a09x2a0bx2a0dx2a0fx2a11x2a13x2a15x2a17x2a19x2a1b]
 {
 type=12
 }
 
 //Arrows and Crossbow-bolts
-[0xf3fx1bfb]
+[x0f3fx1bfb]
 {
 weight=1
 pileable=1

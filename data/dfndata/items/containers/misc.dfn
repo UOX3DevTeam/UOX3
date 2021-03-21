@@ -12,6 +12,7 @@ restock=10
 movable=1
 decay=1
 good=7
+maxitems=125
 }
 
 [0x0e77]
@@ -27,6 +28,7 @@ restock=10
 movable=1
 decay=1
 good=7
+maxitems=125
 }
 
 [0x0e7f]
@@ -42,6 +44,7 @@ restock=10
 movable=1
 decay=1
 good=7
+maxitems=125
 }
 
 [0x0e83]
@@ -57,6 +60,7 @@ restock=10
 movable=1
 decay=1
 good=7
+maxitems=125
 }
 
 [0x09ac]
@@ -72,6 +76,7 @@ restock=10
 movable=1
 decay=1
 good=7
+maxitems=125
 }
 
 [trash_barrel]
@@ -86,4 +91,5 @@ type=87
 movable=2
 decay=0
 script=15004
+maxitems=125
 }

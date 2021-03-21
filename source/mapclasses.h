@@ -51,38 +51,48 @@ struct MultiHS_st
 
 enum TileFlags
 {
-	TF_FLOORLEVEL	= 0,
-	TF_HOLDABLE,
-	TF_TRANSPARENT,
-	TF_TRANSLUCENT,
-	TF_WALL,
+	// Flag:				Also known as:
+	TF_FLOORLEVEL	= 0,	// "Background"
+	TF_HOLDABLE,			// "Weapon"
+	TF_TRANSPARENT,			// "SignGuildBanner"
+	TF_TRANSLUCENT,			// "WebDirtBlood"
+	TF_WALL,				// "WallVertTile"
 	TF_DAMAGING,
-	TF_BLOCKING,
-	TF_WET,
-	TF_UNKNOWN1,
-	TF_SURFACE,
-	TF_CLIMBABLE,
-	TF_STACKABLE,
-	TF_WINDOW,
-	TF_NOSHOOT,
-	TF_DISPLAYA,
-	TF_DISPLAYAN,
-	TF_DESCRIPTION,
-	TF_FOLIAGE,
+	TF_BLOCKING,			// "Impassable"
+	TF_WET,					// "LiquidWet"
+	TF_UNKNOWN1,			// "Ignored"
+	TF_SURFACE,				// "Standable"
+	TF_CLIMBABLE,			// "Bridge"
+	TF_STACKABLE,			// "Generic"
+	TF_WINDOW,				// "WindowArchDoor"
+	TF_NOSHOOT,				// "CannotShootThru"
+	TF_DISPLAYA,			// "Prefix A"
+	TF_DISPLAYAN,			// "Prefix An"
+	TF_DESCRIPTION,			// "Internal"
+	TF_FOLIAGE,				// "FadeWithTrans"
 	TF_PARTIALHUE,
 	TF_UNKNOWN2,
 	TF_MAP,
 	TF_CONTAINER,
-	TF_WEARABLE,
-	TF_LIGHT,
+	TF_WEARABLE,			// "Equipable"
+	TF_LIGHT,				// "LightSource"
 	TF_ANIMATED,
-	TF_NODIAGONAL, //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyles
-	TF_UNKNOWN3,
-	TF_ARMOR,
-	TF_ROOF,
+	TF_NODIAGONAL,			// "HoverOver" in SA clients and later, to determine if tiles can be moved on by flying gargoyles
+	TF_UNKNOWN3,			// "NoDiagonal" in SA clients and later?
+	TF_ARMOR,				// "WholeBodyItem"
+	TF_ROOF,				// "WallRoofWeap"
 	TF_DOOR,
-	TF_STAIRBACK,
-	TF_STAIRRIGHT,
+	TF_STAIRBACK,			// "ClimbableBit1"
+	TF_STAIRRIGHT,			// "ClimbableBit2"
+
+	// Following flags were added in HS expansion? Purpose unknown
+	TF_ALPHABLEND,
+	TF_USENEWART,
+	TF_ARTUSED,
+	TF_NOSHADOW,
+	TF_PIXELBLEED,
+	TF_PLAYANIMONCE,
+	TF_MULTIMOVABLE,
 	TF_COUNT
 };
 
@@ -144,7 +154,7 @@ private:
 	UI08 unknown4;
 	UI08 unknown5;
 	SI08 height;
-	SI08 name[30];
+	SI08 name[20];
 
 public:
 	CTileHS() : unknown0( 0 ), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
@@ -184,7 +194,7 @@ public:
 	void Quantity( UI08 newVal )	{	quantity = newVal;		}
 	void Name( const char *newVal )
 	{
-		strncpy( (char *)name, newVal, 30 );
+		strncpy( (char *)name, newVal, 20 );
 	}
 
 };
@@ -203,7 +213,7 @@ private:
 	UI08 unknown4;
 	UI08 unknown5;
 	SI08 height;
-	SI08 name[30];
+	SI08 name[20];
 
 public:
 	CTile() : weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
@@ -241,7 +251,7 @@ public:
 	void Quantity( UI08 newVal )	{	quantity = newVal;		}
 	void Name( const char *newVal )
 	{
-		strncpy( (char *)name, newVal, 30 );
+		strncpy( (char *)name, newVal, 20 );
 	}
 
 };
@@ -251,7 +261,7 @@ class CLandHS : public CBaseTile
 private:
 	UI32 unknown1;
 	UI16 textureID;
-	SI08 name[30];
+	SI08 name[20];
 public:
 	CLandHS() : unknown1( 0 ), textureID( 0 )
 	{
@@ -272,7 +282,7 @@ public:
 	void TextureID( UI16 newVal )	{	textureID = newVal;		}
 	void Name( char *newVal )
 	{
-		strncpy( (char *)name, newVal, 30 );
+		strncpy( (char *)name, newVal, 20 );
 	}
 };
 
@@ -280,7 +290,7 @@ class CLand : public CBaseTile
 {
 private:
 	UI16 textureID;
-	SI08 name[30];
+	SI08 name[20];
 public:
 	CLand() : textureID( 0 )
 	{
@@ -299,7 +309,7 @@ public:
 	void TextureID( UI08 newVal )	{	textureID = newVal;		}
 	void Name( char *newVal )
 	{
-		strncpy( (char *)name, newVal, 30 );
+		strncpy( (char *)name, newVal, 20 );
 	}
 };
 

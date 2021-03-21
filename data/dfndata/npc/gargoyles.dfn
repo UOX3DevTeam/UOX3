@@ -8,7 +8,7 @@
 NAME=a gargoyle
 NAMELIST=12
 ID=0x0004
-DIRECTION=N
+DIRECTION=RND
 STR=146 175
 DEX=76 95
 INT=81 105
@@ -48,7 +48,7 @@ FLAG=NEUTRAL
 NAME=a stone gargoyle
 ID=0x0043
 SKINLIST=7
-DIRECTION=N
+DIRECTION=RND
 BACKPACK
 LOOT=midlevelscrolls
 LOOT=midlevelscrolls
@@ -83,6 +83,7 @@ FLAG=NEUTRAL
 NAME=an enslaved gargoyle
 TITLE=the enslaved gargoyle
 ID=0x02f1
+DIRECTION=RND
 BACKPACK
 GOLD=100
 STR=302 360
@@ -112,6 +113,7 @@ FLAG=NEUTRAL
 NAME=a fire gargoyle
 NAMELIST=13
 ID=0x0082
+DIRECTION=RND
 BACKPACK
 GOLD=190 230
 STR=351 400
@@ -150,6 +152,7 @@ FLAG=NEUTRAL
 NAME=a gargoyle destroyer
 TITLE=the gargoyle destroyer
 ID=0x02f3
+DIRECTION=RND
 BACKPACK
 GOLD=180 240
 STR=760 850
@@ -188,6 +191,7 @@ FLAG=NEUTRAL
 NAME=a gargoyle enforcer
 TITLE=the gargoyle enforcer
 ID=0x02f2
+DIRECTION=RND
 BACKPACK
 GOLD=50 150
 STR=260 350
@@ -227,6 +231,7 @@ NAME=a gargoyle alchemist
 NAMELIST=12
 TITLE=the gargoyle alchemist
 ID=0x02f6
+DIRECTION=RND
 BACKPACK
 GOLD=50 150
 STR=159 180
@@ -260,6 +265,7 @@ NAME=a gargoyle stone worker
 NAMELIST=12
 TITLE=the gargoyle stone worker
 ID=0x02f6
+DIRECTION=RND
 BACKPACK
 GOLD=50 150
 STR=159 180

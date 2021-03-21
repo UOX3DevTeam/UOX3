@@ -979,8 +979,6 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 	toSend.GumpID( menu );
 	toSend.UserID( INVALIDSERIAL );
 
-	toSend.addCommand( "nomove" );
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand( format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()) );
 	toSend.addCommand( format("button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
@@ -1602,6 +1600,7 @@ void CGuildCollection::Resign( CSocket *s )
 	nGuild->RemoveMember( *(s->CurrcharObj()) );
 	s->sysmessage( 171 );
 	mChar->SetGuildNumber( -1 );
+	mChar->SetGuildTitle( "" );
 	if( nGuild->Master() == mChar->GetSerial() && nGuild->NumMembers() != 0 )
 		nGuild->CalcMaster();
 

@@ -1906,6 +1906,7 @@ void CChar::CopyData( CChar *target )
 	}
 	if( IsValidNPC() )
 	{
+		target->SetNpc( IsNpc() );
 		target->SetTamedHungerRate( GetTamedHungerRate() );
 		target->SetTamedHungerWildChance( GetTamedHungerWildChance() );
 		target->SetFood( GetFood() );

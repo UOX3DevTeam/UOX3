@@ -11,6 +11,7 @@ type=1
 restock=10
 decay=1
 good=5
+maxitems=125
 }
 
 [0x09b2]
@@ -25,6 +26,7 @@ type=1
 restock=10
 decay=1
 good=5
+maxitems=125
 }
 
 [0x0e75]
@@ -39,6 +41,7 @@ type=1
 restock=10
 decay=1
 good=5
+maxitems=125
 }
 
 [0x0e76]
@@ -53,6 +56,7 @@ type=1
 restock=10
 decay=1
 good=5
+maxitems=125
 }
 
 [0x0e79]
@@ -67,6 +71,7 @@ type=1
 restock=10
 decay=1
 good=5
+maxitems=125
 }
 
 [0x0e7a]
@@ -81,4 +86,5 @@ type=1
 restock=10
 decay=1
 good=5
+maxitems=125
 }

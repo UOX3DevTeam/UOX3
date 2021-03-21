@@ -155,7 +155,7 @@ JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	void WriteSort( position, value )
+//|	Prototype	-	void WriteShort( position, value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes two bytes at the specified position in the packet stream
 //o-----------------------------------------------------------------------------------------------o
@@ -204,7 +204,9 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
-	UI32	toWrite		= static_cast<UI32>(JSVAL_TO_INT( argv[1] ));
+	//UI32	toWrite		= static_cast<UI32>(JSVAL_TO_INT( argv[1] ));
+	char *	toWriteChar	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	UI32 toWrite = str_value<UI32>(toWriteChar);
 
 	myPacket->GetPacketStream().WriteLong( position, toWrite );
 
@@ -213,7 +215,7 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	void WriteString( position, stringToWrite )
+//|	Prototype	-	void WriteString( position, stringToWrite, length )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes variable number of bytes at specified position in the packet stream
 //o-----------------------------------------------------------------------------------------------o
@@ -903,15 +905,18 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 3 )
+	if( argc != 3 && argc != 4 )
 	{
-		MethodError( "AddGump: Invalid number of arguments (takes 3)" );
+		MethodError( "AddGump: Invalid number of arguments (takes 3 or 4 - topLeft, topRight, imageID and hue (optional))" );
 		return JS_FALSE;
 	}
 
 	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
 	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
 	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] );
+	SI32 rgbColor = 0;
+	if( argc == 4 )
+		rgbColor = (UI16)JSVAL_TO_INT( argv[3] );
 
 	SEGump *gList = static_cast<SEGump*>(JS_GetPrivate( cx, obj ));
 	if( gList == NULL )
@@ -920,8 +925,10 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format("gumppic %i %i %i", tL, tR, gImage ) );
+	if( rgbColor == 0 )
+		gList->one->push_back( format("gumppic %i %i %i", tL, tR, gImage ) );
+	else
+		gList->one->push_back( format("gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ) );
 
 	return JS_TRUE;
 }
@@ -1617,6 +1624,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //|	Function	-	JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void TextMessage( message )
 //|					void TextMessage( message, allHear, txtHue )
+//|					void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial, speechFontType );
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to say a message
 //o-----------------------------------------------------------------------------------------------o
@@ -4513,7 +4521,7 @@ JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( mySock->GetDWord( offset ) );
+	JS_NewNumberValue( cx, mySock->GetDWord( offset ), rval );
 	return JS_TRUE;
 }
 

@@ -2,6 +2,8 @@ function CommandRegistration()
 {
 	RegisterCommand( "kill", 2, true );
 	RegisterCommand( "resurrect", 2, true );
+	RegisterCommand( "shavehair", 2, true );
+	RegisterCommand( "shavebeard", 2, true );
 }
 
 function command_KILL( socket, cmdString )
@@ -13,6 +15,18 @@ function command_KILL( socket, cmdString )
 	}
 	else
 		socket.SysMessage( "This command takes at least 1 argument." );
+}
+
+// Alias of 'kill hair
+function command_SHAVEHAIR( socket, cmdString )
+{
+	command_KILL( socket, cmdString + "hair" );
+}
+
+// Alias of 'kill beard
+function command_SHAVEBEARD( socket, cmdString )
+{
+	command_KILL( socket, cmdString + "beard" );
 }
 
 function onCallback0( socket, ourObj )

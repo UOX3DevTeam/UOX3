@@ -39,6 +39,8 @@ spawnobj=
 spawnobjlist=
 ammo=
 ammofx=
+maxrange=
+baserange=
 }
 
 

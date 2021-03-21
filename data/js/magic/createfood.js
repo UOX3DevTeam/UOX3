@@ -11,13 +11,13 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( mChar.isCasting )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language ) );
 			return true;
 		}
 		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language ) );
 			return true;
 		}
 	}
@@ -30,7 +30,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
 		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
+			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -40,7 +40,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( !mSpell.enabled )
 	{
 		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
+			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -70,7 +70,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -106,7 +106,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.mana > mChar.mana )
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 696, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -115,7 +115,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.stamina > mChar.stamina )
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -124,7 +124,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.health >= mChar.health )
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;

@@ -2100,8 +2100,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		FireResist( Combat->calcDef( &toCopy, 0, false, HEAT ) );
 		ColdResist( Combat->calcDef( &toCopy, 0, false, COLD ) );
-		EnergyResist( Combat->calcDef( &toCopy, 0, false, LIGHTNING ) );
 		PoisonResist( Combat->calcDef( &toCopy, 0, false, POISON ) );
+		EnergyResist( Combat->calcDef( &toCopy, 0, false, LIGHTNING ) );
 		Luck( 0 );
 		DamageMin( Combat->calcLowDamage( &toCopy ) );
 		DamageMax( Combat->calcHighDamage( &toCopy ) );
@@ -5824,8 +5824,6 @@ void CPSendGumpMenu::Y( UI32 value )
 }
 void CPSendGumpMenu::addCommand( const std::string& msg )
 {
-
-
 	if( msg.empty() ){
 		throw new std::runtime_error( "Blank command field added!" );
 	}
@@ -5839,7 +5837,6 @@ void CPSendGumpMenu::addCommand( const std::string& msg )
 #endif
 	commands.push_back( temp );
 }
-
 
 void CPSendGumpMenu::addText( const std::string& msg )
 {
@@ -5859,8 +5856,6 @@ void CPSendGumpMenu::addText( const std::string& msg )
 
 	text.push_back( msg );
 }
-
-
 
 void CPSendGumpMenu::Finalize( void )
 {
@@ -6316,7 +6311,11 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			tempEntry.stringNum = 1072788;
 		else
 			tempEntry.stringNum = 1072789;
-		tempEntry.ourText = str_number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
+
+		if( cItem.GetType() == IT_ITEMSPAWNER || cItem.GetType() == IT_NPCSPAWNER )
+			tempEntry.ourText = str_number( ( cItem.GetWeight() / 100 ) );
+		else
+			tempEntry.ourText = str_number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )
@@ -7077,12 +7076,14 @@ void CPHealthBarStatus::CopyData( CChar& mChar )
 //|					Packet Build
 //|						BYTE cmd (0xBF)
 //|						BYTE[2] Length
-//|						BYTE[2] Subcommand (0x19)
+//|						BYTE[2] Subcommand (0x18)
 //|						Subcommand details
 //|							BYTE[4] Number of maps
 //|							For each map
 //|								BYTE[4] Number of map patches in this map (these two lines are in reverse order!)
 //|								BYTE[4] Number of static patches in this map
+//|
+//|					Note: Only client versions lower than v7.0.8.2 will load diff files
 //o-----------------------------------------------------------------------------------------------o
 void CPEnableMapDiffs::InternalReset( void )
 {

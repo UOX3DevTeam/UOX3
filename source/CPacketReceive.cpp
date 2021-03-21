@@ -68,6 +68,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xEF:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients after 6.0.x
 		//case 0xE4:	return ( new CPIKREncryptionVerification( s ) ); // KR Encryption Response verification
+		case 0xF1:	return NULL;								// ConnectUO Server Poll Packet - handled in packet hook JS script
 		case 0xF8:	return ( new CPICreateCharacter( s )	);	// New Character Create - minor difference from original
 		case 0xFF:	return NULL;								// new CPIKRSeed( s ) - KR client request for encryption response
 		default:	break;
@@ -2679,6 +2680,10 @@ void CPICreateCharacter::Create2DCharacter( void )
 	pattern2		= tSock->GetDWord( 5 );
 	pattern3		= tSock->GetByte( 9 );
 	profession		= tSock->GetByte( 54 ); // Byte[54]
+
+	// Fix for ClassicUO client
+	if( profession == 255 )
+		profession = 0;
 	sex				= tSock->GetByte( 70 );
 	str				= tSock->GetByte( 71 );
 	dex				= tSock->GetByte( 72 );

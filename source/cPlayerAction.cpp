@@ -71,6 +71,7 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 			bouncing->SetContSerial( spot );
 			break;
 	}
+	bouncing->SetHeldOnCursor( false );
 	bouncing->Dirty( UT_UPDATE );
 	bouncer->Send( &bounce );
 	bouncer->PickupSpot( PL_NOWHERE );
@@ -398,6 +399,7 @@ bool CPIGetItem::Handle( void )
 	i->RemoveFromSight();
 
 	tSock->SetCursorItem( i );
+	i->SetHeldOnCursor( true );
 
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
@@ -412,9 +414,9 @@ bool CPIGetItem::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CPIEquipItem::Handle( void )
 {
-	CChar *ourChar	= tSock->CurrcharObj();
-	SERIAL cserial	= tSock->GetDWord( 6 );
-	SERIAL iserial	= tSock->GetDWord( 1 );
+	CChar *ourChar = tSock->CurrcharObj();
+	SERIAL cserial = tSock->GetDWord( 6 );
+	SERIAL iserial = tSock->GetDWord( 1 );
 	if( cserial == INVALIDSERIAL || iserial == INVALIDSERIAL )
 		return true;
 
@@ -427,11 +429,11 @@ bool CPIEquipItem::Handle( void )
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_PAPERDOLL )
 	{
 		ObjectType pOType;
-		CBaseObject *pOwner	= FindItemOwner( i, pOType );
+		CBaseObject *pOwner = FindItemOwner( i, pOType );
 		if( pOType == OT_CHAR )
 		{
-			CChar *pOChar = static_cast<CChar *>(pOwner);
-			if( ((pOChar != ourChar) && ( ( !ourChar->IsGM() && (pOChar->GetOwnerObj() != ourChar) ) )) || !objInRange( ourChar, pOwner, DIST_NEARBY ) )
+			CChar *pOChar = static_cast< CChar * >( pOwner );
+			if( ( ( pOChar != ourChar ) && ( ( !ourChar->IsGM() && ( pOChar->GetOwnerObj() != ourChar ) ) ) ) || !objInRange( ourChar, pOwner, DIST_NEARBY ) )
 			{
 				Bounce( tSock, i );
 				return true;
@@ -444,7 +446,7 @@ bool CPIEquipItem::Handle( void )
 				Bounce( tSock, i );
 				return true;
 			}
-			CItem *pOItem = static_cast<CItem *>(pOwner);
+			CItem *pOItem = static_cast< CItem * >( pOwner );
 			if( pOItem->IsLockedDown() )
 			{
 				CMultiObj *ourMulti = pOwner->GetMultiObj();
@@ -484,7 +486,16 @@ bool CPIEquipItem::Handle( void )
 	if( !ValidateObject( k ) )
 		return true;
 
-	ARMORCLASS ac1 = Races->ArmorRestrict( k->GetRace() );
+	RACEID raceID = k->GetRace();
+	CRace *race = Races->Race( raceID );
+	if( !race->CanEquipItem( i->GetID() ))
+	{
+		tSock->sysmessage( 1981 + static_cast<SI32>( raceID )); // <Race> cannot wear this.
+		Bounce( tSock, i );
+		return true;
+	}
+
+	ARMORCLASS ac1 = Races->ArmorRestrict( raceID );
 	ARMORCLASS ac2 = i->GetArmourClass();
 
 	if( ac1 != 0 && ( (ac1&ac2) == 0 ) )	// bit comparison, if they have ANYTHING in common, they can wear it
@@ -579,6 +590,7 @@ bool CPIEquipItem::Handle( void )
 	}
 
 	i->SetCont( k );
+	i->SetHeldOnCursor( false );
 
 	//Reset PickupSpot after dropping the item
 	tSock->PickupSpot( PL_NOWHERE );
@@ -732,11 +744,14 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 			if( targNPC->GetHunger() < 6 )
 			{
 				Effects->PlaySound( mSock, static_cast<UI16>(0x003A + RandomNum( 0, 2 )), true );
-				Effects->PlayCharacterAnimation( targNPC, 3 );
+				if( cwmWorldState->creatures[targNPC->GetID()].IsAnimal() )
+				{
+					Effects->PlayCharacterAnimation( targNPC, 3 );
+				}
 
 				if( i->GetPoisoned() && targNPC->GetPoisoned() < i->GetPoisoned() )
 				{
-					Effects->PlaySound( mSock, 0x0246, true ); //poison sound - SpaceDog
+					Effects->PlaySound( mSock, 0x0246, true ); // poison sound - SpaceDog
 					targNPC->SetPoisoned( i->GetPoisoned() );
 					targNPC->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
 				}
@@ -931,8 +946,13 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			mSock->sysmessage( 683 );
 			return;
 		}
+
 		i->SetCont( NULL );
 		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber(), nChar->GetInstanceID() );
+
+		// If item was picked up from a container and dropped on ground, update old location to match new!
+		if( mSock->PickupSpot() != PL_GROUND )
+			i->SetOldLocation( x, y, z );
 	}
 	else
 	{
@@ -969,6 +989,8 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 		else if( i->isDecayable() )
 			i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+
+		i->SetHeldOnCursor( false );
 
 		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
@@ -1313,6 +1335,8 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	CItem *nItem = calcItemObjFromSer( item );
 	if( !ValidateObject( nItem ) )
 		return;
+
+	nItem->SetHeldOnCursor( false );
 
 	bool executeCont	= true;
 	UI16 targTrig		= nItem->GetScriptTrigger();

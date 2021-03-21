@@ -538,7 +538,7 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 //o-----------------------------------------------------------------------------------------------o
 bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
-	if( target->isDevineLocked() )
+	if( target->isDivineLocked() )
 	{
 		sock->sysmessage( 673 );
 		return false;
@@ -2585,7 +2585,7 @@ void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 		z = caster->GetTarg()->GetZ();
 	}
 
-	length = caster->GetSkill( MAGERY )/130;
+	length = UOX_MAX( caster->GetSkill( MAGERY ) / 130, 1 );
 
 	x1 = x - length;
 	x2 = x + length;

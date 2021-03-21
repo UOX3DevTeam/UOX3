@@ -162,7 +162,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 49 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 52 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -275,7 +275,6 @@ private:
 
 	// Combat
 	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
-	SI16		combatarcherrange;				//	RANGE?  Range at which archers stop charging the enemy
 	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
 	UI08		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
 	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
@@ -419,6 +418,8 @@ public:
 
 	bool		ServerUOGEnabled(void) const { return uogEnabled; }
 	void		ServerUOGEnabled(bool uogValue) {	uogEnabled = uogValue; }
+	void		ConnectUOServerPoll( bool value );
+	bool		ConnectUOServerPoll( void ) const;
 	bool		ServerRandomStartingLocation( void ) const { return randomStartingLocation; }
 	void		ServerRandomStartingLocation( bool rndStartLocValue ) { randomStartingLocation = rndStartLocValue; }
 	UI32		ServerNetRetryCount(void) const { return netRetryCount; }
@@ -576,6 +577,9 @@ public:
 	void		ItemsDetectSpeech( bool value );
 	bool		ItemsDetectSpeech( void ) const;
 
+	void		MapDiffsEnabled( bool value );
+	bool		MapDiffsEnabled( void ) const;
+
 	void		MaxPlayerPackItems( UI16 value );
 	UI16		MaxPlayerPackItems( void ) const;
 
@@ -659,9 +663,6 @@ public:
 
 	void		CombatMaxRange( SI16 value );
 	SI16		CombatMaxRange( void ) const;
-
-	void		CombatArcherRange( SI16 value );
-	SI16		CombatArcherRange( void ) const;
 
 	void		CombatMaxSpellRange( SI16 value );
 	SI16		CombatMaxSpellRange( void ) const;

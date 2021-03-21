@@ -340,10 +340,22 @@ void command_tile( CSocket *s )
 	if( Commands->NumArguments() == 0 )
 		return;
 
-	UI16 targID = static_cast<UI16>(Commands->Argument( 1 ));
+	UI16 targID = 0;
+	if( Commands->CommandString( 2, 2 ).upper() == "STATIC" )
+		targID = static_cast<UI16>(Commands->Argument( 2 ));
+	else
+		targID = static_cast<UI16>(Commands->Argument( 1 ));
 
-	if( Commands->NumArguments() == 7 )
+	if( Commands->NumArguments() == 7 || Commands->NumArguments() == 8 )
 	{
+		// tile itemID x1 y1 x2 y2 z rndVal
+		SI32 rndVal = 0;
+		UI16 rndID = 0;
+
+		if( Commands->NumArguments() == 8 )
+			rndVal = static_cast<SI32>(Commands->Argument( 7 ));
+
+		// tile itemID x1 y1 x2 y2 z
 		SI16 x1 = static_cast<SI16>(Commands->Argument( 2 ));
 		SI16 x2 = static_cast<SI16>(Commands->Argument( 3 ));
 		SI16 y1 = static_cast<SI16>(Commands->Argument( 4 ));
@@ -354,7 +366,8 @@ void command_tile( CSocket *s )
 		{
 			for( SI16 y = y1; y <= y2; ++y )
 			{
-				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), targID, 1, 0, OT_ITEM );
+				rndID = targID + RandomNum( static_cast<UI16>(0), static_cast<UI16>(rndVal) );
+				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
 				if( ValidateObject( a ) )	// crash prevention
 				{
 					a->SetLocation( x, y, z );
@@ -363,8 +376,33 @@ void command_tile( CSocket *s )
 			}
 		}
 	}
+	else if( Commands->NumArguments() == 4 )
+	{
+		// tile static itemID rndVal
+		s->ClickX( -1 );
+		s->ClickY( -1 );
+		s->TempInt2( static_cast<SI32>(Commands->Argument( 3 )));
+
+		s->AddID1( static_cast<UI08>(targID>>8) );
+		s->AddID2( static_cast<UI08>(targID%256) );
+		s->target( 0, TARGET_TILING, 24 );
+	}
+	else if( Commands->NumArguments() == 3 )
+	{
+		// tile itemID rndVal
+		// tile static itemID
+		s->ClickX( -1 );
+		s->ClickY( -1 );
+		if( Commands->CommandString( 2, 2 ).upper() != "STATIC" )
+			s->TempInt2( static_cast<SI32>(Commands->Argument( 2 )));
+
+		s->AddID1( static_cast<UI08>(targID>>8) );
+		s->AddID2( static_cast<UI08>(targID%256) );
+		s->target( 0, TARGET_TILING, 24 );
+	}
 	else if( Commands->NumArguments() == 2 )
 	{
+		// tile itemID
 		s->ClickX( -1 );
 		s->ClickY( -1 );
 
@@ -1058,7 +1096,6 @@ void command_howto( CSocket *s )
 		toSend.UserID( INVALIDSERIAL );
 		toSend.GumpID( 13 );
 
-		toSend.addCommand( "noclose" );
 		toSend.addCommand( format("resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic()) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
@@ -1258,7 +1295,7 @@ void cCommands::CommandReset( void )
 	TargetMap["SETSCPTRIG"]		= TargetMapEntry( CL_ADMIN,			CMD_TARGETINT,	TARGET_SETSCPTRIG,		267);
 	TargetMap["SHOWSKILLS"]		= TargetMapEntry( CL_GM,			CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
 	// T
-	TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);
+	//TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);
 	// U
 	// V
 	// W

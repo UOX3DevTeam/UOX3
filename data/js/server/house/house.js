@@ -12,7 +12,7 @@ const visitorPurgeTimer = 86400000; // visitor list for house purged every 24 ho
 
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
-	if( ValidateObject( iMulti ) && iMulti.IsInMulti( pSocket.currentChar ))
+	if( ValidateObject( iMulti ) && !iMulti.IsBoat() && iMulti.IsInMulti( pSocket.currentChar ))
 	{
 		switch( cmdID )
 		{

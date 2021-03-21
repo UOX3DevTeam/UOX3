@@ -14,7 +14,7 @@
 #define	MAX_TRACKINGTARGETS	128
 #define SKILLTOTALCAP		7000
 #define SKILLCAP			1000
-#define STATCAP				325
+#define STATCAP				225
 
 const UI32 BIT_ANNOUNCESAVES		= 0;
 const UI32 BIT_ANNOUNCEJOINPART		= 1;
@@ -64,6 +64,10 @@ const UI32 BIT_TRACKHOUSESPERACCOUNT = 44;
 const UI32 BIT_CANOWNANDCOOWNHOUSES = 45;
 const UI32 BIT_COOWNHOUSESONSAMEACCOUNT = 46;
 const UI32 BIT_ITEMSDETECTSPEECH = 47;
+const UI32 BIT_FORCENEWANIMATIONPACKET = 48;
+const UI32 BIT_MAPDIFFSENABLED = 49;
+const UI32 BIT_ARMORCLASSDAMAGEBONUS = 50;
+const UI32 BIT_CONNECTUOSERVERPOLL = 51;
 
 
 // New uox3.ini format lookup
@@ -373,7 +377,8 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ITEMSDETECTSPEECH", 226);
 	regINIValue("MAXPLAYERPACKITEMS", 227);
 	regINIValue("MAXPLAYERBANKITEMS", 228);
-
+	regINIValue("MAPDIFFSENABLED", 230);
+	regINIValue("CUOENABLED", 244);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -413,7 +418,6 @@ void CServerData::ResetDefaults( void )
 
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
-	CombatArcherRange( 7 );
 	CombatMaxSpellRange( 10 );
 	CombatExplodeDelay( 2 );
 
@@ -524,6 +528,7 @@ void CServerData::ResetDefaults( void )
 	ItemsDetectSpeech( false );
 	MaxPlayerPackItems( 125 );
 	MaxPlayerBankItems( 125 );
+	MapDiffsEnabled( false );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -1529,6 +1534,21 @@ void CServerData::MineCheck( UI08 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ConnectUOServerPoll( void ) const
+//|					void ConnectUOServerPoll( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of matching AC
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ConnectUOServerPoll( void ) const
+{
+	return boolVals.test( BIT_CONNECTUOSERVERPOLL );
+}
+void CServerData::ConnectUOServerPoll( bool newVal )
+{
+	boolVals.set( BIT_CONNECTUOSERVERPOLL, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CombatDisplayHitMessage( void ) const
 //|					void CombatDisplayHitMessage( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -1729,6 +1749,22 @@ bool CServerData::ItemsDetectSpeech( void ) const
 void CServerData::ItemsDetectSpeech( bool newVal )
 {
 	boolVals.set( BIT_ITEMSDETECTSPEECH, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MapDiffsEnabled( void ) const
+//|					void MapDiffsEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should load diff files for maps and statics
+//|	Notes		-	Diff files are not used by client versions newer than 7.0.8.2
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::MapDiffsEnabled( void ) const
+{
+	return boolVals.test( BIT_MAPDIFFSENABLED );
+}
+void CServerData::MapDiffsEnabled( bool newVal )
+{
+	boolVals.set( BIT_MAPDIFFSENABLED, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2257,21 +2293,6 @@ SI16 CServerData::CombatMaxRange( void ) const
 void CServerData::CombatMaxRange( SI16 value )
 {
 	combatmaxrange = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 CombatArcherRange( void ) const
-//|					void CombatArcherRange( SI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the maximum range at which archery can be used in combat
-//o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatArcherRange( void ) const
-{
-	return combatarcherrange;
-}
-void CServerData::CombatArcherRange( SI16 value )
-{
-	combatarcherrange = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2904,6 +2925,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
 		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
+		ofsOutput << "CUOENABLED=" << (ConnectUOServerPoll()?1:0) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
 		ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation()?1:0) << '\n';
 		ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
@@ -3024,6 +3046,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
 		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
+		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -3089,7 +3112,6 @@ bool CServerData::save( std::string filename )
 
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
-		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
 		ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << '\n';
 		ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers()?1:0) << '\n';
@@ -3797,9 +3819,6 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		case 150:	 // PETOFFLINECHECKTIMER[0143]
 			SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
 			break;
-		case 151:	 // ARCHERRANGE[0144]
-			CombatArcherRange( value.toShort() );
-			break;
 		case 152:	 // ADVANCEDPATHFINDING[0145]
 			AdvancedPathfinding( (value.toByte() == 1) );
 			break;
@@ -4018,6 +4037,11 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		case 228:	// MAXPLAYERBANKITEMS[0217]
 			MaxPlayerBankItems( value.toUShort() );
+		case 230:	// MAPDIFFSENABLED[0219]
+			MapDiffsEnabled( value.toUShort() == 1 );
+			break;
+		case 244:	// CUOENABLED[0233]
+			ConnectUOServerPoll( (value.toByte() == 1) );
 			break;
 		default:
 			rvalue = false;

@@ -135,6 +135,8 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 
 	if( buttonPressed < 200 )
 	{
+		if( buttonPressed == 0 )
+			return;
 		buttonPressed -= 7;
 		toSendTo->AddID( buttonPressed );
 		Command( toSendTo, type, buttonPressed );
@@ -303,8 +305,6 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	UI16 tColour		= cwmWorldState->ServerData()->TitleColour();
 	UI16 butRight		= cwmWorldState->ServerData()->ButtonRight();
 	//--static pages
-	toSend.addCommand( "nomove" );
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand( format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()) );
 	toSend.addCommand( format("button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
@@ -379,7 +379,6 @@ void cWhoList::Update( void )
 	size_t k		= cwmWorldState->GetPlayersOnline();
 	SI32 realCount	= 1;
 	//--static pages
-	one.push_back( "noclose" );
 	one.push_back( "page 0"  );
 
 	one.push_back( format(maxsize, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ) );

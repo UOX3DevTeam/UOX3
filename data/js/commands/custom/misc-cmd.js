@@ -1,6 +1,6 @@
 // Miscellaneous Custom Commands || by Xuri (xuri at uox3.org)
 // v1.09
-// Last Updated: 5. September 2020
+// Last Updated: 2. March 2021
 //
 // This script contains some commands I scripted after the command-reorganization in the UOX3 source code,
 // as well as some I've "invented" on my own.
@@ -13,6 +13,7 @@
 // 19. May 2007 - Added LINKDOORS and UNLINKDOORS commands
 // 22. Sept 2018 - Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands
 // 5. Sept 2020 - Added CONT, ENDFIGHT, GETMULTI, FINDITEM and MOVESPEED commands
+// 2. March 2021 - Added IMMORTAL, NOINVUL and MORTAL as aliases for INVUL TRUE/FALSE
 
 function CommandRegistration()
 {
@@ -22,6 +23,9 @@ function CommandRegistration()
 	RegisterCommand( "unfreeze", 2, true ); //Will "unfreeze" any targeted char, and will make any targeted item movable if previously immovable
 	RegisterCommand( "browse", 0, true ); //WIll let users open a webpage in their default browser from within the UO client. BROWSE <url>
 	RegisterCommand( "invul", 2, true ); //Will make the targeted character invulnerable or not, depending on the argument provided (true/false, 1/0)
+	RegisterCommand( "immortal", 2, true ); //Will make the targeted character invulnerable
+	RegisterCommand( "noinvul", 2, true ); //Will make the targeted character vulnerable
+	RegisterCommand( "mortal", 2, true ); //Will make the targeted character vulnerable
 	RegisterCommand( "addpack", 2, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
 	RegisterCommand( "settag", 2, true ); //used to specify a value for a specified tag on a targeted object
 	RegisterCommand( "gettag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
@@ -83,12 +87,28 @@ function command_BROWSE( pSock, execString )
 
 function command_INVUL( pSock, execString )
 {
-	if( execString == "" )
-		pSock.SysMessage( "You need to provide an argument with this command! Either true or false, 1 or 0!" );
-	else if( execString == "true" || execString == 1 )
+	if( execString == "" || execString == "true" || execString == 1 )
 		pSock.CustomTarget( 3, "Whom do you wish to make invulnerable?" );
 	else if ( execString == "false" || execString == 0 )
 		pSock.CustomTarget( 4, "Whom do you wish to make vulnerable?" );
+	else
+		pSock.SysMessage( "Accepted arguments for this command: true or false, 1 or 0!" );
+}
+// Alias for 'invul true'
+function command_IMMORTAL( pSock, execString )
+{
+	command_INVUL( pSock, "true" );
+}
+
+// Alias for 'invul false
+function command_NOINVUL( pSock, execString )
+{
+	command_INVUL( pSock, "false" );
+}
+// Alias for 'invul false'
+function command_MORTAL( pSock, execString )
+{
+	command_INVUL( pSock, "false" );
 }
 
 function command_ADDPACK( pSock, execString )

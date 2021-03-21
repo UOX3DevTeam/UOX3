@@ -197,7 +197,10 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	}
 	SERIAL targSerial;
 	if( argc == 1 )
-		targSerial = (SERIAL)JSVAL_TO_INT( argv[0] );
+	{
+		std::string str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+		targSerial = str_value<SERIAL>(str);
+	}
 	else
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
 
@@ -1007,7 +1010,8 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	newItem = Items->CreateItem( mySock, myChar, itemID, amount, colour, itemType, inPack );
 	if( newItem != NULL )
 	{
-		newItem->SetName( itemName );
+		if( itemName != "" )
+			newItem->SetName( itemName );
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
@@ -3428,9 +3432,6 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 150:	 // PETOFFLINECHECKTIMER[0143]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_PETOFFLINECHECK ))));
 				break;
-			case 151:	 // ARCHERRANGE[0144]
-				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatArcherRange()));
-				break;
 			case 152:	 // ADVANCEDPATHFINDING[0145]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AdvancedPathfinding() );
 				break;
@@ -3509,10 +3510,10 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 181:	// CLIENTSUPPORT70610[0169]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ClientSupport70610() );
 				break;
-			case 182:	 // EXTENDEDSTARTINGSTATS[0170]
+			case 182:	// EXTENDEDSTARTINGSTATS[0170]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ExtendedStartingStats() );
 				break;
-			case 183:	 // EXTENDEDSTARTINGSKILLS[0171]
+			case 183:	// EXTENDEDSTARTINGSKILLS[0171]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ExtendedStartingSkills() );
 				break;
 			case 184:	// WEAPONDAMAGECHANCE[0172]
@@ -3650,6 +3651,12 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 228:	// MAXPLAYERBANKITEMS[0217]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->MaxPlayerBankItems()));
 				break;
+			case 230:	// MAPDIFFSENABLED[0219]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MapDiffsEnabled() );
+				break;
+			case 244:	// CUOENABLED[0233]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ConnectUOServerPoll() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;
@@ -3696,5 +3703,71 @@ JSBool SE_GetServerFeature( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	ServerFeatures serverFeature = static_cast<ServerFeatures>(JSVAL_TO_INT( argv[0] ));
 	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetServerFeature( serverFeature ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetAccountCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets number of accounts on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetAccountCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( Accounts->size() );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetPlayerCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets number of players online on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetPlayerCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( cwmWorldState->GetPlayersOnline() );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_BASEITEMSERIAL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the value of the BASEITEMSERIAL constant
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_BASEITEMSERIAL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JS_NewNumberValue( cx, BASEITEMSERIAL, rval );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_INVALIDSERIAL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the value of the INVALIDSERIAL constant
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_INVALIDSERIAL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JS_NewNumberValue( cx, INVALIDSERIAL, rval );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_INVALIDID( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the value of the INVALIDID constant
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_INVALIDID( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JS_NewNumberValue( cx, INVALIDID, rval );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_INVALIDCOLOUR( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the value of the INVALIDCOLOUR constant
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_INVALIDCOLOUR( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JS_NewNumberValue( cx, INVALIDCOLOUR, rval );
 	return JS_TRUE;
 }

@@ -721,20 +721,30 @@ function onLightChange( object, lightlevel )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnPacketReceive">onPacketReceive</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPacketReceive( socket, packetNum )
+<tr><th colspan=2 bgcolor="maroon"><a name="OnPacketReceiveEvent">onPacketReceive</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPacketReceive( socket, packetNum, subCommand )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When receiving a network packet
-<tr><td valign="top" width="25%"><b>Notes</b><td>OVERLOADPACKETS needs to be enabled in UOX.INI and each specific packet must be registered in jse_fileassociations.scp
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Similar as "packet-hooks" in other emulators - allows overriding network packet-handling without modifying the server source-code
+<tr><td valign="top" width="25%"><b>Notes</b><td>OVERLOADPACKETS needs to be enabled in UOX.INI and each specific packet script must be registered in jse_fileassociations.scp and registered with UOX3 via the PacketRegistration/RegisterPacket functions. Note that subCommand is currently not supported; can be left as 0. IMPORTANT: Once a packet has been registered this way, it needs to be handled in its entirety through the script, including any and all responses expected by the client. Not sending the correct response to a packet, or reading the wrong amount of bytes for the packet can result in unexpected behaviour in client/server.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Similar to "packet-hooks" in other emulators - allows overriding the handling of incoming network packets without modifying the server source-code
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onPacketReceive( socket, packetNum )
+function PacketRegistration()
 {
-	//???
+	RegisterPacket( [packetID], [subCommand] );
+}
+
+function onPacketReceive( pSocket, packetNum, subCommand )
+{
+	var cmd = pSocket.GetByte( 0 );
+	if( cmd != packetNum )
+		return;
+
+	... // Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods
+	return;
 }
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnPathfindEnd">onPathfindEnd</a>
+<tr><th colspan=2 bgcolor="maroon"><a name="OnPathfindEndEvent">onPathfindEnd</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPathfindEnd( tChar, pathfindResult )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When NPC pathfinding after JS methods WalkTo()/RunTo() comes to an end
 <tr><td valign="top" width="25%"><b>Notes</b><td>pathfindResult parameter returns -1 if pathfinding failed, 0 if pathfinding partially succeeded but final location was blocked by a character, and 1 if pathfinding succeeded and NPC reached target location
@@ -1180,13 +1190,13 @@ function onSteal( thief, objStolen )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSwingEvent">onSwing</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSwing( iSwung, pSwinging, pSwingAt )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSwinging swings iSwung at pSwingAt.
-<tr><td valign="top" width="25%"><b>Notes</b><td>iSwung's script is activated
+<tr><td valign="top" width="25%"><b>Notes</b><td>Event can trigger for either pSwinging character or iSwung item, depending on which object script is attached to
 
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onSwing( iSwung, pSwinging, pSwingAt )
 {
-	pSwinging.TextMessage("Have at thee, knave!");
+	pSwinging.TextMessage( "Have at thee, knave!" );
 }
 </pre>
 <tr>

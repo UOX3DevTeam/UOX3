@@ -1,5 +1,6 @@
 #ifndef __Races__
 #define __Races__
+#include <unordered_set>
 
 class CRace
 {
@@ -18,6 +19,8 @@ private:
 
 	typedef std::vector< ColourPair >	COLOURLIST;
 	typedef std::vector< RaceRelate >	RACEIDLIST;
+	typedef std::unordered_set< UI16 > ALLOWEQUIPLIST;
+	typedef std::unordered_set< UI16 > BANEQUIPLIST;
 
 	SI16				HPMod;
 	SI16				ManaMod;
@@ -41,6 +44,9 @@ private:
 	HEATLEVEL			heatLevel;
 	LIGHTLEVEL			nightVision;
 	ARMORCLASS			armourRestrict;
+
+	ALLOWEQUIPLIST		allowedEquipment;
+	BANEQUIPLIST		bannedEquipment;
 
 	std::bitset< WEATHNUM >	weatherAffected;
 	SECONDS					weathSecs[WEATHNUM];
@@ -68,6 +74,7 @@ public:
 	bool			AffectedBy( WeatherType iNum ) const;
 	void			AffectedBy( bool value, WeatherType iNum );
 	bool			NoHair( void ) const;
+	bool			CanEquipItem( UI16 itemID ) const;
 
 	GENDER			GenderRestriction( void ) const;
 	LIGHTLEVEL		LightLevel( void ) const;
@@ -97,6 +104,7 @@ public:
 	void			NoBeard( bool newValue );
 	void			IsPlayerRace( bool newValue );
 	void			NoHair( bool newValue );
+	void			RestrictGear( bool newValue );
 
 	SI16			HPModifier( void ) const;
 	void			HPModifier( SI16 value );

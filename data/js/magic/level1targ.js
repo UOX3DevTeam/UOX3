@@ -12,13 +12,13 @@ function spellTimerCheck( mChar, mSock )
 		if( mChar.isCasting )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language ) );
 			return false;
 		}
 		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language ) );
 			return false;
 		}
 	}
@@ -29,7 +29,7 @@ function jailTimerCheck( mChar, mSock )
 {
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
+		mSock.SysMessage( GetDictionaryEntry( 704, mSock.language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -43,7 +43,7 @@ function spellEnableCheck( mChar, mSock, mSpell )
 	if( !mSpell.enabled )
 	{
 		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
+			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -64,7 +64,7 @@ function itemInHandCheck( mChar, mSock, spellType )
 			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -94,7 +94,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( (spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || (spellNum == 32 && !ourRegion.canRecall()) )
 	{
 		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 705, mSock.Language ) );
+			mSock.SysMessage( GetDictionaryEntry( 705, mSock.language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -106,7 +106,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( ourRegion.isSafeZone )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
 			mChar.SetTimer( 6, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
@@ -116,7 +116,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( !ourRegion.canCastAggressive )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language ) );
 			mChar.SetTimer( 6, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
@@ -167,7 +167,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.mana > mChar.mana )
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 696, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -176,7 +176,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.stamina > mChar.stamina )
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -185,7 +185,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.health >= mChar.health )
 			{
 				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
+					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -263,7 +263,7 @@ function checkReagents( mChar, mSpell )
 			failedCheck = 1;
 		if( failedCheck == 1 )
 		{
-			mChar.SysMessage( GetDictionaryEntry( 702, mChar.socket.Language ) );  // not enough reagents to cast spell
+			mChar.SysMessage( GetDictionaryEntry( 702, mChar.socket.language ) );  // not enough reagents to cast spell
 			return false;
 		}
 	}
@@ -350,7 +350,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	if( !mChar.InRange( ourTarg, 10 ) )
 	{
 		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 712, mSock.Language ) );
+			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language ) );
 		return;
 	}
 
@@ -363,19 +363,19 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		if( targRegion.isSafeZone )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
 			return;
 		}
 		if( !targRegion.canCastAggressive )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 709, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language ) );
 			return;
 		}
 		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 713, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language ) );
 			return;
 		}
 //		mChar.AttackTarget( ourTarg );
@@ -478,7 +478,7 @@ function MagicDamage( p, amount, attacker, mSock, element )
 		//p.TextMessage( "Unfreezing target" );
 		p.frozen = false;
 		if( mSock != null )
-			mSock.SysMessage( GetDictionaryEntry( 700, mSock.Language ) );
+			mSock.SysMessage( GetDictionaryEntry( 700, mSock.language ) );
 	}
 	//p.TextMessage( "Checking for vulnerability and able to cast aggressive magic" );
 	if( p.vulnerable && p.region.canCastAggressive )
@@ -575,7 +575,7 @@ function CheckTargetResist( caster, ourTarg, circle )
 		{
 			var tSock = ourTarg.socket;
 			if( tSock != null )
-				tSock.SysMessage( GetDictionaryEntry( 699, tSock.Language ) );
+				tSock.SysMessage( GetDictionaryEntry( 699, tSock.language ) );
 			i = true;
 		}
 		else
@@ -587,7 +587,7 @@ function CheckTargetResist( caster, ourTarg, circle )
 		{
 			var tSock = ourTarg.socket;
 			if( tSock != null )
-				tSock.SysMessage( GetDictionaryEntry( 699, tSock.Language ) );
+				tSock.SysMessage( GetDictionaryEntry( 699, tSock.language ) );
 		}
 	}
 	return i;

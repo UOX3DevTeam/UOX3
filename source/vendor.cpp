@@ -7,6 +7,7 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 
+#include "cServerDefinitions.h"
 
 #include "ObjectFactory.h"
 
@@ -79,6 +80,7 @@ UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 	return value;
 }
 
+bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIBuyItem::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -200,6 +202,12 @@ bool CPIBuyItem::Handle( void )
 							{
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
+
+								// Reapply item section to allow things like randomized values for bought items, instead
+								// of all bought items inheriting the specific stats of item in vendor's sellpack
+								ScriptSection *toFind = FileLookup->FindEntry( "0x1402", items_def );
+								ApplyItemSection( iMade, toFind, "0x1402" );
+
 								boughtItems.push_back( iMade );
 							}
 						}

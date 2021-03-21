@@ -154,6 +154,14 @@ static JSFunctionSpec my_functions[] =
 
 	{ "DeleteFile",					SE_DeleteFile,				2, 0, 0 },
 
+	{ "GetAccountCount",			SE_GetAccountCount,			0, 0, 0 },
+	{ "GetPlayerCount",				SE_GetPlayerCount,			0, 0, 0 },
+
+	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
+	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
+	{ "INVALIDID",					SE_INVALIDID,				0, 0, 0 },
+	{ "INVALIDCOLOUR",				SE_INVALIDCOLOUR,			0, 0, 0 },
+
 	{ NULL,							NULL,						0, 0, 0 },
 };
 

@@ -51,7 +51,7 @@ function onCallback0( tSock, myTarget )
     	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
     	if( iMakeResource < 1 )
     	{
-		pUser.SysMessage( "You dont seem to have enough wool!" );
+		pUser.SysMessage( "You don't seem to have enough wool!" );
   		return;
 	}
 	if( pUser.CheckSkill( 34, 0, 1000 ) )

@@ -1181,7 +1181,7 @@
 1184=This doesnt seem to be a valid door type. Contact a GM.
 1185=You can't do much in your current state.
 1186=You can't put items on other players!
-1187= You are unable to equip that due to your race.
+1187=You are unable to equip that due to your race.
 1188=You are not strong enough to use that.
 1189=You are not agile enough to use that.
 1190=You are not smart enough to use that.
@@ -1950,5 +1950,39 @@
 1978=Malas
 1979=Tokuno Islands
 1980=Ter Mur
+1981=Humans can't wear this.
+1982=Elves can't wear this.
+1983=Gargoyles can't wear this.
+1984=Reserved for additional player races
+1985=Reserved for additional player races
+1986=Reserved for additional player races
+1987=Reserved for additional player races
+1988=Reserved for additional player races
+1989=Reserved for additional player races
+1990=Reserved for additional player races
+// JS-Based Tweak Menu
+1991=Invalid object targeted!
+1992=Unknown object targeted!
+1993=Aborting tweak request.
+1994=Targeted map or static item! Only dynamic items or characters can be modified.
+1995=New owner set for object.
+1996=New attacker set for character.
+1997=New target set for character.
+1998=Unhandled button ID in Tweak menu callback1:
+1999=Object not found!
+2000=Properties
+2001=Boat
+2002=House
+2003=Spawner
+2004=Item
+2005=Char
+2006=Skills
+2007=Base
+2008=Effective
+2009=Region
+2010=Close Tweak Menu
+2011=Tweak
+2012=Total
+2013=Skillpoints
 }
 EOF

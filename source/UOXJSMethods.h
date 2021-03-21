@@ -286,7 +286,7 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "AddCheckerTrans",			CGump_AddCheckerTrans,				4, 0, 0 },
 	{ "AddCroppedText",				CGump_AddCroppedText,				6, 0, 0 },
 	{ "AddGroup",					CGump_AddGroup,						1, 0, 0 },
-	{ "AddGump",					CGump_AddGump,						3, 0, 0 },
+	{ "AddGump",					CGump_AddGump,						4, 0, 0 },
 	{ "AddGumpColor",				CGump_AddGumpColor,					4, 0, 0 },
 	{ "AddHTMLGump",				CGump_AddHTMLGump,					7, 0, 0 },
 	{ "AddPage",					CGump_AddPage,						1, 0, 0 },

@@ -467,8 +467,6 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x13BA: //viking sword
 		case 0x255E: //ratman sword - LBR
 		case 0x2560: //skeleton scimitar - LBR
-		case 0x0908: //gargish talwar - SA
-		case 0x4075: //gargish talwar - SA
 		case 0x090C: //gargish glass sword - SA
 		case 0x4073: //gargish glass sword - SA
 		case 0x0900: //gargish stone war sword - SA
@@ -477,6 +475,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x48B7: //gargish butcherknife - SA
 		case 0x48BA: //gargish katana - SA
 		case 0x48BB: //gargish katana - SA
+		case 0xA28B: //bladed whip - ToL
+		case 0xA293: //bladed whip - ToL
 			return SLASH_SWORDS;
 			// One-Handed Lg. Swords
 		case 0x0F5E: //broadsword
@@ -516,6 +516,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x27F3: //bokuto - SE
 		case 0x2D26: //rune blade - ML
 		case 0x2D32: //rune blade - ML
+		case 0x0908: //gargish talwar - SA
+		case 0x4075: //gargish talwar - SA
 			return TWOHND_LG_SWORDS;
 			// Bardiche
 		case 0x0F4D: //bardiche
@@ -596,6 +598,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x406E: //gargish disc mace - SA
 		case 0x48C2: //gargish maul - SA
 		case 0x48C3: //gargish maul - SA
+		case 0xA289: //barbed whip - ToL
+		case 0xA291: //barbed whip - ToL
 			return DEF_MACES;
 			// Large Maces
 		case 0x13F4: //crook
@@ -684,12 +688,14 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2D2E: //leafblade - ML
 		case 0x2D23: //war cleaver - ML
 		case 0x2D2F: //war cleaver - ML
-		case 0x2306: //gargish dagger - SA
+		case 0x0902: //gargish dagger - SA
 		case 0x406A: //gargish dagger
 		case 0x08FE: //gargish bloodblade - SA
 		case 0x4072: //gargish bloodblade - SA
 		case 0x48BC: //gargish kryss - SA
 		case 0x48BD: //gargish kryss - SA
+		case 0xA28A: //spiked whip - ToL
+		case 0xA292: //spiked whip - ToL
 			return DEF_FENCING;
 			// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
@@ -1738,9 +1744,18 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
+	// Trigger onSwing for scripts attached to attacker
 	cScript *toExecute	= JSMapping->GetScript( mChar.GetScriptTrigger() );
 	if( toExecute != NULL )
 		toExecute->OnSwing( mWeapon, &mChar, ourTarg );
+
+	// Trigger onSwing for scripts attached to attacker's weapon
+	if( mWeapon )
+	{
+		cScript *toExecute2	= JSMapping->GetScript( mWeapon->GetScriptTrigger() );
+		if( toExecute2 != NULL )
+			toExecute2->OnSwing( mWeapon, &mChar, ourTarg );
+	}
 
 	if( !checkDist && getFightSkill == ARCHERY )
 		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
@@ -2258,9 +2273,10 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 			{
 				if( charInRange( &mChar, ourTarg ) )
 				{
-					if( getCombatSkill( getWeapon( &mChar ) ) == ARCHERY )
+					CItem *equippedWeapon = getWeapon( &mChar );
+					if( getCombatSkill( equippedWeapon ) == ARCHERY || getCombatSkill( equippedWeapon ) == THROWING )
 					{
-						if( getDist( &mChar, ourTarg ) > cwmWorldState->ServerData()->CombatArcherRange() )
+						if( getDist( &mChar, ourTarg ) > equippedWeapon->GetMaxRange() )
 						{
 							return;
 						}

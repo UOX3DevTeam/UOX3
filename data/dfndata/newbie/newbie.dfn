@@ -398,6 +398,30 @@ EQUIPITEM=0x27ab //tekagi
 PACKITEM=0x23a0 //book of ninjitsu
 }
 
+// Spellweaving
+[BESTSKILL 54]
+{
+
+}
+
+// Imbuing
+[BESTSKILL 55]
+{
+
+}
+
+// Mysticism
+[BESTSKILL 56]
+{
+
+}
+
+// Throwing
+[BESTSKILL 57]
+{
+
+}
+
 // Leave Empty
 [BESTSKILL X] //was 46
 {
@@ -408,6 +432,7 @@ PACKITEM=0x23a0 //book of ninjitsu
 {
 EQUIPITEM=0x1539
 EQUIPITEM=0x1517
+EQUIPITEM=0x170F
 }
 
 // Is granted to all female human players, despite skill.
@@ -415,6 +440,7 @@ EQUIPITEM=0x1517
 {
 EQUIPITEM=0x1516
 EQUIPITEM=0x1EFD
+EQUIPITEM=0x170F
 }
 
 // Is granted to all male elf players, despite skill.
@@ -422,6 +448,7 @@ EQUIPITEM=0x1EFD
 {
 EQUIPITEM=0x1539
 EQUIPITEM=0x1517
+EQUIPITEM=0x170F
 }
 
 // Is granted to all female elf players, despite skill.
@@ -429,6 +456,7 @@ EQUIPITEM=0x1517
 {
 EQUIPITEM=0x1516
 EQUIPITEM=0x1EFD
+EQUIPITEM=0x170F
 }
 
 // Is granted to all male gargoyle players, despite skill.
@@ -446,8 +474,7 @@ EQUIPITEM=0x1F03
 // Is granted to all players, despite skill, gender or race
 [DEFAULT ALL]
 {
-EQUIPITEM=0x0f51
-EQUIPITEM=0x170F
+PACKITEM=0x0f51
 PACKITEM=0x0fef
 PACKITEM=0x0a0f
 }
