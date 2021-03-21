@@ -55,6 +55,8 @@ protected:
 	UI08			glow_effect;
 	UI16			ammo[2]; // Ammo ID and Hue
 	UI16			ammoFX[3]; // Ammo-effect ID, Hue and rendermode
+	UI08			baseRange; // Base range of thrown weapon
+	UI08			maxRange; // Max range of ranged weapon
 	SI32			weightMax; //Maximum weight a container can hold
 	SI32			baseWeight; //Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems; // Maximum amount of items a container can hold
@@ -100,25 +102,27 @@ public:
 	bool			isPileable( void ) const;
 	bool			isDyeable( void ) const;
 	bool			isCorpse( void ) const;
+	bool			isHeldOnCursor( void ) const;
 	bool			isGuarded( void ) const;
 	bool			isSpawnerList( void ) const;
 
 	bool			isNewbie( void ) const;
 	bool			isDecayable( void ) const;
 	bool			isDispellable( void ) const;
-	bool			isDevineLocked( void ) const;
+	bool			isDivineLocked( void ) const;
 
 	void			SetDoorOpen( bool newValue );
 	void			SetPileable( bool newValue );
 	void			SetDye( bool newValue );
 	void			SetCorpse( bool newValue );
+	void			SetHeldOnCursor( bool newValue );
 	virtual void	SetGuarded( bool newValue );
 	void			SetSpawnerList( bool newValue );
 
 	void			SetNewbie( bool newValue );
 	void			SetDecayable( bool newValue );
 	void			SetDispellable( bool newValue );
-	void			SetDevineLock( bool newValue );
+	void			SetDivineLock( bool newValue );
 
 	const char *	GetName2( void ) const;
 	SERIAL			GetCreator( void ) const;
@@ -160,6 +164,12 @@ public:
 
 	UI08			GetSpeed( void ) const;
 	void			SetSpeed( UI08 newValue );
+
+	UI08			GetMaxRange( void ) const;
+	void			SetMaxRange( UI08 newValue );
+
+	UI08			GetBaseRange( void ) const;
+	void			SetBaseRange( UI08 newValue );
 
 	SI08			GetMovable( void ) const;
 	void			SetMovable( SI08 newValue );

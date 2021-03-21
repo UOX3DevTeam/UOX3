@@ -1,6 +1,7 @@
 function CommandRegistration()
 {
 	RegisterCommand( "remove", 2, true );
+	RegisterCommand( "delete", 2, true );
 	RegisterCommand( "deletechar", 3, true );
 }
 
@@ -17,6 +18,12 @@ function command_REMOVE( socket, cmdString )
 		var targMsg = GetDictionaryEntry( 188, socket.language );
 		socket.CustomTarget( 0, targMsg );
 	}
+}
+
+// Alias for REMOVE command
+function command_DELETE( socket, cmdString )
+{
+	command_REMOVE( socket, cmdString );
 }
 
 function onCallback0( socket, ourObj )
@@ -56,6 +63,10 @@ function onCallback0( socket, ourObj )
 				}
 				else
 				{
+					// TODO - If targeted object is a house sign on a multi, or a tillerman on a boat,
+					// cause the multi to be demolished and run through the process of releasing
+					// any items locked down inside?
+
 					socket.SysMessage( GetDictionaryEntry( 1013 ) );
 					ourObj.Delete();
 				}

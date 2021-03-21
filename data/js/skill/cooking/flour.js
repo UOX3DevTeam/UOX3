@@ -3,7 +3,7 @@
 // 21/07/2003 Xuri; Updated/rewrote the script
 // use wheat : target flour mill : get flour
 
-function onUseChecked ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed )
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -39,16 +39,13 @@ function onCallback0( tSock, targSerial )
 	var targY	= tSock.GetWord( 13 );
 	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
-	if( tileID == 0 )
-	{ //Target is a Maptile
+	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
+	{ //Target is a MapTile or a Character
 		pUser.SysMessage("You cannot grind your wheat on that.");
-	}
-	else if( StrangeByte == 0 && targSerial.isChar )
-	{ //Target is a Character
-		pUser.SysMessage("You cannot grind your wheat on that.");
+		return;
 	}
 	// Target is a Dynamic or Static Item
-	if( tileID == 0x188b || tileID == 0x188c || ( tileID >= 0x1920 && tileID <= 0x1923 ) || ( tileID >= 0x1925 && tileID <= 0x1927 ) || 
+	if( tileID == 0x188b || tileID == 0x188c || ( tileID >= 0x1920 && tileID <= 0x1923 ) || ( tileID >= 0x1925 && tileID <= 0x1927 ) ||
 	( tileID >= 0x192c && tileID <= 0x192f ) || ( tileID >= 0x1931 && tileID <= 0x1933 ))
 	{	// In case its a flour mill
 		// check if its in range

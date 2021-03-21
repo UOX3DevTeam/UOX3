@@ -1,4 +1,5 @@
 // THIRDDAWN_CLOTHING
+// There's a good chance these don't work in non-Third Dawn clients!
 
 [0x2649]
 {
@@ -542,4 +543,38 @@ movable=1
 dyeable=1
 decay=1
 good=18
+}
+
+[0x230a]
+{
+get=base_item
+name=fur cape
+id=0x230a
+weight=400
+value=50 25
+layer=0x7
+hp=50
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=18
+str=10
+}
+
+[0x2309]
+{
+get=base_item
+name=fur cape
+id=0x2309
+weight=400
+value=50 25
+layer=0x7
+hp=50
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=18
+str=10
 }

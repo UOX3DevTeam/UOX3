@@ -22,14 +22,14 @@ return;
 
 typedef float				R32;
 typedef double				R64;
-typedef unsigned int		UI32;
-typedef signed int			SI32;
-typedef unsigned short int	UI16;
-typedef signed short int	SI16;
-typedef unsigned char		UI08;
-typedef signed char			SI08;
-typedef unsigned long long	UI64;
-typedef signed long long	SI64;
+typedef unsigned char		UI08; // 0 to 255
+typedef signed char			SI08; // -128 to 127
+typedef unsigned short int	UI16; // 0 to 65535
+typedef signed short int	SI16; // -32768 to 32767
+typedef unsigned int		UI32; // 0 to 4294967295
+typedef signed int			SI32; // -2147483648 to 2147483647
+typedef unsigned long long	UI64; // 0 to 18446744073709551615
+typedef signed long long	SI64; // -9223372036854775808 to 9223372036854775807
 
 typedef UI08		GENDER;
 typedef UI08		LIGHTLEVEL;

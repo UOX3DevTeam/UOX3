@@ -45,7 +45,7 @@ function onCallback0( tSock, myTarget )
     	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
     	if( iMakeResource < 5 )
   	{
-    		pUser.SysMessage( "You dont seem to have enough yarn!" );
+    		pUser.SysMessage( "You don't seem to have enough yarn!" );
 		return;
         }
 	if( pUser.CheckSkill( 34, 0, 1000 ) )

@@ -2602,7 +2602,7 @@ int main( SI32 argc, char *argv[] )
 
 		Console << "Initializing and creating class pointers... " << myendl;
 		InitClasses();
-		cwmWorldState->SetUICurrentTime( currentTime );
+		cwmWorldState->SetUICurrentTime( getclock() );
 
 		ParseArgs( argc, argv );
 		Console.PrintSectionBegin();

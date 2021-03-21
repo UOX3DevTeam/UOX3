@@ -941,7 +941,6 @@ void CTownRegion::SendEnemyGump( CSocket *sock )
 	toSend.UserID( INVALIDSERIAL );
 	toSend.GumpID( 3 );
 
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand(format( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
 	toSend.addCommand( format("button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
@@ -990,7 +989,6 @@ void CTownRegion::SendPotentialMember( CSocket *sock )
 	toSend.UserID( INVALIDSERIAL );
 	toSend.GumpID( 3 );
 
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand( format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()) );
 	toSend.addCommand( format("button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
@@ -1029,7 +1027,6 @@ void CTownRegion::SendMayorGump( CSocket *sock )
 	toSend.UserID( INVALIDSERIAL );
 	toSend.GumpID( 3 );
 
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand( format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
 	toSend.addCommand( format("button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
@@ -1085,7 +1082,6 @@ void CTownRegion::SendDefaultGump( CSocket *sock )
 	toSend.UserID( INVALIDSERIAL );
 	toSend.GumpID( 3 );
 
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand( format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()) );
 	toSend.addCommand( format("button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
@@ -1424,7 +1420,6 @@ void CTownRegion::ViewTaxes( CSocket *sock )
 	toSend.UserID( INVALIDSERIAL );
 	toSend.GumpID( 3 );
 
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
 	toSend.addCommand( format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ));
 	toSend.addCommand( format("button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY

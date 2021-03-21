@@ -3,7 +3,7 @@
 // 21/07/2003 Xuri; Updated/rewrote the script
 // use dough : target heat source : get bread
 
-function onUseChecked ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed )
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -38,7 +38,7 @@ function onCallback0( tSock, targSerial )
 		pUser.SysMessage("You cannot cook your bread on that!");
 	}
 	// Target is a Dynamic or Static Item
-	if(( tileID >= 0x0461 && tileID <= 0x0480 ) || ( tileID >= 0x092B && tileID <= 0x0933 ) || ( tileID >= 0x0937 && tileID <= 0x0942 ) || 
+	if(( tileID >= 0x0461 && tileID <= 0x0480 ) || ( tileID >= 0x092B && tileID <= 0x0933 ) || ( tileID >= 0x0937 && tileID <= 0x0942 ) ||
 	( tileID >= 0x0945 && tileID <= 0x0950 ) || ( tileID >= 0x0953 && tileID <= 0x095e ) || ( tileID >= 0x0961 && tileID <= 0x096c ) ||
 	( tileID >= 0x0de3 && tileID <= 0x0de8 ) || tileID == 0x0fac )
 	{	// In case its an oven, fireplace, campfire or fire pit
@@ -47,12 +47,12 @@ function onCallback0( tSock, targSerial )
 		{
 			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}	
+		}
 		// remove one dough
 		var iMakeResource = pUser.ResourceCount( 0x103D );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
 		{
-			pUser.SysMessage( "You dont seem to have any dough!" );
+			pUser.SysMessage( "You don't seem to have any dough!" );
 			return;
 		}
 		pUser.UseResource( 1, 0x103D ); // uses up a resource (amount, item ID, item colour)

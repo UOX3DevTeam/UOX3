@@ -432,14 +432,14 @@ void WstatsTarget( CSocket *s )
 void ColorsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
+	CChar *mChar = s->CurrcharObj();
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
 	s->TempObj( NULL );
 	if( ValidateObject( tempObj ) )
 	{
-		CChar *mChar = s->CurrcharObj();
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -449,6 +449,12 @@ void ColorsTarget( CSocket *s )
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) )
 		return;
+
+	if( i->isHeldOnCursor() || ( FindItemOwner( i ) != NULL && FindItemOwner( i ) != mChar ) || !checkItemRange( mChar, i ) )
+	{
+		s->sysmessage( 400 ); // That is too far away!
+		return;
+	}
 
 	if( i->GetID() == 0x0FAB || i->GetID() == 0x0EFF || i->GetID() == 0x0E27 )	// dye vat, hair dye
 	{
@@ -475,7 +481,7 @@ void DvatTarget( CSocket *s )
 	s->TempObj( NULL );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -486,6 +492,12 @@ void DvatTarget( CSocket *s )
 	CItem *i		= calcItemObjFromSer( serial );
 	if( !ValidateObject( i ) )
 		return;
+
+	if( i->isHeldOnCursor() || !checkItemRange( mChar, i ) )
+	{
+		s->sysmessage( 400 ); // That is too far away!
+		return;
+	}
 
 	if( i->isDyeable() )
 	{
@@ -619,6 +631,13 @@ void InfoTarget( CSocket *s )
 			statTile.AddData( "--> Door", tile.CheckFlag( TF_DOOR ) );
 			statTile.AddData( "--> StairBack", tile.CheckFlag( TF_STAIRBACK ) );
 			statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
+			statTile.AddData( "--> AlphaBlend", tile.CheckFlag( TF_ALPHABLEND ) );
+			statTile.AddData( "--> UseNewArt", tile.CheckFlag( TF_USENEWART ) );
+			statTile.AddData( "--> ArtUsed", tile.CheckFlag( TF_ARTUSED ) );
+			statTile.AddData( "--> NoShadow", tile.CheckFlag( TF_NOSHADOW ) );
+			statTile.AddData( "--> PixelBleed", tile.CheckFlag( TF_PIXELBLEED ) );
+			statTile.AddData( "--> PlayAnimOnce", tile.CheckFlag( TF_PLAYANIMONCE ) );
+			statTile.AddData( "--> MultiMovable", tile.CheckFlag( TF_MULTIMOVABLE ) );
 			statTile.Send( 4, false, INVALIDSERIAL );
 		}
 		else
@@ -742,13 +761,17 @@ void Tiling( CSocket *s )
 	}
 
 	UI16 addid = (UI16)(( ( s->AddID1() ) << 8 ) + s->AddID2());
+	SI32 rndVal = s->TempInt2();
+	s->TempInt2( 0 );
+	UI16 rndID = 0;
 
 	CItem *c = NULL;
 	for( SI16 x = x1; x <= x2; ++x )
 	{
 		for( SI16 y = y1; y <= y2; ++y )
 		{
-			c = Items->CreateItem( NULL, s->CurrcharObj(), addid, 1, 0, OT_ITEM );
+			rndID = addid + RandomNum( static_cast<UI16>(0), static_cast<UI16>(rndVal) );
+			c = Items->CreateItem( NULL, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
 			if( !ValidateObject( c ) )
 				return;
 			c->SetDecayable( false );
@@ -1414,7 +1437,7 @@ void SmeltTarget( CSocket *s )
 	s->TempObj( NULL );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ))
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -1424,6 +1447,12 @@ void SmeltTarget( CSocket *s )
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) || i->GetCont() == NULL )
 		return;
+	if( i->isHeldOnCursor() || !checkItemRange( mChar, i ))
+	{
+		s->sysmessage( 400 ); // That is too far away!
+		return;
+	}
+
 	if( i->GetCreator() == INVALIDSERIAL )
 	{
 		s->sysmessage( 1113 );
@@ -1486,7 +1515,7 @@ void VialTarget( CSocket *mSock )
 
 	if( ValidateObject( nVialID ) )
 	{
-		if( !checkItemRange( mChar, nVialID ) )
+		if( nVialID->isHeldOnCursor() || !checkItemRange( mChar, nVialID ) )
 		{
 			mSock->sysmessage( 400 ); // That is too far away!
 			return;
@@ -1512,6 +1541,12 @@ void VialTarget( CSocket *mSock )
 				mSock->sysmessage( 749 );
 			else
 			{
+				if( !checkItemRange( mChar, targItem ) )
+				{
+					mSock->sysmessage( 400 ); // That is too far away!
+					return;
+				}
+
 				nVialID->SetTempVar( CITV_MORE, 1, targItem->GetTempVar( CITV_MORE, 1 ) );
 				Karma( mChar, NULL, -1000 );
 				if( targItem->GetTempVar( CITV_MORE, 2 ) < 4 )

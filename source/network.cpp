@@ -591,8 +591,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 					cScript *pScript = JSMapping->GetScript( pFind->second );
 					if( pScript != NULL )
 					{
-						doSwitch = false;
-						pScript->OnPacketReceive( mSock, packetID );
+						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
 					}
 				}
 			}
@@ -1059,7 +1058,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		{
 
 			UI08 packetID = buffer[0];
-			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 && packetID != 0xE4 )
+			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 && packetID != 0xE4 && packetID != 0xF1 )
 			{
 				// April 5, 2004 - Hmmm there are two of these ?
 				if(cwmWorldState->ServerData()->ServerUOGEnabled()){
@@ -1086,7 +1085,9 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				{
 					cScript *pScript = JSMapping->GetScript( pFind->second );
 					if( pScript != NULL )
+					{
 						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
+					}
 				}
 			}
 			if( doSwitch )
@@ -1271,7 +1272,8 @@ void cNetworkStuff::LoadFirewallEntries( void )
 
 void cNetworkStuff::RegisterPacket( UI08 packet, UI08 subCmd, UI16 scriptID )
 {
-	UI16 packetID = static_cast<UI16>((subCmd<<8) + packet);
+	//UI16 packetID = static_cast<UI16>((subCmd<<8) + packet); // Registration of subCmd disabled until it can be fully implemented
+	UI16 packetID = static_cast<UI16>(packet);
 	packetOverloads[packetID] = scriptID;
 }
 

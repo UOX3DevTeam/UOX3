@@ -1,9 +1,9 @@
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/rewrote the script
-// Raw cut of ribs : heat source : Cut of ribs 
+// Raw cut of ribs : heat source : Cut of ribs
 
-function onUseChecked ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed )
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -33,16 +33,13 @@ function onCallback0( tSock, targSerial )
 	var targY	= tSock.GetWord( 13 );
 	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
-	if( tileID == 0 )
-	{ //Target is a Maptile
+	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
+	{ //Target is a MapTile or a Character
 		pUser.SysMessage("You cannot cook your raw ribs on that.");
-	}
-	else if( StrangeByte == 0 && targSerial.isChar )
-	{ //Target is a Character
-		pUser.SysMessage("You cannot cook your raw ribs on that.");
+		return;
 	}
 	// Target is a Dynamic or Static Item
-	if(( tileID >= 0x0461 && tileID <= 0x0480 ) || ( tileID >= 0x092B && tileID <= 0x0933 ) || ( tileID >= 0x0937 && tileID <= 0x0942 ) || 
+	if(( tileID >= 0x0461 && tileID <= 0x0480 ) || ( tileID >= 0x092B && tileID <= 0x0933 ) || ( tileID >= 0x0937 && tileID <= 0x0942 ) ||
 	( tileID >= 0x0945 && tileID <= 0x0950 ) || ( tileID >= 0x0953 && tileID <= 0x095e ) || ( tileID >= 0x0961 && tileID <= 0x096c ) ||
 	( tileID >= 0x0de3 && tileID <= 0x0de8 ) || tileID == 0x0fac )
 	{	// In case its an oven, fireplace, campfire or fire pit
@@ -51,15 +48,15 @@ function onCallback0( tSock, targSerial )
 		{
 			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}	
+		}
 		// remove one raw rib
 		var iMakeResource = pUser.ResourceCount( 0x09f1 );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
 		{
-			pUser.SysMessage( "You dont seem to have any raw ribs!" );
+			pUser.SysMessage( "You don't seem to have any raw ribs!" );
 			return;
 		}
-		if( pUser.skills[13] < 100 ) 
+		if( pUser.skills[13] < 100 )
 		{
 			pUser.SysMessage( "You are not skilled enough to do that." );
 			return;

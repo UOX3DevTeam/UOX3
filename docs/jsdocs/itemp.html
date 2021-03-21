@@ -40,7 +40,7 @@
     <td>The color of this item.
   <tr>
     <td>owner
-    <td>The character who owns this item.
+    <td>The character who owns this item
   <tr>
     <td>visible
     <td>The visibility status of this item:<ul>
@@ -50,44 +50,46 @@
 		3 = Permanent Hidden (GM Hide)</ul>
   <tr>
     <td>serial
-    <td>The unique identifying number of this item.
+    <td>(Read-Only) The unique identifying number of this item
   <tr>
     <td>health
-    <td>The actual health of this item.
+    <td>The current health of this item.
   <tr>
     <td>scripttrigger
     <td>The JavaScript-ID assigned to this item.
   <tr>
-    <td>privateword
-    <td>
-  <tr>
     <td>worldnumber
-    <td>The world in which this item is.
+    <td>The world in which this item currently exists
 		<blockquote>0=Felucca<br>
 		1=Trammel<br>
 		2=Ilshenar<br>
-		3=Malas</blockquote>
+		3=Malasl<br>
+    4=Tokunol<br>
+    5=Termur</blockquote>
+  <tr>
+    <td>instanceID
+    <td>Current instance item exists in. Note that objects in different instances cannot interact with or affect one another, even when in the same world, at the same coordinates
   <tr>
     <td>amount
     <td>The amount of the item (for pileables).
   <tr>
     <td>container
-    <td>The container this item is in.
+    <td>Object reference to the container this item is in
   <tr>
     <td>type
-    <td>The type of the item.
+    <td>The item type of the item. See full list in <a href="https://www.uox3.org/docs/index.html#itemtypes" target="_blank">UOX3 Docs</a>!
   <tr>
     <td>more
-    <td>Temporary value for this item.
+    <td>Temporary value for this item. See <a href="https://www.uox3.org/docs/index.html#dfnTagSystem" target="_blank">list of DFN tags for items in UOX3 Docs</a> for more details!
   <tr>
     <td>morex
-    <td>Temporary value for this item.
+    <td>Temporary value for this item. See <a href="https://www.uox3.org/docs/index.html#dfnTagSystem" target="_blank">list of DFN tags for items in UOX3 Docs</a> for more details!
   <tr>
     <td>morey
-    <td>Temporary value for this item.
+    <td>Temporary value for this item. See <a href="https://www.uox3.org/docs/index.html#dfnTagSystem" target="_blank">list of DFN tags for items in UOX3 Docs</a> for more details!
   <tr>
     <td>morez
-    <td>Temporary value for this item.
+    <td>Temporary value for this item. See <a href="https://www.uox3.org/docs/index.html#dfnTagSystem" target="_blank">list of DFN tags for items in UOX3 Docs</a> for more details!
   <tr>
     <td>movable
     <td>Toggles the "movable" status for this item. <blockquote>
@@ -97,13 +99,64 @@
 		3=locked down</blockquote>
   <tr>
     <td>att
-    <td>The damage property of this item.
+    <td>Returns a randomized damage value between lodamage and hidamage properties. If used to set a value, will set both lodamage and hidamage properties to the same value.
+  <tr>
+    <td>def
+    <td>The item's defense value (Physical Resistance post-AoS, AR in older UO)
+  <tr>
+    <td>resistCold
+    <td>The item's Cold Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>resistHeat
+    <td>The item's Heat/Fire Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>resistLight
+    <td>The item's Light Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>resistLightning
+    <td>The item's Lightning/Energy Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>resistPoison
+    <td>The item's Poison Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>resistRain
+    <td>The item's Rain/Water Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>resistSnow
+    <td>The item's Snow/Ice Resistance (0-1000, where 1000 = 100.0%) - no effect implemented yet
+  <tr>
+    <td>damageCold
+    <td>Weapon deals Cold damage (true/false) - no effect implemented yet
+  <tr>
+    <td>damageHeat
+    <td>Weapon deals Heat/Fire damage (true/false) - no effect implemented yet
+  <tr>
+    <td>damageLight
+    <td>Weapon deals Light damage (true/false) - no effect implemented yet
+  <tr>
+    <td>damageLightning
+    <td>Weapon deals Lightning/Energy damage (true/false) - no effect implemented yet
+  <tr>
+    <td>damagePoison
+    <td>Weapon deals Poison damage (true/false) - no effect implemented yet
+  <tr>
+    <td>damageRain
+    <td>Weapon deals Rain/Water damage (true/false) - no effect implemented yet
+  <tr>
+    <td>damageSnow
+    <td>Weapon deals Snow/Ice damage (true/false) - no effect implemented yet
+  <tr>
+    <td>ac
+    <td>The armor class of this item
   <tr>
     <td>layer
-    <td>The layer this item is on when equipped.
+    <td>The layer this item is on when equipped. See <a href="https://www.uox3.org/docs/index.html#itemLayers" target="_blank">full list of item layers</a> in UOX3 Docs!
   <tr>
     <td>itemsinside
-    <td>The number of items this item contains.
+    <td>(Read-Only) The number of items this item (if container) contains
+  <tr>
+    <td>totalItemCount
+    <td>(Read-Only) The total number of items this item (if container) contains, including sub-containers
   <tr>
     <td>decayable
     <td>Toggles this items' ability to decay over time. (true/false or 1/0)
@@ -112,10 +165,13 @@
     <td>The amount of time it takes for this item to decay.
   <tr>
     <td>lodamage
-    <td>The minimum damage this item will do.
+    <td>The minimum damage this item can do (if a weapon)
   <tr>
     <td>hidamage
-    <td>The maximum damage this item will do.
+    <td>The maximum damage this item can do (if a weapon)
+  <tr>
+    <td>speed
+    <td>The speed of the item, primarily used for weapons to determine how fast/how often the character wielding the weapon can attack in combat
   <tr>
     <td>name2
     <td>The second name property of this item (for item ID).
@@ -129,26 +185,23 @@
     <td>isSpawner
     <td>Returns true if this object is a spawn item.
   <tr>
-    <td>raceID
-    <td>Returns the race-id of this item.
-  <tr>
     <td>race
-    <td>Returns the race of this item as a JS object.
+    <td>Returns the race of this item as a JS object (with properties like id, name, armourClass and more). Race can be set using race ID of new race as value.
   <tr>
     <td>maxhp
-    <td>the maximum hitpoints of this item (for damage and repair).
+    <td>The maximum possible hitpoints of this item (for damage and repair).
   <tr>
     <td>rank
     <td>The quality-rank of this item (used in item-creation, for instance). From 1-10.
   <tr>
     <td>poison
-    <td>
+    <td>Poison strength applied to item such as weapons and food (from 1 to 4, where 1 = Weak poison, 4 = Deadly poison)
   <tr>
     <td>dir
     <td>The direction in which this item is facing. For lightsources, this determines the light radius instead.
   <tr>
     <td>wipable
-    <td>Toggles whether or not this item will be removed by the 'wipe commands.
+    <td>Toggles whether or not this item can be removed by the 'wipe commands.
   <tr>
     <td>buyvalue
     <td>The amount of money it costs to buy this item from a vendor.
@@ -157,28 +210,37 @@
     <td>The amount of money one can receive by selling this item to a vendor.
   <tr>
     <td>restock
-    <td>The amount of this item a vendor will restock in his shop.
+    <td>The amount of this item a vendor will restock in their shop, if they carry it
   <tr>
-    <td>devinelock
-    <td>The devinelock status of this item.
+    <td>divinelock
+    <td>The divinelock status of this item. If true, the container was locked by a GM and cannot be unlocked by picklocks, magic unlock, etc
   <tr>
     <td>weight
     <td>The total weight of this item. 1000 = 10.00 stones, 100 = 1.00 stones, 10 = 0.1 stones, 1 = 0.01 stones
   <tr>
+    <td>weightMax
+    <td>The maximum weight in stones a container can hold. 1000 = 10.00 stones, 100 = 1.00 stones, 10 = 0.1 stones, 1 = 0.01 stones
+  <tr>
+    <td>maxItems
+    <td>The maximum amount of items a container can hold (including sub-containers). Defaults to 125
+  <tr>
     <td>strength
-    <td>The amount of strength it takes to wield this item.
+    <td>The amount of strength it takes to wield this item, if it can be equipped
   <tr>
     <td>dexterity
-    <td>The amount of dexterity it takes to wield this item.
+    <td>The amount of dexterity it takes to wield this item, if it can be equipped
   <tr>
     <td>intelligence
-    <td>The amount of intelligence it takes to wield this item.
+    <td>The amount of intelligence it takes to wield this item, if it can be equipped
   <tr>
     <td>corpse
-    <td>Returns true if item is a corpse.
+    <td>(Read-Only) Returns true if item is a corpse
   <tr>
     <td>desc
-    <td>Description of item (For instance used on player vendors.)
+    <td>Description of item (for instance used on player vendors)
+  <tr>
+    <td>tempTimer
+    <td>Timer used by container-spawners to determine when to spawn an item next (if maximum items spawned from container hasn't been reached yet)
   <tr>
     <td>isNewbie
     <td>Item is "blessed"/has newbie status (true/false)
@@ -202,43 +264,61 @@
     <td>Item is an open door (true/false)
   <tr>
     <td>isFieldSpell
-    <td>(readonly) item is part of a field-spell? (true/false)
+    <td>(Read-Only) item is part of a field-spell? (true/false)
   <tr>
     <td>isLockedDown
-    <td>(readonly) item is locked down (true/false)
+    <td>(Read-Only) item is locked down (true/false)
   <tr>
     <td>isShieldType
-    <td>(readonly) ??
+    <td>(Read-Only) item is a shield (true/false)
   <tr>
     <td>isMetalType
-    <td>(readonly) ??
+    <td>(Read-Only) item is a metal object (true/false)
   <tr>
     <td>isLeatherType
-    <td>(readonly) ??
+    <td>(Read-Only) item is a leather object (true/false)
   <tr>
     <td>canBeLockedDown
-    <td>(readonly) item can be locked down (true/false)
+    <td>(Read-Only) item can be locked down (true/false)
   <tr>
     <td>isContType
-    <td>(readonly) ??
+    <td>(Read-Only) item has a container type (includes container spawn objects and trash containers)
   <tr>
     <td>madeWith
-    <td>??
+    <td>ID of skill that was used to create this item
   <tr>
     <td>entryMadeFrom
-    <td>??
+    <td>Create-DFN entry item was made from
   <tr>
     <td>carveSection
-    <td>Get/Set the carvesection of a corpse from carve.dfn
+    <td>The carve-section of a corpse from carve.dfn, determines what items to spawn when a corpse is carved
   <tr>
-    <td>tempTimer
-    <td>??
+    <td>ammoID
+    <td>Ammo ID for ammo used by ranged weapon
   <tr>
-    <td>maxItems
-    <td>Get/Set max item capacity for a container
+    <td>ammoHue
+    <td>Hue of ammo used by ranged weapon
   <tr>
-    <td>totalItemCount
-    <td>Get/Set total item count in a container (including sub-containers)
+    <td>ammoFX
+    <td>ID of projectile FX shown when firing ranged weapon
+  <tr>
+    <td>ammoFXHue
+    <td>Colour of projectiles fired by ranged weapons
+  <tr>
+    <td>ammoFXRender
+    <td>The render mode of projectile FX played when firing ranged weapons
+  <tr>
+    <td>maxRange
+    <td>The max range of archery weapons, and the cap for how far baseRange can extend for throwing weapons based on modifiers like character strength
+  <tr>
+    <td>baseRange
+    <td>The base range of a throwing weapon, before affected by a character's strength
+  <tr>
+    <td>isItemHeld
+    <td>Whether item is being held on cursor by a player
+  <tr>
+    <td>multi
+    <td>(Read-Only) Returns JS object for multi that character is in (if any)
   </table>
 
 <h2>Item Spawner Properties</h2>
@@ -248,16 +328,16 @@
     <th bgcolor="maroon">Purpose
   <tr>
     <td>spawnsection
-    <td>The script section for this item to spawn from.
+    <td>The script section for this spawner to spawn from.
   <tr>
     <td>sectionalist
     <td>Toggles whether or not the section this item spawns from is a list.
   <tr>
     <td>mininterval
-    <td>The minimum amount of time for this item to respawn.
+    <td>The minimum amount of time for this spawner to spawn another item.
   <tr>
     <td>maxinterval
-    <td>The maximum amount of time for this item to respawn.
+    <td>The maximum amount of time for this spawner to spawn another item.
 </table>
 
 <center>

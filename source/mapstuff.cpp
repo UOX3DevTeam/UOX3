@@ -182,24 +182,30 @@ void CMulHandler::LoadMapsDFN( void )
 				case 'M':
 					if( UTag == "MAP" )
 						toAdd.mapFile = data;
-					else if( UTag == "MAPDIFF" )
-						toAdd.mapDiffFile = data;
-					else if( UTag == "MAPDIFFLIST" )
-						toAdd.mapDiffListFile = data;
 					else if( UTag == "MAPUOPWRAP" )
 						toAdd.mapFileUOPWrap = data;
+					else if( cwmWorldState->ServerData()->MapDiffsEnabled() )
+					{
+						if( UTag == "MAPDIFF" )
+								toAdd.mapDiffFile = data;
+						else if( UTag == "MAPDIFFLIST" )
+								toAdd.mapDiffListFile = data;
+					}
 					break;
 				case 'S':
 					if( UTag == "STATICS" )
 						toAdd.staticsFile = data;
 					else if( UTag == "STAIDX" )
 						toAdd.staidxFile = data;
-					else if( UTag == "STATICSDIFF" )
-						toAdd.staticsDiffFile = data;
-					else if( UTag == "STATICSDIFFLIST" )
-						toAdd.staticsDiffListFile = data;
-					else if( UTag == "STATICSDIFFINDEX" )
-						toAdd.staticsDiffIndexFile = data;
+					else if( cwmWorldState->ServerData()->MapDiffsEnabled() )
+					{
+						if( UTag == "STATICSDIFF" )
+							toAdd.staticsDiffFile = data;
+						else if( UTag == "STATICSDIFFLIST" )
+							toAdd.staticsDiffListFile = data;
+						else if( UTag == "STATICSDIFFINDEX" )
+							toAdd.staticsDiffIndexFile = data;
+					}
 					break;
 				case 'X':
 					if( UTag == "X" )
@@ -1864,6 +1870,22 @@ void CMulHandler::LoadDFNOverrides( void )
 								tile->SetFlag( TF_STAIRBACK, (data.toInt() != 0) );
 							else if( UTag == "CLIMBABLEBIT2" )
 								tile->SetFlag( TF_STAIRRIGHT, (data.toInt() != 0) );
+
+							// BaseTile Flag 5 - added in HS expansion?
+							else if( UTag == "ALPHABLEND" )
+								tile->SetFlag( TF_ALPHABLEND, (data.toInt() != 0) );
+							else if( UTag == "USENEWART" )
+								tile->SetFlag( TF_USENEWART, (data.toInt() != 0) );
+							else if( UTag == "ARTUSED" )
+								tile->SetFlag( TF_ARTUSED, (data.toInt() != 0) );
+							else if( UTag == "NOSHADOW" )
+								tile->SetFlag( TF_NOSHADOW, (data.toInt() != 0) );
+							else if( UTag == "PIXELBLEED" )
+								tile->SetFlag( TF_PIXELBLEED, (data.toInt() != 0) );
+							else if( UTag == "PLAYANIMONCE" )
+								tile->SetFlag( TF_PLAYANIMONCE, (data.toInt() != 0) );
+							else if( UTag == "MULTIMOVABLE" )
+								tile->SetFlag( TF_MULTIMOVABLE, (data.toInt() != 0) );
 						}
 					}
 				}
@@ -1912,6 +1934,7 @@ void CTile::Read( UOXFile *toRead )
 	toRead->getUChar( &unknown5 );
 	toRead->getChar( &height );
 	toRead->getChar( name, 20 );
+	name[20] = '\0';
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1953,6 +1976,7 @@ void CTileHS::Read( UOXFile *toRead )
 	toRead->getUChar( &unknown5 );
 	toRead->getChar( &height );
 	toRead->getChar( name, 20 );
+	name[20] = '\0';
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1972,6 +1996,7 @@ void CLand::Read( UOXFile *toRead )
 	flags = flagsRead;
 	toRead->getUShort( &textureID );
 	toRead->getChar( name, 20 );
+	name[20] = '\0';
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1993,4 +2018,5 @@ void CLandHS::Read( UOXFile *toRead )
 	toRead->getULong( &unknown1 );
 	toRead->getUShort( &textureID );
 	toRead->getChar( name, 20 );
+	name[20] = '\0';
 }

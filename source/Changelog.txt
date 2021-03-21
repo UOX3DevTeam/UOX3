@@ -1,3 +1,101 @@
+23/03/2021 - Xuri (0.99.4d)
+	Added new option in UOX.INI under [settings] section:
+		MAPDIFFSENABLED=0/1 // If enabled, server will attempt to load diff files, and send "Enable Map-diff files" packet to client to also load these. Disabled by default.
+	Server no longer loads map/statics diff files by default, nor does it send packet to client to request loading these files, as only client versions below 7.0.8.2 will actively load these files. Can be re-enabled with new UOX.INI setting mentioned above!
+	Fixed incorrect ID for gargish dagger in CHandleCombat::getWeaponType()
+	Added missing weapon entries in CHandleCombat::getWeaponType(): bladed whip, barbed whip, spiked whip, gargish talwar
+	Fixed an issue that would show the end part of some tiledata names as garbled text instead of cutting off the text(!) at 20 characters
+	Fixed an issue with advanced character creation template when using ClassicUO client, which sends a profession value of 255 instead of 0 when no profession template has been selected.
+	Fixed an issue where clones of NPCs that can split in combat didn't get the NPC flag correctly set
+	Guild titles are now removed for players who leave their guilds
+	Enabled closing some hard-coded gump menus using right-click (howto, guild, towns, wholist, addmenu, craftmenu, info)
+	Fixed an issue where adding base items using 'add [itemID] would sometimes get false positive hits from harditems.dfn, depending on the length of the itemID
+	Fixed an issue where items added using 'add [itemID] would not get names applied properly from harditems.dfn
+	Item/NPC DFN tag GET can now inherit a random parent by adding additional values separated by spaces. Syntax:
+		GET=parent1 parent2 parent3 (etc)
+	Fixed an issue where NPC backpacks would not have the max item capacity set properly
+	Added new properties for CItem objects (also exposed as JS Item Properties):
+		maxRange // max distance a ranged weapon can fire at (replaces ARCHERRANGE ini setting)
+		baseRange // base distance throwing weapons (when implemented) can be used at
+	Added support for new Item DFN tag that replaces global UOX.INI setting ARCHERRANGE:
+		MAXRANGE=# 				// Specifies max range of ranged weapon
+	Added support for new Item/NPC DFN tags to support randomizing elemental resistances:
+		RESISTFIRE=#/# #		// Set NPC's poison resistance; fixed or random value
+		RESISTCOLD=#/# #		// Set NPC's poison resistance; fixed or random value
+		RESISTLIGHTNING=#/# # 	// Set NPC's poison resistance; fixed or random value
+		RESISTPOISON=#/# #		// Set NPC's poison resistance; fixed or random value
+	Added support for two new DFN tags in dfndata/race/races.dfn that can be used to allow/ban lists of equipment for specific races
+		ALLOWEQUIPLIST=#
+		BANEQUIPLIST=#
+	Added support for new section in dfndata/race/races.dfn - [EQUIPLIST #], which can be used to define lists of equipment that is whitelisted or banned for specific races.
+	Fixed a bug that would report incorrect weight in tooltips for Item/NPC spawner objects
+	ScriptSections are now reapplied for items bought by players from NPC vendors
+	Fixed an issue where players could drop an item on the ground and other players would still see the item after it was picked up, because of a failed distance check vs old location coordinates (in pack) instead of vs current location on ground
+	Fixed a bug with players being able to use last-target macro to target objects picked up and held by other players on their cursor
+	Updated all references to "devinelock" to be "divinelock" instead - this includes the name of the JS Item property
+	Fixed house commands triggering (useless) targeting cursors for players onboard boats
+	Changed default statcap in UOX.INI from 325 to 225
+	Fixed a out-of-range error for players attempting to combine ore inside their own backpack
+	Fixed various issues with distance checks and container checks when using/target objects
+	Added optional 4th "hue" parameter to AddGump JS method
+	Added JS Function to get total amount of accounts on server - GetAccountCount()
+	Added JS Function to get total amount of players online - GetPlayerCount()
+	onSwing JS Event can now trigger in scripts attached to items, not just items attached to characters
+	Added some JS Functions to expose some hard-coded constants to JS scripts:
+		BASEITEMSERIAL() // Base item serial
+		INVALIDSERIAL() // Invalid serial
+		INVALIDID() // Invalid ID
+		INVALIDCOLOUR() // Invalid colour
+	Fixed an issue where JS character property .colour would modify origSkin property instead of colour
+	Fixed an issue where JS character property .guildTitle returned the name of the character instead of the guild title
+	Character JS property .poison can now also be used to set a character's poisoned level, not just read it
+	Exposed Item property to JS engine:
+		.ac // armour class for item (0-128). Primarily used for setting race-restrictions for equippable items, i.e. race X cannot equip items of armour class Y.
+		.def // defensive value of item (Physical resistance post-AoS, AR in older UO)
+		// NOTE: The following properties don't actually do anything yet, but can still be used in custom JS scripts if desired
+		.resistCold // Cold resistance of item 0-1000, where 1000 equals 100.0%
+		.resistHeat // Heat/Fire resistance of item 0-1000, where 1000 equals 100.0%
+		.resistLight // Light resistance of item 0-1000, where 1000 equals 100.0%
+		.resistLightning // Energy/Lightning resistance of item 0-1000, where 1000 equals 100.0%
+		.resistPoison // Poison resistance of item 0-1000, where 1000 equals 100.0%
+		.resistRain // Rain resistance of item 0-1000, where 1000 equals 100.0%
+		.resistSnow // Snow resistance of item 0-1000, where 1000 equals 100.0%
+		.damageHeat // Weapon deals Heat/Fire elemental damage (true/false)
+		.damageCold // Weapon deals Cold elemental damage (true/false)
+		.damageLight // Weapon deals Light elemental damage (true/false)
+		.damageLightning // Weapon deals Lightning elemental damage (true/false)
+		.damagePoison // Weapon deals Poison elemental damage (true/false)
+		.damageRain // Weapon deals Rain/Water elemental damage (true/false)
+		.damageSnow // Weapon deals Snow/Ice elemental damage (true/false)
+	Added new UOX.INI setting under [server] to enable/disable shard response to ConnectUO server polling (disabled by default)
+	Sub-commands are no longer included when registering packets to be overloaded via RegisterPacket function, as that part was never fully implemented. Packet-hook scripts can be setup for specific packet IDs, but any sub-command checking will need to be done in the script itself
+	JS Packet Method GetDWord() now uses JS_NewNumberValue instead of INT_TO_JSVAL to read from the socket buffer, to better handle large numbers, which could previously be returned with wrong values.
+	JS Function CalcItemFromSer() now uses a JS_GetStringBytes() and str_value() combo instead of JSVAL_TO_INT() to read the data provided in the function argument. This allows JS scripts to provide item serials to the function directly without needing to split it into four parts first (though that still works)
+	Fixed issue where JS properties for multis didn't always return correct values
+	The 'set command can now be used to set the armour class of items ('set ac #)
+	Reimplemented 'tweak command in JS engine (js/commands/targeting/tweak.js) - can be used to view and modify properties of characters, character skills, items, multis and regions (target ground)
+	Added placeholder packet-hook script (js/server/network/0xf1_connectUoServerPoll.js) to handle responses to ConnectUO server polling. By default this script does nothing, but serves as a placeholder for drop-in replacement scripts generated specifically for each shard by the ConnectUO service.
+	Updated some commands to support an alternate STATIC keyword (can also be ommitted) to add base items:
+		'add static itemID
+		'tile static itemID
+	Updated some commands with support for randomization. Provided itemID will be randomized based on provided rndValue:
+		/js/commands/targeting/add.js:
+			'add itemID rndValue
+		cmdtable.cpp and targeting.cpp:
+			'tile itemID rndValue
+			'tile itemID x1 x2 y1 y2 z rndValue
+	Updated js/commands/custom/repeatingcmds.js to support 'm delete as an alias for 'rremove
+	Added 'props as an alias for the 'tweak command
+	Added 'teleport as an alias for the 'tele command (js/commands/targeting/tele.js)
+	Added 'shavehair and 'shavebeard as aliases for 'kill hair and 'kill beard (js/commands/targeting/kill.js)
+	Added 'noinvul and 'mortal aliases for the 'invul false command (js/commands/custom/misc-cmds.js)
+	Added 'immortal and 'invul (without parameter) as aliases for the 'invul true command
+	Added 'bringtopack as an alias of 'movetobag command (js/commands/targeting/movetobag.js)
+	Updated check for cancelling of target cursor in various JS scripts
+	Minor updates to various JS scripts
+	Fixed issue where some item definitions in dfndata/harditems/harditems.dfn and dfndata/items/building/lighting.dfn used comma instead of space as delimiter for the VALUE tag, which thus never got applied
+	Updated all NPC definitions to let NPCs spawn facing in random directions
+
 19/11/2020 - Xuri (0.99.4c)
 	Exposed Item properties to JS Engine:
 		.dexterity // dexterity required to equip item

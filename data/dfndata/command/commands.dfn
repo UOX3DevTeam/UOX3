@@ -111,7 +111,6 @@ SHUTDOWN=		2
 SPAWNKILL=		2
 TELL=			2
 TILE=			2
-TWEAK=			2
 }
 
 EOF

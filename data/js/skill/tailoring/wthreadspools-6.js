@@ -30,7 +30,7 @@ function onCallback0( tSock, myTarget )
 
 	if( myTarget == null || myTarget.isChar )
 	{ //Target is a Maptile/Character
-		pUser.SysMessage("You can ony spin cotton on a spinning wheel.");
+		pUser.SysMessage("You can only spin cotton on a spinning wheel.");
 		return;
 	}
 	if( !(tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C )) //only allow first IDs in the spinning wheel anims
@@ -49,7 +49,7 @@ function onCallback0( tSock, myTarget )
     	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
     	if( iMakeResource < 1 )
 	{
-		pUser.SysMessage( "You dont seem to have any cotton!" );
+		pUser.SysMessage( "You don't seem to have any cotton!" );
 		return;
 	}
 	if( pUser.CheckSkill( 34, 0, 1000 ) )

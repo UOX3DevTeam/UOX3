@@ -2,6 +2,7 @@ function CommandRegistration()
 {
 	RegisterCommand( "telestuff", 1, true );
 	RegisterCommand( "tele", 1, true );
+	RegisterCommand( "teleport", 1, true );
 }
 
 function command_TELESTUFF( socket, cmdString )
@@ -27,8 +28,8 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
-	var cancelCheck = parseInt( socket.GetDWord( 11 ));
-	if( cancelCheck != -1 )
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var dictMsg;
 		var toTele = socket.tempObj;
@@ -56,10 +57,16 @@ function command_TELE( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
+// Alias of TELE
+function command_TELEPORT( socket, cmdString )
+{
+	command_TELE( socket, cmdString );
+}
+
 function onCallback2( socket, ourObj )
 {
-	var cancelCheck = parseInt( socket.GetDWord( 11 ));
-	if( cancelCheck != -1 )
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var mChar = socket.currentChar;
 		if( mChar )

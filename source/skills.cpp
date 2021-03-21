@@ -503,12 +503,25 @@ void cSkills::SmeltOre( CSocket *s )
 	s->TempObj( NULL );
 	CItem *forge		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our forge
 
+	if( itemToSmelt->isHeldOnCursor() )
+	{
+		s->sysmessage( 400 ); // That is too far away!
+		return;
+	}
+
 	if( ValidateObject( forge ) )					// if we have a forge
 	{
-		if( !objInRange( chr, forge, DIST_NEARBY ) || !checkItemRange( chr, itemToSmelt ) ) // Check if forge & item to melt are in range
+		CItem *playerPack = chr->GetPackItem();
+		if( ValidateObject( playerPack ) )
 		{
-			s->sysmessage( 400 ); // That is too far away!
-			return;
+			if( FindRootContainer( itemToSmelt ) != playerPack && FindRootContainer( forge ) != playerPack )
+			{
+				if( !objInRange( chr, forge, DIST_NEARBY ) || !checkItemRange( chr, itemToSmelt ) ) // Check if forge & item to melt are in range
+				{
+					s->sysmessage( 400 ); // That is too far away!
+					return;
+				}
+			}
 		}
 
 		UI16 smeltItemID = itemToSmelt->GetID();
@@ -935,6 +948,12 @@ void cSkills::ItemIDTarget( CSocket *s )
 		return;
 	}
 
+	if( i->isHeldOnCursor() || !checkItemRange( mChar, i ) )
+	{
+		s->sysmessage( 400 ); // That is too far away!
+		return;
+	}
+
 	if( CheckSkill( mChar, ITEMID, 250, 500 ) )
 	{
 		UnicodeTypes sLang = s->Language();
@@ -1018,7 +1037,7 @@ void cSkills::FishTarget( CSocket *s )
 	s->TempObj( NULL );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -1719,7 +1738,7 @@ void cSkills::Smith( CSocket *s )
 	s->TempObj( NULL );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -1735,6 +1754,12 @@ void cSkills::Smith( CSocket *s )
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( ValidateObject( i ) )
 	{
+		if( i->isHeldOnCursor() || !checkItemRange( mChar, i ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+
 		if( i->GetID() >= 0x1BE3 && i->GetID() <= 0x1BF9 )	// is it an ingot?
 		{
 			miningData *oreType = FindOre( i->GetColour() );
@@ -2355,7 +2380,6 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 	ScriptSection *GumpHeader = FileLookup->FindEntry( "ADDMENU HEADER", misc_def );
 	if( GumpHeader == NULL )
 	{
-		toSend.addCommand( "noclose" );
 		toSend.addCommand( format("resizepic 0 0 %i 400 320", background) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
@@ -2634,7 +2658,7 @@ void cSkills::RepairMetal( CSocket *s )
 	s->TempObj( NULL );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -2645,6 +2669,12 @@ void cSkills::RepairMetal( CSocket *s )
 	if( !ValidateObject( j ) || !j->IsMetalType() )
 	{
 		s->sysmessage( 986 );
+		return;
+	}
+
+	if( j->isHeldOnCursor() || !checkItemRange( mChar, j ) )
+	{
+		s->sysmessage( 400 ); // That is too far away!
 		return;
 	}
 

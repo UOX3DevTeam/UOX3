@@ -12,6 +12,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e7e]
@@ -27,6 +28,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x09aa]
@@ -42,6 +44,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e7d]
@@ -57,6 +60,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a2c]
@@ -71,6 +75,7 @@ type=1
 restock=10
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a3c]
@@ -82,6 +87,7 @@ weight=5000
 weightmax=40000
 type=1
 decay=1
+maxitems=125
 }
 
 [0x0a3d]
@@ -92,6 +98,7 @@ id=0x0a3d
 weight=500
 weightmax=40000
 decay=1
+maxitems=125
 }
 
 [0x0a44]
@@ -103,6 +110,7 @@ weight=500
 weightmax=40000
 type=1
 decay=1
+maxitems=125
 }
 
 [0x0a45]
@@ -113,6 +121,7 @@ id=0x0a45
 weight=500
 weightmax=40000
 decay=1
+maxitems=125
 }
 
 [0x0a34]
@@ -128,6 +137,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a30]
@@ -143,6 +153,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a38]
@@ -158,6 +169,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a4f]
@@ -173,6 +185,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a53]
@@ -188,6 +201,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a4d]
@@ -203,6 +217,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a51]
@@ -218,6 +233,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a97]
@@ -233,6 +249,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a98]
@@ -248,6 +265,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a9b]
@@ -263,6 +281,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a99]
@@ -278,6 +297,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a9a]
@@ -293,6 +313,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a9c]
@@ -308,6 +329,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a9d]
@@ -323,6 +345,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0a9e]
@@ -338,6 +361,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e3c]
@@ -353,6 +377,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e3d]
@@ -368,6 +393,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e3e]
@@ -383,6 +409,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e3f]
@@ -398,6 +425,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e42]
@@ -413,6 +441,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 [0x0e43]
@@ -428,6 +457,7 @@ restock=10
 movable=1
 decay=1
 good=8
+maxitems=125
 }
 
 

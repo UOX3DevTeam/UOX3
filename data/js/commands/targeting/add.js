@@ -9,6 +9,7 @@ function command_ADD( socket, cmdString )
 {
 	if( cmdString )
 	{
+		var stringID = "";
 		var splitString = cmdString.split( " " );
 		switch( splitString[0].toUpperCase() )
 		{
@@ -20,40 +21,52 @@ function command_ADD( socket, cmdString )
 			}
 			break;
 		case "ITEM":
-			if( splitString[2] )
+			if( splitString[1] )
 			{
-				var a1 = parseInt( splitString[1] );
-				var a2 = parseInt( splitString[2] );
-				socket.tempint = (a1<<8) + a2;
-				socket.CustomTarget( 2, "Select location for Item: 0x" + socket.tempint.toString( 16 ) );
-			}
-			else if( splitString[1] )
-			{
+				// .add item itemID
 				socket.xText = splitString[1];
-				socket.CustomTarget( 2, "Select location for Item: " + splitString[1] );
+				socket.CustomTarget( 2, "Select location for scripted item: " + splitString[1] );
 			}
 			break;
 		case "SPAWNER":
-			if( splitString[2] )
-			{
-				var a1 = parseInt( splitString[1] );
-				var a2 = parseInt( splitString[2] );
-				var stringVal = ((a1<<8) + a2);
-				socket.tempint = stringVal;
-				socket.xText = stringVal.toString( 16 );
-				socket.CustomTarget( 3, "Select location for Spawner: 0x" + socket.xText );
-			}
-			else if( splitString[1] )
+			if( splitString[1] )
 			{
 				socket.xText = splitString[1];
 				socket.CustomTarget( 4, "Select location for Spawner: " + splitString[1] );
 			}
 			break;
 		default:
-			if( splitString[0] )
+			if( splitString[2] )
 			{
-				socket.tempint = parseInt( splitString[0] );
-				socket.CustomTarget( 1, "Select location for Item: " + splitString[0] );
+				// .add static itemID rndValue
+				stringID = splitString[1];
+				socket.tempint = parseInt( stringID ) + RandomNumber( 0, parseInt( splitString[2] ));
+			}
+			else if( splitString[1] )
+			{
+				if( splitString[0].toUpperCase() == "STATIC" )
+				{
+					// .add static itemID
+					stringID = splitString[1];
+					socket.tempint = parseInt( stringID );
+				}
+				else
+				{
+					// .add itemID rndValue
+					stringID = splitString[0];
+					socket.tempint = parseInt( stringID ) + RandomNumber( 0, parseInt( splitString[1] ));
+				}
+			}
+			else if( splitString[0] )
+			{
+				// .add itemID
+				stringID = splitString[0];
+				socket.tempint = parseInt( stringID );
+			}
+
+			if( stringID != "" )
+			{
+				socket.CustomTarget( 1, "Select location for base item: " + stringID );
 			}
 			break;
 		}
@@ -71,8 +84,8 @@ function onCallback0( socket, ourObj )
 		var y 		= socket.GetWord( 13 );
 		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var npcSection 	= socket.xText;
-
-			var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID );
+		socket.xText = null;
+		var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID );
 
 		if( newChar && newChar.isChar )
 			newChar.InitWanderArea();
@@ -87,12 +100,13 @@ function onCallback1( socket, ourObj )
 	if( mChar )
 	{
 		var itemID 	= socket.tempint;
+		socket.tempint = null;
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj.isChar  )
 		{ //If target is a character, add item to backpack
 			var backpack = ourObj.FindItemLayer(21);
 			if( backpack != null )
-				var newItem = CreateBlankItem( socket, ourObj, 1, "#", itemID, 0, "ITEM", true );
+				var newItem = CreateBlankItem( socket, ourObj, 1, "", itemID, 0, "ITEM", true );
 			else
 				mChar.SysMessage( "That character has no backpack, no item added" );
 		}
@@ -101,7 +115,7 @@ function onCallback1( socket, ourObj )
 			var x 		= socket.GetWord( 11 );
 			var y 		= socket.GetWord( 13 );
 			var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
-			var newItem = CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", false );
+			var newItem = CreateBlankItem( socket, mChar, 1, "", itemID, 0, "ITEM", false );
 			if( newItem )
 				newItem.SetLocation( x, y, z );
 		}
@@ -123,6 +137,7 @@ function onCallback2( socket, ourObj )
 	if( mChar )
 	{
 		var iSection 	= socket.xText;
+		socket.xText = null;
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj.isChar  )
 		{ //If target is a character, add item to backpack
@@ -155,6 +170,7 @@ function onCallback3( socket, ourObj )
 		var y 		= socket.GetWord( 13 );
 		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var itemID 	= socket.tempint;
+		socket.tempint = null;
 		var newItem 	= CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "SPAWNER", false );
 		if( newItem )
 		{
@@ -179,6 +195,7 @@ function onCallback4( socket, ourObj )
 		var y 		= socket.GetWord( 13 );
 		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var iSection 	= socket.xText;
+		socket.xText = null;
 		var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "SPAWNER", false );
 		if( newItem )
 		{
@@ -204,15 +221,9 @@ function command_ADDX( socket, cmdString )
 		var targID;
 		var targZ = mChar.z;
 		var splitString = cmdString.split( " " );
-		if( splitString[2] )
-			targZ = parseInt( splitString[2] );
 		if( splitString[1] )
-		{
-			var a1 = parseInt( splitString[0] );
-			var a2 = parseInt( splitString[1] );
-			targID = (a1<<8) + a2;
-		}
-		else if( splitString[0] )
+			targZ = parseInt( splitString[1] );
+		if( splitString[0] )
 		{
 			targID = parseInt( splitString[0] );
 		}

@@ -2112,5 +2112,39 @@
 1978=Malas
 1979=Tokuno Islands
 1980=Ter Mur
+1981=Les humains ne peuvent pas porter ça.
+1982=Les elfes ne peuvent pas porter ça.
+1983=Les gargouilles ne peuvent pas porter ça.
+1984=Reserved for additional player races
+1985=Reserved for additional player races
+1986=Reserved for additional player races
+1987=Reserved for additional player races
+1988=Reserved for additional player races
+1989=Reserved for additional player races
+1990=Reserved for additional player races
+// JS-Based Tweak Menu
+1991=Objet non valide ciblé!
+1992=Objet inconnu ciblé!
+1993=Abandon de la demande d'ajustement.
+1994=Carte ciblée ou élément statique! Seuls les éléments ou caractères dynamiques peuvent être modifiés.
+1995=Nouveau jeu de propriétaires pour l'objet.
+1996=Nouvel attaquant défini pour le personnage.
+1997=Nouvelle cible définie pour le personnage.
+1998=ID de bouton non géré dans le menu Tweak callback1:
+1999=Objet introuvable!
+2000=Propriétés
+2001=Bateau
+2002=Maison
+2003=géniteur
+2004=Élément
+2005=Caractère
+2006=Compétences
+2007=Base
+2008=Efficace
+2009=Région
+2010=Fermer le menu Tweak
+2011=Tweak
+2012=Total
+2013=Points de compétence
 }
 EOF

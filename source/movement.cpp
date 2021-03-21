@@ -951,6 +951,11 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 	UI16 instanceID		= c->GetInstanceID();
 
 	CPExtMove toSend	= (*c);
+
+	// Send to self as well
+	if( c->GetSocket() != NULL )
+		c->GetSocket()->Send(&toSend);
+
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
@@ -1943,7 +1948,8 @@ void cMovement::NpcMovement( CChar& mChar )
 				const UI16 charDist	= getDist( &mChar, l );
 
 				// NPC is using a ranged weapon, and is within range to shoot at the target
-				if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= cwmWorldState->ServerData()->CombatArcherRange() ) ) )
+				CItem *equippedWeapon = Combat->getWeapon( &mChar );
+				if( charDir < 8 && ( charDist <= 1 || (( Combat->getCombatSkill( equippedWeapon ) == ARCHERY || Combat->getCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() ) ) )
 				{
 					bool los = LineOfSight( NULL, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
 					if( los )
@@ -2716,23 +2722,29 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	if( maxSteps == 0 )
 	{
 		SI08 npcWanderType = mChar->GetNpcWander();
-		if( npcWanderType == WT_FREE || npcWanderType == WT_BOX || npcWanderType == WT_CIRCLE )
+		if( mChar->IsAtWar() )
 		{
-			if( mChar->IsEvading() ) // If they are evading, they might be attempting to move back to original wanderZone
-				maxSteps = 100;
+			if( getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) >= 30 )
+				maxSteps = 300;
 			else
-				maxSteps = 30;
+				maxSteps = 150;
 		}
-		else if( npcWanderType == WT_FLEE )
-			maxSteps = 75;
-		else if( npcWanderType == WT_FOLLOW )
-			maxSteps = 150;
-		else if( mChar->IsAtWar() && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) >= 30 )
-			maxSteps = 200;
-		else if( mChar->IsAtWar() )
-			maxSteps = 75;
 		else
-			maxSteps = 500;
+		{
+			if( npcWanderType == WT_FREE || npcWanderType == WT_BOX || npcWanderType == WT_CIRCLE )
+			{
+				if( mChar->IsEvading() ) // If they are evading, they might be attempting to move back to original wanderZone
+					maxSteps = 100;
+				else
+					maxSteps = 30;
+			}
+			else if( npcWanderType == WT_FLEE )
+				maxSteps = 75;
+			else if( npcWanderType == WT_FOLLOW )
+				maxSteps = 150;
+			else
+				maxSteps = 500;
+		}
 	}
 
 	std::map< UI32, pfNode >	openList;

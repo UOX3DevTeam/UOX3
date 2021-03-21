@@ -983,7 +983,7 @@ CHouseMultiResponse::CHouseMultiResponse( TargetIDs targVal, SI32 dictVal )
 void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CMultiObj *realHouse = findMulti( mChar );
-	if( ValidateObject( realHouse ) )
+	if( ValidateObject( realHouse ) && !realHouse->CanBeObjType( OT_BOAT ))
 	{
 		if( realHouse->CanBeObjType( OT_MULTI ))
 		{

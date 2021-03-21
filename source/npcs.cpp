@@ -661,6 +661,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 								mypack->SetZ( 0 );
 								mypack->SetType( IT_CONTAINER );
 								mypack->SetDye( true );
+								mypack->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
 							}
 						}
 					}
@@ -691,15 +692,6 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				if( retitem != NULL )
 					retitem->SetColour( static_cast<UI16>(haircolor) );
 				break;
-			case DFNTAG_ELEMENTRESIST:
-				if( cdata.sectionCount( " " ) == 3 )
-				{
-					applyTo->SetResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() ), HEAT );
-					applyTo->SetResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ), COLD );
-					applyTo->SetResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() ), LIGHTNING );
-					applyTo->SetResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() ), POISON );
-				}
-				break;
 			case DFNTAG_DEX:
 				if( ndata > 0 )
 				{
@@ -726,7 +718,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 					else
 					{
-						applyTo->SetResist( ndata, PHYSICAL );
+						applyTo->SetResist( static_cast<UI16>(ndata), PHYSICAL );
 					}
 				}
 				else
@@ -783,6 +775,15 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 								break;
 						}
 					}
+				}
+				break;
+			case DFNTAG_ELEMENTRESIST:
+				if( cdata.sectionCount( " " ) == 3 )
+				{
+					applyTo->SetResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() ), HEAT );
+					applyTo->SetResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ), COLD );
+					applyTo->SetResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() ), LIGHTNING );
+					applyTo->SetResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() ), POISON );
 				}
 				break;
 			case DFNTAG_EMOTECOLOUR:
@@ -857,13 +858,25 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_FOOD:				applyTo->SetFood( cdata );				break;
 			case DFNTAG_GET:
 			{
-				ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );
-				if( toFind == NULL )
-					Console.warning(format( "Invalid script entry (%s) called with GET tag, NPC serial 0x%X", cdata.c_str(), applyTo->GetSerial()) );
-				else if( toFind == NpcCreation )
-					Console.warning( format("Infinite loop avoided with GET tag inside NPC script %s", cdata.c_str() ));
+				UString scriptEntry = "";
+				if( cdata.sectionCount( " " ) == 0 )
+				{
+					scriptEntry = cdata;
+				}
 				else
-					ApplyNpcSection( applyTo, toFind, cdata, isGate );
+				{
+					UI32 rndEntry = RandomNum( 0, cdata.sectionCount( " " ));
+					scriptEntry = cdata.section( " ", rndEntry, rndEntry );
+				}
+
+				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, npc_def );
+				if( toFind == NULL )
+					Console.warning( format( "Invalid script entry (%s) called with GET tag, NPC serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
+				else if( toFind == NpcCreation )
+					Console.warning( format( "Infinite loop avoided with GET tag inside NPC script %s", scriptEntry.c_str() ));
+				else
+					ApplyNpcSection( applyTo, toFind, scriptEntry, isGate );
+				break;
 			}
 				break;
 			case DFNTAG_GOLD:
@@ -1086,6 +1099,66 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_PEACEMAKING:		skillToSet = PEACEMAKING;				break;
 			case DFNTAG_PROVOCATION:		skillToSet = PROVOCATION;				break;
 			case DFNTAG_POISONING:			skillToSet = POISONING;					break;
+			case DFNTAG_RESISTFIRE:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), HEAT );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, HEAT );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTFIRE tag inside NPC script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTCOLD:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), COLD );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, COLD );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTCOLD tag inside NPC script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTLIGHTNING:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), LIGHTNING );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, LIGHTNING );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTLIGHTNING tag inside NPC script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTPOISON:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), POISON );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, POISON );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTPOISON tag inside NPC script %s", sectionID.c_str() ));
+				break;
 			case DFNTAG_RSHOPITEM:
 				if( !isGate )
 				{

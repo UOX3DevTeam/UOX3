@@ -1,5 +1,5 @@
-// v.02
-// Last updated March 3rd, 2006 - giwo
+// v.03
+// Last updated December 17th, 2020 - Xuri
 // This file contains any tiledata overrides we wish to do with regards to buggy client data (eg ladders)
 
 // [TILE 0x0123]
@@ -24,7 +24,7 @@
 // WEBDIRTBLOOD=	// Flag 1, bit 4 (0x08)		Translucent
 // WALLVERTTILE=	// Flag 1, bit 5 (0x10)		Wall
 // DAMAGING=		// Flag 1, bit 6 (0x20)		Damaging
-// BLOCKING=		// Flag 1, bit 7 (0x40)		Impassable		
+// BLOCKING=		// Flag 1, bit 7 (0x40)		Impassable
 // LIQUIDWET=		// Flag 1, bit 8 (0x80)		Wet
 
 // // BaseTile Flag 2
@@ -56,6 +56,15 @@
 // DOOR=		// Flag 4, bit 6 (0x20)		Door
 // CLIMBABLEBIT1=	// Flag 4, bit 7 (0x40)		Stair Back
 // CLIMBABLEBIT2=	// Flag 4, bit 8 (0x80)		Stair Right
+
+// Additional flags added with High Seas expansion, purpose unknown:
+// ALPHABLEND=		// Flag 5, bit 1 (0x01)
+// USENEWART=		// Flag 5, bit 2 (0x02)
+// ARTUSED=			// Flag 5, bit 3 (0x04)
+// NOSHADOW=		// Flag 5, bit 4 (0x08)
+// PIXELBLEED=		// Flag 5, bit 5 (0x10)
+// PLAYANIMONCE=	// Flag 5, bit 6 (0x20)
+// MULTIMOVABLE=	// Flag 5, bit 7 (0x40)
 
 [TILE 0x08A5]
 {

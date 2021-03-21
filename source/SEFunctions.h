@@ -154,5 +154,15 @@ SEngineFunc SE_GetServerSetting;
 
 SEngineFunc SE_DeleteFile;
 
+// Account 
+SEngineFunc SE_GetAccountCount;			//										***
+SEngineFunc SE_GetPlayerCount;			//										***
+
+// Server constants
+SEngineFunc SE_BASEITEMSERIAL;			//										***
+SEngineFunc SE_INVALIDSERIAL;			//										***
+SEngineFunc SE_INVALIDID;				//										***
+SEngineFunc SE_INVALIDCOLOUR;			//										***
+
 
 #endif

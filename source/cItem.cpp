@@ -51,7 +51,7 @@ const UI32 BIT_DOOROPEN		=	1;
 const UI32 BIT_PILEABLE		=	2;
 const UI32 BIT_DYEABLE		=	3;
 const UI32 BIT_CORPSE		=	4;
-//const UI32 BIT_UNUSED		=	5; //was wipeable
+const UI32 BIT_HELDONCURSOR	=	5;
 const UI32 BIT_GUARDED		=	6;
 const UI32 BIT_SPAWNERLIST	=	7;
 
@@ -78,7 +78,9 @@ const SI08			DEFITEM_GRIDLOC			= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 const SI32			DEFITEM_WEIGHTMAX		= 0;
 const SI32			DEFITEM_BASEWEIGHT		= 0;
-const UI16			DEFITEM_MAXITEMS		= 125;
+const UI16			DEFITEM_MAXITEMS		= 0;
+const UI08			DEFITEM_MAXRANGE		= 0;
+const UI08			DEFITEM_BASERANGE		= 0;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -91,7 +93,8 @@ madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_G
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ),
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
-creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS )
+creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
+maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -377,6 +380,21 @@ bool CItem::isCorpse( void ) const
 void CItem::SetCorpse( bool newValue )
 {
 	bools.set( BIT_CORPSE, newValue );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isHeldOnCursor( void ) const
+//|					void SetHeldOnCursor( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether item is being held on cursor by a player
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::isHeldOnCursor( void ) const
+{
+	return bools.test( BIT_HELDONCURSOR );
+}
+void CItem::SetHeldOnCursor( bool newValue )
+{
+	bools.set( BIT_HELDONCURSOR, newValue );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -696,6 +714,36 @@ UI08 CItem::GetSpeed( void ) const
 void CItem::SetSpeed( UI08 newValue )
 {
 	spd = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetMaxRange( void ) const
+//|					void SetMaxRange( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's maximum range - primarily used by throwing/archery weapons
+//o-----------------------------------------------------------------------------------------------o
+UI08 CItem::GetMaxRange( void ) const
+{
+	return maxRange;
+}
+void CItem::SetMaxRange( UI08 newValue )
+{
+	maxRange = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetBaseRange( void ) const
+//|					void SetBaseRange( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's base range - primarily used by throwing weapons
+//o-----------------------------------------------------------------------------------------------o
+UI08 CItem::GetBaseRange( void ) const
+{
+	return baseRange;
+}
+void CItem::SetBaseRange( UI08 newValue )
+{
+	baseRange = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1813,7 +1861,7 @@ void CItem::CheckItemIntegrity( void )
 const UI32 BIT_DECAYABLE	=	0;
 const UI32 BIT_NEWBIE		=	1;
 const UI32 BIT_DISPELLABLE	=	2;
-const UI32 BIT_DEVINELOCK	=	3;
+const UI32 BIT_DIVINELOCK	=	3;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isDecayable( void ) const
@@ -1864,18 +1912,18 @@ void CItem::SetDispellable( bool newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool isDevineLocked( void ) const
-//|					void SetDevineLock( bool newValue )
+//|	Function	-	bool isDivineLocked( void ) const
+//|					void SetDivineLock( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether container was locked by a GM
 //o-----------------------------------------------------------------------------------------------o
-bool CItem::isDevineLocked( void ) const
+bool CItem::isDivineLocked( void ) const
 {
-	return priv.test( BIT_DEVINELOCK );
+	return priv.test( BIT_DIVINELOCK );
 }
-void CItem::SetDevineLock( bool newValue )
+void CItem::SetDivineLock( bool newValue )
 {
-	priv.set( BIT_DEVINELOCK, newValue );
+	priv.set( BIT_DIVINELOCK, newValue );
 }
 
 //o-----------------------------------------------------------------------------------------------o

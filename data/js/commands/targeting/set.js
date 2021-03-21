@@ -258,6 +258,12 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.Resist( 1, nVal );
 		okMsg( socket );
 		break;
+	case "ARMORCLASS":
+	case "ARMOURCLASS":
+	case "AC":
+		ourItem.ac( nVal );
+		okMsg( socket );
+		break;
 	case "LAYER":
 		ourItem.layer = nVal;
 		okMsg( socket );

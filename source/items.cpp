@@ -120,6 +120,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside item script %s", sectionID.c_str() ));
 				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>(ndata) );	break;
+			case DFNTAG_BASERANGE:		applyTo->SetBaseRange( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
 			case DFNTAG_COLOUR:			applyTo->SetColour( static_cast<UI16>(ndata) );			break;
 			case DFNTAG_COLOURLIST:		applyTo->SetColour( addRandomColor( cdata ) );			break;
@@ -182,15 +183,27 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_GLOWTYPE:		applyTo->SetGlowEffect( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_GET:
 			{
-				ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
-				if( toFind == NULL )
-					Console.warning( format("Invalid script entry (%s) called with GET tag, item serial 0x%X", cdata.c_str(), applyTo->GetSerial()));
-				else if( toFind == toApply )
-					Console.warning( format("Infinite loop avoided with GET tag inside item script %s", cdata.c_str() ));
+				UString scriptEntry = "";
+				if( cdata.sectionCount( " " ) == 0 )
+				{
+					scriptEntry = cdata;
+				}
 				else
-					ApplyItemSection( applyTo, toFind, cdata );
-			}
+				{
+					UI32 rndEntry = RandomNum( 0, cdata.sectionCount( " " ));
+					scriptEntry = cdata.section( " ", rndEntry, rndEntry );
+				}
+
+				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
+				if( toFind == NULL )
+					Console.warning( format( "Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
+				else if( toFind == toApply )
+					Console.warning( format( "Infinite loop avoided with GET tag inside item script %s", scriptEntry.c_str() ));
+				else
+					ApplyItemSection( applyTo, toFind, scriptEntry );
 				break;
+			}
+
 			case DFNTAG_HP:
 				if( ndata > 0 )
 				{
@@ -217,6 +230,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
 			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<SI16>(ndata) );			break;
 			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>(ndata) );		break;
+			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
 			case DFNTAG_MORE:			applyTo->SetTempVar( CITV_MORE, ndata );				break;
 			case DFNTAG_MORE2:																	break;
@@ -237,6 +251,66 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					applyTo->SetRank( 10 );
 				break;
 			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>(ndata) );			break;
+			case DFNTAG_RESISTFIRE:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), HEAT );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, HEAT );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTFIRE tag inside Item script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTCOLD:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), COLD );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, COLD );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTCOLD tag inside Item script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTLIGHTNING:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), LIGHTNING );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, LIGHTNING );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTLIGHTNING tag inside Item script %s", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTPOISON:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), POISON );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, POISON );
+					}
+				}
+				else
+					Console.warning( format("Invalid data found in RESISTPOISON tag inside Item script %s", sectionID.c_str() ));
+				break;
 			case DFNTAG_RESTOCK:		applyTo->SetRestock( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
 			case DFNTAG_SK_MADE:		applyTo->SetMadeWith( static_cast<SI08>(ndata) );		break;
@@ -608,7 +682,13 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 //o-----------------------------------------------------------------------------------------------o
 void cItem::GetScriptItemSettings( CItem *iCreated )
 {
-	const UString item = "x" + UString::number( iCreated->GetID(), 16 );
+	UString hexID = UString::number( iCreated->GetID(), 16 );
+	while( hexID.size() < 4 )
+	{
+		hexID = "0" + hexID;
+	}
+
+	const UString item = "x" + hexID;
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
 	if( toFind != NULL )
 		ApplyItemSection( iCreated, toFind, item );

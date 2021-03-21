@@ -26,8 +26,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 13. November, 2020</small></p>
-	<p style="margin:0"><small>UOX3 Version: v0.99.4</small></p>
+	<p style="margin:0"><small>Last Updated: 22. March, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -57,6 +57,15 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>March 22nd, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uox3JSE">JSE File, Object and Type-associations</a> section with details about how to register a "packet-hook" script to handle specific incoming network packets via the JS engine</li>
+							<li>Added additional links in Resources and Links section, under <a href="#thirdPartyTools">Third Party Tools</a> and <a href="#otherUOEmuResources">Other UO Emulator Resources</a></li>
+						</ul>
+						<h4>March 19th, 2021</h4>
+						<ul>
+							<li>Added feature documentation details on <a href="#uox3npcloot">NPC Loot</a></li>
+						</ul>
 						<h4>November 13th, 2020</h4>
 						<ul>
 							<li>Added dos2unix instructions for Linux/MacOS users downloading default worldfiles/spawnfiles</li>
@@ -1251,7 +1260,7 @@
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">GLOBALATTACKSPEED</span><strong>=1</strong><br>
-							Used to adjust the attack speed globally for all characters. Defaults to 1. Can be finetuned per NPC via DEX stat in DFNs.</p>
+							Multiplier used to adjust the attack speed globally for all characters. Defaults to 1. A value of 1.5 would make combat 50% faster globally, while a value of 0.5 would make it 50% slower globally. Can be finetuned per NPC via DEX stat in DFNs.</p>
 						</div>
 					</div>
 
@@ -1743,13 +1752,15 @@
 						<input type="checkbox" id="spoiler_cmd_add">
 						<label for="spoiler_cmd_add">add <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Opens GM Add-menu if no parameters provided, or adds raw item if provided with hex-id, while <strong>item</strong> adds specified item from item-dfns, <strong>npc</strong> adds specified NPC from npc-dfns, and <strong>spawner</strong> adds a specified item from the item-dfns, to function as a spawner.</p>
+							<p>Opens GM Add-menu if no parameters provided, or adds raw item if provided with hex-id, while <strong>item</strong> adds specified item from item-dfns, <strong>npc</strong> adds specified NPC from npc-dfns, and <strong>spawner</strong> adds a specified item from the item-dfns, to function as a spawner. Accepts a value after numerical/hexdecimal item IDs to randomize (using provided value) item being added.</p>
 							<p>Command: <span class="highlight">'add</span><br>
-							Parameters: <span class="highlight"><em>(nothing)</em></span> / <span class="highlight"><em>(h)</em></span> / <span class="highlight">item <em>(s)</em></span> / <span class="highlight">npc <em>(s)</em></span> / <span class="highlight">spawner <em>(s)</em></span></p>
+							Parameters: <span class="highlight"><em>(nothing)</em></span> / <span class="highlight"><em>(h)</em></span> / <span class="highlight"><em>(h rndVal)</em></span> / <span class="highlight">item <em>(s)</em></span> / <span class="highlight">item <em>(s rndVal)</em></span> /<span class="highlight">npc <em>(s)</em></span> / <span class="highlight">spawner <em>(s)</em></span></p>
 							<p>Examples:<br>
 								<strong>'add npc orc</strong><br>
-								<strong>'add 0x04a9</strong> (add raw wooden floor tile)<br>
-								<strong>'add item 0x171a</strong> (add feathered hat)</p>
+								<strong>'add 0x04a9</strong> (add base wooden floor tile)<br>
+								<strong>'add 0x04a9 3</strong> (add random base wooden floor tile between 0x04a9 and 0x04ac)<br>
+								<strong>'add item 0x171a</strong> (add scripted feathered hat)<br>
+								<strong>'add item 0x04a9 3</strong> (add random scripted wooden floor between 0x04a9 and 0x04ac)</p>
 						</div>
 						<input type="checkbox" id="spoiler_cmd_addaccount">
 						<label for="spoiler_cmd_addaccount">addAccount <i class="fas fa-angle-down"></i></label>
@@ -1762,7 +1773,7 @@
 						<input type="checkbox" id="spoiler_cmd_addpack">
 						<label for="spoiler_cmd_addpack">addPack <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>With no parameters, it adds a backpack (if missing) to any targeted character. Using either string or HEX hexid will add the specified item (string = from dfns, hex = from tiledata) to targetted player's backpack.</p>
+							<p>With no parameters, it adds a backpack (if missing) to any targeted character. Using either string or HEX hexid will add the specified item (string = from dfns, hex = from tiledata) to targeted player's backpack.</p>
 							<p>Command: <span class="highlight">'addPack</span><br>
 							Parameters: <span class="highlight"><em>(target)</em></span> / <span class="highlight"><em>(s)</em></span> / <span class="highlight"><em>HEX (h)</em></span></p>
 							<p>Examples:<br>
@@ -1772,10 +1783,11 @@
 						<input type="checkbox" id="spoiler_cmd_addx">
 						<label for="spoiler_cmd_addx">addX <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Adds a new raw item to your current location.</p>
+							<p>Adds a new raw item to your current location. Accepts a value after the itemID to specify Z height to spawn item at.</p>
 							<p>Command: <span class="highlight">'addX</span><br>
-							Parameters: <span class="highlight"><em>(h)</em></span></p>
-							<p>Example: <strong>'addX 0x04a9</strong></p>
+							Parameters: <span class="highlight"><em>(h)</em></span> / <span class="highlight"><em>(h z)</em></span></p>
+							<p>Example: <strong>'addX 0x04a9 </strong><br>
+								Example: <strong>'addX 0x04a9 10</strong></p>
 						</div>
 						<input type="checkbox" id="spoiler_cmd_adminyell">
 						<label for="spoiler_cmd_adminyell">adminYell <i class="fas fa-angle-down"></i></label>
@@ -1905,7 +1917,7 @@
 								<strong>'command gmMenu 1</strong> (opens gmMenu 1 from menus.dfn - same as <strong>gmMenu</strong> command)<br>
 								<strong>'command guiInformation</strong> (shows same server info gump as from help menu)<br>
 								<strong>'command makeMenu 1</strong> (opens makeMenu 1 from create DFNs)<br>
-								<strong>'command sysMessage Event starts in 10 minutes, at Castle British!</strong> (sends system message to all players)<br>
+								<strong>'command sysMessage Event starts in 10 minutes, at Castle British!</strong> (sends system message to all players)</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_consoletest">
@@ -2541,17 +2553,17 @@
 						<input type="checkbox" id="spoiler_cmd_radd">
 						<label for="spoiler_cmd_radd">rAdd <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Adds item of specific hex-id at multiple targeted locations.</p>
+							<p>Adds item of specific hex-id at multiple targeted locations. If another number is provided at end of command, UOX3 will randomize (using number provided) the item being added.</p>
 							<p>Command: <span class="highlight">'rAdd</span><br>
-							Parameters: <span class="highlight"><em>(h) (multiple target locations)</em></span></p>
+							Parameters: <span class="highlight"><em>(h) (multiple target locations)</em></span> / <span class="highlight"><em>(h rndVal) (multiple target locations)</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_radditem">
 						<label for="spoiler_cmd_radditem">rAddItem <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Adds item of specified item-id from DFNs at multiple targeted locations.</p>
+							<p>Adds item of specified item-id from DFNs at multiple targeted locations. If another number is provided at end of command, UOX3 will randomize (using number provided) the item being added.</p>
 							<p>Command: <span class="highlight">'rAddItem</span><br>
-							Parameters: <span class="highlight"><em>(s) (multiple target locations)</em></span></p>
+							Parameters: <span class="highlight"><em>(s) (multiple target locations)</em></span> / <span class="highlight"><em>(s rndVal) (multiple target locations)</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_raddnpc">
@@ -2790,7 +2802,8 @@
 							<p><strong>Characters</strong><br>
 							<span class="highlight"><em>advobj (d)</em></span> - Sets the advancement type the character has used.<br>
 							<span class="highlight"><em>allskills (d)</em></span> - Sets all of the character's skills to specified value.<br>
-							<span class="highlight"><em>armor/armour (d)</em></span> - Set the armour level of the character.<br>
+							<span class="highlight"><em>armor/armour (d)</em></span> - Set the (physical) armour level of the character.<br>
+							<span class="highlight"><em>ac/armorclass/armourclass (d)</em></span> - Set the AC/armour class of the item. Can be used to set race-restrictions for which items can be equipped, or to identify armours as cloth vs leather vs plate, etc.<br>
 							<span class="highlight"><em>dir (d)</em></span> -  Sets the direction of a character, or lightradius of a lightsource-item.<br>
 							<span class="highlight"><em>cantrain (d)</em></span> - Toggle NPC's ability to train PCs (0 = false, 1 = true)<br>
 							<span class="highlight"><em>commandlevel (d)</em></span> - Sets the commandlevel of the targeted player.<br>
@@ -2821,7 +2834,7 @@
 							<span class="highlight"><em>buyvalue (d)</em></span> - Sets item buy value.<br>
 							<span class="highlight"><em>decayable (d)</em></span> - Toggles item's decay status (0 = not decayable, 1 = decayable)<br>
 							<span class="highlight"><em>desc (d)</em></span> - Sets the item description (as displayed on tooltips, on player vendors)<br>
-							<span class="highlight"><em>def (d)</em></span> - Sets the item's armorvalue.<br>
+							<span class="highlight"><em>def (d)</em></span> - Sets the item's physical resist/armor rating.<br>
 							<span class="highlight"><em>devinelock (d)</em></span> - Toggles item's devine lock status (0 = not locked, 1 = locked)<br>
 							<span class="highlight"><em>hidamage (d)</em></span> - Sets the maximum amount of damage done with a weapon.<br>
 							<span class="highlight"><em>layer (d)</em></span> - Sets the layer this item will be equipped at.<br>
@@ -3057,9 +3070,9 @@
 						<input type="checkbox" id="spoiler_cmd_tile">
 						<label for="spoiler_cmd_tile">tile <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Tiles the specified item over a targeted area. If coordinates are specified(x1 x2 y1 y2), will tile the item inside those coordinates.</p>
+							<p>Tiles the specified item over a targeted area. If coordinates are specified(x1 x2 y1 y2 z), will tile the item inside those coordinates, at specified Z height. If another number is provided at end of command, UOX3 will randomize (using provided number) the item being tiled</p>
 							<p>Command: <span class="highlight">'tile</span><br>
-							Parameters: <span class="highlight"><em>(h) (target1) (target2)</em></span> / <span class="highlight"><em>(h x1 y1 x2 y2)</em></span></p>
+							Parameters: <span class="highlight"><em>(h) (target1) (target2)</em></span> / <span class="highlight"><em>(h rndVal) (target1) (target2)</em></span> / <span class="highlight"><em>(h x1 x2 y1 y2 z)</em></span> / <span class="highlight"><em>(h x1 x2 y1 y2 z rndVal)</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_time">
@@ -3185,7 +3198,7 @@
 						<input type="checkbox" id="spoiler_cmd_xteleport">
 						<label for="spoiler_cmd_xteleport">xTeleport <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>If you specify <strong>a single number</strong>, teleports player logged into that slot to you. If you specify <strong>nothing</strong> it brings up targeting cursor to target player to tele to you. If you specify <strong>a serial number</strong>, teleports player wih that serial to you.</p>
+							<p>If you specify <strong>a single number</strong>, teleports player logged into that slot to you. If you specify <strong>nothing</strong> it brings up targeting cursor to target object to tele to you. If you specify <strong>a serial number</strong>, teleports player wih that serial to you.</p>
 							<p>Command: <span class="highlight">'xTeleport</span><br>
 							Parameters: <span class="highlight"><em>(d)</em></span> / <span class="highlight"><em>(nothing)</em></span> / <span class="highlight"><em>(h h h h)</em></span></p>
 						</div>
@@ -3305,7 +3318,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#itemTypes" id="itemTypes"><span>Item Types</span></a>
+				<a class="cd-faq__trigger" href="#itemtypes" id="itemtypes"><span>Item Types</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>This contains a list of <strong>item types</strong> supported by UOX3. Item types are assigned to items and essentially tells UOX3 what should happen when these items are double-clicked, or targeted. Item type can be set via the item DFNs, via JS, or with the <span class="highlight">set type #</span> GM command.</p>
@@ -3740,7 +3753,7 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#itemLayers" id="itemLayers"><span>Item Layers</span></a>
+				<a class="cd-faq__trigger" href="#itemlayers" id="itemlayers"><span>Item Layers</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>This is a list of <strong>item layers</strong> supported by UOX3. Item layers says something about where items will ideally be equipped on a character, though this can also be dependent on what the client allows or not. Item layers can be set via item DFNs, JS or with the <span class="highlight">'set layer #</span> GM command.</p>
@@ -4515,6 +4528,84 @@
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>NPC Escort Quests allow players to earn a bit of extra gold by escorting NPCs from one location to another (gold paid upon safe arrival in target region). More details on this system coming soon!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3npcloot" id="uox3npcloot"><span> NPC Loot</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Slaying monsters is all well and good, but surprisingly, most adventurers are not satisfied with just the feeling of ridding the world of evil; they desire something much more valuable: <strong>Epic Loot</strong>! To give NPCs in UOX3 some of this precious and much-sought-after loot, a couple of methods are at your disposal:</p>
+					<h4>GOLD tag in NPC DFNs</h4>
+					<p>The GOLD tag will, when present in the definition for an NPC, add a fixed or random amount of gold to said NPC's backpack when they spawn. This gold will end up on the NPC's corpse when slain, unless it's stolen by a rogue before then! Examples of usage:</p>
+					<p><span class="highlight">GOLD=50</span> - Adds 50 gold to NPC backpack<br>
+					<span class="highlight">GOLD=50 100</span> - Adds between 50 to 100 gold to NPC backpack</p>
+					<h4>PACKITEM/LOOT tags in NPC DFNs</h4>
+					<p>The PACKITEM or LOOT DFN tags can be used to add items to a NPC's backpack when spawned. The PACKITEM tag can either point to specific items, or to itemlists (<strong>UOX3/dfndata/items/itemlists/itemlists.dfn</strong>) from which random items will be selected. The LOOT tag, meanwhile, can only point to specific type of itemlists called lootlists (<strong>UOX3/dfnata/items/lootlists.dfn</strong>), from which random items will be selected. Both tags support an extra, comma-separated parameter that determines the amount of items to add. Some examples:</p>
+					<p>
+					<span class="highlight">PACKITEM=0x0ff0</span> - Adds a book with a specific ID to backpack<br>
+					<span class="highlight">PACKITEM=0x0eed,50</span> - Adds 50 gold to backpack<br>
+					<span class="highlight">PACKITEM=listobject6</span> - Adds a random music instrument from itemlist that listobject6 points to<br>
+					<span class="highlight">LOOT=reagents</span> - Adds a random reagent from reagents lootlist to backpack<br>
+					<span class="highlight">LOOT=reagents,3</span> - Adds 3 random reagents from the same lootlist as loot<br></p>
+					<input type="checkbox" id="spoiler_lootlists">
+					<label for="spoiler_lootlists">Itemlists and Lootlists Explained <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>In the above example, <strong>LOOT=reagents</strong> points to a lootlist called reagents, configured in <strong>UOX3/dfndata/items/lootlists.dfn</strong>, which consists of a list of items from which UOX3 will randomly select one or more items - depending on whether or not an amount was specified with the LOOT tag. The lootlist in question:</p>
+						<p><span class="highlight">[LOOTLIST reagents]<br>
+						{<br>
+						0x0f7a<br>
+						0x0f7b<br>
+						0x0f84<br>
+						0x0f85<br>
+						0x0f86<br>
+						0x0f88<br>
+						0x0f8c<br>
+						0x0f8d<br>
+						}</span></p>
+						<p>Adding <span class="highlight">LOOT=reagents,3</span> in the NPC definition of an orc would add 3 random reagents from the reagents lootlist to that orc when spawned.</p>
+						<p>In the above example, each and every orc in the game would have 3 random reagents in their inventory, <em>every time</em>. However, what if you only wanted the orcs to have reagents as loot some of the time, not all the time?</p>
+						<h4>Blank Lootlist Entries</h4>
+						<p>For additional control over drop-rates, a special entry is supported in lootlists, called "<span class="highlight">blank</span>" (without the quotation marks). If UOX3 selects one of these special entries when making a random selection from a lootlist, it will interpret this as if no item should be spawned. Example:</p>
+						<p><span class="highlight">[LOOTLIST reagents]<br>
+						{<br>
+						0x0f7a<br>
+						0x0f7b<br>
+						0x0f84<br>
+						0x0f85<br>
+						0x0f86<br>
+						0x0f88<br>
+						0x0f8c<br>
+						0x0f8d<br>
+						blank<br>
+						blank<br>
+						}</span></p>
+						<p>Any call to the above lootlist would have a 8/10 or 80% chance of spawning a reagent as loot, and a 2/10 or 20% chance of spawning nothing. Insert or remove such blank lines as needed to get your desired drop-rate for a given lootlist!</p>
+						<h4>What about Itemlists? How do they differ from lootlists?</h4>
+						<p>While lootlists serve only a specific purpose - adding loot to an NPC's backpack, the more general itemlists are multi-purpose, and are used in a variety of features in UOX3, such as when adding newbie items for freshly created player characters, by region spawners when spawning random items in specific regions of the game world.</p>
+						<p>Like lootlists, itemlists support the special "blank" entry, but unlike lootlists, items from itemlists can also be added directly in-game by GMs, using the <strong>'add item [itemlist]</strong> command. Example: <span class="highlight">'add item listobject6</span> will add a random musical instrument in-game.</p>
+						<p>Itemlists are setup in pairs of lists and objects. Example:</p>
+						<p><span class="highlight">//Instruments<br>
+						[ITEMLIST 6]<br>
+						{<br>
+						0x0e9c<br>
+						0x0e9d<br>
+						0x0e9e<br>
+						0x0eb1<br>
+						0x0eb2<br>
+						0x0eb3<br>
+						0x0eb4<br>
+						}<br><br>
+						// Instruments<br>
+						[listobject6]<br>
+						{<br>
+						itemlist=6<br>
+						}</span></p>
+						<p>Instead of referring to the itemlist directly, one refers to an object associated with the itemlist, which in the above example would be <span class="highlight">listobject6</span>, which then refers to the specified itemlist.</p>
+					</div>
+					<h4>onDeath JS Event</h4>
+					<p>For a more custom approach to NPC loot, with more control over what kind of items drop and under which circumstances, you can make use the JS Event onDeath in a script attached to an NPC, which triggers for NPCs upon death and lets you defined your own rules for what should happen. For more information on how to setup JS scripts, check the <a href="#scriptingJS">Scripting - JS Engine</a> section of this document!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5522,8 +5613,8 @@
 					<label for="spoiler_dfn_tags_items">Item DFN Tags <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="highlight">ac</span>=<strong>[armorclass]</strong></strong><br>
-							Set armorclass of item (higher = better)</p>
+							<p><span class="highlight">ac</span>=<strong>[armourClass]</strong></strong><br>
+							Set armour class of item. Can be used to restrict races from wearing items of certain armour classes, or to identify items as cloth, leather, plate, etc.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">addmenuitem</span>=<strong>[itemmenuID,tileID,weightPosition,objectFlags,sectionItemID]</strong><br>
@@ -5597,7 +5688,7 @@
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">def</span>=<strong>[defense]</strong><br>
-							Set physical defense value of item. Primarily used with wearables like armor</p>
+							Set physical resist/armor rating value of item. Primarily used with wearables like clothes, armour, etc.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">dex</span>=<strong>[statpoints]</strong><br>
@@ -5825,7 +5916,7 @@
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">type</span>=<strong>[itemType]</strong><br>
-							Set itemType of item. See <a href="#itemTypes" title="UOX3 Documentation - Item Types">Item Types</a> section</p>
+							Set itemType of item. See <a href="#itemtypes" title="UOX3 Documentation - Item Types">Item Types</a> section</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">value</span>=<strong>[buyValue sellValue]</strong><br>
@@ -6203,17 +6294,6 @@
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#uox3JsDocs" id="uox3JsDocs"><span>JS Engine Documentation</span></a>
-				<div class="cd-faq__content">
-				  <div class="text-component">
-					<p>The <a href="https://www.uox3.org/jsdocs/">UOX3 JS documentation</a> documents all the various events, triggers, methods, functions and properties available to script writers.</p>
-					<p>UOX3 comes with <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (such as <em>let</em>, or browser-specific features) might not be fully supported.</p>
-					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
-				  </div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uox3JSE" id="uox3JSE"><span>JSE File, Object and Type-associations</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -6223,23 +6303,70 @@
 					<input type="checkbox" id="spoiler_jsefileassociations">
 					<label for="spoiler_jsefileassociations">Script Sections in jse_fileassociations.scp <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p><span class="highlight">SCRIPT_LIST</span><br>
+						<p><span class="highlight">[SCRIPT_LIST]</span><br>
 						General mapping of scripts to scriptIDs. Can be assigned to objects in-game, via DFNs, or via other scripts.</p>
-						<p><span class="highlight">COMMAND_SCRIPTS</span><br>
+						<p><span class="highlight">[COMMAND_SCRIPTS]</span><br>
 						Mapping of scriptIDs to scripts containing command events and functions. Scripts are executed when using associated commands in-game.</p>
-						<p><span class="highlight">MAGIC_SCRIPTS</span><br>
+						<p><span class="highlight">[MAGIC_SCRIPTS]</span><br>
 						Mapping of scriptIDs to scripts containing spell events and functions. Scripts are executed when casting associated spells in-game.</p>
-						<p><span class="highlight">SKILLUSE_SCRIPTS</span><br>
+						<p><span class="highlight">[SKILLUSE_SCRIPTS]</span><br>
 						Mapping of scriptIDs to scripts containing skill events and functions. Scripts are executed when using associated skills in-game.</p>
-						<p><span class="highlight">PACKET_SCRIPTS</span><br>
+						<p><span class="highlight">[PACKET_SCRIPTS]</span><br>
 						Mapping of scriptIDs to scripts containing networking packet events and functions. Scripts are executed when associated network packets are received.</p>
-						<p><span class="highlight">CONSOLE_SCRIPTS</span><br>
+						<input type="checkbox" id="spoiler_jse_packets">
+						<label for="spoiler_jse_packets">Registering Packet Scripts <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>To handle an incoming network packet in the JS engine, first ensure that <strong>OVERLOADPACKETS</strong> is enabled in <em>uox.ini</em>, and that the script has been assigned a unique scriptID in the <strong>[PACKET_SCRIPTS]</strong> section of <em>jse_fileassociations.scp</em>.</p>
+							<p>Next, in the JS script handling the packet, register the packet in question with UOX3's packet handler, so it knows to direct any requests with this packet to the script in question:
+<pre><span class="highlight">function PacketRegistration()
+{</span>
+	// Leave the second value (subCmd) at 0x0, as it's not implemented yet
+	<span class="highlight">RegisterPacket( packetNum, 0x0 );
+}
+
+function onPacketReceive( pSocket, packetNum, subCommand )
+{
+	var cmd = pSocket.GetByte( 0 );
+	if( cmd != packetNum )
+		return;</span>
+
+	<span class="highlight">...</span> <em>// Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods, and respond if needed, by creating a new packet object followed by WriteByte, WriteShort, WriteLong, Send and Free packet methods. See <a href="https://www.uox3.org/jsdocs/" target="_blank">UOX3 JavaScript Docs</a> for additional details and examples.</em>
+
+	<span class="highlight">return;</span>
+}</pre></p>
+							<p>Then, in the same script, use the <strong>onPacketReceive JS Event</strong> to handle the incoming packet. Note that once a script has been registered as handler of a network packet, <strong><em>said script is entirely responsible</em></strong> for reading the bytes associated with the packet and forming any/all responses that the client might expect. Not sending a response, or sending the wrong response, or reading an incorrect amount of bytes from the socket buffer <strong>can result in unpredictable behaviour by the client and/or server!</strong></p>
+						</div>
+						<p><span class="highlight">[CONSOLE_SCRIPTS]</span><br>
 						Mapping of scriptIDs to scripts containing console events and functions. Scripts are executed when associated console actions/commands are used.</p>
+						<input type="checkbox" id="spoiler_jse_console">
+						<label for="spoiler_jse_console">Registering Console Scripts <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+<pre><span class="highlight">function ConsoleRegistration()
+{
+	RegisterKey( '[key]', "[commandTitle]" );
+}
+
+function commandTitle()
+{
+	...
+}</span></pre>
+						</div>
 					</div>
 					<p><span class="highlight">jse_objectassociations.scp</span><br>
 					Items whose IDs have been mapped to scripts via this file will execute the OnUse() JS event in the associated script when the items are used (double-clicked) in-game. Syntax: <strong>[itemID]=[scriptID]</strong></p>
 					<p><span class="highlight">jse_typeassociations.scp</span><br>
 					Instead of relying on item IDs or directly assigning scripts to items, you can also use this file to map the scripts to specific item types, which when used in-game will execute the onUse() JS event for the associated script. Syntax: <strong>[itemType]=[scriptID]</strong></p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3JsDocs" id="uox3JsDocs"><span>JS Engine Documentation</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>The <a href="https://www.uox3.org/jsdocs/">UOX3 JS documentation</a> documents all the various events, triggers, methods, functions and properties available to script writers.</p>
+					<p>UOX3 comes with <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (such as <em>let</em>, or browser-specific features) might not be fully supported.</p>
+					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -6266,7 +6393,7 @@
 		<ul id="resources" class="cd-faq__group">
 			<li class="cd-faq__title"><h1>Resources and Links</h1></li>
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#communityLinks" id="communityLinks"><span>Community Links</span></a>
+				<a class="cd-faq__trigger" href="#communityLinks" id="communityLinks"><span>UOX3 Community Links</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<h4><a href="https://github.com/UOX3DevTeam" target="_blank" title="UOX3 @ GitHub">UOX3 @ GitHub</a></h4>
@@ -6293,6 +6420,8 @@
 					<p>Razor is both a necessary tool to remove encryption from the UO client, allowing you to actually connect to UOX3, as well as a tool that can provide many quality-of-life improvements over the regular old UO client.</p>
 					<h4><a href="https://github.com/andreakarasho/ClassicUO" title="ClassicUO - open source UO client">ClassicUO</a></h4>
 					<p>ClassicUO is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client.</p>
+					<h4><a href="http://orionuo.online/	" title="OrionUO - alternative open source UO client">OrionUO</a></h4>
+					<p>OrionUO is an alterntive open source UO client that uses OpenGL for rendering. It's available for Windows and Linux, and comes with a metric ton of customization options on top of smoother performance compared to the original UO client.</p>
 					<h4><a href="https://github.com/polserver/UOFiddler/releases" title="UOFiddler - UO viewing/editing tool">UOFiddler</a></h4>
 					<p>UOFiddler is the spiritual successor of <a href="https://uo.stratics.com/heptazane/insideuo/index.shtml" target="_blank" title="InsideUO homepage">InsideUO</a>, though it has gone far beyond that by now. Tool that can be used to view and alter almost every file in the UO client.</p>
 					<h4><a href="http://dev.uoquint.ru/projects/centred" target="_blank" title="CentrED+ - server/client based map editor that allows multiple people to collaborate on the same map">CentrED+</a></h4>
@@ -6305,10 +6434,18 @@
 				<a class="cd-faq__trigger" href="#otherUOEmuResources" id="otherUOEmuResources"><span>Other UO Emulator Resources</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<h4><a href="https://www.ryandor.com/" target="_blank" title="Ryandor.com UO MapMaking Forums">Ryandor.com</a></h4>
-					<p>Ryandor.com is the homepage of Ryandor, a true artist when it comes to map-making for UO. His forums are crawling with map-makers from all corners of the world, and if you have a question about map-editing that you cannot get an answer for on these forums - there is no answer ;)</p>
+					<h4><a href="https://community.stratics.com/categories/uoemu-stratics.1095/" target="_blank" title="UOEmu Stratics Community Forums">UOEmu Stratics Community Forums</a></h4>
+					<p>A home for discussion of non-Official Ultima Online Servers, also known as Freeshards - hosted by Stratics (who once upon a time also hosted the UOX3 website and IRC channels!)</p>
+					<h4><a href="https://connectuo.net/" target="_blank" title="ConnectUO - Launcher, Patcher, Shard Portal">ConnectUO</a></h4>
+					<p>A combined launcher, patcher and UO freeshard portal that supports Linux, MacOS and Windows and the ClassicUO open source client. Being made in the spirit of the original ConnectUO/UOGateway tools. Beta starts on March 29th, and shard admins can sign up here to get a first look and help make the software stable for release.</p>
+					<h4><a href="https://shardportal.com/" target="_blank" title="ShardPortal - UO Freeshard portal">ShardPortal</a></h4>
+					<p>The ShardPortal is a place for anyone to advertise their shard as well as search out other active shards.</p>
+					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway</a></h4>
+					<p>A top site list for free UO shards made in the spirit of and in honor of Mr. Fixit's original UOGateway tool.</p>
 					<h4><a href="http://www.uo-pixel.de/" target="_blank" title="UO-Pixel - custom artwork assets for UO client">UO-Pixel</a></h4>
 					<p>Another nice (German) website focusing on providing custom artwork for UO shards. Amongst other things, it has some very nice animated item artwork (including a moving water-mill).</p>
+					<h4><a href="https://www.ryandor.com/" target="_blank" title="Ryandor.com UO MapMaking Forums">Ryandor.com</a></h4>
+					<p>Ryandor.com is the homepage of Ryandor, a true artist when it comes to map-making for UO. His forums are crawling with map-makers from all corners of the world, and if you have a question about map-editing that you cannot get an answer for on these forums - there is no answer ;)</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -9189,6 +9326,13 @@
 							<p><span class="highlight">TeHb</span><br> Scripter, ~November 2002</p>
 							<p><span class="highlight">Tim</span><br> ???</p>
 						</div>
+
+						<input type="checkbox" id="spoiler_history_halloffame_active"/>
+						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Contributors active within last year (as of March 2021):</p>
+							<p><span class="highlight">Xuri, tuanhtrng, punt</span><br></p>
+						</div>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -9202,7 +9346,7 @@
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Documentation revamp by Geir Ove Alnes @ Copyright 2020</small></p>
+	<p><small>Documentation revamp by Geir Ove Alnes @ Copyright 2020 - 2021</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->

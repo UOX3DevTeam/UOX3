@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at uox3.org)
-// v1.10
-// Last updated: October 23rd 2020
+// v1.12
+// Last updated: 21/03/2021
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -17,6 +17,7 @@ function CommandRegistration()
 	RegisterCommand( "rdye", 2, true ); // Use 'RDYE <hex-id> - dyes multiple targeted objects with colour <hex-id>
 	RegisterCommand( "radd", 2, true ); // Use 'RADD <hex-id> - adds item <hex-id> at multiple targeted locations
 	RegisterCommand( "rremove", 2, true ); // Use 'RREMOVE - Removes multiple targeted items.
+	RegisterCommand( "m", 2, true ); // Use 'm delete - Removes multiple targeted items.
 	RegisterCommand( "radditem", 2, true ); // Use 'RADDITEM <item-id from dfns>
 	RegisterCommand( "rtele", 2, true ); //Use 'RTELE <target teleport location>
 	RegisterCommand( "raddnpc", 2, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
@@ -35,8 +36,10 @@ function command_RINCX( pSock, execString )
 }
 function onCallback0( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var incXValue = pSock.xText;
 		var incXValue = Number(incXValue);
@@ -61,8 +64,10 @@ function command_RINCY( pSock, execString )
 }
 function onCallback1( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var incYValue = pSock.xText;
 		var incYValue = Number(incYValue);
@@ -87,8 +92,10 @@ function command_RINCZ( pSock, execString )
 }
 function onCallback2( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var incZValue = pSock.xText;
 		var incZValue = Number(incZValue);
@@ -113,8 +120,10 @@ function command_RTYPE( pSock, execString )
 }
 function onCallback4( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var TempType = pSock.xText;
 		var TempType = Number(TempType);
@@ -139,8 +148,10 @@ function command_RDYE( pSock, execString )
 }
 function onCallback5( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var TempDye = pSock.xText;
 		var TempDye = Number(TempDye);
@@ -155,34 +166,51 @@ function onCallback5( pSock, myTarget )
 //Repeated Command: ADD <hex-id>
 function command_RADD( pSock, execString )
 {
-	if( !isNaN(execString))
-	{
+	// if( !isNaN(execString))
+	// {
+		var splitString = execString.split( " " );
 		pSock.xText = execString;
-		pSock.CustomTarget( 6, "Select target location for item "+execString+":" );
-	}
-	else
-		pSock.SysMessage( ReqNum );
+		pSock.CustomTarget( 6, "Select target location for item 0x"+parseInt(splitString[0]).toString(16)+":" );
+	// }
+	// else
+		// pSock.SysMessage( ReqNum );
 }
 function onCallback6( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
-		var TempItemID = pSock.xText;
-		var TempItemID = Number(TempItemID);
+		var tempItemID = ""; //pSock.xText;
+
+		var splitString = pSock.xText.split( " " );
+		if( splitString[1] )
+		{
+			// radd itemID rndValue
+			tempItemID = (parseInt(splitString[0]) + RandomNumber(0, parseInt(splitString[1]))).toString();
+		}
+		else
+		{
+			tempItemID = pSock.xText;
+		}
+
+		// Find targeted location
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
 		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 
+		// Create item and set it's location
 		var pUser = pSock.currentChar;
-		var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );
+		var tempItem = CreateBlankItem( pSock, pUser, 1, "#", parseInt(tempItemID), 0x0, "ITEM", false );
 		if( tempItem )
 		{
 			tempItem.SetLocation( targX, targY, targZ );
 			tempItem.decayable = false;
+			pSock.CustomTarget( 6, "Select target location for item 0x0"+parseInt(tempItemID).toString(16)+":" );
 		}
-
-		pSock.CustomTarget( 6, "Select target location for item "+TempItemID+":" );
+		else
+			pSock.SysMessage( "The specified itemID does not seem to be valid. No item added!" );
 	}
 	else
 		pSock.SysMessage( "Repeating command ended." );
@@ -193,10 +221,19 @@ function command_RREMOVE( pSock, execString )
 {
 	pSock.CustomTarget( 7, "Which object do you wish to remove?" );
 }
+//Repeated Command: M DELETE
+function command_M( pSock, execString )
+{
+	var splitString = execString.split( " " );
+	if( splitString[0].toUpperCase() == "DELETE" )
+		pSock.CustomTarget( 7, "Which object do you wish to remove?" );
+}
 function onCallback7( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		if( !pSock.GetWord( 1 ))
 		{
@@ -222,8 +259,10 @@ function command_RADDITEM( pSock, execString )
 }
 function onCallback8( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var pUser = pSock.currentChar;
 		var TempItemID = pSock.xText;
@@ -233,13 +272,18 @@ function onCallback8( pSock, myTarget )
 			var targY = pSock.GetWord( 13 );
 			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 			var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
-			tempItem.x = targX;
-			tempItem.y = targY;
-			tempItem.z = targZ;
-			pSock.CustomTarget( 8, "Select target location for item "+TempItemID+":" );
+			if( tempItem )
+			{
+				tempItem.x = targX;
+				tempItem.y = targY;
+				tempItem.z = targZ;
+				pSock.CustomTarget( 8, "Select target location for item "+TempItemID+":" );
+			}
+			else
+				pSock.SysMessage( "That doesn't seem to be a valid item-id from the DFNs. No item added!" );
 		}
 		else
-			pSock.SysMessage( "That doesn't seem to be a valid item-id from the DFNs." );
+			pSock.SysMessage( "That doesn't seem to be a valid item-id from the DFNs. No item added!" );
 	}
 	else
 		pSock.SysMessage( "Repeating command ended." );
@@ -252,8 +296,10 @@ function command_RTELE( pSock, execString )
 }
 function onCallback9( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var pUser = pSock.currentChar;
 		var targX = pSock.GetWord( 11 );
@@ -275,8 +321,10 @@ function command_RADDNPC( pSock, execString )
 }
 function onCallback10( pSock, myTarget )
 {
-	var cancelCheck = parseInt( pSock.GetDWord( 11 ));  // DWord 11 is -1 if pressing Escape
-	if( cancelCheck != -1 )
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var pUser = pSock.currentChar;
 		var TempNPCID = pSock.xText;

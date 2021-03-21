@@ -511,7 +511,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		return;
 
 	// page header
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "nodispose" );
 	toSend.addCommand( "page 0" );
 
@@ -1261,6 +1260,9 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 //o-----------------------------------------------------------------------------------------------o
 void HandleHowTo( CSocket *sock, SI32 cmdNumber )
 {
+	if( cmdNumber == -2 )
+		return;
+
 	SI32 iCounter = 0;
 	UI08 cmdLevelReq = 0xFF;
 	UI08 cmdType = 0xFF;
@@ -2155,7 +2157,6 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 	}
 	UI08 ser1, ser2, ser3, ser4;
 	//--static pages
-	one.push_back( "noclose" );
 	one.push_back( "page 0"  );
 	temp = format(maxsize, "resizepic 0 0 %i %i %i", cwmWorldState->ServerData()->BackgroundPic(), width, height );
 	one.push_back( temp );

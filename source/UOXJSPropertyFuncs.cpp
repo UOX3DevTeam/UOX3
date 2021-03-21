@@ -308,6 +308,22 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DECAYTIME:		*vp = INT_TO_JSVAL( gPriv->GetDecayTime() );		break;
 			case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
 			case CIP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
+			case CIP_AC:			*vp = INT_TO_JSVAL( gPriv->GetArmourClass() );		break;
+			case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetResist( PHYSICAL ) );	break;
+			case CIP_RESISTCOLD:	*vp = INT_TO_JSVAL( gPriv->GetResist( COLD ) );		break;
+			case CIP_RESISTHEAT:	*vp = INT_TO_JSVAL( gPriv->GetResist( HEAT ) );		break;
+			case CIP_RESISTLIGHT:	*vp = INT_TO_JSVAL( gPriv->GetResist( LIGHT ) );	break;
+			case CIP_RESISTLIGHTNING:	*vp = INT_TO_JSVAL( gPriv->GetResist( LIGHTNING ) );break;
+			case CIP_RESISTPOISON:	*vp = INT_TO_JSVAL( gPriv->GetResist( POISON ) );	break;
+			case CIP_RESISTRAIN:	*vp = INT_TO_JSVAL( gPriv->GetResist( RAIN ) );		break;
+			case CIP_RESISTSNOW:	*vp = INT_TO_JSVAL( gPriv->GetResist( SNOW ) );		break;
+			case CIP_DAMAGECOLD:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( COLD ) );	break;
+			case CIP_DAMAGEHEAT:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( HEAT ) );	break;
+			case CIP_DAMAGELIGHT:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( LIGHT ) );	break;
+			case CIP_DAMAGELIGHTNING:	*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( LIGHTNING ) );	break;
+			case CIP_DAMAGEPOISON:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( POISON ) );	break;
+			case CIP_DAMAGERAIN:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( RAIN ) );	break;
+			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ) );	break;
 			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
 			case CIP_NAME2:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName2() );
@@ -341,7 +357,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_BUYVALUE:		*vp = INT_TO_JSVAL( gPriv->GetBuyValue() );		break;
 			case CIP_SELLVALUE:		*vp = INT_TO_JSVAL( gPriv->GetSellValue() );	break;
 			case CIP_RESTOCK:		*vp = INT_TO_JSVAL( gPriv->GetRestock() );		break;
-			case CIP_DEVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDevineLocked() ); break;
+			case CIP_DIVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDivineLocked() ); break;
 			case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
 			case CIP_WEIGHTMAX:		*vp = INT_TO_JSVAL( gPriv->GetWeightMax() );	break;
 			case CIP_BASEWEIGHT:	*vp = INT_TO_JSVAL( gPriv->GetBaseWeight() );	break;
@@ -377,6 +393,9 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_AMMOFX:		*vp = INT_TO_JSVAL( gPriv->GetAmmoFX() );				break;
 			case CIP_AMMOFXHUE:		*vp = INT_TO_JSVAL( gPriv->GetAmmoFXHue() );			break;
 			case CIP_AMMOFXRENDER:	*vp = INT_TO_JSVAL( gPriv->GetAmmoFXRender() );			break;
+			case CIP_MAXRANGE:		*vp = INT_TO_JSVAL( gPriv->GetMaxRange() );				break;
+			case CIP_BASERANGE:		*vp = INT_TO_JSVAL( gPriv->GetBaseRange() );			break;
+			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->isHeldOnCursor() );		break;
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
 				if( gPriv->GetObjType() == OT_SPAWNER )
@@ -414,66 +433,98 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_LOCKDDOWNS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetLockdownCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXLOCKDOWNS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxLockdowns() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_TRASHCONTAINERS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetTrashContainerCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXTRASHCONTAINERS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxTrashContainers() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_SECURECONTAINERS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetSecureContainerCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXSECURECONTAINERS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxSecureContainers() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_FRIENDS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetFriendCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXFRIENDS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxFriends() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_GUESTS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetGuestCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXGUESTS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxGuests() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_OWNERS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetOwnerCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXOWNERS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxOwners() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_BANS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetBanCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXBANS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxBans() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_VENDORS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetVendorCount() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_MAXVENDORS:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetMaxVendors() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_DEED:
 				if( gPriv->GetObjType() == OT_MULTI )
@@ -481,10 +532,14 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					tString = JS_NewStringCopyZ( cx, (static_cast<CMultiObj *>(gPriv))->GetDeed().c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 				}
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_ISPUBLIC:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = BOOLEAN_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetPublicStatus() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_BUILDTIMESTAMP:
 				if( gPriv->GetObjType() == OT_MULTI )
@@ -492,6 +547,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ) )->GetBuildTimestamp().c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 				}
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_TRADETIMESTAMP:
 				if( gPriv->GetObjType() == OT_MULTI )
@@ -499,14 +556,20 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					tString = JS_NewStringCopyZ( cx, ( static_cast<CMultiObj *>( gPriv ) )->GetTradeTimestamp().c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 				}
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_BANX:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetBanX() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			case CIP_BANY:
 				if( gPriv->GetObjType() == OT_MULTI )
 					*vp = INT_TO_JSVAL( ( static_cast<CMultiObj *>( gPriv )->GetBanY() ) );
+				else
+					*vp = JSVAL_NULL;
 				break;
 			default:
 				break;
@@ -591,6 +654,22 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 			case CIP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );					break;
 			case CIP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );					break;
+			case CIP_AC:			gPriv->SetArmourClass( (UI08)encaps.toInt() );				break;
+			case CIP_DEF:			gPriv->SetResist( (UI16)encaps.toInt(), PHYSICAL );			break;
+			case CIP_RESISTCOLD:	gPriv->SetResist( (UI16)encaps.toInt(), COLD );				break;
+			case CIP_RESISTHEAT:	gPriv->SetResist( (UI16)encaps.toInt(), HEAT );				break;
+			case CIP_RESISTLIGHT:	gPriv->SetResist( (UI16)encaps.toInt(), LIGHT );			break;
+			case CIP_RESISTLIGHTNING:	gPriv->SetResist( (UI16)encaps.toInt(), LIGHTNING );	break;
+			case CIP_RESISTPOISON:	gPriv->SetResist( (UI16)encaps.toInt(), POISON );			break;
+			case CIP_RESISTRAIN:	gPriv->SetResist( (UI16)encaps.toInt(), RAIN );				break;
+			case CIP_RESISTSNOW:	gPriv->SetResist( (UI16)encaps.toInt(), SNOW );				break;
+			case CIP_DAMAGECOLD:	gPriv->SetWeatherDamage( COLD, encaps.toBool() );			break;
+			case CIP_DAMAGEHEAT:	gPriv->SetWeatherDamage( HEAT, encaps.toBool() );			break;
+			case CIP_DAMAGELIGHT:	gPriv->SetWeatherDamage( LIGHT, encaps.toBool() );			break;
+			case CIP_DAMAGELIGHTNING:	gPriv->SetWeatherDamage( LIGHTNING, encaps.toBool() );	break;
+			case CIP_DAMAGEPOISON:	gPriv->SetWeatherDamage( POISON, encaps.toBool() );			break;
+			case CIP_DAMAGERAIN:	gPriv->SetWeatherDamage( RAIN, encaps.toBool() );			break;
+			case CIP_DAMAGESNOW:	gPriv->SetWeatherDamage( SNOW, encaps.toBool() );			break;
 			case CIP_SPEED:			gPriv->SetSpeed( (UI08)encaps.toInt() );					break;
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
 			case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
@@ -602,7 +681,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_BUYVALUE:		gPriv->SetBuyValue( (UI32)encaps.toInt() );					break;
 			case CIP_SELLVALUE:		gPriv->SetSellValue( (UI32)encaps.toInt() );				break;
 			case CIP_RESTOCK:		gPriv->SetRestock( (UI16)encaps.toInt() );					break;
-			case CIP_DEVINELOCK:	gPriv->SetDevineLock( encaps.toBool() );					break;
+			case CIP_DIVINELOCK:	gPriv->SetDivineLock( encaps.toBool() );					break;
 			case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
 			case CIP_WEIGHTMAX:		gPriv->SetWeightMax( (SI32)encaps.toInt() );				break;
 			case CIP_BASEWEIGHT:	gPriv->SetBaseWeight( (SI32)encaps.toInt() );				break;
@@ -633,6 +712,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_AMMOFX:		gPriv->SetAmmoFX( (UI16)encaps.toInt() );					break;
 			case CIP_AMMOFXHUE:		gPriv->SetAmmoFXHue( (UI16)encaps.toInt() );				break;
 			case CIP_AMMOFXRENDER:	gPriv->SetAmmoFXRender( (UI16)encaps.toInt() );				break;
+			case CIP_MAXRANGE:		gPriv->SetMaxRange( (UI08)encaps.toInt() );					break;
+			case CIP_BASERANGE:		gPriv->SetBaseRange( (UI08)encaps.toInt() );				break;
+			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
 				if( gPriv->GetObjType() == OT_SPAWNER )
@@ -960,7 +1042,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ISCASTING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
 			case CCP_TOWNPRIV:		*vp = INT_TO_JSVAL( gPriv->GetTownPriv() );			break;
 			case CCP_GUILDTITLE:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
+				tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CCP_FONTTYPE:		*vp = INT_TO_JSVAL( gPriv->GetFontType() );			break;
@@ -1114,7 +1196,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );	break;
 			case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );										break;
 			case CCP_ID:	gPriv->SetID( (UI16)encaps.toInt() );										break;
-			case CCP_COLOUR:gPriv->SetOrgSkin( (UI16)encaps.toInt() );									break;
+			case CCP_COLOUR:gPriv->SetColour( (UI16)encaps.toInt() );									break;
 			case CCP_OWNER:
 				if( *vp != JSVAL_NULL )
 				{
@@ -1260,15 +1342,21 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_REGION:		gPriv->SetRegion( (UI16)encaps.toInt() );			break;
 			case CCP_TOWN:
 				cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
-				cwmWorldState->townRegions[encaps.toInt()]->AddAsTownMember( *gPriv );
-				break;
-			case CCP_GUILD:
-				GuildSys->Resign( gPriv->GetSocket() );
-
 				if( *vp != JSVAL_NULL )
 				{
-					CGuild *myGuild = static_cast<CGuild*>(encaps.toObject());
-					myGuild->NewRecruit( gPriv->GetSerial() );
+					cwmWorldState->townRegions[encaps.toInt()]->AddAsTownMember( *gPriv );
+				}
+				break;
+			case CCP_GUILD:
+				if( !gPriv->IsNpc() )
+				{
+					GuildSys->Resign( gPriv->GetSocket() );
+
+					if( *vp != JSVAL_NULL )
+					{
+						CGuild *myGuild = static_cast<CGuild*>(encaps.toObject());
+						myGuild->NewRecruit( gPriv->GetSerial() );
+					}
 				}
 				break;
 			case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( (SI08)encaps.toInt() ); 	break;
@@ -1345,6 +1433,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
 			case CCP_SKILLTOPROV:	gPriv->SetProvoing( encaps.toInt() );				break;
 			case CCP_SKILLTOPEACE:	gPriv->SetPeaceing( encaps.toInt() );				break;
+			case CCP_POISON:		gPriv->SetPoisoned( (UI08)encaps.toInt() );			break;
 			case CCP_POISONSTRENGTH:	gPriv->SetPoisonStrength( (UI08)encaps.toInt() );	break;
 			case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );			break;
 			case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );				break;
@@ -1435,7 +1524,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_CANRECALL:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanRecall() );			break;
 			case CREGP_CANGATE:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanGate() );				break;
 			case CREGP_CANTELEPORT:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanTeleport() );			break;
-			case CREGP_CANPLACEHOUSE:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanPlaceHouse() );	break;
+			case CREGP_CANPLACEHOUSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanPlaceHouse() );		break;
 			case CREGP_ISGUARDED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
 			case CREGP_WORLDNUMBER:			*vp = INT_TO_JSVAL( gPriv->WorldNumber() );				break;
 			case CREGP_INSTANCEID:			*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );			break;

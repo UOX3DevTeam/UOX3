@@ -6,6 +6,7 @@
 #include "classes.h"
 #include "CJSEngine.h"
 #include "power.h"
+#include <unordered_set>
 
 
 cRaces *Races = NULL;
@@ -865,7 +866,6 @@ void CRace::IsPlayerRace( bool newValue )
 {
 	bools.set( BIT_PLAYERRACE, newValue );
 }
-
 void CRace::NoHair( bool newValue )
 {
 	bools.set( BIT_NOHAIR, newValue );
@@ -944,6 +944,29 @@ bool CRace::DoesHunger( void ) const
 void CRace::DoesHunger( bool newValue )
 {
 	doesHunger = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cRaces::CanEquipItem( RACEID race, UI16 itemID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks whether a given race can equip a given item, based on lists of allowed
+//|					or banned equipment from dfndata/race/races.dfn
+//o-----------------------------------------------------------------------------------------------o
+bool CRace::CanEquipItem( UI16 itemID ) const
+{
+	if( allowedEquipment.size() > 0 )
+	{
+		// Race has a list of allowed equipment. If it's not in the list, disallow usage
+		//return ( std::find( allowedEquipment.begin(), allowedEquipment.end(), itemID ) != allowedEquipment.end() );
+		return ( allowedEquipment.find( itemID ) != allowedEquipment.end() );
+	}
+	else if( bannedEquipment.size() > 0 )
+	{
+		// Race has a list of banned equipment. If item is in the list, disallow usage
+		//return !( std::find( bannedEquipment.begin(), bannedEquipment.end(), itemID ) != bannedEquipment.end() );
+		return !( bannedEquipment.find( itemID ) != bannedEquipment.end() );
+	}
+	return true;
 }
 
 CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
@@ -1128,13 +1151,77 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 		{
 			case 'a':
 			case 'A':
-				if( UTag == "ARMORREST" )
+			{
+				if( UTag == "ALLOWEQUIPLIST" )
+				{
+					// Allowed equipment from [EQUIPMENT #] sections in races.dfn
+					UString subTag;
+					UString subUTag;
+					UString subData;
+					UString subSect = std::string( "EQUIPLIST " ) + str_number( data.toUByte() );
+					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
+					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
+					{
+						subUTag = subTag.upper();
+						subData = RacialEquipment->GrabData();
+						switch( subTag[0] )
+						{
+							case 'i':
+							case 'I':
+								if( subUTag == "ITEMS" )
+								{
+									for( int i = 0; i < subData.sectionCount( "," ); i++ )
+									{
+										UI16 temp = static_cast<UI16>(subData.section( ",", i, i ).stripWhiteSpace().toUShort() );
+										//allowedEquipment.push_back( temp );
+										allowedEquipment.insert( temp );
+									}
+								}
+								break;
+							default:
+								break;
+						}
+					}
+				}
+				else if( UTag == "ARMORREST" )
 					ArmourClassRestriction( data.toUByte() );		// 8 classes, value 0 is all, else it's a bit comparison
 				break;
+			}
 
 			case 'b':
 			case 'B':
-				if( UTag == "BEARDMIN" )
+				if( UTag == "BANEQUIPLIST" )
+				{
+					// Allowed equipment from [EQUIPMENT #] sections in races.dfn
+					UString subTag;
+					UString subUTag;
+					UString subData;
+					UString subSect = std::string( "EQUIPLIST " ) + str_number( data.toUByte() );
+					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
+					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
+					{
+						subUTag = subTag.upper();
+						subData = RacialEquipment->GrabData();
+						switch( subTag[0] )
+						{
+							case 'i':
+							case 'I':
+								if( subUTag == "ITEMS" )
+								{
+									for( int i = 0; i < subData.sectionCount( "," ); i++ )
+									{
+										UI16 temp = static_cast<UI16>(subData.section( ",", i, i ).stripWhiteSpace().toUShort() );
+										//bannedEquipment.push_back( temp );
+										bannedEquipment.insert( temp );
+									}
+								}
+								break;
+							default:
+								break;
+						}
+					}
+				}
+				else if( UTag == "BEARDMIN" )
 					beardMin = data.toUShort();
 				else if( UTag == "BEARDMAX" )
 					beardColours.push_back( ColourPair( beardMin, data.toUShort() ) );
