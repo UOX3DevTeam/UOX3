@@ -353,6 +353,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 
 CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
 ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void BuildHouse( CSocket *mSock, UI08 houseEntry )
 //o-----------------------------------------------------------------------------------------------o
@@ -398,6 +399,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	UI16 maxVendors = 10;
 	UI16 maxTrashContainers = 1;
 	UI16 scriptTrigger = 0;
+	UI16 multiColour = 0;
 	UString customTagName;
 	UString customTagStringValue;
 	TAGMAPOBJECT customTag;
@@ -455,6 +457,10 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			maxVendors = data.toUShort();
 		else if( UTag == "SCRIPT" )
 			scriptTrigger = data.toUShort();
+		else if( UTag == "COLOUR" || UTag == "COLOR" )
+			multiColour = data.toUShort();
+		else if( UTag == "COLOURLIST" || UTag == "COLORLIST" )
+			multiColour = addRandomColor( data );
 		else if( UTag == "CUSTOMSTRINGTAG" )
 		{
 			customTagName			= data.section( " ", 0, 0 );
@@ -522,6 +528,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetMaxSecureContainers( maxSecureContainers );
 		house->SetMaxOwners( maxOwners );
 		house->SetMaxVendors( maxVendors );
+		house->SetColour( multiColour );
 
 		time_t buildTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		house->SetBuildTimestamp( buildTimestamp );

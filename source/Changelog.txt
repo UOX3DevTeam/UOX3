@@ -2,6 +2,7 @@
 	Custom tags can now be set for multis in dfndata/house/house.dfn via the DFN tags CUSTOMSTRINGTAG and CUSTOMINTTAG, which can be read later for a placed multi via JS Item method GetTag( tagName ). Syntax is identical to custom tags in Item/NPC definitions:
 		CUSTOMSTRINGTAG=tagName stringValue
 		CUSTOMINTTAG=tagName intValue
+	Definitions for multis in dfndata/house/house.dfn now support the COLOUR and COLOURLIST tags, which will (if present) be applied to new multis that are added in-game. Colour for existing multis can be modified via the 'tweak command.
 
 23/03/2021 - Xuri (0.99.4d)
 	Added new option in UOX.INI under [settings] section:
