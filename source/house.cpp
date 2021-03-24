@@ -398,6 +398,10 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	UI16 maxVendors = 10;
 	UI16 maxTrashContainers = 1;
 	UI16 scriptTrigger = 0;
+	UString customTagName;
+	UString customTagStringValue;
+	TAGMAPOBJECT customTag;
+	std::map<UString, TAGMAPOBJECT> customTagMap;
 
 	UString sect = "HOUSE " + UString::number( houseEntry );
 	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
@@ -451,6 +455,32 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			maxVendors = data.toUShort();
 		else if( UTag == "SCRIPT" )
 			scriptTrigger = data.toUShort();
+		else if( UTag == "CUSTOMSTRINGTAG" )
+		{
+			customTagName			= data.section( " ", 0, 0 );
+			customTagStringValue	= data.section(" ", 1 );
+			if( !customTagName.empty() && !customTagStringValue.empty() )
+			{
+				customTag.m_Destroy		= FALSE;
+				customTag.m_StringValue	= customTagStringValue;
+				customTag.m_IntValue	= customTag.m_StringValue.length();
+				customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
+			}
+		}
+		else if( UTag == "CUSTOMINTTAG" )
+		{
+			customTagName			= data.section(" ", 0, 0);
+			customTagStringValue	= data.section(" ", 1);
+			if( !customTagName.empty() && !customTagStringValue.empty() )
+			{
+				customTag.m_Destroy		= FALSE;
+				customTag.m_IntValue = customTagStringValue.toInt();
+				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+				customTag.m_StringValue	= "";
+				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
+			}
+		}
 	}
 
 	if( !houseID )
@@ -495,6 +525,11 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 		time_t buildTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		house->SetBuildTimestamp( buildTimestamp );
+
+		// Add custom tags to multi
+		for (const auto& [key, value] : customTagMap) {
+			house->SetTag( key, value );
+		}
 
 		// Find corners of new house
 		SI16 multiX1 = 0;
