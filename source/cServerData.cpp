@@ -68,6 +68,7 @@ const UI32 BIT_FORCENEWANIMATIONPACKET = 48;
 const UI32 BIT_MAPDIFFSENABLED = 49;
 const UI32 BIT_ARMORCLASSDAMAGEBONUS = 50;
 const UI32 BIT_CONNECTUOSERVERPOLL = 51;
+const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
 
 
 // New uox3.ini format lookup
@@ -379,6 +380,8 @@ void	CServerData::regAllINIValues() {
 	regINIValue("MAXPLAYERBANKITEMS", 228);
 	regINIValue("MAPDIFFSENABLED", 230);
 	regINIValue("CUOENABLED", 244);
+	regINIValue("ALCHEMYBONUSENABLED", 245);
+	regINIValue("ALCHEMYBONUSMODIFIER", 246);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -478,7 +481,8 @@ void CServerData::ResetDefaults( void )
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2.0 );
-
+	AlchemyDamageBonusEnabled( false );
+	AlchemyDamageBonusModifier( 5 );
 
 	auto curWorkingDir = std::filesystem::current_path().string();
 
@@ -1658,6 +1662,38 @@ SI16 CServerData::CombatNPCDamageRate( void ) const
 void CServerData::CombatNPCDamageRate( SI16 value )
 {
 	combatnpcdamagerate = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AlchemyDamageBonusEnabled( void ) const
+//|					void AlchemyDamageBonusEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Alchemy Damage Bonus Modifier is enabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::AlchemyDamageBonusEnabled( void ) const
+{
+	return boolVals.test( BIT_ALCHEMYDAMAGEBONUSENABLED );
+}
+void CServerData::AlchemyDamageBonusEnabled( bool newVal )
+{
+	boolVals.set( BIT_ALCHEMYDAMAGEBONUSENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 AlchemyDamageBonusModifier( void ) const
+//|					void AlchemyDamageBonusModifier( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Alchemy Damage Bonus Modifier, which gives bonus damage to 
+//|					explosion potions based on this formula: 
+//|						bonusDamage = attackerAlchemySkill / alchemyDamageBonusModifier
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::AlchemyDamageBonusModifier( void ) const
+{
+	return alchemyDamageBonusModifier;
+}
+void CServerData::AlchemyDamageBonusModifier( UI08 value )
+{
+	alchemyDamageBonusModifier = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3131,6 +3167,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<UI16>(CombatArmorDamageChance()) << '\n';
 		ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
 		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
+		ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
+		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -4042,6 +4080,12 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		case 244:	// CUOENABLED[0233]
 			ConnectUOServerPoll( (value.toByte() == 1) );
+			break;
+		case 245:	// ALCHEMYBONUSENABLED[0234]
+			AlchemyDamageBonusEnabled( value.toUShort() == 1 );
+			break;
+		case 246:	// ALCHEMYBONUSMODIFIER[0235]
+			AlchemyDamageBonusModifier( value.toUByte() );
 			break;
 		default:
 			rvalue = false;

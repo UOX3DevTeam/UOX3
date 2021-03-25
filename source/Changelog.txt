@@ -1,3 +1,28 @@
+26/03/2021 - Xuri
+	Re-implemented DoStaticEffect() as a stand-alone JS function that takes a location as a target instead of an object
+	Fixed an issue with potions where entire stacks of potions would get consumed instead of just one potion
+	Added missing entries for normal and greater explosion potions to dfndata/items/magic/potions.dfn, and added them to the item menu
+	Potions are now marked as stackable in dfndata/items/magic/potions.dfn
+	Moved countdown and explosion handling of explosion potions from code to JS (js/item/potion.js)
+	Added LoS and Z distance checking for explosion potions
+	Added optional randomization of countdown timer for explosion potions. Can be enabled via a boolean at the top of the potions script
+	Damage of explosion potions is now defined via DAMAGE/LODAMAGE/HIDAMAGE tags in Item DFNs, and the time before exploding is defined via the SPEED tag
+	Added optional Alchemy skill bonus damage modifier for explosion potions, defaults to 1 additional damage per 5 skillpoints
+	Added new UOX.INI settings under [combat] to control the bonus damage modifier in explosion potions:
+		ALCHEMYBONUSENABLED=0/1	// enable/disable bonus damage, defaults to disabled
+		ALCHEMYBONUSMODIFIER=5 	// bonusDamage = alchemySkill / alchemyBonusModifier
+	Exposed speechType as an additional 7th optional parameter for the JS TextMessage function, and the other optional parameters (speechTarget, speechTargetSerial, speechFontType) can now be supplied as -1 if one just want to use the default values. Supported speechTypes:
+		TALK			= 0,	// normal system message
+	    PROMPT			= 1,	// Display as system prompt
+	    EMOTE			= 2,	// : text
+	    SAY				= 3,	// character speaking
+	    OBJ				= 4,	// at object
+	    NOTHING			= 5,	// does not display
+	    SYSTEM			= 6,	// text labelling an item
+	    NOSCROLL		= 7,	// status msg, does not scroll
+	    WHISPER			= 8,	// only those close can here
+	    YELL			= 9,	// can be heard 2 screens away
+
 24/03/2021 - Xuri
 	Custom tags can now be set for multis in dfndata/house/house.dfn via the DFN tags CUSTOMSTRINGTAG and CUSTOMINTTAG, which can be read later for a placed multi via JS Item method GetTag( tagName ). Syntax is identical to custom tags in Item/NPC definitions:
 		CUSTOMSTRINGTAG=tagName stringValue

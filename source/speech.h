@@ -3,6 +3,7 @@
 
 enum SpeechTarget
 {
+	SPTRG_NULL = -1,
 	SPTRG_INDIVIDUAL = 0,		// aimed at individual person
 	SPTRG_PCS,					// all PCs in range
 	SPTRG_PCNPC,				// all NPCs and PCs in range
@@ -13,6 +14,7 @@ enum SpeechTarget
 
 enum SpeakerType
 {
+	SPK_NULL = -1,
 	SPK_SYSTEM = 0,
 	SPK_CHARACTER,
 	SPK_ITEM,

@@ -29,6 +29,7 @@ SEngineFunc SE_SpawnNPC;			// Create NPC								*
 
 SEngineFunc SE_DoMovingEffect;		// Does moving effect						***
 SEngineFunc SE_DoTempEffect;		// Does a temp effect						***
+SEngineFunc SE_DoStaticEffect;		// Does a static effect at location			***
 
 // Item related functions (2)
 

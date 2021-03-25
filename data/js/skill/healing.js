@@ -64,7 +64,7 @@ function onCallback1( socket, ourObj )
 
 	if( bItem && bItem.isItem && ourObj && ourObj.isChar && mChar && mChar.isChar )
 	{
-		if( mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) )
+		if( mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) && Math.abs( mChar.z - ourObj.z ) < 4 )
 		{
 			if( ourObj.GetTag( "SK_BEINGHEALED" ) )
 			{

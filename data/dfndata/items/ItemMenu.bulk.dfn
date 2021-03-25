@@ -11818,6 +11818,10 @@ ITEMMENU=8
 potions.dfn
 0x0F0D=lesser explosion potion
 ADDITEM=0x0F0D
+0x0F0D=explosion potion
+ADDITEM=0x0F0D-b
+0x0F0D=greater explosion potion
+ADDITEM=0x0F0D-c
 0x0F0B=refreshment potion
 ADDITEM=0x0F0B
 0x0F0B=total refreshment potion

@@ -180,6 +180,7 @@ enum SpeechType
 
 enum FontType
 {
+	FNT_NULL = -1,
     FNT_BOLD = 0,
     FNT_TEXT_WITH_SHADOW,
     FNT_BOLD_PLUS_SHADOW,

@@ -1625,14 +1625,15 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //|	Prototype	-	void TextMessage( message )
 //|					void TextMessage( message, allHear, txtHue )
 //|					void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial, speechFontType );
+//|					void TextMessage( message, allHear, txtHue, speechTarget, speechTargetSerial, speechFontType, speechType );
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to say a message
 //o-----------------------------------------------------------------------------------------------o
 JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 1 || argc > 6 )
+	if( argc < 1 || argc > 7 )
 	{
-		MethodError( "TextMessage: Invalid number of arguments (takes 1 - 6)" );
+		MethodError( "TextMessage: Invalid number of arguments (takes 1 - 7)" );
 		return JS_FALSE;
 	}
 
@@ -1643,7 +1644,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	char *trgMessage		= JS_GetStringBytes( targMessage );
 	if( trgMessage == NULL )
 	{
-		MethodError( "You have to supply a messagetext" );
+		MethodError( "You have to supply a message-text" );
 		return JS_FALSE;
 	}
 
@@ -1651,17 +1652,23 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc >= 3 )
 		txtHue = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
 
-	SpeechTarget speechTarget = SPTRG_PCNPC;
+	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+	if( speechTarget == SPTRG_NULL )
+		speechTarget = SPTRG_PCNPC;
 
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
 
-	FontType speechFontType = FNT_UNKNOWN;
+	FontType speechFontType = FNT_NULL;
 	if( argc == 6 )
 		speechFontType = static_cast<FontType>( JSVAL_TO_INT( argv[5] ));
+
+	SpeechType speechType = UNKNOWN;
+	if( argc == 7 )
+		speechType = static_cast<SpeechType>( JSVAL_TO_INT( argv[6] ));
 
 	if( myClass.ClassName() == "UOXItem" )
 	{
@@ -1673,9 +1680,11 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 		if( !txtHue )
 			txtHue = 0x047F;
-		if( speechFontType == FNT_UNKNOWN )
+		if( speechFontType == FNT_NULL )
 			speechFontType = FNT_NORMAL;
-		MethodSpeech( *myItem, trgMessage, OBJ, txtHue, speechFontType, speechTarget, speechTargetSerial );
+		if( speechType == UNKNOWN )
+			speechType = OBJ;
+		MethodSpeech( *myItem, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -1689,20 +1698,22 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
 			speechTarget = SPTRG_INDIVIDUAL;
 
-		if( speechFontType == FNT_UNKNOWN )
+		if( speechFontType == FNT_NULL )
 			speechFontType = (FontType)myChar->GetFontType();
+		if( speechType == UNKNOWN )
+			speechType = SAY;
 
 		if( myChar->GetNPCAiType() == AI_EVIL )
 		{
 			if( !txtHue )
 				txtHue = 0x0026;
-			MethodSpeech( *myChar, trgMessage, TALK, txtHue, speechFontType, speechTarget, speechTargetSerial );
+			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial );
 		}
 		else
 		{
 			if( !txtHue )
 				txtHue = myChar->GetSayColour();
-			MethodSpeech( *myChar, trgMessage, TALK, txtHue, speechFontType, speechTarget, speechTargetSerial );
+			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial );
 		}
 	}
 

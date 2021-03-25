@@ -49,6 +49,7 @@ static JSFunctionSpec my_functions[] =
 	{ "NumToString",				SE_NumToString,				1, 0, 0 },	// This function will be depreciated
 	{ "NumToHexString",				SE_NumToHexString,			1, 0, 0 },	// This function will be depreciated
 	{ "DoMovingEffect", 			SE_DoMovingEffect,			6, 0, 0 },
+	{ "DoStaticEffect", 			SE_DoStaticEffect,			7, 0, 0 },
 	{ "BroadcastMessage",			SE_BroadcastMessage,		1, 0, 0 },
 	{ "RandomNumber",				SE_RandomNumber,			2, 0, 0 },
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
