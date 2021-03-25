@@ -162,7 +162,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 52 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 53 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -288,6 +288,7 @@ private:
 	UI08		combatarmordamagechance;		//  Chance of armor being damaged when defending in combat (0-100)
 	UI08		combatarmordamagemin;			//  Minimum amount of hitpoints an armor can lose when being damaged in combat
 	UI08		combatarmordamagemax;			//  Maximum amount of hitpoints an armor can lose when being damaged in combat
+	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 
 	// Start & Location Settings
 	std::vector< STARTLOCATION >	startlocations;
@@ -543,6 +544,12 @@ public:
 
 	void		MineCheck( UI08 value );
 	UI08		MineCheck( void ) const;
+
+	void		AlchemyDamageBonusEnabled( bool value );
+	bool		AlchemyDamageBonusEnabled( void ) const;
+
+	void		AlchemyDamageBonusModifier( UI08 value );
+	UI08		AlchemyDamageBonusModifier( void ) const;
 
 	void		CombatDisplayHitMessage( bool value );
 	bool		CombatDisplayHitMessage( void ) const;

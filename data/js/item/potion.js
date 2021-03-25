@@ -1,3 +1,12 @@
+// If enabled in INI setting, explosion potions get bonus damage from alchemy skill
+// using this formula: ( attacker's alchemy skill / 10 ) / alchemyBonusDamageModifier
+// Example: (1000 skillpoints / 10 ) / 5 = 20 bonus damage
+const alchemyBonusEnabled = GetServerSetting( "ALCHEMYBONUSENABLED" );
+const alchemyBonusModifier = parseInt(GetServerSetting( "ALCHEMYBONUSMODIFIER" ));
+
+// Other settings
+const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
+
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -10,7 +19,7 @@ function onUseChecked( pUser, iUsed )
 		}
 
 		//Check to see if it's locked down
-		if( iUsed.movable == 2 || iUsed.movable == 3 )
+		if( iUsed.movable == 3 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
 			return false;
@@ -20,6 +29,7 @@ function onUseChecked( pUser, iUsed )
 			case 1:		// Agility Potion
 				pUser.StaticEffect( 0x373A, 0, 15 );
 				pUser.SoundEffect( 0x01E7, true );
+
 				switch( iUsed.morez )
 				{
 					case 1:
@@ -81,6 +91,7 @@ function onUseChecked( pUser, iUsed )
 				if( pRegion.isSafeZone )
 				{
 					socket.SysMessage( GetDictionaryEntry( 1799, socket.language ) ); // Hostile actions are not permitted in this safe area.
+					return false;
 				}
 				else if( pRegion.isGuarded )
 				{
@@ -89,15 +100,49 @@ function onUseChecked( pUser, iUsed )
 				}
 				else
 				{
+					if( iUsed.amount > 1 )
+					{
+						// Stack of potions
+						var explosionPotion = iUsed.Dupe( socket );
+						explosionPotion.amount = 1;
+						if( ValidateObject( explosionPotion ))
+						{
+							iUsed.amount--;
+							iUsed = explosionPotion;
+						}
+					}
+
+					// Store potion on socket and player serial on potion, for later!
 					socket.tempObj = iUsed;
-					DoTempEffect( 0, pUser, pUser, 16, 0, 1, 3 );
-					DoTempEffect( 0, pUser, pUser, 16, 0, 2, 2 );
-					DoTempEffect( 0, pUser, pUser, 16, 0, 3, 1 );
-					DoTempEffect( 1, pUser, iUsed, 17, 0, 4, 0 );
+					iUsed.more = pUser.serial;
+
+					// Set radius of explosion
+					iUsed.morex = pUser.skills.alchemy / 250;
+
+					// Randomize countdown length, if enabled
+					if( randomizePotionCountdown )
+					{
+						iUsed.speed = RandomNumber( iUsed.speed - 1, iUsed.speed + 1 );
+					}
+
+					// Item's speed forms the basis of the countdownTime
+					var countdownTime = iUsed.speed * 1000;
+
+					// Start the initial timer that shows the first number over the character/object's head
+		  			iUsed.StartTimer( 200, 1, true );
+
+		  			// Start timers with IDs from 2, and count until we reach item's speed + 1
+					var iCount = 2;
+					for( iCount = 2; iCount < ( iUsed.speed + 2 ); iCount++ )
+					{
+						iUsed.StartTimer(( iCount - 1 ) * 1000, iCount, true );
+					}
+
+					// Disallow immediately using other potions
+					pUser.isUsingPotion = true;
+					DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 );
 					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
 				}
-				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 4:		// Heal Potion
 				switch( iUsed.morez )
@@ -197,15 +242,20 @@ function onUseChecked( pUser, iUsed )
 				break;
 		}
 
+		// For potions other than explosion potions, consume potion upon use
 		if( iUsed.morey != 3 )
 		{
 			pUser.SoundEffect( 0x0030, true );
 			if( pUser.id > 0x0189 && !pUser.isonhorse )
 				pUser.DoAction( 0x22 );
 
-			iUsed.Delete();
+			if( iUsed.amount > 1 )
+				iUsed.amount--;
+			else
+				iUsed.Delete();
 
-			var eBottle = CreateDFNItem( pUser.socket, pUser, "0x0F0E", 1, "ITEM", true );
+			// Create empty bottle
+			var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );
 			if( eBottle && eBottle.isItem )
 				eBottle.decay = true;
 		}
@@ -219,49 +269,148 @@ function onCallback0( socket, ourObj )
 	var iUsed = socket.tempObj;
 	if( mChar && mChar.isChar && iUsed && iUsed.isItem )
 	{
-		iUsed.container = null;
-		// We need a LineOfSight check
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj )
-			iUsed.Teleport( ourObj );
+		{
+			// We need a LineOfSight check
+			if( mChar.CanSee( ourObj.x, ourObj.y, ourObj.z ))
+			{
+				iUsed.container = null;
+				iUsed.Teleport( ourObj );
+			}
+			else
+			{
+				socket.SysMessage( GetDictionaryEntry( 1646, socket.language )); // You cannot see that
+
+				// Give player another chance to throw the potion before it blows up in their face
+				socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
+				return;
+			}
+		}
 		else
 		{
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
 			var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
-			iUsed.Teleport( x, y, z );
+
+			// We need a LineOfSight check
+			if( mChar.CanSee( x, y, z ))
+			{
+				iUsed.container = null;
+				iUsed.Teleport( x, y, z );
+			}
+			else
+			{
+				socket.SysMessage( GetDictionaryEntry( 1646, socket.language )); // You cannot see that
+
+				// Give player another chance to throw the potion before it blows up in their face
+				socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
+				return;
+			}
 		}
 
 		iUsed.movable = 2;
 
-		// See if explosion potion would affect any characters in a safe zone, if so disallow
-		var safeTargets = 0;
-		var radius = 4;
-		safeTargets = AreaCharacterFunction( "findSafeTargets", iUsed, radius );
-
-		if( safeTargets == 0 )
-		{
-			// No safe targets found, proceed
-		DoMovingEffect( mChar, iUsed, 0x0F0D, 0x11, 0, false, 0, 0 );
+		// Play moving effect of potion being thrown to potion's target location
+		DoMovingEffect( mChar, iUsed, 0x0F0D, 5, 0, false, 0, 0 );
 	}
+}
+
+
+function onTimer( timerObj, timerID )
+{
+	var countdown = 0;
+	countdown = ( timerObj.speed + 1 ) - timerID;
+	var packOwner = GetPackOwner( timerObj, 0 );
+
+	// If timerID equals object speed + 1, time to explode!
+	if( timerID == timerObj.speed + 1 )
+	{
+		if( timerObj.container == null )
+		{
+		  	DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, 0x36B0, 0x09, 0x0d, false );
+			timerObj.SoundEffect( 0x0207, true );
+
+		  	AreaCharacterFunction( "ApplyExplosionDamage", timerObj, 4 );
+		}
 		else
 		{
-			// Disallow explosion effect from potion, some targets are in safe zone
-			socket.SysMessage( GetDictionaryEntry( 1799, socket.language ) ); // Hostile actions are not permitted in this safe area.
-			iUsed.Delete();
+			// Oops! Player is still holding the potion... explode player for damage!
+			if( packOwner != null && packOwner.isChar )
+			{
+				packOwner.StaticEffect( 0x36b0, 0x09, 0x0d );
+				packOwner.SoundEffect( 0x0207, true );
+
+				// Apply alchemy bonus to explosion damage, if it's enabled and higher than 0 (both set in INI)
+				var alchemyBonus = 0;
+				if( alchemyBonusEnabled && alchemyBonusModifier > 0 )
+					alchemyBonus = Math.round(packOwner.skills.alchemy / alchemyBonusModifier);
+
+				// Deal damage to player holding the potion
+				packOwner.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus );
+			}
+		}
+	  	timerObj.Delete();
+		return;
+	}
+
+	// As long as timerID is lower than object speed, display a countdown message
+	if( timerID <= timerObj.speed )
+	{
+		if( timerObj.container == null )
+		{
+			// Player threw potion, let's show countdown above potion - to everyone nearby
+			timerObj.TextMessage( countdown.toString(), true, 0x0026, -1, -1, -1, 6 );
+		}
+		else
+		{
+			// Player has not thrown potion yet - show timer above character's head, but only to player
+			if( packOwner != null && packOwner.isChar )
+				packOwner.TextMessage( countdown.toString(), false, 0x0026, -1, -1, -1, 6 );
 		}
 	}
 }
 
-// Find targets that are in safe zones but would be affected by explosion potion
-function findSafeTargets( iUsed, targetChar )
+function ApplyExplosionDamage( timerObj, targetChar )
 {
-	var targetRegion = targetChar.region;
-	if( targetRegion )
+	var sourceChar = CalcCharFromSer( timerObj.more );
+	if( ValidateObject( sourceChar ))
 	{
+		// Ignore targets that are in safe zones
+		var targetRegion = targetChar.region;
 		if( targetRegion.isSafeZone )
-			return true;
-		else
-			return false;
+		{
+			sourceChar.SysMessage( "Your target is in a safe zone!" );
+			return;
+		}
+
+		// Don't allow a Z difference greater than 5
+		if( Math.abs( targetChar.z - timerObj.z) > 5 )
+			return;
+
+		// Ignore characters that are not in Line of Sight of the potion
+		if( !targetChar.CanSee( timerObj ))
+			return;
+
+		// Apply alchemy bonus to explosion damage, if it's enabled and higher than 0 (both set in INI)
+		var alchemyBonus = 0;
+		if( alchemyBonusEnabled && alchemyBonusModifier > 0 )
+			alchemyBonus = Math.round(sourceChar.skills.alchemy / alchemyBonusModifier);
+
+		// Deal damage, and do criminal check for source character!
+		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, sourceChar, true );
+
+		// If target is an NPC, make them attack the person who threw the potion!
+		if( targetChar.npc && targetChar.target == null && targetChar.atWar == false )
+		{
+			targetChar.target = sourceChar;
+			targetChar.atWar = true;
+			targetChar.attacker = sourceChar;
+		}
+	}
+	else
+	{
+		// Source character not found - apply damage on general basis
+		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ));
 	}
 }

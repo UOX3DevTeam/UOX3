@@ -334,6 +334,32 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays a static effect at a target location
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DoStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 7 )
+	{
+		DoSEErrorMessage( "DoStaticEffect: Invalid number of arguments (takes 7 - targX, targY, targZ, effectID, speed, loop, explode)" );
+		return JS_FALSE;
+	}
+
+	SI16 targX		= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 targY		= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	SI16 targZ		= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	UI16 effectID	= (UI16)JSVAL_TO_INT( argv[3] );
+	UI08 speed		= (UI08)JSVAL_TO_INT( argv[4] );
+	UI08 loop		= (UI08)JSVAL_TO_INT( argv[5] );
+	bool explode	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+
+	Effects->PlayStaticAnimation( targX, targY, targZ, effectID, speed, loop, explode );
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random number between loNum and hiNum
@@ -3656,6 +3682,12 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 244:	// CUOENABLED[0233]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ConnectUOServerPoll() );
+				break;
+			case 245:	// ALCHEMYBONUSENABLED[0234]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AlchemyDamageBonusEnabled() );
+				break;
+			case 246:	// ALCHEMYBONUSMODIFIER[0235]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->AlchemyDamageBonusModifier()));
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

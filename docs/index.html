@@ -26,8 +26,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 22. March, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4</small></p>
+	<p style="margin:0"><small>Last Updated: 26. March, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4d</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -57,10 +57,20 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>March 26th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> with details on ALCHEMYBONUSENABLED and ALCHEMYBONUSMODIFIER settings</li>
+							<li>Added first iteration of <a href="#spawnObjects">Spawn Objects</a> feature details</li>
+						</ul>
+						<h4>March 23rd, 2021</h4>
+						<ul>
+							<li>Updated list of Tiledata Flags under <a href="#mapsStaticsTiledata">Maps, Statics and Tiledata</a> to include flags added in High Seas expansion</li>
+						</ul>
 						<h4>March 22nd, 2021</h4>
 						<ul>
 							<li>Updated <a href="#uox3JSE">JSE File, Object and Type-associations</a> section with details about how to register a "packet-hook" script to handle specific incoming network packets via the JS engine</li>
 							<li>Added additional links in Resources and Links section, under <a href="#thirdPartyTools">Third Party Tools</a> and <a href="#otherUOEmuResources">Other UO Emulator Resources</a></li>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with latest additions</li>
 						</ul>
 						<h4>March 19th, 2021</h4>
 						<ul>
@@ -163,6 +173,7 @@
 								}</span>
 							</div>
 							<li><strong>Dynamic Reloading of Scripts</strong> - Any scripts, definition files and ini files used by UOX3 can be reloaded on the fly - in just a few seconds - while the server is already running. This makes it easy for shard admins and developers to quickly iterate on changes and additions, without having to restart the server from scratch and reconnect the client to see each change.</li>
+							<li><strong>Custom Object Tags</strong> - Custom string/int tags can be added to any character or item (including multis) via JS scripts or Item/NPC definitions - either of which can be reloaded on the fly if needed. No need to ask developers to add a custom tag in the source... just add it yourself!</li>
 							<li><strong>UO Client Support</strong> - UOX3 supports a wide range of UO client versions, all the way from the 4.x versions originally introduced with the Age of Shadows expansion in 2003, to the most recent 7.0.x series available today.</li>
 							<li><strong>Multi-Language Support</strong> - UOX3 comes with a custom dictionary system that allows for sending script and system messages to connected clients in the client's default language.</li>
 							<li><strong>Extensive Log System</strong> - UOX3 comes with an extensive log system that tracks server errors, warnings, network packets sent and received for each client, commands used, spells cast, combat events, player speech and more.</li>
@@ -304,7 +315,7 @@
 					<p>Default memory usage for an empty shard ranges from 35-50 MB, but will grow based on amount of content added to shard and number of players connected at any given time. Minimum 1+ GB RAM recommended.</p>
 					<h3>Ultima Online Client</h3>
 					<p>It is highly recommended to use the same data files for your UOX3 shard as found in the Ultima Online client you will be connecting to UOX3 with, to minimize the chance of issues related to mismatching files.</p>
-					<p>UOX3 currently supports client versions ranging from <strong>4.0.0p</strong> to at least <strong>7.0.87.x</strong>, and requires the following minimum set of UO data files to run:
+					<p>UOX3 currently supports client versions ranging from <strong>4.0.0p</strong> to at least <strong>7.0.90.x</strong>, and requires the following minimum set of UO data files to run:
 					<ul>
 						<li><strong>map0.mul/map0LegacyMUL.uop</strong> (depending on client version)</li>
 						<li><strong>staidx0.mul</strong></li>
@@ -774,6 +785,10 @@
 							Determines if support for the UOGateway Info Request Service is enabled.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="highlight">CUOENABLED</span><strong>=0</strong><br>
+							Determines if support for the ConnectUO Server Poll Packet request is enabled.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="highlight">RANDOMSTARTINGLOCATION</span><strong>=0</strong><br>
 							If 1, new player characters start in a random starting location instead of one they choose during character creation.</p>
 						</div>
@@ -871,7 +886,7 @@
 							Number of seconds that must pass after a skill is used, before another skill can be used.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">STATCAP</span><strong>=325</strong><br>
+							<p><span class="highlight">STATCAP</span><strong>=225</strong><br>
 							Total number of statpoints available for each player.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1221,6 +1236,10 @@
 							<p><span class="highlight">MAXPLAYERBANKITEMS</span><strong>=125</strong><br>
 							Sets max amount of items players can keep in their bank box.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">MAPDIFFSENABLED</span><strong>=0</strong><br>
+							If enabled, server will attempt to load diff files, and send "Enable Map-diff files" packet to client to also load these. Disabled by default.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_speedup">
@@ -1419,10 +1438,6 @@
 							Maximum range (in tiles) at which combat can occur.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">ARCHERRANGE</span><strong>=7</strong><br>
-							The range at which NPC archers stop charging their target in combat (default 7).</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="highlight">SPELLMAXRANGE</span><strong>=10</strong><br>
 							Maximum range (in tiles) at which spells can be cast.</p>
 						</div>
@@ -1497,6 +1512,14 @@
 						<div class="settingsDiv">
 							<p><span class="highlight">ARMORDAMAGEMAX</span><strong>=1</strong><br>
 							The max amount of damage (randomized) armor can take if it takes damage in combat.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">ALCHEMYBONUSENABLED</span><strong>=0</strong><br>
+							Enables/disables bonus damage from Alchemy skill for explosion potions. Defaults to disabled.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">ALCHEMYBONUSMODIFIER</span><strong>=5</strong><br>
+							The modifier used to add bonus damage based on Alchemy skill for explosion potions. Defaults to 1 bonus damage per 5 skill-points in Alchemy skill, using the following formula: bonusDamage = alchemySkill / modifier</p>
 						</div>
 					</div>
 
@@ -2427,7 +2450,7 @@
 							<p>Plays the specified midi/mp3 file. Note that you can only switch what music plays every so often.</p>
 							<p>Command: <span class="highlight">'music</span><br>
 							Parameters: <span class="highlight"><em>(d)</em></span></p>
-							<p>The exact music available is dependent on which UO client version you're using. No matter which version you're using, you will find a file called <strong>Config.txt</strong> under the <strong>[path to UO]\Music\Digital\</strong> subfolder, which lists out the available music, from 0-67 (v5.0.0b to v6.0.1.10?), 0-87 (v7.0.8.2 to v7.0.20.0+) or 0-102 (v7.0.30.1 to v7.0.87.x).</p>
+							<p>The exact music available is dependent on which UO client version you're using. No matter which version you're using, you will find a file called <strong>Config.txt</strong> under the <strong>[path to UO]\Music\Digital\</strong> subfolder, which lists out the available music, from 0-67 (v5.0.0b to v6.0.1.10?), 0-87 (v7.0.8.2 to v7.0.20.0+) or 0-102 (v7.0.30.1 to v7.0.90.x).</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_minecheck">
@@ -3857,6 +3880,14 @@
 							<span class="highlight">DOOR</span> - Door<br>
 							<span class="highlight">CLIMBABLEBIT1</span> - Stair Back<br>
 							<span class="highlight">CLIMBABLEBIT2</span> - Stair Right</p>
+							<p><strong>// Additional flags added with High Seas expansion, purpose unknown:</strong><br>
+							<span class="highlight">ALPHABLEND</span> - Unknown<br>
+							<span class="highlight">USENEWART</span> - Unknown<br>
+							<span class="highlight">ARTUSED</span> - Unknown<br>
+							<span class="highlight">NOSHADOW</span> - Unknown<br>
+							<span class="highlight">PIXELBLEED</span> - Unknown<br>
+							<span class="highlight">PLAYANIMONCE</span> - Unknown<br>
+							<span class="highlight">MULTIMOVABLE</span> - Unknown</p>
 							</p>
 						</div>
 				  </div>
@@ -4729,9 +4760,53 @@
 				<a class="cd-faq__trigger" href="#spawnObjects" id="spawnObjects"><span>Spawn Objects</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3's Spawn Object system lets shard admins setup item or NPC spawns in-game using GM commands, or setup predefined spawn objects in the DFNs that GMs can then add anywhere they want something to spawn.</p>
-					<p>Unlike objects spawned via <a href="#uox3SpawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Regions</a>, ones spawned from Spawn Objects have a persistent state and will be saved during world saves and will be loaded again if server restarts.</p>
-					<p>More details coming soon!</p>
+					<p>UOX3's <strong>Spawn Object</strong> system lets shard admins setup item or NPC spawns in-game using GM commands, or setup predefined spawn objects in the DFNs that GMs can then drop at any location where they want something to spawn. Examples of such predefined spawn objects can be found in the GM <span class="highlight">'add</span> menu, under <span class="highlight">GM Menu > Spawners</span>. If adding spawn objects via this menu, drag and drop the spawn object from your backpack to the ground to activate the spawn cycle. If you are unable to move it from your inventory, try using the <strong>'allmove on</strong> command first!</p>
+					<p>Unlike objects spawned via <a href="#uox3SpawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Regions</a>, ones spawned from Spawn Objects have a persistent state and will be saved during world saves and are loaded again if server restarts.</p>
+					<p>Four main types of spawn objects are available:</p>
+					<h4>Item Spawner</h4>
+					<p>Spawn Objects of item type 61 (<span class="highlight">IT_ITEMSPAWNER</span>) will spawn items at the spawn object's exact location.</p>
+					<input type="checkbox" id="spoiler_spawnobject_item">
+					<label for="spoiler_spawnobject_item">Example Setup for an Item Spawner <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					</div>
+					<h4>NPC Spawner</h4>
+					<p>Spawn Objects of item type 62 (<span class="highlight">IT_NPCSPAWNER</span>) will spawn NPCs at the spawn object's exact location.</p>
+					<input type="checkbox" id="spoiler_spawnobject_ncp">
+					<label for="spoiler_spawnobject_ncp">Example Setup for a predefined NPC Spawner in DFNs <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Here's an example of an NPC spawner defined in <span class="highlight">dfndata/items/gmmenu/spawners.dfn</span>. Like other spawner objects, it inherits some properties from a base_spawner, to save on the need to redefine these common properties for each individual spawner (the base_spawner itself, meanwhile, inherits properties from a base_item object):</p>
+						<p><span class="highlight">[base_spawner]<br>
+						{</span><br>
+						<span class="highlight">get=base_item</span> // <br>
+						<span class="highlight">id=0x1F14</span> // ID of spawner object's visuals (displayed for GMs only)<br>
+						<span class="highlight">weight=50000</span> // Defines weight of spawn object (500.00 stones)<br>
+						<span class="highlight">interval=1 5</span> // Defines how often spawn object spawns another NPC<br>
+						<span class="highlight">visible=1</span> // Marks spawn object as only being visible to GMs<br>
+						<span class="highlight">decay=0</span> // Marks spawn object as non-decayable<br>
+						<span class="highlight">movable=2</span> // Marks spawn object as only being movable by GMs<br>
+						<span class="highlight">}</span></p>
+						<p><span class="highlight">[orcspawn]<br>
+						{</span><br>
+						<span class="highlight">get=base_spawner</span> // inherit properties from base_spawner<br>
+						<span class="highlight">name=Orc Spawner</span> // Internal name of spawner object, for GM/Admin use only<br>
+						<span class="highlight">type=62</span> // Item type 62 marks object as a NPC Spawner<br>
+						<span class="highlight">spawnobj=orc</span> // Specifies script section ID of NPC to spawn<br>
+						<span class="highlight">amount=3</span> // Max cap on amount of NPCs spawned<br>
+						<span class="highlight">}</span></p>
+						<p>The spawn object (identified as "orcspawn") </p>
+					</div>
+					<h4>Area Spawner</h4>
+					<p>Spawn Objects of item type 69 (<span class="highlight">IT_AREASPAWNER</span>) will spawn NPCs in a radius centered on the spawn object's location.</p>
+					<input type="checkbox" id="spoiler_spawnobject_area">
+					<label for="spoiler_spawnobject_area">Example Setup for an Area Spawner <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					</div>
+					<h4>Container Spawner</h4>
+					<p>Spawn Objects of type 63 (<span class="highlight">IT_SPAWNCONT</span>), 64 (<span class="highlight">IT_LOCKEDSPAWNCONT</span>) and 65 (<span class="highlight">IT_UNLOCKABLESPAWNCONT</span>) are setup as containers with items spawning inside at regular intervals. Can be setup to auto-lock whenever an item respawns, or be set to never lock at all.</p>
+					<input type="checkbox" id="spoiler_spawnobject_container">
+					<label for="spoiler_spawnobject_container">Example Setup for a Container Spawner <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>

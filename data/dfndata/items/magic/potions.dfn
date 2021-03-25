@@ -5,6 +5,7 @@ id=0x0
 weight=100
 restock=50
 decay=1
+pileable=1
 good=29
 }
 
@@ -13,11 +14,40 @@ good=29
 get=base_potion
 name=lesser explosion potion
 id=0x0F0D
-value=40 20
+value=20 35
 type=19
 morey=3
+lodamage=1
+hidamage=5
+speed=3
 }
- 
+
+[0x0F0D-b]
+{
+get=base_potion
+name=explosion potion
+id=0x0F0D
+value=25 50
+type=19
+morey=3
+lodamage=6
+hidamage=10
+speed=3
+}
+
+[0x0F0D-c]
+{
+get=base_potion
+name=greater explosion potion
+id=0x0F0D
+value=55 105
+type=19
+morey=3
+lodamage=11
+hidamage=20
+speed=3
+}
+
 [0x0F0B]
 {
 get=base_potion
