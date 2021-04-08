@@ -35,7 +35,7 @@
 	Updated JS Method CreateDFNItem to allow creating items without referencing a socket/character. Syntax:
 		var myItem = CreateDFNItem( null, null, itemSectionID, amount, "ITEM", false, worldNumber, instanceID );
 	Added functional chessboard that operates on standard chess rules. Pieces cannot be removed from the board, snap to the chessboard grid when dropped, are subject to movement restrictions per chesspiece, will capture opponent pieces if landing on their square. Board can be reset by dragging king-piece off to the side of the board (js/item/gameboards.js and js/item/chesspiece.js)
-	Added functional checkerboard, with pieces that cannot be removed, can only move in diagonals, can jump across opponent pieces to capture them. Board can be reset by ??? (js/item/gameboards.js and js/item/checkerpiece.js)
+	Added functional checkerboard, with pieces that cannot be removed, can only move in diagonals, can jump across opponent pieces to capture them. Board can be reset by either side moving one of their own pieces off to the side of the board (js/item/gameboards.js and js/item/checkerpiece.js)
 	Using the 'go command without any additional parameters will now open the GM travel menu (js/commands/go.js)
 
 26/03/2021 - Xuri
