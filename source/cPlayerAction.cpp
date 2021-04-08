@@ -908,7 +908,21 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	UI16 targTrig		= i->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
-		toExecute->OnDrop( i, nChar );
+	{
+		UI08 rVal = toExecute->OnDrop( i, nChar );	// returns 1 if we should bounce it
+		switch( rVal )
+		{
+			case 2:	// don't bounce, use code
+			case 0:	// no such event
+			default:
+				break;
+			case 1:	// bounce, no code
+				Bounce( mSock, i );
+				return;	// stack not deleted, as we're bouncing
+			case 3:	// don't bounce, don't use code
+				return;
+		}
+	}
 
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
@@ -1264,8 +1278,8 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 	}
 
 	// Check if container can hold more items
-	if( mSock.PickupSpot() != PL_OWNPACK && ( GetTotalItemCount( &droppedOn ) >= droppedOn.GetMaxItems() ||
-		GetTotalItemCount( &droppedOn ) + std::max(static_cast<UI32>(1), 1 + GetTotalItemCount( &iDropped )) > droppedOn.GetMaxItems() ))
+	if( iDropped.GetContSerial() != droppedOn.GetSerial() && ( mSock.PickupSpot() != PL_OWNPACK && ( GetTotalItemCount( &droppedOn ) >= droppedOn.GetMaxItems() ||
+		GetTotalItemCount( &droppedOn ) + std::max(static_cast<UI32>(1), 1 + GetTotalItemCount( &iDropped )) > droppedOn.GetMaxItems() )))
 	{
 		mSock.sysmessage( 1818 ); // The container is already at capacity.
 		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )

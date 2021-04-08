@@ -1,3 +1,43 @@
+08/04/2021 - Xuri (0.99.4e)
+	Added support for packet 0xE2 (New Character Animation, used to play animations in client v7.0.0.0+) via cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID, UI08 subSubActionID )
+	Added support for new animation packet in JS Character method DoAction() using a second parameter that specifies animation variation, which if present forces server to send new animation packet instead of old. This means the 'action/npcaction commands can now be used to play animations on gargoyles/humans in client v7.0.0.0+ using the following syntax: 'action [action subAction]
+	Created new enums for character actions and sub-actions, and updated code to refer to these instead of using "magic" numbers
+	Added new options in UOX.INI under [settings] section:
+		FORCENEWANIMATIONPACKET=0/1 // If enabled (default), forces the use of the new animation packet for playing various character animations for both NPCs in general and for player characters connected with client v7.0.0.0+
+	Updated various actions performed by players and NPCs to use new animation packet (combat, spellcasting, mining) if connected with client v7.0.0.0+ and ini setting to force new animation packet is enabled
+	Added basic support for gargoyle flying ability. Can now use flying ability itself to enter/exit flying state, and the state change will also get sent to nearby players. Flying players are treated the same way as mounted players; polymorph spells will auto-dismounts mounted/flying player, same rules for stealth applies to flying as riding, etc.
+	Exposed Character property to JS engine:
+		.isFlying // returns true if character is flying
+	Moved Orc and Ratman races from RACE 1 and 2 to RACE 22 and 23 in dfndata/race/races.dfn to make room for two new player races, that are applied to new player characters during character creation:
+		[RACE 1] - Elf
+		[RACE 2] - Gargoyle
+	Updated orcs and ratmen in dfndata/npc/humanoids.dfn with race IDs 22 and 23 respectively
+	Added items in dfndata/items/skills/tools/cooking.dfn to item menu under Skills > Tools > Cooking
+	Fixed an issue where moving items around within a container at max item capacity was not allowed
+	The GM command 'set can now modify a character's current mana using 'set mana #
+	Added JS command to get specific object property values (using same property names as 'set command):
+		'get [objectProperty]
+	Exposed Item/Character properties to JS:
+		.oldX // Previous X coordinate for object
+		.oldY // Previous Y coordinate for object
+		.oldZ // Previous Z coordinate for object
+	Exposed Character properties to JS:
+		.mana // Character's current amount of mana
+	Updated version of Winsock requested by UOX3 from 2.0 to 2.2
+	Exposed timer for updating NPC flags to [timers] section of UOX.INI:
+		NPCFLAGUPDATETIMER=5 // Interval in seconds between each time NPC flags are updated. Default adjusted down from 30 to 5 seconds
+	Fixed an issue where UOX3 was trying to output some debug/warning messages to console using the wrong console method
+	Made some small tweaks to NPC pathfinding to make NPCs more likely to pick a new target location when their old one is blocked
+	Added HP DFN tag to guard NPCs to prevent them from spawning with half health
+	Removed -lstdc++fs from Makefile and replaced with special instructions for users of gcc below v9.x
+	Fixed a buffer overrun issue with tiledata item names
+	Eliminated a bunch of compilation warnings in VS2017
+	Updated JS Method CreateDFNItem to allow creating items without referencing a socket/character. Syntax:
+		var myItem = CreateDFNItem( null, null, itemSectionID, amount, "ITEM", false, worldNumber, instanceID );
+	Added functional chessboard that operates on standard chess rules. Pieces cannot be removed from the board, snap to the chessboard grid when dropped, are subject to movement restrictions per chesspiece, will capture opponent pieces if landing on their square. Board can be reset by dragging king-piece off to the side of the board (js/item/gameboards.js and js/item/chesspiece.js)
+	Added functional checkerboard, with pieces that cannot be removed, can only move in diagonals, can jump across opponent pieces to capture them. Board can be reset by ??? (js/item/gameboards.js and js/item/checkerpiece.js)
+	Using the 'go command without any additional parameters will now open the GM travel menu (js/commands/go.js)
+
 26/03/2021 - Xuri
 	Re-implemented DoStaticEffect() as a stand-alone JS function that takes a location as a target instead of an object
 	Fixed an issue with potions where entire stacks of potions would get consumed instead of just one potion

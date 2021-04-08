@@ -217,7 +217,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 			return;
 
 		//Play creature sounds, but add a small chance that they won't, to give players a break every now and then
-		UI08 soundChance = RandomNum( static_cast<size_t>(0), inrange.size() + 9  );
+		UI08 soundChance = static_cast<UI08>(RandomNum( static_cast<size_t>(0), inrange.size() + 9  ));
 		if( soundChance > 5 )
 		{
 			basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
@@ -309,6 +309,9 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 	if( mChar->GetVisible() != VT_VISIBLE || ( mChar->IsGM() || mChar->IsCounselor() ))
 		return;
 
+	if( mChar->IsFlying() ) // No footstep sounds for flying gargoyles
+		return;
+
 	enum TileType
 	{
 		TT_NORMAL = 0,
@@ -320,13 +323,8 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 	};
 	TileType tileType = TT_NORMAL;
 
-	bool onHorse = false;
-	if( mChar->IsOnHorse() )
-		onHorse = true;
-
-	bool isRunning = false;
-	if( mChar->GetRunning() > 0 )
-		isRunning = true;
+	bool onHorse = mChar->IsOnHorse();
+	bool isRunning = ( mChar->GetRunning() > 0 );
 
 	CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 	Static_st *stat = msi.Next();

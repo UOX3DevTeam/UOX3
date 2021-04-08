@@ -84,7 +84,6 @@ public:
 	 @remarks
 	 This returns the list of party entries as it is stored internally.  We
 	 should try and minimise the amount this gets used, if we can
-	 @par
 	 */
 	std::vector< PartyEntry * > *	MemberList( void )		{ return &members; }
 	/** Returns the party entry associated with a character

@@ -812,7 +812,26 @@ bool cScript::OnDrop( CItem *item, CChar *dropper )
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnDrop, false );
 
-	return ( retVal == JS_TRUE );
+	UI08 funcRetVal = 0;
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+		{
+			// script returns
+			// 0 == bounce
+			// 1 == don't bounce, use code
+			// 2 == don't bounce, don't use code
+			// Our func returns values 1 higher
+			funcRetVal = static_cast< UI08 >(JSVAL_TO_INT( rval ) + 1);
+			if( funcRetVal < 1 || funcRetVal > 3 )
+				funcRetVal = 2;	// don't bounce, use code
+		}
+		else
+			funcRetVal = 2;	// don't bounce, use code
+	}
+	else
+		funcRetVal = 2;	// don't bounce, use code
+	return funcRetVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o

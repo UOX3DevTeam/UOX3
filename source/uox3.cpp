@@ -662,7 +662,9 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( mChar.IsNpc() && mChar.IsEvading() && mChar.GetTimer( tNPC_EVADETIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetEvadeState( false );
-		//Console.Warning( "EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+#ifdef DEBUG_COMBAT
+		Console.print( format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+#endif
 	}
 
 	// Hunger Code
@@ -867,7 +869,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		else if( mChar.GetNextAct() <= 0 )//redo the spell action
 		{
 			mChar.SetNextAct( 75 );
-			if( !mChar.IsOnHorse() )
+			if( !mChar.IsOnHorse() && !mChar.IsFlying() ) // Consider Gargoyle flying as mounted here
 				Effects->PlaySpellCastingAnimation( &mChar, Magic->spells[mChar.GetSpellCast()].Action() );
 		}
 	}
@@ -927,6 +929,13 @@ void checkPC( CSocket *mSock, CChar& mChar )
 			mChar.SetOnHorse( false );
 			horseItem->Delete();
 		}
+	}
+
+	if( mChar.GetTimer( tCHAR_FLYINGTOGGLE ) > 0 && mChar.GetTimer( tCHAR_FLYINGTOGGLE ) < cwmWorldState->GetUICurrentTime() )
+	{
+		mChar.SetTimer( tCHAR_FLYINGTOGGLE, 0 );
+		mChar.SetFrozen( false );
+		mChar.Teleport();
 	}
 }
 
@@ -1394,7 +1403,7 @@ void CWorldMain::CheckAutoTimers( void )
 	bool setNPCFlags = false, checkItems = false, checkAI = false, doRestock = false;
 	if( nextSetNPCFlagTime <= GetUICurrentTime() || GetOverflow() )
 	{
-		nextSetNPCFlagTime = BuildTimeValue( 30 );	// Slow down lag "needed" for setting flags, they are set often enough ;-)
+		nextSetNPCFlagTime = ServerData()->BuildSystemTimeValue( tSERVER_NPCFLAGUPDATETIMER );	// Slow down lag "needed" for setting flags, they are set often enough ;-)
 		setNPCFlags = true;
 	}
 	if( nextCheckItems <= GetUICurrentTime() || GetOverflow() )
@@ -2566,11 +2575,11 @@ int main( SI32 argc, char *argv[] )
 	// 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSADATA wsaData;
-	WORD wVersionRequested = MAKEWORD( 2, 0 );
+	WORD wVersionRequested = MAKEWORD( 2, 2 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
 	if( err )
 	{
-		Console.error( "Winsock 2.0 not found on your system..." );
+		Console.error( "Winsock 2.2 not found on your system..." );
 		return 1;
 	}
 #endif

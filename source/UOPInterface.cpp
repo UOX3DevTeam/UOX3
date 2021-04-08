@@ -85,7 +85,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
                 throw std::runtime_error(std::string("hash not found in uop file ")+uopname);
             }
             auto chunkid = hashiter->second ;
-            filesize = std::max<std::uintmax_t>(filesize,(0xC4000*chunkid) + static_cast<uintmax_t>(offsets[i].m_Size));
+            filesize = std::max<std::uintmax_t>(filesize,(0xC4000*static_cast<uintmax_t>(chunkid)) + static_cast<uintmax_t>(offsets[i].m_Size));
         }
     }
     // we now have the file size
@@ -132,19 +132,18 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
     std::uint32_t k = 0 ;
 
     while (length > 12){
-        a += static_cast<std::uint32_t>(s[k]) ;
-
-        a += static_cast<std::uint32_t>(s[k+1]) << 8 ;
-        a += static_cast<std::uint32_t>(s[k+2]) << 16 ;
-        a += static_cast<std::uint32_t>(s[k+3]) << 24 ;
-        b += static_cast<std::uint32_t>(s[k+4]) ;
-        b += static_cast<std::uint32_t>(s[k+5]) << 8 ;
-        b += static_cast<std::uint32_t>(s[k+6]) << 16 ;
-        b += static_cast<std::uint32_t>(s[k+7]) << 24 ;
-        c += static_cast<std::uint32_t>(s[k+8]) ;
-        c += static_cast<std::uint32_t>(s[k+9]) << 8 ;
-        c += static_cast<std::uint32_t>(s[k+10]) << 16 ;
-        c += static_cast<std::uint32_t>(s[k+11]) << 24 ;
+		a += (s[k++]);
+		a += (s[k++] << 8);
+		a += (s[k++] << 16);
+		a += (s[k++] << 24);
+		b += (s[k++]);
+		b += (s[k++] << 8);
+		b += (s[k++] << 16);
+		b += (s[k++] << 24);
+		c += (s[k++]);
+		c += (s[k++] << 8);
+		c += (s[k++] << 16);
+		c += (s[k++] << 24);
 
         a -= c; a ^= c << 4 | c >> 28; c += b;
         b -= a; b ^= a << 6 | a >> 26; a += c;
@@ -154,46 +153,46 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
         c -= b; c ^= b << 4 | b >> 28; b += a;
 
         length -= 12 ;
-        k += 12 ;
     }
 
     // Notice the lack of breaks!  we actually want it to fall through
     switch (length) {
         case 12: {
-            c += static_cast<std::uint32_t>(s[k + 11]) << 24;
+			k += 11;
+            c += (s[k--] << 24);
         }
         case 11: {
-            c += static_cast<std::uint32_t>(s[k + 10]) << 16;
+            c += (s[k--] << 16);
         }
         case 10: {
-            c += static_cast<std::uint32_t>(s[k + 9]) << 8;
+            c += (s[k--] << 8);
         }
         case 9: {
-            c += static_cast<std::uint32_t>(s[k + 8]) ;
+            c += (s[k--]);
         }
         case 8: {
-            b += static_cast<std::uint32_t>(s[k + 7]) << 24 ;
+            b += (s[k--] << 24);
         }
         case 7: {
-            b += static_cast<std::uint32_t>(s[k + 6]) << 16 ;
+            b += (s[k--] << 16);
         }
         case 6: {
-            b += static_cast<std::uint32_t>(s[k + 5]) << 8 ;
+            b += (s[k--] << 8);
         }
         case 5: {
-            b += static_cast<std::uint32_t>(s[k + 4])  ;
+            b += (s[k--]);
         }
         case 4: {
-            a += static_cast<std::uint32_t>(s[k + 3]) << 24 ;
+            a += (s[k--] << 24);
         }
         case 3: {
-            a += static_cast<std::uint32_t>(s[k + 2]) << 16 ;
+            a += (s[k--] << 16);
         }
         case 2: {
-            a += static_cast<std::uint32_t>(s[k + 1]) << 8 ;
+            a += (s[k--] << 8);
         }
         case 1: {
-            a += static_cast<std::uint32_t>(s[k ])  ;
+            a += (s[k]);
             c ^= b; c -= b << 14 | b >> 18;
             a ^= c; a -= c << 11 | c >> 21;
             b ^= a; b -= a << 25 | a >> 7;

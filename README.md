@@ -7,7 +7,7 @@
 
 Ultima Offline eXperiment 3 - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
 
-Supported UO Client versions: **~4.0.0p** to **~7.0.86.2** (with encryption removed by [Razor](https://github.com/msturgill/razor/releases) or similar tool). For additional details on UO client compatibility, check http://www.uox3.org/forums/viewtopic.php?f=1&t=2289
+Supported UO Client versions: **~4.0.0p** to **~7.0.90.16** (with encryption removed by [Razor](https://github.com/msturgill/razor/releases) or similar tool). For additional details on UO client compatibility, check http://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
 Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick chat!
 
@@ -16,7 +16,9 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 # How to compile UOX3...
 # ...under Linux or macOS
 ## Step 1: Clone the UOX3 Git Repository
-### Using git and Terminal ###
+<details>
+  <summary>Using git and Terminal</summary>
+
 First step, open a new terminal and enter the commands below:
 
 1) (Linux) `sudo apt install git` - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
@@ -30,6 +32,7 @@ First step, open a new terminal and enter the commands below:
   `git checkout develop`
 
 </details>
+</details>
 
 <details>
   <summary>(macOS alternative) GitHub Desktop</summary>
@@ -42,8 +45,10 @@ First step, open a new terminal and enter the commands below:
 </details>
 
 ## Step 2: Compile UOX3
-### GNU Make and GCC ###
-You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc**. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):
+<details>
+  <summary>Compiling with GNU Make and GCC (v9.x and above)</summary>
+
+You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc** (*v9.x* or higher recommended). Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (example specific to Debian/Ubuntu Linux flavours):
 
 1) (Linux only) `sudo apt install build-essential`
 
@@ -51,6 +56,21 @@ Once these are in place, navigate to the **UOX3** project folder in your termina
 
 1) `chmod +x automake.sh` - Makes the automake.sh bash script executable.
 2) `./automake.sh` - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
+</details>
+
+<details>
+  <summary>Special note for users of Debian/GCC versions below 9.x</summary>
+
+  If your version of gcc is below 9.x, you'll need to add *-lstdc++fs* in *Makefile* to include the experimental filesystem library from c++17.
+
+  Change the following line (~34) from
+
+    `$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)`
+
+  to
+
+    `$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs`
+</details>
 
 <details>
   <summary>Manual Instructions</summary>
@@ -72,6 +92,8 @@ Once these are in place, navigate to the **UOX3** project folder in your termina
   - `make`
 
 </details>
+
+---
 
 Once done compiling, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.
 
@@ -102,6 +124,9 @@ Once you have all the required files in place, you can follow the regular steps 
 
 ## Step 2: Compile UOX3
 ### Option A) Visual Studio 2017/2019 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
+<details>
+  <summary>Visual Studio 2017/2019</summary>
+
 *This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the [Free Community edition](https://visualstudio.microsoft.com/downloads/) of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either **32-bit** or **64-bit** (default) versions of UOX3.*
 
 #### SpiderMonkey ####
@@ -130,6 +155,7 @@ Press apply!
 Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!
 
 </details>
+</details>
 
 ### Option B) Visual Studio 2017/2019 and CMake ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
 <details>
@@ -144,6 +170,8 @@ Repeat process for both Release and Debug configurations (chosen at top of panel
 5) Note that the **js32.dll** file must be copied to the same folder as UOX3.exe.
 
 </details>
+
+---
 
 Once done compiling, you can copy your new **uox3.exe** (and if using CMake, **js32.dll**) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these.
 

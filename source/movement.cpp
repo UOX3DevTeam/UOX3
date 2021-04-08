@@ -63,6 +63,8 @@ cMovement *Movement;
 #define DEBUG_WALKING		0
 #define DEBUG_NPCWALK		0
 #define DEBUG_PATHFIND		0
+#define DEBUG_REGION		0
+#define DEBUG_COMBAT		0
 
 #undef DBGFILE
 #define DBGFILE "movement.cpp"
@@ -227,9 +229,9 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		if( !calc_move( c, oldx, oldy, myz, dir ) )
 		{
 #if DEBUG_WALKING
-			Console.Print( "DEBUG: %s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, c->GetName() );
-			Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() );
-			Console.Print( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
+			Console.print( format( "DEBUG: %s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, c->GetName() ));
+			Console.print( format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
+			Console.print( format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
 #endif
 			if( mSock != NULL )
 				deny( mSock, c, sequence );
@@ -288,16 +290,16 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			return;
 		}
 #if DEBUG_WALKING
-		Console.Print( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, c->GetName() );
-		Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() );
-		Console.Print( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
+		Console.print( format( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, c->GetName() ));
+		Console.print( format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
+		Console.print( format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
 #endif
 
 		if( c->IsNpc() && CheckForCharacterAtXYZ( c, myx, myy, myz ) )
 		{
 			c->SetPathFail( c->GetPathFail() + 1 );
 
-			if( c->GetPathFail() < 10 && !c->IsEvading() )
+			if( c->GetPathFail() < 3 && !c->IsEvading() ) // Try again up to 3 times
 			{
 				c->FlushPath();
 
@@ -308,11 +310,40 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 					newPath = AdvancedPathfinding( c, c->GetPathTargX(), c->GetPathTargY(), (c->GetRunning() > 0) );
 					if( !newPath )
 						c->SetPathResult( 0 ); // partial success
+#if DEBUG_WALKING
+					Console.print( format("DEBUG: Walking() - NPC (%s) failed to pathfind (%d times). Calculating new path!\n", c->GetName().c_str(), c->GetPathFail() ));
+#endif
 				}
+				return;
+			}
+			else if( c->GetPathFail() < 10 && !c->IsEvading() )
+			{
+#if DEBUG_WALKING
+				Console.print( format( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, c->GetName() ));
+				Console.print( format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
+				Console.print( format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
+				Console.print( format( "DEBUG: Walking() - NPC (%s) failed to pathfind (%d times, but less than 10). Invalidating old target location!\n", c->GetName().c_str(), c->GetPathFail() ));
+#endif
+
+				c->FlushPath();
+				c->SetPathResult( 0 ); // partial success, but blocked by character
+
+				// Forget it, find a new target location for pathfinding
+				c->SetOldTargLocX( 0 );
+				c->SetOldTargLocY( 0 );
+
+				// Temporary change NPC's wandermode to none, and try pathfinding again in 5 seconds
+				if( c->GetNpcWander() != WT_NONE )
+					c->SetOldNpcWander( c->GetNpcWander() );
+				c->SetNpcWander( WT_NONE );
+				c->SetTimer( tNPC_MOVETIME, BuildTimeValue( 5 ) );
 				return;
 			}
 			else
 			{
+#if DEBUG_WALKING
+				Console.print( format("DEBUG: Walking() - NPC (%s) failed to pathfind %d times! Pausing pathfinding for some time.\n", c->GetName().c_str(), c->GetPathFail() ));
+#endif
 				c->FlushPath();
 				c->SetPathResult( 0 ); // partial success, but blocked by character
 				c->SetPathFail( 0 );
@@ -334,6 +365,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			Effects->playTileSound( c, mSock );
 
 		MoveCharForDirection( c, myx, myy, myz );
+		c->SetPathFail( 0 );
 
 		// i actually moved this for now after the z =  illegal_z, in the end of CrazyXYBlockStuff()
 		// can't see how that would hurt anything
@@ -409,7 +441,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			deny( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		Console.Print( "DEBUG: %s (cMovement::isFrozen) casting char %s\n", DBGFILE, c->GetName() );
+		Console.print( format( "DEBUG: %s (cMovement::isFrozen) casting char %s\n", DBGFILE, c->GetName() ));
 #endif
 		return true;
 	}
@@ -421,7 +453,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			deny( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		Console.Print( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, c->GetName() );
+		Console.print( format( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, c->GetName() ));
 #endif
 		return true;
 	}
@@ -456,7 +488,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 				mSock->sysmessage( 1783 );
 				deny( mSock, c, sequence );
 #if DEBUG_WALKING
-				Console.Print( "DEBUG: %s (cMovement::Walking) overloaded char %s\n", DBGFILE, c->GetName() );
+				Console.print( format( "DEBUG: %s (cMovement::Walking) overloaded char %s\n", DBGFILE, c->GetName() ));
 #endif
 				return true;
 			}
@@ -549,7 +581,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 
 		if( !c->IsDead() && c->GetCommandLevel() < CL_CNS )
 		{
-			bool reduceStamina = ( c->IsOnHorse() && c->GetRunning() > ( cwmWorldState->ServerData()->MaxStaminaMovement() * 2 ) );
+			bool reduceStamina = (( c->IsFlying() || c->IsOnHorse() ) && c->GetRunning() > ( cwmWorldState->ServerData()->MaxStaminaMovement() * 2 ) );
 			if( !reduceStamina )
 				reduceStamina = ( c->GetRunning() > ( cwmWorldState->ServerData()->MaxStaminaMovement() * 4 ) );
 			if( reduceStamina )
@@ -581,7 +613,7 @@ bool cMovement::CheckForStealth( CChar *c )
 {
 	if( c->GetVisible() == VT_TEMPHIDDEN || c->GetVisible() == VT_INVISIBLE )
 	{
-		if( c->IsOnHorse() )
+		if( c->IsOnHorse() || c->IsFlying() ) // Consider Gargoyle flying as mounted for this context
 		{
 			if( !cwmWorldState->ServerData()->CharHideWhileMounted() )
 				c->ExposeToView();
@@ -763,7 +795,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			if( !tItem->CanBeObjType( OT_MULTI ) )
 			{
 #if DEBUG_WALKING
-				Console.Print( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() );
+				Console.print( format( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() ));
 #endif
 				if( tItem->GetX() == x && tItem->GetY() == y )
 				{
@@ -1813,7 +1845,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			if( j == 1 )
 				break;
 			else if( j == 2 )
-				j = RandomNum( 0, 8 );
+				j = RandomNum( 0, 7 );
 			else	// Move in the same direction the majority of the time
 				j = mChar.GetDir();
 			shouldRun = (( j&0x80 ) != 0);
@@ -1936,7 +1968,7 @@ void cMovement::NpcMovement( CChar& mChar )
 	if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 #if DEBUG_NPCWALK
-		Console.Print( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", mChar.GetName(), mChar.GetNpcWander(), mChar.IsAtWar(), j );
+		Console.print( format( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", mChar.GetName(), mChar.GetNpcWander(), mChar.IsAtWar(), j ));
 #endif
 		bool shouldRun		= false;
 		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
@@ -1975,7 +2007,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						mChar.SetHP( mChar.GetMaxHP() );
 						mChar.SetEvadeState( true );
 						Combat->InvalidateAttacker( &mChar );
-						//Console.Warning( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+						//Console.warning( format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
 						UI16 targTrig		= mChar.GetScriptTrigger();
 						cScript *toExecute	= JSMapping->GetScript( targTrig );
@@ -2076,7 +2108,7 @@ void cMovement::NpcMovement( CChar& mChar )
 								mChar.SetHP( mChar.GetMaxHP() );
 								mChar.SetEvadeState( true );
 								Combat->InvalidateAttacker( &mChar );
-								//Console.Warning( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+								//Console.warning( format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
 								UI16 targTrig		= mChar.GetScriptTrigger();
 								cScript *toExecute	= JSMapping->GetScript( targTrig );

@@ -74,6 +74,7 @@ public:
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
 
 	// Combat Animations & Sound Effects
+	void	CombatAnimsNew( CChar *mChar );
 	void	CombatOnHorse( CChar *mChar );
 	void	CombatOnFoot( CChar *mChar );
 };

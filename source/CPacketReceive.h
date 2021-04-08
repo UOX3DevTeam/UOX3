@@ -581,7 +581,7 @@ public:
 	virtual void	Create3DCharacter( void );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	SetNewCharGender( CChar *mChar );
+	virtual void	SetNewCharGenderAndRace( CChar *mChar );
 	virtual void	SetNewCharSkillsStats( CChar *mChar );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
@@ -896,6 +896,21 @@ public:
 	virtual void	Receive(void) override;
 	virtual bool	Handle(void) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+
+};
+
+class CPIToggleFlying : public CPInputBuffer
+{
+public:
+	virtual			~CPIToggleFlying()
+	{
+	}
+	CPIToggleFlying();
+	CPIToggleFlying(CSocket *s);
+
+	virtual void	Receive(void) override;
+	virtual bool	Handle(void) override;
+	virtual void	Log(std::ofstream &outStream, bool fullHeader = true) override;
 
 };
 

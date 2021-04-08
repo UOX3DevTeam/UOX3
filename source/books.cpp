@@ -346,7 +346,7 @@ bool CPIBookPage::Handle( void )
 		std::fstream file( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 		if( file.is_open() )
 		{
-			file.seekp( (((pageNum-1)*272)+32+62+2), std::ios::beg );
+			file.seekp( (((static_cast<size_t>(pageNum)-1)*272)+32+62+2), std::ios::beg );
 			if( !file.fail() )
 			{
 				for( UI08 j = 0; j < totalLines; ++j )

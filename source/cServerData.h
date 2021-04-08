@@ -116,6 +116,7 @@ enum cSD_TID
 	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
 	tSERVER_POTION,				// Delay between using potions
 	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
+	tSERVER_NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
 	tSERVER_COUNT
 };
 
@@ -583,6 +584,9 @@ public:
 
 	void		ItemsDetectSpeech( bool value );
 	bool		ItemsDetectSpeech( void ) const;
+
+	void		ForceNewAnimationPacket( bool value );
+	bool		ForceNewAnimationPacket( void ) const;
 
 	void		MapDiffsEnabled( bool value );
 	bool		MapDiffsEnabled( void ) const;

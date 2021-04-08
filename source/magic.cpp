@@ -1471,15 +1471,22 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 
 	if(( !target->IsNpc() && isOnline((*target))) || ( target->IsNpc() && cwmWorldState->creatures[target->GetID()].IsHuman() ))
 	{
-		if( !target->IsOnHorse() )
+		if( !target->IsOnHorse() && !target->IsFlying() )
 		{
-			if( RandomNum( 0, 1 ) )
-				Effects->PlayCharacterAnimation( target, 0x15 );
-			else
-				Effects->PlayCharacterAnimation( target, 0x16 );
+			if( target->GetBodyType() == BT_GARGOYLE )
+			{
+				Effects->PlayNewCharacterAnimation( target, N_ACT_IMPACT ); // Impact anim (0x04) - can't seem to trigger death anim manually with new animation packet
+			}
+			else // BT_HUMAN and BT_ELF
+			{
+				if( RandomNum( 0, 1 ) )
+					Effects->PlayCharacterAnimation( target, ACT_DIE_BACKWARD ); // Death anim variation 1 - 0x15, forward
+				else
+					Effects->PlayCharacterAnimation( target, ACT_DIE_FORWARD ); // Death anim variation 2 - 0x16, backward
+			}
 		}
 	}
-	else
+	else // Monsters, animals
 	{
 		if( target->GetHP() > 0 )
 		{
@@ -2080,7 +2087,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			newChar->SetOwner( caster );
 			newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
 			newChar->SetLocation( caster );
-			Effects->PlayCharacterAnimation( newChar, 0x0C );
+			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
 			newChar->SetFTarg( caster );
 			newChar->SetNpcWander( WT_FOLLOW );
 			s->sysmessage( 695 );
@@ -2147,7 +2154,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 
 	newChar->SetSpDelay( 10 );
 	newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
-	Effects->PlayCharacterAnimation( newChar, 0x0C );
+	Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
 	// (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
 	CChar *i = NULL;
@@ -2979,7 +2986,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 		mChar->SetTimer( tCHAR_SPELLTIME, 0 );
 	// Delay measurement end
 
-	if( !mChar->IsOnHorse() )
+	//if( !mChar->IsOnHorse() )
 		Effects->PlaySpellCastingAnimation( mChar, curSpellCasting.Action() ); // do the action
 
 	std::string temp;

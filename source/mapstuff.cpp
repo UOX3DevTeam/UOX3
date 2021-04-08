@@ -1095,7 +1095,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 
 	MapData_st& mMap = Map->GetMapData( world );
 
-	const size_t indexPos = (baseX * (mMap.yBlock/8) + baseY);
+	const size_t indexPos = ( static_cast<size_t>(baseX) * ( static_cast<size_t>(mMap.yBlock) / 8 ) + static_cast<size_t>(baseY) );
 
 	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( indexPos );
 	if( diffIter != mMap.staticsDiffIndex.end() )
@@ -1157,7 +1157,7 @@ Static_st *CStaticIterator::Next( void )
 	if( mFile == NULL )
 		return NULL;
 
-	const size_t pos2 = static_cast<size_t>(pos + StaticRecordSize * index);	// skip over all the ones we've read so far
+	const size_t pos2 = static_cast<size_t>(pos) + static_cast<size_t>(StaticRecordSize) * static_cast<size_t>(index);	// skip over all the ones we've read so far
 	mFile->seek( pos2, SEEK_SET );
 	do
 	{
@@ -1205,8 +1205,8 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 
 	const SI16 x1 = static_cast<SI16>(x >> 3), y1 = static_cast<SI16>(y >> 3);
 	const UI08 x2 = static_cast<UI08>(x % 8), y2 = static_cast<UI08>(y % 8);
-	const size_t blockID	= x1 * (mMap.yBlock >> 3) + y1;
-	const size_t cellOffset = (4 + (y2 * 8 + x2) * MapRecordSize );
+	const size_t blockID	= static_cast<size_t>(x1) * ( static_cast<size_t>(mMap.yBlock) >> 3) + static_cast<size_t>(y1);
+	const size_t cellOffset = (4 + (static_cast<size_t>(y2) * 8 + static_cast<size_t>(x2)) * static_cast<size_t>(MapRecordSize) );
 
 	std::map< UI32, UI32 >::const_iterator diffIter = mMap.mapDiffList.find( blockID );
 	if( diffIter != mMap.mapDiffList.end() )
@@ -1522,7 +1522,7 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 
 				for( int i = 0; i < roadIDs.size(); i += 2 )
 				{
-					if( landID >= roadIDs[i] && landID <= roadIDs[i + 1] )
+					if( landID >= roadIDs[i] && landID <= roadIDs[static_cast<size_t>(i) + 1] )
 						return true;
 				}
 			}

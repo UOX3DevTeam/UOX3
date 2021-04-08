@@ -194,6 +194,9 @@
 5020=item/diceandcup.js
 5021=item/bedroll.js
 5022=item/guildstone.js
+5024=item/gameboards.js
+5025=item/chesspiece.js
+5026=item/checkerpiece.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
@@ -266,6 +269,7 @@
 1053=commands/accountlogins.js
 1054=commands/fixcontweight.js
 1055=commands/targeting/tweak.js
+1056=commands/targeting/get.js
 }
 
 //-------------------------------------------

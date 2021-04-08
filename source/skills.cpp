@@ -362,10 +362,15 @@ void cSkills::Mine( CSocket *s )
 		mSock.sysmessage( 802 );
 		return;
 	}
-	if( mChar->IsOnHorse() != 0 )	// do action and sound
-		Effects->PlayCharacterAnimation( mChar, 0x1A );
-	else
-		Effects->PlayCharacterAnimation( mChar, 0x0B );
+
+	// do action and sound
+	if( mChar->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == NULL || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // action 0x00, subAction 0x03
+	else if( mChar->IsOnHorse() ) // Human/Elf, mounted, pre-v7.0.0.0
+		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H ); // 0x1A
+	else // Human/Elf, on foot, pre-v7.0.0.0
+		Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH ); // 0x0B
 
 	Effects->PlaySound( &mSock, 0x0125, true );
 
@@ -408,10 +413,15 @@ void cSkills::GraveDig( CSocket *s )
 	CChar *nCharID = s->CurrcharObj();
 	Karma( nCharID, NULL, -2000 ); // Karma loss no lower than the -2 pier
 
-	if( nCharID->IsOnHorse() )
-		Effects->PlayCharacterAnimation( nCharID, 0x1A );
-	else
-		Effects->PlayCharacterAnimation( nCharID, 0x0b );
+	// do action and sound
+	if( nCharID->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == NULL || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
+	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
+		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
+	else // Human/Elf, on foot
+		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH ); // Action 0x0B
+
 	Effects->PlaySound( s, 0x0125, true );
 	if( !CheckSkill( nCharID, MINING, 0, 800 ) )
 	{
@@ -420,10 +430,16 @@ void cSkills::GraveDig( CSocket *s )
 	}
 
 	nFame = nCharID->GetFame();
-	if( nCharID->IsOnHorse() )
-		Effects->PlayCharacterAnimation( nCharID, 0x1A );
-	else
-		Effects->PlayCharacterAnimation( nCharID, 0x0B );
+
+	// do action and sound (again?)
+	if( nCharID->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == NULL || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
+	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
+		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
+	else // Human/Elf, on foot
+		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH ); // Action 0x0B
+
 	Effects->PlaySound( s, 0x0125, true );
 	CChar *spawnCreature = NULL;
 	switch( RandomNum( 0, 12 ) )
@@ -1132,7 +1148,12 @@ void cSkills::FishTarget( CSocket *s )
 			return;
 		}
 		mChar->SetStamina( mChar->GetStamina() - cwmWorldState->ServerData()->FishingStaminaLoss() );
-		Effects->PlayCharacterAnimation( mChar, 0x0b );
+
+		if( mChar->GetBodyType() == BT_GARGOYLE 
+			|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+			Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // 0x0b
+		else
+			Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH ); // 0x0b
 		R32 baseTime;
 		baseTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE ) / 25);
 		baseTime += RandomNum( 0, static_cast< SI32 >(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM ) / 15) );

@@ -31,7 +31,7 @@ $(DEPFILES):
 include $(wildcard $(DEPFILES))
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)
 
 .PHONY: all build clean
 

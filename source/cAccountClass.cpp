@@ -395,7 +395,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			if( nLockCount <= 5 )
 			{
 				if( r.toInt() > 0 )
-					actb.wFlags.set( (AB_FLAGS_CHARACTER1 + nLockCount), true );
+					actb.wFlags.set( (AB_FLAGS_CHARACTER1 + static_cast<size_t>(nLockCount)), true );
 			}
 			++nLockCount;
 			std::getline( fs2, sLine );

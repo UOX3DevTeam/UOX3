@@ -84,6 +84,10 @@ function onCallback0( socket, ourObj )
 		ourObj.maxhp = nVal;
 		okMsg( socket );
 		break;
+	case "MANA":
+		ourObj.mana = nVal;
+		okMsg( socket );
+		break;
 	case "OWNER":
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, "Choose character to own this object" );
@@ -206,8 +210,8 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.isNewbie = (nVal == 1);
 		okMsg( socket );
 		break;
-	case "DEVINELOCK":
-		ourItem.devinelock = (nVal == 1);
+	case "DIVINELOCK":
+		ourItem.divinelock = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "DIR":
