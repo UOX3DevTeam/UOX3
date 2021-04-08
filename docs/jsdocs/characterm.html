@@ -66,9 +66,17 @@ myNPC.TextMessage( "THIS IS A MESSAGE IN RUNIC LETTERS VISIBLE TO ALL", true, 0,
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="DoAction">DoAction</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void DoAction( trgAction );</pre>
-<tr><td class="property">Purpose		<td class="value">Makes Char do action trgAction.<br> NOTE: Anyone got a list of the possible actions?
+<tr><td class="property">Prototype		<td class="value"><pre>void DoAction( trgAction subAction );</pre>
+<tr><td class="property">Purpose		<td class="value">Makes Char do action trgAction. Some gargoyle-specific animations uses a subAction to determine which animation to play.<br>
+<strong>Pre-v7.0.0.0:</strong><br>
+Human/Elf actions range from 0x01 to 0x22.<br>
+Animals have animations in 0x00 to 0x0c range.<br>
+Monsters have animations in 0x00 to 0x15 range, though not all monsters support all these animations.<br>
+<strong>v7.0.0.0+:</strong><br>
+All character actions range from 0x00 to 0x0f, with some animations registered as sub-actions<br>
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.DoAction( 0x0B );
+// or a gargoyle action & subaction
+myChar.DoAction( 0x00, 0x03 );
 </pre></table>
 
 <p>&nbsp;</p>

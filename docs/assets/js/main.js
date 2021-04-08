@@ -135,10 +135,13 @@
 
     // Open new section and clear away hash
 	var targetLink = document.getElementById(e.target.href.split('#')[1]);
-    setTimeout(function(){
-    	targetLink.click();
-    	history.replaceState(null, null, ' ');
-    }, 1);
+	if( targetLink != null )
+	{
+	    setTimeout(function(){
+	    	targetLink.click();
+	    	history.replaceState(null, null, ' ');
+	    }, 1);
+	}
   }
 
   if (document.addEventListener)

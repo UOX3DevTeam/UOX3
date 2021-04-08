@@ -17,13 +17,21 @@
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="CreateDFNItem">CreateDFNItem</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ITEM CreateDFNItem( socket, character, sectionToMake, [int Amount], [objectType], [bool inPack] );
+ITEM CreateDFNItem( null, null, sectionToMake, [int Amount], [objectType], false, [worldNumber], [instanceID] );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Spawns an item from a DFN section number/id.
-<tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>socket - socket to refresh to (and ensure weight is added)<br>character - required to know the pack/character to spawn it to<br>sectionToMake - section # to spawn from<br>int Amount - Amount of items to spawn (Optional)<br>objectType - specify the type of object being added: "ITEM", "SPAWNER"<br>bool inPack - True/false whether to spawn in pack or not (Optional - default is FALSE).
+<tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>socket - socket to refresh to (and ensure weight is added)<br>character - required to know the pack/character to spawn it to<br>sectionToMake - section # to spawn from<br>int Amount - Amount of items to spawn (Optional)<br>objectType - specify the type of object being added: "ITEM", "SPAWNER"<br>bool inPack - True/false whether to spawn in pack or not (Optional - default is FALSE).<br>
+Function can also be used to add items without relying on a character. In this case, the socket and character parameters are null, the inPack parameter is false, and two additional parameters are provided - worldNumber and instanceID
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onUseChecked( pUser, iUsed )
 {
 	var myItem = CreateDFNItem( pUser.socket, pUser, "0x09d0", 10, "ITEM", true );
 	pUser.SysMessage( "Oh my, 10 apples just appeared in my backpack! Magic!" );
+}
+
+function onUseChecked( pUser, iUsed )
+{
+	var myItem = CreateDFNItem( null, null, "0x09d0", 10, "ITEM", false, iUsed.worldnumber, iUsed.instanceID );
+	iUsed.TextMessage( "Oh my, 10 apples just spawned on top of me! Magic!" );
 }
 </pre></table>
 

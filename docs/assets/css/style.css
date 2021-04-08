@@ -85,6 +85,11 @@ input[id^="spoiler"] + label:hover {
 }
 
 .styleguide {
+	background-color: #222 !important;
+	color: white !important;
+}
+
+.jsdocs {
 	background-color: #b20000 !important;
 	color: white !important;
 }
@@ -167,4 +172,19 @@ pre {
 
 .indent {
 	margin-left: 20px;
+}
+
+.topicListDocs {
+	border-top: 10px solid #578bb8;
+	border-bottom: 10px solid #578bb8;
+}
+
+.topicListJS {
+	border-top: 10px solid #b20000;
+	border-bottom: 10px solid #b20000;
+}
+
+.topicListStyleGuide {
+	border-top: 10px solid #222;
+	border-bottom: 10px solid #222;
 }

@@ -6,6 +6,7 @@
   <script>document.getElementsByTagName("html")[0].className += " js";</script>
   <link rel="stylesheet" href="assets/css/style.css" deferred>
   <link rel="stylesheet" href="assets/css/all.css" deferred>
+  <link rel="stylesheet" href="assets/css/prism.css" deferred>
   <title>UOX3 Docs</title>
 </head>
 <body>
@@ -26,12 +27,12 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 26. March, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4d</small></p>
+	<p style="margin:0"><small>Last Updated: 8. April, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4e</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
-	<ul class="cd-faq__categories">
+	<ul class="cd-faq__categories topicListDocs">
 		<!--<img src="../gfx/docs.jpg" style="width:100%"/>-->
 		<li><a class="cd-faq__category cd-faq__category-selected truncate" href="#about">About UOX3</a></li>
 		<li><a class="cd-faq__category truncate" href="#installation">Installation and Setup</a></li>
@@ -57,6 +58,12 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 8th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> with details on NPCFLAGUPDATETIMER setting</li>
+							<li>Added <a href="#colourChart">Colour Chart</a> to Additional UOX3 Info section</li>
+							<li>Documentation now makes use of <a href="https://prismjs.com" title="Prism - Lightweight, extensible syntax highlighter" target="_blank">Prism</a> for syntax highlighting</li>
+						</ul>
 						<h4>March 26th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> with details on ALCHEMYBONUSENABLED and ALCHEMYBONUSMODIFIER settings</li>
@@ -133,44 +140,45 @@
 							<label for="spoiler_js_example">JS example <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p>Script that lets players tip cows over by double-clicking them:</p>
-								<p><span class="highlight">function onCharDoubleClick( pUser, targChar )</span> <em>// DoubleClick Event</em><br>
-								<span class="highlight">{</span><br>
-									<span style="padding-left: 16px"><em>// Generate random number from 0 to 100</em></span><br>
-									<span class="highlight" style="padding-left: 16px">var rndValue = RandomNumber( 0, 100 );</span><br><br>
-									<span style="padding-left: 16px"><em>// If random number was lower than 5, tip the cow!</em></span><br>
-									<span class="highlight" style="padding-left: 16px">if( rndValue < 5 )</span><br>
-									<span class="highlight" style="padding-left: 16px">{</span><br>
-									<span class="highlight" style="padding-left: 32px">targChar.DoAction( 8 );</span> <em>// Play falling over animation on cow</em><br>
-									<span class="highlight" style="padding-left: 32px">targChar.SoundEffect( 0x78, true );</span> <em>// Cow goes moo!</em><br>
-									<span class="highlight" style="padding-left: 16px">}</span><br>
-								<span class="highlight">}</span>
+<pre><code class="language-javascript">function onCharDoubleClick( pUser, targChar ) // DoubleClick Event
+{
+	// Generate random number from 0 to 100
+	var rndValue = RandomNumber( 0, 100 );
+
+	// If random number was lower than 5, tip the cow!
+	if( rndValue < 5 )
+	{
+		targChar.DoAction( 8 ); // Play falling over animation on cow
+		targChar.SoundEffect( 0x78, true ); // Cow goes moo!
+	}
+}</code></pre>
 							</div>
 							<li><strong>DFN Files</strong> - The definition files, written in flat text files, act as easily editable blueprints and templates for items, NPCs, regions, skills, player races and more.</li>
 							<input type="checkbox" id="spoiler_dfn_example"/>
 							<label for="spoiler_dfn_example">DFN example <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p>Definition for a bag full of reagents, added in-game using the GM command <span class="highlight">'add item bagofreagents</span>:</p>
-								<span class="highlight">[bagofreagents]<br>
-								{<br>
-								get=base_item<br>
-								name=bag<br>
-								id=0x0e76<br>
-								weight=100<br>
-								weightmax=40000<br>
-								value=7 3<br>
-								type=1<br>
-								restock=10<br>
-								decay=1<br>
-								good=5<br>
-								packitem=0x0f7a,30<br>
-								packitem=0x0f7b,30<br>
-								packitem=0x0f84,30<br>
-								packitem=0x0f85,30<br>
-								packitem=0x0f86,30<br>
-								packitem=0x0f88,30<br>
-								packitem=0x0f8c,30<br>
-								packitem=0x0f8d,30<br>
-								}</span>
+<pre><code class="language-javascript">[bagofreagents]
+{
+get=base_item
+name=bag
+id=0x0e76
+weight=100
+weightmax=40000
+value=7 3
+type=1
+restock=10
+decay=1
+good=5
+packitem=0x0f7a,30
+packitem=0x0f7b,30
+packitem=0x0f84,30
+packitem=0x0f85,30
+packitem=0x0f86,30
+packitem=0x0f88,30
+packitem=0x0f8c,30
+packitem=0x0f8d,30
+}</code></pre>
 							</div>
 							<li><strong>Dynamic Reloading of Scripts</strong> - Any scripts, definition files and ini files used by UOX3 can be reloaded on the fly - in just a few seconds - while the server is already running. This makes it easy for shard admins and developers to quickly iterate on changes and additions, without having to restart the server from scratch and reconnect the client to see each change.</li>
 							<li><strong>Custom Object Tags</strong> - Custom string/int tags can be added to any character or item (including multis) via JS scripts or Item/NPC definitions - either of which can be reloaded on the fly if needed. No need to ask developers to add a custom tag in the source... just add it yourself!</li>
@@ -637,7 +645,7 @@
 					<p>The <span class="highlight">'where</span> command will show you the current in-game coordinates of your character, in the format of <strong>x, y, z, worldNumber, instanceID</strong>. If you walk around for a bit in the game, and use the command a couple more times, you might notice these coordinates changing. Before moving on to the next step, use <strong>where</strong> again, but this time make a note of the first three values. You'll need them soon!</p>
 					<p>Next, as an exercise, try out the following GM commands to see what they do:<br>
 					<span class="highlight">'tele</span><br>
-					<span class="highlight">'travel</span><br>
+					<span class="highlight">'travel</span> or <span class="highlight">'go</span><br>
 					<span class="highlight">'goplace 1</span><br>
 					<span class="highlight">'goplace 20</span></p>
 					<p>Now that you have travelled the world, been places, maybe seen things you can never forget... it's time to return to your roots. Let's go back to the starting point, the location you were at when you used the <strong>where</strong> command earlier:<br>
@@ -985,6 +993,10 @@
 						<div class="settingsDiv">
 							<p><span class="highlight">PETOFFLINECHECKTIMER</span><strong>=600</strong><br>
 							Sets the interval in seconds between checks for the player offline time.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">NPCFLAGUPDATETIMER</span><strong>=5</strong><br>
+							Interval in seconds between each time NPC flags are updated.</p>
 						</div>
 					</div>
 
@@ -3361,59 +3373,59 @@
 							<p><span class="highlight">2</span><strong> - IT_CASTLEGATEOPENER</strong><br>
 							Causes linked IT_CASTLEGATE object to open. Link to castle gate established via storing item serial of gate on opener's MORE property.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">3</span><strong> - IT_CASTLEGATE</strong><br>
 							Castle gate, raised/lowered by interacting with IT_CASTLEGATE object</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">6</span><strong> - IT_TELEPORTITEM</strong><br>
 							Teleporter item/rune. When used, allows player to choose where to teleport to. Triggered via jse_typeassociations.scp and js/item/teleportrune.js</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">7</span><strong> - IT_KEY</strong><br>
 							 Keys are used to lock/unlock objects with locks (doors, containers) that share an identical <strong>MORE</strong> property value with the key. For example, if both a key and a door have been given the same MORE value of 1, that door can be locked/unlocked with the key. the same MORE property value as the key. To ensure unique setup of keys and locks, use a unique MORE value such as the SERIAL of the key or the lock.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">8</span><strong> - IT_LOCKEDCONTAINER</strong><br>
 							 Locked container. Can be trapped by setting MOREZ property to 1, which will trigger Magic Trap spell if someone opens it. Turns into IT_CONTAINER (1) if unlocked.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">9</span><strong> - IT_SPELLBOOK</strong><br>
 							 Spellbook. Empty by default, drop magic scrolls on it to add spells to the spellbook.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">10</span><strong> - IT_MAP</strong><br>
 							 Opens an in-game world map, where a course can be plotted.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">11</span><strong> - IT_BOOK</strong><br>
 							Used to setup books that are writeable by players and/or readable only. Use <span class="highlight">'set morex 666</span> to make a writeable book, and <span class="highlight">'set morez 32</span> to give it 32 pages. Once the page has been opened (and created, server side), it is no longer possible to adjust the amount of pages it contains. Also note that each page can only hold 8 lines of text.</p><p>To convert a book with text already written in it to readable only, change MOREX to 999. Be vary of giving writeable books too many pages, as entire book is sent each time a writeable book is opened, or changed.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">12</span><strong> - IT_DOOR</strong><br>
 							Unlocked door. Can be locked using a key with a matching MORE value, after which the item type will change to 13 - IT_LOCKEDDOOR.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">13</span><strong> - IT_LOCKEDDOOR</strong><br>
 							Locked door. Can be unlocked using a key with a matching MORE value, after which the item type will change to 12 - IT_DOOR.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">14</span><strong> - IT_FOOD</strong><br>
 							Food that can be eaten by double-clicking the item. Some can also be used to feed pets, based on the individual pet's list of acceptable foods, defined using the NPC DFN tag food, which links to foodlists in dfndata/items/itemlists/foodlists.dfn</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">15</span><strong> - IT_MAGICWAND</strong><br>
 							Players can use magic wands to cast spells without requiring magery skills, simply by double-clicking the wand. Use <span class="highlight">'set morex #</span> to set the spell circle, <span class="highlight">'set morey #</span> to set the spell number within circle, and <span class="highlight">'set morez #</span> to set the amount of charges in the magic wand.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">16</span><strong> - IT_RESURRECTOBJECT</strong><br>
 							Resurrection objects will resurrect dead player characters when the object is double-clicked.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">17</span><strong> - IT_CRYSTALBALL</strong><br>
 							Unused item type.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">18</span><strong> - IT_POTION</strong><br>
 							Magic potion. Type of potion is determined by MOREX value, while MOREZ determines the potion strength, which ranges from 1-4 depending on the type of potion.</p>
 							<p style="margin-left: 20px">Agility - MOREX <span class="highlight">1</span>, MOREZ 1 (Normal) or 2 (Greater)</p>
@@ -3426,139 +3438,139 @@
 							<p style="margin-left: 20px">Strength - MOREX <span class="highlight">8</span>, MOREZ 1 (Normal) or 2 (Greater)</p>
 							<p style="margin-left: 20px">Mana - MOREX <span class="highlight">9</span>, MOREZ 1 (Normal) or 2 (Greater)</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">19</span><strong> - IT_TRADEWINDOW</strong><br>
 							Container type used for secure trading between players. When players trade items via the secure trade window, the items temporarily go into a container with this item type.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">35</span><strong> - IT_TOWNSTONE</strong><br>
 							Townstone Deed if itemID equals 0x14F0, otherwise it's an actual Townstone. See <a href="#uox3Townstones" title="UOX3 Documentation - Townstones">separate feature documentation</a> for more info.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">50</span><strong> - IT_RECALLRUNE</strong><br>
 							Recall rune, used along with the Mark, Recall and Gate spells. Marked location can be set manually using <span class="highlight">'set morex #</span> (X coordinate), <span class="highlight">'set morey #</span> (Y coordinate), <span class="highlight">'set morez #</span> (Z coordinate) and <span class="highlight">'set more #</span> (worldnumber).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">51</span><strong> - IT_GATE</strong><br>
 							When a player steps into a gate, they are teleported to another gate's location. The gates are either spawned automatically when using the Gate spell, but can also be setup manually (and permanently) by linking two separate gate objects together by setting their MORE values to the other gate's serial.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">60</span><strong> - IT_OBJTELEPORTER</strong><br>
 							Object teleporters are similar to gates (IT_GATE), with the primary difference of being one-way teleporters instead of two-way like gates. Teleport location can be set using <span class="highlight">'set morex #</span> (X coordinate), <span class="highlight">'set morey #</span> (Y coordinate) and <span class="highlight">'set morez #</span> (Z coordinate). Players can trigger the teleporter by walking onto it, or by double-clicking it.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">61</span><strong> - IT_ITEMSPAWNER</strong><br>
 							Item spawner object that will spawn - at the item spawner's location - a specified item or list of items (<strong>'set spawnsection itemSectionID/itemListID</strong>) at a given, randomized interval (<strong>'set mininterval #</strong> and <strong>'set maxinterval #</strong>). Spawner object must be added using <strong>'add spawner #</strong> instead of <strong>'add item #</strong> command, or it won't work!</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval</em></p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">62</span><strong> - IT_NPCSPAWNER</strong><br>
 							Like item spawners, NPC spawners are objects that will spawn a specified NPC or list of NPCs (<strong>'set spawnsection npcSectionID/npcListID</strong>) at a given, randomized interval (<strong>'set mininterval #</strong> and <strong>'set maxinterval #</strong>) with the amount of NPCs to spawn (<strong>'set amount #'</strong>). Spawner object must be added using <strong>'add spawner #</strong> instead of <strong>'add item #</strong> command, or it won't work!</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval</em></p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">63</span><strong> - IT_SPAWNCONT</strong><br>
 							Item Spawner (Container). A container added as a spawner that can spawn an item inside the container at random intervals (<strong>'set mininterval #</strong> and <strong>'set maxinterval #</strong>), based on an itemSectionID (<strong>'set spawnsection itemSectionID</strong>) or an itemList (<strong>'set spawnsection itemListID</strong>). Each time a new item spawns inside, the item type of the spawner changes to 64 - IT_LOCKEDSPAWNCONT! Container can be trapped by setting MOREZ value to 1.</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval, morez</em></p>
 						 </div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">64</span><strong> - IT_LOCKEDSPAWNCONT</strong><br>
 							 When a spawn container of type IT_SPAWNCONT spawns an item inside the container, the item type changes to IT_LOCKEDSPAWNCONT, locking the container. This lock can be opened using the Picklocking skill or the Magic Unlock spell - at which point it will return to type IT_SPAWNCONT until another item has spawned. Container can be trapped by setting MOREZ value to 1.</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval, morez</em></p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">65</span><strong> - IT_UNLOCKABLESPAWNCONT</strong><br>
 							 Similar to IT_SPAWNCONT spawn containers, except this won't automatically lock itself when a new item is spawned. Container can be trapped by setting MOREZ value to 1.</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval, morez</em></p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">69</span><strong> - IT_AREASPAWNER</strong><br>
 							Same setup as IT_NPCSPAWNER, but with the addition of offsets for X and Y location to allow spawner to spawn the NPCs randomly in an area instead of directly on top of the spawner object. To set those offsets, use <span class="highlight">'set more 0 0 # #'</span> where the last two digits represents the X and Y offsets, i.e. how far away from the spawn object in X direction and Y direction can NPCs spawn.</p>
 							<p>Note: If the NPCs being spawned are setup with an NPCWander type of 3 or 4, make sure that the FX1, FY1 and FZ1 DFN tags for the NPC is set to -1. This way, the NPC will use the spawn location coordinates as center point for their wandering, and they will stick within the range defined in FX2.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">80</span><strong> - IT_ADVANCEGATE</strong><br>
 							Single-use <a href="#advancementGates" title="UOX3 Documentation - Advancement Gates">Advancement Gate</a>. Setting MOREX value determines which section of UOX3/dfndata/advance/advance.dfn to apply when player steps through.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">81</span><strong> - IT_MULTIADVANCEGATE</strong><br>
 							Multi-use <a href="#advancementGates" title="UOX3 Documentation - Advancement Gates">Advancement Gate</a>. Setting MOREX value determines which section of UOX3/dfndata/advance/advance.dfn to apply when player steps through.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">82</span><strong> - IT_MONSTERGATE</strong><br>
 							Items of type 82 are <a href="#monsterRaceGates" title="UOX3 Documentation - Monster and Race Gates">Monster Gates</a>, that transform player characters into NPCs when they step onto the same tile as the monster gate item. Use <span class="highlight">'set desc npcSectionID</span> to set the type of NPC characters will transform into!</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">83</span><strong> - IT_RACEGATE</strong><br>
 							<a href="#monsterRaceGates" title="UOX3 Documentation - Race Gates">Race Gate</a> objects are similar to Monster Gates in that they transform players who step through the gate/collide with the object. However, instead of transforming the player to a monster, this changes the character's race! Simply use <span class="highlight">'set morex #</span> where # is a race ID from UOX3/dfndata/race/races.dfn. Additionally, set the MOREY property to 1 to allow players to make use of the race gate more than once, or 0 to make it single-use only.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">85</span><strong> - IT_DAMAGEOBJECT</strong><br>
 							Damage objects applies damage to the character using or colliding with them. Set the base damage dealt using the MOREX item property/tag, and add a random amount of damage on top of that using MOREY and MOREZ properties/tags. Useful for traps in dungeons!</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">87</span><strong> - IT_TRASHCONT</strong><br>
 							By assigning type 87 to a container, you turn it into a trash container that instantly disposes/deletes any item dropped onto it, indiscriminately. For an alternative with many additional options, check out the trashbarrel script in UOX3/js/server/house/trashbarrel.js</p>
 						 </div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">88</span><strong> - IT_SOUNDOBJECT</strong><br>
 							Plays a sound effect whenever a player comes within range. Specify which SFX to play using 'set morex soundID, the range at which the sound effect will trigger using 'set morey radiusInTiles, and the probability of the sound playing, in %.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">89</span><strong> - IT_MAPCHANGEOBJECT</strong><br>
 							Map change objects can be used to teleport to another map/world on the server, like from Felucca to Trammel, or vice versa. To specify which world to travel to, use <span class="highlight">'set more worldNum</span>.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">90</span><strong> - IT_WORLDCHANGEGATE</strong><br>
 							World Change Gates can display the world with different season visuals for players, based on the value of the MOREX property set on the gate object. Available MOREX values: 0 - Spring, 1 - Summer, 2 - Fall, 3 - Winter, 4 - Desolation</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">101</span><strong> - IT_MORPHOBJECT</strong><br>
 							Morph objects allow players that use them to polymorph into a specified creature, based on the bodyID set in the morph object's MOREX property (Example: <span class="highlight">'set morex 0x0011</span> to morph into an orc). Once the object is used, the item type changes to 102 - IT_UNMORPHOBJECT.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">102</span><strong> - IT_UNMORPHOBJECT</strong><br>
 							Using an unmorph object will reverse the effects of a previously used morph object, and return a player's body back to its original state. Once the object is used, the item type changes to 101 - IT_MORPHOBJECT.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">105</span><strong> - IT_DRINK</strong><br>
 							Items with the item type 105 are considered drinkable objects. Usage handled in JS (UOX3/js/server/resource/pitchers.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">106</span><strong> - IT_STANDINGHARP</strong><br>
 							Musical instrument for music-related skills. Usage handled in JS (UOX3/js/skill/musicianship.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">111</span><strong> - IT_ZEROKILLSGATE</strong><br>
 							If a player steps through/onto a "Zero Kills Gate", their murder count gets reset to zero. No other configuration is required for this object.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">117</span><strong> - IT_PLANK</strong><br>
 							Planks are automatically added to boats upon creation, and are used for boarding/disembarking. Can be locked using boat key.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">118</span><strong> - IT_FIREWORKSWAND</strong><br>
 							Fireworks wand. Will display fireworks effects on screen upon use. Amount of charges can be set via the object's MOREX property.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">125</span><strong> - IT_ESCORTNPCSPAWNER</strong><br>
 							Escort NPC spawner used to spawn NPCs for escort quests. Same setup as IT_NPCSPAWNER, but with the addition of offsets for X and Y location to allow spawner to spawn the NPCs randomly in an area instead of directly on top of the spawner object. To set those offsets, use <span class="highlight">'set more 0 0 # #'</span> where the last two digits represents the X and Y offsets, i.e. how far away from the spawn object in X direction and Y direction can NPCs spawn.</p>
 							<p>Note: If the NPCs being spawned are setup with an NPCWander type of 3 or 4, make sure that the FX1, FY1 and FZ1 DFN tags for the NPC is set to -1. This way, the NPC will use the spawn location coordinates as center point for their wandering, and they will stick within the range defined in FX2.</p>
 							<p>These spawners are only active if the NPC escort quests have been enabled in uox.ini via the ESCORTENABLED setting. Every time a quest NPC spawns, any message boards setup to show escort quests will get a new post.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">186</span><strong> - IT_RENAMEDEED</strong><br>
 							Rename Deed. Lets the player who uses it enter a new name for their character. After use, the rename deed is deleted.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">190</span><strong> - IT_LEATHERREPAIRTOOL</strong><br>
 							Leather Repair Tool. Setting an item to this item type marks it as a tool that can be used to repair the durability of a piece of leather armor that has lost hitpoints in combat.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">191</span><strong> - IT_BOWREPAIRTOOL</strong><br>
 							Bow Repair Tool. Setting an item to this item type marks it as a tool that can be used to repair the durability of bows and crossbows that have lost hitpoints in combat.</p>
 							</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">200</span><strong> - IT_TILLER</strong><br>
 							Tillerman. Automatically assigned to the tillerman on board boats upon creation of those boats.</p>
 							</div>
@@ -3566,207 +3578,207 @@
 							<p><span class="highlight">201</span><strong> - IT_HOUSEADDON</strong><br>
 							House Addon. Upon using an item (usually a deed) marked with this item type while inside a house owned or co-owned by the player, they are asked to select a location where they'd like to place the house addon associated with the item used.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">202</span><strong> - IT_GUILDSTONE</strong><br>
 							If itemID of object with this type is <strong>0x14F0</strong>, it's a <em>guildstone deed</em>. If it's <strong>0x1869</strong>, it's a <em>guildstone</em> that has already been placed. In deed-form, using the object will place a new guildstone at the player's location.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">203</span><strong> - IT_HOUSESIGN</strong><br>
 							House sign! This item type is automatically assigned to house signs added when placing new player houses. When used, it will bring up a house gump/menu with contents depending on the player's ownership status/access level with the house. Note: The serial of the house will be stored in the sign's MORE property, while the sign's serial will be stored in the house's MORE property.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">204</span><strong> - IT_TINKERTOOL</strong><br>
 							Tinker Tool. Required by the Tinkerer profession to craft items.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">205</span><strong> - IT_METALREPAIRTOOL</strong><br>
 							Metal Repair Tool. Allows players to repair durability of metal armours and weapons that have lost hitpoints in combat.</p>
 							</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">207</span><strong> - IT_FORGE</strong><br>
 							Forge. Can be used to smelt ore into ingots.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">208</span><strong> - IT_DYE</strong><br>
 							Dye. When used, will change the colour of a targeted dye tub/vat to match the colour of the dye object.</p>
 							</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">209</span><strong> - IT_DYEVAT</strong><br>
 							Dye tub/vat. When used, can apply the colour contained in the dye tub to targeted cloth, clothing and some armours.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">210</span><strong> - IT_MODELMULTI</strong><br>
 							The boat equivalent of a house deed! When player's pack up a boat, they receive this item in their inventory, which can then be used to deploy the boat when needed.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">211</span><strong> - IT_ARCHERYBUTTE</strong><br>
 							Archery Butte! Can be used to practice Archery skill early on by holding a bow/crossbow with appropriate ammunition in the backpack, then double-clicking the archery butte from a good distance away (~7 tiles). Usage handled in JS (UOX3/js/item/archerybutte.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">212</span><strong> - IT_DRUM</strong><br>
 							Musical instrument for music-related skills. Usage handled in JS (UOX3/js/skill/musicianship.js).</p>
 							</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">213</span><strong> - IT_TAMBOURINE</strong><br>
 							Musical instrument for music-related skills. Usage handled in JS (UOX3/js/skill/musicianship.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">214</span><strong> - IT_HARP</strong><br>
 							Musical instrument for music-related skills. Usage handled in JS (UOX3/js/skill/musicianship.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">215</span><strong> - IT_LUTE</strong><br>
 							Musical instrument for music-related skills. Usage handled in JS (UOX3/js/skill/musicianship.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">216</span><strong> - IT_AXE</strong><br>
 							Axe. Apart from being used in combat, it can also be used to chop things, like trees, house addons, create resources for fletching, etc. Usage handled in JS (UOX3/js/item/axe.js).</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">217</span><strong> - IT_PLAYERVENDORDEED</strong><br>
 							Player vendor deed. Can be used to place a player vendor in a house owned by the player, who can sell the player's items to other players even when not online.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">218</span><strong> - IT_SMITHYTOOL</strong><br>
 							Smithing tool. Required by the Blacksmithing profession to craft items.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">219</span><strong> - IT_CARPENTRYTOOL</strong><br>
 							Carpentry tool. Required by the Carpentry profession to craft items.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">220</span><strong> - IT_MININGTOOL</strong><br>
 							Mining tool. Required by the Mining profession to mine ore.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">221</span><strong> - IT_EMPTYVIAL</strong><br>
 							Empty vial. Can be used on corpses to create reagents for necromancy!</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">222</span><strong> - IT_UNSPUNFABRIC</strong><br>
 							Unspun wool. Can be spun into balls of yarn used by the Tailoring profession using a spinning wheel.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">223</span><strong> - IT_UNCOOKEDFISH</strong><br>
 							Uncooked fish. Can be fed to pets who like that type of food, or cooked on a campfire or in an oven to create cooked fish.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">224</span><strong> - IT_UNCOOKEDMEAT</strong><br>
 							Uncooked meat. Can be fed to pets who like that type of food, or cooked on a campfire or in an oven to create cooked meat.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">225</span><strong> - IT_SPUNFABRIC</strong><br>
 							Spun wool. Can be woven into cloth by the Tailoring profession using a loom.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">226</span><strong> - IT_FLETCHINGTOOL</strong><br>
 							Fletching tool. Required by the Fletching profession to create bows and arrows.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">227</span><strong> - IT_CANNONBALL</strong><br>
 							Unused item type.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">228</span><strong> - IT_WATERPITCHER</strong><br>
 							Water pitcher. Can be filled with liquids like water, ale, wine. Can be used to pour liquids into other containers like bottles, glasses, mugs, etc. When filled with water, also used by the Cooking profession to create stuff like dough.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">229</span><strong> - IT_UNCOOKEDDOUGH</strong><br>
 							Unused item type.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">230</span><strong> - IT_SEWINGKIT</strong><br>
 							Sewing kit. Can be used by the Tailoring profession to craft various types of clothes.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">231</span><strong> - IT_ORE</strong><br>
 							Ore. Item type is applied to ore mined from the ground. Can be combined with other ore items, or smelted on a forge.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">232</span><strong> - IT_MESSAGEBOARD</strong><br>
 							Message board. Can be used by players to post in-game messages for other players to read. Can also be used by NPC escort quest system to post automatic notices when there are quest NPCs awaiting escorts somewhere.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">233</span><strong> - IT_SWORD</strong><br>
 							Sword/Bladed weapon. Can be used for a variety of purposes like cutting fish into fish steaks, carving meat from corpses, crafting bows from logs, make kindling, etc.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">234</span><strong> - IT_CAMPING</strong><br>
 							Kindling. Used with Camping skill to create a campfire, which can be used to cook food or instantly log out in the wilderness when used along with a sleeping bag.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">235</span><strong> - IT_MAGICSTATUE</strong><br>
 							Magic statue. Drops axe if player passes Item Identification skill-check.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">236</span><strong> - IT_GUILLOTINE</strong><br>
 							Guillotine. Plays an animation if player passes Item Identification skill-check.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">238</span><strong> - IT_FLOURSACK</strong><br>
 							Sack of flour. Used by Cooking profession to create various baked goods. Turns into open sack of flour when used.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">239</span><strong> - IT_OPENFLOURSACK</strong><br>
 							Open Sack of flour. Used by Cooking profession to create various baked goods.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">240</span><strong> - IT_FISHINGPOLE</strong><br>
 							Fishing pole. Used by the Fishing profession to fish.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">241</span><strong> - IT_CLOCK</strong><br>
 							It's a clock. It shows the time.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">242</span><strong> - IT_MORTAR</strong><br>
 							Mortar and pestle. Used by Alchemy profession to grind magical reagents into potions!</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">243</span><strong> - IT_SCISSORS</strong><br>
 							Scissors. Can be used to cut bolts of cloth into cut cloth, cut folded or cut cloth (or clothes!) into bandages, cut hides into leather, or to shear wool from sheep!</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">244</span><strong> - IT_BANDAGE</strong><br>
 							Bandage. Can be used with the Healing skill to heal injured characters. Can be created by cutting up cloth using scissors!</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">245</span><strong> - IT_SEXTANT</strong><br>
 							Sextant. Usable by anyone to display their in-game coordinates in the world.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">246</span><strong> - IT_HAIRDYE</strong><br>
 							Hair dye. When used, will bring up a gump menu with various colour choices, which the player can apply to their hair.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">247</span><strong> - IT_LOCKPICK</strong><br>
 							Lockpick. Can be used by characters with the Lockpicking profession to unlock locked doors and containers, if these are not associated with a player house. Consumed on use.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">248</span><strong> - IT_COTTONPLANT</strong><br>
 							Cotton plant. Can be harvested by anyone for cotton. Once harvested, requires some time to regrow.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">249</span><strong> - IT_TINKERAXLE</strong><br>
 							Axles and gears. Can be combined with one another by the Tinkerer profession to create Axle with Gears, needed for more advanced Tinkering. Consumed on use.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">250</span><strong> - IT_TINKERAWG</strong><br>
 							Various springs, bolts and misc items used by the Tinkerer profession to craft parts needed for more advanced Tinkering. Consumed on use.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">251</span><strong> - IT_TINKERCLOCK</strong><br>
 							Clock parts. Can be combined with other clock parts by the Tinkerer profession to create clocks to show the current in-game time. Consumed on use.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">252</span><strong> - IT_TINKERSEXTANT</strong><br>
 							Sextant parts. Usable by Tinkerer profession to create sextants. Consumed on use.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">253</span><strong> - IT_TRAININGDUMMY</strong><br>
 							Training dummy. Can be used to practice the Tactics combat skill up until player reaches 25.0 skillpoints in that skill.</p>
 						</div>
-					    <div class="itemTypesDiv">
+						<div class="itemTypesDiv">
 							<p><span class="highlight">255</span><strong> - IT_COUNT</strong><br>
 							The final item type in the list, and the one type that serves no gameplay function. However, it is used by various tools to identify items to "freeze" into the statics files.</p>
 						</div>
@@ -3813,6 +3825,131 @@
 						<span class="highlight">Layer 27 / 0x1B</span> - (Bought container) NPC Buy No Restock Container<br>
 						<span class="highlight">Layer 28 / 0x1C</span> - (Buy container) NPC Sell Container<br>
 						<span class="highlight">Layer 29 / 0x1D</span> - Bank Box<br>
+					</div>
+				  </div>
+				</div>
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#colourChart" id="colourChart"><span>Colour Chart</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>This list of <strong>colours</strong> that can be used to change the appearance of objects (and text) in the UO client is not by any stretch complete, but will hopefully serve as a quick-guide for what is possible to do with colours in the game.</p>
+					<p>Colours can be applied to objects via DFN tags (<span class="highlight">colour=#</span>), GM commands (<span class="highlight">'dye #</span>, <span class="highlight">'set colour #</span>) or JavaScript (<span class="highlight">myItem.colour = #</span>). They can also be applied to text via parameters in JS Object Methods such as <strong>TextMessage</strong> and <strong>EmoteMessage</strong>, and in Gump Methods such as <strong>AddGump</strong> and <strong>AddText</strong>. Note that not all these colours can be set by the plain 'dye command and/or dye tubs in the game.</p>
+					<p>Parts of this list was originally created/presented by Fearicon as far back as 1998! If a range of colours is listed, the first value in the range is generally a lighter shade of that colour, while the last value is a darker shade.</p>
+					<input type="checkbox" id="spoiler_colours">
+					<label for="spoiler_colours">UOX Colour Chart <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><strong>General</strong></p>
+						<p><span class="highlight">0x0000</span> // Default/Undyed<br>
+						<span class="highlight">0x0001</span> // Solid/Pure Black<br>
+						<span class="highlight">0x096d</span> // Gold<br>
+						<span class="highlight">0x096c</span> // Dark Grey<br>
+						<span class="highlight">0x066d</span> // Dark Red<br>
+						<span class="highlight">0x0599</span> // Dark Green<br>
+						<span class="highlight">0x084e</span> // Lime Green<br>
+						<span class="highlight">0x054a</span> // Teal Green<br>
+						<span class="highlight">0x0544</span> // Blue-Green<br>
+						<span class="highlight">0x084c</span> // Medium Blue<br>
+						<span class="highlight">0x052f</span> // Dark Blue<br>
+						<span class="highlight">0x084d</span> // Yellow<br>
+						<span class="highlight">0x051d</span> // Purple Black<br>
+						<span class="highlight">0x051e</span> // Pearl Blue<br>
+						<span class="highlight">0x83F8</span> // Flesh</p>
+						<p><strong>Default Colours</strong><br>
+						<span class="highlight">0x0002 - 0x03E9</span> // Colours you get when using 'DYE without parameters<br>
+						<span class="highlight">0xF000</span> // Transparent Skincolour<br>
+						<span class="highlight">0x03EA - 0x0422</span> // Skincolours with dyed undewear<br>
+						<span class="highlight">0x83EA - 0x8422</span> // Skincolours without dyed underwear<br>
+						<span class="highlight">0x0423 - 0x044D</span> // Multicoloured</p>
+						<p><strong>Hair Colours</strong><br>
+						<span class="highlight">0x044E -> 0x0455</span> // Black<br>
+						<span class="highlight">0x0456 -> 0x045D</span> // Bronze<br>
+						<span class="highlight">0x045E -> 0x0465</span> // Gold<br>
+						<span class="highlight">0x0466 -> 0x046D</span> // Yellow Gold<br>
+						<span class="highlight">0x046E -> 0x0475</span> // Copper<br>
+						<span class="highlight">0x0476 -> 0x047D</span> // Dark Copper<p>
+						<p><strong>Special Colours</strong><br>
+						<span class="highlight">0x0480</span> // Ice Blue<br>
+						<span class="highlight">0x0481</span> // Snow White<br>
+						<span class="highlight">0x0482</span> // Cold Flesh Colour<br>
+						<span class="highlight">0x5555</span> // Smoke Colour</p>
+						<p><strong>Misc Colours</strong><br>
+						<span class="highlight">0x0481 -> 0x04B0</span> // Multicoloured<br>
+						<span class="highlight">0x04B1 -> 0x04B9</span> // Red<br>
+						<span class="highlight">0x04BA -> 0x04C2</span> // Red<br>
+						<span class="highlight">0x04C3 -> 0x04CB</span> // Red<br>
+						<span class="highlight">0x04CC -> 0x04D4</span> // Blueish Red<br>
+						<span class="highlight">0x04D5 -> 0x04DD</span> // Blueish Red<br>
+						<span class="highlight">0x04DE -> 0x04E6</span> // Blue<br>
+						<span class="highlight">0x04E7 -> 0x0514</span> // Multicoloured<br>
+						<span class="highlight">0x0515 -> 0x051D</span> // Blue<br>
+						<span class="highlight">0x051E -> 0x0526</span> // Blue<br>
+						<span class="highlight">0x0527 -> 0x052F</span> // Blue<br>
+						<span class="highlight">0x0530 -> 0x0538</span> // Blue<br>
+						<span class="highlight">0x0539 -> 0x0541</span> // Blue<br>
+						<span class="highlight">0x0542 -> 0x054A</span> // Blue<br>
+						<span class="highlight">0x054B -> 0x0578</span> // Multicoloured<br>
+						<span class="highlight">0x0579 -> 0x0581</span> // Blueish Green<br>
+						<span class="highlight">0x0582 -> 0x058A</span> // Green<br>
+						<span class="highlight">0x058B -> 0x0593</span> // Green<br>
+						<span class="highlight">0x0594 -> 0x059C</span> // Green<br>
+						<span class="highlight">0x059D -> 0x05A5</span> // Brownish Green<br>
+						<span class="highlight">0x05A6 -> 0x05AE</span> // Brownish Green<br>
+						<span class="highlight">0x05AF -> 0x05DC</span> // Multicoloured<br>
+						<span class="highlight">0x05DD -> 0x05E5</span> // Brown<br>
+						<span class="highlight">0x05E6 -> 0x05EE</span> // Brown<br>
+						<span class="highlight">0x05EF -> 0x05F7</span> // Brown<br>
+						<span class="highlight">0x05F8 -> 0x0600</span> // Brown<br>
+						<span class="highlight">0x0601 -> 0x0609</span> // Brown<br>
+						<span class="highlight">0x060A -> 0x0612</span> // Reddish Brown<br>
+						<span class="highlight">0x0613 -> 0x0640</span> // Multicoloured<br>
+						<span class="highlight">0x0641 -> 0x0649</span> // Pink<br>
+						<span class="highlight">0x064A -> 0x0652</span> // Pink<br>
+						<span class="highlight">0x0653 -> 0x065B</span> // Pink<br>
+						<span class="highlight">0x065C -> 0x0664</span> // Pink<br>
+						<span class="highlight">0x0665 -> 0x066D</span> // Red<br>
+						<span class="highlight">0x066E -> 0x0676</span> // Red<br>
+						<span class="highlight">0x0677 -> 0x06A4</span> // Multicoloured<br>
+						<span class="highlight">0x06A5 -> 0x06AD</span> // Greenish Brown<br>
+						<span class="highlight">0x06AE -> 0x06B6</span> // Greenish Brown<br>
+						<span class="highlight">0x06B7 -> 0x06BF</span> // Greenish Brown<br>
+						<span class="highlight">0x06C0 -> 0x06C8</span> // Brown<br>
+						<span class="highlight">0x06C9 -> 0x06D1</span> // Brown<br>
+						<span class="highlight">0x06D2 -> 0x06DA</span> // Brown<br>
+						<span class="highlight">0x0709 -> 0x0711</span> // Brownish Green<br>
+						<span class="highlight">0x0712 -> 0x071A</span> // Brownish Green<br>
+						<span class="highlight">0x071B -> 0x0723</span> // Brownish Green<br>
+						<span class="highlight">0x0724 -> 0x072C</span> // Brown<br>
+						<span class="highlight">0x072D -> 0x0735</span> // Brown<br>
+						<span class="highlight">0x0736 -> 0x073E</span> // Brownish Red<br>
+						<span class="highlight">0x073F -> 0x0747</span> // Brownish Red<br>
+						<span class="highlight">0x0748 -> 0x0750</span> // Brownish Red<br>
+						<span class="highlight">0x0751 -> 0x0759</span> // Greyish Red<br>
+						<span class="highlight">0x075A -> 0x0762</span> // Grey with a little red<br>
+						<span class="highlight">0x0763 -> 0x076B</span> // Grey with a little blue<br>
+						<span class="highlight">0x076C -> 0x0774</span> // Greyish Blue<br>
+						<span class="highlight">0x07D1 -> 0x07D6</span> // Green<br>
+						<span class="highlight">0x07D7 -> 0x07DC</span> // Beige<br>
+						<span class="highlight">0x07DD -> 0x07E2</span> // Red<br>
+						<span class="highlight">0x0835 -> 0x083A</span> // Blue<br>
+						<span class="highlight">0x083B -> 0x0840</span> // Beige<br>
+						<span class="highlight">0x0841 -> 0x0846</span> // Red<br>
+						<span class="highlight">0x0847 -> 0x084C</span> // Blue<br>
+						<span class="highlight">0x084D -> 0x0852</span> // Yellow - Green<br>
+						<span class="highlight">0x0899 -> 0x089E</span> // Red<br>
+						<span class="highlight">0x089F -> 0x08A4</span> // Green<br>
+						<span class="highlight">0x08A5 -> 0x08AA</span> // Beige<br>
+						<span class="highlight">0x08AB -> 0x08B0</span> // Blue<br>
+						<span class="highlight">0x08FD -> 0x0902</span> // Silver<br>
+						<span class="highlight">0x0903 -> 0x0908</span> // Gold<br>
+						<span class="highlight">0x0909 -> 0x090E</span> // Bronze/Copper<br>
+						<span class="highlight">0x0961 -> 0x0966</span> // Silver<br>
+						<span class="highlight">0x0967 -> 0x096C</span> // Silver<br>
+						<span class="highlight">0x096D -> 0x0972</span> // Gold<br>
+						<span class="highlight">0x0973 -> 0x0978</span> // Silver-Gold<br>
+						<span class="highlight">0x0979 -> 0x097E</span> // Copper-Gold</p>
+						<p><strong></strong></p>
 					</div>
 				  </div>
 				</div>
@@ -4021,9 +4158,9 @@
 					</div>
 					<h4>Step 2 - Compile UOX3</h4>
 					<input type="checkbox" id="spoiler_compile_linux_2">
-					<label for="spoiler_compile_linux_2">GNU Make and GCC <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_compile_linux_2">Compiling with GNU Make and GCC  (v9.x and above) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>You'll need a couple tools before you can compile UOX3 on Linux, like <strong>GNU Make</strong> (4.2.1 or higher recommended) and <strong>gcc</strong>. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):</p>
+						<p>You'll need a couple tools before you can compile UOX3 on Linux, like <strong>GNU Make</strong> (4.2.1 or higher recommended) and <strong>gcc</strong> (v9.x or higher recommended). Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):</p>
 						<ul>
 							<li><strong>(Linux only)</strong> <span class="highlight">sudo apt install build-essential</span></li>
 						</ul>
@@ -4032,6 +4169,17 @@
 							<li><span class="highlight">chmod +x automake.sh</span> - Makes the automake.sh bash script executable.</li>
 							<li><span class="highlight">./automake.sh</span> - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the <strong>root</strong> UOX3 project directory.</li>
 						</ol>
+
+					<input type="checkbox" id="spoiler_compile_linux_2b">
+						<label for="spoiler_compile_linux_2b">Special note for users of Debian/GCC versions below 9.x <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>If your version of gcc is below 9.x, you'll need to add <em>-lstdc++fs</em> in <em>Makefile</em> to include the experimental filesystem library from c++17.:</p>
+							<p>Change the following line (~34) from<br>
+							<span class="highlight">$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)</span><br>
+							to<br>
+							<span class="highlight">$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs</span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_compile_linux_3">
 						<label for="spoiler_compile_linux_3">Manual Instructions <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -4382,7 +4530,7 @@
 					<input type="checkbox" id="spoiler_language_list">
 					<label for="spoiler_language_list">Socket Language List <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-					    <span class="highlight">0</span> - ZERO<br>					    <span class="highlight">1</span> - UT_ARA<br>					    <span class="highlight">2</span> - UT_ARI<br>					    <span class="highlight">3</span> - UT_ARE<br>					    <span class="highlight">4</span> - UT_ARL<br>					    <span class="highlight">5</span> - UT_ARG<br>					    <span class="highlight">6</span> - UT_ARM<br>					    <span class="highlight">7</span> - UT_ART<br>					    <span class="highlight">8</span> - UT_ARO<br>					    <span class="highlight">9</span> - UT_ARY<br>					    <span class="highlight">10</span> - UT_ARS<br>					    <span class="highlight">11</span> - UT_ARJ<br>					    <span class="highlight">12</span> - UT_ARB<br>					    <span class="highlight">13</span> - UT_ARK<br>					    <span class="highlight">14</span> - UT_ARU<br>					    <span class="highlight">15</span> - UT_ARH<br>					    <span class="highlight">16</span> - UT_ARQ<br>					    <span class="highlight">17</span> - UT_BGR<br>					    <span class="highlight">18</span> - UT_CAT<br>					    <span class="highlight">19</span> - UT_CHT<br>					    <span class="highlight">20</span> - UT_CHS<br>					    <span class="highlight">21</span> - UT_ZHH<br>					    <span class="highlight">22</span> - UT_ZHI<br>					    <span class="highlight">23</span> - UT_ZHM<br>					    <span class="highlight">24</span> - UT_CSY<br>					    <span class="highlight">25</span> - UT_DAN<br>					    <span class="highlight">26</span> - UT_DEU<br>					    <span class="highlight">27</span> - UT_DES<br>					    <span class="highlight">28</span> - UT_DEA<br>					    <span class="highlight">29</span> - UT_DEL<br>					    <span class="highlight">30</span> - UT_DEC<br>					    <span class="highlight">31</span> - UT_ELL<br>					    <span class="highlight">32</span> - UT_ENU<br>					    <span class="highlight">33</span> - UT_ENG<br>					    <span class="highlight">34</span> - UT_ENA<br>					    <span class="highlight">35</span> - UT_ENC<br>					    <span class="highlight">36</span> - UT_ENZ<br>					    <span class="highlight">37</span> - UT_ENI<br>					    <span class="highlight">38</span> - UT_ENS<br>					    <span class="highlight">39</span> - UT_ENJ<br>					    <span class="highlight">40</span> - UT_ENB<br>					    <span class="highlight">41</span> - UT_ENL<br>					    <span class="highlight">42</span> - UT_ENT<br>					    <span class="highlight">43</span> - UT_ENW<br>					    <span class="highlight">44</span> - UT_ENP<br>					    <span class="highlight">45</span> - UT_ESP<br>					    <span class="highlight">46</span> - UT_ESM<br>					    <span class="highlight">47</span> - UT_ESN<br>					    <span class="highlight">48</span> - UT_ESG<br>					    <span class="highlight">49</span> - UT_ESC<br>					    <span class="highlight">50</span> - UT_ESA<br>					    <span class="highlight">51</span> - UT_ESD<br>					    <span class="highlight">52</span> - UT_ESV<br>					    <span class="highlight">53</span> - UT_ESO<br>					    <span class="highlight">54</span> - UT_ESR<br>					    <span class="highlight">55</span> - UT_ESS<br>					    <span class="highlight">56</span> - UT_ESF<br>					    <span class="highlight">57</span> - UT_ESL<br>					    <span class="highlight">58</span> - UT_ESY<br>					    <span class="highlight">59</span> - UT_ESZ<br>					    <span class="highlight">60</span> - UT_ESB<br>					    <span class="highlight">61</span> - UT_ESE<br>					    <span class="highlight">62</span> - UT_ESH<br>					    <span class="highlight">63</span> - UT_ESI<br>					    <span class="highlight">64</span> - UT_ESU<br>					    <span class="highlight">65</span> - UT_FIN<br>					    <span class="highlight">66</span> - UT_FRA<br>					    <span class="highlight">67</span> - UT_FRB<br>					    <span class="highlight">68</span> - UT_FRC<br>					    <span class="highlight">69</span> - UT_FRS<br>					    <span class="highlight">70</span> - UT_FRL<br>					    <span class="highlight">71</span> - UT_FRM<br>					    <span class="highlight">72</span> - UT_HEB<br>					    <span class="highlight">73</span> - UT_HUN<br>					    <span class="highlight">74</span> - UT_ISL<br>					    <span class="highlight">75</span> - UT_ITA<br>					    <span class="highlight">76</span> - UT_ITS<br>					    <span class="highlight">77</span> - UT_JPN<br>					    <span class="highlight">78</span> - UT_KOR<br>					    <span class="highlight">79</span> - UT_NLD<br>					    <span class="highlight">80</span> - UT_NLB<br>					    <span class="highlight">81</span> - UT_NOR<br>					    <span class="highlight">82</span> - UT_NON<br>					    <span class="highlight">83</span> - UT_PLK<br>					    <span class="highlight">84</span> - UT_PTB<br>					    <span class="highlight">85</span> - UT_PTG<br>					    <span class="highlight">86</span> - UT_ROM<br>					    <span class="highlight">87</span> - UT_RUS<br>					    <span class="highlight">88</span> - UT_HRV<br>					    <span class="highlight">89</span> - UT_SRL<br>					    <span class="highlight">90</span> - UT_SRB<br>					    <span class="highlight">91</span> - UT_SKY<br>					    <span class="highlight">92</span> - UT_SQI<br>					    <span class="highlight">93</span> - UT_SVE<br>					    <span class="highlight">94</span> - UT_SVF<br>					    <span class="highlight">95</span> - UT_THA<br>					    <span class="highlight">96</span> - UT_TRK<br>					    <span class="highlight">97</span> - UT_URP<br>					    <span class="highlight">98</span> - UT_IND<br>					    <span class="highlight">99</span> - UT_UKR<br>					    <span class="highlight">100</span> - UT_BEL<br>					    <span class="highlight">101</span> - UT_SLV<br>					    <span class="highlight">102</span> - UT_ETI<br>					    <span class="highlight">103</span> - UT_LVI<br>					    <span class="highlight">104</span> - UT_LTH<br>					    <span class="highlight">105</span> - UT_LTC<br>					    <span class="highlight">106</span> - UT_FAR<br>					    <span class="highlight">107</span> - UT_VIT<br>					    <span class="highlight">108</span> - UT_HYE<br>					    <span class="highlight">109</span> - UT_AZE<br>					    <span class="highlight">110</span> - UT_EUQ<br>					    <span class="highlight">111</span> - UT_MKI<br>					    <span class="highlight">112</span> - UT_AFK<br>					    <span class="highlight">113</span> - UT_KAT<br>					    <span class="highlight">114</span> - UT_FOS<br>					    <span class="highlight">115</span> - UT_HIN<br>					    <span class="highlight">116</span> - UT_MSL<br>					    <span class="highlight">117</span> - UT_MSB<br>					    <span class="highlight">118</span> - UT_KAZ<br>					    <span class="highlight">119</span> - UT_SWK<br>					    <span class="highlight">120</span> - UT_UZB<br>					    <span class="highlight">121</span> - UT_TAT<br>					    <span class="highlight">122</span> - UT_BEN<br>					    <span class="highlight">123</span> - UT_PAN<br>					    <span class="highlight">124</span> - UT_GUJ<br>					    <span class="highlight">125</span> - UT_ORI<br>					    <span class="highlight">126</span> - UT_TAM<br>					    <span class="highlight">127</span> - UT_TEL<br>					    <span class="highlight">128</span> - UT_KAN<br>					    <span class="highlight">129</span> - UT_MAL<br>					    <span class="highlight">130</span> - UT_ASM<br>					    <span class="highlight">131</span> - UT_MAR<br>					    <span class="highlight">132</span> - UT_SAN<br>					    <span class="highlight">133</span> - UT_KOK<br>					</div>
+						<span class="highlight">0</span> - ZERO<br>					    <span class="highlight">1</span> - UT_ARA<br>					    <span class="highlight">2</span> - UT_ARI<br>					    <span class="highlight">3</span> - UT_ARE<br>					    <span class="highlight">4</span> - UT_ARL<br>					    <span class="highlight">5</span> - UT_ARG<br>					    <span class="highlight">6</span> - UT_ARM<br>					    <span class="highlight">7</span> - UT_ART<br>					    <span class="highlight">8</span> - UT_ARO<br>					    <span class="highlight">9</span> - UT_ARY<br>					    <span class="highlight">10</span> - UT_ARS<br>					    <span class="highlight">11</span> - UT_ARJ<br>					    <span class="highlight">12</span> - UT_ARB<br>					    <span class="highlight">13</span> - UT_ARK<br>					    <span class="highlight">14</span> - UT_ARU<br>					    <span class="highlight">15</span> - UT_ARH<br>					    <span class="highlight">16</span> - UT_ARQ<br>					    <span class="highlight">17</span> - UT_BGR<br>					    <span class="highlight">18</span> - UT_CAT<br>					    <span class="highlight">19</span> - UT_CHT<br>					    <span class="highlight">20</span> - UT_CHS<br>					    <span class="highlight">21</span> - UT_ZHH<br>					    <span class="highlight">22</span> - UT_ZHI<br>					    <span class="highlight">23</span> - UT_ZHM<br>					    <span class="highlight">24</span> - UT_CSY<br>					    <span class="highlight">25</span> - UT_DAN<br>					    <span class="highlight">26</span> - UT_DEU<br>					    <span class="highlight">27</span> - UT_DES<br>					    <span class="highlight">28</span> - UT_DEA<br>					    <span class="highlight">29</span> - UT_DEL<br>					    <span class="highlight">30</span> - UT_DEC<br>					    <span class="highlight">31</span> - UT_ELL<br>					    <span class="highlight">32</span> - UT_ENU<br>					    <span class="highlight">33</span> - UT_ENG<br>					    <span class="highlight">34</span> - UT_ENA<br>					    <span class="highlight">35</span> - UT_ENC<br>					    <span class="highlight">36</span> - UT_ENZ<br>					    <span class="highlight">37</span> - UT_ENI<br>					    <span class="highlight">38</span> - UT_ENS<br>					    <span class="highlight">39</span> - UT_ENJ<br>					    <span class="highlight">40</span> - UT_ENB<br>					    <span class="highlight">41</span> - UT_ENL<br>					    <span class="highlight">42</span> - UT_ENT<br>					    <span class="highlight">43</span> - UT_ENW<br>					    <span class="highlight">44</span> - UT_ENP<br>					    <span class="highlight">45</span> - UT_ESP<br>					    <span class="highlight">46</span> - UT_ESM<br>					    <span class="highlight">47</span> - UT_ESN<br>					    <span class="highlight">48</span> - UT_ESG<br>					    <span class="highlight">49</span> - UT_ESC<br>					    <span class="highlight">50</span> - UT_ESA<br>					    <span class="highlight">51</span> - UT_ESD<br>					    <span class="highlight">52</span> - UT_ESV<br>					    <span class="highlight">53</span> - UT_ESO<br>					    <span class="highlight">54</span> - UT_ESR<br>					    <span class="highlight">55</span> - UT_ESS<br>					    <span class="highlight">56</span> - UT_ESF<br>					    <span class="highlight">57</span> - UT_ESL<br>					    <span class="highlight">58</span> - UT_ESY<br>					    <span class="highlight">59</span> - UT_ESZ<br>					    <span class="highlight">60</span> - UT_ESB<br>					    <span class="highlight">61</span> - UT_ESE<br>					    <span class="highlight">62</span> - UT_ESH<br>					    <span class="highlight">63</span> - UT_ESI<br>					    <span class="highlight">64</span> - UT_ESU<br>					    <span class="highlight">65</span> - UT_FIN<br>					    <span class="highlight">66</span> - UT_FRA<br>					    <span class="highlight">67</span> - UT_FRB<br>					    <span class="highlight">68</span> - UT_FRC<br>					    <span class="highlight">69</span> - UT_FRS<br>					    <span class="highlight">70</span> - UT_FRL<br>					    <span class="highlight">71</span> - UT_FRM<br>					    <span class="highlight">72</span> - UT_HEB<br>					    <span class="highlight">73</span> - UT_HUN<br>					    <span class="highlight">74</span> - UT_ISL<br>					    <span class="highlight">75</span> - UT_ITA<br>					    <span class="highlight">76</span> - UT_ITS<br>					    <span class="highlight">77</span> - UT_JPN<br>					    <span class="highlight">78</span> - UT_KOR<br>					    <span class="highlight">79</span> - UT_NLD<br>					    <span class="highlight">80</span> - UT_NLB<br>					    <span class="highlight">81</span> - UT_NOR<br>					    <span class="highlight">82</span> - UT_NON<br>					    <span class="highlight">83</span> - UT_PLK<br>					    <span class="highlight">84</span> - UT_PTB<br>					    <span class="highlight">85</span> - UT_PTG<br>					    <span class="highlight">86</span> - UT_ROM<br>					    <span class="highlight">87</span> - UT_RUS<br>					    <span class="highlight">88</span> - UT_HRV<br>					    <span class="highlight">89</span> - UT_SRL<br>					    <span class="highlight">90</span> - UT_SRB<br>					    <span class="highlight">91</span> - UT_SKY<br>					    <span class="highlight">92</span> - UT_SQI<br>					    <span class="highlight">93</span> - UT_SVE<br>					    <span class="highlight">94</span> - UT_SVF<br>					    <span class="highlight">95</span> - UT_THA<br>					    <span class="highlight">96</span> - UT_TRK<br>					    <span class="highlight">97</span> - UT_URP<br>					    <span class="highlight">98</span> - UT_IND<br>					    <span class="highlight">99</span> - UT_UKR<br>					    <span class="highlight">100</span> - UT_BEL<br>					    <span class="highlight">101</span> - UT_SLV<br>					    <span class="highlight">102</span> - UT_ETI<br>					    <span class="highlight">103</span> - UT_LVI<br>					    <span class="highlight">104</span> - UT_LTH<br>					    <span class="highlight">105</span> - UT_LTC<br>					    <span class="highlight">106</span> - UT_FAR<br>					    <span class="highlight">107</span> - UT_VIT<br>					    <span class="highlight">108</span> - UT_HYE<br>					    <span class="highlight">109</span> - UT_AZE<br>					    <span class="highlight">110</span> - UT_EUQ<br>					    <span class="highlight">111</span> - UT_MKI<br>					    <span class="highlight">112</span> - UT_AFK<br>					    <span class="highlight">113</span> - UT_KAT<br>					    <span class="highlight">114</span> - UT_FOS<br>					    <span class="highlight">115</span> - UT_HIN<br>					    <span class="highlight">116</span> - UT_MSL<br>					    <span class="highlight">117</span> - UT_MSB<br>					    <span class="highlight">118</span> - UT_KAZ<br>					    <span class="highlight">119</span> - UT_SWK<br>					    <span class="highlight">120</span> - UT_UZB<br>					    <span class="highlight">121</span> - UT_TAT<br>					    <span class="highlight">122</span> - UT_BEN<br>					    <span class="highlight">123</span> - UT_PAN<br>					    <span class="highlight">124</span> - UT_GUJ<br>					    <span class="highlight">125</span> - UT_ORI<br>					    <span class="highlight">126</span> - UT_TAM<br>					    <span class="highlight">127</span> - UT_TEL<br>					    <span class="highlight">128</span> - UT_KAN<br>					    <span class="highlight">129</span> - UT_MAL<br>					    <span class="highlight">130</span> - UT_ASM<br>					    <span class="highlight">131</span> - UT_MAR<br>					    <span class="highlight">132</span> - UT_SAN<br>					    <span class="highlight">133</span> - UT_KOK<br>					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -4507,7 +4655,7 @@
 				<a class="cd-faq__trigger" href="#monsterRaceGates" id="monsterRaceGates"><span>Monster and Race Gates</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-				  	<h3>Monster Gates</h3>
+					<h3>Monster Gates</h3>
 					<p>Monster gates are objects (doesn't have to be a gate) of <span class="highlight">type 82</span> that will transform players into monsters when they step onto the same tile as the object. More specifically, it will transform the player into whichever NPC is defined on the monster gate object via its DESC property. Simply point the DESC property towards a specific NPC Section ID from the NPC DFNs!</p>
 					<p>For instance, <span class="highlight">'set desc orc</span> would transform any player who steps through the monster gate into <strong>an orc</strong> - with the same skills, stats and other properties of regular orcs.</p>
 					<h3>Race Gates</h3>
@@ -6346,23 +6494,22 @@
 					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
 					<p>UOX3's JavaScripts can be reloaded dynamically without restarting the server, making it very easy to iterate on new features or modify existing ones.</p>
 					<p>Example of a simple JavaScript in UOX3, used with the Dice and Cup object to allow players to roll a dice and have the number displayed for others to see:<br>
-					<pre>
-<span class="highlight">function onUseChecked( pUser, iUsed )
-{</span>
-	<em>// Generate two random numbers from 1-6</em>
-	<span class="highlight">var iDice1 = RandomNumber( 1, 6 );
-	var iDice2 = RandomNumber( 1, 6 );</span>
+<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
+{
+	// Generate two random numbers from 1-6
+	var iDice1 = RandomNumber( 1, 6 );
+	var iDice2 = RandomNumber( 1, 6 );
 
-	<em>// Fetch the name of the player using the object</em>
-	<span class="highlight">var pName = pUser.name;</span>
+	// Fetch the name of the player using the object
+	var pName = pUser.name;
 
-	<em>// Display the result either as an emote above player (if object is in a container) or a message above item (if on ground)</em>
-	<span class="highlight">if( iUsed.container != null )
+	// Display the result either as an emote above player (if object is in a container) or a message above item (if on ground)</em>
+	if( iUsed.container != null )
 		pUser.EmoteMessage( pName+" rolls the dice and gets a "+iDice1+" and a "+iDice2+"." );
 	else
 		iUsed.TextMessage( pName+" rolls the dice and gets a "+iDice1+" and a "+iDice2+"." );
 	return false;
-}</span></pre>
+}</code></pre>
 					</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -6558,7 +6705,8 @@ function commandTitle()
 					<h3>UOX3 History Crash Course</h3>
 					<p>UOX was originally created by <strong>Denny Zuko</strong> aka <strong>Jaegermeister</strong> in 1997 for the pre-alpha version of Ultima Online, and was subsequently abandoned, rewritten from scratch by <strong>Marcus Rating</strong> aka <strong>Cironian</strong> and released in closed-source form as UOX2 the same year.</p>
 					<p><strong>UOX3</strong> is, as the number in the name implies, the <em>third iteration</em> of UOX, and when released by Cironian in 1998 it become the first open-source UO server emulator. While he is no longer involved with the project, hundreds of other people have since contributed to updating and maintaining UOX3, and those efforts are still ongoing, with <a href="https://www.uox3.org" title="UOX3 Community Homepage">UOX3.org</a> now acting as a central hub for ongoing development and support.</p>
-					<p>In 2001, UOX3 went through a monumental shift as it transitioned from a basic trigger-based scripting system used in the 0.68.x to 0.70.x versions, to a more advanced scripting engine based on Mozilla's SpiderMonkey JavaScript engine, spearheaded by Matthew Randall (EviLDeD, lead developer at the time) and Daniel Stratton (Abaddon). This was also accompanied by a jump in version numbers, up to 0.95.</p>
+					<p>In 2001, UOX3 went through a monumental shift as the code base moved from C-style code to C++. Many systems (like accounts, items and characters, map regions) went through an overhaul that reduced complexity and increased performance. Memory consumption was improved, file IO was reduced, data structures were streamlined and shrunk, and network bandwith utilisation was improved.</p>
+					<p>UOX3's scripting system was also upgraded - from the basic, trigger-based system used in the 0.68x and 0.70.x versions, to a fully fledged scripting engine based on Mozilla's SpiderMonkey JavaScript engine. These changes were spearheaded by Matthew Randall (EviLDeD, lead developer at the time) and Daniel Stratton (Abaddon), and prompted a change in version numbers, from 0.70.x to 0.95.x.</p>
 					<p>Due to the open-source nature of UOX3, there have been numerous spin-off projects over the years - like Wolfpack, Lonewolf or NOX-wizard - all with their own rich history. Most of these have gone dormant, but the "main UOX3 branch" has been around for nearly 22 years (as of 2020), and is here for the long run.</p>
 					<h3>UOX Version Timeline</h3>
 					<input type="checkbox" id="spoiler_history_UOX2_timeline"/>
@@ -7899,24 +8047,23 @@ function commandTitle()
 							<label for="spoiler_history_UOX3_070_03_20a">UOX3 v0.70.03.20a <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 25 October, 2000</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
 								<p><strong>Contributors:</strong> Knoxos</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20c"/>
 							<label for="spoiler_history_UOX3_070_03_20c">UOX3 v0.70.03.20c <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 26 October, 2000</p>
-								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
-								<p><strong>Contributors:</strong> Knoxos, Oakwood</p>
+								<p><strong>Released by:</strong> UOX Dev Team</p>
 							</div>
+							<h4>November, 2000</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20d"/>
 							<label for="spoiler_history_UOX3_070_03_20d">UOX3 v0.70.03.20d <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 4 November, 2000</p>
+								<p><strong>Release date:</strong> 6 November, 2000</p>
 								<p><strong>Released by:</strong> UOX Dev Team w/Freelancers</p>
 								<p><strong>Contributors:</strong> Oakwood, Knoxos</p>
 							</div>
-							<h4>November, 2000</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_20e_TR1"/>
 							<label for="spoiler_history_UOX3_070_03_20e_TR1">UOX3 v0.70.03.20e TR1 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8000,7 +8147,7 @@ function commandTitle()
 							<label for="spoiler_history_UOX3_070_03_23">UOX3 v0.70.03.23 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
 								<p><strong>Release date:</strong> 21 March, 2001</p>
-								<p><strong>Released by:</strong> UOX Dev Team</p>
+								<p><strong>Released by:</strong> Freelancers Group</p>
 							</div>
 							<input type="checkbox" id="spoiler_history_UOX3_070_03_24"/>
 							<label for="spoiler_history_UOX3_070_03_24">UOX3 v0.70.03.24 <i class="fas fa-angle-down"></i></label>
@@ -8140,6 +8287,36 @@ function commandTitle()
 								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
 
+							<h4>September, 2002</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_097_1_9"/>
+							<label for="spoiler_history_UOX3_097_1_9">UOX3 v0.97.1.9 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 26 September, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_1_10"/>
+							<label for="spoiler_history_UOX3_097_1_10">UOX3 v0.97.1.10 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 27 September, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_1_11"/>
+							<label for="spoiler_history_UOX3_097_1_11">UOX3 v0.97.1.11 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 29 September, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_1_12"/>
+							<label for="spoiler_history_UOX3_097_1_12">UOX3 v0.97.1.12 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 29 September, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+
 							<h4>October, 2002</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_097_1"/>
 							<label for="spoiler_history_UOX3_097_1">UOX3 v0.97.1 <i class="fas fa-angle-down"></i></label>
@@ -8148,12 +8325,57 @@ function commandTitle()
 								<p><strong>Released by:</strong> EviLDeD</p>
 								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
-
-							<h4>December, 2002</h4>
-							<input type="checkbox" id="spoiler_history_UOX3_097_01_16a"/>
-							<label for="spoiler_history_UOX3_097_01_16a">UOX3 v0.97.01.16a <i class="fas fa-angle-down"></i></label>
+							<input type="checkbox" id="spoiler_history_UOX3_097_1_14"/>
+							<label for="spoiler_history_UOX3_097_14">UOX3 v0.97.1_14 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> 18 December, 2002</p>
+								<p><strong>Release date:</strong> 7 October, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> Brakhtus</p>
+								<p><strong>Fun Facts:</strong> Addition of OnClick and OnLogout JS events!</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_1_16a"/>
+							<label for="spoiler_history_UOX3_097_16a">UOX3 v0.97.1_16a and 16b <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 25 October, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+
+							<h4>November, 2002</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_097_01_16d"/>
+							<label for="spoiler_history_UOX3_097_01_16d">UOX3 v0.97.01.16c and 16d <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 5 November, 2002</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+
+							<h4>January, 2003</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_097_01_16f"/>
+							<label for="spoiler_history_UOX3_097_01_16f">UOX3 v0.97.01.16f<i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 16 January, 2003</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_02_1a"/>
+							<label for="spoiler_history_UOX3_097_02_1a">UOX3 v0.97.02.1a <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 21 January, 2003</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team (Xuri, Maarc, Dreoth, Brakhtus)</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_02_1i"/>
+							<label for="spoiler_history_UOX3_097_02_1i">UOX3 v0.97.02.1i <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 21 January, 2003</p>
+								<p><strong>Released by:</strong> EviLDeD</p>
+								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
+							</div>
+							<input type="checkbox" id="spoiler_history_UOX3_097_02_1j"/>
+							<label for="spoiler_history_UOX3_097_02_1j">UOX3 v0.97.02.1j <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> 27 January, 2003</p>
 								<p><strong>Released by:</strong> EviLDeD</p>
 								<p><strong>Contributors:</strong> UOX3 Dev Team</p>
 							</div>
@@ -9281,10 +9503,13 @@ function commandTitle()
 							<p><span class="highlight">Rainman/Cobol Junky</span><br> Web Admin, ~Jan-Sept 2001</p>
 							<p><span class="highlight">Jedda</span><br> Programmer, 17/01/2001, 0.70.03.21</p>
 							<p><span class="highlight">Tom2</span><br> Programmer, 17/01/2001, 0.70.03.21</p>
-							<p><span class="highlight">Correa</span><br> Thiago A. Corrêa, Programmer, 17/01/2001, 0.70.03.21</p>
+							<p><span class="highlight">Correa</span><br> Thiago A. Corrêa, Programmer, Freelancers, 17/01/2001, 0.70.03.21</p>
+							<p><span class="highlight">anshil</span><br> Axel Kittenberger, Programmer, Freelancers, 25/01/2001, 0.70.03.21</p>
 							<p><span class="highlight">Raftina</span><br> Scripter, 31/01/2001, 0.70.03.21a</p>
 							<p><span class="highlight">RostamTheGrey</span><br> Daniel K. Olds, Programmer, ~early 2001</p>
 							<p><span class="highlight">Calvin</span><br> Scripter, < February 2001, < v0.0.70.03.21d</p>
+							<p><span class="highlight">Frank Lubber</span><br> Programmer, Freelancers, 24/02/2001, v0.0.70.03.21d</p>
+							<p><span class="highlight">TTP</span><br> Programmer, Freelancers, 14/03/2001</p>
 							<p><span class="highlight">Yeshe</span><br> Carsten Germer, Scripter, 08/05/2001</p>
 							<p><span class="highlight">Zane/Giwo</span><br> Scott Thompson, Scripter/Programmer, Web Admin, 03/07/2001</p>
 							<p><span class="highlight">seank</span><br> Programmer, 04/07/2001</p>
@@ -9426,5 +9651,6 @@ function commandTitle()
 </div>
 <script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->
 <script src="assets/js/main.js"></script>
+<script src="assets/js/prism.js"></script>
 </body>
 </html>

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h2>SpawnRegion Properties</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+
+  <p>Note that any changes to SpawnRegions re applied in runtime memory only, and next server startup or reload of spawn regions from UOX3 console will overwrite those changes.</p>
+  <tr>
+    <th bgcolor="maroon">Property
+    <th bgcolor="maroon">Purpose
+  <tr>
+    <td>name
+    <td>Returns/Sets the name of the spawn region
+  <tr>
+    <td>regionNum
+    <td>Returns/Sets the region number of the spawn region
+  <tr>
+    <td>itemList
+    <td>Returns/Sets list of item IDs that spawn randomly in the spawn region. Can set using name of an ItemList, or a series of comma-separated item IDs.
+  <tr>
+    <td>npcList
+    <td>Returns/Sets list of NPC IDs that spawn randomly in the spawn region. Can set using name of an NPClist, or a series of comma-separated NPC IDs.
+  <tr>
+    <td>item
+    <td>Returns/Sets item ID that spawns in the spawn region
+  <tr>
+    <td>npc
+    <td>Returns/Sets NPC ID that spawns in the spawn region
+  <tr>
+    <td>maxItems
+    <td>Returns/Sets the maximum number of items to spawn in the spawn region
+  <tr>
+    <td>maxNPCs
+    <td>Returns/Sets the maximum number of NPCs to spawn in the spawn region
+  <tr>
+    <td>itemCount
+    <td>Returns the current number of items spawned in the spawn region
+  <tr>
+    <td>npcCount
+    <td>Returns the current number of NPCs spawned in the spawn region
+  <tr>
+    <td>onlyOutside
+    <td>Returns/Sets whether objects in this spawn region spawn only outside buildings (1) or anywhere (0)
+  <tr>
+    <td>prefZ
+    <td>Returns/Sets the maximum Z value a dynamic or static item can have on spawning
+  <tr>
+    <td>x1
+    <td>Returns/Sets the upper left X coordinate of the box defining the spawn region area
+  <tr>
+    <td>y1
+    <td>Returns/Sets the upper left Y coordinate of the box defining the spawn region area
+  <tr>
+    <td>x2
+    <td>Returns/Sets the lower right X coordinate of the box defining the spawn region area
+  <tr>
+    <td>y2
+    <td>Returns/Sets the lower right Y coordinate of the box defining the spawn region area
+  <tr>
+    <td>world
+    <td>Returns/Sets which world number the spawn region should be spawning objects in
+  <tr>
+    <td>instanceID
+    <td>Returns/Sets which instance ID the spawn region should be spawning objects in
+  <tr>
+    <td>minTime
+    <td>Returns/Sets the minimum amount of time it takes for the spawn region to spawn stuff
+  <tr>
+    <td>maxTime
+    <td>Returns/Sets the maximum amount of time it takes for the spawn region to spawn stuff
+  <tr>
+    <td>call
+    <td>Returns/Sets the amount of objects to spawn at the same time per "respawn call"
+  </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2020 <a href="http://www.uox3.org">WWW.UOX3.ORG</a> </font>
+</center>
+
+</body>
