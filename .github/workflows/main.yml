@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: prepare automake
-      run: ./chmod +x automake.sh
+      run: chmod +x automake.sh
     - name: automake
       run: ./automake.sh
     - name: checkmake
