@@ -110,18 +110,60 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDe
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID, UI08 subSubActionID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends message to client to make character perform specified action/anim
+//|					in client versions above 7.0.0.0
+//o-----------------------------------------------------------------------------------------------o
+void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID, UI08 subSubActionID )
+{
+	CPNewCharacterAnimation toSend = (*mChar);
+	toSend.Action( actionID );
+	toSend.SubAction( subActionID );
+	toSend.SubSubAction( subSubActionID );
+	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	{
+		(*cIter)->Send( &toSend );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 {
-	if( mChar->IsOnHorse() && ( actionID == 0x10 || actionID == 0x11 ) )
+	if( mChar->GetBodyType() == BT_GARGOYLE || ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
+		&& ( mChar->GetSocket() == NULL || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 	{
-		PlayCharacterAnimation( mChar, 0x1B );
+		if( mChar->GetBodyType() == BT_GARGOYLE )
+		{
+			if( actionID == 0x10 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_AREA ); // Action: 0x0b, SubAction: spell variation 0x01
+			else if( actionID == 0x11 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action: 0x0b, SubAction: spell variation 0x00
+		}
+		else
+		{
+			// Sub actions are in reverse order for humans!
+			if( actionID == 0x10 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action: 0x0b, SubAction: spell variation 0x00
+			else if( actionID == 0x11 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_AREA ); // Action: 0x0b, SubAction: spell variation 0x01
+		}
 		return;
 	}
-	if( ( mChar->IsOnHorse() || !cwmWorldState->creatures[mChar->GetID()].IsHuman() ) && actionID == 0x22 )
+	else if( mChar->IsOnHorse() )
+	{
+		if( actionID == 0x10 )
+			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H ); // 0x1A
+		else if( actionID == 0x11 )
+			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_BOW ); // 0x1B
+		return;
+	}
+	if( !cwmWorldState->creatures[mChar->GetID()].IsHuman() && actionID == 0x22 )
 		return;
 	PlayCharacterAnimation( mChar, actionID );
 }
@@ -885,6 +927,8 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
 			if( dest->IsOnHorse() )
 				DismountCreature( dest );
+			else if( dest->IsFlying() )
+				dest->ToggleFlying();
 			k = ( more1<<8 ) + more2;
 
 			if( k <= 0x03e2 ) // body-values >0x3e1 crash the client

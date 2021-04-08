@@ -368,7 +368,7 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 {
 
 #ifdef DEBUG_SPAWN
-	Console.Print( "Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway );
+	Console.print( format( "Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway ));
 #endif
 
 	if( !ValidateObject( cCreated ) )

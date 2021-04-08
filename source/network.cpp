@@ -574,7 +574,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 				return;
 			}
 #if _DEBUG_PACKET
-			Console.Print( "Packet ID: 0x%x\n", packetID );
+			Console.print( format( "Packet ID: 0x%x\n", packetID ));
 #endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
 			{
@@ -637,26 +637,48 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						ourChar->BreakConcentration( mSock );
 						if( buffer[3] == 0xC7 ) // Action
 						{
-							if( ourChar->IsOnHorse() ) // Ripper
-								return; // can't bow or salute on horse
-							if( !strcmp( (char *)&buffer[4], "bow" ) ) {
-								if( ( (ourChar->GetID() >= 0x190) &&
-									 (ourChar->GetID() <= 0x193) ) ||
-								   (ourChar->GetID() == 0x3DB) ){
-									Effects->PlayCharacterAnimation( ourChar, 0x20 );
+							if( ourChar->IsOnHorse() || ourChar->IsFlying() )
+								return; // can't bow or salute on horse or while flying
+							if( !strcmp( (char *)&buffer[4], "bow" ) )
+							{
+								if( ourChar->GetBodyType() == BT_GARGOYLE 
+									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
+										&& ( ourChar->GetSocket() == NULL || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+								{
+									// If gargoyle, human or elf, and new animation packet is enabled
+									Effects->PlayNewCharacterAnimation( ourChar, N_ACT_EMOTE, S_ACT_EMOTE_BOW );
 								}
-								else {
-									Effects->PlayCharacterAnimation( ourChar, 0x12 );
+								else if(( ourChar->GetBodyType() == BT_HUMAN || ourChar->GetBodyType() == BT_ELF )
+									&& !cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+								{
+									// If human or elf, and new animation packet is disabled
+									Effects->PlayCharacterAnimation( ourChar, ACT_EMOTE_BOW ); // 0x20
+								}
+								else
+								{
+									// If polymorphed to other creatures
+									Effects->PlayCharacterAnimation( ourChar, 0x12 ); // Monster fidget 1
 								}
 							}
-							if( !strcmp( (char *)&buffer[4], "salute" ) ) {
-								if( ( (ourChar->GetID() >= 0x190) &&
-									 (ourChar->GetID() <= 0x193) ) ||
-								   (ourChar->GetID() == 0x3DB) ){
-									Effects->PlayCharacterAnimation( ourChar, 0x21 );
+							if( !strcmp( (char *)&buffer[4], "salute" ) )
+							{
+								if( ourChar->GetBodyType() == BT_GARGOYLE 
+									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
+										&& ( ourChar->GetSocket() == NULL || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+								{
+									// If gargoyle, human or elf, and new animation packet is enabled
+									Effects->PlayNewCharacterAnimation( ourChar, N_ACT_EMOTE, S_ACT_EMOTE_SALUTE );
 								}
-								else{
-									Effects->PlayCharacterAnimation( ourChar, 0x11 );
+								else if(( ourChar->GetBodyType() == BT_HUMAN || ourChar->GetBodyType() == BT_ELF )
+									&& !cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+								{
+									// If human or elf, and new animation packet is disabled
+									Effects->PlayCharacterAnimation( ourChar, ACT_EMOTE_SALUTE ); // 0x21
+								}
+								else
+								{
+									// If polymorphed to other creatures
+									Effects->PlayCharacterAnimation( ourChar, 0x11 ); // Monster fidget 2
 								}
 							}
 							break;

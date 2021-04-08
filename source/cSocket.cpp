@@ -742,7 +742,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 	{
 		if( cryptclient )
 		{
-			largePackBuffer.resize( outlength * 2 );
+			largePackBuffer.resize( static_cast<size_t>(outlength) * static_cast<size_t>(2) );
 			SI32 len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
 			send( cliSocket, (char *)&largePackBuffer[0], len, 0 );
 		}

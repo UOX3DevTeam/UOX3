@@ -23,6 +23,7 @@ enum cC_TID
 	tCHAR_CRIMFLAG,
 	tCHAR_MURDERRATE,
 	tCHAR_PEACETIMER,
+	tCHAR_FLYINGTOGGLE,
 	// NPC Timers
 	tNPC_MOVETIME,
 	tNPC_SPATIMER,
@@ -225,6 +226,8 @@ protected:
 	UI16		maxStam_olddex;
 	RACEID		oldRace;
 
+	BodyType	bodyType;
+
 	UI08		PoisonStrength;
 
 	DAMAGETRACK		damageDealt;
@@ -245,6 +248,8 @@ protected:
 
 
 public:
+
+	BodyType	GetBodyType( void );
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 
@@ -288,6 +293,10 @@ public:
 
 	void		SetStabled( bool newValue );
 	bool		GetStabled( void ) const;
+	void		SetFlying( bool newValue );
+	bool		IsFlying( void ) const;
+
+	bool		ToggleFlying( void );
 
 	void		SetMaxHPFixed( bool newValue );
 	bool		GetMaxHPFixed( void ) const;

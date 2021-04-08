@@ -56,18 +56,18 @@ const UI32 BIT_SERVERUSINGHSMULTIS	= 36;
 const UI32 BIT_SERVERUSINGHSTILES	= 37;
 const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
 const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
-const UI32 BIT_ASSISTANTNEGOTIATION = 40;
-const UI32 BIT_KICKONASSISTANTSILENCE = 41;
-const UI32 BIT_CLASSICUOMAPTRACKER = 42;
-const UI32 BIT_PROTECTPRIVATEHOUSES = 43;
-const UI32 BIT_TRACKHOUSESPERACCOUNT = 44;
-const UI32 BIT_CANOWNANDCOOWNHOUSES = 45;
+const UI32 BIT_ASSISTANTNEGOTIATION		= 40;
+const UI32 BIT_KICKONASSISTANTSILENCE	= 41;
+const UI32 BIT_CLASSICUOMAPTRACKER		= 42;
+const UI32 BIT_PROTECTPRIVATEHOUSES		= 43;
+const UI32 BIT_TRACKHOUSESPERACCOUNT	= 44;
+const UI32 BIT_CANOWNANDCOOWNHOUSES		= 45;
 const UI32 BIT_COOWNHOUSESONSAMEACCOUNT = 46;
-const UI32 BIT_ITEMSDETECTSPEECH = 47;
-const UI32 BIT_FORCENEWANIMATIONPACKET = 48;
-const UI32 BIT_MAPDIFFSENABLED = 49;
-const UI32 BIT_ARMORCLASSDAMAGEBONUS = 50;
-const UI32 BIT_CONNECTUOSERVERPOLL = 51;
+const UI32 BIT_ITEMSDETECTSPEECH		= 47;
+const UI32 BIT_FORCENEWANIMATIONPACKET	= 48;
+const UI32 BIT_MAPDIFFSENABLED			= 49;
+const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
+const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
 const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
 
 
@@ -378,10 +378,12 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ITEMSDETECTSPEECH", 226);
 	regINIValue("MAXPLAYERPACKITEMS", 227);
 	regINIValue("MAXPLAYERBANKITEMS", 228);
+	regINIValue("FORCENEWANIMATIONPACKET", 229);
 	regINIValue("MAPDIFFSENABLED", 230);
 	regINIValue("CUOENABLED", 244);
 	regINIValue("ALCHEMYBONUSENABLED", 245);
 	regINIValue("ALCHEMYBONUSMODIFIER", 246);
+	regINIValue("NPCFLAGUPDATETIMER", 247);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -526,12 +528,14 @@ void CServerData::ResetDefaults( void )
 	MaxStealthMovement( 10 );
 	MaxStaminaMovement( 15 );
 	SnoopIsCrime( false );
+	SystemTimer( tSERVER_NPCFLAGUPDATETIMER, 5 );
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
 	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
 	ItemsDetectSpeech( false );
 	MaxPlayerPackItems( 125 );
 	MaxPlayerBankItems( 125 );
+	ForceNewAnimationPacket( true );
 	MapDiffsEnabled( false );
 
 	CheckBoatSpeed( 0.65 );
@@ -1788,6 +1792,21 @@ void CServerData::ItemsDetectSpeech( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ForceNewAnimationPacket( void ) const
+//|					void ForceNewAnimationPacket( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should force the use of new animation packet for NPCs
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ForceNewAnimationPacket( void ) const
+{
+	return boolVals.test( BIT_FORCENEWANIMATIONPACKET );
+}
+void CServerData::ForceNewAnimationPacket( bool newVal )
+{
+	boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool MapDiffsEnabled( void ) const
 //|					void MapDiffsEnabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -3028,6 +3047,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << '\n';
 		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
 		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
+		ofsOutput << "NPCFLAGUPDATETIMER=" << SystemTimer( tSERVER_NPCFLAGUPDATETIMER ) << '\n';
+
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
@@ -3082,6 +3103,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
 		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
+		ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
 		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -4075,6 +4097,10 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		case 228:	// MAXPLAYERBANKITEMS[0217]
 			MaxPlayerBankItems( value.toUShort() );
+			break;
+		case 229:	// FORCENEWANIMATIONPACKET[0218]
+			ForceNewAnimationPacket( value.toUShort() == 1 );
+			break;
 		case 230:	// MAPDIFFSENABLED[0219]
 			MapDiffsEnabled( value.toUShort() == 1 );
 			break;
@@ -4086,6 +4112,9 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		case 246:	// ALCHEMYBONUSMODIFIER[0235]
 			AlchemyDamageBonusModifier( value.toUByte() );
+			break;
+		case 247:	 // NPCFLAGUPDATETIMER[0236]
+			SystemTimer( tSERVER_NPCFLAGUPDATETIMER, value.toUShort() );
 			break;
 		default:
 			rvalue = false;

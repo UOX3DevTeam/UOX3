@@ -850,7 +850,7 @@ JSBool SE_GetHour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
 	if( ampm )
-		*rval = INT_TO_JSVAL( hour + 12 );
+		*rval = INT_TO_JSVAL( static_cast<JSInt64>(hour) + 12 );
 	else
 		*rval = INT_TO_JSVAL( hour );
 	return JS_TRUE;
@@ -964,13 +964,19 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		mySock					= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 	}
 
-	JSObject *mChar				= JSVAL_TO_OBJECT( argv[1] );
-	CChar *myChar				= static_cast<CChar *>(JS_GetPrivate( cx, mChar ));
+	CChar *myChar = NULL;
+	if( argv[1] != JSVAL_NULL )
+	{
+		JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
+		myChar					= static_cast<CChar *>(JS_GetPrivate( cx, mChar ));
+	}
 
 	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
 	ObjectType itemType			= OT_ITEM;
+	UI08 worldNumber = 0;
+	UI16 instanceID = 0;
 
 	if( argc > 3 )
 		iAmount					= static_cast< UI16 >(JSVAL_TO_INT( argv[3] ));
@@ -981,8 +987,17 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	if( argc > 5 )
 		bInPack					= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	if( argc > 6 )
+		worldNumber				= static_cast<UI08>(JSVAL_TO_INT( argv[6] ));
+	if( argc > 7 )
+		instanceID				= static_cast<UI16>(JSVAL_TO_INT( argv[7] ));
 
-	CItem *newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
+	CItem *newItem = NULL;
+	if( myChar != NULL )
+		newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
+	else
+		newItem = Items->CreateBaseScriptItem( bpSectNumber, worldNumber, iAmount, instanceID, itemType );
+
 	if( newItem != NULL )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -3677,6 +3692,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 228:	// MAXPLAYERBANKITEMS[0217]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->MaxPlayerBankItems()));
 				break;
+			case 229:	// FORCENEWANIMATIONPACKET[0218]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ForceNewAnimationPacket() );
+				break;
 			case 230:	// MAPDIFFSENABLED[0219]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MapDiffsEnabled() );
 				break;
@@ -3688,6 +3706,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 246:	// ALCHEMYBONUSMODIFIER[0235]
 				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->AlchemyDamageBonusModifier()));
+				break;
+			case 247:	 // NPCFLAGUPDATETIMER[0236]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_NPCFLAGUPDATETIMER ))));
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

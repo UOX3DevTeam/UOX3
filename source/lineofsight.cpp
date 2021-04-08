@@ -563,7 +563,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 
 	line3D lineofsight	= line3D( vector3D( startX, startY, startZ ), vector3D( distX, distY, distZ ) );
 
-	const R64 rBlah		= (distX * distX) + (distY * distY);
+	const R64 rBlah		= (static_cast<R64>(distX) * static_cast<R64>(distX)) + (static_cast<R64>(distY) * static_cast<R64>(distY));
 	const SI32 distance	= static_cast<SI32>(sqrt( rBlah ));
 
 	if( distance > 18 )

@@ -316,7 +316,6 @@ function onCallback0( socket, ourObj )
 	}
 }
 
-
 function onTimer( timerObj, timerID )
 {
 	var countdown = 0;

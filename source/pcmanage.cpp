@@ -687,7 +687,7 @@ bool CPICreateCharacter::Handle( void )
 				mChar->SetAccount( actbRec );
 			}
 
-			SetNewCharGender( mChar );
+			SetNewCharGenderAndRace( mChar );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 
@@ -977,7 +977,6 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 	mChar->SetStamina( mChar->GetMaxStam() );
 	mChar->SetMana( mChar->GetMaxMana() );
 
-	mChar->SetRace( 0 );
 	mChar->SetRaceGate( 65535 );
 	UI08 firstSkill		= skill[0];
 	UI08 secondSkill	= skill[1];
@@ -1003,11 +1002,11 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SetNewCharGender( CChar *mChar )
+//|	Function	-	void SetNewCharGenderAndRace( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sets gender for newly created characters
+//|	Purpose		-	Sets gender and race for newly created characters
 //o-----------------------------------------------------------------------------------------------o
-void CPICreateCharacter::SetNewCharGender( CChar *mChar )
+void CPICreateCharacter::SetNewCharGenderAndRace( CChar *mChar )
 {
 	UI16 pGenderID = 0x0190;
 	bool gargCreation = false;
@@ -1024,34 +1023,68 @@ void CPICreateCharacter::SetNewCharGender( CChar *mChar )
 			case 0:
 				switch( race )
 				{
-					case 1: pGenderID = 0x0190; break;	// human male
-					case 2:	pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
-					case 3: pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
+					case 0: pGenderID = 0x0190; break;	// human male
+					case 1:	pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
+					case 2: pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
 				}
 				break;
 			case 1:
 				switch( race )
 				{
-					case 1: pGenderID = 0x0191;	break;	// human female
-					case 2: pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
-					case 3: pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
+					case 0: pGenderID = 0x0191;	break;	// human female
+					case 1: pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
+					case 2: pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
 				}
 				break;
+			default:
+				break;
 		}
+
+		// Set race to match data sent from client. This should correspond with race setup in races.dfn
+		// 0 = human, 1 = elf, 2 = gargoyle
+		mChar->SetRace( race );
 	}
 	else if( tSock->ClientType() >= CV_SA2D )
 	{
 		switch( sex )
 		{
-			case 0:		pGenderID = 0x0190; break;	// human male
-			case 1:		pGenderID = 0x0191;	break;	// human female
-			case 2:		pGenderID = 0x0190; break;	// human male
-			case 3:		pGenderID = 0x0191;	break;	// human female
-			case 4:		pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
-			case 5:		pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
-			case 6:		pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
-			case 7:		pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
-			default:	break;
+			case 0:
+				// human male
+				pGenderID = 0x0190;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 1:	// human female
+				pGenderID = 0x0191;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 2:	// human male
+				pGenderID = 0x0190;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 3:	// human female
+				pGenderID = 0x0191;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 4: // elf male
+				pGenderID = ( elfCreation ? 0x025D : 0x0190 );
+				mChar->SetRace( 1 ); // Elf
+				break;
+			case 5: // elf female
+				pGenderID = ( elfCreation ? 0x025E : 0x0191 );
+				mChar->SetRace( 1 ); // Elf
+				break;
+			case 6: // Gargoyle male
+				pGenderID = ( gargCreation ? 0x029A : 0x0190 );
+				mChar->SetLevitate( true ); // Enable potential for flying
+				mChar->SetRace( 2 ); // Gargoyle
+				break;
+			case 7: // Gargoyle female
+				pGenderID = ( gargCreation ? 0x029B : 0x0191 );
+				mChar->SetLevitate( true ); // Enable potential for flying
+				mChar->SetRace( 2 ); // Gargoyle
+				break;
+			default:
+				break;
 		}
 	}
 	else

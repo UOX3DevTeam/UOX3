@@ -374,7 +374,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-	//	Console.Warning( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
+	//	Console.warning( format( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() ));
 #endif
 	wasPrioritized = 2;
 }

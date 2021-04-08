@@ -181,6 +181,24 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_X:			*vp = INT_TO_JSVAL( gPriv->GetX() );			break;
 			case CIP_Y:			*vp = INT_TO_JSVAL( gPriv->GetY() );			break;
 			case CIP_Z:			*vp = INT_TO_JSVAL( gPriv->GetZ() );			break;
+			case CIP_OLDX:		
+			{
+				auto oldLocation = gPriv->GetOldLocation();
+				*vp = INT_TO_JSVAL( oldLocation.x );
+				break;
+			}
+			case CIP_OLDY:		
+			{
+				auto oldLocation = gPriv->GetOldLocation();
+				*vp = INT_TO_JSVAL( oldLocation.y );
+				break;
+			}
+			case CIP_OLDZ:		
+			{
+				auto oldLocation = gPriv->GetOldLocation();
+				*vp = INT_TO_JSVAL( oldLocation.z );
+				break;
+			}
 			case CIP_ID:		*vp = INT_TO_JSVAL( gPriv->GetID() );			break;
 			case CIP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
 			case CIP_OWNER:
@@ -831,6 +849,24 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_X:			*vp = INT_TO_JSVAL( gPriv->GetX() );			break;
 			case CCP_Y:			*vp = INT_TO_JSVAL( gPriv->GetY() );			break;
 			case CCP_Z:			*vp = INT_TO_JSVAL( gPriv->GetZ() );			break;
+			case CCP_OLDX:		
+			{
+				auto oldLocation = gPriv->GetOldLocation();
+				*vp = INT_TO_JSVAL( oldLocation.x );
+				break;
+			}
+			case CCP_OLDY:		
+			{
+				auto oldLocation = gPriv->GetOldLocation();
+				*vp = INT_TO_JSVAL( oldLocation.y );
+				break;
+			}
+			case CCP_OLDZ:		
+			{
+				auto oldLocation = gPriv->GetOldLocation();
+				*vp = INT_TO_JSVAL( oldLocation.z );
+				break;
+			}
 			case CCP_ID:		*vp = INT_TO_JSVAL( gPriv->GetID() );			break;
 			case CCP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
 			case CCP_OWNER:
@@ -1027,6 +1063,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_OLDWANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetOldNpcWander() );		break;
 			case CCP_WANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetNpcWander() );		break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
+			case CCP_ISFLYING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFlying() );		break;
 			case CCP_TDEXTERITY:	*vp = INT_TO_JSVAL( gPriv->GetDexterity2() );		break;
 			case CCP_TINTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence2() );	break;
 			case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;

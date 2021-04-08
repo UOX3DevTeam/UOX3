@@ -168,7 +168,15 @@ void HandleHealerAI( CChar& mChar )
 					mChar.TextMessage( NULL, 770, TALK, true );
 				else if( realChar->IsInnocent() )
 				{
-					Effects->PlayCharacterAnimation( &mChar, 0x10 );
+					if( mChar.GetBodyType() == BT_GARGOYLE ||
+						(( mChar.GetBodyType() == BT_HUMAN || mChar.GetBodyType() == BT_ELF ) && cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+					{
+						Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+					}
+					else // Characters pre-v7.0.0.0
+					{
+						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET ); // Action 0x10
+					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
 					mChar.TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
@@ -197,7 +205,15 @@ void HandleEvilHealerAI( CChar& mChar )
 			{
 				if( realChar->IsMurderer() )
 				{
-					Effects->PlayCharacterAnimation( &mChar, 0x10 );
+					if( mChar.GetBodyType() == BT_GARGOYLE ||
+						(( mChar.GetBodyType() == BT_HUMAN || mChar.GetBodyType() == BT_ELF ) && cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+					{
+						Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+					}
+					else // Characters pre-v7.0.0.0
+					{
+						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET ); // Action 0x10
+					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 					mChar.TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );

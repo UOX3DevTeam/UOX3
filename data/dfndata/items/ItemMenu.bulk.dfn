@@ -13619,3 +13619,16 @@ ADDITEM=0x278b
 <=Previous Menu
 ITEMMENU=93
 }
+
+[ITEMMENU 170]
+{
+cooking.dfn
+0x1043=rolling pin
+ADDITEM=0x1043
+0x1039=sack of flour
+ADDITEM=0x1039
+0x1045=sack of flour
+ADDITEM=0x1045
+<=Previous Menu
+ITEMMENU=127
+}

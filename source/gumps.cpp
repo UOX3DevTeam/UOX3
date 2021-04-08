@@ -1243,7 +1243,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 	for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;++CI)
 		autoAddMenuItemCount += 2;	// Need to inicrement by 2 because each entry is measured in the dfn' as two lines. Used in teh calculation below.
 	// let's skip over the name, and get straight to where we should be headed
-	size_t entryNum = static_cast<size_t>((button - 6) * 2);
+	size_t entryNum = ((static_cast<size_t>(button) - 6) * 2);
 	autoAddMenuItemCount += ItemMenu->NumEntries();
 	if( autoAddMenuItemCount >= entryNum )
 	{
@@ -1941,7 +1941,7 @@ bool CPIGumpChoice::Handle( void )
 	if( main >= POLYMORPHMENUOFFSET )
 	{
 		sect = std::string("POLYMORPHMENU ") + str_number( main );
-		data = GrabMenuData( sect, static_cast<size_t>(sub *2), tag );
+		data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 		if( !data.empty() )
 		{
 			if( main == POLYMORPHMENUOFFSET )
@@ -1949,7 +1949,9 @@ bool CPIGumpChoice::Handle( void )
 			else
 			{
 				if( mChar->IsOnHorse() )
-					DismountCreature( tSock->CurrcharObj() );		// can't be polymorphed on a horse
+					DismountCreature( mChar );		// can't be polymorphed on a horse
+				else if( mChar->IsFlying() )
+					mChar->ToggleFlying();
 				Magic->Polymorph( tSock, data.toUShort() );
 			}
 		}
@@ -1959,7 +1961,7 @@ bool CPIGumpChoice::Handle( void )
 		if( main == TRACKINGMENUOFFSET )
 		{
 			sect = std::string("TRACKINGMENU ") + str_number( main );
-			data = GrabMenuData( sect, static_cast<size_t>(sub * 2), tag );
+			data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 			if( !data.empty() )
 				Skills->CreateTrackingMenu( tSock, data.toUShort() );
 		}
@@ -1976,7 +1978,7 @@ bool CPIGumpChoice::Handle( void )
 	else if( main < ITEMMENUOFFSET ) // GM Menus
 	{
 		sect = std::string("GMMENU ") + str_number( main );
-		data = GrabMenuData( sect, static_cast<size_t>(sub * 2), tag );
+		data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 		if( !tag.empty() )
 			HandleGumpCommand( tSock, tag, data );
 	}
@@ -2247,16 +2249,16 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 					temp2 = temp.substr(0,stringWidth) ;
 
 					two.push_back( temp2 );
-					for( UI32 tempCounter = 0; tempCounter < tempWidth / ( stringWidth * 2 ) + 1; ++tempCounter )
+					for( UI32 tempCounter = 0; tempCounter < tempWidth / ( static_cast<size_t>(stringWidth) * 2 ) + 1; ++tempCounter )
 					{
 						//LOOKATME
 						position += 20;
 						++lineForButton;
 						temp3 = format( "text %i %u %i %u", 30, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
 						one.push_back( temp3 );
-						auto remaining = std::min<std::size_t>((temp.size() - static_cast<std::size_t>((tempCounter+1)*stringWidth * 2)),static_cast<std::size_t>(stringWidth*2));
+						auto remaining = std::min<std::size_t>(( temp.size() - ( static_cast<size_t>(tempCounter) + 1 ) * static_cast<size_t>(stringWidth) * 2), static_cast<size_t>(stringWidth) * 2 );
 
-						temp2 = temp.substr(stringWidth+tempCounter* stringWidth * 2,remaining );
+						temp2 = temp.substr( static_cast<size_t>(stringWidth) + static_cast<size_t>(tempCounter) * static_cast<size_t>(stringWidth) * 2, remaining );
 						two.push_back( temp2 );
 					}
 					// be stupid for the moment and do no text wrapping over pages
@@ -2297,9 +2299,9 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 						++lineForButton;
 						temp3 = format(512, "text %i %u %i %u", 30, position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
 						one.push_back( temp3 );
-						auto remaining = std::min<std::size_t>(temp.size() - static_cast<std::size_t>((tempCounter+1)*sWidth),static_cast<std::size_t>(sWidth));
+						auto remaining = std::min<std::size_t>(temp.size() - ( static_cast<size_t>(tempCounter) + 1 ) * static_cast<size_t>(sWidth), static_cast<std::size_t>( sWidth ));
 
-						temp2= temp.substr((tempCounter + 1) * sWidth, remaining );
+						temp2= temp.substr(( static_cast<size_t>(tempCounter) + 1 ) * static_cast<size_t>(sWidth), remaining );
 
 						two.push_back( temp2 );
 					}

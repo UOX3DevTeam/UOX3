@@ -200,7 +200,12 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 					{
 						if( objInRange( i, ourChar, DIST_NEARBY ) )	// let's resurrect him
 						{
-							Effects->PlayCharacterAnimation( i, 0x10 );
+							if( i->GetBodyType() == BT_GARGOYLE
+								|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
+									&& ( i->GetBodyType() == BT_HUMAN || i->GetBodyType() == BT_ELF )))
+								Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+							else
+								Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET ); // 0x10
 							NpcResurrectTarget( ourChar );
 							Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 							i->TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
@@ -1150,22 +1155,98 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CombatAnimsNew( CChar *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Play combat animations for characters (including gargoyles) in clients v7.0.0.0+
+//o-----------------------------------------------------------------------------------------------o
+void CHandleCombat::CombatAnimsNew( CChar *i )
+{
+	if( !ValidateObject( i ) )
+		return;
+
+	UI16 animToPlay		= N_ACT_ATT;		// 0x00
+	UI16 subAnimToPlay	= S_ACT_WRESTLE;	// 0x00
+	CItem *j		= getWeapon( i );
+
+	if( i->IsFlying() || i->IsOnHorse() )
+	{
+		switch( getWeaponType( j ) )
+		{
+			case BOWS:
+			case XBOWS:
+			case DEF_SWORDS:
+			case SLASH_SWORDS:
+			case ONEHND_LG_SWORDS:
+			case ONEHND_AXES:
+			case DEF_MACES:
+			case DEF_FENCING:
+			case WRESTLING:
+			case BLOWGUNS:			subAnimToPlay = S_ACT_2H_SLASH;	break; // 0x07
+			case DUAL_SWORD:
+			case DUAL_FENCING_SLASH:
+			case DUAL_FENCING_STAB:
+			case TWOHND_FENCING:
+			case TWOHND_LG_SWORDS:
+			case BARDICHE:
+			case TWOHND_AXES:
+			case LG_MACES:
+			case THROWN:
+			default:				subAnimToPlay = S_ACT_WRESTLE;	break; // 0x00
+		}
+	}
+	else
+	{
+		switch( getWeaponType( j ) )
+		{
+			case BOWS:				subAnimToPlay = S_ACT_BOW;	break; // 0x01
+			case XBOWS:
+			case BLOWGUNS:			subAnimToPlay = S_ACT_XBOW;	break; // 0x02
+			case THROWN:			subAnimToPlay = S_ACT_THROW;break; // 0x09
+			case DEF_SWORDS:
+			case SLASH_SWORDS:
+			case ONEHND_LG_SWORDS:
+				subAnimToPlay = ( RandomNum( 0, 2 ) > 1 ? (RandomNum( 0, 3 ) > 2 ? S_ACT_1H_PIERCE : S_ACT_1H_BASH ) : S_ACT_1H_SLASH ); // 0x05, 0x03 and 0x04
+				break;
+			case ONEHND_AXES:
+			case DEF_MACES:			subAnimToPlay = ( RandomNum( 0, 3 ) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_BASH ); break; // 0x04 and 0x03
+			case DUAL_FENCING_STAB: 
+			case DEF_FENCING:		subAnimToPlay = ( RandomNum( 0, 3 ) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_PIERCE ); break; // 0x04 and 0x05
+			case TWOHND_FENCING:	subAnimToPlay = S_ACT_2H_PIERCE;	break; // 0x08
+			case TWOHND_LG_SWORDS:
+			case DUAL_SWORD:
+			case DUAL_FENCING_SLASH:
+			case BARDICHE:
+				subAnimToPlay = ( RandomNum( 0, 2 ) > 1 ? (RandomNum( 0, 3 ) > 2 ? S_ACT_2H_PIERCE : S_ACT_2H_BASH ) : S_ACT_2H_SLASH ); // 0x08, 0x06 and 0x07
+				break;
+			case TWOHND_AXES:
+			case LG_MACES:			subAnimToPlay = ( RandomNum( 0, 3 ) > 2 ? S_ACT_2H_BASH : S_ACT_2H_SLASH ); break; // 0x06 and 0x07
+			case WRESTLING:
+			default:				subAnimToPlay = S_ACT_WRESTLE;	break; // 0x00
+		}
+	}
+	Effects->PlayNewCharacterAnimation( i, animToPlay, subAnimToPlay );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CombatOnHorse( CChar *i )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Play animations for combat while mounted
+//|	Purpose		-	Play combat animations for mounted characters in clients v6.x and below
 //o-----------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatOnHorse( CChar *i )
 {
 	if( !ValidateObject( i ) )
 		return;
 
-	UI16 animToPlay = 0x00;
+	UI16 animToPlay = ACT_MOUNT_ATT_1H; // 0x1A;
 	CItem *j		= getWeapon( i );
+
+	// Normal mounted characters
 	switch( getWeaponType( j ) )
 	{
-		case BOWS:				animToPlay = 0x1B;	break;
+		case BOWS:				animToPlay = ACT_MOUNT_ATT_BOW;		break; // 0x1B
 		case XBOWS:
-		case BLOWGUNS:			animToPlay = 0x1C;	break;
+		case BLOWGUNS:			animToPlay = ACT_MOUNT_ATT_XBOW;	break; // 0x1C
+		case THROWN:
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
 		case DUAL_SWORD:
@@ -1174,14 +1255,14 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 		case DEF_MACES:
 		case DUAL_FENCING_SLASH:
 		case DUAL_FENCING_STAB:
-		case DEF_FENCING:		animToPlay = 0x1A;	break;
+		case DEF_FENCING:		animToPlay = ACT_MOUNT_ATT_1H;	break; // 0x1A
 		case TWOHND_FENCING:
 		case TWOHND_LG_SWORDS:
 		case BARDICHE:
 		case TWOHND_AXES:
-		case LG_MACES:			animToPlay = 0x1D;	break;
+		case LG_MACES:			animToPlay = ACT_MOUNT_ATT_2H;	break; // 0x1D
 		case WRESTLING:
-		default:				animToPlay = 0x1A;	break;
+		default:				animToPlay = ACT_MOUNT_ATT_1H;	break; // 0x1A
 	}
 	Effects->PlayCharacterAnimation( i, animToPlay );
 }
@@ -1189,7 +1270,7 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CombatOnFoot( CChar *i )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Play animations for combat on foot
+//|	Purpose		-	Play combat animations for characters on foot in clients v6.x and below
 //o-----------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatOnFoot( CChar *i )
 {
@@ -1200,30 +1281,30 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 	CItem *j		= getWeapon( i );
 	switch( getWeaponType( j ) )
 	{
-		case BOWS:				animToPlay = 0x12;									break;
+		case BOWS:				animToPlay = ACT_ATT_BOW;		break; // 0x12
 		case XBOWS:
-		case BLOWGUNS:			animToPlay = 0x13;									break;
+		case BLOWGUNS:			animToPlay = ACT_ATT_XBOW;		break; // 0x13
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
 		case ONEHND_LG_SWORDS:
 		case DUAL_SWORD:
-		case ONEHND_AXES:		animToPlay = (RandomNum( 0, 1 ) ? 0x09 : 0x0A );	break;
-		case DEF_MACES:			animToPlay = (RandomNum( 0, 1 ) ? 0x09 : 0x0B );	break;
+		case DUAL_FENCING_SLASH:
+		case ONEHND_AXES:		animToPlay = (RandomNum( 0, 2 ) < 1 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_PIERCE );	break; // 0x09 and 0x0A
+		case DEF_MACES:			animToPlay = (RandomNum( 0, 2 ) < 2 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_BASH );		break; // 0x09 and 0x0B
 		case LG_MACES:
 		case TWOHND_LG_SWORDS:
 		case BARDICHE:
-		case TWOHND_AXES:		animToPlay = (RandomNum( 0, 1 ) ? 0x0C : 0x0D );	break;
+		case TWOHND_AXES:		animToPlay = (RandomNum( 0, 1 ) ? ACT_ATT_2H_BASH : ACT_ATT_2H_SLASH );	break; // 0x0C and 0x0D
 		case DUAL_FENCING_STAB:
-		case DEF_FENCING:		animToPlay = 0x0A;									break;
-		case TWOHND_FENCING:	animToPlay = 0x0E;									break;
-		case DUAL_FENCING_SLASH:animToPlay = (RandomNum( 0, 1 ) ? 0x09 : 0x0A );	break;
+		case DEF_FENCING:		animToPlay = ACT_ATT_1H_PIERCE;	break; // 0x0A
+		case TWOHND_FENCING:	animToPlay = ACT_ATT_2H_PIERCE;	break; // 0x0E
 		case WRESTLING:
 		default:
 			switch( RandomNum( 0, 2 ) )
 			{
-				case 0:		animToPlay = 0x0B;										break;
-				case 1:		animToPlay = 0x09;										break;
-				default:	animToPlay = 0x1F;										break;
+				case 0:		animToPlay = ACT_ATT_1H_BASH;		break; // 0x0B
+				case 1:		animToPlay = ACT_ATT_1H_SLASH;		break; // 0x09
+				default:	animToPlay = ACT_ATT_WRESTLE;		break; // 0x1F
 			}
 			break;
 	}
@@ -1262,6 +1343,9 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 				Effects->PlaySound( mChar, toPlay );
 		}
 	}
+	else if( mChar->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == NULL || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		CombatAnimsNew( mChar );
 	else if( mChar->IsOnHorse() )
 		CombatOnHorse( mChar );
 	else
@@ -2218,7 +2302,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 	{
 		if( mChar->GetNPCAiType() == AI_GUARD && ourTarg->IsNpc() )
 		{
-			Effects->PlayCharacterAnimation( ourTarg, 0x15 );
+			Effects->PlayCharacterAnimation( ourTarg, ( RandomNum( 0, 1 ) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD )); // 0x15 or 0x16
 			Effects->playDeathSound( ourTarg );
 
 			ourTarg->Delete(); // Guards, don't give body
@@ -2260,7 +2344,9 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 
 	if( mChar.IsNpc() && mChar.GetTimer( tNPC_EVADETIME ) > cwmWorldState->GetUICurrentTime() )
 	{
-		//Console.Warning( "Exited CombatLoop for NPC due to EvadeTimer.\n" );
+#ifdef DEBUG_COMBAT
+		Console.warning( "DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n" );
+#endif
 		return;
 	}
 

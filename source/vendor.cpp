@@ -116,9 +116,9 @@ bool CPIBuyItem::Handle( void )
 	for( i = 0; i < itemtotal; ++i )
 	{
 		baseOffset	= 7 * i;
-		layer[i]	= tSock->GetByte( 8 + baseOffset );
-		bitems[i]	= calcItemObjFromSer( tSock->GetDWord( 9 + baseOffset ) );
-		amount[i]	= tSock->GetWord( 13 + baseOffset );
+		layer[i]	= tSock->GetByte( 8 + static_cast<size_t>(baseOffset) );
+		bitems[i]	= calcItemObjFromSer( tSock->GetDWord( 9 + static_cast<size_t>(baseOffset) ) );
+		amount[i]	= tSock->GetWord( 13 + static_cast<size_t>(baseOffset) );
 		goldtotal	+= ( amount[i] * ( bitems[i]->GetBuyValue() ) );
 	}
 
@@ -322,8 +322,8 @@ bool CPISellItem::Handle( void )
 		UI32 totgold = 0, value = 0;
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6*i) ) );
-			amt = tSock->GetWord( 13 + (6*i) );
+			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6 * static_cast<size_t>(i)) ) );
+			amt = tSock->GetWord( 13 + ( 6 * static_cast<size_t>(i)) );
 			maxsell += amt;
 		}
 
@@ -335,8 +335,8 @@ bool CPISellItem::Handle( void )
 
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6*i) ) );
-			amt = tSock->GetWord( 13 + (6*i) );
+			j = calcItemObjFromSer( tSock->GetDWord( 9 + ( 6 * static_cast<size_t>(i)) ) );
+			amt = tSock->GetWord( 13 + ( 6 * static_cast<size_t>(i)) );
 			if( ValidateObject( j ) )
 			{
 				if( j->GetAmount() < amt || FindItemOwner( j ) != mChar )

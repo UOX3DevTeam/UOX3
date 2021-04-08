@@ -205,12 +205,12 @@ CMapWorld::CMapWorld( UI08 worldNum )
 	resourceX			= static_cast<UI16>(mMap.xBlock / cwmWorldState->ServerData()->ResOreArea());
 	resourceY			= static_cast<UI16>(mMap.yBlock / cwmWorldState->ServerData()->ResOreArea());
 
-	size_t resourceSize = static_cast<size_t>(resourceX * resourceY);
+	size_t resourceSize = (static_cast<size_t>(resourceX) * static_cast<size_t>(resourceY));
 	if( resourceSize < 1 )	// ALWAYS initialize at least one resource region.
 		resourceSize = 1;
 	mapResources.resize( resourceSize );
 
-	mapRegions.resize( static_cast<size_t>(upperArrayX * upperArrayY) );
+	mapRegions.resize( static_cast<size_t>(upperArrayX) * static_cast<size_t>(upperArrayY) );
 }
 
 CMapWorld::~CMapWorld()
@@ -228,7 +228,7 @@ CMapWorld::~CMapWorld()
 CMapRegion * CMapWorld::GetMapRegion( SI16 xOffset, SI16 yOffset )
 {
 	CMapRegion *mRegion			= NULL;
-	const size_t regionIndex	= static_cast<size_t>((xOffset * upperArrayY) + yOffset);
+	const size_t regionIndex	= (static_cast<size_t>(xOffset) * static_cast<size_t>(upperArrayY) + static_cast<size_t>(yOffset));
 
 	if( xOffset >= 0 && xOffset < upperArrayX && yOffset >= 0 && yOffset < upperArrayY )
 	{
@@ -250,7 +250,7 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 	const UI16 gridX = (x / cwmWorldState->ServerData()->ResOreArea());
 	const UI16 gridY = (y / cwmWorldState->ServerData()->ResOreArea());
 
-	size_t resIndex = ((gridX * resourceY) + gridY);
+	size_t resIndex = ((static_cast<size_t>(gridX) * static_cast<size_t>(resourceY)) + static_cast<size_t>(gridY));
 
 	if( gridX >= resourceX || gridY >= resourceY || resIndex > mapResources.size() )
 		resIndex = 0;
@@ -385,13 +385,13 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetItemList()->Remove( nItem ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
+			Console.warning( format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		}
 		if( !newCell->GetItemList()->Add( nItem ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
+			Console.warning( format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 		}
 		return true;
@@ -418,13 +418,13 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetCharList()->Remove( nChar ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() );
+			Console.warning( format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
 #endif
 		}
 		if( !newCell->GetCharList()->Add( nChar ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() );
+			Console.warning( format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
 #endif
 		}
 		return true;
@@ -446,7 +446,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	if( !cell->GetItemList()->Add( nItem ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
+		Console.warning( format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 		return false;
 	}
@@ -467,7 +467,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	if( !cell->GetItemList()->Remove( nItem ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
+		Console.warning( format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		return false;
 	}
@@ -488,7 +488,7 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	if( !cell->GetCharList()->Add( toAdd ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() );
+		Console.warning( format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
 #endif
 		return false;
 	}
@@ -509,7 +509,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	if( !cell->GetCharList()->Remove( toRemove ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() );
+		Console.warning( format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
 #endif
 		return false;
 	}

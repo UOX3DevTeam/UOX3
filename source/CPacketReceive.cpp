@@ -16,6 +16,7 @@
 #include "PartySystem.h"
 #include "cGuild.h"
 #include "StringUtility.hpp"
+#include "cRaces.h"
 
 
 //o-----------------------------------------------------------------------------------------------o
@@ -138,6 +139,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
+		case 0xD6:	return NULL;
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xF0:	return ( new CPIKrriosClientSpecial( s )	); // Responses to special client packet also used by assistant tools to negotiate features with server
@@ -1434,7 +1436,7 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPISingleClick()
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles incoming packet with single-click request
+//| Purpose		-	Handles incoming packet with single-click (and All-Names macro) request
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x09 (Single Click)
 //|					Size: 5 bytes
@@ -1855,7 +1857,7 @@ UI32 CPIGumpMenuSelect::SwitchValue( UI32 index ) const
 	if( index >= switchCount )
 		return INVALIDSERIAL;
 	// we use a 0 based counter, which means that the first switch is at 19, not 15
-	return tSock->GetDWord( 19 + 4 * index );
+	return tSock->GetDWord( 19 + 4 * static_cast<size_t>(index) );
 }
 
 UI16 CPIGumpMenuSelect::GetTextID( UI08 number ) const
@@ -1868,7 +1870,7 @@ UI16 CPIGumpMenuSelect::GetTextLength( UI08 number ) const
 {
 	if( number >= textCount )
 		return 0xFFFF;
-	return tSock->GetWord( textLocationOffsets[number] + 2 );
+	return tSock->GetWord( static_cast<size_t>(textLocationOffsets[number]) + 2 );
 }
 std::string CPIGumpMenuSelect::GetTextString( UI08 number ) const
 {
@@ -1891,21 +1893,21 @@ std::string CPIGumpMenuSelect::GetTextUString( UI08 number ) const
 	std::string toReturn = "";
 	UI16 offset = textLocationOffsets[number] + 4;
 	for( UI16 counter = 0; counter < GetTextLength( number ); ++counter )
-		toReturn += tSock->GetByte( offset + counter * 2 + 1 );
+		toReturn += tSock->GetByte( static_cast<size_t>(offset) + static_cast<size_t>(counter) * 2 + 1 );
 	return toReturn;
 }
 void CPIGumpMenuSelect::BuildTextLocations( void )
 {
 	if( textCount > 0 )
 	{
-		size_t i = textOffset + 4;	// first is textOffset + 4, to walk past the number of text strings
+		size_t i = static_cast<size_t>(textOffset) + 4;	// first is textOffset + 4, to walk past the number of text strings
 		textLocationOffsets.resize( textCount );
 		for( size_t j = 0; j < textCount; ++j )
 		{
 			textLocationOffsets[j] = static_cast<wchar_t>(i);
 			i += 2;	// skip the text ID
 			UI16 textLen = tSock->GetWord( i );
-			i += ( 2 * textLen + 2 );	// we need to add the + 2 for the text len field
+			i += ( 2 * static_cast<size_t>(textLen) + 2 );	// we need to add the + 2 for the text len field
 		}
 	}
 }
@@ -2260,7 +2262,7 @@ void CPITalkRequestUnicode::Receive( void )
 		size_t numTrigWords	= 0;
 
 		// number of distinct trigger words
-		numTrigWords = (tSock->GetByte( 12 )<<4) + (tSock->GetByte( 13 )>>4);
+		numTrigWords = (static_cast<size_t>(tSock->GetByte( 12 ))<<4) + (static_cast<size_t>(tSock->GetByte( 13 ))>>4);
 
 		size_t byteNum = 13;
 		for( size_t tWord = 0; tWord < numTrigWords; )
@@ -2607,20 +2609,20 @@ void CPICreateCharacter::Create3DCharacter( void )
 		skillValue[3]	= tSock->GetByte( 95 ); // Byte[1]
 		byteNum = 96;
 	}
-	unknown4		= tSock->GetByte( byteNum+25 ); // Byte[1] // 121
-	hairColour		= tSock->GetWord( byteNum+26 ); // Byte[2] // 122
-	hairStyle		= tSock->GetWord( byteNum+28 ); // Byte[2] // 124
-	unknown5		= tSock->GetByte( byteNum+30 ); // Byte[1]
-	unknown6		= tSock->GetDWord( byteNum+31 ); // Byte[4]
-	unknown7		= tSock->GetByte( byteNum+35 ); // Byte[1]
-	shirtColour		= tSock->GetWord( byteNum+36 ); // Byte[2]
-	shirtID			= tSock->GetWord( byteNum+38 ); // Byte[2]
-	unknown8		= tSock->GetByte( byteNum+40 ); // Byte[1]
-	faceColour		= tSock->GetWord( byteNum+41 ); // Byte[2]
-	faceID			= tSock->GetWord( byteNum+43 ); // Byte[2]
-	unknown9		= tSock->GetByte( byteNum+45 ); // Byte[1]
-	facialHairColour= tSock->GetWord( byteNum+46 ); // Byte[2]
-	facialHair		= tSock->GetWord( byteNum+48 ); // Byte[2]
+	unknown4		= tSock->GetByte( static_cast<size_t>(byteNum)+25 ); // Byte[1] // 121
+	hairColour		= tSock->GetWord( static_cast<size_t>(byteNum)+26 ); // Byte[2] // 122
+	hairStyle		= tSock->GetWord( static_cast<size_t>(byteNum)+28 ); // Byte[2] // 124
+	unknown5		= tSock->GetByte( static_cast<size_t>(byteNum)+30 ); // Byte[1]
+	unknown6		= tSock->GetDWord( static_cast<size_t>(byteNum)+31 ); // Byte[4]
+	unknown7		= tSock->GetByte( static_cast<size_t>(byteNum)+35 ); // Byte[1]
+	shirtColour		= tSock->GetWord( static_cast<size_t>(byteNum)+36 ); // Byte[2]
+	shirtID			= tSock->GetWord( static_cast<size_t>(byteNum)+38 ); // Byte[2]
+	unknown8		= tSock->GetByte( static_cast<size_t>(byteNum)+40 ); // Byte[1]
+	faceColour		= tSock->GetWord( static_cast<size_t>(byteNum)+41 ); // Byte[2]
+	faceID			= tSock->GetWord( static_cast<size_t>(byteNum)+43 ); // Byte[2]
+	unknown9		= tSock->GetByte( static_cast<size_t>(byteNum)+45 ); // Byte[1]
+	facialHairColour= tSock->GetWord( static_cast<size_t>(byteNum)+46 ); // Byte[2]
+	facialHair		= tSock->GetWord( static_cast<size_t>(byteNum)+48 ); // Byte[2]
 
 	memcpy( charName, &tSock->Buffer()[11], 30 ); // Byte[30]
 	memcpy( password, &tSock->Buffer()[41], 30 ); // Byte[30]
@@ -2702,17 +2704,17 @@ void CPICreateCharacter::Create2DCharacter( void )
 		byteNum = 82;
 	}
 	skinColour		= tSock->GetWord( byteNum );
-	hairStyle		= tSock->GetWord( byteNum+2 );
-	hairColour		= tSock->GetWord( byteNum+4 );
-	facialHair		= tSock->GetWord( byteNum+6 );
-	facialHairColour= tSock->GetWord( byteNum+8 );
+	hairStyle		= tSock->GetWord( static_cast<size_t>(byteNum)+2 );
+	hairColour		= tSock->GetWord( static_cast<size_t>(byteNum)+4 );
+	facialHair		= tSock->GetWord( static_cast<size_t>(byteNum)+6 );
+	facialHairColour= tSock->GetWord( static_cast<size_t>(byteNum)+8 );
 
-	unknown			= tSock->GetByte( byteNum+10 );
-	locationNumber	= tSock->GetByte( byteNum+11 );
-	slot			= tSock->GetDWord( byteNum+12 );
-	ipAddress		= tSock->GetDWord( byteNum+16 );
-	shirtColour		= tSock->GetWord( byteNum+20 );
-	pantsColour		= tSock->GetWord( byteNum+22 );
+	unknown			= tSock->GetByte( static_cast<size_t>(byteNum)+10 );
+	locationNumber	= tSock->GetByte( static_cast<size_t>(byteNum)+11 );
+	slot			= tSock->GetDWord( static_cast<size_t>(byteNum)+12 );
+	ipAddress		= tSock->GetDWord( static_cast<size_t>(byteNum)+16 );
+	shirtColour		= tSock->GetWord( static_cast<size_t>(byteNum)+20 );
+	pantsColour		= tSock->GetWord( static_cast<size_t>(byteNum)+22 );
 
 	memcpy( charName, &tSock->Buffer()[10], 30 );
 	memcpy( password, &tSock->Buffer()[40], 30 ); // Does this really have anything to do with passwords?
@@ -3426,6 +3428,7 @@ void CPISubcommands::Receive( void )
 		case 0x1A:	{	subPacket = new CPIExtendedStats( tSock );		}	break;	// Extended Stats
 		case 0x1C:	{	subPacket = new CPISpellbookSelect( tSock );	}	break;	// New SpellBook Selection
 		case 0x2C:	{	subPacket = new CPIBandageMacro( tSock );		}	break;	// Bandage macro
+		case 0x32:	{	subPacket = new CPIToggleFlying( tSock );		}	break;	// Toggle Flying on/off
 	}
 }
 bool CPISubcommands::Handle( void )
@@ -4209,6 +4212,53 @@ void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIToggleFlying()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Toggles flying on/off for gargoyle characters
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x32 (Toggle Gargoyle Flying)
+//|					Size: 11 bytes?
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x32)
+//|						Subcommand details
+//|							Byte[4] unk1 (always 0x0100)
+//|							Byte[2] unk2(always 0x0)
+//o-----------------------------------------------------------------------------------------------o
+CPIToggleFlying::CPIToggleFlying()
+{
+}
+CPIToggleFlying::CPIToggleFlying(CSocket *s) : CPInputBuffer(s)
+{
+	Receive();
+}
+
+void CPIToggleFlying::Receive(void)
+{
+	Handle();
+}
+bool CPIToggleFlying::Handle(void)
+{
+	CChar *ourChar = tSock->CurrcharObj();
+	if( ValidateObject( ourChar ))
+	{
+		ourChar->ToggleFlying();
+	}
+	return true;
+}
+
+void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Toggle Gargoyle Flying --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }

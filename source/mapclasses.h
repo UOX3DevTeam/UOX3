@@ -154,7 +154,7 @@ private:
 	UI08 unknown4;
 	UI08 unknown5;
 	SI08 height;
-	SI08 name[20];
+	SI08 name[21];
 
 public:
 	CTileHS() : unknown0( 0 ), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
@@ -213,7 +213,7 @@ private:
 	UI08 unknown4;
 	UI08 unknown5;
 	SI08 height;
-	SI08 name[20];
+	SI08 name[21];
 
 public:
 	CTile() : weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
@@ -261,7 +261,7 @@ class CLandHS : public CBaseTile
 private:
 	UI32 unknown1;
 	UI16 textureID;
-	SI08 name[20];
+	SI08 name[21];
 public:
 	CLandHS() : unknown1( 0 ), textureID( 0 )
 	{
@@ -290,7 +290,7 @@ class CLand : public CBaseTile
 {
 private:
 	UI16 textureID;
-	SI08 name[20];
+	SI08 name[21];
 public:
 	CLand() : textureID( 0 )
 	{

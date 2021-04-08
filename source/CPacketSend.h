@@ -229,6 +229,24 @@ public:
 	CPCharacterAnimation &operator=( CChar &toCopy );
 };
 
+class CPNewCharacterAnimation : public CPUOXBuffer
+{
+protected:
+	virtual void	CopyData( CChar &toCopy );
+	virtual void	InternalReset( void ) override;
+public:
+	CPNewCharacterAnimation();
+	virtual			~CPNewCharacterAnimation()
+	{
+	}
+	CPNewCharacterAnimation( CChar &toCopy );
+	virtual void	Serial( SERIAL toSet );
+	virtual void	Action( UI16 action );
+	virtual void	SubAction( UI16 subAction );
+	virtual void	SubSubAction( UI08 subSubAction );
+	CPNewCharacterAnimation &operator=( CChar &toCopy );
+};
+
 class CPDrawGamePlayer : public CPUOXBuffer
 {
 protected:

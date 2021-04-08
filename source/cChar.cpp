@@ -56,6 +56,7 @@
 #include "CJSEngine.h"
 #include "combat.h"
 #include "StringUtility.hpp"
+#include "cEffects.h"
 
 #define DEBUGMOVEMULTIPLIER 1.75
 
@@ -107,6 +108,7 @@ const UI32 BIT_CANATTACK		=	26;
 const UI32 BIT_INBUILDING		=	27;
 const UI32 BIT_INPARTY			=	28;	// This property is not saved
 const UI32 BIT_EVADE			=	29; // This property is not saved
+const UI32 BIT_FLYING			=	30; // This property is not saved
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -223,6 +225,7 @@ const UI16			DEFCHAR_PRIV				= 0;
 //const UI16			DEFCHAR_NOMOVE 				= 0;
 //const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
+const BodyType		DEFCHAR_BODYTYPE			= BT_OTHER;
 
 
 //o-----------------------------------------------------------------------------------------------o
@@ -239,7 +242,7 @@ emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
 advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
-raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
+raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE )
 {
 	ownedItems.clear();
 	itemLayers.clear();
@@ -583,6 +586,47 @@ UI16 CChar::GetTown( void ) const
 void CChar::SetTown( UI16 newValue )
 {
 	town = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	BodyType GetBodyType( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get the body type (human, elf, gargoyle, other) of a character
+//o-----------------------------------------------------------------------------------------------o
+BodyType CChar::GetBodyType( void )
+{
+	BodyType retVal = BT_OTHER;
+	switch( GetID() )
+	{
+		case 0x0190: // Male Human
+		case 0x0191: // Female Human
+		case 0x0192: // Male Human Ghost
+		case 0x0193: // Female Human Ghost
+		case 0x00B7: // Male Human Savage
+		case 0x00B9: // Male Human Savage
+		case 0x02EE: // Male Human Savage
+		case 0x00B8: // Female Human Savage
+		case 0x00BA: // Female Human Savage
+		case 0x02EF: // Female Human Savage
+			retVal = BT_HUMAN;
+			break;
+		case 0x025D: // Male Elf
+		case 0x025E: // Female Elf
+		case 0x025F: // Male Elf Ghost
+		case 0x0260: // Female Elf Ghost
+			retVal = BT_ELF;
+			break;
+		case 0x029A: // Male Gargoyle
+		case 0x029B: // Female Gargoyle
+		case 0x02B6: // Male Gargoyle Ghost
+		case 0x02B7: // Female Gargoyle Ghost
+			retVal = BT_GARGOYLE;
+			break;
+		default:
+			retVal = BT_OTHER;
+			break;
+	}
+	return retVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4379,6 +4423,94 @@ void CChar::SetStabled( bool newValue )
 			}
 		}
 	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsFlying( void ) const
+//|					void SetFlying( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets flying state of character
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::IsFlying( void ) const
+{	
+	return bools.test( BIT_FLYING );
+}
+void CChar::SetFlying( bool newValue )
+{
+	if( MayLevitate() )
+		bools.set( BIT_FLYING, newValue );
+}
+
+bool CChar::ToggleFlying( void )
+{
+	CSocket *tSock = GetSocket();
+	if( MayLevitate() )
+	{
+		if( GetTimer( tCHAR_FLYINGTOGGLE ) <= cwmWorldState->GetUICurrentTime() )
+		{
+			if( IsFrozen() )
+				tSock->sysmessage("You cannot use this ability while frozen.");
+			else
+			{
+				// Start timer for when flying toggle can be used again
+				SetTimer( tCHAR_FLYINGTOGGLE, BuildTimeValue( 1.65 ) );
+
+				// Freeze character until flying anim is over
+				SetFrozen( true );
+
+				// Toggle flying
+				SetFlying( !IsFlying() );
+
+				// Refresh our own character
+				CPExtMove toSend = (*this);
+				tSock->Send(&toSend);
+
+				// Play takeoff/landing animation
+				if( !IsFlying() )
+					Effects->PlayNewCharacterAnimation( this, N_ACT_LAND ); // Action 0x0A, subAction 0x00
+				else
+					Effects->PlayNewCharacterAnimation( this, N_ACT_TAKEOFF ); // Action 0x09, subAction 0x00
+
+				// Send update to nearby characters
+				Network->pushConn();
+				for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
+				{
+					if( tSend == NULL )
+						continue;
+					CChar *mChar = tSend->CurrcharObj();
+					if( !ValidateObject( mChar ))
+						continue;
+					if( WorldNumber() != mChar->WorldNumber() || GetInstanceID() != mChar->GetInstanceID() )
+						continue;
+
+					UI16 effRange = static_cast<UI16>(tSend->Range());
+					const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
+					if( visibleRange >= effRange )
+						effRange = visibleRange;
+
+					if( this != mChar)
+					{
+						if( !objInRange( this, mChar, effRange ))
+						{
+							continue;
+						}
+					}
+
+					toSend.FlagColour(static_cast<UI08>(FlagColour(mChar)));
+					tSend->Send(&toSend);
+				}
+				Network->popConn();
+			}
+		}
+	}
+	else if( GetID() == 0x029A || GetID() == 0x029B )
+	{
+		// Enable flying mode for older gargoyle characters that were created before this property was added to character creation
+		SetLevitate( true );
+	}
+	else
+		tSock->sysmessage( "This character is not allowed to fly!" );
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o

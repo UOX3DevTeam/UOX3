@@ -1139,6 +1139,7 @@ function HandleItemTarget( pSocket, myTarget )
 			case itemProp.weightMax:
 				itemLabelTooltip 	= "Maximum weight a container can hold (100 = 1.0 stone)";
 				itemValue 			= (myTarget.weightMax).toString();
+				itemValueTooltip 	= (parseFloat(myTarget.weightMax/100).toFixed(2)).toString() + " stones";
 				break;
 			case itemProp.wipable:
 				itemLabelTooltip 	= "Marks item as wipable with WIPE command";

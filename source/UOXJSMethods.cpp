@@ -1856,13 +1856,16 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 2 )
 	{
-		MethodError( "DoAction: Invalid number of arguments (takes 1, action)" );
+		MethodError( "DoAction: Invalid number of arguments (takes 1 to 2 - action, subAction)" );
 		return JS_FALSE;
 	}
 
 	UI16 targAction = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	SI16 targSubAction = -1;
+	if( argc > 1 )
+		targSubAction = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
 	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ) )
@@ -1870,7 +1873,10 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		MethodError( "Action: Invalid character" );
 		return JS_FALSE;
 	}
-	Effects->PlayCharacterAnimation( myChar, targAction );
+	if( myChar->GetBodyType() == BT_GARGOYLE || targSubAction >= 0 )
+		Effects->PlayNewCharacterAnimation( myChar, targAction, static_cast<UI16>(targSubAction) );
+	else
+		Effects->PlayCharacterAnimation( myChar, targAction );
 	return JS_TRUE;
 }
 
@@ -1924,6 +1930,8 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	if( myChar->IsOnHorse() )
 		DismountCreature( myChar );
+	else if( myChar->IsFlying() )
+		myChar->ToggleFlying();
 	return JS_TRUE;
 }
 
@@ -1970,7 +1978,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	std::string msgArg;
-	for( int i = 1; i < argc; i++ )
+	for( UI32 i = 1; i < argc; i++ )
 	{
 		if( msgArg.empty() )
 			msgArg += JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
@@ -2080,7 +2088,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			}
 			else if( JSVAL_IS_INT( argv[0] ) )
 			{
-				size_t placeNum = JSVAL_TO_INT( argv[0] );
+				UI16 placeNum = JSVAL_TO_INT( argv[0] );
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -2601,7 +2609,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			{
 				localObject.m_Destroy		= FALSE;
 				localObject.m_StringValue	= stringVal;
-				localObject.m_IntValue		= localObject.m_StringValue.length();
+				localObject.m_IntValue		= static_cast<SI32>(localObject.m_StringValue.length());
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}
 		}
@@ -3003,8 +3011,6 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	UI32 retVal = 0;
 
-	//Seems to be debug output
-	//Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmount: %i\n*****\n", myObj->GetName().c_str(), realID, itemColour, amount );
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		CChar *myChar	= static_cast<CChar *>(myObj);
@@ -5176,7 +5182,7 @@ JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CAccount_AddAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Function	-	JSBool CAccount_GetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o-----------------------------------------------------------------------------------------------o
@@ -6181,7 +6187,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		}
 		else
 		{
-			size_t placeNum = JSVAL_TO_INT( argv[0] );
+			UI16 placeNum = JSVAL_TO_INT( argv[0] );
 			if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 			{
 				GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
