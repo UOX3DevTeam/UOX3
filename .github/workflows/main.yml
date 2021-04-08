@@ -1,0 +1,17 @@
+name: Linux x64 Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: prepare automake
+      run: chmod +x automake.sh
+    - name: automake
+      run: ./automake.sh

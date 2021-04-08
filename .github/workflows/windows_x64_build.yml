@@ -1,0 +1,18 @@
+name: Windows x64 Build
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setupt msvc console
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: cmake and build
+        run: |
+          cmake -G "NMake Makefiles" .
+          nmake
