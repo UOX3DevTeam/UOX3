@@ -15,7 +15,3 @@ jobs:
       run: chmod +x automake.sh
     - name: automake
       run: ./automake.sh
-    - name: checkmake
-      run: |
-          cd source
-          make check     
