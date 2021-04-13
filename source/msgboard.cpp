@@ -863,24 +863,21 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 
 	CTownRegion *destReg = cwmWorldState->townRegions[mNPC->GetQuestDestRegion()];
 
-	// Calculate payment for services rendered
-	UI16 servicePay = ( RandomNum(0, 20) * RandomNum(1, 30) );  // Equals a range of 0 to 600 possible gold with a 5% chance of getting 0 gold
+	// Calculate payment for services rendered, partly based on escort's fame and partly based on a percentage (25%) of the amount of gold they're carrying
+	UI16 questReward = (( mNPC->GetFame() > 0 ? (( mNPC->GetFame() / 100 ) * 50 ) : 0 ) + std::round( GetItemAmount( mNPC, 0x0EED ) * 0.25 ));
 
 	// If they have no money, well, oops!
-	if( servicePay == 0 )
+	if( questReward == 0 )
 		mNPC->TextMessage( mSock, 738, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	else // Otherwise pay the poor sod for his time
 	{
-		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
-		if( servicePay < 75 )
-			servicePay += RandomNum( 75, 100 );
-		Items->CreateScriptItem( mSock, mChar, "0x0EED", servicePay, OT_ITEM, true );
-		Effects->goldSound( mSock, servicePay );
+		Items->CreateScriptItem( mSock, mChar, "0x0EED", questReward, OT_ITEM, true );
+		Effects->goldSound( mSock, questReward );
 		mNPC->TextMessage( mSock, 739, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}
 
 	// Inform the PC of what he has just been given as payment
-	mSock->sysmessage( 740, servicePay, mNPC->GetName().c_str(), mNPC->GetTitle().c_str() );
+	mSock->sysmessage( 740, questReward, mNPC->GetName().c_str(), mNPC->GetTitle().c_str() );
 
 	// Take the NPC out of quest mode
 	mNPC->SetNpcWander( WT_FREE );         // Wander freely

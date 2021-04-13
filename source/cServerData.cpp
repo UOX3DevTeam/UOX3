@@ -384,6 +384,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ALCHEMYBONUSENABLED", 245);
 	regINIValue("ALCHEMYBONUSMODIFIER", 246);
 	regINIValue("NPCFLAGUPDATETIMER", 247);
+	regINIValue("JSENGINESIZE", 248);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -405,6 +406,11 @@ void CServerData::ResetDefaults( void )
 	ServerPort( 2593 );
 	serverList[0].setPort( 2593 );
 	ServerName( "Default UOX3 Server" );
+
+	// Set default gcMaxBytes limit in MB per JS runtime
+	// If set too low, UOX3 might crash when reloading (full) JS engine
+	// JS API references describe it as "Maximum nominal heap before last ditch GC"
+	SetJSEngineSize( 256 );
 
 	SystemTimer( tSERVER_POTION, 10 );
 	ServerMoon( 0, 0 );
@@ -2763,7 +2769,7 @@ void CServerData::AccountFlushTimer( R64 value )
 //|	Function	-	bool GetClientFeature( ClientFeatures bitNum ) const
 //|					void SetClientFeature( ClientFeatures bitNum, bool nVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which client side features to enable for connecting clients
+//|	Purpose		-	Gets/Sets a specific client-side feature
 //|	Notes		-	See ClientFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
@@ -2795,7 +2801,7 @@ void CServerData::SetClientFeatures( UI32 nVal )
 //|	Function	-	bool GetServerFeature( ServerFeatures bitNum ) const
 //|					void SetServerFeature( ServerFeatures bitNum, bool nVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which server side features to enable
+//|	Purpose		-	Gets/Sets a specific server-side feature
 //|	Notes		-	See ServerFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
@@ -2985,6 +2991,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation()?1:0) << '\n';
 		ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
 		ofsOutput << "CLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker()?1:0) << '\n';
+		ofsOutput << "JSENGINESIZE=" << static_cast<UI16>(GetJSEngineSize()) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -4116,6 +4123,9 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		case 247:	 // NPCFLAGUPDATETIMER[0236]
 			SystemTimer( tSERVER_NPCFLAGUPDATETIMER, value.toUShort() );
 			break;
+		case 248:	 // JSENGINESIZE[0237]
+			SetJSEngineSize( value.toUShort() );
+			break;
 		default:
 			rvalue = false;
 			break;
@@ -4324,6 +4334,22 @@ UI16 CServerData::ServerSecondsPerUOMinute( void ) const
 void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 {
 	secondsperuominute = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetJSEngineSize( void ) const
+//|					void SetJSEngineSize( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets jsEngineSize (in MB), used to define max bytes per JSRuntime
+//|					before a last ditch GC effort is made
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::GetJSEngineSize( void ) const
+{
+	return jsEngineSize;
+}
+void CServerData::SetJSEngineSize( UI16 newVal )
+{
+	jsEngineSize = newVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o

@@ -2098,8 +2098,11 @@ void CSocket::statwindow( CChar *targChar )
 
 	// 9/17/01 : fixed bug of your name on your own stat window
 	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
-	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
-	toSend.AC( Combat->calcDef( targChar, 0, false ) );
+	if( targChar->IsNpc() && mChar == targChar )
+	{
+		toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
+		toSend.AC( Combat->calcDef( targChar, 0, false ) );
+	}
 
 	Send( &toSend );
 

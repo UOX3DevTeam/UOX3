@@ -23,27 +23,20 @@ CJSEngine::CJSEngine( void )
 {
 	runtimeList.resize( 0 );
 
-	const SI32 DefEngineSize = 0x1000000;
+	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
-	std::ifstream engineData( "engine.dat" );
-	SI32 engineSize = DefEngineSize;
-	if( engineData.is_open() )
-	{
-		char line[1024];
-		engineData.getline( line, 1024 );
-		UString sLine( line );
-		sLine = sLine.removeComment().stripWhiteSpace();
-		if( !sLine.empty() )
-			engineSize = UOX_MAX( sLine.toInt(), DefEngineSize );
+	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
+	auto maxBytesSize = UOX_MAX( static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
 
-		engineData.close();
-	}
+	// Use minimum of INI-provided value and hard-defined maximum
+	// maxBytes definition: "Maximum nominal heap before last ditch GC"
+	UI32 engineMaxBytes = UOX_MIN( static_cast<UI32>( static_cast<UI32>(maxBytesSize) * 1024 * 1024 ), maxEngineSize );
 
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;
 
-	runtimeList.push_back( new CJSRuntime( engineSize ) );	// Default Runtime
-	runtimeList.push_back( new CJSRuntime( engineSize ) );	// Console Runtime
+	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Default Runtime
+	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Console Runtime
 
 	Console << "JavaScript engine startup complete." << myendl;
 	Console.PrintSectionBegin();
@@ -151,7 +144,14 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 	if( jsRuntime == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 
-	jsContext = JS_NewContext( jsRuntime, 0x500000 );
+	// No need to use a large number here, it's not stack size as documentation indicated,
+	// but "chunk size of the stack pool". Recommendations are to leave it at 8192. In
+	// debug builds, larger values can even degrade performance drastically
+	jsContext = JS_NewContext( jsRuntime, 8192 );
+
+	// Specify JS 1.7 as version to unlock const variables, let, etc
+	JS_SetVersion( jsContext, JSVERSION_1_7 );
+
 	if( jsContext == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 

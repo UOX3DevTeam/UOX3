@@ -1897,12 +1897,13 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 	fsOut << "//         CHARACTER-4 0xffffffff" << std::endl;
 	fsOut << "//         CHARACTER-5 0xffffffff" << std::endl;
 	fsOut << "//         CHARACTER-6 0xffffffff" << std::endl;
+	fsOut << "//         CHARACTER-7 0xffffffff" << std::endl;
 	fsOut << "//      }" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   FLAGS: " << std::endl;
 	fsOut << "//      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public           0x0008) Currently Logged In" << std::endl;
 	fsOut << "//            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 Blocked   0x0080) Char-4 Blocked" << std::endl;
-	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Unused           0x0800) Unused" << std::endl;
+	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Unused" << std::endl;
 	fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   TIMEBAN: " << std::endl;
@@ -1940,7 +1941,7 @@ void cAccountClass::WriteAccessHeader( std::fstream &fsOut )
 	fsOut << "//   FLAGS: " << std::endl;
 	fsOut << "//      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public           0x0008) Currently Logged In" << std::endl;
 	fsOut << "//            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 Blocked   0x0080) Char-4 Blocked" << std::endl;
-	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Unused           0x0800) Unused" << std::endl;
+	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Unused" << std::endl;
 	fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account" << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
