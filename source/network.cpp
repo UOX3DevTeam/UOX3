@@ -754,6 +754,9 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						mSock->Receive( 3 );// What a STUPID message...  It would be useful if
 						mSock->Receive( mSock->GetWord( 1 ) );// it included the color changed to, but it doesn't!
 						break;
+					case 0xB5: // Open Chat Window
+						mSock->Receive( 64 );
+						break;
 					case 0xB6:// T2A Popuphelp request
 						mSock->Receive( 9 );
 						break;
@@ -846,7 +849,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						mSock->Receive( 3 );
 						mSock->Receive( mSock->GetWord( 1 ) );
 						break;
-					case 0xD9:
+					case 0xD9: // Spy On Client
+						break;
+					case 0xFB: // Update View Public House Contents
+						mSock->Receive( 2 );
 						break;
 					default:
 						FD_ZERO( &all );

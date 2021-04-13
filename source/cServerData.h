@@ -178,6 +178,7 @@ private:
 	UI32		netRetryCount;					// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
 	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
 	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
+	UI16		jsEngineSize;					// gcMaxBytes limit in MB per JS runtime
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
@@ -802,6 +803,9 @@ public:
 
 	UI16			ServerSecondsPerUOMinute( void ) const;
 	void			ServerSecondsPerUOMinute( UI16 newVal );
+
+	UI16			GetJSEngineSize( void ) const;
+	void			SetJSEngineSize( UI16 newVal );
 
 	SI16			ServerTimeDay( void ) const;
 	UI08			ServerTimeHours( void ) const;

@@ -814,6 +814,23 @@ public:
 
 };
 
+class CPIToolTipRequestAoS : public CPInputBuffer
+{
+protected:
+	SERIAL			getSer;
+public:
+	virtual			~CPIToolTipRequestAoS()
+	{
+	}
+	CPIToolTipRequestAoS();
+	CPIToolTipRequestAoS( CSocket *s );
+
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+
+};
+
 class CPIToolTipRequest : public CPInputBuffer
 {
 protected:

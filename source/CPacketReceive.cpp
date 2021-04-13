@@ -139,7 +139,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
-		case 0xD6:	return NULL;
+		case 0xD6:	return ( new CPIToolTipRequestAoS( s )		);	// AoS Request for tooltip data
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xF0:	return ( new CPIKrriosClientSpecial( s )	); // Responses to special client packet also used by assistant tools to negotiate features with server
@@ -3163,6 +3163,74 @@ void CPINewBookHeader::Receive( void )
 {
 	tSock->Receive( 3, false );
 	tSock->Receive( tSock->GetWord( 1 ), false );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIToolTipRequestAoS()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to show gump entry tooltip
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD6 (Mega Cliloc)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						Client Request
+//|							BYTE[1] 0xD6
+//|							BYTE[2] Length
+//|							Loop for each serial being sent to request tooltip detail about
+//|							BYTE[4] Serial
+//|
+//|						Server Response
+//|							BYTE[1] 0xD6
+//|							BYTE[2] Length
+//|							BYTE[2] 0x0001
+//|							BYTE[4] Serial of item/creature
+//|							BYTE[2] 0x0000
+//|							BYTE[4] Serial of item/creature in all tests. This could be the serial of the item the entry to appear over.
+//|
+//|							Loop of all the item/creature's properties to display in the order to display them. The name is always the first entry.
+//|								BYTE[4] Cliloc ID
+//|								BYTE[2] Length of (if any) Text to add into/with the cliloc
+//|								BYTE[?] Unicode text to be added into the cliloc. Not sent if Length of text above is 0
+//|
+//|							BYTE[4] 00000000 - Sent as end of packet/loop
+//o-----------------------------------------------------------------------------------------------o
+CPIToolTipRequestAoS::CPIToolTipRequestAoS() : getSer( INVALIDSERIAL )
+{
+}
+CPIToolTipRequestAoS::CPIToolTipRequestAoS( CSocket *s ) : CPInputBuffer( s ), getSer( INVALIDSERIAL )
+{
+	Receive();
+}
+
+void CPIToolTipRequestAoS::Receive( void )
+{
+	tSock->Receive( 3, false );
+
+	UI16 blockLen	= tSock->GetWord( 1 );
+	if( blockLen == 0 || ( blockLen - 3 ) % 4 != 0 )
+		return;
+	tSock->Receive( blockLen, false );
+
+	UI16 objCount = ( blockLen - 3 ) / 4;
+	size_t offset = 3;
+	for( UI16 i = 0; i < objCount; i++ )
+	{
+		getSer = tSock->GetDWord( offset + ( i * 4 ));
+		CPToolTip tSend( getSer );
+		tSock->Send( &tSend );
+	}
+}
+bool CPIToolTipRequestAoS::Handle( void )
+{
+	return true;
+}
+void CPIToolTipRequestAoS::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : 0xD6 Tooltip Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, true );
 }
 
 

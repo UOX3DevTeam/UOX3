@@ -1997,180 +1997,205 @@ void CPTargetCursor::CursorType( UI08 nType )
 //o-----------------------------------------------------------------------------------------------o
 void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 {
-	if( target.ReceivedVersion() )
+	CChar *mChar = target.CurrcharObj();
+	if( toCopy.GetSerial() == mChar->GetSerial() )
 	{
-		/*if( target.ClientVersionMajor() >= 6 )
+		if( target.ReceivedVersion() )
 		{
-			// Extended stats not implemented yet
-			extended3 = true;
-			extended4 = true;
-			extended5 = true;
-			extended6 = true;
-			pStream.ReserveSize( 121 );
-			pStream.WriteByte( 2, 121 );
-			Flag( 6 );
-		}*/
-		if( target.ClientVersionMajor() >= 5 )
-		{
-			extended3 = true;
-			extended4 = true;
-			extended5 = true;
-			pStream.ReserveSize( 91 );
-			pStream.WriteByte( 2, 91 );
-			Flag( 5 );
-		}
-		else if( target.ClientVersionMajor() >= 4 )
-		{
-			extended3 = true;
-			extended4 = true;
-			pStream.ReserveSize( 88 );
-			pStream.WriteByte( 2, 88 );
-			Flag( 4 );
-		}
-		else if( target.ClientVersionMajor() >= 3 )
-		{
-			extended3 = true;
-			pStream.ReserveSize( 70 );
-			pStream.WriteByte( 2, 70 );
-			Flag( 3 );
-		}
-	}
-	else
-	{
-		// We haven't received any client details yet.. let's use default server settings
-
-		/*if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ) )
-		{
-			// Extended stats not implemented yet
-			extended3 = true;
-			extended4 = true;
-			extended5 = true;
-			extended6 = true;
-			pStream.ReserveSize( 121 );
-			pStream.WriteByte( 2, 121 );
-			Flag( 6 );
-		}*/
-		if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ) )
-		{
-			extended3 = true;
-			extended4 = true;
-			extended5 = true;
-			pStream.ReserveSize( 91 );
-			pStream.WriteByte( 2, 91 );
-			Flag( 5 );
-		}
-		else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_AOS ) )
-		{
-			extended3 = true;
-			extended4 = true;
-			pStream.ReserveSize( 88 );
-			pStream.WriteByte( 2, 88 );
-			Flag( 4 );
-		}
-		else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_UOR ) )
-		{
-			extended3 = true;
-			pStream.ReserveSize( 70 );
-			pStream.WriteByte( 2, 70 );
-			Flag( 3 );
+			/*if( target.ClientVersionMajor() >= 6 )
+			{
+				// Extended stats not implemented yet
+				extended3 = true;
+				extended4 = true;
+				extended5 = true;
+				extended6 = true;
+				pStream.ReserveSize( 121 );
+				pStream.WriteByte( 2, 121 );
+				Flag( 6 );
+			}*/
+			if( target.ClientVersionMajor() >= 5 )
+			{
+				extended3 = true;
+				extended4 = true;
+				extended5 = true;
+				pStream.ReserveSize( 91 );
+				pStream.WriteByte( 2, 91 );
+				Flag( 5 );
+			}
+			else if( target.ClientVersionMajor() >= 4 )
+			{
+				extended3 = true;
+				extended4 = true;
+				pStream.ReserveSize( 88 );
+				pStream.WriteByte( 2, 88 );
+				Flag( 4 );
+			}
+			else if( target.ClientVersionMajor() >= 3 )
+			{
+				extended3 = true;
+				pStream.ReserveSize( 70 );
+				pStream.WriteByte( 2, 70 );
+				Flag( 3 );
+			}
 		}
 		else
 		{
-			Flag( 1 );
+			// We haven't received any client details yet.. let's use default server settings
+
+			/*if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ) )
+			{
+				// Extended stats not implemented yet
+				extended3 = true;
+				extended4 = true;
+				extended5 = true;
+				extended6 = true;
+				pStream.ReserveSize( 121 );
+				pStream.WriteByte( 2, 121 );
+				Flag( 6 );
+			}*/
+			if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ) )
+			{
+				extended3 = true;
+				extended4 = true;
+				extended5 = true;
+				pStream.ReserveSize( 91 );
+				pStream.WriteByte( 2, 91 );
+				Flag( 5 );
+			}
+			else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_AOS ) )
+			{
+				extended3 = true;
+				extended4 = true;
+				pStream.ReserveSize( 88 );
+				pStream.WriteByte( 2, 88 );
+				Flag( 4 );
+			}
+			else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_UOR ) )
+			{
+				extended3 = true;
+				pStream.ReserveSize( 70 );
+				pStream.WriteByte( 2, 70 );
+				Flag( 3 );
+			}
+			else
+			{
+				Flag( 1 );
+			}
 		}
 	}
-	Serial( toCopy.GetSerial() );
-	Name( toCopy.GetName() );
-	bool isDead = toCopy.IsDead();
-	if( isDead )
+
+	// If toCopy is an NPC or another player, only show basic stats
+	if( toCopy.GetSerial() != mChar->GetSerial() )
 	{
-		CurrentHP( 0 );
-		MaxHP( 0 );
+		pStream.ReserveSize( 43 );
+		pStream.WriteByte( 2, 43 );
+		Flag( 0 );
+		Serial( toCopy.GetSerial() );
+		Name( toCopy.GetName() );
+		SI16 currentHP = toCopy.GetHP();
+		UI16 maxHP = toCopy.GetMaxHP();
+		UI08 percentHP = static_cast<UI08>( 100 * ( currentHP / maxHP ));
+		CurrentHP( percentHP );
+		MaxHP( 100 );
+		NameChange( false );
 	}
 	else
 	{
-		CurrentHP( toCopy.GetHP() );
-		MaxHP( toCopy.GetMaxHP() );
-	}
-	NameChange( false );
-	if( toCopy.GetID() == 0x0190 || toCopy.GetOrgID() == 0x0190 ) // Male huamn
-		Sex( 0 );
-	else if( toCopy.GetID() == 0x0191 || toCopy.GetOrgID() == 0x0191 ) // Female human
-		Sex( 1 );
-	else if( toCopy.GetID() == 0x025D || toCopy.GetOrgID() == 0x025D ) // Male elf
-		Sex( 2 );
-	else if( toCopy.GetID() == 0x025E || toCopy.GetOrgID() == 0x025E ) // Female elf
-		Sex( 3 );
-	if( isDead )
-	{
-		Strength( 0 );
-		Dexterity( 0 );
-		Intelligence( 0 );
-		Stamina( 0 );
-		MaxStamina( 0 );
-		Mana( 0 );
-		MaxMana( 0 );
-	}
-	else
-	{
-		Strength( toCopy.GetStrength() );
-		Dexterity( toCopy.GetDexterity() );
-		Intelligence( toCopy.GetIntelligence() );
-		Stamina( toCopy.GetStamina() );
-		MaxStamina( toCopy.GetMaxStam() );
-		Mana( toCopy.GetMana() );
-		MaxMana( toCopy.GetMaxMana() );
-	}
-	Weight( static_cast<UI16>(toCopy.GetWeight() / 100) );
-	if( extended5 )
-	{
-		MaxWeight( toCopy.GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40 );
-		UI16 bodyID = toCopy.GetID();
-		switch( bodyID )
+		// Send player their own full stats
+		Serial( toCopy.GetSerial() );
+		Name( toCopy.GetName() );
+
+		bool isDead = toCopy.IsDead();
+		if( isDead )
 		{
-			case 0x0190:
-			case 0x0191:
-			case 0x0192:
-			case 0x0193:
-				Race( 0x01 ); break; //human
-			case 0x025D:
-			case 0x025E:
-			case 0x025F:
-			case 0x0260:
-				Race( 0x02 ); break; //elf
-			case 0x029A:
-			case 0x029B:
-			case 0x02B6:
-			case 0x02B7:
-				Race( 0x03 ); break; //gargoyle
-			default:
-				Race( 0x01 ); break;
+			CurrentHP( 0 );
+			MaxHP( 0 );
 		}
-	}
-	if( extended3 )
-	{
-		StatCap( cwmWorldState->ServerData()->ServerStatCapStatus() );
-		CurrentPets( toCopy.GetPetList()->Num() );
-		MaxPets( 0xFF );
-	}
-	if( extended4 )
-	{
-		FireResist( Combat->calcDef( &toCopy, 0, false, HEAT ) );
-		ColdResist( Combat->calcDef( &toCopy, 0, false, COLD ) );
-		PoisonResist( Combat->calcDef( &toCopy, 0, false, POISON ) );
-		EnergyResist( Combat->calcDef( &toCopy, 0, false, LIGHTNING ) );
-		Luck( 0 );
-		DamageMin( Combat->calcLowDamage( &toCopy ) );
-		DamageMax( Combat->calcHighDamage( &toCopy ) );
-		TithingPoints( 0 );
+		else
+		{
+			CurrentHP( toCopy.GetHP() );
+			MaxHP( toCopy.GetMaxHP() );
+		}
+		NameChange( false );
+		if( toCopy.GetID() == 0x0190 || toCopy.GetOrgID() == 0x0190 ) // Male huamn
+			Sex( 0 );
+		else if( toCopy.GetID() == 0x0191 || toCopy.GetOrgID() == 0x0191 ) // Female human
+			Sex( 1 );
+		else if( toCopy.GetID() == 0x025D || toCopy.GetOrgID() == 0x025D ) // Male elf
+			Sex( 2 );
+		else if( toCopy.GetID() == 0x025E || toCopy.GetOrgID() == 0x025E ) // Female elf
+			Sex( 3 );
+		if( isDead )
+		{
+			Strength( 0 );
+			Dexterity( 0 );
+			Intelligence( 0 );
+			Stamina( 0 );
+			MaxStamina( 0 );
+			Mana( 0 );
+			MaxMana( 0 );
+		}
+		else
+		{
+			Strength( toCopy.GetStrength() );
+			Dexterity( toCopy.GetDexterity() );
+			Intelligence( toCopy.GetIntelligence() );
+			Stamina( toCopy.GetStamina() );
+			MaxStamina( toCopy.GetMaxStam() );
+			Mana( toCopy.GetMana() );
+			MaxMana( toCopy.GetMaxMana() );
+		}
+		Weight( static_cast<UI16>(toCopy.GetWeight() / 100) );
+		if( extended5 )
+		{
+			MaxWeight( toCopy.GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40 );
+			UI16 bodyID = toCopy.GetID();
+			switch( bodyID )
+			{
+				case 0x0190:
+				case 0x0191:
+				case 0x0192:
+				case 0x0193:
+					Race( 0x01 ); break; //human
+				case 0x025D:
+				case 0x025E:
+				case 0x025F:
+				case 0x0260:
+					Race( 0x02 ); break; //elf
+				case 0x029A:
+				case 0x029B:
+				case 0x02B6:
+				case 0x02B7:
+					Race( 0x03 ); break; //gargoyle
+				default:
+					Race( 0x01 ); break;
+			}
+		}
+		if( extended3 )
+		{
+			StatCap( cwmWorldState->ServerData()->ServerStatCapStatus() );
+			CurrentPets( toCopy.GetPetList()->Num() );
+			MaxPets( 0xFF );
+		}
+		if( extended4 )
+		{
+			FireResist( Combat->calcDef( &toCopy, 0, false, HEAT ) );
+			ColdResist( Combat->calcDef( &toCopy, 0, false, COLD ) );
+			PoisonResist( Combat->calcDef( &toCopy, 0, false, POISON ) );
+			EnergyResist( Combat->calcDef( &toCopy, 0, false, LIGHTNING ) );
+			Luck( 0 );
+			DamageMin( Combat->calcLowDamage( &toCopy ) );
+			DamageMax( Combat->calcHighDamage( &toCopy ) );
+			TithingPoints( 0 );
+		}
 	}
 }
 void CPStatWindow::InternalReset( void )
 {
-	pStream.ReserveSize( 66 );
+	pStream.ReserveSize( 43 );
 	pStream.WriteByte( 0, 0x11 );
 	pStream.WriteByte( 1, 0x00 );
-	pStream.WriteByte( 2, 66 );
+	pStream.WriteByte( 2, 43 );
 	extended3 = false;
 	extended4 = false;
 	extended5 = false;
