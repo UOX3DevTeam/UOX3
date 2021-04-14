@@ -315,6 +315,10 @@ SERIAL CTownRegion::GetMayorSerial( void ) const
 {
 	return mayorSerial;
 }
+void CTownRegion::SetMayorSerial( SERIAL newValue )
+{
+	mayorSerial = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool AddAsTownMember( CChar& toAdd )
@@ -347,7 +351,7 @@ bool CTownRegion::AddAsTownMember( CChar& toAdd )
 //o-----------------------------------------------------------------------------------------------o
 bool CTownRegion::RemoveTownMember( CChar& toAdd )
 {
-	if( toAdd.GetTown() != regionNum )
+	if( toAdd.GetTown() == NULL || toAdd.GetTown() != regionNum )
 		return false;	// not in our town
 
 	for( size_t counter = 0; counter < townMember.size(); ++counter )
@@ -786,6 +790,10 @@ weathID CTownRegion::GetWeather( void ) const
 {
 	return weather;
 }
+void CTownRegion::SetWeather( weathID newValue )
+{
+	weather = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 GetGoodSell( UI08 index ) const
@@ -850,6 +858,10 @@ SI32 CTownRegion::GetGoodRnd2( UI08 index ) const
 UI16 CTownRegion::GetMusicList( void ) const
 {
 	return musicList;
+}
+void CTownRegion::SetMusicList( UI16 newValue )
+{
+	musicList = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1196,6 +1208,16 @@ std::string CTownRegion::GetTownMemberSerials( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::vector GetTownMembers( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a comma-separated string of town member serials
+//o-----------------------------------------------------------------------------------------------o
+std::vector< CTownRegion::townPers > CTownRegion::GetTownMembers( void ) const
+{
+	return townMember;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool VoteForMayor( CSocket *sock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Submits player's vote for mayor
@@ -1401,12 +1423,17 @@ bool CTownRegion::PeriodicCheck( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	WorldType GetAppearance( void ) const
+//|					void SetAppearance( WorldType worldType )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets visual appearance (season) of townregion
+//|	Purpose		-	Gets/Sets visual appearance (season) of townregion
 //o-----------------------------------------------------------------------------------------------o
 WorldType CTownRegion::GetAppearance( void ) const
 {
 	return visualAppearance;
+}
+void CTownRegion::SetAppearance( WorldType worldType )
+{
+	visualAppearance = worldType;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1792,6 +1819,10 @@ UI16 CTownRegion::NumGuards( void ) const
 {
 	return numGuards;
 }
+void CTownRegion::SetNumGuards( UI16 newValue )
+{
+	numGuards = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 WorldNumber( void ) const
@@ -1802,6 +1833,10 @@ UI08 CTownRegion::WorldNumber( void ) const
 {
 	return worldNumber;
 }
+void CTownRegion::WorldNumber( UI08 newValue )
+{
+	worldNumber = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 GetInstanceID( void ) const
@@ -1811,6 +1846,10 @@ UI08 CTownRegion::WorldNumber( void ) const
 UI16 CTownRegion::GetInstanceID( void ) const
 {
 	return instanceID;
+}
+void CTownRegion::SetInstanceID( UI16 newValue )
+{
+	instanceID = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o

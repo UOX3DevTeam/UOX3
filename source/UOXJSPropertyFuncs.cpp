@@ -1571,11 +1571,21 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_ISDUNGEON:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDungeon() );			break;
 			case CREGP_CHANCEBIGORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceBigOre() );			break;
 			case CREGP_NUMOREPREFERENCES:	*vp = INT_TO_JSVAL( gPriv->GetNumOrePreferences() );	break;
-			case CREGP_OREPREFERENCES:
-				break;
 			case CREGP_POPULATION:			*vp = INT_TO_JSVAL( gPriv->GetPopulation() );			break;
 			case CREGP_MEMBERS:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetTownMemberSerials().c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			case CREGP_ID:					*vp = INT_TO_JSVAL( gPriv->GetRegionNum() );			break;
+			case CREGP_NUMGUARDS:			*vp = INT_TO_JSVAL( gPriv->NumGuards() );				break;
+			case CREGP_SCRIPTTRIGGER:		*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );		break;
+			case CREGP_TAXES:				*vp = INT_TO_JSVAL( gPriv->GetTaxes() );				break;
+			case CREGP_RESERVES:			*vp = INT_TO_JSVAL( gPriv->GetReserves() );				break;
+			case CREGP_APPEARANCE:			*vp = INT_TO_JSVAL( gPriv->GetAppearance() );			break;
+			case CREGP_MUSIC:				*vp = INT_TO_JSVAL( gPriv->GetMusicList() );			break;
+			case CREGP_WEATHER:				*vp = INT_TO_JSVAL( gPriv->GetWeather() );				break;
+			case CREGP_OWNER:
+				tString = JS_NewStringCopyZ( cx, gPriv->GetOwner().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			default:
@@ -1594,25 +1604,33 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	{
 		switch( JSVAL_TO_INT( id ) )
 		{
-			case CREGP_NAME:				gPriv->SetName( encaps.toString() );				break;
-			case CREGP_MAYOR:
-				break;
-			case CREGP_RACE:				gPriv->SetRace( (RACEID)encaps.toInt() );			break;
-			case CREGP_TAX:					gPriv->TaxedAmount( (SI16)encaps.toInt() );			break;
-			case CREGP_TAXRESOURCE:			gPriv->SetResourceID( (UI16)encaps.toInt() );		break;
-			case CREGP_CANMARK:				gPriv->CanMark( encaps.toBool() );					break;
-			case CREGP_CANRECALL:			gPriv->CanRecall( encaps.toBool() );				break;
-			case CREGP_CANGATE:				gPriv->CanGate( encaps.toBool() );					break;
-			case CREGP_CANTELEPORT:			gPriv->CanTeleport( encaps.toBool() );				break;
-			case CREGP_CANPLACEHOUSE:		gPriv->CanPlaceHouse( encaps.toBool() );			break;
-			case CREGP_ISGUARDED:			gPriv->IsGuarded( encaps.toBool() );				break;
-			case CREGP_CANCASTAGGRESSIVE:	gPriv->CanCastAggressive( encaps.toBool() );		break;
-			case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );				break;
-			case CREGP_HEALTH:				gPriv->SetHealth( (SI16)encaps.toInt() );			break;
-			case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );				break;
-			case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( (UI08)encaps.toInt() );		break;
-			case CREGP_OREPREFERENCES:
+			case CREGP_NAME:				gPriv->SetName( encaps.toString() );						break;
+			case CREGP_MAYOR:				gPriv->SetMayorSerial( static_cast<UI32>( encaps.toInt() )); break;
+			case CREGP_RACE:				gPriv->SetRace( static_cast<RACEID>( encaps.toInt() ));		break;
+			case CREGP_TAX:					gPriv->TaxedAmount( static_cast<SI16>( encaps.toInt() ));	break;
+			case CREGP_TAXRESOURCE:			gPriv->SetResourceID( static_cast<UI16>( encaps.toInt() ));	break;
+			case CREGP_CANMARK:				gPriv->CanMark( encaps.toBool() );							break;
+			case CREGP_CANRECALL:			gPriv->CanRecall( encaps.toBool() );						break;
+			case CREGP_CANGATE:				gPriv->CanGate( encaps.toBool() );							break;
+			case CREGP_CANTELEPORT:			gPriv->CanTeleport( encaps.toBool() );						break;
+			case CREGP_CANPLACEHOUSE:		gPriv->CanPlaceHouse( encaps.toBool() );					break;
+			case CREGP_ISGUARDED:			gPriv->IsGuarded( encaps.toBool() );						break;
+			case CREGP_CANCASTAGGRESSIVE:	gPriv->CanCastAggressive( encaps.toBool() );				break;
+			case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );						break;
+			case CREGP_HEALTH:				gPriv->SetHealth( static_cast<SI16>( encaps.toInt() ));		break;
+			case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );						break;
+			case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( static_cast<UI08>( encaps.toInt() ));	break;
+			case CREGP_NUMGUARDS:			gPriv->SetNumGuards( static_cast<UI16>( encaps.toInt() ));	break;
+			case CREGP_SCRIPTTRIGGER:		gPriv->SetScriptTrigger( static_cast<UI16>( encaps.toInt() ));	break;
+			case CREGP_TAXES:				gPriv->SetTaxesLeft( static_cast<UI32>( encaps.toInt() ));	break;
+			case CREGP_RESERVES:			gPriv->SetReserves( static_cast<UI32>( encaps.toInt() ));	break;
+			case CREGP_APPEARANCE:			gPriv->SetAppearance( static_cast<WorldType>( encaps.toInt() )); break;
+			case CREGP_MUSIC:				gPriv->SetMusicList( static_cast<UI16>( encaps.toInt() ));	break;
+			case CREGP_WEATHER:				gPriv->SetWeather( static_cast<weathID>( encaps.toInt() ));	break;
+			case CREGP_WORLDNUMBER:			gPriv->WorldNumber( static_cast<UI08>( encaps.toInt() ));	break;
+			case CREGP_INSTANCEID:			gPriv->SetInstanceID( static_cast<UI16>( encaps.toInt() ));	break;
 			case CREGP_MEMBERS:
+				break;
 			default:
 				break;
 		}
