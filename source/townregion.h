@@ -143,6 +143,7 @@ public:
 	void				SetResourceID( UI16 resID );
 	void				SetHealth( SI16 newValue );
 	void				SetChanceBigOre( UI08 newValue );
+	void				SetAppearance( WorldType worldType );
 
 	WorldType			GetAppearance( void ) const;
 	UI08				GetChanceBigOre( void ) const;
@@ -153,7 +154,9 @@ public:
 	SI16				GetHealth( void ) const;
 	CChar *				GetMayor( void );						// returns the mayor character
 	SERIAL				GetMayorSerial( void ) const;			// returns the mayor's serial
+	void				SetMayorSerial( SERIAL newvValue );			// sets the mayor's serial
 	UI16				GetMusicList( void ) const;
+	void				SetMusicList( UI16 newValue );
 	std::string			GetName( void ) const;
 	size_t				GetNumOrePreferences( void ) const;
 	const orePref *		GetOrePreference( size_t targValue ) const;
@@ -166,10 +169,14 @@ public:
 	UI16				GetResourceID( void ) const;
 	UI32				GetTaxes( void ) const;
 	weathID				GetWeather( void ) const;
+	void				SetWeather( weathID newValue );
 	UI16				NumGuards( void ) const;
+	void				SetNumGuards( UI16 newValue );
 	UI16				TaxedAmount( void ) const;
 	UI08				WorldNumber( void ) const;
+	void				WorldNumber( UI08 newValue );
 	UI16				GetInstanceID( void ) const;
+	void				SetInstanceID( UI16 newValue );
 
 	UI16				GetScriptTrigger( void ) const;
 	void				SetScriptTrigger( UI16 newValue );
@@ -181,6 +188,7 @@ public:
 	const regLocs *		GetLocation( size_t locNum ) const;
 
 	std::string			GetTownMemberSerials( void ) const;
+	std::vector< townPers >		GetTownMembers( void ) const;
 };
 
 #endif

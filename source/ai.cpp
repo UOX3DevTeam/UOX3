@@ -158,7 +158,8 @@ void HandleHealerAI( CChar& mChar )
 	{
 		CSocket *mSock	= (*cIter);
 		CChar *realChar = mSock->CurrcharObj();
-		if( realChar->IsDead() )
+		CMultiObj *multiObj = realChar->GetMultiObj();
+		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
 			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
@@ -199,7 +200,8 @@ void HandleEvilHealerAI( CChar& mChar )
 	{
 		CSocket *mSock	= (*cIter);
 		CChar *realChar	= mSock->CurrcharObj();
-		if( realChar->IsDead() )
+		CMultiObj *multiObj = realChar->GetMultiObj();
+		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
 			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{

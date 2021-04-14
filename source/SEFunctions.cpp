@@ -850,7 +850,7 @@ JSBool SE_GetHour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
 	if( ampm )
-		*rval = INT_TO_JSVAL( static_cast<JSInt64>(hour) + 12 );
+		*rval = INT_TO_JSVAL( static_cast<UI64>(hour) + 12 );
 	else
 		*rval = INT_TO_JSVAL( hour );
 	return JS_TRUE;
@@ -2712,6 +2712,40 @@ JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ServerMoon( slot ) );
 
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetTownRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a specified region object
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetTownRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetRegion: Invalid number of parameters (1)" );
+		return JS_FALSE;
+	}
+
+	UI16 regNum = (UI16)JSVAL_TO_INT( argv[0] );
+	if( cwmWorldState->townRegions.find( regNum ) != cwmWorldState->townRegions.end() )
+	{
+		CTownRegion *townReg = cwmWorldState->townRegions[regNum];
+		if( townReg != NULL )
+		{
+			JSObject *myObj = JSEngine->AcquireObject( IUE_REGION, townReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+			*rval = OBJECT_TO_JSVAL( myObj );
+		}
+		else
+		{
+			*rval = JSVAL_NULL;
+		}
+	}
+	else
+	{
+		*rval = JSVAL_NULL;
+	}
 	return JS_TRUE;
 }
 

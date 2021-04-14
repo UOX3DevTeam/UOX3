@@ -93,9 +93,17 @@ static JSPropertySpec CRegionProperties[] =
 	{ "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM },
 	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM },
 	{ "numOrePrefs",		CREGP_NUMOREPREFERENCES,	JSPROP_ENUMPERMRO  },
-	{ "orePrefs",			CREGP_OREPREFERENCES,		JSPROP_ENUMPERMIDX },
 	{ "population",			CREGP_POPULATION,			JSPROP_ENUMPERMRO  },
 	{ "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMIDX },
+	{ "id",					CREGP_ID,					JSPROP_ENUMANDPERM },
+	{ "scriptTrigger",		CREGP_SCRIPTTRIGGER,		JSPROP_ENUMANDPERM },
+	{ "numGuards",			CREGP_NUMGUARDS,			JSPROP_ENUMANDPERM },
+	{ "taxes",				CREGP_TAXES,				JSPROP_ENUMANDPERM },
+	{ "reserves",			CREGP_RESERVES,				JSPROP_ENUMANDPERM },
+	{ "appearance",			CREGP_APPEARANCE,			JSPROP_ENUMANDPERM },
+	{ "music",				CREGP_MUSIC,				JSPROP_ENUMANDPERM },
+	{ "weather",			CREGP_WEATHER,				JSPROP_ENUMANDPERM },
+	{ "owner",				CREGP_OWNER,				JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,					(UI08)0			   }
 };
 
