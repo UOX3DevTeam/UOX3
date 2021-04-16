@@ -183,11 +183,19 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 					if( !ourChar->IsCriminal() && !ourChar->IsMurderer() )
 					{ // Character is innocent
 						if( objInRange( i, ourChar, DIST_NEARBY ) )
-						{	//let's resurrect him!
-							Effects->PlayCharacterAnimation( i, 0x10 );
-							NpcResurrectTarget( ourChar );
-							Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
-							i->TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
+						{
+							CMultiObj *multiObj = ourChar->GetMultiObj();
+							if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
+							{
+								if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+								{
+									//let's resurrect him!
+									Effects->PlayCharacterAnimation( i, 0x10 );
+									NpcResurrectTarget( ourChar );
+									Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
+									i->TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
+								}
+							}
 						}
 						else
 							i->TextMessage( NULL, 321, TALK, true );
@@ -200,15 +208,22 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 					{
 						if( objInRange( i, ourChar, DIST_NEARBY ) )	// let's resurrect him
 						{
-							if( i->GetBodyType() == BT_GARGOYLE
-								|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-									&& ( i->GetBodyType() == BT_HUMAN || i->GetBodyType() == BT_ELF )))
-								Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
-							else
-								Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET ); // 0x10
-							NpcResurrectTarget( ourChar );
-							Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-							i->TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
+							CMultiObj *multiObj = ourChar->GetMultiObj();
+							if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
+							{
+								if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+								{
+									if( i->GetBodyType() == BT_GARGOYLE
+										|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
+											&& ( i->GetBodyType() == BT_HUMAN || i->GetBodyType() == BT_ELF )))
+										Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+									else
+										Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET ); // 0x10
+									NpcResurrectTarget( ourChar );
+									Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
+									i->TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
+								}
+							}
 						}
 						else
 							i->TextMessage( NULL, 328, TALK, true );
