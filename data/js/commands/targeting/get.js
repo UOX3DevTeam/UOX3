@@ -354,6 +354,259 @@ function HandleGetChar( socket, ourChar, uKey )
 			socket.SysMessage( ourChar.socket.language );
 		}
 		break;
+	// Account Properties
+	case "USERNAME":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "Username: " + myAccount.username );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET USERNAME> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "FLAGS":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.sysMessage( "Flags: " + myAccount.flags );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET FLAGS> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CURRENTCHAR":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "currentChar: " +  myAccount.currentChar );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CURRENTCHAR> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "COMMENT":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "Comment: " + myAccount.comment );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET COMMENT> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISBANNED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isBanned: " + myAccount.banned );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISBANNED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSUSPENDED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSuspended: " + myAccount.suspended );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSUSPENDED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISPUBLIC":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isPublic: " + myAccount.public );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISPUBLIC> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISONLINE":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isOnline: " + myAccount.online );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISONLINE> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT1BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot1Blocked: " + myAccount.isSlot1Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT1BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT2BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot2Blocked: " + myAccount.isSlot2Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT2BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT3BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot3Blocked: " + myAccount.isSlot3Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT3BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT4BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot4Blocked: " + myAccount.isSlot4Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT4BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT5BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot5Blocked: " + myAccount.isSlot5Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT5BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT6BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot6Blocked: " + myAccount.isSlot6Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT6BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSLOT7BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSlot7Blocked: " + myAccount.isSlot7Blocked );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSLOT7BLOCKED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "UNUSED9":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "unused9: " + myAccount.unused9 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET UNUSED9> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "UNUSED10":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "unused10: " + myAccount.unused10 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET UNUSED10> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISSEER":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isSeer: " + myAccount.isSeer );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISSEER> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISCOUNSELOR":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isCounselor: " + myAccount.isCounselor );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISCOUNSELOR> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "ISGM":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "isGM: " + myAccount.isGM );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISGM> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER1":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character1;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character1: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 1!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER1> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER2":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character2;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character2: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 2!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER2> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER3":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character3;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character3: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 3!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER3> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER4":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character4;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character4: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 4!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER4> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER5":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character5;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character5: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 5!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER5> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER6":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character6;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character6: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 6!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER6> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "CHARACTER7":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var accountChar = myAccount.character7;
+			if( ValidateObject( accountChar ))
+				socket.SysMessage( "character7: " + accountChar.name );
+			else
+				socket.SysMessage( "No character in slot 7!" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER7> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "LASTIP":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			socket.SysMessage( "Last IP: " + myAccount.lastIP );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET LASTIP> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
 	default:
 		socket.SysMessage( "Invalid property provided for get command: " + uKey );
 		break;

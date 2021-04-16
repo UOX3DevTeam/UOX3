@@ -379,6 +379,36 @@ var regionProp = {
 	worldNumber:726
 }
 
+var accountProp = {
+	comment:800,
+	character1:801,
+	character2:802,
+	character3:803,
+	character4:804,
+	character5:805,
+	character6:806,
+	character7:807,
+	currentChar:808,
+	flags:809,
+	lastIP:810,
+
+	// Flags
+	isBanned:811,
+	isCounselor:812,
+	isGM:813,
+	isOnline:814,
+	isPublic:815,
+	isSeer:816,
+	isSlot1Blocked:817,
+	isSlot2Blocked:818,
+	isSlot3Blocked:819,
+	isSlot4Blocked:820,
+	isSlot5Blocked:821,
+	isSlot6Blocked:822,
+	isSlot7Blocked:823,
+	isSuspended:824
+}
+
 /*var regionProp2 = {
   appearance : {value: 700, dictionary: 154},
   canCastAggressive: {value: 701, dictionary: 155},
@@ -391,6 +421,7 @@ const charPropCount = 127;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
+const accountPropCount = 24;
 
 function CommandRegistration()
 {
@@ -413,6 +444,7 @@ function command_PROPS( pSocket, cmdString )
 function onCallback0( pSocket, myTarget )
 {
 	pSocket.currentChar.SetTag( "tweakRegion", null );
+	pSocket.currentChar.SetTag( "tweakAccount", null );
 	pSocket.tempObj2 = null;
 	var socketLang = pSocket.language;
 
@@ -525,7 +557,11 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 		return;
 	}
 
-	var objName = targetObj.name;
+	var objName = "";
+	if( "username" in targetObj )
+		objName = targetObj.username;
+	else
+		objName = targetObj.name;
 	var objType = "";
 	var nameColor = "#FFFFFF";
 	var skillTotal = 0;
@@ -582,6 +618,8 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 				nameColor = "red";
 		}
 	}
+	else if( "username" in targetObj )
+		objType = "Account"; // Account
 	else
 		objType = GetDictionaryEntry( 2009, socketLang ); // Region
 
@@ -613,7 +651,11 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 // Shared first-page setup independent of object-type
 function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, totalPages )
 {
-	var objName = targetObj.name;
+	var objName = "";
+	if( "username" in targetObj )
+		objName = targetObj.username;
+	else
+		objName = targetObj.name;
 
 	// --------------- Page 1 -------------------
 	gumpObj.AddPage( 1 );
@@ -622,7 +664,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 
 	// Main Object Properties
 	// Labels
-	if( objType != "Region" )
+	if( objType != "Region" && objType != "Account" )
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Serial</BASEFONT>" );
 		if( enableTooltips )
@@ -632,18 +674,27 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 			gumpObj.AddToolTip( 1114778, pSocket, "ID of " + objType );
 		gumpObj.AddHTMLGump( 15, 99, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
-	else
+	else if( objType == "Region" )
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Region ID</BASEFONT>" );
 		if( enableTooltips )
 			gumpObj.AddToolTip( 1114778, pSocket, objType + " ID - Region number defined in regions.dfn" );
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
+	else
+	{
+		// Account
+		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Account ID</BASEFONT>" );
+		if( enableTooltips )
+			gumpObj.AddToolTip( 1114778, pSocket, objType + " ID - Account ID defined for this account in accounts.dfn" );
+		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Username</BASEFONT>" );
+	}
+
 	if( enableTooltips )
 		gumpObj.AddToolTip( 1114778, pSocket, "Name of " + objType );
 
 	// Buttons
-	if( objType != "Region" )
+	if( objType != "Region" && objType != "Account" )
 	{
 		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 2); // ID
 		if( enableTooltips )
@@ -653,8 +704,11 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		else if( objType == "Character" )
 			gumpObj.AddButton( 120, 100, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 11); // Name
 	}
-	else
+	else if( objType == "Region" )
 		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 12); // Name
+	//else // Account
+		//gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 13); // Username
+
 	if( enableTooltips )
 		gumpObj.AddToolTip( 1114778, pSocket, objName );
 
@@ -662,7 +716,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		objName = objName.substr(0, 16-1) + '..';
 
 	// Values
-	if( objType != "Region" )
+	if( objType != "Region" && objType != "Account" )
 	{
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.serial).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
@@ -675,7 +729,10 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.id).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
 			gumpObj.AddToolTip( 1114778, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.id).toString() + "</BASEFONT> (Read-Only)" );
-		gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, propertyValueStart + objName + propertyValueEnd );
+		if( objType == "Account" )
+			gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + objName + propertyValueEnd + "</BASEFONT>"  );
+		else
+			gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, propertyValueStart + objName + propertyValueEnd );
 	}
 
 	// Initial next-page button
@@ -1166,7 +1223,7 @@ function HandleItemTarget( pSocket, myTarget )
 				Console.PrintSectionBegin();
   				Console.Print( "Unhandled itemProperty in tweak command script!" );
 				Console.PrintDone();
-				break
+				break;
 		}
 
 		if( !errorFound )
@@ -1322,7 +1379,8 @@ function HandleCharTarget( pSocket, myTarget )
 		{
 			case charProp.accountNum:
 				charLabelTooltip 	= "Account number associated with player. Controlled by server (Read-Only)";
-				charValue 			= myTarget.npc ? "<BASEFONT color=#EECD8B>" + "n/a"  + "</BASEFONT>" : "<BASEFONT color=#EECD8B>" + (myTarget.accountNum).toString() + "</BASEFONT>";
+				charValue 			= myTarget.npc ? "<BASEFONT color=#EECD8B>" + "n/a"  + "</BASEFONT>" : "<BASEFONT color=#32668A>[click to view]</BASEFONT>"; //myTarget.npc ? "<BASEFONT color=#EECD8B>" + "n/a"  + "</BASEFONT>" : "<BASEFONT color=#EECD8B>" + (myTarget.accountNum).toString() + "</BASEFONT>";
+				charValueTooltip  	= myTarget.accountNum;
 				break;
 			case charProp.aitype:
 				charLabelTooltip 	= "NPC AI Type";
@@ -1862,13 +1920,16 @@ function HandleCharTarget( pSocket, myTarget )
 				Console.PrintSectionBegin();
   				Console.Print( "Unhandled charProperty in tweak command script!" );
 				Console.PrintDone();
-				break
+				break;
 		}
 
 		if( !errorFound )
 		{
 			// Labels
-			charGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
+			if( propertyName == "AccountNum" )
+				charGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + "Account" + propertyLabelEnd );
+			else
+				charGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
 			if( enableTooltips )
 				charGump.AddToolTip( 1114778, pSocket, charLabelTooltip.toString() );
 
@@ -1877,7 +1938,7 @@ function HandleCharTarget( pSocket, myTarget )
 
 			switch( i + 200 )
 			{
-				case charProp.accountNum:
+				// case charProp.accountNum:
 				case charProp.attack:
 				case charProp.ownedItemsCount:
 				case charProp.petCount:
@@ -1908,6 +1969,8 @@ function HandleCharTarget( pSocket, myTarget )
 					if( !((i + 200) == charProp.commandlevel) && !((i+200) == charProp.isGM ) && myTarget.multi == null )
 						break;
 				default:
+					if( ((i + 200) == charProp.accountNum) && myTarget.npc )
+						break;
 					charGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 					if( enableTooltips )
 						charGump.AddToolTip( 1114778, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
@@ -1922,7 +1985,8 @@ function HandleCharTarget( pSocket, myTarget )
 
 			switch( i + 200 )
 			{
-				case charProp.accountNum:
+				// case charProp.accountNum:
+				// case charProp.accountNum:
 				case charProp.attack:
 				case charProp.ownedItemsCount:
 				case charProp.petCount:
@@ -2343,7 +2407,7 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				Console.PrintSectionBegin();
   				Console.Print( "Unhandled character skill in tweak command script!" );
 				Console.PrintDone();
-				break
+				break;
 		}
 
 		if( !errorFound )
@@ -2603,7 +2667,7 @@ function HandleMultiTarget( pSocket, myTarget )
 				Console.PrintSectionBegin();
   				Console.Print( "Unhandled multi property in tweak command script!" );
 				Console.PrintDone();
-				break
+				break;
 		}
 
 		if( !errorFound )
@@ -2905,7 +2969,7 @@ function HandleRegionTarget( pSocket, myTarget )
 				Console.PrintSectionBegin();
   				Console.Print( "Unhandled region property in tweak command script!" );
 				Console.PrintDone();
-				break
+				break;
 		}
 
 		if( !errorFound )
@@ -2962,6 +3026,276 @@ function HandleRegionTarget( pSocket, myTarget )
 	regionGump.Send( pSocket );
 	regionGump.Free();
 }
+
+// Handle properties of user account
+function HandleAccountTarget( pSocket, myTarget )
+{
+	var accountGump = new Gump;
+	accountGump = RenderZeroethPage( pSocket, accountGump, myTarget, false, false );
+
+	var propertyName;
+	var buttonID = 800;
+	var gumpPage = 1;
+	var totalPages = Math.ceil(1 + (accountPropCount - 13) / 17);
+
+	// First page
+	var pageOneLabelStartY = 139;
+	var pageOneButtonStartY = 140;
+	var pageOneValueStartY = 139;
+	// Subsequent pages
+	var pageXlabelStartY = 59;
+	var pageXbuttonStartY = 60;
+	var pageXvalueStartY = 59;
+
+	// Loop over all character properties
+	var i = 0;
+	for( i = 0; i < accountPropCount + 1; i++ )
+	{
+		if( i == 0 )
+		{
+			// Page 1
+			accountGump = RenderFirstPage( pSocket, accountGump, myTarget, "Account", accountPropCount, totalPages );
+		}
+		else // All other pages
+		{
+			// 17 options can fit on each page, so increase page number as needed
+			switch( i )
+			{
+				case 13:
+					gumpPage = 2;
+					break;
+				case 30:
+					gumpPage = 3;
+					break;
+			}
+
+			// Only add these when it's time for a new page
+			if( i == 13 || i == 30 )
+			{
+				pageXlabelStartY = 59;
+				pageXbuttonStartY = 60;
+				pageXvalueStartY = 59;
+				accountGump = RenderOtherPages( pSocket, accountGump, gumpPage, totalPages );
+			}
+		}
+
+		var labelStartY = 0;
+		var buttonStartY = 0;
+		var valueStartY = 0;
+		if( gumpPage == 1 )
+		{
+			labelStartY = pageOneLabelStartY;
+			buttonStartY = pageOneButtonStartY;
+			valueStartY = pageOneValueStartY;
+		}
+		else
+		{
+			labelStartY = pageXlabelStartY;
+			buttonStartY = pageXbuttonStartY;
+			valueStartY = pageXvalueStartY;
+		}
+
+		var index = 20;
+		for( var k in accountProp )
+		{
+		    if( accountProp.hasOwnProperty( k ) && index == i + 20 )
+		    {
+		        // k is key
+				propertyName = k.charAt(0).toUpperCase() + k.slice(1);
+		        break;
+		    }
+		    index++;
+		}
+
+		var accountLabel = propertyName;
+		var accountLabelTooltip = "";
+		var accountValue = "";
+		var accountValueTooltip = "";
+		var errorFound = false;
+		switch( i + 800 )
+		{
+			case accountProp.comment:
+				accountLabelTooltip = "Contact info/comment for Account";
+				accountValue 		= (myTarget.comment).toString();
+				break;
+			case accountProp.character1:
+				accountLabelTooltip = "Character in slot 1 on Account";
+				accountValue 		= (ValidateObject(myTarget.character1) ? (myTarget.character1.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.character2:
+				accountLabelTooltip = "Character in slot 2 on Account";
+				accountValue 		= (ValidateObject(myTarget.character2) ? (myTarget.character2.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.character3:
+				accountLabelTooltip = "Character in slot 3 on Account";
+				accountValue 		= (ValidateObject(myTarget.character3) ? (myTarget.character3.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.character4:
+				accountLabelTooltip = "Character in slot 4 on Account";
+				accountValue 		= (ValidateObject(myTarget.character4) ? (myTarget.character4.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.character5:
+				accountLabelTooltip = "Character in slot 5 on Account";
+				accountValue 		= (ValidateObject(myTarget.character5) ? (myTarget.character5.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.character6:
+				accountLabelTooltip = "Character in slot 6 on Account";
+				accountValue 		= (ValidateObject(myTarget.character6) ? (myTarget.character6.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.character7:
+				accountLabelTooltip = "Character in slot 7 on Account";
+				accountValue 		= (ValidateObject(myTarget.character7) ? (myTarget.character7.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.currentChar:
+				accountLabelTooltip = "Currently logged in character (if any)";
+				accountValue 		= (ValidateObject(myTarget.currentChar) ? (myTarget.currentChar.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
+				break;
+			case accountProp.flags:
+				accountLabelTooltip = "Flags set on Account (Read-Only)";
+				accountValue 		= "<BASEFONT color=#EECD8B>0x" + (myTarget.flags).toString(16) + "</BASEFONT>";
+				break;
+			case accountProp.lastIP:
+				accountLabelTooltip = "Last IP used to login with this Account (Read-Only)";
+				accountValue 		= "<BASEFONT color=#EECD8B>" + (myTarget.lastIP).toString() + "</BASEFONT>";
+				break;
+			// Flags
+			case accountProp.isBanned:
+				accountLabelTooltip = "Is this Account banned?";
+				accountValue 		= (myTarget.isBanned ? "true" : "false");
+				break;
+			case accountProp.isCounselor:
+				accountLabelTooltip = "Is this Account marked as a Counselor account?";
+				accountValue 		= (myTarget.isCounselor ? "true" : "false");
+				break;
+			case accountProp.isGM:
+				accountLabelTooltip = "Is this Account marked as a GM account?";
+				accountValue 		= (myTarget.isGM ? "true" : "false");
+				break;
+			case accountProp.isOnline:
+				accountLabelTooltip = "Is someone logged on to this Account currently? (Read-Only)";
+				accountValue 		= "<BASEFONT color=#EECD8B>" + (myTarget.isOnline ? "true" : "false") + "</BASEFONT>";
+				break;
+			case accountProp.isPublic:
+				accountLabelTooltip = "Is contact/comments for this account marked as public? (does nothing atm)";
+				accountValue 		= (myTarget.isPublic ? "true" : "false");
+				break;
+			case accountProp.isSeer:
+				accountLabelTooltip = "Is this Account marked as a Seer account?";
+				accountValue 		= (myTarget.isSeer ? "true" : "false");
+				break;
+			case accountProp.isSlot1Blocked:
+				accountLabelTooltip = "Is slot 1 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot1Blocked ? "true" : "false");
+				break;
+			case accountProp.isSlot2Blocked:
+				accountLabelTooltip = "Is slot 2 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot2Blocked ? "true" : "false");
+				break;
+			case accountProp.isSlot3Blocked:
+				accountLabelTooltip = "Is slot 3 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot3Blocked ? "true" : "false");
+				break;
+			case accountProp.isSlot4Blocked:
+				accountLabelTooltip = "Is slot 4 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot4Blocked ? "true" : "false");
+				break;
+			case accountProp.isSlot5Blocked:
+				accountLabelTooltip = "Is slot 5 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot5Blocked ? "true" : "false");
+				break;
+			case accountProp.isSlot6Blocked:
+				accountLabelTooltip = "Is slot 6 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot6Blocked ? "true" : "false");
+				break;
+			case accountProp.isSuspended:
+				accountLabelTooltip = "Is this Account suspended?";
+				accountValue 		= (myTarget.isSuspended ? "true" : "false");
+				break;
+			case accountProp.isSlot7Blocked:
+				accountLabelTooltip = "Is slot 7 on this Account blocked?";
+				accountValue 		= (myTarget.isSlot7Blocked ? "true" : "false");
+				break;
+			default:
+				errorFound = true;
+				Console.PrintSectionBegin();
+  				Console.Print( "Unhandled account property in tweak command script!" );
+				Console.PrintDone();
+				break;
+		}
+
+		if( !errorFound )
+		{
+			// Labels
+			accountGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + accountLabel + propertyLabelEnd );
+			accountGump.AddToolTip( 1114778, pSocket, accountLabelTooltip.toString() );
+
+			if( accountValue == "-" )
+				accountValueTooltip = "Value not set";
+
+			// Buttons
+			switch( i + 800 )
+			{
+				case accountProp.lastIP:
+				case accountProp.lastClientType:
+				case accountProp.lastClientVer:
+				case accountProp.lastClientVerShort:
+				case accountProp.isOnline:
+				case accountProp.flags:
+					break;
+				default:
+					if(( propertyName == "Character1" && !ValidateObject( myTarget.character1 ))
+						|| ( propertyName == "Character2" && !ValidateObject( myTarget.character2 ))
+						|| ( propertyName == "Character3" && !ValidateObject( myTarget.character3 ))
+						|| ( propertyName == "Character4" && !ValidateObject( myTarget.character4 ))
+						|| ( propertyName == "Character5" && !ValidateObject( myTarget.character5 ))
+						|| ( propertyName == "Character6" && !ValidateObject( myTarget.character6 ))
+						|| ( propertyName == "Character7" && !ValidateObject( myTarget.character7 ))
+						|| ( propertyName == "CurrentChar" && !ValidateObject( myTarget.currentChar )))
+						break;
+					accountGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
+					accountGump.AddToolTip( 1114778, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
+					break;
+			}
+
+			// Values
+			accountGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + accountValue + propertyValueEnd );
+
+			switch( i + 800 )
+			{
+				case accountProp.lastIP:
+				case accountProp.lastClientType:
+				case accountProp.lastClientVer:
+				case accountProp.lastClientVerShort:
+				case accountProp.isOnline:
+				case accountProp.flags:
+					accountGump.AddToolTip( 1114778, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
+					break;
+				default:
+					break;
+			}
+
+		}
+
+		if( gumpPage == 1 )
+		{
+			pageOneLabelStartY += 20;
+			pageOneButtonStartY += 20;
+			pageOneValueStartY += 20;
+		}
+		else
+		{
+			pageXlabelStartY += 20;
+			pageXbuttonStartY += 20;
+			pageXvalueStartY += 20;
+		}
+
+		buttonID++;
+	}
+
+	accountGump.Send( pSocket );
+	accountGump.Free();
+}
+
 
 // Show input gump for chosen property
 function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength, maxVal, propertyHint )
@@ -3112,9 +3446,15 @@ function onGumpPress( pSocket, pButton, gumpData )
 	var baseSkills = ( pSocket.xText != null && pSocket.xText == "true" ? true : false );
 	pSocket.xText = null;
 
-	if( pSocket.currentChar.GetTag( "tweakRegion") )
+	if( pSocket.currentChar.GetTag( "tweakRegion" ))
 	{
 		targetObj = GetTownRegion( parseInt( pSocket.currentChar.GetTag( "tweakRegion" )));
+	}
+
+	if( pSocket.currentChar.GetTag( "tweakAccount" ))
+	{
+		if( ValidateObject( targetObj ))
+			targetObj = targetObj.account;
 	}
 
 	if( targetObj == null )
@@ -3153,9 +3493,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 					HandleMultiTarget( pSocket, targetObj );
 				else if( targetObj.isItem )
 					HandleItemTarget( pSocket, targetObj );
-				else
+				else if( targetObj.isChar )
 					HandleCharTarget( pSocket, targetObj );
 			}
+			else if( targetObj != null && "username" in targetObj )
+				HandleAccountTarget( pSocket, targetObj );
+			else // Region
+				HandleRegionTarget( pSocket, targetObj );
 			break;
 
 		// Hexadecimal  ------------------------------------------------------
@@ -3229,13 +3573,6 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = "Generic item property used for many different things";
 			break;
 		// Character Properties
-		case charProp.accountNum:
-			propertyName = "accountNum";
-			propertyType = "Hexadecimal";
-			propertyHint = "Account number associated with player (Read-Only)";
-			maxLength = 5;
-			maxVal = 65535;
-			break;
 		case charProp.colour:
 			propertyName = "colour";
 			propertyType = "Hexadecimal";
@@ -3378,6 +3715,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyType = "Text";
 			propertyHint = "The owner of guards in the Region";
 			maxLength = 30;
+			break;
+		// Account Properties
+		case accountProp.comment:
+			propertyName = "comment";
+			propertyType = "Text";
+			propertyHint = "Contact info/comment for Account";
+			maxLength = 200;
 			break;
 
 		// Integer ------------------------------------------------------
@@ -4136,6 +4480,98 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 3;
 			maxVal = 127;
 			break;
+		// Region Properties
+		case regionProp.appearance:
+			propertyName = "appearance";
+			propertyType = "Integer";
+			propertyHint = "Appearance of world within the Region (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown)";
+			maxLength = 1;
+			maxVal = 5;
+			break;
+		case regionProp.chanceBigOre:
+			propertyName = "chanceBigOre";
+			propertyType = "Integer";
+			propertyHint = "Chance to find big ore in the Region";
+			maxLength = 3;
+			maxVal = 100;
+			break;
+		case regionProp.health:
+			propertyName = "health";
+			propertyType = "Integer";
+			propertyHint = "Health of townstone (if any) in Region";
+			maxLength = 5;
+			maxVal = 32767;
+			break;
+		case regionProp.instanceID:
+			propertyName = "instanceID";
+			propertyType = "Integer";
+			propertyHint = "InstanceID region exists in";
+			maxLength = 5;
+			maxVal = 65535;
+			break;
+		case regionProp.music:
+			propertyName = "music";
+			propertyType = "Integer";
+			propertyHint = "Music-list for Region, as specified in regions.dfn";
+			maxLength = 3;
+			maxVal = 255;
+			break;
+		case regionProp.numGuards:
+			propertyName = "numGuards";
+			propertyType = "Integer";
+			propertyHint = "The number of guards for the town (if any) in the Region";
+			maxLength = 5;
+			maxVal = 65535;
+			break;
+		case regionProp.race:
+			propertyName = "race";
+			propertyType = "Integer";
+			propertyHint = "Race associated with the Region";
+			maxLength = 5;
+			maxVal = 65535;
+			break;
+		case regionProp.reserves:
+			propertyName = "reserves";
+			propertyType = "Integer";
+			propertyHint = "Resource reserves for town (if any) in the Region";
+			maxLength = 10;
+			maxVal = 4294967295;
+			break;
+		case regionProp.scriptTrigger:
+			propertyName = "scriptTrigger";
+			propertyType = "Integer";
+			propertyHint = "Script-trigger assigned to the Region (if any)";
+			maxLength = 5;
+			maxVal = 65535;
+			break;
+		case regionProp.tax:
+			propertyName = "tax";
+			propertyType = "Integer";
+			propertyHint = "The amount of gold taxed from citizens of the Town (if any) in this Region";
+			maxLength = 5;
+			maxVal = 32767;
+			break;
+		case regionProp.taxes:
+			propertyName = "taxes";
+			propertyType = "Integer";
+			propertyHint = "The gold reserves of the Town (if any) in this Region";
+			maxLength = 10;
+			maxVal = 4294967295;
+			break;
+		case regionProp.weather:
+			propertyName = "weather";
+			propertyType = "Integer";
+			propertyHint = "Weather ID from weather.dfn associated with this Region";
+			maxLength = 5;
+			maxVal = 65535;
+			break;
+		case regionProp.worldNumber:
+			propertyName = "worldNumber";
+			propertyType = "Integer";
+			propertyHint = "World number that Region exists in";
+			maxLength = 3
+			maxVal = 255;
+			break;
 
 		// SkillValue ------------------------------------------------------
 		// Base Skills
@@ -4383,6 +4819,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyType = "UOXObject";
 			propertyHint = "Owner of item";
 			break;
+		case charProp.accountNum:
+			pSocket.currentChar.SetTag( "tweakAccount", true );
+			HandleAccountTarget( pSocket, targetObj.account );
+			return;
 		case charProp.attacker:
 			propertyName = "attacker";
 			propertyType = "UOXObject";
@@ -4455,6 +4895,53 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "owner";
 			propertyType = "UOXObject";
 			propertyHint = "Owner of Multi";
+			break;
+		// Region Properties
+		case regionProp.mayor:
+			propertyName = "mayor";
+			propertyType = "UOXObject";
+			propertyHint = "Character voted as Mayor of the Town (if any) in this Region";
+			break;
+		// Account Properties
+		case accountProp.character1:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character1;
+			HandleCharTarget( pSocket, targetObj.character1 );
+			break;
+		case accountProp.character2:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character2;
+			HandleCharTarget( pSocket, targetObj.character2 );
+			break;
+		case accountProp.character3:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character3;
+			HandleCharTarget( pSocket, targetObj.character3 );
+			break;
+		case accountProp.character4:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character4;
+			HandleCharTarget( pSocket, targetObj.character4 );
+			break;
+		case accountProp.character5:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character5;
+			HandleCharTarget( pSocket, targetObj.character5 );
+			break;
+		case accountProp.character6:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character6;
+			HandleCharTarget( pSocket, targetObj.character6 );
+			break;
+		case accountProp.character7:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.character7;
+			HandleCharTarget( pSocket, targetObj.character7 );
+			break;
+		case accountProp.currentChar:
+			pSocket.currentChar.SetTag( "tweakAccount", null );
+			pSocket.tempObj2 = targetObj.currentChar;
+			HandleCharTarget( pSocket, targetObj.currentChar );
 			break;
 
 		// Boolean ------------------------------------------------------
@@ -4780,6 +5267,118 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = "Is the Multi flagged as Public?";
 			propertyType = "Boolean";
 			break;
+		// Region Properties
+		case regionProp.canCastAggressive:
+			propertyName = "canCastAggressive";
+			propertyHint = "Can aggressive spells be cast in the Region?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.canGate:
+			propertyName = "canGate";
+			propertyHint = "Can the Gate spell be used in the Region?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.canMark:
+			propertyName = "canMark";
+			propertyHint = "Can the Mark spell be used in the Region?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.canPlaceHouse:
+			propertyName = "canPlaceHouse";
+			propertyHint = "Can players place houses in the Region?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.canRecall:
+			propertyName = "canRecall";
+			propertyHint = "Can the Recall spell be used in the Region?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.canTeleport:
+			propertyName = "canTeleport";
+			propertyHint = "Can the Teleport spell be used in the Region?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.isDungeon:
+			propertyName = "isDungeon";
+			propertyHint = "Is Region considered a dungeon?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.isGuarded:
+			propertyName = "isGuarded";
+			propertyHint = "Is Region protected by guards?";
+			propertyType = "Boolean";
+			break;
+		case regionProp.isSafeZone:
+			propertyName = "isSafeZone";
+			propertyHint = "Is Region considered safe for players?";
+			propertyType = "Boolean";
+			break;
+		// Account Properties
+		case accountProp.isBanned:
+			propertyName = "isBanned";
+			propertyHint = "Is this Account banned?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isCounselor:
+			propertyName = "isCounselor";
+			propertyHint = "Is this Account marked as a Counselor account?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isGM:
+			propertyName = "isGM";
+			propertyHint = "Is this Account marked as a GM account?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isPublic:
+			propertyName = "isPublic";
+			propertyHint = "Is contact/comments for this account marked as public? (does nothing atm)";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSeer:
+			propertyName = "isSeer";
+			propertyHint = "Is this Account marked as a Seer account?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot1Blocked:
+			propertyName = "isSlot1Blocked";
+			propertyHint = "Is slot 1 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot2Blocked:
+			propertyName = "isSlot2Blocked";
+			propertyHint = "Is slot 2 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot3Blocked:
+			propertyName = "isSlot3Blocked";
+			propertyHint = "Is slot 3 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot4Blocked:
+			propertyName = "isSlot4Blocked";
+			propertyHint = "Is slot 4 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot5Blocked:
+			propertyName = "isSlot5Blocked";
+			propertyHint = "Is slot 5 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot6Blocked:
+			propertyName = "isSlot6Blocked";
+			propertyHint = "Is slot 6 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSlot7Blocked:
+			propertyName = "isSlot7Blocked";
+			propertyHint = "Is slot 7 on this Account blocked?";
+			propertyType = "Boolean";
+			break;
+		case accountProp.isSuspended:
+			propertyName = "isSuspended";
+			propertyHint = "Is this Account suspended?";
+			propertyType = "Boolean";
+			break;
 
 		// Timer ------------------------------------------------------
 		case itemProp.decaytime:
@@ -4854,6 +5453,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 					else
 						HandleCharTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "username" in targetObj )
+					HandleAccountTarget( pSocket, targetObj );
+				else
+					HandleRegionTarget( pSocket, targetObj );
 			}
 			break;
 		case "Integer":
@@ -4895,6 +5498,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 							else
 								HandleCharTarget( pSocket, targetObj );
 						}
+						else if( targetObj != null && "username" in targetObj )
+							HandleAccountTarget( pSocket, targetObj );
+						else
+							HandleRegionTarget( pSocket, targetObj );
 
 						// Somehow, if this section comes before the re-opening of the gump, the context
 						// of the object calling the gump changes to the house...
@@ -4961,6 +5568,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 					else
 						HandleCharTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "username" in targetObj )
+					HandleAccountTarget( pSocket, targetObj );
+				else
+					HandleRegionTarget( pSocket, targetObj );
 			}
 			break;
 		case "Boolean":
@@ -4989,6 +5600,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 					else
 						HandleCharTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "username" in targetObj )
+					HandleAccountTarget( pSocket, targetObj );
+				else
+					HandleRegionTarget( pSocket, targetObj );
 			}
 			break;
 		case "Timer":
@@ -5009,6 +5624,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 					else
 						HandleCharTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "username" in targetObj )
+					HandleAccountTarget( pSocket, targetObj );
+				else
+					HandleRegionTarget( pSocket, targetObj );
 			}
 			break;
 		case "UOXObject":
@@ -5039,6 +5658,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 					else
 						HandleCharTarget( pSocket, targetObj );
 				}
+				else if( targetObj != null && "username" in targetObj )
+					HandleAccountTarget( pSocket, targetObj );
+				else
+					HandleRegionTarget( pSocket, targetObj );
 			}
 			break;
 		default:

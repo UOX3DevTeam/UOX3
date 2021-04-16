@@ -481,6 +481,181 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 			okMsg ( socket );
 		}
 		break;
+	// Account Properties
+	case "USERNAME":
+	case "CURRENTCHAR":
+	case "ISONLINE":
+	case "CHARACTER1":
+	case "CHARACTER2":
+	case "CHARACTER3":
+	case "CHARACTER4":
+	case "CHARACTER5":
+	case "CHARACTER6":
+	case "CHARACTER7":
+	case "LASTIP":
+		socket.SysMessage( "This is a read-only property." );
+		break;
+	case "PASSWORD":
+		{
+			if( !ourChar.npc )
+			{
+				var newPass = socket.xText.substring( 9 );
+				if( newPass.length > 3 )
+				{
+					var myAccount = ourChar.account;
+					myAccount.password = newPass;
+   					Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET PASSWORD> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+					okMsg( socket );
+				}
+				else
+					socket.SysMessage( "Password must be longer than 3 characters! Current length: " + newPass.length );
+			}
+			break;
+		}
+	case "COMMENT":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.comment = socket.xText.substring( 8 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET COMMENT> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISBANNED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isBanned = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISBANNED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSUSPENDED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSuspended = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSUSPENDED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISPUBLIC":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isPublic = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISPUBLIC " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT1BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot1Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT1BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT2BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot2Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT2BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT3BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot3Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT3BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT4BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot4Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT4BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT5BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot5Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT5BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT6BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot6Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT6BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT7BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot7Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT6BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "UNUSED9":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.unused9 = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET UNUSED9 " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "UNUSED10":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.unused10 = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET UNUSED10 " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSEER":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSeer = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSEER " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISCOUNSELOR":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isCounselor = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISCOUNSELOR " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISGM":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isGM = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISGM " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
