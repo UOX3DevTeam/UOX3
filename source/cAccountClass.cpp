@@ -656,7 +656,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	}
 	// Ok we have everything except the path to the account dir, so make that now
 	std::string sTempPath( m_sAccountsDirectory );
-	if( sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/' )
+	if( sTempPath[sTempPath.length() - 1] == '\\' || sTempPath[sTempPath.length() - 1] == '/' )
 	{
 		UString szTempBuff	= UString( sUsername ).lower();
 		sTempPath			+= szTempBuff;
@@ -674,7 +674,8 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		actbTemp.sPath = sTempPath;
 	}
 	// Ok now that we got here we need to make the directory, and create the username.uad file
-	if (!std::filesystem::exists(std::filesystem::path(actbTemp.sPath))) {
+	if( !std::filesystem::exists(std::filesystem::path(actbTemp.sPath)) )
+	{
 		auto create_status = std::filesystem::create_directory(std::filesystem::path(actbTemp.sPath));
 		if (!create_status) {
 			Console.error( format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
@@ -685,7 +686,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 
 	// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
 	std::string sUsernameUADPath(actbTemp.sPath);
-	if( sUsernameUADPath[sUsernameUADPath.length()-1]=='\\'||sUsernameUADPath[sUsernameUADPath.length()-1]=='/' )
+	if( sUsernameUADPath[sUsernameUADPath.length() - 1] == '\\' || sUsernameUADPath[sUsernameUADPath.length() - 1] == '/' )
 	{
 		sUsernameUADPath += actbTemp.sUsername;
 		sUsernameUADPath += ".uad";
@@ -697,9 +698,9 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		sUsernameUADPath += ".uad";
 	}
 	// Fix the paths to make sure that all the characters are unified
-	replaceSlash(sUsernameUADPath);
+	replaceSlash( sUsernameUADPath );
 	// Open the file in APPEND to end mode.
-	std::fstream fsAccountsUAD(sUsernameUADPath.c_str(),std::ios::out|std::ios::trunc);
+	std::fstream fsAccountsUAD( sUsernameUADPath.c_str(), std::ios::out|std::ios::trunc );
 	if( !fsAccountsUAD.is_open() )
 	{
 		// Ok we were unable to open the file so this user will not be added.
@@ -715,6 +716,8 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	fsAccountsUAD << "// UOX3 uses this file to store any extra administration info\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------\n";
 	fsAccountsUAD << "ID " << actbTemp.wAccountIndex << "\n";
+	fsAccountsUAD << "NAME " << actbTemp.sUsername << "\n";
+	fsAccountsUAD << "PASS " << actbTemp.sPassword << "\n";
 	fsAccountsUAD << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << "\n";
 	fsAccountsUAD << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << "\n";
 	fsAccountsUAD << "CONTACT " << actbTemp.sContact << "\n";
@@ -727,13 +730,13 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	// Close the files since we dont need them anymore
 	fsAccountsUAD.close();
 	// Ok now we can add this record to the accounts.adm file
-	std::string sAccountsADMPath(m_sAccountsDirectory);
-	if( sAccountsADMPath[sAccountsADMPath.length()-1]=='\\'||sAccountsADMPath[sAccountsADMPath.length()-1]=='/' )
+	std::string sAccountsADMPath( m_sAccountsDirectory );
+	if( sAccountsADMPath[sAccountsADMPath.length() - 1] == '\\' || sAccountsADMPath[sAccountsADMPath.length() - 1] == '/' )
 		sAccountsADMPath += "accounts.adm";
 	else
 		sAccountsADMPath += "/accounts.adm";
 	// Open the file in APPEND to end mode.
-	std::fstream fsAccountsADM(sAccountsADMPath.c_str(),std::ios::out|std::ios::app);
+	std::fstream fsAccountsADM( sAccountsADMPath.c_str(), std::ios::out|std::ios::app );
 	if( !fsAccountsADM.is_open() )
 	{
 		// Ok we were unable to open the file so this user will not be added.
@@ -742,9 +745,9 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	WriteAccountSection( actbTemp, fsAccountsADM );
 	fsAccountsADM.close();
 	// Ok might be a good thing to add this account to the map(s) now.
-	m_mapUsernameIDMap[actbTemp.wAccountIndex]=actbTemp;
-	m_mapUsernameMap[actbTemp.sUsername]=&m_mapUsernameIDMap[actbTemp.wAccountIndex];
-	m_wHighestAccount=actbTemp.wAccountIndex;
+	m_mapUsernameIDMap[actbTemp.wAccountIndex] = actbTemp;
+	m_mapUsernameMap[actbTemp.sUsername] = &m_mapUsernameIDMap[actbTemp.wAccountIndex];
+	m_wHighestAccount = actbTemp.wAccountIndex;
 	// Return to the calling function
 	return (UI16)m_mapUsernameIDMap.size();
 }
@@ -773,8 +776,6 @@ UI32 cAccountClass::size()
 	return static_cast<std::uint32_t>(m_mapUsernameMap.size());
 }
 
-
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 cAccountClass::Load()
 //|	Date		-	12/17/2002 4:00:47 PM
@@ -795,7 +796,6 @@ UI32 cAccountClass::size()
 //o-----------------------------------------------------------------------------------------------o
 UI16 cAccountClass::Load(void)
 {
-
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";

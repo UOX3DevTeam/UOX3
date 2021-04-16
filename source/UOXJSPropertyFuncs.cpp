@@ -838,6 +838,18 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		switch( JSVAL_TO_INT( id ) )
 		{
 			case CCP_ACCOUNTNUM:	*vp = INT_TO_JSVAL( gPriv->GetAccountNum() );	break;
+			case CCP_ACCOUNT:
+			{
+				CAccountBlock *accountBlock = &gPriv->GetAccount();
+				if( accountBlock == NULL )
+					*vp = JSVAL_NULL;
+				else
+				{	// Otherwise Acquire an object
+					JSObject *accountObj	= JSEngine->AcquireObject( IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					*vp = OBJECT_TO_JSVAL( accountObj );
+				}
+				break;
+			}
 			case CCP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -2285,20 +2297,272 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 
 JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
+	CAccountBlock *myAccount = static_cast<CAccountBlock *>(JS_GetPrivate( cx, obj ));
+	if( myAccount == NULL )
+		return JS_FALSE;
+
 	if( JSVAL_IS_INT( id ) )
 	{
-		/*		switch( JSVAL_TO_INT( id ) )
-		 {
-		 default:
-		 break;
-		 }*/
+		JSString *tString = NULL;
+		switch( JSVAL_TO_INT( id ) )
+		{
+			case CACCOUNT_ID:	*vp = INT_TO_JSVAL( myAccount->wAccountIndex );		break;
+			case CACCOUNT_USERNAME:
+				tString = JS_NewStringCopyZ( cx, (myAccount->sUsername).c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break ;
+			case CACCOUNT_PASSWORD: // NO.
+			case CACCOUNT_PATH:		// Nah.
+				break;
+			case CACCOUNT_FLAGS: *vp = INT_TO_JSVAL( (myAccount->wFlags).to_ulong() );		break;
+			case CACCOUNT_COMMENT:
+				tString = JS_NewStringCopyZ( cx, (myAccount->sContact).c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			case CACCOUNT_CHARACTER1:
+			{
+				if( myAccount->dwCharacters[0] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[0];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CHARACTER2:
+			{
+				if( myAccount->dwCharacters[1] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[1];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CHARACTER3:
+			{
+				if( myAccount->dwCharacters[2] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[2];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CHARACTER4:
+			{
+				if( myAccount->dwCharacters[3] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[3];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CHARACTER5:
+			{
+				if( myAccount->dwCharacters[4] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[4];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CHARACTER6:
+			{
+				if( myAccount->dwCharacters[5] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[5];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CHARACTER7:
+			{
+				if( myAccount->dwCharacters[6] != INVALIDSERIAL )
+				{
+					CBaseObject *TempObj = myAccount->lpCharacters[6];
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_CURRENTCHAR:
+			{
+				if( myAccount->dwInGame != INVALIDSERIAL )
+				{
+					CChar *TempObj = calcCharObjFromSer( myAccount->dwInGame );
+
+					if( !ValidateObject( TempObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
+				}
+				else
+					*vp = JSVAL_NULL;
+				break;
+			}
+			case CACCOUNT_LASTIP:
+			{
+				std::string ipString = str_number(static_cast<SI32>((myAccount->dwLastIP&0xFF000000)>>24)) 
+					+ "." + str_number(static_cast<SI32>((myAccount->dwLastIP&0x00FF0000)>>16))
+					+ "." + str_number(static_cast<SI32>((myAccount->dwLastIP&0x0000FF00)>>8))
+					+ "." + str_number(static_cast<SI32>((myAccount->dwLastIP&0x000000FF)%256));
+				tString = JS_NewStringCopyZ( cx, ipString.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case CACCOUNT_BANNED:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_BANNED ) );		break;
+			case CACCOUNT_SUSPENDED:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SUSPENDED ) );		break;
+			case CACCOUNT_PUBLIC:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_PUBLIC ) );		break;
+			case CACCOUNT_ONLINE:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_ONLINE ) );		break;
+			case CACCOUNT_CHARSLOT1BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER1 ) );	break;
+			case CACCOUNT_CHARSLOT2BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER2 ) );	break;
+			case CACCOUNT_CHARSLOT3BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER3 ) );	break;
+			case CACCOUNT_CHARSLOT4BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER4 ) );	break;
+			case CACCOUNT_CHARSLOT5BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER5 ) );	break;
+			case CACCOUNT_CHARSLOT6BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER6 ) );	break;
+			case CACCOUNT_CHARSLOT7BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER7 ) );	break;
+			case CACCOUNT_UNUSED9:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_UNUSED9 ) );		break;
+			case CACCOUNT_UNUSED10:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_UNUSED10 ) );		break;
+			case CACCOUNT_SEER:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SEER ) );			break;
+			case CACCOUNT_COUNSELOR:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_COUNSELOR ) );		break;
+			case CACCOUNT_GM:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_GM ) );			break;
+			default:
+				break;
+		}
 	}
+
 	return JS_TRUE;
 }
 
 JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	return JS_FALSE;
+	CAccountBlock *myAccount = static_cast<CAccountBlock *>(JS_GetPrivate( cx, obj ));
+	if( myAccount == NULL )
+		return JS_FALSE;
+
+	JSEncapsulate encaps( cx, vp );
+
+	if( JSVAL_IS_INT( id ) )
+	{
+		switch( JSVAL_TO_INT( id ) )
+		{
+			case CACCOUNT_ID: 
+			case CACCOUNT_USERNAME:
+			case CACCOUNT_FLAGS:
+			case CACCOUNT_PATH:
+			case CACCOUNT_CHARACTER1:
+			case CACCOUNT_CHARACTER2:
+			case CACCOUNT_CHARACTER3:
+			case CACCOUNT_CHARACTER4:
+			case CACCOUNT_CHARACTER5:
+			case CACCOUNT_CHARACTER6:
+			case CACCOUNT_CHARACTER7:
+			case CACCOUNT_CURRENTCHAR:
+			case CACCOUNT_LASTIP:
+				break;
+			case CACCOUNT_PASSWORD:
+			{
+				std::string newPass = encaps.toString();
+				if( newPass.length() > 3 )
+					myAccount->sPassword = newPass;
+				else
+					return JS_FALSE;
+				break;
+			}
+			case CACCOUNT_COMMENT: 
+				myAccount->sContact = encaps.toString();
+				break;
+			case CACCOUNT_BANNED:			myAccount->wFlags.set( AB_FLAGS_BANNED, encaps.toBool() );		break;
+			case CACCOUNT_SUSPENDED:		myAccount->wFlags.set( AB_FLAGS_SUSPENDED, encaps.toBool() );	break;
+			case CACCOUNT_PUBLIC:			myAccount->wFlags.set( AB_FLAGS_PUBLIC, encaps.toBool() );		break;
+			case CACCOUNT_CHARSLOT1BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER1, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT2BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER2, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT3BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER3, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT4BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER4, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT5BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER5, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT6BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER6, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT7BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER7, encaps.toBool() );	break;
+			case CACCOUNT_UNUSED9:			myAccount->wFlags.set( AB_FLAGS_UNUSED9, encaps.toBool() );		break;
+			case CACCOUNT_UNUSED10:			myAccount->wFlags.set( AB_FLAGS_UNUSED10, encaps.toBool() );	break;
+			case CACCOUNT_SEER:				myAccount->wFlags.set( AB_FLAGS_SEER, encaps.toBool() );		break;
+			case CACCOUNT_COUNSELOR:		myAccount->wFlags.set( AB_FLAGS_COUNSELOR, encaps.toBool() );	break;
+			case CACCOUNT_GM:				myAccount->wFlags.set( AB_FLAGS_GM, encaps.toBool() );			break;
+			default:
+				break;
+		}
+	}
+	return JS_TRUE;
 }
 
 JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )

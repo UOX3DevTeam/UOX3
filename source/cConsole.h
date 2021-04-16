@@ -4,16 +4,8 @@
 // In essence, CConsole is our nice generic class for outputting display
 // As long as the interface is kept the same, we can display whatever we wish to
 // We store a set of coordinates being the window corner and size, for systems with windowing support, which describes the window we are in
+#include <tuple>
 
-// NOTE: I wish Error, and Log, to subclass from CConsole, so we have multiple streams that we can write to, in essence
-//#pragma note( "I wish Error, and Log, to subclass from CConsole, so we have multiple streams that we can write to, in essence" )
-#if UOX_PLATFORM != PLATFORM_WIN32
-#include <termios.h>
-#else
-#include <windows.h>
-#undef min
-#undef max
-#endif
 
 #define MAX_CONSOLE_BUFF 512
 
@@ -88,7 +80,6 @@ public:
 	void	LogEcho( bool value );
 	void	PrintSpecial( UI08 color, const std::string& msg );
 	void	Poll( void );
-	void	Cloak( char *callback );
 
 	void	RegisterKey( SI32 key, std::string cmdName, UI16 scriptID );
 	void	RegisterFunc( const std::string &key, const std::string &cmdName, UI16 scriptID );
@@ -124,34 +115,52 @@ private:
 	UI08				currentMode;
 	UI08				previousColour;
 	bool				logEcho;
-#if UOX_PLATFORM == PLATFORM_WIN32
-	HANDLE						hco;
-	CONSOLE_SCREEN_BUFFER_INFO	csbi;
-#else
-	bool			forceNL;
-	struct termios resetio;
 
-#endif
+	void				initialize();
+	void				reset();
+	std::tuple<int,int>	windowSize();
+	void				clearScreen();
+	void				setTitle(const std::string& title);
+	CConsole& 			sendCMD(const std::string& cmd);
+
 	void	PrintStartOfLine( void );
 	void	StartOfLineCheck(void);
 	SI32		cl_getch( void );
 	void	Process( SI32 c );
 	void	DisplaySettings( void );
+
+	const std::string 	ESC 		= "\x1b";
+	const std::string 	CSI 		= ESC + "[";
+	const std::string   BEL			= "\x07";
+	//  Command sequences
+	const std::string   ATTRIBUTE	= CSI +"#m";  // find/replace on # with attribute number
+	const std::string	MOVE		= CSI + "ROW;COLH"; // we are going to find/replace on ROW/COL
+	const std::string	HORIZMOVE	= CSI + "COLG";
+	const std::string	VERTMOVE	= CSI + "ROWd";
+	const std::string	OFFCURSOR	= CSI + "?25l";
+	const std::string	ONCURSOR	= CSI + "?25h";
+
+	const std::string	ONGRAPHIC	= ESC + "(0";
+	const std::string	OFFGRAPHIC	= ESC + "(B";
+
+	const std::string	SETTITLE	= ESC + "]2;TITLE" + BEL;
+
+	const std::string	CLEAR		= CSI +"2J";
 };
 
-    class CEndL
-    {
-    public:
-        void Action( CConsole& test )
-        {
-            test << "\n"; test.Flush();
-        }
-    private:
+	class CEndL
+	{
+	public:
+		void Action( CConsole& test )
+		{
+			test << "\n"; test.Flush();
+		}
+	private:
 
-    };
+	};
 
-    extern CConsole								Console;
-    extern CEndL								myendl;
+	extern CConsole								Console;
+	extern CEndL								myendl;
 
 #endif
 
