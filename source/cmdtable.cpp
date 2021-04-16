@@ -168,45 +168,40 @@ void command_fixspawn( void )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void command_addaccount( CSocket *s)
-//|	Date		-	10/17/2002
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	GM command for adding new user accounts while in-game
 //o-----------------------------------------------------------------------------------------------o
 void command_addaccount( CSocket *s)
 {
 	VALIDATESOCKET( s );
-	CAccountBlock actbTemp;
 	if( Commands->NumArguments() > 1 )
 	{
+		std::string newUsername = Commands->CommandString( 2, 2 );
+		std::string newPassword = Commands->CommandString( 3, 3 );
+		UI16 newFlags = 0x0000;
 
-		char *szCommandLine	= NULL;
-		char *szCommand		= NULL;
-		char *szUsername	= NULL;
-		char *szPassword	= NULL;
-		char *szPrivs		= NULL;
-		UI16 nFlags = 0x0000;
-		szCommandLine	= (char *)Commands->CommandString( 2 ).c_str();
-		szCommand		= strtok( szCommandLine, " " );
-		szUsername		= strtok( NULL, " " );
-		szPassword		= strtok( NULL, " " );
-		szPrivs			= strtok( NULL, "\0" );
-		if( szPassword == NULL || szUsername == NULL )
-			return;
-		if( szPrivs != NULL )
-			nFlags = atoi( szPrivs );
-		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		CAccountBlock &actbTemp = Accounts->GetAccountByName( szUsername );
-		if( actbTemp.wAccountIndex != AB_INVALID_ID )
+		if( Commands->NumArguments() > 2 )
+			newFlags = str_value<UI16>( Commands->CommandString( 4, 4 ));
+
+		if( newUsername == "" || newPassword == "" )
 		{
-			Accounts->AddAccount( szUsername, szPassword, "NA", nFlags );
-			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
+			s->sysmessage( "Unable to add account, insufficient data provided (syntax: [username] [password] [flags])" );
+			return;
+		}
 
-			s->sysmessage( format( "Account Added: %s:%s:%i", szUsername, szPassword, nFlags ) );
+		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
+		CAccountBlock &actbTemp = Accounts->GetAccountByName( newUsername );
+		if( actbTemp.wAccountIndex == AB_INVALID_ID )
+		{
+			Accounts->AddAccount( newUsername, newPassword, "NA", newFlags );
+			Console << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
+
+			s->sysmessage( format( "Account Added: %s:%s:%i", newUsername.c_str(), newPassword.c_str(), newFlags ) );
 		}
 		else
 		{
-			Console << "o Account was not added" << myendl;
-			s->sysmessage( "Account not added" );
+			Console << "o Account was not added, an account with that username already exists!" << myendl;
+			s->sysmessage( "Account not added, an account with that username already exists!" );
 		}
 	}
 }

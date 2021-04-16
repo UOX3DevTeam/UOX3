@@ -377,6 +377,13 @@ JSObject *CJSRuntime::MakeNewObject( IUEEntries iType )
 			//JS_DefineFunctions( jsContext, toMake, CParty_Methods );
 			//JS_DefineProperties( jsContext, toMake, CPartyProperties );
 			break;
+		case IUE_ACCOUNT:
+			toMake = JS_NewObject( jsContext, &UOXAccount_class, protoList[JSP_ACCOUNT], jsGlobal );
+			if( toMake == NULL )
+				return NULL;
+			//JS_DefineFunctions( jsContext, toMake, CAccount_Methods );
+			//JS_DefineProperties( jsContext, toMake, CAccountProperties );
+			break;
 		default:
 		case IUE_COUNT:
 			return NULL;

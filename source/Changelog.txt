@@ -1,3 +1,47 @@
+16/04/2021 - Xuri
+	Fixed long-standing issue with UOX3 console not resetting terminal properly after shutdown on Linux, after updating cConsole.cpp/h to conform to standard unix terminal commands/settings for certain features (punt)
+	Fixed an issue that could cause a crash on Windows when attempting to broadcast system messages from the UOX3 console (punt)
+	Fixed an issue that prevented text input in UOX3 console for system broadcasts from being displayed on Linux and MacOS (punt)
+	Added support for new JS Object - IUE_ACCOUNT - which can be accessed via character property .account. The following account properties have been exposed to the JS engine:
+		.id 				// Account ID (Read-Only)
+		.username 			// Account Username (Read-Only)
+		.flags 				// Flags set on account (Read-Only)
+		.comment 			// Comment/contact info
+		.character1 		// Character in account slot 1 (Read-Only)
+		.character2 		// Character in account slot 2 (Read-Only)
+		.character3 		// Character in account slot 3 (Read-Only)
+		.character4 		// Character in account slot 4 (Read-Only)
+		.character5 		// Character in account slot 5 (Read-Only)
+		.character6 		// Character in account slot 6 (Read-Only)
+		.character7 		// Character in account slot 7 (Read-Only)
+		.currentChar 		// Currently logged in character (if any) (Read-Only)
+		.lastIP 			// Last IP used to connect to account (Read-Only)
+		// Flag shortcuts
+		.isBanned 			// Is account banned?
+		.isSuspended 		// Is account suspended?
+		.isPublic			// Is comment/contact info to be considered public info?
+		.isOnline			// Is account online?
+		.isSlot1Blocked 	// Is character slot 1 blocked?
+		.isSlot2Blocked 	// Is character slot 2 blocked?
+		.isSlot3Blocked 	// Is character slot 3 blocked?
+		.isSlot4Blocked 	// Is character slot 4 blocked?
+		.isSlot5Blocked 	// Is character slot 5 blocked?
+		.isSlot6Blocked 	// Is character slot 6 blocked?
+		.isSlot7Blocked 	// Is character slot 7 blocked?
+		.unused9 			// Unused flag
+		.unused10 			// Unused flag
+		.isSeer 			// Is account marked as Seer account?
+		.isCounselor 		// Is account marked as Counselor account?
+		.isGM 				// Is account marked as GM account?
+	Fixed 'addaccount command - can now once again be used to add a new user account to the server from in-game. See accounts.adm for info on available flags. Syntax:
+		'addaccount [username] [password] [(optional)flags]
+	Updated 'get command to allow retrieving certain account properties for targeted player characters:
+		username, flags, comment, character1, character2, character3, character4, character5, character6, character7, lastIP, isBanned, isSuspended, isPublic, isOnline, isSlot1Blocked, isSlot2Blocked, isSlot3Blocked, isSlot4Blocked, isSlot5Blocked, isSlot6Blocked, isSlot7Blocked, unused9, unused10, isSeer, isCounselor and isGM
+	Updated 'set command to allow setting certain account properties for targeted player characters:
+		comment, password, isBanned, isSuspended, isPublic, isOnline, isSlot1Blocked, isSlot2Blocked, isSlot3Blocked, isSlot4Blocked, isSlot5Blocked, isSlot6Blocked, isSlot7Blocked, unused9, unused10, isSeer, isCounselor, isGM
+	Updated 'tweak command to allow viewing and modifying of certain account properties for targeted player characters
+		Note that any changes to account properties will not go into effect until a worldsave or manual save of accounts via console has taken place.
+
 14/04/2021 - Xuri
 	Fixed a casting issue that prevented SEFunctions.cpp from compiling on Linux
 	Added additional Region/Townregion JS properties. These (and other properties) can be viewed and modified using the 'tweak command, but changes are not permanently saved and will only be valid as long as the server stays running:

@@ -30,17 +30,22 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
+#include <iostream>
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-#include <stdio.h>
-
+#include <termios.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
-typedef void *HANDLE;
+struct termios initial_terminal_state;
 #else
-#include <process.h>
-#include <conio.h>
-#endif
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <conio.h>
+#undef min
+#undef max
+DWORD initial_terminal_state;
+#endif
 
 CConsole						Console;	// no *, else we can't overload <<
 CEndL							myendl;
@@ -50,13 +55,7 @@ const UI08 WARNINGMODE			= 1;
 const UI08 ERRORMODE			= 2;
 //const UI08 COLOURMODE			= 3;
 
-bool cluox_io					= false;   // is cluox-IO enabled?
-bool cluox_nopipe_fill			= false;   // the stdin-pipe is known to be none-empty, no need to fill it.
-HANDLE cluox_stdin_writeback	= 0; // the write-end of the stdin-pipe
-
-
 // Forward function declarations
-
 void		endmessage( SI32 x );
 void		LoadCustomTitle( void );
 void		LoadSkills( void );
@@ -69,34 +68,143 @@ void		UnloadRegions( void );
 void		UnloadSpawnRegions( void );
 void		LoadTeleportLocations( void );
 
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CConsole()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Class Constructor and deconstructor
 //o-----------------------------------------------------------------------------------------------o
 CConsole::CConsole() : width( 80 ), height( 25 ),
-#if UOX_PLATFORM == PLATFORM_WIN32
 currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false )
-#else
-currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
-
-#endif
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
-	tcgetattr (0, &resetio);
-#endif
+	initialize();
 }
 
 CConsole::~CConsole()
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
-	setvbuf(stdout, NULL, _IONBF, 0);
-	tcsetattr(0, TCSANOW, &resetio);
-#endif
-
+	MoveTo(1,height);
+	reset();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::initialize()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Prepare console/terminal for UOX3 output
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::initialize()
+{
+#if !defined(_WIN32)
+	tcgetattr(1, &initial_terminal_state); // get the current state of the terminal
+	auto temp = initial_terminal_state;
+	temp.c_lflag = temp.c_lflag & (~ECHO) & (~ICANON); // Disable echo and canonical (line) mode
+	temp.c_cc[VMIN] = 0;  		// in non canonical mode we non blocking read
+	temp.c_cc[VTIME] = 0; // in non canonical mode we non blocking read
+	tcsetattr(1, TCSANOW, &temp);
+#else
+	// Set the input to non echo and non canonical (line) mode
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleMode(hco, &initial_terminal_state);
+	auto temp = initial_terminal_state;
+	temp = (temp & (~ENABLE_ECHO_INPUT) & (~ENABLE_LINE_INPUT) & (~ENABLE_MOUSE_INPUT));
+	SetConsoleMode(hco,initial_terminal_state);
+#endif
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::reset()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Reset console/terminal to its original state
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::reset()
+{
+	std::cout.flush();
+
+#if !defined(_WIN32)
+	tcsetattr(1, TCSAFLUSH, &initial_terminal_state);
+	std::cout << std::endl;
+#else
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleMode(hco,initial_terminal_state);
+#endif
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::setTitle( const std::string &value )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Set console/terminal window title
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::setTitle( const std::string &value )
+{
+#if !defined(_WIN32)
+	auto cmd = SETTITLE;
+	auto loc = cmd.find("TITLE");
+	cmd.replace(loc, 5, value);
+	sendCMD(cmd);
+#else
+	SetConsoleTitle( value.c_str() );
+#endif
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::sendCMD( const std::string& cmd )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Send cmd to terminal
+//o-----------------------------------------------------------------------------------------------o
+CConsole& CConsole::sendCMD( const std::string& cmd )
+{
+	std::cout << cmd;
+	std::cout.flush();
+	return *this;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::windowSize()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Set window size in columns and rows
+//o-----------------------------------------------------------------------------------------------o
+std::tuple<int,int> CConsole::windowSize()
+{
+	int row =0;
+	int col =0;
+
+#if !defined(_WIN32)
+	// Get the window size
+	winsize winsz;
+	ioctl(0,TIOCGWINSZ,&winsz);
+	col = winsz.ws_col;
+	row = winsz.ws_row;
+#else
+	HANDLE hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo( hco, &csbi );
+	col	= csbi.dwSize.X;
+	row	= csbi.dwSize.Y;
+#endif
+
+	return std::make_tuple(row,col);
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::clearScreen()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the screen
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::clearScreen()
+{
+#if defined(_WIN32)
+	unsigned long y;
+	COORD xy;
+
+	xy.X = 0;
+	xy.Y = 0;
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	FillConsoleOutputCharacter( hco, ' ', width * height, xy, &y );
+	SetConsoleCursorPosition( hco, xy );
+#else
+	std::string cmd = CSI;
+	cmd = cmd + std::string("2J");
+	sendCMD(cmd);
+#endif
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	<< Overrriding
@@ -114,6 +222,7 @@ CConsole& CConsole::operator<<( const char *outPut )
 	StartOfLineCheck();
 #if UOX_PLATFORM == PLATFORM_WIN32
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
 	std::string toDisplay = outPut;
 	if( ScrBuffInfo.dwCursorPosition.X + toDisplay.length() > ScrBuffInfo.dwSize.X )
@@ -247,15 +356,17 @@ CConsole& CConsole::operator<<( const R64 &outPut )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	void print(const std::string& msg) {
+//| Function	-	void print( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints the console with the "|"
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::print(const std::string& msg) {
-	StartOfLineCheck() ;
-	std::cout << msg ;
-	if ((msg.size() > 0) && (msg[msg.size()-1]=='\n')) {
-		curLeft = 0 ;
+void CConsole::print( const std::string& msg )
+{
+	StartOfLineCheck();
+	std::cout << msg;
+	if ((msg.size() > 0) && (msg[msg.size()-1]=='\n'))
+	{
+		curLeft = 0;
 	}
 }
 
@@ -294,7 +405,7 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Log to the console.log file
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::log( const std::string& msg)
+void CConsole::log( const std::string& msg )
 {
 	if( !cwmWorldState->ServerData()->ServerConsoleLogStatus() )
 		return;
@@ -320,7 +431,6 @@ void CConsole::error( const std::string& msg )
 	CurrentMode( oldMode );
 }
 
-
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void PrintSectionBegin( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -336,12 +446,6 @@ void CConsole::PrintSectionBegin( void )
 	curLeft = 0;
 	curTop = 0;
 	TurnNormal();
-#if UOX_PLATFORM != PLATFORM_WIN32
-	if( forceNL )
-	{
-		(*this) << myendl;
-	}
-#endif
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -352,43 +456,10 @@ void CConsole::PrintSectionBegin( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::Start( const std::string& temp )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
-	hco		= GetStdHandle( STD_OUTPUT_HANDLE );
-	GetConsoleScreenBufferInfo( hco, &csbi );
-	width	= csbi.dwSize.X;
-	height	= csbi.dwSize.Y;
-	SetConsoleTitle( temp.c_str() );
-#else
-	// TODO: unix console handling should really be replaced by (n)curses or
-	// something
-
-	if (isatty (0))
-	{
-		struct termios tio;
-		struct winsize winsz;
-
-		// switch to raw mode
-		tcgetattr (0, &tio);
-
-		tio.c_lflag &= ~ICANON & ~ECHO;
-
-		tcsetattr (0, TCSAFLUSH, &tio); //ignore errors
-
-		// get window size
-		ioctl (0, TIOCGWINSZ, &winsz);
-
-		width = winsz.ws_col;
-		height = winsz.ws_row;
-
-		// disable stdout buffering
-		setvbuf (stdout, NULL, _IONBF, 0);
-	}
-	else
-	{
-		// produce readable log
-		forceNL = true;
-	}
-#endif
+	auto size = windowSize();
+	width = std::get<1>(size);
+	height = std::get<0>(size);
+	setTitle(temp);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -400,6 +471,7 @@ void CConsole::Start( const std::string& temp )
 void CConsole::TurnYellow( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;33m";
@@ -416,6 +488,7 @@ void CConsole::TurnYellow( void )
 void CConsole::TurnRed( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;31m";
@@ -432,6 +505,7 @@ void CConsole::TurnRed( void )
 void CConsole::TurnGreen( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;32m";
@@ -448,6 +522,7 @@ void CConsole::TurnGreen( void )
 void CConsole::TurnBlue( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;34m";
@@ -464,6 +539,7 @@ void CConsole::TurnBlue( void )
 void CConsole::TurnNormal( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
 	std::cout << "\033[0;37m";
@@ -480,6 +556,7 @@ void CConsole::TurnNormal( void )
 void CConsole::TurnBrightWhite( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;37m";
@@ -530,17 +607,7 @@ void CConsole::PrintPassed( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::ClearScreen( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
-	unsigned long y;
-	COORD xy;
-
-	xy.X = 0;
-	xy.Y = 0;
-	FillConsoleOutputCharacter( hco, ' ', width * height, xy, &y );
-	SetConsoleCursorPosition( hco, xy );
-#else
-	std::cout << "\033[H" ;
-#endif
+	clearScreen();
 }
 
 void CConsole::PrintBasedOnVal( bool value )
@@ -613,6 +680,7 @@ void CConsole::PrintStartOfLine( void )
 #if UOX_PLATFORM == PLATFORM_WIN32
 void CConsole::MoveTo( SI32 x, SI32 y )
 {
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD Pos;
 	if( y == -1 )
 	{
@@ -726,53 +794,26 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 SI32 CConsole::cl_getch( void )
 {
 #if UOX_PLATFORM != PLATFORM_WIN32
-	// first the linux style, don't change it's behavoir
-	UI08 c = 0;
-	fd_set KEYBOARD;
-	FD_ZERO( &KEYBOARD );
-	FD_SET( 0, &KEYBOARD );
-	SI32 s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
-	if( s < 0 )
+	char buffer[2];
+	std::string rvalue = "";
+	buffer[1] = 0;
+	auto a = ::read(0, buffer, 1);  // This doesn't block on getting a line due to initalization
+	if( a > 0 )
 	{
-		error( format("%c", "Error scanning key press") );
-		messageLoop << MSG_SHUTDOWN;
+		return static_cast<int>(buffer[0]);
 	}
-	if( s > 0 )
+	else
 	{
-		read( 0, &c, 1 );
-		if( c == 0x0A )
-			return -1;
+		return -1;
 	}
+
 #else
-	// now the windows one
-	if( !cluox_io )
-	{
 		// uox is not wrapped simply use the kbhit routine
 		if( _kbhit() )
 			return _getch();
 		else
 			return -1;
-	}
-	// the wiered cluox getter.
-	UI08 c = 0;
-	unsigned long bytes_written = 0;
-	SI32 asw = 0;
-	if( !cluox_nopipe_fill )
-		asw = WriteFile( cluox_stdin_writeback, &c, 1, &bytes_written, NULL );
-	if( bytes_written != 1 || asw == 0 )
-	{
-		warning( "Using cluox-io" );
-		messageLoop << MSG_SHUTDOWN;
-	}
-	c = (UI08)fgetc( stdin );
-	if( c == 0 )
-	{
-		cluox_nopipe_fill = false;
-		return -1;
-	}
 #endif
-	// here an actual charater is read in
-	return c;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -789,16 +830,6 @@ void CConsole::Poll( void )
 	SI32 c = cl_getch();
 	if( c > 0 )
 	{
-		if( (cluox_io) && ( c == 250 ) )
-		{	// force unsecure mode, need this since cluox can't know
-			//      how the toggle status is.
-			if( cwmWorldState->GetSecure() )
-			{
-				(*this) << "Secure mode disabled. Press ? for a commands list." << myendl;
-				cwmWorldState->SetSecure( false );
-				return;
-			}
-		}
 		c = toupper(c);
 		Process( c );
 	}
@@ -870,6 +901,7 @@ void CConsole::Process( SI32 c )
 			case 'Y':
 				SI32 keyresp;
 				std::cout << "System: ";
+				std::cout.flush();
 				while( !kill )
 				{
 					keyresp = cl_getch();
@@ -904,11 +936,10 @@ void CConsole::Process( SI32 c )
 							messageLoop << temp;
 							break;
 						default:
-							if( static_cast<size_t>(indexcount) < sizeof( outputline ) )
-							{
-								outputline[indexcount++] = (UI08)(keyresp);
-								std::cout << (char)keyresp;
-							}
+							outputline = outputline  + std::string( 1, static_cast<char>(keyresp) );
+							indexcount = indexcount + 1;
+							std::cout << static_cast<char>(keyresp);
+							std::cout.flush();
 							break;
 					}
 					keyresp = 0x00;
@@ -1182,21 +1213,6 @@ void CConsole::Process( SI32 c )
 				break;
 		}
 	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Cloak( char *callback )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Cloak UOX3 console within CLUOX
-//o-----------------------------------------------------------------------------------------------o
-void CConsole::Cloak( char *callback )
-{
-	(*this) << "Using CLUOX Streaming-IO" << myendl;
-	setvbuf( stdout, NULL, _IONBF, 0 );
-	setvbuf( stderr, NULL, _IONBF, 0 );
-	cluox_io = true;
-	char *dummy;
-	cluox_stdin_writeback = (void *)strtol( callback, &dummy, 16 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
