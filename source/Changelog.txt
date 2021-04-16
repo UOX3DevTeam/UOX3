@@ -41,6 +41,7 @@
 		comment, password, isBanned, isSuspended, isPublic, isOnline, isSlot1Blocked, isSlot2Blocked, isSlot3Blocked, isSlot4Blocked, isSlot5Blocked, isSlot6Blocked, isSlot7Blocked, unused9, unused10, isSeer, isCounselor, isGM
 	Updated 'tweak command to allow viewing and modifying of certain account properties for targeted player characters
 		Note that any changes to account properties will not go into effect until a worldsave or manual save of accounts via console has taken place.
+	Updated AI for AI_HEALER_G and AI_HEALER_E to check for multi-ownership and line of sight before resurrecting dead players
 
 14/04/2021 - Xuri
 	Fixed a casting issue that prevented SEFunctions.cpp from compiling on Linux
