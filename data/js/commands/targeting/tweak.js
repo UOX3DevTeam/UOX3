@@ -406,7 +406,8 @@ var accountProp = {
 	isSlot5Blocked:821,
 	isSlot6Blocked:822,
 	isSlot7Blocked:823,
-	isSuspended:824
+	isSuspended:824,
+	timeban:825
 }
 
 /*var regionProp2 = {
@@ -421,7 +422,7 @@ const charPropCount = 127;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
-const accountPropCount = 24;
+const accountPropCount = 25;
 
 function CommandRegistration()
 {
@@ -3215,6 +3216,26 @@ function HandleAccountTarget( pSocket, myTarget )
 				accountLabelTooltip = "Is slot 7 on this Account blocked?";
 				accountValue 		= (myTarget.isSlot7Blocked ? "true" : "false");
 				break;
+			case accountProp.timeban:
+				accountLabelTooltip = "How long is user banned for, in minutes?";
+				if( myTarget.timeban > 0 )
+				{
+					var currentTime = new Date();
+					var currentTimeMin = Math.ceil( currentTime.getTime() / 1000 / 60 );
+					var timebanDelta = myTarget.timeban - currentTimeMin;
+					if( timebanDelta > 0 )
+					{
+						accountValue = timebanDelta;
+						accountValueTooltip = "Banned until: " + new Date(myTarget.timeban * 60 * 1000);
+					}
+					else
+						accountValue = 0;
+				}
+				else
+				{
+					accountValue = 0;
+				}
+				break;
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
@@ -3412,6 +3433,18 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 			else if( propertyName == "decaytime" )
 			{
 				propertyVal = (Math.floor(( targetObj[propertyName] - GetCurrentClock() ) / 1000 )).toString();
+			}
+			else if( propertyName == "timeban" )
+			{
+				var currentTime = new Date();
+				var currentTimeMin = Math.ceil( currentTime.getTime() / 1000 / 60 );
+				var timebanDelta = targetObj[propertyName] - currentTimeMin;
+				if( timebanDelta > 0 )
+				{
+					propertyVal = timebanDelta;
+				}
+				else
+					propertyVal = 0;
 			}
 			else if( propertyType == "SkillValue" )
 			{
@@ -4572,6 +4605,14 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 3
 			maxVal = 255;
 			break;
+		// Account Properties
+		case accountProp.timeban:
+			propertyName = "timeban";
+			propertyType = "Integer";
+			propertyHint = "How long is the user banned for, in minutes?";
+			maxLength = 6;
+			maxVal = 999999;
+			break;
 
 		// SkillValue ------------------------------------------------------
 		// Base Skills
@@ -5488,6 +5529,29 @@ function onGumpPress( pSocket, pButton, gumpData )
 					{
 						var oldValue = parseInt(targetObj[propertyName]);
 						targetObj[propertyName] = targetValue;
+
+						if( propertyName == "isBanned" )
+						{
+							if( targetValue > 0 )
+							{
+								// If marked as banned, also apply a default timeban of 24 hours, and disconnect player
+								targetObj.timeban = 60 * 24;
+								if( targetObj.isOnline && ValidateObject( targetObj.currentChar ) && targetObj.currentChar.socket != null )
+									targetObj.currentChar.Disconnect();
+							}
+							else
+							{
+								// If marked as not banned, also reset timeban value
+								targetObj.timeban = 0;
+							}
+						}
+						else if( propertyName == "timeban" && targetValue > 0 )
+						{
+							// Also mark user as banned, and disconnect them!
+							targetObj.isBanned = 1;
+							if( targetObj.isOnline && ValidateObject( targetObj.currentChar ) && targetObj.currentChar.socket != null )
+								targetObj.currentChar.Disconnect();
+						}
 
 						if( ValidateObject(targetObj) )
 						{

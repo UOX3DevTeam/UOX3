@@ -1,3 +1,17 @@
+17/04/2021 - Xuri
+	Added new helper function to get amount of minutes that have passed since midnight 01/01/1970 UTC - GetMinutesSinceEpoch()
+	Converted wTimeBan property of CAccountBlock from UI16 to UI32
+	Added check during login for timeban account property. If a timeban is in place, player will be unable to login until after the ban is over.
+	Added JS property for Account JS Object:
+		.timeban 			// Time in minutes that user is banned
+	Updated .get command to allow retrieving timeban value from account of player characters
+	Updated .set command to allow setting timeban value on account of player characters. If set to higher than 0, player will also be marked as banned, and disconnected
+	Added two new commands in js/commands/targeting/disconnect.js:
+		'ban [durationInMinutes]	// Ban targeted player for specified duration in minutes, or for a default 24 hours if no duration is specified
+		'unban 						// Unban targeted player
+	Updated 'tweak command (js/commands/targeting/tweak.js) to support viewing and modifying .timeban account property
+	Updated dictionary files with additional messages used in relation to banning/unbanning players
+
 16/04/2021 - Xuri
 	Fixed long-standing issue with UOX3 console not resetting terminal properly after shutdown on Linux, after updating cConsole.cpp/h to conform to standard unix terminal commands/settings for certain features (punt)
 	Fixed an issue that could cause a crash on Windows when attempting to broadcast system messages from the UOX3 console (punt)

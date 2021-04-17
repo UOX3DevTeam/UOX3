@@ -526,6 +526,18 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		{
 			var myAccount = ourChar.account;
 			myAccount.isBanned = ( nVal == 1 );
+			if( nVal == 1 )
+			{
+				// Also set a default timeban of 24 hours (60 * 24), and disconnect user, if online
+				myAccount.timeban = 60 * 24;
+				if( myAccount.isOnline && ValidateObject( myAccount.currentChar ) && myAccount.currentChar.socket != null )
+					myAccount.currentChar.Disconnect();
+			}
+			else
+			{
+				// Remove timeban as well
+				myAccount.timeban = 0;
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISBANNED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 			okMsg( socket );
 		}
@@ -653,6 +665,25 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 			var myAccount = ourChar.account;
 			myAccount.isGM = ( nVal == 1 );
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISGM " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "TIMEBAN":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.timeban = nVal;
+			if( nVal > 0 )
+			{
+				// Ban player if timeban is over zero
+				myAccount.isBanned = 1;
+				if( myAccount.isOnline && ValidateObject( myAccount.currentChar ) && myAccount.currentChar.socket != null )
+				{
+					// Disconnect currently logged in character on account, if they're online
+					myAccount.currentChar.socket.Disconnect();
+				}
+			}
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") useD command <SET TIMEBAN " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 			okMsg( socket );
 		}
 		break;

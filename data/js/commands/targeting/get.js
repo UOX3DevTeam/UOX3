@@ -391,7 +391,14 @@ function HandleGetChar( socket, ourChar, uKey )
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			socket.SysMessage( "isBanned: " + myAccount.banned );
+			socket.SysMessage( "isBanned: " + myAccount.isBanned );
+			if( myAccount.isBanned && myAccount.timeban == 0 )
+				socket.SysMessage( "User is permanently banned." );
+			else if( myAccount.isBanned && myAccount.timeban > 0 )
+			{
+				var bannedUntil = new Date( myAccount.timeban * 60 * 1000 )
+				socket.SysMessage( "User is banned until " + bannedUntil );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISBANNED> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -605,6 +612,25 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			socket.SysMessage( "Last IP: " + myAccount.lastIP );
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET LASTIP> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "TIMEBAN":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var timeban = myAccount.timeban;
+			var currentTime = new Date();
+			var currentTimeMin = Math.ceil( currentTime.getTime() / 1000 / 60 );
+			var timebanDelta = timeban - currentTimeMin;
+			if( timebanDelta > 0 )
+			{
+				socket.SysMessage( "Timeban: " + timebanDelta + " minutes" );
+				var bannedUntil = new Date( timeban * 60 * 1000 )
+				socket.SysMessage( "User is banned until " + bannedUntil );
+			}
+			else
+				socket.SysMessage( "Timeban: 0 minutes" );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET TIMEBAN> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
 	default:

@@ -17,7 +17,7 @@
 #include "cGuild.h"
 #include "StringUtility.hpp"
 #include "cRaces.h"
-
+#include <chrono>
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
@@ -151,6 +151,16 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 	return NULL;
 }
 
+void CheckBanTimer( CAccountBlock &actbTemp )
+{
+	// Unban player if bantime is up, but don't do anything if bantime is zero - maybe player is permanently banned!
+	if( actbTemp.wFlags.test( AB_FLAGS_BANNED ) && ( actbTemp.wTimeBan > 0 && actbTemp.wTimeBan <= GetMinutesSinceEpoch() ))
+	{
+		actbTemp.wTimeBan = 0x0;
+		actbTemp.wFlags.set( AB_FLAGS_BANNED, false );
+	}
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPIFirstLogin()
 //o-----------------------------------------------------------------------------------------------o
@@ -204,6 +214,9 @@ bool CPIFirstLogin::Handle( void )
 	}
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
+		// Check if player's bantime is up, and if so, unban player
+		CheckBanTimer( *actbTemp );
+
 		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ) )
 			t = LDR_ACCOUNTDISABLED;
 		else if( actbTemp->sPassword != pass1 )
@@ -544,6 +557,9 @@ bool CPISecondLogin::Handle( void )
 
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
+		// Check if player's bantime is up, and if so, unban player
+		CheckBanTimer( actbTemp );
+
 		if( actbTemp.wFlags.test( AB_FLAGS_BANNED ) )
 			t = LDR_ACCOUNTDISABLED;
 		else if( pass1 != actbTemp.sPassword )

@@ -2314,11 +2314,12 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_PASSWORD: // NO.
 			case CACCOUNT_PATH:		// Nah.
 				break;
-			case CACCOUNT_FLAGS: *vp = INT_TO_JSVAL( (myAccount->wFlags).to_ulong() );		break;
+			case CACCOUNT_FLAGS: *vp = INT_TO_JSVAL( (myAccount->wFlags).to_ulong() );	break;
 			case CACCOUNT_COMMENT:
 				tString = JS_NewStringCopyZ( cx, (myAccount->sContact).c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
+			case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->wTimeBan );		break;
 			case CACCOUNT_CHARACTER1:
 			{
 				if( myAccount->dwCharacters[0] != INVALIDSERIAL )
@@ -2543,6 +2544,18 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_COMMENT: 
 				myAccount->sContact = encaps.toString();
 				break;
+			case CACCOUNT_TIMEBAN:
+			{
+				UI32 timeBan = static_cast<UI32>(encaps.toInt());
+				if( timeBan > 0 )
+				{
+					myAccount->wFlags.set( AB_FLAGS_BANNED, true );
+					myAccount->wTimeBan = GetMinutesSinceEpoch() + timeBan;
+				}
+				else
+					myAccount->wTimeBan = 0;
+				break;
+			}
 			case CACCOUNT_BANNED:			myAccount->wFlags.set( AB_FLAGS_BANNED, encaps.toBool() );		break;
 			case CACCOUNT_SUSPENDED:		myAccount->wFlags.set( AB_FLAGS_SUSPENDED, encaps.toBool() );	break;
 			case CACCOUNT_PUBLIC:			myAccount->wFlags.set( AB_FLAGS_PUBLIC, encaps.toBool() );		break;

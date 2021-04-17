@@ -129,7 +129,7 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 				if( targSocket != NULL )
 					targSocket->sysmessage( 491 );
 				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
-				actbTemp.wTimeBan=static_cast<UI16>(BuildTimeValue( 60 * 60 * 24 ));
+				actbTemp.wTimeBan = GetMinutesSinceEpoch() + static_cast<UI32>( 1440 );
 
 				if( targSocket != NULL )
 					Network->Disconnect( targSocket );

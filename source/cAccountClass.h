@@ -86,7 +86,7 @@ public:
 		sContact		= "";
 		sPath			= "";
 		wAccountIndex	= 0xFFFF;
-		wTimeBan		= 0x0000;
+		wTimeBan		= 0x00000000;
 		dwInGame		= 0xFFFFFFFF;
 		dwLastIP		= 0x00000000;
 		bChanged		= false;
@@ -103,7 +103,7 @@ public:
 	std::string					sContact;
 	UI16						wAccountIndex;
 	std::bitset< AB_FLAGS_ALL >	wFlags;
-	UI16						wTimeBan;
+	UI32						wTimeBan;
 	UI32						dwInGame;
 	UI32						dwLastIP;
 	UI32						dwLastClientVer;
