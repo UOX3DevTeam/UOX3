@@ -83,7 +83,7 @@ function onCallback1( socket, ourObj )
 			{
 				var banMsg = GetDictionaryEntry( 2017, ourAccount.currentChar.socket.language ); // You have been banned for %d minutes!
 				ourAccount.currentChar.SysMessage( banMsg, timebanDuration );
-				ourAccount.currentChar.Disconnect();
+				ourAccount.currentChar.socket.Disconnect();
 			}
 
 			socket.SysMessage( GetDictionaryEntry( 2016, socket.language ), ourAccount.id, timebanDuration ); // Account with ID #%d has been banned for %d minutes.
