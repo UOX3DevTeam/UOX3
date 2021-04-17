@@ -1984,5 +1984,12 @@
 2011=Tweak
 2012=Total
 2013=Skillpoints
+2014=Account
+2015=Select character to ban for %d minutes.
+2016=Player with accountID #%d has been banned for %d minutes.
+2017=You have been banned for %d minutes!
+2018=Invalid command syntax! Correct syntax: ban / ban <durationInMinutes> (if no duration is specified, ban defaults to 24 hours)
+2019=Select character to unban.
+2020=Account with ID #%d has been unbanned.
 }
 EOF

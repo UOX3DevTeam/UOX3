@@ -2146,5 +2146,12 @@
 2011=Tweak
 2012=Total
 2013=Points de compétence
+2014=Compte
+2015=Sélectionnez le caractère à bannir pendant %d minutes.
+2016=Le joueur avec l'ID de compte #%d a été banni pendant% d minutes.
+2017=Vous avez été banni pendant %d minutes!
+2018=Syntaxe de commande invalide! Syntaxe correcte: ban / ban <durationInMinutes> (si aucune durée n'est spécifiée, l'interdiction par défaut est de 24 heures)
+2019=Sélectionnez le caractère à annuler.
+2020=Le compte avec l'ID #%d a été annulé.
 }
 EOF

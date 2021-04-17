@@ -383,7 +383,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		else if( l == "TIMEBAN" )
 		{
 			if( !r.empty() && r.length() != 0 )
-				actb.wTimeBan = r.toUShort();
+				actb.wTimeBan = r.toUInt();
 			else
 				actb.wTimeBan = 0;
 
@@ -1020,7 +1020,7 @@ UI16 cAccountClass::Load(void)
 		else if( l == "TIMEBAN" )
 		{
 			if( !r.empty() && r.length() != 0 )
-				actb.wTimeBan = UString( r ).toUShort();
+				actb.wTimeBan = UString( r ).toUInt();
 			else
 				actb.wTimeBan = 0;
 
