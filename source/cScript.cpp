@@ -118,6 +118,7 @@ static JSFunctionSpec my_functions[] =
 	{ "ResourceRegion",				SE_ResourceRegion,			3, 0, 0 },
 	{ "Moon",						SE_Moon,					2, 0, 0 },
 
+	{ "GetTownRegion",				SE_GetTownRegion,			1, 0, 0 },
 	{ "GetSpawnRegion",				SE_GetSpawnRegion,			1, 0, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0, 0 },
 
@@ -973,6 +974,7 @@ bool cScript::OnDecay( CItem *decaying )
 	if( !ExistAndVerify( seOnDecay, "onDecay" ) )
 		return false;
 
+	SI08 funcRetVal	= -1;
 	jsval params[1], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, decaying, runTime );
 	params[0] = OBJECT_TO_JSVAL( myObj );
@@ -980,7 +982,24 @@ bool cScript::OnDecay( CItem *decaying )
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnDecay, false );
 
-	return ( retVal == JS_TRUE );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+		else if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
