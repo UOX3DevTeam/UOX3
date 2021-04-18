@@ -129,7 +129,8 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
     c = 0xDEADBEEF + static_cast<std::uint32_t>(length) ;
     a = c;
     b = c ;
-    std::uint32_t k = 0 ;
+	std::uint32_t k = 0 ;
+	std::uint32_t l = 0 ;
 
     while (length > 12){
 		a += (s[k++]);
@@ -158,41 +159,51 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
     // Notice the lack of breaks!  we actually want it to fall through
     switch (length) {
         case 12: {
-			k += 11;
-            c += (s[k--] << 24);
+			l = k + 11;
+            c += (s[l] << 24);
         }
         case 11: {
-            c += (s[k--] << 16);
+			l = k + 10;
+            c += (s[l] << 16);
         }
         case 10: {
-            c += (s[k--] << 8);
+			l = k + 9;
+			c += (s[l] << 8);
         }
         case 9: {
-            c += (s[k--]);
+			l = k + 8;
+			c += (s[l]);
         }
         case 8: {
-            b += (s[k--] << 24);
+			l = k + 7;
+			b += (s[l] << 24);
         }
         case 7: {
-            b += (s[k--] << 16);
+			l = k + 6;
+			b += (s[l] << 16);
         }
         case 6: {
-            b += (s[k--] << 8);
+			l = k + 5;
+			b += (s[l] << 8);
         }
         case 5: {
-            b += (s[k--]);
+			l = k + 4;
+			b += (s[l]);
         }
         case 4: {
-            a += (s[k--] << 24);
+			l = k + 3;
+			a += (s[l] << 24);
         }
         case 3: {
-            a += (s[k--] << 16);
+			l = k + 2;
+			a += (s[l] << 16);
         }
         case 2: {
-            a += (s[k--] << 8);
+			l = k + 1;
+			a += (s[l] << 8);
         }
         case 1: {
-            a += (s[k]);
+			a += (s[k]);
             c ^= b; c -= b << 14 | b >> 18;
             a ^= c; a -= c << 11 | c >> 21;
             b ^= a; b -= a << 25 | a >> 7;
@@ -205,11 +216,9 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
 
         default:
             break;
-
     }
 
     return (static_cast<std::uint64_t>(b) << 32) | static_cast<std::uint64_t>(c) ;
-
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++

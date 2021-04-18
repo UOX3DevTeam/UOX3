@@ -1043,6 +1043,14 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 				}
 				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
+					UI16 decayTrig		= itemCheck->GetScriptTrigger();
+					cScript *toExecute	= JSMapping->GetScript( decayTrig );
+					if( toExecute != NULL )
+					{
+						if( toExecute->OnDecay( itemCheck ) == 1 )	// if it exists and we don't want hard code, return
+							return;
+					}
+
 					if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) )
 						continue;
 				}

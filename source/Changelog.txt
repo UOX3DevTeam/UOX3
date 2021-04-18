@@ -1,3 +1,8 @@
+19/04/2021 - Xuri (0.99.4g)
+	Completed implementation of onDecay JS event, which was not actually hooked up to anything! Can now be used to interrupt decay for items. Returning false will prevent code from deleting the decaying item, while returning true will continue running the decay code as normal.
+	Fixed an issue with .brkPeaceChance JS Character property, which erroneously called on the GetBrkPeaceChanceGain()/SetBrkPeaceChanceGain() functions instead of GetBrkPeaceChance()/SetBrkPeaceChance()
+	Fixed issue with loading of UOP map files that was introduced in a previous commit while attempting to get rid of some warnings when compiling UOX3 on Windows!
+
 17/04/2021 - Xuri
 	Added new helper function to get amount of minutes that have passed since midnight 01/01/1970 UTC - GetMinutesSinceEpoch()
 	Converted wTimeBan property of CAccountBlock from UI16 to UI32
