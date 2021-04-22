@@ -4677,9 +4677,28 @@ bool CPIAOSCommand::Handle( void )
 			 case 0x000D:	break;	//House Customisation :: Place Multi (Stairs)
 			 case 0x000E:	break;	//House Customisation :: Synch
 			 case 0x0010:	break;	//House Customisation :: Clear
-			 case 0x0012:	break;	//House Customisation :: Switch Floors
-			 case 0x0019:	break;	//Special Moves :: Activate / Deactivate
-			 case 0x001A:	break;	//House Customisation :: Revert*/
+			 case 0x0012:	break;	//House Customisation :: Switch Floors*/
+		case 0x0019: //Special Moves :: Activate / Deactivate
+		{
+			UI32 unknown = tSock->GetDWord( 9 );
+			UI08 abilityID = tSock->GetByte( 13 );
+			UI08 unknown2 = tSock->GetByte( 15 );
+
+			bool returnState = false;
+			CChar *myChar = tSock->CurrcharObj();
+			UI16 charTrig = myChar->GetScriptTrigger();
+			cScript *toExecute = JSMapping->GetScript( charTrig );
+			if( toExecute != NULL )
+				returnState = toExecute->OnSpecialMove( myChar, abilityID );
+			if( !returnState )
+			{
+				toExecute = JSMapping->GetScript( (UI16)0 );
+				if( toExecute != NULL )
+					toExecute->OnSpecialMove( myChar, abilityID );
+			}
+			return true;
+		}
+			 /*case 0x001A:	break;	//House Customisation :: Revert*/
 		case 0x0028:			//Guild :: Paperdoll button
 			if( cwmWorldState->ServerData()->PaperdollGuildButton() )
 			{
@@ -4690,7 +4709,22 @@ bool CPIAOSCommand::Handle( void )
 				return true;
 			}
 			break;
-		case 0x0032:	break;	//Quests :: Unknown
+		case 0x0032:			//Quests :: Unknown
+		{
+			bool returnState = false;
+			CChar *myChar	= tSock->CurrcharObj();
+			UI16 charTrig		= myChar->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( charTrig );
+			if( toExecute != NULL )
+				returnState = toExecute->OnQuestGump( myChar );
+			if( !returnState )
+			{
+				toExecute = JSMapping->GetScript( (UI16)0 );
+				if( toExecute != NULL )
+					toExecute->OnQuestGump( myChar );
+			}
+			return true;
+		}
 		default:		break;
 	}
 

@@ -93,7 +93,9 @@ enum ScriptEvent
 	seOnUseBandageMacro,	//	**	allows overriding what happens when client uses bandage macros
 	seOnHouseCommand,		//	**	allows overriding what happens when player speaks house commands
 	seOnPathfindEnd,
-	seOnEnterEvadeState
+	seOnEnterEvadeState,
+	seOnQuestGump,
+	seOnSpecialMove
 };
 
 struct SEGump
@@ -219,6 +221,8 @@ public:
 	UI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i );
 	UI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
 	bool		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID );
+	bool		OnQuestGump( CChar *mChar );
+	bool		OnSpecialMove( CChar *mChar, UI08 abilityID );
 
 	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams );

@@ -69,7 +69,7 @@
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
 
-std::thread cons ;
+std::thread cons;
 std::thread netw;
 
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -1597,6 +1597,8 @@ void ParseArgs( SI32 argc, char *argv[] )
 	}
 }
 
+BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
@@ -1606,25 +1608,35 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
 	{
-		// Special case for house signs
-		if( a->GetObjType() == OT_ITEM
-			&& ( ( a->GetID() >= 0x0b95 && a->GetID() <= 0x0c0e ) || a->GetID() == 0x1f28 || a->GetID() == 0x1f29 ) )
+		if( a->CanBeObjType( OT_MULTI ))
 		{
-			// Reunite house signs with their multis
-			SERIAL houseSerial = static_cast<CItem *>( a )->GetTempVar( CITV_MORE );
-			CMultiObj *multi = calcMultiFromSer( houseSerial );
-			if( ValidateObject( multi ) )
+			CMultiObj *aMulti = static_cast<CMultiObj *>(a);
+			BASEOBJECTLIST objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
+			for( BASEOBJECTLIST_CITERATOR objectCtr = objectList.begin(); objectCtr != objectList.end(); ++objectCtr )
 			{
-				a->SetMulti( multi );
-				return true;
+				CBaseObject *objToCheck = (*objectCtr);
+
+				if( inMulti( objToCheck->GetX(), objToCheck->GetY(), objToCheck->GetZ(), aMulti ))
+					objToCheck->SetMulti( aMulti );
+				else if( objToCheck->GetObjType() == OT_ITEM
+					&& ( ( objToCheck->GetID() >= 0x0b95 && objToCheck->GetID() <= 0x0c0e ) || objToCheck->GetID() == 0x1f28 || objToCheck->GetID() == 0x1f29 ) )
+				{
+					// Reunite house signs with their multis
+					SERIAL houseSerial = static_cast<CItem *>( objToCheck )->GetTempVar( CITV_MORE );
+					CMultiObj *multi = calcMultiFromSer( houseSerial );
+					if( ValidateObject( multi ) )
+					{
+						objToCheck->SetMulti( multi );
+					}
+				}
+				else
+				{
+					// No other multi found where item is, safe to set item's multi to INVALIDSERIAL
+					if( findMulti( objToCheck ) == NULL )
+						objToCheck->SetMulti( INVALIDSERIAL );
+				}
 			}
 		}
-
-		CMultiObj *multi = findMulti( a );
-		if( multi != NULL )
-			a->SetMulti( multi );
-		else
-			a->SetMulti( INVALIDSERIAL );
 	}
 	return true;
 }
@@ -1639,8 +1651,7 @@ void InitMultis( void )
 	Console << "Initializing multis            ";
 
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &FindMultiFunctor );
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &FindMultiFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, NULL, &FindMultiFunctor );
 
 	Console.PrintDone();
 }
@@ -1969,7 +1980,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 //o-----------------------------------------------------------------------------------------------o
 UI32 getclock( void )
 {
-	auto now = std::chrono::system_clock::now() ;
+	auto now = std::chrono::system_clock::now();
 	return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(now-current).count());
 }
 
@@ -2126,7 +2137,7 @@ void doLight( CChar *mChar, UI08 level )
 //o-----------------------------------------------------------------------------------------------o
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
-	UString temp	= mItem.GetName() ;
+	UString temp	= mItem.GetName();
 	temp			= temp.simplifyWhiteSpace();
 	const UI16 getAmount = mItem.GetAmount();
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
@@ -2631,7 +2642,7 @@ int main( SI32 argc, char *argv[] )
 		Console.PrintDone();
 
 		// Moved BulkStartup here, dunno why that function was there...
-		Console << "Loading dictionaries...        " << myendl ;
+		Console << "Loading dictionaries...        " << myendl;
 		Console.PrintBasedOnVal( Dictionary->LoadDictionary() >= 0 );
 
 		Console << "Loading teleport               ";
@@ -2753,6 +2764,25 @@ int main( SI32 argc, char *argv[] )
 		Console.PrintDone();
 
 		Console.PrintSectionBegin();
+
+		// Shows information about IPs and ports being listened on
+		Console.TurnYellow();
+		for( int i = 0; i < cwmWorldState->ServerData()->ServerCount(); i++ )
+		{
+			physicalServer *serverEntry = cwmWorldState->ServerData()->ServerEntry(i);
+			if( !serverEntry->getDomain().empty() )
+			{
+				hostent *hostEntry = gethostbyname( serverEntry->getDomain().c_str() );
+				if( hostEntry != NULL )
+				{
+					struct in_addr *pinaddr;
+					pinaddr = ((struct in_addr*)hostEntry->h_addr);
+					Console << "UOX: " << serverEntry->getName().c_str() << " listening on IP " << inet_ntoa(*pinaddr) << " (Port " << serverEntry->getPort() << ")" << myendl;
+				}
+			}
+		}
+		Console.TurnNormal();
+
 		// we've really finished loading here
 		cwmWorldState->SetLoaded( true );
 
@@ -2761,7 +2791,9 @@ int main( SI32 argc, char *argv[] )
 
 		// Calculate startup time in milliseconds
 		auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
+		Console.TurnGreen();
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
+		Console.TurnNormal();
 		Console.PrintSectionBegin();
 
 		// MAIN SYSTEM LOOP

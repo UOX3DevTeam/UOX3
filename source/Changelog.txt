@@ -1,3 +1,19 @@
+23/04/2021 - Xuri (0.99.4h)
+	Exposed a (read-only) JS property for characters to fetch their hunger rate. Uses race's hunger rate if defined, otherwise uses HUNGERRATE form uox.ini:
+		.hungerRate 		// Seconds between becoming hungrier
+	Updated 'get command to allow retrieving a character's hungerRate property
+	Added some details to console during UOX3 startup about which IPs and Ports UOX3 is listening to
+	Added new JS event that triggers when a player clicks on the Quest button in the paperdoll. Triggers from character script if present, or global script if not:
+		onQuestGump( pUser )
+	Added new JS event that triggers when player toggles a special move from a combat book. See packet 0xBF, subCmd 0x19 in packet guides for details on the special moves, whose IDs range from 0x00 to 0x1D:
+		onSpecialMove( pUser, abilityID )
+	Fixed invalid ID for items [0x0174] and [0x0175] in dfndata/items/building/walls/stone_walls.dfn
+	Updated FileSize() function in regions.cpp to fetch file size using std::filesystem::file_size() instead of creating an input stream, opening a file and then trying to seek the last position in the file
+	Added findNearbyObjects() function to findfuncs.cpp, to find all objects (characters and items) of CBaseObject class near a specified location
+	Improved performance when initializing multis on startup; now checks for items near multis, instead of checking for multis near every single item!
+	Improved performance when loading items and characters from worldfiles during startup; around 33% faster for release builds, around ~50% faster when running in debug mode through visual studio (punt)
+	Updated createSection() in ssection.cpp to use std::string and StringUtility functions instead of UString, and added some error handling (punt)
+
 19/04/2021 - Xuri (0.99.4g)
 	Completed implementation of onDecay JS event, which was not actually hooked up to anything! Can now be used to interrupt decay for items. Returning false will prevent code from deleting the decaying item, while returning true will continue running the decay code as normal.
 	Fixed an issue with .brkPeaceChance JS Character property, which erroneously called on the GetBrkPeaceChanceGain()/SetBrkPeaceChanceGain() functions instead of GetBrkPeaceChance()/SetBrkPeaceChance()

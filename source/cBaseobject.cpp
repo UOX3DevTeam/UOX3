@@ -602,7 +602,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
 	{
 		if( GetResist( (WeatherType)resist ) >= 10 )
-			outStream <<  GetResist( (WeatherType)resist ) << "," ;
+			outStream <<  GetResist( (WeatherType)resist ) << ",";
 		else
 			outStream << "0" <<  GetResist( (WeatherType)resist ) << ",";
 	}

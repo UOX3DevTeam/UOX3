@@ -348,11 +348,17 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "HUNGER":
 		socket.SysMessage( ourChar.hunger );
 		break;
+	case "HUNGERRATE":
+		socket.SysMessage( ourChar.hungerRate );
+		break;
 	case "LANGUAGE":
 		if( !ourChar.npc );
 		{
 			socket.SysMessage( ourChar.socket.language );
 		}
+		break;
+	case "TOWNPRIV":
+		socket.SysMessage( ourChar.townPriv );
 		break;
 	// Account Properties
 	case "USERNAME":

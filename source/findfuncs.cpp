@@ -556,9 +556,9 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( CChar *mChar, distLocs distance )
+//|	Function	-	ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns a list of Items that are within a certain distance
+//|	Purpose		-	Returns a list of Items that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
 ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 {
@@ -582,4 +582,44 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 		regItems->Pop();
 	}
 	return ourItems;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	BASOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance  )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of a location
+//o-----------------------------------------------------------------------------------------------o
+BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+{
+	BASEOBJECTLIST ourObjects;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == NULL )
+			continue;
+
+		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		regItems->Push();
+		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+		{
+			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+				continue;
+			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+				ourObjects.push_back( Item );
+		}
+		regItems->Pop();
+
+		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		regItems->Push();
+		for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
+		{
+			if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
+				continue;
+			if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
+				ourObjects.push_back( Character );
+		}
+		regChars->Pop();
+	}
+	return ourObjects;
 }
