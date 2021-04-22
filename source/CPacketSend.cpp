@@ -921,8 +921,8 @@ CPWornItem &CPWornItem::operator=( CItem &toCopy )
 //|							0x22 = scratch head
 //|							0x23 = 1 foot forward for 2 secs
 //|							0x24 = same
-//|						BYTE unknown1 (0x00) / frame count?
-//|						BYTE direction
+//|						BYTE[1] unknown1 (0x00)
+//|						BYTE[1] Frame Count
 //|						BYTE[2] repeat (1 = once / 2 = twice / 0 = repeat forever)
 //|						BYTE forward/backwards(0x00=forward, 0x01=backwards)
 //|						BYTE repeat Flag (0 - Don't repeat / 1 repeat)
@@ -931,7 +931,7 @@ CPWornItem &CPWornItem::operator=( CItem &toCopy )
 void CPCharacterAnimation::CopyData( CChar &toCopy )
 {
 	Serial( toCopy.GetSerial() );
-	Direction( toCopy.GetDir() );
+	//Direction( toCopy.GetDir() );
 }
 CPCharacterAnimation::CPCharacterAnimation()
 {
@@ -980,6 +980,7 @@ void CPCharacterAnimation::InternalReset( void )
 	pStream.ReserveSize( 14 );
 	pStream.WriteByte( 0, 0x6E );
 	pStream.WriteByte( 7, 0x00 );
+	pStream.WriteByte( 8, 0x07 ); // Animation Length, default to 7
 	Repeat( 1 );
 	DoBackwards( false );
 	RepeatFlag( false );
@@ -4188,7 +4189,7 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
 	outStream << "Number of Items: " << std::dec << numItems << std::endl;
-	SI32 baseOffset = 5;
+	size_t baseOffset = 5;
 	for( size_t x = 0; x < numItems; ++x )
 	{
 		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << pStream.GetULong( baseOffset ) << std::endl;
@@ -4198,7 +4199,7 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "," <<
 		pStream.GetUShort( baseOffset+=2 ) << std::endl;
 		outStream << "      Container : " << "0x" << std::hex << pStream.GetULong( baseOffset+=2 ) << std::endl;
-		outStream << "      Color     : " << "0x" << pStream.GetUShort( baseOffset+=4 ) << std::endl;
+		outStream << "      Color     : " << "0x" << pStream.GetUShort( baseOffset += 4 ) << std::endl;
 		baseOffset += 2;
 	}
 	outStream << "  Raw dump      :" << std::endl;

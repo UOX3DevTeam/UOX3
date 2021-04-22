@@ -485,7 +485,7 @@ npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ScriptSection( FILE *targfile, DefinitionCategories d )
+//|	Function	-	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
@@ -499,7 +499,6 @@ dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListDat
 	currentPos	= data.end();
 	currentPos2	= dataV2.end();
 }
-
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool AtEnd( void )
@@ -775,24 +774,45 @@ UI32 itemIndexHolder = 0;
 void ScriptSection::createSection( std::fstream& input )
 {
 	char line[2048];
-	UString sLine;
+	std::string sLine;
 	sectData *toAdd		= NULL;
 	sectDataV2 *toAdd2	= NULL;
 	DFNTAGS mTag;
-	UString tag, value,localName;
+	std::string tag, value, localName;
 	// Now the reverse comes into play!
 	while( !input.eof() && sLine.substr( 0, 1 ) != "}" && !input.fail() )
 	{
 		input.getline( line, 2048 );
+		line[input.gcount()] = 0;
 		sLine = line;
-		sLine = sLine.removeComment().stripWhiteSpace();
+		sLine = stripTrim( sLine );
 		if( sLine != "}" && !sLine.empty() )
 		{
 			// do something here
 			if( sLine.substr( 0, 1 ) != "}" )
 			{
-				tag		= sLine.section( "=", 0, 0 ).stripWhiteSpace();
-				value	= sLine.section( "=", 1, 1 ).stripWhiteSpace();
+				auto secs = sections( sLine, "=" );
+				tag = "";
+				if( secs.size() >= 1 )
+				{
+					try {
+						tag = stripTrim( secs[0] );
+					}
+					catch (...)	{
+						tag = "";
+					}
+				}
+				auto utag = str_toupper( tag );
+				value = "";
+				if( secs.size() >= 2 )
+				{
+					try {
+						value = stripTrim( secs[1] );
+					}
+					catch (...) {
+						value = "";
+					}
+				}
 				switch( dfnCat )
 				{
 					case advance_def:
@@ -812,15 +832,16 @@ void ScriptSection::createSection( std::fstream& input )
 							{
 								case DFN_UPPERSTRING:
 								{
-									value = value.upper();
-									if( tag.upper() == "ADDMENUITEM" )
+									value = str_toupper( value );
+									if( utag == "ADDMENUITEM" )
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
 										// Format: ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
 										ADDMENUITEM amiLocalCopy;
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = std::string( localName );
-										amiLocalCopy.groupID = value.section( ",", 0, 0 ).stripWhiteSpace().toUInt();
+										auto csecs = sections( value, "," );
+										amiLocalCopy.groupID = static_cast<unsigned int>( std::stoul( stripTrim( csecs[0] ), nullptr, 0 ));
 										if( amiLocalCopy.groupID != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -831,10 +852,11 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = value.section( ",", 1, 1 ).stripWhiteSpace().toUInt();
-										amiLocalCopy.weightPosition = value.section( ",", 2, 2 ).stripWhiteSpace().toUInt();
-										amiLocalCopy.objectFlags = value.section( ",", 3, 3 ).stripWhiteSpace().toUInt();
-										amiLocalCopy.objectID = value.section( ",", 4, 4 ).stripWhiteSpace().c_str();
+										amiLocalCopy.tileID = static_cast<unsigned short>( std::stoul( stripTrim( csecs[1] ), nullptr, 0 ));
+										amiLocalCopy.weightPosition = static_cast<unsigned int>( std::stoul( stripTrim( csecs[2] ), nullptr, 0 ));
+										amiLocalCopy.objectFlags = static_cast<unsigned int>( std::stoul( stripTrim( csecs[3] ), nullptr, 0 ));
+										amiLocalCopy.weightPosition = static_cast<unsigned int>( std::stoul( stripTrim( csecs[4] ), nullptr, 0 ));
+
 										//if( amiLocalCopy.tileID == INVALIDSERIAL )
 											//amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
@@ -844,27 +866,53 @@ void ScriptSection::createSection( std::fstream& input )
 									break;
 								}
 								case DFN_STRING:
-									if( tag.upper() == "NAME" )
+									if( utag == "NAME" )
+									{
 										localName = value;
+									}
 									toAdd2->cdata = value;
 									break;
 								case DFN_NUMERIC:
-									toAdd2->ndata = value.toInt();
+									try {
+										toAdd2->ndata = std::stoi( value, nullptr, 0 );
+									}
+									catch (...) {
+										toAdd2->ndata = 0;
+										Console.warning( format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
+									}
 									break;
 								case DFN_DOUBLENUMERIC:
+								{
 									// Best I can tell the seperator here is a space
-									value = value.simplifyWhiteSpace();
-									if( value.sectionCount( " " ) != 0 )
+									value = simplify( value );
+									auto ssecs = sections( value, " " );
+									if( ssecs.size() >= 2 )
 									{
-										toAdd2->ndata = value.section( " ", 0, 0 ).toInt();
-										toAdd2->odata = value.section( " ", 1, 1 ).toInt();
+										try {
+											toAdd2->ndata = std::stoi( ssecs[0], nullptr, 0 );
+										}
+										catch (...) {
+											toAdd2->ndata = 0;
+										}
+										try {
+											toAdd2->odata = std::stoi( ssecs[1], nullptr, 0 );
+										}
+										catch (...) {
+											toAdd2->odata = 0;
+										}
 									}
 									else
 									{
-										toAdd2->ndata = value.toInt();
+										try {
+											toAdd2->ndata = std::stoi( value, nullptr, 0 );
+										}
+										catch (...) {
+											toAdd2->ndata = 0;
+										}
 										toAdd2->odata = toAdd2->ndata;
 									}
 									break;
+								}
 								case DFN_NODATA:
 								case DFN_UNKNOWN:
 									toAdd2->cdata = "";
@@ -900,7 +948,7 @@ void ScriptSection::createSection( std::fstream& input )
 					case spawn_def:
 					case create_def:
 					case command_def:
-						tag = tag.upper();
+						tag = utag;
 					default:
 						toAdd = new sectData;
 						toAdd->tag	= tag;

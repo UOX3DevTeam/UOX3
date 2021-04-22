@@ -603,28 +603,64 @@ void LoadCreatures( void )
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 {
 	char temp[4096];
-	tag = "o---o";
-	data = "o---o";
-	while( !inStream.eof() && !inStream.fail() )
-	{
-		inStream.getline( temp, 4096 );
-		UString sLine( temp );
-		sLine = sLine.removeComment().stripWhiteSpace();
-		if( !sLine.empty() )
+    tag = "o---o";
+    data = "o---o";
+    while( !inStream.eof() && !inStream.fail() )
+    {
+        inStream.getline( temp, 4096 );
+		auto sLine = std::string( temp );
+		auto cloc = sLine.find( "//" );
+
+		if( cloc != std::string::npos )
 		{
-			if( sLine != "o---o" )
-			{
-				if( sLine.sectionCount( "=" ) == 1 )
-				{
-					tag		= sLine.section( "=", 0, 0 ).stripWhiteSpace();
-					data	= sLine.section( "=", 1 ).stripWhiteSpace();
-					break;
-				}
-			}
-			else
-				break;
+			sLine = sLine.substr( 0, cloc );
 		}
-	}
+		cloc = sLine.find_first_not_of( " \t\v\f\0" );
+		if( cloc != std::string::npos )
+		{
+			if( cloc != std::string::npos )
+			{
+				auto temp2 = sLine.find_last_not_of( " \t\v\f\0" );
+				sLine = sLine.substr( cloc, ( temp2 - cloc ) + 1 );
+			}
+		}
+
+        if( !sLine.empty() )
+        {
+            if( sLine != "o---o" )
+            {
+                auto loc = sLine.find( "=" );
+                if( loc!= std::string::npos )
+                {
+                    tag = sLine.substr( 0, loc );
+                    auto temp = tag.find_first_not_of(" \t\v\f\0");
+                    if( temp != std::string::npos )
+					{
+                        auto temp2 = tag.find_last_not_of( " \t\v\f\0" );
+                        tag = tag.substr( temp, ( temp2 - temp ) + 1 );
+                    }
+                
+                    if(( loc+1 ) < sLine.size() )
+					{
+                        data = sLine.substr( loc + 1 );
+                        auto temp = data.find_first_not_of( " \t\v\f\0" );
+                        if( temp != std::string::npos )
+						{
+                            auto temp2 = data.find_last_not_of( " \t\v\f\0" );
+                            data = data.substr( temp, ( temp2 - temp ) + 1 );
+                        }
+                    }
+                    else
+					{
+                        data = "";
+                    }
+                    break;
+                }
+            }
+            else
+                break;
+        }
+    }
 }
 
 //o-----------------------------------------------------------------------------------------------o

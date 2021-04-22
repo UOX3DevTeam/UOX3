@@ -62,6 +62,20 @@ std::string str_tolower(const std::string &s) {
     return input;
 }
 
+//====================================================================
+std::string& stripTrim(std::string& s)  {
+	auto loc = s.find("//") ;
+	if (loc != std::string::npos) {
+		s = s.substr(0,loc) ;
+	}
+	loc = s.find_first_not_of(" \t\v") ;
+	if (loc != std::string::npos) {
+		auto eloc = s.find_last_not_of(" \t\v") ;
+		s = s.substr(loc,(eloc-loc)+1);
+	}
+	return s ;
+}
+
 //++++++++++++++++++++++++++++++++++++++
 std::tuple<std::string,std::string> separate(const std::string& input,
                                              const std::string& separator){
@@ -153,7 +167,7 @@ std::vector<std::string> sections(const std::string& value, const std::string& s
 	auto pos = value.find(sep,start) ;
 	while (pos < end) {
 		if ((pos - start) > 0) {
-			auto potential = trim(value.substr(start,pos - start)) ;
+			auto potential = value.substr(start,pos - start) ;
 			rvalue.push_back(potential);
 			start = pos+sep.size() ;
 		}
@@ -163,7 +177,7 @@ std::vector<std::string> sections(const std::string& value, const std::string& s
 		}
 		pos = value.find(sep,start) ;
 	}
-	rvalue.push_back(trim(value.substr(start,pos - start))) ;
+	rvalue.push_back(value.substr(start,pos - start)) ;
 	return rvalue ;
 }
 

@@ -965,6 +965,23 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );			break;
 			case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChance() );		break;
 			case CCP_HUNGER:		*vp = INT_TO_JSVAL( gPriv->GetHunger() );					break;
+			case CCP_HUNGERRATE:
+			{
+				CRace *TempRace			= NULL;
+				TempRace = Races->Race( gPriv->GetRace() );
+
+				// Try to fetch hungerRate from character's race
+				UI16 hungerRate = 0;
+				if( TempRace != NULL )
+					hungerRate = TempRace->GetHungerRate();
+
+				// If hungerRate from Race is zero, use the global hunger rate from UOX.INI instead
+				if( hungerRate == 0 )
+					hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
+
+				*vp = INT_TO_JSVAL( hungerRate );
+				break;
+			}
 			case CCP_FROZEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFrozen() );				break;
 			case CCP_COMMANDLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetCommandLevel() );				break;
 			case CCP_RACE:

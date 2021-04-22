@@ -4283,13 +4283,6 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 3;
 			maxVal = 100;
 			break;
-		case charProp.squelch:
-			propertyName = "squelch";
-			propertyHint = "Chance of creature to split when hit in combat";
-			propertyType = "Integer";
-			maxLength = 3;
-			maxVal = 100;
-			break;
 		case charProp.stamina:
 			propertyName = "stamina";
 			propertyHint = "Character's current stamina";
@@ -5275,6 +5268,11 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.singClickSer:
 			propertyName = "singClickSer";
 			propertyHint = "Toggles whether single-clicks shows serial of clicked object";
+			propertyType = "Boolean";
+			break;
+		case charProp.squelch:
+			propertyName = "squelch";
+			propertyHint = "The squelched status of this character. (0 = not squelched - can talk, 1 = squelched - can't talk)";
 			propertyType = "Boolean";
 			break;
 		case charProp.stabled:

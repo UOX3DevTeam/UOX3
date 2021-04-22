@@ -22,12 +22,12 @@ std::string rtrim(const std::string& s) ;
 
 std::string trim(const std::string& s) ;
 
-std::string stripComment(const std::string& input,const std::string &commentdelim = "#");
+std::string stripComment(const std::string& input,const std::string &commentdelim = "//");
 
 std::string str_toupper(const std::string &s);
 std::string str_tolower(const std::string &s);
 
-
+std::string& stripTrim(std::string& s) ;
 
 std::tuple<std::string,std::string> separate(const std::string& input,
 											 const std::string& separator);

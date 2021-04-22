@@ -791,6 +791,53 @@ bool cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool OnQuestGump( CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character who activate Quest button in paperdoll
+//o-----------------------------------------------------------------------------------------------o
+bool cScript::OnQuestGump( CChar *mChar )
+{
+	if( !ValidateObject( mChar ))
+		return false;
+	if( !ExistAndVerify( seOnQuestGump, "onQuestGump" ) )
+		return false;
+
+	jsval rval, params[1];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onQuestGump", 1, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnQuestGump, false );
+	return ( retVal == JS_TRUE );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool OnSpecialMove( CChar *mChar, UI08 abilityID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character who activate special abilities in combat books etc
+//o-----------------------------------------------------------------------------------------------o
+bool cScript::OnSpecialMove( CChar *mChar, UI08 abilityID )
+{
+	if( !ValidateObject( mChar ))
+		return false;
+	if( !ExistAndVerify( seOnSpecialMove, "onSpecialMove" ) )
+		return false;
+
+	jsval rval, params[2];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = INT_TO_JSVAL( abilityID );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpecialMove", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnSpecialMove, false );
+	return ( retVal == JS_TRUE );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool OnDrop( CItem *item, CChar *dropper )
 //|	Date		-	02/07/2004
 //o-----------------------------------------------------------------------------------------------o

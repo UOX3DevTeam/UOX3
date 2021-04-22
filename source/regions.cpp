@@ -3,6 +3,7 @@
 #include "regions.h"
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
+#include <filesystem>
 
 CMapHandler *MapRegion;
 
@@ -15,15 +16,11 @@ SI32 FileSize( std::string filename )
 {
 	SI32 retVal = 0;
 
-	std::ifstream readDestination;
-
-	readDestination.open( filename.c_str() );					// let's open it
-	if( !( readDestination.eof() || readDestination.fail() ) )
-	{
-		readDestination.seekg( 0, std::ios::end );
-		retVal = readDestination.tellg();
-		readDestination.close();
-	}
+	try {
+		retVal = std::filesystem::file_size( filename ); 
+	} catch( std::filesystem::filesystem_error& ex ) {
+		retVal = 0;
+	}   
 
 	return retVal;
 }
@@ -856,6 +853,7 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, 
 		readDestination.getline( line, 1024 );
 		UString sLine( line );
 		sLine = sLine.removeComment().stripWhiteSpace();
+
 		if( sLine.substr( 0, 1 ) == "[" )	// in a section
 		{
 			sLine = sLine.substr( 1, sLine.size() - 2 );

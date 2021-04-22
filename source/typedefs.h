@@ -77,6 +77,10 @@ typedef std::vector< CItem* >							ITEMLIST;
 typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
 typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
 //
+typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
+typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
+typedef std::vector< CBaseObject* >::const_iterator		BASEOBJECTLIST_CITERATOR;
+//
 typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
 typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
 typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;

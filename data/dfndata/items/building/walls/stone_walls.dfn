@@ -1317,7 +1317,7 @@ name=marble wall
 id=0x00FB
 }
 
-// white marble wall west with window with stringcourse top & bottom 
+// white marble wall west with window with stringcourse top & bottom
 [0x00FC]
 {
 get=base_item
@@ -1800,7 +1800,7 @@ name=stone wall
 id=0x03C8
 }
 
-// full sandstone rubble wall south 
+// full sandstone rubble wall south
 [0x03C9]
 {
 get=base_item
@@ -2469,7 +2469,7 @@ id=0x0173
 {
 get=base_item
 name=sandstone wall
-id=0x
+id=0x0174
 }
 
 // large block sandstone walls
@@ -2477,7 +2477,7 @@ id=0x
 {
 get=base_item
 name=sandstone wall
-id=0x
+id=0x0175
 }
 
 [0x0176]
