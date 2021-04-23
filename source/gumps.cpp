@@ -1332,10 +1332,11 @@ void HandleHowTo( CSocket *sock, SI32 cmdNumber )
 			CommandInfo.AddData( "", "No extra information is available about this command", 7 );
 		else
 		{
-			char cmdLine[128];
+			char cmdLine[129];
 			while( !toOpen.eof() && !toOpen.fail() )
 			{
-				toOpen.getline( cmdLine, 128 );
+				toOpen.getline(cmdLine, 128);
+				cmdLine[toOpen.gcount()] = 0;
 				if( cmdLine[0] != 0 )
 					CommandInfo.AddData( "", cmdLine, 7 );
 			};

@@ -800,7 +800,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			SI16 worldbrightlevel;
 			worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
 			dest->SetFixedLight( static_cast<UI08>(worldbrightlevel) );
-			doLight( tSock, static_cast<char>(worldbrightlevel) );
+			doLight( tSock, static_cast<SI08>(worldbrightlevel) );
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 2.0f ) );
 			toAdd->Dispellable( true );
 			break;
@@ -1076,7 +1076,7 @@ void cEffects::SaveEffects( void )
 	Console.print( format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
 }
 
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadEffects( void )
 //|	Date		-	16 March, 2002
@@ -1091,7 +1091,9 @@ void cEffects::LoadEffects( void )
 	input.open( filename.c_str(), std::ios_base::in );
 	input.seekg( 0, std::ios::beg );
 
-	UString tag, data, UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 
 	if( input.is_open() )
 	{
@@ -1100,12 +1102,15 @@ void cEffects::LoadEffects( void )
 
 		while( !input.eof() && !input.fail() )
 		{
-			input.getline( line, 1024 );
-			UString sLine( line );
-			sLine = sLine.removeComment().stripWhiteSpace();
+			input.getline(line, 1023);
+			line[input.gcount()] = 0;
+			std::string sLine(line);
+			sLine = stripTrim( sLine );
+			auto usLine = str_toupper( sLine );
+			
 			if( !sLine.empty() )
 			{
-				if( sLine.upper() == "[EFFECT]" )
+				if( usLine == "[EFFECT]" )
 				{
 					toLoad = new CTEffect;
 					while( tag != "o---o" )
@@ -1113,27 +1118,27 @@ void cEffects::LoadEffects( void )
 						ReadWorldTagData( input, tag, data );
 						if( tag != "o---o" )
 						{
-							UTag = tag.upper();
+							UTag = str_toupper( tag );
 							switch( (UTag.data()[0]) )
 							{
 								case 'A':
 									if( UTag == "ASSOCSCRIPT" )
-										toLoad->AssocScript( data.toUShort() );
+										toLoad->AssocScript( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 									break;
 								case 'D':
 									if( UTag == "DEST" )
-										toLoad->Destination( data.toUInt() );
+										toLoad->Destination( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 									if( UTag == "DISPEL" )
-										toLoad->Dispellable( ( (data.toUInt() == 0) ? false : true ) );
+										toLoad->Dispellable((( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 0 ) ? false : true ));
 									break;
 								case 'E':
 									if( UTag == "EXPIRE" )
-										toLoad->ExpireTime( data.toUInt() + cwmWorldState->GetUICurrentTime() );
+										toLoad->ExpireTime( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) + cwmWorldState->GetUICurrentTime() );
 									break;
 								case 'I':
 									if( UTag == "ITEMPTR" )
 									{
-										SERIAL objSer = data.toUInt();
+										SERIAL objSer = static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1147,20 +1152,20 @@ void cEffects::LoadEffects( void )
 									break;
 								case 'M':
 									if( UTag == "MORE1" )
-										toLoad->More1( data.toUShort() );
+										toLoad->More1( static_cast<UI16>(std::stoul(stripTrim( data ),nullptr, 0)) );
 									if( UTag == "MORE2" )
-										toLoad->More2( data.toUShort() );
+										toLoad->More2( static_cast<UI16>(std::stoul(stripTrim( data ),nullptr, 0)) );
 									if( UTag == "MORE3" )
-										toLoad->More3( data.toUShort() );
+										toLoad->More3( static_cast<UI16>(std::stoul(stripTrim( data ),nullptr, 0)) );
 									break;
 								case 'N':
 									if( UTag == "NUMBER" )
-										toLoad->Number( data.toUByte() );
+										toLoad->Number( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)));
 									break;
 								case 'O':
 									if( UTag == "OBJPTR" )
 									{
-										SERIAL objSer = data.toUInt();
+										SERIAL objSer = static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1173,7 +1178,7 @@ void cEffects::LoadEffects( void )
 									}
 								case 'S':
 									if( UTag == "SOURCE" )
-										toLoad->Source( data.toUInt() );
+										toLoad->Source( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 									break;
 								default:
 									Console.error( format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );

@@ -1043,7 +1043,7 @@ UI16 cAccountClass::Load(void)
 		else if( l == "LASTIP" )
 		{
 			if( !r.empty() && r.length() != 0 && r.sectionCount(".") == 3 )
-				actb.dwLastIP = calcserial( str_value<char>(extractSection(r,".", 0, 0 )), str_value<char>(extractSection(r, ".", 1, 1 )), str_value<char>(extractSection(r, ".", 2, 2 )), str_value<char>(extractSection(r, ".", 3, 3 )) );
+				actb.dwLastIP = calcserial( str_value<SI08>(extractSection(r,".", 0, 0 )), str_value<SI08>(extractSection(r, ".", 1, 1 )), str_value<SI08>(extractSection(r, ".", 2, 2 )), str_value<SI08>(extractSection(r, ".", 3, 3 )) );
 			else
 				actb.dwLastIP = 0x00000000;
 
@@ -1347,8 +1347,8 @@ bool cAccountClass::DelAccount( UI16 wAccountID )
 	// Just a means to show that an accounts has been removed when looking at the directories
 	char szDirName[40];
 	char szDirPath[MAX_PATH];
-	memset(szDirName,0x00,sizeof(char)*40);
-	memset(szDirPath,0x00,sizeof(char)*MAX_PATH);
+	memset(szDirName,0x00,sizeof(SI08)*40);
+	memset(szDirPath,0x00,sizeof(SI08)*MAX_PATH);
 	// Ok copy only the username portion to this so we can build a correct rename path
 	strcpy(szDirName,&actbID.sPath[actbID.sPath.length()-actbID.sUsername.length()-1]);
 	strncpy(szDirPath,actbID.sPath.c_str(),actbID.sPath.length()-actbID.sUsername.length()-1);

@@ -1722,11 +1722,11 @@ function HandleCharTarget( pSocket, myTarget )
 				break;
 			case charProp.owner:
 				charLabelTooltip 	= "Character's owner, if any";
-				charValue 			= ( myTarget.hasOwnProperty('owner') && myTarget.owner != null ) ? (myTarget.owner.name).toString() : "-";;
+				charValue 			= ( myTarget.hasOwnProperty('owner') && myTarget.owner != null ) ? (myTarget.owner.name).toString() : "-";
 				break;
 			case charProp.pack:
 				charLabelTooltip 	= "Object of character's root backpack";
-				charValue 			= (myTarget.pack).toString();
+				charValue 			= ( myTarget.hasOwnProperty('pack') && myTarget.pack != null ) ? (myTarget.pack).toString() : "-";
 				break;
 			case charProp.party:
 				charLabelTooltip 	= "Object of party character is member of";

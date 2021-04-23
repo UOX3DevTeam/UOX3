@@ -18,7 +18,7 @@ SI32 FileSize( std::string filename )
 
 	try {
 		retVal = std::filesystem::file_size( filename ); 
-	} catch( std::filesystem::filesystem_error& ex ) {
+	} catch( ... ) {
 		retVal = 0;
 	}   
 
@@ -271,12 +271,12 @@ void CMapWorld::SaveResources( UI08 worldNum )
 	{
 		for( std::vector< MapResource_st >::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
 		{
-			wBuffer[0] = static_cast<char>((*mIter).oreAmt>>8);
-			wBuffer[1] = static_cast<char>((*mIter).oreAmt%256);
+			wBuffer[0] = static_cast<SI08>((*mIter).oreAmt>>8);
+			wBuffer[1] = static_cast<SI08>((*mIter).oreAmt%256);
 			toWrite.write( (const char *)&wBuffer, 2 );
 
-			wBuffer[0] = static_cast<char>((*mIter).logAmt>>8);
-			wBuffer[1] = static_cast<char>((*mIter).logAmt%256);
+			wBuffer[0] = static_cast<SI08>((*mIter).logAmt>>8);
+			wBuffer[1] = static_cast<SI08>((*mIter).logAmt%256);
 			toWrite.write( (const char *)&wBuffer, 2 );
 		}
 		toWrite.close();
@@ -850,14 +850,15 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, 
 	SI32 updateCount		= 0;
 	while( !readDestination.eof() && !readDestination.fail() )
 	{
-		readDestination.getline( line, 1024 );
-		UString sLine( line );
-		sLine = sLine.removeComment().stripWhiteSpace();
+		readDestination.getline(line, 1023);
+		line[readDestination.gcount()] = 0;
+		std::string sLine(line);
+		sLine = stripTrim( sLine );
 
 		if( sLine.substr( 0, 1 ) == "[" )	// in a section
 		{
 			sLine = sLine.substr( 1, sLine.size() - 2 );
-			sLine = sLine.upper().stripWhiteSpace();
+			sLine = str_toupper( stripTrim( sLine ));
 			if( sLine == "CHARACTER" )
 				LoadChar( readDestination );
 			else if( sLine == "ITEM" )

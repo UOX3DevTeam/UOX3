@@ -4380,7 +4380,7 @@ void CServerData::SaveTime( void )
 	timeDestination.close();
 }
 
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CServerData::LoadTime( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -4400,12 +4400,13 @@ void CServerData::LoadTime( void )
 		char line[1024];
 		while( !input.eof() && !input.fail() )
 		{
-			input.getline( line, 1024 );
-			UString sLine( line );
-			sLine = sLine.removeComment().stripWhiteSpace();
+			input.getline(line, 1023);
+			line[input.gcount()] = 0;
+			std::string sLine(line);
+			sLine = stripTrim( sLine );
 			if( !sLine.empty() )
 			{
-				if( sLine.upper() == "[TIME]" )
+				if( str_toupper( sLine ) == "[TIME]" )
 					LoadTimeTags( input );
 			}
 		}

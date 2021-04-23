@@ -4446,7 +4446,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		for( UI08 j = 0; j < 30; ++j )
 		{
 			if( pStream.GetByte( static_cast<size_t>(baseOffset)+j ) != 0 )
-				outStream << (char)pStream.GetByte( static_cast<size_t>(baseOffset)+j );
+				outStream << (SI08)pStream.GetByte( static_cast<size_t>(baseOffset)+j );
 			else
 				break;
 		}
@@ -4454,7 +4454,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		for( UI08 k = 0; k < 30; ++k )
 		{
 			if( pStream.GetByte( static_cast<size_t>(baseOffset)+k+30 ) != 0 )
-				outStream << (char)pStream.GetByte( static_cast<size_t>(baseOffset)+k+30 );
+				outStream << (SI08)pStream.GetByte( static_cast<size_t>(baseOffset)+k+30 );
 			else
 				break;
 		}

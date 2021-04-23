@@ -48,7 +48,7 @@ void Script::reload( bool disp )
 			SI32 count = 0;
 			while( !input.eof() && !input.fail() )
 			{
-				input.getline( line, 2048 );
+				input.getline(line, 2048);
 				sLine = line;
 				sLine = sLine.removeComment().stripWhiteSpace();
 				if( !sLine.empty() )
@@ -63,7 +63,7 @@ void Script::reload( bool disp )
 						// Now why we look for a {, no idea, but we do - Because we want to make sure that were IN a block not before the block. At least this makes sure that were inside the {}'s of a block...
 						while( !input.eof() && sLine.substr( 0, 1 ) != "{" && !input.fail() )
 						{
-							input.getline( line, 2048 );
+							input.getline(line, 2048);
 							sLine = line;
 							sLine = sLine.removeComment().stripWhiteSpace();
 						}

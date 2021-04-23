@@ -999,14 +999,16 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Processes a tag/data pair if it can.  If it can, returns
 //|					true.  Otherwise, returns false.
 //o-----------------------------------------------------------------------------------------------o
-bool CMultiObj::HandleLine( UString &UTag, UString &data )
+bool CMultiObj::HandleLine( std::string &UTag, std::string &data )
 {
 	bool rvalue = CItem::HandleLine( UTag, data );
+	auto csecs = sections( data, "," );
+	
 	if( !rvalue )
 	{
 		switch( (UTag.data()[0]) )
@@ -1014,25 +1016,31 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 			case 'B':
 				if( UTag == "BANNED" )
 				{
-					CChar *bList = calcCharObjFromSer( data.toUInt() );
-					if( ValidateObject( bList ) )
+					CChar *bList = calcCharObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					if( ValidateObject( bList ))
+					{
 						AddToBanList( bList );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "BUILDTIME" )
 				{
-					time_t buildTime = data.toLong();
+					time_t buildTime = static_cast<UI64>(std::stoll(stripTrim( data ), nullptr, 0));
 					if( buildTime > 0 )
+					{
 						SetBuildTimestamp( buildTime );
+					}
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "COOWNER" ) // Legacy tag for loading older data
 				{
-					CChar *cList = calcCharObjFromSer( data.toUInt() );
-					if( ValidateObject( cList ) )
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					if( ValidateObject( cList ))
+					{
 						AddAsOwner( cList );
+					}
 					rvalue = true;
 				}
 				break;
@@ -1046,32 +1054,36 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 			case 'F':
 				if( UTag == "FRIEND" )
 				{
-					CChar *cList = calcCharObjFromSer( data.toUInt() );
-					if( ValidateObject( cList ) )
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					if( ValidateObject( cList ))
+					{
 						AddAsFriend( cList );
+					}
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GUEST" )
 				{
-					CChar *cList = calcCharObjFromSer( data.toUInt() );
-					if( ValidateObject( cList ) )
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					if( ValidateObject( cList ))
+					{
 						AddAsGuest( cList );
+					}
 					rvalue = true;
 				}
 				break;
 			case 'I':
 				if( UTag == "ISPUBLIC" )
 				{
-					SetPublicStatus( data.toUByte() == 1 );
+					SetPublicStatus( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'L':
 				if( UTag == "LOCKEDITEM" )
 				{
-					CItem *iList = calcItemObjFromSer( data.toUInt() );
+					CItem *iList = calcItemObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					if( ValidateObject( iList ) )
 						LockDownItem( iList );
 					rvalue = true;
@@ -1080,71 +1092,77 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 			case 'M':
 				if( UTag == "MAXBANS" )
 				{
-					maxBans = data.toUShort();
+					maxBans = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "MAXFRIENDS" )
 				{
-					maxFriends = data.toUShort();
+					maxFriends = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "MAXGUESTS" )
 				{
-					maxGuests = data.toUShort();
+					maxGuests = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "MAXLOCKDOWNS" || UTag == "MAXLOCKEDDOWN" )
 				{
-					maxLockdowns = data.toUShort();
+					maxLockdowns = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "MAXOWNERS" )
 				{
-					maxOwners = data.toUShort();
+					maxOwners = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "MAXSECURECONTAINERS" )
 				{
-					maxSecureContainers = data.toUShort();
+					maxSecureContainers = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "MAXVENDORS" )
 				{
-					maxVendors = data.toUShort();
+					maxVendors = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				break;
 			case 'O':
 				if( UTag == "OWNER" )
 				{
-					CChar *cList = calcCharObjFromSer( data.toUInt() );
-					if( ValidateObject( cList ) )
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					if( ValidateObject( cList ))
+					{
 						AddAsOwner( cList );
+					}
 					rvalue = true;
 				}
 				break;
 			case 'S':
 				if( UTag == "SECURECONTAINER" )
 				{
-					CItem *iList = calcItemObjFromSer( data.toUInt() );
-					if( ValidateObject( iList ) )
+					CItem *iList = calcItemObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					if( ValidateObject( iList ))
+					{
 						SecureContainer( iList );
+					}
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TRADETIME" )
 				{
-					time_t tradeTime = data.toLong();
+					time_t tradeTime = static_cast<UI64>(std::stoll(stripTrim( data ), nullptr, 0));
 					if( tradeTime > 0 )
+					{
 						SetTradeTimestamp( tradeTime );
+					}
 					rvalue = true;
 				}
 				break;
 			case 'V':
 				if( UTag == "VENDOR" )
 				{
-					CChar *cList = calcCharObjFromSer( data.toUInt() );
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					if( ValidateObject( cList ) )
 						AddVendor( cList );
 					rvalue = true;
@@ -1416,16 +1434,17 @@ bool CBoatObj::DumpBody( std::ofstream &outStream ) const
 
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag,std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Processes a tag/data pair if it can.  If it can, returns
 //|					true.  Otherwise, returns false.
 //o-----------------------------------------------------------------------------------------------o
-bool CBoatObj::HandleLine( UString &UTag, UString &data )
+bool CBoatObj::HandleLine( std::string &UTag,std::string &data )
 {
 	bool rvalue = CMultiObj::HandleLine( UTag, data );
 	if( !rvalue )
 	{
+		auto csecs = sections( data, "," );
 		switch( (UTag.data()[0]) )
 		{
 			case 'M':
@@ -1436,15 +1455,15 @@ bool CBoatObj::HandleLine( UString &UTag, UString &data )
 			case 'H':
 				if( UTag == "HOLD" )
 				{
-					SetHold( data.toUInt() );
+					SetHold( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PLANKS" )
 				{
-					SetPlank( 0, str_value<std::uint32_t>(trim(extractSection(data, ",", 0, 0 ))) );
-					SetPlank( 1, str_value<std::uint32_t>(trim(extractSection(data, ",", 1, 1 ))));
+					SetPlank( 0, static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetPlank( 1, static_cast<UI32>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;

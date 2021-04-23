@@ -1154,16 +1154,16 @@ bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads object from disk based on mode
 //o-----------------------------------------------------------------------------------------------o
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
 bool CBaseObject::Load( std::ifstream &inStream )
 {
-	UString tag = "", data = "", UTag = "";
+	std::string tag = "", data = "", UTag = "";
 	while( tag != "o---o" )
 	{
 		ReadWorldTagData( inStream, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = tag.upper();
+			UTag = str_toupper( tag );
 			if( !HandleLine( UTag, data ) )
 				Console.warning( format("Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()) );
 		}
@@ -1172,24 +1172,26 @@ bool CBaseObject::Load( std::ifstream &inStream )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to handle world lines. Returns true if the tag is known. If known,
 //|					internal information updated and load routine continues to next tag.
 //|					Otherwise, passed up inheritance tree (if any)
 //o-----------------------------------------------------------------------------------------------o
-bool CBaseObject::HandleLine( UString &UTag, UString &data )
+bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 {
 	static std::string staticTagName = "";
 	bool rvalue = true;
 	size_t numSections = 0;
-
+	auto csecs = sections( data, "," );
+	
 	switch( (UTag[0]) )
 	{
 		case 'B':
 			if( UTag == "BASEWEIGHT" )
 			{
-				(static_cast<CItem *>(this))->SetBaseWeight( data.toUInt() );
+				auto temp = static_cast<UI32>(std::stoul(data, nullptr, 0));
+				(static_cast<CItem *>(this))->SetBaseWeight( temp );
 			}
 			else
 				rvalue = false;
@@ -1197,11 +1199,13 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'C':
 			if( UTag == "COLOUR" )
 			{
-				colour = data.toUShort();
+				auto temp = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				colour = temp;
 			}
 			else if( UTag == "CARVE" )
 			{
-				carve	= data.toShort();
+				auto temp = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				carve = temp;
 			}
 			else
 				rvalue = false;
@@ -1209,49 +1213,70 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'D':
 			if( UTag == "DAMAGE" )
 			{
-				hidamage	= str_value<std::int16_t>(trim(extractSection(data, ",", 1, 1 )));
-				lodamage	= str_value<std::int16_t>(trim(extractSection(data, ",", 0, 0 )));
+				if( csecs.size() >= 2 )
+				{
+					lodamage = static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0));
+					hidamage = static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0));
+				}
+				else 
+				{
+					// ERROR WILL ROBINSON
+				}
 			}
 			else if( UTag == "DIRECTION" )
 			{
-				dir		= data.toUByte();
+				auto temp = static_cast<UI08>(std::stoul(data, nullptr, 0));
+				dir	= temp;
 			}
 			else if( UTag == "DEXTERITY" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				if( csecs.size() >= 2  )
 				{
-					dexterity	= str_value<std::int16_t>(trim(extractSection(data, ",", 0, 0 )));
-					dx2			= str_value<std::int16_t>(trim(extractSection(data, ",", 1, 1 )));
+					dexterity = static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0));	
+					dx2	= static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0));
 				}
 				else
-					dexterity = data.toShort();
+				{
+					dexterity = static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0));
+				}					
 			}
 			else if( UTag == "DEXTERITY2" )
 			{
-				dx2		= data.toShort();
+				dx2	= static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0));
 			}
 			else if( UTag == "DEFENSE" )
 			{
-				numSections = data.sectionCount( "," );
-				if( numSections != 0 )
+				if( data.find( "," ) != std::string::npos )
 				{
-					for( UI08 resist = 0; resist < numSections; ++resist )
+					int count = 1;
+					for( auto &val : csecs )
 					{
-						if( extractSection(data, ",", resist, resist ).empty() )
-							break;
-
-						SetResist( str_value<std::int16_t>(trim(extractSection( data,",", resist, resist ))), (WeatherType)(resist + 1) );
+						if( !val.empty() )
+						{
+							auto temp = str_toupper( stripTrim( val ));
+							if( temp == "[END]" )
+							{
+								break;
+							}
+							auto value = static_cast<SI16>(std::stoi(temp, nullptr, 0));
+							SetResist( value, static_cast<WeatherType>(count) );
+							count++ ;
+						}
 					}
 				}
 				else
-					SetResist( str_value<std::int16_t>(data), PHYSICAL );
+				{	
+					SetResist( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)), PHYSICAL );
+				}	
 			}
 			else if( UTag == "DISABLED" )
 			{
 				SetDisabled( str_value<std::int16_t>(data) == 1 );
 			}
 			else
+			{
 				rvalue = false;
+			}
 			break;
 		case 'F':
 			if( UTag == "FAME" )
@@ -1280,13 +1305,15 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "INTELLIGENCE" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				if( data.find( "," ) != std::string::npos )
 				{
-					intelligence	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-					in2				= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
+					intelligence = static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0));
+					in2 = static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0));
 				}
 				else
+				{
 					intelligence = str_value<std::int16_t>(data);
+				}
 			}
 			else if( UTag == "INTELLIGENCE2" )
 			{
@@ -1310,15 +1337,15 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'L':
 			if( UTag == "LOCATION" )
 			{
-				x			= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-				y			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
-				z			= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
-				worldNumber = data.section( ",", 3, 3 ).stripWhiteSpace().toUByte();
+				x			= static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0));
+				y			= static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0));
+				z			= static_cast<SI08>(std::stoi(stripTrim( csecs[2] ), nullptr, 0));
+				worldNumber = static_cast<UI08>(std::stoi(stripTrim( csecs[3] ), nullptr, 0));
 
 				// Backwards compatibility with pre-instanceID worldfiles
-				if( data.sectionCount( "," ) == 4 )
+				if( csecs.size() >= 5 )
 				{
-					instanceID = data.section( ",", 4, 4 ).stripWhiteSpace().toUShort();
+					instanceID = static_cast<SI16>(std::stoi(stripTrim( csecs[4] ), nullptr, 0));
 				}
 				else
 				{
@@ -1375,15 +1402,17 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "REPUTATION" )
 			{
-				if( data.sectionCount( "," ) == 2 )
+				if( csecs.size() == 3 )
 				{
-					SetFame( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
-					SetKarma( data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
-					SetKills( data.section( ",", 2, 2 ).stripWhiteSpace().toShort() );
+					SetFame( static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetKarma( static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0)) );
+					SetKills( static_cast<SI16>(std::stoi(stripTrim( csecs[2] ), nullptr, 0)) );
 				}
 			}
 			else
+			{
 				rvalue = false;
+			}
 			break;
 		case 'S':
 			if( UTag == "STAMINA" )
@@ -1400,13 +1429,15 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "STRENGTH" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				if( csecs.size() >= 2 )
 				{
-					strength	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-					st2			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
+					strength	= static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0));
+					st2			= static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0));
 				}
 				else
+				{
 					strength = str_value<std::int16_t>(data);
+				}
 			}
 			else if( UTag == "STRENGTH2" )
 			{
@@ -1432,7 +1463,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
-				tagvalObject.m_IntValue		= data.toInt();
+				tagvalObject.m_IntValue		= std::stoi(stripTrim( data ), nullptr, 0);
 				tagvalObject.m_Destroy		= FALSE;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
@@ -1442,7 +1473,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				std::string localString = data;
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType=TAGMAP_TYPE_STRING;
-				tagvalObject.m_IntValue=localString.length();
+				tagvalObject.m_IntValue= static_cast<SI32>(localString.size());
 				tagvalObject.m_Destroy=FALSE;
 				tagvalObject.m_StringValue=localString;
 				SetTag( staticTagName, tagvalObject );
@@ -1454,7 +1485,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'V':
 			if( UTag == "VISIBLE" )
 			{
-				visible	= (VisibleTypes)data.toByte();
+				visible	= static_cast<VisibleTypes>(std::stoul(stripTrim( data )));
 			}
 			else
 				rvalue = false;
@@ -1478,9 +1509,30 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'X':
 			if( UTag == "XYZ" )
 			{
-				x		= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-				y		= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
-				z		= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
+				if( csecs.size() >= 1 )
+				{
+					x = static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0));
+				}
+				else
+				{
+					x = 0;
+				}
+				if( csecs.size() >= 2 )
+				{
+					y = static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0));
+				}
+				else
+				{
+					y = 0;
+				}
+				if( csecs.size() >= 3 )
+				{
+					z = static_cast<UI16>(std::stoul(stripTrim( csecs[2] ), nullptr, 0));
+				}
+				else
+				{
+					z = 0;
+				}
 			}
 			else
 				rvalue = false;

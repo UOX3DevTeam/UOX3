@@ -3092,176 +3092,188 @@ void CChar::StopSpell( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString& data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to handle loading of characters tags from world files
 //o-----------------------------------------------------------------------------------------------o
-bool CChar::HandleLine( UString &UTag, UString& data )
+bool CChar::HandleLine( std::string &UTag, std::string &data )
 {
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
-		size_t numSections = 0;
+		auto csecs = sections( data, "," );
+		
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "ACCOUNT" )
 				{
-					SetAccountNum( data.toUShort() );
+					SetAccountNum( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ATROPHY" )
 				{
-					numSections = data.sectionCount( "," );
-					for( UI08 aCtr = 0; aCtr < numSections; ++aCtr )
+					int count = 0 ;
+					for( auto &value : csecs )
 					{
-						if( data.section( ",", aCtr, aCtr ).empty() )
+						value = str_toupper( stripTrim( value ));
+						if( value == "[END]" )
+						{
 							break;
-
-						SetAtrophy( data.section( ",", aCtr, aCtr ).stripWhiteSpace().toUShort(), aCtr );
+						}
+						if( value.empty() )
+						{
+							break;
+						}
+						SetAtrophy( static_cast<UI08>(std::stoul(value, nullptr, 0)), count );
+						count = count + 1;
 					}
 					rvalue = true;
 				}
 				else if( UTag == "ADVANCEOBJECT" )
 				{
-					SetAdvObj( data.toUShort() );
+					SetAdvObj( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ADVRACEOBJECT" )
 				{
-					SetRaceGate( data.toUShort() );
+					SetRaceGate( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ALLMOVE" )
 				{
-					SetAllMove( data.toUByte() == 1 );
+					SetAllMove( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'B':
 				if( UTag == "BEARDSTYLE" )
 				{
-					SetBeardStyle( data.toUShort() );
+					SetBeardStyle( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "BEARDCOLOUR" )
 				{
-					SetBeardColour( data.toUShort() );
+					SetBeardColour( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "BASESKILLS" )
 				{
-					numSections = data.sectionCount( "-" );
-					// Format: BaseSkills=[0,34]-[1,255]-[END]
-					for( UI08 skillCtr = 0; skillCtr < numSections; ++skillCtr )
+					auto dsecs = sections( data, "-" );
+					for( auto &value : dsecs )
 					{
-						UString tempdata	= data.section( "-", skillCtr, skillCtr ).stripWhiteSpace();
-						if( tempdata.empty() )
+						if( value.empty() )
+						{
 							break;
-
-						UString tempval		= tempdata.section( ",", 1, 1 ).substr( 0, tempdata.section( ",", 1, 1 ).size() - 1 );
-						UString tempnum		= tempdata.section( ",", 0, 0 ).substr( 1 );
-						SetBaseSkill( tempval.toUShort(), tempnum.toUByte() );
+						}
+						auto secs = sections( value, "," );
+						if( secs.size() != 2 )
+						{
+							break;
+						}
+						auto skillNum = static_cast<SkillLock>(std::stoul(secs[0].substr(1), nullptr, 0));
+						auto skillValue = static_cast<UI16>(std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
+						SetBaseSkill( skillValue, skillNum );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "BEARD" )
 				{
-					SetBeardStyle( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-					SetBeardColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					SetBeardStyle( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetBeardColour( static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "BRKPEACECHANCEGAIN" )
 				{
-					SetBrkPeaceChanceGain( data.toUShort() );
+					SetBrkPeaceChanceGain( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "BRKPEACECHANCE" )
 				{
-					SetBrkPeaceChance( data.toUShort() );
+					SetBrkPeaceChance( static_cast<UI16>(std::stoul(stripTrim(data),nullptr,0)) );
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "COMMANDLEVEL" )
 				{
-					SetCommandLevel( data.toUByte() );
+					SetCommandLevel( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CANRUN" )
 				{
-					SetRun( data.toUByte() == 1 );
+					SetRun( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANATTACK" )
 				{
-					SetCanAttack( data.toUByte() == 1 );
+					SetCanAttack( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANTRAIN" )
 				{
-					SetCanTrain( data.toUShort() == 1 );
+					SetCanTrain( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'D':
 				if( UTag == "DEATHS" )
 				{
-					SetDeaths( data.toUShort() );
+					SetDeaths( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "DEAD" )
 				{
-					SetDead( (data.toUByte() == 1) );
+					SetDead( (static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
 			case 'E':
 				if( UTag == "EMOTION" )
 				{
-					SetEmoteColour( data.toUShort() );
+					SetEmoteColour( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'F':
 				if( UTag == "FIXEDLIGHT" )
 				{
-					SetFixedLight( data.toUByte() );
+					SetFixedLight( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FX1" )
 				{
-					SetFx( data.toShort(), 0 );
+					SetFx( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)), 0 );
 					rvalue = true;
 				}
 				else if( UTag == "FX2" )
 				{
-					SetFx( data.toShort(), 1 );
+					SetFx( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)), 1 );
 					rvalue = true;
 				}
 				else if( UTag == "FY1" )
 				{
-					SetFy( data.toShort(), 0 );
+					SetFy( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)), 0 );
 					rvalue = true;
 				}
 				else if( UTag == "FY2" )
 				{
-					SetFy( data.toShort(), 1 );
+					SetFy( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)), 1 );
 					rvalue = true;
 				}
 				else if( UTag == "FZ1" )
 				{
-					SetFz( data.toByte() );
+					SetFz( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FLEEAT" )
 				{
-					SetFleeAt( data.toShort() );
+					SetFleeAt( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FONTTYPE" )
 				{
-					SetFontType( data.toByte() );
+					SetFontType( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FOODLIST" )
@@ -3271,14 +3283,14 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "FLEEINGSPEED" )
 				{
-					SetFleeingSpeed( data.toFloat() );
+					SetFleeingSpeed( static_cast<R32>(std::stof(stripTrim( data ))) );
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
 				{
-					SetGuildFealty( data.toUInt() );
+					SetGuildFealty( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTITLE" )
@@ -3288,57 +3300,57 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "GUILDNUMBER" )
 				{
-					SetGuildNumber( data.toShort() );
+					SetGuildNumber( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTOGGLE" )
 				{
-					SetGuildToggle( data.toShort() == 1 );
+					SetGuildToggle( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'H':
 				if( UTag == "HUNGER" )
 				{
-					SetHunger( data.toShort() );
+					SetHunger( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HOLDG" )
 				{
-					SetHoldG( data.toUInt() );
+					SetHoldG( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRSTYLE" )
 				{
-					SetHairStyle( data.toUShort() );
+					SetHairStyle( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRCOLOUR" )
 				{
-					SetHairColour( data.toUShort() );
+					SetHairColour( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIR" )
 				{
-					SetHairStyle( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-					SetHairColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					SetHairStyle( static_cast<UI16>(std::stoul(stripTrim( csecs[0]), nullptr, 0)) );
+					SetHairColour( static_cast<UI16>(std::stoul(stripTrim( csecs[1]), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'I':
 				if( UTag == "ISNPC" )
 				{
-					SetNpc( (data.toShort() == 1) );
+					SetNpc( (static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSHOP" )
 				{
-					SetShop( (data.toShort() == 1) );
+					SetShop( (static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISWARRING" )
 				{
-					SetWar( (data.toShort() == 1) );
+					SetWar( (static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
@@ -3350,62 +3362,64 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "LASTONSECS" )
 				{
-					SetLastOnSecs( data.toUInt() );
+					SetLastOnSecs( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'M':
 				if( UTag == "MAYLEVITATE" )
 				{
-					SetLevitate( (data.toShort() == 1) );
+					SetLevitate( (static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( data.toFloat() ) );
+					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(std::stof(stripTrim( data ))) ) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXHP" )
 				{
-					SetFixedMaxHP( data.toUShort() );
+					SetFixedMaxHP( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXMANA" )
 				{
-					SetFixedMaxMana( data.toUShort() );
+					SetFixedMaxMana( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXSTAM" )
 				{
-					SetFixedMaxStam( data.toUShort() );
+					SetFixedMaxStam( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOUNTED" )
 				{
-					SetMounted( data.toUShort() == 1 );
+					SetMounted( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'N':
 				if( UTag == "NPCAITYPE" )
 				{
-					SetNPCAiType( data.toShort() );
+					SetNPCAiType( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "NPCWANDER" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() >= 2 )
 					{
-						SetNpcWander( data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
-						SetOldNpcWander( data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+						SetNpcWander( static_cast<SI08>(std::stoi(stripTrim( csecs[0] ), nullptr, 0)) );
+						SetOldNpcWander( static_cast<SI08>(std::stoi(stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
-						SetNpcWander( data.toByte() );
+					{
+						SetNpcWander( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "NPCFLAG" )
 				{
-					SetNPCFlag( (cNPC_FLAG)data.toUByte() );
+					SetNPCFlag( static_cast<cNPC_FLAG>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					UpdateFlag( this );
 					rvalue = true;
 				}
@@ -3418,90 +3432,91 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "ORIGINALBODYID" )
 				{
-					SetOrgID( data.toUShort() );
+					SetOrgID( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORIGINALSKINID" )
 				{
-					SetOrgSkin( data.toUShort() );
+					SetOrgSkin( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORIGINALID" )
 				{
-					SetOrgID( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-					SetOrgSkin( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					SetOrgID( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetOrgSkin( static_cast<UI16>(std::stoul(stripTrim( csecs[1]), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PRIVILEGES" )
 				{
-					SetPriv( data.toUShort() );
+					SetPriv( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PACKITEM" )
 				{
-					packitem = reinterpret_cast<CItem *>( data.toUInt() );
+					// ERROR, THIS IS JUST WRONG!!!!!!!!!!
+					packitem = reinterpret_cast<CItem *>( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "POISON" )
 				{
-					SetPoisoned( data.toUByte() );
+					SetPoisoned( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "POISONSTRENGTH" )
 				{
-					SetPoisonStrength( data.toUByte() );
+					SetPoisonStrength( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PEACEING" )
 				{
-					SetPeaceing( data.toShort() );
+					SetPeaceing( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PROVOING" )
 				{
-					SetProvoing( data.toShort() );
+					SetProvoing( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( data.toFloat() ) );
+					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>(std::stof(stripTrim( data ))) ) );
 					rvalue = true;
 				}
 				break;
 			case 'Q':
 				if( UTag == "QUESTTYPE" )
 				{
-					SetQuestType( data.toUByte() );
+					SetQuestType( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTDESTINATIONREGION" )
 				{
-					SetQuestDestRegion( data.toUByte() );
+					SetQuestDestRegion( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTORIGINALREGION" )
 				{
-					SetQuestOrigRegion( data.toUByte() );
+					SetQuestOrigRegion( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTREGIONS" )
 				{
-					SetQuestOrigRegion( data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() );
-					SetQuestDestRegion( data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() );
+					SetQuestOrigRegion( static_cast<UI08>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetQuestDestRegion( static_cast<UI08>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'R':
 				if( UTag == "ROBESERIAL" )
 				{
-					SetRobe( data.toUInt() );
+					SetRobe( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RESERVED" )
 				{
-					SetCell( data.toByte() );
+					SetCell( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNING" )
@@ -3510,163 +3525,173 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "REGION" )
 				{
-					SetRegion( data.toUShort() );
+					SetRegion(static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "REATTACKAT" )
 				{
-					SetReattackAt( data.toShort() );
+					SetReattackAt( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNINGSPEED" )
 				{
-					SetRunningSpeed( data.toFloat() );
+					SetRunningSpeed( static_cast<R32>(std::stof(stripTrim( data ))) );
 					rvalue = true;
 				}
 				break;
 			case 'S':
 				if( UTag == "SPLIT" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() >= 2 )
 					{
-						SetSplit( data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() );
-						SetSplitChance( data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() );
+						SetSplit( static_cast<UI08>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+						SetSplitChance( static_cast<UI08>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
-						SetSplit( data.toUByte() );
+					{
+						SetSplit( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "SPLITCHANCE" )
 				{
-					SetSplitChance( data.toUByte() );
+					SetSplitChance( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, data.toUInt() );
+					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>(std::stoul( stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SAY" )
 				{
-					SetSayColour( data.toUShort() );
+					SetSayColour( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "STEALTH" )
 				{
-					SetStealth( data.toByte() );
+					SetStealth( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SPATTACK" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() >=2 )
 					{
-						SetSpAttack( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
-						SetSpDelay( data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+						SetSpAttack( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+						SetSpDelay( static_cast<UI08>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
-						SetSpAttack( data.toShort() );
+					{
+						SetSpAttack( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "SPECIALATTACKDELAY" )
 				{
-					SetSpDelay( data.toByte() );
+					SetSpDelay( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SQUELCHED" )
 				{
-					SetSquelched( data.toUByte() );
+					SetSquelched( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SKILLLOCKS" )
 				{
 					// Format: Baselocks=[0,34]-[1,255]-[END]
-					numSections = data.sectionCount( "-" );
-					for( UI08 lockCtr = 0; lockCtr < numSections; ++lockCtr )
+					auto dsecs = sections( data, "-" );
+					
+					for( auto &value : dsecs )
 					{
-						UString tempdata = data.section( "-", lockCtr, lockCtr ).stripWhiteSpace();
-						if( tempdata.empty() )
+						if( value.empty() )
+						{
 							break;
-
-						UString tempval = tempdata.section( ",", 1, 1 ).substr( 0, tempdata.section( ",", 1, 1 ).size() - 1 );
-						UString tempnum = tempdata.section( ",", 0, 0 ).substr( 1 );
-						SetSkillLock( (SkillLock)tempval.toUByte(), tempnum.toUByte() );
+						}
+						auto secs = sections( value, "," );
+						if( secs.size() != 2 )
+						{
+							break;
+						}
+						auto skillnum = static_cast<UI08>(std::stoul(secs[0].substr(1), nullptr, 0));
+						auto skillvalue = static_cast<SkillLock>(std::stoul(secs[1].substr(0,secs[1].size() - 1), nullptr, 0));
+						SetSkillLock( skillvalue, skillnum );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "SPEECH" )
 				{
-					SetSayColour( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-					SetEmoteColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					SetSayColour( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetEmoteColour( static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "STABLED" )
 				{
-					SetStabled( data.toUShort() == 1 );
+					SetStabled( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TAMING" )
 				{
-					SetTaming( data.toShort() );
+					SetTaming( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDHUNGERRATE" )
 				{
-					SetTamedHungerRate( data.toByte() );
+					SetTamedHungerRate( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDHUNGERWILDCHANCE" )
 				{
-					SetTamedHungerWildChance( data.toByte() );
+					SetTamedHungerWildChance( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWN" )
 				{
-					SetTown( data.toUByte() );
+					SetTown( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNVOTE" )
 				{
-					SetTownVote( data.toUInt() );
+					SetTownVote( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNPRIVILEGES" )
 				{
-					SetTownpriv( data.toByte() );
+					SetTownpriv( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNTITLE" )
 				{
-					SetTownTitle( data.toShort() == 1 );
+					SetTownTitle( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'W':
 				if( UTag == "WANDERAREA" )
 				{
-					SetFx( data.section( ",", 0, 0 ).stripWhiteSpace().toShort(), 0 );
-					SetFy( data.section( ",", 1, 1 ).stripWhiteSpace().toShort(), 0 );
-					SetFx( data.section( ",", 2, 2 ).stripWhiteSpace().toShort(), 1 );
-					SetFy( data.section( ",", 3, 3 ).stripWhiteSpace().toShort(), 1 );
-					SetFz( data.section( ",", 4, 4 ).stripWhiteSpace().toByte() );
+					SetFx( static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0)), 0 );
+					SetFy( static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0)), 0 );
+					SetFx( static_cast<SI16>(std::stoi(stripTrim( csecs[2] ), nullptr, 0)), 1 );
+					SetFy( static_cast<SI16>(std::stoi(stripTrim( csecs[3] ), nullptr, 0)), 1 );
+					SetFz( static_cast<SI08>(std::stoi(stripTrim( csecs[4] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "WILLHUNGER" )
 				{
-					SetHungerStatus( data.toShort() == 1 );
+					SetHungerStatus( static_cast<SI16>(std::stoi(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEED" )
 				{
-					SetWalkingSpeed( data.toFloat() );
+					SetWalkingSpeed( static_cast<R32>(std::stof(stripTrim( data ))));
 					rvalue = true;
 				}
 				break;
 			case 'X':
 				if( UTag == "XNPCWANDER" )
 				{
-					SetOldNpcWander( data.toByte() );
+					SetOldNpcWander( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
