@@ -782,7 +782,7 @@ void ScriptSection::createSection( std::fstream& input )
 	// Now the reverse comes into play!
 	while( !input.eof() && sLine.substr( 0, 1 ) != "}" && !input.fail() )
 	{
-		input.getline( line, 2048 );
+		input.getline(line, 2047);
 		line[input.gcount()] = 0;
 		sLine = line;
 		sLine = stripTrim( sLine );
@@ -841,7 +841,7 @@ void ScriptSection::createSection( std::fstream& input )
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = std::string( localName );
 										auto csecs = sections( value, "," );
-										amiLocalCopy.groupID = static_cast<unsigned int>( std::stoul( stripTrim( csecs[0] ), nullptr, 0 ));
+										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0));
 										if( amiLocalCopy.groupID != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -852,10 +852,10 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = static_cast<unsigned short>( std::stoul( stripTrim( csecs[1] ), nullptr, 0 ));
-										amiLocalCopy.weightPosition = static_cast<unsigned int>( std::stoul( stripTrim( csecs[2] ), nullptr, 0 ));
-										amiLocalCopy.objectFlags = static_cast<unsigned int>( std::stoul( stripTrim( csecs[3] ), nullptr, 0 ));
-										amiLocalCopy.weightPosition = static_cast<unsigned int>( std::stoul( stripTrim( csecs[4] ), nullptr, 0 ));
+										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(stripTrim( csecs[2] ), nullptr, 0));
+										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(stripTrim( csecs[3] ), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(stripTrim( csecs[4] ), nullptr, 0));
 
 										//if( amiLocalCopy.tileID == INVALIDSERIAL )
 											//amiLocalCopy.tileID = amiLocalCopy.objectID;

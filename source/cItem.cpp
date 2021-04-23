@@ -1427,43 +1427,44 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles loading in tags and values from world files on startup
 //o-----------------------------------------------------------------------------------------------o
-bool CItem::HandleLine( UString &UTag, UString &data )
+bool CItem::HandleLine( std::string &UTag, std::string &data )
 {
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
+		auto csecs = sections( data, "," );
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "AMMO" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() == 2 )
 					{
-						SetAmmoID( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-						SetAmmoHue( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+						SetAmmoID( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+						SetAmmoHue( static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
 					{
-						SetAmmoID( data.toUShort() );
+						SetAmmoID( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 						SetAmmoHue( ( 0 ) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "AMMOFX" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() == 2 )
 					{
-						SetAmmoFX( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-						SetAmmoFXHue( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
-						SetAmmoFXRender( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+						SetAmmoFX( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+						SetAmmoFXHue( static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
+						SetAmmoFXRender( static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
 					{
-						SetAmmoFX( data.toUShort() );
+						SetAmmoFX( static_cast<UI16>(std::stoul( stripTrim( data ), nullptr, 0 )));
 						SetAmmoFXHue( ( 0 ) );
 						SetAmmoFXRender( ( 0 ) );
 					}
@@ -1471,41 +1472,42 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				else if( UTag == "AMOUNT" )
 				{
-					amount = data.toUShort();
+					amount = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "AC" )
 				{
-					SetArmourClass( data.toUByte() );
+					SetArmourClass( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'B':
 				if( UTag == "BOOLS" )
 				{
-					bools = data.toUByte();
+					bools = static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					contObj = reinterpret_cast<CBaseObject *>( data.toUInt() );
+					// ERRROR, this is just wrong
+					contObj = reinterpret_cast<CBaseObject *>(static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( data.toUInt() );
+					SetCreator( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CORPSE" )
 				{
-					SetCorpse( data.toUByte() == 1 );
+					SetCorpse( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "COLD" )
 				{
-					SetWeatherDamage( COLD, data.toUByte() == 1 );
+					SetWeatherDamage( COLD, static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
@@ -1517,85 +1519,89 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				if( UTag == "DIR" )
 				{
-					SetDir( data.toByte() );
+					SetDir( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "DYEABLE" )
 				{
-					SetDye( data.toUByte() == 1 );
+					SetDye( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'E':
 				if( UTag == "ENTRYMADEFROM" )
 				{
-					EntryMadeFrom( data.toUShort() );
+					EntryMadeFrom( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GRIDLOC" )
 				{
-					SetGridLocation( data.toByte() );
+					SetGridLocation( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOWTYPE" )
 				{
-					SetGlowEffect( data.toUByte() );
+					SetGlowEffect( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOWBC" )
 				{
-					SetGlowColour( data.toUShort() );
+					SetGlowColour( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOW" )
 				{
-					SetGlow( data.toUInt() );
+					SetGlow( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GOOD" )
 				{
-					SetGood( data.toShort() );
+					SetGood( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'H':
 				if( UTag == "HEAT" )
 				{
-					SetWeatherDamage( HEAT, data.toUByte() == 1 );
+					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'L':
 				if( UTag == "LAYER" )
 				{
-					layer = static_cast<ItemLayers>(data.toUByte());
+					layer = static_cast<ItemLayers>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "LIGHT" )
 				{
-					SetWeatherDamage( LIGHT, data.toUShort() == 1 );
+					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "LIGHTNING" )
 				{
-					SetWeatherDamage( LIGHTNING, data.toUShort() == 1 );
+					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'M':
 				if( UTag == "MAXITEMS" )
 				{
-					SetMaxItems( data.toUInt() );
+					SetMaxItems( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MORE" )
 				{
-					if( data.sectionCount( "," ) != 0 )
-						SetTempVar( CITV_MORE, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
+					if( csecs.size() > 1 )
+					{
+						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					}
 					else
-						SetTempVar( CITV_MORE, data.toUInt() );
+					{
+						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MORE2" )	// Depreciated
@@ -1604,34 +1610,34 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					rvalue = true;
 				else if( UTag == "MOREXYZ" )
 				{
-					SetTempVar( CITV_MOREX, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-					SetTempVar( CITV_MOREY, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
-					SetTempVar( CITV_MOREZ, data.section( ",", 2, 2 ).stripWhiteSpace().toUInt() );
+					SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
+					SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(stripTrim( csecs[2] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOREX" )
 				{
-					SetTempVar( CITV_MOREX, data.toUInt() );
+					SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOREY" )
 				{
-					SetTempVar( CITV_MOREY, data.toUInt() );
+					SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOREZ" )
 				{
-					SetTempVar( CITV_MOREZ, data.toUInt() );
+					SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOVABLE" )
 				{
-					SetMovable( data.toByte() );
+					SetMovable( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXHP" )
 				{
-					SetMaxHP( data.toUShort() );
+					SetMaxHP( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -1645,46 +1651,46 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'O':
 				if( UTag == "OFFSPELL" )
 				{
-					SetOffSpell( data.toByte() );
+					SetOffSpell( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PRIV" )
 				{
-					SetPriv( data.toUByte() );
+					SetPriv( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PILEABLE" )
 				{
-					SetPileable( data.toUByte() == 1 );
+					SetPileable( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'R':
 				if( UTag == "RESTOCK" )
 				{
-					SetRestock( data.toUShort() );
+					SetRestock( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RACEDAMAGE" )
 				{
-					SetWeatherDamage( LIGHT, data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( RAIN, data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( HEAT, data.section( ",", 2, 2 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( COLD, data.section( ",", 3, 3 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( SNOW, data.section( ",", 4, 4 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( LIGHTNING, data.section( ",", 5, 5 ).stripWhiteSpace().toUByte() == 1 );
+					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) == 1 );
+					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) == 1 );
+					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(stripTrim( csecs[2] ), nullptr, 0)) == 1 );
+					SetWeatherDamage( COLD, static_cast<UI16>(std::stoul(stripTrim( csecs[3] ), nullptr, 0)) == 1 );
+					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(stripTrim( csecs[4] ), nullptr, 0)) == 1 );
+					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(stripTrim( csecs[5] ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "RANK" )
 				{
-					SetRank( data.toByte() );
+					SetRank( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RAIN" )
 				{
-					SetWeatherDamage( RAIN, data.toUByte() == 1 );
+					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "REPUTATION" )
@@ -1693,34 +1699,38 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'S':
 				if( UTag == "SPEED" )
 				{
-					SetSpeed( data.toUByte() );
+					SetSpeed( static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SK_MADE" )
 				{
-					SetMadeWith( data.toByte() );
+					SetMadeWith( static_cast<SI08>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SNOW" )
 				{
-					SetWeatherDamage( SNOW, data.toUByte() == 1 );
+					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "SPELLS" )
 				{
-					SetSpell( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-					SetSpell( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
-					SetSpell( 2, data.section( ",", 2, 2 ).stripWhiteSpace().toUInt() );
+					SetSpell( 0, static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetSpell( 1, static_cast<UI32>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
+					SetSpell( 2, static_cast<UI32>(std::stoul(stripTrim( csecs[2] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TYPE" )
 				{
-					if( data.sectionCount( "," ) != 0 )
-						SetType( static_cast<ItemTypes>(data.section( ",", 0, 0 ).stripWhiteSpace().toUByte()) );
+					if( csecs.size() != 1 )
+					{
+						SetType( static_cast<ItemTypes>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					}
 					else
-						SetType( static_cast<ItemTypes>(data.toUByte()) );
+					{
+						SetType( static_cast<ItemTypes>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "TYPE2" )
@@ -1729,15 +1739,16 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'V':
 				if( UTag == "VALUE" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() > 1 )
 					{
-						SetBuyValue( data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-						SetSellValue( data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
+						SetBuyValue( static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+						SetSellValue( static_cast<UI32>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
 					{
-						SetBuyValue( data.toUInt() );
-						SetSellValue( (data.toUInt() / 2) );
+						auto val = static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0));
+						SetBuyValue( val );
+						SetSellValue( val / 2 );
 					}
 					rvalue = true;
 				}
@@ -1745,7 +1756,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'W':
 				if( UTag == "WEIGHTMAX" )
 				{
-					SetWeightMax( data.toInt() );
+					SetWeightMax( static_cast<SI32>(std::stoi(stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -2573,28 +2584,29 @@ bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //|	Date		-	6/29/2004
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads data from Worldfile into the class
 //o-----------------------------------------------------------------------------------------------o
-bool CSpawnItem::HandleLine( UString &UTag, UString &data )
+bool CSpawnItem::HandleLine( std::string &UTag, std::string &data )
 {
 	bool rvalue = CItem::HandleLine( UTag, data );
 	if( !rvalue )
 	{
+		auto csecs = sections( data, "," );
 		switch( (UTag.data()[0]) )
 		{
 			case 'I':
 				if( UTag == "INTERVAL" )
 				{
-					SetInterval( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() );
-					SetInterval( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() );
+					SetInterval( 0, static_cast<UI08>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) );
+					SetInterval( 1, static_cast<UI08>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSECTIONALIST" )
 				{
-					IsSectionAList( (data.toUByte() == 1) );
+					IsSectionAList( (static_cast<UI08>(std::stoul(stripTrim( data ), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;

@@ -66,7 +66,7 @@ protected:
 	SERIAL			spawnserial;
 	SERIAL			owner;
 	RACEID			race;
-	UString		 	name;
+	std::string 	name;
 	SI16			strength;
 	SI16			dexterity;
 	SI16			intelligence;
@@ -182,7 +182,7 @@ public:
 	bool					DumpFooter( std::ofstream &outStream ) const;
 	bool					Load( std::ifstream &inStream );
 
-	virtual bool			HandleLine( UString &UTag, UString &data );
+	virtual bool			HandleLine( std::string &UTag, std::string &data );
 
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );

@@ -600,14 +600,15 @@ void LoadCreatures( void )
 	FileLookup->Dispose( creatures_def );
 }
 
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data )
 {
-	char temp[4096];
+	char temp[4097];
     tag = "o---o";
     data = "o---o";
     while( !inStream.eof() && !inStream.fail() )
     {
-        inStream.getline( temp, 4096 );
+        inStream.getline(temp, 4096);
+	    temp[inStream.gcount()] = 0;
 		auto sLine = std::string( temp );
 		auto cloc = sLine.find( "//" );
 

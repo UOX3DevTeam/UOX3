@@ -272,7 +272,7 @@ public:
 
 	virtual bool	Save( std::ofstream &outStream ) override;
 	virtual bool	DumpBody( std::ofstream &outStream ) const override;
-	virtual bool	HandleLine( UString &UTag, UString &data ) override;
+	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual void	PostLoadProcessing( void ) override;
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;
@@ -308,7 +308,7 @@ public:
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
-	virtual bool		HandleLine( UString &UTag, UString &data ) override;
+	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
 	bool				DoRespawn( void );	// Will replace RespawnItem() eventually
 	bool				HandleItemSpawner( void );

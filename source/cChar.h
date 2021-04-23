@@ -235,7 +235,7 @@ protected:
 
 	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool	DumpBody( std::ofstream &outStream ) const override;
-	virtual bool	HandleLine( UString &UTag, UString &data ) override;
+	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual bool	LoadRemnants( void ) override;
 
 	void		CopyData( CChar *target );

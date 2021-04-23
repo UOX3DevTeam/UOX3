@@ -280,16 +280,16 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 {
 	char wBuffer[4];
 
-	wBuffer[0] = static_cast<char>(msgBoardPost.Size>>8);
-	wBuffer[1] = static_cast<char>(msgBoardPost.Size%256);
+	wBuffer[0] = static_cast<SI08>(msgBoardPost.Size>>8);
+	wBuffer[1] = static_cast<SI08>(msgBoardPost.Size%256);
 	mFile.write( (const char *)&wBuffer, 2 );
 
 	mFile.write( (const char *)&msgBoardPost.Toggle, 1 );
 
-	wBuffer[0] = static_cast<char>(msgBoardPost.ParentSerial>>24);
-	wBuffer[1] = static_cast<char>(msgBoardPost.ParentSerial>>16);
-	wBuffer[2] = static_cast<char>(msgBoardPost.ParentSerial>>8);
-	wBuffer[3] = static_cast<char>(msgBoardPost.ParentSerial%256);
+	wBuffer[0] = static_cast<SI08>(msgBoardPost.ParentSerial>>24);
+	wBuffer[1] = static_cast<SI08>(msgBoardPost.ParentSerial>>16);
+	wBuffer[2] = static_cast<SI08>(msgBoardPost.ParentSerial>>8);
+	wBuffer[3] = static_cast<SI08>(msgBoardPost.ParentSerial%256);
 	mFile.write( (const char *)&wBuffer, 4 );
 
 	mFile.write( (const char *)&msgBoardPost.PosterLen, 1 );
@@ -308,10 +308,10 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 		mFile.write( (*lIter).c_str(), lineSize );
 	}
 
-	wBuffer[0] = static_cast<char>(msgBoardPost.Serial>>24);
-	wBuffer[1] = static_cast<char>(msgBoardPost.Serial>>16);
-	wBuffer[2] = static_cast<char>(msgBoardPost.Serial>>8);
-	wBuffer[3] = static_cast<char>(msgBoardPost.Serial%256);
+	wBuffer[0] = static_cast<SI08>(msgBoardPost.Serial>>24);
+	wBuffer[1] = static_cast<SI08>(msgBoardPost.Serial>>16);
+	wBuffer[2] = static_cast<SI08>(msgBoardPost.Serial>>8);
+	wBuffer[3] = static_cast<SI08>(msgBoardPost.Serial%256);
 	mFile.write( (const char *)&wBuffer, 4 );
 }
 
@@ -423,7 +423,7 @@ void MsgBoardPost( CSocket *tSock )
 	UI08 i		= 0;
 	UI16 offset = 11;
 
-	msgBoardPost.PosterLen = tChar->GetName().size()+1;
+	msgBoardPost.PosterLen = static_cast<UI08>(tChar->GetName().size()) + 1;
 	strncpy( msgBoardPost.Poster, tChar->GetName().c_str(), msgBoardPost.PosterLen );
 
 	msgBoardPost.SubjectLen = internalBuffer[++offset];

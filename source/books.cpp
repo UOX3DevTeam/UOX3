@@ -410,8 +410,8 @@ void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook
 	file.write( titleBuff, 62 );
 	file.write( authBuff, 32 );
 
-	wBuffer[0] = static_cast<char>(maxpages>>8);
-	wBuffer[1] = static_cast<char>(maxpages%256);
+	wBuffer[0] = static_cast<SI08>(maxpages>>8);
+	wBuffer[1] = static_cast<SI08>(maxpages%256);
 	file.write( (const char *)&wBuffer, 2 );
 
 	for( UI16 i = 0; i < maxpages; ++i )

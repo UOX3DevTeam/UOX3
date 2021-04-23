@@ -800,7 +800,7 @@ SI32 CConsole::cl_getch( void )
 	auto a = ::read(0, buffer, 1);  // This doesn't block on getting a line due to initalization
 	if( a > 0 )
 	{
-		return static_cast<int>(buffer[0]);
+		return static_cast<SI32>(buffer[0]);
 	}
 	else
 	{
@@ -936,9 +936,9 @@ void CConsole::Process( SI32 c )
 							messageLoop << temp;
 							break;
 						default:
-							outputline = outputline  + std::string( 1, static_cast<char>(keyresp) );
+							outputline = outputline + std::string(1, static_cast<SI08>(keyresp));
 							indexcount = indexcount + 1;
-							std::cout << static_cast<char>(keyresp);
+							std::cout << static_cast<SI08>(keyresp);
 							std::cout.flush();
 							break;
 					}
@@ -1122,7 +1122,7 @@ void CConsole::Process( SI32 c )
 				messageLoop << temp;
 				UI32 m, n;
 				m = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ));
-				total += tmp = m + m*sizeof( CTEffect ) + m*sizeof(char) + m*sizeof( intptr_t )*5;
+				total += tmp = m + m*sizeof(CTEffect) + m*sizeof(SI08) + m*sizeof(intptr_t)*5;
 				temp = format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
 				messageLoop << temp;
 				n = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM ));
@@ -1208,7 +1208,7 @@ void CConsole::Process( SI32 c )
 				FileLookup->DisplayPriorityMap();
 				break;
 			default:
-				temp = format( "Key \'%c\' [%i] does not perform a function", (char)c, c );
+				temp = format( "Key \'%c\' [%i] does not perform a function", (SI08)c, c );
 				messageLoop << temp;
 				break;
 		}
