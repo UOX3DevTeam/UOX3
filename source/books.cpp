@@ -98,11 +98,11 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 {
 	if( mSock != NULL )
 	{
-		UString temp		= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
+		std::string temp	= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
 		if( book != NULL )
 		{
-			UString data, UTag;
+			std::string data, UTag;
 
 			CPNewBookHeader toSend;
 			toSend.Serial( i->GetSerial() );
@@ -110,14 +110,14 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 			toSend.Flag2( 0 );
 
 			bool part1 = false, part2 = false, part3 = false;
-			for( UString tag = book->First(); !book->AtEnd(); tag = book->Next() )
+			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
-				UTag = tag.upper();
+				UTag = str_toupper( tag );
 				data = book->GrabData();
 				if( UTag == "PAGES" )
 				{
 					part1 = true;
-					toSend.Pages( data.toShort() );
+					toSend.Pages( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
 				}
 				else if( UTag == "TITLE" )
 				{
@@ -255,12 +255,12 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 {
 	if( mSock != NULL )
 	{
-		UString temp		= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
+		std::string temp	= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
 		if( book != NULL )
 		{
 			UI16 curPage = p;
-			for( UString tag = book->First(); !book->AtEnd(); tag = book->Next() )
+			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
 				if( tag != "PAGE" )
 					continue;

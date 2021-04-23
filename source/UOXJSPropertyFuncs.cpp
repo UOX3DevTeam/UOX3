@@ -86,7 +86,7 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	SpellInfo *gPriv = static_cast<SpellInfo*>(JS_GetPrivate( cx, obj ));
 	if( gPriv == NULL )
 		return JS_FALSE;
-	UString spellName = "";
+	std::string spellName = "";
 
 	if( JSVAL_IS_INT( id ) )
 	{

@@ -1004,7 +1004,7 @@ JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		// Additional arguments were provided along with the cliloc number
 		// Only supported by client versions above ~7.0.16.0
 		temp << "tooltip " << tooltip << " @";
-		UString tempArg;
+		std::string tempArg;
 		for( UI32 i = 2; i < argc; i++ )
 		{
 			tempArg = JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
@@ -5232,7 +5232,7 @@ JSBool CAccount_AddAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( JSVAL_IS_INT( argv[3] ) )
 		u16Flags = (UI16)JSVAL_TO_INT( argv[3] );
 	else
-		u16Flags = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) ) ).toUShort();
+		u16Flags = static_cast<UI16>(std::stoul(JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) ), nullptr, 0));
 
 	if( lpszUsername.empty() || lpszPassword.empty() || lpszComment.empty() || lpszUsername.length() == 0 || lpszPassword.length() == 0 || lpszComment.length() == 0 )
 		return JS_FALSE;
@@ -5367,12 +5367,12 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	UOXFileWrapper *mFile	= static_cast<UOXFileWrapper *>(JS_GetPrivate( cx, obj ));
 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	UString mode = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	char *folderName = "\0";
+	std::string mode = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	char *folderName = nullptr;
 	if( argc == 3 )
 		folderName = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-
-	if( mode.lower().find_first_of("rwa",0,3) == std::string::npos )
+	
+	if( str_tolower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
@@ -5386,7 +5386,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	std::string filePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
 	// if folderName argument was supplied, use it, and create the appropriate folder under the /shared/ folder
-	if( folderName[0] != '\0' )
+	if( folderName != nullptr )
 	{
 		// However, don't allow special characters in the folder name
 		if( strstr( folderName, ".." ) || strstr( folderName, "\\" ) || strstr( folderName, "/" ) )
@@ -5406,7 +5406,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	filePath.append( fileName );
-	mFile->mWrap = fopen( filePath.c_str(), mode.lower().substr(0,1).c_str() );
+	mFile->mWrap = fopen( filePath.c_str(), str_tolower(mode).substr(0,1).c_str() );
 	return JS_TRUE;
 }
 

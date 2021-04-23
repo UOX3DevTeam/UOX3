@@ -2999,7 +2999,7 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	}
 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	char *subFolderName = "\0";
+	char *subFolderName = nullptr;
 	if( argc == 2 )
 		subFolderName = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 
@@ -3012,7 +3012,7 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	std::string pathString	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
 	// if subFolderName argument was supplied, use it
-	if( subFolderName[0] != '\0' )
+	if( subFolderName != nullptr )
 	{
 		// However, don't allow special characters in the folder name
 		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ) )

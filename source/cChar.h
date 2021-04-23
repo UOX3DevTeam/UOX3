@@ -94,7 +94,7 @@ private:
 		CHARLIST			petFriends;
 		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
 		UI08				hungerWildChance;	// The chance that the char get's wild when hungry
-		UString				foodList;
+		std::string			foodList;
 
 		SERIAL				fTarg; // NPC Follow Target
 
