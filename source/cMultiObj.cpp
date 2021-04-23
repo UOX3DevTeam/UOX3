@@ -671,7 +671,7 @@ void CMultiObj::SetPublicStatus( bool newBool )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the timestamp for when the multi was built
 //o-----------------------------------------------------------------------------------------------o
-UString CMultiObj::GetBuildTimestamp( void ) const
+std::string CMultiObj::GetBuildTimestamp( void ) const
 {
 	if( buildTimestamp > 0 )
 	{
@@ -695,7 +695,7 @@ void CMultiObj::SetBuildTimestamp( time_t newTime )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the timestamp for when the multi was last traded between players
 //o-----------------------------------------------------------------------------------------------o
-UString CMultiObj::GetTradeTimestamp( void ) const
+std::string CMultiObj::GetTradeTimestamp( void ) const
 {
 	if( tradeTimestamp > 0 )
 	{

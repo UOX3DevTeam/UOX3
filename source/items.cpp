@@ -16,14 +16,14 @@
 
 cItem *Items = NULL;
 
-ItemTypes FindItemTypeFromTag( const UString& strToFind );
+ItemTypes FindItemTypeFromTag( const std::string& strToFind );
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
+//|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const std::string &cdata )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load item data from script sections and apply to spawner objects
 //o-----------------------------------------------------------------------------------------------o
-bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
+bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const std::string& cdata )
 {
 	if( !ValidateObject( applyTo ) )
 		return false;
@@ -54,35 +54,42 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 	if( toApply == NULL || !ValidateObject( applyTo ) )
 		return false;
 
-	UString cdata;
+	std::string cdata;
 	SI32 ndata = -1, odata = -1;
 	bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
 
 	TAGMAPOBJECT customTag;
-	UString customTagName;
-	UString customTagStringValue;
+	std::string customTagName;
+	std::string customTagStringValue;
 
 	for( DFNTAGS tag = toApply->FirstTag(); !toApply->AtEndTags(); tag = toApply->NextTag() )
 	{
 		cdata = toApply->GrabData( ndata, odata );
-
+		
 		if( isSpawner && ApplySpawnItemSection( static_cast<CSpawnItem *>(applyTo), tag, ndata, odata, cdata ) )
+		{
 			continue;
-
+		}
+			
+		auto ssecs = sections( stripTrim( cdata ), " " );
 		switch( tag )
 		{
 			case DFNTAG_AMMO:
-				applyTo->SetAmmoID( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
-				if( cdata.sectionCount( " " ) > 0 )
-					applyTo->SetAmmoHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
+				applyTo->SetAmmoID( static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0)) );
+				if( ssecs.size() > 1 )
+				{
+					applyTo->SetAmmoHue( static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0)) );
+				}
 				break;
 			case DFNTAG_AMMOFX:
-				applyTo->SetAmmoFX( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
-				if( cdata.sectionCount( " " ) > 0 )
+				applyTo->SetAmmoFX( static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0)) );
+				if( ssecs.size() > 1 )
 				{
-					applyTo->SetAmmoFXHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
-					if( cdata.sectionCount( " " ) > 1 )
-						applyTo->SetAmmoFXRender( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() );
+					applyTo->SetAmmoFXHue( static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0)) );
+					if( ssecs.size() > 2 )
+					{
+						applyTo->SetAmmoFXRender( static_cast<UI16>(std::stoul(stripTrim( ssecs[2] ), nullptr, 0)) );
+					}
 				}
 				break;
 			case DFNTAG_AMOUNT:
@@ -127,12 +134,12 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_CORPSE:			applyTo->SetCorpse( ndata != 0 )		;				break;
 			case DFNTAG_COLD:			applyTo->SetWeatherDamage( COLD, ndata != 0 );			break;
 			case DFNTAG_ELEMENTRESIST:
-				if( cdata.sectionCount( " " ) == 3 )
+				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), HEAT );
-					applyTo->SetResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), COLD );
-					applyTo->SetResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), LIGHTNING );
-					applyTo->SetResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0)), HEAT );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0)), COLD );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(stripTrim( ssecs[2] ), nullptr, 0)), LIGHTNING );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(stripTrim( ssecs[3] ), nullptr, 0)), POISON );
 				}
 				break;
 			case DFNTAG_DEF:
@@ -166,7 +173,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					Console.warning( format("Invalid data found in DEX tag inside item script %s", sectionID.c_str() ));
 				break;				
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
-			case DFNTAG_DIR:			applyTo->SetDir( cdata.toByte() );			break;
+			case DFNTAG_DIR:			applyTo->SetDir( static_cast<UI08>(std::stoi(stripTrim( cdata ), nullptr, 0)) );			break;
 			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
 			case DFNTAG_DECAY:
 				if( ndata == 1 )
@@ -183,15 +190,15 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_GLOWTYPE:		applyTo->SetGlowEffect( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_GET:
 			{
-				UString scriptEntry = "";
-				if( cdata.sectionCount( " " ) == 0 )
+				std::string scriptEntry = "";
+				if( ssecs.size() == 1 )
 				{
 					scriptEntry = cdata;
 				}
 				else
 				{
-					UI32 rndEntry = RandomNum( 0, cdata.sectionCount( " " ));
-					scriptEntry = cdata.section( " ", rndEntry, rndEntry );
+					UI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size() - 1));
+					scriptEntry = stripTrim( ssecs[rndEntry] );
 				}
 
 				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
@@ -355,24 +362,24 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				Console.print(cdata);
 				break;
 			case DFNTAG_CUSTOMSTRINGTAG:
-				customTagName			= cdata.section( " ", 0, 0 );
-				customTagStringValue	= cdata.section(" ", 1 );
+				customTagName			= stripTrim( ssecs[0] );
+				customTagStringValue	= stripTrim( ssecs[1] );
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
 					customTag.m_StringValue	= customTagStringValue;
-					customTag.m_IntValue	= customTag.m_StringValue.length();
+					customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
 					applyTo->SetTag( customTagName, customTag );
 				}
 				break;
 			case DFNTAG_CUSTOMINTTAG:
-				customTagName			= cdata.section(" ", 0, 0);
-				customTagStringValue	= cdata.section(" ", 1);
+				customTagName			= stripTrim( ssecs[0] );
+				customTagStringValue	= stripTrim( ssecs[1] );
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
-					customTag.m_IntValue = customTagStringValue.toInt();
+					customTag.m_IntValue 	= static_cast<SI32>(std::stoi(customTagStringValue, nullptr, 0));
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
 					applyTo->SetTag( customTagName, customTag );
@@ -383,12 +390,23 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				break;
 			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break;
 			case DFNTAG_PACKITEM:
-				if( cdata.sectionCount( "," ) != 0 )
-					Items->AddRespawnItem( applyTo, cdata.section( ",", 0, 0 ), true, false, cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort() ); //section 0 = id, section 1 = amount
+			{
+				auto csecs = sections( stripTrim( cdata ), "," );
+				if( csecs.size() > 1 )
+				{
+					Items->AddRespawnItem( applyTo, stripTrim( csecs[0] ), true, false, static_cast<unsigned short>(std::stoul(stripTrim( csecs[1] ), nullptr, 0))); //section 0 = id, section 1 = amount
+				}
 				else
-					Items->AddRespawnItem( applyTo, cdata, true, false, 1 );
+				{
+					Items->AddRespawnItem( applyTo, stripTrim( cdata ), true, false, 1 );
+				}
 				break;
-			default:					Console.warning( format("Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));	break;
+			}
+			default:
+			{
+				Console.warning( format("Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));
+				break;
+			}
 		}
 	}
 	return true;
@@ -553,8 +571,8 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNum, const UI16 instanceID )
 {
 	CItem * iCreated	= NULL;
-	UString sect		= "ITEMLIST " + sItemList;
-	sect				= sect.stripWhiteSpace();
+	std::string sect	= "ITEMLIST " + sItemList;
+	sect				= stripTrim( sect );
 
 	if( sect == "blank" ) // The itemlist-entry is just a blank filler item
 		return NULL;
@@ -565,13 +583,17 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 		const size_t i = ItemList->NumEntries();
 		if( i > 0 )
 		{
-			UString k = ItemList->MoveTo( RandomNum( static_cast< size_t >(0), i - 1 ) );
+			std::string k = ItemList->MoveTo( RandomNum( static_cast<size_t>(0), i - 1 ) );
 			if( !k.empty() )
 			{
-				if( k.upper() == "ITEMLIST" )
+				if( str_toupper( k ) == "ITEMLIST" )
+				{
 					iCreated = CreateRandomItem( ItemList->GrabData(), worldNum, instanceID );
+				}
 				else
+				{
 					iCreated = CreateBaseScriptItem( k, worldNum, 1, instanceID );
+				}
 			}
 		}
 	}
@@ -624,14 +646,14 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, c
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
+//|	Function	-	CItem *CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
 //|	Date		-	10/12/2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item from the scripts
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
+CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
 {
-	ourItem						= ourItem.stripWhiteSpace();
+	ourItem						= stripTrim( ourItem );
 
 	if( ourItem == "blank" ) // The lootlist-entry is just a blank filler item
 		return NULL;
@@ -681,14 +703,14 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 //|	Purpose		-	Grabs item entries from harditems.dfn
 //o-----------------------------------------------------------------------------------------------o
 void cItem::GetScriptItemSettings( CItem *iCreated )
-{
-	UString hexID = UString::number( iCreated->GetID(), 16 );
+{	
+	std::string hexID = str_number( iCreated->GetID(), 16 );
 	while( hexID.size() < 4 )
 	{
 		hexID = "0" + hexID;
 	}
 
-	const UString item = "x" + hexID;
+	const std::string item = "x" + hexID;
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
 	if( toFind != NULL )
 		ApplyItemSection( iCreated, toFind, item );

@@ -5,7 +5,7 @@
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
-#include "ustring.h"
+
 #include "typedefs.h"
 #include "uoxstruct.h"
 

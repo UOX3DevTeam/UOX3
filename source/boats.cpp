@@ -848,7 +848,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			break;
 		case TW_SETNAME:
 			char msg[512];
-			strcpy( msg, UString( ourText ).upper().c_str() );
+			strcpy( msg, str_toupper( ourText ).c_str() );
 			char *cmd;
 			cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
 			if( !cmd )

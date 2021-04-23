@@ -127,9 +127,9 @@ public:
 	SI16				GetBanY( void ) const;
 	void				SetBanY( const SI16 newVal );
 
-	UString				GetBuildTimestamp( void ) const;
+	std::string			GetBuildTimestamp( void ) const;
 	void				SetBuildTimestamp( time_t newTime );
-	UString				GetTradeTimestamp( void ) const;
+	std::string			GetTradeTimestamp( void ) const;
 	void				SetTradeTimestamp( time_t newTime );
 
 	virtual bool		Save( std::ofstream &outStream ) override;

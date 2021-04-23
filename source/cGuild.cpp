@@ -637,47 +637,66 @@ void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
 //o-----------------------------------------------------------------------------------------------o
 void CGuild::Load( ScriptSection *toRead )
 {
-	UString tag;
-	UString data;
-	UString UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 	for( tag = toRead->First(); !toRead->AtEnd(); tag = toRead->Next() )
 	{
 		data = toRead->GrabData();
 		if( tag.empty() )
 			continue;
-		UTag = tag.upper();
+		UTag = str_toupper( tag );
 		switch( (UTag.data()[0]) )
 		{
 			case '{':
 			case '/':	break;	// open section, comment, we don't really care ;)
 			case 'A':
 				if( UTag == "ABBREVIATION" )
+				{
 					Abbreviation( data.c_str() );
+				}
 				else if( UTag == "ALLY" )
-					SetGuildRelation( data.toShort(), GR_ALLY );
+				{
+					SetGuildRelation( static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_ALLY );
+				}
 				break;
 			case 'C':
 				if( UTag == "CHARTER" )
+				{
 					Charter( data );
+				}
 				break;
 			case 'M':
 				if( UTag == "MASTER" )
-					Master( data.toUInt() );
+				{
+					Master( static_cast<UI32>(std::stoul(data, nullptr, 0)) );
+				}
 				else if( UTag == "MEMBER" )
-					NewMember( data.toUInt() );
+				{
+					NewMember( static_cast<UI32>(std::stoul(data, nullptr, 0)) );
+				}
 				break;
 			case 'N':
 				if( UTag == "NAME" )
+				{
 					Name( data );
+				}
 				else if( UTag == "NEUTRAL" )
-					SetGuildRelation( data.toShort(), GR_NEUTRAL );
+				{
+					SetGuildRelation( static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_NEUTRAL );
+				}
 				break;
 			case 'R':
 				if( UTag == "RECRUIT" )
-					NewRecruit( data.toUInt() );
+				{
+					NewRecruit( static_cast<UI32>(std::stoul(data, nullptr, 0)) );
+				}
+				break;
 			case 'S':
 				if( UTag == "STONE" )
-					Stone( data.toUInt() );
+				{
+					Stone( static_cast<UI32>(std::stoul(data, nullptr, 0)) );
+				}
 				break;
 			case 'T':
 				if( UTag == "TYPE" )
@@ -694,13 +713,19 @@ void CGuild::Load( ScriptSection *toRead )
 				break;
 			case 'U':
 				if( UTag == "UNKNOWN" )
-					SetGuildRelation( data.toShort(), GR_UNKNOWN );
+				{
+					SetGuildRelation( static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_UNKNOWN );
+				}
 				break;
 			case 'W':
 				if( UTag == "WEBPAGE" )
+				{
 					Webpage( data );
+				}
 				else if( UTag == "WAR" )
-					SetGuildRelation( data.toShort(), GR_WAR );
+				{
+					SetGuildRelation( static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_WAR );
+				}
 				break;
 		}
 	}
@@ -919,9 +944,9 @@ void CGuildCollection::Load( void )
 		GUILDID guildNum		= 0;
 		for( testSect = newScript.FirstEntry(); testSect != NULL; testSect = newScript.NextEntry() )
 		{
-			UString text	= newScript.EntryName();
+			std::string text = newScript.EntryName();
 			text = text.substr( 6 );
-			guildNum		= text.toShort();
+			guildNum = static_cast<SI16>(std::stoi(text, nullptr, 0));
 			if( gList[guildNum] != NULL )
 				delete gList[guildNum];
 			gList[guildNum] = new CGuild();
@@ -1281,7 +1306,7 @@ void CGuildCollection::GumpInput( CPIGumpInput *gi )
 {
 	UI08 type		= gi->Type();
 	UI08 index		= gi->Index();
-	UString text	= gi->Reply();
+	std::string text = gi->Reply();
 	CSocket *s		= gi->GetSocket();
 
 	if( type != 100 )

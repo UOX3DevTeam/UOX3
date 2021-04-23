@@ -1313,8 +1313,8 @@ void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 {
-	UString upper						= cmdFunc;
-	upper								= upper.upper();
+	std::string upper					= cmdFunc;
+	upper								= str_toupper( upper );
 	JSCONSOLEFUNCMAP_ITERATOR	toFind	= JSConsoleFunctions.find( upper );
 	if( toFind != JSConsoleFunctions.end() )
 	{

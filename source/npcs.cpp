@@ -88,9 +88,9 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic npc from the scripts
 //o-----------------------------------------------------------------------------------------------o
-CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
+CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 {
-	ourNPC						= ourNPC.stripWhiteSpace();
+	ourNPC						= stripTrim( ourNPC );
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
 	if( npcCreate == NULL )
 	{
@@ -1560,6 +1560,7 @@ void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 		nCharID->SetKarma( (SI16)( nCurKarma - nChange ) );
 		nEffect = false;
 	}
+
 	if( nChange == 0 )	// NPCs CAN gain/lose karma
 		return;
 

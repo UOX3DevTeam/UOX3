@@ -2460,11 +2460,11 @@ void InitTagToItemType( void )
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
 }
 
-ItemTypes FindItemTypeFromTag( const UString& strToFind )
+ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
-	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strToFind.upper() );
+	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( str_toupper(strToFind) );
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;
