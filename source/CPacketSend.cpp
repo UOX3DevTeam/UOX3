@@ -4275,15 +4275,17 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	std::string itemname;
 	itemname.reserve( MAX_NAME );
 	UI08 sLen = 0;
-	UString temp	= toAdd->GetName() ;
-	temp			= temp.simplifyWhiteSpace();
+	std::string temp	= toAdd->GetName();
+	temp				= simplify(temp);
 	if( temp.substr( 0, 1 ) == "#" )
 	{
 		itemname = str_number( 1020000 + toAdd->GetID() );
 		sLen = static_cast<UI08>(itemname.size() + 1);
 	}
 	else
+	{
 		sLen = static_cast<UI08>(getTileName( (*toAdd), itemname )); // Item name length, don't strip the NULL (3D client doesn't like it)
+	}
 
 	pStream.ReserveSize( static_cast<size_t>(baseOffset) + 5 + static_cast<size_t>(sLen) );
 	pStream.WriteLong(   baseOffset, value );
@@ -6503,7 +6505,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		{
 			// First the price
 			tempEntry.stringNum = 1043304;
-			tempEntry.ourText = UString::number( cItem.GetBuyValue() );
+			tempEntry.ourText = str_number( cItem.GetBuyValue() );
 			FinalizeData( tempEntry, totalStringLen );
 			// Then the description
 			tempEntry.stringNum = 1043305;

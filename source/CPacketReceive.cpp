@@ -665,7 +665,7 @@ void CPINewClientVersion::Receive( void )
 		clientPrototype = tSock->GetDWord( 17 );
 		tSock->ClientVersion( majorVersion, minorVersion, clientRevision, clientPrototype );
 
-		UString verString = str_number( majorVersion ) + std::string(".") + str_number( minorVersion ) + std::string(".") + str_number( clientRevision ) + std::string(".") + str_number( clientPrototype );
+		std::string verString = str_number( majorVersion ) + std::string(".") + str_number( minorVersion ) + std::string(".") + str_number( clientRevision ) + std::string(".") + str_number( clientPrototype );
 		Console << verString << myendl;
 
 		// Set client-version based on information received so far. We need this to be able to send the correct info during login
@@ -813,8 +813,9 @@ bool CPIClientVersion::Handle( void )
 	{
 		UI08 major, minor, sub, letter;
 		std::string s( verString );
-		UString us = UString( s );
-		UI08 secCount = us.sectionCount( "." );
+		std::string us = std::string( s );
+		auto dsecs = sections( s, "." );
+		UI08 secCount = static_cast<UI08>(dsecs.size() - 1);
 
 		std::istringstream ss( s );
 		char period;
@@ -834,7 +835,7 @@ bool CPIClientVersion::Handle( void )
 				letter = temp;
 			else
 			{
-				UString tempSubString;
+				std::string tempSubString;
 				std::stringstream tempHackSS;
 				tempHackSS << sub;
 				tempHackSS >> tempSubString;
@@ -1107,10 +1108,10 @@ bool CPITips::Handle( void )
 			i = 1;
 
 		SI32 x = i;
-		UString tag, data, sect;
+		std::string tag, data, sect;
 		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
 		{
-			if( !tag.empty() && tag.upper() == "TIP" )
+			if( !tag.empty() && str_toupper( tag ) == "TIP" )
 				--x;
 			if( x <= 0 )
 				break;
@@ -1119,11 +1120,11 @@ bool CPITips::Handle( void )
 			tag = Tips->Prev();
 		data = Tips->GrabData();
 
-		sect = "TIP " + data.stripWhiteSpace();
+		sect = "TIP " + stripTrim( data );
 		Tips = FileLookup->FindEntry( sect, misc_def );
 		if( Tips != NULL )
 		{
-			UString tipData = "";
+			std::string tipData = "";
 			for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
 			{
 				tipData += Tips->GrabData() + " ";
@@ -2019,11 +2020,11 @@ bool CPITalkRequest::HandleCommon( void )
 
 	UI32 j = 0;
 	CSocket *tmpSock = NULL;
-
+	
 	switch( ourChar->GetSpeechMode() )
 	{
 		case 3: // Player vendor item pricing
-			j = UString( Text() ).toUInt();
+			j = static_cast<UI32>(std::stoul(std::string(Text()), nullptr, 0));
 			if( j >= 0 )
 			{
 				speechItem->SetBuyValue( j );
@@ -2944,7 +2945,7 @@ UI08 CPIGumpInput::Unk( SI32 offset ) const
 	assert( offset >= 0 && offset <=2 );
 	return unk[offset];
 }
-const UString CPIGumpInput::Reply( void ) const
+const std::string CPIGumpInput::Reply( void ) const
 {
 	return reply;
 }

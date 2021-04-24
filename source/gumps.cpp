@@ -1604,19 +1604,30 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			tweakItemMenu( tSock, j );
 			return;
 		}
+		auto reply_uint = static_cast<UI32>(std::stoul(reply, nullptr, 0));
 		switch( index )
 		{
-			case 1:		j->SetID( reply.toUShort() );				break;	// ID
-			case 2:		j->SetName( reply );						break;	// Name
-			case 3:		j->SetName2( reply.c_str() );				break;	// Name 2
-			case 4:		j->SetColour( reply.toUShort() );			break;	// Colour
-			case 5:		j->SetLayer( static_cast<ItemLayers>(reply.toUByte()) );		break;	// Layer
+			case 1: // ID
+				j->SetID( static_cast<UI16>(reply_uint));
+				break;
+			case 2: // Name
+				j->SetName( reply );
+				break;
+			case 3: // Name 2
+				j->SetName2( reply.c_str() );
+				break;
+			case 4: // Colour
+				j->SetColour( static_cast<UI16>(reply_uint ));
+				break;
+			case 5:	// Layer
+				j->SetLayer( static_cast<ItemLayers>(reply_uint) );
+				break;
 			case 6: // Type
-				if( ( reply.toUByte() >= 61 && reply.toUByte() <= 65 ) || reply.toUByte() == 69 || reply.toUByte() == 125 )
+				if( ( reply_uint >= 61 && reply_uint <= 65 ) ||reply_uint == 69 || reply_uint == 125 )
 				{
 					if( j->GetObjType() == OT_SPAWNER )
 					{
-						j->SetType( static_cast<ItemTypes>( reply.toUByte() ) );
+						j->SetType( static_cast<ItemTypes>(reply_uint) );
 					}
 					else
 					{
@@ -1624,64 +1635,144 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 					}
 				}
 				else
-					j->SetType( static_cast<ItemTypes>( reply.toUByte() ) );
+				{
+					j->SetType( static_cast<ItemTypes>(reply_uint) );
+				}
 				break;
-			case 7:		j->SetMovable( reply.toByte() );			break;	// Moveable
-			case 8:		j->SetLocation( reply.toShort(), j->GetY(), j->GetZ() );			break;	// X
-			case 9:		j->SetLocation( j->GetX(), reply.toShort(), j->GetZ() );			break;	// Y
-			case 10:	j->SetZ( reply.toByte() );					break;	// Z
-			case 11:	j->SetAmount( reply.toUShort() );			break;	// Amount
-			case 12:	j->SetStrength( reply.toShort() );			break;	// Strength
-			case 13:	j->SetHP( reply.toShort() ); 				break;	// Hit Points
-			case 14:	j->SetMaxHP( reply.toShort() );				break;	// Max HP
-			case 15:	j->SetLoDamage( reply.toShort() );			break;	// Low Damage
-			case 16:	j->SetHiDamage( reply.toShort() );			break;	// High Damage
-			case 17:	j->SetResist( reply.toUShort(), PHYSICAL ); break;	// Defense
-			case 18:	j->SetSpeed( reply.toUByte() );				break;	// Speed
-			case 19:	j->SetRank( reply.toByte() );				break;	// Rank
-			case 20:	j->SetTempVar( CITV_MORE, reply.toUInt() );		break;	// More
-			case 21:	j->SetTempVar( CITV_MOREX, reply.toUInt() );	break;	// More X
-			case 22:	j->SetTempVar( CITV_MOREY, reply.toUInt() );	break;	// More Y
-			case 23:	j->SetTempVar( CITV_MOREZ, reply.toUInt() );	break;	// More Z
-			case 24:	j->SetPoisoned( reply.toUByte() );			break;	// Poisoned
-			case 25:	j->SetWeight( reply.toInt() );				break;	// Weight
-			case 26:	j->SetDecayable( reply.toUByte() != 0 );	break;	// Decay
-			case 27:	j->SetGood( reply.toShort() );				break;	// Good
-			case 28:	j->SetBuyValue( reply.toUInt() );			break;	// Buy Value
-			case 29:	j->SetSellValue( reply.toUInt() );			break;	// Sell Value - Not implimented yet
-			case 30:	j->SetCarve( reply.toShort() );				break;	// Carve
-			case 31: 	j->SetPileable( reply.toUByte() != 0 );		break;	// Stackable
-			case 32:	j->SetDye( reply.toUByte() != 0 );			break;	// Dyable
-			case 33:	j->SetCorpse( reply.toUByte() != 0 );		break;	// Corpse
-			case 34:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
-			case 35:	j->SetCreator( reply.toUInt() );			break;	// Creator
-			case 36:	j->SetScriptTrigger( reply.toUShort() );	break; //ScriptTrigger ID
-			case 37:	j->SetAmmoID( reply.toUShort() );			break; //AmmoID
-			case 38:	j->SetAmmoHue( reply.toUShort() );			break; //AmmoHue
-			case 39:	j->SetAmmoFX( reply.toUShort() );			break; //AmmoFX
-			case 40:	j->SetAmmoFXHue( reply.toUShort() );		break; //AmmoFXHue
-			case 41:	j->SetAmmoFXRender( reply.toUShort() );		break; //AmmoFXRender
-			case 42:	j->SetWeightMax( reply.toInt() );			break; //WeightMax
-			case 43:	j->SetBaseWeight( reply.toUInt() );			break; //BaseWeight
+			case 7: // Moveable
+				j->SetMovable( static_cast<SI08>(reply_uint) );
+				break;
+			case 8: // X
+				j->SetLocation( static_cast<SI16>(reply_uint), j->GetY(), j->GetZ() );
+				break;
+			case 9: // Y
+				j->SetLocation( j->GetX(), static_cast<SI16>(reply_uint), j->GetZ() );
+				break;
+			case 10: // Z
+				j->SetZ( static_cast<SI08>(reply_uint) );
+				break;
+			case 11: // Amount
+				j->SetAmount( static_cast<UI16>(reply_uint ));
+				break;
+			case 12: // Strength
+				j->SetStrength( static_cast<SI16>(reply_uint) );
+				break;
+			case 13: // Hit Points
+				j->SetHP( static_cast<SI16>(reply_uint) );
+				break;
+			case 14: // Max HP
+				j->SetMaxHP( static_cast<SI16>(reply_uint) );
+				break;
+			case 15: // Low Damage
+				j->SetLoDamage( static_cast<SI16>(reply_uint) );
+				break;
+			case 16: // High Damage
+				j->SetHiDamage(static_cast<SI16>(reply_uint) );
+				break;
+			case 17: // Defense
+				j->SetResist( static_cast<UI16>(reply_uint), PHYSICAL );
+				break;
+			case 18: // Speed
+				j->SetSpeed( static_cast<UI08>(reply_uint) );
+				break;
+			case 19: // Rank
+				j->SetRank( static_cast<SI08>(reply_uint) );
+				break;
+			case 20: // More
+				j->SetTempVar( CITV_MORE, reply_uint );
+				break;
+			case 21: // More X
+				j->SetTempVar( CITV_MOREX, reply_uint );
+				break;
+			case 22: // More Y
+				j->SetTempVar( CITV_MOREY, reply_uint );
+				break;
+			case 23: // More Z
+				j->SetTempVar( CITV_MOREZ, reply_uint );
+				break;
+			case 24: // Poisoned
+				j->SetPoisoned( static_cast<UI08>(reply_uint) );
+				break;
+			case 25: // Weight
+				j->SetWeight( static_cast<SI32>(reply_uint) );
+				break;
+			case 26: // Decay
+				j->SetDecayable( reply_uint != 0 );
+				break;
+			case 27: // Good
+				j->SetGood( static_cast<UI16>(reply_uint) );
+				break;
+			case 28: // Buy Value
+				j->SetBuyValue( reply_uint );
+				break;
+			case 29: // Sell Value - Not implimented yet
+				j->SetSellValue( reply_uint );
+				break;
+			case 30: // Carve
+				j->SetCarve( static_cast<SI16>(reply_uint) );
+				break;
+			case 31: // Stackable
+				j->SetPileable( reply_uint != 0 );
+				break;
+			case 32: // Dyable
+				j->SetDye( reply_uint != 0 );
+				break;
+			case 33: // Corpse
+				j->SetCorpse( reply_uint != 0 );
+				break;
+			case 34: // Visible
+				j->SetVisible( static_cast<VisibleTypes>(reply_uint) );
+				break;
+			case 35:	// Creator
+				j->SetCreator(reply_uint );
+				break;
+			case 36: //ScriptTrigger ID
+				j->SetScriptTrigger(static_cast<UI16>(reply_uint) );
+				break;
+			case 37: //AmmoID
+				j->SetAmmoID(static_cast<UI16>(reply_uint) );
+				break;
+			case 38: //AmmoHue
+				j->SetAmmoHue( static_cast<UI16>(reply_uint) );
+				break;
+			case 39: //AmmoFX
+				j->SetAmmoFX(static_cast<UI16>(reply_uint) );
+				break;
+			case 40: //AmmoFXHue
+				j->SetAmmoFXHue( static_cast<UI16>(reply_uint) );
+				break;
+			case 41: //AmmoFXRender
+				j->SetAmmoFXRender( static_cast<UI16>(reply_uint) );
+				break;
+			case 42: //WeightMax
+				j->SetWeightMax( reply_uint);
+				break;
+			case 43: //BaseWeight
+				j->SetBaseWeight( reply_uint);
+				break;
 			case 44:
 			{
 				//WorldNumber
 				j->RemoveFromSight();
-				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), reply.toUByte(), j->GetInstanceID() );
-				j->WorldNumber( reply.toUByte() );
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), static_cast<UI08>(reply_uint), j->GetInstanceID() );
+				j->WorldNumber( static_cast<UI08>(reply_uint) );
 				break;
 			}
 			case 45:
 			{
 				//InstanceID
 				j->RemoveFromSight();
-				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), j->WorldNumber(), reply.toUShort() );
-				j->SetInstanceID( reply.toUShort() );
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), j->WorldNumber(), static_cast<UI16>(reply_uint) );
+				j->SetInstanceID( static_cast<UI16>(reply_uint) );
 				break;
 			}
 			case 46:
+				// Spawnobj/Spawnobjlist
 				if( j->GetObjType() == OT_SPAWNER )
-					(static_cast<CSpawnItem *>(j))->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
+				{
+					(static_cast<CSpawnItem *>(j))->SetSpawnSection( reply.c_str() );
+				}
+				break;
 		}
 		tweakItemMenu( tSock, j );
 	}
@@ -1764,13 +1855,13 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			return;
 		}
 		UI16 k;
-
+		auto reply_uint = static_cast<UI32>(std::stoul(reply, nullptr, 0));
 		switch( index )
 		{
 			case 1:		j->SetName( reply );						break;	// Name
 			case 2:		j->SetTitle( reply );					break;	// Title
 			case 3:													// Body
-				k = reply.toUShort();
+				k = static_cast<UI16>(reply_uint);
 				if( k <= 0x3e2 ) // body-values >0x3e crash the client
 				{
 					j->SetID( k );
@@ -1778,75 +1869,118 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 				}
 				break;
 			case 4:													// Skin
-				k = reply.toUShort();
+				k = static_cast<UI16>(reply_uint);
 				j->SetColour( k );
 				j->SetOrgSkin( k );
 				break;
-			case 5:		j->SetRace( reply.toUShort() );			break;	// Race
-			case 6:		j->SetLocation( reply.toShort(), j->GetY(), j->GetZ() );	break;	// X
-			case 7:		j->SetLocation( j->GetX(), reply.toShort(), j->GetZ() );	break;	// Y
-			case 8:		j->SetZ( reply.toByte() );									break;	// Z
-			case 9:		j->SetDir( static_cast<UI08>((reply.toUByte())&0x0F) );		break;	// Direction
+			case 5: // Race
+				j->SetRace( static_cast<UI16>(reply_uint) );
+				break;
+			case 6:		j->SetLocation( static_cast<SI16>(reply_uint), j->GetY(), j->GetZ() );	break;	// X
+			case 7:		j->SetLocation( j->GetX(), static_cast<SI16>(reply_uint), j->GetZ() );	break;	// Y
+			case 8:		j->SetZ( static_cast<SI08>(reply_uint) );								break;	// Z
+			case 9:		j->SetDir( static_cast<UI08>((static_cast<UI08>(reply_uint))&0x0F) );	break;	// Direction
 			case 10:												// Strength
-				if( reply.toShort() > 0 )
-					j->SetStrength( reply.toShort() );
+				if( static_cast<SI16>(reply_uint) > 0 )
+				{
+					j->SetStrength( static_cast<SI16>(reply_uint) );
+				}
 				break;
 			case 11:												// Dexterity
-				if( reply.toShort() > 0 )
-					j->SetDexterity( reply.toShort() );
+				if( static_cast<SI16>(reply_uint) > 0 )
+				{
+					j->SetDexterity( static_cast<SI16>(reply_uint) );
+				}
 				break;
 			case 12:												// Intelligence
-				if( reply.toShort() > 0 )
-					j->SetIntelligence( reply.toShort() );
+				if( static_cast< short>(reply_uint) > 0 )
+				{
+					j->SetIntelligence(static_cast<SI16>(reply_uint) );
+				}
 				break;
 			case 13:												// Hitpoints
-				if( reply.toShort() > 0 )
-					j->SetHP( reply.toShort() );
+				if( static_cast< short>(reply_uint) > 0 )
+				{
+					j->SetHP( static_cast<SI16>(reply_uint) );
+				}
 				break;
 			case 14:												// Stamina
-				if( reply.toUShort() > 0 )
-					j->SetStamina( reply.toUShort() );
+				if( reply_uint > 0 )
+				{
+					j->SetStamina( static_cast<UI16>(reply_uint) ); //IS THIS AN ERROR, ALL others are SHORT, NOT UNSIGNED SHORT. If not, the check is meaningless, unsigned cant be less then zero, but I guess could be 0
+				}
 				break;
 			case 15:												// Mana
-				if( reply.toShort() > 0 )
-					j->SetMana( reply.toShort() );
+				if( static_cast<SI16>(reply_uint) > 0 )
+				{
+					j->SetMana( static_cast<SI16>(reply_uint) );
+				}
 				break;
-			case 16:	j->SetHiDamage( reply.toShort() );		break;	// Low Damage
-			case 17:	j->SetLoDamage( reply.toShort() );		break;	// High Damage
-			case 18:	j->SetResist( reply.toUShort(), PHYSICAL );	break;	// Defense
-			case 19:	j->SetFame( reply.toShort() );			break;	// Fame
-			case 20:	j->SetKarma( reply.toShort() );			break;	// Karma
-			case 21:	j->SetKills( reply.toShort() );			break;	// Kills
+			case 16: // Low Damage
+				j->SetHiDamage( static_cast<SI16>(reply_uint) );
+				break;
+			case 17: // High Damage
+				j->SetLoDamage( static_cast<SI16>(reply_uint) );
+				break;
+			case 18: // Defense
+				j->SetResist( static_cast<UI16>(reply_uint), PHYSICAL ); // IS THIS AN ERROR< again unsigned
+				break;
+			case 19: // Fame
+				j->SetFame( static_cast<SI16>(reply_uint) );
+				break;
+			case 20: // Karma
+				j->SetKarma( static_cast<SI16>(reply_uint) );
+				break;
+			case 21: // Kills
+				j->SetKills(static_cast<SI16>(reply_uint) );
+				break;
 			case 22:												// AI Type
 				if( j->IsNpc() )
-					j->SetNPCAiType( reply.toShort() );
+				{
+					j->SetNPCAiType( static_cast<SI16>(reply_uint) );
+				}
 				break;
 			case 23:												// NPC Wander
 				if( j->IsNpc() )
-					j->SetNpcWander( reply.toByte() );
+				{
+					j->SetNpcWander(static_cast<SI08>(reply_uint) );
+				}
 				break;
-			case 24:	j->SetHunger( reply.toByte() );					break;	// Hunger
-			case 25:	j->SetPoisonStrength( reply.toUByte() );		break;	// Poison
-			case 26:	j->SetWeight( reply.toShort() );				break;	// Weight
-			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
-			case 28:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
-			case 29:	j->SetScriptTrigger( reply.toUShort() );		break;	// ScriptTrigger ID
+			case 24:	// Hunger
+				j->SetHunger( static_cast<SI08>(reply_uint) );
+				break;
+			case 25:	// Poison
+				j->SetPoisonStrength( static_cast<UI08>(reply_uint) );
+				break;
+			case 26:	// Weight
+				j->SetWeight( static_cast<SI16>(reply_uint) );
+				break;
+			case 27:	// Carve
+				j->SetCarve( static_cast<SI16>(reply_uint) );
+				break;
+			case 28:	// Visible
+				j->SetVisible( static_cast<VisibleTypes>(reply_uint) );
+				break;
+			case 29:	// ScriptTrigger ID
+				j->SetScriptTrigger( static_cast<UI16>(reply_uint) );
+				break;
 			case 30:	
 			{
 				//WorldNumber
 				j->RemoveFromSight();
-				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), reply.toUByte(), j->GetInstanceID() );
-				j->WorldNumber( reply.toUByte() );
-				if( j->GetSocket() != NULL )
-					SendMapChange( reply.toUByte(), tSock );
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), static_cast<UI08>(reply_uint), j->GetInstanceID() );
+				j->WorldNumber( static_cast<UI08>(reply_uint) );
+				if( j->GetSocket() != NULL ){
+					SendMapChange( static_cast<UI08>(reply_uint), tSock );
+				}
 				break;
 			}
 			case 31:
 			{
 				//InstanceID
 				j->RemoveFromSight();
-				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), j->WorldNumber(), reply.toUShort() );
-				j->SetInstanceID( reply.toUShort() );
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), j->WorldNumber(), static_cast<UI16>(reply_uint) );
+				j->SetInstanceID( static_cast<UI16>(reply_uint) );
 				break;
 			}
 		}
@@ -1869,7 +2003,7 @@ void CPIGumpInput::HandleTownstoneText( UI08 index )
 		case 6:	// it's our donate resource button
 		{
 			CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
-			amountToDonate = reply.toUInt();
+			amountToDonate = static_cast<UI32>(std::stoul(reply, nullptr, 0));
 			if( amountToDonate == 0 )
 			{
 				tSock->sysmessage( 562 );

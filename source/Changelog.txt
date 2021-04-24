@@ -1,4 +1,5 @@
 25/04/2021 - Xuri
+	Additional work done to modernize string handling in CPacketReceive.cpp, CPacketReceive.h, CPacketSend.cpp, CPacketSend.h, cScript.cpp, gumps.cpp (punt)
 	Additional work done to modernize string handling in gumps.cpp, commands.cpp, cmdtable.cpp, commands.h, CJSMapping.cpp, scriptc.cpp and scriptc.h (punt)
 
 24/04/2021 - Xuri
@@ -105,7 +106,7 @@
 		GetTownRegion( regionID ) // Takes one parameter, regionID, and returns a region object
 
 13/04/2021 - Xuri (0.99.4f)
-	Option to define how much memory JS engine should be allowed to allocate before last-ditch GC kicks in has been moved from engine.dat to a new UOX.INI setting under [server]. Note that too low values can lead to server instability, especially if doing a lot of JS engine reloads, so default value has been increased from 16 to 256 MB per JS Runtime:
+	Option to define how much memory JS engine should be allowed to allocate before last-ditch GC kicks in has been moved from engine.dat to a new UOX.INI setting under [system]. Note that too low values can lead to server instability, especially if doing a lot of JS engine reloads, so default value has been increased from 16 to 256 MB per JS Runtime:
 		JSENGINESIZE=256 // gcMaxBytes limit in MB per JS Runtime. Must be between 16 and 4095
 	Reduced stackchunksize value provided for JS_NewContext from 0x500000 to the recommended default of 8192
 	Updated how players are paid for completing NPC escort quests; instead of hard-coded random amount between 0-600 gold, the reward is now based partly on the NPC escort's fame, and partly on the amount of gold the NPC is carrying. The formula for quest rewards thus look like this: rewardAmount = (( totalFame / 100 ) * 50 ) + ( totalGold * 0.25 )
