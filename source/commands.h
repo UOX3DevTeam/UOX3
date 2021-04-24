@@ -30,20 +30,20 @@ private:
 	std::vector< commandLevel_st *> clearance;
 	COMMANDMAP_ITERATOR				cmdPointer;
 	TARGETMAP_ITERATOR				targPointer;
-	UString							commandString;
+	std::string						commandString;
 
 	void			InitClearance( void );
 	void			CommandReset( void );
 public:
 	UI08			NumArguments( void );
 	SI32			Argument( UI08 argNum );
-	UString			CommandString( UI08 section, UI08 end = 0 );
-	void			CommandString( UString newValue );
+	std::string		CommandString( UI08 section, UI08 end = 0 );
+	void			CommandString( std::string newValue );
 
-	commandLevel_st *GetClearance( UString clearName );			// return by command name
-	commandLevel_st *GetClearance( UI08 commandLevel );	// return by command level
+	commandLevel_st *GetClearance( std::string clearName );	// return by command name
+	commandLevel_st *GetClearance( UI08 commandLevel );		// return by command level
 	UI16			GetColourByLevel( UI08 commandLevel );
-	void			Command( CSocket *s, CChar *c, UString text );
+	void			Command( CSocket *s, CChar *c, std::string text );
 	void			Load( void );
 	void			Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo );
 

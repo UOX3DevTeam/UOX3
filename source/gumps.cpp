@@ -1049,20 +1049,20 @@ void GMPage( CSocket *s, const std::string& reason )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleGumpCommand( CSocket *s, UString cmd, UString data )
+//|	Function	-	void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Execute a command from scripts
 //o-----------------------------------------------------------------------------------------------o
-void HandleGumpCommand( CSocket *s, UString cmd, UString data )
+void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 {
 	if( !s || cmd.empty() )
 		return;
 
 	CChar *mChar = s->CurrcharObj();
 
-	cmd		= cmd.upper();
-	data	= data.upper();
-	UString builtString;
+	cmd		= str_toupper( cmd );
+	data	= str_toupper( data );
+	std::string builtString;
 
 	switch( cmd.data()[0] )
 	{
@@ -1080,14 +1080,17 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 				}
 				if( runCommand )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					auto secs = sections( data, "," );
+					if( secs.size() > 1 )
 					{
-						UString tmp		= trim(extractSection(data, ",", 0, 0 ));
-						UI16 num			= str_value<std::uint16_t>(trim(extractSection(data, ",", 1, 1 )));
+						std::string tmp		= stripTrim( secs[0] );
+						UI16 num			= str_value<std::uint16_t>(stripTrim( secs[1] ));
 						Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
 					}
 					else
+					{
 						Items->CreateScriptItem( s, mChar, data, 0, itemType, true );
+					}
 				}
 			}
 			break;
@@ -1103,8 +1106,10 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			if( cmd == "GMMENU" )
 			{
 				if( data.empty() )
+				{
 					return;
-				CPIHelpRequest toHandle( s, data.toUShort() );
+				}
+				CPIHelpRequest toHandle( s,static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 				toHandle.Handle();
 			}
 			else if( cmd == "GMPAGE" )
@@ -1119,7 +1124,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			{
 				if( data.empty() )
 					return;
-				size_t placeNum = data.toUInt();
+				UI16 placeNum = static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0));
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -1156,8 +1161,10 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			if( cmd == "ITEMMENU" )
 			{
 				if( data.empty() )
+				{
 					return;
-				BuildAddMenuGump( s, data.toUShort() );
+				}
+				BuildAddMenuGump( s, static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
 			}
 			else if( cmd == "INFORMATION" )
 			{
@@ -1169,8 +1176,10 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			if( cmd == "MAKEMENU" )
 			{
 				if( data.empty() )
+				{
 					return;
-				Skills->NewMakeMenu( s, data.toInt(), (UI08)s->AddID() );
+				}
+				Skills->NewMakeMenu( s,std::stoi(stripTrim( data ), nullptr, 0), (UI08)s->AddID() );
 			}
 			break;
 		case 'N':
@@ -1186,8 +1195,10 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			if( cmd == "POLYMORPH" )
 			{
 				if( data.empty() )
+				{
 					return;
-				UI16 newBody = data.toUShort();
+				}
+				UI16 newBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
 				mChar->SetID( newBody );
 				mChar->SetOrgID( newBody );
 			}
@@ -1196,27 +1207,35 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			if( cmd == "SYSMESSAGE" )
 			{
 				if( data.empty() )
+				{
 					return;
+				}
 				s->sysmessage( data.c_str() );
 			}
 			else if( cmd == "SKIN" )
 			{
 				if( data.empty() )
+				{
 					return;
-				COLOUR newSkin = data.toUShort();
+				}
+				COLOUR newSkin = static_cast<UI16>(std::stoul(data, nullptr, 0));
 				mChar->SetSkin( newSkin );
 				mChar->SetOrgSkin( newSkin );
 			}
 			break;
 		case 'V':
 			if( cmd == "VERSION" )
+			{
 				s->sysmessage( "%s v%s(%s) [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
+			}
 			break;
 		case 'W':
 			if( cmd == "WEBLINK" )
 			{
 				if( data.empty() )
+				{
 					return;
+				}
 				s->OpenURL( data );
 			}
 			break;
