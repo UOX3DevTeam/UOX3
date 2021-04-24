@@ -612,7 +612,7 @@ protected:
 	UI08			type;
 	UI08			index;
 	UI08			unk[3];
-	UString			reply;
+	std::string		reply;
 
 	void			HandleTweakItemText( UI08 index );
 	void			HandleTweakCharText( UI08 index );
@@ -630,7 +630,7 @@ public:
 	UI08				Type( void ) const;
 	UI08				Index( void ) const;
 	UI08				Unk( SI32 offset ) const;
-	const UString		Reply( void ) const;
+	const std::string	Reply( void ) const;
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 

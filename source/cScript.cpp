@@ -403,17 +403,21 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
-	JSString *strSpeech = NULL;
-	UString lwrSpeech	= speech;
+	JSString *strSpeech 	= NULL;
+	std::string lwrSpeech	= speech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech.lower().c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, str_tolower( lwrSpeech ).c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj;
 	if( talkingTo->CanBeObjType( OT_CHAR ) )
+	{
 		ttObj = JSEngine->AcquireObject( IUE_CHAR, talkingTo, runTime );
+	}
 	else if( talkingTo->CanBeObjType( OT_ITEM ) )
+	{
 		ttObj = JSEngine->AcquireObject( IUE_ITEM, talkingTo, runTime );
+	}
 
 	params[0] = STRING_TO_JSVAL( strSpeech );
 	params[1] = OBJECT_TO_JSVAL( ptObj );
@@ -2317,10 +2321,10 @@ bool cScript::OnTalk( CChar *myChar, const char *mySpeech )
 
 	jsval params[2], rval;
 
-	JSString *strSpeech	= NULL;
-	UString lwrSpeech	= mySpeech;
+	JSString *strSpeech		= NULL;
+	std::string lwrSpeech	= mySpeech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech.lower().c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, str_tolower( lwrSpeech ).c_str() );
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 

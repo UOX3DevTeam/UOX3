@@ -658,18 +658,22 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 {
 	bool doesEat = false;
 
-	const UString sect		= "FOODLIST " + sFoodList;
+	const std::string sect	= "FOODLIST " + sFoodList;
 	ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
 	if( FoodList != NULL )
 	{
-		for( UString tag = FoodList->First(); !FoodList->AtEnd() && !doesEat; tag = FoodList->Next() )
+		for( std::string tag = FoodList->First(); !FoodList->AtEnd() && !doesEat; tag = FoodList->Next() )
 		{
 			if( !tag.empty() )
 			{
-				if( tag.upper() == "FOODLIST" )
+				if( str_toupper( tag ) == "FOODLIST" )
+				{
 					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
-				else if( sItemID == tag.toUShort() )
+				}
+				else if( sItemID == static_cast<UI16>(std::stoul(tag, nullptr, 0)) )
+				{
 					doesEat = true;
+				}
 			}
 		}
 	}
@@ -1569,7 +1573,7 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 {
 	if( ValidateObject( p ) )
 	{
-		UString thetitle;
+		std::string thetitle;
 		UI08 titlenum = 0xFF;
 
 		SI16 k = p->GetKarma();
@@ -1710,26 +1714,32 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 		{
 			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 			{
-				if( p->GetID( 2 ) == 0x91 ){
+				if( p->GetID( 2 ) == 0x91 )
+				{
 					FameTitle = format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
 				}
-				else{
+				else
+				{
 					FameTitle = format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
 				}
 			}
-			else if( p->GetID( 2 ) == 0x91 ) {
+			else if( p->GetID( 2 ) == 0x91 )
+			{
 				FameTitle = format( Dictionary->GetEntry( 1179 ), thetitle.c_str() ) + std::string(" ");
 			}
-			else {
+			else
+			{
 				FameTitle = format( Dictionary->GetEntry( 1180 ), thetitle.c_str() ) + std::string(" ");
 			}
 		}
 		else
 		{
-			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() ){
+			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+			{
 				FameTitle = Dictionary->GetEntry( 1181 ) + std::string(" ");
 			}
-			else if( !thetitle.stripWhiteSpace().empty() ) {
+			else if( !stripTrim( thetitle ).empty() )
+			{
 				FameTitle = format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
 			}
 		}
@@ -1745,7 +1755,7 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 void PaperDoll( CSocket *s, CChar *pdoll )
 {
 	CChar *myChar	= s->CurrcharObj();
-	UString tempstr;
+	std::string tempstr;
 	CPPaperdoll pd		= (*pdoll);
 	UnicodeTypes sLang	= s->Language();
 
@@ -1758,8 +1768,8 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			return;
 	}
 
-	UString SkillProwessTitle;
-	UString FameTitle;
+	std::string SkillProwessTitle;
+	std::string FameTitle;
 	getSkillProwessTitle( pdoll, SkillProwessTitle );
 	getFameTitle( pdoll, FameTitle );
 
@@ -2479,15 +2489,16 @@ void InitIDToItemType( void )
 		return;
 
 	SI32 sectionCount;
-	UString data;
+	std::string data;
 	ItemTypes iType = IT_COUNT;
-	for( UString tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
+	for( std::string tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
 	{
 		data	= Itemtypes->GrabData();
+		auto comma_secs = sections( data, "," );
 		iType	= FindItemTypeFromTag( tag );
 		if( iType != IT_COUNT )
 		{
-			sectionCount = data.sectionCount( "," );
+			sectionCount = static_cast<SI32>(comma_secs.size() - 1);
 			if( sectionCount != 0 )
 			{
 				for( SI32 i = 0; i <= sectionCount; i++ )
@@ -2496,7 +2507,9 @@ void InitIDToItemType( void )
 				}
 			}
 			else
-				idToItemType[data.toUShort( 0, 16 )] = iType;
+			{	
+				idToItemType[static_cast<UI16>(std::stoul(data, nullptr, 16))] = iType;
+			}
 		}
 	}
 }
@@ -2724,7 +2737,7 @@ bool CPIDblClick::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 const char *AppendData( CItem *i, std::string currentName )
 {
-	UString dataToAdd;
+	std::string dataToAdd;
 	switch( i->GetType() )
 	{
 		case IT_CONTAINER:
