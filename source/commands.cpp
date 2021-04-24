@@ -36,7 +36,8 @@ cCommands::~cCommands()
 //o-----------------------------------------------------------------------------------------------o
 UI08 cCommands::NumArguments( void )
 {
-	return static_cast<UI08>(commandString.sectionCount( " " ) + 1 );
+	auto secs = sections( commandString, " ");
+	return static_cast<UI08>(secs.size());
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -47,35 +48,41 @@ UI08 cCommands::NumArguments( void )
 SI32 cCommands::Argument( UI08 argNum )
 {
 	SI32 retVal = 0;
-	UString tempString = CommandString( argNum + 1, argNum + 1 );
+	std::string tempString = CommandString( argNum + 1, argNum + 1 );
 	if( !tempString.empty() )
-		retVal = tempString.toInt();
+	{
+		retVal = std::stoi(tempString, nullptr, 0);
+	}
 
 	return retVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UString CommandString( UI08 section, UI08 end )
+//|	Function	-	std::string CommandString( UI08 section, UI08 end )
 //|	Date		-	4/02/2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
 //o-----------------------------------------------------------------------------------------------o
-UString cCommands::CommandString( UI08 section, UI08 end )
+std::string cCommands::CommandString( UI08 section, UI08 end )
 {
-	UString retString;
+	std::string retString;
 	if( end != 0 )
+	{
 		retString = extractSection(commandString, " ", section - 1, end - 1 );
+	}
 	else
+	{
 		retString = extractSection(commandString, " ", section - 1 );
+	}
 	return retString;
 }
-void cCommands::CommandString( UString newValue )
+void cCommands::CommandString( std::string newValue )
 {
 	commandString = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Command( CSocket *s, CChar *mChar, UString text )
+//|	Function	-	void Command( CSocket *s, CChar *mChar, std::string text )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles commands sent from client
 //o-----------------------------------------------------------------------------------------------o
@@ -83,12 +90,16 @@ void cCommands::CommandString( UString newValue )
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
 //o-----------------------------------------------------------------------------------------------o
-void cCommands::Command( CSocket *s, CChar *mChar, UString text )
+void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 {
-	CommandString( text.simplifyWhiteSpace() );
+	CommandString( simplify( text ));
 	if( NumArguments() < 1 )
+	{
 		return;
-	UString command = CommandString( 1, 1 ).upper();	// discard the leading '
+	}
+	
+	// Discard the leading command prefix
+	std::string command = str_toupper( CommandString( 1, 1 ));
 
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
@@ -216,9 +227,9 @@ void cCommands::Load( void )
 		return;
 	}
 
-	UString tag;
-	UString data;
-	UString UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 
 	STRINGLIST	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
@@ -232,9 +243,13 @@ void cCommands::Load( void )
 		{
 			++commandCount;
 			if( toFind != CommandMap.end() )
-				toFind->second.cmdLevelReq		= data.toUByte();
+			{
+				toFind->second.cmdLevelReq		= static_cast<UI08>(std::stoul(data, nullptr, 0)) ;
+			}
 			else if( findTarg != TargetMap.end() )
-				findTarg->second.cmdLevelReq	= data.toUByte();
+			{
+				findTarg->second.cmdLevelReq	= static_cast<UI08>(std::stoul(data, nullptr, 0));
+			}
 		}
 		// check for commands here
 	}
@@ -262,7 +277,7 @@ void cCommands::Load( void )
 			currentWorking	= clearance.size();
 			clearance.push_back( new commandLevel_st );
 			clearance[currentWorking]->name			= tag;
-			clearance[currentWorking]->commandLevel = data.toUByte();
+			clearance[currentWorking]->commandLevel = static_cast<UI08>(std::stoul(data, nullptr, 0));
 		}
 		std::vector< commandLevel_st * >::const_iterator cIter;
 		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
@@ -275,24 +290,32 @@ void cCommands::Load( void )
 				continue;
 			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
 			{
-				UTag = tag.upper();
+				UTag = str_toupper( tag );
 				data = cmdClearance->GrabData();
-				if( UTag == "NICKCOLOUR" )
-					ourClear->nickColour = data.toUShort();
-				else if( UTag == "DEFAULTPRIV" )
-					ourClear->defaultPriv = data.toUShort();
-				else if( UTag == "BODYID" )
-					ourClear->targBody = data.toUShort();
-				else if( UTag == "ALLSKILL" )
-					ourClear->allSkillVals = data.toUShort();
-				else if( UTag == "BODYCOLOUR" )
-					ourClear->bodyColour = data.toUShort();
-				else if( UTag == "STRIPHAIR" )
+				if( UTag == "NICKCOLOUR" ) {
+					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "DEFAULTPRIV" ) {
+					ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "BODYID" ) {
+					ourClear->targBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "ALLSKILL" ) {
+					ourClear->allSkillVals = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "BODYCOLOUR" ) {
+					ourClear->bodyColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "STRIPHAIR" ) {
 					ourClear->stripOff.set( BIT_STRIPHAIR, true );
-				else if( UTag == "STRIPITEMS" )
+				}
+				else if( UTag == "STRIPITEMS" ) {
 					ourClear->stripOff.set( BIT_STRIPITEMS, true );
-				else
+				}
+				else {
 					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+				}
 			}
 		}
 	}
@@ -334,23 +357,27 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *GetClearance( UString clearName )
+//|	Function	-	commandLevel_st *GetClearance( std::string clearName )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
 //o-----------------------------------------------------------------------------------------------o
-commandLevel_st *cCommands::GetClearance( UString clearName )
+commandLevel_st *cCommands::GetClearance( std::string clearName )
 {
 	if( clearance.empty() )
-		return NULL;
+	{
+		return nullptr;
+	}
 	commandLevel_st *clearPointer;
 	std::vector< commandLevel_st * >::const_iterator clearIter;
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
 		clearPointer = (*clearIter);
-		if( clearName.upper() == clearPointer->name )
+		if( str_toupper( clearName ) == clearPointer->name )
+		{
 			return clearPointer;
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o

@@ -1,3 +1,9 @@
+25/04/2021 - Xuri
+	Additional work done to modernize string handling in gumps.cpp, commands.cpp, cmdtable.cpp, commands.h, CJSMapping.cpp, scriptc.cpp and scriptc.h (punt)
+
+24/04/2021 - Xuri
+	More UString instances replaced by std::string and associates (punt)
+
 23/04/2021 - Xuri (0.99.4i)
 	Fixed an error in tweak command (js/commands/targeting/tweak.js) when attempting to use it on characters with no backpacks
 	Updated a bunch of casts to use UOX3-specific typedefs for consistency

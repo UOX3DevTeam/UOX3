@@ -44,13 +44,14 @@ void Script::reload( bool disp )
 		input.open( filename.c_str(), std::ios_base::in );
 		if( input.is_open() )
 		{
-			UString sLine;
+			std::string sLine;
 			SI32 count = 0;
 			while( !input.eof() && !input.fail() )
 			{
-				input.getline(line, 2048);
-				sLine = line;
-				sLine = sLine.removeComment().stripWhiteSpace();
+				input.getline(line, 2047);
+				line[input.gcount()] = 0 ;
+				sLine = std::string(line);
+				sLine = stripTrim( sLine );
 				if( !sLine.empty() )
 				{
 					// We have some real data
@@ -63,9 +64,10 @@ void Script::reload( bool disp )
 						// Now why we look for a {, no idea, but we do - Because we want to make sure that were IN a block not before the block. At least this makes sure that were inside the {}'s of a block...
 						while( !input.eof() && sLine.substr( 0, 1 ) != "{" && !input.fail() )
 						{
-							input.getline(line, 2048);
-							sLine = line;
-							sLine = sLine.removeComment().stripWhiteSpace();
+							input.getline(line, 2047);
+							line[input.gcount()] = 0 ;
+							sLine = std::string(line);
+							sLine = stripTrim( sLine );
 						}
 						// We are finally in the actual section!
 						// We waited until now to create it, incase a total invalid file
@@ -123,8 +125,8 @@ Script::~Script()
 //o-----------------------------------------------------------------------------------------------o
 bool Script::isin( const std::string& section )
 {
-	UString temp( section );
-	SSMAP::const_iterator iSearch = defEntries.find( temp.upper() );
+	std::string temp(section);
+	SSMAP::const_iterator iSearch = defEntries.find(str_toupper( temp ));
 	if( iSearch != defEntries.end() )
 		return true;
 	return false;

@@ -310,7 +310,7 @@ CJSMappingSection::~CJSMappingSection()
 //o-----------------------------------------------------------------------------------------------o
 void CJSMappingSection::Parse( Script *fileAssocData )
 {
-	UString basePath		= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
 	ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
 	UI08 runTime			= 0;
 
@@ -321,10 +321,10 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 	{
 		UI16 scriptID = 0xFFFF;
 		size_t i = 0;
-		UString data, fullPath;
-		for( UString tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
+		std::string data, fullPath;
+		for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 		{
-			scriptID	= tag.toUShort();
+			scriptID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
 			data		= mSection->GrabData();
 			fullPath	= basePath + data;
 
@@ -382,15 +382,15 @@ void CJSMappingSection::Reload( UI16 toLoad )
 		ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
 		if( mSection != NULL )
 		{
-			UI16 scriptID		= 0xFFFF;
-			UString basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
-			UString data, fullPath;
+			UI16 scriptID = 0xFFFF;
+			std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+			std::string data, fullPath;
 			UI08 runTime = 0;
 			if( scriptType == SCPT_CONSOLE )
 				runTime = 1;
-			for( UString tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
+			for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 			{
-				scriptID		= tag.toUShort();
+				scriptID		= static_cast<UI16>(std::stoul(tag, nullptr, 0));
 				if( scriptID == toLoad )
 				{
 					data		= mSection->GrabData();
@@ -599,7 +599,6 @@ void CEnvoke::Parse( void )
 {
 	envokeList.clear();
 
-	//std::ifstream envokefile; //Unused variable?
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
 	if( !FileExists( filename ) )
 	{
@@ -613,14 +612,14 @@ void CEnvoke::Parse( void )
 		ScriptSection *mSection = fileAssocData->FindEntry( "ENVOKE" );
 		if( mSection != NULL )
 		{
-			UString tag, data;
+			std::string tag, data;
 			for( tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 			{
 				if( !tag.empty() && tag != "\n" && tag != "\r" )
 				{
 					data			= mSection->GrabData();
-					UI16 envokeID	= tag.toUShort();
-					UI16 scriptID	= data.toUShort();
+					UI16 envokeID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
+					UI16 scriptID	= static_cast<UI16>(std::stoul(data, nullptr, 0));
 					cScript *verify	= JSMapping->GetScript( scriptID );
 					if( verify != NULL )
 						envokeList[envokeID] = scriptID;

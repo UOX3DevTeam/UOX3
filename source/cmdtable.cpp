@@ -34,7 +34,7 @@
 
 void CollectGarbage( void );
 void endmessage( SI32 x );
-void HandleGumpCommand( CSocket *s, UString cmd, UString data );
+void HandleGumpCommand( CSocket *s, std::string cmd, std::string data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string& txt );
 void HandleHowTo( CSocket *sock, SI32 cmdNumber );
@@ -255,7 +255,7 @@ void command_setpost( CSocket *s )
 		return;
 
 	PostTypes type = PT_LOCAL;
-	UString upperCommand = Commands->CommandString( 2, 2 ).upper();
+	std::string upperCommand = str_toupper( Commands->CommandString( 2, 2 ));
 	if( upperCommand == "GLOBAL" ) // user's next post appears in ALL bulletin boards
 		type = PT_GLOBAL;
 	else if( upperCommand == "REGIONAL" ) // user's next post appears in all bulletin boards in current region
@@ -336,10 +336,14 @@ void command_tile( CSocket *s )
 		return;
 
 	UI16 targID = 0;
-	if( Commands->CommandString( 2, 2 ).upper() == "STATIC" )
+	if( str_toupper( Commands->CommandString( 2, 2 )) == "STATIC" )
+	{
 		targID = static_cast<UI16>(Commands->Argument( 2 ));
+	}
 	else
+	{
 		targID = static_cast<UI16>(Commands->Argument( 1 ));
+	}
 
 	if( Commands->NumArguments() == 7 || Commands->NumArguments() == 8 )
 	{
@@ -388,8 +392,10 @@ void command_tile( CSocket *s )
 		// tile static itemID
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		if( Commands->CommandString( 2, 2 ).upper() != "STATIC" )
+		if( str_toupper( Commands->CommandString( 2, 2 )) != "STATIC" )
+		{
 			s->TempInt2( static_cast<SI32>(Commands->Argument( 2 )));
+		}
 
 		s->AddID1( static_cast<UI08>(targID>>8) );
 		s->AddID2( static_cast<UI08>(targID%256) );
@@ -551,7 +557,9 @@ void command_command( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 1 )
-		HandleGumpCommand( s, Commands->CommandString( 2, 2 ).upper(), Commands->CommandString( 3 ).upper() );
+	{
+		HandleGumpCommand( s, str_toupper( Commands->CommandString( 2, 2 )), str_toupper( Commands->CommandString( 3 )) );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -603,7 +611,7 @@ void command_memstats( CSocket *s )
 void command_restock( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
+	if( str_toupper( Commands->CommandString( 2, 2 )) == "ALL" )
 	{
 		restock( true );
 		s->sysmessage( 55 );
@@ -693,7 +701,7 @@ void command_regspawn( CSocket *s )
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
 
-		if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
+		if( str_toupper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
 			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
@@ -751,13 +759,19 @@ void command_cq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
+		std::string upperCommand = str_toupper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in Counselor queue
+		{
 			nextCall( s, false );
+		}
 		else if( upperCommand == "CLEAR" ) // Close and clear current call as resolved
+		{
 			closeCall( s, false );
+		}
 		else if( upperCommand == "CURR" ) // Take Counselor to current call they are on
+		{
 			currentCall( s, false );
+		}
 		else if( upperCommand == "TRANSFER" ) // Transfer call from Counselor queue to GM queue
 		{
 			CChar *mChar = s->CurrcharObj();
@@ -798,16 +812,24 @@ void command_gq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
+		std::string upperCommand = str_toupper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in GM queue
+		{
 			nextCall( s, true );
+		}
 		else if( upperCommand == "CLEAR" ) // Close and clear current call as resolved
+		{
 			closeCall( s, true );
+		}
 		else if( upperCommand == "CURR" ) // Take GM to current call they are on
+		{
 			currentCall( s, true );
+		}
 	}
 	else
+	{
 		GMQueue->SendAsGump( s );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -831,12 +853,12 @@ void command_minecheck( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_guards( void )
 {
-	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
+	if( str_toupper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( true );
 		sysBroadcast( Dictionary->GetEntry( 61 ) );
 	}
-	else if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
+	else if( str_toupper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( false );
 		sysBroadcast( Dictionary->GetEntry( 62 ) );
@@ -850,12 +872,12 @@ void command_guards( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_announce( void )
 {
-	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
+	if( str_toupper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( true );
 		sysBroadcast( Dictionary->GetEntry( 63 ) );
 	}
-	else if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
+	else if( str_toupper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( false );
 		sysBroadcast( Dictionary->GetEntry( 64 ) );
@@ -1074,7 +1096,7 @@ void command_validcmd( CSocket *s )
 void command_howto( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	UString commandStart = Commands->CommandString( 2 ).upper();
+	std::string commandStart = str_toupper( Commands->CommandString( 2 ));
 	if( commandStart.empty() )
 	{
 		CChar *mChar = s->CurrcharObj();
@@ -1374,8 +1396,8 @@ void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 #if defined( UOX_DEBUG_MODE )
 	Console.print(format( "   UnRegistering command %s\n", cmdName.c_str()));
 #endif
-	UString upper		= cmdName;
-	upper				= upper.upper();
+	std::string upper	= cmdName;
+	upper				= str_toupper( upper );
 	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
 	if( p != JSCommandMap.end() )
 		JSCommandMap.erase( p );
@@ -1405,8 +1427,8 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 	Console.print( format("%i\n", cmdLevel) );
 	Console.TurnNormal();
 #endif
-	UString upper		= cmdName;
-	upper				= upper.upper();
+	std::string upper	= cmdName;
+	upper				= str_toupper( upper );
 	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
@@ -1417,8 +1439,8 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 //o-----------------------------------------------------------------------------------------------o
 void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
-	UString upper					= cmdName;
-	upper							= upper.upper();
+	std::string upper				= cmdName;
+	upper							= str_toupper( upper );
 	JSCOMMANDMAP_ITERATOR	toFind	= JSCommandMap.find( upper );
 	if( toFind != JSCommandMap.end() )
 	{
