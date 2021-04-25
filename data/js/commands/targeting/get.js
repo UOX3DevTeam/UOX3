@@ -208,6 +208,8 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "WEIGHT":
 		socket.SysMessage( ourItem.weight );
 		break;
+	case "MAXWEIGHT":
+		socket.SysMessage( "Fetching value of property: .weightMax" );
 	case "WEIGHTMAX":
 		socket.SysMessage( ourItem.weightmax );
 		break;
@@ -381,7 +383,11 @@ function HandleGetChar( socket, ourChar, uKey )
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			socket.SysMessage( "currentChar: " +  myAccount.currentChar );
+			var currentChar = myAccount.currentChar;
+			if( ValidateObject( currentChar ))
+				socket.SysMessage( "currentChar: " + myAccount.currentChar.name );
+			else
+				socket.SysMessage( "Invalid character" );
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CURRENTCHAR> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -428,7 +434,7 @@ function HandleGetChar( socket, ourChar, uKey )
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			socket.SysMessage( "isOnline: " + myAccount.online );
+			socket.SysMessage( "isOnline: " + myAccount.isOnline );
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET ISONLINE> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;

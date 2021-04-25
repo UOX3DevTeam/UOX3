@@ -284,8 +284,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.weight = nVal;
 		okMsg( socket );
 		break;
+	case "MAXWEIGHT":
+		socket.SysMessage( "Setting value of property: .weightMax" );
 	case "WEIGHTMAX":
-		ourItem.weightmax = nVal;
+		ourItem.weightMax = nVal;
 		okMsg( socket );
 		break;
 	case "SPEED":

@@ -100,39 +100,56 @@ CTownRegion::~CTownRegion()
 bool CTownRegion::Load( Script *ss )
 {
 	size_t location = 0xFFFFFFFF;
-	UString tag;
-	UString data;
-	UString UTag;
-	UString sect = std::string("TOWNREGION ") + str_number( regionNum );
-	if( !ss->isin( sect ) )	// doesn't exist
+	std::string tag;
+	std::string data;
+	std::string UTag;
+	std::string sect = std::string("TOWNREGION ") + str_number( regionNum );
+	if( !ss->isin( sect )) // doesn't exist
+	{
 		return false;
+	}
 
 	ScriptSection *target = ss->FindEntry( sect );
 	for( tag = target->First(); !target->AtEnd(); tag = target->Next() )
 	{
-		UTag = tag.upper();
+		UTag = str_toupper( tag );
 		data = target->GrabData();
+		UI32 duint ;
+		try {
+			duint = static_cast<UI32>(std::stoul(data, nullptr, 0));
+		}
+		catch (...) {
+			duint = 0;
+		}
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "ALLYTOWN" )
-					alliedTowns.push_back( data.toUByte() );
+					alliedTowns.push_back( static_cast<UI08>(duint) );
 				break;
 			case 'E':
 				if( UTag == "ELECTIONTIME" )
-					timeToElectionClose = data.toInt();
+					timeToElectionClose = static_cast<SI32>(duint);
 				break;
 			case 'G':
 				if( UTag == "GUARDOWNER" )
+				{
 					guardowner = data;
-				else if( UTag == "GUARD" )	// load our purchased guard
+				}
+				else if( UTag == "GUARD" ) // load our purchased guard
+				{
 					++numGuards;
+				}
 				else if( UTag == "GUARDSBOUGHT" ) // num guards bought
-					guardsPurchased = data.toShort();
+				{
+					guardsPurchased = static_cast<SI16>(duint);
+				}
 				break;
 			case 'H':
 				if( UTag == "HEALTH" )
-					health = data.toShort();
+				{
+					health = static_cast<SI16>(duint);
+				}
 				break;
 			case 'M':
 				if( UTag == "MEMBER" )
@@ -140,16 +157,22 @@ bool CTownRegion::Load( Script *ss )
 					location = townMember.size();
 					townMember.resize( location + 1 );
 					townMember[location].targVote = INVALIDSERIAL;
-					townMember[location].townMember = data.toUInt();
+					townMember[location].townMember = duint;
 				}
 				else if( UTag == "MAYOR" )
-					mayorSerial = data.toUInt();
+				{
+					mayorSerial = duint;
+				}
 				break;
 			case 'N':
 				if( UTag == "NAME" )
+				{
 					name = data.substr( 0, 49 );
+				}
 				else if( UTag == "NUMGUARDS" )
-					numGuards = data.toUShort();
+				{
+					numGuards = static_cast<UI16>(duint);
+				}
 				break;
 			case 'P':
 				if( UTag == "PRIV" )
@@ -159,29 +182,47 @@ bool CTownRegion::Load( Script *ss )
 					//priv = std::bitset<10>( data.toUShort() );
 				}
 				else if( UTag == "POLLTIME" )
-					timeToNextPoll = data.toInt();
+				{
+					timeToNextPoll = static_cast<SI32>(duint);
+				}
 				break;
 			case 'R':
 				if( UTag == "RACE" )
-					race = data.toUShort();
+				{
+					race = static_cast<UI16>(duint);
+				}
 				else if( UTag == "RESOURCEAMOUNT" )
-					goldReserved = data.toInt();
+				{
+					goldReserved = static_cast<SI32>(duint);
+				}
 				else if( UTag == "RESOURCECOLLECTED" )
-					resourceCollected = data.toInt();
+				{
+					resourceCollected = static_cast<SI32>(duint);
+				}
 				break;
 			case 'T':
 				if( UTag == "TAXEDID" )
-					taxedResource = data.toUShort();
+				{
+					taxedResource = static_cast<UI16>(duint);
+				}
 				else if( UTag == "TAXEDAMOUNT" )
-					taxedAmount = data.toUShort();
+				{
+					taxedAmount = static_cast<UI16>(duint);
+				}
 				else if( UTag == "TIMET" )
-					timeSinceTaxedMembers = data.toInt();
+				{
+					timeSinceTaxedMembers = static_cast<SI32>(duint);
+				}
 				else if( UTag == "TIMEG" )
-					timeSinceGuardsPaid = data.toInt();
+				{
+					timeSinceGuardsPaid = static_cast<SI32>(duint);
+				}
 				break;
 			case 'V':
 				if( UTag == "VOTE" && location != 0xFFFFFFFF )
-					townMember[location].targVote = data.toUInt();
+				{
+					townMember[location].targVote = duint;
+				}
 				break;
 		}
 	}
@@ -389,9 +430,9 @@ bool oreSkillComparator (orePref o1, orePref o2)
 //o-----------------------------------------------------------------------------------------------o
 bool CTownRegion::InitFromScript( ScriptSection *toScan )
 {
-	UString tag;
-	UString data;
-	UString UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 	SI32 actgood = -1;
 	bool orePrefLoaded = false;
 
@@ -404,13 +445,22 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	regLocs ourLoc;
 	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
-		UTag = tag.upper();
+		UTag = str_toupper( tag );
 		data = toScan->GrabData();
+		UI32 duint ;
+		try {
+			duint = static_cast<UI32>(std::stoul(data, nullptr, 0));
+		}
+		catch (...) {
+			duint = 0;
+		}
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "ABWEATH" )
-					weather = data.toUByte();
+				{
+					weather = static_cast<UI08>(duint);
+				}
 				else if( UTag == "APPEARANCE" )
 				{
 					visualAppearance = WRLD_COUNT;
@@ -429,57 +479,89 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 			case 'B':
 				if( UTag == "BUYABLE" )
 				{
-					if( actgood > -1 )
-						goodList[actgood].buyVal = data.toInt();
+					if( actgood > - 1 )
+					{
+						goodList[actgood].buyVal = static_cast<SI32>(duint);
+					}
 					else
+					{
 						Console.error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
+					}
 				}
 				break;
 			case 'C':
 				if( UTag == "CHANCEFORBIGORE" )
-					chanceFindBigOre = data.toUByte();
+				{
+					chanceFindBigOre =static_cast<UI08>(duint);
+				}
 				break;
 			case 'D':
 				if( UTag == "DUNGEON" )
-					IsDungeon( (data.toUByte() == 1) );
+				{
+					IsDungeon(( duint == 1 ));
+				}
 				break;
 			case 'E':
 				if( UTag == "ESCORTS" )
 				{
 					// Load the region number in the global array of valid escortable regions
-					if( data.toUShort() == 1 )
+					if( duint == 1 )
+					{
 						cwmWorldState->escortRegions.push_back( regionNum );
+					}
 				}
 				break;
 			case 'G':
 				if( UTag == "GUARDNUM" )
+				{
 					break;
+				}
 				else if( UTag == "GUARDLIST" )
+				{
 					guardList = data;
+				}
 				else if( UTag == "GUARDOWNER" )
+				{
 					guardowner = data;
+				}
 				else if( UTag == "GUARDED" )
-					IsGuarded( (data.toUByte() == 1) );
+				{
+					IsGuarded(( duint == 1 ));
+				}
 				else if( UTag == "GATE" )
-					CanGate( (data.toUByte() == 1) );
+				{
+					CanGate(( duint == 1 ));
+				}
 				else if( UTag == "GOOD" )
-					actgood = data.toInt();
+				{
+					actgood = static_cast<int>(duint);
+				}
 				break;
 			case 'H':
 				if( UTag == "HOUSING" )
-					CanPlaceHouse( (data.toUByte() == 1) );
+				{
+					CanPlaceHouse(( duint == 1 ));
+				}
 				break;
 			case 'I':
 				if( UTag == "INSTANCEID" )
-					instanceID = data.toUShort();
+				{
+					instanceID = static_cast<UI16>(duint);
+				}
 				break;
 			case 'M':
 				if( UTag == "MUSICLIST" || UTag == "MIDILIST" )
-					musicList = data.toUShort();
+				{
+					musicList = static_cast<UI16>(duint);
+				}
 				else if( UTag == "MAGICDAMAGE" )
-					CanCastAggressive( (data.toUByte() == 1) );
+				{
+					CanCastAggressive(( duint == 1 ));
+				}
 				else if( UTag == "MARK" )
-					CanMark( (data.toUByte() == 1) );
+				{
+					CanMark(( duint == 1 ));
+				}
 				break;
 			case 'N':
 				if( UTag == "NAME" )
@@ -491,18 +573,19 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 			case 'O':
 				if( UTag == "OREPREF" )
 				{
-					UString numPart;
+					std::string numPart;
 					std::string oreName;
 					orePref toPush;
-					data			= data.simplifyWhiteSpace();
-					oreName			= extractSection(data, ",", 0, 0 );
+					data			= simplify( data );
+					oreName			= extractSection( data, ",", 0, 0 );
 					toPush.oreIndex = Skills->FindOre( oreName );
 					if( toPush.oreIndex != NULL )
 					{
-						if( data.sectionCount( "," ) > 0 )
+						auto csecs = sections( data, "," );
+						if( csecs.size() > 1 )
 						{
 							// Use chance specified in orepref
-							toPush.percentChance = data.section( ",", 1, 1 ).toUShort();
+							toPush.percentChance = static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0));
 						}
 						else if( toPush.oreIndex->oreChance > 0 )
 						{
@@ -519,24 +602,29 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						orePrefLoaded = true;
 					}
 					else
+					{
 						Console.error( format("Invalid ore preference in region %i as %s", regionNum, oreName.c_str() ));
+					}
 				}
 				break;
 			case 'R':
 				if( UTag == "RECALL" )
-					CanRecall( (data.toUByte() == 1) );
+				{
+					CanRecall(( duint == 1 ));
+				}
 				else if( UTag == "RANDOMVALUE" )
 				{
 					if( actgood > -1 )
 					{
-						if( data.sectionCount( " " ) != 0 )
+						auto ssecs = sections( data, " " );
+						if( ssecs.size() > 1 )
 						{
-							goodList[actgood].rand1 = data.section( " ", 0, 0 ).toInt();
-							goodList[actgood].rand2 = data.section( " ", 1, 1 ).toInt();
+							goodList[actgood].rand1 = std::stoi(stripTrim( ssecs[0] ), nullptr, 0);
+							goodList[actgood].rand2 = std::stoi(stripTrim( ssecs[1] ), nullptr, 0);
 						}
 						else
 						{
-							goodList[actgood].rand1 = data.toInt();
+							goodList[actgood].rand1 = static_cast<SI32>(duint);
 							goodList[actgood].rand2 = goodList[actgood].rand1;
 						}
 						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
@@ -546,27 +634,39 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						}
 					}
 					else
+					{
 						Console.error( " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
+					}
 				}
 				else if( UTag == "RACE" )
-					race = data.toUShort();
+				{
+					race = static_cast<UI16>(duint);
+				}
 				break;
 			case 'S':
 				if( UTag == "SAFEZONE" )
-					IsSafeZone( (data.toUByte() == 1) );
+				{
+					IsSafeZone(( duint == 1 ));
+				}
 				else if( UTag == "SELLABLE" )
 				{
-					if( actgood > -1 )
-						goodList[actgood].sellVal = data.toInt();
+					if( actgood > - 1 )
+					{
+						goodList[actgood].sellVal = static_cast<SI32>(duint);
+					}
 					else
+					{
 						Console.error( " regions dfn -> You must write SELLABLE after GOOD <num>!" );
+					}
 				}
 				else if( UTag == "SPAWN" )
 				{
 					UString sect = "PREDEFINED_SPAWN " + data;
 					ScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
 					if( predefSpawn == NULL )
+					{
 						Console.warning( format("Undefined region spawn %s, check your regions.dfn and spawn.dfn files", data.c_str()) );
+					}
 					else
 					{
 						for( UI16 i = 0xFFFF; i > 0; --i )
@@ -589,30 +689,40 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					}
 				}
 				else if( UTag == "SCRIPT" )
-					jsScript = data.toUShort();
+				{
+					jsScript = static_cast<UI16>(duint);
+				}
 				break;
 			case 'T':
 				if( UTag == "TELEPORT" )
 				{
-					CanTeleport( (data.toUByte() == 1) );
+					CanTeleport(( duint == 1 ));
 				}
 				break;
 			case 'W':
 				if( UTag == "WORLD" )
-					worldNumber = data.toUByte();
+				{
+					worldNumber = static_cast<UI08>(duint);
+				}
 				break;
 			case 'X':
 				if( UTag == "X1" )
-					ourLoc.x1 = data.toShort();
+				{
+					ourLoc.x1 = static_cast<UI16>(duint);
+				}
 				else if( UTag == "X2" )
-					ourLoc.x2 = data.toShort();
+				{
+					ourLoc.x2 = static_cast<UI16>(duint);
+				}
 				break;
 			case 'Y':
 				if( UTag == "Y1" )
-					ourLoc.y1 = data.toShort();
+				{
+					ourLoc.y1 = static_cast<UI16>(duint);
+				}
 				else if( UTag == "Y2" )
 				{
-					ourLoc.y2 = data.toShort();
+					ourLoc.y2 = static_cast<UI16>(duint);
 					locations.push_back( ourLoc );
 				}
 				break;
