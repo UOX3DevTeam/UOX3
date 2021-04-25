@@ -661,7 +661,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				}
 				else if( UTag == "SPAWN" )
 				{
-					UString sect = "PREDEFINED_SPAWN " + data;
+					std::string sect = "PREDEFINED_SPAWN " + data;
 					ScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
 					if( predefSpawn == NULL )
 					{
