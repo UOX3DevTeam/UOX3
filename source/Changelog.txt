@@ -1,3 +1,10 @@
+
+26/04/2021 - Xuri
+	Fixed an issue where 'get command attempts to retrieve incorrect property when isonline parameter is provided
+	Fixed an issue where 'set weightmax # would fail because script used an incorrect property name
+	Fixed an issue with check for allowed/banned equipment for races; if a list of allowed equipment existed, it would never check the banned list
+	Additional string handling modernization in cHTMLSystem.cpp, cRaces.cpp, gumps.cpp, townregion.cpp and uox3.cpp (punt)
+
 25/04/2021 - Xuri
 	Additional work done to modernize string handling in CPacketReceive.cpp, CPacketReceive.h, CPacketSend.cpp, CPacketSend.h, cScript.cpp, gumps.cpp (punt)
 	Additional work done to modernize string handling in gumps.cpp, commands.cpp, cmdtable.cpp, commands.h, CJSMapping.cpp, scriptc.cpp and scriptc.h (punt)
