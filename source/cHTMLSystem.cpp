@@ -28,7 +28,7 @@ cHTMLTemplate::~cHTMLTemplate()
 
 }
 
-UString GetUptime( void )
+std::string GetUptime( void )
 {
 	UI32 total	= (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 	UI32 ho		= total / 3600;
@@ -37,15 +37,21 @@ UString GetUptime( void )
 	total		-= mi * 60;
 	UI32 se		= total;
 	total		= 0;
-	UString builtString = "";
+	std::string builtString = "";
 	if( ho < 10 )
+	{
 		builtString += std::string("0");
+	}
 	builtString += str_number( ho ) + ":";
 	if( mi < 10 )
+	{
 		builtString += std::string("0");
+	}
 	builtString += str_number( mi ) + std::string(":");
 	if( se < 10 )
+	{
 		builtString += std::string("0");
+	}
 	builtString += str_number( se );
 	return builtString;
 }
@@ -523,7 +529,7 @@ void cHTMLTemplate::Process( void )
 	Pos = ParsedContent.find( "%uptime" );
 	while( Pos != std::string::npos )
 	{
-		UString builtString = GetUptime();
+		std::string builtString = GetUptime();
 		ParsedContent.replace( Pos, 7, builtString );
 		Pos = ParsedContent.find( "%uptime" );
 	}

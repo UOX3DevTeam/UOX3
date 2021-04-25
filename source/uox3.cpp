@@ -1819,8 +1819,8 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlayStaticAnimation( applyTo, 0x373A, 0, 15);
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
-		UString sect				= std::string("ADVANCEMENT ") + str_number( advObj );
-		sect						= sect.stripWhiteSpace();
+		std::string sect			= std::string("ADVANCEMENT ") + str_number( advObj );
+		sect						= stripTrim( sect );
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == NULL )
 		{
@@ -1828,11 +1828,11 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 			applyTo->SetAdvObj( 0 );
 			return;
 		}
-		CItem *retitem		= NULL;
+		CItem *retItem		= NULL;
 		CItem *hairobject	= applyTo->GetItemAtLayer( IL_HAIR );
 		CItem *beardobject	= applyTo->GetItemAtLayer( IL_FACIALHAIR );
 		DFNTAGS tag			= DFNTAG_COUNTOFTAGS;
-		UString cdata;
+		std::string cdata;
 		SI32 ndata			= -1, odata = -1;
 		UI08 skillToSet = 0;
 		for( tag = Advancement->FirstTag(); !Advancement->AtEndTags(); tag = Advancement->NextTag() )
@@ -1868,13 +1868,13 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_ENTICEMENT:			skillToSet = ENTICEMENT;						break;
 				case DFNTAG_EVALUATINGINTEL:	skillToSet = EVALUATINGINTEL;					break;
 				case DFNTAG_EQUIPITEM:
-					retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-					if( retitem != NULL )
+					retItem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+					if( retItem != NULL )
 					{
-						if( !retitem->SetCont( applyTo ) )
+						if( !retItem->SetCont( applyTo ) )
 						{
-							retitem->SetCont( applyTo->GetPackItem() );
-							retitem->PlaceInPack();
+							retItem->SetCont( applyTo->GetPackItem() );
+							retItem->PlaceInPack();
 						}
 					}
 					break;
@@ -1892,19 +1892,19 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;						break;
 				case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );	break;
 				case DFNTAG_KILLHAIR:
-					retitem = applyTo->GetItemAtLayer( IL_HAIR );
-					if( ValidateObject( retitem ) )
-						retitem->Delete();
+					retItem = applyTo->GetItemAtLayer( IL_HAIR );
+					if( ValidateObject( retItem ) )
+						retItem->Delete();
 					break;
 				case DFNTAG_KILLBEARD:
-					retitem = applyTo->GetItemAtLayer( IL_FACIALHAIR );
-					if( ValidateObject( retitem ) )
-						retitem->Delete();
+					retItem = applyTo->GetItemAtLayer( IL_FACIALHAIR );
+					if( ValidateObject( retItem ) )
+						retItem->Delete();
 					break;
 				case DFNTAG_KILLPACK:
-					retitem = applyTo->GetItemAtLayer( IL_PACKITEM );
-					if( ValidateObject( retitem ) )
-						retitem->Delete();
+					retItem = applyTo->GetItemAtLayer( IL_PACKITEM );
+					if( ValidateObject( retItem ) )
+						retItem->Delete();
 					break;
 				case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;					break;
 				case DFNTAG_LUMBERJACKING:		skillToSet = LUMBERJACKING;					break;
@@ -1925,12 +1925,17 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_PACKITEM:
 					if( ValidateObject( applyTo->GetPackItem() ) )
 					{
+						auto csecs = sections( cdata, "," );
 						if( !cdata.empty() )
 						{
-							if( cdata.sectionCount( "," ) != 0 )
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), str_value<std::uint16_t>(trim(extractSection(cdata, ",", 1, 1 ))), OT_ITEM, true );
+							if( csecs.size() > 1 )
+							{
+								retItem = Items->CreateScriptItem( NULL, applyTo, stripTrim( csecs[0] ), str_value<std::uint16_t>(stripTrim( csecs[1] )), OT_ITEM, true );
+							}
 							else
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
+							{
+								retItem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
+							}
 						}
 					}
 					else
@@ -1939,7 +1944,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_REMOVETRAPS:		skillToSet = REMOVETRAPS;					break;
 				case DFNTAG_STRENGTH:			applyTo->SetStrength( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
 				case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) );	break;
-				case DFNTAG_SKIN:				applyTo->SetSkin( cdata.toUShort() );		break;
+				case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>(std::stoul(cdata, nullptr, 0) ));			break;
 				case DFNTAG_SNOOPING:			skillToSet = SNOOPING;						break;
 				case DFNTAG_SPELLWEAVING:		skillToSet = SPELLWEAVING;					break;
 				case DFNTAG_SPIRITSPEAK:		skillToSet = SPIRITSPEAK;					break;
@@ -2137,8 +2142,8 @@ void doLight( CChar *mChar, UI08 level )
 //o-----------------------------------------------------------------------------------------------o
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
-	UString temp	= mItem.GetName();
-	temp			= temp.simplifyWhiteSpace();
+	std::string temp	= mItem.GetName();
+	temp				= stripTrim( temp );
 	const UI16 getAmount = mItem.GetAmount();
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
@@ -2146,7 +2151,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		CTileHS& tile = Map->SeekTileHS( mItem.GetID() );
 		if( temp.substr( 0, 1 ) == "#" )
 		{
-			temp =  static_cast< UString >( tile.Name() );
+			temp = tile.Name();
 		}
 
 		if( getAmount == 1 )
@@ -2163,7 +2168,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		CTile& tile = Map->SeekTile( mItem.GetID() );
 		if( temp.substr( 0, 1 ) == "#" )
 		{
-			temp =  static_cast< UString >( tile.Name() );
+			temp = tile.Name() ;
 		}
 
 		if( getAmount == 1 )
@@ -2175,24 +2180,26 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		}
 	}
 
+	auto psecs = sections( temp, "%" );
 	// Find out if the name has a % in it
-	if( temp.sectionCount( "%" ) > 0 )
+	if( psecs.size() > 1 )
 	{
-		UString single;
-		const UString first	= extractSection(temp,"%", 0, 0 );
-		UString plural		= extractSection( temp,"%", 1, 1 );
-		const UString rest	= extractSection( temp, "%", 2 );
-		if( plural.sectionCount( "/" ) > 0 )
+		std::string single;
+		const std::string first	= psecs[0];
+		std::string plural		= psecs[1];
+		const std::string rest	= psecs[2];
+		auto fssecs = sections( plural, "/" );
+		if( fssecs.size() > 1 )
 		{
-			single = extractSection(plural, "/", 1 );
-			plural = extractSection(plural, "/", 0, 0 );
+			single = fssecs[1];
+			plural = fssecs[0];
 		}
 		if( getAmount < 2 )
 			temp = first + single + rest;
 		else
 			temp = first + plural + rest;
 	}
-	itemname = static_cast< std::string >( temp.simplifyWhiteSpace() );
+	itemname = simplify( temp );
 	return itemname.size() + 1;
 }
 

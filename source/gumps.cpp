@@ -23,7 +23,7 @@
 
 
 void CollectGarbage( void );
-UString GetUptime( void );
+std::string GetUptime( void );
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry )
@@ -62,13 +62,13 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
 
-	UString sect = std::string("GUMPMENU ") + str_number( m );
+	std::string sect = std::string("GUMPMENU ") + str_number( m );
 	ScriptSection *gump = FileLookup->FindEntry( sect, misc_def );
 	if( gump == NULL )
 		return;
 
 	UI08 targType	= 0x12;
-	UString tag		= gump->First();
+	std::string tag	= gump->First();
 	if( str_toupper(extractSection(tag, " ", 0, 0 )) == "TYPE" )
 	{
 		targType = str_value<std::uint8_t>(extractSection(tag, " ", 1, 1 ));
@@ -505,7 +505,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	////////////////////////////////////////////////
 	s->TempInt( m );	// Store what menu they are in
 
-	UString sect = std::string("ITEMMENU ") + str_number( m );
+	std::string sect = std::string("ITEMMENU ") + str_number( m );
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
 	if( ItemMenu == NULL )
 		return;
@@ -527,8 +527,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// Next we create and position the close window button as well set its Down, and Up states.
 	toSend.addCommand(format( "button %u %u %u %u %u %u %u",xWidth-28,yStart+1,0xA51, 0xA50, 1, 0, 1));
 	// Grab the first tag/value pair from the gump itemmenu respectivly
-	UString tag		= ItemMenu->First();
-	UString data	= ItemMenu->GrabData();
+	std::string tag		= ItemMenu->First();
+	std::string data	= ItemMenu->GrabData();
 	toSend.addCommand(format( "resizepic %u %u %u %u %u",2,4,0xDAC,470,40));
 	// Create the text stuff for what appears to be the title of the gump. This appears to change from page to page.
 
@@ -690,7 +690,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				// Draw a frame for the item to make it stand out a touch more.
 				toSend.addCommand( format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
 				toSend.addCommand( format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
-				toSend.addCommand( format("tilepic %u %u %i",xOffset+5, yOffset+10, tag.toInt() ));
+				toSend.addCommand( format("tilepic %u %u %i",xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
 				toSend.addCommand(format( "croppedtext %u %u %u %u %u %u", xOffset, yOffset+65, 65, 20, 55, linenum++) );
 				toSend.addText( data );
 				xOffset += XOFFSET;
@@ -767,7 +767,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				yOffset=SYOFFSET;
 			}
 			// Drop in the page number text area image
-			if( tag.upper() == "INSERTADDMENUITEMS" )
+			if( str_toupper( tag ) == "INSERTADDMENUITEMS" )
 			{
 				// Check to see if the desired menu has any items to add
 				if(g_mmapAddMenuMap.find(m)==g_mmapAddMenuMap.end())
@@ -813,7 +813,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				// Draw a frame for the item to make it stand out a touch more.
 				toSend.addCommand( format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
 				toSend.addCommand( format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
-				toSend.addCommand( format("tilepic %u %u %i", xOffset + 5, yOffset + 10, tag.toInt() ));
+				toSend.addCommand( format("tilepic %u %u %i", xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
 				toSend.addCommand( format("croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ ));
 				toSend.addText( data );
 				xOffset += XOFFSET;
@@ -916,7 +916,7 @@ bool CPIHelpRequest::Handle( void )
 	UI16 gmnumber	= 0;
 	CChar *mChar	= tSock->CurrcharObj();
 
-	UString sect = std::string("GMMENU ") + str_number( menuNum );
+	std::string sect = std::string("GMMENU ") + str_number( menuNum );
 	ScriptSection *GMMenu = FileLookup->FindEntry( sect, menus_def );
 	if( GMMenu == NULL )
 		return true;
@@ -924,8 +924,8 @@ bool CPIHelpRequest::Handle( void )
 	std::string line;
 	CPOpenGump toSend( *mChar );
 	toSend.GumpIndex( menuNum );
-	UString tag		= GMMenu->First();
-	UString data	= GMMenu->GrabData();
+	std::string tag		= GMMenu->First();
+	std::string data	= GMMenu->GrabData();
 	line = tag + " " + data;
 	toSend.Question( line );
 	for( tag = GMMenu->Next(); !GMMenu->AtEnd(); tag = GMMenu->Next() )
@@ -1251,7 +1251,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 void HandleAddMenuButton( CSocket *s, UI32 button )
 {
 	SI32 addMenuLoc	= s->TempInt();
-	UString sect = std::string("ITEMMENU ") + str_number( addMenuLoc );
+	std::string sect = std::string("ITEMMENU ") + str_number( addMenuLoc );
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
 	if( ItemMenu == NULL )
 		return;
@@ -1266,8 +1266,8 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 	autoAddMenuItemCount += ItemMenu->NumEntries();
 	if( autoAddMenuItemCount >= entryNum )
 	{
-		UString tag		= ItemMenu->MoveTo( entryNum );
-		UString data	= ItemMenu->GrabData();
+		std::string tag		= ItemMenu->MoveTo( entryNum );
+		std::string data	= ItemMenu->GrabData();
 		HandleGumpCommand( s, tag, data );
 	}
 }
@@ -2062,9 +2062,9 @@ bool CPIGumpInput::Handle( void )
 	return true;
 }
 
-UString GrabMenuData( UString sect, size_t entryNum, UString &tag )
+std::string GrabMenuData( std::string sect, size_t entryNum, std::string &tag )
 {
-	UString data;
+	std::string data;
 	ScriptSection *sectionData = FileLookup->FindEntry( sect, menus_def );
 	if( sectionData != NULL )
 	{
@@ -2085,9 +2085,9 @@ UString GrabMenuData( UString sect, size_t entryNum, UString &tag )
 //o-----------------------------------------------------------------------------------------------o
 bool CPIGumpChoice::Handle( void )
 {
-	UString sect;
-	UString tag;
-	UString data;
+	std::string sect;
+	std::string tag;
+	std::string data;
 	UI16 main		= tSock->GetWord( 5 );
 	UI16 sub		= tSock->GetWord( 7 );
 	CChar *mChar	= tSock->CurrcharObj();
@@ -2099,14 +2099,20 @@ bool CPIGumpChoice::Handle( void )
 		if( !data.empty() )
 		{
 			if( main == POLYMORPHMENUOFFSET )
-				Magic->PolymorphMenu( tSock, data.toUShort() );
+			{
+				Magic->PolymorphMenu( tSock, static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else
 			{
 				if( mChar->IsOnHorse() )
+				{
 					DismountCreature( mChar );		// can't be polymorphed on a horse
+				}
 				else if( mChar->IsFlying() )
+				{
 					mChar->ToggleFlying();
-				Magic->Polymorph( tSock, data.toUShort() );
+				}
+				Magic->Polymorph( tSock, static_cast<UI16>(std::stoul(data,nullptr,0)) );
 			}
 		}
 	}
@@ -2117,7 +2123,9 @@ bool CPIGumpChoice::Handle( void )
 			sect = std::string("TRACKINGMENU ") + str_number( main );
 			data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 			if( !data.empty() )
-				Skills->CreateTrackingMenu( tSock, data.toUShort() );
+			{
+				Skills->CreateTrackingMenu( tSock, static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 		}
 		else
 		{
@@ -2145,8 +2153,8 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 	std::string line;
 	UI16 modelID = 0;
 	UI16 modelColour = 0;
-	UString tag = gumpScript->First();
-	UString data = gumpScript->GrabData();
+	std::string tag = gumpScript->First();
+	std::string data = gumpScript->GrabData();
 	line = tag + " " + data;
 	CPOpenGump toSend( *mChar );
 	toSend.GumpIndex( gumpIndex );
@@ -2154,7 +2162,7 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 	for( tag = gumpScript->Next(); !gumpScript->AtEnd(); tag = gumpScript->Next() )
 	{
 		data = gumpScript->GrabData();
-		modelID = tag.toUShort();
+		modelID = static_cast<UI16>(stoul(tag, nullptr, 0));
 		toSend.AddResponse( modelID, modelColour, data );
 		tag = gumpScript->Next();
 	}
