@@ -467,18 +467,20 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 	if( newbieData != NULL )
 	{
 		CItem *n = NULL;
-		for( UString tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
+		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
-			UString data = newbieData->GrabData();
+			std::string data = newbieData->GrabData();
+			data = stripTrim( data );
 			if( !data.empty() )
 			{
-				UString UTag = tag.upper();
+				auto UTag = str_toupper( tag );
 				if( UTag == "PACKITEM" )
 				{
-					if( data.sectionCount( "," ) != 0 )
-					{
-						UI16 nAmount = str_value<std::uint16_t>(trim(extractSection(data, ",", 1, 1 )));
-						n = Items->CreateScriptItem( socket, c, trim(extractSection(data, ",", 0, 0 )), nAmount, OT_ITEM, true );
+					auto csecs = sections( data, "," );
+					if( csecs.size() > 1 )
+					{						
+						UI16 nAmount = static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0));
+						n = Items->CreateScriptItem( socket, c, stripTrim( csecs[0] ), nAmount, OT_ITEM, true );
 					}
 					else
 					{
@@ -1119,8 +1121,8 @@ void updates( CSocket *s )
 	if( Updates == NULL )
 		return;
 
-	UString updateData = "";
-	for( UString tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
+	std::string updateData = "";
+	for( std::string tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
 	{
 		updateData += Updates->GrabData() + " ";
 	}

@@ -262,32 +262,44 @@ void cEffects::doSocketMusic( CSocket *s )
 {
 	SI32 i = 0;
 	char musicArray[50];
-	UString sect;
+	std::string sect;
 
 	CChar *mChar = s->CurrcharObj();
 
 	CTownRegion *mReg = mChar->GetRegion();
 	if( mReg == NULL )
+	{
 		return;
+	}
 
 	UI16 musicList = mReg->GetMusicList();
 	if( musicList == 0 )
+	{
 		return;
+	}
 
 	if( mChar->IsAtWar() )
+	{
 		sect = "MUSICLIST COMBAT";
+	}
 	else
+	{
 		sect = std::string("MUSICLIST ") + str_number( musicList );
+	}
 
 	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
 	if( MusicList == NULL )
+	{
 		return;
-	UString data;
-	for( UString tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
+	}
+	std::string data;
+	for( std::string tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
 	{
 		data = MusicList->GrabData();
-		if( tag.upper() == "MUSIC" )
-			musicArray[i++] = data.toByte();
+		if( str_toupper( tag ) == "MUSIC" )
+		{
+			musicArray[i++] = static_cast<SI08>(std::stoi(data, nullptr, 0));
+		}
 	}
 	if( i != 0 )
 	{
