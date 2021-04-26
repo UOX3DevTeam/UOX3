@@ -1,6 +1,6 @@
 #include "JSEncapsulate.h"
-#include "ustring.h"
-
+#include <string>
+#include "StringUtility.hpp"
 #include "jsobj.h"
 #include "jsutil.h"
 
@@ -144,8 +144,8 @@ std::string JSEncapsulate::ClassName( void )
 void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 {
 	jsdouble	fvalue;
-	SI32			ivalue;
-	UString		svalue;
+	SI32		ivalue;
+	std::string	svalue;
 	bool		bvalue;
 	switch( typeConvert )
 	{
@@ -160,7 +160,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 				case JSOT_BOOL:		intVal = ( (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE) ? 1 : 0 );	break;
 				case JSOT_STRING:
 					svalue = JS_GetStringBytes( JS_ValueToString( cx, *vp ) );
-					intVal = svalue.toInt();
+					intVal = std::stoi(svalue, nullptr, 0);
 					break;
 				default:
 				case JSOT_COUNT:
@@ -181,7 +181,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 				case JSOT_BOOL:		floatVal	= ( (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE) ? 1.0f : 0.0f );	break;
 				case JSOT_STRING:
 					svalue		= JS_GetStringBytes( JS_ValueToString( cx, *vp ) );
-					floatVal	= svalue.toFloat();
+					floatVal	= std::stof(svalue);
 					break;
 				default:
 				case JSOT_COUNT:
@@ -202,7 +202,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 				case JSOT_BOOL:		boolVal = (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE);	break;
 				case JSOT_STRING:
 					svalue	= JS_GetStringBytes( JS_ValueToString( cx, *vp ) );
-					boolVal = (svalue.upper() == "TRUE");
+					boolVal = (str_toupper( svalue ) == "TRUE");
 					break;
 				default:
 				case JSOT_COUNT:
@@ -214,11 +214,11 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			{
 				case JSOT_INT:
 					ivalue		= JSVAL_TO_INT( (*vp) );
-					stringVal	= UString::number( ivalue );
+					stringVal	= str_number( ivalue );
 					break;
 				case JSOT_DOUBLE:
 					JS_ValueToNumber( cx, (*vp), &fvalue );
-					stringVal	= UString::number( fvalue );
+					stringVal	= str_number( fvalue );
 					break;
 				case JSOT_BOOL:
 					bvalue	= (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE);

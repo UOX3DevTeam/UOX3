@@ -702,7 +702,7 @@ bool CPIMsgBoardEvent::Handle( void )
 bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 {
 	msgBoardPost_st msgBoardPost;
-	UString sect, tag, data;
+	std::string sect, tag, data;
 	std::string fileName		= std::string("region") + str_number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
 	ScriptSection *EscortData	= NULL, *Escort = NULL;
 	size_t totalEntries			= 0;
@@ -898,9 +898,11 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 //o-----------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 {
-	UString fileName;
+	std::string fileName;
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
+	{
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
+	}
 
 	fileName += std::string("region") + str_number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
 
@@ -939,7 +941,9 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 		file.close();
 	}
 	else
+	{
 		Console.error( format("Could not open file %s for reading", fileName.c_str()) );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o

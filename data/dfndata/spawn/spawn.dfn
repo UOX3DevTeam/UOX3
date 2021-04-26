@@ -32,6 +32,8 @@
 // MAXTIME=0			// This is the maximum time for the item or npc to spawn
 // CALL=#			// Amount to spawn in one call
 // ONLYOUTSIDE=#		// Set this to 1 if items and chars should only spawn outside of buildings.
+// VALIDLANDPOS=#,#,#	// Can be used to hard-define valid spawn-locations on land
+// VALIDWATERPOS=#,#,#	// Can be used to hard-define valid spawn-locations on water
 // }				// Of course this is the closing }
 
 EOF

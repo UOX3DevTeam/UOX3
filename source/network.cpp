@@ -694,7 +694,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 							while( buffer[j] != ' ' )
 								++j;
 							buffer[j] = 0;
-							Skills->SkillUse( mSock, UString( (char*)&buffer[4] ).toUByte() );
+							Skills->SkillUse( mSock, static_cast<UI08>(std::stoul(std::string( (char*)&buffer[4] )) ));
 							break;
 						}
 						else if( buffer[3] == 0x27 || buffer[3] == 0x56 )  // Spell
@@ -1246,15 +1246,19 @@ CSocket *cNetworkStuff::LastSocket( void )
 //o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::LoadFirewallEntries( void )
 {
-	UString token;
+	std::string token;
 	std::string fileToUse;
 	if( !FileExists( "banlist.ini" ) )
 	{
 		if( FileExists( "firewall.ini" ) )
+		{
 			fileToUse = "firewall.ini";
+		}
 	}
 	else
+	{
 		fileToUse = "banlist.ini";
+	}
 	if( !fileToUse.empty() )
 	{
 		Script *firewallData = new Script( fileToUse, NUM_DEFS, false );
@@ -1262,27 +1266,33 @@ void cNetworkStuff::LoadFirewallEntries( void )
 		{
 			SI16 p[4];
 			ScriptSection *firewallSect = NULL;
-			UString tag, data;
+			std::string tag, data;
 			for( firewallSect = firewallData->FirstEntry(); firewallSect != NULL; firewallSect = firewallData->NextEntry() )
 			{
 				if( firewallSect != NULL )
 				{
 					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
 					{
-						if( tag.upper() == "IP" )
+						if( str_toupper( tag ) == "IP" )
 						{
 							data = firewallSect->GrabData();
+							data = stripTrim( data );
 							if( !data.empty() )
 							{
-								if( data.sectionCount( "." ) == 3 )	// Wellformed IP address
+								auto psecs = sections( data, "." );
+								if( psecs.size() == 4 )	// Wellformed IP address
 								{
 									for( UI08 i = 0; i < 4; ++i )
 									{
-										token = extractSection(data, ".", i, i );
+										token = psecs[i];
 										if( token == "*" )
+										{
 											p[i] = -1;
+										}
 										else
-											p[i] = token.toShort();
+										{
+											p[i] = static_cast<SI16>(std::stoi(token, nullptr, 0));
+										}
 									}
 									slEntries.push_back( FirewallEntry( p[0], p[1], p[2], p[3] ) );
 								}

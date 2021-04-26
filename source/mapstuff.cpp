@@ -163,57 +163,80 @@ CMulHandler::~CMulHandler()
 //o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadMapsDFN( void )
 {
-	UString tag, data, UTag;
+	std::string tag, data, UTag;
 	const UI08 NumberOfWorlds = static_cast<UI08>(FileLookup->CountOfEntries( maps_def ));
 	MapList.reserve( NumberOfWorlds );
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
-		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + UString::number( i ), maps_def );
+		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + str_number( i ), maps_def );
 		if( toFind == NULL )
 			break;
 
 		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			UTag = tag.upper();
+			UTag = str_toupper( tag );
 			data = toFind->GrabData();
+			data = stripTrim( data );
 			switch( (UTag.data()[0]) )
 			{
 				case 'M':
 					if( UTag == "MAP" )
+					{
 						toAdd.mapFile = data;
+					}
 					else if( UTag == "MAPUOPWRAP" )
+					{
 						toAdd.mapFileUOPWrap = data;
+					}
 					else if( cwmWorldState->ServerData()->MapDiffsEnabled() )
 					{
 						if( UTag == "MAPDIFF" )
+						{
 								toAdd.mapDiffFile = data;
+						}
 						else if( UTag == "MAPDIFFLIST" )
+						{
 								toAdd.mapDiffListFile = data;
+						}
 					}
 					break;
 				case 'S':
 					if( UTag == "STATICS" )
+					{
 						toAdd.staticsFile = data;
+					}
 					else if( UTag == "STAIDX" )
+					{
 						toAdd.staidxFile = data;
+					}
 					else if( cwmWorldState->ServerData()->MapDiffsEnabled() )
 					{
 						if( UTag == "STATICSDIFF" )
+						{
 							toAdd.staticsDiffFile = data;
+						}
 						else if( UTag == "STATICSDIFFLIST" )
+						{
 							toAdd.staticsDiffListFile = data;
+						}
 						else if( UTag == "STATICSDIFFINDEX" )
+						{
 							toAdd.staticsDiffIndexFile = data;
+						}
 					}
 					break;
 				case 'X':
 					if( UTag == "X" )
-						toAdd.xBlock = data.toUShort();
+					{
+						toAdd.xBlock = static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					break;
 				case 'Y':
 					if( UTag == "Y" )
-						toAdd.yBlock = data.toUShort();
+					{
+						toAdd.yBlock = static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					break;
 			}
 		}
@@ -246,31 +269,35 @@ UOXFile * loadFile( const std::string& fullName )
 //o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePath, UI08 &totalMaps )
 {
-	UString mapMUL		= mMap.mapFile;
-	UString mapUOPWrap	= mMap.mapFileUOPWrap;
-	UString lName		= basePath + mapMUL;
+	std::string mapMUL		= mMap.mapFile;
+	std::string mapUOPWrap	= mMap.mapFileUOPWrap;
+	std::string lName		= basePath + mapMUL;
 	mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
 	Console << "\t" << lName << "(/" << mapUOPWrap << ")\t\t";
 
 	//if no map0.mul was found, check if there's a map#LegacyMul.uop
 	if(( mMap.mapObj == NULL || !mMap.mapObj->ready() ) && !mapUOPWrap.empty() )
 	{
-		UString lName	= basePath + mapUOPWrap;
+		std::string lName	= basePath + mapUOPWrap;
 		mMap.mapObj		= new UOXFile( lName.c_str(), "rb" );
 	}
 	if( mMap.mapObj != NULL && mMap.mapObj->ready() )
 	{
-		SI32 checkSize = (mMap.mapObj->getLength() / MapBlockSize);
+		SI32 checkSize = static_cast<SI32>(mMap.mapObj->getLength() / MapBlockSize);
 		if( checkSize / (mMap.xBlock/8) == (mMap.yBlock/8) )
 		{
 			++totalMaps;
 			Console.PrintDone();
 		}
 		else
+		{
 			Console.PrintFailed();
+		}
 	}
 	else
+	{
 		Console.PrintSpecial( CRED, "not found" );
+	}
 
 	mMap.staticsObj				= loadFile( basePath + mMap.staticsFile );
 	mMap.staidxObj				= loadFile( basePath + mMap.staidxFile );
@@ -296,7 +323,9 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 			{
 				mdlFile.read( (char *)&blockID, 4 );
 				if( !mdlFile.fail() )
+				{
 					mMap.mapDiffList[blockID] = offset;
+				}
 				offset += MapBlockSize;
 			}
 			mdlFile.close();
@@ -353,7 +382,7 @@ void CMulHandler::LoadTileData( const std::string& basePath )
 	UI08 j = 0;
 
 	// tiledata.mul is to be cached.
-	UString lName = basePath + "tiledata.mul";
+	std::string lName = basePath + "tiledata.mul";
 	Console << "\t" << lName << "\t";
 
 	UOXFile tileFile( lName.c_str(), "rb" );
@@ -468,7 +497,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	Console << "Caching Multis....  ";
 
 	// only turn it off for now because we are trying to fill the cache.
-	UString lName	= basePath + "multi.idx";
+	std::string lName	= basePath + "multi.idx";
 	UOXFile multiIDX( lName.c_str(), "rb" );
 	if( !multiIDX.ready() )
 	{
@@ -1652,17 +1681,19 @@ UI08 CMulHandler::MapCount( void ) const
 //o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadDFNOverrides( void )
 {
-	UString data, UTag, entryName, titlePart;
+	std::string data, UTag, entryName, titlePart;
 	size_t entryNum;
 
 	for( Script *mapScp = FileLookup->FirstScript( maps_def ); !FileLookup->FinishedScripts( maps_def ); mapScp = FileLookup->NextScript( maps_def ) )
 	{
 		if( mapScp == NULL )
 			continue;
-		for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != NULL; toScan = mapScp->NextEntry() )
+		for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != nullptr; toScan = mapScp->NextEntry() )
 		{
 			if( toScan == NULL )
+			{
 				continue;
+			}
 			entryName	= mapScp->EntryName();
 			entryNum	= str_value<std::uint16_t>(extractSection(entryName," ", 1, 1 ));
 			titlePart	= str_toupper(extractSection(entryName, " ", 0, 0 ));
@@ -1670,105 +1701,185 @@ void CMulHandler::LoadDFNOverrides( void )
 			if( titlePart == "TILE" && entryNum )
 			{
 				if( entryNum == INVALIDID || entryNum >= tileDataSize )
+				{
 					continue;
+				}
 				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 				{
 					//7.0.9.0 data and later
-					CTileHS *tile = &staticTileHS[entryNum];
-					if( tile != NULL )
+					CTileHS *tile = &staticTileHS[entryNum];				
+					if( tile != nullptr )
 					{
-						for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+						for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 						{
 							data	= toScan->GrabData();
-							UTag	= tag.upper();
+							data 	= stripTrim( data );
+							UTag	= str_toupper( tag );
 
 							// CTile properties
 							if( UTag == "WEIGHT" )
-								tile->Weight( data.toUByte() );
+							{
+								tile->Weight( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "HEIGHT" )
-								tile->Height( data.toByte() );
+							{
+								tile->Height( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
+							}
 							else if( UTag == "LAYER" )
-								tile->Layer( data.toByte() );
+							{
+								tile->Layer( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
+							}
 							else if( UTag == "HUE" )
-								tile->Hue( data.toUByte() );
+							{
+								tile->Hue( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "QUANTITY" )
-								tile->Quantity( data.toUByte() );
+							{
+								tile->Quantity( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "ANIMATION" )
-								tile->Animation( data.toUShort() );
+							{
+								tile->Animation( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "NAME" )
+							{
 								tile->Name( data.c_str() );
+							}
 
 							// BaseTile Flag 1
 							else if( UTag == "ATFLOORLEVEL" )
-								tile->SetFlag( TF_FLOORLEVEL, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_FLOORLEVEL, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "HOLDABLE" )
-								tile->SetFlag( TF_HOLDABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_HOLDABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "SIGNGUILDBANNER" )
-								tile->SetFlag( TF_TRANSPARENT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_TRANSPARENT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WEBDIRTBLOOD" )
-								tile->SetFlag( TF_TRANSLUCENT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WALLVERTTILE" )
-								tile->SetFlag( TF_WALL, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_WALL, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DAMAGING" )
-								tile->SetFlag( TF_DAMAGING, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DAMAGING, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "BLOCKING" )
-								tile->SetFlag( TF_BLOCKING, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_BLOCKING, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "LIQUIDWET" )
-								tile->SetFlag( TF_WET, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_WET, (std::stoi(data, nullptr, 0) != 0) );
+							}
 
 							// BaseTile Flag 2
 							else if( UTag == "UNKNOWNFLAG1" )
-								tile->SetFlag( TF_UNKNOWN1, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_UNKNOWN1, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "STANDABLE" )
-								tile->SetFlag( TF_SURFACE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_SURFACE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CLIMBABLE" )
-								tile->SetFlag( TF_CLIMBABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_CLIMBABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "STACKABLE" )
-								tile->SetFlag( TF_STACKABLE, (data.toInt() != 0) );
-							else if( UTag == "WINDOWARCHDOOR" )
-								tile->SetFlag( TF_WINDOW, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_STACKABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
+							else if( UTag == "WINDOWARCHDOOR" ) {
+								tile->SetFlag( TF_WINDOW, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CANNOTSHOOTTHRU" )
-								tile->SetFlag( TF_NOSHOOT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_NOSHOOT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DISPLAYASA" )
-								tile->SetFlag( TF_DISPLAYA, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DISPLAYA, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DISPLAYASAN" )
-								tile->SetFlag( TF_DISPLAYAN, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DISPLAYAN, (std::stoi(data, nullptr, 0) != 0) );
+							}
 
 							// BaseTile Flag 3
 							else if( UTag == "DESCRIPTIONTILE" )
-								tile->SetFlag( TF_DESCRIPTION, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DESCRIPTION, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "FADEWITHTRANS" )
-								tile->SetFlag( TF_FOLIAGE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_FOLIAGE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "PARTIALHUE" )
-								tile->SetFlag( TF_PARTIALHUE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_PARTIALHUE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "UNKNOWNFLAG2" )
-								tile->SetFlag( TF_UNKNOWN2, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_UNKNOWN2, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "MAP" )
-								tile->SetFlag( TF_MAP, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_MAP, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CONTAINER" )
-								tile->SetFlag( TF_CONTAINER, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_CONTAINER, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "EQUIPABLE" )
-								tile->SetFlag( TF_WEARABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_WEARABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "LIGHTSOURCE" )
-								tile->SetFlag( TF_LIGHT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_LIGHT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 
 							// BaseTile Flag 4
 							else if( UTag == "ANIMATED" )
-								tile->SetFlag( TF_ANIMATED, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_ANIMATED, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "NODIAGONAL" )
-								tile->SetFlag( TF_NODIAGONAL, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_NODIAGONAL, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "UNKNOWNFLAG3" )
-								tile->SetFlag( TF_UNKNOWN3, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_UNKNOWN3, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WHOLEBODYITEM" )
-								tile->SetFlag( TF_ARMOR, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_ARMOR, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WALLROOFWEAP" )
-								tile->SetFlag( TF_ROOF, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_ROOF, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DOOR" )
-								tile->SetFlag( TF_DOOR, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DOOR, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CLIMBABLEBIT1" )
-								tile->SetFlag( TF_STAIRBACK, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_STAIRBACK, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CLIMBABLEBIT2" )
-								tile->SetFlag( TF_STAIRRIGHT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_STAIRRIGHT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 						}
 					}
 				}
@@ -1776,116 +1887,179 @@ void CMulHandler::LoadDFNOverrides( void )
 				{
 					//7.0.8.2 data and earlier
 					CTile *tile = &staticTile[entryNum];
-					if( tile != NULL )
+					if( tile != nullptr )
 					{
-						for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+						for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 						{
 							data	= toScan->GrabData();
-							UTag	= tag.upper();
-
+							data 	= stripTrim( data );
+							UTag	= str_toupper( tag );
+							
 							// CTile properties
 							if( UTag == "WEIGHT" )
-								tile->Weight( data.toUByte() );
+							{
+								tile->Weight( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "HEIGHT" )
-								tile->Height( data.toByte() );
+							{
+								tile->Height( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
+							}
 							else if( UTag == "LAYER" )
-								tile->Layer( data.toByte() );
+							{
+								tile->Layer( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
+							}
 							else if( UTag == "HUE" )
-								tile->Hue( data.toUByte() );
+							{
+								tile->Hue( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "QUANTITY" )
-								tile->Quantity( data.toUByte() );
+							{
+								tile->Quantity( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "ANIMATION" )
-								tile->Animation( data.toUShort() );
+							{
+								tile->Animation( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+							}
 							else if( UTag == "NAME" )
+							{
 								tile->Name( data.c_str() );
-
+							}
+							
 							// BaseTile Flag 1
 							else if( UTag == "ATFLOORLEVEL" )
-								tile->SetFlag( TF_FLOORLEVEL, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_FLOORLEVEL, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "HOLDABLE" )
-								tile->SetFlag( TF_HOLDABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_HOLDABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "SIGNGUILDBANNER" )
-								tile->SetFlag( TF_TRANSPARENT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_TRANSPARENT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WEBDIRTBLOOD" )
-								tile->SetFlag( TF_TRANSLUCENT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WALLVERTTILE" )
-								tile->SetFlag( TF_WALL, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_WALL, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DAMAGING" )
-								tile->SetFlag( TF_DAMAGING, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DAMAGING, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "BLOCKING" )
-								tile->SetFlag( TF_BLOCKING, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_BLOCKING, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "LIQUIDWET" )
-								tile->SetFlag( TF_WET, (data.toInt() != 0) );
-
+							{
+								tile->SetFlag( TF_WET, (std::stoi(data, nullptr, 0) != 0) );
+							}
+							
 							// BaseTile Flag 2
 							else if( UTag == "UNKNOWNFLAG1" )
-								tile->SetFlag( TF_UNKNOWN1, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_UNKNOWN1, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "STANDABLE" )
-								tile->SetFlag( TF_SURFACE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_SURFACE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CLIMBABLE" )
-								tile->SetFlag( TF_CLIMBABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_CLIMBABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "STACKABLE" )
-								tile->SetFlag( TF_STACKABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_STACKABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WINDOWARCHDOOR" )
-								tile->SetFlag( TF_WINDOW, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_WINDOW, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CANNOTSHOOTTHRU" )
-								tile->SetFlag( TF_NOSHOOT, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_NOSHOOT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DISPLAYASA" )
-								tile->SetFlag( TF_DISPLAYA, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DISPLAYA, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DISPLAYASAN" )
-								tile->SetFlag( TF_DISPLAYAN, (data.toInt() != 0) );
-
+							{
+								tile->SetFlag( TF_DISPLAYAN, (std::stoi(data, nullptr, 0) != 0) );
+							}
+							
 							// BaseTile Flag 3
 							else if( UTag == "DESCRIPTIONTILE" )
-								tile->SetFlag( TF_DESCRIPTION, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DESCRIPTION, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "FADEWITHTRANS" )
-								tile->SetFlag( TF_FOLIAGE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_FOLIAGE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "PARTIALHUE" )
-								tile->SetFlag( TF_PARTIALHUE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_PARTIALHUE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "UNKNOWNFLAG2" )
-								tile->SetFlag( TF_UNKNOWN2, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_UNKNOWN2, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "MAP" )
-								tile->SetFlag( TF_MAP, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_MAP, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CONTAINER" )
-								tile->SetFlag( TF_CONTAINER, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_CONTAINER, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "EQUIPABLE" )
-								tile->SetFlag( TF_WEARABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_WEARABLE, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "LIGHTSOURCE" )
-								tile->SetFlag( TF_LIGHT, (data.toInt() != 0) );
-
+							{
+								tile->SetFlag( TF_LIGHT, (std::stoi(data, nullptr, 0) != 0) );
+							}
+							
 							// BaseTile Flag 4
 							else if( UTag == "ANIMATED" )
-								tile->SetFlag( TF_ANIMATED, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_ANIMATED, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "NODIAGONAL" )
-								tile->SetFlag( TF_NODIAGONAL, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_NODIAGONAL, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "UNKNOWNFLAG3" )
-								tile->SetFlag( TF_UNKNOWN3, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_UNKNOWN3, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WHOLEBODYITEM" )
-								tile->SetFlag( TF_ARMOR, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_ARMOR, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "WALLROOFWEAP" )
-								tile->SetFlag( TF_ROOF, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_ROOF, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "DOOR" )
-								tile->SetFlag( TF_DOOR, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_DOOR, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CLIMBABLEBIT1" )
-								tile->SetFlag( TF_STAIRBACK, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_STAIRBACK, (std::stoi(data, nullptr, 0) != 0) );
+							}
 							else if( UTag == "CLIMBABLEBIT2" )
-								tile->SetFlag( TF_STAIRRIGHT, (data.toInt() != 0) );
-
-							// BaseTile Flag 5 - added in HS expansion?
-							else if( UTag == "ALPHABLEND" )
-								tile->SetFlag( TF_ALPHABLEND, (data.toInt() != 0) );
-							else if( UTag == "USENEWART" )
-								tile->SetFlag( TF_USENEWART, (data.toInt() != 0) );
-							else if( UTag == "ARTUSED" )
-								tile->SetFlag( TF_ARTUSED, (data.toInt() != 0) );
-							else if( UTag == "NOSHADOW" )
-								tile->SetFlag( TF_NOSHADOW, (data.toInt() != 0) );
-							else if( UTag == "PIXELBLEED" )
-								tile->SetFlag( TF_PIXELBLEED, (data.toInt() != 0) );
-							else if( UTag == "PLAYANIMONCE" )
-								tile->SetFlag( TF_PLAYANIMONCE, (data.toInt() != 0) );
-							else if( UTag == "MULTIMOVABLE" )
-								tile->SetFlag( TF_MULTIMOVABLE, (data.toInt() != 0) );
+							{
+								tile->SetFlag( TF_STAIRRIGHT, (std::stoi(data, nullptr, 0) != 0) );
+							}
 						}
 					}
 				}
