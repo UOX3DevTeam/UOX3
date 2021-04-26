@@ -246,19 +246,20 @@ void JailSystem::ReadSetup( void )
 	else
 	{
 		JailCell toAdd;
-		UString tag;
-		UString data;
+		std::string tag;
+		std::string data;
 		for( tag = Regions->First(); !Regions->AtEnd(); tag = Regions->Next() )
 		{
 			if( tag.empty() )
 				continue;
 			data = Regions->GrabData();
+			data = stripTrim( data );
 			switch( (tag.data()[0]) )
 			{
-				case 'X':	toAdd.X( data.toShort() );	break;
-				case 'Y':	toAdd.Y( data.toShort() );	break;
+				case 'X':	toAdd.X( static_cast<SI16>(std::stoi(data, nullptr, 0)) );	break;
+				case 'Y':	toAdd.Y( static_cast<SI16>(std::stoi(data, nullptr, 0)) );	break;
 				case 'Z':
-					toAdd.Z( data.toByte() );
+					toAdd.Z( static_cast<SI08>(std::stoi(data, nullptr, 0)) );
 					jails.push_back( toAdd );
 					break;
 			}
@@ -274,59 +275,84 @@ void JailSystem::ReadSetup( void )
 void JailSystem::ReadData( void )
 {
 	if( jails.empty() )
+	{
 		return;
+	}
 	std::string temp	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc";
 	if( FileExists( temp ) )
 	{
 		Script *jailData = new Script( temp, NUM_DEFS, false );
-		if( jailData != NULL )
+		if( jailData != nullptr )
 		{
-			ScriptSection *prisonerData = NULL;
-			for( prisonerData = jailData->FirstEntry(); prisonerData != NULL; prisonerData = jailData->NextEntry() )
+			ScriptSection *prisonerData = nullptr;
+			for( prisonerData = jailData->FirstEntry(); prisonerData != nullptr; prisonerData = jailData->NextEntry() )
 			{
-				if( prisonerData == NULL )
+				if( prisonerData == nullptr )
+				{
 					continue;
-				UString tag;
-				UString data;
-				UString UTag;
+				}
+				std::string tag;
+				std::string data;
+				std::string UTag;
 				JailOccupant toPush;
 				UI08 cellNumber = 0;
 				for( tag = prisonerData->First(); !prisonerData->AtEnd(); tag = prisonerData->Next() )
 				{
 					if( tag.empty() )
+					{
 						continue;
-					UTag = tag.upper();
+					}
+					UTag = str_toupper( tag );
 					data = prisonerData->GrabData();
+					data = stripTrim( data );
 					switch( (UTag.data()[0]) )
 					{
 						case 'C':
 							if( UTag == "CELL" )
-								cellNumber = data.toUByte();
+							{
+								cellNumber = static_cast<UI08>(std::stoul(data, nullptr, 0));
+							}
 							break;
 						case 'O':
 							if( UTag == "OLDX" )
-								toPush.x = data.toShort();
+							{
+								toPush.x = static_cast<SI16>(std::stoi(data, nullptr, 0));
+							}
 							else if( UTag == "OLDY" )
-								toPush.y = data.toShort();
+							{
+								toPush.y = static_cast<SI16>(std::stoi(data, nullptr, 0));
+							}
 							else if( UTag == "OLDZ" )
-								toPush.z = data.toByte();
+							{
+								toPush.z = static_cast<SI08>(std::stoi(data, nullptr, 0));
+							}
 							else if( UTag == "WORLD" )
-								toPush.world = data.toByte();
+							{
+								toPush.world = static_cast<SI08>(std::stoi(data, nullptr, 0));
+							}
 							break;
 						case 'R':
 							if( UTag == "RELEASE" )
-								toPush.releaseTime = data.toInt();
+							{
+								toPush.releaseTime = std::stoi(data, nullptr, 0);
+							}
 							break;
 						case 'S':
 							if( UTag == "SERIAL" )
-								toPush.pSerial = data.toUInt();
+							{
+								toPush.pSerial = static_cast<UI32>(std::stoul(data, nullptr, 0));
+							}
 							break;
 					}
 				}
 				if( cellNumber < jails.size() )
+				{
 					jails[cellNumber].AddOccupant( &toPush );
+				}
 				else
-					jails[RandomNum( static_cast< size_t >(0), jails.size() - 1 )].AddOccupant( &toPush );
+				{
+					jails[RandomNum( static_cast<size_t>(0), jails.size() - 1 )].AddOccupant( &toPush );
+				}
 			}
 		}
 		delete jailData;

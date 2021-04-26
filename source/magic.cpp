@@ -2669,7 +2669,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	strcpy( message, Dictionary->GetEntry( 702 ).c_str() );
 
 	// Create temporary string to hold info on our missing reagents
-	UString tempString;
+	std::string tempString;
 	tempString = " [";
 
 	if( failmsg.ash )
@@ -3502,8 +3502,8 @@ void cMagic::LoadScript( void )
 	// apparently index 0 is left unused
 	spells.resize( SPELL_MAX + 1 );
 
-	UString spEntry;
-	UString tag, data, UTag;
+	std::string spEntry;
+	std::string tag, data, UTag;
 	UI08 i = 0;
 	for( Script *spellScp = FileLookup->FirstScript( spells_def ); !FileLookup->FinishedScripts( spells_def ); spellScp = FileLookup->NextScript( spells_def ) )
 	{
@@ -3516,9 +3516,10 @@ void cMagic::LoadScript( void )
 				continue;
 
 			spEntry = spellScp->EntryName();
-			if( spEntry.section( " ", 0, 0 ) == "SPELL" )
+			auto ssecs = sections( spEntry, " " );
+			if( ssecs[0] == "SPELL" )
 			{
-				i = spEntry.section( " ", 1, 1 ).toUByte();
+				i = static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0) );
 				if( i <= SPELL_MAX )
 				{
 					++spellCount;
@@ -3529,115 +3530,176 @@ void cMagic::LoadScript( void )
 
 					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
-						UTag = tag.upper();
+						UTag = str_toupper( tag );
 						data = SpellLoad->GrabData();
+						data = stripTrim( data );
 						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
 						switch( (UTag.data()[0]) )
 						{
 							case 'A':
 								if( UTag == "ACTION" )
-									spells[i].Action( data.toUShort() );
+								{
+									spells[i].Action( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
+								}
 								else if( UTag == "ASH" )
-									mRegs->ash = data.toUByte();
+								{
+									mRegs->ash =static_cast<UI08>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'B':
 								if( UTag == "BASEDMG" )
-									spells[i].BaseDmg( data.toShort() );
+								{
+									spells[i].BaseDmg( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+								}
 								break;
 							case 'C':
 								if( UTag == "CIRCLE" )
-									spells[i].Circle( data.toUByte() );
+								{
+									spells[i].Circle( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+								}
 								break;
 							case 'D':
 								if( UTag == "DELAY" )
-									spells[i].Delay( data.toInt() );
+								{
+									spells[i].Delay( std::stoi(data, nullptr, 0) );
+								}
 								else if( UTag == "DRAKE" )
-									mRegs->drake = data.toUByte();
+								{
+									mRegs->drake = static_cast<UI08>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'E':
-								if( UTag == "ENABLE" )   // presence of enable is enough to enable it
-									spells[i].Enabled( data.toUShort() != 0 );
+								if( UTag == "ENABLE" ) // presence of enable is enough to enable it
+								{
+									spells[i].Enabled(std::stoul(data, nullptr, 0) != 0 );
+								}
 								break;
 							case 'F':
 								if( UTag == "FLAGS" )
 								{
-									if( data.sectionCount( " " ) != 0 )
-										spells[i].Flags( (UI16)((data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 )<<8) + data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 )) );
+									auto ssecs = sections( data, " " );
+									if( ssecs.size() > 1 )
+									{
+										spells[i].Flags(((static_cast<UI08>(std::stoul(stripTrim( ssecs[0] ), nullptr, 16)))<<8) ||
+												    static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16)));
+												    
+									}
 									else
-										spells[i].Flags( data.stripWhiteSpace().toUShort() );
+									{
+										spells[i].Flags( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+									}
 								}
 								break;
 							case 'G':
 								if( UTag == "GARLIC" )
-									mRegs->garlic  = data.toUByte();
+								{
+									mRegs->garlic  = static_cast<UI08>(std::stoul(data, nullptr, 0));
+								}
 								else if( UTag == "GINSENG" )
-									mRegs->ginseng = data.toUByte();
+								{
+									mRegs->ginseng = static_cast<UI08>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'H':
 								if( UTag == "HISKILL" )
-									spells[i].HighSkill( data.toShort() );
+								{
+									spells[i].HighSkill( static_cast<SI16>(std::stoi(data, nullptr, 0)));
+								}
 								else if( UTag == "HEALTH" )
-									spells[i].Health( data.toShort() );
+								{
+									spells[i].Health( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+								}
 								break;
 							case 'L':
 								if( UTag == "LOSKILL" )
-									spells[i].LowSkill( data.toShort() );
+								{
+									spells[i].LowSkill( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+								}
 								break;
 							case 'M':
 								if( UTag == "MANA" )
-									spells[i].Mana( data.toShort() );
+								{
+									spells[i].Mana( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+								}
 								else if( UTag == "MANTRA" )
+								{
 									spells[i].Mantra( data );
+								}
 								else if( UTag == "MOSS" )
-									mRegs->moss = data.toUByte();
+								{
+									mRegs->moss = static_cast<UI08>(std::stoul(data, nullptr, 0));
+								}
 								else if( UTag == "MOVEFX" )
 								{
-									if( data.sectionCount( " " ) != 0 )
-									{
+									auto ssecs = sections( data, " " );
+									if( ssecs.size() > 1 )
+									{										
 										CMagicMove *mv = spells[i].MoveEffectPtr();
-										mv->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-										mv->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
-										mv->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
-										mv->Explode( data.section( " ", 4, 4 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										mv->Effect( static_cast<UI08>(std::stoul(stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16)) );
+										mv->Speed( static_cast<UI08>(std::stoul(stripTrim(ssecs[2]), nullptr, 16)) );
+										mv->Loop( static_cast<UI08>(std::stoul(stripTrim(ssecs[3]), nullptr, 16)) );
+										mv->Explode( static_cast<UI08>(std::stoul(stripTrim(ssecs[4]), nullptr, 16)));
 									}
 								}
 								break;
 							case 'P':
 								if( UTag == "PEARL" )
-									mRegs->pearl = data.toUByte();
+								{
+									mRegs->pearl = static_cast<UI08>(std::stoul(data,nullptr,0));
+								}
 								break;
 							case 'S':
 								if( UTag == "SHADE" )
-									mRegs->shade = data.toUByte();
+								{
+									mRegs->shade = static_cast<UI08>(std::stoul(data,nullptr,0));
+								}
 								else if( UTag == "SILK" )
-									mRegs->silk = data.toUByte();
+								{
+									mRegs->silk = static_cast<UI08>(std::stoul(data,nullptr,0));
+								}
 								else if( UTag == "SOUNDFX" )
 								{
-									if( data.sectionCount( " " ) != 0 )
-										spells[i].Effect( (UI16)((data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 )<<8) + data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 )) );
+									auto ssecs = sections( data, " " );
+									if( ssecs.size() > 1 )
+									{
+										spells[i].Effect( ( (static_cast<UI08>(std::stoul(stripTrim( ssecs[0] ), nullptr, 16))<<8) ||
+												    static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16))));
+									}
 									else
-										spells[i].Effect( data.stripWhiteSpace().toUShort() );
+									{
+										spells[i].Effect( static_cast<UI16>(std::stoul(data,nullptr,0)) );
+									}
 								}
 								else if( UTag == "STATFX" )
 								{
-									if( data.sectionCount( " " ) != 0 )
+									auto ssecs = sections( data, " " );
+									if( ssecs.size() > 1 )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
-										stat->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-										stat->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
-										stat->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										
+										stat->Effect( static_cast<UI08>(std::stoul(stripTrim(ssecs[0]), nullptr, 16)), static_cast<unsigned char>(std::stoul(stripTrim(ssecs[1]),nullptr,16)) );
+										stat->Speed( static_cast<UI08>(std::stoul(stripTrim(ssecs[2]), nullptr, 16)) );
+										stat->Loop( static_cast<UI08>(std::stoul(stripTrim(ssecs[3]), nullptr, 16)) );
 									}
 								}
 								else if( UTag == "SCLO" )
-									spells[i].ScrollLow( data.toShort() );
+								{
+									spells[i].ScrollLow( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+								}
 								else if( UTag == "SCHI" )
-									spells[i].ScrollHigh( data.toShort() );
+								{
+									spells[i].ScrollHigh(  static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+								}
 								else if( UTag == "STAMINA" )
-									spells[i].Stamina( data.toShort() );
+								{
+									spells[i].Stamina(  static_cast<SI16>(std::stoi(data, nullptr, 0)));
+								}
 								break;
 							case 'T':
 								if( UTag == "TARG" )
+								{
 									spells[i].StringToSay( data );
+								}
 								break;
 						}
 					}
@@ -3721,7 +3783,7 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 {
-	UString sect				= "POLYMORPHMENU " + UString::number( gmindex );
+	std::string sect			= "POLYMORPHMENU " + str_number( gmindex );
 	ScriptSection *polyStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( polyStuff == NULL )
 		return;
