@@ -20,7 +20,7 @@
 void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
 {
 	bool multipleArgs		= false;
-	UString argList			= "";
+	std::string argList		= "";
 	std::string stringVal	= "";
 	const char *typesPtr	= types;
 
@@ -67,7 +67,7 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
 {
 	bool multipleArgs		= false;
-	UString argList			= "";
+	std::string argList		= "";
 	std::string stringVal	= "";
 	const char *typesPtr	= types;
 
@@ -142,8 +142,8 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 	langCode[2] = s->GetByte( ++offset );
 	langCode[3] = 0;
 
-	UString ulangCode = langCode;
-	ulangCode = ulangCode.upper();
+	std::string ulangCode = langCode;
+	ulangCode = str_toupper( ulangCode );
 
 	UnicodeTypes cLang = s->Language();
 	if( LanguageCodes[cLang] != ulangCode.c_str() )
@@ -270,13 +270,17 @@ bool CPITalkRequest::Handle( void )
 		}
 		else
 		{
-			UString text( asciiText );
-			text = text.upper();
+			std::string text( asciiText );
+			text = str_toupper(text);
 
 			if( Type() == 0 )
+			{
 				mChar->SetSayColour( TextColour() );
+			}
 			if( Type() == 2 )
+			{
 				mChar->SetEmoteColour( TextColour() );
+			}
 			if( cwmWorldState->ServerData()->ServerConsoleLogStatus() == 2 ) //Logging
 			{
 				auto temp = format("%s.log", mChar->GetName().c_str() );
@@ -340,9 +344,6 @@ bool CPITalkRequest::Handle( void )
 			else
 				nearbyChars = FindNearbyPlayers( mChar );
 
-			SI16 mCharX = mChar->GetX();
-			SI16 mCharY = mChar->GetY();
-			SI08 mCharZ = mChar->GetZ();
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				CSocket *tSock	= (*cIter);

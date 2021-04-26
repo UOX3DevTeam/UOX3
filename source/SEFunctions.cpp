@@ -77,17 +77,21 @@ void InitStringToObjType( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectType FindObjTypeFromString( UString strToFind )
+//|	Function	-	ObjectType FindObjTypeFromString( std::string strToFind )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine object type (ITEM, CHARACTER, MULTI, etc) based on provided string
 //o-----------------------------------------------------------------------------------------------o
-ObjectType FindObjTypeFromString( UString strToFind )
+ObjectType FindObjTypeFromString( std::string strToFind )
 {
-	if( stringToObjType.empty() )	// if we haven't built our array yet
+	if( stringToObjType.empty() ) // if we haven't built our array yet
+	{
 		InitStringToObjType();
-	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( strToFind.upper() );
+	}
+	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( str_toupper( strToFind ));
 	if( toFind != stringToObjType.end() )
+	{
 		return toFind->second;
+	}
 	return OT_CBO;
 }
 
@@ -1696,9 +1700,9 @@ JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	UString str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	std::string str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 
-	*rval = INT_TO_JSVAL( str.toInt() );
+	*rval = INT_TO_JSVAL( std::stoi(str, nullptr, 0) );
 	return JS_TRUE;
 }
 
@@ -1948,18 +1952,24 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 		case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
 	}
 
-	UString tmpString = myChar->GetName() + yellTo + textToYell;
+	std::string tmpString = myChar->GetName() + yellTo + textToYell;
 
 	CSpeechEntry& toAdd = SpeechSys->Add();
 	toAdd.Speech( tmpString );
 	toAdd.Font( (FontType)myChar->GetFontType() );
 	toAdd.Speaker( INVALIDSERIAL );
 	if( mySock->GetWord( 4 ) == 0x1700 )
+	{
 		toAdd.Colour( 0x5A );
+	}
 	else if( mySock->GetWord( 4 ) == 0x0 )
+	{
 		toAdd.Colour( 0x5A );
+	}
 	else
+	{
 		toAdd.Colour( mySock->GetWord( 4 ) );
+	}
 	toAdd.Type( SYSTEM );
 	toAdd.At( cwmWorldState->GetUICurrentTime() );
 	toAdd.TargType( SPTRG_BROADCASTALL );
@@ -2360,20 +2370,29 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 
-	UString resType = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) ) ).stripWhiteSpace().upper();
+	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
+	resType = str_toupper( stripTrim( resType ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
-		if( resType == "LOGS" )	// Logs
+		if( resType == "LOGS" ) // Logs
+		{
 			cwmWorldState->ServerData()->ResLogArea( newVal );
-		else if( resType == "ORE" )	// Ore
+		}
+		else if( resType == "ORE" ) // Ore
+		{
 			cwmWorldState->ServerData()->ResOreArea( newVal );
+		}
 	}
 
 	if( resType == "LOGS" )
+	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogArea() );
+	}
 	else if( resType == "ORE" )
+	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreArea() );
+	}
 
 	return JS_TRUE;
 }
@@ -2391,21 +2410,30 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		DoSEErrorMessage( format("ResourceAmount: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
+	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
+	resType = str_toupper( stripTrim( resType ));
 
-	UString resType = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) ) ).stripWhiteSpace().upper();
 	if( argc == 2 )
 	{
 		SI16 newVal = static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
 		if( resType == "LOGS" )
+		{
 			cwmWorldState->ServerData()->ResLogs( newVal );
+		}
 		else if( resType == "ORE" )
+		{
 			cwmWorldState->ServerData()->ResOre( newVal );
+		}
 	}
 
 	if( resType == "LOGS" )
+	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogs() );
+	}
 	else if( resType == "ORE" )
+	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOre() );
+	}
 
 	return JS_TRUE;
 }
@@ -2424,20 +2452,29 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 
-	UString resType = UString( JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) ) ).stripWhiteSpace().upper();
+	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
+	resType = str_toupper( stripTrim( resType ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
 		if( resType == "LOGS" )
+		{
 			cwmWorldState->ServerData()->ResLogTime( newVal );
+		}
 		else if( resType == "ORE" )
+		{
 			cwmWorldState->ServerData()->ResOreTime( newVal );
+		}
 	}
 
 	if( resType == "LOGS" )
+	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogTime() );
+	}
 	else if( resType == "ORE" )
+	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreTime() );
+	}
 
 	return JS_TRUE;
 }

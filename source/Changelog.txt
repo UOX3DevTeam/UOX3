@@ -1,7 +1,8 @@
 27/04/2021 - Xuri
 	Fixed some missing icons in dfndata/creatures/creatures.dfn
 	Updated server status HTML template page (dfndata/html/online.htf) to match other templates
-	Additional string handling modernization in magic.cpp, JSEncapsulate.cpp, jail.cpp, house.cpp, fileio.cpp, network.cpp, msgboard.cpp and mapstuff.cpp (punt)
+	Fixed an issue where using JS Method PopUpTarget with ID 12 could crash the server
+	Additional string handling modernization in magic.cpp, JSEncapsulate.cpp, jail.cpp, house.cpp, fileio.cpp, network.cpp, msgboard.cpp, mapstuff.cpp, pcmanage.cpp, scriptc.cpp, SEFunctions.cpp, sound.cpp, speech.cpp (punt)
 
 26/04/2021 - Xuri
 	Increased default timer for worldsaves from 5 to 10 minutes

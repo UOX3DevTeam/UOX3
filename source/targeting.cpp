@@ -1289,6 +1289,11 @@ void MakeTownAlly( CSocket *s )
 	UI16 srcTown = mChar->GetTown();
 	UI16 trgTown = targetChar->GetTown();
 
+	if( srcTown == NULL || trgTown == NULL )
+	{
+		return;
+	}
+
 	if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )
 		s->sysmessage( 1111 );
 }
