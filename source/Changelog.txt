@@ -1,3 +1,7 @@
+26/04/2021 - Xuri
+	Increased default timer for worldsaves from 5 to 10 minutes
+	Fixed an issue where the tile command could spawn items with incorrect ID because tempInt2 wasn't reset properly
+	Additional string handling modernization in cAccountClass.cpp, cHTMLSystem.cpp, CResponse.cpp, cServerData.cpp, cServerData.h, cServerDefinitions.cpp, cSocket.cpp, cSpawnRegion.cpp, cSpawnRegion.h, cWeather.cpp, Dictionary.cpp, effect.cpp and uox3.cpp (punt)
 
 26/04/2021 - Xuri
 	Fixed an issue where 'get command attempts to retrieve incorrect property when isonline parameter is provided

@@ -94,7 +94,7 @@ void cHTMLTemplate::Process( void )
 	// Replacing Placeholders
 
 	// Account-Count
-	UString AccountCount	= str_number( (Accounts->size()) );
+	std::string AccountCount	= str_number( (Accounts->size()) );
 	size_t Pos				= ParsedContent.find( "%accounts" );
 	while( Pos != std::string::npos )
 	{
@@ -117,7 +117,7 @@ void cHTMLTemplate::Process( void )
 		Pos = ParsedContent.find( "%version" );
 	}
 	// Character Count
-	UString CharacterCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+	std::string CharacterCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 	Pos						= ParsedContent.find( "%charcount" );
 	while( Pos != std::string::npos )
 	{
@@ -126,7 +126,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Item Count
-	UString ItemCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
+	std::string ItemCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
 	Pos					= ParsedContent.find( "%itemcount" );
 	while( Pos != std::string::npos )
 	{
@@ -160,7 +160,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// GMs
-	UString GMCount = str_number( gm );
+	std::string GMCount = str_number( gm );
 	Pos				= ParsedContent.find( "%online_gms" );
 	while( Pos != std::string::npos )
 	{
@@ -169,7 +169,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Counselor
-	UString CounsiCount	= str_number( cns );
+	std::string CounsiCount	= str_number( cns );
 	Pos					= ParsedContent.find( "%online_couns" );
 	while( Pos != std::string::npos )
 	{
@@ -178,7 +178,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Player
-	UString PlayerCount	= str_number( ccount );
+	std::string PlayerCount	= str_number( ccount );
 	Pos					= ParsedContent.find( "%online_player" );
 	while( Pos != std::string::npos )
 	{
@@ -187,7 +187,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Total
-	UString AllCount	= str_number( (ccount + gm + cns) );
+	std::string AllCount	= str_number( (ccount + gm + cns) );
 	Pos					= ParsedContent.find( "%online_all" );
 	while( Pos != std::string::npos )
 	{
@@ -218,7 +218,7 @@ void cHTMLTemplate::Process( void )
 	time_t currTime;
 	time( &currTime );
 	currTime = mktime( gmtime( &currTime ) );
-	UString timestamp = str_number( currTime );
+	std::string timestamp = str_number( currTime );
 	Pos = ParsedContent.find( "%tstamp" );
 	while( Pos != std::string::npos )
 	{
@@ -361,7 +361,7 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playerx" );
 							while( sPos != std::string::npos )
 							{
-								UString myX = str_number( tChar->GetX() );
+								std::string myX = str_number( tChar->GetX() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerx" );
 							}
@@ -370,7 +370,7 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playery" );
 							while( sPos != std::string::npos )
 							{
-								UString myY = str_number( tChar->GetY() );
+								std::string myY = str_number( tChar->GetY() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playery" );
 							}
@@ -379,7 +379,7 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playerz" );
 							while( sPos != std::string::npos )
 							{
-								UString myZ = str_number( tChar->GetZ() );
+								std::string myZ = str_number( tChar->GetZ() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerz" );
 							}
@@ -422,7 +422,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// GuildCount
-	UString GuildCount	= str_number( (SI32)GuildSys->NumGuilds() );
+	std::string GuildCount	= str_number( (SI32)GuildSys->NumGuilds() );
 	Pos					= ParsedContent.find( "%guildcount" );
 	while( Pos != std::string::npos )
 	{
@@ -454,7 +454,7 @@ void cHTMLTemplate::Process( void )
 			size_t sPos;
 			CGuild *myGuild = GuildSys->Guild( i );
 
-			UString GuildID	= str_number( i );
+			std::string GuildID	= str_number( i );
 			sPos			= parsedInline.find( "%guildid" );
 			while( sPos != std::string::npos )
 			{
@@ -483,7 +483,7 @@ void cHTMLTemplate::Process( void )
 	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
 	npccount	= b;
 
-	UString npcs	= str_number( npccount );
+	std::string npcs	= str_number( npccount );
 	Pos				= ParsedContent.find( "%npcs" );
 	while( Pos != std::string::npos )
 	{
@@ -560,7 +560,7 @@ void cHTMLTemplate::Process( void )
 	Pos = ParsedContent.find( "%updatetime" );
 	while( Pos != std::string::npos )
 	{
-		UString strUpdateTimer = str_number( UpdateTimer );
+		std::string strUpdateTimer = str_number( UpdateTimer );
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, strUpdateTimer ):ParsedContent.replace( Pos, 11, "0" );
 		Pos = ParsedContent.find( "%updatetime" );
 	}
@@ -647,28 +647,40 @@ void cHTMLTemplate::UnloadTemplate( void )
 //o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
-	UString tag, data, UTag, UData, fullPath;
+	std::string tag, data, UTag, UData, fullPath;
 
 	for( tag = found->First(); !found->AtEnd(); tag = found->Next() )
 	{
 		data = found->GrabData();
-		UTag = tag.upper();
+		UTag = str_toupper( tag );
 
 		if( UTag == "UPDATE" )
-			UpdateTimer = data.toUInt();
+		{
+			UpdateTimer = static_cast<UI32>(std::stoul(data, nullptr, 0));
+		}
 		else if( UTag == "TYPE" )
 		{
-			UData = data.upper();
+			UData = str_toupper( data );
 			if( UData == "STATUS" )
+			{
 				Type = ETT_ONLINE;
+			}
 			else if( UData == "OFFLINE" )
+			{
 				Type = ETT_OFFLINE;
+			}
 			else if( UData == "PLAYER" )
+			{
 				Type = ETT_PLAYER;
+			}
 			else if( UData == "GUILD" )
+			{
 				Type = ETT_GUILD;
+			}
 			else if( UData == "GMSTATUS" )
+			{
 				Type = ETT_GMSTATUS;
+			}
 		}
 		else if( UTag == "INPUT" )
 		{

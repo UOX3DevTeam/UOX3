@@ -889,8 +889,8 @@ size_t cWeatherAb::Count( void ) const
 bool cWeatherAb::Load( void )
 {
 	weather.resize( FileLookup->CountOfEntries( weathab_def ) );
-	UString tag, data, UTag;
-	UString entryName;
+	std::string tag, data, UTag;
+	std::string entryName;
 	size_t i = 0;
 	for( Script *weathScp = FileLookup->FirstScript( weathab_def ); !FileLookup->FinishedScripts( weathab_def ); weathScp = FileLookup->NextScript( weathab_def ) )
 	{
@@ -900,105 +900,151 @@ bool cWeatherAb::Load( void )
 		for( ScriptSection *WeatherStuff = weathScp->FirstEntry(); WeatherStuff != NULL; WeatherStuff = weathScp->NextEntry() )
 		{
 			if( WeatherStuff == NULL )
+			{
 				continue;
+			}
 
 			entryName			= weathScp->EntryName();
-			i					= entryName.section( " ", 1, 1 ).toUInt();
+			auto ssecs 			= sections( entryName, " " );
+			i					= static_cast<UI32>(std::stoul(ssecs[1], nullptr, 0));
 			if( i >= weather.size() )
+			{
 				weather.resize( i+1 );
+			}
 
 			for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
 			{
-				UTag = tag.upper();
+				UTag = str_toupper( tag );
 				data = WeatherStuff->GrabData();
 				switch( tag[0] )
 				{
 					case 'c':
 					case 'C':
-						if( UTag == "COLDCHANCE" )			// chance for a cold day
-							ColdChance( static_cast<weathID>(i), data.toByte() );
-						else if( UTag == "COLDINTENSITY" )	// cold intensity
-							ColdIntensityHigh( static_cast<weathID>(i), data.toByte() );
+						if( UTag == "COLDCHANCE" ) // chance for a cold day
+						{
+							ColdChance( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
+						else if( UTag == "COLDINTENSITY" ) // cold intensity
+						{
+							ColdIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
 						break;
 
 					case 'h':
 					case 'H':
-						if( UTag == "HEATCHANCE" )			// chance for a hot day
-							HeatChance( static_cast<weathID>(i), data.toByte() );
-						else if( UTag == "HEATINTENSITY" )	// heat intensity
-							HeatIntensityHigh( static_cast<weathID>(i), data.toByte() );
+						if( UTag == "HEATCHANCE" ) // chance for a hot day
+						{
+							HeatChance( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
+						else if( UTag == "HEATINTENSITY" ) // heat intensity
+						{
+							HeatIntensityHigh( static_cast<weathID>(i),static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
 						break;
 
 					case 'l':
 					case 'L':
-						if( UTag == "LIGHTMIN" )			// minimum light level
-							LightMin( static_cast<weathID>(i), data.toFloat() );
-						else if( UTag == "LIGHTMAX" )		// maximum light level
-							LightMax( static_cast<weathID>(i), data.toFloat() );
+						if( UTag == "LIGHTMIN" ) // minimum light level
+						{
+							LightMin( static_cast<weathID>(i), std::stof(data) );
+						}
+						else if( UTag == "LIGHTMAX" ) // maximum light level
+						{
+							LightMax( static_cast<weathID>(i), std::stof(data));
+						}
 						break;
 
 					case 'm':
 					case 'M':
-						if( UTag == "MAXTEMP" )				// maximum temperature
-							MaxTemp( static_cast<weathID>(i), data.toFloat() );
-						else if( UTag == "MINTEMP" )		// minimum temperature
-							MinTemp( static_cast<weathID>(i), data.toFloat() );
-						else if( UTag == "MAXWIND" )		// maximum wind speed
-							MaxWindSpeed( static_cast<weathID>(i), data.toFloat() );
-						else if( UTag == "MINWIND" )		// minimum wind speed
-							MinWindSpeed( static_cast<weathID>(i), data.toFloat() );
+						if( UTag == "MAXTEMP" ) // maximum temperature
+						{
+							MaxTemp( static_cast<weathID>(i), std::stof(data) );
+						}
+						else if( UTag == "MINTEMP" ) // minimum temperature
+						{
+							MinTemp( static_cast<weathID>(i), std::stof(data) );
+						}
+						else if( UTag == "MAXWIND" ) // maximum wind speed
+						{
+							MaxWindSpeed( static_cast<weathID>(i), std::stof(data) );
+						}
+						else if( UTag == "MINWIND" ) // minimum wind speed
+						{
+							MinWindSpeed( static_cast<weathID>(i), std::stof(data) );
+						}
 						break;
 
 					case 'r':
 					case 'R':
-						if( UTag == "RAINCHANCE" )			// chance of rain
-							RainChance( static_cast<weathID>(i), data.toByte() );
-						else if( UTag == "RAININTENSITY" )	// intensity of rain
-							if( data.sectionCount( "," ) != 0 )
+						if( UTag == "RAINCHANCE" ) // chance of rain
+						{
+							RainChance( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
+						else if( UTag == "RAININTENSITY" ) // intensity of rain
+						{
+							auto csecs = sections( data, "," );
+							if( csecs.size() > 1 )
 							{
-								RainIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
-								RainIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+								RainIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(stripTrim(csecs[0]),nullptr,0)) );
+								RainIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(stripTrim(csecs[1]),nullptr,0)) );
 							}
 							else
 							{
 								RainIntensityLow( static_cast<weathID>(i), 0 );
-								RainIntensityHigh( static_cast<weathID>(i), data.toByte() );
+								RainIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
 							}
-						else if( UTag == "RAINTEMPDROP" )			// temp drop of rain
-							RainTempDrop( static_cast<weathID>(i), data.toByte() );
+						}
+						else if( UTag == "RAINTEMPDROP" ) // temp drop of rain
+						{
+							RainTempDrop( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
 						break;
 					case 's':
 					case 'S':
-						if( UTag == "SNOWCHANCE" )			// chance of snow
-							SnowChance( static_cast<weathID>(i), data.toByte() );
-						else if( UTag == "SNOWINTENSITY" )	// intensity of snow
-							if( data.sectionCount( "," ) != 0 )
+						if( UTag == "SNOWCHANCE" ) // chance of snow
+						{
+							SnowChance( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
+						else if( UTag == "SNOWINTENSITY" ) // intensity of snow
+						{
+							auto csecs = sections( data, "," );
+							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
-								SnowIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(stripTrim(csecs[0]),nullptr,0)));
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(stripTrim(csecs[1]),nullptr,0)) );
 							}
 							else
 							{
 								SnowIntensityLow( static_cast<weathID>(i), 0 );
-								SnowIntensityHigh( static_cast<weathID>(i), data.toByte() );
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
 							}
-						else if( UTag == "SNOWTHRESHOLD" )	// temperature at which snow kicks in
-							SnowThreshold( static_cast<weathID>(i), data.toFloat() );
-						else if( UTag == "STORMCHANCE" )	// chance of a storm
-							StormChance( static_cast<weathID>(i), data.toByte() );
-						else if( UTag == "STORMINTENSITY" )	// chance of a storm
-							if( data.sectionCount( "," ) != 0 )
+						}
+						else if( UTag == "SNOWTHRESHOLD" ) // temperature at which snow kicks in
+						{
+							SnowThreshold( static_cast<weathID>(i), std::stof(data) );
+						}
+						else if( UTag == "STORMCHANCE" ) // chance of a storm
+						{
+							StormChance( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
+						else if( UTag == "STORMINTENSITY" ) // chance of a storm
+						{
+							auto csecs = sections( data, "," );
+							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
-								SnowIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(stripTrim(csecs[0]),nullptr,0)) );
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(stripTrim(csecs[1]),nullptr,0)) );
 							}
 							else
 							{
 								SnowIntensityLow( static_cast<weathID>(i), 0 );
-								SnowIntensityHigh( static_cast<weathID>(i), data.toByte() );
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
 							}
-						else if( UTag == "STORMTEMPDROP" )			// temp drop of storm
-							StormTempDrop( static_cast<weathID>(i), data.toByte() );
+						}
+						else if( UTag == "STORMTEMPDROP" ) // temp drop of storm
+						{
+							StormTempDrop( static_cast<weathID>(i), static_cast<SI08>(std::stoi(data, nullptr, 0)) );
+						}
 						break;
 				}
 			}

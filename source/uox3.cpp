@@ -79,9 +79,6 @@ std::thread netw;
 
 std::chrono::time_point<std::chrono::system_clock> current;
 
-
-
-
 std::mt19937 generator;
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2583,7 +2580,6 @@ void DoorMacro( CSocket *s )
 		regItems->Pop();
 	}
 }
-
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	int main( SI32 argc, char *argv[] )

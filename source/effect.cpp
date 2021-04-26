@@ -355,9 +355,10 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		return;
 
 	CSocket *sock	= src->GetSocket();
-	UString addItem = toMake->addItem;
+	std::string addItem = toMake->addItem;
 	UI16 amount		= 1;
-	if( addItem.sectionCount( "," ) != 0 )
+	auto csecs = sections( addItem, "," );
+	if( csecs.size() > 1 )
 	{
 		amount		= str_value<std::uint16_t>(extractSection(addItem, ",", 1, 1 ));
 		addItem		= extractSection(addItem, ",", 0, 0 );
@@ -529,9 +530,11 @@ void cEffects::checktempeffects( void )
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
 					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
-					UString mTemp = str_number( Effect->More3() );
+					std::string mTemp = str_number( Effect->More3() );
 					if( tSock != NULL )
+					{
 						tSock->sysmessage( mTemp.c_str() );
+					}
 				}
 				break;
 			case 17: // Explosion effect (JS and code)

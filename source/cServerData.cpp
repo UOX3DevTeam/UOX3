@@ -161,7 +161,7 @@ void	CServerData::regAllINIValues() {
 	// be easiest.
 	// They key is that number HAS to match the case statement number
 	// in
-	//bool CServerData::HandleLine( const UString& tag, const UString& value )
+	//bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 	// in cServerData.cpp (this file).
 	regINIValue("SERVERNAME", 1);
 	regINIValue("CONSOLELOG", 2);
@@ -441,7 +441,7 @@ void CServerData::ResetDefaults( void )
 	ServerSkillCap( 1000 );
 	ServerStatCap( 325 );
 	CorpseLootDecay( true );
-	ServerSavesTimer( 300 );
+	ServerSavesTimer( 600 );
 
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
@@ -1041,7 +1041,6 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			default:					verboseDirectory = "Unknown directory";			break;
 		};
 		// First, let's normalize the path name and fix common errors
-		//UString sText( value );
 		// remove all trailing and leading spaces...
 		auto sText = trim(value) ;
 
@@ -3281,7 +3280,7 @@ bool CServerData::save( std::string filename )
 //o-----------------------------------------------------------------------------------------------o
 void CServerData::Load( void )
 {
-	const UString fileName = Directory( CSDDP_ROOT ) + "uox.ini";
+	const std::string fileName = Directory( CSDDP_ROOT ) + "uox.ini";
 	ParseINI( fileName );
 }
 
@@ -3376,10 +3375,10 @@ bool CServerData::ParseINI( const std::string& filename )
 			{
 				if( sect == NULL )
 					continue;
-				UString tag, data;
+				std::string tag, data;
 				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
 				{
-					data = sect->GrabData().simplifyWhiteSpace();
+					data = simplify( sect->GrabData() );
 					if( !HandleLine( tag, data ) )
 					{
 						Console.warning( format("Unhandled tag '%s'", tag.c_str()) );
@@ -3398,7 +3397,7 @@ bool CServerData::ParseINI( const std::string& filename )
 	return rvalue;
 }
 
-bool CServerData::HandleLine( const UString& tag, const UString& value )
+bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 {
 	bool rvalue = true;
 	auto titer = uox3inicasevalue.find(tag) ;
@@ -3411,85 +3410,85 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		case 1:	 // SERVERNAME[0002]
 			break;
 		case 2:	 // CONSOLELOG[0003]
-			ServerConsoleLog( value.toUByte() );
+			ServerConsoleLog( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 3:	 // COMMANDPREFIX[0005]
 			ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
 			break;
 		case 4:	 // ANNOUNCEWORLDSAVES[0006]
-			ServerAnnounceSaves( (value.toUShort()==1?true:false) );
+			ServerAnnounceSaves( (static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false) );
 			break;
 		case 26:	 // JOINPARTMSGS[0007]
-			ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
+			ServerJoinPartAnnouncements( (static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 ? true : false) );
 			break;
 		case 5:	 // BACKUPSENABLED[0009]
-			ServerBackups( (value.toUShort()>0?true:false) );
+			ServerBackups( (static_cast<UI16>(std::stoul(value, nullptr, 0)) > 0 ? true : false) );
 			break;
 		case 6:	 // SAVESTIMER[0010]
-			ServerSavesTimer( value.toUInt() );
+			ServerSavesTimer( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 7:	 // SKILLCAP[0011]
-			ServerSkillTotalCap( value.toUShort() );
+			ServerSkillTotalCap( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 8:	 // SKILLDELAY[0012]
-			ServerSkillDelay( value.toUByte() );
+			ServerSkillDelay( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 9:	 // STATCAP[0013]
-			ServerStatCap( value.toUShort() );
+			ServerStatCap( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 10:	 // MAXSTEALTHMOVEMENTS[0014]
-			MaxStealthMovement( value.toShort() );
+			MaxStealthMovement( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 11:	 // MAXSTAMINAMOVEMENTS[0015]
-			MaxStaminaMovement( value.toShort() );
+			MaxStaminaMovement( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 12:	 // ARMORAFFECTMANAREGEN[0016]
-			ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
+			ArmorAffectManaRegen( (static_cast<UI08>(std::stoul(value, nullptr, 0)) > 0 ? true : false) );
 			break;
 		case 13:	 // CORPSEDECAYTIMER[0017]
-			SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
+			SystemTimer( tSERVER_CORPSEDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 14:	 // WEATHERTIMER[0018]
-			SystemTimer( tSERVER_WEATHER, value.toUShort() );
+			SystemTimer( tSERVER_WEATHER, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 15:	 // SHOPSPAWNTIMER[0019]
-			SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
+			SystemTimer( tSERVER_SHOPSPAWN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 16:	 // DECAYTIMER[0020]
-			SystemTimer( tSERVER_DECAY, value.toUShort() );
+			SystemTimer( tSERVER_DECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 17:	 // INVISIBILITYTIMER[0021]
-			SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
+			SystemTimer( tSERVER_INVISIBILITY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 18:	 // OBJECTUSETIMER[0022]
-			SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
+			SystemTimer( tSERVER_OBJECTUSAGE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 19:	 // GATETIMER[0023]
-			SystemTimer( tSERVER_GATE, value.toUShort() );
+			SystemTimer( tSERVER_GATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 20:	 // POISONTIMER[0024]
-			SystemTimer( tSERVER_POISON, value.toUShort() );
+			SystemTimer( tSERVER_POISON, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 21:	 // LOGINTIMEOUT[0025]
-			SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
+			SystemTimer( tSERVER_LOGINTIMEOUT, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 22:	 // HITPOINTREGENTIMER[0026]
-			SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
+			SystemTimer( tSERVER_HITPOINTREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 23:	 // STAMINAREGENTIMER[0027]
-			SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
+			SystemTimer( tSERVER_STAMINAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 37:	 // MANAREGENTIMER[0028]
-			SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
+			SystemTimer( tSERVER_MANAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 24:	 // BASEFISHINGTIMER[0029]
-			SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
+			SystemTimer( tSERVER_FISHINGBASE,static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 38:	 // RANDOMFISHINGTIMER[0030]
-			SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
+			SystemTimer( tSERVER_FISHINGRANDOM, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 39:	 // SPIRITSPEAKTIMER[0031]
-			SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
+			SystemTimer( tSERVER_SPIRITSPEAK, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 40:	 // DIRECTORY[0032]
 		{
@@ -3532,255 +3531,256 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		}
 		case 47:	 // LOOTDECAYSWITHCORPSE[0040]
-			CorpseLootDecay( value.toUShort() != 0 );
+			CorpseLootDecay( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 49:	 // GUARDSACTIVE[0041]
-			GuardStatus( value.toUShort() != 0 );
+			GuardStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 27:	 // DEATHANIMATION[0042]
-			DeathAnimationStatus( value.toUShort() != 0 );
+			DeathAnimationStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 50:	 // AMBIENTSOUNDS[0043]
-			WorldAmbientSounds( value.toShort() );
+			WorldAmbientSounds( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 51:	 // AMBIENTFOOTSTEPS[0044]
-			AmbientFootsteps( value.toUShort() != 0 );
+			AmbientFootsteps( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 52:	 // INTERNALACCOUNTCREATION[0045]
-			InternalAccountStatus( value.toUShort() != 0 );
+			InternalAccountStatus( static_cast<UI16>(std::stoul(value, nullptr, 0))!= 0 );
 			break;
 		case 53:	 // SHOWOFFLINEPCS[0046]
-			ShowOfflinePCs( value.toUShort() != 0 );
+			ShowOfflinePCs( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 54:	 // ROGUESENABLED[0047]
-			RogueStatus( value.toUShort() != 0 );
+			RogueStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 55:	 // PLAYERPERSECUTION[0048]
-			PlayerPersecutionStatus( value.toUShort() != 0 );
+			PlayerPersecutionStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 56:	 // ACCOUNTFLUSH[0049]
-			AccountFlushTimer( value.toDouble() );
+			AccountFlushTimer( std::stod(value) );
 			break;
 		case 57:	 // HTMLSTATUSENABLED[0050]
-			HtmlStatsStatus( value.toShort() );
+			HtmlStatsStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 58:	 // SELLBYNAME[0051]
-			SellByNameStatus( value.toUShort() == 1 );
+			SellByNameStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 59:	 // SELLMAXITEMS[0052]
-			SellMaxItemsStatus( value.toShort() );
+			SellMaxItemsStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 60:	 // TRADESYSTEM[0053]
-			TradeSystemStatus( value.toUShort() != 0 );
+			TradeSystemStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 61:	 // RANKSYSTEM[0054]
-			RankSystemStatus( value.toUShort() != 0 );
+			RankSystemStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 62:	 // CUTSCROLLREQUIREMENTS[0055]
-			CutScrollRequirementStatus( (value.toUShort() != 0) );
+			CutScrollRequirementStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0) ;
 			break;
 		case 63:	 // CHECKITEMS[0056]
-			CheckItemsSpeed( value.toDouble() );
+			CheckItemsSpeed( std::stod(value) );
 			break;
 		case 64:	 // CHECKBOATS[0057]
-			CheckBoatSpeed( value.toDouble() );
+			CheckBoatSpeed( std::stod(value) );
 			break;
 		case 65:	 // CHECKNPCAI[0058]
-			CheckNpcAISpeed( value.toDouble() );
+			CheckNpcAISpeed( std::stod(value) );
 			break;
 		case 66:	 // CHECKSPAWNREGIONS[0059]
-			CheckSpawnRegionSpeed( value.toDouble() );
+			CheckSpawnRegionSpeed( std::stod(value) );
 			break;
 		case 67:	 // POSTINGLEVEL[0060]
-			MsgBoardPostingLevel( value.toUByte() );
+			MsgBoardPostingLevel( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 68:	 // REMOVALLEVEL[0061]
-			MsgBoardPostRemovalLevel( value.toUByte() );
+			MsgBoardPostRemovalLevel( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 69:	 // ESCORTENABLED[0062]
-			EscortsEnabled( value.toUShort() == 1 );
+			EscortsEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 70:	 // ESCORTINITEXPIRE[0063]
-			SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
+			SystemTimer( tSERVER_ESCORTWAIT, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 71:	 // ESCORTACTIVEEXPIRE[0064]
-			SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
+			SystemTimer( tSERVER_ESCORTACTIVE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 72:	 // MOON1[0065]
-			ServerMoon( 0, value.toShort() );
+			ServerMoon( 0, static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 73:	 // MOON2[0066]
-			ServerMoon( 1, value.toShort() );
+			ServerMoon( 1, static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 74:	 // DUNGEONLEVEL[0067]
-			DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
+			DungeonLightLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 75:	 // CURRENTLEVEL[0068]
-			WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
+			WorldLightCurrentLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 76:	 // BRIGHTLEVEL[0069]
-			WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
+			WorldLightBrightLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 77:	 // BASERANGE[0070]
-			TrackingBaseRange( value.toUShort() );
+			TrackingBaseRange( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 78:	 // BASETIMER[0071]
-			TrackingBaseTimer( value.toUShort() );
+			TrackingBaseTimer( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 79:	 // MAXTARGETS[0072]
-			TrackingMaxTargets( value.toUByte() );
+			TrackingMaxTargets( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 80:	 // MSGREDISPLAYTIME[0073]
-			TrackingRedisplayTime( value.toUShort() );
+			TrackingRedisplayTime( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 81:	 // MURDERDECAYTIMER[0074]
-			SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
+			SystemTimer( tSERVER_MURDERDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 82:	 // MAXKILLS[0075]
-			RepMaxKills( value.toUShort() );
+			RepMaxKills( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 83:	 // CRIMINALTIMER[0076]
-			SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
+			SystemTimer( tSERVER_CRIMINAL, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 84:	 // MINECHECK[0077]
-			MineCheck( value.toUByte() );
+			MineCheck( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 85:	 // OREPERAREA[0078]
-			ResOre( value.toShort() );
+			ResOre(static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 86:	 // ORERESPAWNTIMER[0079]
-			ResOreTime( value.toUShort() );
+			ResOreTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 87:	 // ORERESPAWNAREA[0080]
-			ResOreArea( value.toUShort() );
+			ResOreArea( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 88:	 // LOGSPERAREA[0081]
-			ResLogs( value.toShort() );
+			ResLogs( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 89:	 // LOGSRESPAWNTIMER[0082]
-			ResLogTime( value.toUShort() );
+			ResLogTime( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 90:	 // LOGSRESPAWNAREA[0083]
-			ResLogArea( value.toUShort() );
+			ResLogArea(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 91:	 // HUNGERRATE[0084]
-			SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
+			SystemTimer( tSERVER_HUNGERRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 92:	 // HUNGERDMGVAL[0085]
-			HungerDamage( value.toShort() );
+			HungerDamage( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 93:	 // MAXRANGE[0086]
-			CombatMaxRange( value.toShort() );
+			CombatMaxRange( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 94:	 // SPELLMAXRANGE[0087]
-			CombatMaxSpellRange( value.toShort() );
+			CombatMaxSpellRange(static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 95:	 // DISPLAYHITMSG[0088]
-			CombatDisplayHitMessage( value.toUShort() == 1 );
+			CombatDisplayHitMessage( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 96:	 // MONSTERSVSANIMALS[0089]
-			CombatMonstersVsAnimals( value.toUShort() == 1 );
+			CombatMonstersVsAnimals( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 97:	 // ANIMALATTACKCHANCE[0090]
-			CombatAnimalsAttackChance( value.toUShort() );
+			CombatAnimalsAttackChance( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 98:	 // ANIMALSGUARDED[0091]
-			CombatAnimalsGuarded( value.toUShort() == 1 );
+			CombatAnimalsGuarded( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 99:	 // NPCDAMAGERATE[0092]
-			CombatNPCDamageRate( value.toShort() );
+			CombatNPCDamageRate( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 100:	 // NPCBASEFLEEAT[0093]
-			CombatNPCBaseFleeAt( value.toShort() );
+			CombatNPCBaseFleeAt( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 101:	 // NPCBASEREATTACKAT[0094]
-			CombatNPCBaseReattackAt( value.toShort() );
+			CombatNPCBaseReattackAt( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 102:	 // ATTACKSTAMINA[0095]
-			CombatAttackStamina( value.toShort() );
+			CombatAttackStamina( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 103:	 // LOCATION[0096]
 			ServerLocation( value );
 			break;
 		case 104:	 // STARTGOLD[0097]
-			ServerStartGold( value.toShort() );
+			ServerStartGold( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 105:	 // STARTPRIVS[0098]
-			ServerStartPrivs( value.toUShort() );
+			ServerStartPrivs( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 106:	 // ESCORTDONEEXPIRE[0099]
-			SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
+			SystemTimer( tSERVER_ESCORTDONE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 107:	 // DARKLEVEL[0100]
-			WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
+			WorldLightDarkLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 108:	 // TITLECOLOUR[0101]
-			TitleColour( value.toUShort() );
+			TitleColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 109:	 // LEFTTEXTCOLOUR[0102]
-			LeftTextColour( value.toUShort() );
+			LeftTextColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 110:	 // RIGHTTEXTCOLOUR[0103]
-			RightTextColour( value.toUShort() );
+			RightTextColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 111:	 // BUTTONCANCEL[0104]
-			ButtonCancel( value.toUShort() );
+			ButtonCancel( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 112:	 // BUTTONLEFT[0105]
-			ButtonLeft( value.toUShort() );
+			ButtonLeft( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 113:	 // BUTTONRIGHT[0106]
-			ButtonRight( value.toUShort() );
+			ButtonRight( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 114:	 // BACKGROUNDPIC[0107]
-			BackgroundPic( value.toUShort() );
+			BackgroundPic( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 115:	 // POLLTIME[0108]
-			TownNumSecsPollOpen( value.toUInt() );
+			TownNumSecsPollOpen( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 116:	 // MAYORTIME[0109]
-			TownNumSecsAsMayor( value.toUInt() );
+			TownNumSecsAsMayor( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 117:	 // TAXPERIOD[0110]
-			TownTaxPeriod( value.toUInt() );
+			TownTaxPeriod( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 118:	 // GUARDSPAID[0111]
-			TownGuardPayment( value.toUInt() );
+			TownGuardPayment( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 119:	 // DAY[0112]
-			ServerTimeDay( value.toShort() );
+			ServerTimeDay( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 120:	 // HOURS[0113]
-			ServerTimeHours( value.toUByte() );
+			ServerTimeHours( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 121:	 // MINUTES[0114]
-			ServerTimeMinutes( value.toUByte() );
+			ServerTimeMinutes( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 122:	 // SECONDS[0115]
-			ServerTimeSeconds( value.toUByte() );
+			ServerTimeSeconds( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 123:	 // AMPM[0116]
-			ServerTimeAMPM( value.toUShort() != 0 );
+			ServerTimeAMPM( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 124:	 // SKILLLEVEL[0117]
-			SkillLevel( value.toUByte() );
+			SkillLevel( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 125:	 // SNOOPISCRIME[0118]
-			SnoopIsCrime( value.toUShort() != 0 );
+			SnoopIsCrime( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 126:	 // BOOKSDIRECTORY[0119]
 			Directory( CSDDP_BOOKS, value );
 			break;
 		case 127:	 // SERVERLIST[0120]
 		{
-			UString sname, sip, sport;
+			std::string sname, sip, sport;
 			physicalServer toAdd;
-			if( value.sectionCount( "," ) == 2 )
+			auto csecs = sections( value, "," );
+			if( csecs.size() == 3 )
 			{
 				struct hostent *lpHostEntry = NULL;
-				sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
-				sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
-				sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
+				sname	= stripTrim( csecs[0] );
+				sip		= stripTrim( csecs[1] );
+				sport	= stripTrim( csecs[2] );
 
 				toAdd.setName( sname );
 				// Ok look up the data here see if its a number
@@ -3798,16 +3798,20 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 					bDomain = false;
 				}
 				// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
-				if( bDomain )	// Store the domain name for later then seeing as its a valid one
+				if( bDomain ) // Store the domain name for later then seeing as its a valid one
+				{
 					toAdd.setDomain( sip );
-				else			// this was a valid ip address so we will use an ip instead so clear the domain string.
+				}
+				else // this was a valid ip address so we will use an ip instead so clear the domain string.
+				{
 					toAdd.setDomain( "" );
+				}
 
 				// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once
 				struct in_addr *pinaddr;
 				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
 				toAdd.setIP( inet_ntoa(*pinaddr) );
-				toAdd.setPort( sport.toUShort() );
+				toAdd.setPort( static_cast<UI16>(std::stoul(sport, nullptr, 0)));
 				serverList.push_back( toAdd );
 			}
 			else
@@ -3818,7 +3822,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		}
 		case 128:	 // PORT[0121]
-			ServerPort( value.toUShort() );
+			ServerPort( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 129:	 // ACCESSDIRECTORY[0122]
 			Directory( CSDDP_ACCESS, value );
@@ -3832,299 +3836,299 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			Directory( CSDDP_HTML, value );
 			break;
 		case 133:	 // SHOOTONANIMALBACK[0126]
-			ShootOnAnimalBack( value.toUShort() == 1 );
+			ShootOnAnimalBack( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 134:	 // NPCTRAININGENABLED[0127]
-			NPCTrainingStatus( value.toUShort() == 1 );
+			NPCTrainingStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 135:	 // DICTIONARYDIRECTORY[0128]
 			Directory( CSDDP_DICTIONARIES, value );
 			break;
 		case 136:	 // BACKUPSAVERATIO[0129]
-			BackupRatio( value.toShort() );
+			BackupRatio( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 137:	 // HIDEWILEMOUNTED[0130]
-			CharHideWhileMounted( value.toShort() == 1 );
+			CharHideWhileMounted( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 138:	 // SECONDSPERUOMINUTE[0131]
-			ServerSecondsPerUOMinute( value.toUShort() );
+			ServerSecondsPerUOMinute( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 139:	 // WEIGHTPERSTR[0132]
 			//WeightPerStr( value.toUByte() );
-			WeightPerStr( value.toFloat() );
+			WeightPerStr( std::stof(value) );
 			break;
 		case 140:	 // POLYDURATION[0133]
-			SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
+			SystemTimer( tSERVER_POLYMORPH, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 141:	 // UOGENABLED[0134]
-			ServerUOGEnabled( value.toShort()==1 );
+			ServerUOGEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0))==1 );
 			break;
 		case 142:	 // NETRCVTIMEOUT[0135]
-			ServerNetRcvTimeout( value.toUInt() );
+			ServerNetRcvTimeout( static_cast<UI32>(std::stoul(value, nullptr, 0)));
 			break;
 		case 143:	 // NETSNDTIMEOUT[0136]
-			ServerNetSndTimeout( value.toUInt() );
+			ServerNetSndTimeout( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 144:	 // NETRETRYCOUNT[0137]
-			ServerNetRetryCount( value.toUInt() );
+			ServerNetRetryCount( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 145:	 // CLIENTFEATURES[0138]
-			SetClientFeatures( value.toUInt() );
+			SetClientFeatures( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 146:	 // PACKETOVERLOADS[0139]
-			ServerOverloadPackets( (value.toByte() == 1) );
+			ServerOverloadPackets( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 147:	 // NPCMOVEMENTSPEED[0140]
-			NPCWalkingSpeed( value.toFloat() );
+			NPCWalkingSpeed( std::stof(value) );
 			break;
 		case 148:	 // PETHUNGEROFFLINE[0141]
-			PetHungerOffline( (value.toByte() == 1) );
+			PetHungerOffline( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 149:	 // PETOFFLINETIMEOUT[0142]
-			PetOfflineTimeout( value.toUShort() );
+			PetOfflineTimeout( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 150:	 // PETOFFLINECHECKTIMER[0143]
-			SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
+			SystemTimer( tSERVER_PETOFFLINECHECK, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 152:	 // ADVANCEDPATHFINDING[0145]
-			AdvancedPathfinding( (value.toByte() == 1) );
+			AdvancedPathfinding( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 153:	 // SERVERFEATURES[0146]
-			SetServerFeatures( value.toUInt() );
+			SetServerFeatures( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 154:	 // LOOTINGISCRIME[0147]
-			LootingIsCrime( (value.toByte() == 1) );
+			LootingIsCrime( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 155:	 // NPCRUNNINGSPEED[0148]
-			NPCRunningSpeed( value.toFloat() );
+			NPCRunningSpeed( std::stof(value) );
 			break;
 		case 156:	 // NPCFLEEINGSPEED[0149]
-			NPCFleeingSpeed( value.toFloat() );
+			NPCFleeingSpeed( std::stof(value) );
 			break;
 		case 157:	 // BASICTOOLTIPSONLY[0150]
-			BasicTooltipsOnly( (value.toByte() == 1) );
+			BasicTooltipsOnly( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 158:	 // GLOBALITEMDECAY[0151]
-			GlobalItemDecay( (value.toByte() == 1) );
+			GlobalItemDecay( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 159:	 // SCRIPTITEMSDECAYABLE[0152]
-			ScriptItemsDecayable( (value.toByte() == 1) );
+			ScriptItemsDecayable( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 160:	 // BASEITEMSDECAYABLE[0152]
-			BaseItemsDecayable( (value.toByte() == 1) );
+			BaseItemsDecayable( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 161:	 // ITEMDECAYINHOUSES[0153]
-			ItemDecayInHouses( (value.toByte() == 1) );
+			ItemDecayInHouses( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 162:	// COMBATEXPLODEDELAY[0154]
-			CombatExplodeDelay( value.toUShort() );
+			CombatExplodeDelay( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 163:	// PAPERDOLLGUILDBUTTON[0155]
-			PaperdollGuildButton( value.toByte() == 1 );
+			PaperdollGuildButton( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 164:	// ATTACKSPEEDFROMSTAMINA[0156]
-			CombatAttackSpeedFromStamina( value.toUShort() == 1 );
+			CombatAttackSpeedFromStamina( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 169:	 // DISPLAYDAMAGENUMBERS[0157]
-			CombatDisplayDamageNumbers( value.toUShort() == 1 );
+			CombatDisplayDamageNumbers( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 170:	 // CLIENTSUPPORT4000[0158]
-			ClientSupport4000( value.toUShort() == 1 );
+			ClientSupport4000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 171:	 // CLIENTSUPPORT5000[0159]
-			ClientSupport5000( value.toUShort() == 1 );
+			ClientSupport5000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 172:	 // CLIENTSUPPORT6000[0160]
-			ClientSupport6000( value.toUShort() == 1 );
+			ClientSupport6000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 173:	 // CLIENTSUPPORT6050[0161]
-			ClientSupport6050( value.toUShort() == 1 );
+			ClientSupport6050( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 174:	 // CLIENTSUPPORT7000[0162]
-			ClientSupport7000( value.toUShort() == 1 );
+			ClientSupport7000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 175:	 // CLIENTSUPPORT7090[0163]
-			ClientSupport7090( value.toUShort() == 1 );
+			ClientSupport7090( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 176:	 // CLIENTSUPPORT70160[0164]
-			ClientSupport70160( value.toUShort() == 1 );
+			ClientSupport70160( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 177:	// CLIENTSUPPORT70240[0165]
-			ClientSupport70240( value.toUShort() == 1 );
+			ClientSupport70240( static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 );
 			break;
 		case 178:	// CLIENTSUPPORT70300[0166]
-			ClientSupport70300( value.toUShort() == 1 );
+			ClientSupport70300( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 179:	// CLIENTSUPPORT70331[0167]
-			ClientSupport70331( value.toUShort() == 1 );
+			ClientSupport70331( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 180:	// CLIENTSUPPORT704565[0168]
-			ClientSupport704565( value.toUShort() == 1 );
+			ClientSupport704565( static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 );
 			break;
 		case 181:	// CLIENTSUPPORT70610[0169]
-			ClientSupport70610( value.toUShort() == 1 );
+			ClientSupport70610( static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 );
 			break;
 		case 182:	 // EXTENDEDSTARTINGSTATS[0170]
-			ExtendedStartingStats( value.toUShort() == 1 );
+			ExtendedStartingStats(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 183:	 // EXTENDEDSTARTINGSKILLS[0171]
-			ExtendedStartingSkills( value.toUShort() == 1 );
+			ExtendedStartingSkills( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 184:	// WEAPONDAMAGECHANCE[0172]
-			CombatWeaponDamageChance( value.toUByte() );
+			CombatWeaponDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 185:	// ARMORDAMAGECHANCE[0173]
-			CombatArmorDamageChance( value.toUByte() );
+			CombatArmorDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)));
 			break;
 		case 186:	// WEAPONDAMAGEMIN[0174]
-			CombatWeaponDamageMin( value.toUByte() );
+			CombatWeaponDamageMin( static_cast<UI08>(std::stoul(value, nullptr, 0)));
 			break;
 		case 187:	// WEAPONDAMAGEMAX[0175]
-			CombatWeaponDamageMax( value.toUByte() );
+			CombatWeaponDamageMax( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 188:	// ARMORDAMAGEMIN[0176]
-			CombatArmorDamageMin( value.toUByte() );
+			CombatArmorDamageMin( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 189:	// ARMORDAMAGEMAX[0177]
-			CombatArmorDamageMax( value.toUByte() );
+			CombatArmorDamageMax( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 190:	// GLOBALATTACKSPEED[0178]
-			GlobalAttackSpeed( value.toFloat() );
+			GlobalAttackSpeed( std::stof(value) );
 			break;
 		case 191:	// NPCSPELLCASTSPEED[0179]
-			NPCSpellCastSpeed( value.toFloat() );
+			NPCSpellCastSpeed( std::stof(value) );
 			break;
 		case 192:	// FISHINGSTAMINALOSS[0180]
-			FishingStaminaLoss( value.toFloat() );
+			FishingStaminaLoss( std::stof(value) );
 			break;
 		case 193:	// RANDOMSTARTINGLOCATION[0181]
-			ServerRandomStartingLocation( value.toUShort() == 1 );
+			ServerRandomStartingLocation( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 194:	// ASSISTANTNEGOTIATION[0183]
-			SetAssistantNegotiation( (value.toByte() == 1) );
+			SetAssistantNegotiation( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 195:	// KICKONASSISTANTSILENCE[0184]
-			KickOnAssistantSilence( (value.toByte() == 1) );
+			KickOnAssistantSilence( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 196:	// AF_FILTERWEATHER[0185]
-			SetDisabledAssistantFeature( AF_FILTERWEATHER, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_FILTERWEATHER, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 197:	// AF_FILTERLIGHT[0186]
-			SetDisabledAssistantFeature( AF_FILTERLIGHT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_FILTERLIGHT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 198:	// AF_SMARTTARGET[0187]
-			SetDisabledAssistantFeature( AF_SMARTTARGET, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_SMARTTARGET, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 199:	// AF_RANGEDTARGET[0188]
-			SetDisabledAssistantFeature( AF_RANGEDTARGET, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_RANGEDTARGET, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 200:	// AF_AUTOOPENDOORS[0189]
-			SetDisabledAssistantFeature( AF_AUTOOPENDOORS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOOPENDOORS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 201:	// AF_DEQUIPONCAST[0190]
-			SetDisabledAssistantFeature( AF_DEQUIPONCAST, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_DEQUIPONCAST, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 202:	// AF_AUTOPOTIONEQUIP[0191]
-			SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 203:	// AF_POISONEDCHECKS[0192]
-			SetDisabledAssistantFeature( AF_POISONEDCHECKS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_POISONEDCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 204:	// AF_LOOPEDMACROS[0193]
-			SetDisabledAssistantFeature( AF_LOOPEDMACROS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_LOOPEDMACROS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 205:	// AF_USEONCEAGENT[0194]
-			SetDisabledAssistantFeature( AF_USEONCEAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_USEONCEAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 206:	// AF_RESTOCKAGENT[0195]
-			SetDisabledAssistantFeature( AF_RESTOCKAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_RESTOCKAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 207:	// AF_SELLAGENT[0196]
-			SetDisabledAssistantFeature( AF_SELLAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_SELLAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 208:	// AF_BUYAGENT[0197]
-			SetDisabledAssistantFeature( AF_BUYAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_BUYAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 209:	// AF_POTIONHOTKEYS[0198]
-			SetDisabledAssistantFeature( AF_POTIONHOTKEYS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_POTIONHOTKEYS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 210:	// AF_RANDOMTARGETS[0199]
-			SetDisabledAssistantFeature( AF_RANDOMTARGETS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_RANDOMTARGETS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 211:	// AF_CLOSESTTARGETS[0200]
-			SetDisabledAssistantFeature( AF_CLOSESTTARGETS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_CLOSESTTARGETS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 212:	// AF_OVERHEADHEALTH[0201]
-			SetDisabledAssistantFeature( AF_OVERHEADHEALTH, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_OVERHEADHEALTH, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 213:	// AF_AUTOLOOTAGENT[0202]
-			SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 214:	// AF_BONECUTTERAGENT[0203]
-			SetDisabledAssistantFeature( AF_BONECUTTERAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_BONECUTTERAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 215:	// AF_JSCRIPTMACROS[0204]
-			SetDisabledAssistantFeature( AF_JSCRIPTMACROS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_JSCRIPTMACROS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 216:	// AF_AUTOREMOUNT[0205]
-			SetDisabledAssistantFeature( AF_AUTOREMOUNT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOREMOUNT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 217:	// AF_ALL[0206]
-			SetDisabledAssistantFeature( AF_ALL, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_ALL, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 218:	// CLASSICUOMAPTRACKER[0207]
-			SetClassicUOMapTracker( (value.toByte() == 1) );
+			SetClassicUOMapTracker( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 219:	// DECAYTIMERINHOUSE[0208]
-			SystemTimer( tSERVER_DECAYINHOUSE, value.toUShort() );
+			SystemTimer( tSERVER_DECAYINHOUSE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 220:	// PROTECTPRIVATEHOUSES[0209]
-			ProtectPrivateHouses( value.toUShort() == 1 );
+			ProtectPrivateHouses( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 221:	// TRACKHOUSESPERACCOUNT[0210]
-			TrackHousesPerAccount( value.toUShort() == 1 );
+			TrackHousesPerAccount( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 222:	// MAXHOUSESOWNABLE[0211]
-			MaxHousesOwnable( value.toUShort() );
+			MaxHousesOwnable( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 223:	// MAXHOUSESCOOWNABLE[0212]
-			MaxHousesCoOwnable( value.toUShort() );
+			MaxHousesCoOwnable( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 224:	// CANOWNANDCOOWNHOUSES[0213]
-			CanOwnAndCoOwnHouses( value.toUShort() == 1 );
+			CanOwnAndCoOwnHouses( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 225:	// COOWNHOUSESONSAMEACCOUNT[0214]
-			CoOwnHousesOnSameAccount( value.toUShort() == 1 );
+			CoOwnHousesOnSameAccount( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 226:	// ITEMSDETECTSPEECH[0215]
-			ItemsDetectSpeech( value.toUShort() == 1 );
+			ItemsDetectSpeech( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 227:	// MAXPLAYERPACKITEMS[0216]
-			MaxPlayerPackItems( value.toUShort() );
+			MaxPlayerPackItems( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 228:	// MAXPLAYERBANKITEMS[0217]
-			MaxPlayerBankItems( value.toUShort() );
+			MaxPlayerBankItems( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 229:	// FORCENEWANIMATIONPACKET[0218]
-			ForceNewAnimationPacket( value.toUShort() == 1 );
+			ForceNewAnimationPacket( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 230:	// MAPDIFFSENABLED[0219]
-			MapDiffsEnabled( value.toUShort() == 1 );
+			MapDiffsEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 244:	// CUOENABLED[0233]
-			ConnectUOServerPoll( (value.toByte() == 1) );
+			ConnectUOServerPoll( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 245:	// ALCHEMYBONUSENABLED[0234]
-			AlchemyDamageBonusEnabled( value.toUShort() == 1 );
+			AlchemyDamageBonusEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 246:	// ALCHEMYBONUSMODIFIER[0235]
-			AlchemyDamageBonusModifier( value.toUByte() );
+			AlchemyDamageBonusModifier( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 247:	 // NPCFLAGUPDATETIMER[0236]
-			SystemTimer( tSERVER_NPCFLAGUPDATETIMER, value.toUShort() );
+			SystemTimer( tSERVER_NPCFLAGUPDATETIMER, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 248:	 // JSENGINESIZE[0237]
-			SetJSEngineSize( value.toUShort() );
+			SetJSEngineSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		default:
 			rvalue = false;
@@ -4279,35 +4283,38 @@ LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 }
 void CServerData::ServerLocation( std::string toSet )
 {
-	UString temp( toSet );
-	if( temp.sectionCount( "," ) == 6 )	// Wellformed server location
+	auto temp = toSet;
+	temp = stripTrim( temp );
+	auto csecs = sections( temp, "," );
+	
+	if( csecs.size() ==  7 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
-		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
-		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
-		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
+		toAdd.x				= static_cast<SI16>(std::stoi(stripTrim( csecs[2] ), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(stripTrim( csecs[3] ), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(stripTrim( csecs[4] ), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(stripTrim( csecs[5] ), nullptr, 0));
 		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toUInt();
-		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
-		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(stripTrim( csecs[6] ), nullptr, 0));
+		strcpy( toAdd.oldTown, stripTrim( csecs[0] ).c_str() );
+		strcpy( toAdd.oldDescription, stripTrim( csecs[1] ).c_str() );
+		strcpy( toAdd.newTown, stripTrim( csecs[0] ).c_str()) ;
+		strcpy( toAdd.newDescription, stripTrim( csecs[1] ).c_str() );
 		startlocations.push_back( toAdd );
 	}
-	else if( temp.sectionCount( "," ) == 7 )	// instanceID included
+	else if( csecs.size() ==  8 )	// instanceID included
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
-		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
-		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
-		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
-		toAdd.instanceID	= temp.section( ",", 6, 6 ).toUShort();
-		toAdd.clilocDesc	= temp.section( ",", 7, 7 ).toUInt();
-		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
-		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
+		toAdd.x				= static_cast<SI16>(std::stoi(stripTrim( csecs[2] ), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(stripTrim( csecs[3] ), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(stripTrim( csecs[4] ), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(stripTrim( csecs[5] ), nullptr, 0));
+		toAdd.instanceID	= static_cast<SI16>(std::stoi(stripTrim( csecs[6] ), nullptr, 0));
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(stripTrim( csecs[7] ), nullptr, 0));
+		strcpy( toAdd.oldTown, stripTrim( csecs[0] ).c_str() );
+		strcpy( toAdd.oldDescription, stripTrim( csecs[1] ).c_str() );
+		strcpy( toAdd.newTown, stripTrim( csecs[0] ).c_str()) ;
+		strcpy( toAdd.newDescription, stripTrim( csecs[1] ).c_str() );
 		startlocations.push_back( toAdd );
 	}
 	else
@@ -4416,29 +4423,41 @@ void CServerData::LoadTime( void )
 
 void CServerData::LoadTimeTags( std::ifstream &input )
 {
-	UString UTag, tag, data;
+	std::string UTag, tag, data;
 	while( tag != "o---o" )
 	{
 		ReadWorldTagData( input, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = tag.upper();
+			UTag = str_toupper(tag);
+			
 			if( UTag == "AMPM" )
-				ServerTimeAMPM( (data.toByte() == 1) );
+			{
+				ServerTimeAMPM( (std::stoi(data, nullptr, 0) == 1) );
+			}
 			else if( UTag == "CURRENTLIGHT" )
-				WorldLightCurrentLevel( data.toUShort() );
+			{
+				WorldLightCurrentLevel( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else if( UTag == "DAY" )
-				ServerTimeDay( data.toShort() );
+			{
+				ServerTimeDay( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+			}
 			else if( UTag == "HOUR" )
-				ServerTimeHours( data.toUShort() );
+			{
+				ServerTimeHours( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else if( UTag == "MINUTE" )
-				ServerTimeMinutes( data.toUShort() );
+			{
+				ServerTimeMinutes( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else if( UTag == "MOON" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				auto csecs = sections( data, "," );
+				if( csecs.size() > 1 )
 				{
-					ServerMoon( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
-					ServerMoon( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
+					ServerMoon( 0, static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0)) );
+					ServerMoon( 1, static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0)) );
 				}
 			}
 		}

@@ -345,6 +345,9 @@ void command_tile( CSocket *s )
 		targID = static_cast<UI16>(Commands->Argument( 1 ));
 	}
 
+	// Reset tempint2 on socket
+	s->TempInt2( 0 );
+
 	if( Commands->NumArguments() == 7 || Commands->NumArguments() == 8 )
 	{
 		// tile itemID x1 y1 x2 y2 z rndVal
