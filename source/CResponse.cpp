@@ -414,8 +414,8 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		std::string temp ;
 		std::string temp2 ;
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-		UString UText = UString( ourText ).upper();
-		UString skillName = "";
+		auto UText = str_toupper( ourText );
+		auto skillName = std::string("");
 		bool foundString = false;
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
@@ -426,7 +426,8 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
 				mSock->TempObj( NULL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
-				if( UText.sectionCount( " " ) != 0 ) //Only if string has more than one word
+				auto ssecs = sections( UText, " " );
+				if( ssecs.size() > 1 ) //Only if string has more than one word
 				{
 					//Search for perfect match first
 					for( UI08 i = 0; i < ALLSKILLS; ++i )
@@ -440,7 +441,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					//Then combine first 4 letters in each
 					if( skill == -1 )
 					{
-						UText = (extractSection(UText, " ", 1, 1 )).substr(0,4); //search using first three letters only
+						UText = (ssecs[1]).substr(0,4); //search using first three letters only
 						for( UI08 i = 0; i < ALLSKILLS; ++i )
 						{
 							skillName = (cwmWorldState->skill[i].name).substr(0,4); //search using first three letters only
@@ -590,9 +591,9 @@ CPetMultiResponse::CPetMultiResponse( const std::string &text, bool restrictVal,
 }
 bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, isRestricted ) )
+	if( canControlPet( mChar, Npc, isRestricted ))
 	{
-		if( findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( findString( ourText, str_toupper( Npc->GetName() )))
 		{
 			mSock->TempObj( Npc );
 			mSock->target( 0, targID, dictEntry );
@@ -612,9 +613,9 @@ CPetReleaseResponse::CPetReleaseResponse( const std::string &text ) : CBasePetRe
 //o-----------------------------------------------------------------------------------------------o
 bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, true ) )
+	if( canControlPet( mChar, Npc, true ))
 	{
-		if( findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( findString( ourText, str_toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( NULL );
@@ -647,9 +648,9 @@ CPetGuardResponse::CPetGuardResponse( bool allVal, const std::string &text ) : C
 //o-----------------------------------------------------------------------------------------------o
 bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, true ) )
+	if( canControlPet( mChar, Npc, true ))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			mSock->sysmessage( 1321 );
@@ -675,9 +676,9 @@ CPetAttackResponse::CPetAttackResponse( bool allVal, const std::string &text ) :
 //o-----------------------------------------------------------------------------------------------o
 bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, true ) )
+	if( canControlPet( mChar, Npc, true ))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			mSock->TempObj( Npc );
@@ -699,9 +700,9 @@ CPetComeResponse::CPetComeResponse( bool allVal, const std::string &text ) : CPe
 //o-----------------------------------------------------------------------------------------------o
 bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc ) )
+	if( canControlPet( mChar, Npc ))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( mChar );
@@ -724,9 +725,9 @@ CPetStayResponse::CPetStayResponse( bool allVal, const std::string &text ) : CPe
 //o-----------------------------------------------------------------------------------------------o
 bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc ) )
+	if( canControlPet( mChar, Npc ))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( NULL );
@@ -762,7 +763,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 				continue;
 
-			if( saidVendor || findString( ourText, UString(Npc->GetName()).upper() ) )
+			if( saidVendor || findString( ourText,str_toupper( Npc->GetName() )))
 			{
 				if( !Handle( mSock, mChar, Npc ) )
 					break;

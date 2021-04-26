@@ -1906,7 +1906,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	UI08 a2 = i->GetSerial( 2 );
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
-	UString newName = i->GetName();
+	std::string newName = i->GetName();
 	CChar *mChar = CurrcharObj();
 	if( mChar->GetSingClickSer() || showSer )
 		objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );

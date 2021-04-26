@@ -358,7 +358,7 @@ STRINGLIST CSpawnRegion::GetNPC( void ) const
 {
 	return sNpcs;
 }
-void CSpawnRegion::SetNPC( const UString &newVal )
+void CSpawnRegion::SetNPC( const std::string &newVal )
 {
 	// Clear old entries to make room for new ones
 	sNpcs.clear();
@@ -379,7 +379,7 @@ void CSpawnRegion::SetNPCList( std::string newVal )
 		// Add section of the string to the sNpcs list with the help of a stringstream
 		std::stringstream s_stream(newVal);
 		while( s_stream.good() ) {
-			UString substr;
+			std::string substr;
 			getline( s_stream, substr, ',' );
 			sNpcs.push_back( substr );
 		}
@@ -401,7 +401,7 @@ STRINGLIST CSpawnRegion::GetItem( void ) const
 {
 	return sItems;
 }
-void CSpawnRegion::SetItem( const UString &newVal )
+void CSpawnRegion::SetItem( const std::string &newVal )
 {
 	// Clear old entries to make room for new ones
 	sItems.clear();
@@ -422,7 +422,7 @@ void CSpawnRegion::SetItemList( std::string newVal )
 		// Add section of the string to the sItems list with the help of a stringstream
 		std::stringstream s_stream(newVal);
 		while( s_stream.good() ) {
-			UString substr;
+			std::string substr;
 			getline( s_stream, substr, ',' );
 			sItems.push_back( substr );
 		}
@@ -441,16 +441,20 @@ void CSpawnRegion::SetItemList( std::string newVal )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadNPCList( const std::string &npcList )
 {
-	UString sect = "NPCLIST " + npcList;
+	std::string sect = "NPCLIST " + npcList;
 	ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
 	if( CharList != NULL )
 	{
-		for( UString npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
+		for( std::string npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
 		{
-			if( npc.upper() == "NPCLIST" )
+			if( str_toupper( npc ) == "NPCLIST" )
+			{
 				LoadNPCList( CharList->GrabData() );
+			}
 			else
+			{
 				sNpcs.push_back( npc );
+			}
 		}
 	}
 }
@@ -462,16 +466,20 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadItemList( const std::string &itemList )
 {
-	UString sect = "ITEMLIST " + itemList;
+	std::string sect = "ITEMLIST " + itemList;
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
 	if( ItemList != NULL )
 	{
-		for( UString itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
+		for( std::string itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
 		{
-			if( itm.upper() == "ITEMLIST" )
+			if( str_toupper( itm ) == "ITEMLIST" )
+			{
 				LoadItemList( ItemList->GrabData() );
+			}
 			else
+			{
 				sItems.push_back( itm );
+			}
 		}
 	}
 }
@@ -483,72 +491,110 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::Load( ScriptSection *toScan )
 {
-	UString sect;
-	UString data;
-	UString UTag;
+	std::string sect;
+	std::string data;
+	std::string UTag;
 
-	for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+	for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
 		if( !tag.empty() )
 		{
-			UTag = tag.upper();
+			UTag = str_toupper( tag );
 			data = toScan->GrabData();
 
 			// Default to instanceID 0, in case nothing else is specified in DFN
 			SetInstanceID( 0 );
 
 			if( UTag == "NPCLIST" )
+			{
 				LoadNPCList( data );
+			}
 			else if( UTag == "NPC" )
+			{
 				sNpcs.push_back( data );
+			}
 			else if( UTag == "ITEMLIST" )
+			{
 				LoadItemList( data );
+			}
 			else if( UTag == "ITEM" )
+			{
 				sItems.push_back( data );
+			}
 			else if( UTag == "MAXITEMS" )
-				maxispawn = data.toUInt();
+			{
+				maxispawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "MAXNPCS" )
-				maxcspawn = data.toUInt();
+			{
+				maxcspawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "X1" )
-				x1 = data.toShort();
+			{
+				x1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "X2" )
-				x2 = data.toShort();
+			{
+				x2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "Y1" )
-				y1 = data.toShort();
+			{
+				y1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "Y2" )
-				y2 = data.toShort();
+			{
+				y2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "MINTIME" )
-				mintime = data.toUByte();
+			{
+				mintime = static_cast<UI08>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "MAXTIME" )
-				maxtime = data.toUByte();
+			{
+				maxtime = static_cast<UI08>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "NAME" )
+			{
 				name = data;
+			}
 			else if( UTag == "CALL" )
-				call = data.toUShort();
+			{
+				call = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "WORLD" )
-				worldNumber = data.toUByte();
+			{
+				worldNumber = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "INSTANCEID" )
-				instanceID = data.toUShort();
+			{
+				instanceID = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "PREFZ" )
-				prefZ = data.toByte();
+			{
+				prefZ = static_cast<SI08>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "ONLYOUTSIDE" )
-				onlyOutside = (data.toByte() == 1);
+			{
+				onlyOutside = (static_cast<SI08>(std::stoi(data, nullptr, 0)) == 1);
+			}
 			else if( UTag == "VALIDLANDPOS" )
 			{
-				data = data.simplifyWhiteSpace();
-				if( data.sectionCount( "," ) == 2 )
+				data = simplify( data );
+				auto csecs = sections( data, "," );
+				if( csecs.size() == 3 )
 				{
-					validLandPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
-					validLandPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
+					validLandPos.push_back( point3( static_cast<UI16>(std::stoul(stripTrim(csecs[0]),nullptr,0)), static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)), static_cast<UI08>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) ) );
+					validLandPosCheck[ static_cast<UI16>(std::stoul(stripTrim(csecs[1]),nullptr,0)) + ( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(stripTrim( csecs[2] ), nullptr, 0));
 				}
 			}
 			else if( UTag == "VALIDWATERPOS" )
 			{
-				data = data.simplifyWhiteSpace();
-				if( data.sectionCount( "," ) == 2 )
+				data = simplify( data );
+				auto csecs = sections( data, "," );
+				if( csecs.size() == 3 )
 				{
-					validWaterPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
-					validWaterPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
+					validWaterPos.push_back( point3( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)), static_cast<UI08>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) ) );
+					validWaterPosCheck[ static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) + ( static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(stripTrim( csecs[2] ), nullptr, 0));
 				}
 			}
 		}

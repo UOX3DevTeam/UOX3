@@ -58,17 +58,20 @@ SI32 CDictionary::LoadDictionary( void )
 		if( dictData != NULL )
 		{
 			ScriptSection *dictSect = NULL;
-			UString tag, data;
+			std::string tag, data;
 			for( dictSect = dictData->FirstEntry(); dictSect != NULL; dictSect = dictData->NextEntry() )
 			{
 				if( dictSect != NULL )
 				{
-					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )	// verify it is a dictionary entry
+					// verify it is a dictionary entry
+					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )
+					{
 						continue;
+					}
 					for( tag = dictSect->First(); !dictSect->AtEnd(); tag = dictSect->Next() )
 					{
 						data					= dictSect->GrabData();
-						Text2[tag.toUInt()]	= data.stripWhiteSpace();
+						Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = stripTrim( data );
 						++count;
 					}
 				}
@@ -83,7 +86,9 @@ SI32 CDictionary::LoadDictionary( void )
 		Console.PrintSpecial( CGREEN, "loaded" );
 	}
 	else
+	{
 		count = dictCANTOPEN;
+	}
 
 	return count;
 }

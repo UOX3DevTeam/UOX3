@@ -88,9 +88,9 @@ public:
 	void		SetPrefZ( SI08 newVal );
 	void		SetCall( UI16 newVal );
 	void		SetOnlyOutside( bool newVal );
-	void		SetNPC( const UString &newVal );
+	void		SetNPC( const std::string &newVal );
 	void		SetNPCList( std::string newVal );
-	void		SetItem( const UString &newVal );
+	void		SetItem( const std::string &newVal );
 	void		SetItemList( std::string newVal );
 
 	UI16		GetInstanceID( void ) const;
