@@ -1,3 +1,8 @@
+
+27/04/2021 - Xuri (0.99.4j)
+	Removed ustring.h and ustring.cpp and references to these from the project as they have now been completely phased out by the move to std::string and the use of StringUtility.cpp/hpp
+	Finalized string handling modernization in cRaces.cpp, house.cpp, items.cpp, npcs.cpp, skills.cpp, ssection.cpp, ssection.h and targeting.cpp (punt)
+	
 27/04/2021 - Xuri
 	Fixed some missing icons in dfndata/creatures/creatures.dfn
 	Updated server status HTML template page (dfndata/html/online.htf) to match other templates
