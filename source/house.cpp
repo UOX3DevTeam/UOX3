@@ -556,6 +556,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			}
 			customTagName			= stripTrim( ssecs[0] );
 			customTagStringValue	= result;
+
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
 				customTag.m_Destroy		= FALSE;
@@ -568,25 +569,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		else if( UTag == "CUSTOMINTTAG" )
 		{
 			auto ssecs = sections( data, " " );
-			auto count = 0;
-			std::string result;
-			for( auto &sec : ssecs )
-			{
-				if( count > 0 )
-				{
-					if( count == 1 )
-					{
-						result = stripTrim( sec );
-					}
-					else
-					{
-						result = result + " " + stripTrim( sec );
-					}
-				}
-				count++;
-			}
-			customTagName			= ssecs[0];
-			customTagStringValue	= result;
+			customTagName			= stripTrim( ssecs[0] );
+			customTagStringValue	= stripTrim( ssecs[1] );
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
 				customTag.m_Destroy		= FALSE;

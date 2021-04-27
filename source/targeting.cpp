@@ -832,16 +832,22 @@ void newCarveTarget( CSocket *s, CItem *i )
 		ScriptSection *toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
 		if( toFind == NULL )
 			return;
-		UString tag;
-		UString data;
+		std::string tag;
+		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( tag.upper() == "ADDITEM" )
+			if( str_toupper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				if( data.sectionCount( "," ) != 0 )
-					if( !CreateBodyPart( mChar, i, data.section( ",", 0, 0 ).stripWhiteSpace().toUShort(), data.section( ",", 1, 1 ).stripWhiteSpace().toInt() ) )
+				data = stripTrim( data );
+				auto csecs = sections( data, "," );
+				if( csecs.size() > 1 )
+				{	
+					if( !CreateBodyPart( mChar, i, static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) ) )
+					{
 						return;
+					}
+				}
 			}
 		}
 
@@ -864,21 +870,27 @@ void newCarveTarget( CSocket *s, CItem *i )
 	}
 	else
 	{
-		UString sect			= std::string("CARVE ") + str_number( i->GetCarve() );
+		std::string sect		= std::string("CARVE ") + str_number( i->GetCarve() );
 		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
 		if( toFind == NULL )
 			return;
-		UString tag;
-		UString data;
+		std::string tag;
+		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( tag.upper() == "ADDITEM" )
+			if( str_toupper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				if( data.sectionCount( "," ) != 0 )
-					Items->CreateScriptItem( s, mChar, data.section( ",", 0, 0 ).stripWhiteSpace(), data.section( ",", 1, 1 ).stripWhiteSpace().toUShort(), OT_ITEM, true );
+				data = stripTrim( data );
+				auto csecs = sections( data, "," );
+				if( csecs.size() > 1 )
+				{
+					Items->CreateScriptItem( s, mChar, stripTrim(csecs[0]), static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)), OT_ITEM, true );
+				}
 				else
+				{
 					Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
+				}
 			}
 		}
 	}
@@ -1362,7 +1374,7 @@ void MakeStatusTarget( CSocket *sock )
 		targetChar->SetMana( 100 );
 	}
 
-	UString playerName = targetChar->GetName();
+	std::string playerName = targetChar->GetName();
 	if( targetCommand != origCommand && origLevel != NULL )
 	{
 		const size_t position = playerName.find( origLevel->name );
@@ -1488,7 +1500,7 @@ void SmeltTarget( CSocket *s )
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		UString itemID = str_number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
+		std::string itemID = str_number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
 		Items->CreateScriptItem( s, mChar, "0x"+itemID, amtToRestore, OT_ITEM, true, itemColour );

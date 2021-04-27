@@ -1893,13 +1893,13 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 				}
 				break;
 			case 12:												// Intelligence
-				if( static_cast< short>(reply_uint) > 0 )
+				if( static_cast<SI08>(reply_uint) > 0 )
 				{
 					j->SetIntelligence(static_cast<SI16>(reply_uint) );
 				}
 				break;
 			case 13:												// Hitpoints
-				if( static_cast< short>(reply_uint) > 0 )
+				if( static_cast<SI08>(reply_uint) > 0 )
 				{
 					j->SetHP( static_cast<SI16>(reply_uint) );
 				}

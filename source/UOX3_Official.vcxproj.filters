@@ -56,9 +56,6 @@
     <ClCompile Include="uox3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ustring.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cServerDefinitions.cpp">
       <Filter>Source Files\Scripts</Filter>
     </ClCompile>
@@ -293,9 +290,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UOXStdHeaders.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ustring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cBaseObject.h">

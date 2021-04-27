@@ -1297,20 +1297,6 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="ustring.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
-    </ClCompile>
     <ClCompile Include="vendor.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1442,7 +1428,6 @@
     <ClInclude Include="UOXJSPropertySpecs.h" />
     <ClInclude Include="UOXStdHeaders.h" />
     <ClInclude Include="uoxstruct.h" />
-    <ClInclude Include="ustring.h" />
     <ClInclude Include="weight.h" />
     <ClInclude Include="wholist.h" />
     <ClInclude Include="worldmain.h" />

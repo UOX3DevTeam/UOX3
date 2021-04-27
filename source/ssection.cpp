@@ -222,7 +222,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 
 struct strToDFNLookup
 {
-	UString	strToAdd;
+	std::string strToAdd;
 	DFNTAGS	dfnToAdd;
 };
 
@@ -230,7 +230,7 @@ std::map< std::string, DFNTAGS > strToDFNTag;
 
 void InitStrToDFN( void )
 {
-	// VC6 doesn't like assigning "text" to UString/std::string in a table like fashion
+	// VC6 doesn't like assigning "text" to std::string in a table like fashion
 	strToDFNTag["AC"]				=	DFNTAG_AC;
 	strToDFNTag["ADDMENUITEM"]		=	DFNTAG_ADDMENUITEM;
 	strToDFNTag["ADVOBJ"]			=	DFNTAG_ADVOBJ;
@@ -456,17 +456,21 @@ void CleanupStrToDFN( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	DFNTAGS FindDFNTagFromStr( UString strToFind )
+//|	Function	-	DFNTAGS FindDFNTagFromStr( std::string strToFind )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-
 //o-----------------------------------------------------------------------------------------------o
-DFNTAGS FindDFNTagFromStr( UString strToFind )
+DFNTAGS FindDFNTagFromStr( std::string strToFind )
 {
 	if( strToDFNTag.empty() ) // if we haven't built our array yet
+	{
 		InitStrToDFN();
-	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strToFind.upper() );
+	}
+	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( str_toupper( strToFind ) );
 	if( toFind != strToDFNTag.end() )
+	{
 		return toFind->second;
+	}
 	return DFNTAG_COUNTOFTAGS;
 }
 
@@ -513,29 +517,31 @@ bool ScriptSection::AtEnd( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString First( void )
+//|	Function	-	const std::string First( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the first tag at the start of the section
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::First( void )
+const std::string ScriptSection::First( void )
 // PRE:		vector loaded and init'd
 // POST:	returns string (tag) of first entry
 {
-	UString rvalue;
+	std::string rvalue;
 	currentPos = data.begin();
 	if( !AtEnd() )
+	{
 		rvalue = (*currentPos)->tag;
+	}
 	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString Next( void )
+//|	Function	-	const std::string Next( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the next tag in the section, or NULL if no more
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::Next( void )
+const std::string ScriptSection::Next( void )
 {
-	UString rvalue;
+	std::string rvalue;
 	if( !AtEnd() )
 	{
 		++currentPos;
@@ -546,36 +552,42 @@ const UString ScriptSection::Next( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString MoveTo( size_t position )
+//|	Function	-	const std::string MoveTo( size_t position )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to position in the section and returns the tag there
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::MoveTo( size_t position )
+const std::string ScriptSection::MoveTo( size_t position )
 // PRE:		vector loaded and init'd
 // POST:	returns string (tag) of next entry
 {
-	UString rvalue;
+	std::string rvalue;
 	std::vector< sectData * >::iterator curPos	= currentPos;
 	currentPos									= (data.begin() + position);
 	if( !AtEnd() )
+	{
 		rvalue		= (*currentPos)->tag;
+	}
 	else
+	{
 		currentPos	= curPos;
+	}
 	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString GrabData( void )
+//|	Function	-	const std::string GrabData( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the data for the current tag
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::GrabData( void )
+const std::string ScriptSection::GrabData( void )
 // PRE:		At a valid location, init'd data
 // POST:	returns string of data of current entry
 {
-	UString rvalue;
+	std::string rvalue;
 	if( !AtEnd() )
+	{
 		rvalue = (*currentPos)->data;
+	}
 	return rvalue;
 }
 
@@ -622,18 +634,20 @@ size_t ScriptSection::NumEntries( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString Prev( void )
+//|	Function	-	const std::string Prev( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the previous tag, or NULL if at start
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::Prev( void )
+const std::string ScriptSection::Prev( void )
 {
-	UString rvalue;
+	std::string rvalue;
 	if( currentPos != data.begin() )
 	{
 		--currentPos;
 		if( !AtEnd() )
+		{
 			rvalue = (*currentPos)->tag;
+		}
 	}
 	return rvalue;
 }
@@ -655,11 +669,11 @@ void ScriptSection::Remove( size_t position )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Append( UString tagToAdd, UString dataToAdd )
+//|	Function	-	void Append( std::string tagToAdd, std::string dataToAdd )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new tag/data pair at the end of the section
 //o-----------------------------------------------------------------------------------------------o
-void ScriptSection::Append( UString tagToAdd, UString dataToAdd )
+void ScriptSection::Append( std::string tagToAdd, std::string dataToAdd )
 {
 	sectData *toAdd	= new sectData;
 	toAdd->tag		= tagToAdd;
@@ -667,9 +681,9 @@ void ScriptSection::Append( UString tagToAdd, UString dataToAdd )
 	data.push_back( toAdd );
 }
 
-const UString ScriptSection::GrabData( SI32& ndata, SI32& odata )
+const std::string ScriptSection::GrabData( SI32& ndata, SI32& odata )
 {
-	UString rvalue;
+	std::string rvalue;
 	if( AtEndTags() )
 	{
 		ndata = INVALIDSERIAL;
@@ -742,23 +756,23 @@ bool ScriptSection::NpcListExist( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString ItemListData( void ) const
+//|	Function	-	const std::string ItemListData( void ) const
 //|	Date		-	12 January, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the itemlist data
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::ItemListData( void ) const
+const std::string ScriptSection::ItemListData( void ) const
 {
 	return itemListData;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const UString NpcListData( void ) const
+//|	Function	-	const std::string NpcListData( void ) const
 //|	Date		-	12 January, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the npclist data
 //o-----------------------------------------------------------------------------------------------o
-const UString ScriptSection::NpcListData( void ) const
+const std::string ScriptSection::NpcListData( void ) const
 {
 	return npcListData;
 }

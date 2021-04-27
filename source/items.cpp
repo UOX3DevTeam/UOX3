@@ -362,8 +362,27 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				Console.print(cdata);
 				break;
 			case DFNTAG_CUSTOMSTRINGTAG:
+			{
+				auto count = 0;
+				std::string result;
+				for( auto &sec : ssecs )
+				{
+					if( count > 0 )
+					{
+						if( count == 1 )
+						{
+							result = stripTrim( sec );
+						}
+						else
+						{
+							result = result + " " + stripTrim( sec );
+						}
+					}
+					count++;
+				}
 				customTagName			= stripTrim( ssecs[0] );
-				customTagStringValue	= stripTrim( ssecs[1] );
+				customTagStringValue	= result;
+
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
@@ -373,6 +392,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					applyTo->SetTag( customTagName, customTag );
 				}
 				break;
+			}
 			case DFNTAG_CUSTOMINTTAG:
 				customTagName			= stripTrim( ssecs[0] );
 				customTagStringValue	= stripTrim( ssecs[1] );
@@ -394,7 +414,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				auto csecs = sections( stripTrim( cdata ), "," );
 				if( csecs.size() > 1 )
 				{
-					Items->AddRespawnItem( applyTo, stripTrim( csecs[0] ), true, false, static_cast<unsigned short>(std::stoul(stripTrim( csecs[1] ), nullptr, 0))); //section 0 = id, section 1 = amount
+					Items->AddRespawnItem( applyTo, stripTrim( csecs[0] ), true, false, static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0))); //section 0 = id, section 1 = amount
 				}
 				else
 				{
