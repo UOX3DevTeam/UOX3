@@ -108,7 +108,7 @@ struct SEGumpData
 {
 	STRINGLIST			sEdits;
 	std::vector<SI32>	nButtons;
-	std::vector<short>	nIDs;
+	std::vector<SI16>	nIDs;
 };
 
 class cScript

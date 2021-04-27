@@ -3677,7 +3677,7 @@ void cMagic::LoadScript( void )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
 										
-										stat->Effect( static_cast<UI08>(std::stoul(stripTrim(ssecs[0]), nullptr, 16)), static_cast<unsigned char>(std::stoul(stripTrim(ssecs[1]),nullptr,16)) );
+										stat->Effect( static_cast<UI08>(std::stoul(stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16)) );
 										stat->Speed( static_cast<UI08>(std::stoul(stripTrim(ssecs[2]), nullptr, 16)) );
 										stat->Loop( static_cast<UI08>(std::stoul(stripTrim(ssecs[3]), nullptr, 16)) );
 									}

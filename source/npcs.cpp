@@ -64,7 +64,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 		{
 			if( tcsecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
-				iAmount = static_cast<unsigned short>(std::stoul(stripTrim( tcsecs[1] ), nullptr, 0));
+				iAmount = static_cast<UI16>(std::stoul(stripTrim( tcsecs[1] ), nullptr, 0));
 				retItem = Items->CreateBaseScriptItem( stripTrim( tcsecs[0] ), s->WorldNumber(),  iAmount );
 				if( retItem != NULL )
 				{
@@ -1395,8 +1395,27 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_VETERINARY:			skillToSet = VETERINARY;				break;
 			case DFNTAG_WRESTLING:			skillToSet = WRESTLING;					break;
 			case DFNTAG_CUSTOMSTRINGTAG:
+			{
+				auto count = 0;
+				std::string result;
+				for( auto &sec : ssects )
+				{
+					if( count > 0 )
+					{
+						if( count == 1 )
+						{
+							result = stripTrim( sec );
+						}
+						else
+						{
+							result = result + " " + stripTrim( sec );
+						}
+					}
+					count++;
+				}
 				customTagName			= stripTrim( ssects[0] );
-				customTagStringValue	= stripTrim( ssects[1] );
+				customTagStringValue	= result;
+
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
@@ -1406,6 +1425,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					applyTo->SetTag( customTagName, customTag);
 				}
 				break;
+			}
 			case DFNTAG_CUSTOMINTTAG:
 				customTagName			= stripTrim( ssects[0] );
 				customTagStringValue	= stripTrim( ssects[1] );

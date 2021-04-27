@@ -7,7 +7,7 @@
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 
-#include "ustring.h"
+#include <string>
 
 // 04302004 - Added a new tag DFNTAG_ADDMENUITEM to support the auto generation of the addmenu based on items that are contained in the DFN's
 //						We will still use the menu group item and group/subgroup stuff, however we will no longer have a list of items in a dfn that
@@ -232,12 +232,12 @@ enum DFNTAGS
 typedef struct __ADDMENUITEM__
 {
 	UI32	itemIndex;
-	UString itemName;
+	std::string itemName;
 	UI32	groupID;
 	UI32	tileID;
 	UI32	weightPosition;
 	UI32	objectFlags;
-	UString	objectID;
+	std::string	objectID;
 	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ),
 	weightPosition( 0 ), objectFlags( 0 ), objectID( "" )
 	{
@@ -254,8 +254,8 @@ class ScriptSection
 private:
 	struct sectData
 	{
-		UString tag;
-		UString data;
+		std::string tag;
+		std::string data;
 		sectData() : tag( "" ), data( "" )
 		{
 		}
@@ -263,7 +263,7 @@ private:
 	struct sectDataV2
 	{
 		DFNTAGS tag;
-		UString	cdata;
+		std::string	cdata;
 		SI32	ndata;
 		SI32	odata;
 		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
@@ -280,33 +280,33 @@ private:
 	bool					npcList;
 	bool					itemList;
 
-	UString					npcListData;
-	UString					itemListData;
+	std::string				npcListData;
+	std::string				itemListData;
 
 public:
 	ScriptSection( void );
 	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
 	~ScriptSection();
-	const UString			First( void );
+	const std::string		First( void );
 	DFNTAGS					FirstTag( void );
-	const UString			Next( void );
+	const std::string		Next( void );
 	DFNTAGS					NextTag( void );
-	const UString			Prev( void );
+	const std::string		Prev( void );
 	DFNTAGS					PrevTag( void );
 	bool					AtEnd( void );
 	bool					AtEndTags( void );
-	const UString			GrabData( void );
-	const UString			GrabData( SI32& ndata, SI32& odata );
+	const std::string		GrabData( void );
+	const std::string		GrabData( SI32& ndata, SI32& odata );
 	bool					FlushData( void );
 	size_t					NumEntries( void ) const;
-	const UString			MoveTo( size_t position );
+	const std::string		MoveTo( size_t position );
 	bool					CloseFile( void );
 	void					Remove( size_t position );
-	void					Append( UString tag, UString data );
+	void					Append( std::string tag, std::string data );
 	bool					ItemListExist( void ) const;
 	bool					NpcListExist( void ) const;
-	const UString			ItemListData( void ) const;
-	const UString			NpcListData( void ) const;
+	const std::string		ItemListData( void ) const;
+	const std::string		NpcListData( void ) const;
 	void					createSection( std::fstream& inputbuf );
 };
 

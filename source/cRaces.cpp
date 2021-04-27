@@ -110,7 +110,7 @@ void cRaces::load( void )
 			}
 			else
 			{
-				UI32 modifierCount = CombatMods->GrabData().toUInt();
+				UI32 modifierCount = static_cast<UI32>(std::stoul(CombatMods->GrabData(), nullptr, 0)) ;
 				if( modifierCount < 4 )
 				{
 					Console << "MODCOUNT must be more >= 4, or it uses the defaults!" << myendl;

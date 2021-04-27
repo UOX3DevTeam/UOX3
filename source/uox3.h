@@ -50,7 +50,6 @@
 #include "uoxstruct.h"
 #include "CDataList.h"
 #include "cAccountClass.h"
-#include "ustring.h"
 #include "cBaseObject.h"
 #include "cChar.h"
 #include "cItem.h"

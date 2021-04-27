@@ -38,7 +38,6 @@ add_library(uox
 		cGuild.cpp
 		combat.cpp
 		network.cpp
-		ustring.cpp
 		cHTMLSystem.cpp
 		commands.cpp
 		npcs.cpp

@@ -1022,7 +1022,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 			{
 				UI16 spellToScan = static_cast<UI16>(( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1);
 				// Fetch spellname from Dictionary-files, based on entry from magic_table[]
-				UString spellName = Dictionary->GetEntry( magic_table[spellToScan].spell_name );
+				std::string spellName = Dictionary->GetEntry( magic_table[spellToScan].spell_name );
 				if( !CheckSkill( mChar, ITEMID, 750, 1000 ) )
 					s->sysmessage( 1555, spellName.c_str() ); // It is enchanted with the spell %s, but you cannot determine how many charges remain.
 				else
@@ -1559,7 +1559,7 @@ void cSkills::Tracking( CSocket *s, SI32 selection )
 void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
-	const UString sect = std::string("TRACKINGMENU ") + str_number( m );
+	const std::string sect = std::string("TRACKINGMENU ") + str_number( m );
 	ScriptSection *TrackStuff = FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == NULL )
 		return;
@@ -1593,11 +1593,15 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	std::string line;
 	CPOpenGump toSend( *mChar );
 	if( m >= TRACKINGMENUOFFSET )
+	{
 		toSend.GumpIndex( m );
+	}
 	else
+	{
 		toSend.GumpIndex( m + TRACKINGMENUOFFSET );
-	UString tag		= TrackStuff->First();
-	UString data	= TrackStuff->GrabData();
+	}
+	std::string tag		= TrackStuff->First();
+	std::string data	= TrackStuff->GrabData();
 
 	line = tag + " " + data;
 	toSend.Question( line );
@@ -1662,10 +1666,12 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
-	const UString sect			= std::string("TRACKINGMENU ") + str_number( gmindex );
+	const std::string sect			= std::string("TRACKINGMENU ") + str_number( gmindex );
 	ScriptSection *TrackStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == NULL )
+	{
 		return;
+	}
 	HandleCommonGump( s, TrackStuff, gmindex );
 }
 
@@ -1680,11 +1686,15 @@ void cSkills::Track( CChar *i )
 	VALIDATESOCKET( s );
 	CChar *trackTarg = i->GetTrackingTarget();
 	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 )
+	{
 		return;
+	}
 	CPTrackingArrow tSend = (*trackTarg);
 	tSend.Active( 1 );
 	if( s->ClientType() >= CV_HS2D )
+	{
 		tSend.AddSerial( i->GetTrackingTarget()->GetSerial() );
+	}
 	s->Send( &tSend );
 }
 
@@ -1877,11 +1887,13 @@ bool cSkills::LoadMiningData( void )
 	if( oreList != NULL )
 	{
 		STRINGLIST oreNameList;
-		UString tag;
-		UString data;
-		UString UTag;
+		std::string tag;
+		std::string data;
+		std::string UTag;
 		for( tag = oreList->First(); !oreList->AtEnd(); tag = oreList->Next() )
+		{
 			oreNameList.push_back( tag );
+		}
 		if( !oreNameList.empty() )
 		{
 			rvalue = true;
@@ -1902,29 +1914,40 @@ bool cSkills::LoadMiningData( void )
 					toAdd.oreChance = 0;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
-						UTag = tag.upper();
+						UTag = str_toupper( tag );
 						data = individualOre->GrabData();
+						data = stripTrim( data );
 						switch( (UTag.data()[0]) )	// break on tag
 						{
 							case 'C':
 								if( UTag == "COLOUR" )
-									toAdd.colour = data.toUShort();
+								{
+									toAdd.colour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'F':
 								break;
 							case 'M':
 								if( UTag == "MAKEMENU" )
-									toAdd.makemenu = data.toInt();
+								{
+									toAdd.makemenu = std::stoi(data, nullptr, 0);
+								}
 								else if( UTag == "MINSKILL" )
-									toAdd.minSkill = data.toUShort();
+								{
+									toAdd.minSkill = static_cast<UI16>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'N':
 								if( UTag == "NAME" )
+								{
 									toAdd.name = data;
+								}
 								break;
 							case 'O':
 								if( UTag == "ORECHANCE" )
-									toAdd.oreChance = data.toUShort();
+								{
+									toAdd.oreChance = static_cast<UI16>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							default:
 								Console << "Unknown mining tag " << tag << " with data " << data << " in SECTION " << oreName << myendl;
@@ -2035,32 +2058,43 @@ void cSkills::LoadCreateMenus( void )
 	skillMenus.clear();
 	itemsForMenus.clear();
 
-	UString tag, data, UTag;
+	std::string tag, data, UTag;
 	UI16 ourEntry;							// our actual entry number
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )
 	{
 		if( ourScript == NULL )
-			continue;
-
-		for( ScriptSection *toSearch = ourScript->FirstEntry(); toSearch != NULL; toSearch = ourScript->NextEntry() )
 		{
-			UString eName = ourScript->EntryName();
+			continue;
+		}
+
+		for( ScriptSection *toSearch = ourScript->FirstEntry(); toSearch != nullptr; toSearch = ourScript->NextEntry() )
+		{
+			std::string eName = ourScript->EntryName();
 			if( "SUBMENU" == eName.substr( 0, 7 ) )	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 			{
-				ourEntry = eName.section( " ", 1 ).stripWhiteSpace().toUShort();
+				eName = stripTrim( eName );
+				auto ssecs = sections( eName, " " );
+				ourEntry = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = tag.upper();
+					UTag = str_toupper( tag );
 					data = toSearch->GrabData();
+					data = stripTrim( data );
 					if( UTag == "MENU" )
-						actualMenus[ourEntry].menuEntries.push_back( data.toUShort() );
+					{
+						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+					}
 					else if( UTag == "ITEM" )
-						actualMenus[ourEntry].itemEntries.push_back( data.toUShort() );
+					{
+						actualMenus[ourEntry].itemEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+					}
 				}
 			}
 			else if( "ITEM" == eName.substr( 0, 4 ) )	// is it an item?
 			{
-				ourEntry = eName.section( " ", 1 ).stripWhiteSpace().toUShort();
+				auto ssecs = sections( eName, " " );
+				
+				ourEntry = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
 				createEntry tmpEntry;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
@@ -2070,98 +2104,133 @@ void cSkills::LoadCreateMenus( void )
 
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = tag.upper();
+					UTag = str_toupper( tag );
 					data = toSearch->GrabData();
+					data = stripTrim( data );
 					if( UTag == "COLOUR" )
-						tmpEntry.colour = data.toUShort();
+					{
+						tmpEntry.colour =  static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "ID" )
-						tmpEntry.targID = data.toUShort();
+					{
+						tmpEntry.targID =  static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "MINRANK" )
-						tmpEntry.minRank = data.toUByte();
+					{
+						tmpEntry.minRank =  static_cast<UI08>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "MAXRANK" )
-						tmpEntry.maxRank = data.toUByte();
+					{
+						tmpEntry.maxRank =  static_cast<UI08>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "NAME" )
+					{
 						tmpEntry.name = data;
+					}
 					else if( UTag == "SOUND" )
-						tmpEntry.soundPlayed = data.toUShort();
+					{
+						tmpEntry.soundPlayed =  static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "ADDITEM" )
+					{
 						tmpEntry.addItem = data;
+					}
 					else if( UTag == "DELAY" )
-						tmpEntry.delay = data.toShort();
+					{
+						tmpEntry.delay = static_cast<SI16>(std::stoi(data, nullptr, 0));
+					}
 					else if( UTag == "RESOURCE" )
 					{
 						resAmountPair tmpResource;
-						if( data.sectionCount( " " ) > 0 )
+						auto ssecs = sections(data," ");
+						if( ssecs.size() > 1 )
 						{
-							if( data.sectionCount( " " ) == 1 )
-								tmpResource.amountNeeded	= data.section( " ", 1 ).toUByte();
+							if( ssecs.size() == 2 )
+							{
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
+							}
 							else
 							{
-								tmpResource.amountNeeded	= data.section( " ", 1, 1 ).toUByte();
-								tmpResource.colour			= data.section( " ", 2, 2 ).toUShort();
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
+								tmpResource.colour			= static_cast<UI16>(std::stoul(stripTrim( ssecs[2] ), nullptr, 0));
 							}
 						}
-						UString resType = "RESOURCE " + data.section( " ", 0, 0 );
+						std::string resType = "RESOURCE " + stripTrim( ssecs[0] );
 						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
 						if( resList != NULL )
 						{
-							UString resData;
-							for( UString resTag = resList->First(); !resList->AtEnd(); resTag = resList->Next() )
+							std::string resData;
+							for( std::string resTag = resList->First(); !resList->AtEnd(); resTag = resList->Next() )
 							{
 								resData = resList->GrabData();
-								tmpResource.idList.push_back( resData.toUShort() );
+								tmpResource.idList.push_back( static_cast<UI16>(std::stoul(resData, nullptr, 0 )));
 							}
 						}
 						else
-							tmpResource.idList.push_back( data.section( " ", 0, 0 ).toUShort() );
+						{
+							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0 )) );
+						}
 
 						tmpEntry.resourceNeeded.push_back( tmpResource );
 					}
 					else if( UTag == "SKILL" )
 					{
 						resSkillReq tmpResource;
-						if( data.sectionCount( " " ) == 0 )
+						auto ssecs = sections( data, " " );
+						if( ssecs.size() == 1 )
 						{
 							tmpResource.maxSkill	= 1000;
 							tmpResource.minSkill	= 0;
-							tmpResource.skillNumber	= data.toUByte();
+							tmpResource.skillNumber	=  static_cast<UI16>(std::stoul(data, nullptr, 0 ));
 						}
 						else
 						{
-							if( data.sectionCount( " " ) == 1 )
+							if( ssecs.size() == 2 )
 							{
 								tmpResource.maxSkill = 1000;
-								tmpResource.minSkill = data.section( " ", 1, 1 ).toUShort();
+								tmpResource.minSkill =  static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0 ));
 							}
 							else
 							{
-								tmpResource.minSkill = data.section( " ", 1, 1 ).toUShort();
-								tmpResource.maxSkill = data.section( " ", 2, 2 ).toUShort();
+								tmpResource.minSkill = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0 ));
+								tmpResource.maxSkill = static_cast<UI16>(std::stoul(stripTrim( ssecs[2] ), nullptr, 0 ));
 							}
-							tmpResource.skillNumber = data.section( " ", 0, 0 ).toUByte();
+							tmpResource.skillNumber = static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0 ));
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
 					else if( UTag == "SPELL" )
-						tmpEntry.spell = data.toUShort();
+					{
+						tmpEntry.spell = static_cast<UI16>(std::stoul(data, nullptr, 0 ));
+					}
 				}
 				itemsForMenus[ourEntry] = tmpEntry;
 			}
 			else if( "MENUENTRY" == eName.substr( 0, 9 ) )
 			{
-				ourEntry = eName.section( " ", 1, 1 ).toUShort();
+				auto ssecs = sections( eName, " " );
+				ourEntry = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = tag.upper();
+					UTag = str_toupper( tag );
 					data = toSearch->GrabData();
+					data = stripTrim( data );
 					if( UTag == "ID" )
-						skillMenus[ourEntry].targID = data.toUShort();
+					{
+						skillMenus[ourEntry].targID =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
+					}
 					else if( UTag == "COLOUR" )
-						skillMenus[ourEntry].colour = data.toUShort();
+					{
+						skillMenus[ourEntry].colour =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
+					}
 					else if( UTag == "NAME" )
+					{
 						skillMenus[ourEntry].name = data;
+					}
 					else if( UTag == "SUBMENU" )
-						skillMenus[ourEntry].subMenu = data.toUShort();
+					{
+						skillMenus[ourEntry].subMenu = static_cast<UI16>(std::stoul(data, nullptr, 0 ));
+					}
 				}
 			}
 		}
@@ -2410,17 +2479,24 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 	}
 	else
 	{
-		UString tag, data, UTag;
+		std::string tag, data, UTag;
 		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
 		{
-			UTag = tag.upper();
+			UTag = str_toupper( tag );
 			data = GumpHeader->GrabData();
+			data = stripTrim( data );
 			if( UTag == "BUTTONLEFT" )
-				btnLeft = data.toUShort();
+			{
+				btnLeft = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "BUTTONRIGHT" )
-				btnRight = data.toUShort();
+			{
+				btnRight = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "BUTTONCANCEL" )
-				btnCancel = data.toUShort();
+			{
+				btnCancel = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else
 			{
 				std::string built = tag;

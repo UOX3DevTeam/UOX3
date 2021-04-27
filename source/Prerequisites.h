@@ -155,7 +155,6 @@ class Script;
 class ScriptSection;
 class SpellInfo;
 class UOXFile;
-class UString;
 
 /** In order to avoid finger-aches :)
  */
