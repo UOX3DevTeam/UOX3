@@ -1889,21 +1889,8 @@ UI16 CPIGumpMenuSelect::GetTextLength( UI08 number ) const
 		return 0xFFFF;
 	return tSock->GetWord( static_cast<size_t>(textLocationOffsets[number]) + 2 );
 }
-std::string CPIGumpMenuSelect::GetTextString( UI08 number ) const
-{
-	if( number >= textCount )
-		return "";
-	UI08 bufferLen		= GetTextLength( number ) * 2 + 1;
-	UI08 *buffer		= new UI08[bufferLen];
-	UI16 bufferOffset	= textLocationOffsets[number] + 4;
-	strncpy( (char *)buffer, (const char *)&(tSock->Buffer()[bufferOffset]), bufferLen );
-	buffer[bufferLen-1] = 0;
-	std::string toReturn = (char *)buffer;
-	delete [] buffer;
-	return toReturn;
 
-}
-std::string CPIGumpMenuSelect::GetTextUString( UI08 number ) const
+std::string CPIGumpMenuSelect::GetTextString( UI08 number ) const
 {
 	if( number >= textCount )
 		return "";

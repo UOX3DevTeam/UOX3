@@ -106,6 +106,7 @@ poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 )
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
 	objSettings.reset();
+	temp_container_serial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
 	if( cwmWorldState != NULL && cwmWorldState->GetLoaded() )

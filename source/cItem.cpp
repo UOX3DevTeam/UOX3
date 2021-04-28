@@ -1491,8 +1491,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					// ERRROR, this is just wrong
-					contObj = reinterpret_cast<CBaseObject *>(static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)));
+					temp_container_serial = static_cast<SERIAL>(std::stoul(stripTrim( data ), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
@@ -1820,15 +1819,19 @@ void CItem::PostLoadProcessing( void )
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcWeight( this ) );
 
-	SERIAL tempSerial	= (UI64)contObj;
 	CBaseObject *tmpObj	= NULL;
 	contObj				= NULL;
-	if( tempSerial != INVALIDSERIAL )
+	
+	if( temp_container_serial != INVALIDSERIAL )
 	{
-		if( tempSerial >= BASEITEMSERIAL )
-			tmpObj = calcItemObjFromSer( tempSerial );
+		if( temp_container_serial >= BASEITEMSERIAL )
+		{
+			tmpObj = calcItemObjFromSer( temp_container_serial);
+		}
 		else
-			tmpObj	= calcCharObjFromSer( tempSerial );
+		{
+			tmpObj = calcCharObjFromSer( temp_container_serial );
+		}
 	}
 	SetCont( tmpObj );
 

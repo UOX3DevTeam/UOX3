@@ -118,7 +118,7 @@ void HandleTeleporters( CChar *s )
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
 		if( getTeleLoc == NULL )
 			continue;
-		if( getTeleLoc->SourceWorld() == 0xFF || getTeleLoc->SourceWorld() == charWorld )
+		if(( getTeleLoc->SourceWorld() == 0xFF && charWorld > 1 ) || getTeleLoc->SourceWorld() == charWorld )
 		{
 			if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
 				isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
@@ -126,10 +126,20 @@ void HandleTeleporters( CChar *s )
 				isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
 			if( isOnTeleporter )
 			{
-				s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, getTeleLoc->TargetWorld(), s->GetInstanceID() );
+				UI08 targetWorld = 0;
+				if( getTeleLoc->SourceWorld() == 0xFF )
+				{
+					targetWorld = s->WorldNumber();
+				}
+				else
+				{
+					targetWorld = getTeleLoc->TargetWorld();
+				}
+
+				s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, targetWorld, s->GetInstanceID() );
 				if( !s->IsNpc() )
 				{
-					if( getTeleLoc->TargetWorld() != charWorld )
+					if( targetWorld != charWorld )
 						SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
 
 					CDataList< CChar * > *myPets = s->GetPetList();
