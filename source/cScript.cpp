@@ -2081,7 +2081,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	for( i = 0; i < nText; ++i )
 	{
 		segdGumpData->nIDs.push_back( packet->GetTextID( i ) );
-		segdGumpData->sEdits.push_back( packet->GetTextUString( i ) );
+		segdGumpData->sEdits.push_back( packet->GetTextString( i ) );
 	}
 	jsval jsvParams[3], jsvRVal;
 

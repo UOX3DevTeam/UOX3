@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <sstream>
 #include "UOPInterface.hpp"
+#include <algorithm>
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 #  include <fcntl.h>     // open
@@ -548,6 +549,10 @@ void LoadTeleportLocations( void )
 				}
 			}
 		}
+		std::sort(cwmWorldState->teleLocs.begin(), cwmWorldState->teleLocs.end(), [] ( CTeleLocationEntry  &one, CTeleLocationEntry  &two)
+		{
+			return static_cast<UI32>(one.SourceLocation().x) < static_cast<UI32>(two.SourceLocation().x);
+		});
 		delete teleportData;
 	}
 }

@@ -3455,8 +3455,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "PACKITEM" )
 				{
-					// ERROR, THIS IS JUST WRONG!!!!!!!!!!
-					packitem = reinterpret_cast<CItem *>( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+					temp_container_serial =  static_cast<SERIAL>(std::stoul(stripTrim( data ), nullptr, 0) );
 					rvalue = true;
 				}
 				else if( UTag == "POISON" )
@@ -3804,11 +3803,15 @@ void CChar::SkillUsed( bool value, UI08 skillNum )
 void CChar::PostLoadProcessing( void )
 {
 	CBaseObject::PostLoadProcessing();
-	SERIAL tempSerial = (UI64)packitem;		// we stored the serial in packitem
-	if( tempSerial != INVALIDSERIAL )
-		SetPackItem( calcItemObjFromSer( tempSerial ) );
+	if (temp_container_serial != INVALIDSERIAL)
+	{
+		SetPackItem(calcItemObjFromSer(temp_container_serial));
+	}
 	else
-		SetPackItem( NULL );
+	{
+		SetPackItem(NULL);
+	}
+
 	SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
 	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight )
 		SetWeight( Weight->calcCharWeight( this ) );

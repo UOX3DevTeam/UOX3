@@ -393,7 +393,6 @@ public:
 	UI16			GetTextID( UI08 number ) const;
 	UI16			GetTextLength( UI08 number ) const;
 	std::string		GetTextString( UI08 number ) const;
-	std::string		GetTextUString( UI08 number ) const;
 
 protected:
 	SERIAL				id, buttonID, gumpID;

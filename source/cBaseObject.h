@@ -102,6 +102,8 @@ protected:
 	SI16			fame;
 	SI16			karma;
 	SI16			kills;
+	
+	SERIAL			temp_container_serial;
 
 	void			CopyData( CBaseObject *target );
 

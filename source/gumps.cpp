@@ -455,11 +455,11 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		UI16 textID = packet->GetTextID( i );
 		switch( textID )
 		{
-			case 1000:	username	= packet->GetTextUString( i );	break;
-			case 1001:	password	= packet->GetTextUString( i );	break;
-			case 1002:	emailAddy	= packet->GetTextUString( i );	break;
+			case 1000:	username	= packet->GetTextString( i );	break;
+			case 1001:	password	= packet->GetTextString( i );	break;
+			case 1002:	emailAddy	= packet->GetTextString( i );	break;
 			default:
-				Console.warning( format("Unknown textID %i with string %s", textID, packet->GetTextUString( i ).c_str()) );
+				Console.warning( format("Unknown textID %i with string %s", textID, packet->GetTextString( i ).c_str()) );
 		}
 	}
 
