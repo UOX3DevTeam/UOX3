@@ -70,6 +70,15 @@ public:
 	}
 	void	WriteString( size_t pos, const std::string& toWrite, size_t len )
 	{
+		if(( len == 0 ) || toWrite.empty() )
+		{
+			return;
+		}
+		if( len > toWrite.size() )
+		{
+			len = toWrite.size()+1;
+		}
+
 		if( (pos+len) >= internalBuffer.size() )
 			internalBuffer.resize( pos+len );
 

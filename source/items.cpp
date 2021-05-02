@@ -1139,12 +1139,11 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 
 	if( inCont )
 	{
-		CItem *spawnPack = static_cast<CItem *>(c->GetSpawnObj());
-		if( ValidateObject( spawnPack ) )
+		if( ValidateObject( s ) )
 		{
 			c->SetX( RandomNum( 0, 99 ) + 18 );
 			c->SetZ( 9 );
-			switch( getPackType( spawnPack ) )
+			switch( getPackType( s ) )
 			{
 				case PT_PACK:
 				case PT_BAG:

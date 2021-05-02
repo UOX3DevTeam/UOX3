@@ -1,3 +1,15 @@
+03/05/2021 - Xuri (0.99.4k)
+	Added layer=1 to spellbooks in dfndata/items/magic/misc_magic.dfn to allow NPCs to equip them (dragon slayer)
+	Fixed issue with wipe command (js/commands/targeting/wipe.js) not working because script was referencing wrong name for socket
+	Randomized initial position of items added inside containers via DFN tag PACKITEM
+	Fixed issue with get (js/commands/targeting/get.js) and set (js/commands/target/set.js) commands where wrong property name was used for getting/setting old npcwander type
+	Fixed various issues with in-game bulletin boards; posts can now be made, read and replied to using both regular client and ClassicUO client
+	Fixed issue with bulletin board post removal that could cause infinite loops
+	Fixed issues with and re-enabled bulletin board maintenance. Should no longer cause infinite loops, nor corrupt bulletin board posts when removing posts marked for deletion! This also fixes NPC escort quests not appearing on bulletin boards after initial quests were accepted and related posts removed.
+	Added new GM command in js/commands/msgmod.js:
+		'msgmod on/off 		// If on, GMs who open a bulletin board while using ClassicUO client will be able to remove any individual message
+	Added additional teleport locations in teleport.scp for Dragon Turtle Spawn area, Khaldun, Terathan Keep, Valley of Eodon, Minax Fortress, Stygian Abyss, Underworld
+
 28/04/2021 - Xuri
 	Reorganized teleport.scp file with logical groupings by map and area for easier maintenance
 	All teleport locations in teleport.scp without a source/target world specified will now work for both Felucca and Trammel facets

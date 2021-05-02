@@ -6838,6 +6838,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 			pSerial += BASEITEMSERIAL;
 		else
 			pSerial += 0x80000000;
+
 		pStream.WriteLong( 12, pSerial );
 		size_t byteOffset = 16;
 
@@ -6859,16 +6860,30 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 	else if( bFullPost ) //full post
 	{
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
-			totSize += (*pIter).size()+3;
+			totSize += (*pIter).size()+5;
+		totSize += 1;
 		pStream.ReserveSize( totSize );
 		pStream.WriteShort( 1, static_cast<UI16>(totSize) ); //packet size
-		pStream.WriteLong( 4, mSock->GetDWord( 1 ) ); //board serial
+		pStream.WriteLong( 4, mSock->GetDWord( 4 ) ); //board serial
 		pStream.WriteLong( 8, (mbPost.Serial + BASEITEMSERIAL) ); //message serial
 		size_t offset = 12;
 
-		pStream.WriteByte( offset, mbPost.PosterLen );
-		pStream.WriteString( ++offset, (char *)mbPost.Poster, mbPost.PosterLen );
-		offset += mbPost.PosterLen;
+		CChar *mChar = mSock->CurrcharObj();
+		TAGMAPOBJECT modboards = mChar->GetTag( "modboards" );
+		if( mChar->IsGM() && modboards.m_IntValue == 1 )
+		{
+			// If character is a GM, and has used the MSGMOD ON command, send their username instead of poster's,
+			// to allow removing messages from the message board
+			pStream.WriteByte( offset, mChar->GetName().length() + 1 );
+			pStream.WriteString( ++offset, mChar->GetName(), mChar->GetName().length() + 1 );
+			offset += mChar->GetName().length() + 1;
+		}
+		else
+		{
+			pStream.WriteByte( offset, mbPost.PosterLen + 1 );
+			pStream.WriteString( ++offset, (char *)mbPost.Poster, mbPost.PosterLen + 1 );
+			offset += mbPost.PosterLen + 1;
+		}
 
 		pStream.WriteByte( offset, mbPost.SubjectLen );
 		pStream.WriteString( ++offset, (char *)mbPost.Subject, mbPost.SubjectLen );
@@ -6889,7 +6904,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 			pStream.WriteByte( ++offset, (*pIter).size()+2 );
 			pStream.WriteString( ++offset, (*pIter), (*pIter).size() );
 			offset += (*pIter).size();
-			pStream.WriteByte( offset, 0x32 );
+			pStream.WriteByte( offset, 0x00 );
 			pStream.WriteByte( ++offset, 0x00 );
 		}
 	}

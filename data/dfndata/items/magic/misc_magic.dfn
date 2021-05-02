@@ -9,6 +9,7 @@ type=9
 restock=15
 decay=1
 good=28
+layer=1
 }
 
 [0x1f14]
