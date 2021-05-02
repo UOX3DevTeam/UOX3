@@ -1302,18 +1302,12 @@ void CWorldMain::CheckAutoTimers( void )
 			// After an automatic world save occurs, lets check to see if
 			// anyone is online (clients connected).  If nobody is connected
 			// Lets do some maintenance on the bulletin boards.
-			//
-			// !!!DISABLED!!! Either the MsgBoardMaintenance() function (or sub-functions)
-			// read in the messages incorrectly, or they get saved back out incorrectly.
-			// Either way, it completely messes up bulletin boards, so it's disabled for now.
-			//
-#pragma note( "MsgBoardMaintenance() disabled until someone can figure out why it breaks bullein boards!" )
-			/*if( !GetPlayersOnline() && GetWorldSaveProgress() != SS_SAVING )
+			if( !GetPlayersOnline() && GetWorldSaveProgress() != SS_SAVING )
 			{
 				Console << "No players currently online. Starting bulletin board maintenance" << myendl;
-				Console.Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
+				Console.log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
 				MsgBoardMaintenance();
-			}*/
+			}
 
 			SetAutoSaved( false );
 			SaveNewWorld( false );

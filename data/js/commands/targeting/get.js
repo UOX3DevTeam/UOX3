@@ -301,7 +301,7 @@ function HandleGetChar( socket, ourChar, uKey )
 		socket.SysMessage( ourChar.wandertype );
 		break;
 	case "OLDWANDERTYPE":
-		socket.SysMessage( ourChar.oldwandertype );
+		socket.SysMessage( ourChar.oldWandertype );
 		break;
 	case "DIR":
 	case "DIRECTION":

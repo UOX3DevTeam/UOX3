@@ -107,14 +107,31 @@ function CallWipe( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	socket.clickX 	= socket.GetWord( 11 );
-	socket.clickY 	= socket.GetWord( 13 );
-	socket.CustomTarget( 1, "Choose bottom corner to wipe" );
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck != 255 )
+	{
+		socket.clickX 	= socket.GetWord( 11 );
+		socket.clickY 	= socket.GetWord( 13 );
+		socket.CustomTarget( 1, "Choose bottom corner to wipe" );
+	}
 }
 
 function onCallback1( socket, ourObj )
 {
-	DoWipe( socket, ourObj );
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck != 255 )
+	{
+		DoWipe( socket, ourObj );
+	}
+	else
+	{
+		socket.clickX = 0;
+		socket.clickY = 0;
+	}
 }
 
 function DoWipe( socket, ourObj )

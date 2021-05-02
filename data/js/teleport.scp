@@ -14,8 +14,8 @@
 
 [TELEPORT ENTRIES]
 {
-// Felucca o-----------------------------------------------------o
-// Felucca - Blighted Grove
+// Felucca/Trammel o-----------------------------------------------------o
+// Felucca/Trammel - Blighted Grove
 ENTRY=587,      1638,   All,    6481,   868,    10          //  [Blighted_Grove_ent]
 ENTRY=588,      1638,   All,    6481,   868,    10          //  [Blighted_Grove_ent]
 ENTRY=589,      1638,   All,    6482,   868,    10          //  [Blighted_Grove_ent]
@@ -29,7 +29,7 @@ ENTRY=6479,     862,    All,    586,    1640,   -1          //  [Blighted_Grove_
 ENTRY=6588,     868,    All,    6488,   849,    40          //  [Blighted_Grove_ext_tree]
 ENTRY=6588,     867,    All,    6488,   849,    40          //  [Blighted_Grove_ext_tree]
 
-// Felucca - Britain
+// Felucca/Trammel - Britain
 ENTRY=1491,     1640,   24,     6032,   1498,   25          //  [Britain_Sewer_x]
 ENTRY=1491,     1642,   24,     6032,   1498,   25          //  [Britain_Sewer_x]
 ENTRY=6032,     1499,   All,    1490,   1640,   24          //  [Britain_Sewer_x_to_Britain]
@@ -37,14 +37,14 @@ ENTRY=6032,     1501,   All,    1490,   1642,   24          //  [Britain_Sewer_x
 ENTRY=6140,     1431,   All,    6137,   1408,   2           //  [Britain_Sewer_to_T2A_Cave]
 ENTRY=6141,     1431,   All,    6138,   1408,   2           //  [Britain_Sewer_to_T2A_Cave]
 
-// Felucca - Buccaneer's Den
+// Felucca/Trammel - Buccaneer's Den
 ENTRY=2647,     2195,   -20,    2651,   2195,   5           //  [Buccaneers_Den_Exit2]
 ENTRY=2669,     2072,   -20,    2669,   2099,   3           //  [Buccaneers_Den_Exit1]
 ENTRY=2674,     2242,   2,      2677,   2242,   -18         //  [Buccaneers_Den_Tavern_ent]
 ENTRY=2676,     2241,   -15,    2673,   2242,   3           //  [Buccaneers_Den_Tavern_ext1]
 ENTRY=2676,     2242,   -15,    2673,   2242,   3           //  [Buccaneers_Den_Tavern_ext2]
 
-// Felucca - Covetous Dungeon
+// Felucca/Trammel - Covetous Dungeon
 ENTRY=2384,     836,    All,    5614,   1996,   0           //  [Covetous_2_3_x]
 ENTRY=2384,     837,    All,    5614,   1997,   0           //  [Covetous_2_3_x]
 ENTRY=2384,     838,    All,    5614,   1998,   0           //  [Covetous_2_3_x]
@@ -86,7 +86,7 @@ ENTRY=5615,     1997,   All,    2385,   837,    1           //  [Covetous_3_2_x]
 ENTRY=5615,     1998,   All,    2385,   838,    1           //  [Covetous_3_2_x]
 ENTRY=5615,     1999,   All,    2385,   838,    1           //  [Covetous_3_2_x]
 
-// Felucca - Deceit Dungeon
+// Felucca/Trammel - Deceit Dungeon
 ENTRY=4110,     430,    All,    5187,   638,    0           //  [Deceit_out_x]
 ENTRY=4111,     430,    All,    5188,   638,    0           //  [Deceit_out_x]
 ENTRY=4112,     430,    All,    5189,   638,    0           //  [Deceit_out_x]
@@ -107,7 +107,7 @@ ENTRY=5306,     531,    All,    5218,   586,    -10         //  [Deceit_2_1_x]
 ENTRY=5306,     650,    All,    5219,   761,    -25         //  [Deceit_4_3_x]
 ENTRY=5346,     578,    All,    5137,   650,    6           //  [Deceit_2_3_x]
 
-// Felucca - Despise Dungeon
+// Felucca/Trammel - Despise Dungeon
 ENTRY=1296,     1080,   All,    5587,   630,    30          //  [Despise_out_x]
 ENTRY=1296,     1081,   All,    5587,   631,    30          //  [Despise_out_x]
 ENTRY=1296,     1082,   All,    5587,   632,    30          //  [Despise_out_x]
@@ -133,7 +133,7 @@ ENTRY=5410,     858,    All,    5387,   755,    0           //  [Despise_3_2_x]
 ENTRY=5410,     859,    All,    5387,   756,    0           //  [Despise_3_2_x]
 ENTRY=5410,     860,    All,    5387,   757,    0           //  [Despise_3_2_x]
 
-// Felucca - Destard Dungeon
+// Felucca/Trammel - Destard Dungeon
 ENTRY=1175,     2635,   All,    5242,   1006,   0           //  [Destard_out_x]
 ENTRY=1176,     2635,   All,    5243,   1006,   0           //  [Destard_out_x]
 ENTRY=5129,     909,    All,    5142,   801,    4           //  [Destard_1_2_x]
@@ -156,7 +156,29 @@ ENTRY=5242,     1007,   All,    1175,   2636,   1           //  [Destard_ent_out
 ENTRY=5243,     1007,   All,    1176,   2636,   1           //  [Destard_ent_out_x]
 ENTRY=5244,     1007,   All,    1176,   2636,   1           //  [Destard_ent_out_x]
 
-// Felucca - Fire Dungeon
+// Felucca/Trammel - Dragon Turtle Spawn
+ENTRY=6945,     1813,   All,    5813,   2960,   14          //  [North_Sparkle_to_Lost_Lands]
+ENTRY=7013,     1956,   All,    5319,   981,    0           //  [South_Sparkle_to_Destard]
+ENTRY=7007,     2056,   All,    7162,   1902,   45          //  [Passage_to_Dragon_Turtle_Spawn]
+ENTRY=7007,     2057,   All,    7162,   1903,   45          //  [Passage_to_Dragon_Turtle_Spawn]
+ENTRY=7007,     2058,   All,    7162,   1904,   45          //  [Passage_to_Dragon_Turtle_Spawn]
+ENTRY=7007,     2059,   All,    7162,   1905,   45          //  [Passage_to_Dragon_Turtle_Spawn]
+ENTRY=7007,     2060,   All,    7162,   1906,   45          //  [Passage_to_Dragon_Turtle_Spawn]
+ENTRY=7166,     1902,   All,    7008,   2056,   5           //  [Dragon_Turtle_Spawn_to_Passage]
+ENTRY=7166,     1903,   All,    7008,   2057,   5           //  [Dragon_Turtle_Spawn_to_Passage]
+ENTRY=7166,     1904,   All,    7008,   2058,   5           //  [Dragon_Turtle_Spawn_to_Passage]
+ENTRY=7166,     1905,   All,    7008,   2059,   5           //  [Dragon_Turtle_Spawn_to_Passage]
+ENTRY=7166,     1906,   All,    7008,   2060,   5           //  [Dragon_Turtle_Spawn_to_Passage]
+ENTRY=7034,     2097,   All,    5135,   991,   5            //  [Passage_to_Destard]
+ENTRY=7034,     2098,   All,    5135,   992,   5            //  [Passage_to_Destard]
+ENTRY=7034,     2099,   All,    5135,   993,   5            //  [Passage_to_Destard]
+ENTRY=7034,     2100,   All,    5135,   994,   5            //  [Passage_to_Destard]
+ENTRY=5135,     991,   All,    7031,   2096,   0            //  [Destard_to_Passage]
+ENTRY=5135,     992,   All,    7031,   2097,   5            //  [Destard_to_Passage]
+ENTRY=5135,     993,   All,    7031,   2098,   5            //  [Destard_to_Passage]
+ENTRY=5135,     994,   All,    7031,   2099,   5            //  [Destard_to_Passage]
+
+// Felucca/Trammel - Fire Dungeon
 ENTRY=5686,     1424,   All,    2923,   3406,   9           //  [Fire_Dungeon_b_serp_hold]
 ENTRY=5687,     1424,   All,    2923,   3406,   9           //  [Fire_Dungeon_b_serp_hold]
 ENTRY=5688,     1424,   All,    2923,   3406,   9           //  [Fire_Dungeon_b_serp_hold]
@@ -177,17 +199,17 @@ ENTRY=5757,     2907,   All,     5789,   1415,   42         //  [Desert_to_Fire_
 ENTRY=5757,     2908,   All,     5789,   1416,   39         //  [Desert_to_Fire_Dungeon]
 ENTRY=5757,     2909,   All,     5789,   1417,   38         //  [Desert_to_Fire_Dungeon]
 
-// Felucca - Heartwood
+// Felucca/Trammel - Heartwood
 ENTRY=535,      992,    All,    6984,   338,    0           //  [World_to_Heartwood]
 ENTRY=6984,     338,    All,    535,    992,    0           //  [Heartwood_to_World]
 
-// Felucca - Hedge Maze
+// Felucca/Trammel - Hedge Maze
 ENTRY=1160,     2205,   0,      1160,   2208,   20          //  [Hedge_tele]
 ENTRY=1163,     2208,   63,     1171,   2202,   0           //  [Hedge_tele3]
 ENTRY=1165,     2205,   40,     1163,   2211,   63          //  [Hedge_tele2]
 ENTRY=1166,     2237,   60,     1163,   2208,   0           //  [Hedge_tele1]
 
-// Felucca - Hythloth Dungeon
+// Felucca/Trammel - Hythloth Dungeon
 ENTRY=4721,     3813,   All,    5904,   20,     49          //  [Hythloth_out_x]
 ENTRY=4722,     3813,   All,    5905,   20,     49          //  [Hythloth_out_x]
 ENTRY=4723,     3813,   All,    5906,   20,     49          //  [Hythloth_out_x]
@@ -209,7 +231,7 @@ ENTRY=6082,     144,    All,    5919,   168,    22          //  [Hythloth_3_2_x]
 ENTRY=6082,     145,    All,    5919,   169,    22          //  [Hythloth_3_2_x]
 ENTRY=6082,     146,    All,    5919,   170,    22          //  [Hythloth_3_2_x]
 
-// Felucca - Ice Dungeon
+// Felucca/Trammel - Ice Dungeon
 ENTRY=1997,     80,     All,    5881,   241,    0           //  [N_Wrong_to_Ice_Dungeon]
 ENTRY=1997,     81,     All,    5881,   242,    0           //  [N_Wrong_to_Ice_Dungeon]
 ENTRY=1997,     82,     All,    5881,   243,    0           //  [N_Wrong_to_Ice_Dungeon]
@@ -245,13 +267,30 @@ ENTRY=5882,     242,    All,    1998,   81,     5           //  [Ice_Dungeon_to_
 ENTRY=5882,     243,    All,    1998,   81,     5           //  [Ice_Dungeon_to_N_Wrong]
 ENTRY=5882,     244,    All,    1998,   82,     5           //  [Ice_Dungeon_to_N_Wrong]
 
-// Felucca - Jhelom
+// Felucca/Trammel - Jhelom
 ENTRY=1142,     3621,   All,    1414,   3828,   6           //  [Jhelom_ns_m_x]
 ENTRY=1406,     3996,   All,    1414,   3828,   6           //  [Jhelom_ns_m_x]
 ENTRY=1409,     3824,   All,    1124,   3623,   6           //  [Jhelom_m_n_x]
 ENTRY=1419,     3832,   All,    1466,   4015,   6           //  [Jhelom_m_s_x]
 
-// Felucca - Lost Lands
+// Felucca/Trammel - Khaldun
+ENTRY=6011,     3787,   All,    5570,   1300,   0           //  [Khaldun_Entrance_1]
+ENTRY=6012,     3787,   All,    5571,   1300,   0           //  [Khaldun_Entrance_1]
+ENTRY=6013,     3787,   All,    5572,   1300,   0           //  [Khaldun_Entrance_1]
+ENTRY=6014,     3787,   All,    5573,   1300,   0           //  [Khaldun_Entrance_1]
+ENTRY=5571,     1299,   All,    6012,   3786,   20          //  [Khaldun_Exit_1]
+ENTRY=5572,     1299,   All,    6013,   3786,   20          //  [Khaldun_Exit_1]
+ENTRY=5882,     3819,   All,    5398,   1290,   0           //  [Khaldun_Entrance_2]
+ENTRY=5400,     1289,   All,    5880,   3818,   2           //  [Khaldun_Exit_2]
+ENTRY=5477,     1347,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5477,     1348,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5478,     1348,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5478,     1347,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5479,     1348,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5479,     1346,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+ENTRY=5479,     1347,   All,    5451,   1374,   0           //  [Khaldun_Pit_Teleporter]
+
+// Felucca/Trammel - Lost Lands
 ENTRY=5697,     3660,   All,    5658,   424,    0           //  [T2A_gy_to_Cave]
 ENTRY=5736,     3196,   All,    4545,   852,    31          //  [Papua_to_Moonglow]
 ENTRY=6086,     3675,   All,    2398,   199,    0           //  [East_T2A_to_N._Minoc]
@@ -259,11 +298,11 @@ ENTRY=6086,     3676,   All,    2399,   199,    0           //  [East_T2A_to_N._
 ENTRY=6074,     3332,   All,    6126,   1410,   15          //  [Hoppers_Bog_to_T2A_Cave]
 ENTRY=6075,     3332,   All,    6127,   1410,   15          //  [Hoppers_Bog_to_T2A_Cave]
 
-// Felucca - Minoc to Lost Lands
+// Felucca/Trammel - Minoc to Lost Lands
 ENTRY=2398,     198,    0,      6087,   3675,   17          //  [N._Minoc_to_east_t2a]
 ENTRY=2399,     198,    0,      6087,   3676,   18          //  [N._Minoc_to_east_t2a]
 
-// Felucca - Moongates
+// Felucca/Trammel - Moongates
 ENTRY=643,      2067,   All,    1337,   1998,   5           //  [Skara_Moongate_x]
 ENTRY=771,      752,    All,    1500,   3772,   5           //  [Yew_Moongate_x]
 ENTRY=1336,     1997,   All,    1829,   2949,   -20         //  [Britain_Moongate_x]
@@ -273,7 +312,7 @@ ENTRY=2701,     692,    All,    4468,   1284,   5           //  [Vesper_Moongate
 ENTRY=3563,     2139,   All,    644,    2068,   5           //  [Magincia_Moongate_x]
 ENTRY=4467,     1283,   All,    772,    753,    5           //  [Moonglow_Moongate_x]
 
-// Felucca - Moonglow
+// Felucca/Trammel - Moonglow
 ENTRY=4300,     968,    All,    4442,   1122,   4           //  [Moonglow_b_x]
 ENTRY=4436,     1107,   All,    4300,   992,    5           //  [Moonglow_3_x]
 ENTRY=4443,     1137,   All,    4487,   1475,   4           //  [Moonglow_2_x]
@@ -284,7 +323,7 @@ ENTRY=4540,     898,    All,    4442,   1122,   4           //  [Moonglow_b_x]
 ENTRY=4545,     851,    All,    5735,   3196,   11          //  [Moonglow_to_Papua]
 ENTRY=4663,     1134,   All,    4442,   1122,   4           //  [Moonglow_b_x]
 
-// Felucca - Painted Caves
+// Felucca/Trammel - Painted Caves
 ENTRY=1714,     2996,   All,    6309,   892,    -1          //  [Painted_Caves_ent]
 ENTRY=1714,     2997,   All,    6309,   892,    -1          //  [Painted_Caves_ent]
 ENTRY=6310,     890,    All,    1715,   2996,   0           //  [Painted_Caves_ext]
@@ -292,7 +331,7 @@ ENTRY=6310,     891,    All,    1715,   2996,   0           //  [Painted_Caves_e
 ENTRY=6310,     892,    All,    1715,   2997,   0           //  [Painted_Caves_ext]
 ENTRY=6310,     893,    All,    1715,   2997,   0           //  [Painted_Caves_ext]
 
-// Felucca - Palace of Paroxysmus
+// Felucca/Trammel - Palace of Paroxysmus
 ENTRY=5577,     3018,   All,    6222,   335,    60          //  [Palace_of_Paroxysmus]
 ENTRY=5578,     3016,   All,    6222,   335,    60          //  [Palace_of_Paroxysmus]
 ENTRY=5578,     3017,   All,    6222,   335,    60          //  [Palace_of_Paroxysmus]
@@ -304,7 +343,7 @@ ENTRY=5579,     3019,   All,    6222,   335,    60          //  [Palace_of_Parox
 ENTRY=6303,     328,    All,     5623,   3038,   15         //  [Palace_of_Paroxysmus]
 ENTRY=6304,     328,    All,     5623,   3038,   15         //  [Palace_of_Paroxysmus]
 
-// Felucca - Prism of Light Dungeon
+// Felucca/Trammel - Prism of Light Dungeon
 ENTRY=3784,     1098,   All,    6471,   189,    0           //  [Prism_of_Light]
 ENTRY=3785,     1098,   All,    6472,   189,    0           //  [Prism_of_Light]
 ENTRY=6469,     97,     All,    6503,   87,     0           //  [Prism_of_Light]
@@ -330,7 +369,7 @@ ENTRY=6577,     176,    All,    6579,   159,    7           //  [Prism_of_Light]
 ENTRY=6578,     160,    All,    6577,   178,    30          //  [Prism_of_Light]
 ENTRY=6582,     109,    All,    6552,   142,    0           //  [Prism_of_Light]
 
-// Felucca - Sanctuary
+// Felucca/Trammel - Sanctuary
 ENTRY=766,      1645,   All,    6173,   21,     0           //  [world_to_Sanctuary]
 ENTRY=766,      1646,   All,    6173,   22,     0           //  [world_to_Sanctuary]
 ENTRY=766,      1647,   All,    6173,   23,     0           //  [world_to_Sanctuary]
@@ -358,10 +397,10 @@ ENTRY=6375,     49,     All,    801,    1682,   0           //  [Sanctuary_Cave_
 ENTRY=6376,     49,     All,    801,    1682,   0           //  [Sanctuary_Cave_ladders]
 ENTRY=6377,     49,     All,    801,    1682,   0           //  [Sanctuary_Cave_ladders]
 
-// Felucca - Serpent's Hold
+// Felucca/Trammel - Serpent's Hold
 ENTRY=2923,     3405,   All,    5687,   1423,   41          //  [Serpents_Hold_to_Fire_Dungeon]
 
-// Felucca - Shame Dungeon
+// Felucca/Trammel - Shame Dungeon
 ENTRY=512,      1559,   All,    5394,   126,    0           //  [Shame_out_x]
 ENTRY=513,      1559,   All,    5395,   126,    0           //  [Shame_out_x]
 ENTRY=514,      1559,   All,    5396,   126,    0           //  [Shame_out_x]
@@ -377,22 +416,24 @@ ENTRY=5538,     170,    All,    5516,   176,    0           //  [Shame_3_4_x]
 ENTRY=5604,     102,    All,    5514,   148,    25          //  [Shame_2_3_x]
 ENTRY=5875,     19,     All,    5507,   161,    5           //  [Shame_5_4_x]
 
-// Felucca - Shrine of Spirituality
+// Felucca/Trammel - Shrine of Spirituality
 ENTRY=1596,     2488,   All,    1602,   2488,   5           //  [Shrine_Spirit_Exit]
 ENTRY=1600,     2489,   All,    1596,   2490,   19          //  [Shrine_Spirit_ent1]
 ENTRY=1600,     2490,   All,    1596,   2490,   19          //  [Shrine_Spirit_ent2]
 
-// Felucca - Skara Brae
+// Felucca/Trammel - Skara Brae
 ENTRY=681,      2235,   All,    713,    2235,   -2          //  [Skara_Boat_out]
 ENTRY=711,      2235,   All,    680,    2235,   -2          //  [Skara_Boat_in]
 
-// Felucca - Terathan Keep
+// Felucca/Trammel - Terathan Keep
+ENTRY=5172,     1589,   All,     5143,   1774,   0           //  [Terathan_to_Star_Room]
 ENTRY=5340,     1598,   47,     5426,   3120,   -60         //  [Terathan_out]
 ENTRY=5341,     1598,   47,     5427,   3120,   -60         //  [Terathan_out]
 ENTRY=5426,     3123,   -80,    5340,   1599,   41          //  [Terathan_in]
 ENTRY=5427,     3123,   -80,    5341,   1599,   41          //  [Terathan_in]
+ENTRY=5153,    	1760,   All,    5171,   1586,   0           //  [Star_Room_to_Terathan] <- Temp
 
-// Felucca - Trinsic Passage
+// Felucca/Trammel - Trinsic Passage
 ENTRY=1628,     3320,   All,    5899,   1409,   42          //  [Trinsic_to_Trinsic_Passage]
 ENTRY=1629,     3320,   All,    5900,   1409,   43          //  [Trinsic_to_Trinsic_Passage]
 ENTRY=5898,     1410,   All,    1628,   3321,   0           //  [Trinsic_Passage_to_Trinsic]
@@ -417,18 +458,18 @@ ENTRY=6025,     1344,   All,    5138,   3664,   31          //  [Trinsic_Passage
 ENTRY=6025,     1345,   All,    5138,   3665,   32          //  [Trinsic_Passage_to_W.T2A]
 ENTRY=6025,     1346,   All,    5138,   3665,   32          //  [Trinsic_Passage_to_W.T2A]
 
-// Felucca - Trinsic Hidden Valley
+// Felucca/Trammel - Trinsic Hidden Valley
 ENTRY=1653,     2963,   All,    1676,   2986,   1           //  [Hidden_Valley_m_b_x]
 ENTRY=1677,     2987,   All,    1675,   2987,   21          //  [Hidden_Valley_b_b_x]
 
-// Felucca - T2A Cave
+// Felucca/Trammel - T2A Cave
 ENTRY=6125,     1411,   All,    6074,   3333,   2           //  [T2A_Cave_to_Hoppers_Bog]
 ENTRY=6126,     1411,   All,    6074,   3333,   2           //  [T2A_Cave_to_Hoppers_Bog]
 ENTRY=6127,     1411,   All,    6075,   3333,   2           //  [T2A_Cave_to_Hoppers_Bog]
 ENTRY=6137,     1409,   All,    6140,   1432,   5           //  [T2A_Cave_to_Britain_Sewer]
 ENTRY=6138,     1409,   All,    6141,   1432,   5           //  [T2A_Cave_to_Britain_Sewer]
 
-// Felucca - Vesper Cemetery Passage to Lost Lands/T2A
+// Felucca/Trammel - Vesper Cemetery Passage to Lost Lands/T2A
 ENTRY=2776,     894,    All,    5685,   386,    1           //  [Vesper_gy_to_Cave]
 ENTRY=2776,     895,    All,    5685,   387,    2           //  [Vesper_gy_to_Cave]
 ENTRY=5658,     423,    All,    5697,   3659,   3           //  [Cave_to_T2A_gy]
@@ -438,14 +479,14 @@ ENTRY=5686,     387,    All,    2777,   895,    -23         //  [Vesper_gy_to_Ca
 ENTRY=2494,     3576,   All,    5905,   4070,   26          //  [Temple_Isle_to_T2A_temple]
 ENTRY=5906,     4069,   All,    2493,   3577,   5           //  [T2A_temple_to_Temple_Isle]
 
-// Felucca - Wind
+// Felucca/Trammel - Wind
 ENTRY=1361,     883,    All,    5166,   244,    15          //  [Wind_out_x]
 ENTRY=5166,     245,    All,    1361,   884,    1           //  [Wind_ent_out_x]
 ENTRY=5191,     152,    All,    1367,   890,    0           //  [Wind_Exit]
 ENTRY=5200,     71,     All,    5211,   22,     15          //  [Wind_w_e_x]
 ENTRY=5217,     18,     All,    5204,   74,     17          //  [Wind_e_w_x]
 
-// Felucca - Wrong Dungeon
+// Felucca/Trammel - Wrong Dungeon
 ENTRY=2041,     215,    All,    5823,   629,    0           //  [Wrong_out_x]
 ENTRY=2042,     215,    All,    5824,   629,    0           //  [Wrong_out_x]
 ENTRY=2043,     215,    All,    5825,   629,    0           //  [Wrong_out_x]
@@ -457,7 +498,7 @@ ENTRY=5825,     595,    All,    5689,   570,    25          //  [Wrong_1_2_x]
 ENTRY=5824,     630,    All,    2042,   216,    14          //  [Wrong_ent_out_x]
 ENTRY=5825,     630,    All,    2043,   216,    14          //  [Wrong_ent_out_x]
 
-// Felucca - Yew
+// Felucca/Trammel - Yew
 ENTRY=313,      786,    232,    5749,   360,    1           //  [Yew_to_Cave]
 ENTRY=314,      786,    232,    5750,   360,    2           //  [Yew_to_Cave]
 ENTRY=5748,     361,    All,    313,    787,    -24         //  [Cave_to_Yew]
@@ -985,6 +1026,74 @@ ENTRY=260,      783,    63,     7,      127,    -1,     4,3 //  [Yomotso_Mines_E
 
 
 // Temur o-----------------------------------------------------o
+// Temur - Valley of Eodon
+ENTRY=913,      2009,   All,     543,    2185,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2010,   All,     543,    2186,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2011,   All,     543,    2187,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2012,   All,     543,    2188,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2013,   All,     543,    2189,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2014,   All,     543,    2190,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2015,   All,     543,    2191,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2016,   All,     543,    2192,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2017,   All,     543,    2193,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2018,   All,     543,    2194,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2019,   All,     543,    2195,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2020,   All,     543,    2196,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2021,   All,     543,    2197,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=913,      2022,   All,     543,    2198,   -13,    5,5 //  [Valley_of_Eodon_to_Minax_Fortress]
+ENTRY=726,      1594,   All,     921,    1469,   0,      5,5 //  [Great_Ape_Cave_to_Valley_of_Eodon]
+ENTRY=727,      1594,   All,     922,    1469,   0,      5,5 //  [Great_Ape_Cave_to_Valley_of_Eodon]
+ENTRY=728,      1594,   All,     923,    1469,   0,      5,5 //  [Great_Ape_Cave_to_Valley_of_Eodon]
+ENTRY=924,      1470,   All,     726,    1595,   35,     5,5 //  [Valley_of_Eodon_to_Great_Ape_Cave]
+ENTRY=925,      1470,   All,     727,    1595,   35,     5,5 //  [Valley_of_Eodon_to_Great_Ape_Cave]
+ENTRY=926,      1470,   All,     728,    1595,   35,     5,5 //  [Valley_of_Eodon_to_Great_Ape_Cave]
+ENTRY=877,      2101,   All,     964,    1715,   0,      5,5 //  [Valley_of_Eodon_to_Volcano]
+ENTRY=878,      2101,   All,     965,    1715,   0,      5,5 //  [Valley_of_Eodon_to_Volcano]
+ENTRY=879,      2101,   All,     966,    1715,   0,      5,5 //  [Valley_of_Eodon_to_Volcano]
+ENTRY=880,      2101,   All,     967,    1715,   0,      5,5 //  [Valley_of_Eodon_to_Volcano]
+ENTRY=964,      1716,   All,     877,    2102,   40,     5,5 //  [Volcano_to_Valley_of_Eodon]
+ENTRY=965,      1716,   All,     878,    2102,   40,     5,5 //  [Volcano_to_Valley_of_Eodon]
+ENTRY=966,      1716,   All,     879,    2102,   40,     5,5 //  [Volcano_to_Valley_of_Eodon]
+ENTRY=967,      1716,   All,     880,    2102,   40,     5,5 //  [Volcano_to_Valley_of_Eodon]
+
+// Temur - Minax Fortress
+ENTRY=544,      2185,   All,     914,    2009,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2186,   All,     914,    2010,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2187,   All,     914,    2011,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2188,   All,     914,    2012,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2189,   All,     914,    2013,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2190,   All,     914,    2014,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2191,   All,     914,    2015,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2192,   All,     914,    2016,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2193,   All,     914,    2017,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2194,   All,     914,    2018,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2195,   All,     914,    2019,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2196,   All,     914,    2020,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2197,   All,     914,    2021,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+ENTRY=544,      2198,   All,     914,    2022,   77,     5,5 //  [Minax_Fortress_to_Valley_of_Eodon]
+
+// Temur - Stygian Abyss
+ENTRY=88,       362,    0,       367,    158,    0,      5,5 //  [Instance_1_to_Abyss]
+ENTRY=88,       560,    0,       367,    158,    0,      5,5 //  [Instance_2_to_Abyss]
+ENTRY=88,       768,    0,       367,    158,    0,      5,5 //  [Instance_3_to_Abyss]
+ENTRY=840,      1264,   All,     818,    755,    50,     5,5 //  [Medusa_to_Abyss]
+ENTRY=840,      1094,   All,     818,    755,    50,     5,5 //  [Medusa_to_Abyss]
+ENTRY=840,      927,    All,     818,    755,    50,     5,5 //  [Medusa_to_Abyss]
+
+// Temur - Underworld
+ENTRY=1125,     1076,   All,     520,    920,    39,     5,5 //  [Underworld_to_Stygian_Abyss]
+ENTRY=1126,     1076,   All,     521,    920,    39,     5,5 //  [Underworld_to_Stygian_Abyss]
+ENTRY=520,      919,    All,     1125,   1075,   -117,   5,5 //  [Stygian_Abyss_to_Underworld]
+ENTRY=521,      919,    All,     1126,   1075,   -117,   5,5 //  [Stygian_Abyss_to_Underworld]
+ENTRY=4194,     3260,   All,     1127,   1214,   5,      1,5 //  [Trammel_to_Underworld]
+ENTRY=4195,     3260,   All,     1128,   1214,   5,      1,5 //  [Trammel_to_Underworld]
+ENTRY=1125,     1215,   All,     4194,   3261,   0,      5,1 //  [Trammel_to_Underworld]
+ENTRY=1126,     1215,   All,     4194,   3261,   0,      5,1 //  [Trammel_to_Underworld]
+ENTRY=1127,     1215,   All,     4194,   3261,   0,      5,1 //  [Trammel_to_Underworld]
+ENTRY=1128,     1215,   All,     4194,   3261,   0,      5,1 //  [Trammel_to_Underworld]
+ENTRY=1129,     1215,   All,     4195,   3261,   0,      5,1 //  [Trammel_to_Underworld]
+ENTRY=1130,     1215,   All,     4195,   3261,   0,      5,1 //  [Trammel_to_Underworld]
+ENTRY=1131,     1215,   All,     4195,   3261,   0,      5,1 //  [Trammel_to_Underworld]
 }
 
 // Please end this file with a comment
