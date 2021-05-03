@@ -478,6 +478,7 @@ void MsgBoardPost( CSocket *tSock )
 	msgBoardPost.msgBoardLine.resize( internalBuffer[offset] );
 	msgBoardPost.Lines = internalBuffer[offset];
 	std::vector< std::string >::iterator lIter;
+	UI08 j = 0;
 	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
 	{
 		(*lIter).resize( internalBuffer[++offset] );
@@ -485,6 +486,17 @@ void MsgBoardPost( CSocket *tSock )
 		{
 			(*lIter)[i] = internalBuffer[++offset];
 		}
+
+		// Check if line is null-terminated, and null-terminate it if not
+		if( msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size()] > 0 )
+		{
+			auto checkForNullTerminator = msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size()-1];
+			if( checkForNullTerminator != '\0' )
+			{
+				msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size()-1] = '\0';
+			}
+		}
+		j++;
 	}
 
 	const SERIAL msgID = MsgBoardWritePost( msgBoardPost, fileName, msgType );
