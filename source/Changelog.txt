@@ -1,3 +1,6 @@
+03/05/2021 - Xuri
+	Fixed an issue where bulletin board posts submitted from client with lines of text longer than 255 bytes were stored with no null-terminator at end of the such lines, since they got cut off in wrong place
+
 03/05/2021 - Xuri (0.99.4k)
 	Added layer=1 to spellbooks in dfndata/items/magic/misc_magic.dfn to allow NPCs to equip them (dragon slayer)
 	Fixed issue with wipe command (js/commands/targeting/wipe.js) not working because script was referencing wrong name for socket
@@ -9,6 +12,7 @@
 	Added new GM command in js/commands/msgmod.js:
 		'msgmod on/off 		// If on, GMs who open a bulletin board while using ClassicUO client will be able to remove any individual message
 	Added additional teleport locations in teleport.scp for Dragon Turtle Spawn area, Khaldun, Terathan Keep, Valley of Eodon, Minax Fortress, Stygian Abyss, Underworld
+	Some minor fixes to regions.dfn - Name of Covetous dungeon, a set of coordinates for Ice Dungeon
 
 28/04/2021 - Xuri
 	Reorganized teleport.scp file with logical groupings by map and area for easier maintenance
