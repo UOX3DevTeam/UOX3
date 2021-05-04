@@ -499,9 +499,6 @@
     <ClInclude Include="StringUtility.hpp">
       <Filter>Header Files\Other No. 1</Filter>
     </ClInclude>
-    <ClInclude Include="GenericList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="uox3.ico" />
