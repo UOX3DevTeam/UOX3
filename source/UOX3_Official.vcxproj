@@ -1392,6 +1392,7 @@
     <ClInclude Include="enums.h" />
     <ClInclude Include="fileio.h" />
     <ClInclude Include="funcdecl.h" />
+    <ClInclude Include="GenericList.h" />
     <ClInclude Include="gump.h" />
     <ClInclude Include="jail.h" />
     <ClInclude Include="JSEncapsulate.h" />
