@@ -8,6 +8,7 @@
 #define __WORLDMAIN_H__
 
 #include "CDataList.h"
+#include "GenericList.h"
 #if UOX_PLATFORM == PLATFORM_WIN32
 #include <winsock2.h>
 #undef min
@@ -218,7 +219,7 @@ public:
 	std::map< UI16, GoPlaces_st >		goPlaces;
 	SPAWNMAP							spawnRegions;
 	TOWNMAP								townRegions;
-	CDataList< CTEffect * >				tempEffects;
+	GenericList< CTEffect * >			tempEffects;
 
 	QUEUEMAP							refreshQueue;
 	QUEUEMAP							deletionQueue;
