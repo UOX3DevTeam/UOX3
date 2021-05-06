@@ -722,8 +722,8 @@
 732=Post not valid, please notify GM!
 733=Failed to find post to be removed.
 734=Post removed.
-735=Escort: Needed for the day.
-736= Bounty: Reward for capture.
+735=Escort: Needed!
+736= Bounty: Reward!
 737= Lost valuable item.
 738=Thank you %s for thy service. We have made it safely to %s. Alas, I seem to be a little short on gold. I have nothing to pay you with.
 739=Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.
@@ -1991,5 +1991,22 @@
 2018=Invalid command syntax! Correct syntax: ban / ban <durationInMinutes> (if no duration is specified, ban defaults to 24 hours)
 2019=Select character to unban.
 2020=Account with ID #%d has been unbanned.
+2021=MSGMOD enabled - bulletin boards can now be moderated.
+2022=MSGMOD disabled - bulletin boards can no longer be moderated.
+2023=You must raise the anchor to pilot the ship.
+2024=Ar, the anchor is down sir!
+2025=Ar, anchor dropped sir.
+2026=Ar, the anchor was already dropped sir.
+2027=Ar, anchor raised sir.
+2028=Ar, the anchor has not been dropped sir.
+2029=You must lower the anchor to dock the boat.
+2030=This ship now has no name.
+2031=You open the plank.
+2032=You close the plank.
+2033=The tiller man of %s
+2034=Arr! Only the owner of the ship may change its name!
+2035=a ship
+2037=%s [Dry Docked]
+
 }
 EOF
