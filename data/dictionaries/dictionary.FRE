@@ -3,6 +3,8 @@
 // Translated by Aphasie, member of the "Sohnyrin Project"
 // www.geocities.com/sohnyrin
 // sohnyrin@hotmail.com
+//
+// Last updated by UOX3 project 07/05/2021
 //---------------------------------------------------------
 // Relecture de la partie traduite par Aphasie, et
 // traduction du reste par BigBuG (a.b@ifrance.com),
@@ -842,8 +844,8 @@
 732=Post non valide, veuillez avertir les MJs!
 733=N'a pas trouve le message devant etre supprime.
 734=Message supprime.
-735=Escorte: Requise pour la journee.
-736=Prime: Recompense pour la capture.
+735=Escorte: Requise!
+736=Prime: Recompense!.
 737=Perdu un objet precieux.
 738=Merci %s pour ce service. %s est en securite. Malheureusement, je suis un peu a court d'argent. Je ne peux vous payer.
 739=Merci %s pour ce service. %s est en securite. Voila votre salaire comme promis.
@@ -2153,5 +2155,21 @@
 2018=Syntaxe de commande invalide! Syntaxe correcte: ban / ban <durationInMinutes> (si aucune durée n'est spécifiée, l'interdiction par défaut est de 24 heures)
 2019=Sélectionnez le caractère à annuler.
 2020=Le compte avec l'ID #%d a été annulé.
+2021=MSGMOD activé - les tableaux d'affichage peuvent maintenant être modérés.
+2022=MSGMOD désactivé - les tableaux d'affichage ne peuvent plus être modérés.
+2023=Vous devez lever l'ancre pour piloter le navire.
+2024=Ar, l'ancre est descendue monsieur!
+2025=Ar, l'ancre est tombée monsieur.
+2026=Ar, l'ancre était déjà larguée monsieur.
+2027=Ar, ancre levée monsieur.
+2028=Ar, l'ancre n'a pas été lâchée monsieur.
+2029=Vous devez abaisser l'ancre pour accoster le bateau.
+2030=Ce vaisseau n'a plus de nom.
+2031=Vous ouvrez la planche.
+2032=Vous fermez la planche.
+2033=L'homme tiller de %s
+2034=Arr! Seul le propriétaire du navire peut changer de nom!
+2035=un navire
+2037=%s [en cale sèche]
 }
 EOF
