@@ -158,21 +158,21 @@ void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hou
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CDataList< CItem * > * GetItemList( void )
+//|	Function	-	GenericList< CItem * > * GetItemList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the Item DataList for iteration
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CItem * > * CMapRegion::GetItemList( void )
+GenericList< CItem * > * CMapRegion::GetItemList( void )
 {
 	return &itemData;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CDataList< CChar * > * GetCharList( void )
+//|	Function	-	GenericList< CChar * > * GetCharList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the Character DataList for iteration
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CChar * > * CMapRegion::GetCharList( void )
+GenericList< CChar * > * CMapRegion::GetCharList( void )
 {
 	return &charData;
 }

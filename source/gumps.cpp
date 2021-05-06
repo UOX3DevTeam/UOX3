@@ -367,7 +367,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 							CMapRegion *toCheck = (*rIter);
 							if( toCheck == NULL )	// no valid region
 								continue;
-							CDataList< CItem * > *regItems = toCheck->GetItemList();
+							GenericList< CItem * > *regItems = toCheck->GetItemList();
 							regItems->Push();
 							for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 							{

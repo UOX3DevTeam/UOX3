@@ -4164,7 +4164,7 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	UI16 itemCount		= 0;
 	bool itemIsCorpse	= toCopy.isCorpse();
 
-	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
+	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) )
@@ -4314,7 +4314,7 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContain
 			break;
 	}
 
-	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
+	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) )
@@ -5097,7 +5097,7 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 {
 	pStream.WriteLong( 3, toCopy.GetSerial() );
 	UI16 itemCount = 0;
-	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
+	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) )
@@ -6630,7 +6630,7 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 		CTownRegion *tReg = NULL;
 		if( cwmWorldState->ServerData()->TradeSystemStatus() )
 			tReg = calcRegionFromXY( vendorID.GetX(), vendorID.GetY(), vendorID.WorldNumber(), vendorID.GetInstanceID() );
-		CDataList< CItem * > *spCont = buyPack->GetContainsList();
+		GenericList< CItem * > *spCont = buyPack->GetContainsList();
 		for( CItem *spItem = spCont->First(); !spCont->Finished(); spItem = spCont->Next() )
 		{
 			if( ValidateObject( spItem ) )
@@ -6645,7 +6645,7 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 
 void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen )
 {
-	CDataList< CItem * > *opCont = ourPack->GetContainsList();
+	GenericList< CItem * > *opCont = ourPack->GetContainsList();
 	for( CItem *opItem = opCont->First(); !opCont->Finished(); opItem = opCont->Next() )
 	{
 		if( ValidateObject( opItem ) )

@@ -2096,7 +2096,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 				continue;
 
 			// First remove nearby characters from sight
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -2115,7 +2115,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 			regChars->Pop();
 
 			// Now remove nearby items and multis from sight
-			CDataList< CItem * > *regItems = MapArea->GetItemList();
+			GenericList< CItem * > *regItems = MapArea->GetItemList();
 			regItems->Push();
 			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 			{
@@ -2217,7 +2217,7 @@ void CChar::Teleport( void )
 			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -2230,7 +2230,7 @@ void CChar::Teleport( void )
 				}
 			}
 			regChars->Pop();
-			CDataList< CItem * > *regItems = MapArea->GetItemList();
+			GenericList< CItem * > *regItems = MapArea->GetItemList();
 			regItems->Push();
 			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 			{
@@ -2646,12 +2646,12 @@ void CChar::BreakConcentration( CSocket *sock )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CDataList< CChar * > *GetPetList( void )
+//| Function	-	GenericList< CChar * > *GetPetList( void )
 //| Date		-	13 March 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of pets the character owns
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CChar * > *CChar::GetPetList( void )
+GenericList< CChar * > *CChar::GetPetList( void )
 {
 	return &petsControlled;
 }

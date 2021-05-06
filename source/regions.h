@@ -34,11 +34,11 @@ struct MapResource_st
 class CMapRegion
 {
 private:
-	CDataList< CItem * >	itemData;
-	CDataList< CChar * >	charData;
+	GenericList< CItem * >	itemData;
+	GenericList< CChar * >	charData;
 public:
-	CDataList< CItem * > *	GetItemList( void );
-	CDataList< CChar * > *	GetCharList( void );
+	GenericList< CItem * > *	GetItemList( void );
+	GenericList< CChar * > *	GetCharList( void );
 
 	CMapRegion()
 	{

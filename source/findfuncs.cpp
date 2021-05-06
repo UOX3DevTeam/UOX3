@@ -98,7 +98,7 @@ CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 		if( CellResponse == NULL )
 			continue;
 
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		GenericList< CChar * > *regChars = CellResponse->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -182,7 +182,7 @@ CChar *FindItemOwner( CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 {
-	CDataList< CItem * > *tsCont = toSearch->GetContainsList();
+	GenericList< CItem * > *tsCont = toSearch->GetContainsList();
 	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
 	{
 		if( ValidateObject( toCheck ) )
@@ -231,7 +231,7 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 //o-----------------------------------------------------------------------------------------------o
 CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 {
-	CDataList< CItem * > *tsCont = toSearch->GetContainsList();
+	GenericList< CItem * > *tsCont = toSearch->GetContainsList();
 	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
 	{
 		if( ValidateObject( toCheck ) )
@@ -430,7 +430,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 		CMapRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -470,7 +470,7 @@ CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 	CMapRegion *toCheck = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( toCheck != NULL )	// no valid region
 	{
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -504,7 +504,7 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 		CMapRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -541,7 +541,7 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 		if( CellResponse == NULL )
 			continue;
 
-		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
 		regItems->Push();
 		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
@@ -570,7 +570,7 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 		if( CellResponse == NULL )
 			continue;
 
-		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
 		regItems->Push();
 		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
@@ -599,7 +599,7 @@ BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanc
 		if( CellResponse == NULL )
 			continue;
 
-		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
 		regItems->Push();
 		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
@@ -610,7 +610,7 @@ BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanc
 		}
 		regItems->Pop();
 
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		GenericList< CChar * > *regChars = CellResponse->GetCharList();
 		regItems->Push();
 		for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
 		{

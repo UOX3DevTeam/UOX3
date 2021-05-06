@@ -308,7 +308,7 @@ void command_showids( CSocket *s )
 	CMapRegion *Cell = MapRegion->GetMapRegion( mChar );
 	if( Cell == NULL )	// nothing to show
 		return;
-	CDataList< CChar * > *regChars = Cell->GetCharList();
+	GenericList< CChar * > *regChars = Cell->GetCharList();
 	regChars->Push();
 	for( CChar *toShow = regChars->First(); !regChars->Finished(); toShow = regChars->Next() )
 	{
@@ -926,7 +926,7 @@ void command_spawnkill( CSocket *s )
 		SI32 killed	= 0;
 
 		s->sysmessage( 349 );
-		CDataList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
+		GenericList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
 		for( CChar *i = spCharList->First(); !spCharList->Finished(); i = spCharList->Next() )
 		{
 			if( !ValidateObject( i ) )

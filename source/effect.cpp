@@ -282,7 +282,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		CMapRegion *Cell = (*rIter);
 		bool chain = false;
 
-		CDataList< CChar * > *regChars = Cell->GetCharList();
+		GenericList< CChar * > *regChars = Cell->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -307,7 +307,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 			}
 		}
 		regChars->Pop();
-		CDataList< CItem * > *regItems = Cell->GetItemList();
+		GenericList< CItem * > *regItems = Cell->GetItemList();
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{

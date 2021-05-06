@@ -1317,7 +1317,7 @@ void cSkills::RandomSteal( CSocket *s )
 	}
 
 	CItem *item = NULL;
-	CDataList< CItem * > *tcCont = p->GetContainsList();
+	GenericList< CItem * > *tcCont = p->GetContainsList();
 	const size_t numItems = tcCont->Num();
 
 	std::vector< CItem * > contList;
@@ -1612,7 +1612,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
 		{
@@ -1828,7 +1828,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{

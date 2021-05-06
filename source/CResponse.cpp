@@ -61,7 +61,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 		if( CellResponse == NULL )
 			continue;
 
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		GenericList< CChar * > *regChars = CellResponse->GetCharList();
 		regChars->Push();
 		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
 		{

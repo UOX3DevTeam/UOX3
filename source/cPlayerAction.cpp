@@ -150,7 +150,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 		const UI16 itID		= iToStack->GetID();
 		const SERIAL itSer	= iToStack->GetSerial();
 		const UI16 itCol	= iToStack->GetColour();
-		CDataList< CItem * > *ipCont = iPack->GetContainsList();
+		GenericList< CItem * > *ipCont = iPack->GetContainsList();
 		for( CItem *stack = ipCont->First(); !ipCont->Finished(); stack = ipCont->Next() )
 		{
 			if( !ValidateObject( stack ) )

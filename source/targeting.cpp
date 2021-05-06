@@ -853,7 +853,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 
 		criminal( mChar );
 
-		CDataList< CItem * > *iCont = i->GetContainsList();
+		GenericList< CItem * > *iCont = i->GetContainsList();
 		for( c = iCont->First(); !iCont->Finished(); c = iCont->Next() )
 		{
 			if( ValidateObject( c ) )

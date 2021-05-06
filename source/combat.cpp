@@ -2442,7 +2442,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 
 	if( toCheck != NULL )
 	{
-		CDataList< CChar * > *regChars = toCheck->GetCharList();
+		GenericList< CChar * > *regChars = toCheck->GetCharList();
 		regChars->Push();
 		for( getGuard = regChars->First(); !regChars->Finished(); getGuard = regChars->Next() )
 		{

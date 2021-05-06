@@ -50,7 +50,7 @@ class CChar : public CBaseObject
 private:
 	typedef std::map< ItemLayers, CItem * >				LAYERLIST;
 	typedef std::map< ItemLayers, CItem * >::iterator	LAYERLIST_ITERATOR;
-	typedef CDataList< DamageTrackEntry * >				DAMAGETRACK;
+	typedef GenericList< DamageTrackEntry * >				DAMAGETRACK;
 
 	struct NPCValues_st
 	{
@@ -213,7 +213,7 @@ protected:
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
-	CDataList< CChar * >	petsControlled;
+	GenericList< CChar * >	petsControlled;
 	ITEMLIST				ownedItems;
 	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
 	std::bitset< UT_COUNT >	updateTypes;
@@ -262,7 +262,7 @@ public:
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
 
-	CDataList< CChar * > *	GetPetList( void );
+	GenericList< CChar * > *	GetPetList( void );
 	ITEMLIST *	GetOwnedItems( void );
 
 	void		AddOwnedItem( CItem *toAdd );

@@ -142,7 +142,7 @@ void HandleTeleporters( CChar *s )
 					if( targetWorld != charWorld )
 						SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
 
-					CDataList< CChar * > *myPets = s->GetPetList();
+					GenericList< CChar * > *myPets = s->GetPetList();
 					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
 					{
 						if( !ValidateObject( myPet ) )
@@ -529,7 +529,7 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( cx ), MapRegion->GetGridY( cy ), c->WorldNumber() );	// check 3 cols... do we really NEED to?
 	if( MapArea == NULL )	// no valid region
 		return false;
-	CDataList< CChar * > *regChars = MapArea->GetCharList();
+	GenericList< CChar * > *regChars = MapArea->GetCharList();
 	regChars->Push();
 	for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 	{
@@ -796,7 +796,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
 		{
@@ -1072,7 +1072,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	if( grid == NULL )
 		return;
 
-	CDataList< CChar * > *regChars = grid->GetCharList();
+	GenericList< CChar * > *regChars = grid->GetCharList();
 	regChars->Push();
 	bool didShove			= false;
 	const SI16 x			= c->GetX();
@@ -1304,7 +1304,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 			continue;
 		if( mSock != NULL )		// Only send char stuff if we have a valid socket
 		{
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -1332,7 +1332,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 			}
 			regChars->Pop();
 		}
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
 		{

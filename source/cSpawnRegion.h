@@ -36,8 +36,8 @@ private:
 	UI08		worldNumber;		// which world are we spawning in?
 	UI16		instanceID;			// Which instance are we spawning in?
 
-	CDataList< CChar * >	spawnedChars;
-	CDataList< CItem * >	spawnedItems;
+	GenericList< CChar * >	spawnedChars;
+	GenericList< CItem * >	spawnedItems;
 	std::map<UI32, SI08>	validLandPosCheck;
 	std::map<UI32, SI08>	validWaterPosCheck;
 	std::vector< point3 >	validLandPos;
@@ -103,8 +103,8 @@ public:
 	void		deleteSpawnedChar( CChar *toDelete );
 	void		deleteSpawnedItem( CItem *toDelete );
 
-	CDataList< CItem * > *	GetSpawnedItemsList( void );
-	CDataList< CChar * > *	GetSpawnedCharsList( void );
+	GenericList< CItem * > *	GetSpawnedItemsList( void );
+	GenericList< CChar * > *	GetSpawnedCharsList( void );
 private:
 	CChar *		RegionSpawnChar( void );
 	CItem *		RegionSpawnItem( void );

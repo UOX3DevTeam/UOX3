@@ -2481,7 +2481,7 @@ void CItem::Delete( void )
 	}
 }
 
-CDataList< CItem * > * CItem::GetContainsList( void )
+GenericList< CItem * > * CItem::GetContainsList( void )
 {
 	return &Contains;
 }

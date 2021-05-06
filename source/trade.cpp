@@ -138,7 +138,7 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 					CItem *p = k->GetPackItem();
 					if( ValidateObject( p ) )
 					{
-						CDataList< CItem * > *iCont = i->GetContainsList();
+						GenericList< CItem * > *iCont = i->GetContainsList();
 						for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
 						{
 							if( ValidateObject( j ) )
@@ -198,7 +198,7 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 	if( ValidateObject( bp1 ) && ValidateObject( bp2 ) )
 	{
 		CItem *i = NULL;
-		CDataList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
+		GenericList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
 		for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 		{
 			if( ValidateObject( i ) )
@@ -210,7 +210,7 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 				i->PlaceInPack();
 			}
 		}
-		CDataList< CItem * > *c2Cont = tradeWindowTwo->GetContainsList();
+		GenericList< CItem * > *c2Cont = tradeWindowTwo->GetContainsList();
 		for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
 		{
 			if( ValidateObject( i ) )

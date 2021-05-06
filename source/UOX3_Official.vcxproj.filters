@@ -274,9 +274,6 @@
     <ClInclude Include="PartySystem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CDataList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -251,7 +251,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 					}
 
 					// Check that house addon won't block a door/staircase when placed
-					CDataList< CItem * > *itemList = mMulti->GetItemsInMultiList();
+					GenericList< CItem * > *itemList = mMulti->GetItemsInMultiList();
 					for( CItem *mItem = itemList->First(); !itemList->Finished(); mItem = itemList->Next() )
 					{
 						if( !ValidateObject( mItem ) )
@@ -763,7 +763,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	}
 
 	//Teleport pets as well
-	CDataList< CChar * > *myPets = mChar->GetPetList();
+	GenericList< CChar * > *myPets = mChar->GetPetList();
 	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 	{
 		if( ValidateObject( pet ) )

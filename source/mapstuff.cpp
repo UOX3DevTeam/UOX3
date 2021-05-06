@@ -835,7 +835,7 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
 		return z;
-	CDataList< CItem * > *regItems = MapArea->GetItemList();
+	GenericList< CItem * > *regItems = MapArea->GetItemList();
 	regItems->Push();
 	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 	{
@@ -944,7 +944,7 @@ CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 i
 		if( CellResponse == NULL )
 			continue;
 
-		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
 		regItems->Push();
 		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
@@ -1488,7 +1488,7 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 	if( checkWater || waterWalk )
 	{
 		const map_st map = SeekMap( x, y, worldNumber );
-		if( checkMultiPlacement && map.z == z || ( !checkMultiPlacement && map.z > z && map.z - z < 16 ))
+		if( checkMultiPlacement && map.z == z || ( !checkMultiPlacement && map.z >= z && map.z - z < 16 ))
 		{
 			if( z == ILLEGAL_Z )
 				return true;

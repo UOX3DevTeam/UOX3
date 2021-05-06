@@ -107,10 +107,10 @@ void LeaveBoat( CSocket *s, CItem *p )
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
 			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceID );
-			if( Map->ValidMultiLocation( x, y, z, worldNumber, instanceID, true, false, false, false ) == 1 && !findMulti( x, y, z, worldNumber, instanceID ) )
+			if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID ))
 			{
 				mChar->SetLocation( x, y, z, worldNumber, instanceID );
-				CDataList< CChar * > *myPets = mChar->GetPetList();
+				GenericList< CChar * > *myPets = mChar->GetPetList();
 				for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 				{
 					if( ValidateObject( pet ) )
@@ -143,7 +143,7 @@ void PlankStuff( CSocket *s, CItem *p )
 		CMultiObj *boat2	= p->GetMultiObj();
 		if( ValidateObject( boat2 ) )
 		{
-			CDataList< CChar * > *myPets = mChar->GetPetList();
+			GenericList< CChar * > *myPets = mChar->GetPetList();
 			for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 			{
 				if( ValidateObject( pet ) )
@@ -594,7 +594,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	p2->IncLocation( tx, ty );
 	hold->IncLocation( tx, ty );
 
-	CDataList< CItem * > *itemList = boat->GetItemsInMultiList();
+	GenericList< CItem * > *itemList = boat->GetItemsInMultiList();
 	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
 	{
 		if( !ValidateObject( bItem ) )
@@ -604,7 +604,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		bItem->IncLocation( tx, ty );
 	}
 
-	CDataList< CChar * > *charList = boat->GetCharsInMultiList();
+	GenericList< CChar * > *charList = boat->GetCharsInMultiList();
 	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
 	{
 		if( !ValidateObject( bChar ) )
@@ -705,14 +705,14 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 		b->SetDir( WEST );
 
 
-	CDataList< CItem * > *itemList = b->GetItemsInMultiList();
+	GenericList< CItem * > *itemList = b->GetItemsInMultiList();
 	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
 	{
 		if( !ValidateObject( bItem ) )
 			continue;
 		TurnStuff( b, bItem, rightTurn );
 	}
-	CDataList< CChar * > *charList = b->GetCharsInMultiList();
+	GenericList< CChar * > *charList = b->GetCharsInMultiList();
 	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
 	{
 		if( !ValidateObject( bChar ) )

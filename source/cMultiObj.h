@@ -37,12 +37,12 @@ protected:
 
 	virtual bool		LoadRemnants( void ) override;
 
-	CDataList< CItem * >	itemInMulti;
-	CDataList< CChar * >	charInMulti;
-	CDataList< CChar * >	ownersOfMulti;
-	CDataList< CChar * >	friendsOfMulti;
-	CDataList< CChar * >	bannedFromMulti;
-	CDataList< CChar * >	guestsOfMulti;
+	GenericList< CItem * >	itemInMulti;
+	GenericList< CChar * >	charInMulti;
+	GenericList< CChar * >	ownersOfMulti;
+	GenericList< CChar * >	friendsOfMulti;
+	GenericList< CChar * >	bannedFromMulti;
+	GenericList< CChar * >	guestsOfMulti;
 
 public:
 	CMultiObj();
@@ -146,12 +146,12 @@ public:
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
-	CDataList< CChar * > *	GetOwnersOfMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetFriendsOfMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetGuestsOfMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetBannedFromMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetCharsInMultiList( void );
-	CDataList< CItem * > *	GetItemsInMultiList( void );
+	GenericList< CChar * > *	GetOwnersOfMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetFriendsOfMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetGuestsOfMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetBannedFromMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetCharsInMultiList( void );
+	GenericList< CItem * > *	GetItemsInMultiList( void );
 
 };
 

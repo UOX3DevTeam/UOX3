@@ -801,7 +801,7 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 	{
 		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !cwmWorldState->ServerData()->CorpseLootDecay() )
 		{
-			CDataList< CItem * > *iCont = toDecay.GetContainsList();
+			GenericList< CItem * > *iCont = toDecay.GetContainsList();
 			for( CItem *io = iCont->First(); !iCont->Finished(); io = iCont->Next() )
 			{
 				if( ValidateObject( io ) )
