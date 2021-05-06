@@ -1,3 +1,7 @@
+07/05/2021 - Xuri
+	Replaced CDataList with the new GenericList class throughout UOX3, and removed CDataList from the project files
+	Reverted an earlier change where scriptsections were supposed to be reapplied to items bought from NPC shopkeepers - didn't actually work!
+
 04/05/2021 - giwo
 	Fixed server crash related to JS timers/other tempeffects by replacing the use of CDataList (which uses std::deque) in tempEffects with GenericList (which uses std::list), which is more optimized for removing records in the middle of the array
 	Updated Sort() methods in GenericList to use std::list member function sort instead of std::sort (Xuri)

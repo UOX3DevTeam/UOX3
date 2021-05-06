@@ -1812,7 +1812,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -1879,7 +1879,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{

@@ -683,7 +683,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
 		{

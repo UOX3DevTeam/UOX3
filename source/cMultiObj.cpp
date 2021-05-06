@@ -1287,7 +1287,7 @@ void CMultiObj::SetBanY( SI16 newValue )
 	banY		= newValue;
 }
 
-CDataList< CChar * > * CMultiObj::GetOwnersOfMultiList( bool clearList )
+GenericList< CChar * > * CMultiObj::GetOwnersOfMultiList( bool clearList )
 {
 	if( clearList )
 	{
@@ -1306,7 +1306,7 @@ CDataList< CChar * > * CMultiObj::GetOwnersOfMultiList( bool clearList )
 	return &ownersOfMulti;
 }
 
-CDataList< CChar * > * CMultiObj::GetFriendsOfMultiList( bool clearList )
+GenericList< CChar * > * CMultiObj::GetFriendsOfMultiList( bool clearList )
 {
 	if( clearList )
 		friendsOfMulti.Clear();
@@ -1323,7 +1323,7 @@ CDataList< CChar * > * CMultiObj::GetFriendsOfMultiList( bool clearList )
 	return &friendsOfMulti;
 }
 
-CDataList< CChar * > * CMultiObj::GetGuestsOfMultiList( bool clearList )
+GenericList< CChar * > * CMultiObj::GetGuestsOfMultiList( bool clearList )
 {
 	if( clearList )
 		guestsOfMulti.Clear();
@@ -1340,7 +1340,7 @@ CDataList< CChar * > * CMultiObj::GetGuestsOfMultiList( bool clearList )
 	return &guestsOfMulti;
 }
 
-CDataList< CChar * > * CMultiObj::GetBannedFromMultiList( bool clearList )
+GenericList< CChar * > * CMultiObj::GetBannedFromMultiList( bool clearList )
 {
 	if( clearList )
 		bannedFromMulti.Clear();
@@ -1357,12 +1357,12 @@ CDataList< CChar * > * CMultiObj::GetBannedFromMultiList( bool clearList )
 	return &bannedFromMulti;
 }
 
-CDataList< CChar * > * CMultiObj::GetCharsInMultiList( void )
+GenericList< CChar * > * CMultiObj::GetCharsInMultiList( void )
 {
 	return &charInMulti;
 }
 
-CDataList< CItem * > * CMultiObj::GetItemsInMultiList( void )
+GenericList< CItem * > * CMultiObj::GetItemsInMultiList( void )
 {
 	return &itemInMulti;
 }

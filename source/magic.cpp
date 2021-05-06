@@ -1132,7 +1132,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -1371,7 +1371,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 		CMapRegion *MapArea = (*rIter);
 		if( MapArea == NULL )	// no valid region
 			continue;
-		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -2039,7 +2039,7 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
 		if( !mChar->IsNpc() )
 		{
-			CDataList< CChar * > *myPets = mChar->GetPetList();
+			GenericList< CChar * > *myPets = mChar->GetPetList();
 			for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
 			{
 				if( !ValidateObject( myPet ) )
@@ -2472,7 +2472,7 @@ void cMagic::CheckFieldEffects( CChar& mChar )
 	CMapRegion *toCheck = MapRegion->GetMapRegion( &mChar );
 	if( toCheck == NULL )	// no valid region
 		return;
-	CDataList< CItem * > *regItems = toCheck->GetItemList();
+	GenericList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
 	for( CItem *inItemList = regItems->First(); !regItems->Finished(); inItemList = regItems->Next() )
 	{

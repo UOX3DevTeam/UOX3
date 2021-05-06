@@ -499,7 +499,7 @@ void callGuards( CChar *mChar )
 	CMapRegion *toCheck = MapRegion->GetMapRegion( mChar );
 	if( toCheck == NULL )
 		return;
-	CDataList< CChar * > *regChars = toCheck->GetCharList();
+	GenericList< CChar * > *regChars = toCheck->GetCharList();
 	regChars->Push();
 	for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 	{
@@ -1023,7 +1023,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o-----------------------------------------------------------------------------------------------o
 void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 {
-	CDataList< CItem * > *regItems = toCheck->GetItemList();
+	GenericList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
 	for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 	{
@@ -1427,7 +1427,7 @@ void CWorldMain::CheckAutoTimers( void )
 	while( tcCheck != regionList.end() )
 	{
 		CMapRegion *toCheck = (*tcCheck);
-		CDataList< CChar * > *regChars = toCheck->GetCharList();
+		GenericList< CChar * > *regChars = toCheck->GetCharList();
 		regChars->Push();
 		for( CChar *charCheck = regChars->First(); !regChars->Finished(); charCheck = regChars->Next() )
 		{
@@ -2250,7 +2250,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 					CItem *packItem = mChar.GetPackItem();
 					if( ValidateObject( packItem ) )
 					{
-						CDataList< CItem * > *piCont = packItem->GetContainsList();
+						GenericList< CItem * > *piCont = packItem->GetContainsList();
 						for( CItem *toScan = piCont->First(); !piCont->Finished(); toScan = piCont->Next() )
 						{
 							if( ValidateObject( toScan ) )
@@ -2547,7 +2547,7 @@ void DoorMacro( CSocket *s )
 		CMapRegion *toCheck = (*rIter);
 		if( toCheck == NULL )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{

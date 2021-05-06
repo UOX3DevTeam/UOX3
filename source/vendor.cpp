@@ -202,12 +202,6 @@ bool CPIBuyItem::Handle( void )
 							{
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
-
-								// Reapply item section to allow things like randomized values for bought items, instead
-								// of all bought items inheriting the specific stats of item in vendor's sellpack
-								ScriptSection *toFind = FileLookup->FindEntry( "0x1402", items_def );
-								ApplyItemSection( iMade, toFind, "0x1402" );
-
 								boughtItems.push_back( iMade );
 							}
 						}
@@ -358,7 +352,7 @@ bool CPISellItem::Handle( void )
 				}
 
 				CItem *join = NULL;
-				CDataList< CItem * > *pCont = boughtPack->GetContainsList();
+				GenericList< CItem * > *pCont = boughtPack->GetContainsList();
 				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
 					if( ValidateObject( k ) )
@@ -444,7 +438,7 @@ void restockNPC( CChar& i, bool stockAll )
 	CItem *ci = i.GetItemAtLayer( IL_SELLCONTAINER );
 	if( ValidateObject( ci ) )
 	{
-		CDataList< CItem * > *ciCont = ci->GetContainsList();
+		GenericList< CItem * > *ciCont = ci->GetContainsList();
 		for( CItem *c = ciCont->First(); !ciCont->Finished(); c = ciCont->Next() )
 		{
 			if( ValidateObject( c ) )

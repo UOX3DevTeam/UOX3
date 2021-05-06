@@ -1022,21 +1022,21 @@ void CSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CDataList< CItem * > * GetSpawnedItemsList( void )
+//|	Function	-	GenericList< CItem * > * GetSpawnedItemsList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of spawned Items for spawnregion
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
+GenericList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
 {
 	return &spawnedItems;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CDataList< CChar * > * GetSpawnedCharsList( void )
+//|	Function	-	GenericList< CChar * > * GetSpawnedCharsList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of spawned NPCs for spawnregion
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
+GenericList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
 {
 	return &spawnedChars;
 }

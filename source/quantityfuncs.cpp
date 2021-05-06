@@ -9,7 +9,7 @@
 UI32 GetSubTotalItemCount( CItem *objCont )
 {
 	UI32 total = 0;
-	CDataList< CItem * > *pCont = objCont->GetContainsList();
+	GenericList< CItem * > *pCont = objCont->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
 		if( ValidateObject( i ) )
@@ -46,7 +46,7 @@ UI32 GetTotalItemCount( CItem *objCont )
 UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 {
 	UI32 total = 0;
-	CDataList< CItem * > *pCont = p->GetContainsList();
+	GenericList< CItem * > *pCont = p->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
 		if( ValidateObject( i ) )
@@ -84,7 +84,7 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 		return 0;
 	UI32 amtDeleted = 0;
 	UI32 total		= amount;
-	CDataList< CItem * > *pCont = p->GetContainsList();
+	GenericList< CItem * > *pCont = p->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
 		if( ValidateObject( i ) )

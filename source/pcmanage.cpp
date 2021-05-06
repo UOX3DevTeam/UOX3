@@ -1400,7 +1400,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 				dupeItem->SetZ( 0 );
 				break;
 			case IL_PACKITEM:
-				CDataList< CItem * > *jCont;
+				GenericList< CItem * > *jCont;
 				jCont = j->GetContainsList();
 				for( k = jCont->First(); !jCont->Finished(); k = jCont->Next() )
 				{

@@ -1,6 +1,6 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
-#include "CDataList.h"
+#include "GenericList.h"
 enum CITempVars
 {
 	CITV_MORE	= 0,
@@ -13,7 +13,7 @@ enum CITempVars
 class CItem : public CBaseObject
 {
 protected:
-	CDataList< CItem * >	Contains;
+	GenericList< CItem * >	Contains;
 
 	SI08				gridLoc;
 
@@ -78,7 +78,7 @@ protected:
 
 public:
 
-	CDataList< CItem * > *	GetContainsList( void );
+	GenericList< CItem * > *	GetContainsList( void );
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 	UI16			EntryMadeFrom( void ) const;
@@ -291,7 +291,7 @@ protected:
 
 	void				CopyData( CSpawnItem *target );
 public:
-	CDataList< CBaseObject * >		spawnedList;
+	GenericList< CBaseObject * >		spawnedList;
 
 	CSpawnItem();
 	virtual				~CSpawnItem()

@@ -3,7 +3,7 @@
 
 #include "Prerequisites.h"
 
-#include "CDataList.h"
+#include "GenericList.h"
 #include "cChar.h"
 class PartyEntry
 {
@@ -140,7 +140,7 @@ class PartyFactory
 {
 	friend class Party;
 protected:
-	CDataList< Party * >		parties;
+	GenericList< Party * >		parties;
 	std::map< SERIAL, Party * >	partyQuickLook;
 
 	void			AddLookup( Party *toQuickLook, CChar *toSave );

@@ -1360,7 +1360,6 @@
     <ClInclude Include="cBaseObject.h" />
     <ClInclude Include="cChar.h" />
     <ClInclude Include="cConsole.h" />
-    <ClInclude Include="CDataList.h" />
     <ClInclude Include="cdice.h" />
     <ClInclude Include="cEffects.h" />
     <ClInclude Include="cGuild.h" />

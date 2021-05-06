@@ -1459,7 +1459,7 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
 		return NULL;
 
-	CDataList< CChar * > *myPets = mChar->GetPetList();
+	GenericList< CChar * > *myPets = mChar->GetPetList();
 	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 	{
 		if( ValidateObject( pet ) )

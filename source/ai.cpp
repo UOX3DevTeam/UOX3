@@ -88,7 +88,7 @@ void HandleGuardAI( CChar& mChar )
 			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -124,7 +124,7 @@ void HandleFighterAI( CChar& mChar )
 			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -243,7 +243,7 @@ void HandleEvilAI( CChar& mChar )
 			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -291,7 +291,7 @@ void HandleChaoticAI( CChar& mChar )
 			CMapRegion *MapArea = (*rIter);
 			if( MapArea == NULL )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -328,7 +328,7 @@ void HandleAnimalAI( CChar& mChar )
 				CMapRegion *MapArea = (*rIter);
 				if( MapArea == NULL )	// no valid region
 					continue;
-				CDataList< CChar * > *regChars = MapArea->GetCharList();
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
 				regChars->Push();
 				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{

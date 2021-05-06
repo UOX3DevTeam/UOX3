@@ -7,7 +7,6 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
-#include "CDataList.h"
 #include "GenericList.h"
 #if UOX_PLATFORM == PLATFORM_WIN32
 #include <winsock2.h>

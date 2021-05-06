@@ -81,7 +81,7 @@ SI32 CWeight::calcWeight( CItem *pack )
 	SI32 totalWeight = 0;
 	SI32 contWeight = 0;
 
-	CDataList< CItem * > *pCont = pack->GetContainsList();
+	GenericList< CItem * > *pCont = pack->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
 		if( !ValidateObject( i ) )
