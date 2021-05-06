@@ -423,6 +423,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	UI16 maxTrashContainers = 1;
 	UI16 scriptTrigger = 0;
 	UI16 multiColour = 0;
+	SI32 weightMax = 400; // Default
+	UI16 maxItems = 125; // Default
 	std::string customTagName;
 	std::string customTagStringValue;
 	TAGMAPOBJECT customTag;
@@ -489,6 +491,14 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		else if( UTag == "BOAT" )
 		{
 			isBoat = true;	//Boats
+		}
+		else if( UTag == "MAXITEMS" )
+		{
+			maxItems = static_cast<UI16>(std::stoul(data, nullptr, 0));
+		}
+		else if( UTag == "WEIGHTMAX" )
+		{
+			weightMax = static_cast<SI32>(std::stoi(data, nullptr, 0));
 		}
 		else if( UTag == "MAXBANS" )
 		{
@@ -600,11 +610,18 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	CItem *fakeHouse = NULL;
 	if( isMulti )
 	{
-		if( (houseID%256) > 18 ){
+		if( (houseID%256) > 20 )
+		{
 			temp = format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
 		}
-		else{
-			temp =  "a mast" ;
+		else
+		{
+			// Assign name of boat deed/model ship to newly created boat
+			temp = mChar->GetSpeechItem()->GetTitle();
+			if( temp == "" )
+			{
+				temp = "a ship";
+			}
 		}
 		house = Items->CreateMulti( mChar, temp, houseID, isBoat );
 		if( house == NULL )
@@ -737,6 +754,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	if( isBoat ) //Boats
 	{
 		CBoatObj *bObj = static_cast<CBoatObj *>(house);
+		bObj->SetWeightMax( weightMax );
+		bObj->SetMaxItems( maxItems );
 		if( bObj == NULL || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
 		{
 			house->Delete();

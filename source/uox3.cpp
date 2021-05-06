@@ -1097,19 +1097,120 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 		if( itemCheck->CanBeObjType( OT_BOAT ) )
 		{
 			CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
-			if( ValidateObject( mBoat ) && mBoat->GetMoveType() &&
+			SI08 boatMoveType = mBoat->GetMoveType();
+			if( ValidateObject( mBoat ) && boatMoveType &&
 			   ( mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 			{
-				if( mBoat->GetMoveType() == 1 )
-					MoveBoat( itemCheck->GetDir(), mBoat );
-				else if( mBoat->GetMoveType() == 2 )
+				if( boatMoveType != BOAT_ANCHORED )
 				{
-					UI08 dir = (UI08)( itemCheck->GetDir() + 4 );
-					if( dir > 7 )
-						dir %= 8;
-					MoveBoat( dir, mBoat );
+					switch( boatMoveType )
+					{
+						//case BOAT_ANCHORED:
+						//case BOAT_STOP:
+						case BOAT_FORWARD:
+						case BOAT_SLOWFORWARD:
+						case BOAT_ONEFORWARD:
+							MoveBoat( itemCheck->GetDir(), mBoat );
+							break;
+						case BOAT_BACKWARD:
+						case BOAT_SLOWBACKWARD:
+						case BOAT_ONEBACKWARD:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 4 );
+							if( dir > 7 )
+								dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_LEFT:
+						case BOAT_SLOWLEFT:
+						case BOAT_ONELEFT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 2 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_RIGHT:
+						case BOAT_SLOWRIGHT:
+						case BOAT_ONERIGHT:
+						{
+							// Right / One Right
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 2 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_FORWARDLEFT:
+						case BOAT_SLOWFORWARDLEFT:
+						case BOAT_ONEFORWARDLEFT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 1 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_FORWARDRIGHT:
+						case BOAT_SLOWFORWARDRIGHT:
+						case BOAT_ONEFORWARDRIGHT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 1 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_BACKWARDLEFT:
+						case BOAT_SLOWBACKWARDLEFT:
+						case BOAT_ONEBACKWARDLEFT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 5 );
+							if( dir > 7 )
+								dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_BACKWARDRIGHT:
+						case BOAT_SLOWBACKWARDRIGHT:
+						case BOAT_ONEBACKWARDRIGHT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 3 );
+							if( dir > 7 )
+								dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						default:
+							break;
+					}
+
+					// One-step boat commands, so reset move type to 0 after the initial move
+					if( boatMoveType == BOAT_LEFT || boatMoveType == BOAT_RIGHT )
+					{
+						// Move 50% slower left/right than forward/back
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+					}
+					else if( boatMoveType >= BOAT_ONELEFT && boatMoveType <= BOAT_ONEBACKWARDRIGHT )
+					{
+						mBoat->SetMoveType( 0 );
+
+						// Set timer to restrict movement to normal boat speed if player spams command
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+					}
+					else if( boatMoveType >= BOAT_SLOWLEFT && boatMoveType <= BOAT_SLOWBACKWARDLEFT )
+					{
+						// Set timer to slowly move the boat forward
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 2.0 ) );
+					}
+					else
+					{
+						// Set timer to move the boat forward at normal speed
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
+					}
 				}
-				mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
 			}
 		}
 	}

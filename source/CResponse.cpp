@@ -188,44 +188,44 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			case TW_BALANCE:			tResp = new CBankResponse( true );										break;
 			case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
 			case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
-			case TW_TRAIN:				tResp = new CTrainingResponse( text );									break;
+			case TW_TRAIN:				tResp = new CTrainingResponse( str_toupper( text ));					break;
 			case TW_FOLLOW:
-			case TW_FOLLOW2:			tResp = new CPetMultiResponse( text, false, TARGET_FOLLOW, 1310 );		break;
+			case TW_FOLLOW2:			tResp = new CPetMultiResponse( str_toupper( text ), false, TARGET_FOLLOW, 1310 );	break;
 			case TW_COME:
-			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, text );							break;
+			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, str_toupper( text ) );							break;
 			case TW_ALLCOME:
 			case TW_ALLFOLLOW:
-			case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, text );								break;
+			case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, str_toupper( text ) );							break;
 			case TW_KILL:
-			case TW_ATTACK:				tResp = new CPetAttackResponse( false, text );							break;
+			case TW_ATTACK:				tResp = new CPetAttackResponse( false, str_toupper( text ) );						break;
 			case TW_ALLKILL:
-			case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, text );							break;
+			case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, str_toupper( text ) );						break;
 			case TW_FETCH:
 			case TW_GET:
-			case TW_BRING:				tResp = new CPetMultiResponse( text, false, TARGET_GUARD, 1316 );		break;
-			case TW_FRIEND:				tResp = new CPetMultiResponse( text, true, TARGET_FRIEND, 1620 );		break;
-			case TW_GUARD:				tResp = new CPetMultiResponse( text, true, TARGET_GUARD, 1104 );		break;
+			case TW_BRING:				tResp = new CPetMultiResponse( str_toupper( text ), false, TARGET_GUARD, 1316 );	break;
+			case TW_FRIEND:				tResp = new CPetMultiResponse( str_toupper( text ), true, TARGET_FRIEND, 1620 );	break;
+			case TW_GUARD:				tResp = new CPetMultiResponse( str_toupper( text ), true, TARGET_GUARD, 1104 );		break;
 			case TW_ALLGUARD:
-			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, text );							break;
+			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, str_toupper( text ) );							break;
 			case TW_STOP:
-			case TW_STAY:				tResp = new CPetStayResponse( false, text );							break;
+			case TW_STAY:				tResp = new CPetStayResponse( false, str_toupper( text ) );							break;
 			case TW_ALLSTOP:
-			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, text );								break;
-			case TW_TRANSFER:			tResp = new CPetMultiResponse( text, true, TARGET_TRANSFER, 1323 );		break;
-			case TW_RELEASE:			tResp = new CPetReleaseResponse( text );								break;
-			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, text );							break;
-			case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
-			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
-			case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
-			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, text );							break;
-			case TW_VIEW:				tResp = new CVendorViewResponse( false, text );							break;
-			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
+			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, str_toupper( text ) );							break;
+			case TW_TRANSFER:			tResp = new CPetMultiResponse( str_toupper( text ), true, TARGET_TRANSFER, 1323 );		break;
+			case TW_RELEASE:			tResp = new CPetReleaseResponse( str_toupper( text ) );								break;
+			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, str_toupper( text ) );						break;
+			case TW_BUY:				tResp = new CVendorBuyResponse( false, str_toupper( text ) );						break;
+			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, str_toupper( text ) );						break;
+			case TW_SELL:				tResp = new CVendorSellResponse( false, str_toupper( text ) );						break;
+			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, str_toupper( text ) );						break;
+			case TW_VIEW:				tResp = new CVendorViewResponse( false, str_toupper( text ) );						break;
+			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, str_toupper( text ) );						break;
 			case TW_COLLECT:
-			case TW_GOLD:				tResp = new CVendorGoldResponse( false, text );							break;
-			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, text );						break;
-			case TW_STATUS:				tResp = new CVendorStatusResponse( false, text );						break;
-			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, text );						break;
-			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, text );						break;
+			case TW_GOLD:				tResp = new CVendorGoldResponse( false, str_toupper( text ) );						break;
+			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, str_toupper( text ) );						break;
+			case TW_STATUS:				tResp = new CVendorStatusResponse( false, str_toupper( text ) );					break;
+			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, str_toupper( text ) );					break;
+			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, str_toupper( text ));					break;
 			case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
 			case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
 			case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
@@ -243,26 +243,55 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			}
 			case TW_TRASHBARREL:		tResp = new CHouseMultiResponse( TARGET_HOUSETRASHBARREL, -1 );			break;
 			case TW_BOATFORWARD:
-			case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
-			case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
+			case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( BOAT_FORWARD );							break;
+			case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( BOAT_BACKWARD );						break;
+			case TW_BOATLEFT:			tResp = new CBoatMultiResponse( BOAT_LEFT );							break;
+			case TW_BOATRIGHT:			tResp = new CBoatMultiResponse( BOAT_RIGHT );							break;
+			case TW_BOATFORWARDLEFT:	tResp = new CBoatMultiResponse( BOAT_FORWARDLEFT );						break;
+			case TW_BOATFORWARDRIGHT:	tResp = new CBoatMultiResponse( BOAT_FORWARDRIGHT );					break;
+			case TW_BOATBACKLEFT:		tResp = new CBoatMultiResponse( BOAT_BACKWARDLEFT );					break;
+			case TW_BOATBACKRIGHT:		tResp = new CBoatMultiResponse( BOAT_BACKWARDRIGHT );					break;
+			case TW_BOATONEFORWARD:		tResp = new CBoatMultiResponse( BOAT_ONEFORWARD );						break;
+			case TW_BOATONEBACK:		tResp = new CBoatMultiResponse( BOAT_ONEBACKWARD );						break;
+			case TW_BOATONELEFT:		tResp = new CBoatMultiResponse( BOAT_ONELEFT );							break;
+			case TW_BOATONERIGHT:		tResp = new CBoatMultiResponse( BOAT_ONERIGHT );						break;
+			case TW_BOATONEFORWARDLEFT:	tResp = new CBoatMultiResponse( BOAT_ONEFORWARDLEFT );					break;
+			case TW_BOATONEFORWARDRIGHT:tResp = new CBoatMultiResponse( BOAT_ONEFORWARDRIGHT );					break;
+			case TW_BOATONEBACKLEFT:	tResp = new CBoatMultiResponse( BOAT_ONEBACKWARDLEFT );					break;
+			case TW_BOATONEBACKRIGHT:	tResp = new CBoatMultiResponse( BOAT_ONEBACKWARDRIGHT );				break;
+			case TW_BOATSLOWFORWARD:	tResp = new CBoatMultiResponse( BOAT_SLOWFORWARD );						break;
+			case TW_BOATSLOWBACK:		tResp = new CBoatMultiResponse( BOAT_SLOWBACKWARD );					break;
+			case TW_BOATSLOWLEFT:		tResp = new CBoatMultiResponse( BOAT_SLOWLEFT );						break;
+			case TW_BOATSLOWRIGHT:		tResp = new CBoatMultiResponse( BOAT_SLOWRIGHT );						break;
+			case TW_BOATSLOWFORWARDLEFT:	tResp = new CBoatMultiResponse( BOAT_SLOWFORWARDLEFT );				break;
+			case TW_BOATSLOWFORWARDRIGHT:	tResp = new CBoatMultiResponse( BOAT_SLOWFORWARDRIGHT );			break;
+			case TW_BOATSLOWBACKLEFT:		tResp = new CBoatMultiResponse( BOAT_SLOWBACKWARDLEFT );			break;
+			case TW_BOATSLOWBACKRIGHT:		tResp = new CBoatMultiResponse( BOAT_SLOWBACKWARDRIGHT );			break;
 			case TW_BOATSTOP:
 			case TW_STOP2:
-			case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
+			case TW_BOATFURL:			//tResp = new CBoatMultiResponse( BOAT_STOP );							break;
+			{
+				tResp = new CBoatMultiResponse( BOAT_STOP );
+				tResp->Handle( mSock, mChar );
+				delete tResp;
+				tResp = NULL;
+				goto endResponseCheck; // :
+			}
 			case TW_BOATTURNRIGHT:
 			case TW_BOATSTARBOARD:
 			case TW_BOATTURNLEFT:
 			case TW_BOATPORT:
 			case TW_BOATTURNAROUND:
-			case TW_BOATLEFT:
-			case TW_BOATRIGHT:
-			case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );							break;
-			case TW_RESIGN:				GuildSys->Resign( mSock );												break;
+			case TW_BOATANCHORDROP:
+			case TW_BOATANCHORRAISE:
+			case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );						break;
+			case TW_RESIGN:				GuildSys->Resign( mSock );											break;
 			default:
 				//This is to handle the "train <skill>" keywords
 				if(( trigWord >= 0x006D && trigWord <= 0x009C ) || trigWord == 0x154 || trigWord == 0x115 ||
 				   trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E )
 				{
-					tResp = new CTrainingResponse( text );									break;
+					tResp = new CTrainingResponse( str_toupper( text ));									break;
 				}
 #if defined( UOX_DEBUG_MODE )
 				Console.print( format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
@@ -1014,7 +1043,7 @@ CBoatResponse::CBoatResponse( const std::string &text, UI16 tW )
 }
 // void CBoatResponse::Handle( CSocket *mSock, CChar *mChar ) in Boats.cpp
 
-CBoatMultiResponse::CBoatMultiResponse( UI08 mType )
+CBoatMultiResponse::CBoatMultiResponse( BoatMoveType mType )
 {
 	moveType = mType;
 }
@@ -1026,13 +1055,37 @@ CBoatObj * GetBoat( CSocket *s );
 //o-----------------------------------------------------------------------------------------------o
 void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
+	// Let's do some spam-prevention here
+	if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+	{
+		return;
+	}
+	else
+	{
+		mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
+	}
+
 	CBoatObj *boat = GetBoat( mSock );
 	if( !ValidateObject( boat ) )
+	{
 		return;
+	}
+
+	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
+	if( boat->GetMoveType() == BOAT_ANCHORED )
+	{
+		if( ValidateObject( tiller ) )
+		{
+			tiller->TextMessage( mSock, 2024 ); // Ar, the anchor is down sir!
+			mSock->sysmessage( 2023 ); // You must raise the anchor to pilot the ship.
+		}
+		return;
+	}
 
 	boat->SetMoveType( moveType );
 
-	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
 	if( ValidateObject( tiller ) )
-		tiller->TextMessage( mSock, 10 );
+	{
+		tiller->TextMessage( mSock, 10 ); // Aye, sir.
+	}
 }

@@ -1,6 +1,37 @@
 07/05/2021 - Xuri
+	Updated LeaveBoat() function to use ValidSpawnLocation() instead of ValidMultiLocation() for more reliable disembarking from boats
+	Added support for the following boat commands (and their triggerword aliases):
+		raise anchor 		// Raise anchor, allowing boat to move
+		drop anchor 		// Drops anchor, preventing boat from moving
+		forward one 		// Moves boat one tile forward
+		backward one 		// Moves boat one tile backward
+		left one 			// Moves boat one tile in port direction
+		right one 			// Moves boat one tile in starboard direction
+		forward left 		// Moves boat forward left diagonally
+		forward right 		// Moves boat forward right diagonally
+		backward left 		// Moves boat backward left diagonally
+		backward right 		// Moves boat backward right diagonally
+		forward left one 	// Moves boat one tile diagonally, forward left
+		forward right one 	// Moves boat one tile diagonally, forward right
+		backward left one 	// Moves boat one tile diagonally, backward left
+		backward right one 	// Moves boat one tile diagonally, backward right
+	Added new enum BoatMoveType to keep track of all the additional boat movement types, and changed moveType from UI08 to SI08, in order to use -1 as a representation of an "anchored" and immovable boat
+	Boats now start out with anchor dropped when initially placed, and must also have anchor dropped before they can be packed up into model ships, while anchor must be raised in order for tiller man to accept orders to sail
+	Added support for two new DFN tags in houses.dfn, primarily for the use of boats/boat holds:
+		MAXITEMS=#			// Max items that can be stored in a boat's hold
+		WEIGHTMAX=#			// Max weight that a boat's hold can... hold (40000 = 400.00 stones)
+	Updated dfndata/house/house.dfn to include default MAXITEMS (125 items) and WEIGHTMAX (400 stones) values for boats
+	Fixed an issue where large dragon ships would be spawned with incorrect names due to server assuming they're houses
+	Fixed an issue where it was not possible to turn a boat around under certain circumstances
+	Tiller men on boats will now be named "a tiller man" if the boat is unnamed, and "The tiller man of [ship name]" if the ship has been named
+	Boats now cannot be dry-docked if there are items in the hold
+	Boats now cannot be dry-docked if either of the planks are open
+	Names of boats are now stored in the title property of ship models, and is used to reapply the boat's name when unpacking the boat, while the ship model itself is named after the boat with a [Dry Docked] tag slapped on at the end.
+
+07/05/2021 - Xuri
 	Replaced CDataList with the new GenericList class throughout UOX3, and removed CDataList from the project files
 	Reverted an earlier change where scriptsections were supposed to be reapplied to items bought from NPC shopkeepers - didn't actually work!
+	Fixed issue where total gold and armor rating of player was not getting sent for status window updates
 
 04/05/2021 - giwo
 	Fixed server crash related to JS timers/other tempeffects by replacing the use of CDataList (which uses std::deque) in tempEffects with GenericList (which uses std::list), which is more optimized for removing records in the middle of the array
