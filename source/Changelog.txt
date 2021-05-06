@@ -1,4 +1,4 @@
-07/05/2021 - Xuri
+07/05/2021 - Xuri (0.99.4l)
 	Updated LeaveBoat() function to use ValidSpawnLocation() instead of ValidMultiLocation() for more reliable disembarking from boats
 	Added support for the following boat commands (and their triggerword aliases):
 		raise anchor 		// Raise anchor, allowing boat to move
