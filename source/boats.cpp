@@ -87,15 +87,15 @@ CBoatObj * GetBoat( CSocket *s )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void LeaveBoat( CSocket *s, CItem *p )
+//|	Function	-	bool LeaveBoat( CSocket *s, CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Leave a boat
 //o-----------------------------------------------------------------------------------------------o
-void LeaveBoat( CSocket *s, CItem *p )
+bool LeaveBoat( CSocket *s, CItem *p )
 {
 	CBoatObj *boat = GetBoat( s );
 	if( !ValidateObject( boat ) )
-		return;
+		return false;
 
 	const SI16 x2 = p->GetX();
 	const SI16 y2 = p->GetY();
@@ -120,11 +120,12 @@ void LeaveBoat( CSocket *s, CItem *p )
 					}
 				}
 				s->sysmessage( 3 );
-				return;
+				return true;
 			}
 		}
 	}
 	s->sysmessage( 4 );
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -440,6 +441,17 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	const SERIAL serial = b->GetSerial();
 	const UI08 worldNumber = b->WorldNumber();
 	const UI16 instanceID = b->GetInstanceID();
+	SI32 maxWeight = b->GetWeightMax();
+	if( maxWeight == 0 )
+	{
+		maxWeight = 40000; // 400 stones default, if nothing else is defined
+	}
+	UI16 maxItems = b->GetMaxItems();
+	if( maxItems == 0 )
+	{
+		maxItems = 125; // Default if nothing else is defined
+	}
+
 	const SI16 x = b->GetX(), y = b->GetY();
 	SI08 z = Map->MapElevation( x, y, worldNumber );
 
@@ -453,15 +465,25 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 			z = staticz;
 	}
 	b->SetZ( z );// Z in water
-	b->SetName( Dictionary->GetEntry( 1408 ) );//Name is something other than "%s's house"
 	b->SetTempVar( CITV_MOREZ, calcserial( id2, id2+3, b->GetTempVar( CITV_MOREZ, 3 ), b->GetTempVar( CITV_MOREZ, 4 ) ) );
+	b->SetMoveType( BOAT_ANCHORED );
 
 	CChar *mChar = s->CurrcharObj();
 
 	CItem *tiller = Items->CreateItem( NULL, mChar, 0x3E4E, 1, 0, OT_ITEM );
 	if( tiller == NULL )
 		return false;
-	tiller->SetName( Dictionary->GetEntry( 1409 ) );
+
+	if( b->GetName().length() > 0 && b->GetName() != Dictionary->GetEntry( 2035, s->Language() )) // a ship
+	{
+		std::string tillerNameDict = Dictionary->GetEntry( 2033, s->Language() ); // The tiller man of %s
+		auto sPos = tillerNameDict.find("%s");
+		tiller->SetName( tillerNameDict.replace( sPos, 2, b->GetName() ));
+	}
+	else
+	{
+		tiller->SetName( Dictionary->GetEntry( 1409 ) ); // a tiller man
+	}
 	tiller->SetType( IT_TILLER );
 	tiller->SetTempVar( CITV_MOREX, boattype );
 	tiller->SetDecayable( false );
@@ -483,6 +505,8 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		return false;
 	hold->SetType( IT_CONTAINER );//Conatiner
 	hold->SetDecayable( false );
+	hold->SetWeightMax( maxWeight );
+	hold->SetMaxItems( maxItems );
 
 	p2->SetTempVar( CITV_MORE, serial );
 	p1->SetTempVar( CITV_MORE, serial );
@@ -641,7 +665,7 @@ void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn the boat and use TurnStuff() to turn all items/chars on it
 //o-----------------------------------------------------------------------------------------------o
-void TurnBoat( CBoatObj *b, bool rightTurn )
+void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 {
 	if( !ValidateObject( b ) )
 		return;
@@ -686,15 +710,18 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 		id2 -= 4;//Now you know what the min/max id is for :-)
 
 	prSend.Mode( 0 );
-	if( BlockBoat( b, 0, 0, b->GetDir(), olddir, true ) )
+	if( !disableChecks )
 	{
-		b->SetDir( olddir );
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
+		if( BlockBoat( b, 0, 0, b->GetDir(), olddir, true ) )
 		{
-			(*cIter)->Send( &prSend );
-			tiller->TextMessage( (*cIter), 1410, 0, 0x0481 );
+			b->SetDir( olddir );
+			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
+			{
+				(*cIter)->Send( &prSend );
+				tiller->TextMessage( (*cIter), 1410, 0, 0x0481 );
+			}
+			return;
 		}
-		return;
 	}
 
 	b->SetID( static_cast<UI08>(id2), 2 );//set the id
@@ -772,7 +799,7 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 	if( !BlockBoat( myBoat, tx, ty, dir, myBoat->GetDir(), true ) )
 	{
 		tiller->TextMessage( mSock, 10 );
-		TurnBoat( myBoat, rightTurn );
+		TurnBoat( myBoat, rightTurn, false );
 	}
 	else
 	{
@@ -799,8 +826,36 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
 
 	UnicodeTypes mLang = mSock->Language();
+	if( trigWord != TW_SETNAME && trigWord != TW_BOATANCHORRAISE && trigWord != TW_BOATANCHORDROP && boat->GetMoveType() == -1 )
+	{
+		tiller->TextMessage( mSock, 2024 ); // Ar, the anchor is down sir!
+		mSock->sysmessage( 2023 ); // You must raise the anchor to pilot the ship.
+		return;
+	}
 	switch( trigWord )
 	{
+		case TW_BOATANCHORDROP:
+			if( boat->GetMoveType() != BOAT_ANCHORED )
+			{
+				boat->SetMoveType( BOAT_ANCHORED );
+				tiller->TextMessage( mSock, 2025 ); // Ar, anchor dropped sir.
+			}
+			else
+			{
+				tiller->TextMessage( mSock, 2026 ); // Ar, the anchor was already dropped sir.
+			}
+			break;
+		case TW_BOATANCHORRAISE:
+			if( boat->GetMoveType() == BOAT_ANCHORED )
+			{
+				boat->SetMoveType( BOAT_STOP );
+				tiller->TextMessage( mSock, 2027 ); // Ar, anchor raised sir.
+			}
+			else
+			{
+				tiller->TextMessage( mSock, 2028 ); // Ar, the anchor has not been dropped sir.
+			}
+			break;
 		case TW_BOATTURNRIGHT:
 		case TW_BOATSTARBOARD:
 			if( dir >= 2 )
@@ -817,56 +872,67 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			TurnBoat( mSock, boat, tiller, dir, false );
 			break;
 		case TW_BOATTURNAROUND:
-			tiller->TextMessage( mSock, 10 );
-			TurnBoat( boat, true );
-			TurnBoat( boat, true );
-			break;
-		case TW_BOATLEFT:
-			if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
-				break;
-			else
-				mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
-
-			if( dir >= 2 )
-				dir -= 2;
-			else
-				dir	+= 6;
-			tiller->TextMessage( mSock, 10 );
-			MoveBoat( dir, boat );
-			break;
-		case TW_BOATRIGHT:
-			if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
-				break;
-			else
-				mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
-
-			dir += 2;
-			if( dir > 7 )
-				dir -= 8;
-			tiller->TextMessage( mSock, 10 );
-			MoveBoat( dir, boat );
+			tiller->TextMessage( mSock, 10 ); // Aye, sir.
+			TurnBoat( boat, true, true );
+			TurnBoat( boat, true, true );
 			break;
 		case TW_SETNAME:
-			char msg[512];
-			strcpy( msg, str_toupper( ourText ).c_str() );
-			char *cmd;
-			cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
-			if( !cmd )
+		{
+			// Check if player trying to rename the boat is actually the owner
+			if( mChar->GetSerial() != boat->GetOwner() )
 			{
-				tiller->TextMessage( mSock, 11 );
-				return;
-			}
-			cmd += 9;
-			while( *cmd && *cmd == ' ' )
-				++cmd; // remove any extra spaces
-			if( !(*cmd) )
-			{
-				tiller->TextMessage( mSock, 12 );
+				tiller->TextMessage( mSock, 2034 ); // Arr! Only the owner of the ship may change its name!
 				return;
 			}
 
-			tiller->SetName( format(Dictionary->GetEntry( 1426, mLang ), &ourText[msg - cmd] ) );
+			// Check if player provided anything after the actual set name command
+			std::string cmdString = str_toupper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
+			if( str_toupper( ourText ).size() == cmdString.size() )
+			{
+				tiller->TextMessage( mSock, 12 ); // Can ya say that again with an actual name, sir?
+				return;
+			}
+
+			// Check if we can find the dictionary-based command string in the player's speech
+			std::string upperOurText = str_toupper( ourText );
+			size_t cmdStringPos = upperOurText.find(cmdString);
+			if( cmdStringPos == std::string::npos )
+			{
+				// Command string not found in text, something went wrong!
+				tiller->TextMessage( mSock, 11 ); // What be that, sir?
+				return;
+			}
+
+			// Erase cmdString from ourText, leaving us with just the new name of the boat
+			size_t pos = upperOurText.find(cmdString);
+			if( pos != std::string::npos )
+				ourText.erase(pos, cmdString.size());
+
+			// Trim spaces from start and end of player provided name, and see if there's actually a name there and not just empty spaces!
+			ourText = trim(ourText);
+			if( ourText.size() == 0 )
+			{
+				boat->SetName( Dictionary->GetEntry( 2035, mLang )); // a ship
+				tiller->SetName( Dictionary->GetEntry( 1409, mLang )); // a tiller man
+				tiller->TextMessage( mSock, 2030 ); // This ship now has no name.
+				return;
+			}
+		
+			std::string tillerNameDict = Dictionary->GetEntry( 2033, mLang ); // The tiller man of %s
+			if( tillerNameDict.size() + ourText.size() > MAX_NAME - 1 )
+			{
+				mSock->sysmessage( 1944 ); // That name is too long.
+				return;
+			}
+
+			// Give boat the new name
+			boat->SetName( ourText );
+
+			// Give tiller man a fitting name as well
+			auto sPos = tillerNameDict.find("%s");
+			tiller->SetName( tillerNameDict.replace( sPos, 2, ourText ));
 			break;
+		}
 		default:
 			break;
 	}
@@ -910,10 +976,18 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 			}
 		}
 
-		if( mChar->GetMultiObj() == i && getDist( mChar, p1 ) <= getDist( mChar, p2 ))
-			LeaveBoat( s, p1 );
-		else if( mChar->GetMultiObj() == i && getDist( mChar, p2 ) <= getDist( mChar, p1 ))
-			LeaveBoat( s, p2 );
+		if( p1->GetID( 2 ) == 0x84 || p1->GetID( 2 ) == 0xD5 || p1->GetID( 2 ) == 0xD4 || p1->GetID( 2 ) == 0x89
+			|| p2->GetID( 2 ) == 0x84 || p2->GetID( 2 ) == 0xD5 || p2->GetID( 2 ) == 0xD4 || p2->GetID( 2 ) == 0x89 )
+		{
+			s->sysmessage( "Planks must be closed before you pack up your ship!" );
+			return;
+		}
+
+		if( hold->GetContainsList()->Num() > 0 )
+		{
+			s->sysmessage( "Make sure your hold is empty, and try again!" );
+			return;
+		}
 
 		if( i->GetItemsInMultiList()->Num() > 4 || i->GetCharsInMultiList()->Num() > 0 )
 		{
@@ -931,6 +1005,17 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		Weight->addItemWeight( mChar, model );
 		model->SetType( IT_MODELMULTI );
 		model->SetMovable( 0 );
+
+		if( i->GetName().length() > 0 )
+		{
+			// Apply boat's name to the ship model
+			std::string shipModelNameDict = Dictionary->GetEntry( 2037, s->Language() ); // %s [Dry Docked]
+			auto sPos = shipModelNameDict.find("%s");
+			model->SetName( shipModelNameDict.replace( sPos, 2, i->GetName() ));
+
+			// Also store the original name in the item's title
+			model->SetTitle( i->GetName() );
+		}
 
 		tiller->Delete();
 		p1->Delete();

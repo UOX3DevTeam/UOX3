@@ -161,7 +161,7 @@ protected:
 	SERIAL				tiller;
 	SERIAL				planks[2];
 	SERIAL				hold;
-	UI08				moveType;
+	SI08				moveType;
 
 	TIMERVAL			nextMoveTime;
 
@@ -178,12 +178,12 @@ public:
 	SERIAL				GetTiller( void ) const;
 	SERIAL				GetPlank( UI08 plankNum ) const;
 	SERIAL				GetHold( void ) const;
-	UI08				GetMoveType( void ) const;
+	SI08				GetMoveType( void ) const;
 
 	void				SetPlank( UI08 plankNum, SERIAL newVal );
 	void				SetTiller( SERIAL newVal );
 	void				SetHold( SERIAL newVal );
-	void				SetMoveType( UI08 newVal );
+	void				SetMoveType( SI08 newVal );
 
 	TIMERVAL			GetMoveTime( void ) const;
 	void				SetMoveTime( TIMERVAL newVal );

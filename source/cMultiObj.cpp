@@ -355,7 +355,12 @@ void CMultiObj::RemoveFromMulti( CBaseObject *toRemove )
 	{
 		charInMulti.Remove( static_cast< CChar * >(toRemove) );
 		if( CanBeObjType( OT_BOAT ) && charInMulti.Num() == 0 )
-			(static_cast<CBoatObj *>(this))->SetMoveType( 0 );
+		{
+			if( (static_cast<CBoatObj *>(this))->GetMoveType() != -1 )
+			{
+				(static_cast<CBoatObj *>(this))->SetMoveType( 0 );
+			}
+		}
 	}
 	else
 	{
@@ -1386,7 +1391,7 @@ GenericList< CItem * > * CMultiObj::GetItemsInMultiList( void )
 
 const SERIAL		DEFBOAT_TILLER		= INVALIDSERIAL;
 const SERIAL		DEFBOAT_HOLD		= INVALIDSERIAL;
-const UI08			DEFBOAT_MOVETYPE	= 0;
+const SI08			DEFBOAT_MOVETYPE	= 0;
 const TIMERVAL		DEFBOAT_MOVETIME	= 0;
 
 CBoatObj::CBoatObj() : CMultiObj(), tiller( DEFBOAT_TILLER ), hold( DEFBOAT_HOLD ),
@@ -1532,17 +1537,17 @@ void CBoatObj::SetHold( SERIAL newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 GetMoveType( void ) const
-//|					void SetMoveType( UI08 newVal )
+//|	Function	-	SI08 GetMoveType( void ) const
+//|					void SetMoveType( SI08 newVal )
 //|	Date		-	October 28, 2003
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets boat's movement type (0 = Not moving, 1 = Moving forward, 2 = Moving backward)
+//|	Purpose		-	Gets/Sets boat's movement type. See BoatMoveType enum for full list
 //o-----------------------------------------------------------------------------------------------o
-UI08 CBoatObj::GetMoveType( void ) const
+SI08 CBoatObj::GetMoveType( void ) const
 {
 	return moveType;
 }
-void CBoatObj::SetMoveType( UI08 newVal )
+void CBoatObj::SetMoveType( SI08 newVal )
 {
 	moveType = newVal;
 }

@@ -31,12 +31,39 @@ enum TriggerWords
 	TW_BOATRIGHT		= 0x0048,		// Right/Drift Right
 	TW_BOATSTARBOARD	= 0x0049,		// Starboard
 	TW_BOATPORT			= 0x004A,		// Port
+	TW_BOATFORWARDLEFT	= 0x004B,		// Forward Left
+	TW_BOATFORWARDRIGHT	= 0x004C,		// Forward Right
+	TW_BOATBACKLEFT		= 0x004D,		// Back Left/Backward Left/Backwards Left
+	TW_BOATBACKRIGHT	= 0x004E,		// Back Right/Backward Right/Backwards Right
 	TW_BOATSTOP			= 0x004F,		// Stop
+	TW_BOATSLOWLEFT		= 0x0050,		// Slow Left
+	TW_BOATSLOWRIGHT	= 0x0051,		// Slow Right
+	TW_BOATSLOWFORWARD	= 0x0052,		// Slow Forward
+	TW_BOATSLOWBACK		= 0x0053,		// Slow Back/Slow Backward/Slow Backwards
+	TW_BOATSLOWFORWARDLEFT	= 0x0054,	// Slow Forward Left
+	TW_BOATSLOWFORWARDRIGHT	= 0x0055,	// Slow Forward Right
+	TW_BOATSLOWBACKRIGHT	= 0x0056,	// Slow Back Right/Slow Backward Right/Slow Backwards Right
+	TW_BOATSLOWBACKLEFT		= 0x0057,	// Slow Back Left/Slow Backward Left/Slow Backwards Left
+	TW_BOATONELEFT		= 0x0058,		// One Left/Left One
+	TW_BOATONERIGHT		= 0x0059,		// One Right/Right One
+	TW_BOATONEFORWARD	= 0x005A,		// One Forward/Forward One
+	TW_BOATONEBACK		= 0x005B,		// One Back/One Backward/One Backwards/Back One/Backward One/Backwards One
+	TW_BOATONEFORWARDLEFT	= 0x005C,	// One Forward Left/Forward Left One
+	TW_BOATONEFORWARDRIGHT	= 0x005D,	// One Forward Right/Forward Right One
+	TW_BOATONEBACKRIGHT	= 0x005E,		// One Back Right/One Backward Right/One Backwards Right/Back One Right/Backward One Right/Backwards One Right
+	TW_BOATONEBACKLEFT	= 0x005F,		// One Back Left/One Backward Left/One Backwards Left/Back One Left/Backward One Left/Backwards One Left
+	TW_BOATNAV			= 0x0060,		// Nav
+	TW_BOATNAVSTART		= 0x0061,		// Start
+	TW_BOATNAVCONTINUE	= 0x0062,		// Continue
+	TW_BOATNAVGOTO		= 0x0063,		// Goto*
+	TW_BOATNAVSINGLE	= 0x0064,		// Single*
 	TW_BOATTURNRIGHT	= 0x0065,		// Turn Right
 	TW_BOATTURNLEFT		= 0x0066,		// Turn Left
 	TW_BOATTURNAROUND	= 0x0067,		// Turn Around/Come About
 	TW_BOATUNFURL		= 0x0068,		// Unfurl Sail
 	TW_BOATFURL			= 0x0069,		// Furl Sail
+	TW_BOATANCHORDROP	= 0x006A,		// Drop Anchor/Lower Anchor
+	TW_BOATANCHORRAISE	= 0x006B,		// Raise Anchor/Lift Anchor/Hoist Anchor
 	TW_TRAIN			= 0x006C,		// Train, Teach
 	TW_TRAINPARRY		= 0x006D,		// Train Parrying/Parry/Battle/Defense
 	TW_TRAINHEAL		= 0x006E,		// Train First/Aid/Heal/Healing/Medicine
@@ -335,9 +362,9 @@ public:
 class CBoatMultiResponse : public CBaseResponse
 {
 protected:
-	UI08			moveType;
+	BoatMoveType		moveType;
 public:
-	CBoatMultiResponse( UI08 mType );
+	CBoatMultiResponse( BoatMoveType mType );
 	virtual			~CBoatMultiResponse()
 	{
 	}

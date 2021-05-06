@@ -2212,10 +2212,21 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			CBoatObj *boat = static_cast<CBoatObj *>( iUsed->GetMultiObj() );
 			if( ValidateObject( boat ))
 			{
-				if( objInRange( mChar, boat, DIST_INRANGE ))
-					ModelBoat( mSock, boat );
+				if( boat->GetMoveType() != BOAT_ANCHORED )
+				{
+					mSock->sysmessage( 2029 ); // You must lower the anchor to dock the boat.
+				}
 				else
-					mSock->sysmessage( 461 ); // You are too far away.
+				{
+					if( objInRange( mChar, boat, DIST_INRANGE ) )
+					{
+						ModelBoat( mSock, boat );
+					}
+					else
+					{
+						mSock->sysmessage( 461 ); // You are too far away.
+					}
+				}
 			}
 			return true;
 		}

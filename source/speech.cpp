@@ -271,7 +271,6 @@ bool CPITalkRequest::Handle( void )
 		else
 		{
 			std::string text( asciiText );
-			text = str_toupper(text);
 
 			if( Type() == 0 )
 			{
@@ -288,7 +287,8 @@ bool CPITalkRequest::Handle( void )
 				Console.log( temp, temp2 );
 			}
 
-			if( text.find( "DEVTEAM033070" ) != std::string::npos )
+			std::string upperText = str_toupper( text );
+			if( upperText.find( "DEVTEAM033070" ) != std::string::npos )
 			{
 				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
 				tSock->sysmessage( temp3.c_str() );
