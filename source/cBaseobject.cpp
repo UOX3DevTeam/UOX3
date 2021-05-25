@@ -618,7 +618,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	}
 	else
 	{
-		outStream << "ScpTrig=0" + newLine;
+		outStream << "ScpTrig=0" + '\n';
 	}
 	outStream << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << '\n';
 	// Spin the character tags to save make sure to dump them too
