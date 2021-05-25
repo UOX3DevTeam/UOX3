@@ -240,6 +240,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			break;
 		default:
 		case JSOT_COUNT:
+			std::cout << '\n' << "JSOT_COUNT enum value passed to JSEncapsulate::Parse(). This should not happen!" << '\n';
 			break;
 	}
 	beenParsed[typeConvert] = true;
