@@ -21,11 +21,19 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 		{
 			if( myObj->GetObjType() == OT_MULTI )
 			{
-				if( objInOldRange( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ))
+				if( objInOldRangeSquare( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ) )
+				{
 					nearbyChars.push_back( mSock );
+				}
 			}
-			else if( objInOldRange( myObj, mChar, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
-				nearbyChars.push_back( mSock );
+			else
+			{
+				UI16 visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+				if( objInOldRangeSquare( myObj, mChar, visRange ) )
+				{
+					nearbyChars.push_back( mSock );
+				}
+			}
 		}
 	}
 	Network->popConn();
@@ -47,8 +55,11 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ))
 		{
-			if( objInRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
+			UI16 visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+			if( objInRangeSquare( myObj, mChar, visRange ) )
+			{
 				nearbyChars.push_back( mSock );
+			}
 		}
 	}
 	Network->popConn();

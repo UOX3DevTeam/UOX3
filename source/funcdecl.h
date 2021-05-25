@@ -33,7 +33,9 @@ extern std::mt19937 generator;
 //o-----------------------------------------------------------------------------------------------o
 bool	objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance );
 bool	objInRange( CBaseObject *a, CBaseObject *b, UI16 distance );
+bool	objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance );
+bool	objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	charInRange( CChar *a, CChar *b );
 UI16	getDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist( point3 a, point3 b );
