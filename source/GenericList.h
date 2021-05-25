@@ -14,6 +14,8 @@
 //o-----------------------------------------------------------------------------------------------o
 #include <iostream>
 #include <cstdint>
+#include <unordered_set>
+
 template <typename T>
 class GenericList
 {
@@ -95,9 +97,9 @@ public:
 		objData.clear();
 	}
 
-	bool Add( T toAdd )
+	bool Add( T toAdd, bool checkForExisting = true )
 	{
-		if( FindEntry( toAdd ) != objData.end() )
+		if( checkForExisting && FindEntry( toAdd ) != objData.end() )
 		{
 			return false;
 		}
@@ -171,7 +173,39 @@ public:
 	}
 };
 
+template <typename SERIAL>
+class RegionSerialList
+{
+private:
+	typedef std::unordered_set<SERIAL>							REGIONSERIALLIST;
+	typedef typename std::unordered_set<SERIAL>::iterator		REGIONSERIALLIST_ITERATOR;
+	typedef typename std::unordered_set<SERIAL>::const_iterator	REGIONSERIALLIST_CITERATOR;
 
+	REGIONSERIALLIST					objSerials;
+	REGIONSERIALLIST_ITERATOR		objIterator;
+	std::pair<REGIONSERIALLIST_ITERATOR, bool> insertResult;
+
+public:
+	RegionSerialList()
+	{
+	}
+
+	~RegionSerialList()
+	{
+		objSerials.clear();
+	}
+
+	bool Add( SERIAL toAdd )
+	{
+		insertResult = objSerials.insert( toAdd );
+		return insertResult.second;
+	}
+
+	size_t Remove( SERIAL toRemove )
+	{
+		return objSerials.erase( toRemove );
+	}
+};
 
 #endif // __GENERICLIST_H__
 
