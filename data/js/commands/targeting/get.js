@@ -107,6 +107,25 @@ function onCallback0( socket, ourObj )
 	case "WORLDNUMBER":
 		socket.SysMessage( ourObj.worldnumber );
 		break;
+	case "SCRIPTTRIGGER":
+	{
+		// Get last script trigger in list of triggers on object
+		var scriptTriggers = ourObj.scriptTriggers;
+		var size = scriptTriggers.length;
+		socket.SysMessage( scriptTriggers[size-1] );
+		break;
+	}
+	case "SCRIPTTRIGGERS":
+	{
+		// Get list of script triggers from object
+		var scriptTriggers = ourObj.scriptTriggers;
+		var size = scriptTriggers.length;
+		for( var i = 0; i < size; i++ )
+		{
+			socket.SysMessage( scriptTriggers[i] );
+		}
+		break;
+	}
 	default:
 		if( ourObj.isChar )
 			HandleGetChar( socket, ourObj, uKey );
@@ -362,6 +381,7 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "TOWNPRIV":
 		socket.SysMessage( ourChar.townPriv );
 		break;
+
 	// Account Properties
 	case "USERNAME":
 		if( !ourChar.npc )

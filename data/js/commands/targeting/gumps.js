@@ -77,7 +77,11 @@ function onCallback0( socket, ourObj )
 		addEntry( myGump, "Sell Value:", ourObj.sellvalue );
 
 		addEntry( myGump, "Is Corpse:", ourObj.corpse?1:0 );
-		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
+		var scriptTriggers = ourObj.scriptTriggers;
+		for( var i = 0; i < scriptTriggers.length; i++ )
+		{
+			addEntry( myGump, "Script ID:", scriptTriggers[i] );
+		}
 		addEntry( myGump, "Direction:", ourObj.dir );
 		if( ourObj.isSpawner )
 		{
@@ -99,8 +103,16 @@ function onCallback0( socket, ourObj )
 
 function command_CSTATS( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 183, socket.language );
-	socket.CustomTarget( 1, targMsg );
+	var target = CalcCharFromSer( socket.GetDWord( 7 ));
+	if( ValidateObject( target ))
+	{
+		onCallback1( socket, target );
+	}
+	else
+	{
+		var targMsg = GetDictionaryEntry( 183, socket.language );
+		socket.CustomTarget( 1, targMsg );
+	}
 }
 
 // Known needed entries:
@@ -114,7 +126,8 @@ function command_CSTATS( socket, cmdString )
 // Region
 function onCallback1( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) && ourObj && ourObj.isChar )
+	// if( !socket.GetWord( 1 ) && ourObj && ourObj.isChar )
+	if( ValidateObject( ourObj ) && ourObj.isChar)
 	{
 		position 	= 40;
 		var myGump 	= new Gump;
@@ -163,7 +176,11 @@ function onCallback1( socket, ourObj )
 		else
 			addEntry( myGump, "Race:", 0 );
 		addEntry( myGump, "CommandLevel:", ourObj.commandlevel );
-		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
+		var scriptTriggers = ourObj.scriptTriggers;
+		for( var i = 0; i < scriptTriggers.length; i++ )
+		{
+			addEntry( myGump, "Script ID:", scriptTriggers[i] );
+		}
 		addEntry( myGump, "Direction:", ourObj.direction );
 		myGump.AddPageButton( 10, 260, 4014, 2 );
 		myGump.Send( socket );

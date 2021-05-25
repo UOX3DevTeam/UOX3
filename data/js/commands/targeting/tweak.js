@@ -432,7 +432,18 @@ function CommandRegistration()
 
 function command_TWEAK( pSocket, cmdString )
 {
-	pSocket.CustomTarget( 0, GetDictionaryEntry( 229, pSocket.language )); // Select item or character to tweak.
+	// First check if a valid target serial has been set by code, for instance when calling
+	// tweak command via the hard-coded wholist gump
+	var target = CalcCharFromSer( pSocket.GetDWord( 7 ));
+	if( ValidateObject( target ))
+	{
+		onCallback0( pSocket, target );
+	}
+	else
+	{
+		// If not, request a custom target
+		pSocket.CustomTarget( 0, GetDictionaryEntry( 229, pSocket.language )); // Select item or character to tweak.
+	}
 }
 
 // Alias of TWEAK
@@ -451,13 +462,13 @@ function onCallback0( pSocket, myTarget )
 
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
 	// regular UO client), but one byte in the packet is always 255 when this happens
-	if( parseInt( pSocket.GetByte( 11 )) == 255 )
+	if( parseInt( pSocket.GetByte( 11 )) == 255 && !ValidateObject( myTarget ))
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 1993, socketLang )); // Aborting tweak request
 		return;
 	}
 
-	if( pSocket.GetWord( 1 ) )
+	if( !ValidateObject( myTarget ) && pSocket.GetWord( 1 ) )
 	{
 		var targX = pSocket.GetWord( 11 );
 		var targY = pSocket.GetWord( 13 );
