@@ -102,6 +102,47 @@ void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems, const UI32 nextDecayItemsInHouses );
 void		CheckAI( CChar& mChar );
 
+
+bool isWorldSaving = false;
+#if UOX_PLATFORM == PLATFORM_WIN32
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	BOOL WINAPI exit_handler(DWORD dwCtrlType)
+//|					void app_stopped(int sig)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Prevent closing of console via CTRL+C/or CTRL+BREAK keys during worldsaves
+//o-----------------------------------------------------------------------------------------------o
+BOOL WINAPI exit_handler( DWORD dwCtrlType )
+{
+	switch( dwCtrlType )
+	{
+		
+		case CTRL_C_EVENT:
+		case CTRL_BREAK_EVENT:
+		case CTRL_CLOSE_EVENT:
+			std::cout << std::endl << "World save in progress - closing UOX3 before it completes may result in corrupted save data!" << std::endl;
+
+			// Shutdown of the application will only be halted for as long as the exit_handler is doing something,
+			// so do some non-work while isWorldSaving is true to prevent shutdown during save
+			while( isWorldSaving == true ) {
+				Sleep(0);
+			}
+
+			return true;
+		default:
+			return false;
+	}
+}
+#else
+void app_stopped(int sig)
+{
+	// function called when signal is received.
+	if( isWorldSaving == false )
+	{
+		cwmWorldState->SetKeepRun( false );
+	}
+}
+#endif
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void UnloadSpawnRegions( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -1439,7 +1480,16 @@ void CWorldMain::CheckAutoTimers( void )
 			}
 
 			SetAutoSaved( false );
+
+#if UOX_PLATFORM == PLATFORM_WIN32
+			SetConsoleCtrlHandler( exit_handler, TRUE );
+#endif
+			isWorldSaving = true;
 			SaveNewWorld( false );
+			isWorldSaving = false;
+#if UOX_PLATFORM == PLATFORM_WIN32
+			SetConsoleCtrlHandler( exit_handler, false );
+#endif
 		}
 	}
 
@@ -1822,10 +1872,18 @@ void Shutdown( SI32 retCode )
 
 	if( retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
+#if UOX_PLATFORM == PLATFORM_WIN32
+	SetConsoleCtrlHandler( exit_handler, TRUE );
+#endif
+		isWorldSaving = true;
 		do
 		{
 			cwmWorldState->SaveNewWorld( true );
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
+		isWorldSaving = false;
+#if UOX_PLATFORM == PLATFORM_WIN32
+	SetConsoleCtrlHandler( exit_handler, FALSE );
+#endif
 	}
 
 	if( cwmWorldState->ClassesInitialized() )
@@ -2667,8 +2725,8 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 	}
 	sock->Send( &mapChange );
 	CChar *mChar = sock->CurrcharObj();
-	if( !initialLogin )
-		mChar->Teleport();
+	/*if( !initialLogin )
+		mChar->Teleport();*/
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2768,6 +2826,11 @@ int main( SI32 argc, char *argv[] )
 {
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
+
+#if UOX_PLATFORM != PLATFORM_WIN32
+	// Protection from server-shutdown during mid-worldsave
+	signal(SIGINT, app_stopped);
+#endif
 
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
@@ -3062,15 +3125,22 @@ int main( SI32 argc, char *argv[] )
 		Network->SockClose();
 		Console.PrintDone();
 
+#if UOX_PLATFORM == PLATFORM_WIN32
+		SetConsoleCtrlHandler( exit_handler, TRUE );
+#endif
 		if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 		{
+			isWorldSaving = true;
 			do
 			{
 				cwmWorldState->SaveNewWorld( true );
 			} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
+			isWorldSaving = false;
 		}
-
 		cwmWorldState->ServerData()->save();
+#if UOX_PLATFORM == PLATFORM_WIN32
+		SetConsoleCtrlHandler( exit_handler, false );
+#endif
 
 		Console.log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
 

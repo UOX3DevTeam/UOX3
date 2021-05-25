@@ -2613,10 +2613,10 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
 		{
 			NpcResurrectTarget( ourChar );
-			tSock->sysmessage( 390 );
+			tSock->sysmessage( 390 ); // You have been resurrected.
 		}
 		else // If it's not a ressurect item, and you're dead, forget it
-			tSock->sysmessage( 392 );
+			tSock->sysmessage( 392 ); // You are dead and cannot do that.
 		return false;
 	}
 	// Range check for double clicking on items
@@ -2627,7 +2627,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 			canUse = (iType == IT_DOOR || iType == IT_LOCKEDDOOR || checkItemLineOfSight( ourChar, iUsed ) );
 		if( !canUse )
 		{
-			tSock->sysmessage( 389 );
+			tSock->sysmessage( 389 ); // That is too far away and you cannot reach it.
 			return false;
 		}
 	}
@@ -2635,7 +2635,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	{
 		if( ( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
-			tSock->sysmessage( 386 );
+			tSock->sysmessage( 386 ); // You must wait to perform another action.
 			return false;
 		}
 		tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
@@ -2647,7 +2647,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 			if( ValidateObject( iChar ) && iChar != ourChar &&
 			   !( iUsed->IsContType() && cwmWorldState->ServerData()->RogueStatus() ) )
 			{
-				tSock->sysmessage( 387 );	// Can't use stuff that isn't in your pack.
+				tSock->sysmessage( 387 ); // You cannot use items equipped by other players.
 				return false;
 			}
 		}
@@ -2656,7 +2656,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		{
 			if( iUsed->GetMultiObj() != NULL && iUsed->GetMultiObj() != ourChar->GetMultiObj() )
 			{
-				tSock->sysmessage( 389 );
+				tSock->sysmessage( 389 ); // That is too far away and you cannot reach it.
 				return false;
 			}
 		}
@@ -2832,22 +2832,6 @@ bool CPIDblClick::Handle( void )
 	if( handleDoubleClickTypes( tSock, ourChar, iUsed, iType ) )
 		return true;
 
-	//	Begin Scrolls check
-	//if( iUsed->GetID( 1 ) == 0x1F && ( iUsed->GetID( 2 ) > 0x2C && iUsed->GetID( 2 ) < 0x6D ) )
-	//{
-	//	bool success = false;
-	//	tSock->CurrentSpellType( 1 );	// spell from scroll
-	//	if( iUsed->GetID( 2 ) == 0x2D )	// Reactive Armor spell scrolls
-	//		success = Magic->SelectSpell( tSock, 7 );
-	//	if( iUsed->GetID( 2 ) >= 0x2E && iUsed->GetID( 2 ) <= 0x34 )  // first circle spell scrolls
-	//		success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D );
-	//	else if( iUsed->GetID( 2 ) >= 0x35 && iUsed->GetID( 2 ) <= 0x6C )  // 2 to 8 circle spell scrolls
-	//		success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D + 1 );
-
-	//	if( success )
-	//		iUsed->IncAmount( -1 );
-	//	return true;
-	//}
 	tSock->sysmessage( 486 );
 	return true;
 }

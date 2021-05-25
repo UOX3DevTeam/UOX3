@@ -1064,6 +1064,7 @@ bool CPIUpdateRangeChange::Handle( void )
 #pragma note( "Flush location" )
 #endif
 	tSock->FlushBuffer();
+	tSock->CurrcharObj()->Teleport(); // TODO - Could this be an Update() instead of Teleport?
 	return true;
 }
 

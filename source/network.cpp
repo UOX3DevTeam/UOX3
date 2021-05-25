@@ -868,6 +868,8 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 					case 0xFB: // Update View Public House Contents
 						mSock->Receive( 2 );
 						break;
+					case 0xF0: // ClassicUO Map Tracker, handled by CPIKrriosClientSpecial in CPacketReceive.cpp
+						break;
 					default:
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );

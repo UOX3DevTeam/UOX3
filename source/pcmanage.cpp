@@ -1306,10 +1306,12 @@ void startChar( CSocket *mSock, bool onCreate )
 				}
 			}
 
+			mChar->Dirty( UT_LOCATION );
+
 			if( mChar->WorldNumber() > 0 )
 			{
-				mSock->sysmessage( "Adjusting character position..." );
-				mChar->Teleport();
+				// Without this, world will not be properly updated in regular UO clients until they take the first step
+				mChar->Update();
 			}
 		}
 	}
