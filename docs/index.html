@@ -16,7 +16,7 @@
 			<img class="headerImg" src="logo.gif" style="max-height: 150px;padding: 0 0"/>
 		</div>
 		<!--<h1>Ultima Offline eXperiment 3 - Docs</h1>-->
-		<h1>Documentation</h1>
+		<h1>UOX3 Documentation</h1>
 	</div>
 </header>
 
@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 8. April, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4e</small></p>
+	<p style="margin:0"><small>Last Updated: 25. April, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4i</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -58,10 +58,16 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>April 25th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#colours">Colours and Colour Chart</a> to include information about partial hues and ethereal hues.</li>
+							<li>Updated details for set command in <a href="#commandList">Command List</a> to include account properties that can be set</li>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with latest additions (JSENGINESIZE)</li>
+						</ul>
 						<h4>April 8th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> with details on NPCFLAGUPDATETIMER setting</li>
-							<li>Added <a href="#colourChart">Colour Chart</a> to Additional UOX3 Info section</li>
+							<li>Added <a href="#colours">Colour Chart</a> to Additional UOX3 Info section</li>
 							<li>Documentation now makes use of <a href="https://prismjs.com" title="Prism - Lightweight, extensible syntax highlighter" target="_blank">Prism</a> for syntax highlighting</li>
 						</ul>
 						<h4>March 26th, 2021</h4>
@@ -811,6 +817,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="highlight">CLASSICUOMAPTRACKER</span><strong>=0</strong><br>
 							If 1, UOX3 will respond to ClassicUO client's WorldMap packet request for party/guild member location info.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">JSENGINESIZE</span><strong>=256</strong><br>
+							gcMaxBytes limited in MB per JS Runtime. Must be between 16 and 4095! Essentially defines how much memory JS engine should be allowed to allocate before last-ditch GC kicks in.</p>
 						</div>
 					</div>
 
@@ -1800,7 +1810,7 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_addaccount">
 						<label for="spoiler_cmd_addaccount">addAccount <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Adds an account. First string is username, seconds is password, hex parameter is privs (if any).</p>
+							<p>Adds an account. First string is username, second is password, hex parameter is privs (if any).</p>
 							<p>Command: <span class="highlight">'addAccount</span><br>
 							Parameters: <span class="highlight"><em>(s s h)</em></span></p>
 							<p>Example: <strong>'addAccount testuser testpass 0x0</strong></p>
@@ -2129,6 +2139,14 @@ packitem=0x0f8d,30
 							<p>Creates a moongate using the location set on targeted rune.</p>
 							<p>Command: <span class="highlight">'gate</span><br>
 							Parameters: <span class="highlight"><em>(target)</em></span></p>
+						</div>
+
+						<input type="checkbox" id="spoiler_cmd_get">
+						<label for="spoiler_cmd_get">get <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Gets property of targeted object, value displayed in a system message. See <strong>set</strong> command for a list of properties that can be retrieved using this command.</p>
+							<p>Command: <span class="highlight">'get</span><br>
+							Parameters: <span class="highlight"><em>(variable) (target)</em></span></p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_getmulti">
@@ -2814,7 +2832,7 @@ packitem=0x0f8d,30
 						<div class="spoiler">
 							<p>Sets property of targeted object to specified value.</p>
 							<p>Command: <span class="highlight">'set</span><br>
-							Parameters: <span class="highlight"><em>(variable, see below)</em></span></p>
+							Parameters: <span class="highlight"><em>(variable, see below) (target)</em></span></p>
 							<p>Syntax:</p>
 							<p><strong>Base Objects (Characters, Items, Spawners)</strong><br>
 							<span class="highlight"><em>color/colour (h)</em></span> - Sets the hue of the object.<br>
@@ -2855,15 +2873,34 @@ packitem=0x0f8d,30
 							<span class="highlight"><em>orgskin (h)</em></span> - Sets the original skin of the character.<br>
 							<span class="highlight"><em>poison (d)</em></span> - Sets the poison strength of the character.<br>
 							<span class="highlight"><em>[skillname] (d)</em></span> - Sets the specified skillpoints for specified skillname.<br>
-							<span class="highlight"><em>spattack (d)</em></span> - Sets the SPAttack value of the character.<br>
-							<span class="highlight"><em>spdelay (d)</em></span> - Sets the SPDelay value of the character.<br>
+							<span class="highlight"><em>spattack (d)</em></span> - Sets the SPAttack value of the character - the maximum spell circle from which an NPC will cast spells in combat.<br>
+							<span class="highlight"><em>spdelay (d)</em></span> - Sets the SPDelay value of the character - the minimum number of seconds between each time an NPC will cast spells in combat.<br>
 							<span class="highlight"><em>split (d)</em></span> - Amount of creatures an NPC can split into.<br>
 							<span class="highlight"><em>splitchance (d)</em></span> - Chance of NPC splitting when hit.<br>
 							<span class="highlight"><em>title (s)</em></span> - Sets the title of the character.<br>
 							<span class="highlight"><em>totame (d)</em></span> - Sets the skill required to tame a creature.<br>
 							<span class="highlight"><em>toprov (d)</em></span> - Sets the skill required to provoce a creature.<br>
 							<span class="highlight"><em>topeace (d)</em></span> - Sets the skill required to peacemaking a creature.<br>
-							<span class="highlight"><em>vulnerable (d)</em></span> - Makes a creature vulnerable or not (0=invulnerable, 1=vulnerable).<br>
+							<span class="highlight"><em>vulnerable (d)</em></span> - Makes a creature vulnerable or not (0=invulnerable, 1=vulnerable).</p>
+							<p><strong>Characters (Account properties)</strong><br>
+							<span class="highlight"><em>comment (d)</em></span> - Sets comment/contact info (such as an e-mail address) of account<br>
+							<span class="highlight"><em>isBanned (d)</em></span> - Toggles whether account is banned (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSuspended (d)</em></span> -Toggles whether account is suspended (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isPublic (d)</em></span> - Toggles whether account contact/comment details are public (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot1Blocked (d)</em></span> - Toggles whether character slot 1 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot2Blocked (d)</em></span> - Toggles whether character slot 2 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot3Blocked (d)</em></span> - Toggles whether character slot 3 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot4Blocked (d)</em></span> - Toggles whether character slot 4 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot5Blocked (d)</em></span> - Toggles whether character slot 5 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot6Blocked (d)</em></span> - Toggles whether character slot 6 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSlot7Blocked (d)</em></span> - Toggles whether character slot 7 is blocked on account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>unused9 (d)</em></span> - Toggles unused9 flag (0 = false, 1 = true)<br>
+							<span class="highlight"><em>unused10 (d)</em></span> - Toggles unused10 flag (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isSeer (d)</em></span> - Toggles whether account is marked as Seer account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isCounselor (d)</em></span> - Toggles whether account is marked as Counselor account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>isGM (d)</em></span> - Toggles whether account is marked as GM account (0 = false, 1 = true)<br>
+							<span class="highlight"><em>timeban (d)</em></span> - Sets ban duration for account in minutes<br>
+							<span class="highlight"><em>(Read-Only properties, fetch with 'get command)</em></span> - character1, character2, character3, character4, character5, character6, character7, currentChar, flags, id, isonline, lastip, username</p>
 							<p><strong>Items</strong><br>
 							<span class="highlight"><em>amount (d)</em></span> - Sets the amount in a pile of items.<br>
 							<span class="highlight"><em>buyvalue (d)</em></span> - Sets item buy value.<br>
@@ -2887,11 +2924,11 @@ packitem=0x0f8d,30
 							<span class="highlight"><em>sellvalue (d)</em></span> - Sets item sell value<br>
 							<span class="highlight"><em>type (d)</em></span> - Sets item's TYPE.<br>
 							<span class="highlight"><em>weight (d)</em></span> - Sets an item's weight (100 = 1.00 stone)<br>
-							<span class="highlight"><em>wipable (d)</em></span> - Toggles items wipeable status (0 = false, 1 = true)<br>
+							<span class="highlight"><em>wipable (d)</em></span> - Toggles items wipeable status (0 = false, 1 = true)</p>
 							<p><strong>Spawners</strong><br>
 							<span class="highlight"><em>spawnsection (s)</em></span> - Sets the script section for spawner to pull data from.<br>
 							<span class="highlight"><em>mininterval (d)</em></span> - Sets the minimum spawn interval.<br>
-							<span class="highlight"><em>maxinterval (d)</em></span> - Sets the maximum spawn interval.<br>
+							<span class="highlight"><em>maxinterval (d)</em></span> - Sets the maximum spawn interval.</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_setammoeffect">
@@ -3129,7 +3166,7 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_tweak">
 						<label for="spoiler_cmd_tweak">tweak <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Opens the <strong>tweak</strong> menu allowing you to modify many settings on the targeted object.</p>
+							<p>Opens the <strong>tweak</strong> menu allowing you to modify many settings on the targeted object. Objects that can be tweaked: Items, Spawners, Characters, Accounts (via Character tweak), Skills (via Character tweak), Multis, Regions (by targeting ground), </p>
 							<p>Command: <span class="highlight">'tweak</span><br>
 							Parameters: <span class="highlight"><em>(target)</em></span></p>
 						</div>
@@ -3831,11 +3868,12 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#colourChart" id="colourChart"><span>Colour Chart</span></a>
+				<a class="cd-faq__trigger" href="#colours" id="colours"><span>Colours and Colour Chart</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>This list of <strong>colours</strong> that can be used to change the appearance of objects (and text) in the UO client is not by any stretch complete, but will hopefully serve as a quick-guide for what is possible to do with colours in the game.</p>
 					<p>Colours can be applied to objects via DFN tags (<span class="highlight">colour=#</span>), GM commands (<span class="highlight">'dye #</span>, <span class="highlight">'set colour #</span>) or JavaScript (<span class="highlight">myItem.colour = #</span>). They can also be applied to text via parameters in JS Object Methods such as <strong>TextMessage</strong> and <strong>EmoteMessage</strong>, and in Gump Methods such as <strong>AddGump</strong> and <strong>AddText</strong>. Note that not all these colours can be set by the plain 'dye command and/or dye tubs in the game.</p>
+					<h3>UOX Colour Chart</h3>
+					<p>This list of <strong>colours</strong> that can be used to change the appearance of objects (and text) in the UO client is not by any stretch complete, but will hopefully serve as a quick-guide for what is possible to do with colours in the game.</p>
 					<p>Parts of this list was originally created/presented by Fearicon as far back as 1998! If a range of colours is listed, the first value in the range is generally a lighter shade of that colour, while the last value is a darker shade.</p>
 					<input type="checkbox" id="spoiler_colours">
 					<label for="spoiler_colours">UOX Colour Chart <i class="fas fa-angle-down"></i></label>
@@ -3949,8 +3987,12 @@ packitem=0x0f8d,30
 						<span class="highlight">0x096D -> 0x0972</span> // Gold<br>
 						<span class="highlight">0x0973 -> 0x0978</span> // Silver-Gold<br>
 						<span class="highlight">0x0979 -> 0x097E</span> // Copper-Gold</p>
-						<p><strong></strong></p>
 					</div>
+					<p>For additional colours, experiment with the numbers - or check out one of the tools that can show an overview of all the colours in the game, such as UOFiddler!</p>
+					<h3>Partial-hues and Ethereal hues</h3>
+					<p>Characters can be dyed with partial-hues, where only some parts of the character gets the selected colour, and other parts are left as the original colour. By adding <span class="highlight">0x8000</span> to a colour you want to apply to a character, the partial-hue flag for said character will be enabled in the client. For instance... if you use <span class="highlight">'dye 0x0279</span> on your human character, the entire character will receive that colour, including the loincloth. However, if you use <span class="highlight">'dye 0x8279</span> (0x0279 + 0x8000), only the body receives the colour, while the loincloth is left at its original colour!</p>
+					<p>This applies to many other creatures in the game as well; with the partial-hue flag, a panther's eyes will remain glowing even if you dye the rest of the panther pink. A sheep's wool will stay white, even if the rest of the NPC is dyed green. Note that this only applies to characters - items don't support this partial-hue flag (although some items, like the jester suit, will only have some parts dyed by default).</p>
+					<p>Similarly, you can make any creature look "ethereal" by giving it the hue <span class="highlight">0x4001</span> (actually, any hue between 0x4001 and 0x7fff should work, but they all look the same, so no point using anything else!). Example: <span class="highlight">'dye 0x4001</span> on a forest ostard NPC will turn it ethereal.</p>
 				  </div>
 				</div>
 			</li>
@@ -5044,7 +5086,8 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#spellcastingNPCs" id="spellcastingNPCs"><span>Spellcasting NPCs</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>The spattack= setting in npc.dfn's matches the circle you want an NPC to be able to cast up to (IE a setting of 8 means he can cast any spell from Circle 1 all the way to circle 8 ). Notably, NPC's can currently only cast certain spells, and theese will be chosen at random when the NPC is able to cast spells during its combat cycle.</p>
+					<p>The <span class="highlight">spattack</span> DFN tag in NPC DFN's defines the maximum spell circle from which an NPC will be able to cast spells in combat. A value of 8 means the NPC will be able to cast spells from circles 1 through 8, while a value of 5 means the NPC can cast spells from circles 1 to 5.</p>
+					<p>Notably, NPC's can currently only cast certain spells, and these will be chosen at random when the NPC is able to cast spells during its combat cycle - defined by the <span class="highlight">spdelay</span> DFN tag, which defines the minimum amount of seconds between each time they can cast spells in combat. This can further be modified by a uox.ini setting - <span class="highlight">NPCSPELLCASTSPEED</span> - which modifies the spellcasting delay for NPCs on a global basis.</p>
 					<p>Following is a list of spells an NPC can cast:</p>
 					<p><ul>
 						<li><strong>Circle 1:</strong> 	Clumsy, Feeble Mind, Heal (Self), Magic Arrow, Reactive Armor (self ), Cure (Self if poisoned), Weaken</li>
@@ -6586,8 +6629,8 @@ function commandTitle()
 				<a class="cd-faq__trigger" href="#uox3JsDocs" id="uox3JsDocs"><span>JS Engine Documentation</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>The <a href="https://www.uox3.org/jsdocs/">UOX3 JS documentation</a> documents all the various events, triggers, methods, functions and properties available to script writers.</p>
-					<p>UOX3 comes with <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (such as <em>let</em>, or browser-specific features) might not be fully supported.</p>
+					<p>The <a href="https://www.uox3.org/jsdocs/">UOX3 JS documentation</a> documents all the UOX3-specific events, triggers, methods, functions and properties available to script writers.</p>
+					<p>UOX3 contains an embedded scripting engine based on <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
 					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -6597,7 +6640,7 @@ function commandTitle()
 				<a class="cd-faq__trigger" href="#uox3JSresources" id="uox3JSresources"><span>JSE Resources</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-				  	<h4>The JScript Vault</h4>
+					<h4>The JScript Vault</h4>
 					<p>Check out <a href="https://www.uox3.org/forums/viewforum.php?f=5" target="_blank" title="">The JScript Vault</a> on the UOX3.org forums, which contains many scripts written by other UOX3 users that can be downloaded and added to any UOX3 shard, or used as references for writing new scripts.</p>
 					<p>Some examples of such scripts:
 						<ul>
@@ -9441,6 +9484,7 @@ function commandTitle()
 							<p><span class="highlight">Ashen Gray</span><br> Scripter, 01/02/1999</p>
 							<p><span class="highlight">Cork</span><br> Scripter, 07/02/1999</p>
 							<p><span class="highlight">Klick</span><br> Scripter, 15/02/1999</p>
+							<p><span class="highlight">Ison</span><br> Programmer, 20/02/1999</p>
 							<p><span class="highlight">Solomon</span><br> Scripter, 25/02/1999</p>
 							<p><span class="highlight">Sayter/Zophar</span><br> Scripter, 25/02/1999</p>
 							<p><span class="highlight">Westy</span><br> Peter Westberg, Programmer, Encryption Guru, 18/03/1999</p>
@@ -9470,6 +9514,7 @@ function commandTitle()
 							<p><span class="highlight">RevalutionShadow</span><br> Scripter, 29/11/1999</p>
 							<p><span class="highlight">Infinity</span><br> Scripter, 29/11/1999</p>
 							<p><span class="highlight">Folci</span><br> Scripter, 29/11/1999</p>
+							<p><span class="highlight">Banter</span><br> Programmer, ~1999</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_history_halloffame_2000"/>
@@ -9491,6 +9536,7 @@ function commandTitle()
 							<p><span class="highlight">Thaliq</span><br> Programmer, 24/10/2000, 0.70.03.20</p>
 							<p><span class="highlight">GM Azrael</span><br> Scripter, 24/10/2000</p>
 							<p><span class="highlight">Oakwood</span><br> Programmer, 06/11/2000, 0.70.03.20d</p>
+							<p><span class="highlight">Leafbeach</span><br> Programmer, November-December 2000</p>
 							<p><span class="highlight">KKung</span><br> Programmer, 06/12/2000, 0.70.03.20f</p>
 							<p><span class="highlight">Rain-</span><br> Programmer, ~January 2000</p>
 							<p><span class="highlight">Lord Vader</span><br> Programmer, ~2000</p>

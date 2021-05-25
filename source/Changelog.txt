@@ -1,3 +1,86 @@
+25/05/2021 - Xuri (0.99.4m)
+	Fixed a long-standing (20+ years old) issue with objects not being sent/removed consistently when players login, teleport or move around, or when items are being removed, areas wiped, etc.
+	Added new class RegionSerialList to store serial references to objects added to/removed from regions (both on worldfile load and when objects move in-game). This allows for faster lookup, insertion tests, etc. and results in worldfiles loading up to ~41% faster
+	Fixed an issue where characters in different world instances could shove each-other when moving
+	Fixed server crash related to using incorrect argument for REGSPAWN command
+	Fixed an issue where characters would not get world changes updated properly in some older (5.x) client versions
+	UOX3 will now attempt to resist being closed if a world-save is in progress, to avoid corruption of worldfile data
+	Added TryParseJSVal() helper function in cScript.cpp, used to parse jsval values returned from script events. Provides results matching 0 (0, false), 1 (1, true) or any specific int value returned from script.
+	JS events updated to use new TryParseJSVal helper function (no change in behaviour):
+		onDecay, onResurrect, onCommand, onBuyFromVendor, onSellToVendor, onPickup, onCharDoubleClick, onSkillGump, onUseBandageMacro, onCombatStart, onCombatEnd, onDeathBlow, onBuy, onSell
+	JS events with slight change of behaviour after update to use TryParseJSVal:
+		onDrop, onDropItemOnItem, onDropItemOnNpc - previously, a blank or non-existent return value would be treated the same as a return true. This will now be treated as a return false. Update scripts accordingly!
+	JS events updated to support return values from scripts:
+		onCollide, onTalk, onSnooped, OnHungerChange
+			Return false or nothing to prevent hard code from running
+			Return true to allow hard code to run like normal
+		onStolenFrom, onAISliver, onLightChange, onVirtueGumpPress, onQuestGump, onSpecialMove, onSwing, onClick, onHouseCommand, onSellToVendor, onSkillCheck, onSpellGain, onSpellLoss
+			Return false to allow hard code and other scripts with event to run like normal
+			Return true to prevent hard code and other scripts with event from running
+		onSteal
+			Return false or nothing to allow hard code and other scripts with event to run like normal
+			Return true to prevent hard code and onStolenFrom event from running (theft failed?)
+			Return 2 to prevent hard code, but allow onStolenFrom event to run (theft succeeded, but handled in script?)
+		onLeaving, onEntrance, onEquip, onUnequip, onEnterEvadeState, onSoldToVendor, onBoughtFromVendor, onSpellSuccess, onSpellTarget, onFlagChange, onDeath
+			Return false or nothing to allow other scripts with event to run like normal
+			Return true to prevent other scripts with event from running
+	Added new JS events that run prior to items being equipped/unequipped, with support for return values:
+		onEquipAttempt( pEquipper, iEquipping )
+		onUnequipAttempt( pEquipper, iUnequipping )
+			Return false or nothing to reject attempt to equip/unequip item, and prevent hard-code or other scripts with event from running
+			Return true to allow hard code to run like normal
+	Added new JS event that runs prior to onSnooped event, for character doing the snooping:
+		onSnoopAttempt( snooped, snooper )
+			Return false or nothing to prevent hard code and other snooping-related events from running
+			Return true to allow hard code and other snooping-related events to run like normal
+	Updated onSnooped JS event to accept return values:
+		Return true when success state is true to prevent other scripts with event from running
+		Return true when success state is false to prevent hard code and other scripts with event from running
+	Added second parameter to onCommand() JS event to match it up with the documented version. New syntax:
+		onCommand( socket, cmdString )
+	Updated onClick JS event to also run for characters with event attached (return 1 to prevent showing hard-coded name for whatever object is clicked)
+	Updated onSteal JS event to include a third parameter, an object reference for the target of the theft
+	Fixed an issue where the JS function TriggerEvent() didn't restore the original JSContext and JSObject of the calling script after calling an event in a separate script, causing timers to be associated with the wrong script when both TriggerEvent and StartTimer were used in same script
+	Updated KillTimers JS method to support an optional argument specifying the timerID of the timer to be killed. If no arguments are provided, it will - as previously - kill all timers for the object
+	Added support for assigning multiple JS scripts per object (item, multi, char, region).
+		Any time a scriptID is added to an object, the list of such IDs for that object will be sorted from lowest to highest scriptID, which also determines the execution order for the scripts. Note that if the same JS event is present in several scripts assigned to an object, each of those events will trigger, unless the rules about return values for said event prevent this
+	DFNs for Items, Multis, Characters and Regions can now contain multiple SCRIPT=scriptID tags per definition. Each such SCRIPT tag will be applied to the object in question, then sorted from lowest to highest scriptID by server.
+	Added new JS property for Items, Multis, Characters and Regions:
+		.scriptTriggers 		// If used to get property, will return array object with all script IDs assigned to object. If used to set property, will add script ID to existing list of script IDs for object.
+	Modified JS property for Items, Multis, Characters and Regions, which for backwards compatibility functions similar to in older versions:
+		.scripttrigger 			// If used to get property, will return last script ID in list of script IDs assigned to object. If used to set property, will clear list of script IDs and assign only the new ID
+	Added new JS Methods for Items, Multis, Characters and Regions:
+		.AddScriptTrigger( scriptID ) 	// Adds a new scriptID to list of scripts assigned to object
+		.RemoveScriptTrigger( scriptID ) // Remove a specific scriptID from object (0 = remove all)
+	Removed all traces of SETSCPTRIG and TWEAK commands from source. These commands are now entirely handled in JS.
+	Stats and Tweak buttons in list of online characters ('WHOLIST) will now execute the CSTATS or TWEAK command respectively, with target automatically set to character being viewed in list
+	Fixed an issue with TWEAK command where items equipped on a character's paperdoll could not be targeted
+	Moved SETSCPTRIG command from code to JS (js/commands/targeting/scptrig.js), and supplemented it with some additional commands:
+		GETSCPTRIG				// List out all scriptIDs assigned to object
+		SETSCPTRIG scriptID 	// Clears list of scriptIDs for object, then assigns the specified scriptID
+		ADDSCPTRIG scriptID 	// Adds specified scriptID to list of scriptsIDs assigned to object
+		REMOVESCPTRIG scriptID 	// Removes specified scriptID from list of scriptIDs assigned to object (0 = remove all)
+	Fixed issue where sub-commands would still execute despite cancelling target cursor when using AREACOMMAND, just without being limited by such pesky things as coordinates (js/commands/targeting/areacommand.js)
+	Updated AREACOMMAND to support adding/removing script triggers (js/commands/targeting/areacommand.js)
+	Updated CSTATS command to support showing all script triggers attached to an object (js/commands/targetin/gumps.js)
+	Updated GET (js/commands/targeting/get.js) and SET (js/commands/targeting/set.js) commands to support adding/removing script triggers from objects
+	Updated the following JS scripts to use AddScriptTrigger() method instead of .scripttrigger property:
+		kindling script (js/item/kindling.js)
+		key script (js/item/key.js)
+		pitchers script (js/server/resource/pitchers.js)
+		houseSign script (js/server/house/houseSign.js)
+		banker script (js/npc/ai/banker.js)
+	Fixed some missing/incorrect brackets in the following DFN files (thanks, punt!):
+		dfndata/items/gear/armor/base_armors.dfn
+		dfndata/items/gear/armor/leather_armor/ninja_leather.dfn
+		dfndata/items/skills/misc/misc.dfn
+		dfndata/items/building/walls/tent_walls.dfn
+		dfndata/items/building/decs/stoneart.dfn
+		dfndata/location/location.dfn
+	Added decay=0 tag to bulletin boards
+	Updated JS docs with updated return value details for events
+	Updated UOX3 docs to latest version
+
 07/05/2021 - Xuri (0.99.4l)
 	Updated LeaveBoat() function to use ValidSpawnLocation() instead of ValidMultiLocation() for more reliable disembarking from boats
 	Added support for the following boat commands (and their triggerword aliases):
@@ -57,7 +140,8 @@
 28/04/2021 - Xuri
 	Reorganized teleport.scp file with logical groupings by map and area for easier maintenance
 	All teleport locations in teleport.scp without a source/target world specified will now work for both Felucca and Trammel facets
-	Deleted ustring.cpp/ustring.h from repository and removed last few straggling references to these	Teleport locations from teleport.scp are now sorted upon initial load, and no longer require being sorted in the file itself (punt)
+	Deleted ustring.cpp/ustring.h from repository and removed last few straggling references to these
+	Teleport locations from teleport.scp are now sorted upon initial load, and no longer require being sorted in the file itself (punt)
 	Modified handling of CONT and PACKITEM tags loaded from worldfiles to no longer corrupt pointers (punt)
 
 27/04/2021 - Xuri (0.99.4j)
