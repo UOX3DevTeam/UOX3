@@ -594,10 +594,14 @@ void cEffects::checktempeffects( void )
 				break;
 			case 40: // Used by JS timers
 			{
+				// Default/Global script ID
 				UI16 scpNum			= 0xFFFF;
+
+				// Get script associated with effect, if any
 				cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
 
-				if( Effect->Source() >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+				// items have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+				if( Effect->Source() >= BASEITEMSERIAL )	
 				{
 					myObj = calcItemObjFromSer( Effect->Source() );
 					equipCheckNeeded = false;
@@ -607,17 +611,29 @@ void cEffects::checktempeffects( void )
 					myObj = calcCharObjFromSer( Effect->Source() );
 					equipCheckNeeded = true;
 				}
-				if( !ValidateObject( myObj ) )	// item no longer exists!
+
+				// Check that object effect was running on still exists
+				if( !ValidateObject( myObj ) )
 					break;
-				if( tScript == NULL )	// No associated script, so it must be another callback variety
+
+				// No associated script, so it must be another callback variety
+				if( tScript == NULL )
 				{
-					if( Effect->More2() != 0xFFFF )
+					if( Effect->More2() != 0xFFFF ) // A scriptID other than default one was found
+					{
 						scpNum = Effect->More2();
-					else
+						tScript = JSMapping->GetScript( scpNum );
+					}
+					/*else
+					{
+						// No specific script was associated with effect, so let's see if there's a script associated with object instead
+
 						scpNum = myObj->GetScriptTrigger();
-					tScript = JSMapping->GetScript( scpNum );
+					}
+					tScript = JSMapping->GetScript( scpNum );*/
 				}
-				//Make sure to check for a specific script when the previous checks ended in the global script.
+
+				// Make sure to check for a specific script via envoke system when the previous checks ended in the global script.
 				if( ( tScript == NULL || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
 				{
 					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) ) )
@@ -631,8 +647,12 @@ void cEffects::checktempeffects( void )
 						tScript	= JSMapping->GetScript( scpNum );
 					}
 				}
-				if( tScript != NULL )				// do OnTimer stuff here
+
+				// Callback to onTimer event in script
+				if( tScript != NULL )
+				{
 					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
+				}
 				break;
 			}
 			case 41: // Start of item crafting

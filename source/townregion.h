@@ -78,6 +78,7 @@ private:
 	UI08				chanceFindBigOre;		// chance of finding big ore
 
 	UI16				jsScript;
+	std::vector<UI16>	scriptTriggers;
 
 	void				SendEnemyGump( CSocket *sock );
 	void				SendBasicInfo( CSocket *sock );
@@ -178,8 +179,10 @@ public:
 	UI16				GetInstanceID( void ) const;
 	void				SetInstanceID( UI16 newValue );
 
-	UI16				GetScriptTrigger( void ) const;
-	void				SetScriptTrigger( UI16 newValue );
+	std::vector<UI16>	GetScriptTriggers( void );
+	void				AddScriptTrigger( UI16 newValue );
+	void				RemoveScriptTrigger( UI16 newValue );
+	void				ClearScriptTriggers( void );
 
 	UI16				GetRegionNum( void ) const;
 	void				SetRegionNum( UI16 newVal );

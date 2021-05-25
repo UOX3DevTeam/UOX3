@@ -415,16 +415,24 @@ SI08 CChar::GetHunger( void ) const
 }
 bool CChar::SetHunger( SI08 newValue )
 {
-	bool JSEventUsed = false;
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( i );
+		if( toExecute != NULL )
+		{
+			// If script returns false/0/nothing, prevent hunger from changing, and prevent
+			// other scripts with event from running
+			if( toExecute->OnHungerChange( (this), hunger ) == 0 )
+			{
+				return false;
+			}
+		}
+	}
 
 	hunger = newValue;
 
-	const UI16 HungerTrig = GetScriptTrigger();
-	cScript *toExecute = JSMapping->GetScript( HungerTrig );
-	if( toExecute != NULL )
-		JSEventUsed = toExecute->OnHungerChange( (this), hunger );
-
-	return JSEventUsed;
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2008,6 +2016,9 @@ void CChar::CopyData( CChar *target )
 			target->SetSkillLock( mPlayer->lockState[j], j );
 		}
 	}
+
+	// Add any script triggers present on object to the new object
+	target->scriptTriggers = GetScriptTriggers();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2318,6 +2329,21 @@ CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::WearItem( CItem *toWear )
 {
+	// Run event prior to equipping item, allowing script to prevent equip
+	std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != NULL )
+		{
+			// If script returns false, prevent item from being equipped
+			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
+			{
+				return false;
+			}
+		}
+	}
+
 	bool rvalue = true;
 	ItemLayers tLayer = toWear->GetLayer();
 	if( tLayer != IL_NONE )	// Layer == 0 is a special case, for things like trade windows and such
@@ -2337,14 +2363,24 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
-			if( toWear->isPostLoaded() ) {
+			if( toWear->isPostLoaded() )
+			{
 				if( itemLayers[tLayer]->GetPoisoned() )
 					SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
 
-				UI16 scpNum			= toWear->GetScriptTrigger();
-				cScript *tScript	= JSMapping->GetScript( scpNum );
-				if( tScript != NULL )
-					tScript->OnEquip( this, toWear );
+				std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *tScript = JSMapping->GetScript( i );
+					if( tScript != NULL )
+					{
+						// If script returns 1, prevent other scripts with event from running
+						if( tScript->OnEquip( this, toWear ) == 1 )
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2360,6 +2396,20 @@ bool CChar::WearItem( CItem *toWear )
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::TakeOffItem( ItemLayers Layer )
 {
+	// Run event prior to equipping item, allowing script to prevent equip
+	std::vector<UI16> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != NULL )
+		{
+			if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+			{
+				return false;
+			}
+		}
+	}
+
 	bool rvalue = false;
 	if( ValidateObject( GetItemAtLayer( Layer ) ) )
 	{
@@ -2376,11 +2426,19 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 				SetPoisoned( GetPoisoned() - itemLayers[Layer]->GetPoisoned() );
 		}
 
-		cScript *tScript = NULL;
-		UI16 scpNum = itemLayers[Layer]->GetScriptTrigger();
-		tScript = JSMapping->GetScript( scpNum );
-		if( tScript != NULL )
-			tScript->OnUnequip( this, itemLayers[Layer] );
+		std::vector<UI16> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *tScript = JSMapping->GetScript( i );
+			if( tScript != NULL )
+			{
+				// If script returns true/1, prevent other scripts with event from running
+				if( tScript->OnUnequip( this, itemLayers[Layer] ) == 0 )
+				{
+					break;
+				}
+			}
+		}
 
 		itemLayers[Layer] = NULL;
 		rvalue = true;
@@ -3962,11 +4020,15 @@ void CChar::WalkZ( SI08 newZ )
 
 	if( fallDistance > MAX_Z_FALL )
 	{
-		bool JSEventUsed = false;
-		const UI16 FallTrig = GetScriptTrigger();
-		cScript *toExecute = JSMapping->GetScript( FallTrig );
-		if( toExecute != NULL )
-			JSEventUsed = toExecute->OnFall( (this), fallDistance );
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != NULL )
+			{
+				toExecute->OnFall( (this), fallDistance );
+			}
+		}
 	}
 }
 
@@ -6097,10 +6159,13 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 {
-	UI16 dbScript		= GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( dbScript );
-	if( toExecute != NULL )
-		toExecute->OnDamage( this, attacker, damageValue );
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( i );
+		if( toExecute != NULL )
+			toExecute->OnDamage(  this, attacker, damageValue );
+	}
 
 	CSocket *mSock = GetSocket(), *attSock = NULL, *attOwnerSock = NULL;
 
@@ -6190,12 +6255,20 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::Die( CChar *attacker, bool doRepsys )
 {
-	UI16 dbScript		= GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( dbScript );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for( auto i : scriptTriggers )
 	{
-		if( toExecute->OnDeathBlow( this, attacker ) == 1 ) // if it exists and we don't want hard code, return
-			return;
+		cScript *toExecute = JSMapping->GetScript( i );
+		if( toExecute != NULL )
+		{
+			SI08 retStatus = toExecute->OnDeathBlow( this, attacker );
+
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( retStatus == 0 )
+				return;
+		}
 	}
 
 	if( ValidateObject( attacker ) )

@@ -998,13 +998,15 @@ bool BuyShop( CSocket *s, CChar *c )
 	if( !ValidateObject( c ) )
 		return false;
 
-	//Check if vendor has onBuy script running
-	UI16 charTrig		= c->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnBuy( s, c ) )
-			return false;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnBuy( s, c ) == 0 )
+				return false;
+		}
 	}
 
 	CItem *sellPack		= c->GetItemAtLayer( IL_SELLCONTAINER );
@@ -1067,12 +1069,15 @@ void NpcResurrectTarget( CChar *i )
 	{
 		if( i->IsDead() )
 		{
-			UI16 charTrig		= i->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( charTrig );
-			if( toExecute != NULL )
+			std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( toExecute->OnResurrect( i ) == 1 )	// if it exists and we don't want hard code, return
-					return;
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					if( toExecute->OnResurrect( i ) == 1 )	// if it exists and we don't want hard code, return
+						return;
+				}
 			}
 
 			Fame( i, 0 );
@@ -1678,7 +1683,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_NPCRESURRECT:	NpcResurrectTarget( mChar );			break;
 					case TARGET_TWEAK:			TweakTarget( tSock );					break;
 					case TARGET_MAKESTATUS:		MakeStatusTarget( tSock );				break;
-					case TARGET_SETSCPTRIG:		HandleSetScpTrig( tSock );				break;
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;
 					case TARGET_SHOWSKILLS:		ShowSkillTarget( tSock );				break;

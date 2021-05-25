@@ -1265,12 +1265,16 @@ bool CPIStatusRequest::Handle( void )
 	{
 		// Check if onSkillGump event exists
 		CChar *myChar	= tSock->CurrcharObj();
-		UI16 charTrig		= myChar->GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( charTrig );
-		if( toExecute != NULL )
+		std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			if( toExecute->OnSkillGump( myChar ) == 1 )	// if it exists and we don't want hard code, return
-				return true;
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != NULL )
+			{
+				UI08 retStatus = toExecute->OnSkillGump( myChar );
+				if( retStatus == 0 ) // if it exists and we don't want hard code, return
+					return true;
+			}
 		}
 
 		CPSkillsValues toSend;
@@ -4246,36 +4250,39 @@ bool CPIBandageMacro::Handle(void)
 	if( ValidateObject( ourChar ) )
 	{
 		// Check if onUseBandageMacro event exists
-		UI16 charTrig = ourChar->GetScriptTrigger();
-		cScript *toExecute = JSMapping->GetScript( charTrig );
-		if( toExecute != NULL )
+		std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			SERIAL bandageSerial = tSock->GetDWord( 5 );
-			SERIAL targetSerial = tSock->GetDWord( 9 );
-
-			if( bandageSerial == INVALIDSERIAL )
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != NULL )
 			{
-				Console << "Bandage Macro detected, but no bandage found!\n";
-				return false;
-			}
+				SERIAL bandageSerial = tSock->GetDWord( 5 );
+				SERIAL targetSerial = tSock->GetDWord( 9 );
 
-			if( targetSerial == INVALIDSERIAL )
-			{
-				Console << "Bandage Macro detected, but no target found!\n";
-				return false;
-			}
+				if( bandageSerial == INVALIDSERIAL )
+				{
+					Console << "Bandage Macro detected, but no bandage found!\n";
+					return false;
+				}
 
-			CItem *bandageItem = calcItemObjFromSer( bandageSerial );
-			CChar *targetChar = calcCharObjFromSer( targetSerial );
+				if( targetSerial == INVALIDSERIAL )
+				{
+					Console << "Bandage Macro detected, but no target found!\n";
+					return false;
+				}
 
-			if( !ValidateObject( bandageItem ) || !ValidateObject( targetChar ))
-				return false;
+				CItem *bandageItem = calcItemObjFromSer( bandageSerial );
+				CChar *targetChar = calcCharObjFromSer( targetSerial );
 
-			if( toExecute->OnUseBandageMacro( tSock, targetChar, bandageItem ) == 1 )	// if it exists and we don't want hard code, return
-				return true;
+				if( !ValidateObject( bandageItem ) || !ValidateObject( targetChar ))
+					return false;
+
+				if( toExecute->OnUseBandageMacro( tSock, targetChar, bandageItem ) == 1 )	// if it exists and we don't want hard code, return
+				{
+					return true;
+				}
+			}				
 		}
-		else
-			Console << "Bandage Macro detected, but onUseBandageMacro JS event not found in global script." << myendl;
 	}
 	return false;
 }
@@ -4672,21 +4679,29 @@ bool CPIAOSCommand::Handle( void )
 			UI08 abilityID = tSock->GetByte( 13 );
 			UI08 unknown2 = tSock->GetByte( 15 );
 
-			bool returnState = false;
 			CChar *myChar = tSock->CurrcharObj();
-			UI16 charTrig = myChar->GetScriptTrigger();
-			cScript *toExecute = JSMapping->GetScript( charTrig );
-			if( toExecute != NULL )
-				returnState = toExecute->OnSpecialMove( myChar, abilityID );
-			if( !returnState )
+			std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+			for( auto i : scriptTriggers )
 			{
-				toExecute = JSMapping->GetScript( (UI16)0 );
+				cScript *toExecute = JSMapping->GetScript( i );
 				if( toExecute != NULL )
-					toExecute->OnSpecialMove( myChar, abilityID );
+				{
+					if( toExecute->OnSpecialMove( myChar, abilityID ) == 1 )
+					{
+						return true;
+					}
+				}
+			}
+
+			// No individual scripts handling OnSpecialMove return true - let's check global script!
+			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+			if( toExecute != NULL )
+			{
+				toExecute->OnSpecialMove( myChar, abilityID );
 			}
 			return true;
 		}
-			 /*case 0x001A:	break;	//House Customisation :: Revert*/
+		/*case 0x001A:	break;	//House Customisation :: Revert*/
 		case 0x0028:			//Guild :: Paperdoll button
 			if( cwmWorldState->ServerData()->PaperdollGuildButton() )
 			{
@@ -4699,17 +4714,25 @@ bool CPIAOSCommand::Handle( void )
 			break;
 		case 0x0032:			//Quests :: Unknown
 		{
-			bool returnState = false;
 			CChar *myChar	= tSock->CurrcharObj();
-			UI16 charTrig		= myChar->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( charTrig );
-			if( toExecute != NULL )
-				returnState = toExecute->OnQuestGump( myChar );
-			if( !returnState )
+			std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				toExecute = JSMapping->GetScript( (UI16)0 );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != NULL )
-					toExecute->OnQuestGump( myChar );
+				{
+					if( toExecute->OnQuestGump( myChar ) == 1 )
+					{
+						return true;
+					}
+				}
+			}
+
+			// No individual scripts handling OnSpecialMove returned true - let's check global script!
+			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+			if( toExecute != NULL )
+			{
+				toExecute->OnQuestGump( myChar );
 			}
 			return true;
 		}

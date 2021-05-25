@@ -179,9 +179,27 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 		COMMANDMAP_ITERATOR toFind = CommandMap.find( command );
 		if( toFind == CommandMap.end() )
 		{
-			cScript *toGrab = JSMapping->GetScript( mChar->GetScriptTrigger() );
-			if( toGrab == NULL || !toGrab->OnCommand( s ) )
-				s->sysmessage( 336 );
+			bool cmdHandled = false;
+			std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					// -1 == event doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing
+					// 1 == script returned true or 1, don't execute hard code
+					if( toExecute->OnCommand( s, command ) == 1 )
+					{
+						cmdHandled = true;
+					}
+				}
+			}
+
+			if( !cmdHandled )
+			{
+				s->sysmessage( 336 ); // Unrecognized command.
+			}
 			return;
 		}
 		else

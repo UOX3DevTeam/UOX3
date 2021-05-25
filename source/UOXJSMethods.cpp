@@ -6366,13 +6366,22 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 
-	UI16 dbScript		= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( dbScript );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto i : scriptTriggers )
 	{
-		if( toExecute->OnDeathBlow( mChar, NULL ) == 1 ) // if it exists and we don't want hard code, return
-			return JS_FALSE;
+		cScript *toExecute = JSMapping->GetScript( i );
+		if( toExecute != NULL )
+		{
+			SI08 retStatus = toExecute->OnDeathBlow( mChar, NULL );
+
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( retStatus == 0 )
+				return JS_FALSE;
+		}
 	}
+
 	HandleDeath( mChar );
 	return JS_TRUE;
 }
@@ -8081,6 +8090,172 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void AddScriptTrigger( scriptTrigger )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddScriptTrigger: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "Invalid Object assigned (AddScriptTrigger)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ) )
+	{
+		MethodError( "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
+	}
+
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	if( scriptID > 0 )
+	{
+		cScript *toExecute	= JSMapping->GetScript( scriptID );
+		if( toExecute == NULL )
+		{
+			MethodError( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptID).c_str() );
+			return JS_FALSE;
+		}
+		else
+		{
+			myObj->AddScriptTrigger( scriptID );
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void RemoveScriptTrigger( scriptTrigger )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a scriptTrigger from an object's list of scriptTriggers
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "Invalid Object assigned (RemoveScriptTrigger)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ) )
+	{
+		MethodError( "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
+	}
+
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	if( scriptID > 0 )
+	{
+		myObj->RemoveScriptTrigger( scriptID );
+	}
+	else
+	{
+		myObj->ClearScriptTriggers();
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void AddScriptTrigger( scriptTrigger )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
+//o-----------------------------------------------------------------------------------------------o
+JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddScriptTrigger: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	CTownRegion *myObj = static_cast<CTownRegion *>(JS_GetPrivate( cx, obj ));
+	if( myObj == NULL )
+	{
+		MethodError( "Invalid Object assigned (AddScriptTrigger)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ) )
+	{
+		MethodError( "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
+		return JS_FALSE;
+	}
+
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	if( scriptID > 0 )
+	{
+		cScript *toExecute	= JSMapping->GetScript( scriptID );
+		if( toExecute == NULL )
+		{
+			MethodError( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptID).c_str() );
+			return JS_FALSE;
+		}
+		else
+		{
+			myObj->AddScriptTrigger( scriptID );
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void RemoveScriptTrigger( scriptTrigger )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove a scriptTrigger from an object's list of scriptTriggers
+//o-----------------------------------------------------------------------------------------------o
+JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	CTownRegion *myObj = static_cast<CTownRegion *>(JS_GetPrivate( cx, obj ));
+	if( myObj == NULL )
+	{
+		MethodError( "Invalid Object assigned (RemoveScriptTrigger)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ) )
+	{
+		MethodError( "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
+	}
+
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
+	if( scriptID > 0 )
+	{
+		myObj->RemoveScriptTrigger( scriptID );
+	}
+	else
+	{
+		myObj->ClearScriptTriggers();
+	}
+
+	return JS_TRUE;
+}
 
 // Party Methods
 //o-----------------------------------------------------------------------------------------------o

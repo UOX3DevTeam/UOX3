@@ -78,6 +78,7 @@ protected:
 	SI16			hidamage;
 	SI16			lodamage;
 	UI16			scriptTrig;
+	std::vector<UI16>	scriptTriggers;
 
 	SI16			carve; // Carve.dfn entry
 
@@ -218,8 +219,10 @@ public:
 	void					SetHiDamage( SI16 newValue );
 	void					SetLoDamage( SI16 newValue );
 
-	UI16					GetScriptTrigger( void ) const;
-	void					SetScriptTrigger( UI16 newValue );
+	std::vector<UI16>		GetScriptTriggers( void );
+	void					AddScriptTrigger( UI16 newValue );
+	void					RemoveScriptTrigger( UI16 newValue );
+	void					ClearScriptTriggers( void );
 
 	SI16					GetStrength2( void ) const;
 	SI16					GetDexterity2( void ) const;

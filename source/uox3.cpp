@@ -724,12 +724,20 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 					}
 					if( mChar.GetHP() < 1 && !mChar.IsDead() )
 					{
-						dbScript = mChar.GetScriptTrigger();
-						cScript *toExecute = JSMapping->GetScript( dbScript );
-						if( toExecute != NULL )
+						std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+						for( auto i : scriptTriggers )
 						{
-							if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
-								return false;
+							cScript *toExecute = JSMapping->GetScript( i );
+							if( toExecute != NULL )
+							{
+								SI08 retStatus = toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() );
+
+								// -1 == script doesn't exist, or returned -1
+								// 0 == script returned false, 0, or nothing - don't execute hard code
+								// 1 == script returned true or 1
+								if( retStatus == 0 )
+									return false;
+							}
 						}
 
 						HandleDeath( ( &mChar ) );
@@ -811,12 +819,20 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		return true;
 	else if( mChar.GetHP() <= 0 )
 	{
-		dbScript	= mChar.GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( dbScript );
-		if( toExecute != NULL )
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
-				return false;
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != NULL )
+			{
+				SI08 retStatus = toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() );
+
+				// -1 == script doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( retStatus == 0 )
+					return false;
+			}
 		}
 
 		HandleDeath( (&mChar) );
@@ -947,14 +963,21 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
 	// AI can never be faster than how often we check npcs
 
-	const UI16 AITrig	= mChar.GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( AITrig );
-	bool doAICheck		= true;
-	if( toExecute != NULL )
+	bool doAICheck = true;
+	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnAISliver( &mChar ) )
-			doAICheck = false;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnAISliver( &mChar ) == 1 )
+			{
+				// Script returned true or 1, don't do hard-coded AI check
+				doAICheck = false;
+			}
+		}
 	}
+
 	if( doAICheck && checkAI )
 		CheckAI( mChar );
 	Movement->NpcMovement( mChar );
@@ -1040,12 +1063,17 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 				}
 				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
-					UI16 decayTrig		= itemCheck->GetScriptTrigger();
-					cScript *toExecute	= JSMapping->GetScript( decayTrig );
-					if( toExecute != NULL )
+					std::vector<UI16> scriptTriggers = itemCheck->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
 					{
-						if( toExecute->OnDecay( itemCheck ) == 1 )	// if it exists and we don't want hard code, return
-							return;
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != NULL )
+						{
+							if( toExecute->OnDecay( itemCheck ) == 0 )	// if it exists and we don't want hard code, return
+							{
+								return;
+							}
+						}
 					}
 
 					if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) )
@@ -2153,16 +2181,28 @@ void doLight( CSocket *s, UI08 level )
 	}
 	s->Send( &toSend );
 
-	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onLightChangeScp != NULL ) {
-		onLightChangeScp->OnLightChange( mChar, toShow );
-	}
-	else
+	bool eventFound = false;
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnLightChange( mChar, toShow ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				eventFound = true;
+				break;
+			}
+		}
+	}
 
-		if( onLightChangeScp != NULL )
-			onLightChangeScp->OnLightChange( mChar, toShow );
+	if( !eventFound )
+	{
+		// Check global script! Maybe there's another event there
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+		if( toExecute != NULL )
+			toExecute->OnLightChange( mChar, toShow );
 	}
 
 	Weather->DoPlayerStuff( s, mChar );
@@ -2210,16 +2250,30 @@ void doLight( CChar *mChar, UI08 level )
 		}
 	}
 
-	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onLightChangeScp != NULL )
-		onLightChangeScp->OnLightChange( mChar, toShow );
-	else
+	bool eventFound = false;
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
-
-		if( onLightChangeScp != NULL )
-			onLightChangeScp->OnLightChange( mChar, toShow );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnLightChange( mChar, toShow ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				eventFound = true;
+				break;
+			}
+		}
 	}
+
+	if( !eventFound )
+	{
+		// Check global script! Maybe there's another event there
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+		if( toExecute != NULL )
+			toExecute->OnLightChange( mChar, toShow );
+	}
+
 	Weather->DoNPCStuff( mChar );
 }
 
@@ -2373,23 +2427,43 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 		}
 		if( iRegion != NULL && calcReg != NULL )
 		{
-			UI16 leaveScript = mChar.GetScriptTrigger();
-			cScript *tScript = JSMapping->GetScript( leaveScript );
-			if( tScript != NULL )
+			// Run onLeaveRegion/onEnterRegion for character
+			std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				tScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
-				tScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					toExecute->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+					toExecute->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+				}
 			}
 
-			UI16 regLeaveScript	= iRegion->GetScriptTrigger();
-			cScript *trScript	= JSMapping->GetScript( regLeaveScript );
-			if( trScript != NULL )
-				trScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+			// Run onLeaveRegion event for region being left
+			scriptTriggers.clear();
+			scriptTriggers.shrink_to_fit();
+			scriptTriggers = iRegion->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					toExecute->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+				}
+			}
 
-			UI16 regEnterScript	= calcReg->GetScriptTrigger();
-			cScript *teScript	= JSMapping->GetScript( regEnterScript );
-			if( teScript != NULL )
-				teScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+			// Run onEnterRegion event for region being entered
+			scriptTriggers.clear();
+			scriptTriggers.shrink_to_fit();
+			scriptTriggers = calcReg->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					toExecute->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+				}
+			}
 		}
 		if( calcReg != NULL )
 			mChar.SetRegion( calcReg->GetRegionNum() );
@@ -2553,10 +2627,19 @@ void UpdateFlag( CChar *mChar )
 	UI08 newFlag = mChar->GetFlag();
 	if( oldFlag != newFlag )
 	{
-		UI16 targTrig = mChar->GetScriptTrigger();
-		cScript *toExecute = JSMapping->GetScript( targTrig );
-		if( toExecute != NULL )
-			toExecute->OnFlagChange( mChar, newFlag, oldFlag );
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnFlagChange( mChar, newFlag, oldFlag ) == 1 )
+				{
+					break;
+				}
+			}
+		}
+
 		mChar->Dirty( UT_UPDATE );
 	}
 }

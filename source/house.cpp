@@ -434,6 +434,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
 	if( House == NULL )
 		return;
+
+	std::vector<UI16> scriptIDs;
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
 		UTag = str_toupper( tag );
@@ -535,6 +537,10 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		else if( UTag == "SCRIPT" )
 		{
 			scriptTrigger = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			if( scriptTrigger > 0 )
+			{
+				scriptIDs.push_back( scriptTrigger );
+			}
 		}
 		else if( UTag == "COLOUR" || UTag == "COLOR" )
 		{
@@ -633,7 +639,11 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetDecayable( itemsWillDecay );
 		house->SetDeed( houseDeed ); // crackerjack 8/9/99 - for converting back *into* deeds
 		house->SetOwner( mChar );
-		house->SetScriptTrigger( scriptTrigger );
+		// Add all script IDs to multi's list of script IDs
+		for( auto scriptID : scriptIDs )
+		{
+			house->AddScriptTrigger( scriptID );
+		}
 		house->SetMaxBans( maxBans );
 		house->SetMaxFriends( maxFriends );
 		house->SetMaxGuests( maxGuests );

@@ -17,7 +17,7 @@
 
 #undef DBGFILE
 #define DBGFILE "combat.cpp"
-
+#define DEBUG_COMBAT		0
 
 CHandleCombat *Combat = NULL;
 
@@ -254,13 +254,20 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 	}//if isDead
 	else if( ourChar->GetTarg() != i )
 	{
-		// Check if OnCombatStart event exists, necessary here for when players attack
-		UI16 charTrig		= ourChar->GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( charTrig );
-		if( toExecute != NULL )
+		std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
 		{
-			if( toExecute->OnCombatStart( ourChar, i ) == 1 )	// if it exists and we don't want hard code, return
-				return;
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				// -1 == script doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatStart( ourChar, i ) == 0 )
+				{
+					return;
+				}
+			}
 		}
 
 		if( !ourChar->GetCanAttack() ) //Is our char allowed to attack
@@ -361,12 +368,20 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 {
 	// Check if OnCombatStart event exists, necessary here to make event run for NPCs attacking
-	UI16 charTrig		= cAttack->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = cAttack->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnCombatStart( cAttack, cTarget ) == 1 )	// if it exists and we don't want hard code, return
-			return;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( toExecute->OnCombatStart( cAttack, cTarget ) == 0 )
+			{
+				return;
+			}
+		}
 	}
 
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
@@ -1749,9 +1764,17 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 {
 	SI16 damage = -1;
 
-	cScript *toExecute	= JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( toExecute != NULL )
-		damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill );
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// -1 == event doesn't exist, default to hard code
+			// Other value = calculated damage from script
+			damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill );
+		}
+	}
 
 	if( damage >= 0 )
 		return damage;
@@ -1799,7 +1822,7 @@ void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
 				splitnum = 1;
 			}
 			else {
-				splitnum = static_cast<std::uint8_t>(RandomNum( static_cast< std::uint16_t >(1), static_cast< std::uint16_t >(toSplit->GetSplit() )));
+				splitnum = static_cast<std::uint8_t>( RandomNum( static_cast<std::uint16_t>( 1 ), static_cast<std::uint16_t>( toSplit->GetSplit() ) ) );
 			}
 
 			for( UI08 splitcount = 0; splitcount < splitnum; ++splitcount )
@@ -1844,16 +1867,34 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
 	// Trigger onSwing for scripts attached to attacker
-	cScript *toExecute	= JSMapping->GetScript( mChar.GetScriptTrigger() );
-	if( toExecute != NULL )
-		toExecute->OnSwing( mWeapon, &mChar, ourTarg );
+	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnSwing( mWeapon, &mChar, ourTarg ) == 0 )
+			{
+				return;
+			}
+		}
+	}
 
 	// Trigger onSwing for scripts attached to attacker's weapon
 	if( mWeapon )
 	{
-		cScript *toExecute2	= JSMapping->GetScript( mWeapon->GetScriptTrigger() );
-		if( toExecute2 != NULL )
-			toExecute2->OnSwing( mWeapon, &mChar, ourTarg );
+		std::vector<UI16> weaponScriptTriggers = mWeapon->GetScriptTriggers();
+		for( auto scriptTrig : weaponScriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnSwing( mWeapon, &mChar, ourTarg ) == 0 )
+				{
+					return;
+				}
+			}
+		}
 	}
 
 	if( !checkDist && getFightSkill == ARCHERY )
@@ -1996,12 +2037,24 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )
 				PlayHitSoundEffect( &mChar, mWeapon );
 
-			if( toExecute != NULL )
-				toExecute->OnAttack( &mChar, ourTarg );
-			UI16 defScript	= ourTarg->GetScriptTrigger();
-			toExecute		= JSMapping->GetScript( defScript );
-			if( toExecute != NULL )
-				toExecute->OnDefense( &mChar, ourTarg );
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					toExecute->OnAttack( &mChar, ourTarg );
+				}
+			}
+
+			std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+			for( auto scriptTrig : defScriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					toExecute->OnDefense( &mChar, ourTarg );
+				}
+			}
 		}
 	}
 }
@@ -2266,15 +2319,24 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	CChar *ourTarg = mChar->GetTarg();
 
 	// Check if OnCombatEnd event exists.
-	UI16 charTrig		= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		//Check if ourTarg validates as another character. If not, don't use
-		if( !ValidateObject( ourTarg ))
-			ourTarg = NULL;
-		if( toExecute->OnCombatEnd( mChar, ourTarg ) == 1 )	// if it exists and we don't want hard code, return
-			return;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			//Check if ourTarg validates as another character. If not, don't use
+			if( !ValidateObject( ourTarg ))
+				ourTarg = NULL;
+
+			// -1 == event doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( toExecute->OnCombatEnd( mChar, ourTarg ) == 0 )	// if it exists and we don't want hard code, return
+			{
+				return;
+			}
+		}
 	}
 
 	if( mChar->IsNpc() && mChar->GetNPCAiType() == AI_GUARD )

@@ -349,14 +349,22 @@ bool CPIGetItem::Handle( void )
 		}
 	}
 
-	UI16 targTrig		= i->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( !toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
 		{
-			PickupBounce( tSock );
-			return true;
+			SI08 retStatus = toExecute->OnPickup( i, ourChar );
+
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( retStatus == 0 )
+			{
+				PickupBounce( tSock );
+				return true;
+			}
 		}
 	}
 
@@ -691,52 +699,60 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	const bool isGM		= (mChar->GetCommandLevel() >= CL_CNS);
 	bool stackDeleted	= false;
 	bool executeNpc		= true;
-	UI16 targTrig		= i->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	UI08 rVal			= 0;
-	if( toExecute != NULL )
+
+	SI08 rVal = 0;
+	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );	// returns 1 if we should bounce it
-		switch( rVal )
-		{
-			case 0:	// no such event
-			default:
-				executeNpc = true;
-				break;
-			case 1:	// bounce, no code
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-					Weight->subtractItemWeight( mChar, i );
-				Bounce( mSock, i );
-				return false;	// stack not deleted, as we're bouncing
-			case 2:	// don't bounce, use code
-				executeNpc = false;
-				break;
-			case 3:	// don't bounce, don't use code
-				executeNpc = true;
-				break;
-		}
-	}
-	if( executeNpc )
-	{
-		targTrig	= targNPC->GetScriptTrigger();
-		toExecute	= JSMapping->GetScript( targTrig );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != NULL )
 		{
-			rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );
+			rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );	// returns 1 if we should bounce it
 			switch( rVal )
 			{
-				case 0:	// no such event
-				case 2:	// we don't want to bounce, use code
+				case -1:	// no such event
 				default:
+					executeNpc = true;
 					break;
-				case 1:	// we want to bounce and return
-					// If we want to bounce, then it's safe to assume the item still exists!
+				case 0:	// bounce, no code
 					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 						Weight->subtractItemWeight( mChar, i );
 					Bounce( mSock, i );
-					return false;	// bouncing, so item exists
-				case 3:	// we don't want to bounce, don't use code
-					return true;	// don't let the code assume the item exists, so we never reference it
+					return false;	// stack not deleted, as we're bouncing
+				case 1:	// don't bounce, use code
+					executeNpc = false;
+					break;
+				case 2:	// don't bounce, don't use code
+					executeNpc = true;
+					break;
+			}
+		}
+	}
+
+	if( executeNpc )
+	{
+		std::vector<UI16> targScriptTriggers = targNPC->GetScriptTriggers();
+		for( auto scriptTrig : targScriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );	// returns 1 if we should bounce it
+				switch( rVal )
+				{
+					case -1:	// no such event
+					case 1:	// we don't want to bounce, use code
+					default:
+						break;
+					case 0:	// we want to bounce and return
+							// If we want to bounce, then it's safe to assume the item still exists!
+						if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+							Weight->subtractItemWeight( mChar, i );
+						Bounce( mSock, i );
+						return false;	// bouncing, so item exists
+					case 2:	// we don't want to bounce, don't use code
+						return true;	// don't let the code assume the item exists, so we never reference it
+				}
 			}
 		}
 	}
@@ -909,22 +925,25 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		return;
 	}
 
-	UI16 targTrig		= i->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		UI08 rVal = toExecute->OnDrop( i, nChar );	// returns 1 if we should bounce it
-		switch( rVal )
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
 		{
-			case 2:	// don't bounce, use code
-			case 0:	// no such event
-			default:
-				break;
-			case 1:	// bounce, no code
-				Bounce( mSock, i );
-				return;	// stack not deleted, as we're bouncing
-			case 3:	// don't bounce, don't use code
-				return;
+			UI08 rVal = toExecute->OnDrop( i, nChar );	// returns 1 if we should bounce it
+			switch( rVal )
+			{
+				case 1:	// don't bounce, use code
+				case -1:	// no such event
+				default:
+					break;
+				case 0:	// bounce, no code
+					Bounce( mSock, i );
+					return;	// stack not deleted, as we're bouncing
+				case 2:	// don't bounce, don't use code
+					return;
+			}
 		}
 	}
 
@@ -1357,50 +1376,57 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	nItem->SetHeldOnCursor( false );
 
 	bool executeCont	= true;
-	UI16 targTrig		= nItem->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = nItem->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		UI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
-		switch( rVal )
-		{
-			case 0:	// no such event
-			default:
-				executeCont = true;
-				break;
-			case 1:	// bounce, no code
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-					Weight->subtractItemWeight( mChar, nItem );
-				Bounce( mSock, nItem );
-				return;	// stack not deleted, as we're bouncing
-			case 2:	// don't bounce, use code
-				executeCont = false;
-				break;
-			case 3:	// don't bounce, don't use code
-				executeCont = true;
-				break;
-		}
-	}
-	if( executeCont )
-	{
-		targTrig			= nCont->GetScriptTrigger();
-		toExecute	= JSMapping->GetScript( targTrig );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != NULL )
 		{
-			UI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
+			SI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
 			switch( rVal )
 			{
-				case 2:	// don't bounce, use code
-				case 0:	// no such event
+				case -1:	// no such event
 				default:
+					executeCont = true;
 					break;
-				case 1:	// bounce, no code
+				case 0:	// bounce, no code
 					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 						Weight->subtractItemWeight( mChar, nItem );
 					Bounce( mSock, nItem );
 					return;	// stack not deleted, as we're bouncing
-				case 3:	// don't bounce, don't use code
-					return;
+				case 1:	// don't bounce, use code
+					executeCont = false;
+					break;
+				case 2:	// don't bounce, don't use code
+					executeCont = true;
+					break;
+			}
+		}
+	}
+
+	if( executeCont )
+	{
+		std::vector<UI16> contScriptTriggers = nCont->GetScriptTriggers();
+		for( auto scriptTrig : contScriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				SI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
+				switch( rVal )
+				{
+					case 1:	// don't bounce, use code
+					case -1:	// no such event
+					default:
+						break;
+					case 0:	// bounce, no code
+						if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+							Weight->subtractItemWeight( mChar, nItem );
+						Bounce( mSock, nItem );
+						return;	// stack not deleted, as we're bouncing
+					case 2:	// don't bounce, don't use code
+						return;
+				}
 			}
 		}
 	}
@@ -1759,13 +1785,34 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	CPPaperdoll pd		= (*pdoll);
 	UnicodeTypes sLang	= s->Language();
 
-	// Check if onCharDoubleClick event exists
-	UI16 charTrig		= pdoll->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	bool eventFound = false;
+	cScript *toExecute;
+	std::vector<UI16> scriptTriggers = pdoll->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 0 )
+			{
+				// if it exists and we don't want hard code, return
+				return;
+			}
+		}
+	}
+
+	// Also check global script!
+	toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
 	if( toExecute != NULL )
 	{
-		if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 1 )	// if it exists and we don't want hard code, return
+		if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 0 )
+		{
+			// if it exists and we don't want hard code, return
 			return;
+		}
 	}
 
 	std::string SkillProwessTitle;
@@ -1857,13 +1904,18 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	if( !ValidateObject( c ) )
 		return;
 
-	// Check if onCharDoubleClick event exists
-	UI16 charTrig		= c->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnCharDoubleClick( mChar, c ) == 1 )	// if it exists and we don't want hard code, return
-			return;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( toExecute->OnCharDoubleClick( mChar, c ) == 0 )	// if it exists and we don't want hard code, return
+				return;
+		}
 	}
 
 	if( c->IsNpc() )
@@ -2678,45 +2730,104 @@ bool CPIDblClick::Handle( void )
 		return true;
 
 	ItemTypes iType		= findItemType( iUsed );
-
-	UI16 itemID			= iUsed->GetID();
-	UI16 itemTrig		= iUsed->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( itemTrig );
-	if( itemTrig == 0 || toExecute == NULL )
+	bool scriptExecuted = false;
+	std::vector<UI16> scriptTriggers = iUsed->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		UI16 envTrig		= 0;
+		// First loop through all scripts, checking for OnUseUnChecked events, which should run before
+		// item usage check is performed
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL ) // Was a script found?
+		{
+			// If retVal is -1, event doesn't exist in script
+			// If retVal is 0, event exists, but returned false/0
+			// If retVal is 1, event exists, and handles item usage. Don't proceed with hard code (or other scripts!)
+			SI08 retVal = toExecute->OnUseUnChecked( ourChar, iUsed );
+			if( retVal == 0 )
+			{
+				// Event exists, and returned 0 - proceed with other scripts/hard code
+				scriptExecuted = true;
+			}
+			else if( retVal == 1 )
+			{
+				// Event exists, and returned 1 - script handles usage, don't continue!
+				return true;
+			}
+		}
+	}
+
+	bool itemUsageCheckComplete = false;
+	for( auto scriptTrig : scriptTriggers )
+	{
+		// Then loop through all scripts again, checking for OnUseChecked event - but first run item usage check
+		// once to make sure player can actually use item!
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If it hasn't been done at least once already, run the usual item-usage checks
+			if( !itemUsageCheckComplete )
+			{
+				if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
+				{
+					return true;
+				}
+
+				// If item is disabled, don't continue
+				if( iUsed->isDisabled() )
+				{
+					tSock->sysmessage( 394 ); // You cannot do that at the moment.
+					return true;
+				}
+
+				// Item-usage check completed!
+				itemUsageCheckComplete = true;
+			}
+
+			// Check if OnUseChecked event is present in script
+			SI08 retVal = toExecute->OnUseChecked( ourChar, iUsed );
+			if( retVal == 0 )
+			{
+				// Event exists, and returned 0 - don't continue, usage is handled in script!
+				scriptExecuted = true;
+			}
+			else if( retVal == 1 )
+			{
+				// Script returned 1 - proceed with other scripts/hard code
+				return true;
+			}
+		}
+	}
+
+	// If no scripts were found, or if no script contained onUse events, proceed with envoke stuff
+	if( scriptTriggers.size() == 0 || !scriptExecuted )
+	{
+		UI16 itemID			= iUsed->GetID();
+		cScript *toExecute = NULL;
+		UI16 envTrig = 0;
+
 		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
 		{
+			// Get script to run by item type
 			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
 			toExecute = JSMapping->GetScript( envTrig );
 		}
 		else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
 		{
+			// Get script to run by item ID
 			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
 			toExecute = JSMapping->GetScript( envTrig );
 		}
-	}
 
-	if( toExecute != NULL )
-	{
-		if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
-			return true;
-	}
-
-	if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
-		return true;
-
-	if( toExecute != NULL )
-	{
-		if( iUsed->isDisabled() )
+		// Check for the onUse events in envoke scripts!
+		if( toExecute != NULL )
 		{
-			tSock->sysmessage( 394 );
-			return true;
-		}
-		if( toExecute->OnUseChecked( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
-			return true;
-	}
+			if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 0 )
+				return true;
 
+			if( toExecute->OnUseChecked( ourChar, iUsed ) == 0 )
+				return true;
+		}
+	}
 
 	if( handleDoubleClickTypes( tSock, ourChar, iUsed, iType ) )
 		return true;
@@ -2795,7 +2906,23 @@ bool CPISingleClick::Handle( void )
 		// Begin chars/npcs section
 		CChar *c = calcCharObjFromSer( objectID );
 		if( ValidateObject( c ) )
+		{
+			std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					// If script returns true/1, don't show hard-coded name, and don't run additional onClick events
+					if( toExecute->OnClick( tSock, c ) == 1 )
+					{
+						return true;
+					}
+				}
+			}
 			tSock->ShowCharName( c, false );
+		}
+
 		//End chars/npcs section
 		return true;
 	}
@@ -2813,10 +2940,21 @@ bool CPISingleClick::Handle( void )
 	CItem *i	= calcItemObjFromSer( objectID );
 	if( !ValidateObject( i ) )		// invalid item
 		return true;
+
 	// October 6, 2002 - Added support for the onClick event
-	cScript *onClickScp = JSMapping->GetScript( i->GetScriptTrigger() );
-	if( onClickScp != NULL )
-		onClickScp->OnClick( tSock, i );
+	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns true/0, don't show hard-coded name, and don't run additional onClick events
+			if( toExecute->OnClick( tSock, i ) == 1 )
+			{
+				return true;
+			}
+		}
+	}
 
 	if( mChar->GetSingClickSer() )
 		tSock->objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );

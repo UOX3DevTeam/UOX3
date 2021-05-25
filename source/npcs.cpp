@@ -121,9 +121,15 @@ CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 		if( !ApplyNpcSection( cCreated, npcCreate, ourNPC ) )
 			Console.error( "Trying to apply an npc section failed" );
 
-		cScript *toGrab = JSMapping->GetScript( cCreated->GetScriptTrigger() );
-		if( toGrab != NULL )
-			toGrab->OnCreate( cCreated, true );
+		std::vector<UI16> scriptTriggers = cCreated->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				toExecute->OnCreate( cCreated, true );
+			}
+		}
 	}
 	return cCreated;
 }
@@ -1350,7 +1356,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) ); break;
 			case DFNTAG_SCRIPT:
 				if( !isGate )
-					applyTo->SetScriptTrigger( static_cast<UI16>(ndata) );
+				{
+					applyTo->AddScriptTrigger( static_cast<UI16>(ndata) );
+				}
 				break;
 			case DFNTAG_THROWING:			skillToSet = THROWING;					break;
 			case DFNTAG_TITLE:				applyTo->SetTitle( cdata );		break;

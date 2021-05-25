@@ -230,7 +230,7 @@ void CJSRuntime::InitializePrototypes( void )
 	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, NULL, &UOXSocket_class.base,	NULL,		0,		CSocketProps,			CSocket_Methods,	NULL,	NULL );
 	protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, NULL, &UOXAccount_class,		NULL,		0,		CAccountProperties,		CAccount_Methods,	NULL,	NULL );
 	protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, NULL, &UOXConsole_class,		NULL,		0,		CConsoleProperties,		CConsole_Methods,	NULL,	NULL );
-	protoList[JSP_REGION]	=	JS_InitClass( cx, obj, NULL, &UOXRegion_class,		NULL,		0,		CRegionProperties,		NULL,				NULL,	NULL );
+	protoList[JSP_REGION]	=	JS_InitClass( cx, obj, NULL, &UOXRegion_class,		NULL,		0,		CRegionProperties,		CRegion_Methods,	NULL,	NULL );
 	protoList[JSP_SPAWNREGION]=	JS_InitClass( cx, obj, NULL, &UOXSpawnRegion_class,	NULL,		0,		CSpawnRegionProperties,	NULL,				NULL,	NULL );
 	protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, NULL, &UOXResource_class,	NULL,		0,		CResourceProperties,	NULL,				NULL,	NULL );
 	protoList[JSP_RACE]		=	JS_InitClass( cx, obj, NULL, &UOXRace_class,		NULL,		0,		CRaceProperties,		CRace_Methods,		NULL,	NULL );

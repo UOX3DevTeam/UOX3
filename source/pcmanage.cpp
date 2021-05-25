@@ -1241,15 +1241,30 @@ void startChar( CSocket *mSock, bool onCreate )
 					onCreateScp->OnCreate( mChar, true );
 			}
 
-			cScript *onLoginScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-			if( onLoginScp != NULL )
-				onLoginScp->OnLogin( mSock, mChar );
-			else
+			bool loginEventHandled = false;
+			std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				onLoginScp = JSMapping->GetScript( (UI16)0 );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					// 0 == no such event was found
+					// 1 == event was found, and executed
+					if( toExecute->OnLogin( mSock, mChar ) == 1 )
+					{
+						loginEventHandled = true;
+					}
+				}
+			}
 
-				if( onLoginScp != NULL )
-					onLoginScp->OnLogin( mSock, mChar );
+			if( !loginEventHandled )
+			{
+				// No script attached to character handled onLoginevent. Let's check global script!
+				cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+				if( toExecute != NULL )
+				{
+					toExecute->OnLogin( mSock, mChar );
+				}
 			}
 
 			// Store hair and beard (if they have any) properly for characters created pre-0.99.2j
@@ -1516,10 +1531,19 @@ void HandleDeath( CChar *mChar )
 		}
 	}
 
-	UI16 targTrig		= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
-		toExecute->OnDeath( mChar, iCorpse );
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns true/1, prevent other scripts with event from running
+			if( toExecute->OnDeath( mChar, iCorpse ) == 1 )
+			{
+				break;
+			}
+		}
+	}
 
 	if( mChar->IsNpc() )
 		mChar->Delete();
