@@ -1478,14 +1478,18 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( toExecute == NULL || eventToFire == NULL )
 		return JS_FALSE;
 
+	auto origContext = cx;
+	auto origObject = obj;
 	if( toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2 ) )
 	{
 		*rval = JS_TRUE;
+		JS_SetGlobalObject( origContext, origObject );
 		return JS_TRUE;
 	}
 	else
 	{
 		*rval = JS_FALSE;
+		JS_SetGlobalObject( origContext, origObject );
 		return JS_FALSE;
 	}
 }
