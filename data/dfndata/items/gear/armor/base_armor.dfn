@@ -939,6 +939,7 @@ good=13
 }
 
 [leather_ninja_belt]
+{
 get=base_item
 name=leather ninja belt
 id=0x2790

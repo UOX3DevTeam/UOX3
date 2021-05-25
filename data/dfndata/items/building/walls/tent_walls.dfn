@@ -403,7 +403,7 @@ id=0x0371
 
 // patch
 [0x0372]
-[
+{
 get=base_item
 name=patch
 id=0x0372

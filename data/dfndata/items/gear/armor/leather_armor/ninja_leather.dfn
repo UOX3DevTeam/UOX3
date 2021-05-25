@@ -15,6 +15,7 @@ id=0x27d9
 }
 
 [0x2790]
+{
 get=leather_ninja_belt
 name=leather ninja belt
 id=0x2790

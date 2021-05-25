@@ -43,7 +43,7 @@ name=easel
 id=0x0f69
 weight=2000
 movable=2
-
+}
 
 [0x0f6a]
 { N

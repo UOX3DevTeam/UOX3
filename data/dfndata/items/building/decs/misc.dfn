@@ -1,6 +1,6 @@
 // decoration.dfn
 // All types of decoration and items that are not used yet or dont fit in anywhere else
-// v1.0; 26/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.0; 26/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org
 // v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
 // (add new version comments here, use format of above line please)
 // For use with the UOX emulator or any with permission from the author
@@ -1027,6 +1027,7 @@ name=bulletin board
 id=0x1e5e
 weight=500
 movable=2
+decay=0
 }
 
 [0x1e5f]
@@ -1036,6 +1037,7 @@ name=bulletin board
 id=0x1e5f
 weight=500
 movable=2
+decay=0
 }
 
 [0x1e9a]
