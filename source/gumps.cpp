@@ -1402,7 +1402,21 @@ bool CPIGumpMenuSelect::Handle( void )
 		else // Clicked an item on the virtue gump
 			targChar = calcCharObjFromSer( id );
 
-		cScript *toExecute = JSMapping->GetScript( (UI16)0 ); // Global script
+		cScript *toExecute = NULL;
+		std::vector<UI16> scriptTriggers = tSock->CurrcharObj()->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnVirtueGumpPress( tSock->CurrcharObj(), targChar, buttonID ) == 1 )
+				{
+					return true;
+				}
+			}
+		}
+
+		toExecute = JSMapping->GetScript( (UI16)0 ); // Global script
 		if( toExecute != NULL )
 			toExecute->OnVirtueGumpPress( tSock->CurrcharObj(), targChar, buttonID );
 

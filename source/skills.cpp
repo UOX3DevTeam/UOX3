@@ -758,12 +758,21 @@ void cSkills::SmeltOre( CSocket *s )
 bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 {
 	bool skillCheck		= false;
-	const UI16 scpNum	= s->GetScriptTrigger();
-	cScript *tScript	= JSMapping->GetScript( scpNum );
 	bool exists			= false;
-
-	if( tScript != NULL )
-		exists = tScript->OnSkillCheck( s, sk, lowSkill, highSkill );
+	std::vector<UI16> scriptTriggers = s->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns true/1, allows skillcheck to proceed, but also prevents other scripts with event from running
+			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill ) == 1 )
+			{
+				exists = true;
+				break;
+			}
+		}
+	}
 
 	// o----------------------------------------------------------------------------o
 	// | 15 March, 2002																|
@@ -855,8 +864,9 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	UI08 toDec				= 0xFF;
 	UI08 counter			= 0;
 	CSocket *mSock			= c->GetSocket();
-	const UI16 skillTrig	= c->GetScriptTrigger();
-	cScript *scpSkill		= JSMapping->GetScript( skillTrig );
+
+	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+
 	UI08 amtToGain			= 1;
 	if( success )
 		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
@@ -865,10 +875,15 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( c->IsNpc() )
 	{
 		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-		if( scpSkill != NULL )
+
+		for( auto scriptTrig : scriptTriggers )
 		{
-			if( !scpSkill->OnSkillGain( c, sk ) )
-				scpSkill->OnSkillChange( c, sk );
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				if( !toExecute->OnSkillGain( c, sk ) )
+					toExecute->OnSkillChange( c, sk );
+			}
 		}
 		return;
 	}
@@ -916,10 +931,15 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		{
 			totalSkill -= amtToGain;
 			c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
-			if( scpSkill != NULL )
+
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( !scpSkill->OnSkillLoss( c, toDec ) )
-					scpSkill->OnSkillChange( c, toDec );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					if( !toExecute->OnSkillLoss( c, toDec ) )
+						toExecute->OnSkillChange( c, toDec );
+				}
 			}
 			mSock->updateskill( toDec );
 		}
@@ -928,10 +948,15 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( skillCap > static_cast<UI16>(totalSkill) )
 	{
 		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-		if( scpSkill != NULL )
+
+		for( auto scriptTrig : scriptTriggers )
 		{
-			if( !scpSkill->OnSkillGain( c, sk ) )
-				scpSkill->OnSkillChange( c, sk );
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				if( !toExecute->OnSkillGain( c, sk ) )
+					toExecute->OnSkillChange( c, sk );
+			}
 		}
 		mSock->updateskill( sk );
 	}
@@ -1248,17 +1273,38 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	}
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || mChar->IsGM() )
 	{
-		cScript *skScript = JSMapping->GetScript( mChar->GetScriptTrigger() );
 		bool doSwitch = true;
-		if( skScript != NULL )
-			doSwitch = !skScript->OnSkill( mChar, x );
-		if( doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF )
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
 		{
-			skScript = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
-			if( skScript != NULL )
-				doSwitch = !skScript->OnSkill( mChar, x );
+			// Loop through attached scripts
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnSkill( mChar, x ) )
+				{
+					// Look for onSkill JS event in script
+					doSwitch = false;
+				}
+			}
 		}
 
+		// If no onSkill event was found in a script already, check if skill has a script
+		// attached directly, with onSkill event
+		if( doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF )
+		{
+			cScript *toExecute = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnSkill( mChar, x ))
+				{
+					doSwitch = false;
+				}
+
+			}
+		}
+
+		// If no onSkill event has run yet, run the hardcoded version
 		if( doSwitch )
 		{
 			switch( x )
@@ -1406,6 +1452,38 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		s->sysmessage( 874 );
 		return;
 	}
+
+	std::vector<UI16> scriptTriggers = item->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		// Loop through attached scripts
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			SI08 retVal = toExecute->OnSteal( mChar, item, npc );
+			if( retVal == 1 ) // Item was not stolen, and we don't want to run hard code
+			{
+				return;
+			}
+			else if( retVal == 2 ) // item was stolen, and we don't want to run hard code
+			{
+				std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
+				for( auto targScriptTrig : targetScriptTriggers )
+				{
+					cScript *targToExecute = JSMapping->GetScript( targScriptTrig );
+					if( targToExecute != NULL )
+					{
+						if( targToExecute->OnStolenFrom( mChar, npc, item ) == 1 )
+						{
+							break;
+						}
+					}
+				}
+				return;
+			}
+		}
+	}
+
 	s->sysmessage( 877, npc->GetName().c_str(), item->GetName().c_str() );
 	if( objInRange( mChar, npc, DIST_NEXTTILE ) )
 	{
@@ -1440,15 +1518,18 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			item->SetCont( pack );
 			s->sysmessage( 880 );
 
-			UI16 targTrig		= item->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnSteal( mChar, item );
-
-			targTrig	= npc->GetScriptTrigger();
-			toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnStolenFrom( mChar, npc, item );
+			std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
+			for( auto targScriptTrig : targetScriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( targScriptTrig );
+				if( toExecute != NULL )
+				{
+					if( toExecute->OnStolenFrom( mChar, npc, item ) == 1 )
+					{
+						return;
+					}
+				}
+			}
 		}
 		else
 			s->sysmessage( 881 );
@@ -2315,9 +2396,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 	UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence };
 	SkillLock StatLocks[3] = { s->GetSkillLock( STRENGTH ), s->GetSkillLock( DEXTERITY ), s->GetSkillLock( INTELLECT ) };
 
-	UI16 skillUpdTrig = s->GetScriptTrigger();
-	cScript *skillTrig = JSMapping->GetScript( skillUpdTrig );
-
+	std::vector<UI16> skillUpdTriggers = s->GetScriptTriggers();
 
 	for ( StatCount = STRENGTH; StatCount <= INTELLECT; ++StatCount )
 	{
@@ -2378,28 +2457,43 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 						case 0:
 							s->IncStrength( -1 );
 							ttlStats--;
-							if( skillTrig != NULL )
+
+							for( auto skillTrig : skillUpdTriggers )
 							{
-								if( !skillTrig->OnStatLoss( s, STRENGTH ) )
-									skillTrig->OnStatChange( s, STRENGTH );
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != NULL )
+								{
+									if( !toExecute->OnStatLoss( s, STRENGTH ) )
+										toExecute->OnStatChange( s, STRENGTH );
+								}
 							}
 							break;
 						case 1:
 							s->IncDexterity( -1 );
 							ttlStats--;
-							if( skillTrig != NULL )
+
+							for( auto skillTrig : skillUpdTriggers )
 							{
-								if( !skillTrig->OnStatLoss( s, DEXTERITY ) )
-									skillTrig->OnStatChange( s, DEXTERITY );
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != NULL )
+								{
+									if( !toExecute->OnStatLoss( s, DEXTERITY ) )
+										toExecute->OnStatChange( s, DEXTERITY );
+								}
 							}
 							break;
 						case 2:
 							s->IncIntelligence( -1 );
 							ttlStats--;
-							if( skillTrig != NULL )
+
+							for( auto skillTrig : skillUpdTriggers )
 							{
-								if( !skillTrig->OnStatLoss( s, INTELLECT ) )
-									skillTrig->OnStatChange( s, INTELLECT );
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != NULL )
+								{
+									if( !toExecute->OnStatLoss( s, INTELLECT ) )
+										toExecute->OnStatChange( s, INTELLECT );
+								}
 							}
 							break;
 						default:
@@ -2426,10 +2520,14 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 							break;
 					}
 
-					if( skillTrig != NULL )
+					for( auto skillTrig : skillUpdTriggers )
 					{
-						if( !skillTrig->OnStatGained( s, StatCount, sk ) )
-							skillTrig->OnStatChange( s, StatCount );
+						cScript *toExecute = JSMapping->GetScript( skillTrig );
+						if( toExecute != NULL )
+						{
+							if( !toExecute->OnStatGained( s, StatCount, sk ) )
+								toExecute->OnStatChange( s, StatCount );
+						}
 					}
 
 					break;//only one stat at a time fellas
@@ -2830,14 +2928,27 @@ void callGuards( CChar *mChar, CChar *targChar );
 void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
-
 	CSocket *tSock = target->GetSocket();
+
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns false, prevent hard-code and other scripts with event from running
+			if( toExecute->OnSnoopAttempt( target, mChar ) == 0 )
+			{
+				return;
+			}
+		}
+	}
 
 	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
 	{
-		s->sysmessage( 991 );
+		s->sysmessage( 991 ); // You failed to peek into that container.
 		if( tSock != NULL )
-			tSock->sysmessage( 992, mChar->GetName().c_str() );
+			tSock->sysmessage( 992, mChar->GetName().c_str() ); // %s is snooping you!
 		return;
 	}
 
@@ -2845,32 +2956,59 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	if( mChar->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->sysmessage( 1799 );
+		s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 		return;
 	}
+
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
+	scriptTriggers = target->GetScriptTriggers();
 
 	if( CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
 		s->openPack( pack );
-		s->sysmessage( 993 );
-		cScript *successSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
-		if( successSnoop != NULL )
-			successSnoop->OnSnooped( target, mChar, true );
+		s->sysmessage( 993 ); // You successfully peek into that container.
+
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *successSnoop = JSMapping->GetScript( scriptTrig );
+			if( successSnoop != NULL )
+			{
+				// If script returns true/1, prevent other scripts with event from running
+				if( successSnoop->OnSnooped( target, mChar, true ) == 1 )
+				{
+					break;
+				}
+			}
+		}
 	}
 	else
 	{
 		bool doNormal = true;
-		cScript *failSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
-		if( failSnoop != NULL )
-			doNormal = !failSnoop->OnSnooped( target, mChar, true );
+
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *failSnoop = JSMapping->GetScript( scriptTrig );
+			if( failSnoop != NULL )
+			{
+				// If script returns true/1, prevent hard code and other scripts with event from running
+				if( failSnoop->OnSnooped( target, mChar, true ) == 1 )
+				{
+					doNormal = false;
+				}
+			}
+		}
 
 		if( doNormal )
 		{
-			s->sysmessage( 991 );
+			s->sysmessage( 991 ); // You failed to peek into that container.
 			if( target->IsNpc() )
 			{
 				if( cwmWorldState->creatures[target->GetID()].IsHuman() && target->GetNPCAiType() != AI_EVIL && target->GetNPCAiType() != AI_HEALER_E )
 				{
+					// 994=Art thou attempting to disturb my privacy?
+					// 995=Stop that!
+					// 996=Be aware I am going to call the guards!
 					target->TextMessage( s, 994 + RandomNum( 0, 2 ), TALK, false );
 					if( cwmWorldState->ServerData()->SnoopIsCrime() )
 					{
@@ -2886,13 +3024,13 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 				}
 			}
 			else if( tSock != NULL )
-				tSock->sysmessage( 997, mChar->GetName().c_str() );
+				tSock->sysmessage( 997, mChar->GetName().c_str() ); // You notice %s trying to peek into your pack!
 			if( cwmWorldState->ServerData()->SnoopIsCrime() )
 				criminal( mChar );
 			if( mChar->GetKarma() <= 1000 )
 			{
 				mChar->SetKarma( mChar->GetKarma() - 10 );
-				s->sysmessage( 998 );
+				s->sysmessage( 998 ); // You've lost a small bit of karma.
 			}
 		}
 	}

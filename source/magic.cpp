@@ -754,14 +754,17 @@ bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
 		{
 			if( i->isDecayable() || i->isDispellable() )
 			{
-				UI16 scpNum = i->GetScriptTrigger();
-				cScript *tScript = JSMapping->GetScript( scpNum );
-				if( tScript != NULL )
+				std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+				for( auto scriptTrig : scriptTriggers )
 				{
-					if( tScript->OnDispel( i ) == 1 ) // if it exists and we don't want hard code, return
-						return false;
-					tScript->OnDispel( i );
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != NULL )
+					{
+						if( toExecute->OnDispel( i ) == 1 ) // if it exists and we don't want hard code, return
+							return false;
+					}
 				}
+
 				i->Delete();
 			}
 			Effects->PlaySound( caster, 0x0201 );
@@ -961,14 +964,17 @@ bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
 		if( target->IsNpc() )
 		{
-			UI16 scpNum = target->GetScriptTrigger();
-			cScript *tScript = JSMapping->GetScript( scpNum );
-			if( tScript != NULL )
+			std::vector<UI16> scriptTriggers = target->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( tScript->OnDispel( target ) == 1 ) // if it exists and we don't want hard code, return
-					return false;
-				tScript->OnDispel( target );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					if( toExecute->OnDispel( target ) == 1 ) // if it exists and we don't want hard code, return
+						return false;
+				}
 			}
+
 			target->Delete();
 		}
 		else
@@ -1293,13 +1299,15 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 		}
 		if( target->IsNpc() )
 		{
-			UI16 scpNum = target->GetScriptTrigger();
-			cScript *tScript = JSMapping->GetScript( scpNum );
-			if( tScript != NULL )
+			std::vector<UI16> scriptTriggers = target->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( tScript->OnDispel( target ) == 1 ) // if it exists and we don't want hard code, return
-					return;
-				tScript->OnDispel( target );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
+				{
+					if( toExecute->OnDispel( target ) == 1 ) // if it exists and we don't want hard code, return
+						return;
+				}
 			}
 			Effects->PlaySound( target, 0x0204 );
 			Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );
@@ -1868,11 +1876,19 @@ bool cMagic::HasSpell( CItem *book, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::AddSpell( CItem *book, SI32 spellNum )
 {
-	cScript *tScript	= NULL;
-	UI16 scpNum			= book->GetScriptTrigger();
-	tScript				= JSMapping->GetScript( scpNum );
-	if( tScript != NULL )
-		tScript->OnSpellGain( book, spellNum );
+	std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns false/0, prevent addition of spell to spellbook
+			if( toExecute->OnSpellGain( book, spellNum ) == 0 )
+			{
+				return;
+			}
+		}
+	}
 
 	if( !ValidateObject( book ) )
 		return;
@@ -1894,11 +1910,19 @@ void cMagic::AddSpell( CItem *book, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::RemoveSpell( CItem *book, SI32 spellNum )
 {
-	cScript *tScript = NULL;
-	UI16 scpNum = book->GetScriptTrigger();
-	tScript = JSMapping->GetScript( scpNum );
-	if( tScript != NULL )
-		tScript->OnSpellLoss( book, spellNum );
+	std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns false/0, prevent removal of spell from spellbook
+			if( toExecute->OnSpellLoss( book, spellNum ) == 0 )
+			{
+				return;
+			}
+		}
+	}
 
 	if( !ValidateObject( book ) )
 		return;
@@ -2786,7 +2810,9 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 		//	*	On callback, do stuff
 		//	* NOTE * For area affect spells, use an AreaCharacterFunction
 		if( jsScript->MagicSpellCast( mSock, mChar, false, num ) )
+		{
 			return true;
+		}
 	}
 
 	if( !mChar->GetCanAttack() )
@@ -2905,19 +2931,28 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	SI16 Delay = -2;
 
-	UI16 spellTrig = mChar->GetScriptTrigger();
-	cScript *toExecute = JSMapping->GetScript( spellTrig );
-	if( toExecute != NULL )
+	// If more than one script contains the onSpellCast/onScrollCast events, whichever script runs last will
+	// determine the final delay value
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		// Events:
-		//  type 0: onSpellCast   (SpellBook)
-		//  type 1: onScrollCast  (Scroll)
-		//  type 2: onScrolllCast (Wand)
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// Events:
+			//  type 0: onSpellCast   (SpellBook)
+			//  type 1: onScrollCast  (Scroll)
+			//  type 2: onScrolllCast (Wand)
 
-		if( type == 0 )
-			Delay = toExecute->OnSpellCast( mChar, num );
-		else
-			Delay = toExecute->OnScrollCast( mChar, num );
+			if( type == 0 )
+			{
+				Delay = toExecute->OnSpellCast( mChar, num );
+			}
+			else
+			{
+				Delay = toExecute->OnScrollCast( mChar, num );
+			}
+		}
 	}
 
 	// If Delay is -1 the spell should be canceled
@@ -3068,7 +3103,9 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	if( jsScript != NULL )
 	{
 		if( jsScript->MagicSpellCast( s, caster, true, curSpell ) )
+		{
 			return;
+		}
 	}
 
 	if( caster->IsCasting() )
@@ -3076,11 +3113,18 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 	caster->StopSpell();
 
-	UI16 spellTrig		= caster->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( spellTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = caster->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		toExecute->OnSpellSuccess( caster, curSpell );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returns true/1, prevent other scripts with event from running
+			if( toExecute->OnSpellSuccess( caster, curSpell ) == 1 )
+			{
+				break;
+			}
+		}
 	}
 
 	CChar *src			= caster;
@@ -3122,8 +3166,6 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
-		cScript *tScriptExec = NULL;
-		UI16 tScript = 0xFFFF;
 		CItem *i = NULL;
 		if( validSocket && spells[curSpell].TravelSpell() )				// travel spells.... mark, recall and gate
 		{
@@ -3153,14 +3195,26 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							case 32: //////////// (32) RECALL ////////////////
 							case 45: //////////// (45) MARK //////////////////
 							case 52: //////////// (52) GATE //////////////////
-								tScript = i->GetScriptTrigger();
-								tScriptExec = JSMapping->GetScript( tScript );
-								if( tScriptExec != NULL )
+							{
+								scriptTriggers.clear();
+								scriptTriggers.shrink_to_fit();
+								scriptTriggers = i->GetScriptTriggers();
+								for( auto scriptTrig : scriptTriggers )
 								{
-									tScriptExec->OnSpellTarget( i, caster, curSpell );
+									cScript *toExecute = JSMapping->GetScript( scriptTrig );
+									if( toExecute != NULL )
+									{
+										// If script returns true/1, prevent other scripts with event from running
+										if( toExecute->OnSpellTarget( i, caster, curSpell ) == 1 )
+										{
+											break;
+										}
+									}
 								}
+
 								(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
 								break;
+							}
 							default:
 								Console.error( format(" Unknown Travel spell %i, magic.cpp", curSpell) );
 								break;
@@ -3269,28 +3323,42 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 51: // Flamestrike
 						case 53: // Mana Vampire
 						case 59: // Resurrection
-							tScript = c->GetScriptTrigger();
-							tScriptExec = JSMapping->GetScript( tScript );
-							if( tScriptExec != NULL )
+						{
+							scriptTriggers.clear();
+							scriptTriggers.shrink_to_fit();
+							scriptTriggers = i->GetScriptTriggers();
+							for( auto scriptTrig : scriptTriggers )
 							{
-								tScriptExec->OnSpellTarget( c, caster, curSpell );
+								cScript *toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != NULL )
+								{
+									toExecute->OnSpellTarget( c, caster, curSpell );
+								}
 							}
 							(*((MAGIC_CHARFUNC)magic_table[curSpell-1].mag_extra))( caster, c, src, curSpell );
 							break;
+						}
 						case 46:	// Mass cure
 						case 25:	// Arch Cure
 						case 26:	// Arch Protection
 						case 49:	// Chain Lightning
 						case 54:	// Mass Dispel
 						case 55:	// Meteor Swarm
-							tScript = c->GetScriptTrigger();
-							tScriptExec = JSMapping->GetScript( tScript );
-							if( tScriptExec != NULL )
+						{
+							scriptTriggers.clear();
+							scriptTriggers.shrink_to_fit();
+							scriptTriggers = i->GetScriptTriggers();
+							for( auto scriptTrig : scriptTriggers )
 							{
-								tScriptExec->OnSpellTarget( c, caster, curSpell );
+								cScript *toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != NULL )
+								{
+									toExecute->OnSpellTarget( c, caster, curSpell );
+								}
 							}
 							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );
 							break;
+						}
 						default:
 							Console.error( format(" Unknown CharacterTarget spell %i, magic.cpp", curSpell) );
 							break;

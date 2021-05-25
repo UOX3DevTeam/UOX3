@@ -225,11 +225,19 @@ bool CPITalkRequest::Handle( void )
 		return true;
 
 	char *asciiText		= Text();
-	cScript *myScript	= JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( myScript != NULL )
+
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( !myScript->OnTalk( mChar, asciiText ) )
-			return true;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// If script returned false/0, prevent hard-code (and other scripts with event) from running
+			if( toExecute->OnTalk( mChar, asciiText ) == 0 )
+			{
+				return true;
+			}
+		}
 	}
 
 	if( ( asciiText[0] == cwmWorldState->ServerData()->ServerCommandPrefix() ) || ( ( asciiText[0] == '.' ) && ( asciiText[1] != '.' ) ) )

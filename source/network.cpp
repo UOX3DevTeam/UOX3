@@ -110,14 +110,28 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 		if( !currChar->isFree() && connClients[s] != NULL )
 		{
 			// October 6, 2002 - Support for the onLogout event.
-			cScript *onLogoutScp = JSMapping->GetScript(currChar->GetScriptTrigger());
-			if( onLogoutScp!=NULL )
-				onLogoutScp->OnLogout(connClients[s], currChar);
-			else
+			bool returnState = false;
+			std::vector<UI16> scriptTriggers = currChar->GetScriptTriggers();
+			for( auto i : scriptTriggers )
 			{
-				onLogoutScp = JSMapping->GetScript( (UI16)0 );
-				if( onLogoutScp!=NULL )
-					onLogoutScp->OnLogout(connClients[s],currChar);
+				cScript *toExecute = JSMapping->GetScript( i );
+				if( toExecute != NULL )
+				{
+					if( toExecute->OnLogout(connClients[s], currChar ))
+					{
+						returnState = true;
+					}
+				}
+			}
+
+			if( !returnState )
+			{
+				// No individual scripts handling OnSpecialMove were found - let's check global script!
+				cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+				if( toExecute != NULL )
+				{
+					toExecute->OnLogout(connClients[s],currChar);
+				}
 			}
 			LogOut( connClients[s] );
 		}

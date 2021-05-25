@@ -63,8 +63,6 @@ cMovement *Movement;
 #define DEBUG_WALKING		0
 #define DEBUG_NPCWALK		0
 #define DEBUG_PATHFIND		0
-#define DEBUG_REGION		0
-#define DEBUG_COMBAT		0
 
 #undef DBGFILE
 #define DBGFILE "movement.cpp"
@@ -1078,8 +1076,11 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	const SI16 x			= c->GetX();
 	const SI16 y			= c->GetY();
 	const SI08 z			= c->GetZ();
-	const UI16 targTrig		= c->GetScriptTrigger();
-	cScript *toExecute		= JSMapping->GetScript( targTrig );
+	const UI16 instanceID	= c->GetInstanceID();
+
+	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+	std::vector<UI16> ourScriptTriggers;
+	cScript *toExecute;
 	for( CChar *ourChar = regChars->First(); !regChars->Finished(); ourChar = regChars->Next() )
 	{
 		if( !ValidateObject( ourChar ) || ourChar == c )
@@ -1089,14 +1090,36 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 			if(( ourChar->GetVisible() != VT_PERMHIDDEN ) && ( !IsGMBody( ourChar ) && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) &&
 															  ourChar->GetCommandLevel() < CL_CNS ))
 			{
-				didShove = true;
+				// Run onCollide event on character doing the shoving
+				for( auto scriptTrig : scriptTriggers )
+				{
+					toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != NULL )
+					{
+						if( toExecute->OnCollide( mSock, c, ourChar ) == 1 )
+						{
+							didShove = true;
+							break;
+						}
+					}
+				}
 
-				if( toExecute != NULL )
-					toExecute->OnCollide( mSock, c, ourChar );
-				UI16 tTrig		= ourChar->GetScriptTrigger();
-				cScript *tExec	= JSMapping->GetScript( tTrig );
-				if( tExec != NULL )
-					tExec->OnCollide( ourChar->GetSocket(), ourChar, c );
+				// Run onCollide event on character being shoved
+				ourScriptTriggers.clear();
+				ourScriptTriggers.shrink_to_fit();
+				ourScriptTriggers = ourChar->GetScriptTriggers();
+				for( auto scriptTrig : ourScriptTriggers )
+				{
+					toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != NULL )
+					{
+						if( toExecute->OnCollide( ourChar->GetSocket(), c, ourChar ) == 1 )
+						{
+							didShove = true;
+							break;
+						}
+					}
+				}
 
 				if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
 					mSock->sysmessage( 1384 );
@@ -1119,10 +1142,15 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
 {
-	const UI16 targTrig	= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
-		toExecute->InRange( mChar, objInRange );
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			toExecute->InRange( mChar, objInRange );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1132,10 +1160,15 @@ void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
 //o-----------------------------------------------------------------------------------------------o
 void DoJSOutOfRange( CChar *mChar, CBaseObject *objOutOfRange )
 {
-	const UI16 targTrig	= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
-		toExecute->OutOfRange( mChar, objOutOfRange );
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			toExecute->OutOfRange( mChar, objOutOfRange );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1271,13 +1304,13 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	UI16 visibleRange	= static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ));
 	if( mSock != NULL )
 		visibleRange	= static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+
 	const SI16 newx		= mChar->GetX();
 	const SI16 newy		= mChar->GetY();
 	const UI16 instanceID = mChar->GetInstanceID();
 	UI16 id;
 	ItemTypes type;
 	bool EffRange;
-	UI16 envTrig;
 
 	bool isGM			= mChar->IsGM();
 	UI16 dxNew, dyNew, dxOld, dyOld;
@@ -1348,10 +1381,33 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				{
 					if( !tItem->CanBeObjType( OT_MULTI ) )
 					{
-						UI16 targTrig		= tItem->GetScriptTrigger();
-						cScript *toExecute	= JSMapping->GetScript( targTrig );
-						if( targTrig == 0 || toExecute == NULL )
+						bool scriptExecuted = false;
+						std::vector<UI16> scriptTriggers = tItem->GetScriptTriggers();
+						for( auto i : scriptTriggers )
 						{
+							// Loop through all scriptIDs registered for item, check for scripts
+							cScript *toExecute = JSMapping->GetScript( i );
+							if( toExecute != NULL )
+							{
+								// Script was found, let's check for onCollide event
+								SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
+								if( retVal != -1 )
+								{
+									scriptExecuted = true;
+									if( retVal == 1 )
+									{
+										// Script returned 1 - don't continue with other scripts on item
+										break;
+									}
+								}
+							}
+						}
+
+						// Handle envoke stuff outside for loop, as we only want this to execute once
+						cScript *toExecute = NULL;
+						if( scriptTriggers.size() == 0 || !scriptExecuted )
+						{
+							UI16 envTrig = 0;
 							if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(type) ) )
 							{
 								envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(type) );
@@ -1363,15 +1419,25 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 								toExecute = JSMapping->GetScript( envTrig );
 							}
 						}
+
 						if( toExecute != NULL )
+						{
 							toExecute->OnCollide( mSock, mChar, tItem );
+						}
 						else
 						{
 							// Item being stepped on didn't have a script, so let's check if character has one instead
-							const UI16 charTrig	= mChar->GetScriptTrigger();
-							cScript *toExecute	= JSMapping->GetScript( charTrig );
-							if( toExecute != NULL )
-								toExecute->OnCollide( mSock, mChar, tItem );
+							for( auto scriptTrig : scriptTriggers )
+							{
+								toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != NULL )
+								{
+									if( toExecute->OnCollide( mSock, mChar, tItem ) == 1 )
+									{
+										break;
+									}
+								}
+							}
 						}
 					}
 				}
@@ -1947,10 +2013,19 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			{
 				mChar.SetNpcWander( mChar.GetOldNpcWander() );
 
-				UI16 targTrig		= mChar.GetScriptTrigger();
-				cScript *toExecute	= JSMapping->GetScript( targTrig );
-				if( toExecute != NULL )
-					toExecute->OnPathfindEnd( &mChar, mChar.GetPathResult() ); // Reached end of pathfinding
+				std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+				for( auto scriptTrig : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != NULL )
+					{
+						// Reached end of pathfinding, if script returns true/1, prevent other scripts with event from running
+						if( toExecute->OnPathfindEnd( &mChar, mChar.GetPathResult() ) == 1 )
+						{
+							break;
+						}
+					}
+				}
 			}
 			break;
 		default:
@@ -2019,10 +2094,19 @@ void cMovement::NpcMovement( CChar& mChar )
 						Combat->InvalidateAttacker( &mChar );
 						//Console.warning( format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
-						UI16 targTrig		= mChar.GetScriptTrigger();
-						cScript *toExecute	= JSMapping->GetScript( targTrig );
-						if( toExecute != NULL )
-							toExecute->OnEnterEvadeState( &mChar, l );
+						std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+						for( auto scriptTrig : scriptTriggers )
+						{
+							cScript *toExecute = JSMapping->GetScript( scriptTrig );
+							if( toExecute != NULL )
+							{
+								// If script returns true/1, prevent other scripts with event from running
+								if( toExecute->OnEnterEvadeState( &mChar, l ) == 1 )
+								{
+									break;
+								}
+							}
+						}
 						return;
 					}
 				}
@@ -2120,10 +2204,19 @@ void cMovement::NpcMovement( CChar& mChar )
 								Combat->InvalidateAttacker( &mChar );
 								//Console.warning( format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
-								UI16 targTrig		= mChar.GetScriptTrigger();
-								cScript *toExecute	= JSMapping->GetScript( targTrig );
-								if( toExecute != NULL )
-									toExecute->OnEnterEvadeState( &mChar, l );
+								std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+								for( auto scriptTrig : scriptTriggers )
+								{
+									cScript *toExecute = JSMapping->GetScript( scriptTrig );
+									if( toExecute != NULL )
+									{
+										// If script returns true/1, prevent other scripts with event from running
+										if( toExecute->OnEnterEvadeState( &mChar, l ) == 1 )
+										{
+											break;
+										}
+									}
+								}
 							}
 						}
 						else

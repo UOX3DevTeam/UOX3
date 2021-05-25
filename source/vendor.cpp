@@ -135,15 +135,19 @@ bool CPIBuyItem::Handle( void )
 				soldout = true;
 
 			// Check if onBuyFromVendor JS event is present for each item being purchased
-			// If true, and a return false has been returned from the script, halt the purchase
-			UI16 targTrig		= bitems[i]->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
+			// If return false or 0 has been returned from the script, halt the purchase
+			std::vector<UI16> scriptTriggers = bitems[i]->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) )
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
 				{
-					bitems.clear(); //needed???
-					return true;
+					if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) == 0 )
+					{
+						bitems.clear();
+						bitems.shrink_to_fit();
+						return true;
+					}
 				}
 			}
 		}
@@ -273,9 +277,19 @@ bool CPIBuyItem::Handle( void )
 			{
 				if( boughtItems[i] )
 				{
-					cScript *toGrab = JSMapping->GetScript( boughtItems[i]->GetScriptTrigger() );
-					if( toGrab != NULL )
-						toGrab->OnBoughtFromVendor( tSock, npc, boughtItems[i] );
+					std::vector<UI16> scriptTriggers = boughtItems[i]->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != NULL )
+						{
+							// If script returns 1, prevent other scripts with event from running
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -327,6 +341,7 @@ bool CPISellItem::Handle( void )
 			return true;
 		}
 
+		// Loop through each item being sold
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
 			j = calcItemObjFromSer( tSock->GetDWord( 9 + ( 6 * static_cast<size_t>(i)) ) );
@@ -339,16 +354,28 @@ bool CPISellItem::Handle( void )
 					return true;
 				}
 
-				// Check if onSellToVendor JS event is present for each item being sold
-				// If true, and a value of "false" has been returned from the script, halt the sale
-				UI16 targTrig		= j->GetScriptTrigger();
-				cScript *toExecute	= JSMapping->GetScript( targTrig );
-				if( toExecute != NULL )
+				// Check if onSellToVendor JS event is present for item being sold
+				// If present and a value of "false" or 0 was returned from the script, halt the sale
+				bool saleHalted = false;
+				std::vector<UI16> scriptTriggers = j->GetScriptTriggers();
+				for( auto scriptTrig : scriptTriggers )
 				{
-					if( toExecute->OnSellToVendor( tSock, n, j ) )
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != NULL )
 					{
-						return true; // LOOKATME - Should this be continue instead?
+						if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+						{
+							// Halt sale! 
+							saleHalted = true;
+							break;
+						}
 					}
+				}
+
+				// If sale was halted by onSellToVendor event, continue to next item
+				if( saleHalted )
+				{
+					continue;
 				}
 
 				CItem *join = NULL;
@@ -402,9 +429,19 @@ bool CPISellItem::Handle( void )
 				}
 				if( l )
 				{
-					cScript *toGrab = JSMapping->GetScript( l->GetScriptTrigger() );
-					if( toGrab != NULL )
-						toGrab->OnSoldToVendor( tSock, n, l );
+					std::vector<UI16> scriptTriggers = l->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != NULL )
+						{
+							// If script returns true/1, prevent other scripts with event from running
+							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}

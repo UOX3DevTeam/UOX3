@@ -228,7 +228,34 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 			}
 			case CIP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
-			case CIP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
+			case CIP_SCRIPTTRIGGER:
+			{
+				// For backwards compatibility, get last scripttrigger from vector
+				// For older worldfiles, this will be the only scripttrigger added to the vector after load
+				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+				UI16 lastScriptTrigger = 0;
+				auto numberOfTriggers = scriptTriggers.size();
+				if( numberOfTriggers > 0 )
+				{
+					lastScriptTrigger = scriptTriggers[numberOfTriggers-1];
+				}
+				*vp = INT_TO_JSVAL( lastScriptTrigger );
+			}
+			case CIP_SCRIPTTRIGGERS:
+			{
+				jsval scriptID;
+				JSObject *scriptTriggersJS = JS_NewArrayObject(cx, 0, NULL);
+
+				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+				for( int i = 0; i < scriptTriggers.size(); i++ )
+				{
+					scriptID = INT_TO_JSVAL( scriptTriggers[i] );
+					JS_SetElement(cx, scriptTriggersJS, i, &scriptID);
+				}
+
+				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
+				break;
+			}
 			case CIP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
 			case CIP_INSTANCEID:	*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );		break;
 			case CIP_AMOUNT:		*vp = INT_TO_JSVAL( gPriv->GetAmount() );			break;
@@ -414,6 +441,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MAXRANGE:		*vp = INT_TO_JSVAL( gPriv->GetMaxRange() );				break;
 			case CIP_BASERANGE:		*vp = INT_TO_JSVAL( gPriv->GetBaseRange() );			break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->isHeldOnCursor() );		break;
+
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
 				if( gPriv->GetObjType() == OT_SPAWNER )
@@ -627,7 +655,44 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_VISIBLE:		gPriv->SetVisible( (VisibleTypes)encaps.toInt() );			break;
 			case CIP_SERIAL:																	break;
 			case CIP_HEALTH:		gPriv->SetHP( (SI16)encaps.toInt() ); 						break;
-			case CIP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
+			case CIP_SCRIPTTRIGGER:
+			{
+				// For backwards compatibility; clears out other scripts and assigns a specific script
+				std::uint16_t scriptID = static_cast<UI16>(encaps.toInt());
+				cScript *toExecute	= JSMapping->GetScript( scriptID );
+				if( toExecute == NULL )
+				{
+					Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+				}
+				else
+				{
+					gPriv->ClearScriptTriggers();
+					gPriv->AddScriptTrigger( scriptID );
+				}
+				break;
+			}
+			case CIP_SCRIPTTRIGGERS:
+			{
+				if( *vp != JSVAL_NULL )
+				{
+					std::uint16_t scriptID = static_cast<UI16>(encaps.toInt());
+					cScript *toExecute	= JSMapping->GetScript( scriptID );
+					if( toExecute == NULL )
+					{
+						Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+					}
+					else
+					{
+						gPriv->AddScriptTrigger( scriptID );
+					}
+				}
+				else
+				{
+					// If null value was provided, clear script triggers on object
+					gPriv->ClearScriptTriggers();
+				}
+				break; 
+			}
 			case CIP_WORLDNUMBER:
 				if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), (UI08)encaps.toInt() ))
 					return JS_FALSE;
@@ -733,6 +798,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MAXRANGE:		gPriv->SetMaxRange( (UI08)encaps.toInt() );					break;
 			case CIP_BASERANGE:		gPriv->SetBaseRange( (UI08)encaps.toInt() );				break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
+
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
 				if( gPriv->GetObjType() == OT_SPAWNER )
@@ -908,7 +974,35 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			}
 			case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
-			case CCP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
+			case CCP_SCRIPTTRIGGER:
+			{
+				// For backwards compatibility, get last scripttrigger from vector
+				// For older worldfiles, this will be the only scripttrigger added to the vector after load
+				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+				UI16 lastScriptTrigger = 0;
+				auto numberOfTriggers = scriptTriggers.size();
+				if( numberOfTriggers > 0 )
+				{
+					lastScriptTrigger = scriptTriggers[numberOfTriggers-1];
+				}
+				*vp = INT_TO_JSVAL( lastScriptTrigger );
+				break;
+			}
+			case CCP_SCRIPTTRIGGERS:
+			{
+				jsval scriptID;
+				JSObject *scriptTriggersJS = JS_NewArrayObject(cx, 0, NULL);
+
+				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+				for( int i = 0; i < scriptTriggers.size(); i++ )
+				{
+					scriptID = INT_TO_JSVAL( scriptTriggers[i] );
+					JS_SetElement(cx, scriptTriggersJS, i, &scriptID);
+				}
+
+				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
+				break;
+			}
 			case CCP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
 			case CCP_INSTANCEID:	*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );		break;
 			case CCP_TARGET:
@@ -1277,7 +1371,44 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_VISIBLE:		gPriv->SetVisible( (VisibleTypes)encaps.toInt() );					break;
 			case CCP_SERIAL:															break;
 			case CCP_HEALTH:		gPriv->SetHP( encaps.toInt() );						break;
-			case CCP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );	break;
+			case CCP_SCRIPTTRIGGER:
+			{
+				// For backwards compatibility; clears out other scripts and assigns a specific script
+				std::uint16_t scriptID = static_cast<UI16>(encaps.toInt());
+				cScript *toExecute	= JSMapping->GetScript( scriptID );
+				if( toExecute == NULL )
+				{
+					Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+				}
+				else
+				{
+					gPriv->ClearScriptTriggers();
+					gPriv->AddScriptTrigger( scriptID );
+				}
+				break;
+			}
+			case CCP_SCRIPTTRIGGERS:
+			{
+				if( *vp != JSVAL_NULL )
+				{
+					std::uint16_t scriptID = static_cast<UI16>(encaps.toInt());
+					cScript *toExecute	= JSMapping->GetScript( scriptID );
+					if( toExecute == NULL )
+					{
+						Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+					}
+					else
+					{
+						gPriv->AddScriptTrigger( scriptID );
+					}
+				}
+				else
+				{
+					// If null value was provided, clear script triggers on object
+					gPriv->ClearScriptTriggers();
+				}
+				break; 
+			}
 			case CCP_WORLDNUMBER:
 				if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), (UI08)encaps.toInt() ))
 					return JS_FALSE;
@@ -1607,7 +1738,34 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 			case CREGP_ID:					*vp = INT_TO_JSVAL( gPriv->GetRegionNum() );			break;
 			case CREGP_NUMGUARDS:			*vp = INT_TO_JSVAL( gPriv->NumGuards() );				break;
-			case CREGP_SCRIPTTRIGGER:		*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );		break;
+			case CREGP_SCRIPTTRIGGER:
+			{
+				// For backwards compatibility, get last scripttrigger from vector
+				// For older worldfiles, this will be the only scripttrigger added to the vector after load
+				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+				UI16 lastScriptTrigger = 0;
+				auto numberOfTriggers = scriptTriggers.size();
+				if( numberOfTriggers > 0 )
+				{
+					lastScriptTrigger = scriptTriggers[numberOfTriggers-1];
+				}
+				*vp = INT_TO_JSVAL( lastScriptTrigger );
+			}
+			case CREGP_SCRIPTTRIGGERS:
+			{
+				jsval scriptID;
+				JSObject *scriptTriggersJS = JS_NewArrayObject(cx, 0, NULL);
+
+				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+				for( int i = 0; i < scriptTriggers.size(); i++ )
+				{
+					scriptID = INT_TO_JSVAL( scriptTriggers[i] );
+					JS_SetElement(cx, scriptTriggersJS, i, &scriptID);
+				}
+
+				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
+				break;
+			}
 			case CREGP_TAXES:				*vp = INT_TO_JSVAL( gPriv->GetTaxes() );				break;
 			case CREGP_RESERVES:			*vp = INT_TO_JSVAL( gPriv->GetReserves() );				break;
 			case CREGP_APPEARANCE:			*vp = INT_TO_JSVAL( gPriv->GetAppearance() );			break;
@@ -1650,7 +1808,44 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );						break;
 			case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( static_cast<UI08>( encaps.toInt() ));	break;
 			case CREGP_NUMGUARDS:			gPriv->SetNumGuards( static_cast<UI16>( encaps.toInt() ));	break;
-			case CREGP_SCRIPTTRIGGER:		gPriv->SetScriptTrigger( static_cast<UI16>( encaps.toInt() ));	break;
+			case CREGP_SCRIPTTRIGGER:
+			{
+				// For backwards compatibility; clears out other scripts and assigns a specific script
+				std::uint16_t scriptID = static_cast<UI16>(encaps.toInt());
+				cScript *toExecute	= JSMapping->GetScript( scriptID );
+				if( toExecute == NULL )
+				{
+					Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+				}
+				else
+				{
+					gPriv->ClearScriptTriggers();
+					gPriv->AddScriptTrigger( scriptID );
+				}
+				break;
+			}
+			case CREGP_SCRIPTTRIGGERS:
+			{
+				if( *vp != JSVAL_NULL )
+				{
+					std::uint16_t scriptID = static_cast<UI16>(encaps.toInt());
+					cScript *toExecute	= JSMapping->GetScript( scriptID );
+					if( toExecute == NULL )
+					{
+						Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+					}
+					else
+					{
+						gPriv->AddScriptTrigger( scriptID );
+					}
+				}
+				else
+				{
+					// If null value was provided, clear script triggers on object
+					gPriv->ClearScriptTriggers();
+				}
+				break; 
+			}
 			case CREGP_TAXES:				gPriv->SetTaxesLeft( static_cast<UI32>( encaps.toInt() ));	break;
 			case CREGP_RESERVES:			gPriv->SetReserves( static_cast<UI32>( encaps.toInt() ));	break;
 			case CREGP_APPEARANCE:			gPriv->SetAppearance( static_cast<WorldType>( encaps.toInt() )); break;

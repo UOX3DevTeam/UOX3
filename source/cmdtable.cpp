@@ -1312,7 +1312,6 @@ void cCommands::CommandReset( void )
 	// Q
 	// R
 	// S
-	TargetMap["SETSCPTRIG"]		= TargetMapEntry( CL_ADMIN,			CMD_TARGETINT,	TARGET_SETSCPTRIG,		267);
 	TargetMap["SHOWSKILLS"]		= TargetMapEntry( CL_GM,			CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
 	// T
 	//TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);

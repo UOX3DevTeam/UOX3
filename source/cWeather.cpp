@@ -1834,26 +1834,24 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 //o-----------------------------------------------------------------------------------------------o
 void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp )
 {
-	cScript *onWeatherChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onWeatherChangeScp != NULL )
-		onWeatherChangeScp->OnWeatherChange( mChar, weathType );
-	else
+	// Check for events in specific scripts attached to character
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		onWeatherChangeScp = JSMapping->GetScript( (UI16)0 );
-
-		if( onWeatherChangeScp != NULL )
-			onWeatherChangeScp->OnWeatherChange( mChar, weathType );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			toExecute->OnWeatherChange( mChar, weathType );
+			toExecute->OnTempChange( mChar, currentTemp );
+		}
 	}
 
-	cScript *onTempChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onTempChangeScp != NULL )
-		onTempChangeScp->OnTempChange( mChar, currentTemp );
-	else
+	// Check global script as well
+	cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>(0) );
+	if( toExecuteGlobal != NULL )
 	{
-		onTempChangeScp = JSMapping->GetScript( (UI16)0 );
-
-		if( onTempChangeScp != NULL )
-			onTempChangeScp->OnTempChange( mChar, currentTemp );
+		toExecuteGlobal->OnWeatherChange( mChar, weathType );
+		toExecuteGlobal->OnTempChange( mChar, currentTemp );
 	}
 }
 

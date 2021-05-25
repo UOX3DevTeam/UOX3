@@ -273,6 +273,8 @@ JSMethodFunc CSocket_FirstTriggerWord;
 JSMethodFunc CSocket_NextTriggerWord;
 JSMethodFunc CSocket_FinishedTriggerWords;
 
+JSMethodFunc CRegion_AddScriptTrigger;
+JSMethodFunc CRegion_RemoveScriptTrigger;
 
 
 static JSFunctionSpec CGump_Methods[] =
@@ -387,6 +389,8 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },
+	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ NULL,					NULL,					0, 0, 0 }
 };
 
@@ -444,6 +448,8 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Carve",				CItem_Carve,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
+	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "GetMultiCorner",		CMulti_GetMultiCorner,		1, 0, 0 },
 	{ "SecureContainer",	CMulti_SecureContainer,		1, 0, 0 },
 	{ "UnsecureContainer",	CMulti_UnsecureContainer,	1, 0, 0 },
@@ -465,7 +471,9 @@ static JSFunctionSpec CItem_Methods[] =
 
 static JSFunctionSpec CRegion_Methods[] =
 {
-	{ NULL,					NULL,				0, 0, 0 },
+	{ "AddScriptTrigger",		CRegion_AddScriptTrigger,		1, 0, 0 },
+	{ "RemoveScriptTrigger",	CRegion_RemoveScriptTrigger,	1, 0, 0 },
+	{ NULL,						NULL,							0, 0, 0 }
 };
 
 static JSFunctionSpec CSocket_Methods[] =

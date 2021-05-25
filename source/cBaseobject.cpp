@@ -536,6 +536,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	//static std::ostringstream objectDump( destination ); //static, construct only once
 	//objectDump.str(std::string()); // clear the stream
 	//destination = ""; // clear the string
+
 	SI16 temp_st2, temp_dx2, temp_in2;
 
 	// Hexadecimal Values
@@ -608,7 +609,17 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 			outStream << "0" <<  GetResist( (WeatherType)resist ) << ",";
 	}
 	outStream << "[END]" << '\n';
-	outStream << "ScpTrig=" << scriptTrig << '\n';
+	if( scriptTriggers.size() > 0 )
+	{
+		for( auto scriptTrig : scriptTriggers )
+		{
+			outStream << "ScpTrig=" + std::to_string(scriptTrig) + '\n';
+		}
+	}
+	else
+	{
+		outStream << "ScpTrig=0" + newLine;
+	}
 	outStream << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << '\n';
 	// Spin the character tags to save make sure to dump them too
 	TAGMAP2_CITERATOR CI;
@@ -815,15 +826,38 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 			multis->RemoveFromMulti( this );
 			if( fireTrigger )
 			{
-				// First, trigger the onEntrance event for the multi an object is removed from
-				cScript *onMultiLeaving = JSMapping->GetScript( multis->GetScriptTrigger() );
-				if( onMultiLeaving != NULL )
-					onMultiLeaving->OnLeaving( multis, this );
+				// First, trigger the OnLeaving event for the multi an object is removed from
+				std::vector<UI16> scriptTriggers = multis->GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != NULL )
+					{
+						// If script returns true/1, prevent other onLeaving events from triggering
+						if( toExecute->OnLeaving( multis, this ) == 1 )
+						{
+							break;
+						}
+
+					}
+				}
+				// Clear scriptTriggers vector so we can re-use it below
+				scriptTriggers.clear();
 
 				// Then, trigger the same event for the object being removed
-				cScript *onLeaving = JSMapping->GetScript( GetScriptTrigger() );
-				if( onLeaving != NULL )
-					onLeaving->OnLeaving( multis, this );
+				scriptTriggers = GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != NULL )
+					{
+						// If script returns true/1, prevent other onLeaving events from triggering
+						if( toExecute->OnLeaving( multis, this ) == 1 )
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 		else
@@ -852,14 +886,39 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 			if( fireTrigger )
 			{
 				// First, trigger the onEntrance script attached to the multi, if any
-				cScript *onMultiEntrance = JSMapping->GetScript( multis->GetScriptTrigger() );
-				if( onMultiEntrance != NULL )
-					onMultiEntrance->OnEntrance( multis, this );
+				std::vector<UI16> scriptTriggers = multis->GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != NULL )
+					{
+						// If script returns true/1, prevent other onEntrance events from triggering
+						if( toExecute->OnEntrance( multis, this ) == 1 )
+						{
+							break;
+						}
+
+					}
+				}
+
+				// Clear scriptTriggers vector so we can reuse it below
+				scriptTriggers.clear();
+				scriptTriggers.shrink_to_fit();
 
 				// Then, trigger the onEntrance script attached to the object entering the multi
-				cScript *onEntrance = JSMapping->GetScript( GetScriptTrigger() );
-				if( onEntrance != NULL )
-					onEntrance->OnEntrance( multis, this );
+				scriptTriggers = GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != NULL )
+					{
+						// If script returns true/1, prevent other onEntrance events from triggering
+						if( toExecute->OnEntrance( multis, this ) == 1 )
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 		else
@@ -1031,19 +1090,52 @@ void CBaseObject::SetTitle( std::string newtitle )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetScriptTrigger( void ) const
-//|					void SetScriptTrigger( UI16 newValue )
-//|	Date		-	August 27th, 2000
+//|	Function	-	UI16 GetScriptTriggers( void ) const
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the object's script trigger value
+//|	Purpose		-	Gets list of script triggers on object
 //o-----------------------------------------------------------------------------------------------o
-UI16 CBaseObject::GetScriptTrigger( void ) const
+std::vector<UI16> CBaseObject::GetScriptTriggers( void )
 {
-	return scriptTrig;
+	return scriptTriggers;
 }
-void CBaseObject::SetScriptTrigger( UI16 newValue )
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddScriptTrigger( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a script trigger to object's list of script triggers
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::AddScriptTrigger( UI16 newValue )
 {
-	scriptTrig = newValue;
+	if( std::find(scriptTriggers.begin(), scriptTriggers.end(), newValue) == scriptTriggers.end() )
+	{
+		// Add scriptID to scriptTriggers if not already present
+		scriptTriggers.push_back(newValue);
+	}
+
+	// Sort vector in ascending order, so order in which scripts are evaluated is predictable
+	std::sort(scriptTriggers.begin(), scriptTriggers.end());
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveScriptTrigger( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a specific script trigger to object's list of script triggers
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::RemoveScriptTrigger( UI16 newValue )
+{
+	// Remove all elements containing specified script trigger from vector
+	scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue), scriptTriggers.end());
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClearScriptTriggers( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears out all script triggers from object
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::ClearScriptTriggers( void )
+{
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1446,7 +1538,20 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "SCPTRIG" )
 			{
-				scriptTrig	= str_value<std::uint16_t>(data);
+				//scriptTrig	= str_value<std::uint16_t>(data);
+				std::uint16_t scriptID = str_value<std::uint16_t>(data);
+				if( scriptID != 0 )
+				{
+					cScript *toExecute	= JSMapping->GetScript( scriptID );
+					if( toExecute == NULL )
+					{
+						Console.warning( format("SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str()) );
+					}
+					else
+					{
+						this->AddScriptTrigger( str_value<std::uint16_t>(data) );
+					}
+				}
 			}
 			else
 				rvalue = false;
@@ -1743,10 +1848,13 @@ void CBaseObject::Cleanup( void )
 	SetY( 7000 );
 	SetZ( 0 );
 
-	UI16 scpNum			= GetScriptTrigger();
-	cScript *tScript	= JSMapping->GetScript( scpNum );
-	if( tScript != NULL )
-		tScript->OnDelete( this );
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != NULL )
+			tScript->OnDelete( this );
+	}
 
 	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
 	if( toFind != cwmWorldState->refreshQueue.end() )

@@ -93,29 +93,32 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 
 		if( abs( mChar->GetZ() - Npc->GetZ() ) <= 9 )
 		{
-			UI16 speechTrig		= Npc->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( speechTrig );
-			if( toExecute != NULL )
+			std::vector<UI16> scriptTriggers = Npc->GetScriptTriggers();
+			for( auto i : scriptTriggers )
 			{
-				//|				-1	=> No such function or bad call
-				//|				0	=> Let other NPCs and PCs see it
-				//|				1	=> Let other PCs see it
-				//|				2	=> Let no one else see it
-				SI08 rVal = -1;
-				if( Npc->isDisabled() )
-					Npc->TextMessage( NULL, 1291, TALK, false );
-				else
-					rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
-				switch( rVal )
+				cScript *toExecute	= JSMapping->GetScript( i );
+				if( toExecute != NULL )
 				{
-					case 1:		// No other NPCs to see it, but PCs should
-						return true;
-					case 2:		// no one else to see it
-						return false;
-					case 0:		// Other NPCs and PCs to see it
-					case -1:	// no function, so do nothing... NOT handled!
-					default:
-						break;
+					//|				-1	=> No such function or bad call
+					//|				0	=> Let other NPCs and PCs see it
+					//|				1	=> Let other PCs see it
+					//|				2	=> Let no one else see it
+					SI08 rVal = -1;
+					if( Npc->isDisabled() )
+						Npc->TextMessage( NULL, 1291, TALK, false );
+					else
+						rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
+					switch( rVal )
+					{
+						case 1:		// No other NPCs to see it, but PCs should
+							return true;
+						case 2:		// no one else to see it
+							return false;
+						case 0:		// Other NPCs and PCs to see it
+						case -1:	// no function, so do nothing... NOT handled!
+						default:
+							break;
+					}
 				}
 			}
 		}
@@ -134,29 +137,28 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 
 			if( abs( mChar->GetZ() - Item->GetZ() ) <= 9 )
 			{
-				UI16 speechTrig		= Item->GetScriptTrigger();
-				cScript *toExecute	= JSMapping->GetScript( speechTrig );
-				if( toExecute != NULL )
+				std::vector<UI16> scriptTriggers = Item->GetScriptTriggers();
+				for( auto i : scriptTriggers )
 				{
-					//|				-1	=> No such function or bad call
-					//|				0	=> Let other NPCs and PCs see it
-					//|				1	=> Let other PCs see it
-					//|				2	=> Let no one else see it
-					SI08 rVal = -1;
-					if( Item->isDisabled() )
-						Item->TextMessage( NULL, 1291, TALK, false );
-					else
-						rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
-					switch( rVal )
+					cScript *toExecute	= JSMapping->GetScript( i );
+					if( toExecute != NULL )
 					{
-					case 1:		// No other NPCs to see it, but PCs should
-						return true;
-					case 2:		// no one else to see it
-						return false;
-					case 0:		// Other NPCs and PCs to see it
-					case -1:	// no function, so do nothing... NOT handled!
-					default:
-						break;
+						SI08 rVal = -1;
+						if( Item->isDisabled() )
+							Item->TextMessage( NULL, 1291, TALK, false );
+						else
+							rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
+						switch( rVal )
+						{
+							case 1:		// No other NPCs to see it, but PCs should
+								return true;
+							case 2:		// no one else to see it
+								return false;
+							case 0:		// Other NPCs and PCs to see it
+							case -1:	// no function, so do nothing... NOT handled!
+							default:
+								break;
+						}
 					}
 				}
 			}
@@ -834,14 +836,21 @@ CVendorSellResponse::CVendorSellResponse( bool vendVal, const std::string &text 
 //o-----------------------------------------------------------------------------------------------o
 bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-
 	//Check if vendor has onSell script running
-	UI16 charTrig		= Npc->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = Npc->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnSell( mSock, Npc ) ) //if script returns true, don't continue
-			return false;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( toExecute->OnSell( mSock, Npc ) == 0 ) //if script returns false, don't continue
+			{
+				return false;
+			}
+		}
 	}
 
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
@@ -1017,13 +1026,19 @@ void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	{
 		if( realHouse->CanBeObjType( OT_MULTI ))
 		{
-			UI16 targTrig		= realHouse->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
+			std::vector<UI16> scriptTriggers = realHouse->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( toExecute->OnHouseCommand( mSock, realHouse, targID ) )
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != NULL )
 				{
-					return;
+					//-1 == event not found
+					// 0 == script returned false/0
+					// 1 == script returned true/1
+					if( toExecute->OnHouseCommand( mSock, realHouse, targID ) == 1 ) //if script returns true, don't continue
+					{
+						return;
+					}
 				}
 			}
 

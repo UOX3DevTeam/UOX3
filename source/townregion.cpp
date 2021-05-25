@@ -14,6 +14,7 @@
 #include "Dictionary.h"
 #include "classes.h"
 #include "CJSEngine.h"
+#include "CJSMapping.h"
 #include "StringUtility.hpp"
 // Implementation of town regions
 
@@ -690,7 +691,19 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				}
 				else if( UTag == "SCRIPT" )
 				{
-					jsScript = static_cast<UI16>(duint);
+					std::uint16_t scriptID = static_cast<std::uint16_t>(duint);
+					if( scriptID != 0 )
+					{
+						cScript *toExecute	= JSMapping->GetScript( scriptID );
+						if( toExecute == NULL )
+						{
+							Console.warning( format("SCRIPT tag found with invalid script ID (%s) when loading region data!", str_number(scriptID).c_str()) );
+						}
+						else
+						{
+							this->AddScriptTrigger( scriptID );
+						}
+					}
 				}
 				break;
 			case 'T':
@@ -1978,18 +1991,52 @@ UI16 CTownRegion::TaxedAmount( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetScriptTrigger( void ) const
-//|					void SetScriptTrigger( UI16 newValue )
+//|	Function	-	UI16 GetScriptTriggers( void ) const
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets script trigger for the townregion
+//|	Purpose		-	Gets list of script triggers on object
 //o-----------------------------------------------------------------------------------------------o
-UI16 CTownRegion::GetScriptTrigger( void ) const
+std::vector<UI16> CTownRegion::GetScriptTriggers( void )
 {
-	return jsScript;
+	return scriptTriggers;
 }
-void CTownRegion::SetScriptTrigger( UI16 newValue )
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddScriptTrigger( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a script trigger to object's list of script triggers
+//o-----------------------------------------------------------------------------------------------o
+void CTownRegion::AddScriptTrigger( UI16 newValue )
 {
-	jsScript = newValue;
+	if( std::find(scriptTriggers.begin(), scriptTriggers.end(), newValue) == scriptTriggers.end() )
+	{
+		// Add scriptID to scriptTriggers if not already present
+		scriptTriggers.push_back(newValue);
+	}
+
+	// Sort vector in ascending order, so order in which scripts are evaluated is predictable
+	std::sort(scriptTriggers.begin(), scriptTriggers.end());
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveScriptTrigger( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a specific script trigger to object's list of script triggers
+//o-----------------------------------------------------------------------------------------------o
+void CTownRegion::RemoveScriptTrigger( UI16 newValue )
+{
+	// Remove all elements containing specified script trigger from vector
+	scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue), scriptTriggers.end());
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClearScriptTriggers( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears out all script triggers from object
+//o-----------------------------------------------------------------------------------------------o
+void CTownRegion::ClearScriptTriggers( void )
+{
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
 }
 
 //o-----------------------------------------------------------------------------------------------o

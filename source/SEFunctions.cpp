@@ -1385,13 +1385,49 @@ JSBool SE_UseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 
-	ItemTypes iType		= myItem->GetType();
-	UI16 itemID			= myItem->GetID();
-	UI16 itemTrig		= myItem->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( itemTrig );
-	if( itemTrig == 0 || toExecute == NULL )
+	bool scriptExecuted = false;
+	std::vector<UI16> scriptTriggers = myItem->GetScriptTriggers();
+	for( auto i : scriptTriggers )
 	{
+		// Loop through all scriptIDs registered for item, check for scripts
+		cScript *toExecute = JSMapping->GetScript( i );
+		if( toExecute != NULL )
+		{
+			// Script was found, let's check for OnUseUnChecked event
+			SI08 retVal = toExecute->OnUseUnChecked( mChar, myItem );
+			if( retVal != -1 )
+			{
+				scriptExecuted = true;
+				if( retVal == 0 )
+				{
+					// Script returned 0 - don't continue with other scripts
+					break;
+				}
+			}
+
+			// No OnUseUnChecked event returned 0, check OnUseChecked event as well!
+			// We don't actually do any checking in this case, as this should be
+			// handled in script that calls UseItem
+			retVal = toExecute->OnUseChecked( mChar, myItem );
+			if( retVal != -1 )
+			{
+				scriptExecuted = true;
+				if( retVal == 0 )
+				{
+					// Script returned 0 - don't continue with other scripts
+					break;
+				}
+			}
+		}
+	}
+
+	// Handle envoke stuff outside for loop, as we only want this to execute once
+	if( scriptTriggers.size() == 0 || !scriptExecuted )
+	{
+		ItemTypes iType		= myItem->GetType();
+		UI16 itemID			= myItem->GetID();
 		UI16 envTrig		= 0;
+		cScript *toExecute = NULL;
 		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
 		{
 			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
@@ -1402,12 +1438,20 @@ JSBool SE_UseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
 			toExecute = JSMapping->GetScript( envTrig );
 		}
-	}
 
-	if( toExecute != NULL )
-	{
-		if( toExecute->OnUseChecked( mChar, myItem ) == -1 )
-			toExecute->OnUseUnChecked( mChar, myItem );
+		// Check for the onUse events in envoke scripts!
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnUseUnChecked( mChar, myItem ) == 0 )
+			{
+				return JS_TRUE;
+			}
+
+			if( toExecute->OnUseChecked( mChar, myItem ) == 0 )
+			{
+				return JS_TRUE;
+			}
+		}
 	}
 
 	return JS_TRUE;

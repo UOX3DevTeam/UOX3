@@ -1323,7 +1323,6 @@ void CItem::CopyData( CItem *target )
 	target->SetRank( GetRank() );
 	target->SetRestock( GetRestock() );
 	target->SetRndValueRate( GetRndValueRate() );
-	target->SetScriptTrigger( GetScriptTrigger() );
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
 	target->SetSpell( 0, GetSpell( 0 ) );
@@ -1344,8 +1343,14 @@ void CItem::CopyData( CItem *target )
 	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
+	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
+	{
 		target->SetWeatherDamage( (WeatherType)i, GetWeatherDamage( (WeatherType)i ) );
+	}
+
+	// Add any script triggers present on object to the new object
+	target->scriptTriggers = GetScriptTriggers();
 }
 
 //o-----------------------------------------------------------------------------------------------o

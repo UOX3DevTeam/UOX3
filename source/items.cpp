@@ -325,7 +325,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>(ndata) );		break;
 			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>(ndata) );			break;
 			case DFNTAG_SNOW:			applyTo->SetWeatherDamage( SNOW, ndata != 0 );			break;
-			case DFNTAG_SCRIPT:			applyTo->SetScriptTrigger( static_cast<UI16>(ndata) );	break;
+			case DFNTAG_SCRIPT:			applyTo->AddScriptTrigger( static_cast<UI16>(ndata) );	break;
 			case DFNTAG_TYPE:
 				ItemTypes iType;
 				iType = FindItemTypeFromTag( cdata );
@@ -489,9 +489,15 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 		iCreated->SetAmount( iAmount );
 	}
 
-	cScript *toGrab = JSMapping->GetScript( iCreated->GetScriptTrigger() );
-	if( toGrab != NULL )
-		toGrab->OnCreate( iCreated, false );
+	std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			toExecute->OnCreate( iCreated, false );
+		}
+	}
 
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
@@ -706,9 +712,15 @@ CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, c
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
 			iCreated->SetMaxHP( iCreated->GetHP() );
 
-		cScript *toGrab = JSMapping->GetScript( iCreated->GetScriptTrigger() );
-		if( toGrab != NULL )
-			toGrab->OnCreate( iCreated, true );
+		std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != NULL )
+			{
+				toExecute->OnCreate( iCreated, true );
+			}
+		}
 	}
 	if( iAmount > 1 && iCreated->isPileable() )
 		iCreated->SetAmount( iAmount );
@@ -1335,9 +1347,15 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 	}
 	c->SetAmount( amount );
 
-	cScript *toGrab = JSMapping->GetScript( c->GetScriptTrigger() );
-	if( toGrab != NULL )
-		toGrab->OnCreate( c, false );
+	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != NULL )
+		{
+			toExecute->OnCreate( c, false );
+		}
+	}
 
 	return c;
 }
