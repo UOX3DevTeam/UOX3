@@ -150,6 +150,8 @@ JSMethodFunc CBase_Resist;
 JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
+JSMethodFunc CBase_AddScriptTrigger;
+JSMethodFunc CBase_RemoveScriptTrigger;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -396,7 +398,7 @@ static JSFunctionSpec CChar_Methods[] =
 
 static JSFunctionSpec CItem_Methods[] =
 {
-	{ "KillTimers",			CBase_KillTimers,			0, 0, 0 },
+	{ "KillTimers",			CBase_KillTimers,			1, 0, 0 },
 	{ "Delete",				CBase_Delete,				0, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,			1, 0, 0 },
 	{ "Teleport",			CBase_Teleport,				3, 0, 0 },

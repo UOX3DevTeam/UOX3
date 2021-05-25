@@ -613,8 +613,6 @@ protected:
 	UI08			unk[3];
 	std::string		reply;
 
-	void			HandleTweakItemText( UI08 index );
-	void			HandleTweakCharText( UI08 index );
 	void			HandleTownstoneText( UI08 index );
 public:
 	virtual			~CPIGumpInput()

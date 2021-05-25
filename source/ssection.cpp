@@ -777,7 +777,6 @@ const std::string ScriptSection::NpcListData( void ) const
 	return npcListData;
 }
 
-
 UI32 groupHolder = 0;
 UI32 itemIndexHolder = 0;
 //o-----------------------------------------------------------------------------------------------o
@@ -798,6 +797,7 @@ void ScriptSection::createSection( std::fstream& input )
 	{
 		input.getline(line, 2047);
 		line[input.gcount()] = 0;
+
 		sLine = line;
 		sLine = stripTrim( sLine );
 		if( sLine != "}" && !sLine.empty() )

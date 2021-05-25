@@ -22,9 +22,6 @@
 #include "StringUtility.hpp"
 
 
-
-void tweakItemMenu( CSocket *s, CItem *j );
-void tweakCharMenu( CSocket *s, CChar *c );
 void OpenPlank( CItem *p );
 bool checkItemRange( CChar *mChar, CItem *i );
 
@@ -171,43 +168,6 @@ void HandleGuildTarget( CSocket *s )
 					s->sysmessage( 1006 );
 			}
 			break;
-	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleSetScpTrig( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Assign a JS script ID to a target character or item
-//o-----------------------------------------------------------------------------------------------o
-void HandleSetScpTrig( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	UI16 targTrig		= (UI16)s->TempInt();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( targTrig && toExecute == NULL )
-	{
-		s->sysmessage( 1752 );
-		return;
-	}
-
-	SERIAL ser = s->GetDWord( 7 );
-	if( ser < BASEITEMSERIAL )
-	{	// character
-		CChar *targChar = calcCharObjFromSer( ser );
-		if( ValidateObject( targChar ) )
-		{
-			targChar->SetScriptTrigger( targTrig );
-			s->sysmessage( 1653 );
-		}
-	}
-	else
-	{	// item
-		CItem *targetItem = calcItemObjFromSer( ser );
-		if( ValidateObject( targetItem ) )
-		{
-			s->sysmessage( 1652 );
-			targetItem->SetScriptTrigger( targTrig );
-		}
 	}
 }
 
@@ -696,26 +656,6 @@ void InfoTarget( CSocket *s )
 			statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
 			statTile.Send( 4, false, INVALIDSERIAL );
 		}
-	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void TweakTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Bring up Tweak menu for targeted object
-//o-----------------------------------------------------------------------------------------------o
-void TweakTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	SERIAL serial	= s->GetDWord( 7 );
-	CChar *c		= calcCharObjFromSer( serial );
-	if( ValidateObject( c ) )
-		tweakCharMenu( s, c );
-	else
-	{
-		CItem *i = calcItemObjFromSer( serial );
-		if( ValidateObject( i ) )
-			tweakItemMenu( s, i );
 	}
 }
 
@@ -1681,7 +1621,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_INFO:			InfoTarget( tSock );					break;
 					case TARGET_WSTATS:			WstatsTarget( tSock );					break;
 					case TARGET_NPCRESURRECT:	NpcResurrectTarget( mChar );			break;
-					case TARGET_TWEAK:			TweakTarget( tSock );					break;
 					case TARGET_MAKESTATUS:		MakeStatusTarget( tSock );				break;
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;

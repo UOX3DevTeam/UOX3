@@ -1729,9 +1729,9 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
-	if( argc != 0 )
+	if( argc > 1 )
 	{
-		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0", argc );
+		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return JS_FALSE;
 	}
 	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
@@ -1740,12 +1740,25 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		MethodError("KillTimers: Invalid object assigned.");
 		return JS_FALSE;
 	}
+	SI16 triggerNum = -1;
+	if( argc == 1 )
+		triggerNum = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+
 	SERIAL mySer = myObj->GetSerial();
 	cwmWorldState->tempEffects.Push();
 	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
-		if( mySer == Effect->Destination() )
+		if( triggerNum != -1 )
+		{
+			if( mySer == Effect->Destination() && Effect->More1() == triggerNum )
+			{
+				cwmWorldState->tempEffects.Remove( Effect, true );
+			}
+		}
+		else if( mySer == Effect->Destination() )
+		{
 			cwmWorldState->tempEffects.Remove( Effect, true );
+		}
 	}
 	cwmWorldState->tempEffects.Pop();
 	return JS_TRUE;
