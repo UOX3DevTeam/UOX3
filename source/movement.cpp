@@ -1083,12 +1083,13 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	cScript *toExecute;
 	for( CChar *ourChar = regChars->First(); !regChars->Finished(); ourChar = regChars->Next() )
 	{
-		if( !ValidateObject( ourChar ) || ourChar == c )
+		if( !ValidateObject( ourChar ) || ourChar == c || ourChar->GetInstanceID() != instanceID )
 			continue;
-		if( ourChar->GetX() == x && ourChar->GetY() == y && ourChar->GetZ() == z )
+		if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 2 )
 		{
-			if(( ourChar->GetVisible() != VT_PERMHIDDEN ) && ( !IsGMBody( ourChar ) && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) &&
-															  ourChar->GetCommandLevel() < CL_CNS ))
+			if(( ourChar->GetVisible() != VT_PERMHIDDEN ) 
+				&& ( !IsGMBody( ourChar ) 
+					&& ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS ))
 			{
 				// Run onCollide event on character doing the shoving
 				for( auto scriptTrig : scriptTriggers )
@@ -1182,7 +1183,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 	{
 		if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
 		{
-			if( dNew == DIST_BUILDRANGE && dOld > DIST_BUILDRANGE )	// It's a building
+			if( dNew == DIST_BUILDRANGE && dOld > DIST_BUILDRANGE )	// It's a large building
 			{
 				tItem->SendToSocket( mSock );
 				return true;
@@ -1328,7 +1329,19 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	At this time, I'm not sure this is causing problems, or whether problems are steming from
 	a region issue (fixed now).  So I have not updated this code.  If this problem pops up in
 	the future, and I'm no longer around...  This is your piece of the puzzle.
+	
+	Update from future people (from 23/05/2021):
+		While UOX calculated vis in a square during movement, it calculated vis in a radius on logins,
+		teleports, object additions/removals. This means someone could log in, get sent all objects
+		within a radius of X, then when they started moving, they would get sent all objects entering
+		a square boundary around character (with distance X) - skipping any objects trapped in the
+		area between the circle and the square.
+	
+		Logins, teleports, object additions and removals all now calculate vis range via square
+		pattern instead of a circular one, which seems to fix most of these 20+ year old issues.
 	*/
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	std::vector<UI16> itemScriptTriggers;
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( newx, newy, mChar->WorldNumber() );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{

@@ -68,6 +68,22 @@ bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if an object's location is within a certain distance of another
+//|					object, but checking using a square instead of a radius
+//o-----------------------------------------------------------------------------------------------o
+bool objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+{
+	auto aX = a->GetX();
+	auto aY = a->GetY();
+	auto bX = b->GetX();
+	auto bY = b->GetY();
+	return ( aX >= ( bX - distance ) && aX <= ( bX + distance )
+		&& aY >= ( bY - distance ) && aY <= ( bY + distance ) );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another object
@@ -75,6 +91,23 @@ bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 bool objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
 	return ( getOldDist( a, b ) <= distance );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if an object's old location is within a certain distance of another
+//|					object, but checking using a square instead of a radius
+//o-----------------------------------------------------------------------------------------------o
+bool objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+{
+	point3 aOldLoc = a->GetOldLocation();
+	auto aX = aOldLoc.x;
+	auto aY = aOldLoc.y;
+	auto bX = b->GetX();
+	auto bY = b->GetY();
+	return ( aX >= ( bX - distance ) && aX <= ( bX + distance )
+		&& aY >= ( bY - distance ) && aY <= ( bY + distance ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o

@@ -2097,7 +2097,13 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 		mSock->CurrcharObj();
 
 		// Calculate player's visibility range so we can use it to find nearby objects
-		UI16 visrange = mSock->Range() + Races->VisRange( GetRace() );
+		UI16 visRange = mSock->Range() + Races->VisRange( GetRace() );
+		UI16 mCharX = this->GetX();
+		UI16 mCharY = this->GetY();
+		auto minX = mCharX - visRange;
+		auto minY = mCharY - visRange;
+		auto maxX = mCharX + visRange;
+		auto maxY = mCharY + visRange;
 
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
@@ -2114,8 +2120,10 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
 				{
 					CPRemoveItem charToSend = (*tempChar);
+					auto tempX = tempChar->GetX();
+					auto tempY = tempChar->GetY();
 
-					if( this != tempChar && objInRange( this, tempChar, visrange ) &&
+					if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					   ( isOnline( ( *tempChar ) ) || tempChar->IsNpc() ||
 						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
 					{
@@ -2133,11 +2141,24 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 				if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
 				{
 					CPRemoveItem itemToSend = (*tempItem);
+					auto tempItemX = tempItem->GetX();
+					auto tempItemY = tempItem->GetY();
 
-					if( tempItem->CanBeObjType( OT_MULTI ) && objInRange( this, tempItem, DIST_BUILDRANGE ))
-						mSock->Send( &itemToSend );
-					else if( objInRange( this, tempItem, visrange ))
-						mSock->Send( &itemToSend );
+					if( tempItem->CanBeObjType( OT_MULTI ) )
+					{
+						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
+							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+						{
+							tempItem->SendToSocket( mSock );
+						}
+					}
+					else
+					{
+						if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+						{
+							mSock->Send( &itemToSend );
+						}
+					}
 				}
 			}
 			regItems->Pop();
@@ -2222,6 +2243,13 @@ void CChar::Teleport( void )
 		mSock->statwindow( this );
 		mSock->WalkSequence( -1 );
 
+		UI16 mCharX = this->GetX();
+		UI16 mCharY = this->GetY();
+		auto minX = mCharX - visrange;
+		auto minY = mCharY - visrange;
+		auto maxX = mCharX + visrange;
+		auto maxY = mCharY + visrange;
+
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
@@ -2234,7 +2262,9 @@ void CChar::Teleport( void )
 			{
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
 				{
-					if( this != tempChar && objInRange( this, tempChar, visrange ) &&
+					auto tempX = tempChar->GetX();
+					auto tempY = tempChar->GetY();
+					if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 					   ( isOnline( (*tempChar) ) || tempChar->IsNpc() ||
 						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
 						tempChar->SendToSocket( mSock );
@@ -2247,10 +2277,23 @@ void CChar::Teleport( void )
 			{
 				if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
 				{
-					if( tempItem->CanBeObjType( OT_MULTI ) && objInRange( this, tempItem, DIST_BUILDRANGE ))
-						tempItem->SendToSocket( mSock );
-					else if( objInRange( this, tempItem, visrange ))
-						tempItem->SendToSocket( mSock );
+					auto tempItemX = tempItem->GetX();
+					auto tempItemY = tempItem->GetY();
+					if( tempItem->CanBeObjType( OT_MULTI ) )
+					{
+						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
+							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+						{
+							tempItem->SendToSocket( mSock );
+						}
+					}
+					else
+					{
+						if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+						{
+							tempItem->SendToSocket( mSock );
+						}
+					}
 				}
 			}
 			regItems->Pop();
@@ -2295,11 +2338,16 @@ void CChar::Update( CSocket *mSock )
 		SendToSocket( mSock );
 	else
 	{
-		SOCKLIST nearbyChars = FindNearbyPlayers( this );
+		SOCKLIST nearbyChars = FindPlayersInVisrange( this );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			if( !(*cIter)->LoginComplete() )
 				continue;
+
+			// Send one extra update to self to fix potential issues with world changing
+			if( (*cIter)->CurrcharObj() == this )
+				SendToSocket( (*cIter) );
+
 			SendToSocket( (*cIter) );
 		}
 	}
