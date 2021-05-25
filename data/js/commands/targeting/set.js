@@ -136,6 +136,32 @@ function onCallback0( socket, ourObj )
 		ourObj.worldnumber = nVal;
 		okMsg( socket );
 		break;
+	case "SCRIPTTRIGGER":
+		// Add a single script trigger to object; overwrites existing list of scripts
+		if( parseInt(nVal) == 0 )
+		{
+			ourObj.RemoveScriptTrigger( 0 );
+			socket.SysMessage( GetDictionaryEntry( 2044, socket.language )); // All script triggers have been cleared from target!
+		}
+		else
+		{
+			ourObj.scripttrigger = nVal;
+			okMsg( socket );
+		}
+		break;
+	case "SCRIPTTRIGGERS":
+		// Add script trigger to list of triggers on objects
+		if( parseInt(nVal) == 0 )
+		{
+			ourObj.RemoveScriptTrigger( 0 );
+			socket.SysMessage( GetDictionaryEntry( 2044, socket.language )); // All script triggers have been cleared from target!
+		}
+		else
+		{
+			ourObj.AddScriptTrigger( nVal );
+			okMsg( socket );
+		}
+		break;
 	default:
 		if( ourObj.isChar )
 			HandleSetChar( socket, ourObj, uKey, nVal );

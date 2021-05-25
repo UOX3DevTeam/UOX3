@@ -237,7 +237,7 @@ function onCallback7( pSock, myTarget )
 	{
 		if( !pSock.GetWord( 1 ))
 		{
-			if( myTarget.npc || myTarget.isItem )
+			if( ValidateObject(myTarget) && myTarget.npc || myTarget.isItem )
 				myTarget.Delete();
 			else
 				pSock.SysMessage( "You can only remove items or NPCs." );

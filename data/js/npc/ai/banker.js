@@ -75,7 +75,7 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 							newCheck.SetTag( "CheckSize", checkSize );
 							newCheck.name = "A bank check";
 							newCheck.colour = 0x34;
-							newCheck.scripttrigger = bankCheckTrigger;
+							newCheck.AddScriptTrigger( bankCheckTrigger );
 							newCheck.isNewbie = true;
 							newCheck.weight = 100;
 							newCheck.container = bankBox;

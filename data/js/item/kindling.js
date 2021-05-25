@@ -22,7 +22,7 @@ function onUseChecked( pUser, iUsed )
         			if( eKindling && eKindling.isItem )
 						iUsed = eKindling;
 				}
-				iUsed.scripttrigger = 5008;
+				iUsed.AddScriptTrigger( 5008 );
 				iUsed.container = null;
 				iUsed.Teleport( pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 				iUsed.movable = 2;

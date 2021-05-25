@@ -69,7 +69,14 @@ function onUseUnChecked( pUser, iUsed )
 
 				// Set scripttrigger 15000 on houses that were created prior to the version that
 				// automatically adds this based on tag in houses.dfn
-				if( iMulti.scriptrigger == 0 )
+				var scriptFound = false;
+				var scriptTriggers = iMulti.scriptTriggers;
+				for( var i = 0; i < scriptTriggers.length; i++ )
+				{
+					if( scriptTriggers[i] == 15000 )
+						scriptFound = true;
+				}
+				if( !scriptFound )
 					iMulti.scripttrigger = 15000;
 
 				// Then grab some other data and store them in global

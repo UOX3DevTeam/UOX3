@@ -5,7 +5,10 @@ function onUseChecked( pUser, iUsed )
 
 	// Store gumpID for gumps opened by this script in a global variable for later use
 	if( iUsed )
-		gumpID = iUsed.scripttrigger+0xffff;
+	{
+		var scriptID = 5021;
+		gumpID = scriptID+0xffff;
+	}
 	else
 		return false;
 

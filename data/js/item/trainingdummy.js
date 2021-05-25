@@ -56,8 +56,8 @@ function onUseChecked( pUser, iUsed )
 		else
 			pUser.CheckSkill( 27, 0, 250 );
 
-		//Star a timer so the dummy doesn't swing forever
-		iUsed.StartTimer( 3000, 1, false );
+		//Start a timer so the dummy doesn't swing forever
+		iUsed.StartTimer( 3000, 1, true );
 	}
 	else
 	{

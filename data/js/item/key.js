@@ -268,9 +268,16 @@ function onCallback2( pSock, myTarget )
 			}
 			else
 			{
-				if( !myTarget.scripttrigger ) // If targetted key doesn't use this script, make it :)
+				var scriptFound = false;
+				var scriptTriggers = myTarget.scriptTriggers;
+				for( var i = 0; i < scriptTriggers.length; i++ )
 				{
-					myTarget.scripttrigger = KeyScriptID;
+					if( scriptTriggers[i] == KeyScriptID )
+						scriptFound = true;
+				}
+				if( !scriptFound ) // If targetted key doesn't use this script, make it :)
+				{
+					myTarget.AddScriptTrigger( KeyScriptID );
 				}
 				emptyKeyring.id = KeyringID1;
 				emptyKeyring.SetTag( "keys", 1 );
@@ -438,11 +445,11 @@ function changeLockStatus( pUser, myTarget )
 			}
 			if( !plankStatus )
 			{
-				pUser.SysMessage( "You close the plank." );
+				pUser.SysMessage( GetDictionaryEntry( 2032, pSock.language )); //You close the plank.
 			}
 			else
 			{
-				pUser.SysMessage( "You open the plank." );
+				pUser.SysMessage( GetDictionaryEntry( 2031, pSock.language )); //You open the plank.
 			}
 			break;
 		case 203: //A house sign
