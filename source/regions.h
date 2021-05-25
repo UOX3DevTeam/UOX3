@@ -36,9 +36,12 @@ class CMapRegion
 private:
 	GenericList< CItem * >	itemData;
 	GenericList< CChar * >	charData;
+	RegionSerialList< SERIAL > regionSerialData;
+
 public:
 	GenericList< CItem * > *	GetItemList( void );
 	GenericList< CChar * > *	GetCharList( void );
+	RegionSerialList< SERIAL > *	GetRegionSerialList( void );
 
 	CMapRegion()
 	{

@@ -5,8 +5,9 @@
 #include "ObjectFactory.h"
 #include <filesystem>
 
-CMapHandler *MapRegion;
+#define DEBUG_REGIONS		0
 
+CMapHandler *MapRegion;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 FileSize( std::string filename )
 //o-----------------------------------------------------------------------------------------------o
@@ -175,6 +176,16 @@ GenericList< CItem * > * CMapRegion::GetItemList( void )
 GenericList< CChar * > * CMapRegion::GetCharList( void )
 {
 	return &charData;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	RegionSerialList< SERIAL > * GetRegionSerialList( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the list of baseobject serials for iteration
+//o-----------------------------------------------------------------------------------------------o
+RegionSerialList< SERIAL > * CMapRegion::GetRegionSerialList( void )
+{
+	return &regionSerialData;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -379,19 +390,24 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 
 	if( curCell != newCell )
 	{
-		if( !curCell->GetItemList()->Remove( nItem ) )
+		if( curCell->GetRegionSerialList()->Remove( nItem->GetSerial() ) != 1 || !curCell->GetItemList()->Remove( nItem ) )
 		{
-#if defined( DEBUG_REGIONS )
+#if DEBUG_REGIONS
 			Console.warning( format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		}
-		if( !newCell->GetItemList()->Add( nItem ) )
+
+		if( newCell->GetRegionSerialList()->Add( nItem->GetSerial() ))
 		{
-#if defined( DEBUG_REGIONS )
+			newCell->GetItemList()->Add( nItem, false );
+			return true;
+		}
+		else
+		{
+#if DEBUG_REGIONS
 			Console.warning( format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 		}
-		return true;
 	}
 	return false;
 }
@@ -412,19 +428,24 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 
 	if( curCell != newCell )
 	{
-		if( !curCell->GetCharList()->Remove( nChar ) )
+		if( !curCell->GetRegionSerialList()->Remove( nChar->GetSerial() ) || !curCell->GetCharList()->Remove( nChar ) )
 		{
-#if defined( DEBUG_REGIONS )
+#if DEBUG_REGIONS
 			Console.warning( format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
 #endif
 		}
-		if( !newCell->GetCharList()->Add( nChar ) )
+		
+		if( newCell->GetRegionSerialList()->Add( nChar->GetSerial() ))
 		{
-#if defined( DEBUG_REGIONS )
+			newCell->GetCharList()->Add( nChar, false );
+			return true;
+		}
+		else
+		{
+#if DEBUG_REGIONS
 			Console.warning( format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
 #endif
 		}
-		return true;
 	}
 	return false;
 }
@@ -439,15 +460,20 @@ bool CMapHandler::AddItem( CItem *nItem )
 {
 	if( !ValidateObject( nItem ) )
 		return false;
+
 	CMapRegion *cell = GetMapRegion( nItem );
-	if( !cell->GetItemList()->Add( nItem ) )
+	if( cell->GetRegionSerialList()->Add( nItem->GetSerial() ))
 	{
-#if defined( DEBUG_REGIONS )
+		cell->GetItemList()->Add( nItem, false );
+		return true;
+	}
+	else
+	{
+#if DEBUG_REGIONS
 		Console.warning( format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
-		return false;
 	}
-	return true;
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -463,7 +489,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	CMapRegion *cell = GetMapRegion( nItem );
 	if( !cell->GetItemList()->Remove( nItem ) )
 	{
-#if defined( DEBUG_REGIONS )
+#if DEBUG_REGIONS
 		Console.warning( format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		return false;
@@ -481,15 +507,20 @@ bool CMapHandler::AddChar( CChar *toAdd )
 {
 	if( !ValidateObject( toAdd ) )
 		return false;
+
 	CMapRegion *cell = GetMapRegion( toAdd );
-	if( !cell->GetCharList()->Add( toAdd ) )
+	if( cell->GetRegionSerialList()->Add( toAdd->GetSerial() ))
 	{
-#if defined( DEBUG_REGIONS )
+		cell->GetCharList()->Add( toAdd, false );
+		return true;
+	}
+	else
+	{
+#if DEBUG_REGIONS
 		Console.warning( format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
 #endif
-		return false;
 	}
-	return true;
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -505,7 +536,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	CMapRegion *cell = GetMapRegion( toRemove );
 	if( !cell->GetCharList()->Remove( toRemove ) )
 	{
-#if defined( DEBUG_REGIONS )
+#if DEBUG_REGIONS
 		Console.warning( format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
 #endif
 		return false;
