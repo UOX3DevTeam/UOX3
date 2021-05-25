@@ -188,3 +188,25 @@ pre {
 	border-top: 10px solid #222;
 	border-bottom: 10px solid #222;
 }
+
+[contenteditable][placeholder]:empty:before {
+  content: attr(placeholder);
+  position: absolute;
+  color: gray;
+  opacity:0.5;
+  background-color: transparent;
+}
+
+[contenteditable="true"] {
+    white-space: nowrap;
+    width:200px;
+    overflow: hidden;
+}
+[contenteditable="true"] br {
+    display:none;
+
+}
+[contenteditable="true"] * {
+    display:inline;
+    white-space:nowrap;
+}
