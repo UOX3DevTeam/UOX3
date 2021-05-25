@@ -51,7 +51,12 @@ SI32 cCommands::Argument( UI08 argNum )
 	std::string tempString = CommandString( argNum + 1, argNum + 1 );
 	if( !tempString.empty() )
 	{
-		retVal = std::stoi(tempString, nullptr, 0);
+		try {
+			retVal = std::stoi(tempString, nullptr, 0);
+		} 
+		catch (const std::invalid_argument & e) {
+			Console.error( format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
+		}
 	}
 
 	return retVal;
