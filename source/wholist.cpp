@@ -10,8 +10,6 @@
 cWhoList *WhoList;
 cWhoList *OffList;
 
-void	TweakTarget( CSocket *s );
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ResetUpdateFlag( void )
 //|	Date		-	12th February, 2000
@@ -263,6 +261,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
+			// Trigger scripted command
 			Commands->Command( toSendTo, targetChar, "cstats" );
 			break;
 		case 207:	// remote tweak
@@ -272,7 +271,8 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
-			TweakTarget( toSendTo );
+			// Trigger scripted command
+			Commands->Command( toSendTo, targetChar, "tweak" );
 			break;
 		default:
 			Console.error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
