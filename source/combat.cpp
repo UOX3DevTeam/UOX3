@@ -14,6 +14,7 @@
 #include "movement.h"
 #include "cScript.h"
 #include "CJSMapping.h"
+#include <algorithm>
 
 #undef DBGFILE
 #define DBGFILE "combat.cpp"
@@ -1647,7 +1648,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			baseDamage = AdjustRaceDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc, getFightSkill );
 
 			// Strength Damage Bonus, +20% Damage
-			multiplier = static_cast<R32>( ( ( UOX_MIN( mChar->GetStrength(), static_cast<SI16>(200) ) * 20 ) / 100 ) / 100 ) + 1;
+			multiplier = static_cast<R32>( ( ( std::min( mChar->GetStrength(), static_cast<SI16>(200) ) * 20 ) / 100 ) / 100 ) + 1;
 			damage = (R32)(baseDamage * multiplier);
 
 			// Tactics Damage Bonus, % = ( Tactics + 50 )
@@ -1857,12 +1858,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	//Attacker Skill values
 	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
-	const UI16 attackSkill		= UOX_MIN( 1000, (SI32)mChar.GetSkill( getFightSkill ) );
+	const UI16 attackSkill		= std::min( 1000, (SI32)mChar.GetSkill( getFightSkill ) );
 
 	//Defender Skill values
 	CItem *defWeapon			= getWeapon( ourTarg );
 	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
-	const UI16 defendSkill		= UOX_MIN( 1000, (SI32)ourTarg->GetSkill( getTargetSkill ) );
+	const UI16 defendSkill		= std::min( 1000, (SI32)ourTarg->GetSkill( getTargetSkill ) );
 
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
@@ -1951,7 +1952,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		bool skillPassed = false;
 
 		// Do a skill check so the fight skill is increased
-		Skills->CheckSkill( &mChar, getFightSkill, 0, UOX_MIN( 1000, (SI32)((getDefSkill * 1.25) + 100) ) );
+		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min( 1000, (SI32)((getDefSkill * 1.25) + 100) ) );
 		const R32 hitChance = ( ( ( (R32)attackSkill + 500.0 ) / ( ( (R32)defendSkill + 500.0 ) * 2.0) ) * 100.0 );
 		skillPassed = ( RandomNum(0, 100) <= hitChance );
 
@@ -2273,9 +2274,9 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 
 	R32 getDelay = 0;
 	if( mChar->IsNpc() ) // Allow NPCs more speed based off of available stamina than players
-		getDelay	= (R32)( (R32)UOX_MIN( statOffset, static_cast<SI16>(300) ) + 100 );
+		getDelay	= (R32)( (R32)std::min( statOffset, static_cast<SI16>(300) ) + 100 );
 	else
-		getDelay	= (R32)( (R32)UOX_MIN( statOffset, static_cast<SI16>(100) ) + 100 );
+		getDelay	= (R32)( (R32)std::min( statOffset, static_cast<SI16>(100) ) + 100 );
 
 	SI32 getOffset	= 0;
 	SI32 baseValue	= 15000;

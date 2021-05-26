@@ -10,6 +10,7 @@
 #include "cServerDefinitions.h"
 
 #include "ObjectFactory.h"
+#include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 calcValue( CItem *i, UI32 value )
@@ -487,7 +488,7 @@ void restockNPC( CChar& i, bool stockAll )
 				}
 				else if( c->GetRestock() )
 				{
-					UI16 stockAmt = UOX_MIN( c->GetRestock(), static_cast<UI16>(( c->GetRestock() / 2 ) + 1) );
+					UI16 stockAmt = std::min( c->GetRestock(), static_cast<UI16>(( c->GetRestock() / 2 ) + 1) );
 					c->IncAmount( stockAmt );
 					c->SetRestock( c->GetRestock() - stockAmt );
 				}

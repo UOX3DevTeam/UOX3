@@ -12,7 +12,7 @@ typedef void *  va_list;
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == NULL ) \
 { \
-Console.print( format("Socket failure at %s", __FILE__LINE__) );	\
+Console.print( strutil::format("Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else

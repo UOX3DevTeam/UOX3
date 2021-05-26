@@ -253,7 +253,7 @@ void JailSystem::ReadSetup( void )
 			if( tag.empty() )
 				continue;
 			data = Regions->GrabData();
-			data = stripTrim( data );
+			data = strutil::stripTrim( data );
 			switch( (tag.data()[0]) )
 			{
 				case 'X':	toAdd.X( static_cast<SI16>(std::stoi(data, nullptr, 0)) );	break;
@@ -302,9 +302,9 @@ void JailSystem::ReadData( void )
 					{
 						continue;
 					}
-					UTag = str_toupper( tag );
+					UTag = strutil::toupper( tag );
 					data = prisonerData->GrabData();
-					data = stripTrim( data );
+					data = strutil::stripTrim( data );
 					switch( (UTag.data()[0]) )
 					{
 						case 'C':
@@ -370,7 +370,7 @@ void JailSystem::WriteData( void )
 	std::ofstream jailsDestination( jailsFile.c_str() );
 	if( !jailsDestination )
 	{
-		Console.error( format("Failed to open %s for writing", jailsFile.c_str() ));
+		Console.error( strutil::format("Failed to open %s for writing", jailsFile.c_str() ));
 		return;
 	}
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )

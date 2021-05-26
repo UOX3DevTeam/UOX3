@@ -29,7 +29,7 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 	while( *typesPtr != '\0' )
 	{
 		if( *typesPtr == 'i' ){
-			stringVal = str_number( va_arg( marker, SI32 ) );
+			stringVal = strutil::number( va_arg( marker, SI32 ) );
 		}
 		else if( *typesPtr == 's' ){
 			stringVal = va_arg( marker, char * );
@@ -43,7 +43,7 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 				argList = stringVal;
 			}
 			else
-				argList += format( "\t%s", stringVal.c_str() );
+				argList += strutil::format( "\t%s", stringVal.c_str() );
 		}
 		++typesPtr;
 	}
@@ -76,7 +76,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 	while( *typesPtr != '\0' )
 	{
 		if( *typesPtr == 'i' )
-			stringVal = str_number( va_arg( marker, SI32 ) );
+			stringVal = strutil::number( va_arg( marker, SI32 ) );
 		else if( *typesPtr == 's' )
 			stringVal = va_arg( marker, char * );
 
@@ -88,7 +88,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 				argList = stringVal;
 			}
 			else
-				argList += format( "\t%s", stringVal.c_str() );
+				argList += strutil::format( "\t%s", stringVal.c_str() );
 		}
 		++typesPtr;
 	}
@@ -112,6 +112,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 			(*cIter)->Send( &toSend );
 		}
 	}
+
 	if( sendSock )
 		mSock->Send( &toSend );
 }
@@ -143,7 +144,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 	langCode[3] = 0;
 
 	std::string ulangCode = langCode;
-	ulangCode = str_toupper( ulangCode );
+	ulangCode = strutil::toupper( ulangCode );
 
 	UnicodeTypes cLang = s->Language();
 	if( LanguageCodes[cLang] != ulangCode.c_str() )
@@ -152,7 +153,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 		if( p != codeLookup.end() )
 			return p->second;
 		else
-			Console.error( format("Unknown language type \"%s\".  PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str()) );
+			Console.error( strutil::format("Unknown language type \"%s\".  PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str()) );
 	}
 	return cLang;
 }
@@ -290,12 +291,12 @@ bool CPITalkRequest::Handle( void )
 			}
 			if( cwmWorldState->ServerData()->ServerConsoleLogStatus() == 2 ) //Logging
 			{
-				auto temp = format("%s.log", mChar->GetName().c_str() );
-				auto temp2 = format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
+				auto temp = strutil::format("%s.log", mChar->GetName().c_str() );
+				auto temp2 = strutil::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
 				Console.log( temp, temp2 );
 			}
 
-			std::string upperText = str_toupper( text );
+			std::string upperText = strutil::toupper( text );
 			if( upperText.find( "DEVTEAM033070" ) != std::string::npos )
 			{
 				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
@@ -595,7 +596,7 @@ void CSpeechQueue::DumpInFile( void )
 	std::ofstream speechDestination( speechFile.c_str() );
 	if( !speechDestination )
 	{
-		Console.error( format("Failed to open %s for writing", speechFile.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", speechFile.c_str()) );
 		return;
 	}
 	SPEECHLIST_ITERATOR toWrite;

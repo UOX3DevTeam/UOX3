@@ -87,7 +87,7 @@ ObjectType FindObjTypeFromString( std::string strToFind )
 	{
 		InitStringToObjType();
 	}
-	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( str_toupper( strToFind ));
+	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( strutil::toupper( strToFind ));
 	if( toFind != stringToObjType.end() )
 	{
 		return toFind->second;
@@ -180,7 +180,7 @@ JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	std::string trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( trgMessage.empty() || trgMessage.length() == 0 )
 	{
-		DoSEErrorMessage( format("BroadcastMessage: Invalid string (%s)", trgMessage.c_str()) );
+		DoSEErrorMessage( strutil::format("BroadcastMessage: Invalid string (%s)", trgMessage.c_str()) );
 		return JS_FALSE;
 	}
 	sysBroadcast( trgMessage );
@@ -203,7 +203,7 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( argc == 1 )
 	{
 		std::string str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-		targSerial = str_value<SERIAL>(str);
+		targSerial = strutil::value<SERIAL>(str);
 	}
 	else
 		targSerial = calcserial( (UI08)JSVAL_TO_INT( argv[0] ), (UI08)JSVAL_TO_INT( argv[1] ), (UI08)JSVAL_TO_INT( argv[2] ), (UI08)JSVAL_TO_INT( argv[3] ) );
@@ -406,7 +406,7 @@ JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	createEntry *toFind = Skills->FindItem( itemMenu );
 	if( toFind == NULL )
 	{
-		DoSEErrorMessage( format("MakeItem: Invalid make item (%i)", itemMenu) );
+		DoSEErrorMessage( strutil::format("MakeItem: Invalid make item (%i)", itemMenu) );
 		return JS_FALSE;
 	}
 	Skills->MakeItem( *toFind, player, sock, itemMenu );
@@ -586,7 +586,7 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		Console.MoveTo( 15 );
 		Console.print( "Registering skill number " );
 		Console.TurnYellow();
-		Console.print( format("%i", skillNumber ));
+		Console.print( strutil::format("%i", skillNumber ));
 		if( !isEnabled )
 		{
 			Console.TurnRed();
@@ -633,7 +633,7 @@ JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( scriptID != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.print( format("Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd) );
+		Console.print( strutil::format("Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd) );
 #endif
 		Network->RegisterPacket( packet, subCmd, scriptID );
 	}
@@ -1769,7 +1769,7 @@ JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
-	auto str = str_number( num );
+	auto str = strutil::number( num );
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
 }
@@ -1789,7 +1789,7 @@ JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
-	auto str = str_number( num, 16 );
+	auto str = strutil::number( num, 16 );
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
@@ -2292,7 +2292,7 @@ JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage(format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc) );
+		DoSEErrorMessage(strutil::format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2314,7 +2314,7 @@ JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( format("WorldDarkLevel: Unknown Count of Arguments: %d", argc) );
+		DoSEErrorMessage( strutil::format("WorldDarkLevel: Unknown Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2336,7 +2336,7 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( format("WorldDungeonLevel: Unknown Count of Arguments: %d", argc) );
+		DoSEErrorMessage( strutil::format("WorldDungeonLevel: Unknown Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2395,7 +2395,7 @@ JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	UI16 scriptID			= static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
 	if( scriptID == JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ) )
 	{
-		DoSEErrorMessage( format("ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptID) );
+		DoSEErrorMessage( strutil::format("ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptID) );
 		return JS_FALSE;
 	}
 
@@ -2414,12 +2414,12 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( format("ResourceArea: Invalid Count of Arguments: %d", argc) );
+		DoSEErrorMessage( strutil::format("ResourceArea: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = str_toupper( stripTrim( resType ));
+	resType = strutil::toupper( strutil::stripTrim( resType ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
@@ -2455,11 +2455,11 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( format("ResourceAmount: Invalid Count of Arguments: %d", argc) );
+		DoSEErrorMessage( strutil::format("ResourceAmount: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = str_toupper( stripTrim( resType ));
+	resType = strutil::toupper( strutil::stripTrim( resType ));
 
 	if( argc == 2 )
 	{
@@ -2496,12 +2496,12 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( format("ResourceTime: Invalid Count of Arguments: %d", argc) );
+		DoSEErrorMessage( strutil::format("ResourceTime: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = str_toupper( stripTrim( resType ));
+	resType = strutil::toupper( strutil::stripTrim( resType ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
@@ -2784,7 +2784,7 @@ JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( format("Moon: Invalid Count of Arguments: %d", argc) );
+		DoSEErrorMessage( strutil::format("Moon: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
 	}
 

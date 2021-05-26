@@ -57,7 +57,7 @@ void MethodError( const char *txt, ... )
 {
 	va_list argptr;
 	va_start( argptr, txt );
-	Console.error( format(txt,argptr) );
+	Console.error( strutil::format(txt,argptr) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -206,7 +206,7 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
 	//UI32	toWrite		= static_cast<UI32>(JSVAL_TO_INT( argv[1] ));
 	char *	toWriteChar	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	UI32 toWrite = str_value<UI32>(toWriteChar);
+	UI32 toWrite = strutil::value<UI32>(toWriteChar);
 
 	myPacket->GetPacketStream().WriteLong( position, toWrite );
 
@@ -492,9 +492,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-
-
-	gList->one->push_back( format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initState, relay ) );
+	gList->one->push_back( strutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initState, relay ) );
 
 	return JS_TRUE;
 }
@@ -675,9 +673,7 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-
-
-	gList->one->push_back( format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ) );
+	gList->one->push_back( strutil::format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ) );
 
 	return JS_TRUE;
 }
@@ -709,9 +705,8 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		MethodError( "AddButton: Couldn't find gump associated with object");
 		return JS_FALSE;
 	}
-
-
-	gList->one->push_back( format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ) );
+	
+	gList->one->push_back( strutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ) );
 
 	return JS_TRUE;
 }
@@ -750,8 +745,7 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format("buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIDnorm, tileIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY ) );
+	gList->one->push_back( strutil::format("buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIDnorm, tileIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY ) );
 
 	return JS_TRUE;
 }
@@ -782,8 +776,7 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ) );
+	gList->one->push_back( strutil::format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ) );
 
 	return JS_TRUE;
 }
@@ -815,9 +808,7 @@ JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-
-
-	gList->one->push_back( format( "checkertrans %i %i %i %i", x, y, width, height ) );
+	gList->one->push_back( strutil::format( "checkertrans %i %i %i %i", x, y, width, height ) );
 
 	return JS_TRUE;
 }
@@ -861,9 +852,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	UI32 TextID = gList->TextID;
 	++gList->TextID;
 
-
-
-	gList->one->push_back( format("croppedtext %i %i %i %i %i %u", TextX, TextY, TextWidth, TextHeight, TextHue, TextID ) );
+	gList->one->push_back( strutil::format("croppedtext %i %i %i %i %i %u", TextX, TextY, TextWidth, TextHeight, TextHue, TextID ) );
 	gList->two->push_back( TextString );
 
 	return JS_TRUE;
@@ -891,8 +880,7 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "group %d", JSVAL_TO_INT( argv[0] ) ) );
+	gList->one->push_back( strutil::format( "group %d", JSVAL_TO_INT( argv[0] ) ) );
 
 	return JS_TRUE;
 }
@@ -926,9 +914,9 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	}
 
 	if( rgbColor == 0 )
-		gList->one->push_back( format("gumppic %i %i %i", tL, tR, gImage ) );
+		gList->one->push_back( strutil::format("gumppic %i %i %i", tL, tR, gImage ) );
 	else
-		gList->one->push_back( format("gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ) );
+		gList->one->push_back( strutil::format("gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ) );
 
 	return JS_TRUE;
 }
@@ -959,8 +947,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format("gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ) );
+	gList->one->push_back( strutil::format("gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ) );
 
 	return JS_TRUE;
 }
@@ -1066,8 +1053,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 
-
-	gList->one->push_back( format( "htmlgump %i %i %i %i %u %i %i", x, y, width, height, TextID, iBrd, iScrl ) );
+	gList->one->push_back( strutil::format( "htmlgump %i %i %i %i %u %i %i", x, y, width, height, TextID, iBrd, iScrl ) );
 	gList->two->push_back( TextString );
 
 	return JS_TRUE;
@@ -1094,8 +1080,7 @@ JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "page %d", JSVAL_TO_INT( argv[0] ) ) );
+	gList->one->push_back( strutil::format( "page %d", JSVAL_TO_INT( argv[0] ) ) );
 
 	return JS_TRUE;
 }
@@ -1125,8 +1110,7 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "tilepic %i %i %i", tL, tR, gImage ) );
+	gList->one->push_back( strutil::format( "tilepic %i %i %i", tL, tR, gImage ) );
 
 	return JS_TRUE;
 }
@@ -1157,8 +1141,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ) );
+	gList->one->push_back( strutil::format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ) );
 
 	return JS_TRUE;
 }
@@ -1193,8 +1176,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format("picinpic %i %i %i %i %i %i %i", x, y, gImage, width, height, spriteX, spriteY ) );
+	gList->one->push_back( strutil::format("picinpic %i %i %i %i %i %i %i", x, y, gImage, width, height, spriteX, spriteY ) );
 
 	return JS_TRUE;
 }
@@ -1235,8 +1217,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "itemproperty %i", trgSer ) );
+	gList->one->push_back( strutil::format( "itemproperty %i", trgSer ) );
 
 	return JS_TRUE;
 }
@@ -1268,8 +1249,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format("radio %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initialState, relay ) );
+	gList->one->push_back( strutil::format("radio %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initialState, relay ) );
 
 	return JS_TRUE;
 }
@@ -1312,9 +1292,7 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	TextID = gList->TextID;
 	++gList->TextID;
 
-
-
-	gList->one->push_back( format( "text %i %i %i %u", TextX, TextY, TextHue, TextID ) );
+	gList->one->push_back( strutil::format( "text %i %i %i %u", TextX, TextY, TextHue, TextID ) );
 	gList->two->push_back( TextString );
 
 	return JS_TRUE;
@@ -1356,7 +1334,7 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( format( "textentry %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex ) );
+	gList->one->push_back( strutil::format( "textentry %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex ) );
 	gList->two->push_back( test );
 
 	return JS_TRUE;
@@ -1399,8 +1377,7 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsva
 		return JS_FALSE;
 	}
 
-
-	gList->one->push_back( format( "textentrylimited %i %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex, textEntrySize ) );
+	gList->one->push_back( strutil::format( "textentrylimited %i %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex, textEntrySize ) );
 	gList->two->push_back( test );
 
 	return JS_TRUE;
@@ -1434,9 +1411,7 @@ JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-
-
-	gList->one->push_back( format("gumppictiled %i %i %i %i %i", x, y, width, height, gumpID ) );
+	gList->one->push_back( strutil::format("gumppictiled %i %i %i %i %i", x, y, width, height, gumpID ) );
 
 	return JS_TRUE;
 }
@@ -1474,8 +1449,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 
-
-	gList->one->push_back( format( "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl ) );
+	gList->one->push_back( strutil::format( "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl ) );
 
 	return JS_TRUE;
 }
@@ -1514,8 +1488,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 
-
-	gList->one->push_back( format( "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour ) );
+	gList->one->push_back( strutil::format( "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour ) );
 
 	return JS_TRUE;
 }
@@ -1557,8 +1530,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 
-
-	gList->one->push_back( format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ) );
+	gList->one->push_back( strutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ) );
 
 	return JS_TRUE;
 }
@@ -3177,7 +3149,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	std::string toSay;
 	if( argc == 2 )
 	{
-		toSay = format(512, "%s", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) );
+		toSay = strutil::format(512, "%s", JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) );
 	}
 
 	mySock->target( 0, tNum, toSay );
@@ -5385,7 +5357,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( argc == 3 )
 		folderName = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
 	
-	if( str_tolower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
+	if( strutil::tolower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
@@ -5419,7 +5391,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	filePath.append( fileName );
-	mFile->mWrap = fopen( filePath.c_str(), str_tolower(mode).substr(0,1).c_str() );
+	mFile->mWrap = fopen( filePath.c_str(), strutil::tolower(mode).substr(0,1).c_str() );
 	return JS_TRUE;
 }
 
@@ -5833,7 +5805,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.print( format("WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps) );
+	Console.print( strutil::format("WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps) );
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -5921,7 +5893,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.print(format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps) );
+	Console.print(strutil::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps) );
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -6312,7 +6284,7 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 
 	if( mChar->GetRegion()->GetName()[0] != 0 ){
-		mItem->SetName(format(Dictionary->GetEntry( 684 ), mChar->GetRegion()->GetName().c_str() ));
+		mItem->SetName(strutil::format(Dictionary->GetEntry( 684 ), mChar->GetRegion()->GetName().c_str() ));
 	}
 	else {
 		mItem->SetName( Dictionary->GetEntry( 685 ) );
@@ -6905,7 +6877,7 @@ JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		MethodError( "Reload: Section to reload must be between 0 and 8" );
 		return JS_FALSE;
 	}
-	messageLoop.NewMessage( MSG_RELOAD, str_number( mArg ).c_str() );
+	messageLoop.NewMessage( MSG_RELOAD, strutil::number( mArg ).c_str() );
 	return JS_TRUE;
 }
 
@@ -8135,7 +8107,7 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		cScript *toExecute	= JSMapping->GetScript( scriptID );
 		if( toExecute == NULL )
 		{
-			MethodError( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptID).c_str() );
+			MethodError( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptID).c_str() );
 			return JS_FALSE;
 		}
 		else
@@ -8219,7 +8191,7 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 		cScript *toExecute	= JSMapping->GetScript( scriptID );
 		if( toExecute == NULL )
 		{
-			MethodError( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptID).c_str() );
+			MethodError( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptID).c_str() );
 			return JS_FALSE;
 		}
 		else

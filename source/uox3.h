@@ -32,17 +32,6 @@
 // Class Declarations
 //o-----------------------------------------------------------------------------------------------o
 
-#if !defined(_MSC_VER)
-// VC6 doesn't define std::min and std::max correctly, we're told to use _MIN and _MAX instead
-#define UOX_MIN (std::min)
-#define UOX_MAX (std::max)
-#elif defined( _MSC_VER ) && _MSC_VER >= 1300
-#define UOX_MIN (std::min)		// without the brackets, VC7.1 kicks up a stink
-#define UOX_MAX (std::max)
-#else
-#define UOX_MIN (std::_MIN)
-#define UOX_MAX (std::_MAX)
-#endif
 
 //o-----------------------------------------------------------------------------------------------o
 // The UOX project includes

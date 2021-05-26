@@ -21,6 +21,7 @@
 #include "scriptc.h"
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
+#include <algorithm>
 
 cMagic *Magic = NULL;
 
@@ -654,7 +655,7 @@ bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	SI32 j				= caster->GetSkill( MAGERY ) / 30 + HalfRandomNum( baseHealing );
 
 	target->Heal( j, caster );
-	Magic->SubtractHealth( caster, UOX_MIN( target->GetStrength(), (SI16)(srcHealth + j) ), 29 );
+	Magic->SubtractHealth( caster, std::min( target->GetStrength(), (SI16)(srcHealth + j) ), 29 );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -1060,7 +1061,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 	std::string tempitemname;
 
 	if( caster->GetRegion()->GetName()[0] != 0 ){
-		tempitemname = format(Dictionary->GetEntry( 684 ), caster->GetRegion()->GetName().c_str() );
+		tempitemname = strutil::format(Dictionary->GetEntry( 684 ), caster->GetRegion()->GetName().c_str() );
 	}
 	else {
 		tempitemname=Dictionary->GetEntry( 685 );
@@ -1455,7 +1456,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 
 	SI32 distx	= abs(target->GetX() - caster->GetX() );
 	SI32 disty	= abs(target->GetY() - caster->GetY() );
-	SI32 dmgmod	= UOX_MIN( distx, disty );
+	SI32 dmgmod	= std::min( distx, disty );
 	dmgmod		= -(dmgmod - 7);
 
 	SI16 spellDamage = 0;
@@ -2616,7 +2617,7 @@ void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 		z = caster->GetTarg()->GetZ();
 	}
 
-	length = UOX_MAX( caster->GetSkill( MAGERY ) / 130, 1 );
+	length = std::max( caster->GetSkill( MAGERY ) / 130, 1 );
 
 	x1 = x - length;
 	x2 = x + length;
@@ -3216,7 +3217,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								break;
 							}
 							default:
-								Console.error( format(" Unknown Travel spell %i, magic.cpp", curSpell) );
+								Console.error( strutil::format(" Unknown Travel spell %i, magic.cpp", curSpell) );
 								break;
 						}
 					}
@@ -3360,7 +3361,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							break;
 						}
 						default:
-							Console.error( format(" Unknown CharacterTarget spell %i, magic.cpp", curSpell) );
+							Console.error( strutil::format(" Unknown CharacterTarget spell %i, magic.cpp", curSpell) );
 							break;
 					}
 				}
@@ -3479,7 +3480,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z, curSpell );
 							break;
 						default:
-							Console.error(format( " Unknown LocationTarget spell %i", curSpell) );
+							Console.error(strutil::format( " Unknown LocationTarget spell %i", curSpell) );
 							break;
 					}
 				}
@@ -3509,7 +3510,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
 							break;
 						default:
-							Console.error( format(" Unknown ItemTarget spell %i, magic.cpp", curSpell) );
+							Console.error( strutil::format(" Unknown ItemTarget spell %i, magic.cpp", curSpell) );
 							break;
 					}
 				}
@@ -3546,7 +3547,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				(*((MAGIC_NOFUNC)magic_table[curSpell-1].mag_extra))( s, caster, curSpell );
 				break;
 			default:
-				Console.error( format(" Unknown NonTarget spell %i, magic.cpp", curSpell) );
+				Console.error( strutil::format(" Unknown NonTarget spell %i, magic.cpp", curSpell) );
 				break;
 		}
 		return;
@@ -3584,10 +3585,10 @@ void cMagic::LoadScript( void )
 				continue;
 
 			spEntry = spellScp->EntryName();
-			auto ssecs = sections( spEntry, " " );
+			auto ssecs = strutil::sections( spEntry, " " );
 			if( ssecs[0] == "SPELL" )
 			{
-				i = static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0) );
+				i = static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0) );
 				if( i <= SPELL_MAX )
 				{
 					++spellCount;
@@ -3598,9 +3599,9 @@ void cMagic::LoadScript( void )
 
 					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
-						UTag = str_toupper( tag );
+						UTag = strutil::toupper( tag );
 						data = SpellLoad->GrabData();
-						data = stripTrim( data );
+						data = strutil::stripTrim( data );
 						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
 						switch( (UTag.data()[0]) )
 						{
@@ -3645,11 +3646,11 @@ void cMagic::LoadScript( void )
 							case 'F':
 								if( UTag == "FLAGS" )
 								{
-									auto ssecs = sections( data, " " );
+									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Flags(((static_cast<UI08>(std::stoul(stripTrim( ssecs[0] ), nullptr, 16)))<<8) ||
-												    static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16)));
+										spells[i].Flags(((static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 16)))<<8) ||
+												    static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)));
 												    
 									}
 									else
@@ -3699,14 +3700,14 @@ void cMagic::LoadScript( void )
 								}
 								else if( UTag == "MOVEFX" )
 								{
-									auto ssecs = sections( data, " " );
+									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{										
 										CMagicMove *mv = spells[i].MoveEffectPtr();
-										mv->Effect( static_cast<UI08>(std::stoul(stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16)) );
-										mv->Speed( static_cast<UI08>(std::stoul(stripTrim(ssecs[2]), nullptr, 16)) );
-										mv->Loop( static_cast<UI08>(std::stoul(stripTrim(ssecs[3]), nullptr, 16)) );
-										mv->Explode( static_cast<UI08>(std::stoul(stripTrim(ssecs[4]), nullptr, 16)));
+										mv->Effect( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)) );
+										mv->Speed( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[2]), nullptr, 16)) );
+										mv->Loop( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[3]), nullptr, 16)) );
+										mv->Explode( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[4]), nullptr, 16)));
 									}
 								}
 								break;
@@ -3727,11 +3728,11 @@ void cMagic::LoadScript( void )
 								}
 								else if( UTag == "SOUNDFX" )
 								{
-									auto ssecs = sections( data, " " );
+									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Effect( ( (static_cast<UI08>(std::stoul(stripTrim( ssecs[0] ), nullptr, 16))<<8) ||
-												    static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16))));
+										spells[i].Effect( ( (static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 16))<<8) ||
+												    static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16))));
 									}
 									else
 									{
@@ -3740,14 +3741,14 @@ void cMagic::LoadScript( void )
 								}
 								else if( UTag == "STATFX" )
 								{
-									auto ssecs = sections( data, " " );
+									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
 										
-										stat->Effect( static_cast<UI08>(std::stoul(stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(stripTrim( ssecs[1] ), nullptr, 16)) );
-										stat->Speed( static_cast<UI08>(std::stoul(stripTrim(ssecs[2]), nullptr, 16)) );
-										stat->Loop( static_cast<UI08>(std::stoul(stripTrim(ssecs[3]), nullptr, 16)) );
+										stat->Effect( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)) );
+										stat->Speed( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[2]), nullptr, 16)) );
+										stat->Loop( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[3]), nullptr, 16)) );
 									}
 								}
 								else if( UTag == "SCLO" )
@@ -3851,7 +3852,7 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 {
-	std::string sect			= "POLYMORPHMENU " + str_number( gmindex );
+	std::string sect			= "POLYMORPHMENU " + strutil::number( gmindex );
 	ScriptSection *polyStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( polyStuff == NULL )
 		return;
@@ -3891,7 +3892,7 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.error(format( "Unable to open spell log file %s!", logName.c_str() ));
+		Console.error(strutil::format( "Unable to open spell log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -3914,7 +3915,7 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::
 void cMagic::Register( cScript *toRegister, SI32 spellNumber, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.print( format("Registering spell number %i\n", spellNumber ));
+	Console.print( strutil::format("Registering spell number %i\n", spellNumber ));
 #endif
 	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )
 		return;

@@ -46,7 +46,7 @@ bool CPINewBookHeader::Handle( void )
 		if( !ValidateObject( mBook ) )
 			return true;
 
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( bookSer, 16 ) + std::string(".bok");
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( bookSer, 16 ) + std::string(".bok");
 
 		if( !FileExists( fileName ) )
 			Books->CreateBook( fileName, tSock->CurrcharObj(), mBook );
@@ -76,14 +76,14 @@ bool CPINewBookHeader::Handle( void )
 				file.write( authBuff, 32 );
 
 				if( file.fail() )
-					Console.error( format("Couldn't write to book file %s", fileName.c_str()) );
+					Console.error( strutil::format("Couldn't write to book file %s", fileName.c_str()) );
 			}
 			else
-				Console.error( format("Failed to seek to book file %s", fileName.c_str() ));
+				Console.error( strutil::format("Failed to seek to book file %s", fileName.c_str() ));
 			file.close();
 		}
 		else
-			Console.error( format("Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
+			Console.error( strutil::format("Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
 	}
 	return true;
 }
@@ -98,7 +98,7 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 {
 	if( mSock != NULL )
 	{
-		std::string temp	= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
+		std::string temp	= std::string("BOOK ") + strutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
 		if( book != NULL )
 		{
@@ -112,7 +112,7 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 			bool part1 = false, part2 = false, part3 = false;
 			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
-				UTag = str_toupper( tag );
+				UTag = strutil::toupper( tag );
 				data = book->GrabData();
 				if( UTag == "PAGES" )
 				{
@@ -158,7 +158,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 		UI16 numPages = 0;
 
 		std::string bookTitle, bookAuthor;
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( mBook->GetSerial(), 16 ) + std::string(".bok");
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( mBook->GetSerial(), 16 ) + std::string(".bok");
 
 		std::ifstream file( fileName.c_str(), std::ios::in | std::ios::binary );
 
@@ -201,7 +201,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 				cpbpToSend.Finalize();
 			}
 			else
-				Console.error( format("Failed to seek to book file %s", fileName.c_str()) );
+				Console.error( strutil::format("Failed to seek to book file %s", fileName.c_str()) );
 
 			file.close();
 		}
@@ -255,7 +255,7 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 {
 	if( mSock != NULL )
 	{
-		std::string temp	= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
+		std::string temp	= std::string("BOOK ") + strutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
 		if( book != NULL )
 		{
@@ -313,7 +313,7 @@ bool CPIBookPage::Handle( void )
 			return true;
 		}
 
-		const std::string fileName	= cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( mBook->GetSerial(), 16 ) + std::string(".bok");
+		const std::string fileName	= cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( mBook->GetSerial(), 16 ) + std::string(".bok");
 		UI16 totalLines		= tSock->GetWord( 11 );
 
 		// Cap amount of lines sent in one go at 8 per page
@@ -355,11 +355,11 @@ bool CPIBookPage::Handle( void )
 				}
 			}
 			else
-				Console.error( format("Failed to seek to book file %s", fileName.c_str()) );
+				Console.error( strutil::format("Failed to seek to book file %s", fileName.c_str()) );
 			file.close();
 		}
 		else
-			Console.error( format("Couldn't write to book file %s", fileName.c_str()) );
+			Console.error( strutil::format("Couldn't write to book file %s", fileName.c_str()) );
 	}
 	return true;
 }
@@ -372,7 +372,7 @@ bool CPIBookPage::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::DeleteBook( CItem *id )
 {
-	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( id->GetSerial(), 16 ) + std::string(".bok");
+	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( id->GetSerial(), 16 ) + std::string(".bok");
 	remove( fileName.c_str() );
 }
 

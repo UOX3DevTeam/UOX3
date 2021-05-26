@@ -18,6 +18,8 @@
 #include "movement.h"
 #include "StringUtility.hpp"
 #include "weight.h"
+#include <algorithm>
+
 
 bool checkItemRange( CChar *mChar, CItem *i );
 
@@ -721,7 +723,7 @@ void cSkills::SmeltOre( CSocket *s )
 
 					CItem *ingot = Items->CreateScriptItem( s, chr, "0x1BF2", ingotNum, OT_ITEM, true, oreType->colour );
 					if( ingot != NULL ){
-						ingot->SetName( format("%s Ingot", oreType->name.c_str() ) );
+						ingot->SetName( strutil::format("%s Ingot", oreType->name.c_str() ) );
 					}
 
 					if( smeltItemID == 0x19B7 && itemToSmelt->GetAmount() % 2 != 0 )
@@ -820,7 +822,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		if( s->GetCommandLevel() > 0 )
 			skillCheck = true;
 		else
-			skillCheck = ( chanceskillsuccess >= RandomNum( 0, UOX_MIN( 1000, (highSkill+100) ) ) );
+			skillCheck = ( chanceskillsuccess >= RandomNum( 0, std::min( 1000, (highSkill+100) ) ) );
 
 		CSocket *mSock = s->GetSocket();
 		if( mSock != NULL )
@@ -1016,21 +1018,21 @@ void cSkills::ItemIDTarget( CSocket *s )
 			if( ValidateObject( mCreater ) )
 			{
 				if( i->GetMadeWith() > 0 ){
-					temp = format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
+					temp = strutil::format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
 				}
 				else if( i->GetMadeWith() < 0 ){
-					temp= format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
+					temp= strutil::format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
 				}
 				else{
-					temp = format(1024, temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
+					temp = strutil::format(1024, temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
 				}
 			}
 			else {
-				format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
+				strutil::format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
 			}
 		}
 		else{
-			temp = format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
+			temp = strutil::format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
 		}
 		s->sysmessage( temp );
 
@@ -1510,7 +1512,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			return;
 		}
 
-		const SI32 getDefOffset	= UOX_MIN( stealCheck + ( (SI32)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
+		const SI32 getDefOffset	= std::min( stealCheck + ( (SI32)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
 		const bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
 		if( canSteal )
 		{
@@ -1547,16 +1549,16 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 
 			if( item->GetName()[0] != '#' )
 			{
-				temp = format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() );
-				temp2 = format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npc->GetName().c_str() );
+				temp = strutil::format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() );
+				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npc->GetName().c_str() );
 			}
 			else
 			{
 				std::string tileName;
 				tileName.reserve( MAX_NAME );
 				getTileName( (*item), tileName );
-				temp = format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() );
-				temp2 = format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
+				temp = strutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() );
+				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
 			}
 
 			CSocket *npcSock = npc->GetSocket();
@@ -1605,7 +1607,7 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 			itemWeight = i->GetWeight();
 			calcDiff = (SI32)((c->GetSkill( STEALING ) * 2) + 100);  // GM thieves can steal up to 21 stones, newbie only 1 stone
 			if( calcDiff > itemWeight )
-				stealDiff = (SI16)UOX_MAX( UOX_MIN( ((SI32)((itemWeight + 9) / 20) * 10), 990 ), 0 );
+				stealDiff = (SI16)std::max( std::min( ((SI32)((itemWeight + 9) / 20) * 10), 990 ), 0 );
 			break;
 	}
 	return stealDiff;
@@ -1640,7 +1642,7 @@ void cSkills::Tracking( CSocket *s, SI32 selection )
 void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
-	const std::string sect = std::string("TRACKINGMENU ") + str_number( m );
+	const std::string sect = std::string("TRACKINGMENU ") + strutil::number( m );
 	ScriptSection *TrackStuff = FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == NULL )
 		return;
@@ -1747,7 +1749,7 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
-	const std::string sect			= std::string("TRACKINGMENU ") + str_number( gmindex );
+	const std::string sect			= std::string("TRACKINGMENU ") + strutil::number( gmindex );
 	ScriptSection *TrackStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == NULL )
 	{
@@ -1795,7 +1797,7 @@ void cSkills::updateSkillLevel( CChar *c, UI08 s ) const
 	UI16 bskill = c->GetBaseSkill( s );
 
 	UI16 temp = ( ( (sstr * astr) / 100 + (sdex * adex) / 100 + (sint + aint) / 100) * ( 1000 - bskill ) ) / 1000 + bskill;
-	c->SetSkill( UOX_MAX( bskill, temp ), s );
+	c->SetSkill( std::max( bskill, temp ), s );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1995,9 +1997,9 @@ bool cSkills::LoadMiningData( void )
 					toAdd.oreChance = 0;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
-						UTag = str_toupper( tag );
+						UTag = strutil::toupper( tag );
 						data = individualOre->GrabData();
-						data = stripTrim( data );
+						data = strutil::stripTrim( data );
 						switch( (UTag.data()[0]) )	// break on tag
 						{
 							case 'C':
@@ -2153,14 +2155,14 @@ void cSkills::LoadCreateMenus( void )
 			std::string eName = ourScript->EntryName();
 			if( "SUBMENU" == eName.substr( 0, 7 ) )	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 			{
-				eName = stripTrim( eName );
-				auto ssecs = sections( eName, " " );
-				ourEntry = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
+				eName = strutil::stripTrim( eName );
+				auto ssecs = strutil::sections( eName, " " );
+				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = str_toupper( tag );
+					UTag = strutil::toupper( tag );
 					data = toSearch->GrabData();
-					data = stripTrim( data );
+					data = strutil::stripTrim( data );
 					if( UTag == "MENU" )
 					{
 						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
@@ -2173,9 +2175,9 @@ void cSkills::LoadCreateMenus( void )
 			}
 			else if( "ITEM" == eName.substr( 0, 4 ) )	// is it an item?
 			{
-				auto ssecs = sections( eName, " " );
+				auto ssecs = strutil::sections( eName, " " );
 				
-				ourEntry = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 				createEntry tmpEntry;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
@@ -2185,9 +2187,9 @@ void cSkills::LoadCreateMenus( void )
 
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = str_toupper( tag );
+					UTag = strutil::toupper( tag );
 					data = toSearch->GrabData();
-					data = stripTrim( data );
+					data = strutil::stripTrim( data );
 					if( UTag == "COLOUR" )
 					{
 						tmpEntry.colour =  static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -2223,20 +2225,20 @@ void cSkills::LoadCreateMenus( void )
 					else if( UTag == "RESOURCE" )
 					{
 						resAmountPair tmpResource;
-						auto ssecs = sections(data," ");
+						auto ssecs = strutil::sections(data," ");
 						if( ssecs.size() > 1 )
 						{
 							if( ssecs.size() == 2 )
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 							}
 							else
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
-								tmpResource.colour			= static_cast<UI16>(std::stoul(stripTrim( ssecs[2] ), nullptr, 0));
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0));
 							}
 						}
-						std::string resType = "RESOURCE " + stripTrim( ssecs[0] );
+						std::string resType = "RESOURCE " + strutil::stripTrim( ssecs[0] );
 						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
 						if( resList != NULL )
 						{
@@ -2249,7 +2251,7 @@ void cSkills::LoadCreateMenus( void )
 						}
 						else
 						{
-							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0 )) );
+							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0 )) );
 						}
 
 						tmpEntry.resourceNeeded.push_back( tmpResource );
@@ -2257,7 +2259,7 @@ void cSkills::LoadCreateMenus( void )
 					else if( UTag == "SKILL" )
 					{
 						resSkillReq tmpResource;
-						auto ssecs = sections( data, " " );
+						auto ssecs = strutil::sections( data, " " );
 						if( ssecs.size() == 1 )
 						{
 							tmpResource.maxSkill	= 1000;
@@ -2269,14 +2271,14 @@ void cSkills::LoadCreateMenus( void )
 							if( ssecs.size() == 2 )
 							{
 								tmpResource.maxSkill = 1000;
-								tmpResource.minSkill =  static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0 ));
+								tmpResource.minSkill =  static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0 ));
 							}
 							else
 							{
-								tmpResource.minSkill = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0 ));
-								tmpResource.maxSkill = static_cast<UI16>(std::stoul(stripTrim( ssecs[2] ), nullptr, 0 ));
+								tmpResource.minSkill = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0 ));
+								tmpResource.maxSkill = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0 ));
 							}
-							tmpResource.skillNumber = static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0 ));
+							tmpResource.skillNumber = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0 ));
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
@@ -2289,13 +2291,13 @@ void cSkills::LoadCreateMenus( void )
 			}
 			else if( "MENUENTRY" == eName.substr( 0, 9 ) )
 			{
-				auto ssecs = sections( eName, " " );
-				ourEntry = static_cast<UI16>(std::stoul(stripTrim( ssecs[1] ), nullptr, 0));
+				auto ssecs = strutil::sections( eName, " " );
+				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = str_toupper( tag );
+					UTag = strutil::toupper( tag );
 					data = toSearch->GrabData();
-					data = stripTrim( data );
+					data = strutil::stripTrim( data );
 					if( UTag == "ID" )
 					{
 						skillMenus[ourEntry].targID =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
@@ -2568,21 +2570,21 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 	ScriptSection *GumpHeader = FileLookup->FindEntry( "ADDMENU HEADER", misc_def );
 	if( GumpHeader == NULL )
 	{
-		toSend.addCommand( format("resizepic 0 0 %i 400 320", background) );
+		toSend.addCommand( strutil::format("resizepic 0 0 %i 400 320", background) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
 		toSend.addText( "Create menu" );
 		++textCounter;
-		toSend.addCommand( format("button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1) );
+		toSend.addCommand( strutil::format("button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1) );
 	}
 	else
 	{
 		std::string tag, data, UTag;
 		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
 		{
-			UTag = str_toupper( tag );
+			UTag = strutil::toupper( tag );
 			data = GumpHeader->GrabData();
-			data = stripTrim( data );
+			data = strutil::stripTrim( data );
 			if( UTag == "BUTTONLEFT" )
 			{
 				btnLeft = static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -2663,10 +2665,10 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 			}
 			if( canMake )
 			{
-				toSend.addCommand( format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter)) );
+				toSend.addCommand( strutil::format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter)) );
 				if( iItem.targID )
-					toSend.addCommand( format("tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID ));
-				toSend.addCommand( format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ ));
+					toSend.addCommand( strutil::format("tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID ));
+				toSend.addCommand( strutil::format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ ));
 				toSend.addText( iItem.name );
 				yLoc += 40;
 				++actualItems;
@@ -2686,10 +2688,10 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 		if( smIter != skillMenus.end() )
 		{
 			createMenuEntry iMenu = smIter->second;
-			toSend.addCommand(format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter) ));
+			toSend.addCommand(strutil::format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter) ));
 			if( iMenu.targID )
-				toSend.addCommand( format("tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID) );
-			toSend.addCommand( format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++) );
+				toSend.addCommand( strutil::format("tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID) );
+			toSend.addCommand( strutil::format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++) );
 			toSend.addText( iMenu.name );
 			yLoc += 40;
 			++actualItems;
@@ -2769,7 +2771,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
-			toDelete -= UOX_MIN( GetItemAmount( player, targID, targColour ), static_cast<UI32>(toDelete) );
+			toDelete -= std::min( GetItemAmount( player, targID, targColour ), static_cast<UI32>(toDelete) );
 			if( toDelete == 0 )
 				break;
 		}
@@ -2824,7 +2826,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		if( !canMake )
-			toDelete = RandomNum( 0, UOX_MAX(1, toDelete / 2 ));
+			toDelete = RandomNum( 0, std::max(1, toDelete / 2 ));
 		targColour	= resEntry.colour;
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{

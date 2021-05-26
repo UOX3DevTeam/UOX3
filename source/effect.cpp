@@ -13,6 +13,7 @@
 #include "CJSMapping.h"
 #include "townregion.h"
 #include "StringUtility.hpp"
+#include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void deathAction( CChar *s, CItem *x, UI08 fallDirection )
@@ -301,7 +302,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 				{
 					//UI08 hitLoc = Combat->CalculateHitLoc();
-					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), true);
+					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - std::min( dx, dy ) ) ), true);
 					tempChar->Damage( damage, c, true );
 				}
 			}
@@ -357,11 +358,11 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	CSocket *sock	= src->GetSocket();
 	std::string addItem = toMake->addItem;
 	UI16 amount		= 1;
-	auto csecs = sections( addItem, "," );
+	auto csecs = strutil::sections( addItem, "," );
 	if( csecs.size() > 1 )
 	{
-		amount		= str_value<std::uint16_t>(extractSection(addItem, ",", 1, 1 ));
-		addItem		= extractSection(addItem, ",", 0, 0 );
+		amount		= strutil::value<std::uint16_t>(strutil::extractSection(addItem, ",", 1, 1 ));
+		addItem		= strutil::extractSection(addItem, ",", 0, 0 );
 	}
 
 	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true );
@@ -369,7 +370,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == NULL )
 	{
-		Console.error( format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
+		Console.error( strutil::format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
 		return;
 	}
 	else
@@ -479,17 +480,17 @@ void cEffects::checktempeffects( void )
 				break;
 			case 6: // Agility Potion (JS) and Spell (code)
 				s->IncDexterity2( -Effect->More1() );
-				s->SetStamina( UOX_MIN( s->GetStamina(), s->GetMaxStam() ) );
+				s->SetStamina( std::min( s->GetStamina(), s->GetMaxStam() ) );
 				equipCheckNeeded = true;
 				break;
 			case 7: // Cunning Spell
 				s->IncIntelligence2( -Effect->More1() );
-				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
+				s->SetMana( std::min( s->GetMana(), s->GetMaxMana() ) );
 				equipCheckNeeded = true;
 				break;
 			case 8: // Strength Potion (JS) and Spell (code)
 				s->IncStrength2( -Effect->More1() );
-				s->SetHP( UOX_MIN( s->GetHP(), static_cast<SI16>(s->GetMaxHP()) ) );
+				s->SetHP( std::min( s->GetHP(), static_cast<SI16>(s->GetMaxHP()) ) );
 				equipCheckNeeded = true;
 				break;
 			case 9:	// Grind potion (also used for necro stuff)
@@ -504,11 +505,11 @@ void cEffects::checktempeffects( void )
 				break;
 			case 11: // Bless Spell
 				s->IncStrength2( -Effect->More1() );
-				s->SetHP(  UOX_MIN( s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+				s->SetHP(  std::min( s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
 				s->IncDexterity2( -Effect->More2() );
-				s->SetStamina( UOX_MIN( s->GetStamina(), s->GetMaxStam() ) );
+				s->SetStamina( std::min( s->GetStamina(), s->GetMaxStam() ) );
 				s->IncIntelligence2( -Effect->More3() );
-				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
+				s->SetMana( std::min( s->GetMana(), s->GetMaxMana() ) );
 				equipCheckNeeded = true;
 				break;
 			case 12: // Curse Spell
@@ -530,7 +531,7 @@ void cEffects::checktempeffects( void )
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
 					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
-					std::string mTemp = str_number( Effect->More3() );
+					std::string mTemp = strutil::number( Effect->More3() );
 					if( tSock != NULL )
 					{
 						tSock->sysmessage( mTemp.c_str() );
@@ -672,7 +673,7 @@ void cEffects::checktempeffects( void )
 				src->SetID( 0xCF ); // Thats all we need to do
 				break;
 			default:
-				Console.error( format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
+				Console.error( strutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
 				break;
 		}
 		if( ValidateObject( s ) && equipCheckNeeded )
@@ -831,7 +832,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( dest->GetDexterity() < more1 )
 				more1 = dest->GetDexterity();
 			dest->IncDexterity2( -more1 );
-			dest->SetStamina( UOX_MIN( dest->GetStamina(), dest->GetMaxStam() ) );
+			dest->SetStamina( std::min( dest->GetStamina(), dest->GetMaxStam() ) );
 			//Halve effect-timer on resist
 			spellResisted = Magic->CheckResist( source, dest, 1 );
 			if( spellResisted )
@@ -845,7 +846,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( dest->GetIntelligence() < more1 )
 				more1 = dest->GetIntelligence();
 			dest->IncIntelligence2( -more1 );
-			dest->SetMana( UOX_MIN(dest->GetMana(), dest->GetMaxMana() ) );
+			dest->SetMana( std::min(dest->GetMana(), dest->GetMaxMana() ) );
 			//Halve effect-timer on resist
 			spellResisted = Magic->CheckResist( source, dest, 1 );
 			if( spellResisted )
@@ -859,7 +860,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( dest->GetStrength() < more1 )
 				more1 = dest->GetStrength();
 			dest->IncStrength2( -more1 );
-			dest->SetHP( UOX_MIN( dest->GetHP(), static_cast<SI16>(dest->GetMaxHP()) ) );
+			dest->SetHP( std::min( dest->GetHP(), static_cast<SI16>(dest->GetMaxHP()) ) );
 			//Halve effect-timer on resist
 			spellResisted = Magic->CheckResist( source, dest, 4 );
 			if( spellResisted )
@@ -997,7 +998,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) ) );
 			break;
 		default:
-			Console.error( format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
+			Console.error( strutil::format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -1077,7 +1078,7 @@ void cEffects::SaveEffects( void )
 	effectDestination.open( filename.c_str() );
 	if( !effectDestination )
 	{
-		Console.error( format("Failed to open %s for writing", filename.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", filename.c_str()) );
 		return;
 	}
 
@@ -1096,7 +1097,7 @@ void cEffects::SaveEffects( void )
 	Console.PrintDone();
 
 	SI32 e_t = getclock();
-	Console.print( format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
+	Console.print( strutil::format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
 }
 
 void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
@@ -1128,8 +1129,8 @@ void cEffects::LoadEffects( void )
 			input.getline(line, 1023);
 			line[input.gcount()] = 0;
 			std::string sLine(line);
-			sLine = stripTrim( sLine );
-			auto usLine = str_toupper( sLine );
+			sLine = strutil::stripTrim( sLine );
+			auto usLine = strutil::toupper( sLine );
 			
 			if( !sLine.empty() )
 			{
@@ -1141,27 +1142,27 @@ void cEffects::LoadEffects( void )
 						ReadWorldTagData( input, tag, data );
 						if( tag != "o---o" )
 						{
-							UTag = str_toupper( tag );
+							UTag = strutil::toupper( tag );
 							switch( (UTag.data()[0]) )
 							{
 								case 'A':
 									if( UTag == "ASSOCSCRIPT" )
-										toLoad->AssocScript( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) );
+										toLoad->AssocScript( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
 									break;
 								case 'D':
 									if( UTag == "DEST" )
-										toLoad->Destination( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+										toLoad->Destination( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
 									if( UTag == "DISPEL" )
-										toLoad->Dispellable((( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)) == 0 ) ? false : true ));
+										toLoad->Dispellable((( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 0 ) ? false : true ));
 									break;
 								case 'E':
 									if( UTag == "EXPIRE" )
-										toLoad->ExpireTime( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) + cwmWorldState->GetUICurrentTime() );
+										toLoad->ExpireTime( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) + cwmWorldState->GetUICurrentTime() );
 									break;
 								case 'I':
 									if( UTag == "ITEMPTR" )
 									{
-										SERIAL objSer = static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0));
+										SERIAL objSer = static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1175,20 +1176,20 @@ void cEffects::LoadEffects( void )
 									break;
 								case 'M':
 									if( UTag == "MORE1" )
-										toLoad->More1( static_cast<UI16>(std::stoul(stripTrim( data ),nullptr, 0)) );
+										toLoad->More1( static_cast<UI16>(std::stoul(strutil::stripTrim( data ),nullptr, 0)) );
 									if( UTag == "MORE2" )
-										toLoad->More2( static_cast<UI16>(std::stoul(stripTrim( data ),nullptr, 0)) );
+										toLoad->More2( static_cast<UI16>(std::stoul(strutil::stripTrim( data ),nullptr, 0)) );
 									if( UTag == "MORE3" )
-										toLoad->More3( static_cast<UI16>(std::stoul(stripTrim( data ),nullptr, 0)) );
+										toLoad->More3( static_cast<UI16>(std::stoul(strutil::stripTrim( data ),nullptr, 0)) );
 									break;
 								case 'N':
 									if( UTag == "NUMBER" )
-										toLoad->Number( static_cast<UI16>(std::stoul(stripTrim( data ), nullptr, 0)));
+										toLoad->Number( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)));
 									break;
 								case 'O':
 									if( UTag == "OBJPTR" )
 									{
-										SERIAL objSer = static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0));
+										SERIAL objSer = static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1201,10 +1202,10 @@ void cEffects::LoadEffects( void )
 									}
 								case 'S':
 									if( UTag == "SOURCE" )
-										toLoad->Source( static_cast<UI32>(std::stoul(stripTrim( data ), nullptr, 0)) );
+										toLoad->Source( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
 									break;
 								default:
-									Console.error( format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
+									Console.error( strutil::format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
 									break;
 							}
 						}

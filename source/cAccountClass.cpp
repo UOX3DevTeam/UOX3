@@ -125,20 +125,20 @@ UI16 cAccountClass::CreateAccountSystem( void )
 	UI08 nLockCount		= 0x00;
 	bool bSkipUAD		= false;
 	actb.reset();
-	sLine = stripTrim( sLine );
+	sLine = strutil::stripTrim( sLine );
 	while( !fs2.eof() && !fs2.fail() )
 	{
 		if( sLine.empty() || sLine.length() == 0 )	// Either nothing on the line, or there was a comment we've ignored
 		{
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// Check to see if there is an EOF for those that are like legacy FREAKS!!! Freaks I say!!
 		if( "EOF" == sLine )
 		{
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// Keep track of the section account lines. There is nothing to process till at least one of these has been read
@@ -147,14 +147,14 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			// Increment the account acount
 			++wAccountCount;
 			// Ok the section block was found, Tokenize the string to get the account #
-			actb.wAccountIndex = wAccountID = str_value<std::int32_t>(extractSection(sLine, " ", 2, 2 ));
+			actb.wAccountIndex = wAccountID = strutil::value<std::int32_t>(strutil::extractSection(sLine, " ", 2, 2 ));
 			// Ok, we have parsed out the account ID, Set bBraces[2] to true to allow block reading
 			bBraces[0] = false;
 			bBraces[1] = false;
 			bBraces[2] = true;
 			// Get the next line and continue
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// Fail safe. If bBraces[2] isn't set there is no need to even run this code
@@ -162,7 +162,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		{
 			// Make sure the get the next line to process.
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// If we get here then were reading a block now. Check for the openning brace.
@@ -170,7 +170,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		{
 			bBraces[0] = true;
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		if( ((sLine[0] == '{') && bBraces[0]) || ((sLine[0] == '{') && bBraces[1] ))
@@ -191,26 +191,26 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			bBraces[0] = false;
 			nLockCount = 0;
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// Set up the tokenizing
-		auto ssecs = sections( sLine, " " );
-		auto l = stripTrim( ssecs[0] );
-		auto r = stripTrim( ssecs[1] );
+		auto ssecs = strutil::sections( sLine, " " );
+		auto l = strutil::stripTrim( ssecs[0] );
+		auto r = strutil::stripTrim( ssecs[1] );
 		// Parse and store based on tag
 		if( "NAME" == l )
 		{
 			if( !r.empty() && r.length() != 0 )
 			{
-				actb.sUsername = str_tolower(r);
+				actb.sUsername = strutil::tolower(r);
 			}
 			else
 			{
 				actb.sUsername = "ERROR";
 			}
 			std::getline( fs2, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "PASS" )
@@ -224,21 +224,21 @@ UI16 cAccountClass::CreateAccountSystem( void )
 				if( fs1.is_open() )
 				{
 					std::getline( fs1, sLine2 );
-					sLine2 = stripTrim( sLine2 );
+					sLine2 = strutil::stripTrim( sLine2 );
 					bBraces2[2] = true;
 					while( !fs1.eof() && bBraces2[2] && !fs1.fail() )
 					{
 						if( sLine2.empty() && sLine2.length() != 0 )
 						{
 							std::getline( fs1, sLine2 );
-							sLine2 = stripTrim( sLine2 );
+							sLine2 = strutil::stripTrim( sLine2 );
 							continue;
 						}
 						// Keep track of the section account lines. There is nothing to process till at least one of these has been read
 						if( sLine2.substr( 0, 14 ) ==  "SECTION ACCESS" )
 						{
 							// Ok the section block was found, Tokenize the string to get the account #
-							wAccessID = str_value<std::int32_t>(extractSection(sLine2, " ", 2 ));
+							wAccessID = strutil::value<std::int32_t>(strutil::extractSection(sLine2, " ", 2 ));
 							// Ok, we have parsed out the account ID, Set bBraces[2] to true to allow block reading
 							bBraces2[0] = false;
 							bBraces2[1] = false;
@@ -279,9 +279,9 @@ UI16 cAccountClass::CreateAccountSystem( void )
 								bBraces2[2] = false;
 								break;
 							}
-							auto ssecs = sections( sLine2, " " );
-							auto l2 = stripTrim( ssecs[0] );
-							auto r2 = stripTrim( ssecs[1] );
+							auto ssecs = strutil::sections( sLine2, " " );
+							auto l2 = strutil::stripTrim( ssecs[0] );
+							auto r2 = strutil::stripTrim( ssecs[1] );
 							// Parse and store based on tag
 							if( "PATH" == l2 )
 							{
@@ -379,7 +379,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		{
 			// Ok strip the name and store it. We need to make it all the same case for comparisons
 			if( !r.empty() && r.length() != 0 )
-				actb.sContact = str_tolower( r );
+				actb.sContact = strutil::tolower( r );
 			else
 				actb.sContact = "UNKNOWN";
 
@@ -480,7 +480,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			if (!std::filesystem::exists(std::filesystem::path(sNewPath))) {
 				auto create_status = std::filesystem::create_directory(std::filesystem::path(sNewPath));
 				if (!create_status) {
-					Console.error( format("CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str()) );
+					Console.error( strutil::format("CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str()) );
 					m_mapUsernameIDMap.clear();
 					m_mapUsernameMap.clear();
 					return 0L;
@@ -520,7 +520,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 					sOutFile += "/";
 				sOutFile += actbTemp.sUsername;
 				sOutFile += ".uad";
-				replaceSlash( sOutFile );
+				strutil::replaceSlash( sOutFile );
 				std::fstream fsOut(sOutFile.c_str(),std::ios::out);
 				if( !fsOut.is_open() )
 				{
@@ -561,7 +561,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 	while( nResp == -1 )
 	{
 		// Loop through 255 numbers, these will be added to the end of the bu in case a bu exists.
-		szltoa2 = format( "%d", kk++ );
+		szltoa2 = strutil::format( "%d", kk++ );
 		sNewPath += szltoa2;
 		nResp= rename(sAccountsAdm.c_str(),sNewPath.c_str());
 		sNewPath = sBUPath;
@@ -592,7 +592,7 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 	fsOut << "NAME " << actbTemp.sUsername << std::endl;
 	fsOut << "PASS " << actbTemp.sPassword << std::endl;
 	fsOut << "FLAGS 0x" << std::hex << actbTemp.wFlags.to_ulong() << std::dec << std::endl;
-	fsOut << "PATH " << replaceSlash(actbTemp.sPath) << std::endl;
+	fsOut << "PATH " << strutil::replaceSlash(actbTemp.sPath) << std::endl;
 	fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
 	fsOut << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
 	fsOut << "CONTACT " << (actbTemp.sContact.length()?actbTemp.sContact:"NA") << std::endl;
@@ -643,7 +643,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	if( sUsername.length() < 4 || sPassword.length() < 4 )
 	{
 		// Username, and or password must both be 4 characters or more in length
-		Console.log(format("ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short",sUsername.c_str(),sPassword.c_str()),"accounts.log");
+		Console.log(strutil::format("ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short",sUsername.c_str(),sPassword.c_str()),"accounts.log");
 		return 0x0000;
 	}
 	// Next thing were going to do is make sure there isn't a duplicate username.
@@ -672,19 +672,19 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	std::string sTempPath( m_sAccountsDirectory );
 	if( sTempPath[sTempPath.length() - 1] == '\\' || sTempPath[sTempPath.length() - 1] == '/' )
 	{
-		auto szTempBuff	=    str_tolower( sUsername );
+		auto szTempBuff	=    strutil::tolower( sUsername );
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
-		replaceSlash( sTempPath );
+		strutil::replaceSlash( sTempPath );
 		actbTemp.sPath		= sTempPath;
 	}
 	else
 	{
-		auto szTempBuff	= str_tolower( sUsername );
+		auto szTempBuff	= strutil::tolower( sUsername );
 		sTempPath			+= "/";
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
-		replaceSlash( sTempPath );
+		strutil::replaceSlash( sTempPath );
 		actbTemp.sPath = sTempPath;
 	}
 	// Ok now that we got here we need to make the directory, and create the username.uad file
@@ -692,7 +692,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	{
 		auto create_status = std::filesystem::create_directory(std::filesystem::path(actbTemp.sPath));
 		if (!create_status) {
-			Console.error( format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
+			Console.error( strutil::format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
 			return 0x0000;
 
 		}
@@ -712,7 +712,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		sUsernameUADPath += ".uad";
 	}
 	// Fix the paths to make sure that all the characters are unified
-	replaceSlash( sUsernameUADPath );
+	strutil::replaceSlash( sUsernameUADPath );
 	// Open the file in APPEND to end mode.
 	std::fstream fsAccountsUAD( sUsernameUADPath.c_str(), std::ios::out|std::ios::trunc );
 	if( !fsAccountsUAD.is_open() )
@@ -813,7 +813,7 @@ UI16 cAccountClass::Load(void)
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
-	replaceSlash(sAccountsADM);
+	strutil::replaceSlash(sAccountsADM);
 	// Check to see what version the current accounts.adm file is.
 	std::string sLine;
 	std::fstream fsAccountsADMTest(sAccountsADM.c_str(),std::ios::in);
@@ -847,7 +847,7 @@ UI16 cAccountClass::Load(void)
 
 	// We need to read from the stream once before entering the loop
 	std::getline( fsAccountsADM, sLine );
-	sLine = stripTrim( sLine );
+	sLine = strutil::stripTrim( sLine );
 	// Ok start the loop and process
 	bool bBraces[3]					= { false, false, false };
 	bool bBraces2[3]				= { false, false, false };
@@ -864,7 +864,7 @@ UI16 cAccountClass::Load(void)
 		if( sLine[0]=='\\'||sLine[0]==';'||sLine[0]=='/'||sLine[0]=='\''||sLine[0]==0x13||sLine[0]==0x00 )
 		{
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// Keep track of the section account lines. There is nothing to process till at least one of these has been read
@@ -872,7 +872,7 @@ UI16 cAccountClass::Load(void)
 		{
 			// Increment the account acount
 			++wAccountCount;
-			actb.wAccountIndex = wAccountID = str_value<std::int32_t>(extractSection(sLine, " ", 2 ));
+			actb.wAccountIndex = wAccountID = strutil::value<std::int32_t>(strutil::extractSection(sLine, " ", 2 ));
 
 			// Scan for hiegest account. Needed for additional accounts.
 			if( actb.wAccountIndex>m_wHighestAccount )
@@ -883,7 +883,7 @@ UI16 cAccountClass::Load(void)
 			bBraces[2] = true;
 			// Get the next line and continue
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// Fail safe. If bBraces[2] isn't set there is no need to even run this code
@@ -891,7 +891,7 @@ UI16 cAccountClass::Load(void)
 		{
 			// Make sure the get the next line to process.
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		// If we get here then were reading a block now. Check for the openning brace.
@@ -899,7 +899,7 @@ UI16 cAccountClass::Load(void)
 		{
 			bBraces[0]=true;
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		if( ((sLine[0]=='{') &&bBraces[0]) ||((sLine[0]=='{')&&bBraces[1]) )
@@ -963,23 +963,23 @@ UI16 cAccountClass::Load(void)
 			bBraces[1] = false;
 			bBraces[2] = false;
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			for( UI08 kk = 0; kk < CHARACTERCOUNT; ++kk )
 			{
 				dwChars[kk]=INVALIDSERIAL;
 			}
 			continue;
 		}
-		auto ssecs = sections( sLine, " " );
-		auto l	= stripTrim( ssecs[0] );
-		auto r	= stripTrim( ssecs[1] );
+		auto ssecs = strutil::sections( sLine, " " );
+		auto l	= strutil::stripTrim( ssecs[0] );
+		auto r	= strutil::stripTrim( ssecs[1] );
 		// Parse and store based on tag
 		if( l == "NAME" )
 		{
 			// Ok strip the name and store it. We need to make it all the same case for comparisons
 			if( !r.empty() && r.length() != 0 )
 			{
-				actb.sUsername = str_tolower( r );
+				actb.sUsername = strutil::tolower( r );
 			}
 			else
 			{
@@ -987,7 +987,7 @@ UI16 cAccountClass::Load(void)
 			}
 
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "PASS" )
@@ -1007,7 +1007,7 @@ UI16 cAccountClass::Load(void)
 			bBraces2[1] = false;
 			bBraces2[2] = false;
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "FLAGS" )
@@ -1026,7 +1026,7 @@ UI16 cAccountClass::Load(void)
 			}
 
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "PATH" )
@@ -1042,7 +1042,7 @@ UI16 cAccountClass::Load(void)
 			}
 
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "TIMEBAN" )
@@ -1057,7 +1057,7 @@ UI16 cAccountClass::Load(void)
 			}
 
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "CONTACT" )
@@ -1065,7 +1065,7 @@ UI16 cAccountClass::Load(void)
 			// Ok strip the name and store it. We need to make it all the same case for comparisons
 			if( !r.empty() && r.length() != 0 )
 			{
-				actb.sContact = str_tolower( r );
+				actb.sContact = strutil::tolower( r );
 			}
 			else
 			{
@@ -1073,15 +1073,15 @@ UI16 cAccountClass::Load(void)
 			}
 
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l == "LASTIP" )
 		{
-			auto psecs = sections( r, "." );
+			auto psecs = strutil::sections( r, "." );
 			if( !r.empty() && r.length() != 0 && psecs.size() == 4 )
 			{
-				actb.dwLastIP = calcserial( str_value<SI08>(psecs[0]), str_value<SI08>(psecs[1]), str_value<SI08>(psecs[2]), str_value<SI08>(psecs[3]) );
+				actb.dwLastIP = calcserial( strutil::value<SI08>(psecs[0]), strutil::value<SI08>(psecs[1]), strutil::value<SI08>(psecs[2]), strutil::value<SI08>(psecs[3]) );
 			}
 			else
 			{
@@ -1089,7 +1089,7 @@ UI16 cAccountClass::Load(void)
 			}
 
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		else if( l.substr( 0, 10 ) == "CHARACTER-" )	// It's a character
@@ -1114,11 +1114,11 @@ UI16 cAccountClass::Load(void)
 				}
 			}
 			std::getline( fsAccountsADM, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
 		std::getline( fsAccountsADM, sLine );
-		sLine = stripTrim( sLine );
+		sLine = strutil::stripTrim( sLine );
 		actb.reset();
 	}
 	// We need to see if there are any new accounts to come.
@@ -1620,7 +1620,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 		sTemp += "accounts.adm";
 	else
 		sTemp += "/accounts.adm";
-	replaceSlash(sTemp);
+	strutil::replaceSlash(sTemp);
 	// Ok we have the path, now open the file and start saving
 	std::fstream fsAccountsADM(sTemp.c_str(),std::ios::out|std::ios::trunc);
 	if( !fsAccountsADM.is_open() )
@@ -1640,7 +1640,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
 			// there was an error between blocks
-			Console.error( format("Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str()) );
+			Console.error( strutil::format("Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str()) );
 			fsAccountsADM.close();
 			return 0xFFFF;
 		}
@@ -1656,19 +1656,19 @@ UI16 cAccountClass::Save( bool bForceLoad )
 			std::string sTempPath(m_sAccountsDirectory);
 			if( sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/' )
 			{
-				auto szTempBuff	= str_tolower( actbID.sUsername );
+				auto szTempBuff	= strutil::tolower( actbID.sUsername );
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
-				replaceSlash( sTempPath );
+				strutil::replaceSlash( sTempPath );
 				actbID.sPath		= sTempPath;
 			}
 			else
 			{
-				auto szTempBuff	= str_tolower( actbID.sUsername );
+				auto szTempBuff	= strutil::tolower( actbID.sUsername );
 				sTempPath			+= "/";
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
-				replaceSlash( sTempPath );
+				strutil::replaceSlash( sTempPath );
 				actbID.sPath		= sTempPath;
 			}
 		}
@@ -1677,7 +1677,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 		if (!std::filesystem::exists(std::filesystem::path(actbID.sPath))) {
 			auto create_status = std::filesystem::create_directory(std::filesystem::path(actbID.sPath));
 			if (!create_status) {
-				Console.error( format("Save(): Couldn't create directory %s", actbID.sPath.c_str()));
+				Console.error( strutil::format("Save(): Couldn't create directory %s", actbID.sPath.c_str()));
 				fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
 				continue;
 
@@ -1698,13 +1698,13 @@ UI16 cAccountClass::Save( bool bForceLoad )
 			sUsernameUADPath += ".uad";
 		}
 		// Fix the paths to make sure that all the characters are unified
-		replaceSlash(sUsernameUADPath);
+		strutil::replaceSlash(sUsernameUADPath);
 		// Open the file in APPEND to end mode.
 		std::fstream fsAccountsUAD(sUsernameUADPath.c_str(),std::ios::out|std::ios::trunc);
 		if( !fsAccountsUAD.is_open() )
 		{
 			// Ok we were unable to open the file so this user will not be added.
-			Console.error( format("Save(): Couldn't open file %s", sUsernameUADPath.c_str() ));
+			Console.error( strutil::format("Save(): Couldn't open file %s", sUsernameUADPath.c_str() ));
 			fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
 			continue;
 		}
@@ -1746,7 +1746,7 @@ UI16 cAccountClass::ImportAccounts( void )
 	// Prepare to load in the newaccounts.adm file. This file if it exists will contain new accounts to be added to the server.
 	std::string sImportAccounts(m_sAccountsDirectory);
 	sImportAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"newaccounts.adm":"/newaccounts.adm";
-	replaceSlash(sImportAccounts);
+	strutil::replaceSlash(sImportAccounts);
 	// Check to see what version the current accounts.adm file is.
 	std::string sLine;
 	std::fstream fsInputAccountsTest( sImportAccounts.c_str(), std::ios::in );
@@ -1757,7 +1757,7 @@ UI16 cAccountClass::ImportAccounts( void )
 	}
 	// Now that we have a file, we want to read it, and add these accounts to the system
 	std::getline( fsInputAccountsTest, sLine );
-	sLine = stripTrim( sLine );
+	sLine = strutil::stripTrim( sLine );
 	UI16 wAccountCount = 0x0000;
 	UI16 wCurrentFlags = 0x0004;
 	while( !fsInputAccountsTest.eof() && !fsInputAccountsTest.fail() )
@@ -1766,22 +1766,22 @@ UI16 cAccountClass::ImportAccounts( void )
 		if( sLine.empty() || sLine.length() == 0 )
 		{
 			std::getline( fsInputAccountsTest, sLine );
-			sLine = stripTrim( sLine );
+			sLine = strutil::stripTrim( sLine );
 			continue;
 		}
-		auto esecs = sections( sLine, "=" );
-		auto l = stripTrim( esecs[0] );
-		auto r = stripTrim( esecs[1] );
+		auto esecs = strutil::sections( sLine, "=" );
+		auto l = strutil::stripTrim( esecs[0] );
+		auto r = strutil::stripTrim( esecs[1] );
 		if( l == "USER" )
 		{
 			// OK we have an account to import, start parsing it.
 			std::string user, pass;
-			auto csecs = sections( r, "," );
+			auto csecs = strutil::sections( r, "," );
 			
-			user = stripTrim( csecs[0] );
+			user = strutil::stripTrim( csecs[0] );
 			if( csecs.size() > 1 )
 			{
-				pass = stripTrim( csecs[1] );
+				pass = strutil::stripTrim( csecs[1] );
 			}
 
 			if( user.empty() || user.length() == 0 || pass.empty() || pass.length() == 0 )
@@ -1789,14 +1789,14 @@ UI16 cAccountClass::ImportAccounts( void )
 				// error there are no NULLS allowed for usernames, passwords. So we move to the next.
 				// NOTE! This record will be dropped onces parsing is completed as file is deleted.
 				std::getline( fsInputAccountsTest, sLine );
-				sLine = stripTrim( sLine );
+				sLine = strutil::stripTrim( sLine );
 				continue;
 			}
 			
 			std::string flags;
 			if( csecs.size() > 2 )
 			{
-			  flags = stripTrim( csecs[2] );
+			  flags = strutil::stripTrim( csecs[2] );
 			}
 			
 			// Set flags to a default value. and in this case I believe that its 0x00000004
@@ -1812,7 +1812,7 @@ UI16 cAccountClass::ImportAccounts( void )
 			std::string email;
 			if( csecs.size() > 3 )
 			{
-				email = stripTrim( csecs[3] );
+				email = strutil::stripTrim( csecs[3] );
 			}
 
 			if( email.empty() || email.length() == 0 )
@@ -1824,14 +1824,14 @@ UI16 cAccountClass::ImportAccounts( void )
 				// As requested we are going to stuff back accounts into their own file
 				std::string sOutputBadAccounts(m_sAccountsDirectory);
 				sOutputBadAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"failed_accounts.log":"/failed_accounts.log";
-				replaceSlash(sOutputBadAccounts);
+				strutil::replaceSlash(sOutputBadAccounts);
 				// Open the file and append this to the end
 				std::fstream fsOutputBadAccounts(sOutputBadAccounts.c_str(),std::ios::app);
 				if( !fsOutputBadAccounts.is_open() )
 				{
 					// The bad accounts file wasn't writable or something so were going to skip it
 					std::getline( fsInputAccountsTest, sLine );
-					sLine = stripTrim( sLine );
+					sLine = strutil::stripTrim( sLine );
 					continue;
 				}
 				// Write the failed line to the file
@@ -1840,14 +1840,14 @@ UI16 cAccountClass::ImportAccounts( void )
 				// OK there was a problem entering this accounts into the system. Possibly a duplicate? or Other issues
 				Console << "NOTICE: New account was not processed. Please see failed_accounts.log for details." << myendl;
 				std::getline( fsInputAccountsTest, sLine );
-				sLine = stripTrim( sLine );
+				sLine = strutil::stripTrim( sLine );
 				continue;
 			}
 			wAccountCount++;
 		}
 		// Need to make sure we get the next line
 		std::getline( fsInputAccountsTest, sLine );
-		sLine = stripTrim( sLine );
+		sLine = strutil::stripTrim( sLine );
 	}
 	// Make sure to close the file
 	fsInputAccountsTest.close();

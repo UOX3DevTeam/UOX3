@@ -645,7 +645,7 @@ void CGuild::Load( ScriptSection *toRead )
 		data = toRead->GrabData();
 		if( tag.empty() )
 			continue;
-		UTag = str_toupper( tag );
+		UTag = strutil::toupper( tag );
 		switch( (UTag.data()[0]) )
 		{
 			case '{':
@@ -806,7 +806,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 			va_start( argptr, dictEntry );
 
 			CSpeechEntry& toAdd = SpeechSys->Add();
-			toAdd.Speech(format(512,txt,argptr));
+			toAdd.Speech(strutil::format(512,txt,argptr));
 			toAdd.Font( FNT_NORMAL );
 			toAdd.Speaker( INVALIDSERIAL );
 			toAdd.SpokenTo( (*cIter) );
@@ -1005,9 +1005,9 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 	toSend.UserID( INVALIDSERIAL );
 
 	toSend.addCommand( "page 0" );
-	toSend.addCommand( format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()) );
-	toSend.addCommand( format("button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
-	toSend.addCommand(format( "text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));
+	toSend.addCommand( strutil::format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()) );
+	toSend.addCommand( strutil::format("button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
+	toSend.addCommand(strutil::format( "text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour() ));
 	toSend.addCommand( "page 1" );
 
 	SERIAL gMaster	= gList[trgGuild]->Master();
@@ -1063,25 +1063,25 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			toSend.addText( Dictionary->GetEntry( 103, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 104, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 105, sLang ) );
-			toSend.addText( format(Dictionary->GetEntry( 106, sLang ), guildfealty ));
-			toSend.addText( format(Dictionary->GetEntry( 107, sLang ), toggle ));
+			toSend.addText( strutil::format(Dictionary->GetEntry( 106, sLang ), guildfealty ));
+			toSend.addText( strutil::format(Dictionary->GetEntry( 107, sLang ), toggle ));
 			toSend.addText( Dictionary->GetEntry( 108, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 109, sLang ) );
-			toSend.addText( format(Dictionary->GetEntry( 110, sLang ), gName.c_str()) );
-			toSend.addText( format(Dictionary->GetEntry( 111, sLang ), gName.c_str() ));
+			toSend.addText( strutil::format(Dictionary->GetEntry( 110, sLang ), gName.c_str()) );
+			toSend.addText( strutil::format(Dictionary->GetEntry( 111, sLang ), gName.c_str() ));
 			toSend.addText( Dictionary->GetEntry( 112, sLang ) );
 
 			if( mChar->GetSerial() == gMaster || mChar->IsGM() )	// Guildmaster Access?
 			{
 				++numButtons;
-				toSend.addText( format(Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str()) );
+				toSend.addText( strutil::format(Dictionary->GetEntry( 113, sLang ), gMstr->GetGuildTitle().c_str()) );
 			}
 			break;
 		case BasePage+2:	numButtons = 16;		// Guildmaster menu
 			toSend.addText( Dictionary->GetEntry( 114, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 115, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 116, sLang ) );
-			toSend.addText(format( Dictionary->GetEntry( 117, sLang ), guildt ));
+			toSend.addText(strutil::format( Dictionary->GetEntry( 117, sLang ), guildt ));
 			for( tCounter = 118; tCounter <= 130; ++tCounter )
 				toSend.addText( Dictionary->GetEntry( tCounter, sLang ) );
 			break;
@@ -1101,7 +1101,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 		case BasePage+5:	numButtons = 3;			// View charter
 			toSend.addText( Dictionary->GetEntry( 140, sLang ) );
 			toSend.addText( gList[trgGuild]->Charter() );
-			toSend.addText( format(Dictionary->GetEntry( 142, sLang ), gList[trgGuild]->Webpage().c_str()) );
+			toSend.addText( strutil::format(Dictionary->GetEntry( 142, sLang ), gList[trgGuild]->Webpage().c_str()) );
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			break;
 		case BasePage+6:								// List of recruits
@@ -1230,15 +1230,15 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 				toSend.addText( temp );
 				// To display: Name, str, dex, int, # kills, # deaths, status (criminal, murderer, innocent), top x skills
 				toSend.addText( "Strength" );
-				toSend.addText( format("%i", kChar->GetStrength()) );
+				toSend.addText( strutil::format("%i", kChar->GetStrength()) );
 				toSend.addText( "Dexterity" );
-				toSend.addText( format("%i", kChar->GetDexterity() ));
+				toSend.addText( strutil::format("%i", kChar->GetDexterity() ));
 				toSend.addText( "Intelligence" );
-				toSend.addText( format("%i", kChar->GetIntelligence()) );
+				toSend.addText( strutil::format("%i", kChar->GetIntelligence()) );
 				toSend.addText( "Kills" );
-				toSend.addText( format("%i", kChar->GetKills() ));
+				toSend.addText( strutil::format("%i", kChar->GetKills() ));
 				toSend.addText( "Deaths" );
-				toSend.addText( format("%u", kChar->GetDeaths()) );
+				toSend.addText( strutil::format("%u", kChar->GetDeaths()) );
 				numText = 10;
 				numColumns = 2;
 				numButtons = 1;
@@ -1286,17 +1286,17 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 
 	for( UI16 iCtr = 0; iCtr < numButtons; ++iCtr )
 	{
-		toSend.addCommand( format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2) );
-		toSend.addCommand( format("text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1) );
+		toSend.addCommand( strutil::format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2) );
+		toSend.addCommand( strutil::format("text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1) );
 	}
 	if( numText != 0 )
 	{
 		for( UI16 iCtr = 0; iCtr < numText; ++iCtr )
 		{
 			if( numColumns == 1 )
-				toSend.addCommand( format("text 50 %i %i %i", 30 + 20 * ( iCtr + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1 ));
+				toSend.addCommand( strutil::format("text 50 %i %i %i", 30 + 20 * ( iCtr + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1 ));
 			else
-				toSend.addCommand(format( "text %i %i %i %i", 50 + (iCtr % numColumns) * 100, 30 + 20 * ( ( iCtr / 2 ) + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1) );
+				toSend.addCommand(strutil::format( "text %i %i %i %i", 50 + (iCtr % numColumns) * 100, 30 + 20 * ( ( iCtr / 2 ) + numButtons ), cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1) );
 		}
 	}
 	toSend.Finalize();
@@ -1366,7 +1366,7 @@ void CGuildCollection::TransportGuildStone( CSocket *s, GUILDID guildID )
 			gTransportStone->SetNewbie( true );
 			gTransportStone->SetWeight( 1, true );
 			gTransportStone->SetType( IT_GUILDSTONE );
-			gTransportStone->SetName( format( Dictionary->GetEntry( 101 ), gList[guildID]->Name().c_str() ));
+			gTransportStone->SetName( strutil::format( Dictionary->GetEntry( 101 ), gList[guildID]->Name().c_str() ));
 			CItem *gStone = calcItemObjFromSer( gList[guildID]->Stone() );
 			gStone->Delete();
 
@@ -1715,7 +1715,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( nGuild == NULL )
 		{
 			s->objMessage( 174, deed );
-			Console.error(format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
+			Console.error(strutil::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
 		mChar->SetGuildNumber( gNum );
@@ -1725,7 +1725,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed );
-			Console.error( format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()) );
+			Console.error( strutil::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
 		stone->SetName( Dictionary->GetEntry( 175 ) );
@@ -1758,17 +1758,17 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( nGuild == NULL )
 		{
 			s->objMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
-			Console.error(format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
+			Console.error(strutil::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
 		CItem *stone = Items->CreateItem( NULL, mChar, 0x0ED5, 1, 0, OT_ITEM );
 		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
-			Console.error( format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()) );
+			Console.error( strutil::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
-		stone->SetName( format( Dictionary->GetEntry( 101 ), nGuild->Name().c_str() ));
+		stone->SetName( strutil::format( Dictionary->GetEntry( 101 ), nGuild->Name().c_str() ));
 		stone->SetLocation( mChar );
 		stone->SetType( IT_GUILDSTONE );
 		stone->SetTempVar( CITV_MORE, gNum );
@@ -1835,19 +1835,19 @@ void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 		{
 			auto guildtype= GTypeNames[mGuild->Type()] ;
 			if( src->GetGuildTitle().empty() ){
-				title= format( "[%s, %s] [%s]", src->GetGuildTitle().c_str(), abbreviation.c_str(), guildtype.c_str() );
+				title= strutil::format( "[%s, %s] [%s]", src->GetGuildTitle().c_str(), abbreviation.c_str(), guildtype.c_str() );
 			}
 			else{
-				title = format(  "[%s] [%s]", abbreviation.c_str(), guildtype.c_str() );
+				title = strutil::format(  "[%s] [%s]", abbreviation.c_str(), guildtype.c_str() );
 			}
 		}
 		else
 		{
 			if( src->GetGuildTitle().empty() ){
-				title = format("[%s, %s]", src->GetGuildTitle().c_str(), abbreviation.c_str() );
+				title = strutil::format("[%s, %s]", src->GetGuildTitle().c_str(), abbreviation.c_str() );
 			}
 			else{
-				title = format( "[%s]", abbreviation.c_str() );
+				title = strutil::format( "[%s]", abbreviation.c_str() );
 			}
 		}
 		s->objMessage( title, src );
