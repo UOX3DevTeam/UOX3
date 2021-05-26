@@ -662,7 +662,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				cScript *toExecute	= JSMapping->GetScript( scriptID );
 				if( toExecute == NULL )
 				{
-					Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+					Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
 				}
 				else
 				{
@@ -679,7 +679,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == NULL )
 					{
-						Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+						Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
 					}
 					else
 					{
@@ -1378,7 +1378,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *toExecute	= JSMapping->GetScript( scriptID );
 				if( toExecute == NULL )
 				{
-					Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+					Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
 				}
 				else
 				{
@@ -1395,7 +1395,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == NULL )
 					{
-						Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+						Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
 					}
 					else
 					{
@@ -1815,7 +1815,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *toExecute	= JSMapping->GetScript( scriptID );
 				if( toExecute == NULL )
 				{
-					Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+					Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
 				}
 				else
 				{
@@ -1832,7 +1832,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == NULL )
 					{
-						Console.error( format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", str_number(scriptID).c_str()) );
+						Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
 					}
 					else
 					{
@@ -2686,10 +2686,10 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_LASTIP:
 			{
-				std::string ipString = str_number(static_cast<SI32>((myAccount->dwLastIP&0xFF000000)>>24)) 
-					+ "." + str_number(static_cast<SI32>((myAccount->dwLastIP&0x00FF0000)>>16))
-					+ "." + str_number(static_cast<SI32>((myAccount->dwLastIP&0x0000FF00)>>8))
-					+ "." + str_number(static_cast<SI32>((myAccount->dwLastIP&0x000000FF)%256));
+				std::string ipString = strutil::number(static_cast<SI32>((myAccount->dwLastIP&0xFF000000)>>24)) 
+					+ "." + strutil::number(static_cast<SI32>((myAccount->dwLastIP&0x00FF0000)>>16))
+					+ "." + strutil::number(static_cast<SI32>((myAccount->dwLastIP&0x0000FF00)>>8))
+					+ "." + strutil::number(static_cast<SI32>((myAccount->dwLastIP&0x000000FF)%256));
 				tString = JS_NewStringCopyZ( cx, ipString.c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;

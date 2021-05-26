@@ -374,7 +374,7 @@ void WstatsTarget( CSocket *s )
 	wStat.AddData( "Y", i->GetY() );
 
 
-	wStat.AddData( "Z", format( "%d", i->GetZ() ) );
+	wStat.AddData( "Z", strutil::format( "%d", i->GetZ() ) );
 	wStat.AddData( "Wander", i->GetNpcWander() );
 	wStat.AddData( "FX1", i->GetFx( 0 ) );
 	wStat.AddData( "FY1", i->GetFy( 0 ) );
@@ -732,7 +732,7 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 	CItem *toCreate = Items->CreateItem( NULL, mChar, partID, 1, 0, OT_ITEM );
 	if( !ValidateObject( toCreate ) )
 		return false;
-	toCreate->SetName( format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetName( strutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
 	toCreate->SetLocation( corpse );
 	toCreate->SetOwner( corpse->GetOwnerObj() );
 	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
@@ -776,14 +776,14 @@ void newCarveTarget( CSocket *s, CItem *i )
 		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( str_toupper( tag ) == "ADDITEM" )
+			if( strutil::toupper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = stripTrim( data );
-				auto csecs = sections( data, "," );
+				data = strutil::stripTrim( data );
+				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{	
-					if( !CreateBodyPart( mChar, i, static_cast<UI16>(std::stoul(stripTrim( csecs[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)) ) )
+					if( !CreateBodyPart( mChar, i, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) ) )
 					{
 						return;
 					}
@@ -810,7 +810,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 	}
 	else
 	{
-		std::string sect		= std::string("CARVE ") + str_number( i->GetCarve() );
+		std::string sect		= std::string("CARVE ") + strutil::number( i->GetCarve() );
 		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
 		if( toFind == NULL )
 			return;
@@ -818,14 +818,14 @@ void newCarveTarget( CSocket *s, CItem *i )
 		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( str_toupper( tag ) == "ADDITEM" )
+			if( strutil::toupper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = stripTrim( data );
-				auto csecs = sections( data, "," );
+				data = strutil::stripTrim( data );
+				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					Items->CreateScriptItem( s, mChar, stripTrim(csecs[0]), static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0)), OT_ITEM, true );
+					Items->CreateScriptItem( s, mChar, strutil::stripTrim(csecs[0]), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)), OT_ITEM, true );
 				}
 				else
 				{
@@ -1000,7 +1000,7 @@ void NpcResurrectTarget( CChar *i )
 
 	if( i->IsNpc() )
 	{
-		Console.error( format(Dictionary->GetEntry( 1079 ), i));
+		Console.error( strutil::format(Dictionary->GetEntry( 1079 ), i));
 		return;
 	}
 	CSocket *mSock = i->GetSocket();
@@ -1084,7 +1084,7 @@ void NpcResurrectTarget( CChar *i )
 			mSock->sysmessage( 1080 );
 	}
 	else
-		Console.warning( format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()) );
+		Console.warning( strutil::format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1115,7 +1115,7 @@ void ShowSkillTarget( CSocket *s )
 			skillVal = mChar->GetSkill( i );
 
 		if( skillVal > 0 || dispType%2 == 0 ){
-			showSkills.AddData( cwmWorldState->skill[i].name, str_number( (R32)skillVal/10 ), 8 );
+			showSkills.AddData( cwmWorldState->skill[i].name, strutil::number( (R32)skillVal/10 ), 8 );
 		}
 	}
 	showSkills.Send( 4, false, INVALIDSERIAL );
@@ -1283,8 +1283,8 @@ void MakeStatusTarget( CSocket *sock )
 	//char temp[1024], temp2[1024];
 
 	UI08 targetCommand = targLevel->commandLevel;
-	auto temp = format("account%i.log", mChar->GetAccount().wAccountIndex );
-	auto temp2 = format("%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
+	auto temp = strutil::format("account%i.log", mChar->GetAccount().wAccountIndex );
+	auto temp2 = strutil::format("%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
 
 	Console.log( temp2, temp );
 
@@ -1327,10 +1327,10 @@ void MakeStatusTarget( CSocket *sock )
 			playerName.replace( position, origLevel->name.size(), "" );
 	}
 	if( targetCommand != 0 && targetCommand != origCommand ) {
-		targetChar->SetName( trim(format("%s %s", targLevel->name.c_str(), trim(playerName).c_str() )) );
+		targetChar->SetName( strutil::trim(strutil::format("%s %s", targLevel->name.c_str(), strutil::trim(playerName).c_str() )) );
 	}
 	else if( origCommand != 0 ){
-		targetChar->SetName( trim(playerName) );
+		targetChar->SetName( strutil::trim(playerName) );
 	}
 
 	CItem *mypack	= targetChar->GetPackItem();
@@ -1445,7 +1445,7 @@ void SmeltTarget( CSocket *s )
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		std::string itemID = str_number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
+		std::string itemID = strutil::number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
 		Items->CreateScriptItem( s, mChar, "0x"+itemID, amtToRestore, OT_ITEM, true, itemColour );

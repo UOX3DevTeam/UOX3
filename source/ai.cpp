@@ -384,7 +384,7 @@ void CheckAI( CChar& mChar )
 				Combat->AttackTarget( &mChar, realChar->GetTarg() );
 			break;
 		default:
-			Console.error( format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
+			Console.error( strutil::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
 			return;
 	}
 }

@@ -160,7 +160,7 @@ ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATE
 
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
-		auto tUFind = str_toupper( toFind );
+		auto tUFind = strutil::toupper( toFind );
 
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
@@ -246,7 +246,7 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 	if( !mSort.empty() )
 	{
 		std::sort( mSort.begin(), mSort.end() );
-		Console.print( format("Section %20s : %6i", dirnames[toLoad].c_str(), 0 ));
+		Console.print( strutil::format("Section %20s : %6i", dirnames[toLoad].c_str(), 0 ));
 		size_t iTotal = 0;
 		Console.TurnYellow();
 
@@ -256,10 +256,10 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 			Console.print( "\b\b\b\b\b\b" );
 			ScriptListings[toLoad].push_back( new Script( (*mIter).filename, toLoad, false ) );
 			iTotal += ScriptListings[toLoad].back()->NumEntries();
-			Console.print( format("%6i", iTotal) );
+			Console.print( strutil::format("%6i", iTotal) );
 		}
 
-		Console.print( format("\b\b\b\b\b\b%6i", CountOfEntries( toLoad )) );
+		Console.print( strutil::format("\b\b\b\b\b\b%6i", CountOfEntries( toLoad )) );
 		Console.TurnNormal();
 		Console.print( " entries" );
 		switch( wasPriod )
@@ -353,13 +353,13 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
 					{
 						data = prioInfo->GrabData();
-						if( str_toupper( tag ) == "DEFAULTPRIORITY" )
+						if( strutil::toupper( tag ) == "DEFAULTPRIORITY" )
 						{
 							defaultPriority = static_cast<UI16>(std::stoul(data, nullptr, 0));
 						}
 						else
 						{
-							std::string filenametemp = str_tolower( tag );
+							std::string filenametemp = strutil::tolower( tag );
 							priorityMap[filenametemp] =static_cast<SI16>(std::stoi(data, nullptr, 0));
 						}
 					}
@@ -376,7 +376,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-	//	Console.warning( format( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() ));
+	//	Console.warning( strutil::format( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() ));
 #endif
 	wasPrioritized = 2;
 }
@@ -396,7 +396,7 @@ void CServerDefinitions::DisplayPriorityMap( void )
 SI16 CServerDefinitions::GetPriority( const char *file )
 {
 	SI16 retVal = defaultPriority;
-	auto lowername = str_tolower( file );
+	auto lowername = strutil::tolower( file );
 	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
 	if( p != priorityMap.end() )
 		retVal = p->second;
@@ -419,13 +419,13 @@ bool cDirectoryListing::PushDir( std::string toMove )
 	{
 		std::filesystem::current_path( path );
 		currentDir = toMove;
-		replaceSlash( toMove );
+		strutil::replaceSlash( toMove );
 		shortCurrentDir = ShortDirectory( toMove );
 		return true;
 	}
 	else
 	{
-		Console.error(format( "DFN directory %s does not exist", toMove.c_str()) );
+		Console.error(strutil::format( "DFN directory %s does not exist", toMove.c_str()) );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return false;

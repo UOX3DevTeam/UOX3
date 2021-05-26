@@ -168,16 +168,16 @@ void CMulHandler::LoadMapsDFN( void )
 	MapList.reserve( NumberOfWorlds );
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
-		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + str_number( i ), maps_def );
+		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + strutil::number( i ), maps_def );
 		if( toFind == NULL )
 			break;
 
 		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			UTag = str_toupper( tag );
+			UTag = strutil::toupper( tag );
 			data = toFind->GrabData();
-			data = stripTrim( data );
+			data = strutil::stripTrim( data );
 			switch( (UTag.data()[0]) )
 			{
 				case 'M':
@@ -502,7 +502,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	if( !multiIDX.ready() )
 	{
 		Console.PrintFailed();
-		Console.error( format("Can't cache %s!  File cannot be opened", lName.c_str()) );
+		Console.error( strutil::format("Can't cache %s!  File cannot be opened", lName.c_str()) );
 		return;
 	}
 	lName			= basePath + "multi.mul";
@@ -510,7 +510,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	if( !multis.ready() )
 	{
 		Console.PrintFailed();
-		Console.error( format("Can't cache %s!  File cannot be opened", lName.c_str()) );
+		Console.error( strutil::format("Can't cache %s!  File cannot be opened", lName.c_str()) );
 		return;
 	}
 
@@ -1015,7 +1015,7 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 	//7.0.8.2 tiledata and earlier
 	if( !IsValidTile( tileNum ) )
 	{
-		Console.warning( format("Invalid tile access, the offending tile number is %u", tileNum) );
+		Console.warning( strutil::format("Invalid tile access, the offending tile number is %u", tileNum) );
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -1033,7 +1033,7 @@ CTileHS& CMulHandler::SeekTileHS( UI16 tileNum )
 	//7.0.9.2 tiledata and later
 	if( !IsValidTile( tileNum ) )
 	{
-		Console.warning( format("Invalid tile access, the offending tile number is %u", tileNum ));
+		Console.warning( strutil::format("Invalid tile access, the offending tile number is %u", tileNum ));
 		static CTileHS emptyTile;
 		return emptyTile;
 	}
@@ -1050,7 +1050,7 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
 	{
-		Console.warning( format("Invalid land access, the offending land number is %u", landNum) );
+		Console.warning( strutil::format("Invalid land access, the offending land number is %u", landNum) );
 		static CLand emptyTile;
 		return emptyTile;
 	}
@@ -1067,7 +1067,7 @@ CLandHS& CMulHandler::SeekLandHS( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
 	{
-		Console.warning( format("Invalid land access, the offending land number is %u", landNum) );
+		Console.warning( strutil::format("Invalid land access, the offending land number is %u", landNum) );
 		static CLandHS emptyTile;
 		return emptyTile;
 	}
@@ -1253,7 +1253,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	if( mFile->eof() )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.warning( format("SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y ));
+		Console.warning( strutil::format("SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y ));
 #endif
 	}
 	else
@@ -1695,8 +1695,8 @@ void CMulHandler::LoadDFNOverrides( void )
 				continue;
 			}
 			entryName	= mapScp->EntryName();
-			entryNum	= str_value<std::uint16_t>(extractSection(entryName," ", 1, 1 ));
-			titlePart	= str_toupper(extractSection(entryName, " ", 0, 0 ));
+			entryNum	= strutil::value<std::uint16_t>(strutil::extractSection(entryName," ", 1, 1 ));
+			titlePart	= strutil::toupper(strutil::extractSection(entryName, " ", 0, 0 ));
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
@@ -1713,8 +1713,8 @@ void CMulHandler::LoadDFNOverrides( void )
 						for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 						{
 							data	= toScan->GrabData();
-							data 	= stripTrim( data );
-							UTag	= str_toupper( tag );
+							data 	= strutil::stripTrim( data );
+							UTag	= strutil::toupper( tag );
 
 							// CTile properties
 							if( UTag == "WEIGHT" )
@@ -1892,8 +1892,8 @@ void CMulHandler::LoadDFNOverrides( void )
 						for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 						{
 							data	= toScan->GrabData();
-							data 	= stripTrim( data );
-							UTag	= str_toupper( tag );
+							data 	= strutil::stripTrim( data );
+							UTag	= strutil::toupper( tag );
 							
 							// CTile properties
 							if( UTag == "WEIGHT" )

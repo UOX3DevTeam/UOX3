@@ -306,32 +306,32 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	UI16 butRight		= cwmWorldState->ServerData()->ButtonRight();
 	//--static pages
 	toSend.addCommand( "page 0" );
-	toSend.addCommand( format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()) );
-	toSend.addCommand( format("button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
-	toSend.addCommand( format("text 30 40 %u 0", tColour ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( format("text 30 60 %u 1", tColour) );
+	toSend.addCommand( strutil::format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()) );
+	toSend.addCommand( strutil::format("button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
+	toSend.addCommand( strutil::format("text 30 40 %u 0", tColour ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.addCommand( strutil::format("text 30 60 %u 1", tColour) );
 	toSend.addCommand( "page 1" );
 
-	toSend.addCommand( format("text 50 90 %u 2", lColour) );	//goto text
-	toSend.addCommand( format("text 50 110 %u 3", lColour) );	//gettext
-	toSend.addCommand( format("text 50 130 %u 4", lColour ));	//Jail text
-	toSend.addCommand( format("text 50 150 %u 5", lColour ));	//Release text
-	toSend.addCommand( format("text 50 170 %u 6", lColour ));	//Kick user text
-	toSend.addCommand( format("text 50 190 %u 7", lColour ));
-	toSend.addCommand( format("text 50 210 %u 8", lColour ));
-	toSend.addCommand( format("text 50 230 %u 9", lColour) );
-	toSend.addCommand( format("text 50 270 %u 10", lColour ));
-	toSend.addCommand( format("button 20 90 %u %i 1 0 200", butRight, butRight + 1 )); //goto button
-	toSend.addCommand( format("button 20 110 %u %i 1 0 201", butRight, butRight + 1 )); //get button
-	toSend.addCommand( format("button 20 130 %u %i 1 0 202", butRight, butRight + 1 )); //Jail button
-	toSend.addCommand( format("button 20 150 %u %i 1 0 203", butRight, butRight + 1 )); //Release button
-	toSend.addCommand( format("button 20 170 %u %i 1 0 204", butRight, butRight + 1 )); //kick button
-	toSend.addCommand( format("button 20 190 %u %i 1 0 205", butRight, butRight + 1 )); //Where button
-	toSend.addCommand( format("button 20 210 %u %i 1 0 206", butRight, butRight + 1 )); //Cstats button
-	toSend.addCommand( format("button 20 230 %u %i 1 0 207", butRight, butRight + 1 )); //Tweak button
+	toSend.addCommand( strutil::format("text 50 90 %u 2", lColour) );	//goto text
+	toSend.addCommand( strutil::format("text 50 110 %u 3", lColour) );	//gettext
+	toSend.addCommand( strutil::format("text 50 130 %u 4", lColour ));	//Jail text
+	toSend.addCommand( strutil::format("text 50 150 %u 5", lColour ));	//Release text
+	toSend.addCommand( strutil::format("text 50 170 %u 6", lColour ));	//Kick user text
+	toSend.addCommand( strutil::format("text 50 190 %u 7", lColour ));
+	toSend.addCommand( strutil::format("text 50 210 %u 8", lColour ));
+	toSend.addCommand( strutil::format("text 50 230 %u 9", lColour) );
+	toSend.addCommand( strutil::format("text 50 270 %u 10", lColour ));
+	toSend.addCommand( strutil::format("button 20 90 %u %i 1 0 200", butRight, butRight + 1 )); //goto button
+	toSend.addCommand( strutil::format("button 20 110 %u %i 1 0 201", butRight, butRight + 1 )); //get button
+	toSend.addCommand( strutil::format("button 20 130 %u %i 1 0 202", butRight, butRight + 1 )); //Jail button
+	toSend.addCommand( strutil::format("button 20 150 %u %i 1 0 203", butRight, butRight + 1 )); //Release button
+	toSend.addCommand( strutil::format("button 20 170 %u %i 1 0 204", butRight, butRight + 1 )); //kick button
+	toSend.addCommand( strutil::format("button 20 190 %u %i 1 0 205", butRight, butRight + 1 )); //Where button
+	toSend.addCommand( strutil::format("button 20 210 %u %i 1 0 206", butRight, butRight + 1 )); //Cstats button
+	toSend.addCommand( strutil::format("button 20 230 %u %i 1 0 207", butRight, butRight + 1 )); //Tweak button
 
-	toSend.addText(format( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex));
-	toSend.addText( format("Name: %s", targetChar->GetName().c_str() ));
+	toSend.addText(strutil::format( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex));
+	toSend.addText( strutil::format("Name: %s", targetChar->GetName().c_str() ));
 	toSend.addText( Dictionary->GetEntry( 1400, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1401, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1402, sLang ) );
@@ -340,7 +340,7 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	toSend.addText( Dictionary->GetEntry( 1405, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1406, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1407, sLang ) );
-	toSend.addText( format("Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )) );
+	toSend.addText( strutil::format("Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )) );
 
 	toSend.Finalize();
 	toSendTo->Send( &toSend );
@@ -381,14 +381,14 @@ void cWhoList::Update( void )
 	//--static pages
 	one.push_back( "page 0"  );
 
-	one.push_back( format(maxsize, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ) );
+	one.push_back( strutil::format(maxsize, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ) );
 
-	one.push_back( format(maxsize,"button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ) );
+	one.push_back( strutil::format(maxsize,"button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ) );
 
-	one.push_back( format(maxsize, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() ) );
+	one.push_back( strutil::format(maxsize, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() ) );
 
 
-	one.push_back( format(maxsize, "page %u", pagenum ) );
+	one.push_back( strutil::format(maxsize, "page %u", pagenum ) );
 
 
 	two.push_back( "Wholist" );
@@ -407,14 +407,14 @@ void cWhoList::Update( void )
 				position = 40;
 				++pagenum;
 
-				one.push_back( format(maxsize, "page %u", pagenum ) );
+				one.push_back( strutil::format(maxsize, "page %u", pagenum ) );
 			}
 
-			one.push_back( format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
+			one.push_back( strutil::format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
 
-			one.push_back( format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
+			one.push_back( strutil::format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
 
-			two.push_back( format(maxsize, " %s", tChar->GetName().c_str() ) );
+			two.push_back( strutil::format(maxsize, " %s", tChar->GetName().c_str() ) );
 			AddSerial( tChar->GetSerial() );
 
 			position += 20;
@@ -424,23 +424,23 @@ void cWhoList::Update( void )
 		}
 
 
-		two[0] = format(maxsize, "Wholist [%i online]", realCount - 1 );
+		two[0] = strutil::format(maxsize, "Wholist [%i online]", realCount - 1 );
 
 		pagenum = 1;
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
 
-			one.push_back( format(maxsize, "page %u", pagenum ) );
+			one.push_back( strutil::format(maxsize, "page %u", pagenum ) );
 			if( i >= numPerPage )
 			{
 				 //back button
-				one.push_back( format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
+				one.push_back( strutil::format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
 
-				one.push_back( format(maxsize, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
+				one.push_back( strutil::format(maxsize, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
 			}
 			++pagenum;
 		}
@@ -466,15 +466,15 @@ void cWhoList::Update( void )
 							position = 40;
 							++pagenum;
 
-							one.push_back( format(maxsize,"page %u", pagenum ) );
+							one.push_back( strutil::format(maxsize,"page %u", pagenum ) );
 						}
 
-						one.push_back( format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
+						one.push_back( strutil::format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
 
-						one.push_back( format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
+						one.push_back( strutil::format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
 
 
-						two.push_back( format(maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ) );
+						two.push_back( strutil::format(maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ) );
 						AddSerial( ourChar->GetSerial() );
 
 						position += 20;
@@ -486,22 +486,22 @@ void cWhoList::Update( void )
 			}
 		}
 
-		two[0] = format(maxsize,"Wholist [%i offline]", realCount-1 );
+		two[0] = strutil::format(maxsize,"Wholist [%i offline]", realCount-1 );
 
 		pagenum = 1;
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
 
-			one.push_back( format(maxsize,"page %u", pagenum ) );
+			one.push_back( strutil::format(maxsize,"page %u", pagenum ) );
 			if( i >= numPerPage )
 			{
 				 //back button
-				one.push_back( format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
+				one.push_back( strutil::format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				one.push_back( format(maxsize,"button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
+				one.push_back( strutil::format(maxsize,"button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
 			}
 			++pagenum;
 		}

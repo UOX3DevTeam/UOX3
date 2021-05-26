@@ -82,7 +82,7 @@ void cRaces::load( void )
 
 	while( !done )
 	{
-		sect					= std::string("RACE ") + str_number( raceCount );
+		sect					= std::string("RACE ") + strutil::number( raceCount );
 		ScriptSection *tempSect = FileLookup->FindEntry( sect, race_def );
 		if( tempSect == NULL )
 			done = true;
@@ -103,7 +103,7 @@ void cRaces::load( void )
 		}
 		else
 		{
-			if( str_toupper( tag ) != "MODCOUNT" )
+			if( strutil::toupper( tag ) != "MODCOUNT" )
 			{
 				Console << "MODCOUNT must come before any entries!" << myendl;
 				DefaultInitCombat();
@@ -1145,14 +1145,14 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 	std::string data;
 	std::string UTag;
 	SI32 raceDiff = 0;
-	std::string sect = std::string("RACE ") + str_number( sectNum );
+	std::string sect = std::string("RACE ") + strutil::number( sectNum );
 	ScriptSection *RacialPart = FileLookup->FindEntry( sect, race_def );
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
 
 	for( tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next() )
 	{
-		UTag = str_toupper( tag );
+		UTag = strutil::toupper( tag );
 		data = RacialPart->GrabData();
 		
 		switch( tag[0] )
@@ -1166,11 +1166,11 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					std::string subTag;
 					std::string subUTag;
 					std::string subData;
-					std::string subSect = std::string( "EQUIPLIST " ) + str_number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+					std::string subSect = std::string( "EQUIPLIST " ) + strutil::number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
 					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
-						subUTag = str_toupper( subTag );
+						subUTag = strutil::toupper( subTag );
 						subData = RacialEquipment->GrabData();
 						switch( subTag[0] )
 						{
@@ -1178,10 +1178,10 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 							case 'I':
 								if( subUTag == "ITEMS" )
 								{
-									auto csecs = sections( subData, "," );
+									auto csecs = strutil::sections( subData, "," );
 									for( int i = 0; i < csecs.size() - 1; i++ )
 									{
-										UI16 temp = static_cast<UI16>(std::stoul(stripTrim( csecs[i] ) ,nullptr, 0));
+										UI16 temp = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[i] ) ,nullptr, 0));
 										//allowedEquipment.push_back( temp );
 										allowedEquipment.insert( temp );
 									}
@@ -1207,11 +1207,11 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					std::string subTag;
 					std::string subUTag;
 					std::string subData;
-					std::string subSect = std::string( "EQUIPLIST " ) + str_number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+					std::string subSect = std::string( "EQUIPLIST " ) + strutil::number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
 					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
-						subUTag = str_toupper( subTag );
+						subUTag = strutil::toupper( subTag );
 						subData = RacialEquipment->GrabData();
 						switch( subTag[0] )
 						{
@@ -1219,10 +1219,10 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 							case 'I':
 								if( subUTag == "ITEMS" )
 								{
-									auto csecs = sections( subData, "," );
+									auto csecs = strutil::sections( subData, "," );
 									for( int i = 0; i < csecs.size() - 1; i++ )
 									{
-										UI16 temp = static_cast<UI16>(std::stoul(stripTrim( csecs[i] ), nullptr, 0));
+										UI16 temp = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[i] ), nullptr, 0));
 										//bannedEquipment.push_back( temp );
 										bannedEquipment.insert( temp );
 									}
@@ -1275,7 +1275,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			case 'G':
 				if( UTag == "GENDER" )
 				{
-					auto udata = str_toupper( data );
+					auto udata = strutil::toupper( data );
 					if( udata == "MALE" )
 					{
 						GenderRestriction( MALE );
@@ -1315,11 +1315,11 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					HPModifier( static_cast<UI16>(std::stoul(data,nullptr,0)) );
 				}
 				else if( UTag == "HUNGER" )	{ // does race suffer from hunger
-					auto csecs = sections( data, "," );
+					auto csecs = strutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{
-						SetHungerRate( static_cast<SI16>(std::stoi(stripTrim( csecs[0] ), nullptr, 0)) );
-						SetHungerDamage( static_cast<SI16>(std::stoi(stripTrim( csecs[1] ), nullptr, 0)) );
+						SetHungerRate( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
+						SetHungerDamage( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
 					{
@@ -1447,10 +1447,10 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				}
 				else if( UTag == "RACERELATION" )
 				{
-					auto ssecs = sections(data," ");
+					auto ssecs = strutil::sections(data," ");
 					if( ssecs.size() > 1 )
 					{
-						RaceRelation( static_cast<RaceRelate>(std::stoi(stripTrim( ssecs[1] ), nullptr, 0)), static_cast<UI16>(std::stoul(stripTrim( ssecs[0] ), nullptr, 0)) );
+						RaceRelation( static_cast<RaceRelate>(std::stoi(strutil::stripTrim( ssecs[1] ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0)) );
 					}
 				}
 				else if( UTag == "RACIALENEMY" )

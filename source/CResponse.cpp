@@ -190,44 +190,44 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			case TW_BALANCE:			tResp = new CBankResponse( true );										break;
 			case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
 			case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
-			case TW_TRAIN:				tResp = new CTrainingResponse( str_toupper( text ));					break;
+			case TW_TRAIN:				tResp = new CTrainingResponse( strutil::toupper( text ));					break;
 			case TW_FOLLOW:
-			case TW_FOLLOW2:			tResp = new CPetMultiResponse( str_toupper( text ), false, TARGET_FOLLOW, 1310 );	break;
+			case TW_FOLLOW2:			tResp = new CPetMultiResponse( strutil::toupper( text ), false, TARGET_FOLLOW, 1310 );	break;
 			case TW_COME:
-			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, str_toupper( text ) );							break;
+			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, strutil::toupper( text ) );							break;
 			case TW_ALLCOME:
 			case TW_ALLFOLLOW:
-			case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, str_toupper( text ) );							break;
+			case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, strutil::toupper( text ) );							break;
 			case TW_KILL:
-			case TW_ATTACK:				tResp = new CPetAttackResponse( false, str_toupper( text ) );						break;
+			case TW_ATTACK:				tResp = new CPetAttackResponse( false, strutil::toupper( text ) );						break;
 			case TW_ALLKILL:
-			case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, str_toupper( text ) );						break;
+			case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, strutil::toupper( text ) );						break;
 			case TW_FETCH:
 			case TW_GET:
-			case TW_BRING:				tResp = new CPetMultiResponse( str_toupper( text ), false, TARGET_GUARD, 1316 );	break;
-			case TW_FRIEND:				tResp = new CPetMultiResponse( str_toupper( text ), true, TARGET_FRIEND, 1620 );	break;
-			case TW_GUARD:				tResp = new CPetMultiResponse( str_toupper( text ), true, TARGET_GUARD, 1104 );		break;
+			case TW_BRING:				tResp = new CPetMultiResponse( strutil::toupper( text ), false, TARGET_GUARD, 1316 );	break;
+			case TW_FRIEND:				tResp = new CPetMultiResponse( strutil::toupper( text ), true, TARGET_FRIEND, 1620 );	break;
+			case TW_GUARD:				tResp = new CPetMultiResponse( strutil::toupper( text ), true, TARGET_GUARD, 1104 );		break;
 			case TW_ALLGUARD:
-			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, str_toupper( text ) );							break;
+			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, strutil::toupper( text ) );							break;
 			case TW_STOP:
-			case TW_STAY:				tResp = new CPetStayResponse( false, str_toupper( text ) );							break;
+			case TW_STAY:				tResp = new CPetStayResponse( false, strutil::toupper( text ) );							break;
 			case TW_ALLSTOP:
-			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, str_toupper( text ) );							break;
-			case TW_TRANSFER:			tResp = new CPetMultiResponse( str_toupper( text ), true, TARGET_TRANSFER, 1323 );		break;
-			case TW_RELEASE:			tResp = new CPetReleaseResponse( str_toupper( text ) );								break;
-			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, str_toupper( text ) );						break;
-			case TW_BUY:				tResp = new CVendorBuyResponse( false, str_toupper( text ) );						break;
-			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, str_toupper( text ) );						break;
-			case TW_SELL:				tResp = new CVendorSellResponse( false, str_toupper( text ) );						break;
-			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, str_toupper( text ) );						break;
-			case TW_VIEW:				tResp = new CVendorViewResponse( false, str_toupper( text ) );						break;
-			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, str_toupper( text ) );						break;
+			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, strutil::toupper( text ) );							break;
+			case TW_TRANSFER:			tResp = new CPetMultiResponse( strutil::toupper( text ), true, TARGET_TRANSFER, 1323 );		break;
+			case TW_RELEASE:			tResp = new CPetReleaseResponse( strutil::toupper( text ) );								break;
+			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, strutil::toupper( text ) );						break;
+			case TW_BUY:				tResp = new CVendorBuyResponse( false, strutil::toupper( text ) );						break;
+			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, strutil::toupper( text ) );						break;
+			case TW_SELL:				tResp = new CVendorSellResponse( false, strutil::toupper( text ) );						break;
+			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, strutil::toupper( text ) );						break;
+			case TW_VIEW:				tResp = new CVendorViewResponse( false, strutil::toupper( text ) );						break;
+			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, strutil::toupper( text ) );						break;
 			case TW_COLLECT:
-			case TW_GOLD:				tResp = new CVendorGoldResponse( false, str_toupper( text ) );						break;
-			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, str_toupper( text ) );						break;
-			case TW_STATUS:				tResp = new CVendorStatusResponse( false, str_toupper( text ) );					break;
-			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, str_toupper( text ) );					break;
-			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, str_toupper( text ));					break;
+			case TW_GOLD:				tResp = new CVendorGoldResponse( false, strutil::toupper( text ) );						break;
+			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, strutil::toupper( text ) );						break;
+			case TW_STATUS:				tResp = new CVendorStatusResponse( false, strutil::toupper( text ) );					break;
+			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, strutil::toupper( text ) );					break;
+			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, strutil::toupper( text ));					break;
 			case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
 			case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
 			case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
@@ -293,10 +293,10 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 				if(( trigWord >= 0x006D && trigWord <= 0x009C ) || trigWord == 0x154 || trigWord == 0x115 ||
 				   trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E )
 				{
-					tResp = new CTrainingResponse( str_toupper( text ));									break;
+					tResp = new CTrainingResponse( strutil::toupper( text ));									break;
 				}
 #if defined( UOX_DEBUG_MODE )
-				Console.print( format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
+				Console.print( strutil::format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
 #endif
 				break;
 		}
@@ -445,7 +445,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		std::string temp ;
 		std::string temp2 ;
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-		auto UText = str_toupper( ourText );
+		auto UText = strutil::toupper( ourText );
 		auto skillName = std::string("");
 		bool foundString = false;
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
@@ -457,7 +457,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
 				mSock->TempObj( NULL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
-				auto ssecs = sections( UText, " " );
+				auto ssecs = strutil::sections( UText, " " );
 				if( ssecs.size() > 1 ) //Only if string has more than one word
 				{
 					//Search for perfect match first
@@ -514,7 +514,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
-							temp2= str_tolower(cwmWorldState->skill[j].name);
+							temp2= strutil::tolower(cwmWorldState->skill[j].name);
 							if( !skillsToTrainIn ) {
 								temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it, and add a space in front.
 								temp += (" " + temp2);
@@ -555,17 +555,17 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					}
 					if( Npc->GetBaseSkill( (UI08)skill ) > 10 )
 					{
-						temp = format(maxsize, Dictionary->GetEntry( 1304 ), str_tolower(cwmWorldState->skill[skill].name ).c_str() );
+						temp = strutil::format(maxsize, Dictionary->GetEntry( 1304 ), strutil::tolower(cwmWorldState->skill[skill].name ).c_str() );
 						if( mChar->GetBaseSkill( (UI08)skill ) >= 250 ){
 							temp += Dictionary->GetEntry( 1305 );
 						}
 						else
 						{
 							if( Npc->GetBaseSkill( (UI08)skill ) <= 250){
-								temp2=format(maxsize, Dictionary->GetEntry( 1306 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
+								temp2=strutil::format(maxsize, Dictionary->GetEntry( 1306 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
 							}
 							else {
-								temp2 = format(maxsize, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
+								temp2 = strutil::format(maxsize, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
 							}
 							temp += temp2 ;
 							mSock->TempObj( Npc );
@@ -624,7 +624,7 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, isRestricted ))
 	{
-		if( findString( ourText, str_toupper( Npc->GetName() )))
+		if( findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			mSock->TempObj( Npc );
 			mSock->target( 0, targID, dictEntry );
@@ -646,7 +646,7 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ))
 	{
-		if( findString( ourText, str_toupper( Npc->GetName() )))
+		if( findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( NULL );
@@ -681,7 +681,7 @@ bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ))
 	{
-		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
+		if( saidAll || findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			mSock->sysmessage( 1321 );
@@ -709,7 +709,7 @@ bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ))
 	{
-		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
+		if( saidAll || findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			mSock->TempObj( Npc );
@@ -733,7 +733,7 @@ bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc ))
 	{
-		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
+		if( saidAll || findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( mChar );
@@ -758,7 +758,7 @@ bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc ))
 	{
-		if( saidAll || findString( ourText, str_toupper( Npc->GetName() )))
+		if( saidAll || findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( NULL );
@@ -794,7 +794,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 				continue;
 
-			if( saidVendor || findString( ourText,str_toupper( Npc->GetName() )))
+			if( saidVendor || findString( ourText,strutil::toupper( Npc->GetName() )))
 			{
 				if( !Handle( mSock, mChar, Npc ) )
 					break;

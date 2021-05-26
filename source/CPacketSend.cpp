@@ -1795,7 +1795,7 @@ void CPOpenGump::Question( std::string toAdd )
 	pStream.WriteString( 10, toAdd, toAdd.length() );
 #if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
-		Console.error( format("CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length()) );
+		Console.error( strutil::format("CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length()) );
 #endif
 	pStream.WriteByte( 9, static_cast< UI08 >(toAdd.length() + 1) );
 	responseBaseOffset	= (pStream.GetSize() - 1);
@@ -1806,7 +1806,7 @@ void CPOpenGump::AddResponse( UI16 modelNum, UI16 colour, std::string responseTe
 	pStream.WriteByte( responseBaseOffset, pStream.GetByte( responseBaseOffset ) + 1 ); // increment number of responses
 #if defined( UOX_DEBUG_MODE )
 	if( responseText.length() >= 255 )
-		Console.error( format("CPOpenGump::AddResponse responseText is too long (%i)", responseText.length()) );
+		Console.error( strutil::format("CPOpenGump::AddResponse responseText is too long (%i)", responseText.length()) );
 #endif
 	UI16 toAdd = static_cast< UI16 >(5 + responseText.length());
 	pStream.ReserveSize( pStream.GetSize() + toAdd );
@@ -4276,10 +4276,10 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	itemname.reserve( MAX_NAME );
 	UI08 sLen = 0;
 	std::string temp	= toAdd->GetName();
-	temp				= simplify(temp);
+	temp				= strutil::simplify(temp);
 	if( temp.substr( 0, 1 ) == "#" )
 	{
-		itemname = str_number( 1020000 + toAdd->GetID() );
+		itemname = strutil::number( 1020000 + toAdd->GetID() );
 		sLen = static_cast<UI08>(itemname.size() + 1);
 	}
 	else
@@ -6290,19 +6290,19 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		std::string temp;
 		getTileName( cItem, temp );
 		if( cItem.GetAmount() > 1 && addAmount ) {
-			tempEntry.ourText = format( " \t%s : %i\t ", temp.c_str(), cItem.GetAmount() );
+			tempEntry.ourText = strutil::format( " \t%s : %i\t ", temp.c_str(), cItem.GetAmount() );
 		}
 		else{
-			tempEntry.ourText = format(" \t%s\t ",temp.c_str() );
+			tempEntry.ourText = strutil::format(" \t%s\t ",temp.c_str() );
 		}
 	}
 	else
 	{
 		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT ){
-			tempEntry.ourText = format( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
+			tempEntry.ourText = strutil::format( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
 		}
 		else{
-			tempEntry.ourText = format(" \t%s\t ",cItem.GetName().c_str() );
+			tempEntry.ourText = strutil::format(" \t%s\t ",cItem.GetName().c_str() );
 		}
 	}
 	tempEntry.stringNum = 1050045;
@@ -6326,16 +6326,16 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{
 		tempEntry.stringNum = 1050044;
-		//tempEntry.ourText = format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
-		tempEntry.ourText = format( "%u\t%i", GetTotalItemCount( &cItem ), (cItem.GetWeight()/100) );
+		//tempEntry.ourText = strutil::format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
+		tempEntry.ourText = strutil::format( "%u\t%i", GetTotalItemCount( &cItem ), (cItem.GetWeight()/100) );
 		FinalizeData( tempEntry, totalStringLen );
 		if( ( cItem.GetWeightMax() / 100 ) >= 1 )
 		{
 			//Uncomment and replace 0 with maxitem value if we ever implement it
 			tempEntry.stringNum = 1072226;
-			tempEntry.ourText = format( "%u\t%i", cItem.GetMaxItems(), ( cItem.GetWeightMax() / 100 ) );
+			tempEntry.ourText = strutil::format( "%u\t%i", cItem.GetMaxItems(), ( cItem.GetWeightMax() / 100 ) );
 			//tempEntry.stringNum = 1060658;
-			//tempEntry.ourText = format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
+			//tempEntry.ourText = strutil::format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -6355,7 +6355,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
 	{
 		tempEntry.stringNum = 1060584;
-		tempEntry.ourText = str_number( cItem.GetTempVar( CITV_MOREZ ) );
+		tempEntry.ourText = strutil::number( cItem.GetTempVar( CITV_MOREZ ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_RECALLRUNE )
@@ -6398,9 +6398,9 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			tempEntry.stringNum = 1072789;
 
 		if( cItem.GetType() == IT_ITEMSPAWNER || cItem.GetType() == IT_NPCSPAWNER )
-			tempEntry.ourText = str_number( ( cItem.GetWeight() / 100 ) );
+			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) );
 		else
-			tempEntry.ourText = str_number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
+			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )
@@ -6410,21 +6410,21 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( cItem.GetHiDamage() > 0 )
 			{
 				tempEntry.stringNum = 1060403;
-				tempEntry.ourText = str_number( 100 );
+				tempEntry.ourText = strutil::number( 100 );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetHiDamage() > 0 )
 			{
 				tempEntry.stringNum = 1061168;
-				tempEntry.ourText = format( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
+				tempEntry.ourText = strutil::format( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetSpeed() > 0 )
 			{
 				tempEntry.stringNum = 1061167;
-				tempEntry.ourText = str_number( cItem.GetSpeed() );
+				tempEntry.ourText = strutil::number( cItem.GetSpeed() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
@@ -6460,40 +6460,40 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( cItem.GetResist( PHYSICAL ) > 0 )
 			{
 				tempEntry.stringNum = 1060448;
-				tempEntry.ourText = str_number( cItem.GetResist( PHYSICAL ) );
+				tempEntry.ourText = strutil::number( cItem.GetResist( PHYSICAL ) );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetMaxHP() > 1 )
 			{
 				tempEntry.stringNum = 1060639;
-				tempEntry.ourText = format( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
+				tempEntry.ourText = strutil::format( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetStrength2() > 0 )
 			{
 				tempEntry.stringNum = 1060485;
-				tempEntry.ourText = str_number( cItem.GetStrength2() );
+				tempEntry.ourText = strutil::number( cItem.GetStrength2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 			if( cItem.GetDexterity2() > 0 )
 			{
 				tempEntry.stringNum = 1060409;
-				tempEntry.ourText = str_number( cItem.GetDexterity2() );
+				tempEntry.ourText = strutil::number( cItem.GetDexterity2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 			if( cItem.GetIntelligence2() > 0 )
 			{
 				tempEntry.stringNum = 1060432;
-				tempEntry.ourText = str_number( cItem.GetIntelligence2() );
+				tempEntry.ourText = strutil::number( cItem.GetIntelligence2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetStrength() > 1 )
 			{
 				tempEntry.stringNum = 1061170;
-				tempEntry.ourText = str_number( cItem.GetStrength() );
+				tempEntry.ourText = strutil::number( cItem.GetStrength() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}
@@ -6505,7 +6505,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		{
 			// First the price
 			tempEntry.stringNum = 1043304;
-			tempEntry.ourText = str_number( cItem.GetBuyValue() );
+			tempEntry.ourText = strutil::number( cItem.GetBuyValue() );
 			FinalizeData( tempEntry, totalStringLen );
 			// Then the description
 			tempEntry.stringNum = 1043305;
@@ -6530,7 +6530,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
 	toolTipEntry tempEntry = {};
 	tempEntry.stringNum = 1050045;
-	tempEntry.ourText = format( " \t%s\t ",mChar.GetName().c_str() );
+	tempEntry.ourText = strutil::format( " \t%s\t ",mChar.GetName().c_str() );
 	FinalizeData( tempEntry, totalStringLen );
 }
 

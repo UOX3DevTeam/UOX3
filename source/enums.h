@@ -435,7 +435,7 @@ enum distLocs
     DIST_NEARBY,
     DIST_INRANGE	= 7,
     DIST_SAMESCREEN = 24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
-    DIST_BUILDRANGE = 31,
+	DIST_BUILDRANGE = 31,
     DIST_OUTOFRANGE	= 0xFFFF
 };
 

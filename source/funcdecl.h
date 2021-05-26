@@ -225,7 +225,7 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 	catch( ... )
 	{
 		rvalue = false;
-		Console.error( format("Invalid Object found: 0x%X", (UI64)toValidate) );
+		Console.error( strutil::format("Invalid Object found: 0x%X", (UI64)toValidate) );
 	}
 	return rvalue;
 }

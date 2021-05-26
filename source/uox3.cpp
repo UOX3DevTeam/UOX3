@@ -490,7 +490,7 @@ void endmessage( SI32 x )
 		cwmWorldState->SetEndTime( igetclock );
 
 
-	sysBroadcast( format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
+	sysBroadcast( strutil::format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
 }
 
 #if UOX_PLATFORM != PLATFORM_WIN32
@@ -701,7 +701,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	{
 		mChar.SetEvadeState( false );
 #ifdef DEBUG_COMBAT
-		Console.print( format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+		Console.print( strutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
 	}
 
@@ -1836,7 +1836,7 @@ void DisplayBanner( void )
 	Console.PrintSectionBegin();
 
 
-	//auto idName = format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
+	//auto idName = strutil::format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
 
 	Console.TurnYellow();
 	Console << "Compiled on ";
@@ -1997,8 +1997,8 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlayStaticAnimation( applyTo, 0x373A, 0, 15);
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
-		std::string sect			= std::string("ADVANCEMENT ") + str_number( advObj );
-		sect						= stripTrim( sect );
+		std::string sect			= std::string("ADVANCEMENT ") + strutil::number( advObj );
+		sect						= strutil::stripTrim( sect );
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == NULL )
 		{
@@ -2103,12 +2103,12 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_PACKITEM:
 					if( ValidateObject( applyTo->GetPackItem() ) )
 					{
-						auto csecs = sections( cdata, "," );
+						auto csecs = strutil::sections( cdata, "," );
 						if( !cdata.empty() )
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( NULL, applyTo, stripTrim( csecs[0] ), str_value<std::uint16_t>(stripTrim( csecs[1] )), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( NULL, applyTo, strutil::stripTrim( csecs[0] ), strutil::value<std::uint16_t>(strutil::stripTrim( csecs[1] )), OT_ITEM, true );
 							}
 							else
 							{
@@ -2347,7 +2347,7 @@ void doLight( CChar *mChar, UI08 level )
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	std::string temp	= mItem.GetName();
-	temp				= stripTrim( temp );
+	temp				= strutil::stripTrim( temp );
 	const UI16 getAmount = mItem.GetAmount();
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
@@ -2384,7 +2384,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		}
 	}
 
-	auto psecs = sections( temp, "%" );
+	auto psecs = strutil::sections( temp, "%" );
 	// Find out if the name has a % in it
 	if( psecs.size() > 1 )
 	{
@@ -2392,7 +2392,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		const std::string first	= psecs[0];
 		std::string plural		= psecs[1];
 		const std::string rest	= psecs[2];
-		auto fssecs = sections( plural, "/" );
+		auto fssecs = strutil::sections( plural, "/" );
 		if( fssecs.size() > 1 )
 		{
 			single = fssecs[1];
@@ -2403,7 +2403,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		else
 			temp = first + plural + rest;
 	}
-	itemname = simplify( temp );
+	itemname = strutil::simplify( temp );
 	return itemname.size() + 1;
 }
 
@@ -2637,7 +2637,7 @@ void UpdateFlag( CChar *mChar )
 		else
 		{
 			mChar->SetFlagBlue();
-			Console.warning( format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
+			Console.warning( strutil::format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
 		}
 	}
 	else
@@ -2854,7 +2854,7 @@ int main( SI32 argc, char *argv[] )
 		current = std::chrono::system_clock::now();
 		const UI32 currentTime = 0;
 
-		Console.Start( format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
+		Console.Start( strutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection

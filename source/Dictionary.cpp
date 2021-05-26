@@ -71,7 +71,7 @@ SI32 CDictionary::LoadDictionary( void )
 					for( tag = dictSect->First(); !dictSect->AtEnd(); tag = dictSect->Next() )
 					{
 						data					= dictSect->GrabData();
-						Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = stripTrim( data );
+						Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = strutil::stripTrim( data );
 						++count;
 					}
 				}
@@ -133,7 +133,7 @@ std::string CDictionary::GetEntry( const SI32 Num )
 		if( toFind != Text2.end() )
 			rvalue = toFind->second;
 		else
-			Console.warning( format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
+			Console.warning( strutil::format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
 	}
 	return rvalue;
 }

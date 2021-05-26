@@ -36,7 +36,7 @@ cCommands::~cCommands()
 //o-----------------------------------------------------------------------------------------------o
 UI08 cCommands::NumArguments( void )
 {
-	auto secs = sections( commandString, " ");
+	auto secs = strutil::sections( commandString, " ");
 	return static_cast<UI08>(secs.size());
 }
 
@@ -55,7 +55,7 @@ SI32 cCommands::Argument( UI08 argNum )
 			retVal = std::stoi(tempString, nullptr, 0);
 		} 
 		catch (const std::invalid_argument & e) {
-			Console.error( format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
+			Console.error( strutil::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
 		}
 	}
 
@@ -73,11 +73,11 @@ std::string cCommands::CommandString( UI08 section, UI08 end )
 	std::string retString;
 	if( end != 0 )
 	{
-		retString = extractSection(commandString, " ", section - 1, end - 1 );
+		retString = strutil::extractSection(commandString, " ", section - 1, end - 1 );
 	}
 	else
 	{
-		retString = extractSection(commandString, " ", section - 1 );
+		retString = strutil::extractSection(commandString, " ", section - 1 );
 	}
 	return retString;
 }
@@ -97,14 +97,14 @@ void cCommands::CommandString( std::string newValue )
 //o-----------------------------------------------------------------------------------------------o
 void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 {
-	CommandString( simplify( text ));
+	CommandString( strutil::simplify( text ));
 	if( NumArguments() < 1 )
 	{
 		return;
 	}
 	
 	// Discard the leading command prefix
-	std::string command = str_toupper( CommandString( 1, 1 ));
+	std::string command = strutil::toupper( CommandString( 1, 1 ));
 
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
@@ -123,7 +123,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 			if( toExecute != NULL )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.print( format("Executing JS command %s\n", command.c_str() ));
+				Console.print( strutil::format("Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
@@ -313,7 +313,7 @@ void cCommands::Load( void )
 				continue;
 			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
 			{
-				UTag = str_toupper( tag );
+				UTag = strutil::toupper( tag );
 				data = cmdClearance->GrabData();
 				if( UTag == "NICKCOLOUR" ) {
 					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -364,7 +364,7 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.error( format("Unable to open command log file %s!", logName.c_str() ));
+		Console.error( strutil::format("Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -395,7 +395,7 @@ commandLevel_st *cCommands::GetClearance( std::string clearName )
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
 		clearPointer = (*clearIter);
-		if( str_toupper( clearName ) == clearPointer->name )
+		if( strutil::toupper( clearName ) == clearPointer->name )
 		{
 			return clearPointer;
 		}

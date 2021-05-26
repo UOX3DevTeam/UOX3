@@ -674,7 +674,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 		{
 			if( !tag.empty() )
 			{
-				if( str_toupper( tag ) == "FOODLIST" )
+				if( strutil::toupper( tag ) == "FOODLIST" )
 				{
 					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
 				}
@@ -1742,20 +1742,20 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			{
 				if( p->GetID( 2 ) == 0x91 )
 				{
-					FameTitle = format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
+					FameTitle = strutil::format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
 				}
 				else
 				{
-					FameTitle = format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
+					FameTitle = strutil::format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
 				}
 			}
 			else if( p->GetID( 2 ) == 0x91 )
 			{
-				FameTitle = format( Dictionary->GetEntry( 1179 ), thetitle.c_str() ) + std::string(" ");
+				FameTitle = strutil::format( Dictionary->GetEntry( 1179 ), thetitle.c_str() ) + std::string(" ");
 			}
 			else
 			{
-				FameTitle = format( Dictionary->GetEntry( 1180 ), thetitle.c_str() ) + std::string(" ");
+				FameTitle = strutil::format( Dictionary->GetEntry( 1180 ), thetitle.c_str() ) + std::string(" ");
 			}
 		}
 		else
@@ -1764,9 +1764,9 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			{
 				FameTitle = Dictionary->GetEntry( 1181 ) + std::string(" ");
 			}
-			else if( !stripTrim( thetitle ).empty() )
+			else if( !strutil::stripTrim( thetitle ).empty() )
 			{
-				FameTitle = format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
+				FameTitle = strutil::format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
 			}
 		}
 	}
@@ -1831,7 +1831,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
 		if( cwmWorldState->murdererTags.empty() )
-			tempstr = format( Dictionary->GetEntry( 374, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+			tempstr = strutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 			bContinue = true;
 		else
@@ -1850,7 +1850,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 	}
 	else if( pdoll->IsCriminal() )
-		tempstr = format( Dictionary->GetEntry( 373, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+		tempstr = strutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 	else
 		bContinue = true;
 	if( bContinue )
@@ -1859,7 +1859,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		if( pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2 )	// TownTitle
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
-				tempstr = format( Dictionary->GetEntry( 379, sLang ), pdoll->GetName().c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
+				tempstr = strutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetName().c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
 			else	// is Resident
 				tempstr = pdoll->GetName() + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
 		}
@@ -2537,7 +2537,7 @@ ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
-	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( str_toupper(strToFind) );
+	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strutil::toupper(strToFind) );
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;
@@ -2557,7 +2557,7 @@ void InitIDToItemType( void )
 	for( std::string tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
 	{
 		data	= Itemtypes->GrabData();
-		auto comma_secs = sections( data, "," );
+		auto comma_secs = strutil::sections( data, "," );
 		iType	= FindItemTypeFromTag( tag );
 		if( iType != IT_COUNT )
 		{
@@ -2566,7 +2566,7 @@ void InitIDToItemType( void )
 			{
 				for( SI32 i = 0; i <= sectionCount; i++ )
 				{
-					idToItemType[ str_value<std::uint16_t>(extractSection(data, ",", i, i ), 16 )] = iType;
+					idToItemType[ strutil::value<std::uint16_t>(strutil::extractSection(data, ",", i, i ), 16 )] = iType;
 				}
 			}
 			else
@@ -2849,13 +2849,13 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = std::string(" (") + str_number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += str_number( ( i->GetWeight() / 100 ) ) + std::string(" stones)");
+			dataToAdd = std::string(" (") + strutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
+			dataToAdd += strutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones)");
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = std::string(" (") + str_number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += str_number( ( i->GetWeight() / 100 ) ) + std::string(" stones) [Locked]");
+			dataToAdd = std::string(" (") + strutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
+			dataToAdd += strutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones) [Locked]");
 			break;
 		case IT_LOCKEDDOOR:
 			dataToAdd = " [Locked]";
@@ -2956,7 +2956,7 @@ bool CPISingleClick::Handle( void )
 				{
 					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 					if( ValidateObject( mCreater ) ){
-						temp2 = format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+						temp2 = strutil::format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 					}
 					else{
 						temp2 =  i->GetDesc();
@@ -2978,16 +2978,16 @@ bool CPISingleClick::Handle( void )
 	if( i->GetName()[0] != '#' )
 	{
 		if( i->GetID() == 0x0ED5 )//guildstone
-			realname = format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetName().c_str() );
+			realname = strutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetName().c_str() );
 		if( !i->isPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->isCorpse() && getAmount > 1 )
-				realname = format( "%s (%u)", i->GetName().c_str(), getAmount );
+				realname = strutil::format( "%s (%u)", i->GetName().c_str(), getAmount );
 			else
 				realname = i->GetName();
 		}
 		else
-			realname = format( "%u %ss", getAmount, i->GetName().c_str() );
+			realname = strutil::format( "%u %ss", getAmount, i->GetName().c_str() );
 	}
 	else
 	{
@@ -3007,13 +3007,13 @@ bool CPISingleClick::Handle( void )
 	}
 	else if( i->IsContType() )
 	{
-		realname += format( ", (%u items, %u stones)", i->GetContainsList()->Num(), (i->GetWeight()/100) );
+		realname += strutil::format( ", (%u items, %u stones)", i->GetContainsList()->Num(), (i->GetWeight()/100) );
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{
 		CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 		if( ValidateObject( mCreater ) ){
-			temp2=format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+			temp2=strutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 		}
 		else{
 			temp2= realname;

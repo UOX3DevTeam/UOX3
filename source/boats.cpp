@@ -184,7 +184,7 @@ void OpenPlank( CItem *p )
 		case 0xD5: p->SetID( 0xB1, 2 ); break;
 		case 0xD4: p->SetID( 0xB2, 2 ); break;
 		case 0x89: p->SetID( 0x8A, 2 ); break;
-		default: 	Console.warning( format("Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetID() ));
+		default: 	Console.warning( strutil::format("Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetID() ));
 			break;
 	}
 }
@@ -784,7 +784,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 			tiller->IncLocation( iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP] );
 			hold->IncLocation( iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP] );
 			break;
-		default: Console.error( format("TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) ));
+		default: Console.error( strutil::format("TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) ));
 	}
 
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
@@ -886,15 +886,15 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			}
 
 			// Check if player provided anything after the actual set name command
-			std::string cmdString = str_toupper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
-			if( str_toupper( ourText ).size() == cmdString.size() )
+			std::string cmdString = strutil::toupper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
+			if( strutil::toupper( ourText ).size() == cmdString.size() )
 			{
 				tiller->TextMessage( mSock, 12 ); // Can ya say that again with an actual name, sir?
 				return;
 			}
 
 			// Check if we can find the dictionary-based command string in the player's speech
-			std::string upperOurText = str_toupper( ourText );
+			std::string upperOurText = strutil::toupper( ourText );
 			size_t cmdStringPos = upperOurText.find(cmdString);
 			if( cmdStringPos == std::string::npos )
 			{
@@ -909,7 +909,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 				ourText.erase(pos, cmdString.size());
 
 			// Trim spaces from start and end of player provided name, and see if there's actually a name there and not just empty spaces!
-			ourText = trim(ourText);
+			ourText = strutil::trim(ourText);
 			if( ourText.size() == 0 )
 			{
 				boat->SetName( Dictionary->GetEntry( 2035, mLang )); // a ship

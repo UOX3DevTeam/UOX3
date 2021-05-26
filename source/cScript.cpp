@@ -171,14 +171,14 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 {
 	UI16 scriptNum = JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	// If we're loading the world then do NOT print out anything!
-	Console.error( format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
+	Console.error( strutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
 	if( report == NULL || report->filename == NULL )
 	{
 		Console.error( "No detailed data" );
 		return;
 	}
-	Console.error( format("Filename: %s\n| Line Number: %i", report->filename, report->lineno) );
-	Console.error( format("Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	Console.error( strutil::format("Filename: %s\n| Line Number: %i", report->filename, report->lineno) );
+	Console.error( strutil::format("Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -441,7 +441,7 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	JSString *strSpeech 	= NULL;
 	std::string lwrSpeech	= speech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, str_tolower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj = NULL;
@@ -1883,7 +1883,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 		JS_SetGlobalObject( targContext, targObject );
 
 
-		JSBool retVal = JS_CallFunctionName( targContext, targObject, format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
+		JSBool retVal = JS_CallFunctionName( targContext, targObject, strutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
 		return ( retVal == JS_TRUE );
 	}
 	catch( ... )
@@ -2369,7 +2369,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	JSString *strSpeech		= NULL;
 	std::string lwrSpeech	= mySpeech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, str_tolower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 
@@ -2596,7 +2596,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	jsval params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	JSString *strCmd = NULL;
-	strCmd = JS_NewStringCopyZ( targContext, str_tolower( command ).c_str() );
+	strCmd = JS_NewStringCopyZ( targContext, strutil::tolower( command ).c_str() );
 	params[0]	= OBJECT_TO_JSVAL( myObj );
 	params[1]	= STRING_TO_JSVAL( strCmd );
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onCommand", 2, params, &rval );
@@ -2654,7 +2654,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
 	if( Func == JSVAL_VOID )
 	{
-		Console.warning( format("Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() ));
+		Console.warning( strutil::format("Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() ));
 		return false;
 	}
 

@@ -16,6 +16,7 @@
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
+#include <algorithm>
 
 CJSEngine *JSEngine = NULL;
 
@@ -26,11 +27,11 @@ CJSEngine::CJSEngine( void )
 	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
 	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
-	auto maxBytesSize = UOX_MAX( static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
+	auto maxBytesSize = std::max( static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
 
 	// Use minimum of INI-provided value and hard-defined maximum
 	// maxBytes definition: "Maximum nominal heap before last ditch GC"
-	UI32 engineMaxBytes = UOX_MIN( static_cast<UI32>( static_cast<UI32>(maxBytesSize) * 1024 * 1024 ), maxEngineSize );
+	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>(maxBytesSize) * 1024 * 1024 ), maxEngineSize );
 
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;

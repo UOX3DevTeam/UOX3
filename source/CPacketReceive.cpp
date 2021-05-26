@@ -326,7 +326,7 @@ bool CPIFirstLogin::Handle( void )
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
 		actbTemp->dwLastIP = calcserial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
-		auto temp = format("Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
+		auto temp = strutil::format("Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
 		Console.log( temp , "server.log" );
 		messageLoop << temp;
 
@@ -665,7 +665,7 @@ void CPINewClientVersion::Receive( void )
 		clientPrototype = tSock->GetDWord( 17 );
 		tSock->ClientVersion( majorVersion, minorVersion, clientRevision, clientPrototype );
 
-		std::string verString = str_number( majorVersion ) + std::string(".") + str_number( minorVersion ) + std::string(".") + str_number( clientRevision ) + std::string(".") + str_number( clientPrototype );
+		std::string verString = strutil::number( majorVersion ) + std::string(".") + strutil::number( minorVersion ) + std::string(".") + strutil::number( clientRevision ) + std::string(".") + strutil::number( clientPrototype );
 		Console << verString << myendl;
 
 		// Set client-version based on information received so far. We need this to be able to send the correct info during login
@@ -814,7 +814,7 @@ bool CPIClientVersion::Handle( void )
 		UI08 major, minor, sub, letter;
 		std::string s( verString );
 		std::string us = std::string( s );
-		auto dsecs = sections( s, "." );
+		auto dsecs = strutil::sections( s, "." );
 		UI08 secCount = static_cast<UI08>(dsecs.size() - 1);
 
 		std::istringstream ss( s );
@@ -1112,7 +1112,7 @@ bool CPITips::Handle( void )
 		std::string tag, data, sect;
 		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
 		{
-			if( !tag.empty() && str_toupper( tag ) == "TIP" )
+			if( !tag.empty() && strutil::toupper( tag ) == "TIP" )
 				--x;
 			if( x <= 0 )
 				break;
@@ -1121,7 +1121,7 @@ bool CPITips::Handle( void )
 			tag = Tips->Prev();
 		data = Tips->GrabData();
 
-		sect = "TIP " + stripTrim( data );
+		sect = "TIP " + strutil::stripTrim( data );
 		Tips = FileLookup->FindEntry( sect, misc_def );
 		if( Tips != NULL )
 		{
@@ -2033,7 +2033,7 @@ bool CPITalkRequest::HandleCommon( void )
 			ourChar->SetSpeechMode( 0 );
 			break;
 		case 7: // Rune renaming
-			speechItem->SetName( format(Dictionary->GetEntry( 684 ).c_str(), Text() ) );
+			speechItem->SetName( strutil::format(Dictionary->GetEntry( 684 ).c_str(), Text() ) );
 			tSock->sysmessage( 757, Text() );
 			ourChar->SetSpeechMode( 0 );
 			break;
@@ -2072,7 +2072,7 @@ bool CPITalkRequest::HandleCommon( void )
 
 				tempPage->Reason( Text() );
 				tempPage->WhoPaging( ourChar->GetSerial() );
-				auto temp = format("GM Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPage->Reason().c_str() );
+				auto temp = strutil::format("GM Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPage->Reason().c_str() );
 				bool x = false;
 				{
 					//std::scoped_lock lock(Network->internallock);
@@ -2110,7 +2110,7 @@ bool CPITalkRequest::HandleCommon( void )
 				tempPageCns = CounselorQueue->Current();
 				tempPageCns->Reason( Text() );
 				tempPageCns->WhoPaging( ourChar->GetSerial() );
-				auto temp = format( "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPageCns->Reason().c_str() );
+				auto temp = strutil::format( "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPageCns->Reason().c_str() );
 				bool x = false;
 				{
 					//std::scoped_lock lock(Network->internallock);
@@ -3494,7 +3494,7 @@ void CPISubcommands::Receive( void )
 		case 0x0C:	skipOver = true;	break;	// Closed Status Gump
 		case 0x0F:	skipOver = true;	break;	// Unknown, Sent once at Login
 		case 0x24:	skipOver = true;	break;
-		default:	Console.print( format("Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd ));	skipOver = true;	break;
+		default:	Console.print( strutil::format("Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd ));	skipOver = true;	break;
 		case 0x06:	{	subPacket = new CPIPartyCommand( tSock );		}	break;
 		case 0x07:	{	subPacket = new CPITrackingArrow( tSock );		}	break;	// Click on Quest/Tracking Arrow
 		case 0x0B:	{	subPacket = new CPIClientLanguage( tSock );		}	break;	// Client language.  3 bytes.  "ENU" for english
@@ -4139,7 +4139,7 @@ bool CPIPopupMenuSelect::Handle( void )
 							Skills->Snooping( tSock, targChar, pack );
 					}
 					else
-						Console.warning( format("Character 0x%X has no backpack!", targChar->GetSerial()) );
+						Console.warning( strutil::format("Character 0x%X has no backpack!", targChar->GetSerial()) );
 				}
 			}
 			break;
@@ -4159,7 +4159,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			}
 			break;
 		default:
-			Console.print(format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 ) ));
+			Console.print(strutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 ) ));
 			break;
 	}
 	return true;

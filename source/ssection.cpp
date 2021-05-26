@@ -466,7 +466,7 @@ DFNTAGS FindDFNTagFromStr( std::string strToFind )
 	{
 		InitStrToDFN();
 	}
-	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( str_toupper( strToFind ) );
+	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strutil::toupper( strToFind ) );
 	if( toFind != strToDFNTag.end() )
 	{
 		return toFind->second;
@@ -799,29 +799,29 @@ void ScriptSection::createSection( std::fstream& input )
 		line[input.gcount()] = 0;
 
 		sLine = line;
-		sLine = stripTrim( sLine );
+		sLine = strutil::stripTrim( sLine );
 		if( sLine != "}" && !sLine.empty() )
 		{
 			// do something here
 			if( sLine.substr( 0, 1 ) != "}" )
 			{
-				auto secs = sections( sLine, "=" );
+				auto secs = strutil::sections( sLine, "=" );
 				tag = "";
 				if( secs.size() >= 1 )
 				{
 					try {
-						tag = stripTrim( secs[0] );
+						tag = strutil::stripTrim( secs[0] );
 					}
 					catch (...)	{
 						tag = "";
 					}
 				}
-				auto utag = str_toupper( tag );
+				auto utag = strutil::toupper( tag );
 				value = "";
 				if( secs.size() >= 2 )
 				{
 					try {
-						value = stripTrim( secs[1] );
+						value = strutil::stripTrim( secs[1] );
 					}
 					catch (...) {
 						value = "";
@@ -846,7 +846,7 @@ void ScriptSection::createSection( std::fstream& input )
 							{
 								case DFN_UPPERSTRING:
 								{
-									value = str_toupper( value );
+									value = strutil::toupper( value );
 									if( utag == "ADDMENUITEM" )
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
@@ -854,8 +854,8 @@ void ScriptSection::createSection( std::fstream& input )
 										ADDMENUITEM amiLocalCopy;
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = std::string( localName );
-										auto csecs = sections( value, "," );
-										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(stripTrim( csecs[0] ), nullptr, 0));
+										auto csecs = strutil::sections( value, "," );
+										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0));
 										if( amiLocalCopy.groupID != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -866,10 +866,10 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(stripTrim( csecs[1] ), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(stripTrim( csecs[2] ), nullptr, 0));
-										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(stripTrim( csecs[3] ), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(stripTrim( csecs[4] ), nullptr, 0));
+										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0));
+										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[3] ), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[4] ), nullptr, 0));
 
 										//if( amiLocalCopy.tileID == INVALIDSERIAL )
 											//amiLocalCopy.tileID = amiLocalCopy.objectID;
@@ -892,14 +892,14 @@ void ScriptSection::createSection( std::fstream& input )
 									}
 									catch (...) {
 										toAdd2->ndata = 0;
-										Console.warning( format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
+										Console.warning( strutil::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
 									}
 									break;
 								case DFN_DOUBLENUMERIC:
 								{
 									// Best I can tell the seperator here is a space
-									value = simplify( value );
-									auto ssecs = sections( value, " " );
+									value = strutil::simplify( value );
+									auto ssecs = strutil::sections( value, " " );
 									if( ssecs.size() >= 2 )
 									{
 										try {
