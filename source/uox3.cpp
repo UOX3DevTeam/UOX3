@@ -2349,39 +2349,18 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 	std::string temp	= mItem.GetName();
 	temp				= strutil::stripTrim( temp );
 	const UI16 getAmount = mItem.GetAmount();
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	CTile& tile = Map->SeekTile( mItem.GetID() );
+	if( temp.substr( 0, 1 ) == "#" )
 	{
-		//7.0.9.0 data and later
-		CTileHS& tile = Map->SeekTileHS( mItem.GetID() );
-		if( temp.substr( 0, 1 ) == "#" )
-		{
-			temp = tile.Name();
-		}
-
-		if( getAmount == 1 )
-		{
-			if( tile.CheckFlag( TF_DISPLAYAN ) )
-				temp = "an " + temp;
-			else if( tile.CheckFlag( TF_DISPLAYA ) )
-				temp = "a " + temp;
-		}
+		temp = tile.Name();
 	}
-	else
+	
+	if( getAmount == 1 )
 	{
-		//7.0.8.2 data and earlier
-		CTile& tile = Map->SeekTile( mItem.GetID() );
-		if( temp.substr( 0, 1 ) == "#" )
-		{
-			temp = tile.Name() ;
-		}
-
-		if( getAmount == 1 )
-		{
-			if( tile.CheckFlag( TF_DISPLAYAN ) )
-				temp = "an " + temp;
-			else if( tile.CheckFlag( TF_DISPLAYA ) )
-				temp = "a " + temp;
-		}
+		if( tile.CheckFlag( TF_DISPLAYAN ) )
+			temp = "an " + temp;
+		else if( tile.CheckFlag( TF_DISPLAYA ) )
+			temp = "a " + temp;
 	}
 
 	auto psecs = strutil::sections( temp, "%" );

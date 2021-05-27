@@ -711,18 +711,8 @@ void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount
 	if( mapz != ILLEGAL_Z )
 	{
 		const map_st map	= Map->SeekMap( x, y, worldNumber );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 tiledata and later
-			CLandHS& land			= Map->SeekLandHS( map.id );
-			xyblock[xycount].Flags( land.Flags() );
-		}
-		else
-		{
-			//7.0.8.2 tiledata and earlier
-			CLand& land			= Map->SeekLand( map.id );
-			xyblock[xycount].Flags( land.Flags() );
-		}
+		CLand& land			= Map->SeekLand( map.id );
+		xyblock[xycount].Flags( land.Flags() );
 		xyblock[xycount].Type( 0 );
 		xyblock[xycount].BaseZ( mapz );
 		xyblock[xycount].Top( mapz );
@@ -741,41 +731,19 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 		return;
 
 	CStaticIterator msi( x, y, worldNumber );
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
-		//7.0.9.0 data and later
-		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-		{
-			CTileHS& tile = Map->SeekTileHS( stat->itemid );
+		CTile& tile = Map->SeekTile( stat->itemid );
 
-			xyblock[xycount].Type( 2 );
-			xyblock[xycount].BaseZ( stat->zoff );
-			xyblock[xycount].Top( stat->zoff + calcTileHeight( tile.Height() ) );
-			xyblock[xycount].Height(tile.Height());
-			xyblock[xycount].SetID( stat->itemid );
-			xyblock[xycount].Flags( tile.Flags() );
-			++xycount;
-			if( xycount >= XYMAX )	// don't overflow
-				break;
-		}
-	}
-	else
-	{
-		//7.0.8.2 data and earlier
-		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-		{
-			CTile& tile = Map->SeekTile( stat->itemid );
-
-			xyblock[xycount].Type( 2 );
-			xyblock[xycount].BaseZ( stat->zoff );
-			xyblock[xycount].Top( stat->zoff + calcTileHeight( tile.Height() ) );
-			xyblock[xycount].Height(tile.Height());
-			xyblock[xycount].SetID( stat->itemid );
-			xyblock[xycount].Flags( tile.Flags() );
-			++xycount;
-			if( xycount >= XYMAX )	// don't overflow
-				break;
-		}
+		xyblock[xycount].Type( 2 );
+		xyblock[xycount].BaseZ( stat->zoff );
+		xyblock[xycount].Top( stat->zoff + calcTileHeight( tile.Height() ) );
+		xyblock[xycount].Height(tile.Height());
+		xyblock[xycount].SetID( stat->itemid );
+		xyblock[xycount].Flags( tile.Flags() );
+		++xycount;
+		if( xycount >= XYMAX )	// don't overflow
+			break;
 	}
 }
 
@@ -807,28 +775,13 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 #endif
 				if( tItem->GetX() == x && tItem->GetY() == y )
 				{
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-					{
-						//7.0.9.0 data and later
-						CTileHS& tile = Map->SeekTileHS( tItem->GetID() );
-						xyblock[xycount].Type( 1 );
-						xyblock[xycount].BaseZ( tItem->GetZ() );
-						xyblock[xycount].Height( tile.Height());
-						xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
-						xyblock[xycount].Flags( tile.Flags() );
-						xyblock[xycount].SetID(tItem->GetID());
-					}
-					else
-					{
-						//7.0.8.2 data and earlier
-						CTile& tile = Map->SeekTile( tItem->GetID() );
-						xyblock[xycount].Type( 1 );
-						xyblock[xycount].BaseZ( tItem->GetZ() );
-						xyblock[xycount].Height( tile.Height());
-						xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
-						xyblock[xycount].Flags( tile.Flags() );
-						xyblock[xycount].SetID(tItem->GetID());
-					}
+					CTile& tile = Map->SeekTile( tItem->GetID() );
+					xyblock[xycount].Type( 1 );
+					xyblock[xycount].BaseZ( tItem->GetZ() );
+					xyblock[xycount].Height( tile.Height());
+					xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
+					xyblock[xycount].Flags( tile.Flags() );
+					xyblock[xycount].SetID(tItem->GetID());
 					++xycount;
 					if( xycount >= XYMAX )	// don't overflow
 					{
@@ -841,107 +794,40 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			{	// implication, is, this is now a CMultiObj
 				const UI16 multiID = (tItem->GetID() - 0x4000);
 				SI32 length = 0;
-				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-					length = Map->SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
-				else
-					length = Map->SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
-
+				length = Map->SeekMulti( multiID ); 
+				
 				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (13 Sept 1999)
 				{
 					Console.error( "Walking() - Bad length in multi file. Avoiding stall" );
 					const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-					{
-						//7.0.9.0 tiledata and later
-						CLandHS& land = Map->SeekLandHS( map1.id );
-						if( land.CheckFlag( TF_WET ) ) // is it water?
-							tItem->SetID( 0x4001 );
-						else
-							tItem->SetID( 0x4064 );
-					}
+					
+					CLand& land = Map->SeekLand( map1.id );
+					if( land.CheckFlag( TF_WET ) ) // is it water?
+						tItem->SetID( 0x4001 );
 					else
-					{
-						//7.0.8.2 tiledata and earlier
-						CLand& land = Map->SeekLand( map1.id );
-						if( land.CheckFlag( TF_WET ) ) // is it water?
-							tItem->SetID( 0x4001 );
-						else
-							tItem->SetID( 0x4064 );
-					}
+						tItem->SetID( 0x4064 );
 					length = 0;
 				}
 				for( SI32 j = 0; j < length; ++j )
 				{
-					if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
+					const Multi_st& multi = Map->SeekIntoMulti( multiID, j );
+					if( multi.visible && (tItem->GetX() + multi.x) == x && (tItem->GetY() + multi.y) == y )
 					{
-						const MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, j );
-						if( multi.visible && (tItem->GetX() + multi.x) == x && (tItem->GetY() + multi.y) == y )
+						//7.0.9.0 tiledata and later
+						CTile& tile = Map->SeekTile( multi.tile );
+						xyblock[xycount].Type( 2 );
+						xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
+						xyblock[xycount].Height( tile.Height());
+						xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
+						xyblock[xycount].Flags( tile.Flags() );
+						xyblock[xycount].SetID(tItem->GetID());
+						++xycount;
+						if( xycount >= XYMAX )	// don't overflow
 						{
-							if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-							{
-								//7.0.9.0 tiledata and later
-								CTileHS& tile = Map->SeekTileHS( multi.tile );
-								xyblock[xycount].Type( 2 );
-								xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
-								xyblock[xycount].Height( tile.Height());
-								xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
-								xyblock[xycount].Flags( tile.Flags() );
-								xyblock[xycount].SetID(tItem->GetID());
-							}
-							else
-							{
-								//7.0.8.2 tiledata and earlier
-								CTile& tile = Map->SeekTile( multi.tile );
-								xyblock[xycount].Type( 2 );
-								xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
-								xyblock[xycount].Height( tile.Height());
-								xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
-								xyblock[xycount].Flags( tile.Flags() );
-								xyblock[xycount].SetID(tItem->GetID());
-							}
-							++xycount;
-							if( xycount >= XYMAX )	// don't overflow
-							{
-								regItems->Pop();
-								return;
-							}
+							regItems->Pop();
+							return;
 						}
-					}
-					else
-					{
-						const Multi_st& multi = Map->SeekIntoMulti( multiID, j );
-						if( multi.visible && (tItem->GetX() + multi.x) == x && (tItem->GetY() + multi.y) == y )
-						{
-							if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-							{
-								//7.0.9.0 tiledata and later
-								CTileHS& tile = Map->SeekTileHS( multi.tile );
-								xyblock[xycount].Type( 2 );
-								xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
-								xyblock[xycount].Height( tile.Height());
-								xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
-								xyblock[xycount].Flags( tile.Flags() );
-								xyblock[xycount].SetID(tItem->GetID());
-							}
-							else
-							{
-								//7.0.8.2 tiledata and earlier
-								CTile& tile = Map->SeekTile( multi.tile );
-								xyblock[xycount].Type( 2 );
-								xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
-								xyblock[xycount].Height( tile.Height());
-								xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
-								xyblock[xycount].Flags( tile.Flags() );
-								xyblock[xycount].SetID(tItem->GetID());
-							}
-							++xycount;
-							if( xycount >= XYMAX )	// don't overflow
-							{
-								regItems->Pop();
-								return;
-							}
-						}
-					}
+					}					
 				}
 			}
 		}
@@ -1087,9 +973,9 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 			continue;
 		if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 2 )
 		{
-			if(( ourChar->GetVisible() != VT_PERMHIDDEN ) 
-				&& ( !IsGMBody( ourChar ) 
-					&& ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS ))
+			if(( ourChar->GetVisible() != VT_PERMHIDDEN )
+			   && ( !IsGMBody( ourChar )
+				 && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS ))
 			{
 				// Run onCollide event on character doing the shoving
 				for( auto scriptTrig : scriptTriggers )
@@ -1387,7 +1273,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 			id		= tItem->GetID();
 			type	= tItem->GetType();
 			EffRange = (	tItem->GetX() == newx && tItem->GetY() == newy &&
-						mChar->GetZ() >= tItem->GetZ() && mChar->GetZ() <= ( tItem->GetZ() + 5 ) );
+					mChar->GetZ() >= tItem->GetZ() && mChar->GetZ() <= ( tItem->GetZ() + 5 ) );
 			if( EffRange )
 			{
 				if( !Magic->HandleFieldEffects( mChar, tItem, id ) )
@@ -1537,7 +1423,6 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 	// if we are walking in an area, and the area is not properly defined, just don't bother with the area anymore
 	if(	( ( getWander == WT_BOX ) && ( fx1 == -1 || fx2 == -1 || fy1 == -1 || fy2 == -1 ) ) ||
 	   ( ( getWander == WT_CIRCLE ) && ( fx1 == -1 || fx2 == -1 || fy1 == -1 ) ) ) // circle's don't use fy2, so don't require them! 10/30/1999
-
 	{
 		i->SetNpcWander( WT_FREE ); // Wander freely from now on
 	}
@@ -2357,23 +2242,11 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	bool landBlock = true;
 
 	const map_st map	= Map->SeekMap( x, y, world );
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-	{
-		//7.0.9.0 tiledata and later
-		CLandHS& land	= Map->SeekLandHS( map.id );
-		landBlock = land.CheckFlag( TF_BLOCKING );
-		if( landBlock && waterwalk && land.CheckFlag( TF_WET ))
-			landBlock = false;
-	}
-	else
-	{
-		//7.0.8.2 tiledata and earlier
-		CLand& land		= Map->SeekLand( map.id );
-		landBlock = land.CheckFlag( TF_BLOCKING );
-		if( landBlock && waterwalk && land.CheckFlag( TF_WET ))
-			landBlock = false;
-	}
-
+	CLand& land	= Map->SeekLand( map.id );
+	landBlock = land.CheckFlag( TF_BLOCKING );
+	if( landBlock && waterwalk && land.CheckFlag( TF_WET ))
+		landBlock = false;
+	
 	CTileUni *tb;
 	CTileUni xyblock[XYMAX];
 	UI16 xycount		= 0;
@@ -2510,35 +2383,18 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceID );
 
 	const map_st map	= Map->SeekMap( x, y, c->WorldNumber() );
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-	{
-		//7.0.9.0 tiledata and later
-		CLandHS& land	= Map->SeekLandHS( map.id );
-
-		// Does landtile in target location block movement?
-		landBlock = land.CheckFlag( TF_BLOCKING );
-
-		// If it does, but it's WET and character can swim, it doesn't block!
-		if( landBlock && waterWalk && land.CheckFlag( TF_WET ))
-			landBlock = false;
-		else if( waterWalk && !land.CheckFlag( TF_WET ))
-			landBlock = true;
-	}
-	else
-	{
-		//7.0.8.2 tiledata and earlier
-		CLand& land		= Map->SeekLand( map.id );
-
-		// Does landtile in target location block movement?
-		landBlock = land.CheckFlag( TF_BLOCKING );
-
-		// If it does, but it's WET and character can swim, it doesn't block!
-		if( landBlock && waterWalk && land.CheckFlag( TF_WET ))
-			landBlock = false;
-		else if( waterWalk && !land.CheckFlag( TF_WET ))
-			landBlock = true;
-	}
-
+	CLand& land	= Map->SeekLand( map.id );
+	
+	// Does landtile in target location block movement?
+	landBlock = land.CheckFlag( TF_BLOCKING );
+	
+	// If it does, but it's WET and character can swim, it doesn't block!
+	if( landBlock && waterWalk && land.CheckFlag( TF_WET ))
+		landBlock = false;
+	else if( waterWalk && !land.CheckFlag( TF_WET ))
+		landBlock = true;
+	
+	
 	bool considerLand = Map->IsIgnored( map.id ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
 
 	SI08 startTop = 0;
@@ -2947,8 +2803,8 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	if( loopCtr == maxSteps )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.warning( strutil::format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n", 
-			mChar->GetName().c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
+		Console.warning( strutil::format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
+							   mChar->GetName().c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
 #endif
 		mChar->SetPathResult( -1 ); // Pathfinding failed
 		return false;

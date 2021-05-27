@@ -1,3 +1,10 @@
+28/05/2021 - Xuri
+	Unified duplicate tile/multi seeking code for HS/non-HS versions of tiledata & multis (punt)
+
+27/05/2021 - Xuri
+	Replaced UOX_MIN and UOX_MAX with std::min and std::max (punt)
+	Moved StringUtility functions into a new namespace: strutil (punt)
+
 25/05/2021 - Xuri (0.99.4m)
 	Fixed a long-standing (20+ years old) issue with objects not being sent/removed consistently when players login, teleport or move around, or when items are being removed, areas wiped, etc.
 	Added new class RegionSerialList to store serial references to objects added to/removed from regions (both on worldfile load and when objects move in-game). This allows for faster lookup, insertion tests, etc. and results in worldfiles loading up to ~41% faster

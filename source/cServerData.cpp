@@ -52,8 +52,8 @@ const UI32 BIT_ITEMDECAYINHOUSES	= 32;
 const UI32 BIT_PAPERDOLLGUILDBUTTON = 33;
 const UI32 BIT_ATTSPEEDFROMSTAMINA	= 34;
 const UI32 BIT_SHOWDAMAGENUMBERS	= 35;
-const UI32 BIT_SERVERUSINGHSMULTIS	= 36;
-const UI32 BIT_SERVERUSINGHSTILES	= 37;
+// 36 free!
+// 37 free!
 const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
 const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
 const UI32 BIT_ASSISTANTNEGOTIATION		= 40;
@@ -1703,36 +1703,6 @@ UI08 CServerData::AlchemyDamageBonusModifier( void ) const
 void CServerData::AlchemyDamageBonusModifier( UI08 value )
 {
 	alchemyDamageBonusModifier = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ServerUsingHSMultis( void ) const
-//|					void ServerUsingHSMultis( bool newVal )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server uses multi data from High Seas expansion
-//o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerUsingHSMultis( void ) const
-{
-	return boolVals.test( BIT_SERVERUSINGHSMULTIS );
-}
-void CServerData::ServerUsingHSMultis( bool newVal )
-{
-	boolVals.set( BIT_SERVERUSINGHSMULTIS, newVal );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ServerUsingHSTiles( void ) const
-//|					void ServerUsingHSTiles( bool newVal )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server uses tiledata from High Seas expansion
-//o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerUsingHSTiles( void ) const
-{
-	return boolVals.test( BIT_SERVERUSINGHSTILES );
-}
-void CServerData::ServerUsingHSTiles( bool newVal )
-{
-	boolVals.set( BIT_SERVERUSINGHSTILES, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o

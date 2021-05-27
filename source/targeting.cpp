@@ -519,143 +519,73 @@ void InfoTarget( CSocket *s )
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
 		mapStat.AddData( "Tilenum", map1.id, 5 );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 tiledata and later
-			CLandHS& land = Map->SeekLandHS( map1.id );
-			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
-			mapStat.AddData( "Name", land.Name() );
-		}
-		else
-		{
-			//7.0.8.2 tiledata and earlier
-			CLand& land = Map->SeekLand( map1.id );
-			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
-			mapStat.AddData( "Name", land.Name() );
-		}
+		CLand& land = Map->SeekLand( map1.id );
+		mapStat.AddData( "Flags", land.FlagsNum(), 1 );
+		mapStat.AddData( "Name", land.Name() );
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	}
 	else
-	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 data and later
-			CTileHS& tile = Map->SeekTileHS( tileID );
+	{		
+		CTile& tile = Map->SeekTile( tileID );
+		
+		GumpDisplay statTile( s, 300, 300 );
+		statTile.SetTitle( "Map Tile" );
+		
+		statTile.AddData( "Tilenum", tileID, 5 );
+		statTile.AddData( "Weight", tile.Weight(), 0 );
+		statTile.AddData( "Layer", tile.Layer(), 1 );
+		statTile.AddData( "Hue", tile.Hue(), 5 );
+		statTile.AddData( "Anim", tile.Animation(), 1 );
+		statTile.AddData( "Quantity", tile.Quantity(), 1 );
+		statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
+		statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
+		statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+		statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
+		statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
+		statTile.AddData( "Height", tile.Height(), 0 );
+		statTile.AddData( "Name", tile.Name() );
+		statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
+		statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ) );
+		statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ) );
+		statTile.AddData( "--> Transparent", tile.CheckFlag( TF_TRANSPARENT ) );
+		statTile.AddData( "--> Translucent", tile.CheckFlag( TF_TRANSLUCENT ) );
+		statTile.AddData( "--> Wall", tile.CheckFlag( TF_WALL ) );
+		statTile.AddData( "--> Damaging", tile.CheckFlag( TF_DAMAGING ) );
+		statTile.AddData( "--> Blocking", tile.CheckFlag( TF_BLOCKING ) );
+		statTile.AddData( "--> Wet", tile.CheckFlag( TF_WET ) );
+		statTile.AddData( "--> Unknown1", tile.CheckFlag( TF_UNKNOWN1 ) );
+		statTile.AddData( "--> Surface", tile.CheckFlag( TF_SURFACE ) );
+		statTile.AddData( "--> Climbable", tile.CheckFlag( TF_CLIMBABLE ) );
+		statTile.AddData( "--> Stackable", tile.CheckFlag( TF_STACKABLE ) );
+		statTile.AddData( "--> Window", tile.CheckFlag( TF_WINDOW ) );
+		statTile.AddData( "--> NoShoot", tile.CheckFlag( TF_NOSHOOT ) );
+		statTile.AddData( "--> DisplayA", tile.CheckFlag( TF_DISPLAYA ) );
+		statTile.AddData( "--> DisplayAn", tile.CheckFlag( TF_DISPLAYAN ) );
+		statTile.AddData( "--> Description", tile.CheckFlag( TF_DESCRIPTION ) );
+		statTile.AddData( "--> Foilage", tile.CheckFlag( TF_FOLIAGE ) );
+		statTile.AddData( "--> PartialHue", tile.CheckFlag( TF_PARTIALHUE ) );
+		statTile.AddData( "--> Unknown2", tile.CheckFlag( TF_UNKNOWN2 ) );
+		statTile.AddData( "--> Map", tile.CheckFlag( TF_MAP ) );
+		statTile.AddData( "--> Container", tile.CheckFlag( TF_CONTAINER ) );
+		statTile.AddData( "--> Wearable", tile.CheckFlag( TF_WEARABLE ) );
+		statTile.AddData( "--> Light", tile.CheckFlag( TF_LIGHT ) );
+		statTile.AddData( "--> Animated", tile.CheckFlag( TF_ANIMATED ) );
+		statTile.AddData( "--> NoDiagonal", tile.CheckFlag( TF_NODIAGONAL ) ); //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyle
+		statTile.AddData( "--> Unknown3", tile.CheckFlag( TF_UNKNOWN3 ) );
+		statTile.AddData( "--> Armor", tile.CheckFlag( TF_ARMOR ) );
+		statTile.AddData( "--> Roof", tile.CheckFlag( TF_ROOF ) );
+		statTile.AddData( "--> Door", tile.CheckFlag( TF_DOOR ) );
+		statTile.AddData( "--> StairBack", tile.CheckFlag( TF_STAIRBACK ) );
+		statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
+		statTile.AddData( "--> AlphaBlend", tile.CheckFlag( TF_ALPHABLEND ) );
+		statTile.AddData( "--> UseNewArt", tile.CheckFlag( TF_USENEWART ) );
+		statTile.AddData( "--> ArtUsed", tile.CheckFlag( TF_ARTUSED ) );
+		statTile.AddData( "--> NoShadow", tile.CheckFlag( TF_NOSHADOW ) );
+		statTile.AddData( "--> PixelBleed", tile.CheckFlag( TF_PIXELBLEED ) );
+		statTile.AddData( "--> PlayAnimOnce", tile.CheckFlag( TF_PLAYANIMONCE ) );
+		statTile.AddData( "--> MultiMovable", tile.CheckFlag( TF_MULTIMOVABLE ) );
+		statTile.Send( 4, false, INVALIDSERIAL );
 
-			GumpDisplay statTile( s, 300, 300 );
-			statTile.SetTitle( "Map Tile" );
-
-			statTile.AddData( "Tilenum", tileID, 5 );
-			statTile.AddData( "Weight", tile.Weight(), 0 );
-			statTile.AddData( "Layer", tile.Layer(), 1 );
-			statTile.AddData( "Hue", tile.Hue(), 5 );
-			statTile.AddData( "Anim", tile.Animation(), 1 );
-			statTile.AddData( "Quantity", tile.Quantity(), 1 );
-			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
-			statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
-			statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
-			statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
-			statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
-			statTile.AddData( "Height", tile.Height(), 0 );
-			statTile.AddData( "Name", tile.Name() );
-			statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
-			statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ) );
-			statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ) );
-			statTile.AddData( "--> Transparent", tile.CheckFlag( TF_TRANSPARENT ) );
-			statTile.AddData( "--> Translucent", tile.CheckFlag( TF_TRANSLUCENT ) );
-			statTile.AddData( "--> Wall", tile.CheckFlag( TF_WALL ) );
-			statTile.AddData( "--> Damaging", tile.CheckFlag( TF_DAMAGING ) );
-			statTile.AddData( "--> Blocking", tile.CheckFlag( TF_BLOCKING ) );
-			statTile.AddData( "--> Wet", tile.CheckFlag( TF_WET ) );
-			statTile.AddData( "--> Unknown1", tile.CheckFlag( TF_UNKNOWN1 ) );
-			statTile.AddData( "--> Surface", tile.CheckFlag( TF_SURFACE ) );
-			statTile.AddData( "--> Climbable", tile.CheckFlag( TF_CLIMBABLE ) );
-			statTile.AddData( "--> Stackable", tile.CheckFlag( TF_STACKABLE ) );
-			statTile.AddData( "--> Window", tile.CheckFlag( TF_WINDOW ) );
-			statTile.AddData( "--> NoShoot", tile.CheckFlag( TF_NOSHOOT ) );
-			statTile.AddData( "--> DisplayA", tile.CheckFlag( TF_DISPLAYA ) );
-			statTile.AddData( "--> DisplayAn", tile.CheckFlag( TF_DISPLAYAN ) );
-			statTile.AddData( "--> Description", tile.CheckFlag( TF_DESCRIPTION ) );
-			statTile.AddData( "--> Foilage", tile.CheckFlag( TF_FOLIAGE ) );
-			statTile.AddData( "--> PartialHue", tile.CheckFlag( TF_PARTIALHUE ) );
-			statTile.AddData( "--> Unknown2", tile.CheckFlag( TF_UNKNOWN2 ) );
-			statTile.AddData( "--> Map", tile.CheckFlag( TF_MAP ) );
-			statTile.AddData( "--> Container", tile.CheckFlag( TF_CONTAINER ) );
-			statTile.AddData( "--> Wearable", tile.CheckFlag( TF_WEARABLE ) );
-			statTile.AddData( "--> Light", tile.CheckFlag( TF_LIGHT ) );
-			statTile.AddData( "--> Animated", tile.CheckFlag( TF_ANIMATED ) );
-			statTile.AddData( "--> NoDiagonal", tile.CheckFlag( TF_NODIAGONAL ) ); //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyle
-			statTile.AddData( "--> Unknown3", tile.CheckFlag( TF_UNKNOWN3 ) );
-			statTile.AddData( "--> Armor", tile.CheckFlag( TF_ARMOR ) );
-			statTile.AddData( "--> Roof", tile.CheckFlag( TF_ROOF ) );
-			statTile.AddData( "--> Door", tile.CheckFlag( TF_DOOR ) );
-			statTile.AddData( "--> StairBack", tile.CheckFlag( TF_STAIRBACK ) );
-			statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
-			statTile.AddData( "--> AlphaBlend", tile.CheckFlag( TF_ALPHABLEND ) );
-			statTile.AddData( "--> UseNewArt", tile.CheckFlag( TF_USENEWART ) );
-			statTile.AddData( "--> ArtUsed", tile.CheckFlag( TF_ARTUSED ) );
-			statTile.AddData( "--> NoShadow", tile.CheckFlag( TF_NOSHADOW ) );
-			statTile.AddData( "--> PixelBleed", tile.CheckFlag( TF_PIXELBLEED ) );
-			statTile.AddData( "--> PlayAnimOnce", tile.CheckFlag( TF_PLAYANIMONCE ) );
-			statTile.AddData( "--> MultiMovable", tile.CheckFlag( TF_MULTIMOVABLE ) );
-			statTile.Send( 4, false, INVALIDSERIAL );
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			CTile& tile = Map->SeekTile( tileID );
-
-			GumpDisplay statTile( s, 300, 300 );
-			statTile.SetTitle( "Map Tile" );
-
-			statTile.AddData( "Tilenum", tileID, 5 );
-			statTile.AddData( "Weight", tile.Weight(), 0 );
-			statTile.AddData( "Layer", tile.Layer(), 1 );
-			statTile.AddData( "Hue", tile.Hue(), 5 );
-			statTile.AddData( "Anim", tile.Animation(), 1 );
-			statTile.AddData( "Quantity", tile.Quantity(), 1 );
-			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
-			statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
-			statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
-			statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
-			statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
-			statTile.AddData( "Height", tile.Height(), 0 );
-			statTile.AddData( "Name", tile.Name() );
-			statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
-			statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ) );
-			statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ) );
-			statTile.AddData( "--> Transparent", tile.CheckFlag( TF_TRANSPARENT ) );
-			statTile.AddData( "--> Translucent", tile.CheckFlag( TF_TRANSLUCENT ) );
-			statTile.AddData( "--> Wall", tile.CheckFlag( TF_WALL ) );
-			statTile.AddData( "--> Damaging", tile.CheckFlag( TF_DAMAGING ) );
-			statTile.AddData( "--> Blocking", tile.CheckFlag( TF_BLOCKING ) );
-			statTile.AddData( "--> Wet", tile.CheckFlag( TF_WET ) );
-			statTile.AddData( "--> Unknown1", tile.CheckFlag( TF_UNKNOWN1 ) );
-			statTile.AddData( "--> Surface", tile.CheckFlag( TF_SURFACE ) );
-			statTile.AddData( "--> Climbable", tile.CheckFlag( TF_CLIMBABLE ) );
-			statTile.AddData( "--> Stackable", tile.CheckFlag( TF_STACKABLE ) );
-			statTile.AddData( "--> Window", tile.CheckFlag( TF_WINDOW ) );
-			statTile.AddData( "--> NoShoot", tile.CheckFlag( TF_NOSHOOT ) );
-			statTile.AddData( "--> DisplayA", tile.CheckFlag( TF_DISPLAYA ) );
-			statTile.AddData( "--> DisplayAn", tile.CheckFlag( TF_DISPLAYAN ) );
-			statTile.AddData( "--> Description", tile.CheckFlag( TF_DESCRIPTION ) );
-			statTile.AddData( "--> Foilage", tile.CheckFlag( TF_FOLIAGE ) );
-			statTile.AddData( "--> PartialHue", tile.CheckFlag( TF_PARTIALHUE ) );
-			statTile.AddData( "--> Unknown2", tile.CheckFlag( TF_UNKNOWN2 ) );
-			statTile.AddData( "--> Map", tile.CheckFlag( TF_MAP ) );
-			statTile.AddData( "--> Container", tile.CheckFlag( TF_CONTAINER ) );
-			statTile.AddData( "--> Wearable", tile.CheckFlag( TF_WEARABLE ) );
-			statTile.AddData( "--> Light", tile.CheckFlag( TF_LIGHT ) );
-			statTile.AddData( "--> Animated", tile.CheckFlag( TF_ANIMATED ) );
-			statTile.AddData( "--> NoDiagonal", tile.CheckFlag( TF_NODIAGONAL ) ); //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyle
-			statTile.AddData( "--> Unknown3", tile.CheckFlag( TF_UNKNOWN3 ) );
-			statTile.AddData( "--> Armor", tile.CheckFlag( TF_ARMOR ) );
-			statTile.AddData( "--> Roof", tile.CheckFlag( TF_ROOF ) );
-			statTile.AddData( "--> Door", tile.CheckFlag( TF_DOOR ) );
-			statTile.AddData( "--> StairBack", tile.CheckFlag( TF_STAIRBACK ) );
-			statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
-			statTile.Send( 4, false, INVALIDSERIAL );
-		}
 	}
 }
 

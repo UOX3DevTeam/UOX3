@@ -1585,18 +1585,8 @@ void CTownRegion::ViewTaxes( CSocket *sock )
 
 	toSend.addText(strutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str()) );
 	toSend.addText( strutil::format("Population %i", GetPopulation() ));
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-	{
-		//7.0.9.2 tiledata and later
-		CTileHS& tile = Map->SeekTileHS( GetResourceID() );
-		toSend.addText( strutil::format("%i %ss", taxedAmount, tile.Name()) );
-	}
-	else
-	{
-		//7.0.8.2 tiledata and earlier
-		CTile tile = Map->SeekTile( GetResourceID() );
-		toSend.addText( strutil::format("%i %ss", taxedAmount, tile.Name()) );
-	}
+	CTile& tile = Map->SeekTile( GetResourceID() );
+	toSend.addText( strutil::format("%i %ss", taxedAmount, tile.Name()) );
 	toSend.Finalize();
 	sock->Send( &toSend );
 }

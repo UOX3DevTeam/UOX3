@@ -326,27 +326,12 @@ bool CPIGetItem::Handle( void )
 		i->SetGuarded( false );
 	}
 
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	CTile& tile = Map->SeekTile( i->GetID() );
+	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
+								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
-		//7.0.9.2 tiledata and later
-		CTileHS& tile = Map->SeekTileHS( i->GetID() );
-		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
-									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
-		{
-			PickupBounce( tSock );
-			return true;
-		}
-	}
-	else
-	{
-		//7.0.8.2 tiledata and earlier
-		CTile& tile = Map->SeekTile( i->GetID() );
-		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
-									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
-		{
-			PickupBounce( tSock );
-			return true;
-		}
+		PickupBounce( tSock );
+		return true;
 	}
 
 	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
@@ -534,27 +519,13 @@ bool CPIEquipItem::Handle( void )
 			return true;
 		}
 	}
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+
+	CTile& tile = Map->SeekTile( i->GetID() );
+	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
-		//7.0.9.2 tiledata and later
-		CTileHS& tile = Map->SeekTileHS( i->GetID() );
-		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
-									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
-		{
-			Bounce( tSock, i );
-			return true;
-		}
-	}
-	else
-	{
-		//7.0.8.2 tiledata and earlier
-		CTile& tile = Map->SeekTile( i->GetID() );
-		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
-									( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
-		{
-			Bounce( tSock, i );
-			return true;
-		}
+		Bounce( tSock, i );
+		return true;
 	}
 
 	if( i->GetLayer() == IL_NONE )
@@ -947,32 +918,16 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 	}
 
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	CTile& tile = Map->SeekTile( i->GetID() );
+	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
+								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
-		//7.0.9.2 tiledata and later
-		CTileHS& tile = Map->SeekTileHS( i->GetID() );
-		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
-								  ( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
-		{
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( nChar, i );
-			Bounce( mSock, i );
-			return;
-		}
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( nChar, i );
+		Bounce( mSock, i );
+		return;
 	}
-	else
-	{
-		//7.0.8.2 tiledata and earlier
-		CTile& tile = Map->SeekTile( i->GetID() );
-		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
-								  ( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
-		{
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( nChar, i );
-			Bounce( mSock, i );
-			return;
-		}
-	}
+
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
 		if( !nChar->IsGM() && !LineOfSight( mSock, nChar, x, y, z, WALLS_CHIMNEYS + DOORS, true ))
@@ -1433,31 +1388,14 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 
 	bool stackDeleted = false;
 
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	CTile& tile = Map->SeekTile( nItem->GetID() );
+	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
+								( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 	{
-		//7.0.9.0 data and later
-		CTileHS& tile = Map->SeekTileHS( nItem->GetID() );
-		if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
-								  ( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
-		{
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( mChar, nItem );
-			Bounce( mSock, nItem );
-			return;
-		}
-	}
-	else
-	{
-		//7.0.8.2 data and earlier
-		CTile& tile = Map->SeekTile( nItem->GetID() );
-		if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
-								  ( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
-		{
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( mChar, nItem );
-			Bounce( mSock, nItem );
-			return;
-		}
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, nItem );
+		Bounce( mSock, nItem );
+		return;
 	}
 
 	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )	// Trade window
