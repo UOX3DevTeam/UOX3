@@ -2133,38 +2133,17 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		{
 			CStaticIterator msi( targetX, targetY, worldNumber );
 			CMulHandler tileXTemp;
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 			{
-				//7.0.9.2 tiledata and later
-				for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+				CTile& tile = Map->SeekTile( stat->itemid );
+				if( targetZ == stat->zoff )
 				{
-					CTileHS& tile = Map->SeekTileHS( stat->itemid );
-					if( targetZ == stat->zoff )
-					{
-						GumpDisplay staticStat( mySock, 300, 300 );
-						staticStat.SetTitle( "Item [Static]" );
-						staticStat.AddData( "ID", targetID, 5 );
-						staticStat.AddData( "Height", tile.Height() );
-						staticStat.AddData( "Name", tile.Name() );
-						staticStat.Send( 4, false, INVALIDSERIAL );
-					}
-				}
-			}
-			else
-			{
-				//7.0.8.2 tiledata and earlier
-				for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-				{
-					CTile& tile = Map->SeekTile( stat->itemid );
-					if( targetZ == stat->zoff )
-					{
-						GumpDisplay staticStat( mySock, 300, 300 );
-						staticStat.SetTitle( "Item [Static]" );
-						staticStat.AddData( "ID", targetID, 5 );
-						staticStat.AddData( "Height", tile.Height() );
-						staticStat.AddData( "Name", tile.Name() );
-						staticStat.Send( 4, false, INVALIDSERIAL );
-					}
+					GumpDisplay staticStat( mySock, 300, 300 );
+					staticStat.SetTitle( "Item [Static]" );
+					staticStat.AddData( "ID", targetID, 5 );
+					staticStat.AddData( "Height", tile.Height() );
+					staticStat.AddData( "Name", tile.Name() );
+					staticStat.Send( 4, false, INVALIDSERIAL );
 				}
 			}
 		}
@@ -2175,18 +2154,8 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 			GumpDisplay mapStat( mySock, 300, 300 );
 			mapStat.SetTitle( "Item [Map]" );
 			mapStat.AddData( "ID", targetID, 5 );
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-			{
-				//7.0.9.0 data and later
-				CLandHS& land = Map->SeekLandHS( map1.id );
-				mapStat.AddData( "Name", land.Name() );
-			}
-			else
-			{
-				//7.0.8.2 data and earlier
-				CLand& land = Map->SeekLand( map1.id );
-				mapStat.AddData( "Name", land.Name() );
-			}
+			CLand& land = Map->SeekLand( map1.id );
+			mapStat.AddData( "Name", land.Name() );
 			mapStat.Send( 4, false, INVALIDSERIAL );
 		}
 	}

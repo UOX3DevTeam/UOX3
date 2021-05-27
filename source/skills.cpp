@@ -223,45 +223,20 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
 					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+					for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
 					{
-						//7.0.9.0 data and later
-						for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
-						{
-							CTileHS& tile = Map->SeekTileHS( stat->itemid );
-							if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
-								return true;
-						}
-					}
-					else
-					{
-						//7.0.8.2 data and earlier
-						for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
-						{
-							CTile& tile = Map->SeekTile( stat->itemid );
-							if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
-								return true;
-						}
+						CTile& tile = Map->SeekTile( stat->itemid );
+						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
+							return true;
 					}
 				}
 				else		// or it could be a map only
 				{
 					// manually calculating the ID's if a maptype
 					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-					{
-						//7.0.9.0 tiledata and later
-						CLandHS& land = Map->SeekLandHS( map1.id );
-						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
-							return true;
-					}
-					else
-					{
-						//7.0.8.2 tiledata and earlier
-						CLand& land = Map->SeekLand( map1.id );
-						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
-							return true;
-					}
+					CLand& land = Map->SeekLand( map1.id );
+					if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
+						return true;
 				}
 			}
 			break;
@@ -1103,59 +1078,25 @@ void cSkills::FishTarget( CSocket *s )
 	bool validLocation = false;
 	if( ValidateObject( targetItem ) )
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 data and later
-			validLocation = Map->SeekTileHS( targetItem->GetID() ).CheckFlag( TF_WET );
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			validLocation = Map->SeekTile( targetItem->GetID() ).CheckFlag( TF_WET );
-		}
+		validLocation = Map->SeekTile( targetItem->GetID() ).CheckFlag( TF_WET );
 	}
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
 		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 		{
-			//7.0.9.0 data and later
-			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-			{
-				CTileHS& tile = Map->SeekTileHS( stat->itemid );
-				if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
-					validLocation = true;
-			}
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-			{
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
-					validLocation = true;
-			}
+			CTile& tile = Map->SeekTile( stat->itemid );
+			if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
+				validLocation = true;
 		}
 	}
 	else		// or it could be a map only
 	{
 		// manually calculating the ID's if a maptype
 		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 tiledata and later
-			CLandHS& land = Map->SeekLandHS( map1.id );
-			if( land.CheckFlag( TF_WET ) )
-				validLocation = true;
-		}
-		else
-		{
-			//7.0.8.2 tiledata and earlier
-			CLand& land = Map->SeekLand( map1.id );
-			if( land.CheckFlag( TF_WET ) )
-				validLocation = true;
-		}
+		CLand& land = Map->SeekLand( map1.id );
+		if( land.CheckFlag( TF_WET ) )
+			validLocation = true;
 	}
 	if( validLocation )
 	{

@@ -343,45 +343,21 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 
 	if( stat )
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		CTile& tile = Map->SeekTile( stat->itemid );
+		if( tile.CheckFlag( TF_WET ) )
+			tileType = TT_WATER;
+		else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
 		{
-			//7.0.9.0 data and later
-			CTileHS& tile = Map->SeekTileHS( stat->itemid );
-			if( tile.CheckFlag( TF_WET ) )
-				tileType = TT_WATER;
-			else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
-			{
-				char search1[10];
-				strcpy( search1, "wood" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_WOODEN;
-				strcpy( search1, "ston" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_STONE;
-				strcpy( search1, "gras" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_GRASS;
-			}
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			CTile& tile = Map->SeekTile( stat->itemid );
-			if( tile.CheckFlag( TF_WET ) )
-				tileType = TT_WATER;
-			else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
-			{
-				char search1[10];
-				strcpy( search1, "wood" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_WOODEN;
-				strcpy( search1, "ston" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_STONE;
-				strcpy( search1, "gras" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_GRASS;
-			}
+			char search1[10];
+			strcpy( search1, "wood" );
+			if( strstr( tile.Name(), search1 ) )
+				tileType = TT_WOODEN;
+			strcpy( search1, "ston" );
+			if( strstr( tile.Name(), search1 ) )
+				tileType = TT_STONE;
+			strcpy( search1, "gras" );
+			if( strstr( tile.Name(), search1 ) )
+				tileType = TT_GRASS;
 		}
 	}
 

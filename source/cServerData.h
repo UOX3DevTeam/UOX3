@@ -562,12 +562,6 @@ public:
 	void		CombatAttackSpeedFromStamina( bool value );
 	bool		CombatAttackSpeedFromStamina( void ) const;
 
-	void		ServerUsingHSMultis( bool value );
-	bool		ServerUsingHSMultis( void ) const;
-
-	void		ServerUsingHSTiles( bool value );
-	bool		ServerUsingHSTiles( void ) const;
-
 	void		FishingStaminaLoss( SI16 value );
 	SI16		FishingStaminaLoss( void ) const;
 

@@ -363,152 +363,54 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	{
 		if( toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2 )
 		{
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			CTile& iTile = Map->SeekTile( toCheck->GetID() );
+			for( i = 0; i < collisioncount; ++i )
 			{
-				//7.0.9.0 data and later
-				CTileHS& iTile = Map->SeekTileHS( toCheck->GetID() );
-				for( i = 0; i < collisioncount; ++i )
-				{
-					checkLoc = &collisions[i];
-					if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
-						return toCheck->GetID();
-				}
+				checkLoc = &collisions[i];
+				if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
+					return toCheck->GetID();
 			}
-			else
-			{
-				//7.0.8.2 data and earlier
-				CTile& iTile = Map->SeekTile( toCheck->GetID() );
-				for( i = 0; i < collisioncount; ++i )
-				{
-					checkLoc = &collisions[i];
-					if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
-						return toCheck->GetID();
-				}
-			}
+
 		}
 	}
 	else if( distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE )
 	{
 		const UI16 multiID = static_cast<UI16>(toCheck->GetID() - 0x4000);
 		SI32 length = 0;
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-			length = Map->SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
-		else
-			length = Map->SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
+		length = Map->SeekMulti( multiID );
 		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (13 Sept 1999)
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-			{
-				//7.0.9.0 tiledata and later
-				CLandHS& land = Map->SeekLandHS( map1.id );
-				if( land.CheckFlag( TF_WET ) ) // is it water?
-					toCheck->SetID( 0x4001 );
-				else
-					toCheck->SetID( 0x4064 );
-			}
+			CLand& land = Map->SeekLand( map1.id );
+			if( land.CheckFlag( TF_WET ) ) // is it water?
+				toCheck->SetID( 0x4001 );
 			else
-			{
-				//7.0.8.2 tiledata and earlier
-				CLand& land = Map->SeekLand( map1.id );
-				if( land.CheckFlag( TF_WET ) ) // is it water?
-					toCheck->SetID( 0x4001 );
-				else
-					toCheck->SetID( 0x4064 );
-			}
+				toCheck->SetID( 0x4064 );
 			length = 0;
 		}
-
-		if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
+		
+		for( SI32 k = 0; k < length; ++k )
 		{
-			for( SI32 k = 0; k < length; ++k )
+			Multi_st& multi = Map->SeekIntoMulti( multiID, k );
+			if( multi.visible )
 			{
-				MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, k );
-				if( multi.visible )
+				const SI16 checkX = (curX + multi.x);
+				const SI16 checkY = (curY + multi.y);
+				if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
 				{
-					const SI16 checkX = (curX + multi.x);
-					const SI16 checkY = (curY + multi.y);
-					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
+					const SI08 checkZ = (curZ + multi.z);
+					CTile& multiTile = Map->SeekTile( multi.tile );
+					for( i = 0; i < collisioncount; ++i )
 					{
-						const SI08 checkZ = (curZ + multi.z);
-						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+						checkLoc = &collisions[i];
+						if( checkX == checkLoc->x && checkY == checkLoc->y &&
+						   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+						    ( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 						{
-							//7.0.9.2 tiledata and later
-							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
+							return multi.tile;
 						}
-						else
-						{
-							//7.0.8.2 tiledata and earlier
-							CTile& multiTile = Map->SeekTile( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			for( SI32 k = 0; k < length; ++k )
-			{
-				Multi_st& multi = Map->SeekIntoMulti( multiID, k );
-				if( multi.visible )
-				{
-					const SI16 checkX = (curX + multi.x);
-					const SI16 checkY = (curY + multi.y);
-					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
-					{
-						const SI08 checkZ = (curZ + multi.z);
-						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-						{
-							//7.0.9.0 data and later
-							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
-						}
-						else
-						{
-							//7.0.8.2 data and earlier
-							CTile& multiTile = Map->SeekTile( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
-						}
-					}
+					}			
 				}
 			}
 		}
@@ -697,22 +599,11 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 			if( idToPush != INVALIDID )
 			{
-				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-				{
-					//7.0.9.0 data and later
-					CTileHS& itemToCheck = Map->SeekTileHS( idToPush );
-					losItemList[itemCount].Height(itemToCheck.Height());
-					losItemList[itemCount].SetID( idToPush );
-					losItemList[itemCount].Flags( itemToCheck.Flags() );
-				}
-				else
-				{
-					//7.0.8.2 data and earlier
-					CTile& itemToCheck = Map->SeekTile( idToPush );
-					losItemList[itemCount].Height(itemToCheck.Height());
-					losItemList[itemCount].SetID( idToPush );
-					losItemList[itemCount].Flags( itemToCheck.Flags() );
-				}
+				CTile& itemToCheck = Map->SeekTile( idToPush );
+				losItemList[itemCount].Height(itemToCheck.Height());
+				losItemList[itemCount].SetID( idToPush );
+				losItemList[itemCount].Flags( itemToCheck.Flags() );
+
 				++itemCount;
 				if( itemCount >= LOSXYMAX )	// don't overflow
 					break;
@@ -735,30 +626,15 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		// Statics
 		while( stat != NULL )
 		{
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			CTile& tile = Map->SeekTile( stat->itemid );
+			if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
+			   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
 			{
-				//7.0.9.0 data and later
-				CTileHS& tile = Map->SeekTileHS( stat->itemid );
-				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-				   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
-				{
-					losItemList[itemCount].Height(tile.Height());
-					losItemList[itemCount].SetID( stat->itemid );
-					losItemList[itemCount].Flags( tile.Flags() );
-				}
+				losItemList[itemCount].Height(tile.Height());
+				losItemList[itemCount].SetID( stat->itemid );
+				losItemList[itemCount].Flags( tile.Flags() );
 			}
-			else
-			{
-				//7.0.8.2 data and earlier
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-				   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
-				{
-					losItemList[itemCount].Height(tile.Height());
-					losItemList[itemCount].SetID( stat->itemid );
-					losItemList[itemCount].Flags( tile.Flags() );
-				}
-			}
+
 			++itemCount;
 			if( itemCount >= LOSXYMAX )	// don't overflow
 				break;

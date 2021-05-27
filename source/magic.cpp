@@ -486,35 +486,16 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 	}
 	if( !caster->IsNpc() )
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		CTile& tile = Map->SeekTile( sock->GetWord( 0x11 ) );
+		if( (!strcmp( tile.Name(), "water")) || tile.CheckFlag( TF_WET ) )
 		{
-			//7.0.9.0 data and later
-			CTileHS& tile = Map->SeekTileHS( sock->GetWord( 0x11 ) );
-			if( (!strcmp( tile.Name(), "water")) || tile.CheckFlag( TF_WET ) )
-			{
-				sock->sysmessage( 671 );
-				return false;
-			}
-			if( tile.CheckFlag( TF_ROOF ) )	// slanted roof tile!!! naughty naughty
-			{
-				sock->sysmessage( 672 );
-				return false;
-			}
+			sock->sysmessage( 671 );
+			return false;
 		}
-		else
+		if( tile.CheckFlag( TF_ROOF ) )	// slanted roof tile!!! naughty naughty
 		{
-			//7.0.8.2 data and earlier
-			CTile& tile = Map->SeekTile( sock->GetWord( 0x11 ) );
-			if( (!strcmp( tile.Name(), "water")) || tile.CheckFlag( TF_WET ) )
-			{
-				sock->sysmessage( 671 );
-				return false;
-			}
-			if( tile.CheckFlag( TF_ROOF ) )	// slanted roof tile!!! naughty naughty
-			{
-				sock->sysmessage( 672 );
-				return false;
-			}
+			sock->sysmessage( 672 );
+			return false;
 		}
 	}
 	if( Weight->isOverloaded( caster ) )

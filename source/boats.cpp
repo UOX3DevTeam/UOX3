@@ -356,47 +356,21 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				map = Map->SeekMap( x, y, worldNumber );
-				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-				{
-					//7.0.9.0 tiledata and later
-					CLandHS& land = Map->SeekLandHS( map.id );
-					if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
-						return true;
-				}
-				else
-				{
-					//7.0.8.2 tiledata and earlier
-					CLand& land = Map->SeekLand( map.id );
-					if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
-						return true;
-				}
+				CLand& land = Map->SeekLand( map.id );
+				if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
+					return true;
 			}
 			else
 			{ //static tile
 				msi = new CStaticIterator( x, y, worldNumber );
 				for( Static_st *stat = msi->First(); stat != NULL; stat = msi->Next() )
 				{
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+					CTile& tile = Map->SeekTile( stat->itemid );
+					SI08 zt = stat->zoff + tile.Height();
+					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
 					{
-						//7.0.9.0 data and later
-						CTileHS& tile = Map->SeekTileHS( stat->itemid );
-						SI08 zt = stat->zoff + tile.Height();
-						if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
-						{
-							delete msi;
-							return true;
-						}
-					}
-					else
-					{
-						//7.0.8.2 data and earlier
-						CTile& tile = Map->SeekTile( stat->itemid );
-						SI08 zt = stat->zoff + tile.Height();
-						if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
-						{
-							delete msi;
-							return true;
-						}
+						delete msi;
+						return true;
 					}
 				}
 				delete msi;
