@@ -1,5 +1,6 @@
 28/05/2021 - Xuri
 	Unified duplicate tile/multi seeking code for HS/non-HS versions of tiledata & multis (punt)
+	Updated MsgBoardMaintenance() to use standard filesystem directory listing (punt)
 
 27/05/2021 - Xuri
 	Replaced UOX_MIN and UOX_MAX with std::min and std::max (punt)
