@@ -1163,58 +1163,61 @@ void MsgBoardMaintenance( void )
 	}
 
 	// Fetch file listing from msgboards directory
-	cDirectoryListing fileList( dirName, ".bbf" );
-
-	// Iterate through file list and read contents of each file
-	STRINGLIST *mbFiles = fileList.List();
-	STRINGLIST_ITERATOR fIter;
-	for( fIter = mbFiles->begin(); fIter != mbFiles->end(); ++fIter )
+	for( auto &entry : std::filesystem::directory_iterator(dirName) )
 	{
-		// Open file stream for reading in binary mode
-		std::ifstream file ( (*fIter).c_str(), std::ios::in | std::ios::binary );
-		if( file.is_open() )
+		if( std::filesystem::is_regular_file(entry.path()) )
 		{
-			// Seek start of file
-			file.seekg( 0, std::ios::beg );
-
-			// As long as end of file hasn't been reached, continue reading in more posts
-			while( !file.eof() )
+			// It is a regular file
+			if( entry.path().extension() == ".bbf" )
 			{
-				msgBoardPost_st toAdd;
-
-				// If post had Toggle value other than 0x00, add it to the list of posts to write back out to file later
-				if( MsgBoardReadPost( file, toAdd ) )
+				// Open file stream for reading in binary mode
+				std::ifstream file ( entry.path().string(), std::ios::in | std::ios::binary );
+				if( file.is_open() )
 				{
-					mbMessages.push_back( toAdd );
+					// Seek start of file
+					file.seekg( 0, std::ios::beg );
+					
+					// As long as end of file hasn't been reached, continue reading in more posts
+					while( !file.eof() )
+					{
+						msgBoardPost_st toAdd;
+						
+						// If post had Toggle value other than 0x00, add it to the list of posts to write back out to file later
+						if( MsgBoardReadPost( file, toAdd ) )
+						{
+							mbMessages.push_back( toAdd );
+						}
+					}
+					file.close();
+					
+					// If there are no more posts in the file, delete the file
+					if( mbMessages.empty() )
+					{
+						std::filesystem::remove( entry.path() );
+					}
+					else
+					{
+						// Open an output file stream for the .bbf file in binary mode
+						std::ofstream mFile ( entry.path(), std::ios::out | std::ios::trunc | std::ios::binary );
+						
+						// Write each of the posts we want to keep back into the file
+						mFile.seekp( 0, std::ios::beg );
+						for( mbIter = mbMessages.begin(); mbIter != mbMessages.end(); ++mbIter )
+						{
+							MsgBoardWritePost( mFile, (*mbIter) );
+						}
+						mFile.close();
+					}
+					
+					// Clear the message vector to prepare it for next file (if any)
+					mbMessages.clear();
 				}
-			}
-			file.close();
-
-			// If there are no more posts in the file, delete the file
-			if( mbMessages.empty() )
-			{
-				remove( (*fIter).c_str() );
-			}
-			else
-			{
-				// Open an output file stream for the .bbf file in binary mode
-				std::ofstream mFile ( (*fIter).c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
-
-				// Write each of the posts we want to keep back into the file
-				mFile.seekp( 0, std::ios::beg );
-				for( mbIter = mbMessages.begin(); mbIter != mbMessages.end(); ++mbIter )
+				else
 				{
-					MsgBoardWritePost( mFile, (*mbIter) );
+					Console.error( strutil::format("Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
 				}
-				mFile.close();
-			}
 
-			// Clear the message vector to prepare it for next file (if any)
-			mbMessages.clear();
-		}
-		else
-		{
-			Console.error( strutil::format("Failed to open MessageBoard file for reading: %s", (*fIter).c_str() ));
+			}
 		}
 	}
 }

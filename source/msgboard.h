@@ -51,11 +51,11 @@ struct msgBoardPost_st
 };
 
 // Function Prototypes
-void    MsgBoardQuestEscortCreate( CChar *mNPC );
-void    MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC );
-void    MsgBoardQuestEscortRemovePost( CChar *mNPC );
+void	MsgBoardQuestEscortCreate( CChar *mNPC );
+void	MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC );
+void	MsgBoardQuestEscortRemovePost( CChar *mNPC );
 void	MsgBoardRemoveFile( const SERIAL msgBoardSer );
-void    MsgBoardMaintenance( void );
+void	MsgBoardMaintenance( void );
 
 
 #endif
