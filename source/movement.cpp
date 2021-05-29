@@ -794,9 +794,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			{	// implication, is, this is now a CMultiObj
 				const UI16 multiID = (tItem->GetID() - 0x4000);
 				SI32 length = 0;
-				length = Map->SeekMulti( multiID ); 
 				
-				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (13 Sept 1999)
+				if( !Map->multiExists( multiID ))
 				{
 					Console.error( "Walking() - Bad length in multi file. Avoiding stall" );
 					const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
@@ -808,26 +807,27 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 						tItem->SetID( 0x4064 );
 					length = 0;
 				}
-				for( SI32 j = 0; j < length; ++j )
+				else
 				{
-					const Multi_st& multi = Map->SeekIntoMulti( multiID, j );
-					if( multi.visible && (tItem->GetX() + multi.x) == x && (tItem->GetY() + multi.y) == y )
+					for( auto &multi : Map->SeekMulti( multiID ).allItems() )
 					{
-						//7.0.9.0 tiledata and later
-						CTile& tile = Map->SeekTile( multi.tile );
-						xyblock[xycount].Type( 2 );
-						xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
-						xyblock[xycount].Height( tile.Height());
-						xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
-						xyblock[xycount].Flags( tile.Flags() );
-						xyblock[xycount].SetID(tItem->GetID());
-						++xycount;
-						if( xycount >= XYMAX )	// don't overflow
+						if( multi.visible && (tItem->GetX() + multi.xoffset) == x && (tItem->GetY() + multi.yoffset) == y )
 						{
-							regItems->Pop();
-							return;
+							CTile& tile = Map->SeekTile( multi.tileid );
+							xyblock[xycount].Type( 2 );
+							xyblock[xycount].BaseZ( multi.zoffset + tItem->GetZ() );
+							xyblock[xycount].Height( tile.Height());
+							xyblock[xycount].Top( multi.zoffset + tItem->GetZ() + calcTileHeight( tile.Height() ) );
+							xyblock[xycount].Flags( tile.Flags() );
+							xyblock[xycount].SetID(tItem->GetID());
+							++xycount;
+							if( xycount >= XYMAX )	// don't overflow
+							{
+								regItems->Pop();
+								return;
+							}
 						}
-					}					
+					}
 				}
 			}
 		}

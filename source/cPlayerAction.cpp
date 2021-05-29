@@ -2678,17 +2678,17 @@ bool CPIDblClick::Handle( void )
 		if( toExecute != NULL ) // Was a script found?
 		{
 			// If retVal is -1, event doesn't exist in script
-			// If retVal is 0, event exists, but returned false/0
-			// If retVal is 1, event exists, and handles item usage. Don't proceed with hard code (or other scripts!)
+			// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+			// If retVal is 1, event exists, proceed with hard code/other scripts
 			SI08 retVal = toExecute->OnUseUnChecked( ourChar, iUsed );
-			if( retVal == 0 )
+			if( retVal == 1 )
 			{
-				// Event exists, and returned 0 - proceed with other scripts/hard code
+				// Event exists, and returned 1 - proceed with other scripts/hard code
 				scriptExecuted = true;
 			}
-			else if( retVal == 1 )
+			else if( retVal == 0 )
 			{
-				// Event exists, and returned 1 - script handles usage, don't continue!
+				// Event exists, and returned 0 - script handles usage, don't continue!
 				return true;
 			}
 		}
@@ -2723,14 +2723,14 @@ bool CPIDblClick::Handle( void )
 
 			// Check if OnUseChecked event is present in script
 			SI08 retVal = toExecute->OnUseChecked( ourChar, iUsed );
-			if( retVal == 0 )
+			if( retVal == 1 )
 			{
-				// Event exists, and returned 0 - don't continue, usage is handled in script!
+				// Event exists, and returned 1 - proceed with other scripts/hard code
 				scriptExecuted = true;
 			}
-			else if( retVal == 1 )
+			else if( retVal == 0 )
 			{
-				// Script returned 1 - proceed with other scripts/hard code
+				// Script returned 0 - don't continue, usage is handled in script!
 				return true;
 			}
 		}

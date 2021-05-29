@@ -3,7 +3,8 @@
 
 #include "power.h"
 #include <cstdint>
-
+#include <sstream>
+#include "MultiMul.hpp"
 
 struct Static_st
 {
@@ -17,24 +18,6 @@ struct map_st
 {
 	UI16 id;
 	SI08 z;
-};
-
-struct MultiIndex_st
-{
-	SI32 start;
-	SI32 length;
-	SI32 unknown;
-};
-
-struct Multi_st
-{
-	SI32 visible;
-	UI16 tile;
-	SI16 x;
-	SI16 y;
-	SI08 z;
-	SI08 empty;
-	SI32 unknown1;
 };
 
 enum TileFlags

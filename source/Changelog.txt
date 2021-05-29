@@ -1,3 +1,11 @@
+30/05/2021 - Xuri (0.99.4n)
+	Fixed return value logic for onUseChecked/onUsedUnchecked JS events - was reversed by mistake!
+	Initiated start of revamped mul/uop handling, with some new files added to project: (punt)
+		MultiMul.cpp/hpp, IDXMul.cpp/hpp and UOPData.cpp/hpp
+	Updated code for loading and seeking in multis (punt)
+	Added new files to VS project and project filter
+	Added new files to source/CMakeLists.txt
+
 28/05/2021 - Xuri
 	Unified duplicate tile/multi seeking code for HS/non-HS versions of tiledata & multis (punt)
 	Updated MsgBoardMaintenance() to use standard filesystem directory listing (punt)

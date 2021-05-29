@@ -3,6 +3,7 @@
 
 #include "mapclasses.h"
 #include <climits>
+#include "MultiMul.hpp"
 
 const UI08 MAX_Z_STEP	= 9;
 const UI08 MAX_Z_FALL	= 20;
@@ -88,19 +89,8 @@ public:
 class CMulHandler
 {
 private:
-	struct MultiItemsIndex_st
-	{
-		Multi_st *	items;		// point into where the items begin.
-		SI32		size;				// # of items.
-		SI16		lx, ly, hx, hy;
-		SI08		lz, hz;
-		MultiItemsIndex_st() : items( NULL ), size( -1 ),
-		lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ),
-		lz( SCHAR_MAX ), hz( SCHAR_MIN )
-		{}
-		void		Include( SI16 x, SI16 y, SI08 z );
-	};
 
+	MultiMul _multidata ;
 
 	typedef std::vector< MapData_st >					MAPLIST;
 	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
@@ -110,10 +100,6 @@ private:
 	// multiItem, tileSet, and verdata(patches really)
 	CLand    *			landTile;			// the 512*32 pieces of land tile
 	CTile    *			staticTile;			// the 512*32 pieces of static tile set
-	Multi_st *			multiItems;			// the multis cache(shadow) from files
-	MultiItemsIndex_st *multiIndex;			// here's our index to multiItems
-	size_t				multiIndexSize;		// the length of index
-	size_t				multiSize;
 	size_t				tileDataSize;
 
 	MAPLIST				MapList;
@@ -159,8 +145,9 @@ public:
 
 	// look at tile functions
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	SI32			SeekMulti( UI16 multinum );
-	Multi_st &		SeekIntoMulti( UI16 multinum, SI32 number );
+	bool			multiExists(UI16 multinum);
+
+	const multi_structure&	SeekMulti( UI16 multinum ) const;
 	bool			IsValidTile( UI16 tileNum );
 	CTile &			SeekTile( UI16 tileNum );
 	CLand &			SeekLand( UI16 landNum );
