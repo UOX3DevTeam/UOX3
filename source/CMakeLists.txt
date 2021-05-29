@@ -75,6 +75,9 @@ add_library(uox
 		sound.cpp
 		UOPInterface.cpp
 		StringUtility.cpp
+		UOPData.cpp
+		MultiMul.cpp
+		IDXMul.cpp
 )
 
 target_include_directories(uox

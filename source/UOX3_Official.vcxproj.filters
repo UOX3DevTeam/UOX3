@@ -45,6 +45,12 @@
     <Filter Include="Header Files\Network No. 1">
       <UniqueIdentifier>{6120db4f-bb2e-449f-b847-1547b395dee6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UOData">
+      <UniqueIdentifier>{5fcfac04-c4f0-4c48-804a-8b4f49e615c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UOData">
+      <UniqueIdentifier>{d191cb74-b6ab-4daa-9a7d-23c417c8efa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ObjectFactory.cpp">
@@ -268,6 +274,15 @@
     </ClCompile>
     <ClCompile Include="StringUtility.cpp">
       <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="UOPData.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="IDXMul.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiMul.cpp">
+      <Filter>Source Files\UOData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -498,6 +513,15 @@
     </ClInclude>
     <ClInclude Include="GenericList.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UOPData.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="IDXMul.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiMul.hpp">
+      <Filter>Header Files\UOData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

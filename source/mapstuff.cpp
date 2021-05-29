@@ -82,34 +82,13 @@ MapData_st::~MapData_st()
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Compute new bounding box, by include the new point. < High Seas version
-//o-----------------------------------------------------------------------------------------------o
-void CMulHandler::MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
-{
-	if( x < lx )
-		lx = x;
-	if( x > hx )
-		hx = x;
-	if( y < ly )
-		ly = y;
-	if( y > hy )
-		hy = y;
-	if( z < lz )
-		lz = z;
-	if( z > hz )
-		hz = z;
-}
-
 /*! Use Memory-Mapped file to do caching instead
  ** 'verdata.mul', 'tiledata.mul', 'multis.mul' and 'multi.idx' is changed so
  **  it will reads into main memory and access directly.  'map*.mul', 'statics*.mul' and
  **  'staidx.mul' is being managed by memory-mapped files, it faster than manual caching
  **  and less susceptible to bugs.
  */
-CMulHandler::CMulHandler() : landTile( 0 ),  staticTile( 0 ),  multiItems( 0 ),  multiIndex( 0 ), multiIndexSize( 0 ), multiSize( 0 ), tileDataSize( 0 )
+CMulHandler::CMulHandler() : landTile( 0 ),  staticTile( 0 ),  tileDataSize( 0 )
 {
 	LoadMapsDFN();
 }
@@ -120,10 +99,6 @@ CMulHandler::~CMulHandler()
 		delete[] landTile;
 	if ( staticTile )
 		delete[] staticTile;
-	if ( multiItems )
-		delete[] multiItems;
-	if ( multiIndex )
-		delete[] multiIndex;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -443,75 +418,10 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	Console << "Caching Multis....  ";
 
 	// only turn it off for now because we are trying to fill the cache.
-	std::string lName	= basePath + "multi.idx";
-	UOXFile multiIDX( lName.c_str(), "rb" );
-	if( !multiIDX.ready() )
-	{
-		Console.PrintFailed();
-		Console.error( strutil::format("Can't cache %s!  File cannot be opened", lName.c_str()) );
-		return;
-	}
-	lName			= basePath + "multi.mul";
-	UOXFile multis( lName.c_str(), "rb" );
-	if( !multis.ready() )
-	{
-		Console.PrintFailed();
-		Console.error( strutil::format("Can't cache %s!  File cannot be opened", lName.c_str()) );
-		return;
-	}
+	std::string idxname	= basePath + "multi.idx";
 
-	// multiLength determines version of datafiles used by server
-	//	994832 - 7.0.85.15 - possibly earlier
-	//	962928 - 7.0.15.1 to 7.0.23.1 - Additional SI32 unknown1 property added
-	//	908592 - 7.0.9.0
-	//	596976 - 7.0.8.2
-	//	593616 - 5.0.9.1 to 6.1.14.1
-	//	592560 - 4.0.11c
-	size_t multiLength = multis.getLength();
-	multiSize	= multis.getLength() / (( multiLength >= 908592 ) ? MultiRecordSizeHS : MultiRecordSize );
-
-	//! first reads in Multi_st completely
-	bool useHS = false ;
-	if( multiLength >= 908592 )
-	{
-		useHS = true ;
-	}
-	
-	multiItems	= new Multi_st[multiSize];
-	for( size_t i = 0; i < multiSize; ++i )
-	{
-		multis.getUShort( &multiItems[i].tile );
-		multis.getShort( &multiItems[i].x );
-		multis.getShort( &multiItems[i].y );
-		multis.getChar( &multiItems[i].z );
-		multis.getChar( &multiItems[i].empty );
-		multis.getLong( &multiItems[i].visible );
-		if (useHS){
-			multis.getLong( &multiItems[i].unknown1 );
-		}
-	}
-	multiIndexSize	= multiIDX.getLength() / MultiIndexRecordSize;
-	multiIndex	= new MultiItemsIndex_st[multiIndexSize];
-	
-	// now rejig the multiIDX to point to the cache directly, and calculate the size
-	for( MultiItemsIndex_st *ptr = multiIndex; ptr != (multiIndex+multiIndexSize); ++ptr )
-	{
-		MultiIndex_st multiidx;
-		multiIDX.getLong( &multiidx.start );
-		multiIDX.getLong( &multiidx.length );
-		multiIDX.getLong( &multiidx.unknown );
-		
-		ptr->size = multiidx.length;
-		if( ptr->size != -1 )
-		{
-			ptr->size /= MultiRecordSize;		// convert byte size to record size
-			ptr->items = (Multi_st*)((char*)multiItems+ multiidx.start);
-			for( Multi_st* items = ptr->items; items != (ptr->items+ptr->size); ++items )
-			{
-				ptr->Include( items->x, items->y, items->z );
-			}
-		}
-	}	
+	std::string mulname	= basePath + "multi.mul";
+	_multidata.load(mulname, idxname) ;
 	Console.PrintDone();
 }
 
@@ -532,7 +442,7 @@ size_t CMulHandler::GetTileMem( void ) const
 //o-----------------------------------------------------------------------------------------------o
 size_t CMulHandler::GetMultisMem( void ) const
 {
-	return (multiSize * sizeof( Multi_st ) + multiIndexSize * sizeof( MultiItemsIndex_st ) );
+	return _multidata.memoryMulti();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -570,22 +480,20 @@ SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 m
 	return top;
 }
 
+//=============================================================================
+bool CMulHandler::multiExists(UI16 multinum){
+	return _multidata.exists(multinum);
+}
+
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 SeekMulti( UI16 multinum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if multinum/id can be found in multi data. Non-High Seas version
 //o-----------------------------------------------------------------------------------------------o
-SI32 CMulHandler::SeekMulti( UI16 multinum )
+const multi_structure &CMulHandler::SeekMulti( UI16 multinum )  const
 {
-	SI32 retVal = -1;
-	if( multinum < multiIndexSize )
-		retVal = multiIndex[multinum].size;
-	return retVal;
-}
-
-Multi_st& CMulHandler::SeekIntoMulti( UI16 multinum, SI32 number )
-{
-	return *(multiIndex[multinum].items + number);
+	return _multidata.entry(multinum);
 }
 
 //o--------------------------------------------------------------------------
@@ -603,13 +511,15 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 	const SI16 yAdd = i->GetY();
 
 	const UI16 multiNum = static_cast<UI16>(i->GetID() - 0x4000);
-	if( multiNum >= multiIndexSize )
-		return;
-	
-	x1 = static_cast<SI16>(multiIndex[multiNum].lx + xAdd);
-	x2 = static_cast<SI16>(multiIndex[multiNum].hx + xAdd);
-	y1 = static_cast<SI16>(multiIndex[multiNum].ly + yAdd);
-	y2 = static_cast<SI16>(multiIndex[multiNum].hy + yAdd);
+	if (!multiExists(multiNum))
+	{
+		return ;
+	}
+	auto structure = SeekMulti(multiNum);
+	x1 = static_cast<SI16>(structure.minx() + xAdd);
+	x2 = static_cast<SI16>(structure.maxx() + xAdd);
+	y1 = static_cast<SI16>(structure.miny() + yAdd);
+	y2 = static_cast<SI16>(structure.maxx() + yAdd);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -621,34 +531,33 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldZ, SI08 maxZ, bool checkHeight )
 {
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
-	SI32 length = 0;
-	length = SeekMulti( multiID );
 	
-	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (13 Sept 1999)
-		length = 0;
+	SI08 mHeight = ILLEGAL_Z;
+	SI08 tmpTop = ILLEGAL_Z;
+
+	if( !multiExists(multiID) ){
+		return mHeight;
+	}
 
 	const SI16 baseX = i->GetX();
 	const SI16 baseY = i->GetY();
 	const SI08 baseZ = i->GetZ();
-	SI08 mHeight = ILLEGAL_Z;
-	SI08 tmpTop = ILLEGAL_Z;
-	for( SI32 j = 0; j < length; ++j )
+	for( auto &multi : SeekMulti( multiID ).allItems() )
 	{
-		Multi_st& multi = SeekIntoMulti( multiID, j );
-		if(( checkHeight || multi.visible ) && ( baseX + multi.x ) == x && ( baseY + multi.y ) == y )
+		if(( checkHeight || multi.visible ) && ( baseX + multi.xoffset ) == x && ( baseY + multi.yoffset ) == y )
 		{
 			if( checkHeight )
 			{
 				// Returns height of highest point of multi
-				tmpTop = static_cast<SI08>(baseZ + multi.z);
+				tmpTop = static_cast<SI08>(baseZ + multi.zoffset);
 				if( ( tmpTop <= oldZ + maxZ ) && tmpTop > oldZ && tmpTop > mHeight )
 					mHeight = tmpTop;
 			}
 			else
 			{
-				tmpTop = static_cast<SI08>( baseZ + multi.z );
+				tmpTop = static_cast<SI08>( baseZ + multi.zoffset );
 				if( abs( tmpTop - oldZ ) <= maxZ )
-					return tmpTop + TileHeight( multi.tile );
+					return tmpTop + TileHeight( multi.tileid );
 			}
 		}
 	}
@@ -698,8 +607,8 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 		return 0;
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
 	SI32 length = 0;
-	length = SeekMulti( multiID );
-	if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (13 Sept 1999)
+	
+	if( !multiExists( multiID ))
 	{
 		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		const map_st map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
@@ -711,24 +620,25 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 			i->SetID( 0x4064 );
 		length = 0;
 	}
-	
-	// Loop through each item that makes up the multi
-	// If any of those items intersect with area were are checking, return the ID of that tile
-	for( SI32 j = 0; j < length; ++j )
-	{
-		Multi_st& multi = SeekIntoMulti( multiID, j );
-		if( !checkVisible )
+	else
+	{		
+		// Loop through each item that makes up the multi
+		// If any of those items intersect with area were are checking, return the ID of that tile
+		for( auto &multi : SeekMulti( multiID ).allItems() )
 		{
-			if( ( i->GetX() + multi.x == x ) && ( i->GetY() + multi.y == y ) )
+			if( !checkVisible )
 			{
-				return multi.tile;
+				if( ( i->GetX() + multi.xoffset == x ) && ( i->GetY() + multi.yoffset == y ) )
+				{
+					return multi.tileid;
+				}
 			}
-		}
-		else if( multi.visible > 0 && ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) )
-		{
-			if( ( i->GetX() + multi.x == x ) && ( i->GetY() + multi.y == y ) )
+			else if( multi.visible > 0 && ( abs( i->GetZ() + multi.zoffset - oldz ) <= 1 ) )
 			{
-				return multi.tile;
+				if( ( i->GetX() + multi.xoffset == x ) && ( i->GetY() + multi.yoffset == y ) )
+				{
+					return multi.tileid;
+				}
 			}
 		}
 	}

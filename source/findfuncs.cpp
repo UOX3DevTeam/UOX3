@@ -295,8 +295,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		return false;
 	const UI16 multiID = static_cast<UI16>(m->GetID() - 0x4000);
 	SI32 length = 0;
-	length = Map->SeekMulti( multiID );
-	if( length == -1 || length >= 17000000 )
+	
+	if( !Map->multiExists( multiID ) )
 	{
 		// the length associated with the multi means one thing
 		// the multi it's trying to reference is NOT in the multis.mul file
@@ -304,7 +304,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		// if it's dry, we'll make it a house
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
-
+		
 		const map_st map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
 		CLand& land = Map->SeekLand( map1.id );
 		if( land.CheckFlag( TF_WET ) ) // is it water?
@@ -317,34 +317,34 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		else
 			m->SetID( 0x4064 );
 	}
-
-	UI08 zOff = m->CanBeObjType( OT_BOAT ) ? 3 : 20;
-	const SI16 baseX = m->GetX();
-	const SI16 baseY = m->GetY();
-	const SI08 baseZ = m->GetZ();
-
-	for( SI32 j = 0; j < length; ++j )
+	else
 	{
-		Multi_st& multi = Map->SeekIntoMulti( multiID, j );
-
-		// Ignore signs and signposts sticking out of buildings
-		if( multi.tile >= 0x0b95 && multi.tile <= 0x0c0e || multi.tile == 0x1f28 || multi.tile == 0x1f29 )
-			continue;
-
-		if( (baseX + multi.x) == x && (baseY + multi.y) == y )
+		UI08 zOff = m->CanBeObjType( OT_BOAT ) ? 3 : 20;
+		const SI16 baseX = m->GetX();
+		const SI16 baseY = m->GetY();
+		const SI08 baseZ = m->GetZ();
+		
+		for( auto &multi : Map->SeekMulti( multiID ).allItems() )
 		{
-			// Find the top Z level of the multi section being examined
-			const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
-			if( m->GetObjType() == OT_BOAT )
+			// Ignore signs and signposts sticking out of buildings
+			if( multi.tileid >= 0x0b95 && multi.tileid <= 0x0c0e || multi.tileid == 0x1f28 || multi.tileid == 0x1f29 )
+				continue;
+			
+			if( (baseX + multi.xoffset) == x && (baseY + multi.yoffset) == y )
 			{
-				// We're on a boat!
-				if( abs( multiZ - z ) <= zOff )
-					return true;
-			}
-			else
-			{
-				if( z >= multiZ || abs( multiZ - z ) <= zOff )
-					return true;
+				// Find the top Z level of the multi section being examined
+				const SI08 multiZ = (baseZ + multi.zoffset + Map->TileHeight( multi.tileid ) );
+				if( m->GetObjType() == OT_BOAT )
+				{
+					// We're on a boat!
+					if( abs( multiZ - z ) <= zOff )
+						return true;
+				}
+				else
+				{
+					if( z >= multiZ || abs( multiZ - z ) <= zOff )
+						return true;
+				}
 			}
 		}
 	}

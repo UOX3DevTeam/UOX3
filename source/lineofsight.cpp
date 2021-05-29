@@ -370,15 +370,14 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 				if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
 					return toCheck->GetID();
 			}
-
 		}
 	}
 	else if( distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE )
 	{
 		const UI16 multiID = static_cast<UI16>(toCheck->GetID() - 0x4000);
 		SI32 length = 0;
-		length = Map->SeekMulti( multiID );
-		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (13 Sept 1999)
+		
+		if( !Map->multiExists( multiID ))
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
@@ -389,28 +388,30 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 				toCheck->SetID( 0x4064 );
 			length = 0;
 		}
-		
-		for( SI32 k = 0; k < length; ++k )
+		else
 		{
-			Multi_st& multi = Map->SeekIntoMulti( multiID, k );
-			if( multi.visible )
+			for( auto &multi : Map->SeekMulti( multiID ).allItems() )
 			{
-				const SI16 checkX = (curX + multi.x);
-				const SI16 checkY = (curY + multi.y);
-				if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
+				
+				if( multi.visible )
 				{
-					const SI08 checkZ = (curZ + multi.z);
-					CTile& multiTile = Map->SeekTile( multi.tile );
-					for( i = 0; i < collisioncount; ++i )
+					const SI16 checkX = (curX + multi.xoffset);
+					const SI16 checkY = (curY + multi.yoffset);
+					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
 					{
-						checkLoc = &collisions[i];
-						if( checkX == checkLoc->x && checkY == checkLoc->y &&
-						   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-						    ( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+						const SI08 checkZ = (curZ + multi.zoffset);
+						CTile& multiTile = Map->SeekTile( multi.tileid );
+						for( i = 0; i < collisioncount; ++i )
 						{
-							return multi.tile;
+							checkLoc = &collisions[i];
+							if( checkX == checkLoc->x && checkY == checkLoc->y &&
+							   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+							    ( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+							{
+								return multi.tileid;
+							}
 						}
-					}			
+					}
 				}
 			}
 		}
