@@ -109,9 +109,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x64;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\zlib\x64\Release;..\spidermonkey\Release\x64;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\zlib;..\spidermonkey;$(SourcePath)</SourcePath>
+    <IncludePath>..\zlib;..\spidermonkey;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -137,9 +137,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x64;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\spidermonkey\Release\x64;..\zlib\x64\Release;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\spidermonkey;..\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\spidermonkey;..\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
     <OutDir>.\Debug\x64\</OutDir>
     <IntDir>.\Debug\x64\</IntDir>
@@ -208,14 +208,17 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\zlib\x64\Release\;..\spidermonkey\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Midl>
       <TypeLibraryName>.\Release/UOX3_Official.tlb</TypeLibraryName>
@@ -361,10 +364,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;..\zlib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

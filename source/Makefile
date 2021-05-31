@@ -1,10 +1,12 @@
 BASE		:= ..
 SPIDER		:= $(BASE)/spidermonkey
+ZLIB		:= $(BASE)/zlib
+
 CXX			:= g++
 CXXFLAGS	:= -std=c++17 -O2 -pthread
-LDFLAGS		:= -L$(SPIDER)  -ljs32
+LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3
-INCLUDE		:=  -I$(SPIDER) -I.
+INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB)
 
 DEPDIR := ./.deps
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d

@@ -126,7 +126,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 
 			if( !returnState )
 			{
-				// No individual scripts handling OnSpecialMove were found - let's check global script!
+				// No individual scripts handling OnLogout were found - let's check global script!
 				cScript *toExecute = JSMapping->GetScript( (UI16)0 );
 				if( toExecute != NULL )
 				{
