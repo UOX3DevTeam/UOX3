@@ -5,7 +5,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
-
+#include <filesystem>
 
 CMulHandler *Map				= NULL;
 
@@ -416,12 +416,17 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 {
 	// now main memory multiItems
 	Console << "Caching Multis....  ";
-
+	std::string uopname = basePath + "MultiCollection.uop" ;
+	if (std::filesystem::exists(std::filesystem::path(uopname))) {
+		_multidata.load(uopname);
+	}
+	else {
 	// only turn it off for now because we are trying to fill the cache.
-	std::string idxname	= basePath + "multi.idx";
+		std::string idxname	= basePath + "multi.idx";
 
-	std::string mulname	= basePath + "multi.mul";
-	_multidata.load(mulname, idxname) ;
+		std::string mulname	= basePath + "multi.mul";
+		_multidata.load(mulname, idxname) ;
+	}
 	Console.PrintDone();
 }
 

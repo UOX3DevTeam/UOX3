@@ -1,3 +1,10 @@
+01/06/2021 - Xuri (0.99.4o)
+	Added support for MultiCollections.uop. If present in the specified datafolder, this file will be preferred over the traditional multi.mul/idx files, and will enable access to the new multis contained within (punt)
+	Added dependency for static library of zlib-1.2.11, of which a minimal version is included in a subfolder alongside spidermonkey in the root UOX3 project folder. This is needed for compression matters related to UOP files and certain UO network packets
+	Added VS Solution (zlib.sln) to compile static-library of zlib-1.2.11 for Windows. Makefile for Linux/macOS also included.
+	Updated CMakeList.txt to include zlib references
+	Updated default DATADIRECTORY path in uox.ini to match current day default installation path of UO (thanks, dragonslayer!)
+
 30/05/2021 - Xuri (0.99.4n)
 	Fixed return value logic for onUseChecked/onUsedUnchecked JS events - was reversed by mistake!
 	Initiated start of revamped mul/uop handling, with some new files added to project: (punt)

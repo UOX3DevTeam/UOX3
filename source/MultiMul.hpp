@@ -88,19 +88,23 @@ public:
 //====================================================================
 
 class MultiMul : public UOPData{
-	
+protected:
 	static constexpr std::size_t hssize = 908592;
-	
 	std::map<int, multi_structure> _entries ;
+
 	
 public:
 	MultiMul() ;
 	MultiMul(const std::string &mulpath, const std::string &idxpath);
+	MultiMul(const std::string &uoppath);
 	void load(const std::string &mulpath, const std::string &idxpath);
+	void load(const std::string &uoppath);
+	void processData(std::vector<unsigned char> &data, std::uint32_t chunkid) override ;
 	const multi_structure& entry(int id) const ;
 	std::size_t amount() const ;
 	bool exists(int id) ;
 	std::size_t memoryMulti() const ;
+	std::size_t size() const ;
 };
 
 #endif /* MultiMul_hpp */

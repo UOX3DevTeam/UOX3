@@ -27,13 +27,71 @@ std::size_t multi_structure::memoryComponent() const {
 
 
 //=========================================================================
-MultiMul::MultiMul() {
-	
+MultiMul::MultiMul() :UOPData() {
+	_mytype = UOPData::multi ;
 }
 //=========================================================================
-MultiMul::MultiMul(const std::string &mulpath, const std::string &idxpath) {
+MultiMul::MultiMul(const std::string &mulpath, const std::string &idxpath):MultiMul() {
+	
 	load(mulpath,idxpath);
 }
+//=========================================================================
+MultiMul::MultiMul(const std::string &uoppath) : MultiMul() {
+	load(uoppath);
+}
+//=============================================================================
+void MultiMul::load(const std::string &uoppath){
+	std::ifstream uopstream(uoppath,std::ifstream::binary|std::ifstream::in);
+	if (!uopstream.is_open()){
+		throw std::runtime_error(std::string("Unable to open uop file: ")+uoppath);
+	}
+	loadUOP(uopstream);
+	uopstream.close();
+
+}
+
+//=============================================================================
+void MultiMul::processData(std::vector<unsigned char> &data, std::uint32_t chunkid){
+	multi_structure structure ;
+	std::size_t offset = 4 ;  // skip the first 32 bit word 
+	std::uint32_t count ;
+	count = (*reinterpret_cast<std::uint32_t *>((data.data()+offset))) ;
+	offset = offset + 4 ;
+	for (unsigned int i = 0 ; i < count ; i++){
+		multi_component component ;
+		component.visible = 0 ;
+		component.tileid  = (*reinterpret_cast<std::uint16_t *>((data.data()+offset))) ;
+		offset = offset + 2 ;
+		component.xoffset = (*reinterpret_cast<std::int16_t *>((data.data()+offset))) ;
+		offset = offset + 2 ;
+		component.yoffset = (*reinterpret_cast<std::int16_t *>((data.data()+offset))) ;
+		offset = offset + 2 ;
+		component.zoffset = (*reinterpret_cast<std::int16_t *>((data.data()+offset))) ;
+		offset = offset + 2 ;
+		auto flags = (*reinterpret_cast<std::uint16_t *>((data.data()+offset))) ;
+		offset = offset + 2 ;
+		switch (flags) {
+			default:
+			case 0: 					// background
+				component.visible = 1 ;
+				break;
+			case 1:					// none
+				break;
+			case 257:					// generic
+				component.visible = 0x800;
+				break;
+		}
+		auto clilocs = (*reinterpret_cast<std::uint32_t *>((data.data()+offset))) ;
+		offset = offset + 4 ;
+		if (clilocs != 0 ) {
+			offset = offset + (clilocs * 4);
+		}
+		structure.addItem(component);
+
+	}
+	_entries.insert_or_assign(chunkid, structure);
+}
+
 
 //=========================================================================
 void MultiMul::load(const std::string &mulpath, const std::string &idxpath){
@@ -61,7 +119,7 @@ void MultiMul::load(const std::string &mulpath, const std::string &idxpath){
 				multi_component item ;
 				
 				short temp =0;
-				int 	dummy =0;
+				unsigned int 	dummy =0;
 				// Read in Tileid
 				mul.read(reinterpret_cast<char*>(&temp),2);
 				item.tileid = static_cast<unsigned short>(temp);
@@ -84,7 +142,7 @@ void MultiMul::load(const std::string &mulpath, const std::string &idxpath){
 
 				// Read in flags ;
 				mul.read(reinterpret_cast<char*>(&dummy),4);
-				item.visible = dummy; // static_cast<unsigned int>( temp );
+				item.visible = dummy ;
 				length = length-4 ;
 				if (useHS) {
 					mul.read(reinterpret_cast<char*>(&dummy),4);
@@ -146,4 +204,9 @@ std::size_t MultiMul::memoryMulti() const {
 		rvalue = rvalue + entry.second.memoryComponent() ;
 	}
 	return rvalue ;
+}
+
+//======================================================================
+std::size_t MultiMul::size() const {
+	return _entries.size() ;
 }

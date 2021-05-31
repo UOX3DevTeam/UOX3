@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+echo "Building spidermonkey"
 cd spidermonkey
 make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc
 
@@ -14,7 +14,14 @@ then
         ar -r libjs32.a Linux_All_DBG.OBJ/*.o
         cp Linux_All_DBG.OBJ/jsautocfg.h ./
 fi
+cd ../zlib
+echo "Bulding zlib"
+make distclean
+./configure 
+make 
+
 cd ../source
+echo "Building UOX3"
 make
 cp uox3 ..
 cd ..
