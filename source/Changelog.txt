@@ -1,3 +1,7 @@
+01/06/2021 - Xuri
+	Adjustments to source/CMakeList.txt in attempt to fix build issue with CMake
+	Updated debug/release configurations for Win32 in VS solution to include required references to zlib
+
 01/06/2021 - Xuri (0.99.4o)
 	Added support for MultiCollections.uop. If present in the specified datafolder, this file will be preferred over the traditional multi.mul/idx files, and will enable access to the new multis contained within (punt)
 	Added dependency for static library of zlib-1.2.11, of which a minimal version is included in a subfolder alongside spidermonkey in the root UOX3 project folder. This is needed for compression matters related to UOP files and certain UO network packets
