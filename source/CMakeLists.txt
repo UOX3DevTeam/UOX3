@@ -96,7 +96,7 @@ target_compile_definitions(uox
 target_link_libraries(uox
 	PUBLIC
 		js32
-		${PROJECT_SOURCE_DIR}/out/build/x64-Release/zlib/zlibstatic.lib
+		zlib/zlibstatic
 		$<$<PLATFORM_ID:Windows>:wsock32>
 		$<$<PLATFORM_ID:Windows>:ws2_32>
 )
