@@ -1,3 +1,24 @@
+03/06/2021 - Xuri
+	Removed RemoveFromSight() from CItem::Update() in cItem.cpp, to address flickering issues with animated items, and for smoother updates of items on boats when sailing.
+	Added new flag in CBaseObject - damageable - which determines if an Item or Multi should be considered a damageable object.
+	Added new DFN tag for Items and Multis to mark objects as damageable objects
+		DAMAGEABLE=0/1 // If enabled, allows client to display healthbar for object, using object's hp/maxhp values as basis. Note that any changes to a damageable object's health will not be reflected in the client until a stat update has been sent.
+	Added new JS Property for Items and Multis and Characters to get/set an object's damageable flag
+		.isDamageable // 1 or 0
+	Added new JS Method for Items, Multis and Characters to force an update of the object's health bar to nearby players:
+		.UpdateStats( statType ) // statType can be 0 (Health, only one that works for items), 1 (Mana) or 2 (Stamina)
+	Updated DFN entries for training dummies (dfndata/items/houseaddons/house_addons.dfn) to include DAMAGEABLE=1 and HP=100 tags, and also updated script for training dummies (js/item/trainingdummy.js) with some extra features for dummies marked as damageable:
+		Show damage numbers over the training dummy when hit
+		Update health of training dummy based on damage received when hit
+		Restore health of training dummy to max after 4 seconds of inactivity
+	Updated updateStats() in uox3.cpp to work with CBaseObject instead of CChar
+	Updated statwindow() in CSocket.cpp to work with CBaseObject instead of CChar
+	Updated CPUpdateStat in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0xA1 to client for Items/Multis
+	Updated CPStatWindow in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0x11 to client for Items/Multis
+	Fixed an issue with outgoing packet 0x11 where a character's current HP might sometimes incorrectly be displayed as zero
+	Updated CPNewObjectInfo in CPacketSend.cpp to send object information packet 0xF3 to client with datatype set to 0x03 for Items/Multis marked as damageable objects, to enable the client's ability to display health-bars for these items.
+	Fixed an issue with JS Method for Items - .Refresh() - which previously did nothing, but now instead sends an update of item to all sockets in range
+
 01/06/2021 - Xuri
 	Adjustments to source/CMakeList.txt in attempt to fix build issue with CMake
 	Updated debug/release configurations for Win32 in VS solution to include required references to zlib

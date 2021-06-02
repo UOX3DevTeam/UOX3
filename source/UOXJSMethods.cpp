@@ -3565,6 +3565,65 @@ JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+void updateStats( CBaseObject *mObj, UI08 x );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_UpdateStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void UpdateStats( statType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends update to client with specified stat (health, mana or stamina) for object
+//| Notes		-	Can be used with any character, as well as with items/multis with damageable flag enabled
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 1 )
+	{
+		MethodError("(UpdateStats) Invalid Number of Arguments %d, needs: 1 (stat type - 0, 1 or 2 for Health, Mana or Stamina)", argc);
+		return JS_FALSE;
+	}
+
+	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate(cx, obj) );
+	UI08 statType = (UI08)JSVAL_TO_INT(argv[0]);
+
+	if( !ValidateObject( myObj ))
+	{
+		MethodError("UpdateStats: Invalid object assigned");
+		return JS_FALSE;
+	}
+
+	if( myObj->CanBeObjType(OT_MULTI) || myObj->CanBeObjType(OT_ITEM) )
+	{
+		if( statType != 0 )
+		{
+			MethodError("UpdateStatus: For Items/Multis, only the Health stat (type 0) can be sent as an update to the client");
+			return JS_FALSE;
+		}
+
+		if( !myObj->isDamageable() )
+		{
+			MethodError("UpdateStatus: Can only be used with characters, or Items/Multis with damagable flag set to true");
+			return JS_FALSE;
+		}
+	}
+
+	switch( statType )
+	{
+		case 0: // Health
+			updateStats( myObj, 0 );
+			break;
+		case 1: // Mana - only relevant for characters
+			updateStats( myObj, 1 );
+			break;
+		case 2: // Stamina - only relevant for characters
+			updateStats( myObj, 2 );
+			break;
+		default:
+			MethodError("UpdateStats: Argument can only contain values 0, 1 or 2 for Health, Mana or Stamina respectively");
+			return JS_FALSE;
+	}
+
+	return JS_TRUE;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void SetPoisoned( poisonLevel, Length )
@@ -5136,7 +5195,7 @@ JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	}
 
 	CItem *myItem = static_cast<CItem *>(JS_GetPrivate( cx, obj ));
-	myItem->Dirty( UT_UPDATE );
+	myItem->Update();
 
 	return JS_TRUE;
 }

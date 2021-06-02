@@ -2,8 +2,8 @@
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // if you use/move a piece of furniture it should rotate accordingly
 
-function onUseChecked( pUser, iUsed ) 
-{ 
+function onUseChecked( pUser, iUsed )
+{
 	// get users socket
 	var srcSock = pUser.socket;
 
@@ -16,7 +16,7 @@ function onUseChecked( pUser, iUsed )
 	// interpolate items facing
 	var relX = userX - itemX;
 	var relY = userY - itemY;
-    
+
 	var absX, absY;
 	if( relX < 0 )
 	{
@@ -36,30 +36,30 @@ function onUseChecked( pUser, iUsed )
 	}
 
 	var direction = 0;
-	if( ( absX > absY ) && ( relX < 0 ) ) 
+	if( ( absX > absY ) && ( relX < 0 ) )
 	{
 		direction = 1;
 		srcSock.SysMessage( "item east of player" );
 	}
-	if( ( absX > absY ) && ( relX > 0 ) ) 
+	if( ( absX > absY ) && ( relX > 0 ) )
 	{
 		direction = 2; // west
 		srcSock.SysMessage( "item west of player" );
 	}
-	if( ( absX < absY ) && ( relY < 0 ) ) 
+	if( ( absX < absY ) && ( relY < 0 ) )
 	{
 		direction = 3; // south
 		srcSock.SysMessage( "item south of player" );
 	}
-	if( ( absX < absY ) && ( relY > 0 ) ) 
+	if( ( absX < absY ) && ( relY > 0 ) )
 	{
 		direction = 4; // north
 		srcSock.SysMessage( "item north of player" );
 	}
-    
-	// straw chair    
+
+	// straw chair
 	if( iUsed.id == 0x0b5A || iUsed.id == 0x0B5B || iUsed.id == 0x0B5D || iUsed.id == 0x0B5C )
-	{ 
+	{
 		srcSock.SysMessage( "straw chair" );
 		if( direction == 1 )
 		{
@@ -84,10 +84,10 @@ function onUseChecked( pUser, iUsed )
 	}
 }
 
-function onDrop( iDropped, pDropper ) 
+function onDrop( iDropped, pDropper )
 {
 	// onDrop not working atm
 	// I coded the stuff into onUse, once onDrop is working it can just be switched over
 	pDropper.SysMessage( "You droppsored the chair." );
-   
+	return true;
 }

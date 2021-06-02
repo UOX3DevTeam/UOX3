@@ -36,6 +36,7 @@ const UI32 BIT_SPAWNED		=	3;
 const UI32 BIT_SAVE			=	4;
 const UI32 BIT_DISABLED		=	5;
 const UI32 BIT_WIPEABLE		=	6;
+const UI32 BIT_DAMAGEABLE	=	7;
 
 
 //o-----------------------------------------------------------------------------------------------o
@@ -600,6 +601,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	outStream << "Damage=" << lodamage << "," << hidamage << '\n';
 	outStream << "Poisoned=" << (SI16)poisoned << '\n';
 	outStream << "Carve=" << GetCarve() << '\n';
+	outStream << "Damageable=" << (isDamageable()?"1":"0") << '\n';
 	outStream << "Defense=";
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
 	{
@@ -1316,6 +1318,10 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					// ERROR WILL ROBINSON
 				}
 			}
+			else if( UTag == "DAMAGEABLE" )
+			{
+				SetDamageable( strutil::value<std::uint8_t>(data) == 1 );
+			}
 			else if( UTag == "DIRECTION" )
 			{
 				auto temp = static_cast<UI08>(std::stoul(data, nullptr, 0));
@@ -1921,6 +1927,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetFame( fame );
 	target->SetKills( kills );
 	target->SetWipeable( isWipeable() );
+	target->SetDamageable( isDamageable() );
 }
 
 point3 CBaseObject::GetOldLocation( void )
@@ -1988,3 +1995,17 @@ void CBaseObject::SetWipeable( bool newValue )
 	objSettings.set( BIT_WIPEABLE, newValue );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDamageable( void ) const
+//|					void SetDamageable( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's damageable state
+//o-----------------------------------------------------------------------------------------------o
+bool CBaseObject::isDamageable(void) const
+{
+	return objSettings.test( BIT_DAMAGEABLE );
+}
+void CBaseObject::SetDamageable(bool newValue)
+{
+	objSettings.set( BIT_DAMAGEABLE, newValue );
+}

@@ -130,14 +130,14 @@
     <OutDir>.\Debug\x86\</OutDir>
     <IntDir>.\Debug\x86\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x86;..\zlib\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\spidermonkey\Release\x86;..\zlib\Debug;$(LibraryPath)</LibraryPath>
     <SourcePath>..\spidermonkey;..\zlib;$(SourcePath)</SourcePath>
     <IncludePath>..\spidermonkey;..\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x64;..\zlib\x64\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\spidermonkey\Release\x64;..\zlib\x64\Debug;$(LibraryPath)</LibraryPath>
     <SourcePath>..\spidermonkey;..\zlib;$(SourcePath)</SourcePath>
     <IncludePath>..\spidermonkey;..\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
@@ -323,13 +323,13 @@
       <CompileAs>Default</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x86;..\zlib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\spidermonkey\Release\x86;..\zlib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -371,7 +371,7 @@
       <AdditionalDependencies>ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;..\zlib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;..\zlib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

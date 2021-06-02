@@ -2092,7 +2092,9 @@ void CItem::Update( CSocket *mSock )
 	if( GetType() == IT_TRADEWINDOW )
 		return;
 
-	RemoveFromSight( mSock );
+	//RemoveFromSight( mSock );
+#pragma note( "To monitor: Commented out RemoveFromSight() in CItem::Update() to potentially fix a lot of flickering issues with animated items, boats, etc." )
+
 	if( GetCont() == this )
 	{
 		Console.warning( strutil::format("Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));

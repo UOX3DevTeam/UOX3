@@ -107,6 +107,9 @@ function onCallback0( socket, ourObj )
 	case "WORLDNUMBER":
 		socket.SysMessage( ourObj.worldnumber );
 		break;
+	case "DAMAGEABLE":
+		socket.SysMessage( ourObj.isDamageable );
+		break;
 	case "SCRIPTTRIGGER":
 	{
 		// Get last script trigger in list of triggers on object
