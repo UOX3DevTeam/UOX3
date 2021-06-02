@@ -65,6 +65,11 @@ function onCallback0( socket, ourObj )
 	case "HP":
 	case "HEALTH":
 		ourObj.health = nVal;
+		if( ourObj.isDamageable )
+		{
+			// Refresh potential health bar for damageable objects
+			ourObj.UpdateStats( 0 );
+		}
 		okMsg( socket );
 		break;
 	case "KARMA":
@@ -134,6 +139,10 @@ function onCallback0( socket, ourObj )
 		break;
 	case "WORLDNUMBER":
 		ourObj.worldnumber = nVal;
+		okMsg( socket );
+		break;
+	case "DAMAGEABLE":
+		ourObj.isDamageable = nVal;
 		okMsg( socket );
 		break;
 	case "SCRIPTTRIGGER":

@@ -146,6 +146,7 @@ JSMethodFunc CBase_NextItem;
 JSMethodFunc CBase_FinishedItems;
 JSMethodFunc CBase_DistanceTo;
 JSMethodFunc CBase_GetSerial;
+JSMethodFunc CBase_UpdateStats;
 JSMethodFunc CBase_Resist;
 JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
@@ -351,6 +352,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "SysMessage",			CMisc_SysMessage,		10, 0, 0 },
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0, 0 },
 	{ "GetSerial",			CBase_GetSerial,		1, 0, 0 },
+	{ "UpdateStats",		CBase_UpdateStats,		1, 0, 0 },
 	{ "MakeMenu",			CMisc_MakeMenu,			2, 0, 0 },
 	{ "Wander",				CChar_Wander,			3, 0, 0 },
 	{ "Follow",				CChar_Follow,			1, 0, 0 },
@@ -434,6 +436,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "ClearGuestList",		CMulti_ClearGuestList,		1, 0, 0 },
 	{ "ClearOwnerList",		CMulti_ClearOwnerList,		1, 0, 0 },
 	{ "GetSerial",			CBase_GetSerial,			1, 0, 0 },
+	{ "UpdateStats",		CBase_UpdateStats,			1, 0, 0 },
 	{ "SetCont",			CItem_SetCont,				1, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,			1, 0, 0 },
 	{ "Refresh",			CItem_Refresh,				0, 0, 0 },

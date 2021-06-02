@@ -333,7 +333,7 @@ public:
 	void			target( UI08 targType, UI08 targID,  SI32 dictEntry, ... );
 	void			mtarget( UI16 itemID, SI32 dictEntry );
 
-	void			statwindow( CChar *i );
+	void			statwindow( CBaseObject *i );
 	void			updateskill( UI08 skillnum );
 	void			openPack( CItem *i, bool isPlayerVendor = false );
 	void			openBank( CChar *i );

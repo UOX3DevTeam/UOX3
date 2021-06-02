@@ -311,6 +311,8 @@ movable=1
 pileable=0
 dyeable=0
 decay=0
+damageable=1
+hp=100
 }
 
 [0x1071]
@@ -336,6 +338,8 @@ movable=1
 pileable=0
 dyeable=0
 decay=0
+damageable=1
+hp=100
 }
 
 [0x1075]

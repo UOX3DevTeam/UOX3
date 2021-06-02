@@ -94,6 +94,12 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 	return FindNearbyPlayers( mChar, visRange );
 }
 
+SOCKLIST FindNearbyPlayers( CBaseObject *mObj )
+{
+	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mObj->GetRace() ));
+	return FindNearbyPlayers( mObj, visRange );
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CHARLIST findNearbyChars( CChar *mChar, distLocs distance )
 //o-----------------------------------------------------------------------------------------------o

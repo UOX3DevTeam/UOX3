@@ -2073,13 +2073,14 @@ UI32 CSocket::BytesReceived( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void statwindow( CChar *targChar )
+//|	Function	-	void statwindow( CBaseObject *targObj )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Opens the status window
+//|	Purpose		-	Opens the status window/health bar for characters 
+//|					and/or items/multis with damageable flag set
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::statwindow( CChar *targChar )
+void CSocket::statwindow( CBaseObject *targObj )
 {
-	if( !ValidateObject( targChar ) )
+	if( !ValidateObject(targObj) )
 		return;
 
 	if( !LoginComplete() )
@@ -2087,27 +2088,44 @@ void CSocket::statwindow( CChar *targChar )
 
 	CChar *mChar = CurrcharObj();
 
-	if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS &&
-	   (targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
-		return;
-
-	CPHealthBarStatus hpBarStatus( (*targChar), (*this ));
-	Send( &hpBarStatus );
-
-	CPStatWindow toSend( (*targChar), (*this) );
-
-	// 9/17/01 : fixed bug of your name on your own stat window
-	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
-	if( !targChar->IsNpc() && mChar == targChar )
+	if( targObj->CanBeObjType(OT_CHAR) )
 	{
-		toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
-		toSend.AC( Combat->calcDef( targChar, 0, false ) );
+		// Character specific
+		CChar *targChar = static_cast<CChar*>( targObj );
+
+		if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS &&
+			( targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline(( *targChar )) ) || !charInRange(mChar, targChar) ) )
+			return;
+
+		CPHealthBarStatus hpBarStatus(( *targChar ), ( *this ));
+		Send(&hpBarStatus);
+
+		CPStatWindow toSend(( *targObj ), ( *this ));
+
+		// 9/17/01 : fixed bug of your name on your own stat window
+		toSend.NameChange(mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ));
+		if( !targChar->IsNpc() && mChar == targChar )
+		{
+			toSend.Gold(GetItemAmount(targChar, 0x0EED));
+			toSend.AC(Combat->calcDef(targChar, 0, false));
+		}
+
+		Send(&toSend);
+
+		CPExtendedStats exStats(( *targChar ));
+		Send(&exStats);
 	}
+	else
+	{
+		// Item specific
+		SI16 visRange = MAX_VISRANGE + Races->VisRange(mChar->GetRace());
+		if( mChar->GetCommandLevel() < CL_CNS &&
+			( targObj->GetVisible() != VT_VISIBLE || !objInRange( mChar, targObj, static_cast<UI16>( visRange )) ) )
+			return;
 
-	Send( &toSend );
-
-	CPExtendedStats exStats( (*targChar) );
-	Send( &exStats );
+		CPStatWindow toSend(( *targObj ), ( *this ));
+		Send(&toSend);
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o

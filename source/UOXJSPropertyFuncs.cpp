@@ -422,6 +422,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ENTRYMADEFROM:	*vp = INT_TO_JSVAL( gPriv->EntryMadeFrom() );			break;
 			case CIP_ISPILEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isPileable() );			break;
 			case CIP_ISDYEABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDyeable() );			break;
+			case CIP_ISDAMAGEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDamageable() );		break;
 			case CIP_ISWIPEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isWipeable() );			break;
 			case CIP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->isGuarded() );			break;
 			case CIP_ISDOOROPEN:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDoorOpen() );			break;
@@ -786,6 +787,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ENTRYMADEFROM:	gPriv->EntryMadeFrom( (UI16)encaps.toInt() );				break;
 			case CIP_ISPILEABLE:	gPriv->SetPileable( encaps.toBool() );						break;
 			case CIP_ISDYEABLE:		gPriv->SetDye( encaps.toBool() );							break;
+			case CIP_ISDAMAGEABLE:	gPriv->SetDamageable( encaps.toBool() );					break;
 			case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
 			case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
 			case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;

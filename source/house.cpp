@@ -410,6 +410,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	houseItems.resize( 0 );
 	bool itemsWillDecay = false;
 	bool isBoat			= false;
+	bool isDamageable	= false;
 	std::string houseDeed, tag, data, UTag;
 	UI16 houseID		= 0;
 	// Use default values matching a small house if no tags present
@@ -493,6 +494,10 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		else if( UTag == "BOAT" )
 		{
 			isBoat = true;	//Boats
+		}
+		else if( UTag == "DAMAGEABLE" )
+		{
+			isDamageable = ( static_cast<SI16>( std::stoi(data, nullptr, 0) ) == 1 );
 		}
 		else if( UTag == "MAXITEMS" )
 		{
@@ -653,6 +658,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetMaxOwners( maxOwners );
 		house->SetMaxVendors( maxVendors );
 		house->SetColour( multiColour );
+		house->SetDamageable( isDamageable );
 
 		time_t buildTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		house->SetBuildTimestamp( buildTimestamp );
@@ -766,6 +772,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		CBoatObj *bObj = static_cast<CBoatObj *>(house);
 		bObj->SetWeightMax( weightMax );
 		bObj->SetMaxItems( maxItems );
+		bObj->SetDamageable( isDamageable );
 		if( bObj == NULL || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
 		{
 			house->Delete();

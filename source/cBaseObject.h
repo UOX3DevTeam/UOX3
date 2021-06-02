@@ -89,7 +89,7 @@ protected:
 	void			AddToMulti( bool fireTrigger = true );
 
 	UI08					poisoned;
-	std::bitset< 7 >		objSettings;
+	std::bitset< 8 >		objSettings;
 
 	UI16			resistances[WEATHNUM];
 
@@ -268,6 +268,7 @@ public:
 	bool					ShouldSave( void ) const;
 	bool					isDisabled( void ) const;
 	bool					isWipeable( void ) const;
+	bool					isDamageable( void ) const;
 
 	void					SetFree( bool newVal );
 	void					SetDeleted( bool newVal );
@@ -276,6 +277,7 @@ public:
 	void					ShouldSave( bool newVal );
 	void					SetDisabled( bool newVal );
 	void					SetWipeable( bool newValue );
+	void					SetDamageable( bool newValue );
 
 	SI16					GetFame( void ) const;
 	void					SetFame( SI16 value );

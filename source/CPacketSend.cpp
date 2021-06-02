@@ -1549,6 +1549,7 @@ void CPGraphicalEffect::TargetLocation( SI16 x, SI16 y, SI08 z )
 //| Function	-	CPUpdateStat()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet(s) to update player's health, mana and stamina
+//|					Also used to update the health of items/multis with damageable flag set
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA1 (Update Current Health)
 //|					Packet: 0xA2 (Update Current Mana)
@@ -1566,22 +1567,51 @@ void CPUpdateStat::InternalReset( void )
 	pStream.ReserveSize( 9 );
 	pStream.WriteByte( 0, 0xA1 );
 }
-CPUpdateStat::CPUpdateStat( CChar &toUpdate, UI08 statNum )
+CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum )
 {
 	InternalReset();
 	Serial( toUpdate.GetSerial() );
+	auto maxHP = 0;
+	auto maxStam = 0;
+	auto maxMana = 0;
+	if( toUpdate.CanBeObjType( OT_CHAR ))
+	{
+		// For characters, 
+		auto objChar = calcCharObjFromSer(toUpdate.GetSerial());
+		maxHP = objChar->GetMaxHP();
+		maxStam = objChar->GetMaxStam();
+		maxMana = objChar->GetMaxMana();
+	}
+	else
+	{
+		// For items and multis, only health is relevant, as not only does
+		// client not display anything relevant for stamina/mana for items,
+		// but items also have no mana/stamina values to send!
+		if( toUpdate.CanBeObjType(OT_MULTI) )
+		{
+			auto objMulti = calcMultiFromSer(toUpdate.GetSerial());
+			maxHP = objMulti->GetMaxHP();
+		}
+		else
+		{
+			auto objItem = calcItemObjFromSer(toUpdate.GetSerial());
+			maxHP = objItem->GetMaxHP();
+		}
+	}
+
 	switch( statNum )
 	{
-		case 0:	MaxVal( toUpdate.GetMaxHP() );
+		case 0:	MaxVal( maxHP );
 			CurVal( toUpdate.GetHP() );
 			break;
-		case 2:	MaxVal( toUpdate.GetMaxStam() );
+		case 2:	MaxVal( maxStam );
 			CurVal( toUpdate.GetStamina() );
 			break;
-		case 1:	MaxVal( toUpdate.GetMaxMana() );
+		case 1:	MaxVal( maxMana );
 			CurVal( toUpdate.GetMana() );
 			break;
 	}
+
 	pStream.WriteByte( 0, (pStream.GetByte( 0 ) + statNum) );
 }
 void CPUpdateStat::Serial( SERIAL toSet )
@@ -2095,7 +2125,11 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		Name( toCopy.GetName() );
 		SI16 currentHP = toCopy.GetHP();
 		UI16 maxHP = toCopy.GetMaxHP();
-		UI08 percentHP = static_cast<UI08>( 100 * ( currentHP / maxHP ));
+		SI16 percentHP = 0;
+		if( currentHP > 0 )
+		{
+			percentHP = static_cast<SI16>( ceil(100 * ( static_cast<float>( currentHP ) / static_cast<float>( maxHP ) )) );
+		}
 		CurrentHP( percentHP );
 		MaxHP( 100 );
 		NameChange( false );
@@ -2208,10 +2242,34 @@ CPStatWindow::CPStatWindow()
 {
 	InternalReset();
 }
-CPStatWindow::CPStatWindow( CChar &toCopy, CSocket &target )
+CPStatWindow::CPStatWindow( CBaseObject &toCopy, CSocket &target )
 {
 	InternalReset();
-	SetCharacter( toCopy, target );
+	if( toCopy.CanBeObjType(OT_CHAR) )
+	{
+		auto charObj = calcCharObjFromSer(toCopy.GetSerial());
+		SetCharacter( *charObj, target );
+	}
+	else
+	{
+		// Item! Let's send the compact version
+		auto itemObj = calcItemObjFromSer( toCopy.GetSerial() );
+		pStream.ReserveSize(43);
+		pStream.WriteByte(2, 43);
+		Serial(itemObj->GetSerial());
+		Name(itemObj->GetName());
+		SI16 currentHP = itemObj->GetHP();
+		UI16 maxHP = itemObj->GetMaxHP();
+		SI16 percentHP = 0;
+		if( currentHP > 0 )
+		{
+			percentHP = static_cast<SI16>( ceil(100 * ( static_cast<float>( currentHP ) / static_cast<float>( maxHP ) )) );
+		}
+		CurrentHP( percentHP );
+		MaxHP(100);
+		NameChange(false);
+		Flag(0);
+	}
 }
 void CPStatWindow::Serial( SERIAL toSet )
 {
@@ -5162,7 +5220,11 @@ void CPNewObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 	bool isInvisible	= (mItem.GetVisible() != VT_VISIBLE);
 	bool isMovable		= (mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ));
 
-	pStream.WriteByte( 3, 0x00 ); //DataType
+	if( mItem.isDamageable() )
+		pStream.WriteByte( 3, 0x03 ); // Damageable Item DataType
+	else
+		pStream.WriteByte( 3, 0x00 ); // Item DataType
+
 	pStream.WriteLong( 4, mItem.GetSerial() ); //Serial
 
 	// if player is a gm, this item is shown like a candle (so that he can move it),

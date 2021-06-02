@@ -370,7 +370,7 @@ public:
 	virtual ~CPUpdateStat()
 	{
 	}
-	CPUpdateStat( CChar &toUpdate, UI08 statNum );
+	CPUpdateStat( CBaseObject &toUpdate, UI08 statNum );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	MaxVal( SI16 maxVal );
 	virtual void	CurVal( SI16 curVal );
@@ -488,7 +488,7 @@ public:
 	virtual			~CPStatWindow()
 	{
 	}
-	CPStatWindow( CChar &toCopy, CSocket &target );
+	CPStatWindow( CBaseObject &toCopy, CSocket &target );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Name( const std::string& nName );
 	virtual void	CurrentHP( SI16 nValue );

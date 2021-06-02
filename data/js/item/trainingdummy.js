@@ -40,7 +40,7 @@ function onUseChecked( pUser, iUsed )
 			case 1: pUser.SoundEffect( 0x013C, true );	break;
 			case 2: pUser.SoundEffect( 0x013D, true );	break;
 			default:
-				ConsoleMessage( " cSkills::TDummy -> Fallout of switch statement without default" );
+				Console.Print( " cSkills::TDummy -> Fallout of switch statement without default\n" );
 				return false;
 		}
 
@@ -55,6 +55,35 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 939, pSock.language )); //You feel you would gain no more from using that.
 		else
 			pUser.CheckSkill( 27, 0, 250 );
+
+		// If the training dummy is marked as damageable,
+		// handle damage numbers and health bar updates
+		if( iUsed.isDamageable )
+		{
+			// Get random attack value for character
+			var dummyRandomDamage = pUser.attack;
+
+			// Create and send a custom packet showing damage over training dummy
+		    var myPacket = new Packet; // Create new packet stream
+		    myPacket.ReserveSize( 7 ); // Reserve packet size of 7, which is optimal for packet 0x0B
+		    myPacket.WriteByte( 0, 0x0B ); // Write packetID (0x0B) at position 0
+		    myPacket.WriteLong( 1, iUsed.serial ); // Write character serial at position 1 (0+WriteByte, or 0+1)
+		    myPacket.WriteShort( 5, dummyRandomDamage ); // Write damage number at position 5 (1+WriteLong, or 1+4)
+		    pSock.Send( myPacket ); // Send stream to socket
+		    myPacket.Free(); // Free up stream
+
+		    // Update the training dummy's health
+		    if( iUsed.health > dummyRandomDamage )
+		    	iUsed.health = iUsed.health - dummyRandomDamage;
+		    else
+		    	iUsed.health = 1;
+
+		    // Refresh the dummy's health bar nearby players
+		    iUsed.UpdateStats( 0 );
+		}
+
+		// Kill existing timers on training dummy, just in case
+	    iUsed.KillTimers();
 
 		//Start a timer so the dummy doesn't swing forever
 		iUsed.StartTimer( 3000, 1, true );
@@ -75,7 +104,9 @@ function safetyMeasure( iUsed )
 
 	//Check if 4 or more failed attempts have been made
 	if( failedToUse > 3 )
+	{
 		stopDummy( iUsed );
+	}
 	else
 	{
 		// Else, add to failed attempts
@@ -87,10 +118,19 @@ function safetyMeasure( iUsed )
 
 function onTimer( iUsed, timerID )
 {
-	//If timer is 1, stop the swinging dummy
 	if( timerID == 1 )
 	{
+		//If timer is 1, stop the swinging dummy
 		stopDummy( iUsed );
+		iUsed.StartTimer( 4000, 2, true );
+	}
+	if( timerID == 2 )
+	{
+		// Restore training dummy health
+		iUsed.health = iUsed.maxhp;
+
+		 // Refresh the dummy's health bar nearby players
+		iUsed.UpdateStats( 0 );
 	}
 }
 

@@ -329,21 +329,29 @@ bool isOnline( CChar& mChar )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void updateStats( CChar *c, char x )
+//|	Function	-	void updateStats( CBaseObject *mObj, UI08 x )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Updates characters stats
+//|	Purpose		-	Updates object's stats
 //o-----------------------------------------------------------------------------------------------o
-void updateStats( CChar *mChar, UI08 x )
+void updateStats( CBaseObject *mObj, UI08 x )
 {
-	CPUpdateStat toSend( (*mChar), x );
-	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
+	// Prepare the stat update packet
+	CPUpdateStat toSend( (*mObj), x );
+
+	SOCKLIST nearbyChars = FindNearbyPlayers( mObj );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		if( !(*cIter)->LoginComplete() )
 			continue;
+
+		// Send the stat update packet
 		(*cIter)->Send( &toSend );
-		if( (*cIter)->CurrcharObj() == mChar )
-			(*cIter)->statwindow( mChar );
+
+		// If object we send info for matches player, update the status window too!
+		if( ( *cIter )->CurrcharObj()->GetSerial() == mObj->GetSerial() )
+		{
+			(*cIter)->statwindow( mObj );
+		}
 	}
 }
 
@@ -1663,11 +1671,11 @@ void CWorldMain::CheckAutoTimers( void )
 				CChar *uChar = static_cast<CChar *>(mObj);
 
 				if( uChar->GetUpdate( UT_HITPOINTS ) )
-					updateStats( uChar, 0 );
+					updateStats( mObj, 0 );
 				if( uChar->GetUpdate( UT_STAMINA ) )
-					updateStats( uChar, 1 );
+					updateStats( mObj, 1 );
 				if( uChar->GetUpdate( UT_MANA ) )
-					updateStats( uChar, 2 );
+					updateStats( mObj, 2 );
 
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();

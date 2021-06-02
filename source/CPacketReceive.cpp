@@ -1261,7 +1261,12 @@ void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
 bool CPIStatusRequest::Handle( void )
 {
 	if( getType == 4 )
-		tSock->statwindow( calcCharObjFromSer( playerID ) );
+	{
+		if( playerID >= BASEITEMSERIAL )
+			tSock->statwindow( calcItemObjFromSer( playerID )); // Item
+		else
+			tSock->statwindow( calcCharObjFromSer( playerID )); // Character
+	}
 	if( getType == 5 )
 	{
 		// Check if onSkillGump event exists
