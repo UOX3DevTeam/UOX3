@@ -333,7 +333,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		for( auto &multi : Map->SeekMulti( multiID ).allItems() )
 		{
 			// Ignore signs and signposts sticking out of buildings
-			if( multi.tileid >= 0x0b95 && multi.tileid <= 0x0c0e || multi.tileid == 0x1f28 || multi.tileid == 0x1f29 )
+			if((( multi.tileid >= 0x0b95 ) && ( multi.tileid <= 0x0c0e )) || (( multi.tileid == 0x1f28 ) || ( multi.tileid == 0x1f29 )))
 				continue;
 			
 			if( (baseX + multi.xoffset) == x && (baseY + multi.yoffset) == y )

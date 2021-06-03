@@ -76,14 +76,14 @@ UI32 ObjectFactory::CountOfObjects( ObjectType toCount )
 			break;
 		case OT_ITEM:
 		case OT_SPAWNER:
-			toRet = items.size();
+			toRet = static_cast<UI32>(items.size());
 			break;
 		case OT_MULTI:
 		case OT_BOAT:
-			toRet = multis.size();
+			toRet = static_cast<UI32>(multis.size());
 			break;
 		case OT_CHAR:
-			toRet = chars.size();
+			toRet = static_cast<UI32>(chars.size());
 			break;
 	}
 	return toRet;

@@ -597,8 +597,6 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o-----------------------------------------------------------------------------------------------o
 bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather )
 {
-	UI16 dbScript = 0;
-
 	UI16 c;
 	if( !mChar.IsDead() )
 	{
@@ -1468,11 +1466,11 @@ void CWorldMain::CheckAutoTimers( void )
 		{
 			SetAutoSaved( true );
 			time(&oldTime);
-			SetOldTime( oldTime );
+			SetOldTime( static_cast<UI32>(oldTime) );
 		}
 		time_t newTime = GetNewTime();
 		time(&newTime);
-		SetNewTime( newTime );
+		SetNewTime( static_cast<UI32>(newTime) );
 
 		if( difftime( GetNewTime(), GetOldTime() ) >= saveinterval )
 		{
@@ -1506,11 +1504,11 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		SetIPUpdated( true );
 		time(&oldIPTime);
-		SetOldIPTime( oldIPTime );
+		SetOldIPTime( static_cast<UI32>(oldIPTime) );
 	}
 	time_t newIPTime = GetNewIPTime();
 	time(&newIPTime);
-	SetNewIPTime( newIPTime );
+	SetNewIPTime( static_cast<UI32>(newIPTime) );
 
 	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
 	{
@@ -2711,7 +2709,7 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 		}
 	}
 	sock->Send( &mapChange );
-	CChar *mChar = sock->CurrcharObj();
+	//CChar *mChar = sock->CurrcharObj();
 	/*if( !initialLogin )
 		mChar->Teleport();*/
 }
@@ -2839,7 +2837,6 @@ int main( SI32 argc, char *argv[] )
 	{// Error trapping....
 #endif
 		current = std::chrono::system_clock::now();
-		const UI32 currentTime = 0;
 
 		Console.Start( strutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
 

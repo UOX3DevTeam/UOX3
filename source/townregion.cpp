@@ -393,7 +393,7 @@ bool CTownRegion::AddAsTownMember( CChar& toAdd )
 //o-----------------------------------------------------------------------------------------------o
 bool CTownRegion::RemoveTownMember( CChar& toAdd )
 {
-	if( toAdd.GetTown() == NULL || toAdd.GetTown() != regionNum )
+	if( toAdd.GetTown() == 0 || toAdd.GetTown() != regionNum )
 		return false;	// not in our town
 
 	for( size_t counter = 0; counter < townMember.size(); ++counter )
@@ -1505,7 +1505,7 @@ bool CTownRegion::PeriodicCheck( void )
 				}
 			}
 		}
-		timeSinceTaxedMembers = now;
+		timeSinceTaxedMembers = static_cast<SI32>(now);
 	}
 	if( difftime( now, timeSinceGuardsPaid ) >= cwmWorldState->ServerData()->TownGuardPayment() )	// init to 1000 seconds
 	{
@@ -1520,7 +1520,7 @@ bool CTownRegion::PeriodicCheck( void )
 			}
 		}
 		goldReserved -= 20 * numGuards;
-		timeSinceGuardsPaid = now;
+		timeSinceGuardsPaid = static_cast<SI32>(now);
 	}
 
 	if( now > timeToNextPoll && !townMember.empty() )
@@ -1528,7 +1528,7 @@ bool CTownRegion::PeriodicCheck( void )
 		TellMembers( 1165 );
 		for( size_t counter = 0; counter < townMember.size(); ++counter )
 			townMember[counter].targVote = INVALIDSERIAL;
-		timeToElectionClose = now + cwmWorldState->ServerData()->TownNumSecsPollOpen();	// 2 days polls are open
+		timeToElectionClose = static_cast<SI32>(now) + cwmWorldState->ServerData()->TownNumSecsPollOpen();	// 2 days polls are open
 		timeToNextPoll		= timeToElectionClose + cwmWorldState->ServerData()->TownNumSecsAsMayor();	// secs as mayor over the top of the end of the poll
 		CChar *mayor		= GetMayor();
 		if( ValidateObject( mayor ) )
@@ -1746,7 +1746,7 @@ void CTownRegion::ForceEarlyElection( void )
 	time_t now;
 	time(&now);
 	CChar *mayor	= GetMayor();
-	timeToNextPoll	= now;	// time to open poll
+	timeToNextPoll	= static_cast<SI32>(now);	// time to open poll
 	TellMembers( 1174 );
 	for( size_t counter = 0; counter < townMember.size(); ++counter )
 		townMember[counter].targVote = INVALIDSERIAL;

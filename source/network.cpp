@@ -71,7 +71,7 @@ void cNetworkStuff::setLastOn( CSocket *s )
 	if( s->CurrcharObj() != NULL )
 	{
 		s->CurrcharObj()->SetLastOn( t );
-		s->CurrcharObj()->SetLastOnSecs( ltime );
+		s->CurrcharObj()->SetLastOnSecs( static_cast<UI32>(ltime) );
 	}
 }
 
@@ -451,7 +451,7 @@ cNetworkStuff::~cNetworkStuff()
 
 	loggedInClients.resize( 0 );
 	connClients.resize( 0 );
-	closesocket( s );
+	closesocket( static_cast<int>(s) );
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSACleanup();
 #endif
@@ -469,7 +469,7 @@ void cNetworkStuff::CheckMessage( void )
 	SI32 nfds = 0;
 	for( SOCKLIST_CITERATOR toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
 	{
-		SI32 clientSock = (*toCheck)->CliSocket();
+		SI32 clientSock = static_cast<SI32>((*toCheck)->CliSocket());
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( clientSock + 1 > nfds )
@@ -483,13 +483,13 @@ void cNetworkStuff::CheckMessage( void )
 		{
 			if( FD_ISSET( connClients[i]->CliSocket(), &errsock ) )
 			{
-				Disconnect( i );
+				Disconnect( static_cast<UOXSOCKET>(i) );
 			}
 			if( ( FD_ISSET( connClients[i]->CliSocket(), &all ) ) && ( oldnow == cwmWorldState->GetPlayersOnline() ) )
 			{
 				try
 				{
-					GetMsg( i );
+					GetMsg( static_cast<UOXSOCKET>(i) );
 				}
 				catch( socket_error& blah )
 				{
@@ -556,7 +556,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 			se = total;
 
 			auto uoxmonitor = strutil::format( "UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se );
-			mSock->Send( uoxmonitor.c_str(), uoxmonitor.size() );
+			mSock->Send( uoxmonitor.c_str(), static_cast<SI32>(uoxmonitor.size()) );
 			mSock->NewClient( false );
 		}
 		else
@@ -832,7 +832,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 								}
 								mj += 2;
 								tempBuffer[2] = mj;
-								mSock->Send( tempBuffer, mj );
+								mSock->Send( tempBuffer, static_cast<SI32>(mj) );
 #if defined( _MSC_VER )
 #pragma note( "Flush location" )
 #endif
@@ -874,7 +874,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );
 						SI32 nfds;
-						nfds = mSock->CliSocket() + 1;
+						nfds = static_cast<SI32>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( 2560 );
 
@@ -914,7 +914,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 		if( clientSock + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	SI32 s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
+	SI32 s = select( static_cast<int>(nfds), &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();
@@ -922,14 +922,14 @@ void cNetworkStuff::CheckLoginMessage( void )
 		{
 			if( FD_ISSET( loggedInClients[i]->CliSocket(), &errsock ) )
 			{
-				LoginDisconnect( i );
+				LoginDisconnect( static_cast<UOXSOCKET>(i) );
 				continue;
 			}
 			if( ( FD_ISSET( loggedInClients[i]->CliSocket(), &all ) ) && ( oldnow == loggedInClients.size() ) )
 			{
 				try
 				{
-					GetLoginMsg( i );
+					GetLoginMsg( static_cast<UOXSOCKET>(i) );
 				}
 				catch( socket_error& blah )
 				{
@@ -1064,7 +1064,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			se		= total;
 			// April 5, 2004 - Please leave the place holders incode. They are not read in from the ini as of yet but will be as I get time and solidify the exact values needed
 			auto szTBuf = strutil::format( "UOX3:sn=%s,cs=0x%04X,st=[ut:%02i:%02i:%02i][cn%lui][ic:%i][cc:%i][me:0x%08X][ma:0x%04X,%s,%s,%s,%s]", cwmWorldState->ServerData()->ServerName().c_str(), cwmWorldState->ServerData()->GetClientFeatures(), ho, mi, se, cwmWorldState->GetPlayersOnline()+1, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), 0xDEADFEED, 0x000D, "Felucia", "Trammel", "Ilshenar", "Malas" );
-			mSock->Send( szTBuf.c_str(),szTBuf.size()+1);
+			mSock->Send( szTBuf.c_str(),static_cast<SI32>(szTBuf.size())+1);
 			mSock->NewClient( false );
 		}
 		else if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
@@ -1077,7 +1077,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			se		= total;
 
 			auto uoxmonitor = strutil::format("UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se );
-			mSock->Send( uoxmonitor.c_str(), uoxmonitor.size() );
+			mSock->Send( uoxmonitor.c_str(), static_cast<SI32>(uoxmonitor.size() ));
 			mSock->NewClient( false );
 		}
 		else
@@ -1189,7 +1189,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 						fd_set all;
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );
-						nfds = mSock->CliSocket() + 1;
+						nfds = static_cast<SI32>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( 2560 );
 						messageLoop << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID );

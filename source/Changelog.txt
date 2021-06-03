@@ -1,4 +1,7 @@
 03/06/2021 - Xuri
+	Cleaned up some warnings caused by 64 bit/32 bit difference between macOS and Windows (punt)
+
+03/06/2021 - Xuri
 	Removed RemoveFromSight() from CItem::Update() in cItem.cpp, to address flickering issues with animated items, and for smoother updates of items on boats when sailing.
 	Added new flag in CBaseObject - damageable - which determines if an Item or Multi should be considered a damageable object.
 	Added new DFN tag for Items and Multis to mark objects as damageable objects
@@ -11,6 +14,8 @@
 		Show damage numbers over the training dummy when hit
 		Update health of training dummy based on damage received when hit
 		Restore health of training dummy to max after 4 seconds of inactivity
+	Updated 'fullstats and 'heal commands (js/commands/targeting/stats.js) to support restoring the health of a damageable object
+	Updated 'get (js/commands/targeting/get.js) and 'set (js/commands/targeting/set.js) commands to support getting and setting the damageable flag on objects
 	Updated updateStats() in uox3.cpp to work with CBaseObject instead of CChar
 	Updated statwindow() in CSocket.cpp to work with CBaseObject instead of CChar
 	Updated CPUpdateStat in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0xA1 to client for Items/Multis

@@ -18,7 +18,7 @@ SI32 FileSize( std::string filename )
 	SI32 retVal = 0;
 
 	try {
-		retVal = std::filesystem::file_size( filename ); 
+		retVal = static_cast<SI32>(std::filesystem::file_size( filename )); 
 	} catch( ... ) {
 		retVal = 0;
 	}   

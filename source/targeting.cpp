@@ -1176,7 +1176,7 @@ void MakeTownAlly( CSocket *s )
 	UI16 srcTown = mChar->GetTown();
 	UI16 trgTown = targetChar->GetTown();
 
-	if( srcTown == NULL || trgTown == NULL )
+	if( srcTown == 0 || trgTown == 0 )
 	{
 		return;
 	}
