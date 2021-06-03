@@ -1,3 +1,7 @@
+04/06/2021 - Xuri (0.99.4p)
+	Fixed an issue with return values for onDrop JS event where not all return values would work as intended
+	Added -Wno-shift-negative-value flag to CXXFLAGS in Makefile to potentially supress some JS-related warnings when compiling on Unix platforms (punt)
+
 04/06/2021 - Xuri
 	Reverted changes to jsapi.h, which were causing some unwanted behavior
 	Fixed some errors reading in UOP files in UOPData.cpp, and made some tweaks to other related files (punt)
