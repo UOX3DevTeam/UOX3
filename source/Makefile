@@ -3,7 +3,7 @@ SPIDER		:= $(BASE)/spidermonkey
 ZLIB		:= $(BASE)/zlib
 
 CXX			:= g++
-CXXFLAGS	:= -std=c++17 -O2 -pthread
+CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value
 LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3
 INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB)

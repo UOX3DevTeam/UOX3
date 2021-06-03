@@ -902,7 +902,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != NULL )
 		{
-			UI08 rVal = toExecute->OnDrop( i, nChar );	// returns 1 if we should bounce it
+			SI08 rVal = toExecute->OnDrop( i, nChar );	// returns 1 if we should bounce it
 			switch( rVal )
 			{
 				case 1:	// don't bounce, use code
