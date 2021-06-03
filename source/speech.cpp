@@ -514,6 +514,8 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 					mSock->Send( &toSend );
 			}
 			break;
+		case SPTRG_NULL:
+			break;
 	};
 }
 

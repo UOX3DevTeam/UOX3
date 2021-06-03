@@ -197,7 +197,7 @@ inline std::uint32_t CheckMilliTimer( std::uint32_t &Seconds, std::uint32_t &Mil
 
 inline std::uint32_t GetMinutesSinceEpoch()
 {
-	return std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now().time_since_epoch()).count();
+	return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now().time_since_epoch()).count());
 }
 
 //o-----------------------------------------------------------------------------------------------o

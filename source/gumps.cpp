@@ -1005,7 +1005,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				guiInfo.AddData( "Accounts", Accounts->size() );
 				guiInfo.AddData( "Items", ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
 				guiInfo.AddData( "Chars", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
-				guiInfo.AddData( "Players in world", cwmWorldState->GetPlayersOnline() );
+				guiInfo.AddData( "Players in world", static_cast<UI32>(cwmWorldState->GetPlayersOnline()) );
 				guiInfo.Send( 0, false, INVALIDSERIAL );
 			}
 			break;

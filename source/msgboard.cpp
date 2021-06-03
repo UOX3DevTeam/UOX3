@@ -694,7 +694,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 	const SERIAL msgSer = (mSock->GetDWord( 8 ) - BASEITEMSERIAL );
 
 	// Let's grab the size of the file so we can use it later
-	SI32 fileSize = 0;
+	std::size_t fileSize = 0;
 	try {
 		fileSize = std::filesystem::file_size( fileName );
 	} catch( ... ) {
@@ -1063,7 +1063,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 	}
 
 	fileName += std::string("region") + strutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
-	SI32 fileSize = 0;
+	std::size_t fileSize = 0;
 	try {
 		fileSize = std::filesystem::file_size( fileName );
 	} catch( ... ) {

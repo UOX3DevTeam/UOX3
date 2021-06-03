@@ -13,13 +13,9 @@ const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
 //! these are the fixed record lengths as determined by the .mul files from OSI
 //! i made them longs because they are used to calculate offsets into the files
-const UI32 MultiRecordSize			= 12L;
-const UI32 MultiRecordSizeHS		= 16L;
 const UI32 TileRecordSize			= 26L;
 const UI32 TileRecordSizeHS			= 41L;
 const UI32 MapRecordSize			= 3L;
-//const UI32 MapRecordSizeHS			= 4L;
-const UI32 MultiIndexRecordSize		= 12L;
 const UI32 StaticRecordSize			= 7L;
 const UI32 StaticIndexRecordSize	= 12L;
 const UI32 MapBlockSize				= 196L;
@@ -269,7 +265,7 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 				mdlFile.read( (char *)&blockID, 4 );
 				if( !mdlFile.fail() )
 				{
-					mMap.mapDiffList[blockID] = offset;
+					mMap.mapDiffList[static_cast<UI32>(blockID)] = static_cast<UI32>(offset);
 				}
 				offset += MapBlockSize;
 			}
@@ -301,9 +297,9 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 				while( !sdiFile.fail() && !sdlFile.fail() )
 				{
 					sdlFile.read( (char *)&blockID, 4 );
-					sdiFile.read( (char *)&mMap.staticsDiffIndex[blockID].offset, 4 );
-					sdiFile.read( (char *)&mMap.staticsDiffIndex[blockID].length, 4 );
-					sdiFile.read( (char *)&mMap.staticsDiffIndex[blockID].unknown, 4 );
+					sdiFile.read( (char *)&mMap.staticsDiffIndex[static_cast<UI32>(blockID)].offset, 4 );
+					sdiFile.read( (char *)&mMap.staticsDiffIndex[static_cast<UI32>(blockID)].length, 4 );
+					sdiFile.read( (char *)&mMap.staticsDiffIndex[static_cast<UI32>(blockID)].unknown, 4 );
 				}
 				sdlFile.close();
 				Console.PrintDone();
@@ -811,7 +807,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 
 	const size_t indexPos = ( static_cast<size_t>(baseX) * ( static_cast<size_t>(mMap.yBlock) / 8 ) + static_cast<size_t>(baseY) );
 
-	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( indexPos );
+	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( static_cast<const UI32>(indexPos) );
 	if( diffIter != mMap.staticsDiffIndex.end() )
 	{
 		const StaticsIndex_st &sdiRecord = diffIter->second;
@@ -922,7 +918,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	const size_t blockID	= static_cast<size_t>(x1) * ( static_cast<size_t>(mMap.yBlock) >> 3) + static_cast<size_t>(y1);
 	const size_t cellOffset = (4 + (static_cast<size_t>(y2) * 8 + static_cast<size_t>(x2)) * static_cast<size_t>(MapRecordSize) );
 
-	std::map< UI32, UI32 >::const_iterator diffIter = mMap.mapDiffList.find( blockID );
+	std::map< UI32, UI32 >::const_iterator diffIter = mMap.mapDiffList.find( static_cast<const UI32>(blockID) );
 	if( diffIter != mMap.mapDiffList.end() )
 	{
 		mFile	= mMap.mapDiffObj;
@@ -1105,7 +1101,7 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 	if( checkWater || waterWalk )
 	{
 		const map_st map = SeekMap( x, y, worldNumber );
-		if( checkMultiPlacement && map.z == z || ( !checkMultiPlacement && map.z >= z && map.z - z < 16 ))
+		if(( checkMultiPlacement && map.z == z ) || ( !checkMultiPlacement && map.z >= z && map.z - z < 16 ))
 		{
 			if( z == ILLEGAL_Z )
 				return true;

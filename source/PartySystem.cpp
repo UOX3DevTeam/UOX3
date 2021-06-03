@@ -57,7 +57,7 @@ PartyEntry *Party::Find( CChar *i, SI32 *location )
 			if( toFind->Member() == i )
 			{
 				if( location != NULL )
-					(*location) = j;
+					(*location) = static_cast<int>(j);
 				return toFind;
 			}
 		}

@@ -2770,7 +2770,7 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		curY = static_cast<UI16>(parentSer%65536);
 		curZ = openList[parentSer].z;
 
-		closedList[parentSer] = openList[parentSer].parent;
+		closedList[parentSer] = static_cast<UI32>(openList[parentSer].parent);
 		openList.erase( openList.find( parentSer ) );
 		fCostList.pop_front();
 

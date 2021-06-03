@@ -163,7 +163,7 @@ void PageVector::SendAsGump( CSocket *toSendTo )
 		{
 			CChar *mChar = calcCharObjFromSer( (*qIter)->WhoPaging() );
 			if( ValidateObject( mChar ) )
-				GQueue.AddData( mChar->GetName(), (*qIter)->TimeOfPage() );
+				GQueue.AddData( mChar->GetName(), static_cast<UI32>((*qIter)->TimeOfPage()) );
 		}
 	}
 	GQueue.Send( 4, false, INVALIDSERIAL );
@@ -211,7 +211,7 @@ bool PageVector::GotoPos( SI32 pos )
 //o-----------------------------------------------------------------------------------------------o
 SI32 PageVector::CurrentPos( void ) const
 {
-	return (currentPos - Queue.begin());
+	return static_cast<SI32>((currentPos - Queue.begin()));
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -236,7 +236,7 @@ SI32 PageVector::FindCallNum( SERIAL callNum )
 	for( size_t counter = 0; counter < Queue.size(); ++counter )
 	{
 		if( Queue[counter]->RequestID() == callNum )
-			return counter;
+			return static_cast<SI32>(counter);
 	}
 	return -1;
 }
@@ -274,7 +274,7 @@ bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 				QNext.AddData( "Pager: ", isPaging->GetName() );
 				QNext.AddData( "Problem: ", tempPage->Reason() );
 				QNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-				QNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
+				QNext.AddData( "Paged at: ", static_cast<UI32>(tempPage->TimeOfPage()) );
 				QNext.Send( 4, false, INVALIDSERIAL );
 				tempPage->IsHandled( true );
 				if( mChar->WorldNumber() != isPaging->WorldNumber() )
