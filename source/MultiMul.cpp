@@ -11,6 +11,11 @@
 #include <algorithm>
 
 #include "IDXMul.hpp"
+
+using namespace UO ;
+
+const std::string MultiMul::_uopformat = "build/multicollection/%06d.bin";
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 //		Methods for MultiMul
@@ -27,8 +32,10 @@ std::size_t multi_structure::memoryComponent() const {
 
 
 //=========================================================================
-MultiMul::MultiMul() :UOPData() {
+MultiMul::MultiMul() : UOPData() {
 	_mytype = UOPData::multi ;
+	_hashformat = _uopformat;
+	_maxhashes = 0x10000 ;
 }
 //=========================================================================
 MultiMul::MultiMul(const std::string &mulpath, const std::string &idxpath):MultiMul() {

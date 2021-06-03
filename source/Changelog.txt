@@ -1,4 +1,8 @@
 04/06/2021 - Xuri
+	Reverted changes to jsapi.h, which were causing some unwanted behavior
+	Fixed some errors reading in UOP files in UOPData.cpp, and made some tweaks to other related files (punt)
+
+04/06/2021 - Xuri
 	Fixed an issue that could cause player characters created in older versions of UOX3 to end up with backpacks without max item capacity set, thus being unable to add any items to their backpack
 	More warnings cleanup, and some fixes to address size_t differences between Windows and Unix platforms (punt)
 
