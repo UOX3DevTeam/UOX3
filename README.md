@@ -54,10 +54,9 @@ You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make
 
 1) (Linux only) `sudo apt install build-essential`
 
-Once these are in place, navigate to the **UOX3** project folder in your terminal and execute the following commands from the project's root directory, in order:
+Once these are in place, navigate to the **UOX3** project folder in your terminal and execute the following command from the project's root directory:
 
-1) `chmod +x automake.sh` - Makes the automake.sh bash script executable.
-2) `./automake.sh` - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the included zlib library, and finally compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
+`./automake.sh` - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the included zlib library, and finally compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
 </details>
 
 <details>
@@ -137,6 +136,8 @@ Once you have all the required files in place, you can follow the regular steps 
   <summary>Visual Studio 2017/2019</summary>
 
 *This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the [Free Community edition](https://visualstudio.microsoft.com/downloads/) of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either **32-bit** or **64-bit** (default) versions of UOX3.*
+
+***Note:*** You'll need to install **"Desktop development with C++"** via the Visual Studio Installer if you don't have it already, along with the option for this titled **MSVC v141 - VS 2017 C++ x64/x86 build tools (v14.16)**
 
 #### SpiderMonkey ####
 1) Navigate to the **UOX3\spidermonkey** folder and open **SpiderMonkey.sln** in Visual Studio.
