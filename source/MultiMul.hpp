@@ -87,9 +87,10 @@ public:
 
 //====================================================================
 
-class MultiMul : public UOPData{
+class MultiMul : public UO::UOPData{
 protected:
 	static constexpr std::size_t hssize = 908592;
+	static const std::string _uopformat ;
 	std::map<int, multi_structure> _entries ;
 
 	
