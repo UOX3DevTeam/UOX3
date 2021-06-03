@@ -498,7 +498,7 @@ void cEffects::checktempeffects( void )
 				{
 					case 0:
 						if( Effect->More2() != 0 )
-							s->TextMessage( NULL, 1270, EMOTE, true, s->GetName().c_str() );
+							s->TextMessage( NULL, 1270, EMOTE, 1, s->GetName().c_str() );
 						PlaySound( s, 0x0242 );
 						break;
 				}

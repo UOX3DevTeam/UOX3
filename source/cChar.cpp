@@ -4013,7 +4013,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle server-triggered speech for characters
 //o-----------------------------------------------------------------------------------------------o
-void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... )
+void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... )
 {
 	UnicodeTypes dictLang = ZERO;
 	if( s != NULL )
@@ -4030,8 +4030,12 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool sp
 		if (msg.size()>512){
 			msg = msg.substr(0,512);
 		}
-
-		TextMessage( s, msg, msgType, spamTimer );
+		auto spam = false;
+		if( spamTimer == 1 )
+		{
+			spam = true;
+		}
+		TextMessage( s, msg, msgType, spam );
 	}
 }
 

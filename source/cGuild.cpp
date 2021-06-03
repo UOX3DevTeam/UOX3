@@ -777,7 +777,7 @@ void CGuild::CalcMaster( void )
 				++votes[counter];
 		}
 		if( votes[counter] > votes[maxIndex] )
-			maxIndex = counter;
+			maxIndex = static_cast<UI32>(counter);
 	}
 
 	Master( members[maxIndex] );

@@ -1875,6 +1875,16 @@ void CItem::CheckItemIntegrity( void )
 		Console.warning( strutil::format("Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() ));
 		SetSpawn( INVALIDSERIAL );
 	}
+
+	if( type == IT_CONTAINER && GetLayer() == IL_PACKITEM && contObj->CanBeObjType( OT_CHAR ))
+	{
+		UI16 maxItemsVal = GetMaxItems();
+		if( maxItemsVal == 0 )
+		{
+			SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
+			Console.warning(strutil::format("Container (%s) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string(GetSerial()).c_str(), std::to_string(contObj->GetSerial()).c_str()));
+		}
+	}
 }
 
 const UI32 BIT_DECAYABLE	=	0;

@@ -1723,7 +1723,6 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	CPPaperdoll pd		= (*pdoll);
 	UnicodeTypes sLang	= s->Language();
 
-	bool eventFound = false;
 	cScript *toExecute;
 	std::vector<UI16> scriptTriggers = pdoll->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -2779,7 +2778,7 @@ bool CPIDblClick::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add data onto the end of the string in singleclick() based on an items type
 //o-----------------------------------------------------------------------------------------------o
-const char *AppendData( CItem *i, std::string currentName )
+const char *AppendData( CItem *i, std::string &currentName )
 {
 	std::string dataToAdd;
 	switch( i->GetType() )

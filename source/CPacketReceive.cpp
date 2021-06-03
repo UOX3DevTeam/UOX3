@@ -26,9 +26,9 @@
 //o-----------------------------------------------------------------------------------------------o
 void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 {
-	SI32 i = 0;
+	auto i = 0;
 	pass1 = "";
-	SI32 pass0Len = pass0.length();
+	auto pass0Len = pass0.length();
 	while( i < pass0Len && pass0[i] != '/' )
 		++i;
 	pass1 = pass0.substr( 0, i );
@@ -4681,9 +4681,9 @@ bool CPIAOSCommand::Handle( void )
 			 case 0x0012:	break;	//House Customisation :: Switch Floors*/
 		case 0x0019: //Special Moves :: Activate / Deactivate
 		{
-			UI32 unknown = tSock->GetDWord( 9 );
+			//UI32 unknown = tSock->GetDWord( 9 );
 			UI08 abilityID = tSock->GetByte( 13 );
-			UI08 unknown2 = tSock->GetByte( 15 );
+			//UI08 unknown2 = tSock->GetByte( 15 );
 
 			CChar *myChar = tSock->CurrcharObj();
 			std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();

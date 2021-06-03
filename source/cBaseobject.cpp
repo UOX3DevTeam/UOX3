@@ -106,6 +106,8 @@ in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
+	multis = nullptr;
+	tempmulti = INVALIDSERIAL;
 	objSettings.reset();
 	temp_container_serial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
@@ -172,7 +174,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= tagval.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
-			I->second.m_IntValue	= tagval.m_StringValue.length();
+			I->second.m_IntValue	= static_cast<SI32>(tagval.m_StringValue.length());
 		}
 		else
 		{
@@ -1277,7 +1279,6 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 {
 	static std::string staticTagName = "";
 	bool rvalue = true;
-	size_t numSections = 0;
 	auto csecs = strutil::sections( data, "," );
 	
 	switch( (UTag[0]) )
@@ -1465,7 +1466,8 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "MULTIID" )
 			{
-				multis = calcMultiFromSer((strutil::value<std::uint32_t>(data)));
+				tempmulti = (strutil::value<std::uint32_t>(data));
+				multis = nullptr;
 			}
 			else
 				rvalue = false;
@@ -1666,9 +1668,8 @@ void CBaseObject::PostLoadProcessing( void )
 	SERIAL tmpSerial = INVALIDSERIAL;
 	if( multis != NULL )
 	{
-		tmpSerial	= (UI64)multis;
-		multis		= NULL;
-		SetMulti( tmpSerial, false );
+		multis		= nullptr;
+		SetMulti( tempmulti, false );
 	}
 	if( spawnserial != INVALIDSERIAL )
 	{

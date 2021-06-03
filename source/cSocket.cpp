@@ -145,7 +145,7 @@ void CSocket::CliSocket( size_t newValue )
 	cliSocket = newValue;
 	unsigned long mode = 1;
 	// set the socket to nonblocking
-	ioctlsocket( cliSocket, FIONBIO, &mode );
+	ioctlsocket( static_cast<UOXSOCKET>(cliSocket), FIONBIO, &mode );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -364,7 +364,7 @@ void CSocket::DyeAll( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::CloseSocket( void )
 {
-	closesocket( cliSocket );
+	closesocket( static_cast<UOXSOCKET>(cliSocket) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -621,7 +621,7 @@ CSocket::~CSocket()
 
 	if( ValidateObject( currCharObj ) )
 		currCharObj->SetSocket( NULL );
-	closesocket( cliSocket );
+	closesocket( static_cast<UOXSOCKET>(cliSocket) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -638,7 +638,7 @@ void CSocket::InternalReset( void )
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking
 	unsigned long mode = 1;
-	ioctlsocket( cliSocket, FIONBIO, &mode );
+	ioctlsocket( static_cast<UOXSOCKET>(cliSocket), FIONBIO, &mode );
 	for( SI32 mTID = (SI32)tPC_SKILLDELAY; mTID < (SI32)tPC_COUNT; ++mTID )
 		pcTimers[mTID] = 0;
 	accountNum = AB_INVALID_ID;
@@ -700,10 +700,10 @@ bool CSocket::FlushBuffer( bool doLog )
 			UI32 len;
 			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
-			send( cliSocket, (char *)xoutbuffer, len, 0 );
+			send( static_cast<UOXSOCKET>(cliSocket), (char *)xoutbuffer, len, 0 );
 		}
 		else
-			send( cliSocket, (char *)&outbuffer[0], outlength, 0 );
+			send( static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0 );
 		if( Logging() && doLog )
 		{
 			SERIAL toPrint;
@@ -744,10 +744,10 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 		{
 			largePackBuffer.resize( static_cast<size_t>(outlength) * static_cast<size_t>(2) );
 			SI32 len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
-			send( cliSocket, (char *)&largePackBuffer[0], len, 0 );
+			send( static_cast<UOXSOCKET>(cliSocket), (char *)&largePackBuffer[0], len, 0 );
 		}
 		else
-			send( cliSocket, (char *)&largeBuffer[0], outlength, 0 );
+			send( static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0 );
 
 		if( Logging() && doLog )
 		{
@@ -919,7 +919,7 @@ void CSocket::FlushIncoming( void )
 	SI32 count = 0;
 	do
 	{
-		count = recv( cliSocket, (char *)&buffer[inlength], 1, 0 );
+		count = static_cast<int>(recv( static_cast<UOXSOCKET>(cliSocket), (char *)&buffer[static_cast<int>(inlength)], 1, 0 ));
 	} while( count > 0 );
 }
 
@@ -969,7 +969,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 	UI32 nexTime		= curTime;
 	do
 	{
-		count = recv( cliSocket, (char *)&buffer[inlength], x - inlength, 0 );
+		count = static_cast<int>(recv( static_cast<UOXSOCKET>(cliSocket), (char *)&buffer[inlength], x - inlength, 0 ));
 		if( count > 0 )
 		{
 			inlength += count;
@@ -1439,12 +1439,12 @@ void CSocket::Send( CPUOXBuffer *toSend )
 	if( cryptclient )
 	{
 		len = toSend->Pack();
-		send( cliSocket, (char *)toSend->PackedPointer(), len, 0 );
+		send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->PackedPointer(), len, 0 );
 	}
 	else
 	{
-		len = toSend->GetPacketStream().GetSize();
-		send( cliSocket, (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
+		len = static_cast<UI32>(toSend->GetPacketStream().GetSize());
+		send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
 	}
 
 	bytesSent += len;
@@ -2459,7 +2459,7 @@ UI32 CPUOXBuffer::Pack( void )
 
 	isPacked	= true;
 
-	packedLength = DoPack( pIn, pOut, len );
+	packedLength = DoPack( pIn, pOut, static_cast<SI32>(len) );
 	return packedLength;
 }
 

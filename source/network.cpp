@@ -389,7 +389,7 @@ void cNetworkStuff::CheckConn( void )
 		{
 
 			messageLoop << strutil::format( "FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!", part[0], part[1], part[2], part[3] );
-			closesocket( newClient );
+			closesocket( static_cast<UOXSOCKET>(newClient) );
 			delete toMake;
 			return;
 		}
@@ -451,7 +451,7 @@ cNetworkStuff::~cNetworkStuff()
 
 	loggedInClients.resize( 0 );
 	connClients.resize( 0 );
-	closesocket( static_cast<int>(s) );
+	closesocket( static_cast<UOXSOCKET>(s) );
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSACleanup();
 #endif
@@ -469,10 +469,10 @@ void cNetworkStuff::CheckMessage( void )
 	SI32 nfds = 0;
 	for( SOCKLIST_CITERATOR toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
 	{
-		SI32 clientSock = static_cast<SI32>((*toCheck)->CliSocket());
+		UOXSOCKET clientSock = static_cast<UOXSOCKET>((*toCheck)->CliSocket());
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
-		if( clientSock + 1 > nfds )
+		if( static_cast<int>(clientSock) + 1 > nfds )
 			nfds = clientSock + 1;
 	}
 	SI32 s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
@@ -874,7 +874,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );
 						SI32 nfds;
-						nfds = static_cast<SI32>(mSock->CliSocket()) + 1;
+						nfds = static_cast<int>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( 2560 );
 
@@ -905,16 +905,16 @@ void cNetworkStuff::CheckLoginMessage( void )
 	FD_ZERO( &all );
 	FD_ZERO( &errsock );
 
-	size_t nfds = 0;
+	SI32 nfds = 0;
 	for( i = 0; i < loggedInClients.size(); ++i )
 	{
 		size_t clientSock = loggedInClients[i]->CliSocket();
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
-		if( clientSock + 1 > nfds )
-			nfds = clientSock + 1;
+		if( static_cast<int>(clientSock) + 1 > nfds )
+			nfds = static_cast<int>(clientSock) + 1;
 	}
-	SI32 s = select( static_cast<int>(nfds), &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
+	SI32 s = select( static_cast<UOXSOCKET>(nfds), &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();
@@ -1189,7 +1189,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 						fd_set all;
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );
-						nfds = static_cast<SI32>(mSock->CliSocket()) + 1;
+						nfds = static_cast<UOXSOCKET>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( 2560 );
 						messageLoop << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID );
