@@ -560,7 +560,7 @@ public:
 	bool			inBuilding( void );
 
 	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
-	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... );
+	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... );
 
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;

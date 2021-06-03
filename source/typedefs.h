@@ -45,7 +45,11 @@ typedef UI16		SKILLVAL;
 typedef UI16		weathID;
 typedef SI16		GUILDID;
 typedef UI32		TIMERVAL;
+#if defined(_WIN32)
 typedef UI32		UOXSOCKET;
+#else
+typedef SI32		UOXSOCKET;
+#endif
 typedef UI32		SERIAL;
 
 const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;

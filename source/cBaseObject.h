@@ -62,6 +62,7 @@ protected:
 	UI16			colour;
 	UI08			dir;
 	SERIAL			serial;
+	SERIAL			tempmulti;
 	CMultiObj *	multis;
 	SERIAL			spawnserial;
 	SERIAL			owner;

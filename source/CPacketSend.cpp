@@ -232,6 +232,9 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 			else
 				SpeakerModel( INVALIDID );
 			break;
+		case SPK_NULL:
+			
+			break;
 	}
 	if( toCopy.SpeakerName().length() != 0 )
 		SpeakerName( toCopy.SpeakerName() );
@@ -4619,14 +4622,14 @@ CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock& actbBlock, UI08 numCharacte
 		packetSize = (UI16)( noLoopBytes + ( charSlots * 60 ) + ( numLocations * 89 ));
 		pStream.ReserveSize( packetSize );
 		pStream.WriteShort( 1, packetSize );
-		pStream.WriteLong( packetSize - 4, cwmWorldState->ServerData()->GetServerFeatures() );
+		pStream.WriteLong( packetSize - 4, static_cast<UI32>(cwmWorldState->ServerData()->GetServerFeatures() ));
 	}
 	else
 	{
 		packetSize = (UI16)( noLoopBytes + ( charSlots * 60 ) + ( numLocations * 63 ));
 		pStream.ReserveSize( packetSize );
 		pStream.WriteShort( 1, packetSize );
-		pStream.WriteLong( packetSize - 4, cwmWorldState->ServerData()->GetServerFeatures() );
+		pStream.WriteLong( packetSize - 4, static_cast<UI32>(cwmWorldState->ServerData()->GetServerFeatures()) );
 	}
 
 	pStream.WriteByte( 3, charSlots );
@@ -6616,7 +6619,7 @@ void CPToolTip::CopyData( SERIAL objSer, bool addAmount, bool playerVendor )
 	size_t packetLen = 14 + totalStringLen + 5;
 	//size_t packetLen = 15 + totalStringLen + 5;
 	pStream.ReserveSize( packetLen );
-	pStream.WriteShort( 1, packetLen );
+	pStream.WriteShort( 1, static_cast<SI32>(packetLen) );
 	pStream.WriteLong(  5, objSer );
 
 	size_t modifier = 14;
@@ -6627,7 +6630,7 @@ void CPToolTip::CopyData( SERIAL objSer, bool addAmount, bool playerVendor )
 		size_t stringLen = ourEntries[i].stringLen;
 		pStream.WriteLong( ++modifier, ourEntries[i].stringNum );
 		modifier += 4;
-		pStream.WriteShort( modifier, stringLen );
+		pStream.WriteShort( modifier, static_cast<SI32>(stringLen) );
 		modifier += 1;
 
 		//convert to uni character
@@ -6740,7 +6743,7 @@ void CPSellList::AddItem( CTownRegion *tReg, CItem *spItem, CItem *opItem, size_
 	if( cwmWorldState->ServerData()->TradeSystemStatus() )
 		value = calcGoodValue( tReg, spItem, value, true );
 	pStream.WriteShort(  packetLen+10, value );
-	pStream.WriteShort(  packetLen+12, stringLen );
+	pStream.WriteShort(  packetLen+12, static_cast<SI32>(stringLen) );
 	pStream.WriteString( packetLen+14, itemname, stringLen );
 	packetLen = newLen;
 }
@@ -7044,7 +7047,7 @@ void CPSendMsgBoardPosts::CopyData( CSocket *mSock, SERIAL mSerial, UI08 pToggle
 
 void CPSendMsgBoardPosts::Finalize( void )
 {
-	pStream.WriteShort( 1, pStream.GetSize() );
+	pStream.WriteShort( 1, static_cast<SI32>(pStream.GetSize()) );
 	pStream.WriteShort( 3, postCount );
 }
 
@@ -7266,14 +7269,14 @@ void CPEnableMapDiffs::CopyData( void )
 	size_t pSize	= ((static_cast<size_t>(mapCount)+1)*8)+9;
 
 	pStream.ReserveSize( pSize );
-	pStream.WriteShort( 1, pSize );
+	pStream.WriteShort( 1, static_cast<SI32>(pSize) );
 	pStream.WriteLong( 5, mapCount+1 );
 
 	for( UI08 i = 0; i < mapCount; ++i )
 	{
 		MapData_st &mMap = Map->GetMapData( i );
-		pStream.WriteLong( 9+(static_cast<size_t>(i)*8), mMap.staticsDiffIndex.size() );
-		pStream.WriteLong( 13+(static_cast<size_t>(i)*8), mMap.mapDiffList.size() );	
+		pStream.WriteLong( 9+(static_cast<size_t>(i)*8), static_cast<UI32>(mMap.staticsDiffIndex.size()) );
+		pStream.WriteLong( 13+(static_cast<size_t>(i)*8), static_cast<UI32>(mMap.mapDiffList.size()) );	
 	}
 }
 
@@ -7643,7 +7646,7 @@ void CPPartyMemberList::AddMember( CChar *member )
 	pStream.ReserveSize( curPos + 4 );
 	pStream.WriteLong( curPos, member->GetSerial() );
 	pStream.WriteByte( 6, pStream.GetByte( 6 ) + 1 );
-	pStream.WriteShort( 1, curPos + 4 );
+	pStream.WriteShort( 1, static_cast<SI32>(curPos) + 4 );
 }
 
 void CPPartyMemberList::Log( std::ofstream &outStream, bool fullHeader )
@@ -7753,7 +7756,7 @@ void CPPartyMemberRemove::AddMember( CChar *member )
 	pStream.ReserveSize( curPos + 4 );
 	pStream.WriteLong( curPos, member->GetSerial() );
 	pStream.WriteByte( 6, pStream.GetByte( 6 ) + 1 );
-	pStream.WriteShort( 1, curPos + 4 );
+	pStream.WriteShort( 1, static_cast<SI32>(curPos) + 4 );
 }
 
 void CPPartyMemberRemove::Log( std::ofstream &outStream, bool fullHeader )

@@ -849,7 +849,7 @@ void TransferTarget( CSocket *s )
 
 	Npcs->stopPetGuarding( char1 );
 
-	char1->TextMessage( NULL, 1074, TALK, false, char1->GetName().c_str(), char2->GetName().c_str() );
+	char1->TextMessage( NULL, 1074, TALK, 0, char1->GetName().c_str(), char2->GetName().c_str() );
 
 	char1->SetOwner( char2 );
 	char1->SetFTarg( NULL );

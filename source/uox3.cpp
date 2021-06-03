@@ -730,7 +730,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1240, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( NULL, 1240, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							mChar.Damage( (SI16)RandomNum( 1, 2 ) );
 							break;
@@ -739,7 +739,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1241, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( NULL, 1241, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
 							mChar.Damage( (SI16)pcalc );
@@ -749,7 +749,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1242, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( NULL, 1242, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
 							mChar.Damage( (SI16)pcalc );
@@ -759,7 +759,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1243, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( NULL, 1243, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
 							mChar.Damage( (SI16)pcalc );

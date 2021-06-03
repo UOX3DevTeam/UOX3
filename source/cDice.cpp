@@ -87,7 +87,7 @@ bool cDice::convStringToDice( std::string dieString )
 	if(is_to_parse_size) {
 		auto const position = std::size_t{0};
 		auto const count = d_position;
-		dice = parsed_value(position, count, 1);
+		dice = parsed_value(position, static_cast<SI32>(count), 1);
 	}
 
 	auto const is_to_parse_sides = bool{plus_position > d_position + 1};
@@ -95,7 +95,7 @@ bool cDice::convStringToDice( std::string dieString )
 	if(is_to_parse_sides) {
 		auto const position = d_position + 1;
 		auto const count = plus_position - position;
-		sides = parsed_value(position, count, 1);
+		sides = parsed_value(static_cast<SI32>(position), static_cast<SI32>(count), 1);
 	}
 
 	auto const is_to_parse_plus = bool{dieString.size() > plus_position + 1};
@@ -103,7 +103,7 @@ bool cDice::convStringToDice( std::string dieString )
 	if(is_to_parse_plus) {
 		auto const position = plus_position + 1;
 		auto const count = dieString.size() - position;
-		addition = parsed_value(position, count);
+		addition = parsed_value(static_cast<SI32>(position), static_cast<SI32>(count));
 	}
 
 	return true;

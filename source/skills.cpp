@@ -1768,7 +1768,7 @@ void cSkills::Persecute( CSocket *s )
 			if( tSock != NULL )
 				tSock->sysmessage( 973 );
 			s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-			targChar->TextMessage( NULL, 974, EMOTE, true, targChar->GetName().c_str() );
+			targChar->TextMessage( NULL, 974, EMOTE, 1, targChar->GetName().c_str() );
 		}
 		else
 			s->sysmessage( 975 );
@@ -2991,7 +2991,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
-		iCharID->TextMessage( NULL, 741, EMOTE, true, iCharID->GetName().c_str() );
+		iCharID->TextMessage( NULL, 741, EMOTE, 1, iCharID->GetName().c_str() );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );

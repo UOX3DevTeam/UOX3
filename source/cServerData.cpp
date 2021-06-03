@@ -3758,7 +3758,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
 				{
 					// this was not a domain name so check for IP address
-					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
+					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), static_cast<UI32>(sip.size()), AF_INET ) ) == NULL )
 					{
 						// We get here it wasn't a valid IP either.
 						Console.warning( strutil::format("Failed to translate %s", sip.c_str() ));

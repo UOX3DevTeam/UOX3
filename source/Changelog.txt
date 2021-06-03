@@ -1,3 +1,7 @@
+04/06/2021 - Xuri
+	Fixed an issue that could cause player characters created in older versions of UOX3 to end up with backpacks without max item capacity set, thus being unable to add any items to their backpack
+	More warnings cleanup, and some fixes to address size_t differences between Windows and Unix platforms (punt)
+
 03/06/2021 - Xuri
 	Cleaned up some warnings caused by 64 bit/32 bit difference between macOS and Windows (punt)
 

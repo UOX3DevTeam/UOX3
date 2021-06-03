@@ -1025,13 +1025,13 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	// If they have no money, well, oops!
 	if( questReward == 0 )
 	{
-		mNPC->TextMessage( mSock, 738, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
+		mNPC->TextMessage( mSock, 738, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}
 	else // Otherwise pay the poor sod for his time
 	{
 		Items->CreateScriptItem( mSock, mChar, "0x0EED", questReward, OT_ITEM, true );
 		Effects->goldSound( mSock, questReward );
-		mNPC->TextMessage( mSock, 739, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
+		mNPC->TextMessage( mSock, 739, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}
 
 	// Inform the PC of what he has just been given as payment

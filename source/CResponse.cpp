@@ -344,7 +344,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 
 					// Send out the rant about accepting the escort
-					Npc->TextMessage( NULL, 1294, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
+					Npc->TextMessage( NULL, 1294, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
 
 					// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
 					MsgBoardQuestEscortRemovePost( Npc );
@@ -360,11 +360,11 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( findDest )
 			{
 				if( Npc->GetFTarg() == mChar )
-					Npc->TextMessage( NULL, 1295, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( NULL, 1295, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else if( !ValidateObject( Npc->GetFTarg() ) )  // If nobody has been accepted for the quest yet
-					Npc->TextMessage( NULL, 1296, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( NULL, 1296, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else // The must be enroute
-					Npc->TextMessage( NULL, 1297, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
+					Npc->TextMessage( NULL, 1297, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
 			}
@@ -398,7 +398,7 @@ void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 				{
 					UI32 goldCount = GetBankCount( mChar, 0x0EED );
 					ClilocMessage( mSock, Npc, 0, 0x0040, FNT_NORMAL, 1042759, false, "i", goldCount );
-					//Npc->TextMessage( mSock, 1298, TALK, true, mChar->GetName().c_str(), goldCount );
+					//Npc->TextMessage( mSock, 1298, TALK, 1, mChar->GetName().c_str(), goldCount );
 				}
 				break;
 			}
@@ -652,7 +652,7 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			Npc->SetFTarg( NULL );
 			Npc->SetNpcWander( WT_FREE );
 			Npc->SetOwner( NULL );
-			Npc->TextMessage( NULL, 1325, TALK, false, Npc->GetName().c_str() );
+			Npc->TextMessage( NULL, 1325, TALK, 0, Npc->GetName().c_str() );
 			if( Npc->GetTimer( tNPC_SUMMONTIME ) )
 			{
 				Effects->PlaySound( Npc, 0x01FE );
@@ -933,7 +933,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			if( give )
 				Items->CreateScriptItem( mSock, mChar, "0x0EED", give, OT_ITEM, true );
 
-			Npc->TextMessage( mSock, 1328, TALK, false, earned, pay, give );
+			Npc->TextMessage( mSock, 1328, TALK, 0, earned, pay, give );
 		}
 		else
 			Npc->TextMessage( mSock, 1329, TALK, false );
@@ -973,7 +973,7 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				{
 					pay = Npc->GetHoldG();
 				}
-				Npc->TextMessage( mSock, 1782, TALK, false, Npc->GetHoldG(), pay );
+				Npc->TextMessage( mSock, 1782, TALK, 0, Npc->GetHoldG(), pay );
 			}
 		}
 		else

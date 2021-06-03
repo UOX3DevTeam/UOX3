@@ -160,13 +160,13 @@ bool CPIBuyItem::Handle( void )
 		else
 		{
 			if( mChar->IsGM() )
-				npc->TextMessage( NULL, 1337, TALK, false, mChar->GetName().c_str() );
+				npc->TextMessage( NULL, 1337, TALK, 0, mChar->GetName().c_str() );
 			else
 			{
 				if( goldtotal == 1 )
-					npc->TextMessage( NULL, 1338, TALK, false, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( NULL, 1338, TALK, 0, mChar->GetName().c_str(), goldtotal );
 				else
-					npc->TextMessage( NULL, 1339, TALK, false, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( NULL, 1339, TALK, 0, mChar->GetName().c_str(), goldtotal );
 
 				Effects->goldSound( tSock, goldtotal );
 			}
@@ -338,7 +338,7 @@ bool CPISellItem::Handle( void )
 
 		if( maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus() )
 		{
-			n->TextMessage( NULL, 1342, TALK, false, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
+			n->TextMessage( NULL, 1342, TALK, 0, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
 			return true;
 		}
 

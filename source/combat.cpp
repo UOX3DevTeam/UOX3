@@ -337,13 +337,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( i->IsGuarded() )
 			petGuardAttack( ourChar, i, i );
 
-		ourChar->TextMessage( NULL, 334, EMOTE, true, ourChar->GetName().c_str(), i->GetName().c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
+		ourChar->TextMessage( NULL, 334, EMOTE, 1, ourChar->GetName().c_str(), i->GetName().c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
 
 		if( !i->IsNpc() )
 		{
 			CSocket *iSock = i->GetSocket();
 			if( iSock != NULL )
-				i->TextMessage( iSock, 1281, EMOTE, true, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
+				i->TextMessage( iSock, 1281, EMOTE, 1, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
 		}
 
 		// keep the target highlighted
@@ -408,12 +408,12 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	}
 	if( cAttack->DidAttackFirst() )
 	{
-		cAttack->TextMessage( NULL, 334, EMOTE, true, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby
+		cAttack->TextMessage( NULL, 334, EMOTE, 1, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby
 		if( !cTarget->IsNpc() )
 		{
 			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != NULL )
-				cTarget->TextMessage( iSock, 1281, EMOTE, true, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!"
+				cTarget->TextMessage( iSock, 1281, EMOTE, 1, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!"
 		}
 	}
 }
