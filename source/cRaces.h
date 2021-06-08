@@ -57,8 +57,11 @@ private:
 	R32				poisonResistance;	// % of poison to cancel
 	R32				magicResistance;	// % of magic to cancel
 	bool			doesHunger;
+	bool            doesThirst;
 	UI16			hungerRate;
+	UI16            thirstRate;
 	SI16			hungerDamage;
+	SI16            thirstDrain;
 
 public:
 
@@ -92,11 +95,17 @@ public:
 	RaceRelate		RaceRelation( RACEID race ) const;
 
 	UI16			GetHungerRate( void ) const;
+	UI16            GetThirstRate( void ) const;
 	void			SetHungerRate( UI16 newValue );
+	void            SetThirstRate( UI16 newValue );
 	SI16			GetHungerDamage( void ) const;
+	SI16            GetThirstDrain( void ) const;
 	void			SetHungerDamage( SI16 newValue );
+	void            SetThirstDrain( SI16 newValue );
 	bool			DoesHunger( void ) const;
+	bool            DoesThirst( void ) const;
 	void			DoesHunger( bool newValue );
+	void            DoesThirst( bool newValue );
 
 	void			Skill( SKILLVAL newValue, SI32 iNum );
 	void			Name( const std::string& newName );
@@ -199,8 +208,11 @@ public:
 	COLDLEVEL		ColdLevel( RACEID race ) const;
 	HEATLEVEL		HeatLevel( RACEID race ) const;
 	bool			DoesHunger( RACEID race ) const;
+	bool            DoesThirst( RACEID race ) const;
 	UI16			GetHungerRate( RACEID race ) const;
+	UI16            GetThirstRate( RACEID race ) const;
 	SI16			GetHungerDamage( RACEID race ) const;
+	SI16            GetThirstDrain( RACEID race ) const;
 	ARMORCLASS		ArmorRestrict( RACEID race ) const;
 	COLOUR			RandomSkin( RACEID x ) const;
 	COLOUR			RandomHair( RACEID x ) const;
@@ -224,8 +236,11 @@ public:
 	void			ColdLevel( RACEID race, COLDLEVEL value );
 	void			HeatLevel( RACEID race, HEATLEVEL value );
 	void			DoesHunger( RACEID race, bool value );
+	void            DoesThirst( RACEID race, bool value );
 	void			SetHungerRate( RACEID race, UI16 value );
+	void            SetThirstRate( RACEID race, UI16 value );
 	void			SetHungerDamage( RACEID race, SI16 value );
+	void            SetThirstDrain( RACEID race, SI16 value );
 	void			ArmorRestrict( RACEID race, ARMORCLASS value );
 	void			RacialEnemy( RACEID race, RACEID enemy );
 	void			RacialAlly( RACEID race, RACEID ally );
