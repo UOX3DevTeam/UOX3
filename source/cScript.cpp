@@ -1926,6 +1926,29 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool OnThirstChange( CChar *pChanging, SI08 newStatus )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Triggers for character with event attached when Thirst level changes
+//o-----------------------------------------------------------------------------------------------o
+bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
+{
+	if ( !ValidateObject( pChanging ) )
+		return false;
+	if ( !ExistAndVerify( seOnThirstChange, "onThirstChange") )
+		return false;
+
+	jsval params[2], rval;
+	JSObject* charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = INT_TO_JSVAL( newStatus );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onThirstChange", 2, params, &rval );
+	if ( retVal == JS_FALSE )
+		SetEventExists( seOnThirstChange, false );
+
+	return ( retVal == JS_TRUE );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when being stolen from

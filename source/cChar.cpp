@@ -110,6 +110,7 @@ const UI32 BIT_INBUILDING		=	27;
 const UI32 BIT_INPARTY			=	28;	// This property is not saved
 const UI32 BIT_EVADE			=	29; // This property is not saved
 const UI32 BIT_FLYING			=	30; // This property is not saved
+const UI32 BIT_WILLTHIRST       =   31;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -177,7 +178,9 @@ const SI16			DEFNPC_WANDERAREA			= -1;
 const cNPC_FLAG		DEFNPC_NPCFLAG				= fNPC_NEUTRAL;
 const UI16			DEFNPC_BOOLFLAG				= 0;
 const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
+const UI16          DEFNPC_TAMEDTHIRSTRATE      = 0;
 const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
+const UI08          DEFNPC_THIRSTWILDCHANCE     = 0;
 const R32			DEFNPC_MOVEMENTSPEED		= -1;
 const SI08			DEFNPC_PATHFAIL				= -1;
 
@@ -186,7 +189,7 @@ aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPAD
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ),
-tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ),
+tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ),
 runningSpeed( DEFNPC_MOVEMENTSPEED ), fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
@@ -210,6 +213,7 @@ const SI08			DEFCHAR_CELL 				= -1;
 const SERIAL		DEFCHAR_TARG 				= INVALIDSERIAL;
 const SERIAL		DEFCHAR_ATTACKER 			= INVALIDSERIAL;
 const SI08			DEFCHAR_HUNGER 				= 6;
+const SI08          DEFCHAR_THIRST              = 6;
 const UI16			DEFCHAR_REGIONNUM 			= 255;
 const UI16			DEFCHAR_TOWN 				= 0;
 const UI16			DEFCHAR_ADVOBJ 				= 0;
@@ -240,7 +244,7 @@ fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXH
 oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ),
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ),
-targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
+targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), thirst( DEFCHAR_THIRST ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
 advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
 raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE )
@@ -262,6 +266,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetCanTrain( true );
 
 	SetHungerStatus( true );
+	SetThirstStatus(true);
 
 	skillUsed[0].reset();
 	skillUsed[1].reset();
@@ -537,6 +542,148 @@ void CChar::DoHunger( CSocket *mSock )
 						SetHunger( 6 );
 					}
 					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
+				}
+			}
+		}
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   SI08 GetThirst( void ) const
+//|                 bool SetThirst( SI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Get/Set Thirst level of the character
+//o-----------------------------------------------------------------------------------------------o
+SI08 CChar::GetThirst(void) const
+{
+	return thirst;
+}
+
+bool CChar::SetThirst(SI08 newValue)
+{
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for (auto i : scriptTriggers)
+	{
+		cScript* toExecute = JSMapping->GetScript(i);
+		if (toExecute != NULL)
+		{
+			// If script returns false/0/nothing, prevent thirst from changing, and prevent
+			// other scripts with event from running
+			if (toExecute->OnThirstChange((this), thirst) == 0)
+			{
+				return false;
+			}
+		}
+	}
+
+	thirst = newValue;
+
+	return true;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   void DoThirst()
+//| Date        -   6. June, 2021
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Calculate Thirst level of the character and do all related effects.
+//o-----------------------------------------------------------------------------------------------o
+void CChar::DoThirst(CSocket* mSock)
+{
+	if (!IsDead() && !IsInvulnerable()) // No need to do anything on dead or invulnerable chars
+	{
+		UI16 thirstRate;
+		SI16 thirstDrain;
+		if (!IsNpc() && mSock != NULL)  // Do Thirst for player chars
+		{
+			if (WillThirst() && GetCommandLevel() == CL_PLAYER)
+			{
+				if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())
+				{
+					if (Races->DoesThirst(GetRace())) // prefer the hunger settings frome the race
+					{
+						thirstRate = Races->GetThirstRate(GetRace());
+						thirstDrain = Races->GetThirstDrain(GetRace());
+					}
+					else // use the global values if there is no race setting
+					{
+						thirstRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE);
+						thirstDrain = cwmWorldState->ServerData()->ThirstDrain();
+					}
+
+					if (GetThirst() > 0)
+					{
+						bool doThirstMessage = !DecThirst();
+						if (doThirstMessage)
+						{
+							switch (GetThirst())
+							{
+							default:
+							case 6:                             break;
+							case 5: mSock->sysmessage(2038);    break;
+							case 4: mSock->sysmessage(2039);    break;
+							case 3: mSock->sysmessage(2040);    break;
+							case 2: mSock->sysmessage(2041);    break;
+							case 1: mSock->sysmessage(2042);    break;
+							case 0: mSock->sysmessage(2043);    break;
+							}
+						}
+					}
+					else if (GetStamina() > 0 && thirstDrain > 0)
+					{
+						mSock->sysmessage(2044);
+						//Damage(thirstDrain);
+						SetStamina((static_cast<SI16>(1), GetStamina() - cwmWorldState->ServerData()->ThirstStaminaDrain()));
+						if (GetStamina() <= 1)
+							mSock->sysmessage(2045);
+					}
+					SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+				}
+			}
+		}
+		else if (IsNpc() && !IsTamed() && Races->DoesThirst(GetRace()))
+		{
+			if (WillThirst() && !GetMounted() && !GetStabled())
+			{
+				if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())
+				{
+					thirstRate = Races->GetThirstRate(GetRace());
+					thirstDrain = Races->GetThirstDrain(GetRace());
+
+					if (GetThirst() > 0)
+						DecThirst();
+					else if (GetStamina() > 0 && thirstDrain > 0)
+						//Damage(thirstDrain);
+						SetStamina((static_cast<SI16>(1), GetStamina() - cwmWorldState->ServerData()->ThirstStaminaDrain()));
+					SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+				}
+			}
+		}
+		else if (IsTamed() && GetTamedThirstRate() > 0)
+		{
+			if (WillThirst() && !GetMounted() && !GetStabled())
+			{
+				if (cwmWorldState->ServerData()->PetHungerOffline() == false)
+				{
+					CChar* owner = GetOwnerObj();
+					if (!ValidateObject(owner))
+						return;
+
+					if (!isOnline((*owner)))
+						return;
+				}
+
+				if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())
+				{
+					thirstRate = GetTamedThirstRate();
+
+					if (GetThirst() > 0)
+						DecThirst();
+					else if ((UI08)RandomNum(0, 100) <= GetTamedThirstWildChance())
+					{
+						SetOwner(NULL);
+						SetThirst(6);
+					}
+					SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
 				}
 			}
 		}
@@ -1006,6 +1153,21 @@ bool CChar::WillHunger( void ) const
 void CChar::SetHungerStatus( bool newValue )
 {
 	bools.set( BIT_WILLHUNGER, newValue );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool WillThirst( void ) const
+//|                 void SetThirstStatus( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Returns/Sets whether the character will get thirst
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::WillThirst(void) const
+{
+	return bools.test(BIT_WILLTHIRST);
+}
+void CChar::SetThirstStatus(bool newValue)
+{
+	bools.set(BIT_WILLTHIRST, newValue);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1929,6 +2091,7 @@ void CChar::CopyData( CChar *target )
 	for( SI32 mTID = (SI32)tCHAR_TIMEOUT; mTID < (SI32)tCHAR_COUNT; ++mTID )
 		target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
 	target->SetHunger( hunger );
+	target->SetThirst( thirst );
 	target->SetBrkPeaceChance( GetBrkPeaceChance() );
 	target->SetBrkPeaceChanceGain( GetBrkPeaceChanceGain() );
 	target->SetRegion( regionNum );
@@ -1961,7 +2124,9 @@ void CChar::CopyData( CChar *target )
 	{
 		target->SetNpc( IsNpc() );
 		target->SetTamedHungerRate( GetTamedHungerRate() );
+		target->SetTamedThirstRate( GetTamedThirstRate() );
 		target->SetTamedHungerWildChance( GetTamedHungerWildChance() );
+		target->SetTamedThirstWildChance( GetTamedThirstWildChance() );
 		target->SetFood( GetFood() );
 		target->SetFleeAt( GetFleeAt() );
 		target->SetReattackAt( GetReattackAt() );
@@ -2568,6 +2733,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	outStream << std::dec;
 	outStream << "GuildTitle=" << GetGuildTitle() << '\n';
 	outStream << "Hunger=" << (SI16)GetHunger() << '\n';
+	outStream << "Thirst=" << (SI16)GetThirst() << '\n';
 	outStream << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << '\n';
 	outStream << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << '\n';
 	if ( GetMaxHPFixed() )
@@ -2652,7 +2818,9 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "Mounted=" << (SI16)(boolFlags.test( BIT_MOUNTED )?1:0) << '\n';
 	outStream << "Stabled=" << (SI16)(boolFlags.test( BIT_STABLED )?1:0) << '\n';
 	outStream << "TamedHungerRate=" << tamedHungerRate << '\n';
+	outStream << "TamedThirstRate=" << tamedThirstRate << '\n';
 	outStream << "TamedHungerWildChance=" << (SI16)hungerWildChance << '\n';
+	outStream << "TamedThirstWildChance=" << (SI16)thirstWildChance << '\n';
 	outStream << "Foodlist=" << foodList << '\n';
 	outStream << "WalkingSpeed=" << walkingSpeed << '\n';
 	outStream << "RunningSpeed=" << runningSpeed << '\n';
@@ -3184,6 +3352,17 @@ void CChar::SetFlagNeutral( void )
 bool CChar::DecHunger( const SI08 amt )
 {
 	return SetHunger( (SI08)(GetHunger() - amt) );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool DecThirst( const SI08 amt )
+//| Date        -   6 June 2021
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Decrements the character's thirst
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::DecThirst( const SI08 amt )
+{
+	return SetThirst( (SI08)(GetThirst() - amt) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3772,6 +3951,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetTownTitle( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
+				else if (UTag == "THIRST")
+				{
+					SetThirst(static_cast<SI16>(std::stoi(strutil::stripTrim(data), nullptr, 0)));
+					rvalue = true;
+				}
 				break;
 			case 'W':
 				if( UTag == "WANDERAREA" )
@@ -3786,6 +3970,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "WILLHUNGER" )
 				{
 					SetHungerStatus( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					rvalue = true;
+				}
+				else if (UTag == "WILLTHIRST")
+				{
+					SetThirstStatus(static_cast<SI16>(std::stoi(strutil::stripTrim(data), nullptr, 0)) == 1);
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEED" )
@@ -5307,6 +5496,30 @@ void CChar::SetTamedHungerRate( UI16 newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI16 GetTamedThirstRate( void ) const
+//|                 void SetTamedThirstRate( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Get/Set the rate at which a pet Thirst
+//o-----------------------------------------------------------------------------------------------o
+UI16 CChar::GetTamedThirstRate( void ) const
+{
+	UI16 retVal = DEFNPC_TAMEDTHIRSTRATE;
+	if (IsValidNPC() )
+		retVal = mNPC->tamedHungerRate;
+	return retVal;
+}
+void CChar::SetTamedThirstRate( UI16 newValue )
+{
+	if ( !IsValidNPC() )
+	{
+		if ( DEFNPC_TAMEDTHIRSTRATE != newValue )
+			CreateNPC();
+	}
+	if ( IsValidNPC() )
+		mNPC->tamedThirstRate = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	UI08 GetTamedHungerWildChance( void ) const
 //|					void SetTamedHungerWildChance( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
@@ -5328,6 +5541,30 @@ void CChar::SetTamedHungerWildChance( UI08 newValue )
 	}
 	if( IsValidNPC() )
 		mNPC->hungerWildChance = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 GetTamedThirstWildChance( void ) const
+//|                 void SetTamedThirstWildChance( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets chance for a thirst pet to go wild
+//o-----------------------------------------------------------------------------------------------o
+UI08 CChar::GetTamedThirstWildChance( void ) const
+{
+	UI08 retVal = DEFNPC_THIRSTWILDCHANCE;
+	if ( IsValidNPC() )
+		retVal = mNPC->thirstWildChance;
+	return retVal;
+}
+void CChar::SetTamedThirstWildChance( UI08 newValue )
+{
+	if ( !IsValidNPC() )
+	{
+		if ( DEFNPC_THIRSTWILDCHANCE != newValue )
+			CreateNPC();
+	}
+	if ( IsValidNPC() )
+		mNPC->thirstWildChance = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o

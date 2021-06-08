@@ -108,6 +108,7 @@ enum cSD_TID
 	tSERVER_FISHINGRANDOM,		// Max random time for fishing skill to complete.
 	tSERVER_SPIRITSPEAK,		// Duration of the spirit speak skill.
 	tSERVER_HUNGERRATE,			// Amount of time a player has before his hunger level decreases.
+	tSERVER_THIRSTRATE,         // Amount of time a player has before his thirst level decreases.
 	tSERVER_POLYMORPH,			// Duration of the polymorph spell.
 	tSERVER_ESCORTWAIT,			// Amount of time until an escort NPC will dissapear while waiting for a player to start his quest.
 	tSERVER_ESCORTACTIVE,		// Amount of time until an escort NPC will dissapear while a player is escorting him.
@@ -220,6 +221,7 @@ private:
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
+	SI16		thirststaminadrain;				//	The amount of stamina lost with each use of fishing skill
 	UI16		maxPlayerPackItems;				//	The max amount of items a player's backpack can contain
 	UI16		maxPlayerBankItems;				//	The max amount of items a player's bankbox can contain
 
@@ -274,6 +276,8 @@ private:
 
 	// Hunger & Food
 	SI16		hungerdamage;					//	Amount of damage applied if hungry and below threshold
+	// Thirst
+	SI16        thirstdrain;                   //  Amount of stamina drained if thirst and below threshold
 
 	// Combat
 	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
@@ -565,6 +569,9 @@ public:
 	void		FishingStaminaLoss( SI16 value );
 	SI16		FishingStaminaLoss( void ) const;
 
+	void		ThirstStaminaDrain(SI16 value);
+	SI16		ThirstStaminaDrain(void) const;
+
 	void		CombatAttackStamina( SI16 value );
 	SI16		CombatAttackStamina( void ) const;
 
@@ -655,8 +662,14 @@ public:
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;
 
+	void        ThirstDrain( SI16 value );
+	SI16        ThirstDrain( void ) const;
+
 	void		PetHungerOffline( bool value );
 	bool		PetHungerOffline( void ) const;
+
+	void        PetThirstOffline( bool value );
+	bool        PetThirstOffline( void ) const;
 
 	void		PetOfflineTimeout( UI16 value );
 	UI16		PetOfflineTimeout( void ) const;
