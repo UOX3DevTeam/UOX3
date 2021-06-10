@@ -386,6 +386,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ALCHEMYBONUSMODIFIER", 246);
 	regINIValue("NPCFLAGUPDATETIMER", 247);
 	regINIValue("JSENGINESIZE", 248);
+	regINIValue("SCRIPTDATADIRECTORY", 250);
 	regINIValue("THIRSTRATE", 251);
 	regINIValue("THIRSTDRAINVAL", 252);
 	regINIValue("PETTHIRSTOFFLINE", 253);
@@ -513,6 +514,8 @@ void CServerData::ResetDefaults( void )
 	Directory( CSDDP_ACCESS, tDir );
 	tDir = wDir + std::string("js/");
 	Directory( CSDDP_SCRIPTS, tDir );
+	tDir = wDir + std::string( "js/jsdata" );
+	Directory( CSDDP_SCRIPTDATA, tDir );
 	tDir = wDir + std::string("archives/");
 	Directory( CSDDP_BACKUP, tDir );
 	tDir = wDir + std::string("msgboards/");
@@ -1035,6 +1038,9 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			case CSDDP_ACCESS:			verboseDirectory = "Access directory";			break;
 			case CSDDP_ACCOUNTS:		verboseDirectory = "Accounts directory";		break;
 			case CSDDP_SCRIPTS:			verboseDirectory = "Scripts directory";			break;
+			case CSDDP_SCRIPTDATA:		verboseDirectory = "ScriptData directory";
+				create_dir = true;
+				break;
 			case CSDDP_BACKUP:			verboseDirectory = "Backup directory";			break;
 			case CSDDP_MSGBOARD:		verboseDirectory = "Messageboard directory";	break;
 			case CSDDP_SHARED:			verboseDirectory = "Shared directory";
@@ -1138,18 +1144,19 @@ void CServerData::dumpPaths( void )
 {
 	Console.PrintSectionBegin();
 	Console << "PathDump: \n";
-	Console << "    Root      : " << Directory( CSDDP_ROOT ) << "\n";
-	Console << "    Accounts  : " << Directory( CSDDP_ACCOUNTS ) << "\n";
-	Console << "    Access    : " << Directory( CSDDP_ACCESS ) << "\n";
-	Console << "    Mul(Data) : " << Directory( CSDDP_DATA ) << "\n";
-	Console << "    DFN(Defs) : " << Directory( CSDDP_DEFS ) << "\n";
-	Console << "    JScript   : " << Directory( CSDDP_SCRIPTS ) << "\n";
-	Console << "    HTML      : " << Directory( CSDDP_HTML ) << "\n";
-	Console << "    MSGBoards : " << Directory( CSDDP_MSGBOARD ) << "\n";
-	Console << "    Books     : " << Directory( CSDDP_BOOKS ) << "\n";
-	Console << "    Shared    : " << Directory( CSDDP_SHARED ) << "\n";
-	Console << "    Backups   : " << Directory( CSDDP_BACKUP ) << "\n";
-	Console << "    Logs      : " << Directory( CSDDP_LOGS ) << "\n";
+	Console << "    Root        : " << Directory( CSDDP_ROOT ) << "\n";
+	Console << "    Accounts    : " << Directory( CSDDP_ACCOUNTS ) << "\n";
+	Console << "    Access      : " << Directory( CSDDP_ACCESS ) << "\n";
+	Console << "    Mul(Data)   : " << Directory( CSDDP_DATA ) << "\n";
+	Console << "    DFN(Defs)   : " << Directory( CSDDP_DEFS ) << "\n";
+	Console << "    JScript     : " << Directory( CSDDP_SCRIPTS ) << "\n";
+	Console << "    JScriptData : " << Directory( CSDDP_SCRIPTDATA ) << "\n";
+	Console << "    HTML        : " << Directory( CSDDP_HTML ) << "\n";
+	Console << "    MSGBoards   : " << Directory( CSDDP_MSGBOARD ) << "\n";
+	Console << "    Books       : " << Directory( CSDDP_BOOKS ) << "\n";
+	Console << "    Shared      : " << Directory( CSDDP_SHARED ) << "\n";
+	Console << "    Backups     : " << Directory( CSDDP_BACKUP ) << "\n";
+	Console << "    Logs        : " << Directory( CSDDP_LOGS ) << "\n";
 	Console.PrintSectionBegin();
 }
 
@@ -3071,6 +3078,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
 		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
 		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
+		ofsOutput << "SCRIPTDATADIRECTORY=" << Directory( CSDDP_SCRIPTDATA ) << '\n';
 		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
 		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
 		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
@@ -4143,6 +4151,11 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 248:	 // JSENGINESIZE[0237]
 			SetJSEngineSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
+		case 250:	 // SCRIPTDATADIRECTORY[0239]
+		{
+			Directory( CSDDP_SCRIPTDATA, value );
+			break;
+		}
 		case 251:    // THIRSTRATE[0240]
 			SystemTimer( tSERVER_THIRSTRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;

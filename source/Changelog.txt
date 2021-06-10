@@ -1,3 +1,48 @@
+11/06/2021 - Xuri (0.99.4q)
+	Added entry for a new directory path in uox.ini:
+		SCRIPTDATADIRECTORY=./js/jsdata/ - dedicated to generic data read/written by JS scripts, data not directly linked to live content, which should not live or die by the state of the SHAREDDIRECTORY. Existing scripts will continue to write/read files in the SHAREDDIRECTORY if no changes are made.
+	Updated JS File Method .Open() to support an optional fourth argument (requires third argument):
+		useScriptDataDir (boolean) - when this fourth argument is included as true, UOX3 will look for the file in the SCRIPTDATADIRECTORY instead of the SHAREDDIRECTORY. Third argument - folderName - is required for this fourth argument to be used. New syntaxes:
+			.Open( fileName, fileMode )
+			.Open( fileName, fileMode, folderName )
+			.Open( fileName, fileMode, folderName, useScriptDataDir )
+	Updated JS File Function DeleteFile() to support an optional third argument (requires second argument):
+		useScriptDataDir (boolean) - when this third argument is included as true, UOX3 will look for the file in the SCRIPTDATADIRECTORY instead of the SHAREDDIRECTORY. Second argument - folderName - is required for this third argument to be used. New syntaxes:
+			DeleteFile( fileName )
+			DeleteFile( fileName, folderName )
+			DeleteFile( fileName, folderName, useScriptDataDir )
+	Added new admin command (js/commands/decorate.js) to allow saving/loading world templates. These templates are essentially text files (with .jsdata file extension) that contain the bare minimum amount of details needed to decorate an entire game world, a facet or even a specific area of a facet. The files can be bundled with UOX3 for a smoother first-time-user-experience, can be easily shared with other people as blueprints for world decoration, and they can be saved and loaded on the fly without impacting existing data on a shard. By default, the command will save/load items to/from different files per facet based on the following item categories: doors, signs, lights, moongates, teleporters, misc (everything else).
+		Command syntax:
+			'decorate save
+				Save all items to the default templates, based on each item's objectCategory and facet
+			'decorate save [objectCategory]
+				Save all items of specified objectCategory, regardless of facet
+			'decorate save [facetName]
+				Save all items on specified facet, regardless of objectCategory
+			'decorate save [customFileName]
+				Save all items of all objectCategories on all facets to custom template file
+			'decorate save [objectCategory] [facetName]
+				Save all items of specified objectCategory in the specified facet
+			'decorate save [customFileName] [facetName] x1 y1 x2 y2
+				Save all items within specified coordinates on specified facet to customFileName
+			'decorate load
+				Load all items from the default templates, regardless of objectCategory and facet
+			'decorate load [objectCategory]
+				Load all items of specified objectCategory, regardless of facet
+			'decorate load [facetName]
+				Load all items on specified facet, regardless of objectCategory
+			'decorate load [customFileName]
+				Load all items from file named [customFileName]
+			'decorate load [objectCategory] [facetName]
+				Load all items of specified objectCategory in the specified facet
+			'decorate copy [sourceFacet] [targetFacet]
+				Copy all items from one facet to another
+			'decorate clean
+				Clean up duplicate decorations that might have been loaded/added by accident.
+		Note that world templates are by default stored in and read from a subfolder named "worldtemplates" under the new SCRIPTDATADIRECTORY (which defaults to UOX3/js/jsdata/)
+	Added welcome gump that is displayed automatically for characters on the admin account (account 0) on first login. This welcome gump gives new shard admins the option to either start with a blank and empty world, or to load the default UOX3 world - based on the default set of worldfile templates provided with UOX3, if any. It also provides a few tips to get started, as well as links to various documentation pages, forum and Discord server. The welcome gump can also be re-opened at a later stage using a new admin command: 'welcome
+	Updated Item JS Method Dupe() to support passing NULL instead of a socket, for duplicating items without needing to place them in a player's backpack
+
 11/06/2021 - Xuri
 	Added some error-checking to JS function AreaItemFunction() to avoid potential server crash
 	Fixed an issue introduced in 0.99.4m, where objects being added to/moved to specific worlds or instances were still visible to players in other worlds/instances

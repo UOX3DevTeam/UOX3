@@ -31,6 +31,10 @@
 
 [SCRIPT_LIST]
 {
+// Global script, events within triggered for all applicable objects
+0=server/global.js
+
+1=server/misc/admin_welcome.js
 //-------------------------------------------
 // CORE:[0-99] Rerserved for specific core server needs
 //-------------------------------------------
@@ -272,6 +276,7 @@
 1056=commands/targeting/get.js
 1057=commands/msgmod.js
 1058=commands/targeting/scptrig.js
+1059=commands/decorate.js
 }
 
 //-------------------------------------------

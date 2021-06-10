@@ -5496,9 +5496,9 @@ JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o-----------------------------------------------------------------------------------------------o
 JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 2 && argc != 3 )
+	if( argc < 2 || argc > 4 )
 	{
-		MethodError( "Open: Invalid number of arguments (takes 2 or 3 - filename, file mode and - optionally - folderName)" );
+		MethodError( "Open: Invalid number of arguments (takes 2 to 4 - filename, file mode and - optionally - folderName and useScriptDataDir bool)" );
 		return JS_FALSE;
 	}
 	UOXFileWrapper *mFile	= static_cast<UOXFileWrapper *>(JS_GetPrivate( cx, obj ));
@@ -5506,9 +5506,12 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	std::string mode = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	char *folderName = nullptr;
-	if( argc == 3 )
+	if( argc >= 3 )
 		folderName = JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
-	
+	bool useScriptDataDir = false;
+	if( argc >= 4 )
+		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+
 	if( strutil::tolower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
@@ -5532,7 +5535,17 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			return JS_FALSE;
 		}
 
-		filePath.append( folderName );
+		// If script wants to look in script-data folder instead of shared folder, let it
+		if( useScriptDataDir )
+		{
+			filePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA );
+		}
+
+		if( folderName != "" )
+		{
+			filePath.append( folderName );
+		}
+
 		if( !std::filesystem::exists( filePath ))
 		{
 			// Create missing directory
@@ -5674,9 +5687,9 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		MethodError( "Write: Error writing to file, file was not opened sucessfully!" );
 		return JS_FALSE;
 	}
-	else if( ftell( mFile->mWrap ) > 1049600 )
+	else if( ftell( mFile->mWrap ) > ( 10 * 1024 * 1024 ))
 	{
-		MethodError( "Write: Error writing to file.  File my not exceed 1mb." );
+		MethodError( "Write: Error writing to file.  File may not exceed 10mb." );
 		return JS_FALSE;
 	}
 
@@ -6556,20 +6569,38 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 {
 	if( argc != 1 )
 	{
-		MethodError( "Dupe: Invalid number of arguments (takes 1, string, value)" );
+		MethodError( "Dupe: Invalid number of arguments (takes 1 - socket/null)" );
 		return JS_FALSE;
 	}
 
 	CItem *mItem			= static_cast<CItem *>(JS_GetPrivate( cx, obj ));
 	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mSock			= static_cast<CSocket *>(JS_GetPrivate( cx, jsObj ));
-	if( !ValidateObject( mItem ) || mSock == NULL )
+
+	CSocket *mSock = nullptr;
+	bool dupeInPack = true;
+
+	if( jsObj == NULL )
+		dupeInPack = false;
+	else
+		mSock = static_cast<CSocket *>( JS_GetPrivate( cx, jsObj ) );
+
+	if( !ValidateObject( mItem ) || ( mSock == nullptr && dupeInPack ))
 	{
-		MethodError( "Dupe: Bad parameters passed" );
+		MethodError( "Dupe: Bad parameters passed. Either item or socket is invalid!" );
 		return JS_FALSE;
 	}
 
-	JSObject *dupeItem		= JSEngine->AcquireObject( IUE_ITEM, Items->DupeItem( mSock, mItem, mItem->GetAmount()), JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+	JSObject *dupeItem = nullptr;
+	if( dupeInPack && mSock != nullptr )
+	{
+		dupeItem = JSEngine->AcquireObject( IUE_ITEM, Items->DupeItem( mSock, mItem, mItem->GetAmount()), JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+	}
+	else
+	{
+		CItem *dupeItemTemp = mItem->Dupe();
+		dupeItem = JSEngine->AcquireObject( IUE_ITEM, dupeItemTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+	}
+
 	*rval = OBJECT_TO_JSVAL( dupeItem );
 	return JS_TRUE;
 }

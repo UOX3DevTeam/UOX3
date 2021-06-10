@@ -46,6 +46,7 @@ function CommandRegistration()
 	RegisterCommand( "getmulti", 2, true ); //Get multiObject for targeted item
 	RegisterCommand( "finditem", 2, true ); //Find item at layer
 	RegisterCommand( "movespeed", 2, true ); //Set movement speed of target player
+	RegisterCommand( "welcome", 2, true ); // Display UOX3 welcome gump for admin
 }
 
 function command_RENAME( pSock, execString )
@@ -746,4 +747,9 @@ function onCallback24( pSock, myTarget )
 	}
 	else
 		pUser.SysMessage( "Target is not a character." );
+}
+
+function command_WELCOME( pSock, execString )
+{
+	TriggerEvent( 1, "DisplayAdminWelcomeGump", pSock, pSock.currentChar );
 }
