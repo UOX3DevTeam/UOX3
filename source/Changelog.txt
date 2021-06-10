@@ -26,6 +26,7 @@
 			Wipes ALL objects, on ALL facets, regardless of object type
 		'wipe all force
 			Wipes ALL objects, on ALL facets, regardless of object type and whether wipeable flag is set
+	Fixed an issue with getTileName() in uox3.cpp that could cause a server crash when fetching the names of certain items
 
 11/06/2021 - Dragon Slayer
 	Added thirst system that works similarly to existing hunger system, where characters (and optionally, pets) grow thirsty over time, and gradually draining their stamina (down to a minimum of 1) if too thirsty

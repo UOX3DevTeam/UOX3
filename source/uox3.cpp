@@ -2375,7 +2375,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 
 	auto psecs = strutil::sections( temp, "%" );
 	// Find out if the name has a % in it
-	if( psecs.size() > 1 )
+	if( psecs.size() > 2 )
 	{
 		std::string single;
 		const std::string first	= psecs[0];
