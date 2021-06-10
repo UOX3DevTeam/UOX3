@@ -888,6 +888,20 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPCloseGump : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+	UI32			_gumpID;
+	UI32			_buttonID;
+public:
+	CPCloseGump( UI32 dialogID, UI32 buttonID );
+	virtual			~CPCloseGump()
+	{
+	}
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+};
+
 class CPItemsInContainer : public CPUOXBuffer
 {
 protected:

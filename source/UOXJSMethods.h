@@ -41,6 +41,7 @@ JSMethodFunc CGump_AddCheckbox;
 JSMethodFunc CGump_AddCheckerTrans;
 JSMethodFunc CGump_AddCroppedText;
 JSMethodFunc CGump_AddGroup;
+JSMethodFunc CGump_EndGroup;
 JSMethodFunc CGump_AddGump;
 JSMethodFunc CGump_AddGumpColor;
 JSMethodFunc CGump_AddHTMLGump;
@@ -58,7 +59,7 @@ JSMethodFunc CGump_AddToolTip;
 JSMethodFunc CGump_AddXMFHTMLGump;
 JSMethodFunc CGump_AddXMFHTMLGumpColor;
 JSMethodFunc CGump_AddXMFHTMLTok;
-//JSMethodFunc CGump_MasterGump;
+JSMethodFunc CGump_MasterGump;
 JSMethodFunc CGump_NoClose;
 JSMethodFunc CGump_NoDispose;
 JSMethodFunc CGump_NoMove;
@@ -203,6 +204,7 @@ JSMethodFunc CSocket_SetDWord;
 JSMethodFunc CSocket_SetString;
 JSMethodFunc CSocket_ReadBytes;
 JSMethodFunc CSocket_OpenGump;
+JSMethodFunc CSocket_CloseGump;
 JSMethodFunc CSocket_WhoList;
 JSMethodFunc CSocket_Music;
 JSMethodFunc CSocket_SendAddMenu;
@@ -287,10 +289,11 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "AddButton",					CGump_AddButton,					6, 0, 0 },
 	{ "AddButtonTileArt",			CGump_AddButtonTileArt,				11, 0, 0 },
 	{ "AddPageButton",				CGump_AddPageButton,				4, 0, 0 },
-	{ "AddCheckbox",				CGump_AddCheckbox,					5, 0, 0 },
+	{ "AddCheckbox",				CGump_AddCheckbox,					6, 0, 0 },
 	{ "AddCheckerTrans",			CGump_AddCheckerTrans,				4, 0, 0 },
 	{ "AddCroppedText",				CGump_AddCroppedText,				6, 0, 0 },
 	{ "AddGroup",					CGump_AddGroup,						1, 0, 0 },
+	{ "EndGroup",					CGump_EndGroup,						0, 0, 0 },
 	{ "AddGump",					CGump_AddGump,						4, 0, 0 },
 	{ "AddGumpColor",				CGump_AddGumpColor,					4, 0, 0 },
 	{ "AddHTMLGump",				CGump_AddHTMLGump,					7, 0, 0 },
@@ -299,7 +302,7 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "AddPictureColor",			CGump_AddPictureColor,				4, 0, 0 },
 	{ "AddPicInPic",				CGump_AddPicInPic,					7, 0, 0 },
 	{ "AddItemProperty",			CGump_AddItemProperty,				1, 0, 0 },
-	{ "AddRadio",					CGump_AddRadio,						5, 0, 0 },
+	{ "AddRadio",					CGump_AddRadio,						6, 0, 0 },
 	{ "AddText",					CGump_AddText,						4, 0, 0 },
 	{ "AddTextEntry",				CGump_AddTextEntry,					8, 0, 0 },
 	{ "AddTextEntryLimited",		CGump_AddTextEntryLimited,			9, 0, 0 },
@@ -308,7 +311,7 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "AddXMFHTMLGump",				CGump_AddXMFHTMLGump,				7, 0, 0 },
 	{ "AddXMFHTMLGumpColor",		CGump_AddXMFHTMLGumpColor,			8, 0, 0 },
 	{ "AddXMFHTMLTok",				CGump_AddXMFHTMLTok,				8, 0, 0 },
-	//	{ "MasterGump",					CGump_MasterGump,					1, 0, 0 },
+	{ "MasterGump",					CGump_MasterGump,					1, 0, 0 },
 	{ "NoClose",					CGump_NoClose,						0, 0, 0 },
 	{ "NoDispose",					CGump_NoDispose,					0, 0, 0 },
 	{ "NoMove",						CGump_NoMove,						0, 0, 0 },
@@ -501,6 +504,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "SetString",			CSocket_SetString,	2, 0, 0 },
 	{ "ReadBytes",			CSocket_ReadBytes,	1, 0, 0 },
 	{ "OpenGump",			CSocket_OpenGump,	1, 0, 0 },
+	{ "CloseGump",			CSocket_CloseGump,	2, 0, 0 },
 	{ "OpenURL",			CSocket_OpenURL,    1, 0, 0 },
 	{ "BuyFrom",			CMisc_BuyFrom,		1, 0, 0 },
 	{ "SellTo",				CMisc_SellTo,		1, 0, 0 },

@@ -4097,6 +4097,49 @@ CPMapChange& CPMapChange::operator=( CBaseObject& moving )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPCloseGump( UI32 gumpID, UI32 buttonID )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet to close a generic/custom gump with a specified ID,
+//|					while also allowing to specify the button ID response to send after
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x4 (Close Generic Gump)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x4)
+//|						Subcommand details
+//|							BYTE[4] dialogID // which gump to destroy (second ID in 0xB0 packet)
+//|							BYTE[4] buttonId // response buttonID for packet 0xB1
+//o-----------------------------------------------------------------------------------------------o
+CPCloseGump::CPCloseGump( UI32 gumpID, UI32 buttonID )
+{
+	_gumpID = gumpID;
+	_buttonID = buttonID;
+	InternalReset();
+}
+void CPCloseGump::InternalReset( void )
+{
+	pStream.ReserveSize( 13 );
+	pStream.WriteByte( 0, 0xBF );		// Command: Packet 0xBF - General Information Packet
+	pStream.WriteShort( 1, 13 );		// Packet length
+	pStream.WriteShort( 3, 0x04 );		// Subcommand 0x04 - Close Generic Gump
+	pStream.WriteLong( 5, _gumpID );	// gumpID - which gump to destroy
+	pStream.WriteLong( 9, _buttonID );	// buttonID - response buttonID for packet 0xB1
+}
+void CPCloseGump::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet   : CPCloseGump 0xBF Subcommand 4 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "gumpID            : " << (UI32)pStream.GetLong( 5 ) << std::endl;
+	outStream << "buttonID            : " << (UI32)pStream.GetLong( 9 ) << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPItemsInContainer()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to send list of items in container to client

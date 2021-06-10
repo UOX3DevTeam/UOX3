@@ -471,18 +471,37 @@ JSBool CGumpData_getButton( JSContext *cx, JSObject *obj, uintN argc,jsval *argv
 //o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 5 )
+	if( argc < 5 || argc > 6 )
 	{
-		MethodError("AddCheckbox: Wrong count of Parameters, needs 5");
+		MethodError("AddCheckbox: Wrong count of Parameters, needs 5 or 6");
 		return JS_FALSE;
 	}
 
-	SI16 tL			= (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR			= (SI16)JSVAL_TO_INT( argv[1] );
-	UI16 gImage		= (UI16)JSVAL_TO_INT( argv[2] );
-	SI16 initState	= (SI16)JSVAL_TO_INT( argv[3] );
-	SI16 relay		= (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 tL = 0;
+	SI16 tR = 0;
+	UI16 gImage = 0;
+	UI16 gImageChk = 0;
+	SI16 initState = 0;
+	SI16 relay = 0;
 
+	if( argc == 5 )
+	{
+		tL			= (SI16)JSVAL_TO_INT( argv[0] );
+		tR			= (SI16)JSVAL_TO_INT( argv[1] );
+		gImage		= (UI16)JSVAL_TO_INT( argv[2] );
+		gImageChk	= gImage + 1;
+		initState	= (SI16)JSVAL_TO_INT( argv[3] );
+		relay		= (SI16)JSVAL_TO_INT( argv[4] );
+	}
+	else
+	{
+		tL			= (SI16)JSVAL_TO_INT( argv[0] );
+		tR			= (SI16)JSVAL_TO_INT( argv[1] );
+		gImage		= (UI16)JSVAL_TO_INT( argv[2] );
+		gImageChk	= (UI16)JSVAL_TO_INT( argv[3] );
+		initState	= (SI16)JSVAL_TO_INT( argv[4] );
+		relay		= (SI16)JSVAL_TO_INT( argv[5] );
+	}
 
 	SEGump *gList = static_cast<SEGump*>(JS_GetPrivate( cx, obj ));
 
@@ -492,7 +511,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( strutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initState, relay ) );
+	gList->one->push_back( strutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initState, relay ) );
 
 	return JS_TRUE;
 }
@@ -617,11 +636,9 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //|	Function	-	JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	24th March, 2012
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	In theory allows overriding gumpIDs, but doesn't seem
-//|					to work, so commented out until someone can figure it out.
-//|					Possible that this only works with client versions between 4.0.4d and 5.0.5b
+//|	Purpose		-	Possible that the mastergump command itself only has any effect with client versions between 4.0.4d and 5.0.5b?
 //o-----------------------------------------------------------------------------------------------o
-/*JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -629,8 +646,8 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	SI32 gumpID = (SI32)JSVAL_TO_INT( argv[0] );
-	SEGump *gList = (SEGump *)JS_GetPrivate( cx, obj );
+	SI32 masterGumpID = (SI32)JSVAL_TO_INT( argv[0] );
+	SEGump *gList = static_cast<SEGump *>(JS_GetPrivate( cx, obj ));
 
 	if( gList == NULL )
 	{
@@ -638,13 +655,11 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	char temp[256];
-	sprintf( temp, "mastergump %i", gumpID );
-
-	gList->one->push_back( temp );
+	// Also send mastergump command with new gumpID
+	gList->one->push_back( strutil::format( "mastergump %i %i %i %i %i", masterGumpID ) );
 
 	return JS_TRUE;
-}*/
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -881,6 +896,32 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 
 	gList->one->push_back( strutil::format( "group %d", JSVAL_TO_INT( argv[0] ) ) );
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void EndGroup( groupNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Ends a previously started group element
+//o-----------------------------------------------------------------------------------------------o
+JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "EndGroup: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = static_cast<SEGump*>( JS_GetPrivate( cx, obj ) );
+	if( gList == NULL )
+	{
+		MethodError( "EndGroup: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	gList->one->push_back( strutil::format( "endgroup", JSVAL_TO_INT( argv[0] ) ) );
 
 	return JS_TRUE;
 }
@@ -1230,17 +1271,38 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 5 )
+	if( argc < 5 || argc > 6 )
 	{
-		MethodError( "Gump_AddRadio: Invalid number of arguments (takes 5)" );
+		MethodError( "Gump_AddRadio: Invalid number of arguments (takes 5 or 6)" );
 		return JS_FALSE;
 	}
 
-	SI16 tL				= (SI16)JSVAL_TO_INT( argv[0] );
-	SI16 tR				= (SI16)JSVAL_TO_INT( argv[1] );
-	UI16 gImage			= (UI16)JSVAL_TO_INT( argv[2] );
-	SI16 initialState	= (SI16)JSVAL_TO_INT( argv[3] );
-	SI16 relay			= (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 tL = 0;
+	SI16 tR = 0;
+	UI16 gImage = 0;
+	UI16 gImageChk = 0;
+	SI16 initialState = 0;
+	SI16 relay = 0;
+
+	if( argc == 5 )
+	{
+		tL				= (SI16)JSVAL_TO_INT( argv[0] );
+		tR				= (SI16)JSVAL_TO_INT( argv[1] );
+		gImage			= (UI16)JSVAL_TO_INT( argv[2] );
+		gImageChk		= gImage + 1;
+		initialState	= (SI16)JSVAL_TO_INT( argv[3] );
+		relay			= (SI16)JSVAL_TO_INT( argv[4] );
+	}
+	else
+	{
+		tL				= (SI16)JSVAL_TO_INT( argv[0] );
+		tR				= (SI16)JSVAL_TO_INT( argv[1] );
+		gImage			= (UI16)JSVAL_TO_INT( argv[2] );
+		gImageChk		= (UI16)JSVAL_TO_INT( argv[3] );
+		initialState	= (SI16)JSVAL_TO_INT( argv[4] );
+		relay			= (SI16)JSVAL_TO_INT( argv[5] );
+	}
+
 
 	SEGump *gList = static_cast<SEGump*>(JS_GetPrivate( cx, obj ));
 	if( gList == NULL )
@@ -1249,7 +1311,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( strutil::format("radio %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, initialState, relay ) );
+	gList->one->push_back( strutil::format("radio %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initialState, relay ) );
 
 	return JS_TRUE;
 }
@@ -1566,7 +1628,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			MethodError( "Send: Passed an invalid Socket" );
 			return JS_FALSE;
 		}
-		UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ));
+		UI32 gumpID = ( 0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ) );
 		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), gumpID, INVALIDSERIAL );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
@@ -1579,7 +1641,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		}
 
 		CSocket *mySock = myChar->GetSocket();
-		UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ));
+		UI32 gumpID = ( 0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ) );
 		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), gumpID, INVALIDSERIAL );
 	}
 	else
@@ -4956,6 +5018,37 @@ JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	BuildGumpFromScripts( mySock, menuNumber );
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void CloseGump()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Closes specified generic gump based on its ID, and provides a button ID response
+//o-----------------------------------------------------------------------------------------------o
+JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "CloseGump: Invalid number of arguments (takes 2 - gumpID to close, and buttonID to send as response)" );
+		return JS_FALSE;
+	}
+
+	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ) );
+
+	if( mySock == NULL )
+	{
+		MethodError( "SysMessage: Invalid socket" );
+		return JS_FALSE;
+	}
+
+	UI32 gumpID = (UI32)JSVAL_TO_INT( argv[0] );
+	UI32 buttonID = (UI32)JSVAL_TO_INT( argv[1] );
+
+	CPCloseGump gumpToClose( gumpID, buttonID );
+	mySock->Send( &gumpToClose );
 
 	return JS_TRUE;
 }

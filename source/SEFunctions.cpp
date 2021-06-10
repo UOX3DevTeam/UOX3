@@ -1903,7 +1903,6 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-
 	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
 	CBaseObject *srcObject		= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcBaseObj ));
 
@@ -1916,7 +1915,14 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( argc == 4 )
 	{
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
-		srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
+		if( srcSocketObj != NULL )
+		{
+			srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
+		}
+		else
+		{
+			DoSEErrorMessage( "AreaItemFunction: Argument 3 not a valid socket" );
+		}
 	}
 
 	UI16 retCounter					= 0;

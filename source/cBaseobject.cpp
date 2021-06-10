@@ -1548,7 +1548,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			{
 				//scriptTrig	= strutil::value<std::uint16_t>(data);
 				std::uint16_t scriptID = strutil::value<std::uint16_t>(data);
-				if( scriptID != 0 )
+				if( scriptID != 0 && scriptID != 65535 )
 				{
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == NULL )

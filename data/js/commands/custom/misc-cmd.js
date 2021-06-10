@@ -651,7 +651,7 @@ function onCallback21( pSock, myTarget )
 			pUser.SysMessage( myTarget.attacker );
 			var opponent = myTarget.target;
 			opponent.target = null;
-			opponent.atWar = null;
+			opponent.atWar = false;
 			opponent.attacker = null;
 			myTarget.target = null;
 			myTarget.atWar = false;

@@ -1928,7 +1928,7 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 //o-----------------------------------------------------------------------------------------------o
 //| Function    -   bool OnThirstChange( CChar *pChanging, SI08 newStatus )
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose     -   Triggers for character with event attached when hhirst level changes
+//| Purpose     -   Triggers for character with event attached when thirst level changes
 //o-----------------------------------------------------------------------------------------------o
 bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 {
