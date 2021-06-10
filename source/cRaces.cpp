@@ -612,13 +612,13 @@ bool cRaces::DoesHunger( RACEID race ) const
 
 void cRaces::DoesThirst( RACEID race, bool value )
 {
-	if ( InvalidRace( race ) )
+	if( InvalidRace( race ) )
 		return;
 	races[race]->DoesThirst( value );
 }
 bool cRaces::DoesThirst( RACEID race ) const
 {
-	if ( InvalidRace( race ) )
+	if( InvalidRace( race ) )
 		return 0;
 	return races[race]->DoesThirst();
 }
@@ -638,13 +638,13 @@ UI16 cRaces::GetHungerRate( RACEID race ) const
 
 void cRaces::SetThirstRate( RACEID race, UI16 value )
 {
-	if ( InvalidRace( race ) )
+	if( InvalidRace( race ) )
 		return;
 	races[race]->SetThirstRate( value );
 }
 UI16 cRaces::GetThirstRate( RACEID race ) const
 {
-	if ( InvalidRace( race ) )
+	if( InvalidRace( race ) )
 		return 0;
 	return races[race]->GetThirstRate();
 }
@@ -664,13 +664,13 @@ SI16 cRaces::GetHungerDamage( RACEID race ) const
 
 void cRaces::SetThirstDrain( RACEID race, SI16 value )
 {
-	if ( InvalidRace( race ) )
+	if( InvalidRace( race ) )
 		return;
 	races[race]->SetThirstDrain( value );
 }
 SI16 cRaces::GetThirstDrain( RACEID race ) const
 {
-	if ( InvalidRace( race ) )
+	if( InvalidRace( race ) )
 		return 0;
 	return races[race]->GetThirstDrain();
 }
@@ -1362,28 +1362,41 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 			case 'h':
 			case 'H':
-				if( UTag == "HAIRMIN" ){
+				if( UTag == "HAIRMIN" )
+				{
 					hairMin = static_cast<UI16>(std::stoul(data, nullptr, 0));
 				}
-				else if( UTag == "HAIRMAX" ){
+				else if( UTag == "HAIRMAX" )
+				{
 					hairColours.push_back( ColourPair( hairMin, static_cast<UI16>(std::stoul(data, nullptr, 0)) ) );
 				}
-				else if( UTag == "HEATAFFECT" )	{// are we affected by light?
+				else if( UTag == "HEATAFFECT" )
+				{
+					// are we affected by light?
 					AffectedBy( true, HEAT );
 				}
-				else if( UTag == "HEATDAMAGE" )	{// how much damage to take from light
+				else if( UTag == "HEATDAMAGE" )
+				{
+					// how much damage to take from light
 					WeatherDamage( static_cast<UI16>(std::stoul(data,nullptr,0)), HEAT );
 				}
-				else if( UTag == "HEATLEVEL" ){	// heat level at which to take damage
+				else if( UTag == "HEATLEVEL" )
+				{
+					// heat level at which to take damage
 					HeatLevel( static_cast<UI16>(std::stoul(data,nullptr,0)) );
 				}
-				else if( UTag == "HEATSECS" ){		// how often light affects in secs
+				else if( UTag == "HEATSECS" )
+				{		// how often light affects in secs
 					WeatherSeconds(static_cast<UI16>(std::stoul(data,nullptr,0)), HEAT );
 				}
-				else if( UTag == "HPMOD" ) {// how much additional percent of strength are hitpoints
+				else if( UTag == "HPMOD" )
+				{
+					// how much additional percent of strength are hitpoints
 					HPModifier( static_cast<UI16>(std::stoul(data,nullptr,0)) );
 				}
-				else if( UTag == "HUNGER" )	{ // does race suffer from hunger
+				else if( UTag == "HUNGER" )	
+				{
+					// does race suffer from hunger
 					auto csecs = strutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{
@@ -1395,10 +1408,12 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 						SetHungerRate( 0 );
 						SetHungerDamage( 0 );
 					}
-					if( GetHungerRate() > 0 ){
+					if( GetHungerRate() > 0 )
+					{
 						DoesHunger( true );
 					}
-					else{
+					else
+					{
 						DoesHunger( false );
 					}
 				}
@@ -1593,19 +1608,21 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				break;
 			case 't':
 			case 'T':
-				if ( UTag == "THIRST" ) {// does race suffer from thirst
-					auto csecs = strutil::sections(data, ",");
-					if (csecs.size() > 1)
+				if( UTag == "THIRST" )
+				{
+					// does race suffer from thirst
+					auto csecs = strutil::sections( data, "," );
+					if( csecs.size() > 1 )
 					{
-						SetThirstRate(static_cast<SI16>(std::stoi(strutil::stripTrim(csecs[0]), nullptr, 0)));
-						SetThirstDrain(static_cast<SI16>(std::stoi(strutil::stripTrim(csecs[1]), nullptr, 0)));
+						SetThirstRate( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
+						SetThirstDrain( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
 					}
 					else
 					{
 						SetThirstRate( 0 );
 						SetThirstDrain( 0 );
 					}
-					if ( GetThirstRate() > 0 )
+					if( GetThirstRate() > 0 )
 					{
 						DoesThirst( true );
 					}

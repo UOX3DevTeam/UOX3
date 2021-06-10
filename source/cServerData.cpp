@@ -386,10 +386,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ALCHEMYBONUSMODIFIER", 246);
 	regINIValue("NPCFLAGUPDATETIMER", 247);
 	regINIValue("JSENGINESIZE", 248);
-	regINIValue("THIRSTRATE", 249);
-	regINIValue("THIRSTDRAINVAL", 250);
-	regINIValue("THIRSTSTAMINADRAIN", 251);
-	regINIValue("PETTHIRSTOFFLINE", 252);
+	regINIValue("THIRSTRATE", 251);
+	regINIValue("THIRSTDRAINVAL", 252);
+	regINIValue("PETTHIRSTOFFLINE", 253);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -452,8 +451,8 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
 
-	SystemTimer(tSERVER_THIRSTRATE, 6000);
-	ThirstDrain(2);
+	SystemTimer( tSERVER_THIRSTRATE, 6000 );
+	ThirstDrain( 2 );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -497,7 +496,6 @@ void CServerData::ResetDefaults( void )
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2.0 );
-	ThirstStaminaDrain(2.0);
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
 
@@ -1664,21 +1662,6 @@ SI16 CServerData::FishingStaminaLoss( void ) const
 void CServerData::FishingStaminaLoss( SI16 value )
 {
 	fishingstaminaloss = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 ThirstStaminaDrain( void ) const
-//|					void ThirstStaminaDrain( SI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the stamina drain for when you are thirsty
-//o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ThirstStaminaDrain(void) const
-{
-	return thirststaminadrain;
-}
-void CServerData::ThirstStaminaDrain(SI16 value)
-{
-	thirststaminadrain = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3201,7 +3184,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
 		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
 		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
-		ofsOutput << "THIRSTSTAMINADRAIN=" << ThirstStaminaDrain() << '\n';
 		ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -4161,17 +4143,14 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 248:	 // JSENGINESIZE[0237]
 			SetJSEngineSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
-		case 249:    // THIRSTRATE[0238]
-			SystemTimer(tSERVER_THIRSTRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+		case 251:    // THIRSTRATE[0240]
+			SystemTimer( tSERVER_THIRSTRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
-		case 250:    // THIRSTDRAINVAL[0239]
-			ThirstDrain(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+		case 252:    // THIRSTDRAINVAL[0241]
+			ThirstDrain( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
-		case 251:	// THIRSTSTAMINADRAIN[0240]
-			ThirstStaminaDrain(std::stof(value));
-			break;
-		case 252:    // PETTHIRSTOFFLINE[0241]
-			PetThirstOffline((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+		case 253:    // PETTHIRSTOFFLINE[0242]
+			PetThirstOffline( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		default:
 			rvalue = false;

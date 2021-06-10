@@ -110,7 +110,7 @@ const UI32 BIT_INBUILDING		=	27;
 const UI32 BIT_INPARTY			=	28;	// This property is not saved
 const UI32 BIT_EVADE			=	29; // This property is not saved
 const UI32 BIT_FLYING			=	30; // This property is not saved
-const UI32 BIT_WILLTHIRST       =   31;
+const UI32 BIT_WILLTHIRST		=	31;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -178,9 +178,9 @@ const SI16			DEFNPC_WANDERAREA			= -1;
 const cNPC_FLAG		DEFNPC_NPCFLAG				= fNPC_NEUTRAL;
 const UI16			DEFNPC_BOOLFLAG				= 0;
 const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
-const UI16          DEFNPC_TAMEDTHIRSTRATE      = 0;
+const UI16			DEFNPC_TAMEDTHIRSTRATE      = 0;
 const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
-const UI08          DEFNPC_THIRSTWILDCHANCE     = 0;
+const UI08			DEFNPC_THIRSTWILDCHANCE     = 0;
 const R32			DEFNPC_MOVEMENTSPEED		= -1;
 const SI08			DEFNPC_PATHFAIL				= -1;
 
@@ -213,7 +213,7 @@ const SI08			DEFCHAR_CELL 				= -1;
 const SERIAL		DEFCHAR_TARG 				= INVALIDSERIAL;
 const SERIAL		DEFCHAR_ATTACKER 			= INVALIDSERIAL;
 const SI08			DEFCHAR_HUNGER 				= 6;
-const SI08          DEFCHAR_THIRST              = 6;
+const SI08			DEFCHAR_THIRST              = 6;
 const UI16			DEFCHAR_REGIONNUM 			= 255;
 const UI16			DEFCHAR_TOWN 				= 0;
 const UI16			DEFCHAR_ADVOBJ 				= 0;
@@ -266,7 +266,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetCanTrain( true );
 
 	SetHungerStatus( true );
-	SetThirstStatus(true);
+	SetThirstStatus( true );
 
 	skillUsed[0].reset();
 	skillUsed[1].reset();
@@ -554,22 +554,22 @@ void CChar::DoHunger( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Get/Set Thirst level of the character
 //o-----------------------------------------------------------------------------------------------o
-SI08 CChar::GetThirst(void) const
+SI08 CChar::GetThirst( void ) const
 {
 	return thirst;
 }
 
-bool CChar::SetThirst(SI08 newValue)
+bool CChar::SetThirst( SI08 newValue )
 {
 	std::vector<UI16> scriptTriggers = GetScriptTriggers();
-	for (auto i : scriptTriggers)
+	for( auto i : scriptTriggers )
 	{
 		cScript* toExecute = JSMapping->GetScript(i);
-		if (toExecute != NULL)
+		if( toExecute != NULL )
 		{
 			// If script returns false/0/nothing, prevent thirst from changing, and prevent
 			// other scripts with event from running
-			if (toExecute->OnThirstChange((this), thirst) == 0)
+			if( toExecute->OnThirstChange( ( this ), thirst ) == 0 )
 			{
 				return false;
 			}
@@ -587,103 +587,107 @@ bool CChar::SetThirst(SI08 newValue)
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Calculate Thirst level of the character and do all related effects.
 //o-----------------------------------------------------------------------------------------------o
-void CChar::DoThirst(CSocket* mSock)
+void CChar::DoThirst( CSocket* mSock )
 {
-	if (!IsDead() && !IsInvulnerable()) // No need to do anything on dead or invulnerable chars
+	if( !IsDead() && !IsInvulnerable() ) // No need to do anything on dead or invulnerable chars
 	{
 		UI16 thirstRate;
 		SI16 thirstDrain;
-		if (!IsNpc() && mSock != NULL)  // Do Thirst for player chars
+		if( !IsNpc() && mSock != NULL )  // Do Thirst for player chars
 		{
-			if (WillThirst() && GetCommandLevel() == CL_PLAYER)
+			if( WillThirst() && GetCommandLevel() == CL_PLAYER )
 			{
-				if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
-					if (Races->DoesThirst(GetRace())) // prefer the hunger settings frome the race
+					if( Races->DoesThirst( GetRace() )) // prefer the thirst settings frome the race
 					{
-						thirstRate = Races->GetThirstRate(GetRace());
-						thirstDrain = Races->GetThirstDrain(GetRace());
+						thirstRate = Races->GetThirstRate( GetRace() );
+						thirstDrain = Races->GetThirstDrain( GetRace() );
 					}
 					else // use the global values if there is no race setting
 					{
-						thirstRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE);
+						thirstRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE );
 						thirstDrain = cwmWorldState->ServerData()->ThirstDrain();
 					}
 
-					if (GetThirst() > 0)
+					if( GetThirst() > 0 )
 					{
 						bool doThirstMessage = !DecThirst();
-						if (doThirstMessage)
+						if( doThirstMessage )
 						{
-							switch (GetThirst())
+							switch( GetThirst() )
 							{
-							default:
-							case 6:                             break;
-							case 5: mSock->sysmessage(2038);    break;
-							case 4: mSock->sysmessage(2039);    break;
-							case 3: mSock->sysmessage(2040);    break;
-							case 2: mSock->sysmessage(2041);    break;
-							case 1: mSock->sysmessage(2042);    break;
-							case 0: mSock->sysmessage(2043);    break;
+								default:
+								case 6:									break;
+								case 5: mSock->sysmessage( 2045 );		break;
+								case 4: mSock->sysmessage( 2046 );		break;
+								case 3: mSock->sysmessage( 2047 );		break;
+								case 2: mSock->sysmessage( 2048 );		break;
+								case 1: mSock->sysmessage( 2049 );		break;
+								case 0: mSock->sysmessage( 2050 );		break;
 							}
 						}
 					}
-					else if (GetStamina() > 0 && thirstDrain > 0)
+					else if( GetStamina() > 1 && thirstDrain > 0 )
 					{
-						mSock->sysmessage(2044);
-						//Damage(thirstDrain);
-						SetStamina((static_cast<SI16>(1), GetStamina() - cwmWorldState->ServerData()->ThirstStaminaDrain()));
-						if (GetStamina() <= 1)
-							mSock->sysmessage(2045);
+						mSock->sysmessage( 2051 );
+						SetStamina( std::max( static_cast<SI16>(1), static_cast<SI16>(GetStamina() - thirstDrain )));
+						if( GetStamina() <= 1 )
+						{
+							mSock->sysmessage( 2052 );
+						}
 					}
-					SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>(thirstRate) ));
 				}
 			}
 		}
-		else if (IsNpc() && !IsTamed() && Races->DoesThirst(GetRace()))
+		else if( IsNpc() && !IsTamed() && Races->DoesThirst( GetRace() ))
 		{
-			if (WillThirst() && !GetMounted() && !GetStabled())
+			if( WillThirst() && !GetMounted() && !GetStabled() )
 			{
-				if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
-					thirstRate = Races->GetThirstRate(GetRace());
-					thirstDrain = Races->GetThirstDrain(GetRace());
+					thirstRate = Races->GetThirstRate( GetRace() );
+					thirstDrain = Races->GetThirstDrain( GetRace() );
 
-					if (GetThirst() > 0)
+					if( GetThirst() > 0 )
+					{
 						DecThirst();
-					else if (GetStamina() > 0 && thirstDrain > 0)
-						//Damage(thirstDrain);
-						SetStamina((static_cast<SI16>(1), GetStamina() - cwmWorldState->ServerData()->ThirstStaminaDrain()));
-					SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+					}
+					else if( GetStamina() > 1 && thirstDrain > 0 )
+					{
+						SetStamina( std::max( static_cast<SI16>( 1 ), static_cast<SI16>( GetStamina() - thirstDrain ) ) );
+					}
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>(thirstRate) ));
 				}
 			}
 		}
-		else if (IsTamed() && GetTamedThirstRate() > 0)
+		else if( IsTamed() && GetTamedThirstRate() > 0 )
 		{
-			if (WillThirst() && !GetMounted() && !GetStabled())
+			if( WillThirst() && !GetMounted() && !GetStabled() )
 			{
-				if (cwmWorldState->ServerData()->PetHungerOffline() == false)
+				if( cwmWorldState->ServerData()->PetHungerOffline() == false )
 				{
 					CChar* owner = GetOwnerObj();
-					if (!ValidateObject(owner))
+					if( !ValidateObject( owner ))
 						return;
 
-					if (!isOnline((*owner)))
+					if( !isOnline((*owner)) )
 						return;
 				}
 
-				if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())
+				if( GetTimer( tCHAR_THIRST ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
 					thirstRate = GetTamedThirstRate();
 
-					if (GetThirst() > 0)
+					if( GetThirst() > 0 )
 						DecThirst();
-					else if ((UI08)RandomNum(0, 100) <= GetTamedThirstWildChance())
+					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedThirstWildChance() )
 					{
-						SetOwner(NULL);
-						SetThirst(6);
+						SetOwner( NULL );
+						SetThirst( 6 );
 					}
-					SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>(thirstRate) ));
 				}
 			}
 		}
@@ -1159,15 +1163,15 @@ void CChar::SetHungerStatus( bool newValue )
 //| Function    -   bool WillThirst( void ) const
 //|                 void SetThirstStatus( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose     -   Returns/Sets whether the character will get thirst
+//| Purpose     -   Returns/Sets whether the character will get thirsty
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::WillThirst(void) const
 {
-	return bools.test(BIT_WILLTHIRST);
+	return bools.test( BIT_WILLTHIRST );
 }
-void CChar::SetThirstStatus(bool newValue)
+void CChar::SetThirstStatus( bool newValue )
 {
-	bools.set(BIT_WILLTHIRST, newValue);
+	bools.set( BIT_WILLTHIRST, newValue );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3931,6 +3935,16 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetTamedHungerWildChance( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
+				else if( UTag == "TAMEDTHIRSTRATE" )
+				{
+					SetTamedThirstRate( static_cast<SI08>( std::stoi( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					rvalue = true;
+				}
+				else if( UTag == "TAMEDTHIRSTWILDCHANCE" )
+				{
+					SetTamedThirstWildChance( static_cast<SI08>( std::stoi( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					rvalue = true;
+				}
 				else if( UTag == "TOWN" )
 				{
 					SetTown( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
@@ -3953,7 +3967,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if (UTag == "THIRST")
 				{
-					SetThirst(static_cast<SI16>(std::stoi(strutil::stripTrim(data), nullptr, 0)));
+					SetThirst( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -3974,7 +3988,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if (UTag == "WILLTHIRST")
 				{
-					SetThirstStatus(static_cast<SI16>(std::stoi(strutil::stripTrim(data), nullptr, 0)) == 1);
+					SetThirstStatus( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEED" )
@@ -5499,23 +5513,23 @@ void CChar::SetTamedHungerRate( UI16 newValue )
 //| Function    -   UI16 GetTamedThirstRate( void ) const
 //|                 void SetTamedThirstRate( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose     -   Get/Set the rate at which a pet Thirst
+//| Purpose     -   Get/Set the rate at which a pet thirsts
 //o-----------------------------------------------------------------------------------------------o
 UI16 CChar::GetTamedThirstRate( void ) const
 {
 	UI16 retVal = DEFNPC_TAMEDTHIRSTRATE;
-	if (IsValidNPC() )
+	if( IsValidNPC() )
 		retVal = mNPC->tamedHungerRate;
 	return retVal;
 }
 void CChar::SetTamedThirstRate( UI16 newValue )
 {
-	if ( !IsValidNPC() )
+	if( !IsValidNPC() )
 	{
-		if ( DEFNPC_TAMEDTHIRSTRATE != newValue )
+		if( DEFNPC_TAMEDTHIRSTRATE != newValue )
 			CreateNPC();
 	}
-	if ( IsValidNPC() )
+	if( IsValidNPC() )
 		mNPC->tamedThirstRate = newValue;
 }
 
@@ -5547,23 +5561,23 @@ void CChar::SetTamedHungerWildChance( UI08 newValue )
 //| Function    -   UI08 GetTamedThirstWildChance( void ) const
 //|                 void SetTamedThirstWildChance( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets chance for a thirst pet to go wild
+//| Purpose     -   Gets/Sets chance for a thirsty pet to go wild
 //o-----------------------------------------------------------------------------------------------o
 UI08 CChar::GetTamedThirstWildChance( void ) const
 {
 	UI08 retVal = DEFNPC_THIRSTWILDCHANCE;
-	if ( IsValidNPC() )
+	if( IsValidNPC() )
 		retVal = mNPC->thirstWildChance;
 	return retVal;
 }
 void CChar::SetTamedThirstWildChance( UI08 newValue )
 {
-	if ( !IsValidNPC() )
+	if( !IsValidNPC() )
 	{
-		if ( DEFNPC_THIRSTWILDCHANCE != newValue )
+		if( DEFNPC_THIRSTWILDCHANCE != newValue )
 			CreateNPC();
 	}
-	if ( IsValidNPC() )
+	if( IsValidNPC() )
 		mNPC->thirstWildChance = newValue;
 }
 

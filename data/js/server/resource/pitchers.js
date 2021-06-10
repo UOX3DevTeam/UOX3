@@ -279,6 +279,24 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		}
 		if( myTarget.serial == pUser.serial )
 		{
+			var pThirst = pUser.thirst;
+			if( pThirst < 6 )
+			{
+				if( pThirst >= 0 )
+				{
+					if( pThirst == 0 || pThirst == 1 )
+						pSock.SysMessage( GetDictionaryEntry( (2054), pSock.language ) ); //You take a swig from the %s, but are still extremely thirsty.
+					else
+						pSock.SysMessage( GetDictionaryEntry( (2054 + pThirst - 1), pSock.language ) ); //You take a swig from the %s, but are still extremely thirsty.
+					pUser.thirst += 1;
+				}
+			}
+			else
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2053, pSock.language ) ); //You are simply too full to drink any more!
+				return;
+			}
+
 			//If pitcher is a mug/glass/goblet/etc
 			if(( Pitcher.id >= 0x0995 && Pitcher.id <= 0x099a ) || Pitcher.id == 0x09b3 || Pitcher.id == 0x09bf ||
 			Pitcher.id == 0x09cb || ( Pitcher.id >= 0x0ffb && Pitcher.id <= 0x1002 )||( Pitcher.id >= 0x1f7d && Pitcher.id <= 0x1f80 )||(

@@ -2007,5 +2007,26 @@
 2034=Arr! Only the owner of the ship may change its name!
 2035=a ship
 2037=%s [Dry Docked]
+2038=Select target to set script trigger (%i) for:
+2039=Select target to add script trigger (%i) to:
+2040=Select target to remove script trigger (%i) from:
+2041=Select target to get script triggers for:
+2042=No scripts found attached to target.
+2043=Select target to remove ALL script triggers from:
+2044=All script triggers have been cleared from target!
+2045=You are still stuffed from your last drink.
+2046=You are not very thirsty, but could drink more.
+2047=You are feeling fairly thirsty.
+2048=You are extremely thirsty.
+2049=You are very weak from dehydration!
+2050=You must drink very soon or you will suffer from dehydration!
+2051=You are severely dehydrated!
+2052=You have no stamina because of dehydration.
+2053=You are simply too full to drink any more!
+2054=You drink the beverage, but are still extremely thirsty.
+2055=After drinking the beverage, you feel much less thirsty.
+2056=You drink the beverage, and begin to feel more satiated.
+2057=You feel quite full after drinking the beverage.
+2058=Your thirst is nearly quenched, but you manage to drink the beverage.
 }
 EOF

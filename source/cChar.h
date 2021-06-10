@@ -94,9 +94,9 @@ private:
 
 		CHARLIST			petFriends;
 		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
-		UI16                tamedThirstRate;    // The rate at which thirst decreases when char is tamed
-		UI08				hungerWildChance;	// The chance that the char get's wild when hungry
-		UI08                thirstWildChance;   // The chance that the char get's wild when hungry
+		UI16				tamedThirstRate;    // The rate at which thirst decreases when char is tamed
+		UI08				hungerWildChance;	// The chance that the char goes wild when hungry
+		UI08				thirstWildChance;   // The chance that the char goes wild when thirsty
 		std::string			foodList;
 
 		SERIAL				fTarg; // NPC Follow Target
@@ -173,7 +173,7 @@ protected:
 	PlayerValues_st	*	mPlayer;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
-	SI08        thirst;     // Level of Thirstyness, 6 = full, 0 = "empty"
+	SI08		thirst;		// Level of thirstiness, 6 = full, 0 = "empty"
 	UI16		town;       // Matches Region number in regions.dfn
 	UI16		regionNum;
 
@@ -273,23 +273,23 @@ public:
 	void		RemoveOwnedItem( CItem *toRemove );
 
 	void		DoHunger( CSocket *mSock );
-	void        DoThirst( CSocket* mSock );
+	void		DoThirst( CSocket* mSock );
 	void		checkPetOfflineTimeout( void );
 	SI08		GetHunger( void ) const;
 	SI08        GetThirst( void ) const;
 	UI16		GetTamedHungerRate( void ) const;
-	UI16        GetTamedThirstRate( void ) const;
+	UI16		GetTamedThirstRate( void ) const;
 	UI08		GetTamedHungerWildChance( void ) const;
-	UI08        GetTamedThirstWildChance( void ) const;
+	UI08		GetTamedThirstWildChance( void ) const;
 	UI16		GetTown( void ) const;
 	std::string GetFood( void ) const;
 
 	bool		SetHunger( SI08 newValue );
-	bool        SetThirst( SI08 newValue );
+	bool		SetThirst( SI08 newValue );
 	void		SetTamedHungerRate( UI16 newValue );
-	void        SetTamedThirstRate( UI16 newValue );
+	void		SetTamedThirstRate( UI16 newValue );
 	void		SetTamedHungerWildChance( UI08 newValue );
-	void        SetTamedThirstWildChance( UI08 newValue );
+	void		SetTamedThirstWildChance( UI08 newValue );
 	void		SetTown( UI16 newValue );
 	void		SetFood( std::string food );
 
@@ -317,7 +317,7 @@ public:
 	bool		GetMaxStamFixed( void ) const;
 
 	bool		DecHunger( const SI08 amt = 1 );
-	bool        DecThirst( const SI08 amt = 1 );
+	bool		DecThirst( const SI08 amt = 1 );
 
 	bool		isUnicode( void ) const;
 	bool		IsNpc( void ) const;
@@ -363,7 +363,7 @@ public:
 	void		SetUsingPotion( bool newVal );
 	void		SetLevitate( bool newValue );
 	void		SetHungerStatus( bool newValue );
-	void        SetThirstStatus( bool newValue );
+	void		SetThirstStatus( bool newValue );
 	void		SetMeditating( bool newValue );
 	void		SetCasting( bool newValue );
 	void		SetJSCasting( bool newValue );

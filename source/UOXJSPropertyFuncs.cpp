@@ -1078,6 +1078,24 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				*vp = INT_TO_JSVAL( hungerRate );
 				break;
 			}
+			case CCP_THIRST:		*vp = INT_TO_JSVAL( gPriv->GetThirst() );					break;
+			case CCP_THIRSTRATE:
+			{
+				CRace *TempRace			= NULL;
+				TempRace = Races->Race( gPriv->GetRace() );
+
+				// Try to fetch thirstRate from character's race
+				UI16 thirstRate = 0;
+				if( TempRace != NULL )
+					thirstRate = TempRace->GetThirstRate();
+
+				// If thirstRate from Race is zero, use the global thirst rate from UOX.INI instead
+				if( thirstRate == 0 )
+					thirstRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE );
+
+				*vp = INT_TO_JSVAL( thirstRate );
+				break;
+			}
 			case CCP_FROZEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFrozen() );				break;
 			case CCP_COMMANDLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetCommandLevel() );				break;
 			case CCP_RACE:
@@ -1196,6 +1214,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );		break;
 			case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
 			case CCP_HUNGERSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillHunger() );		break;
+			case CCP_THIRSTSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillThirst() );		break;
 			case CCP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
 			case CCP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
 			case CCP_FLAG:			*vp = INT_TO_JSVAL( gPriv->GetFlag() );				break;
@@ -1252,7 +1271,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
 			case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 			case CCP_TAMEDHUNGERRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerRate() );		break;
+			case CCP_TAMEDTHIRSTRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstRate() );		break;
 			case CCP_HUNGERWILDCHANCE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerWildChance() );	break;
+			case CCP_THIRSTWILDCHANCE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstWildChance() );	break;
 			case CCP_FOODLIST:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetFood().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -1454,6 +1475,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_FAME:			gPriv->SetFame( (SI16)encaps.toInt() );				break;
 			case CCP_KARMA:			gPriv->SetKarma( (SI16)encaps.toInt() );			break;
 			case CCP_HUNGER:		gPriv->SetHunger( (SI08)encaps.toInt() );			break;
+			case CCP_THIRST:		gPriv->SetThirst( (SI08)encaps.toInt() );			break;
 			case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );				break;
 			case CCP_BRKPEACE:		gPriv->SetBrkPeaceChance( encaps.toInt() );		break;
 			case CCP_SETPEACE:		gPriv->SetPeace( encaps.toInt() );					break;
@@ -1575,6 +1597,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_VULNERABLE:	gPriv->SetInvulnerable( !encaps.toBool() );		break;
 			case CCP_HUNGERSTATUS:	gPriv->SetHungerStatus( encaps.toBool() );		break;
+			case CCP_THIRSTSTATUS:	gPriv->SetThirstStatus( encaps.toBool() );		break;
 			case CCP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );		break;
 			case CCP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );		break;
 			case CCP_ATWAR:
@@ -1623,6 +1646,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
 			case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
 			case CCP_TAMEDHUNGERRATE: gPriv->SetTamedHungerRate( (UI16)encaps.toInt() ); break;
+			case CCP_TAMEDTHIRSTRATE: gPriv->SetTamedThirstRate( (UI16)encaps.toInt() ); break;
+			case CCP_THIRSTWILDCHANCE: gPriv->SetTamedThirstWildChance( (UI08)encaps.toInt() ); break;
 			case CCP_HUNGERWILDCHANCE: gPriv->SetTamedHungerWildChance( (UI08)encaps.toInt() ); break;
 			case CCP_FOODLIST:		gPriv->SetFood( encaps.toString() );				break;
 			case CCP_MOUNTED:		gPriv->SetMounted( encaps.toBool() );				break;
