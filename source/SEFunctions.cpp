@@ -33,6 +33,8 @@
 #include "CJSEngine.h"
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
+#include "CPacketSend.h"
+
 
 
 void		LoadTeleportLocations( void );
@@ -3052,20 +3054,23 @@ JSBool SE_DoesMapBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc!= 1 && argc != 2 )
+	if( argc < 1 || argc > 3 )
 	{
-		DoSEErrorMessage( "DeleteFile: Invalid number of arguments (takes 1 or 2 - fileName and (optionally) subFolderName)" );
+		DoSEErrorMessage( "DeleteFile: Invalid number of arguments (takes 1 to 3 - fileName and (optionally) subFolderName and useScriptDataDir bool)" );
 		return JS_FALSE;
 	}
 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	char *subFolderName = nullptr;
-	if( argc == 2 )
+	if( argc >= 2 )
 		subFolderName = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	bool useScriptDataDir = false;
+	if( argc >= 3 )
+		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 
 	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ) )
 	{
-		DoSEErrorMessage( "Open: file names may not contain \".\", \"..\", \"\\\", or \"/\"." );
+		DoSEErrorMessage( "DeleteFile: file names may not contain \".\", \"..\", \"\\\", or \"/\"." );
 		return JS_FALSE;
 	}
 
@@ -3077,15 +3082,26 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		// However, don't allow special characters in the folder name
 		if( strstr( subFolderName, ".." ) || strstr( subFolderName, "\\" ) || strstr( subFolderName, "/" ) )
 		{
-			DoSEErrorMessage( "Open: folder names may not contain \".\", \"..\", \"\\\", or \"/\"." );
+			DoSEErrorMessage( "DeleteFile: folder names may not contain \".\", \"..\", \"\\\", or \"/\"." );
 			return JS_FALSE;
 		}
 
-		pathString.append( subFolderName );
+		// If script wants to look in script-data folder instead of shared folder, let it
+		if( useScriptDataDir )
+		{
+			pathString = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA );
+		}
+
+		// Append subfolder name to path, unless no name was provided
+		if( subFolderName != "" )
+		{
+			pathString.append( subFolderName );
+		}
+
 		if( !std::filesystem::exists( pathString ))
 		{
-			// Create missing directory
-			std::filesystem::create_directory( pathString );
+			DoSEErrorMessage( "DeleteFile: provided folder path not found, unable to delete file");
+			return JS_FALSE;
 		}
 
 		pathString += std::filesystem::path::preferred_separator;
@@ -3807,6 +3823,12 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 248:	 // JSENGINESIZE[0237]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->GetJSEngineSize() ));
 				break;
+			case 250:	 // SCRIPTDATADIRECTORY[0239]
+			{
+				tString = JS_NewStringCopyZ( cx, cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA ).c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
 			case 251:	 // THIRSTRATE[0240]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_THIRSTRATE ))));
 				break;
