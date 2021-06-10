@@ -1,3 +1,18 @@
+11/06/2021 - Dragon Slayer
+	Added thirst system that works similarly to existing hunger system, where characters (and optionally, pets) grow thirsty over time, and gradually draining their stamina (down to a minimum of 1) if too thirsty
+	Added new settings to uox.ini under a new [thirst] section to control thirst system:
+		THIRSTRATE=6000 	// The rate at which characters grow more thirsty
+		THIRSTDRAINVAL=2 	// The amount of stamina drained per thirst cycle when too thirsty
+		PETTHIRSTOFFLINE=0 	// Enable/disable whether pets grow more thirsty over time while owners are offline
+	Added new JS properties for Characters related to thirst system (Xuri)
+		.thirst 			// Get/Set current thirst level of character
+		.thirstRate 		// Get character's thirst rate, based on racial properties or global settings
+		.willthirst/ 		// Get/Set whether character will get thirsty
+		.tamedThirstRate 	// Get/Set tamed pet's thirst rate
+		.thirstWildChance 	// Get/Set tamed pet's chance at going wild if too thirsty
+	Updated JS script for drinks (js/server/resource/pitchers.js) to reduce character thirst when consumed, with appropriate system messages displayed based on character's thirst level (Xuri)
+	Updated JS commands get (js/commands/targeting/get.js), set (js/commands/targeting/set.js) and tweak (js/commands/targeting/tweak.js) to support getting/setting character hunger levels (Xuri)
+
 04/06/2021 - Xuri (0.99.4p)
 	Fixed an issue with return values for onDrop JS event where not all return values would work as intended
 	Added -Wno-shift-negative-value flag to CXXFLAGS in Makefile to potentially supress some JS-related warnings when compiling on Unix platforms (punt)

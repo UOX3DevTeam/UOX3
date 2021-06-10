@@ -69,6 +69,7 @@ const UI32 BIT_MAPDIFFSENABLED			= 49;
 const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
 const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
 const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
+const UI32 BIT_PETTHIRSTOFFLINE          = 53;
 
 
 // New uox3.ini format lookup
@@ -385,6 +386,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ALCHEMYBONUSMODIFIER", 246);
 	regINIValue("NPCFLAGUPDATETIMER", 247);
 	regINIValue("JSENGINESIZE", 248);
+	regINIValue("THIRSTRATE", 251);
+	regINIValue("THIRSTDRAINVAL", 252);
+	regINIValue("PETTHIRSTOFFLINE", 253);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -446,6 +450,9 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
+
+	SystemTimer( tSERVER_THIRSTRATE, 6000 );
+	ThirstDrain( 2 );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -2154,6 +2161,21 @@ void CServerData::HungerDamage( SI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function    -   SI16 ThirstDrain( void ) const
+//|                 void ThirstDrain( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the stamina drain from players being thirsty
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::ThirstDrain( void ) const
+{
+	return thirstdrain;
+}
+void CServerData::ThirstDrain( SI16 value )
+{
+	thirstdrain = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 PetOfflineTimeout( void ) const
 //|					void PetOfflineTimeout( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -2181,6 +2203,21 @@ bool CServerData::PetHungerOffline( void ) const
 void CServerData::PetHungerOffline( bool newVal )
 {
 	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool PetThirstOffline( void ) const
+//|                 void PetThirstOffline( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether pets should thirst while the player (owner) is offline or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::PetThirstOffline( void ) const
+{
+	return boolVals.test( BIT_PETTHIRSTOFFLINE );
+}
+void CServerData::PetThirstOffline( bool newVal )
+{
+	boolVals.set( BIT_PETTHIRSTOFFLINE, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3144,6 +3181,12 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
+		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
+		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
+		ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
@@ -4099,6 +4142,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 248:	 // JSENGINESIZE[0237]
 			SetJSEngineSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 251:    // THIRSTRATE[0240]
+			SystemTimer( tSERVER_THIRSTRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 252:    // THIRSTDRAINVAL[0241]
+			ThirstDrain( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
+			break;
+		case 253:    // PETTHIRSTOFFLINE[0242]
+			PetThirstOffline( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		default:
 			rvalue = false;

@@ -3801,6 +3801,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 248:	 // JSENGINESIZE[0237]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->GetJSEngineSize() ));
 				break;
+			case 251:	 // THIRSTRATE[0240]
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( static_cast<cSD_TID>( tSERVER_THIRSTRATE ))));
+				break;
+			case 252:	 // THIRSTDRAINVAL[0241]
+				*rval = INT_TO_JSVAL( static_cast<SI16>( cwmWorldState->ServerData()->ThirstDrain() ));
+				break;
+			case 253:	 // PETTHIRSTOFFLINE[0242]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetThirstOffline() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;
