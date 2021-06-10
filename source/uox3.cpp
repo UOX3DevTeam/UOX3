@@ -640,19 +640,22 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		{
 			if( mChar.GetStamina() < mChar.GetMaxStam() )
 			{
-				for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
+				if( mChar.GetThirst() > 0 || ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
-					if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
+					for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
 					{
-						mChar.IncStamina( 1 );
-						if( mChar.GetStamina() >= mChar.GetMaxStam() )
+						if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
 						{
-							mChar.SetStamina( mChar.GetMaxStam() );
-							break;
+							mChar.IncStamina( 1 );
+							if( mChar.GetStamina() >= mChar.GetMaxStam() )
+							{
+								mChar.SetStamina( mChar.GetMaxStam() );
+								break;
+							}
 						}
+						else
+							break;
 					}
-					else
-						break;
 				}
 			}
 			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
@@ -711,10 +714,11 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 #endif
 	}
 
-	// Hunger Code
 	if( !mChar.IsDead() )
 	{
+		// Hunger/Thirst Code
 		mChar.DoHunger( mSock );
+		mChar.DoThirst( mSock );
 
 		if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
 		{

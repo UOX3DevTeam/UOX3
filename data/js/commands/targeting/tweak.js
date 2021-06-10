@@ -232,23 +232,27 @@ var charProp = {
 	strength:307,
 	tamed:308,
 	tamedHungerRate:309,
-	target:310,
-	tempdex:311,
-	tempint:312,
-	tempstr:313,
-	title:314,
-	town:315,
-	townPriv:316,
-	trainer:317,
-	visible:318,
-	vulnerable:319,
-	wandertype:320,
-	weight:321,
-	willhunger:322,
-	worldnumber:323,
-	x:324,
-	y:325,
-	z:326
+	tamedThirstRate:310,
+	target:311,
+	tempdex:312,
+	tempint:313,
+	tempstr:314,
+	thirst:315,
+	thirstWildChance:316,
+	title:317,
+	town:318,
+	townPriv:319,
+	trainer:320,
+	visible:321,
+	vulnerable:322,
+	wandertype:323,
+	weight:324,
+	willhunger:325,
+	willthirst:326,
+	worldnumber:327,
+	x:328,
+	y:329,
+	z:330
 }
 
 // List of character skills to handle
@@ -418,7 +422,7 @@ var accountProp = {
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
 const itemPropCount = 80;
-const charPropCount = 127;
+const charPropCount = 131;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
@@ -1857,6 +1861,10 @@ function HandleCharTarget( pSocket, myTarget )
 				charLabelTooltip 	= "The rate at which a pet grows hungry";
 				charValue 			= (myTarget.tamedHungerRate).toString();
 				break;
+			case charProp.tamedThirstRate:
+				charLabelTooltip 	= "The rate at which a pet grows thirsty";
+				charValue 			= (myTarget.tamedThirstRate).toString();
+				break;
 			case charProp.target:
 				charLabelTooltip 	= "Character's current target";
 				charValue 			= ( myTarget.hasOwnProperty('target') && myTarget.target != null ) ? (myTarget.target).toString() : "-";
@@ -1872,6 +1880,14 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.tempstr:
 				charLabelTooltip 	= "Character's temporary str, as affected by equipped items, spells and potions";
 				charValue 			= (myTarget.tempstr).toString();
+				break;
+			case charProp.thirst:
+				charLabelTooltip 	= "Character's current thirst status (0-6)";
+				charValue 			= (myTarget.thirst).toString();
+				break;
+			case charProp.thirstWildChance:
+				charLabelTooltip 	= "Chance for extremely thirsty pet to go wild with every NPC AI loop";
+				charValue 			= (myTarget.thirstWildChance).toString() + "%";
 				break;
 			case charProp.title:
 				charLabelTooltip 	= "The title of the character";
@@ -1910,6 +1926,10 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.willhunger:
 				charLabelTooltip 	= "Enables (true) or disables (false) hunger-mode";
 				charValue 			= (myTarget.willhunger).toString();
+				break;
+			case charProp.willthirst:
+				charLabelTooltip 	= "Enables (true) or disables (false) thirst-mode";
+				charValue 			= (myTarget.willthirst).toString();
 				break;
 			case charProp.worldnumber:
 				charLabelTooltip 	= "World that character exists in";
@@ -4315,6 +4335,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 5;
 			maxVal = 32737;
 			break;
+		case charProp.tamedThirstRate:
+			propertyName = "tamedThirstRate";
+			propertyHint = "The rate at which a pet grows thirsty";
+			propertyType = "Integer";
+			maxLength = 5;
+			maxVal = 32737;
+			break;
 		case charProp.tempdex:
 			propertyName = "tempdex";
 			propertyHint = "Character's temporary dex, as affected by equipped items, spells and potions";
@@ -4335,6 +4362,20 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
+			break;
+		case charProp.thirst:
+			propertyName = "thirst";
+			propertyType = "Integer";
+			propertyHint = "Character's current thirst status (0 - 6, where 0 is max thirsty and 6 is max full. At 0, characters may start take stamina damage depending on server settings.)";
+			maxLength = 1;
+			maxVal = 6;
+			break;
+		case charProp.thirstWildChance:
+			propertyName = "thirstWildChance";
+			propertyType = "Integer";
+			propertyHint = "Chance for extremely thirsty pet to go wild with every NPC AI loop";
+			maxLength = 3;
+			maxVal = 100;
 			break;
 		case charProp.townPriv:
 			propertyName = "townPriv";
@@ -5309,6 +5350,11 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.willhunger:
 			propertyName = "willhunger";
 			propertyHint = "Will character grow hungry?";
+			propertyType = "Boolean";
+			break;
+		case charProp.willthirst:
+			propertyName = "willthirst";
+			propertyHint = "Will character grow thirsty?";
 			propertyType = "Boolean";
 			break;
 		// Multi Properties

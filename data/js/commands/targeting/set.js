@@ -518,6 +518,10 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 			okMsg ( socket );
 		}
 		break;
+	case "THIRST":
+		ourChar.thirst = nVal;
+		okMsg( socket );
+		break;
 	// Account Properties
 	case "USERNAME":
 	case "CURRENTCHAR":

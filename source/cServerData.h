@@ -108,6 +108,7 @@ enum cSD_TID
 	tSERVER_FISHINGRANDOM,		// Max random time for fishing skill to complete.
 	tSERVER_SPIRITSPEAK,		// Duration of the spirit speak skill.
 	tSERVER_HUNGERRATE,			// Amount of time a player has before his hunger level decreases.
+	tSERVER_THIRSTRATE,			// Amount of time a player has before his thirst level decreases.
 	tSERVER_POLYMORPH,			// Duration of the polymorph spell.
 	tSERVER_ESCORTWAIT,			// Amount of time until an escort NPC will dissapear while waiting for a player to start his quest.
 	tSERVER_ESCORTACTIVE,		// Amount of time until an escort NPC will dissapear while a player is escorting him.
@@ -163,7 +164,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 53 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 55 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -274,6 +275,8 @@ private:
 
 	// Hunger & Food
 	SI16		hungerdamage;					//	Amount of damage applied if hungry and below threshold
+	// Thirst
+	SI16		thirstdrain;					//  Amount of stamina drained if thirsty and below threshold
 
 	// Combat
 	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
@@ -655,8 +658,14 @@ public:
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;
 
+	void		ThirstDrain( SI16 value );
+	SI16		ThirstDrain( void ) const;
+
 	void		PetHungerOffline( bool value );
 	bool		PetHungerOffline( void ) const;
+
+	void		PetThirstOffline( bool value );
+	bool		PetThirstOffline( void ) const;
 
 	void		PetOfflineTimeout( UI16 value );
 	UI16		PetOfflineTimeout( void ) const;
