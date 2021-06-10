@@ -2008,12 +2008,12 @@
 2035=a ship
 2037=%s [Dry Docked]
 2038=You are still stuffed from your last drink.
-2039=You are not very thirsty but could drink more.
+2039=You are not very thirsty, but could drink more.
 2040=You are feeling fairly thirsty.
 2041=You are extremely thirsty.
 2042=You are very weak from dehydration!
-2043=You must drink very soon or you will die!
-2044=You are dehydration!
-2045=You have no stamina from dehydration.
+2043=You must drink very soon or you will suffer from dehydration!
+2044=You are severely dehydrated!
+2045=You have no stamina because of dehydration.
 }
 EOF
