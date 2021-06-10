@@ -253,7 +253,7 @@ name=secret door
 id=0x0321
 type=12
 }
-// dark greenish stone wall west 
+// dark greenish stone wall west
 [0x0323]
 {
 get=base_item
@@ -709,7 +709,7 @@ name=barred metal door
 id=0x068D
 type=12
 }
-// barred metal door west hinge north 
+// barred metal door west hinge north
 [0x068E]
 {
 get=base_item
@@ -1613,7 +1613,7 @@ name=wooden gate
 id=0x086D
 type=12
 }
-// wooden gate south hinges west 
+// wooden gate south hinges west
 [0x086E]
 {
 get=base_item
@@ -1685,7 +1685,7 @@ name=iron gate
 id=0x0825
 type=12
 }
-// iron gate west hinges south 
+// iron gate west hinges south
 [0x0826]
 {
 get=base_item
@@ -1925,4 +1925,4 @@ name=iron gate
 id=0x085B
 type=12
 }
-// 
+//

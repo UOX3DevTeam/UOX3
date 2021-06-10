@@ -75,6 +75,13 @@ bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
 bool objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
+		return false;
+	if( a == b )
+		return true;
+	if( a->WorldNumber() != b->WorldNumber() || a->GetInstanceID() != b->GetInstanceID() )
+		return false;
+
 	auto aX = a->GetX();
 	auto aY = a->GetY();
 	auto bX = b->GetX();
@@ -101,6 +108,13 @@ bool objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
 bool objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
+		return false;
+	if( a == b )
+		return true;
+	if( a->WorldNumber() != b->WorldNumber() || a->GetInstanceID() != b->GetInstanceID() )
+		return false;
+
 	point3 aOldLoc = a->GetOldLocation();
 	auto aX = aOldLoc.x;
 	auto aY = aOldLoc.y;
