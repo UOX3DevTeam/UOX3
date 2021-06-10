@@ -381,6 +381,12 @@ function HandleGetChar( socket, ourChar, uKey )
 			socket.SysMessage( ourChar.socket.language );
 		}
 		break;
+	case "THIRST":
+		socket.SysMessage( ourChar.thirst );
+		break;
+	case "THIRSTRATE":
+		socket.SysMessage( ourChar.thirstRate );
+		break;
 	case "TOWNPRIV":
 		socket.SysMessage( ourChar.townPriv );
 		break;

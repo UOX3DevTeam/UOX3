@@ -2171,5 +2171,26 @@
 2034=Arr! Seul le propriétaire du navire peut changer de nom!
 2035=un navire
 2037=%s [en cale sèche]
+2038=Sélectionnez la cible pour définir le déclencheur de script (%i) pour:
+2039=Sélectionnez la cible pour ajouter le déclencheur de script (%i) à:
+2040=Sélectionnez la cible pour supprimer le déclencheur de script (%i) de:
+2041=Sélectionnez la cible pour obtenir les déclencheurs de script pour:
+2042=Aucun script trouvé attaché à la cible.
+2043=Sélectionnez la cible pour supprimer TOUS les déclencheurs de script de:
+2044=Tous les déclencheurs de script ont été effacés de la cible!
+2045=Vous êtes toujours gavé de votre dernier verre.
+2046=Tu n'as pas très soif, mais tu pourrais boire plus.
+2047=Vous avez assez soif.
+2048=Vous avez extrêmement soif.
+2049=Vous êtes très faible à cause de la déshydratation!
+2050=Vous devez boire très bientôt ou vous souffrirez de déshydratation !
+2051=Vous êtes gravement déshydraté!
+2052=Vous n'avez pas d'endurance à cause de la déshydratation.
+2053=Vous êtes tout simplement trop rassasié pour continuer à boire!
+2054=Vous buvez la boisson, mais vous avez encore extrêmement soif.
+2055=Après avoir bu la boisson, vous avez beaucoup moins soif.
+2056=Vous buvez la boisson et commencez à vous sentir plus rassasié.
+2057=Vous vous sentez rassasié après avoir bu la boisson.
+2058=Votre soif est presque étanche, mais vous parvenez à boire la boisson.
 }
 EOF

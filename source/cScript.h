@@ -62,7 +62,7 @@ enum ScriptEvent
 	seOnResurrect,			//	**
 	seOnFlagChange,			//	**
 	seOnHungerChange,		//	**
-	seOnThirstChange,       //  **
+	seOnThirstChange,		//  **
 	seOnStolenFrom,			//	**
 	seOnSnooped,			//	**
 	seOnSnoopAttempt,		//	**
@@ -210,7 +210,7 @@ public:
 	SI08		OnResurrect( CChar *pAlive );
 	SI08		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );
 	SI08		OnHungerChange( CChar *pChanging, SI08 newStatus );
-	bool        OnThirstChange( CChar* pChanging, SI08 newStatus );
+	bool		OnThirstChange( CChar* pChanging, SI08 newStatus );
 	SI08		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
 	SI08		OnSnooped( CChar *snooped, CChar *snooper, bool success );
 	SI08		OnSnoopAttempt( CChar *snooped, CChar *snooper );
