@@ -170,6 +170,7 @@ private:
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
 	UI16		port;							//	Port number that the server listens on, for connections
+	std::string externalIP;
 	std::vector< physicalServer > serverList;	//	Series of server entries for shard list
 	UI08		consolelogenabled;				//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
 	char		commandprefix;					//	Character that acts as the command prefix
@@ -378,7 +379,7 @@ public:
 
 	void		ResetDefaults( void );
 
-	void		RefreshIPs( void );
+	//void		RefreshIPs( void );
 
 	CServerData( void );
 	~CServerData();
@@ -388,7 +389,8 @@ public:
 	std::string ServerName( void ) const;
 	std::string ServerDomain( void ) const;
 	std::string ServerIP( void ) const;
-
+	std::string ExternalIP() const;
+	void 		ExternalIP( const std::string &ip );
 	void		ServerPort( UI16 setport );
 	UI16		ServerPort( void ) const;
 	void		ServerConsoleLog( UI08 setting );

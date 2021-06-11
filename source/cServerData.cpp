@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <cstdint>
 #include <limits>
+#include "IP4Address.hpp"
 #if UOX_PLATFORM != PLATFORM_WIN32
 #include <netdb.h>
 
@@ -190,6 +191,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BASEFISHINGTIMER",24);
 	regINIValue("SCRIPTSDIRECTORY", 25);
 	regINIValue("JOINPARTMSGS", 26);
+	regINIValue("EXTERNALIP",254);
 	//HERE
 	regINIValue("MANAREGENTIMER", 37);
 	regINIValue("RANDOMFISHINGTIMER", 38);
@@ -281,7 +283,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SKILLLEVEL", 124);
 	regINIValue("SNOOPISCRIME", 125);
 	regINIValue("BOOKSDIRECTORY", 126);
-	regINIValue("SERVERLIST", 127);
+	//regINIValue("SERVERLIST", 127);
 	regINIValue("PORT", 128);
 	regINIValue("ACCESSDIRECTORY", 129);
 	regINIValue("LOGSDIRECTORY", 130);
@@ -409,8 +411,9 @@ void CServerData::ResetDefaults( void )
 
 	ServerIP( "127.0.0.1" );
 	ServerPort( 2593 );
+	ExternalIP("127.0.0.1");
 	serverList[0].setPort( 2593 );
-	ServerName( "Default UOX3 Server" );
+	ServerName( "My UOX3 Shard" );
 
 	// Set default gcMaxBytes limit in MB per JS runtime
 	// If set too low, UOX3 might crash when reloading (full) JS engine
@@ -702,7 +705,7 @@ CServerData::~CServerData()
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Refresh IPs for servers in serverlist
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::RefreshIPs( void )
+/*void CServerData::RefreshIPs( void )
 {
 	struct hostent *lpHostEntry = NULL;
 
@@ -720,7 +723,7 @@ void CServerData::RefreshIPs( void )
 			}
 		}
 	}
-}
+}*/
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string ServerName( void ) const
@@ -739,7 +742,7 @@ void CServerData::ServerName( std::string setname )
 	serverList[0].setName( setname );
 	if( setname.empty() )
 	{
-		serverList[0].setName( "Default UOX3 Server" );
+		serverList[0].setName( "My UOX3 Shard" );
 	}
 }
 
@@ -782,7 +785,21 @@ void CServerData::ServerIP( std::string setip )
 	else
 		serverList[0].setIP(setip);
 }
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string CServerData::ExternalIP() const
+//|					void CServerData::ExternalIP( const std::string &ip )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets external (WAN) IP for server
+//o-----------------------------------------------------------------------------------------------o
+std::string CServerData::ExternalIP() const
+{
+	return externalIP;
+}
+void CServerData::ExternalIP( const std::string &ip )
+{
+	externalIP = ip;
+	IP4Address::setExternal( externalIP );
+}
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 ServerPort( void ) const
 //|					void ServerPort( UI16 setport )
@@ -2986,6 +3003,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << (static_cast<std::uint16_t>(1)<<8 | static_cast<std::uint16_t>(2)) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
+		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
 		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
@@ -3022,7 +3040,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CLIENTSUPPORT70610=" << (ClientSupport70610()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
-		ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
+		/*ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
 
 		std::vector< physicalServer >::iterator slIter;
 		for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
@@ -3034,7 +3052,7 @@ bool CServerData::save( std::string filename )
 				ofsOutput << slIter->getIP() << ",";
 			ofsOutput << slIter->getPort() << '\n';
 		}
-		ofsOutput << "}" << '\n';
+		ofsOutput << "}" << '\n';*/
 
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
@@ -3390,7 +3408,7 @@ bool CServerData::ParseINI( const std::string& filename )
 		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
 		if( !toParse.IsErrored() )
 		{
-			serverList.clear();
+			//serverList.clear();
 			startlocations.clear();
 			for( ScriptSection *sect = toParse.FirstEntry(); sect != NULL; sect = toParse.NextEntry() )
 			{
@@ -3429,6 +3447,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 	switch( titer->second )
 	{
 		case 1:	 // SERVERNAME[0002]
+			ServerName( value );
 			break;
 		case 2:	 // CONSOLELOG[0003]
 			ServerConsoleLog( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
@@ -3793,7 +3812,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 127:	 // SERVERLIST[0120]
 		{
-			std::string sname, sip, sport;
+			/*std::string sname, sip, sport;
 			physicalServer toAdd;
 			auto csecs = strutil::sections( value, "," );
 			if( csecs.size() == 3 )
@@ -3839,7 +3858,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			{
 				Console.warning(strutil::format("Malformend Serverlist entry: %s", value.c_str() ));
 				Console.warning( "This shard will not show up on the shard listing" );
-			}
+			}*/
 			break;
 		}
 		case 128:	 // PORT[0121]
@@ -4164,6 +4183,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 253:    // PETTHIRSTOFFLINE[0242]
 			PetThirstOffline( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
+			break;
+		case 254:	// ExternalIP
+			ExternalIP(value);
 			break;
 		default:
 			rvalue = false;

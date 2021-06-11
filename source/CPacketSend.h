@@ -1079,6 +1079,7 @@ public:
 	CPGameServerList( UI16 numServers );
 	virtual void	NumberOfServers( UI16 numItems );
 	virtual void	AddServer( UI16 servNum, physicalServer *data );
+	virtual void 	addEntry( const std::string & name, UI32 addressBig );
 };
 
 class CPSecureTrading : public CPUOXBuffer

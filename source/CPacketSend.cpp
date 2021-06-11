@@ -5757,6 +5757,15 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 	UI32 ip = inet_addr( data->getIP().c_str() );
 	pStream.WriteLong( static_cast<size_t>(baseOffset) + 36, ip );
 }
+void CPGameServerList::addEntry( const std::string & name, UI32 addressBig )
+{
+	pStream.WriteShort( 1, 46 );
+	pStream.WriteShort( 4, 1 );
+	pStream.WriteShort( 6, 0 );
+	UI32 baseOffset = 6;
+	pStream.WriteString( static_cast<size_t>(baseOffset) + 2, name.c_str(), name.size() );
+	pStream.WriteLong( static_cast<size_t>(baseOffset) + 36, addressBig );
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPSecureTrading()

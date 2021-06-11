@@ -1,6 +1,6 @@
 #ifndef __CSOCKET_H__
 #define __CSOCKET_H__
-
+#include "IP4Address.hpp"
 enum ClientTypes
 {
 	CV_DEFAULT = 0,
@@ -69,6 +69,7 @@ public:
 	//
 
 	void			InternalReset( void );
+	IP4Address		ipaddress;
 
 private:
 	std::vector< UI16 >				trigWords;

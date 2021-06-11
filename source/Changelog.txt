@@ -1,3 +1,9 @@
+12/06/2021 - Xuri
+	Updated decorate command to support two additional object categories - containers and spawners - and the properties needed by these to function
+	Fixed an issue with appending folder names to paths in File JS Method .Open() and JS File Function DeleteFile()
+	Renamed default UOX3 server name (was too long) to My UOX3 Shard
+	Rewrote server IP handling (new files: IP4Address.hpp/cpp) and did away with the need for the [play server list] section and SERVERLIST entries in uox.ini. UOX3 now automatically accepts and responds to connections on both local and LAN IPs, as well as an optional external/WAN ip defined in uox.ini tag EXTERNALIP, with server name defined by the existing SERVERNAME tag in the ini (punt)
+
 11/06/2021 - Xuri (0.99.4q)
 	Added entry for a new directory path in uox.ini:
 		SCRIPTDATADIRECTORY=./js/jsdata/ - dedicated to generic data read/written by JS scripts, data not directly linked to live content, which should not live or die by the state of the SHAREDDIRECTORY. Existing scripts will continue to write/read files in the SHAREDDIRECTORY if no changes are made.

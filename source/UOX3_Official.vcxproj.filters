@@ -284,6 +284,9 @@
     <ClCompile Include="MultiMul.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
+    <ClCompile Include="IP4Address.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PartySystem.h">
@@ -522,6 +525,9 @@
     </ClInclude>
     <ClInclude Include="MultiMul.hpp">
       <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="IP4Address.hpp">
+      <Filter>Header Files\Network No. 1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
