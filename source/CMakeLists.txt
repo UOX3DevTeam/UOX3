@@ -78,6 +78,7 @@ add_library(uox
 		UOPData.cpp
 		MultiMul.cpp
 		IDXMul.cpp
+		IP4Address.cpp
 )
 
 target_include_directories(uox
