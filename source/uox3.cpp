@@ -1503,7 +1503,7 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 	}
 
-	time_t oldIPTime = GetOldIPTime();
+	/*time_t oldIPTime = GetOldIPTime();
 	if( !GetIPUpdated() )
 	{
 		SetIPUpdated( true );
@@ -1518,7 +1518,7 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		ServerData()->RefreshIPs();
 		SetIPUpdated( false );
-	}
+	}*/
 
 	//Time functions
 	if( GetUOTickCount() <= GetUICurrentTime() || ( GetOverflow() ) )
@@ -2999,7 +2999,7 @@ int main( SI32 argc, char *argv[] )
 
 		// Shows information about IPs and ports being listened on
 		Console.TurnYellow();
-		for( int i = 0; i < cwmWorldState->ServerData()->ServerCount(); i++ )
+		/*for( int i = 0; i < cwmWorldState->ServerData()->ServerCount(); i++ )
 		{
 			physicalServer *serverEntry = cwmWorldState->ServerData()->ServerEntry(i);
 			if( !serverEntry->getDomain().empty() )
@@ -3012,6 +3012,22 @@ int main( SI32 argc, char *argv[] )
 					Console << "UOX: " << serverEntry->getName().c_str() << " listening on IP " << inet_ntoa(*pinaddr) << " (Port " << serverEntry->getPort() << ")" << myendl;
 				}
 			}
+		}*/
+
+		auto externalIP = cwmWorldState->ServerData()->ExternalIP();
+		if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" )
+		{
+			Console << "UOX: listening for incoming connections on Exernal/WAN IP: " << externalIP.c_str() << myendl;
+		}
+
+		auto &deviceIPs = IP4Address::deviceIPs();
+		auto temp = strutil::sections( deviceIPs, "\n" );
+		for( auto &entry : temp )
+		{
+			if( entry == "127.0.0.1" )
+				Console << "UOX: listening for incoming connections on Local IP: " << entry << myendl;
+			else
+				Console << "UOX: listening for incoming connections on LAN IP: " << entry << myendl;
 		}
 		Console.TurnNormal();
 

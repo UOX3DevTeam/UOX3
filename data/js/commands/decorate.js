@@ -1,12 +1,25 @@
 // Decorate command - by Xuri (xuri@uox3.org)
-// v1.0
-// Last updated: 10th of June, 2021
+// v1.2
+//
+//		1.2 - 12/06/2021
+//			Added new objectType - spawners
+//			Saves/Loads new object properties: spawnsection, sectionalist, mininterval, maxinterval
+//			Added progress gump display to all save, load, copy and clean sub-commands
+//
+// 		1.1 - 11/06/2021
+// 			Added new objectType - containers
+// 			Saves/Loads new object properties: dir, weight, weightMax, maxItems, amount
+//
+// 		1.0 - 10/06/2021
+// 			Initial version
 //
 // Command that allows saving and loading world templates - essentially blueprints for world decoration
 // Templates are by default read from/written in SCRIPTDATADIRECTORY/worldtemplates/
 //
+// Supported objectTypes: doors, signs, lights, containers, moongates, teleporters, misc (everything else)
+//
 // OPEN GUMP MENU WIHT OPTIONS
-// 'decorate
+// 'decorate (TODO)
 // 		Open gump with options for saving and loading world templates
 //
 // SAVING WORLD TEMPLATES MANUALLY
@@ -40,23 +53,22 @@
 // 		Clean up duplicate decorations that might have been loaded/added by accident. Counts as duplicate if
 // 		item ID, location, type and hue are identical. BEWARE: Might affect player items on a live shard!
 
-// Save arrays
+// Save/load arrays
 var decorateArray = [];
 var decorateDoorsArray = [];
 var decorateSignsArray = [];
 var decorateLightsArray = [];
+var decorateContainersArray = [];
 var decorateMoongatesArray = [];
 var decorateTeleportersArray = [];
+var decorateSpawnersArray = [];
 var decorateMiscArray = [];
 
-// Load arrays
-var decorateArray = [];
-var decorateDoorsArray = [];
-var decorateSignsArray = [];
-var decorateLightsArray = [];
-var decorateMoongatesArray = [];
-var decorateTeleportersArray = [];
-var decorateMiscArray = [];
+// Facets, each will have their own set of files with relevant object types
+const facetList = [ "felucca", "trammel", "ilshenar", "malas", "tokuno", "termur" ];
+
+// Object types - each will be saved to its own file, per facet
+const objectTypeList = [ "doors", "signs", "lights", "containers", "moongates", "teleporters", "spawners", "misc" ];
 
 // List of sign IDs
 const signIDs = [ 0x0b97,0x0b96,0x0b97,0x0b98,0x0b99,0x0b9a,0x0b9b,0x0b9c,0x0b9d,0x0b9e,0x0b9f,0x0ba0,0x0ba1,0x0ba2,0x0ba3,0x0ba4,0x0ba5,0x0ba6,0x0ba7,0x0ba8,0x0ba9,0x0baa,0x0bab,0x0bac,0x0bad,0x0bae,0x0baf,0x0bb0,0x0bb1,0x0bb2,0x0bb3,0x0bb4,0x0bb5,0x0bb6,0x0bb7,0x0bb8,0x0bb9,0x0bba,0x0bbb,0x0bbc,0x0bbd,0x0bbe,0x0bbf,0x0bc0,0x0bc1,0x0bc2,0x0bc3,0x0bc4,0x0bc5,0x0bc6,0x0bc7,0x0bc8,0x0bc9,0x0bca,0x0bcb,0x0bcc,0x0bcd,0x0bce,0x0bcf,0x0bd0,0x0bd1,0x0bd2,0x0bd3,0x0bd4,0x0bd5,0x0bd6,0x0bd7,0x0bd8,0x0bd9,0x0bda,0x0bdb,0x0bdc,0x0bdd,0x0bde,0x0bdf,0x0be0,0x0be1,0x0be2,0x0be3,0x0be4,0x0be5,0x0be6,0x0be7,0x0be8,0x0be9,0x0bea,0x0beb,0x0bec,0x0bed,0x0bee,0x0bef,0x0bf0,0x0bf1,0x0bf2,0x0bf3,0x0bf4,0x0bf5,0x0bf6,0x0bf7,0x0bf8,0x0bf9,0x0bfa,0x0bfb,0x0bfc,0x0bfd,0x0bfe,0x0bff,0x0c00,0x0c01,0x0c02,0x0c03,0x0c04,0x0c05,0x0c06,0x0c07,0x0c08,0x0c09,0x0c0a,0x0c0b,0x0c0c,0x0c0d,0x0c0e,0x1297,0x1298,0x1299,0x129a,0x129b,0x129c,0x129d,0x129e,0x163d,0x163e,0x163f,0x1641,0x1642,0x1643,0x1f28,0x1f29,0x4b20,0x4b21,0x9a0c,0x9a0d,0x9a0e,0x9a0f,0x9a10,0x9a11,0x9a12,0x9a13,0xa130,0xa131,0xa132,0xa133,0xa134,0xa135,0xa136,0xa137 ];
@@ -64,11 +76,8 @@ const signIDs = [ 0x0b97,0x0b96,0x0b97,0x0b98,0x0b99,0x0b9a,0x0b9b,0x0b9c,0x0b9d
 // List of moongate IDs
 const moongateIDs = [ 0x0dda,0x0ddb,0x0ddc,0x0ddd,0x0dde,0x0f6c,0x0f6d,0x0f6e,0x0f6f,0x0f70,0x1ae5,0x1ae6,0x1ae7,0x1ae8,0x1ae9,0x1aea,0x1aeb,0x1aec,0x1aed,0x1af3,0x1af4,0x1af5,0x1af6,0x1af7,0x1af8,0x1af9,0x1afa,0x1afb,0x1fcb,0x1fcc,0x1fcd,0x1fce,0x1fcf,0x1fd0,0x1fd1,0x1fd2,0x1fd3,0x1fd4,0x1fd5,0x1fd6,0x1fd7,0x1fd8,0x1fde,0x1fdf,0x1fe0,0x1fe1,0x1fe2,0x1fe3,0x1fe4,0x1fe5,0x1fe6,0x1fe7,0x1fe8,0x1fe9,0x1fea,0x1feb,0x4b8f,0x4b90,0x4b91,0x4b92,0x4b93,0x4b94,0x4b95,0x4b96,0x4b97,0x4b98,0x4b99,0x4b9a,0x4b9b,0x4b9c,0x4bcb,0x4bcc,0x4bcd,0x4bce,0x4bcf,0x4bd0,0x4bd1,0x4bd2,0x4bd3,0x4bd4,0x4bd5,0x4bd6,0x4bd7,0x4bd8 ]
 
-// Doors,Signs, Lights, Moongates, Teleporters and Misc
-const objectTypeCount = 6;
-
-// Felucca, Trammel, Ilshenar, Malas, Tokuno, Termur
-const facetCount = 6;
+// List of object properties to save
+const objectProps = [];
 
 // ScriptID of this script, used to identify and close some gumps
 const scriptID = 1059;
@@ -85,8 +94,10 @@ function command_DECORATE( socket, cmdString )
 	decorateDoorsArray.length = 0;
 	decorateSignsArray.length = 0;
 	decorateLightsArray.length = 0;
+	decorateContainersArray.length = 0;
 	decorateMoongatesArray.length = 0;
 	decorateTeleportersArray.length = 0;
+	decorateSpawnersArray.length = 0;
 	decorateMiscArray.length = 0;
 
 	// Reset some global variables used to track stuff across functions
@@ -154,6 +165,10 @@ function GetDecorationType( socket, splitString )
 				objectType = "lights";
 				decorateArray = decorateLightsArray;
 				break;
+			case "CONTAINERS": // All items with container type, or container tiledata flag
+				objectType = "containers";
+				decorateArray = decorateContainersArray;
+				break;
 			case "MOONGATES": // All moongates
 				objectType = "moongates";
 				decorateArray = decorateMoongatesArray;
@@ -162,12 +177,16 @@ function GetDecorationType( socket, splitString )
 				objectType = "teleporters";
 				decorateArray = decorateTeleportersArray;
 				break;
+			case "SPAWNERS": // All spawner objects
+				objectType = "spawners";
+				decorateArray = decorateSpawnersArray;
+				break;
 			case "MISC": // All other objects that don't fit into the other categories
 				objectType = "misc";
 				decorateArray = decorateMiscArray;
 				break;
 			default:
-				if( splitString != "felucca" && splitString != "trammel" && splitString != "ilshenar" && splitString != "malas" && splitString != "termur" )
+				if( facetList.indexOf( splitString ) == -1 )
 				{
 					objectType = splitString.toLowerCase();
 				}
@@ -291,6 +310,8 @@ function HandleDecorateCopy( socket, splitString )
 
 		if( facetID != -1 && targetFacetID != -1 )
 		{
+			DisplayProgressGump( socket, "Copying Decorations", 0 );
+
 			totalCopied = IterateOver( "ITEM" );
 			if( totalCopied > 0 )
 			{
@@ -300,6 +321,8 @@ function HandleDecorateCopy( socket, splitString )
 			{
 				socket.SysMessage( "No decorations were copied." );
 			}
+
+			socket.CloseGump( scriptID + 0xffff, 0 );
 		}
 	}
 	else
@@ -315,11 +338,49 @@ function HandleDecorateClean( socket )
 	cleanMode = true;
 	totalCleaned = 0;
 
+	DisplayProgressGump( socket, "Cleaning Duplicates", 0 );
+
+	var progressOne = true;
+	var progressTwo = true;
+	var progressThree = true;
+	var progressFour = true;
+	var progressFive = true;
+
+	var facetCount = facetList.length;
 	for( var i = 0; i < facetCount; i++ )
 	{
 		facetID = i;
 		IterateOver( "ITEM" );
+
+		if( progressFive && i >= 5 )
+		{
+			DisplayProgressGump( socket, "Cleaning Duplicates", 75 );
+			progressFive = false;
+		}
+		else if( progressFour && i >= 4 )
+		{
+			DisplayProgressGump( socket, "Cleaning Duplicates", 60 );
+			progressFour = false;
+		}
+		else if( progressThree && i >= 3 )
+		{
+			DisplayProgressGump( socket, "Cleaning Duplicates", 45 );
+			progressThree = false;
+		}
+		else if( progressTwo && i >= 2 )
+		{
+			DisplayProgressGump( socket, "Cleaning Duplicates", 30 );
+			progressTwo = false;
+		}
+		else if( progressOne && i >= 1 )
+		{
+			DisplayProgressGump( socket, "Cleaning Duplicates", 15 );
+			progressOne = false;
+		}
+
 	}
+
+	socket.CloseGump( scriptID + 0xffff, 0 );
 
 	if( totalCleaned > 0 )
 	{
@@ -338,6 +399,8 @@ function HandleDecorateSave( socket, splitString )
 	saveAll = false;
 	saveCustom = false;
 
+	var facetCount = facetList.length;
+	var objectTypeCount = objectTypeList.length;
 	var numArguments = splitString.length;
 	switch( numArguments )
 	{
@@ -352,8 +415,10 @@ function HandleDecorateSave( socket, splitString )
 				decorateDoorsArray.length = 0;
 				decorateSignsArray.length = 0;
 				decorateLightsArray.length = 0;
+				decorateContainersArray.length = 0;
 				decorateMoongatesArray.length = 0;
 				decorateTeleportersArray.length = 0;
+				decorateSpawnersArray.length = 0;
 				decorateMiscArray.length = 0;
 
 				switch( i )
@@ -362,31 +427,37 @@ function HandleDecorateSave( socket, splitString )
 						socket.SysMessage( "Saving decorations for Felucca..." );
 						facetID = 0;
 						facetName = "felucca";
+						DisplayProgressGump( socket, "Saving Decorations", 0 );
 						break;
 					case 1:
 						socket.SysMessage( "Saving decorations for Trammel..." );
 						facetID = 1;
 						facetName = "trammel";
+						DisplayProgressGump( socket, "Saving Decorations", 20 );
 						break;
 					case 2:
 						socket.SysMessage( "Saving decorations for Ilshenar..." );
 						facetID = 2;
 						facetName = "ilshenar";
+						DisplayProgressGump( socket, "Saving Decorations", 35 );
 						break;
 					case 3:
 						socket.SysMessage( "Saving decorations for Malas..." );
 						facetID = 3;
 						facetName = "malas";
+						DisplayProgressGump( socket, "Saving Decorations", 50 );
 						break;
 					case 4:
 						socket.SysMessage( "Saving decorations for Tokuno..." );
 						facetID = 4;
 						facetName = "tokuno";
+						DisplayProgressGump( socket, "Saving Decorations", 65 );
 						break;
 					case 5:
 						socket.SysMessage( "Saving decorations for Termur..." );
 						facetID = 5;
 						facetName = "termur";
+						DisplayProgressGump( socket, "Saving Decorations", 80 );
 						break;
 					default:
 						socket.SysMessage( "Invalid facet selected, saving aborted!" );
@@ -398,7 +469,7 @@ function HandleDecorateSave( socket, splitString )
 				if( iterateCount == 0 )
 					continue; // No decorations found, of any type. Check next facet!
 
-				socket.SysMessage( "..." + iterateCount + " decorations saved!" );
+				socket.SysMessage( "..." + ( iterateCount ) + " decorations saved!" );
 
 				// With facetID/Name sorted, let's loop through each objectType
 				for( var j = 0; j < objectTypeCount; j++ )
@@ -407,27 +478,36 @@ function HandleDecorateSave( socket, splitString )
 					{
 						case 0:
 							objectType = "doors";
-							SaveDecorationsToFile( socket, decorateDoorsArray );
+							SaveDecorationsToFile( socket, decorateDoorsArray, false );
 							break;
 						case 1:
 							objectType = "signs";
-							SaveDecorationsToFile( socket, decorateSignsArray );
+							SaveDecorationsToFile( socket, decorateSignsArray, false  );
 							break;
 						case 2:
 							objectType = "lights";
-							SaveDecorationsToFile( socket, decorateLightsArray );
+							SaveDecorationsToFile( socket, decorateLightsArray, false  );
 							break;
 						case 3:
-							objectType = "moongates";
-							SaveDecorationsToFile( socket, decorateMoongatesArray );
+							objectType = "containers";
+							SaveDecorationsToFile( socket, decorateContainersArray, false  );
 							break;
 						case 4:
-							objectType = "teleporters";
-							SaveDecorationsToFile( socket, decorateTeleportersArray );
+							objectType = "moongates";
+							SaveDecorationsToFile( socket, decorateMoongatesArray, false  );
 							break;
 						case 5:
+							objectType = "teleporters";
+							SaveDecorationsToFile( socket, decorateTeleportersArray, false  );
+							break;
+						case 6:
+							objectType = "spawners";
+							socket.SysMessage( "Spawners!" );
+							SaveDecorationsToFile( socket, decorateSpawnersArray, false  );
+							break;
+						case 7:
 							objectType = "misc";
-							SaveDecorationsToFile( socket, decorateMiscArray );
+							SaveDecorationsToFile( socket, decorateMiscArray, false  );
 							break;
 						default:
 							socket.SysMessage( "Invalid objectType selected, saving aborted!" );
@@ -435,6 +515,7 @@ function HandleDecorateSave( socket, splitString )
 					}
 				}
 			}
+			socket.CloseGump( scriptID + 0xffff, 0 );
 			return;
 		}
 		case 2: // User trying to save custom file, or specified either objectType or facetName (but not both)
@@ -455,16 +536,19 @@ function HandleDecorateSave( socket, splitString )
 			}
 
 			// If no objectType was specified, AND no facetID, then assume user wants to save everything to a custom file
-			if( objectType != "" && objectType != "doors" && objectType != "signs" && objectType != "lights" && objectType != "moongates" && objectType != "teleporters" && objectType != "misc" )
+			// if( objectType != "" && objectType != "doors" && objectType != "signs" && objectType != "lights" && objectType != "containers" && objectType != "moongates" && objectType != "teleporters" && objectType != "misc" )
+			if( objectType != "" && objectTypeList.indexOf( objectType ) == -1 )
 			{
 				// Save in custom file
 				saveCustom = true;
 				saveAll = true;
 
+				DisplayProgressGump( socket, "Saving Decorations", 0 );
+
 				var iterateCount = IterateOver( "ITEM" );
 				if( iterateCount > 0 )
 				{
-					if( SaveDecorationsToFile( socket, decorateArray ))
+					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
 						socket.SysMessage( iterateCount + " decorations saved to custom world template '" + objectType + "'. Check <SCRIPTSDATADIRECTORY>/worldtemplates/ for output files!" );
 					}
@@ -477,12 +561,15 @@ function HandleDecorateSave( socket, splitString )
 				{
 					socket.SysMessage( "No decorations found. None saved!" );
 				}
+				socket.CloseGump( scriptID + 0xffff, 0 );
 			}
 			else
 			{
 				if( objectType == "" && facetID != -1 )
 				{
 					saveAll = true;
+
+					DisplayProgressGump( socket, "Saving Decorations", 0 );
 
 					var iterateCount = IterateOver( "ITEM" );
 					if( iterateCount > 0 )
@@ -495,34 +582,50 @@ function HandleDecorateSave( socket, splitString )
 							{
 								case 0:
 									objectType = "doors";
-									SaveDecorationsToFile( socket, decorateDoorsArray );
+									SaveDecorationsToFile( socket, decorateDoorsArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 12 );
 									break;
 								case 1:
 									objectType = "signs";
-									SaveDecorationsToFile( socket, decorateSignsArray );
+									SaveDecorationsToFile( socket, decorateSignsArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 24 );
 									break;
 								case 2:
 									objectType = "lights";
-									SaveDecorationsToFile( socket, decorateLightsArray );
+									SaveDecorationsToFile( socket, decorateLightsArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 36 );
 									break;
 								case 3:
-									objectType = "moongates";
-									SaveDecorationsToFile( socket, decorateMoongatesArray );
+									objectType = "containers";
+									SaveDecorationsToFile( socket, decorateContainersArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 48 );
 									break;
 								case 4:
-									objectType = "teleporters";
-									SaveDecorationsToFile( socket, decorateTeleportersArray );
+									objectType = "moongates";
+									SaveDecorationsToFile( socket, decorateMoongatesArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 60 );
 									break;
 								case 5:
+									objectType = "teleporters";
+									SaveDecorationsToFile( socket, decorateTeleportersArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 72 );
+									break;
+								case 6:
+									objectType = "spawners";
+									SaveDecorationsToFile( socket, decorateSpawnersArray, false );
+									DisplayProgressGump( socket, "Saving Decorations", 84 );
+									break;
+								case 7:
 									objectType = "misc";
 									SaveDecorationsToFile( socket, decorateMiscArray );
 									break;
 								default:
 									socket.SysMessage( "Invalid objectType selected, saving aborted!" );
+									socket.CloseGump( scriptID + 0xffff, 0 );
 									return;
 							}
 						}
-
+						socket.CloseGump( scriptID + 0xffff, 0 );
 						socket.SysMessage( iterateCount + " decorations successfully saved to templates for facet '" + facetName + "'. Check <SCRIPTDATADIRECTORY/worldtemplates/ for saved template files!" );
 					}
 				}
@@ -537,6 +640,7 @@ function HandleDecorateSave( socket, splitString )
 						decorateLightsArray.length = 0;
 						decorateMoongatesArray.length = 0;
 						decorateTeleportersArray.length = 0;
+						decorateSpawnersArray.length = 0;
 						decorateMiscArray.length = 0;
 
 						switch( i )
@@ -544,29 +648,36 @@ function HandleDecorateSave( socket, splitString )
 							case 0:
 								facetID = 0;
 								facetName = "felucca";
+								DisplayProgressGump( socket, "Saving Decorations", 15 );
 								break;
 							case 1:
 								facetID = 1;
 								facetName = "trammel";
+								DisplayProgressGump( socket, "Saving Decorations", 30 );
 								break;
 							case 2:
 								facetID = 2;
 								facetName = "ilshenar";
+								DisplayProgressGump( socket, "Saving Decorations", 45 );
 								break;
 							case 3:
 								facetID = 3;
 								facetName = "malas";
+								DisplayProgressGump( socket, "Saving Decorations", 60 );
 								break;
 							case 4:
 								facetID = 4;
 								facetName = "tokuno";
+								DisplayProgressGump( socket, "Saving Decorations", 75 );
 								break;
 							case 5:
 								facetID = 5;
 								facetName = "termur";
+								DisplayProgressGump( socket, "Saving Decorations", 90 );
 								break;
 							default:
 								socket.SysMessage( "Invalid facet selected, saving aborted!" );
+								socket.CloseGump( scriptID + 0xffff, 0 );
 								return;
 						}
 
@@ -579,28 +690,36 @@ function HandleDecorateSave( socket, splitString )
 						switch( objectType.toUpperCase() )
 						{
 							case "DOORS":
-								SaveDecorationsToFile( socket, decorateDoorsArray );
+								SaveDecorationsToFile( socket, decorateDoorsArray, false );
 								break;
 							case "SIGNS":
-								SaveDecorationsToFile( socket, decorateSignsArray );
+								SaveDecorationsToFile( socket, decorateSignsArray, false );
 								break;
 							case "LIGHTS":
-								SaveDecorationsToFile( socket, decorateLightsArray );
+								SaveDecorationsToFile( socket, decorateLightsArray, false );
+								break;
+							case "CONTAINERS":
+								SaveDecorationsToFile( socket, decorateContainersArray, false );
 								break;
 							case "MOONGATES":
-								SaveDecorationsToFile( socket, decorateMoongatesArray );
+								SaveDecorationsToFile( socket, decorateMoongatesArray, false );
 								break;
 							case "TELEPORTERS":
-								SaveDecorationsToFile( socket, decorateTeleportersArray );
+								SaveDecorationsToFile( socket, decorateTeleportersArray, false );
+								break;
+							case "SPAWNERS":
+								SaveDecorationsToFile( socket, decorateSpawnersArray, false );
 								break;
 							case "MISC":
-								SaveDecorationsToFile( socket, decorateMiscArray );
+								SaveDecorationsToFile( socket, decorateMiscArray, false );
 								break;
 							default:
 								socket.SysMessage( "Invalid objectType selected, saving aborted!" );
+								socket.CloseGump( scriptID + 0xffff, 0 );
 								return;
 						}
 					}
+					socket.CloseGump( scriptID + 0xffff, 0 );
 				}
 			}
 			break;
@@ -611,11 +730,13 @@ function HandleDecorateSave( socket, splitString )
 			GetFacet( socket, splitString[2] );
 			if( facetID != -1 && objectType != "" )
 			{
+				DisplayProgressGump( socket, "Saving Decorations", 0 );
+
 				var iterateCount = IterateOver( "ITEM" );
 				if( iterateCount > 0 )
 				{
 					socket.SysMessage( iterateCount + " items of type '" + objectType + "' detected in facet '" + facetName + "'. Saving..." );
-					if( SaveDecorationsToFile( socket, decorateArray ))
+					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
 						socket.SysMessage( "World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!" );
 					}
@@ -628,6 +749,8 @@ function HandleDecorateSave( socket, splitString )
 				{
 					socket.SysMessage( "No decorations of type '" + objectType + "' was found in facet '" + facetName + "'." );
 				}
+
+				socket.CloseGump( scriptID + 0xffff, 0 );
 			}
 			break;
 		}
@@ -651,12 +774,14 @@ function HandleDecorateSave( socket, splitString )
 					return;
 				}
 
+				DisplayProgressGump( socket, "Saving Decorations", 0 );
+
 				// If both facet and objectType is defined...
 				var iterateCount = IterateOver( "ITEM" );
 				if( iterateCount > 0 )
 				{
 					socket.SysMessage( iterateCount + " items detected in facet '" + facetName + "'. Saving to custom world template titled '" + objectType + "'..." );
-					if( SaveDecorationsToFile( socket, decorateArray ))
+					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
 						socket.SysMessage( "World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!" );
 					}
@@ -665,6 +790,8 @@ function HandleDecorateSave( socket, splitString )
 						socket.SysMessage( "Unable to save decorations to template. Something may have gone wrong!" );
 					}
 				}
+
+				socket.CloseGump( scriptID + 0xffff, 0 );
 			}
 			break;
 		}
@@ -687,9 +814,28 @@ function SaveDecorationToArray( toCheck, arrayRef )
 	var itemInstanceID = (toCheck.instanceID).toString();
 	var itemMovable = (toCheck.movable).toString();
 	var itemVisible = (toCheck.visible).toString();
+	var itemDirection = (toCheck.dir).toString();
+	var itemWeight = (toCheck.weight).toString();
+	var itemWeightMax = (toCheck.weightMax).toString();
+	var itemMaxItems = (toCheck.maxItems).toString();
+	var itemAmount = (toCheck.amount).toString();
+	var spawnSection = 0;
+	var sectionAList = 0;
+	var minInterval = 0;
+	var maxInterval = 0;
+	if( toCheck.isSpawner )
+	{
+		spawnSection = toCheck.spawnsection;
+		sectionAList = (toCheck.sectionalist).toString();
+		minInterval = (toCheck.mininterval).toString();
+		maxInterval = (toCheck.maxinterval).toString();
+	}
 
 	// Form new string with object properties separated by a |
-	var newEntry = itemID + "|" + itemName + "|" + itemHue + "|" + itemType + "|" + itemX + "|" + itemY + "|" + itemZ + "|" + itemWorld + "|" + itemInstanceID + "|" + itemMovable + "|" + itemVisible;
+	var newEntry = itemID + "|" + itemName + "|" + itemHue + "|" + itemType + "|" + itemX + "|"
+		+ itemY + "|" + itemZ + "|" + itemWorld + "|" + itemInstanceID + "|" + itemMovable + "|"
+		+ itemVisible + "|" + itemDirection + "|" + itemWeight + "|" + "|" + itemMaxItems + "|" + itemAmount + "|"
+		+ spawnSection + "|" + sectionAList + "|" + minInterval + "|" + maxInterval;
 
 	// Append any ScriptTriggers attached to object to string
 	var scriptTriggers = toCheck.scriptTriggers;
@@ -703,7 +849,7 @@ function SaveDecorationToArray( toCheck, arrayRef )
 	arrayRef.push( newEntry );
 }
 
-function SaveDecorationsToFile( socket, arrayRef )
+function SaveDecorationsToFile( socket, arrayRef, singleSave )
 {
 	if( !arrayRef )
 	{
@@ -715,6 +861,21 @@ function SaveDecorationsToFile( socket, arrayRef )
 	if( arrayLength < 1 )
 	{
 		return;
+	}
+
+	var displayProgressTen = false;
+	var displayProgressTwenty = false;
+	var displayProgressForty = false;
+	var displayProgressSixty = false;
+	var displayProgressEighty = false;
+
+	if( singleSave )
+	{
+		displayProgressTen = true;
+		displayProgressTwenty = true;
+		displayProgressForty = true;
+		displayProgressSixty = true;
+		displayProgressEighty = true;
 	}
 
 	// Create a new file object
@@ -734,6 +895,32 @@ function SaveDecorationsToFile( socket, arrayRef )
 		for( var i = 0; i < arrayLength; i++ )
 		{
 			mFile.Write( arrayRef[i] + "\n" );
+
+			if( displayProgressEighty && (( i * 100 ) / arrayLength ) >= 80 )
+			{
+				DisplayProgressGump( socket, "Saving Decorations", 80 );
+				displayProgressEighty = false;
+			}
+			else if( displayProgressSixty && (( i * 100 ) / arrayLength ) >= 60 )
+			{
+				DisplayProgressGump( socket, "Saving Decorations", 60 );
+				displayProgressSixty = false;
+			}
+			else if( displayProgressForty && (( i * 100 ) / arrayLength ) >= 40 )
+			{
+				DisplayProgressGump( socket, "Saving Decorations", 40 );
+				displayProgressForty = false;
+			}
+			else if( displayProgressTwenty && (( i * 100 ) / arrayLength ) >= 20 )
+			{
+				DisplayProgressGump( socket, "Saving Decorations", 20 );
+				displayProgressTwenty = false;
+			}
+			else if( displayProgressTen )
+			{
+				DisplayProgressGump( socket, "Saving Decorations", 10 );
+				displayProgressTen = false;
+			}
 		}
 
 		// Close file and free up memory allocated by file object
@@ -751,6 +938,8 @@ function SaveDecorationsToFile( socket, arrayRef )
 function HandleDecorateLoad( socket, splitString )
 {
 	var multipleCmd = false;
+	var facetCount = facetList.length;
+	var objectTypeCount = objectTypeList.length;
 	var numArguments = splitString.length;
 	switch( numArguments )
 	{
@@ -759,6 +948,7 @@ function HandleDecorateLoad( socket, splitString )
 			// Load everything
 			// If no facet OR object type is specified - load everything
 			decorateArray.length = 0;
+			DisplayProgressGump( socket, "Loading Decorations", 0 );
 			for( var i = 0; i < facetCount; i++ )
 			{
 				switch( i )
@@ -820,17 +1010,24 @@ function HandleDecorateLoad( socket, splitString )
 							objectType = "lights";
 							break;
 						case 3:
-							objectType = "moongates";
+							objectType = "containers";
 							break;
 						case 4:
-							objectType = "teleporters";
+							objectType = "moongates";
 							break;
 						case 5:
+							objectType = "teleporters";
+							break;
+						case 6:
+							objectType = "spawners";
+							break;
+						case 7:
 							objectType = "misc";
 							break;
 						default:
 							if( !silentMode )
 								socket.SysMessage( "Invalid objectType selected, loading aborted!" );
+							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
 
@@ -862,18 +1059,22 @@ function HandleDecorateLoad( socket, splitString )
 			}
 
 			// If no objectType was specified, AND no facetID, then attempt to load custom decorations file instead!
-			if( objectType != "" && objectType != "doors" && objectType != "signs" && objectType != "lights" && objectType != "moongates" && objectType != "teleporters" && objectType != "misc" )
+			//if( objectType != "" && objectType != "doors" && objectType != "signs" && objectType != "lights" && objectType != "moongates" && objectType != "teleporters" && objectType != "misc" )
+			if( objectType != "" && objectTypeList.indexOf( objectType.toLowerCase() ) == -1 )
 			{
+				DisplayProgressGump( socket, "Loading Decorations", 0 );
 				loadCustom = true;
 				if( !LoadDecorationsFromFile( socket ))
 				{
 					if( !silentMode )
 						socket.SysMessage( "Unable to load decorations from custom file. Does the file (" + objectType + ".jsdata" + ") exist?" );
+					socket.CloseGump( scriptID + 0xffff, 0 );
 					return;
 				}
 			}
 			else if( objectType != "" && facetID == -1 )
 			{
+				DisplayProgressGump( socket, "Loading Decorations", 0 );
 				// Object type specified, but not facet. Load object type for ALL facets
 				for( var i = 0; i < facetCount; i++ )
 				{
@@ -924,6 +1125,7 @@ function HandleDecorateLoad( socket, splitString )
 						default:
 							if( !silentMode )
 								socket.SysMessage( "Invalid facet selected, loading aborted!" );
+							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
 				}
@@ -931,6 +1133,7 @@ function HandleDecorateLoad( socket, splitString )
 			else// if( objectType == "" && facetID != -1 )
 			{
 				// Load all contents of a specific facet, regardless of object type
+				DisplayProgressGump( socket, "Loading Decorations", 0 );
 				for( var i = 0; i < objectTypeCount; i++ )
 				{
 					switch( i )
@@ -948,20 +1151,29 @@ function HandleDecorateLoad( socket, splitString )
 							LoadDecorationsFromFile( socket );
 							break;
 						case 3:
-							objectType = "moongates";
+							objectType = "containers";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 4:
-							objectType = "teleporters";
+							objectType = "moongates";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 5:
+							objectType = "teleporters";
+							LoadDecorationsFromFile( socket );
+							break;
+						case 6:
+							objectType = "spawners";
+							LoadDecorationsFromFile( socket );
+							break;
+						case 7:
 							objectType = "misc";
 							LoadDecorationsFromFile( socket );
 							break;
 						default:
 							if( !silentMode )
 								socket.SysMessage( "Invalid objectType selected, loading aborted!" );
+							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
 				}
@@ -990,11 +1202,14 @@ function HandleDecorateLoad( socket, splitString )
 			// Fetch info on what facet to load
 			GetFacet( socket, splitString[2] );
 
+			DisplayProgressGump( socket, "Loading Decorations", 0 );
+
 			// Attempt to load specified decorations of specified objectType and facet from file
 			if( !LoadDecorationsFromFile( socket ))
 			{
 				if( !silentMode )
 					socket.SysMessage( "Unable to load decorations from file. Does the file (" + facetName + "_" + objectType + ".jsdata" + ") you're trying to load exist?" );
+				socket.CloseGump( scriptID + 0xffff, 0 );
 				return;
 			}
 			break;
@@ -1006,30 +1221,57 @@ function HandleDecorateLoad( socket, splitString )
 	if( decorateArray.length == 0 )
 	{
 		socket.SysMessage( "No decorations were loaded from world template files, unable to decorate world." );
+		socket.CloseGump( scriptID + 0xffff, 0 );
 		return;
 	}
 	else if( !multipleCmd )
 	{
 		// socket.SysMessage( "Decorations loaded; please wait while world is decorated..." );
 		BroadcastMessage( "Decorations loaded; please wait while world is decorated..." );
-		var decorateWait = new Gump;
-		decorateWait.NoClose();
-		decorateWait.NoMove();
-		decorateWait.NoDispose();
-		decorateWait.AddPage( 0 );
-		decorateWait.AddBackground( 0, 0, 175, 55, 5054 ); // Tile White Background
-		decorateWait.AddCheckerTrans( 0, 5, 175, 45 );
-
-		decorateWait.AddHTMLGump( 10, 7, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Decorating World...</BASEFONT></BIG></CENTER>" );
-		decorateWait.AddHTMLGump( 10, 27, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Please wait...</BASEFONT></BIG></CENTER>" );
-		decorateWait.Send( socket );
-		decorateWait.Free();
 		socket.currentChar.StartTimer( 100, 1, true );
 	}
 	else
 	{
 		DecorateWorld( socket );
 	}
+}
+
+function DisplayProgressGump( socket, progressText, percentage )
+{
+	var fontColor = "";
+	if( percentage >= 80 )
+	{
+		fontColor = "#57E90F";
+	}
+	else if( percentage >= 60 )
+	{
+		fontColor = "#A9E90F";
+	}
+	else if( percentage >= 40 )
+	{
+		fontColor = "#E9D70F";
+	}
+	else if( percentage >= 20 )
+	{
+		fontColor = "#E9940F";
+	}
+	else
+	{
+		fontColor = "#E9660F";
+	}
+
+	var progressGump = new Gump;
+	progressGump.NoClose();
+	progressGump.NoMove();
+	progressGump.NoDispose();
+	progressGump.AddPage( 0 );
+	progressGump.AddBackground( 0, 0, 175, 55, 5054 ); // Tile White Background
+	progressGump.AddCheckerTrans( 0, 5, 175, 45 );
+
+	progressGump.AddHTMLGump( 10, 7, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>" + progressText + "...</BASEFONT></BIG></CENTER>" );
+	progressGump.AddHTMLGump( 10, 27, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=" + fontColor + ">Please wait... " + ( percentage >= 20 ? percentage + "%" : "") + "</BASEFONT></BIG></CENTER>" );
+	progressGump.Send( socket );
+	progressGump.Free();
 }
 
 function onTimer( timerObj, timerID )
@@ -1093,9 +1335,18 @@ function DecorateWorld( socket )
 	var instanceID = 0;
 	var movable = 0;
 	var visible = 1;
+	var dir = 0;
+	var weight = 0;
+	var weightMax = 0;
+	var maxItems = 0;
+	var amount = 0;
+	var spawnSection = "";
+	var sectionAList = 0;
+	var minInterval = 0;
+	var maxInterval = 0;
 	var scriptTriggers = [];
-	var newItemCount = 0;
 
+	var newItemCount = 0;
 	var twentyPercent = Math.round(arrayLength * 0.2);
 	var fortyPercent = Math.round(arrayLength * 0.4);
 	var sixtyPercent = Math.round(arrayLength * 0.6);
@@ -1112,28 +1363,46 @@ function DecorateWorld( socket )
 		for( var j = 0; j < splitString.length; j++ )
 		{
 			if( j == 0 ) // ID
-				id = parseInt(splitString[0]);
+				id = parseInt(splitString[j]);
 			else if ( j == 1 ) // Name
-				name = splitString[1];
+				name = splitString[j];
 			else if( j == 2 ) // Hue/Color
-				hue = parseInt(splitString[2]);
+				hue = parseInt(splitString[j]);
 			else if( j == 3 ) // Type
-				type = parseInt(splitString[3]);
+				type = parseInt(splitString[j]);
 			else if( j == 4 ) // X
-				x = parseInt(splitString[4]);
+				x = parseInt(splitString[j]);
 			else if( j == 5 ) // Y
-				y = parseInt(splitString[5]);
+				y = parseInt(splitString[j]);
 			else if( j == 6 ) // Z
-				z = parseInt(splitString[6]);
+				z = parseInt(splitString[j]);
 			else if( j == 7 ) // WorldNumber
-				worldNum = parseInt(splitString[7]);
+				worldNum = parseInt(splitString[j]);
 			else if( j == 8 ) // InstanceID
-				instanceID = parseInt(splitString[8]);
+				instanceID = parseInt(splitString[j]);
 			else if( j == 9 ) // Movable
-				movable = parseInt(splitString[9]);
+				movable = parseInt(splitString[j]);
 			else if( j == 10 ) // Visible
-				visible = parseInt(splitString[10]);
-			else if( j >= 11 ) // ScriptTriggers
+				visible = parseInt(splitString[j]);
+			else if( j == 11 ) // Dir
+				dir = parseInt(splitString[j]);
+			else if( j == 12 ) // Weight
+				weight = parseInt(splitString[j]);
+			else if( j == 13 ) // WeightMax
+				amount = parseInt(splitString[j]);
+			else if( j == 14 ) // MaxItems
+				amount = parseInt(splitString[j]);
+			else if( j == 15 ) // Amount
+				amount = parseInt(splitString[j]);
+			else if( j == 16 ) // SpawnSection
+				spawnSection = splitString[j];
+			else if( j == 17 ) // sectionAList
+				sectionAList = parseInt(splitString[j]);
+			else if( j == 18 ) // minInterval
+				minInterval = parseInt(splitString[j]);
+			else if( j == 19 ) // maxInterval
+				maxInterval = parseInt(splitString[j])
+			else if( j >= 20 ) // ScriptTriggers
 			{
 				scriptTriggers.push(parseInt(splitString[j]));
 			}
@@ -1142,32 +1411,33 @@ function DecorateWorld( socket )
 		if( i == twentyPercent )
 		{
 			progress = 20;
-			fontColor = "#E9940F";
-			twentyPercent = -1;
+			/*fontColor = "#E9940F";
+			twentyPercent = -1;*/
 		}
 		else if( i == fortyPercent )
 		{
 			progress = 40;
-			fontColor = "#E9D70F";
-			fortyPercent = -1;
+			/*fontColor = "#E9D70F";
+			fortyPercent = -1;*/
 		}
 		else if( i == sixtyPercent )
 		{
 			progress = 60;
-			fontColor = "#A9E90F";
-			sixtyPercent = -1;
+			/*fontColor = "#A9E90F";
+			sixtyPercent = -1;*/
 		}
 		else if( i == eightyPercent )
 		{
 			progress = 80;
-			fontColor = "#57E90F";
-			eightyPercent = -1;
+			/*fontColor = "#57E90F";
+			eightyPercent = -1;*/
 		}
 
 		if( progress == 20 || progress == 40 || progress == 60 || progress == 80 )
 		{
 			socket.CloseGump( scriptID + 0xffff, 0 );
-			var decorateWait = new Gump;
+			DisplayProgressGump( socket, "Decorating World", progress );
+			/*var decorateWait = new Gump;
 			decorateWait.NoClose();
 			decorateWait.NoMove();
 			decorateWait.NoDispose();
@@ -1178,7 +1448,7 @@ function DecorateWorld( socket )
 			decorateWait.AddHTMLGump( 10, 7, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>Decorating World...</BASEFONT></BIG></CENTER>" );
 			decorateWait.AddHTMLGump( 10, 27, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=" + fontColor + ">Please wait... " + progress + "%</BASEFONT></BIG></CENTER>" );
 			decorateWait.Send( socket );
-			decorateWait.Free();
+			decorateWait.Free();*/
 
 			if( progress == 20 )
 				progress = 0;
@@ -1190,7 +1460,25 @@ function DecorateWorld( socket )
 				progress = 0;
 		}
 
-		var newItem = CreateBlankItem( socket, socket.currentChar, 1, name, id, hue, "ITEM", false );
+		var newItem;
+		if(( type >= 61 && type <= 65 ) || type == 69 || type == 125 )
+		{
+			// Object Spawner, so set the appropriate properties for it
+			newItem = CreateBlankItem( socket, socket.currentChar, 1, name, id, hue, "SPAWNER", false );
+			if( ValidateObject( newItem ))
+			{
+				newItem.spawnsection = spawnSection;
+				newItem.sectionalist = sectionAList;
+				newItem.mininterval = minInterval;
+				newItem.maxinterval = maxInterval;
+			}
+		}
+		else
+		{
+			// Not a spawner, so create a normal item
+			newItem = CreateBlankItem( socket, socket.currentChar, 1, name, id, hue, "ITEM", false );
+		}
+
 		if( ValidateObject( newItem ))
 		{
 			newItem.type = type;
@@ -1201,6 +1489,12 @@ function DecorateWorld( socket )
 			newItem.instanceID = instanceID;
 			newItem.movable = movable;
 			newItem.visible = visible;
+			newItem.dir = dir;
+			newItem.weight = weight;
+			newItem.weightMax = weightMax;
+			newItem.maxItems = maxItems;
+			newItem.amount = amount;
+
 			if( scriptTriggers.length > 0 )
 			{
 				for( var k = 0; k < scriptTriggers.length; k++ )
@@ -1211,13 +1505,13 @@ function DecorateWorld( socket )
 			newItemCount++;
 		}
 	}
-	socket.SysMessage( newItemCount + " items added!" );
+	socket.SysMessage( newItemCount + " decorations added!" );
 	socket.CloseGump( scriptID + 0xffff, 0 );
 }
 
 function onIterate( toCheck )
 {
-	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isSpawner )
+	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti )
 	{
 		if( saveCustom && saveAll )
 		{
@@ -1264,10 +1558,16 @@ function onIterate( toCheck )
 				SaveDecorationToArray( toCheck, decorateSignsArray );
 				return true;
 			}
-			else if( CheckTileFlag( toCheck.id, 23 ))
+			else if( CheckTileFlag( toCheck.id, 23 )) // 23 = TF_LIGHT
 			{
 				// Lights
 				SaveDecorationToArray( toCheck, decorateLightsArray );
+				return true;
+			}
+			else if( toCheck.type == 1 || toCheck.type == 8 || toCheck.type == 87 || CheckTileFlag( toCheck.id, 21 )) // 21 = TF_CONTAINER
+			{
+				// Containers
+				SaveDecorationToArray( toCheck, decorateContainersArray );
 				return true;
 			}
 			else if( moongateIDs.indexOf( id ) > -1 )
@@ -1280,6 +1580,12 @@ function onIterate( toCheck )
 			{
 				// Teleporters
 				SaveDecorationToArray( toCheck, decorateTeleportersArray );
+				return true;
+			}
+			else if( toCheck.isSpawner )
+			{
+				// Spawner Objects
+				SaveDecorationToArray( toCheck, decorateSpawnersArray );
 				return true;
 			}
 			else
@@ -1323,6 +1629,16 @@ function onIterate( toCheck )
 					}
 					break;
 				}
+				case "containers":
+				{
+					// Check if item has a container item-type, or if container flag set in tiledata
+					if( toCheck.type == 1 || toCheck.type == 8 || toCheck.type == 87 || CheckTileFlag( toCheck.id, 21 ))
+					{
+						SaveDecorationToArray( toCheck, decorateContainersArray );
+						return true;
+					}
+					break;
+				}
 				case "moongates":
 				{
 					var id = toCheck.id;
@@ -1340,10 +1656,21 @@ function onIterate( toCheck )
 						return true;
 					}
 					break;
+				case "spawners":
+					if( toCheck.isSpawner )
+					{
+						// Spawner Objects
+						SaveDecorationToArray( toCheck, decorateSpawnersArray );
+						return true;
+					}
+					break;
 				case "misc":
 				{
 					var id = toCheck.id;
-					if(( toCheck.type != 12 && toCheck.type != 13 ) && ( signIDs.indexOf( id ) == -1 ) && ( !CheckTileFlag( toCheck.id, 23 )) && ( moongateIDs.indexOf( id ) == -1 ) && ( toCheck.type != 60 ))
+					if(( toCheck.type != 12 && toCheck.type != 13 ) && ( signIDs.indexOf( id ) == -1 ) && ( !CheckTileFlag( toCheck.id, 23 ))
+						&& ( toCheck.type != 1 && toCheck.type != 8 && toCheck.type != 87 && !CheckTileFlag( toCheck.id, 21 ))
+						&& ( moongateIDs.indexOf( id ) == -1 ) && ( toCheck.type != 60 )
+						&& ( !toCheck.isSpawner ))
 					{
 						// Only save out items that don't fit into another category
 						SaveDecorationToArray( toCheck, decorateMiscArray );

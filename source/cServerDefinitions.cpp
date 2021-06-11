@@ -4,6 +4,7 @@
 #include "scriptc.h"
 #include <filesystem>
 #include "StringUtility.hpp"
+#include "IP4Address.hpp"
 
 CServerDefinitions *FileLookup;
 
@@ -70,6 +71,8 @@ std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;
 
 CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 {
+	// Load our device ips
+	IP4Address::loadIPs();
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts..." << myendl;
 	Console << "   o Clearing AddMenuMap entries(" << static_cast<UI64>(g_mmapAddMenuMap.size()) << ")" << myendl;
@@ -81,6 +84,9 @@ CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 
 CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
 {
+	// Load our device ips
+	IP4Address::loadIPs();
+	
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts...." << myendl;
 

@@ -18,6 +18,7 @@
 #include "StringUtility.hpp"
 #include "cRaces.h"
 #include <chrono>
+#include "IP4Address.hpp"
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
@@ -340,13 +341,11 @@ bool CPIFirstLogin::Handle( void )
 			actbTemp->dwLastClientVerShort = tSock->ClientVerShort();
 		}
 
-		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
-		CPGameServerList toSend( servcount );
-		for( UI16 i = 0; i < servcount; ++i )
-		{
-			physicalServer *sData = cwmWorldState->ServerData()->ServerEntry( i );
-			toSend.AddServer( i, sData );
-		}
+		// change for IP4Address
+		auto address = IP4Address::respond( tSock->ipaddress );
+		
+		CPGameServerList toSend(1);
+		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.bigEndian() );
 		tSock->Send( &toSend );
 	}
 	// If socket's ClientType is still CV_DEFAULT, it's an old client,
@@ -456,11 +455,11 @@ SI16 CPIServerSelect::ServerNum( void )
 
 bool CPIServerSelect::Handle( void )
 {
-	UI16 selectedServer		= ServerNum() - 1;
-	physicalServer *tServer = cwmWorldState->ServerData()->ServerEntry( selectedServer );
-	UI32 ip = htonl( inet_addr( tServer->getIP().c_str() ) );
-	CPRelay toSend( ip, tServer->getPort() );
-	tSock->Send( &toSend );
+	auto ip = IP4Address::respond( tSock->ipaddress );
+	auto name = cwmWorldState->ServerData()->ServerName();
+	auto port = cwmWorldState->ServerData()->ServerPort();
+	CPRelay toSend( ip.littleEndian(), port );
+	tSock->Send(&toSend);
 	// Mark packet as sent. No we need to change how we network.
 	return true;
 }

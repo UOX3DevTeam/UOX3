@@ -3092,11 +3092,8 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 			pathString = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA );
 		}
 
-		// Append subfolder name to path, unless no name was provided
-		if( subFolderName != "" )
-		{
-			pathString.append( subFolderName );
-		}
+		// Append subfolder name to path
+		pathString.append( subFolderName );
 
 		if( !std::filesystem::exists( pathString ))
 		{
@@ -3136,8 +3133,13 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		auto settingID = cwmWorldState->ServerData()->lookupINIValue( settingName );
 		switch( settingID )
 		{
-			//case 1:	 // SERVERNAME[0002]
-				//break;
+			case 1:	 // SERVERNAME[0002]
+			{
+				std::string tempString = { cwmWorldState->ServerData()->ServerName() };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
 			case 2:	 // CONSOLELOG[0003]
 				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerConsoleLogStatus()));
 				break;
@@ -3151,7 +3153,7 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 4:	 // ANNOUNCEWORLDSAVES[0006]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerAnnounceSavesStatus() );
 				break;
-			case 26:	 // JOINPARTMSGS[0007]
+			case 26: // JOINPARTMSGS[0007]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() );
 				break;
 			case 5:	 // BACKUPSENABLED[0009]

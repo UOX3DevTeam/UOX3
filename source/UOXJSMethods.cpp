@@ -5541,10 +5541,8 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			filePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA );
 		}
 
-		if( folderName != "" )
-		{
-			filePath.append( folderName );
-		}
+		// Append the provided folder name
+		filePath.append( folderName );
 
 		if( !std::filesystem::exists( filePath ))
 		{
