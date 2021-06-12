@@ -131,5 +131,9 @@ namespace strutil {
 			return static_cast<T>(value);
 		}
 	}
+	
+	// split a string by a sep
+	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep);
+
 }
 #endif /* StringUtility_hpp */
