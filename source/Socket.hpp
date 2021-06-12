@@ -52,6 +52,7 @@ public:
 	std::string description() const ;
 	
 	static void initialize() ;
+	static void shutdown() ;
 
 	};
 
