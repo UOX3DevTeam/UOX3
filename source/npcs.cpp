@@ -16,7 +16,7 @@
 
 #include "ObjectFactory.h"
 
-cCharStuff *Npcs = NULL;
+cCharStuff *Npcs = nullptr;
 
 
 //o-----------------------------------------------------------------------------------------------o
@@ -26,11 +26,11 @@ cCharStuff *Npcs = NULL;
 //o-----------------------------------------------------------------------------------------------o
 CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 {
-	CItem *retItem			= NULL;
+	CItem *retItem			= nullptr;
 	std::string sect		= std::string("LOOTLIST ") + lootlist;
 	ScriptSection *LootList = FileLookup->FindEntry( sect, items_def );
-	if( LootList == NULL )
-		return NULL;
+	if( LootList == nullptr )
+		return nullptr;
 	size_t i = LootList->NumEntries();
 	if( i > 0 )
 	{
@@ -41,7 +41,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 		auto tcsecs = strutil::sections( strutil::stripTrim( tag ), "," );
 		
 		if( tag.empty() )
-			return NULL;
+			return nullptr;
 		UI16 iAmount = 0;
 
 		if( strutil::toupper( tag ) == "LOOTLIST" )
@@ -49,7 +49,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			if( csecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
 				iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0));
-				CItem *retItemNested = NULL;
+				CItem *retItemNested = nullptr;
 				for( UI16 iCount = 0; iCount < iAmount; ++iCount )
 				{
 					retItemNested = addRandomLoot( s, strutil::stripTrim( csecs[0]) );
@@ -66,7 +66,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			{
 				iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( tcsecs[1] ), nullptr, 0));
 				retItem = Items->CreateBaseScriptItem( strutil::stripTrim( tcsecs[0] ), s->WorldNumber(),  iAmount );
-				if( retItem != NULL )
+				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
 					retItem->PlaceInPack();
@@ -75,7 +75,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			else
 			{
 				retItem = Items->CreateBaseScriptItem( tag, s->WorldNumber(), 1 );
-				if( retItem != NULL )
+				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
 					retItem->PlaceInPack();
@@ -96,20 +96,20 @@ CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 {
 	ourNPC						= strutil::stripTrim( ourNPC );
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
-	if( npcCreate == NULL )
+	if( npcCreate == nullptr )
 	{
 		Console.error(strutil::format( "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str()) );
-		return NULL;
+		return nullptr;
 	}
 
-	CChar *cCreated = NULL;
+	CChar *cCreated = nullptr;
 	if( npcCreate->NpcListExist() )
 		cCreated = CreateRandomNPC( npcCreate->NpcListData() );
 	else
 	{
 		cCreated = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-		if( cCreated == NULL )
-			return NULL;
+		if( cCreated == nullptr )
+			return nullptr;
 
 		cCreated->SetSkillTitles( true );
 		cCreated->SetNpc( true );
@@ -125,7 +125,7 @@ CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				toExecute->OnCreate( cCreated, true );
 			}
@@ -142,11 +142,11 @@ CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 //o-----------------------------------------------------------------------------------------------o
 CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 {
-	CChar *cCreated			= NULL;
+	CChar *cCreated			= nullptr;
 	std::string sect		= std::string("NPCLIST ") + npcList;
 	sect					= strutil::stripTrim( sect );
 	ScriptSection *NPCList	= FileLookup->FindEntry( sect, npc_def );
-	if( NPCList != NULL )
+	if( NPCList != nullptr )
 	{
 		const size_t i = NPCList->NumEntries();
 		if( i > 0 )
@@ -178,19 +178,19 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 	const ItemTypes iType = iSpawner->GetType();
 	// If the spawner type is 125 and escort quests are not active then abort
 	if( iType == IT_ESCORTNPCSPAWNER && !cwmWorldState->ServerData()->EscortsEnabled() )
-		return NULL;
+		return nullptr;
 
-	CChar *cCreated = NULL;
+	CChar *cCreated = nullptr;
 	if( iSpawner->IsSectionAList() )
 		cCreated = CreateRandomNPC( npc );
 	else
 		cCreated = CreateBaseNPC( npc );
-	if( cCreated == NULL )
-		return NULL;
+	if( cCreated == nullptr )
+		return nullptr;
 
 	cCreated->SetSpawn( iSpawner->GetSerial() );
 	SI16 awayX = 0, awayY = 0;
-	if(( iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER ) && iSpawner->GetCont() == NULL )
+	if(( iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER ) && iSpawner->GetCont() == nullptr )
 	{
 		awayX = iSpawner->GetTempVar( CITV_MORE, 3 );
 		awayY = iSpawner->GetTempVar( CITV_MORE, 4 );
@@ -216,8 +216,8 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
 	CChar *cCreated = CreateBaseNPC( npc );
-	if( cCreated == NULL )
-		return NULL;
+	if( cCreated == nullptr )
+		return nullptr;
 
 	cCreated->SetLocation( x, y, z, worldNumber, instanceID );
 	// Update "old location" for new NPCs straight away
@@ -437,12 +437,12 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 	std::string sect	= std::string("SHOPLIST ") + list;
 	sect				= strutil::stripTrim( sect );
 	ScriptSection *ShoppingList = FileLookup->FindEntry( sect, items_def );
-	if( ShoppingList == NULL )
+	if( ShoppingList == nullptr )
 		return;
 
 	std::string cdata;
 	SI32 ndata		= -1, odata = -1;
-	CItem *retItem	= NULL;
+	CItem *retItem	= nullptr;
 	for( DFNTAGS tag = ShoppingList->FirstTag(); !ShoppingList->AtEndTags(); tag = ShoppingList->NextTag() )
 	{
 		cdata = ShoppingList->GrabData( ndata, odata );
@@ -452,7 +452,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 				if( ValidateObject( buyLayer ) )
 				{
 					retItem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
-					if( retItem != NULL )
+					if( retItem != nullptr )
 					{
 						retItem->SetCont( buyLayer );
 						retItem->PlaceInPack();
@@ -467,7 +467,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 				if( ValidateObject( sellLayer ) )
 				{
 					retItem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
-					if( retItem != NULL )
+					if( retItem != nullptr )
 					{
 						retItem->SetCont( sellLayer );
 						//retitem->SetSellValue( retitem->GetBuyValue() / 2 );
@@ -483,7 +483,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 				if( ValidateObject( boughtLayer ) )
 				{
 					retItem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
-					if( retItem != NULL )
+					if( retItem != nullptr )
 					{
 						retItem->SetCont( boughtLayer );
 						retItem->PlaceInPack();
@@ -495,7 +495,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Bought Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
 			case DFNTAG_VALUE:
-				if( retItem != NULL )
+				if( retItem != nullptr )
 				{
 					if( !cdata.empty() )
 					{
@@ -529,7 +529,7 @@ void setRandomName( CChar *s, const std::string& namelist )
 	std::string tempName;
 
 	ScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
-	if( RandomName == NULL )
+	if( RandomName == nullptr )
 	{
 		tempName = std::string("Error Namelist ") + namelist+std::string(" Not Found");
 	}
@@ -555,7 +555,7 @@ UI16 addRandomColor( const std::string& colorlist )
 	std::string sect				= std::string("RANDOMCOLOR ") + colorlist;
 	sect							= strutil::stripTrim( sect );
 	ScriptSection *RandomColours	= FileLookup->FindEntry( sect, colors_def );
-	if( RandomColours == NULL )
+	if( RandomColours == nullptr )
 	{
 		Console.warning( strutil::format("Error Colorlist %s Not Found", colorlist.c_str() ));
 		return 0;
@@ -580,13 +580,13 @@ void MakeShop( CChar *c )
 	if( !ValidateObject( c ) )
 		return;
 	c->SetShop( true );
-	CItem *tPack = NULL;
+	CItem *tPack = nullptr;
 	for( UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i )
 	{
 		tPack = c->GetItemAtLayer( static_cast<ItemLayers>(i) );
 		if( !ValidateObject( tPack ) )
 		{
-			tPack = Items->CreateItem( NULL, c, 0x2AF8, 1, 0, OT_ITEM );
+			tPack = Items->CreateItem( nullptr, c, 0x2AF8, 1, 0, OT_ITEM );
 			if( ValidateObject( tPack ) )
 			{
 				tPack->SetDecayable( false );
@@ -611,12 +611,12 @@ void MakeShop( CChar *c )
 //o-----------------------------------------------------------------------------------------------o
 bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, std::string sectionID, bool isGate )
 {
-	if( NpcCreation == NULL || !ValidateObject( applyTo ) )
+	if( NpcCreation == nullptr || !ValidateObject( applyTo ) )
 		return false;
 
 	UI16 haircolor	= INVALIDCOLOUR;
-	CItem *buyPack	= NULL, *boughtPack = NULL, *sellPack = NULL;
-	CItem *retitem	= NULL, *mypack = NULL;
+	CItem *buyPack	= nullptr, *boughtPack = nullptr, *sellPack = nullptr;
+	CItem *retitem	= nullptr, *mypack = nullptr;
 
 	std::string cdata;
 	SI32 ndata		= -1, odata = -1;
@@ -660,11 +660,11 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_BACKPACK:
 				if( !isGate )
 				{
-					if( mypack == NULL )
+					if( mypack == nullptr )
 						mypack = applyTo->GetPackItem();
-					if( mypack == NULL )
+					if( mypack == nullptr )
 					{
-						mypack = Items->CreateItem( NULL, applyTo, 0x0E75, 1, 0, OT_ITEM );
+						mypack = Items->CreateItem( nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM );
 						if( ValidateObject( mypack ) )
 						{
 							mypack->SetDecayable( false );
@@ -672,7 +672,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							mypack->SetName( "Backpack" );
 							mypack->SetLayer( IL_PACKITEM );
 							if( !mypack->SetCont( applyTo ) )
-								mypack = NULL;
+								mypack = nullptr;
 							else
 							{
 								mypack->SetX( 0 );
@@ -700,15 +700,15 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_CHIVALRY:			skillToSet = CHIVALRY;				break;
 			case DFNTAG_COOKING:			skillToSet = COOKING;				break;
 			case DFNTAG_COLOUR:
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( static_cast<UI16>(ndata) );
 				break;
 			case DFNTAG_COLOURLIST:
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( addRandomColor( cdata ) );
 				break;
 			case DFNTAG_COLOURMATCHHAIR:
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( static_cast<UI16>(haircolor) );
 				break;
 			case DFNTAG_DEX:
@@ -822,14 +822,14 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				if( !isGate )
 				{
 					retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-					if( retitem != NULL )
+					if( retitem != nullptr )
 					{
 						if( retitem->GetLayer() == IL_NONE )
 							Console << "Warning: Bad NPC Script (" << sectionID.c_str() << ") with problem item " << cdata << " executed!" << myendl;
 						else if( !retitem->SetCont( applyTo ) )
 						{
 							if( !retitem->SetCont( applyTo->GetPackItem() ) )
-								retitem = NULL;
+								retitem = nullptr;
 						}
 					}
 				}
@@ -903,7 +903,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				}
 
 				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, npc_def );
-				if( toFind == NULL )
+				if( toFind == nullptr )
 					Console.warning( strutil::format( "Invalid script entry (%s) called with GET tag, NPC serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
 				else if( toFind == NpcCreation )
 					Console.warning( strutil::format( "Infinite loop avoided with GET tag inside NPC script %s", scriptEntry.c_str() ));
@@ -923,11 +923,11 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						{
 							if( odata && odata > ndata )
 							{
-								retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
 							}
 							else
 							{
-								retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", ndata, OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", ndata, OT_ITEM, true );
 							}
 						}
 						else
@@ -939,7 +939,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				break;
 			case DFNTAG_HAIRCOLOUR:
 				haircolor = addRandomColor( cdata );
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( haircolor );
 				break;
 			case DFNTAG_HEALING:			skillToSet = HEALING;					break;
@@ -1119,10 +1119,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 								{
 									iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( tsects[0] ), nullptr, 0));
 								}
-								retitem = Items->CreateScriptItem( NULL, applyTo, strutil::stripTrim( csects[0] ), iAmount, OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, strutil::stripTrim( csects[0] ), iAmount, OT_ITEM, true );
 							}
 							else
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, cdata, 1, OT_ITEM, true );
 						}
 					}
 					else
@@ -1206,7 +1206,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					if( ValidateObject( buyPack ) )
 					{
 						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-						if( retitem != NULL )
+						if( retitem != nullptr )
 						{
 							retitem->SetCont( buyPack );
 							retitem->PlaceInPack();
@@ -1248,7 +1248,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					if( ValidateObject( sellPack ) )
 					{
 						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-						if( retitem != NULL )
+						if( retitem != nullptr )
 						{
 							retitem->SetCont( sellPack );
 							retitem->PlaceInPack();
@@ -1268,7 +1268,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					if( ValidateObject( boughtPack ) )
 					{
 						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-						if( retitem != NULL )
+						if( retitem != nullptr )
 						{
 							retitem->SetCont( boughtPack );
 							retitem->PlaceInPack();
@@ -1465,7 +1465,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
-		return NULL;
+		return nullptr;
 
 	GenericList< CChar * > *myPets = mChar->GetPetList();
 	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
@@ -1477,7 +1477,7 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 				return pet;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1488,9 +1488,9 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
 	CHARLIST *petFriends	= pet->GetFriendList();
-	if( petFriends != NULL )
+	if( petFriends != nullptr )
 	{
-		CChar *getFriend		= NULL;
+		CChar *getFriend		= nullptr;
 		for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
 		{
 			getFriend = (*I);
@@ -1524,7 +1524,7 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 		if( ValidateObject( charGuard ) )
 			charGuard->SetGuarded( false );
 	}
-	pet->SetGuarding( NULL );
+	pet->SetGuarding( nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1534,14 +1534,14 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 //o-----------------------------------------------------------------------------------------------o
 void MonsterGate( CChar *s, const std::string& scriptEntry )
 {
-	CItem *mypack = NULL;
+	CItem *mypack = nullptr;
 	if( s->IsNpc() )
 		return;
 		
 	auto entry = scriptEntry;
 	entry = strutil::stripTrim( entry );
 	ScriptSection *Monster = FileLookup->FindEntry( entry, npc_def );
-	if( Monster == NULL )
+	if( Monster == nullptr )
 		return;
 
 	s->SetTitle( "\0" );
@@ -1557,11 +1557,11 @@ void MonsterGate( CChar *s, const std::string& scriptEntry )
 				z->Delete();
 			else if( z->GetLayer() != IL_PACKITEM && z->GetLayer() != IL_BANKBOX )
 			{
-				if( mypack == NULL )
+				if( mypack == nullptr )
 					mypack = s->GetPackItem();
-				if( mypack == NULL )
+				if( mypack == nullptr )
 				{
-					n = Items->CreateItem( NULL, s, 0x0E75, 1, 0, OT_ITEM );
+					n = Items->CreateItem( nullptr, s, 0x0E75, 1, 0, OT_ITEM );
 					if( !ValidateObject( n ) )
 						return;
 					s->SetPackItem( n );
@@ -1627,7 +1627,7 @@ void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 		return;
 
 	CSocket *mSock = nCharID->GetSocket();
-	if( nCharID->IsNpc() || mSock == NULL )
+	if( nCharID->IsNpc() || mSock == nullptr )
 		return;
 	if( nChange <= 25 )
 	{
@@ -1686,7 +1686,7 @@ void Fame( CChar *nCharID, const SI16 nFame )
 	if( nChange == 0 )
 		return;
 	CSocket *mSock = nCharID->GetSocket();
-	if( mSock == NULL || nCharID->IsNpc() )
+	if( mSock == nullptr || nCharID->IsNpc() )
 		return;
 	if( nChange <= 25 )
 	{

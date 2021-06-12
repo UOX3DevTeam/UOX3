@@ -55,13 +55,13 @@ SI32 CDictionary::LoadDictionary( void )
 	if( FileExists( PathToDictionary ) )
 	{
 		Script *dictData = new Script( PathToDictionary, NUM_DEFS, false );
-		if( dictData != NULL )
+		if( dictData != nullptr )
 		{
-			ScriptSection *dictSect = NULL;
+			ScriptSection *dictSect = nullptr;
 			std::string tag, data;
-			for( dictSect = dictData->FirstEntry(); dictSect != NULL; dictSect = dictData->NextEntry() )
+			for( dictSect = dictData->FirstEntry(); dictSect != nullptr; dictSect = dictData->NextEntry() )
 			{
-				if( dictSect != NULL )
+				if( dictSect != nullptr )
 				{
 					// verify it is a dictionary entry
 					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )
@@ -77,7 +77,7 @@ SI32 CDictionary::LoadDictionary( void )
 				}
 			}
 			delete dictData;
-			dictData = NULL;
+			dictData = nullptr;
 		}
 		IsValid = true;
 		Console.print( " " );

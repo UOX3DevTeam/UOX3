@@ -5,18 +5,18 @@
 typedef void *  va_list;
 #endif
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #define MAX_PATH			268
 #endif
 
 #if defined( _DEBUG )
-#define VALIDATESOCKET( s ) if( s == NULL ) \
+#define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
 Console.print( strutil::format("Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else
-#define VALIDATESOCKET( s ) if( s == NULL ) \
+#define VALIDATESOCKET( s ) if( s == nullptr ) \
 return;
 #endif
 

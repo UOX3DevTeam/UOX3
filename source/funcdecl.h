@@ -218,7 +218,7 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 	bool rvalue = true;
 	try
 	{
-		if( toValidate == NULL )
+		if( toValidate == nullptr )
 			rvalue = false;
 		else if( toValidate->isDeleted() )
 			rvalue = false;

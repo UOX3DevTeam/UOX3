@@ -101,7 +101,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 	toSend.Message( messageNum );
 	toSend.ArgumentString( argList );
 
-	bool sendSock = (mSock != NULL);
+	bool sendSock = (mSock != nullptr);
 	if( sendAll )
 	{
 		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, DIST_INRANGE );
@@ -134,7 +134,7 @@ void InitializeLookup( void )
 //o-----------------------------------------------------------------------------------------------o
 UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return ZERO;
 
 	char langCode[4];
@@ -231,7 +231,7 @@ bool CPITalkRequest::Handle( void )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returned false/0, prevent hard-code (and other scripts with event) from running
 			if( toExecute->OnTalk( mChar, asciiText ) == 0 )
@@ -306,12 +306,12 @@ bool CPITalkRequest::Handle( void )
 			if( !WhichResponse( tSock, mChar, text ) )
 				return true;
 
-			CPUOXBuffer *txtToSend				= NULL;
-			CPUOXBuffer *ghostedText			= NULL;
-			CPUnicodeSpeech *uniTxtToSend		= NULL;
-			CPUnicodeSpeech *uniGhostedText		= NULL;
-			CPacketSpeech *asciiTxtToSend		= NULL;
-			CPacketSpeech *asciiGhostedText		= NULL;
+			CPUOXBuffer *txtToSend				= nullptr;
+			CPUOXBuffer *ghostedText			= nullptr;
+			CPUnicodeSpeech *uniTxtToSend		= nullptr;
+			CPUnicodeSpeech *uniGhostedText		= nullptr;
+			CPacketSpeech *asciiTxtToSend		= nullptr;
+			CPacketSpeech *asciiGhostedText		= nullptr;
 
 			if( IsUnicode() )
 			{
@@ -419,7 +419,7 @@ CSpeechQueue::~CSpeechQueue()
 	for( SPEECHLIST_ITERATOR slIter = speechList.begin(); slIter != speechList.end(); ++slIter )
 	{
 		delete (*slIter);
-		(*slIter) = NULL;
+		(*slIter) = nullptr;
 	}
 	speechList.clear();
 }
@@ -432,10 +432,10 @@ CSpeechQueue::~CSpeechQueue()
 void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 {
 	CPacketSpeech toSend	= toSay;
-	CChar *thisChar			= NULL;
-	CItem *thisItem			= NULL;
-	CBaseObject *thisObj	= NULL;
-	CSocket *thisSock		= NULL;
+	CChar *thisChar			= nullptr;
+	CItem *thisItem			= nullptr;
+	CBaseObject *thisObj	= nullptr;
+	CSocket *thisSock		= nullptr;
 	if( toSay.Speaker() > BASEITEMSERIAL )
 	{
 		thisItem	= calcItemObjFromSer( toSay.Speaker() );
@@ -446,22 +446,22 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 		thisChar	= calcCharObjFromSer( toSay.Speaker() );
 		thisObj		= thisChar;
 	}
-	CChar *sChar	= NULL;
-	CSocket *mSock	= NULL;
+	CChar *sChar	= nullptr;
+	CSocket *mSock	= nullptr;
 	switch( toSay.TargType() )
 	{
 		case SPTRG_INDIVIDUAL:		// aimed at individual person
 			if( ValidateObject( thisChar ) )
 			{
 				thisSock = thisChar->GetSocket();
-				if( thisSock != NULL )
+				if( thisSock != nullptr )
 					thisSock->Send( &toSend );
 			}
 			sChar = calcCharObjFromSer( toSay.SpokenTo() );
 			if( ValidateObject( sChar ) && sChar != thisChar )
 			{
 				mSock = sChar->GetSocket();
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->Send( &toSend );
 			}
 			break;
@@ -470,7 +470,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 		{
 			if( !ValidateObject( thisObj ) )
 				break;
-			if( ValidateObject( thisItem ) && thisItem->GetCont() != NULL )	// not on ground, can't guarantee speech
+			if( ValidateObject( thisItem ) && thisItem->GetCont() != nullptr )	// not on ground, can't guarantee speech
 				break;
 			SOCKLIST nearbyChars = FindPlayersInVisrange( thisObj );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
@@ -492,7 +492,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 			Network->pushConn();
 			for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 			{
-				if( mSock != NULL )
+				if( mSock != nullptr )
 				{
 					CChar *mChar = mSock->CurrcharObj();
 					if( ValidateObject( mChar ) )
@@ -510,7 +510,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 			if( ValidateObject( sChar ) && sChar != thisChar )
 			{
 				mSock = sChar->GetSocket();
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->Send( &toSend );
 			}
 			break;
@@ -527,7 +527,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 bool CSpeechQueue::InternalPoll( void )
 {
 	bool retVal = false;
-	CSpeechEntry *toCheck = NULL;
+	CSpeechEntry *toCheck = nullptr;
 
 	SPEECHLIST_ITERATOR slIter = speechList.begin();
 	while( slIter != speechList.end() )
@@ -540,7 +540,7 @@ bool CSpeechQueue::InternalPoll( void )
 			SayIt( (*toCheck) );
 
 			delete (*slIter);
-			(*slIter) = NULL;
+			(*slIter) = nullptr;
 
 			slIter = speechList.erase( slIter );
 		}

@@ -32,7 +32,7 @@
 #include "StringUtility.hpp"
 #include <iostream>
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -220,7 +220,7 @@ CConsole& CConsole::operator<<( const SI08 *outPut )
 CConsole& CConsole::operator<<( const char *outPut )
 {
 	StartOfLineCheck();
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
@@ -382,7 +382,7 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 
 	std::ofstream toWrite;
 	std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
-	if( cwmWorldState != NULL )
+	if( cwmWorldState != nullptr )
 		realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
 	else
 		realFileName = filename;
@@ -470,7 +470,7 @@ void CConsole::Start( const std::string& temp )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnYellow( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
@@ -487,7 +487,7 @@ void CConsole::TurnYellow( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnRed( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
@@ -504,7 +504,7 @@ void CConsole::TurnRed( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnGreen( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
@@ -521,7 +521,7 @@ void CConsole::TurnGreen( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBlue( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
@@ -538,7 +538,7 @@ void CConsole::TurnBlue( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnNormal( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
@@ -555,7 +555,7 @@ void CConsole::TurnNormal( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBrightWhite( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
@@ -677,7 +677,7 @@ void CConsole::PrintStartOfLine( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 //o-----------------------------------------------------------------------------------------------o
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 void CConsole::MoveTo( SI32 x, SI32 y )
 {
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -793,7 +793,7 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 SI32 CConsole::cl_getch( void )
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 	char buffer[2];
 	std::string rvalue = "";
 	buffer[1] = 0;
@@ -870,17 +870,17 @@ void CConsole::Process( SI32 c )
 			if( toFind->second.isEnabled )
 			{
 				cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
 					print(strutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
 #endif
-					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), NULL, 0 );
+					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0 );
 				}
 				return;
 			}
 		}
-		CSocket *tSock	= NULL;
+		CSocket *tSock	= nullptr;
 		//char outputline[128], temp[1024];
 		std::string outputline, temp;
 		SI32 indexcount	= 0;
@@ -1048,7 +1048,7 @@ void CConsole::Process( SI32 c )
 				break;
 			case  'D':
 				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != NULL; tSock = Network->PrevSocket() )
+				for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() )
 				{
 					if( tSock->AcctNo() == 0 )
 						Network->Disconnect( tSock );
@@ -1183,11 +1183,11 @@ void CConsole::Process( SI32 c )
 					Network->pushConn();
 
 					CSocket *snSock		= Network->FirstSocket();
-					if( snSock != NULL )
+					if( snSock != nullptr )
 						loggingEnabled = !snSock->Logging();
 					for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
 					{
-						if( snSock != NULL )
+						if( snSock != nullptr )
 							snSock->Logging( !snSock->Logging() );
 					}
 					Network->popConn();
@@ -1333,7 +1333,7 @@ void CConsole::Registration( void )
 	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_CONSOLE );
 	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Console" );
 	}
 }

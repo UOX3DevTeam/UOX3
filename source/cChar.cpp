@@ -140,9 +140,9 @@ const SI08			DEFPLAYER_TOWNPRIV 			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
-hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( NULL ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
-speechCallback( NULL ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ),
-fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV )
+hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
+speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ),
+fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -151,7 +151,7 @@ fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL ), 
 	for( UI08 j = 0; j <= INTELLECT; ++j )
 		atrophy[j] = j;
 
-	if( cwmWorldState != NULL )
+	if( cwmWorldState != nullptr )
 		trackingTargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
 }
 
@@ -188,7 +188,7 @@ CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
-petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ),
+petGuarding( nullptr ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ),
 tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ),
 runningSpeed( DEFNPC_MOVEMENTSPEED ), fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL )
 {
@@ -243,7 +243,7 @@ bools( DEFCHAR_BOOLS ),
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ),
 oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ),
-emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ),
+emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( nullptr ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), thirst( DEFCHAR_THIRST ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
 advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
@@ -274,8 +274,8 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 
 	strength = dexterity = intelligence = 1;
 
-	mPlayer	= NULL;
-	mNPC	= NULL;
+	mPlayer	= nullptr;
+	mNPC	= nullptr;
 
 	SetMaxHPFixed( false );
 	SetMaxManaFixed( false );
@@ -295,13 +295,13 @@ CChar::~CChar()
 	if( IsValidNPC() )
 	{
 		delete mNPC;
-		mNPC = NULL;
+		mNPC = nullptr;
 	}
 
 	if( IsValidPlayer() )
 	{
 		delete mPlayer;
-		mPlayer = NULL;
+		mPlayer = nullptr;
 	}
 }
 
@@ -324,7 +324,7 @@ void CChar::CreatePlayer( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::IsValidNPC( void ) const
 {
-	return ( mNPC != NULL );
+	return ( mNPC != nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -334,7 +334,7 @@ bool CChar::IsValidNPC( void ) const
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::IsValidPlayer( void ) const
 {
-	return ( mPlayer != NULL );
+	return ( mPlayer != nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -425,7 +425,7 @@ bool CChar::SetHunger( SI08 newValue )
 	for( auto i : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( i );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns false/0/nothing, prevent hunger from changing, and prevent
 			// other scripts with event from running
@@ -453,7 +453,7 @@ void CChar::DoHunger( CSocket *mSock )
 	{
 		UI16 hungerRate;
 		SI16 hungerDamage;
-		if( !IsNpc() && mSock != NULL )	// Do Hunger for player chars
+		if( !IsNpc() && mSock != nullptr )	// Do Hunger for player chars
 		{
 			if( WillHunger() && GetCommandLevel() == CL_PLAYER  )
 			{
@@ -538,7 +538,7 @@ void CChar::DoHunger( CSocket *mSock )
 						DecHunger();
 					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
 					{
-						SetOwner( NULL );
+						SetOwner( nullptr );
 						SetHunger( 6 );
 					}
 					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
@@ -565,7 +565,7 @@ bool CChar::SetThirst( SI08 newValue )
 	for( auto i : scriptTriggers )
 	{
 		cScript* toExecute = JSMapping->GetScript(i);
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns false/0/nothing, prevent thirst from changing, and prevent
 			// other scripts with event from running
@@ -593,7 +593,7 @@ void CChar::DoThirst( CSocket* mSock )
 	{
 		UI16 thirstRate;
 		SI16 thirstDrain;
-		if( !IsNpc() && mSock != NULL )  // Do Thirst for player chars
+		if( !IsNpc() && mSock != nullptr )  // Do Thirst for player chars
 		{
 			if( WillThirst() && GetCommandLevel() == CL_PLAYER )
 			{
@@ -684,7 +684,7 @@ void CChar::DoThirst( CSocket* mSock )
 						DecThirst();
 					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedThirstWildChance() )
 					{
-						SetOwner( NULL );
+						SetOwner( nullptr );
 						SetThirst( 6 );
 					}
 					SetTimer( tCHAR_THIRST, BuildTimeValue( static_cast<R32>(thirstRate) ));
@@ -709,7 +709,7 @@ void CChar::checkPetOfflineTimeout( void )
 
 		CChar *owner = GetOwnerObj();
 		if( !ValidateObject( owner ) )
-			SetOwner( NULL ); // The owner is gone, so remove him
+			SetOwner( nullptr ); // The owner is gone, so remove him
 		else
 		{
 			if( isOnline( (*owner) ) )
@@ -725,7 +725,7 @@ void CChar::checkPetOfflineTimeout( void )
 			{
 				if( difftime( currTime, lastOnTime) >= offlineTimeout )
 				{
-					SetOwner( NULL );
+					SetOwner( nullptr );
 					SetHunger( 6 );
 				}
 			}
@@ -1249,8 +1249,8 @@ void CChar::SetPeace( UI32 newValue )
 		SetCanAttack( false );
 		if( IsAtWar() )
 			SetWar( false );
-		SetTarg( NULL );
-		SetAttacker( NULL );
+		SetTarg( nullptr );
+		SetAttacker( nullptr );
 		SetAttackFirst( false );
 		SetTimer( tCHAR_PEACETIMER, BuildTimeValue( newValue ) );
 	}
@@ -1549,7 +1549,7 @@ void CChar::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::SetLocation( const CBaseObject *toSet )
 {
-	if( toSet != NULL )
+	if( toSet != nullptr )
 		SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber(), toSet->GetInstanceID() );
 }
 
@@ -1591,7 +1591,7 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
 CItem * CChar::GetPackItem( void )
 {
-	if( packitem == NULL )
+	if( packitem == nullptr )
 	{
 		CItem *tempItem = GetItemAtLayer( IL_PACKITEM );
 		if( ValidateObject( tempItem ) && tempItem->GetType() == IT_CONTAINER )
@@ -2032,8 +2032,8 @@ void CChar::SetNoNeedReags( bool newValue )
 CChar *CChar::Dupe( void )
 {
 	CChar *target = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-	if( target == NULL )
-		return NULL;
+	if( target == nullptr )
+		return nullptr;
 
 	CBaseObject::CopyData( target );
 	CopyData( target );
@@ -2238,7 +2238,7 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 void CChar::RemoveFromSight( CSocket *mSock )
 {
 	CPRemoveItem toSend = (*this);
-	if( mSock != NULL )
+	if( mSock != nullptr )
 		mSock->Send( &toSend );
 	else
 	{
@@ -2261,7 +2261,7 @@ void CChar::RemoveFromSight( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		//CChar *myChar = mSock->CurrcharObj();
 		mSock->CurrcharObj();
@@ -2279,7 +2279,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 
 			// First remove nearby characters from sight
@@ -2348,7 +2348,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::SendToSocket( CSocket *s )
 {
-	if( s != NULL && s->LoginComplete() )
+	if( s != nullptr && s->LoginComplete() )
 	{
 		CChar *mCharObj = s->CurrcharObj();
 		bool alwaysSendItemHue = false;
@@ -2407,7 +2407,7 @@ void CChar::Teleport( void )
 	CSocket *mSock = GetSocket();
 	RemoveFromSight();
 	Update();
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		UI16 visrange = mSock->Range() + Races->VisRange( GetRace() );
 		mSock->statwindow( this );
@@ -2424,7 +2424,7 @@ void CChar::Teleport( void )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -2504,7 +2504,7 @@ void CChar::ExposeToView( void )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::Update( CSocket *mSock )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 		SendToSocket( mSock );
 	else
 	{
@@ -2531,7 +2531,7 @@ void CChar::Update( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 {
-	CItem *rVal = NULL;
+	CItem *rVal = nullptr;
 	LAYERLIST_ITERATOR lIter = itemLayers.find( Layer );
 	if( lIter != itemLayers.end() )
 		rVal = lIter->second;
@@ -2552,7 +2552,7 @@ bool CChar::WearItem( CItem *toWear )
 	for( auto i : scriptTriggers )
 	{
 		cScript *tScript = JSMapping->GetScript( i );
-		if( tScript != NULL )
+		if( tScript != nullptr )
 		{
 			// If script returns false, prevent item from being equipped
 			if( tScript->OnEquipAttempt( this, toWear ) == 0 )
@@ -2590,7 +2590,7 @@ bool CChar::WearItem( CItem *toWear )
 				for( auto i : scriptTriggers )
 				{
 					cScript *tScript = JSMapping->GetScript( i );
-					if( tScript != NULL )
+					if( tScript != nullptr )
 					{
 						// If script returns 1, prevent other scripts with event from running
 						if( tScript->OnEquip( this, toWear ) == 1 )
@@ -2619,7 +2619,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 	for( auto i : scriptTriggers )
 	{
 		cScript *tScript = JSMapping->GetScript( i );
-		if( tScript != NULL )
+		if( tScript != nullptr )
 		{
 			if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
 			{
@@ -2632,7 +2632,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 	if( ValidateObject( GetItemAtLayer( Layer ) ) )
 	{
 		if( Layer == IL_PACKITEM )	// It's our pack!
-			SetPackItem( NULL );
+			SetPackItem( nullptr );
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
@@ -2648,7 +2648,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		for( auto i : scriptTriggers )
 		{
 			cScript *tScript = JSMapping->GetScript( i );
-			if( tScript != NULL )
+			if( tScript != nullptr )
 			{
 				// If script returns true/1, prevent other scripts with event from running
 				if( tScript->OnUnequip( this, itemLayers[Layer] ) == 0 )
@@ -2658,7 +2658,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 			}
 		}
 
-		itemLayers[Layer] = NULL;
+		itemLayers[Layer] = nullptr;
 		rvalue = true;
 	}
 	return rvalue;
@@ -2672,7 +2672,7 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CChar::FirstItem( void )
 {
-	CItem *rVal = NULL;
+	CItem *rVal = nullptr;
 
 	layerCtr = itemLayers.begin();
 	if( !FinishedItems() )
@@ -2688,7 +2688,7 @@ CItem *CChar::FirstItem( void )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CChar::NextItem( void )
 {
-	CItem *rVal = NULL;
+	CItem *rVal = nullptr;
 	++layerCtr;
 	if( !FinishedItems() )
 		rVal = layerCtr->second;
@@ -2919,7 +2919,7 @@ void CChar::BreakConcentration( CSocket *sock )
 	if( IsMeditating() )
 	{
 		SetMeditating( false );
-		if( sock != NULL )
+		if( sock != nullptr )
 			sock->sysmessage( 100 );
 	}
 }
@@ -2999,7 +2999,7 @@ UI16 CChar::GetMaxHP( void )
 		CRace *pRace = Races->Race( GetRace() );
 
 		// if race is invalid just use default race
-		if( pRace == NULL )
+		if( pRace == nullptr )
 			pRace = Races->Race( 0 );
 
 		maxHP = (UI16)(GetStrength() + (UI16)( ((R32)GetStrength()) * ((R32)(pRace->HPModifier())) / 100 ));
@@ -3026,7 +3026,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 		SetMaxHPFixed( false );
 
 		CRace *pRace = Races->Race( GetRace() );
-		if( pRace == NULL )
+		if( pRace == nullptr )
 			pRace = Races->Race( 0 );
 
 		maxHP = (UI16)(GetStrength() + (UI16)( ((R32)GetStrength()) * ((R32)(pRace->HPModifier())) / 100 ));
@@ -3052,7 +3052,7 @@ SI16 CChar::GetMaxMana( void )
 		CRace *pRace = Races->Race( GetRace() );
 
 		// if race is invalid just use default race
-		if( pRace == NULL )
+		if( pRace == nullptr )
 			pRace = Races->Race( 0 );
 
 		maxMana = (SI16)(GetIntelligence() + (SI16)( ((R32)GetIntelligence()) * ((R32)(pRace->ManaModifier())) / 100 ));
@@ -3079,7 +3079,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 		SetMaxManaFixed( false );
 
 		CRace *pRace = Races->Race( GetRace() );
-		if( pRace == NULL )
+		if( pRace == nullptr )
 			pRace = Races->Race( 0 );
 
 		maxMana = (SI16)(GetIntelligence() + (SI16)( ((R32)GetIntelligence()) * ((R32)(pRace->ManaModifier())) / 100 ));
@@ -3105,7 +3105,7 @@ SI16 CChar::GetMaxStam( void )
 		CRace *pRace = Races->Race( GetRace() );
 
 		// if race is invalid just use default race
-		if( pRace == NULL )
+		if( pRace == nullptr )
 			pRace = Races->Race( 0 );
 
 		maxStam = (SI16)(GetDexterity() + (SI16)( ((R32)GetDexterity()) * ((R32)(pRace->StamModifier())) / 100 ));
@@ -3132,7 +3132,7 @@ void CChar::SetFixedMaxStam( SI16 newmaxstam )
 		SetMaxStamFixed( false );
 
 		CRace *pRace = Races->Race( GetRace() );
-		if( pRace == NULL )
+		if( pRace == nullptr )
 			pRace = Races->Race( 0 );
 
 		maxStam = (SI16)(GetDexterity() + (SI16)( ((R32)GetDexterity()) * ((R32)(pRace->StamModifier())) / 100 ));
@@ -4024,7 +4024,7 @@ bool CChar::LoadRemnants( void )
 		SetWar( false );
 
 	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber, instanceID );
-	SetRegion( (tRegion != NULL ? tRegion->GetRegionNum() : 0xFF) );
+	SetRegion( (tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF) );
 	SetTimer( tCHAR_ANTISPAM, 0 );
 	if( GetID() != GetOrgID() && !IsDead() )
 		SetID( GetOrgID() );
@@ -4119,7 +4119,7 @@ void CChar::PostLoadProcessing( void )
 	}
 	else
 	{
-		SetPackItem(NULL);
+		SetPackItem(nullptr);
 	}
 
 	SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
@@ -4149,7 +4149,7 @@ bool CChar::IsJailed( void ) const
 bool CChar::inDungeon( void )
 {
 	bool rValue = false;
-	if( GetRegion() != NULL )
+	if( GetRegion() != nullptr )
 		rValue = GetRegion()->IsDungeon();
 	return rValue;
 }
@@ -4191,7 +4191,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 
 			SERIAL speakTo		= INVALIDSERIAL;
 			SpeechTarget target	= SPTRG_PCNPC;
-			if( s != NULL )
+			if( s != nullptr )
 			{
 				CChar *mChar	= s->CurrcharObj();
 				speakTo			= mChar->GetSerial();
@@ -4219,7 +4219,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... )
 {
 	UnicodeTypes dictLang = ZERO;
-	if( s != NULL )
+	if( s != nullptr )
 		dictLang = s->Language();
 
 	std::string txt = Dictionary->GetEntry( dictEntry, dictLang );
@@ -4280,7 +4280,7 @@ void CChar::WalkZ( SI08 newZ )
 		for( auto i : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( i );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				toExecute->OnFall( (this), fallDistance );
 			}
@@ -4321,34 +4321,34 @@ void CChar::Cleanup( void )
 			if( ValidateObject( tItem ) )
 				tItem->Delete();
 		}
-		CChar *tempChar = NULL;
+		CChar *tempChar = nullptr;
 		tempChar = GetTarg();
 		if( ValidateObject( tempChar ) )
 		{
 			if( tempChar->GetTarg() == this )
 			{
-				tempChar->SetTarg( NULL );
-				tempChar->SetAttacker( NULL );
+				tempChar->SetTarg( nullptr );
+				tempChar->SetAttacker( nullptr );
 				tempChar->SetAttackFirst( false );
 				if( tempChar->IsAtWar() )
 					tempChar->ToggleCombat();
 			}
-			SetTarg( NULL );
+			SetTarg( nullptr );
 		}
 		tempChar = GetAttacker();
 		if( ValidateObject( tempChar ) )
 		{
 			if( tempChar->GetAttacker() == this )
-				tempChar->SetAttacker( NULL );
+				tempChar->SetAttacker( nullptr );
 
 			if( tempChar->GetTarg() == this )
 			{
-				tempChar->SetTarg( NULL );
+				tempChar->SetTarg( nullptr );
 				tempChar->SetAttackFirst( false );
 				if( tempChar->IsAtWar() )
 					tempChar->ToggleCombat();
 			}
-			SetAttacker( NULL );
+			SetAttacker( nullptr );
 		}
 
 		// If we delete a NPC we should delete his tempeffects as well
@@ -4373,7 +4373,7 @@ void CChar::Cleanup( void )
 				if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 				{
 					CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-					if( spawnReg != NULL )
+					if( spawnReg != nullptr )
 						spawnReg->deleteSpawnedChar( this );
 				}
 			}
@@ -4386,7 +4386,7 @@ void CChar::Cleanup( void )
 			{
 				for( UI08 actr = 0; actr < 7; ++actr )
 				{
-					if( mAcct.lpCharacters[actr] != NULL && mAcct.lpCharacters[actr]->GetSerial() == GetSerial() )
+					if( mAcct.lpCharacters[actr] != nullptr && mAcct.lpCharacters[actr]->GetSerial() == GetSerial() )
 					{
 						Accounts->DelCharacter( mAcct.wAccountIndex, actr );
 						break;
@@ -4395,14 +4395,14 @@ void CChar::Cleanup( void )
 			}
 		}
 
-		if( GetSpawnObj() != NULL )
+		if( GetSpawnObj() != nullptr )
 			SetSpawn( INVALIDSERIAL );
 
 		if( IsGuarded() )
 		{
 			CChar *petGuard = Npcs->getGuardingPet( this, this );
 			if( ValidateObject( petGuard ) )
-				petGuard->SetGuarding( NULL );
+				petGuard->SetGuarding( nullptr );
 			SetGuarded( false );
 		}
 		Npcs->stopPetGuarding( this );
@@ -4410,7 +4410,7 @@ void CChar::Cleanup( void )
 		for( tempChar = petsControlled.First(); !petsControlled.Finished(); tempChar = petsControlled.Next() )
 		{
 			if( ValidateObject( tempChar ) )
-				tempChar->SetOwner( NULL );
+				tempChar->SetOwner( nullptr );
 		}
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
 	}
@@ -4821,7 +4821,7 @@ bool CChar::ToggleFlying( void )
 				Network->pushConn();
 				for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
 				{
-					if( tSend == NULL )
+					if( tSend == nullptr )
 						continue;
 					CChar *mChar = tSend->CurrcharObj();
 					if( !ValidateObject( mChar ))
@@ -5083,7 +5083,7 @@ void CChar::SetBeardColour( COLOUR value )
 //o-----------------------------------------------------------------------------------------------o
 CChar *CChar::GetTrackingTarget( void ) const
 {
-	CChar *rVal = NULL;
+	CChar *rVal = nullptr;
 	if( IsValidPlayer() )
 		rVal = calcCharObjFromSer( mPlayer->trackingTarget );
 	return rVal;
@@ -5092,7 +5092,7 @@ void CChar::SetTrackingTarget( CChar *newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != NULL )
+		if( newValue != nullptr )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
@@ -5107,7 +5107,7 @@ void CChar::SetTrackingTarget( CChar *newValue )
 //o-----------------------------------------------------------------------------------------------o
 CChar *CChar::GetTrackingTargets( UI08 targetNum ) const
 {
-	CChar *rVal = NULL;
+	CChar *rVal = nullptr;
 	if( IsValidPlayer() )
 	{
 		if( targetNum < mPlayer->trackingTargets.size() )
@@ -5119,7 +5119,7 @@ void CChar::SetTrackingTargets( CChar *newValue, UI08 targetNum )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != NULL )
+		if( newValue != nullptr )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
@@ -5259,7 +5259,7 @@ void CChar::SetSquelched( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CChar::GetSpeechItem( void ) const
 {
-	CItem *rVal = NULL;
+	CItem *rVal = nullptr;
 	if( IsValidPlayer() )
 		rVal = mPlayer->speechItem;
 	return rVal;
@@ -5268,7 +5268,7 @@ void CChar::SetSpeechItem( CItem *newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != NULL )
+		if( newValue != nullptr )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
@@ -5345,7 +5345,7 @@ void CChar::SetSpeechID( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 cScript *CChar::GetSpeechCallback( void ) const
 {
-	cScript *rVal = NULL;
+	cScript *rVal = nullptr;
 	if( IsValidPlayer() )
 		rVal = mPlayer->speechCallback;
 	return rVal;
@@ -5354,7 +5354,7 @@ void CChar::SetSpeechCallback( cScript *newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != NULL )
+		if( newValue != nullptr )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
@@ -5419,7 +5419,7 @@ void CChar::SetDeaths( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 CSocket * CChar::GetSocket( void ) const
 {
-	CSocket *rVal = NULL;
+	CSocket *rVal = nullptr;
 	if( IsValidPlayer() )
 		rVal = mPlayer->socket;
 	return rVal;
@@ -5428,7 +5428,7 @@ void CChar::SetSocket( CSocket *newVal )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newVal != NULL )
+		if( newVal != nullptr )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
@@ -5637,7 +5637,7 @@ void CChar::SetNPCAiType( SI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject *CChar::GetGuarding( void ) const
 {
-	CBaseObject *rVal = NULL;
+	CBaseObject *rVal = nullptr;
 	if( IsValidNPC() )
 		rVal = mNPC->petGuarding;
 	return rVal;
@@ -5646,7 +5646,7 @@ void CChar::SetGuarding( CBaseObject *newValue )
 {
 	if( !IsValidNPC() )
 	{
-		if( newValue != NULL )
+		if( newValue != nullptr )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
@@ -5962,7 +5962,7 @@ void CChar::SetOldNpcWander( SI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 CChar *CChar::GetFTarg( void ) const
 {
-	CChar *rVal = NULL;
+	CChar *rVal = nullptr;
 	if( IsValidNPC() )
 		rVal = calcCharObjFromSer( mNPC->fTarg );
 	return rVal;
@@ -5971,7 +5971,7 @@ void CChar::SetFTarg( CChar *newTarg )
 {
 	if( !IsValidNPC() )
 	{
-		if( newTarg != NULL )
+		if( newTarg != nullptr )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
@@ -6211,7 +6211,7 @@ void CChar::FlushPath( void )
 //o-----------------------------------------------------------------------------------------------o
 CHARLIST *CChar::GetFriendList( void )
 {
-	CHARLIST *rVal = NULL;
+	CHARLIST *rVal = nullptr;
 	if( IsValidNPC() )
 		rVal = &mNPC->petFriends;
 	return rVal;
@@ -6228,7 +6228,7 @@ void CChar::AddFriend( CChar *toAdd )
 {
 	if( !IsValidNPC() )
 	{
-		if( toAdd != NULL )
+		if( toAdd != nullptr )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
@@ -6385,9 +6385,9 @@ void CChar::SetFleeingSpeed( R32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 bool DTEgreater( DamageTrackEntry *elem1, DamageTrackEntry *elem2 )
 {
-	if( elem1 == NULL )
+	if( elem1 == nullptr )
 		return false;
-	if( elem2 == NULL )
+	if( elem2 == nullptr )
 		return true;
 	return elem1->damageDone > elem2->damageDone;
 }
@@ -6400,7 +6400,7 @@ bool DTEgreater( DamageTrackEntry *elem1, DamageTrackEntry *elem2 )
 void CChar::Heal( SI16 healValue, CChar *healer )
 {
 	SetHP( hitpoints + healValue );
-	if( healer != NULL )
+	if( healer != nullptr )
 	{
 		const SERIAL healerSerial	= healer->GetSerial();
 		bool persFound				= false;
@@ -6450,7 +6450,7 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 					ToggleCombat();
 					SetTimer( tNPC_MOVETIME, BuildTimeValue( GetWalkingSpeed() ) );
 				}
-			} else if( mSock != NULL )
+			} else if( mSock != nullptr )
 				BreakConcentration( mSock );
 		}
 	}
@@ -6467,11 +6467,11 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 	for( auto i : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( i );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 			toExecute->OnDamage(  this, attacker, damageValue );
 	}
 
-	CSocket *mSock = GetSocket(), *attSock = NULL, *attOwnerSock = NULL;
+	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
 
 	if( ValidateObject( attacker ) )
 	{
@@ -6484,11 +6484,11 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 	if( cwmWorldState->ServerData()->CombatDisplayDamageNumbers() )
 	{
 		CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->Send( &toDisplay );
-		if( attSock != NULL && attSock != mSock )
+		if( attSock != nullptr && attSock != mSock )
 			attSock->Send( &toDisplay );
-		if( attOwnerSock != NULL )
+		if( attOwnerSock != nullptr )
 			attOwnerSock->Send( &toDisplay );
 	}
 
@@ -6502,7 +6502,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
 		{
 			SetCanAttack( true );
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->sysmessage( 1779 );
 		}
 		else
@@ -6520,7 +6520,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 				bool regionGuarded = ( GetRegion()->IsGuarded() );
 				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[this->GetID()].IsHuman() )
 				{
-					TextMessage( NULL, 335, TALK, true );
+					TextMessage( nullptr, 335, TALK, true );
 					callGuards( this, attacker );
 				}
 				if( ValidateObject( attacker->GetOwnerObj() ) )
@@ -6563,7 +6563,7 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 	for( auto i : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( i );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			SI08 retStatus = toExecute->OnDeathBlow( this, attacker );
 
@@ -6586,7 +6586,7 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 				attacker->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
 				if( !attacker->IsNpc() )
 				{
-					if( attSock != NULL )
+					if( attSock != nullptr )
 					{
 						attSock->sysmessage( 314, attacker->GetKills() );
 						if( attacker->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1 )
@@ -6616,11 +6616,11 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 void CChar::UpdateDamageTrack( void )
 {
 	TIMERVAL currentTime	= cwmWorldState->GetUICurrentTime();
-	DamageTrackEntry *i		= NULL;
+	DamageTrackEntry *i		= nullptr;
 	// Update the damage stuff
 	for( i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
 	{
-		if( i == NULL )
+		if( i == nullptr )
 		{
 			damageDealt.Remove( i );
 			continue;
@@ -6631,7 +6631,7 @@ void CChar::UpdateDamageTrack( void )
 	// Update the healing stuff
 	for( i = damageHealed.First(); !damageHealed.Finished(); i = damageHealed.Next() )
 	{
-		if( i == NULL )
+		if( i == nullptr )
 		{
 			damageHealed.Remove( i );
 			continue;

@@ -53,8 +53,8 @@ struct MapData_st
 	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
 
 	MapData_st() : mapFile( "" ), mapFileUOPWrap( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ),
-	staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( NULL ), staticsObj( NULL ),
-	staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
+	staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( nullptr ), staticsObj( nullptr ),
+	staidxObj( nullptr ), mapDiffObj( nullptr ), staticsDiffObj( nullptr )
 	{
 		mapDiffList.clear();
 		staticsDiffIndex.clear();

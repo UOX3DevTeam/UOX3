@@ -318,14 +318,14 @@ void startChar( CSocket *mSock, bool onCreate = false );
 //o-----------------------------------------------------------------------------------------------o
 bool CPIPlayCharacter::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
 			bool disconnect = false;
 			CAccountBlock&  actbRec	= tSock->GetAccount();
-			CChar *kChar			= NULL;
-			CChar *ourChar			= NULL;
+			CChar *kChar			= nullptr;
+			CChar *ourChar			= nullptr;
 			if( actbRec.wAccountIndex == AB_INVALID_ID )
 			{
 				Network->Disconnect( tSock );
@@ -334,7 +334,7 @@ bool CPIPlayCharacter::Handle( void )
 			else
 			{
 				ourChar = actbRec.lpCharacters[slotChosen];
-				if( ourChar != NULL )
+				if( ourChar != nullptr )
 				{
 					if( !ourChar->IsNpc() && !ourChar->isFree() )
 						kChar = ourChar;
@@ -414,7 +414,7 @@ bool CPIPlayCharacter::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CPIDeleteCharacter::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		CAccountBlock * actbTemp = &tSock->GetAccount();
 		UI08 slot = tSock->GetByte( 0x22 );
@@ -465,9 +465,9 @@ bool CPIDeleteCharacter::Handle( void )
 void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour )
 {
 	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
-	if( newbieData != NULL )
+	if( newbieData != nullptr )
 	{
-		CItem *n = NULL;
+		CItem *n = nullptr;
 		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
 			std::string data = newbieData->GrabData();
@@ -491,7 +491,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 				else if( UTag == "EQUIPITEM" )
 				{
 					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
-					if( n != NULL && n->GetLayer() != IL_NONE )
+					if( n != nullptr && n->GetLayer() != IL_NONE )
 					{
 						bool conflictItem = true;
 						CItem *j = c->GetItemAtLayer( n->GetLayer() );
@@ -535,7 +535,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 						}
 					}
 				}
-				if( n != NULL )
+				if( n != nullptr )
 					n->SetNewbie( true );
 			}
 		}
@@ -559,14 +559,14 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		ITOTAL
 	};
 
-	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL };
+	CItem *CreatedItems[ITOTAL] = { nullptr, nullptr, nullptr, nullptr, nullptr };
 	UI16 ItemID, ItemColour;
 	if( validHairStyle( hairStyle, mChar->GetID() ) )
 	{
 		ItemID				= hairStyle;
 		ItemColour			= validHairColour( hairColour, mChar->GetID() );
 		CreatedItems[HAIR]	= Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
-		if( CreatedItems[HAIR] != NULL )
+		if( CreatedItems[HAIR] != nullptr )
 		{
 			CreatedItems[HAIR]->SetDecayable( false );
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
@@ -583,7 +583,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		else // human male
 			ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
 		CreatedItems[BEARD] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
-		if( CreatedItems[BEARD] != NULL )
+		if( CreatedItems[BEARD] != nullptr )
 		{
 			CreatedItems[BEARD]->SetDecayable( false );
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
@@ -593,7 +593,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		}
 	}
 	CreatedItems[PACK] = Items->CreateItem( tSock, mChar, 0x0E75, 1, 0, OT_ITEM );
-	if( CreatedItems[PACK] != NULL )
+	if( CreatedItems[PACK] != nullptr )
 	{
 		mChar->SetPackItem( CreatedItems[PACK] );
 		CreatedItems[PACK]->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
@@ -604,7 +604,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[PACK]->SetDye( true );
 	}
 	CreatedItems[BANK] = Items->CreateItem( tSock, mChar, 0x09AB, 1, 0, OT_ITEM );
-	if( CreatedItems[BANK] != NULL )
+	if( CreatedItems[BANK] != nullptr )
 	{
 		CreatedItems[BANK]->SetName( strutil::format(1024,Dictionary->GetEntry( 1283 ), mChar->GetName().c_str() ) );
 		CreatedItems[BANK]->SetDecayable( false );
@@ -669,10 +669,10 @@ bool CPICreateCharacter::Handle( void )
 	// Way too large from a maintenance perspective
 	// --> I split certain things out into a few new functions to make this a bit more manageable
 
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		CChar *mChar = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-		if( mChar != NULL )
+		if( mChar != nullptr )
 		{
 			CPClientVersion verCheck;
 			tSock->Send( &verCheck );
@@ -720,7 +720,7 @@ bool CPICreateCharacter::Handle( void )
 				}
 			}
 
-			if (toGo == NULL)
+			if (toGo == nullptr)
 			{
 				// Invalid locationNumber; check if there are ANY start locations loaded
 				if (serverCount == 0)
@@ -1116,10 +1116,10 @@ void CPICreateCharacter::SetNewCharGenderAndRace( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 void updates( CSocket *s )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 	ScriptSection *Updates = FileLookup->FindEntry( "MOTD", misc_def );
-	if( Updates == NULL )
+	if( Updates == nullptr )
 		return;
 
 	std::string updateData = "";
@@ -1141,7 +1141,7 @@ void sysBroadcast( const std::string& txt );
 //o-----------------------------------------------------------------------------------------------o
 void startChar( CSocket *mSock, bool onCreate )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		/*
 		 //Login Packet Sequence per Krrios
@@ -1238,7 +1238,7 @@ void startChar( CSocket *mSock, bool onCreate )
 			if( onCreate )
 			{
 				cScript *onCreateScp = JSMapping->GetScript( (UI16)0 );	// 0 == global script
-				if( onCreateScp != NULL )
+				if( onCreateScp != nullptr )
 					onCreateScp->OnCreate( mChar, true );
 			}
 
@@ -1247,7 +1247,7 @@ void startChar( CSocket *mSock, bool onCreate )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					// 0 == no such event was found
 					// 1 == event was found, and executed
@@ -1262,7 +1262,7 @@ void startChar( CSocket *mSock, bool onCreate )
 			{
 				// No script attached to character handled onLoginevent. Let's check global script!
 				cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnLogin( mSock, mChar );
 				}
@@ -1325,12 +1325,12 @@ void startChar( CSocket *mSock, bool onCreate )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 {
-	CItem *iCorpse = NULL;
+	CItem *iCorpse = nullptr;
 	if( !createPack )
 	{
-		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
+		iCorpse = Items->CreateItem( nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
 		if( !ValidateObject( iCorpse ) )
-			return NULL;
+			return nullptr;
 
 		iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), mChar.GetName().c_str() ) );
 		iCorpse->SetCarve( mChar.GetCarve() );
@@ -1347,9 +1347,9 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 	}
 	else
 	{
-		iCorpse = Items->CreateItem( NULL, &mChar, 0x09B2, 1, 0x0000, OT_ITEM );
-		if( iCorpse== NULL )
-			return NULL;
+		iCorpse = Items->CreateItem( nullptr, &mChar, 0x09B2, 1, 0x0000, OT_ITEM );
+		if( iCorpse== nullptr )
+			return nullptr;
 
 		iCorpse->SetName( Dictionary->GetEntry( 1611 ) );
 		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
@@ -1389,9 +1389,9 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 //o-----------------------------------------------------------------------------------------------o
 void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 {
-	CItem *k			= NULL;
+	CItem *k			= nullptr;
 	CItem *packItem		= mChar.GetPackItem();
-	CItem *dupeItem		= NULL;
+	CItem *dupeItem		= nullptr;
 	bool packIsValid	= ValidateObject( packItem );
 	for( CItem *j = mChar.FirstItem(); !mChar.FinishedItems(); j = mChar.NextItem() )
 	{
@@ -1463,13 +1463,13 @@ void HandleDeath( CChar *mChar )
 	if( !ValidateObject( mChar ) || mChar->IsDead() || mChar->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
 		return;
 
-	CSocket *pSock = NULL;
+	CSocket *pSock = nullptr;
 	if( !mChar->IsNpc() )
 		pSock = mChar->GetSocket();
 
 	DismountCreature( mChar );
 
-	if( pSock != NULL )
+	if( pSock != nullptr )
 		killTrades( mChar );
 
 	if( mChar->GetID() != mChar->GetOrgID() )
@@ -1481,7 +1481,7 @@ void HandleDeath( CChar *mChar )
 	mChar->SetDead( true );
 
 	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack, fallDirection );
-	if( iCorpse != NULL )
+	if( iCorpse != nullptr )
 	{
 		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
@@ -1514,8 +1514,8 @@ void HandleDeath( CChar *mChar )
 			case 0x02EF:	mChar->SetID( 0x0192 );	break;	// savage female
 		}
 
-		CItem *c = Items->CreateItem( NULL, mChar, 0x204E, 1, 0, OT_ITEM );
-		if( c == NULL )
+		CItem *c = Items->CreateItem( nullptr, mChar, 0x204E, 1, 0, OT_ITEM );
+		if( c == nullptr )
 			return;
 		c->SetName( Dictionary->GetEntry( 1610 ) );
 		mChar->SetRobe( c->GetSerial() );
@@ -1525,7 +1525,7 @@ void HandleDeath( CChar *mChar )
 
 		if( mChar->GetAccount().wAccountIndex != AB_INVALID_ID )
 		{
-			if( pSock != NULL )
+			if( pSock != nullptr )
 			{
 				CPResurrectMenu toSend( 0 );
 				pSock->Send( &toSend );
@@ -1538,7 +1538,7 @@ void HandleDeath( CChar *mChar )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns true/1, prevent other scripts with event from running
 			if( toExecute->OnDeath( mChar, iCorpse ) == 1 )

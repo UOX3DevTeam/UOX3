@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 25. April, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4i</small></p>
+	<p style="margin:0"><small>Last Updated: 13. June, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4q</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -58,6 +58,13 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 13th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#installation">Installation and Setup</a> section with up-to-date information on getting started with UOX3</li>
+							<li>Updated <a href="#populateUOX3">Decorating and Populating your UOX3 Shard</a> with information on new welcome-gump for admins and introduction to 'decorate command</li>
+							<li>Added details about 'decorate command to the <a href="#commandList">Command List</a></li>
+							<li>Added details about <a href="#worldTemplates">World Templates</a> under the Feature Documentation section</li>
+						</ul>
 						<h4>April 25th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#colours">Colours and Colour Chart</a> to include information about partial hues and ethereal hues.</li>
@@ -334,8 +341,8 @@ packitem=0x0f8d,30
 						<li><strong>map0.mul/map0LegacyMUL.uop</strong> (depending on client version)</li>
 						<li><strong>staidx0.mul</strong></li>
 						<li><strong>statics0.mul</strong></li>
-						<li><strong>multi.mul</strong></li>
-						<li><strong>multi.idx</strong></li>
+						<li><strong>multi.mul / MultiCollection.uop</strong> (depending on client version)</li>
+						<li><strong>multi.idx</strong> (not needed if using MultiCollection.uop)</li>
 						<li><strong>tiledata.mul</strong></li>
 					</ul></p>
 					<p>Additional map and statics data files are optional, and required only if you want the other worlds/facets to be available on your shard.</p>
@@ -345,7 +352,7 @@ packitem=0x0f8d,30
 						<p>Clients after v7.0.24.2 started using new file format for map files - uop - that previously required conversion to mul format in order to be loaded by UOX3, leading to a recommendation of using a client version earlier than this. However, starting with v0.99.3, UOX3 <strong>can</strong> now load these uop files directly. <strong>No need to convert!</strong> If for whatever reason you still want to convert files between the .mul and .uop formats, check out the <a href="#convertUOP">Additional UOX3 Info > Converting UOP to MUL</a> section!</p>
 					</div>
 					<p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">the community forums</a> to read more about UOX3's compatibility with various UO Client versions.</p>
-					<p>While you're at it, go grab the <a href="http://www.uor-razor.com/" target="_blank">UO:R Community Edition of Razor</a>, a tool you'll need later to remove the encryption from the UO client, allowing it to connect to UOX3 - which only accepts encryption-less connections.</p>
+					<p>While you're at it, go grab the <a href="http://www.uor-razor.com/" target="_blank">UO:R Community Edition of Razor</a>, a tool you'll need later to remove the encryption from the UO client, allowing it to connect to UOX3 - which only accepts encryption-less connections. Alternatively, you can use <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a> - an open source client with many extra bells and whistles.</p>
 					<h3>Linux/macOS Platforms</h3>
 					<p>While UOX3 supports both Linux and macOS, neither the standard UO client nor Razor run natively on these platforms. As an alternative, have a look at <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source, cross-platform client that supports both Linux and macOS (and Windows!), and which does not rely on Razor to work.</p>
 				  </div>
@@ -363,7 +370,7 @@ packitem=0x0f8d,30
 					<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to the "cutting edge" nature.</p>
 					<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3.</p></div>
 					<h3>3) Compile Source Yourself</h3>
-					<p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
+					<p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, or just like to live life on the edge and want to stay up-to-date with the most recent changes at any given point of time, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -377,48 +384,41 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<p>If you think the detailed instructions below are too wordy, try this quick start guide instead, and refer to the full setup guide if you run into any problems along the way:</p>
 						<ol>
-							<li>Download the <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">UO Client</a>, and <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a>. Run Razor in WinXP SP2/3 Compatibility mode. For Linux/macOS users, find a way to copy the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on <a href="https://www.classicuo.eu/" target="_blank" title="ClassicUO - Open Source UO Client">ClassicUO</a> client instead of the UO+Razor combination.</li>
+							<li>Download the <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">UO Client</a>, and <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a>. Run Razor in WinXP SP2/3 Compatibility mode. For Linux/macOS users, find a way to copy the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on <a href="https://www.classicuo.eu/" target="_blank" title="ClassicUO - Open Source UO Client">ClassicUO</a> client (also available for Windows-users!) instead of the UO+Razor combination.</li>
 							<li>Download <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3</a> for your platform of choice.</li>
 							<li>Set client versions allowed on your shard via <strong>CLIENTSUPPORT#</strong> lines in <em>[clientsupport]</em> section of <strong>UOX.INI</strong>.</li>
-							<li>Update <strong>shard name</strong> and IP (if other than local) in <em>[play server list]</em> section of <strong>UOX.INI</strong></li>
+							<li>Update <strong>SERVERNAME</strong> (name of your shard) and optionally <strong>EXTERNALIP</strong> (your internet IP) in <em>[system]</em> section of <strong>UOX.INI</strong>. If you just want to connect locally on same computer, leave EXTERNALIP alone</li>
 							<li>Update <strong>DATADIRECTORY</strong> path in <em>[directories]</em> section of <strong>UOX.INI</strong>; point it to UO folder, or folder with UO data files.</li>
-							<li>Change default <strong>username</strong>/<strong>password</strong> for <em>account 0</em> in <strong>UOX3/accounts/accounts.adm</strong>.</li>
+							<li>Change default <strong>username</strong>/<strong>password</strong> for <em>account 0</em> (admin account) in <strong>UOX3/accounts/accounts.adm</strong>.</li>
 							<li>Start UOX3!</li>
-							<li>Start Razor, and use it to load up the UO client, then log in!</li>
+							<li>Start Razor and use it to load up the UO client (or use ClassicUO), then log in!</li>
 						</ol>
 					</div>
 					<p>Assuming you now have a UOX3 folder that contains <em>UOX3.exe</em> (Windows only), <em>uox3 binary</em> (Linux/macOS only), some .ini files and a bunch of folders like <em>accounts</em>, <em>dfndata</em> and <em>js</em>, it's time to dig in and get your hands dirty with some ini editing!</p>
 					<h3>Step 1) Open UOX.INI</h3>
 					<p>Open <span class="highlight">UOX.INI</span> from the root UOX3 folder using your favourite text editor (Notepad, <a href="https://notepad-plus-plus.org/" target="_blank" title="Notepad++ homepage">Notepad++</a>, <a href="https://www.sublimetext.com/" target="_blank" title="Sublime Text Editor homepage">Sublime Text</a>, Vim, nano, etc.)
-					<h3>Step 2) Limit Allowed Client Versions</h3>
+					<h3>Step 2) Name Your Shard</h3>
+					<p>Under the <span class="highlight">[system]</span> section, look for the line similar to <span class="highlight">SERVERNAME=My UOX3 Shard</span>.</p>
+					<p>Replace <span class="highlight">"My UOX3 Shard"</span> with the name you'd like to use for your UOX3 shard. Keep the name short (preferably 16-20 chars); the longer it is, the less likely it will show up in the UO client's server list without being truncated.</p>
+					<h3>Step 3) Set the IP Address and Port</h3>
+					<p>By default, UOX3 will work for <strong>local connections</strong> with <strong>no further changes required</strong> in this step, i.e. when connecting with UO client on same computer as UOX3, or connecting across a home LAN/WiFi.</p>
+					<p>However, if you intend to have your UOX3 shard <strong>accessible to other people</strong> over the Internet, you need to replace <span class="highlight">127.0.0.1</span> in the line <span class="highlight">EXTERNALIP=127.0.0.1</span> with your public Internet IP. An additional step that might be required here, is to configure your Internet router to forward incoming connections to your local computer via a concept called <a href="https://www.uox3.org/forums/viewtopic.php?f=19&t=2348" target="_blank" title="UOX3 Forum - Frequently Asked Questions - Port Forwarding">port forwarding</a> (check linked FAQ answer on UOX3 forums for more info).</p>
+					<p>Speaking of ports - the ini setting <span class="highlight">PORT=2593</span> determines the port UOX3 will be listening for incoming connections on. Usually this can be left as the default value, unless you have specific reasons to use a different port.</p>
+					<h3>Step 4) Limit Allowed Client Versions</h3>
 					<p>Under the <span class="highlight">[clientsupport]</span> section, enable or disable specific UO client version ranges to determine which versions of the UO client are allowed to connect to your UOX3 shard. As a general rule, try to keep the allowed ranges as narrow as possible to avoid potential issues with different client versions behaving differently. Any client version you enable here also enable a range of versions up to the version in the next available setting.</p>
-					<h3>Step 3) Name your Shard</h3>
-					<p>Locate the section called <strong>[play server list]</strong>, which should contain a line similar to this:</p>
-					<p style="margin-left: 20px"><span class="highlight">SERVERLIST=Default UOX3 Server,127.0.0.1,2593</span></p>
-					<p>Replace <span class="highlight">"Default UOX3 Server"</span> with the name you'd like to use for your UOX3 shard. Keep the name short (below 30 chars); the longer it is, the less likely it will show up in the UO client's server list without being truncated.</p>
-					<h3>Step 4) Set the IP Address</h3>
-					<p>If you are running UOX3 on the same computer as your UO client, and you only intend to access the server locally, you can leave the IP address in the <strong>SERVERLIST</strong> line as is (127.0.0.1). If you intend to have the shard accessible over LAN or the Internet, you need to replace 127.0.0.1 with with your LAN or public Internet IP.</p>
-					<p>However, instead of replacing the local IP with a LAN/Internet IP, which will restrict you from connecting to the shard locally, you can alternatively add multiple SERVERLIST= lines in the .ini file, each one with a different IP assigned. The below example would allow connections from both local, LAN and Internet sources:</p>
-					<p style="margin-left: 20px"><span class="highlight">[play server list]<br>
-					{<br>
-					SERVERLIST=Local UOX3 Shard,127.0.0.1,2593<br>
-					SERVERLIST=LAN UOX3 Shard,192.168.1.X,2593<br>
-					SERVERLIST=Online UOX3 Shard,X.X.X.X,2593<br>
-					}</span></p>
-					<p><em>2593</em> is the Port address that your UOX3 shard will be listening for connections on, and can be left as the default value unless you have a specific reason to use another Port.</p>
 					<h3>Step 5) Set the path to UO files</h3>
 					<p>Scroll down to the <strong>[directories]</strong> section of the ini file, and locate this line:</p>
-					<p style="margin-left: 20px"><span class="highlight">DATADIRECTORY=c:/program files/ultima online/</span></p>
+					<p style="margin-left: 20px"><span class="highlight">DATADIRECTORY=C:\Program Files (x86)\Electronic Arts\Ultima Online Classic</span></p>
 					<p>If you're running UOX3 on the same computer as your UO client, point the DATADIRECTORY filepath to the folder where you installed Ultima Online.</p>
 					<p>If you're running UOX3 on a computer without the UO client installed, point the DATADIRECTORY filepath to a folder that contains the following data-files, copied from the UO Client:</p>
 					<input type="checkbox" id="spoiler_config_requiredfiles"/>
 					<label for="spoiler_config_requiredfiles">List of Required UO Data Files <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<ul>
-							<li><span class="highlight">map*.mul/map*LegacyMUL.uop</span> (Depending on client version)</li>
+							<li><span class="highlight">map*.mul / map*LegacyMUL.uop</span> (Depending on client version)</li>
 							<li><span class="highlight">mapdif*.mul</span> (Only certain older client versions)</li>
-							<li><span class="highlight">multi.idx</span></li>
-							<li><span class="highlight">multi.mul</span></li>
+							<li><span class="highlight">multi.idx / MultiCollection.uop</span> (Depending on client version)</li>
+							<li><span class="highlight">multi.mul</span> (Not needed if using MultiCollection.uop)</li>
 							<li><span class="highlight">stadif*.mul</span> (Only certain older client versions)</li>
 							<li><span class="highlight">staidx*.mul</span></li>
 							<li><span class="highlight">statics*.mul</span></li>
@@ -429,7 +429,7 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 					<h3>Step 6) Setting up the Admin Account</h3>
-					<p>The final step in the UOX3 setup process is to setup the administrator account for your shard! Save and close UOX.INI, and instead navigate your way to the <em>UOX3/accounts/</em> folder, where you open the file called <strong>accounts.adm</strong> in your text editor, before locating this section of the file:</p>
+					<p>The <strong>final step</strong> in the UOX3 setup process is to setup the administrator account for your shard! <strong>Save and close UOX.INI</strong>, and instead navigate your way to the <em>UOX3/accounts/</em> folder, where you <span class="highlight">open accounts.adm</span> in your text editor, before locating this section of the file:</p>
 					<input type="checkbox" id="spoiler_config_accountsetup"/>
 					<label for="spoiler_config_accountsetup">accounts.adm <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -453,18 +453,21 @@ packitem=0x0f8d,30
 						}</em></p>
 						...
 					</div>
-					<p>This is account #0 on your shard, also known as the administrator account. Any character created on this account will <strong>automatically be granted all GM powers</strong>. As such, it would be a good idea to change the username and password from the default ADMIN/ADMIN to something more original, creative and most importantly - <strong>secure</strong>!</p>
-					<p>Additional accounts can be created by copying an existing SECTION ACCOUNT # and pasting it at the bottom of the file, followed by manually incrementing the account number of the new account to the next available number (1 higher than the previous one). It can be a good idea to create a second, non-admin account to use for testing purposes, as GM/admin characters are often not subject to the same gameplay rules as regular players.</p>
+					<p>This is account #0 on your shard, also known as the administrator account. Any character created on this account will <strong>automatically be granted all GM and Admin powers</strong>. As such, it would be a good idea to <span class="highlight">change the username and password</span> from the default ADMIN/ADMIN to something more original, creative and most importantly - <strong>secure</strong>! Note that it can be a good idea to create a second, non-admin account to use for testing purposes, as GM/Admin characters are often not subject to the same gameplay rules as regular players.</p>
+					<p>Additional accounts can be created by <strong>copying an existing SECTION ACCOUNT #</strong> (like the default guest account) and pasting it at the bottom of the file, followed by <strong>manually incrementing the account number</strong> of the new account to the next available number (1 higher than the previous one), <strong>changing the username/password/contact info</strong> and ensuring all the character references are set to <strong>0xffffffff [UNKNOWN]</strong>.</p>
 					<p>If you make changes to this file while UOX3 is already running, you will have to reload the accounts from UOX3's console menu.</p>
 					<input type="checkbox" id="spoiler_acctCreationBonus"/>
 					<label for="spoiler_acctCreationBonus">Bonus Tips - Additional Account Creation Methods <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p><strong>Tip #1 - Adding accounts through newaccounts.adm</strong></p>
-						<p>A second, alternate way of adding new accounts is to edit - or create, if it doesn't already exist, a file called <strong>newaccounts.adm</strong> in the same folder, and adding in one line of the following lines (pressing Enter after each) for each account you want to create:</p>
-						<p style="margin-left: 20px"><span class="highlight">USER=username,password,flags,email</span></p>
+						<p><strong>Tip #1 - Add accounts via in-game command</strong></p>
+						<p>While your UOX3 shard is already running, you can add more accounts via the in-game Admin command <span class="highlight">'addaccount</span>. Any accounts added via this command are instantly available for use. Syntax: <span class="highlight">addaccount [username] [password] [flags]</span></p>
+						<p>Example: <span class="highlight">'addaccount guest2 guest2 0x0</span></p>
+						<p><strong>Tip #2 - Add accounts through newaccounts.adm</strong></p>
+						<p>Another alternate way of adding new accounts is to edit - or create, if it doesn't already exist, a file called <strong>newaccounts.adm</strong> in the root accounts folder, and adding one line per account you want to create, matching the following syntax:</p>
+						<p style="margin-left: 20px"><span class="highlight">USER=[username],[password],[flags],[email]</span></p>
 						<p>Note that additions to newaccounts.adm only go into effect when the server is restarted.</p>
-						<p><strong>Tip #2 - Enabling auto-creation of accounts</strong></p>
-						<p>Finally, you can enable <strong>auto-creation of accounts on login</strong> by setting the UOX.INI setting <span class="highlight">INTERNALACCOUNTCREATION</span> from 0 to 1 and restarting your UOX3 shard (or reloading the INI from the UOX3 console menu).</p>
+						<p><strong>Tip #3 - Enable auto-creation of accounts</strong></p>
+						<p>Finally, you can enable <strong>auto-creation of accounts on login</strong> by setting the UOX.INI setting <span class="highlight">INTERNALACCOUNTCREATION</span> from 0 to 1 and restarting your UOX3 shard (or reloading the INI from the UOX3 console menu). This will automatically create a new account for anyone who attempts to login to your shard with an unrecognized account-name. Beware that this could make it easier for someone to cause trouble for your shard, as even if you ban a problem user's account, they can just create a new account straight away. To solve this issue, you might need to ban them by IP via banlist.ini instead!</p>
 					</div>
 					<input type="checkbox" id="spoiler_dirStructure"/>
 					<label for="spoiler_dirStructure">Bonus Tips - UOX3 Directory Structure Overview <i class="fas fa-angle-down"></i></label>
@@ -518,17 +521,20 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#populateUOX3" id="populateUOX3"><span>(Optional) Populating Your UOX3 Shard</span></a>
+				<a class="cd-faq__trigger" href="#populateUOX3" id="populateUOX3"><span>Decorating and Populating Your UOX3 Shard</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>By default, UOX3 comes as a blank slate - a tabula rasa - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you can use of the "Default UOX3 Worldfiles" to add basic decorations such as doors and signs for all the mainland UO towns on the Felucca facet (world 0), and/or the "Community-made Spawn.dfn" file that will populate your world with all kinds of NPCs, from animals and monsters to shopkeepers and townfolk.</p>
-					<p><span class="highlight">Linux/MacOS users take note:</span> you might need to run the default worldfiles and/or spawn files through dos2unix to convert the line breaks to the correct format for your platform, or UOX3 might not be able to read them properly. Just run the command "<span class="highlight">dos2unix *</span>" on the files before copying them into the UOX3/shared and/or UOX3/dfndata/spawn directories.</p>
-					<h3>Default UOX3 Worldfiles</h3>
-					<p><em>Note: It is recommended that you download and add these default worldfiles to your shard BEFORE your first startup and before you create your first character, as applying these will essentially overwrite your existing worldfiles and erase any characters or items you might have created already.</em></p>
-					<p>Click the <strong>Default UOX3 Worldfiles</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file containing a default set of world decorations for your shard. Once the download is complete, unzip this file into your <em>UOX3/shared/</em> folder, overwriting any existing files in that folder.</p>
-
-					<h3>Community-made Spawn.dfn</h3>
-					<p>Click the <strong>Community-made Spawn.dfn</strong> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the <em>UOX3/dfndata/spawn/</em> folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
+				  <h3>Decorating your World with Items</h3>
+				  <p>By default, UOX3 comes as a blank slate - <strong>a tabula rasa</strong> - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you will - on first login with a character on the admin account - <strong>get the option</strong> to <span class="highlight">automatically decorate your shard</span> based on some default <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world templates</a> (based on the older "<em>default UOX3 worldfiles</em>") provided with UOX3, which generates items such as doors, signs, lights and more. For now, these templates cover all the mainland UO towns on the Felucca facet (world 0).</p>
+				  <p>This option is presented in a <strong>gump</strong> (UO term for menu) that pops up on login, where you can choose between <strong>starting with a blank shard</strong> and do your own thing, or to <strong>make use of the default UOX3 world templates</strong> to generate decorations and provide a starting point for your shard.</p>
+				  <p style="padding-left: 10%; padding-right: 10%"><img src="assets/images/uox3_welcome_1.jpg" style="padding: 20px;max-width: 50%; max-height: 316px;float: left"/><img src="assets/images/uox3_welcome_2.jpg" style="padding: 20px;max-width: 50%;max-height: 316px;float: right"/></p>
+				  <p style="clear:both">If you don't want to make this choice on your first login, you can always return to the welcome screen using the <span class="highlight">'welcome</span> command, or alternatively skip that altogether and rely on the <span class="highlight">'decorate load</span> command to get the job done. Either way, any custom content you have added or changes you have made to your shard will not be overwritten.</p>
+				  <p>For more info on how to actually create a character and login to your shard, check the <a href="#logInAndCreateChar">Logging In and Creating a Character</a> section of the docs.</p>
+				  <h3>Populating your World with NPCs</h3>
+				  <p>You can supplement the world decorations from above with a community-made spawn file, which <strong>will populate your world with all kinds of NPCs</strong>, from animals and monsters to shopkeepers and townfolk. This also covers mainland Britannia on the Felucca facet, as well as the dungeons and various monster camps on that map:</p>
+					<h4>Community-made Spawn.dfn</h4>
+					<p>Click the <span class="highlight">Community-made Spawn.dfn</span> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> (<a href="https://www.uox3.org/files/community_made_spawns_v2.zip" title="UOX3.org Downloads - Community-made Spawns">direct link</a>) to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the <em>UOX3/dfndata/spawn/</em> folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
+					<p><span class="highlight">Linux/MacOS users take note:</span> you might need to run the spawn file through dos2unix to convert the line breaks to the correct format for your platform, or UOX3 might not be able to read them properly. Just run the command "<span class="highlight">dos2unix *</span>" on the files before copying them into the UOX3/dfndata/spawn directory.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -598,6 +604,7 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 					<p>Once your UOX3 shard has successfully started up (and importantly, <strong>remains running</strong>), and the UO client has loaded the login screen after you started it using a tool like Razor, you are ready to log in to your UOX3 shard for the first time.</p>
 					<p>Enter the same <span class="highlight">username</span> and <span class="highlight">password</span> that you added in <strong>UOX3/accounts/accounts.adm</strong> during the initial UOX3 setup, and click <span class="highlight">Login</span>. Select your UOX3 shard from the server listing that appears, and proceed through character creation to create your first character. Note that if you are logging in using the first account listed in accounts.adm - account 0 - all characters created on this account will automatically receive GM powers!</p>
+					<p>As previously outlined in <a href="#populateUOX3">Decorating and Populating your UOX3 Shard</a>, the first thing that will greet you on your first login is a <strong>welcome gump</strong> with options to <strong>start with a blank slate</strong>, or to use the default UOX3 world template to <strong>automatically generate decorations</strong> for your shard. If you skipped that step, or need a refresher on the options available to you, go read it now, and then continue to the next step here once done!</a>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -743,8 +750,12 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_system">[system] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="highlight">SERVERNAME</span><strong>=Default UOX3 Server</strong><br>
-							Servername used to support UOG Info Request.</p>
+							<p><span class="highlight">SERVERNAME</span><strong>=My UOX3 Server</strong><br>
+							The (preferably) unique name that you want for your UOX3 shard!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">EXTERNALIP</span><strong>=127.0.0.1</strong><br>
+							Your external/WAN IP address. If you want others to be able to connect to your shard from across the world, you'll need to supply your public IP here! If you just want to connect locally with a client on the same computer as UOX3, or just want to connect from another computer on the same LAN/WiFi network, leave this at the default setting.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">PORT</span><strong>=2593</strong><br>
@@ -876,15 +887,6 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="highlight">CLIENTSUPPORT70610</span><strong>=1</strong><br>
 							Enables login-support for clients from 7.0.61.0 and above</p>
-						</div>
-					</div>
-
-					<input type="checkbox" id="spoiler_ini_playerserverlist">
-					<label for="spoiler_ini_playerserverlist">[play server list] <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<div class="settingsDiv">
-							<p><span class="highlight">SERVERLIST</span><strong>=Default UOX3 Server,127.0.0.1,2593</strong><br>
-							Series of server entries for shard list. Multiple entries supported, each with different name, IP and Port.</p>
 						</div>
 					</div>
 
@@ -2017,6 +2019,33 @@ packitem=0x0f8d,30
 							Parameters: <span class="highlight"><em>(target)</em></span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_decorate">
+						<label for="spoiler_cmd_decorate">decorate <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Can be used to save/load <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world template files</a>, which can be used to quickly decorate a shard with objects of various types across one or more facets. Supported sub-commands: <strong>save</strong> (save items to templates), <strong>load</strong> (load items from templates), <strong>clean</strong> (remove duplicate items) and <strong>copy</strong> (copy items from one facet to another).</p>
+							<p>World templates are saved to/loaded from a subfolder of <em>SCRIPTDATADIRECTORY</em> (set in uox.ini) titled "worldtemplates", which by default can be found at <strong>uox3/js/jsdata/worldtemplates</strong>.</p>
+							<p>Command: <span class="highlight">'decorate</span><br>
+							Sub-Commands: <span class="highlight"><em>save</em></span> <strong>(params)</strong> / <span class="highlight"><em>load</em></span> <strong>(params)</strong> / <span class="highlight"><em>clean</em></span> / <span class="highlight"><em>copy</em></span> <strong>(params)</strong><br>
+							Params (<strong>save</strong>): <span class="highlight"><em>(none)</em></span> / <span class="highlight"><em>(objCategory facetName)</em></span> / <span class="highlight"><em>(objCategory)</em></span> / <span class="highlight"><em>(facetName)</em></span> / <span class="highlight"><em>(customFileName)</em></span></span><br>
+							Params (<strong>load</strong>): <span class="highlight"><em>(none)</em></span> / <span class="highlight"><em>(objCategory facetName)</em></span> / <span class="highlight"><em>(objCategory)</em></span> / <span class="highlight"><em>(facetName)</em></span> / <span class="highlight"><em>(customFileName)</em></span></span><br>
+							Params (<strong>copy</strong>): <span class="highlight"><em>(sourceFacetName targetFacetName</em></span></p>
+							<p>Examples:
+								<h4>Save</h4>
+								<em>'decorate save</em><br>
+								<em>'decorate save doors</em><br>
+								<em>'decorate save felucca</em><br>
+								<em>'decorate save containers trammel</em><br>
+								<h4>Load</h4>
+								<em>'decorate load</em><br>
+								<em>'decorate load containers</em><br>
+								<em>'decorate load trammel</em><br>
+								<em>'decorate load lights ilshenar</em><br>
+								<h4>Clean</h4>
+								<em>'decorate clean</em><br>
+								<h4>Copy</h4>
+								<em>'decorate copy felucca trammel</em></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_deletechar">
 						<label for="spoiler_cmd_deletechar">deleteChar <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -2769,7 +2798,7 @@ packitem=0x0f8d,30
 							<p>Tiles a random item from <em>[startID]</em> to <em>[endID]</em> of the specified <em>[hue]</em> at the (optional) specified <em>[Z]</em>, with an (optional) <em>[movable true/false]</em> state.</p>
 							<p>Command: <span class="highlight">'rndTile</span><br>
 							Parameters: <span class="highlight"><em>(d / h) (d / h) (d / h) (z) (true / false) (target location 1) (target location 2)</em></span></p>
-							Syntax: <strong>'rndTile [startID] [endID] [hue] [z](optional] [movable true/false](optional)</strong><br>
+							<p>Syntax: <strong>'rndTile [startID] [endID] [hue] [z](optional] [movable true/false](optional)</strong><br>
 							Examples:<br>
 								<strong>'rndTile 0x04a9 0x04ac 0</strong> (tiles random wooden floors between target location 1 and 2)<br>
 								<strong>'rndTile 0x04a9 0x04ac 0x0042</strong> (tiles random green wooden floors between target location 1 and 2)</p>
@@ -4117,20 +4146,28 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_compile_other_branches_0">
 						<label for="spoiler_compile_other_branches_0">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can click the <strong>Current branch</strong> dropdown menu in GitHub Desktop and select the branch you wish to check out.</p>
+							<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can click the <strong>Current branch</strong> dropdown menu in GitHub Desktop and select the branch you wish to check out. If you're out to do some code development, or just want to get at the latest possible changes, be sure to select the develop branch instead of the main/master one!</p>
 						</div>
 					</div>
 					<h4>Step 2 - Compile UOX3</h4>
 					<input type="checkbox" id="spoiler_compile_windows_1">
 					<label for="spoiler_compile_windows_1">Option A - Visual Studio 2017/2019 <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p><em>This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the <a href="https://visualstudio.microsoft.com/downloads/" target="_blank" title="Visual Studio download page">Free Community Edition</a> of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either <span class="highlight">32-bit or 64-bit (default)</span> versions of UOX3.</em></p>
+						<p><em>This option will let you use Visual Studio solution/project files to compile both UOX3, SpiderMonkey and zlib with Visual Studio's default VC++ compiler. Note that you can download the <a href="https://visualstudio.microsoft.com/downloads/" target="_blank" title="Visual Studio download page">Free Community Edition</a> of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either <span class="highlight">32-bit or 64-bit (default)</span> versions of UOX3.</em></p>
+						<p><em>Note: You'll need to install <strong>"Desktop development with C++"</strong> via the Visual Studio Installer if you don't have it already, along with the option for this titled <strong>MSVC v141 - VS 2017 C++ x64/x86 build tools (v14.16)</strong></em></p>
 						<h4>SpiderMonkey</h4>
 						<ol>
 							<li>Navigate to the <strong>UOX3\spidermonkey</strong> folder and open <span class="highlight">SpiderMonkey.sln</span> in Visual Studio.</li>
 							<li>Make sure you have <span class="highlight">js32</span> selected in the Solution Explorer, then select <span class="highlight">Release</span> and either <span class="highlight">x64</span> (64-bit) or <span class="highlight">Win32</span> (32-bit) in the Solution Configuration/Platform dropdown menus</li>
 							<li>Click <span class="highlight">Build > Build js32</span> from the menu.</li>
 							<li>Visual Studio will compile SpiderMonkey and create <strong>spidermonkey\Release\x64</strong> (64-bit) or <strong>spidermonkey\Release\x86</strong> (32-bit) folders with the compiled <span class="highlight">js32.lib</span> library file contained within. No further actions are necessary here, so you can close the SpiderMonkey VS Solution.</li>
+						</ol>
+						<h4>zlib</h4>
+						<ol>
+							<li>Navigate to the <strong>UOX3\zlib folder</strong> and open <strong>zlib.sln</strong> in Visual Studio.</li>
+							<li>Select <strong>Release</strong> and either <strong>x64</strong> (64-bit) or <strong>Win32</strong> (32-bit) in the <strong>Solution Configuration/Platform</strong> dropdown menus</li>
+							<li>Click <strong>Build > Build zlib-static</strong> from the menu.</li>
+							<li>Visual Studio will compile zlib and create <strong>zlib\x64\Release</strong> (64-bit) or <strong>zlib\x86\Release</strong> (32-bit) folders with the compiled <strong>zlib-static.lib</strong> library file contained within. No further actions are necessary here, so you can close the zlib VS Solution.</li>
 						</ol>
 						<h4>UOX3</h4>
 						<ol>
@@ -4139,17 +4176,17 @@ packitem=0x0f8d,30
 							<li>Select <span class="highlight">Build -> Build UOX3_Official</span> to start compiling UOX3. When done, you'll find <span class="highlight">UOX3.exe</span> in either <strong>UOX3\source\Release\x64</strong> (or <strong>\x86)</strong> or <strong>UOX3\source\Debug\x64</strong> (or <strong>\x86)</strong>, depending on your choices in the previous step.</li>
 						</ol>
 						<input type="checkbox" id="spoiler_compile_windows_1b">
-						<label for="spoiler_compile_windows_1b">Adding Missing SpiderMonkey References <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_compile_windows_1b">Adding SpiderMonkey/zlib references in Configuration Manager <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>If VS give you link errors when attempting to build UOX3, references to SpiderMonkey might have gone missing! Try the following steps to add them back.</p>
+							<p>If VS give you link errors when attempting to build UOX3, references to SpiderMonkey or zlib might have gone missing! Try the following steps to add them back.</p>
 							<ol>
 								<li>Right click on <span class="highlight">UOX3_Official</span> in the Solution Explorer, and select <span class="highlight">Properties</span>.</li>
-								<li>With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey in these sections:</li>
+								<li>With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey and zlib in these sections:</li>
 								<ul>
-									<li><em>VC++ Directories ></em> <strong>Include Directories</strong> (add path to SpiderMonkey root folder)</li>
-									<li><em>VC++ Directories ></em> <strong>Library Directories</strong> (add path to SpiderMonkey <strong>release\x64</strong> or <strong>\x86</strong> folder depending on desired configuration)</li>
-									<li><em>VC++ Directories ></em> <strong>Source Directories</strong> (add path to SpiderMonkey root folder)</li>
-									<li><em>Linker ></em> <strong>Additional Library Dependencies</strong> (add path to SpiderMonkey <strong>release\x64</strong> or <strong>\x86</strong> folder depending on desired configuration)</li>
+									<li><em>VC++ Directories ></em> <strong>Include Directories</strong> (add path to SpiderMonkey and zlib root folders)</li>
+									<li><em>VC++ Directories ></em> <strong>Library Directories</strong> (add path to SpiderMonkey <strong>Release\x64</strong> or <strong>Release\x86</strong> folder, as well as zlib <strong>\x64\Release</strong> or <strong>\x86\Release</strong> folder, depending on desired configuration)
+									<li><em>VC++ Directories ></em> <strong>Source Directories</strong> (add path to SpiderMonkey and zlib root folder)</li>
+									<li><em>Linker ></em> <strong>Additional Library Dependencies</strong> (add path to SpiderMonkey <strong>Release\x64</strong> or <strong>Release\x86</strong> folder, as well as zlib <strong>\x64\Release</strong> or <strong>\x86\Release</strong> , depending on desired configuration)</li>
 								</ul>
 								<li>Press apply!</li>
 								<li>Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!</li>
@@ -4180,7 +4217,7 @@ packitem=0x0f8d,30
 						<ol>
 							<li><strong>(Linux)</strong> <span class="highlight">sudo apt install git</span> - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.</li>
 							<li><strong>(macOS)</strong> <span class="highlight">xcode-select --install</span> - This will install git if not already installed, along with required make and gcc tools</li>
-							<li><span class="highlight">git clone https://github.com/UOX3DevTeam/UOX3.git</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>) is also included.</li>
+							<li><span class="highlight">git clone https://github.com/UOX3DevTeam/UOX3.git</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>) is also included, as well as a minimal set of files required to compile zlib-1.2.11.</li>
 						</ol>
 						<input type="checkbox" id="spoiler_compile_other_branches">
 						<label for="spoiler_compile_other_branches">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
@@ -4208,8 +4245,7 @@ packitem=0x0f8d,30
 						</ul>
 						<p>Once these tools are in place, navigate to the <strong>UOX3</strong> project directory in your terminal and execute the following commands from the project's root directory, in order:</p>
 						<ol>
-							<li><span class="highlight">chmod +x automake.sh</span> - Makes the automake.sh bash script executable.</li>
-							<li><span class="highlight">./automake.sh</span> - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the <strong>root</strong> UOX3 project directory.</li>
+							<li><span class="highlight">./automake.sh</span> - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the included zlib library, and finally compiles the actual UOX3 build, before copying the compiled binary to the <strong>root</strong> UOX3 project directory.</li>
 						</ol>
 
 					<input type="checkbox" id="spoiler_compile_linux_2b">
@@ -4239,8 +4275,18 @@ packitem=0x0f8d,30
 									<li><span class="highlight">ar rcs libjs32.a Darwin_DBG.OBJ/*.o</span></li>
 									<li><span class="highlight">cp Darwin_DBG.OBJ/jsautocfg.h ./</span></li>
 								</ul>
-								<li><span class="highlight">cd ../source</span></li>
-								<li><span class="highlight">make</span></li>
+								<li>Next up, compile a static library of the included zlib package:</li>
+								<ul>
+									<li><span class="highlight">cd ../zlib</span></li>
+									<li><span class="highlight">make distclean</span></li>
+									<li><span class="highlight">./configure</span></li>
+									<li><span class="highlight">make</span></li>
+								</ul>
+								<li>At this point, now cd to the root UOX3 project directory and build UOX3:</li>
+								<ul>
+									<li><span class="highlight">cd ../source</span></li>
+									<li><span class="highlight">make</span></li>
+								</ul>
 							</ul>
 						</div>
 					</div>
@@ -5178,6 +5224,47 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 					<p>UOX3 comes with an extensive weather system that ties in with regions and player races.</p>
 					<p>More details being added soon!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#worldTemplates" id="worldTemplates"><span>World Templates</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>World templates are files read and written by the <span class="highlight">'decorate <em>save/load/clean/copy</em></span> commands (see <strong>'decorate</strong> command in <a href="#commandList" title="UOX3 Documentation - Command List">Command List</a> for full details on syntax), and essentially work as blueprints for world decoration, which can be easily loaded, re-saved after changes/additions or even be transferred between shards.</p>
+					<p>These templates contain items such as <strong>doors</strong>, <strong>signs</strong>, <strong>lights</strong>, <strong>moongates</strong>, <strong>teleporters</strong>, <strong>containers</strong>, <strong>spawners</strong> and "<strong>misc</strong>" (any other item type), and each of these item types are saved to their own text file, per facet, with a .jsdata file extension. Examples:<br>
+					<em>felucca_doors.jsdata<br>
+					felucca_containers.jsdata<br>
+					trammel_doors.jsdata<br>
+					trammel_spawners.jsdata</em></p>
+					<p>UOX3 already comes with a default set of such world template files stored in <strong>UOX3/js/jsdata/worldtemplates/</strong>, but they are optional to use, and new shard admins can choose between starting out with an empty world or to load the default templates - either select parts of them or in full.</p>
+					<p>Through the 'decorate command, shard admins can save out templates to <strong>pre-defined files per facet and object-type</strong>, or to <strong>custom template files</strong> where all objects are saved to the same file. Example: <span class="highlight">'decorate save myCustomTemplate</span> would save <em>ALL</em> items on <em>ALL</em> facets to a custom template file called "<strong>myCustomTemplate.jsdata</strong>", which is then stored in <strong>UOX3/js/jsdata/worldtemplates</strong>. Note that the location of these files might differ for a given UOX3 configuration, depending on whether the SCRIPTDATADIRECTORY in uox.ini has been modified from the default.</p>
+					<input type="checkbox" id="spoiler_worldtemplates_commands">
+					<label for="spoiler_worldtemplates_commands">Full list of supported sub-commands for 'decorate <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">'decorate save</span><br>
+						 	Save all items to the default templates, based on objectType and facet<br>
+						<span class="highlight">'decorate save [objectType]</span><br>
+						 	Save all items of objectType, regardless of facet<br>
+						<span class="highlight">'decorate save [objectType] [facetName]</span><br>
+						 	Save all items of objectType in the specified facet<br>
+						<span class="highlight">'decorate save [customObjectType] [facetName] x1 y1 x2 y2</span><br>
+						 	Save all items within specified coordinates on specified facet to file with same name as customObjectType</p>
+						<p><span class="highlight">'decorate load</span><br>
+						 	Load all items from the default templates, regardless of objectType and facet<br>
+						<span class="highlight">'decorate load [objectType]</span><br>
+						 	Load all items of objectType, regardless of facet<br>
+						<span class="highlight">'decorate load [objectType] [facetName]</span><br>
+						 	Load all items of objectType in the specified facet<br>
+						<span class="highlight">'decorate load [customObjectType]</span><br>
+						 	Load all items from file with same name as [customObjectType]</p>
+						<p><span class="highlight">'decorate clean</span><br>
+						 	Clean up duplicate decorations that might have been loaded/added by accident. Counts as duplicate if
+						 	item ID, location, type and hue are identical. BEWARE: Might affect player items on a live shard!</p>
+						<p><span class="highlight">'decorate copy [sourceFacetName] [targetFacetName]</span><br>
+						 	Copy all items from one facet (sourceFacetName) to another (targetFacetName)</p>
+					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -6632,6 +6719,101 @@ function commandTitle()
 					<p>The <a href="https://www.uox3.org/jsdocs/">UOX3 JS documentation</a> documents all the UOX3-specific events, triggers, methods, functions and properties available to script writers.</p>
 					<p>UOX3 contains an embedded scripting engine based on <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
 					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3JsTutorial" id="uox3JsTutorial"><span>JS Tutorial</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<input type="checkbox" id="spoiler_jse_guide_basics">
+					<label for="spoiler_jse_guide_basics">JavaScript Fundamentals <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<input type="checkbox" id="spoiler_jse_guide_variables">
+						<label for="spoiler_jse_guide_variables">Working with values <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Assigning values to variables</h4>
+	<pre><code><span class="highlight">var v;</span> // Initialize the variable v, without assigning it a value
+
+	<span class="highlight">v = 0;</span> // Int
+	<span class="highlight">v = 0.5;</span> // Double
+	<span class="highlight">v = someString;</span> // String
+	<span class="highlight">v = null;</span> // Null value
+	<span class="highlight">v = undefined;</span> // Undefined value
+	<span class="highlight">v = false;</span> // Boolean</code></pre>
+							<h4>Checking variable/value type</h4>
+							<p>To check whether a value has a particular type, the following methods can be used:</p>
+	<pre><span class="highlight">var v = computeSomeValue();</span>
+
+	<span class="highlight">var isString = typeof v === "string";</span> // Check if variable v contains a String
+	<span class="highlight">var isNumber = typeof v === "number";</span> // Check if variable v contains a Number
+	<span class="highlight">var isNull = v === null;</span> // Check if variable v contains a Null value
+	<span class="highlight">var isBoolean = typeof v === "boolean";</span> // Check if variable v contains a Boolean
+	<span class="highlight">var isObject = typeof v === "object" && v !== null;</span> // Check if variable v contains an Object</pre>
+						</div>
+						<input type="checkbox" id="spoiler_jse_guide_function">
+						<label for="spoiler_jse_guide_function">Working with functions <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>Defining a function</h4>
+							<p>When defining a function within a script, other portions of said script can call on the function to perform some specific work. To define a function:</p>
+	<pre><span class="highlight">function myJsFunction( myParam )
+	{
+		Console.Print( myParam.toString() + "\n" );</span> // Prints the value of provided parameter, as a string
+	<span class="highlight">return true;</span> // returns the Boolean value true from the function
+	}</span></pre>
+							<h4>Calling a function</h4>
+							<p>To call a function from elsewhere inside a script, and have the code inside said function run, just type the name of the function, along with any parameters required:</p>
+	<pre><span class="highlight">var myTestBool = myJsFunction( 42 );</span></pre>
+						</div>
+						<input type="checkbox" id="spoiler_jse_guide_array">
+						<label for="spoiler_jse_guide_array">Creating an array <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Arrays can be created using either of the below methods:</p>
+	<pre><span class="highlight">var x = [];
+	x = Array();
+	x = new Array;</span></pre>
+						</div>
+						<input type="checkbox" id="spoiler_jse_guide_object">
+						<label for="spoiler_jse_guide_object">Creating an object <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Custom JS Objects can be created using either of the below methods:</p>
+	<pre><span class="highlight">var x = {};
+	x = Object();
+	x = new Object;</span></pre>
+						</div>
+						<input type="checkbox" id="spoiler_jse_guide_exception">
+						<label for="spoiler_jse_guide_exception">Exception handling <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<h4>throw</h4>
+	<pre><span class="highlight">throw new Error("This will result in a custom error displayed in the UOX3 console!");</span></pre>
+							<h4>catch</h4>
+							<h4>finally</h4>
+						</div>
+						<input type="checkbox" id="spoiler_jse_guide_properties">
+						<label for="spoiler_jse_guide_properties">Object properties <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+						</div>
+						<input type="checkbox" id="spoiler_jse_guide_loops">
+						<label for="spoiler_jse_guide_loops">For and While loops <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+						</div>
+						<h4>Advanced Topics</h4>
+						<p><em>Generator functions and yield</em></p>
+					</div>
+					<input type="checkbox" id="spoiler_jse_guide_uox3js">
+					<label for="spoiler_jse_guide_uox3js">JS Events, Functions and Objects for UOX3 <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<input type="checkbox" id="spoiler_jse_guide_variables">
+						<label for="spoiler_jse_guide_variables">Events/Triggers <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+						</div>
+					</div>
+					<h4>Other Resources</h4>
+					<p><ul>
+						<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript" target="_blank" title="A re-introduction to JavaScript (JS tutorial)">[mozilla.org] A re-introduction to JavaScript (JS tutorial)</a></li>
+						<li></li>
+					</ul></p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -9676,8 +9858,8 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of March 2021):</p>
-							<p><span class="highlight">Xuri, tuanhtrng, punt</span><br></p>
+							<p>Contributors active within last year (as of June 2021):</p>
+							<p><span class="highlight">Xuri, punt, giwo, tuanhtrng</span><br></p>
 						</div>
 					</div>
 				  </div>

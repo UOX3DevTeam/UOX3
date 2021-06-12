@@ -34,7 +34,7 @@ SI32 FileSize( std::string filename )
 void LoadChar( std::ifstream& readDestination )
 {
 	CChar *x = static_cast< CChar * >(ObjectFactory::getSingleton().CreateBlankObject( OT_CHAR ));
-	if( x == NULL )
+	if( x == nullptr )
 		return;
 	if( !x->Load( readDestination ) )
 	{
@@ -51,7 +51,7 @@ void LoadChar( std::ifstream& readDestination )
 void LoadItem( std::ifstream& readDestination )
 {
 	CItem *x = static_cast< CItem * >(ObjectFactory::getSingleton().CreateBlankObject( OT_ITEM ));
-	if( x == NULL )
+	if( x == nullptr )
 		return;
 	if( !x->Load( readDestination ) )
 	{
@@ -235,7 +235,7 @@ CMapWorld::~CMapWorld()
 //o-----------------------------------------------------------------------------------------------o
 CMapRegion * CMapWorld::GetMapRegion( SI16 xOffset, SI16 yOffset )
 {
-	CMapRegion *mRegion			= NULL;
+	CMapRegion *mRegion			= nullptr;
 	const size_t regionIndex	= (static_cast<size_t>(xOffset) * static_cast<size_t>(upperArrayY) + static_cast<size_t>(yOffset));
 
 	if( xOffset >= 0 && xOffset < upperArrayX && yOffset >= 0 && yOffset < upperArrayY )
@@ -365,10 +365,10 @@ CMapHandler::~CMapHandler()
 {
 	for( WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )
 	{
-		if( (*mIter) != NULL )
+		if( (*mIter) != nullptr )
 		{
 			delete (*mIter);
-			(*mIter) = NULL;
+			(*mIter) = nullptr;
 		}
 	}
 	mapWorlds.resize( 0 );
@@ -575,7 +575,7 @@ SI16 CMapHandler::GetGridY( SI16 y )
 CMapRegion *CMapHandler::GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber )
 {
 	CMapRegion * mRegion = mapWorlds[worldNumber]->GetMapRegion( xOffset, yOffset );
-	if( mRegion == NULL )
+	if( mRegion == nullptr )
 		mRegion = &overFlow;
 
 	return mRegion;
@@ -600,7 +600,7 @@ CMapRegion *CMapHandler::GetMapRegion( CBaseObject *mObj )
 //o-----------------------------------------------------------------------------------------------o
 CMapWorld *	CMapHandler::GetMapWorld( UI08 worldNum )
 {
-	CMapWorld *mWorld = NULL;
+	CMapWorld *mWorld = nullptr;
 	if( worldNum > mapWorlds.size() )
 		mWorld = mapWorlds[worldNum];
 	return mWorld;
@@ -614,7 +614,7 @@ CMapWorld *	CMapHandler::GetMapWorld( UI08 worldNum )
 //o-----------------------------------------------------------------------------------------------o
 MapResource_st * CMapHandler::GetResource( SI16 x, SI16 y, UI08 worldNum )
 {
-	MapResource_st *resData = NULL;
+	MapResource_st *resData = nullptr;
 	if( worldNum < mapWorlds.size() )
 		resData = &mapWorlds[worldNum]->GetResource( x, y );
 	return resData;
@@ -647,7 +647,7 @@ REGIONLIST CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber )
 		for( SI08 counter2 = -1; counter2 <= 1; ++counter2 )
 		{
 			CMapRegion *MapArea	= GetMapRegion( xOffset + counter1, yOffset + counter2, worldNumber );
-			if( MapArea == NULL )
+			if( MapArea == nullptr )
 				continue;
 			nearbyRegions.push_back( MapArea );
 		}
@@ -719,7 +719,7 @@ void CMapHandler::Save( void )
 								Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
 						}
 						CMapRegion * mRegion = (*mIter)->GetMapRegion( (baseX+xCnt), (baseY+yCnt) );
-						if( mRegion != NULL )
+						if( mRegion != nullptr )
 							mRegion->SaveToDisk( writeDestination, houseDestination );
 
 						writeDestination << blockDiscriminator;
@@ -849,9 +849,9 @@ void CMapHandler::Load( void )
 	LoadFromDisk( houseDestination, -1, -1, -1 );
 
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, NULL, &PostLoadFunctor );
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &PostLoadFunctor );
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &PostLoadFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, nullptr, &PostLoadFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &PostLoadFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, nullptr, &PostLoadFunctor );
 	houseDestination.close();
 
 	UI32 e_t	= getclock();

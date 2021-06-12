@@ -39,10 +39,10 @@ public:
 	 @par
 	 CPUOXBuffer *toSend		The packet we want to send
 	 CSocket *toSendTo		The socket, if any, we send to.  If this
-	 value is NULL, then we send to the entire
+	 value is nullptr, then we send to the entire
 	 party
 	 */
-	void						SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo = NULL );
+	void						SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo = nullptr );
 	/** Adds a member to the party
 	 @remarks
 	 This adds a new member to the party.  It validates that the member
@@ -96,7 +96,7 @@ public:
 	 so that we can index quickly into the members[]
 	 to find the character again.  Used internally.
 	 */
-	PartyEntry *				Find( CChar *find, SI32 *location = NULL );
+	PartyEntry *				Find( CChar *find, SI32 *location = nullptr );
 	/** Returns whether a member is in the party or not
 	 @remarks
 	 This returns true if the character exists in the party
@@ -125,10 +125,10 @@ public:
 	 This will send the current list of party members to the socket in
 	 question, or the entire party.
 	 @par
-	 CSocket *toSendTo			The socket to send the list to, or if NULL,
+	 CSocket *toSendTo			The socket to send the list to, or if nullptr,
 	 then the entire party
 	 */
-	void						SendList( CSocket *toSendTo = NULL );
+	void						SendList( CSocket *toSendTo = nullptr );
 	Party( bool npc = false );
 	Party( CChar *leader, bool npc = false );
 };

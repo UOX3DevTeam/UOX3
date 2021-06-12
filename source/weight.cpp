@@ -65,7 +65,7 @@
 //|								checkCharWeight() returns false if a character is at their maximum weight or not based upon MAX_CHARWEIGHT
 //o-----------------------------------------------------------------------------------------------o
 
-CWeight *Weight = NULL;
+CWeight *Weight = nullptr;
 
 //const SI32 MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
 //o-----------------------------------------------------------------------------------------------o
@@ -407,7 +407,7 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 		itemWeight *= item->GetAmount();
 	if( (itemWeight + packWeight) <= packWeightMax ) // <= MAX_PACKWEIGHT )
 	{	// Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
-		if( pack->GetCont() == NULL )	// No container above pack
+		if( pack->GetCont() == nullptr )	// No container above pack
 			return true;
 		if( pack->GetContSerial() >= BASEITEMSERIAL )	// pack is in another pack, lets ensure it won't overload that pack
 			return checkPackWeight( ourChar, static_cast<CItem *>(pack->GetCont()), item );

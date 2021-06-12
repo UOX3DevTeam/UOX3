@@ -76,7 +76,7 @@ public:
 		for( UI08 i = 0; i < 7; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
-			lpCharacters[i] = NULL;
+			lpCharacters[i] = nullptr;
 		}
 	}
 	void reset( void )
@@ -93,7 +93,7 @@ public:
 		for( UI08 i = 0; i < 7; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
-			lpCharacters[i] = NULL;
+			lpCharacters[i] = nullptr;
 		}
 		wFlags.reset();
 	}

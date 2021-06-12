@@ -53,7 +53,7 @@ public:
 
 	T GetCurrent( void )
 	{
-		T rvalue = NULL;
+		T rvalue = nullptr;
 		if( objIterator != objData.end() )
 		{
 			rvalue = (*objIterator);
@@ -69,7 +69,7 @@ public:
 
 	T Next( void )
 	{
-		T rvalue = NULL;
+		T rvalue = nullptr;
 		if( !Begin() )
 		{
 			--objIterator;

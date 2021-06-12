@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugProfile|Win32">
@@ -1364,6 +1364,90 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="TimeUtility.cpp">
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
+    <ClCompile Include="KeyValue.cpp">
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
+    <ClCompile Include="DataSection.cpp">
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
+    <ClCompile Include="DataCategory.cpp">
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
+    <ClCompile Include="DataSettings.cpp">
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
+    <ClCompile Include="Socket.cpp">
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+	    <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+	    <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="books.h" />
@@ -1384,7 +1468,7 @@
     <ClInclude Include="cMultiObj.h" />
     <ClInclude Include="combat.h" />
     <ClInclude Include="commands.h" />
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigOS.h" />
     <ClInclude Include="CPacketReceive.h" />
     <ClInclude Include="CPacketSend.h" />
     <ClInclude Include="cRaces.h" />
@@ -1446,6 +1530,13 @@
     <ClInclude Include="weight.h" />
     <ClInclude Include="wholist.h" />
     <ClInclude Include="worldmain.h" />
+    <ClInclude Include="TimeUtility.hpp" />
+    <ClInclude Include="KeyValue.hpp" />
+    <ClInclude Include="DataSection.hpp" />
+    <ClInclude Include="DataCategory.hpp" />
+    <ClInclude Include="DataSettings.hpp" />
+    <ClInclude Include="Socket.hpp" />
+
   </ItemGroup>
   <ItemGroup>
     <Image Include="uox3.ico" />

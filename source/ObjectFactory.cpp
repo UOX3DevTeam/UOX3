@@ -129,7 +129,7 @@ SERIAL ObjectFactory::NextFreeSerial( ObjectType toFind )
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject *ObjectFactory::CreateObject( ObjectType createType )
 {
-	CBaseObject *created = NULL;
+	CBaseObject *created = nullptr;
 	switch( createType )
 	{
 		default:													break;
@@ -140,7 +140,7 @@ CBaseObject *ObjectFactory::CreateObject( ObjectType createType )
 		case OT_CHAR:			created	= new CChar();				break;
 	}
 	// assign serial here
-	if( created != NULL )
+	if( created != nullptr )
 		created->SetSerial( NextFreeSerial( createType ) );	// SetSerial() will register our object -
 
 	return created;
@@ -154,7 +154,7 @@ CBaseObject *ObjectFactory::CreateObject( ObjectType createType )
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject *ObjectFactory::CreateBlankObject( ObjectType createType )
 {
-	CBaseObject *created = NULL;
+	CBaseObject *created = nullptr;
 	switch( createType )
 	{
 		default:													break;
@@ -175,7 +175,7 @@ CBaseObject *ObjectFactory::CreateBlankObject( ObjectType createType )
 CBaseObject *ObjectFactory::FindObject( SERIAL toFind )
 {
 	OBJECTMAP_ITERATOR fIter, fUpper, fEnd;
-	CBaseObject	*	retVal		= NULL;
+	CBaseObject	*	retVal		= nullptr;
 	SERIAL			hashValue	= HashSerial( toFind );
 	if( toFind != INVALIDSERIAL )
 	{
@@ -194,7 +194,7 @@ CBaseObject *ObjectFactory::FindObject( SERIAL toFind )
 				else
 					++fIter;
 			}
-			if( retVal == NULL )	// Not an item!  Let's check multis
+			if( retVal == nullptr )	// Not an item!  Let's check multis
 			{
 				fIter	= multis.find( hashValue );
 				fUpper	= multis.upper_bound( hashValue );
@@ -240,10 +240,10 @@ CBaseObject *ObjectFactory::FindObject( SERIAL toFind )
 //o-----------------------------------------------------------------------------------------------o
 bool ObjectFactory::DestroyObject( CBaseObject *toDestroy )
 {
-	assert( toDestroy != NULL );
+	assert( toDestroy != nullptr );
 	UnregisterObject( toDestroy );
 	delete toDestroy;
-	toDestroy = NULL;
+	toDestroy = nullptr;
 	return true;
 }
 
@@ -255,7 +255,7 @@ bool ObjectFactory::DestroyObject( CBaseObject *toDestroy )
 //o-----------------------------------------------------------------------------------------------o
 bool ObjectFactory::RegisterObject( CBaseObject *toRegister )
 {
-	assert( toRegister != NULL );
+	assert( toRegister != nullptr );
 	return RegisterObject( toRegister, toRegister->GetSerial() );
 }
 
@@ -272,7 +272,7 @@ bool ObjectFactory::RegisterObject( CBaseObject *toRegister )
 //o-----------------------------------------------------------------------------------------------o
 bool ObjectFactory::RegisterObject( CBaseObject *toRegister, SERIAL toAttach )
 {
-	assert( toRegister != NULL );
+	assert( toRegister != nullptr );
 	ObjectType reg = toRegister->GetObjType();
 	switch( reg )
 	{
@@ -308,7 +308,7 @@ bool ObjectFactory::RegisterObject( CBaseObject *toRegister, SERIAL toAttach )
 //o-----------------------------------------------------------------------------------------------o
 bool ObjectFactory::UnregisterObject( CBaseObject *toRemove )
 {
-	assert( toRemove != NULL );
+	assert( toRemove != nullptr );
 	OBJECTMAP_ITERATOR rIter, rUpper, rEnd;
 	SERIAL hashValue = HashSerial( toRemove->GetSerial() );
 	switch( toRemove->GetObjType() )

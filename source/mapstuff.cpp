@@ -7,7 +7,7 @@
 #include "scriptc.h"
 #include <filesystem>
 
-CMulHandler *Map				= NULL;
+CMulHandler *Map				= nullptr;
 
 const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
@@ -51,30 +51,30 @@ const UI32 MapBlockSize				= 196L;
 
 MapData_st::~MapData_st()
 {
-	if( mapObj != NULL )
+	if( mapObj != nullptr )
 	{
 		delete mapObj;
-		mapObj = NULL;
+		mapObj = nullptr;
 	}
-	if( staticsObj != NULL )
+	if( staticsObj != nullptr )
 	{
 		delete staticsObj;
-		staticsObj = NULL;
+		staticsObj = nullptr;
 	}
-	if( staidxObj != NULL )
+	if( staidxObj != nullptr )
 	{
 		delete staidxObj;
-		staidxObj = NULL;
+		staidxObj = nullptr;
 	}
-	if( mapDiffObj != NULL )
+	if( mapDiffObj != nullptr )
 	{
 		delete mapDiffObj;
-		mapDiffObj = NULL;
+		mapDiffObj = nullptr;
 	}
-	if( staticsDiffObj != NULL )
+	if( staticsDiffObj != nullptr )
 	{
 		delete staticsDiffObj;
-		staticsDiffObj = NULL;
+		staticsDiffObj = nullptr;
 	}
 }
 
@@ -110,7 +110,7 @@ void CMulHandler::LoadMapsDFN( void )
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
 		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + strutil::number( i ), maps_def );
-		if( toFind == NULL )
+		if( toFind == nullptr )
 			break;
 
 		MapData_st toAdd;
@@ -195,7 +195,7 @@ UOXFile * loadFile( const std::string& fullName )
 	UOXFile *toLoad = new UOXFile( fullName.c_str(), "rb" );
 	Console << "\t" << fullName << "\t\t";
 
-	if( toLoad != NULL && toLoad->ready() )
+	if( toLoad != nullptr && toLoad->ready() )
 		Console.PrintDone();
 	else
 		Console.PrintSpecial( CBLUE, "not found" );
@@ -217,12 +217,12 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 	Console << "\t" << lName << "(/" << mapUOPWrap << ")\t\t";
 
 	//if no map0.mul was found, check if there's a map#LegacyMul.uop
-	if(( mMap.mapObj == NULL || !mMap.mapObj->ready() ) && !mapUOPWrap.empty() )
+	if(( mMap.mapObj == nullptr || !mMap.mapObj->ready() ) && !mapUOPWrap.empty() )
 	{
 		std::string lName	= basePath + mapUOPWrap;
 		mMap.mapObj		= new UOXFile( lName.c_str(), "rb" );
 	}
-	if( mMap.mapObj != NULL && mMap.mapObj->ready() )
+	if( mMap.mapObj != nullptr && mMap.mapObj->ready() )
 	{
 		SI32 checkSize = static_cast<SI32>(mMap.mapObj->getLength() / MapBlockSize);
 		if( checkSize / (mMap.xBlock/8) == (mMap.yBlock/8) )
@@ -472,7 +472,7 @@ SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 m
 	SI08 top = ILLEGAL_Z;
 
 	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
 	{
 		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
 		if( ( tempTop <= oldz + maxZ ) && ( tempTop > top ) )
@@ -576,7 +576,7 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 	SI08 z = ILLEGAL_Z;
 
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( MapArea == NULL )	// no valid region
+	if( MapArea == nullptr )	// no valid region
 		return z;
 	GenericList< CItem * > *regItems = MapArea->GetItemList();
 	regItems->Push();
@@ -658,7 +658,7 @@ CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 i
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
 		GenericList< CItem * > *regItems = CellResponse->GetItemList();
@@ -686,7 +686,7 @@ CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 i
 		}
 		regItems->Pop();
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -787,7 +787,7 @@ bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 //|					Usage:
 //|						CStaticIterator msi( x, y, worldNumber );
 //|
-//|						for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+//|						for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
 //|						{
 //|							CTile& tile = Map->SeekTile( stat->itemid );
 //|							... your code here...
@@ -825,7 +825,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 	else
 	{
 		UOXFile *toRead = mMap.staidxObj;
-		if( toRead == NULL )
+		if( toRead == nullptr )
 		{
 			length = 0;
 			return;
@@ -854,25 +854,25 @@ Static_st *CStaticIterator::First( void )
 Static_st *CStaticIterator::Next( void )
 {
 	if( index >= length )
-		return NULL;
+		return nullptr;
 
 	MapData_st& mMap = Map->GetMapData( worldNumber );
-	UOXFile *mFile = NULL;
+	UOXFile *mFile = nullptr;
 
 	if( useDiffs )
 		mFile = mMap.staticsDiffObj;
 	else
 		mFile = mMap.staticsObj;
 
-	if( mFile == NULL )
-		return NULL;
+	if( mFile == nullptr )
+		return nullptr;
 
 	const size_t pos2 = static_cast<size_t>(pos) + static_cast<size_t>(StaticRecordSize) * static_cast<size_t>(index);	// skip over all the ones we've read so far
 	mFile->seek( pos2, SEEK_SET );
 	do
 	{
 		if( mFile->eof() )
-			return NULL;
+			return nullptr;
 
 		mFile->getUShort( &staticArray.itemid );
 		mFile->getUChar( &staticArray.xoff );
@@ -894,7 +894,7 @@ Static_st *CStaticIterator::Next( void )
 		}
 	} while( index < length );
 
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -911,7 +911,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	MapData_st& mMap = MapList[worldNumber];
 
 	size_t pos				= 0;
-	UOXFile *mFile			= NULL;
+	UOXFile *mFile			= nullptr;
 
 	const SI16 x1 = static_cast<SI16>(x >> 3), y1 = static_cast<SI16>(y >> 3);
 	const UI08 x2 = static_cast<UI08>(x % 8), y2 = static_cast<UI08>(y % 8);
@@ -954,7 +954,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
 		CTile& tile = SeekTile( stat->itemid );
@@ -980,7 +980,7 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface )
 {
 	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>( stat->zoff );
 		const SI08 tileHeight = static_cast<SI08>( TileHeight( stat->itemid ) );
@@ -1241,7 +1241,7 @@ UI08 CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 //o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::MapExists( UI08 worldNumber )
 {
-	return ( (worldNumber < MapList.size()) && (MapList[worldNumber].mapObj != NULL) );
+	return ( (worldNumber < MapList.size()) && (MapList[worldNumber].mapObj != nullptr) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1276,11 +1276,11 @@ void CMulHandler::LoadDFNOverrides( void )
 
 	for( Script *mapScp = FileLookup->FirstScript( maps_def ); !FileLookup->FinishedScripts( maps_def ); mapScp = FileLookup->NextScript( maps_def ) )
 	{
-		if( mapScp == NULL )
+		if( mapScp == nullptr )
 			continue;
 		for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != nullptr; toScan = mapScp->NextEntry() )
 		{
-			if( toScan == NULL )
+			if( toScan == nullptr )
 			{
 				continue;
 			}

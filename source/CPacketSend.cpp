@@ -1824,7 +1824,7 @@ void CPOpenGump::Log( std::ofstream &outStream, bool fullHeader )
 }
 void CPOpenGump::Question( std::string toAdd )
 {
-	pStream.ReserveSize( 10 + toAdd.length() + 2 );	// 10 for start of string, length of string + NULL, plus spot for # responses
+	pStream.ReserveSize( 10 + toAdd.length() + 2 );	// 10 for start of string, length of string + nullptr, plus spot for # responses
 	pStream.WriteString( 10, toAdd, toAdd.length() );
 #if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
@@ -2621,7 +2621,7 @@ void CPPauseResume::Mode( UI08 mode )
 
 bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return false;
 	switch( mSock->ClientType() )
 	{
@@ -3338,7 +3338,7 @@ void CPSkillsValues::BlockSize( SI16 newValue )
 	pStream.ReserveSize( newValue );
 	pStream.WriteShort( 1, newValue ); //packet size, variable based on amount of skills
 	pStream.WriteByte(  3, 0x02 );	// full list, capped
-	pStream.WriteByte(  static_cast<size_t>(newValue)-1, 0x00 );	// finish off with a double NULL
+	pStream.WriteByte(  static_cast<size_t>(newValue)-1, 0x00 );	// finish off with a double nullptr
 	pStream.WriteByte(  static_cast<size_t>(newValue)-2, 0x00 );
 }
 CPSkillsValues::CPSkillsValues()
@@ -3886,10 +3886,10 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 			pStream.WriteByte( byteOffset, 0x01 );
 			byteOffset += 1;
 			Party * myParty = PartyFactory::getSingleton().Get( mSock->CurrcharObj() );
-			if( myParty != NULL )
+			if( myParty != nullptr )
 			{
 				std::vector< PartyEntry * > *mList = myParty->MemberList();
-				if( mList != NULL )
+				if( mList != nullptr )
 				{
 					for( size_t j = 0; j < mList->size(); ++j )
 					{
@@ -3926,7 +3926,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 			pStream.WriteByte( byteOffset, 0x02 );
 			byteOffset += 2;
 			CGuild * mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-			if( mGuild != NULL )
+			if( mGuild != nullptr )
 			{
 				size_t numRecruits = mGuild->NumRecruits();
 				size_t numMembers = mGuild->NumMembers();
@@ -3936,7 +3936,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				{
 					SERIAL recruitSerial = mGuild->RecruitNumber( i );
 					CChar * guildRecruit = calcCharObjFromSer( recruitSerial );
-					if( guildRecruit != NULL && guildRecruit->GetSocket() != NULL )
+					if( guildRecruit != nullptr && guildRecruit->GetSocket() != nullptr )
 					{
 						if( guildRecruit->GetSerial() == mChar->GetSerial() )
 							continue;
@@ -3970,7 +3970,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				{
 					SERIAL memberSerial = mGuild->MemberNumber( i );
 					CChar * guildMember = calcCharObjFromSer( memberSerial );
-					if( guildMember != NULL && guildMember->GetSocket() != NULL )
+					if( guildMember != nullptr && guildMember->GetSocket() != nullptr )
 					{
 						if( guildMember->GetSerial() == mChar->GetSerial() )
 							continue;
@@ -4388,7 +4388,7 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	}
 	else
 	{
-		sLen = static_cast<UI08>(getTileName( (*toAdd), itemname )); // Item name length, don't strip the NULL (3D client doesn't like it)
+		sLen = static_cast<UI08>(getTileName( (*toAdd), itemname )); // Item name length, don't strip the nullptr (3D client doesn't like it)
 	}
 
 	pStream.ReserveSize( static_cast<size_t>(baseOffset) + 5 + static_cast<size_t>(sLen) );
@@ -4402,7 +4402,7 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContain
 {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
-	CTownRegion *tReg = NULL;
+	CTownRegion *tReg = nullptr;
 	if( cwmWorldState->ServerData()->TradeSystemStatus() && ValidateObject( vendorID ) )
 		tReg = calcRegionFromXY( vendorID->GetX(), vendorID->GetY(), vendorID->WorldNumber(), vendorID->GetInstanceID() );
 
@@ -4690,7 +4690,7 @@ void CPCharAndStartLoc::CopyData( CAccountBlock& toCopy )
 	for( UI08 i = 0; i < pStream.GetByte( 3 ); ++i )
 	{
 		baseOffset = (UI16)(4 + ( i * 60 ));
-		if( toCopy.lpCharacters[i] != NULL )
+		if( toCopy.lpCharacters[i] != nullptr )
 			AddCharacter( toCopy.lpCharacters[i], i );
 		else
 		{
@@ -4720,7 +4720,7 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, CSocket *mSock )
 
 void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 {
-	if( sLoc == NULL )
+	if( sLoc == nullptr )
 		return;
 
 	UI16 baseOffset = 0;
@@ -4734,7 +4734,7 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 
 void CPCharAndStartLoc::NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 {
-	if( sLoc == NULL )
+	if( sLoc == nullptr )
 		return;
 
 	UI16 baseOffset = 0;
@@ -6208,7 +6208,7 @@ CPNewSpellBook::CPNewSpellBook( CItem& obj )
 
 bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return false;
 	switch( mSock->ClientType() )
 	{
@@ -6270,7 +6270,7 @@ CPDisplayDamage::CPDisplayDamage( CChar& ourTarg, UI16 ourDamage )
 }
 bool CPDisplayDamage::ClientCanReceive( CSocket *mSock )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return false;
 	switch( mSock->ClientType() )
 	{
@@ -6341,7 +6341,7 @@ CPQueryToolTip::CPQueryToolTip( CBaseObject& mObj )
 
 bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return false;
 	switch( mSock->ClientType() )
 	{
@@ -6462,7 +6462,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = cItem.GetName();
 		FinalizeData( tempEntry, totalStringLen );
 
-		if( cItem.GetOwnerObj() != NULL )
+		if( cItem.GetOwnerObj() != nullptr )
 		{
 			tempEntry.stringNum = 1061113;
 			tempEntry.ourText = cItem.GetOwnerObj()->GetName();
@@ -6658,13 +6658,13 @@ void CPToolTip::CopyData( SERIAL objSer, bool addAmount, bool playerVendor )
 	if( objSer < BASEITEMSERIAL )
 	{
 		CChar *mChar = calcCharObjFromSer( objSer );
-		if( mChar != NULL )
+		if( mChar != nullptr )
 			CopyCharData( (*mChar), totalStringLen );
 	}
 	else
 	{
 		CItem *cItem = calcItemObjFromSer( objSer );
-		if( cItem != NULL )
+		if( cItem != nullptr )
 			CopyItemData( (*cItem), totalStringLen, addAmount, playerVendor );
 	}
 
@@ -6744,7 +6744,7 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 
 	if( ValidateObject( buyPack ) && ValidateObject( ourPack ) )
 	{
-		CTownRegion *tReg = NULL;
+		CTownRegion *tReg = nullptr;
 		if( cwmWorldState->ServerData()->TradeSystemStatus() )
 			tReg = calcRegionFromXY( vendorID.GetX(), vendorID.GetY(), vendorID.WorldNumber(), vendorID.GetInstanceID() );
 		GenericList< CItem * > *spCont = buyPack->GetContainsList();

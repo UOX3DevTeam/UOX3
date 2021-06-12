@@ -164,7 +164,7 @@ static JSFunctionSpec my_functions[] =
 	{ "INVALIDID",					SE_INVALIDID,				0, 0, 0 },
 	{ "INVALIDCOLOUR",				SE_INVALIDCOLOUR,			0, 0, 0 },
 
-	{ NULL,							NULL,						0, 0, 0 },
+	{ nullptr,							nullptr,						0, 0, 0 },
 };
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
@@ -172,7 +172,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 	UI16 scriptNum = JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	// If we're loading the world then do NOT print out anything!
 	Console.error( strutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
-	if( report == NULL || report->filename == NULL )
+	if( report == nullptr || report->filename == nullptr )
 	{
 		Console.error( "No detailed data" );
 		return;
@@ -225,11 +225,11 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	}
 
 	targContext = JSEngine->GetContext( runTime ); //JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
-	if( targContext == NULL )
+	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewObject( targContext, &uox_class, NULL, NULL );
-	if( targObject == NULL )
+	targObject = JS_NewObject( targContext, &uox_class, nullptr, nullptr );
+	if( targObject == nullptr )
 	{
 		return;
 	}
@@ -244,7 +244,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
-	if( targScript == NULL )
+	if( targScript == nullptr )
 	{
 		throw std::runtime_error( "Compilation failed" );
 	}
@@ -279,11 +279,11 @@ void cScript::CollectGarbage( void )
 cScript::~cScript()
 {
 	JS_GC( targContext );
-	if( targScript != NULL )
+	if( targScript != nullptr )
 		JS_DestroyScript( targContext, targScript );
 	Cleanup();
 	JS_GC( targContext );
-	//	if( targContext != NULL )
+	//	if( targContext != nullptr )
 	//		JS_DestroyContext( targContext );
 }
 
@@ -432,19 +432,19 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( speech == NULL || !ValidateObject( personTalking ) || !ValidateObject( talkingTo ) )
+	if( speech == nullptr || !ValidateObject( personTalking ) || !ValidateObject( talkingTo ) )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSpeech, "onSpeech" ) )
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
-	JSString *strSpeech 	= NULL;
+	JSString *strSpeech 	= nullptr;
 	std::string lwrSpeech	= speech;
 
 	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
-	JSObject *ttObj = NULL;
+	JSObject *ttObj = nullptr;
 	if( talkingTo->CanBeObjType( OT_CHAR ) )
 	{
 		ttObj = JSEngine->AcquireObject( IUE_CHAR, talkingTo, runTime );
@@ -540,7 +540,7 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 	jsval rval, params[3];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objColliding, runTime );
-	JSObject *myObj2	= NULL;
+	JSObject *myObj2	= nullptr;
 	if( objCollideWith->GetObjType() == OT_CHAR )
 		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objCollideWith, runTime );
 	else
@@ -1536,7 +1536,7 @@ bool cScript::OnSystemSlice( void )
 		return false;
 
 	jsval rval;
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSystemSlice", 0, NULL, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSystemSlice", 0, nullptr, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnSystemSlice, false );
 	return false;
@@ -1844,16 +1844,16 @@ SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 //o-----------------------------------------------------------------------------------------------o
 bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 {
-	if( tSock == NULL )
+	if( tSock == nullptr )
 		return false;
 	jsval params[2], rval;
 	SI32 objType			= 2;	// 2 == null, 1 == char, 0 == item
-	CBaseObject *mObj	= NULL;
-	JSObject *myObj2	= NULL;
+	CBaseObject *mObj	= nullptr;
+	JSObject *myObj2	= nullptr;
 	try
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-		if(myObj == NULL)
+		if(myObj == nullptr)
 			return false;
 		params[0] = OBJECT_TO_JSVAL( myObj );
 		if( targeted >= BASEITEMSERIAL )
@@ -2069,7 +2069,7 @@ size_t cScript::NewGumpList( void )
 SEGump * cScript::GetGumpList( SI32 index )
 {
 	if( index < 0 || (size_t)index >= gumpDisplays.size() )
-		return NULL;
+		return nullptr;
 	return gumpDisplays[index];
 }
 
@@ -2117,10 +2117,10 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	if( !ExistAndVerify( seOnGumpPress, "onGumpPress" ) )
 		return;
 
-	if( packet == NULL )
+	if( packet == nullptr )
 		return;
 	CSocket *pressing = packet->GetSocket();
-	if( pressing == NULL )
+	if( pressing == nullptr )
 		return;
 
 	UI32 button		= packet->ButtonID();
@@ -2128,7 +2128,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	UI16 nText		= static_cast<UI16>(packet->TextCount());
 
 	SEGumpData *segdGumpData	= new SEGumpData;
-	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, NULL, NULL );
+	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, nullptr, nullptr );
 	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
 	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties );
 	JS_SetPrivate( targContext, jsoObject, segdGumpData );
@@ -2162,7 +2162,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 //o-----------------------------------------------------------------------------------------------o
 void cScript::HandleGumpInput( CPIGumpInput *pressing )
 {
-	if( pressing == NULL )
+	if( pressing == nullptr )
 		return;
 	if( !ExistAndVerify( seOnGumpInput, "onGumpInput" ) )
 		return;
@@ -2267,7 +2267,7 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams )
 {
-	if( eventToCall == NULL )
+	if( eventToCall == nullptr )
 		return false;
 
 	jsval rval;
@@ -2393,7 +2393,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 
 	jsval params[2], rval;
 
-	JSString *strSpeech		= NULL;
+	JSString *strSpeech		= nullptr;
 	std::string lwrSpeech	= mySpeech;
 
 	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
@@ -2430,7 +2430,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 		return true;
 
 	jsval params[4], rval;
-	JSString *strSpeech = NULL;
+	JSString *strSpeech = nullptr;
 
 	char *lwrSpeech = new char[strlen(mySpeech)+1];
 	strcpy( lwrSpeech, mySpeech );
@@ -2557,7 +2557,7 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 //o-----------------------------------------------------------------------------------------------o
 bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
 {
-	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == NULL )
+	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == nullptr )
 		return false;
 
 	jsval params[3], rval;
@@ -2589,9 +2589,9 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	params[0]			= OBJECT_TO_JSVAL( srcObj );
 	params[1]			= OBJECT_TO_JSVAL( tmpObj );
 
-	if( s != NULL )
+	if( s != nullptr )
 	{
-		JSObject *sockObj	= NULL;
+		JSObject *sockObj	= nullptr;
 		sockObj		= JSEngine->AcquireObject( IUE_SOCK, s, runTime );
 		params[2]	= OBJECT_TO_JSVAL( sockObj );
 	}
@@ -2615,14 +2615,14 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( mSock  == NULL || command == "" )
+	if( mSock  == nullptr || command == "" )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnCommand, "onCommand" ) )
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	JSString *strCmd = NULL;
+	JSString *strCmd = nullptr;
 	strCmd = JS_NewStringCopyZ( targContext, strutil::tolower( command ).c_str() );
 	params[0]	= OBJECT_TO_JSVAL( myObj );
 	params[1]	= STRING_TO_JSVAL( strCmd );
@@ -2756,7 +2756,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 
 	jsval params[1], rval;
 
-	JSObject *myObj = NULL;
+	JSObject *myObj = nullptr;
 	if( a->GetObjType() == OT_CHAR )
 		myObj = JSEngine->AcquireObject( IUE_CHAR, a, runTime );
 	else
@@ -2790,14 +2790,14 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 //o-----------------------------------------------------------------------------------------------o
 bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 {
-	if( a == NULL )
+	if( a == nullptr )
 		return true;
 	if( !ExistAndVerify( seOnIterateSpawnRegions, "onIterateSpawnRegions" ) )
 		return false;
 
 	jsval params[1], rval;
 
-	JSObject *myObj = NULL;
+	JSObject *myObj = nullptr;
 	myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, a, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
@@ -2821,7 +2821,7 @@ bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 //o-----------------------------------------------------------------------------------------------o
 bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return false;
 	if( !ExistAndVerify( seOnPacketReceive, "onPacketReceive" ) )
 		return false;
@@ -2910,7 +2910,7 @@ SI08 cScript::OnSkillGump( CChar *currChar )
 SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( targChar ) || mSock == NULL )
+	if( !ValidateObject( targChar ) || mSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnUseBandageMacro, "onUseBandageMacro" ) )
 		return RV_NOFUNC;
@@ -3120,7 +3120,7 @@ bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
 SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || tSock == NULL )
+	if( !ValidateObject( objVendor ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnBuy, "onBuy" ) )
 		return RV_NOFUNC;
@@ -3152,7 +3152,7 @@ SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || tSock == NULL )
+	if( !ValidateObject( objVendor ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSell, "onSell" ) )
 		return RV_NOFUNC;
@@ -3185,7 +3185,7 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == NULL )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ) )
 		return RV_NOFUNC;
@@ -3193,7 +3193,7 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	jsval rval, params[3];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= NULL;
+	JSObject *myObj2	= nullptr;
 	if( objItemBought->GetObjType() == OT_ITEM )
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
 
@@ -3222,7 +3222,7 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == NULL )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ) )
 		return RV_NOFUNC;
@@ -3230,7 +3230,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	jsval rval, params[3];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= NULL;
+	JSObject *myObj2	= nullptr;
 	if( objItemSold->GetObjType() == OT_ITEM )
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
 
@@ -3259,7 +3259,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == NULL )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ) )
 		return RV_NOFUNC;
@@ -3267,7 +3267,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	jsval rval, params[3];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= NULL;
+	JSObject *myObj2	= nullptr;
 	if( objItemBought->GetObjType() == OT_ITEM )
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
 
@@ -3296,7 +3296,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == NULL )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ) )
 		return RV_NOFUNC;
@@ -3304,7 +3304,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	jsval rval, params[3];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
-	JSObject *myObj2	= NULL;
+	JSObject *myObj2	= nullptr;
 	if( objItemSold->GetObjType() == OT_ITEM )
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
 
@@ -3331,7 +3331,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objMulti ) || tSock == NULL )
+	if( !ValidateObject( objMulti ) || tSock == nullptr )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnHouseCommand, "onHouseCommand" ) )
 		return RV_NOFUNC;
