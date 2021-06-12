@@ -32,7 +32,7 @@
 #include "StringUtility.hpp"
 #include <iostream>
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -220,7 +220,7 @@ CConsole& CConsole::operator<<( const SI08 *outPut )
 CConsole& CConsole::operator<<( const char *outPut )
 {
 	StartOfLineCheck();
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
@@ -470,7 +470,7 @@ void CConsole::Start( const std::string& temp )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnYellow( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
@@ -487,7 +487,7 @@ void CConsole::TurnYellow( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnRed( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
@@ -504,7 +504,7 @@ void CConsole::TurnRed( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnGreen( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
@@ -521,7 +521,7 @@ void CConsole::TurnGreen( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBlue( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
@@ -538,7 +538,7 @@ void CConsole::TurnBlue( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnNormal( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
@@ -555,7 +555,7 @@ void CConsole::TurnNormal( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBrightWhite( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
@@ -677,7 +677,7 @@ void CConsole::PrintStartOfLine( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 //o-----------------------------------------------------------------------------------------------o
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 void CConsole::MoveTo( SI32 x, SI32 y )
 {
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -793,7 +793,7 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 SI32 CConsole::cl_getch( void )
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 	char buffer[2];
 	std::string rvalue = "";
 	buffer[1] = 0;

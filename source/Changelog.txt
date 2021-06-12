@@ -1,3 +1,10 @@
+12/06/2021 - punt
+	Following changes made to ensure compatable with some of my other projects
+		Switched over to ConfigOS.h from Config.h
+		UOX_PLATFORM to PLATFORM (and the corresponding platform types)
+	Replaced NULL with nullptr
+
+
 12/06/2021 - Xuri
 	Some minor cleanup in a few DFN files. Affected files:
 		dfndata/creatures/creatures.dfn

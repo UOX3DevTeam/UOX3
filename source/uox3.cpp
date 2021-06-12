@@ -72,7 +72,7 @@
 std::thread cons;
 std::thread netw;
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
 #endif
@@ -104,7 +104,7 @@ void		CheckAI( CChar& mChar );
 
 
 bool isWorldSaving = false;
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	BOOL WINAPI exit_handler(DWORD dwCtrlType)
 //|					void app_stopped(int sig)
@@ -501,7 +501,7 @@ void endmessage( SI32 x )
 	sysBroadcast( strutil::format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
 }
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 void illinst( SI32 x = 0 ) //Thunderstorm linux fix
 {
 	sysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
@@ -1491,13 +1491,13 @@ void CWorldMain::CheckAutoTimers( void )
 
 			SetAutoSaved( false );
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 			SetConsoleCtrlHandler( exit_handler, TRUE );
 #endif
 			isWorldSaving = true;
 			SaveNewWorld( false );
 			isWorldSaving = false;
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 			SetConsoleCtrlHandler( exit_handler, false );
 #endif
 		}
@@ -1882,7 +1882,7 @@ void Shutdown( SI32 retCode )
 
 	if( retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	SetConsoleCtrlHandler( exit_handler, TRUE );
 #endif
 		isWorldSaving = true;
@@ -1891,7 +1891,7 @@ void Shutdown( SI32 retCode )
 			cwmWorldState->SaveNewWorld( true );
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
 		isWorldSaving = false;
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	SetConsoleCtrlHandler( exit_handler, FALSE );
 #endif
 	}
@@ -1978,7 +1978,7 @@ void Shutdown( SI32 retCode )
 		Console.TurnRed();
 		Console << "Exiting UOX with errorlevel " << retCode << myendl;
 		Console.TurnNormal();
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 		Console << "Press Return to exit " << myendl;
 		std::string throwAway;
 		std::getline(std::cin, throwAway);
@@ -2816,7 +2816,7 @@ int main( SI32 argc, char *argv[] )
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 	// Protection from server-shutdown during mid-worldsave
 	signal(SIGINT, app_stopped);
 #endif
@@ -2825,7 +2825,7 @@ int main( SI32 argc, char *argv[] )
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
 
 	// 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD( 2, 2 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
@@ -2844,7 +2844,7 @@ int main( SI32 argc, char *argv[] )
 
 		Console.Start( strutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
 //		signal( SIGTERM, &endmessage );
 //		signal( SIGQUIT, &endmessage );
@@ -3129,7 +3129,7 @@ int main( SI32 argc, char *argv[] )
 		Network->SockClose();
 		Console.PrintDone();
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 		SetConsoleCtrlHandler( exit_handler, TRUE );
 #endif
 		if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
@@ -3142,7 +3142,7 @@ int main( SI32 argc, char *argv[] )
 			isWorldSaving = false;
 		}
 		cwmWorldState->ServerData()->save();
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 		SetConsoleCtrlHandler( exit_handler, false );
 #endif
 

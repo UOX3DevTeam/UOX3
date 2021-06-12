@@ -2,7 +2,7 @@
 // Created on:  6/8/21
 
 #include "IP4Address.hpp"
-#include "Config.h"
+#include "ConfigOS.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <sstream>
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
@@ -332,7 +332,7 @@ IP4Address IP4Address::lookup(const std::string& address){
 	hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;          /* Any protocol */
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	WSAData wsdata;
 	int startresult = WSAStartup(MAKEWORD(2, 2), &wsdata);
 	if (startresult != 0) {
@@ -341,7 +341,7 @@ IP4Address IP4Address::lookup(const std::string& address){
 #endif
 	int status = getaddrinfo(address.c_str(), nullptr, &hints, &result);
 	if (status != 0) {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 		WSACleanup();
 #endif
 		
@@ -361,7 +361,7 @@ IP4Address IP4Address::lookup(const std::string& address){
 				sockaddr_in adr = *reinterpret_cast<sockaddr_in*>(rp->ai_addr);
 				auto number =  ntohl(adr.sin_addr.s_addr);
 				freeaddrinfo(result);
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 				WSACleanup();
 #endif
 				return IP4Address(number) ;
@@ -377,7 +377,7 @@ IP4Address IP4Address::lookup(const std::string& address){
 
 // Unfortunately, the approach here for the unix/windows is almost totally
 // different, so effectively, to completely different routines
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 //====================================================================
 std::vector<IP4Address> IP4Address::available() {
 	/* Note: could also use malloc() and free() */

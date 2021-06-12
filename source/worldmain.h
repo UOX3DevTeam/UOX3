@@ -8,7 +8,7 @@
 #define __WORLDMAIN_H__
 
 #include "GenericList.h"
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 #include <winsock2.h>
 #undef min
 #undef max
