@@ -293,7 +293,7 @@ std::size_t Socket::receive(unsigned char *data, std::size_t amount){
 #else
 	{
 		SOCKET fd = _fd ;
-		status = ::recv(fd,data,static_cast<int>(amount),flag);
+		status = ::recv(fd,reinterpret_cast<char*>(data),static_cast<int>(amount),flag);
 	}
 	
 	if (status == SOCKET_ERROR) {
