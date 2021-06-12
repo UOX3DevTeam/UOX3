@@ -321,10 +321,10 @@ void Socket::shutdown() {
 				message = "A successful WSAStartup call must occur before using this function";
 				break;
 			case WSAENETDOWN:
-				message = "The network subsystem has failed."
+				message = "The network subsystem has failed.";
 				break;
 			case WSAEINPROGRESS:
-				message = "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function."
+				message = "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function.";
 				break ;
 			default:
 				message = std::string("Unknown error: ") + std::to_string(status) ;
