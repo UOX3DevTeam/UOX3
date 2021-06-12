@@ -307,3 +307,30 @@ std::size_t Socket::receive(unsigned char *data, std::size_t amount){
 	return static_cast<std::size_t>(status) ;
 
 }
+
+//==============================================================================
+void Socket::shutdown() {
+	// Really just for windows, to shutdown WinSock2
+#if PLATFORM == WINDOWS
+	auto status =  WSACleanup();
+	if (status != 0) {
+		status = WSAGetLastError();
+		std::string message ;
+		switch (status) {
+			case WSANOTINITIALISED:
+				message = "A successful WSAStartup call must occur before using this function";
+				break;
+			case WSAENETDOWN:
+				message = "The network subsystem has failed."
+				break;
+			case WSAEINPROGRESS:
+				message = "A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function."
+				break ;
+			default:
+				message = std::string("Unknown error: ") + std::to_string(status) ;
+				break;
+		}
+		throw std::runtime_error(message);
+	}
+#endif
+}
