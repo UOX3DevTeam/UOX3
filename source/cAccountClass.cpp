@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <filesystem>
 #include "StringUtility.hpp"
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #include <arpa/inet.h>
 #endif
 

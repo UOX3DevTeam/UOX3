@@ -17,7 +17,7 @@
 #include "UOPInterface.hpp"
 #include <algorithm>
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #  include <fcntl.h>     // open
 #  include <sys/mman.h>  // mmap, mmunmap
 #endif
@@ -60,7 +60,7 @@ UOXFile::UOXFile( const char* const fileName, const char * const )
 		return;
 	}
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	HANDLE hFile = ::CreateFileA(
 								 fileName,
 								 GENERIC_READ,
@@ -140,7 +140,7 @@ UOXFile::~UOXFile()
 	}
 	if( memPtr )
 	{
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 		UnmapViewOfFile( memPtr );
 #else
 		munmap(memPtr, fileSize);

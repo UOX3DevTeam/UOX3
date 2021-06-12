@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <limits>
 #include "IP4Address.hpp"
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #include <netdb.h>
 
 #include <arpa/inet.h>

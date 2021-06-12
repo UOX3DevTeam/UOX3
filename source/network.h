@@ -2,7 +2,7 @@
 #define __CNETWORK_H__
 
 #include <mutex>
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>

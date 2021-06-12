@@ -1384,7 +1384,7 @@
     <ClInclude Include="cMultiObj.h" />
     <ClInclude Include="combat.h" />
     <ClInclude Include="commands.h" />
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigOS.h" />
     <ClInclude Include="CPacketReceive.h" />
     <ClInclude Include="CPacketSend.h" />
     <ClInclude Include="cRaces.h" />

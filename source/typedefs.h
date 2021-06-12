@@ -5,7 +5,7 @@
 typedef void *  va_list;
 #endif
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #define MAX_PATH			268
 #endif
 
