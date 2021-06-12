@@ -57,7 +57,7 @@ void Socket::setServer(int port){
 #if PLATFORM == WINDOWS
 		auto error = WSAGetLastError() ;
 		throw std::runtime_error(std::string("Unable to get socket address info: ") + std::to_string(error));
-		
+	}
 #else
 		throw std::runtime_error(std::string("Unable to get socket address info: ") + std::string(gai_strerror(status)));
 	}
