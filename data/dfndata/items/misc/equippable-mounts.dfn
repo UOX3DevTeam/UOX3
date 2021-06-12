@@ -279,9 +279,9 @@ LAYER=25
 NEWBIE
 }
 
-[chimera]
+[reptalon]
 {
-NAME=a chimera
+NAME=a reptalon
 ID=0x3E90
 LAYER=25
 NEWBIE

@@ -2,7 +2,6 @@
 [base_reagent]
 {
 get=base_item
-name=
 id=0x0
 weight=10
 restock=50

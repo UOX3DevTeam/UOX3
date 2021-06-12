@@ -1,4 +1,17 @@
 12/06/2021 - Xuri
+	Some minor cleanup in a few DFN files. Affected files:
+		dfndata/creatures/creatures.dfn
+		dfndata/items/gear/weapons/aos_weapons.dfn
+		dfndata/items/magic/reagents.dfn
+		dfndata/items/misc/equippable-mounts.dfn
+		dfndata/items/misc/gems.dfn
+		dfndata/items/npcmenu.bulk.dfn
+		dfndata/items/skills/misc/misc.dfn
+		dfndata/npc/femalevendors.dfn
+		dfndata/npc/mounts.dfn
+		dfndata/npc/undead.dfn
+
+12/06/2021 - Xuri
 	Updated decorate command to support two additional object categories - containers and spawners - and the properties needed by these to function
 	Fixed an issue with appending folder names to paths in File JS Method .Open() and JS File Function DeleteFile()
 	Renamed default UOX3 server name (was too long) to My UOX3 Shard
