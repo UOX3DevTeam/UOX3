@@ -115,7 +115,7 @@ void Socket::initialize() {
 		// Initialize Winsock
 		iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 		if (iResult != 0) {
-			throw std::runtime_error(std::string("Unable to start winsock: ")+std::to_string(IResult));
+			throw std::runtime_error(std::string("Unable to start winsock: ")+std::to_string(iResult));
 		}
 #elif PLATFORM == LINUX
 		signal(SIGPIPE, SIG_IGN);		// We dont do this on macos,as we can set a socket option
