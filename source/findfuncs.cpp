@@ -112,7 +112,7 @@ CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
 		GenericList< CChar * > *regChars = CellResponse->GetCharList();
@@ -137,10 +137,10 @@ CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 {
-	if( !ValidateObject( i ) || i->GetCont() == NULL )	// Item has no containing item
-		return NULL;
+	if( !ValidateObject( i ) || i->GetCont() == nullptr )	// Item has no containing item
+		return nullptr;
 
-	while( i->GetCont() != NULL )
+	while( i->GetCont() != nullptr )
 	{
 		if( i->GetContSerial() < BASEITEMSERIAL )
 		{
@@ -161,10 +161,10 @@ CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 //o-----------------------------------------------------------------------------------------------o
 CItem *FindRootContainer( CItem *i )
 {
-	if( !ValidateObject( i ) || i->GetCont() == NULL )
-		return NULL;
+	if( !ValidateObject( i ) || i->GetCont() == nullptr )
+		return nullptr;
 
-	while( i->GetCont() != NULL )
+	while( i->GetCont() != nullptr )
 	{
 		if( i->GetContSerial() < BASEITEMSERIAL )
 			break;
@@ -181,14 +181,14 @@ CItem *FindRootContainer( CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 CChar *FindItemOwner( CItem *p )
 {
-	if( !ValidateObject( p ) || p->GetCont() == NULL )
-		return NULL;
+	if( !ValidateObject( p ) || p->GetCont() == nullptr )
+		return nullptr;
 
 	ObjectType oType = OT_CBO;
 	CBaseObject *iOwner = FindItemOwner( p, oType );
 	if( oType == OT_CHAR )
 		return static_cast<CChar *>(iOwner);
-	return NULL;
+	return nullptr;
 }
 
 
@@ -214,7 +214,7 @@ CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -238,7 +238,7 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -263,7 +263,7 @@ CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -287,7 +287,7 @@ CItem *FindItemOfType( CChar *toFind, ItemTypes type )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -365,7 +365,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 CMultiObj *findMulti( CBaseObject *i )
 {
 	if( !ValidateObject( i ) )
-		return NULL;
+		return nullptr;
 	return findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber(), i->GetInstanceID() );
 }
 
@@ -386,14 +386,14 @@ inline T hypotenuse( T sideA, T sideB )
 CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
 	SI32 lastdist = 30;
-	CMultiObj *multi = NULL;
+	CMultiObj *multi = nullptr;
 	SI32 ret, dx, dy;
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *toCheck = (*rIter);
-		if( toCheck == NULL )	// no valid region
+		if( toCheck == nullptr )	// no valid region
 			continue;
 		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
@@ -416,7 +416,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 						return multi;
 					}
 					else
-						multi = NULL;
+						multi = nullptr;
 				}
 			}
 		}
@@ -433,7 +433,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
 	CMapRegion *toCheck = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( toCheck != NULL )	// no valid region
+	if( toCheck != nullptr )	// no valid region
 	{
 		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
@@ -449,7 +449,7 @@ CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 		}
 		regItems->Pop();
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -461,13 +461,13 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 {
 	UI16 oldDist		= DIST_OUTOFRANGE;
 	UI16 currDist;
-	CItem *currItem		= NULL;
+	CItem *currItem		= nullptr;
 	point3 targLocation = point3( x, y, z );
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *toCheck = (*rIter);
-		if( toCheck == NULL )	// no valid region
+		if( toCheck == nullptr )	// no valid region
 			continue;
 		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
@@ -503,7 +503,7 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
 		GenericList< CItem * > *regItems = CellResponse->GetItemList();
@@ -532,7 +532,7 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
 		GenericList< CItem * > *regItems = CellResponse->GetItemList();
@@ -561,7 +561,7 @@ BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanc
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
 		GenericList< CItem * > *regItems = CellResponse->GetItemList();

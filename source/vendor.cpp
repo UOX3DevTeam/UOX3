@@ -54,7 +54,7 @@ UI32 calcValue( CItem *i, UI32 value )
 //o-----------------------------------------------------------------------------------------------o
 UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 {
-	if( tReg == NULL )
+	if( tReg == nullptr )
 		return value;
 
 	SI16 good			= i->GetGood();
@@ -141,7 +141,7 @@ bool CPIBuyItem::Handle( void )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) == 0 )
 					{
@@ -160,13 +160,13 @@ bool CPIBuyItem::Handle( void )
 		else
 		{
 			if( mChar->IsGM() )
-				npc->TextMessage( NULL, 1337, TALK, 0, mChar->GetName().c_str() );
+				npc->TextMessage( nullptr, 1337, TALK, 0, mChar->GetName().c_str() );
 			else
 			{
 				if( goldtotal == 1 )
-					npc->TextMessage( NULL, 1338, TALK, 0, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( nullptr, 1338, TALK, 0, mChar->GetName().c_str(), goldtotal );
 				else
-					npc->TextMessage( NULL, 1339, TALK, 0, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( nullptr, 1339, TALK, 0, mChar->GetName().c_str(), goldtotal );
 
 				Effects->goldSound( tSock, goldtotal );
 			}
@@ -180,18 +180,18 @@ bool CPIBuyItem::Handle( void )
 					DeleteItemAmount( mChar, goldtotal, 0x0EED );
 			}
 			CItem *biTemp;
-			CItem *iMade = NULL;
+			CItem *iMade = nullptr;
 			UI16 j;
 			for( i = 0; i < itemtotal; ++i )
 			{
 				biTemp	= bitems[i];
-				iMade	= NULL;
+				iMade	= nullptr;
 				if( biTemp->GetAmount() > amount[i] )
 				{
 					if( biTemp->isPileable() )
 					{
 						iMade = Items->DupeItem( tSock, biTemp, amount[i] );
-						if( iMade != NULL )
+						if( iMade != nullptr )
 						{
 							iMade->SetCont( p );
 							iMade->PlaceInPack();
@@ -203,7 +203,7 @@ bool CPIBuyItem::Handle( void )
 						for( j = 0; j < amount[i]; ++j )
 						{
 							iMade = Items->DupeItem( tSock, biTemp, 1 );
-							if( iMade != NULL )
+							if( iMade != nullptr )
 							{
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
@@ -222,7 +222,7 @@ bool CPIBuyItem::Handle( void )
 							if( biTemp->isPileable() )
 							{
 								iMade = Items->DupeItem( tSock, biTemp, amount[i] );
-								if( iMade != NULL )
+								if( iMade != nullptr )
 								{
 									iMade->SetCont( p );
 									iMade->PlaceInPack();
@@ -234,7 +234,7 @@ bool CPIBuyItem::Handle( void )
 								for( j = 0; j < amount[i]; ++j )
 								{
 									iMade = Items->DupeItem( tSock, biTemp, 1 );
-									if( iMade != NULL )
+									if( iMade != nullptr )
 									{
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
@@ -256,7 +256,7 @@ bool CPIBuyItem::Handle( void )
 								for( j = 0; j < amount[i]-1; ++j )
 								{
 									iMade = Items->DupeItem( tSock, biTemp, 1 );
-									if( iMade != NULL )
+									if( iMade != nullptr )
 									{
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
@@ -282,7 +282,7 @@ bool CPIBuyItem::Handle( void )
 					for( auto scriptTrig : scriptTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
-						if( toExecute != NULL )
+						if( toExecute != nullptr )
 						{
 							// If script returns 1, prevent other scripts with event from running
 							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
@@ -296,7 +296,7 @@ bool CPIBuyItem::Handle( void )
 		}
 	}
 	else
-		npc->TextMessage( NULL, 1340, TALK, false );
+		npc->TextMessage( nullptr, 1340, TALK, false );
 
 	if( clear )
 	{
@@ -325,7 +325,7 @@ bool CPISellItem::Handle( void )
 		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
 		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
 			return true;
-		CItem *j = NULL, *k = NULL, *l = NULL;
+		CItem *j = nullptr, *k = nullptr, *l = nullptr;
 		UI16 amt = 0, maxsell = 0;
 		UI08 i = 0;
 		UI32 totgold = 0, value = 0;
@@ -338,7 +338,7 @@ bool CPISellItem::Handle( void )
 
 		if( maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus() )
 		{
-			n->TextMessage( NULL, 1342, TALK, 0, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
+			n->TextMessage( nullptr, 1342, TALK, 0, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
 			return true;
 		}
 
@@ -351,7 +351,7 @@ bool CPISellItem::Handle( void )
 			{
 				if( j->GetAmount() < amt || FindItemOwner( j ) != mChar )
 				{
-					n->TextMessage( NULL, 1343, TALK, false );
+					n->TextMessage( nullptr, 1343, TALK, false );
 					return true;
 				}
 
@@ -362,7 +362,7 @@ bool CPISellItem::Handle( void )
 				for( auto scriptTrig : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
 						{
@@ -379,7 +379,7 @@ bool CPISellItem::Handle( void )
 					continue;
 				}
 
-				CItem *join = NULL;
+				CItem *join = nullptr;
 				GenericList< CItem * > *pCont = boughtPack->GetContainsList();
 				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
@@ -434,7 +434,7 @@ bool CPISellItem::Handle( void )
 					for( auto scriptTrig : scriptTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
-						if( toExecute != NULL )
+						if( toExecute != nullptr )
 						{
 							// If script returns true/1, prevent other scripts with event from running
 							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
@@ -520,5 +520,5 @@ bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
 void restock( bool stockAll )
 {
 	UI32 b = (stockAll ? 1 : 0);
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &restockFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, nullptr, &restockFunctor );
 }

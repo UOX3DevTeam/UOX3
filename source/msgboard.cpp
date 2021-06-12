@@ -852,7 +852,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 	msgBoardPost_st msgBoardPost;
 	std::string sect, tag, data;
 	std::string fileName		= std::string("region") + strutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
-	ScriptSection *EscortData	= NULL, *Escort = NULL;
+	ScriptSection *EscortData	= nullptr, *Escort = nullptr;
 	size_t totalEntries			= 0;
 	std::string tmpSubject		= "";
 
@@ -862,7 +862,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			msgBoardPost.Toggle		= QT_ESCORTQUEST;
 			tmpSubject				= Dictionary->GetEntry( 735 );
 			Escort					= FileLookup->FindEntry( "ESCORTS", msgboard_def );
-			if( Escort == NULL )
+			if( Escort == nullptr )
 			{
 				return false;
 			}
@@ -877,7 +877,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			Escort->MoveTo( RandomNum( static_cast<size_t>(0), totalEntries-1 ) );
 			sect		= "ESCORT " + Escort->GrabData();
 			EscortData	= FileLookup->FindEntry( sect, msgboard_def );
-			if( EscortData == NULL )
+			if( EscortData == nullptr )
 			{
 				Console.error( strutil::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
 				return false;
@@ -1039,13 +1039,13 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 
 	// Take the NPC out of quest mode
 	mNPC->SetNpcWander( WT_FREE );         // Wander freely
-	mNPC->SetFTarg( NULL );			 // Reset follow target
+	mNPC->SetFTarg( nullptr );			 // Reset follow target
 	mNPC->SetQuestType( 0 );         // Reset quest type
 	mNPC->SetQuestDestRegion( 0 );   // Reset quest destination region
 
 	// Set a timer to automatically delete the NPC
 	mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
-	mNPC->SetOwner( NULL );
+	mNPC->SetOwner( nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o

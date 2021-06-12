@@ -68,7 +68,7 @@ SERIAL PageVector::Add( HelpRequest *toAdd )
 {
 	HelpRequest *adding = new HelpRequest;
 #if defined( UOX_DEBUG_MODE )
-	if( adding == NULL )
+	if( adding == nullptr )
 		return INVALIDSERIAL;
 #endif
 #pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?" )
@@ -103,7 +103,7 @@ HelpRequest *PageVector::First( void )
 {
 	currentPos = Queue.begin();
 	if( AtEnd() )
-		return NULL;	// empty queue!
+		return nullptr;	// empty queue!
 	return (*currentPos);
 }
 
@@ -116,7 +116,7 @@ HelpRequest *PageVector::Next( void )
 {
 	++currentPos;
 	if( AtEnd() )
-		return NULL;	// at end, return NULL!
+		return nullptr;	// at end, return nullptr!
 	return (*currentPos);
 }
 
@@ -157,7 +157,7 @@ void PageVector::SendAsGump( CSocket *toSendTo )
 	std::vector< HelpRequest * >::iterator qIter;
 	for( qIter = Queue.begin(); qIter != Queue.end(); ++qIter )
 	{
-		if( (*qIter) == NULL )
+		if( (*qIter) == nullptr )
 			continue;
 		if( !(*qIter)->IsHandled() )
 		{
@@ -251,7 +251,7 @@ HelpRequest *PageVector::Current( void )
 	if( !AtEnd() )
 		return (*currentPos);
 	else
-		return NULL;
+		return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -262,7 +262,7 @@ HelpRequest *PageVector::Current( void )
 bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 {
 	bool retVal		= false;
-	CChar *isPaging = NULL;
+	CChar *isPaging = nullptr;
 	for( HelpRequest *tempPage = First(); !AtEnd(); tempPage = Next() )
 	{
 		if( !tempPage->IsHandled() )

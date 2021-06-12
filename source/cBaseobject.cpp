@@ -47,7 +47,7 @@ const UI32 BIT_DAMAGEABLE	=	7;
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject::~CBaseObject()
 {
-	if( multis != NULL )
+	if( multis != nullptr )
 		RemoveFromMulti( false );
 	// Delete all tags.
 	tags.clear();
@@ -62,7 +62,7 @@ const UI16			DEFBASE_ID			= 1;
 const UI16			DEFBASE_COLOUR		= 0;
 const UI08			DEFBASE_DIR			= 0;
 const SERIAL		DEFBASE_SERIAL		= INVALIDSERIAL;
-CMultiObj *			DEFBASE_MULTIS		= NULL;
+CMultiObj *			DEFBASE_MULTIS		= nullptr;
 const SERIAL		DEFBASE_SPAWNSER	= INVALIDSERIAL;
 const SERIAL		DEFBASE_OWNER		= INVALIDSERIAL;
 const UI08			DEFBASE_WORLD		= 0;
@@ -112,7 +112,7 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 	temp_container_serial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
-	if( cwmWorldState != NULL && cwmWorldState->GetLoaded() )
+	if( cwmWorldState != nullptr && cwmWorldState->GetLoaded() )
 		SetPostLoaded( true );
 	ShouldSave( true );
 	memset( &resistances[0], DEFBASE_RESIST, sizeof( UI16 ) * WEATHNUM );
@@ -318,7 +318,7 @@ UI16 CBaseObject::GetID( void ) const
 }
 void CBaseObject::SetID( UI16 newValue )
 {
-	CBaseObject *checkCont = NULL;
+	CBaseObject *checkCont = nullptr;
 	if( isPostLoaded() && CanBeObjType( OT_ITEM ) )
 		checkCont = (static_cast<CItem *>(this))->GetCont();
 
@@ -441,7 +441,7 @@ void CBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 			AddToMulti( fireTrigger );
 		}
 		else
-			multis = NULL;
+			multis = nullptr;
 	}
 }
 //o-----------------------------------------------------------------------------------------------o
@@ -486,7 +486,7 @@ CSpawnItem *CBaseObject::GetSpawnObj( void ) const
 	CSpawnItem *ourSpawner = static_cast<CSpawnItem *>(calcItemObjFromSer( spawnserial ));
 	if( ValidateObject( ourSpawner ) && ourSpawner->GetObjType() == OT_SPAWNER )
 		return ourSpawner;
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -835,7 +835,7 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 				for( auto i : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( i );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						// If script returns true/1, prevent other onLeaving events from triggering
 						if( toExecute->OnLeaving( multis, this ) == 1 )
@@ -853,7 +853,7 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 				for( auto i : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( i );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						// If script returns true/1, prevent other onLeaving events from triggering
 						if( toExecute->OnLeaving( multis, this ) == 1 )
@@ -879,7 +879,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 {
 	if( CanBeObjType( OT_MULTI ) )
 	{
-		multis = NULL;
+		multis = nullptr;
 		return;
 	}
 	if( ValidateObject( multis ) )
@@ -894,7 +894,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 				for( auto i : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( i );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						// If script returns true/1, prevent other onEntrance events from triggering
 						if( toExecute->OnEntrance( multis, this ) == 1 )
@@ -914,7 +914,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 				for( auto i : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( i );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						// If script returns true/1, prevent other onEntrance events from triggering
 						if( toExecute->OnEntrance( multis, this ) == 1 )
@@ -952,13 +952,13 @@ void CBaseObject::SetMulti( CMultiObj *newMulti, bool fireTrigger )
 void CBaseObject::SetSpawn( SERIAL newSpawn )
 {
 	CSpawnItem *ourSpawner = GetSpawnObj();
-	if( ourSpawner != NULL )
+	if( ourSpawner != nullptr )
 		ourSpawner->spawnedList.Remove( this );
 	spawnserial = newSpawn;
 	if( newSpawn != INVALIDSERIAL )
 	{
 		ourSpawner = GetSpawnObj();
-		if( ourSpawner != NULL )
+		if( ourSpawner != nullptr )
 			ourSpawner->spawnedList.Add( this );
 	}
 }
@@ -1551,7 +1551,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				if( scriptID != 0 && scriptID != 65535 )
 				{
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
-					if( toExecute == NULL )
+					if( toExecute == nullptr )
 					{
 						Console.warning( strutil::format("SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str()) );
 					}
@@ -1666,7 +1666,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 void CBaseObject::PostLoadProcessing( void )
 {
 	SERIAL tmpSerial = INVALIDSERIAL;
-	if( multis != NULL )
+	if( multis != nullptr )
 	{
 		multis		= nullptr;
 		SetMulti( tempmulti, false );
@@ -1859,7 +1859,7 @@ void CBaseObject::Cleanup( void )
 	for( auto i : scriptTriggers )
 	{
 		cScript *tScript = JSMapping->GetScript( i );
-		if( tScript != NULL )
+		if( tScript != nullptr )
 			tScript->OnDelete( this );
 	}
 
@@ -1872,12 +1872,12 @@ void CBaseObject::Cleanup( void )
 
 	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
-		if( iSock != NULL )
+		if( iSock != nullptr )
 		{
-			if( iSock->TempObj() != NULL && iSock->TempObj() == this )
-				iSock->TempObj( NULL );
-			if( iSock->TempObj2() != NULL && iSock->TempObj2() == this )
-				iSock->TempObj2( NULL );
+			if( iSock->TempObj() != nullptr && iSock->TempObj() == this )
+				iSock->TempObj( nullptr );
+			if( iSock->TempObj2() != nullptr && iSock->TempObj2() == this )
+				iSock->TempObj2( nullptr );
 		}
 	}
 }

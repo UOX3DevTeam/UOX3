@@ -341,4 +341,22 @@ namespace strutil {
 		
 		return conversion.str()  ;
 	}
+	
+	//====================================================================
+	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep){
+		std::string first ;
+		std::string second ;
+		auto loc = value.find(sep);
+		if (loc == std::string::npos){
+			first = value ;
+		}
+		else {
+			first = strutil::rtrim(value.substr(0,loc));
+			if ((loc+1) < value.size()) {
+				second = strutil::ltrim(value.substr(loc+1));
+			}
+		}
+		return std::make_tuple(first,second);
+	}
+	
 }

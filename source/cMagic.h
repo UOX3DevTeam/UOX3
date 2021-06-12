@@ -34,7 +34,7 @@ public:
 	bool CheckHealth( CChar *s, SI32 num );
 	bool CheckMagicReflect( CChar *i );
 
-	void MagicDamage( CChar *p, SI16 amount, CChar *attacker = NULL, WeatherType element = NONE );
+	void MagicDamage( CChar *p, SI16 amount, CChar *attacker = nullptr, WeatherType element = NONE );
 	void SpellFail( CSocket *s );
 	void SubtractMana( CChar *s, SI32 mana );
 	void SubtractStamina( CChar *s, SI32 stamina );

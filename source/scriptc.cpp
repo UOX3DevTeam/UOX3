@@ -136,11 +136,11 @@ bool Script::isin( const std::string& section )
 //|	Function		-	ScriptSection *FindEntry( const std::string& section )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns a ScriptSection * to the section named "section"
-//|						if it exists, otherwise returning NULL
+//|						if it exists, otherwise returning nullptr
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::FindEntry( const std::string& section )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	SSMAP::const_iterator iSearch = defEntries.find( section );
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
@@ -155,7 +155,7 @@ ScriptSection *Script::FindEntry( const std::string& section )
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	auto usection = std::string( section );
 	usection = strutil::toupper(usection);
 	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
@@ -176,7 +176,7 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::FirstEntry( void )
 {
-	ScriptSection *rvalue	= NULL;
+	ScriptSection *rvalue	= nullptr;
 	iSearch					= defEntries.begin();
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
@@ -190,7 +190,7 @@ ScriptSection *Script::FirstEntry( void )
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::NextEntry( void )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	if( iSearch != defEntries.end() )
 	{
 		++iSearch;

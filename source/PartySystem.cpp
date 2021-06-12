@@ -13,7 +13,7 @@ bool PartyEntry::IsLootable( void ) const	{	return settings.test( BIT_LOOTABLE )
 void PartyEntry::Member( CChar *valid )		{	member = valid;							}
 void PartyEntry::IsLeader( bool value )		{	settings.set( BIT_LEADER, true   );		}
 void PartyEntry::IsLootable( bool value )	{	settings.set( BIT_LOOTABLE, true );		}
-PartyEntry::PartyEntry() : member( NULL )	{	settings.reset();						}
+PartyEntry::PartyEntry() : member( nullptr )	{	settings.reset();						}
 PartyEntry::PartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m )
 {
 	settings.set( BIT_LEADER, isLeader );
@@ -35,7 +35,7 @@ bool Party::AddMember( CChar *i )
 			PartyEntry *toAdd	= new PartyEntry( i );
 			PartyFactory::getSingleton().AddLookup( this, i );
 			members.push_back( toAdd );
-			SendList( NULL );
+			SendList( nullptr );
 			retVal = true;
 		}
 	}
@@ -56,17 +56,17 @@ PartyEntry *Party::Find( CChar *i, SI32 *location )
 			PartyEntry *toFind = members[j];
 			if( toFind->Member() == i )
 			{
-				if( location != NULL )
+				if( location != nullptr )
 					(*location) = static_cast<int>(j);
 				return toFind;
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 bool Party::HasMember( CChar *find )
 {
-	return ( Find( find ) != NULL );
+	return ( Find( find ) != nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -81,7 +81,7 @@ bool Party::RemoveMember( CChar *i )
 	{
 		SI32 removeSpot;
 		PartyEntry *toFind = Find( i, &removeSpot );
-		if( toFind != NULL )
+		if( toFind != nullptr )
 		{
 			delete members[removeSpot];
 			members.erase( members.begin() + removeSpot );
@@ -94,8 +94,8 @@ bool Party::RemoveMember( CChar *i )
 				toSend.AddMember( toFind->Member() );
 			}
 
-			SendPacket( &toSend, NULL );
-			if( i->GetSocket() != NULL )
+			SendPacket( &toSend, nullptr );
+			if( i->GetSocket() != nullptr )
 				SendPacket( &toSend, i->GetSocket() );
 			retVal = true;
 		}
@@ -112,13 +112,13 @@ void Party::Leader( CChar *member )
 {
 	SI32 newLeaderPos;
 	PartyEntry *newLeader = Find( member, &newLeaderPos );
-	if( newLeader != NULL )
+	if( newLeader != nullptr )
 	{
-		if( leader != NULL )
+		if( leader != nullptr )
 		{
 			SI32 oldLeaderPos;
 			PartyEntry *mFind = Find( leader, &oldLeaderPos );
-			if( mFind != NULL )
+			if( mFind != nullptr )
 			{
 				mFind->IsLeader( false );
 				// We need to swap their position in the array, because the first cab
@@ -133,8 +133,8 @@ void Party::Leader( CChar *member )
 	}
 }
 CChar *Party::Leader( void )	{	return leader;	}
-Party::Party( bool npc ) : leader( NULL ), isNPC( npc )	{					}
-Party::Party( CChar *ldr, bool npc ) : leader( NULL ), isNPC( npc )
+Party::Party( bool npc ) : leader( nullptr ), isNPC( npc )	{					}
+Party::Party( CChar *ldr, bool npc ) : leader( nullptr ), isNPC( npc )
 {
 	if( ValidateObject( ldr ) )
 	{
@@ -150,7 +150,7 @@ Party::Party( CChar *ldr, bool npc ) : leader( NULL ), isNPC( npc )
 //o-----------------------------------------------------------------------------------------------o
 void Party::SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo )
 {
-	if( toSendTo != NULL )
+	if( toSendTo != nullptr )
 		toSendTo->Send( toSend );
 	else
 	{
@@ -158,7 +158,7 @@ void Party::SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo )
 		{
 			PartyEntry *toFind	= members[k];
 			CSocket *tSock		= toFind->Member()->GetSocket();
-			if( tSock != NULL )
+			if( tSock != nullptr )
 				tSock->Send( toSend );
 		}
 	}
@@ -218,12 +218,12 @@ PartyFactory::~PartyFactory()
 	for( Party *obj = parties.First(); !parties.Finished(); obj = parties.Next() )
 	{
 		delete obj;
-		obj = NULL;
+		obj = nullptr;
 	}
 }
 Party *PartyFactory::Create( CChar *leader )
 {
-	Party *toAdd	= NULL;
+	Party *toAdd	= nullptr;
 	if( ValidateObject( leader ) )
 	{
 		toAdd		= new Party( leader );
@@ -238,10 +238,10 @@ void PartyFactory::Destroy( CChar *member )
 }
 void PartyFactory::Destroy( Party *toRemove )
 {
-	if( toRemove != NULL )
+	if( toRemove != nullptr )
 	{
 		std::vector< PartyEntry * > *mList = toRemove->MemberList();
-		if( mList != NULL )
+		if( mList != nullptr )
 		{
 			for( size_t j = 0; j < mList->size(); ++j )
 			{
@@ -261,10 +261,10 @@ Party *PartyFactory::Get( CChar *member )
 		if( toFind != partyQuickLook.end() )
 			return toFind->second;
 		else
-			return NULL;
+			return nullptr;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -288,13 +288,13 @@ void PartyFactory::CreateInvite( CSocket *inviter )
 		return;
 	}
 	Party *ourParty = Get( inviterChar );
-	if( ourParty == NULL )
+	if( ourParty == nullptr )
 	{
 		//Party *tParty = Create( inviterChar );
 		Create( inviterChar);
 	}
 	CSocket *targSock = toInvite->GetSocket();
-	if( targSock != NULL )
+	if( targSock != nullptr )
 	{
 		CPPartyInvitation toSend;
 		toSend.Leader( inviterChar );
@@ -322,7 +322,7 @@ void PartyFactory::Kick( CSocket *inviter )
 		return;
 	}
 	Party *ourParty = Get( inviter->CurrcharObj() );
-	if( ourParty == NULL )
+	if( ourParty == nullptr )
 	{
 		inviter->sysmessage( "You are not in a party and cannot kick them out" );
 		return;

@@ -268,7 +268,7 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 		if( ( mz1 < mz2 && z <= mz2 && z >= mz1 ) ||									// 1) Collides with a map "wall"
 		   ( mz1 > mz2 && z <= mz1 && z >= mz2 ) ||
 		   ( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
-		   ( stat == NULL &&															// Ensure there is no static item
+		   ( stat == nullptr &&															// Ensure there is no static item
 			( ( mID1 >= 431  && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 475  ) ||
 			 (   mID1 >= 543  && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
 			 (   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
@@ -358,7 +358,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	const SI16 curY		= toCheck->GetY();
 	const SI08 curZ		= toCheck->GetZ();
 	SI32 i				= 0;
-	vector3D *checkLoc	= NULL;
+	vector3D *checkLoc	= nullptr;
 	if( !toCheck->CanBeObjType( OT_MULTI ) )
 	{
 		if( toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2 )
@@ -584,7 +584,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
 		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
@@ -625,7 +625,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			return blocked;
 
 		// Statics
-		while( stat != NULL )
+		while( stat != nullptr )
 		{
 			CTile& tile = Map->SeekTile( stat->itemid );
 			if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
@@ -671,11 +671,11 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 	CBaseObject *itemOwner	= i;
 	bool inSight			= false;
 
-	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate the lof
+	if( i->GetCont() != nullptr ) // It's inside another container, we need root container to calculate the lof
 	{
 		ObjectType objType	= OT_CBO;
 		CBaseObject *iOwner = FindItemOwner( i, objType );
-		if( iOwner != NULL )
+		if( iOwner != nullptr )
 			itemOwner = iOwner;
 	}
 
@@ -688,20 +688,20 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 
 		const SI08 height = Map->TileHeight( itemOwner->GetID() ); // Retrieves actual height of item, unrelated to world-coordinate
 		// Can we see the top or bottom of the item
-		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+		if( LineOfSight( nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 		{
 			inSight = true;
 		}
 		else if( height > 0 ) // Only bother checking for the top of the item if the item has an actual height value, otherwise it's essentially same check twice
 		{
-			if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+			if( LineOfSight( nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				inSight = true;
 			}
 		}
 		if( inSight == false )// If both the previous checks failed, try checking from character's Z location to top of item instead
 		{
-			if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true ) )
+			if( LineOfSight( nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true ) )
 			{
 				inSight = true;
 			}

@@ -35,7 +35,7 @@ void PlVBuy( CSocket *s )
 	VALIDATESOCKET( s );
 
 	CChar *vChar = static_cast<CChar *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( !ValidateObject( vChar ) || vChar->isFree() )
 		return;
 
@@ -50,7 +50,7 @@ void PlVBuy( CSocket *s )
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) || i->GetCont() == NULL )
+	if( !ValidateObject( i ) || i->GetCont() == nullptr )
 		return;
 
 	if( FindItemOwner( i ) != vChar )
@@ -91,9 +91,9 @@ void PlVBuy( CSocket *s )
 void HandleGuildTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *trgChar	= NULL;
+	CChar *trgChar	= nullptr;
 	CChar *mChar	= s->CurrcharObj();
-	CGuild *mGuild	= NULL, *tGuild = NULL;
+	CGuild *mGuild	= nullptr, *tGuild = nullptr;
 	switch( s->GetByte( 5 ) )
 	{
 		case 0:	// recruit character
@@ -103,7 +103,7 @@ void HandleGuildTarget( CSocket *s )
 				if( trgChar->GetGuildNumber() == -1 )	// no existing guild
 				{
 					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-					if( mGuild != NULL )
+					if( mGuild != nullptr )
 						mGuild->NewRecruit( (*trgChar) );
 				}
 				else
@@ -131,11 +131,11 @@ void HandleGuildTarget( CSocket *s )
 					else
 					{
 						mGuild = GuildSys->Guild(mChar->GetGuildNumber() );
-						if( mGuild != NULL )
+						if( mGuild != nullptr )
 						{
 							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_WAR );
 							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
-							if( tGuild != NULL )
+							if( tGuild != nullptr )
 								tGuild->TellMembers( 1005, mGuild->Name().c_str() );
 						}
 					}
@@ -155,11 +155,11 @@ void HandleGuildTarget( CSocket *s )
 					else
 					{
 						mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-						if( mGuild != NULL )
+						if( mGuild != nullptr )
 						{
 							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_ALLY );
 							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
-							if( tGuild != NULL )
+							if( tGuild != nullptr )
 								tGuild->TellMembers( 1007, mGuild->Name().c_str() );
 						}
 					}
@@ -235,7 +235,7 @@ void TeleTarget( CSocket *s )
 
 	const SERIAL serial = s->GetDWord( 7 );
 
-	CBaseObject *mObj = NULL;
+	CBaseObject *mObj = nullptr;
 	if( serial >= BASEITEMSERIAL )
 		mObj = calcItemObjFromSer( serial );
 	else
@@ -276,7 +276,7 @@ void TeleTarget( CSocket *s )
 		mChar->SetLocation( targX, targY, targZ );
 		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 	}
-	else if( s != NULL )
+	else if( s != nullptr )
 		s->sysmessage( 687 );
 }
 
@@ -288,8 +288,8 @@ void TeleTarget( CSocket *s )
 void DyeTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CItem *i		= NULL;
-	CChar *c		= NULL;
+	CItem *i		= nullptr;
+	CChar *c		= nullptr;
 	SERIAL serial	= s->GetDWord( 7 );
 	if( s->AddID1() == 0xFF && s->AddID2() == 0xFF )
 	{
@@ -396,7 +396,7 @@ void ColorsTarget( CSocket *s )
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
@@ -410,7 +410,7 @@ void ColorsTarget( CSocket *s )
 	if( !ValidateObject( i ) )
 		return;
 
-	if( i->isHeldOnCursor() || ( FindItemOwner( i ) != NULL && FindItemOwner( i ) != mChar ) || !checkItemRange( mChar, i ) )
+	if( i->isHeldOnCursor() || ( FindItemOwner( i ) != nullptr && FindItemOwner( i ) != mChar ) || !checkItemRange( mChar, i ) )
 	{
 		s->sysmessage( 400 ); // That is too far away!
 		return;
@@ -438,7 +438,7 @@ void DvatTarget( CSocket *s )
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
@@ -470,7 +470,7 @@ void DvatTarget( CSocket *s )
 				return;
 			}
 		}
-		if( i->GetCont() != NULL )
+		if( i->GetCont() != nullptr )
 		{
 			CChar *c = FindItemOwner( i );
 			if( ValidateObject( c ) && c != mChar )
@@ -635,13 +635,13 @@ void Tiling( CSocket *s )
 	s->TempInt2( 0 );
 	UI16 rndID = 0;
 
-	CItem *c = NULL;
+	CItem *c = nullptr;
 	for( SI16 x = x1; x <= x2; ++x )
 	{
 		for( SI16 y = y1; y <= y2; ++y )
 		{
 			rndID = addid + RandomNum( static_cast<UI16>(0), static_cast<UI16>(rndVal) );
-			c = Items->CreateItem( NULL, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
+			c = Items->CreateItem( nullptr, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
 			if( !ValidateObject( c ) )
 				return;
 			c->SetDecayable( false );
@@ -659,7 +659,7 @@ void Tiling( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 {
-	CItem *toCreate = Items->CreateItem( NULL, mChar, partID, 1, 0, OT_ITEM );
+	CItem *toCreate = Items->CreateItem( nullptr, mChar, partID, 1, 0, OT_ITEM );
 	if( !ValidateObject( toCreate ) )
 		return false;
 	toCreate->SetName( strutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
@@ -688,8 +688,8 @@ void newCarveTarget( CSocket *s, CItem *i )
 	VALIDATESOCKET( s );
 
 	CChar *mChar = s->CurrcharObj();
-	CItem *c = Items->CreateItem( NULL, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
-	if( c == NULL )
+	CItem *c = Items->CreateItem( nullptr, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
+	if( c == nullptr )
 		return;
 	c->SetLocation( i );
 	c->SetMovable( 2 );
@@ -700,7 +700,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 	if( i->GetTempVar( CITV_MOREY, 2 ) )
 	{
 		ScriptSection *toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
-		if( toFind == NULL )
+		if( toFind == nullptr )
 			return;
 		std::string tag;
 		std::string data;
@@ -730,7 +730,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 			{
 				if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR )
 				{
-					c->SetCont( NULL );
+					c->SetCont( nullptr );
 					c->SetLocation( i );
 					c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 				}
@@ -742,7 +742,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 	{
 		std::string sect		= std::string("CARVE ") + strutil::number( i->GetCarve() );
 		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
-		if( toFind == NULL )
+		if( toFind == nullptr )
 			return;
 		std::string tag;
 		std::string data;
@@ -776,7 +776,7 @@ void AttackTarget( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *target	= static_cast<CChar *>(s->TempObj());
 	CChar *target2	= calcCharObjFromSer( s->GetDWord( 7 ) );
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 
 	if( !ValidateObject( target2 ) || !ValidateObject( target ) )
 		return;
@@ -813,7 +813,7 @@ void FollowTarget( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *char1	= static_cast<CChar *>(s->TempObj());
 	CChar *char2	= calcCharObjFromSer( s->GetDWord( 7 ) );
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( !ValidateObject( char1 ) || !ValidateObject( char2 ) )
 		return;
 
@@ -831,7 +831,7 @@ void TransferTarget( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *char1 = static_cast<CChar *>(s->TempObj());
 	CChar *char2 = calcCharObjFromSer( s->GetDWord( 7 ) );
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 
 	if( !ValidateObject( char1 ) )
 		return;
@@ -849,10 +849,10 @@ void TransferTarget( CSocket *s )
 
 	Npcs->stopPetGuarding( char1 );
 
-	char1->TextMessage( NULL, 1074, TALK, 0, char1->GetName().c_str(), char2->GetName().c_str() );
+	char1->TextMessage( nullptr, 1074, TALK, 0, char1->GetName().c_str(), char2->GetName().c_str() );
 
 	char1->SetOwner( char2 );
-	char1->SetFTarg( NULL );
+	char1->SetFTarg( nullptr );
 	char1->SetNpcWander( WT_FREE );
 }
 
@@ -863,7 +863,7 @@ void TransferTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 bool BuyShop( CSocket *s, CChar *c )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return false;
 	if( !ValidateObject( c ) )
 		return false;
@@ -872,7 +872,7 @@ bool BuyShop( CSocket *s, CChar *c )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			if( toExecute->OnBuy( s, c ) == 0 )
 				return false;
@@ -935,7 +935,7 @@ void NpcResurrectTarget( CChar *i )
 	}
 	CSocket *mSock = i->GetSocket();
 	// the char is a PC, but not logged in.....
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		if( i->IsDead() )
 		{
@@ -943,7 +943,7 @@ void NpcResurrectTarget( CChar *i )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnResurrect( i ) == 1 )	// if it exists and we don't want hard code, return
 						return;
@@ -961,7 +961,7 @@ void NpcResurrectTarget( CChar *i )
 			UI16 hairStyleColor = i->GetHairColour();
 			CItem *hairItem = Items->CreateItem( mSock, i, hairStyleID, 1, hairStyleColor, OT_ITEM );
 
-			if( hairItem != NULL )
+			if( hairItem != nullptr )
 			{
 				hairItem->SetDecayable( false );
 				hairItem->SetLayer( IL_HAIR );
@@ -973,7 +973,7 @@ void NpcResurrectTarget( CChar *i )
 			UI16 beardStyleColor = i->GetBeardColour();
 			CItem *beardItem = Items->CreateItem( mSock, i, beardStyleID, 1, beardStyleColor, OT_ITEM );
 
-			if( beardItem != NULL )
+			if( beardItem != nullptr )
 			{
 				beardItem->SetDecayable( false );
 				beardItem->SetLayer( IL_FACIALHAIR );
@@ -985,11 +985,11 @@ void NpcResurrectTarget( CChar *i )
 			i->SetStamina( i->GetMaxStam() / 10 );
 			//
 			i->SetMana( i->GetMaxMana() / 10 );
-			i->SetAttacker( NULL );
+			i->SetAttacker( nullptr );
 			i->SetAttackFirst( false );
 			i->SetWar( false );
 			i->SetHunger( 6 );
-			CItem *c = NULL;
+			CItem *c = nullptr;
 			for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
 			{
 				if( ValidateObject( j ) && !j->isFree() )
@@ -1003,8 +1003,8 @@ void NpcResurrectTarget( CChar *i )
 					{
 						j->Delete();
 
-						c = Items->CreateScriptItem( NULL, i, "resurrection_robe", 1, OT_ITEM );
-						if( c != NULL )
+						c = Items->CreateScriptItem( nullptr, i, "resurrection_robe", 1, OT_ITEM );
+						if( c != nullptr )
 							c->SetCont( i );
 					}
 				}
@@ -1076,7 +1076,7 @@ void FriendTarget( CSocket *s )
 	}
 
 	CChar *pet = static_cast<CChar *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( Npcs->checkPetFriend( targChar, pet ) )
 	{
 		s->sysmessage( 1621 );
@@ -1085,7 +1085,7 @@ void FriendTarget( CSocket *s )
 
 	CHARLIST *petFriends = pet->GetFriendList();
 	// Make sure to cover the STL response
-	if( petFriends != NULL )
+	if( petFriends != nullptr )
 	{
 		if( petFriends->size() >= 10 )
 		{
@@ -1098,7 +1098,7 @@ void FriendTarget( CSocket *s )
 	s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
 
 	CSocket *targSock = targChar->GetSocket();
-	if( targSock != NULL )
+	if( targSock != nullptr )
 		targSock->sysmessage( 1625, mChar->GetName().c_str(), pet->GetName().c_str() );
 }
 
@@ -1118,7 +1118,7 @@ void GuardTarget( CSocket *s )
 		return;
 
 	CChar *petGuarding = static_cast<CChar *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( !ValidateObject( petGuarding ) )
 		return;
 
@@ -1204,7 +1204,7 @@ void MakeStatusTarget( CSocket *sock )
 	commandLevel_st *targLevel	= Commands->GetClearance( sock->XText() );
 	commandLevel_st *origLevel	= Commands->GetClearance( origCommand );
 
-	if( targLevel == NULL )
+	if( targLevel == nullptr )
 	{
 		sock->sysmessage( 1112 );
 		return;
@@ -1250,7 +1250,7 @@ void MakeStatusTarget( CSocket *sock )
 	}
 
 	std::string playerName = targetChar->GetName();
-	if( targetCommand != origCommand && origLevel != NULL )
+	if( targetCommand != origCommand && origLevel != nullptr )
 	{
 		const size_t position = playerName.find( origLevel->name );
 		if( position != std::string::npos )
@@ -1290,7 +1290,7 @@ void MakeStatusTarget( CSocket *sock )
 								mypack = targetChar->GetPackItem();
 							if( !ValidateObject( mypack ) )
 							{
-								CItem *iMade = Items->CreateItem( NULL, targetChar, 0x0E75, 1, 0, OT_ITEM );
+								CItem *iMade = Items->CreateItem( nullptr, targetChar, 0x0E75, 1, 0, OT_ITEM );
 								if( !ValidateObject( iMade ) )
 									return;
 								targetChar->SetPackItem( iMade );
@@ -1326,7 +1326,7 @@ void SmeltTarget( CSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ))
@@ -1337,7 +1337,7 @@ void SmeltTarget( CSocket *s )
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) || i->GetCont() == NULL )
+	if( !ValidateObject( i ) || i->GetCont() == nullptr )
 		return;
 	if( i->isHeldOnCursor() || !checkItemRange( mChar, i ))
 	{
@@ -1354,7 +1354,7 @@ void SmeltTarget( CSocket *s )
 	UI16 iMadeFrom = i->EntryMadeFrom();
 
 	createEntry *ourCreateEntry = Skills->FindItem( iMadeFrom );
-	if( iMadeFrom == 0 || ourCreateEntry == NULL )
+	if( iMadeFrom == 0 || ourCreateEntry == nullptr )
 	{
 		s->sysmessage( 1114 );
 		return;
@@ -1395,7 +1395,7 @@ void VialTarget( CSocket *mSock )
 	VALIDATESOCKET( mSock );
 
 	CItem *nVialID = static_cast<CItem *>(mSock->TempObj());
-	mSock->TempObj( NULL );
+	mSock->TempObj( nullptr );
 
 	SERIAL targSerial = mSock->GetDWord( 7 );
 	if( targSerial == INVALIDSERIAL )
@@ -1440,7 +1440,7 @@ void VialTarget( CSocket *mSock )
 				}
 
 				nVialID->SetTempVar( CITV_MORE, 1, targItem->GetTempVar( CITV_MORE, 1 ) );
-				Karma( mChar, NULL, -1000 );
+				Karma( mChar, nullptr, -1000 );
 				if( targItem->GetTempVar( CITV_MORE, 2 ) < 4 )
 				{
 					mSock->sysmessage( 750 );
@@ -1534,7 +1534,7 @@ bool CPITargetCursor::Handle( void )
 				///not a great fix, but better then assuming a ptr size .
 				cScript *tScript = tSock->scriptForCallBack ;
 				//cScript *tScript	= reinterpret_cast<cScript *>(tSock->TempInt());
-				if( tScript != NULL )
+				if( tScript != nullptr )
 					tScript->DoCallback( tSock, tSock->GetDWord( 7 ), static_cast<UI08>(targetID) );
 				return true;
 			}

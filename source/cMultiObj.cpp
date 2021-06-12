@@ -814,7 +814,7 @@ bool CMultiObj::Save( std::ofstream &outStream )
 	{
 		rvalue = true;
 		MapData_st& mMap = Map->GetMapData( worldNumber );
-		if( GetCont() != NULL || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
+		if( GetCont() != nullptr || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
 		{
 			DumpHeader( outStream );
 			DumpBody( outStream );

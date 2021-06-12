@@ -136,8 +136,8 @@ void cHTMLTemplate::Process( void )
 
 	// Connection Count (GMs, Counselors, Player)
 	UI32 gm = 0, cns = 0, ccount = 0;
-	CSocket *tSock	= NULL;
-	CChar *tChar	= NULL;
+	CSocket *tSock	= nullptr;
+	CChar *tChar	= nullptr;
 
 	// Get all Network Connections
 	{
@@ -235,7 +235,7 @@ void cHTMLTemplate::Process( void )
 			physicalServer *mServ = cwmWorldState->ServerData()->ServerEntry( i );
 			auto ipToken = strutil::format( "%%ip%i", i+1 );
 
-			if( mServ != NULL )
+			if( mServ != nullptr )
 			{
 				Pos = ParsedContent.find( ipToken );
 				while( Pos != std::string::npos )
@@ -248,7 +248,7 @@ void cHTMLTemplate::Process( void )
 			// i think we'll never get higher than 2 digits, anyway...
 			auto portToken = strutil::format( "%%port%i", i+1 );
 
-			if( mServ != NULL )
+			if( mServ != nullptr )
 			{
 				Pos = ParsedContent.find( portToken );
 				while( Pos != std::string::npos )
@@ -267,7 +267,7 @@ void cHTMLTemplate::Process( void )
 
 			auto serverToken= strutil::format( "%%server%i", i+1 );
 
-			if( mServ != NULL )
+			if( mServ != nullptr )
 			{
 				Pos = ParsedContent.find( serverToken );
 				while( Pos != std::string::npos )
@@ -300,7 +300,7 @@ void cHTMLTemplate::Process( void )
 			{
 				try
 				{
-					if( tSock != NULL )
+					if( tSock != nullptr )
 					{
 						CChar *tChar = tSock->CurrcharObj();
 						if( ValidateObject( tChar ) )
@@ -480,7 +480,7 @@ void cHTMLTemplate::Process( void )
 	//NPCCount
 	UI32 npccount = 0;
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, nullptr, &CountNPCFunctor );
 	npccount	= b;
 
 	std::string npcs	= strutil::number( npccount );
@@ -721,13 +721,13 @@ void cHTMLTemplates::Load( void )
 {
 	for( Script *toCheck = FileLookup->FirstScript( html_def ); !FileLookup->FinishedScripts( html_def ); toCheck = FileLookup->NextScript( html_def ) )
 	{
-		if( toCheck != NULL )
+		if( toCheck != nullptr )
 		{
 			size_t NumEntries = toCheck->NumEntries();
 			if( NumEntries == 0 )
 				continue;
 
-			for( ScriptSection *found = toCheck->FirstEntry(); found != NULL; found = toCheck->NextEntry() )
+			for( ScriptSection *found = toCheck->FirstEntry(); found != nullptr; found = toCheck->NextEntry() )
 			{
 				cHTMLTemplate *Template = new cHTMLTemplate();
 				Template->Load( found );
@@ -750,7 +750,7 @@ void cHTMLTemplates::Unload( void )
 	for( size_t i = 0; i < Templates.size(); ++i )
 	{
 		delete Templates[ i ];
-		Templates[i] = NULL;
+		Templates[i] = nullptr;
 	}
 	Templates.clear();
 }
@@ -766,7 +766,7 @@ void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 	for( tIter = Templates.begin(); tIter != Templates.end(); ++tIter )
 	{
 		cHTMLTemplate *toPoll = (*tIter);
-		if( toPoll != NULL )
+		if( toPoll != nullptr )
 		{
 			if( nTemplateID == -1 || toPoll->GetTemplateType() == nTemplateID )
 				toPoll->Poll();

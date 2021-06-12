@@ -108,13 +108,13 @@ void HandleTeleporters( CChar *s )
 	if( !ValidateObject( s ) )
 		return;
 	UI08 charWorld					= s->WorldNumber();
-	CTeleLocationEntry *getTeleLoc	= NULL;
+	CTeleLocationEntry *getTeleLoc	= nullptr;
 	bool isOnTeleporter;
 	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
 	{
 		isOnTeleporter	= false;
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
-		if( getTeleLoc == NULL )
+		if( getTeleLoc == nullptr )
 			continue;
 		if(( getTeleLoc->SourceWorld() == 0xFF && charWorld > 1 ) || getTeleLoc->SourceWorld() == charWorld )
 		{
@@ -241,7 +241,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 			Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
 #endif
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				deny( mSock, c, sequence );
 			if( c->IsNpc() )
 			{
@@ -276,7 +276,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 						c->SetOldTargLocX( 0 );
 						c->SetOldTargLocY( 0 );
 						c->SetNpcWander( WT_NONE );
-						c->TextMessage( NULL, "[Stops following]", SYSTEM, false );
+						c->TextMessage( nullptr, "[Stops following]", SYSTEM, false );
 					}
 					else if( npcWanderType == WT_BOX )
 					{
@@ -443,7 +443,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 {
 	if( c->IsCasting() )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			mSock->sysmessage( 1380 );
 			deny( mSock, c, sequence );
@@ -455,7 +455,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 	}
 	if( c->IsFrozen() )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			mSock->sysmessage( 1381 );
 			deny( mSock, c, sequence );
@@ -486,7 +486,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 	// Who are we going to check for weight restrictions?
 	if( !c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CL_CNS )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			if( Weight->isOverloaded( c ) )
 				c->IncStamina( -5 );
@@ -525,7 +525,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 {
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( cx ), MapRegion->GetGridY( cy ), c->WorldNumber() );	// check 3 cols... do we really NEED to?
-	if( MapArea == NULL )	// no valid region
+	if( MapArea == nullptr )	// no valid region
 		return false;
 	GenericList< CChar * > *regChars = MapArea->GetCharList();
 	regChars->Push();
@@ -553,7 +553,7 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 //o-----------------------------------------------------------------------------------------------o
 bool cMovement::VerifySequence( CChar *c, CSocket *mSock, SI16 sequence )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		if( mSock->WalkSequence() + 1 != sequence && sequence != 256 )
 		{
@@ -654,7 +654,7 @@ bool cMovement::CheckForHouseBan( CChar *c, CSocket *mSock )
 	}
 	else
 	{
-		if( c->GetMultiObj() != NULL )
+		if( c->GetMultiObj() != nullptr )
 			c->SetMulti( INVALIDSERIAL );
 	}
 	return true;
@@ -731,7 +731,7 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 		return;
 
 	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
 	{
 		CTile& tile = Map->SeekTile( stat->itemid );
 
@@ -760,7 +760,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
 		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
@@ -842,7 +842,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 //o-----------------------------------------------------------------------------------------------o
 void cMovement::SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		CPWalkOK toSend;
 
@@ -879,14 +879,14 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 	CPExtMove toSend	= (*c);
 
 	// Send to self as well
-	if( c->GetSocket() != NULL )
+	if( c->GetSocket() != nullptr )
 		c->GetSocket()->Send(&toSend);
 
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
 	{	// lets see, its much cheaper to call perm[i] first so i'm reordering this
-		if( tSend == NULL )
+		if( tSend == nullptr )
 			continue;
 		CChar *mChar = tSend->CurrcharObj();
 		if( !ValidateObject( mChar ) )
@@ -945,7 +945,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 //o-----------------------------------------------------------------------------------------------o
 void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 
 	// GMs, counselors, and ghosts don't shove things
@@ -953,7 +953,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 		return;
 	// lets cache these vars in advance
 	CMapRegion *grid = MapRegion->GetMapRegion( c );
-	if( grid == NULL )
+	if( grid == nullptr )
 		return;
 
 	GenericList< CChar * > *regChars = grid->GetCharList();
@@ -981,7 +981,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				for( auto scriptTrig : scriptTriggers )
 				{
 					toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						if( toExecute->OnCollide( mSock, c, ourChar ) == 1 )
 						{
@@ -998,7 +998,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				for( auto scriptTrig : ourScriptTriggers )
 				{
 					toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						if( toExecute->OnCollide( ourChar->GetSocket(), c, ourChar ) == 1 )
 						{
@@ -1033,7 +1033,7 @@ void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			toExecute->InRange( mChar, objInRange );
 		}
@@ -1051,7 +1051,7 @@ void DoJSOutOfRange( CChar *mChar, CBaseObject *objOutOfRange )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			toExecute->OutOfRange( mChar, objOutOfRange );
 		}
@@ -1067,7 +1067,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 {
 	if( isGM || tItem->GetVisible() == VT_VISIBLE || ( tItem->GetVisible() == VT_TEMPHIDDEN && tItem->GetOwnerObj() == mChar ) )
 	{
-		if( mSock != NULL && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
+		if( mSock != nullptr && ( (id >= 0x407A && id <= 0x407F) || id == 0x5388 ) )
 		{
 			if( dNew == DIST_BUILDRANGE && dOld > DIST_BUILDRANGE )	// It's a large building
 			{
@@ -1082,14 +1082,14 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 		}
 		else if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
 		{
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				tItem->SendToSocket( mSock );
 			DoJSInRange( mChar, tItem );
 			return true;
 		}
 		else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 		{
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				tItem->RemoveFromSight( mSock );
 			DoJSOutOfRange( mChar, tItem );
 			return true;
@@ -1107,7 +1107,7 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 {
 	if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			tChar->SendToSocket( mSock );
 		DoJSInRange( mChar, tChar );
 		DoJSInRange( tChar, mChar );
@@ -1115,7 +1115,7 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 	}
 	if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			tChar->RemoveFromSight( mSock );
 		DoJSOutOfRange( mChar, tChar );
 		DoJSOutOfRange( tChar, mChar );
@@ -1152,7 +1152,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 		case IT_DAMAGEOBJECT:														// damage objects
 			if( !mChar->IsInvulnerable() )
 			{
-				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), NULL );
+				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), nullptr );
 			}
 			break;
 		case IT_SOUNDOBJECT:														// sound objects
@@ -1166,7 +1166,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 		case IT_WORLDCHANGEGATE:
 			if( !mChar->IsNpc() )	// world change gate
 			{
-				if( mSock != NULL )
+				if( mSock != nullptr )
 				{
 					CPWorldChange wrldChange( (WorldType)itemCheck->GetTempVar( CITV_MOREX ), 1 );
 					mSock->Send( &wrldChange );
@@ -1189,7 +1189,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 {
 	// lets cache these vars in advance
 	UI16 visibleRange	= static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ));
-	if( mSock != NULL )
+	if( mSock != nullptr )
 		visibleRange	= static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
 
 	const SI16 newx		= mChar->GetX();
@@ -1232,9 +1232,9 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
-		if( mSock != NULL )		// Only send char stuff if we have a valid socket
+		if( mSock != nullptr )		// Only send char stuff if we have a valid socket
 		{
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -1286,7 +1286,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						{
 							// Loop through all scriptIDs registered for item, check for scripts
 							cScript *toExecute = JSMapping->GetScript( i );
-							if( toExecute != NULL )
+							if( toExecute != nullptr )
 							{
 								// Script was found, let's check for onCollide event
 								SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
@@ -1303,7 +1303,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						}
 
 						// Handle envoke stuff outside for loop, as we only want this to execute once
-						cScript *toExecute = NULL;
+						cScript *toExecute = nullptr;
 						if( scriptTriggers.size() == 0 || !scriptExecuted )
 						{
 							UI16 envTrig = 0;
@@ -1319,7 +1319,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 							}
 						}
 
-						if( toExecute != NULL )
+						if( toExecute != nullptr )
 						{
 							toExecute->OnCollide( mSock, mChar, tItem );
 						}
@@ -1329,7 +1329,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 							for( auto scriptTrig : scriptTriggers )
 							{
 								toExecute = JSMapping->GetScript( scriptTrig );
-								if( toExecute != NULL )
+								if( toExecute != nullptr )
 								{
 									if( toExecute->OnCollide( mSock, mChar, tItem ) == 1 )
 									{
@@ -1390,7 +1390,7 @@ void cMovement::CombatWalk( CChar *i )
 	CPExtMove toSend = (*i);
 
 	if( !i->IsAtWar() )
-		i->SetTarg( NULL );
+		i->SetTarg( nullptr );
 
 	SOCKLIST nearbyChars = FindNearbyPlayers( i );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
@@ -1440,12 +1440,12 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 	{
 		case WT_FREE:	// Wander freely
 		case WT_FLEE:	// Wander freely after fleeing
-			Walking( NULL, i, jMod, 256 );
+			Walking( nullptr, i, jMod, 256 );
 			break;
 		case WT_BOX:	// Wander inside a box
 			if( checkBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceID ) )
 			{
-				Walking( NULL, i, jMod, 256 );
+				Walking( nullptr, i, jMod, 256 );
 			}
 			// The NPC is outside it's area, send it back
 			else if( !checkBoundingBox( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, fy2, worldNumber, instanceID ) )
@@ -1464,14 +1464,14 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				if( pathFound )
 				{
 					j = i->PopDirection();
-					Walking( NULL, i, j, 256 );
+					Walking( nullptr, i, j, 256 );
 				}
 			}
 			break;
 		case WT_CIRCLE:	// Wander inside a circle
 			if( checkBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceID ) )
 			{
-				Walking( NULL, i, jMod, 256 );
+				Walking( nullptr, i, jMod, 256 );
 			}
 			// The NPC is outside it's area, send it back
 			else if( !checkBoundingCircle( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, worldNumber, instanceID ) )
@@ -1489,7 +1489,7 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				if( pathFound )
 				{
 					j = i->PopDirection();
-					Walking( NULL, i, j, 256 );
+					Walking( nullptr, i, j, 256 );
 				}
 			}
 			break;
@@ -1738,7 +1738,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 {
 	bool shouldRun	= false;
 	bool canRun		= false;
-	CChar *kChar	= NULL;
+	CChar *kChar	= nullptr;
 	UI08 j;
 	SI08 npcWanderType = mChar.GetNpcWander();
 	switch( npcWanderType )
@@ -1789,7 +1789,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 									// If NPC following fails to follow, make it stop
 									mChar.SetOldTargLocX( 0 );
 									mChar.SetOldTargLocY( 0 );
-									mChar.TextMessage( NULL, "[Stops following]", SYSTEM, false );
+									mChar.TextMessage( nullptr, "[Stops following]", SYSTEM, false );
 									mChar.SetNpcWander( WT_NONE );
 								}
 							}
@@ -1804,7 +1804,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 					}
 
 					j = mChar.PopDirection();
-					Walking( NULL, &mChar, j, 256 );
+					Walking( nullptr, &mChar, j, 256 );
 					shouldRun = (( j&0x80 ) != 0);
 				}
 				// Has the Escortee reached the destination ??
@@ -1885,7 +1885,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 
 				j			= mChar.PopDirection();
 				shouldRun	= (( j&0x80 ) != 0);
-				Walking( NULL, &mChar, j, 256 );
+				Walking( nullptr, &mChar, j, 256 );
 			}
 			else
 			{ // wander freely... don't just stop because I'm out of range.
@@ -1905,7 +1905,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			{
 				j			= mChar.PopDirection();
 				shouldRun	= (( j&0x80 ) != 0);
-				Walking( NULL, &mChar, j, 256 );
+				Walking( nullptr, &mChar, j, 256 );
 			}
 			else
 			{
@@ -1915,7 +1915,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 				for( auto scriptTrig : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						// Reached end of pathfinding, if script returns true/1, prevent other scripts with event from running
 						if( toExecute->OnPathfindEnd( &mChar, mChar.GetPathResult() ) == 1 )
@@ -1966,7 +1966,7 @@ void cMovement::NpcMovement( CChar& mChar )
 				CItem *equippedWeapon = Combat->getWeapon( &mChar );
 				if( charDir < 8 && ( charDist <= 1 || (( Combat->getCombatSkill( equippedWeapon ) == ARCHERY || Combat->getCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() ) ) )
 				{
-					bool los = LineOfSight( NULL, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
+					bool los = LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
 					if( los )
 					{
 						// Turn towards target
@@ -1986,7 +1986,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						mChar.SetOldTargLocX( 0 );
 						mChar.SetOldTargLocY( 0 );
 						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ) );
-						mChar.TextMessage( NULL, "[Evading]", SYSTEM, false );
+						mChar.TextMessage( nullptr, "[Evading]", SYSTEM, false );
 						mChar.SetHP( mChar.GetMaxHP() );
 						mChar.SetEvadeState( true );
 						Combat->InvalidateAttacker( &mChar );
@@ -1996,7 +1996,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						for( auto scriptTrig : scriptTriggers )
 						{
 							cScript *toExecute = JSMapping->GetScript( scriptTrig );
-							if( toExecute != NULL )
+							if( toExecute != nullptr )
 							{
 								// If script returns true/1, prevent other scripts with event from running
 								if( toExecute->OnEnterEvadeState( &mChar, l ) == 1 )
@@ -2096,7 +2096,7 @@ void cMovement::NpcMovement( CChar& mChar )
 								mChar.SetOldTargLocX( 0 );
 								mChar.SetOldTargLocY( 0 );
 								mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, "[Evading]", SYSTEM, false );
+								mChar.TextMessage( nullptr, "[Evading]", SYSTEM, false );
 								mChar.SetHP( mChar.GetMaxHP() );
 								mChar.SetEvadeState( true );
 								Combat->InvalidateAttacker( &mChar );
@@ -2106,7 +2106,7 @@ void cMovement::NpcMovement( CChar& mChar )
 								for( auto scriptTrig : scriptTriggers )
 								{
 									cScript *toExecute = JSMapping->GetScript( scriptTrig );
-									if( toExecute != NULL )
+									if( toExecute != nullptr )
 									{
 										// If script returns true/1, prevent other scripts with event from running
 										if( toExecute->OnEnterEvadeState( &mChar, l ) == 1 )
@@ -2130,7 +2130,7 @@ void cMovement::NpcMovement( CChar& mChar )
 					PathFind( &mChar, l->GetX(), l->GetY(), canRun ); // Non-advanced pathfinding
 				const UI08 j	= mChar.PopDirection();
 				shouldRun		= (( j&0x80 ) != 0);
-				Walking( NULL, &mChar, j, 256 );
+				Walking( nullptr, &mChar, j, 256 );
 			}
 			else
 				mChar.FlushPath();
@@ -2566,7 +2566,7 @@ void cMovement::deny( CSocket *mSock, CChar *s, SI16 sequence )
 	denPack.Direction( s->GetDir() );
 	denPack.Z( s->GetZ() );
 
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		mSock->Send( &denPack );
 		mSock->WalkSequence( -1 );

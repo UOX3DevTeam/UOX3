@@ -17,8 +17,8 @@
 CChar *calcCharObjFromSer( SERIAL targSerial )
 {
 	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
-	CChar *toRet = NULL;
-	if( findItem != NULL )
+	CChar *toRet = nullptr;
+	if( findItem != nullptr )
 	{
 		if( findItem->CanBeObjType( OT_CHAR ) )
 			toRet = static_cast<CChar *>(findItem);
@@ -34,8 +34,8 @@ CChar *calcCharObjFromSer( SERIAL targSerial )
 CItem *calcItemObjFromSer( SERIAL targSerial )
 {
 	CBaseObject *findItem = ObjectFactory::getSingleton().FindObject( targSerial );
-	CItem *toRet = NULL;
-	if( findItem != NULL )
+	CItem *toRet = nullptr;
+	if( findItem != nullptr )
 	{
 		if( findItem->CanBeObjType( OT_ITEM ) )
 			toRet = static_cast<CItem *>(findItem);
@@ -46,8 +46,8 @@ CItem *calcItemObjFromSer( SERIAL targSerial )
 CMultiObj *calcMultiFromSer( SERIAL targSerial )
 {
 	CBaseObject *findMulti = ObjectFactory::getSingleton().FindObject( targSerial );
-	CMultiObj *toRet = NULL;
-	if( findMulti != NULL )
+	CMultiObj *toRet = nullptr;
+	if( findMulti != nullptr )
 	{
 		if( findMulti->CanBeObjType( OT_MULTI ) )
 			toRet = static_cast<CMultiObj *>(findMulti);
@@ -62,18 +62,18 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 //o--------------------------------------------------------------------------
 CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID )
 {
-	const regLocs *getLoc	= NULL;
+	const regLocs *getLoc	= nullptr;
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
 	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
 	while( tIter != tEnd )
 	{
 		CTownRegion *myReg = tIter->second;
-		if( myReg != NULL && myReg->WorldNumber() == worldNumber && myReg->GetInstanceID() == instanceID )
+		if( myReg != nullptr && myReg->WorldNumber() == worldNumber && myReg->GetInstanceID() == instanceID )
 		{
 			for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
 			{
 				getLoc = myReg->GetLocation( j );
-				if( getLoc != NULL )
+				if( getLoc != nullptr )
 				{
 					if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
 						return myReg;

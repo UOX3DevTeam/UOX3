@@ -114,7 +114,16 @@
 
   if( location.hash != '' ) {
   	// Open section referred to in hash in url and clear away hash
-  	var link = document.getElementById(window.location.href.split('#')[1]);
+  	var hash = window.location.href.split('#')[1];
+  	if( hash == "commandlist" )
+		{
+			hash = "commandList";
+		}
+		else if( hash = "usefirstgmcommands" )
+		{
+			hash = "useFirstGMCommands";
+		}
+  	var link = document.getElementById(hash);
 	setTimeout(function(){
 		link.click();
 		history.replaceState(null, null, ' ');

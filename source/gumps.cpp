@@ -32,7 +32,7 @@ std::string GetUptime( void );
 //o-----------------------------------------------------------------------------------------------o
 void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 	std::string txt = Dictionary->GetEntry( dictEntry, s->Language() );
 	if( txt.empty() )
@@ -64,7 +64,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 
 	std::string sect = std::string("GUMPMENU ") + strutil::number( m );
 	ScriptSection *gump = FileLookup->FindEntry( sect, misc_def );
-	if( gump == NULL )
+	if( gump == nullptr )
 		return;
 
 	UI08 targType	= 0x12;
@@ -81,7 +81,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 	}
 	sect = std::string("GUMPTEXT ") + strutil::number( m );
 	gump = FileLookup->FindEntry( sect, misc_def );
-	if( gump == NULL )
+	if( gump == nullptr )
 		return;
 	for( tag = gump->First(); !gump->AtEnd(); tag = gump->Next() )
 	{
@@ -113,10 +113,10 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 			if( mChar->IsGM() && !j->IsNpc() )
 			{
 				s->sysmessage( 487 );
-				if( targSocket != NULL )
+				if( targSocket != nullptr )
 					targSocket->sysmessage( 488 );
 				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
-				if( targSocket != NULL )
+				if( targSocket != nullptr )
 					Network->Disconnect( targSocket );
 			}
 			else
@@ -126,12 +126,12 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 			if( mChar->IsGM() && !j->IsNpc() )
 			{
 				s->sysmessage( 490 );
-				if( targSocket != NULL )
+				if( targSocket != nullptr )
 					targSocket->sysmessage( 491 );
 				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
 				actbTemp.wTimeBan = GetMinutesSinceEpoch() + static_cast<UI32>( 1440 );
 
-				if( targSocket != NULL )
+				if( targSocket != nullptr )
 					Network->Disconnect( targSocket );
 			}
 			else
@@ -171,14 +171,14 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			break;
 		case 3:		// view taxes
 			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
-			if( targetRegion != NULL )
+			if( targetRegion != nullptr )
 				targetRegion->ViewTaxes( s );
 			else
 				s->sysmessage( 541 );
 			break;
 		case 4:		// toggle town title
 			mChar->SetTownTitle( !mChar->GetTownTitle() );
-			ourRegion->DisplayTownMenu( NULL, s );
+			ourRegion->DisplayTownMenu( nullptr, s );
 			break;
 		case 5:		s->target( 0, TARGET_VOTEFORMAYOR, 542 );								break;		// vote for town mayor
 		case 6:		TextEntryGump(  s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 543 );	break;		// gold donation
@@ -187,7 +187,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 9:		ourRegion->SendEnemyTowns( s );		break;
 		case 20:	// access mayoral functions, never hit here if we don't have mayoral access anyway!
 			// also, we'll only get access, if we're in our OWN region
-			ourRegion->DisplayTownMenu( NULL, s, 0x01 );	// mayor
+			ourRegion->DisplayTownMenu( nullptr, s, 0x01 );	// mayor
 			break;
 		case 21:	s->sysmessage( 544 );				break;	// set taxes
 		case 22:	ourRegion->DisplayTownMembers( s );	break;	// list town members
@@ -195,7 +195,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 24:	s->sysmessage( 545 );	break;	// purchase more guards
 		case 25:	s->sysmessage( 546 );	break;	// fire a guard
 		case 26:	s->target( 0, TARGET_TOWNALLY, 547 );								break;	// make a town an ally
-		case 40:	ourRegion->DisplayTownMenu( NULL, s );	break;	// we can't return from mayor menu if we weren't mayor!
+		case 40:	ourRegion->DisplayTownMenu( nullptr, s );	break;	// we can't return from mayor menu if we weren't mayor!
 		case 41:	// join town!
 			if( !(calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() )->AddAsTownMember( (*mChar) ) ) )
 				s->sysmessage( 548 );
@@ -204,7 +204,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			if( !Skills->CheckSkill( mChar, STEALING, 950, 1000 )	) // minimum 95.0 stealing
 			{
 				targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
-				if( targetRegion != NULL )
+				if( targetRegion != nullptr )
 				{
 					SI32 chanceToSteal	= RandomNum( 0, targetRegion->GetHealth() / 2 );
 					SI32 fudgedStealing	= RandomNum( mChar->GetSkill( STEALING ), static_cast< UI16 >(mChar->GetSkill( STEALING ) * 2) );
@@ -217,7 +217,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 						for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 						{
 							CMapRegion *toCheck = (*rIter);
-							if( toCheck == NULL )	// no valid region
+							if( toCheck == nullptr )	// no valid region
 								continue;
 							GenericList< CItem * > *regItems = toCheck->GetItemList();
 							regItems->Push();
@@ -359,7 +359,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 
 	std::string sect = std::string("ITEMMENU ") + strutil::number( m );
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
-	if( ItemMenu == NULL )
+	if( ItemMenu == nullptr )
 		return;
 
 	// page header
@@ -770,7 +770,7 @@ bool CPIHelpRequest::Handle( void )
 
 	std::string sect = std::string("GMMENU ") + strutil::number( menuNum );
 	ScriptSection *GMMenu = FileLookup->FindEntry( sect, menus_def );
-	if( GMMenu == NULL )
+	if( GMMenu == nullptr )
 		return true;
 
 	std::string line;
@@ -809,7 +809,7 @@ void CPage( CSocket *s, const std::string& reason )
 	pageToAdd.Reason( reason );
 	pageToAdd.WhoPaging( mChar->GetSerial() );
 	pageToAdd.IsHandled( false );
-	pageToAdd.TimeOfPage( time( NULL ) );
+	pageToAdd.TimeOfPage( time( nullptr ) );
 
 	SERIAL callNum = CounselorQueue->Add( &pageToAdd );
 	if( callNum != INVALIDSERIAL )
@@ -863,7 +863,7 @@ void GMPage( CSocket *s, const std::string& reason )
 	pageToAdd.Reason( reason );
 	pageToAdd.WhoPaging( mChar->GetSerial() );
 	pageToAdd.IsHandled( false );
-	pageToAdd.TimeOfPage( time( NULL ) );
+	pageToAdd.TimeOfPage( time( nullptr ) );
 	SERIAL callNum = GMQueue->Add( &pageToAdd );
 	if( callNum != INVALIDSERIAL )
 	{
@@ -1105,7 +1105,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 	SI32 addMenuLoc	= s->TempInt();
 	std::string sect = std::string("ITEMMENU ") + strutil::number( addMenuLoc );
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
-	if( ItemMenu == NULL )
+	if( ItemMenu == nullptr )
 		return;
 
 	// If we get here we have to check to see if there are any other entryies added via the auto-addmenu code. Each item == 2 entries IE: IDNUM=Text name of Item, and ADDITEM=itemID to add
@@ -1245,7 +1245,7 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	if( gumpID == 461 ) // Virtue gump
 	{
-		CChar *targChar = NULL;
+		CChar *targChar = nullptr;
 		if( buttonID == 1 && switchCount > 0 ) // Clicked on a players Virtue Gump icon
 		{
 			SERIAL targSer = tSock->GetDWord( 19 );
@@ -1254,12 +1254,12 @@ bool CPIGumpMenuSelect::Handle( void )
 		else // Clicked an item on the virtue gump
 			targChar = calcCharObjFromSer( id );
 
-		cScript *toExecute = NULL;
+		cScript *toExecute = nullptr;
 		std::vector<UI16> scriptTriggers = tSock->CurrcharObj()->GetScriptTriggers();
 		for( auto scriptTrig : scriptTriggers )
 		{
 			toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( toExecute->OnVirtueGumpPress( tSock->CurrcharObj(), targChar, buttonID ) == 1 )
 				{
@@ -1269,7 +1269,7 @@ bool CPIGumpMenuSelect::Handle( void )
 		}
 
 		toExecute = JSMapping->GetScript( (UI16)0 ); // Global script
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 			toExecute->OnVirtueGumpPress( tSock->CurrcharObj(), targChar, buttonID );
 
 		return true;
@@ -1299,7 +1299,7 @@ bool CPIGumpMenuSelect::Handle( void )
 	else if( gumpID >= 0xFFFF )	// script gump
 	{
 		cScript *toExecute = JSMapping->GetScript( (gumpID - 0xFFFF) );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 			toExecute->HandleGumpPress( this );
 	}
 	else if( gumpID == 21 ) // Multi functional gump
@@ -1338,14 +1338,14 @@ bool CPIGumpMenuSelect::Handle( void )
 	Console << "Type is " << gumpID << " button is " <<  buttonID << myendl;
 #endif
 
-	CItem *j = NULL;
+	CItem *j = nullptr;
 	switch( gumpID )
 	{
 		case 3:	HandleTownstoneButton( tSock, buttonID, id, gumpID );			break;	// Townstones
 		case 4:	WhoList->ButtonSelect( tSock, static_cast<UI16>(buttonID), static_cast<UI08>(gumpID) );					break;	// Wholist
 		case 6:																		// Hair Dye Menu
 			j = static_cast<CItem *>(tSock->TempObj());
-			tSock->TempObj( NULL );
+			tSock->TempObj( nullptr );
 			if( ValidateObject( j ) )
 				HandleHairDyeButton( tSock, j );
 			break;
@@ -1418,13 +1418,13 @@ bool CPIGumpInput::Handle( void )
 			if( ValidateObject( mChar ) )
 			{
 				CSocket *mSock = mChar->GetSocket();
-				if( mSock != NULL )
+				if( mSock != nullptr )
 				{
 					UI32 scriptNo = mSock->AddID();
 					if( scriptNo >= 0xFFFF )
 					{
 						cScript *toExecute = JSMapping->GetScript( (scriptNo - 0xFFFF) );
-						if( toExecute != NULL )
+						if( toExecute != nullptr )
 							toExecute->HandleGumpInput( this );
 						mSock->AddID( 0 );
 					}
@@ -1442,7 +1442,7 @@ std::string GrabMenuData( std::string sect, size_t entryNum, std::string &tag )
 {
 	std::string data;
 	ScriptSection *sectionData = FileLookup->FindEntry( sect, menus_def );
-	if( sectionData != NULL )
+	if( sectionData != nullptr )
 	{
 		if( sectionData->NumEntries() >= entryNum )
 		{
@@ -1772,7 +1772,7 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 				break;
 			case 4:
 				if( gumpData[i]->stringValue.empty() ){
-					temp =  "NULL POINTER" ;
+					temp =  "nullptr POINTER" ;
 				}
 				else{
 					temp= gumpData[i]->stringValue;

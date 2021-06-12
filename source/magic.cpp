@@ -23,7 +23,7 @@
 #include "ObjectFactory.h"
 #include <algorithm>
 
-cMagic *Magic = NULL;
+cMagic *Magic = nullptr;
 
 #define SPELL_MAX 68 // use define for now; can make autocount later
 
@@ -99,7 +99,7 @@ const MagicTable_s magic_table[] = {
 	{ 660, (MAGIC_DEFN)&splNecro3 },
 	{ 661, (MAGIC_DEFN)&splNecro4 },
 	{ 662, (MAGIC_DEFN)&splNecro5 },
-	{ 0, NULL }
+	{ 0, nullptr }
 };
 
 //o-----------------------------------------------------------------------------------------------o
@@ -110,7 +110,7 @@ const MagicTable_s magic_table[] = {
 //o-----------------------------------------------------------------------------------------------o
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld )
 {
-	CItem *g1 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
+	CItem *g1 = Items->CreateItem( nullptr, caster, 0x0F6C, 1, 0, OT_ITEM );
 	if( ValidateObject( g1 ) )
 	{
 		g1->SetDecayable( true );
@@ -119,7 +119,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 		g1->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g1->SetDir( 1 );
 
-		CItem *g2 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
+		CItem *g2 = Items->CreateItem( nullptr, caster, 0x0F6C, 1, 0, OT_ITEM );
 		if( ValidateObject( g2 ) )
 		{
 			g2->SetDecayable( true );
@@ -162,15 +162,15 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 		fx[3] = x + 2;
 		fx[4] = x;
 	}
-	CItem *i = NULL;
+	CItem *i = nullptr;
 	UI08 worldNumber = caster->WorldNumber();
 	UI16 instanceID = caster->GetInstanceID();
 	for( UI08 j = 0; j < 5; ++j )		// how about we make this 5, huh?  missing part of the field
 	{
 		if( id != 0x0080 || ( id == 0x0080 && !Movement->CheckForCharacterAtXYZ( caster, fx[j], fy[j], z )))
 		{
-			i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
-			if( i != NULL )
+			i = Items->CreateItem( nullptr, caster, id, 1, 0, OT_ITEM );
+			if( i != nullptr )
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
@@ -740,7 +740,7 @@ bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
 				for( auto scriptTrig : scriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						if( toExecute->OnDispel( i ) == 1 ) // if it exists and we don't want hard code, return
 							return false;
@@ -950,7 +950,7 @@ bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnDispel( target ) == 1 ) // if it exists and we don't want hard code, return
 						return false;
@@ -1118,7 +1118,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -1158,7 +1158,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 	if( target->IsNpc() )
 		Combat->AttackTarget( target, caster );
 	Effects->PlaySound( caster, 0x0029 );
-	CChar *def = NULL;
+	CChar *def = nullptr;
 	if( Magic->CheckMagicReflect( target ) )
 		def = caster;
 	else
@@ -1285,7 +1285,7 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnDispel( target ) == 1 ) // if it exists and we don't want hard code, return
 						return;
@@ -1359,7 +1359,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
 		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
@@ -1377,7 +1377,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 					targetList.push_back( tempChar );
 					//trgFunc( caster, tempChar, curSpell, targCount );
 				}
-				else if( sock != NULL )
+				else if( sock != nullptr )
 					sock->sysmessage( 688 );
 			}
 		}
@@ -1493,7 +1493,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	criminal( caster );
-	if( sock != NULL )
+	if( sock != nullptr )
 	{
 		sock->SetWord( 11, caster->GetX() );
 		sock->SetWord( 13, caster->GetY() );
@@ -1677,13 +1677,13 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 	fx[2] = 0;		  fy[2] = -yOffset;
 	fx[3] = xOffset;  fy[3] = 0;
 
-	CItem *i			= NULL;
+	CItem *i			= nullptr;
 	UI08 worldNumber = caster->WorldNumber();
 	UI16 instanceID	= caster->GetInstanceID();
 	for( j = 0; j < 4; ++j )	// Draw the corners of our diamond
 	{
-		i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
-		if( i != NULL )
+		i = Items->CreateItem( nullptr, caster, id, 1, 0, OT_ITEM );
+		if( i != nullptr )
 		{
 			i->SetDispellable( true );
 			i->SetDecayable( true );
@@ -1701,8 +1701,8 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 		{
 			for( SI32 counter3 = 1; counter3 < yOffset; ++counter3 )
 			{
-				i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
-				if( i != NULL )
+				i = Items->CreateItem( nullptr, caster, id, 1, 0, OT_ITEM );
+				if( i != nullptr )
 				{
 					i->SetDispellable( true );
 					i->SetDecayable( true );
@@ -1737,15 +1737,15 @@ bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 	fx[2] = -xOffset;	fy[2] = xOffset;
 	fx[3] = -yOffset;	fy[3] = yOffset;
 
-	CItem *i = NULL;
+	CItem *i = nullptr;
 	UI08 worldNumber = caster->WorldNumber();
 	UI16 instanceID = caster->GetInstanceID();
 	for( UI08 j = 0; j < 4; ++j )	// Draw the corners of our diamond
 	{
 		for( SI32 counter = fx[j]; counter < fy[j]; ++counter )
 		{
-			i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
-			if( i != NULL )
+			i = Items->CreateItem( nullptr, caster, id, 1, 0, OT_ITEM );
+			if( i != nullptr )
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
@@ -1792,8 +1792,8 @@ bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 	{
 		for( SI32 counter2 = minY; counter2 <= maxY; ++counter2 )
 		{
-			CItem *i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
-			if( i != NULL )
+			CItem *i = Items->CreateItem( nullptr, caster, id, 1, 0, OT_ITEM );
+			if( i != nullptr )
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
@@ -1862,7 +1862,7 @@ void cMagic::AddSpell( CItem *book, SI32 spellNum )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns false/0, prevent addition of spell to spellbook
 			if( toExecute->OnSpellGain( book, spellNum ) == 0 )
@@ -1896,7 +1896,7 @@ void cMagic::RemoveSpell( CItem *book, SI32 spellNum )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns false/0, prevent removal of spell from spellbook
 			if( toExecute->OnSpellLoss( book, spellNum ) == 0 )
@@ -2070,7 +2070,7 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z )
 {
-	if( s != NULL )
+	if( s != nullptr )
 		caster = s->CurrcharObj();
 	else
 	{	// Since caster will determine who is casting the spell... get a socket for players to see animations and hear effects
@@ -2163,8 +2163,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
 	// (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
-	CChar *i = NULL;
-	if( !caster->IsNpc() && s != NULL )
+	CChar *i = nullptr;
+	if( !caster->IsNpc() && s != nullptr )
 	{
 		if( s->GetDWord( 7 ) != INVALIDSERIAL )
 		{
@@ -2207,7 +2207,7 @@ bool cMagic::CheckMana( CChar *s, SI32 num )
 	else
 	{
 		CSocket *p = s->GetSocket();
-		if( p != NULL )
+		if( p != nullptr )
 			p->sysmessage( 696 );
 	}
 	return false;
@@ -2229,7 +2229,7 @@ bool cMagic::CheckStamina( CChar *s, SI32 num )
 	else
 	{
 		CSocket *p = s->GetSocket();
-		if( p != NULL )
+		if( p != nullptr )
 			p->sysmessage( 697 );
 	}
 	return false;
@@ -2256,7 +2256,7 @@ bool cMagic::CheckHealth( CChar *s, SI32 num )
 	else
 		return true;
 	CSocket *p = s->GetSocket();
-	if( p != NULL )
+	if( p != nullptr )
 		p->sysmessage( 698 );
 	return false;
 }
@@ -2337,7 +2337,7 @@ bool cMagic::CheckMagicReflect( CChar *i )
 bool cMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 {
 	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
-	CSocket *s = NULL;
+	CSocket *s = nullptr;
 	if( ValidateObject( attacker ) )
 	{
 		// Check what is higher between user's normal resistchance and a fallback value
@@ -2350,7 +2350,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 		if( RandomNum( 1, 100 ) < resistChance / 10 )
 		{
 			s = defender->GetSocket();
-			if( s != NULL )
+			if( s != nullptr )
 				s->sysmessage( 699 );
 			i = true;
 		}
@@ -2362,7 +2362,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 		if( i )
 		{
 			s = defender->GetSocket();
-			if( s != NULL )
+			if( s != nullptr )
 				s->sysmessage( 699 );
 		}
 	}
@@ -2422,7 +2422,7 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 	if( p->IsFrozen() && p->GetDexterity() > 0 )
 	{
 		p->SetFrozen( false );
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->sysmessage( 700 );
 	}
 
@@ -2451,7 +2451,7 @@ void cMagic::PoisonDamage( CChar *p, SI32 poison )
 	{
 		p->SetFrozen( false );
 		CSocket *s = p->GetSocket();
-		if( s != NULL )
+		if( s != nullptr )
 			s->sysmessage( 700 );
 	}
 
@@ -2476,7 +2476,7 @@ void cMagic::PoisonDamage( CChar *p, SI32 poison )
 void cMagic::CheckFieldEffects( CChar& mChar )
 {
 	CMapRegion *toCheck = MapRegion->GetMapRegion( &mChar );
-	if( toCheck == NULL )	// no valid region
+	if( toCheck == nullptr )	// no valid region
 		return;
 	GenericList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
@@ -2508,7 +2508,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 		{
 			if( RandomNum( 0, 2 ) == 1 )
 			{
-				if( !CheckResist( NULL, mChar, 4 ) )
+				if( !CheckResist( nullptr, mChar, 4 ) )
 					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 50, caster, HEAT );
 				else
 					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, caster, HEAT );
@@ -2527,7 +2527,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 		}
 		if( RandomNum( 0, 2 ) == 1 )
 		{
-			if( !CheckResist( NULL, mChar, 5 ) )
+			if( !CheckResist( nullptr, mChar, 5 ) )
 			{
 				if( fieldItem->GetTempVar( CITV_MOREX ) < 997 )
 					PoisonDamage( mChar, 2 );
@@ -2548,7 +2548,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 				criminal( caster );
 		}
-		if( RandomNum( 0, 2 ) == 1 && !CheckResist( NULL, mChar, 6 ) )
+		if( RandomNum( 0, 2 ) == 1 && !CheckResist( nullptr, mChar, 6 ) )
 		{
 			Effects->tempeffect( caster, mChar, 1, 0, 0, 0 );
 			Effects->PlaySound( mChar, 520 );
@@ -2562,7 +2562,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 		{
 			if( RandomNum( 0, 2 ) == 1 )
 			{
-				if( !CheckResist( NULL, mChar, 4 ) )
+				if( !CheckResist( nullptr, mChar, 4 ) )
 					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 50, caster, LIGHTNING );
 				else
 					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, caster, LIGHTNING );
@@ -2585,7 +2585,7 @@ void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 	SI08 z;
 	SI16 length;
 
-	if( s != NULL )
+	if( s != nullptr )
 	{
 		x = s->GetWord( 11 );
 		y = s->GetWord( 13 );
@@ -2619,10 +2619,10 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
 		return;
 	Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
 	Effects->PlaySound( s, 0x0207 );
-	if( CheckResist( NULL, s, 4 ) )
-		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 4, NULL, LIGHTNING );
+	if( CheckResist( nullptr, s, 4 ) )
+		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 4, nullptr, LIGHTNING );
 	else
-		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, NULL, LIGHTNING );
+		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, nullptr, LIGHTNING );
 	i->SetTempVar( CITV_MOREZ, 0 );
 }
 
@@ -2718,7 +2718,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	if( display )
 	{
 		CSocket *i = s->GetSocket();
-		if( i != NULL )
+		if( i != nullptr )
 			i->sysmessage( message );
 		return false;
 	}
@@ -2766,7 +2766,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	cScript *jsScript	= JSMapping->GetScript( spells[num].JSScript() );
 
-	if( jsScript != NULL )
+	if( jsScript != nullptr )
 	{
 		// It is the responsibility of the JS script to call the proper events (ie onSpellSuccess and so forth)
 		// They deal with their own mana subtraction and all sorts of things
@@ -2821,7 +2821,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	mChar->SetSpellCast( static_cast<SI08>(num) );
 	if( num > 63 && num <= static_cast<SI32>(spellCount) && spellCount <= 70 )
-		Log( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, NULL, "(Attempted)");
+		Log( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, nullptr, "(Attempted)");
 	if( mChar->IsJailed() && !mChar->IsGM() )
 	{
 		mSock->sysmessage( 704 );
@@ -2889,7 +2889,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 		{
 			CItem *itemRHand = mChar->GetItemAtLayer( IL_RIGHTHAND );
 			CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
-			if( itemLHand != NULL || ( itemRHand != NULL && itemRHand->GetType() != IT_SPELLBOOK ) )
+			if( itemLHand != nullptr || ( itemRHand != nullptr && itemRHand->GetType() != IT_SPELLBOOK ) )
 			{
 				mSock->sysmessage( 708 );
 				mChar->StopSpell();
@@ -2919,7 +2919,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// Events:
 			//  type 0: onSpellCast   (SpellBook)
@@ -2980,7 +2980,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	if( ( !mChar->IsGM() ) && ( !Skills->CheckSkill( mChar, MAGERY, lowSkill, highSkill ) ) )
 	{
-		mChar->TextMessage( NULL, curSpellCasting.Mantra().c_str(), TALK, false );
+		mChar->TextMessage( nullptr, curSpellCasting.Mantra().c_str(), TALK, false );
 		SpellFail( mSock );
 		mChar->StopSpell();
 		return false;
@@ -3017,7 +3017,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 	else
 		temp = curSpellCasting.Mantra();
 
-	mChar->TextMessage( NULL, temp, TALK, false );
+	mChar->TextMessage( nullptr, temp, TALK, false );
 	mChar->SetCasting( true );
 	return true;
 
@@ -3082,7 +3082,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 	curSpell			= caster->GetSpellCast();
 	cScript *jsScript	= JSMapping->GetScript( spells[curSpell].JSScript() );
-	if( jsScript != NULL )
+	if( jsScript != nullptr )
 	{
 		if( jsScript->MagicSpellCast( s, caster, true, curSpell ) )
 		{
@@ -3099,7 +3099,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns true/1, prevent other scripts with event from running
 			if( toExecute->OnSpellSuccess( caster, curSpell ) == 1 )
@@ -3110,7 +3110,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	}
 
 	CChar *src			= caster;
-	bool validSocket	= ( s != NULL );
+	bool validSocket	= ( s != nullptr );
 
 	// Check if caster can cast aggressive spells in the region they're in
 	if( spells[curSpell].AggressiveSpell() )
@@ -3135,7 +3135,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	}
 
 	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
-		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, NULL, "(Succeeded)");
+		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, nullptr, "(Succeeded)");
 	if( caster->IsNpc() || (validSocket && (s->CurrentSpellType() != 2)) )	// delete mana if NPC, s is -1 otherwise!
 	{
 		SubtractMana( caster, spells[curSpell].Mana() );
@@ -3148,7 +3148,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
-		CItem *i = NULL;
+		CItem *i = nullptr;
 		if( validSocket && spells[curSpell].TravelSpell() )				// travel spells.... mark, recall and gate
 		{
 			// Region checks
@@ -3165,7 +3165,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( ValidateObject( i ) )
 			{
-				if( i->GetCont() != NULL || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
+				if( i->GetCont() != nullptr || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 				{
 					if( i->GetType() == IT_RECALLRUNE )
 					{
@@ -3184,7 +3184,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								for( auto scriptTrig : scriptTriggers )
 								{
 									cScript *toExecute = JSMapping->GetScript( scriptTrig );
-									if( toExecute != NULL )
+									if( toExecute != nullptr )
 									{
 										// If script returns true/1, prevent other scripts with event from running
 										if( toExecute->OnSpellTarget( i, caster, curSpell ) == 1 )
@@ -3216,7 +3216,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		if( spells[curSpell].RequireCharTarget() )
 		{
 			// TARGET CALC HERE
-			CChar *c = NULL;
+			CChar *c = nullptr;
 			if( !caster->IsNpc() )
 				c = calcCharObjFromSer( s->GetDWord( 7 ) );
 			else
@@ -3312,7 +3312,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							for( auto scriptTrig : scriptTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
-								if( toExecute != NULL )
+								if( toExecute != nullptr )
 								{
 									toExecute->OnSpellTarget( c, caster, curSpell );
 								}
@@ -3333,7 +3333,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							for( auto scriptTrig : scriptTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
-								if( toExecute != NULL )
+								if( toExecute != nullptr )
 								{
 									toExecute->OnSpellTarget( c, caster, curSpell );
 								}
@@ -3357,7 +3357,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			SI16 x = 0;
 			SI16 y = 0 ;
 			SI08 z=0;
-			CBaseObject *getTarg = NULL;
+			CBaseObject *getTarg = nullptr;
 			if( !caster->IsNpc() )
 			{
 				if( s->GetDWord( 7 ) != INVALIDSERIAL )
@@ -3380,7 +3380,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 			if( ValidateObject( getTarg ) )
 			{
-				if( !getTarg->CanBeObjType( OT_ITEM ) || (static_cast<CItem *>(getTarg))->GetCont() == NULL )
+				if( !getTarg->CanBeObjType( OT_ITEM ) || (static_cast<CItem *>(getTarg))->GetCont() == nullptr )
 				{
 					x = getTarg->GetX();
 					y = getTarg->GetY();
@@ -3474,7 +3474,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( ValidateObject( i ) )
 			{
-				if( ( i->GetCont() != NULL && FindItemOwner( i ) != caster ) || ( objInRange( caster, i, cwmWorldState->ServerData()->CombatMaxSpellRange() ) ) )
+				if( ( i->GetCont() != nullptr && FindItemOwner( i ) != caster ) || ( objInRange( caster, i, cwmWorldState->ServerData()->CombatMaxSpellRange() ) ) )
 				{
 					s->sysmessage( 718 );
 					return;
@@ -3557,12 +3557,12 @@ void cMagic::LoadScript( void )
 	UI08 i = 0;
 	for( Script *spellScp = FileLookup->FirstScript( spells_def ); !FileLookup->FinishedScripts( spells_def ); spellScp = FileLookup->NextScript( spells_def ) )
 	{
-		if( spellScp == NULL )
+		if( spellScp == nullptr )
 			continue;
 
-		for( ScriptSection *SpellLoad = spellScp->FirstEntry(); SpellLoad != NULL; SpellLoad = spellScp->NextEntry() )
+		for( ScriptSection *SpellLoad = spellScp->FirstEntry(); SpellLoad != nullptr; SpellLoad = spellScp->NextEntry() )
 		{
-			if( SpellLoad == NULL )
+			if( SpellLoad == nullptr )
 				continue;
 
 			spEntry = spellScp->EntryName();
@@ -3765,7 +3765,7 @@ void cMagic::LoadScript( void )
 	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_MAGIC );
 	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Spell" );
 	}
 }
@@ -3835,7 +3835,7 @@ void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 {
 	std::string sect			= "POLYMORPHMENU " + strutil::number( gmindex );
 	ScriptSection *polyStuff	= FileLookup->FindEntry( sect, menus_def );
-	if( polyStuff == NULL )
+	if( polyStuff == nullptr )
 		return;
 	HandleCommonGump( s, polyStuff, gmindex );
 }
@@ -3900,7 +3900,7 @@ void cMagic::Register( cScript *toRegister, SI32 spellNumber, bool isEnabled )
 #endif
 	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )
 		return;
-	if( toRegister == NULL )
+	if( toRegister == nullptr )
 		return;
 
 	spells[spellNumber].JSScript( JSMapping->GetScriptID( toRegister->Object() ) );

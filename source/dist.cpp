@@ -17,11 +17,11 @@ bool checkItemRange( CChar *mChar, CItem *i )
 	CBaseObject *itemOwner	= i;
 	bool checkRange			= false;
 
-	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate distance
+	if( i->GetCont() != nullptr ) // It's inside another container, we need root container to calculate distance
 	{
 		ObjectType objType	= OT_CBO;
 		CBaseObject *iOwner = FindItemOwner( i, objType );
-		if( iOwner != NULL )
+		if( iOwner != nullptr )
 			itemOwner = iOwner;
 	}
 	if( itemOwner == mChar )

@@ -29,7 +29,7 @@
 #include "StringUtility.hpp"
 
 
-cBooks *Books = NULL;
+cBooks *Books = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPINewBookHeader::Handle( void )
@@ -39,7 +39,7 @@ cBooks *Books = NULL;
 //o-----------------------------------------------------------------------------------------------o
 bool CPINewBookHeader::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		const SERIAL bookSer = tSock->GetDWord( 3 );
 		CItem *mBook = calcItemObjFromSer( bookSer );
@@ -96,11 +96,11 @@ bool CPINewBookHeader::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		std::string temp	= std::string("BOOK ") + strutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
-		if( book != NULL )
+		if( book != nullptr )
 		{
 			std::string data, UTag;
 
@@ -149,7 +149,7 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		CPBookPage cpbpToSend;
 		CPNewBookHeader bInfo;
@@ -253,11 +253,11 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		std::string temp	= std::string("BOOK ") + strutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
-		if( book != NULL )
+		if( book != nullptr )
 		{
 			UI16 curPage = p;
 			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
@@ -270,7 +270,7 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 				{
 					temp = "PAGE " + book->GrabData();
 					ScriptSection *page = FileLookup->FindEntry( temp, misc_def );
-					if( page != NULL )
+					if( page != nullptr )
 					{
 						CPBookPage cpbpSend( (*i) );
 						cpbpSend.NewPage( p );
@@ -298,7 +298,7 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 //o-----------------------------------------------------------------------------------------------o
 bool CPIBookPage::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		CItem *mBook = calcItemObjFromSer( tSock->GetDWord( 3 ) );
 		if( !ValidateObject( mBook ) )

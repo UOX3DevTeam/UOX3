@@ -46,7 +46,7 @@ public:
 	static void setExternal(const std::string &address) ;
 	static IP4Address lookup(const std::string& address);
 	static IP4Address respond(IP4Address &address);
-	static std::string deviceIPs() ;
+	static std::vector<IP4Address> deviceIPs() ;
 	static std::string externalIP()  ;
 	
 	

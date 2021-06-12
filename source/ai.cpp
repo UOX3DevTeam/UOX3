@@ -47,7 +47,7 @@ bool isValidAttackTarget( CChar& mChar, CChar *cTarget )
 			return false;
 		if( objInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ) )
 		{
-			if( LineOfSight( NULL, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				if( isOnline( (*cTarget) ) || cTarget->IsNpc() )
 					return true;
@@ -86,7 +86,7 @@ void HandleGuardAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -97,7 +97,7 @@ void HandleGuardAI( CChar& mChar )
 					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
-						mChar.TextMessage( NULL, 313, TALK, true );
+						mChar.TextMessage( nullptr, 313, TALK, true );
 						regChars->Pop();
 						return;
 					}
@@ -122,7 +122,7 @@ void HandleFighterAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -164,9 +164,9 @@ void HandleHealerAI( CChar& mChar )
 			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				if( realChar->IsMurderer() )
-					mChar.TextMessage( NULL, 322, TALK, true );
+					mChar.TextMessage( nullptr, 322, TALK, true );
 				else if( realChar->IsCriminal() )
-					mChar.TextMessage( NULL, 770, TALK, true );
+					mChar.TextMessage( nullptr, 770, TALK, true );
 				else if( realChar->IsInnocent() )
 				{
 					if( mChar.GetBodyType() == BT_GARGOYLE ||
@@ -180,7 +180,7 @@ void HandleHealerAI( CChar& mChar )
 					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
-					mChar.TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
+					mChar.TextMessage( nullptr, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
 				}
 			}
 		}
@@ -218,10 +218,10 @@ void HandleEvilHealerAI( CChar& mChar )
 					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-					mChar.TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
+					mChar.TextMessage( nullptr, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
 				}
 				else
-					mChar.TextMessage( NULL, 329, TALK, true );
+					mChar.TextMessage( nullptr, 329, TALK, true );
 			}
 		}
 	}
@@ -241,7 +241,7 @@ void HandleEvilAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -289,7 +289,7 @@ void HandleChaoticAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
@@ -326,7 +326,7 @@ void HandleAnimalAI( CChar& mChar )
 			if( hunger <= 4 )
 			{
 				CMapRegion *MapArea = (*rIter);
-				if( MapArea == NULL )	// no valid region
+				if( MapArea == nullptr )	// no valid region
 					continue;
 				GenericList< CChar * > *regChars = MapArea->GetCharList();
 				regChars->Push();
@@ -358,7 +358,7 @@ void HandleAnimalAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void CheckAI( CChar& mChar )
 {
-	CChar *realChar			= NULL;
+	CChar *realChar			= nullptr;
 	switch( mChar.GetNPCAiType() )
 	{
 		case AI_BANKER:													// Banker

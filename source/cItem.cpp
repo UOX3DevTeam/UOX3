@@ -88,7 +88,7 @@ const UI08			DEFITEM_BASERANGE		= 0;
 //|	Purpose		-	Constructor
 //o-----------------------------------------------------------------------------------------------o
 CItem::CItem() : CBaseObject(),
-contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ),
+contObj( nullptr ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ),
 madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ),
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ),
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
@@ -135,7 +135,7 @@ CBaseObject * CItem::GetCont( void ) const
 //o-----------------------------------------------------------------------------------------------o
 SERIAL CItem::GetContSerial( void ) const
 {
-	if( contObj != NULL )
+	if( contObj != nullptr )
 		return contObj->GetSerial();
 	return INVALIDSERIAL;
 }
@@ -244,7 +244,7 @@ bool CItem::SetContSerial( SERIAL newSerial )
 		else
 			return SetCont( calcCharObjFromSer( newSerial ) );
 	}
-	return SetCont( NULL );
+	return SetCont( nullptr );
 }
 bool CItem::SetCont( CBaseObject *newCont )
 {
@@ -286,7 +286,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 		else
 		{
 			CItem *itemHolder = static_cast<CItem *>(newCont);
-			if( itemHolder != NULL )
+			if( itemHolder != nullptr )
 			{
 				contIsGround = false;
 				// ok heres what hair/beards should be handled like
@@ -312,7 +312,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 
 	if( contIsGround )
 	{
-		contObj = NULL;
+		contObj = nullptr;
 		MapRegion->AddItem( this );
 	}
 
@@ -511,7 +511,7 @@ void CItem::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetLocation( const CBaseObject *toSet )
 {
-	if( toSet == NULL )
+	if( toSet == nullptr )
 		return;
 	SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber(), toSet->GetInstanceID() );
 }
@@ -533,7 +533,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instance_id )
 {
-	if( GetCont() == NULL )
+	if( GetCont() == nullptr )
 		MapRegion->ChangeRegion( this, newX, newY, world );
 	oldLocX = x;
 	oldLocY = y;
@@ -544,7 +544,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 	gridLoc = newLoc;
 	worldNumber = world;
 	instanceID = instance_id;
-	if( GetCont() == NULL )
+	if( GetCont() == nullptr )
 	{
 		if( !CanBeObjType( OT_MULTI ) )
 		{
@@ -1173,7 +1173,7 @@ bool CItem::Save( std::ofstream &outStream )
 	if( isFree() )
 		return false;
 	MapData_st& mMap = Map->GetMapData( worldNumber );
-	if( GetCont() != NULL || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
+	if( GetCont() != nullptr || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
 	{
 		DumpHeader( outStream );
 		DumpBody( outStream );
@@ -1196,7 +1196,7 @@ bool CItem::Save( std::ofstream &outStream )
 void CItem::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
-	if( oldOwner != NULL )
+	if( oldOwner != nullptr )
 		oldOwner->RemoveOwnedItem( this );
 }
 
@@ -1221,7 +1221,7 @@ void CItem::AddSelfToOwner( void )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::RemoveSelfFromCont( void )
 {
-	if( contObj != NULL )
+	if( contObj != nullptr )
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
@@ -1255,8 +1255,8 @@ void CItem::RemoveSelfFromCont( void )
 CItem * CItem::Dupe( ObjectType itemType )
 {
 	CItem *target = static_cast< CItem * >(ObjectFactory::getSingleton().CreateObject( itemType ));
-	if( target == NULL )
-		return NULL;
+	if( target == nullptr )
+		return nullptr;
 
 	CopyData( target );
 
@@ -1824,8 +1824,8 @@ void CItem::PostLoadProcessing( void )
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcWeight( this ) );
 
-	CBaseObject *tmpObj	= NULL;
-	contObj				= NULL;
+	CBaseObject *tmpObj	= nullptr;
+	contObj				= nullptr;
 	
 	if( temp_container_serial != INVALIDSERIAL )
 	{
@@ -1840,7 +1840,7 @@ void CItem::PostLoadProcessing( void )
 	}
 	SetCont( tmpObj );
 
-	Items->StoreItemRandomValue( this, NULL );
+	Items->StoreItemRandomValue( this, nullptr );
 	CheckItemIntegrity();
 	SetPostLoaded( true );
 }
@@ -1863,12 +1863,12 @@ void CItem::CheckItemIntegrity( void )
 	if( getSerial == GetContSerial() )
 	{
 		Console.warning( strutil::format("Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str()) );
-		SetCont( NULL );
+		SetCont( nullptr );
 	}
 	if( getSerial == GetOwner() )
 	{
 		Console.warning( strutil::format("Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str()) );
-		SetOwner( NULL );
+		SetOwner( nullptr );
 	}
 	if( getSerial == GetSpawn() )
 	{
@@ -1978,7 +1978,7 @@ void CItem::EntryMadeFrom( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 {
-	CBaseObject *checkCont = NULL;
+	CBaseObject *checkCont = nullptr;
 	if( isPostLoaded() && doWeightUpdate )
 		checkCont = GetCont();
 
@@ -2065,7 +2065,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	UnicodeTypes dictLang	= ZERO;
 	SERIAL speakTo			= INVALIDSERIAL;
 	SpeechTarget target		= SPTRG_PCNPC;
-	if( s != NULL )
+	if( s != nullptr )
 	{
 		dictLang = s->Language();
 		CChar *mChar	= s->CurrcharObj();
@@ -2108,11 +2108,11 @@ void CItem::Update( CSocket *mSock )
 	if( GetCont() == this )
 	{
 		Console.warning( strutil::format("Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));
-		SetCont( NULL );
+		SetCont( nullptr );
 	}
 
 	CBaseObject *iCont = GetCont();
-	if( iCont == NULL )
+	if( iCont == nullptr )
 	{
 		SOCKLIST nearbyChars;
 		if( GetID( 1 ) >= 0x40 )
@@ -2128,7 +2128,7 @@ void CItem::Update( CSocket *mSock )
 	else if( iCont->GetObjType() == OT_CHAR )
 	{
 		CChar *charCont = static_cast<CChar *>(iCont);
-		if( charCont != NULL )
+		if( charCont != nullptr )
 		{
 			CPWornItem toWear = (*this);
 			CPToolTip pSend( GetSerial() );
@@ -2146,7 +2146,7 @@ void CItem::Update( CSocket *mSock )
 	else
 	{
 		CItem *itemCont = static_cast<CItem *>(iCont);
-		if( itemCont != NULL )
+		if( itemCont != nullptr )
 		{
 			ObjectType oType = OT_CBO;
 			SOCKLIST nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
@@ -2174,7 +2174,7 @@ void CItem::SendToSocket( CSocket *mSock )
 		return;
 
 	CChar *mChar = mSock->CurrcharObj();
-	if( mChar != NULL )
+	if( mChar != nullptr )
 	{
 		if( !mChar->IsGM() )
 		{
@@ -2215,7 +2215,7 @@ void CItem::SendToSocket( CSocket *mSock )
 void CItem::SendPackItemToSocket( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	if( mChar != NULL )
+	if( mChar != nullptr )
 	{
 		bool isGM = mChar->IsGM();
 		ItemLayers iLayer = GetLayer();
@@ -2251,20 +2251,20 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	ObjectType oType	= OT_CBO;
 	CBaseObject *iOwner	= FindItemOwner( this, oType );
 
-	if( iCont == NULL || oType == OT_ITEM )
+	if( iCont == nullptr || oType == OT_ITEM )
 	{
-		CItem *rItem = NULL;
-		if( iCont == NULL )
+		CItem *rItem = nullptr;
+		if( iCont == nullptr )
 			rItem = this;
 		else
 			rItem = static_cast<CItem *>(iOwner);
-		if( rItem != NULL )
+		if( rItem != nullptr )
 		{
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->Send( &toRemove );
 			else
 			{
-				CChar *tChar			= NULL;
+				CChar *tChar			= nullptr;
 				SOCKLIST nearbyChars;
 				if( rItem == this )
 					nearbyChars = FindPlayersInOldVisrange( rItem );
@@ -2286,14 +2286,14 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	}
 	else if( iCont->GetObjType() == OT_CHAR || oType == OT_CHAR )
 	{
-		CChar *rChar = NULL;
+		CChar *rChar = nullptr;
 		if( iCont->GetObjType() == OT_CHAR )
 			rChar = static_cast<CChar *>(iCont);
 		else
 			rChar = static_cast<CChar *>(iOwner);
-		if( rChar != NULL )
+		if( rChar != nullptr )
 		{
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->Send( &toRemove );
 			else
 			{
@@ -2309,7 +2309,7 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	}
 	else
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->Send( &toRemove );
 		else
 		{
@@ -2394,13 +2394,13 @@ void CItem::Cleanup( void )
 				if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 				{
 					CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-					if( spawnReg != NULL )
+					if( spawnReg != nullptr )
 						spawnReg->deleteSpawnedItem( this );
 				}
 			}
 			SetSpawn( INVALIDSERIAL );
 		}
-		if( GetSpawnObj() != NULL )
+		if( GetSpawnObj() != nullptr )
 			SetSpawn( INVALIDSERIAL );
 
 		if( GetGlow() != INVALIDSERIAL )
@@ -2412,7 +2412,7 @@ void CItem::Cleanup( void )
 
 		if( isGuarded() )
 		{
-			CChar *owner = NULL;
+			CChar *owner = nullptr;
 			CMultiObj *multi = findMulti( this );
 			if( ValidateObject( multi ) )
 				owner = multi->GetOwnerObj();
@@ -2422,7 +2422,7 @@ void CItem::Cleanup( void )
 			{
 				CChar *petGuard = Npcs->getGuardingPet( owner, this );
 				if( ValidateObject( petGuard ) )
-					petGuard->SetGuarding( NULL );
+					petGuard->SetGuarding( nullptr );
 				SetGuarded( false );
 			}
 		}
@@ -2440,7 +2440,7 @@ void CItem::Cleanup( void )
 			if( ValidateObject( rootOwner ) && rootOwner->GetObjType() == OT_CHAR )
 			{
 				CSocket *ownerSocket = rootOwner->GetSocket();
-				if( ownerSocket != NULL )
+				if( ownerSocket != nullptr )
 				{
 					// Refresh container tooltip
 					CPToolTip pSend( iCont->GetSerial() );
@@ -2783,8 +2783,8 @@ bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 CSpawnItem * CSpawnItem::Dupe( void )
 {
 	CSpawnItem *target = static_cast< CSpawnItem * >(ObjectFactory::getSingleton().CreateObject( OT_SPAWNER ));
-	if( target == NULL )
-		return NULL;
+	if( target == nullptr )
+		return nullptr;
 
 	CopyData( target );
 

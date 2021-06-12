@@ -157,7 +157,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		toSendTo->sysmessage( 1387 );
 		return;
 	}
-	CSocket *trgSock = NULL;
+	CSocket *trgSock = nullptr;
 	switch( buttonPressed )
 	{
 		case 200://gochar
@@ -449,7 +449,7 @@ void cWhoList::Update( void )
 	{
 		MAPUSERNAMEID_ITERATOR I;
 		//
-		CChar *ourChar = NULL;
+		CChar *ourChar = nullptr;
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
 			CAccountBlock& actbSearch = I->second;

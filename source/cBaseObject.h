@@ -252,7 +252,7 @@ public:
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual void			Update( CSocket *mSock = NULL ) = 0;
+	virtual void			Update( CSocket *mSock = nullptr ) = 0;
 	virtual void			SendToSocket( CSocket *mSock ) = 0;
 	virtual void			Dirty( UpdateTypes updateType );
 

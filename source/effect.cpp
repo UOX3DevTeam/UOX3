@@ -137,7 +137,7 @@ void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subA
 void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 {
 	if( mChar->GetBodyType() == BT_GARGOYLE || ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-		&& ( mChar->GetSocket() == NULL || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		&& ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 	{
 		if( mChar->GetBodyType() == BT_GARGOYLE )
 		{
@@ -256,10 +256,10 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	UI32 dmg = 0;
 	UI32 dx, dy, dz;
 	// - send the effect (visual and sound)
-	if( nItem->GetCont() != NULL )
+	if( nItem->GetCont() != nullptr )
 	{
 		Effects->PlayStaticAnimation( c, 0x36B0, 0x00, 0x09 );
-		nItem->SetCont( NULL );
+		nItem->SetCont( nullptr );
 		nItem->SetLocation( c );
 		Effects->PlaySound( c, 0x0207 );
 	}
@@ -346,13 +346,13 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 {
-	if( tMake == NULL )
+	if( tMake == nullptr )
 		return;
 
 	CChar *src			= calcCharObjFromSer( tMake->Source() );
 	UI16 iMaking		= tMake->More2();
 	createEntry *toMake = Skills->FindItem( iMaking );
-	if( toMake == NULL )
+	if( toMake == nullptr )
 		return;
 
 	CSocket *sock	= src->GetSocket();
@@ -368,7 +368,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true );
 	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
-	if( targItem == NULL )
+	if( targItem == nullptr )
 	{
 		Console.error( strutil::format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
 		return;
@@ -418,16 +418,16 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::checktempeffects( void )
 {
-	CItem *i = NULL;
-	CChar *s = NULL, *src = NULL;
-	CSocket *tSock = NULL;
-	CBaseObject *myObj = NULL;
+	CItem *i = nullptr;
+	CChar *s = nullptr, *src = nullptr;
+	CSocket *tSock = nullptr;
+	CBaseObject *myObj = nullptr;
 
 	const UI32 j = cwmWorldState->GetUICurrentTime();
 	cwmWorldState->tempEffects.Push();
 	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
-		if( Effect == NULL )
+		if( Effect == nullptr )
 		{
 			cwmWorldState->tempEffects.Remove( Effect );
 			continue;
@@ -458,7 +458,7 @@ void cEffects::checktempeffects( void )
 				if( s->IsFrozen() )
 				{
 					s->SetFrozen( false );
-					if( tSock != NULL )
+					if( tSock != nullptr )
 						tSock->sysmessage( 700 );
 				}
 				break;
@@ -498,7 +498,7 @@ void cEffects::checktempeffects( void )
 				{
 					case 0:
 						if( Effect->More2() != 0 )
-							s->TextMessage( NULL, 1270, EMOTE, 1, s->GetName().c_str() );
+							s->TextMessage( nullptr, 1270, EMOTE, 1, s->GetName().c_str() );
 						PlaySound( s, 0x0242 );
 						break;
 				}
@@ -513,7 +513,7 @@ void cEffects::checktempeffects( void )
 				equipCheckNeeded = true;
 				break;
 			case 12: // Curse Spell
-				if( s != NULL )
+				if( s != nullptr )
 				{
 					s->IncStrength2( Effect->More1() );
 					s->IncDexterity2( Effect->More2() );
@@ -532,7 +532,7 @@ void cEffects::checktempeffects( void )
 				{
 					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
 					std::string mTemp = strutil::number( Effect->More3() );
-					if( tSock != NULL )
+					if( tSock != nullptr )
 					{
 						tSock->sysmessage( mTemp.c_str() );
 					}
@@ -564,7 +564,7 @@ void cEffects::checktempeffects( void )
 					i->SetColour( s->GetBeardColour() );
 					i->SetID( s->GetBeardStyle() );
 				}
-				if( tSock != NULL )
+				if( tSock != nullptr )
 					s->SendWornItems( tSock );
 				s->IsIncognito( false );
 				break;
@@ -618,7 +618,7 @@ void cEffects::checktempeffects( void )
 					break;
 
 				// No associated script, so it must be another callback variety
-				if( tScript == NULL )
+				if( tScript == nullptr )
 				{
 					if( Effect->More2() != 0xFFFF ) // A scriptID other than default one was found
 					{
@@ -635,7 +635,7 @@ void cEffects::checktempeffects( void )
 				}
 
 				// Make sure to check for a specific script via envoke system when the previous checks ended in the global script.
-				if( ( tScript == NULL || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
+				if( ( tScript == nullptr || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
 				{
 					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) ) )
 					{
@@ -650,7 +650,7 @@ void cEffects::checktempeffects( void )
 				}
 
 				// Callback to onTimer event in script
-				if( tScript != NULL )
+				if( tScript != nullptr )
 				{
 					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
 				}
@@ -1085,7 +1085,7 @@ void cEffects::SaveEffects( void )
 	cwmWorldState->tempEffects.Push();
 	for( CTEffect *currEffect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); currEffect = cwmWorldState->tempEffects.Next() )
 	{
-		if( currEffect == NULL )
+		if( currEffect == nullptr )
 			continue;
 		currEffect->Save( effectDestination );
 		effectDestination << blockDiscriminator;
@@ -1171,7 +1171,7 @@ void cEffects::LoadEffects( void )
 												toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
 										}
 										else
-											toLoad->ObjPtr( NULL );
+											toLoad->ObjPtr( nullptr );
 									}
 									break;
 								case 'M':
@@ -1198,7 +1198,7 @@ void cEffects::LoadEffects( void )
 												toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
 										}
 										else
-											toLoad->ObjPtr( NULL );
+											toLoad->ObjPtr( nullptr );
 									}
 								case 'S':
 									if( UTag == "SOURCE" )
@@ -1228,7 +1228,7 @@ void cEffects::LoadEffects( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CTEffect::Save( std::ofstream &effectDestination ) const
 {
-	CBaseObject *getPtr = NULL;
+	CBaseObject *getPtr = nullptr;
 
 	effectDestination << "[EFFECT]" << '\n';
 
