@@ -29,7 +29,7 @@ void sendTradeStatus( CItem *tradeWindowOne, CItem *tradeWindowTwo )
 
 	CSocket *s1 = p1->GetSocket();
 	CSocket *s2 = p2->GetSocket();
-	if( s1 != NULL && s2 != NULL )
+	if( s1 != nullptr && s2 != nullptr )
 		sendTradeStatus( s1, s2, tradeWindowOne, tradeWindowTwo );
 }
 
@@ -46,12 +46,12 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 	{
 		mSock->sysmessage( 773 );
 		nSock->sysmessage( 1357, mChar->GetName().c_str() );
-		return NULL;
+		return nullptr;
 	}
 
-	CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x1E5E, 1, 0, OT_ITEM, false );
+	CItem *tradeWindow = Items->CreateItem( nullptr, mChar, 0x1E5E, 1, 0, OT_ITEM, false );
 	if( !ValidateObject( tradeWindow ) )
-		return NULL;
+		return nullptr;
 
 	tradeWindow->SetType( IT_TRADEWINDOW );
 	tradeWindow->SetCont( mChar );
@@ -76,24 +76,24 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 CItem *startTrade( CSocket *mSock, CChar *nChar )
 {
-	if( mSock == NULL || !ValidateObject( nChar ) )
-		return NULL;
+	if( mSock == nullptr || !ValidateObject( nChar ) )
+		return nullptr;
 
 	CChar *mChar	= mSock->CurrcharObj();
 	CSocket *nSock	= nChar->GetSocket();
 
-	if( !ValidateObject( mChar ) || nSock == NULL )
-		return NULL;
+	if( !ValidateObject( mChar ) || nSock == nullptr )
+		return nullptr;
 
 	CItem *tradeWindowOne = CreateTradeWindow( mSock, nSock, mChar );
 	if( !ValidateObject( tradeWindowOne ) )
-		return NULL;
+		return nullptr;
 
 	CItem *tradeWindowTwo = CreateTradeWindow( nSock, mSock, nChar );
 	if( !ValidateObject( tradeWindowTwo ) )
 	{
 		tradeWindowOne->Delete();
-		return NULL;
+		return nullptr;
 	}
 
 	const SERIAL tw1Serial = tradeWindowOne->GetSerial();
@@ -162,7 +162,7 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 void clearTrades( void )
 {
 	UI32 b = 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &clearTradesFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &clearTradesFunctor );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -179,14 +179,14 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 		return;
 
 	CSocket *mSock = p1->GetSocket();
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		CPSecureTrading cpstOne( (*tradeWindowOne) );
 		cpstOne.Action( 1 );
 		mSock->Send( &cpstOne );
 	}
 	CSocket *nSock = p2->GetSocket();
-	if( nSock != NULL )
+	if( nSock != nullptr )
 	{
 		CPSecureTrading cpstTwo( (*tradeWindowTwo) );
 		cpstTwo.Action( 1 );
@@ -197,7 +197,7 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 	CItem *bp2 = p2->GetPackItem();
 	if( ValidateObject( bp1 ) && ValidateObject( bp2 ) )
 	{
-		CItem *i = NULL;
+		CItem *i = nullptr;
 		GenericList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
 		for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 		{
@@ -252,7 +252,7 @@ bool CPITradeMessage::Handle( void )
 	CItem *tradeWindowOne = calcItemObjFromSer( tSock->GetDWord( 4 ) );
 	if( ValidateObject( tradeWindowOne ) )
 	{
-		CItem *tradeWindowTwo = NULL;
+		CItem *tradeWindowTwo = nullptr;
 		switch( tSock->GetByte( 3 ) )
 		{
 			case 0://Start trade - Never happens, sent out by the server only.

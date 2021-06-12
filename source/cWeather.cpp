@@ -20,7 +20,7 @@ const UI08 CURRVAL	= 2;
 const UI08 TEMP		= 0;
 const UI08 WIND		= 1;
 
-cWeatherAb *Weather = NULL;
+cWeatherAb *Weather = nullptr;
 // Version History
 // 1.0		 		Unknown
 //			Initial implementation
@@ -894,12 +894,12 @@ bool cWeatherAb::Load( void )
 	size_t i = 0;
 	for( Script *weathScp = FileLookup->FirstScript( weathab_def ); !FileLookup->FinishedScripts( weathab_def ); weathScp = FileLookup->NextScript( weathab_def ) )
 	{
-		if( weathScp == NULL )
+		if( weathScp == nullptr )
 			continue;
 
-		for( ScriptSection *WeatherStuff = weathScp->FirstEntry(); WeatherStuff != NULL; WeatherStuff = weathScp->NextEntry() )
+		for( ScriptSection *WeatherStuff = weathScp->FirstEntry(); WeatherStuff != nullptr; WeatherStuff = weathScp->NextEntry() )
 		{
-			if( WeatherStuff == NULL )
+			if( WeatherStuff == nullptr )
 			{
 				continue;
 			}
@@ -1672,7 +1672,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	weathID currval = p->GetRegion()->GetWeather();
 	if( currval > weather.size() || weather.empty() || p->inBuilding() )
 	{
-		if( s != NULL )
+		if( s != nullptr )
 		{
 			CPWeather dry( 0xFF, 0x00, 0 );
 			s->Send( &dry );
@@ -1839,7 +1839,7 @@ void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 curren
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			toExecute->OnWeatherChange( mChar, weathType );
 			toExecute->OnTempChange( mChar, currentTemp );
@@ -1848,7 +1848,7 @@ void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 curren
 
 	// Check global script as well
 	cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>(0) );
-	if( toExecuteGlobal != NULL )
+	if( toExecuteGlobal != nullptr )
 	{
 		toExecuteGlobal->OnWeatherChange( mChar, weathType );
 		toExecuteGlobal->OnTempChange( mChar, currentTemp );
@@ -1874,7 +1874,7 @@ void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, 
 //	Byte 3 - Particle count (upper limit of 70)
 //	Byte 4 - Temperature
 
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 
 	CPWeather dry( 0xFF, 0x00, currentTemp );
@@ -1959,7 +1959,7 @@ void cWeatherAb::CurrentLight( weathID toCheck, R32 newValue )
 CWeather *cWeatherAb::Weather( weathID toCheck )
 {
 	if( toCheck >= weather.size() )
-		return NULL;
+		return nullptr;
 	else
 		return &weather[toCheck];
 }
@@ -2063,7 +2063,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 			}
 		}
 
-		damage = Combat->ApplyDefenseModifiers( LIGHT, NULL, &mChar, 0, 0, damage, true);
+		damage = Combat->ApplyDefenseModifiers( LIGHT, nullptr, &mChar, 0, 0, damage, true);
 
 		if( damage > 0 )
 		{
@@ -2072,7 +2072,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 			Effects->PlaySound( (&mChar), 0x0208 );
 			didDamage = true;
 
-			if( message != 0 && mSock != NULL)
+			if( message != 0 && mSock != nullptr)
 				mSock->sysmessage( message );
 		}
 		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT )) )), LIGHT );
@@ -2176,13 +2176,13 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageAnim = 0x3709;
 		}
 
-		damage = Combat->ApplyDefenseModifiers( resistElement, NULL, &mChar, 0, 0, damage, true);
+		damage = Combat->ApplyDefenseModifiers( resistElement, nullptr, &mChar, 0, 0, damage, true);
 
 		if( damage > 0 )
 		{
 				mChar.Damage( damage );
 				mChar.SetStamina( mChar.GetStamina() - 2 );
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->sysmessage( damageMessage );
 				if( damageAnim != 0x0)
 					Effects->PlayStaticAnimation( (&mChar), damageAnim, 0x09, 0x19 );

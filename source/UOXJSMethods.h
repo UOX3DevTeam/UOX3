@@ -317,7 +317,7 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "NoMove",						CGump_NoMove,						0, 0, 0 },
 	{ "NoResize",					CGump_NoResize,						0, 0, 0 },
 	{ "Send",						CGump_Send,							1, 0, 0 },
-	{ NULL,							NULL,								0, 0, 0 }
+	{ nullptr,							nullptr,								0, 0, 0 }
 };
 
 static JSFunctionSpec CChar_Methods[] =
@@ -398,7 +398,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Defense",			CChar_Defense,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
-	{ NULL,					NULL,					0, 0, 0 }
+	{ nullptr,					nullptr,					0, 0, 0 }
 };
 
 static JSFunctionSpec CItem_Methods[] =
@@ -474,14 +474,14 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
 	
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
-	{ NULL,					NULL,						0, 0, 0 }
+	{ nullptr,					nullptr,						0, 0, 0 }
 };
 
 static JSFunctionSpec CRegion_Methods[] =
 {
 	{ "AddScriptTrigger",		CRegion_AddScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",	CRegion_RemoveScriptTrigger,	1, 0, 0 },
-	{ NULL,						NULL,							0, 0, 0 }
+	{ nullptr,						nullptr,							0, 0, 0 }
 };
 
 static JSFunctionSpec CSocket_Methods[] =
@@ -520,13 +520,13 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "FirstTriggerWord",	CSocket_FirstTriggerWord, 0, 0, 0 },
 	{ "NextTriggerWord",	CSocket_NextTriggerWord, 0, 0, 0 },
 	{ "FinishedTriggerWords",	CSocket_FinishedTriggerWords, 0, 0, 0 },
-	{ NULL,					NULL,				0, 0, 0 }
+	{ nullptr,					nullptr,				0, 0, 0 }
 };
 
 static JSFunctionSpec CGuild_Methods[] =
 {
 	{ "AcceptRecruit",		CGuild_AcceptRecruit,	1, 0, 0 },
-	{ NULL,					NULL,					0, 0, 0 }
+	{ nullptr,					nullptr,					0, 0, 0 }
 };
 
 static JSFunctionSpec CRace_Methods[] =
@@ -535,7 +535,7 @@ static JSFunctionSpec CRace_Methods[] =
 	{ "IsValidHairColour",	CRace_IsValidHairColour,	1, 0, 0 },
 	{ "IsValidSkinColour",	CRace_IsValidSkinColour,	1, 0, 0 },
 	{ "IsValidBeardColour",	CRace_IsValidBeardColour,	1, 0, 0 },
-	{ NULL,					NULL,						0, 0, 0 }
+	{ nullptr,					nullptr,						0, 0, 0 }
 };
 
 static JSFunctionSpec CGumpData_Methods[] =
@@ -544,7 +544,7 @@ static JSFunctionSpec CGumpData_Methods[] =
 	{ "getButton",	CGumpData_getButton,	1, 0, 0 },
 	{ "getID",		CGumpData_getID,		1, 0, 0 },
 	{ "getEdit",	CGumpData_getEdit,		1, 0, 0 },
-	{ NULL,			NULL,					0, 0, 0 }
+	{ nullptr,			nullptr,					0, 0, 0 }
 };
 
 static JSFunctionSpec CFile_Methods[] =
@@ -558,14 +558,14 @@ static JSFunctionSpec CFile_Methods[] =
 	{ "EOF",		CFile_EOF,				0, 0, 0 },
 	{ "Length",		CFile_Length,			0, 0, 0 },
 	{ "Pos",		CFile_Pos,				1, 0, 0 },
-	{ NULL,			NULL,					0, 0, 0 }
+	{ nullptr,			nullptr,					0, 0, 0 }
 };
 
 static JSFunctionSpec CAccount_Methods[] =
 {
 	{ "AddAccount",		CAccount_AddAccount,		4, 0, 0 },
 	{ "DelAccount",		CAccount_DelAccount,		1, 0, 0 },
-	{ NULL,			NULL,					0, 0, 0 }
+	{ nullptr,			nullptr,					0, 0, 0 }
 };
 
 static JSFunctionSpec CConsole_Methods[] =
@@ -590,7 +590,7 @@ static JSFunctionSpec CConsole_Methods[] =
 	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0, 0 },
 	{ "BeginShutdown",		CConsole_BeginShutdown,		0, 0, 0 },
 	{ "Reload",				CConsole_Reload,			1, 0, 0 },
-	{ NULL,			NULL,								0, 0, 0 }
+	{ nullptr,			nullptr,								0, 0, 0 }
 };
 
 static JSFunctionSpec CPacket_Methods[] =
@@ -601,7 +601,7 @@ static JSFunctionSpec CPacket_Methods[] =
 	{ "WriteLong",		CPacket_WriteLong,			2, 0, 0 },
 	{ "WriteString",	CPacket_WriteString,		3, 0, 0 },
 	{ "ReserveSize",	CPacket_ReserveSize,		1, 0, 0 },
-	{ NULL,				NULL,						0, 0, 0 }
+	{ nullptr,				nullptr,						0, 0, 0 }
 };
 
 static JSFunctionSpec CParty_Methods[] =
@@ -609,7 +609,7 @@ static JSFunctionSpec CParty_Methods[] =
 	{ "GetMember",		CParty_GetMember,			1, 0, 0 },
 	{ "Add",			CParty_Add,					1, 0, 0 },
 	{ "Remove",			CParty_Remove,				1, 0, 0 },
-	{ NULL,				NULL,						0, 0, 0 }
+	{ nullptr,				nullptr,						0, 0, 0 }
 };
 
 #endif

@@ -23,7 +23,7 @@
 #endif
 
 
-cNetworkStuff *Network = NULL;
+cNetworkStuff *Network = nullptr;
 
 #define _DEBUG_PACKET	0
 
@@ -57,7 +57,7 @@ void cNetworkStuff::ClearBuffers( void )
 //o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::setLastOn( CSocket *s )
 {
-	assert( s != NULL );
+	assert( s != nullptr );
 
 	time_t ltime;
 	time( &ltime );
@@ -68,7 +68,7 @@ void cNetworkStuff::setLastOn( CSocket *s )
 	for( size_t end = mLen - 1; end >= 0 && isspace( t[end] ) && end < mLen; --end )
 		t[end] = '\0';
 
-	if( s->CurrcharObj() != NULL )
+	if( s->CurrcharObj() != nullptr )
 	{
 		s->CurrcharObj()->SetLastOn( t );
 		s->CurrcharObj()->SetLastOnSecs( static_cast<UI32>(ltime) );
@@ -88,7 +88,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 
 
 
-	if( currChar != NULL )
+	if( currChar != nullptr )
 	{
 		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 		{
@@ -105,9 +105,9 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 		}
 	}
 	//Instalog
-	if( currChar != NULL )
+	if( currChar != nullptr )
 	{
-		if( !currChar->isFree() && connClients[s] != NULL )
+		if( !currChar->isFree() && connClients[s] != nullptr )
 		{
 			// October 6, 2002 - Support for the onLogout event.
 			bool returnState = false;
@@ -115,7 +115,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 			for( auto i : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( i );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnLogout(connClients[s], currChar ))
 					{
@@ -128,7 +128,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 			{
 				// No individual scripts handling OnLogout were found - let's check global script!
 				cScript *toExecute = JSMapping->GetScript( (UI16)0 );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnLogout(connClients[s],currChar);
 				}
@@ -195,7 +195,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	}
 	if( !valid )
 	{
-		CMultiObj *multi = NULL;
+		CMultiObj *multi = nullptr;
 		if( !ValidateObject( p->GetMultiObj() ) )
 			multi = findMulti( p );
 		else
@@ -218,7 +218,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 		if( s->PickupSpot() == PL_GROUND )
 		{
 			CItem * i = s->GetCursorItem();
-			i->SetCont( NULL );
+			i->SetCont( nullptr );
 			i->SetLocation( p->GetX(), p->GetY(), p->GetZ() );
 		}
 	}
@@ -239,7 +239,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	}
 	s->LoginComplete( false );
 	actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
-	p->SetSocket( NULL );
+	p->SetSocket( nullptr );
 	p->SetLocation( p );
 }
 
@@ -337,7 +337,7 @@ void cNetworkStuff::CheckConn( void )
 	FD_ZERO( &conn );
 	FD_SET( a_socket, &conn );
 	SI32 nfds = a_socket + 1;
-	SI32 s = select( nfds, &conn, NULL, NULL, &cwmWorldState->uoxtimeout );
+	SI32 s = select( nfds, &conn, nullptr, nullptr, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		SI32 len = sizeof( struct sockaddr_in );
@@ -478,7 +478,7 @@ void cNetworkStuff::CheckMessage( void )
 		if( static_cast<int>(clientSock) + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	SI32 s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
+	SI32 s = select( nfds, &all, nullptr, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = cwmWorldState->GetPlayersOnline();
@@ -524,7 +524,7 @@ cNetworkStuff::cNetworkStuff() : peakConnectionCount( 0 ) // Initialize sockets
 CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
 	if( s >= connClients.size() )
-		return NULL;
+		return nullptr;
 	return connClients[s];
 }
 
@@ -542,7 +542,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 
 	CSocket *mSock = connClients[s];
 
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 
 	if( mSock->NewClient() )
@@ -606,7 +606,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 				if( pFind != packetOverloads.end() )
 				{
 					cScript *pScript = JSMapping->GetScript( pFind->second );
-					if( pScript != NULL )
+					if( pScript != nullptr )
 					{
 						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
 					}
@@ -615,7 +615,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 			if( doSwitch )
 			{
 				CPInputBuffer *test	= WhichPacket( packetID, mSock );
-				if( test != NULL )
+				if( test != nullptr )
 				{
 					mSock->ReceiveLogging( test );
 					if( test->Handle() )
@@ -634,7 +634,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 					case 0x72:// Combat Mode
 						mSock->Receive( 5 );
 						ourChar->SetWar( buffer[1] != 0 );
-						ourChar->SetTarg( NULL );
+						ourChar->SetTarg( nullptr );
 						if( ourChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
 							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1 ) );
 						else
@@ -660,7 +660,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 							{
 								if( ourChar->GetBodyType() == BT_GARGOYLE 
 									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-										&& ( ourChar->GetSocket() == NULL || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 								{
 									// If gargoyle, human or elf, and new animation packet is enabled
 									Effects->PlayNewCharacterAnimation( ourChar, N_ACT_EMOTE, S_ACT_EMOTE_BOW );
@@ -681,7 +681,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 							{
 								if( ourChar->GetBodyType() == BT_GARGOYLE 
 									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-										&& ( ourChar->GetSocket() == NULL || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 								{
 									// If gargoyle, human or elf, and new animation packet is enabled
 									Effects->PlayNewCharacterAnimation( ourChar, N_ACT_EMOTE, S_ACT_EMOTE_SALUTE );
@@ -878,7 +878,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						FD_SET( mSock->CliSocket(), &all );
 						SI32 nfds;
 						nfds = static_cast<int>(mSock->CliSocket()) + 1;
-						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 )
+						if( select( nfds, &all, nullptr, nullptr, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( 2560 );
 
 						Console << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID ) << myendl;
@@ -917,7 +917,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 		if( static_cast<int>(clientSock) + 1 > nfds )
 			nfds = static_cast<int>(clientSock) + 1;
 	}
-	SI32 s = select( static_cast<UOXSOCKET>(nfds), &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
+	SI32 s = select( static_cast<UOXSOCKET>(nfds), &all, nullptr, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();
@@ -1047,7 +1047,7 @@ void cNetworkStuff::Transfer( CSocket *mSock )
 void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 {
 	CSocket *mSock = loggedInClients[s];
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 	if( mSock->NewClient() )
 	{
@@ -1131,7 +1131,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				if( pFind != packetOverloads.end() )
 				{
 					cScript *pScript = JSMapping->GetScript( pFind->second );
-					if( pScript != NULL )
+					if( pScript != nullptr )
 					{
 						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
 					}
@@ -1139,7 +1139,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			}
 			if( doSwitch )
 			{
-				CPInputBuffer *test = NULL;
+				CPInputBuffer *test = nullptr;
 				try
 				{
 					test = WhichLoginPacket( packetID, mSock );
@@ -1150,7 +1150,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 					mSock->FlushIncoming();
 					return;
 				}
-				if( test != NULL )
+				if( test != nullptr )
 				{
 #ifdef _DEBUG_PACKET
 					Console.log( strutil::format("Logging packet ID: 0x%X", packetID), "loginthread.txt" );
@@ -1193,7 +1193,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );
 						nfds = static_cast<UOXSOCKET>(mSock->CliSocket()) + 1;
-						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 )
+						if( select( nfds, &all, nullptr, nullptr, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( 2560 );
 						messageLoop << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID );
 						break;
@@ -1217,7 +1217,7 @@ UOXSOCKET cNetworkStuff::FindNetworkPtr( CSocket *toFind )
 
 CSocket *cNetworkStuff::FirstSocket( void )
 {
-	CSocket *retSock = NULL;
+	CSocket *retSock = nullptr;
 	currConnIter = connClients.begin();
 	if( !FinishedSockets() )
 		retSock = (*currConnIter);
@@ -1225,7 +1225,7 @@ CSocket *cNetworkStuff::FirstSocket( void )
 }
 CSocket *cNetworkStuff::NextSocket( void )
 {
-	CSocket *retSock = NULL;
+	CSocket *retSock = nullptr;
 	if( !FinishedSockets() )
 	{
 		++currConnIter;
@@ -1242,7 +1242,7 @@ bool cNetworkStuff::FinishedSockets( void )
 CSocket *cNetworkStuff::PrevSocket( void )
 {
 	if( currConnIter == connClients.begin() )
-		return NULL;
+		return nullptr;
 	--currConnIter;
 	return (*currConnIter);
 }
@@ -1255,7 +1255,7 @@ CSocket *cNetworkStuff::LastSocket( void )
 		return (*currConnIter);
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1281,14 +1281,14 @@ void cNetworkStuff::LoadFirewallEntries( void )
 	if( !fileToUse.empty() )
 	{
 		Script *firewallData = new Script( fileToUse, NUM_DEFS, false );
-		if( firewallData != NULL )
+		if( firewallData != nullptr )
 		{
 			SI16 p[4];
-			ScriptSection *firewallSect = NULL;
+			ScriptSection *firewallSect = nullptr;
 			std::string tag, data;
-			for( firewallSect = firewallData->FirstEntry(); firewallSect != NULL; firewallSect = firewallData->NextEntry() )
+			for( firewallSect = firewallData->FirstEntry(); firewallSect != nullptr; firewallSect = firewallData->NextEntry() )
 			{
-				if( firewallSect != NULL )
+				if( firewallSect != nullptr )
 				{
 					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
 					{

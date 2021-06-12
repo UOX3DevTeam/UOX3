@@ -76,8 +76,8 @@
 #endif
 
 /// Useful macros
-#define UOX_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
-#define UOX_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+#define UOX_DELETE(p)       { if(p) { delete (p);     (p)=nullptr; } }
+#define UOX_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=nullptr; } }
 
 
 // Pre-declare classes

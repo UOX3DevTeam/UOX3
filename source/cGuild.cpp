@@ -797,7 +797,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 	{
 		CChar *targetChar	= calcCharObjFromSer( (*cIter) );
 		CSocket *targetSock	= targetChar->GetSocket();
-		if( targetSock != NULL )
+		if( targetSock != nullptr )
 		{
 			std::string txt = "GUILD: ";
 			txt += Dictionary->GetEntry( dictEntry, targetSock->Language() );
@@ -837,7 +837,7 @@ void CGuild::SetGuildFaction( GuildType newFaction )
 			{
 				memberChar->SetGuildToggle( true );
 				CSocket *memberSock	= memberChar->GetSocket();
-				if( memberSock != NULL )
+				if( memberSock != nullptr )
 					memberSock->sysmessage( 154 ); // Let him know about the change
 			}
 		}
@@ -902,7 +902,7 @@ CGuild *CGuildCollection::Guild( GUILDID num ) const
 {
 	GUILDLIST::const_iterator pFind = gList.find( num );
 	if( pFind == gList.end() )
-		return NULL;
+		return nullptr;
 	return pFind->second;
 }
 CGuild *CGuildCollection::operator[]( GUILDID num )
@@ -940,14 +940,14 @@ void CGuildCollection::Load( void )
 	if( FileExists( filename ) )
 	{
 		Script newScript( filename, NUM_DEFS, false );
-		ScriptSection *testSect	= NULL;
+		ScriptSection *testSect	= nullptr;
 		GUILDID guildNum		= 0;
-		for( testSect = newScript.FirstEntry(); testSect != NULL; testSect = newScript.NextEntry() )
+		for( testSect = newScript.FirstEntry(); testSect != nullptr; testSect = newScript.NextEntry() )
 		{
 			std::string text = newScript.EntryName();
 			text = text.substr( 6 );
 			guildNum = static_cast<SI16>(std::stoi(text, nullptr, 0));
-			if( gList[guildNum] != NULL )
+			if( gList[guildNum] != nullptr )
 				delete gList[guildNum];
 			gList[guildNum] = new CGuild();
 			gList[guildNum]->Load( testSect );
@@ -967,7 +967,7 @@ GUILDRELATION CGuildCollection::Compare( GUILDID srcGuild, GUILDID trgGuild ) co
 	if( srcGuild == trgGuild )
 		return GR_SAME;
 	CGuild *mGuild = Guild( srcGuild );
-	if( mGuild == NULL )
+	if( mGuild == nullptr )
 		return GR_UNKNOWN;
 	return mGuild->RelatedToGuild( trgGuild );
 }
@@ -979,7 +979,7 @@ GUILDRELATION CGuildCollection::Compare( GUILDID srcGuild, GUILDID trgGuild ) co
 //o-----------------------------------------------------------------------------------------------o
 GUILDRELATION CGuildCollection::Compare( CChar *src, CChar *trg ) const
 {
-	if( src == NULL || trg == NULL )
+	if( src == nullptr || trg == nullptr )
 		return GR_UNKNOWN;
 	if( src->GetGuildNumber() == -1 || trg->GetGuildNumber() == -1 )
 		return GR_UNKNOWN;
@@ -995,7 +995,7 @@ GUILDRELATION CGuildCollection::Compare( CChar *src, CChar *trg ) const
 //o-----------------------------------------------------------------------------------------------o
 void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plID )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 	if( trgGuild >= static_cast<SI32>(NumGuilds()) )
 		return;
@@ -1398,7 +1398,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 	GUILDREL *ourList;
 	size_t offCounter;
 
-	CChar *tChar = NULL;
+	CChar *tChar = nullptr;
 
 	switch( realType )
 	{
@@ -1619,7 +1619,7 @@ void CGuildCollection::Resign( CSocket *s )
 		return;
 
 	CGuild *nGuild = gList[guildnumber];
-	if( nGuild == NULL )
+	if( nGuild == nullptr )
 		return;
 
 	nGuild->RemoveMember( *(s->CurrcharObj()) );
@@ -1654,7 +1654,7 @@ void CGuildCollection::Erase( GUILDID toErase )
 	if( pFind == gList.end() )	// doesn't exist
 		return;
 	CGuild *gErase = pFind->second;
-	if( gErase == NULL )
+	if( gErase == nullptr )
 	{
 		gList.erase( pFind );
 		return;
@@ -1682,7 +1682,7 @@ CGuildCollection::~CGuildCollection()
 	GUILDLIST::const_iterator i = gList.begin();
 	while( i != gList.end() )
 	{
-		if( i->second != NULL )
+		if( i->second != nullptr )
 			delete i->second;
 		++i;
 	}
@@ -1697,7 +1697,7 @@ CGuildCollection::~CGuildCollection()
 //o-----------------------------------------------------------------------------------------------o
 void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 {
-	if( s == NULL || !ValidateObject( deed ) )
+	if( s == nullptr || !ValidateObject( deed ) )
 		return;
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -1712,7 +1712,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		}
 		GUILDID gNum = NewGuild();
 		CGuild *nGuild = Guild( gNum );
-		if( nGuild == NULL )
+		if( nGuild == nullptr )
 		{
 			s->objMessage( 174, deed );
 			Console.error(strutil::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
@@ -1721,7 +1721,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		mChar->SetGuildNumber( gNum );
 		s->TempInt( gNum );
 		nGuild->NewMember( (*mChar) );
-		CItem *stone = Items->CreateItem( NULL, mChar, 0x0ED5, 1, 0, OT_ITEM );
+		CItem *stone = Items->CreateItem( nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM );
 		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed );
@@ -1755,13 +1755,13 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		}
 		GUILDID gNum = deed->GetTempVar( CITV_MORE );
 		CGuild *nGuild = Guild( gNum );
-		if( nGuild == NULL )
+		if( nGuild == nullptr )
 		{
 			s->objMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
 			Console.error(strutil::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()) );
 			return;
 		}
-		CItem *stone = Items->CreateItem( NULL, mChar, 0x0ED5, 1, 0, OT_ITEM );
+		CItem *stone = Items->CreateItem( nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM );
 		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
@@ -1817,7 +1817,7 @@ bool CGuildCollection::ResultInCriminal( CChar *src, CChar *trg ) const
 //o-----------------------------------------------------------------------------------------------o
 void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 {
-	if( !ValidateObject( src ) || s == NULL )
+	if( !ValidateObject( src ) || s == nullptr )
 		return;
 
 	GUILDID sGuild = src->GetGuildNumber();
@@ -1826,7 +1826,7 @@ void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 		std::string title;
 
 		CGuild *mGuild = Guild( sGuild );
-		if( mGuild == NULL )
+		if( mGuild == nullptr )
 			return;
 		auto abbreviation = std::string(mGuild->Abbreviation()) ;
 		if( abbreviation.empty() ) // 0 length string

@@ -154,7 +154,7 @@ void JailCell::EraseOccupant( size_t occupantID )
 JailOccupant *JailCell::Occupant( size_t occupantID )
 {
 	if( occupantID >= playersInJail.size() )
-		return NULL;
+		return nullptr;
 	return playersInJail[occupantID];
 }
 
@@ -196,7 +196,7 @@ void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 	for( jIter = playersInJail.begin(); jIter != playersInJail.end(); ++jIter )
 	{
 		JailOccupant *mOccupant = (*jIter);
-		if( mOccupant != NULL )
+		if( mOccupant != nullptr )
 		{
 			outStream << "[PRISONER]" << '\n' << "{" << '\n';
 			outStream << "CELL=" << cellNumber << '\n';
@@ -229,7 +229,7 @@ JailSystem::~JailSystem()
 void JailSystem::ReadSetup( void )
 {
 	ScriptSection *Regions = FileLookup->FindEntry( "JAILS", regions_def );
-	if( Regions == NULL )
+	if( Regions == nullptr )
 	{
 		jails.resize( 10 );
 		jails[0].X( 5276 );		jails[0].Y( 1164 );		jails[0].Z( 0 );
@@ -407,7 +407,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 	for( size_t iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); ++iCounter )
 	{
 		JailOccupant *mOccupant = jails[cellNum].Occupant( iCounter );
-		if( mOccupant == NULL )
+		if( mOccupant == nullptr )
 			continue;
 		if( mOccupant->pSerial == toRelease->GetSerial() )
 		{
@@ -427,7 +427,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 //o-----------------------------------------------------------------------------------------------o
 bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 {
-	if( jails.empty() || toJail == NULL )
+	if( jails.empty() || toJail == nullptr )
 		return false;
 	size_t minCell = 0;
 	for( size_t i = 0; i < jails.size(); ++i )

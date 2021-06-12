@@ -29,7 +29,7 @@ struct CommandMapEntry
 	UI08			cmdLevelReq;
 	UI08			cmdType;
 	void			(*cmd_extra) ();	// executable function
-	CommandMapEntry() : cmdLevelReq( 0 ), cmdType( CMD_SOCKFUNC ), cmd_extra( NULL )
+	CommandMapEntry() : cmdLevelReq( 0 ), cmdType( CMD_SOCKFUNC ), cmd_extra( nullptr )
 	{
 	}
 	CommandMapEntry( UI08 cLR, UI08 cT, void (*ce)() ) : cmdLevelReq( cLR ), cmdType( cT ), cmd_extra( ce )

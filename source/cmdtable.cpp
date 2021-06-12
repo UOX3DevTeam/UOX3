@@ -50,7 +50,7 @@ void closeCall( CSocket *s, bool isGM )
 	if( mChar->GetCallNum() != 0 )
 	{
 		UI16 sysMessage = 1285;
-		PageVector *tmpVector = NULL;
+		PageVector *tmpVector = nullptr;
 		if( isGM )
 			tmpVector = GMQueue;
 		else
@@ -80,7 +80,7 @@ void currentCall( CSocket *s, bool isGM )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
 	{
-		PageVector *tmpVector = NULL;
+		PageVector *tmpVector = nullptr;
 		if( isGM )
 			tmpVector = GMQueue;
 
@@ -163,7 +163,7 @@ bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 void command_fixspawn( void )
 {
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &FixSpawnFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &FixSpawnFunctor );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -222,7 +222,7 @@ void command_getlight( CSocket *s )
 	CTownRegion *tRegion	= mChar->GetRegion();
 	UI16 wID				= tRegion->GetWeather();
 	CWeather *sys			= Weather->Weather( wID );
-	if( sys != NULL )
+	if( sys != nullptr )
 	{
 		const R32 lightMin = sys->LightMin();
 		const R32 lightMax = sys->LightMax();
@@ -306,7 +306,7 @@ void command_showids( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
 	CMapRegion *Cell = MapRegion->GetMapRegion( mChar );
-	if( Cell == NULL )	// nothing to show
+	if( Cell == nullptr )	// nothing to show
 		return;
 	GenericList< CChar * > *regChars = Cell->GetCharList();
 	regChars->Push();
@@ -369,7 +369,7 @@ void command_tile( CSocket *s )
 			for( SI16 y = y1; y <= y2; ++y )
 			{
 				rndID = targID + RandomNum( static_cast<UI16>(0), static_cast<UI16>(rndVal) );
-				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
+				CItem *a = Items->CreateItem( nullptr, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
 				if( ValidateObject( a ) )	// crash prevention
 				{
 					a->SetLocation( x, y, z );
@@ -512,7 +512,7 @@ void command_tell( CSocket *s )
 	{
 		CSocket *i = Network->GetSockPtr( Commands->Argument( 1 ) );
 		std::string txt = Commands->CommandString( 3 );
-		if( i == NULL || txt.empty() )
+		if( i == nullptr || txt.empty() )
 			return;
 
 		CChar *mChar		= i->CurrcharObj();
@@ -681,13 +681,13 @@ void command_respawn( void )
 	while( spIter != spEnd )
 	{
 		CSpawnRegion *spawnReg = spIter->second;
-		if( spawnReg != NULL )
+		if( spawnReg != nullptr )
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
 		++spIter;
 	}
 
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &RespawnFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &RespawnFunctor );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -711,7 +711,7 @@ void command_regspawn( CSocket *s )
 			while( spIter != spEnd )
 			{
 				CSpawnRegion *spawnReg = spIter->second;
-				if( spawnReg != NULL )
+				if( spawnReg != nullptr )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 				++spIter;
 			}
@@ -726,7 +726,7 @@ void command_regspawn( CSocket *s )
 			if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 			{
 				CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-				if( spawnReg != NULL )
+				if( spawnReg != nullptr )
 				{
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 					if( itemsSpawned || npcsSpawned )
@@ -783,12 +783,12 @@ void command_cq( CSocket *s )
 				if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( mChar->GetCallNum() ) ) )
 				{
 					HelpRequest pageToAdd;
-					HelpRequest *currentPage = NULL;
+					HelpRequest *currentPage = nullptr;
 					currentPage = CounselorQueue->Current();
 					pageToAdd.Reason( currentPage->Reason() );
 					pageToAdd.WhoPaging( currentPage->WhoPaging() );
 					pageToAdd.IsHandled( false );
-					pageToAdd.TimeOfPage( time( NULL ) );
+					pageToAdd.TimeOfPage( time( nullptr ) );
 					GMQueue->Add( &pageToAdd );
 					s->sysmessage( 74 );
 					closeCall( s, false );
@@ -921,7 +921,7 @@ void command_spawnkill( CSocket *s )
 		if( cwmWorldState->spawnRegions.find( regNum ) == cwmWorldState->spawnRegions.end() )
 			return;
 		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[regNum];
-		if( spawnReg == NULL )
+		if( spawnReg == nullptr )
 			return;
 		SI32 killed	= 0;
 

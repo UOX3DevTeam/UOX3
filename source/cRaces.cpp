@@ -9,7 +9,7 @@
 #include <unordered_set>
 
 
-cRaces *Races = NULL;
+cRaces *Races = nullptr;
 
 const UI08 MALE = 1;
 const UI08 FEMALE = 2;
@@ -37,7 +37,7 @@ const std::string cRaces::Name( RACEID race ) const
 CRace * cRaces::Race( RACEID x )
 {
 	if( InvalidRace( x ) )
-		return NULL;
+		return nullptr;
 	return races[x];
 }
 
@@ -54,7 +54,7 @@ cRaces::~cRaces( void )
 	for( size_t i = 0; i < races.size(); ++i )
 	{
 		delete races[i];
-		races[i] = NULL;
+		races[i] = nullptr;
 	}
 	races.clear();
 }
@@ -84,7 +84,7 @@ void cRaces::load( void )
 	{
 		sect					= std::string("RACE ") + strutil::number( raceCount );
 		ScriptSection *tempSect = FileLookup->FindEntry( sect, race_def );
-		if( tempSect == NULL )
+		if( tempSect == nullptr )
 			done = true;
 		else
 			++raceCount;
@@ -94,7 +94,7 @@ void cRaces::load( void )
 		races.push_back( new CRace( raceCount ) );
 
 	ScriptSection *CombatMods = FileLookup->FindEntry( std::string("COMBAT MODS"), race_def );
-	if( CombatMods != NULL )
+	if( CombatMods != nullptr )
 	{
 		tag = CombatMods->First();
 		if( tag.empty() )	// location didn't exist!!!
@@ -179,10 +179,10 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 {
 	if( !ValidateObject( s ) )
 		return;
-	CItem *hairobject = NULL, *beardobject = NULL;
+	CItem *hairobject = nullptr, *beardobject = nullptr;
 
 	CRace *pRace = Race( x );
-	if( pRace == NULL )
+	if( pRace == nullptr )
 		return;
 
 	CSocket *mSock = s->GetSocket();
@@ -254,7 +254,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			if( pRace->NoHair() )
 			{
 				hairobject->Delete();
-				hairobject = NULL;
+				hairobject = nullptr;
 			}
 		}
 		if( pRace->RequiresBeard() && ( s->GetID() == 0x0190 || s->GetID() == 0x025D ) && !ValidateObject( beardobject ) )
@@ -263,8 +263,8 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				hairColor = RandomBeard( x );
 			else
 				hairColor = 0x0480;
-			CItem *n = Items->CreateItem( NULL, s, 0x204C, 1, hairColor, OT_ITEM );
-			if( n != NULL )
+			CItem *n = Items->CreateItem( nullptr, s, 0x204C, 1, hairColor, OT_ITEM );
+			if( n != nullptr )
 			{
 				n->SetDecayable( false );
 				n->SetLayer( IL_FACIALHAIR );
@@ -286,7 +286,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			if( pRace->NoBeard() )
 			{
 				beardobject->Delete();
-				beardobject = NULL;
+				beardobject = nullptr;
 			}
 		}
 		if( pRace->IsSkinRestricted() )	// do we have a limited skin colour range?
@@ -1505,7 +1505,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				else if( UTag == "PARENTRACE" )
 				{
 					CRace *pRace = Races->Race( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
-					if( pRace != NULL ){
+					if( pRace != nullptr ){
 						(*this) = (*pRace);
 					}
 				}

@@ -363,7 +363,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			else
 			{ //static tile
 				msi = new CStaticIterator( x, y, worldNumber );
-				for( Static_st *stat = msi->First(); stat != NULL; stat = msi->Next() )
+				for( Static_st *stat = msi->First(); stat != nullptr; stat = msi->Next() )
 				{
 					CTile& tile = Map->SeekTile( stat->itemid );
 					SI08 zt = stat->zoff + tile.Height();
@@ -444,8 +444,8 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 
 	CChar *mChar = s->CurrcharObj();
 
-	CItem *tiller = Items->CreateItem( NULL, mChar, 0x3E4E, 1, 0, OT_ITEM );
-	if( tiller == NULL )
+	CItem *tiller = Items->CreateItem( nullptr, mChar, 0x3E4E, 1, 0, OT_ITEM );
+	if( tiller == nullptr )
 		return false;
 
 	if( b->GetName().length() > 0 && b->GetName() != Dictionary->GetEntry( 2035, s->Language() )) // a ship
@@ -462,20 +462,20 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	tiller->SetTempVar( CITV_MOREX, boattype );
 	tiller->SetDecayable( false );
 
-	CItem *p2 = Items->CreateItem( NULL, mChar, 0x3EB2, 1, 0, OT_ITEM );//Plank2 is on the RIGHT side of the boat
-	if( p2 == NULL )
+	CItem *p2 = Items->CreateItem( nullptr, mChar, 0x3EB2, 1, 0, OT_ITEM );//Plank2 is on the RIGHT side of the boat
+	if( p2 == nullptr )
 		return false;
 	p2->SetType( IT_PLANK );
 	p2->SetDecayable( false );
 
-	CItem *p1 = Items->CreateItem( NULL, mChar, 0x3EB1, 1, 0, OT_ITEM );//Plank1 is on the LEFT side of the boat
-	if( p1 == NULL )
+	CItem *p1 = Items->CreateItem( nullptr, mChar, 0x3EB1, 1, 0, OT_ITEM );//Plank1 is on the LEFT side of the boat
+	if( p1 == nullptr )
 		return false;
 	p1->SetType( IT_PLANK );//Boat type
 	p1->SetDecayable( false );
 
-	CItem *hold = Items->CreateItem( NULL, mChar, 0x3EAE, 1, 0, OT_ITEM );
-	if( hold == NULL )
+	CItem *hold = Items->CreateItem( nullptr, mChar, 0x3EAE, 1, 0, OT_ITEM );
+	if( hold == nullptr )
 		return false;
 	hold->SetType( IT_CONTAINER );//Conatiner
 	hold->SetDecayable( false );
@@ -788,7 +788,7 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 //o-----------------------------------------------------------------------------------------------o
 void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 
 	CBoatObj *boat = GetBoat( mSock );
@@ -944,7 +944,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		{
 			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
 			{
-				if( s != NULL )
+				if( s != nullptr )
 					s->sysmessage( 1819 ); // Your backpack cannot hold any more items!
 				return;
 			}
@@ -970,7 +970,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		}
 
 		CItem *model = Items->CreateItem( s, mChar, 0x14f3, 1, 0, OT_ITEM, true );
-		if( model == NULL )
+		if( model == nullptr )
 			return;
 
 		model->SetTempVar( CITV_MOREX, tiller->GetTempVar( CITV_MOREX ) );

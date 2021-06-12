@@ -18,9 +18,9 @@ void JSEncapsulate::InternalReset( void )
 	floatVal				= 0.0f;
 	boolVal					= false;
 	stringVal				= "";
-	objectVal				= NULL;
+	objectVal				= nullptr;
 }
-JSEncapsulate::JSEncapsulate() : cx( NULL ), vp( NULL ), obj( NULL )
+JSEncapsulate::JSEncapsulate() : cx( nullptr ), vp( nullptr ), obj( nullptr )
 {
 	InternalReset();
 }
@@ -50,12 +50,12 @@ void JSEncapsulate::Init( void )
 	else if( JSVAL_IS_OBJECT( (*vp) ) )
 		nativeType	= JSOT_OBJECT;
 }
-JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), obj( NULL )
+JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), obj( nullptr )
 {
 	InternalReset();
 	Init();
 }
-JSEncapsulate::JSEncapsulate( JSContext *jsCX, JSObject *jsVP ) : intVal( 0 ), floatVal( 0 ), boolVal( false ), stringVal( "" ), objectVal( NULL ), cx( jsCX ), vp( NULL ), obj( jsVP )
+JSEncapsulate::JSEncapsulate( JSContext *jsCX, JSObject *jsVP ) : intVal( 0 ), floatVal( 0 ), boolVal( false ), stringVal( "" ), objectVal( nullptr ), cx( jsCX ), vp( nullptr ), obj( jsVP )
 {
 	InternalReset();
 	// We don't want to call Init() here, because we *know* it's an Object
@@ -117,12 +117,12 @@ std::string JSEncapsulate::ClassName( void )
 	{
 		if( nativeType == JSOT_OBJECT )
 		{
-			JSObject *obj2 = NULL;
-			if( vp != NULL )
+			JSObject *obj2 = nullptr;
+			if( vp != nullptr )
 				obj2 = JSVAL_TO_OBJECT( *vp );
 			else
 				obj2 = obj;
-			if( obj2 != NULL )
+			if( obj2 != nullptr )
 			{
 				JSClass *mClass = OBJ_GET_CLASS( cx, obj2 );
 				if( mClass->flags & JSCLASS_IS_EXTENDED )	// extended class

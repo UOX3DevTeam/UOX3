@@ -58,7 +58,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
 		GenericList< CChar * > *regChars = CellResponse->GetCharList();
@@ -83,7 +83,7 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
 //o-----------------------------------------------------------------------------------------------o
 bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
-	CChar *Npc			= NULL;
+	CChar *Npc			= nullptr;
 	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_INRANGE );
 	for( CHARLIST_ITERATOR nIter = nearbyNPCs.begin(); nIter != nearbyNPCs.end(); ++nIter )
 	{
@@ -97,7 +97,7 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 			for( auto i : scriptTriggers )
 			{
 				cScript *toExecute	= JSMapping->GetScript( i );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					//|				-1	=> No such function or bad call
 					//|				0	=> Let other NPCs and PCs see it
@@ -105,7 +105,7 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 					//|				2	=> Let no one else see it
 					SI08 rVal = -1;
 					if( Npc->isDisabled() )
-						Npc->TextMessage( NULL, 1291, TALK, false );
+						Npc->TextMessage( nullptr, 1291, TALK, false );
 					else
 						rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
 					switch( rVal )
@@ -127,7 +127,7 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 	// How about items?
 	if( cwmWorldState->ServerData()->ItemsDetectSpeech() )
 	{
-		CItem *Item			= NULL;
+		CItem *Item			= nullptr;
 		ITEMLIST nearbyItems = findNearbyItems( mChar, DIST_INRANGE );
 		for( ITEMLIST_ITERATOR nIter = nearbyItems.begin(); nIter != nearbyItems.end(); ++nIter )
 		{
@@ -141,11 +141,11 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 				for( auto i : scriptTriggers )
 				{
 					cScript *toExecute	= JSMapping->GetScript( i );
-					if( toExecute != NULL )
+					if( toExecute != nullptr )
 					{
 						SI08 rVal = -1;
 						if( Item->isDisabled() )
-							Item->TextMessage( NULL, 1291, TALK, false );
+							Item->TextMessage( nullptr, 1291, TALK, false );
 						else
 							rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
 						switch( rVal )
@@ -177,7 +177,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 	if( !DoJSResponse( mSock, mChar, text ) )
 		return false;
 
-	CBaseResponse *tResp	= NULL;
+	CBaseResponse *tResp	= nullptr;
 
 	for( UI16 trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords(); trigWord = mSock->NextTrigWord() )
 	{
@@ -240,7 +240,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 				tResp = new CHouseMultiResponse( TARGET_HOUSESTRONGBOX, -1 );
 				tResp->Handle( mSock, mChar );
 				delete tResp;
-				tResp = NULL;
+				tResp = nullptr;
 				goto endResponseCheck; // :
 			}
 			case TW_TRASHBARREL:		tResp = new CHouseMultiResponse( TARGET_HOUSETRASHBARREL, -1 );			break;
@@ -276,7 +276,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 				tResp = new CBoatMultiResponse( BOAT_STOP );
 				tResp->Handle( mSock, mChar );
 				delete tResp;
-				tResp = NULL;
+				tResp = nullptr;
 				goto endResponseCheck; // :
 			}
 			case TW_BOATTURNRIGHT:
@@ -301,11 +301,11 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 				break;
 		}
 
-		if( tResp != NULL )
+		if( tResp != nullptr )
 		{
 			tResp->Handle( mSock, mChar );
 			delete tResp;
-			tResp = NULL;
+			tResp = nullptr;
 		}
 	}
 	endResponseCheck:
@@ -344,7 +344,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 
 					// Send out the rant about accepting the escort
-					Npc->TextMessage( NULL, 1294, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
+					Npc->TextMessage( nullptr, 1294, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
 
 					// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
 					MsgBoardQuestEscortRemovePost( Npc );
@@ -360,11 +360,11 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( findDest )
 			{
 				if( Npc->GetFTarg() == mChar )
-					Npc->TextMessage( NULL, 1295, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( nullptr, 1295, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else if( !ValidateObject( Npc->GetFTarg() ) )  // If nobody has been accepted for the quest yet
-					Npc->TextMessage( NULL, 1296, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( nullptr, 1296, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else // The must be enroute
-					Npc->TextMessage( NULL, 1297, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
+					Npc->TextMessage( nullptr, 1297, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
 			}
@@ -416,7 +416,7 @@ CKillsResponse::CKillsResponse( void )
 //o-----------------------------------------------------------------------------------------------o
 void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
 {
-	if( !mChar->IsDead() && mSock != NULL )
+	if( !mChar->IsDead() && mSock != nullptr )
 	{
 		SI16 i = mChar->GetKills();
 		if( i == 0 )
@@ -455,7 +455,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 			{
 				// Stop the NPC from moving for a minute while talking with the player
 				Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
-				mSock->TempObj( NULL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
+				mSock->TempObj( nullptr ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
 				auto ssecs = strutil::sections( UText, " " );
 				if( ssecs.size() > 1 ) //Only if string has more than one word
@@ -649,10 +649,10 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		if( findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
-			Npc->SetFTarg( NULL );
+			Npc->SetFTarg( nullptr );
 			Npc->SetNpcWander( WT_FREE );
-			Npc->SetOwner( NULL );
-			Npc->TextMessage( NULL, 1325, TALK, 0, Npc->GetName().c_str() );
+			Npc->SetOwner( nullptr );
+			Npc->TextMessage( nullptr, 1325, TALK, 0, Npc->GetName().c_str() );
 			if( Npc->GetTimer( tNPC_SUMMONTIME ) )
 			{
 				Effects->PlaySound( Npc, 0x01FE );
@@ -761,8 +761,8 @@ bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		if( saidAll || findString( ourText, strutil::toupper( Npc->GetName() )))
 		{
 			Npcs->stopPetGuarding( Npc );
-			Npc->SetFTarg( NULL );
-			Npc->SetTarg( NULL );
+			Npc->SetFTarg( nullptr );
+			Npc->SetTarg( nullptr );
 			if( Npc->IsAtWar() )
 				Npc->ToggleCombat();
 			Npc->SetNpcWander( WT_NONE );
@@ -841,7 +841,7 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -875,7 +875,7 @@ bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
-		CItem *pack		= NULL;
+		CItem *pack		= nullptr;
 		Npc->TextMessage( mSock, 385, TALK, false );
 		pack = Npc->GetPackItem();
 		if( ValidateObject( pack ) )
@@ -1030,7 +1030,7 @@ void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					//-1 == event not found
 					// 0 == script returned false/0

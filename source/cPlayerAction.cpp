@@ -39,7 +39,7 @@ void		ModelBoat( CSocket *s, CBoatObj *i );
 //o-----------------------------------------------------------------------------------------------o
 void Bounce( CSocket *bouncer, CItem *bouncing )
 {
-	if( bouncer == NULL || !ValidateObject( bouncing ) )
+	if( bouncer == nullptr || !ValidateObject( bouncing ) )
 		return;
 	CPBounce bounce( 5 );
 	PickupLocations from	= bouncer->PickupSpot();
@@ -75,7 +75,7 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 	bouncing->Dirty( UT_UPDATE );
 	bouncer->Send( &bounce );
 	bouncer->PickupSpot( PL_NOWHERE );
-	bouncer->SetCursorItem( NULL );
+	bouncer->SetCursorItem( nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -85,12 +85,12 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 //o-----------------------------------------------------------------------------------------------o
 void PickupBounce( CSocket *bouncer )
 {
-	if( bouncer == NULL )
+	if( bouncer == nullptr )
 		return;
 	CPBounce bounce( 0 );
 	bouncer->Send( &bounce );
 	bouncer->PickupSpot( PL_NOWHERE );
-	bouncer->SetCursorItem( NULL );
+	bouncer->SetCursorItem( nullptr );
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
@@ -118,7 +118,7 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 	{
 		stack->SetAmount( newAmt );
 		i->Delete();
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			Effects->itemSound( mSock, stack, false );
 		return stack;
 	}
@@ -128,7 +128,7 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 //|	Status		-	Modified to v2
-//|					v2 - accepts a possible NULL socket to deal with the JSE
+//|					v2 - accepts a possible nullptr socket to deal with the JSE
 //|					v3 - returns a CItem * (stack if stacked, item otherwise)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Searches through the pack to see if an item can be stacked
@@ -136,16 +136,16 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 //o-----------------------------------------------------------------------------------------------o
 CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 {
-	CChar *mChar = NULL;
-	if( mSock != NULL )
+	CChar *mChar = nullptr;
+	if( mSock != nullptr )
 		mChar = mSock->CurrcharObj();
 	if( !ValidateObject( iToStack ) || !ValidateObject( iPack ) )
-		return NULL;
+		return nullptr;
 
 	iToStack->SetCont( iPack );
 	if( iToStack->isPileable() )
 	{
-		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
+		if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
 			Weight->subtractItemWeight( mChar, iToStack );
 		const UI16 itID		= iToStack->GetID();
 		const SERIAL itSer	= iToStack->GetSerial();
@@ -163,11 +163,11 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 					return stack;	// return the stack
 			}
 		}
-		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
+		if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
 			Weight->addItemWeight( mChar, iToStack );
 	}
 	iToStack->PlaceInPack();
-	if( mSock != NULL )
+	if( mSock != nullptr )
 		Effects->itemSound( mSock, iToStack, false );
 	return iToStack;
 }
@@ -192,10 +192,10 @@ bool CPIGetItem::Handle( void )
 	CPBounce bounce( 0 );
 
 	ObjectType oType	= OT_CBO;
-	CBaseObject *iOwner	= NULL;
+	CBaseObject *iOwner	= nullptr;
 	CItem *x			= i;
 	CBaseObject *iCont	= i->GetCont();
-	if( iCont != NULL )  //Find character owning item
+	if( iCont != nullptr )  //Find character owning item
 	{
 		iOwner = FindItemOwner( i, oType );
 		tSock->PickupSerial( i->GetContSerial() );
@@ -251,7 +251,7 @@ bool CPIGetItem::Handle( void )
 						if( ValidateObject( zChar ) )
 						{
 							CSocket *zSock = zChar->GetSocket();
-							if( zSock != NULL )
+							if( zSock != nullptr )
 								Effects->PlaySound( zSock, 0x0057, true );
 						}
 					}
@@ -303,7 +303,7 @@ bool CPIGetItem::Handle( void )
 		return true;
 	}
 
-	if( x->GetMultiObj() != NULL )
+	if( x->GetMultiObj() != nullptr )
 	{
 		if( ( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND ) && ( x->GetMultiObj() != ourChar->GetMultiObj() || x->IsLockedDown() ))
 		{
@@ -322,7 +322,7 @@ bool CPIGetItem::Handle( void )
 
 		CChar *petGuard = Npcs->getGuardingPet( ourChar, i );
 		if( ValidateObject( petGuard ) )
-			petGuard->SetGuarding( NULL );
+			petGuard->SetGuarding( nullptr );
 		i->SetGuarded( false );
 	}
 
@@ -338,7 +338,7 @@ bool CPIGetItem::Handle( void )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			SI08 retStatus = toExecute->OnPickup( i, ourChar );
 
@@ -362,7 +362,7 @@ bool CPIGetItem::Handle( void )
 		else if( amount < i->GetAmount() )
 		{
 			CItem *c = i->Dupe();
-			if( c != NULL )
+			if( c != nullptr )
 			{
 				c->IncAmount( -amount );
 				c->SetCont( i->GetCont() );
@@ -379,7 +379,7 @@ bool CPIGetItem::Handle( void )
 	}
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 	{
-		if( !Weight->checkCharWeight( NULL, ourChar, i ) )
+		if( !Weight->checkCharWeight( nullptr, ourChar, i ) )
 		{
 			tSock->sysmessage( 1743 );
 			PickupBounce( tSock );
@@ -387,7 +387,7 @@ bool CPIGetItem::Handle( void )
 		}
 	}
 
-	if( iCont == NULL )
+	if( iCont == nullptr )
 		MapRegion->RemoveItem( i );
 	i->RemoveFromSight();
 
@@ -573,7 +573,7 @@ bool CPIEquipItem::Handle( void )
 
 	//Reset PickupSpot after dropping the item
 	tSock->PickupSpot( PL_NOWHERE );
-	tSock->SetCursorItem( NULL );
+	tSock->SetCursorItem( nullptr );
 
 	CPDropItemApproved lc;
 	tSock->Send( &lc );
@@ -598,7 +598,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 		CItem *pack = mChar->GetPackItem();
 		if( !ValidateObject( pack ) ) // if player has no pack, put it at its feet
 		{
-			i->SetCont( NULL );
+			i->SetCont( nullptr );
 			i->SetLocation( mChar );
 		}
 		else
@@ -639,7 +639,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 
 	const std::string sect	= "FOODLIST " + sFoodList;
 	ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
-	if( FoodList != NULL )
+	if( FoodList != nullptr )
 	{
 		for( std::string tag = FoodList->First(); !FoodList->AtEnd() && !doesEat; tag = FoodList->Next() )
 		{
@@ -676,7 +676,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );	// returns 1 if we should bounce it
 			switch( rVal )
@@ -706,7 +706,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		for( auto scriptTrig : targScriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				rVal = toExecute->OnDropItemOnNpc( mChar, targNPC, i );	// returns 1 if we should bounce it
 				switch( rVal )
@@ -794,7 +794,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				i->Delete();
 				stackDeleted = true;
 			}
-			mSock->TempObj( NULL );
+			mSock->TempObj( nullptr );
 			targNPC->SetTrainingPlayerIn( 0xFF );
 			Effects->goldSound( mSock, getAmount, false );
 		}
@@ -900,7 +900,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			SI08 rVal = toExecute->OnDrop( i, nChar );	// returns 1 if we should bounce it
 			switch( rVal )
@@ -939,7 +939,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			return;
 		}
 
-		i->SetCont( NULL );
+		i->SetCont( nullptr );
 		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber(), nChar->GetInstanceID() );
 
 		// If item was picked up from a container and dropped on ground, update old location to match new!
@@ -967,7 +967,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( nChar, i );
 
-		if( nChar->GetMultiObj() != NULL )
+		if( nChar->GetMultiObj() != nullptr )
 		{
 			CMultiObj *multi = findMulti( i );
 			if( ValidateObject( multi ) )
@@ -1019,7 +1019,7 @@ void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CIt
 		if( ValidateObject( tw2Owner ) )
 		{
 			CSocket *tw2Sock = tw2Owner->GetSocket();
-			if( tw2Sock != NULL )
+			if( tw2Sock != nullptr )
 				Effects->itemSound( tw2Sock, &tradeWindowOne, ( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND ) );
 		}
 	}
@@ -1137,7 +1137,7 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 	}
 
 	bool canHold = true;
-	if( droppedOn.GetCont() != NULL )
+	if( droppedOn.GetCont() != nullptr )
 	{
 		if( droppedOn.GetContSerial() >= BASEITEMSERIAL )
 			canHold = Weight->checkPackWeight( &mChar, static_cast<CItem *>(droppedOn.GetCont()), &iDropped );
@@ -1197,7 +1197,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 							if( ValidateObject( tw2Char ) )
 							{
 								CSocket *tw2Sock = tw2Char->GetSocket();
-								if( tw2Sock != NULL )
+								if( tw2Sock != nullptr )
 									Effects->itemSound( tw2Sock, recurseItem, ( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND ) );
 							}
 						}
@@ -1335,7 +1335,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			SI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
 			switch( rVal )
@@ -1365,7 +1365,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		for( auto scriptTrig : contScriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				SI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
 				switch( rVal )
@@ -1476,7 +1476,7 @@ bool CPIDropItem::Handle( void )
 
 	//Reset PickupSpot after dropping the item
 	tSock->PickupSpot( PL_NOWHERE );
-	tSock->SetCursorItem( NULL );
+	tSock->SetCursorItem( nullptr );
 	return true;
 }
 
@@ -1728,7 +1728,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -1743,7 +1743,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 
 	// Also check global script!
 	toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
-	if( toExecute != NULL )
+	if( toExecute != nullptr )
 	{
 		if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 0 )
 		{
@@ -1845,7 +1845,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -1857,7 +1857,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 
 	if( c->IsNpc() )
 	{
-		CItem *pack		= NULL;
+		CItem *pack		= nullptr;
 		if( cwmWorldState->creatures[c->GetID()].MountID() != 0 )	// Is a mount
 		{
 			if( ( c->IsTamed() && ( c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) ) ) || mChar->GetCommandLevel() >= CL_GM )
@@ -1937,8 +1937,8 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 //o-----------------------------------------------------------------------------------------------o
 bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType )
 {
-	CChar *iChar	= NULL;
-	CItem *i		= NULL;
+	CChar *iChar	= nullptr;
+	CItem *i		= nullptr;
 	UI16 itemID		= iUsed->GetID();
 	bool canTrap	= false;
 
@@ -1966,7 +1966,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				{
 					CMultiObj * baseContMultiObj = baseCont->GetMultiObj();
 
-					if( baseContMultiObj == NULL || mChar->GetMultiObj() == baseContMultiObj )
+					if( baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj )
 					{
 						if( baseContMultiObj && baseContMultiObj->IsSecureContainer( static_cast<CItem *>( baseCont ) ) && !mChar->GetMultiObj()->IsOnOwnerList( mChar ) )
 						{
@@ -2106,13 +2106,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 					return true;
 
-				Items->CreateScriptItem( NULL, mChar, "townstone", 1, OT_ITEM );
+				Items->CreateScriptItem( nullptr, mChar, "townstone", 1, OT_ITEM );
 				iUsed->Delete();
 			}
 			else	// Display Townstone gump
 			{
 				CTownRegion *useRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
-				if( useRegion != NULL )
+				if( useRegion != nullptr )
 					useRegion->DisplayTownMenu( iUsed, mSock );
 			}
 			return true;
@@ -2485,7 +2485,7 @@ std::map< UI16, ItemTypes > idToItemType;
 void InitIDToItemType( void )
 {
 	ScriptSection *Itemtypes = FileLookup->FindEntry( "ITEMTYPES", items_def );
-	if( Itemtypes == NULL )
+	if( Itemtypes == nullptr )
 		return;
 
 	SI32 sectionCount;
@@ -2577,8 +2577,8 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		}
 		tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
 
-		CChar *iChar = NULL;
-		if( iUsed->GetCont() != NULL )
+		CChar *iChar = nullptr;
+		if( iUsed->GetCont() != nullptr )
 		{
 			iChar = FindItemOwner( iUsed );
 			if( ValidateObject( iChar ) && iChar != ourChar &&
@@ -2591,7 +2591,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		// Check if item is in a house?
 		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK && iType != IT_HOUSESIGN && iType != IT_TILLER )
 		{
-			if( iUsed->GetMultiObj() != NULL && iUsed->GetMultiObj() != ourChar->GetMultiObj() )
+			if( iUsed->GetMultiObj() != nullptr && iUsed->GetMultiObj() != ourChar->GetMultiObj() )
 			{
 				tSock->sysmessage( 389 ); // That is too far away and you cannot reach it.
 				return false;
@@ -2674,7 +2674,7 @@ bool CPIDblClick::Handle( void )
 		// First loop through all scripts, checking for OnUseUnChecked events, which should run before
 		// item usage check is performed
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL ) // Was a script found?
+		if( toExecute != nullptr ) // Was a script found?
 		{
 			// If retVal is -1, event doesn't exist in script
 			// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
@@ -2699,7 +2699,7 @@ bool CPIDblClick::Handle( void )
 		// Then loop through all scripts again, checking for OnUseChecked event - but first run item usage check
 		// once to make sure player can actually use item!
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If it hasn't been done at least once already, run the usual item-usage checks
 			if( !itemUsageCheckComplete )
@@ -2739,7 +2739,7 @@ bool CPIDblClick::Handle( void )
 	if( scriptTriggers.size() == 0 || !scriptExecuted )
 	{
 		UI16 itemID			= iUsed->GetID();
-		cScript *toExecute = NULL;
+		cScript *toExecute = nullptr;
 		UI16 envTrig = 0;
 
 		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
@@ -2756,7 +2756,7 @@ bool CPIDblClick::Handle( void )
 		}
 
 		// Check for the onUse events in envoke scripts!
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 0 )
 				return true;
@@ -2832,7 +2832,7 @@ bool CPISingleClick::Handle( void )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					// If script returns true/1, don't show hard-coded name, and don't run additional onClick events
 					if( toExecute->OnClick( tSock, c ) == 1 )
@@ -2867,7 +2867,7 @@ bool CPISingleClick::Handle( void )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns true/0, don't show hard-coded name, and don't run additional onClick events
 			if( toExecute->OnClick( tSock, i ) == 1 )
@@ -2881,7 +2881,7 @@ bool CPISingleClick::Handle( void )
 		tSock->objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );
 
 	UI16 getAmount = i->GetAmount();
-	if( i->GetCont() != NULL && i->GetContSerial() >= BASEITEMSERIAL )
+	if( i->GetCont() != nullptr && i->GetContSerial() >= BASEITEMSERIAL )
 	{
 		CChar *w = FindItemOwner( static_cast<CItem *>( i->GetCont() ));
 		if( ValidateObject( w ) )

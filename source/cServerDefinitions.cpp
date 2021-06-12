@@ -126,11 +126,11 @@ void CServerDefinitions::Cleanup( void )
 		VECSCRIPTLIST& toDel = (*slIter);
 		for( size_t j = 0; j < toDel.size(); ++j )
 		{
-			if( toDel[j] == NULL )
+			if( toDel[j] == nullptr )
 				continue;
 
 			delete toDel[j];
-			toDel[j] = NULL;
+			toDel[j] = nullptr;
 		}
 	}
 }
@@ -149,7 +149,7 @@ bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
 			Script *toDelete = (*dIter);
-			if( toDelete != NULL )
+			if( toDelete != nullptr )
 			{
 				retVal = true;
 				delete toDelete;
@@ -162,7 +162,7 @@ bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 
 ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
@@ -172,10 +172,10 @@ ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATE
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
 			Script *toCheck = (*dIter);
-			if( toCheck != NULL )
+			if( toCheck != nullptr )
 			{
 				rvalue = toCheck->FindEntry( tUFind );
-				if( rvalue != NULL )
+				if( rvalue != nullptr )
 					break;
 			}
 		}
@@ -185,17 +185,17 @@ ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATE
 
 ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
 			Script *toCheck = (*dIter);
-			if( toCheck != NULL )
+			if( toCheck != nullptr )
 			{
 				rvalue = toCheck->FindEntrySubStr( toFind );
-				if( rvalue != NULL )
+				if( rvalue != nullptr )
 					break;
 			}
 		}
@@ -297,7 +297,7 @@ size_t CServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 {
 	size_t sumEntries = 0;
 	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
-	if( toScan == NULL )
+	if( toScan == nullptr )
 		return 0;
 
 	for( VECSCRIPTLIST_CITERATOR cIter = toScan->begin(); cIter != toScan->end(); ++cIter )
@@ -312,7 +312,7 @@ size_t CServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
 
 Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
 {
-	Script *retScript = NULL;
+	Script *retScript = nullptr;
 	slIter = ScriptListings[typeToFind].begin();
 	if( !FinishedScripts( typeToFind ) )
 		retScript = (*slIter);
@@ -320,7 +320,7 @@ Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
 }
 Script * CServerDefinitions::NextScript( DEFINITIONCATEGORIES typeToFind )
 {
-	Script *retScript = NULL;
+	Script *retScript = nullptr;
 	if( !FinishedScripts( typeToFind ) )
 	{
 		++slIter;
@@ -349,12 +349,12 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		if( FileExists( filename ) )	// the file exists, so perhaps we do
 		{
 			Script *prio = new Script( filename, category, false );	// generate a script for it
-			if( prio != NULL )	// successfully made a script
+			if( prio != nullptr )	// successfully made a script
 			{
 				std::string tag;
 				std::string data;
 				ScriptSection *prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
-				if( prioInfo != NULL )
+				if( prioInfo != nullptr )
 				{
 					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
 					{
@@ -374,7 +374,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 				else
 					wasPrioritized = 1;
 				delete prio;	// remove script
-				prio = NULL;
+				prio = nullptr;
 			}
 			else
 				wasPrioritized = 2;

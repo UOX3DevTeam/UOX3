@@ -10,13 +10,13 @@ typedef void *  va_list;
 #endif
 
 #if defined( _DEBUG )
-#define VALIDATESOCKET( s ) if( s == NULL ) \
+#define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
 Console.print( strutil::format("Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else
-#define VALIDATESOCKET( s ) if( s == NULL ) \
+#define VALIDATESOCKET( s ) if( s == nullptr ) \
 return;
 #endif
 

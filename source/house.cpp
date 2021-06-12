@@ -102,13 +102,13 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 	{
 		std::string sect = "HOUSE ITEM " + (*hiIter);
 		HouseItem = FileLookup->FindEntry( sect, house_def );
-		if( HouseItem != NULL )
+		if( HouseItem != nullptr )
 		{
 			SI16 hiX = x, hiY = y;
 			SI08 hiZ = z;
 			UI08 hWorld = house->WorldNumber();
 			UI16 hInstanceID = house->GetInstanceID();
-			hItem = NULL;	// clear it out
+			hItem = nullptr;	// clear it out
 			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
 				UTag = strutil::toupper( tag );
@@ -117,7 +117,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 				if( UTag == "ITEM" )
 				{
 					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1, hInstanceID );
-					if( hItem == NULL )
+					if( hItem == nullptr )
 					{
 						Console << "Error in house creation, item " << data << " could not be made" << myendl;
 						break;
@@ -206,7 +206,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 					hiZ += static_cast<SI16>(std::stoi(data, nullptr, 0));
 				}
 			}
-			if( ValidateObject( hItem ) && hItem->GetCont() == NULL )
+			if( ValidateObject( hItem ) && hItem->GetCont() == nullptr )
 				hItem->SetLocation( hiX, hiY, hiZ, hWorld, hInstanceID );
 		}
 	}
@@ -336,7 +336,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 				UI08 retVal1 = Map->ValidMultiLocation( curX, curY, z, worldNum, instanceID, !isBoat, checkOnlyMultis, checkOnlyNonMultis, checkForRoads );
 				CMultiObj *retVal2 = findMulti( curX, curY, z, worldNum, instanceID );
 
-				if( retVal1 != 1 || retVal2 != NULL )
+				if( retVal1 != 1 || retVal2 != nullptr )
 				{
 					if( isBoat )
 						mSock->sysmessage( 7 );
@@ -433,7 +433,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	std::string sect = "HOUSE " + strutil::number( houseEntry );
 	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
-	if( House == NULL )
+	if( House == nullptr )
 		return;
 
 	std::vector<UI16> scriptIDs;
@@ -617,8 +617,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	constexpr std::uint16_t maxsize = 1024 ;
 	std::string temp ;
-	CMultiObj *house = NULL;
-	CItem *fakeHouse = NULL;
+	CMultiObj *house = nullptr;
+	CItem *fakeHouse = nullptr;
 	if( isMulti )
 	{
 		if( (houseID%256) > 20 )
@@ -635,7 +635,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			}
 		}
 		house = Items->CreateMulti( mChar, temp, houseID, isBoat );
-		if( house == NULL )
+		if( house == nullptr )
 		{
 			return;
 		}
@@ -726,7 +726,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	{
 		// House addon
 		fakeHouse = Items->CreateItem( mSock, mChar, houseID, 1, 0, OT_ITEM );
-		if( fakeHouse == NULL )
+		if( fakeHouse == nullptr )
 		{
 			return;
 		}
@@ -773,7 +773,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		bObj->SetWeightMax( weightMax );
 		bObj->SetMaxItems( maxItems );
 		bObj->SetDamageable( isDamageable );
-		if( bObj == NULL || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
+		if( bObj == nullptr || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
 		{
 			house->Delete();
 			return;
@@ -781,7 +781,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	}
 
 	mChar->GetSpeechItem()->Delete();
-	mChar->SetSpeechItem( NULL );
+	mChar->SetSpeechItem( nullptr );
 
 	CreateHouseKey( mSock, mChar, house, houseID );
 	if( !houseItems.empty() )
@@ -897,7 +897,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 				else
 				{
 					// On the ground, not in a container, not locked down
-					if( i->GetMovable() != 3 && i->GetCont() == NULL )
+					if( i->GetMovable() != 3 && i->GetCont() == nullptr )
 					{
 						i->Delete();
 					}
@@ -911,7 +911,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 				if(( ValidateObject( itemPackOwner ) && itemPackOwner->GetSerial() == charSerial ) ||
 					( i->GetMovable() == 3 && ValidateObject( i->GetMultiObj() ) && i->GetMultiObj()->GetOwnerObj()->GetSerial() == charSerial ) ||
 					( ValidateObject( i->GetCont() ) && FindRootContainer( i )->GetOwner() == charSerial ) ||
-					( i->GetMovable() != 3 && i->GetCont() == NULL ))
+					( i->GetMovable() != 3 && i->GetCont() == nullptr ))
 				{
 					// Also look in keyrings - first get count of keys in keyring
 					SI32 keyCount = i->GetTag( "keys" ).m_IntValue;

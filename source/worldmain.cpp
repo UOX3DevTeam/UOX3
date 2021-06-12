@@ -30,7 +30,7 @@
 #include "ObjectFactory.h"
 
 
-CWorldMain						*cwmWorldState = NULL;
+CWorldMain						*cwmWorldState = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
@@ -504,7 +504,7 @@ void CWorldMain::SaveNewWorld( bool x )
 	while( spIter != spEnd )
 	{
 		CSpawnRegion *spawnReg = spIter->second;
-		if( spawnReg != NULL )
+		if( spawnReg != nullptr )
 			spawnReg->checkSpawned();
 		++spIter;
 	}
@@ -587,7 +587,7 @@ void CWorldMain::RegionSave( void )
 	while( tIter != tEnd )
 	{
 		CTownRegion *myReg = tIter->second;
-		if( myReg != NULL )
+		if( myReg != nullptr )
 			myReg->Save( regionsDestination );
 		++tIter;
 	}

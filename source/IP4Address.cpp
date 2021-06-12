@@ -400,18 +400,18 @@ std::vector<IP4Address> IP4Address::available() {
 		// default to unspecified address family (both)
 		ULONG family = AF_INET;
 		
-		LPVOID lpMsgBuf = NULL;
+		LPVOID lpMsgBuf = nullptr;
 		
-		PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+		PIP_ADAPTER_ADDRESSES pAddresses = nullptr;
 		ULONG outBufLen = 0;
 		ULONG Iterations = 0;
 		
-		PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
-		PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
-		PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
-		PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
-		IP_ADAPTER_DNS_SERVER_ADDRESS* pDnServer = NULL;
-		IP_ADAPTER_PREFIX* pPrefix = NULL;
+		PIP_ADAPTER_ADDRESSES pCurrAddresses = nullptr;
+		PIP_ADAPTER_UNICAST_ADDRESS pUnicast = nullptr;
+		PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = nullptr;
+		PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = nullptr;
+		IP_ADAPTER_DNS_SERVER_ADDRESS* pDnServer = nullptr;
+		IP_ADAPTER_PREFIX* pPrefix = nullptr;
 		
 		// Allocate a 15 KB buffer to start with.
 		outBufLen = WORKING_BUFFER_SIZE;
@@ -424,11 +424,11 @@ std::vector<IP4Address> IP4Address::available() {
 			}
 			
 			dwRetVal =
-			GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen);
+			GetAdaptersAddresses(family, flags, nullptr, pAddresses, &outBufLen);
 			
 			if (dwRetVal == ERROR_BUFFER_OVERFLOW) {
 				FREE(pAddresses);
-				pAddresses = NULL;
+				pAddresses = nullptr;
 			}
 			else {
 				break;
@@ -500,14 +500,14 @@ std::vector<IP4Address> IP4Address::available() {
 #else
 std::vector<IP4Address> IP4Address::available() {
 	std::vector<IP4Address> rvalue ;
-	struct ifaddrs * ifAddrStruct=NULL;
-	struct ifaddrs * ifa=NULL;
-	void * tmpAddrPtr=NULL;
+	struct ifaddrs * ifAddrStruct=nullptr;
+	struct ifaddrs * ifa=nullptr;
+	void * tmpAddrPtr=nullptr;
 	IP4Address device_address ;
 	
 	getifaddrs(&ifAddrStruct);
 	
-	for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
+	for (ifa = ifAddrStruct; ifa != nullptr; ifa = ifa->ifa_next) {
 		if (!ifa->ifa_addr) {
 			continue;
 		}
@@ -521,7 +521,7 @@ std::vector<IP4Address> IP4Address::available() {
 			}
 		}
 	}
-	if (ifAddrStruct!=NULL) {
+	if (ifAddrStruct!=nullptr) {
 		freeifaddrs(ifAddrStruct);
 	}
 	return rvalue ;

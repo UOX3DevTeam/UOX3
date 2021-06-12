@@ -540,7 +540,7 @@ const std::string ScriptSection::First( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const std::string Next( void )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the next tag in the section, or NULL if no more
+//|	Purpose		-	Returns the next tag in the section, or nullptr if no more
 //o-----------------------------------------------------------------------------------------------o
 const std::string ScriptSection::Next( void )
 {
@@ -639,7 +639,7 @@ size_t ScriptSection::NumEntries( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	const std::string Prev( void )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the previous tag, or NULL if at start
+//|	Purpose		-	Returns the previous tag, or nullptr if at start
 //o-----------------------------------------------------------------------------------------------o
 const std::string ScriptSection::Prev( void )
 {
@@ -791,8 +791,8 @@ void ScriptSection::createSection( std::fstream& input )
 {
 	char line[2048];
 	std::string sLine;
-	sectData *toAdd		= NULL;
-	sectDataV2 *toAdd2	= NULL;
+	sectData *toAdd		= nullptr;
+	sectDataV2 *toAdd2	= nullptr;
 	DFNTAGS mTag;
 	std::string tag, value, localName;
 	// Now the reverse comes into play!

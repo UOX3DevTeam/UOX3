@@ -382,7 +382,7 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 
 	std::ofstream toWrite;
 	std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
-	if( cwmWorldState != NULL )
+	if( cwmWorldState != nullptr )
 		realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
 	else
 		realFileName = filename;
@@ -870,17 +870,17 @@ void CConsole::Process( SI32 c )
 			if( toFind->second.isEnabled )
 			{
 				cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
 					print(strutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
 #endif
-					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), NULL, 0 );
+					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0 );
 				}
 				return;
 			}
 		}
-		CSocket *tSock	= NULL;
+		CSocket *tSock	= nullptr;
 		//char outputline[128], temp[1024];
 		std::string outputline, temp;
 		SI32 indexcount	= 0;
@@ -1048,7 +1048,7 @@ void CConsole::Process( SI32 c )
 				break;
 			case  'D':
 				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != NULL; tSock = Network->PrevSocket() )
+				for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() )
 				{
 					if( tSock->AcctNo() == 0 )
 						Network->Disconnect( tSock );
@@ -1183,11 +1183,11 @@ void CConsole::Process( SI32 c )
 					Network->pushConn();
 
 					CSocket *snSock		= Network->FirstSocket();
-					if( snSock != NULL )
+					if( snSock != nullptr )
 						loggingEnabled = !snSock->Logging();
 					for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
 					{
-						if( snSock != NULL )
+						if( snSock != nullptr )
 							snSock->Logging( !snSock->Logging() );
 					}
 					Network->popConn();
@@ -1333,7 +1333,7 @@ void CConsole::Registration( void )
 	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_CONSOLE );
 	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Console" );
 	}
 }

@@ -599,13 +599,13 @@ const bool				DEFSOCK_LOGINCOMPLETE			= false;
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 //o-----------------------------------------------------------------------------------------------o
-CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
+CSocket::CSocket( size_t sockNum ) : currCharObj( nullptr ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ),
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ),
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ),
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ),
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), tmpObj2( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr )
 {
 	InternalReset();
 }
@@ -620,7 +620,7 @@ CSocket::~CSocket()
 	JSEngine->ReleaseObject( IUE_SOCK, this );
 
 	if( ValidateObject( currCharObj ) )
-		currCharObj->SetSocket( NULL );
+		currCharObj->SetSocket( nullptr );
 	closesocket( static_cast<UOXSOCKET>(cliSocket) );
 }
 
@@ -945,7 +945,7 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 			Console.error( strutil::format("Failed to open socket log %s", logFile.c_str()));
 			return;
 		}
-		if( toLog != NULL )
+		if( toLog != nullptr )
 			toLog->Log( logDestination );
 		else
 		{
@@ -997,7 +997,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 	}
 	while( x != 2560 && x != inlength );
 	if( doLog )
-		ReceiveLogging( NULL );
+		ReceiveLogging( nullptr );
 	bytesReceived += count;
 	return count;
 }
@@ -1062,7 +1062,7 @@ void CSocket::CurrcharObj( CChar *newValue )
 	if( ValidateObject( currCharObj ) )
 	{
 		if( currCharObj->GetSocket() == this )
-			currCharObj->SetSocket( NULL );
+			currCharObj->SetSocket( nullptr );
 	}
 	if( ValidateObject( newValue ) )
 		newValue->SetSocket( this );
@@ -1428,7 +1428,7 @@ void CSocket::PostAcked( SERIAL newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::Send( CPUOXBuffer *toSend )
 {
-	if( toSend == NULL )
+	if( toSend == nullptr )
 		return;
 
 	// If the client cannot receive it validly, abort, abort!
@@ -2318,7 +2318,7 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::openBank( CChar *i )
 {
-	CItem *bankBox = NULL;
+	CItem *bankBox = nullptr;
 	bankBox = i->GetItemAtLayer( IL_BANKBOX );
 	if( ValidateObject( bankBox ) )
 	{
@@ -2333,7 +2333,7 @@ void CSocket::openBank( CChar *i )
 	
 	// No bankbox was found, so let's create one!
 	auto temp = strutil::format(1024, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
-	bankBox = Items->CreateItem( NULL, i, 0x09AB, 1, 0, OT_ITEM );
+	bankBox = Items->CreateItem( nullptr, i, 0x09AB, 1, 0, OT_ITEM );
 	bankBox->SetName( temp );
 	bankBox->SetLayer( IL_BANKBOX );
 	bankBox->SetOwner( i );
@@ -2485,7 +2485,7 @@ void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
 	doPacketLogging( outStream, pStream.GetSize(), pStream.GetBuffer() );
 }
 
-CPInputBuffer::CPInputBuffer() : tSock( NULL )
+CPInputBuffer::CPInputBuffer() : tSock( nullptr )
 {
 }
 CPInputBuffer::CPInputBuffer( CSocket *input )
