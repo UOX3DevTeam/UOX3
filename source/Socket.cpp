@@ -233,7 +233,7 @@ std::size_t Socket::send(unsigned char *data,std::size_t amount ) {
 	
 	{
 		
-		status = ::send(_fd,data,amount,flag);
+		status = ::send(_fd,reinterpret_cast<char*>(data),amount,flag);
 
 	}
 	if (status == SOCKET_ERROR) {
@@ -279,7 +279,7 @@ std::size_t Socket::receive(unsigned char *data, std::size_t amount){
 	{
 		//std::lock_guard lock(_descriptor_lock) ;
 		SOCKET fd = _fd ;
-		status = ::recv(fd,data,amount,flag);
+		status = ::recv(fd,reinterpret_cast<char*>(data),amount,flag);
 		
 	}
 	if (status == SOCKET_ERROR) {
