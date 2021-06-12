@@ -176,7 +176,6 @@ get=base_item
 name=dipping stick
 id=0x1429
 weight=100
-colorlist=
 movable=1
 decay=1
 }

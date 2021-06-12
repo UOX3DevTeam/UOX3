@@ -110,7 +110,6 @@ hidamage=20
 hp=31 50
 spd=30
 str=40
-stradd=
 restock=10
 movable=1
 decay=1
