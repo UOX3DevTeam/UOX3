@@ -210,3 +210,11 @@ pre {
     display:inline;
     white-space:nowrap;
 }
+pre > code {
+	white-space: pre-wrap !important;
+}
+
+.cd-faq__content ul {
+	color: hsl(210, 14%, 49%);
+    color: var(--cd-color-3);
+}

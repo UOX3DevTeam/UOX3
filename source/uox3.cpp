@@ -3017,29 +3017,25 @@ int main( SI32 argc, char *argv[] )
 		auto externalIP = cwmWorldState->ServerData()->ExternalIP();
 		if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" )
 		{
-			Console << "UOX: listening for incoming connections on Exernal/WAN IP: " << externalIP.c_str() << myendl;
+			Console << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
 		}
 
 		auto deviceIPs = IP4Address::deviceIPs();
-		
 		for( auto &entry : deviceIPs )
 		{
-			switch (entry.type()) {
+			switch (entry.type())
+			{
 				case IP4Address::lan:
 					Console << "UOX: listening for incoming connections on LAN IP: " << entry.string() << myendl;
-
 					break;
 				case IP4Address::local:
 					Console << "UOX: listening for incoming connections on Local IP: " << entry.string() << myendl;
 					break;
 				case IP4Address::wan:
 					Console << "UOX: listening for incoming connections on WAN IP: " << entry.string() << myendl;
-
 					break;
-
 				default:
-					Console << "UOX: listening for incoming connections on  IP: " << entry.string() << myendl;
-
+					Console << "UOX: listening for incoming connections on IP: " << entry.string() << myendl;
 					break;
 			}
 		}

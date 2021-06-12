@@ -1,10 +1,14 @@
+13/06/2021 - Xuri
+	Updated UOX3 documentation to reflect recent changes to IP handling/config, addition of 'decorate command and world templates, updated instructions for building from source
+	Added missing world template file (js/jsdata/worldtemplates/felucca_containers.jsdata)
+	Fixed an issue with how UOX3 lists out IP addresses it's actively listening to (punt)
+	
 12/06/2021 - punt
 	Following changes made to ensure compatable with some of my other projects
 		Switched over to ConfigOS.h from Config.h
 		UOX_PLATFORM to PLATFORM (and the corresponding platform types)
 	Replaced NULL with nullptr
-
-
+	
 12/06/2021 - Xuri
 	Some minor cleanup in a few DFN files. Affected files:
 		dfndata/creatures/creatures.dfn
