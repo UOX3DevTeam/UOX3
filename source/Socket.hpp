@@ -32,7 +32,7 @@ protected:
 	
 	
 	int create(int port) ;
-	void setOptions(int fd) ;
+	void setOptions(SOCKET fd) ;
 	void setServer(int port) ;
 	
 public:
