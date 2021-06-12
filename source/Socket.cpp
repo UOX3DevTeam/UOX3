@@ -78,7 +78,7 @@ void Socket::setServer(int port){
 	SOCKET fd = _fd ;
 
 	setOptions(fd);
-	auto bstatus = bind(fd, res->ai_addr, res->ai_addrlen);
+	auto bstatus = bind(static_cast<int>(fd), res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
 	if (bstatus == SOCKET_ERROR){
 		close();
@@ -122,7 +122,7 @@ void Socket::initialize() {
 #endif
 }
 //============================================================================
-void Socket::setOptions(int fd) {
+void Socket::setOptions(SOCKET fd) {
 	unsigned long one = 1 ;
 	
 #if PLATFORM == MACOS

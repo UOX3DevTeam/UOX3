@@ -283,7 +283,7 @@ void DataCategory::loadData(const std::string &directory, DataCategory::Category
 		}
 	}
 	for (auto &path : postfiles) {
-		loadFile(path);
+		loadFile(path.string());
 	}
 	
 }
