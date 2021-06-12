@@ -246,7 +246,6 @@ std::size_t Socket::send(unsigned char *data,std::size_t amount ) {
 	}
 #else
 	{
-		std::lock_guard lock(_descriptor_lock) ;
 		status = ::send(_fd,reinterpret_cast<char*>(data),static_cast<int>(amount),flag);
 	}
 
@@ -277,7 +276,6 @@ std::size_t Socket::receive(unsigned char *data, std::size_t amount){
 #if PLATFORM != WINDOWS
 	
 	{
-		//std::lock_guard lock(_descriptor_lock) ;
 		SOCKET fd = _fd ;
 		status = ::recv(fd,reinterpret_cast<char*>(data),amount,flag);
 		
