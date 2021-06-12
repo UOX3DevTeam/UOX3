@@ -151,7 +151,7 @@ std::tuple<SOCKET,IP4Address, std::string>  Socket::accept() {
 	if (new_fd == INVALID_SOCKET) {
 #if PLATFORM == WINDOWS
 		auto error = WSAGetLastError() ;
-		if (error == WSAWOULDBLOCK) {
+		if (error == WSAEWOULDBLOCK) {
 			return std::make_tuple(INVALID_SOCKET,std::string(),std::string());
 		}
 		throw std::runtime_error(std::string("Error accepting sockets: ")+std::to_string(error));
