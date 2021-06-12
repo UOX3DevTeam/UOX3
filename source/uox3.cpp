@@ -3028,6 +3028,7 @@ int main( SI32 argc, char *argv[] )
 				case IP4Address::lan:
 					Console << "UOX: listening for incoming connections on LAN IP: " << entry.string() << myendl;
 					break;
+				case IP4Address::mine:
 				case IP4Address::local:
 					Console << "UOX: listening for incoming connections on Local IP: " << entry.string() << myendl;
 					break;

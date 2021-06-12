@@ -1,4 +1,7 @@
 13/06/2021 - Xuri
+	Some fixes to IP4Address code and output to console of which type of IP being listened (punt)
+
+13/06/2021 - Xuri
 	Updated UOX3 documentation to reflect recent changes to IP handling/config, addition of 'decorate command and world templates, updated instructions for building from source
 	Added missing world template file (js/jsdata/worldtemplates/felucca_containers.jsdata)
 	Fixed an issue with how UOX3 lists out IP addresses it's actively listening to (punt)

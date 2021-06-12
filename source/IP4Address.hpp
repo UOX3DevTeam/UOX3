@@ -29,7 +29,7 @@ private:
 public:
 	static void loadIPs() ;
 	enum typeIP { wan,lan,local,apipa,mine};
-	typeIP type() const ;
+	typeIP type(bool notmine = true ) const ;
 	IP4Address() ;
 	IP4Address(unsigned int address);
 	IP4Address(const std::string &address);
