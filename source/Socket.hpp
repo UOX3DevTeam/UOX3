@@ -22,7 +22,7 @@
 class Socket {
 
 protected:
-	static bool _global_init ;  // This is so we can load winsock or set ingore signals one time
+	
 	std::atomic<SOCKET> _fd ;
 	// If a connection, there address and prot and time connected
 	IP4Address _ipaddress ;
@@ -30,7 +30,6 @@ protected:
 	std::string _time_created ;
 
 	
-	void initialize() ;
 	
 	int create(int port) ;
 	void setOptions(int fd) ;
@@ -51,6 +50,8 @@ public:
 	std::size_t receive(unsigned char *data, std::size_t amount);
 	
 	std::string description() const ;
+	
+	static void initialize() ;
 
 	};
 
