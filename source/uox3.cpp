@@ -3021,13 +3021,27 @@ int main( SI32 argc, char *argv[] )
 		}
 
 		auto deviceIPs = IP4Address::deviceIPs();
-		auto temp = strutil::sections( deviceIPs, "\n" );
-		for( auto &entry : temp )
+		
+		for( auto &entry : deviceIPs )
 		{
-			if( entry == "127.0.0.1" )
-				Console << "UOX: listening for incoming connections on Local IP: " << entry << myendl;
-			else
-				Console << "UOX: listening for incoming connections on LAN IP: " << entry << myendl;
+			switch (entry.type()) {
+				case IP4Address::lan:
+					Console << "UOX: listening for incoming connections on LAN IP: " << entry.string() << myendl;
+
+					break;
+				case IP4Address::local:
+					Console << "UOX: listening for incoming connections on Local IP: " << entry.string() << myendl;
+					break;
+				case IP4Address::wan:
+					Console << "UOX: listening for incoming connections on WAN IP: " << entry.string() << myendl;
+
+					break;
+
+				default:
+					Console << "UOX: listening for incoming connections on  IP: " << entry.string() << myendl;
+
+					break;
+			}
 		}
 		Console.TurnNormal();
 
