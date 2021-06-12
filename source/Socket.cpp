@@ -247,7 +247,7 @@ std::size_t Socket::send(unsigned char *data,std::size_t amount ) {
 #else
 	{
 		std::lock_guard lock(_descriptor_lock) ;
-		status = ::send(_fd,data,static_cast<int>(amount),flag);
+		status = ::send(_fd,reinterpret_cast<char*>(data),static_cast<int>(amount),flag);
 	}
 
 	if (status == SOCKET_ERROR) {
