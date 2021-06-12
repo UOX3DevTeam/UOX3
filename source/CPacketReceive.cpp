@@ -53,7 +53,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 	switch( packetID )
 	{
 		case 0x00:	return ( new CPICreateCharacter( s )	);	// Character Create
-		case 0x01:	return NULL;								// Main Menu on the character select screen
+		case 0x01:	return nullptr;								// Main Menu on the character select screen
 		case 0x04:	return ( new CPIGodModeToggle( s )		);
 		case 0x5D:	return ( new CPIPlayCharacter( s )		);	// Character Select
 		case 0x73:	return ( new CPIKeepAlive( s )			);
@@ -63,20 +63,20 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0x91:	return ( new CPISecondLogin( s )		);
 		case 0xA0:	return ( new CPIServerSelect( s )		);
 		case 0xA4:	return ( new CPISpy( s )				);
-		case 0xBB:	return NULL;								// Ultima Messenger - old, no longer used
+		case 0xBB:	return nullptr;								// Ultima Messenger - old, no longer used
 		case 0xBD:	return ( new CPIClientVersion( s )		);
 		case 0xBF:	return ( new CPISubcommands( s )		);	// general overall packet
 		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xEF:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients after 6.0.x
 		//case 0xE4:	return ( new CPIKREncryptionVerification( s ) ); // KR Encryption Response verification
-		case 0xF1:	return NULL;								// ConnectUO Server Poll Packet - handled in packet hook JS script
+		case 0xF1:	return nullptr;								// ConnectUO Server Poll Packet - handled in packet hook JS script
 		case 0xF8:	return ( new CPICreateCharacter( s )	);	// New Character Create - minor difference from original
-		case 0xFF:	return NULL;								// new CPIKRSeed( s ) - KR client request for encryption response
+		case 0xFF:	return nullptr;								// new CPIKRSeed( s ) - KR client request for encryption response
 		default:	break;
 	}
 	throw socket_error( "Bad packet request" );
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -97,21 +97,21 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0x07:	return ( new CPIGetItem( s )			);
 		case 0x08:	return ( new CPIDropItem( s )			);
 		case 0x09:	return ( new CPISingleClick( s )		);
-		case 0x12:	return NULL;								// Request Skill / Action / Magic Usage
+		case 0x12:	return nullptr;								// Request Skill / Action / Magic Usage
 		case 0x13:	return ( new CPIEquipItem( s )			);
 		case 0x22:	return ( new CPIResyncReq( s )			);
 		case 0x2C:	return ( new CPIResMenuChoice( s )		);
 		case 0x34:	return ( new CPIStatusRequest( s )		);
-		case 0x3A:	return NULL;								// Skills management packet
+		case 0x3A:	return nullptr;								// Skills management packet
 		case 0x3B:	return ( new CPIBuyItem( s )			);
-		case 0x56:	return NULL;								// Map Related
+		case 0x56:	return nullptr;								// Map Related
 		case 0x5D:	return ( new CPIPlayCharacter( s )		);
 		case 0x66:	return ( new CPIBookPage( s )			);	// Player Turns the Page (or closes) a Book
-		case 0x69:	return NULL;								// Client text change
+		case 0x69:	return nullptr;								// Client text change
 		case 0x6C:	return ( new CPITargetCursor( s )		);
 		case 0x6F:	return ( new CPITradeMessage( s )		);
 		case 0x71:	return ( new CPIMsgBoardEvent( s )		);	// Message Board Item
-		case 0x72:	return NULL;								// Combat mode
+		case 0x72:	return nullptr;								// Combat mode
 		case 0x73:	return ( new CPIKeepAlive( s )			);
 		case 0x75:	return ( new CPIRename( s )				);
 		case 0x7D:	return ( new CPIGumpChoice( s )			);
@@ -119,7 +119,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0x83:	return ( new CPIDeleteCharacter( s )	);
 		case 0x8D:	return ( new CPICreateCharacter( s )	);	// Character creation for 3D/Enhanced clients
 		case 0x91:	return ( new CPISecondLogin( s )		);
-		case 0x93:	return NULL;								// Books - title page
+		case 0x93:	return nullptr;								// Books - title page
 		case 0x95:	return ( new CPIDyeWindow( s )			);
 		case 0x98:	return ( new CPIAllNames3D( s )			);
 		case 0x9B:	return ( new CPIHelpRequest( s )		);
@@ -130,26 +130,26 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xAC:	return ( new CPIGumpInput( s )			);
 		case 0xAD:	return ( new CPITalkRequestUnicode( s ) );
 		case 0xB1:	return ( new CPIGumpMenuSelect( s )		);
-		case 0xB6:	return NULL;								// T2A Popup Help Request
-		case 0xB8:	return NULL;								// T2A Profile Request
-		case 0xBB:	return NULL;								// Ultima Messenger
+		case 0xB6:	return nullptr;								// T2A Popup Help Request
+		case 0xB8:	return nullptr;								// T2A Profile Request
+		case 0xBB:	return nullptr;								// Ultima Messenger
 		case 0xBD:	return ( new CPIClientVersion( s )		);
 		case 0xBF:	return ( new CPISubcommands( s )		);	// Assorted commands
 		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
 		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
-		case 0xD0:	return NULL;								// Configuration File
-		case 0xD1:	return NULL;								// Logout Status
+		case 0xD0:	return nullptr;								// Configuration File
+		case 0xD1:	return nullptr;								// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD6:	return ( new CPIToolTipRequestAoS( s )		);	// AoS Request for tooltip data
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xF0:	return ( new CPIKrriosClientSpecial( s )	); // Responses to special client packet also used by assistant tools to negotiate features with server
-		case 0xF3:	return NULL;								// TODO - Object Information (SA)
-		case 0xF5:	return NULL;								// TODO - New Map Message
+		case 0xF3:	return nullptr;								// TODO - Object Information (SA)
+		case 0xF5:	return nullptr;								// TODO - New Map Message
 		case 0xF8:	return ( new CPICreateCharacter( s )	);  // New Character Create
-		default:	return NULL;
+		default:	return nullptr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CheckBanTimer( CAccountBlock &actbTemp )
@@ -174,7 +174,7 @@ void CheckBanTimer( CAccountBlock &actbTemp )
 //|						BYTE cmd
 //|						BYTE[30] userid
 //|						BYTE[30] password
-//|						BYTE unknown1 (not usually 0x00 - so not NULL)
+//|						BYTE unknown1 (not usually 0x00 - so not nullptr)
 //o-----------------------------------------------------------------------------------------------o
 void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
@@ -1101,7 +1101,7 @@ void CPITips::Receive( void )
 bool CPITips::Handle( void )
 {
 	ScriptSection *Tips = FileLookup->FindEntry( "TIPS", misc_def );
-	if( Tips != NULL )
+	if( Tips != nullptr )
 	{
 		UI16 i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
 		if( i == 0 )
@@ -1122,7 +1122,7 @@ bool CPITips::Handle( void )
 
 		sect = "TIP " + strutil::stripTrim( data );
 		Tips = FileLookup->FindEntry( sect, misc_def );
-		if( Tips != NULL )
+		if( Tips != nullptr )
 		{
 			std::string tipData = "";
 			for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
@@ -1274,7 +1274,7 @@ bool CPIStatusRequest::Handle( void )
 		for( auto i : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( i );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				UI08 retStatus = toExecute->OnSkillGump( myChar );
 				if( retStatus == 0 ) // if it exists and we don't want hard code, return
@@ -2015,7 +2015,7 @@ bool CPITalkRequest::HandleCommon( void )
 	CItem *speechItem = ourChar->GetSpeechItem();
 
 	UI32 j = 0;
-	CSocket *tmpSock = NULL;
+	CSocket *tmpSock = nullptr;
 	
 	switch( ourChar->GetSpeechMode() )
 	{
@@ -2046,7 +2046,7 @@ bool CPITalkRequest::HandleCommon( void )
 			tSock->sysmessage( 758, Text() );
 			ourChar->SetSpeechMode( 0 );
 			speechItem->Delete();
-			ourChar->SetSpeechItem( NULL );
+			ourChar->SetSpeechItem( nullptr );
 			break;
 		case 5:	// Key renaming
 		case 8: // Sign renaming
@@ -2057,7 +2057,7 @@ bool CPITalkRequest::HandleCommon( void )
 		case 9: // JavaScript speech
 		{
 			cScript *myScript	= ourChar->GetSpeechCallback();
-			if( myScript != NULL )
+			if( myScript != nullptr )
 				myScript->OnSpeechInput( ourChar, speechItem, Text() );
 
 			ourChar->SetSpeechMode( 0 );
@@ -2067,7 +2067,7 @@ bool CPITalkRequest::HandleCommon( void )
 			UI08 a1, a2, a3, a4;
 			if( GMQueue->GotoPos( GMQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
 			{
-				HelpRequest *tempPage = NULL;
+				HelpRequest *tempPage = nullptr;
 				tempPage = GMQueue->Current();
 				a1 = ourChar->GetSerial( 1 );
 				a2 = ourChar->GetSerial( 2 );
@@ -2372,7 +2372,7 @@ void CPIAllNames3D::Receive( void )
 bool CPIAllNames3D::Handle( void )
 {
 	SERIAL objSer		= tSock->GetDWord( 3 );
-	CBaseObject *toName = NULL;
+	CBaseObject *toName = nullptr;
 
 	if( objSer >= BASEITEMSERIAL )
 		toName = calcItemObjFromSer( objSer );
@@ -3362,13 +3362,13 @@ void PaperDoll( CSocket *s, CChar *pdoll );
 bool BuyShop( CSocket *s, CChar *c );
 
 
-CPISubcommands::CPISubcommands() : skipOver( false ), subPacket( NULL )
+CPISubcommands::CPISubcommands() : skipOver( false ), subPacket( nullptr )
 {
 }
 CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 {
 	skipOver	= false;
-	subPacket	= NULL;
+	subPacket	= nullptr;
 	Receive();
 }
 
@@ -3515,7 +3515,7 @@ void CPISubcommands::Receive( void )
 bool CPISubcommands::Handle( void )
 {
 	bool retVal = skipOver;
-	if( subPacket != NULL )
+	if( subPacket != nullptr )
 	{
 		retVal = subPacket->Handle();
 		delete subPacket;
@@ -3524,7 +3524,7 @@ bool CPISubcommands::Handle( void )
 }
 void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
 {
-	if( subPacket != NULL )
+	if( subPacket != nullptr )
 		subPacket->Log( outStream, fullHeader );
 	else
 	{
@@ -3630,7 +3630,7 @@ bool CPIPartyCommand::Handle( void )
 		case PARTY_REMOVE:
 		{
 			Party *ourParty = PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
-			if( ourParty != NULL )
+			if( ourParty != nullptr )
 			{
 				SERIAL charToRemove	= tSock->GetDWord( BASE_OFFSET );
 				if( ( ourParty->Leader() == tSock->CurrcharObj() ) || ( tSock->CurrcharObj()->GetSerial() == charToRemove ) )
@@ -3655,13 +3655,13 @@ bool CPIPartyCommand::Handle( void )
 		case PARTY_TELLINDIV:
 		{
 			Party *toTellTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
-			if( toTellTo != NULL )
+			if( toTellTo != nullptr )
 			{
 				CPPartyTell toTell( this, tSock );
 				SERIAL personToTell	= tSock->GetDWord( BASE_OFFSET );
 				CChar *charToTell	= calcCharObjFromSer( personToTell );
 				CSocket *charTell	= charToTell->GetSocket();
-				if( charTell != NULL )
+				if( charTell != nullptr )
 					toTellTo->SendPacket( &toTell, charTell );
 			}
 			else
@@ -3671,7 +3671,7 @@ bool CPIPartyCommand::Handle( void )
 		case PARTY_TELLALL:
 		{
 			Party *toTellTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
-			if( toTellTo != NULL )
+			if( toTellTo != nullptr )
 			{
 				CPPartyTell toTell( this, tSock );
 				toTellTo->SendPacket( &toTell );
@@ -3683,10 +3683,10 @@ bool CPIPartyCommand::Handle( void )
 		case PARTY_LOOT:
 		{
 			Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
-			if( toAddTo != NULL )
+			if( toAddTo != nullptr )
 			{
 				PartyEntry *mEntry = toAddTo->Find( tSock->CurrcharObj() );
-				if( mEntry != NULL )
+				if( mEntry != nullptr )
 					mEntry->IsLootable( tSock->GetByte( BASE_OFFSET ) != 0 );
 				tSock->sysmessage( "You have changed your loot setting" );
 			}
@@ -3700,7 +3700,7 @@ bool CPIPartyCommand::Handle( void )
 		{
 			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
 			Party *toAddTo		= PartyFactory::getSingleton().Get( calcCharObjFromSer( leaderSerial ) );
-			if( toAddTo != NULL )
+			if( toAddTo != nullptr )
 				toAddTo->AddMember( tSock->CurrcharObj() );
 			else
 				tSock->sysmessage( "That party does not exist any more" );
@@ -3710,10 +3710,10 @@ bool CPIPartyCommand::Handle( void )
 		{
 			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
 			CChar *leader		= calcCharObjFromSer( leaderSerial );
-			if( leader != NULL )
+			if( leader != nullptr )
 			{
 				CSocket *leaderSock = leader->GetSocket();
-				if( leaderSock != NULL )
+				if( leaderSock != nullptr )
 				{	// is it a PC leader?
 					leaderSock->sysmessage( "The player has declined your invitation to party" );
 				}
@@ -4051,7 +4051,7 @@ bool CPIPopupMenuRequest::Handle( void )
 	if( mSer < BASEITEMSERIAL )
 	{
 		CChar *myChar = calcCharObjFromSer( mSer );
-		if( myChar == NULL )
+		if( myChar == nullptr )
 			return true;
 
 		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
@@ -4087,10 +4087,10 @@ void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
 //|							BYTE[4] Character ID
 //|							BYTE[2] Entry Tag for line selected provided in subcommand 0x14
 //o-----------------------------------------------------------------------------------------------o
-CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( NULL )
+CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( nullptr )
 {
 }
-CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targChar( NULL )
+CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targChar( nullptr )
 {
 	Receive();
 }
@@ -4259,7 +4259,7 @@ bool CPIBandageMacro::Handle(void)
 		for( auto i : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( i );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				SERIAL bandageSerial = tSock->GetDWord( 5 );
 				SERIAL targetSerial = tSock->GetDWord( 9 );
@@ -4436,7 +4436,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 					}
 
 					const CGuild * const mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-					if( mGuild != NULL )
+					if( mGuild != nullptr )
 					{
 						// Count the number of recruits and regular members, only proceeed
 						// if there's more than one (that would be the player themselves)
@@ -4689,7 +4689,7 @@ bool CPIAOSCommand::Handle( void )
 			for( auto i : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( i );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnSpecialMove( myChar, abilityID ) == 1 )
 					{
@@ -4700,7 +4700,7 @@ bool CPIAOSCommand::Handle( void )
 
 			// No individual scripts handling OnSpecialMove return true - let's check global script!
 			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				toExecute->OnSpecialMove( myChar, abilityID );
 			}
@@ -4724,7 +4724,7 @@ bool CPIAOSCommand::Handle( void )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnQuestGump( myChar ) == 1 )
 					{
@@ -4735,7 +4735,7 @@ bool CPIAOSCommand::Handle( void )
 
 			// No individual scripts handling OnSpecialMove returned true - let's check global script!
 			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				toExecute->OnQuestGump( myChar );
 			}

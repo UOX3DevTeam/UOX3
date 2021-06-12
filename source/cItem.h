@@ -236,7 +236,7 @@ public:
 	//    Ex) madewith = 34, 34 - 1 = 33, 33 = STEALING
 	// if is a negative value, add 1 from it and invert value.
 	//    Ex) madewith = -34, -34 + 1 = -33, Abs(-33) = 33 = STEALING.
-	// 0 = NULL
+	// 0 = nullptr
 	// So... a positive value is used when the item is made by a
 	// player with 95.0+ at that skill. Infact in this way when
 	// you click on the item appear its name and the name of the
@@ -265,10 +265,10 @@ public:
 	bool			IsContType( void ) const;
 
 	void			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A );
-	virtual void	Update( CSocket *mSock = NULL ) override;
+	virtual void	Update( CSocket *mSock = nullptr ) override;
 	virtual void	SendToSocket( CSocket *mSock ) override;
 	void			SendPackItemToSocket( CSocket *mSock );
-	virtual void	RemoveFromSight( CSocket *mSock = NULL );
+	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
 
 	virtual bool	Save( std::ofstream &outStream ) override;
 	virtual bool	DumpBody( std::ofstream &outStream ) const override;

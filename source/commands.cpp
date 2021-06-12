@@ -8,7 +8,7 @@
 #include "StringUtility.hpp"
 
 
-cCommands *Commands			= NULL;
+cCommands *Commands			= nullptr;
 
 cCommands::cCommands()
 {
@@ -23,7 +23,7 @@ cCommands::~cCommands()
 	for( size_t clearIter = 0; clearIter < clearance.size(); ++clearIter )
 	{
 		delete clearance[clearIter];
-		clearance[clearIter] = NULL;
+		clearance[clearIter] = nullptr;
 	}
 	clearance.clear();
 }
@@ -115,19 +115,19 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( command, mChar, NULL, "Insufficient clearance" );
+				Log( command, mChar, nullptr, "Insufficient clearance" );
 				s->sysmessage( 337 );
 				return;
 			}
 			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
 				Console.print( strutil::format("Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
-			Log( command, mChar, NULL, "Cleared" );
+			Log( command, mChar, nullptr, "Cleared" );
 			return;
 		}
 	}
@@ -138,11 +138,11 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 		bool plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 		if( !plClearance )
 		{
-			Log( command, mChar, NULL, "Insufficient clearance" );
+			Log( command, mChar, nullptr, "Insufficient clearance" );
 			s->sysmessage( 337 );
 			return;
 		}
-		Log( command, mChar, NULL, "Cleared" );
+		Log( command, mChar, nullptr, "Cleared" );
 		switch( findTarg->second.cmdType )
 		{
 			case CMD_TARGET:
@@ -189,7 +189,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					// -1 == event doesn't exist, or returned -1
 					// 0 == script returned false, 0, or nothing
@@ -213,11 +213,11 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( command, mChar, NULL, "Insufficient clearance" );
+				Log( command, mChar, nullptr, "Insufficient clearance" );
 				s->sysmessage( 337 );
 				return;
 			}
-			Log( command, mChar, NULL, "Cleared" );
+			Log( command, mChar, nullptr, "Cleared" );
 
 			switch( toFind->second.cmdType )
 			{
@@ -244,7 +244,7 @@ void cCommands::Load( void )
 {
 	SI16 commandCount = 0;
 	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
-	if( commands == NULL )
+	if( commands == nullptr )
 	{
 		InitClearance();
 		return;
@@ -289,7 +289,7 @@ void cCommands::Load( void )
 
 	Console << "   o Loading command levels" << myendl;
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
-	if( cmdClearance == NULL )
+	if( cmdClearance == nullptr )
 		InitClearance();
 	else
 	{
@@ -306,10 +306,10 @@ void cCommands::Load( void )
 		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
 		{
 			commandLevel_st *ourClear = (*cIter);
-			if( ourClear == NULL )
+			if( ourClear == nullptr )
 				continue;
 			cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
-			if( cmdClearance == NULL )
+			if( cmdClearance == nullptr )
 				continue;
 			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
 			{
@@ -347,7 +347,7 @@ void cCommands::Load( void )
 	CJSMappingSection *commandSection = JSMapping->GetSection( SCPT_COMMAND );
 	for( cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Command" );
 	}
 }
@@ -479,7 +479,7 @@ commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 {
 	size_t clearanceSize = clearance.size();
 	if( clearanceSize == 0 )
-		return NULL;
+		return nullptr;
 	if( commandLevel > clearance[0]->commandLevel )
 		return clearance[0];
 
@@ -548,9 +548,9 @@ bool cCommands::FinishedCommandList( void )
 CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 {
 	if( !CommandExists( cmdName ) )
-		return NULL;
+		return nullptr;
 	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
 	if( toFind == CommandMap.end() )
-		return NULL;
+		return nullptr;
 	return &(toFind->second);
 }

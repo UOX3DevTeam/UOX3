@@ -707,7 +707,7 @@ CServerData::~CServerData()
 //o-----------------------------------------------------------------------------------------------o
 /*void CServerData::RefreshIPs( void )
 {
-	struct hostent *lpHostEntry = NULL;
+	struct hostent *lpHostEntry = nullptr;
 
 	std::vector< physicalServer >::iterator slIter;
 	for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
@@ -715,7 +715,7 @@ CServerData::~CServerData()
 		if( !slIter->getDomain().empty() )
 		{
 			lpHostEntry = gethostbyname( slIter->getDomain().c_str() );
-			if( lpHostEntry != NULL )
+			if( lpHostEntry != nullptr )
 			{
 				struct in_addr *pinaddr;
 				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
@@ -3315,7 +3315,7 @@ bool CServerData::save( std::string filename )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load up the uox.ini file and parse it into the internals
 //|	Returns		-	pointer to the valid inmemory serverdata storage(this)
-//|						NULL is there is an error, or invalid file type
+//|						nullptr is there is an error, or invalid file type
 //o-----------------------------------------------------------------------------------------------o
 void CServerData::Load( void )
 {
@@ -3410,9 +3410,9 @@ bool CServerData::ParseINI( const std::string& filename )
 		{
 			//serverList.clear();
 			startlocations.clear();
-			for( ScriptSection *sect = toParse.FirstEntry(); sect != NULL; sect = toParse.NextEntry() )
+			for( ScriptSection *sect = toParse.FirstEntry(); sect != nullptr; sect = toParse.NextEntry() )
 			{
-				if( sect == NULL )
+				if( sect == nullptr )
 					continue;
 				std::string tag, data;
 				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
@@ -3817,7 +3817,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			auto csecs = strutil::sections( value, "," );
 			if( csecs.size() == 3 )
 			{
-				struct hostent *lpHostEntry = NULL;
+				struct hostent *lpHostEntry = nullptr;
 				sname	= strutil::stripTrim( csecs[0] );
 				sip		= strutil::stripTrim( csecs[1] );
 				sport	= strutil::stripTrim( csecs[2] );
@@ -3825,10 +3825,10 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 				toAdd.setName( sname );
 				// Ok look up the data here see if its a number
 				bool bDomain = true;
-				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
+				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == nullptr )
 				{
 					// this was not a domain name so check for IP address
-					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), static_cast<UI32>(sip.size()), AF_INET ) ) == NULL )
+					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), static_cast<UI32>(sip.size()), AF_INET ) ) == nullptr )
 					{
 						// We get here it wasn't a valid IP either.
 						Console.warning( strutil::format("Failed to translate %s", sip.c_str() ));
@@ -4333,7 +4333,7 @@ void CServerData::PostLoadDefaults( void )
 //o-----------------------------------------------------------------------------------------------o
 LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 {
-	LPSTARTLOCATION rvalue = NULL;
+	LPSTARTLOCATION rvalue = nullptr;
 	if( locNum < startlocations.size() )
 		rvalue = &startlocations[locNum];
 	return rvalue;
@@ -4620,7 +4620,7 @@ bool CServerData::incDay( void )
 
 physicalServer *CServerData::ServerEntry( UI16 entryNum )
 {
-	physicalServer *rvalue = NULL;
+	physicalServer *rvalue = nullptr;
 	if( entryNum < serverList.size() )
 		rvalue = &serverList[entryNum];
 	return rvalue;

@@ -154,7 +154,7 @@ void UnloadSpawnRegions( void )
 	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
 	while( spIter != spEnd )
 	{
-		if( spIter->second != NULL )
+		if( spIter->second != nullptr )
 			delete spIter->second;
 		++spIter;
 	}
@@ -172,7 +172,7 @@ void UnloadRegions( void )
 	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
 	while( tIter != tEnd )
 	{
-		if( tIter->second != NULL )
+		if( tIter->second != nullptr )
 			delete tIter->second;
 		++tIter;
 	}
@@ -370,7 +370,7 @@ void CollectGarbage( void )
 	{
 		CBaseObject *mObj = delqIter->first;
 		++delqIter;
-		if( mObj == NULL || mObj->isFree() || !mObj->isDeleted() )
+		if( mObj == nullptr || mObj->isFree() || !mObj->isDeleted() )
 		{
 			Console.warning( "Invalid object found in Deletion Queue" );
 			continue;
@@ -412,7 +412,7 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			s->ExposeToView();
 
 		s->SetOnHorse( true );
-		CItem *c = Items->CreateItem( NULL, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
+		CItem *c = Items->CreateItem( nullptr, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
 		c->SetName( x->GetName() );
 		c->SetDecayable( false );
 		c->SetLayer( IL_MOUNT );
@@ -435,14 +435,14 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			s->SendWornItems( (*cIter) );
 		}
 
-		if( x->GetTarg() != NULL )	// zero out target, under all circumstances
+		if( x->GetTarg() != nullptr )	// zero out target, under all circumstances
 		{
-			x->SetTarg( NULL );
+			x->SetTarg( nullptr );
 			if( x->IsAtWar() )
 				x->ToggleCombat();
 		}
 		if( ValidateObject( x->GetAttacker() ) )
-			x->GetAttacker()->SetTarg( NULL );
+			x->GetAttacker()->SetTarg( nullptr );
 		x->SetFrozen( true );
 		x->SetMounted( true );
 		x->SetInvulnerable( true );
@@ -546,7 +546,7 @@ void callGuards( CChar *mChar )
 	}
 
 	CMapRegion *toCheck = MapRegion->GetMapRegion( mChar );
-	if( toCheck == NULL )
+	if( toCheck == nullptr )
 		return;
 	GenericList< CChar * > *regChars = toCheck->GetCharList();
 	regChars->Push();
@@ -676,7 +676,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						{
 							if( mChar.IsMeditating() ) // Morrolan = Meditation
 							{
-								if( mSock != NULL )
+								if( mSock != nullptr )
 									mSock->sysmessage( 969 );
 								mChar.SetMeditating( false );
 							}
@@ -734,7 +734,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1240, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1240, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							mChar.Damage( (SI16)RandomNum( 1, 2 ) );
 							break;
@@ -743,7 +743,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1241, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1241, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
 							mChar.Damage( (SI16)pcalc );
@@ -753,7 +753,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1242, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1242, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
 							mChar.Damage( (SI16)pcalc );
@@ -763,7 +763,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1243, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mChar.GetName().c_str() );
 							}
 							pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
 							mChar.Damage( (SI16)pcalc );
@@ -779,7 +779,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						for( auto i : scriptTriggers )
 						{
 							cScript *toExecute = JSMapping->GetScript( i );
-							if( toExecute != NULL )
+							if( toExecute != nullptr )
 							{
 								SI08 retStatus = toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() );
 
@@ -792,7 +792,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						}
 
 						HandleDeath( ( &mChar ) );
-						if( mSock != NULL )
+						if( mSock != nullptr )
 							mSock->sysmessage( 1244 );
 					}
 				}
@@ -804,7 +804,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			if( mChar.GetPoisoned() > 0 )
 			{
 				mChar.SetPoisoned( 0 );
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->sysmessage( 1245 );
 			}
 		}
@@ -813,13 +813,13 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( !mChar.GetCanAttack() && mChar.GetTimer( tCHAR_PEACETIMER ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetCanAttack( true );
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->sysmessage( 1779 );
 	}
 
 	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->sysmessage( 1238 );
 		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
 		UpdateFlag( &mChar );
@@ -832,7 +832,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mChar.SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
 		else
 			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mSock != NULL && mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
+		if( mSock != nullptr && mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
 			mSock->sysmessage( 1239 );
 		UpdateFlag( &mChar );
 	}
@@ -874,7 +874,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		for( auto i : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( i );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				SI08 retStatus = toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() );
 
@@ -1019,7 +1019,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			if( toExecute->OnAISliver( &mChar ) == 1 )
 			{
@@ -1087,7 +1087,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
 		mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
 	}
-	Combat->CombatLoop( NULL, mChar );
+	Combat->CombatLoop( nullptr, mChar );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1105,7 +1105,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 			continue;
 		if( checkItems )
 		{
-			if( itemCheck->isDecayable() && itemCheck->GetCont() == NULL )
+			if( itemCheck->isDecayable() && itemCheck->GetCont() == nullptr )
 			{
 				if( itemCheck->GetType() == IT_HOUSESIGN && itemCheck->GetTempVar( CITV_MORE ) > 0 )
 				{
@@ -1118,7 +1118,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					for( auto scriptTrig : scriptTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
-						if( toExecute != NULL )
+						if( toExecute != nullptr )
 						{
 							if( toExecute->OnDecay( itemCheck ) == 0 )	// if it exists and we don't want hard code, return
 							{
@@ -1405,7 +1405,7 @@ void CWorldMain::CheckAutoTimers( void )
 			Network->pushConn();
 			for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 			{
-				if( wsSocket != NULL )
+				if( wsSocket != nullptr )
 				{
 					if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() )
 					{
@@ -1433,7 +1433,7 @@ void CWorldMain::CheckAutoTimers( void )
 		while( tIter != tEnd )
 		{
 			CTownRegion *myReg = tIter->second;
-			if( myReg != NULL )
+			if( myReg != nullptr )
 				myReg->PeriodicCheck();
 			++tIter;
 		}
@@ -1450,7 +1450,7 @@ void CWorldMain::CheckAutoTimers( void )
 		while( spIter != spEnd )
 		{
 			CSpawnRegion *spawnReg = spIter->second;
-			if( spawnReg != NULL )
+			if( spawnReg != nullptr )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
@@ -1559,7 +1559,7 @@ void CWorldMain::CheckAutoTimers( void )
 		Network->pushConn();
 		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 		{
-			if( iSock == NULL )
+			if( iSock == nullptr )
 				continue;
 			CChar *mChar		= iSock->CurrcharObj();
 			if( !ValidateObject( mChar ) )
@@ -1577,7 +1577,7 @@ void CWorldMain::CheckAutoTimers( void )
 					for( SI08 ctr2 = -1; ctr2 <= 1; ++ctr2 ) // Check 3 y colums
 					{
 						CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
-						if( tC == NULL )
+						if( tC == nullptr )
 							continue;
 						regionList.insert( tC );
 					}
@@ -1624,7 +1624,7 @@ void CWorldMain::CheckAutoTimers( void )
 				continue;
 			if( charCheck->IsNpc() )
 			{
-				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, doWeather ) )
+				if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) )
 				{
 					if( setNPCFlags )
 						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
@@ -1691,7 +1691,7 @@ void CWorldMain::CheckAutoTimers( void )
 				else if( uChar->GetUpdate( UT_STATWINDOW ) )
 				{
 					CSocket *uSock = uChar->GetSocket();
-					if( uSock != NULL )
+					if( uSock != nullptr )
 						uSock->statwindow( uChar );
 				}
 
@@ -1714,54 +1714,54 @@ void InitClasses( void )
 {
 	cwmWorldState->ClassesInitialized( true );
 
-	JSMapping		= NULL;	Effects		= NULL;
-	Commands		= NULL;	Combat		= NULL;
-	Items			= NULL;	Map			= NULL;
-	Npcs			= NULL;	Skills		= NULL;
-	Weight			= NULL;	JailSys		= NULL;
-	Network			= NULL;	Magic		= NULL;
-	Races			= NULL;	Weather		= NULL;
-	Movement		= NULL;	GuildSys	= NULL;
-	WhoList			= NULL;	OffList		= NULL;
-	Books			= NULL;	GMQueue		= NULL;
-	Dictionary		= NULL;	Accounts	= NULL;
-	MapRegion		= NULL;	SpeechSys	= NULL;
-	CounselorQueue	= NULL;
-	HTMLTemplates	= NULL;
-	FileLookup		= NULL;
+	JSMapping		= nullptr;	Effects		= nullptr;
+	Commands		= nullptr;	Combat		= nullptr;
+	Items			= nullptr;	Map			= nullptr;
+	Npcs			= nullptr;	Skills		= nullptr;
+	Weight			= nullptr;	JailSys		= nullptr;
+	Network			= nullptr;	Magic		= nullptr;
+	Races			= nullptr;	Weather		= nullptr;
+	Movement		= nullptr;	GuildSys	= nullptr;
+	WhoList			= nullptr;	OffList		= nullptr;
+	Books			= nullptr;	GMQueue		= nullptr;
+	Dictionary		= nullptr;	Accounts	= nullptr;
+	MapRegion		= nullptr;	SpeechSys	= nullptr;
+	CounselorQueue	= nullptr;
+	HTMLTemplates	= nullptr;
+	FileLookup		= nullptr;
 
 	JSEngine		= new CJSEngine;
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
-	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
-	if(( Dictionary		= new CDictionaryContainer )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
-	if(( Combat			= new CHandleCombat )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
-	if(( Commands		= new cCommands )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
-	if(( Items			= new cItem )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
-	if(( Map			= new CMulHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
-	if(( Npcs			= new cCharStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
-	if(( Skills			= new cSkills )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
-	if(( Weight			= new CWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
-	if(( Network		= new cNetworkStuff )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
-	if(( Magic			= new cMagic )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
-	if(( Races			= new cRaces )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
-	if(( Weather		= new cWeatherAb )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
-	if(( Movement		= new cMovement )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
-	if(( WhoList		= new cWhoList )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
-	if(( OffList		= new cWhoList( false ) )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
-	if(( Books			= new cBooks )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
-	if(( GMQueue		= new PageVector( "GM Queue" ) )		== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( JSMapping		= new CJSMapping )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	if(( FileLookup		= new CServerDefinitions() )			== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
+	if(( Dictionary		= new CDictionaryContainer )			== nullptr ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
+	if(( Combat			= new CHandleCombat )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
+	if(( Commands		= new cCommands )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
+	if(( Items			= new cItem )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
+	if(( Map			= new CMulHandler )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAP );
+	if(( Npcs			= new cCharStuff )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
+	if(( Skills			= new cSkills )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
+	if(( Weight			= new CWeight )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
+	if(( Network		= new cNetworkStuff )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
+	if(( Magic			= new cMagic )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
+	if(( Races			= new cRaces )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_RACES );
+	if(( Weather		= new cWeatherAb )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
+	if(( Movement		= new cMovement )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
+	if(( WhoList		= new cWhoList )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
+	if(( OffList		= new cWhoList( false ) )				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
+	if(( Books			= new cBooks )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
+	if(( GMQueue		= new PageVector( "GM Queue" ) )		== nullptr ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
+	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== nullptr ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
+	if(( JSMapping		= new CJSMapping )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
 	JSMapping->ResetDefaults();
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
-	if(( MapRegion		= new CMapHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
-	if(( Effects		= new cEffects )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
-	if(( HTMLTemplates	= new cHTMLTemplates )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
-	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
-	if(( SpeechSys		= new CSpeechQueue()	)				== NULL ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
-	if(( GuildSys		= new CGuildCollection() )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
-	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
+	if(( MapRegion		= new CMapHandler )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
+	if(( Effects		= new cEffects )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
+	if(( HTMLTemplates	= new cHTMLTemplates )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
+	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == nullptr ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
+	if(( SpeechSys		= new CSpeechQueue()	)				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
+	if(( GuildSys		= new CGuildCollection() )				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
+	if(( JailSys		= new JailSystem() )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1812,7 +1812,7 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 				else
 				{
 					// No other multi found where item is, safe to set item's multi to INVALIDSERIAL
-					if( findMulti( objToCheck ) == NULL )
+					if( findMulti( objToCheck ) == nullptr )
 						objToCheck->SetMulti( INVALIDSERIAL );
 				}
 			}
@@ -1831,7 +1831,7 @@ void InitMultis( void )
 	Console << "Initializing multis            ";
 
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, NULL, &FindMultiFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, nullptr, &FindMultiFunctor );
 
 	Console.PrintDone();
 }
@@ -1911,7 +1911,7 @@ void Shutdown( SI32 retCode )
 		Console.PrintDone();
 
 		Console << "Destroying class objects and pointers... ";
-		// delete any objects that were created (delete takes care of NULL check =)
+		// delete any objects that were created (delete takes care of nullptr check =)
 
 		delete Combat;
 		delete Commands;
@@ -2010,13 +2010,13 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		std::string sect			= std::string("ADVANCEMENT ") + strutil::number( advObj );
 		sect						= strutil::stripTrim( sect );
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
-		if( Advancement == NULL )
+		if( Advancement == nullptr )
 		{
 			Console << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
 			applyTo->SetAdvObj( 0 );
 			return;
 		}
-		CItem *retItem		= NULL;
+		CItem *retItem		= nullptr;
 		CItem *hairobject	= applyTo->GetItemAtLayer( IL_HAIR );
 		CItem *beardobject	= applyTo->GetItemAtLayer( IL_FACIALHAIR );
 		DFNTAGS tag			= DFNTAG_COUNTOFTAGS;
@@ -2057,7 +2057,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_EVALUATINGINTEL:	skillToSet = EVALUATINGINTEL;					break;
 				case DFNTAG_EQUIPITEM:
 					retItem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-					if( retItem != NULL )
+					if( retItem != nullptr )
 					{
 						if( !retItem->SetCont( applyTo ) )
 						{
@@ -2118,11 +2118,11 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( NULL, applyTo, strutil::stripTrim( csecs[0] ), strutil::value<std::uint16_t>(strutil::stripTrim( csecs[1] )), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::stripTrim( csecs[0] ), strutil::value<std::uint16_t>(strutil::stripTrim( csecs[1] )), OT_ITEM, true );
 							}
 							else
 							{
-								retItem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, cdata, 1, OT_ITEM, true );
 							}
 						}
 					}
@@ -2161,7 +2161,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 	else
 	{
 		CSocket *sock = applyTo->GetSocket();
-		if( sock != NULL )
+		if( sock != nullptr )
 			sock->sysmessage( 1366 );
 	}
 }
@@ -2197,7 +2197,7 @@ R32 roundNumber( R32 toRound)
 //o-----------------------------------------------------------------------------------------------o
 void doLight( CSocket *s, UI08 level )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 
 	CChar *mChar = s->CurrcharObj();
@@ -2220,7 +2220,7 @@ void doLight( CSocket *s, UI08 level )
 
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 	// we have a valid weather system
-	if( wSys != NULL )
+	if( wSys != nullptr )
 	{
 		const R32 lightMin = wSys->LightMin();
 		const R32 lightMax = wSys->LightMax();
@@ -2254,7 +2254,7 @@ void doLight( CSocket *s, UI08 level )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			if( toExecute->OnLightChange( mChar, toShow ) == 1 )
 			{
@@ -2269,7 +2269,7 @@ void doLight( CSocket *s, UI08 level )
 	{
 		// Check global script! Maybe there's another event there
 		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 			toExecute->OnLightChange( mChar, toShow );
 	}
 
@@ -2294,7 +2294,7 @@ void doLight( CChar *mChar, UI08 level )
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 
 	// we have a valid weather system
-	if( wSys != NULL )
+	if( wSys != nullptr )
 	{
 		const R32 lightMin = wSys->LightMin();
 		const R32 lightMax = wSys->LightMax();
@@ -2323,7 +2323,7 @@ void doLight( CChar *mChar, UI08 level )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			if( toExecute->OnLightChange( mChar, toShow ) == 1 )
 			{
@@ -2338,7 +2338,7 @@ void doLight( CChar *mChar, UI08 level )
 	{
 		// Check global script! Maybe there's another event there
 		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 			toExecute->OnLightChange( mChar, toShow );
 	}
 
@@ -2405,13 +2405,13 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
 	CTownRegion *iRegion	= mChar.GetRegion();
 	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
-	if( iRegion == NULL && calcReg != NULL )
+	if( iRegion == nullptr && calcReg != nullptr )
 		mChar.SetRegion( calcReg->GetRegionNum() );
 	else if( calcReg != iRegion )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
-			if( iRegion != NULL && calcReg != NULL )
+			if( iRegion != nullptr && calcReg != nullptr )
 			{
 				// Drake 08-30-99 If region name are the same, do not display message
 				//                for playing music when approaching Tavern
@@ -2472,14 +2472,14 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 				}
 			}
 		}
-		if( iRegion != NULL && calcReg != NULL )
+		if( iRegion != nullptr && calcReg != nullptr )
 		{
 			// Run onLeaveRegion/onEnterRegion for character
 			std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
 					toExecute->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
@@ -2493,7 +2493,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
 				}
@@ -2506,15 +2506,15 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
 				}
 			}
 		}
-		if( calcReg != NULL )
+		if( calcReg != nullptr )
 			mChar.SetRegion( calcReg->GetRegionNum() );
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			Effects->doSocketMusic( mSock );
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
@@ -2522,7 +2522,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 	}
 	else if( forceUpdateLight )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
@@ -2600,7 +2600,7 @@ void criminal( CChar *c )
 	if( !c->IsCriminal() && !c->IsMurderer() )
 	{
 		CSocket *cSock = c->GetSocket();
-		if( cSock != NULL )
+		if( cSock != nullptr )
 			cSock->sysmessage( 1379 );
 		UpdateFlag( c );
 	}
@@ -2678,7 +2678,7 @@ void UpdateFlag( CChar *mChar )
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( toExecute->OnFlagChange( mChar, newFlag, oldFlag ) == 1 )
 				{
@@ -2698,7 +2698,7 @@ void UpdateFlag( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 {
-	if( sock == NULL )
+	if( sock == nullptr )
 		return;
 	CPMapChange mapChange( worldNumber );
 	if( !initialLogin && worldNumber > 1 )
@@ -2725,14 +2725,14 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 //o-----------------------------------------------------------------------------------------------o
 void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 {
-	if( !ValidateObject( gate ) || ( sock == NULL && !ValidateObject( charMoving ) ) )
+	if( !ValidateObject( gate ) || ( sock == nullptr && !ValidateObject( charMoving ) ) )
 		return;
 	UI08 tWorldNum = (UI08)gate->GetTempVar( CITV_MORE );
 	UI16 tInstanceID = gate->GetInstanceID();
 	if( !Map->MapExists( tWorldNum ) )
 		return;
 	CChar *toMove = charMoving;
-	if( sock != NULL && !ValidateObject( charMoving ) )
+	if( sock != nullptr && !ValidateObject( charMoving ) )
 		toMove = sock->CurrcharObj();
 	if( !ValidateObject( toMove ) )
 		return;
@@ -2776,7 +2776,7 @@ void DoorMacro( CSocket *s )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *toCheck = (*rIter);
-		if( toCheck == NULL )	// no valid region
+		if( toCheck == nullptr )	// no valid region
 			continue;
 		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
@@ -2793,7 +2793,7 @@ void DoorMacro( CSocket *s )
 					{
 						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
 						cScript *envExecute = JSMapping->GetScript( envTrig );
-						if( envExecute != NULL )
+						if( envExecute != nullptr )
 							envExecute->OnUseChecked( mChar, itemCheck );
 
 						regItems->Pop();
@@ -2856,7 +2856,7 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
 		Console.PrintSectionBegin();
 
-		if(( cwmWorldState = new CWorldMain ) == NULL )
+		if(( cwmWorldState = new CWorldMain ) == nullptr )
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
 		cwmWorldState->ServerData()->Load();
 
@@ -2892,7 +2892,7 @@ int main( SI32 argc, char *argv[] )
 		CJSMappingSection *packetSection = JSMapping->GetSection( SCPT_PACKET );
 		for( cScript *ourScript = packetSection->First(); !packetSection->Finished(); ourScript = packetSection->Next() )
 		{
-			if( ourScript != NULL )
+			if( ourScript != nullptr )
 				ourScript->ScriptRegistration( "Packet" );
 		}
 
@@ -3005,7 +3005,7 @@ int main( SI32 argc, char *argv[] )
 			if( !serverEntry->getDomain().empty() )
 			{
 				hostent *hostEntry = gethostbyname( serverEntry->getDomain().c_str() );
-				if( hostEntry != NULL )
+				if( hostEntry != nullptr )
 				{
 					struct in_addr *pinaddr;
 					pinaddr = ((struct in_addr*)hostEntry->h_addr);
@@ -3020,7 +3020,7 @@ int main( SI32 argc, char *argv[] )
 			Console << "UOX: listening for incoming connections on Exernal/WAN IP: " << externalIP.c_str() << myendl;
 		}
 
-		auto &deviceIPs = IP4Address::deviceIPs();
+		auto deviceIPs = IP4Address::deviceIPs();
 		auto temp = strutil::sections( deviceIPs, "\n" );
 		for( auto &entry : temp )
 		{

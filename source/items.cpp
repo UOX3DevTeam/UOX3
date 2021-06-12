@@ -14,7 +14,7 @@
 #include "StringUtility.hpp"
 
 
-cItem *Items = NULL;
+cItem *Items = nullptr;
 
 ItemTypes FindItemTypeFromTag( const std::string& strToFind );
 
@@ -51,7 +51,7 @@ UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID )
 {
-	if( toApply == NULL || !ValidateObject( applyTo ) )
+	if( toApply == nullptr || !ValidateObject( applyTo ) )
 		return false;
 
 	std::string cdata;
@@ -202,7 +202,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				}
 
 				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
-				if( toFind == NULL )
+				if( toFind == nullptr )
 					Console.warning( strutil::format( "Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
 				else if( toFind == toApply )
 					Console.warning( strutil::format( "Infinite loop avoided with GET tag inside item script %s", scriptEntry.c_str() ));
@@ -445,7 +445,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
 		Console.warning(strutil::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial()) );
-		return NULL;
+		return nullptr;
 	}
 
 	if( inPack )
@@ -456,7 +456,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 		{
 			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
 			{
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
 				inPack = false; // Spawn item at character's feet instead
 			}
@@ -464,8 +464,8 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 	}
 
 	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID() );
-	if( iCreated == NULL )
-		return NULL;
+	if( iCreated == nullptr )
+		return nullptr;
 
 	if( iID != 0x0000 )
 	{
@@ -493,7 +493,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			toExecute->OnCreate( iCreated, false );
 		}
@@ -515,7 +515,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
 		Console.warning( strutil::format("CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() ));
-		return NULL;
+		return nullptr;
 	}
 
 	if( inPack )
@@ -526,7 +526,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 		{
 			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
 			{
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
 				inPack = false; // Spawn item at character's feet instead
 			}
@@ -534,15 +534,15 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 	}
 
 	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType );
-	if( iCreated == NULL )
-		return NULL;
+	if( iCreated == nullptr )
+		return nullptr;
 
 	if( iColor != 0xFFFF )
 		iCreated->SetColour( iColor );
 	if( iAmount > 1 && !iCreated->isPileable() )
 	{
 		// Turns out we need to spawn more than one item, let's do that here:
-		CItem *iCreated2 = NULL;
+		CItem *iCreated2 = nullptr;
 		for( UI16 i = 0; i < iAmount-1; ++i ) //minus 1 because 1 item has already been created at this point
 		{
 			iCreated2 = CreateBaseScriptItem( item, mChar->WorldNumber(), 1, mChar->GetInstanceID(), itemType );
@@ -571,11 +571,11 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
-		return NULL;
+		return nullptr;
 
 	CItem *iCreated = CreateRandomItem( itemList, mChar->WorldNumber(), mChar->GetInstanceID() );
-	if( iCreated == NULL )
-		return NULL;
+	if( iCreated == nullptr )
+		return nullptr;
 
 	if( iCreated->GetBuyValue() != 0 )
 	{
@@ -596,15 +596,15 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //o-----------------------------------------------------------------------------------------------o
 CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNum, const UI16 instanceID )
 {
-	CItem * iCreated	= NULL;
+	CItem * iCreated	= nullptr;
 	std::string sect	= "ITEMLIST " + sItemList;
 	sect				= strutil::stripTrim( sect );
 
 	if( sect == "blank" ) // The itemlist-entry is just a blank filler item
-		return NULL;
+		return nullptr;
 
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
-	if( ItemList != NULL )
+	if( ItemList != nullptr )
 	{
 		const size_t i = ItemList->NumEntries();
 		if( i > 0 )
@@ -635,8 +635,8 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
 {
 	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
-	if( mCreated == NULL )
-		return NULL;
+	if( mCreated == nullptr )
+		return nullptr;
 
 	mCreated->SetID( iID );
 	GetScriptItemSettings( mCreated );
@@ -658,11 +658,11 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI
 CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, const UI16 instanceID )
 {
 	if( itemType != OT_ITEM && itemType != OT_SPAWNER )
-		return NULL;
+		return nullptr;
 
 	CItem *iCreated = static_cast< CItem * >(ObjectFactory::getSingleton().CreateObject( itemType ));
-	if( iCreated == NULL )
-		return NULL;
+	if( iCreated == nullptr )
+		return nullptr;
 
 	iCreated->SetWipeable( true );
 	iCreated->WorldNumber( worldNum );
@@ -682,23 +682,23 @@ CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, c
 	ourItem						= strutil::stripTrim( ourItem );
 
 	if( ourItem == "blank" ) // The lootlist-entry is just a blank filler item
-		return NULL;
+		return nullptr;
 
 	ScriptSection *itemCreate	= FileLookup->FindEntry( ourItem, items_def );
-	if( itemCreate == NULL )
+	if( itemCreate == nullptr )
 	{
 		Console.error( strutil::format("CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str()) );
-		return NULL;
+		return nullptr;
 	}
 
-	CItem *iCreated = NULL;
+	CItem *iCreated = nullptr;
 	if( itemCreate->ItemListExist() )
 		iCreated = CreateRandomItem( itemCreate->ItemListData(), worldNum, instanceID );
 	else
 	{
 		iCreated = CreateBaseItem( worldNum, itemType, instanceID );
-		if( iCreated == NULL )
-			return NULL;
+		if( iCreated == nullptr )
+			return nullptr;
 
 		// Only set item to decayable by default if ini setting is enabled
 		if( cwmWorldState->ServerData()->ScriptItemsDecayable() )
@@ -716,7 +716,7 @@ CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, c
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				toExecute->OnCreate( iCreated, true );
 			}
@@ -744,7 +744,7 @@ void cItem::GetScriptItemSettings( CItem *iCreated )
 
 	const std::string item = "x" + hexID;
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
-	if( toFind != NULL )
+	if( toFind != nullptr )
 		ApplyItemSection( iCreated, toFind, item );
 }
 
@@ -767,7 +767,7 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 			iCreated->PlaceInPack();
 		}
 
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			// Refresh container tooltip
 			CPToolTip pSend( iCreated->GetContSerial() );
@@ -820,7 +820,7 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 				{
 					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR )
 					{
-						io->SetCont( NULL );
+						io->SetCont( nullptr );
 						io->SetLocation( (&toDecay) );
 						io->SetDecayTime( nextDecayItems );
 					}
@@ -1112,17 +1112,17 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 {
 	if( !ValidateObject( s ) || x.empty() )
 		return;
-	CItem *c = NULL;
+	CItem *c = nullptr;
 	if( randomItem )
 		c = CreateRandomItem( x, s->WorldNumber(), s->GetInstanceID() );
 	else
 		c = CreateBaseScriptItem( x, s->WorldNumber(), itemAmount, s->GetInstanceID() );
-	if( c == NULL )
+	if( c == nullptr )
 		return;
 
 	if( itemAmount > 1 && !c->isPileable() ) //Not stackable? Okay, spawn 'em all individually
 	{
-		CItem *iCreated2 = NULL;
+		CItem *iCreated2 = nullptr;
 		for( UI08 i = 0; i < itemAmount; ++i )
 		{
 			if( randomItem )
@@ -1218,9 +1218,9 @@ void cItem::GlowItem( CItem *i )
 			return;
 
 		CBaseObject *getCont = i->GetCont();
-		if( getCont == NULL ) // On the ground
+		if( getCont == nullptr ) // On the ground
 		{
-			j->SetCont( NULL );
+			j->SetCont( nullptr );
 			j->SetDir( 29 );
 			j->SetLocation( i );
 		}
@@ -1261,7 +1261,7 @@ void cItem::CheckEquipment( CChar *p )
 	if( ValidateObject( p ) )
 	{
 		CSocket *pSock = p->GetSocket();
-		if( pSock == NULL )
+		if( pSock == nullptr )
 			return;
 
 		const SI16 StrengthToCompare = p->GetStrength();
@@ -1277,7 +1277,7 @@ void cItem::CheckEquipment( CChar *p )
 					else
 						itemname = i->GetName();
 
-					i->SetCont( NULL );
+					i->SetCont( nullptr );
 					i->SetLocation( p );
 
 					SOCKLIST nearbyChars = FindNearbyPlayers( p );
@@ -1302,12 +1302,12 @@ void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 {
 	if( i->GetGood() < 0 )
 		return;
-	if( tReg == NULL )
+	if( tReg == nullptr )
 	{
 		CBaseObject *getLastCont = i->GetCont();
-		if( getLastCont != NULL )
+		if( getLastCont != nullptr )
 			tReg = calcRegionFromXY( getLastCont->GetX(), getLastCont->GetY(), getLastCont->WorldNumber(), getLastCont->GetInstanceID() );
-		if( tReg == NULL )
+		if( tReg == nullptr )
 			return;
 	}
 
@@ -1330,11 +1330,11 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 	CItem *charPack		= mChar->GetPackItem();
 
 	if( !ValidateObject( mChar ) || i->isCorpse() || ( !ValidateObject( iCont ) && !ValidateObject( charPack ) ) )
-		return NULL;
+		return nullptr;
 
 	CItem *c = i->Dupe();
-	if( c == NULL )
-		return NULL;
+	if( c == nullptr )
+		return nullptr;
 
 	c->IncLocation( 2, 2 );
 	if( ( !ValidateObject( iCont ) || iCont->GetObjType() != OT_ITEM ) && ValidateObject( charPack ) )
@@ -1351,7 +1351,7 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			toExecute->OnCreate( c, false );
 		}

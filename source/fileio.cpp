@@ -65,10 +65,10 @@ UOXFile::UOXFile( const char* const fileName, const char * const )
 								 fileName,
 								 GENERIC_READ,
 								 FILE_SHARE_READ,
-								 NULL,
+								 nullptr,
 								 OPEN_EXISTING,
 								 FILE_FLAG_SEQUENTIAL_SCAN,
-								 NULL
+								 nullptr
 								 );
 
 	if( hFile == INVALID_HANDLE_VALUE )
@@ -76,11 +76,11 @@ UOXFile::UOXFile( const char* const fileName, const char * const )
 
 	// Store the size of the file, it's used to construct
 	//  the end iterator
-	fileSize = ::GetFileSize( hFile, NULL );
+	fileSize = ::GetFileSize( hFile, nullptr );
 
-	HANDLE hMap = ::CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
+	HANDLE hMap = ::CreateFileMapping( hFile, nullptr, PAGE_READONLY, 0, 0, nullptr );
 
-	if( hMap == NULL )
+	if( hMap == nullptr )
 	{
 		::CloseHandle( hFile );
 		return;
@@ -272,12 +272,12 @@ void LoadSkills( void )
 	UI08 i = 0;
 	for( Script *creatScp = FileLookup->FirstScript( skills_def ); !FileLookup->FinishedScripts( skills_def ); creatScp = FileLookup->NextScript( skills_def ) )
 	{
-		if( creatScp == NULL )
+		if( creatScp == nullptr )
 			continue;
 
-		for( ScriptSection *SkillList = creatScp->FirstEntry(); SkillList != NULL; SkillList = creatScp->NextEntry() )
+		for( ScriptSection *SkillList = creatScp->FirstEntry(); SkillList != nullptr; SkillList = creatScp->NextEntry() )
 		{
-			if( SkillList == NULL )
+			if( SkillList == nullptr )
 				continue;
 
 			skEntry = creatScp->EntryName();
@@ -352,11 +352,11 @@ void LoadSpawnRegions( void )
 	UI16 i					= 0;
 	for( Script *spnScp = FileLookup->FirstScript( spawn_def ); !FileLookup->FinishedScripts( spawn_def ); spnScp = FileLookup->NextScript( spawn_def ) )
 	{
-		if( spnScp == NULL )
+		if( spnScp == nullptr )
 			continue;
-		for( ScriptSection *toScan = spnScp->FirstEntry(); toScan != NULL; toScan = spnScp->NextEntry() )
+		for( ScriptSection *toScan = spnScp->FirstEntry(); toScan != nullptr; toScan = spnScp->NextEntry() )
 		{
-			if( toScan == NULL )
+			if( toScan == nullptr )
 				continue;
 			std::string sectionName = spnScp->EntryName();
 			auto ssecs = strutil::sections( sectionName, " " );
@@ -387,7 +387,7 @@ void LoadRegions( void )
 	cwmWorldState->townRegions.clear();
 	std::string regionsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc";
 	bool performLoad		= false;
-	Script *ourRegions		= NULL;
+	Script *ourRegions		= nullptr;
 	if( FileExists( regionsFile ) )
 	{
 		performLoad = true;
@@ -398,12 +398,12 @@ void LoadRegions( void )
 	std::string regEntry;
 	for( Script *regScp = FileLookup->FirstScript( regions_def ); !FileLookup->FinishedScripts( regions_def ); regScp = FileLookup->NextScript( regions_def ) )
 	{
-		if( regScp == NULL )
+		if( regScp == nullptr )
 			continue;
 
-		for( ScriptSection *toScan = regScp->FirstEntry(); toScan != NULL; toScan = regScp->NextEntry() )
+		for( ScriptSection *toScan = regScp->FirstEntry(); toScan != nullptr; toScan = regScp->NextEntry() )
 		{
-			if( toScan == NULL )
+			if( toScan == nullptr )
 				continue;
 
 			regEntry = regScp->EntryName();
@@ -435,10 +435,10 @@ void LoadRegions( void )
 	if( performLoad )
 	{
 		delete ourRegions;
-		ourRegions = NULL;
+		ourRegions = nullptr;
 	}
 	ScriptSection *InstaLog = FileLookup->FindEntry( "INSTALOG", regions_def );
-	if( InstaLog == NULL )
+	if( InstaLog == nullptr )
 		return;
 	LogoutLocationEntry toAdd;
 	std::string data, UTag;
@@ -492,17 +492,17 @@ void LoadTeleportLocations( void )
 	}
 
 	Script *teleportData = new Script( filename, NUM_DEFS, false );
-	if( teleportData != NULL )
+	if( teleportData != nullptr )
 	{
 		cwmWorldState->teleLocs.reserve( teleportData->NumEntries() );
 
 		UI16 tempX, tempY;
 		SI08 tempZ;
-		ScriptSection *teleportSect = NULL;
+		ScriptSection *teleportSect = nullptr;
 		std::string tag, data, temp;
-		for( teleportSect = teleportData->FirstEntry(); teleportSect != NULL; teleportSect = teleportData->NextEntry() )
+		for( teleportSect = teleportData->FirstEntry(); teleportSect != nullptr; teleportSect = teleportData->NextEntry() )
 		{
-			if( teleportSect != NULL )
+			if( teleportSect != nullptr )
 			{
 				for( tag = teleportSect->First(); !teleportSect->AtEnd(); tag = teleportSect->Next() )
 				{
@@ -569,12 +569,12 @@ void LoadCreatures( void )
 	UI16 i = 0;
 	for( Script *creatScp = FileLookup->FirstScript( creatures_def ); !FileLookup->FinishedScripts( creatures_def ); creatScp = FileLookup->NextScript( creatures_def ) )
 	{
-		if( creatScp == NULL )
+		if( creatScp == nullptr )
 			continue;
 
-		for( ScriptSection *creatureData = creatScp->FirstEntry(); creatureData != NULL; creatureData = creatScp->NextEntry() )
+		for( ScriptSection *creatureData = creatScp->FirstEntry(); creatureData != nullptr; creatureData = creatScp->NextEntry() )
 		{
-			if( creatureData == NULL )
+			if( creatureData == nullptr )
 				continue;
 
 			cEntry = creatScp->EntryName();
@@ -784,7 +784,7 @@ void LoadPlaces( void )
 					Console.warning( strutil::format("Doubled up entry in Location.dfn (%u)", entryNum) );
 				}
 				toAdd = &cwmWorldState->goPlaces[entryNum];
-				if( toAdd != NULL )
+				if( toAdd != nullptr )
 				{
 					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 					{

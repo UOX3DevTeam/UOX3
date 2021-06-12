@@ -76,12 +76,12 @@ static JSExtendedClass UOXChar_class =
 		JS_ResolveStub,
 		JS_ConvertStub,
 		JS_FinalizeStub,
-		NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL
+		nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr
 	},
 	CBaseObject_equality,
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
 	JSCLASS_NO_RESERVED_MEMBERS
 };
 
@@ -97,12 +97,12 @@ static JSExtendedClass UOXItem_class =
 		JS_ResolveStub,
 		JS_ConvertStub,
 		JS_FinalizeStub,
-		NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL
+		nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr
 	},
 	CBaseObject_equality,
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
 	JSCLASS_NO_RESERVED_MEMBERS
 };
 
@@ -249,12 +249,12 @@ static JSExtendedClass UOXSocket_class =
 		JS_ResolveStub,
 		JS_ConvertStub,
 		JS_FinalizeStub,
-		NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL
+		nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr
 	},
 	CSocket_equality,
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
 	JSCLASS_NO_RESERVED_MEMBERS
 };
 
@@ -387,12 +387,12 @@ static JSExtendedClass UOXParty_class =
 		JS_ResolveStub,
 		JS_ConvertStub,
 		JS_FinalizeStub,
-		NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL
+		nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr
 	},
 	CParty_equality,
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
 	JSCLASS_NO_RESERVED_MEMBERS
 };
 

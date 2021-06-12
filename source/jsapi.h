@@ -1971,10 +1971,10 @@ JS_CStringsAreUTF8();
  * of the destination buffer before the call; on return, *dstlenp contains the
  * number of bytes (JS_EncodeCharacters) or jschars (JS_DecodeBytes) actually
  * stored.  To determine the necessary destination buffer size, make a sizing
- * call that passes NULL for dst.
+ * call that passes nullptr for dst.
  *
  * On errors, the functions report the error. In that case, *dstlenp contains
- * the number of characters or bytes transferred so far.  If cx is NULL, no
+ * the number of characters or bytes transferred so far.  If cx is nullptr, no
  * error is reported on failure, and the functions simply return JS_FALSE.
  *
  * NB: Neither function stores an additional zero byte or jschar after the
@@ -2009,14 +2009,14 @@ struct JSLocaleCallbacks {
 
 /*
  * Establish locale callbacks. The pointer must persist as long as the
- * JSContext.  Passing NULL restores the default behaviour.
+ * JSContext.  Passing nullptr restores the default behaviour.
  */
 extern JS_PUBLIC_API(void)
 JS_SetLocaleCallbacks(JSContext *cx, JSLocaleCallbacks *callbacks);
 
 /*
  * Return the address of the current locale callbacks struct, which may
- * be NULL.
+ * be nullptr.
  */
 extern JS_PUBLIC_API(JSLocaleCallbacks *)
 JS_GetLocaleCallbacks(JSContext *cx);
@@ -2176,7 +2176,7 @@ JS_DropExceptionState(JSContext *cx, JSExceptionState *state);
 /*
  * If the given value is an exception object that originated from an error,
  * the exception will contain an error report struct, and this API will return
- * the address of that struct.  Otherwise, it returns NULL.  The lifetime of
+ * the address of that struct.  Otherwise, it returns nullptr.  The lifetime of
  * the error report struct that might be returned is the same as the lifetime
  * of the exception object.
  */

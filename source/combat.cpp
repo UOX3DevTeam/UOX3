@@ -20,7 +20,7 @@
 #define DBGFILE "combat.cpp"
 #define DEBUG_COMBAT		0
 
-CHandleCombat *Combat = NULL;
+CHandleCombat *Combat = nullptr;
 
 #define SWINGAT (UI32)1.75 * 1000
 
@@ -49,7 +49,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		return false;
 	if( cTarget->GetVisible() > 2 )
 		return false;
-	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( NULL, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 		return false;
 
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
@@ -84,7 +84,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			returningAttack = true;
 		}
 
-		if( cTarget->GetSocket() != NULL )
+		if( cTarget->GetSocket() != nullptr )
 		{
 			CPAttackOK tSend = (*cAttack);
 			cTarget->GetSocket()->Send( &tSend );
@@ -97,7 +97,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
 		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
 		{
-			cTarget->TextMessage( NULL, 335, TALK, true );
+			cTarget->TextMessage( nullptr, 335, TALK, true );
 			callGuards( cTarget, cAttack );
 		}
 	}
@@ -148,7 +148,7 @@ void callGuards( CChar *mChar, CChar *targChar );
 //o-----------------------------------------------------------------------------------------------o
 void CHandleCombat::PlayerAttack( CSocket *s )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 
 	CChar *ourChar = s->CurrcharObj();
@@ -165,13 +165,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 	SERIAL serial = s->GetDWord( 1 );
 	if( serial == INVALIDSERIAL )
 	{
-		ourChar->SetTarg( NULL );
+		ourChar->SetTarg( nullptr );
 		return;
 	}
 	CChar *i = calcCharObjFromSer( serial );
 	if( !ValidateObject( i ) )
 	{
-		ourChar->SetTarg( NULL );
+		ourChar->SetTarg( nullptr );
 		return;
 	}
 	if( ourChar->IsDead() )
@@ -194,15 +194,15 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 									Effects->PlayCharacterAnimation( i, 0x10 );
 									NpcResurrectTarget( ourChar );
 									Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
-									i->TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
+									i->TextMessage( nullptr, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
 								}
 							}
 						}
 						else
-							i->TextMessage( NULL, 321, TALK, true );
+							i->TextMessage( nullptr, 321, TALK, true );
 					}
 					else // Character is criminal or murderer
-						i->TextMessage( NULL, 322, TALK, true );
+						i->TextMessage( nullptr, 322, TALK, true );
 					break;
 				case AI_HEALER_E: // Evil Healer
 					if( ourChar->IsMurderer() )
@@ -222,15 +222,15 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 										Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET ); // 0x10
 									NpcResurrectTarget( ourChar );
 									Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-									i->TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
+									i->TextMessage( nullptr, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
 								}
 							}
 						}
 						else
-							i->TextMessage( NULL, 328, TALK, true );
+							i->TextMessage( nullptr, 328, TALK, true );
 					}
 					else
-						i->TextMessage( NULL, 329, TALK, true );
+						i->TextMessage( nullptr, 329, TALK, true );
 					break;
 				default:
 					s->sysmessage( 330 );
@@ -259,7 +259,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				// -1 == script doesn't exist, or returned -1
 				// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -313,13 +313,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( i->IsNpc() && i->GetQuestType() == 0xFF && i->GetOwnerObj() == ourChar )
 		{
 			i->SetNpcWander( WT_FREE );   // Wander freely
-			i->SetFTarg( NULL );			 // Reset follow target
+			i->SetFTarg( nullptr );			 // Reset follow target
 			i->SetQuestType( 0 );         // Reset quest type
 			i->SetQuestDestRegion( 0 );   // Reset quest destination region
 			// Set a timer to automatically delete the NPC
 			i->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
-			i->SetOwner( NULL );
-			i->TextMessage( NULL, 1797, TALK, false ); // Send out the rant about being abandoned
+			i->SetOwner( nullptr );
+			i->TextMessage( nullptr, 1797, TALK, false ); // Send out the rant about being abandoned
 		}
 
 		//flag them FIRST so that anything attacking them as a result of this is not flagged.
@@ -329,7 +329,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			bool regionGuarded = ( i->GetRegion()->IsGuarded() );
 			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[i->GetID()].IsHuman() )
 			{
-				i->TextMessage( NULL, 335, TALK, true );
+				i->TextMessage( nullptr, 335, TALK, true );
 				callGuards( i, ourChar );
 			}
 		}
@@ -337,12 +337,12 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( i->IsGuarded() )
 			petGuardAttack( ourChar, i, i );
 
-		ourChar->TextMessage( NULL, 334, EMOTE, 1, ourChar->GetName().c_str(), i->GetName().c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
+		ourChar->TextMessage( nullptr, 334, EMOTE, 1, ourChar->GetName().c_str(), i->GetName().c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
 
 		if( !i->IsNpc() )
 		{
 			CSocket *iSock = i->GetSocket();
-			if( iSock != NULL )
+			if( iSock != nullptr )
 				i->TextMessage( iSock, 1281, EMOTE, 1, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
 		}
 
@@ -373,7 +373,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -401,18 +401,18 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		{
 			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
 			{
-				cTarget->TextMessage( NULL, 1282, TALK, true );
+				cTarget->TextMessage( nullptr, 1282, TALK, true );
 				callGuards( cTarget, cAttack );
 			}
 		}
 	}
 	if( cAttack->DidAttackFirst() )
 	{
-		cAttack->TextMessage( NULL, 334, EMOTE, 1, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby
+		cAttack->TextMessage( nullptr, 334, EMOTE, 1, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby
 		if( !cTarget->IsNpc() )
 		{
 			CSocket *iSock = cTarget->GetSocket();
-			if( iSock != NULL )
+			if( iSock != nullptr )
 				cTarget->TextMessage( iSock, 1281, EMOTE, 1, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!"
 		}
 	}
@@ -426,19 +426,19 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 CItem * CHandleCombat::getWeapon( CChar *i )
 {
 	if( !ValidateObject( i ) )
-		return NULL;
+		return nullptr;
 
 	CItem *j = i->GetItemAtLayer( IL_RIGHTHAND );
 	if( ValidateObject( j ) )
 	{
 		if( j->GetType() == IT_SPELLBOOK )	// spell books aren't weapons
-			return NULL;
+			return nullptr;
 		return j;
 	}
 	j = i->GetItemAtLayer( IL_LEFTHAND );
 	if( ValidateObject( j ) && !j->IsShieldType() )
 		return j;
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -454,7 +454,7 @@ CItem * CHandleCombat::getShield( CChar *i )
 		if( ValidateObject( shield ) && shield->IsShieldType() )
 			return shield;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -890,7 +890,7 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 				if( weapon->GetHP() <= 0 )
 				{
 					CSocket *mSock = p->GetSocket();
-					if( mSock != NULL )
+					if( mSock != nullptr )
 					{
 						std::string name;
 						getTileName( (*weapon), name );
@@ -1077,7 +1077,7 @@ CItem *CHandleCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef
 CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
 {
 	SI32 armorDef = 0;
-	CItem *currItem = NULL;
+	CItem *currItem = nullptr;
 	switch( bodyLoc )
 	{
 		case 1:		// Torso
@@ -1144,7 +1144,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 
 	if( !mChar->IsNpc() || cwmWorldState->creatures[mChar->GetID()].IsHuman() ) // Polymorphed Characters and GM's can still wear armor
 	{
-		CItem *defendItem = NULL;
+		CItem *defendItem = nullptr;
 		if( hitLoc == 0 )
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
@@ -1169,7 +1169,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 			if( defendItem->GetHP() <= 0 )
 			{
 				CSocket *mSock = mChar->GetSocket();
-				if( mSock != NULL )
+				if( mSock != nullptr )
 				{
 					std::string name;
 					getTileName( (*defendItem), name );
@@ -1375,7 +1375,7 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 		}
 	}
 	else if( mChar->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == NULL || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 		CombatAnimsNew( mChar );
 	else if( mChar->IsOnHorse() )
 		CombatOnHorse( mChar );
@@ -1488,7 +1488,7 @@ SI16 CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapo
 	if( weapon->GetRace() == defend->GetRace() )
 		amount = bDamage;
 	CRace *rPtr = Races->Race( defend->GetRace() );
-	if( rPtr != NULL )
+	if( rPtr != nullptr )
 	{
 		for( SI32 i = LIGHT; i < WEATHNUM; ++i )
 		{
@@ -1514,7 +1514,7 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 
 	CSocket *targSock = ourTarg->GetSocket();
 
-	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != NULL )
+	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != nullptr )
 	{
 		UI08 randHit = RandomNum( 0, 2 );
 		switch( hitLoc )
@@ -1672,7 +1672,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 		default:
 			damage = (R32)baseDamage;
 			// If the race is weak to this element double the damage
-			if( rPtr != NULL )
+			if( rPtr != nullptr )
 			{
 				if( rPtr->AffectedBy( damageType ) )
 					damage *= 2;
@@ -1722,7 +1722,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					// Play shield parrying FX
 					Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
 
-					if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != NULL )
+					if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != nullptr )
 					{
 						targSock->sysmessage( 1805 ); // You block the attack!
 					}
@@ -1732,7 +1732,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						shield->IncHP( -1 );
 					if( shield->GetHP() <= 0 )
 					{
-						if( targSock != NULL )
+						if( targSock != nullptr )
 							targSock->sysmessage( 283 ); // Your shield has been destroyed!
 						shield->Delete();
 					}
@@ -1769,7 +1769,7 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// -1 == event doesn't exist, default to hard code
 			// Other value = calculated damage from script
@@ -1829,10 +1829,10 @@ void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
 			for( UI08 splitcount = 0; splitcount < splitnum; ++splitcount )
 			{
 				CChar *c = toSplit->Dupe();
-				if( c == NULL )
+				if( c == nullptr )
 					continue;
 
-				c->SetFTarg( NULL );
+				c->SetFTarg( nullptr );
 				c->SetLocation( toSplit->GetX() + 1, toSplit->GetY(), toSplit->GetZ() );
 				c->SetKills( 0 );
 				c->SetHP( toSplit->GetMaxHP() );
@@ -1872,7 +1872,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			if( toExecute->OnSwing( mWeapon, &mChar, ourTarg ) == 0 )
 			{
@@ -1888,7 +1888,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		for( auto scriptTrig : weaponScriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( toExecute->OnSwing( mWeapon, &mChar, ourTarg ) == 0 )
 				{
@@ -1907,7 +1907,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		SOCKLIST nearbyChars = FindNearbyPlayers( &mChar );
 		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
-			if( (*cIter) != NULL )
+			if( (*cIter) != nullptr )
 				(*cIter)->Send( &tSend );
 		}
 
@@ -1936,7 +1936,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 			else
 			{
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->sysmessage( 309 );
 				return;
 			}
@@ -1962,7 +1962,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				UI16 ammoID = mWeapon->GetAmmoID();
 				UI16 ammoHue = mWeapon->GetAmmoHue();
-				Items->CreateItem( NULL, ourTarg, ammoID, 1, ammoHue, OT_ITEM, false );
+				Items->CreateItem( nullptr, ourTarg, ammoID, 1, ammoHue, OT_ITEM, false );
 			}
 
 			PlayMissedSoundEffect( &mChar );
@@ -1998,7 +1998,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					ourTarg->SetPoisoned( mChar.GetPoisonStrength() );
 					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32> (40 / ourTarg->GetPoisoned() )) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs
 					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON ) ) ); //wear off starts after poison takes effect
-					if( targSock != NULL )
+					if( targSock != nullptr )
 						targSock->sysmessage( 282 );
 				}
 			}
@@ -2007,7 +2007,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if( ourDamage > 0 )
 			{
 				// Interrupt Spellcasting
-				if( !ourTarg->IsNpc() && targSock != NULL )
+				if( !ourTarg->IsNpc() && targSock != nullptr )
 				{
 					if( ourTarg->IsCasting() && targSock->CurrentSpellType() == 0 )
 					{
@@ -2041,7 +2041,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnAttack( &mChar, ourTarg );
 				}
@@ -2051,7 +2051,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			for( auto scriptTrig : defScriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					toExecute->OnDefense( &mChar, ourTarg );
 				}
@@ -2072,7 +2072,7 @@ inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 
 	mChar->SetSpellCast( spellNum );
 	mChar->SetTarg( mChar );
-	Magic->CastSpell( NULL, mChar );
+	Magic->CastSpell( nullptr, mChar );
 	mChar->StopSpell();
 	mChar->SetTarg( ourTarg );
 }
@@ -2249,7 +2249,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 					break;
 			}
 			if( npcAttack->GetSpellCast() != -1 )
-				Magic->CastSpell( NULL, npcAttack );
+				Magic->CastSpell( nullptr, npcAttack );
 
 			//Adjust spellDelay based on UOX.INI setting:
 			SI08 spellDelay = floor( ( npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed() ) + 0.5 );
@@ -2324,11 +2324,11 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			//Check if ourTarg validates as another character. If not, don't use
 			if( !ValidateObject( ourTarg ))
-				ourTarg = NULL;
+				ourTarg = nullptr;
 
 			// -1 == event doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -2345,25 +2345,25 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
 		mChar->SetNpcWander( WT_FREE );
 		mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetWalkingSpeed() ) );
-		mChar->TextMessage( NULL, 281, TALK, false );
+		mChar->TextMessage( nullptr, 281, TALK, false );
 	}
 
 	if( ValidateObject( ourTarg ) && ourTarg->GetTarg() == mChar )
 	{
-		ourTarg->SetTarg( NULL );
-		ourTarg->SetAttacker( NULL );
+		ourTarg->SetTarg( nullptr );
+		ourTarg->SetAttacker( nullptr );
 		ourTarg->SetAttackFirst( false );
 		if( ourTarg->IsAtWar() )
 			ourTarg->ToggleCombat();
 	}
-	mChar->SetTarg( NULL );
+	mChar->SetTarg( nullptr );
 	CChar *attAttacker = mChar->GetAttacker();
 	if( ValidateObject( attAttacker ) )
 	{
 		attAttacker->SetAttackFirst( false );
-		attAttacker->SetAttacker( NULL );
+		attAttacker->SetAttacker( nullptr );
 	}
-	mChar->SetAttacker( NULL );
+	mChar->SetAttacker( nullptr );
 	mChar->SetAttackFirst( false );
 	if( mChar->IsAtWar() && mChar->IsNpc() )
 		mChar->ToggleCombat();
@@ -2417,7 +2417,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 {
 	CChar *ourTarg = mChar.GetTarg();
-	if( ourTarg == NULL )
+	if( ourTarg == nullptr )
 		return;
 
 	if( mChar.IsNpc() && mChar.GetTimer( tNPC_EVADETIME ) > cwmWorldState->GetUICurrentTime() )
@@ -2461,7 +2461,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					mChar.SetLocation( ourTarg );
 					Effects->PlaySound( &mChar, 0x01FE );
 					Effects->PlayStaticAnimation( &mChar, 0x372A, 0x09, 0x06 );
-					mChar.TextMessage( NULL, 1616, TALK, true );
+					mChar.TextMessage( nullptr, 1616, TALK, true );
 				}
 				else
 					InvalidateAttacker( &mChar );
@@ -2469,8 +2469,8 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		}
 		if( !validTarg )
 		{
-			mChar.SetTarg( NULL );
-			mChar.SetAttacker( NULL );
+			mChar.SetTarg( nullptr );
+			mChar.SetAttacker( nullptr );
 			mChar.SetAttackFirst( false );
 			if( mChar.IsAtWar() )
 				mChar.ToggleCombat();
@@ -2500,10 +2500,10 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 		return;
 
 	bool reUseGuard		= false;
-	CChar *getGuard		= NULL;
+	CChar *getGuard		= nullptr;
 	CMapRegion *toCheck	= MapRegion->GetMapRegion( mChar );
 
-	if( toCheck != NULL )
+	if( toCheck != nullptr )
 	{
 		GenericList< CChar * > *regChars = toCheck->GetCharList();
 		regChars->Push();
@@ -2560,7 +2560,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 			Effects->PlaySound( getGuard, 0x01FE );
 			Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
 
-			getGuard->TextMessage( NULL, 313, TALK, true );
+			getGuard->TextMessage( nullptr, 313, TALK, true );
 		}
 	}
 }
@@ -2587,7 +2587,7 @@ void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *gua
 		else
 		{
 			CSocket *oSock = owner->GetSocket();
-			if( oSock != NULL )
+			if( oSock != nullptr )
 				oSock->sysmessage( 1629 );
 		}
 	}

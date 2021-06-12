@@ -49,7 +49,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM },
 	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM },
-	{ NULL,					(SI08)NULL,				(UI08)0			   }
+	{ nullptr,					(SI08)0,				(UI08)0			   }
 };
 
 static JSPropertySpec CRaceProperties[] =
@@ -68,7 +68,7 @@ static JSPropertySpec CRaceProperties[] =
 	{ "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM },
 	{ "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM },
 	{ "nightVision",		CRP_NIGHTVISION,		JSPROP_ENUMANDPERM },
-	{ NULL,					(SI08)NULL,				(UI08)0			   }
+	{ nullptr,					(SI08)0,				(UI08)0			   }
 };
 
 
@@ -105,7 +105,7 @@ static JSPropertySpec CRegionProperties[] =
 	{ "music",				CREGP_MUSIC,				JSPROP_ENUMANDPERM },
 	{ "weather",			CREGP_WEATHER,				JSPROP_ENUMANDPERM },
 	{ "owner",				CREGP_OWNER,				JSPROP_ENUMANDPERM },
-	{ NULL,					(SI08)NULL,					(UI08)0			   }
+	{ nullptr,					(SI08)0,					(UI08)0			   }
 };
 
 static JSPropertySpec CSpawnRegionProperties[] =
@@ -131,7 +131,7 @@ static JSPropertySpec CSpawnRegionProperties[] =
 	{ "minTime",			CSPAWNREGP_MINTIME,					JSPROP_ENUMANDPERM },
 	{ "maxTime",			CSPAWNREGP_MAXTIME,					JSPROP_ENUMANDPERM },
 	{ "call",				CSPAWNREGP_CALL,					JSPROP_ENUMANDPERM },
-	{ NULL,					(SI08)NULL,					(UI08)0			   }
+	{ nullptr,					(SI08)0,					(UI08)0			   }
 };
 
 static JSPropertySpec CGuildProperties[] =
@@ -147,7 +147,7 @@ static JSPropertySpec CGuildProperties[] =
 	{ "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM },
 	{ "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM },
 	{ "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM },
-	{ NULL,				(SI08)NULL,			(UI08)0}
+	{ nullptr,				(SI08)0,			(UI08)0}
 };
 
 static JSPropertySpec CCharacterProps[] =
@@ -301,7 +301,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM },
 	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM },
 
-	{ NULL,			(SI08)NULL,			(UI08)0}
+	{ nullptr,			(SI08)0,			(UI08)0}
 };
 
 static JSPropertySpec CItemProps[] =
@@ -441,7 +441,7 @@ static JSPropertySpec CItemProps[] =
 	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM },
 
 
-	{ NULL,			(SI08)NULL,			(UI08)0}
+	{ nullptr,			(SI08)0,			(UI08)0}
 };
 
 static JSPropertySpec CSocketProps[] =
@@ -482,7 +482,7 @@ static JSPropertySpec CSocketProps[] =
 	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM },
 	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM },
 	{ "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM },
-	{ NULL,					(SI08)NULL,				(UI08)0}
+	{ nullptr,					(SI08)0,				(UI08)0}
 };
 
 static JSPropertySpec CSkillsProps[] =
@@ -546,14 +546,14 @@ static JSPropertySpec CSkillsProps[] =
 	{ "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM },
 	{ "throwing",			THROWING,			JSPROP_ENUMANDPERM },
 	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM },
-	{ NULL,					(SI08)NULL,			(UI08)0}
+	{ nullptr,					(SI08)0,			(UI08)0}
 };
 
 static JSPropertySpec CGumpDataProperties[] =
 {
 	{	"buttons",	CGumpData_Button,	JSPROP_ENUMANDPERM	},
 	{	"IDs",		CGumpData_ID ,		JSPROP_ENUMANDPERM	},
-	{	NULL,		(SI08)NULL,			(UI08)0				}
+	{	nullptr,		(SI08)0,			(UI08)0				}
 
 };
 
@@ -595,14 +595,14 @@ static JSPropertySpec CAccountProperties[] =
 	{ "isCounselor",	CACCOUNT_COUNSELOR,	JSPROP_ENUMANDPERM },
 	{ "isGM",			CACCOUNT_GM,		JSPROP_ENUMANDPERM },
 
-	{	NULL,		(SI08)NULL,			(UI08)0				}
+	{	nullptr,		(SI08)0,			(UI08)0				}
 };
 
 static JSPropertySpec CConsoleProperties[] =
 {
 	{ "mode",		CCONSOLE_MODE,		JSPROP_ENUMANDPERM },
 	{ "logEcho",	CCONSOLE_LOGECHO,	JSPROP_ENUMANDPERM },
-	{	NULL,		(SI08)NULL,			(UI08)0				}
+	{	nullptr,		(SI08)0,			(UI08)0				}
 };
 
 static JSPropertySpec CScriptSectionProperties[] =
@@ -610,7 +610,7 @@ static JSPropertySpec CScriptSectionProperties[] =
 	{ "numTags",	CSS_NUMTAGS,		JSPROP_ENUMANDPERM },
 	{ "atEnd",		CSS_ATEND,			JSPROP_ENUMANDPERM },
 	{ "atEndTags",	CSS_ATENDTAGS,		JSPROP_ENUMANDPERM },
-	{	NULL,		(SI08)NULL,			(UI08)0				}
+	{	nullptr,		(SI08)0,			(UI08)0				}
 };
 
 static JSPropertySpec CResourceProperties[] =
@@ -619,7 +619,7 @@ static JSPropertySpec CResourceProperties[] =
 	{ "logTime",	CRESP_LOGTIME,		JSPROP_ENUMANDPERM },
 	{ "oreAmount",	CRESP_OREAMT,		JSPROP_ENUMANDPERM },
 	{ "oreTime",	CRESP_ORETIME,		JSPROP_ENUMANDPERM },
-	{	NULL,		(SI08)NULL,			(UI08)0				}
+	{	nullptr,		(SI08)0,			(UI08)0				}
 };
 
 static JSPropertySpec CPartyProperties[] =
@@ -627,7 +627,7 @@ static JSPropertySpec CPartyProperties[] =
 	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM	},
 	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO	},
 	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM	},
-	{	NULL,			(SI08)NULL,				(UI08)0				}
+	{	nullptr,			(SI08)0,				(UI08)0				}
 };
 
 #endif

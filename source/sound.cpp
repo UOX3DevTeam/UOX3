@@ -17,7 +17,7 @@ cEffects *Effects;
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -62,7 +62,7 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 		if( baseObj->GetObjType() == OT_CHAR )
 		{
 			CSocket *mSock = (static_cast<CChar *>(baseObj))->GetSocket();
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->Send( &toSend );
 		}
 	}
@@ -86,7 +86,7 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 	{
 		UI16 effectID = 0x0042;
 		CBaseObject *getCont = item->GetCont();
-		if( getCont != NULL )
+		if( getCont != nullptr )
 		{
 			if( getCont->GetObjType() == OT_ITEM )
 			{
@@ -191,7 +191,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
 		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
@@ -267,7 +267,7 @@ void cEffects::doSocketMusic( CSocket *s )
 	CChar *mChar = s->CurrcharObj();
 
 	CTownRegion *mReg = mChar->GetRegion();
-	if( mReg == NULL )
+	if( mReg == nullptr )
 	{
 		return;
 	}
@@ -288,7 +288,7 @@ void cEffects::doSocketMusic( CSocket *s )
 	}
 
 	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
-	if( MusicList == NULL )
+	if( MusicList == nullptr )
 	{
 		return;
 	}
@@ -441,7 +441,7 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 
 	if( soundID )			// if we have a valid sound
 	{
-		if( mSock == NULL && ValidateObject( mChar ) )
+		if( mSock == nullptr && ValidateObject( mChar ) )
 		{
 			// It's an NPC!
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );

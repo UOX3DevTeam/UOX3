@@ -23,7 +23,7 @@
 
 bool checkItemRange( CChar *mChar, CItem *i );
 
-cSkills *Skills = NULL;
+cSkills *Skills = nullptr;
 
 const UI16 CREATE_MENU_OFFSET = 5000;	// This is how we differentiate a menu button from an item button (and the limit on ITEM=# in create.dfn)
 
@@ -143,23 +143,23 @@ void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 //o-----------------------------------------------------------------------------------------------o
 void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 {
-	if( targRegion == NULL || !ValidateObject( mChar ) )
+	if( targRegion == nullptr || !ValidateObject( mChar ) )
 		return;
 
 	const UI16 getSkill			= mChar->GetSkill( MINING );
 	const SI32 findOreChance	= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
 	SI32 sumChance				= 0;
 	bool oreFound				= false;
-	const orePref *toFind		= NULL;
-	const miningData *found		= NULL;
+	const orePref *toFind		= nullptr;
+	const miningData *found		= nullptr;
 	for( size_t currentOre = 0; currentOre < targRegion->GetNumOrePreferences(); ++currentOre )
 	{
 		toFind = targRegion->GetOrePreference( currentOre );
-		if( toFind == NULL )
+		if( toFind == nullptr )
 			continue;
 
 		found = toFind->oreIndex;
-		if( found == NULL )
+		if( found == nullptr )
 			continue;
 
 		sumChance += toFind->percentChance;
@@ -178,7 +178,7 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 				{
 					const std::string oreName = found->name + " ore";
 					oreItem->SetName( oreName );
-					if( oreItem->GetCont() != NULL )
+					if( oreItem->GetCont() != nullptr )
 						mSock.sysmessage( 982, oreName.c_str() );
 				}
 				oreFound = true;
@@ -223,7 +223,7 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
 					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
+					for( Static_st *stat = msi.Next(); stat != nullptr; stat = msi.Next() )
 					{
 						CTile& tile = Map->SeekTile( stat->itemid );
 						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
@@ -266,7 +266,7 @@ void cSkills::Mine( CSocket *s )
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( !checkItemRange( mChar, tempObj ) )
@@ -342,7 +342,7 @@ void cSkills::Mine( CSocket *s )
 
 	// do action and sound
 	if( mChar->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == NULL || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 		Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // action 0x00, subAction 0x03
 	else if( mChar->IsOnHorse() ) // Human/Elf, mounted, pre-v7.0.0.0
 		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H ); // 0x1A
@@ -362,7 +362,7 @@ void cSkills::Mine( CSocket *s )
 #endif
 
 		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber(), mChar->GetInstanceID() );
-		if( targetReg == NULL )
+		if( targetReg == nullptr )
 			return;
 
 		MakeOre( mSock, mChar, targetReg );
@@ -385,14 +385,14 @@ void cSkills::GraveDig( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SI16	nFame;
-	CItem *	nItemID = NULL;
+	CItem *	nItemID = nullptr;
 
 	CChar *nCharID = s->CurrcharObj();
-	Karma( nCharID, NULL, -2000 ); // Karma loss no lower than the -2 pier
+	Karma( nCharID, nullptr, -2000 ); // Karma loss no lower than the -2 pier
 
 	// do action and sound
 	if( nCharID->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == NULL || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
 		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
 	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
 		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
@@ -410,7 +410,7 @@ void cSkills::GraveDig( CSocket *s )
 
 	// do action and sound (again?)
 	if( nCharID->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == NULL || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
 		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
 	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
 		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
@@ -418,7 +418,7 @@ void cSkills::GraveDig( CSocket *s )
 		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH ); // Action 0x0B
 
 	Effects->PlaySound( s, 0x0125, true );
-	CChar *spawnCreature = NULL;
+	CChar *spawnCreature = nullptr;
 	switch( RandomNum( 0, 12 ) )
 	{
 		case 2:
@@ -427,7 +427,7 @@ void cSkills::GraveDig( CSocket *s )
 			break;
 		case 4:
 			nItemID = Items->CreateRandomItem( s, "diggingarmor" ); // Armor and shields - Random
-			if( nItemID == NULL )
+			if( nItemID == nullptr )
 				break;
 			if( nItemID->GetID() >= 7026 && nItemID->GetID() <= 7035 )
 				s->sysmessage( 807 );
@@ -475,7 +475,7 @@ void cSkills::GraveDig( CSocket *s )
 				s->sysmessage( 813 );
 			break;
 	}
-	if( spawnCreature != NULL )
+	if( spawnCreature != nullptr )
 		spawnCreature->SetLocation( nCharID );
 }
 
@@ -493,7 +493,7 @@ void cSkills::SmeltOre( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *chr			= s->CurrcharObj();
 	CItem *itemToSmelt	= static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	CItem *forge		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our forge
 
 	if( itemToSmelt->isHeldOnCursor() )
@@ -582,7 +582,7 @@ void cSkills::SmeltOre( CSocket *s )
 						return;	
 					}
 				}
-				else if( forge->GetCont() != NULL )
+				else if( forge->GetCont() != nullptr )
 				{
 					if( ( newTargetWeight + forge->GetCont()->GetWeight() - subtractWeight ) > 200000 ) // 2000 stones
 					{
@@ -650,7 +650,7 @@ void cSkills::SmeltOre( CSocket *s )
 				{
 					UI16 targColour		= itemToSmelt->GetColour();
 					miningData *oreType	= FindOre( targColour );
-					if( oreType == NULL )
+					if( oreType == nullptr )
 					{
 						s->sysmessage( 814 ); // That material is foreign to you.
 						return;
@@ -697,7 +697,7 @@ void cSkills::SmeltOre( CSocket *s )
 					}
 
 					CItem *ingot = Items->CreateScriptItem( s, chr, "0x1BF2", ingotNum, OT_ITEM, true, oreType->colour );
-					if( ingot != NULL ){
+					if( ingot != nullptr ){
 						ingot->SetName( strutil::format("%s Ingot", oreType->name.c_str() ) );
 					}
 
@@ -740,7 +740,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns true/1, allows skillcheck to proceed, but also prevents other scripts with event from running
 			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill ) == 1 )
@@ -800,7 +800,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 			skillCheck = ( chanceskillsuccess >= RandomNum( 0, std::min( 1000, (highSkill+100) ) ) );
 
 		CSocket *mSock = s->GetSocket();
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			bool mageryUp = true;
 			mageryUp = ( mSock->CurrentSpellType() == 0 );
@@ -856,7 +856,7 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( !toExecute->OnSkillGain( c, sk ) )
 					toExecute->OnSkillChange( c, sk );
@@ -865,7 +865,7 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		return;
 	}
 
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 
 	//srand( getclock() ); // Randomize
@@ -912,7 +912,7 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( !toExecute->OnSkillLoss( c, toDec ) )
 						toExecute->OnSkillChange( c, toDec );
@@ -929,7 +929,7 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( !toExecute->OnSkillGain( c, sk ) )
 					toExecute->OnSkillChange( c, sk );
@@ -1052,7 +1052,7 @@ void cSkills::FishTarget( CSocket *s )
 	// Check if item used to initialize target cursor is still within range
 	CChar *mChar = s->CurrcharObj();
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
@@ -1083,7 +1083,7 @@ void cSkills::FishTarget( CSocket *s )
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
 		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+		for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
 		{
 			CTile& tile = Map->SeekTile( stat->itemid );
 			if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
@@ -1222,7 +1222,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		{
 			// Loop through attached scripts
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( toExecute->OnSkill( mChar, x ) )
 				{
@@ -1237,7 +1237,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		if( doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF )
 		{
 			cScript *toExecute = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{
 				if( toExecute->OnSkill( mChar, x ))
 				{
@@ -1305,7 +1305,7 @@ void cSkills::RandomSteal( CSocket *s )
 		return;
 	}
 
-	CItem *item = NULL;
+	CItem *item = nullptr;
 	GenericList< CItem * > *tcCont = p->GetContainsList();
 	const size_t numItems = tcCont->Num();
 
@@ -1361,7 +1361,7 @@ void cSkills::StealingTarget( CSocket *s )
 		return;
 	}
 
-	if( item->GetCont() == npc || item->GetCont() == NULL || item->isNewbie() )
+	if( item->GetCont() == npc || item->GetCont() == nullptr || item->isNewbie() )
 	{
 		s->sysmessage( 874 );
 		return;
@@ -1390,7 +1390,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		return;
 	}
 	CItem *itemCont = static_cast<CItem *>(item->GetCont());
-	if( itemCont != NULL && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
+	if( itemCont != nullptr && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
 	{
 		s->sysmessage( 874 );
 		return;
@@ -1401,7 +1401,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 	{
 		// Loop through attached scripts
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			SI08 retVal = toExecute->OnSteal( mChar, item, npc );
 			if( retVal == 1 ) // Item was not stolen, and we don't want to run hard code
@@ -1414,7 +1414,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 				for( auto targScriptTrig : targetScriptTriggers )
 				{
 					cScript *targToExecute = JSMapping->GetScript( targScriptTrig );
-					if( targToExecute != NULL )
+					if( targToExecute != nullptr )
 					{
 						if( targToExecute->OnStolenFrom( mChar, npc, item ) == 1 )
 						{
@@ -1465,7 +1465,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			for( auto targScriptTrig : targetScriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( targScriptTrig );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{
 					if( toExecute->OnStolenFrom( mChar, npc, item ) == 1 )
 					{
@@ -1481,7 +1481,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		{//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
 			s->sysmessage( 882 );
 			if( npc->IsNpc() )
-				npc->TextMessage( NULL, 883, TALK, false );
+				npc->TextMessage( nullptr, 883, TALK, false );
 
 			if( WillResultInCriminal( mChar, npc ) )
 				criminal( mChar );
@@ -1503,7 +1503,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			}
 
 			CSocket *npcSock = npc->GetSocket();
-			if( npcSock != NULL )
+			if( npcSock != nullptr )
 				npcSock->sysmessage( temp );
 
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
@@ -1585,7 +1585,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	VALIDATESOCKET( s );
 	const std::string sect = std::string("TRACKINGMENU ") + strutil::number( m );
 	ScriptSection *TrackStuff = FileLookup->FindEntry( sect, menus_def );
-	if( TrackStuff == NULL )
+	if( TrackStuff == nullptr )
 		return;
 
 	enum CreatureTypes
@@ -1634,7 +1634,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
 		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
@@ -1692,7 +1692,7 @@ void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 	VALIDATESOCKET( s );
 	const std::string sect			= std::string("TRACKINGMENU ") + strutil::number( gmindex );
 	ScriptSection *TrackStuff	= FileLookup->FindEntry( sect, menus_def );
-	if( TrackStuff == NULL )
+	if( TrackStuff == nullptr )
 	{
 		return;
 	}
@@ -1765,10 +1765,10 @@ void cSkills::Persecute( CSocket *s )
 			CSocket *tSock = targChar->GetSocket();
 			targChar->SetMana( targChar->GetMana() - decrease ); // decrease mana
 			s->sysmessage( 972 );
-			if( tSock != NULL )
+			if( tSock != nullptr )
 				tSock->sysmessage( 973 );
 			s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-			targChar->TextMessage( NULL, 974, EMOTE, 1, targChar->GetName().c_str() );
+			targChar->TextMessage( nullptr, 974, EMOTE, 1, targChar->GetName().c_str() );
 		}
 		else
 			s->sysmessage( 975 );
@@ -1790,7 +1790,7 @@ void cSkills::Smith( CSocket *s )
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
@@ -1818,7 +1818,7 @@ void cSkills::Smith( CSocket *s )
 		if( i->GetID() >= 0x1BE3 && i->GetID() <= 0x1BF9 )	// is it an ingot?
 		{
 			miningData *oreType = FindOre( i->GetColour() );
-			if( oreType == NULL )
+			if( oreType == nullptr )
 			{
 				s->sysmessage( 977 );
 				return;
@@ -1850,7 +1850,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
 		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
@@ -1908,7 +1908,7 @@ bool cSkills::LoadMiningData( void )
 	// Let's first get our ore list, in SECTION ORE_LIST
 	ScriptSection *oreList = FileLookup->FindEntry( "ORE_LIST", skills_def );
 	bool rvalue = false;
-	if( oreList != NULL )
+	if( oreList != nullptr )
 	{
 		STRINGLIST oreNameList;
 		std::string tag;
@@ -1921,13 +1921,13 @@ bool cSkills::LoadMiningData( void )
 		if( !oreNameList.empty() )
 		{
 			rvalue = true;
-			ScriptSection *individualOre = NULL;
+			ScriptSection *individualOre = nullptr;
 			STRINGLIST_CITERATOR toCheck;
 			for( toCheck = oreNameList.begin(); toCheck != oreNameList.end(); ++toCheck )
 			{
 				std::string oreName = (*toCheck);
 				individualOre = FileLookup->FindEntry( oreName, skills_def );
-				if( individualOre != NULL )
+				if( individualOre != nullptr )
 				{
 					miningData toAdd;
 					toAdd.colour	= 0;
@@ -2010,7 +2010,7 @@ void cSkills::Load( void )
 	CJSMappingSection *skillSection = JSMapping->GetSection( SCPT_SKILLUSE );
 	for( cScript *ourScript = skillSection->First(); !skillSection->Finished(); ourScript = skillSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Skill" );
 	}
 
@@ -2035,7 +2035,7 @@ size_t cSkills::GetNumberOfOres( void )
 miningData *cSkills::GetOre( size_t number )
 {
 	if( number >= ores.size() )
-		return NULL;
+		return nullptr;
 	return &ores[number];
 }
 
@@ -2052,7 +2052,7 @@ miningData *cSkills::FindOre( std::string const &name )
 		if( (*oreIter).oreName == name )
 			return &(*oreIter);
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2068,7 +2068,7 @@ miningData *cSkills::FindOre( UI16 const &colour )
 		if( (*oreIter).colour == colour )
 			return &(*oreIter);
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2086,7 +2086,7 @@ void cSkills::LoadCreateMenus( void )
 	UI16 ourEntry;							// our actual entry number
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )
 	{
-		if( ourScript == NULL )
+		if( ourScript == nullptr )
 		{
 			continue;
 		}
@@ -2181,7 +2181,7 @@ void cSkills::LoadCreateMenus( void )
 						}
 						std::string resType = "RESOURCE " + strutil::stripTrim( ssecs[0] );
 						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
-						if( resList != NULL )
+						if( resList != nullptr )
 						{
 							std::string resData;
 							for( std::string resTag = resList->First(); !resList->AtEnd(); resTag = resList->Next() )
@@ -2322,7 +2322,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 	CRace *pRace = Races->Race( s->GetRace() );
 
 	// If the Race is invalid just use the default race
-	if( pRace == NULL )
+	if( pRace == nullptr )
 		pRace = Races->Race( 0 );
 
 	//make sure socket is no npc
@@ -2404,7 +2404,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 							for( auto skillTrig : skillUpdTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( skillTrig );
-								if( toExecute != NULL )
+								if( toExecute != nullptr )
 								{
 									if( !toExecute->OnStatLoss( s, STRENGTH ) )
 										toExecute->OnStatChange( s, STRENGTH );
@@ -2418,7 +2418,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 							for( auto skillTrig : skillUpdTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( skillTrig );
-								if( toExecute != NULL )
+								if( toExecute != nullptr )
 								{
 									if( !toExecute->OnStatLoss( s, DEXTERITY ) )
 										toExecute->OnStatChange( s, DEXTERITY );
@@ -2432,7 +2432,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 							for( auto skillTrig : skillUpdTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( skillTrig );
-								if( toExecute != NULL )
+								if( toExecute != nullptr )
 								{
 									if( !toExecute->OnStatLoss( s, INTELLECT ) )
 										toExecute->OnStatChange( s, INTELLECT );
@@ -2466,7 +2466,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 					for( auto skillTrig : skillUpdTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( skillTrig );
-						if( toExecute != NULL )
+						if( toExecute != nullptr )
 						{
 							if( !toExecute->OnStatGained( s, StatCount, sk ) )
 								toExecute->OnStatChange( s, StatCount );
@@ -2509,7 +2509,7 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 	createMenu	ourMenu		= p->second;
 	UI32		textCounter = 0;
 	ScriptSection *GumpHeader = FileLookup->FindEntry( "ADDMENU HEADER", misc_def );
-	if( GumpHeader == NULL )
+	if( GumpHeader == nullptr )
 	{
 		toSend.addCommand( strutil::format("resizepic 0 0 %i 400 320", background) );
 		toSend.addCommand( "page 0" );
@@ -2550,7 +2550,7 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 			}
 		}
 		ScriptSection *GumpText = FileLookup->FindEntry( "ADDMENU TEXT", misc_def );
-		if( GumpText != NULL )
+		if( GumpText != nullptr )
 		{
 			for( tag = GumpText->First(); !GumpText->AtEnd(); tag = GumpText->Next() )
 			{
@@ -2681,7 +2681,7 @@ createEntry *cSkills::FindItem( UI16 itemNum )
 {
 	std::map< UI16, createEntry >::iterator r = itemsForMenus.find( itemNum );
 	if( r == itemsForMenus.end() )
-		return NULL;
+		return nullptr;
 	return &(r->second);
 }
 
@@ -2793,7 +2793,7 @@ void cSkills::RepairMetal( CSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
@@ -2877,7 +2877,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != NULL )
+		if( toExecute != nullptr )
 		{
 			// If script returns false, prevent hard-code and other scripts with event from running
 			if( toExecute->OnSnoopAttempt( target, mChar ) == 0 )
@@ -2890,7 +2890,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
 	{
 		s->sysmessage( 991 ); // You failed to peek into that container.
-		if( tSock != NULL )
+		if( tSock != nullptr )
 			tSock->sysmessage( 992, mChar->GetName().c_str() ); // %s is snooping you!
 		return;
 	}
@@ -2915,7 +2915,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *successSnoop = JSMapping->GetScript( scriptTrig );
-			if( successSnoop != NULL )
+			if( successSnoop != nullptr )
 			{
 				// If script returns true/1, prevent other scripts with event from running
 				if( successSnoop->OnSnooped( target, mChar, true ) == 1 )
@@ -2932,7 +2932,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *failSnoop = JSMapping->GetScript( scriptTrig );
-			if( failSnoop != NULL )
+			if( failSnoop != nullptr )
 			{
 				// If script returns true/1, prevent hard code and other scripts with event from running
 				if( failSnoop->OnSnooped( target, mChar, true ) == 1 )
@@ -2966,7 +2966,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 						Effects->PlaySound( target, toPlay );
 				}
 			}
-			else if( tSock != NULL )
+			else if( tSock != nullptr )
 				tSock->sysmessage( 997, mChar->GetName().c_str() ); // You notice %s trying to peek into your pack!
 			if( cwmWorldState->ServerData()->SnoopIsCrime() )
 				criminal( mChar );
@@ -2986,18 +2986,18 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 //o-----------------------------------------------------------------------------------------------o
 void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 {
-	CItem *iItem = NULL;
+	CItem *iItem = nullptr;
 	CChar *iCharID = nSocket->CurrcharObj();
 
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
-		iCharID->TextMessage( NULL, 741, EMOTE, 1, iCharID->GetName().c_str() );
+		iCharID->TextMessage( nullptr, 741, EMOTE, 1, iCharID->GetName().c_str() );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
 		iItem = Items->CreateItem( nSocket, iCharID, 0x0F8F, 1, 0, OT_ITEM, true );
-		if( iItem == NULL )
+		if( iItem == nullptr )
 			return;
 		iItem->SetName( "bone powder" );
 		iItem->SetTempVar( CITV_MOREX, 666 );
@@ -3010,7 +3010,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 		if( nItem->GetTempVar( CITV_MORE, 1 ) == 1 )
 		{
 			iItem = Items->CreateItem( nSocket, iCharID, 0x0F82, 1, 0, OT_ITEM, true );
-			if( iItem == NULL )
+			if( iItem == nullptr )
 				return;
 			iItem->SetBuyValue( 15 );
 			iItem->SetTempVar( CITV_MOREX, 666 );
@@ -3018,7 +3018,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 		else
 		{
 			iItem = Items->CreateItem( nSocket, iCharID, 0x0F7D, 1, 0, OT_ITEM, true );
-			if( iItem == NULL )
+			if( iItem == nullptr )
 				return;
 			iItem->SetBuyValue( 10 );
 			iItem->SetTempVar( CITV_MOREX, 666 );

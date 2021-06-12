@@ -305,7 +305,7 @@ void CTownRegion::CalcNewMayor( void )
 	if( ValidateObject( oldMayor ) && mayorSerial == townMember[maxIndex].townMember )
 	{
 		CSocket *targSock = oldMayor->GetSocket();
-		if( targSock != NULL )
+		if( targSock != nullptr )
 			targSock->sysmessage( 1119 );
 		// welcome the mayor back for another term
 	}
@@ -380,7 +380,7 @@ bool CTownRegion::AddAsTownMember( CChar& toAdd )
 	townMember.resize( townMember.size() + 1 );
 	townMember[townMember.size()-1].townMember = toAdd.GetSerial();
 	townMember[townMember.size()-1].targVote = INVALIDSERIAL;
-	townMember[townMember.size()-1].PlayerBank = NULL;
+	townMember[townMember.size()-1].PlayerBank = nullptr;
 	toAdd.SetTown( regionNum );
 	toAdd.SetTownpriv( 1 );	// set as resident
 	return true;
@@ -417,9 +417,9 @@ bool CTownRegion::RemoveTownMember( CChar& toAdd )
 //o-----------------------------------------------------------------------------------------------o
 bool oreSkillComparator (orePref o1, orePref o2)
 {
-	if (o1.oreIndex == NULL)
+	if (o1.oreIndex == nullptr)
 		return false;
-	if (o2.oreIndex == NULL)
+	if (o2.oreIndex == nullptr)
 		return true;
 	return o1.oreIndex->minSkill > o2.oreIndex->minSkill;
 }
@@ -580,7 +580,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					data			= strutil::simplify( data );
 					oreName			= strutil::extractSection( data, ",", 0, 0 );
 					toPush.oreIndex = Skills->FindOre( oreName );
-					if( toPush.oreIndex != NULL )
+					if( toPush.oreIndex != nullptr )
 					{
 						auto csecs = strutil::sections( data, "," );
 						if( csecs.size() > 1 )
@@ -664,7 +664,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				{
 					std::string sect = "PREDEFINED_SPAWN " + data;
 					ScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
-					if( predefSpawn == NULL )
+					if( predefSpawn == nullptr )
 					{
 						Console.warning( strutil::format("Undefined region spawn %s, check your regions.dfn and spawn.dfn files", data.c_str()) );
 					}
@@ -676,7 +676,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 							{
 								CSpawnRegion *spawnReg			= new CSpawnRegion( i );
 								cwmWorldState->spawnRegions[i]	= spawnReg;
-								if( spawnReg != NULL )
+								if( spawnReg != nullptr )
 								{
 									spawnReg->SetX1( locations[locations.size() - 1].x1 );
 									spawnReg->SetY1( locations[locations.size() - 1].y1 );
@@ -695,7 +695,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					if( scriptID != 0 )
 					{
 						cScript *toExecute	= JSMapping->GetScript( scriptID );
-						if( toExecute == NULL )
+						if( toExecute == nullptr )
 						{
 							Console.warning( strutil::format("SCRIPT tag found with invalid script ID (%s) when loading region data!", strutil::number(scriptID).c_str()) );
 						}
@@ -1683,7 +1683,7 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...)
 			continue;
 
 		CSocket *targetSock = targetChar->GetSocket();
-		if( targetSock != NULL )
+		if( targetSock != nullptr )
 		{
 			std::string txt = Dictionary->GetEntry( dictEntry, targetSock->Language() );
 			std::string msg = "TOWN: " ;
@@ -1770,7 +1770,7 @@ void CTownRegion::SendEnemyTowns( CSocket *sock )
 	while( tIter != tEnd )
 	{
 		CTownRegion *myReg = tIter->second;
-		if( myReg != NULL )
+		if( myReg != nullptr )
 		{
 			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY )	// if we're racial enemies, and not the same as ourselves
 			{
@@ -1890,7 +1890,7 @@ size_t CTownRegion::GetNumOrePreferences( void ) const
 const orePref *CTownRegion::GetOrePreference( size_t targValue ) const
 {
 	if( targValue >= orePreferences.size() )
-		return NULL;
+		return nullptr;
 	return &orePreferences[targValue];
 }
 
@@ -2062,6 +2062,6 @@ size_t CTownRegion::GetNumLocations( void ) const
 const regLocs *CTownRegion::GetLocation( size_t locNum ) const
 {
 	if( locNum >= locations.size() )
-		return NULL;
+		return nullptr;
 	return &locations[locNum];
 }

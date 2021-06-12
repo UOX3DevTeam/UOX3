@@ -443,7 +443,7 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 {
 	std::string sect = "NPCLIST " + npcList;
 	ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
-	if( CharList != NULL )
+	if( CharList != nullptr )
 	{
 		for( std::string npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
 		{
@@ -468,7 +468,7 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 {
 	std::string sect = "ITEMLIST " + itemList;
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
-	if( ItemList != NULL )
+	if( ItemList != nullptr )
 	{
 		for( std::string itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
 		{
@@ -617,8 +617,8 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 	bool shouldSpawnItems = ( !sItems.empty() && maxispawn > spawnedItems.Num() );
 	if( shouldSpawnChars || shouldSpawnItems )
 	{
-		CChar *spawnChar		= NULL;
-		CItem *spawnItem		= NULL;
+		CChar *spawnChar		= nullptr;
+		CItem *spawnItem		= nullptr;
 		const UI08 spawnChars	= (shouldSpawnChars?0:50);
 		const UI08 spawnItems	= (shouldSpawnItems?100:49);
 		for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
@@ -662,10 +662,10 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 //o-----------------------------------------------------------------------------------------------o
 CChar *CSpawnRegion::RegionSpawnChar( void )
 {
-	CChar *CSpawn = NULL;
+	CChar *CSpawn = nullptr;
 	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
 
-	if( CSpawn != NULL )
+	if( CSpawn != nullptr )
 	{
 		SI16 x, y;
 		SI08 z;
@@ -699,13 +699,13 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CSpawnRegion::RegionSpawnItem( void )
 {
-	CItem *ISpawn = NULL;
+	CItem *ISpawn = nullptr;
 	SI16 x, y;
 	SI08 z;
 	if( FindItemSpotToSpawn( x, y, z ) )
 	{
 		ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1 );
-		if( ISpawn != NULL )
+		if( ISpawn != nullptr )
 		{
 			ISpawn->SetLocation( x, y, z );
 			ISpawn->SetSpawn( static_cast<UI32>(regionnum) );

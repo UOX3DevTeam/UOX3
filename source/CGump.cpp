@@ -40,7 +40,7 @@ void CGump::Add( const std::string& Tag, const std::string& Text )
 //o-----------------------------------------------------------------------------------------------o
 void CGump::Send( CSocket *target )
 {
-	if( target == NULL )
+	if( target == nullptr )
 		return;
 
 	CPSendGumpMenu toSend;

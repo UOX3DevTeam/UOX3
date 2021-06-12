@@ -16,7 +16,7 @@ private:
 	UI16			assocScript;
 
 public:
-	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( NULL ), assocScript( 0xFFFF )
+	CTEffect() : source( INVALIDSERIAL ), dest( INVALIDSERIAL ), expiretime( 0 ), num( 0 ), more1( 0 ), more2( 0 ), more3( 0 ), dispellable( false ), objptr( nullptr ), assocScript( 0xFFFF )
 	{
 	}
 

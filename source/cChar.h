@@ -491,12 +491,12 @@ public:
 	virtual		~CChar();
 
 	CChar *			Dupe( void );
-	virtual void	RemoveFromSight( CSocket *mSock = NULL );
-	virtual void	RemoveAllObjectsFromSight( CSocket *mSock = NULL );
+	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
+	virtual void	RemoveAllObjectsFromSight( CSocket *mSock = nullptr );
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = NULL ) override;
+	virtual void	Update( CSocket *mSock = nullptr ) override;
 	virtual void	SendToSocket( CSocket *s ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );
@@ -507,7 +507,7 @@ public:
 	CItem *			NextItem( void );
 	bool			FinishedItems( void );
 
-	void			BreakConcentration( CSocket *sock = NULL );
+	void			BreakConcentration( CSocket *sock = nullptr );
 
 	virtual bool	Save( std::ofstream &outStream ) override;
 	virtual void	PostLoadProcessing( void ) override;
@@ -581,9 +581,9 @@ public:
 	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
 
 	FlagColors		FlagColour( CChar *toCompare );
-	void			Heal( SI16 healValue, CChar *healer = NULL );
-	void			Damage( SI16 damageValue, CChar *attacker = NULL, bool doRepsys = false );
-	void			ReactOnDamage( WeatherType damageType, CChar *attacker = NULL );
+	void			Heal( SI16 healValue, CChar *healer = nullptr );
+	void			Damage( SI16 damageValue, CChar *attacker = nullptr, bool doRepsys = false );
+	void			ReactOnDamage( WeatherType damageType, CChar *attacker = nullptr );
 	void			Die( CChar *attacker, bool doRepsys );
 
 	// Values determining if the character is in a party or not, save us shortcutting in a few places
