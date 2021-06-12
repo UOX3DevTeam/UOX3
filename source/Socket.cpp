@@ -27,11 +27,11 @@
 //
 //+++++++++++++++++++++++++++++++++++++++++++++++++++
 
-bool Socket::_global_init = false ;
+
 //============================================================================
 Socket::Socket(){
 	_fd = INVALID_SOCKET ;
-	initialize();
+	
 	_time_created = timeutil::timenow() ;
 	
 }
@@ -57,11 +57,12 @@ void Socket::setServer(int port){
 #if PLATFORM == WINDOWS
 		auto error = WSAGetLastError() ;
 		throw std::runtime_error(std::string("Unable to get socket address info: ") + std::to_string(error));
-	}
+
 #else
 		throw std::runtime_error(std::string("Unable to get socket address info: ") + std::string(gai_strerror(status)));
-	}
+
 #endif
+	}
 	_fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (_fd == INVALID_SOCKET) {
 		freeaddrinfo(res);
@@ -108,20 +109,17 @@ Socket::Socket(SOCKET fd, IP4Address &ipaddress, int port) : Socket() {
 }
 //============================================================================
 void Socket::initialize() {
-	if (!_global_init) {
 #if PLATFORM == WINDOWS
-		int iResult;
-		WSADATA wsaData ;
-		// Initialize Winsock
-		iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-		if (iResult != 0) {
-			throw std::runtime_error(std::string("Unable to start winsock: ")+std::to_string(iResult));
-		}
-#elif PLATFORM == LINUX
-		signal(SIGPIPE, SIG_IGN);		// We dont do this on macos,as we can set a socket option
-#endif
-		_global_init = true ;
+	int iResult;
+	WSADATA wsaData ;
+	// Initialize Winsock
+	iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+	if (iResult != 0) {
+		throw std::runtime_error(std::string("Unable to start winsock: ")+std::to_string(iResult));
 	}
+#elif PLATFORM == LINUX
+	signal(SIGPIPE, SIG_IGN);		// We dont do this on macos,as we can set a socket option
+#endif
 }
 //============================================================================
 void Socket::setOptions(int fd) {
@@ -162,8 +160,8 @@ std::tuple<SOCKET,IP4Address, std::string>  Socket::accept() {
 		}
 		throw std::runtime_error(std::string("Error accepting sockets: ")+std::string(strerror(error)));
 		
-	}
 #endif
+	}
 	struct sockaddr_in *sin = reinterpret_cast<sockaddr_in *>(&their_addr) ;
 	IP4Address ipaddress(ntohl(sin->sin_addr.s_addr));
 
