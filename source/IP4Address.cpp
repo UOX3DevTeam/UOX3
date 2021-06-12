@@ -202,11 +202,13 @@ bool IP4Address::match(const IP4Address &address, int level) const {
 	
 }
 //=====================================================================
-IP4Address::typeIP IP4Address::type() const{
+IP4Address::typeIP IP4Address::type(bool notmine ) const{
 	// Check for a match!
-	for (auto &entry: _myIPs){
-		if (entry == *this){
-			return mine;
+	if (!notmine){
+		for (auto &entry: _myIPs){
+			if (entry == *this){
+				return mine;
+			}
 		}
 	}
 	if (_externalIP == *this) {
@@ -229,12 +231,12 @@ IP4Address::typeIP IP4Address::type() const{
 //============================================================================
 IP4Address IP4Address::respond(IP4Address &address){
 	// get the type
-	auto type = address.type();
-	if (type == mine) {
+	auto ttype = address.type(false);
+	if (ttype == mine) {
 		// respond with local host
 		return IP4Address("127.0.0.1");
 	}
-	else if (type == lan){
+	else if (ttype == lan){
 		return bestMatch(address);
 	}
 	return IP4Address::_externalIP;
