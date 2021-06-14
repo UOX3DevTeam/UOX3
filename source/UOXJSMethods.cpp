@@ -6530,7 +6530,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		}
 	}
 
-	HandleDeath( mChar );
+	HandleDeath( mChar, nullptr );
 	return JS_TRUE;
 }
 

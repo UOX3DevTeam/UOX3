@@ -791,7 +791,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 						}
 
-						HandleDeath( ( &mChar ) );
+						HandleDeath( ( &mChar ), nullptr );
 						if( mSock != nullptr )
 							mSock->sysmessage( 1244 );
 					}
@@ -886,7 +886,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			}
 		}
 
-		HandleDeath( (&mChar) );
+		HandleDeath( (&mChar), nullptr );
 		return true;
 	}
 	return false;

@@ -1,3 +1,21 @@
+15/06/2021 - Xuri
+	Added cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodColour, BloodTypes bloodType ), which can be called upon to create blood splatter effects for things like death, bleeding, combat hits, etc.
+	Added random blood effects that spawn when a character dies, and decays according to new ini setting
+	Added new UOX.INI settings under [timers] to define how long blood effects take to decay:
+		BLOODDECAYTIMER=3 			// Smaller blood effects spawned during combat, defaults to 3 seconds
+		BLOODDECAYCORPSETIMER=450 	// Larger blood effects spawned upon death, defaults to half the duration of the default corpse decay timer
+	Fixed an issue with Forensic Evaluation skill (js/skills/forensics.js) not giving correct info on age of a corpse, because it incorrectly tried to check a .tempTime property instead of .tempTimer
+	Changed default value of MSGREDISPLAYTIME in [tracking] section of UOX.INI from 30 to 3, so tracking arrow will actually follow the target when it moves (every 3 seconds)
+	Fixed an issue with the Tracking skill where attempting to left-click on the tracking arrow would cause client to freeze up
+	Fixed an issue with the Tracking skill where right-clicking tracking arrow to dismiss it would not always work, especially if target had been killed/deleted
+	Fixed an issue with the Tracking skill where the tracking arrow would not be automatically dismissed if the tracked target was killed/deleted
+	Fixed an issue that prevented clients in 6.0.5 - 6.0.14.1 range from connecting even though CLIENTSUPPORT6050 was enabled in ini
+	Fixed an issue where client 6.0.14.2 was being mis-classified as a T2A client, and not the first of the SA clients as it should be
+	Changed how Race damage modifier is applied to damage dealt in combat - it's now a direct percentage bonus (or penalty) applied to the base damage dealt
+	Added in missing default [COMBAT MODS] section to dfndata/race/races.dfn. Each MOD# entry in this section represents a percentage modifier applied to skill checks for members of a race that subscribes to that MOD entry via skill tags like [SKILLNAME]G=# (bonus) or [SKILLNAME]L=# (penalty). These modifiers are also applied to base damage in combat, before other damage modifiers.
+		Example1: SWORDSMANSHIPG=3 would apply a 20% bonus to swordsmanship skill checks for race the tag was added to, as well as a 20% bonus to base damage dealt in combat
+		Example2: MACEFIGHTINGL=3 would apply a 20% penalty to macefighting skill checks for race the tag was added to, as well as a 20% penalty to base damage dealt in combat
+
 13/06/2021 - Xuri
 	Some fixes to IP4Address code and output to console of which type of IP being listened (punt)
 

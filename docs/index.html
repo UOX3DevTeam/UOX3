@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 13. June, 2021</small></p>
+	<p style="margin:0"><small>Last Updated: 15. June, 2021</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4q</small></p>
 </div>
 
@@ -58,6 +58,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>June 15th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#raceSystem">Race System</a> feature info with details on how to use [COMBAT MODS] with races</li>
+						</ul>
 						<h4>June 13th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#installation">Installation and Setup</a> section with up-to-date information on getting started with UOX3</li>
@@ -4940,6 +4944,57 @@ packitem=0x0f8d,30
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>More details on UOX3 race system coming here soon! Check out <strong>UOX3/dfndata/race/races.dfn</strong> for examples.</p>
+					<input type="checkbox" id="spoiler_race_combat_mods">
+					<label for="spoiler_race_combat_mods">Racial Combat Mods <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Racial combat mods are <span class="highlight">bonuses or penalties</span> applied to skills during <strong>skill checks</strong>, or during calculations of <strong>base damage</strong> dealt when attacking someone with a given weapon-skill in combat. These modifiers apply to characters who are members of a race that has been setup with skill tags such as <strong>[SKILLNAME]G=#</strong> (bonus) or <strong>[SKILLNAME]L=#</strong> (penalty) - where # points to one of the <strong>MOD#</strong> entries in this section.</p>
+						<p>Example: A race setup with a <span class="highlight">SWORDSMANSHIPG=3</span> tag will have a <span class="highlight">20% bonus</span> applied to any Swordsmanship skill checks, and will also receive a <span class="highlight">20% bonus</span> to base damage during combat when wielding a sword, <em>before</em> any other damage modifiers are applied. If <span class="highlight">SWORDSMANSHIPL=3</span> was used instead, it would be a <span class="highlight">20% penalty</span> instead of a bonus.</p>
+						<p>Example of default [COMBAT MODS] setup in <span class="highlight">dfndata/race/races.dfn</span>, along with a couple of examples how to make use of them:<br>
+
+<pre><code class="language-ini">[COMBAT MODS]
+{
+MODCOUNT=4
+MOD0=0
+MOD1=50
+MOD2=100
+MOD3=200
+}
+
+[RACE 0]
+{
+NAME=Human
+STRCAP=100
+DEXCAP=100
+INTCAP=100
+PLAYERRACE=0
+BANEQUIPLIST=1
+BANEQUIPLIST=2
+SWORDSMANSHIPG=2 // Uses MOD2, i.e. 10.0% bonus to swordsmanship
+FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
+}
+
+[RACE 1]
+{
+PARENTRACE=0
+NAME=Elf
+PLAYERRACE=0
+BANEQUIPLIST=2
+MACEFIGHTINGL2 // MOD2, 10.0% penalty to macefighting
+ARCHERYG=3 // MOD3, 20.0% bonus to archery
+}
+
+[RACE 2]
+{ // Player
+PARENTRACE=0
+NAME=Gargoyle
+PLAYERRACE=0
+RACIALAID=3
+ALLOWEQUIPLIST=0
+ALLOWEQUIPLIST=2
+MACEFIGHTINGG=2 // MOD2, 10.0% bonus to macefighting
+ARCHERYL=3 // MOD3, 20.0% penalty to archery
+}</code></pre>
+					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>

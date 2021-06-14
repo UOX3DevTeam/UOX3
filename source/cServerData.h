@@ -118,6 +118,8 @@ enum cSD_TID
 	tSERVER_POTION,				// Delay between using potions
 	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
 	tSERVER_NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
+	tSERVER_BLOODDECAY,			// Delay in seconds before blood spatter spawned from combat decays
+	tSERVER_BLOODDECAYCORPSE,	// Delay in seconds before blood spawned along with corpses decays
 	tSERVER_COUNT
 };
 
@@ -295,6 +297,7 @@ private:
 	UI08		combatarmordamagechance;		//  Chance of armor being damaged when defending in combat (0-100)
 	UI08		combatarmordamagemin;			//  Minimum amount of hitpoints an armor can lose when being damaged in combat
 	UI08		combatarmordamagemax;			//  Maximum amount of hitpoints an armor can lose when being damaged in combat
+	UI08		combatbloodeffectchance;		//  Chance of blood splatter effects spawning during combat
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 
 	// Start & Location Settings
@@ -657,6 +660,9 @@ public:
 
 	void		CombatArmorDamageMax( UI08 value );
 	UI08		CombatArmorDamageMax( void ) const;
+
+	void		CombatBloodEffectChance( UI08 value );
+	UI08		CombatBloodEffectChance( void ) const;
 
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;

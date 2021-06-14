@@ -960,7 +960,7 @@ bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 			target->Delete();
 		}
 		else
-			HandleDeath( target );
+			HandleDeath( target, nullptr );
 	}
 	return true;
 }
@@ -1293,7 +1293,7 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 			}
 			Effects->PlaySound( target, 0x0204 );
 			Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );
-			HandleDeath( target );
+			HandleDeath( target, caster );
 		}
 	}
 }

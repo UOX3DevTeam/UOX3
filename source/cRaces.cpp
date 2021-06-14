@@ -105,7 +105,7 @@ void cRaces::load( void )
 		{
 			if( strutil::toupper( tag ) != "MODCOUNT" )
 			{
-				Console << "MODCOUNT must come before any entries!" << myendl;
+				Console.error( "MODCOUNT must come before any entries!" );
 				DefaultInitCombat();
 			}
 			else
@@ -113,7 +113,7 @@ void cRaces::load( void )
 				UI32 modifierCount = static_cast<UI32>(std::stoul(CombatMods->GrabData(), nullptr, 0)) ;
 				if( modifierCount < 4 )
 				{
-					Console << "MODCOUNT must be more >= 4, or it uses the defaults!" << myendl;
+					Console.warning( "MODCOUNT must be more >= 4, or it uses the defaults!" );
 					DefaultInitCombat();
 				}
 				else
@@ -430,6 +430,19 @@ COLOUR cRaces::RandomBeard( RACEID x ) const
 	if( InvalidRace( x ) )
 		return 0;
 	return races[x]->RandomBeard();
+}
+
+COLOUR cRaces::BloodColour( RACEID x ) const
+{
+	if( InvalidRace( x ) )
+		return 0000;
+	return races[x]->BloodColour();
+}
+void cRaces::BloodColour( RACEID x, COLOUR newValue )
+{
+	if( InvalidRace( x ) )
+		return;
+	races[x]->BloodColour( newValue );
 }
 
 bool cRaces::beardRestricted( RACEID x ) const
@@ -1040,7 +1053,7 @@ bool CRace::CanEquipItem( UI16 itemID ) const
 }
 
 CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
-restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
+restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
 	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
@@ -1062,7 +1075,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 
 
 CRace::CRace( SI32 numRaces ) : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
-restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
+restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	NumEnemyRaces( numRaces );
 
@@ -1115,6 +1128,15 @@ COLOUR CRace::RandomBeard( void ) const
 		return 0;
 	size_t sNum = RandomNum( static_cast< size_t >(0), beardColours.size() - 1 );
 	return (COLOUR)RandomNum( beardColours[sNum].cMin, beardColours[sNum].cMax );
+}
+
+COLOUR CRace::BloodColour( void ) const
+{
+	return bloodColour;
+}
+void CRace::BloodColour( COLOUR newValue )
+{
+	bloodColour = newValue;
 }
 
 bool CRace::IsSkinRestricted( void ) const
@@ -1309,6 +1331,10 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				else if( UTag == "BEARDMAX" )
 				{
 					beardColours.push_back( ColourPair( beardMin, static_cast<UI16>(std::stoul(data, nullptr, 0)) ) );
+				}
+				else if( UTag == "BLOODCOLOUR" )
+				{
+					bloodColour = static_cast<COLOUR>(std::stoul(data, nullptr, 0));
 				}
 				break;
 
@@ -1730,6 +1756,7 @@ CRace& CRace::operator =( CRace& trgRace )
 	visDistance = trgRace.visDistance;
 	poisonResistance = trgRace.poisonResistance;
 	magicResistance = trgRace.magicResistance;
+	bloodColour = trgRace.bloodColour;
 
 	return (*this);
 }

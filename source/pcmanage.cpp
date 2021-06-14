@@ -12,6 +12,7 @@
 #include "townregion.h"
 #include "Dictionary.h"
 #include "cEffects.h"
+#include "cRaces.h"
 #include "StringUtility.hpp"
 
 #include "ObjectFactory.h"
@@ -1319,11 +1320,11 @@ void startChar( CSocket *mSock, bool onCreate )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
+//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fallDirection )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
 //o-----------------------------------------------------------------------------------------------o
-CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
+CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fallDirection )
 {
 	CItem *iCorpse = nullptr;
 	if( !createPack )
@@ -1374,10 +1375,10 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 	else
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ) ) );
 
-	if( !ValidateObject( mChar.GetAttacker() ) )
+	if( !ValidateObject( killer ) )
 		iCorpse->SetTempVar( CITV_MOREX, INVALIDSERIAL );
 	else
-		iCorpse->SetTempVar( CITV_MOREX, mChar.GetAttacker()->GetSerial() );
+		iCorpse->SetTempVar( CITV_MOREX, killer->GetSerial() );
 
 	return iCorpse;
 }
@@ -1453,12 +1454,12 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 
 void killTrades( CChar *i );
 //o-----------------------------------------------------------------------------------------------o
-//|	Function    -	void HandleDeath( CChar *mChar )
+//|	Function    -	void HandleDeath( CChar *mChar, CChar *attacker )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose     -	Performs death stuff. I.E.- creates a corpse, moves items
 //|                  to it, take out of war mode, does animation and sound, etc.
 //o-----------------------------------------------------------------------------------------------o
-void HandleDeath( CChar *mChar )
+void HandleDeath( CChar *mChar, CChar *attacker )
 {
 	if( !ValidateObject( mChar ) || mChar->IsDead() || mChar->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
 		return;
@@ -1480,7 +1481,7 @@ void HandleDeath( CChar *mChar )
 	UI08 fallDirection = (UI08)(RandomNum( 0, 100 ) % 2);
 	mChar->SetDead( true );
 
-	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack, fallDirection );
+	CItem *iCorpse = CreateCorpseItem( (*mChar), attacker, createPack, fallDirection );
 	if( iCorpse != nullptr )
 	{
 		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
@@ -1488,6 +1489,35 @@ void HandleDeath( CChar *mChar )
 			Effects->deathAction( mChar, iCorpse, fallDirection );
 	}
 	Effects->playDeathSound( mChar );
+
+	// Spawn blood effect below corpse
+	UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property
+	CItem * bloodEffect = Effects->SpawnBloodEffect( iCorpse->WorldNumber(), iCorpse->GetInstanceID(), bloodColour, BLOOD_DEATH );
+	if( ValidateObject( bloodEffect ))
+	{
+		// Set a timestamp for when the bloodeffect was created, and match it to the corpse!
+		bloodEffect->SetTempTimer( iCorpse->GetTempTimer() );
+
+		if( !mChar->IsNpc() )
+		{
+			// Set character as owner of blood-effects, if not an NPC
+			bloodEffect->SetOwner( mChar );
+		}
+
+		// If there's a valid attacker still, store the serial on the blood item (just like the corpse)
+		// so it could be accessed by something like forensics skill
+		if( ValidateObject( attacker ) )
+		{
+			bloodEffect->SetTempVar( CITV_MOREX, attacker->GetSerial() );
+		}
+		else
+		{
+			bloodEffect->SetTempVar( CITV_MOREX, INVALIDSERIAL );
+		}
+
+		// Finally, set blood's location to match that of the corpse
+		bloodEffect->SetLocation( iCorpse );
+	}
 
 	mChar->SetWar( false );
 	mChar->StopSpell();

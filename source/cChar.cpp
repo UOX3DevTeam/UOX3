@@ -5098,6 +5098,15 @@ void CChar::SetTrackingTarget( CChar *newValue )
 	if( IsValidPlayer() )
 		mPlayer->trackingTarget = calcSerFromObj( newValue );
 }
+SERIAL CChar::GetTrackingTargetSerial( void ) const
+{
+	SERIAL rVal = INVALIDSERIAL;
+	if( IsValidPlayer() )
+	{
+		rVal = mPlayer->trackingTarget;
+	}
+	return rVal;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CChar *GetTrackingTargets( UI08 targetNum ) const
@@ -6495,6 +6504,31 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 	// Apply the damage
 	SetHP( hitpoints - damageValue );
 
+	// Spawn blood effects
+	if( damageValue >= static_cast<UI16>(floor(GetMaxHP() * 0.01)) ) // Only display blood effects if damage done is higher than 1% of max health
+	{
+		UI08 bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
+		bool spawnBlood = ( bloodEffectChance >= static_cast<UI08>(RandomNum( 0, 99 )));
+		if( spawnBlood )
+		{
+			BloodTypes bloodType = BLOOD_BLEED;
+			auto foijf = GetMaxHP() * 0.2;
+			if( damageValue >= static_cast<UI16>(floor(GetMaxHP() * 0.2 )) )
+			{
+				// If damage done is higher than 20% of max health, spawn larger blood splats
+				bloodType = BLOOD_CRITICAL;
+			}
+
+			UI16 bloodColour = Races->BloodColour( GetRace() ); // Fetch blood color from race property
+			CItem * bloodEffect = Effects->SpawnBloodEffect( WorldNumber(), GetInstanceID(), bloodColour, bloodType );
+			if( ValidateObject( bloodEffect ) )
+			{
+				// Finally, set blood's location to match that of the character
+				bloodEffect->SetLocation( this );
+			}
+		}
+	}
+
 	// Handle peace state
 	if( !GetCanAttack() )
 	{
@@ -6605,7 +6639,7 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 		Combat->Kill( attacker, this );
 	}
 	else
-		HandleDeath( this );
+		HandleDeath( this, nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o

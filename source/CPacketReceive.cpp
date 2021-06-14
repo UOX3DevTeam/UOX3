@@ -235,7 +235,7 @@ bool CPIFirstLogin::Handle( void )
 					Console << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
 				}
 			}
-			else if( tSock->ClientType() == CV_KR3D )
+			else if( tSock->ClientType() <= CV_KR3D )
 			{
 				if( !cwmWorldState->ServerData()->ClientSupport6050() )
 				{
@@ -694,6 +694,8 @@ void CPINewClientVersion::Receive( void )
 						tSock->ClientVerShort( CVS_70240 );
 				}
 			}
+			else if( tSock->ClientVersion() == 100666882 ) // 6.0.14.2, but technically first SA2D client
+				tSock->ClientType( CV_SA2D ); 
 			else if( tSock->ClientVersion() <= 117442562 && clientRevision >= 0 && clientRevision < 9 )
 				tSock->ClientType( CV_SA2D );
 			else if( tSock->ClientVersion() >= 117440814 && clientRevision >= 9 )
@@ -3842,13 +3844,28 @@ void CPITrackingArrow::Receive( void )
 bool CPITrackingArrow::Handle( void )
 {
 	CChar *mChar = tSock->CurrcharObj();
-	if( ValidateObject( mChar ) )
+	if( ValidateObject( mChar ) && tSock->GetByte( 5 ) == 0x01 )
 	{
 		tSock->SetTimer( tPC_TRACKING, 0 );
-		if( ValidateObject( mChar->GetTrackingTarget() ) )
+		CChar *trackingTarg = mChar->GetTrackingTarget();
+		if( ValidateObject( trackingTarg ))
 		{
-			CPTrackingArrow tSend = (*mChar->GetTrackingTarget());
+			CPTrackingArrow tSend = (*trackingTarg);
 			tSend.Active( 0 );
+			if( tSock->ClientVersion() >= CV_HS2D )
+			{
+				tSend.AddSerial( trackingTarg->GetSerial() );
+			}
+			tSock->Send( &tSend );
+		}
+		else
+		{
+			CPTrackingArrow tSend;
+			tSend.Active( 0 );
+			if( tSock->ClientVersion() >= CV_HS2D )
+			{
+				tSend.AddSerial( mChar->GetTrackingTargetSerial() );
+			}
 			tSock->Send( &tSend );
 		}
 	}

@@ -722,6 +722,7 @@ public:
 
 	CChar *		GetTrackingTarget( void ) const;
 	CChar *		GetTrackingTargets( UI08 targetNum ) const;
+	SERIAL		GetTrackingTargetSerial( void ) const;
 	void		SetTrackingTarget( CChar *newValue );
 	void		SetTrackingTargets( CChar *newValue, UI08 targetNum );
 

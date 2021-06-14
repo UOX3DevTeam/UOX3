@@ -33,6 +33,58 @@ void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SpawnBloodEffect( UI16 bloodColour )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spawns a blood effect item and returns the newly created object to caller
+//o-----------------------------------------------------------------------------------------------o
+CItem * cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodColour, BloodTypes bloodType )
+{
+	// Use default blood decay timer from ini setting
+	R32 bloodDecayTimer = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY ));
+
+	// Blood effects, sorted by size of effect from small to large
+	std::vector<UI16> bloodIDs{ 0x1645, 0x122C, 0x122E, 0x122B, 0x122D, 0x122A, 0x122F };
+	UI16 bloodEffectID = 0x122c;
+
+	switch( bloodType )
+	{
+		case BLOOD_DEATH:
+			// Use corpse-specific blood decay timer instead of default one
+			bloodDecayTimer = static_cast<R32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ) );
+
+			// Randomize between large blood effects
+			bloodEffectID = bloodIDs[RandomNum( static_cast<UI16>( 3 ), static_cast<UI16>( 6 ) )];
+			break;
+		case BLOOD_BLEED:
+			// Randomize between small blood effects
+			bloodEffectID = bloodIDs[RandomNum( static_cast<UI16>( 0 ), static_cast<UI16>( 3 ) )];
+			break;
+		case BLOOD_CRITICAL:
+			// Randomize between medium to large blood effects
+			bloodEffectID = bloodIDs[RandomNum( static_cast<UI16>( 2 ), static_cast<UI16>( 5 ) )];
+
+			// More blood, so increase the time it takes to decay
+			bloodDecayTimer *= 1.5;
+			break;
+		default:
+			break;
+	}
+	
+	// Spawn the blood effect item
+	CItem *blood = Items->CreateBaseItem( worldNum, OT_ITEM, instanceID );
+	if( ValidateObject( blood ) )
+	{
+		blood->SetID( bloodEffectID );
+		blood->SetColour( bloodColour );
+		blood->SetDecayable( true );
+		blood->SetDecayTime( BuildTimeValue( bloodDecayTimer ));
+		return blood;
+	}
+
+	return nullptr;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect,
 //|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 //o-----------------------------------------------------------------------------------------------o
@@ -137,7 +189,7 @@ void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subA
 void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 {
 	if( mChar->GetBodyType() == BT_GARGOYLE || ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-		&& ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		&& ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
 	{
 		if( mChar->GetBodyType() == BT_GARGOYLE )
 		{

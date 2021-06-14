@@ -392,6 +392,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("THIRSTRATE", 251);
 	regINIValue("THIRSTDRAINVAL", 252);
 	regINIValue("PETTHIRSTOFFLINE", 253);
+	regINIValue("BLOODDECAYTIMER", 255);
+	regINIValue("BLOODDECAYCORPSETIMER", 256);
+	regINIValue("BLOODEFFECTCHANCE", 257);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -497,6 +500,7 @@ void CServerData::ResetDefaults( void )
 	CombatArmorDamageChance( 33 );
 	CombatArmorDamageMin( 0 );
 	CombatArmorDamageMax( 1 );
+	CombatBloodEffectChance( 75 );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2.0 );
@@ -688,6 +692,8 @@ void CServerData::ResetDefaults( void )
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
 	SystemTimer( tSERVER_CORPSEDECAY, 900 );
+	SystemTimer( tSERVER_BLOODDECAYCORPSE, 450 ); // Default to half the decay timer of a corpse
+	SystemTimer( tSERVER_BLOODDECAY, 3 ); // Keep it short and sweet
 	resettingDefaults = false;
 	PostLoadDefaults();
 }
@@ -2170,6 +2176,23 @@ void CServerData::CombatArmorDamageMax( UI08 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatBloodEffectChance( void ) const
+//|					void CombatBloodEffectChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the chance to spawn blood splatter effects during combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatBloodEffectChance( void ) const
+{
+	return combatbloodeffectchance;
+}
+void CServerData::CombatBloodEffectChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatbloodeffectchance = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 HungerDamage( void ) const
 //|					void HungerDamage( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3086,7 +3109,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
 		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
 		ofsOutput << "NPCFLAGUPDATETIMER=" << SystemTimer( tSERVER_NPCFLAGUPDATETIMER ) << '\n';
-
+		ofsOutput << "BLOODDECAYTIMER=" << SystemTimer( tSERVER_BLOODDECAY ) << '\n';
+		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
@@ -3236,6 +3260,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
 		ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
 		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
+		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -4186,6 +4211,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 254:	// ExternalIP
 			ExternalIP(value);
+			break;
+		case 255:	 // BLOODDECAYTIMER[0243]
+			SystemTimer( tSERVER_BLOODDECAY, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 256:	 // BLOODDECAYCORPSETIMER[0244]
+			SystemTimer( tSERVER_BLOODDECAYCORPSE, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 257:	// BLOODEFFECTCHANCE[0245]
+			CombatBloodEffectChance( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
 			break;
 		default:
 			rvalue = false;
