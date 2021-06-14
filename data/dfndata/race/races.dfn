@@ -54,6 +54,8 @@
 //*	STRCAP=# - STRENGTH cap of race				  *
 //*	SKINMIN=#						  *
 //*	SKINMAX=#						  *
+//* [SKILLNAME]G=#						*
+//* [SKILLNAME]L=#						*
 //*	SNOWAFFECT - Race is affected by snow			  *
 //*	SNOWDAMAGE=# - Max amount of damage taken by snow	  *
 //*	SNOWSECS=# - How often snow damages in seconds		  *
@@ -65,6 +67,24 @@
 //*								  *
 //*                                                               *
 //*****************************************************************
+
+// Combat mods are bonuses or penalties applied to skills during skill checks, or during calculations
+// of base damage dealt when attacking someone with a given weaponskill in combat. These modifiers
+// apply to characters who are members of a race that has been setup with skilltags such as
+// [SKILLNAME]G=# (bonus) or [SKILLNAME]L=# (penalty) - where # points to one of the MOD# entries in this
+// section.
+//
+// Example: A race setup with a SWORDSMANSHIPG=3 tag will have a 20% bonus applied to any Swordsmanship
+// checks, and will also receive a 20% bonus to base damage during combat when wielding a sword, before
+// any other damage modifiers are applied.
+[COMBAT MODS]
+{
+MODCOUNT=4
+MOD0=0
+MOD1=50
+MOD2=100
+MOD3=200
+}
 
 [RACE 0]
 {

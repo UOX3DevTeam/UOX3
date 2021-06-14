@@ -660,7 +660,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 							{
 								if( ourChar->GetBodyType() == BT_GARGOYLE 
 									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientType() >= CV_SA2D )))
 								{
 									// If gargoyle, human or elf, and new animation packet is enabled
 									Effects->PlayNewCharacterAnimation( ourChar, N_ACT_EMOTE, S_ACT_EMOTE_BOW );
@@ -681,7 +681,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 							{
 								if( ourChar->GetBodyType() == BT_GARGOYLE 
 									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientType() >= CV_SA2D )))
 								{
 									// If gargoyle, human or elf, and new animation packet is enabled
 									Effects->PlayNewCharacterAnimation( ourChar, N_ACT_EMOTE, S_ACT_EMOTE_SALUTE );

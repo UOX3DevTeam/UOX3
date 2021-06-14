@@ -2383,7 +2383,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 			Effects->PlayCharacterAnimation( ourTarg, ( RandomNum( 0, 1 ) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD )); // 0x15 or 0x16
 			Effects->playDeathSound( ourTarg );
 
-			ourTarg->Delete(); // Guards, don't give body
+			ourTarg->Delete(); // NPC was killed by a Guard, don't leave a corpse behind
 			if( mChar->IsAtWar() )
 				mChar->ToggleCombat();
 			return;
@@ -2406,7 +2406,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 		}
 		InvalidateAttacker( mChar );
 	}
-	HandleDeath( ourTarg );
+	HandleDeath( ourTarg, mChar );
 }
 
 //o-----------------------------------------------------------------------------------------------o

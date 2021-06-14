@@ -659,6 +659,13 @@ enum monsterSound
     SND_COUNT
 };
 
+enum BloodTypes
+{
+	BLOOD_DEATH = 0,
+	BLOOD_BLEED,
+	BLOOD_CRITICAL,
+};
+
 enum FlagColors
 {
     FC_INNOCENT = 1,

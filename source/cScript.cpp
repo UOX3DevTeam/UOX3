@@ -164,7 +164,7 @@ static JSFunctionSpec my_functions[] =
 	{ "INVALIDID",					SE_INVALIDID,				0, 0, 0 },
 	{ "INVALIDCOLOUR",				SE_INVALIDCOLOUR,			0, 0, 0 },
 
-	{ nullptr,							nullptr,						0, 0, 0 },
+	{ nullptr,						nullptr,					0, 0, 0 },
 };
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )

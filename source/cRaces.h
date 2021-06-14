@@ -33,6 +33,7 @@ private:
 	COLOURLIST			beardColours;
 	COLOURLIST			hairColours;
 	COLOURLIST			skinColours;
+	COLOUR				bloodColour;
 
 	std::bitset< 8 >	bools;
 
@@ -142,6 +143,8 @@ public:
 	COLOUR			RandomSkin( void ) const;
 	COLOUR			RandomHair( void ) const;
 	COLOUR			RandomBeard( void ) const;
+	COLOUR			BloodColour( void ) const;
+	void			BloodColour( COLOUR newValue );
 
 	bool			IsSkinRestricted( void ) const;
 	bool			IsHairRestricted( void ) const;
@@ -217,6 +220,7 @@ public:
 	COLOUR			RandomSkin( RACEID x ) const;
 	COLOUR			RandomHair( RACEID x ) const;
 	COLOUR			RandomBeard( RACEID x ) const;
+	COLOUR			BloodColour( RACEID x ) const;
 	SI32			DamageFromSkill( SI32 skill, RACEID x ) const;
 	SI32			FightPercent( SI32 skill, RACEID x ) const;
 	SKILLVAL		LanguageMin( RACEID x ) const;
@@ -246,6 +250,7 @@ public:
 	void			RacialAlly( RACEID race, RACEID ally );
 	void			RacialNeutral( RACEID race, RACEID neutral );
 	void			LanguageMin( SKILLVAL toSetTo, RACEID race );
+	void			BloodColour( RACEID race, COLOUR newValue );
 
 	void			VisLevel( RACEID x, LIGHTLEVEL bonus );
 	void			VisRange( RACEID x, RANGE range );

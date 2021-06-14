@@ -342,7 +342,7 @@ void cSkills::Mine( CSocket *s )
 
 	// do action and sound
 	if( mChar->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
 		Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // action 0x00, subAction 0x03
 	else if( mChar->IsOnHorse() ) // Human/Elf, mounted, pre-v7.0.0.0
 		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H ); // 0x1A
@@ -392,7 +392,7 @@ void cSkills::GraveDig( CSocket *s )
 
 	// do action and sound
 	if( nCharID->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientType() >= CV_SA2D )))
 		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
 	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
 		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
@@ -410,7 +410,7 @@ void cSkills::GraveDig( CSocket *s )
 
 	// do action and sound (again?)
 	if( nCharID->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientType() >= CV_SA2D )))
 		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
 	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
 		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
@@ -1709,8 +1709,17 @@ void cSkills::Track( CChar *i )
 	CSocket *s = i->GetSocket();
 	VALIDATESOCKET( s );
 	CChar *trackTarg = i->GetTrackingTarget();
-	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 )
+	if( !ValidateObject( trackTarg ) || trackTarg->isDeleted() || trackTarg->GetY() == -1 )
 	{
+		s->sysmessage( 2059 ); // You have lost your quarry.
+		s->SetTimer( tPC_TRACKING, 0 );
+		CPTrackingArrow tSend;
+		tSend.Active( 0 );
+		if( s->ClientVersion() >= CV_HS2D )
+		{
+			tSend.AddSerial( i->GetTrackingTargetSerial() );
+		}
+		s->Send( &tSend );
 		return;
 	}
 	CPTrackingArrow tSend = (*trackTarg);

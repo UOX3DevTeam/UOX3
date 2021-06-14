@@ -11,11 +11,20 @@ function command_CLEANUP( socket, cmdString )
 	socket.SysMessage( count.toString() + " corpses or gates have been deleted" );
 }
 
+var bloodIDs = [ 0x1645, 0x122A, 0x122B, 0x122C, 0x122D, 0x122E, 0x122F ];
 function onIterate( toCheck )
 {
 	if( toCheck && toCheck.isItem )
 	{
+		// Clean up corpses
 		if( toCheck.corpse || toCheck.type == 51 || toCheck.type == 52 )
+		{
+			toCheck.Delete();
+			return true;
+		}
+
+		// Also clean up blood splatter
+		if( bloodIDs.indexOf( toCheck.id ) > -1 )
 		{
 			toCheck.Delete();
 			return true;
