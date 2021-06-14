@@ -1,0 +1,45 @@
+[0x1f86]
+{//1063477 The Admiral's Hearty Rum
+get=base_drink
+name=The Admiral's Hearty Rum
+id=0x1f86
+color=0x66C
+}
+
+[0x1086]
+{//1070638 Alchemists Bauble
+get=base_jewelry
+name=Alchemists Bauble
+id=0x1086
+layer=0x0e
+color=0x290
+//enhance potions by 30
+//lower reg cost by 20
+//add resistance poison by 10
+}
+
+[0x1406]
+{//1063481 Arctic Death Dealer
+get=base_item
+name=Arctic Death Dealer
+id=0x1406
+color=0x480
+weight=1700
+value=32 16
+layer=1
+lodamage=10
+hidamage=30
+hp=255 255
+spd=32
+str=30
+restock=10
+movable=1
+decay=1
+good=26
+//need cold damage 50 and physical damage 50 added
+//hit harm by 33
+//hit lower attack by 40
+//weapon speed by 20
+//weapon damage by 40
+//add resist bonus cold by 10
+}

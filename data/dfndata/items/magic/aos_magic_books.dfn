@@ -1,0 +1,21 @@
+[0x2252]
+{
+get=base_item
+name=paladin spellbook
+id=0x2252
+weight=100
+value=22 11
+decay=1
+good=28
+}
+
+[0x2253]
+{
+get=base_item
+name=necromancer book
+id=0x2253
+weight=100
+value=22 11
+decay=1
+good=28
+}

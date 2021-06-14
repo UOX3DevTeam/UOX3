@@ -1,0 +1,124 @@
+[base_necromancy_scroll]
+{
+get=base_scroll
+value=12 6
+}
+
+[0x2260]
+{
+get=base_necromancy_scroll
+name=Animate Dead Scroll
+id=0x2260
+}
+
+[0x2261]
+{
+get=base_necromancy_scroll
+name=Blood Oath Scroll
+id=0x2261
+}
+
+[0x2262]
+{
+get=base_necromancy_scroll
+name=Corpse Skin Scroll
+id=0x2262
+}
+
+[0x2263]
+{
+get=base_necromancy_scroll
+name=Curse Weapon Scroll
+id=0x2263
+}
+
+[0x2264]
+{
+get=base_necromancy_scroll
+name=Evil Omen Scroll
+id=0x2264
+}
+
+[0x2265]
+{
+get=base_necromancy_scroll
+name=Horrific Beast Scroll
+id=0x2265
+}
+
+[0x2266]
+{
+get=base_necromancy_scroll
+name=Lich Form Scroll
+id=0x2266
+}
+
+[0x2267]
+{
+get=base_necromancy_scroll
+name=Mind Rot Scroll
+id=0x2267
+}
+
+[0x2268]
+{
+get=base_necromancy_scroll
+name=Pain Spike Scroll
+id=0x2268
+}
+
+[0x2269]
+{
+get=base_necromancy_scroll
+name=Poison Strike Scroll
+id=0x2269
+}
+
+[0x226A]
+{
+get=base_necromancy_scroll
+name=Strangle Scroll
+id=0x226A
+}
+
+[0x226B]
+{
+get=base_necromancy_scroll
+name=Summon Familiar Scroll
+id=0x226B
+}
+
+[0x226C]
+{
+get=base_necromancy_scroll
+name=Vampiric Embrace Scroll
+id=0x226C
+}
+
+[0x226D]
+{
+get=base_necromancy_scroll
+name=Vengeful Spirit Scroll
+id=0x226D
+}
+
+[0x226E]
+{
+get=base_necromancy_scroll
+name=Wither Scroll
+id=0x226E
+}
+
+[0x226F]
+{
+get=base_necromancy_scroll
+name=Wraith Form Scroll
+id=0x226F
+}
+
+[0x2270]
+{
+get=base_necromancy_scroll
+name=Exorcism Scroll
+id=0x2270
+}
