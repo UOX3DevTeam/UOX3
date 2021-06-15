@@ -1127,6 +1127,16 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 						}
 					}
 
+					// Check global script! Maybe there's another event there
+					cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+					if( toExecute != nullptr )
+					{
+						if( toExecute->OnDecay( itemCheck ) == 0 )	// if it exists and we don't want hard code, return
+						{
+							return;
+						}
+					}
+
 					if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) )
 						continue;
 				}

@@ -120,6 +120,7 @@ enum cSD_TID
 	tSERVER_NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
 	tSERVER_BLOODDECAY,			// Delay in seconds before blood spatter spawned from combat decays
 	tSERVER_BLOODDECAYCORPSE,	// Delay in seconds before blood spawned along with corpses decays
+	tSERVER_NPCCORPSEDECAY,		// Delay in seconds before NPC corpses decay
 	tSERVER_COUNT
 };
 
