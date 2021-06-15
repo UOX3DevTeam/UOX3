@@ -6,6 +6,7 @@
 		NPCCORPSEDECAYTIMER=420
 	Updated onDecay JS event to support triggering in global script
 	Added onDecay event to default global script (js/server/global.js), which detects when player corpses are about to decay, turns them into bones, and resets the decay timer back to full
+	Fixed an issue that snuck in with regards to fetching server setting for BLOODEFFECTCHANCE in JS engine
 
 15/06/2021 - Xuri
 	Added cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodColour, BloodTypes bloodType ), which can be called upon to create blood splatter effects for things like death, bleeding, combat hits, etc.
