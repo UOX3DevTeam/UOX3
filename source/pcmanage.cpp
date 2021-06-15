@@ -1373,7 +1373,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fall
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY ) ) );
 	}
 	else
-		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ) ) );
+		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY ) ) );
 
 	if( !ValidateObject( killer ) )
 		iCorpse->SetTempVar( CITV_MOREX, INVALIDSERIAL );

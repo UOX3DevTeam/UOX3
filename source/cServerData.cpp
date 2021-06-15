@@ -191,7 +191,6 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BASEFISHINGTIMER",24);
 	regINIValue("SCRIPTSDIRECTORY", 25);
 	regINIValue("JOINPARTMSGS", 26);
-	regINIValue("EXTERNALIP",254);
 	//HERE
 	regINIValue("MANAREGENTIMER", 37);
 	regINIValue("RANDOMFISHINGTIMER", 38);
@@ -392,9 +391,11 @@ void	CServerData::regAllINIValues() {
 	regINIValue("THIRSTRATE", 251);
 	regINIValue("THIRSTDRAINVAL", 252);
 	regINIValue("PETTHIRSTOFFLINE", 253);
+	regINIValue("EXTERNALIP",254);
 	regINIValue("BLOODDECAYTIMER", 255);
 	regINIValue("BLOODDECAYCORPSETIMER", 256);
 	regINIValue("BLOODEFFECTCHANCE", 257);
+	regINIValue("NPCCORPSEDECAYTIMER", 258);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -691,8 +692,9 @@ void CServerData::ResetDefaults( void )
 	ServerRandomStartingLocation( false );
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
-	SystemTimer( tSERVER_CORPSEDECAY, 900 );
-	SystemTimer( tSERVER_BLOODDECAYCORPSE, 450 ); // Default to half the decay timer of a corpse
+	SystemTimer( tSERVER_CORPSEDECAY, 420 );
+	SystemTimer( tSERVER_NPCCORPSEDECAY, 420 );
+	SystemTimer( tSERVER_BLOODDECAYCORPSE, 210 ); // Default to half the decay timer of a npc corpse
 	SystemTimer( tSERVER_BLOODDECAY, 3 ); // Keep it short and sweet
 	resettingDefaults = false;
 	PostLoadDefaults();
@@ -3092,6 +3094,7 @@ bool CServerData::save( std::string filename )
 
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
 		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
+		ofsOutput << "NPCCORPSEDECAYTIMER=" << SystemTimer( tSERVER_NPCCORPSEDECAY ) << '\n';
 		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
 		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
 		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
@@ -4220,6 +4223,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 257:	// BLOODEFFECTCHANCE[0245]
 			CombatBloodEffectChance( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 258:	 // NPCCORPSEDECAYTIMER[0246]
+			SystemTimer( tSERVER_NPCCORPSEDECAY, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
 			break;
 		default:
 			rvalue = false;
