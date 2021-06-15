@@ -3846,8 +3846,8 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 256:	 // BLOODDECAYCORPSETIMER[0244]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ) ) );
 				break;
-			case 257:	// PARRYDAMAGECHANCE[0229]
-				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatParryDamageChance() ) );
+			case 257:	// BLOODEFFECTCHANCE[0229]
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatBloodEffectChance() ) );
 				break;
 			case 258:	 // NPCCORPSEDECAYTIMER[0230]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY ) ) );
