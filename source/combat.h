@@ -31,7 +31,7 @@ private:
 
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
-	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill );
+	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );

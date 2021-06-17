@@ -1757,11 +1757,11 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill )
+//|	Function	-	SI16 calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate damage based on hit location, damage bonuses, defense modifiers
 //o-----------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill )
+SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
 {
 	SI16 damage = -1;
 
@@ -1773,7 +1773,7 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		{
 			// -1 == event doesn't exist, default to hard code
 			// Other value = calculated damage from script
-			damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill );
+			damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill, hitLoc );
 		}
 	}
 
@@ -1783,7 +1783,6 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		damage = 0;
 
 	const SI16 baseDamage = calcAtt( mChar, true );
-	const UI08 hitLoc = CalculateHitLoc();
 
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
@@ -1800,9 +1799,6 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 
 	if( !ourTarg->IsNpc() )
 		damage /= cwmWorldState->ServerData()->CombatNPCDamageRate(); // Rate damage against other players
-
-	if( damage > 0 )
-		DoHitMessage( mChar, ourTarg, hitLoc, damage );
 
 	return damage;
 }
@@ -2003,9 +1999,13 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				}
 			}
 
-			UI16 ourDamage = calcDamage( &mChar, ourTarg, getFightSkill );
+			const UI08 hitLoc = CalculateHitLoc();
+			UI16 ourDamage = calcDamage( &mChar, ourTarg, getFightSkill, hitLoc );
 			if( ourDamage > 0 )
 			{
+				// Show hit messages, if enabled
+				DoHitMessage( &mChar, ourTarg, hitLoc, ourDamage );
+
 				// Interrupt Spellcasting
 				if( !ourTarg->IsNpc() && targSock != nullptr )
 				{
