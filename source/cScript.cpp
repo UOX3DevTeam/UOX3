@@ -3034,14 +3034,14 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill )
+//|	Function	-	SI16 OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc )
 //|	Date		-	21st March, 2006
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached every time combat damage is calculated
 //|	Notes		-	Returning -1 will default to hard code handling of event
 //|					Returning another value will override code's default handling of event
 //o-----------------------------------------------------------------------------------------------o
-SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill )
+SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc )
 {
 	const SI16 RV_NOFUNC = -1;
 	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
@@ -3051,15 +3051,16 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 
 	SI16 funcRetVal	= -1;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
 	JSObject *defenderObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( attackerObj );
 	params[1] = OBJECT_TO_JSVAL( defenderObj );
 	params[2] = INT_TO_JSVAL( getFightSkill );
+	params[3] = INT_TO_JSVAL( hitLoc );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatDamageCalc", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatDamageCalc", 4, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnCombatDamageCalc, false );

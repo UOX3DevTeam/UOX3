@@ -2614,23 +2614,23 @@ bool CChar::WearItem( CItem *toWear )
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::TakeOffItem( ItemLayers Layer )
 {
-	// Run event prior to equipping item, allowing script to prevent equip
-	std::vector<UI16> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
-	for( auto i : scriptTriggers )
-	{
-		cScript *tScript = JSMapping->GetScript( i );
-		if( tScript != nullptr )
-		{
-			if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
-			{
-				return false;
-			}
-		}
-	}
-
 	bool rvalue = false;
 	if( ValidateObject( GetItemAtLayer( Layer ) ) )
 	{
+		// Run event prior to equipping item, allowing script to prevent equip
+		std::vector<UI16> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *tScript = JSMapping->GetScript( i );
+			if( tScript != nullptr )
+			{
+				if( tScript->OnUnequipAttempt( this, itemLayers[Layer] ) == 0 )
+				{
+					return false;
+				}
+			}
+		}
+
 		if( Layer == IL_PACKITEM )	// It's our pack!
 			SetPackItem( nullptr );
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
@@ -2644,7 +2644,6 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 				SetPoisoned( GetPoisoned() - itemLayers[Layer]->GetPoisoned() );
 		}
 
-		std::vector<UI16> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
 		for( auto i : scriptTriggers )
 		{
 			cScript *tScript = JSMapping->GetScript( i );

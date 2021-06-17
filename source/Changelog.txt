@@ -1,3 +1,10 @@
+17/06/2021 - Xuri
+	Fixed a potential server crash issue with OnUnequipAttempt JS event
+	Added additional parameter to onCombatDamageCalc JS event - hitLoc, which contains the hit location calculated by code for an attack. New syntax:
+		onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
+	Moved CalculateHitLoc() and DoHitMessage() out of CHandleCombat::calcDamage(), so these can still happen if JS scripts override damage calculations using onCombatDamageCalc event
+	Hairs/Beards inside corpse containers now not movable, even if displayed in client for some reason
+
 16/06/2021 - Xuri (0.99.4r)
 	Updated default item decay timer from 300s to 1800s (30 minutes)
 	Updated default corpse decay timer from 900s to 420s (7 minutes)
