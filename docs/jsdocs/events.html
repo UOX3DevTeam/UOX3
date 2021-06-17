@@ -215,14 +215,13 @@ If script is attached to a character, will also trigger when the AllNames macro 
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnCombatDamageCalc">onCombatDamageCalc</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCombatDamageCalc( attacker, defender, getFightSkill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Everytime combat damage calculation occurs this event is fired
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCombatDamageCalc( attacker, defender, getFightSkill, hitLoc )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Every time combat damage calculation occurs this event is fired
 <tr><td valign="top" width="25%"><b>Notes</b><td>Return a damage value to override the combat calculation of the engine, or a negative value to use the engine
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Allow to override the combat damage calculation
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCombatDamageCalc( pAttacker, pDefender, fightSkill )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
 {
 	var baseDamage = pAttacker.attack;
-	var hitLoc = CalculateHitLoc();
 
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
@@ -232,13 +231,16 @@ If script is attached to a character, will also trigger when the AllNames macro 
 	if( damage < 1 )
 		return 0;
 
+	// Apply defense modifiers based on armor, resistances etc
 	damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true);
 
+	// If damage after defense modifiers is below 0, do a small random amount of damage still
 	if( damage <= 0 )
 		damage = RandomNumber( 0, 4 );
 
+	// If defender is a player, damage is divided by this modifier from uox.ini
 	if( !pDefender.npc )
-		damage /= 2;
+		damage /= GetServerSetting( "NPCDAMAGERATE" );
 
 	return damage;
 }</pre></table>
@@ -773,7 +775,7 @@ function onSpellCast( pUser, spellID )
 	if( spellID == 18 )
 	{
 		pUser.CustomTarget( 0, "What do you want to target with your fireball?" );
-	        return -1;
+			return -1;
 	}
 }
 </pre></table>
@@ -1166,8 +1168,8 @@ function onSpeechInput(pUser, iUsed, pSpeech, pSpeechID)
 		pUser.SysMessage( "You didn't type anything!" );
 		return;
 	}
-    	switch(pSpeechID)
-    	{
+		switch(pSpeechID)
+		{
 	case 1:
 		pUser.SysMessage( "You rename the item to: "+pSpeech );
 		iUsed.name = pSpeech;
@@ -1188,7 +1190,7 @@ function onSpellCast( pUser, spellID )
 	if( spellID == 18 )
 	{
 		pUser.CustomTarget( 0, "What do you want to target with your fireball?" );
-	        return -1;
+			return -1;
 	}
 }
 </pre></table>
