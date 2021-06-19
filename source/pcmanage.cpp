@@ -1411,7 +1411,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 				continue;
 			case IL_HAIR:
 			case IL_FACIALHAIR:
-				if( !mChar.GetBodyType() == BT_GARGOYLE ) // Ignore if gargoyle - doesn't seem to display properly on corpses
+				if( mChar.GetBodyType() != BT_GARGOYLE ) // Ignore if gargoyle - doesn't seem to display properly on corpses
 				{
 					dupeItem = j->Dupe();
 					dupeItem->SetCont( iCorpse );
