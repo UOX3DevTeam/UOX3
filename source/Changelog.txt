@@ -1,3 +1,7 @@
+20/06/2021 - Xuri
+	Fixed an error introduced with previous commit that caused some issues with the handling of items upon player death/resurrection
+	Fixed an error where items that had AR/resistances with values lower than 10 would lose those values after a restart (for instance wooden buckler)
+
 17/06/2021 - Xuri
 	Fixed a potential server crash issue with OnUnequipAttempt JS event
 	Added additional parameter to onCombatDamageCalc JS event - hitLoc, which contains the hit location calculated by code for an attack. New syntax:
