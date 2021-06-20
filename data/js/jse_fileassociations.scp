@@ -40,6 +40,7 @@
 //-------------------------------------------
 // turn furniture start[50-54]
 50=server/misc/furniture_smartturn.js
+51=server/misc/ondrop.js
 //-------------------------------------------
 // deeds start[55-59]
 // 55=server/misc/deeds_005.js
@@ -201,6 +202,7 @@
 5024=item/gameboards.js
 5025=item/chesspiece.js
 5026=item/checkerpiece.js
+5027=item/interiordecorator.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
