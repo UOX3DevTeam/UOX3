@@ -1,0 +1,74 @@
+function onDrop( iDropped, pDropper ) 
+{		
+      switch( iDropped.id )
+      {
+      case 0x0B5A: iDropped.id++; break;
+      case 0x0B5B: iDropped.id++; break;
+      case 0x0B5C: iDropped.id++; break;
+      case 0x0B5D: iDropped.id = 0x0B5A; break;
+      case 0x0b56: iDropped.id++; break;
+      case 0x0b57: iDropped.id++; break;
+      case 0x0b58: iDropped.id++; break;
+      case 0x0b59: iDropped.id = 0x0b56; break;
+      case 0x0b56: iDropped.id++; break;
+      case 0x0b57: iDropped.id++; break;
+      case 0x0b58: iDropped.id++; break;
+      case 0x0b59: iDropped.id = 0x0b56; break;
+      case 0x0b52: iDropped.id++; break;
+      case 0x0b53: iDropped.id++; break;
+      case 0x0b54: iDropped.id++; break;
+      case 0x0b55: iDropped.id = 0x0b52; break;
+      case 0x0b4e: iDropped.id++; break;
+      case 0x0b4f: iDropped.id++; break;
+      case 0x0b50: iDropped.id++; break;
+      case 0x0b51: iDropped.id = 0x0b4e; break;
+      case 0x0b32: iDropped.id++; break;
+      case 0x0b33: iDropped.id = 0x0b32; break;
+      case 0x0b2e: iDropped.id++; break;
+      case 0x0b2f: iDropped.id++; break;
+      case 0x0b30: iDropped.id++; break;
+      case 0x0b31: iDropped.id = 0x0b2e; break;
+      case 0x0b2c: iDropped.id++; break;
+      case 0x0b2d: iDropped.id = 0x0b2c; break;
+      case 0x1218: iDropped.id++; break;
+      case 0x1219: iDropped.id++; break;
+      case 0x121a: iDropped.id++; break;
+      case 0x121b: iDropped.id = 0x1218; break;
+      case 0x3dff: iDropped.id++; break;
+      case 0x3e00: iDropped.id = 0x3dff; break;
+      case 0x0e40: iDropped.id++; break;
+      case 0x0e41: iDropped.id = 0x0e40; break;
+      case 0x09ab: iDropped.id = 0x0e7c; break;
+      case 0x0e7c: iDropped.id = 0x09ab; break;
+      case 0x09a8: iDropped.id = 0x0e80; break;
+      case 0x0e80: iDropped.id = 0x09a8; break;
+      case 0x09a9: iDropped.id = 0x0e7e; break;
+      case 0x0e7e: iDropped.id = 0x09a9; break;
+      case 0x09aa: iDropped.id = 0x0e7d; break;
+      case 0x0e7d: iDropped.id = 0x09aa; break;
+      case 0x0a2c: iDropped.id = 0x0a34; break;
+      case 0x0a34: iDropped.id = 0x0a2c; break;
+      case 0x0a30: iDropped.id = 0x0a38; break;
+      case 0x0a38: iDropped.id = 0x0a30; break;
+      case 0x0a4f: iDropped.id = 0x0a53; break;
+      case 0x0a53: iDropped.id = 0x0a4f; break;
+      case 0x0a4d: iDropped.id = 0x0a51; break;
+      case 0x0a51: iDropped.id = 0x0a4d; break;
+      case 0x0a9d: iDropped.id = 0x0a9e; break;
+      case 0x0a9e: iDropped.id = 0x0a9d; break;
+      case 0x0e3c: iDropped.id = 0x0e3d; break;
+      case 0x0e3d: iDropped.id = 0x0e3c; break;
+      case 0x0e3e: iDropped.id = 0x0e3f; break;
+      case 0x0e3f: iDropped.id = 0x0e3e; break;
+      case 0x0e42: iDropped.id = 0x0e43; break;
+      case 0x0e43: iDropped.id = 0x0e42; break;
+      case 0x0b90: iDropped.id = 0x0b7d; break;
+      case 0x0b7d: iDropped.id = 0x0b90; break;
+      case 0x0b8f: iDropped.id = 0x0b7c; break;
+      case 0x0b7c: iDropped.id = 0x0b8f; break;
+      case 0x0b49: iDropped.id++; break;
+      case 0x0b4a: iDropped.id++; break;
+      case 0x0b4b: iDropped.id++; break;
+      case 0x0b4c: iDropped.id = 0x0b49; break;
+      }
+}
