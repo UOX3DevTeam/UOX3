@@ -1,12 +1,10 @@
 -===============================================-
--= ITEM DFN's Updated 6/13/2021 - Dragon Slayer =-
+-= ITEM DFN's Updated 6/20/2021 - Dragon Slayer =-
 -===============================================-
 -New Files:
-	-aos_scrolls.dfn (items/magic)
-        -Split out from misc_magic.dfn:
-		-aos_magic_books.dfn (items/magic)
+	-uor_misc(items/misc)
 -New Items:
-        -traditional_minor_artifacts.dfn (items/artifacts)
+        -uor_misc (items/misc)
 -======================================-
 -= ITEM DFN's Updated 09/5/2003 - Xuri =-
 -======================================-
