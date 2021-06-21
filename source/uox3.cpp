@@ -615,7 +615,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		{
 			if( mChar.GetHP() < maxHP )
 			{
-				if( mChar.GetHunger() > 0 || ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
+				if( !cwmWorldState->ServerData()->HungerSystemEnabled() || mChar.GetHunger() > 0 
+					|| ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
 					for( c = 0; c < maxHP + 1; ++c )
 					{
@@ -646,7 +647,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			if( mStamina < maxStam )
 			{
 				// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
-				if( mChar.GetThirst() > 0 || ( mChar.GetThirst() == 0 && mStamina < static_cast<SI16>( maxStam * 0.25 ) ) || ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() ) ) )
+				if( !cwmWorldState->ServerData()->ThirstSystemEnabled() || mChar.GetThirst() > 0 || ( mChar.GetThirst() == 0 && mStamina < static_cast<SI16>( maxStam * 0.25 ) ) 
+					|| ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
 					for( c = 0; c < maxStam + 1; ++c )
 					{

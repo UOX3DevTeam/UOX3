@@ -449,6 +449,10 @@ bool CChar::SetHunger( SI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::DoHunger( CSocket *mSock )
 {
+	// Don't continue if hunger system is disabled
+	if( !cwmWorldState->ServerData()->HungerSystemEnabled() )
+		return;
+
 	if ( !IsDead() && !IsInvulnerable() )	// No need to do anything on dead or invulnerable chars
 	{
 		UI16 hungerRate;
@@ -589,6 +593,10 @@ bool CChar::SetThirst( SI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::DoThirst( CSocket* mSock )
 {
+	// Don't continue if thirst system is disabled
+	if( !cwmWorldState->ServerData()->ThirstSystemEnabled() )
+		return;
+
 	if( !IsDead() && !IsInvulnerable() ) // No need to do anything on dead or invulnerable chars
 	{
 		UI16 thirstRate;
@@ -6519,6 +6527,11 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 			}
 
 			UI16 bloodColour = Races->BloodColour( GetRace() ); // Fetch blood color from race property
+			if( bloodColour == 0xffff )
+			{
+				// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
+				bloodColour = GetSkin();
+			}
 			CItem * bloodEffect = Effects->SpawnBloodEffect( WorldNumber(), GetInstanceID(), bloodColour, bloodType );
 			if( ValidateObject( bloodEffect ) )
 			{

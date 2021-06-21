@@ -14,7 +14,9 @@
 	Extended packet overloading to include packets received on first connection, to allow custom responses to things like UOG server poll and other early incoming packets
 	Adjusted code that spawns blood effects when taking damage to only happen for damage values higher than 1% of max health, or 1 (whichever is higher)
 	Adjusted code that prevents stamina regen from taking place if a character is thirsty to allow generating up to 25% of max stamina, to prevent characters from being unable to move due to thirst!
-	Thirst system is now disabled by default, but can be enabled by setting the THIRSTRATE value in uox.ini to a value higher than zero. The value indicates the number of seconds between each time a character grows more thirsty. For hunger, this is set to 6000 seconds (100 min) by default.
+	Added new settings in uox.ini to enable/disable the hard-coded hunger and thirst systems, with thirst system being disabled by default:
+		HUNGERENABLED=1 // defaults to 1. Affects hunger of players, tamed pets, animal AI
+		THIRSTENABLED=0 // defaults to 0. Affects thirst of players, tamed pets, animal AI
 	Responses to UOG/CUO server poll requests are now enabled in uox.ini by default
 
 20/06/2021 - Xuri
