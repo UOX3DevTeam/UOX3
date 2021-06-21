@@ -71,6 +71,8 @@ const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
 const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
 const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
 const UI32 BIT_PETTHIRSTOFFLINE          = 53;
+const UI32 BIT_HUNGERSYSTEMENABLED		= 55;
+const UI32 BIT_THIRSTSYSTEMENABLED		= 56;
 
 
 // New uox3.ini format lookup
@@ -396,6 +398,8 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BLOODDECAYCORPSETIMER", 256);
 	regINIValue("BLOODEFFECTCHANCE", 257);
 	regINIValue("NPCCORPSEDECAYTIMER", 258);
+	regINIValue("HUNGERENABLED", 259);
+	regINIValue("THIRSTENABLED", 260);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -458,9 +462,11 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
+	HungerSystemEnabled( true );
 
-	SystemTimer( tSERVER_THIRSTRATE, 0 );
+	SystemTimer( tSERVER_THIRSTRATE, 6000 );
 	ThirstDrain( 2 );
+	ThirstSystemEnabled( false );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -1591,7 +1597,7 @@ void CServerData::MineCheck( UI08 value )
 //|	Function	-	bool ConnectUOServerPoll( void ) const
 //|					void ConnectUOServerPoll( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of matching AC
+//|	Purpose		-	Gets/Sets whether UOX3 will respond to server poll requests from ConnectUO
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::ConnectUOServerPoll( void ) const
 {
@@ -2194,6 +2200,36 @@ void CServerData::CombatBloodEffectChance( UI08 value )
 	if( value > 100 )
 		value = 100;
 	combatbloodeffectchance = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool HungerSystemEnabled( void ) const
+//|                 void HungerSystemEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::HungerSystemEnabled( void ) const
+{
+	return boolVals.test( BIT_HUNGERSYSTEMENABLED );
+}
+void CServerData::HungerSystemEnabled( bool newVal )
+{
+	boolVals.set( BIT_HUNGERSYSTEMENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool ThirstSystemEnabled( void ) const
+//|                 void ThirstSystemEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ThirstSystemEnabled( void ) const
+{
+	return boolVals.test( BIT_THIRSTSYSTEMENABLED );
+}
+void CServerData::ThirstSystemEnabled( bool newVal )
+{
+	boolVals.set( BIT_THIRSTSYSTEMENABLED, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3230,6 +3266,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
+		ofsOutput << "HUNGERENABLED=" << (HungerSystemEnabled()?1:0) << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
 		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
@@ -3237,6 +3274,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
+		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
 		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
 		ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
@@ -4228,6 +4266,12 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 258:	 // NPCCORPSEDECAYTIMER[0246]
 			SystemTimer( tSERVER_NPCCORPSEDECAY, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 259:    // HUNGERENABLED[0247]
+			HungerSystemEnabled( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 260:    // THIRSTENABLED[0248]
+			ThirstSystemEnabled( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		default:
 			rvalue = false;

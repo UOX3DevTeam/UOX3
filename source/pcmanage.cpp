@@ -1496,6 +1496,11 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 
 	// Spawn blood effect below corpse
 	UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property
+	if( bloodColour == 0xffff )
+	{
+		// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
+		bloodColour = mChar->GetSkin();
+	}
 	CItem * bloodEffect = Effects->SpawnBloodEffect( iCorpse->WorldNumber(), iCorpse->GetInstanceID(), bloodColour, BLOOD_DEATH );
 	if( ValidateObject( bloodEffect ))
 	{

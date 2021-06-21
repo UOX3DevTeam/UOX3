@@ -3846,11 +3846,17 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 256:	 // BLOODDECAYCORPSETIMER[0244]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ) ) );
 				break;
-			case 257:	// BLOODEFFECTCHANCE[0229]
+			case 257:	// BLOODEFFECTCHANCE[0245]
 				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->CombatBloodEffectChance() ) );
 				break;
-			case 258:	 // NPCCORPSEDECAYTIMER[0230]
+			case 258:	 // NPCCORPSEDECAYTIMER[0246]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY ) ) );
+				break;
+			case 259:	 // HUNGERENABLED[0247]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HungerSystemEnabled() );
+				break;
+			case 260:	 // THIRSTENABLED[0248]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ThirstSystemEnabled() );
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
