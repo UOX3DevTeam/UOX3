@@ -156,6 +156,7 @@
 // AI-Stuff
 3200=npc/ai/cow_tipping.js
 3201=npc/ai/banker.js
+3203=npc/ai/splitting_npc.js
 
 // General Skills
 4000=skill/healing.js
@@ -313,6 +314,7 @@
 [PACKET_SCRIPTS]
 { // 1500-1999
 1500=server/network/0xf1_connectUoServerPoll.js
+1501=server/network/0x7f_uogatewayServerPoll.js
 }
 
 [CONSOLE_SCRIPTS]

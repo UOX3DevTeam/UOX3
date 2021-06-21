@@ -6504,7 +6504,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 	SetHP( hitpoints - damageValue );
 
 	// Spawn blood effects
-	if( damageValue >= static_cast<UI16>(floor(GetMaxHP() * 0.01)) ) // Only display blood effects if damage done is higher than 1% of max health
+	if( damageValue >= std::max(static_cast<SI16>(1), static_cast<SI16>(floor(GetMaxHP() * 0.01))) ) // Only display blood effects if damage done is higher than 1, or 1% of max health - whichever is higher
 	{
 		UI08 bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
 		bool spawnBlood = ( bloodEffectChance >= static_cast<UI08>(RandomNum( 0, 99 )));
@@ -6512,7 +6512,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		{
 			BloodTypes bloodType = BLOOD_BLEED;
 			auto foijf = GetMaxHP() * 0.2;
-			if( damageValue >= static_cast<UI16>(floor(GetMaxHP() * 0.2 )) )
+			if( damageValue >= static_cast<SI16>(floor(GetMaxHP() * 0.2 )) )
 			{
 				// If damage done is higher than 20% of max health, spawn larger blood splats
 				bloodType = BLOOD_CRITICAL;

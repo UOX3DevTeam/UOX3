@@ -1053,49 +1053,32 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	{
 		SI32 count, ho, mi, se, total;
 		count = mSock->Receive( 4 );
-		// March 1, 2004 - Implemented support for UOG request for client connection count and possibly other server values
+		auto packetID = mSock->Buffer()[0];
 
-		if( (std::string(reinterpret_cast<char*>(mSock->Buffer()))=="UOG") && cwmWorldState->ServerData()->ServerUOGEnabled() ) // || (mSock->Buffer()[0]==46 && count<4)) // Commented out becuase the timing cycle in the recieve() member function in CSocket returns to fast and doesn't get the correct revieved byte count.
+		if( cwmWorldState->ServerData()->ServerOverloadPackets() )
 		{
-			// ok this is UOG calling for server info. Just return the current data count and be done with it.
-
-			total	= ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
-			ho		= total / 3600;
-			total	-= ho * 3600;
-			mi		= total / 60;
-			total	-= mi * 60;
-			se		= total;
-			// April 5, 2004 - Please leave the place holders incode. They are not read in from the ini as of yet but will be as I get time and solidify the exact values needed
-			auto szTBuf = strutil::format( "UOX3:sn=%s,cs=0x%04X,st=[ut:%02i:%02i:%02i][cn%lui][ic:%i][cc:%i][me:0x%08X][ma:0x%04X,%s,%s,%s,%s]", cwmWorldState->ServerData()->ServerName().c_str(), cwmWorldState->ServerData()->GetClientFeatures(), ho, mi, se, cwmWorldState->GetPlayersOnline()+1, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), 0xDEADFEED, 0x000D, "Felucia", "Trammel", "Ilshenar", "Malas" );
-			mSock->Send( szTBuf.c_str(),static_cast<SI32>(szTBuf.size())+1);
-			mSock->NewClient( false );
-		}
-		else if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
-		{
-			total	= ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
-			ho		= total / 3600;
-			total	-= ho * 3600;
-			mi		= total / 60;
-			total	-= mi * 60;
-			se		= total;
-
-			auto uoxmonitor = strutil::format("UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se );
-			mSock->Send( uoxmonitor.c_str(), static_cast<SI32>(uoxmonitor.size() ));
-			mSock->NewClient( false );
-		}
-		else
-		{
-			if( mSock->Buffer()[0] == 0xEF || mSock->Buffer()[0] == 0xC0 || mSock->Buffer()[0] == 0xFF )
+			// Allow overloading initial connection packets
+			std::map< UI16, UI16 >::const_iterator pFind = packetOverloads.find( packetID );
+			if( pFind != packetOverloads.end() )
 			{
-				WhichLoginPacket( mSock->Buffer()[0], mSock );
-				//mSock->Receive( 21, false );
+				cScript *pScript = JSMapping->GetScript( pFind->second );
+				if( pScript != nullptr )
+				{
+					pScript->OnPacketReceive( mSock, packetID );
+				}
 			}
-
-			mSock->NewClient( false );
-			if( mSock->GetDWord( 0 ) == 0x12345678 )
-				LoginDisconnect( s );
-			mSock->FirstPacket( true );
 		}
+
+		if( packetID == 0xEF || packetID == 0xC0 || packetID == 0xFF )
+		{
+			WhichLoginPacket( packetID, mSock );
+			//mSock->Receive( 21, false );
+		}
+
+		mSock->NewClient( false );
+		if( mSock->GetDWord( 0 ) == 0x12345678 )
+			LoginDisconnect( s );
+		mSock->FirstPacket( true );
 	}
 	else
 	{
