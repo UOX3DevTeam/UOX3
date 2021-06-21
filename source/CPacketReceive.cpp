@@ -70,7 +70,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		case 0xEF:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients after 6.0.x
 		//case 0xE4:	return ( new CPIKREncryptionVerification( s ) ); // KR Encryption Response verification
-		case 0xF1:	return nullptr;								// ConnectUO Server Poll Packet - handled in packet hook JS script
+		//case 0xF1:	return nullptr;								// ConnectUO Server Poll Packet - handled in packet hook JS script
 		case 0xF8:	return ( new CPICreateCharacter( s )	);	// New Character Create - minor difference from original
 		case 0xFF:	return nullptr;								// new CPIKRSeed( s ) - KR client request for encryption response
 		default:	break;

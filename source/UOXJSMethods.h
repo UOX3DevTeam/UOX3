@@ -105,6 +105,7 @@ JSMethodFunc CChar_Mark;
 JSMethodFunc CChar_SetSkillByName;
 JSMethodFunc CChar_Kill;
 JSMethodFunc CChar_Resurrect;
+JSMethodFunc CChar_Dupe;
 JSMethodFunc CChar_Jail;
 JSMethodFunc CChar_Release;
 JSMethodFunc CChar_SpellMoveEffect;
@@ -381,6 +382,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "SetSkillByName",		CChar_SetSkillByName,	2, 0, 0 },
 	{ "Kill",				CChar_Kill,				0, 0, 0 },
 	{ "Resurrect",			CChar_Resurrect,		0, 0, 0 },
+	{ "Dupe",				CChar_Dupe,				0, 0, 0 },
 	{ "Jail",				CChar_Jail,				0, 0, 0 },
 	{ "Release",			CChar_Release,			0, 0, 0 },
 	{ "GetTimer",			CMisc_GetTimer,			1, 0, 0 },

@@ -1,3 +1,22 @@
+22/06/2021 - Xuri (0.99.4s)
+	Updated Character JS Method .Follow() to allow optional null parameter to clear follow target for an NPC
+	Added new Character JS Method .Dupe(), exposing code functionality to duplicate a character and returning the new character object to scripts. Example:
+		var newChar = myChar.Dupe()
+	Updated GM command 'dupe to work with characters as well as items
+	The colour of blood effects for characters and creatures hit in combat can be defined in dfndata/race/races.dfn using the BLOODCOLOUR tag and a colour ID. If the value 0xffff is provided, the colour of the blood will be inherited from the character's colour, if any
+	Moved splitting of NPCs in combat from hard code to JS (js/npc/ai/splitting_npcs.js). It relies on the onAttack JS event to trigger, but otherwise works identical to the previous hard-coded variant. The script has been assigned a default script ID of 3203
+	Added SCRIPT=3203 tag to [slime]/[jwilson] NPCs (dfndata/npc/miscmonsters.dfn)
+	Added new race for slime-related creatures (RACE 24 in dfndata/race/races.dfn), with a BLOODCOLOUR tag set to 0xffff to let blood effects inherit the colour of each individual slime
+	Updated RACE tag for [slime]/[jwilson] NPCs to use the new slime-race (dfndata/npc/miscmonsters.dfn)
+	Fixed an issue where UOX3 would attempt to update health bar of training dummies not marked as damageable (js/item/trainingdummy.js)
+	Added packet-hook script (js/server/network/0x7f_uogatewayServerPoll.js) to handle responses to server polling by shard lists like UOGateway, ShardPortal, etc.
+	Removed old and outdated UOG response code from network.cpp, along with UOXMONITOR response (an old tool no longer found in the wild)
+	Extended packet overloading to include packets received on first connection, to allow custom responses to things like UOG server poll and other early incoming packets
+	Adjusted code that spawns blood effects when taking damage to only happen for damage values higher than 1% of max health, or 1 (whichever is higher)
+	Adjusted code that prevents stamina regen from taking place if a character is thirsty to allow generating up to 25% of max stamina, to prevent characters from being unable to move due to thirst!
+	Thirst system is now disabled by default, but can be enabled by setting the THIRSTRATE value in uox.ini to a value higher than zero. The value indicates the number of seconds between each time a character grows more thirsty. For hunger, this is set to 6000 seconds (100 min) by default.
+	Responses to UOG/CUO server poll requests are now enabled in uox.ini by default
+
 20/06/2021 - Xuri
 	Fixed an error introduced with previous commit that caused some issues with the handling of items upon player death/resurrection
 	Fixed an error where items that had AR/resistances with values lower than 10 would lose those values after a restart (for instance wooden buckler)

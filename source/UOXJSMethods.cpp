@@ -1874,18 +1874,31 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 {
 	if( argc != 1 )
 	{
-		MethodError( "Follow: Invalid number of arguments (takes 1, char object)" );
+		MethodError( "Follow: Invalid number of arguments (takes 1, char object or null)" );
 		return JS_FALSE;
+	}
+
+	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
+	{
+		MethodError( "Follow: Invalid NPC character object referenced!" );
+		return JS_FALSE;
+	}
+
+	if( argv[0] == JSVAL_NULL )
+	{
+		// Clear follow target if null was provided instead of a character object to follow
+		myChar->SetFTarg( nullptr );
+		myChar->SetNpcWander( WT_NONE );
+		return JS_TRUE;
 	}
 
 	JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
 	CBaseObject *myObj = static_cast<CBaseObject *>(JS_GetPrivate( cx, jsObj ));
 
-	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ) );
-
-	if( !ValidateObject( myChar ) || !myChar->IsNpc() || !ValidateObject( myObj ) || myObj->GetSerial() >= BASEITEMSERIAL )
+	if( !ValidateObject( myObj ) || myObj->GetSerial() >= BASEITEMSERIAL )
 	{
-		MethodError( "Follow: Invalid character" );
+		MethodError( "Follow: Invalid character parameter provided!" );
 		return JS_FALSE;
 	}
 
@@ -6600,6 +6613,44 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	*rval = OBJECT_TO_JSVAL( dupeItem );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void Dupe()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dupes specified character
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "Dupe: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	// Original character object
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "Dupe: Invalid character object passed?" );
+		return JS_FALSE;
+	}
+
+	// Duped character object
+	CChar *dupeCharTemp = mChar->Dupe();
+	if( !ValidateObject( dupeCharTemp ) )
+	{
+		MethodError( "Dupe: Unable to duplicate character due to unknown error!" );
+		return JS_FALSE;
+	}
+
+	// JS Object for duped character
+	JSObject *dupeChar = nullptr;
+	dupeChar = JSEngine->AcquireObject( IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+
+	*rval = OBJECT_TO_JSVAL( dupeChar );
 	return JS_TRUE;
 }
 

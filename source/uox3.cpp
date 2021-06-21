@@ -600,22 +600,26 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	UI16 c;
 	if( !mChar.IsDead() )
 	{
-		if( mChar.GetHP() > mChar.GetMaxHP() )
-			mChar.SetHP( mChar.GetMaxHP() );
-		if( mChar.GetStamina() > mChar.GetMaxStam() )
-			mChar.SetStamina( mChar.GetMaxStam() );
-		if( mChar.GetMana() > mChar.GetMaxMana() )
-			mChar.SetMana( mChar.GetMaxMana() );
+		const auto maxHP = mChar.GetMaxHP();
+		const auto maxStam = mChar.GetMaxStam();
+		const auto maxMana = mChar.GetMaxMana();
+
+		if( mChar.GetHP() > maxHP )
+			mChar.SetHP( maxHP );
+		if( mChar.GetStamina() > maxStam )
+			mChar.SetStamina( maxStam );
+		if( mChar.GetMana() > maxMana )
+			mChar.SetMana( maxMana );
 
 		if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetHP() < mChar.GetMaxHP() )
+			if( mChar.GetHP() < maxHP )
 			{
 				if( mChar.GetHunger() > 0 || ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
-					for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
+					for( c = 0; c < maxHP + 1; ++c )
 					{
-						if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
+						if( mChar.GetHP() <= maxHP && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
 						{
 							if( mChar.GetSkill( HEALING ) < 500 )
 								mChar.IncHP( 1 );
@@ -623,9 +627,9 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 								mChar.IncHP( 2 );
 							else
 								mChar.IncHP( 3 );
-							if( mChar.GetHP() >= mChar.GetMaxHP() )
+							if( mChar.GetHP() >= maxHP )
 							{
-								mChar.SetHP( mChar.GetMaxHP() );
+								mChar.SetHP( maxHP );
 								break;
 							}
 						}
@@ -638,18 +642,20 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		}
 		if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetStamina() < mChar.GetMaxStam() )
+			auto mStamina = mChar.GetStamina();
+			if( mStamina < maxStam )
 			{
-				if( mChar.GetThirst() > 0 || ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() ) ) )
+				// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
+				if( mChar.GetThirst() > 0 || ( mChar.GetThirst() == 0 && mStamina < static_cast<SI16>( maxStam * 0.25 ) ) || ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
-					for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
+					for( c = 0; c < maxStam + 1; ++c )
 					{
-						if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
+						if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam )
 						{
 							mChar.IncStamina( 1 );
-							if( mChar.GetStamina() >= mChar.GetMaxStam() )
+							if( mChar.GetStamina() >= maxStam )
 							{
-								mChar.SetStamina( mChar.GetMaxStam() );
+								mChar.SetStamina( maxStam );
 								break;
 							}
 						}
@@ -664,15 +670,15 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
 		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetMana() < mChar.GetMaxMana() )
+			if( mChar.GetMana() < maxMana )
 			{
-				for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
+				for( c = 0; c < maxMana + 1; ++c )
 				{
-					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
+					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana )
 					{
 						Skills->CheckSkill( ( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
 						mChar.IncMana( 1 );	// Gain a mana point
-						if( mChar.GetMana() == mChar.GetMaxMana() )
+						if( mChar.GetMana() == maxMana )
 						{
 							if( mChar.IsMeditating() ) // Morrolan = Meditation
 							{

@@ -459,7 +459,7 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
 
-	SystemTimer( tSERVER_THIRSTRATE, 6000 );
+	SystemTimer( tSERVER_THIRSTRATE, 0 );
 	ThirstDrain( 2 );
 
 	ServerSkillDelay( 5 );
@@ -483,6 +483,8 @@ void CServerData::ResetDefaults( void )
 	ServerOverloadPackets( true );
 	AdvancedPathfinding( true );
 	LootingIsCrime( true );
+	ServerUOGEnabled( true );
+	ConnectUOServerPoll( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 5 );
