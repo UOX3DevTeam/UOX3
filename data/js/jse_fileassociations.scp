@@ -40,7 +40,6 @@
 //-------------------------------------------
 // turn furniture start[50-54]
 50=server/misc/furniture_smartturn.js
-51=server/misc/ondrop.js
 //-------------------------------------------
 // deeds start[55-59]
 // 55=server/misc/deeds_005.js
