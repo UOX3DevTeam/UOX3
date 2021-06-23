@@ -1,3 +1,50 @@
+23/06/2021 - Dragon Slayer
+	Added [interiordecorator] tool (dfndata/items/misc/uor_misc.dfn) that can be used to raise, lower or rotate locked down items in houses
+	Added script for rotating furniture via interior decorator tool or via dropping item
+	Merged furniture rotating functionality into existing smartturn script, and expanded on the selection of items. Supported furniture can now be turned by double-clicking the item (if no other double-click functionality exists), picking up and dropping the item, or via the interiordecorator tool (Xuri)
+	Updated js/jse_objectassociations.scp with furniture IDs supported by the furniture_smartturn script, so rotating will work for any supported furniture without needing to add scripts to each individual furniture DFN (Xuri)
+	Added system messages to dictionary files (Xuri)
+	Added interior decorator tool to Architect shoplists (Xuri)
+
+23/06/2021 - Xuri
+	Fixed an issue with CChar::RemoveAllObjectsFromSight(), which failed to remove nearby multis from sight, leading to ghost images when changing worlds/instances
+	Added check for other multis when sailing - boats will now collide with other boats!
+	Added check for dynamic items when sailing - boats will now collide with blocking objects
+	Added "wrapping" support for maps 0 and 1 when sailing, meaning a ship can sail around the world in both N/S and E/W directions.
+	Added new [magic] section in uox.ini with the following settings:
+		TRAVELSPELLSFROMBOATKEYS=1 		// Toggle being able to travel via Recall and Gate spells directly to a boat via its key
+		TRAVELSPELLSWHILEOVERWEIGHT=0 	// Toggle being able to travel via Recall and Gate spells when overweight
+		MARKRUNESINMULTIS=1 			// Toggle being able to mark runes while inside multis. If enabled, runes marked inside multis will be associated with the multi in question, rather than a specific set of coordinates. If multi no longer exists, travelling to it via Recall or Gate will be impossible
+		TRAVELSPELLSBETWEENWORLD=0 		// Toggle being able to travel via Recall and Gate spells from one facet to another
+		TRAVELSPELLSWHILEAGGRESSOR=0	// Toggle being able to travel via Recall and Gate spells when marked as an aggressor (if attacked an innocent first, or if criminal)
+	Fixed an exception that would only rear its head when running UOX3 in debug mode, by adding new function void CBaseObject::RemoveFromRefreshQueue(), which when called from the end of the Cleanup() process for an object will ensure it's removed from the refreshQueue (thanks giwo!)
+	Fixed several issues with the regional spawning system:
+		NPCs would quite often get created, only to be deleted shortly after because the system failed to find a valid spawn location. This part of the system has now been rewritten to look for a valid spawn location before actually spawning the NPC, to avoid unnecessary creation/deletion of characters
+		Spawn system would not continue looking for a valid spawn location past the first failure (when it was supposed to make 100 attempts before giving up)
+		Spawn system would not look for valid water tiles for ocean-based/amphibian creatures if valid land tiles could not be found. As a result, amphibian creatures that could have spawned on either land or water would only ever spawn on land.
+		DoesMapBlock() function checked for TF_BLOCKING tile flag before it checked if waterwalking was allowed and if tile had TF_WET flag. As a result, no purely ocean-based creatures would spawn at all because no valid spawn locations could ever be found
+
+22/06/2021 - Xuri (0.99.4s)
+	Updated Character JS Method .Follow() to allow optional null parameter to clear follow target for an NPC
+	Added new Character JS Method .Dupe(), exposing code functionality to duplicate a character and returning the new character object to scripts. Example:
+		var newChar = myChar.Dupe()
+	Updated GM command 'dupe to work with characters as well as items
+	The colour of blood effects for characters and creatures hit in combat can be defined in dfndata/race/races.dfn using the BLOODCOLOUR tag and a colour ID. If the value 0xffff is provided, the colour of the blood will be inherited from the character's colour, if any
+	Moved splitting of NPCs in combat from hard code to JS (js/npc/ai/splitting_npcs.js). It relies on the onAttack JS event to trigger, but otherwise works identical to the previous hard-coded variant. The script has been assigned a default script ID of 3203
+	Added SCRIPT=3203 tag to [slime]/[jwilson] NPCs (dfndata/npc/miscmonsters.dfn)
+	Added new race for slime-related creatures (RACE 24 in dfndata/race/races.dfn), with a BLOODCOLOUR tag set to 0xffff to let blood effects inherit the colour of each individual slime
+	Updated RACE tag for [slime]/[jwilson] NPCs to use the new slime-race (dfndata/npc/miscmonsters.dfn)
+	Fixed an issue where UOX3 would attempt to update health bar of training dummies not marked as damageable (js/item/trainingdummy.js)
+	Added packet-hook script (js/server/network/0x7f_uogatewayServerPoll.js) to handle responses to server polling by shard lists like UOGateway, ShardPortal, etc.
+	Removed old and outdated UOG response code from network.cpp, along with UOXMONITOR response (an old tool no longer found in the wild)
+	Extended packet overloading to include packets received on first connection, to allow custom responses to things like UOG server poll and other early incoming packets
+	Adjusted code that spawns blood effects when taking damage to only happen for damage values higher than 1% of max health, or 1 (whichever is higher)
+	Adjusted code that prevents stamina regen from taking place if a character is thirsty to allow generating up to 25% of max stamina, to prevent characters from being unable to move due to thirst!
+	Added new settings in uox.ini to enable/disable the hard-coded hunger and thirst systems, with thirst system being disabled by default:
+		HUNGERENABLED=1 // defaults to 1. Affects hunger of players, tamed pets, animal AI
+		THIRSTENABLED=0 // defaults to 0. Affects thirst of players, tamed pets, animal AI
+	Responses to UOG/CUO server poll requests are now enabled in uox.ini by default
+
 20/06/2021 - Xuri
 	Fixed an error introduced with previous commit that caused some issues with the handling of items upon player death/resurrection
 	Fixed an error where items that had AR/resistances with values lower than 10 would lose those values after a restart (for instance wooden buckler)

@@ -9,6 +9,7 @@
 
 [SHOPLIST ArchitectShopping]
 {
+RSHOPITEM=interiordecorator
 RSHOPITEM=smallsnphousedeed
 RSHOPITEM=smallstonehousedeed
 RSHOPITEM=smallbrickhousedeed
@@ -31,6 +32,7 @@ RSHOPITEM=2storyvilladeed
 RSHOPITEM=sandstonepatiohousedeed
 RSHOPITEM=2storylogcabindeed
 RSHOPITEM=largemarblepatiohousedeed
+SELLITEM=interiordecorator
 SELLITEM=smallsnphousedeed
 SELLITEM=smallstonehousedeed
 SELLITEM=smallbrickhousedeed
