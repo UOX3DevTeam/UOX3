@@ -1,0 +1,11 @@
+[interiordecorator]
+{
+get=base_item
+name=an interior decorator
+id=0x0FC1
+weight=100
+decay=1
+script=5027
+newbie
+value=5000 2500
+}

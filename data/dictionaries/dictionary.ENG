@@ -2036,5 +2036,13 @@
 2064=You are unable to open a gate to your ship - it might be in another world!
 2065=You can only recall off of recall runes or valid ship keys!
 2066=You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
+2067=You must be in your house to do this.
+2068=Select an object to turn.
+2069=Select an object to increase its height.
+2070=Select an object to lower its height.
+2071=Select an object to get the hue.
+2072=You can only use the interior decorator on locked down items.
+2073=You cannot lower it down any further.
+2074=You cannot raise it up any higher.
 }
 EOF

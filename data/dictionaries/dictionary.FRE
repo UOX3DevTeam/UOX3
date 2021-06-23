@@ -2200,5 +2200,13 @@
 2064=Vous ne parvenez pas à ouvrir une porte sur votre vaisseau - il se trouve peut-être dans un autre monde!
 2065=Vous ne pouvez vous rappeler que des runes de rappel ou des clés de vaisseau valides!
 2066=Vous n'êtes pas autorisé à utiliser des sorts de Rappel ou de Porte en étant l'agresseur dans un combat!
+2067=Vous devez être dans votre maison pour faire cela.
+2068=Sélectionnez un objet à tourner.
+2069=Sélectionnez un objet pour augmenter sa hauteur.
+2070=Sélectionnez un objet pour réduire sa hauteur.
+2071=Sélectionnez un objet pour obtenir la teinte.
+2072=Vous ne pouvez utiliser le décorateur d'intérieur que sur des objets verrouillés.
+2073=Vous ne pouvez pas l'abaisser davantage.
+2074=Vous ne pouvez pas l'augmenter plus haut.
 }
 EOF

@@ -651,4 +651,294 @@
 
 // Dice and Cup
 0x0FA7=5020
+
+// Furniture Smartturn
+// Straw chair
+0x0B5A=50
+0x0B5B=50
+0x0B5D=50
+0x0B5C=50
+0x0B5A=50
+0x0B5D=50
+// Fine wooden chair
+0x0b56=50
+0x0b57=50
+0x0b58=50
+0x0b59=50
+0x0b56=50
+// Cushioned wooden chair
+0x0b52=50
+0x0b53=50
+0x0b55=50
+0x0b54=50
+0x0b52=50
+0x0b55=50
+// Cushioned fancy wooden chair
+0x0b4e=50
+0x0b4f=50
+0x0b51=50
+0x0b50=50
+0x0b4e=50
+0x0b51=50
+// Cushioned throne
+0x0b32=50
+0x0b33=50
+0x0b32=50
+// Wooden throne
+0x0b2e=50
+0x0b30=50
+0x0b2f=50
+0x0b30=50
+0x0b31=50
+0x0b2f=50
+// Wooden bench
+0x0b2c=50
+0x0b2d=50
+0x0b2c=50
+// Stone throne
+0x1218=50
+0x121b=50
+0x1219=50
+0x121a=50
+0x121b=50
+// Stone bench
+0x3dff=50
+0x3e00=50
+0x3dff=50
+// Fancy metal chest
+0x0e40=50
+0x0e41=50
+0x0e40=50
+// Metal Chest
+0x09ab=50
+0x0e7c=50
+0x0e7c=50
+0x09ab=50
+// Gold box
+0x09a8=50
+0x0e80=50
+0x0e80=50
+0x09a8=50
+// Small wooden crate
+0x09a9=50
+0x0e7e=50
+0x0e7e=50
+0x09a9=50
+// Wooden box red
+0x09aa=50
+0x0e7d=50
+0x0e7d=50
+0x09aa=50
+// Chest of drawers
+0x0a2c=50
+0x0a34=50
+0x0a34=50
+0x0a2c=50
+// Chest of drawers red
+0x0a30=50
+0x0a38=50
+0x0a38=50
+0x0a30=50
+// Armoire
+0x0a4f=50
+0x0a53=50
+0x0a53=50
+0x0a4f=50
+// Armoire red
+0x0a4d=50
+0x0a51=50
+0x0a51=50
+0x0a4d=50
+// Wooden shelf
+0x0a9d=50
+0x0a9e=50
+0x0a9e=50
+0x0a9d=50
+// Large crate
+0x0e3c=50
+0x0e3d=50
+0x0e3d=50
+0x0e3c=50
+// Wooden box medium
+0x0e3e=50
+0x0e3f=50
+0x0e3f=50
+0x0e3e=50
+// Wooden chest
+0x0e42=50
+0x0e43=50
+0x0e43=50
+0x0e42=50
+// Wooden table
+0x0b90=50
+0x0b7d=50
+0x0b7d=50
+0x0b90=50
+// Wooden table
+0x0b8f=50
+0x0b7c=50
+0x0b7c=50
+0x0b8f=50
+// Writing table
+0x0b49=50
+0x0b4a=50
+0x0b4c=50
+0x0b4b=50
+0x0b49=50
+0x0b4c=50
+// Chest (Samurai Empire)
+0x280b=50
+0x280c=50
+// Chest (Samurai Empire)
+0x280d=50
+0x280e=50
+// Fancy chest (Samurai Empire)
+0x280f=50
+0x2810=50
+// Chest, wide (Samurai Empire)
+0x2811=50
+0x2812=50
+// Chest, wide (Samurai Empire)
+0x2813=50
+0x2814=50
+// Cabinet, tall (Samurai Empire)
+0x2815=50
+0x2816=50
+// Cabinate, low (Samurai Empire)
+0x2817=50
+0x2818=50
+// Sword Display (Samurai Empire)
+0x2851=50
+0x2852=50
+// Sword Display (Samurai Empire)
+0x2853=50
+0x2854=50
+// Sword Display (Samurai Empire)
+0x2855=50
+0x2856=50
+// Armoire, red (Samurai Empire)
+0x2857=50
+0x2858=50
+// Armoire, beige (Samurai Empire)
+0x2859=50
+0x285a=50
+// Armoire, wood (Samurai Empire)
+0x285b=50
+0x285c=50
+// Armoire, wood (Samurai Empire)
+0x285d=50
+0x285e=50
+// Sword Display (Samurai Empire)
+0x2a45=50
+0x2a46=50
+// Sword Display (Samurai Empire)
+0x2a47=50
+0x2a48=50
+// Sword Display (Samurai Empire)
+0x2a49=50
+0x2a4a=50
+// Sword Display (Samurai Empire)
+0x2a4b=50
+0x2a4c=50
+// Skeletal throne (Samurai Empire)
+0x2a58=50
+0x2a59=50
+// Sword Display (Samurai Empire)
+0x2a4b=50
+0x2a4c=50
+// Simple armoire (Mondain's Legacy)
+0x2d05=50
+0x2d06=50
+// Fancy armoire (Mondain's Legacy)
+0x2d07=50
+0x2d08=50
+// Elven dresser (Mondain's Legacy)
+0x2d09=50
+0x2d0a=50
+// Elven wash basin (Mondain's Legacy)
+0x2d0b=50
+0x2d0c=50
+// Elven alchemy table (Mondain's Legacy)
+0x2dd3=50
+0x2dd4=50
+// Elven spinning wheel (Mondain's Legacy)
+0x2dd9=50
+0x2dda=50
+// Elven love seat (Mondain's Legacy)
+0x2ddf=50
+0x2de0=50
+// Elven ornate table (Mondain's Legacy)
+0x2de1=50
+0x2de2=50
+// Elven ornate chair (Mondain's Legacy)
+0x2de3=50
+0x2de4=50
+0x2de5=50
+0x2de6=50
+0x2de3=50
+// Elven fancy table (Mondain's Legacy)
+0x2de7=50
+0x2de8=50
+// Elven storage table (Mondain's Legacy)
+0x2de9=50
+0x2dea=50
+// Elven big chair (Mondain's Legacy)
+0x2deb=50
+0x2ded=50
+0x2dec=50
+0x2dee=50
+0x2ded=50
+0x2dee=50
+0x2deb=50
+// Elven book shelf (Mondain's Legacy)
+0x2def=50
+0x2df0=50
+// Elven ornate chest (Mondain's Legacy)
+0x2df1=50
+0x2df2=50
+// Elven ornate chest (Mondain's Legacy)
+0x2df3=50
+0x2df4=50
+// Elven reading desk (Mondain's Legacy)
+0x2df5=50
+0x2df6=50
+// Display case (Mondain's Legacy)
+0x2fea=50
+0x2feb=50
+// Wooden bench
+0x319a=50
+0x319b=50
+// Incubator
+0x407c=50
+0x407d=50
+// Welcome mat (Stygian Abyss)
+0x47da=50
+0x47db=50
+// Gothic chest (Stygian Abyss)
+0x4910=50
+0x4911=50
+// Plague Banner (Stygian Abyss)
+0x4b8d=50
+0x4b8e=50
+// Alchemist Bookcase (Stygian Abyss)
+0x4c24=50
+0x4c25=50
+// Chair simple (Stygian Abyss)
+0x4c80=50
+0x4c81=50
+// Safe
+0x9c18=50
+0x9c19=50
+// Metal chest
+0xa304=50
+0xa305=50
+// Rusty metal chest
+0xa306=50
+0xa307=50
+// Gold chest
+0xa308=50
+0xa309=50
+// Barnacle metal chest
+0xa30a=50
+0xa30b=50
 }
