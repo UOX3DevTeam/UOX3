@@ -2461,6 +2461,9 @@ void CItem::Cleanup( void )
 				}
 			}
 		}
+
+		//Ensure that object is removed from refreshQueue
+		RemoveFromRefreshQueue();
 	}
 }
 

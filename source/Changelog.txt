@@ -1,3 +1,21 @@
+23/06/2021 - Xuri
+	Fixed an issue with CChar::RemoveAllObjectsFromSight(), which failed to remove nearby multis from sight, leading to ghost images when changing worlds/instances
+	Added check for other multis when sailing - boats will now collide with other boats!
+	Added check for dynamic items when sailing - boats will now collide with blocking objects
+	Added "wrapping" support for maps 0 and 1 when sailing, meaning a ship can sail around the world in both N/S and E/W directions.
+	Added new [magic] section in uox.ini with the following settings:
+		TRAVELSPELLSFROMBOATKEYS=1 		// Toggle being able to travel via Recall and Gate spells directly to a boat via its key
+		TRAVELSPELLSWHILEOVERWEIGHT=0 	// Toggle being able to travel via Recall and Gate spells when overweight
+		MARKRUNESINMULTIS=1 			// Toggle being able to mark runes while inside multis. If enabled, runes marked inside multis will be associated with the multi in question, rather than a specific set of coordinates. If multi no longer exists, travelling to it via Recall or Gate will be impossible
+		TRAVELSPELLSBETWEENWORLD=0 		// Toggle being able to travel via Recall and Gate spells from one facet to another
+		TRAVELSPELLSWHILEAGGRESSOR=0	// Toggle being able to travel via Recall and Gate spells when marked as an aggressor (if attacked an innocent first, or if criminal)
+	Fixed an exception that would only rear its head when running UOX3 in debug mode, by adding new function void CBaseObject::RemoveFromRefreshQueue(), which when called from the end of the Cleanup() process for an object will ensure it's removed from the refreshQueue (thanks giwo!)
+	Fixed several issues with the regional spawning system:
+		NPCs would quite often get created, only to be deleted shortly after because the system failed to find a valid spawn location. This part of the system has now been rewritten to look for a valid spawn location before actually spawning the NPC, to avoid unnecessary creation/deletion of characters
+		Spawn system would not continue looking for a valid spawn location past the first failure (when it was supposed to make 100 attempts before giving up)
+		Spawn system would not look for valid water tiles for ocean-based/amphibian creatures if valid land tiles could not be found. As a result, amphibian creatures that could have spawned on either land or water would only ever spawn on land.
+		DoesMapBlock() function checked for TF_BLOCKING tile flag before it checked if waterwalking was allowed and if tile had TF_WET flag. As a result, no purely ocean-based creatures would spawn at all because no valid spawn locations could ever be found
+
 22/06/2021 - Xuri (0.99.4s)
 	Updated Character JS Method .Follow() to allow optional null parameter to clear follow target for an NPC
 	Added new Character JS Method .Dupe(), exposing code functionality to duplicate a character and returning the new character object to scripts. Example:

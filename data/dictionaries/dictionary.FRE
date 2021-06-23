@@ -997,8 +997,8 @@
 881=Vous ne reussisssez pas a voler un objet.
 882=Vous avez ete pris la main dans le sac!
 883=Gardes! Au voleur!
-884=Vous remarquez que %s tente de vous voler %s !
-885=Vous remarquez que %s tente de voler %s a %s !
+884=Vous remarquez que %s tente de vous voler %s!
+885=Vous remarquez que %s tente de voler %s a %s!
 886=Vous etes trop loin pour voler cet objet.
 887=Il n'y a aucune piste d'animal dans les parages.
 888=Il n'y a aucune piste d'une quelconque creature dans les parages.
@@ -2183,7 +2183,7 @@
 2047=Vous avez assez soif.
 2048=Vous avez extrêmement soif.
 2049=Vous êtes très faible à cause de la déshydratation!
-2050=Vous devez boire très bientôt ou vous souffrirez de déshydratation !
+2050=Vous devez boire très bientôt ou vous souffrirez de déshydratation!
 2051=Vous êtes gravement déshydraté!
 2052=Vous n'avez pas d'endurance à cause de la déshydratation.
 2053=Vous êtes tout simplement trop rassasié pour continuer à boire!
@@ -2192,5 +2192,13 @@
 2056=Vous buvez la boisson et commencez à vous sentir plus rassasié.
 2057=Vous vous sentez rassasié après avoir bu la boisson.
 2058=Votre soif est presque étanche, mais vous parvenez à boire la boisson.
+2059=Vous avez perdu votre proie.
+2060=Votre attaque a été bloquée!
+2061=Voyager entre les mondes en utilisant les sorts de Rappel ou de Porte n'est pas possible.
+2062=Impossible de localiser le navire - il a pu être en cale sèche... ou coulé!
+2063=Vous n'arrivez pas à vous rappeler de votre vaisseau - il se trouve peut-être dans un autre monde!
+2064=Vous ne parvenez pas à ouvrir une porte sur votre vaisseau - il se trouve peut-être dans un autre monde!
+2065=Vous ne pouvez vous rappeler que des runes de rappel ou des clés de vaisseau valides!
+2066=Vous n'êtes pas autorisé à utiliser des sorts de Rappel ou de Porte en étant l'agresseur dans un combat!
 }
 EOF

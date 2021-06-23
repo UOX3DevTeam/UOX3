@@ -110,7 +110,7 @@ private:
 	CItem *		RegionSpawnItem( void );
 
 	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
-	bool		FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z );
+	bool		FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature );
 
 	void		LoadNPCList( const std::string &npcList );
 	void		LoadItemList( const std::string &itemList );

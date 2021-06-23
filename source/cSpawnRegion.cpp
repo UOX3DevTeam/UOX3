@@ -662,14 +662,43 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 //o-----------------------------------------------------------------------------------------------o
 CChar *CSpawnRegion::RegionSpawnChar( void )
 {
-	CChar *CSpawn = nullptr;
-	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
+	std::string ourNPC = strutil::stripTrim( sNpcs[RandomNum( static_cast<size_t>( 0 ), sNpcs.size() - 1 )] );
+	ScriptSection *npcCreate = FileLookup->FindEntry( ourNPC, npc_def );
 
-	if( CSpawn != nullptr )
+	std::string cdata;
+	SI32 ndata = -1, odata = -1;
+	UI16 npcID = 0;
+
+	for( DFNTAGS tag = npcCreate->FirstTag(); !npcCreate->AtEndTags(); tag = npcCreate->NextTag() )
 	{
-		SI16 x, y;
-		SI08 z;
-		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
+		cdata = npcCreate->GrabData( ndata, odata );
+		switch( tag )
+		{
+			case DFNTAG_ID:
+				npcID = static_cast<UI16>( ndata );
+				goto foundNpcID;
+			default:
+				break;
+		}
+	}
+	foundNpcID:
+
+	bool waterCreature = false;
+	bool amphiCreature = false;
+	if( npcID > 0 )
+	{
+		waterCreature = cwmWorldState->creatures[npcID].IsWater();
+		amphiCreature = cwmWorldState->creatures[npcID].IsAmphibian();
+	}
+
+	SI16 x, y;
+	SI08 z;
+	if( FindCharSpotToSpawn( x, y, z, waterCreature, amphiCreature ) )
+	{
+		CChar *CSpawn = nullptr;
+		CSpawn = Npcs->CreateBaseNPC( ourNPC );
+
+		if( CSpawn != nullptr )
 		{
 			// NPCs should always wander the whole spawnregion
 			CSpawn->SetNpcWander( WT_BOX );
@@ -680,16 +709,17 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 			CSpawn->SetLocation( x, y, z, worldNumber, instanceID );
 			CSpawn->SetSpawned( true );
 			CSpawn->ShouldSave( false );
-			CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
+			CSpawn->SetSpawn( static_cast<UI32>( regionnum ) );
 			Npcs->PostSpawnUpdate( CSpawn );
 			IncCurrentCharAmt();
-		}
-		else
-		{
-			CSpawn->Delete();
+			return CSpawn;
 		}
 	}
-	return CSpawn;
+	else
+	{
+		Console.warning( strutil::format("Unable to find valid location to spawn NPC in region %i", this->GetRegionNum() ));
+	}
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -718,11 +748,11 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
+//|	Function	-	bool FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 //o-----------------------------------------------------------------------------------------------o
-bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
+bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature )
 {
 	bool rvalue = false;
 	point3 currLoc;
@@ -730,8 +760,6 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 	SI08 z2 = ILLEGAL_Z;
 	const size_t landPosSize = validLandPos.size();
 	const size_t waterPosSize = validWaterPos.size();
-	bool waterCreature = cwmWorldState->creatures[c->GetID()].IsWater();
-	bool amphiCreature = cwmWorldState->creatures[c->GetID()].IsAmphibian();
 
 	// By default, let's attempt - at most - this many times to find a valid spawn point for the NPC
 	UI08 maxSpawnAttempts = 100;
@@ -760,11 +788,12 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				z = staticz;
 		}
 
-		//Break out of loop if z is still invalid, no point in continuing
+		// Continue with the next spawn attempt if z is illegal
 		if( z == ILLEGAL_Z )
-			break;
+			continue;
 
-		// First go through the lists of already stored good locations
+		// First go through the lists of already valid spawn locations on land,
+		// and see if the chosen location has already been validated
 		if( !waterCreature )
 		{
 			if( !validLandPosCheck.empty() && landPosSize > 0 )
@@ -780,7 +809,9 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				}
 			}
 		}
-		else if( waterCreature || amphiCreature )
+
+		// No luck, so let's try the list of already valid water tiles instead (if NPC can move on water)
+		if( waterCreature || amphiCreature )
 		{
 			if( !validWaterPosCheck.empty() && waterPosSize > 0 )
 			{
@@ -796,7 +827,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 			}
 		}
 
-		//if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ) && !waterCreature )
+		// Since our chosen location has not already been validated, lets validate it with a land-based creature in mind
 		if( !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ))
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber, instanceID ) )
@@ -810,8 +841,9 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				}
 			}
 		}
-		//else if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ) && ( waterCreature || amphiCreature ) )
-		else if(( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ))
+
+		// Otherwise, validate it with a water-based creature in mind instead
+		if(( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ))
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber, instanceID ) )
 			{
