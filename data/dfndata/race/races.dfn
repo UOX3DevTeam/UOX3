@@ -249,6 +249,13 @@ PLAYERRACE=1
 RACIALAID=22
 }
 
+[RACE 24]
+{
+NAME=Slimes
+PLAYERRACE=1
+BLOODCOLOUR=0xffff
+}
+
 // Equipment Lists ----------------------------------------------------
 
 // Common Equipment, usable by all

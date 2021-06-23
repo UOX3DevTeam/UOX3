@@ -347,11 +347,32 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 
 	CStaticIterator *msi;
 	UI08 worldNumber = b->WorldNumber();
+	UI16 instanceID = b->GetInstanceID();
+	SI08 boatZ = b->GetZ();
 	for( SI16 x = x1; x < x2; ++x )
 	{
 		for( SI16 y = y1; y < y2; ++y )
 		{
-			SI08 sz = Map->StaticTop( x, y, b->GetZ(), worldNumber, MAX_Z_STEP );
+			// Look for other boats
+			CMultiObj * tempBoat = findMulti( x, y, boatZ, worldNumber, instanceID );
+			if( ValidateObject( tempBoat ) && tempBoat->GetSerial() != b->GetSerial() )
+				return true;
+
+			// Look for blocking dynamic items at boat's Z level
+			CItem *tempItem = GetItemAtXYZ( x, y, boatZ, worldNumber, instanceID );
+			if( ValidateObject( tempItem ))
+			{
+				auto multiSerial = tempItem->GetMulti();
+				auto boatSerial = b->GetSerial();
+				if( multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial() )
+				{
+					CTile& tile = Map->SeekTile( tempItem->GetID() );
+					if( tile.CheckFlag( TF_BLOCKING ) )
+						return true;
+				}
+			}
+
+			SI08 sz = Map->StaticTop( x, y, boatZ, worldNumber, MAX_Z_STEP );
 
 			if( sz == ILLEGAL_Z ) //map tile
 			{
@@ -361,7 +382,8 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 					return true;
 			}
 			else
-			{ //static tile
+			{ 
+				// Static tile
 				msi = new CStaticIterator( x, y, worldNumber );
 				for( Static_st *stat = msi->First(); stat != nullptr; stat = msi->Next() )
 				{
@@ -556,24 +578,46 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	SOCKLIST_CITERATOR cIter;
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
-		(*cIter)->Send( &prSend );
+		( *cIter )->Send( &prSend );
 	}
 
 	SI16 tx = 0, ty = 0;
-	CheckDirection( dir&0x0F, tx, ty );
+	CheckDirection( dir & 0x0F, tx, ty );
 
 	SI16 x = boat->GetX(), y = boat->GetY();
-	prSend.Mode( 0 );
-	if( ( (x + tx) <= 200 || (x + tx) >= 6000 ) && ( (y + ty) <= 200 || (y + ty) >= 4900 ) )
+
+	auto worldNumber = boat->WorldNumber();
+	bool teleportBoat = false;
+	if( worldNumber <= 1 && ( x + tx ) < 5100 )
 	{
-		boat->SetMoveType( 0 );
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		// Handle wrapping map from one edge to the other when sailing
+		if( ( x + tx ) <= 50 && tx < 0 )
 		{
-			(*cIter)->Send( &prSend );
-			tiller->TextMessage( (*cIter), 8 );
+			// Sailing west
+			tx = 5050;
+			teleportBoat = true;
 		}
-		return;
+		else if( ( x + tx ) >= 5050 && tx > 0 )
+		{
+			// Sailing east
+			tx = -5050;
+			teleportBoat = true;
+		}
+		else if( ( y + ty ) <= 100 && ty < 0 )
+		{
+			// Sailing north
+			ty = 3896;
+			teleportBoat = true;
+		}
+		else if( ( y + ty ) >= 3996 && ty > 0 )
+		{
+			// Sailing south
+			ty = -3896;
+			teleportBoat = true;
+		}
 	}
+
+	// Check if anything blocks boat from moving to new location
 	if( BlockBoat( boat, tx, ty, dir, boat->GetDir(), false ) )
 	{
 		boat->SetMoveType( 0 );
@@ -584,14 +628,31 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		}
 		return;
 	}
-
-	//Move all the special items
+	
+	// Move all the special items along with the boat
 	boat->IncLocation( tx, ty );
 	tiller->IncLocation( tx, ty );
 	p1->IncLocation( tx, ty );
 	p2->IncLocation( tx, ty );
 	hold->IncLocation( tx, ty );
 
+	// If boat got teleported due to wrapping of map, make sure to
+	// remove the boat and everything on it from sight of nearby players
+	if( teleportBoat )
+	{
+		boat->RemoveFromSight();
+		boat->Update();
+		tiller->RemoveFromSight();
+		tiller->Update();
+		p1->RemoveFromSight();
+		p1->Update();
+		p2->RemoveFromSight();
+		p2->Update();
+		hold->RemoveFromSight();
+		hold->Update();
+	}
+
+	// Move all items aboard the boat along with the boat
 	GenericList< CItem * > *itemList = boat->GetItemsInMultiList();
 	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
 	{
@@ -600,14 +661,26 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		if( bItem == tiller || bItem == p1 || bItem == p2 || bItem == hold )
 			continue;
 		bItem->IncLocation( tx, ty );
+
+		// Remember to remove any items on board from sight of nearby players if boat got teleported
+		if( teleportBoat )
+		{
+			bItem->RemoveFromSight();
+			bItem->Update();
+		}
 	}
 
+	// Move all characters aboard the boat along with the boat
 	GenericList< CChar * > *charList = boat->GetCharsInMultiList();
 	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
 	{
 		if( !ValidateObject( bChar ) )
 			continue;
 		bChar->SetLocation( bChar->GetX() + tx, bChar->GetY() + ty, bChar->GetZ() );
+		if( teleportBoat )
+		{
+			bChar->Update();
+		}
 	}
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
 	{
