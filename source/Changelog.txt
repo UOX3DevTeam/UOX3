@@ -1,3 +1,11 @@
+23/06/2021 - Dragon Slayer
+	Added [interiordecorator] tool (dfndata/items/misc/uor_misc.dfn) that can be used to raise, lower or rotate locked down items in houses
+	Added script for rotating furniture via interior decorator tool or via dropping item
+	Merged furniture rotating functionality into existing smartturn script, and expanded on the selection of items. Supported furniture can now be turned by double-clicking the item (if no other double-click functionality exists), picking up and dropping the item, or via the interiordecorator tool (Xuri)
+	Updated js/jse_objectassociations.scp with furniture IDs supported by the furniture_smartturn script, so rotating will work for any supported furniture without needing to add scripts to each individual furniture DFN (Xuri)
+	Added system messages to dictionary files (Xuri)
+	Added interior decorator tool to Architect shoplists (Xuri)
+
 23/06/2021 - Xuri
 	Fixed an issue with CChar::RemoveAllObjectsFromSight(), which failed to remove nearby multis from sight, leading to ghost images when changing worlds/instances
 	Added check for other multis when sailing - boats will now collide with other boats!
