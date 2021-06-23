@@ -71,6 +71,13 @@ const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
 const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
 const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
 const UI32 BIT_PETTHIRSTOFFLINE          = 53;
+const UI32 BIT_HUNGERSYSTEMENABLED		= 55;
+const UI32 BIT_THIRSTSYSTEMENABLED		= 56;
+const UI32 BIT_TRAVELSPELLSFROMBOATKEYS	= 57;
+const UI32 BIT_TRAVELSPELLSWHILEOVERWEIGHT	= 58;
+const UI32 BIT_MARKRUNESINMULTIS			= 59;
+const UI32 BIT_TRAVELSPELLSBETWEENWORLDS	= 60;
+const UI32 BIT_TRAVELSPELLSWHILEAGGRESSOR	= 61;
 
 
 // New uox3.ini format lookup
@@ -396,6 +403,13 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BLOODDECAYCORPSETIMER", 256);
 	regINIValue("BLOODEFFECTCHANCE", 257);
 	regINIValue("NPCCORPSEDECAYTIMER", 258);
+	regINIValue("HUNGERENABLED", 259);
+	regINIValue("THIRSTENABLED", 260);
+	regINIValue("TRAVELSPELLSFROMBOATKEYS", 261);
+	regINIValue("TRAVELSPELLSWHILEOVERWEIGHT", 262);
+	regINIValue("MARKRUNESINMULTIS", 263);
+	regINIValue("TRAVELSPELLSBETWEENWORLDS", 264);
+	regINIValue("TRAVELSPELLSWHILEAGGRESSOR", 265);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -458,9 +472,11 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
+	HungerSystemEnabled( true );
 
 	SystemTimer( tSERVER_THIRSTRATE, 6000 );
 	ThirstDrain( 2 );
+	ThirstSystemEnabled( false );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -483,6 +499,8 @@ void CServerData::ResetDefaults( void )
 	ServerOverloadPackets( true );
 	AdvancedPathfinding( true );
 	LootingIsCrime( true );
+	ServerUOGEnabled( true );
+	ConnectUOServerPoll( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 5 );
@@ -561,6 +579,11 @@ void CServerData::ResetDefaults( void )
 	MaxPlayerBankItems( 125 );
 	ForceNewAnimationPacket( true );
 	MapDiffsEnabled( false );
+	TravelSpellsFromBoatKeys( true );
+	TravelSpellsWhileOverweight( false );
+	MarkRunesInMultis( true );
+	TravelSpellsBetweenWorlds( false );
+	TravelSpellsWhileAggressor( false );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -1589,7 +1612,7 @@ void CServerData::MineCheck( UI08 value )
 //|	Function	-	bool ConnectUOServerPoll( void ) const
 //|					void ConnectUOServerPoll( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of matching AC
+//|	Purpose		-	Gets/Sets whether UOX3 will respond to server poll requests from ConnectUO
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::ConnectUOServerPoll( void ) const
 {
@@ -2195,6 +2218,36 @@ void CServerData::CombatBloodEffectChance( UI08 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool HungerSystemEnabled( void ) const
+//|                 void HungerSystemEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::HungerSystemEnabled( void ) const
+{
+	return boolVals.test( BIT_HUNGERSYSTEMENABLED );
+}
+void CServerData::HungerSystemEnabled( bool newVal )
+{
+	boolVals.set( BIT_HUNGERSYSTEMENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool ThirstSystemEnabled( void ) const
+//|                 void ThirstSystemEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ThirstSystemEnabled( void ) const
+{
+	return boolVals.test( BIT_THIRSTSYSTEMENABLED );
+}
+void CServerData::ThirstSystemEnabled( bool newVal )
+{
+	boolVals.set( BIT_THIRSTSYSTEMENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 HungerDamage( void ) const
 //|					void HungerDamage( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -2379,6 +2432,82 @@ bool CServerData::LootingIsCrime( void ) const
 void CServerData::LootingIsCrime( bool newVal )
 {
 	boolVals.set( BIT_LOOTINGISCRIME, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsFromBoatKeys( void ) const
+//|                 void TravelSpellsFromBoatKeys( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are usable with boat keys to teleport
+//|					directly to boat's location
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsFromBoatKeys( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSFROMBOATKEYS );
+}
+void CServerData::TravelSpellsFromBoatKeys( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSFROMBOATKEYS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsWhileOverweight( void ) const
+//|                 void TravelSpellsWhileOverweight( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while overweight
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsWhileOverweight( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSWHILEOVERWEIGHT );
+}
+void CServerData::TravelSpellsWhileOverweight( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSWHILEOVERWEIGHT, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool MarkRunesInMultis( void ) const
+//|                 void MarkRunesInMultis( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether server allows marking recall runes in multis (houses, boats)
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::MarkRunesInMultis( void ) const
+{
+	return boolVals.test( BIT_MARKRUNESINMULTIS );
+}
+void CServerData::MarkRunesInMultis( bool newVal )
+{
+	boolVals.set( BIT_MARKRUNESINMULTIS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsBetweenWorlds( void ) const
+//|                 void TravelSpellsBetweenWorlds( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed between worlds
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsBetweenWorlds( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSBETWEENWORLDS );
+}
+void CServerData::TravelSpellsBetweenWorlds( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSBETWEENWORLDS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsWhileAggressor( void ) const
+//|                 void TravelSpellsWhileAggressor( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while marked as an aggressor
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsWhileAggressor( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSWHILEAGGRESSOR );
+}
+void CServerData::TravelSpellsWhileAggressor( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSWHILEAGGRESSOR, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3228,6 +3357,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
+		ofsOutput << "HUNGERENABLED=" << (HungerSystemEnabled()?1:0) << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
 		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
@@ -3235,6 +3365,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
+		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
 		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
 		ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
@@ -3264,6 +3395,14 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
 		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
 		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
+		ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << ( TravelSpellsFromBoatKeys() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << ( TravelSpellsWhileOverweight() ? 1 : 0 ) << '\n';
+		ofsOutput << "MARKRUNESINMULTIS=" << ( MarkRunesInMultis() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << ( TravelSpellsBetweenWorlds() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -4226,6 +4365,27 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 258:	 // NPCCORPSEDECAYTIMER[0246]
 			SystemTimer( tSERVER_NPCCORPSEDECAY, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 259:    // HUNGERENABLED[0247]
+			HungerSystemEnabled( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 260:    // THIRSTENABLED[0248]
+			ThirstSystemEnabled( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 261:    // TRAVELSPELLSFROMBOATKEYS[0249]
+			TravelSpellsFromBoatKeys( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 262:    // TRAVELSPELLSWHILEOVERWEIGHT[0250]
+			TravelSpellsWhileOverweight( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 263:    // MARKRUNESINMULTIS[0251]
+			MarkRunesInMultis( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 264:    // TRAVELSPELLSBETWEENWORLD[0252]
+			TravelSpellsBetweenWorlds( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 265:    // TRAVELSPELLSWHILEAGGRESSOR[0253]
+			TravelSpellsWhileAggressor( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		default:
 			rvalue = false;

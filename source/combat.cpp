@@ -1375,7 +1375,7 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 		}
 	}
 	else if( mChar->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D ))) //mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
 		CombatAnimsNew( mChar );
 	else if( mChar->IsOnHorse() )
 		CombatOnHorse( mChar );
@@ -1804,46 +1804,6 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleSplittingNPCs( CChar *toSplit )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles the splitting of NPCs like slimes when hit in combat
-//o-----------------------------------------------------------------------------------------------o
-void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
-{
-	if( toSplit->GetSplit() > 0 && toSplit->GetHP() >= 1 )
-	{
-		if( RandomNum( 0, 100 ) <= toSplit->GetSplitChance() )
-		{
-			UI08 splitnum;
-			if( toSplit->GetSplit() == 1 ) {
-				splitnum = 1;
-			}
-			else {
-				splitnum = static_cast<std::uint8_t>( RandomNum( static_cast<std::uint16_t>( 1 ), static_cast<std::uint16_t>( toSplit->GetSplit() ) ) );
-			}
-
-			for( UI08 splitcount = 0; splitcount < splitnum; ++splitcount )
-			{
-				CChar *c = toSplit->Dupe();
-				if( c == nullptr )
-					continue;
-
-				c->SetFTarg( nullptr );
-				c->SetLocation( toSplit->GetX() + 1, toSplit->GetY(), toSplit->GetZ() );
-				c->SetKills( 0 );
-				c->SetHP( toSplit->GetMaxHP() );
-				c->SetStamina( toSplit->GetMaxStam() );
-				c->SetMana( toSplit->GetMaxMana() );
-				if( RandomNum( 0, 34 ) == 5 )
-					c->SetSplit( 1 );
-				else
-					c->SetSplit( 0 );
-			}
-		}
-	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles combat related stuff during combat loop
@@ -2030,10 +1990,6 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				{
 					ourTarg->Damage( ourDamage, &mChar, true );
 				}
-
-				// Splitting NPC's
-				if( ourTarg->IsNpc() )
-					HandleSplittingNPCs( ourTarg );
 			}
 			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )
 				PlayHitSoundEffect( &mChar, mWeapon );

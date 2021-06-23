@@ -27,7 +27,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 		case 0xC0: // ConnectUO Server Poll Packet request
 			if( !GetServerSetting( "CUOENABLED" ))
 			{
-				Console.Print( "CUO Server Poll Packet detected; response disabled via CONNECTUOSERVERPOLL ini-setting.\n" );
+				Console.Print( "CUO Server Poll Packet detected; response disabled via CUOENABLED ini-setting.\n" );
 			}
 			else if( protVer == cuoProtocolVersion )
 			{

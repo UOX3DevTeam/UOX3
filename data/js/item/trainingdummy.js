@@ -1,3 +1,7 @@
+// Settings
+// If true, UOX3 will attempt to automatically make training dummies damageable if they're not already
+const damageableDummies = true;
+
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
@@ -55,6 +59,18 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 939, pSock.language )); //You feel you would gain no more from using that.
 		else
 			pUser.CheckSkill( 27, 0, 250 );
+
+		// Automatically set training dummies as damageable if they're not already
+		if( damageableDummies && !iUsed.isDamageable )
+		{
+			iUsed.isDamageable = 1;
+
+			if( iUsed.maxhp == 0 )
+			{
+				iUsed.maxhp = 100;
+				iUsed.health = 100;
+			}
+		}
 
 		// If the training dummy is marked as damageable,
 		// handle damage numbers and health bar updates
@@ -122,9 +138,13 @@ function onTimer( iUsed, timerID )
 	{
 		//If timer is 1, stop the swinging dummy
 		stopDummy( iUsed );
-		iUsed.StartTimer( 4000, 2, true );
+
+		if( iUsed.isDamageable )
+		{
+			iUsed.StartTimer( 4000, 2, true );
+		}
 	}
-	if( timerID == 2 )
+	if( timerID == 2 && iUsed.isDamageable )
 	{
 		// Restore training dummy health
 		iUsed.health = iUsed.maxhp;

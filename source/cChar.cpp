@@ -449,6 +449,10 @@ bool CChar::SetHunger( SI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::DoHunger( CSocket *mSock )
 {
+	// Don't continue if hunger system is disabled
+	if( !cwmWorldState->ServerData()->HungerSystemEnabled() )
+		return;
+
 	if ( !IsDead() && !IsInvulnerable() )	// No need to do anything on dead or invulnerable chars
 	{
 		UI16 hungerRate;
@@ -589,6 +593,10 @@ bool CChar::SetThirst( SI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::DoThirst( CSocket* mSock )
 {
+	// Don't continue if thirst system is disabled
+	if( !cwmWorldState->ServerData()->ThirstSystemEnabled() )
+		return;
+
 	if( !IsDead() && !IsInvulnerable() ) // No need to do anything on dead or invulnerable chars
 	{
 		UI16 thirstRate;
@@ -2319,7 +2327,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
 							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
 						{
-							tempItem->SendToSocket( mSock );
+							mSock->Send( &itemToSend );
 						}
 					}
 					else
@@ -4412,6 +4420,9 @@ void CChar::Cleanup( void )
 				tempChar->SetOwner( nullptr );
 		}
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
+
+		//Ensure that object is removed from refreshQueue
+		RemoveFromRefreshQueue();
 	}
 }
 
@@ -6504,7 +6515,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 	SetHP( hitpoints - damageValue );
 
 	// Spawn blood effects
-	if( damageValue >= static_cast<UI16>(floor(GetMaxHP() * 0.01)) ) // Only display blood effects if damage done is higher than 1% of max health
+	if( damageValue >= std::max(static_cast<SI16>(1), static_cast<SI16>(floor(GetMaxHP() * 0.01))) ) // Only display blood effects if damage done is higher than 1, or 1% of max health - whichever is higher
 	{
 		UI08 bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
 		bool spawnBlood = ( bloodEffectChance >= static_cast<UI08>(RandomNum( 0, 99 )));
@@ -6512,13 +6523,18 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		{
 			BloodTypes bloodType = BLOOD_BLEED;
 			auto foijf = GetMaxHP() * 0.2;
-			if( damageValue >= static_cast<UI16>(floor(GetMaxHP() * 0.2 )) )
+			if( damageValue >= static_cast<SI16>(floor(GetMaxHP() * 0.2 )) )
 			{
 				// If damage done is higher than 20% of max health, spawn larger blood splats
 				bloodType = BLOOD_CRITICAL;
 			}
 
 			UI16 bloodColour = Races->BloodColour( GetRace() ); // Fetch blood color from race property
+			if( bloodColour == 0xffff )
+			{
+				// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
+				bloodColour = GetSkin();
+			}
 			CItem * bloodEffect = Effects->SpawnBloodEffect( WorldNumber(), GetInstanceID(), bloodColour, bloodType );
 			if( ValidateObject( bloodEffect ) )
 			{
