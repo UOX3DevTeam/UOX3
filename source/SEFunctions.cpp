@@ -3858,6 +3858,21 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 260:	 // THIRSTENABLED[0248]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ThirstSystemEnabled() );
 				break;
+			case 261:	 // TRAVELSPELLSFROMBOATKEYS[0249]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsFromBoatKeys() );
+				break;
+			case 262:	 // TRAVELSPELLSWHILEOVERWEIGHT[0250]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsWhileOverweight() );
+				break;
+			case 263:	 // MARKRUNESINMULTIS[0251]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MarkRunesInMultis() );
+				break;
+			case 264:	 // TRAVELSPELLSBETWEENWORLDS[0252]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() );
+				break;
+			case 265:	 // TRAVELSPELLSWHILEAGGRESSOR[0253]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsWhileAggressor() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;

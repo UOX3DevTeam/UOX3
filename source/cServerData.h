@@ -168,7 +168,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 57 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 62 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -664,6 +664,21 @@ public:
 
 	void		CombatBloodEffectChance( UI08 value );
 	UI08		CombatBloodEffectChance( void ) const;
+
+	void		TravelSpellsFromBoatKeys( bool value );
+	bool		TravelSpellsFromBoatKeys( void ) const;
+
+	void		TravelSpellsWhileOverweight( bool value );
+	bool		TravelSpellsWhileOverweight( void ) const;
+
+	void		MarkRunesInMultis( bool value );
+	bool		MarkRunesInMultis( void ) const;
+
+	void		TravelSpellsBetweenWorlds( bool value );
+	bool		TravelSpellsBetweenWorlds( void ) const;
+
+	void		TravelSpellsWhileAggressor( bool value );
+	bool		TravelSpellsWhileAggressor( void ) const;
 
 	void		HungerSystemEnabled( bool value );
 	bool		HungerSystemEnabled( void ) const;

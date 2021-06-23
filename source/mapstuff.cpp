@@ -1108,8 +1108,6 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 
 			UI16 landID;
 			CLand& land = SeekLand( map.id );
-			if( land.CheckFlag( TF_BLOCKING ) ) // is it impassable?
-				return true;
 			if( waterWalk )
 			{
 				if( !land.CheckFlag( TF_WET ) )
@@ -1117,7 +1115,7 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 			}
 			else
 			{
-				if( land.CheckFlag( TF_WET ) )
+				if( land.CheckFlag( TF_WET ) || land.CheckFlag( TF_BLOCKING ))
 					return true;
 			}
 			

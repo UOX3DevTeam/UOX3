@@ -2028,5 +2028,13 @@
 2056=You drink the beverage, and begin to feel more satiated.
 2057=You feel quite full after drinking the beverage.
 2058=Your thirst is nearly quenched, but you manage to drink the beverage.
+2059=You have lost your quarry.
+2060=Your attack was blocked!
+2061=Travelling between worlds using Recall or Gate spells is not possible.
+2062=Unable to locate ship - it might have been dry-docked... or sunk!
+2063=You are unable to recall to your ship - it might be in another world!
+2064=You are unable to open a gate to your ship - it might be in another world!
+2065=You can only recall off of recall runes or valid ship keys!
+2066=You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
 }
 EOF

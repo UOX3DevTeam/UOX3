@@ -255,6 +255,7 @@ public:
 	virtual void			Update( CSocket *mSock = nullptr ) = 0;
 	virtual void			SendToSocket( CSocket *mSock ) = 0;
 	virtual void			Dirty( UpdateTypes updateType );
+	void					RemoveFromRefreshQueue( void );
 
 	virtual void			Delete( void ) = 0;
 	virtual void			Cleanup( void );

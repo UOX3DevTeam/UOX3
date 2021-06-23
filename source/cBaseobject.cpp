@@ -1893,6 +1893,18 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 		++(cwmWorldState->refreshQueue[this]);
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveFromRefreshQueue( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes the object from the global refresh queue
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::RemoveFromRefreshQueue()
+{
+	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	if( toFind != cwmWorldState->refreshQueue.end() )
+		cwmWorldState->refreshQueue.erase( toFind );
+}
+
 void CBaseObject::CopyData( CBaseObject *target )
 {
 	target->SetTitle( GetTitle() );

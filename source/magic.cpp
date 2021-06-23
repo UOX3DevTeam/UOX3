@@ -683,31 +683,93 @@ bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
-	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
+	// No recall if too heavy, GMs excempt
+	if( Weight->isOverloaded( caster ) && !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() && ( !caster->IsCounselor() && !caster->IsGM() ) )
 	{
-		sock->sysmessage( 679 );
+		sock->sysmessage( 680 ); // You are too heavy to do that!
+		sock->sysmessage( 681 ); // You feel drained from the attempt.
 		return false;
 	}
-	else if( Weight->isOverloaded( caster ) && ( !caster->IsCounselor() && !caster->IsGM() ) ) // no recall if too heavy, GM's excempt
+	else if( i->GetType() == 7 )
 	{
-		sock->sysmessage( 680 );
-		sock->sysmessage( 681 );
-		return false;
+		// Player recalled off a key
+		CMultiObj *shipMulti = calcMultiFromSer( i->GetTempVar( CITV_MORE ) );
+		if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) )
+		{
+			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
+			{
+				caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+				return true;
+			}
+			else
+			{
+				sock->sysmessage( 2063 ); // You are unable to recall to your ship - it might be in another world!
+				return false;
+			}
+		}
+		else
+		{
+			sock->sysmessage( 2065 ); // You can only recall off of recall runes or valid ship keys!
+			return false;
+		}
 	}
 	else
 	{
-		UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
-		if( !Map->MapExists( worldNum ) )
-			worldNum = caster->WorldNumber();
-		if( worldNum != caster->WorldNumber() )
+		// Check if rune was marked in a multi - if so, try to take user directly there
+		TAGMAPOBJECT runeMore = i->GetTag( "multiSerial" );
+		if( runeMore.m_StringValue != "" )
 		{
-			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
-			SendMapChange( caster->WorldNumber(), sock, false );
+			SERIAL mSerial = strutil::value<SERIAL>( runeMore.m_StringValue );
+			if( mSerial != 0 && mSerial != INVALIDSERIAL )
+			{
+				CMultiObj *shipMulti = calcMultiFromSer( mSerial );
+				if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) )
+				{
+					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
+					{
+						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+						return true;
+					}
+					else
+					{
+						sock->sysmessage( 2063 ); // You are unable to recall to your ship - it might be in another world!
+						return false;
+					}
+				}
+			}
+
+			sock->sysmessage( 2062 ); // Unable to locate ship - it might have been dry-docked... or sunk!
+			return false;
+		}
+		else if( i->GetTempVar( CITV_MOREX ) == 0 && i->GetTempVar( CITV_MOREY ) == 0 )
+		{
+			sock->sysmessage( 679 ); // That rune has not been marked yet!
+			return false;
 		}
 		else
-			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
-		sock->sysmessage( 682 );
-		return true;
+		{
+			UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
+			if( !Map->MapExists( worldNum ) )
+				worldNum = caster->WorldNumber();
+
+			if( worldNum != caster->WorldNumber() )
+			{
+				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
+				{
+					caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+					SendMapChange( caster->WorldNumber(), sock, false );
+				}
+				else
+				{
+					sock->sysmessage( 2061 ); // Travelling between worlds using Recall or Gate spells is not possible.
+					return false;
+				}
+			}
+			else
+				caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+			sock->sysmessage( 682 ); // You have recalled from the rune.
+			return true;
+		}
 	}
 }
 
@@ -1030,25 +1092,61 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	if( i->IsLockedDown() )
 	{
-		sock->sysmessage( 774 );
+		sock->sysmessage( 774 ); // That is locked down and you cannot use it.
 		return false;
 	}
-	//
-	i->SetTempVar( CITV_MOREX, caster->GetX() );
-	i->SetTempVar( CITV_MOREY, caster->GetY() );
-	i->SetTempVar( CITV_MOREZ, caster->GetZ() );
-	i->SetTempVar( CITV_MORE, caster->WorldNumber() );
 
-	std::string tempitemname;
+	bool markedInMulti = false;
+	CMultiObj *multi = caster->GetMultiObj();
+	if( ValidateObject( multi ) )
+	{
+		if( !multi->IsOnOwnerList( caster ) )
+		{
+			sock->sysmessage( "Marking a rune in property you don't own is not possible" ); // Marking a rune in property you don't own is not possible
+			return false;
+		}
+		else if( !cwmWorldState->ServerData()->MarkRunesInMultis() )
+		{
+			sock->sysmessage( "Marking a rune inside one's property is not permitted." );
+			return false;
+		}
+		else
+		{
+			// Let's allow marking the rune in the multi, and store multi's serial in a tag
+			auto mSerial = multi->GetSerial();
+			TAGMAPOBJECT tagObject;
+			tagObject.m_Destroy = FALSE;
+			tagObject.m_StringValue = std::to_string(mSerial);
+			tagObject.m_IntValue = static_cast<SI32>( tagObject.m_StringValue.size() );
+			tagObject.m_ObjectType = TAGMAP_TYPE_STRING;
+			i->SetTag( "multiSerial", tagObject );
+			markedInMulti = true;
 
-	if( caster->GetRegion()->GetName()[0] != 0 ){
-		tempitemname = strutil::format(Dictionary->GetEntry( 684 ), caster->GetRegion()->GetName().c_str() );
+			std::string tempRuneName = strutil::format( Dictionary->GetEntry( 684 ), multi->GetName().c_str() );
+			if( tempRuneName.length() > 0 )
+				i->SetName( tempRuneName );
+		}
 	}
-	else {
-		tempitemname=Dictionary->GetEntry( 685 );
+
+	if( !markedInMulti )
+	{
+		i->SetTempVar( CITV_MOREX, caster->GetX() );
+		i->SetTempVar( CITV_MOREY, caster->GetY() );
+		i->SetTempVar( CITV_MOREZ, caster->GetZ() );
+		i->SetTempVar( CITV_MORE, caster->WorldNumber() );
+
+		std::string tempitemname;
+
+		if( caster->GetRegion()->GetName()[0] != 0 ){
+			tempitemname = strutil::format(Dictionary->GetEntry( 684 ), caster->GetRegion()->GetName().c_str() );
+		}
+		else {
+			tempitemname=Dictionary->GetEntry( 685 );
+		}
+		i->SetName( tempitemname );
 	}
-	i->SetName( tempitemname );
-	sock->sysmessage( 686 );
+
+	sock->sysmessage( 686 ); // Recall rune marked.
 	return true;
 }
 
@@ -1227,18 +1325,61 @@ bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
-	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
+	// No recall if too heavy, GM's excempt
+	if( Weight->isOverloaded( caster ) && !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() && ( !caster->IsCounselor() && !caster->IsGM() ) )
 	{
-		sock->sysmessage( 679 );
+		sock->sysmessage( 680 ); // You are too heavy to do that!
+		sock->sysmessage( 681 ); // You feel drained from the attempt.
 		return false;
 	}
 	else
 	{
-		UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
-		if( !Map->MapExists( worldNum ) )
-			worldNum = caster->WorldNumber();
-		SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
-		return true;
+		// Check if rune was marked in a multi - if so, try to take user directly there
+		TAGMAPOBJECT runeMore = i->GetTag( "multiSerial" );
+		if( runeMore.m_StringValue != "" )
+		{
+			SERIAL mSerial = strutil::value<SERIAL>( runeMore.m_StringValue );
+			if( mSerial != 0 && mSerial != INVALIDSERIAL )
+			{
+				CMultiObj *shipMulti = calcMultiFromSer( mSerial );
+				if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) )
+				{
+					if( ( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
+					{
+						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3 );
+						SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber() );
+						return true;
+					}
+					else
+					{
+						sock->sysmessage( 2064 ); // You are unable to open a gate to your ship - it might be in another world!
+						return false;
+					}
+				}
+			}
+
+			sock->sysmessage( 2062 ); // Unable to locate ship - it might have been dry-docked... or sunk!
+			return false;
+		}
+		else if( i->GetTempVar( CITV_MOREX ) == 0 && i->GetTempVar( CITV_MOREY ) == 0 )
+		{
+			sock->sysmessage( 679 ); // That rune has not been marked yet!
+			return false;
+		}
+		else
+		{
+			UI08 worldNum = static_cast<UI08>( i->GetTempVar( CITV_MORE ) );
+			if( !Map->MapExists( worldNum ) )
+				worldNum = caster->WorldNumber();
+			if( caster->WorldNumber() != worldNum && !cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
+			{
+				sock->sysmessage( 2061 ); // Travelling between worlds using Recall or Gate spells is not possible.
+				return false;
+			}
+
+			SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
+			return true;
+		}
 	}
 }
 
@@ -3080,8 +3221,8 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	// for LocationTarget spell like ArchCure, ArchProtection etc...
 	SI08 curSpell;
 
-	curSpell			= caster->GetSpellCast();
-	cScript *jsScript	= JSMapping->GetScript( spells[curSpell].JSScript() );
+	curSpell = caster->GetSpellCast();
+	cScript *jsScript = JSMapping->GetScript( spells[curSpell].JSScript() );
 	if( jsScript != nullptr )
 	{
 		if( jsScript->MagicSpellCast( s, caster, true, curSpell ) )
@@ -3109,8 +3250,8 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 	}
 
-	CChar *src			= caster;
-	bool validSocket	= ( s != nullptr );
+	CChar *src = caster;
+	bool validSocket = ( s != nullptr );
 
 	// Check if caster can cast aggressive spells in the region they're in
 	if( spells[curSpell].AggressiveSpell() )
@@ -3132,6 +3273,15 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 		if( !allowCasting )
 			return;
+	}
+
+	if( curSpell == 32 || curSpell == 52 )
+	{
+		if( !cwmWorldState->ServerData()->TravelSpellsWhileAggressor() && ( ( caster->DidAttackFirst() && ValidateObject( caster->GetTarg() ) && caster->GetTarg()->IsInnocent() ) || caster->IsCriminal() ) )
+		{
+			s->sysmessage( 2066 ); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
+			return;
+		}
 	}
 
 	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
@@ -3167,7 +3317,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			{
 				if( i->GetCont() != nullptr || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 				{
-					if( i->GetType() == IT_RECALLRUNE )
+					if( i->GetType() == IT_RECALLRUNE || (curSpell != 45 && i->GetType() == IT_KEY && cwmWorldState->ServerData()->TravelSpellsFromBoatKeys() ))
 					{
 						playSound( src, curSpell );
 						doMoveEffect( curSpell, i, src );

@@ -2327,7 +2327,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
 							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
 						{
-							tempItem->SendToSocket( mSock );
+							mSock->Send( &itemToSend );
 						}
 					}
 					else
@@ -4420,6 +4420,9 @@ void CChar::Cleanup( void )
 				tempChar->SetOwner( nullptr );
 		}
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
+
+		//Ensure that object is removed from refreshQueue
+		RemoveFromRefreshQueue();
 	}
 }
 
