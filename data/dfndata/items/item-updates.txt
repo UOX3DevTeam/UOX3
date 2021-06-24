@@ -1,6 +1,12 @@
 -=================================================-
 -= ITEM DFN's Updated 06/23/2021 - Dragon Slayer =-
 -=================================================-
+-New Items:
+	-hair restyle deed (items/deeds/misc_deeds.dfn)
+
+-=================================================-
+-= ITEM DFN's Updated 06/23/2021 - Dragon Slayer =-
+-=================================================-
 -New Files:
 	-uor_misc.dfn (items/misc)
 
