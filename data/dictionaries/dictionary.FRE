@@ -2208,5 +2208,21 @@
 2072=Vous ne pouvez utiliser le décorateur d'intérieur que sur des objets verrouillés.
 2073=Vous ne pouvez pas l'abaisser davantage.
 2074=Vous ne pouvez pas l'augmenter plus haut.
+2075=MENU DE SÉLECTION DE COIFFURE
+2076=Vous devez être chauve pour changer de cheveux.
+2077=Impossible de changer de coiffure.
+2078=Vous êtes déjà chauve - changement de coiffure avorté.
+2079=Chauve (Si vous choisissez de devenir chauve, vous perdrez votre couleur de cheveux)
+2080=Jeune page
+2081=Recul
+2082=Nattes
+2083=Chignon
+2084=Court
+2085=Longue
+2086=Queue de cheval
+2087=Mohawk
+2088=Bouclé
+2089=petits pains
+2090=ANNULER
 }
 EOF

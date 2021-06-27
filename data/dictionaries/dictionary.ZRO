@@ -2044,5 +2044,21 @@
 2072=You can only use the interior decorator on locked down items.
 2073=You cannot lower it down any further.
 2074=You cannot raise it up any higher.
+2075=HAIRSTYLE SELECTION MENU
+2076=You need to be bald to change your hair.
+2077=Failed to change hairstyle.
+2078=You are already bald - hairstyle change aborted.
+2079=Bald (If you choose to go bald, you will lose your hair color)
+2080=Pageboy
+2081=Receding
+2082=Pigtails
+2083=Topknot
+2084=Short
+2085=Long
+2086=Ponytail
+2087=Mohawk
+2088=Curly
+2089=Buns
+2090=CANCEL
 }
 EOF
