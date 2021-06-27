@@ -390,7 +390,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 
 	if( curCell != newCell )
 	{
-		if( curCell->GetRegionSerialList()->Remove( nItem->GetSerial() ) != 1 || !curCell->GetItemList()->Remove( nItem ) )
+		if( !curCell->GetRegionSerialList()->Remove( nItem->GetSerial() ) || !curCell->GetItemList()->Remove( nItem ) )
 		{
 #if DEBUG_REGIONS
 			Console.warning( strutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
@@ -487,7 +487,11 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	if( !ValidateObject( nItem ) )
 		return false;
 	CMapRegion *cell = GetMapRegion( nItem );
-	if( !cell->GetItemList()->Remove( nItem ) )
+	if( cell->GetRegionSerialList()->Remove( nItem->GetSerial() ) )
+	{
+		cell->GetItemList()->Remove( nItem );
+	}
+	else
 	{
 #if DEBUG_REGIONS
 		Console.warning( strutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
@@ -534,7 +538,11 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	if( !ValidateObject( toRemove ) )
 		return false;
 	CMapRegion *cell = GetMapRegion( toRemove );
-	if( !cell->GetCharList()->Remove( toRemove ) )
+	if( cell->GetRegionSerialList()->Remove( toRemove->GetSerial() ) )
+	{
+		cell->GetCharList()->Remove( toRemove );
+	}
+	else
 	{
 #if DEBUG_REGIONS
 		Console.warning( strutil::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));

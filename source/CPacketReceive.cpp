@@ -235,7 +235,7 @@ bool CPIFirstLogin::Handle( void )
 					Console << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
 				}
 			}
-			else if( tSock->ClientType() <= CV_KR3D )
+			else if( tSock->ClientType() <= CV_KR3D && tSock->ClientType() != CV_DEFAULT )
 			{
 				if( !cwmWorldState->ServerData()->ClientSupport6050() )
 				{
