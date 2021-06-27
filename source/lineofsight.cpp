@@ -472,9 +472,10 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	if( distance > 18 )
 		return blocked;
 
+	// DISABLED; Allows placing items within walls when standing next to them...
 	//If target is next to us and within our field of view
-	if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
-		return not_blocked;
+	//if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
+		//return not_blocked;
 
 	vector3D collisions[ MAX_COLLISIONS ];
 	SI16 x1, y1, x2, y2;
@@ -651,7 +652,8 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		for( j = 0; j < checkthistotal; ++j )
 		{
 			tb = &losItemList[i];
-			if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
+			//if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
+			if( CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
 				return blocked;
 		}
 	}

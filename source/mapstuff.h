@@ -127,6 +127,7 @@ public:
 	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis );
 	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad );
 	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface = false );
+	bool			CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck );
 	bool			CheckTileFlag( UI16 itemID, TileFlags flagToCheck );
 
 	// height functions

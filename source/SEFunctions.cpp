@@ -53,9 +53,8 @@ void DoSEErrorMessage( const std::string& txt )
 		auto msg = txt ;
 		if (msg.size()>512){
 			msg = msg.substr(0,512);
-			Console.error( msg );
 		}
-
+		Console.error( msg );
 	}
 
 }
@@ -2951,6 +2950,30 @@ JSBool SE_CheckStaticFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CheckDynamicFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_CheckDynamicFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		DoSEErrorMessage( "CheckDynamicFlag: Invalid number of arguments (takes 6: X, Y, Z, WorldNumber, instanceID and TileFlagID)" );
+		return JS_FALSE;
+	}
+
+	SI16 x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ) );
+	SI16 y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ) );
+	UI08 z = static_cast<SI16>( JSVAL_TO_INT( argv[2] ) );
+	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[3] ) );
+	UI08 instanceID = static_cast<UI08>( JSVAL_TO_INT( argv[4] ) );
+	TileFlags toCheck = static_cast<TileFlags>( JSVAL_TO_INT( argv[5] ) );
+	bool hasDynamicFlag = Map->CheckDynamicFlag( x, y, z, worldNum, instanceID, toCheck );
+	*rval = BOOLEAN_TO_JSVAL( hasDynamicFlag );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_CheckTileFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether tile with given ID has a specific flag
@@ -3097,8 +3120,9 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 
 		if( !std::filesystem::exists( pathString ))
 		{
-			DoSEErrorMessage( "DeleteFile: provided folder path not found, unable to delete file");
-			return JS_FALSE;
+			// Return JS_TRUE to allow script to continue running even if file was not found for deletion, but set return value to false
+			*rval = false;
+			return JS_TRUE;
 		}
 
 		pathString += std::filesystem::path::preferred_separator;
@@ -3141,7 +3165,7 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			}
 			case 2:	 // CONSOLELOG[0003]
-				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->ServerConsoleLogStatus()));
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerConsoleLog() );
 				break;
 			case 3:	 // COMMANDPREFIX[0005]
 			{
@@ -3873,6 +3897,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 265:	 // TRAVELSPELLSWHILEAGGRESSOR[0253]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TravelSpellsWhileAggressor() );
 				break;
+			case 266:	 // BANKBUYTHRESHOLD[0254]
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BuyThreshold() ) );
+				break;
+			case 267:	 // NETWORKLOG[0255]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerNetworkLog() );
+				break;
+			case 268:	 // SPEECHLOG[0256]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerSpeechLog() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;
@@ -3941,6 +3974,66 @@ JSBool SE_GetAccountCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 JSBool SE_GetPlayerCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->GetPlayersOnline() );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DistanceBetween( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the distance between two locations, or two objects - or a combination of both
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_DistanceBetween( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
+	{
+		DoSEErrorMessage( "DistanceBetween: needs 2, 3, 4 or 6 arguments - object a, object b - or object a, object b, (bool)checkZ - or x1, y1 and x2, y2 - or x1, y1, z1 and x2, y2, z2!" );
+		return JS_FALSE;
+	}
+
+	if( argc <= 3 )
+	{
+		// 2 or 3 arguments - find dinstance between two objects in 2D or 3D
+		JSObject *srcObj = JSVAL_TO_OBJECT( argv[0] );
+		JSObject *trgObj = JSVAL_TO_OBJECT( argv[1] );
+		bool checkZ = argc == 3 ? ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE ) : false;
+		CBaseObject *srcBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ) );
+		CBaseObject *trgBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ) );
+		if( !ValidateObject( srcBaseObj ) || !ValidateObject( trgBaseObj ) )
+		{
+			DoSEErrorMessage( "DistanceBetween: Invalid source or target object" );
+			*rval = INT_TO_JSVAL(-1);
+			return JS_FALSE;
+		}
+
+		if( checkZ )
+			*rval = INT_TO_JSVAL( getDist3D( srcBaseObj, trgBaseObj ) );
+		else
+			*rval = INT_TO_JSVAL( getDist( srcBaseObj, trgBaseObj ) );
+	}
+	else
+	{
+		UI16 x1 = static_cast<UI16>( JSVAL_TO_INT( argv[0] ) );
+		UI16 y1 = static_cast<UI16>( JSVAL_TO_INT( argv[1] ) );
+		UI16 x2 = 0;
+		UI16 y2 = 0;
+		if( argc == 4 )
+		{
+			// 4 arguments - find distance in 2D
+			x2 = static_cast<UI16>( JSVAL_TO_INT( argv[2] ) );
+			y2 = static_cast<UI16>( JSVAL_TO_INT( argv[3] ) );
+			*rval = INT_TO_JSVAL( getDist( point3( x1, y1, 0 ), point3( x2, y2, 0 )));
+		}
+		else
+		{
+			// 6 arguments - find distance in 3D
+			SI08 z1 = static_cast<SI08>( JSVAL_TO_INT( argv[2] ) );
+			x2 = static_cast<UI16>( JSVAL_TO_INT( argv[3] ) );
+			y2 = static_cast<UI16>( JSVAL_TO_INT( argv[4] ) );
+			SI08 z2 = static_cast<SI08>( JSVAL_TO_INT( argv[5] ) );
+			*rval = INT_TO_JSVAL( getDist3D( point3( x1, y1, z1 ), point3( x2, y2, z2 ) ) );
+		}
+	}
+	
 	return JS_TRUE;
 }
 

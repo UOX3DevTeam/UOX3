@@ -520,7 +520,7 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 	x1 = static_cast<SI16>(structure.minx() + xAdd);
 	x2 = static_cast<SI16>(structure.maxx() + xAdd);
 	y1 = static_cast<SI16>(structure.miny() + yAdd);
-	y2 = static_cast<SI16>(structure.maxx() + yAdd);
+	y2 = static_cast<SI16>(structure.maxy() + yAdd);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -667,16 +667,27 @@ CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 i
 		{
 			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
 				continue;
-			if( !checkOnlyNonMultis && Item->GetID( 1 ) >= 0x40 && Item->GetObjType() == OT_MULTI )
+			if( !checkOnlyNonMultis )
 			{
-				auto deetee = MultiTile( Item, x, y, oldz, false );
-				if( deetee > 0 )
+				if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
 				{
+					auto deetee = MultiTile( Item, x, y, oldz, false );
+					if( deetee > 0 )
+					{
+						regItems->Pop();
+						return Item;
+					}
+					else
+						continue;
+				}
+				else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) )
+				{
+					if( Item->GetX() != x && Item->GetY() != y )
+						continue;
+
 					regItems->Pop();
 					return Item;
 				}
-				else
-					continue;
 			}
 			else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
 			{
@@ -998,6 +1009,68 @@ bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, Til
 		}		
 	}
 	return checkSpawnSurface;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
+//o-----------------------------------------------------------------------------------------------o
+bool CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck )
+{
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = ( *rIter );
+		if( CellResponse == nullptr )
+			continue;
+
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
+		regItems->Push();
+		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+		{
+			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+				continue;
+
+			if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
+			{
+				// Found a multi
+				// Look for a multi item at specific location
+				UI16 multiID = static_cast<UI16>( Item->GetID() - 0x4000 );
+				for( auto &multiItem : SeekMulti( multiID ).allItems() )
+				{
+					if( multiItem.visible > 0 && ( abs( Item->GetZ() + multiItem.zoffset - z ) <= 1 ) )
+					{
+						if( ( Item->GetX() + multiItem.xoffset == x ) && ( Item->GetY() + multiItem.yoffset == y ) )
+						{
+							if( SeekTile( multiItem.tileid ).CheckFlag( toCheck ) )
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				// Item is not a multi
+				if( Item->GetX() == x && Item->GetY() == y && Item->GetZ() == z )
+				{
+					UI16 itemZ = Item->GetZ();
+					const SI08 tileHeight = static_cast<SI08>( TileHeight( Item->GetID() ) );
+					if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
+					{
+						if( SeekTile( Item->GetID() ).CheckFlag( toCheck ) )
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		regItems->Pop();
+	}
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o

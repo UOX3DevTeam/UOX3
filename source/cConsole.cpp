@@ -377,7 +377,7 @@ void CConsole::print( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::log( const std::string& msg, const std::string& filename )
 {
-	if( !cwmWorldState->ServerData()->ServerConsoleLogStatus() )
+	if( !cwmWorldState->ServerData()->ServerConsoleLog() )
 		return;
 
 	std::ofstream toWrite;
@@ -407,7 +407,7 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::log( const std::string& msg )
 {
-	if( !cwmWorldState->ServerData()->ServerConsoleLogStatus() )
+	if( !cwmWorldState->ServerData()->ServerConsoleLog() )
 		return;
 
 	log( msg, "console.log" );
