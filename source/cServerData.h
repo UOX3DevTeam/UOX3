@@ -168,7 +168,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 62 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 65 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -397,8 +397,12 @@ public:
 	void 		ExternalIP( const std::string &ip );
 	void		ServerPort( UI16 setport );
 	UI16		ServerPort( void ) const;
-	void		ServerConsoleLog( UI08 setting );
-	UI08		ServerConsoleLogStatus( void ) const;
+	void		ServerConsoleLog( bool setting );
+	bool		ServerConsoleLog( void ) const;
+	void		ServerNetworkLog( bool setting );
+	bool		ServerNetworkLog( void ) const;
+	void		ServerSpeechLog( bool setting );
+	bool		ServerSpeechLog( void ) const;
 	void		ServerCommandPrefix( char cmdvalue );
 	char		ServerCommandPrefix( void ) const;
 	void		ServerAnnounceSaves( bool setting );

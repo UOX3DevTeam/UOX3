@@ -873,6 +873,59 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool  CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, UI08 z )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check for a valid drop location at the location where client attempts to drop an item
+//o-----------------------------------------------------------------------------------------------o
+bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, UI08 z )
+{
+	bool dropLocationBlocked = false;
+
+	// Don't allow dropping item at a location far below or far above character
+	if( z < nChar->GetZ() - 5 || z > nChar->GetZ() + 16 )
+		dropLocationBlocked = true;
+
+	if( !dropLocationBlocked )
+	{
+		// Check static items for TF_BLOCKING flag
+		dropLocationBlocked = Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false );
+		if( !dropLocationBlocked )
+		{
+			// No? Well, then check static flags for TF_ROOF flag
+			dropLocationBlocked = Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, false );
+			if( !dropLocationBlocked )
+			{
+				// Still no? Time to check dynamic items for TF_BLOCKING flag...
+				dropLocationBlocked = Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceID(), TF_BLOCKING );
+				if( !dropLocationBlocked )
+				{
+					// ...and then for TF_ROOF flag
+					dropLocationBlocked = Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceID(), TF_ROOF );
+				}
+				else
+				{
+					// Location blocked! But wait, there might be a valid dynamic surface to place the item on...
+					dropLocationBlocked = !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceID(), TF_SURFACE );
+				}
+			}
+		}
+		else
+		{
+			// Location blocked! But wait, there might be a valid static surface to place the item on...
+			dropLocationBlocked = !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, false );
+		}
+	}
+
+	// Let's check line of sight as well, for good measure
+	if( !nChar->IsGM() && !dropLocationBlocked && !LineOfSight( mSock, nChar, x, y, z, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, true ) )
+	{
+		dropLocationBlocked = true;
+	}
+
+	return !dropLocationBlocked;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Item is dropped on the ground or on a character
@@ -930,7 +983,8 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
-		if( !nChar->IsGM() && !LineOfSight( mSock, nChar, x, y, z, WALLS_CHIMNEYS + DOORS, true ))
+		// Let's check for a valid drop location for the item, and bounce it if none was found
+		if( !CheckForValidDropLocation( mSock, nChar, x, y, z ))
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
@@ -939,8 +993,27 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			return;
 		}
 
+		// New location either is not blocking, or has a surface we can put the item on, so let's find the exact Z of where to put it
+		auto nCharZ = nChar->GetZ();
+		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 16 );
+		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 16 )
+		{
+			// No valid static elevation found, use dynamic elevation instead
+			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), 16, nChar->GetInstanceID() );
+			if( newZ < z || newZ > z + 16 )
+			{
+				// No valid dynamic elevation found. Use map elevation instead (don't implicitly trust Z from client)
+				newZ = Map->MapElevation( x, y, nChar->WorldNumber() );
+			}
+		}
+		else
+		{
+			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), 16, nChar->GetInstanceID() );
+			newZ = (( dynZ >= z && dynZ <= z + 16 ) ? dynZ : newZ );
+		}
+
 		i->SetCont( nullptr );
-		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber(), nChar->GetInstanceID() );
+		i->SetLocation( x, y, newZ, gridLoc, nChar->WorldNumber(), nChar->GetInstanceID() );
 
 		// If item was picked up from a container and dropped on ground, update old location to match new!
 		if( mSock->PickupSpot() != PL_GROUND )

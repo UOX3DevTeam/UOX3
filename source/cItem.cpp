@@ -1876,7 +1876,7 @@ void CItem::CheckItemIntegrity( void )
 		SetSpawn( INVALIDSERIAL );
 	}
 
-	if( type == IT_CONTAINER && GetLayer() == IL_PACKITEM && contObj->CanBeObjType( OT_CHAR ))
+	if( type == IT_CONTAINER && GetLayer() == IL_PACKITEM && (contObj != nullptr && contObj->CanBeObjType( OT_CHAR )))
 	{
 		UI16 maxItemsVal = GetMaxItems();
 		if( maxItemsVal == 0 )

@@ -138,10 +138,12 @@ SEngineFunc SE_StaticAt;
 SEngineFunc SE_GetMapElevation;
 SEngineFunc SE_IsInBuilding;
 SEngineFunc SE_CheckStaticFlag;
+SEngineFunc SE_CheckDynamicFlag;
 SEngineFunc SE_CheckTileFlag;
 SEngineFunc SE_DoesStaticBlock;
 SEngineFunc SE_DoesDynamicBlock;
 SEngineFunc SE_DoesMapBlock;
+SEngineFunc SE_DistanceBetween;
 
 SEngineFunc SE_ValidateObject;
 SEngineFunc SE_ApplyDamageBonuses;

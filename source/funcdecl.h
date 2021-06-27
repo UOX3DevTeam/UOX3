@@ -41,6 +41,7 @@ UI16	getDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist( point3 a, point3 b );
 UI16	getOldDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist3D( CBaseObject *a, CBaseObject *b );
+UI16	getDist3D( point3 a, point3 b );
 SOCKLIST	FindPlayersInVisrange( CBaseObject *myObj );
 SOCKLIST	FindPlayersInOldVisrange( CBaseObject *myObj );
 SOCKLIST	FindNearbyPlayers( CBaseObject *myObj, UI16 distance );
@@ -243,8 +244,8 @@ inline T RandomNum( T nLowNum, T nHighNum )
 	}
 	auto distribution = std::uniform_int_distribution<T>(low, high);
 	return distribution(generator);
-
 }
+
 
 template< class T >
 inline T HalfRandomNum( T HighRange )

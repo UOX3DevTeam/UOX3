@@ -7332,6 +7332,35 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the tile name of a specified tile (item)
+//o-----------------------------------------------------------------------------------------------o
+JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "GetTileName: needs 0 arguments!" );
+		return JS_FALSE;
+	}
+
+	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mItem ) )
+	{
+		MethodError( "GetTileName: Invalid item" );
+		return JS_FALSE;
+	}
+
+	std::string itemName = "";
+	getTileName( ( *mItem ), itemName );
+
+	JSString *tString;
+	tString = JS_NewStringCopyZ( cx, itemName.c_str() );
+	*rval = STRING_TO_JSVAL( tString );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void GetMultiCorner( cornerID )
 //o-----------------------------------------------------------------------------------------------o

@@ -5,6 +5,29 @@
 	Updated js/jse_objectassociations.scp with furniture IDs supported by the furniture_smartturn script, so rotating will work for any supported furniture without needing to add scripts to each individual furniture DFN (Xuri)
 	Added system messages to dictionary files (Xuri)
 	Added interior decorator tool to Architect shoplists (Xuri)
+27/06/2021 - Xuri
+	Fixed an issue with JS Function DeleteFile(), which would stop calling script from working if no file was found for deletion. Could break demolishing of houses, amongst other things
+	Fixed an issue with DoSEErrorMessage() function that prevented JS function error messages from being displayed in UOX3 console if message size was below 512
+	Fixed a bug that allowed players to place items on the same slot of walls when using a client that doesn't automatically restrict this
+	When dropping items, UOX3 will now look for a valid surface to drop them on, and move the item to said valid surface if applicable
+	Fixed an issue with loading of MultiCollections.uop where max boundaries of each multi was not set on load, preventing features that relied on finding corners of building from working (like automatic ban location detection for houses)
+	Added new function in mapstuff.cpp to check flags on dynamic items, and exposed it as a JS Function with same name and parameters:
+		CheckDynamicFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, TileFlags toCheck );
+	Fixed an issue where items were not always properly added to/removed from map regions when picked up or dropped
+	Added new helper function in dist.cpp to find 3D distance between two points:
+		getDist3D( point a, point b )
+	Added JS Function - DistanceBetween() - to find distance between two sets of coordinates, or two objects:
+		DistanceBetween( x1, y1, x2, y2 )
+		DistanceBetween( x1, y1, z1, x2, y2, z2 )
+		DistanceBetween( sourceObject, targObject )
+		DistanceBetween( sourceObject, targObject, checkZ )
+	Added Item JS Method - GetTileName() - to get name of an item directly from tiledata
+	Added new UOX.INI setting that defines the lower limit for when a purchase will withdraw money from bank instead of backpack:
+		BANKBUYTHRESHOLD=2000
+	Split the UOX.INI setting CONSOLELOG into three parts, to enable/disable different forms of logging:
+		CONSOLELOG=1/0 	// Toggles logging of console messages, warnings and errors
+		NETWORKLOG=1/0 	// Toggles logging of network traffic
+		SPEECHLOG=1/0 	// Toggles logging of player/staff speech
 
 23/06/2021 - Xuri
 	Fixed an issue with CChar::RemoveAllObjectsFromSight(), which failed to remove nearby multis from sight, leading to ghost images when changing worlds/instances
