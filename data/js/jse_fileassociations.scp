@@ -203,6 +203,7 @@
 5025=item/chesspiece.js
 5026=item/checkerpiece.js
 5027=item/interiordecorator.js
+5028=item/hairrestyle.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
