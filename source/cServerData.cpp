@@ -78,6 +78,9 @@ const UI32 BIT_TRAVELSPELLSWHILEOVERWEIGHT	= 58;
 const UI32 BIT_MARKRUNESINMULTIS			= 59;
 const UI32 BIT_TRAVELSPELLSBETWEENWORLDS	= 60;
 const UI32 BIT_TRAVELSPELLSWHILEAGGRESSOR	= 61;
+const UI32 BIT_CONSOLELOG					= 62;
+const UI32 BIT_NETWORKLOG					= 63;
+const UI32 BIT_SPEECHLOG					= 64;
 
 
 // New uox3.ini format lookup
@@ -410,6 +413,10 @@ void	CServerData::regAllINIValues() {
 	regINIValue("MARKRUNESINMULTIS", 263);
 	regINIValue("TRAVELSPELLSBETWEENWORLDS", 264);
 	regINIValue("TRAVELSPELLSWHILEAGGRESSOR", 265);
+	regINIValue("BANKBUYTHRESHOLD", 266);
+	regINIValue("NETWORKLOG", 267);
+	regINIValue("SPEECHLOG", 268);
+
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -562,7 +569,9 @@ void CServerData::ResetDefaults( void )
 	ServerAnnounceSaves( true );
 	WorldAmbientSounds( 5 );
 	ServerJoinPartAnnouncements( true );
-	ServerConsoleLog( 1 );
+	ServerConsoleLog( true );
+	ServerNetworkLog( false );
+	ServerSpeechLog( false );
 	RogueStatus( true );
 	SystemTimer( tSERVER_WEATHER, 60 );
 	SystemTimer( tSERVER_LOGINTIMEOUT, 300 );
@@ -850,20 +859,49 @@ void CServerData::ServerPort( UI16 setport )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 ServerConsoleLogStatus( void ) const
-//|					void ServerConsoleLog( UI08 setting )
+//|	Function	-	bool ServerConsoleLog( void ) const
+//|					void ServerConsoleLog( bool setting )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set console log enabled/disabled state
+//|	Purpose		-	Gets/Set logging of console messages, warnings and errors
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::ServerConsoleLogStatus( void ) const
+bool CServerData::ServerConsoleLog( void ) const
 {
 	return consolelogenabled;
 }
-void CServerData::ServerConsoleLog( UI08 setting )
+void CServerData::ServerConsoleLog( bool setting )
 {
 	consolelogenabled = setting;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerNetworkLog( void ) const
+//|					void ServerNetworkLog( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets logging of network traffic to logs folder
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerNetworkLog( void ) const
+{
+	return boolVals.test( BIT_NETWORKLOG );
+}
+void CServerData::ServerNetworkLog( bool newVal )
+{
+	boolVals.set( BIT_NETWORKLOG, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerSpeechLog( void ) const
+//|					void ServerSpeechLog( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets logging of player/staff speech to logs folder
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerSpeechLog( void ) const
+{
+	return boolVals.test( BIT_SPEECHLOG );
+}
+void CServerData::ServerSpeechLog( bool newVal )
+{
+	boolVals.set( BIT_SPEECHLOG, newVal );
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	char ServerCommandPrefix( void ) const
@@ -3162,7 +3200,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
 		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
 		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
-		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << '\n';
+		ofsOutput << "CONSOLELOG=" << ( ServerConsoleLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "NETWORKLOG=" << ( ServerNetworkLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "SPEECHLOG=" << ( ServerSpeechLog() ? 1 : 0 ) << '\n';
 		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
 		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << '\n';
 		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << '\n';
@@ -3276,6 +3316,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
 		ofsOutput << "SELLBYNAME=" << (SellByNameStatus()?1:0) << '\n';
 		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
+		ofsOutput << "BANKBUYTHRESHOLD=" << BuyThreshold() << '\n';
 		ofsOutput << "TRADESYSTEM=" << (TradeSystemStatus()?1:0) << '\n';
 		ofsOutput << "RANKSYSTEM=" << (RankSystemStatus()?1:0) << '\n';
 		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << '\n';
@@ -3617,7 +3658,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ServerName( value );
 			break;
 		case 2:	 // CONSOLELOG[0003]
-			ServerConsoleLog( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			ServerConsoleLog( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		case 3:	 // COMMANDPREFIX[0005]
 			ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
@@ -3626,7 +3667,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ServerAnnounceSaves( (static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false) );
 			break;
 		case 26:	 // JOINPARTMSGS[0007]
-			ServerJoinPartAnnouncements( (static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 ? true : false) );
+			ServerJoinPartAnnouncements( (static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false) );
 			break;
 		case 5:	 // BACKUPSENABLED[0009]
 			ServerBackups( (static_cast<UI16>(std::stoul(value, nullptr, 0)) > 0 ? true : false) );
@@ -4386,6 +4427,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 265:    // TRAVELSPELLSWHILEAGGRESSOR[0253]
 			TravelSpellsWhileAggressor( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 266:	// BUYBANKTHRESHOLD[0254]
+			BuyThreshold( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 267:	// NETWORKLOG[0255]
+			ServerNetworkLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ));
+			break;
+		case 268:	// SPEECHLOG[0256]
+			ServerSpeechLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ));
 			break;
 		default:
 			rvalue = false;

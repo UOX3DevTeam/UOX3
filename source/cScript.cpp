@@ -107,10 +107,12 @@ static JSFunctionSpec my_functions[] =
 	{ "GetMapElevation",			SE_GetMapElevation,			3, 0, 0 },
 	{ "IsInBuilding",				SE_IsInBuilding,			6, 0, 0 },
 	{ "CheckStaticFlag",			SE_CheckStaticFlag,			5, 0, 0 },
+	{ "CheckDynamicFlag",			SE_CheckDynamicFlag,		6, 0, 0 },
 	{ "CheckTileFlag",				SE_CheckTileFlag,			2, 0, 0 },
 	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		7, 0, 0 },
 	{ "DoesStaticBlock",			SE_DoesStaticBlock,			7, 0, 0 },
 	{ "DoesMapBlock",				SE_DoesMapBlock,			8, 0, 0 },
+	{ "DistanceBetween",			SE_DistanceBetween,			4, 0, 0 },
 
 	{ "ResourceArea",				SE_ResourceArea,			2, 0, 0 },
 	{ "ResourceAmount",				SE_ResourceAmount,			2, 0, 0 },

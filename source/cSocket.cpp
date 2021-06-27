@@ -704,7 +704,7 @@ bool CSocket::FlushBuffer( bool doLog )
 		}
 		else
 			send( static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0 );
-		if( Logging() && doLog )
+		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
 			SERIAL toPrint;
 			if( !ValidateObject( currCharObj ) )
@@ -749,7 +749,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 		else
 			send( static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0 );
 
-		if( Logging() && doLog )
+		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
 			SERIAL toPrint;
 			if( !ValidateObject( currCharObj ) )
@@ -930,7 +930,7 @@ void CSocket::FlushIncoming( void )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 {
-	if( Logging() )
+	if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() )
 	{
 		SERIAL toPrint;
 		if( !ValidateObject( currCharObj ) )
@@ -1449,7 +1449,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 
 	bytesSent += len;
 
-	if( Logging() )
+	if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() )
 	{
 		SERIAL toPrint;
 		if( !ValidateObject( currCharObj ) )

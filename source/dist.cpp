@@ -159,6 +159,12 @@ UI16 getDist( point3 a, point3 b )
 	return static_cast<UI16>(difference.Mag());
 }
 
+UI16 getDist3D( point3 a, point3 b )
+{
+	point3 difference = a - b;
+	return static_cast<UI16>( difference.Mag3D() );
+}
+
 UI16 getOldDist( CBaseObject *a, CBaseObject *b )
 {
 	if( !ValidateObject( a ) || !ValidateObject( b ) )

@@ -93,6 +93,13 @@ void MultiMul::processData(std::vector<unsigned char> &data, std::uint32_t chunk
 		if (clilocs != 0 ) {
 			offset = offset + (clilocs * 4);
 		}
+
+		// Add max bounds of multi
+		structure._maxX = std::max( static_cast<int>( component.xoffset ), structure._maxX );
+		structure._minX = std::min( static_cast<int>( component.xoffset ), structure._minX );
+		structure._maxY = std::max( static_cast<int>( component.yoffset ), structure._maxY );
+		structure._minY = std::min( static_cast<int>( component.yoffset ), structure._minY );
+
 		structure.addItem(component);
 
 	}

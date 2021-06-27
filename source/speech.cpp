@@ -289,7 +289,7 @@ bool CPITalkRequest::Handle( void )
 			{
 				mChar->SetEmoteColour( TextColour() );
 			}
-			if( cwmWorldState->ServerData()->ServerConsoleLogStatus() == 2 ) //Logging
+			if( cwmWorldState->ServerData()->ServerSpeechLog() ) //Logging
 			{
 				auto temp = strutil::format("%s.log", mChar->GetName().c_str() );
 				auto temp2 = strutil::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
