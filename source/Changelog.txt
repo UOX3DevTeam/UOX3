@@ -5,6 +5,11 @@
 	Updated js/jse_objectassociations.scp with furniture IDs supported by the furniture_smartturn script, so rotating will work for any supported furniture without needing to add scripts to each individual furniture DFN (Xuri)
 	Added system messages to dictionary files (Xuri)
 	Added interior decorator tool to Architect shoplists (Xuri)
+27/06/2021 - Dragon Slayer
+	Added [hairrestyledeed] item that lets (human) players restyle their hair
+	Added script for handling hair restyle (js/item/hairrestyle.js) and added it to jse_fileassociations.scp with ID 5028
+	Updated hair restyle script with some coding style changes, added system messages to dictionary files and added gump tooltips (Xuri)
+
 27/06/2021 - Xuri
 	Fixed an issue with JS Function DeleteFile(), which would stop calling script from working if no file was found for deletion. Could break demolishing of houses, amongst other things
 	Fixed an issue with DoSEErrorMessage() function that prevented JS function error messages from being displayed in UOX3 console if message size was below 512
