@@ -64,6 +64,34 @@ static  JSClass UOXSpells_class =
 	JS_FinalizeStub
 };
 
+static  JSClass UOXCreateEntry_class =
+{
+	"UOXCreateEntry",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CCreateEntryProps_getProperty,
+	CCreateEntryProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
+static  JSClass UOXCreateEntries_class =
+{
+	"UOXCreateEntries",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CCreateEntriesProps_getProperty,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
 static JSExtendedClass UOXChar_class =
 {
 	{	"UOXChar",

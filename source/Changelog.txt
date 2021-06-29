@@ -1,3 +1,31 @@
+29/06/2021 - Xuri (0.99.4t)
+	Exposed crafting entries to JS engine, along with associated properties from the crafting DFNs:
+		New JS Object types
+			CreateEntries	// Global JS object containing all item entries loaded from create DFNs
+			CreateEntry		// A specific create entry retrieved from global object. Example:
+				var createEntry = CreateEntries[7] // Fetches item entry #7 from create DFNs
+		New CreateEntry JS Properties
+			id			// itemID of item to craft
+			name		// name of item entry from create DFNs
+			addItem 	// section header of item to craft from item DFNs
+			colour		// colour of crafted item
+			sound		// sound played when crafting item
+			minRank		// minimum rank value used by rank system to provide variable stats to crafted items
+			maxRank		// maximum rank value used by rank system to provide variable stats to crafted items
+			delay		// delay in milliseconds for crafting to finish
+			spell		// spell ID primarily used when inscribing magic scrolls
+			resources	// list of resources needed to craft item.
+				resources[n][0] // amount of resource needed
+				resources[n][1] // resource colour required
+				resources[n][2] // list of IDs accepted as resource material
+			skills		// list of skills requirements to craft item
+				skills[n][0]	// skillNumber of skill required to craft item
+				skills[n][1]	// minimum skill at which player will always fail to craft item
+				skills[n][2]	// maximum skill at which player will always succeed to craft item
+			avgMinSkill	// average minimum skill required to smelt item
+			avgMaxSkill	// average maximum skill required to smelt item
+	Fixed a bug with tracking menu that could cause UOX3 to crash when cancelling/closing the menu
+
 27/06/2021 - Dragon Slayer
 	Added [hairrestyledeed] item that lets (human) players restyle their hair
 	Added script for handling hair restyle (js/item/hairrestyle.js) and added it to jse_fileassociations.scp with ID 5028
