@@ -2167,6 +2167,9 @@ void CChar::CopyData( CChar *target )
 		target->SetWalkingSpeed( GetWalkingSpeed() );
 		target->SetRunningSpeed( GetRunningSpeed() );
 		target->SetFleeingSpeed( GetFleeingSpeed() );
+		target->SetMountedWalkingSpeed( GetMountedWalkingSpeed() );
+		target->SetMountedRunningSpeed( GetMountedRunningSpeed() );
+		target->SetMountedFleeingSpeed( GetMountedFleeingSpeed() );
 	}
 	if( IsValidPlayer() )
 	{
@@ -2836,6 +2839,9 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "WalkingSpeed=" << walkingSpeed << '\n';
 	outStream << "RunningSpeed=" << runningSpeed << '\n';
 	outStream << "FleeingSpeed=" << fleeingSpeed << '\n';
+	outStream << "WalkingSpeedMounted=" << mountedWalkingSpeed << '\n';
+	outStream << "RunningSpeedMounted=" << mountedRunningSpeed << '\n';
+	outStream << "FleeingSpeedMounted=" << mountedFleeingSpeed << '\n';	
 }
 void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 {
@@ -3583,6 +3589,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetFleeingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
 					rvalue = true;
 				}
+				else if( UTag == "FLEEINGSPEEDMOUNTED" )
+				{
+					SetMountedFleeingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
+					rvalue = true;
+				}
 				break;
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
@@ -3834,6 +3845,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetRunningSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
 					rvalue = true;
 				}
+				else if( UTag == "RUNNINGSPEEDMOUNTED" )
+				{
+					SetMountedRunningSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
+					rvalue = true;
+				}
 				break;
 			case 'S':
 				if( UTag == "SPLIT" )
@@ -4001,6 +4017,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "WALKINGSPEED" )
 				{
 					SetWalkingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))));
+					rvalue = true;
+				}
+				else if( UTag == "WALKINGSPEEDMOUNTED" )
+				{
+					SetMountedWalkingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))));
 					rvalue = true;
 				}
 				break;
@@ -6398,6 +6419,90 @@ void CChar::SetFleeingSpeed( R32 newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	R32 GetMountedWalkingSpeed( void ) const
+//|					void SetMountedWalkingSpeed( R32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the NPC's mounted walking speed
+//o-----------------------------------------------------------------------------------------------o
+R32 CChar::GetMountedWalkingSpeed( void ) const
+{
+	R32 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
+
+	if( IsValidNPC() )
+		if( mNPC->mountedWalkingSpeed > 0 )
+			retVal = mNPC->mountedWalkingSpeed;
+
+#if defined( UOX_DEBUG_MODE )
+	retVal = ( retVal * DEBUGMOVEMULTIPLIER );
+#endif
+	return retVal;
+}
+void CChar::SetMountedWalkingSpeed( R32 newValue )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+		mNPC->mountedWalkingSpeed = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	R32 GetMountedRunningSpeed( void ) const
+//|					void SetMountedRunningSpeed( R32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the NPC's mounted running speed
+//o-----------------------------------------------------------------------------------------------o
+R32 CChar::GetMountedRunningSpeed( void ) const
+{
+	R32 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
+
+	if( IsValidNPC() )
+		if( mNPC->mountedRunningSpeed > 0 )
+			retVal = mNPC->mountedRunningSpeed;
+
+#if defined( UOX_DEBUG_MODE )
+	retVal = ( retVal * DEBUGMOVEMULTIPLIER );
+#endif
+	return retVal;
+}
+void CChar::SetMountedRunningSpeed( R32 newValue )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+		mNPC->mountedRunningSpeed = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	R32 GetMountedFleeingSpeed( void ) const
+//|					void SetMountedFleeingSpeed( R32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the NPC's fleeing speed
+//o-----------------------------------------------------------------------------------------------o
+R32 CChar::GetMountedFleeingSpeed( void ) const
+{
+	R32 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
+
+	if( IsValidNPC() )
+		if( mNPC->mountedFleeingSpeed > 0 )
+			retVal = mNPC->mountedFleeingSpeed;
+
+#if defined( UOX_DEBUG_MODE )
+	retVal = ( retVal * DEBUGMOVEMULTIPLIER );
+#endif
+	return retVal;
+}
+void CChar::SetMountedFleeingSpeed( R32 newValue )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+		mNPC->mountedFleeingSpeed = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool DTEgreater( DamageTrackEntry *elem1, DamageTrackEntry *elem2 )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Compare damage done for two damage entries
@@ -6467,7 +6572,10 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 				{
 					SetTarg( attacker );
 					ToggleCombat();
-					SetTimer( tNPC_MOVETIME, BuildTimeValue( GetWalkingSpeed() ) );
+					if( GetMounted() )
+						SetTimer( tNPC_MOVETIME, BuildTimeValue( GetMountedWalkingSpeed() ) );
+					else
+						SetTimer( tNPC_MOVETIME, BuildTimeValue( GetWalkingSpeed() ) );
 				}
 			} else if( mSock != nullptr )
 				BreakConcentration( mSock );

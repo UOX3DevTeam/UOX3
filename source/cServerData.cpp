@@ -416,6 +416,10 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BANKBUYTHRESHOLD", 266);
 	regINIValue("NETWORKLOG", 267);
 	regINIValue("SPEECHLOG", 268);
+	regINIValue("NPCMOUNTEDWALKINGSPEED", 269);
+	regINIValue("NPCMOUNTEDRUNNINGSPEED", 270);
+	regINIValue("NPCMOUNTEDFLEEINGSPEED", 271);
+
 
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
@@ -616,9 +620,12 @@ void CServerData::ResetDefaults( void )
 
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCWalkingSpeed( 0.6 );
-	NPCRunningSpeed( 0.3 );
-	NPCFleeingSpeed( 0.4 );
+	NPCWalkingSpeed( 0.38 );
+	NPCRunningSpeed( 0.2 );
+	NPCFleeingSpeed( 0.3 );
+	NPCMountedWalkingSpeed( 0.3 );
+	NPCMountedRunningSpeed( 0.12 );
+	NPCMountedFleeingSpeed( 0.2 );
 	AccountFlushTimer( 0.0 );
 
 	ResLogs( 3 );
@@ -2699,6 +2706,51 @@ void CServerData::NPCFleeingSpeed( R32 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCMountedWalkingSpeed( void ) const
+//|					void NPCMountedWalkingSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default walking speed for mounted NPCs
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCMountedWalkingSpeed( void ) const
+{
+	return npcMountedWalkingSpeed;
+}
+void CServerData::NPCMountedWalkingSpeed( R32 value )
+{
+	npcMountedWalkingSpeed = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCMountedRunningSpeed( void ) const
+//|					void NPCMountedRunningSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default running speed for mounted NPCs
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCMountedRunningSpeed( void ) const
+{
+	return npcMountedRunningSpeed;
+}
+void CServerData::NPCMountedRunningSpeed( R32 value )
+{
+	npcMountedRunningSpeed = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCMountedFleeingSpeed( void ) const
+//|					void NPCMountedFleeingSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default speed at which mounted NPCs flee in combat
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCMountedFleeingSpeed( void ) const
+{
+	return npcMountedFleeingSpeed;
+}
+void CServerData::NPCMountedFleeingSpeed( R32 value )
+{
+	npcMountedFleeingSpeed = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 TitleColour( void ) const
 //|					void TitleColour( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3351,6 +3403,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
 		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
 		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDWALKINGSPEED=" << NPCMountedWalkingSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDRUNNINGSPEED=" << NPCMountedRunningSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDFLEEINGSPEED=" << NPCMountedFleeingSpeed() << '\n';
 		ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
 		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
@@ -4436,6 +4491,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 268:	// SPEECHLOG[0256]
 			ServerSpeechLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ));
+			break;
+		case 269:	 // NPCMOUNTEDWALKINGSPEED[0257]
+			NPCMountedWalkingSpeed( std::stof( value ) );
+			break;
+		case 270:	 // NPCMOUNTEDRUNNINGSPEED[0258]
+			NPCMountedRunningSpeed( std::stof( value ) );
+			break;
+		case 271:	 // NPCMOUNTEDFLEEINGSPEED[0259]
+			NPCMountedFleeingSpeed( std::stof( value ) );
 			break;
 		default:
 			rvalue = false;

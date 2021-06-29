@@ -267,7 +267,10 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 						c->SetFleeAt( 0 );
 						c->SetReattackAt( 1 );
 						c->SetNpcWander( c->GetOldNpcWander() );
-						c->SetTimer( tNPC_MOVETIME, BuildTimeValue( c->GetRunningSpeed() ) );
+						if( c->GetMounted() )
+							c->SetTimer( tNPC_MOVETIME, BuildTimeValue( c->GetMountedRunningSpeed() ) );
+						else
+							c->SetTimer( tNPC_MOVETIME, BuildTimeValue( c->GetRunningSpeed() ) );
 						c->SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
 					}
 					else if( npcWanderType == WT_FOLLOW )
@@ -1875,7 +1878,10 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 							mChar.SetFleeAt( 0 );
 							mChar.SetReattackAt( 1 );
 							mChar.SetNpcWander( mChar.GetOldNpcWander() );
-							mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
+							if( mChar.GetMounted() )
+								mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedRunningSpeed() ) );
+							else
+								mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
 							mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
 						}
 					}
@@ -2142,16 +2148,36 @@ void cMovement::NpcMovement( CChar& mChar )
 		if( shouldRun )
 		{
 			if( npcWanderType == WT_FOLLOW )
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 ) ); // Increase follow speed so NPC pets/escorts can keep up with players
+			{
+				if( mChar.GetMounted() )
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedRunningSpeed() ) );
+				else
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 ) ); // Increase follow speed so NPC pets/escorts can keep up with players
+			}
 			else if( npcWanderType != WT_FLEE )
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
+			{
+				if( mChar.GetMounted() )
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedRunningSpeed() ) );
+				else
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
+			}
 			else
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+			{
+				if( mChar.GetMounted() )
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ) );
+				else
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+			}
 		}
 		else if( npcWanderType == WT_NONE && mChar.GetOldNpcWander() != WT_NONE && !mChar.IsAtWar() )
 			return;
 		else
-			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
+		{
+			if( mChar.GetMounted() )
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedWalkingSpeed() ) );
+			else
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
+		}
 	}
 }
 

@@ -1087,12 +1087,18 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	{
 		mChar.SetOldNpcWander( mChar.GetNpcWander() );
 		mChar.SetNpcWander( WT_FLEE );
-		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+		if( mChar.GetMounted() )
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ) );
+		else
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
 	}
 	else if( mChar.GetNpcWander() == WT_FLEE && (mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100))
 	{
 		mChar.SetNpcWander( mChar.GetOldNpcWander() );
-		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
+		if( mChar.GetMounted() )
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedWalkingSpeed() ) );
+		else
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
 		mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
 	}
 	Combat->CombatLoop( nullptr, mChar );
