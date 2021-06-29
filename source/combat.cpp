@@ -116,7 +116,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		// if the source is an npc, make sure they're in war mode and reset their movement time
 		if( !cAttack->IsAtWar() )
 			cAttack->ToggleCombat();
-		cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetWalkingSpeed() ) );
+		if( cAttack->GetMounted() )
+			cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetMountedWalkingSpeed() ) );
+		else
+			cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetWalkingSpeed() ) );
 	}
 
 	// Only unhide the defender, if they're going to return the attack (otherwise they're doing nothing!)
@@ -134,7 +137,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		{
 			if( !cTarget->IsAtWar() )
 				cTarget->ToggleCombat();
-			cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetWalkingSpeed() ) );
+			if( cTarget->GetMounted() )
+				cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetMountedWalkingSpeed() ) );
+			else
+				cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetWalkingSpeed() ) );
 		}
 	}
 	return true;
@@ -2300,7 +2306,10 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	{
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
 		mChar->SetNpcWander( WT_FREE );
-		mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetWalkingSpeed() ) );
+		if( mChar->GetMounted() )
+			mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetMountedWalkingSpeed() ) );
+		else
+			mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetWalkingSpeed() ) );
 		mChar->TextMessage( nullptr, 281, TALK, false );
 	}
 
@@ -2510,7 +2519,10 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 			getGuard->SetLocation( targChar );
 		else
 		{
-			getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ) );
+			if( getGuard->GetMounted() )
+				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetMountedWalkingSpeed() ) );
+			else
+				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ) );
 			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
 
 			Effects->PlaySound( getGuard, 0x01FE );

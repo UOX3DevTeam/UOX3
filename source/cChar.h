@@ -108,6 +108,9 @@ private:
 		R32					walkingSpeed;
 		R32					runningSpeed;
 		R32					fleeingSpeed;
+		R32					mountedWalkingSpeed;
+		R32					mountedRunningSpeed;
+		R32					mountedFleeingSpeed;
 	};
 
 	struct PlayerValues_st
@@ -686,6 +689,15 @@ public:
 
 	R32			GetFleeingSpeed( void ) const;
 	void		SetFleeingSpeed( R32 newValue );
+
+	R32			GetMountedWalkingSpeed( void ) const;
+	void		SetMountedWalkingSpeed( R32 newValue );
+
+	R32			GetMountedRunningSpeed( void ) const;
+	void		SetMountedRunningSpeed( R32 newValue );
+
+	R32			GetMountedFleeingSpeed( void ) const;
+	void		SetMountedFleeingSpeed( R32 newValue );
 
 	// Player Characters
 public:

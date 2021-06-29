@@ -237,6 +237,9 @@ private:
 	R32			npcWalkingSpeed;				//	Speed at which walking NPCs move
 	R32			npcRunningSpeed;				//	Speed at which running NPCs move
 	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
+	R32			npcMountedWalkingSpeed;			//	Speed at which (mounted) walking NPCs move
+	R32			npcMountedRunningSpeed;			//	Speed at which (mounted) running NPCs move
+	R32			npcMountedFleeingSpeed;			//	Speed at which (mounted) fleeing NPCs move
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
 	R32			globalattackspeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
 	R32			npcspellcastspeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
@@ -740,6 +743,15 @@ public:
 
 	void		NPCFleeingSpeed( R32 value );
 	R32			NPCFleeingSpeed( void ) const;
+
+	void		NPCMountedWalkingSpeed( R32 value );
+	R32			NPCMountedWalkingSpeed( void ) const;
+
+	void		NPCMountedRunningSpeed( R32 value );
+	R32			NPCMountedRunningSpeed( void ) const;
+
+	void		NPCMountedFleeingSpeed( R32 value );
+	R32			NPCMountedFleeingSpeed( void ) const;
 
 	void		TitleColour( UI16 value );
 	UI16		TitleColour( void ) const;

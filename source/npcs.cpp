@@ -831,6 +831,12 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							if( !retitem->SetCont( applyTo->GetPackItem() ) )
 								retitem = nullptr;
 						}
+
+						if( retitem->GetLayer() == 25 )
+						{
+							// Item equipped on mount layer. Set NPC as mounted!
+							applyTo->SetMounted( true );
+						}
 					}
 				}
 				break;
@@ -844,6 +850,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				break;
 			case DFNTAG_FLEEINGSPEED:
 				applyTo->SetFleeingSpeed( std::stof(cdata) );
+				break;
+			case DFNTAG_FLEEINGSPEEDMOUNTED:
+				applyTo->SetMountedFleeingSpeed( std::stof(cdata) );
 				break;
 			case DFNTAG_FLAG:
 				if( !isGate )
@@ -1231,6 +1240,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_RUNNINGSPEED:
 				applyTo->SetRunningSpeed( std::stof(cdata) );
 				break;
+			case DFNTAG_RUNNINGSPEEDMOUNTED:
+				applyTo->SetMountedRunningSpeed( std::stof(cdata) );
+				break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_SHOPKEEPER:
 				if( !isGate )
@@ -1393,6 +1405,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				break;
 			case DFNTAG_WALKINGSPEED:
 				applyTo->SetWalkingSpeed( std::stof(cdata)  );
+				break;
+			case DFNTAG_WALKINGSPEEDMOUNTED:
+				applyTo->SetMountedWalkingSpeed( std::stof(cdata) );
 				break;
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;

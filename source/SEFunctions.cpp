@@ -3906,6 +3906,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 268:	 // SPEECHLOG[0256]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerSpeechLog() );
 				break;
+			case 269:	 // NPCMOUNTEDWALKINGSPEED[0257]
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedWalkingSpeed() ) );
+				break;
+			case 270:	 // NPCMOUNTEDRUNNINGSPEED[0258]
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedRunningSpeed() ) );
+				break;
+			case 271:	 // NPCMOUNTEDFLEEINGSPEED[0259]
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedFleeingSpeed() ) );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;

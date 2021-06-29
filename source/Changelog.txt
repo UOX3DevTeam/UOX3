@@ -1,3 +1,13 @@
+30/06/2021 - Xuri
+	Added new UOX.INI settings under [speedup] section to control global speed of mounted NPCs:
+		NPCMOUNTEDWALKINGSPEED=0.3
+		NPCMOUNTEDRUNNINGSPEED=0.12
+		NPCMOUNTEDFLEEINGSPEED=0.2
+	Added new NPC DFN tags to allow overriding global mounted movement speeds:
+		FLEEINGSPEEDMOUNTED=#
+		RUNNINGSPEEDMOUNTED=#
+		WALKINGSPEEDMOUNTED=#
+
 29/06/2021 - Xuri (0.99.4t)
 	Exposed crafting entries to JS engine, along with associated properties from the crafting DFNs:
 		New JS Object types
