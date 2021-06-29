@@ -177,6 +177,7 @@ CJSRuntime::~CJSRuntime( void )
 	//JS_RemoveRoot( jsContext, &accountsObj );
 	JS_UnlockGCThing( jsContext, consoleObj );
 	//JS_RemoveRoot( jsContext, &consoleObj );
+	JS_UnlockGCThing( jsContext, createEntriesObj );
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
@@ -226,29 +227,34 @@ void CJSRuntime::InitializePrototypes( void )
 
 	protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, nullptr, &UOXChar_class.base,	nullptr,		0,		CCharacterProps,		CChar_Methods,		nullptr,	nullptr );
 	protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, nullptr, &UOXItem_class.base,	nullptr,		0,		CItemProps,				CItem_Methods,		nullptr,	nullptr );
-	protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, nullptr, &UOXSpell_class,		nullptr,		0,		CSpellProperties,		nullptr,				nullptr,	nullptr );
-	protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, nullptr, &UOXSpells_class,		nullptr,		0,		nullptr,					nullptr,				nullptr,	nullptr );
+	protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, nullptr, &UOXSpell_class,		nullptr,		0,		CSpellProperties,		nullptr,			nullptr,	nullptr );
+	protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, nullptr, &UOXSpells_class,		nullptr,		0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_CREATEENTRY]		= JS_InitClass( cx, obj, nullptr, &UOXCreateEntry_class,	nullptr, 0,		CCreateEntryProperties, nullptr,			nullptr,	nullptr );
+	protoList[JSP_CREATEENTRIES]	= JS_InitClass( cx, obj, nullptr, &UOXCreateEntries_class,	nullptr, 0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, nullptr, &UOXSocket_class.base,	nullptr,		0,		CSocketProps,			CSocket_Methods,	nullptr,	nullptr );
 	protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, nullptr, &UOXAccount_class,		nullptr,		0,		CAccountProperties,		CAccount_Methods,	nullptr,	nullptr );
 	protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, nullptr, &UOXConsole_class,		nullptr,		0,		CConsoleProperties,		CConsole_Methods,	nullptr,	nullptr );
 	protoList[JSP_REGION]	=	JS_InitClass( cx, obj, nullptr, &UOXRegion_class,		nullptr,		0,		CRegionProperties,		CRegion_Methods,	nullptr,	nullptr );
-	protoList[JSP_SPAWNREGION]=	JS_InitClass( cx, obj, nullptr, &UOXSpawnRegion_class,	nullptr,		0,		CSpawnRegionProperties,	nullptr,				nullptr,	nullptr );
-	protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, nullptr, &UOXResource_class,	nullptr,		0,		CResourceProperties,	nullptr,				nullptr,	nullptr );
-	protoList[JSP_RACE]		=	JS_InitClass( cx, obj, nullptr, &UOXRace_class,		nullptr,		0,		CRaceProperties,		CRace_Methods,		nullptr,	nullptr );
+	protoList[JSP_SPAWNREGION]=	JS_InitClass( cx, obj, nullptr, &UOXSpawnRegion_class,	nullptr,		0,		CSpawnRegionProperties,	nullptr,			nullptr,	nullptr );
+	protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, nullptr, &UOXResource_class,		nullptr,		0,		CResourceProperties,	nullptr,			nullptr,	nullptr );
+	protoList[JSP_RACE]		=	JS_InitClass( cx, obj, nullptr, &UOXRace_class,			nullptr,		0,		CRaceProperties,		CRace_Methods,		nullptr,	nullptr );
 	protoList[JSP_GUILD]	=	JS_InitClass( cx, obj, nullptr, &UOXGuild_class,		nullptr,		0,		CGuildProperties,		CGuild_Methods,		nullptr,	nullptr );
 	protoList[JSP_PARTY]	=	JS_InitClass( cx, obj, nullptr, &UOXParty_class.base,	nullptr,		0,		CPartyProperties,		CParty_Methods,		nullptr,	nullptr );
-	protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, nullptr, &UOXPacket_class,		Packet,		0,		nullptr,					nullptr,				nullptr,	nullptr );
-	protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, nullptr, &UOXGump_class,		Gump,		0,		nullptr,					nullptr,				nullptr,	nullptr );
-	protoList[JSP_FILE]		=	JS_InitClass( cx, obj, nullptr, &UOXFile_class,		UOXCFile,	0,		nullptr,					nullptr,				nullptr,	nullptr );
+	protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, nullptr, &UOXPacket_class,		Packet,			0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, nullptr, &UOXGump_class,			Gump,			0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_FILE]		=	JS_InitClass( cx, obj, nullptr, &UOXFile_class,			UOXCFile,		0,		nullptr,				nullptr,			nullptr,	nullptr );
 	spellsObj				=	JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
 	accountsObj				=	JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
 	consoleObj				=	JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
+	createEntriesObj		=	JS_DefineObject( cx, obj, "CreateEntries", &UOXCreateEntries_class, protoList[JSP_CREATEENTRIES], 0 );
 	JS_LockGCThing( cx, spellsObj );
 	//JS_AddRoot( cx, &spellsObj );
 	JS_LockGCThing( cx, accountsObj );
 	//JS_AddRoot( cx, &accountsObj );
 	JS_LockGCThing( cx, consoleObj );
 	//JS_AddRoot( cx, &consoleObj );
+	JS_LockGCThing( cx, createEntriesObj );
+
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
 		JS_LockGCThing( cx, protoList[i] );

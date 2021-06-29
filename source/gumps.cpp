@@ -1498,7 +1498,7 @@ bool CPIGumpChoice::Handle( void )
 		{
 			sect = std::string("TRACKINGMENU ") + strutil::number( main );
 			data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
-			if( !data.empty() )
+			if( !data.empty() && tag != "What" )
 			{
 				Skills->CreateTrackingMenu( tSock, static_cast<UI16>(std::stoul(data, nullptr, 0)) );
 			}

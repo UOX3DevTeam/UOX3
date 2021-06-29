@@ -158,6 +158,150 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	return JS_TRUE;
 }
 
+JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	UI16 createEntryID = static_cast<UI16>(JSVAL_TO_INT( id ));
+
+	if( createEntryID >= Magic->spells.size() || createEntryID < 0 )
+	{
+		Console.error( "Invalid CreateEntry ID" ); // Revise please...
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
+
+	createEntry *myCreateEntry = Skills->FindItem( createEntryID );
+	if( myCreateEntry == nullptr )
+	{
+		Console.error( strutil::format( "Invalid create entry ID (%i)", createEntryID ) );
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
+
+	JSObject *jsCreateEntry = JS_NewObject( cx, &UOXCreateEntry_class, nullptr, obj );
+	JS_DefineProperties( cx, jsCreateEntry, CCreateEntryProperties );
+	JS_SetPrivate( cx, jsCreateEntry, myCreateEntry );
+
+	*vp = OBJECT_TO_JSVAL( jsCreateEntry );
+	return JS_TRUE;
+}
+
+JSBool CCreateEntryProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	return JS_TRUE;
+}
+
+JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	createEntry *gPriv = static_cast<createEntry*>( JS_GetPrivate( cx, obj ) );
+	if( gPriv == nullptr )
+		return JS_FALSE;
+
+	if( JSVAL_IS_INT( id ) )
+	{
+		JSString *tString = nullptr;
+		bool bDone = false;
+		size_t i = 0;
+		switch( JSVAL_TO_INT( id ) )
+		{
+		case CMAKE_ID:
+			*vp = INT_TO_JSVAL( gPriv->targID );
+			break;
+		case CMAKE_NAME:
+		{
+			std::string createName = gPriv->name;
+			tString = JS_NewStringCopyZ( cx, createName.c_str() );
+			*vp = STRING_TO_JSVAL( tString );
+			break;
+		}
+		case CMAKE_ADDITEM:
+		{
+			std::string addItem = gPriv->addItem;
+			tString = JS_NewStringCopyZ( cx, addItem.c_str() );
+			*vp = STRING_TO_JSVAL( tString );
+			break;
+		}
+		case CMAKE_COLOUR:			*vp = INT_TO_JSVAL( gPriv->colour );				break;
+		case CMAKE_SOUND:			*vp = INT_TO_JSVAL( gPriv->soundPlayed );			break;
+		case CMAKE_MINRANK:			*vp = INT_TO_JSVAL( gPriv->minRank );				break;
+		case CMAKE_MAXRANK:			*vp = INT_TO_JSVAL( gPriv->maxRank );				break;
+		case CMAKE_DELAY:			*vp = INT_TO_JSVAL( gPriv->delay );					break;
+		case CMAKE_SPELL:			*vp = INT_TO_JSVAL( gPriv->spell );					break;
+		case CMAKE_RESOURCES:
+		{
+			resAmountPair resEntry;
+			std::vector< resAmountPair > resourcesNeeded = gPriv->resourceNeeded;
+
+			// Loop through each resource required, and add them to a JSObject
+			jsval amountNeeded = 0;
+			jsval targColour = 0;
+			JSObject *resources = JS_NewArrayObject( cx, 0, nullptr );
+			for( int i = 0; i < resourcesNeeded.size(); i++ )
+			{
+				resEntry = resourcesNeeded[i];
+				amountNeeded = INT_TO_JSVAL( resEntry.amountNeeded );
+				targColour = INT_TO_JSVAL( resEntry.colour );
+
+				// Add each required resource as its own object
+				JSObject *resource = JS_NewArrayObject( cx, 0, nullptr );
+				JS_SetElement( cx, resource, 0, &amountNeeded );
+				JS_SetElement( cx, resource, 1, &targColour );
+
+				// Make a child object with all the supported resource IDs
+				JSObject *idList = JS_NewArrayObject( cx, 0, nullptr );
+				for( int j = 0; j < resEntry.idList.size(); j++ )
+				{
+					jsval targID = INT_TO_JSVAL( resEntry.idList[j] );
+					JS_SetElement( cx, idList, j, &targID );
+				}
+				jsval idListVal = OBJECT_TO_JSVAL( idList );
+				JS_SetElement( cx, resource, 2, &idListVal );
+
+				// Now stuff the resource object into the parent object
+				jsval resourceVal = OBJECT_TO_JSVAL( resource );
+				JS_SetElement( cx, resources, i, &resourceVal );
+			}
+
+			*vp = OBJECT_TO_JSVAL( resources );
+			break;
+		}
+		case CMAKE_SKILLS:
+		{
+			resSkillReq resEntry;
+			std::vector< resSkillReq > skillReqs = gPriv->skillReqs;
+
+			// Loop through each skill required, and add the details to a JSObject
+			jsval skillNumber = 0;
+			jsval minSkill = 0;
+			jsval maxSkill = 0;
+			JSObject *skills = JS_NewArrayObject( cx, 0, nullptr );
+			for( int i = 0; i < skillReqs.size(); i++ )
+			{
+				resEntry = skillReqs[i];
+				skillNumber = INT_TO_JSVAL( resEntry.skillNumber );
+				minSkill = INT_TO_JSVAL( resEntry.minSkill );
+				maxSkill = INT_TO_JSVAL( resEntry.maxSkill );
+
+				// Add each required skill as its own object
+				JSObject *skill = JS_NewArrayObject( cx, 0, nullptr );
+				JS_SetElement( cx, skill, 0, &skillNumber );
+				JS_SetElement( cx, skill, 1, &minSkill );
+				JS_SetElement( cx, skill, 2, &maxSkill );
+
+				// Now stuff the skill object into the parent object
+				jsval skillVal = OBJECT_TO_JSVAL( skill );
+				JS_SetElement( cx, skills, i, &skillVal );
+			}
+
+			*vp = OBJECT_TO_JSVAL( skills );
+			break;
+		}
+		case CMAKE_AVGMINSKILL:		*vp = INT_TO_JSVAL( gPriv->AverageMinSkill() );		break;
+		case CMAKE_AVGMAXSKILL:		*vp = INT_TO_JSVAL( gPriv->AverageMaxSkill() );		break;
+		}
+	}
+	return JS_TRUE;
+}
+
 JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CItem *gPriv = static_cast<CItem *>(JS_GetPrivate( cx, obj ));

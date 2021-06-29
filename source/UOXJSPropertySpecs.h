@@ -52,6 +52,24 @@ static JSPropertySpec CSpellProperties[] =
 	{ nullptr,				(SI08)0,				(UI08)0			   }
 };
 
+static JSPropertySpec CCreateEntryProperties[] =
+{
+	{ "id",					CMAKE_ID,				JSPROP_ENUMANDPERM },
+	{ "name",				CMAKE_NAME,				JSPROP_ENUMANDPERM },
+	{ "addItem",			CMAKE_ADDITEM,			JSPROP_ENUMANDPERM },
+	{ "colour",				CMAKE_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "sound",				CMAKE_SOUND,			JSPROP_ENUMANDPERM },
+	{ "minRank",			CMAKE_MINRANK,			JSPROP_ENUMANDPERM },
+	{ "maxRank",			CMAKE_MAXRANK,			JSPROP_ENUMANDPERM },
+	{ "delay",				CMAKE_DELAY,			JSPROP_ENUMANDPERM },
+	{ "spell",				CMAKE_SPELL,			JSPROP_ENUMANDPERM },
+	{ "resources",			CMAKE_RESOURCES,		JSPROP_ENUMANDPERM },
+	{ "skills",				CMAKE_SKILLS,			JSPROP_ENUMANDPERM },
+	{ "avgMinSkill",		CMAKE_AVGMINSKILL,		JSPROP_ENUMANDPERM },
+	{ "avgMaxSkill",		CMAKE_AVGMAXSKILL,		JSPROP_ENUMANDPERM },
+	{ nullptr,				(SI08)0,				(UI08)0			   }
+};
+
 static JSPropertySpec CRaceProperties[] =
 {
 	{ "id",					CRP_ID,					JSPROP_ENUMANDPERM },
