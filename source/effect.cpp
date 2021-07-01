@@ -1051,6 +1051,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			break;
 		default:
 			Console.error( strutil::format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
+			delete toAdd;
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -1106,6 +1107,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			break;
 		default:
 			Console.error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
+			delete toAdd;
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );

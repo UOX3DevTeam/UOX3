@@ -657,9 +657,9 @@ void Tiling( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create body parts after carving up a corpse
 //o-----------------------------------------------------------------------------------------------o
-bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
+bool CreateBodyPart( CChar *mChar, CItem *corpse, std::string partID, SI32 dictEntry )
 {
-	CItem *toCreate = Items->CreateItem( nullptr, mChar, partID, 1, 0, OT_ITEM );
+	CItem *toCreate = Items->CreateScriptItem( nullptr, mChar, partID, 1, OT_ITEM, false, 0x0 );
 	if( !ValidateObject( toCreate ) )
 		return false;
 	toCreate->SetName( strutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
@@ -713,7 +713,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{	
-					if( !CreateBodyPart( mChar, i, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) ) )
+					if( !CreateBodyPart( mChar, i, strutil::stripTrim( csecs[0] ), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) ) )
 					{
 						return;
 					}

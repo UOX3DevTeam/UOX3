@@ -681,7 +681,7 @@ std::string CMultiObj::GetBuildTimestamp( void ) const
 	if( buildTimestamp > 0 )
 	{
 		char tempTimestamp[100];
-		tm *curtime = new tm( *std::localtime( &buildTimestamp ) );
+		struct tm * curtime = std::localtime( &buildTimestamp );
 		strftime( tempTimestamp, 50, "%F at %T", curtime );
 		return tempTimestamp;
 	}
@@ -705,7 +705,7 @@ std::string CMultiObj::GetTradeTimestamp( void ) const
 	if( tradeTimestamp > 0 )
 	{
 		char tempTimestamp[100];
-		tm *curtime = new tm( *std::localtime( &tradeTimestamp ) );
+		struct tm * curtime = std::localtime( &tradeTimestamp );
 		strftime( tempTimestamp, 50, "%F at %T", curtime );
 		return tempTimestamp;
 	}
@@ -1457,6 +1457,7 @@ bool CBoatObj::HandleLine( std::string &UTag,std::string &data )
 				{
 					rvalue = true;
 				}
+				break;
 			case 'H':
 				if( UTag == "HOLD" )
 				{
