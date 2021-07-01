@@ -387,7 +387,7 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 				case TT_STONE: // stone
 					soundID = 0x0130;
 					break;
-				case TT_OTHER: // other
+				//case TT_OTHER: // other
 				case TT_WOODEN: // wooden
 					soundID = 0x0123;
 					break;
@@ -419,7 +419,7 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 				case TT_STONE: // stone
 					soundID = 0x012F;
 					break;
-				case TT_OTHER: // other
+				//case TT_OTHER: // other
 				case TT_WOODEN: // wooden
 					soundID = 0x0122;
 					break;

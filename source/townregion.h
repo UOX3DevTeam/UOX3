@@ -11,10 +11,10 @@ struct orePref
 
 struct regLocs
 {
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
+	SI16 x1 = 0;
+	SI16 y1 = 0;
+	SI16 x2 = 0;
+	SI16 y2 = 0;
 };
 
 

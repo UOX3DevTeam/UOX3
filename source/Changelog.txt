@@ -1,3 +1,8 @@
+02/07/2021 - Xuri
+	Corpse parts carved from human corpses will now have weight, and decay - as they're added as script items instead of base items
+	Fixed some memory leaks in CMultiObj::GetBuildTimestamp(), CMultiObj::GetTradeTimestamp(), CWorldMain::SaveNewWorld() and cEffects::tempeffect()
+	Misc smaller code cleanup
+
 30/06/2021 - Xuri
 	Added new UOX.INI settings under [speedup] section to control global speed of mounted NPCs:
 		NPCMOUNTEDWALKINGSPEED=0.3

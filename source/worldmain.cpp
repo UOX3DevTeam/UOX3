@@ -558,7 +558,7 @@ void CWorldMain::SaveNewWorld( bool x )
 
 		char saveTimestamp[100];
 		time_t tempTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		tm *curtime = new tm( *std::localtime( &tempTimestamp ) );
+		struct tm *curtime = std::localtime( &tempTimestamp );
 		strftime( saveTimestamp, 50, "%F at %T", curtime );
 
 		Console << "World save complete on " << saveTimestamp << myendl;

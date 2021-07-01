@@ -4533,7 +4533,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		startLocOffset	= 424;
 		realChars		= 7;
 	}
-	if( pStream.GetByte( 3 ) > 5 )
+	else if( pStream.GetByte( 3 ) > 5 )
 	{
 		startLocOffset	= 364;
 		realChars		= 6;

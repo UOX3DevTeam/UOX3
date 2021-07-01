@@ -48,9 +48,9 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		rk_range = skillMake.maxRank - skillMake.minRank;
 		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
 		if( sk_range <= 0 )
-			rank = skillMake.minRank;
+			rank = skillMake.minRank; // should this be sk_range? the value is not used before being overwritten later
 		else if( sk_range >= 1000 )
-			rank = skillMake.maxRank;
+			rank = skillMake.maxRank; // should this be sk_range? the value is not used before being overwritten later
 		randnum = static_cast<R32>(RandomNum( 0, 999 ));
 		if( randnum <= sk_range )
 			rank = skillMake.maxRank;
