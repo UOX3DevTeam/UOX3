@@ -442,6 +442,6 @@ bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 	}
 
 	jails[minCell].AddOccupant( toJail, numSecsToJail );
-	toJail->SetCell( minCell );
+	toJail->SetCell( static_cast<SI08>(minCell) );
 	return true;
 }

@@ -1308,12 +1308,14 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			{
 				if( csecs.size() >= 2 )
 				{
-					lodamage = static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0));
-					hidamage = static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0));
+					lodamage = static_cast<SI16>( std::stoi( strutil::stripTrim( csecs[0] ), nullptr, 0 ) );
+					hidamage = static_cast<SI16>( std::stoi( strutil::stripTrim( csecs[1] ), nullptr, 0 ) );
 				}
-				else 
+				else
 				{
-					// ERROR WILL ROBINSON
+					// If there's only one value, set both to the same
+					lodamage = static_cast<SI16>( std::stoi( strutil::stripTrim( data ), nullptr, 0 ) );
+					hidamage = static_cast<SI16>( std::stoi( strutil::stripTrim( data ), nullptr, 0 ) );
 				}
 			}
 			else if( UTag == "DAMAGEABLE" )
@@ -1472,7 +1474,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'N':
 			if( UTag == "NAME" )
 			{
-				name = data.substr( 0, MAX_NAME );
+				name = data.substr( 0, MAX_NAME - 1 );
 			}
 			else
 				rvalue = false;
@@ -1564,7 +1566,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'T':
 			if( UTag == "TITLE" )
 			{
-				title = data.substr( 0, MAX_TITLE );
+				title = data.substr( 0, MAX_TITLE - 1 );
 			}
 			else if( UTag == "TAGNAME" )
 			{

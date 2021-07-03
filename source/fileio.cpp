@@ -236,6 +236,10 @@ void LoadCustomTitle( void )
 	}
 
 	CustomTitle = FileLookup->FindEntry( "FAME", titles_def );
+	if( CustomTitle == nullptr )
+	{
+		return;
+	}
 	titlecount	= 0;
 
 	for( tag = CustomTitle->First(); !CustomTitle->AtEnd() && titlecount < ALLSKILLS; tag = CustomTitle->Next() )
@@ -779,11 +783,11 @@ void LoadPlaces( void )
 			
 			if( (strutil::toupper(strutil::stripTrim( ssecs[0])) == "LOCATION") && entryNum )
 			{
-				if( cwmWorldState->goPlaces.find( entryNum ) != cwmWorldState->goPlaces.end() )
+				if( cwmWorldState->goPlaces.find( static_cast<UI16>(entryNum) ) != cwmWorldState->goPlaces.end() )
 				{
 					Console.warning( strutil::format("Doubled up entry in Location.dfn (%u)", entryNum) );
 				}
-				toAdd = &cwmWorldState->goPlaces[entryNum];
+				toAdd = &cwmWorldState->goPlaces[static_cast<UI16>(entryNum)];
 				if( toAdd != nullptr )
 				{
 					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )

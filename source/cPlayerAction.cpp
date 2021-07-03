@@ -2024,6 +2024,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_CONTAINER:	// Container, Backpack
 		case IT_SPAWNCONT: // Item spawn container
 			canTrap = true;
+			[[fallthrough]]; // Indicate to compiler that fallthrough is valid to suppress warning
 		case IT_UNLOCKABLESPAWNCONT:	// Unlockable item spawn container
 		case IT_TRASHCONT:	// Trash container
 			bool packOpened;

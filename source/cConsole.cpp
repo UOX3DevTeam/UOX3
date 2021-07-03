@@ -387,7 +387,7 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 	else
 		realFileName = filename;
 
-	char timeStr[128];
+	char timeStr[256];
 	RealTime( timeStr );
 
 	toWrite.open( realFileName.c_str(), std::ios::out | std::ios::app );

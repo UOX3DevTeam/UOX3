@@ -274,7 +274,7 @@ void cNetworkStuff::sockInit( void )
 		return;
 	}
 #if PLATFORM != WINDOWS
-	setsockopt( a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
+	[[maybe_unused]] int result = setsockopt( a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
 #endif
 
 	UI32 len_connection_addr = sizeof( struct sockaddr_in );
@@ -349,6 +349,7 @@ void cNetworkStuff::CheckConn( void )
 		if( newClient >= FD_SETSIZE )
 		{
 			Console.error( "accept() returning unselectable fd!" );
+			closesocket( static_cast<UOXSOCKET>( newClient ) );
 			return;
 		}
 #endif
@@ -1051,7 +1052,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		return;
 	if( mSock->NewClient() )
 	{
-		SI32 count, ho, mi, se, total;
+		SI32 count;
 		count = mSock->Receive( 4 );
 		auto packetID = mSock->Buffer()[0];
 

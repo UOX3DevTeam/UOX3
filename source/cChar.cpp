@@ -2275,7 +2275,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 	if( mSock != nullptr )
 	{
 		//CChar *myChar = mSock->CurrcharObj();
-		mSock->CurrcharObj();
+		//mSock->CurrcharObj();
 
 		// Calculate player's visibility range so we can use it to find nearby objects
 		UI16 visRange = mSock->Range() + Races->VisRange( GetRace() );
@@ -3581,7 +3581,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "FOODLIST" )
 				{
-					SetFood( data.substr( 0, MAX_NAME ) );
+					SetFood( data.substr( 0, MAX_NAME - 1 ) );
 					rvalue = true;
 				}
 				else if( UTag == "FLEEINGSPEED" )
@@ -4254,8 +4254,6 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 	if( !txt.empty() )
 	{
 		va_list argptr;
-
-
 		va_start( argptr, spamTimer );
 		auto msg = strutil::format(txt,argptr);
 		if (msg.size()>512){

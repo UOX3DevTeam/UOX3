@@ -383,7 +383,9 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				{
 					lastScriptTrigger = scriptTriggers[numberOfTriggers-1];
 				}
+
 				*vp = INT_TO_JSVAL( lastScriptTrigger );
+				break;
 			}
 			case CIP_SCRIPTTRIGGERS:
 			{
@@ -1920,7 +1922,9 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				{
 					lastScriptTrigger = scriptTriggers[numberOfTriggers-1];
 				}
+
 				*vp = INT_TO_JSVAL( lastScriptTrigger );
+				break;
 			}
 			case CREGP_SCRIPTTRIGGERS:
 			{

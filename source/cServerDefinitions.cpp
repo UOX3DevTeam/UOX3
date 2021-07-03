@@ -425,7 +425,7 @@ bool cDirectoryListing::PushDir( std::string toMove )
 	{
 		std::filesystem::current_path( path );
 		currentDir = toMove;
-		strutil::replaceSlash( toMove );
+		toMove = strutil::replaceSlash( toMove );
 		shortCurrentDir = ShortDirectory( toMove );
 		return true;
 	}

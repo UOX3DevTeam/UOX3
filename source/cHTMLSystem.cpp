@@ -196,7 +196,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Time
-	char time_str[80];
+	char time_str[256];
 	RealTime( time_str );
 	Pos = ParsedContent.find( "%time" );
 	while( Pos != std::string::npos )
@@ -255,12 +255,14 @@ void cHTMLTemplate::Process( void )
 				{
 
 					auto myPort = std::to_string(mServ->getPort());
-					if (cwmWorldState->GetKeepRun()){
+
+					// Both paths do the same. Something seems missing
+					//if (cwmWorldState->GetKeepRun()){
 						ParsedContent.replace(Pos, portToken.size(), myPort);
-					}
-					else {
-						ParsedContent.replace(Pos, portToken.size(), myPort);
-					}
+					//}
+					//else {
+						//ParsedContent.replace(Pos, portToken.size(), myPort);
+					//}
 					Pos = ParsedContent.find( portToken );
 				}
 			}

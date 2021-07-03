@@ -372,7 +372,7 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 
 	logDestination << "[" << dateTime << "] ";
 	logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << ") ";
-	logDestination << "used command <" << command << "> ";
+	logDestination << "used command <" << command << (CommandString( 2 ) != "" ? " " : "") << CommandString( 2 ) << "> ";
 	if( ValidateObject( player2 ) )
 		logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " )";
 	logDestination << "Extra Info: " << extraInfo << std::endl;

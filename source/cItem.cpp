@@ -439,7 +439,7 @@ const char *CItem::GetName2( void ) const
 }
 void CItem::SetName2( const char *newValue )
 {
-	strncpy( name2, newValue, MAX_NAME );
+	strncpy( name2, newValue, MAX_NAME - 1 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1598,14 +1598,15 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MORE" )
 				{
-					if( csecs.size() > 1 )
-					{
+					// Both paths lead to same code. Something missing?
+					//if( csecs.size() > 1 )
+					//{
 						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					}
+					/*}
 					else
 					{
 						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					}
+					}*/
 					rvalue = true;
 				}
 				else if( UTag == "MORE2" )	// Depreciated

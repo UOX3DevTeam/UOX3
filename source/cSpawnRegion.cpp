@@ -664,6 +664,8 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 {
 	std::string ourNPC = strutil::stripTrim( sNpcs[RandomNum( static_cast<size_t>( 0 ), sNpcs.size() - 1 )] );
 	ScriptSection *npcCreate = FileLookup->FindEntry( ourNPC, npc_def );
+	if( npcCreate == nullptr )
+		return nullptr;
 
 	std::string cdata;
 	SI32 ndata = -1, odata = -1;

@@ -2154,7 +2154,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	jsvParams[0] = OBJECT_TO_JSVAL( myObj );
 	jsvParams[1] = INT_TO_JSVAL( button );
 	jsvParams[2] = OBJECT_TO_JSVAL( jsoObject );
-	JS_CallFunctionName( targContext, targObject, "onGumpPress", 3, jsvParams, &jsvRVal );
+	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpPress", 3, jsvParams, &jsvRVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2173,7 +2173,7 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime );
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( pressing->Index() );
-	JS_CallFunctionName( targContext, targObject, "onGumpInput", 2, params, &rval );
+	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 2, params, &rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2276,7 +2276,7 @@ bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	JS_SetGlobalObject( targContext, targObject );
 	//JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
-	JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
+	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
 	return ( JSVAL_TO_BOOLEAN( rval ) != JS_FALSE );
 }
 
@@ -2604,7 +2604,7 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 
 	//FIXME === do we need this retvalue?
 	//JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
-	JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
 
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
 }

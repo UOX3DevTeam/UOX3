@@ -99,7 +99,6 @@ namespace strutil {
 			if (test.size() > maxsize) {
 				test = test.substr(0,maxsize);
 			}
-			
 		}
 		return test ;
 	}

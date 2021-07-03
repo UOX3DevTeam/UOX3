@@ -48,9 +48,9 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		rk_range = skillMake.maxRank - skillMake.minRank;
 		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
 		if( sk_range <= 0 )
-			rank = skillMake.minRank; // should this be sk_range? the value is not used before being overwritten later
+			sk_range = skillMake.minRank;
 		else if( sk_range >= 1000 )
-			rank = skillMake.maxRank; // should this be sk_range? the value is not used before being overwritten later
+			sk_range = skillMake.maxRank;
 		randnum = static_cast<R32>(RandomNum( 0, 999 ));
 		if( randnum <= sk_range )
 			rank = skillMake.maxRank;
@@ -986,28 +986,30 @@ void cSkills::ItemIDTarget( CSocket *s )
 			name = i->GetName();
 		s->sysmessage( 1547, name.c_str() ); // You found that this item appears to be called: %s
 
-		std::string temp ;
+		std::string temp;
 		if( i->GetCreator() != INVALIDSERIAL )
 		{
 			CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 			if( ValidateObject( mCreater ) )
 			{
 				if( i->GetMadeWith() > 0 ){
-					temp = strutil::format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
+					temp = strutil::format( 1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
 				}
 				else if( i->GetMadeWith() < 0 ){
-					temp= strutil::format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
+					temp = strutil::format( 1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
 				}
 				else{
-					temp = strutil::format(1024, temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
+					temp = strutil::format( 1024, temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
 				}
 			}
-			else {
-				strutil::format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
+			else
+			{
+				temp = strutil::format( 1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
 			}
 		}
-		else{
-			temp = strutil::format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
+		else
+		{
+			temp = strutil::format( 1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
 		}
 		s->sysmessage( temp );
 
@@ -2312,7 +2314,7 @@ SI08 cSkills::FindSkillPoint( UI08 sk, SI32 value )
 	{
 		if( cwmWorldState->skill[sk].advancement[iCounter].base <= value && value < cwmWorldState->skill[sk].advancement[iCounter+1].base )
 		{
-			retVal = iCounter;
+			retVal = static_cast<SI08>(iCounter);
 			break;
 		}
 	}

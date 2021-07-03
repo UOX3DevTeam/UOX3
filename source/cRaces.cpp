@@ -1259,6 +1259,9 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					std::string subData;
 					std::string subSect = std::string( "EQUIPLIST " ) + strutil::number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
 					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
+					if( RacialEquipment == nullptr )
+						break;
+
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
 						subUTag = strutil::toupper( subTag );
@@ -1300,6 +1303,9 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					std::string subData;
 					std::string subSect = std::string( "EQUIPLIST " ) + strutil::number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
 					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
+					if( RacialEquipment == nullptr )
+						break;
+
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
 						subUTag = strutil::toupper( subTag );

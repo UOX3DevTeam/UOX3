@@ -2212,7 +2212,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		if( extended3 )
 		{
 			StatCap( cwmWorldState->ServerData()->ServerStatCapStatus() );
-			CurrentPets( toCopy.GetPetList()->Num() );
+			CurrentPets( static_cast<UI08>(toCopy.GetPetList()->Num()) );
 			MaxPets( 0xFF );
 		}
 		if( extended4 )
@@ -3579,8 +3579,8 @@ void CPGumpTextEntry::Format( SERIAL id )
 void CPGumpTextEntry::Text1( const std::string& txt )
 {
 	size_t sLen = txt.length();
-	BlockSize( 20 + sLen );	// 11 + 1 + 8
-	Text1Len( sLen + 1 );
+	BlockSize( static_cast<SI16>(sLen + 20) );	// 11 + 1 + 8
+	Text1Len( static_cast<SI16>(sLen + 1) );
 	pStream.WriteString( 11, txt, sLen );
 }
 void CPGumpTextEntry::Text2( const std::string& txt )
@@ -5963,7 +5963,7 @@ void CPBookPage::NewPage( SI16 pNum, const STRINGLIST *lines )
 		pStream.WriteShort( baseOffset, pageCount );
 	else
 		pStream.WriteShort( baseOffset, pNum );
-	pStream.WriteByte( static_cast<size_t>(baseOffset) + 3, lines->size() );	// 8 lines per page
+	pStream.WriteByte( static_cast<size_t>(baseOffset + 3), static_cast<UI08>(lines->size()) );	// 8 lines per page
 
 	for( STRINGLIST_CITERATOR lIter = lines->begin(); lIter != lines->end(); ++lIter )
 	{
@@ -6991,7 +6991,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 		{
 			// If character is a GM, and has used the MSGMOD ON command, send their username instead of poster's,
 			// to allow removing messages from the message board
-			pStream.WriteByte( offset, mChar->GetName().length() + 1 );
+			pStream.WriteByte( offset, static_cast<UI08>(mChar->GetName().length() + 1));
 			pStream.WriteString( ++offset, mChar->GetName(), mChar->GetName().length() + 1 );
 			offset += mChar->GetName().length() + 1;
 		}
@@ -7018,7 +7018,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
 		{
-			pStream.WriteByte( ++offset, (*pIter).size()+2 );
+			pStream.WriteByte( ++offset, static_cast<UI08>((*pIter).size() + 2) );
 			pStream.WriteString( ++offset, (*pIter), (*pIter).size() );
 			offset += (*pIter).size();
 			pStream.WriteByte( offset, 0x00 );

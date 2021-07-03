@@ -972,6 +972,7 @@ void ScriptSection::createSection( std::fstream& input )
 					case create_def:
 					case command_def:
 						tag = utag;
+						[[fallthrough]]; // Indicate to compiler that fallthrough is intentional
 					default:
 						toAdd = new sectData;
 						toAdd->tag	= tag;

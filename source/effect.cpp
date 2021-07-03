@@ -1254,6 +1254,7 @@ void cEffects::LoadEffects( void )
 										else
 											toLoad->ObjPtr( nullptr );
 									}
+									break;
 								case 'S':
 									if( UTag == "SOURCE" )
 										toLoad->Source( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );

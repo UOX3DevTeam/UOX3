@@ -1139,7 +1139,7 @@ void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 
 	fileName += strutil::number( msgBoardSer, 16 ) + std::string(".bbf");
 
-	remove( fileName.c_str() );
+	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 
 	Console.print( strutil::format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer) );
 }
