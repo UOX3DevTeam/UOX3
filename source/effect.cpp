@@ -504,10 +504,11 @@ void cEffects::checktempeffects( void )
 		}
 		bool equipCheckNeeded = false;
 
+		bool validChar = ValidateObject( s );
 		switch( Effect->Number() )
 		{
 			case 1: // Paralysis / Paralysis Field Spells
-				if( s->IsFrozen() )
+				if( validChar && s->IsFrozen() )
 				{
 					s->SetFrozen( false );
 					if( tSock != nullptr )
@@ -515,57 +516,84 @@ void cEffects::checktempeffects( void )
 				}
 				break;
 			case 2: // Nightsight Potion (JS) and Spell (code)
-				s->SetFixedLight( 255 );
-				doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+				if( validChar )
+				{
+					s->SetFixedLight( 255 );
+					doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+				}
 				break;
 			case 3: // Clumsy spell (JS)
-				s->IncDexterity2( Effect->More1() );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncDexterity2( Effect->More1() );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 4: // Feeblemind spell (JS)
-				s->IncIntelligence2( Effect->More1() );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncIntelligence2( Effect->More1() );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 5: // Weaken Spell
-				s->IncStrength2( Effect->More1() );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncStrength2( Effect->More1() );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 6: // Agility Potion (JS) and Spell (code)
-				s->IncDexterity2( -Effect->More1() );
-				s->SetStamina( std::min( s->GetStamina(), s->GetMaxStam() ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncDexterity2( -Effect->More1() );
+					s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 7: // Cunning Spell
-				s->IncIntelligence2( -Effect->More1() );
-				s->SetMana( std::min( s->GetMana(), s->GetMaxMana() ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncIntelligence2( -Effect->More1() );
+					s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 8: // Strength Potion (JS) and Spell (code)
-				s->IncStrength2( -Effect->More1() );
-				s->SetHP( std::min( s->GetHP(), static_cast<SI16>(s->GetMaxHP()) ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncStrength2( -Effect->More1() );
+					s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+					equipCheckNeeded = true;
+					}
 				break;
 			case 9:	// Grind potion (also used for necro stuff)
-				switch( Effect->More1() )
+				if( validChar )
 				{
-					case 0:
-						if( Effect->More2() != 0 )
-							s->TextMessage( nullptr, 1270, EMOTE, 1, s->GetName().c_str() );
-						PlaySound( s, 0x0242 );
-						break;
+					switch( Effect->More1() )
+					{
+						case 0:
+							if( Effect->More2() != 0 )
+								s->TextMessage( nullptr, 1270, EMOTE, 1, s->GetName().c_str() );
+							PlaySound( s, 0x0242 );
+							break;
+					}
 				}
 				break;
 			case 11: // Bless Spell
-				s->IncStrength2( -Effect->More1() );
-				s->SetHP(  std::min( s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
-				s->IncDexterity2( -Effect->More2() );
-				s->SetStamina( std::min( s->GetStamina(), s->GetMaxStam() ) );
-				s->IncIntelligence2( -Effect->More3() );
-				s->SetMana( std::min( s->GetMana(), s->GetMaxMana() ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncStrength2( -Effect->More1() );
+					s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+					s->IncDexterity2( -Effect->More2() );
+					s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
+					s->IncIntelligence2( -Effect->More3() );
+					s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
+					equipCheckNeeded = true;
+					}
 				break;
 			case 12: // Curse Spell
-				if( s != nullptr )
+				if( validChar )
 				{
 					s->IncStrength2( Effect->More1() );
 					s->IncDexterity2( Effect->More2() );
@@ -576,7 +604,10 @@ void cEffects::checktempeffects( void )
 					equipCheckNeeded = false;
 				break;
 			case 15: // Reactive Armor Spell
-				s->SetReactiveArmour( false );
+				if( validChar )
+				{
+					s->SetReactiveArmour( false );
+				}
 				break;
 			case 16: // Explosion potion messages (JS)
 				src = calcCharObjFromSer( Effect->Source() );
@@ -595,45 +626,57 @@ void cEffects::checktempeffects( void )
 				explodeItem( src->GetSocket(), static_cast<CItem *>(Effect->ObjPtr()) ); //explode this item
 				break;
 			case 18: // Polymorph Spell
-				s->SetID( s->GetOrgID() );
-				s->IsPolymorphed( false );
+				if( validChar )
+				{
+					s->SetID( s->GetOrgID() );
+					s->IsPolymorphed( false );
+				}
 				break;
 			case 19: // Incognito Spell
-				s->SetID( s->GetOrgID() );
-
-				// ------ NAME -----
-				s->SetName( s->GetOrgName() );
-
-				i = s->GetItemAtLayer( IL_HAIR );
-				if( ValidateObject( i ) )
+				if( validChar )
 				{
-					i->SetColour( s->GetHairColour() );
-					i->SetID( s->GetHairStyle() );
+					s->SetID( s->GetOrgID() );
+
+					// ------ NAME -----
+					s->SetName( s->GetOrgName() );
+
+					i = s->GetItemAtLayer( IL_HAIR );
+					if( ValidateObject( i ) )
+					{
+						i->SetColour( s->GetHairColour() );
+						i->SetID( s->GetHairStyle() );
+					}
+					i = s->GetItemAtLayer( IL_FACIALHAIR );
+					if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 )
+					{
+						i->SetColour( s->GetBeardColour() );
+						i->SetID( s->GetBeardStyle() );
+					}
+					if( tSock != nullptr )
+						s->SendWornItems( tSock );
+					s->IsIncognito( false );
 				}
-				i = s->GetItemAtLayer( IL_FACIALHAIR );
-				if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 )
-				{
-					i->SetColour( s->GetBeardColour() );
-					i->SetID( s->GetBeardStyle() );
-				}
-				if( tSock != nullptr )
-					s->SendWornItems( tSock );
-				s->IsIncognito( false );
 				break;
 			case 21: // Protection Spell
-				UI16 toDrop;
-				toDrop = Effect->More1();
-				if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
-					s->SetBaseSkill( 0, PARRYING );
-				else
-					s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					UI16 toDrop;
+					toDrop = Effect->More1();
+					if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
+						s->SetBaseSkill( 0, PARRYING );
+					else
+						s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 25: // Temporarily set item as disabled
 				Effect->ObjPtr()->SetDisabled( false );
 				break;
 			case 26: // Disallow immediately using another potion (JS)
-				s->SetUsingPotion( false );
+				if( validChar )
+				{
+					s->SetUsingPotion( false );
+				}
 				break;
 			case 27: // Explosion Spell
 				src = calcCharObjFromSer( Effect->Source() );
@@ -728,7 +771,7 @@ void cEffects::checktempeffects( void )
 				Console.error( strutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
 				break;
 		}
-		if( ValidateObject( s ) && equipCheckNeeded )
+		if( validChar && equipCheckNeeded )
 			Items->CheckEquipment( s ); // checks equipments for stat requirements
 		cwmWorldState->tempEffects.Remove( Effect, true );
 	}

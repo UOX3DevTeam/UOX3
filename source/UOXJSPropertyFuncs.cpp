@@ -53,7 +53,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 {
 	size_t SpellID = JSVAL_TO_INT(id);
 
-	if( SpellID >= Magic->spells.size() || SpellID < 0 )
+	if( SpellID >= Magic->spells.size() )
 	{
 		Console.error( "Invalid Spell ID" ); // Revise please...
 		*vp = JSVAL_NULL;
@@ -161,13 +161,6 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	UI16 createEntryID = static_cast<UI16>(JSVAL_TO_INT( id ));
-
-	if( createEntryID >= Magic->spells.size() || createEntryID < 0 )
-	{
-		Console.error( "Invalid CreateEntry ID" ); // Revise please...
-		*vp = JSVAL_NULL;
-		return JS_FALSE;
-	}
 
 	createEntry *myCreateEntry = Skills->FindItem( createEntryID );
 	if( myCreateEntry == nullptr )

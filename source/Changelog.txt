@@ -1,3 +1,8 @@
+04/07/2021 - Xuri (0.99.4u)
+	UOX3 now sends the appropriate packets (0x85 and/or 0x86) in response to client requests to delete a character from the char selection screen
+	Fixed an issue with fetching create entries in JS - was incorrectly limited by number of registered spells!
+	More code cleanup
+
 04/07/2021 - Xuri
 	Fixed an issue with ItemID skill where using the skill on a crafted item would not output a result if creator of item was unknown
 	Command logs now also include any parameters used with a command
@@ -7,6 +12,7 @@
 	Fixed a couple instances of missing breaks in switch cases
 	Added [[maybe_unused]] attributes in places where return values are intentionally unused
 	Added [[fallthrough]] attributes in places where switch case fallthroughs are intentional
+	Fixed some issues with converting account data from older (pre 0.99) versions of UOX3
 	Misc minor code cleanup
 
 02/07/2021 - Xuri

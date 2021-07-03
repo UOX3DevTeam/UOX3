@@ -3900,6 +3900,7 @@ CPIClientLanguage::CPIClientLanguage()
 }
 CPIClientLanguage::CPIClientLanguage( CSocket *s ) : CPInputBuffer( s )
 {
+	newLang = ZERO;
 	Receive();
 }
 

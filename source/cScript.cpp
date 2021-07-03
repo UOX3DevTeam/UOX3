@@ -475,16 +475,10 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 		{
 			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
 				return 2;
-			else
-				return 0;
 		}
-		else
-			return 0;	// some unknown value
 	}
-	else
-		return 0;	// return default
 
-	return ( retVal == JS_TRUE );
+	return 0;	// return default
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2567,25 +2561,32 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	JSObject *srcObj = nullptr;
 	JSObject *tmpObj = nullptr;
 
-	if( srcObject->CanBeObjType( OT_ITEM ) ) {
-		srcObj = JSEngine->AcquireObject( IUE_ITEM, srcObject, runTime );
-	}
-	else if( srcObject->CanBeObjType( OT_CHAR ) ) {
-		srcObj = JSEngine->AcquireObject( IUE_CHAR, srcObject, runTime );
-	}
-	if (srcObject == nullptr) {
-		return false ;
+	if( srcObject == nullptr || tmpObject == nullptr )
+	{
+		return false;
 	}
 
-	if( tmpObject->CanBeObjType( OT_ITEM ) ) {
+	if( srcObject->CanBeObjType( OT_ITEM ) )
+	{
+		srcObj = JSEngine->AcquireObject( IUE_ITEM, srcObject, runTime );
+	}
+	else if( srcObject->CanBeObjType( OT_CHAR ) )
+	{
+		srcObj = JSEngine->AcquireObject( IUE_CHAR, srcObject, runTime );
+	}
+
+	if( tmpObject->CanBeObjType( OT_ITEM ) )
+	{
 		tmpObj = JSEngine->AcquireObject( IUE_ITEM, tmpObject, runTime );
 	}
-	else if( tmpObject->CanBeObjType( OT_CHAR ) ) {
+	else if( tmpObject->CanBeObjType( OT_CHAR ) )
+	{
 		tmpObj = JSEngine->AcquireObject( IUE_CHAR, tmpObject, runTime );
 	}
 
-	if (tmpObject == nullptr){
-		return false ;
+	if( srcObj == nullptr || tmpObj == nullptr )
+	{
+		return false;
 	}
 
 	params[0]			= OBJECT_TO_JSVAL( srcObj );

@@ -700,10 +700,10 @@ bool CSocket::FlushBuffer( bool doLog )
 			UI32 len;
 			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
-			send( static_cast<UOXSOCKET>(cliSocket), (char *)xoutbuffer, len, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)xoutbuffer, len, 0 );
 		}
 		else
-			send( static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0 );
 		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
 			SERIAL toPrint;
