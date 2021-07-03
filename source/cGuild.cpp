@@ -790,8 +790,6 @@ void CGuild::CalcMaster( void )
 //o-----------------------------------------------------------------------------------------------o
 void CGuild::TellMembers( SI32 dictEntry, ... )
 {
-
-
 	SERLIST_CITERATOR cIter;
 	for( cIter = members.begin(); cIter != members.end(); ++cIter )
 	{
@@ -814,6 +812,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 			toAdd.Type( SYSTEM );
 			toAdd.At( cwmWorldState->GetUICurrentTime() );
 			toAdd.TargType( SPTRG_INDIVIDUAL );
+			va_end(argptr);
 		}
 	}
 }

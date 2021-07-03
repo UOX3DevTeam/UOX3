@@ -86,25 +86,19 @@ class CWorldMain
 private:
 	struct skill_st
 	{
-		UI16 strength;
-		UI16 dexterity;
-		UI16 intelligence;
-		std::string madeword;
+		UI16 strength			= 0;
+		UI16 dexterity			= 0;
+		UI16 intelligence		= 0;
+		std::string madeword	= "made";
 		std::vector< advance_st > advancement;
-		UI16 jsScript;
-		std::string name;
+		UI16 jsScript			= 0xFFFF;
+		std::string name		= "";
 		skill_st()
 		{
 			ResetDefaults();
 		}
 		void ResetDefaults( void )
 		{
-			strength		= 0;
-			dexterity		= 0;
-			intelligence	= 0;
-			jsScript		= 0xFFFF;
-			madeword		= "made";
-			name			= "";
 			advancement.resize( 0 );
 		}
 	};

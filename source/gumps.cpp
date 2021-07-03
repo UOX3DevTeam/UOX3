@@ -1115,7 +1115,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 		autoAddMenuItemCount += 2;	// Need to inicrement by 2 because each entry is measured in the dfn' as two lines. Used in teh calculation below.
 	// let's skip over the name, and get straight to where we should be headed
 	size_t entryNum = ((static_cast<size_t>(button) - 6) * 2);
-	autoAddMenuItemCount += ItemMenu->NumEntries();
+	autoAddMenuItemCount += static_cast<UI32>(ItemMenu->NumEntries());
 	if( autoAddMenuItemCount >= entryNum )
 	{
 		std::string tag		= ItemMenu->MoveTo( entryNum );
@@ -1431,6 +1431,7 @@ bool CPIGumpInput::Handle( void )
 				}
 			}
 		}
+		[[fallthrough]]; // Indicate to compiler that fallthrough is intentional to suppress warning
 		case 100:	GuildSys->GumpInput( this );			break;
 		default:
 			break;

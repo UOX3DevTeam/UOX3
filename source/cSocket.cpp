@@ -744,10 +744,10 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 		{
 			largePackBuffer.resize( static_cast<size_t>(outlength) * static_cast<size_t>(2) );
 			SI32 len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
-			send( static_cast<UOXSOCKET>(cliSocket), (char *)&largePackBuffer[0], len, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&largePackBuffer[0], len, 0 );
 		}
 		else
-			send( static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0 );
 
 		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
@@ -1439,12 +1439,12 @@ void CSocket::Send( CPUOXBuffer *toSend )
 	if( cryptclient )
 	{
 		len = toSend->Pack();
-		send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->PackedPointer(), len, 0 );
+		[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->PackedPointer(), len, 0 );
 	}
 	else
 	{
 		len = static_cast<UI32>(toSend->GetPacketStream().GetSize());
-		send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
+		[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
 	}
 
 	bytesSent += len;

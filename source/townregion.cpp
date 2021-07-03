@@ -111,6 +111,9 @@ bool CTownRegion::Load( Script *ss )
 	}
 
 	ScriptSection *target = ss->FindEntry( sect );
+	if( target == nullptr )
+		return false;
+
 	for( tag = target->First(); !target->AtEnd(); tag = target->Next() )
 	{
 		UTag = strutil::toupper( tag );
@@ -1700,6 +1703,7 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...)
 			toAdd.Type( SYSTEM );
 			toAdd.At( cwmWorldState->GetUICurrentTime() );
 			toAdd.TargType( SPTRG_INDIVIDUAL );
+			va_end(argptr);
 		}
 	}
 }

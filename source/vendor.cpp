@@ -331,7 +331,7 @@ bool CPISellItem::Handle( void )
 		UI32 totgold = 0, value = 0;
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6 * static_cast<size_t>(i)) ) );
+			//j = calcItemObjFromSer( tSock->GetDWord( 9 + (6 * static_cast<size_t>(i)) ) );
 			amt = tSock->GetWord( 13 + ( 6 * static_cast<size_t>(i)) );
 			maxsell += amt;
 		}

@@ -815,7 +815,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( 10 );
 				break;
 			case 2: // Mage
-				skill[0] = ( extSkills ? 25 : 25 ); // Magery or Magery
+				skill[0] = 25; // Magery
 				skill[1] = ( extSkills ? 16 : 46 ); // Evaulate Intelligence or Meditation
 				skill[2] = ( extSkills ? 46 : 43 ); // Meditation or Wrestling
 				skill[3] = ( extSkills ? 43 : 0xFF ); // Wrestling or nothing
@@ -828,7 +828,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( 45 );
 				break;
 			case 3: // Blacksmith
-				skill[0] = ( extSkills ? 7 : 7 );	// Blacksmithing
+				skill[0] = 7;	// Blacksmithing
 				skill[1] = ( extSkills ? 45 : 37 );	// Mining or Tinkering
 				skill[2] = ( extSkills ? 37 : 45 );	// Tinkering or Mining
 				skill[3] = ( extSkills ? 34 : 0xFF );	// Tailoring or nothing
@@ -841,7 +841,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 15 : 10);
 				break;
 			case 4: // Necromancer
-				skill[0] = ( extSkills ? 49 : 49 );	// Necromancy
+				skill[0] = 49;	// Necromancy
 				skill[1] = ( extSkills ? 32 : 40 );	// Spirit Speak or Swordsmanship
 				skill[2] = ( extSkills ? 40 : 27 );	// Swordsmanship or Tactics
 				skill[3] = ( extSkills ? 46 : 0xFF );	// Meditation or nothing
@@ -854,7 +854,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 45 : 35 );
 				break;
 			case 5: // Paladin
-				skill[0] = ( extSkills ? 51 : 51 );	// Chivalry
+				skill[0] = 51;	// Chivalry
 				skill[1] = ( extSkills ? 40 : 27 );	// Swordsmanship or Tactics
 				skill[2] = ( extSkills ? 27 : 43 );	// Tactics or Wrestling
 				skill[3] = ( extSkills ? 50 : 0xFF );	// Focus or nothing
@@ -867,7 +867,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 25 : 15 );
 				break;
 			case 6: // Samurai
-				skill[0] = ( extSkills ? 52 : 52 );	// Bushido
+				skill[0] = 52;	// Bushido
 				skill[1] = ( extSkills ? 40 : 40 );	// Swordsmanship
 				skill[2] = ( extSkills ? 50 : 43 );	// Focus or Wrestling
 				skill[3] = ( extSkills ? 5 : 0xFF );	// Parrying or nothing
@@ -880,7 +880,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 20 : 10 );
 				break;
 			case 7: // Ninja
-				skill[0] = ( extSkills ? 53 : 53 ); // Ninjitsu or Ninjitsu
+				skill[0] = 53; // Ninjitsu
 				skill[1] = ( extSkills ? 42 : 21 ); // Fencing or Hiding
 				skill[2] = ( extSkills ? 21 : 43 ); // Hiding or Wrestling
 				skill[3] = ( extSkills ? 47 : 0xFF ); // Stealth or nothing
@@ -1286,7 +1286,7 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( mChar->GetBeardStyle() == 0xFFFF )
 				{
 					mChar->SetBeardStyle( beardObject->GetID() );
-					mChar->SetHairColour( hairObject->GetColour() );
+					mChar->SetBeardColour( beardObject->GetColour() );
 				}
 			}
 
@@ -1485,47 +1485,47 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	UI08 fallDirection = (UI08)(RandomNum( 0, 100 ) % 2);
 	mChar->SetDead( true );
 
+	Effects->playDeathSound( mChar );
 	CItem *iCorpse = CreateCorpseItem( (*mChar), attacker, createPack, fallDirection );
 	if( iCorpse != nullptr )
 	{
 		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
 			Effects->deathAction( mChar, iCorpse, fallDirection );
-	}
-	Effects->playDeathSound( mChar );
 
-	// Spawn blood effect below corpse
-	UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property
-	if( bloodColour == 0xffff )
-	{
-		// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
-		bloodColour = mChar->GetSkin();
-	}
-	CItem * bloodEffect = Effects->SpawnBloodEffect( iCorpse->WorldNumber(), iCorpse->GetInstanceID(), bloodColour, BLOOD_DEATH );
-	if( ValidateObject( bloodEffect ))
-	{
-		// Set a timestamp for when the bloodeffect was created, and match it to the corpse!
-		bloodEffect->SetTempTimer( iCorpse->GetTempTimer() );
-
-		if( !mChar->IsNpc() )
+		// Spawn blood effect below corpse
+		UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property
+		if( bloodColour == 0xffff )
 		{
-			// Set character as owner of blood-effects, if not an NPC
-			bloodEffect->SetOwner( mChar );
+			// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
+			bloodColour = mChar->GetSkin();
 		}
-
-		// If there's a valid attacker still, store the serial on the blood item (just like the corpse)
-		// so it could be accessed by something like forensics skill
-		if( ValidateObject( attacker ) )
+		CItem * bloodEffect = Effects->SpawnBloodEffect( iCorpse->WorldNumber(), iCorpse->GetInstanceID(), bloodColour, BLOOD_DEATH );
+		if( ValidateObject( bloodEffect ))
 		{
-			bloodEffect->SetTempVar( CITV_MOREX, attacker->GetSerial() );
-		}
-		else
-		{
-			bloodEffect->SetTempVar( CITV_MOREX, INVALIDSERIAL );
-		}
+			// Set a timestamp for when the bloodeffect was created, and match it to the corpse!
+			bloodEffect->SetTempTimer( iCorpse->GetTempTimer() );
 
-		// Finally, set blood's location to match that of the corpse
-		bloodEffect->SetLocation( iCorpse );
+			if( !mChar->IsNpc() )
+			{
+				// Set character as owner of blood-effects, if not an NPC
+				bloodEffect->SetOwner( mChar );
+			}
+
+			// If there's a valid attacker still, store the serial on the blood item (just like the corpse)
+			// so it could be accessed by something like forensics skill
+			if( ValidateObject( attacker ) )
+			{
+				bloodEffect->SetTempVar( CITV_MOREX, attacker->GetSerial() );
+			}
+			else
+			{
+				bloodEffect->SetTempVar( CITV_MOREX, INVALIDSERIAL );
+			}
+
+			// Finally, set blood's location to match that of the corpse
+			bloodEffect->SetLocation( iCorpse );
+		}
 	}
 
 	mChar->SetWar( false );

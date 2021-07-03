@@ -3158,13 +3158,14 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	//mySock->TempInt( (SI64)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 	UI08 tNum = (UI08)JSVAL_TO_INT( argv[0] );
-	constexpr auto maxsize = 512 ; // Could become long (make sure it's nullptr )
-	std::string toSay ;
+	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
+	std::string toSay;
 	if( argc == 2 )
 	{
-		toSay=JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) ) ;
-		if (toSay.size() > maxsize){
-			toSay.substr(0,maxsize);
+		toSay = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+		if( toSay.size() > maxsize )
+		{
+			toSay = toSay.substr(0, maxsize);
 		}
 	}
 
@@ -5621,7 +5622,8 @@ JSBool CFile_Read( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 
-	fread( data, 1, bytes, mFile->mWrap );
+	// We don't care about return value, so suppress compiler warning
+	[[maybe_unused]] size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, data ) );
 	return JS_TRUE;
@@ -5761,7 +5763,9 @@ JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	long fpos = ftell( mFile->mWrap );
 	fseek( mFile->mWrap, 0, SEEK_END );
 	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ) );
-	fseek( mFile->mWrap, fpos, SEEK_SET );
+
+	if( fpos > -1 )
+		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, fpos, SEEK_SET ); // We don't care about return value, so suppress compiler warning
 
 	return JS_TRUE;
 }
@@ -5786,7 +5790,7 @@ JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 		return JS_FALSE;
 
 	if( argc == 1 )
-		fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
+		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
 
 	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ) );
 
@@ -8013,7 +8017,14 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		y	= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
 		z	= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
 	}
-	*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) ) ;
+
+	if( ValidateObject( mChar ) )
+	{
+		*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) );
+	}
+	else
+		*rval = BOOLEAN_TO_JSVAL( false );
+
 	return JS_TRUE;
 }
 

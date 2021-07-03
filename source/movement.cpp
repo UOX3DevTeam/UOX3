@@ -1324,7 +1324,8 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 
 						if( toExecute != nullptr )
 						{
-							toExecute->OnCollide( mSock, mChar, tItem );
+							// We don't care about the return value from onCollide here, so suppress the warning
+							[[maybe_unused]] SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
 						}
 						else
 						{

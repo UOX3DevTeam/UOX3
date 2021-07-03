@@ -144,10 +144,22 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		// Keep track of the section account lines. There is nothing to process till at least one of these has been read
 		if( sLine.substr( 0, 15 ) == "SECTION ACCOUNT" )
 		{
+			// Ok the section block was found, Tokenize the string to get the account #
+			auto accountIDFromFile = strutil::value<std::int32_t>( strutil::extractSection( sLine, " ", 2, 2 ) );
+			if( accountIDFromFile == 0 && wAccountCount > 0 )
+			{
+				actb.wAccountIndex = wAccountCount;
+				wAccountID = wAccountCount;
+			}
+			else
+			{
+				actb.wAccountIndex = accountIDFromFile;
+				wAccountID = accountIDFromFile;
+			}
+
 			// Increment the account acount
 			++wAccountCount;
-			// Ok the section block was found, Tokenize the string to get the account #
-			actb.wAccountIndex = wAccountID = strutil::value<std::int32_t>(strutil::extractSection(sLine, " ", 2, 2 ));
+
 			// Ok, we have parsed out the account ID, Set bBraces[2] to true to allow block reading
 			bBraces[0] = false;
 			bBraces[1] = false;
@@ -197,13 +209,27 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		// Set up the tokenizing
 		auto ssecs = strutil::sections( sLine, " " );
 		auto l = strutil::stripTrim( ssecs[0] );
-		auto r = strutil::stripTrim( ssecs[1] );
+		std::string r = "";
+		if( ssecs.size() > 1 )
+		{
+			r = strutil::stripTrim( ssecs[1] );
+		}
+		//auto r = strutil::stripTrim( ssecs[1] );
 		// Parse and store based on tag
 		if( "NAME" == l )
 		{
 			if( !r.empty() && r.length() != 0 )
 			{
 				actb.sUsername = strutil::tolower(r);
+				if( ssecs.size() > 2 )
+					actb.sUsername += strutil::tolower(ssecs[2]);
+
+				// Next thing were going to do is make sure there isn't a duplicate username.
+				while( isUser( actb.sUsername ) )
+				{
+					// This username is already on the list, keep adding a random value to the end of the username until we find a free one
+					actb.sUsername += strutil::number( RandomNum(10000, 20000) );
+				}
 			}
 			else
 			{
@@ -334,13 +360,13 @@ UI16 cAccountClass::CreateAccountSystem( void )
 					}
 					WriteUADHeader(fsUADFile,actb);
 					// Need to write out the charcters
-					for( UI08 ii = 1; ii < CHARACTERCOUNT; ++ii )
+					for( UI08 ii = 1; ii < CHARACTERCOUNT + 1; ++ii )
 					{
 						fsUADFile << "CHARACTER-" << std::dec << (SI32)ii << " 0xffffffff [UNKNOWN]" << std::endl;
 					}
 					fsUADFile.close();
 					// Flood fill the actb class for accounts
-					for( UI08 i = 0; i < CHARACTERCOUNT; ++i )
+					for( UI08 i = 0; i < CHARACTERCOUNT; i++ )
 					{
 						actb.dwCharacters[i] = INVALIDSERIAL;
 						actb.lpCharacters[i] = nullptr;
@@ -367,10 +393,15 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		}
 		else if( l == "LASTIP" )
 		{
-			if( !r.empty() && r.length() != 0 )
-				actb.dwLastIP = inet_addr( r.c_str() );
+			auto psecs = strutil::sections( r, "." );
+			if( !r.empty() && r.length() != 0 && psecs.size() == 4 )
+			{
+				actb.dwLastIP = calcserial( strutil::value<SI08>( psecs[0] ), strutil::value<SI08>( psecs[1] ), strutil::value<SI08>( psecs[2] ), strutil::value<SI08>( psecs[3] ) );
+			}
 			else
+			{
 				actb.dwLastIP = 0x00000000;
+			}
 
 			std::getline( fs2, sLine );
 			continue;
@@ -427,13 +458,13 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		else if( l.substr( 0, 10 ) == "CHARACTER-" )
 		{
 			SI32 charNum = std::stoi(l.substr( 10 ) , nullptr, 0);
-			if( charNum < 1 || charNum > CHARACTERCOUNT )
+			if( charNum < 1 || charNum > CHARACTERCOUNT + 1 )
 			{
 				Console.error( "Invalid character found in accounts" );
 			}
 			else
 			{
-				if( !r.empty() && r.length() != 0 )
+				if( !r.empty() && r.length() != 0 && strutil::value<std::uint32_t>( r ) != INVALIDSERIAL )
 				{
 					actb.dwCharacters[charNum-1] = static_cast<UI32>(std::stoul(r, nullptr, 0));
 					actb.lpCharacters[charNum-1] = calcCharObjFromSer( actb.dwCharacters[charNum-1] );
@@ -505,7 +536,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 				// Ok we have to write the new username.uad file in the directory
 				WriteUADHeader( fsOut, actbTemp );
 				// Ok write out the characters and the charcter names if we know them
-				for( SI32 i = 0; i < CHARACTERCOUNT; ++i )
+				for( SI32 i = 0; i < CHARACTERCOUNT + 1; ++i )
 				{
 					fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.lpCharacters[i]->GetSerial() : INVALIDSERIAL ) << " [" << (char*)(actbTemp.lpCharacters[i] != nullptr ? actbTemp.lpCharacters[i]->GetName().c_str() : "UNKNOWN" ) << "]\n";
 				}
@@ -520,7 +551,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 					sOutFile += "/";
 				sOutFile += actbTemp.sUsername;
 				sOutFile += ".uad";
-				strutil::replaceSlash( sOutFile );
+				sOutFile = strutil::replaceSlash( sOutFile );
 				std::fstream fsOut(sOutFile.c_str(),std::ios::out);
 				if( !fsOut.is_open() )
 				{
@@ -550,7 +581,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 	// Make a back up first, then Dump to new file,
 	std::string sBUAccess(sAccessAdm);
 	sBUAccess += ".bu";
-	rename(sAccessAdm.c_str(),sBUAccess.c_str());
+	[[maybe_unused]] int renameResult = rename(sAccessAdm.c_str(),sBUAccess.c_str());
 	//
 	SI32 kk=0;
 	std::string szltoa2 ;
@@ -600,7 +631,7 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 	{
 		SERIAL charSer			= INVALIDSERIAL;
 		std::string charName	= "UNKNOWN";
-		if( actbTemp.lpCharacters[ii] != nullptr )
+		if( actbTemp.lpCharacters[ii] != nullptr && actbTemp.dwCharacters[ii] != INVALIDSERIAL )
 		{
 			charSer		= actbTemp.dwCharacters[ii];
 			charName	= actbTemp.lpCharacters[ii]->GetName();
@@ -675,7 +706,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		auto szTempBuff	=    strutil::tolower( sUsername );
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
-		strutil::replaceSlash( sTempPath );
+		sTempPath = strutil::replaceSlash( sTempPath );
 		actbTemp.sPath		= sTempPath;
 	}
 	else
@@ -684,7 +715,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		sTempPath			+= "/";
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
-		strutil::replaceSlash( sTempPath );
+		sTempPath = strutil::replaceSlash( sTempPath );
 		actbTemp.sPath = sTempPath;
 	}
 	// Ok now that we got here we need to make the directory, and create the username.uad file
@@ -712,7 +743,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		sUsernameUADPath += ".uad";
 	}
 	// Fix the paths to make sure that all the characters are unified
-	strutil::replaceSlash( sUsernameUADPath );
+	sUsernameUADPath = strutil::replaceSlash( sUsernameUADPath );
 	// Open the file in APPEND to end mode.
 	std::fstream fsAccountsUAD( sUsernameUADPath.c_str(), std::ios::out|std::ios::trunc );
 	if( !fsAccountsUAD.is_open() )
@@ -813,7 +844,7 @@ UI16 cAccountClass::Load(void)
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
-	strutil::replaceSlash(sAccountsADM);
+	sAccountsADM = strutil::replaceSlash(sAccountsADM);
 	// Check to see what version the current accounts.adm file is.
 	std::string sLine;
 	std::fstream fsAccountsADMTest(sAccountsADM.c_str(),std::ios::in);
@@ -1125,7 +1156,7 @@ UI16 cAccountClass::Load(void)
 	UI16 wImportCount = 0x0000;
 	wImportCount = ImportAccounts();
 	// Return the number of accounts loaded
-	return m_mapUsernameMap.size();
+	return static_cast<UI16>(m_mapUsernameMap.size());
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1398,7 +1429,7 @@ bool cAccountClass::DelAccount( UI16 wAccountID )
 	std::string sNewDir(szDirPath);
 	sNewDir += "_";
 	sNewDir += szDirName;
-	rename(actbID.sPath.c_str(),sNewDir.c_str());
+	[[maybe_unused]] int retVal = rename(actbID.sPath.c_str(),sNewDir.c_str());
 	// We have to run a save to make sure that the accoung it removed.
 	Save( false );
 	return true;
@@ -1620,7 +1651,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 		sTemp += "accounts.adm";
 	else
 		sTemp += "/accounts.adm";
-	strutil::replaceSlash(sTemp);
+	sTemp = strutil::replaceSlash(sTemp);
 	// Ok we have the path, now open the file and start saving
 	std::fstream fsAccountsADM(sTemp.c_str(),std::ios::out|std::ios::trunc);
 	if( !fsAccountsADM.is_open() )
@@ -1640,7 +1671,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
 			// there was an error between blocks
-			Console.error( strutil::format("Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str()) );
+			Console.error( strutil::format("Save(): Mismatch %s - %s (Duplicate username in accounts file?)", actbID.sUsername.c_str(), actbName.sUsername.c_str()) );
 			fsAccountsADM.close();
 			return 0xFFFF;
 		}
@@ -1659,7 +1690,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 				auto szTempBuff	= strutil::tolower( actbID.sUsername );
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
-				strutil::replaceSlash( sTempPath );
+				sTempPath = strutil::replaceSlash( sTempPath );
 				actbID.sPath		= sTempPath;
 			}
 			else
@@ -1668,7 +1699,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 				sTempPath			+= "/";
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
-				strutil::replaceSlash( sTempPath );
+				sTempPath = strutil::replaceSlash( sTempPath );
 				actbID.sPath		= sTempPath;
 			}
 		}
@@ -1698,7 +1729,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 			sUsernameUADPath += ".uad";
 		}
 		// Fix the paths to make sure that all the characters are unified
-		strutil::replaceSlash(sUsernameUADPath);
+		sUsernameUADPath = strutil::replaceSlash(sUsernameUADPath);
 		// Open the file in APPEND to end mode.
 		std::fstream fsAccountsUAD(sUsernameUADPath.c_str(),std::ios::out|std::ios::trunc);
 		if( !fsAccountsUAD.is_open() )
@@ -1720,7 +1751,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 	}
 	// Ok were done looping so we can close the file and return the count of accounts
 	fsAccountsADM.close();
-	return m_mapUsernameIDMap.size();
+	return static_cast<UI16>(m_mapUsernameIDMap.size());
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1746,7 +1777,7 @@ UI16 cAccountClass::ImportAccounts( void )
 	// Prepare to load in the newaccounts.adm file. This file if it exists will contain new accounts to be added to the server.
 	std::string sImportAccounts(m_sAccountsDirectory);
 	sImportAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"newaccounts.adm":"/newaccounts.adm";
-	strutil::replaceSlash(sImportAccounts);
+	sImportAccounts = strutil::replaceSlash(sImportAccounts);
 	// Check to see what version the current accounts.adm file is.
 	std::string sLine;
 	std::fstream fsInputAccountsTest( sImportAccounts.c_str(), std::ios::in );
@@ -1824,7 +1855,7 @@ UI16 cAccountClass::ImportAccounts( void )
 				// As requested we are going to stuff back accounts into their own file
 				std::string sOutputBadAccounts(m_sAccountsDirectory);
 				sOutputBadAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"failed_accounts.log":"/failed_accounts.log";
-				strutil::replaceSlash(sOutputBadAccounts);
+				sOutputBadAccounts = strutil::replaceSlash(sOutputBadAccounts);
 				// Open the file and append this to the end
 				std::fstream fsOutputBadAccounts(sOutputBadAccounts.c_str(),std::ios::app);
 				if( !fsOutputBadAccounts.is_open() )

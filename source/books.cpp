@@ -373,7 +373,7 @@ bool CPIBookPage::Handle( void )
 void cBooks::DeleteBook( CItem *id )
 {
 	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( id->GetSerial(), 16 ) + std::string(".bok");
-	remove( fileName.c_str() );
+	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 }
 
 //o-----------------------------------------------------------------------------------------------o

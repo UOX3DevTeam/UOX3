@@ -1920,7 +1920,7 @@ void Shutdown( SI32 retCode )
 #endif
 	}
 
-	if( cwmWorldState->ClassesInitialized() )
+	if( cwmWorldState && cwmWorldState->ClassesInitialized() )
 	{
 		if( HTMLTemplates )
 		{
@@ -2749,6 +2749,8 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 //o-----------------------------------------------------------------------------------------------o
 void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 {
+	if( sock == nullptr )
+		return;
 	if( !ValidateObject( gate ) || ( sock == nullptr && !ValidateObject( charMoving ) ) )
 		return;
 	UI08 tWorldNum = (UI08)gate->GetTempVar( CITV_MORE );
@@ -2756,7 +2758,7 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 	if( !Map->MapExists( tWorldNum ) )
 		return;
 	CChar *toMove = charMoving;
-	if( sock != nullptr && !ValidateObject( charMoving ) )
+	if( !ValidateObject( charMoving ) )
 		toMove = sock->CurrcharObj();
 	if( !ValidateObject( toMove ) )
 		return;
@@ -2818,7 +2820,7 @@ void DoorMacro( CSocket *s )
 						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
 						cScript *envExecute = JSMapping->GetScript( envTrig );
 						if( envExecute != nullptr )
-							envExecute->OnUseChecked( mChar, itemCheck );
+							[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
 
 						regItems->Pop();
 						return;

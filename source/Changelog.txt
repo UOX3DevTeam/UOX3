@@ -1,3 +1,14 @@
+04/07/2021 - Xuri
+	Fixed an issue with ItemID skill where using the skill on a crafted item would not output a result if creator of item was unknown
+	Command logs now also include any parameters used with a command
+	Fixed an issue where messages used with CustomTarget JS function would not get truncated properly if longer than the allowed maximum length
+	Fixed some instances of potential buffer overrun and/or out-of-bounds memory access
+	Fixed some potential null pointer dereferences
+	Fixed a couple instances of missing breaks in switch cases
+	Added [[maybe_unused]] attributes in places where return values are intentionally unused
+	Added [[fallthrough]] attributes in places where switch case fallthroughs are intentional
+	Misc minor code cleanup
+
 02/07/2021 - Xuri
 	Corpse parts carved from human corpses will now have weight, and decay - as they're added as script items instead of base items
 	Fixed some memory leaks in CMultiObj::GetBuildTimestamp(), CMultiObj::GetTradeTimestamp(), CWorldMain::SaveNewWorld() and cEffects::tempeffect()

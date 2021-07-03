@@ -1526,7 +1526,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 	}
 
 	// Iterate through list of valid targets, do damage
-	targCount = targetList.size();
+	targCount = static_cast<SI08>(targetList.size());
 	for( i = 0; i < targetList.size(); ++i )
 	{
 		trgFunc( caster, targetList[i], curSpell, targCount );
@@ -2211,7 +2211,8 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z )
 {
-	if( s != nullptr )
+	bool validSocket = ( s != nullptr );
+	if( validSocket )
 		caster = s->CurrcharObj();
 	else
 	{	// Since caster will determine who is casting the spell... get a socket for players to see animations and hear effects
@@ -2228,7 +2229,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			newChar = Npcs->CreateRandomNPC( "10000" );
 			if( !ValidateObject( newChar ) )
 			{
-				s->sysmessage( 694 );
+				if( validSocket )
+					s->sysmessage( 694 );
 				return;
 			}
 			newChar->SetOwner( caster );
@@ -2237,7 +2239,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
 			newChar->SetFTarg( caster );
 			newChar->SetNpcWander( WT_FOLLOW );
-			s->sysmessage( 695 );
+			if( validSocket )
+				s->sysmessage( 695 );
 			return;
 		case 1: // Energy Vortex
 			Effects->PlaySound( s, 0x0216, true ); // EV
@@ -2297,7 +2300,6 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 		else
 			newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
 	}
-
 
 	newChar->SetSpDelay( 10 );
 	newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
@@ -3279,7 +3281,8 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	{
 		if( !cwmWorldState->ServerData()->TravelSpellsWhileAggressor() && ( ( caster->DidAttackFirst() && ValidateObject( caster->GetTarg() ) && caster->GetTarg()->IsInnocent() ) || caster->IsCriminal() ) )
 		{
-			s->sysmessage( 2066 ); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
+			if( validSocket )
+				s->sysmessage( 2066 ); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
 			return;
 		}
 	}
