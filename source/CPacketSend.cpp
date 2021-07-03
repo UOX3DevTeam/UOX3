@@ -3714,6 +3714,89 @@ void CPLoginDeny::DenyReason( LoginDenyReason reason )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPCharDeleteResult()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with result of characterdeletion request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x85 (Delete Result)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE result
+//|
+//|					Deletion results handled by client:
+//|						0x00 - Incorrect password
+//|						0x01 - Character does not exist
+//|						0x02 - Character is currently being played
+//|						0x03 - Character is too young to delete
+//|						0x04 - Character is queued for deletion
+//|						0x05 - Bad request
+//o-----------------------------------------------------------------------------------------------o
+void CPCharDeleteResult::InternalReset( void )
+{
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0x85 );
+}
+CPCharDeleteResult::CPCharDeleteResult()
+{
+	InternalReset();
+}
+CPCharDeleteResult::CPCharDeleteResult( CharacterDeletionResult result )
+{
+	InternalReset();
+	DeleteResult( result );
+}
+void CPCharDeleteResult::DeleteResult( CharacterDeletionResult result )
+{
+	pStream.WriteByte( 1, result );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CharacterListUpdate()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with updated character list
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x86 (Character Lits Update)
+//|					Size: variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] len
+//|						BYTE[1] number of characters( slots 5, 6 or 7 )
+//|						loop characters( 5, 6 or 7 ) :
+//|							BYTE[30] character name
+//|							BYTE[30] character password
+//|						endloop( characters )
+//|
+//|					Deletion results handled by client:
+//|						0x00 - Incorrect password
+//|						0x01 - Character does not exist
+//|						0x02 - Character is currently being played
+//|						0x03 - Character is too young to delete
+//|						0x04 - Character is queued for deletion
+//|						0x05 - Bad request
+//o-----------------------------------------------------------------------------------------------o
+CharacterListUpdate::CharacterListUpdate( UI08 charCount)
+{
+	numChars = charCount;
+	InternalReset();
+}
+void CharacterListUpdate::InternalReset( void )
+{
+	UI16 packetLen = 4 + ( numChars * 60 );
+	pStream.ReserveSize( packetLen );
+	pStream.WriteByte( 0, 0x86 );
+	pStream.WriteShort( 1, packetLen );
+	pStream.WriteByte( 3, numChars );
+}
+void CharacterListUpdate::AddCharName( UI08 charNum, std::string charName )
+{
+	UI16 byteOffset = 4 + ( charNum > 0 ? ( charNum * 60 ) : 0 );
+	pStream.WriteString( byteOffset, charName, 60 );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPKREncryptionRequest()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with encryption request for KR3D client

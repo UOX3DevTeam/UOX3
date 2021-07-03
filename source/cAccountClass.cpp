@@ -10,6 +10,7 @@
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "cVersionClass.h"
+#include "enums.h"
 #include <cstdint>
 #include <filesystem>
 #include "StringUtility.hpp"
@@ -458,7 +459,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		else if( l.substr( 0, 10 ) == "CHARACTER-" )
 		{
 			SI32 charNum = std::stoi(l.substr( 10 ) , nullptr, 0);
-			if( charNum < 1 || charNum > CHARACTERCOUNT + 1 )
+			if( charNum < 1 || charNum > CHARACTERCOUNT )
 			{
 				Console.error( "Invalid character found in accounts" );
 			}
@@ -536,7 +537,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 				// Ok we have to write the new username.uad file in the directory
 				WriteUADHeader( fsOut, actbTemp );
 				// Ok write out the characters and the charcter names if we know them
-				for( SI32 i = 0; i < CHARACTERCOUNT + 1; ++i )
+				for( SI32 i = 0; i < CHARACTERCOUNT; ++i )
 				{
 					fsOut << "CHARACTER-" << (i+1) << " 0x" << std::hex << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.lpCharacters[i]->GetSerial() : INVALIDSERIAL ) << " [" << (char*)(actbTemp.lpCharacters[i] != nullptr ? actbTemp.lpCharacters[i]->GetName().c_str() : "UNKNOWN" ) << "]\n";
 				}
@@ -1469,8 +1470,7 @@ std::string cAccountClass::GetPath( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DelCharacter( UI16 wAccountID, UI08 nSlot )
-//|	Date		-	12/19/2002 12:45:10 AM
+//|	Function	-	SI08 DelCharacter( UI16 wAccountID, UI08 nSlot )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a character from the accounts map. Currently this
 //|						character object resource is not freed. The Character ID,
@@ -1484,80 +1484,99 @@ std::string cAccountClass::GetPath( void )
 //|						game that a GM can use to locate, or even assign to another
 //|						account.
 //o-----------------------------------------------------------------------------------------------o
-bool cAccountClass::DelCharacter( UI16 wAccountID, UI08 nSlot )
+SI08 cAccountClass::DelCharacter( UI16 wAccountID, UI08 nSlot )
 {
 	// Do the simple here, save us some work
-	if( nSlot > CHARACTERCOUNT )
-		return false;
+	if( nSlot >= CHARACTERCOUNT )
+		return CDR_BADREQUEST;
+
 	// ok were going to need to get the respective blocked from the maps
-	MAPUSERNAMEID_ITERATOR I=m_mapUsernameIDMap.find(wAccountID);
-	if( I==m_mapUsernameIDMap.end() )
-		return false;
+	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
+	if( I == m_mapUsernameIDMap.end() )
+		return CDR_CHARNOTFOUND;
 	CAccountBlock& actbID = I->second;
+
 	// Ok now that we have the ID Map block we can get the Username Block
-	MAPUSERNAME_ITERATOR J=m_mapUsernameMap.find(actbID.sUsername);
-	if( J==m_mapUsernameMap.end() )
-		return false;
+	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
+	if( J == m_mapUsernameMap.end() )
+		return CDR_BADPASSWORD;
 	CAccountBlock& actbName=(*J->second);
+
 	// Check to see if this record has been flagged changed
-	if( actbID.bChanged )
+	// Edit: What's this supposed to do? All it does is prevent players from deleting their character on the first try... then it succeedes on the second try
+	/*if( actbID.bChanged )
 	{
 		I->second.bChanged = false;
-		return false;
-	}
+		return CDR_CHARISQUEUED;
+	}*/
+
 	// We have both blocks now. We should validate the slot, and make the changes
-	if( actbID.dwCharacters[nSlot]==INVALIDSERIAL||actbName.dwCharacters[nSlot]==INVALIDSERIAL )
-		return false;
+	if( actbID.dwCharacters[nSlot] == INVALIDSERIAL || actbName.dwCharacters[nSlot] == INVALIDSERIAL )
+		return CDR_CHARNOTFOUND;
+
 	// We need to make a entry in the orphan.adm file for this block before we change it
 	std::string sTempPath(m_sAccountsDirectory);
-	if( sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/' )
+	if( sTempPath[sTempPath.length() - 1] == '\\' || sTempPath[sTempPath.length() - 1] == '/' )
 		sTempPath += "orphans.adm";
 	else
 		sTempPath += "/orphans.adm";
+
 	// First lets see if the file exists.
 	bool bOrphanHeader=false;
-	std::fstream fsOrphansADMTest(sTempPath.c_str(),std::ios::in);
+	std::fstream fsOrphansADMTest(sTempPath.c_str(), std::ios::in);
 	if( !fsOrphansADMTest.is_open() )
-		bOrphanHeader=true;
+		bOrphanHeader = true;
 	fsOrphansADMTest.close();
+
 	// ok open the stream for append and add this record to the end of the file
-	std::fstream fsOrphansADM(sTempPath.c_str(),std::ios::out|std::ios::app);
+	std::fstream fsOrphansADM(sTempPath.c_str(), std::ios::out|std::ios::app);
 	if( !fsOrphansADM.is_open() )
-		return false;
+		return CDR_BADREQUEST;
+
 	// If this is a new file then we need to write the header first
 	if( bOrphanHeader )
 	{
 		WriteOrphanHeader(fsOrphansADM);
 	}
+
 	// Ok build then write what we need to the file
-	fsOrphansADM << actbID.sUsername << "=0x" << std::hex << actbID.dwCharacters[nSlot] << "," << (actbID.lpCharacters[nSlot]!=nullptr?actbID.lpCharacters[nSlot]->GetName():"UNKNOWN") << ",0x" << (actbID.lpCharacters[nSlot]!=nullptr?actbID.lpCharacters[nSlot]->GetX():0) << ",0x" << (actbID.lpCharacters[nSlot]!=nullptr?actbID.lpCharacters[nSlot]->GetY():0) << "," << std::dec << (actbID.lpCharacters[nSlot]!=nullptr?(SI32)actbID.lpCharacters[nSlot]->GetZ():(SI32)0) << std::endl;
+	fsOrphansADM << actbID.sUsername << "=0x" << std::hex << actbID.dwCharacters[nSlot] << "," 
+		<< (actbID.lpCharacters[nSlot] != nullptr ? actbID.lpCharacters[nSlot]->GetName() : "UNKNOWN") << ",0x" 
+		<< (actbID.lpCharacters[nSlot] != nullptr ? actbID.lpCharacters[nSlot]->GetX() : 0) << ",0x" 
+		<< (actbID.lpCharacters[nSlot] != nullptr ? actbID.lpCharacters[nSlot]->GetY() : 0) << "," << std::dec 
+		<< (actbID.lpCharacters[nSlot] != nullptr ? (SI32)actbID.lpCharacters[nSlot]->GetZ() : (SI32)0) << std::endl;
 	fsOrphansADM.close();
+
 	// Ok there is something in this slot so we should remove it.
-	actbID.dwCharacters[nSlot]=actbName.dwCharacters[nSlot]=INVALIDSERIAL;
-	actbID.lpCharacters[nSlot]=actbName.lpCharacters[nSlot]=nullptr;
+	actbID.dwCharacters[nSlot] = actbName.dwCharacters[nSlot] = INVALIDSERIAL;
+	actbID.lpCharacters[nSlot] = actbName.lpCharacters[nSlot] = nullptr;
+
 	// need to reorder the accounts or have to change the addchar code to ignore invalid serials(earier here)
 	CAccountBlock actbScratch;
 	actbScratch.reset();
 	actbScratch = actbID;
-	SI32 kk=0;
+	SI32 kk = 0;
+
 	// Dont mind this loop, becuase we needed a copy of the data too we need to invalidate actbScracthes pointers, and indexs
 	for( UI08 ll = 0; ll < CHARACTERCOUNT; ++ll )
 	{
-		if( actbID.dwCharacters[ll]!=INVALIDSERIAL && actbID.lpCharacters[ll]!=nullptr )
+		if( actbID.dwCharacters[ll] != INVALIDSERIAL && actbID.lpCharacters[ll] != nullptr )
 		{
 			// OK we keep this entry
-			actbScratch.dwCharacters[kk]=actbID.dwCharacters[ll];
-			actbScratch.lpCharacters[kk]=actbID.lpCharacters[ll];
-			kk+=1;
+			actbScratch.dwCharacters[kk] = actbID.dwCharacters[ll];
+			actbScratch.lpCharacters[kk] = actbID.lpCharacters[ll];
+			kk += 1;
 		}
 	}
-	UI08 jj = 0;
+
 	// Fill the rest with standard empty values.
+	UI08 jj = 0;
 	for( jj = kk; jj < CHARACTERCOUNT; ++jj )
 	{
-		actbScratch.dwCharacters[jj]=INVALIDSERIAL;
-		actbScratch.lpCharacters[jj]=nullptr;
+		actbScratch.dwCharacters[jj] = INVALIDSERIAL;
+		actbScratch.lpCharacters[jj] = nullptr;
 	}
+
 	// Now copy back out the info to the structures
 	for( jj = 0; jj < CHARACTERCOUNT; ++jj )
 	{
@@ -1565,19 +1584,19 @@ bool cAccountClass::DelCharacter( UI16 wAccountID, UI08 nSlot )
 		actbID.lpCharacters[jj] = actbName.lpCharacters[jj] = actbScratch.lpCharacters[jj];
 	}
 	actbID.bChanged = actbName.bChanged = true;
+
 	// Now we have to put the values back into the maps
 	try
 	{
 		I->second = actbID;
-		//MAPUSERNAMEID_ITERATOR Q = m_mapUsernameIDMap.find(actbID.wAccountIndex);
-		m_mapUsernameIDMap.find(actbID.wAccountIndex);
-		Save(false);
+		[[maybe_unused]] MAPUSERNAMEID_ITERATOR Q = m_mapUsernameIDMap.find(actbID.wAccountIndex);
+		Save( false );
 	}
 	catch( ... )
 	{
-		return false;
+		return CDR_BADREQUEST;
 	}
-	return true;
+	return CDR_SUCCESS;
 }
 
 //o-----------------------------------------------------------------------------------------------o

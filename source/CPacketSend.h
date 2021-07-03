@@ -1136,6 +1136,33 @@ public:
 	virtual void	DenyReason( LoginDenyReason reason );
 };
 
+class CPCharDeleteResult : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+public:
+	virtual			~CPCharDeleteResult()
+	{
+	}
+	CPCharDeleteResult();
+	CPCharDeleteResult( CharacterDeletionResult result );
+	virtual void	DeleteResult( CharacterDeletionResult result );
+};
+
+class CharacterListUpdate : public CPUOXBuffer
+{
+protected:
+	UI08			numChars;
+	virtual void	InternalReset( void ) override;
+public:
+	virtual			~CharacterListUpdate()
+	{
+	}
+	CharacterListUpdate();
+	CharacterListUpdate( UI08 charCount );
+	virtual void	AddCharName( UI08 charCount, std::string charName );
+};
+
 class CPKREncryptionRequest : public CPUOXBuffer
 {
 public:

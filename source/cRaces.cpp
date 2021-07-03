@@ -1238,6 +1238,8 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 	SI32 raceDiff = 0;
 	std::string sect = std::string("RACE ") + strutil::number( sectNum );
 	ScriptSection *RacialPart = FileLookup->FindEntry( sect, race_def );
+	if( RacialPart == nullptr )
+		return;
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
 

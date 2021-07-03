@@ -3370,7 +3370,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		{
 			// TARGET CALC HERE
 			CChar *c = nullptr;
-			if( !caster->IsNpc() )
+			if( validSocket && !caster->IsNpc() )
 				c = calcCharObjFromSer( s->GetDWord( 7 ) );
 			else
 				c = caster->GetTarg();
@@ -3480,18 +3480,21 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 54:	// Mass Dispel
 						case 55:	// Meteor Swarm
 						{
-							scriptTriggers.clear();
-							scriptTriggers.shrink_to_fit();
-							scriptTriggers = i->GetScriptTriggers();
-							for( auto scriptTrig : scriptTriggers )
+							if( ValidateObject( i ))
 							{
-								cScript *toExecute = JSMapping->GetScript( scriptTrig );
-								if( toExecute != nullptr )
+								scriptTriggers.clear();
+								scriptTriggers.shrink_to_fit();
+								scriptTriggers = i->GetScriptTriggers();
+								for( auto scriptTrig : scriptTriggers )
 								{
-									toExecute->OnSpellTarget( c, caster, curSpell );
+									cScript *toExecute = JSMapping->GetScript( scriptTrig );
+									if( toExecute != nullptr )
+									{
+										toExecute->OnSpellTarget( c, caster, curSpell );
+									}
 								}
+								(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );
 							}
-							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );
 							break;
 						}
 						default:

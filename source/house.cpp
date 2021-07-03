@@ -143,55 +143,71 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 				}
 				else if( UTag == "DECAY" )
 				{
-					hItem->SetDecayable( true );
+					if( ValidateObject( hItem ))
+						hItem->SetDecayable( true );
 				}
 				else if( UTag == "NODECAY" )
 				{
-					hItem->SetDecayable( false );
+					if( ValidateObject( hItem ) )
+						hItem->SetDecayable( false );
 				}
 				else if( UTag == "PACK" )//put the item in the Builder's Backpack
 				{
-					CItem *pack = mChar->GetPackItem();
-					hItem->SetCont( pack );
-					hItem->PlaceInPack();
+					if( ValidateObject( hItem ) )
+					{
+						CItem *pack = mChar->GetPackItem();
+						hItem->SetCont( pack );
+						hItem->PlaceInPack();
+					}
 				}
 				else if( UTag == "MOVEABLE" )
 				{
-					hItem->SetMovable( 1 );
+					if( ValidateObject( hItem ) )
+						hItem->SetMovable( 1 );
 				}
 				else if( UTag == "INVISIBLE" )
 				{
-					hItem->SetVisible( VT_PERMHIDDEN );
+					if( ValidateObject( hItem ) )
+						hItem->SetVisible( VT_PERMHIDDEN );
 				}
 				else if( UTag == "LOCK" && houseID >= 0x4000 )//lock it with the house key
 				{
-					hItem->SetTempVar( CITV_MORE, house->GetSerial() );
-					if( hItem->GetType() == IT_HOUSESIGN )
+					if( ValidateObject( hItem ) )
 					{
-						// Also store a reference to the sign on the house itself
-						house->SetTempVar( CITV_MORE, hItem->GetSerial() );
+						hItem->SetTempVar( CITV_MORE, house->GetSerial() );
+						if( hItem->GetType() == IT_HOUSESIGN )
+						{
+							// Also store a reference to the sign on the house itself
+							house->SetTempVar( CITV_MORE, hItem->GetSerial() );
+						}
 					}
 				}
 				else if( UTag == "FRONTDOOR" )
 				{
-					TAGMAPOBJECT frontDoorTag;
-					frontDoorTag.m_Destroy		= FALSE;
-					frontDoorTag.m_StringValue	= "front";
-					frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
-					frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
-					hItem->SetTag( "DoorType", frontDoorTag );
+					if( ValidateObject( hItem ) )
+					{
+						TAGMAPOBJECT frontDoorTag;
+						frontDoorTag.m_Destroy		= FALSE;
+						frontDoorTag.m_StringValue	= "front";
+						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
+						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+						hItem->SetTag( "DoorType", frontDoorTag );
 
-					// Lock it automatically since house is private when placed initially
-					hItem->SetType( IT_LOCKEDDOOR );
+						// Lock it automatically since house is private when placed initially
+						hItem->SetType( IT_LOCKEDDOOR );
+					}
 				}
 				else if( UTag == "INTERIORDOOR" )
 				{
-					TAGMAPOBJECT frontDoorTag;
-					frontDoorTag.m_Destroy		= FALSE;
-					frontDoorTag.m_StringValue	= "interior";
-					frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
-					frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
-					hItem->SetTag( "DoorType", frontDoorTag );
+					if( ValidateObject( hItem ) )
+					{
+						TAGMAPOBJECT frontDoorTag;
+						frontDoorTag.m_Destroy		= FALSE;
+						frontDoorTag.m_StringValue	= "interior";
+						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
+						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+						hItem->SetTag( "DoorType", frontDoorTag );
+						}
 				}
 				else if( UTag == "X" ) //offset + or - from the center of the house:
 				{
@@ -770,10 +786,17 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	if( isBoat ) //Boats
 	{
 		CBoatObj *bObj = static_cast<CBoatObj *>(house);
+		if( bObj == nullptr || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
+		{
+			house->Delete();
+			return;
+		}
+
 		bObj->SetWeightMax( weightMax );
 		bObj->SetMaxItems( maxItems );
 		bObj->SetDamageable( isDamageable );
-		if( bObj == nullptr || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
+
+		if( !CreateBoat( mSock, bObj, ( houseID % 256 ), houseEntry ) )
 		{
 			house->Delete();
 			return;

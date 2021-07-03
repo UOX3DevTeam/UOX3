@@ -126,16 +126,16 @@ void Socket::setOptions(SOCKET fd) {
 	unsigned long one = 1 ;
 	
 #if PLATFORM == MACOS
-	setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-	setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &one, sizeof(one));
+	[[maybe_unused]] int retVal = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+	[[maybe_unused]] int retVal = setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &one, sizeof(one));
 	ioctl( fd, FIONBIO, &one );
 
 #elif PLATFORM == LINUX
-	setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+	[[maybe_unused]] int retVal = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 	ioctl( fd, FIONBIO, &one );
 
 #elif PLATFORM == WINDOWS
-	ioctlsocket( fd, FIONBIO, &one );
+	[[maybe_unused]] int retVal = ioctlsocket( fd, FIONBIO, &one );
 #endif
 }
 //============================================================================

@@ -2751,7 +2751,7 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 {
 	if( sock == nullptr )
 		return;
-	if( !ValidateObject( gate ) || ( sock == nullptr && !ValidateObject( charMoving ) ) )
+	if( !ValidateObject( gate ) || !ValidateObject( charMoving ) )
 		return;
 	UI08 tWorldNum = (UI08)gate->GetTempVar( CITV_MORE );
 	UI16 tInstanceID = gate->GetInstanceID();

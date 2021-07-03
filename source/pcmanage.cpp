@@ -417,6 +417,7 @@ bool CPIDeleteCharacter::Handle( void )
 {
 	if( tSock != nullptr )
 	{
+		SI08 deleteResult = -1;
 		CAccountBlock * actbTemp = &tSock->GetAccount();
 		UI08 slot = tSock->GetByte( 0x22 );
 		if( actbTemp->wAccountIndex != AB_INVALID_ID )
@@ -424,8 +425,9 @@ bool CPIDeleteCharacter::Handle( void )
 			CChar *ourObj = actbTemp->lpCharacters[slot];
 			if( ValidateObject( ourObj ) )	// we have a char
 			{
-				Accounts->DelCharacter( actbTemp->wAccountIndex , slot );
-				ourObj->Delete();
+				deleteResult = Accounts->DelCharacter( actbTemp->wAccountIndex , slot );
+				if( deleteResult == CDR_SUCCESS )
+					ourObj->Delete();
 			}
 		}
 		else
@@ -435,23 +437,39 @@ bool CPIDeleteCharacter::Handle( void )
 			actbTemp = &Accounts->GetAccountByID( actbTemp->wAccountIndex );
 		}
 
-		UI08 charCount = 0;
-		for( UI08 i = 0; i < 7; ++i )
+		// For modern clients (?) we need to send packets 0x85 and 0x86 here!
+		if( deleteResult != CDR_SUCCESS )
 		{
-			if( ValidateObject( actbTemp->lpCharacters[i] ) )
-				++charCount;
+			// 0x85 - DeleteResult - only send if deletion failed!
+			CPCharDeleteResult pckDelResult( static_cast<CharacterDeletionResult>(deleteResult) );
+			tSock->Send( &pckDelResult );
 		}
-		CServerData *sd		= cwmWorldState->ServerData();
-		UI08 serverCount	= static_cast<UI08>(sd->NumServerLocations());
-		CPCharAndStartLoc toSend( (*actbTemp), charCount, serverCount, tSock );
-		for( UI08 j = 0; j < serverCount; ++j )
+		else
 		{
-			if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13 )
-				toSend.NewAddStartLocation( sd->ServerLocation( j ), j );
-			else
-				toSend.AddStartLocation( sd->ServerLocation( j ), j );
+			UI08 charCount = 0;
+			for( UI08 i = 0; i < 7; ++i )
+			{
+				if( ValidateObject( actbTemp->lpCharacters[i] ) )
+					++charCount;
+			}
+
+			// 0x86 - Resend Characters after Delete
+			CharacterListUpdate pckCharList( charCount );
+			for( UI08 i = 0; i < charCount; ++i )
+			{
+				if( ValidateObject( actbTemp->lpCharacters[i] ) )
+					pckCharList.AddCharName( i, actbTemp->lpCharacters[i]->GetName() );
+				else
+					pckCharList.AddCharName( i, "" );
+			}
+
+			// If no characters exist, send an empty character list
+			if( charCount == 0 )
+			{
+				pckCharList.AddCharName( 0, "" );
+			}
+			tSock->Send( &pckCharList );
 		}
-		tSock->Send( &toSend );
 	}
 	return true;
 }

@@ -993,6 +993,9 @@ void killKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o-----------------------------------------------------------------------------------------------o
 void ModelBoat( CSocket *s, CBoatObj *i )
 {
+	if( s == nullptr )
+		return;
+
 	CItem *tiller	= calcItemObjFromSer( i->GetTiller() );
 	CItem *p1		= calcItemObjFromSer( i->GetPlank( 0 ) );
 	CItem *p2		= calcItemObjFromSer( i->GetPlank( 1 ) );
@@ -1017,8 +1020,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		{
 			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
 			{
-				if( s != nullptr )
-					s->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+				s->sysmessage( 1819 ); // Your backpack cannot hold any more items!
 				return;
 			}
 		}
