@@ -152,7 +152,7 @@ public:
 	bool					isUser( std::string sUsername );
 	bool					AddCharacter( UI16 wAccountID, CChar *lpObject );
 	bool					AddCharacter( UI16 wAccountID, UI32 dwCharacterID, CChar *lpObject );
-	bool					DelCharacter( UI16 wAccountID, UI08 nSlot );
+	SI08					DelCharacter( UI16 wAccountID, UI08 nSlot );
 	bool					TransCharacter( UI16 wSAccountID, UI16 wSSlot, UI16 wDAccountID );
 	CAccountBlock&			GetAccountByName( std::string sUsername );
 	CAccountBlock&			GetAccountByID( UI16 wAccountID );

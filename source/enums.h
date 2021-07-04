@@ -194,6 +194,17 @@ enum FontType
     FNT_UNKNOWN
 };
 
+enum CharacterDeletionResult
+{
+	CDR_BADPASSWORD = 0x00,
+	CDR_CHARNOTFOUND,
+	CDR_CHARISBUSY,
+	CDR_CHARISTOOYOUNG,
+	CDR_CHARISQUEUED,
+	CDR_BADREQUEST,
+	CDR_SUCCESS
+};
+
 enum PickupLocations
 {
     PL_NOWHERE = 0,
