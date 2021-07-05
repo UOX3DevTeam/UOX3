@@ -50,6 +50,7 @@ function onCallback0( pSock, ourObj )
 						ourObj.type = 12;
 					else if( iType == 64 )
 						ourObj.type = 63;
+					ourObj.Refresh();
 					pSock.SoundEffect( 0x01FF, false );
 					pSock.SysMessage( GetDictionaryEntry( 935, pSock.language ) );
 				}

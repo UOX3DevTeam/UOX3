@@ -36,10 +36,6 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	if( socket == null )
 		return;
 
-	// Tooltips with additional arguments are only supported by clients v7.0.16 and higher
-	if( socket.clientMajorVer < 7 && socket.clientMinorVer == 0 && socket.clientSubVer < 16 )
-		enableTooltips = false;
-
 	// Close existing instance of gump that's open, if any
 	var gumpID = scriptID + 0xffff;
 	socket.CloseGump( gumpID, 0 );
@@ -54,7 +50,7 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddBackground( 0, 0, gumpMainBackgroundWidth, gumpMainBackgroundHeight, gumpMainBackground );
 	adminWelcome.AddButton( 345, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Close Gump" ); // Close Gump menu
+		adminWelcome.AddToolTip( 1050045, socket, "Close Gump" ); // Close Gump menu
 
 	// Add a checkered overlay over the background we just added
 	if( enableTransparentGump )
@@ -71,7 +67,7 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddHTMLGump( 20, 117, 240, 80, true, false, "<p>Start with the <basefont color=#3D9A2B>default UOX3 world</basefont> to get a world that's already decorated with doors, signs, lights and other items!</p>" );
 	adminWelcome.AddHTMLGump( 120, 117, 120, 80, false, false, " " );
 		if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
+		adminWelcome.AddToolTip( 1050045, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
 	adminWelcome.AddGump( -30, 150, 30065 );
 
 	// adminWelcome.AddBackground( 15, 205, 260, 80, 3000 );
@@ -83,12 +79,12 @@ function DisplayAdminWelcomeGump( socket, pChar )
 
 	adminWelcome.AddButton( 290, 145, defaultWorldButtonOff, defaultWorldButtonOn, 0, 2, 0 ); 	// Okay Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
+		adminWelcome.AddToolTip( 1050045, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
 	adminWelcome.AddHTMLGump( 285, 125, 160, 30, false, false, "<basefont color=#5ADC40>Default World</basefont>" );
 
 	adminWelcome.AddButton( 290, 230, blankSlateButtonOff, blankSlateButtonOn, 0, 20, 0 ); 	// Cancel Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "I want to start with a blank slate!" ); // Cancel Gump menu
+		adminWelcome.AddToolTip( 1050045, socket, "I want to start with a blank slate!" ); // Cancel Gump menu
 	adminWelcome.AddHTMLGump( 290, 210, 85, 30, false, false, "<basefont color=#FF2D2D>Blank Slate</basefont>" );
 
 	////////// PAGE 2 //////////
@@ -115,7 +111,7 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddBackground( 0, 0, gumpMainBackgroundWidth, gumpMainBackgroundHeight, gumpMainBackground );
 	adminWelcome.AddButton( 345, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Close Gump" ); // Close Gump menu
+		adminWelcome.AddToolTip( 1050045, socket, "Close Gump" ); // Close Gump menu
 
 	adminWelcome.AddBackground( 10, 25, 140, 230, gumpSecondaryBackground );
 	// Add a checkered overlay over the background we just added
@@ -153,7 +149,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddBackground( 0, 0, 530, gumpMainBackgroundHeight + 100, gumpMainBackground );
 	adminWelcome.AddButton( 460, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Close Gump" ); // Close Gump menu
+		adminWelcome.AddToolTip( 1050045, socket, "Close Gump" ); // Close Gump menu
 
 	if( enableTransparentGump )
 		adminWelcome.AddCheckerTrans( 0, 5, 530, gumpMainBackgroundHeight + 90 );
@@ -188,22 +184,22 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddCheckbox( 410, 210, 9722, 2153, 1, checkboxStartID + 5 );
 	adminWelcome.AddHTMLGump( 445, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Doors, doors and more doors!<br> Almost every building has one - or more!" );
+		adminWelcome.AddToolTip( 1050045, socket, "Doors, doors and more doors!<br> Almost every building has one - or more!" );
 	adminWelcome.AddHTMLGump( 445, 95, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Signs</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Signs on shop buildings, and roadsigns" );
+		adminWelcome.AddToolTip( 1050045, socket, "Signs on shop buildings, and roadsigns" );
 	adminWelcome.AddHTMLGump( 445, 125, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Lights</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Lights of all kinds:<br> lampposts, candles, wall-mounted torches, etc." );
+		adminWelcome.AddToolTip( 1050045, socket, "Lights of all kinds:<br> lampposts, candles, wall-mounted torches, etc." );
 	adminWelcome.AddHTMLGump(445, 155, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Moongates</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Moongates placed at fixed locations around the world" );
+		adminWelcome.AddToolTip( 1050045, socket, "Moongates placed at fixed locations around the world" );
 	adminWelcome.AddHTMLGump( 445, 185, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Teleporters</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Teleporter objects that teleport players<br> from one location to another" );
+		adminWelcome.AddToolTip( 1050045, socket, "Teleporter objects that teleport players<br> from one location to another" );
 	adminWelcome.AddHTMLGump( 445, 215, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Misc</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Miscellanous items like plants,<br> and smaller decorations in houses, etc" );
+		adminWelcome.AddToolTip( 1050045, socket, "Miscellanous items like plants,<br> and smaller decorations in houses, etc" );
 
 	adminWelcome.AddGump( 483, 0, 10410 );
 	adminWelcome.AddGump( 483, 200, 10412 );
@@ -214,10 +210,10 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	// Add buttons to cancel/get things going
 	adminWelcome.AddButton( 308, 273, previousPageButtonOff, previousPageButtonOn, 0, 1, 0 ); 	// Previous Page Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "I changed my mind, go back!" );
+		adminWelcome.AddToolTip( 1050045, socket, "I changed my mind, go back!" );
 	adminWelcome.AddButton( 420, 265, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( 1114778, socket, "Load default UOX3 world" );
+		adminWelcome.AddToolTip( 1050045, socket, "Load default UOX3 world" );
 
 	var facetText = "";
 	switch( pageNum )
@@ -264,7 +260,7 @@ function DisplayLoadingWorldTips( socket )
 	worldLoadTips.AddBackground( 0, 0, gumpMainBackgroundWidth, gumpMainBackgroundHeight + 120, gumpMainBackground );
 	worldLoadTips.AddButton( 345, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 	if( enableTooltips )
-		worldLoadTips.AddToolTip( 1114778, socket, "Close Gump" ); // Close Gump menu
+		worldLoadTips.AddToolTip( 1050045, socket, "Close Gump" ); // Close Gump menu
 	worldLoadTips.AddBackground( 265, 95, 125, 290, gumpSecondaryBackground );
 
 	// Add a checkered overlay over the background we just added
@@ -289,7 +285,7 @@ function DisplayLoadingWorldTips( socket )
 
 	worldLoadTips.AddButton( 150, 393, 12006, 12007, 1, 0, 0 ); 	// Close Button
 	if( enableTooltips )
-		worldLoadTips.AddToolTip( 1114778, socket, "Sounds good. Let me have at it!" );
+		worldLoadTips.AddToolTip( 1050045, socket, "Sounds good. Let me have at it!" );
 
 	worldLoadTips.Send( socket );
 	worldLoadTips.Free();

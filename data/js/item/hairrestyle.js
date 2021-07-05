@@ -6,10 +6,6 @@ function onUseChecked( pUser, iUsed )
 	socket.tempObj = iUsed;
 	if( iUsed.container != null )
 	{
-		// Tooltips with additional arguments are only supported by clients v7.0.16 and higher
-		if( socket.clientMajorVer < 7 && socket.clientMinorVer == 0 && socket.clientSubVer < 16 )
-			enableTooltips = false;
-
 		if( pUser.id == 0x191 )
 		{
 			var hsGump = new Gump;
@@ -19,43 +15,43 @@ function onUseChecked( pUser, iUsed )
 			hsGump.AddHTMLGump( 100, 25, 400, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2075, socket.language ) + "</CENTER>" ); // HAIRSTYLE SELECTION MENU
 			hsGump.AddHTMLGump( 210, 342, 90, 35, 0, 0, GetDictionaryEntry( 2090, socket.language ) ); // CANCEL
 			hsGump.AddBackground( 175, 50, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2084, socket.language ) ); // Short
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2084, socket.language ) ); // Short
 			hsGump.AddGump( 110, 10, 0xed1c ); // Short
 			hsGump.AddButton( 140, 60, 0xfa5, 1, 0, 1 );
 			hsGump.AddBackground( 175, 120, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2085, socket.language ) ); // Long
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2085, socket.language ) ); // Long
 			hsGump.AddGump( 110, 80, 0xed1d ); // Long
 			hsGump.AddButton( 140, 130, 0xfa5, 1, 0, 2 );
 			hsGump.AddBackground( 175, 190, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2086, socket.language ) ); // Ponytail
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2086, socket.language ) ); // Ponytail
 			hsGump.AddGump( 110, 150, 0xed1e ); // Ponytail
 			hsGump.AddButton( 140, 200, 0xfa5, 1, 0, 3 );
 			hsGump.AddBackground( 175, 260, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2087, socket.language ) ); // Mohawk
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2087, socket.language ) ); // Mohawk
 			hsGump.AddGump( 110, 220, 0xed27 ); // Mohawk
 			hsGump.AddButton( 140, 270, 0xfa5, 1, 0, 4 );
 			hsGump.AddBackground( 275, 50, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2080, socket.language ) ); // Pageboy
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2080, socket.language ) ); // Pageboy
 			hsGump.AddGump( 210, 10, 0xED26 ); // Pageboy
 			hsGump.AddButton( 240, 60, 0xfa5, 1, 0, 5 );
 			hsGump.AddBackground( 275, 120, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2089, socket.language ) ); // Buns
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2089, socket.language ) ); // Buns
 			hsGump.AddGump( 210, 80, 0xed28 ); // Buns
 			hsGump.AddButton( 240, 130, 0xfa5, 1, 0, 6 );
 			hsGump.AddBackground( 275, 190, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2082, socket.language ) ); // Pigtails
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2082, socket.language ) ); // Pigtails
 			hsGump.AddGump( 210, 150, 0xede6 ); // Pigtails
 			hsGump.AddButton( 240, 200, 0xfa5, 1, 0, 7 );
 			hsGump.AddBackground( 275, 260, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2083, socket.language ) ); // Topknot
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2083, socket.language ) ); // Topknot
 			hsGump.AddGump( 210, 220, 0xED29 ); // Topknot
 			hsGump.AddButton( 240, 270, 0xfa5, 1, 0, 8 );
 			hsGump.AddBackground( 375, 50, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2088, socket.language ) ); // Curly
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2088, socket.language ) ); // Curly
 			hsGump.AddGump( 310, 10, 0xed25 ); // Curly
 			hsGump.AddButton( 340, 60, 0xfa5, 1, 0, 9 );
 			hsGump.AddButton( 275, 340, 0xfa5, 1, 0, 11 );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2079, socket.language ) ); // Bald (If you choose to go bald, you will lose your hair color)
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2079, socket.language ) ); // Bald (If you choose to go bald, you will lose your hair color)
 			hsGump.AddHTMLGump( 310, 342, 90, 35, 0, 0, "Bald" );
 			hsGump.Send( socket ); // send this gump to client now
 			hsGump.Free(); // clear this gump from uox-memory
@@ -70,44 +66,44 @@ function onUseChecked( pUser, iUsed )
 			hsGump.AddHTMLGump( 100, 25, 400, 35, 0, 0, "<CENTER>" + GetDictionaryEntry( 2075, socket.language ) + "</CENTER>" ); // HAIRSTYLE SELECTION MENU
 			hsGump.AddHTMLGump( 210, 342, 90, 35, 0, 0,  GetDictionaryEntry( 2090, socket.language ) ); // CANCEL
 			hsGump.AddBackground( 175, 50, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2084, socket.language ) ); // Short
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2084, socket.language ) ); // Short
 			hsGump.AddGump( 110, 10, 0xC60C ); // Short
 			hsGump.AddButton( 140, 60, 0xfa5, 1, 0, 1 );
 			hsGump.AddBackground( 175, 120, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2085, socket.language ) ); // Long
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2085, socket.language ) ); // Long
 			hsGump.AddGump( 110, 80, 0xc60d ); // Long
 			hsGump.AddButton( 140, 130, 0xfa5, 1, 0, 2 );
 			hsGump.AddBackground( 175, 190, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2086, socket.language ) ); // Ponytail
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2086, socket.language ) ); // Ponytail
 			hsGump.AddGump( 110, 150, 0xc60e ); // Ponytail
 			hsGump.AddButton( 140, 200, 0xfa5, 1, 0, 3 );
 			hsGump.AddBackground( 175, 260, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2087, socket.language ) ); // Mohawk
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2087, socket.language ) ); // Mohawk
 			hsGump.AddGump( 110, 220, 0xC60F ); // Mohawk
 			hsGump.AddButton( 140, 270, 0xfa5, 1, 0, 4 );
 			hsGump.AddBackground( 275, 50, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2080, socket.language ) ); // Pageboy
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2080, socket.language ) ); // Pageboy
 			hsGump.AddGump( 210, 10, 0xED26 ); // Pageboy
 			hsGump.AddButton( 240, 60, 0xfa5, 1, 0, 5 );
 			hsGump.AddBackground( 275, 120, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2081, socket.language ) ); // Receding
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2081, socket.language ) ); // Receding
 			hsGump.AddGump( 210, 80, 0xEDE5 ); // Receding
 			hsGump.AddButton( 240, 130, 0xfa5, 1, 0, 10 );
 			hsGump.AddBackground( 275, 190, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2082, socket.language ) ); // Pigtails
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2082, socket.language ) ); // Pigtails
 			hsGump.AddGump( 210, 150, 0xede6 ); // Pigtails
 			hsGump.AddButton( 240, 200, 0xfa5, 1, 0, 7 );
 			hsGump.AddBackground( 275, 260, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2083, socket.language ) ); // Topknot
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2083, socket.language ) ); // Topknot
 			hsGump.AddGump( 210, 220, 0xED29 ); // Topknot
 			hsGump.AddButton( 240, 270, 0xfa5, 1, 0, 8 );
 			hsGump.AddBackground( 375, 50, 50, 50, 0xA3C );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2088, socket.language ) ); // Curly
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2088, socket.language ) ); // Curly
 			hsGump.AddGump( 310, 10, 0xed25 ); // Curly
 			hsGump.AddButton( 340, 60, 0xfa5, 1, 0, 9 );
 			hsGump.AddButton( 275, 340, 0xfa5, 1, 0, 11 );
 			hsGump.AddHTMLGump( 310, 342, 90, 35, 0, 0, "Bald" );
-			hsGump.AddToolTip( 1114778, socket, GetDictionaryEntry( 2079, socket.language ) ); // Bald (If you choose to go bald, you will lose your hair color)
+			hsGump.AddToolTip( 1050045, socket, GetDictionaryEntry( 2079, socket.language ) ); // Bald (If you choose to go bald, you will lose your hair color)
 			hsGump.Send( socket ); // send this gump to client now
 			hsGump.Free(); // clear this gump from uox-memory
 			return false;

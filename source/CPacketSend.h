@@ -1145,8 +1145,8 @@ public:
 	{
 	}
 	CPCharDeleteResult();
-	CPCharDeleteResult( CharacterDeletionResult result );
-	virtual void	DeleteResult( CharacterDeletionResult result );
+	CPCharDeleteResult( SI08 result );
+	virtual void	DeleteResult( SI08 result );
 };
 
 class CharacterListUpdate : public CPUOXBuffer

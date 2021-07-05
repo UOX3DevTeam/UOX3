@@ -529,11 +529,15 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 	{
 		target->SetType( IT_CONTAINER );
 		sock->sysmessage( 674 );
+		target->RemoveFromSight();
+		target->Update();
 	}
 	else if( target->GetType() == IT_LOCKEDSPAWNCONT )
 	{
 		target->SetType( IT_SPAWNCONT );
 		sock->sysmessage( 675 );
+		target->RemoveFromSight();
+		target->Update();
 	}
 	else if( target->GetType() == IT_CONTAINER || target->GetType() == IT_SPAWNCONT || target->GetType() == IT_LOCKEDSPAWNCONT || target->GetType() == IT_TRASHCONT )
 		sock->sysmessage( 676 );
@@ -2554,7 +2558,7 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType element )
 {
-	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
+	if( !ValidateObject( p ) )
 		return;
 
 	if( p->IsDead() || p->GetHP() <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
@@ -2766,7 +2770,9 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
 		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 4, nullptr, LIGHTNING );
 	else
 		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, nullptr, LIGHTNING );
-	i->SetTempVar( CITV_MOREZ, 0 );
+
+	// Set first part of MOREZ to 0 to disable trap, but leave other parts intact
+	i->SetTempVar( CITV_MOREZ, 1, 0 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3630,7 +3636,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( ValidateObject( i ) )
 			{
-				if( ( i->GetCont() != nullptr && FindItemOwner( i ) != caster ) || ( objInRange( caster, i, cwmWorldState->ServerData()->CombatMaxSpellRange() ) ) )
+				if( ( i->GetCont() != nullptr && FindItemOwner( i ) != caster ) || ( !objInRange( caster, i, cwmWorldState->ServerData()->CombatMaxSpellRange() ) ) )
 				{
 					s->sysmessage( 718 );
 					return;

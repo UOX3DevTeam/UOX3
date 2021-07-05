@@ -1,3 +1,18 @@
+06/07/2021 - Xuri
+	Updated how UOX3 handles more, morex, morey and morez properties:
+		DFN tags for these properties can now handle data in multiple formats. Example:
+			MORE=1285, MORE=0 0 5 5, MORE=0x00 0x00 0x05 0x05, MORE=0x00000505
+		JS command 'set more/morex/morey/morez now accepts any of the above formats
+		JS command 'get will now display both the decimal value for these properties, as well as the hex one
+		JS command 'tweak will now display hex value for these properties in a tooltip
+	Fixed an issue with target-based spells (like Magic Lock/Unlock, Magic Trap/Untrap, Telekinesis) that used the inverse result of a distance check to determine if players could cast such a spell at an item
+	Fixed an issue where players could keep spawn containers open on screen to access items respawning inside without having to unlock/untrap container again after a respawn
+	Locked containers (and spawn containers) will now show [Locked] in the item tooltip
+	Spawn containers will now be re-trapped when new items spawn, if they were trapped originally. To trap a container:
+		MOREZ=0x01 0x32 0x00 0x00 // 0x01 marks container as trapped, 0x32 says "deal 50 damage" when trap is set off
+	Fixed trapped spawn containers not dealing damage when trap is set off due to magic damage function in source requiring a valid attacker (now no longer does)
+	Updated source and scripts to use cliloc id 1050045 for custom tooltips rather than 1114778, as 1050045 is available in all client versions that support tooltips
+
 04/07/2021 - Xuri (0.99.4u)
 	UOX3 now sends the appropriate packets (0x85 and/or 0x86) in response to client requests to delete a character from the char selection screen
 	Fixed an issue with fetching create entries in JS - was incorrectly limited by number of registered spells!

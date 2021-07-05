@@ -858,10 +858,70 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					gPriv->SetCont( nullptr );
 				break;
 			case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
-			case CIP_MORE:			gPriv->SetTempVar( CITV_MORE, encaps.toInt() ); 			break;
-			case CIP_MOREX:			gPriv->SetTempVar( CITV_MOREX, encaps.toInt() );			break;
-			case CIP_MOREY:			gPriv->SetTempVar( CITV_MOREY, encaps.toInt() );			break;
-			case CIP_MOREZ:			gPriv->SetTempVar( CITV_MOREZ, encaps.toInt() );			break;
+			case CIP_MORE:
+			{
+				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MOREX:
+			{
+				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MOREX, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MOREY:
+			{
+				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MOREY, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MOREZ:
+			{
+				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MOREZ, encaps.toInt() );
+				}
+				break;
+			}
 			case CIP_MOVABLE:		gPriv->SetMovable( (SI08)encaps.toInt() );					break;
 			case CIP_ATT:			gPriv->SetLoDamage( (SI16)encaps.toInt() );
 				gPriv->SetHiDamage( (SI16)encaps.toInt() );
