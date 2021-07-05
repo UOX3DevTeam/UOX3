@@ -1598,15 +1598,17 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MORE" )
 				{
-					// Both paths lead to same code. Something missing?
-					//if( csecs.size() > 1 )
-					//{
-						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					/*}
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+					}
 					else
 					{
-						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					}*/
+						SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MORE2" )	// Depreciated
@@ -1622,17 +1624,47 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "MOREX" )
 				{
-					SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+					}
+					else
+					{
+						SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MOREY" )
 				{
-					SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+					}
+					else
+					{
+						SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MOREZ" )
 				{
-					SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+					}
+					else
+					{
+						SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MOVABLE" )
@@ -2716,7 +2748,7 @@ bool CSpawnItem::HandleNPCSpawner( void )
 			Npcs->CreateNPC( this, strutil::number( GetTempVar( CITV_MOREX ) ) );
 		else
 		{
-			Console.warning( "Bad Npc/Area Spawner found; Spawnsection or MOREX values missing! Deleting Spawner." );
+			Console.warning( "Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values missing! Deleting Spawner." );
 			Delete();
 			return true;
 		}
@@ -2729,7 +2761,15 @@ bool CSpawnItem::HandleSpawnContainer( void )
 	{
 		std::string listObj = GetSpawnSection();
 		if( GetType() == IT_SPAWNCONT )
+		{
 			SetType( IT_LOCKEDSPAWNCONT ); // Lock the container
+
+			if( GetTempVar( CITV_MOREZ, 2 ) > 0 )
+			{
+				// Part 2 of MOREZ being higher than 0 indicates container was previously trapped. Reapply trap!
+				SetTempVar( CITV_MOREZ, 1, 1 );
+			}
+		}
 		if( !listObj.empty() )
 			Items->AddRespawnItem( this, listObj, true, IsSectionAList(), 1 );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
@@ -2740,6 +2780,8 @@ bool CSpawnItem::HandleSpawnContainer( void )
 			Delete();
 			return true;
 		}
+		RemoveFromSight();
+		Update();
 	}
 	return false;
 }

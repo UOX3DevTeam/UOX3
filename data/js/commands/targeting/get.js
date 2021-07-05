@@ -167,21 +167,28 @@ function HandleGetItem( socket, ourItem, uKey )
 		socket.SysMessage( ourItem.maxItems );
 		break;
 	case "MORE":
-		socket.SysMessage( ourItem.more );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.more).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.more + " (" + hexVal + ")" );
 		break;
 	case "MOREX":
-		socket.SysMessage( ourItem.morex );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.morex).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.morex + " (" + hexVal + ")" );
 		break;
 	case "MOREY":
-		socket.SysMessage( ourItem.morey );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.morey).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.morey + " (" + hexVal + ")" );
 		break;
 	case "MOREZ":
-		socket.SysMessage( ourItem.morez );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.morez).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.morez + " (" + hexVal + ")" );
 		break;
 	case "MOREXYZ":
-		socket.SysMessage( ourItem.morex );
-		socket.SysMessage( ourItem.morey );
-		socket.SysMessage( ourItem.morez );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.morex).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.morex + " (" + hexVal + ")" );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.morey).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.morey + " (" + hexVal + ")" );
+		var hexVal = "0x" + ("00000000"+(Number(ourItem.morez).toString(16))).slice(-8)
+		socket.SysMessage( ourItem.morez + " (" + hexVal + ")" );
 		break;
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );

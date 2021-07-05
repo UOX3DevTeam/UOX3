@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 22. June, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4s</small></p>
+	<p style="margin:0"><small>Last Updated: 06. July, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4u</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -58,6 +58,16 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>July 6th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#raceSystem">Race System</a> feature info with complete details on how the race system in UOX3 is/can be setup</li>
+							<li>Updated <a href="#dfnTagSystem">DFN Tag Overview</a> with full list of tags supported by races.dfn</li>
+							<li>Updated <a href="#spawnObjects">Spawn Objects</a> feature info with details and examples of how to setup the different types of spawn objects</li>
+						</ul>
+						<h4>June 30th, 2021</h4>
+						<ul>
+							<li>Added <a href="#uox3Crafting">Crafting System</a> feature info with details on how the crafting system in UOX3 is setup, as well as how the "rank system" extension of the crafting system works</li>
+						</ul>
 						<h4>June 22nd, 2021</h4>
 						<ul>
 							<li>Updated <a href="#npcEscortQuests">NPC Escort Quests</a> feature info with details on how NPC Escort Quests are setup and used</li>
@@ -2954,7 +2964,7 @@ packitem=0x0f8d,30
 							<span class="highlight"><em>morez (h)</em></span> - Sets item's "morez" value.<br>
 							<span class="highlight"><em>morexyz (h h h)</em></span> - Sets item's morex, morey and morez values.<br>
 							<span class="highlight"><em>movable (d)</em></span> - Toggles items ability to be moved (0 = default, 1 = movable, 2 = not movable, 3 = locked down)<br>
-							<span class="highlight"><em>name2 (s)</em></span> - Sets items name2 value (for use with Item-ID).<br>
+							<span class="highlight"><em>name2 (s)</em></span> - Sets items name2 value (used for magical items and Item-ID, for naming corpses, and body parts).<br>
 							<span class="highlight"><em>newbie (target)</em></span> - Makes targeted item a newbie/blessed item.<br>
 							<span class="highlight"><em>poison (d)</em></span> - Sets the poison strength applied to an item (weapon, food).<br>
 							<span class="highlight"><em>restock (d)</em></span> - Sets amount of a targeted item to restock on a shopkeeper.<br>
@@ -3441,7 +3451,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="highlight">1</span><strong> - IT_CONTAINER</strong><br>
-							Container. Can be trapped by setting MOREZ property to 1, which will trigger Magic Trap spell if someone opens it. Bank-boxes have a MOREX of 1.</p>
+							Container. Can be trapped by setting MOREZ property to a value of 0x01320000, which marks the container as trapped (01), sets damage to deal to 50 (hex: 32), and will trigger Magic Trap spell if someone opens it. Bank-boxes have a MOREX of 1.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="highlight">2</span><strong> - IT_CASTLEGATEOPENER</strong><br>
@@ -3544,22 +3554,22 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="highlight">63</span><strong> - IT_SPAWNCONT</strong><br>
-							Item Spawner (Container). A container added as a spawner that can spawn an item inside the container at random intervals (<strong>'set mininterval #</strong> and <strong>'set maxinterval #</strong>), based on an itemSectionID (<strong>'set spawnsection itemSectionID</strong>) or an itemList (<strong>'set spawnsection itemListID</strong>). Each time a new item spawns inside, the item type of the spawner changes to 64 - IT_LOCKEDSPAWNCONT! Container can be trapped by setting MOREZ value to 1.</p>
+							Item Spawner (Container). A container added as a spawner that can spawn an item inside the container at random intervals (<strong>'set mininterval #</strong> and <strong>'set maxinterval #</strong>), based on an itemSectionID (<strong>'set spawnsection itemSectionID</strong>) or an itemList (<strong>'set spawnsection itemListID</strong>). Each time a new item spawns inside, the item type of the spawner changes to 64 - IT_LOCKEDSPAWNCONT! Can be trapped by setting MOREZ property to a value of 0x01320000, which marks the container as trapped (01), sets damage to deal to 50 (hex: 32), and will trigger Magic Trap spell if someone opens it. See <a href="#spawnObjects" title="UOX3 Documentation - Spawn Objects">Spawn Objects</a> feature info for more details and examples on how to set these up in DFNs.</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval, morez</em></p>
 						 </div>
 						<div class="itemTypesDiv">
 							<p><span class="highlight">64</span><strong> - IT_LOCKEDSPAWNCONT</strong><br>
-							 When a spawn container of type IT_SPAWNCONT spawns an item inside the container, the item type changes to IT_LOCKEDSPAWNCONT, locking the container. This lock can be opened using the Picklocking skill or the Magic Unlock spell - at which point it will return to type IT_SPAWNCONT until another item has spawned. Container can be trapped by setting MOREZ value to 1.</p>
+							 When a spawn container of type IT_SPAWNCONT spawns an item inside the container, the item type changes to IT_LOCKEDSPAWNCONT, locking the container. This lock can be opened using the Picklocking skill or the Magic Unlock spell - at which point it will return to type IT_SPAWNCONT until another item has spawned. Can be trapped by setting MOREZ property to a value of 0x01320000, which marks the container as trapped (01), sets damage to deal to 50 (hex: 32), and will trigger Magic Trap spell if someone opens it. See <a href="#spawnObjects" title="UOX3 Documentation - Spawn Objects">Spawn Objects</a> feature info for more details and examples on how to set these up in DFNs.</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval, morez</em></p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="highlight">65</span><strong> - IT_UNLOCKABLESPAWNCONT</strong><br>
-							 Similar to IT_SPAWNCONT spawn containers, except this won't automatically lock itself when a new item is spawned. Container can be trapped by setting MOREZ value to 1.</p>
+							 Similar to IT_SPAWNCONT spawn containers, except this won't automatically lock itself when a new item is spawned. Can be trapped by setting MOREZ property to a value of 0x01320000, which marks the container as trapped (01), sets damage to deal to 50 (hex: 32), and will trigger Magic Trap spell if someone opens it. See <a href="#spawnObjects" title="UOX3 Documentation - Spawn Objects">Spawn Objects</a> feature info for more details and examples on how to set these up in DFNs.</p>
 							<p class="indent">DFN Tags: <em>spawnobj, spawnobjlist, amount, interval, morez</em></p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="highlight">69</span><strong> - IT_AREASPAWNER</strong><br>
-							Same setup as IT_NPCSPAWNER, but with the addition of offsets for X and Y location to allow spawner to spawn the NPCs randomly in an area instead of directly on top of the spawner object. To set those offsets, use <span class="highlight">'set more 0 0 # #'</span> where the last two digits represents the X and Y offsets, i.e. how far away from the spawn object in X direction and Y direction can NPCs spawn.</p>
+							Same setup as IT_NPCSPAWNER, but with the addition of offsets for X and Y location to allow spawner to spawn the NPCs randomly in an area instead of directly on top of the spawner object. To set those offsets, use <span class="highlight">'set more 0 0 # #'</span> (or 'set more 0x00 0x00 0x## 0x##) where the last two digits represents the X and Y offsets, i.e. how far away from the spawn object in X direction and Y direction can NPCs spawn.</p>
 							<p>Note: If the NPCs being spawned are setup with an NPCWander type of 3 or 4, make sure that the FX1, FY1 and FZ1 DFN tags for the NPC is set to -1. This way, the NPC will use the spawn location coordinates as center point for their wandering, and they will stick within the range defined in FX2.</p>
 						</div>
 						<div class="itemTypesDiv">
@@ -4599,6 +4609,133 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3Crafting" id="uox3Crafting"><span>Crafting System</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>The core of the crafting system in UOX3 is setup in a series of DFN files, usually one per crafting skill, that all exist in the <strong>UOX3/dfndata/create/</strong> folder. Each of these files contain a number of references to <em>menus</em>, <em>submenus</em>, <em>items</em> and <em>resources</em>, which altogether are used by UOX3 to create the <strong>in-game crafting menus</strong> you see when using the appropriate crafting tools and skills.</p>
+					<h3>Sub Menu:</h3>
+					<p>When interpreting these files and creating the in-game crafting menus, UOX3 starts by looking up the first <span class="highlight">[SUBMENU #]</span> section it can find, and by default that can be found in smithing.dfn, and looks like this:</p>
+					<input type="checkbox" id="spoiler_submenu_section">
+					<label for="spoiler_submenu_section">[SUBMENU 1] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">[SUBMENU 1]<br>
+						{ Blacksmithing<br>
+						MENU=1 // armor<br>
+						MENU=2 // shields<br>
+						MENU=3 // weapons<br>
+						}</span></p>
+					</div>
+					<p>Note: The ID used for a SUBMENU section must be unique (<em>across all create DFN files</em>), and the same is true for the other menu-specific sections in the create DFN system, like <strong>MENUENTRY</strong> and <strong>ITEM</strong> (see below).</p>
+					<h3>Menu Entry</h3>
+					<p>The above sub-menu contains three <span class="highlight">MENU entries</span> - for armor, shields and weapons respectively - which are references to <span class="highlight">[MENUENTRY #]</span> sections defined in the same file. Here's an example of one of them, for shields:</p>
+					<input type="checkbox" id="spoiler_menuentry_section">
+					<label for="spoiler_menuentry_section">[MENUENTRY 2] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">[MENUENTRY 2]<br>
+						{<br>
+						NAME=Shields<br>
+						ID=0x1b74<br>
+						SUBMENU=3<br>
+						}</span></p>
+					</div>
+					<p>Each such <strong>[MENUENTRY #]</strong> section contains both an item ID (for an item that is displayed to represent an "item/menu category" in the crafting menu), and another SUBMENU reference. Following said reference takes us to the <strong>[SUBMENU 3]</strong> section,  which contains some <span class="highlight">ITEM entries</span>:</p>
+					<input type="checkbox" id="spoiler_submenu_section3">
+					<label for="spoiler_submenu_section3">[SUBMENU 3] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">[SUBMENU 3]<br>
+						{ Shields<br>
+						ITEM=367<br>
+						ITEM=2<br>
+						ITEM=3<br>
+						ITEM=4<br>
+						ITEM=5<br>
+						ITEM=6<br>
+						MENU=0<br>
+						}</span></p>
+					</div>
+					<h3>Item Entry:</h3>
+					<p>These entries refer directly to <span class="highlight">[ITEM #]</span> sections defined further down in the same file, which contain all the requirements needed to craft an item, as well as various item properties that will be assigned to the crafted item after it has been made, such as colour, rank, etc. An example, let's look at the item referenced by the ITEM=2 entry:</p>
+					<input type="checkbox" id="spoiler_item_section">
+					<label for="spoiler_item_section">[ITEM 2] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">[ITEM 2]<br>
+						{<br>
+						NAME=bronze<br>
+						ID=0x1b72<br>
+						RESOURCE=0x1bf2 12<br>
+						SKILL=7 0 150<br>
+						ADDITEM=0x1b72<br>
+						MINRANK=1<br>
+						MAXRANK=10<br>
+						SOUND=0x002A<br>
+						}</span></p>
+					</div>
+					<p>When one of these ITEM entries are selected in the crafting menu, UOX3 first checks that the player <strong>meets the crafting requirements</strong> as defined in the ITEM section, <strong>allows or denies</strong> the crafting attempt, and then returns either a failure or success to the player based on a <strong>combination of skill-checks and random luck</strong>.</p>
+					<p>Success will cause the defined amount of resources to be consumed as part of the crafting process, and in return the player is given the final crafted item. Failure will cause a small amount of resources to go to waste, with no crafted item being given to the player.</p>
+					<h3>Resource Types</h3>
+					<p>Named resource types such as <span class="highlight">WOOD</span>, <span class="highlight">LEATHER</span> or <span class="highlight">CLOTH</span> can be used as resource requirements instead of direct references to specific resource IDs. This allows for a setup where crafting particular items can be done using <em>any resource ID</em> that belongs to a given, named resource type, rather than being restricted to any one particular resource ID.<p>
+					<p>For instance, instead of saying <em>"this item requires a resource with <strong>ID 0x175d</strong> (folded cloth) to craft"</em>, which would make it impossible to craft the same item using a similar resource with ID 0x1768 (cut cloth), we can say "this item requires a resource of type <strong>CLOTH</strong> to craft". As an example, <span class="highlight">RESOURCE=CLOTH 12</span> would allow a player to craft an item using any CLOTH resource.</p>
+					<p>The named resource types, and the resource IDs that fit in under those types, are defined in <strong>UOX3/dfndata/create/resources.dfn</strong>. Here's an example of the CLOTH resource type from that file:</p>
+					<input type="checkbox" id="spoiler_resource_definition">
+					<label for="spoiler_resource_definition">[RESOURCE CLOTH] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">[RESOURCE CLOTH]<br>
+						{<br>
+						ID=0x175d<br>
+						ID=0x175e<br>
+						ID=0x175f<br>
+						ID=0x1760<br>
+						ID=0x1761<br>
+						ID=0x1762<br>
+						ID=0x1763<br>
+						ID=0x1764<br>
+						ID=0x1765<br>
+						ID=0x1766<br>
+						ID=0x1767<br>
+						ID=0x1768<br>
+						}</span></p>
+					</div>
+					<p>Any and all of the above listed resource IDs will be counted as CLOTH by the crafting system, allowing for a much more flexible and user-friendly crafting process!</p>
+					<h3>Create DFN Tags</h3>
+					<input type="checkbox" id="spoiler_create_tags">
+					<label for="spoiler_create_tags">Create DFN Tags explained <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">MENU</span> - menu-system tag that points to a MENUENTRY section.<br>
+						<span class="highlight">SUBMENU</span> - menu-system tag that points to a SUBMENU section.<br>
+						<span class="highlight">ITEM</span> - menu-system tag that points to an ITEM section.<br>
+						<span class="highlight">NAME</span> - the label applied to the item when shown in the crafting menu, which is not necessarily a reflection of the name of the actual item that will be crafted in the end.<br>
+						<span class="highlight">ID</span> - the artwork ID used to display the item in the crafting menu.<br>
+						<span class="highlight">RESOURCE</span> - contains the ID and/or resource type (see below) of the resource required to craft the item, as well as optional amount and colour values. In this case the colour tag is omitted, but the amount is specified, so 12 items with the ID 0x1bf2 (and the colour 0) are required to craft this item. Each item entry can contain multiple RESOURCE tags, if more than one type of resource is required to craft an item.<br>
+						<span class="highlight">SKILL</span> - the skill ID of a skill required to craft the item, along with minimum (minimum skill-points to be able to attempt crafting the item) and maximum (skill-points higher than which player will always succeed) skill-point values. Each item entry can contain multiple SKILL tags, if more than one skill is required to craft an item.<br>
+						<span class="highlight">ADDITEM</span> - the tag pointing to the [section header] name of the actual item that will be crafted, as defined in the item DFNs in UOX3/dfndata/items/<br>
+						<span class="highlight">MINRANK</span> - represents the minimum item rank that can be randomly applied to the crafted item based on the rank system, which can cause items to become weaker or stronger than average.<br>
+						<span class="highlight">MAXRANK</span> - represents the maximum item rank that can be randomly applied to the crafted item based on the rank system, which can cause items to become weaker or stronger than average. If rank system is off, the default rank value is 10.<br>
+						<span class="highlight">SOUND</span> - the sound FX that plays when the item is being crafted.</p>
+						<p>In addition, there are some supported tags not used in the above example:<br>
+						<span class="highlight">DELAY</span> - the delay in milliseconds before the crafting process completes and the item has been crafted.<br>
+						<span class="highlight">SPELL</span> - the spell ID of a spell required to be in the player's possession (in a spellbook) in order to craft the item. Primarily used by the Inscription skill.<br></p>
+					</div>
+					<h3>Rank System</h3>
+					<input type="checkbox" id="spoiler_rank_system">
+					<label for="spoiler_rank_system">Advanced Topic: Rank System <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>The rank system is an extension of the crafting system that calculates a "quality rank" for crafted items based on a player's average skill in all skills required to craft the item, and on the <strong>MINRANK</strong> and <strong>MAXRANK</strong> tags of the item's entry in the create DFNs, which by default ranges from <strong>1 to 10</strong>. Depending on the calculated rank, a modifier is applied to some of the item's base properties. The system can be enabled/disabled via the <span class="highlight">RANKSYSTEM=1/0</span> setting in UOX.INI.</p>
+						<p>The <strong>item properties</strong> affected by the rank system, if enabled:<br>
+							<span class="highlight">lodamage/hidamage</span><br>
+							<span class="highlight">ar/physical resist</span><br>
+							<span class="highlight">hp/maxhp</span><br>
+							<span class="highlight">buyvalue/sellvalue/</span></p>
+						<p>These properties are modified according to the following formula:<br>
+						<span class="highlight">newPropertyVal = (( rank * propertyVal ) / 10 )</span></p>
+						<p>Thus, an item with a calculated final rank of 10 will not be modified, while any rank below 10 will reduce the values of the above properties for the item by -10% per rank below 10.</p>
+						<p>Calculation of rank takes place as part of the crafting process. First, a <strong>range of potential ranks</strong> is determined based on the values of the MINRANK and MAXRANK tags for an item in the create DFNs. Then, <strong>for each skill</strong> required to craft the item, the system <strong>calculates a temporary rank</strong> based on the player's skill, random chance, and a UOX.INI setting (<span class="highlight">SKILLLEVEL=5</span>) which acts as a global modifier to the system to make it <strong>easier</strong> (low SKILLLEVEL value) to get high rank items, or <strong>harder</strong> (high SKILLLEVEL value) to get high rank items.</p>
+						<p>When a temporary rank has been calculated for all skills required to craft the item, the average of all these is chosen as the item's final rank, and the modifiers are permanently applied to the item's properties.</p>
+					</div>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uox3Dictionaries" id="uox3Dictionaries"><span>Dictionaries</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -4961,11 +5098,63 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#raceSystem" id="raceSystem"><span>Race System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>More details on UOX3 race system coming here soon! Check out <strong>UOX3/dfndata/race/races.dfn</strong> for examples.</p>
+					<h3>Races in UOX3</h3>
+					<p>The race system in UOX3 is integrated with both player and NPC characters, and offers numerous options for customizing the behaviour and properties of each race, like taking double damage from silver weapons, dealing more damage with a particular weapon skill, or being allied to or the sworn enemy of another race.</p>
+					<p>By default, UOX3 is setup to work with the default player races that can be selected in the UO client's character creation (depending on client version) - i.e. humans, elves and gargoyles - and will automatically assign players to the associated race in the race system, but there's nothing preventing a shard admin from creating multiple other player races, and to provide players with other means of selecting a race for their character.</p>
+					<p>Some default races have also been setup for monsters, like Orcs, Ratmen, Undead and Daemons (and more), while animals are generally divided into some predefined Predator and Animal races (with a few other special cases for Birds, Arachnids, etc).</p>
+					<h3>How does it work?</h3>
+					<p>Each race in UOX3 is setup in its own <span class="highlight">[RACE #]</span> section of <strong>UOX3/dfndata/race/races.dfn</strong>, which contain the various properties, bonuses and penalties associated with the race. For a full list of properties available in the race system, check the Race DFN Tags portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
+					<input type="checkbox" id="spoiler_race_examples">
+					<label for="spoiler_race_examples">A few example race sections <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					<p><span class="highlight">[RACE 0]<br>
+					{<br>
+					NAME=Human<br>
+					STRCAP=100<br>
+					DEXCAP=100<br>
+					INTCAP=100<br>
+					PLAYERRACE=0<br>
+					BANEQUIPLIST=1<br>
+					BANEQUIPLIST=2<br>
+					}</span></p>
+					<p>Race 0 is the "default" UOX3 player race, which is applied automatically to all newly created (human) player characters, as well as any NPCs that have no other race specified. Here it is setup with stat caps that define the max amount of strength, dexterity and intelligence a player can get, as well as some entries for banned equipment - stuff humans are not allowed to equip.</p>
+					<p><span class="highlight">[RACE 1]<br>
+					{<br>
+					PARENTRACE=0<br>
+					NAME=Elf<br>
+					PLAYERRACE=0<br>
+					BANEQUIPLIST=2<br>
+					}</span></p>
+					<p>The second default player race is "Elf", which applies automatically to all newly created elf player characters. Whether this race is used or not is dependent on whether the shard uses a client version that has elves as part of the character creation process. This race is setup with a PARENTRACE tag that points to race 0, meaning that in addition to any custom properties defined, it will also inherit the properties of the parent race. Note that any inherited properties can be overridden by redefining the same property for the child race, and the terms "parent race" and "child race" in this context only applies to the logic of inheriting properties, and has no other gameplay or player-facing relevance.</p>
+
+					<p><span class="highlight">[RACE 2]<br>
+					{ // Player<br>
+					PARENTRACE=0<br>
+					NAME=Gargoyle<br>
+					PLAYERRACE=0<br>
+					RACIALAID=3<br>
+					ALLOWEQUIPLIST=0<br>
+					ALLOWEQUIPLIST=2<br>
+					}</span></p>
+					<p>The third and last default player race is "Gargoyle", which applies automatically to all newly created gargoyle player characters. As with the elf race, this is dependent on the server supporting a client version that has this race included in the character creation process. This race has been setup with a RACIALAID tag, which points to the monster-version of the gargoyle race (see below). This means gargoyle players will see monster gargoyles as allies in the game, which will not automatically attack the players as they might players belonging to other races. Additionally, this race has some entries to whitelist certain equipment lists, allowing gargoyle players to equip any items from these lists.</p>
+
+					<p><span class="highlight">[RACE 3]<br>
+					{ // Monster<br>
+					NAME=Gargoyle<br>
+					PLAYERRACE=1<br>
+					RACIALENEMY=1<br>
+					RACIALAID=3<br>
+					}</span></p>
+					<p>The first and only monster race listed in this example, the monster-variant of the gargoyle race has been setup as an ally to the player-variant of the gargoyle race, and as an enemy of the elven race. When two races are set as enemies of one another, members of those races can freely attack each other without any negative consequences to things like the reputation system and criminal flagging, and killing an enemy would not result in a murder count. NPC members of a race will attack members of enemy races on sight.</p>
+					</div>
+					<p>NPCs - whether monsters, animals, shopkeepers or adventurers - can be assigned as members of a particular race using the <span class="highlight">RACE=#</span> DFN tag, which can be added to a given NPC's DFN section in its relevant file under <strong>UOX3/dfndata/npc/</strong>. For example, monster gargoyles (found in <strong>UOX3/dfndata/npc/gargoyles.dfn</strong>) are setup with a RACE=3 tag, with the value 3 referring to the race ID for the monster-variant of the gargoyle race. Similarly, any <strong>undead NPCs</strong> are setup with a <span class="highlight">RACE=11</span> tag, which matches up with the "undead" race in races.dfn - which has a race ID of 11.</p>
+					<h3>Slayer Weapons/Double Damage to Undeads</h3>
+					<p>Any weapon can be setup as a "slayer weapon" - i.e. a weapon that deals double damage against members of a particular race. Historically in UO, the first such weapons were weapons with a "silver" property, which dealt double damage to any undead NPCs. In UOX3, any weapon can be setup with this effect simply by adding a RACE=# tag to the weapon's item DFN section under UOX3/dfndata/items/, which will then cause said weapon to deal double damage to members of whichever race whose ID matches up with the value used in the weapon's RACE tag.</p>
+					<h3>Racial Combat Mods</h3>
+					<p>Racial combat mods are <span class="highlight">bonuses or penalties</span> applied to skills during <strong>skill checks</strong>, or during calculations of <strong>base damage</strong> dealt when attacking someone with a given weapon-skill in combat. These modifiers apply to characters who are members of a race that has been setup with skill tags such as <strong>[SKILLNAME]G=#</strong> (bonus) or <strong>[SKILLNAME]L=#</strong> (penalty) - where # points to one of the <strong>MOD#</strong> entries in this section.</p>
 					<input type="checkbox" id="spoiler_race_combat_mods">
 					<label for="spoiler_race_combat_mods">Racial Combat Mods <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Racial combat mods are <span class="highlight">bonuses or penalties</span> applied to skills during <strong>skill checks</strong>, or during calculations of <strong>base damage</strong> dealt when attacking someone with a given weapon-skill in combat. These modifiers apply to characters who are members of a race that has been setup with skill tags such as <strong>[SKILLNAME]G=#</strong> (bonus) or <strong>[SKILLNAME]L=#</strong> (penalty) - where # points to one of the <strong>MOD#</strong> entries in this section.</p>
 						<p>Example: A race setup with a <span class="highlight">SWORDSMANSHIPG=3</span> tag will have a <span class="highlight">20% bonus</span> applied to any Swordsmanship skill checks, and will also receive a <span class="highlight">20% bonus</span> to base damage during combat when wielding a sword, <em>before</em> any other damage modifiers are applied. If <span class="highlight">SWORDSMANSHIPL=3</span> was used instead, it would be a <span class="highlight">20% penalty</span> instead of a bonus.</p>
 						<p>Example of default [COMBAT MODS] setup in <span class="highlight">dfndata/race/races.dfn</span>, along with a couple of examples how to make use of them:<br>
 
@@ -4989,29 +5178,51 @@ BANEQUIPLIST=1
 BANEQUIPLIST=2
 SWORDSMANSHIPG=2 // Uses MOD2, i.e. 10.0% bonus to swordsmanship
 FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
-}
-
-[RACE 1]
-{
-PARENTRACE=0
-NAME=Elf
-PLAYERRACE=0
-BANEQUIPLIST=2
-MACEFIGHTINGL2 // MOD2, 10.0% penalty to macefighting
-ARCHERYG=3 // MOD3, 20.0% bonus to archery
-}
-
-[RACE 2]
-{ // Player
-PARENTRACE=0
-NAME=Gargoyle
-PLAYERRACE=0
-RACIALAID=3
-ALLOWEQUIPLIST=0
-ALLOWEQUIPLIST=2
-MACEFIGHTINGG=2 // MOD2, 10.0% bonus to macefighting
-ARCHERYL=3 // MOD3, 20.0% penalty to archery
 }</code></pre>
+					</div>
+					<h3>Races and Equipment Restrictions</h3>
+					<p>When setting up player races, it can be useful to have the option to restrict who can equip certain equipment - either because the equipment in question only works with certain character models (like Gargoyles), or to setup visual styles unique to each race. Either way, the race system supports this, via the ALLOWEQUIPLIST and BANEQUIPLIST tags, and associated [EQUIPLIST #] equipment lists.</p>
+					<h4>Allowing or Banning Equipment Lists</h4>
+					<p>The ALLOWEQUIPLIST and BANEQUIPLIST tags give shard admins the option to specify which equipment lists (see below) should be allowed or disallowed for each individual race in the race system. A given race can be setup with multiple of each tag, to allow or disallow multiple equipment lists.</p>
+					<p>By default, the "human" player race has been setup with two banned equipment lists (BANEQUIP=1 and BANEQUIP=2). Those lists contain items only usable by Elves (for traditional reasons), and items only usable by Gargoyles (for technical reasons):</p>
+					<input type="checkbox" id="spoiler_race_allowbanlist">
+					<label for="spoiler_race_allowbanlist">Details of race with banned equipment <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>[RACE 0]<br>
+						{<br>
+						NAME=Human<br>
+						STRCAP=100<br>
+						DEXCAP=100<br>
+						INTCAP=100<br>
+						PLAYERRACE=0<br>
+						<span class="highlight">BANEQUIPLIST=1<br>
+						BANEQUIPLIST=2</span><br>
+						}</p>
+					</div>
+					<h4>Equipment Lists</h4>
+					<p>Equipment lists for races can by default be found at the bottom of UOX3/dfndata/race/races.dfn, and a typical list will consist of a [EQUIPLIST #] header, and a series of ITEMS tags that list out all the item IDs that make up the equipment list.</p>
+					<p>In the below example, each ITEMS tag contains a different "sub-category" of equipment, but this is just done to make it easier to find specific items in the list (in theory, all items in an equipmentlist could be setup in the same ITEMS tag). When UOX3 starts up, all the items in a given equipment-list are loaded into memory, and from there on referenced whenever a player attempts to equip a particular piece of equipment to see if the race they belong to allows it.</p>
+					<input type="checkbox" id="spoiler_race_equipmentlist">
+					<label for="spoiler_race_equipmentlist">Example of an equipmentlist <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><span class="highlight">// Common Equipment, usable by all<br>
+						[EQUIPLIST 0]<br>
+						{<br>
+						// whips<br>
+						ITEMS=0xA289,0xA28A,0xA28B,0xA291,0xA292,0xA293<br><br>
+
+						// Tools<br>
+						ITEMS=0x0E85,0x0E86,0x13E3,0x13E4<br><br>
+
+						// Robe & Arcane Robe<br>
+						ITEMS=0x1F03,0x1F04,0x26AE<br><br>
+
+						// Crook<br>
+						ITEMS=0x0E81<br><br>
+
+						// Rings/Bracelet<br>
+						ITEMS=0x1086,0x108A,0x1F06,0x1F09<br>
+						}</span></p>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -5075,18 +5286,37 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 					<h4>Item Spawner</h4>
 					<p>Spawn Objects of item type 61 (<span class="highlight">IT_ITEMSPAWNER</span>) will spawn items at the spawn object's exact location.</p>
 					<input type="checkbox" id="spoiler_spawnobject_item">
-					<label for="spoiler_spawnobject_item">Example Setup for an Item Spawner <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_spawnobject_item">Example DFN Setup for an Item Spawner <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<p>Here's an example of an Item spawner that could be defined in a DFN file like <span class="highlight">dfndata/items/gmmenu/spawners.dfn</span>. Like other spawner objects, it inherits some properties from a base_spawner, to save on the need to redefine these common properties for each individual spawner (the base_spawner itself, meanwhile, inherits properties from a base_item object):</p>
+						<p><span class="highlight">[base_spawner]<br>
+						{</span><br>
+						<span class="highlight">get=base_item</span> // Inherit default properties from base_item object<br>
+						<span class="highlight">id=0x1F14</span> // ID of spawner object's visuals (displayed for GMs only)<br>
+						<span class="highlight">weight=50000</span> // Defines weight of spawn object (500.00 stones)<br>
+						<span class="highlight">interval=1 5</span> // Defines how often spawn object spawns another Item<br>
+						<span class="highlight">visible=1</span> // Marks spawn object as only being visible to GMs<br>
+						<span class="highlight">decay=0</span> // Marks spawn object as non-decayable<br>
+						<span class="highlight">movable=2</span> // Marks spawn object as only being movable by GMs<br>
+						<span class="highlight">}</span></p>
+						<p><span class="highlight">[reagentspawner]<br>
+						{</span><br>
+						<span class="highlight">get=base_spawner</span> // Inherit properties from base_spawner<br>
+						<span class="highlight">name=Reagent Spawner</span> // Internal name of spawner object, for GM/Admin use only<br>
+						<span class="highlight">type=61</span> // Type 61 marks object as an Item Spawner<br>
+						<span class="highlight">spawnobj=bagofreagents</span> // Specifies script section ID of Item to spawn<br>
+						<span class="highlight">}</span></p>
+						<p>After a spawner has been setup in this manner (and DFNs have been reloaded), the spawn object ("reagentspawner" in this case) can be added to the <strong>'add</strong> menu for GMs to access (via itemMenu.dfn and itemMenu.bulk.dfn), or can be added to the world directly using the <span class="highlight">'add spawner reagentspawner</span> command. The spawned object will be invisible and immovable to normal players, and will immediately start spawning bags of magical reagents. Note that Item Spawners, unlike NPC Spawners, do not support specifying an amount of items to spawn - these are restricted to 1 per Item Spawner, to avoid stacking multiple of same item on the same tile.</p>
 					</div>
 					<h4>NPC Spawner</h4>
 					<p>Spawn Objects of item type 62 (<span class="highlight">IT_NPCSPAWNER</span>) will spawn NPCs at the spawn object's exact location.</p>
 					<input type="checkbox" id="spoiler_spawnobject_ncp">
-					<label for="spoiler_spawnobject_ncp">Example Setup for a predefined NPC Spawner in DFNs <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_spawnobject_ncp">Example DFN Setup for a predefined NPC Spawner in DFNs <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p>Here's an example of an NPC spawner defined in <span class="highlight">dfndata/items/gmmenu/spawners.dfn</span>. Like other spawner objects, it inherits some properties from a base_spawner, to save on the need to redefine these common properties for each individual spawner (the base_spawner itself, meanwhile, inherits properties from a base_item object):</p>
 						<p><span class="highlight">[base_spawner]<br>
 						{</span><br>
-						<span class="highlight">get=base_item</span> // <br>
+						<span class="highlight">get=base_item</span> // Inherit default properties from base_item object<br>
 						<span class="highlight">id=0x1F14</span> // ID of spawner object's visuals (displayed for GMs only)<br>
 						<span class="highlight">weight=50000</span> // Defines weight of spawn object (500.00 stones)<br>
 						<span class="highlight">interval=1 5</span> // Defines how often spawn object spawns another NPC<br>
@@ -5096,25 +5326,71 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 						<span class="highlight">}</span></p>
 						<p><span class="highlight">[orcspawn]<br>
 						{</span><br>
-						<span class="highlight">get=base_spawner</span> // inherit properties from base_spawner<br>
+						<span class="highlight">get=base_spawner</span> // Inherit properties from base_spawner<br>
 						<span class="highlight">name=Orc Spawner</span> // Internal name of spawner object, for GM/Admin use only<br>
-						<span class="highlight">type=62</span> // Item type 62 marks object as a NPC Spawner<br>
+						<span class="highlight">type=62</span> // Type 62 marks object as a NPC Spawner<br>
 						<span class="highlight">spawnobj=orc</span> // Specifies script section ID of NPC to spawn<br>
-						<span class="highlight">amount=3</span> // Max cap on amount of NPCs spawned<br>
+						<span class="highlight">amount=3</span> // Max cap on amount of NPCs spawned and alive at the same time<br>
 						<span class="highlight">}</span></p>
-						<p>The spawn object (identified as "orcspawn") </p>
+						<p>After a spawner has been setup in this manner (and DFNs have been reloaded), the spawn object ("orcspawn" in this case) can be added to the <strong>'add</strong> menu for GMs to access (via itemMenu.dfn and itemMenu.bulk.dfn), or can be added to the world directly using the <span class="highlight">'add spawner orcspawn</span> command. The spawned object will be invisible and immovable to normal players, and will immediately start spawning orcs.</p>
 					</div>
 					<h4>Area Spawner</h4>
 					<p>Spawn Objects of item type 69 (<span class="highlight">IT_AREASPAWNER</span>) will spawn NPCs in a radius centered on the spawn object's location.</p>
 					<input type="checkbox" id="spoiler_spawnobject_area">
-					<label for="spoiler_spawnobject_area">Example Setup for an Area Spawner <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_spawnobject_area">Example DFN Setup for an Area Spawner <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<p>Here's an example of an Area Spawner that could be defined in a DFN file like <span class="highlight">dfndata/items/gmmenu/spawners.dfn</span>. Like other spawner objects, it inherits some properties from a base_spawner, to save on the need to redefine these common properties for each individual spawner (the base_spawner itself, meanwhile, inherits properties from a base_item object):</p>
+						<p><span class="highlight">[base_spawner]<br>
+						{</span><br>
+						<span class="highlight">get=base_item</span> // Inherit default properties from base_item object<br>
+						<span class="highlight">id=0x1F14</span> // ID of spawner object's visuals (displayed for GMs only)<br>
+						<span class="highlight">weight=50000</span> // Defines weight of spawn object (500.00 stones)<br>
+						<span class="highlight">interval=1 5</span> // Defines how often spawn object spawns another Item<br>
+						<span class="highlight">visible=1</span> // Marks spawn object as only being visible to GMs<br>
+						<span class="highlight">decay=0</span> // Marks spawn object as non-decayable<br>
+						<span class="highlight">movable=2</span> // Marks spawn object as only being movable by GMs<br>
+						<span class="highlight">}</span></p>
+						<p><span class="highlight">[ratman_area_spawner]<br>
+						{</span><br>
+						<span class="highlight">get=base_spawner</span> // Inherit properties from base_spawner<br>
+						<span class="highlight">name=Ratman Area Spawner</span> // Internal name of spawner object, for GM/Admin use only<br>
+						<span class="highlight">type=69</span> // Type 69 marks object as an Area Spawner<br>
+						<span class="highlight">spawnobj=ratman</span> // Specifies script section ID of NPC to spawn<br>
+						<span class="highlight">amount=3</span> // Max cap on amount of NPCs spawned and alive at the same time<br>
+						<span class="highlight">more=0x00000505</span> // Last 4 digits represent max x/y offsets for spawner, i.e. how far in each direction with spawner as center can NPCs be spawned (can also be specified as more=0x00 0x00 0x05 0x05 for better readability or using decimal values more=0 0 5 5)<br>
+						<span class="highlight">}</span></p>
+						<p>After a spawner has been setup in this manner (and DFNs have been reloaded), the spawn object ("ratman_area_spawner" in this case) can be added to the <strong>'add</strong> menu for GMs to access (via itemMenu.dfn and itemMenu.bulk.dfn), or can be added to the world directly using the <span class="highlight">'add spawner ratman_area_spawner</span> command. The spawned object will be invisible and immovable to normal players, and will immediately start spawning ratmen at a random interval between the min and max minutes specified in the interval tag.</p>
 					</div>
 					<h4>Container Spawner</h4>
 					<p>Spawn Objects of type 63 (<span class="highlight">IT_SPAWNCONT</span>), 64 (<span class="highlight">IT_LOCKEDSPAWNCONT</span>) and 65 (<span class="highlight">IT_UNLOCKABLESPAWNCONT</span>) are setup as containers with items spawning inside at regular intervals. Can be setup to auto-lock whenever an item respawns, or be set to never lock at all.</p>
 					<input type="checkbox" id="spoiler_spawnobject_container">
-					<label for="spoiler_spawnobject_container">Example Setup for a Container Spawner <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_spawnobject_container">Example DFN Setup for a Spawn Container <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<p>Here's an example of a Spawn Container that could be defined in a DFN file like <span class="highlight">dfndata/items/gmmenu/spawners.dfn</span>. Like other spawner objects, it inherits some properties from a base_spawner, to save on the need to redefine these common properties for each individual spawner (the base_spawner itself, meanwhile, inherits properties from a base_item object). Note that a <strong>valid container ID must be used</strong> for Spawn Containers, or players will be unable to open them to get at the loot inside.</p>
+						<p><span class="highlight">[base_spawner]<br>
+						{</span><br>
+						<span class="highlight">get=base_item</span> // Inherit default properties from base_item object<br>
+						<span class="highlight">id=0x1F14</span> // ID of spawner object's visuals (displayed for GMs only)<br>
+						<span class="highlight">weight=50000</span> // Defines weight of spawn object (500.00 stones)<br>
+						<span class="highlight">interval=1 5</span> // Defines interval for how often (in minutes) spawn object spawns another Item<br>
+						<span class="highlight">visible=1</span> // Marks spawn object as only being visible to GMs<br>
+						<span class="highlight">decay=0</span> // Marks spawn object as non-decayable<br>
+						<span class="highlight">movable=2</span> // Marks spawn object as only being movable by GMs<br>
+						<span class="highlight">}</span></p>
+						<p><span class="highlight">[spawn_container]<br>
+						{</span><br>
+						<span class="highlight">get=base_spawner</span> // Inherit properties from base_spawner<br>
+						<span class="highlight">id=0x0e40</span> // ID of container to visually represent spawner object<br>
+						<span class="highlight">visible=0</span> // Unlike other spawners, we want this one to be visible, so override tag!<br>
+						<span class="highlight">name=Spawn Container</span> // Internal name of spawner object, for GM/Admin use only<br>
+						<span class="highlight">type=63</span> // Type 63 marks object as a Spawn Container<br>
+						<span class="highlight">spawnobj=bagofreagents</span> // Specifies script section ID of Item to spawn<br>
+						<span class="highlight">spawnobjlist=listobject69</span> // Alternate way of specifying object to spawn. This points to a listobject for an itemlist in UOX3/dfndata/items/itemlists/itemlists.dfn, and will spawn random treasure inside the container each time it respawns.<br>
+						<span class="highlight">morez=0x01 0x32 0x00 0x00</span> // If first value is set to 1, container is trapped. Second value (0x32 = 50) determines damage dealt if trap is sprung<br>
+						<span class="highlight">}</span></p>
+						<p>After a spawner has been setup in this manner (and DFNs have been reloaded), the spawn object ("spawn_container" in this case) can be added to the <strong>'add</strong> menu for GMs to access (via itemMenu.dfn and itemMenu.bulk.dfn), or can be added to the world directly using the <span class="highlight">'add spawner spawn_container</span> command. The spawned object will be visible, but immovable to normal players, and will immediately start spawning items inside the container at a random interval between the min and max minutes specified in the interval tag.</p>
+						<p>As soon as an item has spawned inside the Spawn Container, the item type of the spawn object will change from <strong>63 (IT_SPAWNCONT)</strong> to <strong>64 (IT_LOCKEDSPAWNCONT)</strong> and players will need to unlock it using lockpicks or the Magic Unlock spell before they can get to the treasure inside. Upon being unlocked, the type will reset back to <strong>63 (IT_SPAWNCONT)</strong>.</p>
+						<p>If you don't want the Spawn Container to be locked, even after spawning/respawning items, change it's type to <strong>65 (IT_UNLOCKABLESPAWNCONT)</strong> instead. By doing this, the container will not automatically lock itself when a new item is spawned.</p>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -5457,7 +5733,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 					<label for="spoiler_dfnsystem_race">race <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="highlight">UOX3\dfndata\race\races.dfn</span><br>
-						Used to define races in the game (including player-accessible ones); their strengths and weaknesses, their skill bonuses and penalties, and so forth. See <a href="#raceSystem" title="UOX3 Documentation - Race System">separate feature documentation</a> for more info.</p>
+						Used to define races in the game (including player-accessible ones); their strengths and weaknesses, their skill bonuses and penalties, and so forth. See <a href="#raceSystem" title="UOX3 Documentation - Race System">separate feature documentation</a> for more info, or lookup <strong>Race DFN Tags</strong> in <a href="#dfnTagSystem">DFN Tag Overview</a> for a full list of supported DFN tags for this system.</p>
 					</div>
 					<input type="checkbox" id="spoiler_dfnsystem_regions">
 					<label for="spoiler_dfnsystem_regions">regions <i class="fas fa-angle-down"></i></label>
@@ -5581,7 +5857,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							If tag is present, makes color of character's beard (if they have one) same as for their hair</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">cooking<</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							<p><span class="highlight">cooking</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
 							Set Cooking skill (0 - 1000)</p>
 						</div>
 						<div class="settingsDiv">
@@ -5654,8 +5930,12 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							Set percentage of health at which NPC will start to flee in combat</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">fleeingspeed</span>=<strong>[movstrongentspeed]</strong><br>
-							Set the speed at which the NPC flees (0.4 by default, lower = faster)</p>
+							<p><span class="highlight">fleeingspeed</span>=<strong>[movementSpeed]</strong><br>
+							Set the speed at which the NPC flees (0.3 by default, lower = faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">fleeingspeedmounted</span>=<strong>[movementSpeed]</strong><br>
+							Set the speed at which the NPC flees when mounted (0.25 by default, lower = faster)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">focus</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
@@ -5875,7 +6155,11 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">runningspeed</span>=<strong>[movementspeed]</strong><br>
-							Defines running-speed for the NPC (0.2 by default, lower = faster)</p>
+							Defines running-speed for the NPC (uses default value from uox.ini setting if not set: 0.2, lower = faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">runningspeedmounted</span>=<strong>[movementspeed]</strong><br>
+							Defines running-speed for the NPC (uses default value from uox.ini setting if not set: 0.12, lower = faster)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">runs</span><br>
@@ -5982,7 +6266,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							Set hunger-rate and chance to become wild (600 default for hungerrate, 30 for chance to go wild!)</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">taming<</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							<p><span class="highlight">taming</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
 							Set Animal Taming skill (0 - 1000)</p>
 						</div>
 						<div class="settingsDiv">
@@ -6023,7 +6307,11 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">walkingspeed</span>=<strong>[movementspeed]</strong><br>
-							Set NPC walk speed (0.7 default, uses global uox.ini settings if not set)</p>
+							Set NPC walk speed (uses default value from uox.ini setting if not set: 0.38, lower = faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">walkingspeedmounted</span>=<strong>[movementspeed]</strong><br>
+							Set NPC walk speed (uses default value from uox.ini setting if not set: 0.3, lower = faster)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">willhunger</span>=<strong>[0/1]</strong><br>
@@ -6109,6 +6397,10 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							Same as <strong>Att</strong> tag. Used to set minimum and maximum damage values for weapons</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="highlight">damageable</span>=<strong>[0/1]</strong><br>
+							If enabled, allows client to display healthbar for object, using object's hp/maxhp values as basis. Any changes to a damageable object's health will not be reflected in the client until a stat update has been sent.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="highlight">decay</span>=<strong>[0/1]</strong><br>
 							If set to 1, item decays based on normal item decay rules. If set to 0, it never decays</p>
 						</div>
@@ -6121,7 +6413,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							Minimum dexterity required to equip item</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">dexadd<</span>=<strong>[statpoints]</strong><br>
+							<p><span class="highlight">dexadd</span>=<strong>[statpoints]</strong><br>
 							Temporary dexterity bonus applied to character while they have item equipped</p>
 						</div>
 						<div class="settingsDiv">
@@ -6262,7 +6554,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">name2</span>=<strong>[text]</strong><br>
-							Secondary, hidden name of item. Revealed with Item Identification. Maximum length: 128 characters</p>
+							Secondary, hidden name of item, revealed with Item Identification skill (also used to name corpses and body parts from corpses). Maximum length: 127 characters</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">newbie</span><br>
@@ -6366,6 +6658,243 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_dfn_tags_race">
+					<label for="spoiler_dfn_tags_race">Race DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="highlight">ALLOWEQUIPLIST</span>=<strong>[number]</strong></strong><br>
+							Members of the race can equip items listed in the specified EQUIPLIST section</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">ARMORREST</span>=<strong>[number]</strong></strong><br>
+							Sets the armor class restriction of the race (0-127). Race will be unable to equip any armor with the specified AC</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">BANEQUIPLIST</span>=<strong>[number]</strong></strong><br>
+							Members of the race are forbidden from equipping items listed in the specified EQUIPLIST section</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">BEARDMIN</span>=<strong>[hue]</strong><br>
+							Minimum value for beard colour allowed for race. Entered as a pair (min, max) along with BEARDMAX. Multiple pairs can be added to support multiple ranges of colours.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">BEARDMAX</span>=<strong>[hue]</strong><br>
+							Maximum value for beard colour allowed for race. Entered as a pair (min, max) along with BEARDMIN. Multiple pairs can be added to support multiple ranges of colours.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">BLOODCOLOUR</span>=<strong>[hue]</strong><br>
+							When blood-effects are spawned from a member of this race, their blood will be this colour (hexID of hue)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">COLDAFFECT</span><br>
+							If present, race will be affected by cold, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">COLDLEVEL</span>=<strong>[number]</strong><br>
+							Cold level limit (temperature from weather system) where character of race will start taking damage</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">COLDDAMAGE</span>=<strong>[number]</strong><br>
+							Max amount of damage caused by cold, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">COLDSECS</span>=<strong>[seconds]</strong><br>
+							How often cold damage can occur, in seconds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">DEXCAP</span>=<strong>[statValue]</strong><br>
+							Cap on Dexterity stat for the race</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">GENDER</span>=<strong>[MALE/FEMALE]</strong><br>
+							Restrict membership in race to characters of specified gender. Leave out for no restriction.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HAIRMIN</span>=<strong>[hue]</strong><br>
+							Minimum value for hair colour allowed for race. Entered as a pair (min, max) along with HAIRMAX. Multiple pairs can be added to support multiple ranges of colours.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HAIRMAX</span>=<strong>[hue]</strong><br>
+							Maximum value for hair colour allowed for race. Entered as a pair (min, max) along with HAIRMIN. Multiple pairs can be added to support multiple ranges of colours.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HEATAFFECT</span></strong><br>
+							If present, race will be affected by heat, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HEATDAMAGE</span>=<strong>[number]</strong><br>
+							Max amount of damage caused by heat, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HEATLEVEL</span>=<strong>[number]</strong><br>
+							Heat level limit (temperature from weather system) where character of race will start taking damage</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HEATSECS</span>=<strong>[seconds]</strong><br>
+							How often heat damage can occur, in seconds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HPMOD</span>=<strong>[number]</strong><br>
+							Adjusts maximum hitpoints of member of the race by a percentage value of the character's strength. Example: 100 base hitpoints, 50 strength and HPMOD=50 will give a character max hitpoints of <span class="highlight">100 + ( 50 * 0.50 ) = 125</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">HUNGER</span>=<strong>[number,number]</strong><br>
+							The first number is the time in seconds between hunger checks, the second one is the damage taken when starving</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">INTCAP</span>=<strong>[statValue]</strong><br>
+							Cap on Intelligence stat for the race</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTAFFECT</span><br>
+							If present, race will be affected by light, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTDAMAGE</span>=<strong>[number]</strong><br>
+							Base amount of damage caused by light, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTLEVEL</span>=<strong>[number]</strong><br>
+							Light level that defines when character of race will take damage from light in world and dungeons. For world, character will take damage if race's LIGHTLEVEL is higher than current light value. If LIGHTLEVEL is set to 10, character will take damage from world light level if it's between 1 and 9 and character is not in a dungeon, but no damage if world light level is 10 or above. If character is in a dungeon, they will take damage if dungeon light level is 10 or higher.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTSECS</span>=<strong>[seconds]</strong><br>
+							How often light damage is applied in seconds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTNINGAFFECT</span><br>
+							If present, race will be affected by lightning, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTNINGDAMAGE</span>=<strong>[number]</strong><br>
+							Max amount of damage caused by lightning, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LIGHTNINGCHANCE</span>=<strong>[number]</strong><br>
+							Chance to get hit by lightning during a storm</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">LANGUAGEMIN</span>=<strong>[number]</strong><br>
+							Minimum skillpoints in Spirit Speak skill required for non-members of this race to understand speech from members of the race</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">MAGICRESISTANCE</span>=<strong>[float]</strong><br>
+							Sets a magic resistance bonus for members of this race, between 0.0 and 100.0 % (not currently active)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">MANAMOD</span>=<strong>[number]</strong><br>
+							Adjusts maximum mana of member of the race by a percentage value of the character's intelligence. Example: 100 base mana, 50 intelligence and MANAMOD=50 will give a character max mana of <span class="highlight">100 + ( 50 * 0.50 ) = 125</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">NAME</span>=<strong>[text]</strong><br>
+							Name of the race</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">NOBEARD</span><br>
+							If present, only characters with no beards can be members of this race, and any new characters joining it will have their beards (if any) removed.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">NIGHTVIS</span>=<strong>[number]</strong><br>
+							Light level at which night vision kicks in for members of the race. If world light level (or light level of weather system in a region, or dungeon light level) is brighter than this (i.e. lower value) nothing happens. If light level is darker (higher value) than this, the character's personal light level gets adjusted to raceLightLevel - worldLightLevel.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">PLAYERRACE</span>=<strong>[0/1]</strong><br>
+							Supposed to indicate whether a particular race is intended for players or not, but currently does nothing. Still, exposed to the JS engine if someone wants to make use of it!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">POISONRESISTANCE</span>=<strong>[number]</strong><br>
+							Sets a poison resistance bonus for members of this race, between 0.0 and 100.0 % (not currently active)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">PARENTRACE</span>=<strong>[raceID]</strong><br>
+							ID of parent race, from which the race will inherit properties. Inherited properties can be overridden by re-defining them in child race.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">REQUIREBEARD</span><br>
+							If present, members of the race are required to have facial hear of some sort. Anyone joining the race (for instance through a Race Gate) without having facial hair will be given facial hair.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">RAINAFFECT</span><br>
+							If present, race will be affected by rain, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">RAINDAMAGE</span>=<strong>[number]</strong><br>
+							Max amount of damage caused by rain, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">RAINSECS</span>=<strong>[seconds]</strong><br>
+							How often rain damage is applied in seconds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">RACERELATION</span>=<strong>[raceID value]</strong><br>
+							Defines a race's relation with another race. raceID is the ID of the other race, while value is a number between -100 and 100, where a value of 0 means the relationship is neutral, a value under 0 is enemy, and a value above 0 is ally.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">RACIALENEMY</span>=<strong>[raceID]</strong><br>
+							Alternate way of setting race relation. Will set a race's relation with raceID equal to the smallest relation level that still counts as enemy, i.e. -1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">RACIALAID</span>=<strong>[raceID]</strong><br>
+							Alternate way of setting race relation. Will set a race's relation with raceID equal to the smallest relation level that still counts as ally, i.e. 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">[SKILLNAME]G</span>=<strong>[combatModID]</strong><br>
+							Bonus applied to skill checks for specified SKILLNAME, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, SWORDSMANSHIPG=3 will apply a 20% bonus to swordsmanship skill checks for members of a race with that tag, if using the default [COMBAT MODS] section. The same bonus is also applied to base damage in combat, before other damage modifiers.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">[SKILLNAME]L</span>=<strong>[number]</strong><br>
+							Penalty applied to skill checks for specified SKILLNAME, based on percentage value provided in [COMBAT MODS] section for specified ID. For instance, SWORDSMANSHIPL=3 will apply a 20% penalty to swordsmanship skill checks for members of a race with that tag, if using the default [COMBAT MODS] section. The same penalty is also applied to base damage in combat, before other damage modifiers.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">SKINMIN</span>=<strong>[hue]</strong><br>
+							Minimum value for skin colour allowed for race. Entered as a pair (min, max) along with SKINMAX. Multiple pairs can be added to support multiple ranges of colours.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">SKINMAX</span>=<strong>[hue]</strong><br>
+							Maximum value for skin colour allowed for race. Entered as a pair (min, max) along with SKINMIN. Multiple pairs can be added to support multiple ranges of colours.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">SNOWAFFECT</span><br>
+							If present, race will be affected by snow, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">SNOWDAMAGE</span>=<strong>[number]</strong><br>
+							Max amount of damage caused by snow, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">SNOWSECS</span>=<strong>[seconds]</strong><br>
+							How often snow damage can occur, in seconds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">STAMMOD</span>=<strong>[number]</strong><br>
+							Adjusts maximum stamina of member of the race by a percentage value of the character's dexterity. Example: 100 base stamina, 50 dexterity and STAMMOD=50 will give a character max stamina of <span class="highlight">100 + ( 50 * 0.50 ) = 125</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">STORMAFFECT</span><br>
+							If present, race will be affected by storms, based on weather, damage types, etc</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">STORMDAMAGE</span>=<strong>[number]</strong><br>
+							Max amount of damage caused by storms, before resistances</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">STORMSECS</span>=<strong>[seconds]</strong><br>
+							How often storms damage can occur, in seconds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">STRCAP</span>=<strong>[statValue]</strong><br>
+							Cap on Strength stat for the race</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">THIRST</span>=<strong>[number,number]</strong><br>
+							The first number is the time in seconds between thirst checks, the second one is the damage taken when extremely thirsty</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">VISRANGE</span>=<strong>[number]</strong><br>
+							Default visibility range of race. Defaults to 18</p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_dfn_tags_regions">
 					<label for="spoiler_dfn_tags_regions">Region DFN Tags <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -6438,7 +6967,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							Set one of these lines for each ore type you want players to be able to find in this region, with an optional weighted value behind representing the chance to find said ore in the region. If no chance is specified, will use default chance defined via DEFAULTCHANCE tag for said ore type in skills.dfn</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">race<</span>=<strong>[raceID]</strong><br>
+							<p><span class="highlight">race</span>=<strong>[raceID]</strong><br>
 							Set the ID of the race this region belongs to. Members of a race can freely perform hostile actions against enemies of said race within this region</p>
 						</div>
 						<div class="settingsDiv">
@@ -6652,7 +7181,7 @@ ARCHERYL=3 // MOD3, 20.0% penalty to archery
 							Lower right corner of coordinate set</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">stormtempdrop<</span>=<strong>[y coordinate]</strong><br>
+							<p><span class="highlight">stormtempdrop</span>=<strong>[y coordinate]</strong><br>
 							Upper left corner of coordinate set</p>
 						</div>
 					</div>
@@ -9916,7 +10445,7 @@ function commandTitle()
 							<p><span class="highlight">Alkiser</span><br> Web Designer/Admin of uoxdev.com, ~early 2000</p>
 							<p><span class="highlight">Infymus</span><br> Michael Hoenie, Tool Programmer, ~2001</p>
 							<p><span class="highlight">Duke</span><br> Lonewolf developer</p>
-							<p><span class="highlight">Mark A. Pelletier</span><br> UOR/OU emulator</p>
+							<p><span class="highlight">Coren</span><br> Mark A. Pelletier, UOR/OU emulator</p>
 							<p><span class="highlight">Sheppard</span><br> Creator of UOOS emulator</p>
 						</div>
 

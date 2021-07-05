@@ -239,11 +239,59 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
-			case DFNTAG_MORE:			applyTo->SetTempVar( CITV_MORE, ndata );				break;
+			case DFNTAG_MORE:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+				}
+				break;
 			case DFNTAG_MORE2:																	break;
-			case DFNTAG_MOREX:			applyTo->SetTempVar( CITV_MOREX, ndata );				break;
-			case DFNTAG_MOREY:			applyTo->SetTempVar( CITV_MOREY, ndata );				break;
-			case DFNTAG_MOREZ:			applyTo->SetTempVar( CITV_MOREZ, ndata );				break;
+			case DFNTAG_MOREX:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+				}
+				break;
+			case DFNTAG_MOREY:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+				}
+				break;
+			case DFNTAG_MOREZ:
+				if( ssecs.size() >= 4 )
+				{
+					applyTo->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+				}
+				else
+				{
+					applyTo->SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+				}
+				break;
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata.c_str() );						break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;

@@ -3742,12 +3742,12 @@ CPCharDeleteResult::CPCharDeleteResult()
 {
 	InternalReset();
 }
-CPCharDeleteResult::CPCharDeleteResult( CharacterDeletionResult result )
+CPCharDeleteResult::CPCharDeleteResult( SI08 result )
 {
 	InternalReset();
 	DeleteResult( result );
 }
-void CPCharDeleteResult::DeleteResult( CharacterDeletionResult result )
+void CPCharDeleteResult::DeleteResult( SI08 result )
 {
 	pStream.WriteByte( 1, result );
 }
@@ -6505,7 +6505,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			tempEntry.ourText = strutil::format(" \t%s\t ",cItem.GetName().c_str() );
 		}
 	}
-	tempEntry.stringNum = 1050045;
+	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 	FinalizeData( tempEntry, totalStringLen );
 
 	if( cItem.IsLockedDown() )
@@ -6513,48 +6513,54 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( ValidateObject( cItem.GetMultiObj() ) && cItem.GetMultiObj()->IsSecureContainer( &cItem ) )
 		{
 			// Locked down and secure
-			tempEntry.stringNum = 501644;
+			tempEntry.stringNum = 501644; // locked down & secure
 			FinalizeData( tempEntry, totalStringLen );
 		}
 		else
 		{
 			// Locked down
-			tempEntry.stringNum = 501643;
+			tempEntry.stringNum = 501643; // locked down
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
-	{
-		tempEntry.stringNum = 1050044;
+	{	
+		tempEntry.stringNum = 1050044; // ~1_COUNT~ items, ~2_WEIGHT~ stones
 		//tempEntry.ourText = strutil::format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
-		tempEntry.ourText = strutil::format( "%u\t%i", GetTotalItemCount( &cItem ), (cItem.GetWeight()/100) );
+		tempEntry.ourText = strutil::format( "%u\t%i", GetTotalItemCount( &cItem ), ( cItem.GetWeight() / 100 ) );
 		FinalizeData( tempEntry, totalStringLen );
+
 		if( ( cItem.GetWeightMax() / 100 ) >= 1 )
 		{
-			//Uncomment and replace 0 with maxitem value if we ever implement it
-			tempEntry.stringNum = 1072226;
+			tempEntry.stringNum = 1072226; // Capacity: ~1_COUNT~ items, ~2_WEIGHT~ stones
 			tempEntry.ourText = strutil::format( "%u\t%i", cItem.GetMaxItems(), ( cItem.GetWeightMax() / 100 ) );
 			//tempEntry.stringNum = 1060658;
 			//tempEntry.ourText = strutil::format( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
+	else if( cItem.GetType() == IT_LOCKEDCONTAINER || cItem.GetType() == IT_LOCKEDSPAWNCONT )
+	{
+			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+			tempEntry.ourText = strutil::format( " \t%s\t ", "[Locked]" );
+			FinalizeData( tempEntry, totalStringLen );
+	}
 	else if( cItem.GetType() == IT_HOUSESIGN )
 	{
-		tempEntry.stringNum = 1061112;
+		tempEntry.stringNum = 1061112; // House Name: ~1_val~
 		tempEntry.ourText = cItem.GetName();
 		FinalizeData( tempEntry, totalStringLen );
 
 		if( cItem.GetOwnerObj() != nullptr )
 		{
-			tempEntry.stringNum = 1061113;
+			tempEntry.stringNum = 1061113; // Owner: ~1_val~
 			tempEntry.ourText = cItem.GetOwnerObj()->GetName();
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
 	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
 	{
-		tempEntry.stringNum = 1060584;
+		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
 		tempEntry.ourText = strutil::number( cItem.GetTempVar( CITV_MOREZ ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
@@ -6564,27 +6570,27 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		switch( cItem.GetTempVar( CITV_MORE ) )
 		{
 			case 1: // Trammel
-				tempEntry.stringNum = 1114778;
+				tempEntry.stringNum = 1050045; // ~1_VAL~
 				tempEntry.ourText = "(Trammel)";
 				break;
 			case 2: // Ilshenar
-				tempEntry.stringNum = 1114778;
+				tempEntry.stringNum = 1050045; // ~1_VAL~
 				tempEntry.ourText = "(Ilshenar)";
 				break;
 			case 3: // Malas
-				tempEntry.stringNum = 1114778;
+				tempEntry.stringNum = 1050045; // ~1_VAL~
 				tempEntry.ourText = "(Malas)";
 				break;
 			case 4: // Tokuno
-				tempEntry.stringNum = 1114778;
+				tempEntry.stringNum = 1050045; // ~1_VAL~
 				tempEntry.ourText = "(Tokuno Islands)";
 				break;
 			case 5: // TerMur
-				tempEntry.stringNum = 1114778;
+				tempEntry.stringNum = 1050045; // ~1_VAL~
 				tempEntry.ourText = "(Ter Mur)";
 				break;
 			default: // Felucca
-				tempEntry.stringNum = 1114778;
+				tempEntry.stringNum = 1050045; // ~1_VAL~
 				tempEntry.ourText = "(Felucca)";
 				break;
 		}
@@ -6593,9 +6599,9 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
 	{
 		if( ( cItem.GetWeight() / 100 ) == 1 )
-			tempEntry.stringNum = 1072788;
+			tempEntry.stringNum = 1072788; // Weight: ~1_WEIGHT~ stone
 		else
-			tempEntry.stringNum = 1072789;
+			tempEntry.stringNum = 1072789; // Weight: ~1_WEIGHT~ stones
 
 		if( cItem.GetType() == IT_ITEMSPAWNER || cItem.GetType() == IT_NPCSPAWNER )
 			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) );
@@ -6609,21 +6615,21 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		{
 			if( cItem.GetHiDamage() > 0 )
 			{
-				tempEntry.stringNum = 1060403;
+				tempEntry.stringNum = 1060403; // physical damage ~1_val~%
 				tempEntry.ourText = strutil::number( 100 );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetHiDamage() > 0 )
 			{
-				tempEntry.stringNum = 1061168;
+				tempEntry.stringNum = 1061168; // weapon damage ~1_val~ - ~2_val~
 				tempEntry.ourText = strutil::format( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetSpeed() > 0 )
 			{
-				tempEntry.stringNum = 1061167;
+				tempEntry.stringNum = 1061167; // weapon speed ~1_val~
 				tempEntry.ourText = strutil::number( cItem.GetSpeed() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
@@ -6631,9 +6637,9 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			if( cItem.GetHiDamage() > 0 )
 			{
 				if( cItem.GetLayer() == IL_RIGHTHAND )
-					tempEntry.stringNum = 1061824;
+					tempEntry.stringNum = 1061824; // one-handed weapon
 				else
-					tempEntry.stringNum = 1061171;
+					tempEntry.stringNum = 1061171; // two-handed weapon
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
@@ -6642,16 +6648,19 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				switch( Combat->getCombatSkill( &cItem ) )
 				{
 					case SWORDSMANSHIP:
-						tempEntry.stringNum = 1061172;
+						tempEntry.stringNum = 1061172; // skill required: swordsmanship
 						break;
 					case MACEFIGHTING:
-						tempEntry.stringNum = 1061173;
+						tempEntry.stringNum = 1061173; // skill required: mace fighting
 						break;
 					case FENCING:
-						tempEntry.stringNum = 1061174;
+						tempEntry.stringNum = 1061174; // skill required: fencing
 						break;
 					case ARCHERY:
-						tempEntry.stringNum = 1061175;
+						tempEntry.stringNum = 1061175; // skill required: archery
+						break;
+					case THROWING:
+						tempEntry.stringNum = 1112075; // skill required: throwing
 						break;
 				}
 				FinalizeData( tempEntry, totalStringLen );
@@ -6659,40 +6668,40 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 
 			if( cItem.GetResist( PHYSICAL ) > 0 )
 			{
-				tempEntry.stringNum = 1060448;
+				tempEntry.stringNum = 1060448; // physical resist ~1_val~%
 				tempEntry.ourText = strutil::number( cItem.GetResist( PHYSICAL ) );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetMaxHP() > 1 )
 			{
-				tempEntry.stringNum = 1060639;
+				tempEntry.stringNum = 1060639; // durability ~1_val~ / ~2_val~
 				tempEntry.ourText = strutil::format( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetStrength2() > 0 )
 			{
-				tempEntry.stringNum = 1060485;
+				tempEntry.stringNum = 1060485; // strength bonus ~1_val~
 				tempEntry.ourText = strutil::number( cItem.GetStrength2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 			if( cItem.GetDexterity2() > 0 )
 			{
-				tempEntry.stringNum = 1060409;
+				tempEntry.stringNum = 1060409; // dexterity bonus ~1_val~
 				tempEntry.ourText = strutil::number( cItem.GetDexterity2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 			if( cItem.GetIntelligence2() > 0 )
 			{
-				tempEntry.stringNum = 1060432;
+				tempEntry.stringNum = 1060432; // intelligence bonus ~1_val~
 				tempEntry.ourText = strutil::number( cItem.GetIntelligence2() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
 			if( cItem.GetStrength() > 1 )
 			{
-				tempEntry.stringNum = 1061170;
+				tempEntry.stringNum = 1061170; // strength requirement ~1_val~
 				tempEntry.ourText = strutil::number( cItem.GetStrength() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
@@ -6704,21 +6713,21 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetBuyValue() > 0 )
 		{
 			// First the price
-			tempEntry.stringNum = 1043304;
+			tempEntry.stringNum = 1043304; // Price: ~1_COST~
 			tempEntry.ourText = strutil::number( cItem.GetBuyValue() );
 			FinalizeData( tempEntry, totalStringLen );
 			// Then the description
-			tempEntry.stringNum = 1043305;
+			tempEntry.stringNum = 1043305; // <br>Seller's Description:<br>"~1_DESC~"
 			tempEntry.ourText = cItem.GetDesc();
 			FinalizeData( tempEntry, totalStringLen );
 		}
 		else
 		{
 			// Item is not for sale
-			tempEntry.stringNum = 1043307;
+			tempEntry.stringNum = 1043307; // Price: Not for sale.
 			FinalizeData( tempEntry, totalStringLen );
 			// The description
-			tempEntry.stringNum = 1043305;
+			tempEntry.stringNum = 1043305; // <br>Seller's Description:<br>"~1_DESC~"
 			tempEntry.ourText = cItem.GetDesc();
 			FinalizeData( tempEntry, totalStringLen );
 
@@ -6729,7 +6738,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
 	toolTipEntry tempEntry = {};
-	tempEntry.stringNum = 1050045;
+	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 	tempEntry.ourText = strutil::format( " \t%s\t ",mChar.GetName().c_str() );
 	FinalizeData( tempEntry, totalStringLen );
 }

@@ -34,7 +34,7 @@ function onCallback0( socket, ourObj )
 		return;
 	}
 
-	var splitString = socket.xText.split( " ", 2 );
+	var splitString = socket.xText.split( " " );
 	var uKey 	= splitString[0].toUpperCase();
 	var nVal 	= parseInt( splitString[1] );
 	switch( uKey )
@@ -173,17 +173,19 @@ function onCallback0( socket, ourObj )
 		break;
 	default:
 		if( ourObj.isChar )
-			HandleSetChar( socket, ourObj, uKey, nVal );
+			HandleSetChar( socket, ourObj, uKey, splitString );
 		else if( ourObj.isItem )
-			HandleSetItem( socket, ourObj, uKey, nVal );
+			HandleSetItem( socket, ourObj, uKey, splitString );
 		else
 			socket.SysMessage( "Invalid set command " + uKey );
 		break;
 	}
 }
 
-function HandleSetItem( socket, ourItem, uKey, nVal )
+function HandleSetItem( socket, ourItem, uKey, splitString )
 {
+	var nVal 	= parseInt( splitString[1] );
+
 	switch( uKey )
 	{
 	case "ID":
@@ -216,28 +218,55 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "MORE":
-		ourItem.more = nVal;
+		if( splitString[4] )
+		{
+			ourItem.more = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREX":
-		ourItem.morex = nVal;
+		if( splitString[4] )
+		{
+			ourItem.morex = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.morex = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREY":
-		ourItem.morey = nVal;
+		if( splitString[4] )
+		{
+			ourItem.morey = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.morey = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREZ":
-		ourItem.morez = nVal;
+		if( splitString[4] )
+		{
+			ourItem.morez = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.morez = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREXYZ":
-		var splitValues = socket.xText.split( " " );
-		if( splitValues[3] )
+		if( splitString[3] )
 		{
-			ourItem.morex = parseInt( splitValues[1] );
-			ourItem.morey = parseInt( splitValues[2] );
-			ourItem.morez = parseInt( splitValues[3] );
+			ourItem.morex = parseInt( splitString[1] );
+			ourItem.morey = parseInt( splitString[2] );
+			ourItem.morez = parseInt( splitString[3] );
 			okMsg( socket );
 		}
 		break;
@@ -341,7 +370,7 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		break;
 	default:
 		if( ourItem.isSpawner )
-			HandleSetSpawner( socket, ourItem, uKey, nVal );
+			HandleSetSpawner( socket, ourItem, uKey, splitString );
 		else
 		{
 			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
@@ -357,8 +386,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 	}
 }
 
-function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
+function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
+	var nVal 	= parseInt( splitString[1] );
+
 	switch( uKey )
 	{
 	case "SPAWNSECTION":
@@ -388,8 +419,10 @@ function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
 	}
 }
 
-function HandleSetChar( socket, ourChar, uKey, nVal )
+function HandleSetChar( socket, ourChar, uKey, splitString )
 {
+	var nVal 	= parseInt( splitString[1] );
+
 	switch( uKey )
 	{
 	case "ALLSKILLS":

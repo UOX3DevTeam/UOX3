@@ -31,7 +31,7 @@ const propertyLabelEnd = "</BASEFONT>";
 
 // Settings
 const enableTransparentGump = true;
-const enableTooltips = false; // Too much data for regular UO client, but works with ClassicUO client
+const enableTooltips = true; // Too much data for regular UO client, but works with ClassicUO client
 
 // If any properties are removed or added, make sure to update the value behind each entry so there
 // are no duplicate or skipped values
@@ -651,11 +651,11 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 	else
 		gumpObj.AddButton( 230, 2, 4017, 4018, 1, 0, 0 ); 	// Exit
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1114778, pSocket, GetDictionaryEntry( 2009, socketLang )); // Close Tweak menu
+		gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 2009, socketLang )); // Close Tweak menu
 	gumpObj.AddHTMLGump( 10, 2, 230, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>" + GetDictionaryEntry( 2011, socketLang ) + " " + objType + " " + objPropHeader + "</BASEFONT></BIG></CENTER>" );
 	gumpObj.AddHTMLGump( 10, 27, 230, 20, 0, 0, "<BIG><BASEFONT color=" + nameColor + "><CENTER>" + objName + "</CENTER></BASEFONT></BIG>" );
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1114778, pSocket, objName );
+		gumpObj.AddToolTip( 1050045, pSocket, objName );
 	if( tweakSkills )
 	{
 		gumpObj.AddHTMLGump( 0, 402, 235, 20, 0, 0, '<CENTER><BASEFONT color=#cdcdcd>' + GetDictionaryEntry( 2012, socketLang ) + ' ' + objType + ' ' + GetDictionaryEntry( 2013, socketLang ) + ': ' + (skillTotal/10).toFixed(1).toString() + '</BASEFONT></CENTER>' );
@@ -684,17 +684,17 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Serial</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, objType + " Serial - set automatically by UOX3" );
+			gumpObj.AddToolTip( 1050045, pSocket, objType + " Serial - set automatically by UOX3" );
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, "ID of " + objType );
+			gumpObj.AddToolTip( 1050045, pSocket, "ID of " + objType );
 		gumpObj.AddHTMLGump( 15, 99, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
 	else if( objType == "Region" )
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Region ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, objType + " ID - Region number defined in regions.dfn" );
+			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - Region number defined in regions.dfn" );
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
 	else
@@ -702,19 +702,19 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		// Account
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Account ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, objType + " ID - Account ID defined for this account in accounts.dfn" );
+			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - Account ID defined for this account in accounts.dfn" );
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Username</BASEFONT>" );
 	}
 
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1114778, pSocket, "Name of " + objType );
+		gumpObj.AddToolTip( 1050045, pSocket, "Name of " + objType );
 
 	// Buttons
 	if( objType != "Region" && objType != "Account" )
 	{
 		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 2); // ID
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, "0x" + (targetObj.id).toString(16) + " (" + (targetObj.id).toString() + ")" );
+			gumpObj.AddToolTip( 1050045, pSocket, "0x" + (targetObj.id).toString(16) + " (" + (targetObj.id).toString() + ")" );
 		if( objType == "Item" || objType == "Multi" )
 			gumpObj.AddButton( 120, 100, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 10); // Name
 		else if( objType == "Character" )
@@ -726,7 +726,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		//gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 13); // Username
 
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1114778, pSocket, objName );
+		gumpObj.AddToolTip( 1050045, pSocket, objName );
 
 	if( objName.length > 16 )
 		objName = objName.substr(0, 16-1) + '..';
@@ -736,7 +736,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.serial).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.serial).toString() + "</BASEFONT> (Read-Only)" );
+			gumpObj.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.serial).toString() + "</BASEFONT> (Read-Only)" );
 		gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, propertyValueStart + "0x" + (targetObj.id).toString(16) + " (" + (targetObj.id).toString() + ")" + propertyValueEnd );
 		gumpObj.AddHTMLGump( 125, 99, 105, 20, 0, 0, propertyValueStart + objName + propertyValueEnd );
 	}
@@ -744,7 +744,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.id).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.id).toString() + "</BASEFONT> (Read-Only)" );
+			gumpObj.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.id).toString() + "</BASEFONT> (Read-Only)" );
 		if( objType == "Account" )
 			gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + objName + propertyValueEnd + "</BASEFONT>"  );
 		else
@@ -757,7 +757,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		gumpObj.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>Page 1/" + totalPages + "</BASEFONT>" );
 		gumpObj.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, 2, 0 );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, "Next page" );
+			gumpObj.AddToolTip( 1050045, pSocket, "Next page" );
 	}
 
 	return gumpObj;
@@ -776,13 +776,13 @@ function RenderOtherPages( pSocket, gumpObj, gumpPage, totalPages )
 		// Add next page button for all subsequent pages except last one
 		gumpObj.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, gumpPage + 1, 0 );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1114778, pSocket, "Next page" );
+			gumpObj.AddToolTip( 1050045, pSocket, "Next page" );
 	}
 
 	// Add previous page button for all subsequent pages
 	gumpObj.AddButton( 14, 420, gumpPrevButtonOff, gumpPrevButtonOn, 0, gumpPage - 1, 0 );
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1114778, pSocket, "Previous page" );
+		gumpObj.AddToolTip( 1050045, pSocket, "Previous page" );
 
 	return gumpObj;
 }
@@ -1079,18 +1079,29 @@ function HandleItemTarget( pSocket, myTarget )
 			case itemProp.more:
 				itemLabelTooltip 	= "Generic item property used for many different things";
 				itemValue 			= (myTarget.more).toString();
+				var hexVal = "0x" + ("00000000"+(Number(myTarget.more).toString(16))).slice(-8)
+				itemValueTooltip = (myTarget.more).toString() + " (" + hexVal + ")";
 				break;
 			case itemProp.morex:
 				itemLabelTooltip 	= "Generic item property used for many different things";
 				itemValue 			= (myTarget.morex).toString();
+				var hexVal = "0x" + ("00000000"+(Number(myTarget.morex).toString(16))).slice(-8)
+				itemValueTooltip = (myTarget.morex).toString() + " (" + hexVal + ")";
+				break;
 				break;
 			case itemProp.morey:
 				itemLabelTooltip 	= "Generic item property used for many different things";
 				itemValue 			= (myTarget.morey).toString();
+				var hexVal = "0x" + ("00000000"+(Number(myTarget.morey).toString(16))).slice(-8)
+				itemValueTooltip = (myTarget.morey).toString() + " (" + hexVal + ")";
+				break;
 				break;
 			case itemProp.morez:
 				itemLabelTooltip 	= "Generic item property used for many different things";
 				itemValue 			= (myTarget.morez).toString();
+				var hexVal = "0x" + ("00000000"+(Number(myTarget.morez).toString(16))).slice(-8)
+				itemValueTooltip = (myTarget.morez).toString() + " (" + hexVal + ")";
+				break;
 				break;
 			case itemProp.movable:
 				itemLabelTooltip 	= "Determines who can pick up/move item";
@@ -1246,7 +1257,7 @@ function HandleItemTarget( pSocket, myTarget )
 		{
 			// Labels
 			itemGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
-			itemGump.AddToolTip( 1114778, pSocket, itemLabelTooltip.toString() );
+			itemGump.AddToolTip( 1050045, pSocket, itemLabelTooltip.toString() );
 
 			if( itemValue == "-" )
 				itemValueTooltip = "Value not set";
@@ -1256,18 +1267,18 @@ function HandleItemTarget( pSocket, myTarget )
 			 ( propertyName != "Maxinterval" && propertyName != "Mininterval" && propertyName != "Spawnsection" && propertyName != "Sectionalist" ))))
 			{
 				itemGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-				itemGump.AddToolTip( 1114778, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ));
+				itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ));
 			}
 
 			// Values
 			itemGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + itemValue + propertyValueEnd );
 			if( propertyName == "Itemsinside" || propertyName == "Container" || propertyName == "IsGuarded" || propertyName == "Origin" )
 			{
-				itemGump.AddToolTip( 1114778, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ) + " (Read-Only)");
+				itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ) + " (Read-Only)");
 			}
 			else if( !myTarget.isSpawner && ( propertyName == "Maxinterval" || propertyName == "Mininterval" || propertyName == "Spawnsection" || propertyName == "Sectionalist" ))
 			{
-				itemGump.AddToolTip( 1114778, pSocket, "<BASEFONT color=#EECD8B>n/a</BASEFONT> (SpawnObject Only)");
+				itemGump.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>n/a</BASEFONT> (SpawnObject Only)");
 			}
 		}
 
@@ -1963,7 +1974,7 @@ function HandleCharTarget( pSocket, myTarget )
 			else
 				charGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
 			if( enableTooltips )
-				charGump.AddToolTip( 1114778, pSocket, charLabelTooltip.toString() );
+				charGump.AddToolTip( 1050045, pSocket, charLabelTooltip.toString() );
 
 			if( charValue == "-" )
 				charValueTooltip = "Value not set";
@@ -2005,7 +2016,7 @@ function HandleCharTarget( pSocket, myTarget )
 						break;
 					charGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 					if( enableTooltips )
-						charGump.AddToolTip( 1114778, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
+						charGump.AddToolTip( 1050045, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
 					break;
 			}
 
@@ -2045,12 +2056,12 @@ function HandleCharTarget( pSocket, myTarget )
 					if(( propertyName != "Commandlevel" && propertyName != "IsGM" ) || ( myTarget.commandlevel >= pSocket.currentChar.commandlevel ))
 					{
 						if( enableTooltips )
-							charGump.AddToolTip( 1114778, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ) + " (Read-Only)");
+							charGump.AddToolTip( 1050045, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ) + " (Read-Only)");
 					}
 					break;
 				case charProp.multi:
 					if( myTarget.multi == null && enableTooltips )
-						charGump.AddToolTip( 1114778, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
+						charGump.AddToolTip( 1050045, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
 					break;
 				default:
 					break;
@@ -2115,7 +2126,7 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				// Next/Prev buttons
 				skillGump.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>Page 1/" + totalPages + "</BASEFONT>" );
 				skillGump.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, 2, 0 );
-					skillGump.AddToolTip( 1114778, pSocket, "Next page" );
+					skillGump.AddToolTip( 1050045, pSocket, "Next page" );
 			}
 		}
 		else // All other pages
@@ -2150,12 +2161,12 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				{
 					// Add next page button for all subsequent pages except last one
 					skillGump.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, gumpPage + 1, 0 );
-					skillGump.AddToolTip( 1114778, pSocket, "Next page" );
+					skillGump.AddToolTip( 1050045, pSocket, "Next page" );
 				}
 
 				// Add previous page button for all subsequent pages
 				skillGump.AddButton( 14, 420, gumpPrevButtonOff, gumpPrevButtonOn, 0, gumpPage - 1, 0 );
-				skillGump.AddToolTip( 1114778, pSocket, "Previous page" );
+				skillGump.AddToolTip( 1050045, pSocket, "Previous page" );
 			}
 		}
 
@@ -2446,11 +2457,11 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 		{
 			// Labels
 			skillGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
-			skillGump.AddToolTip( 1114778, pSocket, charSkillsToolTip.toString() );
+			skillGump.AddToolTip( 1050045, pSocket, charSkillsToolTip.toString() );
 
 			// Buttons
 			skillGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-			skillGump.AddToolTip( 1114778, pSocket, ( charSkillsValueTooltip != "" ? charSkillsValueTooltip : charSkillsValue ));
+			skillGump.AddToolTip( 1050045, pSocket, ( charSkillsValueTooltip != "" ? charSkillsValueTooltip : charSkillsValue ));
 
 			// Values
 			skillGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + charSkillsValue + propertyValueEnd );
@@ -2706,7 +2717,7 @@ function HandleMultiTarget( pSocket, myTarget )
 		{
 			// Labels
 			multiGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
-			multiGump.AddToolTip( 1114778, pSocket, multiLabelTooltip.toString() );
+			multiGump.AddToolTip( 1050045, pSocket, multiLabelTooltip.toString() );
 
 			if( multiValue == "-" )
 				multiValueTooltip = "Value not set";
@@ -2739,7 +2750,7 @@ function HandleMultiTarget( pSocket, myTarget )
 						break;
 				default:
 					multiGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-					multiGump.AddToolTip( 1114778, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ));
+					multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ));
 					break;
 			}
 
@@ -2758,7 +2769,7 @@ function HandleMultiTarget( pSocket, myTarget )
 				case multiProp.tradeTimestamp:
 				case multiProp.trashContainers:
 				case multiProp.vendors:
-					multiGump.AddToolTip( 1114778, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ) + " (Read-Only)");
+					multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3008,7 +3019,7 @@ function HandleRegionTarget( pSocket, myTarget )
 		{
 			// Labels
 			regionGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + regionLabel + propertyLabelEnd );
-			regionGump.AddToolTip( 1114778, pSocket, regionLabelTooltip.toString() );
+			regionGump.AddToolTip( 1050045, pSocket, regionLabelTooltip.toString() );
 
 			if( regionValue == "-" )
 				regionValueTooltip = "Value not set";
@@ -3020,7 +3031,7 @@ function HandleRegionTarget( pSocket, myTarget )
 					break;
 				default:
 					regionGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-					regionGump.AddToolTip( 1114778, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ));
+					regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ));
 					break;
 			}
 
@@ -3031,7 +3042,7 @@ function HandleRegionTarget( pSocket, myTarget )
 			{
 				case regionProp.population:
 				case regionProp.numOrePrefs:
-					regionGump.AddToolTip( 1114778, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ) + " (Read-Only)");
+					regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3279,7 +3290,7 @@ function HandleAccountTarget( pSocket, myTarget )
 		{
 			// Labels
 			accountGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + accountLabel + propertyLabelEnd );
-			accountGump.AddToolTip( 1114778, pSocket, accountLabelTooltip.toString() );
+			accountGump.AddToolTip( 1050045, pSocket, accountLabelTooltip.toString() );
 
 			if( accountValue == "-" )
 				accountValueTooltip = "Value not set";
@@ -3305,7 +3316,7 @@ function HandleAccountTarget( pSocket, myTarget )
 						|| ( propertyName == "CurrentChar" && !ValidateObject( myTarget.currentChar )))
 						break;
 					accountGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-					accountGump.AddToolTip( 1114778, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
+					accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
 					break;
 			}
 
@@ -3320,7 +3331,7 @@ function HandleAccountTarget( pSocket, myTarget )
 				case accountProp.lastClientVerShort:
 				case accountProp.isOnline:
 				case accountProp.flags:
-					accountGump.AddToolTip( 1114778, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
+					accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3430,7 +3441,14 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 
 		if( propertyType == "Hexadecimal" )
 		{
-			inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, "0x" + (targetObj[propertyName]).toString(16), maxLength );
+			if( propertyName == "more" || propertyName == "morex" || propertyName == "morey" || propertyName == "morez" )
+			{
+				var hexVal = "0x" + ("00000000"+(Number(targetObj[propertyName]).toString(16))).slice(-8)
+				inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, hexVal, maxLength );
+				inputGump.AddToolTip( 1050045, pUser.socket, (targetObj[propertyName]).toString() );
+			}
+			else
+				inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, "0x" + (targetObj[propertyName]).toString(16), maxLength );
 		}
 		else if( propertyType == "Text" && ( propertyName in targetObj ) && targetObj[propertyName] == null )
 		{
@@ -3439,9 +3457,9 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 		else if( propertyType == "UOXObject" && propertyName != "race" )
 		{
 			inputGump.AddButton( 20, 66, 0xfae, 0xfaf, 1, 0, 1002 ); // Assign new Object
-				inputGump.AddToolTip( 1114778, pUser.socket, "Assign new Object" );
+				inputGump.AddToolTip( 1050045, pUser.socket, "Assign new Object" );
 			inputGump.AddButton( 245, 66, 0xfb4, 0xfb5, 1, 0, 1001 ); 	// Clear Object
-				inputGump.AddToolTip( 1114778, pUser.socket, "Clear Object" );
+				inputGump.AddToolTip( 1050045, pUser.socket, "Clear Object" );
 			if( targetObj[propertyName] == null )
 				inputGump.AddHTMLGump( 50, 70, 195, 20, 0, 0, "<CENTER><BASEFONT color=#EECD8B> - </BASEFONT></CENTER>" );
 			else
@@ -3619,22 +3637,30 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case itemProp.more:
 			propertyName = "more";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things";
+			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			maxLength = 10;
+			maxVal = 0xffffffff;
 			break;
 		case itemProp.morex:
 			propertyName = "morex";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things";
+			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			maxLength = 10;
+			maxVal = 0xffffffff;
 			break;
 		case itemProp.morey:
 			propertyName = "morey";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things";
+			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			maxLength = 10;
+			maxVal = 0xffffffff;
 			break;
 		case itemProp.morez:
 			propertyName = "morez";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things";
+			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			maxLength = 10;
+			maxVal = 0xffffffff;
 			break;
 		// Character Properties
 		case charProp.colour:

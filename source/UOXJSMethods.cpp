@@ -1001,14 +1001,11 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	Additional arguments (up to 10) can be provided if the cliloc in question needs
 //|					them. This could also be used to show custom tooltips in the client, if using a
-//|					cliloc (like 1114778) that only contain an argument and no additional text!
+//|					cliloc (like 1050045) that only contain an argument and no additional text!
 //|
-//|					For example, if you use myGump.AddToolTip( 1114778, "My Custom Text" ) in JS
+//|					For example, if you use myGump.AddToolTip( 1050045, "My Custom Text" ) in JS
 //|					UOX3 will send the following gump command to add a tooltip element to previous
-//|					gump element: "tooltip 1114778 @My Custom Text@"
-//|
-//|					NOTE: Sending arguments with tooltip command will only work in UO clients
-//|					v7.0.16.0 and above
+//|					gump element: "tooltip 1050045 @My Custom Text@"
 //o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
