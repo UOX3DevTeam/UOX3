@@ -14,6 +14,7 @@
 	Updated source and scripts to use cliloc id 1050045 for custom tooltips rather than 1114778, as 1050045 is available in all client versions that support tooltips
 	Added new JS Function to force-trigger a trapped item, as if the player tried to open a trapped container:
 		TriggerTrap( pChar, iTrap )
+	Updated JS docs with some missing Functions/Methods
 
 04/07/2021 - Xuri (0.99.4u)
 	UOX3 now sends the appropriate packets (0x85 and/or 0x86) in response to client requests to delete a character from the char selection screen
