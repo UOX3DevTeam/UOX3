@@ -154,6 +154,21 @@ function myAreaFunc( srcChar, trgItem, pSock )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_TriggerTrap">TriggerTrap</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>TriggerTrap( pChar/pSock, iTrap );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>pChar/pSock triggers trap on iTrap object (if any trap is present)
+<tr><td valign="top" width="25%"><b>Extra Info</b><td>Trap will only trigger if both first two parts of MOREZ value is set on object; first part needs to be set to 1 to indicate object is trapped, second part needs to specify damage amount to apply.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+// Setup trap on iTrap object
+// First part of value (01) indicates object is trapped
+// Second part of value (32) defines damage dealt (32 = 0x32 = 50 damage)
+iTrap.morez = 0x01320000;
+
+// Trigger the trap
+TriggerTrap( pChar, iTrap );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_SendStaticStats">SendStaticStats</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SendStaticStats( socket );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Builds a gump with map and tile information on the targeted location.
@@ -378,6 +393,50 @@ var tileFlagFound = CheckStaticFlag( pUser.x, pUser.y, pUser.z, pUser.worldnumbe
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CheckDynamicFlag">CheckDynamicFlag</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CheckDynamicFlag( x, y, z, worldNumber, instanceID, tileFlagID );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Check if any dynamics at given coordinates has specified tile flag.<br><br>
+Parameters:<br>
+x, y, z, world, instanceID = coordinates, worldnumber and instanceID<br>
+tileFlagID = tileFlag from sourceCode<br>
+<pre>	TF_FLOORLEVEL	= 0,
+	TF_HOLDABLE = 1,
+	TF_TRANSPARENT = 2,
+	TF_TRANSLUCENT = 3,
+	TF_WALL = 4,
+	TF_DAMAGING = 5,
+	TF_BLOCKING = 6 ,
+	TF_WET = 7,
+	TF_UNKNOWN1 = 8,
+	TF_SURFACE = 9,
+	TF_CLIMBABLE = 10,
+	TF_STACKABLE = 11,
+	TF_WINDOW = 12,
+	TF_NOSHOOT = 13,
+	TF_DISPLAYA = 14,
+	TF_DISPLAYAN = 15,
+	TF_DESCRIPTION = 16,
+	TF_FOLIAGE = 17,
+	TF_PARTIALHUE = 18,
+	TF_UNKNOWN2 = 19,
+	TF_MAP = 20,
+	TF_CONTAINER = 21,
+	TF_WEARABLE = 22,
+	TF_LIGHT = 23,
+	TF_ANIMATED = 24,
+	TF_NODIAGONAL = 25, //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyles
+	TF_UNKNOWN3 = 26,
+	TF_ARMOR = 27,
+	TF_ROOF = 28,
+	TF_DOOR = 29,
+	TF_STAIRBACK = 30,
+	TF_STAIRRIGHT = 31</pre>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var tileFlagFound = CheckDynamicFlag( pUser.x, pUser.y, pUser.z, pUser.worldNumber, pUser.instanceID, 6 ); // Is there a tile with TF_BLOCKING flag?
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_DoesStaticBlock">DoesStaticBlock</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool DoesStaticBlock( x, y, z, world, checkWater );
 </pre>
@@ -417,6 +476,31 @@ checkMultiPlacement = if true, map tile has to be at exact same Z as provided co
 checkForRoad = true if roads and paths should count as blocking. checkMultiPlacement must be true for this to be checked
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 var doesMapBlock = DoesMapBlock( pUser.x + 1, pUser.y, pUser.z, pUser.worldnumber, false, false, true, true );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_DistanceBetween">DistanceBetween</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool DistanceBetween( x1, y1, x2, y2 );
+bool DistanceBetween( x1, y1, z1, x2, y2, z2 );
+bool DistanceBetween( objA, objB );
+bool DistanceBetween( objA, objB, checkZ );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Get the distance between two sets of coordinates or objects on either 2D or 3D plane<br><br>
+Parameters:<br>
+x1, y1, z1, x2, y2, z2 = coordinates<br>
+checkZ = true if distance between two objects should take into account Z axis
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+// Get distance between two sets of x, y coordinates
+var distance1 = DistanceBetween( pUser.x, pUser.y, iUsed.x, iUsed.y );
+
+// Get distance between two sets of x, y, z coordinates
+var distance2 = DistanceBetween( pUser.x, pUser.y, pUser.z, iUsed.x, iUsed.y, iUsed.z );
+
+// Get distance between pUser and iUsed using 2D coordinates
+var distance2 = DistanceBetween( pUser, iUsed );
+
+// Get distance between pUser and iUsed using 3D coordinates
+var distance2 = DistanceBetween( pUser, iUsed, true );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
