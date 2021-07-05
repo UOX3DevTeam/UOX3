@@ -94,6 +94,7 @@ SEngineFunc SE_IsRaceWeakToWeather;		//										***
 SEngineFunc SE_GetRaceSkillAdjustment;	//										***
 
 SEngineFunc SE_UseItem;					//										***
+SEngineFunc SE_TriggerTrap;				//										***
 
 SEngineFunc SE_TriggerEvent;			//										*
 

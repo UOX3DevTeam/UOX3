@@ -1459,6 +1459,67 @@ JSBool SE_UseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_TriggerTrap( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Uses specified item
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_TriggerTrap( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "UseItem: Invalid number of arguments (takes 2 - socket/char, and item (trap) triggered)" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar = nullptr;
+	CSocket *mySocket = nullptr;
+
+	JSEncapsulate myClass( cx, &( argv[0] ) );
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		if( myClass.isType( JSOT_OBJECT ) )
+		{
+			mChar = static_cast<CChar *>( myClass.toObject() );
+			if( !ValidateObject( mChar ) )
+			{
+				mChar = nullptr;
+			}
+		}
+	}
+	else if( myClass.ClassName() == "UOXSocket" )
+	{
+		if( myClass.isType( JSOT_OBJECT ) )
+		{
+			mySocket = static_cast<CSocket *>( myClass.toObject() );
+			if( mySocket != nullptr )
+				mChar = mySocket->CurrcharObj();
+		}
+	}
+
+	if( !ValidateObject( mChar ) )
+	{
+		DoSEErrorMessage( "TriggerTrap: Invalid character" );
+		return JS_FALSE;
+	}
+
+	JSObject *mItem = JSVAL_TO_OBJECT( argv[1] );
+	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, mItem ) );
+
+	if( !ValidateObject( myItem ) )
+	{
+		DoSEErrorMessage( "TriggerTrap: Invalid item" );
+		return JS_FALSE;
+	}
+
+	if( myItem->GetTempVar( CITV_MOREZ, 1 ) == 1 && myItem->GetTempVar( CITV_MOREZ, 2 ) > 0 ) // Is trapped and set to deal more than 0 damage
+	{
+		Magic->MagicTrap( mChar, myItem );
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers a an event/function in a different JS
