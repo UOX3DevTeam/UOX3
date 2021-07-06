@@ -2060,5 +2060,13 @@
 2088=Curly
 2089=Buns
 2090=CANCEL
+2091=You do not know enough about locks.  Become better at picking locks.
+2092=You are not perceptive enough.  Become better at detect hidden.
+2093=Which trap will you attempt to disarm?
+2094=You feel that such an action would be inappropriate
+2095=That doesn't appear to be trapped
+2096=You successfully render the trap harmless
+2097=Oops.
+2098=You breathe a sigh of relief, as you fail to disarm the trap, but don't set it off.
 }
 EOF
