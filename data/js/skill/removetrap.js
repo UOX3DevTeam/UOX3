@@ -35,11 +35,16 @@ function onCallback0( pSock, ourObj )
 	var iMoreZPart2 = ( iMoreZ >> 16 ); // Trap Damage
 	var iMoreZPart3 = ( iMoreZ >> 8 );  // Minskill
 	var iMoreZPart4 = ( iMoreZ % 256 ); // Maxskill
+	var isInRange = pUser.InRange( ourObj, 3 );
 
 	pSock.tempObj = null;
+	if ( !isInRange )
+	{
+		pSock.SysMessage(GetDictionaryEntry( 461, pSock.Language ) ); // You are too far away.
+		return;
+	}
 
-	//if ( ValidateObject( pUser ) && pUser.isChar ) // checking to see if it is a npc or player
-	if ( !pUser && pUser.isChar )
+	if ( ourObj.isChar || ourObj.npc) // checking to see if it is a npc or player
 	{
 		// You feel that such an action would be inappropriate
 		pSock.SysMessage( GetDictionaryEntry( 2094, pSock.language ) );
@@ -51,7 +56,13 @@ function onCallback0( pSock, ourObj )
 	}
 	else
 	{
-		if ( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, iMoreZPart3, 1000 ) )
+		var skillCheckModifier = 0;
+		var iGloves = pUser.FindItemLayer( 7 ); // hands layer
+		if ( ValidateObject( iGloves ) )
+		{
+			skillCheckModifier = iGloves.weight;
+		}
+		if ( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, ( iMoreZPart3 + skillCheckModifier ), 1000 ) )
 		{
 			// You successfully render the trap harmless
 			pSock.SysMessage( GetDictionaryEntry( 2096, pSock.language ) );
@@ -71,22 +82,6 @@ function onCallback0( pSock, ourObj )
 				// You breathe a sigh of relief, as you fail to disarm the trap, but don't set it off.
 				pSock.SysMessage( GetDictionaryEntry( 2098, pSock.language ) );
 			}
-		}
-	}
-}
-
-function CheckHands( pUser )
-{
-	var rHand = pUser.FindItemLayer( 0x01 );		// Right Hand
-	if ( ValidateObject( rHand ) )
-	{
-		if ( rHand.id == 0x13eb )				//ring gloves
-		{
-			retVal = rHand;
-		}
-		else if ( rHand.id == 0x1414 )				//plate gloves
-		{
-			retVal = rHand;
 		}
 	}
 }
