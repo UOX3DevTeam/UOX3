@@ -55,7 +55,7 @@ function onCallback0( pSock, ourObj )
 		{
 			// You successfully render the trap harmless
 			pSock.SysMessage( GetDictionaryEntry( 2096, pSock.language ) );
-			ourObj.morez = 0;
+			ourObj.morez = "0" + " " + iMoreZPart2.toString() + " " + iMoreZPart3.toString() + " " + iMoreZPart4.toString();
 			pSock.SoundEffect( 0x241, false );// lockpick sounds
 		}
 		else
@@ -71,6 +71,22 @@ function onCallback0( pSock, ourObj )
 				// You breathe a sigh of relief, as you fail to disarm the trap, but don't set it off.
 				pSock.SysMessage( GetDictionaryEntry( 2098, pSock.language ) );
 			}
+		}
+	}
+}
+
+function CheckHands( pUser )
+{
+	var rHand = pUser.FindItemLayer( 0x01 );		// Right Hand
+	if ( ValidateObject( rHand ) )
+	{
+		if ( rHand.id == 0x13eb )				//ring gloves
+		{
+			retVal = rHand;
+		}
+		else if ( rHand.id == 0x1414 )				//plate gloves
+		{
+			retVal = rHand;
 		}
 	}
 }
