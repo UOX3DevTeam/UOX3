@@ -311,6 +311,7 @@
 814=skill/provocation.js
 815=skill/inscription.js
 816=skill/meditation.js
+817=skill/removetrap.js
 }
 
 [PACKET_SCRIPTS]
