@@ -44,10 +44,15 @@ function onCallback0( pSock, ourObj )
 		return;
 	}
 
-	if ( ourObj.isChar || ourObj.npc) // checking to see if it is a npc or player
+	if ( !ValidateObject( ourObj ) || !ourObj.isItem )
 	{
 		// You feel that such an action would be inappropriate
 		pSock.SysMessage( GetDictionaryEntry( 2094, pSock.language ) );
+	}
+	else if ( !pUser.CanSee( ourObj ) )
+	{
+		// You cannot see that
+		pSock.SysMessage( GetDictionaryEntry( 1646, pSock.language) );
 	}
 	else if ( ourObj.morez == 0 )
 	{
