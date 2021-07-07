@@ -54,7 +54,7 @@ function onCallback0( pSock, ourObj )
 		// You cannot see that
 		pSock.SysMessage( GetDictionaryEntry( 1646, pSock.language) );
 	}
-	else if ( ourObj.morez == 0 )
+	else if ( iMoreZPart1 == 0 )
 	{
 		// That doesn't appear to be trapped
 		pSock.SysMessage( GetDictionaryEntry( 2095, pSock.language ) );
