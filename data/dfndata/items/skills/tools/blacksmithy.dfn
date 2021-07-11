@@ -1,6 +1,6 @@
 //Blacksmithy Tools
 
-[0x0fbb]
+[tongs]
 {
 get=base_item
 name=tongs
@@ -10,21 +10,17 @@ value=16 8
 restock=20
 decay=1
 good=52
+script=4013
 }
 
 [0x0fbc]
 {
-get=base_item
+get=tongs
 name=tongs
 id=0x0fBC
-weight=200
-value=16 8
-restock=20
-decay=1
-good=52
 }
 
-[0x0faf]
+[anvil]
 {
 get=base_item
 name=anvil
@@ -35,10 +31,8 @@ movable=2
 
 [0x0fb0]
 {
-get=base_item
+get=anvil
 name=anvil
 id=0x0fb0
-weight=2000
-movable=2
 }
 

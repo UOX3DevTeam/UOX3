@@ -172,6 +172,15 @@
 4010=skill/tinkerawg.js
 4011=skill/tinkerclock.js
 4012=skill/tinkersextant.js
+4013=skill/blacksmith/blacksmithing.js
+4014=skill/blacksmith/bronze_blacksmithing.js
+4015=skill/blacksmith/copper_blacksmithing.js
+4016=skill/blacksmith/agapite_blacksmithing.js
+4017=skill/blacksmith/dullcopper_blacksmithing.js
+4018=skill/blacksmith/gold_blacksmithing.js
+4019=skill/blacksmith/shadowiron_blacksmithing.js
+4020=skill/blacksmith/valorite_blacksmithing.js
+4021=skill/blacksmith/verite_blacksmithing.js
 
 // Doors
 4500=item/doors.js
