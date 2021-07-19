@@ -860,7 +860,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
 			case CIP_MORE:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sencaps = encaps.toString();
+				sencaps = strutil::stripTrim(sencaps);
+				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
 					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
@@ -876,7 +878,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREX:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sencaps = encaps.toString();
+				sencaps = strutil::stripTrim(sencaps);
+				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
 					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
@@ -892,7 +896,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREY:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sencaps = encaps.toString();
+				sencaps = strutil::stripTrim(sencaps);
+				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
 					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
@@ -908,7 +914,9 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREZ:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sencaps = encaps.toString();
+				sencaps = strutil::stripTrim(sencaps);
+				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
 					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
