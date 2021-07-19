@@ -1279,7 +1279,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 						if( strutil::upper( tag ) == "IP" )
 						{
 							data = firewallSect->GrabData();
-							data = strutil::stripTrim( data );
+							data = strutil::trim(strutil::removeTrailing( data,"//") );
 							if( !data.empty() )
 							{
 								auto psecs = strutil::sections( data, "." );

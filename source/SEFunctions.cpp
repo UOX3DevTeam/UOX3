@@ -2456,7 +2456,7 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::upper( strutil::stripTrim( resType ));
+	resType = strutil::upper( strutil::trim(strutil::removeTrailing( resType,"//") ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
@@ -2496,7 +2496,7 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::upper( strutil::stripTrim( resType ));
+	resType = strutil::upper( strutil::trim(strutil::removeTrailing( resType,"//") ));
 
 	if( argc == 2 )
 	{
@@ -2538,7 +2538,7 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::upper( strutil::stripTrim( resType ));
+	resType = strutil::upper( strutil::trim(strutil::removeTrailing( resType,"//") ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));

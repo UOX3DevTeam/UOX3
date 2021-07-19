@@ -71,7 +71,7 @@ SI32 CDictionary::LoadDictionary( void )
 					for( tag = dictSect->First(); !dictSect->AtEnd(); tag = dictSect->Next() )
 					{
 						data					= dictSect->GrabData();
-						Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = strutil::stripTrim( data );
+						Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = strutil::trim(strutil::removeTrailing( data,"//") );
 						++count;
 					}
 				}

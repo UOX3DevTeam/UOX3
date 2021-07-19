@@ -253,7 +253,7 @@ void JailSystem::ReadSetup( void )
 			if( tag.empty() )
 				continue;
 			data = Regions->GrabData();
-			data = strutil::stripTrim( data );
+			data = strutil::trim(strutil::removeTrailing( data,"//") );
 			switch( (tag.data()[0]) )
 			{
 				case 'X':	toAdd.X( static_cast<SI16>(std::stoi(data, nullptr, 0)) );	break;
@@ -304,7 +304,7 @@ void JailSystem::ReadData( void )
 					}
 					UTag = strutil::upper( tag );
 					data = prisonerData->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim(strutil::removeTrailing( data,"//") );
 					switch( (UTag.data()[0]) )
 					{
 						case 'C':

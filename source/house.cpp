@@ -39,7 +39,7 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 		data = House->GrabData();
 		if( strutil::upper( tag ) == "ID" )
 		{
-			houseID = static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+			houseID = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( data,"//") ), nullptr, 0));
 			break;
 		}
 	}
@@ -113,7 +113,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 			{
 				UTag = strutil::upper( tag );
 				data = HouseItem->GrabData();
-				data = strutil::stripTrim( data );
+				data = strutil::trim(strutil::removeTrailing( data,"//") );
 				if( UTag == "ITEM" )
 				{
 					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1, hInstanceID );
@@ -457,7 +457,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	{
 		UTag = strutil::upper( tag );
 		data = House->GrabData();
-		data = strutil::stripTrim( data );
+		data = strutil::trim(strutil::removeTrailing( data,"//") );
 		
 		if( UTag == "ID" )
 		{
@@ -582,16 +582,16 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 				{
 					if( count == 1 )
 					{
-						result = strutil::stripTrim( sec );
+						result = strutil::trim(strutil::removeTrailing( sec,"//") );
 					}
 					else
 					{
-						result = result + " " + strutil::stripTrim( sec );
+						result = result + " " + strutil::trim(strutil::removeTrailing( sec,"//") );
 					}
 				}
 				count++;
 			}
-			customTagName			= strutil::stripTrim( ssecs[0] );
+			customTagName			= strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
 			customTagStringValue	= result;
 
 			if( !customTagName.empty() && !customTagStringValue.empty() )
@@ -606,12 +606,13 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		else if( UTag == "CUSTOMINTTAG" )
 		{
 			auto ssecs = strutil::sections( data, " " );
-			customTagName			= strutil::stripTrim( ssecs[0] );
-			customTagStringValue	= strutil::stripTrim( ssecs[1] );
+			customTagName			= strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
+			customTagStringValue	= strutil::trim(strutil::removeTrailing( ssecs[1],"//") );
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
 				customTag.m_Destroy		= FALSE;
-				customTag.m_IntValue 	= std::stoi(strutil::stripTrim( customTagStringValue ), nullptr, 0);
+				
+				customTag.m_IntValue 	= std::stoi(strutil::trim(strutil::removeTrailing( customTagStringValue,"//") ), nullptr, 0);
 				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 				customTag.m_StringValue	= "";
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));

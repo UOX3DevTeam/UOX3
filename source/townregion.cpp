@@ -589,7 +589,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						if( csecs.size() > 1 )
 						{
 							// Use chance specified in orepref
-							toPush.percentChance = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0));
+							toPush.percentChance = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
 						}
 						else if( toPush.oreIndex->oreChance > 0 )
 						{
@@ -623,8 +623,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						auto ssecs = strutil::sections( data, " " );
 						if( ssecs.size() > 1 )
 						{
-							goodList[actgood].rand1 = std::stoi(strutil::stripTrim( ssecs[0] ), nullptr, 0);
-							goodList[actgood].rand2 = std::stoi(strutil::stripTrim( ssecs[1] ), nullptr, 0);
+							goodList[actgood].rand1 = std::stoi(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0);
+							goodList[actgood].rand2 = std::stoi(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0);
 						}
 						else
 						{

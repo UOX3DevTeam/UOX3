@@ -490,7 +490,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
 			std::string data = newbieData->GrabData();
-			data = strutil::stripTrim( data );
+			data = strutil::trim(strutil::removeTrailing( data,"//") );
 			if( !data.empty() )
 			{
 				auto UTag = strutil::upper( tag );
@@ -499,8 +499,8 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 					auto csecs = strutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{						
-						UI16 nAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0));
-						n = Items->CreateScriptItem( socket, c, strutil::stripTrim( csecs[0] ), nAmount, OT_ITEM, true );
+						UI16 nAmount = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
+						n = Items->CreateScriptItem( socket, c, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nAmount, OT_ITEM, true );
 					}
 					else
 					{

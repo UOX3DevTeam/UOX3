@@ -2032,7 +2032,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
 		std::string sect			= std::string("ADVANCEMENT ") + strutil::number( advObj );
-		sect						= strutil::stripTrim( sect );
+		sect						= strutil::trim(strutil::removeTrailing( sect,"//") );
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr )
 		{
@@ -2142,7 +2142,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::stripTrim( csecs[0] ), strutil::value<std::uint16_t>(strutil::stripTrim( csecs[1] )), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), strutil::value<std::uint16_t>(strutil::trim(strutil::removeTrailing( csecs[1],"//") )), OT_ITEM, true );
 							}
 							else
 							{
@@ -2381,7 +2381,7 @@ void doLight( CChar *mChar, UI08 level )
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	std::string temp	= mItem.GetName();
-	temp				= strutil::stripTrim( temp );
+	temp				= strutil::trim(strutil::removeTrailing( temp,"//") );
 	const UI16 getAmount = mItem.GetAmount();
 	CTile& tile = Map->SeekTile( mItem.GetID() );
 	if( temp.substr( 0, 1 ) == "#" )
