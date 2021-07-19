@@ -112,19 +112,7 @@ namespace strutil {
 	}
 
 
-	//====================================================================
-	std::string& stripTrim(std::string& s)  {
-		auto loc = s.find("//") ;
-		if (loc != std::string::npos) {
-			s = s.substr(0,loc) ;
-		}
-		loc = s.find_first_not_of(" \t\v") ;
-		if (loc != std::string::npos) {
-			auto eloc = s.find_last_not_of(" \t\v") ;
-			s = s.substr(loc,(eloc-loc)+1);
-		}
-		return s ;
-	}
+
 	
 	//++++++++++++++++++++++++++++++++++++++
 	std::tuple<std::string,std::string> separate(const std::string& input,

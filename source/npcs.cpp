@@ -37,8 +37,8 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 		i = RandomNum( static_cast< size_t >(0), i - 1 );
 		std::string tag = LootList->MoveTo( i );
 		std::string tagData = LootList->GrabData();
-		auto csecs = strutil::sections( strutil::stripTrim( tagData ), "," );
-		auto tcsecs = strutil::sections( strutil::stripTrim( tag ), "," );
+		auto csecs = strutil::sections( strutil::trim(strutil::removeTrailing( tagData,"//") ), "," );
+		auto tcsecs = strutil::sections( strutil::trim(strutil::removeTrailing( tag,"//") ), "," );
 		
 		if( tag.empty() )
 			return nullptr;
@@ -48,11 +48,11 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 		{
 			if( csecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
-				iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0));
+				iAmount = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
 				CItem *retItemNested = nullptr;
 				for( UI16 iCount = 0; iCount < iAmount; ++iCount )
 				{
-					retItemNested = addRandomLoot( s, strutil::stripTrim( csecs[0]) );
+					retItemNested = addRandomLoot( s, strutil::trim(strutil::removeTrailing( csecs[0],"//") ) );
 				}
 			}
 			else
@@ -64,8 +64,8 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 		{
 			if( tcsecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
-				iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( tcsecs[1] ), nullptr, 0));
-				retItem = Items->CreateBaseScriptItem( strutil::stripTrim( tcsecs[0] ), s->WorldNumber(),  iAmount );
+				iAmount = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( tcsecs[1],"//") ), nullptr, 0));
+				retItem = Items->CreateBaseScriptItem( strutil::trim(strutil::removeTrailing( tcsecs[0],"//") ), s->WorldNumber(),  iAmount );
 				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
@@ -94,7 +94,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 //o-----------------------------------------------------------------------------------------------o
 CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 {
-	ourNPC						= strutil::stripTrim( ourNPC );
+	ourNPC						= strutil::trim(strutil::removeTrailing( ourNPC,"//") );
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
 	if( npcCreate == nullptr )
 	{
@@ -144,7 +144,7 @@ CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 {
 	CChar *cCreated			= nullptr;
 	std::string sect		= std::string("NPCLIST ") + npcList;
-	sect					= strutil::stripTrim( sect );
+	sect					= strutil::trim(strutil::removeTrailing( sect,"//") );
 	ScriptSection *NPCList	= FileLookup->FindEntry( sect, npc_def );
 	if( NPCList != nullptr )
 	{
@@ -435,7 +435,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 	CItem *sellLayer	= c->GetItemAtLayer( IL_SELLCONTAINER ); //Contains items the NPC will sell
 
 	std::string sect	= std::string("SHOPLIST ") + list;
-	sect				= strutil::stripTrim( sect );
+	sect				= strutil::trim(strutil::removeTrailing( sect,"//") );
 	ScriptSection *ShoppingList = FileLookup->FindEntry( sect, items_def );
 	if( ShoppingList == nullptr )
 		return;
@@ -502,8 +502,8 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 						auto ssecs = strutil::sections( cdata, " " );
 						if( ssecs.size() > 1 )
 						{
-							retItem->SetBuyValue(  static_cast<UI32>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0)) );
-							retItem->SetSellValue( static_cast<UI32>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0)) );
+							retItem->SetBuyValue(  static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0)) );
+							retItem->SetSellValue( static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0)) );
 							break;
 						}
 					}
@@ -525,7 +525,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 void setRandomName( CChar *s, const std::string& namelist )
 {
 	std::string sect	= std::string("RANDOMNAME ") + namelist;
-	sect				= strutil::stripTrim( sect );
+	sect				= strutil::trim(strutil::removeTrailing( sect,"//") );
 	std::string tempName;
 
 	ScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
@@ -553,7 +553,7 @@ void setRandomName( CChar *s, const std::string& namelist )
 UI16 addRandomColor( const std::string& colorlist )
 {
 	std::string sect				= std::string("RANDOMCOLOR ") + colorlist;
-	sect							= strutil::stripTrim( sect );
+	sect							= strutil::trim(strutil::removeTrailing( sect,"//") );
 	ScriptSection *RandomColours	= FileLookup->FindEntry( sect, colors_def );
 	if( RandomColours == nullptr )
 	{
@@ -565,7 +565,7 @@ UI16 addRandomColor( const std::string& colorlist )
 	{
 		i = RandomNum( static_cast<size_t>(0), i - 1 );
 		std::string tag = RandomColours->MoveTo( static_cast<SI16>(i) );
-		return static_cast<UI16>(std::stoul(strutil::stripTrim( tag ), nullptr, 0));
+		return static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( tag,"//") ), nullptr, 0));
 	}
 	return 0;
 }
@@ -629,7 +629,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 	for( DFNTAGS tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
 	{
 		cdata = NpcCreation->GrabData( ndata, odata );
-		cdata = strutil::stripTrim( cdata );
+		cdata = strutil::trim(strutil::removeTrailing( cdata,"//") );
 		auto ssects = strutil::sections( cdata, " " );
 		auto csects = strutil::sections( cdata, "," );
 		switch( tag )
@@ -807,10 +807,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_ELEMENTRESIST:
 				if( ssects.size() >= 4 )
 				{
-					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::stripTrim( ssects[0] ), nullptr, 0)) ), HEAT );
-					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::stripTrim( ssects[1] ), nullptr, 0)) ), COLD );
-					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::stripTrim( ssects[2] ), nullptr, 0)) ), LIGHTNING );
-					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::stripTrim( ssects[3] ), nullptr, 0)) ), POISON );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssects[0],"//") ), nullptr, 0)) ), HEAT );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssects[1],"//") ), nullptr, 0)) ), COLD );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssects[2],"//") ), nullptr, 0)) ), LIGHTNING );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssects[3],"//") ), nullptr, 0)) ), POISON );
 				}
 				break;
 			case DFNTAG_EMOTECOLOUR:
@@ -908,7 +908,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				else
 				{
 					SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssects.size()-1));
-					scriptEntry = strutil::stripTrim( ssects[rndEntry] );
+					scriptEntry = strutil::trim(strutil::removeTrailing( ssects[rndEntry],"//") ) ;
 				}
 
 				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, npc_def );
@@ -1021,20 +1021,20 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							if( csects.size() > 1 )
 							{
 								UI16 iAmount = 0;
-								std::string amountData = strutil::stripTrim( csects[1] );
+								std::string amountData = strutil::trim(strutil::removeTrailing( csects[1],"//") );
 								auto tsects = strutil::sections( amountData, " " );
 								if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
 								{
-									auto first = static_cast<UI16>(std::stoul(strutil::stripTrim( tsects[0] ), nullptr, 0));
-									auto second = static_cast<UI16>(std::stoul(strutil::stripTrim( tsects[1] ), nullptr, 0));
+									auto first = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( tsects[0],"//") ), nullptr, 0));
+									auto second = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing(tsects[1],"//") ), nullptr, 0));
 									// Tag contained a minimum and maximum value for amount! Let's randomize!
 									iAmount = static_cast<UI16>(RandomNum( first, second ));
 								}
 								else
 								{
-									iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( csects[1] ), nullptr, 0));
+									iAmount = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csects[0],"//") ), nullptr, 0));
 								}
-								auto tdata = strutil::stripTrim(csects[0]);
+								auto tdata = strutil::trim(strutil::removeTrailing( csects[0],"//") );
 								for( UI16 iCount = 0; iCount < iAmount;  ++iCount )
 								{
 									retitem = addRandomLoot( mypack, tdata );
@@ -1116,19 +1116,19 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							if( csects.size() > 1 ) // Check if the tag-data contains more than just the itemid
 							{
 								UI16 iAmount = 0;
-								std::string amountData = strutil::stripTrim( csects[1] );
+								std::string amountData =strutil::trim(strutil::removeTrailing( csects[1],"//") );
 								auto tsects = strutil::sections( amountData, " " );
 								if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
 								{
 									
 									// Tag contained a minimum and maximum value for amount! Let's randomize!
-									iAmount = static_cast<UI16>(RandomNum( static_cast<UI16>(std::stoul(strutil::stripTrim( tsects[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::stripTrim( tsects[1] ), nullptr, 0)) ));
+									iAmount = static_cast<UI16>(RandomNum( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( tsects[0],"//") ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( tsects[1],"//") ), nullptr, 0)) ));
 								}
 								else
 								{
-									iAmount = static_cast<UI16>(std::stoul(strutil::stripTrim( tsects[0] ), nullptr, 0));
+									iAmount = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( tsects[0],"//") ), nullptr, 0));
 								}
-								retitem = Items->CreateScriptItem( nullptr, applyTo, strutil::stripTrim( csects[0] ), iAmount, OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim(strutil::removeTrailing( csects[0],"//") ), iAmount, OT_ITEM, true );
 							}
 							else
 								retitem = Items->CreateScriptItem( nullptr, applyTo, cdata, 1, OT_ITEM, true );
@@ -1427,16 +1427,16 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						if( count == 1 )
 						{
-							result = strutil::stripTrim( sec );
+							result = strutil::trim(strutil::removeTrailing( sec,"//") );
 						}
 						else
 						{
-							result = result + " " + strutil::stripTrim( sec );
+							result = result + " " + strutil::trim(strutil::removeTrailing( sec,"//") );
 						}
 					}
 					count++;
 				}
-				customTagName			= strutil::stripTrim( ssects[0] );
+				customTagName			= strutil::trim(strutil::removeTrailing( ssects[0],"//") );
 				customTagStringValue	= result;
 
 				if( !customTagName.empty() && !customTagStringValue.empty() )
@@ -1450,8 +1450,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				break;
 			}
 			case DFNTAG_CUSTOMINTTAG:
-				customTagName			= strutil::stripTrim( ssects[0] );
-				customTagStringValue	= strutil::stripTrim( ssects[1] );
+				customTagName			= strutil::trim(strutil::removeTrailing( ssects[0],"//") );
+				customTagStringValue	= strutil::trim(strutil::removeTrailing( ssects[1],"//") );
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
@@ -1554,7 +1554,7 @@ void MonsterGate( CChar *s, const std::string& scriptEntry )
 		return;
 		
 	auto entry = scriptEntry;
-	entry = strutil::stripTrim( entry );
+	entry = strutil::trim(strutil::removeTrailing( entry,"//") );
 	ScriptSection *Monster = FileLookup->FindEntry( entry, npc_def );
 	if( Monster == nullptr )
 		return;
