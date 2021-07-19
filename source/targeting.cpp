@@ -709,11 +709,11 @@ void newCarveTarget( CSocket *s, CItem *i )
 			if( strutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = strutil::stripTrim( data );
+				data = strutil::trim(strutil::removeTrailing(data,"//") );
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{	
-					if( !CreateBodyPart( mChar, i, strutil::stripTrim( csecs[0] ), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) ) )
+					if( !CreateBodyPart( mChar, i, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)) ) )
 					{
 						return;
 					}
@@ -751,11 +751,11 @@ void newCarveTarget( CSocket *s, CItem *i )
 			if( strutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = strutil::stripTrim( data );
+				data = strutil::trim(strutil::removeTrailing(data,"//") );
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					Items->CreateScriptItem( s, mChar, strutil::stripTrim(csecs[0]), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)), OT_ITEM, true );
+					Items->CreateScriptItem( s, mChar, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)), OT_ITEM, true );
 				}
 				else
 				{

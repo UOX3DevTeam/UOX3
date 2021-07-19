@@ -892,12 +892,12 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, 
 		readDestination.getline(line, 1023);
 		line[readDestination.gcount()] = 0;
 		std::string sLine(line);
-		sLine = strutil::stripTrim( sLine );
+		sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
 
 		if( sLine.substr( 0, 1 ) == "[" )	// in a section
 		{
 			sLine = sLine.substr( 1, sLine.size() - 2 );
-			sLine = strutil::upper( strutil::stripTrim( sLine ));
+			sLine = strutil::upper( strutil::trim(strutil::removeTrailing( sLine,"//") ));
 			if( sLine == "CHARACTER" )
 				LoadChar( readDestination );
 			else if( sLine == "ITEM" )

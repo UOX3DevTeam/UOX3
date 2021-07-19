@@ -51,7 +51,7 @@ void Script::reload( bool disp )
 				input.getline(line, 2047);
 				line[input.gcount()] = 0 ;
 				sLine = std::string(line);
-				sLine = strutil::stripTrim( sLine );
+				sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
 				if( !sLine.empty() )
 				{
 					// We have some real data
@@ -67,7 +67,7 @@ void Script::reload( bool disp )
 							input.getline(line, 2047);
 							line[input.gcount()] = 0 ;
 							sLine = std::string(line);
-							sLine = strutil::stripTrim( sLine );
+							sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
 						}
 						// We are finally in the actual section!
 						// We waited until now to create it, incase a total invalid file

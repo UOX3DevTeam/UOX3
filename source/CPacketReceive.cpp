@@ -1122,7 +1122,7 @@ bool CPITips::Handle( void )
 			tag = Tips->Prev();
 		data = Tips->GrabData();
 
-		sect = "TIP " + strutil::stripTrim( data );
+		sect = "TIP " + strutil::trim(strutil::removeTrailing( data,"//") );
 		Tips = FileLookup->FindEntry( sect, misc_def );
 		if( Tips != nullptr )
 		{

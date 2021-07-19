@@ -118,7 +118,7 @@ void CMulHandler::LoadMapsDFN( void )
 		{
 			UTag = strutil::upper( tag );
 			data = toFind->GrabData();
-			data = strutil::stripTrim( data );
+			data = strutil::trim(strutil::removeTrailing( data,"//") );
 			switch( (UTag.data()[0]) )
 			{
 				case 'M':
@@ -1372,7 +1372,7 @@ void CMulHandler::LoadDFNOverrides( void )
 					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 					{
 						data	= toScan->GrabData();
-						data 	= strutil::stripTrim( data );
+						data 	= strutil::trim(strutil::removeTrailing( data,"//") );
 						UTag	= strutil::upper( tag );
 						
 						// CTile properties

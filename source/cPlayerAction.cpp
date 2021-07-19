@@ -1775,7 +1775,7 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			{
 				FameTitle = Dictionary->GetEntry( 1181 ) + std::string(" ");
 			}
-			else if( !strutil::stripTrim( thetitle ).empty() )
+			else if( !(thetitle = strutil::trim(strutil::removeTrailing( thetitle,"//") )).empty() )
 			{
 				FameTitle = strutil::format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
 			}
