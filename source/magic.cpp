@@ -3731,7 +3731,7 @@ void cMagic::LoadScript( void )
 			auto ssecs = strutil::sections( spEntry, " " );
 			if( ssecs[0] == "SPELL" )
 			{
-				i = static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0) );
+				i = static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0) );
 				if( i <= SPELL_MAX )
 				{
 					++spellCount;
@@ -3744,7 +3744,7 @@ void cMagic::LoadScript( void )
 					{
 						UTag = strutil::upper( tag );
 						data = SpellLoad->GrabData();
-						data = strutil::stripTrim( data );
+						data = strutil::trim(strutil::removeTrailing( data,"//") );
 						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
 						switch( (UTag.data()[0]) )
 						{
@@ -3792,8 +3792,8 @@ void cMagic::LoadScript( void )
 									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Flags(((static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 16)))<<8) ||
-												    static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)));
+										spells[i].Flags(((static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 16)))<<8) ||
+												    static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 16)));
 												    
 									}
 									else
@@ -3847,10 +3847,10 @@ void cMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{										
 										CMagicMove *mv = spells[i].MoveEffectPtr();
-										mv->Effect( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)) );
-										mv->Speed( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[2]), nullptr, 16)) );
-										mv->Loop( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[3]), nullptr, 16)) );
-										mv->Explode( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[4]), nullptr, 16)));
+										mv->Effect( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 16)) );
+										mv->Speed( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 16)) );
+										mv->Loop( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 16)) );
+										mv->Explode( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[4],"//") ), nullptr, 16)));
 									}
 								}
 								break;
@@ -3874,8 +3874,8 @@ void cMagic::LoadScript( void )
 									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Effect( ( (static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 16))<<8) ||
-												    static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16))));
+										spells[i].Effect( ( (static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 16))<<8) ||
+												    static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 16))));
 									}
 									else
 									{
@@ -3889,9 +3889,9 @@ void cMagic::LoadScript( void )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
 										
-										stat->Effect( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)) );
-										stat->Speed( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[2]), nullptr, 16)) );
-										stat->Loop( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[3]), nullptr, 16)) );
+										stat->Effect( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 16)) );
+										stat->Speed( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 16)) );
+										stat->Loop( static_cast<UI08>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 16)) );
 									}
 								}
 								else if( UTag == "SCLO" )

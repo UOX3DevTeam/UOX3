@@ -861,14 +861,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MORE:
 			{
 				auto sencaps = encaps.toString();
-				sencaps = strutil::stripTrim(sencaps);
+				sencaps = strutil::trim(strutil::removeTrailing( sencaps,"//") );
 				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[0],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[1],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[2],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
@@ -879,14 +879,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREX:
 			{
 				auto sencaps = encaps.toString();
-				sencaps = strutil::stripTrim(sencaps);
+				sencaps = strutil::trim(strutil::removeTrailing( sencaps,"//") );
 				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[0],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[1],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[2],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
@@ -897,14 +897,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREY:
 			{
 				auto sencaps = encaps.toString();
-				sencaps = strutil::stripTrim(sencaps);
+				sencaps = strutil::trim(strutil::removeTrailing( sencaps,"//") );
 				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[0],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[1],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[2],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
@@ -915,14 +915,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREZ:
 			{
 				auto sencaps = encaps.toString();
-				sencaps = strutil::stripTrim(sencaps);
+				sencaps = strutil::trim(strutil::removeTrailing( sencaps,"//") );
 				auto encapsSections = strutil::sections(sencaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[0],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[1],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[2],"//") ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( encapsSections[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{

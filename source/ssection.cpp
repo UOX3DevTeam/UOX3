@@ -808,7 +808,7 @@ void ScriptSection::createSection( std::fstream& input )
 		line[input.gcount()] = 0;
 
 		sLine = line;
-		sLine = strutil::stripTrim( sLine );
+		sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
 		if( sLine != "}" && !sLine.empty() )
 		{
 			// do something here
@@ -819,7 +819,7 @@ void ScriptSection::createSection( std::fstream& input )
 				if( secs.size() >= 1 )
 				{
 					try {
-						tag = strutil::stripTrim( secs[0] );
+						tag = strutil::trim(strutil::removeTrailing( secs[0],"//") );
 					}
 					catch (...)	{
 						tag = "";
@@ -830,7 +830,7 @@ void ScriptSection::createSection( std::fstream& input )
 				if( secs.size() >= 2 )
 				{
 					try {
-						value = strutil::stripTrim( secs[1] );
+						value = strutil::trim(strutil::removeTrailing( secs[1],"//") );
 					}
 					catch (...) {
 						value = "";
@@ -864,7 +864,7 @@ void ScriptSection::createSection( std::fstream& input )
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = std::string( localName );
 										auto csecs = strutil::sections( value, "," );
-										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0));
+										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0));
 										if( amiLocalCopy.groupID != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -875,10 +875,10 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0));
-										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[3] ), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[4] ), nullptr, 0));
+										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[2],"//") ), nullptr, 0));
+										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[3],"//") ), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[4],"//") ), nullptr, 0));
 
 										//if( amiLocalCopy.tileID == INVALIDSERIAL )
 											//amiLocalCopy.tileID = amiLocalCopy.objectID;
