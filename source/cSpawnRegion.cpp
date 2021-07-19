@@ -447,7 +447,7 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 	{
 		for( std::string npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
 		{
-			if( strutil::toupper( npc ) == "NPCLIST" )
+			if( strutil::upper( npc ) == "NPCLIST" )
 			{
 				LoadNPCList( CharList->GrabData() );
 			}
@@ -472,7 +472,7 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 	{
 		for( std::string itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
 		{
-			if( strutil::toupper( itm ) == "ITEMLIST" )
+			if( strutil::upper( itm ) == "ITEMLIST" )
 			{
 				LoadItemList( ItemList->GrabData() );
 			}
@@ -499,7 +499,7 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 	{
 		if( !tag.empty() )
 		{
-			UTag = strutil::toupper( tag );
+			UTag = strutil::upper( tag );
 			data = toScan->GrabData();
 
 			// Default to instanceID 0, in case nothing else is specified in DFN

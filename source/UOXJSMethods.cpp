@@ -5523,7 +5523,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( argc >= 4 )
 		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 
-	if( strutil::tolower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
+	if( strutil::lower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
@@ -5565,7 +5565,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	filePath.append( fileName );
-	mFile->mWrap = fopen( filePath.c_str(), strutil::tolower(mode).substr(0,1).c_str() );
+	mFile->mWrap = fopen( filePath.c_str(), strutil::lower(mode).substr(0,1).c_str() );
 	return JS_TRUE;
 }
 

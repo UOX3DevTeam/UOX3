@@ -645,7 +645,7 @@ void CGuild::Load( ScriptSection *toRead )
 		data = toRead->GrabData();
 		if( tag.empty() )
 			continue;
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		switch( (UTag.data()[0]) )
 		{
 			case '{':

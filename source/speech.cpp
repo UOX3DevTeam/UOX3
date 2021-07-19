@@ -144,7 +144,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 	langCode[3] = 0;
 
 	std::string ulangCode = langCode;
-	ulangCode = strutil::toupper( ulangCode );
+	ulangCode = strutil::upper( ulangCode );
 
 	UnicodeTypes cLang = s->Language();
 	if( LanguageCodes[cLang] != ulangCode.c_str() )
@@ -296,7 +296,7 @@ bool CPITalkRequest::Handle( void )
 				Console.log( temp, temp2 );
 			}
 
-			std::string upperText = strutil::toupper( text );
+			std::string upperText = strutil::upper( text );
 			if( upperText.find( "DEVTEAM033070" ) != std::string::npos )
 			{
 				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();

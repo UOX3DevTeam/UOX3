@@ -3419,7 +3419,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					int count = 0 ;
 					for( auto &value : csecs )
 					{
-						value = strutil::toupper( strutil::stripTrim( value ));
+						value = strutil::upper( strutil::stripTrim( value ));
 						if( value == "[END]" )
 						{
 							break;

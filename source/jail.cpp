@@ -302,7 +302,7 @@ void JailSystem::ReadData( void )
 					{
 						continue;
 					}
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = prisonerData->GrabData();
 					data = strutil::stripTrim( data );
 					switch( (UTag.data()[0]) )

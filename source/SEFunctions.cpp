@@ -88,7 +88,7 @@ ObjectType FindObjTypeFromString( std::string strToFind )
 	{
 		InitStringToObjType();
 	}
-	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( strutil::toupper( strToFind ));
+	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( strutil::upper( strToFind ));
 	if( toFind != stringToObjType.end() )
 	{
 		return toFind->second;
@@ -2456,7 +2456,7 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::toupper( strutil::stripTrim( resType ));
+	resType = strutil::upper( strutil::stripTrim( resType ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
@@ -2496,7 +2496,7 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::toupper( strutil::stripTrim( resType ));
+	resType = strutil::upper( strutil::stripTrim( resType ));
 
 	if( argc == 2 )
 	{
@@ -2538,7 +2538,7 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::toupper( strutil::stripTrim( resType ));
+	resType = strutil::upper( strutil::stripTrim( resType ));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));

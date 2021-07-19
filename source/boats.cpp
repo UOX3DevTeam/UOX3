@@ -933,15 +933,15 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			}
 
 			// Check if player provided anything after the actual set name command
-			std::string cmdString = strutil::toupper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
-			if( strutil::toupper( ourText ).size() == cmdString.size() )
+			std::string cmdString = strutil::upper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
+			if( strutil::upper( ourText ).size() == cmdString.size() )
 			{
 				tiller->TextMessage( mSock, 12 ); // Can ya say that again with an actual name, sir?
 				return;
 			}
 
 			// Check if we can find the dictionary-based command string in the player's speech
-			std::string upperOurText = strutil::toupper( ourText );
+			std::string upperOurText = strutil::upper( ourText );
 			size_t cmdStringPos = upperOurText.find(cmdString);
 			if( cmdStringPos == std::string::npos )
 			{

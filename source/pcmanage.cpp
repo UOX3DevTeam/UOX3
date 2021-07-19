@@ -493,7 +493,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 			data = strutil::stripTrim( data );
 			if( !data.empty() )
 			{
-				auto UTag = strutil::toupper( tag );
+				auto UTag = strutil::upper( tag );
 				if( UTag == "PACKITEM" )
 				{
 					auto csecs = strutil::sections( data, "," );

@@ -1949,7 +1949,7 @@ bool cSkills::LoadMiningData( void )
 					toAdd.oreChance = 0;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
-						UTag = strutil::toupper( tag );
+						UTag = strutil::upper( tag );
 						data = individualOre->GrabData();
 						data = strutil::stripTrim( data );
 						switch( (UTag.data()[0]) )	// break on tag
@@ -2112,7 +2112,7 @@ void cSkills::LoadCreateMenus( void )
 				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
 					data = strutil::stripTrim( data );
 					if( UTag == "MENU" )
@@ -2139,7 +2139,7 @@ void cSkills::LoadCreateMenus( void )
 
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
 					data = strutil::stripTrim( data );
 					if( UTag == "COLOUR" )
@@ -2247,7 +2247,7 @@ void cSkills::LoadCreateMenus( void )
 				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
 					data = strutil::stripTrim( data );
 					if( UTag == "ID" )
@@ -2534,7 +2534,7 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 		std::string tag, data, UTag;
 		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
 		{
-			UTag = strutil::toupper( tag );
+			UTag = strutil::upper( tag );
 			data = GumpHeader->GrabData();
 			data = strutil::stripTrim( data );
 			if( UTag == "BUTTONLEFT" )

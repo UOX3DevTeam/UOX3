@@ -475,7 +475,7 @@ DFNTAGS FindDFNTagFromStr( std::string strToFind )
 	{
 		InitStrToDFN();
 	}
-	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strutil::toupper( strToFind ) );
+	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strutil::upper( strToFind ) );
 	if( toFind != strToDFNTag.end() )
 	{
 		return toFind->second;
@@ -825,7 +825,7 @@ void ScriptSection::createSection( std::fstream& input )
 						tag = "";
 					}
 				}
-				auto utag = strutil::toupper( tag );
+				auto utag = strutil::upper( tag );
 				value = "";
 				if( secs.size() >= 2 )
 				{
@@ -855,7 +855,7 @@ void ScriptSection::createSection( std::fstream& input )
 							{
 								case DFN_UPPERSTRING:
 								{
-									value = strutil::toupper( value );
+									value = strutil::upper( value );
 									if( utag == "ADDMENUITEM" )
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group

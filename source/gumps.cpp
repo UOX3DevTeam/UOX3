@@ -69,7 +69,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 
 	UI08 targType	= 0x12;
 	std::string tag	= gump->First();
-	if( strutil::toupper(strutil::extractSection(tag, " ", 0, 0 )) == "TYPE" )
+	if( strutil::upper(strutil::extractSection(tag, " ", 0, 0 )) == "TYPE" )
 	{
 		targType = strutil::value<std::uint8_t>(strutil::extractSection(tag, " ", 1, 1 ));
 		tag = gump->Next();
@@ -619,7 +619,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				yOffset=SYOFFSET;
 			}
 			// Drop in the page number text area image
-			if( strutil::toupper( tag ) == "INSERTADDMENUITEMS" )
+			if( strutil::upper( tag ) == "INSERTADDMENUITEMS" )
 			{
 				// Check to see if the desired menu has any items to add
 				if(g_mmapAddMenuMap.find(m)==g_mmapAddMenuMap.end())
@@ -912,8 +912,8 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 
 	CChar *mChar = s->CurrcharObj();
 
-	cmd		= strutil::toupper( cmd );
-	data	= strutil::toupper( data );
+	cmd		= strutil::upper( cmd );
+	data	= strutil::upper( data );
 	std::string builtString;
 
 	switch( cmd.data()[0] )

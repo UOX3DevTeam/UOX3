@@ -8,24 +8,32 @@
 #define StringUtility_hpp
 
 #include <string>
-#include <tuple>
-#include <cstdarg>
-
-#include <string>
-#include <tuple>
 #include <vector>
 #include <sstream>
+#include <iomanip>
+#include <tuple>
+#include <cstdarg>
 #include <type_traits>
+
+
 namespace strutil {
-	std::string ltrim(const std::string& s) ;
-	std::string rtrim(const std::string& s) ;
-	
-	std::string trim(const std::string& s) ;
-	
-	std::string stripComment(const std::string& input,const std::string &commentdelim = "//");
-	
-	std::string toupper(const std::string &s);
-	std::string tolower(const std::string &s);
+	// Uppercase the string
+	std::string lower(const std::string &value);
+	// Lowercase the string
+	std::string upper(const std::string &value);
+
+	// Remove leading whitespace
+	std::string ltrim(const std::string &value);
+	// Remove trailing whitespace
+	std::string rtrim(const std::string &value);
+	// Remove leading/trailing whitespace
+	std::string trim(const std::string &value);
+	// Remove leading/trailing whitepace, and reduce all other whitespace to one " "
+	std::string simplify(const std::string &value);
+
+	// Removing everything after a delimiter. Normally "//" for comments
+	std::string removeTrailing(const std::string& value,const std::string& delim="//");
+
 	
 	std::string& stripTrim(std::string& s) ;
 	

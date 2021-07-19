@@ -830,7 +830,7 @@ void CConsole::Poll( void )
 	SI32 c = cl_getch();
 	if( c > 0 )
 	{
-		c = toupper(c);
+		c = std::toupper(c);
 		Process( c );
 	}
 }
@@ -1304,7 +1304,7 @@ void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 #if defined( UOX_DEBUG_MODE )
 	print(strutil::format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
 #endif
-	JSConsoleFunctions[strutil::toupper(cmdFunc)]	= JSConsoleEntry( scriptID, cmdName );
+	JSConsoleFunctions[strutil::upper(cmdFunc)]	= JSConsoleEntry( scriptID, cmdName );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1315,7 +1315,7 @@ void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 {
 	std::string upper					= cmdFunc;
-	upper								= strutil::toupper( upper );
+	upper								= strutil::upper( upper );
 	JSCONSOLEFUNCMAP_ITERATOR	toFind	= JSConsoleFunctions.find( upper );
 	if( toFind != JSConsoleFunctions.end() )
 	{

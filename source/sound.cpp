@@ -296,7 +296,7 @@ void cEffects::doSocketMusic( CSocket *s )
 	for( std::string tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
 	{
 		data = MusicList->GrabData();
-		if( strutil::toupper( tag ) == "MUSIC" )
+		if( strutil::upper( tag ) == "MUSIC" )
 		{
 			musicArray[i++] = static_cast<SI08>(std::stoi(data, nullptr, 0));
 		}

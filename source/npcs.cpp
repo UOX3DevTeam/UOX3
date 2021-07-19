@@ -44,7 +44,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			return nullptr;
 		UI16 iAmount = 0;
 
-		if( strutil::toupper( tag ) == "LOOTLIST" )
+		if( strutil::upper( tag ) == "LOOTLIST" )
 		{
 			if( csecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
@@ -154,7 +154,7 @@ CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 			std::string k = NPCList->MoveTo( RandomNum( static_cast<size_t>(0), i - 1 ));
 			if( !k.empty() )
 			{
-				if( strutil::toupper( k ) == "NPCLIST" ) {
+				if( strutil::upper( k ) == "NPCLIST" ) {
 					cCreated = CreateRandomNPC( NPCList->GrabData() );
 				}
 				else
@@ -746,7 +746,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_DIR:
 				if( !isGate )
 				{
-					std::string cupper = strutil::toupper( cdata );
+					std::string cupper = strutil::upper( cdata );
 					if( cupper == "NE" ) {
 						applyTo->SetDir( NORTHEAST );
 					}
@@ -859,7 +859,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				{
 					if( !cdata.empty() )
 					{
-						std::string upperData = strutil::toupper( cdata );
+						std::string upperData = strutil::upper( cdata );
 						if( upperData == "NEUTRAL" )
 						{
 							applyTo->SetNPCFlag( fNPC_NEUTRAL );

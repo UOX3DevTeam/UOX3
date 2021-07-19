@@ -5,64 +5,113 @@
 //
 
 #include "StringUtility.hpp"
-
-#include <regex>
-#include <algorithm>
 #include <cctype>
+#include <locale>
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
+
+#include <cstdio>
 #include <stdexcept>
 #include <filesystem>
 
+using namespace std::string_literals;
+
 namespace strutil {
-	//==============================================================
-	//++++++++++++++++++++++++++++++++++++
-	std::string ltrim(const std::string& s) {
-		return std::regex_replace(s, std::regex("^\\s+"), std::string(""));
+	
+	//=====================================================================
+	// Lowercase the string
+	std::string lower(const std::string &value){
+		auto rvalue  = value ;
+		std::transform(rvalue.begin(), rvalue.end(),rvalue.begin(),
+				   [](unsigned char c){ return std::tolower(c);});
+		return rvalue;
 	}
 	
-	//++++++++++++++++++++++++++++++++++++
-	std::string rtrim(const std::string& s) {
-		return std::regex_replace(s, std::regex("\\s+$"), std::string(""));
-	}
-	
-	//++++++++++++++++++++++++++++++++++++
-	std::string trim(const std::string& s) {
-		return ltrim(rtrim(s));
-	}
-	
-	
-	//==============================================================
-	//++++++++++++++++++++++++++++++++++++
-	std::string stripComment(const std::string &input,const std::string &commentdelim ){
+	//=====================================================================
+	// Uppercase the string
+	std::string upper(const std::string &value){
+		auto rvalue  = value ;
+		std::transform(rvalue.begin(), rvalue.end(),rvalue.begin(),
+				   [](unsigned char c){ return std::toupper(c);});
+		return rvalue;
 		
-		auto loc = input.find_first_of(commentdelim) ;
-		auto value = input.substr(0,loc);
-		value = trim(value) ;
-		return value;
 	}
 	
+
 	
-	
-	//==============================================================
-	//++++++++++++++++++++++++++++++++++++
-	std::string toupper(const std::string &s) {
-		auto input = s ;
-		std::transform(input.begin(), input.end(), input.begin(),
-				   [](unsigned char c){ return std::toupper(c); } // correct
-				   );
-		return input;
+	//=====================================================================
+	// Remove leading whitespace
+	std::string ltrim(const std::string &value){
+		auto count = 0 ;
+		for (auto it = value.begin(); it != value.end();it++) {
+			if (!isspace(*it)){
+				return value.substr(count) ;
+			}
+			else {
+				count++;
+			}
+		}
+		
+		return std::string();
 	}
-	
-	//++++++++++++++++++++++++++++++++++++
-	std::string tolower(const std::string &s) {
-		auto input = s ;
-		std::transform(input.begin(), input.end(), input.begin(),
-				   [](unsigned char c){ return std::tolower(c); } // correct
-				   );
-		return input;
+	//=====================================================================
+	// Remove trailing whitespace
+	std::string rtrim(const std::string &value){
+		auto count = 0 ;
+		for (auto it = value.rbegin(); it != value.rend();it++) {
+			if (!isspace(*it)){
+				return value.substr(0,value.size()-count);
+				
+			}
+			else {
+				count++;
+			}
+		}
+		
+		return std::string();
+		
 	}
-	
+	//=====================================================================
+	// Remove leading/trailing whitespace
+	std::string trim(const std::string &value) {
+		return rtrim(ltrim(value));
+	}
+	//=====================================================================
+	// Remove leading/trailing whitepace, and reduce all other whitespace to one " "
+	std::string simplify(const std::string &value){
+		auto tvalue = trim(value) ;
+		auto rvalue = ""s ;
+		auto toggle = false ;
+		for (auto &c :tvalue){
+			if (isspace(c)) {
+				if (!toggle){
+					rvalue = rvalue + c ;
+					toggle = true ;
+				}
+				
+				
+			}
+			else {
+				toggle = false ;
+				rvalue = rvalue + c ;
+				
+			}
+		}
+		return rvalue ;
+	}
+
+	//=====================================================================
+	// Removing everything after a delimiter. Normally "//" for comments
+	std::string removeTrailing(const std::string& value,const std::string& delim){
+		auto loc = value.find(delim) ;
+		if (loc == std::string::npos){
+			return value ;
+		}
+		return value.substr(0,loc) ;
+	}
+
+
 	//====================================================================
 	std::string& stripTrim(std::string& s)  {
 		auto loc = s.find("//") ;
@@ -150,14 +199,6 @@ namespace strutil {
 			pos = format.find_first_of("%") ;
 		}
 		return format ;
-	}
-	//++++++++++++++++++++++++++++++++++++++++
-	std::string simplify(const std::string& input){
-		std::regex re("\\s{2,}");
-		std::string fmt = " ";
-		
-		auto output = regex_replace(input, re, fmt);
-		return output ;
 	}
 	
 	//++++++++++++++++++++++++++++++++++++++++++

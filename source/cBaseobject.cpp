@@ -1257,7 +1257,7 @@ bool CBaseObject::Load( std::ifstream &inStream )
 		ReadWorldTagData( inStream, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = strutil::toupper( tag );
+			UTag = strutil::upper( tag );
 			if( !HandleLine( UTag, data ) )
 				Console.warning( strutil::format("Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()) );
 		}
@@ -1352,7 +1352,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					{
 						if( !val.empty() )
 						{
-							auto temp = strutil::toupper( strutil::stripTrim( val ));
+							auto temp = strutil::upper( strutil::stripTrim( val ));
 							if( temp == "[END]" )
 							{
 								break;
