@@ -35,7 +35,6 @@ namespace strutil {
 	std::string removeTrailing(const std::string& value,const std::string& delim="//");
 
 	
-	std::string& stripTrim(std::string& s) ;
 	
 	std::tuple<std::string,std::string> separate(const std::string& input,
 								   const std::string& separator);

@@ -71,24 +71,24 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			continue;
 		}
 			
-		auto ssecs = strutil::sections( strutil::stripTrim( cdata ), " " );
+		auto ssecs = strutil::sections( strutil::trim(strutil::removeTrailing( cdata,"//") ), " " );
 		switch( tag )
 		{
 			case DFNTAG_AMMO:
-				applyTo->SetAmmoID( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0)) );
+				applyTo->SetAmmoID( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0)) );
 				if( ssecs.size() > 1 )
 				{
-					applyTo->SetAmmoHue( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0)) );
+					applyTo->SetAmmoHue( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0)) );
 				}
 				break;
 			case DFNTAG_AMMOFX:
-				applyTo->SetAmmoFX( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0)) );
+				applyTo->SetAmmoFX( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0)) );
 				if( ssecs.size() > 1 )
 				{
-					applyTo->SetAmmoFXHue( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0)) );
+					applyTo->SetAmmoFXHue( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0)) );
 					if( ssecs.size() > 2 )
 					{
-						applyTo->SetAmmoFXRender( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0)) );
+						applyTo->SetAmmoFXRender( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0)) );
 					}
 				}
 				break;
@@ -136,10 +136,10 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_ELEMENTRESIST:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0)), HEAT );
-					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0)), COLD );
-					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0)), LIGHTNING );
-					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[3] ), nullptr, 0)), POISON );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0)), HEAT );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0)), COLD );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0)), LIGHTNING );
+					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 0)), POISON );
 				}
 				break;
 			case DFNTAG_DEF:
@@ -173,7 +173,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					Console.warning( strutil::format("Invalid data found in DEX tag inside item script %s", sectionID.c_str() ));
 				break;				
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
-			case DFNTAG_DIR:			applyTo->SetDir( static_cast<UI08>(std::stoi(strutil::stripTrim( cdata ), nullptr, 0)) );			break;
+			case DFNTAG_DIR:			applyTo->SetDir( static_cast<UI08>(std::stoi(strutil::trim(strutil::removeTrailing( cdata,"//") ), nullptr, 0)) );			break;
 			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
 			case DFNTAG_DECAY:
 				if( ndata == 1 )
@@ -198,7 +198,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				else
 				{
 					UI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size() - 1));
-					scriptEntry = strutil::stripTrim( ssecs[rndEntry] );
+					scriptEntry =  strutil::trim(strutil::removeTrailing( ssecs[rndEntry],"//") )   ;
 				}
 
 				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
@@ -242,54 +242,54 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_MORE:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
-					applyTo->SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
 				}
 				break;
 			case DFNTAG_MORE2:																	break;
 			case DFNTAG_MOREX:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
-					applyTo->SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
 				}
 				break;
 			case DFNTAG_MOREY:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
-					applyTo->SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
 				}
 				break;
 			case DFNTAG_MOREZ:
 				if( ssecs.size() >= 4 )
 				{
-					applyTo->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[1] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[2] ), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( ssecs[3] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[3],"//") ), nullptr, 0 ) ) );
 				}
 				else
 				{
-					applyTo->SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( strutil::stripTrim( ssecs[0] ), nullptr, 0 ) ) );
+					applyTo->SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ) ) );
 				}
 				break;
 			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
@@ -419,16 +419,16 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					{
 						if( count == 1 )
 						{
-							result = strutil::stripTrim( sec );
+							result = strutil::trim(strutil::removeTrailing( sec,"//") );
 						}
 						else
 						{
-							result = result + " " + strutil::stripTrim( sec );
+							result = result + " " + strutil::trim(strutil::removeTrailing( sec,"//") );
 						}
 					}
 					count++;
 				}
-				customTagName			= strutil::stripTrim( ssecs[0] );
+				customTagName			= strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
 				customTagStringValue	= result;
 
 				if( !customTagName.empty() && !customTagStringValue.empty() )
@@ -442,8 +442,8 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				break;
 			}
 			case DFNTAG_CUSTOMINTTAG:
-				customTagName			= strutil::stripTrim( ssecs[0] );
-				customTagStringValue	= strutil::stripTrim( ssecs[1] );
+				customTagName			= strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
+				customTagStringValue	= strutil::trim(strutil::removeTrailing( ssecs[1],"//") );
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
@@ -459,14 +459,14 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break;
 			case DFNTAG_PACKITEM:
 			{
-				auto csecs = strutil::sections( strutil::stripTrim( cdata ), "," );
+				auto csecs = strutil::sections( strutil::trim(strutil::removeTrailing( cdata,"//") ), "," );
 				if( csecs.size() > 1 )
 				{
-					Items->AddRespawnItem( applyTo, strutil::stripTrim( csecs[0] ), true, false, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0))); //section 0 = id, section 1 = amount
+					Items->AddRespawnItem( applyTo, strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), true, false, static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0))); //section 0 = id, section 1 = amount
 				}
 				else
 				{
-					Items->AddRespawnItem( applyTo, strutil::stripTrim( cdata ), true, false, 1 );
+					Items->AddRespawnItem( applyTo, strutil::trim(strutil::removeTrailing( cdata,"//") ), true, false, 1 );
 				}
 				break;
 			}
@@ -646,7 +646,7 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 {
 	CItem * iCreated	= nullptr;
 	std::string sect	= "ITEMLIST " + sItemList;
-	sect				= strutil::stripTrim( sect );
+	sect				= strutil::trim(strutil::removeTrailing( sect,"//") );
 
 	if( sect == "blank" ) // The itemlist-entry is just a blank filler item
 		return nullptr;
@@ -727,7 +727,7 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, c
 //o-----------------------------------------------------------------------------------------------o
 CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
 {
-	ourItem						= strutil::stripTrim( ourItem );
+	ourItem						= strutil::trim(strutil::removeTrailing( ourItem,"//") );
 
 	if( ourItem == "blank" ) // The lootlist-entry is just a blank filler item
 		return nullptr;
