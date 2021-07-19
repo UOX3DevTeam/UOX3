@@ -4081,9 +4081,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			if( csecs.size() == 3 )
 			{
 				struct hostent *lpHostEntry = nullptr;
-				sname	= strutil::stripTrim( csecs[0] );
-				sip		= strutil::stripTrim( csecs[1] );
-				sport	= strutil::stripTrim( csecs[2] );
+				sname	= strutil::trim(strutil::removeTrailing( csecs[0],"//") );
+				sip		= strutil::trim(strutil::removeTrailing( csecs[1],"//") );
+				sport	= strutil::trim(strutil::removeTrailing( csecs[2],"//") );
 
 				toAdd.setName( sname );
 				// Ok look up the data here see if its a number
@@ -4655,37 +4655,37 @@ LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 void CServerData::ServerLocation( std::string toSet )
 {
 	auto temp = toSet;
-	temp = strutil::stripTrim( temp );
+	temp = strutil::trim(strutil::removeTrailing( temp,"//") );
 	auto csecs = strutil::sections( temp, "," );
 	
 	if( csecs.size() ==  7 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[2] ), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[3] ), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[4] ), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[5] ), nullptr, 0));
+		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[2],"//") ), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[3],"//") ), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[4],"//") ), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[5],"//") ), nullptr, 0));
 		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[6] ), nullptr, 0));
-		strcpy( toAdd.oldTown, strutil::stripTrim( csecs[0] ).c_str() );
-		strcpy( toAdd.oldDescription, strutil::stripTrim( csecs[1] ).c_str() );
-		strcpy( toAdd.newTown, strutil::stripTrim( csecs[0] ).c_str()) ;
-		strcpy( toAdd.newDescription, strutil::stripTrim( csecs[1] ).c_str() );
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[6],"//") ), nullptr, 0));
+		strcpy( toAdd.oldTown, strutil::trim(strutil::removeTrailing( csecs[0],"//") ).c_str() );
+		strcpy( toAdd.oldDescription, strutil::trim(strutil::removeTrailing( csecs[1],"//") ).c_str() );
+		strcpy( toAdd.newTown, toAdd.oldTown) ;
+		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else if( csecs.size() ==  8 )	// instanceID included
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[2] ), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[3] ), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[4] ), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[5] ), nullptr, 0));
-		toAdd.instanceID	= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[6] ), nullptr, 0));
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[7] ), nullptr, 0));
-		strcpy( toAdd.oldTown, strutil::stripTrim( csecs[0] ).c_str() );
-		strcpy( toAdd.oldDescription, strutil::stripTrim( csecs[1] ).c_str() );
-		strcpy( toAdd.newTown, strutil::stripTrim( csecs[0] ).c_str()) ;
-		strcpy( toAdd.newDescription, strutil::stripTrim( csecs[1] ).c_str() );
+		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[2],"//") ), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[3],"//") ), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[4],"//") ), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[5],"//") ), nullptr, 0));
+		toAdd.instanceID	= static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[6],"//") ), nullptr, 0));
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[7],"//") ), nullptr, 0));
+		strcpy( toAdd.oldTown, strutil::trim(strutil::removeTrailing( csecs[0],"//") ).c_str() );
+		strcpy( toAdd.oldDescription, strutil::trim(strutil::removeTrailing( csecs[1],"//") ).c_str() );
+		strcpy( toAdd.newTown, toAdd.oldTown) ;
+		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else
@@ -4781,7 +4781,7 @@ void CServerData::LoadTime( void )
 			input.getline(line, 1023);
 			line[input.gcount()] = 0;
 			std::string sLine(line);
-			sLine = strutil::stripTrim( sLine );
+			sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
 			if( !sLine.empty() )
 			{
 				if( strutil::upper( sLine ) == "[TIME]" )
@@ -4827,8 +4827,8 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					ServerMoon( 0, static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					ServerMoon( 1, static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+					ServerMoon( 0, static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)) );
+					ServerMoon( 1, static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)) );
 				}
 			}
 		}
