@@ -1951,7 +1951,7 @@ bool cSkills::LoadMiningData( void )
 					{
 						UTag = strutil::upper( tag );
 						data = individualOre->GrabData();
-						data = strutil::stripTrim( data );
+						data = strutil::trim(strutil::removeTrailing( data,"//") );
 						switch( (UTag.data()[0]) )	// break on tag
 						{
 							case 'C':
@@ -2107,14 +2107,14 @@ void cSkills::LoadCreateMenus( void )
 			std::string eName = ourScript->EntryName();
 			if( "SUBMENU" == eName.substr( 0, 7 ) )	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 			{
-				eName = strutil::stripTrim( eName );
+				eName = strutil::trim(strutil::removeTrailing( eName,"//") );
 				auto ssecs = strutil::sections( eName, " " );
-				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
 					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim(strutil::removeTrailing( data,"//") );
 					if( UTag == "MENU" )
 					{
 						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
@@ -2129,7 +2129,7 @@ void cSkills::LoadCreateMenus( void )
 			{
 				auto ssecs = strutil::sections( eName, " " );
 				
-				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0));
 				createEntry tmpEntry;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
@@ -2141,7 +2141,7 @@ void cSkills::LoadCreateMenus( void )
 				{
 					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim(strutil::removeTrailing( data,"//") );
 					if( UTag == "COLOUR" )
 					{
 						tmpEntry.colour =  static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -2182,15 +2182,15 @@ void cSkills::LoadCreateMenus( void )
 						{
 							if( ssecs.size() == 2 )
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0));
 							}
 							else
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
-								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0));
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0));
+								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0));
 							}
 						}
-						std::string resType = "RESOURCE " + strutil::stripTrim( ssecs[0] );
+						std::string resType = "RESOURCE " + strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
 						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
 						if( resList != nullptr )
 						{
@@ -2203,7 +2203,7 @@ void cSkills::LoadCreateMenus( void )
 						}
 						else
 						{
-							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0 )) );
+							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 )) );
 						}
 
 						tmpEntry.resourceNeeded.push_back( tmpResource );
@@ -2223,14 +2223,14 @@ void cSkills::LoadCreateMenus( void )
 							if( ssecs.size() == 2 )
 							{
 								tmpResource.maxSkill = 1000;
-								tmpResource.minSkill =  static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0 ));
+								tmpResource.minSkill =  static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0 ));
 							}
 							else
 							{
-								tmpResource.minSkill = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0 ));
-								tmpResource.maxSkill = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0 ));
+								tmpResource.minSkill = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0 ));
+								tmpResource.maxSkill = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[2],"//") ), nullptr, 0 ));
 							}
-							tmpResource.skillNumber = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0 ));
+							tmpResource.skillNumber = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0 ));
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
@@ -2244,12 +2244,12 @@ void cSkills::LoadCreateMenus( void )
 			else if( "MENUENTRY" == eName.substr( 0, 9 ) )
 			{
 				auto ssecs = strutil::sections( eName, " " );
-				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
 					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim(strutil::removeTrailing( data,"//") );
 					if( UTag == "ID" )
 					{
 						skillMenus[ourEntry].targID =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
@@ -2536,7 +2536,7 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 		{
 			UTag = strutil::upper( tag );
 			data = GumpHeader->GrabData();
-			data = strutil::stripTrim( data );
+			data = strutil::trim(strutil::removeTrailing(data,"//") );
 			if( UTag == "BUTTONLEFT" )
 			{
 				btnLeft = static_cast<UI16>(std::stoul(data, nullptr, 0));
