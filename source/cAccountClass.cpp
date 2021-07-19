@@ -209,13 +209,12 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		}
 		// Set up the tokenizing
 		auto ssecs = strutil::sections( sLine, " " );
-		auto l = strutil::stripTrim( ssecs[0] );
+		auto l = strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
 		std::string r = "";
 		if( ssecs.size() > 1 )
 		{
-			r = strutil::stripTrim( ssecs[1] );
+			r = strutil::trim(strutil::removeTrailing( ssecs[1],"//") );
 		}
-		//auto r = strutil::stripTrim( ssecs[1] );
 		// Parse and store based on tag
 		if( "NAME" == l )
 		{
@@ -307,8 +306,8 @@ UI16 cAccountClass::CreateAccountSystem( void )
 								break;
 							}
 							auto ssecs = strutil::sections( sLine2, " " );
-							auto l2 = strutil::stripTrim( ssecs[0] );
-							auto r2 = strutil::stripTrim( ssecs[1] );
+							auto l2 = strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
+							auto r2 = strutil::trim(strutil::removeTrailing( ssecs[1],"//") );
 							// Parse and store based on tag
 							if( "PATH" == l2 )
 							{
@@ -1003,8 +1002,8 @@ UI16 cAccountClass::Load(void)
 			continue;
 		}
 		auto ssecs = strutil::sections( sLine, " " );
-		auto l	= strutil::stripTrim( ssecs[0] );
-		auto r	= strutil::stripTrim( ssecs[1] );
+		auto l	= strutil::trim(strutil::removeTrailing( ssecs[0],"//") );
+		auto r	= strutil::trim(strutil::removeTrailing( ssecs[1],"//") );
 		// Parse and store based on tag
 		if( l == "NAME" )
 		{
@@ -1820,18 +1819,18 @@ UI16 cAccountClass::ImportAccounts( void )
 			continue;
 		}
 		auto esecs = strutil::sections( sLine, "=" );
-		auto l = strutil::stripTrim( esecs[0] );
-		auto r = strutil::stripTrim( esecs[1] );
+		auto l = strutil::trim(strutil::removeTrailing( esecs[0],"//") );
+		auto r = strutil::trim(strutil::removeTrailing( esecs[1],"//") );
 		if( l == "USER" )
 		{
 			// OK we have an account to import, start parsing it.
 			std::string user, pass;
 			auto csecs = strutil::sections( r, "," );
 			
-			user = strutil::stripTrim( csecs[0] );
+			user = strutil::trim(strutil::removeTrailing( csecs[0],"//") );
 			if( csecs.size() > 1 )
 			{
-				pass = strutil::stripTrim( csecs[1] );
+				pass = strutil::trim(strutil::removeTrailing( csecs[1],"//") );
 			}
 
 			if( user.empty() || user.length() == 0 || pass.empty() || pass.length() == 0 )
@@ -1846,7 +1845,7 @@ UI16 cAccountClass::ImportAccounts( void )
 			std::string flags;
 			if( csecs.size() > 2 )
 			{
-			  flags = strutil::stripTrim( csecs[2] );
+				flags = strutil::trim(strutil::removeTrailing( csecs[2],"//") );
 			}
 			
 			// Set flags to a default value. and in this case I believe that its 0x00000004
@@ -1862,7 +1861,7 @@ UI16 cAccountClass::ImportAccounts( void )
 			std::string email;
 			if( csecs.size() > 3 )
 			{
-				email = strutil::stripTrim( csecs[3] );
+				email = strutil::trim(strutil::removeTrailing( csecs[3],"//") );
 			}
 
 			if( email.empty() || email.length() == 0 )
