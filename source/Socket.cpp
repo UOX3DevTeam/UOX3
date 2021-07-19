@@ -127,7 +127,7 @@ void Socket::setOptions(SOCKET fd) {
 	
 #if PLATFORM == MACOS
 	[[maybe_unused]] int retVal = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-	[[maybe_unused]] int retVal = setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &one, sizeof(one));
+	 retVal = setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &one, sizeof(one));
 	ioctl( fd, FIONBIO, &one );
 
 #elif PLATFORM == LINUX
