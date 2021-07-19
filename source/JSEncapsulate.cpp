@@ -202,7 +202,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 				case JSOT_BOOL:		boolVal = (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE);	break;
 				case JSOT_STRING:
 					svalue	= JS_GetStringBytes( JS_ValueToString( cx, *vp ) );
-					boolVal = (strutil::toupper( svalue ) == "TRUE");
+					boolVal = (strutil::upper( svalue ) == "TRUE");
 					break;
 				default:
 				case JSOT_COUNT:

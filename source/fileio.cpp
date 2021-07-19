@@ -296,7 +296,7 @@ void LoadSkills( void )
 						cwmWorldState->skill[i].ResetDefaults();
 						for( tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next() )
 						{
-							UTag = strutil::toupper( tag );
+							UTag = strutil::upper( tag );
 							data = SkillList->GrabData();
 							data = strutil::stripTrim( data );
 							if( UTag == "STR" )
@@ -448,7 +448,7 @@ void LoadRegions( void )
 	std::string data, UTag;
 	for( std::string tag = InstaLog->First(); !InstaLog->AtEnd(); tag = InstaLog->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data	= InstaLog->GrabData();
 		data = strutil::stripTrim( data );
 		if( UTag == "X1" )
@@ -511,7 +511,7 @@ void LoadTeleportLocations( void )
 				for( tag = teleportSect->First(); !teleportSect->AtEnd(); tag = teleportSect->Next() )
 				{
 					CTeleLocationEntry toAdd;
-					if( strutil::toupper( tag ) == "ENTRY" )
+					if( strutil::upper( tag ) == "ENTRY" )
 					{
 						tempX = 0;
 						tempY = 0;
@@ -523,7 +523,7 @@ void LoadTeleportLocations( void )
 						{
 							tempX	= static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0) );
 							tempY	= static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0) );
-							temp	= strutil::toupper(strutil::stripTrim( csecs[2] ));
+							temp	= strutil::upper(strutil::stripTrim( csecs[2] ));
 							if( temp != "ALL" && temp != "A" )
 							{
 								tempZ =  static_cast<UI16>(std::stoul(temp, nullptr, 0) );
@@ -595,7 +595,7 @@ void LoadCreatures( void )
 					}
 					data = creatureData->GrabData();
 					data = strutil::stripTrim( data );
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					switch( (UTag.data()[0]) )
 					{
 						case 'A':
@@ -635,11 +635,11 @@ void LoadCreatures( void )
 						case 'M':
 							if( UTag == "MOVEMENT" )
 							{
-								if( strutil::toupper(data) == "WATER" )
+								if( strutil::upper(data) == "WATER" )
 								{
 									cwmWorldState->creatures[i].IsWater( true );
 								}
-								else if( strutil::toupper(data) == "BOTH" )
+								else if( strutil::upper(data) == "BOTH" )
 								{
 									cwmWorldState->creatures[i].IsAmphibian( true );
 								}
@@ -781,7 +781,7 @@ void LoadPlaces( void )
 			
 			size_t entryNum		= static_cast<UI32>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
 			
-			if( (strutil::toupper(strutil::stripTrim( ssecs[0])) == "LOCATION") && entryNum )
+			if( (strutil::upper(strutil::stripTrim( ssecs[0])) == "LOCATION") && entryNum )
 			{
 				if( cwmWorldState->goPlaces.find( static_cast<UI16>(entryNum) ) != cwmWorldState->goPlaces.end() )
 				{
@@ -794,7 +794,7 @@ void LoadPlaces( void )
 					{
 						data = toScan->GrabData();
 						data = strutil::stripTrim( data );
-						UTag = strutil::toupper( tag );
+						UTag = strutil::upper( tag );
 						if( UTag == "X" )
 						{
 							toAdd->x = static_cast<SI16>(std::stoi(data, nullptr, 0));

@@ -1276,7 +1276,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 				{
 					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
 					{
-						if( strutil::toupper( tag ) == "IP" )
+						if( strutil::upper( tag ) == "IP" )
 						{
 							data = firewallSect->GrabData();
 							data = strutil::stripTrim( data );

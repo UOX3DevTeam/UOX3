@@ -444,7 +444,7 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	JSString *strSpeech 	= nullptr;
 	std::string lwrSpeech	= speech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, strutil::lower( lwrSpeech ).c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj = nullptr;
@@ -2393,7 +2393,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	JSString *strSpeech		= nullptr;
 	std::string lwrSpeech	= mySpeech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, strutil::lower( lwrSpeech ).c_str() );
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 
@@ -2627,7 +2627,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	jsval params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	JSString *strCmd = nullptr;
-	strCmd = JS_NewStringCopyZ( targContext, strutil::tolower( command ).c_str() );
+	strCmd = JS_NewStringCopyZ( targContext, strutil::lower( command ).c_str() );
 	params[0]	= OBJECT_TO_JSVAL( myObj );
 	params[1]	= STRING_TO_JSVAL( strCmd );
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onCommand", 2, params, &rval );

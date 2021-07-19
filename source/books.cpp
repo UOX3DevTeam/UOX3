@@ -112,7 +112,7 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 			bool part1 = false, part2 = false, part3 = false;
 			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
-				UTag = strutil::toupper( tag );
+				UTag = strutil::upper( tag );
 				data = book->GrabData();
 				if( UTag == "PAGES" )
 				{

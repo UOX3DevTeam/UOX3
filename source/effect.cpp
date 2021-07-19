@@ -1227,7 +1227,7 @@ void cEffects::LoadEffects( void )
 			line[input.gcount()] = 0;
 			std::string sLine(line);
 			sLine = strutil::stripTrim( sLine );
-			auto usLine = strutil::toupper( sLine );
+			auto usLine = strutil::upper( sLine );
 			
 			if( !sLine.empty() )
 			{
@@ -1239,7 +1239,7 @@ void cEffects::LoadEffects( void )
 						ReadWorldTagData( input, tag, data );
 						if( tag != "o---o" )
 						{
-							UTag = strutil::toupper( tag );
+							UTag = strutil::upper( tag );
 							switch( (UTag.data()[0]) )
 							{
 								case 'A':

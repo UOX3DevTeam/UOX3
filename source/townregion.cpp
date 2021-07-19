@@ -116,7 +116,7 @@ bool CTownRegion::Load( Script *ss )
 
 	for( tag = target->First(); !target->AtEnd(); tag = target->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data = target->GrabData();
 		UI32 duint ;
 		try {
@@ -449,7 +449,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	regLocs ourLoc;
 	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data = toScan->GrabData();
 		UI32 duint ;
 		try {

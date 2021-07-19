@@ -660,7 +660,7 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 			std::string k = ItemList->MoveTo( RandomNum( static_cast<size_t>(0), i - 1 ) );
 			if( !k.empty() )
 			{
-				if( strutil::toupper( k ) == "ITEMLIST" )
+				if( strutil::upper( k ) == "ITEMLIST" )
 				{
 					iCreated = CreateRandomItem( ItemList->GrabData(), worldNum, instanceID );
 				}

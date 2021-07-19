@@ -1113,7 +1113,7 @@ bool CPITips::Handle( void )
 		std::string tag, data, sect;
 		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
 		{
-			if( !tag.empty() && strutil::toupper( tag ) == "TIP" )
+			if( !tag.empty() && strutil::upper( tag ) == "TIP" )
 				--x;
 			if( x <= 0 )
 				break;

@@ -706,7 +706,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( strutil::toupper( tag ) == "ADDITEM" )
+			if( strutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
 				data = strutil::stripTrim( data );
@@ -748,7 +748,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( strutil::toupper( tag ) == "ADDITEM" )
+			if( strutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
 				data = strutil::stripTrim( data );

@@ -914,7 +914,7 @@ bool cWeatherAb::Load( void )
 
 			for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
 			{
-				UTag = strutil::toupper( tag );
+				UTag = strutil::upper( tag );
 				data = WeatherStuff->GrabData();
 				switch( tag[0] )
 				{

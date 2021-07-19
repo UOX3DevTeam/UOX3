@@ -37,7 +37,7 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
 		data = House->GrabData();
-		if( strutil::toupper( tag ) == "ID" )
+		if( strutil::upper( tag ) == "ID" )
 		{
 			houseID = static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
 			break;
@@ -111,7 +111,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 			hItem = nullptr;	// clear it out
 			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
-				UTag = strutil::toupper( tag );
+				UTag = strutil::upper( tag );
 				data = HouseItem->GrabData();
 				data = strutil::stripTrim( data );
 				if( UTag == "ITEM" )
@@ -455,7 +455,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	std::vector<UI16> scriptIDs;
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data = House->GrabData();
 		data = strutil::stripTrim( data );
 		

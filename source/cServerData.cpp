@@ -4784,7 +4784,7 @@ void CServerData::LoadTime( void )
 			sLine = strutil::stripTrim( sLine );
 			if( !sLine.empty() )
 			{
-				if( strutil::toupper( sLine ) == "[TIME]" )
+				if( strutil::upper( sLine ) == "[TIME]" )
 					LoadTimeTags( input );
 			}
 		}
@@ -4800,7 +4800,7 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 		ReadWorldTagData( input, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = strutil::toupper(tag);
+			UTag = strutil::upper(tag);
 			
 			if( UTag == "AMPM" )
 			{

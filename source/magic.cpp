@@ -3742,7 +3742,7 @@ void cMagic::LoadScript( void )
 
 					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
-						UTag = strutil::toupper( tag );
+						UTag = strutil::upper( tag );
 						data = SpellLoad->GrabData();
 						data = strutil::stripTrim( data );
 						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons

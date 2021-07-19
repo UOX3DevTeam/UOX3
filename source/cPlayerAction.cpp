@@ -645,7 +645,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 		{
 			if( !tag.empty() )
 			{
-				if( strutil::toupper( tag ) == "FOODLIST" )
+				if( strutil::upper( tag ) == "FOODLIST" )
 				{
 					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
 				}
@@ -2548,7 +2548,7 @@ ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
-	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strutil::toupper(strToFind) );
+	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strutil::upper(strToFind) );
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;

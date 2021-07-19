@@ -103,7 +103,7 @@ void cRaces::load( void )
 		}
 		else
 		{
-			if( strutil::toupper( tag ) != "MODCOUNT" )
+			if( strutil::upper( tag ) != "MODCOUNT" )
 			{
 				Console.error( "MODCOUNT must come before any entries!" );
 				DefaultInitCombat();
@@ -1245,7 +1245,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 	for( tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data = RacialPart->GrabData();
 		
 		switch( tag[0] )
@@ -1266,7 +1266,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
-						subUTag = strutil::toupper( subTag );
+						subUTag = strutil::upper( subTag );
 						subData = RacialEquipment->GrabData();
 						switch( subTag[0] )
 						{
@@ -1310,7 +1310,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
-						subUTag = strutil::toupper( subTag );
+						subUTag = strutil::upper( subTag );
 						subData = RacialEquipment->GrabData();
 						switch( subTag[0] )
 						{
@@ -1378,7 +1378,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			case 'G':
 				if( UTag == "GENDER" )
 				{
-					auto udata = strutil::toupper( data );
+					auto udata = strutil::upper( data );
 					if( udata == "MALE" )
 					{
 						GenderRestriction( MALE );

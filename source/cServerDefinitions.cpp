@@ -166,7 +166,7 @@ ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATE
 
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
-		auto tUFind = strutil::toupper( toFind );
+		auto tUFind = strutil::upper( toFind );
 
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
@@ -359,13 +359,13 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
 					{
 						data = prioInfo->GrabData();
-						if( strutil::toupper( tag ) == "DEFAULTPRIORITY" )
+						if( strutil::upper( tag ) == "DEFAULTPRIORITY" )
 						{
 							defaultPriority = static_cast<UI16>(std::stoul(data, nullptr, 0));
 						}
 						else
 						{
-							std::string filenametemp = strutil::tolower( tag );
+							std::string filenametemp = strutil::lower( tag );
 							priorityMap[filenametemp] =static_cast<SI16>(std::stoi(data, nullptr, 0));
 						}
 					}
@@ -402,7 +402,7 @@ void CServerDefinitions::DisplayPriorityMap( void )
 SI16 CServerDefinitions::GetPriority( const char *file )
 {
 	SI16 retVal = defaultPriority;
-	auto lowername = strutil::tolower( file );
+	auto lowername = strutil::lower( file );
 	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
 	if( p != priorityMap.end() )
 		retVal = p->second;
