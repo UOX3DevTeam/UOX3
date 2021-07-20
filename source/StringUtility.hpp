@@ -35,9 +35,12 @@ namespace strutil {
 	std::string removeTrailing(const std::string& value,const std::string& delim="//");
 
 	
-	
-	std::tuple<std::string,std::string> separate(const std::string& input,
-								   const std::string& separator);
+	// Return the values between two delimitors.
+	std::string contents(const std::string &value,const std::string& startdelim, const std::string &enddelim,std::string::size_type location=0);
+
+	// Split a string based on a separator
+	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep);
+
 	
 	
 	std::string format(std::size_t maxsize, const std::string fmtstring,...) ;
@@ -46,8 +49,7 @@ namespace strutil {
 	std::string format(const std::string fmtstring,...) ;
 	std::string format(const std::string fmtstring,va_list &list);
 	std::string formatMessage(const std::string& uformat, const std::string& data) ;
-	
-	std::string simplify(const std::string& input);
+
 	
 	std::vector<std::string> sections(const std::string& value, const std::string& sep=",", std::string::size_type start = 0, std::string::size_type end = std::string::npos) ;
 	std::vector<std::wstring> sections(const std::wstring& value, const std::wstring& sep=L",", std::wstring::size_type start = 0, std::wstring::size_type end = std::wstring::npos) ;
@@ -139,8 +141,6 @@ namespace strutil {
 		}
 	}
 	
-	// split a string by a sep
-	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep);
 
 }
 #endif /* StringUtility_hpp */

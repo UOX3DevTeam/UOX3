@@ -112,20 +112,39 @@ namespace strutil {
 	}
 
 
-
-	
-	//++++++++++++++++++++++++++++++++++++++
-	std::tuple<std::string,std::string> separate(const std::string& input,
-								   const std::string& separator){
-		auto loc = input.find(separator);
-		auto first = input.substr(0,loc) ;
-		std::string second ="";
-		if ((loc != std::string::npos) && ((loc+1)< input.size()) ) {
-			second = input.substr(loc+1) ;
+	//=====================================================================
+	// Return the values between two delimitors.
+	std::string contents(const std::string &value,const std::string& startdelim, const std::string &enddelim,std::string::size_type location){
+		auto loc = value.find_first_of(startdelim,location);
+		if (loc == std::string::npos){
+			return std::string();
 		}
-		return std::make_tuple(trim(first),trim(second));
-		
+		auto start_search = loc + startdelim.size() ;
+		if (start_search >= value.size()){
+			return std::string();
+			
+		}
+		auto end = value.find_first_of(enddelim,start_search);
+		if (end == std::string::npos){
+			return std::string();
+			
+		}
+		return value.substr(start_search,end-start_search);
 	}
+
+	//=====================================================================
+	// Split a string based on a separator
+	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep){
+		auto loc = value.find(sep) ;
+		auto next = loc + sep.size();
+		if ((loc == std::string::npos) || (next >= value.size())){
+			return std::make_tuple(trim(value),""s);
+		}
+		else {
+			return std::make_tuple(trim(value.substr(0,loc)),trim(value.substr(next)));
+		}
+	}
+
 	//+++++++++++++++++++++++++++++++++++++
 	std::string format(std::size_t maxsize, const std::string fmtstring,...)  {
 		
@@ -370,21 +389,6 @@ namespace strutil {
 		return conversion.str()  ;
 	}
 	
-	//====================================================================
-	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep){
-		std::string first ;
-		std::string second ;
-		auto loc = value.find(sep);
-		if (loc == std::string::npos){
-			first = value ;
-		}
-		else {
-			first = strutil::rtrim(value.substr(0,loc));
-			if ((loc+1) < value.size()) {
-				second = strutil::ltrim(value.substr(loc+1));
-			}
-		}
-		return std::make_tuple(first,second);
-	}
+
 	
 }
