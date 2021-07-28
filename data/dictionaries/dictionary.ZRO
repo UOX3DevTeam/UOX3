@@ -356,7 +356,7 @@
 367=The character's vendor packs have been removed.
 // craces.cpp
 368=Player has bad race attribute! Player %i Race %i
-369= This race is not for players!
+369=This race is not for players!
 370=You are not of the right gender!
 371=You feel yourself losing %s.
 372=You have already used a race gate with this character.
@@ -2161,6 +2161,11 @@
 2187=That doesn't look much like an animal.
 2188=Wild
 2199=Confused
+2200=None
+2201=Owner Count
+2202=Pet Slots
+2203=Control Chance
+2204=Friend's List
 // [2300-2449] Hirelings
 2300=%s has been removed from %s's friend list.
 2301=You have been removed from %s's friend list.
@@ -2996,7 +3001,7 @@
 4528=a capybara baby
 4541=Rabbit of Doom
 4542=Baby Rabbit of Doom
-// 5000-5499 Additional NPC names and titles (not linked to ID)
+// [5000-5499] Additional NPC names and titles (not linked to ID)
 5000=a whipping vine
 5001=a canary
 5002=a falcon
@@ -3368,7 +3373,7 @@
 8108=This is a read-only property.
 8109=Password must be longer than 3 characters! Current length:
 8110=Select Item to get Type Info from:
-8111="Facet (%s) not found. Valid facets: 0/felucca, 1/trammel, 2/ilshenar, 3/malas, 4/tokuno, 5/termur
+8111=Facet (%s) not found. Valid facets: 0/felucca, 1/trammel, 2/ilshenar, 3/malas, 4/tokuno, 5/termur
 8112=Wiping %s on facet:
 8113=Wiping %s on ALL facets...
 8114=Invalid parameter %s. Valid params: all / items / npcs / spawners / (x1 y1 x2 y2), facet
@@ -3402,23 +3407,23 @@
 8141=Weapon deals Poison elemental damage (true/false)
 8142=Weapon deals Rain elemental damage (true/false)
 8143=Weapon deals Snow elemental damage (true/false)
-8144=Marks the item as decayable
-8145=The amount of time left before the item will decay
+8144=Is item decayable?
+8145=The amount of seconds left before the item will decay
 8146=Defensive value of item (Physical Resistance post-AoS, AR in older UO)
 8147=Description of item - used for items sold on player vendors
-8148=Marks the item as locked by a GM
+8148=Has item been locked by a GM?
 8149=Direction of item - used to determine light type on light sources
 8150=The ID of entry from Create DFN that item was crafted from (if any)
 8151=Item's current health/hitpoints (cannot exceed value of maxhp property)
 8152=Max damage item can deal in combat (randomized between lodamage and hidamage)
 8153=ID of instance of world that item exists in. Objects in different instances will not be able to interact with one another!
-8154=Marks item as dispellable with Magic Dispel
-8155=Marks door as open
-8156=Marks item as dyeable
-8157=Marks item as guarded by a pet/hireling
-8158=Marks item as newbiefied/blessed
-8159=Marks item as pileable
-8160=Marks item as wipeable with WIPE command
+8154=Is item dispellable with Magic Dispel?
+8155=Is door open?
+8156=Is item dyable?
+8157=Is item guarded by a pet/hireling?
+8158=Is item marked as newbie/blessed?
+8159=Is item pileable?
+8160=Is item wipeable with WIPE command?
 8161=The amount of items contained inside container
 8162=Layer that characters will equip item on
 8163=Lowest damage item can deal in combat
@@ -3429,6 +3434,7 @@
 8168=Maximum range of ranged weapon
 8169=Min interval in seconds between respawns - SpawnObjects only
 8170=Generic item property used for many different things
+8171=Item type of item - determines double-click behaviour
 8174=Movable state of item (0 - default, 1 - movable, 2 - not movable, 3 - locked down)
 8175=Secondary name of object, revealed using item identification
 8176=Object registered as owner of this item
@@ -3451,7 +3457,6 @@
 8193=Attack speed of item - used by weapons
 8194=Strength required to equip item
 8195=Temporary timer used by spawners
-8196=Item type of item - determines double-click behaviour
 8197=Determines who item is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 8198=Weight of item (100 = 1.0 stone)
 8199=Maximum weight a container can hold (100 = 1.0 stone)
@@ -3468,18 +3473,18 @@
 8303=Gets calculated attack value for character based on skills, equipment, etc. Controlled by server (Read-Only)
 8304=Character's current attacker
 8305=Did character attack first?
-8306=Toggles combat mode for NPC characters (NPC Only)
+8306=Toggles combat mode for NPC characters
 8307=Base skill values for character
 8308=Chance of character affected by peacemaking will break out of peace state
 8309=Toggles whether character can attack other characters
 8310=Toggles whether character can broadcast messages
-8311=Toggles whether character can run
-8312=Toggles whether character can snoop in other character's backpacks
+8311=Toggles whether NPC can run
+8312=Toggles whether character can snoop in other characters' backpacks
 8313=Current jail character is locked up in, if any
 8314=Colour of character's body
 8315=Character's command level (Read-Only, cannot adjust command level of fellow GMs/Admins)
-8316=Character's command level.
-8317=Marks character as criminal, instead of innocent, neutral or murderer
+8316=Character's access level to commands. Default setup: 0 = Player, 1 = Counselor, 2 = GM, 5 = Admin
+8317=Is character flagged as a criminal?
 8318=Is (player) character dead? Controlled by server (Read-Only)
 8319=Total amount of times (player) character has died
 8320=Dexterity attribute of character
@@ -3497,14 +3502,14 @@
 8332=Toggles whether house icons/deeds are shown instead of multis for character
 8333=Number of houses co-owned by character. Controlled by server (Read-Only)
 8334=Number of houses owned by character. Controlled by server (Read-Only)
-8335=Character's current hunger status (0-6)
+8335=Character's current hunger status (0 - 6, where 0 is max hungry and 6 is max full. At 0, characters may start take hunger damage depending on server settings.)
 8336=Chance for extremely hungry pet to go wild with every NPC AI loop
-8337=Marks character as innocent, instead of neutral, criminal or murderer
+8337=Is character flagged as innocent?
 8338=ID of instance character is currently in. Objects in different instances will not be able to interact with one another!
 8339=Intelligence attribute of character
 8340=Is character an animal? Controlled by server (Read-Only)
 8341=Is character casting a spell?
-8342=Is character a counselor?
+8342=Is character a Counselor?
 8343=Can character be dispelled by the Dispel spell? (NPC only)
 8344=Is character flying? Controlled by server (Read-Only)
 8345=Is character a GM? (Read-Only)
@@ -3529,15 +3534,15 @@
 8364=Is mount carrying someone?
 8365=Object for multi the character is currently in
 8366=Amount of players character has killed
-8367=Is character a murderer?
+8367=Is character flagged as a murderer?
 8368=Is character neutrally flagged?
 8369=The next spellcasting action character is going to do. Controlled by server (Read-Only)
 8370=Mana is not needed for character to cast spells
 8371=Reagents are not needed for character to cast spells
 8372=Skill titles are not displayed for character
-8373=Whether character is an NPC. Controlled by server (Read-Only)
+8373=Is character an NPC? Controlled by server (Read-Only)
 8374=NPC's old/previous wandertype
-8375=Whether player character is online or not. Controlled by server (Read-Only)
+8375=Is (player) character online? Controlled by server (Read-Only)
 8376=Character's original body ID
 8377=Character's original skin (colour)
 8378=Number of items owned by character. Controlled by server (Read-Only)
@@ -3552,7 +3557,7 @@
 8387=ID of Race for which character has used a Race Gate, if any
 8388=Object of region character is currently in. Controlled by server (Read-Only)
 8389=Colour of character's speech text
-8390=JS Script assigned to character
+8390=JS Script from jse_fileassociations.scp assigned to Character
 8391=Toggles whether single-clicks shows serial of clicked object
 8392=Toggles skill lock for specific character skills (N/A)
 8393=Set value for a specific character skill
@@ -3566,25 +3571,25 @@
 8401=Determines how many NPCs character will split into when hit in combat
 8402=Chance of creature to split when hit in combat
 8403=Toggles whether character is squelched/muted
-8404=Toggles whether creature is in a stable
+8404=Is pet stabled?
 8405=Character's current stamina
 8406=Number of steps character has taken in stealth. Controlled by server (Read-Only)
 8407=Strength attribute of character
-8408=Determines if a creature is tame
+8408=Is NPC tame?
 8409=The rate at which a pet grows hungry
 8410=The rate at which a pet grows thirsty
 8411=Character's current target
 8412=Character's temporary dex, as affected by equipped items, spells and potions
 8413=Character's temporary int, as affected by equipped items, spells and potions
 8414=Character's temporary str, as affected by equipped items, spells and potions
-8415=Character's current thirst status (0-6)
+8415=Character's current thirst status (0 - 6, where 0 is max thirsty and 6 is max full. At 0, characters may start take stamina damage depending on server settings.)
 8416=Chance for extremely thirsty pet to go wild with every NPC AI loop
 8417=The title of the character
 8418=The town the player belongs to (N/A)
 8419=The privileges the character has with their town (1 = Resident, 2 = Mayor)
 8420=Toggles if NPC can train players in skills
 8421=Determines visibility of character to other players (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
-8422=Toggles vulnerability/invulnerability for character
+8422=Is character vulnerable to damage?
 8423=Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)
 8424=Total weight of character (100 = 1.0 stone)
 8425=Enables (true) or disables (false) hunger-mode
@@ -3593,7 +3598,7 @@
 8428=X coordinate of character in the world
 8429=Y coordinate of character in the world
 8430=Z coordinate of character in the world
-// [8500-8549] Multi property descriptions
+// [8500-8549] Tweak menu - Multi property descriptions
 8500=Current number of players banned from Multi. Controlled by Server (Read-Only)
 8501=X coordinate for Multi's ban-location
 8502=Y coordinate for Multi's ban-location
@@ -3606,17 +3611,17 @@
 8509=Is the Multi flagged as Public?
 8510=ID of instance of world that Multi exists in. Objects in different instances will not be able to interact with one another!
 8511=Amount of locked down items in Multi. Controlled by Server (Read-Only)
-8512=Maximum amount of bans supported by Multi
-8513=Maximum amount of friends supported by Multi
-8514=Maximum amount of guests supported by Multi
-8515=Maximum amount of lockdowns supported by Multi
-8516=Maximum amount of owners supported by Multi
-8517=Maximum amount of secure containers supported by Multi
-8518=Maximum amount of trash containers supported by Multi
-8519=Maximum amount of vendors supported by Multi
+8512=Max amount of bans supported by Multi
+8513=Max amount of friends supported by Multi
+8514=Max amount of guests supported by Multi
+8515=Max amount of lockdowns supported by Multi
+8516=Max amount of owners supported by Multi
+8517=Max amount of secure containers supported by Multi
+8518=Max amount of trash containers supported by Multi
+8519=Max amount of vendors supported by Multi
 8520=Object registered as owner of this Multi
 8521=Current amount of owners of Multi. Controlled by Server (Read-Only)
-8522=JS Script assigned to Multi
+8522=JS Script from jse_fileassociations.scp assigned to Multi
 8523=Current amount of secure containers in Multi. Controlled by Server (Read-Only)
 8524=Timestamp for last time Multi was traded. Controlled by Server (Read-Only)
 8525=Current amount of trash containers in Multi. Controlled by Server (Read-Only)
@@ -3626,7 +3631,7 @@
 8529=X coordinate of Multi in the world
 8530=Y coordinate of Multi in the world
 8531=Z coordinate of Multi in the world
-// [8600-8649] Region property descriptions
+// [8600-8649] Tweak menu - Region property descriptions
 8600=Can aggressive spells be cast in the Region?
 8601=Can the Gate spell be used in the Region?
 8602=Can the Mark spell be used in the Region?
@@ -3653,8 +3658,8 @@
 8623=ID of resource taxed from citizens of the town (if any) in this Region
 8624=Weather ID from weather.dfn associated with this Region
 8625=World number that Region exists in
-8626=Appearance of world within the Region
-// [8700-8749] Account property descriptions
+8626=Appearance of world within the Region (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown)
+// [8700-8749] Tweak menu - Account property descriptions
 8700=Contact info/comment for Account
 8701=Character in slot 1 on Account
 8702=Character in slot 2 on Account
@@ -3692,7 +3697,7 @@
 8807=Name of Item/Multi, capped at 127 characters
 8808=Name of character, capped at 30 characters
 8809=Name of Region, capped at 50 characters
-8810=Base weight of item (100 = 1.0 stones)";
+8810=Base weight of item (100 = 1.0 stones);
 8811=Multi not found. Is character still inside Multi?
 8812=Base skill, before bonuses from stats and items are applied.
 8813=Effective skill, after bonuses from stats and items are applied.
@@ -3702,5 +3707,156 @@
 8817=Only Admins can modify someone's GM status!
 8818=Select new object:
 8819=Page
+// [8850-8900] More Command messages
+8850=This command requires a numerical value.
+8851=What do you wish to rename to '%s'?
+8852=You need to enter a new name!
+8853=What do you wish to freeze to the ground?
+8854=What do you wish to unfreeze?
+8855=That's not a valid URL.
+8856=Whom do you wish to make invulnerable?
+8857=Whom do you wish to make vulnerable?
+8858=Accepted arguments for this command: true or false, 1 or 0!
+8859=For which character/at which location do you wish to add a backpack?
+8860=On what character do you wish to add the item %s?
+8861=Erroneous parameter specified! Try 'ADDPACK hex <hexid> or 'ADDPACK <item-id from dfn>
+8862=You need to specify a tag and a value for the tag, seperated by a comma.
+8863=Apply tag to which object?
+8864=You need to specify a tagname to retrieve the value for
+8865=Retrieve tag from which object?
+8866=Select an item to set as NOT decayable:
+8867=Select an item to set as decayable:
+8868=Select object for remote speech:
+8869=You forgot to write some text to go with this command.
+8870='%s' has been renamed to '%t'.
+8871=You cannot rename that!
+8872=The selected character has been frozen.
+8873=The selected item has been frozen.
+8874=You cannot freeze that.
+8875=The selected item has been unfrozen.
+8876=That character isn't frozen! Can't unfreeze!
+8877=That item isn't frozen! Can't unfreeze!
+8878=The selected item has been unfrozen.
+8879=You cannot unfreeze that.
+8880=That target is already invulnerable!
+8881=The selected target has been made invulnerable.
+8882=That is not a character. Try again.
+8883=That target is already vulnerable!
+8884=The selected target has been made vulnerable.
+8885=That is not a character. Try again.
+8886=That character already has a backpack. No new backpack added.
+8887=That character has no backpack! Backpack being added before new item...
+8888=You have set a tag named '%s' with a value of '%t' on the targeted object.
+8889=You need to target a dynamic object (item or character).
+8890=The value of the targeted object's '%s'-tag is:
+8891=You need to target a dynamic object (item or character).
+8892=Item successfully set as NOT decayable.
+8893=This command can only be applied to items.
+8894=You need to target a dynamic item.
+8895=Item successfully set as decayable.
+8896=This command can only be applied to items.
+8897=You must target either a character or a dynamic item.
+8898=Which two doors do you want to link? (1/2)
+8899=Which two doors do you want to link? (2/2)
+8900=The two doors have been linked.
+8901=Unlink which two doors? (1/2)
+8902=Unlink which two doors? (2/2)
+8903=The two doors have been unlinked.
+8904=Set ammoeffect on which bow?
+8905=Set ammotype on which bow?
+8906=Get ammoeffect from which bow?
+8907=AmmoEffect on selected bow:
+8908=Get ammotype from which bow?
+8909=AmmoType on selected bow:
+8910=Get region info for which character?
+8911=Set which item as nonmovable container?
+8912=The selected item has been nonmovable container'd.
+8913=You must select a container!
+8914=Impossible!
+8915=Subdue which fight?
+8916=Fight has been subdued.
+8917=That character is not in a fight.
+8918=You must select a character!
+8919=Get MultiObj from which item?
+8920=Serial of multiObj:
+8921=Target does not belong to a multiObj.
+8922=Find item at layer %s on which character?
+8923=Target has item with ID %i equipped at layer %d.
+8924=Target has no item equipped at layer %i.
+8925=Target is not a character.
+8926=Choose target to set movement speed %i for:
+8927=Only values between 0x0 to 0x4 are supported!
+8928=You need to enter a numerical value with this command!
+8929=Select target to reposition by %i X:
+8930=Select target to reposition by %i Y:
+8931=Select target to reposition by %i Z:
+8932=Repeating command ended.
+8933=Select target to make TYPE %i:
+8935=Select target to DYE %i:
+8936=Select target location for item 0x%i:
+8937=The specified itemID does not seem to be valid. No item added!
+8938=Which object do you wish to remove?
+8939=You can only remove items or NPCs.
+8940=Select target location for item %s:
+8941=That doesn't seem to be a valid item-id from the DFNs. No item added!
+8942=Select location to teleport to:
+8943=Select target location for the [%s]:
+8944=That doesn't seem to be a valid NPC-id from the DFNs.
+// [9000-9500] Misc
+9000=You cannot use this ability while frozen.
+9001=This character is not allowed to fly!
+9002=You have been invited to join a party, type /accept or /decline to deal with the invitation
+9003=Select the character to add to the party
+9004=Select the character to remove from the party
+9005=You have to be the leader to do that
+9006=You are not in a party
+9007=You have changed your loot setting
+9008=That party does not exist any more
+9009=The player has declined your invitation to party
+9010=Features successfully negotiated with assistant tool.
+9011=That container is secure. You cannot use this unless you are the owner.
+9012=Attempting to negotiate features with assistant tool...
+9013=This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds.
+9014=Something is not right - unable to find tiller, planks or hold! This boat might be bugged...
+9015=Planks must be closed before you pack up your ship!
+9016=Make sure your hold is empty, and try again!
+9017=This boat must be empty before it can be converted to a model!
+9018=Unable to add account, insufficient data provided (syntax: [username] [password] [flags])
+9019=Account Added: %s:%s:%i
+9020=Account not added, an account with that username already exists!
+9021=Spawned %u items and %u npcs in %u SpawnRegions
+9022=Failed to spawn any new items or npcs in %u SpawnRegions
+9023=Region: '%s'(%u) spawned %u items and %u npcs
+9024=Region: '%s'(%u) failed to spawn any new items or npcs
+9025=Invalid SpawnRegion %u
+9026=This command requires more arguments!
+9027=This object must be placed in your house
+9028=You cannot place a house-addon adjacent to a door.
+9029=You cannot build your house on the selected terrain!
+9030=You cannot build your house there - location is blocked by one or more items!
+9031=You cannot build your house there - houses not allowed in this region!
+9032=This house has reached the limit on locked down items already!
+9033=House addons can only be placed in houses!
+9034=Marking a rune in property you don't own is not possible.
+9035=Marking a rune inside one's property is not permitted.
+9036=Only GM's may post Global or Regional messages.
+9037=Only GMs may delete posts!
+9038=Failed to remove post; file size not found! Check server log for more details.
+9039=This command can not be used on characters.
+9040=You cannot invite an NPC or unknown player.
+9041=You cannot invite yourself to a party.
+9042=That player is not online.
+9043=You cannot kick an NPC or unknown player.
+9044=You are not in a party and cannot kick them out.
+9045=Only the leader can kick someone from a party.
+9046=The player has been removed from the party.
+9047=Failed to negotiate features with assistant tool. Disconnecting client...
+9048=[Stops following]
+9049=[Evading]
+9050=[Locked]
+9051=[Guarded]
+9052=[locked down & secure]
+9053=[locked down]
+9054=You cannot use skills while dead.
 }
 EOF
