@@ -305,7 +305,7 @@ var charSkills = {
 	mining:445,
 	meditation:446,
 	stealth:447,
-	removetraps:448,
+	removetrap:448,
 	necromancy:449,
 	focus:450,
 	chivalry:451,
@@ -2421,9 +2421,9 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				charSkillsToolTip = "Skill 47 - " + propertyName;
 				charSkillsValue = ((baseSkills ? myTarget.baseskills.stealth : myTarget.skills.stealth)/10).toFixed(1).toString();
 				break;
-			case charSkills.removetraps:
+			case charSkills.removetrap:
 				charSkillsToolTip = "Skill 48 - " + propertyName;
-				charSkillsValue = ((baseSkills ? myTarget.baseskills.removetraps : myTarget.skills.removetraps)/10).toFixed(1).toString();
+				charSkillsValue = ((baseSkills ? myTarget.baseskills.removetrap : myTarget.skills.removetrap)/10).toFixed(1).toString();
 				break;
 			case charSkills.necromancy:
 				charSkillsToolTip = "Skill 49 - " + propertyName;
@@ -4917,8 +4917,8 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "stealth";
 			propertyType = ( baseSkills ? "BaseSkillValue" : "SkillValue" );
 			break;
-		case charSkills.removetraps:
-			propertyName = "removetraps";
+		case charSkills.removetrap:
+			propertyName = "removetrap";
 			propertyType = ( baseSkills ? "BaseSkillValue" : "SkillValue" );
 			break;
 		case charSkills.necromancy:

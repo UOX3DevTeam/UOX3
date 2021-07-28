@@ -2163,7 +2163,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 					else
 						Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
 					break;
-				case DFNTAG_REMOVETRAPS:		skillToSet = REMOVETRAPS;					break;
+				case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;					break;
 				case DFNTAG_STRENGTH:			applyTo->SetStrength( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
 				case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) );	break;
 				case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>(std::stoul(cdata, nullptr, 0) ));			break;

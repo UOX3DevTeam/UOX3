@@ -106,11 +106,11 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, 
 	if( sendAll )
 	{
 		UI16 searchDistance = DIST_SAMESCREEN;
-		if( speechType == WHISPER )
-			searchDistance = DIST_NEXTTILE;
-		else if( speechType == YELL )
+		if( speechType == WHISPER || speechType == ASCIIWHISPER )
+			searchDistance = DIST_SAMETILE;
+		else if( speechType == YELL || speechType == ASCIIYELL )
 			searchDistance = DIST_SAMESCREEN * 1.5;
-		else if( speechType == EMOTE )
+		else if( speechType == EMOTE || speechType == ASCIIEMOTE )
 			searchDistance = DIST_INRANGE;
 
 		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, searchDistance );
@@ -289,7 +289,7 @@ bool CPITalkRequest::Handle( void )
 			}
 		}
 
-		if( Type() != WHISPER && ( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ))
+		if(( Type() != WHISPER && Type() != ASCIIWHISPER ) && ( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ))
 			mChar->ExposeToView();
 
 		if( ( Type() == YELL || Type() == ASCIIYELL ) && mChar->CanBroadcast() )
@@ -382,11 +382,11 @@ bool CPITalkRequest::Handle( void )
 
 			SOCKLIST nearbyChars;
 			// Distance at which other players can hear the speech depends on speech-type
-			if( Type() == WHISPER && !mChar->IsGM() && !mChar->IsCounselor() )
+			if(( Type() == WHISPER || Type() == ASCIIWHISPER ) && !mChar->IsGM() && !mChar->IsCounselor() )
 				nearbyChars = FindNearbyPlayers( mChar, 1 );
-			else if( Type() == WHISPER && ( mChar->IsGM() || mChar->IsCounselor() ))
+			else if(( Type() == WHISPER || Type() == ASCIIWHISPER ) && ( mChar->IsGM() || mChar->IsCounselor() ))
 				nearbyChars = FindNearbyPlayers( mChar, 3 );
-			else if( Type() == YELL )
+			else if( Type() == YELL || Type() == ASCIIYELL )
 				nearbyChars = FindNearbyPlayers( mChar, ( DIST_SAMESCREEN * 1.5 ));
 			else
 				nearbyChars = FindNearbyPlayers( mChar );
@@ -398,7 +398,7 @@ bool CPITalkRequest::Handle( void )
 				if( mChar != tChar )
 				{
 					// Line of Sight check!
-					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, 0, false ) )
 						continue;
 					if( mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
 					{
@@ -420,7 +420,7 @@ bool CPITalkRequest::Handle( void )
 
 						if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE || mChar->GetVisible() == VT_PERMHIDDEN )
 						{
-							if(( tChar->IsGM() || tChar->IsCounselor() ) || Type() == WHISPER )
+							if(( tChar->IsGM() || tChar->IsCounselor() ) || ( Type() == WHISPER || Type() == ASCIIWHISPER ))
 							{
 								tSock->sysmessage( 1794, mCharName.c_str() ); // (Whisper from %s)
 								tSock->Send( txtToSend );
@@ -428,7 +428,7 @@ bool CPITalkRequest::Handle( void )
 						}
 						else
 						{
-							if( Type() == YELL && !objInRange( tChar, mChar, DIST_SAMESCREEN ) )
+							if(( Type() == YELL || Type() == ASCIIYELL ) && !objInRange( tChar, mChar, DIST_SAMESCREEN ) )
 							{
 								tSock->sysmessage( 1795, mCharName.c_str() ); // (Yelled by %s)
 								tSock->Send( txtToSend );

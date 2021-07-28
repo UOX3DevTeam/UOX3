@@ -2451,7 +2451,7 @@ void CChar::SendToSocket( CSocket *s )
 		toSend.Finalize();
 		s->Send( &toSend );
 
-		if( s->ClientVerShort() >= CV_SA2D )
+		if( s->ClientType() >= CV_SA2D )
 		{
 			// Send poison state of healthbar
 			CPHealthBarStatus hpBarStatus1( ( *this ), ( *s ), 1 );
@@ -4325,9 +4325,9 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 		if( canSpeak )
 		{
 			UI16 txtColor = 0x5A;
-			if( msgType == EMOTE )
+			if( msgType == EMOTE || msgType == ASCIIEMOTE )
 				txtColor = GetEmoteColour();
-			else if( msgType == TALK )
+			else if( msgType == TALK || msgType == ASCIITALK )
 			{
 				if( GetNPCAiType() == AI_EVIL )
 					txtColor = 0x0026;
@@ -4375,11 +4375,11 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				if( sendAll )
 				{
 					UI16 searchDistance = DIST_SAMESCREEN;
-					if( msgType == WHISPER )
-						searchDistance = DIST_NEXTTILE;
-					else if( msgType == YELL )
+					if( msgType == WHISPER || msgType == ASCIIWHISPER )
+						searchDistance = DIST_SAMETILE;
+					else if( msgType == YELL || msgType == ASCIIYELL )
 						searchDistance = DIST_SAMESCREEN * 1.5;
-					else if( msgType == EMOTE )
+					else if( msgType == EMOTE || msgType == ASCIIEMOTE )
 						searchDistance = DIST_INRANGE;
 
 					SOCKLIST nearbyChars = FindNearbyPlayers( this, searchDistance );

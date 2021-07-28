@@ -586,7 +586,7 @@ static JSPropertySpec CSkillsProps[] =
 	{ "mining",				MINING,				JSPROP_ENUMANDPERM },
 	{ "meditation",			MEDITATION,			JSPROP_ENUMANDPERM },
 	{ "stealth",			STEALTH,			JSPROP_ENUMANDPERM },
-	{ "removetraps",		REMOVETRAPS,		JSPROP_ENUMANDPERM },
+	{ "removetrap",			REMOVETRAP,			JSPROP_ENUMANDPERM },
 	{ "necromancy",			NECROMANCY,			JSPROP_ENUMANDPERM },
 	{ "focus",				FOCUS,				JSPROP_ENUMANDPERM },
 	{ "chivalry",			CHIVALRY,			JSPROP_ENUMANDPERM },

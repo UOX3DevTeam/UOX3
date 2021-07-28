@@ -2219,7 +2219,7 @@ void CSocket::statwindow( CBaseObject *targObj )
 		if( !charInRange( mChar, targChar ) )
 			return;
 
-		if( ClientVerShort() >= CV_SA2D )
+		if( ClientType() >= CV_SA2D )
 		{
 			// Send poison state of healthbar
 			CPHealthBarStatus hpBarStatus1( ( *targChar ), ( (*this) ), 1 );

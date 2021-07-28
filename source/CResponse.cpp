@@ -509,7 +509,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					case 134: // peek, peeking, snoop, snooping
 						skill = SNOOPING; break;
 					case 135: // disarm, disarming, remove, removing
-						skill = REMOVETRAPS; break;
+						skill = REMOVETRAP; break;
 					case 136: // play, instrument, playing, music, musician, musicianship
 						skill = MUSICIANSHIP; break;
 					case 137: // poisoning, poison
