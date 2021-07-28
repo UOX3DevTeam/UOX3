@@ -6761,7 +6761,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ) ); // [Guarded]
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -6784,7 +6784,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_LOCKEDCONTAINER || cItem.GetType() == IT_LOCKEDSPAWNCONT )
 	{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9050 ), tSock->Language() ); // [Locked]
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9050 ).c_str(), tSock->Language() ); // [Locked]
 			FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_HOUSESIGN )
@@ -6986,7 +6986,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ) ); // [Guarded]
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
