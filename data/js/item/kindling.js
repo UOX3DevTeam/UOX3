@@ -1,6 +1,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 
 	if( iUsed.id != 0x0de1 )
 		return false;

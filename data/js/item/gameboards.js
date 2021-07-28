@@ -2,6 +2,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	switch( iUsed.id )
 	{
 		case 0x0E1C: // Backgammon

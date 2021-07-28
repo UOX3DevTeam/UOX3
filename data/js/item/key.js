@@ -28,6 +28,10 @@ const coOwnHousesOnSameAccount = GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" );
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( iUsed.movable == 3 )
 	{
 		// Key is locked down, make sure only owners, co-owners or friends can use it

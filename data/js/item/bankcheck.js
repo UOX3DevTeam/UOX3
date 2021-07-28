@@ -1,10 +1,15 @@
 // Bank Checks (by Xuri)
-// v1.01
-// Last Updated: 4. November 2020
+// v1.02
+// Last Updated: 5. July 2021
 
 function onUseChecked( pUser, iUsed )
 {
-	var bankBox = pUser.FindItemLayer( 29 );
+	var bankBox = pUser.FindItemLayer(29);
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
+
 	if( ValidateObject( bankBox ) && iUsed.container && iUsed.container.serial == bankBox.serial )
 	{
 		var checkSize = iUsed.GetTag( "CheckSize" );
