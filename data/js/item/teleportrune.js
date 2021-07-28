@@ -1,6 +1,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( socket && iUsed && iUsed.isItem )
 	{
 		socket.tempObj = iUsed;
@@ -13,6 +17,10 @@ function onUseChecked( pUser, iUsed )
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
+	if ( mChar.visible == 1 || mChar.visible == 2 )
+	{
+		mChar.visible = 0;
+	}
 	if( mChar )
 	{
 		var targX;

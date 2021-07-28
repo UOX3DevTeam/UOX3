@@ -1,6 +1,11 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
+
 	if( socket && iUsed && iUsed.isItem )
 	{
 		//Check to see if it's locked down

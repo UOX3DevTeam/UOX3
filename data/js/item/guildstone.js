@@ -3,6 +3,10 @@ function onUseChecked( pUser, iUsed )
 {
 	// Check if object is in player's backpack
 	var pSocket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( pSocket != null && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		if( iUsed.id == 0x14F0 || iUsed.id == 0x1869 )

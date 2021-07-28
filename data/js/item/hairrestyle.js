@@ -4,6 +4,10 @@ function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	socket.tempObj = iUsed;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( iUsed.container != null )
 	{
 		if( pUser.id == 0x191 )
