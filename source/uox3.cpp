@@ -1681,6 +1681,7 @@ void CWorldMain::CheckAutoTimers( void )
 						actbTemp.dwInGame = INVALIDSERIAL;
 						charCheck->SetTimer( tPC_LOGOUT, 0 );
 						charCheck->Update();
+						charCheck->Teleport();
 					}
 				}
 			}
