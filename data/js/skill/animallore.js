@@ -3,11 +3,11 @@ function SkillRegistration()
 	RegisterSkill( 2, true );	// Animal Lore
 }
 
-var OSIGumpEnabled = 1;	// If this option is set to 0 you will see the old school uox gump
+var OSIGumpEnabled = 0;	// If this option is set to 0 you will see the old school uox gump
 var SEenabled = 1;		// If this option is set to 0 you will not see any SE Features
 var AOSenabled = 1;		// If this option is set to 0 you will not see any AOS Features
 var SAenabled = 1;		// If this option is set to 0 you will not see any SA Features
-var position = 20;
+var UOXposition = 20;
 
 function onSkill( pUser, objType, skillUsed )
 {
@@ -294,7 +294,7 @@ function onCallback0( pSock, ourObj )
 					addEntry( UOXAnimalLoreGump, GetDictionaryEntry( 2185, pSock.language ), ourObj.Resist( 1 ) );//Armor Rating:
 					UOXAnimalLoreGump.AddPageButton( 260, 260, 4005, 2 );
 					UOXAnimalLoreGump.AddPage( 2 );
-					position = 20;
+					UOXposition = 20;
 					addStringEntry( UOXAnimalLoreGump, GetDictionaryEntry( 2155, pSock.language ) );//Combat Ratings
 					addEntry( UOXAnimalLoreGump, GetDictionaryEntry( 2156, pSock.language ), parseInt( ourObj.skills.wrestling / 10 ) );//Wrestling
 					addEntry( UOXAnimalLoreGump, GetDictionaryEntry( 2157, pSock.language ), parseInt( ourObj.skills.tactics / 10 ) );//tactics
@@ -335,21 +335,21 @@ function onGumpPress( socket, button, UOXAnimalLoreGump )
 
 function addEntry( UOXAnimalLoreGump, stringToAdd, dataToAdd )
 {
-	UOXAnimalLoreGump.AddText( 50, position, 0, stringToAdd );
-	UOXAnimalLoreGump.AddText( 225, position, 0, dataToAdd.toString() );
-	position += 20;
+	UOXAnimalLoreGump.AddText( 50, UOXposition, 0, stringToAdd );
+	UOXAnimalLoreGump.AddText( 225, UOXposition, 0, dataToAdd.toString() );
+	UOXposition += 20;
 }
 
 function addDualEntry( UOXAnimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd )
 {
-	UOXAnimalLoreGump.AddText( 50, position, 0, stringToAdd );
-	UOXAnimalLoreGump.AddText( 225, position, 0, dataToAdd.toString() + "/" + moreDataToAdd.toString() );
-	position += 20;
+	UOXAnimalLoreGump.AddText( 50, UOXposition, 0, stringToAdd );
+	UOXAnimalLoreGump.AddText( 225, UOXposition, 0, dataToAdd.toString() + "/" + moreDataToAdd.toString() );
+	UOXposition += 20;
 }
 
 function addStringEntry( UOXAnimalLoreGump, stringToAdd )
 {
-	position += 20;
-	UOXAnimalLoreGump.AddText( 40, position, 0, stringToAdd );
-	position += 20;
+	UOXposition += 20;
+	UOXAnimalLoreGump.AddText( 40, UOXposition, 0, stringToAdd );
+	UOXposition += 20;
 }
