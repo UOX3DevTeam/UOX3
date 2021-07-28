@@ -447,7 +447,7 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 	{
 		for( std::string npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
 		{
-			if( strutil::toupper( npc ) == "NPCLIST" )
+			if( strutil::upper( npc ) == "NPCLIST" )
 			{
 				LoadNPCList( CharList->GrabData() );
 			}
@@ -472,7 +472,7 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 	{
 		for( std::string itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
 		{
-			if( strutil::toupper( itm ) == "ITEMLIST" )
+			if( strutil::upper( itm ) == "ITEMLIST" )
 			{
 				LoadItemList( ItemList->GrabData() );
 			}
@@ -499,7 +499,7 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 	{
 		if( !tag.empty() )
 		{
-			UTag = strutil::toupper( tag );
+			UTag = strutil::upper( tag );
 			data = toScan->GrabData();
 
 			// Default to instanceID 0, in case nothing else is specified in DFN
@@ -583,8 +583,8 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() == 3 )
 				{
-					validLandPos.push_back( point3( static_cast<UI16>(std::stoul(strutil::stripTrim(csecs[0]),nullptr,0)), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)), static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) ) );
-					validLandPosCheck[ static_cast<UI16>(std::stoul(strutil::stripTrim(csecs[1]),nullptr,0)) + ( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0));
+					validLandPos.push_back( point3( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ),nullptr,0)), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)), static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0))));
+					validLandPosCheck[ static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ),nullptr,0)) + ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
 				}
 			}
 			else if( UTag == "VALIDWATERPOS" )
@@ -593,8 +593,8 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() == 3 )
 				{
-					validWaterPos.push_back( point3( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)), static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) ) );
-					validWaterPosCheck[ static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) + ( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0));
+					validWaterPos.push_back( point3( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)), static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0))));
+					validWaterPosCheck[ static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)) + ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
 				}
 			}
 		}
@@ -661,8 +661,8 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 //|	Purpose		-	Do a char spawn
 //o-----------------------------------------------------------------------------------------------o
 CChar *CSpawnRegion::RegionSpawnChar( void )
-{
-	std::string ourNPC = strutil::stripTrim( sNpcs[RandomNum( static_cast<size_t>( 0 ), sNpcs.size() - 1 )] );
+{	
+	std::string ourNPC = strutil::trim( strutil::removeTrailing( sNpcs[RandomNum( static_cast<size_t>( 0 ), sNpcs.size() - 1 )], "//" ));
 	ScriptSection *npcCreate = FileLookup->FindEntry( ourNPC, npc_def );
 	if( npcCreate == nullptr )
 		return nullptr;

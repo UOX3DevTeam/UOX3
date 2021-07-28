@@ -1,5 +1,5 @@
 // Grape-Picking Script
-// 20/02/2006 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@uox3.org
 // When (dynamic) grapevines are double-clicked, they're setup with
 // 5 grapes ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more grapes can be picked. Once the timer is over,
@@ -13,7 +13,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( "You are too far away to reach that." );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pUser.socket.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -27,24 +27,24 @@ function onUseChecked( pUser, iUsed )
 	var GrapeCount = iUsed.GetTag("GrapeCounter");
 	if (Grapes == 0)
 	{	
-		pUser.SysMessage( "You find no ripe grapebunches to pick. Try again later." );
+		pUser.SysMessage( GetDictionaryEntry( 2534, pUser.socket.language )); // You find no ripe grapebunches to pick. Try again later.
 	}
 	if( Grapes == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
-			pUser.SysMessage( "You fail to pick any grapebunches." );
+			pUser.SysMessage( GetDictionaryEntry( 2535, pUser.socket.language )); // You fail to pick any grapebunches.
 		if( loot == 3 || loot == 1 )
 	 	{
-			pUser.SysMessage( "You pick a grapebunch from the tree." );
+			pUser.SysMessage( GetDictionaryEntry( 2536, pUser.socket.language )); // You pick a grapebunch from the tree.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d1", 1, "ITEM", true );
 			GrapeCount--;
 			iUsed.SetTag( "GrapeCounter", GrapeCount );
 			if( GrapeCount == 1)
-				pUser.SysMessage( "There is "+GrapeCount+" ripe grapebunch left on the tree." );
+				pUser.SysMessage( GetDictionaryEntry( 2537, pUser.socket.language )); // There is 1 ripe grapebunch left on the tree.
 			else
-				pUser.SysMessage( "There are "+GrapeCount+" ripe grapebunches left on the tree." );
+				pUser.SysMessage( GetDictionaryEntry( 2538, pUser.socket.language )); // There are %i ripe grapebunches left on the tree.
 		    	if( GrapeCount == 0 )
 			{
 				iUsed.SetTag( "Grapes", 0 );

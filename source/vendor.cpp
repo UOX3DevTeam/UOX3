@@ -154,19 +154,19 @@ bool CPIBuyItem::Handle( void )
 		}
 		if( soldout )
 		{
-			npc->TextMessage( tSock, 1336, TALK, false );
+			npc->TextMessage( tSock, 1336, TALK, false ); // Alas, I no longer have all those goods in stock.  Let me know if there is something else thou wouldst buy.
 			clear = true;
 		}
 		else
 		{
 			if( mChar->IsGM() )
-				npc->TextMessage( nullptr, 1337, TALK, 0, mChar->GetName().c_str() );
+				npc->TextMessage( nullptr, 1337, TALK, 0, mChar->GetName().c_str() ); // Here you are, %s. Someone as special as thee will receive my wares for free of course.
 			else
 			{
 				if( goldtotal == 1 )
-					npc->TextMessage( nullptr, 1338, TALK, 0, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( nullptr, 1338, TALK, 0, mChar->GetName().c_str(), goldtotal ); // Here you are, %s. That will be %d gold coin.  I thank thee for thy business.
 				else
-					npc->TextMessage( nullptr, 1339, TALK, 0, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( nullptr, 1339, TALK, 0, mChar->GetName().c_str(), goldtotal ); // Here you are, %s. That will be %d gold coins.  I thank thee for thy business.
 
 				Effects->goldSound( tSock, goldtotal );
 			}
@@ -296,7 +296,7 @@ bool CPIBuyItem::Handle( void )
 		}
 	}
 	else
-		npc->TextMessage( nullptr, 1340, TALK, false );
+		npc->TextMessage( nullptr, 1340, TALK, false ); // Alas, thou dost not possess sufficient gold for this purchase!
 
 	if( clear )
 	{
@@ -338,7 +338,7 @@ bool CPISellItem::Handle( void )
 
 		if( maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus() )
 		{
-			n->TextMessage( nullptr, 1342, TALK, 0, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
+			n->TextMessage( nullptr, 1342, TALK, 0, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() ); // Sorry %s, but I can only buy %i items at a time!
 			return true;
 		}
 
@@ -351,7 +351,7 @@ bool CPISellItem::Handle( void )
 			{
 				if( j->GetAmount() < amt || FindItemOwner( j ) != mChar )
 				{
-					n->TextMessage( nullptr, 1343, TALK, false );
+					n->TextMessage( nullptr, 1343, TALK, false ); // Cheating scum! Leave now, before I call the guards!
 					return true;
 				}
 

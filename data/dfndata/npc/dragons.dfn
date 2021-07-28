@@ -1,6 +1,6 @@
 [graydragon]
 {
-NAME=a dragon
+NAME=#//a dragon
 ID=0x000c
 DIRECTION=RND
 BACKPACK
@@ -39,18 +39,19 @@ FOOD=meat
 CARVE=57
 RACE=12
 FLAG=NEUTRAL
+CONTROLSLOTS=3
 }
 
 [reddragon]
 {
 GET=graydragon
-NAME=a dragon
+NAME=#//a dragon
 ID=0x003b
 }
 
 [graydrake]
 {
-NAME=a drake
+NAME=#//a drake
 ID=0x003c
 DIRECTION=RND
 BACKPACK
@@ -87,18 +88,19 @@ FOOD=carnivore
 CARVE=58
 RACE=12
 FLAG=NEUTRAL
+CONTROLSLOTS=2
 }
 
 [reddrake]
 {
 GET=graydrake
-NAME=a drake
+NAME=#//a drake
 ID=0x003d
 }
 
 [shadowwyrm]
 {
-NAME=a shadow wyrm
+NAME=#//a shadow wyrm
 ID=0x006a
 DIRECTION=RND
 BACKPACK
@@ -141,11 +143,12 @@ TOPEACE=1249 5
 CARVE=51
 RACE=12
 FLAG=NEUTRAL
+CONTROLSLOTS=5
 }
 
 [whitewyrm]
 {
-NAME=a white wyrm
+NAME=#//a white wyrm
 ID=0x0031
 DIRECTION=RND
 BACKPACK
@@ -188,11 +191,12 @@ FOOD=meat
 CARVE=51
 RACE=12
 FLAG=NEUTRAL
+CONTROLSLOTS=3
 }
 
 [ancientwyrm]
 {
-NAME=an ancient wyrm
+NAME=#//an ancient wyrm
 ID=0x002e
 DIRECTION=RND
 BACKPACK
@@ -237,7 +241,7 @@ FLAG=NEUTRAL
 
 [wyvern]
 {
-NAME=a wyvern
+NAME=#//a wyvern
 ID=0x003e
 DIRECTION=RND
 BACKPACK
@@ -273,7 +277,7 @@ FLAG=NEUTRAL
 
 [serpentinedragon]
 {
-NAME=a serpentine dragon
+NAME=#//a serpentine dragon
 ID=0x0067
 DIRECTION=RND
 BACKPACK
@@ -317,7 +321,7 @@ FLAG=NEUTRAL
 
 [skeletaldragon]
 {
-NAME=a skeletal dragon
+NAME=#//a skeletal dragon
 ID=0x0068
 DIRECTION=RND
 BACKPACK
@@ -356,5 +360,6 @@ TOPEACE=1183 5
 CARVE=51
 RACE=12
 FLAG=NEUTRAL
+CONTROLSLOTS=3
 }
 

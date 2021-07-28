@@ -9,7 +9,7 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 454, socket.language );
+		var targMsg = GetDictionaryEntry( 454, socket.language ); // What would you like to use this with?
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;
@@ -26,7 +26,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 779, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 779, socket.language ) ); // You cannot use that for fletching.
 			return;
 		}
 
@@ -39,10 +39,10 @@ function onCallback1( socket, ourObj )
 			if( ownerObj && mChar.serial == ownerObj.serial )
 				socket.MakeMenu( 51, 8 );
 			else
-				socket.SysMessage( GetDictionaryEntry( 778, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 778, socket.language ) ); // You can't use items outside your backpack.
 		}
 		else
-			socket.SysMessage( "You can't make anything from that material." );
+			socket.SysMessage( GetDictionaryEntry( 6006, socket.language ) ); // You can't make anything from that material.
 	}
 }
 

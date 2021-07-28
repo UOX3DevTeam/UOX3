@@ -1,6 +1,6 @@
 [airele]
 {
-NAME=an air elemental
+NAME=#//an air elemental
 ID=0x000d
 SKIN=0x777f
 DIRECTION=RND
@@ -37,7 +37,7 @@ FLAG=NEUTRAL
 
 [earthele]
 {
-NAME=an earth elemental
+NAME=#//an earth elemental
 ID=0x000e
 SKIN=0000
 DIRECTION=RND
@@ -70,7 +70,7 @@ FLAG=NEUTRAL
 
 [firele]
 {
-NAME=a fire elemental
+NAME=#//a fire elemental
 ID=0x000f
 SKIN=0000
 DIRECTION=RND
@@ -107,7 +107,7 @@ FLAG=NEUTRAL
 
 [waterele]
 {
-NAME=a water elemental
+NAME=#//a water elemental
 ID=0x0010
 SKIN=0000
 DIRECTION=RND
@@ -146,7 +146,7 @@ FLAG=NEUTRAL
 
 [bloodele]
 {
-NAME=a blood elemental
+NAME=#//a blood elemental
 ID=0x009f
 DIRECTION=RND
 BACKPACK
@@ -185,7 +185,7 @@ FLAG=NEUTRAL
 
 [poisonele]
 {
-NAME=a poison elemental
+NAME=#//a poison elemental
 ID=0x00a2
 DIRECTION=RND
 BACKPACK
@@ -225,7 +225,7 @@ FLAG=NEUTRAL
 
 [iceele]
 {
-NAME=an ice elemental
+NAME=#//an ice elemental
 ID=0x00a1
 DIRECTION=RND
 BACKPACK
@@ -258,7 +258,7 @@ FLAG=NEUTRAL
 
 [snowele]
 {
-NAME=a snow elemental
+NAME=#//a snow elemental
 ID=0x00a3
 DIRECTION=RND
 BACKPACK
@@ -291,7 +291,7 @@ FLAG=NEUTRAL
 
 [acidele]
 {
-NAME=an acid elemental
+NAME=#//an acid elemental
 ID=0x009e
 DIRECTION=RND
 BACKPACK
@@ -327,7 +327,7 @@ FLAG=NEUTRAL
 
 [agapiteele]
 {
-NAME=an agapite elemental
+NAME=#//an agapite elemental
 ID=0x006b
 DIRECTION=RND
 BACKPACK
@@ -360,7 +360,7 @@ FLAG=NEUTRAL
 
 [bronzeele]
 {
-NAME=a bronze elemental
+NAME=#//a bronze elemental
 ID=0x006c
 DIRECTION=RND
 BACKPACK
@@ -393,7 +393,7 @@ FLAG=NEUTRAL
 
 [copperele]
 {
-NAME=a copper elemental
+NAME=#//a copper elemental
 ID=0x006d
 DIRECTION=RND
 BACKPACK
@@ -427,7 +427,7 @@ FLAG=NEUTRAL
 //AoS ELEMENTAL!
 [crystalele]
 {
-NAME=a crystal elemental
+NAME=#//a crystal elemental
 ID=0x012c
 DIRECTION=RND
 BACKPACK
@@ -463,7 +463,7 @@ FLAG=NEUTRAL
 
 [dullcopperele]
 {
-NAME=a dull copper elemental
+NAME=#//a dull copper elemental
 ID=0x006e
 DIRECTION=RND
 BACKPACK
@@ -496,7 +496,7 @@ FLAG=NEUTRAL
 
 [goldele]
 {
-NAME=a gold elemental
+NAME=#//a gold elemental
 ID=0x00a6
 DIRECTION=RND
 BACKPACK
@@ -529,7 +529,7 @@ FLAG=NEUTRAL
 
 [shadowironele]
 {
-NAME=a shadow iron elemental
+NAME=#//a shadow iron elemental
 ID=0x006f
 DIRECTION=RND
 BACKPACK
@@ -562,7 +562,7 @@ FLAG=NEUTRAL
 
 [valoriteele]
 {
-NAME=a valorite elemental
+NAME=#//a valorite elemental
 ID=0x0070
 DIRECTION=RND
 BACKPACK
@@ -595,7 +595,7 @@ FLAG=NEUTRAL
 
 [veriteele]
 {
-NAME=a verite elemental
+NAME=#//a verite elemental
 ID=0x0071
 DIRECTION=RND
 BACKPACK
@@ -628,7 +628,7 @@ FLAG=NEUTRAL
 
 [energyvortex]
 {
-NAME=an energy vortex
+NAME=#//an energy vortex
 ID=0x00a4
 DIRECTION=RND
 BACKPACK

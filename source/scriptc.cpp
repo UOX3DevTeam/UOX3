@@ -51,7 +51,7 @@ void Script::reload( bool disp )
 				input.getline(line, 2047);
 				line[input.gcount()] = 0 ;
 				sLine = std::string(line);
-				sLine = strutil::stripTrim( sLine );
+				sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 				if( !sLine.empty() )
 				{
 					// We have some real data
@@ -60,14 +60,14 @@ void Script::reload( bool disp )
 					{
 						// Ok a section is starting here, get the name
 						std::string sectionname = sLine.substr( 1, sLine.size() - 2 );
-						sectionname				= strutil::toupper( strutil::simplify( sectionname ));
+						sectionname				= strutil::upper( strutil::simplify( sectionname ));
 						// Now why we look for a {, no idea, but we do - Because we want to make sure that were IN a block not before the block. At least this makes sure that were inside the {}'s of a block...
 						while( !input.eof() && sLine.substr( 0, 1 ) != "{" && !input.fail() )
 						{
 							input.getline(line, 2047);
 							line[input.gcount()] = 0 ;
 							sLine = std::string(line);
-							sLine = strutil::stripTrim( sLine );
+							sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 						}
 						// We are finally in the actual section!
 						// We waited until now to create it, incase a total invalid file
@@ -126,7 +126,7 @@ Script::~Script()
 bool Script::isin( const std::string& section )
 {
 	std::string temp(section);
-	SSMAP::const_iterator iSearch = defEntries.find(strutil::toupper( temp ));
+	SSMAP::const_iterator iSearch = defEntries.find(strutil::upper( temp ));
 	if( iSearch != defEntries.end() )
 		return true;
 	return false;
@@ -157,7 +157,7 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
 	ScriptSection *rvalue = nullptr;
 	auto usection = std::string( section );
-	usection = strutil::toupper(usection);
+	usection = strutil::upper( usection );
 	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
 	{
 		if( iSearch->first.find( usection ) != std::string::npos )	// FOUND IT!

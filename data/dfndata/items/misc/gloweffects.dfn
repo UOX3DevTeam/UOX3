@@ -1,0 +1,25 @@
+// Invisible light sources and equippable items that make characters glow
+
+[0x1647]
+{
+get=base_item
+id=0x1647
+name=a lightsource
+dir=29
+decay=0
+newbie
+}
+
+[wispglow]
+{
+get=0x1647
+layer=0x09
+dir=1
+}
+
+[shadowwispglow]
+{
+get=0x1647
+layer=0x09
+dir=2
+}

@@ -933,15 +933,15 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			}
 
 			// Check if player provided anything after the actual set name command
-			std::string cmdString = strutil::toupper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
-			if( strutil::toupper( ourText ).size() == cmdString.size() )
+			std::string cmdString = strutil::upper( Dictionary->GetEntry( 1425, mLang )); // SET NAME
+			if( strutil::upper( ourText ).size() == cmdString.size() )
 			{
 				tiller->TextMessage( mSock, 12 ); // Can ya say that again with an actual name, sir?
 				return;
 			}
 
 			// Check if we can find the dictionary-based command string in the player's speech
-			std::string upperOurText = strutil::toupper( ourText );
+			std::string upperOurText = strutil::upper( ourText );
 			size_t cmdStringPos = upperOurText.find(cmdString);
 			if( cmdStringPos == std::string::npos )
 			{
@@ -1005,7 +1005,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 
 	if( !ValidateObject( tiller ) || !ValidateObject( p1 ) || !ValidateObject( p2 ) || !ValidateObject( hold ) )
 	{
-		s->sysmessage( "Something is not right - unable to find tiller, planks or hold! This boat might be bugged..." );
+		s->sysmessage( 9014 ); // Something is not right - unable to find tiller, planks or hold! This boat might be bugged...
 		return;
 	}
 
@@ -1028,19 +1028,19 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		if( p1->GetID( 2 ) == 0x84 || p1->GetID( 2 ) == 0xD5 || p1->GetID( 2 ) == 0xD4 || p1->GetID( 2 ) == 0x89
 			|| p2->GetID( 2 ) == 0x84 || p2->GetID( 2 ) == 0xD5 || p2->GetID( 2 ) == 0xD4 || p2->GetID( 2 ) == 0x89 )
 		{
-			s->sysmessage( "Planks must be closed before you pack up your ship!" );
+			s->sysmessage( 9015 ); // Planks must be closed before you pack up your ship!
 			return;
 		}
 
 		if( hold->GetContainsList()->Num() > 0 )
 		{
-			s->sysmessage( "Make sure your hold is empty, and try again!" );
+			s->sysmessage( 9016 ); // Make sure your hold is empty, and try again!
 			return;
 		}
 
 		if( i->GetItemsInMultiList()->Num() > 4 || i->GetCharsInMultiList()->Num() > 0 )
 		{
-			s->sysmessage( "This boat must be empty before it can be converted to a model!" );
+			s->sysmessage( 9017 ); // This boat must be empty before it can be converted to a model!
 			return;
 		}
 

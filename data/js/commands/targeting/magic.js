@@ -38,7 +38,29 @@ function onCallback1( socket, ourObj )
 	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
 		var txtMessage;
-		if( ourObj.morex <= 200 && ourObj.morey <= 200 )
+		if( ourObj.type == 7 )
+		{
+			// We targeted a key. For a house, or a boat?
+			var shipSerial = ourObj.more;
+			var serialPart1 = ( shipSerial >> 24 );
+			var serialPart2 = ( shipSerial >> 16 );
+			var serialPart3 = ( shipSerial >> 8 );
+			var serialPart4 = ( shipSerial % 256 );
+			var shipMulti = CalcMultiFromSer( serialPart1, serialPart2, serialPart3, serialPart4 );
+
+			if( ValidateObject( shipMulti ) && shipMulti.isBoat() )
+			{
+				if( shipMulti.worldnumber == socket.currentChar.worldnumber && shipMulti.instanceID == socket.currentChar.instanceID )
+				{
+					socket.currentChar.SetLocation( shipMulti.x + 1, shipMulti.y, shipMulti.z + 3 );
+				}
+				else
+					socket.SysMessage( GetDictionaryEntry( 8093, socket.language )); // You are unable to recall to your ship - it might be in another world!
+			}
+			else
+				socket.SysMessage( GetDictionaryEntry( 8094, socket.language )); // You can only recall off of valid ship keys.
+		}
+		else if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
 			txtMessage = GetDictionaryEntry( 431, socket.language );
 			socket.SysMessage( txtMessage );

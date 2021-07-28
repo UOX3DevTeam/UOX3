@@ -3,12 +3,15 @@
 
 enum DistinctLanguage
 {
-    DL_UNKNOWN = 0,
-    DL_DEFAULT,
+    DL_DEFAULT = 0,
     DL_ENGLISH,
     DL_GERMAN,
     DL_SPANISH,
     DL_FRENCH,
+	DL_PORTUGUESE,
+	DL_ITALIAN,
+	DL_CZECH,
+	DL_RUSSIAN,
     DL_JAPANESE,
     DL_COUNT
 };
@@ -191,6 +194,9 @@ enum FontType
     FNT_COLOURFUL,
     FNT_RUNIC,		// Only use CAPS!
     FNT_SMALL_LIGHT,
+	FNT_TEN,		// Unicode only
+	FNT_ELEVEN,		// Unicode only
+	FNT_TWELVE,		// Unicode only
     FNT_UNKNOWN
 };
 
@@ -431,7 +437,8 @@ enum AITypes
     AI_FIGHTER		= 5,
     AI_ANIMAL		= 6,
     AI_DUMMY		= 7,
-    AI_BANKER		= 8,
+    AI_BANKER		= 8, // handled in JS, but needed to identify NPC for context menus
+	AI_STABLEMASTER = 9, // handled in JS, but needed to identify NPC for context menus
     AI_PLAYERVENDOR	= 17,
     AI_PET_GUARD	= 32,
     AI_CHAOTIC		= 88,
@@ -445,6 +452,7 @@ enum distLocs
     DIST_NEXTTILE,
     DIST_NEARBY,
     DIST_INRANGE	= 7,
+	DIST_CMDRANGE	= 12,
     DIST_SAMESCREEN = 24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
 	DIST_BUILDRANGE = 31,
     DIST_OUTOFRANGE	= 0xFFFF
@@ -559,6 +567,7 @@ enum ItemTypes
     IT_TINKERCLOCK			= 251,
     IT_TINKERSEXTANT		= 252,
     IT_TRAININGDUMMY		= 253,
+	IT_PETTRANSFERDEED		= 254,
     IT_COUNT				= 255
 };
 
@@ -594,8 +603,8 @@ enum ItemLayers
     IL_BOUGHTCONTAINER		= 0x1B,
     IL_BUYCONTAINER			= 0x1C,
     IL_BANKBOX				= 0x1D,
-    //IL_UNUSED				= 0x1E, // turns player invisible when used?
-    //IL_SECURETRADE		= 0x1F,
+    IL_UNUSED				= 0x1E, // turns player invisible when used?
+    IL_SECURETRADE			= 0x1F
 };
 
 enum TargetIDs
@@ -648,6 +657,7 @@ enum TargetIDs
     TARGET_PARTYREMOVE,
 	TARGET_HOUSETRASHBARREL,
 	TARGET_HOUSESTRONGBOX,
+	TARGET_REMOVEFRIEND,
     TARGET_NOFUNC
 };
 

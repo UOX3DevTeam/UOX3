@@ -158,6 +158,37 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	return JS_TRUE;
 }
 
+JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	if( JSVAL_IS_INT( id ) )
+	{
+		switch( JSVAL_TO_INT( id ) )
+		{
+			case TIMER_TIMEOUT:			*vp = INT_TO_JSVAL( tCHAR_TIMEOUT );		break;
+			case TIMER_INVIS:			*vp = INT_TO_JSVAL( TIMER_INVIS );			break;
+			case TIMER_HUNGER:			*vp = INT_TO_JSVAL( TIMER_HUNGER );			break;
+			case TIMER_THIRST:			*vp = INT_TO_JSVAL( TIMER_THIRST );			break;
+			case TIMER_POISONTIME:		*vp = INT_TO_JSVAL( TIMER_POISONTIME );		break;
+			case TIMER_POISONTEXT:		*vp = INT_TO_JSVAL( TIMER_POISONTEXT );		break;
+			case TIMER_POISONWEAROFF:	*vp = INT_TO_JSVAL( TIMER_POISONWEAROFF );	break;
+			case TIMER_SPELLTIME:		*vp = INT_TO_JSVAL( TIMER_SPELLTIME );		break;
+			case TIMER_ANTISPAM:		*vp = INT_TO_JSVAL( TIMER_ANTISPAM );		break;
+			case TIMER_CRIMFLAG:		*vp = INT_TO_JSVAL( TIMER_CRIMFLAG );		break;
+			case TIMER_MURDERRATE:		*vp = INT_TO_JSVAL( TIMER_MURDERRATE );		break;
+			case TIMER_PEACETIMER:		*vp = INT_TO_JSVAL( TIMER_PEACETIMER );		break;
+			case TIMER_FLYINGTOGGLE:	*vp = INT_TO_JSVAL( TIMER_FLYINGTOGGLE );	break;
+			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( TIMER_MOVETIME );		break;
+			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( TIMER_SPATIMER );		break;
+			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( TIMER_SUMMONTIME );		break;
+			case TIMER_EVADETIME:		*vp = INT_TO_JSVAL( TIMER_EVADETIME );		break;
+			case TIMER_LOGOUT:			*vp = INT_TO_JSVAL( TIMER_LOGOUT );			break;
+			default:
+				break;
+		}
+	}
+	return JS_TRUE;
+}
+
 JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	UI16 createEntryID = static_cast<UI16>(JSVAL_TO_INT( id ));
@@ -860,13 +891,15 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
 			case CIP_MORE:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sEncaps = encaps.toString();
+				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = strutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -876,13 +909,15 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREX:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sEncaps = encaps.toString();
+				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//"));
+				auto encapsSections = strutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -892,13 +927,15 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREY:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sEncaps = encaps.toString();
+				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//"));
+				auto encapsSections = strutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -908,13 +945,15 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MOREZ:
 			{
-				auto encapsSections = strutil::sections( strutil::stripTrim( encaps.toString() ), " " );
+				auto sEncaps = encaps.toString();
+				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = strutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[0] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[1] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[2] ), nullptr, 0 ) ) );
-					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( encapsSections[3] ), nullptr, 0 ) ) );
+					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1118,9 +1157,18 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			}
 			case CCP_NAME:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
+				{
+					CSocket *tSock = nullptr;
+					JSObject *tempSock = JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+
+					std::string mCharName = getNpcDictName( gPriv, tSock );
+					std::string convertedString = strutil::stringToWstringToString( mCharName );
+
+					tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
+
+					*vp = STRING_TO_JSVAL( tString );
+					break;
+				}
 			case CCP_TITLE:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -1148,6 +1196,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			}
 			case CCP_ID:		*vp = INT_TO_JSVAL( gPriv->GetID() );			break;
 			case CCP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
+			case CCP_CONTROLSLOTS:	*vp = INT_TO_JSVAL( (UI08)gPriv->GetControlSlots() );		break;
+			case CCP_CONTROLSLOTSUSED:	*vp = INT_TO_JSVAL( (UI08)gPriv->GetControlSlotsUsed() );		break;
+			case CCP_ORNERINESS:	*vp = INT_TO_JSVAL( gPriv->GetOrneriness() );		break;
 			case CCP_OWNER:
 				CBaseObject *TempObj;
 				TempObj = gPriv->GetOwnerObj();
@@ -1406,6 +1457,30 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_WANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetNpcWander() );		break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
 			case CCP_ISFLYING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFlying() );		break;
+			case CCP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );		break;
+			case CCP_GUARDING:
+			{
+				CBaseObject *tempObj = gPriv->GetGuarding();
+				if( !ValidateObject( tempObj ) )
+				{	// Return a JS_NULL
+					*vp = JSVAL_NULL;
+				}
+				else
+				{
+					// Otherwise Acquire an object
+					JSObject *myObj = nullptr;
+					if( tempObj->CanBeObjType( OT_CHAR ) )
+					{
+						myObj = JSEngine->AcquireObject( IUE_CHAR, tempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					}
+					else if( tempObj->CanBeObjType( OT_ITEM ))
+					{
+						myObj = JSEngine->AcquireObject( IUE_ITEM, tempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					}
+					*vp = OBJECT_TO_JSVAL( myObj );
+				}
+				break;
+			}
 			case CCP_TDEXTERITY:	*vp = INT_TO_JSVAL( gPriv->GetDexterity2() );		break;
 			case CCP_TINTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence2() );	break;
 			case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;
@@ -1452,8 +1527,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				*vp			= OBJECT_TO_JSVAL( TempObject );
 				break;
 			case CCP_DEATHS:		*vp = INT_TO_JSVAL( gPriv->GetDeaths() );					break;
+			case CCP_OWNERCOUNT:	*vp = INT_TO_JSVAL( (UI08)gPriv->GetOwnerCount() );				break;
 			case CCP_NEXTACT:		*vp = INT_TO_JSVAL( gPriv->GetNextAct() );					break;
-			case CCP_PETCOUNT:		*vp = INT_TO_JSVAL( gPriv->GetPetList()->Num() );			break;
+			case CCP_PETCOUNT:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetPetList()->Num() );			break;
 			case CCP_OWNEDITEMSCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetOwnedItems()->size() );	break;
 			case CCP_CELL:			*vp = INT_TO_JSVAL( gPriv->GetCell() );						break;
 			case CCP_ALLMOVE:		*vp = BOOLEAN_TO_JSVAL( gPriv->AllMove() );					break;
@@ -1464,6 +1540,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPLIT:			*vp = INT_TO_JSVAL( gPriv->GetSplit() );					break;
 			case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
 			case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
+			case CCP_HIRELING:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeHired() );				break;
 			case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
 			case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
 			case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
@@ -1506,6 +1583,18 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<SI32>(gPriv->GetNPCFlag()) );break;
 			case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
 			case CCP_ATTACKFIRST:	*vp = BOOLEAN_TO_JSVAL( gPriv->DidAttackFirst() );			break;
+			case CCP_MAXLOYALTY:	*vp = INT_TO_JSVAL( gPriv->GetMaxLoyalty() );				break;
+			case CCP_LOYALTY:		*vp = INT_TO_JSVAL( gPriv->GetLoyalty() );					break;
+			case CCP_LOYALTYRATE:
+			{
+				// Use global loyalty rate from UOX.INI
+				UI16 loyaltyRate = 0;
+				if( loyaltyRate == 0 )
+					loyaltyRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE );
+
+				*vp = INT_TO_JSVAL( loyaltyRate );
+				break;
+			}
 			case CCP_PARTYLOOTABLE:
 			{
 				Party *toGet = PartyFactory::getSingleton().Get( gPriv );
@@ -1578,7 +1667,10 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );	break;
 			case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );										break;
 			case CCP_ID:	gPriv->SetID( (UI16)encaps.toInt() );										break;
-			case CCP_COLOUR:gPriv->SetColour( (UI16)encaps.toInt() );									break;
+			case CCP_COLOUR:		gPriv->SetColour( (UI16)encaps.toInt() );							break;
+			case CCP_CONTROLSLOTS:	gPriv->SetControlSlots( (UI16)encaps.toInt() );						break;
+			case CCP_CONTROLSLOTSUSED:	gPriv->SetControlSlotsUsed( (UI16)encaps.toInt() );				break;
+			case CCP_ORNERINESS:	gPriv->SetOrneriness( (UI16)encaps.toInt() );						break;
 			case CCP_OWNER:
 				if( *vp != JSVAL_NULL )
 				{
@@ -1839,6 +1931,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_AITYPE:		gPriv->SetNPCAiType( (SI16)encaps.toInt() );		break;
 			case CCP_SPLIT:			gPriv->SetSplit( (UI08)encaps.toInt() );			break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( (UI08)encaps.toInt() );		break;
+			case CCP_HIRELING:		gPriv->SetCanHire( encaps.toBool() );				break;
 			case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );				break;
 			case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
 			case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
@@ -1861,6 +1954,18 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );			break;
 			case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );				break;
 			case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );					break;
+			case CCP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );				break;
+			case CCP_GUARDING:
+				if( *vp != JSVAL_NULL )
+				{
+					CBaseObject *myObj = static_cast<CBaseObject *>( encaps.toObject() );
+					if( !ValidateObject( myObj ) )
+						break;
+					gPriv->SetGuarding( myObj );
+				}
+				else
+					gPriv->SetGuarding( nullptr );
+				break;
 			case CCP_ISMEDITATING:	gPriv->SetMeditating( encaps.toBool() );			break;
 			case CCP_ISGM:			gPriv->SetGM( encaps.toBool() );					break;
 			case CCP_CANBROADCAST:	gPriv->SetBroadcast( encaps.toBool() );				break;
@@ -1895,6 +2000,9 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			case CCP_ATTACKFIRST:	gPriv->SetAttackFirst( encaps.toBool() );		break;
+			case CCP_MAXLOYALTY:	gPriv->SetMaxLoyalty( (UI16)encaps.toInt() );	break;
+			case CCP_LOYALTY:		gPriv->SetLoyalty( (UI16)encaps.toInt() );		break;
+
 			case CCP_PARTYLOOTABLE:
 			{
 				Party *toGet = PartyFactory::getSingleton().Get( gPriv );

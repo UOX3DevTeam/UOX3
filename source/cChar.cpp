@@ -111,6 +111,7 @@ const UI32 BIT_INPARTY			=	28;	// This property is not saved
 const UI32 BIT_EVADE			=	29; // This property is not saved
 const UI32 BIT_FLYING			=	30; // This property is not saved
 const UI32 BIT_WILLTHIRST		=	31;
+const UI32 BIT_HIRELING			=	32;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -137,12 +138,13 @@ const UI08			DEFPLAYER_FIXEDLIGHT 		= 255;
 const UI16			DEFPLAYER_DEATHS			= 0;
 const SERIAL		DEFPLAYER_TOWNVOTE 			= INVALIDSERIAL;
 const SI08			DEFPLAYER_TOWNPRIV 			= 0;
+const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
 speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ),
-fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV )
+fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -183,14 +185,20 @@ const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
 const UI08			DEFNPC_THIRSTWILDCHANCE     = 0;
 const R32			DEFNPC_MOVEMENTSPEED		= -1;
 const SI08			DEFNPC_PATHFAIL				= -1;
+const UI16			DEFNPC_CONTROLSLOTS			= 0;
+const UI16			DEFNPC_MAXLOYALTY			= 100;
+const UI16			DEFNPC_LOYALTY				= 25;
+const UI16			DEFNPC_ORNERINESS			= 0;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( nullptr ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ),
-tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ),
-runningSpeed( DEFNPC_MOVEMENTSPEED ), fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL )
+tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), 
+thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ), runningSpeed( DEFNPC_MOVEMENTSPEED ), 
+fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), 
+loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -231,7 +239,6 @@ const UI16			DEFCHAR_PRIV				= 0;
 //const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const BodyType		DEFCHAR_BODYTYPE			= BT_OTHER;
-
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar constructor
@@ -453,7 +460,7 @@ void CChar::DoHunger( CSocket *mSock )
 	if( !cwmWorldState->ServerData()->HungerSystemEnabled() )
 		return;
 
-	if ( !IsDead() && !IsInvulnerable() )	// No need to do anything on dead or invulnerable chars
+	if ( !IsInvulnerable() ) // No need to do anything for invulnerable chars
 	{
 		UI16 hungerRate;
 		SI16 hungerDamage;
@@ -505,48 +512,70 @@ void CChar::DoHunger( CSocket *mSock )
 		}
 		else if( IsNpc() && !IsTamed() && Races->DoesHunger( GetRace() ) )
 		{
-			if( WillHunger() && !GetMounted() && !GetStabled() )
-			{
-				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-				{
-					hungerRate	 = Races->GetHungerRate( GetRace() );
-					hungerDamage = Races->GetHungerDamage( GetRace() );
+			// Handle hunger for regular non-tame NPCs
+			if( !WillHunger() || GetMounted() || GetStabled() )
+				return;
 
-					if( GetHunger() > 0 )
-						DecHunger();
-					else if( GetHP() > 0 && hungerDamage > 0)
-						Damage( hungerDamage );
-					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
-				}
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			{
+				hungerRate	 = Races->GetHungerRate( GetRace() );
+				hungerDamage = Races->GetHungerDamage( GetRace() );
+
+				if( GetHunger() > 0 )
+					DecHunger();
+				else if( GetHP() > 0 && hungerDamage > 0)
+					Damage( hungerDamage );
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 			}
 		}
 		else if( IsTamed() && GetTamedHungerRate() > 0 )
 		{
-			if( WillHunger() && !GetMounted() && !GetStabled() )
+			// Handle hunger for pets
+			if( !WillHunger() || GetMounted() || GetStabled() )
+				return;
+
+			// Pets don't hunger if owner is offline
+			if( cwmWorldState->ServerData()->PetHungerOffline() == false )
 			{
-				if( cwmWorldState->ServerData()->PetHungerOffline() == false )
+				CChar *owner = GetOwnerObj();
+				if( !ValidateObject( owner ) )
+					return;
+
+				if( !isOnline( (*owner) ) )
+					return;
+			}
+
+			if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			{
+				// Get hungerrate for tamed creatures
+				hungerRate = GetTamedHungerRate();
+
+				if( GetHunger() > 0 )
 				{
+					// Make pet more hungry
+					DecHunger();
+				}
+				else if( GetLoyalty() == 0 && (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
+				{
+					// Make pet go wild from hunger, but only if loyalty is zero
 					CChar *owner = GetOwnerObj();
-					if( !ValidateObject( owner ) )
-						return;
-
-					if( !isOnline( (*owner) ) )
-						return;
-				}
-
-				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-				{
-					hungerRate = GetTamedHungerRate();
-
-					if( GetHunger() > 0 )
-						DecHunger();
-					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
+					if( ValidateObject( owner ) )
 					{
-						SetOwner( nullptr );
-						SetHunger( 6 );
+						// Reduce player's control slot usage by the amount of control slots taken up by the pet
+						owner->SetControlSlotsUsed( std::max( 0, owner->GetControlSlotsUsed() - GetControlSlots() ) );
 					}
-					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
+
+					// Release the pet
+					Npcs->releasePet( this );
 				}
+				else if( GetLoyalty() == 0 )
+				{
+					// Pet is hungry. Reduce loyalty!
+					SetLoyalty( std::max(0, GetLoyalty() - 1 ));
+				}
+
+				// Set timer for next time pet should grow more hungry
+				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 			}
 		}
 	}
@@ -597,7 +626,7 @@ void CChar::DoThirst( CSocket* mSock )
 	if( !cwmWorldState->ServerData()->ThirstSystemEnabled() )
 		return;
 
-	if( !IsDead() && !IsInvulnerable() ) // No need to do anything on dead or invulnerable chars
+	if( !IsInvulnerable() ) // No need to do anything for invulnerable chars
 	{
 		UI16 thirstRate;
 		SI16 thirstDrain;
@@ -1032,6 +1061,21 @@ void CChar::SetCanTrain( bool newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanHire( void ) const
+//|					void SetCanHire( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns/Sets whether the character is available for hire
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::CanBeHired( void ) const
+{
+	return bools.test( BIT_HIRELING );
+}
+void CChar::SetCanHire( bool newValue )
+{
+	bools.set( BIT_HIRELING, newValue );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool GetGuildToggle( void ) const
 //|					void SetGuildToggle( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
@@ -1275,7 +1319,9 @@ void CChar::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
 	if( ValidateObject( oldOwner ) )
+	{
 		oldOwner->GetPetList()->Remove( this );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1294,7 +1340,10 @@ void CChar::AddSelfToOwner( void )
 	else
 	{
 		newOwner->GetPetList()->Add( this );
-		SetTamed( true );
+		if( !CanBeHired() )
+		{
+			SetTamed( true );
+		}
 	}
 	UpdateFlag( this );
 	Dirty( UT_UPDATE );
@@ -2110,6 +2159,7 @@ void CChar::CopyData( CChar *target )
 	target->SetTown( town );
 	target->SetAdvObj( advobj );
 	target->SetDisabled( isDisabled() );
+	target->SetCanHire( CanBeHired() );
 	target->SetCanTrain( CanTrain() );
 	target->SetLastOn( GetLastOn() );
 	target->SetLastOnSecs( GetLastOnSecs() );
@@ -2401,8 +2451,23 @@ void CChar::SendToSocket( CSocket *s )
 		toSend.Finalize();
 		s->Send( &toSend );
 
-		CPToolTip pSend( GetSerial() );
-		s->Send( &pSend );
+		if( s->ClientVerShort() >= CV_SA2D )
+		{
+			// Send poison state of healthbar
+			CPHealthBarStatus hpBarStatus1( ( *this ), ( *s ), 1 );
+			s->Send( &hpBarStatus1 );
+
+			// Send invulnerable state of healthbar
+			CPHealthBarStatus hpBarStatus2( ( *this ), ( *s ), 2 );
+			s->Send( &hpBarStatus2 );
+		}
+
+		// Only send tooltip if server feature for tooltips is enabled
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		{
+			CPToolTip pSend( GetSerial(), s );
+			s->Send( &pSend );
+		}
 	}
 }
 
@@ -2580,7 +2645,8 @@ bool CChar::WearItem( CItem *toWear )
 		if( ValidateObject( GetItemAtLayer( tLayer ) ) )
 		{
 #if defined( UOX_DEBUG_MODE )
-			Console.warning( strutil::format("Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial ));
+			std::string charName = getNpcDictName( this );
+			Console.warning( strutil::format("Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial ));
 #endif
 			rvalue = false;
 		}
@@ -2782,6 +2848,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	outStream << "IsNpc=" << (SI16)(IsNpc()?1:0) << '\n';
 	outStream << "IsShop=" << (SI16)(IsShop()?1:0) << '\n';
 	outStream << "Dead=" << (SI16)(IsDead()?1:0) << '\n';
+	outStream << "CanBeHired=" << static_cast<SI16>(CanBeHired()?1:0) << '\n';
 	outStream << "CanTrain=" << (SI16)(CanTrain()?1:0) << '\n';
 	outStream << "IsWarring=" << (SI16)(IsAtWar()?1:0) << '\n';
 	outStream << "GuildToggle=" << (SI16)(GetGuildToggle()?1:0) << '\n';
@@ -2842,6 +2909,19 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "WalkingSpeedMounted=" << mountedWalkingSpeed << '\n';
 	outStream << "RunningSpeedMounted=" << mountedRunningSpeed << '\n';
 	outStream << "FleeingSpeedMounted=" << mountedFleeingSpeed << '\n';	
+	outStream << "ControlSlots=" << static_cast<UI16>(controlSlots) << '\n';
+	outStream << "MaxLoyalty=" << static_cast<UI16>(maxLoyalty) << '\n';
+	outStream << "Loyalty=" << static_cast<UI16>(loyalty) << '\n';
+	outStream << "Orneriness=" << static_cast<UI16>(orneriness) << '\n';
+
+	// Loop through list of previous owners for pet and store a reference to each of those
+	for( CChar *tempChar = petOwnerList.First(); !petOwnerList.Finished(); tempChar = petOwnerList.Next() )
+	{
+		if( ValidateObject( tempChar ) )
+		{
+			outStream << "PetOwner=" << std::to_string(tempChar->GetSerial()) << "\n";
+		}
+	}
 }
 void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 {
@@ -2862,6 +2942,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "CommandLevel=" << (SI16)commandLevel << '\n';	// command level
 	outStream << "Squelched=" << (SI16)squelched << '\n';
 	outStream << "Deaths=" << deaths << '\n';
+	outStream << "ControlSlotsUsed=" << static_cast<UI16>(controlSlotsUsed) << '\n';
 	outStream << "FixedLight=" << (SI16)fixedLight << '\n';
 	outStream << "TownPrivileges=" << (SI16)townpriv << '\n';
 	outStream << "Atrophy=";
@@ -3411,7 +3492,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 			case 'A':
 				if( UTag == "ACCOUNT" )
 				{
-					SetAccountNum( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)));
+					SetAccountNum( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ATROPHY" )
@@ -3419,7 +3500,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					int count = 0 ;
 					for( auto &value : csecs )
 					{
-						value = strutil::toupper( strutil::stripTrim( value ));
+						value = strutil::upper( strutil::trim( strutil::removeTrailing( value,"//" )));
 						if( value == "[END]" )
 						{
 							break;
@@ -3435,29 +3516,29 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "ADVANCEOBJECT" )
 				{
-					SetAdvObj( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)));
+					SetAdvObj( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ADVRACEOBJECT" )
 				{
-					SetRaceGate( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)));
+					SetRaceGate( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ALLMOVE" )
 				{
-					SetAllMove( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetAllMove( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'B':
 				if( UTag == "BEARDSTYLE" )
 				{
-					SetBeardStyle( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)));
+					SetBeardStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "BEARDCOLOUR" )
 				{
-					SetBeardColour( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)));
+					SetBeardColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "BASESKILLS" )
@@ -3482,101 +3563,116 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "BEARD" )
 				{
-					SetBeardStyle( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetBeardColour( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+					SetBeardStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetBeardColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "BRKPEACECHANCEGAIN" )
 				{
-					SetBrkPeaceChanceGain( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetBrkPeaceChanceGain( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "BRKPEACECHANCE" )
 				{
-					SetBrkPeaceChance( static_cast<UI16>(std::stoul(strutil::stripTrim(data),nullptr,0)) );
+					SetBrkPeaceChance( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr,0)) );
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "COMMANDLEVEL" )
 				{
-					SetCommandLevel( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetCommandLevel( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CANRUN" )
 				{
-					SetRun( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetRun( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANATTACK" )
 				{
-					SetCanAttack( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetCanAttack( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANTRAIN" )
 				{
-					SetCanTrain( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetCanTrain( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "CANBEHIRED" )
+				{
+					SetCanHire( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "CONTROLSLOTS" )
+				{
+					SetControlSlots( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "CONTROLSLOTSUSED" )
+				{
+					SetControlSlotsUsed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'D':
 				if( UTag == "DEATHS" )
 				{
-					SetDeaths( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetDeaths( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "DEAD" )
 				{
-					SetDead( (static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1) );
+					SetDead( (static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
 			case 'E':
 				if( UTag == "EMOTION" )
 				{
-					SetEmoteColour( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetEmoteColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'F':
 				if( UTag == "FIXEDLIGHT" )
 				{
-					SetFixedLight( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFixedLight( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FX1" )
 				{
-					SetFx( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)), 0 );
+					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 0 );
 					rvalue = true;
 				}
 				else if( UTag == "FX2" )
 				{
-					SetFx( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)), 1 );
+					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 1 );
 					rvalue = true;
 				}
 				else if( UTag == "FY1" )
 				{
-					SetFy( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)), 0 );
+					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 0 );
 					rvalue = true;
 				}
 				else if( UTag == "FY2" )
 				{
-					SetFy( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)), 1 );
+					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 1 );
 					rvalue = true;
 				}
 				else if( UTag == "FZ1" )
 				{
-					SetFz( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFz( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FLEEAT" )
 				{
-					SetFleeAt( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFleeAt( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FONTTYPE" )
 				{
-					SetFontType( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFontType( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FOODLIST" )
@@ -3586,19 +3682,19 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "FLEEINGSPEED" )
 				{
-					SetFleeingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
+					SetFleeingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				else if( UTag == "FLEEINGSPEEDMOUNTED" )
 				{
-					SetMountedFleeingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
+					SetMountedFleeingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
 				{
-					SetGuildFealty( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGuildFealty( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTITLE" )
@@ -3608,57 +3704,57 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "GUILDNUMBER" )
 				{
-					SetGuildNumber( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGuildNumber( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTOGGLE" )
 				{
-					SetGuildToggle( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetGuildToggle( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'H':
 				if( UTag == "HUNGER" )
 				{
-					SetHunger( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetHunger( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HOLDG" )
 				{
-					SetHoldG( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetHoldG( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRSTYLE" )
 				{
-					SetHairStyle( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetHairStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRCOLOUR" )
 				{
-					SetHairColour( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetHairColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIR" )
 				{
-					SetHairStyle( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0]), nullptr, 0)) );
-					SetHairColour( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1]), nullptr, 0)) );
+					SetHairStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetHairColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'I':
 				if( UTag == "ISNPC" )
 				{
-					SetNpc( (static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1) );
+					SetNpc( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSHOP" )
 				{
-					SetShop( (static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1) );
+					SetShop( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISWARRING" )
 				{
-					SetWar( (static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1) );
+					SetWar( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
@@ -3670,64 +3766,74 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "LASTONSECS" )
 				{
-					SetLastOnSecs( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetLastOnSecs( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "LOYALTY" )
+				{
+					SetLoyalty( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'M':
 				if( UTag == "MAYLEVITATE" )
 				{
-					SetLevitate( (static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1) );
+					SetLevitate( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(std::stof(strutil::stripTrim( data ))) ) );
+					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" ))))));
 					rvalue = true;
 				}
 				else if( UTag == "MAXHP" )
 				{
-					SetFixedMaxHP( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFixedMaxHP( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXMANA" )
 				{
-					SetFixedMaxMana( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFixedMaxMana( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "MAXLOYALTY" )
+				{
+					SetMaxLoyalty( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXSTAM" )
 				{
-					SetFixedMaxStam( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetFixedMaxStam( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOUNTED" )
 				{
-					SetMounted( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetMounted( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'N':
 				if( UTag == "NPCAITYPE" )
 				{
-					SetNPCAiType( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetNPCAiType( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "NPCWANDER" )
 				{
 					if( csecs.size() >= 2 )
 					{
-						SetNpcWander( static_cast<SI08>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetOldNpcWander( static_cast<SI08>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetOldNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetNpcWander( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+						SetNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "NPCFLAG" )
 				{
-					SetNPCFlag( static_cast<cNPC_FLAG>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetNPCFlag( static_cast<cNPC_FLAG>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					UpdateFlag( this );
 					rvalue = true;
 				}
@@ -3740,90 +3846,104 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "ORIGINALBODYID" )
 				{
-					SetOrgID( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORIGINALSKINID" )
 				{
-					SetOrgSkin( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetOrgSkin( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORIGINALID" )
 				{
-					SetOrgID( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetOrgSkin( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1]), nullptr, 0)) );
+					SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetOrgSkin( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "ORNERINESS" )
+				{
+					SetOrneriness( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PRIVILEGES" )
 				{
-					SetPriv( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetPriv( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PACKITEM" )
 				{
-					temp_container_serial =  static_cast<SERIAL>(std::stoul(strutil::stripTrim( data ), nullptr, 0) );
+					temp_container_serial = static_cast<SERIAL>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0) );
+					rvalue = true;
+				}
+				else if( UTag == "PETOWNER" )
+				{
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					if( ValidateObject( cList ) )
+					{
+						AddPetOwnerToList( cList );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "POISON" )
 				{
-					SetPoisoned( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetPoisoned( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "POISONSTRENGTH" )
 				{
-					SetPoisonStrength( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetPoisonStrength( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PEACEING" )
 				{
-					SetPeaceing( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetPeaceing( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PROVOING" )
 				{
-					SetProvoing( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetProvoing( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>(std::stof(strutil::stripTrim( data ))) ) );
+					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) ) );
 					rvalue = true;
 				}
 				break;
 			case 'Q':
 				if( UTag == "QUESTTYPE" )
 				{
-					SetQuestType( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetQuestType( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTDESTINATIONREGION" )
 				{
-					SetQuestDestRegion( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetQuestDestRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTORIGINALREGION" )
 				{
-					SetQuestOrigRegion( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetQuestOrigRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTREGIONS" )
 				{
-					SetQuestOrigRegion( static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetQuestDestRegion( static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+					SetQuestOrigRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetQuestDestRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'R':
 				if( UTag == "ROBESERIAL" )
 				{
-					SetRobe( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetRobe( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RESERVED" )
 				{
-					SetCell( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetCell( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNING" )
@@ -3832,22 +3952,22 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "REGION" )
 				{
-					SetRegion(static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetRegion(static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "REATTACKAT" )
 				{
-					SetReattackAt( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetReattackAt( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNINGSPEED" )
 				{
-					SetRunningSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
+					SetRunningSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNINGSPEEDMOUNTED" )
 				{
-					SetMountedRunningSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))) );
+					SetMountedRunningSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				break;
@@ -3856,56 +3976,56 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() >= 2 )
 					{
-						SetSplit( static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetSplitChance( static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetSplit( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetSplitChance( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetSplit( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+						SetSplit( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "SPLITCHANCE" )
 				{
-					SetSplitChance( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetSplitChance( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>(std::stoul( strutil::stripTrim( data ), nullptr, 0)) );
+					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>(std::stoul( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SAY" )
 				{
-					SetSayColour( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetSayColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "STEALTH" )
 				{
-					SetStealth( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetStealth( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SPATTACK" )
 				{
 					if( csecs.size() >=2 )
 					{
-						SetSpAttack( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetSpDelay( static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetSpAttack( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetSpDelay( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetSpAttack( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+						SetSpAttack( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "SPECIALATTACKDELAY" )
 				{
-					SetSpDelay( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetSpDelay( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SQUELCHED" )
 				{
-					SetSquelched( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetSquelched( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SKILLLOCKS" )
@@ -3932,103 +4052,103 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "SPEECH" )
 				{
-					SetSayColour( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetEmoteColour( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+					SetSayColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetEmoteColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "STABLED" )
 				{
-					SetStabled( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetStabled( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TAMING" )
 				{
-					SetTaming( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetTaming( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDHUNGERRATE" )
 				{
-					SetTamedHungerRate( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetTamedHungerRate( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDHUNGERWILDCHANCE" )
 				{
-					SetTamedHungerWildChance( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetTamedHungerWildChance( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDTHIRSTRATE" )
 				{
-					SetTamedThirstRate( static_cast<SI08>( std::stoi( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					SetTamedThirstRate( static_cast<SI08>( std::stoi( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) ) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDTHIRSTWILDCHANCE" )
 				{
-					SetTamedThirstWildChance( static_cast<SI08>( std::stoi( strutil::stripTrim( data ), nullptr, 0 ) ) );
+					SetTamedThirstWildChance( static_cast<SI08>( std::stoi( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) ) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWN" )
 				{
-					SetTown( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetTown( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNVOTE" )
 				{
-					SetTownVote( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetTownVote( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNPRIVILEGES" )
 				{
-					SetTownpriv( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetTownpriv( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNTITLE" )
 				{
-					SetTownTitle( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetTownTitle( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if (UTag == "THIRST")
 				{
-					SetThirst( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetThirst( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'W':
 				if( UTag == "WANDERAREA" )
 				{
-					SetFx( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)), 0 );
-					SetFy( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)), 0 );
-					SetFx( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[2] ), nullptr, 0)), 1 );
-					SetFy( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[3] ), nullptr, 0)), 1 );
-					SetFz( static_cast<SI08>(std::stoi(strutil::stripTrim( csecs[4] ), nullptr, 0)) );
+					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)), 0 );
+					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), 0 );
+					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)), 1 );
+					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)), 1 );
+					SetFz( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "WILLHUNGER" )
 				{
-					SetHungerStatus( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetHungerStatus( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if (UTag == "WILLTHIRST")
 				{
-					SetThirstStatus( static_cast<SI16>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetThirstStatus( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEED" )
 				{
-					SetWalkingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))));
+					SetWalkingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))));
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEEDMOUNTED" )
 				{
-					SetMountedWalkingSpeed( static_cast<R32>(std::stof(strutil::stripTrim( data ))));
+					SetMountedWalkingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))));
 					rvalue = true;
 				}
 				break;
 			case 'X':
 				if( UTag == "XNPCWANDER" )
 				{
-					SetOldNpcWander( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetOldNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -4062,7 +4182,8 @@ bool CChar::LoadRemnants( void )
 	{
 		if( acct == AB_INVALID_ID )
 		{
-			Console.warning( strutil::format("NPC: %s with serial 0x%X with bugged body found, deleting", GetName().c_str(), GetSerial()) );
+			std::string charName = getNpcDictName( this );
+			Console.warning( strutil::format("NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial()) );
 			rvalue = false;
 		}
 		else
@@ -4083,7 +4204,8 @@ bool CChar::LoadRemnants( void )
 		{
 			if( IsNpc() )
 			{
-				Console.warning( strutil::format("NPC: %s with serial 0x%X found outside valid world locations, deleting", GetName().c_str(), GetSerial()) );
+				std::string charName = getNpcDictName( this );
+				Console.warning( strutil::format("NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial()) );
 				rvalue = false;
 			}
 			else
@@ -4214,6 +4336,8 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 			}
 			else if( msgType == SYSTEM )
 				txtColor = 0x07FA;
+			else if( msgType == OBJ )
+				txtColor = 0x3b2;
 			if( !txtColor || txtColor == 0x1700 )
 				txtColor = 0x5A;
 
@@ -4226,15 +4350,62 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				target			= SPTRG_INDIVIDUAL;
 			}
 
-			CSpeechEntry& toAdd = SpeechSys->Add();
-			toAdd.Font( (FontType)GetFontType() );
-			toAdd.Speech( toSay );
-			toAdd.Speaker( GetSerial() );
-			toAdd.SpokenTo( speakTo );
-			toAdd.Type( msgType );
-			toAdd.At( cwmWorldState->GetUICurrentTime() );
-			toAdd.TargType( target );
-			toAdd.Colour( txtColor );
+			if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+			{
+				// Doesn't enter the speech-queue, though!
+				bool sendAll = true;
+				if( target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER )
+					sendAll = false;
+
+				// Send speech as a unicode-enabled cliloc message (packet 0xC1)
+				//ClilocMessage( s, this, msgType, txtColor, (FontType)GetFontType(), 1114057, sendAll, "s", toSay.c_str() );
+
+				CPUnicodeMessage unicodeMessage;
+				unicodeMessage.Message( toSay );
+				unicodeMessage.Font( (FontType)GetFontType() );
+				unicodeMessage.Colour( txtColor );
+				unicodeMessage.Type( msgType );
+				unicodeMessage.Language( "ENG" );
+				unicodeMessage.Name( this->GetName() );
+				unicodeMessage.ID( INVALIDID );
+				unicodeMessage.Serial( GetSerial() );
+
+				bool sendSock = ( s != nullptr );
+
+				if( sendAll )
+				{
+					UI16 searchDistance = DIST_SAMESCREEN;
+					if( msgType == WHISPER )
+						searchDistance = DIST_NEXTTILE;
+					else if( msgType == YELL )
+						searchDistance = DIST_SAMESCREEN * 1.5;
+					else if( msgType == EMOTE )
+						searchDistance = DIST_INRANGE;
+
+					SOCKLIST nearbyChars = FindNearbyPlayers( this, searchDistance );
+					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+					{
+						if( sendSock && (*cIter) == s )
+							sendSock = false;
+						(*cIter)->Send( &unicodeMessage );
+					}
+				}
+
+				if( sendSock )
+					s->Send( &unicodeMessage );
+			}
+			else
+			{
+				CSpeechEntry& toAdd = SpeechSys->Add();
+				toAdd.Font( (FontType)GetFontType() );
+				toAdd.Speech( toSay );
+				toAdd.Speaker( GetSerial() );
+				toAdd.SpokenTo( speakTo );
+				toAdd.Type( msgType );
+				toAdd.At( cwmWorldState->GetUICurrentTime() );
+				toAdd.TargType( target );
+				toAdd.Colour( txtColor );
+			}
 		}
 	}
 }
@@ -4438,6 +4609,14 @@ void CChar::Cleanup( void )
 			if( ValidateObject( tempChar ) )
 				tempChar->SetOwner( nullptr );
 		}
+
+		// If a pet/follower, reduce owner's pet control slot usage by amount occupied by pet/follower
+		CChar *oldOwner = GetOwnerObj();
+		if( ValidateObject( oldOwner ) )
+		{
+			oldOwner->SetControlSlotsUsed( std::max(0, oldOwner->GetControlSlotsUsed() - GetControlSlots()) );
+		}
+
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
 
 		//Ensure that object is removed from refreshQueue
@@ -4824,7 +5003,7 @@ bool CChar::ToggleFlying( void )
 		if( GetTimer( tCHAR_FLYINGTOGGLE ) <= cwmWorldState->GetUICurrentTime() )
 		{
 			if( IsFrozen() )
-				tSock->sysmessage("You cannot use this ability while frozen.");
+				tSock->sysmessage( 9000 ); // You cannot use this ability while frozen.
 			else
 			{
 				// Start timer for when flying toggle can be used again
@@ -4884,7 +5063,7 @@ bool CChar::ToggleFlying( void )
 		SetLevitate( true );
 	}
 	else
-		tSock->sysmessage( "This character is not allowed to fly!" );
+		tSock->sysmessage( 9001 ); // This character is not allowed to fly!
 	return true;
 }
 
@@ -5524,6 +5703,165 @@ void CChar::SetTownpriv( SI08 newValue )
 // NPC Specific Functions
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI16 GetMaxLoyalty( void ) const
+//|					void SetMaxLoyalty( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the max loyalty of the NPC
+//o-----------------------------------------------------------------------------------------------o
+UI16 CChar::GetMaxLoyalty( void ) const
+{
+	UI16 retVal = DEFNPC_MAXLOYALTY;
+	if( IsValidNPC() )
+		retVal = mNPC->maxLoyalty;
+	return retVal;
+}
+void CChar::SetMaxLoyalty( UI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( DEFNPC_MAXLOYALTY != newValue )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->maxLoyalty = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI16 GetLoyalty( void ) const
+//|					void SetLoyalty( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the loyalty of the NPC
+//o-----------------------------------------------------------------------------------------------o
+UI16 CChar::GetLoyalty( void ) const
+{
+	UI16 retVal = DEFNPC_LOYALTY;
+	if( IsValidNPC() )
+		retVal = mNPC->loyalty;
+	return retVal;
+}
+void CChar::SetLoyalty( UI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( DEFNPC_LOYALTY != newValue )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
+			{
+				// If script returns false/0/nothing, prevent loyalty from changing, and prevent
+				// other scripts with event from running
+				if( toExecute->OnLoyaltyChange( ( this ), hunger ) == 0 )
+				{
+					return;
+				}
+			}
+		}
+
+		mNPC->loyalty = newValue;
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function    -	void DoLoyaltyUpdate( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle automatic loyalty change for the NPC character
+//o-----------------------------------------------------------------------------------------------o
+void CChar::DoLoyaltyUpdate( void )
+{
+	// Don't continue if pet control difficulty system is disabled
+	if( !cwmWorldState->ServerData()->CheckPetControlDifficulty() )
+		return;
+
+	if( !IsNpc() || IsDead() || !IsTamed() ) // No need to do anything for dead or non-tame NPCs
+		return;
+
+	if( !ValidateObject( GetOwnerObj() ))
+		return;
+
+	if( GetTimer( tNPC_LOYALTYTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+	{
+		UI16 loyaltyRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE );
+		if( GetLoyalty() > 0 )
+		{
+			// Is loyalty already at the lowest threshold from the last time this check ran?
+			if( GetLoyalty() == 0 )
+			{
+				// Make pet go wild from lack of loyalty
+				CChar *owner = GetOwnerObj();
+				if( ValidateObject( owner ) )
+				{
+					// Reduce player's control slot usage by the amount of control slots taken up by the pet
+					owner->SetControlSlotsUsed( std::max( 0, owner->GetControlSlotsUsed() - GetControlSlots() ) );
+				}
+
+				// Release the pet
+				Npcs->releasePet( this );
+				return;
+			}
+
+			// Reduce loyalty by 1, reset timer
+			SetLoyalty( std::max( 0, GetLoyalty() - 1 ) );
+			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R32>( loyaltyRate ) ) );
+
+			// Provide some feedback to the player, if they're online
+			CSocket *mSock = GetOwnerObj()->GetSocket();
+			if( mSock != nullptr )
+			{
+				if(( GetLoyalty() % 10 ) == 0 )
+				{
+					// Round loyalty down to nearest 10
+					auto loyaltyLevel = 10 * ( GetLoyalty() / 10 );
+					switch( loyaltyLevel )
+					{
+						case 0:
+							TextMessage( mSock, 2421, OBJ, true ); // Your pet looks confused
+							break;
+						case 10:
+							TextMessage( mSock, 2422, OBJ, true ); // Your pet looks extremely unhappy
+							break;
+						case 20:
+							TextMessage( mSock, 2423, OBJ, true ); // Your pet looks rather unhappy
+							break;
+						case 30:
+							TextMessage( mSock, 2424, OBJ, true ); // Your pet looks unhappy
+							break;
+						case 40:
+							TextMessage( mSock, 2425, OBJ, true ); // Your pet looks somewhat content
+							break;
+						case 50:
+							TextMessage( mSock, 2426, OBJ, true ); // Your pet looks content
+							break;
+						case 60:
+							TextMessage( mSock, 2427, OBJ, true ); // Your pet looks happy
+							break;
+						case 70:
+							TextMessage( mSock, 2428, OBJ, true ); // Your pet looks rather happy
+							break;
+						case 80:
+							TextMessage( mSock, 2429, OBJ, true ); // Your pet looks very happy
+							break;
+						case 90:
+							TextMessage( mSock, 2430, OBJ, true ); // Your pet looks extremely happy
+							break;
+						case 100:
+							TextMessage( mSock, 2431, OBJ, true ); // Your pet looks wonderfully happy
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		}
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	UI16 GetTamedHungerRate( void ) const
 //|					void SetTamedHungerRate( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
@@ -5557,7 +5895,7 @@ UI16 CChar::GetTamedThirstRate( void ) const
 {
 	UI16 retVal = DEFNPC_TAMEDTHIRSTRATE;
 	if( IsValidNPC() )
-		retVal = mNPC->tamedHungerRate;
+		retVal = mNPC->tamedThirstRate;
 	return retVal;
 }
 void CChar::SetTamedThirstRate( UI16 newValue )
@@ -6242,6 +6580,91 @@ void CChar::FlushPath( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	GenericList< CChar * > *GetPetOwnerList( void )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the pet's list of previous owners
+//o-----------------------------------------------------------------------------------------------o
+GenericList< CChar * > *CChar::GetPetOwnerList( void )
+{
+	return &mNPC->petOwnerList;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CHARLIST *ClearPetOwnerList( void )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the pet's list of previous owners
+//o-----------------------------------------------------------------------------------------------o
+void CChar::ClearPetOwnerList( void )
+{
+	GetPetOwnerList()->Clear();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	bool AddPetOwner( CChar *toAdd )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Adds a character to a pet's list of previous owners
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::AddPetOwnerToList( CChar *toAdd )
+{
+	if( ValidateObject( toAdd ) )
+	{
+		return GetPetOwnerList()->Add( toAdd );
+	}
+	return false;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	bool RemovePetOwnerFromList( CChar *toRemove )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Removes a character from a pet's list of previous owners
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::RemovePetOwnerFromList( CChar *toRemove )
+{
+	if( ValidateObject( toRemove ) )
+	{
+		return GetPetOwnerList()->Remove( toRemove );
+	}
+	return false;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsOnPetOwnerList( CChar *toCheck ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if a character is a pet's list of previous owners
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::IsOnPetOwnerList( CChar *toCheck )
+{
+	bool retVal = false;
+	if( ValidateObject( toCheck ) )
+	{
+		GenericList< CChar * > *petOwnerListTemp = GetPetOwnerList();
+		petOwnerListTemp->Push();
+		for( CChar *tempChar = petOwnerListTemp->First(); !petOwnerListTemp->Finished(); tempChar = petOwnerListTemp->Next() )
+		{
+			if( ValidateObject( tempChar ) && tempChar == toCheck )
+			{
+				retVal = true;
+				break;
+			}
+		}
+		petOwnerListTemp->Pop();
+	}
+
+	return retVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CHARLIST *ClearFriendList( void )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the characters list of friends
+//o-----------------------------------------------------------------------------------------------o
+void CChar::ClearFriendList( void )
+{
+	mNPC->petFriends.clear();
+	mNPC->petFriends.shrink_to_fit();
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	CHARLIST *GetFriendList( void )
 //| Date		-	20 July 2001
 //o-----------------------------------------------------------------------------------------------o
@@ -6256,13 +6679,13 @@ CHARLIST *CChar::GetFriendList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	void AddFriend( CChar *toAdd )
+//| Function	-	bool AddFriend( CChar *toAdd )
 //| Date		-	20 July 2001
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Adds the friend toAdd to the player's friends list
+//| Purpose		-	Adds the friend toAdd to the NPC's pet/follower's friends list
 //|					ensuring it is already not on it
 //o-----------------------------------------------------------------------------------------------o
-void CChar::AddFriend( CChar *toAdd )
+bool CChar::AddFriend( CChar *toAdd )
 {
 	if( !IsValidNPC() )
 	{
@@ -6279,17 +6702,21 @@ void CChar::AddFriend( CChar *toAdd )
 			++i;
 		}
 		if( i == mNPC->petFriends.end() )
+		{
 			mNPC->petFriends.push_back( toAdd );
+			return true;
+		}
 	}
+	return false;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	void RemoveFriend( CChar *toRemove )
+//| Function	-	bool RemoveFriend( CChar *toRemove )
 //| Date		-	20 July 2001
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Removes the friend toRemove from the pets friends list
+//| Purpose		-	Removes the friend toRemove from the NPC pet/follower's friends list
 //o-----------------------------------------------------------------------------------------------o
-void CChar::RemoveFriend( CChar *toRemove )
+bool CChar::RemoveFriend( CChar *toRemove )
 {
 	if( IsValidNPC() )
 	{
@@ -6298,10 +6725,94 @@ void CChar::RemoveFriend( CChar *toRemove )
 			if( (*rIter) == toRemove )
 			{
 				mNPC->petFriends.erase( rIter );
-				break;
+				return true;
 			}
 		}
 	}
+	return false;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI08 GetOwnerCount( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Get the total number of owners a pet/follower has had
+//o-----------------------------------------------------------------------------------------------o
+UI08 CChar::GetOwnerCount( void )
+{
+	return static_cast<UI08>(GetPetOwnerList()->Num());
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI08 GetControlSlotsUsed( void ) const
+//|					void SetControlSlotsUsed( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Get/Sets the total number of control slots used by a player's active pets/followers
+//o-----------------------------------------------------------------------------------------------o
+UI08 CChar::GetControlSlotsUsed( void ) const
+{
+	UI08 rVal = DEFPLAYER_CONTROLSLOTSUSED;
+	if( IsValidPlayer() )
+		rVal = mPlayer->controlSlotsUsed;
+	return rVal;
+}
+void CChar::SetControlSlotsUsed( UI08 newVal )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newVal != DEFPLAYER_CONTROLSLOTSUSED )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+	{
+		mPlayer->controlSlotsUsed = newVal;
+		Dirty( UT_STATWINDOW );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI08 GetControlSlots( void ) const
+//|					void SetControlSlots( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Get/Sets the total number of control slots an NPC takes up
+//o-----------------------------------------------------------------------------------------------o
+UI08 CChar::GetControlSlots( void ) const
+{
+	UI08 rVal = DEFNPC_CONTROLSLOTS;
+	if( IsValidNPC() )
+		rVal = mNPC->controlSlots;
+	return rVal;
+}
+void CChar::SetControlSlots( UI08 newVal )
+{
+	if( !IsValidNPC() )
+	{
+		CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->controlSlots = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI16 GetOrneriness( void ) const
+//|					void SetOrneriness( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Get/Sets the difficulty of controlling a pet
+//o-----------------------------------------------------------------------------------------------o
+UI16 CChar::GetOrneriness( void ) const
+{
+	UI16 rVal = DEFNPC_ORNERINESS;
+	if( IsValidNPC() )
+		rVal = mNPC->orneriness;
+	return rVal;
+}
+void CChar::SetOrneriness( UI16 newVal )
+{
+	if( !IsValidNPC() )
+	{
+		CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->orneriness = newVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6628,7 +7139,6 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		if( spawnBlood )
 		{
 			BloodTypes bloodType = BLOOD_BLEED;
-			auto foijf = GetMaxHP() * 0.2;
 			if( damageValue >= static_cast<SI16>(floor(GetMaxHP() * 0.2 )) )
 			{
 				// If damage done is higher than 20% of max health, spawn larger blood splats
@@ -6708,6 +7218,24 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 GetKarma( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the character's karma
+//o-----------------------------------------------------------------------------------------------o
+SI16 CChar::GetKarma( void ) const
+{
+	if( GetOwnerObj() != nullptr && IsTamed() )
+	{
+		if( ValidateObject( GetOwnerObj() ) )
+		{
+			// Pets inherit the karma of their owner
+			return GetOwnerObj()->GetKarma();
+		}
+	}
+	return karma;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	void Die( CChar *attacker, bool doRepsys )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Kills character and handles consequences for character death
@@ -6753,7 +7281,8 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 			Karma( attacker, this, ( 0 - ( GetKarma() ) ) );
 			Fame( attacker, GetFame() );
 		}
-		if( (!attacker->IsNpc()) && (!IsNpc()) ) {
+		if( (!attacker->IsNpc()) && (!IsNpc()) )
+		{
 			Console.log( strutil::format(Dictionary->GetEntry( 1617 ),GetName().c_str(), attacker->GetName().c_str()), "PvP.log");
 		}
 

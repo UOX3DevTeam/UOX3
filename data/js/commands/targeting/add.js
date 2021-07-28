@@ -17,7 +17,7 @@ function command_ADD( socket, cmdString )
 			if( splitString[1] )
 			{
 				socket.xText = splitString[1];
-				socket.CustomTarget( 0, "Select location for NPC: " + splitString[1] );
+				socket.CustomTarget( 0, GetDictionaryEntry( 8068, socket.language ) + " " + splitString[1]); //Select location for NPC:
 			}
 			break;
 		case "ITEM":
@@ -25,14 +25,14 @@ function command_ADD( socket, cmdString )
 			{
 				// .add item itemID
 				socket.xText = splitString[1];
-				socket.CustomTarget( 2, "Select location for scripted item: " + splitString[1] );
+				socket.CustomTarget( 2, GetDictionaryEntry( 8069, socket.language ) + " " + splitString[1] ); // Select location for scripted item:
 			}
 			break;
 		case "SPAWNER":
 			if( splitString[1] )
 			{
 				socket.xText = splitString[1];
-				socket.CustomTarget( 4, "Select location for Spawner: " + splitString[1] );
+				socket.CustomTarget( 4, GetDictionaryEntry( 8070, socket.language ) + " " + splitString[1] ); // Select location for Spawner:
 			}
 			break;
 		default:
@@ -66,7 +66,7 @@ function command_ADD( socket, cmdString )
 
 			if( stringID != "" )
 			{
-				socket.CustomTarget( 1, "Select location for base item: " + stringID );
+				socket.CustomTarget( 1, GetDictionaryEntry( 8071, socket.language ) + " " + stringID ); // Select location for base item:
 			}
 			break;
 		}
@@ -90,7 +90,7 @@ function onCallback0( socket, ourObj )
 		if( newChar && newChar.isChar )
 			newChar.InitWanderArea();
 		else
-			mChar.SysMessage( "NPC-section not found in DFNs: " + npcSection );
+			mChar.SysMessage( GetDictionaryEntry( 8072, socket.language ) + " " + npcSection ); // NPC-section not found in DFNs:
 	}
 }
 
@@ -108,7 +108,7 @@ function onCallback1( socket, ourObj )
 			if( backpack != null )
 				var newItem = CreateBlankItem( socket, ourObj, 1, "", itemID, 0, "ITEM", true );
 			else
-				mChar.SysMessage( "That character has no backpack, no item added" );
+				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
 		}
 		else
 		{
@@ -123,7 +123,7 @@ function onCallback1( socket, ourObj )
 		{
 			if( newItem.id != itemID )
 			{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
-				mChar.SysMessage( "Specified item-ID does not exist." );
+				mChar.SysMessage( GetDictionaryEntry( 8074, socket.language )); // Specified item-ID does not exist.
 				mChar.SysMessage( "Hex: 0x"+itemID.toString(16)+ " Dec: " + itemID );
 				newItem.Delete();
 			}
@@ -145,7 +145,7 @@ function onCallback2( socket, ourObj )
 			if( backpack != null )
 				var newItem = CreateDFNItem( socket, ourObj, iSection, 1, "ITEM", true );
 			else
-				mChar.SysMessage( "That character has no backpack, no item added" );
+				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
 		}
 		else
 		{
@@ -157,7 +157,7 @@ function onCallback2( socket, ourObj )
 				newItem.SetLocation( x, y, z );
 		}
 		if( !newItem )
-			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );
+			mChar.SysMessage( GetDictionaryEntry( 8074, socket.language ) + " " + iSection ); // Item-section not found in DFNs:
 	}
 }
 
@@ -179,7 +179,7 @@ function onCallback3( socket, ourObj )
 		}
 		if( newItem.id != itemID )
 		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
-			mChar.SysMessage( "Specified item-ID does not exist." );
+			mChar.SysMessage( GetDictionaryEntry( 8074, socket.language )); // Specified item-ID does not exist.
 			mChar.SysMessage( "Hex: 0x"+itemID.toString(16)+ " Dec: " + itemID );
 			newItem.Delete();
 		}
@@ -203,7 +203,7 @@ function onCallback4( socket, ourObj )
 			newItem.decayable = false;
 		}
 		else
-			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );
+			mChar.SysMessage( GetDictionaryEntry( 8075, socket.language ) + " " + iSection ); // Item-section not found in DFNs:
 	}
 }
 
@@ -235,7 +235,7 @@ function command_ADDX( socket, cmdString )
 
 		if( newItem.id != targID )
 		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
-			mChar.SysMessage( "Specified item-ID does not exist." );
+			mChar.SysMessage( GetDictionaryEntry( 8074, socket.language )); // Specified item-ID does not exist.
 			mChar.SysMessage( "Hex: 0x"+targID.toString(16)+ " Dec: " + targID );
 			newItem.Delete();
 		}

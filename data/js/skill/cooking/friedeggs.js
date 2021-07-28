@@ -1,6 +1,7 @@
 // cooking script
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/rewrote the script
+// Updated to use dictionary messages
 // Eggs : Heat source : Fried Eggs
 
 function onUseChecked ( pUser, iUsed )
@@ -13,13 +14,13 @@ function onUseChecked ( pUser, iUsed )
 	{
 		var iPackOwner = GetPackOwner( iUsed, 0 );
 		if( iPackOwner.serial != pUser.serial )
-			pUser.SysMessage( "This has to be in your backpack!" );
+			srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
 		else
 			// let the user target the heat source
-			srcSock.CustomTarget( 0, "What do you want to use the eggs with?" );
+			srcSock.CustomTarget( 0, GetDictionaryEntry( 6084, srcSock.language )); // What do you want to use the eggs with?
 	}
 	else
-		pUser.SysMessage( "This has to be in your backpack!" );
+		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
 	return false;
 }
 
@@ -33,7 +34,7 @@ function onCallback0( tSock, targSerial )
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
 	{ //Target is a MapTile or a Character
-		pUser.SysMessage( "You cannot fry eggs on that." );
+		tSock.SysMessage( GetDictionaryEntry( 6085, tSock.language )); // You cannot fry eggs on that.
 		return;
 	}
 	// Target is a Dynamic or Static Item
@@ -44,19 +45,19 @@ function onCallback0( tSock, targSerial )
 		// check if its in range
 		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
 		{
-			pUser.SysMessage( "You are too far away from the target!" );
+			tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
 			return;
 			}
 		// remove one dough
 		var iMakeResource = pUser.ResourceCount( 0x09b5 );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
 		{
-			pUser.SysMessage( "You don't seem to have any raw eggs!" );
+			tSock.SysMessage( GetDictionaryEntry( 6086, tSock.language )); // You don't seem to have any raw eggs!
 			return;
 		}
 		if( pUser.skills[13] < 200 )
 		{
-			pUser.SysMessage( "You are not skilled enough to do that." );
+			tSock.SysMessage( GetDictionaryEntry( 6051, tSock.language )); // You are not skilled enough to do that.
 			return;
 		}
 		pUser.UseResource( 1, 0x09b5 ); // uses up a resource (amount, item ID, item colour)
@@ -64,11 +65,11 @@ function onCallback0( tSock, targSerial )
 		// check the skill
 		if( !pUser.CheckSkill( 13, 10, 400 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
-			pUser.SysMessage( "You burnt the eggs crisp." );
+			tSock.SysMessage( GetDictionaryEntry( 6087, tSock.language )); // You burnt the eggs crisp.
 			return;
 		}
-		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09b6", 1, "ITEM", true ); // makes fried eggs
-		pUser.SysMessage( "You fry the eggs." );
+		var itemMade = CreateDFNItem( tSock, pUser, "0x09b6", 1, "ITEM", true ); // makes fried eggs
+		tSock.SysMessage( GetDictionaryEntry( 6088, tSock.language )); // You fry the eggs.
 		return;
 	}
 }

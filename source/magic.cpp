@@ -1106,12 +1106,12 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 	{
 		if( !multi->IsOnOwnerList( caster ) )
 		{
-			sock->sysmessage( "Marking a rune in property you don't own is not possible" ); // Marking a rune in property you don't own is not possible
+			sock->sysmessage( 9034 ); // Marking a rune in property you don't own is not possible.
 			return false;
 		}
 		else if( !cwmWorldState->ServerData()->MarkRunesInMultis() )
 		{
-			sock->sysmessage( "Marking a rune inside one's property is not permitted." );
+			sock->sysmessage( 9035 ); // "Marking a rune inside one's property is not permitted.
 			return false;
 		}
 		else
@@ -2168,7 +2168,6 @@ void cMagic::SpellBook( CSocket *mSock )
 //|	Purpose		-	Used when a PLAYER passes through a gate.  Takes the player
 //|						to the other side of the gate-link.
 //o-----------------------------------------------------------------------------------------------o
-
 void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
 {
 	if( type == IT_GATE )
@@ -2224,6 +2223,11 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			s = caster->GetTarg()->GetSocket();
 	}
 
+	UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
+	UI08 maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
+	UI08 controlSlotsUsed = caster->GetControlSlotsUsed();
+	UI08 petCount = static_cast<UI08>(caster->GetPetList()->Num());
+
 	CChar *newChar=nullptr;
 
 	switch( id )
@@ -2237,7 +2241,22 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 					s->sysmessage( 694 );
 				return;
 			}
+
+			if( maxControlSlots > 0 && ( controlSlotsUsed + newChar->GetControlSlots() > maxControlSlots ) )
+			{
+				newChar->Delete();
+				if( validSocket )
+					s->sysmessage( 2390 ); // That would exceed your maximum pet control slots.
+				return;
+			}
+			else if( petCount >= maxFollowers )
+			{
+				newChar->Delete();
+				if( validSocket )
+					s->sysmessage( 2346, maxFollowers ); // You can maximum have %i pets / followers active at the same time.
+			}
 			newChar->SetOwner( caster );
+			caster->SetControlSlotsUsed( std::clamp(controlSlotsUsed + newChar->GetControlSlots(), 0, 255) );
 			newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
 			newChar->SetLocation( caster );
 			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
@@ -2289,11 +2308,32 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	if( !ValidateObject( newChar ) )
 		return;
 
+	if( maxControlSlots > 0 && ( controlSlotsUsed + newChar->GetControlSlots() > maxControlSlots ) )
+	{
+		newChar->Delete();
+		if( validSocket )
+			s->sysmessage( 2390 ); // That would exceed your maximum pet control slots.
+		return;
+	}
+	else if( petCount >= maxFollowers )
+	{
+		newChar->Delete();
+		if( validSocket )
+			s->sysmessage( 2346, maxFollowers ); // You can maximum have %i pets / followers active at the same time.
+	}
+
 	newChar->SetDispellable( true );
 
 	// pc's don't own BS/EV, NPCs do
 	if( caster->IsNpc() || ( id != 1 && id != 6 ) )
+	{
 		newChar->SetOwner( caster );
+		if( !caster->IsNpc() )
+		{
+			// Update control slots used
+			caster->SetControlSlotsUsed( std::clamp(controlSlotsUsed + newChar->GetControlSlots(), 0, 255) );
+		}
+	}
 
 	if( x == 0 )
 		newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
@@ -3467,7 +3507,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						{
 							scriptTriggers.clear();
 							scriptTriggers.shrink_to_fit();
-							scriptTriggers = i->GetScriptTriggers();
+							scriptTriggers = c->GetScriptTriggers();
 							for( auto scriptTrig : scriptTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
@@ -3486,21 +3526,18 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 54:	// Mass Dispel
 						case 55:	// Meteor Swarm
 						{
-							if( ValidateObject( i ))
+							scriptTriggers.clear();
+							scriptTriggers.shrink_to_fit();
+							scriptTriggers = c->GetScriptTriggers();
+							for( auto scriptTrig : scriptTriggers )
 							{
-								scriptTriggers.clear();
-								scriptTriggers.shrink_to_fit();
-								scriptTriggers = i->GetScriptTriggers();
-								for( auto scriptTrig : scriptTriggers )
+								cScript *toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != nullptr )
 								{
-									cScript *toExecute = JSMapping->GetScript( scriptTrig );
-									if( toExecute != nullptr )
-									{
-										toExecute->OnSpellTarget( c, caster, curSpell );
-									}
+									toExecute->OnSpellTarget( c, caster, curSpell );
 								}
-								(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );
 							}
+							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );
 							break;
 						}
 						default:
@@ -3731,7 +3768,7 @@ void cMagic::LoadScript( void )
 			auto ssecs = strutil::sections( spEntry, " " );
 			if( ssecs[0] == "SPELL" )
 			{
-				i = static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0) );
+				i = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0) );
 				if( i <= SPELL_MAX )
 				{
 					++spellCount;
@@ -3742,9 +3779,9 @@ void cMagic::LoadScript( void )
 
 					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
-						UTag = strutil::toupper( tag );
+						UTag = strutil::upper( tag );
 						data = SpellLoad->GrabData();
-						data = strutil::stripTrim( data );
+						data = strutil::trim( strutil::removeTrailing( data, "//" ));
 						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
 						switch( (UTag.data()[0]) )
 						{
@@ -3792,8 +3829,8 @@ void cMagic::LoadScript( void )
 									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Flags(((static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 16)))<<8) ||
-												    static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)));
+										spells[i].Flags(((static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)))<<8) ||
+												    static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)));
 												    
 									}
 									else
@@ -3847,10 +3884,10 @@ void cMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{										
 										CMagicMove *mv = spells[i].MoveEffectPtr();
-										mv->Effect( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)) );
-										mv->Speed( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[2]), nullptr, 16)) );
-										mv->Loop( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[3]), nullptr, 16)) );
-										mv->Explode( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[4]), nullptr, 16)));
+										mv->Effect( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)) );
+										mv->Speed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 16)) );
+										mv->Loop( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[3], "//" )), nullptr, 16)) );
+										mv->Explode( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[4], "//" )), nullptr, 16)));
 									}
 								}
 								break;
@@ -3874,8 +3911,8 @@ void cMagic::LoadScript( void )
 									auto ssecs = strutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Effect( ( (static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 16))<<8) ||
-												    static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16))));
+										spells[i].Effect( ( (static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 16))<<8) ||
+												    static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 16))));
 									}
 									else
 									{
@@ -3889,9 +3926,9 @@ void cMagic::LoadScript( void )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
 										
-										stat->Effect( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[0]), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 16)) );
-										stat->Speed( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[2]), nullptr, 16)) );
-										stat->Loop( static_cast<UI08>(std::stoul(strutil::stripTrim(ssecs[3]), nullptr, 16)) );
+										stat->Effect( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)), static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)) );
+										stat->Speed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 16)) );
+										stat->Loop( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[3], "//" )), nullptr, 16)) );
 									}
 								}
 								else if( UTag == "SCLO" )
@@ -4042,10 +4079,15 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::
 	RealTime( dateTime );
 
 	logDestination << "[" << dateTime << "] ";
-	logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << " ) ";
+
+	std::string casterName = getNpcDictName( player1 );
+	logDestination << casterName << " (serial: " << std::hex << player1->GetSerial() << " ) ";
 	logDestination << "cast spell <" << spell << "> ";
 	if( ValidateObject( player2 ) )
-		logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " ) ";
+	{
+		std::string targetName = getNpcDictName( player2 );
+		logDestination << "on player " << targetName << " (serial: " << player2->GetSerial() << " ) ";
+	}
 	logDestination << "Extra Info: " << extraInfo << std::endl;
 	logDestination.close();
 }

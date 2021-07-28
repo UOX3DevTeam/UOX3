@@ -913,6 +913,21 @@ public:
 
 };
 
+class CPIClosedStatusGump : public CPInputBuffer
+{
+public:
+	virtual			~CPIClosedStatusGump()
+	{
+	}
+	CPIClosedStatusGump();
+	CPIClosedStatusGump( CSocket *s );
+
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+
+};
+
 class CPIToggleFlying : public CPInputBuffer
 {
 public:

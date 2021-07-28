@@ -84,6 +84,6 @@ function onCallback0( pSock, ourObj )
 		}
 	}
 	if( !canCombine )
-		pSock.SysMessage( "You cannot combine those to make anything useful." );
+		pSock.SysMessage( GetDictionaryEntry( 6023, pSock.language )); // You cannot combine those to make anything useful.
 }
 

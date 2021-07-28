@@ -27,7 +27,7 @@ function onCallback1( socket, ourObj )
 
 		if( ourObj.movable == 2 || ourObj.movable == 3 )
 		{
-			socket.SysMessage( "This has to be in your backpack before you can use it." );
+			socket.SysMessage( GetDictionaryEntry( 6022, socket.language ) ); // This has to be in your backpack before you can use it.
 			return;
 		}
 
@@ -46,7 +46,7 @@ function onCallback1( socket, ourObj )
 				socket.SysMessage( GetDictionaryEntry( 775, socket.language ) );
 		}
 		else
-			socket.SysMessage( "You can't make anything from that material." );
+			socket.SysMessage( GetDictionaryEntry( 6006, socket.language ) ); // You can't make anything from that material.
 	}
 }
 

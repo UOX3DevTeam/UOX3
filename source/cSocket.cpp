@@ -1750,15 +1750,34 @@ void CSocket::sysmessage( const std::string txt, ... )
 	if (msg.size()>512){
 		msg = msg.substr(0,512);
 	}
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( msg );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( 0x0040 );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+
+
+	if(cwmWorldState->ServerData()->UseUnicodeMessages())
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( msg );
+		unicodeMessage.Font( 4 );
+		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( msg );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( 0x0040 );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1777,15 +1796,34 @@ void CSocket::sysmessageJS( const std::string& uformat, const std::string& data 
 	{
 		msg = msg.substr( 0, 512 );
 	}
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( msg );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( 0x0040 );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+	
+	if(cwmWorldState->ServerData()->UseUnicodeMessages())
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( msg );
+		unicodeMessage.Font( 4 );
+		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Unicode( true );
+		toAdd.Speech( msg );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( 0x0040 );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+	}
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void sysmessage( SI32 dictEntry, ... )
@@ -1807,15 +1845,34 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 	if (msg.size()>512){
 		msg = msg.substr(0,512);
 	}
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( msg );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( 0x0040 );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( msg );
+		unicodeMessage.Font( 4 );
+		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Unicode( true );
+		toAdd.Speech( msg );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( 0x0040 );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1857,42 +1914,88 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 		temp = txt.substr(0,512);
 	}
 	CChar *mChar		= CurrcharObj();
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( temp );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( getObj->GetSerial() );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Type( SYSTEM );
-	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( SPTRG_ONLYRECEIVER );
 
-	if( getObj->GetObjType() == OT_ITEM )
+	if(cwmWorldState->ServerData()->UseUnicodeMessages())
 	{
-		CItem *getItem = static_cast< CItem *>(getObj);
-		if( getItem->isCorpse() )
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( temp );
+		unicodeMessage.Font( FNT_NORMAL );
+		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( getObj->GetSerial() );
+
+		if(getObj->GetObjType() == OT_ITEM)
 		{
-			CChar *targChar = getItem->GetOwnerObj();
-			if( ValidateObject( targChar ) )
-				targColour = GetFlagColour( mChar, targChar );
-			else
+			CItem *getItem = static_cast<CItem *>(getObj);
+			if(getItem->isCorpse())
 			{
-				switch( getItem->GetTempVar( CITV_MOREZ ) )
+				CChar *targChar = getItem->GetOwnerObj();
+				if(ValidateObject( targChar ))
+					targColour = GetFlagColour( mChar, targChar );
+				else
 				{
+					switch(getItem->GetTempVar( CITV_MOREZ ))
+					{
 					case 0x01:	targColour = 0x0026;	break;	//red
 					case 0x02:	targColour = 0x03B2;	break;	// gray
 					case 0x08:	targColour = 0x0049;	break;	// green
 					case 0x10:	targColour = 0x0030;	break;	// orange
 					default:
 					case 0x04:	targColour = 0x005A;	break;	// blue
+					}
 				}
 			}
 		}
-	}
 
-	if( targColour == 0x0 || targColour == 0x1700)
-		toAdd.Colour( 0x03B2 );
+		if(targColour == 0x0 || targColour == 0x1700)
+			unicodeMessage.Colour( 0x03B2 );
+		else
+			unicodeMessage.Colour( targColour );
+
+		Send( &unicodeMessage );
+	}
 	else
-		toAdd.Colour( targColour );
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( temp );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( getObj->GetSerial() );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Type( SYSTEM );
+		toAdd.At( BuildTimeValue( secsFromNow ) );
+		toAdd.TargType( SPTRG_ONLYRECEIVER );
+
+		if( getObj->GetObjType() == OT_ITEM )
+		{
+			CItem *getItem = static_cast< CItem *>(getObj);
+			if( getItem->isCorpse() )
+			{
+				CChar *targChar = getItem->GetOwnerObj();
+				if( ValidateObject( targChar ) )
+					targColour = GetFlagColour( mChar, targChar );
+				else
+				{
+					switch( getItem->GetTempVar( CITV_MOREZ ) )
+					{
+						case 0x01:	targColour = 0x0026;	break;	//red
+						case 0x02:	targColour = 0x03B2;	break;	// gray
+						case 0x08:	targColour = 0x0049;	break;	// green
+						case 0x10:	targColour = 0x0030;	break;	// orange
+						default:
+						case 0x04:	targColour = 0x005A;	break;	// blue
+					}
+				}
+			}
+		}
+
+		if( targColour == 0x0 || targColour == 0x1700)
+			toAdd.Colour( 0x03B2 );
+		else
+			toAdd.Colour( targColour );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1906,7 +2009,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	UI08 a2 = i->GetSerial( 2 );
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
-	std::string newName = i->GetName();
+	std::string charName = getNpcDictName( i, this );
 	CChar *mChar = CurrcharObj();
 	if( mChar->GetSingClickSer() || showSer )
 		objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );
@@ -1917,44 +2020,60 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		if( i->GetCommandLevel() < CL_CNS && i->GetFame() >= 10000 )	//  only normal players have titles now
 		{
 			if( i->GetID( 2 ) == 0x91 )
-				newName = strutil::format( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead
+				charName = strutil::format( Dictionary->GetEntry( 1740, Language() ).c_str(), charName.c_str() );	// Morrolan, added Lord/Lady to title overhead
 			else if( i->GetID( 1 ) == 0x90 )
-				newName = strutil::format( Dictionary->GetEntry( 1739, Language() ).c_str(), newName.c_str() );
+				charName = strutil::format( Dictionary->GetEntry( 1739, Language() ).c_str(), charName.c_str() );
 		}
 		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race ( )
 		{
-			newName += " (";
-			newName += Races->Name( i->GetRace() );
-			newName += ")";
+			charName += " (";
+			charName += Races->Name( i->GetRace() );
+			charName += ")";
 		}
 		if( i->GetTownPriv() == 2 )
-			newName = strutil::format( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
+			charName = strutil::format( Dictionary->GetEntry( 1738, Language() ).c_str(), charName.c_str() );
 		if( !isOnline( (*i) ) )
-			newName += " (OFF)";
+			charName += " (OFF)";
 	}
 	else
 	{
 		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetID()].IsHuman() )
-			newName += " (tame) ";
+			charName += " (tame) ";
 	}
 	if( i->IsInvulnerable() )
-		newName += " (invulnerable)";
+		charName += " (invulnerable)";
 	if( i->IsFrozen() )
-		newName += " (frozen) ";
+		charName += " (frozen) ";
 	if( i->IsGuarded() )
-		newName += " (guarded)";
+		charName += " (guarded)";
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
 		GuildSys->DisplayTitle( this, i );
 
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( newName );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( i->GetSerial() );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( GetFlagColour( mChar, i ) );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_ONLYRECEIVER );
+	if(cwmWorldState->ServerData()->UseUnicodeMessages())
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( charName );
+		unicodeMessage.Font( FNT_NORMAL );
+		unicodeMessage.Colour( GetFlagColour( mChar, i ));
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( i->GetSerial() );
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( charName );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( i->GetSerial() );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( GetFlagColour( mChar, i ) );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_ONLYRECEIVER );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1967,13 +2086,13 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 	COLOUR retVal = 0x0058;
 	switch( trg->FlagColour( src ) )
 	{
-		case FC_INNOCENT:		retVal = 0x0058;		break;	// Blue
+		case FC_INNOCENT:		retVal = 0x0059;		break;	// Blue
 		case FC_NEUTRAL:
 		case FC_CRIMINAL:
 		default:				retVal = 0x03B2;		break;	// Gray
-		case FC_MURDERER:		retVal = 0x0026;		break;	// Red
-		case FC_FRIEND:			retVal = 0x0043;		break;	// Green
-		case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
+		case FC_MURDERER:		retVal = 0x0022;		break;	// Red
+		case FC_FRIEND:			retVal = 0x003F;		break;	// Green
+		case FC_ENEMY:			retVal = 0x0090;		break;	// Orange
 		case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
 	}
 
@@ -2093,12 +2212,23 @@ void CSocket::statwindow( CBaseObject *targObj )
 		// Character specific
 		CChar *targChar = static_cast<CChar*>( targObj );
 
-		if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS &&
-			( targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline(( *targChar )) ) || !charInRange(mChar, targChar) ) )
+		if( mChar->GetCommandLevel() < CL_CNS && (( mChar != targChar && targChar->GetVisible() != VT_VISIBLE )
+			|| ( !targChar->IsNpc() && !isOnline( *targChar ))))
 			return;
 
-		CPHealthBarStatus hpBarStatus(( *targChar ), ( *this ));
-		Send(&hpBarStatus);
+		if( !charInRange( mChar, targChar ) )
+			return;
+
+		if( ClientVerShort() >= CV_SA2D )
+		{
+			// Send poison state of healthbar
+			CPHealthBarStatus hpBarStatus1( ( *targChar ), ( (*this) ), 1 );
+			Send( &hpBarStatus1 );
+
+			// Send invulnerable state of healthbar
+			CPHealthBarStatus hpBarStatus2( ( *targChar ), ( (*this) ), 2 );
+			Send( &hpBarStatus2 );
+		}
 
 		CPStatWindow toSend(( *targObj ), ( *this ));
 
@@ -2112,13 +2242,21 @@ void CSocket::statwindow( CBaseObject *targObj )
 
 		Send(&toSend);
 
-		CPExtendedStats exStats(( *targChar ));
-		Send(&exStats);
+		if( !targChar->IsNpc() && mChar == targChar )
+		{
+			CPExtendedStats exStats(( *targChar ));
+			Send(&exStats);
+		}
 	}
 	else
 	{
 		// Item specific
-		SI16 visRange = MAX_VISRANGE + Races->VisRange(mChar->GetRace());
+		SI16 visRange = MAX_VISRANGE;
+		if( mChar->GetSocket() != nullptr )
+			visRange = mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() );
+		else
+			visRange += Races->VisRange( mChar->GetRace() );
+
 		if( mChar->GetCommandLevel() < CL_CNS &&
 			( targObj->GetVisible() != VT_VISIBLE || !objInRange( mChar, targObj, static_cast<UI16>( visRange )) ) )
 			return;

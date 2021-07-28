@@ -33,16 +33,16 @@ function command_RNDTILE( pSock, cmdString )
 					pSock.xText = pSock.xText + " " + splitString[3];
 				if( splitString[4] )
 					pSock.xText = pSock.xText + " " + splitString[4];
-				pSock.CustomTarget( 0, "Select first corner of bounding box:" );
+				pSock.CustomTarget( 0, GetDictionaryEntry( 8097, pSock.language )); // Select first corner of bounding box:
 			}
 			else
-				pSock.SysMessage( "<startID> must be lower than <endID>!" );
+				pSock.SysMessage( GetDictionaryEntry( 8098, pSock.language )); // <startID> must be lower than <endID>!
 		}
 		else
-			pSock.SysMessage( "A minimum of three arguments must be included; <startID> <endID> and <hue>" );
+			pSock.SysMessage( GetDictionaryEntry( 8099, pSock.language )); // A minimum of three arguments must be included; <startID> <endID> and <hue>
 	}
 	else
-		pSock.SysMessage( "Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)" );
+		pSock.SysMessage( GetDictionaryEntry( 8100, pSock.language )); // Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
 }
 
 //First target location in boundary box
@@ -62,7 +62,7 @@ function onCallback0( pSock, myTarget )
 	if( toFreeze != "true" ) // if movable status hasn't been set to true, set it to false
 		toFreeze = "false";
 	pSock.xText = targX + " " + targY + " " + startID + " " + endID + " " + itemHue + " " + toFreeze;
-	pSock.CustomTarget( 1, "Select second corner of bounding box:" );
+	pSock.CustomTarget( 1, GetDictionaryEntry( 8101, pSock.language )); // Select second corner of bounding box:
 }
 
 //Second target location in boundary box

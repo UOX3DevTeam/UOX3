@@ -197,7 +197,8 @@ function checkReagents( mChar, mSpell )
 		failedCheck = 1;
 	if( failedCheck == 1 )
 	{
-		mChar.SysMessage( "You do not have enough reagents to cast that spell." );
+		if( mChar.socket != null )
+			mChar.socket.SysMessage( GetDictionaryEntry( 702, mChar.socket.Language )); // You do not have enough reagents to cast that spell.
 		return false;
 	}
 	else

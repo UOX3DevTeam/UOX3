@@ -25,7 +25,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( "You can't make anything useful from that." );
+			socket.SysMessage( GetDictionaryEntry( 6001, socket.language ) ); // You can't make anything useful from that.
 			return;
 		}
 
@@ -44,12 +44,12 @@ function onCallback1( socket, ourObj )
 				case 0x0F86:	socket.MakeMenu( 96, 0 );	break;
 				case 0x0F8D:	socket.MakeMenu( 97, 0 );	break;
 				default:
-					socket.SysMessage( "You can't make anything useful from that." );
+					socket.SysMessage( GetDictionaryEntry( 6001, socket.language ) ); // You can't make anything useful from that.
 					break;
 			}
 		}
 		else
-			socket.SysMessage( "That must be in your pack." );
+			socket.SysMessage( GetDictionaryEntry( 6002, socket.language ) ); // That must be in your pack.
 	}
 }
 

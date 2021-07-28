@@ -133,8 +133,17 @@ bool charInRange( CChar *a, CChar *b )
 {
 	if( !ValidateObject( a ) )
 		return false;
-	SI16 visRange		= MAX_VISRANGE + Races->VisRange( a->GetRace() );
-	return objInRange( a, b, static_cast<UI16>(visRange) );
+
+	SI16 visRange = MAX_VISRANGE;
+	if( a->GetSocket() != nullptr )
+	{
+		visRange = a->GetSocket()->Range() + Races->VisRange( a->GetRace() );
+	}
+	else
+	{
+		visRange += Races->VisRange( a->GetRace() );
+	}
+	return objInRangeSquare( a, b, static_cast<UI16>( visRange ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o

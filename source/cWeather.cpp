@@ -914,7 +914,7 @@ bool cWeatherAb::Load( void )
 
 			for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
 			{
-				UTag = strutil::toupper( tag );
+				UTag = strutil::upper( tag );
 				data = WeatherStuff->GrabData();
 				switch( tag[0] )
 				{
@@ -985,8 +985,8 @@ bool cWeatherAb::Load( void )
 							auto csecs = strutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								RainIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::stripTrim(csecs[0]),nullptr,0)) );
-								RainIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::stripTrim(csecs[1]),nullptr,0)) );
+								RainIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )),nullptr,0)) );
+								RainIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )),nullptr,0)) );
 							}
 							else
 							{
@@ -1010,8 +1010,8 @@ bool cWeatherAb::Load( void )
 							auto csecs = strutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::stripTrim(csecs[0]),nullptr,0)));
-								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::stripTrim(csecs[1]),nullptr,0)) );
+								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )),nullptr,0)));
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )),nullptr,0)));
 							}
 							else
 							{
@@ -1032,8 +1032,8 @@ bool cWeatherAb::Load( void )
 							auto csecs = strutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::stripTrim(csecs[0]),nullptr,0)) );
-								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::stripTrim(csecs[1]),nullptr,0)) );
+								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )),nullptr,0)));
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )),nullptr,0)));
 							}
 							else
 							{

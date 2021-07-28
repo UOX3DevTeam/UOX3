@@ -61,6 +61,7 @@ enum ScriptEvent
 	seOnDeath,				//	**
 	seOnResurrect,			//	**
 	seOnFlagChange,			//	**
+	seOnLoyaltyChange,		//	**
 	seOnHungerChange,		//	**
 	seOnThirstChange,		//  **
 	seOnStolenFrom,			//	**
@@ -209,6 +210,7 @@ public:
 	SI08		OnDeath( CChar *pDead, CItem *iCorpse );
 	SI08		OnResurrect( CChar *pAlive );
 	SI08		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );
+	SI08		OnLoyaltyChange( CChar *pChanging, SI08 newStatus );
 	SI08		OnHungerChange( CChar *pChanging, SI08 newStatus );
 	bool		OnThirstChange( CChar* pChanging, SI08 newStatus );
 	SI08		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
@@ -233,7 +235,7 @@ public:
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityID );
 
 	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
-	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams );
+	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
 

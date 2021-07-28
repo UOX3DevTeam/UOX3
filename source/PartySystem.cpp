@@ -278,13 +278,13 @@ void PartyFactory::CreateInvite( CSocket *inviter )
 	CChar *toInvite	= calcCharObjFromSer( serial );
 	if( !ValidateObject( toInvite ) || toInvite->IsNpc() )
 	{
-		inviter->sysmessage( "You cannot invite an npc or unknown player" );
+		inviter->sysmessage( 9040 ); // You cannot invite an NPC or unknown player.
 		return;
 	}
 	CChar *inviterChar = inviter->CurrcharObj();
 	if( ValidateObject( inviterChar ) && inviterChar == toInvite )
 	{
-		inviter->sysmessage( "You cannot invite yourself to a party" );
+		inviter->sysmessage( 9041 ); // You cannot invite yourself to a party.
 		return;
 	}
 	Party *ourParty = Get( inviterChar );
@@ -299,11 +299,11 @@ void PartyFactory::CreateInvite( CSocket *inviter )
 		CPPartyInvitation toSend;
 		toSend.Leader( inviterChar );
 		targSock->Send( &toSend );
-		targSock->sysmessage( "You have been invited to join a party, type /accept or /decline to deal with the invitation" );
+		targSock->sysmessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
 	}
 	else
 	{
-		inviter->sysmessage( "That player is not online" );
+		inviter->sysmessage( 9042 ); // That player is not online.
 	}
 }
 
@@ -318,24 +318,24 @@ void PartyFactory::Kick( CSocket *inviter )
 	CChar *toRemove	= calcCharObjFromSer( serial );
 	if( !ValidateObject( toRemove ) || toRemove->IsNpc() )
 	{
-		inviter->sysmessage( "You cannot kick an npc or unknown player" );
+		inviter->sysmessage( 9043 ); // You cannot kick an NPC or unknown player.
 		return;
 	}
 	Party *ourParty = Get( inviter->CurrcharObj() );
 	if( ourParty == nullptr )
 	{
-		inviter->sysmessage( "You are not in a party and cannot kick them out" );
+		inviter->sysmessage( 9044 ); // You are not in a party and cannot kick them out.
 		return;
 	}
 	if( ( ourParty->Leader() != inviter->CurrcharObj() ) && ( inviter->CurrcharObj() != toRemove ) )
 	{
-		inviter->sysmessage( "Only the leader can kick someone out" );
+		inviter->sysmessage( 9045 ); // Only the leader can kick someone from a party.
 		return;
 	}
 	if( ourParty->HasMember( toRemove ) )
 	{	// even if they're offline, we can kick them out
 		ourParty->RemoveMember( toRemove );
-		inviter->sysmessage( "The player has been removed" );
+		inviter->sysmessage( 9046 ); // The player has been removed from the party.
 	}
 }
 

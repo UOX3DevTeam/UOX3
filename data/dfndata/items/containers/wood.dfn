@@ -75,6 +75,7 @@ type=1
 restock=10
 decay=1
 good=8
+movable 1
 maxitems=125
 }
 

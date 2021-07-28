@@ -1,5 +1,5 @@
 // Date-Picking Script
-// 20/02/2006 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) date tree is double-clicked, it's setup with
 // 5 dates ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more dates can be picked. Once the timer is over,
@@ -13,7 +13,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( "You are too far away to reach that." );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pUser.socket.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -27,25 +27,28 @@ function onUseChecked( pUser, iUsed )
 	var DateCount = iUsed.GetTag("DateCounter");
 	if (Dates == 0)
 	{	
-		pUser.SysMessage( "You find no ripe dates to pick. Try again later." );
+		pUser.SysMessage( GetDictionaryEntry( 2526, pUser.socket.language )); // You find no ripe dates to pick. Try again later.
 	}
 	if( Dates == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
-			pUser.SysMessage( "You fail to pick any dates." );
+			pUser.SysMessage( GetDictionaryEntry( 2527, pUser.socket.language )); // You fail to pick any dates.
 		if( loot == 3 || loot == 1 )
 	 	{
-			pUser.SysMessage( "You pick a bunch of dates from the date-palm." );
+			pUser.SysMessage( GetDictionaryEntry( 2528, pUser.socket.language )); // You pick a bunch of dates from the date-palm.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1727", 1, "ITEM", true );
 			DateCount--;
 			iUsed.SetTag( "DateCounter", DateCount );
 			if( DateCount == 1)
-				pUser.SysMessage( "There is "+DateCount+" ripe bunch of dates left on the tree." );
+				pUser.SysMessage( GetDictionaryEntry( 2529, pUser.socket.language )); // There is 1 ripe bunch of dates left on the tree.
 			else
-				pUser.SysMessage( "There are "+DateCount+" ripe dates left on the tree." );
-		    	if( DateCount == 0 )
+			{
+				var dateCountMsg = GetDictionaryEntry( 2530, pUser.socket.language ); // There are %i ripe bunches of dates left on the tree.
+				pUser.SysMessage( dateCountMsg.replace(/%i/gi, DateCount ));
+			}
+		    if( DateCount == 0 )
 			{
 				if( iUsed.id == 0x0d96 )
 					iUsed.id = 0x0d95;

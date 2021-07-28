@@ -726,6 +726,65 @@ void cSkills::SmeltOre( CSocket *s )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 cSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate a player's chance (returned as value between 0 to 1000) of controlling 
+//|					(having commands accepted) a follower
+//o-----------------------------------------------------------------------------------------------o
+UI16 cSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
+{
+	SI16 petOrneriness = static_cast<SI16>(Npc->GetOrneriness());
+	
+	// If difficulty to control is below a certain treshold (29.1) or it's a summoned creature, 100% chance to control creature
+	if( petOrneriness <= 291 || ( petOrneriness == 0 && Npc->GetTaming() <= 291 ) || Npc->IsDispellable() )
+		return static_cast<SI16>(1000);
+
+	// TODO: Check if NPC can be tamed via necromancer Dark Wolf Familiar
+	//if( petOrneriness > 249 && CheckFamiliarMastery( mChar, Npc ))
+		//toTame = 249;
+
+	// Fetch player's skill values (with modifiers)
+	SI16 tamingSkill	= static_cast<SI16>(mChar->GetSkill( TAMING ));
+	SI16 loreSkill		= static_cast<SI16>(mChar->GetSkill( ANIMALLORE ));
+
+	SI16 bonusChance	= 0;
+	SI16 totalChance	= 700; // base chance of success
+	SI16 tamingSkillMod	= 6;
+	SI16 animalLoreMod	= 6;
+
+	// Base bonuses based on skill vs orneriness
+	SI16 tamingSkillBonus = static_cast<SI16>(tamingSkill - petOrneriness);
+	SI16 animalLoreBonus = static_cast<SI16>(loreSkill - petOrneriness);
+
+	// Calculated bonus modifiers
+	if( tamingSkillBonus < 0 )
+		tamingSkillMod = 28;
+	if( animalLoreBonus < 0 )
+		animalLoreMod= 14;
+
+	tamingSkillBonus *= tamingSkillMod;
+	animalLoreBonus *= animalLoreMod;
+
+	// Bonus chance equals average of bonuses for tamingskill and animallore
+	bonusChance = static_cast<SI16>(( tamingSkillBonus + animalLoreBonus ) / 2);
+	totalChance += bonusChance;
+
+	// Modify chance based on NPCs loyalty (or lack thereof)
+	totalChance -= ( Npc->GetMaxLoyalty() - Npc->GetLoyalty() ) * 10;
+
+	// Finally, apply a 15% penalty to chance for friends of the pet trying to control
+	if( Npcs->checkPetFriend( mChar, Npc ) )
+	{
+		totalChance -= ( totalChance * 0.15 );
+	}
+
+	// Clamp lower chance to 20% and upper chance to 99%
+	totalChance = std::clamp(totalChance, static_cast<SI16>(200), static_cast<SI16>(990));
+
+	return static_cast<UI16>(totalChance);
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to check a players skill based on the highskill and lowskill it was called
@@ -1197,15 +1256,15 @@ void cSkills::Fish( CSocket *mSock, CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player uses a skill from the skill list
 //o-----------------------------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... );
+//void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... );
 void cSkills::SkillUse( CSocket *s, UI08 x )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsDead() )
 	{
-		ClilocMessage( s, 6, 0x0040, FNT_NORMAL, 500012 );
-		//s->sysmessage( 392 );
+		//ClilocMessage( s, SYSTEM, 0x0040, FNT_NORMAL, 500012 );
+		s->sysmessage( 9054 ); // You cannot use skills while dead.
 		return;
 	}
 	if( ( x != STEALTH && mChar->GetVisible() == VT_TEMPHIDDEN ) || mChar->GetVisible() == VT_INVISIBLE )
@@ -1383,18 +1442,18 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 	VALIDATESOCKET( s );
 	if( npc == mChar )
 	{
-		s->sysmessage( 873 );
+		s->sysmessage( 873 ); // You catch yourself red handed.
 		return;
 	}
 	if( npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
-		s->sysmessage( 874 );
+		s->sysmessage( 874 ); // You cannot steal that.
 		return;
 	}
 	CItem *itemCont = static_cast<CItem *>(item->GetCont());
 	if( itemCont != nullptr && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
 	{
-		s->sysmessage( 874 );
+		s->sysmessage( 874 ); // You cannot steal that.
 		return;
 	}
 
@@ -1429,29 +1488,32 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		}
 	}
 
-	s->sysmessage( 877, npc->GetName().c_str(), item->GetName().c_str() );
+	std::string npcTargetName = getNpcDictName( npc );
+	std::string myNpcTargetName = getNpcDictName( npc, s );
+
+	s->sysmessage( 877, myNpcTargetName.c_str(), item->GetName().c_str() ); // You reach into %s's pack and try to take something...
 	if( objInRange( mChar, npc, DIST_NEXTTILE ) )
 	{
 		if( Combat->calcDef( mChar, 0, false ) > 40 )
 		{
-			s->sysmessage( 1643 );
+			s->sysmessage( 1643 ); // Your armour is too heavy to do that
 			return;
 		}
 		SI16 stealCheck = calcStealDiff( mChar, item );
 		if( stealCheck == -1 )
 		{
-			s->sysmessage( 1551 );
+			s->sysmessage( 1551 ); // That is too heavy
 			return;
 		}
 
 		if( mChar->GetCommandLevel() < npc->GetCommandLevel() )
 		{
-			s->sysmessage( 878 );
+			s->sysmessage( 878 ); // You can't steal from gods.
 			return;
 		}
 		if( item->isNewbie() )
 		{
-			s->sysmessage( 879 );
+			s->sysmessage( 879 ); // That item has no value to you.
 			return;
 		}
 
@@ -1461,7 +1523,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		{
 			CItem *pack = mChar->GetPackItem();
 			item->SetCont( pack );
-			s->sysmessage( 880 );
+			s->sysmessage( 880 ); // You successfully steal that item.
 
 			std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
 			for( auto targScriptTrig : targetScriptTriggers )
@@ -1477,13 +1539,13 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			}
 		}
 		else
-			s->sysmessage( 881 );
+			s->sysmessage( 881 ); // You failed to steal that item.
 
 		if( ( !canSteal && RandomNum( 1, 5 ) == 5 ) || mChar->GetSkill( STEALING ) < RandomNum( 0, 1001 ) )
 		{//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
-			s->sysmessage( 882 );
+			s->sysmessage( 882 ); // You have been caught!
 			if( npc->IsNpc() )
-				npc->TextMessage( nullptr, 883, TALK, false );
+				npc->TextMessage( nullptr, 883, TALK, false ); // Guards!! A thief is among us!
 
 			if( WillResultInCriminal( mChar, npc ) )
 				criminal( mChar );
@@ -1492,16 +1554,16 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 
 			if( item->GetName()[0] != '#' )
 			{
-				temp = strutil::format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() );
-				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npc->GetName().c_str() );
+				temp = strutil::format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() ); // // You notice %s trying to steal %s from you!
+				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
 			}
 			else
 			{
 				std::string tileName;
 				tileName.reserve( MAX_NAME );
 				getTileName( (*item), tileName );
-				temp = strutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() );
-				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
+				temp = strutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() ); // You notice %s trying to steal %s from you!
+				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
 			}
 
 			CSocket *npcSock = npc->GetSocket();
@@ -1519,7 +1581,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		}
 	}
 	else
-		s->sysmessage( 886 );
+		s->sysmessage( 886 ); // You are too far away to steal that item.
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 calcStealDiff( CChar *c, CItem *i )
@@ -1573,7 +1635,10 @@ void cSkills::Tracking( CSocket *s, SI32 selection )
 	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )) );
 	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingRedisplayTime() ) ));
 	if( ValidateObject( i->GetTrackingTarget() ) )
-		s->sysmessage( 1644, i->GetTrackingTarget()->GetName().c_str() );
+	{
+		std::string trackingTargetName = getNpcDictName( i->GetTrackingTarget() );
+		s->sysmessage( 1644, trackingTargetName.c_str() ); // You are now tracking %s.
+	}
 	Track( i );
 }
 
@@ -1666,7 +1731,8 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 						case EAST:		dirMessage = 897;	break;
 						default:		dirMessage = 898;	break;
 					}
-					line = tempChar->GetName() + " " + Dictionary->GetEntry( dirMessage, mLang );
+					std::string tempName = getNpcDictName( tempChar );
+					line = tempName + " " + Dictionary->GetEntry( dirMessage, mLang );
 					toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 				}
 			}
@@ -1775,17 +1841,19 @@ void cSkills::Persecute( CSocket *s )
 		{
 			CSocket *tSock = targChar->GetSocket();
 			targChar->SetMana( targChar->GetMana() - decrease ); // decrease mana
-			s->sysmessage( 972 );
+			s->sysmessage( 972 ); // Your spiritual forces disturb the enemy!
 			if( tSock != nullptr )
-				tSock->sysmessage( 973 );
+				tSock->sysmessage( 973 ); // A damned soul is disturbing your mind!
 			s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-			targChar->TextMessage( nullptr, 974, EMOTE, 1, targChar->GetName().c_str() );
+
+			std::string targCharName = getNpcDictName( targChar );
+			targChar->TextMessage( nullptr, 974, EMOTE, 1, targCharName.c_str() ); // %s is persecuted by a ghost!
 		}
 		else
-			s->sysmessage( 975 );
+			s->sysmessage( 975 ); // Your mind is not strong enough to disturb the enemy
 	}
 	else
-		s->sysmessage( 976 );
+		s->sysmessage( 976 ); // You are unable to persecute him now. Rest a little.
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1949,9 +2017,9 @@ bool cSkills::LoadMiningData( void )
 					toAdd.oreChance = 0;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
-						UTag = strutil::toupper( tag );
+						UTag = strutil::upper( tag );
 						data = individualOre->GrabData();
-						data = strutil::stripTrim( data );
+						data = strutil::trim( strutil::removeTrailing( data, "//" ));
 						switch( (UTag.data()[0]) )	// break on tag
 						{
 							case 'C':
@@ -2107,14 +2175,14 @@ void cSkills::LoadCreateMenus( void )
 			std::string eName = ourScript->EntryName();
 			if( "SUBMENU" == eName.substr( 0, 7 ) )	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 			{
-				eName = strutil::stripTrim( eName );
+				eName = strutil::trim( strutil::removeTrailing( eName, "//" ));
 				auto ssecs = strutil::sections( eName, " " );
-				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					if( UTag == "MENU" )
 					{
 						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
@@ -2129,7 +2197,7 @@ void cSkills::LoadCreateMenus( void )
 			{
 				auto ssecs = strutil::sections( eName, " " );
 				
-				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 				createEntry tmpEntry;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
@@ -2139,9 +2207,9 @@ void cSkills::LoadCreateMenus( void )
 
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					if( UTag == "COLOUR" )
 					{
 						tmpEntry.colour =  static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -2182,15 +2250,15 @@ void cSkills::LoadCreateMenus( void )
 						{
 							if( ssecs.size() == 2 )
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 							}
 							else
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
-								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0));
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
+								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 0));
 							}
 						}
-						std::string resType = "RESOURCE " + strutil::stripTrim( ssecs[0] );
+						std::string resType = "RESOURCE " + strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
 						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
 						if( resList != nullptr )
 						{
@@ -2203,7 +2271,7 @@ void cSkills::LoadCreateMenus( void )
 						}
 						else
 						{
-							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0 )) );
+							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )) );
 						}
 
 						tmpEntry.resourceNeeded.push_back( tmpResource );
@@ -2223,14 +2291,14 @@ void cSkills::LoadCreateMenus( void )
 							if( ssecs.size() == 2 )
 							{
 								tmpResource.maxSkill = 1000;
-								tmpResource.minSkill =  static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0 ));
+								tmpResource.minSkill =  static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
 							}
 							else
 							{
-								tmpResource.minSkill = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0 ));
-								tmpResource.maxSkill = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[2] ), nullptr, 0 ));
+								tmpResource.minSkill = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+								tmpResource.maxSkill = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ));
 							}
-							tmpResource.skillNumber = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0 ));
+							tmpResource.skillNumber = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ));
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
@@ -2244,12 +2312,12 @@ void cSkills::LoadCreateMenus( void )
 			else if( "MENUENTRY" == eName.substr( 0, 9 ) )
 			{
 				auto ssecs = strutil::sections( eName, " " );
-				ourEntry = static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[1] ), nullptr, 0));
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = strutil::toupper( tag );
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
-					data = strutil::stripTrim( data );
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					if( UTag == "ID" )
 					{
 						skillMenus[ourEntry].targID =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
@@ -2534,9 +2602,9 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 		std::string tag, data, UTag;
 		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
 		{
-			UTag = strutil::toupper( tag );
+			UTag = strutil::upper( tag );
 			data = GumpHeader->GrabData();
-			data = strutil::stripTrim( data );
+			data = strutil::trim( strutil::removeTrailing( data, "//" ));
 			if( UTag == "BUTTONLEFT" )
 			{
 				btnLeft = static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -3002,7 +3070,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
-		iCharID->TextMessage( nullptr, 741, EMOTE, 1, iCharID->GetName().c_str() );
+		iCharID->TextMessage( nullptr, 741, EMOTE, 1, iCharID->GetName().c_str() ); // %s is grinding some bone into powder
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );

@@ -1,6 +1,6 @@
 [paroxysmus]
 {
-NAME=Chief Paroxysmus
+NAME=#//Chief Paroxysmus
 ID=0x0100
 DIRECTION=RND
 BACKPACK
@@ -31,9 +31,9 @@ RACE=18
 FLAG=NEUTRAL
 }
 
-[abmyssalhorror]
+[abyssmalhorror]
 {
-NAME=an abyssmal horror
+NAME=#//an abyssmal horror
 ID=0x0138
 DIRECTION=RND
 BACKPACK
@@ -67,7 +67,7 @@ FLAG=NEUTRAL
 
 [bonedaemon]
 {
-NAME=a bone daemon
+NAME=#//a bone daemon
 ID=0x0134
 DIRECTION=RND
 BACKPACK
@@ -101,8 +101,8 @@ FLAG=NEUTRAL
 
 [barracoon]
 {
-NAME=barracoon
-TITLE=the piper
+NAME=Barracoon
+TITLE=5012//the Piper
 ID=0x0190
 SKIN=0x83EA
 DIRECTION=RND
@@ -144,9 +144,9 @@ FLAG=NEUTRAL
 
 [darkfather]
 {
-NAME=a demon knight
+NAME=#//a demon knight
 NAMELIST=14
-TITLE=the Dark Father
+TITLE=5013//the Dark Father
 ID=0x013e
 DIRECTION=RND
 BACKPACK
@@ -179,9 +179,9 @@ FLAG=NEUTRAL
 
 [darknightcreeper]
 {
-NAME=a darknight creeper
+NAME=#//a darknight creeper
 NAMELIST=15
-TITLE=the Darknight Creeper
+TITLE=5014//the Darknight Creeper
 ID=0x0139
 DIRECTION=RND
 BACKPACK
@@ -215,7 +215,7 @@ FLAG=NEUTRAL
 
 [dreadhorn]
 {
-NAME=Dread Horn
+NAME=#//Dread Horn
 ID=0x101
 DIRECTION=RND
 BACKPACK
@@ -242,7 +242,7 @@ FLAG=NEUTRAL
 
 [fleshrenderer]
 {
-NAME=the Flesh Renderer
+NAME=#//a fleshrenderer
 ID=0x13b
 DIRECTION=RND
 BACKPACK
@@ -270,9 +270,9 @@ FLAG=NEUTRAL
 
 [impaler]
 {
-NAME=an impaler
+NAME=#//an impaler
 NAMELIST=16
-TITLE=the Impaler
+TITLE=5015//the Impaler
 ID=0x132
 DIRECTION=RND
 BACKPACK
@@ -302,7 +302,7 @@ FLAG=NEUTRAL
 
 [ladymelisande]
 {
-NAME=Lady Melisande
+NAME=#//Lady Melisande
 ID=0x102
 DIRECTION=RND
 BACKPACK
@@ -329,7 +329,7 @@ FLAG=NEUTRAL
 
 [lordoaks]
 {
-NAME=Lord Oaks
+NAME=5007//Lord Oaks
 ID=0x00af
 DIRECTION=RND
 BACKPACK
@@ -392,7 +392,7 @@ FLAG=NEUTRAL
 
 [interredgrizzle]
 {
-NAME=a monstrous interred grizzle
+NAME=#//Monstrous Interred Grizzle
 ID=0x103
 DIRECTION=RND
 BACKPACK
@@ -424,7 +424,7 @@ FLAG=NEUTRAL
 [neira]
 {
 NAME=Neira
-TITLE=the Necromancer
+TITLE=5016//the Necromancer
 ID=0x0191
 SKIN=0x83fe
 DIRECTION=RND
@@ -526,7 +526,7 @@ FLAG=NEUTRAL
 [serado]
 {
 NAME=Serado
-TITLE=the Awakened
+TITLE=5017//the Awakened
 ID=0xf9
 DIRECTION=RND
 BACKPACK
@@ -554,9 +554,9 @@ FLAG=NEUTRAL
 
 [shadowknight]
 {
-NAME=a shadowknight
+NAME=#//a shadowknight
 NAMELIST=17
-TITLE=the Shadow Knight
+TITLE=5018//the Shadow Knight
 ID=0x137
 DIRECTION=RND
 BACKPACK
@@ -589,7 +589,7 @@ FLAG=NEUTRAL
 
 [shimmeringeffusion]
 {
-NAME=The Shimmering Effusion
+NAME=5008//Shimmering Effusion
 ID=0x105
 DIRECTION=RND
 BACKPACK
@@ -655,7 +655,7 @@ FLAG=NEUTRAL
 
 [theharrower]
 {
-NAME=The Harrower
+NAME=5009//The Harrower
 ID=0x92
 DIRECTION=RND
 BACKPACK
@@ -687,7 +687,7 @@ FLAG=NEUTRAL
 
 [trueharrower]
 {
-NAME=The True Harrower
+NAME=5010//The True Harrower
 ID=0x30c
 DIRECTION=RND
 BACKPACK
@@ -720,7 +720,7 @@ FLAG=NEUTRAL
 
 [travesty]
 {
-NAME=a travesty
+NAME=#//Travesty
 ID=0x108
 DIRECTION=RND
 BACKPACK

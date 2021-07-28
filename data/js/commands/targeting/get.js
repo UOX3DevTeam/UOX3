@@ -8,17 +8,18 @@ function command_GET( socket, cmdString )
 	if( cmdString )
 	{
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, "Choose target to get " + cmdString + " property for:" );
+		var tempMsg = GetDictionaryEntry( 8079, socket.language ); // Choose target to get %s property for:
+		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ));
 	}
 	else
-		socket.SysMessage( "No property was specified for the GET command." );
+		socket.SysMessage( GetDictionaryEntry( 8080, socket.language )); // No property was specified for the GET command.
 }
 
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) )
 	{
-		socket.SysMessage( "'Get': Invalid target" );
+		socket.SysMessage( "'Get': " + GetDictionaryEntry( 2353, socket.language )); // Invalid target.
 		return;
 	}
 
@@ -135,7 +136,7 @@ function onCallback0( socket, ourObj )
 		else if( ourObj.isItem )
 			HandleGetItem( socket, ourObj, uKey );
 		else
-			socket.SysMessage( "Invalid property provided for get command: " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
 		break;
 	}
 }
@@ -263,11 +264,11 @@ function HandleGetItem( socket, ourItem, uKey )
 		{
 			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
 			{
-				socket.SysMessage( "These properties are only found on objects added as spawner objects via the 'ADD SPAWNER # command!" );
+				socket.SysMessage( GetDictionaryEntry( 8082, socket.language )); // These properties are only found on objects added as spawner objects via the 'ADD SPAWNER # command!
 			}
 			else
 			{
-				socket.SysMessage( "Invalid property provided for get command: " + uKey );
+				socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
 			}
 		}
 		break;
@@ -291,7 +292,7 @@ function HandleGetSpawner( socket, ourSpawn, uKey )
 		socket.SysMessage( ourSpawn.maxinterval );
 		break;
 	default:
-		socket.SysMessage( "Invalid property provided for get command: " + uKey );
+		socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
 	}
 }
 
@@ -304,6 +305,30 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "ORGID":
 		socket.SysMessage( "0x" + (ourChar.orgID).toString(16) + " (" + ourChar.orgID + ")" );
+		break;
+	case "CONTROLSLOTS":
+		socket.SysMessage( ourChar.controlSlots );
+		break;
+	case "CONTROLSLOTSUSED":
+		socket.SysMessage( ourChar.controlSlotsUsed );
+		break;
+	case "PETCOUNT":
+		socket.SysMessage( ourChar.petCount );
+		break;
+	case "MAXLOYALTY":
+		socket.SysMessage( ourChar.maxLoyalty );
+		break;
+	case "LOYALTY":
+		socket.SysMessage( ourChar.loyalty );
+		break;
+	case "LOYALTYRATE":
+		socket.SysMessage( ourChar.loyaltyRate );
+		break;
+	case "DEATHS":
+		socket.SysMessage( ourChar.deaths );
+		break;
+	case "OWNERCOUNT":
+		socket.SysMessage( ourChar.ownerCount );
 		break;
 	case "FONT":
 		socket.SysMessage( ourChar.font );
@@ -682,7 +707,7 @@ function HandleGetChar( socket, ourChar, uKey )
 		}
 		break;
 	default:
-		socket.SysMessage( "Invalid property provided for get command: " + uKey );
+		socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
 		break;
 	}
 }

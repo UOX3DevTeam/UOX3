@@ -414,6 +414,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 // Display list of co-owners, friends or banned players
 function displayPlayerList( pUser, listType )
 {
+	var pLanguage = pUser.socket.language;
 	var playerListCount = 0;
 	var playerIndex = 0;
 	var playerIndexStart = 0;
@@ -456,27 +457,27 @@ function displayPlayerList( pUser, listType )
 	housePlayerListGump.AddBackground( 0, 0, 250, 360, 2620 );  		// Tile Dark Gray Background
 	housePlayerListGump.AddBackground( 10, 10, 230, 340, 3000 );  	// Tile White Background
 	housePlayerListGump.AddButton( 205, 15, 4017, 4018, 1, 0, 1 ); 	// Exit
-	housePlayerListGump.AddHTMLGump( 5, 15, 245, 20, 10, 0, "<CENTER>House Owner</CENTER>");
+	housePlayerListGump.AddHTMLGump( 5, 15, 245, 20, 10, 0, "<CENTER>" + GetDictionaryEntry( 2800, pLanguage ) + "</CENTER>");
 	housePlayerListGump.AddHTMLGump( 5, 30, 245, 40, 10, 0, "<CENTER>" + houseOwner + "</CENTER>" );
 	housePlayerListGump.AddGump( 35, 50, 10452 ); 				// Sign Image
 	if( listType == "owner" )
 	{
-		housePlayerListGump.AddHTMLGump( 35, 115, 170, 20, 0, 0, "CO-OWNERS (" + owners + "/" + maxOwners + ")" );
+		housePlayerListGump.AddHTMLGump( 35, 115, 170, 20, 0, 0, GetDictionaryEntry( 2801, pLanguage ) + " (" + owners + "/" + maxOwners + ")" );
 		housePlayerListGump.AddButton( 195, 115, 5402, 5402, 1, 0, 11);	// Button - Add a co-owner
 	}
 	else if( listType == "friend" )
 	{
-		housePlayerListGump.AddHTMLGump( 35, 115, 170, 20, 0, 0, "FRIENDS (" + friends + "/" + maxFriends + ")" );
+		housePlayerListGump.AddHTMLGump( 35, 115, 170, 20, 0, 0, GetDictionaryEntry( 2802, pLanguage ) + " (" + friends + "/" + maxFriends + ")" );
 		housePlayerListGump.AddButton( 195, 115, 5402, 5402, 1, 0, 21);	// Button - Add a Friend
 	}
 	else if( listType == "guest" )
 	{
-		housePlayerListGump.AddHTMLGump( 35, 113, 170, 20, 0, 0, "GUESTS (" + guests + "/" + maxGuests + ")" );
+		housePlayerListGump.AddHTMLGump( 35, 113, 170, 20, 0, 0, GetDictionaryEntry( 2803, pLanguage ) + " (" + guests + "/" + maxGuests + ")" );
 		housePlayerListGump.AddButton( 195, 115, 5402, 5402, 1, 0, 41);	// Button - Add a Guest
 	}
 	else // "banned"
 	{
-		housePlayerListGump.AddHTMLGump( 35, 115, 170, 20, 0, 0, "BANS (" + bans + "/" + maxBans + ")" );
+		housePlayerListGump.AddHTMLGump( 35, 115, 170, 20, 0, 0, GetDictionaryEntry( 2804, pLanguage ) + " (" + bans + "/" + maxBans + ")" );
 		housePlayerListGump.AddButton( 195, 115, 5402, 5402, 1, 0, 30);	// Button - Ban someone from the house
 	}
 
@@ -494,7 +495,7 @@ function displayPlayerList( pUser, listType )
 		{
 			housePlayerListGump.AddPage( pageOffset );
 			if( pageNumTotal > 1 )
-				housePlayerListGump.AddHTMLGump( 80, 300, 150, 20, 0, 0, ("Page " + pageOffset + " of " + pageNumTotal) );
+				housePlayerListGump.AddHTMLGump( 80, 300, 150, 20, 0, 0, (GetDictionaryEntry( 2805, pLanguage ) + " " + pageOffset + " of " + pageNumTotal) ); // Page
 		}
 
 		if( playerIndex >= ( playerIndexStart + (4 * pageOffset) ))
@@ -505,19 +506,19 @@ function displayPlayerList( pUser, listType )
 
 			// Before changing page, add a NEXT button to the old page
 			housePlayerListGump.AddButton( 150, 323, 4005, 4006, 0, pageOffset, 0 ); 		// Next page
-			housePlayerListGump.AddHTMLGump( 190, 325, 40, 20, 0, 0, "NEXT");
+			housePlayerListGump.AddHTMLGump( 190, 325, 40, 20, 0, 0, GetDictionaryEntry( 2806, pLanguage )); // NEXT
 
 
 			// Start of next page, with a PREV button
 			housePlayerListGump.AddPage( pageOffset );
-			housePlayerListGump.AddHTMLGump( 80, 300, 150, 20, 0, 0, ("Page " + pageOffset + " of " + pageNumTotal) );
+			housePlayerListGump.AddHTMLGump( 80, 300, 150, 20, 0, 0, (GetDictionaryEntry( 2805, pLanguage ) + " " + pageOffset + " of " + pageNumTotal )); // Page
 			housePlayerListGump.AddButton( 30, 323, 4014, 4015, 0, (pageOffset - 1), 0 ); 		// Prev page
-			housePlayerListGump.AddHTMLGump( 70, 325, 40, 20, 0, 0, "PREV");
+			housePlayerListGump.AddHTMLGump( 70, 325, 40, 20, 0, 0, GetDictionaryEntry( 2807, pLanguage )); // PREV
 		}
 
 		// Add button to remove a co-owner... but do we know which co-owner this is?
 		housePlayerListGump.AddButton( 25, yGumpOffset, 2710, 2711, 1, 0, playerIndex);	// Button - Remove a co-owner
-		housePlayerListGump.AddHTMLGump( 50, yGumpOffset, 170, 20, 0, 0, "(Remove) - " + houseChar.name );
+		housePlayerListGump.AddHTMLGump( 50, yGumpOffset, 170, 20, 0, 0, "(" + GetDictionaryEntry( 2808, pLanguage ) + ") - " + houseChar.name ); // Remove
 
 		if( listType == "owner" ) // owners
 			houseCoOwnerList.push( houseChar );
@@ -540,22 +541,24 @@ function displayPlayerList( pUser, listType )
 // Gump displayed to guests
 function houseGuestGump( pUser )
 {
+	var pLanguage = pUser.socket.language;
 	var houseGuestGump = new Gump;
 	// Page 0 - Shared with all other pages
 	houseGuestGump.AddPage( 0 );
-	houseGuestGump.AddBackground( 0, 0, 210, 200, 2620 );	// Tile Dark Gray Background
-	houseGuestGump.AddBackground( 10, 10, 190, 180, 3000 );	// Tile White Background
+	houseGuestGump.AddBackground( 0, 0, 210, 220, 2620 );	// Tile Dark Gray Background
+	houseGuestGump.AddBackground( 10, 10, 190, 200, 3000 );	// Tile White Background
 	houseGuestGump.AddGump( 30, 0, 100 ); 					// Sign Image
 
 	houseGuestGump.AddHTMLGump( 45, Math.max((60 - iSign.name.length),10), 115, 75, 26, 0, ("<CENTER><BIG>" + iSign.name + "</BIG></CENTER>") );
-	houseGuestGump.AddHTMLGump( 30, 105, 140, 20, 0, 0, "<CENTER>Owned by: " + houseOwner + "</CENTER>" );
+	houseGuestGump.AddHTMLGump( 30, 105, 140, 20, 0, 0, "<CENTER>" + GetDictionaryEntry( 2800, pLanguage ) + "</CENTER>" ); // House Owner:
+	houseGuestGump.AddHTMLGump( 30, 125, 140, 20, 0, 0, "<CENTER>" + houseOwner + "</CENTER>" ); // Owner name
 	if( !houseIsPublic )
-		houseGuestGump.AddHTMLGump( 20, 125, 150, 40, 26, 0, "<CENTER>This house is <BASEFONT color=#FF0000>private</BASEFONT></CENTER>");
+		houseGuestGump.AddHTMLGump( 20, 150, 150, 40, 26, 0, "<CENTER>" + GetDictionaryEntry( 2809, pLanguage ) + " <BASEFONT color=#FF0000>" + GetDictionaryEntry( 2810, pLanguage ) + "</BASEFONT></CENTER>" ); // This house is // private
 	else
 	{
-		houseGuestGump.AddHTMLGump( 20, 125, 170, 20, 26, 0, "<CENTER>This house is </CENTER>");
-		houseGuestGump.AddHTMLGump( 20, 145, 170, 20, 26, 0, "<CENTER><BASEFONT color=#00FF00>open to the public</BASEFONT></CENTER>");
-		houseGuestGump.AddHTMLGump( 20, 165, 170, 20, 26, 0, "<CENTER>"+visitCount+" visitor(s)</CENTER>");
+		houseGuestGump.AddHTMLGump( 20, 150, 170, 20, 26, 0, "<CENTER>" + GetDictionaryEntry( 2809, pLanguage ) + " </CENTER>" ); // This house is
+		houseGuestGump.AddHTMLGump( 20, 170, 170, 20, 26, 0, "<CENTER><BASEFONT color=#00FF00>" + GetDictionaryEntry( 2811, pLanguage ) + "</BASEFONT></CENTER>" ); //open to the public
+		houseGuestGump.AddHTMLGump( 20, 190, 170, 20, 26, 0, "<CENTER>"+visitCount+" " + GetDictionaryEntry( 2812, pLanguage ) + "</CENTER>" ); // visitor(s)
 	}
 
 	houseGuestGump.AddButton( 175, 10, 4017, 4018, 1, 0, 0 ); 		// Exit
@@ -566,6 +569,7 @@ function houseGuestGump( pUser )
 // Gump displayed to house owners
 function houseOwnerGump( pUser )
 {
+	var pLanguage = pUser.socket.language;
 	var houseOwnerGump = new Gump;
 	// Page 0 - Shared with all other pages
 	houseOwnerGump.AddPage( 0 );
@@ -580,28 +584,34 @@ function houseOwnerGump( pUser )
 	houseOwnerGump.AddButton( 165, 107, 4008, 4009, 0, 2, 0 ); 		// Friends
 	houseOwnerGump.AddButton( 300, 107, 4029, 4030, 0, 3, 0 ); 		// Options
 	houseOwnerGump.AddButton( 300, 352, 4017, 4018, 1, 0, 0 ); 		// Exit
-	houseOwnerGump.AddHTMLGump( 70, 109, 90, 20, 0, 0, "INFO");				// Info
-	houseOwnerGump.AddHTMLGump( 200, 109, 65, 20, 0, 0, "FRIENDS");			// Friends
-	houseOwnerGump.AddHTMLGump( 335, 109, 75, 20, 0, 0, "OPTIONS");			// options
-	houseOwnerGump.AddHTMLGump( 70, 354, 175, 20, 0, 0, "Change Sign");		// Change Sign
-	houseOwnerGump.AddHTMLGump( 200, 354, 175, 20, 0, 0, "Change Name");	// Change Name
-	houseOwnerGump.AddHTMLGump( 335, 354, 40, 20, 0, 0, "EXIT");			// Exit
+	houseOwnerGump.AddHTMLGump( 70, 109, 90, 20, 0, 0, GetDictionaryEntry( 2813, pLanguage ));		// Info
+	houseOwnerGump.AddHTMLGump( 200, 109, 65, 20, 0, 0, GetDictionaryEntry( 2802, pLanguage ));		// Friends
+	houseOwnerGump.AddHTMLGump( 335, 109, 75, 20, 0, 0, GetDictionaryEntry( 2814, pLanguage ));		// options
+	houseOwnerGump.AddHTMLGump( 70, 354, 175, 20, 0, 0, GetDictionaryEntry( 2815, pLanguage ));		// Change Sign
+	houseOwnerGump.AddHTMLGump( 200, 354, 175, 20, 0, 0, GetDictionaryEntry( 2816, pLanguage ));	// Change Name
+	houseOwnerGump.AddHTMLGump( 335, 354, 40, 20, 0, 0, GetDictionaryEntry( 2817, pLanguage ));		// Exit
 
 	// Page 1 - Information
 	houseOwnerGump.AddPage( 1 );
-	houseOwnerGump.AddHTMLGump( 35, 145, 350,  20, 0, 0, "Owned by: " + houseOwner );
+	houseOwnerGump.AddHTMLGump( 35, 145, 350,  20, 0, 0, GetDictionaryEntry( 2800, pLanguage ) + " " + houseOwner ); // House Owner: Owner name
 	if( !houseIsPublic )
-		houseOwnerGump.AddHTMLGump( 35, 165, 350, 20, 26, 0, "This house is <BASEFONT color=#FF0000>private</BASEFONT>");
+	{
+		// This house is // private
+		houseOwnerGump.AddHTMLGump( 35, 165, 350, 20, 26, 0, GetDictionaryEntry( 2809, pLanguage ) + " <BASEFONT color=#FF0000>" + GetDictionaryEntry( 2810, pLanguage ) + "</BASEFONT>" );
+	}
 	else
-		houseOwnerGump.AddHTMLGump( 35, 165, 350, 20, 26, 0, "This house is <BASEFONT color=#00FF00>open to the public</BASEFONT> ("+visitCount.toString()+" visitors) ");
+	{
+		 // This house is <BASEFONT color=#00FF00>open to the public</BASEFONT> ("+visitCount.toString()+" visitors) ");
+		houseOwnerGump.AddHTMLGump( 35, 165, 350, 20, 26, 0, GetDictionaryEntry( 2809, pLanguage ) + " <BASEFONT color=#00FF00>" + GetDictionaryEntry( 2811, pLanguage ) + "</BASEFONT> (" + visitCount.toString() + " " + GetDictionaryEntry( 2812, pLanguage ) + ")" );
+	}
 
-	houseOwnerGump.AddHTMLGump( 35, 200, 350, 20, 0, 0, "Number of locked down items:");
-	houseOwnerGump.AddHTMLGump( 35, 220, 350, 20, 0, 0, "Number of secure containers:");
-	houseOwnerGump.AddHTMLGump( 35, 240, 350, 20, 0, 0, "Number of trash barrels:");
-	houseOwnerGump.AddHTMLGump( 35, 260, 350, 20, 0, 0, "Number of player vendors:");
+	houseOwnerGump.AddHTMLGump( 35, 200, 350, 20, 0, 0, GetDictionaryEntry( 2818, pLanguage )); // Number of locked down items:
+	houseOwnerGump.AddHTMLGump( 35, 220, 350, 20, 0, 0, GetDictionaryEntry( 2819, pLanguage )); // Number of secure containers:
+	houseOwnerGump.AddHTMLGump( 35, 240, 350, 20, 0, 0, GetDictionaryEntry( 2820, pLanguage )); // Number of trash barrels:
+	houseOwnerGump.AddHTMLGump( 35, 260, 350, 20, 0, 0, GetDictionaryEntry( 2821, pLanguage )); // Number of player vendors:
 
-	houseOwnerGump.AddHTMLGump( 35, 300, 350, 20, 0, 0, "Built On:");
-	houseOwnerGump.AddHTMLGump( 35, 320, 350, 20, 0, 0, "Last Traded:");
+	houseOwnerGump.AddHTMLGump( 35, 300, 350, 20, 0, 0, GetDictionaryEntry( 2822, pLanguage )); // Built On:
+	houseOwnerGump.AddHTMLGump( 35, 320, 350, 20, 0, 0, GetDictionaryEntry( 2823, pLanguage )); // Last Traded:
 
 	houseOwnerGump.AddHTMLGump( 300, 200, 100, 20, 0, 0, " " + lockdowns + " / " + maxLockdowns);
 	houseOwnerGump.AddHTMLGump( 300, 220, 100, 20, 0, 0, " " + secureContainers + " / " + maxSecureContainers);
@@ -613,22 +623,22 @@ function houseOwnerGump( pUser )
 
 	// Page 2 - Friends, Co-owners and Banlist
 	houseOwnerGump.AddPage( 2 );
-	houseOwnerGump.AddButton( 65, 145, 2714, 2715, 1, 0, 10);	// Button - List of co-owners
-	houseOwnerGump.AddButton( 65, 165, 2714, 2715, 1, 0, 11);	// Button - Add a co-owner
-	houseOwnerGump.AddButton( 65, 185, 2710, 2711, 1, 0, 12);	// Button - Remove a co-owner
-	houseOwnerGump.AddButton( 65, 205, 2708, 2709, 1, 0, 13);	// Button - Clear co-owner list
-	houseOwnerGump.AddHTMLGump( 90, 145, 170, 20, 0, 0, "List of co-owners");
-	houseOwnerGump.AddHTMLGump( 90, 165, 170, 20, 0, 0, "Add a co-owner");
-	houseOwnerGump.AddHTMLGump( 90, 185, 170, 20, 0, 0, "Remove a co-owner");
-	houseOwnerGump.AddHTMLGump( 90, 205, 170, 20, 0, 0, "Clear co-owner list");
+	houseOwnerGump.AddButton( 35, 145, 2714, 2715, 1, 0, 10);	// Button - List of co-owners
+	houseOwnerGump.AddButton( 35, 165, 2714, 2715, 1, 0, 11);	// Button - Add a co-owner
+	houseOwnerGump.AddButton( 35, 185, 2710, 2711, 1, 0, 12);	// Button - Remove a co-owner
+	houseOwnerGump.AddButton( 35, 205, 2708, 2709, 1, 0, 13);	// Button - Clear co-owner list
+	houseOwnerGump.AddHTMLGump( 60, 145, 170, 20, 0, 0, GetDictionaryEntry( 2824, pLanguage )); // List of co-owners
+	houseOwnerGump.AddHTMLGump( 60, 165, 170, 20, 0, 0, GetDictionaryEntry( 2825, pLanguage )); // Add a co-owner
+	houseOwnerGump.AddHTMLGump( 60, 185, 170, 20, 0, 0, GetDictionaryEntry( 2826, pLanguage )); // Remove a co-owner
+	houseOwnerGump.AddHTMLGump( 60, 205, 170, 20, 0, 0, GetDictionaryEntry( 2827, pLanguage )); // Clear co-owner list
 	houseOwnerGump.AddButton( 225, 145, 2714, 2715, 1, 0, 20);	// Button - List of Friends
 	houseOwnerGump.AddButton( 225, 165, 2714, 2715, 1, 0, 21);	// Button - Add a Friend
 	houseOwnerGump.AddButton( 225, 185, 2710, 2711, 1, 0, 22);	// Button - Remove a Friend
 	houseOwnerGump.AddButton( 225, 205, 2708, 2709, 1, 0, 23);	// Button - Clear Friends list
-	houseOwnerGump.AddHTMLGump( 250, 145, 170, 20, 15, 0, "List of Friends");
-	houseOwnerGump.AddHTMLGump( 250, 165, 170, 20, 16, 0, "Add a Friend");
-	houseOwnerGump.AddHTMLGump( 250, 185, 170, 20, 17, 0, "Remove a Friend");
-	houseOwnerGump.AddHTMLGump( 250, 205, 170, 20, 18, 0, "Clear Friends list");
+	houseOwnerGump.AddHTMLGump( 250, 145, 170, 20, 15, 0, GetDictionaryEntry( 2828, pLanguage )); // List of Friends
+	houseOwnerGump.AddHTMLGump( 250, 165, 170, 20, 16, 0, GetDictionaryEntry( 2829, pLanguage )); // Add a Friend
+	houseOwnerGump.AddHTMLGump( 250, 185, 170, 20, 17, 0, GetDictionaryEntry( 2830, pLanguage )); // Remove a Friend
+	houseOwnerGump.AddHTMLGump( 250, 205, 170, 20, 18, 0, GetDictionaryEntry( 2831, pLanguage )); // Clear Friends list
 
 	if( !houseIsPublic )
 	{
@@ -636,20 +646,20 @@ function houseOwnerGump( pUser )
 		houseOwnerGump.AddButton( 65, 265, 2714, 2715, 1, 0, 41);	// Button - Add a guest
 		houseOwnerGump.AddButton( 65, 285, 2710, 2711, 1, 0, 42);	// Button - Remove a guest
 		houseOwnerGump.AddButton( 65, 305, 2708, 2709, 1, 0, 43);	// Button - Clear guest list
-		houseOwnerGump.AddHTMLGump( 90, 245, 170, 20, 0, 0, "List of guests");
-		houseOwnerGump.AddHTMLGump( 90, 265, 170, 20, 0, 0, "Add a guest");
-		houseOwnerGump.AddHTMLGump( 90, 285, 170, 20, 0, 0, "Remove a guest");
-		houseOwnerGump.AddHTMLGump( 90, 305, 170, 20, 0, 0, "Clear guest list");
+		houseOwnerGump.AddHTMLGump( 90, 245, 170, 20, 0, 0, GetDictionaryEntry( 2832, pLanguage )); // List of guests
+		houseOwnerGump.AddHTMLGump( 90, 265, 170, 20, 0, 0, GetDictionaryEntry( 2833, pLanguage )); // Add a guest
+		houseOwnerGump.AddHTMLGump( 90, 285, 170, 20, 0, 0, GetDictionaryEntry( 2834, pLanguage )); // Remove a guest
+		houseOwnerGump.AddHTMLGump( 90, 305, 170, 20, 0, 0, GetDictionaryEntry( 2835, pLanguage )); // Clear guest list
 	}
 
 	houseOwnerGump.AddButton( 225, 245, 2714, 2715, 1, 0, 32);	// Button - View a list of banned people
 	houseOwnerGump.AddButton( 225, 265, 2714, 2715, 1, 0, 30);	// Button - Ban someone from the house
 	houseOwnerGump.AddButton( 225, 285, 2710, 2711, 1, 0, 33);	// Button - Lift a ban
 	houseOwnerGump.AddButton( 225, 305, 2708, 2709, 1, 0, 31);	// Button - Eject someone from the house
-	houseOwnerGump.AddHTMLGump( 250, 245, 200, 20, 21, 0, "List of banned players");
-	houseOwnerGump.AddHTMLGump( 250, 265, 200, 20, 19, 0, "<BASEFONT COLOR=#FF0000>Ban player</BASEFONT>");
-	houseOwnerGump.AddHTMLGump( 250, 285, 200, 20, 22, 0, "Lift a ban");
-	houseOwnerGump.AddHTMLGump( 250, 305, 200, 20, 20, 0, "Eject player");
+	houseOwnerGump.AddHTMLGump( 250, 245, 200, 20, 21, 0, GetDictionaryEntry( 2836, pLanguage )); // List of banned players
+	houseOwnerGump.AddHTMLGump( 250, 265, 200, 20, 19, 0, "<BASEFONT COLOR=#FF0000>" + GetDictionaryEntry( 2837, pLanguage ) + "</BASEFONT>"); // Ban player
+	houseOwnerGump.AddHTMLGump( 250, 285, 200, 20, 22, 0, GetDictionaryEntry( 2838, pLanguage )); // Lift a ban
+	houseOwnerGump.AddHTMLGump( 250, 305, 200, 20, 20, 0, GetDictionaryEntry( 2839, pLanguage )); // Eject player
 
 	// Page 3 - Options
 	houseOwnerGump.AddPage( 3 );
@@ -660,13 +670,13 @@ function houseOwnerGump( pUser )
 		houseOwnerGump.AddButton( 35, 245, 2714, 2715, 1, 0, 53);	// Button - Declare this building to be public. This will make your doors unlockable
 	else
 		houseOwnerGump.AddButton( 35, 245, 2714, 2715, 1, 0, 54);	// Button - Declare this building to be private.
-	houseOwnerGump.AddHTMLGump( 60, 155, 350, 20, 23, 0, "Transfer ownership of the house");
-	houseOwnerGump.AddHTMLGump( 60, 185, 350, 20, 24, 0, "Demolish the house and get a deed back");
-	houseOwnerGump.AddHTMLGump( 60, 215, 350, 20, 25, 0, "Change the house locks");
+	houseOwnerGump.AddHTMLGump( 60, 155, 350, 20, 23, 0, GetDictionaryEntry( 2840, pLanguage )); // Transfer ownership of the house
+	houseOwnerGump.AddHTMLGump( 60, 185, 350, 20, 24, 0, GetDictionaryEntry( 2841, pLanguage )); // Demolish the house and get a deed back
+	houseOwnerGump.AddHTMLGump( 60, 215, 350, 20, 25, 0, GetDictionaryEntry( 2842, pLanguage )); // Change the house locks
 	if( !houseIsPublic )
-		houseOwnerGump.AddHTMLGump( 60, 245, 350, 40, 26, 0, "Declare this building to be public. This will make your front door unlockable.");
+		houseOwnerGump.AddHTMLGump( 60, 245, 350, 40, 26, 0, GetDictionaryEntry( 2843, pLanguage )); // Declare this building to be public. This will make your front door unlockable.
 	else
-		houseOwnerGump.AddHTMLGump( 60, 245, 350, 40, 26, 0, "Declare this building to be private.");
+		houseOwnerGump.AddHTMLGump( 60, 245, 350, 40, 26, 0, GetDictionaryEntry( 2844, pLanguage )); // Declare this building to be private.
 
 	houseOwnerGump.Send( pUser.socket );
 	houseOwnerGump.Free();
@@ -674,6 +684,7 @@ function houseOwnerGump( pUser )
 
 function houseSignNameInputGump( pUser )
 {
+	var pLanguage = pUser.socket.language;
 	var signNameInputGump = new Gump;
 	signNameInputGump.AddPage( 0 );
 	signNameInputGump.AddBackground( 0, 0, 350, 180, 2620 );  	// Tile Dark Gray Background
@@ -681,9 +692,9 @@ function houseSignNameInputGump( pUser )
 	signNameInputGump.AddButton( 305, 15, 4017, 4018, 1, 0, 1 ); 	// Exit
 	signNameInputGump.AddButton( 175, 125, 4023, 4024, 1, 0, 5 ); // Okay, confirm
 	signNameInputGump.AddGump( 25, 45, 100 ); 						// Sign Image
-	signNameInputGump.AddHTMLGump( 25, 20, 280, 20, 0, 0, "<BIG>Enter new name for sign:</BIG>" );
-	signNameInputGump.AddHTMLGump( 175, 60, 150, 60, 0, 0, "(Note: Name will be centered when viewed)" );
-	signNameInputGump.AddHTMLGump( 210, 127, 130, 20, 0, 0, "Confirm New Name" );
+	signNameInputGump.AddHTMLGump( 25, 20, 280, 20, 0, 0, "<BIG>" + GetDictionaryEntry( 2845, pLanguage ) + "</BIG>" ); // Enter new name for sign:
+	signNameInputGump.AddHTMLGump( 175, 60, 150, 60, 0, 0, GetDictionaryEntry( 2846, pLanguage )); // (Note: Name will be centered when viewed)
+	signNameInputGump.AddHTMLGump( 210, 127, 130, 20, 0, 0, GetDictionaryEntry( 2847, pLanguage )); // Confirm New Name
 	signNameInputGump.AddTextEntryLimited( 50, 60, 100, 200, 0, 1, 3, iSign.name, 60 );
 	signNameInputGump.Send( pUser.socket );
 	signNameInputGump.Free();
@@ -691,15 +702,16 @@ function houseSignNameInputGump( pUser )
 
 function confirmActionGump( pUser, confirmString, confirmButtonID )
 {
+	var pLanguage = pUser.socket.language;
 	var confirmGump = new Gump;
 	confirmGump.AddPage( 0 );
 	confirmGump.AddBackground( 0, 0, 300, 140, 2620 ); // Tile Dark Gray Background
 	confirmGump.AddBackground( 10, 10, 280, 120, 3000 ); // Tile White Background
-	confirmGump.AddHTMLGump( 10, 20, 280, 60, 0, 0, "<CENTER><BIG>Confirm Action?</BIG></CENTER>" );
+	confirmGump.AddHTMLGump( 10, 20, 280, 60, 0, 0, "<CENTER><BIG>" + GetDictionaryEntry( 2848, pLanguage ) + "</BIG></CENTER>" ); // Confirm Action?
 	confirmGump.AddButton( 100, 100, 4023, 4024, 1, 0, confirmButtonID ); // Okay, confirm
 	confirmGump.AddButton( 175, 100, 4020, 4021, 1, 0, 1 ); // Cancel
-	confirmGump.AddText( 25, 100, 0, "CONFIRM >" );
-	confirmGump.AddText( 210, 100, 0, "< CANCEL" );
+	confirmGump.AddText( 25, 100, 0, GetDictionaryEntry( 2849, pLanguage )); // CONFIRM >
+	confirmGump.AddText( 210, 100, 0, GetDictionaryEntry( 2850, pLanguage )); // < CANCEL
 	confirmGump.AddHTMLGump( 25, 50, 250, 60, 0, 0, confirmString );
 	confirmGump.Send( pUser.socket );
 	confirmGump.Free();
@@ -709,12 +721,13 @@ function confirmActionGump( pUser, confirmString, confirmButtonID )
 // so the radioID can be used to set the ID of the sign directly when player confirms selection!
 function houseSignSelectionGump( pUser )
 {
+	var pLanguage = pUser.socket.language;
 	var signSelectGump = new Gump;
 	signSelectGump.AddPage( 0 );
 	signSelectGump.AddBackground( 0, 0, 350, 370, 2620 );
 	signSelectGump.AddBackground( 10, 10, 330, 350, 3000 );
-	signSelectGump.AddHTMLGump( 0, 13, 350, 20, 0, 0, "<CENTER><BIG>Select new house sign:</BIG></CENTER>" );
-	signSelectGump.AddHTMLGump( 0, 315, 350, 20, 0, 0, "<CENTER>Confirm with OK</CENTER>" );
+	signSelectGump.AddHTMLGump( 0, 13, 350, 20, 0, 0, "<CENTER><BIG>" + GetDictionaryEntry( 2851, pLanguage ) + "</BIG></CENTER>" ); // Select new house sign:
+	signSelectGump.AddHTMLGump( 0, 315, 350, 20, 0, 0, "<CENTER>" + GetDictionaryEntry( 2852, pLanguage ) + "</CENTER>" ); // Confirm with OK
 	signSelectGump.AddButton( 305, 15, 4017, 4018, 1, 0, 1 ); 	// Exit
 	signSelectGump.AddButton( 150, 335, 4023, 4024, 1, 0, 3 ); // Change house sign OK
 	signSelectGump.AddPage( 1 );
@@ -778,7 +791,7 @@ function houseSignSelectionGump( pUser )
 	signSelectGump.AddRadio( 258, 285, 9722, (iSign.id == 3032? 1 : 0), 3032 );
 	signSelectGump.AddPicture( 280, 280, 3032 );
 
-	signSelectGump.AddText( 265, 335, 0, "NEXT" );
+	signSelectGump.AddText( 245, 335, 0, GetDictionaryEntry( 2806, pLanguage )); // NEXT
 	signSelectGump.AddButton( 305, 335, 4005, 4006, 0, 2, 0 );
 
 	signSelectGump.AddPage( 2 );
@@ -842,7 +855,7 @@ function houseSignSelectionGump( pUser )
 	signSelectGump.AddRadio( 258, 285, 9722, (iSign.id == 3140 ? 1 : 0), 3140 );
 	signSelectGump.AddPicture( 280, 285, 3140 );
 
-	signSelectGump.AddText( 60, 335, 0, "PREV" );
+	signSelectGump.AddText( 60, 335, 0, GetDictionaryEntry( 2807, pLanguage )); // PREV"
 	signSelectGump.AddButton( 19, 335, 4014, 4015, 0, 1, 0 );
 
 	signSelectGump.Send( pUser.socket );

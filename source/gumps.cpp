@@ -69,7 +69,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 
 	UI08 targType	= 0x12;
 	std::string tag	= gump->First();
-	if( strutil::toupper(strutil::extractSection(tag, " ", 0, 0 )) == "TYPE" )
+	if( strutil::upper( strutil::extractSection( tag, " ", 0, 0 )) == "TYPE" )
 	{
 		targType = strutil::value<std::uint8_t>(strutil::extractSection(tag, " ", 1, 1 ));
 		tag = gump->Next();
@@ -619,7 +619,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				yOffset=SYOFFSET;
 			}
 			// Drop in the page number text area image
-			if( strutil::toupper( tag ) == "INSERTADDMENUITEMS" )
+			if( strutil::upper( tag ) == "INSERTADDMENUITEMS" )
 			{
 				// Check to see if the desired menu has any items to add
 				if(g_mmapAddMenuMap.find(m)==g_mmapAddMenuMap.end())
@@ -912,8 +912,8 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 
 	CChar *mChar = s->CurrcharObj();
 
-	cmd		= strutil::toupper( cmd );
-	data	= strutil::toupper( data );
+	cmd		= strutil::upper( cmd );
+	data	= strutil::upper( data );
 	std::string builtString;
 
 	switch( cmd.data()[0] )
@@ -935,8 +935,8 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					auto secs = strutil::sections( data, "," );
 					if( secs.size() > 1 )
 					{
-						std::string tmp		= strutil::stripTrim( secs[0] );
-						UI16 num			= strutil::value<std::uint16_t>(strutil::stripTrim( secs[1] ));
+						std::string tmp		= strutil::trim( strutil::removeTrailing( secs[0], "//" ));
+						UI16 num			= strutil::value<std::uint16_t>(strutil::trim( strutil::removeTrailing( secs[1], "//" )));
 						Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
 					}
 					else
@@ -961,7 +961,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				{
 					return;
 				}
-				CPIHelpRequest toHandle( s,static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+				CPIHelpRequest toHandle( s,static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 				toHandle.Handle();
 			}
 			else if( cmd == "GMPAGE" )
@@ -976,7 +976,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 			{
 				if( data.empty() )
 					return;
-				UI16 placeNum = static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+				UI16 placeNum = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -1016,7 +1016,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				{
 					return;
 				}
-				BuildAddMenuGump( s, static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+				BuildAddMenuGump( s, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 			}
 			else if( cmd == "INFORMATION" )
 			{
@@ -1031,7 +1031,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				{
 					return;
 				}
-				Skills->NewMakeMenu( s,std::stoi(strutil::stripTrim( data ), nullptr, 0), (UI08)s->AddID() );
+				Skills->NewMakeMenu( s,std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0), (UI08)s->AddID() );
 			}
 			break;
 		case 'N':

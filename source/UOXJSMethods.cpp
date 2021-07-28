@@ -67,24 +67,84 @@ void MethodError( const char *txt, ... )
 //|	Purpose		-	Adds speech entry of specified type, font, color, etc to the speech queue
 //| Notes		-	Copied that here from SEFunctions.cpp. Default paramters weren't working !?
 //o-----------------------------------------------------------------------------------------------o
-void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC, SERIAL spokenTo = INVALIDSERIAL )
+void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A, FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC, SERIAL spokenTo = INVALIDSERIAL, bool useUnicode = false )
 {
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Font( fType );
-	toAdd.Speech( message );
-	toAdd.Speaker( speaker.GetSerial() );
-	toAdd.Type( sType );
-	toAdd.TargType( spTrg );
-	if( spTrg == SPTRG_INDIVIDUAL || spTrg == SPTRG_ONLYRECEIVER )
-		toAdd.SpokenTo( spokenTo );
+	if( useUnicode )
+	{
+		bool sendAll = true;
+		if( spTrg == SPTRG_INDIVIDUAL || spTrg == SPTRG_ONLYRECEIVER )
+			sendAll = false;
 
-	// Added that because transparent text could cause trouble
-	if( sColour != 0x1700 && sColour != 0x0)
-		toAdd.Colour( sColour );
+		std::string fromChar( message );
+		std::string speakerName = "";
+		if( speaker.CanBeObjType( OT_CHAR ))
+		{
+			CChar *speakerChar = calcCharObjFromSer( speaker.GetSerial() );
+			speakerName = getNpcDictName( speakerChar );
+		}
+		else
+		{
+			speakerName = speaker.GetName();
+		}
+		speakerName = strutil::stringToWstringToString( speakerName );
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( fromChar );
+		unicodeMessage.Font( fType );
+		unicodeMessage.Colour( sColour );
+		unicodeMessage.Type( sType );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( speakerName );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( speaker.GetSerial() );
+
+		if( sendAll )
+		{
+			UI16 searchDistance = DIST_SAMESCREEN;
+			if( sType == WHISPER )
+				searchDistance = DIST_NEXTTILE;
+			else if( sType == YELL )
+				searchDistance = DIST_SAMESCREEN * 1.5;
+			else if( sType == EMOTE )
+				searchDistance = DIST_INRANGE;
+
+			SOCKLIST nearbyChars = FindNearbyPlayers( &speaker, searchDistance );
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			{
+				(*cIter)->Send( &unicodeMessage );
+			}
+		}
+		else
+		{
+			CChar *targChar = calcCharObjFromSer( spokenTo );
+			if( ValidateObject( targChar ))
+			{
+				CSocket *targSock = targChar->GetSocket();
+				if( targSock != nullptr )
+				{
+					targSock->Send( &unicodeMessage );
+				}
+			}
+		}
+	}
 	else
-		toAdd.Colour( 0x0058 );
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Font( fType );
+		toAdd.Speech( message );
+		toAdd.Speaker( speaker.GetSerial() );
+		toAdd.Type( sType );
+		toAdd.TargType( spTrg );
+		if( spTrg == SPTRG_INDIVIDUAL || spTrg == SPTRG_ONLYRECEIVER )
+			toAdd.SpokenTo( spokenTo );
 
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
+		// Added that because transparent text could cause trouble
+		if( sColour != 0x1700 && sColour != 0x0)
+			toAdd.Colour( sColour );
+		else
+			toAdd.Colour( 0x0058 );
+
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1701,6 +1761,8 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc == 7 )
 		speechType = static_cast<SpeechType>( JSVAL_TO_INT( argv[6] ));
 
+	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+
 	if( myClass.ClassName() == "UOXItem" )
 	{
 		CItem *myItem = static_cast<CItem *>(myObj);
@@ -1715,7 +1777,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			speechFontType = FNT_NORMAL;
 		if( speechType == UNKNOWN )
 			speechType = OBJ;
-		MethodSpeech( *myItem, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial );
+		MethodSpeech( *myItem, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -1738,13 +1800,13 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		{
 			if( !txtHue )
 				txtHue = 0x0026;
-			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial );
+			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
 		}
 		else
 		{
 			if( !txtHue )
 				txtHue = myChar->GetSayColour();
-			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial );
+			MethodSpeech( *myChar, trgMessage, speechType, txtHue, speechFontType, speechTarget, speechTargetSerial, useUnicode );
 		}
 	}
 
@@ -1900,6 +1962,7 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 
 	myChar->SetFTarg( static_cast<CChar*>(myObj) );
+	myChar->FlushPath();
 	myChar->SetNpcWander( WT_FOLLOW );
 
 	return JS_TRUE;
@@ -1945,9 +2008,9 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 5 )
 	{
-		MethodError( "EmoteMessage: Invalid number of arguments (takes 1)" );
+		MethodError( "EmoteMessage: Invalid number of arguments (takes 1 - 5: text, allSay, hue, speech target and speech serial)" );
 		return JS_FALSE;
 	}
 
@@ -1960,7 +2023,29 @@ JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		MethodError( "EmoteMessage: Invalid character or speech");
 		return JS_FALSE;
 	}
-	MethodSpeech( *myChar, trgMessage, EMOTE, myChar->GetEmoteColour(), (FontType)myChar->GetFontType() );
+
+	UI16 txtHue = 0x0000;
+	if( argc >= 3 )
+		txtHue = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
+	if( txtHue == 0x0000 )
+		txtHue = myChar->GetEmoteColour();
+
+	SpeechTarget speechTarget = SPTRG_NULL;
+	if( argc >= 4 )
+		speechTarget = static_cast<SpeechTarget>(JSVAL_TO_INT( argv[3] ));
+	if( speechTarget == SPTRG_NULL )
+		speechTarget = SPTRG_PCNPC;
+
+	SERIAL speechTargetSerial = INVALIDSERIAL;
+	if( argc >= 5 )
+		speechTargetSerial = static_cast<SERIAL>(JSVAL_TO_INT( argv[4] ));
+
+	if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
+		speechTarget = SPTRG_INDIVIDUAL;
+
+	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+
+	MethodSpeech( *myChar, trgMessage, EMOTE, txtHue, (FontType)myChar->GetFontType(), speechTarget, speechTargetSerial, useUnicode );
 	return JS_TRUE;
 }
 
@@ -4951,10 +5036,12 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
+	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+
 	if( myChar->GetNPCAiType() == AI_EVIL )
-		MethodSpeech( *myChar, trgMessage, YELL, 0x0026, (FontType)myChar->GetFontType() );
+		MethodSpeech( *myChar, trgMessage, YELL, 0x0026, (FontType)myChar->GetFontType(), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
 	else
-		MethodSpeech( *myChar, trgMessage, YELL, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
+		MethodSpeech( *myChar, trgMessage, YELL, myChar->GetSayColour(), (FontType)myChar->GetFontType(), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
 
 	return JS_TRUE;
 }
@@ -4991,10 +5078,12 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		return JS_FALSE;
 	}
 
+	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+
 	if( myChar->GetNPCAiType() == AI_EVIL )
-		MethodSpeech( *myChar, trgMessage, WHISPER, 0x0026, (FontType)myChar->GetFontType() );
+		MethodSpeech( *myChar, trgMessage, WHISPER, 0x0026, (FontType)myChar->GetFontType(), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
 	else
-		MethodSpeech( *myChar, trgMessage, WHISPER, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
+		MethodSpeech( *myChar, trgMessage, WHISPER, myChar->GetSayColour(), (FontType)myChar->GetFontType(), SPTRG_PCNPC, INVALIDSERIAL, useUnicode );
 
 	return JS_TRUE;
 }
@@ -5284,13 +5373,13 @@ JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Function	-	JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 //|	Prototype	-	void Refresh()
 //|	Date		-	23 June, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes the item to be refreshed to sockets that can see it
 //o-----------------------------------------------------------------------------------------------o
-JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5298,8 +5387,31 @@ JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 
-	CItem *myItem = static_cast<CItem *>(JS_GetPrivate( cx, obj ));
-	myItem->Update();
+	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ) );
+
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "Refresh: Invalid object assigned - only Charaacters or Items accepted" );
+		return JS_FALSE;
+	}
+
+	if( myObj->CanBeObjType( OT_CHAR ) )
+	{
+		CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ) );
+		if( ValidateObject( myChar ))
+			myChar->Update();
+	}
+	else if( myObj->CanBeObjType( OT_ITEM ) )
+	{
+		CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ) );
+		if( ValidateObject( myItem ))
+			myItem->Update();
+	}
+	else
+	{
+		MethodError( "Refresh: Invalid object assigned - only Charaacters or Items accepted" );
+		return JS_FALSE;
+	}
 
 	return JS_TRUE;
 }
@@ -5326,6 +5438,40 @@ JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	SI32 maxrank		= JSVAL_TO_INT( argv[1] );
 
 	Skills->ApplyRank( nullptr, myItem, rank, maxrank );
+	return JS_TRUE;
+}
+
+bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CItem_IsOnFoodList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool IsOnFoodList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if item is on a specified food list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CItem_IsOnFoodList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 || argc > 7 )
+	{
+		MethodError( "(IsOnFoodList) Invalid Number of Arguments %d, needs: 1 - foodlist name", argc );
+		return JS_TRUE;
+	}
+
+	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ) );
+
+	if( !ValidateObject( myItem ) )
+	{
+		MethodError( "(IsOnFoodList) Invalid object assigned" );
+		return JS_TRUE;
+	}
+
+	if( !JSVAL_IS_STRING( argv[0] ))
+	{
+		MethodError( "IsOnFoodList: Invalid parameter specifled, string required!" );
+		return JS_FALSE;
+	}
+	std::string foodList = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+
+	*rval = BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetID() ));
 	return JS_TRUE;
 }
 
@@ -5523,7 +5669,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( argc >= 4 )
 		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 
-	if( strutil::tolower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
+	if( strutil::lower( mode ).find_first_of("rwa", 0, 3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
@@ -5565,7 +5711,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	filePath.append( fileName );
-	mFile->mWrap = fopen( filePath.c_str(), strutil::tolower(mode).substr(0,1).c_str() );
+	mFile->mWrap = fopen( filePath.c_str(), strutil::lower(mode).substr(0,1).c_str() );
 	return JS_TRUE;
 }
 
@@ -6213,12 +6359,12 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 
-	CItem *mItem	= static_cast<CItem *>(JS_GetPrivate( cx, obj ) );
-
+	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ) );
+	
 	if( !ValidateObject( mItem ) )
 	{
-		MethodError( "Glow: Invalid item" );
-		mySock->sysmessage( 1095 );
+		MethodError( "Glow: Invalid object" );
+		mySock->sysmessage( 1095 ); // No item found there, only items can be made to glow.
 		return JS_FALSE;
 	}
 
@@ -6228,12 +6374,12 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 	if( mItem->GetGlow() != INVALIDSERIAL )
 	{
-		mySock->sysmessage( 1097 );
+		mySock->sysmessage( 1097 ); // That object already glows!
 		return JS_FALSE;
 	}
 	if( mItem->GetCont() == nullptr && FindItemOwner( mItem ) != mChar )
 	{
-		mySock->sysmessage( 1096 );
+		mySock->sysmessage( 1096 ); // You can't create glowing items in other people's packs or hands!
 		return JS_FALSE;
 	}
 
@@ -6251,7 +6397,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	Items->GlowItem( mItem );
 
 	mChar->Update( mySock );
-	mySock->sysmessage( 1098 );
+	mySock->sysmessage( 1098 ); // Item is now glowing.
 
 	return JS_TRUE;
 }
@@ -6272,7 +6418,7 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( !ValidateObject( mItem ) )
 	{
 		MethodError( "UnGlow: Invalid item" );
-		mySock->sysmessage( 1099 );
+		mySock->sysmessage( 1099 ); // No item found, only items can be made to unglow.
 		return JS_FALSE;
 	}
 
@@ -6282,14 +6428,14 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	if( mItem->GetCont() == nullptr && FindItemOwner( mItem ) != mChar )
 	{
-		mySock->sysmessage( 1100 );
+		mySock->sysmessage( 1100 ); // You can't unglow items in other people's packs or hands!
 		return JS_FALSE;
 	}
 
 	CItem *glowItem = calcItemObjFromSer( mItem->GetGlow() );
 	if( mItem->GetGlow() == INVALIDSERIAL || !ValidateObject( glowItem ) )
 	{
-		mySock->sysmessage( 1101 );
+		mySock->sysmessage( 1101 ); // That object doesn't glow!
 		return JS_FALSE;
 	}
 
@@ -6299,7 +6445,7 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	mItem->SetGlow( INVALIDSERIAL );
 
 	mChar->Update( mySock );
-	mySock->sysmessage( 1102 );
+	mySock->sysmessage( 1102 ); // Item is no longer glowing.
 
 	return JS_TRUE;
 }
@@ -7951,6 +8097,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	SI16 x = -1, y = -1;
 	SI08 z = 0;
+	SI08 zTop = 0;
 	if( argc == 1 )	// we've been passed an item, character, or socket
 	{
 		JSEncapsulate myClass( cx, &(argv[0]) );
@@ -8002,6 +8149,14 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 					*rval = JSVAL_FALSE;
 					return JS_TRUE;
 				}
+
+				// Include top of item
+				zTop = Map->TileHeight( tObj->GetID() );
+			}
+			else
+			{
+				// Include top of head of character. Also, assume all characters are equally tall
+				zTop = 15;
 			}
 			x = tObj->GetX();
 			y = tObj->GetY();
@@ -8017,7 +8172,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	if( ValidateObject( mChar ) )
 	{
-		*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) );
+		*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, zTop ) );
 	}
 	else
 		*rval = BOOLEAN_TO_JSVAL( false );
@@ -8165,6 +8320,38 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		doRepsys = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 	}
 	mChar->Damage( damage.toInt(), attacker, doRepsys );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool InitiateCombat( targetChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Attempts to initiate combat with target character
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(InitiateCombat) Invalid Number of Arguments %d, takes: 1 (targetChar))", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "(InitiateCombat): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ) );
+	if( !ValidateObject( ourTarget ) )
+	{
+		MethodError( "(InitiateCombat): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget ));
 	return JS_TRUE;
 }
 
@@ -8511,6 +8698,359 @@ JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, js
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_AddFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool Add( playerToAdd )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds player to an NPC pet/follower's friend list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_AddFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddFriend: Invalid number of arguments (takes 1 - playerObject)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "AddFriend: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "AddFriend: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	CChar *newFriend = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ) );
+	if( !ValidateObject( newFriend ) )
+	{
+		MethodError( "(AddFriend) Invalid Object passed as function parameter" );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool Add( playerToRemove )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes player from an NPC pet/follower's friend list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "RemoveFriend: Invalid number of arguments (takes 1 - playerObject)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "RemoveFriend: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "RemoveFriend: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	CChar *friendToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) ) );
+	if( !ValidateObject( friendToRemove ) )
+	{
+		MethodError( "(AddFriend) Invalid Object passed as function parameter" );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool GetFriendList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets an NPC pet/follower's friend list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "GetFriendList: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "GetFriendList: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "GetFriendList: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	// Fetch actual friend list
+	CHARLIST *friendList = mChar->GetFriendList();
+
+	// Prepare some temporary helper variables
+	JSObject *jsFriendList = JS_NewArrayObject( cx, 0, nullptr );
+	CChar *tempFriend = nullptr;
+	jsval jsTempFriend;
+
+	// Loop through list of friends, and add each one to the JS ArrayObject
+	int i = 0;
+	for( CHARLIST_ITERATOR rIter = friendList->begin(); rIter != friendList->end(); ++rIter )
+	{
+		// Grab character reference
+		tempFriend = ( *rIter );
+
+		// Create a new JS Object based on character
+		JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+
+		// Convert JS Object to jsval
+		jsTempFriend = OBJECT_TO_JSVAL( myObj );
+
+		// Add jsval to ArrayObject
+		JS_SetElement( cx, jsFriendList, i, &jsTempFriend );
+		i++;
+	}
+
+	// Convert ArrayObject to jsval and pass it to script
+	*rval = OBJECT_TO_JSVAL( jsFriendList );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool ClearFriendList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears an NPC pet/follower's friend list
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "ClearFriendList: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "ClearFriendList: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "ClearFriendList: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	// Clear friend list
+	mChar->ClearFriendList();
+
+	*rval = BOOLEAN_TO_JSVAL( true );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool GetPetList()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets list of character's pets/followers
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "GetPetList: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "GetPetList: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "GetPetList: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	// Fetch actual friend list
+	GenericList<CChar *> *petList = mChar->GetPetList();
+
+	// Prepare some temporary helper variables
+	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
+	CChar *tempPet = nullptr;
+	jsval jsTempPet;
+
+	// Loop through list of friends, and add each one to the JS ArrayObject
+	int i = 0;
+	for( CChar *pet = petList->First(); !petList->Finished(); pet = petList->Next() )
+	{
+		if( ValidateObject( pet ) )
+		{
+			if( pet->GetOwnerObj() == mChar )
+			{
+				// Create a new JS Object based on character
+				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+
+				// Convert JS Object to jsval
+				jsTempPet = OBJECT_TO_JSVAL( myObj );
+
+				// Add jsval to ArrayObject
+				JS_SetElement( cx, jsPetList, i, &jsTempPet );
+				i++;
+			}
+		}
+	}
+
+	// Convert ArrayObject to jsval and pass it to script
+	*rval = OBJECT_TO_JSVAL( jsPetList );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool HasBeenOwner( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns whether character pChar has previously owned the pet (is on pet owner list)
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "HasBeenOwner: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "HasBeenOwner: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "HasBeenOwner: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+	
+	JSEncapsulate toCheck( cx, &( argv[0] ) );
+	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
+	if( !ValidateObject( pChar ) )
+	{
+		MethodError( "HasBeenOwner: Invalid Character passed as parameter" );
+		return JS_FALSE;
+	}
+
+	bool hasBeenOwner = mChar->IsOnPetOwnerList( pChar );
+
+	*rval = BOOLEAN_TO_JSVAL( hasBeenOwner );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool HasBeenOwner( pChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns chance (in values ranging from 0 to 1000) of pChar (player) successfully controlling mChar (pet)
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "CalculateControlChance: Invalid number of arguments (takes 1 - pChar)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ) )
+		{
+			MethodError( "CalculateControlChance: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "CalculateControlChance: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate toCheck( cx, &( argv[0] ) );
+	CChar *pChar = static_cast<CChar *>( toCheck.toObject() );
+	if( !ValidateObject( pChar ) )
+	{
+		MethodError( "CalculateControlChance: Invalid Character passed as parameter" );
+		return JS_FALSE;
+	}
+
+	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
+
+	*rval = INT_TO_JSVAL( petControlChance );
+	return JS_TRUE;
+}
+
 // Party Methods
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CParty_Remove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -8617,7 +9157,7 @@ JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 						CPPartyInvitation toSend;
 						toSend.Leader( leader );
 						targSock->Send( &toSend );
-						targSock->sysmessage( "You have been invited to join a party, type /accept or /decline to deal with the invitation" );
+						targSock->sysmessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
 						*rval = BOOLEAN_TO_JSVAL( true );
 					}
 					else

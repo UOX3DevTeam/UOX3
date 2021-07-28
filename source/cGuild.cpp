@@ -645,7 +645,7 @@ void CGuild::Load( ScriptSection *toRead )
 		data = toRead->GrabData();
 		if( tag.empty() )
 			continue;
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		switch( (UTag.data()[0]) )
 		{
 			case '{':
@@ -803,15 +803,34 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 			va_list argptr;
 			va_start( argptr, dictEntry );
 
-			CSpeechEntry& toAdd = SpeechSys->Add();
-			toAdd.Speech(strutil::format(512,txt,argptr));
-			toAdd.Font( FNT_NORMAL );
-			toAdd.Speaker( INVALIDSERIAL );
-			toAdd.SpokenTo( (*cIter) );
-			toAdd.Colour( 0x000B );
-			toAdd.Type( SYSTEM );
-			toAdd.At( cwmWorldState->GetUICurrentTime() );
-			toAdd.TargType( SPTRG_INDIVIDUAL );
+			if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+			{
+				std::string tempStr = strutil::format( 512, txt, argptr );
+
+				CPUnicodeMessage unicodeMessage;
+				unicodeMessage.Message( tempStr );
+				unicodeMessage.Font( FNT_NORMAL );
+				unicodeMessage.Colour( 0x000B );
+				unicodeMessage.Type( SYSTEM );
+				unicodeMessage.Language( "ENG" );
+				unicodeMessage.Name( "System" );
+				unicodeMessage.ID( INVALIDID );
+				unicodeMessage.Serial( INVALIDSERIAL );
+
+				targetSock->Send( &unicodeMessage );
+			}
+			else
+			{
+				CSpeechEntry& toAdd = SpeechSys->Add();
+				toAdd.Speech( strutil::format( 512, txt, argptr ));
+				toAdd.Font( FNT_NORMAL );
+				toAdd.Speaker( INVALIDSERIAL );
+				toAdd.SpokenTo( (*cIter) );
+				toAdd.Colour( 0x000B );
+				toAdd.Type( SYSTEM );
+				toAdd.At( cwmWorldState->GetUICurrentTime() );
+				toAdd.TargType( SPTRG_INDIVIDUAL );
+			}
 			va_end(argptr);
 		}
 	}
@@ -980,11 +999,14 @@ GUILDRELATION CGuildCollection::Compare( CChar *src, CChar *trg ) const
 {
 	if( src == nullptr || trg == nullptr )
 		return GR_UNKNOWN;
-	if( src->GetGuildNumber() == -1 || trg->GetGuildNumber() == -1 )
+
+	auto srcGuild = src->GetGuildNumber();
+	auto trgGuild = trg->GetGuildNumber();
+	if( srcGuild == -1 || trgGuild == -1 )
 		return GR_UNKNOWN;
-	if( src->GetGuildNumber() == trg->GetGuildNumber() )
+	if( srcGuild == trgGuild )
 		return GR_SAME;
-	return Compare( src->GetGuildNumber(), trg->GetGuildNumber() );
+	return Compare( srcGuild, trgGuild );
 }
 
 //o-----------------------------------------------------------------------------------------------o

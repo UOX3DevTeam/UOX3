@@ -104,7 +104,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 	}
 	
 	// Discard the leading command prefix
-	std::string command = strutil::toupper( CommandString( 1, 1 ));
+	std::string command = strutil::upper( CommandString( 1, 1 ));
 
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
@@ -175,7 +175,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
 				}
 				else
-					s->sysmessage( "This command requires more arguments!" );
+					s->sysmessage( 9026 ); // This command requires more arguments!
 				break;
 		}
 	}
@@ -313,7 +313,7 @@ void cCommands::Load( void )
 				continue;
 			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
 			{
-				UTag = strutil::toupper( tag );
+				UTag = strutil::upper( tag );
 				data = cmdClearance->GrabData();
 				if( UTag == "NICKCOLOUR" ) {
 					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -395,7 +395,7 @@ commandLevel_st *cCommands::GetClearance( std::string clearName )
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
 		clearPointer = (*clearIter);
-		if( strutil::toupper( clearName ) == clearPointer->name )
+		if( strutil::upper( clearName ) == clearPointer->name )
 		{
 			return clearPointer;
 		}

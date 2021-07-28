@@ -1,5 +1,5 @@
 // tailoring script
-// Last Updated: January 24th 2005
+// Last Updated: July 24th 2021
 // five balls of yarn : loom : bolt of cloth
 
 function onUseChecked ( pUser, iUsed )
@@ -16,7 +16,7 @@ function onUseChecked ( pUser, iUsed )
 			srcSock.CustomTarget( 0, GetDictionaryEntry( 452, srcSock.language ) ); // Select loom to make your cloth.
 		}
 		else
-			pUser.SysMessage( GetDictionaryEntry( 775, srcSock.language ) ); //You can't use material outside your backpack.
+			srcSock.SysMessage( GetDictionaryEntry( 775, srcSock.language ) ); // You can't use material outside your backpack.
 	}
 	return false;
 }
@@ -31,32 +31,32 @@ function onCallback0( tSock, myTarget )
 
 	if(( myTarget == null ) || ( myTarget.isChar ) || !( tileID >= 0x105f && tileID <= 0x1066 ))
 	{ //Target is a Maptile/Character/wrong item
-		pUser.SysMessage("You cannot weave your yarn on that!");
+		tSock.SysMessage( GetDictionaryEntry( 6037, tSock.language ) ); // You cannot weave your yarn on that!
 		return;
 	}
 	else
 	{
 		if( !pUser.InRange( myTarget, 3 ) )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 393, tSock.language ) ); //That is too far away
+			tSock.SysMessage( GetDictionaryEntry( 393, tSock.language ) ); // That is too far away
 			return;
 		}
 	}
     	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
     	if( iMakeResource < 5 )
   	{
-    		pUser.SysMessage( "You don't seem to have enough yarn!" );
+    		tSock.SysMessage( GetDictionaryEntry( 6038, tSock.language ) ); // You don't seem to have enough yarn!
 		return;
         }
 	if( pUser.CheckSkill( 34, 0, 1000 ) )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 822, tSock.language ) ); //You have successfully spun your material.
-        	pUser.UseResource( 5, iUsed.id ); 	// remove five balls of yarn
+		tSock.SysMessage( GetDictionaryEntry( 822, tSock.language ) ); // You have successfully spun your material.
+        pUser.UseResource( 5, iUsed.id ); 	// remove five balls of yarn
 		pUser.SoundEffect( 0x0190, true );
-	        var itemMade = CreateDFNItem( pUser.socket, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth
-		pUser.SysMessage( "You weave some folded cloth." );
+	    var itemMade = CreateDFNItem( tSock, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth
+		tSock.SysMessage( GetDictionaryEntry( 6039, tSock.language ) ); // You weave some folded cloth.
 	}
 	else
-		pUser.SysMessage( GetDictionaryEntry( 821, tSock.language ) ); //You failed to spin your material.
+		tSock.SysMessage( GetDictionaryEntry( 821, tSock.language ) ); // You failed to spin your material.
         return;
 }

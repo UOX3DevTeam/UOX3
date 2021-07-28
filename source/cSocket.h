@@ -349,10 +349,10 @@ public:
 	TIMERVAL		GetTimer( cS_TID timerID ) const;
 	void			SetTimer( cS_TID timerID, TIMERVAL value );
 	void			ClearTimers( void );
+	COLOUR			GetFlagColour( CChar *src, CChar *trg );
 
 private:
 
-	COLOUR			GetFlagColour( CChar *src, CChar *trg );
 
 };
 #endif

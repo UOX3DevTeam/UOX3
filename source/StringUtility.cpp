@@ -5,90 +5,145 @@
 //
 
 #include "StringUtility.hpp"
-
-#include <regex>
-#include <algorithm>
 #include <cctype>
+#include <regex>
+#include <locale>
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <stdexcept>
 #include <filesystem>
+#include <codecvt>
+using namespace std::string_literals;
 
 namespace strutil {
-	//==============================================================
-	//++++++++++++++++++++++++++++++++++++
-	std::string ltrim(const std::string& s) {
-		return std::regex_replace(s, std::regex("^\\s+"), std::string(""));
+	
+	//=====================================================================
+	// Lowercase the string
+	std::string lower(const std::string &value){
+		auto rvalue  = value ;
+		std::transform(rvalue.begin(), rvalue.end(),rvalue.begin(),
+				   [](unsigned char c){ return std::tolower(c);});
+		return rvalue;
 	}
 	
-	//++++++++++++++++++++++++++++++++++++
-	std::string rtrim(const std::string& s) {
-		return std::regex_replace(s, std::regex("\\s+$"), std::string(""));
-	}
-	
-	//++++++++++++++++++++++++++++++++++++
-	std::string trim(const std::string& s) {
-		return ltrim(rtrim(s));
-	}
-	
-	
-	//==============================================================
-	//++++++++++++++++++++++++++++++++++++
-	std::string stripComment(const std::string &input,const std::string &commentdelim ){
-		
-		auto loc = input.find_first_of(commentdelim) ;
-		auto value = input.substr(0,loc);
-		value = trim(value) ;
-		return value;
-	}
-	
-	
-	
-	//==============================================================
-	//++++++++++++++++++++++++++++++++++++
-	std::string toupper(const std::string &s) {
-		auto input = s ;
-		std::transform(input.begin(), input.end(), input.begin(),
-				   [](unsigned char c){ return std::toupper(c); } // correct
-				   );
-		return input;
-	}
-	
-	//++++++++++++++++++++++++++++++++++++
-	std::string tolower(const std::string &s) {
-		auto input = s ;
-		std::transform(input.begin(), input.end(), input.begin(),
-				   [](unsigned char c){ return std::tolower(c); } // correct
-				   );
-		return input;
-	}
-	
-	//====================================================================
-	std::string& stripTrim(std::string& s)  {
-		auto loc = s.find("//") ;
-		if (loc != std::string::npos) {
-			s = s.substr(0,loc) ;
-		}
-		loc = s.find_first_not_of(" \t\v") ;
-		if (loc != std::string::npos) {
-			auto eloc = s.find_last_not_of(" \t\v") ;
-			s = s.substr(loc,(eloc-loc)+1);
-		}
-		return s ;
-	}
-	
-	//++++++++++++++++++++++++++++++++++++++
-	std::tuple<std::string,std::string> separate(const std::string& input,
-								   const std::string& separator){
-		auto loc = input.find(separator);
-		auto first = input.substr(0,loc) ;
-		std::string second ="";
-		if ((loc != std::string::npos) && ((loc+1)< input.size()) ) {
-			second = input.substr(loc+1) ;
-		}
-		return std::make_tuple(trim(first),trim(second));
+	//=====================================================================
+	// Uppercase the string
+	std::string upper(const std::string &value){
+		auto rvalue  = value ;
+		std::transform(rvalue.begin(), rvalue.end(),rvalue.begin(),
+				   [](unsigned char c){ return std::toupper(c);});
+		return rvalue;
 		
 	}
+	
+
+	
+	//=====================================================================
+	// Remove leading whitespace
+	std::string ltrim(const std::string &value){
+		auto count = 0 ;
+		for (auto it = value.begin(); it != value.end();it++) {
+			if (!isspace(*it)){
+				return value.substr(count) ;
+			}
+			else {
+				count++;
+			}
+		}
+		
+		return std::string();
+	}
+	//=====================================================================
+	// Remove trailing whitespace
+	std::string rtrim(const std::string &value){
+		auto count = 0 ;
+		for (auto it = value.rbegin(); it != value.rend();it++) {
+			if (!isspace(*it)){
+				return value.substr(0,value.size()-count);
+				
+			}
+			else {
+				count++;
+			}
+		}
+		
+		return std::string();
+		
+	}
+	//=====================================================================
+	// Remove leading/trailing whitespace
+	std::string trim(const std::string &value) {
+		return rtrim(ltrim(value));
+	}
+	//=====================================================================
+	// Remove leading/trailing whitepace, and reduce all other whitespace to one " "
+	std::string simplify(const std::string &value){
+		auto tvalue = trim(value) ;
+		auto rvalue = ""s ;
+		auto toggle = false ;
+		for (auto &c :tvalue){
+			if (isspace(c)) {
+				if (!toggle){
+					rvalue = rvalue + c ;
+					toggle = true ;
+				}
+				
+				
+			}
+			else {
+				toggle = false ;
+				rvalue = rvalue + c ;
+				
+			}
+		}
+		return rvalue ;
+	}
+
+	//=====================================================================
+	// Removing everything after a delimiter. Normally "//" for comments
+	std::string removeTrailing(const std::string& value,const std::string& delim){
+		auto loc = value.find(delim) ;
+		if (loc == std::string::npos){
+			return value ;
+		}
+		return value.substr(0,loc) ;
+	}
+
+
+	//=====================================================================
+	// Return the values between two delimitors.
+	std::string contents(const std::string &value,const std::string& startdelim, const std::string &enddelim,std::string::size_type location){
+		auto loc = value.find_first_of(startdelim,location);
+		if (loc == std::string::npos){
+			return std::string();
+		}
+		auto start_search = loc + startdelim.size() ;
+		if (start_search >= value.size()){
+			return std::string();
+			
+		}
+		auto end = value.find_first_of(enddelim,start_search);
+		if (end == std::string::npos){
+			return std::string();
+			
+		}
+		return value.substr(start_search,end-start_search);
+	}
+
+	//=====================================================================
+	// Split a string based on a separator
+	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep){
+		auto loc = value.find(sep) ;
+		auto next = loc + sep.size();
+		if ((loc == std::string::npos) || (next >= value.size())){
+			return std::make_tuple(trim(value),""s);
+		}
+		else {
+			return std::make_tuple(trim(value.substr(0,loc)),trim(value.substr(next)));
+		}
+	}
+
 	//+++++++++++++++++++++++++++++++++++++
 	std::string format(std::size_t maxsize, const std::string fmtstring,...)  {
 		
@@ -150,14 +205,6 @@ namespace strutil {
 			pos = format.find_first_of("%") ;
 		}
 		return format ;
-	}
-	//++++++++++++++++++++++++++++++++++++++++
-	std::string simplify(const std::string& input){
-		std::regex re("\\s{2,}");
-		std::string fmt = " ";
-		
-		auto output = regex_replace(input, re, fmt);
-		return output ;
 	}
 	
 	//++++++++++++++++++++++++++++++++++++++++++
@@ -341,21 +388,35 @@ namespace strutil {
 		return conversion.str()  ;
 	}
 	
-	//====================================================================
-	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep){
-		std::string first ;
-		std::string second ;
-		auto loc = value.find(sep);
-		if (loc == std::string::npos){
-			first = value ;
+	// Decode a UTF8 string into a wstring
+	std::wstring stringToWstring( const std::string& t_str )
+	{
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
+		
+		// use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+		try {
+			return converter.from_bytes(t_str);
 		}
-		else {
-			first = strutil::rtrim(value.substr(0,loc));
-			if ((loc+1) < value.size()) {
-				second = strutil::ltrim(value.substr(loc+1));
-			}
+		catch( ... ) {
+			return L"";
 		}
-		return std::make_tuple(first,second);
 	}
-	
+
+	// "Encode" a wstring into UTF8, while retaining any special wide characters
+	std::string wStringToString( const std::wstring& t_str )
+	{
+		const size_t stringLen = t_str.size();
+
+		std::string resultString;
+		for( size_t i = 0; i < stringLen; ++i )
+			resultString += t_str[i];
+
+		return resultString;
+	}
+
+	// Convert from string to wstring and back to string
+	std::string stringToWstringToString( const std::string& t_str )
+	{
+		return wStringToString( stringToWstring( t_str ));
+	}
 }

@@ -7,7 +7,7 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 855, pSock.language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 855, pSock.language ) ); // What item do you wish to get information about?
 
 	return true;
 }
@@ -23,14 +23,14 @@ function onCallback0( pSock, ourObj )
 		var ourHiDmg = ourObj.hidamage;
 
 		if( ourDef == 0 && ourLoDmg == 0 && ourHiDmg == 0 )
-			pSock.SysMessage( GetDictionaryEntry( 1503, pLanguage ) );
+			pSock.SysMessage( GetDictionaryEntry( 1503, pLanguage ) ); // That does not appear to be a weapon.
 		else
 		{
 			var ourOwner = GetPackOwner( ourObj, 0 );
 			if( ourOwner && ourOwner.isChar && ourOwner.serial == pUser.serial )
 			{
 				if( !pUser.CheckSkill( 4, 0, 1000 ) )
-					pSock.SysMessage( GetDictionaryEntry( 1504, pLanguage ) );
+					pSock.SysMessage( GetDictionaryEntry( 1504, pLanguage ) ); // You are not certain...
 				else
 				{
 					var ourMaxHP = ourObj.maxhp;
@@ -44,7 +44,7 @@ function onCallback0( pSock, ourObj )
 						if( offset >= 0 && offset <= 8 )
 							hpString = GetDictionaryEntry( 1515 - offset, pLanguage );
 						else
-							hpString = GetDictionaryEntry( 1506, pLanguage );
+							hpString = GetDictionaryEntry( 1506, pLanguage ); // is brand new.
 						sysString = hpString;
 					}
 
@@ -58,7 +58,7 @@ function onCallback0( pSock, ourObj )
 							if( offset > 0 && offset < 5 )
 								pString = GetDictionaryEntry( 1455 + offset, pLanguage );
 							else
-								pString = GetDictionaryEntry( 1459, pLanguage );
+								pString = GetDictionaryEntry( 1459, pLanguage ); // glistens with very deadly poison.
 							dmgString = pString;
 						}
 						// HiDamage + LoDamage / 10 ( 0-9 = 0, 10-19 = 1, ect )
@@ -66,7 +66,7 @@ function onCallback0( pSock, ourObj )
 						if( offset <= 5 )
 							dmgString = dmgString + " " + GetDictionaryEntry( 1522 - offset, pLanguage );
 						else
-							dmgString = dmgString + " " + GetDictionaryEntry( 1516, pLanguage );
+							dmgString = dmgString + " " + GetDictionaryEntry( 1516, pLanguage ); // would be extraordinarily deadly.
 
 						if( pUser.skills.armslore > 250 )
 						{
@@ -76,7 +76,7 @@ function onCallback0( pSock, ourObj )
 							if( offset <= 2 )
 								spString = GetDictionaryEntry( 1526 - offset, pLanguage );
 							else
-								spString = GetDictionaryEntry( 1523, pLanguage );
+								spString = GetDictionaryEntry( 1523, pLanguage ); // and is very fast.
 							dmgString = dmgString + " " + spString;
 						}
 
@@ -91,17 +91,17 @@ function onCallback0( pSock, ourObj )
 						if( offset <= 6 )
 							defString = GetDictionaryEntry( 1534 - offset, pLanguage );
 						else
-							defString = GetDictionaryEntry( 1527, pLanguage );
+							defString = GetDictionaryEntry( 1527, pLanguage ); // is superbly crafted to provide maximum protection.
 
 						sysString = sysString + " " + defString;
 					}
-					pSock.SysMessage( "This item " + sysString );
+					pSock.SysMessage( GetDictionaryEntry( 6003, pLanguage ) + " " + sysString ); // This item [is...]
 				}
 			}
 			else
-				pSock.SysMessage( "You must be holding the item to examine it." );
+				pSock.SysMessage( GetDictionaryEntry( 6004, pLanguage )); // You must be holding the item to examine it.
 		}
 	}
 	else
-		pSock.SysMessage( GetDictionaryEntry( 1569, pSock.language ) );
+		pSock.SysMessage( GetDictionaryEntry( 1569, pSock.language ) ); // That is not a player!
 }

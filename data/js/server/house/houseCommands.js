@@ -1,5 +1,5 @@
-// houseCommands.js - v1.0.0
-// Last Updated 2020-11-03
+// houseCommands.js - v1.0.1
+// Last Updated 2021-07-11
 //
 // The functions in this script are shared between spoken house commands (triggered in
 // js/server/house/house.js attached to multi) and the buttons in the house menu gump triggered in
@@ -168,7 +168,7 @@ function onCallback0( pSocket, myTarget )
 			myTarget.SetTag( "iSignSerial", (iSign.serial).toString() );
 
 			var confirmButtonID = 1;
-			var confirmString = pUser.name + " wants to transfer ownership of this house to you:<BR><B>" + iMulti.name + "</B>";
+			var confirmString = pUser.name + " " + GetDictionaryEntry( 2853, pSocket.language ) + "<BR><B>" + iMulti.name + "</B>"; // wants to transfer ownership of this house to you:
 			confirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 
 			pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language ), myTarget.name ); // House ownership transfer initiated, waiting for response from %s...
@@ -255,7 +255,7 @@ function onCallback1( pSocket, myTarget )
 				myTarget.SetTag( "oldMultiOwner", (iMulti.owner.serial).toString() );
 
 				var confirmButtonID = 2;
-				var confirmString = pUser.name + " wants to add you as co-owner of this house:<BR><B>" + iMulti.name + "</B>";
+				var confirmString = pUser.name + " " + GetDictionaryEntry( 2856, pSocket.language ) + "<BR><B>" + iMulti.name + "</B>"; // wants to add you as co-owner of this house:
 				confirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 				pSocket.SysMessage( GetDictionaryEntry( 1835, pSocket.language ), myTarget.name ); // Adding %s as co-owner, waiting for response...
 			}
@@ -1749,11 +1749,11 @@ function confirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 	confirmGump.AddPage( 0 );
 	confirmGump.AddBackground( 0, 0, 300, 160, 2620 ); // Tile Dark Gray Background
 	confirmGump.AddBackground( 10, 10, 280, 140, 3000 ); // Tile White Background
-	confirmGump.AddHTMLGump( 10, 20, 280, 60, 0, 0, "<CENTER><BIG>Confirm?</BIG></CENTER>" );
+	confirmGump.AddHTMLGump( 10, 20, 280, 60, 0, 0, "<CENTER><BIG>" + GetDictionaryEntry( 2854, pSocket.language ) + "</BIG></CENTER>" ); // Confirm?
 	confirmGump.AddButton( 100, 120, 4023, 4024, 1, 0, confirmButtonID ); // Okay, confirm
 	confirmGump.AddButton( 175, 120, 4020, 4021, 1, 0, 0 ); // Cancel
-	confirmGump.AddText( 25, 120, 0, "CONFIRM >" );
-	confirmGump.AddText( 210, 120, 0, "< CANCEL" );
+	confirmGump.AddText( 25, 120, 0, GetDictionaryEntry( 2849, pSocket.language )); // CONFIRM >
+	confirmGump.AddText( 210, 120, 0, GetDictionaryEntry( 2850, pSocket.language )); // < CANCEL
 	confirmGump.AddHTMLGump( 25, 50, 250, 80, 0, 0, confirmString );
 	confirmGump.Send( myTarget.socket );
 	confirmGump.Free();
@@ -1803,7 +1803,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 	switch( pButton )
 	{
 		case 0: // Cancel
-			oldMultiOwner.SysMessage( "Player rejected the offer." );
+			oldMultiOwner.SysMessage( GetDictionaryEntry( 2855, pSocket.language )); // Player rejected the offer.
 			break;
 		case 1: // Confirm transfer of house ownership
 		{

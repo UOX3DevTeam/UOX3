@@ -429,7 +429,7 @@ void MsgBoardPost( CSocket *tSock )
 
 	if( msgType != PT_LOCAL && tChar->GetCommandLevel() < CL_GM )
 	{
-		tSock->sysmessage( "Only GM's may post Global or Regional messages" );
+		tSock->sysmessage( 9036 ); // Only GM's may post Global or Regional messages
 		return;
 	}
 
@@ -664,7 +664,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) || ( ValidateObject( mChar ) && !mChar->IsGM() ))
 	{
-		mSock->sysmessage( "Only GMs may delete posts!" );
+		mSock->sysmessage( 9037 ); // Only GMs may delete posts!
 		return;
 	}
 
@@ -706,7 +706,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 	{
 		if( ValidateObject( mChar ))
 		{
-			mSock->sysmessage( "Failed to remove post; file size not found! Check server log for more details." );
+			mSock->sysmessage( 9038 ); // Failed to remove post; file size not found! Check server log for more details.
 		}
 		Console.error( strutil::format("Could not fetch file size for file %s", fileName.c_str()) );
 		return;
@@ -903,7 +903,8 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 				position = fullLine.find( "%t" );
 				while( position != std::string::npos )
 				{
-					fullLine.replace( position, 2, mNPC->GetTitle() );
+					std::string mNPCTitle = getNpcDictTitle( mNPC );
+					fullLine.replace( position, 2, mNPCTitle );
 					position = fullLine.find( "%t" );
 				}
 
@@ -1035,7 +1036,8 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	}
 
 	// Inform the PC of what he has just been given as payment
-	mSock->sysmessage( 740, questReward, mNPC->GetName().c_str(), mNPC->GetTitle().c_str() );
+	std::string mNPCTitle = getNpcDictTitle( mNPC, mSock );
+	mSock->sysmessage( 740, questReward, mNPC->GetName().c_str(), mNPCTitle.c_str() ); // You have just received %d gold coins from %s %s.
 
 	// Take the NPC out of quest mode
 	mNPC->SetNpcWander( WT_FREE );         // Wander freely

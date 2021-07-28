@@ -17,6 +17,7 @@
 #include "cEffects.h"
 #include "regions.h"
 #include "combat.h"
+#include "Dictionary.h"
 #include "StringUtility.hpp"
 
 #undef DBGFILE
@@ -361,10 +362,11 @@ void CheckAI( CChar& mChar )
 	CChar *realChar			= nullptr;
 	switch( mChar.GetNPCAiType() )
 	{
-		case AI_BANKER:													// Banker
-		case AI_PLAYERVENDOR:											// Player Vendors.
 		case AI_NONE:													// No special AI, default NPC behavior
-		case AI_DUMMY:												// Passive AI - doesn't attack nor fight back
+		case AI_DUMMY:													// Passive AI - doesn't attack nor fight back
+		case AI_BANKER:													// Banker
+		case AI_STABLEMASTER:											// Stablemaster
+		case AI_PLAYERVENDOR:											// Player Vendors.
 			break;	// No AI for these special NPC's.
 		case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
 		case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
@@ -384,8 +386,11 @@ void CheckAI( CChar& mChar )
 				Combat->AttackTarget( &mChar, realChar->GetTarg() );
 			break;
 		default:
-			Console.error( strutil::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
+		{
+			std::string mCharName = getNpcDictName( &mChar );
+			Console.error( strutil::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mCharName.c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
 			return;
+		}
 	}
 }
 
