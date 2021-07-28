@@ -1250,7 +1250,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				if( !isGate )
 					applyTo->SetReattackAt( static_cast<SI16>(ndata) );
 				break;
-			case DFNTAG_REMOVETRAPS:		skillToSet = REMOVETRAPS;				break;
+			case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;				break;
 			case DFNTAG_RACE:				applyTo->SetRace( static_cast<UI16>(ndata));		break;
 			case DFNTAG_RUNS:
 				if( !isGate )

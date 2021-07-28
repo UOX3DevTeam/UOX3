@@ -1,3 +1,11 @@
+29/07/2021 - Xuri
+	Fixed some issues with whispers and yells (both server and client-sent ones)
+	Fixed an issue with EmoteMessage JS Method that didn't work with anything other than 5 arguments
+	Fixed a couple of incorrect client type comparisons (thanks, punt!)
+	Addressed issue from previous commit on trying to pass a String type on a vardiac function (punt)
+	Fixed a couple of other minor issues
+	Renamed Remove Trap skill in various locations in source and scripts from "removetraps" to "removetrap"
+
 28/07/2021 - Xuri (0.99.4v)
 	Added JS command to reload dictionaries
 		'reloaddictionaries
@@ -188,7 +196,6 @@
 	Feeding a pet will now restore its loyalty to maximum
 	Pets will now lose loyalty on hunger checks when at maximum hunger
 	Pets that are maximum hungry will now only have a chance to go wild if loyalty has dropped to zero
-	Added new DFN tag for creatures.dfn - TYPE - which contains a string describing the type of creature
 	Added secure pet trading. Players who trade pets will now see a pet transfer deed appear in a secure trade window with the name and type of creature, and upon completion of the trade the associated pet will be instantly transferred to the other player
 	Updated resource JS scripts (js/server/resource/*) to use dictionaries for all system messages
 	Updated skill JS scripts (js/skill/*) to use dictionaries for all system messages
@@ -209,7 +216,7 @@
 	Updated default dictionaries for the following languages: English, French
 	Added default dictionaries for the following languages: German, Spanish, Portuguese, Italian, Czech (note that translations have been provided by automatic services and will contain inaccuracies!)
 	Added new UOX.INI setting to allow specifying a default dictionary language for server, which if set will force that language for all dictionary messages, regardless of client settings:
-		SERVERLANGUAGE=0 	// Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 5 - French, 6 - Portuguese, 7 - Italian, 8 - Czech
+		SERVERLANGUAGE=0 	// Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 4 - French, 5 - Portuguese, 6 - Italian, 7 - Czech
 	Added new function in combat.cpp - AdjustArmorClassDamage() - which adjusts the damage dealt in combat based on whether armour class (AC DFN tag or .ac JS property) of weapon and armour equipped on hit location of target match up. A weapon with armour class 1 would essentially be doubly effective against armour of armour class 1. Allows setting up things like piercing weapons being better against some armor types than mace weapons, etc.
 	Added new UOX.INI setting under [combat] to enable/disable double damage from armour class bonuses:
 		ARMORCLASSDAMAGEBONUS=0/1 //defaults to 0)

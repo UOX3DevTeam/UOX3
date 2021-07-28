@@ -100,12 +100,14 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 		if( sendAll )
 		{
 			UI16 searchDistance = DIST_SAMESCREEN;
-			if( sType == WHISPER )
-				searchDistance = DIST_NEXTTILE;
-			else if( sType == YELL )
+			if( sType == WHISPER || sType == ASCIIWHISPER )
+				searchDistance = DIST_SAMETILE;
+			else if( sType == YELL || sType == ASCIIYELL )
 				searchDistance = DIST_SAMESCREEN * 1.5;
-			else if( sType == EMOTE )
+			else if( sType == EMOTE || sType == ASCIIEMOTE )
 				searchDistance = DIST_INRANGE;
+			else
+				searchDistance = DIST_SAMESCREEN;
 
 			SOCKLIST nearbyChars = FindNearbyPlayers( &speaker, searchDistance );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
@@ -2008,7 +2010,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 5 )
+	if( argc < 1 || argc > 5 )
 	{
 		MethodError( "EmoteMessage: Invalid number of arguments (takes 1 - 5: text, allSay, hue, speech target and speech serial)" );
 		return JS_FALSE;

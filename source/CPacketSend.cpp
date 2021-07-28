@@ -1653,7 +1653,6 @@ CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeS
 				if( maxMana > 0 )
 				{
 					MaxVal( 100 );
-					CurVal(( toUpdate.GetMana() * 100 ) / maxMana );
 					CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana) ))) );
 				}
 				else
@@ -1665,7 +1664,7 @@ CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeS
 			else
 			{
 				MaxVal( maxMana );
-				CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana) ))) );
+				CurVal( toUpdate.GetMana() );
 			}
 			break;
 	}
@@ -6761,7 +6760,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ) ); // [Guarded]
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -6784,7 +6783,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_LOCKEDCONTAINER || cItem.GetType() == IT_LOCKEDSPAWNCONT )
 	{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9050 ), tSock->Language() ); // [Locked]
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9050 ).c_str(), tSock->Language() ); // [Locked]
 			FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_HOUSESIGN )
@@ -6986,7 +6985,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ) ); // [Guarded]
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -8333,7 +8332,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 					case MAGICRESISTANCE:	pStream.WriteShort( offset, 0x0084 ); break;
 					case TACTICS:			pStream.WriteShort( offset, 0x0085 ); break;
 					case SNOOPING:			pStream.WriteShort( offset, 0x0086 ); break;
-					case REMOVETRAPS:		pStream.WriteShort( offset, 0x0087 ); break;
+					case REMOVETRAP:		pStream.WriteShort( offset, 0x0087 ); break;
 					case MUSICIANSHIP:		pStream.WriteShort( offset, 0x0088 ); break;
 					case POISONING:			pStream.WriteShort( offset, 0x0089 ); break;
 					case ARCHERY:			pStream.WriteShort( offset, 0x008a ); break;

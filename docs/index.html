@@ -5396,7 +5396,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<span class="highlight">type=63</span> // Type 63 marks object as a Spawn Container<br>
 						<span class="highlight">spawnobj=bagofreagents</span> // Specifies script section ID of Item to spawn<br>
 						<span class="highlight">spawnobjlist=listobject69</span> // Alternate way of specifying object to spawn. This points to a listobject for an itemlist in UOX3/dfndata/items/itemlists/itemlists.dfn, and will spawn random treasure inside the container each time it respawns.<br>
-						<span class="highlight">morez=0x01 0x32 0x00 0x00</span> // If first value is set to 1, container is trapped. Second value (0x32 = 50) determines damage dealt if trap is sprung<br>
+						<span class="highlight">morez=0x01 0x32 0x34 0x45</span> // If first value is set to 1, container is trapped. Second value (0x32 = 50) determines damage dealt if trap is sprung. Third value represents minimum skill to remove trap, while fourth value represents "max" skill beyond which removal is guaranteed.<br>
 						<span class="highlight">}</span></p>
 						<p>After a spawner has been setup in this manner (and DFNs have been reloaded), the spawn object ("spawn_container" in this case) can be added to the <strong>'add</strong> menu for GMs to access (via itemMenu.dfn and itemMenu.bulk.dfn), or can be added to the world directly using the <span class="highlight">'add spawner spawn_container</span> command. The spawned object will be visible, but immovable to normal players, and will immediately start spawning items inside the container at a random interval between the min and max minutes specified in the interval tag.</p>
 						<p>As soon as an item has spawned inside the Spawn Container, the item type of the spawn object will change from <strong>63 (IT_SPAWNCONT)</strong> to <strong>64 (IT_LOCKEDSPAWNCONT)</strong> and players will need to unlock it using lockpicks or the Magic Unlock spell before they can get to the treasure inside. Upon being unlocked, the type will reset back to <strong>63 (IT_SPAWNCONT)</strong>.</p>
@@ -6156,8 +6156,8 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 							Defines percentage of health at which NPC will return to combat if fleeing</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="highlight">removetraps</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
-							Set Remove Traps skill - either fixed value or random range</p>
+							<p><span class="highlight">removetrap</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
+							Set Remove Trap skill - either fixed value or random range</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="highlight">rshopitem</span>=<strong>[itemSectionID]</strong><br>
