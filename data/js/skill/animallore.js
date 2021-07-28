@@ -7,9 +7,9 @@ var enabledAOS = 1;
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
-	if ( pSock )
+	if( pSock )
 	{
-		if ( enabledAOS == 1 )
+		if( enabledAOS == 1 )
 		{
 			//What animal should I look at ?
 			pSock.CustomTarget( 0, GetDictionaryEntry( 2130, pSock.language ) );
@@ -26,34 +26,34 @@ function onSkill( pUser, objType, skillUsed )
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
-	if ( ourObj && ourObj.isChar && pUser )
+	if( ourObj && ourObj.isChar && pUser )
 	{
-		if ( !ourObj.InRange( pUser, 3 ) )
+		if( !ourObj.InRange( pUser, 3 ) )
 		{
 			// That is too far away.
 			pSock.SysMessage( GetDictionaryEntry( 393, pSock.language ) );
 		}
-		else if ( !ourObj.npc || !ourObj.isAnimal )
+		else if( !ourObj.npc || !ourObj.isAnimal )
 		{
 			// That's not an animal!
 			pSock.SysMessage( GetDictionaryEntry( 2134, pSock.language ) );
 		}
-		else if ( ourObj.tamed || pUser.skills.animallore >= 700 )
+		else if( ourObj.tamed || pUser.skills.animallore >= 700 )
 		{
-			if ( !pUser.CheckSkill( 2, 0, 1000 ) )
+			if( !pUser.CheckSkill( 2, 0, 1000 ) )
 			{
 				// At your skill level, you can only lore tamed creatures.
 				pSock.SysMessage( GetDictionaryEntry( 2132, pSock.language ) );
 			}
-			else if ( enabledAOS == 1 && !pUser.CheckSkill( 2, 0, 1100 ) )
+			else if( enabledAOS == 1 && !pUser.CheckSkill( 2, 0, 1100 ) )
 			{
 				// At your skill level, you can only lore tamed or tameable creatures.
-				pSock.SysMessage(GetDictionaryEntry( 2133, pSock.language ) );
+				pSock.SysMessage( GetDictionaryEntry( 2133, pSock.language ) );
 			}
 			else
 			{
 				position = 20;
-				if ( enabledAOS == 1 )
+				if( enabledAOS == 1 )
 				{
 					var ColorLabel = 0xF424E5;
 
@@ -117,7 +117,7 @@ function onCallback0( pSock, ourObj )
 					AnimalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 4, 0 );
 					AnimalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 2, 0 );
 
-					AnimalLoreGump.AddPage(4);
+					AnimalLoreGump.AddPage( 4 );
 					AnimalLoreGump.AddGump( 28, 76, 0x826 );
 					AnimalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2153, pSock.language ) + "</basefont>" );						 // Damage
 					AnimalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2148, pSock.language ) + "</basefont>" );				 // Physical
@@ -272,21 +272,21 @@ function onGumpPress( socket, button, UOXANimalLoreGump )
 	}
 }
 
-function addEntry(UOXANimalLoreGump, stringToAdd, dataToAdd )
+function addEntry( UOXANimalLoreGump, stringToAdd, dataToAdd )
 {
 	UOXANimalLoreGump.AddText( 50, position, 0, stringToAdd );
 	UOXANimalLoreGump.AddText( 225, position, 0, dataToAdd.toString() );
 	position += 20;
 }
 
-function addDualEntry(UOXANimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd )
+function addDualEntry( UOXANimalLoreGump, stringToAdd, dataToAdd, moreDataToAdd )
 {
 	UOXANimalLoreGump.AddText( 50, position, 0, stringToAdd );
 	UOXANimalLoreGump.AddText( 225, position, 0, dataToAdd.toString() + "/" + moreDataToAdd.toString() );
 	position += 20;
 }
 
-function addStringEntry(UOXANimalLoreGump, stringToAdd )
+function addStringEntry( UOXANimalLoreGump, stringToAdd )
 {
 	position += 20;
 	UOXANimalLoreGump.AddText( 40, position, 0, stringToAdd );
