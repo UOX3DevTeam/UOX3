@@ -788,6 +788,12 @@ void AttackTarget( CSocket *s )
 	if( !ValidateObject( mChar ))
 		return;
 
+	// Don't allow attacking offline characters
+	if( !target->IsNpc() && !isOnline( *target ))
+	{
+		return;
+	}
+
 	// Check if combat is disallowed in attacker's OR mPet's regions
 	if( mChar->GetRegion()->IsSafeZone() || mPet->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone() )
 	{

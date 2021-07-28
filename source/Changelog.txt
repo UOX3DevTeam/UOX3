@@ -5,6 +5,8 @@
 	Addressed issue from previous commit on trying to pass a String type on a vardiac function (punt)
 	Fixed a couple of other minor issues
 	Renamed Remove Trap skill in various locations in source and scripts from "removetraps" to "removetrap"
+	Fixed a bug where players logging out in locations other than "INSTALOG" areas from regions.dfn (Inns, basically) and other than the player's own house, were still able to logout and vanish instantly. Logout timer was not being set correctly
+	Players who are flagged as criminals or who are at war with someone else are now unable to logout instantly even in "INSTALOG" areas, and will remain visible to other players for the full duration specified in the LOGINTIMEOUT setting in UOX.INI
 
 28/07/2021 - Xuri (0.99.4v)
 	Added JS command to reload dictionaries

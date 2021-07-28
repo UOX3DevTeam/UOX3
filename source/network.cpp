@@ -222,7 +222,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	}
 
 	CAccountBlock& actbAccount = s->GetAccount();
-	if( valid )
+	if( valid && !p->IsCriminal() && !p->IsAtWar() )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.dwInGame = INVALIDSERIAL;
@@ -233,7 +233,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.dwInGame = p->GetSerial();
-		p->SetTimer( tPC_LOGOUT, cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ) );
+		p->SetTimer( tPC_LOGOUT, BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT )) );
 	}
 	s->LoginComplete( false );
 	actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
