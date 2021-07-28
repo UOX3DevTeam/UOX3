@@ -23,7 +23,7 @@ FLAG=INNOCENT
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the banker
+TITLE=5035//the Banker
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -44,6 +44,7 @@ PARRYING=400 600
 MAGICRESISTANCE=400 600
 TACTICS=400 600
 WRESTLING=400 600
+NPCAI=8
 SCRIPT=3201
 }
 
@@ -51,7 +52,7 @@ SCRIPT=3201
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the bard
+TITLE=5036//the Bard
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -79,7 +80,7 @@ SHOPLIST=BardShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the miner
+TITLE=5037//the Miner
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -106,7 +107,7 @@ SELLITEM=0x1bf2
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Weaponsmith
+TITLE=5038//the Weaponsmith
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -139,7 +140,7 @@ SHOPLIST=WeaponsmithShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the baker
+TITLE=5039//the Baker
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -163,7 +164,7 @@ SHOPLIST=BakerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the provisioner
+TITLE=5040//the Provisioner
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -187,7 +188,7 @@ SHOPLIST=ProvisionerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the cobbler
+TITLE=5041//the Cobbler
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -210,7 +211,7 @@ SHOPLIST=CobblerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the innkeeper
+TITLE=5042//the Innkeeper
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -233,7 +234,7 @@ SHOPLIST=InnkeeperShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the herbalist
+TITLE=5043//the Herbalist
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -255,7 +256,7 @@ SHOPLIST=HerbalistShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the butcher
+TITLE=5044//the Butcher
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -279,7 +280,7 @@ SHOPLIST=ButcherShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the tailor
+TITLE=5045//the Tailor
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -304,7 +305,7 @@ SHOPLIST=TailorShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the bowyer
+TITLE=5046//the Bowyer
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -331,7 +332,7 @@ SHOPLIST=BowyerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the jeweler
+TITLE=5047//the Jeweler
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -354,7 +355,7 @@ SHOPLIST=JewlerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the leather worker
+TITLE=5048//the Leatherworker
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -375,7 +376,7 @@ SHOPLIST=LeatherShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the mage
+TITLE=5063//the Mage
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -412,7 +413,7 @@ SHOPLIST=MageShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the shipwright
+TITLE=5049//the Shipwright
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -438,7 +439,7 @@ SHOPLIST=ShipwrightShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the spinner
+TITLE=5050//the Spinner
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -462,7 +463,7 @@ SHOPLIST=SpinnerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the armourer
+TITLE=5051//the Armourer
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -495,7 +496,7 @@ SHOPLIST=ArmorShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Blacksmith
+TITLE=5052//the Blacksmith
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -528,7 +529,7 @@ SHOPLIST=BlacksmithShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the architect
+TITLE=5053//the Architect
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -553,7 +554,7 @@ SHOPLIST=ArchitectShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Carpenter
+TITLE=5054//the Carpenter
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -577,7 +578,7 @@ SHOPLIST=CarpenterShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Farmer
+TITLE=5055//the Farmer
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -602,7 +603,7 @@ SHOPLIST=FarmerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the cook
+TITLE=5056//the Cook
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -626,7 +627,7 @@ SHOPLIST=CookShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Animal Trainer
+TITLE=5057//the Animal Trainer
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -649,6 +650,7 @@ EQUIPITEM=listobject25
 COLORLIST=11
 GOLD=0 50
 SHOPLIST=TrainerShopping
+NPCAI=9
 SCRIPT=3105
 }
 
@@ -656,7 +658,7 @@ SCRIPT=3105
 {
 GET=basevendor
 NAMELIST=1
-TITLE=The Fisherman
+TITLE=5058//The Fisher
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -682,7 +684,7 @@ SHOPLIST=FisherShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Alchemist
+TITLE=5059//the Alchemist
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -706,7 +708,7 @@ SHOPLIST=AlchemistShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the Tinker
+TITLE=5060//the Tinker
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -733,7 +735,7 @@ SHOPLIST=TinkerShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the beekeeper
+TITLE=5061//the Beekeeper
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -755,7 +757,7 @@ SHOPLIST=BeekeeperShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the healer
+TITLE=5062//the healer
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -798,7 +800,7 @@ DEF=10
 TOTAME=2000
 FLAG=INNOCENT
 NAMELIST=1
-TITLE=The Player Vendor
+TITLE=5106//The Player Vendor
 ID=0x0190
 EQUIPITEM=0x203b
 HAIRCOLOR=15
@@ -822,7 +824,7 @@ TACTICS=1000 900
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the tavernkeeper
+TITLE=5064//the Tavernkeeper
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15
@@ -844,7 +846,7 @@ SHOPLIST=TavernKeepShopping
 {
 GET=basevendor
 NAMELIST=1
-TITLE=the scribe
+TITLE=5065//the Scribe
 ID=0x0190
 EQUIPITEM=listobject13
 HAIRCOLOR=15

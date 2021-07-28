@@ -16,6 +16,7 @@
 #include "combat.h"
 #include "magic.h"
 #include "Dictionary.h"
+#include "CResponse.h"
 
 #include "ObjectFactory.h"
 #include "PartySystem.h"
@@ -369,7 +370,9 @@ void WstatsTarget( CSocket *s )
 	UI16 charID = i->GetID();
 	wStat.AddData( "Serial", charSerial, 3 );
 	wStat.AddData( "Body ID", charID, 5 );
-	wStat.AddData( "Name", i->GetName() );
+
+	std::string iName = getNpcDictName( i, s );
+	wStat.AddData( "Name", iName );
 	wStat.AddData( "X", i->GetX() );
 	wStat.AddData( "Y", i->GetY() );
 
@@ -499,7 +502,7 @@ void InfoTarget( CSocket *s )
 
 	if( !s->GetByte( 1 ) && s->GetDWord( 7 ) < BASEITEMSERIAL )
 	{
-		s->sysmessage( "This command can not be used on characters." );
+		s->sysmessage( 9039 ); // This command can not be used on characters.
 		return;
 	}
 
@@ -709,11 +712,11 @@ void newCarveTarget( CSocket *s, CItem *i )
 			if( strutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = strutil::trim(strutil::removeTrailing(data,"//") );
+				data = strutil::trim( strutil::removeTrailing( data, "//" ));
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{	
-					if( !CreateBodyPart( mChar, i, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)) ) )
+					if( !CreateBodyPart( mChar, i, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0))))
 					{
 						return;
 					}
@@ -751,11 +754,11 @@ void newCarveTarget( CSocket *s, CItem *i )
 			if( strutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = strutil::trim(strutil::removeTrailing(data,"//") );
+				data = strutil::trim( strutil::removeTrailing( data, "//" ));
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					Items->CreateScriptItem( s, mChar, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)), OT_ITEM, true );
+					Items->CreateScriptItem( s, mChar, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
 				}
 				else
 				{
@@ -774,32 +777,100 @@ void newCarveTarget( CSocket *s, CItem *i )
 void AttackTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *target	= static_cast<CChar *>(s->TempObj());
-	CChar *target2	= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CChar *mPet	= static_cast<CChar *>(s->TempObj());
+	CChar *target	= calcCharObjFromSer( s->GetDWord( 7 ) );
 	s->TempObj( nullptr );
 
-	if( !ValidateObject( target2 ) || !ValidateObject( target ) )
+	if( !ValidateObject( target ) || !ValidateObject( mPet ) )
 		return;
-	if( target2 == target )
-	{
-		s->sysmessage( 1073 );
-		return;
-	}
 
-	// Check if combat is allowed in attacker's AND target's regions
-	if( target->GetRegion()->IsSafeZone() || target2->GetRegion()->IsSafeZone() )
+	CChar *mChar = s->CurrcharObj();
+	if( !ValidateObject( mChar ))
+		return;
+
+	// Check if combat is disallowed in attacker's OR mPet's regions
+	if( mChar->GetRegion()->IsSafeZone() || mPet->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
 		s->sysmessage( 1799 );
 		return;
 	}
 
-	Combat->AttackTarget( target, target2 );
-	if( target2->IsInnocent() && target2 != target->GetOwnerObj() )
+	// Check if the command was applied to all pets
+	if( s->TempInt() == 1 )
 	{
-		CChar *pOwner = target->GetOwnerObj();
-		if( ValidateObject( pOwner ) && WillResultInCriminal( pOwner, target2 ) )
-			criminal( pOwner );
+		s->TempInt( 0 );
+		GenericList< CChar * > *myPets = mChar->GetPetList();
+		for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+		{
+			// Make sure pet returned from petList is still a valid character
+			if( !ValidateObject( myPet ) )
+				continue;
+
+			// Make sure pet cannot attack itself
+			if( target == myPet )
+			{
+				s->sysmessage( 1073 ); // Your pet cannot attack itself!
+				continue;
+			}
+
+			// Make sure only nearby pets can respond
+			if( !objInRange( mChar, myPet, 12 ))
+				continue;
+
+			// Make sure pets can only attack nearby targets
+			if( !objInRange( mChar, target, 12 ) )
+			{
+				s->sysmessage( 393 ); // That is too far away
+				continue;
+			}
+
+			if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
+			{
+				myPet->FlushPath();
+				Combat->AttackTarget( myPet, target );
+				if( target->IsInnocent() && target != myPet->GetOwnerObj() )
+				{
+					if( WillResultInCriminal( mChar, target ) )
+						criminal( mChar );
+				}
+			}
+		}
+	}
+	else
+	{
+		// Make sure pet cannot attack itself
+		if( target == mPet )
+		{
+			s->sysmessage( 1073 ); // Your pet cannot attack itself!
+			return;
+		}
+
+		// Make sure only nearby pets can respond
+		if( !objInRange( mChar, mPet, 12 ) )
+			return;
+
+		// Make sure pet can only attack nearby targets
+		if( !objInRange( mChar, target, 12 ) )
+		{
+			s->sysmessage( 393 ); // That is too far away
+			return;
+		}
+
+		// Make sure a friend cannot order a pet to attack its owner
+		if( target == mPet->GetOwnerObj() && mChar != target )
+		{
+			s->sysmessage( 2408 ); // They are unwilling to attack their own master.
+			return;
+		}
+
+		mPet->FlushPath();
+		Combat->AttackTarget( mPet, target );
+		if( target->IsInnocent() && target != mChar )
+		{
+			if( WillResultInCriminal( mChar, target ))
+				criminal( mChar );
+		}
 	}
 }
 
@@ -811,16 +882,77 @@ void AttackTarget( CSocket *s )
 void FollowTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *char1	= static_cast<CChar *>(s->TempObj());
-	CChar *char2	= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CChar *mPet	= static_cast<CChar *>(s->TempObj());
+	CChar *target	= calcCharObjFromSer( s->GetDWord( 7 ) );
 	s->TempObj( nullptr );
-	if( !ValidateObject( char1 ) || !ValidateObject( char2 ) )
+	if( !ValidateObject( mPet ) || !ValidateObject( target ) )
 		return;
 
-	char1->SetFTarg( char2 );
-	char1->SetNpcWander( WT_FOLLOW );
+	CChar *mChar = s->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	if( s->TempInt() == 1 )
+	{
+		s->TempInt( 0 );
+
+		GenericList< CChar * > *myPets = mChar->GetPetList();
+		for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+		{
+			// Make sure pet returned from petList is still a valid character
+			if( !ValidateObject( myPet ) )
+				continue;
+
+			if( myPet == target )
+			{
+				s->sysmessage( 2388 ); // Your pet cannot follow itself!
+				continue;
+			}
+
+			// Make sure only nearby pets can respond
+			if( !objInRange( mChar, myPet, 12 ) )
+				continue;
+
+			if( !objInRange( mChar, target, 12 ) )
+			{
+				s->sysmessage( 393 ); // That is too far away
+				continue;
+			}
+
+			if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
+			{
+				myPet->SetFTarg( target );
+				myPet->FlushPath();
+				myPet->SetNpcWander( WT_FOLLOW );
+			}
+		}
+	}
+	else
+	{
+		if( mPet == target )
+		{
+			s->sysmessage( 2388 ); // Your pet cannot follow itself!
+			return;
+		}
+
+		// Make sure only nearby pets can respond
+		if( !objInRange( mChar, mPet, 12 ) )
+			return;
+
+		if( !objInRange( mChar, target, 12 ) )
+		{
+			s->sysmessage( 393 ); // That is too far away
+			return;
+		}
+
+		mPet->SetFTarg( target );
+		mPet->FlushPath();
+		mPet->SetNpcWander( WT_FOLLOW );
+	}
 }
 
+void		sendTradeStatus( CItem *cont1, CItem *cont2 );
+CItem *		startTrade( CSocket *mSock, CChar *i );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void TransferTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
@@ -829,31 +961,140 @@ void FollowTarget( CSocket *s )
 void TransferTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *char1 = static_cast<CChar *>(s->TempObj());
-	CChar *char2 = calcCharObjFromSer( s->GetDWord( 7 ) );
+	CChar *petChar = static_cast<CChar *>(s->TempObj());
+	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
 	s->TempObj( nullptr );
 
-	if( !ValidateObject( char1 ) )
+	if( !ValidateObject( petChar ) )
 		return;
 
-	if( !ValidateObject( char2 ) )
+	if( petChar->IsDispellable() )
 	{
-		s->sysmessage( 1066 );
-		return;
-	}
-	if( char1 == char2 )
-	{
-		s->sysmessage( 1066 );
+		s->sysmessage( 2386 ); // You cannot transfer ownership of a summoned creature.
 		return;
 	}
 
-	Npcs->stopPetGuarding( char1 );
+	if( !ValidateObject( targChar ) )
+	{
+		s->sysmessage( 1066 ); // That is not a valid person!
+		return;
+	}
+	
+	if( petChar == targChar )
+	{
+		s->sysmessage( 2371 ); // Ownership can only be transferred to other players.
+		return;
+	}
 
-	char1->TextMessage( nullptr, 1074, TALK, 0, char1->GetName().c_str(), char2->GetName().c_str() );
+	if( petChar->IsAtWar() )
+	{
+		s->sysmessage( 2414 ); // You may not transfer a pet that has recently been in combat.
+		if( targChar->GetSocket() != nullptr )
+		{
+			targChar->GetSocket()->sysmessage( 2415 ); //  The pet may not be transfered to you because it has recently been in combat.
+		}
+		return;
+	}
 
-	char1->SetOwner( char2 );
-	char1->SetFTarg( nullptr );
-	char1->SetNpcWander( WT_FREE );
+	CChar *mChar = s->CurrcharObj();
+
+	if( targChar == mChar )
+	{
+		s->sysmessage( 2409 ); // That would be pointless - you are already their master!
+		return;
+	}
+
+	if( targChar->IsDead() )
+	{
+		s->sysmessage( 2384 ); // You cannot transfer to someone that is dead.
+		return;
+	}
+
+	if( targChar->IsNpc() )
+	{
+		s->sysmessage( 2371 ); // Ownership can only be transferred to other players!
+		return;
+	}
+
+	// Don't allow transfer of pet if either party is a criminal
+	if( mChar->IsCriminal() )
+	{
+		s->sysmessage( 2379 ); // The pet refuses to be transferred because it will not obey you sufficiently.
+		if( targChar->GetSocket() != nullptr )
+			targChar->GetSocket()->sysmessage( 2382, mChar->GetName().c_str() ); // The pet will not accept you as a master because it does not trust %s.
+		return;
+	}
+	else if( targChar->IsCriminal() )
+	{
+		s->sysmessage( 2380, mChar->GetName().c_str() ); // The pet refuses to be transferred because it will not obey %s.
+		if( targChar->GetSocket() != nullptr )
+			targChar->GetSocket()->sysmessage( 2381 ); // The pet will not accept you as a master because it does not trust you.
+		return;
+	}
+
+	UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
+	if( maxControlSlots > 0 && ( targChar->GetControlSlotsUsed() + petChar->GetControlSlots() > maxControlSlots ) )
+	{
+		s->sysmessage( 2391 ); // That would exceed the other player's maximum pet control slots.
+		if( targChar->GetSocket() != nullptr )
+			targChar->GetSocket()->sysmessage( 2390 ); // That would exceed your maximum pet control slots.
+		return;
+	}
+
+	UI08 maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
+	if( petChar->IsOnPetOwnerList( targChar ) && maxPetOwners > 0 && ( petChar->GetPetOwnerList()->Num() >= maxPetOwners ) )
+	{
+		s->sysmessage( 2402 ); // The creature has had too many masters and is not willing to do the bidding of another one!
+		if( targChar->GetSocket() != nullptr )
+			targChar->GetSocket()->sysmessage( 2402 ); // The creature has had too many masters and is not willing to do the bidding of another one!
+		return;
+	}
+
+	// Check loyalty of pet to old master
+	if( cwmWorldState->ServerData()->CheckPetControlDifficulty() && !Npcs->canControlPet( mChar, petChar, true, false, false, true ) )
+	{
+		s->sysmessage( 2379 ); // The pet refuses to be transferred because it will not obey you sufficiently.
+		if( targChar->GetSocket() != nullptr )
+		{
+			targChar->GetSocket()->sysmessage( 2382, mChar->GetName().c_str() ); // The pet will not accept you as a master because it does not trust %s.
+		}
+		return;
+	}
+
+	// Check loyalty of pet to new master
+	if( cwmWorldState->ServerData()->CheckPetControlDifficulty() && !Npcs->canControlPet( targChar, petChar, true, true, true, true ) )
+	{
+		s->sysmessage( 2380 ); // The pet refuses to be transferred because it will not obey %s.
+		if( targChar->GetSocket() != nullptr )
+		{
+			targChar->GetSocket()->sysmessage( 2381, mChar->GetName().c_str() ); // The pet will not accept you as a master because it does not trust you.
+		}
+		return;
+	}
+
+	if( targChar->GetSocket() != nullptr )
+	{
+		// Create a pet transfer deed
+		CItem *petTransferDeed = Items->CreateScriptItem( s, mChar, "0x14F0", 1, OT_ITEM, false, 0 );
+		if( ValidateObject( petTransferDeed ) )
+		{
+			std::string petName = getNpcDictName( petChar );
+			petTransferDeed->SetName( strutil::format( "a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry( 3000 + petChar->GetID(), targChar->GetSocket()->Language() ).c_str() )); //cwmWorldState->creatures[petChar->GetID()].CreatureType().c_str() ));
+			petTransferDeed->SetTempVar( CITV_MORE, petChar->GetSerial() );
+			petTransferDeed->SetMovable( 2 ); // Disallow moving the deed out of the trade window
+			petTransferDeed->SetType( IT_PETTRANSFERDEED ); // Set a type to let us identify it later when trade is accepted
+
+			// Open a trade window, and place the petTransferDeed in the window
+			CItem *j = startTrade( s, targChar );
+			if( ValidateObject( j ) )
+			{
+				petTransferDeed->SetCont( j );
+				petTransferDeed->SetX( 30 );
+				petTransferDeed->SetY( 30 );
+				petTransferDeed->SetZ( 9 );
+			}
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1066,20 +1307,39 @@ void FriendTarget( CSocket *s )
 	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( targChar ) )
 	{
-		s->sysmessage( 1103 );
+		s->sysmessage( 1103 ); // Not a valid target!
 		return;
 	}
-	if( targChar->IsNpc() || !isOnline( (*targChar) ) || targChar == mChar )
+	if( targChar->IsNpc() || !isOnline( (*targChar) ))
 	{
-		s->sysmessage( 1622 );
+		s->sysmessage( 1622 ); // That person cannot be made a friend of this creature.
 		return;
 	}
 
 	CChar *pet = static_cast<CChar *>(s->TempObj());
 	s->TempObj( nullptr );
+
+	if( !ValidateObject( pet ) )
+	{
+		s->sysmessage( 1999 ); // Object not found
+		return;
+	}
+
+	if( targChar == mChar )
+	{
+		s->sysmessage( 2409 ); // That would be pointless - you are already their master!
+		return;
+	}
+
+	if( pet->IsDispellable() )
+	{
+		s->sysmessage( 2385 ); // Summoned creatures are loyal only to their summoners.
+		return;
+	}
+
 	if( Npcs->checkPetFriend( targChar, pet ) )
 	{
-		s->sysmessage( 1621 );
+		s->sysmessage( 1621 ); // That person is already a friend of this creature!
 		return;
 	}
 
@@ -1089,17 +1349,110 @@ void FriendTarget( CSocket *s )
 	{
 		if( petFriends->size() >= 10 )
 		{
-			s->sysmessage( 1623 );
+			s->sysmessage( 1623 ); // This creature has too many friends.
 			return;
 		}
 	}
 
-	pet->AddFriend( targChar );
-	s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
+	// Check loyalty of pet to master
+	if( cwmWorldState->ServerData()->CheckPetControlDifficulty() && !Npcs->canControlPet( mChar, pet, false, true, true ) )
+	{
+		s->sysmessage( 2417 ); // The pet refuses to accept a new friend because it will not obey you sufficiently.
+		if( targChar->GetSocket() != nullptr )
+		{
+			targChar->GetSocket()->sysmessage( 2418, mChar->GetName().c_str() ); // The pet will not accept you as a friend because it does not trust %s.
+		}
+		return;
+	}
 
-	CSocket *targSock = targChar->GetSocket();
-	if( targSock != nullptr )
-		targSock->sysmessage( 1625, mChar->GetName().c_str(), pet->GetName().c_str() );
+	// Check loyalty of pet to new friend
+	if( cwmWorldState->ServerData()->CheckPetControlDifficulty() && !Npcs->canControlPet( targChar, pet, false, true, true ) )
+	{
+		s->sysmessage( 2419, targChar->GetName().c_str() ); // The pet refuses to accept %s as a friend because it will not obey them.
+		if( targChar->GetSocket() != nullptr )
+		{
+			targChar->GetSocket()->sysmessage( 2420 ); // The pet will not accept you as a friend because it does not trust you.
+		}
+		return;
+	}
+
+	if( pet->AddFriend( targChar ) )
+	{
+		// %s will now treat %s as a friend.
+		std::string petName = getNpcDictName( pet, s );
+		s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
+
+		// Inform the player added as friend
+		CSocket *targSock = targChar->GetSocket();
+		if( targSock != nullptr )
+		{
+			// %s has befriended %s to you.
+			petName = getNpcDictName( pet, targSock );
+			targSock->sysmessage( 1625, mChar->GetName().c_str(), petName.c_str() );
+		}
+	}
+	else
+	{
+		// You cannot do that at the moment
+		s->sysmessage( 394 );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveFriendTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove targeted player from pet's friendslist
+//o-----------------------------------------------------------------------------------------------o
+void RemoveFriendTarget( CSocket *s )
+{
+	// Validate player's socket and character
+	VALIDATESOCKET( s );
+	CChar *mChar = s->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	// Get targeted character from socket
+	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( !ValidateObject( targChar ) )
+	{
+		s->sysmessage( 1103 ); // Not a valid target!
+		return;
+	}
+	if( targChar->IsNpc() || !isOnline( ( *targChar ) ) || targChar == mChar )
+	{
+		s->sysmessage( 1103 ); // Not a valid target!
+		return;
+	}
+
+	CChar *pet = static_cast<CChar *>( s->TempObj() );
+	s->TempObj( nullptr );
+	if( !Npcs->checkPetFriend( targChar, pet ) )
+	{
+		s->sysmessage( 1856 ); // That player is not on the friend list!
+		return;
+	}
+
+	if( pet->RemoveFriend( targChar ) )
+	{
+		// %s has been removed from %s's friend list.
+		std::string petName = getNpcDictName( pet, s );
+		s->sysmessage( 2300, targChar->GetName().c_str(), petName.c_str() );
+
+		// Inform the player removed as friend
+		CSocket *targSock = targChar->GetSocket();
+		if( targSock != nullptr )
+		{	
+			petName = getNpcDictName( pet, targSock );
+
+			// You have been removed from %s's friend list.
+			targSock->sysmessage( 2301, petName.c_str() );
+		}
+	}
+	else
+	{
+		// You cannot do that at the moment
+		s->sysmessage( 394 );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1129,12 +1482,27 @@ void GuardTarget( CSocket *s )
 	{
 		if( charToGuard != petGuarding->GetOwnerObj() && !Npcs->checkPetFriend( charToGuard, petGuarding ) )
 		{
-			s->sysmessage( 1628 );
+			s->sysmessage( 1628 ); // Your pet may only guard you, his friends, and items in your house!
 			return;
 		}
 		petGuarding->SetNPCAiType( AI_PET_GUARD ); // 32 is guard mode
 		petGuarding->SetGuarding( charToGuard );
 		mChar->SetGuarded( true );
+		petGuarding->SetFTarg( charToGuard );
+		petGuarding->FlushPath();
+		petGuarding->SetNpcWander( WT_FOLLOW );
+
+		if( charToGuard == mChar )
+			s->sysmessage( 1321 ); // Your pet is now guarding you.
+		else
+		{
+			if( charToGuard->GetSocket() != nullptr )
+			{
+				std::string petName = getNpcDictName( petGuarding, charToGuard->GetSocket() );
+				charToGuard->GetSocket()->sysmessage( 2374, petName.c_str() ); // ~1_PETNAME~ is now guarding you.
+			}
+		}
+
 		return;
 	}
 	CItem *itemToGuard = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -1416,12 +1784,12 @@ void VialTarget( CSocket *mSock )
 		CItem *nDagger = Combat->getWeapon( mChar );
 		if( !ValidateObject( nDagger ) )
 		{
-			mSock->sysmessage( 742 );
+			mSock->sysmessage( 742 ); // You do not have a dagger in your hands!
 			return;
 		}
 		if( nDagger->GetID() != 0x0F51 && nDagger->GetID() != 0x0F52 )
 		{
-			mSock->sysmessage( 743 );
+			mSock->sysmessage( 743 ); // That is not a dagger!
 			return;
 		}
 
@@ -1430,7 +1798,7 @@ void VialTarget( CSocket *mSock )
 		{	// it's an item
 			CItem *targItem = calcItemObjFromSer( targSerial );
 			if( !targItem->isCorpse() )
-				mSock->sysmessage( 749 );
+				mSock->sysmessage( 749 ); // That is not a corpse!
 			else
 			{
 				if( !checkItemRange( mChar, targItem ) )
@@ -1443,12 +1811,12 @@ void VialTarget( CSocket *mSock )
 				Karma( mChar, nullptr, -1000 );
 				if( targItem->GetTempVar( CITV_MORE, 2 ) < 4 )
 				{
-					mSock->sysmessage( 750 );
+					mSock->sysmessage( 750 ); // You take a sample of blood from the corpse.
 					Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
 					targItem->SetTempVar( CITV_MORE, 2, targItem->GetTempVar( CITV_MORE, 2 ) + 1 );
 				}
 				else
-					mSock->sysmessage( 751 );
+					mSock->sysmessage( 751 ); // You examine the corpse, but decide any further blood samples would be too contaminated.
 			}
 		}
 		else
@@ -1457,9 +1825,9 @@ void VialTarget( CSocket *mSock )
 			if( targChar == mChar )
 			{
 				if( targChar->GetHP() <= 10 )
-					mSock->sysmessage( 744 );
+					mSock->sysmessage( 744 ); // You are too wounded to continue
 				else
-					mSock->sysmessage( 745 );
+					mSock->sysmessage( 745 ); // You prick your finger and fill the vial
 			}
 			else if( objInRange( mChar, targChar, DIST_NEARBY ) )
 			{
@@ -1472,7 +1840,7 @@ void VialTarget( CSocket *mSock )
 				else
 				{
 					CSocket *nCharSocket = targChar->GetSocket();
-					nCharSocket->sysmessage( 746, mChar->GetName().c_str() );
+					nCharSocket->sysmessage( 746, mChar->GetName().c_str() ); // %s has pricked you with a dagger and sampled your blood
 				}
 				if( WillResultInCriminal( mChar, targChar ) )
 					criminal( mChar );
@@ -1480,7 +1848,7 @@ void VialTarget( CSocket *mSock )
 			}
 			else
 			{
-				mSock->sysmessage( 747 );
+				mSock->sysmessage( 747 ); // That individual is not anywhere near you.
 				return;
 			}
 			targChar->Damage( RandomNum( 0, 5 ) + 2 );
@@ -1566,6 +1934,7 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_TRANSFER:		TransferTarget( tSock );				break;
 					case TARGET_GUARD:			GuardTarget( tSock );					break;
 					case TARGET_FRIEND:			FriendTarget( tSock );					break;
+					case TARGET_REMOVEFRIEND:	RemoveFriendTarget( tSock );			break;
 						// Magic
 					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;
 						// Skills Functions

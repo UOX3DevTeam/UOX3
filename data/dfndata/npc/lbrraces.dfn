@@ -1,6 +1,6 @@
 [jukawarrior]
 {
-NAME=a juka warrior
+NAME=#//a juka warrior
 ID=0x02fc
 DIRECTION=RND
 BACKPACK
@@ -33,7 +33,7 @@ FLAG=NEUTRAL
 
 [jukalord]
 {
-NAME=a juka lord
+NAME=#//a juka lord
 ID=0x02fe
 DIRECTION=RND
 BACKPACK
@@ -68,7 +68,7 @@ FLAG=NEUTRAL
 
 [jukamage]
 {
-NAME=a juka mage
+NAME=#//a juka mage
 ID=0x02fd
 DIRECTION=RND
 BACKPACK
@@ -106,7 +106,7 @@ FLAG=NEUTRAL
 
 [meereternal]
 {
-NAME=a meer eternal
+NAME=#//a meer eternal
 ID=0x0304
 DIRECTION=RND
 BACKPACK
@@ -143,7 +143,7 @@ FLAG=NEUTRAL
 
 [meerwarrior]
 {
-NAME=a meer warrior
+NAME=#//a meer warrior
 ID=0x0303
 DIRECTION=RND
 BACKPACK
@@ -175,7 +175,7 @@ FLAG=NEUTRAL
 
 [meercaptain]
 {
-NAME=a meer captain
+NAME=#//a meer captain
 ID=0x0305
 DIRECTION=RND
 BACKPACK
@@ -209,7 +209,7 @@ FLAG=NEUTRAL
 
 [meermage]
 {
-NAME=a meer mage
+NAME=#//a meer mage
 ID=0x0302
 DIRECTION=RND
 BACKPACK

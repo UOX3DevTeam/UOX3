@@ -15,7 +15,6 @@
 #include <cstdarg>
 #include <type_traits>
 
-
 namespace strutil {
 	// Uppercase the string
 	std::string lower(const std::string &value);
@@ -34,13 +33,11 @@ namespace strutil {
 	// Removing everything after a delimiter. Normally "//" for comments
 	std::string removeTrailing(const std::string& value,const std::string& delim="//");
 
-	
 	// Return the values between two delimitors.
 	std::string contents(const std::string &value,const std::string& startdelim, const std::string &enddelim,std::string::size_type location=0);
 
 	// Split a string based on a separator
 	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep);
-
 	
 	
 	std::string format(std::size_t maxsize, const std::string fmtstring,...) ;
@@ -86,6 +83,15 @@ namespace strutil {
 	
 	// Convert a string to wstring (for UTF8 characters)
 	std::wstring stringToWstring( const std::string& t_str );
+
+	// Convert a wstring to string (retaining UTF8 characters)
+	std::string wStringToString( const std::wstring& t_str );
+
+	// Convert a string to wstring and back to string (retaining UTF8 characters)
+	std::string stringToWstringToString( const std::string& t_str );
+	
+	// Tackles converting text loaded from dictionary into japanese
+	std::wstring FromUTF8( const char* str );
 	
 	template<typename T>
 	std::string number(T n, int base=10){

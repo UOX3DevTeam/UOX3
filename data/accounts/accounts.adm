@@ -1,4 +1,4 @@
-//AV3.0-UV0.99-BD4[RC5]-DS1604784852-ED0
+//AV3.0-UV0.99-BD4v-DS1627456742-ED0
 //------------------------------------------------------------------------------
 //accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers
 //
@@ -18,12 +18,13 @@
 //         CHARACTER-4 0xffffffff
 //         CHARACTER-5 0xffffffff
 //         CHARACTER-6 0xffffffff
+//         CHARACTER-7 0xffffffff
 //      }
 //
 //   FLAGS: 
 //      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public           0x0008) Currently Logged In
 //            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 Blocked   0x0080) Char-4 Blocked
-//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Unused           0x0800) Unused
+//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Unused
 //            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account
 //
 //   TIMEBAN: 
@@ -60,6 +61,7 @@ PASS guest1
 FLAGS 0x0
 PATH ./accounts/guest1/
 TIMEBAN 0x0
+LASTIP 0.0.0.0
 CONTACT unknown
 CHARACTER-1 0xffffffff [UNKNOWN]
 CHARACTER-2 0xffffffff [UNKNOWN]

@@ -1,0 +1,81 @@
+[base_practice_weapon]
+{
+decay=1
+str=1
+lodamage=2
+hidamage=8
+speed=25
+hp=31 80
+layer=1
+newbie
+}
+
+[practice_skinning_knife]
+{
+get=base_practice_weapon
+name=a skinning knife (practice weapon)
+id=0x0ec4
+}
+
+[practice_hatchet]
+{
+get=base_practice_weapon
+name=a hatchet (practice weapon)
+id=0x0f43
+}
+
+[practice_axe]
+{
+get=base_practice_weapon
+name=a battle axe (practice weapon)
+id=0x0f47
+}
+
+[practice_mace]
+{
+get=base_practice_weapon
+name=a mace (practice weapon)
+id=0x0f5c
+}
+
+[practice_longsword]
+{
+get=base_practice_weapon
+name=a longsword (practice weapon)
+id=0x0f61
+}
+
+[practice_spear]
+{
+get=base_practice_weapon
+name=a spear (practice weapon)
+id=0x0f63
+}
+
+[practice_bow]
+{
+get=base_practice_weapon
+name=a bow (practice weapon)
+id=0x13b2
+}
+
+[practice_club]
+{
+get=base_practice_weapon
+name=a club (practice weapon)
+id=0x13b3
+}
+
+[practice_crook]
+{
+get=base_practice_weapon
+name=a crook (practice weapon)
+id=0x13f5
+}
+
+[practice_gnarled_staff]
+{
+get=base_practice_weapon
+name=a gnarled staff (practice weapon)
+id=0x13f8
+}

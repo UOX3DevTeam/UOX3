@@ -1,5 +1,5 @@
 // Wheat-Picking Script
-// 20/02/2006 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@uox3.org
 // When (dynamic)wheat is double-clicked, it's setup with
 // wheat ripe for picking. When it is harvested it turns into "harvested wheat",
 // and a "growth" process happens, where the wheat goes through various stages
@@ -11,7 +11,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( "You are too far away to reach that." );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pUser.socket.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -23,7 +23,7 @@ function onUseChecked( pUser, iUsed )
 	var Wheat = iUsed.GetTag("Wheat");
 	if (Wheat == 0)
 	{	
-		pUser.SysMessage( "This wheat is not ready for harvesting yet." );
+		pUser.SysMessage( GetDictionaryEntry( 2549, pUser.socket.language )); // This wheat is not ready for harvesting yet.
 		return false;
 	}
 	if( Wheat == 1 )
@@ -31,10 +31,10 @@ function onUseChecked( pUser, iUsed )
 		iUsed.SoundEffect( 0x0050, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
-			pUser.SysMessage( "You fail to pick any wheat." );
+			pUser.SysMessage( GetDictionaryEntry( 2550, pUser.socket.language )); // You fail to pick any wheat.
 		if( loot == 3 || loot == 1 )
 	 	{
-			pUser.SysMessage( "You harvest some wheat." );
+			pUser.SysMessage( GetDictionaryEntry( 2551, pUser.socket.language )); // You harvest some wheat.
 			var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", 0x1ebd, 0x0, "ITEM", true );
 			var loot2 = RollDice( 1, 2, 0 );
 			if( loot2 == 1 )

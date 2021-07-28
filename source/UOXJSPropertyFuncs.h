@@ -19,6 +19,8 @@ JSPropertyFunc CCreateEntriesProps_getProperty;
 JSPropertyFunc CCreateEntryProps_getProperty;
 JSPropertyFunc CCreateEntryProps_setProperty;
 
+JSPropertyFunc CTimerProps_getProperty;
+
 JSPropertyFunc CItemProps_getProperty;
 JSPropertyFunc CItemProps_setProperty;
 JSPropertyFunc CCharacterProps_getProperty;

@@ -10,14 +10,15 @@
 #include "CPacketSend.h"
 #include "CResponse.h"
 #include "movement.h"
+#include "Dictionary.h"
 #include "StringUtility.hpp"
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+//|	Function	-	void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system message
 //o-----------------------------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
 {
 	bool multipleArgs		= false;
 	std::string argList		= "";
@@ -50,7 +51,7 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 	va_end( marker );
 
 	CPClilocMessage toSend;
-	toSend.Type( type );
+	toSend.Type( speechType );
 	toSend.Hue( hue );
 	toSend.Font( font );
 	toSend.Message( messageNum );
@@ -60,11 +61,11 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
+//|	Function	-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if said by srcObj
 //o-----------------------------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
+void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
 {
 	bool multipleArgs		= false;
 	std::string argList		= "";
@@ -95,7 +96,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 	va_end( marker );
 
 	CPClilocMessage toSend( (*srcObj) );
-	toSend.Type( type );
+	toSend.Type( speechType );
 	toSend.Hue( hue );
 	toSend.Font( font );
 	toSend.Message( messageNum );
@@ -104,7 +105,15 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 	bool sendSock = (mSock != nullptr);
 	if( sendAll )
 	{
-		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, DIST_INRANGE );
+		UI16 searchDistance = DIST_SAMESCREEN;
+		if( speechType == WHISPER )
+			searchDistance = DIST_NEXTTILE;
+		else if( speechType == YELL )
+			searchDistance = DIST_SAMESCREEN * 1.5;
+		else if( speechType == EMOTE )
+			searchDistance = DIST_INRANGE;
+
+		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, searchDistance );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			if( sendSock && (*cIter) == mSock )
@@ -171,21 +180,46 @@ void sysBroadcast( const std::string& txt )
 {
 	if( !txt.empty() )
 	{
-		CSpeechEntry& toAdd = SpeechSys->Add();
-		toAdd.Speech( txt );
-		toAdd.Font( FNT_NORMAL );
-		toAdd.Speaker( INVALIDSERIAL );
-		toAdd.SpokenTo( INVALIDSERIAL );
-		toAdd.Type( SYSTEM );
-		toAdd.At( cwmWorldState->GetUICurrentTime() );
-		toAdd.TargType( SPTRG_BROADCASTPC );
-		toAdd.Colour( 0x084D );
-		toAdd.Font( FNT_BOLD );
-		toAdd.SpeakerName( "System: " );
+		/*if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+		{
+			Network->pushConn();
+			for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+			{
+				CChar *mChar = mSock->CurrcharObj();
+				if( ValidateObject( mChar ))
+				{
+						CPUnicodeMessage unicodeMessage;
+						unicodeMessage.Message( txt );
+						unicodeMessage.Font( 0xFFFF );
+						unicodeMessage.Colour( 0xFFFF );
+						unicodeMessage.Type( 1 );
+						unicodeMessage.Language( "ENG" );
+						unicodeMessage.Name( "System" );
+						unicodeMessage.ID( 0 );
+						unicodeMessage.Serial( 0 );
+						mSock->Send( &unicodeMessage );
+				}
+			}
+			Network->popConn();
+		}
+		else
+		{*/
+			CSpeechEntry& toAdd = SpeechSys->Add();
+			toAdd.Speech( txt );
+			toAdd.Font( FNT_NORMAL );
+			toAdd.Speaker( INVALIDSERIAL );
+			toAdd.SpokenTo( INVALIDSERIAL );
+			toAdd.Type( SYSTEM );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_BROADCASTPC );
+			toAdd.Colour( 0x084D );
+			toAdd.Font( FNT_BOLD );
+			toAdd.SpeakerName( "System: " );
+		//}
 	}
 }
 
-bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
+bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPITalkRequest::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -275,7 +309,9 @@ bool CPITalkRequest::Handle( void )
 			else
 				toAdd.Colour( mChar->GetSayColour() );
 			toAdd.Font( FNT_BOLD );
-			toAdd.SpeakerName( mChar->GetName() );
+
+			std::string mCharName = getNpcDictName( mChar );
+			toAdd.SpeakerName( mCharName );
 		}
 		else
 		{
@@ -289,7 +325,7 @@ bool CPITalkRequest::Handle( void )
 			{
 				mChar->SetEmoteColour( TextColour() );
 			}
-			if( cwmWorldState->ServerData()->ServerSpeechLog() ) //Logging
+			if( cwmWorldState->ServerData()->ServerSpeechLog() && !mChar->IsNpc() ) //Logging
 			{
 				auto temp = strutil::format("%s.log", mChar->GetName().c_str() );
 				auto temp2 = strutil::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
@@ -331,7 +367,9 @@ bool CPITalkRequest::Handle( void )
 				asciiTxtToSend = new CPacketSpeech( *(static_cast<CPITalkRequestAscii *>(this)) );
 				asciiTxtToSend->SpeakerSerial( mChar->GetSerial() );
 				asciiTxtToSend->SpeakerModel( mChar->GetID() );
-				asciiTxtToSend->SpeakerName( mChar->GetName() );
+
+				std::string mCharName = getNpcDictName( mChar );
+				asciiTxtToSend->SpeakerName( mCharName );
 				txtToSend = asciiTxtToSend;
 
 				asciiGhostedText = new CPacketSpeech();
@@ -378,11 +416,13 @@ bool CPITalkRequest::Handle( void )
 					}
 					else
 					{
+						std::string mCharName = getNpcDictName( mChar );
+
 						if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE || mChar->GetVisible() == VT_PERMHIDDEN )
 						{
 							if(( tChar->IsGM() || tChar->IsCounselor() ) || Type() == WHISPER )
 							{
-								tSock->sysmessage( 1794, mChar->GetName().c_str() );
+								tSock->sysmessage( 1794, mCharName.c_str() ); // (Whisper from %s)
 								tSock->Send( txtToSend );
 							}
 						}
@@ -390,7 +430,7 @@ bool CPITalkRequest::Handle( void )
 						{
 							if( Type() == YELL && !objInRange( tChar, mChar, DIST_SAMESCREEN ) )
 							{
-								tSock->sysmessage( 1795, mChar->GetName().c_str() );
+								tSock->sysmessage( 1795, mCharName.c_str() ); // (Yelled by %s)
 								tSock->Send( txtToSend );
 							}
 							else

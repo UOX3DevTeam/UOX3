@@ -49,10 +49,10 @@ function onUseChecked( pUser, iUsed )
 			var newGoldPile = CreateDFNItem( pUser.socket, pUser, "0x0EED", checkSize, "ITEM", false );
 			newGoldPile.container = bankBox;
 		}
-		pUser.TextMessage( "Gold was deposited in your account: " + checkSize, false, 0x096a );
+		pUser.TextMessage( GetDictionaryEntry( 2703, pUser.socket ) + " " + checkSize, false, 0x096a ); // Gold was deposited in your account:
 		iUsed.Delete();
 	}
 	else
-		pUser.SysMessage( "That must be in your bank box to use it." );
+		pUser.SysMessage( GetDictionaryEntry( 2702, pUser.socket )); // That must be in your bank box to use it.
 	return false;
 }

@@ -69,6 +69,17 @@ decay=1
 good=28
 }
 
+[0x2d9d]
+{
+get=base_item
+name=mystic book
+id=0x02d9d
+weight=100
+value=22 11
+decay=1
+good=28
+}
+
 [moonstone]
 {
 get=base_item

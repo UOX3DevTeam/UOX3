@@ -347,7 +347,7 @@ JSBool SE_DoStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc != 7 )
 	{
-		DoSEErrorMessage( "DoStaticEffect: Invalid number of arguments (takes 7 - targX, targY, targZ, effectID, speed, loop, explode)" );
+		DoSEErrorMessage( "StaticEffect: Invalid number of arguments (takes 7 - targX, targY, targZ, effectID, speed, loop, explode)" );
 		return JS_FALSE;
 	}
 
@@ -958,7 +958,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 {
 	if( argc < 3 )
 	{
-		DoSEErrorMessage( "CreateDFNItem: Invalid number of arguments (takes at least 3)" );
+		DoSEErrorMessage( "CreateDFNItem: Invalid number of arguments (takes at least 3, max 8)" );
 		return JS_FALSE;
 	}
 
@@ -980,8 +980,9 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	bool bInPack				= true;
 	UI16 iAmount				= 1;
 	ObjectType itemType			= OT_ITEM;
-	UI08 worldNumber = 0;
-	UI16 instanceID = 0;
+	UI16 iColor					= 0xFFFF;
+	UI08 worldNumber			= 0;
+	UI16 instanceID				= 0;
 
 	if( argc > 3 )
 		iAmount					= static_cast< UI16 >(JSVAL_TO_INT( argv[3] ));
@@ -993,15 +994,17 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc > 5 )
 		bInPack					= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	if( argc > 6 )
-		worldNumber				= static_cast<UI08>(JSVAL_TO_INT( argv[6] ));
+		iColor					= static_cast<UI16>(JSVAL_TO_INT( argv[6] ));
 	if( argc > 7 )
-		instanceID				= static_cast<UI16>(JSVAL_TO_INT( argv[7] ));
+		worldNumber				= static_cast<UI08>(JSVAL_TO_INT( argv[7] ));
+	if( argc > 8 )
+		instanceID				= static_cast<UI16>(JSVAL_TO_INT( argv[8] ));
 
 	CItem *newItem = nullptr;
 	if( myChar != nullptr )
-		newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
+		newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack, iColor );
 	else
-		newItem = Items->CreateBaseScriptItem( bpSectNumber, worldNumber, iAmount, instanceID, itemType );
+		newItem = Items->CreateBaseScriptItem( bpSectNumber, worldNumber, iAmount, instanceID, itemType, iColor );
 
 	if( newItem != nullptr )
 	{
@@ -1542,15 +1545,15 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 	auto origContext = cx;
 	auto origObject = obj;
-	if( toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2 ) )
+
+	JSBool retVal = toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2, rval );
+	if( retVal )
 	{
-		*rval = JS_TRUE;
 		JS_SetGlobalObject( origContext, origObject );
 		return JS_TRUE;
 	}
 	else
 	{
-		*rval = JS_FALSE;
 		JS_SetGlobalObject( origContext, origObject );
 		return JS_FALSE;
 	}
@@ -2032,6 +2035,7 @@ JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( argc == 2 )
 		language = (UnicodeTypes)JSVAL_TO_INT( argv[1] );
 	std::string txt = Dictionary->GetEntry( dictEntry, language );
+	txt = strutil::stringToWstringToString( txt );
 
 	JSString *strTxt = nullptr;
 	strTxt = JS_NewStringCopyZ( cx, txt.c_str() );
@@ -2068,28 +2072,57 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 		case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
 	}
 
-	std::string tmpString = myChar->GetName() + yellTo + textToYell;
+	std::string tmpString = getNpcDictName( myChar, mySock ) + yellTo + textToYell;
 
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( tmpString );
-	toAdd.Font( (FontType)myChar->GetFontType() );
-	toAdd.Speaker( INVALIDSERIAL );
-	if( mySock->GetWord( 4 ) == 0x1700 )
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
-		toAdd.Colour( 0x5A );
-	}
-	else if( mySock->GetWord( 4 ) == 0x0 )
-	{
-		toAdd.Colour( 0x5A );
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( tmpString );
+		unicodeMessage.Font( (FontType)myChar->GetFontType() );
+		if( mySock->GetWord( 4 ) == 0x1700 )
+		{
+			unicodeMessage.Colour( 0x5A );
+		}
+		else if( mySock->GetWord( 4 ) == 0x0 )
+		{
+			unicodeMessage.Colour( 0x5A );
+		}
+		else
+		{
+			unicodeMessage.Colour( mySock->GetWord( 4 ) );
+		}
+		unicodeMessage.Type( YELL );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "SYSTEM" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		mySock->Send( &unicodeMessage );
 	}
 	else
 	{
-		toAdd.Colour( mySock->GetWord( 4 ) );
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( tmpString );
+		toAdd.Font( (FontType)myChar->GetFontType() );
+		toAdd.Speaker( INVALIDSERIAL );
+		if( mySock->GetWord( 4 ) == 0x1700 )
+		{
+			toAdd.Colour( 0x5A );
+		}
+		else if( mySock->GetWord( 4 ) == 0x0 )
+		{
+			toAdd.Colour( 0x5A );
+		}
+		else
+		{
+			toAdd.Colour( mySock->GetWord( 4 ) );
+		}
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_BROADCASTALL );
+		toAdd.CmdLevel( commandLevel );
 	}
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_BROADCASTALL );
-	toAdd.CmdLevel( commandLevel );
+
 	return JS_TRUE;
 }
 
@@ -2158,6 +2191,9 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			break;
 		case 9: // Reload Accounts
 			Accounts->Load();
+			break;
+		case 10: // Reload Dictionaries
+			Dictionary->LoadDictionary();
 			break;
 		default:
 			break;
@@ -2456,7 +2492,7 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::upper( strutil::trim(strutil::removeTrailing( resType,"//") ));
+	resType = strutil::upper( strutil::trim( strutil::removeTrailing( resType, "//" )));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
@@ -2496,7 +2532,7 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::upper( strutil::trim(strutil::removeTrailing( resType,"//") ));
+	resType = strutil::upper( strutil::trim( strutil::removeTrailing( resType, "//" )));
 
 	if( argc == 2 )
 	{
@@ -2538,7 +2574,7 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
-	resType = strutil::upper( strutil::trim(strutil::removeTrailing( resType,"//") ));
+	resType = strutil::upper( strutil::trim( strutil::removeTrailing( resType, "//" )));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
@@ -2760,6 +2796,46 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 	damage	= Combat->ApplyDefenseModifiers( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt(), doArmorDamage.toBool() );
 	*rval	= INT_TO_JSVAL( damage );
 
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_WillResultInCriminal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if hostile action done by one character versus another will result in criminal flag
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_WillResultInCriminal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "WillResultInCriminal: Invalid number of arguments (takes 2: srcChar and trgChar)" );
+		return JS_FALSE;
+	}
+
+	bool result = false;
+	CChar *srcChar = nullptr;
+	CChar *trgChar = nullptr;
+
+	if( argv[0] != JSVAL_NULL && argv[1] != JSVAL_NULL )
+	{
+		JSObject *srcCharObj = JSVAL_TO_OBJECT( argv[0] );
+		srcChar = static_cast<CChar *>( JS_GetPrivate( cx, srcCharObj ) );
+
+		JSObject *trgCharObj = JSVAL_TO_OBJECT( argv[1] );
+		trgChar = static_cast<CChar *>( JS_GetPrivate( cx, trgCharObj ) );
+
+		if( ValidateObject( srcChar ) && ValidateObject( trgChar ) )
+		{
+			result = WillResultInCriminal( srcChar, trgChar );
+		}
+	}
+	else
+	{
+		DoSEErrorMessage( "WillResultInCriminal: Invalid objects passed - characters required)" );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( result );
 	return JS_TRUE;
 }
 
@@ -3212,7 +3288,7 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	JSString *tString;
-	std::string settingName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	std::string settingName = strutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
 	if( !settingName.empty() )
 	{
 		auto settingID = cwmWorldState->ServerData()->lookupINIValue( settingName );
@@ -3303,6 +3379,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 24:	 // BASEFISHINGTIMER[0029]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE )));
+				break;
+			case 34:	// MAXPETOWNERS[0224]
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxPetOwners() ) );
+				break;
+			case 35:	// MAXFOLLOWERS[0224]
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxFollowers() ) );
+				break;
+			case 36:	// MAXCONTROLSLOTS[0224]
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxControlSlots() ));
 				break;
 			case 38:	 // RANDOMFISHINGTIMER[0030]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM )));
@@ -3628,7 +3713,7 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 136:	 // BACKUPSAVERATIO[0129]
 				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->BackupRatio()));
 				break;
-			case 137:	 // HIDEWILEMOUNTED[0130]
+			case 137:	 // HIDEWHILEMOUNTED[0130]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CharHideWhileMounted() );
 				break;
 			case 138:	 // SECONDSPERUOMINUTE[0131]
@@ -3895,6 +3980,18 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 230:	// MAPDIFFSENABLED[0219]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MapDiffsEnabled() );
 				break;
+			case 240:	// PARRYDAMAGECHANCE[0229]
+				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatParryDamageChance()));
+				break;
+			case 241:	// PARRYDAMAGEMIN[0230]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->CombatParryDamageMin()));
+				break;
+			case 242:	// PARRYDAMAGEMAX[0231]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->CombatParryDamageMax()));
+				break;
+			case 243:	// ARMORCLASSDAMAGEBONUS[0232]
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatArmorClassDamageBonus() );
+				break;
 			case 244:	// CUOENABLED[0233]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ConnectUOServerPoll() );
 				break;
@@ -3909,6 +4006,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 248:	 // JSENGINESIZE[0237]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->GetJSEngineSize() ));
+				break;
+			case 249:	 // USEUNICODEMESSAGES[0238]
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->UseUnicodeMessages() ));
 				break;
 			case 250:	 // SCRIPTDATADIRECTORY[0239]
 			{
@@ -3961,20 +4061,41 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 266:	 // BANKBUYTHRESHOLD[0254]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->BuyThreshold() ) );
 				break;
-			case 267:	 // NETWORKLOG[0255]
+			case 267:	 // NETWORKLOG
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerNetworkLog() );
 				break;
-			case 268:	 // SPEECHLOG[0256]
+			case 268:	 // SPEECHLOG
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerSpeechLog() );
 				break;
-			case 269:	 // NPCMOUNTEDWALKINGSPEED[0257]
+			case 269:	 // NPCMOUNTEDWALKINGSPEED
 				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedWalkingSpeed() ) );
 				break;
-			case 270:	 // NPCMOUNTEDRUNNINGSPEED[0258]
+			case 270:	 // NPCMOUNTEDRUNNINGSPEED
 				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedRunningSpeed() ) );
 				break;
-			case 271:	 // NPCMOUNTEDFLEEINGSPEED[0259]
+			case 271:	 // NPCMOUNTEDFLEEINGSPEED
 				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->NPCMountedFleeingSpeed() ) );
+				break;
+			case 272:	 // CONTEXTMENUS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ServerContextMenus() );
+				break;
+			case 273:	// SERVERLANGUAGE
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->ServerLanguage() ) );
+				break;
+			case 274:	// CHECKPETCONTROLDIFFICULTY
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CheckPetControlDifficulty() );
+				break;
+			case 275:	// PETLOYALTYGAINONSUCCESS[0263]
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess() ) );
+				break;
+			case 276:	// PETLOYALTYLOSSONFAILURE[0264]
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure() ) );
+				break;
+			case 277:	 // PETLOYALTYRATE
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE ) ) );
+				break;
+			case 278:	 // SHOWNPCTITLESINTOOLTIPS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() );
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

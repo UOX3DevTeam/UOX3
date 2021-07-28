@@ -10,6 +10,7 @@ function CommandRegistration()
 	RegisterCommand( "reloadspells", 3, true ); //reload spells
 	RegisterCommand( "reloadcommands", 3, true ); //reload commands
 	RegisterCommand( "reloadhtml", 3, true ); //reload HTML templates
+	RegisterCommand( "reloaddictionaries", 3, true ); //reload dictionaries
 	RegisterCommand( "reloadall", 3, true ); //reload everything
 }
 
@@ -37,50 +38,55 @@ function command_RELOADINI( socket, cmdString )
 function command_RELOADJSFILE( socket, cmdString )
 {
 	var scriptID = parseInt( cmdString );
-	socket.SysMessage( "Attempting Reload of JavaScript (ScriptID " + cmdString + ")" );
+	var tempMsg = GetDictionaryEntry( 8003, socket.language ); // Attempting Reload of JavaScript (ScriptID %i)
+	socket.SysMessage( tempMsg.replace(/%i/gi, cmdString ));
 	ReloadJSFile( scriptID );
 }
 
 function command_RELOADALLJS( socket, cmdString )
 {
-	socket.SysMessage( "Attempting Reload of all JavaScripts." );
+	socket.SysMessage( GetDictionaryEntry( 8004, socket.language )); // Attempting Reload of all JavaScripts.
 	Reload( 5 );
 }
 
 function command_RELOADREGIONS( socket, cmdString )
 {
-	socket.SysMessage( "Attempting Reload of Regions." );
+	socket.SysMessage( GetDictionaryEntry( 8005, socket.language )); // Attempting Reload of Regions.
 	Reload( 0 );
 }
 
 function command_RELOADSPAWNREGIONS( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 68, socket.language );
-	socket.SysMessage( dictMessage );
+	socket.SysMessage( GetDictionaryEntry( 68, socket.language ));
 	Reload( 1 );
 }
 
 function command_RELOADALL( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 1746, socket.language );
-	BroadcastMessage( dictMessage );
+	BroadcastMessage( GetDictionaryEntry( 1746, socket.language ));
 	Reload( 8 );
 }
 
 function command_RELOADSPELLS( socket, cmdString )
 {
-	socket.SysMessage( "Reloading spells.." );
+	socket.SysMessage( GetDictionaryEntry( 8006, socket.language )); // Reloading spells...
 	Reload( 2 );
 }
 
 function command_RELOADCOMMANDS( socket, cmdString )
 {
-	socket.SysMessage( "Reloading commands.." );
+	socket.SysMessage( GetDictionaryEntry( 8007, socket.language )); // Reloading commands..
 	Reload( 3 );
 }
 
 function command_RELOADHTML( socket, cmdString )
 {
-	socket.SysMessage( "Reloading HTML Templates.." );
+	socket.SysMessage( GetDictionaryEntry( 8008, socket.language )); // Reloading HTML Templates..
 	Reload( 6 );
+}
+
+function command_RELOADDICTIONARIES( socket, cmdString )
+{
+	socket.SysMessage( GetDictionaryEntry( 8009, socket.language )); // Reloading Dictionaries..
+	Reload( 10 );
 }

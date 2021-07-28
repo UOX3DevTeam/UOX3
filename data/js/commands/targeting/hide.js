@@ -32,7 +32,7 @@ function onCallback1( socket, ourObj )
 	if( !socket.GetWord( 1 ) )
 	{
 		if( ourObj.visible == 0 )
-			socket.SysMessage( "That object is already visible!" );
+			socket.SysMessage( GetDictionaryEntry( 8085, socket.language )); // That object is already visible!
 		else
 		{
 			if( ourObj.isChar )
@@ -40,7 +40,7 @@ function onCallback1( socket, ourObj )
 				var mChar = socket.currentChar;
 				if( ourObj.commandlevel > mChar.commandlevel )
 				{
-					socket.SysMessage( "You cannot unhide that person!" );
+					socket.SysMessage( GetDictionaryEntry( 8086, socket.language )); // You cannot unhide that person!
 					return;
 				}
 			}

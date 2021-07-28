@@ -6,15 +6,14 @@
 
 #include "StringUtility.hpp"
 #include <cctype>
+#include <regex>
 #include <locale>
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-
-#include <cstdio>
 #include <stdexcept>
 #include <filesystem>
-
+#include <codecvt>
 using namespace std::string_literals;
 
 namespace strutil {
@@ -389,6 +388,35 @@ namespace strutil {
 		return conversion.str()  ;
 	}
 	
+	// Decode a UTF8 string into a wstring
+	std::wstring stringToWstring( const std::string& t_str )
+	{
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
+		
+		// use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+		try {
+			return converter.from_bytes(t_str);
+		}
+		catch( ... ) {
+			return L"";
+		}
+	}
 
-	
+	// "Encode" a wstring into UTF8, while retaining any special wide characters
+	std::string wStringToString( const std::wstring& t_str )
+	{
+		const size_t stringLen = t_str.size();
+
+		std::string resultString;
+		for( size_t i = 0; i < stringLen; ++i )
+			resultString += t_str[i];
+
+		return resultString;
+	}
+
+	// Convert from string to wstring and back to string
+	std::string stringToWstringToString( const std::string& t_str )
+	{
+		return wStringToString( stringToWstring( t_str ));
+	}
 }

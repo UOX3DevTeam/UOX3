@@ -589,7 +589,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						if( csecs.size() > 1 )
 						{
 							// Use chance specified in orepref
-							toPush.percentChance = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
+							toPush.percentChance = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
 						}
 						else if( toPush.oreIndex->oreChance > 0 )
 						{
@@ -623,8 +623,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						auto ssecs = strutil::sections( data, " " );
 						if( ssecs.size() > 1 )
 						{
-							goodList[actgood].rand1 = std::stoi(strutil::trim(strutil::removeTrailing( ssecs[0],"//") ), nullptr, 0);
-							goodList[actgood].rand2 = std::stoi(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0);
+							goodList[actgood].rand1 = std::stoi(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0);
+							goodList[actgood].rand2 = std::stoi(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0);
 						}
 						else
 						{
@@ -1678,7 +1678,6 @@ bool CTownRegion::MakeAlliedTown( UI16 townToMake )
 //o-----------------------------------------------------------------------------------------------o
 void CTownRegion::TellMembers( SI32 dictEntry, ...)
 {
-
 	for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 	{
 		CChar *targetChar = calcCharObjFromSer( townMember[memberCounter].townMember );
@@ -1694,15 +1693,31 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...)
 			va_start( argptr, dictEntry );
 			msg += strutil::format(txt,argptr);
 
-			CSpeechEntry& toAdd = SpeechSys->Add();
-			toAdd.Speech( msg );
-			toAdd.Font( FNT_NORMAL );
-			toAdd.Speaker( INVALIDSERIAL );
-			toAdd.SpokenTo( townMember[memberCounter].townMember );
-			toAdd.Colour( 0x000B );
-			toAdd.Type( SYSTEM );
-			toAdd.At( cwmWorldState->GetUICurrentTime() );
-			toAdd.TargType( SPTRG_INDIVIDUAL );
+			if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+			{
+				CPUnicodeMessage unicodeMessage;
+				unicodeMessage.Message( msg );
+				unicodeMessage.Font( FNT_NORMAL );
+				unicodeMessage.Colour( 0x000B );
+				unicodeMessage.Type( SYSTEM );
+				unicodeMessage.Language( "ENG" );
+				unicodeMessage.Name( "System" );
+				unicodeMessage.ID( INVALIDID );
+				unicodeMessage.Serial( INVALIDSERIAL );
+				targetSock->Send( &unicodeMessage );
+			}
+			else
+			{
+				CSpeechEntry& toAdd = SpeechSys->Add();
+				toAdd.Speech( msg );
+				toAdd.Font( FNT_NORMAL );
+				toAdd.Speaker( INVALIDSERIAL );
+				toAdd.SpokenTo( townMember[memberCounter].townMember );
+				toAdd.Colour( 0x000B );
+				toAdd.Type( SYSTEM );
+				toAdd.At( cwmWorldState->GetUICurrentTime() );
+				toAdd.TargType( SPTRG_INDIVIDUAL );
+			}
 			va_end(argptr);
 		}
 	}

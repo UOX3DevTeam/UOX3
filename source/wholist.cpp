@@ -145,7 +145,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	SERIAL ser = toSendTo->AddID();
 	if( ser == INVALIDSERIAL )
 	{
-		toSendTo->sysmessage( 1387 );
+		toSendTo->sysmessage( 1387 ); // Selected character not found.
 		return;
 	}
 
@@ -154,7 +154,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	CChar *targetChar = calcCharObjFromSer( charSerial ); // find selected char ...
 	if( !ValidateObject( targetChar ) )
 	{
-		toSendTo->sysmessage( 1387 );
+		toSendTo->sysmessage( 1387 ); // Selected character not found.
 		return;
 	}
 	CSocket *trgSock = nullptr;
@@ -163,7 +163,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 200://gochar
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1388 );
+				toSendTo->sysmessage( 1388 ); // You cannot go to such powerful beings.
 				return;
 			}
 			if( sourceChar->WorldNumber() != targetChar->WorldNumber() )
@@ -177,7 +177,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 201://xtele
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1389 );
+				toSendTo->sysmessage( 1389 ); // Such powerful beings don't come on your whim!
 				return;
 			}
 			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
@@ -192,56 +192,56 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 202://jail char
 			if( sourceChar == targetChar )
 			{
-				toSendTo->sysmessage( 1390 );
+				toSendTo->sysmessage( 1390 ); // You cannot jail yourself!
 				break;
 			}
 			else
 			{
 				if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 				{
-					toSendTo->sysmessage( 1391 );
+					toSendTo->sysmessage( 1391 ); // You cannot jail someone superior to you.
 					return;
 				}
 				if( targetChar->IsJailed() )
-					toSendTo->sysmessage( 1070 );
+					toSendTo->sysmessage( 1070 ); // That player is already in jail!
 
 				else if( !JailSys->JailPlayer( targetChar, 0xFFFFFFFF ) )
-					toSendTo->sysmessage( 1072 );
+					toSendTo->sysmessage( 1072 ); // All jails are currently full!
 				break;
 			}
 		case 203://release
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1392 );
+				toSendTo->sysmessage( 1392 ); // You release someone more powerful than you.
 				return;
 			}
 			if( !targetChar->IsJailed() )
-				toSendTo->sysmessage( 1064 );
+				toSendTo->sysmessage( 1064 ); // That player is not in jail!
 			else
 			{
 				JailSys->ReleasePlayer( targetChar );
-				toSendTo->sysmessage( 1065, targetChar->GetName().c_str() );
+				toSendTo->sysmessage( 1065, targetChar->GetName().c_str() ); // Player %s released.
 			}
 			break;
 		case 204:
 			if( targetChar == sourceChar )
 			{
-				toSendTo->sysmessage( 1393 );
+				toSendTo->sysmessage( 1393 ); // You cannot kick yourself.
 				break;
 			}
 			else
 			{
 				if( !isOnline( (*targetChar) ) )	// local var overloads it
 				{
-					toSendTo->sysmessage( 1394 );		// you realize the break isn't necessary?
+					toSendTo->sysmessage( 1394 ); // You can't kick an offline player.
 					break;
 				}
 				if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 				{
-					toSendTo->sysmessage( 1395 );
+					toSendTo->sysmessage( 1395 ); // You cannot kick someone more powerful than you.
 					return;
 				}
-				toSendTo->sysmessage( 1396 );
+				toSendTo->sysmessage( 1396 ); // Kicking player.
 				Network->Disconnect( targetChar->GetSocket() );
 				break;
 			}
@@ -249,7 +249,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			// make it prettier later!
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1397 );
+				toSendTo->sysmessage( 1397 ); // You cannot spy on your betters.
 				return;
 			}
 			toSendTo->sysmessage( "X: %i Y: %i Z: %i World: %u", targetChar->GetX(), targetChar->GetY(), targetChar->GetZ(), targetChar->WorldNumber() );
@@ -257,7 +257,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 206:	// remote cstats
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1398 );
+				toSendTo->sysmessage( 1398 ); // You have not the right to see the intimate details of your betters!
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
@@ -267,7 +267,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 207:	// remote tweak
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1399 );
+				toSendTo->sysmessage( 1399 ); // You certainly cannot adjust those that are your betters!
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );

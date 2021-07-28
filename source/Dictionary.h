@@ -31,8 +31,8 @@ private:
 class CDictionaryContainer
 {
 private:
-	CDictionary		*dictList[DL_COUNT];
-	UnicodeTypes	defaultLang;
+	CDictionary			*dictList[DL_COUNT];
+	UnicodeTypes		defaultLang;
 public:
 	CDictionaryContainer();
 	CDictionaryContainer( const std::string& filepath );

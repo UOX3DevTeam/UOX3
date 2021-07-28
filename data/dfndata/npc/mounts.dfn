@@ -9,7 +9,7 @@
 
 [horse]
 {
-NAME=a horse
+NAME=#//a horse
 ID=0x00E4
 DIRECTION=RND
 BACKPACK
@@ -37,40 +37,42 @@ RUNS
 CARVE=26
 RACE=9
 FOOD=horse
+CONTROLSLOTS=1
 }
 
 [brownhorse]
 {
 GET=horse
-NAME=a horse
+NAME=#//a horse
 ID=0x00C8
 }
 
 [grayhorse]
 {
 GET=horse
-NAME=a horse
+NAME=#//a horse
 ID=0x00E2
 }
 
 [darkhorse]
 {
 GET=horse
-NAME=a horse
+NAME=#//a horse
 ID=0x00CC
 }
 
 [etherealhorse]
 {
 GET=horse
-NAME=an ethereal horse
+NAME=#//an ethereal horse
 ID=0x0073
+SKIN=0x4001
 }
 
 [llama]
 {
 GET=horse
-NAME=a llama
+NAME=#//a llama
 ID=0x00dc
 BACKPACK
 STR=21 49
@@ -90,10 +92,18 @@ CARVE=30
 RACE=9
 }
 
+[ethereallama]
+{
+GET=llama
+NAME=#//an ethereal llama
+ID=0x00aa
+SKIN=0x4001
+}
+
 [frenziedostard]
 {
 GET=horse
-NAME=a frenzied ostard
+NAME=#//a frenzied ostard
 ID=0x00DB
 BACKPACK
 STR=94 170
@@ -119,7 +129,7 @@ FLAG=NEUTRAL
 [forestostard]
 {
 GET=horse
-NAME=a forest ostard
+NAME=#//a forest ostard
 ID=0x00da
 BACKPACK
 STR=94 170
@@ -142,7 +152,7 @@ RACE=9
 [desertostard]
 {
 GET=horse
-NAME=a desert ostard
+NAME=#//a desert ostard
 ID=0x00d2
 BACKPACK
 STR=94 170
@@ -162,10 +172,18 @@ CARVE=11
 RACE=9
 }
 
+[etherealostard]
+{
+GET=desertostard
+NAME=#//an ethereal ostard
+ID=0x00AB
+SKIN=0x4001
+}
+
 [nightmare]
 {
 GET=horse
-NAME=a nightmare
+NAME=#//a nightmare
 ID=0x0074
 BACKPACK
 STR=496 525
@@ -196,12 +214,13 @@ FOOD=meat
 CARVE=75
 RACE=9
 FLAG=NEUTRAL
+CONTROLSLOTS=2
 }
 
 [darknightmare]
 {
 GET=horse
-NAME=a nightmare
+NAME=#//a nightmare
 ID=0x00b1
 BACKPACK
 STR=496 525
@@ -232,12 +251,13 @@ FOOD=meat
 CARVE=75
 RACE=9
 FLAG=NEUTRAL
+CONTROLSLOTS=2
 }
 
 [manenightmare]
 {
 GET=horse
-NAME=a nightmare
+NAME=#//a nightmare
 ID=0x00b2
 BACKPACK
 STR=496 525
@@ -268,12 +288,13 @@ FOOD=meat
 CARVE=75
 RACE=9
 FLAG=NEUTRAL
+CONTROLSLOTS=2
 }
 
 [purenightmare]
 {
 GET=horse
-NAME=a Nightmare
+NAME=#//a nightmare
 ID=0x00b3
 BACKPACK
 STR=496 525
@@ -304,12 +325,13 @@ FOOD=meat
 CARVE=75
 RACE=9
 FLAG=NEUTRAL
+CONTROLSLOTS=2
 }
 
 [unicorn]
 {
 GET=horse
-NAME=a unicorn
+NAME=#//a unicorn
 ID=0x007a
 BACKPACK
 STR=296 325
@@ -331,12 +353,22 @@ TOTAME=951
 TOPROV=862
 TOPEACE=862 5
 RACE=9
+CONTROLSLOTS=2
+}
+
+[etherealunicorn]
+{
+GET=unicorn
+NAME=#//an ethereal unicorn
+ID=0x00c0
+SKIN=0x4001
+CONTROLSLOTS=1
 }
 
 [ki-rin]
 {
 GET=horse
-NAME=a ki-rin
+NAME=#//a ki-rin
 ID=0x0084
 BACKPACK
 STR=296 325
@@ -358,12 +390,13 @@ TOTAME=951
 TOPROV=847
 TOPEACE=847 5
 RACE=9
+CONTROLSLOTS=2
 }
 
 [warhorse1]
 { //True Britannian Warhorse
 GET=horse
-NAME=a war horse
+NAME=#//a war horse
 ID=0x0076
 STR=400 400
 DEX=125 125
@@ -381,7 +414,7 @@ TOTAME=291
 [warhorse2]
 { //Circle of Mages Warhorse
 GET=warhorse1
-NAME=a war horse
+NAME=#//a war horse
 ID=0x0077
 STR=400 400
 DEX=125 125
@@ -399,7 +432,7 @@ TOTAME=291
 [warhorse3]
 { //Minax Warhorse
 GET=warhorse1
-NAME=a war horse
+NAME=#//a war horse
 ID=0x0078
 STR=400 400
 DEX=125 125
@@ -417,7 +450,7 @@ TOTAME=291
 [warhorse4]
 { //Shadowlords Warhorse
 GET=warhorse1
-NAME=a war horse
+NAME=#//a war horse
 ID=0x0079
 STR=400 400
 DEX=125 125
@@ -435,7 +468,7 @@ TOTAME=291
 [darksteed]
 {
 GET=horse
-NAME=a dark steed
+NAME=#//a dark steed
 ID=0x0072
 STR=400
 DEX=125
@@ -449,7 +482,7 @@ TOTAME=990
 [silversteed]
 {
 GET=horse
-NAME=a silver steed
+NAME=#//a silver steed
 ID=0x0075
 STR=400
 DEX=125
@@ -463,7 +496,7 @@ TOTAME=990
 [skeletalmount]
 {
 GET=horse
-NAME=a skeletal mount
+NAME=#//a skeletal steed
 ID=0x0319
 STR=91 100
 DEX=46 55
@@ -480,7 +513,7 @@ TOPEACE=491 5
 [giantbeetle]
 {
 GET=horse
-NAME=a giant beetle
+NAME=#//a giant beetle
 ID=0x0317
 STR=300 300
 DEX=100 100
@@ -493,12 +526,22 @@ DAMAGE=18 51
 TOPROV=881
 TOPEACE=881 5
 TOTAME=291
+CONTROLSLOTS=3
+}
+
+[etherealgiantbeetle]
+{
+GET=giantbeetle
+NAME=#//an ethereal giant beetle
+ID=0x00C3
+SKIN=0x4001
+CONTROLSLOTS=1
 }
 
 [firesteed]
 {
 GET=horse
-NAME=a fire steed
+NAME=#//a fire steed
 ID=0x00be
 STR=91 120
 DEX=91 120
@@ -511,12 +554,13 @@ DAMAGE=34 86
 TOPROV=786
 TOPEACE=736 5
 TOTAME=1060
+CONTROLSLOTS=2
 }
 
 [ridgeback]
 {
 GET=horse
-NAME=a ridgeback
+NAME=#//a ridgeback
 ID=0x00BB
 STR=58 100
 DEX=56 75
@@ -534,7 +578,7 @@ TOTAME=831
 [savageridgeback]
 {
 GET=horse
-NAME=a savage ridgeback
+NAME=#//a savage ridgeback
 ID=0x00BC
 STR=58 100
 DEX=56 75
@@ -551,26 +595,16 @@ TOTAME=831
 
 [etherealridgeback]
 {
-GET=horse
-NAME=an ethereal ridgeback
+GET=ridgeback
+NAME=#//an ethereal ridgeback
 ID=0x00C1
-STR=58 100
-DEX=56 75
-INT=16 30
-HPMAX=41 54
-WRESTLING=351 450
-TACTICS=293 440
-MAGICRESISTANCE=253 400
-DAMAGE=4 11
-TOPROV=291
-TOPEACE=291 5
-TOTAME=831
+SKIN=0x4001
 }
 
 [swampdragon]
 {
 GET=horse
-NAME=a swamp dragon
+NAME=#//a swamp dragon
 ID=0x031a
 STR=201 300
 DEX=66 85
@@ -590,7 +624,7 @@ FOOD=meat
 [armoredswampdragon]
 {
 GET=horse
-NAME=an armoured swamp dragon
+NAME=#//an armoured swamp dragon
 ID=0x031f
 STR=201 300
 DEX=66 85
@@ -609,27 +643,16 @@ FOOD=meat
 
 [etherealswampdragon]
 {
-GET=horse
-NAME=an ethereal swamp dragon
+GET=swampdragon
+NAME=#//an ethereal swamp dragon
 ID=0x00C2
-STR=201 300
-DEX=66 85
-INT=61 100
-HPMAX=121 180
-ANATOMY=451 550
-WRESTLING=451 550
-TACTICS=451 550
-MAGICRESISTANCE=451 550
-DAMAGE=7 9
-TOPROV=590
-TOPEACE=590 5
-TOTAME=939
+SKIN=0x4001
 }
 
-[giantfirebeetle]
+[firebeetle]
 {
 GET=horse
-NAME=a giant fire beetle
+NAME=#//a fire beetle
 ID=0x00a9
 STR=300 300
 DEX=100 100
@@ -643,12 +666,13 @@ TOPROV=840
 TOPEACE=840 5
 TOTAME=939
 FOOD=meat
+CONTROLSLOTS=3
 }
 
 [hiryu]
 {
 GET=horse
-NAME=a hiryu
+NAME=#//a hiryu
 ID=0x00f3
 STR=1200 1410
 DEX=170 270
@@ -663,12 +687,22 @@ TOPROV=1153
 TOPEACE=1153 5
 TOTAME=987
 FOOD=meat
+CONTROLSLOTS=4
 }
 
-[chimera]
+[etherealhiryu]
+{
+GET=hiryu
+NAME=5109//an ethereal hiryu
+ID=0x00f3
+SKIN=0x4001
+CONTROLSLOTS=1
+}
+
+[reptalon]
 {
 GET=horse
-NAME=a chimera
+NAME=#//a reptalon
 ID=0x0114
 STR=796 1125
 DEX=386 405
@@ -685,12 +719,22 @@ DAMAGE=76 92
 TOPROV=1250
 TOPEACE=1250 5
 TOTAME=1191
+CONTROLSLOTS=4
+}
+
+[etherealreptalon]
+{
+GET=reptalon
+NAME=5110//an ethereal reptalon
+ID=0x0114
+SKIN=0x4001
+CONTROLSLOTS=1
 }
 
 [cusidhe]
 {
 GET=horse
-NAME=a cu sidhe
+NAME=#//a cu sidhe
 ID=0x0115
 STR=896 1205
 DEX=286 305
@@ -709,10 +753,18 @@ TOPEACE=1269 5
 TOTAME=1191
 }
 
-[mondainsteed]
+[etherealcusidhe]
+{
+GET=cusidhe
+NAME=5111//an ethereal cu sidhe
+ID=0x0115
+SKIN=0x4001
+}
+
+[chargerofthefallen]
 {
 GET=horse
-NAME=mondain's steed
+NAME=#//Charger of the Fallen
 ID=0x011c
 STR=576 900
 DEX=391 620
@@ -728,4 +780,45 @@ DAMAGE=61 80
 TOPROV=1250
 TOPEACE=1250 5
 TOTAME=1199
+}
+
+[etherealkirin]
+{
+GET=ki-rin
+NAME=an ethereal ki-rin
+ID=0x00BF
+SKIN=0x4001
+CONTROLSLOTS=1
+}
+
+[etherealpolarbear]
+{
+GET=horse
+NAME=an ethereal polar bear
+ID=0x00d5
+SKIN=0x4001
+}
+
+[etherealboura]
+{
+GET=horse
+NAME=an ethereal boura
+ID=0x02cb
+SKIN=0x4001
+}
+
+[etherealchargerofthefallen]
+{
+GET=horse
+NAME=an ethereal charger of the fallen
+ID=0x011c
+SKIN=0x4001
+}
+
+[etherealtiger]
+{
+GET=horse
+NAME=an ethereal tiger
+ID=0x04e7
+SKIN=0x4001
 }

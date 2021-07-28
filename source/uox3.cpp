@@ -335,23 +335,25 @@ bool isOnline( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void updateStats( CBaseObject *mObj, UI08 x )
 {
-	// Prepare the stat update packet
-	CPUpdateStat toSend( (*mObj), x );
-
 	SOCKLIST nearbyChars = FindNearbyPlayers( mObj );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		if( !(*cIter)->LoginComplete() )
 			continue;
 
-		// Send the stat update packet
-		(*cIter)->Send( &toSend );
-
-		// If object we send info for matches player, update the status window too!
+		// Normalize stats if we're updating our stats for other players
+		bool normalizeStats = true;
 		if( ( *cIter )->CurrcharObj()->GetSerial() == mObj->GetSerial() )
 		{
-			(*cIter)->statwindow( mObj );
+			( *cIter )->statwindow( mObj );
+			normalizeStats = false;
 		}
+
+		// Prepare the stat update packet
+		CPUpdateStat toSend( (*mObj), x, normalizeStats );
+
+		// Send the stat update packet
+		(*cIter)->Send( &toSend );
 	}
 }
 
@@ -413,7 +415,9 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 
 		s->SetOnHorse( true );
 		CItem *c = Items->CreateItem( nullptr, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
-		c->SetName( x->GetName() );
+
+		std::string xName = getNpcDictName( x, sockPtr );
+		c->SetName( xName );
 		c->SetDecayable( false );
 		c->SetLayer( IL_MOUNT );
 
@@ -718,7 +722,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	{
 		mChar.SetEvadeState( false );
 #ifdef DEBUG_COMBAT
-		Console.print( strutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+		std::string mCharName = getNpcDictName( &mChar );
+		Console.print( strutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
 	}
 
@@ -728,12 +733,17 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		mChar.DoHunger( mSock );
 		mChar.DoThirst( mSock );
 
+		// Loyalty update for pets
+		mChar.DoLoyaltyUpdate();
+
 		if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
 		{
 			if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
 				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
+					std::string mCharName = getNpcDictName( &mChar );
+
 					SI16 pcalc = 0;
 					switch( mChar.GetPoisoned() )
 					{
@@ -742,7 +752,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( nullptr, 1240, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1240, EMOTE, 1, mCharName.c_str() ); // * %s looks a bit nauseous *
 							}
 							mChar.Damage( (SI16)RandomNum( 1, 2 ) );
 							break;
@@ -751,7 +761,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( nullptr, 1241, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1241, EMOTE, 1, mCharName.c_str() ); // * %s looks disoriented and nauseous! *
 							}
 							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
 							mChar.Damage( (SI16)pcalc );
@@ -761,7 +771,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( nullptr, 1242, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1242, EMOTE, 1, mCharName.c_str() ); // * %s is in severe pain! *
 							}
 							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
 							mChar.Damage( (SI16)pcalc );
@@ -771,7 +781,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
 							}
 							pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
 							mChar.Damage( (SI16)pcalc );
@@ -1413,7 +1423,7 @@ void CWorldMain::CheckAutoTimers( void )
 						if( !tChar->IsGM() )
 						{
 							tSock->IdleTimeout( -1 );
-							tSock->sysmessage( "Failed to negotiate features with assistant tool. Disconnecting client..." );
+							tSock->sysmessage( 9047 ); // Failed to negotiate features with assistant tool. Disconnecting client...
 							Network->Disconnect( tSock );
 						}
 					}
@@ -2032,7 +2042,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
 		std::string sect			= std::string("ADVANCEMENT ") + strutil::number( advObj );
-		sect						= strutil::trim(strutil::removeTrailing( sect,"//") );
+		sect						= strutil::trim( strutil::removeTrailing( sect, "//" ));
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr )
 		{
@@ -2142,7 +2152,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), strutil::value<std::uint16_t>(strutil::trim(strutil::removeTrailing( csecs[1],"//") )), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), strutil::value<std::uint16_t>( strutil::trim( strutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
 							}
 							else
 							{
@@ -2212,6 +2222,16 @@ R32 roundNumber( R32 toRound)
 	if( flVal < floor( toRound + 0.5 ) )
 		return ceil( toRound );
 	return flVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isNumber( const std::string& str )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if string is a number, false if not
+//o-----------------------------------------------------------------------------------------------o
+bool isNumber( const std::string& str )
+{
+	return str.find_first_not_of( "0123456789" ) == std::string::npos;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2381,7 +2401,7 @@ void doLight( CChar *mChar, UI08 level )
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	std::string temp	= mItem.GetName();
-	temp				= strutil::trim(strutil::removeTrailing( temp,"//") );
+	temp				= strutil::trim( strutil::removeTrailing( temp, "//" ));
 	const UI16 getAmount = mItem.GetAmount();
 	CTile& tile = Map->SeekTile( mItem.GetID() );
 	if( temp.substr( 0, 1 ) == "#" )
@@ -2418,6 +2438,62 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 	}
 	itemname = strutil::simplify( temp );
 	return itemname.size() + 1;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string getNpcDictName( CChar *mChar, CSocket *tSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the dictionary name for a given NPC, if their name equals # or a dictionary ID
+//o-----------------------------------------------------------------------------------------------o
+std::string getNpcDictName( CChar *mChar, CSocket *tSock )
+{
+	std::string dictName = mChar->GetName();
+	SI32 dictEntryID = 0;
+
+	if( dictName == "#" )
+	{
+		// If character name is #, get dictionary entry based on base dictionary entry for creature names (3000) plus character's ID
+		dictEntryID = static_cast<SI32>( 3000 + mChar->GetID() );
+		if( tSock != nullptr )
+			dictName = Dictionary->GetEntry( dictEntryID, tSock->Language() );
+		else
+			dictName = Dictionary->GetEntry( dictEntryID );
+	}
+	else if( isNumber( dictName ))
+	{
+		// If name is a number, assume it's a direct dictionary entry reference, and use that
+		dictEntryID = static_cast<SI32>( strutil::value<SI32>( dictName ));
+		if( tSock != nullptr )
+			dictName = Dictionary->GetEntry( dictEntryID, tSock->Language() );
+		else
+			dictName = Dictionary->GetEntry( dictEntryID );
+	}
+
+	return dictName;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the dictionary string for the title of a given NPC, if their title 
+//|					equals a dictionary ID
+//o-----------------------------------------------------------------------------------------------o
+std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
+{
+	std::string dictTitle = mChar->GetTitle();
+	SI32 dictEntryID = 0;
+
+	if( isNumber( dictTitle ) )
+	{
+		// If title is a number, assume it's a direct dictionary entry reference, and use that
+		dictEntryID = static_cast<SI32>( strutil::value<SI32>( dictTitle ) );
+		if( tSock != nullptr )
+			dictTitle = Dictionary->GetEntry( dictEntryID, tSock->Language() );
+		else
+			dictTitle = Dictionary->GetEntry( dictEntryID );
+	}
+
+	return dictTitle;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3025,20 +3101,6 @@ int main( SI32 argc, char *argv[] )
 
 		// Shows information about IPs and ports being listened on
 		Console.TurnYellow();
-		/*for( int i = 0; i < cwmWorldState->ServerData()->ServerCount(); i++ )
-		{
-			physicalServer *serverEntry = cwmWorldState->ServerData()->ServerEntry(i);
-			if( !serverEntry->getDomain().empty() )
-			{
-				hostent *hostEntry = gethostbyname( serverEntry->getDomain().c_str() );
-				if( hostEntry != nullptr )
-				{
-					struct in_addr *pinaddr;
-					pinaddr = ((struct in_addr*)hostEntry->h_addr);
-					Console << "UOX: " << serverEntry->getName().c_str() << " listening on IP " << inet_ntoa(*pinaddr) << " (Port " << serverEntry->getPort() << ")" << myendl;
-				}
-			}
-		}*/
 
 		auto externalIP = cwmWorldState->ServerData()->ExternalIP();
 		if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" )

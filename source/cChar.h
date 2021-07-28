@@ -30,6 +30,7 @@ enum cC_TID
 	tNPC_SPATIMER,
 	tNPC_SUMMONTIME,
 	tNPC_EVADETIME,
+	tNPC_LOYALTYTIME,
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
@@ -92,7 +93,13 @@ private:
 		SI16				fleeAt;		// HP Level to flee at
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
-		CHARLIST			petFriends;
+		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
+		CHARLIST			petFriends;			// Temporary list of friends a pet has
+		GenericList< CChar * >	petOwnerList;	// Persistent list of owners a pet has previously had
+		UI16				maxLoyalty;			// Pet's maximum loyalty to its master
+		UI16				loyalty;			// Pet's current loyalty to its master
+		UI16				orneriness;			// Difficulty to control pet
+
 		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
 		UI16				tamedThirstRate;    // The rate at which thirst decreases when char is tamed
 		UI08				hungerWildChance;	// The chance that the char goes wild when hungry
@@ -147,6 +154,7 @@ private:
 		UI08		squelched; // Squelching
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 		UI16		deaths;
+		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 
 		SERIAL		townvote;
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
@@ -183,7 +191,7 @@ protected:
 	UI08		brkPeaceChanceGain;
 	UI08		brkPeaceChance;
 
-	std::bitset< 32 >		bools;	// lots of flags
+	std::bitset< 64 >		bools;	// lots of flags
 	std::bitset< 16 >		priv;
 
 	SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
@@ -270,11 +278,13 @@ public:
 	UI08		GetPoisonStrength( void ) const;
 
 	GenericList< CChar * > *	GetPetList( void );
+	GenericList< CChar * > *	GetPetOwnerList( void );
 	ITEMLIST *	GetOwnedItems( void );
 
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
 
+	void		DoLoyaltyUpdate( void );
 	void		DoHunger( CSocket *mSock );
 	void		DoThirst( CSocket* mSock );
 	void		checkPetOfflineTimeout( void );
@@ -334,6 +344,7 @@ public:
 	bool		GetTownTitle( void ) const;
 	bool		GetReactiveArmour( void ) const;
 	bool		CanTrain( void ) const;
+	bool		CanBeHired( void ) const;
 	bool		GetGuildToggle( void ) const;
 	bool		IsTamed( void ) const;
 	bool		IsGuarded( void ) const;
@@ -358,6 +369,7 @@ public:
 	void		SetOnHorse( bool newValue );
 	void		SetTownTitle( bool newValue );
 	void		SetReactiveArmour( bool newValue );
+	void		SetCanHire( bool newValue );
 	void		SetCanTrain( bool newValue );
 	void		SetGuildToggle( bool newValue );
 	void		SetTamed( bool newValue );
@@ -479,10 +491,12 @@ public:
 	UI16		GetDeaths( void ) const;		// can we die 4 billion times?!
 	SI16		GetGuildNumber( void ) const;
 	UI08		GetFlag( void ) const;
+	UI08		GetControlSlotsUsed( void ) const;
 
 	void		SetDeaths( UI16 newVal );
 	void		SetFlag( UI08 newValue );
 	void		SetGuildNumber( SI16 newValue );
+	void		SetControlSlotsUsed( UI08 newValue );
 
 	SI08		GetFontType( void ) const;
 	void		SetFontType( SI08 newType );
@@ -557,6 +571,8 @@ public:
 	virtual UI16	GetMaxHP( void );
 	SI16			GetMaxMana( void );
 	SI16			GetMaxStam( void );
+	UI16			GetMaxLoyalty( void ) const;
+	UI16			GetLoyalty( void ) const;
 	virtual void	SetMana( SI16 newValue ) override;
 	virtual void	SetHP( SI16 newValue ) override;
 	virtual void	SetStamina( SI16 newValue ) override;
@@ -568,6 +584,8 @@ public:
 	virtual void	SetIntelligence2( SI16 newValue ) override;
 	void			IncStamina( SI16 toInc );
 	void			IncMana( SI16 toInc );
+	void			SetMaxLoyalty( UI16 newMaxLoyalty );
+	void			SetLoyalty( UI16 newLoyalty );
 
 	void			ToggleCombat( void );
 
@@ -586,6 +604,7 @@ public:
 	FlagColors		FlagColour( CChar *toCompare );
 	void			Heal( SI16 healValue, CChar *healer = nullptr );
 	void			Damage( SI16 damageValue, CChar *attacker = nullptr, bool doRepsys = false );
+	SI16			GetKarma( void ) const;
 	void			ReactOnDamage( WeatherType damageType, CChar *attacker = nullptr );
 	void			Die( CChar *attacker, bool doRepsys );
 
@@ -600,10 +619,16 @@ protected:
 	virtual void	RemoveSelfFromOwner( void ) override;
 	virtual void	AddSelfToOwner( void ) override;
 public:
+	void		ClearFriendList( void );
 	CHARLIST *	GetFriendList( void );
 
-	void		AddFriend( CChar *toAdd );
-	void		RemoveFriend( CChar *toRemove );
+	void		ClearPetOwnerList( void );
+	bool		AddPetOwnerToList( CChar *toAdd );
+	bool		RemovePetOwnerFromList( CChar *toRemove );
+	bool		IsOnPetOwnerList( CChar *toCheck );
+
+	bool		AddFriend( CChar *toAdd );
+	bool		RemoveFriend( CChar *toRemove );
 
 	SI16		GetNPCAiType( void ) const;
 	SI16		GetTaming( void ) const;
@@ -613,6 +638,9 @@ public:
 	UI32		GetHoldG( void ) const;
 	UI08		GetSplit( void ) const;
 	UI08		GetSplitChance( void ) const;
+	UI08		GetOwnerCount( void );
+	UI08		GetControlSlots( void ) const;
+	UI16		GetOrneriness( void ) const;
 
 	void		SetNPCAiType( SI16 newValue );
 	void		SetTaming( SI16 newValue );
@@ -622,6 +650,8 @@ public:
 	void		SetHoldG( UI32 newValue );
 	void		SetSplit( UI08 newValue );
 	void		SetSplitChance( UI08 newValue );
+	void		SetControlSlots( UI08 newVal );
+	void		SetOrneriness( UI16 newVal );
 
 	SI08		GetPathFail( void ) const;
 	void		SetPathFail( SI08 newValue );

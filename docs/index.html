@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 06. July, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4u</small></p>
+	<p style="margin:0"><small>Last Updated: 28. July, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4v</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -58,6 +58,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>July 28th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uox3Dictionaries">Dictionaries</a> feature info with details on UOX3's multilingual support</li>
+						</ul>
 						<h4>July 6th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#raceSystem">Race System</a> feature info with complete details on how the race system in UOX3 is/can be setup</li>
@@ -214,7 +218,7 @@ packitem=0x0f8d,30
 							<li><strong>Dynamic Reloading of Scripts</strong> - Any scripts, definition files and ini files used by UOX3 can be reloaded on the fly - in just a few seconds - while the server is already running. This makes it easy for shard admins and developers to quickly iterate on changes and additions, without having to restart the server from scratch and reconnect the client to see each change.</li>
 							<li><strong>Custom Object Tags</strong> - Custom string/int tags can be added to any character or item (including multis) via JS scripts or Item/NPC definitions - either of which can be reloaded on the fly if needed. No need to ask developers to add a custom tag in the source... just add it yourself! No serialization headaches required.</li>
 							<li><strong>UO Client Support</strong> - UOX3 supports a wide range of UO client versions, all the way from the 4.x versions originally introduced with the Age of Shadows expansion in 2003, to the most recent 7.0.x series available today.</li>
-							<li><strong>Multi-Language Support</strong> - UOX3 comes with a custom dictionary system that allows for sending script and system messages to connected clients in the client's default language.</li>
+							<li><strong>Multi-Language Support</strong> - UOX3 comes with a custom dictionary system that allows for sending script and system messages to connected clients in the client's default language, or to specify a default language for the server which is used for all connected clients regardless of their language settings. Languages supported by server (translation quality may vary):<br><span class="highlight">English (Default), Czech, French, German, Italian, Portuguese, Spanish</span></li>
 							<li><strong>Extensive Log System</strong> - UOX3 comes with an extensive log system that tracks server errors, warnings, network packets sent and received for each client, commands used, spells cast, combat events, player speech and more.</li>
 						</ul>
 					</div>
@@ -244,6 +248,7 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<p>UOX3 comes pre-packed with a host of custom (and optional) features that can be customized and tweaked by shard admins:</p>
 						<ul>
+							<li><strong>Instances</strong> - The Instances system can be used to allow players (and other objects) to co-exist at the same coordinates on the same map, without seeing each other, interfering with each other or be blocked by each other. Can be used to create systems for instanced dungeons, housing zones, static housing, personalized quest-zones, etc.</li>
 							<li><strong>Region System & Player-run Towns</strong> - Region system with built-in support for player-run towns.</li>
 							<li><strong>Regional Weather System</strong> - A region-specific weather system allows each region of the game world to have its own unique weather setup, with temperature swings, heat waves, cold snaps, rain, snow and wind - all of which ties into a race system where specific races can have weaknesses or strengths tied to specific weather or temperatures.</li>
 							<li><strong>Regional Spawning System</strong> - The regional spawning system allows UOX3 shards to spawn an enormous amount of NPCs and items in the game world without significantly increased world-save and load times, since the objects spawned through this system are only kept in memory for as long as the server is running, and will respawn upon startup.</li>
@@ -262,7 +267,7 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<p>UOX3 also supports various features from regular UO:</p>
 						<ul>
-							<li><strong>Combat</strong> - Combat system with rules that align closely with official UO around the time of Publish 15/16, just before the release of the Age of Shadows expansion. Ruleset can be modified and/or extended to support specific preferences.</li>
+							<li><strong>Combat</strong> - Combat system with rules that align closely with official UO around the time of Publish 15, just before the release of the Age of Shadows expansion. Ruleset can be modified and/or extended to support specific preferences.</li>
 							<li><strong>Crafting</strong> - Prefer baking bread over hacking and slashing? Try your hand at Alchemy, Bowcraft, Carpentry, Cartography, Inscription, Smithing, Tailoring or Tinkering!</li>
 							<li><strong>Gathering</strong> - Mine your way to an ingot empire, introduce some trees to your friend - the axe, or relax with some casual fishing.</li>
 							<li><strong>Persistent Housing</strong> - Classic persistent housing system with lockdowns, secure containers, co-owners, friendlists, public/private houses.</li>
@@ -4739,16 +4744,20 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#uox3Dictionaries" id="uox3Dictionaries"><span>Dictionaries</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3 comes with a <strong>custom dictionary system</strong> that allows shard admins to set up and translate their own system and script messages to any language supported by the UO client. This system has some pros and cons over the usual "cliloc" (client localization, also supported!) system UO uses, in that it allows shard admins to send completely customized messages to the client (even if not setting up for multiple languages), at the cost of using more bandwith than the built-in cliloc system in the client.</p>
+					<p>UOX3 comes with a <strong>custom, multilingual dictionary system</strong> that allows shard admins to set up and translate their own system and script messages to any language supported by UOX3 and the UO client. This system has some pros and cons over the usual "cliloc" (client localization, also supported!) system UO uses, in that it allows shard admins to send completely customized messages to the client - in any language supported by server and using any font displayable in the client - without needing to patch the client, at the cost of using more bandwith than the built-in cliloc system in the client.</p>
 					<p>The dictionaries are set up in the <em>UOX3/dictionaries/</em> folder, with each language contained in its own dictionary file with a file-ending matching a <strong>group</strong> of language codes used in the UO client. ENG, for instance, covers all English language codes, and FRE does the same for French ones. The exceptions are the files with a .ZRO and .UNK extensions. These are used as default files when no/an unknown language is returned from the client.</p>
-					<h4>Language Groups supported in UOX3's Dictionary System:</h4>
-					<p><span class="highlight">UNK</span> (Unknown - Used when unknown language code is returned from client)<br>
-					<span class="highlight">ZRO</span> (Default - Used )<br>
-					<span class="highlight">ENG</span> (English - ENU, ENG, ENA, ENC, ENZ, ENI, ENS, ENJ, ENB, ENL, ENT, ENW, ENP)<br>
-					<span class="highlight">GER</span> (German - DEU, DES, DEA, DEL, DEC)<br>
-					<span class="highlight">SPA</span> (Spanish - ESP, ESM, ESN, ESG, ESC, ESA, ESD, ESV, ESO, ESR, ESS, ESF, ESL, ESY, ESZ, ESB, ESE, ESH, ESI, ESU)<br>
-					<span class="highlight">FRE</span> (French - FRA, FRB, FRC, FRS, FRL, FRM)<br>
-					<span class="highlight">JAP</span> (Japanese - JPN)<br></p>
+					<h4>Option to Specify Fixed Server Language</h4>
+					<p>By default, UOX3 will attempt to send messages to connected clients in whichever language is specified by the client, but will fall back to the default language (English) if the language set in the client is not supported, or if the message in question does not exist in the dictionary for that language.</p>
+					<p>However, via the UOX.INI setting SERVERLANGUAGE, shard admins can specify a fixed language for the server, and if set, all messages to connected clients will be sent in this language.</p>
+					<h4>Language Groups supported in UOX3's Dictionary System (and values used to set language in UOX.INI):</h4>
+					<p><span class="highlight">0 - ZRO</span> (Default - English, used when unknown language code is returned from client )<br>
+					<span class="highlight">1 - ENG</span> (English - ENU, ENG, ENA, ENC, ENZ, ENI, ENS, ENJ, ENB, ENL, ENT, ENW, ENP)<br>
+					<span class="highlight">2 - GER</span> (German - DEU, DES, DEA, DEL, DEC)<br>
+					<span class="highlight">3 - SPA</span> (Spanish - ESP, ESM, ESN, ESG, ESC, ESA, ESD, ESV, ESO, ESR, ESS, ESF, ESL, ESY, ESZ, ESB, ESE, ESH, ESI, ESU)<br>
+					<span class="highlight">4 - FRE</span> (French - FRA, FRB, FRC, FRS, FRL, FRM)<br>
+					<span class="highlight">5 - PTG</span> (Portuguese - PTG, PTB)<br>
+					<span class="highlight">6 - ITA</span> (Italian - ITA, ITS)<br>
+					<span class="highlight">7 - CSY</span> (Czech - CSY)</p>
 					<h4>Language Codes supported by UO client via cliloc system (depending on client version):</h4>
 					<p><span class="highlight">ENG</span> (English)<br>
 					<span class="highlight">DEU</span> (German)<br>
@@ -4759,6 +4768,7 @@ packitem=0x0f8d,30
 					<span class="highlight">JPN</span> (Japanese)<br>
 					<span class="highlight">KOR</span> (Korean)<br></p>
 					<p>In older client versions, it is possible to change the client language by changing a setting - <strong>UserLanguageCodeString</strong> - in the uo.cfg file. <strong>Example: UserLanguageCodeString=DEU</strong>. In modern client versions, this seems to instead be dictated automatically by the regional settings in Windows, meaning the above uo.cfg setting might not work.</p>
+					<p>If using the ClassicUO client, the client language can be changed by changing the <strong>lang</strong> setting in that client's settings.json file. Supported language codes (as of 27/07/2021) in this client: "RUS", "FRA", "DEU", "ESP", "JPN", "KOR", "PTB", "ITA", "CHT".</p>
 					<p>Alternatively, it's also possible to set a specific language for a player's socket either through a script (for instance via a custom menu that could allow players to choose which language to use) or via the GM command <span class="highlight">'set language #</span>. See below for a full list of language IDs that can be set in this manner:</p>
 					<input type="checkbox" id="spoiler_language_list">
 					<label for="spoiler_language_list">Socket Language List <i class="fas fa-angle-down"></i></label>

@@ -15,20 +15,15 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="InRangeEvent">inRange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function inRange( pCharacter, objInRange, objType )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function inRange( pCharacter, objInRange )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>objInRange comes into visible range of pCharacter.  pCharacter's script is activated
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objInRange is a character<br>objType == 1 indicates objInRange is an item
-
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Useful for when you want to do something when a certain thing comes into range.  You could yell out guards when a murderer comes into range, for instance, if you're in a guarded region.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function inRange( pCharacter, objInRange, objType )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function inRange( pCharacter, objInRange )
 {
-	if( objType == 1 )	// An item came into range
+	pCharacter.DoStaticEffect( 0x376A, 9, 0, );	// Make some sparkles!
+	if( objInRange.isItem && objInRange.id == 0x1416 )	// Ooh, it's a purty piece of armour
 	{
-		pCharacter.DoStaticEffect( 0x376A, 9, 0, );	// Make some sparkles!
-		if( objInRange.id == 0x1416 )	// Ooh, it's a purty piece of armour
-		{
-			pCharacter.EmoteMessage( &quot;*ooooooooooooo*" );
-		}
+		pCharacter.EmoteMessage( "*ooooooooooooo*" );
 	}
 }
 </pre>

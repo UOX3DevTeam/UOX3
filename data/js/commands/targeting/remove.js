@@ -11,11 +11,12 @@ function command_REMOVE( socket, cmdString )
 	if( cmdString )
 	{
 		socket.tempint = parseInt( cmdString );
-		socket.CustomTarget( 0, "Select container to remove item (" + cmdString + ") from: " );
+		var tempMsg = GetDictionaryEntry( 8095, socket.language ); // Select container to remove item (%s) from:
+		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ));
 	}
 	else
 	{
-		var targMsg = GetDictionaryEntry( 188, socket.language );
+		var targMsg = GetDictionaryEntry( 188, socket.language ); // Select item to remove.
 		socket.CustomTarget( 0, targMsg );
 	}
 }
@@ -36,7 +37,7 @@ function onCallback0( socket, ourObj )
 			{
 				if( ourObj.npc )
 				{
-					socket.SysMessage( GetDictionaryEntry( 1015 ) );
+					socket.SysMessage( GetDictionaryEntry( 1015, socket.language )); // Removing character.
 					ourObj.Delete();
 				}
 			}
@@ -58,7 +59,7 @@ function onCallback0( socket, ourObj )
 					}
 					else
 					{
-						socket.SysMessage( "Unable to find any items of that ID to remove from the container!" );
+						socket.SysMessage( GetDictionaryEntry( 8096, socket.language )); // Unable to find any items of that ID to remove from the container!
 					}
 				}
 				else
@@ -67,19 +68,19 @@ function onCallback0( socket, ourObj )
 					// cause the multi to be demolished and run through the process of releasing
 					// any items locked down inside?
 
-					socket.SysMessage( GetDictionaryEntry( 1013 ) );
+					socket.SysMessage( GetDictionaryEntry( 1013, socket.language )); // Removing item.
 					ourObj.Delete();
 				}
 			}
 		}
 		else
-			socket.SysMessage( "Invalid target" );
+			socket.SysMessage( GetDictionaryEntry( 2353, socket.language )); // Invalid target
 	}
 }
 
 function command_DELETECHAR( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 1618, socket.language );
+	var targMsg = GetDictionaryEntry( 1618, socket.language ); // Which player do you wish to delete?
 	socket.CustomTarget( 1, targMsg );
 }
 
@@ -92,7 +93,7 @@ function onCallback1( socket, ourObj )
 			var targSock = ourObj.socket;
 			if( targSock )
 			{
-				targSock.SysMessage( GetDictionaryEntry( 1659 ) );
+				targSock.SysMessage( GetDictionaryEntry( 1659, targSock.language )); // You are being removed
 				targSock.Disconnect();
 			}
 		}

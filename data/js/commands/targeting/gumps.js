@@ -27,7 +27,7 @@ function onCallback0( socket, ourObj )
 		var myGump 	= new Gump;
 		myGump.AddBackground( 0, 0, 300, 350, 2600 );
 		myGump.AddButton( 260, 15, 4017, 1, 0, 1 );
-		myGump.AddText( 45, 15, 0, "Dynamic Item Stats" );
+		myGump.AddText( 45, 15, 0, GetDictionaryEntry( 8083, socket.language )); // Dynamic Item Stats
 		myGump.AddPage( 1 );
 		addHexEntry( myGump, "Serial:", ourObj.serial );
 		addHexEntry( myGump, "ID:", ourObj.id );
@@ -133,7 +133,7 @@ function onCallback1( socket, ourObj )
 		var myGump 	= new Gump;
 		myGump.AddBackground( 0, 0, 300, 300, 2600 );
 		myGump.AddButton( 260, 15, 4017, 1, 0, 1 );
-		myGump.AddText( 45, 15, 0, "Character Stats" );
+		myGump.AddText( 45, 15, 0, GetDictionaryEntry( 8084, socket.language )); // Character Stats
 		myGump.AddPage( 1 );
 		addHexEntry( myGump, "Serial:", ourObj.serial );
 		addHexEntry( myGump, "Body Type:", ourObj.id );

@@ -44,6 +44,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_COLOUR,
 	DFN_STRING,			//	DFNTAG_COLOURLIST,
 	DFN_NODATA,			//	DFNTAG_COLOURMATCHHAIR,
+	DFN_NUMERIC,		//	DFNTAG_CONTROLSLOTS,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_COOKING,
 	DFN_NUMERIC,		//	DFNTAG_CORPSE,
 	DFN_NUMERIC,		//	DFNTAG_CREATOR,
@@ -95,6 +96,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HERDING,
 	DFN_NUMERIC,		//	DFNTAG_HIDAMAGE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HIDING,
+	DFN_NODATA,			//	DFNTAG_HIRELING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HP,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HPMAX,
 	DFN_NUMERIC,		//	DFNTAG_ID,
@@ -115,6 +117,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_LOCKPICKING,
 	DFN_NUMERIC,		//	DFNTAG_LODAMAGE,
 	DFN_UPPERSTRING,	//	DFNTAG_LOOT,
+	DFN_NUMERIC,		//	DFNTAG_LOYALTY,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_LUMBERJACKING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_MACEFIGHTING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_MAGERY,
@@ -123,6 +126,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_MANAMAX,
 	DFN_NUMERIC,		//	DFNTAG_MAXHP,
 	DFN_NUMERIC,		//	DFNTAG_MAXITEMS,
+	DFN_NUMERIC,		//	DFNTAG_MAXLOYALTY,
 	DFN_NUMERIC,		//	DFNTAG_MAXRANGE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_MEDITATION,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_MINING,
@@ -140,6 +144,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_NECROMANCY,
 	DFN_NODATA,			//	DFNTAG_NEWBIE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_NINJITSU,
+	DFN_NODATA,			//	DFNTAG_NOHIRELING,
 	DFN_NODATA,			//	DFNTAG_NOTRAIN,
 	DFN_NUMERIC,		//	DFNTAG_NPCAI,
 	DFN_UPPERSTRING,	//	DFNTAG_NPCLIST,
@@ -203,6 +208,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TAILORING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TAMING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TAMEDHUNGER,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_TAMEDTHIRST,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TASTEID,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_THROWING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TINKERING,
@@ -266,6 +272,7 @@ void InitStrToDFN( void )
 	strToDFNTag["COLOURLIST"]		=	DFNTAG_COLOURLIST;
 	strToDFNTag["COLORMATCHHAIR"]	=	DFNTAG_COLOURMATCHHAIR;
 	strToDFNTag["COLOURMATCHHAIR"]	=	DFNTAG_COLOURMATCHHAIR;
+	strToDFNTag["CONTROLSLOTS"]		=	DFNTAG_CONTROLSLOTS;
 	strToDFNTag["COOKING"]			=	DFNTAG_COOKING;
 	strToDFNTag["CORPSE"]			=	DFNTAG_CORPSE;
 	strToDFNTag["CREATOR"]			=	DFNTAG_CREATOR;
@@ -323,6 +330,7 @@ void InitStrToDFN( void )
 	strToDFNTag["HERDING"]			=	DFNTAG_HERDING;
 	strToDFNTag["HIDAMAGE"]			=	DFNTAG_HIDAMAGE;
 	strToDFNTag["HIDING"]			=	DFNTAG_HIDING;
+	strToDFNTag["HIRELING"]			=	DFNTAG_HIRELING;
 	strToDFNTag["HP"]				=	DFNTAG_HP;
 	strToDFNTag["HPMAX"]			=	DFNTAG_HPMAX;
 	strToDFNTag["ID"]				=	DFNTAG_ID;
@@ -347,6 +355,7 @@ void InitStrToDFN( void )
 	strToDFNTag["LOCKPICKING"]		=	DFNTAG_LOCKPICKING;
 	strToDFNTag["LODAMAGE"]			=	DFNTAG_LODAMAGE;
 	strToDFNTag["LOOT"]				=	DFNTAG_LOOT;
+	strToDFNTag["LOYALTY"]			=	DFNTAG_MAXLOYALTY;
 	strToDFNTag["LUMBERJACKING"]	=	DFNTAG_LUMBERJACKING;
 	strToDFNTag["MACEFIGHTING"]		=	DFNTAG_MACEFIGHTING;
 	strToDFNTag["MAGERY"]			=	DFNTAG_MAGERY;
@@ -356,6 +365,7 @@ void InitStrToDFN( void )
 	strToDFNTag["MAXRANGE"]			=	DFNTAG_MAXRANGE;
 	strToDFNTag["MAXHP"]			=	DFNTAG_MAXHP;
 	strToDFNTag["MAXITEMS"]			=	DFNTAG_MAXITEMS;
+	strToDFNTag["MAXLOYALTY"]		=	DFNTAG_MAXLOYALTY;
 	strToDFNTag["MEDITATION"]		=	DFNTAG_MEDITATION;
 	strToDFNTag["MINING"]			=	DFNTAG_MINING;
 	strToDFNTag["MOVABLE"]			=	DFNTAG_MOVABLE;
@@ -372,6 +382,7 @@ void InitStrToDFN( void )
 	strToDFNTag["NECROMANCY"]		=	DFNTAG_NECROMANCY;
 	strToDFNTag["NEWBIE"]			=	DFNTAG_NEWBIE;
 	strToDFNTag["NINJITSU"]			=	DFNTAG_NINJITSU;
+	strToDFNTag["NOHIRELING"]		=	DFNTAG_NOHIRELING;
 	strToDFNTag["NOTRAIN"]			=	DFNTAG_NOTRAIN;
 	strToDFNTag["NPCAI"]			=	DFNTAG_NPCAI;
 	strToDFNTag["NPCLIST"]			=	DFNTAG_NPCLIST;
@@ -439,6 +450,7 @@ void InitStrToDFN( void )
 	strToDFNTag["TAILORING"]		=	DFNTAG_TAILORING;
 	strToDFNTag["TAMING"]			=	DFNTAG_TAMING;
 	strToDFNTag["TAMEDHUNGER"]		=	DFNTAG_TAMEDHUNGER;
+	strToDFNTag["TAMEDTHIRST"]		=	DFNTAG_TAMEDTHIRST;
 	strToDFNTag["TASTEID"]			=	DFNTAG_TASTEID;
 	strToDFNTag["THROWING"]			=	DFNTAG_THROWING;
 	strToDFNTag["TINKERING"]		=	DFNTAG_TINKERING;
@@ -808,7 +820,7 @@ void ScriptSection::createSection( std::fstream& input )
 		line[input.gcount()] = 0;
 
 		sLine = line;
-		sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
+		sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 		if( sLine != "}" && !sLine.empty() )
 		{
 			// do something here
@@ -819,7 +831,7 @@ void ScriptSection::createSection( std::fstream& input )
 				if( secs.size() >= 1 )
 				{
 					try {
-						tag = strutil::trim(strutil::removeTrailing( secs[0],"//") );
+						tag = strutil::trim( strutil::removeTrailing( secs[0], "//" ));
 					}
 					catch (...)	{
 						tag = "";
@@ -830,7 +842,7 @@ void ScriptSection::createSection( std::fstream& input )
 				if( secs.size() >= 2 )
 				{
 					try {
-						value = strutil::trim(strutil::removeTrailing( secs[1],"//") );
+						value = strutil::trim( strutil::removeTrailing( secs[1], "//" ));
 					}
 					catch (...) {
 						value = "";
@@ -864,7 +876,7 @@ void ScriptSection::createSection( std::fstream& input )
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = std::string( localName );
 										auto csecs = strutil::sections( value, "," );
-										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0));
+										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
 										if( amiLocalCopy.groupID != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -875,10 +887,10 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[2],"//") ), nullptr, 0));
-										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[3],"//") ), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[4],"//") ), nullptr, 0));
+										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
 
 										//if( amiLocalCopy.tileID == INVALIDSERIAL )
 											//amiLocalCopy.tileID = amiLocalCopy.objectID;

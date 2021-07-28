@@ -9,7 +9,7 @@
 
 [ettin]
 {
-NAME=an ettin
+NAME=#//an ettin
 ID=0x0002
 DIRECTION=RND
 BACKPACK
@@ -50,7 +50,7 @@ ID=0x0012
 
 [ogre]
 {
-NAME=an ogre
+NAME=#//an ogre
 ID=0x0001
 DIRECTION=RND
 BACKPACK
@@ -86,7 +86,7 @@ FLAG=NEUTRAL
 
 [ogrelord]
 {
-NAME=an ogre lord
+NAME=#//an ogre lord
 ID=0x0054
 DIRECTION=RND
 BACKPACK
@@ -125,7 +125,7 @@ FLAG=NEUTRAL
 
 [arcticogrelord]
 {
-NAME=an arctic ogre lord
+NAME=#//an arctic ogre lord
 ID=0x0087
 DIRECTION=RND
 BACKPACK
@@ -164,7 +164,7 @@ FLAG=NEUTRAL
 
 [troll]
 {
-NAME=a troll
+NAME=#//a troll
 ID=0x0036
 DIRECTION=RND
 BACKPACK
@@ -203,7 +203,7 @@ ID=0x0035
 
 [frosttroll]
 {
-NAME=a frost troll
+NAME=#//a frost troll
 ID=0x0037
 DIRECTION=RND
 BACKPACK
@@ -237,7 +237,7 @@ FLAG=NEUTRAL
 
 [cyclops]
 {
-NAME=a cyclopedian warrior
+NAME=#//a cyclopean warrior
 ID=0x004b
 DIRECTION=RND
 STR=336 385
@@ -272,7 +272,7 @@ FLAG=NEUTRAL
 
 [titan]
 {
-NAME=a titan
+NAME=#//a titan
 ID=0x004c
 DIRECTION=RND
 STR=536 585

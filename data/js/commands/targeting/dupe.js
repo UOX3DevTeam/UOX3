@@ -48,7 +48,7 @@ function onCallback0( socket, ourObj )
 					}
 					else
 					{
-						socket.SysMessage( "Failed to dupe item." );
+						socket.SysMessage( GetDictionaryEntry( 8077, socket.language )); // Failed to dupe item.
 						return;
 					}
 				}
@@ -57,6 +57,7 @@ function onCallback0( socket, ourObj )
 			}
 		}
 	}
-	socket.SysMessage( numToDupe + " duped items have been placed in your backpack." );
+	var tempMsg = GetDictionaryEntry( 8078, socket.language ); // %i duped items have been placed in your backpack.
+	socket.SysMessage( tempMsg.replace(/%i/gi, numToDupe.toString() ));
 	socket.tempint = 0;
 }

@@ -9,7 +9,7 @@
 
 [deepseaserpent]
 {
-NAME=a deep sea serpent
+NAME=#//a deep sea serpent
 ID=0x0091
 DIRECTION=RND
 BACKPACK
@@ -44,7 +44,7 @@ FLAG=NEUTRAL
 
 [dolphin]
 {
-NAME=a dolphin
+NAME=#//a dolphin
 ID=0x0097
 DIRECTION=RND
 BACKPACK
@@ -72,7 +72,7 @@ RACE=9
 
 [kraken]
 {
-NAME=a kraken
+NAME=#//a kraken
 ID=0x004d
 SKIN=0000
 DIRECTION=RND
@@ -104,7 +104,7 @@ FLAG=NEUTRAL
 
 [seaserpent]
 {
-NAME=a sea serpent
+NAME=#//a sea serpent
 ID=0x0096
 SKIN=0x0289
 DIRECTION=RND
@@ -140,7 +140,7 @@ FLAG=NEUTRAL
 
 [walrus]
 {
-NAME=a walrus
+NAME=#//a walrus
 ID=0x00dd
 DIRECTION=RND
 BACKPACK
@@ -167,11 +167,12 @@ TAMEDHUNGER=600 30
 FOOD=fish
 CARVE=49
 RACE=9
+CONTROLSLOTS=1
 }
 
 [seahorse]
 {
-NAME=a sea horse
+NAME=#//a sea horse
 ID=0x0090
 DIRECTION=RND
 BACKPACK

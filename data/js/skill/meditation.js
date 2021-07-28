@@ -10,27 +10,27 @@ function onSkill( pUser, objType, skillUsed )
 	{
 		if( pUser.Defense( 0, 1, false ) > 10 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 967, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 967, pSock.language ) ); // The energies cannot be absorbed through your armour.
 			pUser.isMeditating = false;
 		}
 		else if( CheckHands( pUser ) )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 968, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 968, pSock.language ) ); // You cannot meditate with a weapon or shield equipped!
 			pUser.isMeditating = false;
 		}
 		else if( pUser.mana == pUser.maxMana )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 969, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 969, pSock.language ) ); // You are at peace.
 			pUser.isMeditating = false;
 		}
 		else if( !pUser.CheckSkill( 46, 0, 1000 ) )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 970, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 970, pSock.language ) ); // You cannot focus your concentration.
 			pUser.isMeditating = false;
 		}
 		else
 		{
-			pSock.SysMessage( GetDictionaryEntry( 971, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 971, pSock.language ) ); // You enter a meditative trance.
 			pUser.isMeditating = true;
 			pUser.SoundEffect( 0x00F9, true );
 		}

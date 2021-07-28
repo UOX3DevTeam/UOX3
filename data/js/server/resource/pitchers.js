@@ -1,6 +1,6 @@
-// Pitchers and Bottles - Jugs and Mugs, by Xuri (xuri@sensewave.com)
+// Pitchers and Bottles - Jugs and Mugs, by Xuri (xuri@uox3.org)
 // Version: 1.6
-// Last Updated: June 7th 2007
+// Last Updated: July 24th 2021
 //
 // Script for using pitchers, bottles, jugs, mugs, goblets and glasses
 // (Oh yeah, and buckets and water-basins too)
@@ -21,7 +21,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 ); //if character is within range of 2 tiles of target
 	if( !isInRange )
 	{
-		pUser.SysMessage( "You are too far away to reach that!" );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pSock.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -44,15 +44,15 @@ function onUseChecked( pUser, iUsed )
 	}
 	if( iUsed.GetTag( "EmptyGlass" ) == 2 )
 	{
-		pUser.SysMessage( "It's empty." );
+		pUser.SysMessage( GetDictionaryEntry( 2554, pSock.language )); // It's empty.
 	}
 	else if( iUsed.GetTag( "UsesLeft" ) > 0 )
 	{
-		pUser.CustomTarget( 1, "Where would you like to pour this?" );
+		pUser.CustomTarget( 1, GetDictionaryEntry( 2552, pSock.language )); // Where would you like to pour this?
 	}
 	else if( iUsed.GetTag( "ContentsType" ) == 1 && iUsed.GetTag( "EmptyGlass" ) == 3 )
 	{
-		pUser.CustomTarget( 0, "Fill from what?" );
+		pUser.CustomTarget( 0, GetDictionaryEntry( 2553, pSock.language )); // Fill from what?
 	}
 	return false;
 }
@@ -68,12 +68,12 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	var Pitcher = pSock.tempObj;
 	if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 15 ) || ( pUser.z < targZ - 15 ))
 	{
-		pUser.SysMessage( "You are too far away from the target!" );
+		pSock.SysMessage( GetDictionaryEntry( 2555, pSock.language )); // You are too far away from the target!
 		return;
 	}
 	if( !tileID )
 	{
-		pUser.SysMessage( "It's not possible to fill the pitcher with anything from that." );
+		pSock.SysMessage( GetDictionaryEntry( 2556, pSock.language )); // It's not possible to fill the pitcher with anything from that.
 		return;
 	}
 	if( !StrangeByte && myTarget.isChar )
@@ -86,19 +86,19 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 			switch( Pitcher.id )
 			{
 				case 0x09a7:case 0x0ff7:
-					pUser.SysMessage( "You fill the pitcher with some milk from the cow." );
+					pSock.SysMessage( GetDictionaryEntry( 2557, pSock.language )); // You fill the pitcher with some milk from the cow.
 					Pitcher.id = 0x09ad;
 					break;
 				case 0x0ff6:
-					pUser.SysMessage( "You fill the pitcher with some milk from the cow." );
+					pSock.SysMessage( GetDictionaryEntry( 2557, pSock.language )); // You fill the pitcher with some milk from the cow.
 					Pitcher.id = 0x09f0;
 					break;
 				case 0x099b:case 0x099f:case 0x09c7:
-					pUser.SysMessage( "You fill the bottle with some milk from the cow." );
+					pSock.SysMessage( GetDictionaryEntry( 2558, pSock.language )); // You fill the bottle with some milk from the cow.
 					Pitcher.name = "bottle of milk";
 					break;
 				case 0x09c8:
-					pUser.SysMessage( "You fill the jug with some milk from the cow." );
+					pSock.SysMessage( GetDictionaryEntry( 2558, pSock.language )); // You fill the jug with some milk from the cow.
 					Pitcher.name = "jug of milk";
 					Pitcher.SetTag( "UsesLeft", 9 );
 					break;
@@ -108,7 +108,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 		}
 		else
 		{
-			pUser.SysMessage( "You cannot fill the pitcher with anything from that character!" );
+			pSock.SysMessage( GetDictionaryEntry( 2558, pSock.language )); // You cannot fill the pitcher with anything from that character!
 		}
 		return;
 	}
@@ -118,7 +118,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 		{
 			if( Pitcher.serial == myTarget.serial )
 			{
-				pUser.SysMessage( "Impossible. Can't be done." );
+				pSock.SysMessage( GetDictionaryEntry( 2561, pSock.language )); // Impossible. Can't be done.
 				return;
 			}
 			//If target hasn't been setup with scripttrigger and the proper tags yet, and
@@ -138,22 +138,26 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				switch( Pitcher.id )
 				{
 				case 0x0ff6:
-					pUser.SysMessage( "You fill the pitcher with "+Liquid+"." );
+					var msg = GetDictionaryEntry( 2562, pSock.language ); // You fill the pitcher with %s.
+					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
 					switchPitcherID( pSock, Pitcher );
 					switchPitcherID( pSock, myTarget );
 					break;
 				case 0x0ff7:case 0x09a7:
-					pUser.SysMessage( "You fill the pitcher with "+Liquid+"." );
+					var msg = GetDictionaryEntry( 2562, pSock.language ); // You fill the pitcher with %s.
+					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
 					switchPitcherID( pSock, Pitcher );
 					switchPitcherID( pSock, myTarget );
 					break;
 				case 0x099b:case 0x099f:case 0x09c7:
-					pUser.SysMessage( "You fill the bottle with "+Liquid+"." );
+					var msg = GetDictionaryEntry( 2563, pSock.language ); // You fill the bottle with %s.
+					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
 					Pitcher.name = "bottle of "+Liquid;
 					switchPitcherID( pSock, myTarget );
 					break;
 				case 0x09c8:
-					pUser.SysMessage( "You fill the jug with "+Liquid+"." );
+					var msg = GetDictionaryEntry( 2564, pSock.language ); // You fill the jug with %s.
+					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
 					Pitcher.name = "jug of "+Liquid;
 					switchPitcherID( pSock, myTarget );
 					break;
@@ -176,28 +180,28 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 			switch( Pitcher.id )
 			{
 			case 0x0ff6:
-				pUser.SysMessage( "You fill the pitcher with water." );
+				pSock.SysMessage( GetDictionaryEntry( 2565, pSock.language )); // You fill the pitcher with water.
 				Pitcher.id = 0x1f9d;
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 5 );
 				break;
 			case 0x0ff7:case 0x09a7:
-				pUser.SysMessage( "You fill the pitcher with water." );
+				pSock.SysMessage( GetDictionaryEntry( 2565, pSock.language )); // You fill the pitcher with water.
 				Pitcher.id = 0x01f9e;
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 5 );
 				break;
 			case 0x099b:case 0x099f:case 0x09c7:
-				pUser.SysMessage( "You fill the bottle with water." );
+				pSock.SysMessage( GetDictionaryEntry( 2566, pSock.language )); // You fill the bottle with water.
 				Pitcher.name = "bottle of water";
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 5 );
 				break;
 			case 0x09c8:
-				pUser.SysMessage( "You fill the jug with water." );
+				pSock.SysMessage( GetDictionaryEntry( 2567, pSock.language )); // You fill the jug with water.
 				Pitcher.name = "jug of water";
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
@@ -206,7 +210,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 			}
 			return;
 		}
-		pUser.SysMessage( "It's not possible to fill the pitcher with anything from that." );
+		pSock.SysMessage( GetDictionaryEntry( 2556, pSock.language )); // It's not possible to fill the pitcher with anything from that.
 	}
 }
 
@@ -224,7 +228,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 	{ //If target is the ground
 		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 15 ) || ( pUser.z < targZ - 15 ))
 		{
-			pUser.SysMessage( "You are too far away from the target!" );
+			pUser.SysMessage( GetDictionaryEntry( 2555, pSock.language )); // You are too far away from the target!
 			return;
 		}
 		pUser.SoundEffect( 78, 1 );
@@ -233,7 +237,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		Pitcher.id == 0x09cb || Pitcher.id == 0x09ee || Pitcher.id == 0x09ef || ( Pitcher.id >= 0x0ffb && Pitcher.id <= 0x1002 ) ||
 		( Pitcher.id >= 0x1f7d && Pitcher.id <= 0x1f80 ) || ( Pitcher.id >= 0x1f85 && Pitcher.id <= 0x1f94 ))
 		{
-			pUser.SysMessage( "You pour out your drink." );
+			pUser.SysMessage( GetDictionaryEntry( 2568, pSock.language )); // You pour out your drink.
 			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsName", "nothing" );
 			Pitcher.SetTag( "ContentsType", 1 );
@@ -244,7 +248,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		//if the container is a jug
 		else if( Pitcher.id == 0x09c8 )
 		{
-			pUser.SysMessage( "You pour out the contents of the jug." );
+			pUser.SysMessage( GetDictionaryEntry( 2569, pSock.language )); // You pour out the contents of the jug.
 			Pitcher.name = "empty jug";
 			Pitcher.SetTag( "ContentsType", 1 );
 			Pitcher.SetTag( "UsesLeft", 0 );
@@ -253,7 +257,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		//if the container is a bottle
 		else if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
 		{
-			pUser.SysMessage( "You pour out the contents of the bottle." );
+			pUser.SysMessage( GetDictionaryEntry( 2570, pSock.language )); // You pour out the contents of the bottle.
 			Pitcher.name = "empty bottle";
 			Pitcher.SetTag( "ContentsType", 1 );
 			Pitcher.SetTag( "UsesLeft", 0 );
@@ -262,7 +266,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		//if the container is a pitcher
 		else
 		{
-			pUser.SysMessage( "You pour out the contents of the pitcher." );
+			pUser.SysMessage( GetDictionaryEntry( 2571, pSock.language )); // You pour out the contents of the pitcher.
 			Pitcher.SetTag( "UsesLeft", 0 );
 			Pitcher.SetTag( "ContentsType", 1);
 			Pitcher.SetTag( "UsesLeft", 0 );
@@ -274,7 +278,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 	{ //If target is a character
 		if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 15 ) || ( pUser.z < targZ - 15 ))
 		{
-			pUser.SysMessage( "You are too far away from the target!" );
+			pUser.SysMessage( GetDictionaryEntry( 2555, pSock.language )); // You are too far away from the target!
 			return;
 		}
 		if( myTarget.serial == pUser.serial )
@@ -285,15 +289,15 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				if( pThirst >= 0 )
 				{
 					if( pThirst == 0 || pThirst == 1 )
-						pSock.SysMessage( GetDictionaryEntry( (2054), pSock.language ) ); //You take a swig from the %s, but are still extremely thirsty.
+						pSock.SysMessage( GetDictionaryEntry( (2054), pSock.language ) ); // You drink the beverage, but are still extremely thirsty.
 					else
-						pSock.SysMessage( GetDictionaryEntry( (2054 + pThirst - 1), pSock.language ) ); //You take a swig from the %s, but are still extremely thirsty.
+						pSock.SysMessage( GetDictionaryEntry( (2054 + pThirst - 1), pSock.language ) ); // You drink the beverage, but are still extremely thirsty.
 					pUser.thirst += 1;
 				}
 			}
 			else
 			{
-				pSock.SysMessage( GetDictionaryEntry( 2053, pSock.language ) ); //You are simply too full to drink any more!
+				pSock.SysMessage( GetDictionaryEntry( 2053, pSock.language ) ); // You are simply too full to drink any more!
 				return;
 			}
 
@@ -324,17 +328,17 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			{
 				if( Pitcher.id == 0x09c8 )
 				{
-					pUser.SysMessage( "The jug is empty!" );
+					pSock.SysMessage( GetDictionaryEntry( 2572, pSock.language ) ); // The jug is empty!
 					Pitcher.name = "empty jug";
 				}
 				else if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
 				{
-					pUser.SysMessage( "The bottle is empty." );
+					pSock.SysMessage( GetDictionaryEntry( 2573, pSock.language ) ); // The bottle is empty.
 					Pitcher.name = "empty bottle";
 				}
 				else
 				{
-					pUser.SysMessage( "The pitcher is empty." );
+					pSock.SysMessage( GetDictionaryEntry( 2574, pSock.language ) ); // The pitcher is empty.
 					switchPitcherID( pSock, Pitcher );
 				}
 				Pitcher.SetTag( "ContentsType", 1);
@@ -345,11 +349,12 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		}
 		if(( tileID == 0x00d8 || tileID == 0x00e7 ) && ( Pitcher.GetTag( "ContentsType" ) == 3 ))
 		{
-			pUser.SysMessage( "You can't put the milk back in the cow, fool!" );
+			pSock.SysMessage( GetDictionaryEntry( 2575, pSock.language ) ); // You can't put the milk back in the cow, fool!
 		}
 		else
 		{
-			pUser.SysMessage( "You resist the urge to empty the "+Pitcher.GetTag( "ContentsName" )+" over the head of your target." );
+			var tempMsg = GetDictionaryEntry( 2576, pSock.language ); // You resist the urge to empty the %s over the head of your target.
+			pSock.SysMessage( tempMsg.replace(/%s/gi, Pitcher.GetTag( "ContentsName" ) ));
 		}
 		return;
 	}
@@ -357,7 +362,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 	{	//If target is an item
 		if( Pitcher.serial == myTarget.serial )
 		{
-			pUser.SysMessage( "Impossible. Can't be done." );
+			pSock.SysMessage( GetDictionaryEntry( 2561, pSock.language )); // Impossible. Can't be done.
 			return;
 		}
 		//If Target is an open sack of flour, or a bowl of flour
@@ -368,7 +373,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		if(( tileID == 0x0ff8 || tileID == 0xff9) || ( tileID >= 0x1f7d && tileID <= 0x1f80 ) || ( tileID >= 0x1f85 && tileID <= 0x1f94 ) ||
 		( tileID >= 0x1f95 && tileID <= 0x1f9e ) || ( myTarget.GetTag( "ContentsType" ) > 1 ))
 		{
-			pUser.SysMessage( "That is already full! You cannot pour anything into that until it's been emptied." );
+			pSock.SysMessage( GetDictionaryEntry( 2577, pSock.language )); // That is already full! You cannot pour anything into that until it's been emptied.
 			return;
 		}
 		if( !myTarget.GetTag( "ContentsType" ))
@@ -410,19 +415,19 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			{
 				if( Pitcher.id == 0x09c8 )
 				{
-					pUser.SysMessage( "The jug is empty!" );
+					pSock.SysMessage( GetDictionaryEntry( 2572, pSock.language )); // The jug is empty!
 					Pitcher.name = "empty jug";
 					Pitcher.SetTag( "ContentsType", 1);
 				}
 				else if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
 				{
-					pUser.SysMessage( "The bottle is empty." );
+					pSock.SysMessage( GetDictionaryEntry( 2573, pSock.language )); // The bottle is empty!
 					Pitcher.name = "empty bottle";
 					Pitcher.SetTag( "ContentsType", 1);
 				}
 				else
 				{
-					pUser.SysMessage( "The pitcher is empty." );
+					pSock.SysMessage( GetDictionaryEntry( 2574, pSock.language )); // The pitcher is empty!
 					Pitcher.SetTag( "ContentsType", 1);
 					switchPitcherID( pSock, Pitcher );
 				}
@@ -445,7 +450,8 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			switch( myTarget.id )
 			{
 			case 0x0ff6:case 0x0ff7:case 0x09a7:
-				pUser.SysMessage( "You pour the "+Liquid+" into the empty pitcher." );
+				var tmpMsg = GetDictionaryEntry( 2578, pSock.language ); // You pour the %s into the empty pitcher.
+				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				if( UsesLeft > 5 )
 				{
 					UsesLeft = 5;
@@ -455,7 +461,8 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				switchPitcherID( pSock, Pitcher );
 				break;
 			case 0x099b:case 0x099f:case 0x09c7:
-				pUser.SysMessage( "You pour the "+Liquid+" into the empty bottle." );
+				var tmpMsg = GetDictionaryEntry( 2579, pSock.language ); // You pour the %s into the empty bottle.
+				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				myTarget.name = "bottle of "+Liquid;
 				if( UsesLeft > 5 )
 				{
@@ -465,13 +472,13 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				switchPitcherID( pSock, Pitcher );
 				break;
 			case 0x09c8:
-				pUser.SysMessage( "You pour the "+Liquid+" into the empty jug." );
+				var tmpMsg = GetDictionaryEntry( 2580, pSock.language ); // You pour the %s into the empty jug.
+				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				myTarget.name = "jug of "+Liquid;
 				myTarget.SetTag( "UsesLeft", UsesLeft );
 				switchPitcherID( pSock, Pitcher );
 				break;
 			}
-
 
 			if(( Pitcher.id >= 0x0995 && Pitcher.id <= 0x099a ) || Pitcher.id == 0x09b3 || Pitcher.id == 0x09bf || Pitcher.id == 0x09ca ||
 			Pitcher.id == 0x09cb || Pitcher.id == 0x09ee || Pitcher.id == 0x09ef || ( Pitcher.id >= 0x0ffb && Pitcher.id <= 0x1002 ) ||
@@ -491,7 +498,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		Pitcher.id == 0x09cb || ( Pitcher.id >= 0x0ffb && Pitcher.id <= 0x1002 )||( Pitcher.id >= 0x1f7d && Pitcher.id <= 0x1f80 )||(
 		Pitcher.id >= 0x1f85 && Pitcher.id <= 0x1f94 ))
 		{
-			pUser.SysMessage( "You pour out your drink." );
+			pUser.SysMessage( GetDictionaryEntry( 2568, pSock.language )); // You pour out your drink.
 			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsName", "nothing" );
 			Pitcher.SetTag( "ContentsType", 1 );
@@ -501,21 +508,21 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		}
 		if( Pitcher.id == 0x09c8 )
 		{
-			pUser.SysMessage( "You pour out the contents of the jug, and you're left with an empty jug." );
+			pUser.SysMessage( GetDictionaryEntry( 2579, pSock.language )); // You pour out the contents of the jug, and you're left with an empty jug.
 			Pitcher.name = "empty jug";
 			Pitcher.SetTag( "ContentsType", 1 );
 			return;
 		}
 		else if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
 		{
-			pUser.SysMessage( "You pour out the contents of the bottle, and you're left with an empty bottle." );
+			pUser.SysMessage( GetDictionaryEntry( 2580, pSock.language )); // You pour out the contents of the bottle, and you're left with an empty bottle.
 			Pitcher.name = "empty bottle";
 			Pitcher.SetTag( "ContentsType", 1 );
 			return;
 		}
 		else
 		{
-			pUser.SysMessage( "You pour out the contents of the pitcher, leaving you with an empty pitcher." );
+			pUser.SysMessage( GetDictionaryEntry( 2581, pSock.language )); // You pour out the contents of the pitcher, leaving you with an empty pitcher.
 			Pitcher.SetTag( "ContentsType", 1 );
 			switchPitcherID( pSock, Pitcher );
 			return;
@@ -529,7 +536,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 	{
 		//water
 		case 2:
-			pSock.SysMessage( "You pour some water into the container" );
+			pSock.SysMessage( GetDictionaryEntry( 2582, pSock.language )); // You pour some water into the container.
 			switch( myTarget.id )
 			{
 				//ceramic mugs
@@ -580,7 +587,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 			break;
 		// Milk
 		case 3:
-			pSock.SysMessage( "You pour some milk into the container." );
+			pSock.SysMessage( GetDictionaryEntry( 2583, pSock.language )); // You pour some milk into the container.
 
 			switch( myTarget.id )
 			{
@@ -616,7 +623,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 			break;
 		//ale
 		case 4:
-			pSock.SysMessage( "You pour some ale into the container." );
+			pSock.SysMessage( GetDictionaryEntry( 2584, pSock.language )); // You pour some ale into the container.
 			switch( myTarget.id )
 			{
 				//ceramic mugs
@@ -645,7 +652,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 			break;
 		//cider
 		case 5:
-			pSock.SysMessage( "You pour some cider into the container." );
+			pSock.SysMessage( GetDictionaryEntry( 2585, pSock.language )); // You pour some cider into the container.
 			switch( myTarget.id )
 			{
 				//ceramic mugs
@@ -680,7 +687,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 			break;
 		// Liquor
 		case 6:
-			pSock.SysMessage( "You pour some liquor into the container." );
+			pSock.SysMessage( GetDictionaryEntry( 2586, pSock.language )); // You pour some liquor into the container.
 			switch( myTarget.id )
 			{
 				//ceramic mugs
@@ -715,7 +722,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 			break;
 		// Wine
 		case 7:
-			pSock.SysMessage( "You pour some wine into the glass." );
+			pSock.SysMessage( GetDictionaryEntry( 2587, pSock.language )); // You pour some wine into the glass.
 			switch( myTarget.id )
 			{
 				//ceramic mugs

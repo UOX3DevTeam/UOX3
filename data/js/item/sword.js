@@ -6,7 +6,7 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
+			pUser.SysMessage( GetDictionaryEntry( 6019, socket.language )); // This must be in your backpack or equipped before it can be used.
 			return false;
 		}
 		else if( iUsed.type != 15 )
@@ -60,7 +60,7 @@ function onCallback1( socket, ourObj )
 				else if( tileID == 0x2006 )
 					CarveCorpse( socket, mChar, ourObj );
 				else
-					socket.SysMessage( "You cannot carve that." );
+					socket.SysMessage( GetDictionaryEntry( 1968, socket.language )); // You cannot carve that.
 			}
 		}
 	}
@@ -81,7 +81,7 @@ function MakeFishSteaks( socket, mChar, ourObj )
 	if( ownerObj && mChar.serial == ownerObj.serial )
 	{
 		CreateDFNItem( mChar.socket, mChar, "0x097A", 4, "ITEM", true );
-		mChar.SysMessage( "You slice a fish to steaks." );
+		mChar.SysMessage( GetDictionaryEntry( 2758, socket.language )); // You slice a fish to steaks.
 		if( ourObj.amount > 1 )
 			ourObj.amount = ourObj.amount-1;
 		else

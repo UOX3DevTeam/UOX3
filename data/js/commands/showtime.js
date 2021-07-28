@@ -18,6 +18,6 @@ function command_SHOWTIME( socket, cmdString )
 	if( minute < 10 )
 		mDisp = "0" + mDisp;
 
-	var toDisplay	= "Time: " + hDisp + ":" + mDisp + ampm;
+	var toDisplay	= GetDictionaryEntry( 8002, socket.language ) + " " + hDisp + ":" + mDisp + ampm; // Time: h:m am/pm
 	socket.SysMessage( toDisplay );
 }

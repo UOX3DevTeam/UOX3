@@ -171,6 +171,7 @@ public:
 
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
+	UI16 CalculatePetControlChance( CChar *mChar, CChar *Npc );
 	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );
 	void SkillUse( CSocket *s, UI08 x );
 	void updateSkillLevel( CChar *c, UI08 s) const;

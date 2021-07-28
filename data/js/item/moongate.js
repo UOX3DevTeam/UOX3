@@ -98,7 +98,7 @@ function onGumpPress(srcSock,myButton)
   //Check ret and button (dont say anything if canceled) 
   if( ret == false && myButton >= 0) 
   { 
-    srcSock.SysMessage("You have moved too far away to use this."); 
+    srcSock.SysMessage( GetDictionaryEntry( 2749, srcSock.language )); // You have moved too far away to use this.
     return;
   } 
 
@@ -254,10 +254,10 @@ function displaygump(srcSock, pUser)
   // add a background 
   myGump.AddPage(1);  //Page 1 Felucca 
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
-  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+  myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
   //Cancel Button 
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
-  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+  myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
   //Facet Buttons 
   if( enableFelucca == 1 )
   {
@@ -305,10 +305,10 @@ function displaygump(srcSock, pUser)
   //PAGE 2
   myGump.AddPage (2);  //Page 2 Trammel 
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
-  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+  myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
-  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+  myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
   if( enableFelucca == 1 )
   {
@@ -355,10 +355,10 @@ function displaygump(srcSock, pUser)
   //PAGE 3
   myGump.AddPage (3);  //Page 3 IIsh 
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
-  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+  myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
-  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+  myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
   if( enableFelucca == 1 )
   {
@@ -408,10 +408,10 @@ function displaygump(srcSock, pUser)
   //PAGE 4
   myGump.AddPage (4);  //Page 4 Malas
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
-  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+  myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 	
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
-  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+  myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 	
   if( enableFelucca == 1 )
   {
@@ -449,10 +449,10 @@ function displaygump(srcSock, pUser)
   //PAGE 5
   myGump.AddPage (5);  //Page 4 Tokuno Islands
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
-  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+  myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
-  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+  myGump.AddText( 80, 210, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 
   if( enableFelucca == 1 )
   {

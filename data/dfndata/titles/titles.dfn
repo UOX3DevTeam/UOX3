@@ -1,8 +1,8 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.99.3                     *
+//*                         UOX3 DFNs v0.99.4                     *
 //*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
-//* Last Update : 1/4/2003                                        *
+//* Last Update : 17/7/2021                                       *
 //* Script : Titles.dfn                                           *
 //*****************************************************************
 
@@ -18,13 +18,13 @@ SKILLTITLE=Alchemist
 SKILLTITLE=Healer
 
 //Animal Lore (2)
-SKILLTITLE=Vet
+SKILLTITLE=Ranger
 
 //Item Identification (3)
 SKILLTITLE=Merchant
 
 //Arms Lore (4)
-SKILLTITLE=Blacksmith
+SKILLTITLE=Warrior
 
 //Parrying (5)
 SKILLTITLE=Warrior
@@ -33,7 +33,7 @@ SKILLTITLE=Warrior
 SKILLTITLE=Beggar
 
 //Blacksmithing (7)
-SKILLTITLE=Blacksmith
+SKILLTITLE=Smith
 
 //Bowcrafting (8)
 SKILLTITLE=Bowyer
@@ -51,10 +51,10 @@ SKILLTITLE=Carpenter
 SKILLTITLE=Cartographer
 
 //Cooking (13)
-SKILLTITLE=Cook
+SKILLTITLE=Chef
 
 //Detect Hidden (14)
-SKILLTITLE=Detective
+SKILLTITLE=Scout
 
 //Enticement (15)
 SKILLTITLE=Bard
@@ -69,7 +69,7 @@ SKILLTITLE=Healer
 SKILLTITLE=Fisherman
 
 //Forensics (19)
-SKILLTITLE=Criminologist
+SKILLTITLE=Detective
 
 //Herding (20)
 SKILLTITLE=Shepherd
@@ -84,7 +84,7 @@ SKILLTITLE=Bard
 SKILLTITLE=Scribe
 
 //Lockpicking (24)
-SKILLTITLE=Locksmith
+SKILLTITLE=Rogue
 
 //Magery (25)
 SKILLTITLE=Mage
@@ -96,7 +96,7 @@ SKILLTITLE=Mage
 SKILLTITLE=Warrior
 
 //Snooping (28)
-SKILLTITLE=Snoop
+SKILLTITLE=Pickpocket
 
 //Musicianship (29)
 SKILLTITLE=Bard
@@ -120,7 +120,7 @@ SKILLTITLE=Tailor
 SKILLTITLE=Tamer
 
 //Taste Identification (36)
-SKILLTITLE=Detective
+SKILLTITLE=Chef
 
 //Tinkering (37)
 SKILLTITLE=Tinker
@@ -129,7 +129,7 @@ SKILLTITLE=Tinker
 SKILLTITLE=Ranger
 
 //Veterinary (39)
-SKILLTITLE=Vet
+SKILLTITLE=Veterinarian
 
 //Swordsmanship (40)
 SKILLTITLE=Swordsman
@@ -141,7 +141,7 @@ SKILLTITLE=Armsman
 SKILLTITLE=Fencer
 
 //Wrestling (43)
-SKILLTITLE=Boxer
+SKILLTITLE=Wrestler
 
 //Lumberjacking (44)
 SKILLTITLE=Lumberjack
@@ -150,25 +150,54 @@ SKILLTITLE=Lumberjack
 SKILLTITLE=Miner
 
 //Meditation (46)
-SKILLTITLE=Monk
+SKILLTITLE=Stoic
 
 //Stealth (47)
-SKILLTITLE=Burglar
+SKILLTITLE=Rogue
 
 //Remove Trap (48)
-SKILLTITLE=Locksmith
+SKILLTITLE=Rogue
+
+// Necromancy (49)
+SKILLTITLE=Necromancer
+
+// Focus (50)
+SKILLTITLE=Stoic
+
+// Chivalry (51)
+SKILLTITLE=Paladin
+
+// Bushido (52)
+SKILLTITLE=Samurai
+
+// Ninjitsu (53)
+SKILLTITLE=Ninja
+
+// Spellweaving (54)
+SKILLTITLE=Arcanist
+
+// Imbuing (55)
+SKILLTITLE=Artificer
+
+// Mysticism (56)
+SKILLTITLE=Mystic
+
+// Throwing (57)
+SKILLTITLE=Bladeweaver
 }
 
 [PROWESS]
 {
 0=Neophyte
-201=Novice
-501=Apprentice
-601=Journeyman
-701=Expert
-801=Adept
-901=Master
+200=Novice
+500=Apprentice
+600=Journeyman
+700=Expert
+800=Adept
+900=Master
 1000=Grandmaster
+1100=Elder
+1200=Legendary
 }
 
 //Goes in order of BEST fame title to WORST fame title

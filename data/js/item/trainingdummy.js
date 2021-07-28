@@ -14,11 +14,8 @@ function onUseChecked( pUser, iUsed )
 	}
 	else if( iUsed.id == 0x1070 || iUsed.id == 0x1074 ) //if training dummy is motionless
 	{
-
 		//Determine weapon-type by calling external script and loading a value set there afterwards
-		TriggerEvent( 2500, "getWeaponType", pUser );
-		var weaponType = pUser.GetTag( "weaponType" );
-
+		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser );
 		if( weaponType == "BOWS" || weaponType == "XBOWS" )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 938, pSock.language )); //Practice archery on archery buttes!
@@ -26,16 +23,14 @@ function onUseChecked( pUser, iUsed )
 		}
 
 		//Check if character is mounted or not, and then call up an external script to determine combat animations
+		var combatAnim = 0;
 		if( pUser.isonhorse )
-			TriggerEvent( 2501, "getHorseCombatAnim", pUser, weaponType );
+			combatAnim = TriggerEvent( 2501, "getHorseCombatAnim", pUser, weaponType );
 		else
-			TriggerEvent( 2501, "getFootCombatAnim", pUser, weaponType );
-		var combatAnim = parseInt( pUser.GetTag( "combatAnim" )); //convert to decimal for use with DoAction
-		pUser.DoAction( combatAnim );
+			combatAnim = TriggerEvent( 2501, "getFootCombatAnim", pUser, weaponType );
 
-		//Remove the temporary tags we set on our character above
-		pUser.SetTag( "weaponType", null );
-		pUser.SetTag( "combatAnim", null );
+		if( !isNaN( combatAnim ) && combatAnim != 0 )
+			pUser.DoAction( combatAnim );
 
 		//Play some random sound effects when the training dummy is hit
 		switch( RandomNumber( 0, 2 ) )
@@ -44,7 +39,6 @@ function onUseChecked( pUser, iUsed )
 			case 1: pUser.SoundEffect( 0x013C, true );	break;
 			case 2: pUser.SoundEffect( 0x013D, true );	break;
 			default:
-				Console.Print( " cSkills::TDummy -> Fallout of switch statement without default\n" );
 				return false;
 		}
 

@@ -149,6 +149,7 @@ SEngineFunc SE_DistanceBetween;
 SEngineFunc SE_ValidateObject;
 SEngineFunc SE_ApplyDamageBonuses;
 SEngineFunc SE_ApplyDefenseModifiers;
+SEngineFunc SE_WillResultInCriminal;
 
 SEngineFunc SE_CreateParty;
 
