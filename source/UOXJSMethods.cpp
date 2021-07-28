@@ -2008,7 +2008,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 5 )
+	if( argc < 1 || argc > 5 )
 	{
 		MethodError( "EmoteMessage: Invalid number of arguments (takes 1 - 5: text, allSay, hue, speech target and speech serial)" );
 		return JS_FALSE;
