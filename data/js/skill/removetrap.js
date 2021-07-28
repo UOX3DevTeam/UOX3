@@ -8,12 +8,12 @@ function onSkill( pUser, objType, skillUsed )
 	var pSock = pUser.socket;
 	if ( pSock )
 	{
-		if ( pUser.skills[24] < 500 )
+		if ( pUser.skills.lockpicking < 500 )
 		{
 			// You do not know enough about locks.  Become better at picking locks.
 			pSock.SysMessage( GetDictionaryEntry( 2091, pSock.language ) );
 		}
-		else if ( pUser.skills[14] < 500 )
+		else if ( pUser.skills.lockpicking < 500 )
 		{
 			// You are not perceptive enough.  Become better at detect hidden.
 			pSock.SysMessage( GetDictionaryEntry( 2092, pSock.language ) );
