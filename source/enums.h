@@ -352,7 +352,7 @@ enum Skills
     MINING,
     MEDITATION,
     STEALTH,
-    REMOVETRAPS,
+    REMOVETRAP,
     NECROMANCY,
     FOCUS,
     CHIVALRY,

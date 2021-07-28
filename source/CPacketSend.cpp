@@ -8332,7 +8332,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 					case MAGICRESISTANCE:	pStream.WriteShort( offset, 0x0084 ); break;
 					case TACTICS:			pStream.WriteShort( offset, 0x0085 ); break;
 					case SNOOPING:			pStream.WriteShort( offset, 0x0086 ); break;
-					case REMOVETRAPS:		pStream.WriteShort( offset, 0x0087 ); break;
+					case REMOVETRAP:		pStream.WriteShort( offset, 0x0087 ); break;
 					case MUSICIANSHIP:		pStream.WriteShort( offset, 0x0088 ); break;
 					case POISONING:			pStream.WriteShort( offset, 0x0089 ); break;
 					case ARCHERY:			pStream.WriteShort( offset, 0x008a ); break;
