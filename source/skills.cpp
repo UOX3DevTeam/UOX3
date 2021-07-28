@@ -736,7 +736,7 @@ UI16 cSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 	SI16 petOrneriness = static_cast<SI16>(Npc->GetOrneriness());
 	
 	// If difficulty to control is below a certain treshold (29.1) or it's a summoned creature, 100% chance to control creature
-	if( petOrneriness <= 291 || ( petOrneriness == 0 && Npc->GetTaming() <= 291 ) || Npc->IsDispellable() )
+	if(( petOrneriness == 0 && Npc->GetTaming() <= 291 ) || petOrneriness <= 291 || Npc->IsDispellable() )
 		return static_cast<SI16>(1000);
 
 	// TODO: Check if NPC can be tamed via necromancer Dark Wolf Familiar

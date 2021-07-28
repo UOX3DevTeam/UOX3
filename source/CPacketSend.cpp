@@ -1653,7 +1653,6 @@ CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeS
 				if( maxMana > 0 )
 				{
 					MaxVal( 100 );
-					CurVal(( toUpdate.GetMana() * 100 ) / maxMana );
 					CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana) ))) );
 				}
 				else
@@ -1665,7 +1664,7 @@ CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeS
 			else
 			{
 				MaxVal( maxMana );
-				CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana) ))) );
+				CurVal( toUpdate.GetMana() );
 			}
 			break;
 	}
