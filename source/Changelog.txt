@@ -1,3 +1,10 @@
+29/07/2021 - Xuri
+	Fixed some issues with whispers and yells (both server and client-sent ones)
+	Fixed an issue with EmoteMessage JS Method that didn't work with anything other than 5 arguments
+	Fixed a couple of incorrect client type comparisons (thanks, punt!)
+	Addressed issue from previous commit on trying to pass a String type on a vardiac function (punt)
+	Fixed a couple of other minor issues
+
 28/07/2021 - Xuri (0.99.4v)
 	Added JS command to reload dictionaries
 		'reloaddictionaries

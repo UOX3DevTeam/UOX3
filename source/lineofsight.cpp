@@ -460,7 +460,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 //|
 //|					it WAS based on the P.T., now its based on linear algebra ;)
 //o-----------------------------------------------------------------------------------------------o
-bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ, SI08 destZTop )
+bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ, SI08 destZTop, bool checkDistance )
 {
 	const bool blocked		= false;
 	const bool not_blocked	= true;
@@ -488,7 +488,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	// Let's provide some leeway based on height of object
 	destZTop = destZ + destZTop;
 
-	if( distance > 18 )
+	if( checkDistance && distance > 18 )
 		return blocked;
 
 	// DISABLED; Allows placing items within walls when standing next to them...
