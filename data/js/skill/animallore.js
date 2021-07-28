@@ -189,18 +189,18 @@ function onCallback0( pSock, ourObj )
 					AnimalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.Meditation / 10 ) );
 					if(AOSenabled == 1)
 					{
-						AnimalLoreGump.AddHTMLGump( 53, 146, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2169, pSock.language ) + "</basefont>" );				 // Necromancy
+						AnimalLoreGump.AddHTMLGump( 53, 146, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2169, pSock.language ) + "</basefont>" );			 // Necromancy
 						AnimalLoreGump.AddHTMLGump( position, 146, 100, 18, false, false, parseInt( ourObj.skills.Necromancy / 10 ) );
 					}
 					AnimalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2170, pSock.language ) + "</basefont>" );				 // Spirit Speak
 					AnimalLoreGump.AddHTMLGump( position, 164, 100, 18, false, false, parseInt( ourObj.skills.SpiritSpeak / 10 ) );
 					if(SAenabled == 1)
 					{
-						AnimalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2171, pSock.language ) + "</basefont>" );				 // Mysticism
+						AnimalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2171, pSock.language ) + "</basefont>" );			 // Mysticism
 						AnimalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, parseInt( ourObj.skills.Mysticism / 10 ) );
-						AnimalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2172, pSock.language ) + "</basefont>" );				 // Focus
+						AnimalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2172, pSock.language ) + "</basefont>" );		     // Focus
 						AnimalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, parseInt( ourObj.skills.Focus / 10 ) );
-						AnimalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2173, pSock.language ) + "</basefont>" );				 // Spellweaving
+						AnimalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2173, pSock.language ) + "</basefont>" );			 // Spellweaving
 						AnimalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, parseInt( ourObj.skills.Spellweaving / 10 ) );
 					}
 					AnimalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2174, pSock.language ) + "</basefont>" );				 // Discordance
@@ -210,42 +210,67 @@ function onCallback0( pSock, ourObj )
 
 					AnimalLoreGump.AddPage( 7 );
 					AnimalLoreGump.AddGump( 28, 76, 0x826 );
-					AnimalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );				 // Lore & Knowledge
+					AnimalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );					 // Lore & Knowledge
 					if(SEenabled == 1)
 				    {
-						AnimalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2175, pSock.language ) + "</basefont>" );				 // Bushido
+						AnimalLoreGump.AddHTMLGump( 53, 92, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2175, pSock.language ) + "</basefont>" );			 // Bushido
 						AnimalLoreGump.AddHTMLGump( position, 92, 100, 18, false, false, parseInt( ourObj.skills.Discordance / 10 ) );
-						AnimalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2176, pSock.language ) + "</basefont>" );				 // Ninjitsu
+						AnimalLoreGump.AddHTMLGump( 53, 110, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2176, pSock.language ) + "</basefont>" );			 // Ninjitsu
 						AnimalLoreGump.AddHTMLGump( position, 110, 100, 18, false, false, parseInt( ourObj.skills.Discordance / 10 ) );
 					}
 					if(AOSenabled == 1)
 					{
-						AnimalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2177, pSock.language ) + "</basefont>" );				 // Chivalry
+						AnimalLoreGump.AddHTMLGump( 53, 128, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2177, pSock.language ) + "</basefont>" );			 // Chivalry
 						AnimalLoreGump.AddHTMLGump( position, 128, 100, 18, false, false, parseInt( ourObj.skills.Discordance / 10 ) );
 					}
 					AnimalLoreGump.AddGump( 28, 146, 0x826 );
 					AnimalLoreGump.AddHTMLGump( 47, 144, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry( 2178, pSock.language ) + "</basefont>" );				 // Preferred Foods
 
-					var afoodlist = "<basefont color=#0000C8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>";//None
+					var afoodlist = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>";//None
 
 					if ( ( ourObj.foodlist = "fruit" ) || ( ourObj.foodlist = "vegetable" ) )
-						afoodlist = "<basefont color=#0000C8>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
+						afoodlist = "<basefont color=#279053>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
 					else if ( ( ourObj.foodlist = "crops" ) || ( ourObj.foodlist = "hay" ) )
-						afoodlist = "<basefont color=#0000C8>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
+						afoodlist = "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
 					else if ( ( ourObj.foodlist = "fish" ) )
-						afoodlist = "<basefont color=#0000C8>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
+						afoodlist = "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
 					else if ( ( ourObj.foodlist = "meat" ) )
-						afoodlist = "<basefont color=#0000C8>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
+						afoodlist = "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
 					else if ( ( ourObj.foodlist = "eggs" ) )
-						afoodlist = "<basefont color=#0000C8>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
+						afoodlist = "<basefont color=#5070700>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
 
 					AnimalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, afoodlist );
-					AnimalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2201, pSock.language ) + "</basefont>" );				 // Owner Count
-					AnimalLoreGump.AddHTMLGump( position, 182, 100, 18, false, false, ourObj.ownerCount.toString() );
+
+					AnimalLoreGump.AddGump( 28, 182, 0x826 );				
+					AnimalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );				 // Lore & Knowledge
+
 					AnimalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2202, pSock.language ) + "</basefont>" );				 // Pet Slots
 					AnimalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, ourObj.controlSlotsUsed.toString() );
-					AnimalLoreGump.AddGump( 28, 182, 0x826 );
+
+				    AnimalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2203, pSock.language ) + "</basefont>" );				 // Control Chance
+					AnimalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, ourObj.CalculateControlChance(pUser).toString() + "%" );
+
+					AnimalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2201, pSock.language ) + "</basefont>" );				 // Owner Count
+					AnimalLoreGump.AddHTMLGump( position, 236, 100, 18, false, false, ourObj.ownerCount.toString() );
+
+					AnimalLoreGump.AddButton( 240, 328, 0x15E1, 0x15E5, 0, 8, 0 );
 					AnimalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 6, 0 );
+
+					AnimalLoreGump.AddPage( 8 );
+					AnimalLoreGump.AddGump( 28, 76, 0x826 );
+					AnimalLoreGump.AddHTMLGump( 47, 74, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2204, pSock.language) + "</basefont>" );					// Friend List
+
+					var yHeight = 92
+					var friendList = ourObj.GetFriendList();
+					for( var i = 0; i < friendList.length; i++ )
+					{
+						var myFriend = friendList[i];
+						if( ValidateObject( myFriend ) )
+						{
+							AnimalLoreGump.AddHTMLGump( 53, yHeight, 160, 18, false, false, myFriend.name );
+							yHeight += 15;
+						}
+					}
 					AnimalLoreGump.Send( pSock );
 					AnimalLoreGump.Free();
 				}

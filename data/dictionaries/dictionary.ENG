@@ -2164,6 +2164,8 @@
 2200=None
 2201=Owner Count
 2202=Pet Slots
+2203=Control Chance
+2204=Friend's List
 // [2300-2449] Hirelings
 2300=%s has been removed from %s's friend list.
 2301=You have been removed from %s's friend list.
