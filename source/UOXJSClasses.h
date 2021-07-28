@@ -92,6 +92,20 @@ static  JSClass UOXCreateEntries_class =
 	JS_FinalizeStub
 };
 
+static  JSClass UOXTimer_class =
+{
+	"UOXTimer",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CTimerProps_getProperty,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
 static JSExtendedClass UOXChar_class =
 {
 	{	"UOXChar",

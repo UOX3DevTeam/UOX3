@@ -58,10 +58,24 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcTargetedChar">CalcTargetedChar</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHAR CalcTargetedChar( cSerial );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns targeted character stored on socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var trgItem = CalcTargetedChar( cSerial );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcItemFromSer">CalcItemFromSer</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ITEM CalcItemFromSer( iSerial );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the item with serial iSerial.  Returns null if it doesn't exist
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var trgItem = CalcItemFromSer( iSerial );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CalcTargetedItem">CalcTargetedItem</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ITEM CalcTargetedItem( iSerial );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns targeted item stored on socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var trgItem = CalcTargetedItem( iSerial );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -91,11 +105,34 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_GetTileIDAtMapCoord">GetTileIDAtMapCoord</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>char DirectionTo( xLoc, yLoc, worldNumber );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetTileIDAtMapCoord( xLoc, yLoc, worldNumber );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns ID of the tile at xLoc and yLoc in world worldNumber
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
 <pre>
 var MapTile = GetTileIDAtMapCoord( 0, 0, 0 ); // gets tile at 0,0 in Britannia
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_StaticInRange">StaticInRange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool StaticInRange( xLoc, yLoc, worldNumber, radius, tileID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Checks for static within specified range of given location
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td>
+<pre>
+// Checks if there's a static tile with ID 0x04a9 (wooden floor) within a radius of 3 from pUser's location
+var staticFound = StaticInRange( pUser.x, pUser.y, pUser.worldnumber, 3, 0x04a9 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_StaticAt">StaticAt</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool StaticAt( xLoc, yLoc, worldNumber, tileID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Checks for static at specified location. If no tileID parameter is specified, will match ANY static at said location
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td>
+<pre>
+// Checks if there's a static tile with ID 0x04a9 (wooden floor) at a specific location
+var staticFound = StaticAt( pUser.x, pUser.y, pUser.worldnumber, 0x04a9 );
+
+// Checks if there's ANY static tile at specific location
+var staticFound = StaticAt( pUser.x, pUser.y, pUser.worldnumber );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">

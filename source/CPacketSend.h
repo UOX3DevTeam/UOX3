@@ -370,7 +370,7 @@ public:
 	virtual ~CPUpdateStat()
 	{
 	}
-	CPUpdateStat( CBaseObject &toUpdate, UI08 statNum );
+	CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeStats );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	MaxVal( SI16 maxVal );
 	virtual void	CurVal( SI16 curVal );
@@ -1222,6 +1222,33 @@ public:
 	CPUnicodeSpeech &operator=( CPITalkRequestUnicode &talking );
 };
 
+class CPUnicodeMessage : public CPUOXBuffer
+{
+protected:
+	void			CopyData( CBaseObject &toCopy );
+	void			InternalReset( void ) override;
+	void			SetLength( UI16 value );
+public:
+	CPUnicodeMessage();
+	virtual			~CPUnicodeMessage()
+	{
+	}
+	CPUnicodeMessage( CBaseObject &toCopy );
+	void			ID( UI16 toSet );
+	void			Serial( SERIAL toSet );
+	void			Object( CBaseObject &toCopy );
+	void			Language( char *value );
+	void            Language( const char *value );
+	void            Lanaguge( const std::string& value );
+	void			Type( UI08 value );
+	void			Colour( COLOUR value );
+	void			Font( UI16 value );
+	void			Name( std::string value );
+	void			Message( const char *value );
+	void			Message( const std::string value );
+	CPUnicodeMessage &operator=( CBaseObject &toCopy );
+};
+
 class CPAllNames3D : public CPUOXBuffer
 {
 protected:
@@ -1331,17 +1358,27 @@ protected:
 		size_t stringLen;
 	};
 	std::vector< toolTipEntry > ourEntries;
+
+	struct toolTipEntryWide
+	{
+		std::wstring ourText;
+		UI32 stringNum;
+		size_t stringLen;
+	};
+	std::vector< toolTipEntryWide > ourWideEntries;
+	CSocket *tSock;
 	virtual void	InternalReset( void ) override;
 	virtual void	CopyData( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
 	void				CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount = true, bool playerVendor = false );
 	void				CopyCharData( CChar& mChar, size_t &totalStringLen );
 	void				FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen );
+	void				FinalizeWideData( toolTipEntryWide tempEntry, size_t &totalStringLen );
 public:
 	virtual			~CPToolTip()
 	{
 	}
 	CPToolTip();
-	CPToolTip( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
+	CPToolTip( SERIAL objSer, CSocket *mSock = nullptr, bool addAmount = true, bool playerVendor = false );
 };
 
 class CPSellList : public CPUOXBuffer
@@ -1410,13 +1447,13 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPHealthBarStatus();
-	CPHealthBarStatus( CChar& mChar, CSocket &target );
+	CPHealthBarStatus( CChar& mChar, CSocket &target, UI08 healthBarColor );
 	virtual			~CPHealthBarStatus()
 	{
 	}
 
 	virtual void	CopyData( CChar& mChar );
-	virtual void	SetHBStatusData( CChar& mChar, CSocket &target );
+	virtual void	SetHBStatusData( CChar& mChar, CSocket &target, UI08 healthBarColor );
 };
 
 class CPExtendedStats : public CPUOXBuffer
@@ -1471,11 +1508,11 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPPopupMenu();
-	CPPopupMenu( CChar& );
+	CPPopupMenu( CChar&, CSocket& );
 	virtual			~CPPopupMenu()
 	{
 	}
-	virtual void	CopyData( CChar& );
+	virtual void	CopyData( CChar&, CSocket& );
 };
 
 class CPClilocMessage : public CPUOXBuffer

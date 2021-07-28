@@ -1,6 +1,7 @@
 #include "uox3.h"
 #include "scriptc.h"
 #include "ssection.h"
+#include "Dictionary.h"
 #include <filesystem>
 #include <cstdint>
 #include <limits>
@@ -71,6 +72,7 @@ const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
 const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
 const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
 const UI32 BIT_PETTHIRSTOFFLINE          = 53;
+const UI32 BIT_USEUNICODEMESSAGES 		= 54;
 const UI32 BIT_HUNGERSYSTEMENABLED		= 55;
 const UI32 BIT_THIRSTSYSTEMENABLED		= 56;
 const UI32 BIT_TRAVELSPELLSFROMBOATKEYS	= 57;
@@ -81,12 +83,15 @@ const UI32 BIT_TRAVELSPELLSWHILEAGGRESSOR	= 61;
 const UI32 BIT_CONSOLELOG					= 62;
 const UI32 BIT_NETWORKLOG					= 63;
 const UI32 BIT_SPEECHLOG					= 64;
+const UI32 BIT_CONTEXTMENUS					= 65;
+const UI32 BIT_CHECKPETCONTROLDIFFICULTY	= 66;
+const UI32 BIT_SHOWNPCTITLESINTOOLTIPS		= 67;
 
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
 // February 26 2002 	- 	Modified: to support the AccountIsolation, and left out dir3ectory tags
-// September 22 2002 	- 	Added the  "HIDEWILEMOUNTED" tag to support hide fix
+// September 22 2002 	- 	Added the  "HIDEWHILEMOUNTED" tag to support hide fix
 // September 06 2003 	- 	Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
 // October 16, 2003 	- 	Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
 // April 3, 2004 		- 	Added new tags, for UOG support, as well as new facet tags etc.
@@ -201,7 +206,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BASEFISHINGTIMER",24);
 	regINIValue("SCRIPTSDIRECTORY", 25);
 	regINIValue("JOINPARTMSGS", 26);
-	//HERE
+	regINIValue("MAXPETOWNERS", 34);
+	regINIValue("MAXFOLLOWERS", 35);
+	regINIValue("MAXCONTROLSLOTS", 36);
 	regINIValue("MANAREGENTIMER", 37);
 	regINIValue("RANDOMFISHINGTIMER", 38);
 	regINIValue("SPIRITSPEAKTIMER", 39);
@@ -302,7 +309,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("NPCTRAININGENABLED", 134);
 	regINIValue("DICTIONARYDIRECTORY", 135);
 	regINIValue("BACKUPSAVERATIO", 136);
-	regINIValue("HIDEWILEMOUNTED", 137);
+	regINIValue("HIDEWHILEMOUNTED", 137);
 	regINIValue("SECONDSPERUOMINUTE", 138);
 	regINIValue("WEIGHTPERSTR", 139);
 	regINIValue("POLYDURATION", 140);
@@ -392,11 +399,16 @@ void	CServerData::regAllINIValues() {
 	regINIValue("MAXPLAYERBANKITEMS", 228);
 	regINIValue("FORCENEWANIMATIONPACKET", 229);
 	regINIValue("MAPDIFFSENABLED", 230);
+	regINIValue("PARRYDAMAGECHANCE", 240);
+	regINIValue("PARRYDAMAGEMIN", 241);
+	regINIValue("PARRYDAMAGEMAX", 242);
+	regINIValue("ARMORCLASSDAMAGEBONUS", 243);
 	regINIValue("CUOENABLED", 244);
 	regINIValue("ALCHEMYBONUSENABLED", 245);
 	regINIValue("ALCHEMYBONUSMODIFIER", 246);
 	regINIValue("NPCFLAGUPDATETIMER", 247);
 	regINIValue("JSENGINESIZE", 248);
+	regINIValue("USEUNICODEMESSAGES", 249);
 	regINIValue("SCRIPTDATADIRECTORY", 250);
 	regINIValue("THIRSTRATE", 251);
 	regINIValue("THIRSTDRAINVAL", 252);
@@ -419,7 +431,13 @@ void	CServerData::regAllINIValues() {
 	regINIValue("NPCMOUNTEDWALKINGSPEED", 269);
 	regINIValue("NPCMOUNTEDRUNNINGSPEED", 270);
 	regINIValue("NPCMOUNTEDFLEEINGSPEED", 271);
-
+	regINIValue("CONTEXTMENUS", 272);
+	regINIValue("SERVERLANGUAGE", 273);
+	regINIValue("CHECKPETCONTROLDIFFICULTY", 274);
+	regINIValue("PETLOYALTYGAINONSUCCESS", 275);
+	regINIValue("PETLOYALTYLOSSONFAILURE", 276);
+	regINIValue("PETLOYALTYRATE", 277);
+	regINIValue("SHOWNPCTITLESINTOOLTIPS", 278);
 
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
@@ -449,6 +467,10 @@ void CServerData::ResetDefaults( void )
 	// JS API references describe it as "Maximum nominal heap before last ditch GC"
 	SetJSEngineSize( 256 );
 
+	// Send server-originating messages i`n Unicode format, if possible
+	UseUnicodeMessages( true );
+
+	ServerLanguage( DL_DEFAULT );
 	SystemTimer( tSERVER_POTION, 10 );
 	ServerMoon( 0, 0 );
 	ServerMoon( 1, 0 );
@@ -476,7 +498,7 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_DECAYINHOUSE, 3600 );
 	ServerSkillTotalCap( 7000 );
 	ServerSkillCap( 1000 );
-	ServerStatCap( 325 );
+	ServerStatCap( 225 );
 	CorpseLootDecay( true );
 	ServerSavesTimer( 600 );
 
@@ -512,6 +534,7 @@ void CServerData::ResetDefaults( void )
 	LootingIsCrime( true );
 	ServerUOGEnabled( true );
 	ConnectUOServerPoll( true );
+	ServerContextMenus( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 5 );
@@ -521,8 +544,8 @@ void CServerData::ResetDefaults( void )
 	ShootOnAnimalBack( false );
 	SellByNameStatus( false );
 	SkillLevel( 5 );
-	SellMaxItemsStatus( 5 );
-	CombatNPCDamageRate( 2 );
+	SellMaxItemsStatus( 250 );
+	CombatNPCDamageRate( 1 );
 	RankSystemStatus( true );
 	CombatWeaponDamageChance( 17 );
 	CombatWeaponDamageMin( 0 );
@@ -530,12 +553,20 @@ void CServerData::ResetDefaults( void )
 	CombatArmorDamageChance( 33 );
 	CombatArmorDamageMin( 0 );
 	CombatArmorDamageMax( 1 );
+	CombatParryDamageChance( 20 );
+	CombatParryDamageMin( 0 );
+	CombatParryDamageMax( 1 );
 	CombatBloodEffectChance( 75 );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2.0 );
+	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
+	CheckPetControlDifficulty( true );
+	SetPetLoyaltyGainOnSuccess( 1 );
+	SetPetLoyaltyLossOnFailure( 3 );
+	SystemTimer( tSERVER_LOYALTYRATE, 900 );
 
 	auto curWorkingDir = std::filesystem::current_path().string();
 
@@ -597,6 +628,9 @@ void CServerData::ResetDefaults( void )
 	MarkRunesInMultis( true );
 	TravelSpellsBetweenWorlds( false );
 	TravelSpellsWhileAggressor( false );
+	MaxControlSlots( 0 ); // Default to 0, which is equal to off
+	MaxFollowers( 5 );
+	MaxPetOwners( 10 );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -609,6 +643,7 @@ void CServerData::ResetDefaults( void )
 	// No replacement I can see
 	EscortsEnabled( true );
 	BasicTooltipsOnly( false );
+	ShowNpcTitlesInTooltips( true );
 	GlobalItemDecay( true );
 	ScriptItemsDecayable( true );
 	BaseItemsDecayable( false );
@@ -968,6 +1003,21 @@ bool CServerData::ServerBackupStatus( void ) const
 void CServerData::ServerBackups( bool newVal )
 {
 	boolVals.set( BIT_SERVERBACKUP, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerContextMenus( void ) const
+//|					void ServerContextMenus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets enabled status of context menus
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerContextMenus( void ) const
+{
+	return boolVals.test( BIT_CONTEXTMENUS );
+}
+void CServerData::ServerContextMenus( bool newVal )
+{
+	boolVals.set( BIT_CONTEXTMENUS, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1532,6 +1582,21 @@ void CServerData::CutScrollRequirementStatus( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckPetControlDifficulty( void ) const
+//|					void CheckPetControlDifficulty( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether pet control difficulty is enabled or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CheckPetControlDifficulty( void ) const
+{
+	return boolVals.test( BIT_CHECKPETCONTROLDIFFICULTY );
+}
+void CServerData::CheckPetControlDifficulty( bool newVal )
+{
+	boolVals.set( BIT_CHECKPETCONTROLDIFFICULTY, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	R64 CheckItemsSpeed( void ) const
 //|					void CheckItemsSpeed( R64 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -1666,6 +1731,21 @@ bool CServerData::ConnectUOServerPoll( void ) const
 void CServerData::ConnectUOServerPoll( bool newVal )
 {
 	boolVals.set( BIT_CONNECTUOSERVERPOLL, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatArmorClassDamageBonus( void ) const
+//|					void CombatArmorClassDamageBonus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of matching AC
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CombatArmorClassDamageBonus( void ) const
+{
+	return boolVals.test( BIT_ARMORCLASSDAMAGEBONUS );
+}
+void CServerData::CombatArmorClassDamageBonus( bool newVal )
+{
+	boolVals.set( BIT_ARMORCLASSDAMAGEBONUS, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1947,6 +2027,21 @@ bool CServerData::BasicTooltipsOnly( void ) const
 void CServerData::BasicTooltipsOnly( bool newVal )
 {
 	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ShowNpcTitlesInTooltips( void ) const
+//|					void ShowNpcTitlesInTooltips( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether NPC titles show up in tooltips
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ShowNpcTitlesInTooltips( void ) const
+{
+	return boolVals.test( BIT_SHOWNPCTITLESINTOOLTIPS );
+}
+void CServerData::ShowNpcTitlesInTooltips( bool newVal )
+{
+	boolVals.set( BIT_SHOWNPCTITLESINTOOLTIPS, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2243,6 +2338,53 @@ UI08 CServerData::CombatArmorDamageMax( void ) const
 void CServerData::CombatArmorDamageMax( UI08 value )
 {
 	combatarmordamagemax = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatParryDamageChance( void ) const
+//|					void CombatParryDamageChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the chance to damage items used to parry in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatParryDamageChance( void ) const
+{
+	return combatparrydamagechance;
+}
+void CServerData::CombatParryDamageChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatparrydamagechance = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatParryDamageMin( void ) const
+//|					void CombatParryDamageMin( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the min damage dealt to items used to parry in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatParryDamageMin( void ) const
+{
+	return combatparrydamagemin;
+}
+void CServerData::CombatParryDamageMin( UI08 value )
+{
+	combatparrydamagemin = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatParryDamageMax( void ) const
+//|					void CombatParryDamageMax( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max damage dealt to items used to parry in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatParryDamageMax( void ) const
+{
+	return combatparrydamagemax;
+}
+void CServerData::CombatParryDamageMax( UI08 value )
+{
+	combatparrydamagemax = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2553,6 +2695,81 @@ bool CServerData::TravelSpellsWhileAggressor( void ) const
 void CServerData::TravelSpellsWhileAggressor( bool newVal )
 {
 	boolVals.set( BIT_TRAVELSPELLSWHILEAGGRESSOR, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 MaxControlSlots( void ) const
+//|                 void MaxControlSlots( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the max amount of control slots a player has available (0 for disable)
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MaxControlSlots( void ) const
+{
+	return maxControlSlots;
+}
+void CServerData::MaxControlSlots( UI08 newVal )
+{
+	maxControlSlots = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 MaxFollowers( void ) const
+//|                 void MaxFollowers( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the max amount of active followers/pets a player can have (0 for disable)
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MaxFollowers( void ) const
+{
+	return maxFollowers;
+}
+void CServerData::MaxFollowers( UI08 newVal )
+{
+	maxFollowers = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 MaxPetOwners( void ) const
+//|                 void MaxPetOwners( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the max amount of different owners a pet can have in its lifetime
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MaxPetOwners( void ) const
+{
+	return maxPetOwners;
+}
+void CServerData::MaxPetOwners( UI08 newVal )
+{
+	maxPetOwners = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI16 GetPetLoyaltyGainOnSuccess( void ) const
+//|                 void SetPetLoyaltyGainOnSuccess( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the pet loyalty gained on successful use of pet command
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::GetPetLoyaltyGainOnSuccess( void ) const
+{
+	return petLoyaltyGainOnSuccess;
+}
+void CServerData::SetPetLoyaltyGainOnSuccess( UI16 newVal )
+{
+	petLoyaltyGainOnSuccess = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI16 GetPetLoyaltyLossOnFailure( void ) const
+//|                 void SetPetLoyaltyLossOnFailure( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the pet loyalty loss for failed use of pet command
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::GetPetLoyaltyLossOnFailure( void ) const
+{
+	return petLoyaltyLossOnFailure;
+}
+void CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal )
+{
+	petLoyaltyLossOnFailure = newVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3134,6 +3351,21 @@ void CServerData::SetClassicUOMapTracker( bool nVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool UseUnicodeMessages( void ) const
+//|					void UseUnicodeMessages( bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should send messages originating on server as unicode
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::UseUnicodeMessages( void ) const
+{
+	return boolVals.test( BIT_USEUNICODEMESSAGES );
+}
+void CServerData::UseUnicodeMessages( bool nVal )
+{
+	boolVals.set( BIT_USEUNICODEMESSAGES, nVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool GetDisabledAssistantFeature( ClientFeatures bitNum ) const
 //|					void SetDisabledAssistantFeature( ClientFeatures bitNum, bool nVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -3249,6 +3481,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
 		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
 		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
 		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
@@ -3269,6 +3502,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
 		ofsOutput << "CLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker()?1:0) << '\n';
 		ofsOutput << "JSENGINESIZE=" << static_cast<UI16>(GetJSEngineSize()) << '\n';
+		ofsOutput << "USEUNICODEMESSAGES=" << (UseUnicodeMessages()?1:0) << '\n';
+		ofsOutput << "CONTEXTMENUS=" << ( ServerContextMenus() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -3373,7 +3608,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "RANKSYSTEM=" << (RankSystemStatus()?1:0) << '\n';
 		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << '\n';
 		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << '\n';
-		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
+		ofsOutput << "HIDEWHILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
 		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << '\n';
 		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
@@ -3383,6 +3618,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << '\n';
 		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << '\n';
 		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << '\n';
+		ofsOutput << "SHOWNPCTITLESINTOOLTIPS=" << (ShowNpcTitlesInTooltips()?1:0) << '\n';
 		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << '\n';
 		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << '\n';
 		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
@@ -3393,6 +3629,16 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
 		ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
 		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
+		ofsOutput << "MAXCONTROLSLOTS=" << static_cast<UI16>(MaxControlSlots()) << '\n';
+		ofsOutput << "MAXFOLLOWERS=" << static_cast<UI16>(MaxFollowers()) << '\n';
+		ofsOutput << "MAXPETOWNERS=" << static_cast<UI16>(MaxPetOwners()) << '\n';
+		ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << ( CheckPetControlDifficulty() ? 1 : 0 ) << '\n';
+		ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<UI16>( GetPetLoyaltyGainOnSuccess() ) << '\n';
+		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
+		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -3488,6 +3734,10 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<UI16>(CombatArmorDamageChance()) << '\n';
 		ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
 		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
+		ofsOutput << "PARRYDAMAGECHANCE=" << static_cast<UI16>(CombatParryDamageChance()) << '\n';
+		ofsOutput << "PARRYDAMAGEMIN=" << static_cast<UI16>(CombatParryDamageMin()) << '\n';
+		ofsOutput << "PARRYDAMAGEMAX=" << static_cast<UI16>(CombatParryDamageMax()) << '\n';
+		ofsOutput << "ARMORCLASSDAMAGEBONUS=" << (CombatArmorClassDamageBonus()?1:0) << '\n';
 		ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
 		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
 		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
@@ -3781,11 +4031,20 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 23:	 // STAMINAREGENTIMER[0027]
 			SystemTimer( tSERVER_STAMINAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
-		case 37:	 // MANAREGENTIMER[0028]
-			SystemTimer( tSERVER_MANAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
-			break;
 		case 24:	 // BASEFISHINGTIMER[0029]
 			SystemTimer( tSERVER_FISHINGBASE,static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 34:	// MAXPETOWNERS[0211]
+			MaxPetOwners( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 35:	// MAXFOLLOWERS[0211]
+			MaxFollowers( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 36:	// MAXCONTROLSLOTS[0211]
+			MaxControlSlots( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 37:	 // MANAREGENTIMER[0028]
+			SystemTimer( tSERVER_MANAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 38:	 // RANDOMFISHINGTIMER[0030]
 			SystemTimer( tSERVER_FISHINGRANDOM, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
@@ -4081,9 +4340,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			if( csecs.size() == 3 )
 			{
 				struct hostent *lpHostEntry = nullptr;
-				sname	= strutil::stripTrim( csecs[0] );
-				sip		= strutil::stripTrim( csecs[1] );
-				sport	= strutil::stripTrim( csecs[2] );
+				sname	= strutil::trim(strutil::removeTrailing( csecs[0],"//") );
+				sip		= strutil::trim(strutil::removeTrailing( csecs[1],"//") );
+				sport	= strutil::trim(strutil::removeTrailing( csecs[2],"//") );
 
 				toAdd.setName( sname );
 				// Ok look up the data here see if its a number
@@ -4150,7 +4409,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 136:	 // BACKUPSAVERATIO[0129]
 			BackupRatio( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
-		case 137:	 // HIDEWILEMOUNTED[0130]
+		case 137:	 // HIDEWHILEMOUNTED[0130]
 			CharHideWhileMounted( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 138:	 // SECONDSPERUOMINUTE[0131]
@@ -4417,6 +4676,17 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 230:	// MAPDIFFSENABLED[0219]
 			MapDiffsEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
+		case 240:	// PARRYDAMAGECHANCE[0229]
+			CombatParryDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 241:	// PARRYDAMAGEMIN[0230]
+			CombatParryDamageMin( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 242:	// PARRYDAMAGEMAX[0231]
+			CombatParryDamageMax( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 243:	// ARMORCLASSDAMAGEBONUS[0232]
+			CombatArmorClassDamageBonus(  static_cast<SI08>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 244:	// CUOENABLED[0233]
 			ConnectUOServerPoll( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
@@ -4432,6 +4702,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 248:	 // JSENGINESIZE[0237]
 			SetJSEngineSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 249:	 // USEUNICODEMESSAGES[0238]
+			UseUnicodeMessages( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 250:	 // SCRIPTDATADIRECTORY[0239]
 		{
@@ -4500,6 +4773,27 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 271:	 // NPCMOUNTEDFLEEINGSPEED[0259]
 			NPCMountedFleeingSpeed( std::stof( value ) );
+			break;
+		case 272:	// CONTEXTMENUS[0260]
+			ServerContextMenus( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 273:	// SERVERLANGUAGE[0261]
+			ServerLanguage( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 274:	// CHECKPETCONTROLDIFFICULTY[0262]
+			CheckPetControlDifficulty( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 275:	// PETLOYALTYGAINONSUCCESS[0263]
+			SetPetLoyaltyGainOnSuccess( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 276:	// PETLOYALTYLOSSONFAILURE[0264]
+			SetPetLoyaltyLossOnFailure( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 277:    // LOYALTYRATE[0265]
+			SystemTimer( tSERVER_LOYALTYRATE, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 278:	// SHOWNPCTITLESINTOOLTIPS[0262]
+			ShowNpcTitlesInTooltips( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		default:
 			rvalue = false;
@@ -4655,37 +4949,37 @@ LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 void CServerData::ServerLocation( std::string toSet )
 {
 	auto temp = toSet;
-	temp = strutil::stripTrim( temp );
+	temp = strutil::trim( strutil::removeTrailing( temp, "//" ));
 	auto csecs = strutil::sections( temp, "," );
 	
 	if( csecs.size() ==  7 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[2] ), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[3] ), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[4] ), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[5] ), nullptr, 0));
+		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
 		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[6] ), nullptr, 0));
-		strcpy( toAdd.oldTown, strutil::stripTrim( csecs[0] ).c_str() );
-		strcpy( toAdd.oldDescription, strutil::stripTrim( csecs[1] ).c_str() );
-		strcpy( toAdd.newTown, strutil::stripTrim( csecs[0] ).c_str()) ;
-		strcpy( toAdd.newDescription, strutil::stripTrim( csecs[1] ).c_str() );
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		strcpy( toAdd.oldTown, strutil::trim( strutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcpy( toAdd.oldDescription, strutil::trim( strutil::removeTrailing( csecs[1], "//" )).c_str() );
+		strcpy( toAdd.newTown, toAdd.oldTown);
+		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else if( csecs.size() ==  8 )	// instanceID included
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[2] ), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[3] ), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[4] ), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[5] ), nullptr, 0));
-		toAdd.instanceID	= static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[6] ), nullptr, 0));
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[7] ), nullptr, 0));
-		strcpy( toAdd.oldTown, strutil::stripTrim( csecs[0] ).c_str() );
-		strcpy( toAdd.oldDescription, strutil::stripTrim( csecs[1] ).c_str() );
-		strcpy( toAdd.newTown, strutil::stripTrim( csecs[0] ).c_str()) ;
-		strcpy( toAdd.newDescription, strutil::stripTrim( csecs[1] ).c_str() );
+		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
+		toAdd.instanceID	= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
+		strcpy( toAdd.oldTown, strutil::trim( strutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcpy( toAdd.oldDescription, strutil::trim( strutil::removeTrailing( csecs[1], "//" )).c_str() );
+		strcpy( toAdd.newTown, toAdd.oldTown);
+		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else
@@ -4712,6 +5006,24 @@ UI16 CServerData::ServerSecondsPerUOMinute( void ) const
 void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 {
 	secondsperuominute = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerLanguage( void ) const
+//|					void ServerLanguage( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default (if any) language used for the server
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerLanguage( void ) const
+{
+	return serverLanguage;
+}
+void CServerData::ServerLanguage( UI16 newVal )
+{
+	if( newVal < DL_COUNT )
+		serverLanguage = newVal;
+	else
+		serverLanguage = DL_DEFAULT;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4781,10 +5093,10 @@ void CServerData::LoadTime( void )
 			input.getline(line, 1023);
 			line[input.gcount()] = 0;
 			std::string sLine(line);
-			sLine = strutil::stripTrim( sLine );
+			sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 			if( !sLine.empty() )
 			{
-				if( strutil::toupper( sLine ) == "[TIME]" )
+				if( strutil::upper( sLine ) == "[TIME]" )
 					LoadTimeTags( input );
 			}
 		}
@@ -4800,7 +5112,7 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 		ReadWorldTagData( input, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = strutil::toupper(tag);
+			UTag = strutil::upper(tag);
 			
 			if( UTag == "AMPM" )
 			{
@@ -4827,8 +5139,8 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 				auto csecs = strutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					ServerMoon( 0, static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					ServerMoon( 1, static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+					ServerMoon( 0, static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					ServerMoon( 1, static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 				}
 			}
 		}

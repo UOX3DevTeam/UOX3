@@ -204,15 +204,18 @@ inline std::uint32_t GetMinutesSinceEpoch()
 //o-----------------------------------------------------------------------------------------------o
 // Misc Functions
 //o-----------------------------------------------------------------------------------------------o
-R32		roundNumber( R32 toRound);
-bool	FileExists( const std::string& filepath );
-void	DismountCreature( CChar *s );
-size_t	getTileName( CItem& mItem, std::string& itemname );
-bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ );
-bool	checkItemLineOfSight( CChar *mChar, CItem *i );
-void	Shutdown( SI32 retCode );
-void	HandleDeath( CChar *mChar, CChar *attacker );
-void	NpcResurrectTarget( CChar *s );
+R32			roundNumber( R32 toRound);
+bool		isNumber( const std::string& str );
+bool		FileExists( const std::string& filepath );
+void		DismountCreature( CChar *s );
+size_t		getTileName( CItem& mItem, std::string& itemname );
+std::string	getNpcDictName( CChar *mChar, CSocket *tSock = nullptr );
+std::string	getNpcDictTitle( CChar *mChar, CSocket *tSock = nullptr );
+bool		LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ, SI08 z2Top = 0 );
+bool		checkItemLineOfSight( CChar *mChar, CItem *i );
+void		Shutdown( SI32 retCode );
+void		HandleDeath( CChar *mChar, CChar *attacker );
+void		NpcResurrectTarget( CChar *s );
 
 inline bool ValidateObject( const CBaseObject *toValidate )
 {

@@ -7,7 +7,7 @@ function onUseUnChecked( pUser, iUsed )
 
 	if( pUser.dead == 1 )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 330, pSock.language )); //You are dead and cannot do that.
+		pUser.SysMessage( GetDictionaryEntry( 330, pSock.language )); // You are dead and cannot do that.
 		return false;
 	}
 
@@ -15,11 +15,11 @@ function onUseUnChecked( pUser, iUsed )
 	{
 		if(( lastUsed + 10000 ) > timeNow )
 		{
-			pUser.SysMessage( "Someone else is using this right now." );
+			pUser.SysMessage( GetDictionaryEntry( 2450, pSock.language )); // Someone else is using this right now.
 			return false;
 		}
 	}
-	//Check if user is standing right next to dummy, and if there are arrows/bolts to collect
+	// Check if user is standing right next to dummy, and if there are arrows/bolts to collect
 	if( iUsed.InRange( pUser, 4 ))
 	{
 		if( iUsed.InRange( pUser, 1 ) )
@@ -31,17 +31,22 @@ function onUseUnChecked( pUser, iUsed )
 				if( stuckArrows > 0 )
 				{
 					var newArrows = CreateDFNItem( pUser.socket, pUser, "0x0f3f", stuckArrows, "ITEM", true );
-					pUser.SysMessage( "You retrieve "+stuckArrows+" arrows from the target." );
+					var tempMsg = GetDictionaryEntry( 2451, pSock.language ) // You retrieve %i arrows from the target.
+					pUser.SysMessage( tempMsg.replace(/%i/gi, stuckArrows ) );
 				}
 				if( stuckBolts > 0 )
 				{
 					var newBolts = CreateDFNItem( pUser.socket, pUser, "0x1bfb", stuckBolts, "ITEM", true );
-					pUser.SysMessage( "You retrieve "+stuckBolts+" crossbow bolts from the target." );
+					var tempMsg = GetDictionaryEntry( 2452, pSock.language ) // You retrieve %i crossbow bolts from the target.
+					pUser.SysMessage( tempMsg.replace(/%i/gi, stuckBolts ) );
 				}
 			}
 			else
+			{
 				pUser.SysMessage( GetDictionaryEntry( 943, pSock.language )); //This target is empty
-			pUser.SysMessage( "You reset the target score." );
+			}
+
+			pUser.SysMessage( GetDictionaryEntry( 2453, pSock.language )); // You reset the target score.
 			iUsed.SetTag( "stuckArrows", 0 );
 			iUsed.SetTag( "stuckBolts", 0 );
 			iUsed.SetTag( "totalScore", 0 );
@@ -55,20 +60,21 @@ function onUseUnChecked( pUser, iUsed )
 			return false;
 		}
 		else
-			pUser.SysMessage( GetDictionaryEntry( 1766, pSock.language )); //You are too close to the target.
+			pUser.SysMessage( GetDictionaryEntry( 1766, pSock.language )); // You are too close to the target.
 	}
-	else if( !iUsed.InRange( pUser, 7 ))
-		pUser.SysMessage( GetDictionaryEntry( 1767, pSock.language )); //You are too far away from the archery butte to get an accurate shot.
+	else if( !iUsed.InRange( pUser, 12 ))
+		pUser.SysMessage( GetDictionaryEntry( 1767, pSock.language )); // You are too far away from the archery butte to get an accurate shot.
 	else if(( lastUsed + 1500 ) > timeNow )
 	{
-		pUser.SysMessage( "You must wait a moment before using this again." );
+		pUser.SysMessage( GetDictionaryEntry( 1762, pSock.language )); // You must wait before you can use that item again.
 		return false;
 	}
 	else
-	{ //Close enough, and not too far away =)
+	{
+		// Close enough, and not too far away =)
 		if( pUser.isonhorse )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 1757, pSock.language )); //Please dismount first.
+			pUser.SysMessage( GetDictionaryEntry( 1757, pSock.language )); // Please dismount first.
 			return false;
 		}
 		if( iUsed.id == 0x100a)
@@ -76,15 +82,15 @@ function onUseUnChecked( pUser, iUsed )
 			if( pUser.direction != 6 )
 			{
 				pUser.TurnToward( iUsed );
-				pUser.SysMessage( "You weren't even facing the target! Try again." );
+				pUser.SysMessage( GetDictionaryEntry( 2454, pSock.language )); // You turn to face the target.
 				return false;
 			}
 			if( pUser.x < iUsed.x || pUser.y != iUsed.y )
 			{
 				if( pUser.x < iUsed.x )
-					pUser.SysMessage( GetDictionaryEntry( 1768, pSock.language )); //You would do better to stand in front of the archery butte.
+					pUser.SysMessage( GetDictionaryEntry( 1768, pSock.language )); // You would do better to stand in front of the archery butte.
 				if( pUser.y != iUsed.y )
-					pUser.SysMessage( GetDictionaryEntry( 1769, pSock.language )); //You aren't properly lined up with the archery butte to get an accurate shot.
+					pUser.SysMessage( GetDictionaryEntry( 1769, pSock.language )); // You aren't properly lined up with the archery butte to get an accurate shot.
 				return false;
 			}
 		}
@@ -93,24 +99,22 @@ function onUseUnChecked( pUser, iUsed )
 			if( pUser.direction != 0 )
 			{
 				pUser.TurnToward( iUsed );
-				pUser.SysMessage( "You weren't even facing the target! Try again." );
+				pUser.SysMessage( GetDictionaryEntry( 2454, pSock.language )); // You turn to face the target.
 				return false;
 			}
 			if( pUser.y < iUsed.y || pUser.x != iUsed.x )
 			{
 				if( pUser.y < iUsed.y )
-					pUser.SysMessage( GetDictionaryEntry( 1768, pSock.language )); //You would do better to stand in front of the archery butte.
+					pUser.SysMessage( GetDictionaryEntry( 1768, pSock.language )); // You would do better to stand in front of the archery butte.
 				if( pUser.x != iUsed.x )
-					pUser.SysMessage( GetDictionaryEntry( 1769, pSock.language )); //You aren't properly lined up with the archery butte to get an accurate shot.
+					pUser.SysMessage( GetDictionaryEntry( 1769, pSock.language )); // You aren't properly lined up with the archery butte to get an accurate shot.
 				return false;
 			}
 		}
-		TriggerEvent( 2500, "getWeaponType", pUser );
-		var weaponType = pUser.GetTag( "weaponType" );
-		pUser.SetTag( "weaponType", null );
+		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser );
 		if( weaponType != "BOWS" && weaponType != "XBOWS" )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 947, pSock.language )); //You need to equip a bow to use this.
+			pUser.SysMessage( GetDictionaryEntry( 947, pSock.language )); // You need to equip a bow to use this.
 			return false;
 		}
 		else
@@ -122,7 +126,7 @@ function onUseUnChecked( pUser, iUsed )
 					var Arrows = pUser.ResourceCount( 0x0F3F, 0 );
 					if( Arrows == 0 )
 					{
-						pUser.SysMessage( GetDictionaryEntry( 1770, pSock.language )); //You do not have any arrows with which to practice.
+						pUser.SysMessage( GetDictionaryEntry( 1770, pSock.language )); // You do not have any arrows with which to practice.
 						return false;
 					}
 					else
@@ -138,7 +142,7 @@ function onUseUnChecked( pUser, iUsed )
 					var Bolts = pUser.ResourceCount( 0x1BFB, 0 );
 					if( Bolts == 0 )
 					{
-						pUser.SysMessage( GetDictionaryEntry( 1771, pSock.language )); //You do not have any bolts with which to practice.
+						pUser.SysMessage( GetDictionaryEntry( 1771, pSock.language )); // You do not have any bolts with which to practice.
 						return false;
 					}
 					else
@@ -153,114 +157,168 @@ function onUseUnChecked( pUser, iUsed )
 			ammoType = parseInt( ammoType );
 			DoMovingEffect( pUser, iUsed, ammoType, 0x06, 0x00, false );
 			var points = 0;
-			if(!pUser.CheckSkill( 31, 0, 250 ))
+			if( !pUser.CheckSkill( 31, 0, 250 ))
 			{
 				pUser.SoundEffect( 0x0238, true );
-				pUser.SysMessage( GetDictionaryEntry( 951, pSock.language )); //You miss the target.
-				iUsed.TextMessage( pUser.name +" misses!" );
+				pUser.SysMessage( GetDictionaryEntry( 951, pSock.language )); // You miss the target.
+				var tempMsg = GetDictionaryEntry( 2455, pSock.language ) // %s misses!
+				iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 			}
 			else
 			{
 				pUser.SoundEffect( 0x0234, true );
-				var BullseyeChance = pUser.skills.archery * 0.10;
-				var InnerChance = pUser.skills.archery * 0.105;
-				var MiddleChance = pUser.skills.archery * 0.115;
-				var OuterChance = pUser.skills.archery * 0.12 ;
-				var iNum = RandomNumber( 0, 150 );
 
-				if( BullseyeChance > iNum )
+				// Calculate distance penalty
+				var distanceToTarget = DistanceBetween( pUser, iUsed );
+				var distancePenalty = Math.max( 0.05, 1 - (distanceToTarget / 15));
+
+				// Modify distance penalty based on strength
+				distancePenalty -= (( distanceToTarget / pUser.strength ) / 5);
+
+				// Calculate dexterity bonus
+				var dexBonus = pUser.dexterity * 0.15;
+
+				// Calculate chance of hitting bullseye
+				var BullseyeChance = Math.round(((pUser.skills.archery * 0.025) * distancePenalty) + dexBonus);
+				if( InnerChance > 65 )
+					InnerChance = 65;
+
+				// Calculate chance of hitting inner ring
+				var InnerChance = Math.round(((pUser.skills.archery * 0.1) * distancePenalty) + dexBonus);
+				if( InnerChance > 75 )
+					InnerChance = 75;
+
+				// Calculate chance of hitting middle ring
+				var MiddleChance = Math.round(((pUser.skills.archery * 0.15) * distancePenalty) + dexBonus);
+				if( MiddleChance > 85 )
+					MiddleChance = 85;
+
+				// Calculate chance of hitting outer ring
+				var OuterChance = Math.round(((pUser.skills.archery * 0.225) * distancePenalty) + dexBonus);
+				if( OuterChance > 95 )
+					OuterChance = 95;
+
+				var iNum = RandomNumber( 0, 100 );
+
+				if( BullseyeChance >= iNum )
 				{
 					//BULLSEYE!
 					var bullseyeShots = iUsed.GetTag( "bullseyeShots" );
 					iUsed.SetTag( "bullseyeShots", bullseyeShots + 1 );
+					var bullseyeSplit = false;
 					if( bullseyeShots > 0 )
 					{
-						var BullseyeSplit = RandomNumber( 0, 100 );
-						if(( 30 + (( pUser.skills.archery / 100 ) * 2 )) > BullseyeSplit )
+						var bullseyeSplitChance = RandomNumber( 0, 100 );
+						if(( 15 + (( pUser.skills.archery / 100 ) * 2 )) > bullseyeSplitChance )
 						{
-							iUsed.TextMessage( pUser.name +" splits an arrow in the bullseye!" );
+							var tempMsg = GetDictionaryEntry( 2456, pSock.language ) // %s splits an arrow in the bullseye!
+							iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 							points = 100;
-							var Bullseye = 1;
+							bullseyeSplit = true;
+							pUser.CheckSkill( 31, 0, 250 ); // Extra bonus skill check for hitting bullseye
 						}
 					}
-					if( !Bullseye )
+					if( !bullseyeSplit )
 					{
-						iUsed.TextMessage( pUser.name +" hits a BULLSEYE!" );
+						var tempMsg = GetDictionaryEntry( 2457, pSock.language ) // %s hits the bullseye!
+						iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
                         points = 50;
 					}
 				}
-				else if( InnerChance > iNum )
+				else if( InnerChance >= iNum )
 				{
 					//Inner Ring
 					var innerShots = iUsed.GetTag( "innerShots" );
 					iUsed.SetTag( "innerShots", innerShots + 1 );
+					var innerShotSplit = false;
 					if( innerShots > 0 )
 					{
-						var innerShotSplit = RandomNumber( 0, 100 );
-						if(( 30 + (( pUser.skills.archery / 100 ) * 2 )) > innerShotSplit )
+						var innerShotSplitChance = RandomNumber( 0, 100 );
+						if(( 15 + (( pUser.skills.archery / 100 ) * 2 )) > innerShotSplitChance )
 						{
-							iUsed.TextMessage( pUser.name +" splits an arrow in the innter ring!" );
+							var tempMsg = GetDictionaryEntry( 2458, pSock.language ) // %s splits an arrow in the inner ring!
+							iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 							points = 20;
-							var Innershot = 1;
+							innerShotSplit = true;
 						}
 					}
-					if( !Innershot == 1 )
+					if( !innerShotSplit )
 					{
-						iUsed.TextMessage( pUser.name +" hits the inner ring." );
+						var tempMsg = GetDictionaryEntry( 2459, pSock.language ) // %s hits the inner ring.
+						iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 						points = 10;
 					}
 				}
-				else if( MiddleChance > iNum )
+				else if( MiddleChance >= iNum )
 				{
 					//Middle Ring
 					var middleShots = iUsed.GetTag( "middleShots" );
 					iUsed.SetTag( "middleShots", middleShots + 1 );
+					var middleShotSplit = false;
 					if( middleShots > 0 )
 					{
-						var middleShotSplit = RandomNumber( 0, 100 );
-						if(( 30 + (( pUser.skills.archery / 100 ) * 2 )) > middleShotSplit )
+						var middleShotSplitChance = RandomNumber( 0, 100 );
+						if(( 15 + (( pUser.skills.archery / 100 ) * 2 )) > middleShotSplitChance )
 						{
-							iUsed.TextMessage( pUser.name + " splits an arrow in the middle ring!" );
+							var tempMsg = GetDictionaryEntry( 2460, pSock.language ) // %s splits an arrow in the middle ring!
+							iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 							points = 15;
-							var Middleshot = 1;
+							middleShotSplit = true;
 						}
 					}
-					if( !Middleshot == 1 )
+					if( !middleShotSplit )
 					{
-						iUsed.TextMessage( pUser.name + " hits the middle ring." );
+						var tempMsg = GetDictionaryEntry( 2461, pSock.language ) // %s hits the middle ring.
+						iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 						points = 5;
 					}
 				}
-				else
+				else if( OuterChance >= iNum )
 				{
 					//Outer Ring
 					var outerShots = iUsed.GetTag( "outerShots" );
 					iUsed.SetTag( "outerShots", outerShots + 1 );
+					var outerShotSplit = false;
 					if( outerShots > 0 )
 					{
-						var outerShotSplit = RandomNumber( 0, 100 );
-						if(( 30 + (( pUser.skills.archery / 100 ) * 2 )) > outerShotSplit )
+						var outerShotSplitChance = RandomNumber( 0, 100 );
+						if(( 15 + (( pUser.skills.archery / 100 ) * 2 )) > outerShotSplitChance )
 						{
-							iUsed.TextMessage( pUser.name + " splits an arrow in the outer ring!" );
+							var tempMsg = GetDictionaryEntry( 2462, pSock.language ) // %s splits an arrow in the outer ring!
+							iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 							points = 5;
-							var Outershot = 1;
+							outerShotSplit = true;
 						}
 					}
-					if( !Outershot == 1 )
+					if( !outerShotSplit )
 					{
-						iUsed.TextMessage( pUser.name + " hits the outer ring." );
-						var points = 2;
+						var tempMsg = GetDictionaryEntry( 2463, pSock.language ) // %s hits the outer ring.
+						iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
+						points = 2;
 					}
 				}
+				else
+				{
+					pUser.SoundEffect( 0x0238, true );
+					pUser.SysMessage( GetDictionaryEntry( 951, pSock.language )); //You miss the target.
+					var tempMsg = GetDictionaryEntry( 2455, pSock.language ) // %s misses
+					iUsed.TextMessage( tempMsg.replace(/%s/gi, pUser.name ) );
+				}
 			}
+
+			// Update tags on archery butte with current status
 			var totalShots = iUsed.GetTag( "totalShots" ) + 1;
 			iUsed.SetTag( "totalShots", totalShots );
 			var totalScore = iUsed.GetTag( "totalScore" ) + points;
 			iUsed.SetTag( "totalScore", totalScore );
-			iUsed.TextMessage( "Score: "+totalScore+" after "+totalShots+" shots." );
 			iUsed.SetTag( "lastUsedBy", ( pUser.serial & 0x00FFFFFF ) );
 			var lastUsed = GetCurrentClock();
 			iUsed.SetTag( "lastUsed", lastUsed );
+
+			// Report overall score
+			var tempMsg = GetDictionaryEntry( 2464, pSock.language ) // Score: %i after %u shots.
+			tempMsg = tempMsg.replace(/%i/gi, totalScore );
+			iUsed.TextMessage( tempMsg.replace(/%u/gi, totalShots ) );
 		}
 	}
 	return false;

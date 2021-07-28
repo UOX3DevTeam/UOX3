@@ -17,7 +17,7 @@ function onUseChecked( pUser, iUsed )
 		if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
 		{
 			// Player vendors can only be placed in houses!
-			pUser.SysMessage( "Player vendors can only be placed in houses!" );
+			pUser.SysMessage( GetDictionaryEntry( 2857, pSocket.language )); // Player vendors can only be placed in houses!
 			return false;
 		}
 
@@ -25,7 +25,7 @@ function onUseChecked( pUser, iUsed )
 		if( !iMulti.IsOwner( pUser ))
 		{
 			// Only the house owner can place player vendors in a house!
-			pUser.SysMessage( "Only the house owner can place player vendors in a house!" );
+			pUser.SysMessage( GetDictionaryEntry( 2858, pSocket.language )); // Only the house owner can place player vendors in a house!
 			return false;
 		}
 
@@ -33,14 +33,14 @@ function onUseChecked( pUser, iUsed )
 		if( iMulti.vendors >= iMulti.maxVendors )
 		{
 			// You cannot place any more player vendors in this house!
-			pUser.SysMessage( "You cannot place any more player vendors in this house!" );
+			pUser.SysMessage( GetDictionaryEntry( 2859, pSocket.language )); // You cannot place any more player vendors in this house!
 			return false;
 		}
 
 		// Make sure the house is not private - player vendors can only be placed in public houses!
 		if( !iMulti.isPublic )
 		{
-			pSocket.SysMessage( "Player vendors can only be placed in public houses!" );
+			pSocket.SysMessage( GetDictionaryEntry( 2860, pSocket.language )); // Player vendors can only be placed in public houses!
 			return false;
 		}
 
@@ -49,7 +49,7 @@ function onUseChecked( pUser, iUsed )
 		var foundDoor = AreaItemFunction( "checkForNearbyDoors", pUser, 3, pSocket );
 		if( foundDoor )
 		{
-			pSocket.SysMessage( "You cannot place a player vendor adjacent to a door!" ); // You cannot place a player vendor adjacent to a door!
+			pSocket.SysMessage( GetDictionaryEntry( 2861, pSocket.language )); // You cannot place a player vendor adjacent to a door!
 			return false;
 		}
 

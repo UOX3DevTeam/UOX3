@@ -31,7 +31,7 @@ const propertyLabelEnd = "</BASEFONT>";
 
 // Settings
 const enableTransparentGump = true;
-const enableTooltips = true; // Too much data for regular UO client, but works with ClassicUO client
+var enableTooltips = true; // Too much data for regular UO client, but works with ClassicUO client
 
 // If any properties are removed or added, make sure to update the value behind each entry so there
 // are no duplicate or skipped values
@@ -436,6 +436,12 @@ function CommandRegistration()
 
 function command_TWEAK( pSocket, cmdString )
 {
+	if( GetServerSetting( "ServerLanguage" ) == 7 || GetServerSetting( "ServerLanguage" ) == 0 && pSocket.language == 24 )
+	{
+		// Disable tooltips in this menu for Czech language until we can figure out why it crashes client!
+		enableTooltips = false;
+	}
+
 	// First check if a valid target serial has been set by code, for instance when calling
 	// tweak command via the hard-coded wholist gump
 	var target = CalcCharFromSer( pSocket.GetDWord( 7 ));
@@ -651,7 +657,9 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 	else
 		gumpObj.AddButton( 230, 2, 4017, 4018, 1, 0, 0 ); 	// Exit
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 2009, socketLang )); // Close Tweak menu
+	{
+		gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 2010, socketLang )); // Close Tweak menu
+	}
 	gumpObj.AddHTMLGump( 10, 2, 230, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>" + GetDictionaryEntry( 2011, socketLang ) + " " + objType + " " + objPropHeader + "</BASEFONT></BIG></CENTER>" );
 	gumpObj.AddHTMLGump( 10, 27, 230, 20, 0, 0, "<BIG><BASEFONT color=" + nameColor + "><CENTER>" + objName + "</CENTER></BASEFONT></BIG>" );
 	if( enableTooltips )
@@ -684,7 +692,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Serial</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, objType + " Serial - set automatically by UOX3" );
+			gumpObj.AddToolTip( 1050045, pSocket, objType + " Serial - " + GetDictionaryEntry( 8119, pSocket.language )); // set automatically by UOX3
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>ID</BASEFONT>" );
 		if( enableTooltips )
 			gumpObj.AddToolTip( 1050045, pSocket, "ID of " + objType );
@@ -694,7 +702,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Region ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - Region number defined in regions.dfn" );
+			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - " + GetDictionaryEntry( 8120, pSocket.language )); // Region number defined in regions.dfn
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
 	else
@@ -702,12 +710,15 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		// Account
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Account ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - Account ID defined for this account in accounts.dfn" );
+			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - " + GetDictionaryEntry( 8121, pSocket.language )); // Account ID defined for this account in accounts.dfn
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Username</BASEFONT>" );
 	}
 
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1050045, pSocket, "Name of " + objType );
+	{
+		var tempMsg = GetDictionaryEntry( 8122, pSocket.language ); // Name of %s
+		gumpObj.AddToolTip( 1050045, pSocket, tempMsg.replace(/%s/gi, objType ));
+	}
 
 	// Buttons
 	if( objType != "Region" && objType != "Account" )
@@ -754,10 +765,10 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	// Initial next-page button
 	if( propCount > 12 )
 	{
-		gumpObj.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>Page 1/" + totalPages + "</BASEFONT>" );
+		gumpObj.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>" + GetDictionaryEntry( 8819, pSocket.language ) + " 1/" + totalPages + "</BASEFONT>" );
 		gumpObj.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, 2, 0 );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, "Next page" );
+			gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 	}
 
 	return gumpObj;
@@ -769,20 +780,20 @@ function RenderOtherPages( pSocket, gumpObj, gumpPage, totalPages )
 	gumpObj.AddPage( gumpPage );
 	gumpObj.AddBackground( 112, 55, gumpSecondaryBackgroundWidth, 350, gumpSecondaryBackground ); // Tile White Background
 
-	gumpObj.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>Page " + gumpPage + "/" + totalPages + "</BASEFONT>" );
+	gumpObj.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>" + GetDictionaryEntry( 8819, pSocket.language ) + " " + gumpPage + "/" + totalPages + "</BASEFONT>" );
 
 	if( gumpPage < totalPages )
 	{
 		// Add next page button for all subsequent pages except last one
 		gumpObj.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, gumpPage + 1, 0 );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, "Next page" );
+			gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 	}
 
 	// Add previous page button for all subsequent pages
 	gumpObj.AddButton( 14, 420, gumpPrevButtonOff, gumpPrevButtonOn, 0, gumpPage - 1, 0 );
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1050045, pSocket, "Previous page" );
+		gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8124, pSocket.language )); // Previous page
 
 	return gumpObj;
 }
@@ -880,174 +891,174 @@ function HandleItemTarget( pSocket, myTarget )
 		switch( i + 20 )
 		{
 			case itemProp.ammoFX:
-				itemLabelTooltip 	= "ID of moving effect played when ranged weapon fires projectile";
+				itemLabelTooltip 	= GetDictionaryEntry( 8125, pSocket.language ); // ID of moving effect played when ranged weapon fires projectile
 				itemValue 			= "0x" + (myTarget.ammoFX).toString(16);
 				break;
 			case itemProp.ammoFXHue:
-				itemLabelTooltip 	= "Hue of moving effect played when ranged weapon fires projectile";
+				itemLabelTooltip 	= GetDictionaryEntry( 8126, pSocket.language ); // Hue of moving effect played when ranged weapon fires projectile
 				itemValue 			= "0x" + (myTarget.ammoFXHue).toString(16);
 				break;
 			case itemProp.ammoFXRender:
-				itemLabelTooltip 	= "Render mode of moving effect played when ranged weapon fires projectile";
+				itemLabelTooltip 	= GetDictionaryEntry( 8127, pSocket.language ); // Render mode of moving effect played when ranged weapon fires projectile
 				itemValue 			= "0x" + (myTarget.ammoFXRender).toString(16);
 				break;
 			case itemProp.ammoHue:
-				itemLabelTooltip 	= "Hue of item used as ammo by ranged weapon";
+				itemLabelTooltip 	= GetDictionaryEntry( 8128, pSocket.language ); // Hue of item used as ammo by ranged weapon
 				itemValue 			= "0x" + (myTarget.ammoHue).toString(16);
 				break;
 			case itemProp.ammoID:
-				itemLabelTooltip 	= "ID of item used as ammo by ranged weapon";
+				itemLabelTooltip 	= GetDictionaryEntry( 8129, pSocket.language ); // ID of item used as ammo by ranged weapon
 				itemValue 			= "0x" + (myTarget.ammoID).toString(16);
 				break;
 			case itemProp.amount:
-				itemLabelTooltip 	= "Amount of items in pile, or amount of items restocked on shopkeeper";
+				itemLabelTooltip 	= GetDictionaryEntry( 8130, pSocket.language ); // Amount of items in pile, or amount of items restocked on shopkeeper
 				itemValue 			= (myTarget.amount).toString();
 				break;
 			case itemProp.baseWeight:
-				itemLabelTooltip 	= "Base weight of item - primarily used for tracking the 'true' weight of containers, without adding weight of other items";
+				itemLabelTooltip 	= GetDictionaryEntry( 8131, pSocket.language ); // Base weight of item - primarily used for tracking the 'true' weight of containers, without adding weight of other items
 				itemValue 			= (myTarget.baseWeight).toString();
 				itemValueTooltip	= (parseFloat(myTarget.baseWeight/100).toFixed(2)).toString() + " stones";
 				break;
 			case itemProp.buyvalue:
-				itemLabelTooltip 	= "Item's buy value - price player needs to pay to buy item from NPC shopkeeper";
+				itemLabelTooltip 	= GetDictionaryEntry( 8132, pSocket.language ); // Item's buy value - price player needs to pay to buy item from NPC shopkeeper
 				itemValue 			= (myTarget.buyvalue).toString();
 				break;
 			case itemProp.carveSection:
-				itemLabelTooltip 	= "ID of section in carve DFNs that triggers if this item is carved - used for corpses";
+				itemLabelTooltip 	= GetDictionaryEntry( 8133, pSocket.language ); // ID of section in carve DFNs that triggers if this item is carved - used for corpses
 				itemValue 			= (myTarget.carveSection).toString();
 				break;
 			case itemProp.colour:
-				itemLabelTooltip 	= "Colour of item";
+				itemLabelTooltip 	= GetDictionaryEntry( 8134, pSocket.language ); // Colour of item
 				itemValue 			= "0x" + (myTarget.colour).toString(16);
 				break;
 			case itemProp.container:
-				itemLabelTooltip 	= "Item/Character the item is contained in/on";
+				itemLabelTooltip 	= GetDictionaryEntry( 8135, pSocket.language ); // Item/Character the item is contained in/on
 				itemValue 			= (ValidateObject(myTarget.container) ? "<BASEFONT color=#EECD8B>" + (myTarget.container).toString() + "</BASEFONT>" : "-");
 				itemValueTooltip 	= (ValidateObject(myTarget.container) ? (myTarget.container.name).toString() + " (" + (myTarget.container.serial) + ")": "-");
 				break;
 			case itemProp.corpse:
-				itemLabelTooltip 	= "Marks item as corpse";
+				itemLabelTooltip 	= GetDictionaryEntry( 8136, pSocket.language ); // Marks item as corpse
 				itemValue 			= (myTarget.corpse ? "true" : "false");
 				break;
 			case itemProp.damageHeat:
-				itemLabelTooltip 	= "Weapon deals Heat/Fire elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8137, pSocket.language ); // Weapon deals Heat/Fire elemental damage (true/false)
 				itemValue 			= (myTarget.damageHeat).toString();
 				break;
 			case itemProp.damageCold:
-				itemLabelTooltip 	= "Weapon deals Cold elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8138, pSocket.language ); // Weapon deals Cold elemental damage (true/false)
 				itemValue 			= (myTarget.damageCold).toString();
 				break;
 			case itemProp.damageLight:
-				itemLabelTooltip 	= "Weapon deals Light elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8139, pSocket.language ); // Weapon deals Light elemental damage (true/false)
 				itemValue 			= (myTarget.damageLight).toString();
 				break;
 			case itemProp.damageLightning:
-				itemLabelTooltip 	= "Weapon deals Lightning/Energy elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8140, pSocket.language ); // Weapon deals Lightning/Energy elemental damage (true/false)
 				itemValue 			= (myTarget.damageLightning).toString();
 				break;
 			case itemProp.damagePoison:
-				itemLabelTooltip 	= "Weapon deals Poison elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8141, pSocket.language ); // Weapon deals Poison elemental damage (true/false)
 				itemValue 			= (myTarget.damagePoison).toString();
 				break;
 			case itemProp.damageRain:
-				itemLabelTooltip 	= "Weapon deals Rain elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8142, pSocket.language ); // Weapon deals Rain elemental damage (true/false)
 				itemValue 			= (myTarget.damageRain).toString();
 				break;
 			case itemProp.damageSnow:
-				itemLabelTooltip 	= "Weapon deals Snow elemental damage (true/false)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8143, pSocket.language ); // Weapon deals Snow elemental damage (true/false)
 				itemValue 			= (myTarget.damageSnow).toString();
 				break;
 			case itemProp.decayable:
-				itemLabelTooltip 	= "Marks the item as decayable";
+				itemLabelTooltip 	= GetDictionaryEntry( 8144, pSocket.language ); // Marks the item as decayable
 				itemValue 			= (myTarget.decayable ? "true" : "false");
 				break;
 			case itemProp.decaytime:
-				itemLabelTooltip 	= "The amount of time left before the item will decay";
+				itemLabelTooltip 	= GetDictionaryEntry( 8145, pSocket.language ); // The amount of time left before the item will decay
 				itemValue 			=  myTarget.decaytime > 0 ? Math.floor(( myTarget.decaytime - GetCurrentClock() ) / 1000 ).toString() : 0;
 				break;
 			case itemProp.def:
-				itemLabelTooltip 	= "Defensive value of item (Physical Resistance post-AoS, AR in older UO)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8146, pSocket.language ); // Defensive value of item (Physical Resistance post-AoS, AR in older UO)
 				itemValue 			= (myTarget.def).toString();
 				break;
 			case itemProp.desc:
-				itemLabelTooltip 	= "Description of item - used for items sold on player vendors";
+				itemLabelTooltip 	= GetDictionaryEntry( 8147, pSocket.language ); // Description of item - used for items sold on player vendors
 				itemValue 			= (myTarget.desc ? (myTarget.desc).toString() : "-");
 				break;
 			case itemProp.divinelock:
-				itemLabelTooltip 	= "Marks the item as locked by a GM";
+				itemLabelTooltip 	= GetDictionaryEntry( 8148, pSocket.language ); // Marks the item as locked by a GM
 				itemValue 			= (myTarget.divinelock ? "true" : "false");
 				break;
 			case itemProp.dir:
-				itemLabelTooltip 	= "Direction of item - used to determine light type on light sources";
+				itemLabelTooltip 	= GetDictionaryEntry( 8149, pSocket.language ); // Direction of item - used to determine light type on light sources
 				itemValue 			= (myTarget.dir).toString();
 				break;
 			case itemProp.entryMadeFrom:
-				itemLabelTooltip 	= "The ID of entry from Create DFN that item was crafted from (if any)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8150, pSocket.language ); // The ID of entry from Create DFN that item was crafted from (if any)";
 				itemValue 			= (myTarget.entryMadeFrom).toString();
 				break;
 			case itemProp.health:
-				itemLabelTooltip 	= "Item's current health/hitpoints (cannot exceed value of maxhp property)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8151, pSocket.language ); // Item's current health/hitpoints (cannot exceed value of maxhp property)
 				itemValue 			= (myTarget.health).toString();
 				break;
 			case itemProp.hidamage:
-				itemLabelTooltip 	= "Max damage item can deal in combat (randomized between lodamage and hidamage)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8152, pSocket.language ); // Max damage item can deal in combat (randomized between lodamage and hidamage)
 				itemValue 			= (myTarget.hidamage).toString();
 				break;
 			case itemProp.instanceID:
-				itemLabelTooltip 	= "ID of instance of world that item exists in. Objects in different instances will not be able to interact with one another!";
+				itemLabelTooltip 	= GetDictionaryEntry( 8153, pSocket.language ); // ID of instance of world that item exists in. Objects in different instances will not be able to interact with one another!
 				itemValue 			= (myTarget.instanceID).toString();
 				break;
 			case itemProp.isDispellable:
-				itemLabelTooltip 	= "Marks item as dispellable with Magic Dispel";
+				itemLabelTooltip 	= GetDictionaryEntry( 8154, pSocket.language ); // Marks item as dispellable with Magic Dispel
 				itemValue 			= (myTarget.isDispellable ? "true" : "false");
 				break;
 			case itemProp.isDoorOpen:
-				itemLabelTooltip 	= "Marks door as open";
+				itemLabelTooltip 	= GetDictionaryEntry( 8155, pSocket.language ); // Marks door as open
 				itemValue 			= (myTarget.isDoorOpen ? "true" : "false");
 				break;
 			case itemProp.isDyeable:
-				itemLabelTooltip 	= "Marks item as dyeable";
+				itemLabelTooltip 	= GetDictionaryEntry( 8156, pSocket.language ); // Marks item as dyeable
 				itemValue 			= (myTarget.isDyeable ? "true" : "false");
 				break;
 			case itemProp.isGuarded:
-				itemLabelTooltip 	= "Marks item as guarded by a pet/hireling";
+				itemLabelTooltip 	= GetDictionaryEntry( 8157, pSocket.language ); // Marks item as guarded by a pet/hireling
 				itemValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isGuarded ? "true" : "false") + "</BASEFONT>";
 				break;
 			case itemProp.isNewbie:
-				itemLabelTooltip 	= "Marks item as newbiefied/blessed";
+				itemLabelTooltip 	= GetDictionaryEntry( 8158, pSocket.language ); // Marks item as newbiefied/blessed
 				itemValue 			= (myTarget.isNewbie ? "true" : "false");
 				break;
 			case itemProp.isPileable:
-				itemLabelTooltip 	= "Marks item as pileable";
+				itemLabelTooltip 	= GetDictionaryEntry( 8159, pSocket.language ); // Marks item as pileable
 				itemValue 			= (myTarget.isPileable ? "true" : "false");
 				break;
 			case itemProp.isWipeable:
-				itemLabelTooltip 	= "Marks item as wipeable with WIPE command";
+				itemLabelTooltip 	= GetDictionaryEntry( 8160, pSocket.language ); // Marks item as wipeable with WIPE command
 				itemValue 			= (myTarget.isWipeable ? "true" : "false");
 				break;
 			case itemProp.itemsinside:
-				itemLabelTooltip 	= "The amount of items contained inside container";
+				itemLabelTooltip 	= GetDictionaryEntry( 8161, pSocket.language ); // The amount of items contained inside container
 				itemValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.itemsinside).toString() + "</BASEFONT>";
 				break;
 			case itemProp.layer:
-				itemLabelTooltip 	= "Layer that characters will equip item on";
+				itemLabelTooltip 	= GetDictionaryEntry( 8162, pSocket.language ); // Layer that characters will equip item on
 				itemValue 			= "0x" + (myTarget.layer).toString(16);
 				itemValueTooltip 	= layerName[myTarget.layer];
 				break;
 			case itemProp.lodamage:
-				itemLabelTooltip 	= "Lowest damage item can deal in combat";
+				itemLabelTooltip 	= GetDictionaryEntry( 8163, pSocket.language ); // Lowest damage item can deal in combat
 				itemValue 			= (myTarget.lodamage).toString();
 				break;
 			case itemProp.madeWith:
-				itemLabelTooltip 	= "Skill ID used to create item";
+				itemLabelTooltip 	= GetDictionaryEntry( 8164, pSocket.language ); // Skill ID used to create item
 				itemValue 			= (myTarget.madeWith).toString();
 				break;
 			case itemProp.maxhp:
-				itemLabelTooltip 	= "Maximum amount of hitpoints item can have";
+				itemLabelTooltip 	= GetDictionaryEntry( 8165, pSocket.language ); // Maximum amount of hitpoints item can have
 				itemValue 			= (myTarget.maxhp).toString();
 				break;
 			case itemProp.maxinterval:
-				itemLabelTooltip 	= "Max interval in seconds between respawns - SpawnObjects only";
+				itemLabelTooltip 	= GetDictionaryEntry( 8166, pSocket.language ); // Max interval in seconds between respawns - SpawnObjects only
 				if( myTarget.isSpawner )
 				{
 					itemValue 		= (myTarget.hasOwnProperty('maxinterval') ? (myTarget.maxinterval).toString() : "-");
@@ -1058,15 +1069,15 @@ function HandleItemTarget( pSocket, myTarget )
 				}
 				break;
 			case itemProp.maxItems:
-				itemLabelTooltip 	= "Max items a container can contain";
+				itemLabelTooltip 	= GetDictionaryEntry( 8167, pSocket.language ); // Max items a container can contain
 				itemValue 			= (myTarget.maxItems).toString();
 				break;
 			case itemProp.maxRange:
-				itemLabelTooltip 	= "Maximum range of ranged weapon";
+				itemLabelTooltip 	= GetDictionaryEntry( 8168, pSocket.language ); // Maximum range of ranged weapon
 				itemValue 			= (myTarget.maxRange).toString();
 				break;
 			case itemProp.mininterval:
-				itemLabelTooltip 	= "Min interval in seconds between respawns - SpawnObjects only";
+				itemLabelTooltip 	= GetDictionaryEntry( 8169, pSocket.language ); // Min interval in seconds between respawns - SpawnObjects only
 				if( myTarget.isSpawner )
 				{
 					itemValue 		= (myTarget.hasOwnProperty('mininterval') ? (myTarget.mininterval).toString() : "-");
@@ -1077,99 +1088,99 @@ function HandleItemTarget( pSocket, myTarget )
 				}
 				break;
 			case itemProp.more:
-				itemLabelTooltip 	= "Generic item property used for many different things";
+				itemLabelTooltip 	= GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things
 				itemValue 			= (myTarget.more).toString();
 				var hexVal = "0x" + ("00000000"+(Number(myTarget.more).toString(16))).slice(-8)
 				itemValueTooltip = (myTarget.more).toString() + " (" + hexVal + ")";
 				break;
 			case itemProp.morex:
-				itemLabelTooltip 	= "Generic item property used for many different things";
+				itemLabelTooltip 	= GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things
 				itemValue 			= (myTarget.morex).toString();
 				var hexVal = "0x" + ("00000000"+(Number(myTarget.morex).toString(16))).slice(-8)
 				itemValueTooltip = (myTarget.morex).toString() + " (" + hexVal + ")";
 				break;
 				break;
 			case itemProp.morey:
-				itemLabelTooltip 	= "Generic item property used for many different things";
+				itemLabelTooltip 	= GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things
 				itemValue 			= (myTarget.morey).toString();
 				var hexVal = "0x" + ("00000000"+(Number(myTarget.morey).toString(16))).slice(-8)
 				itemValueTooltip = (myTarget.morey).toString() + " (" + hexVal + ")";
 				break;
 				break;
 			case itemProp.morez:
-				itemLabelTooltip 	= "Generic item property used for many different things";
+				itemLabelTooltip 	= GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things
 				itemValue 			= (myTarget.morez).toString();
 				var hexVal = "0x" + ("00000000"+(Number(myTarget.morez).toString(16))).slice(-8)
 				itemValueTooltip = (myTarget.morez).toString() + " (" + hexVal + ")";
 				break;
 				break;
 			case itemProp.movable:
-				itemLabelTooltip 	= "Determines who can pick up/move item";
-				itemValue 			= (myTarget.movable ? "true" : "false");
+				itemLabelTooltip 	= GetDictionaryEntry( 8174, pSocket.language ); // Determines who can pick up/move item
+				itemValue 			= (myTarget.movable).toString();
 				break;
 			case itemProp.name2:
-				itemLabelTooltip 	= "Secondary name of object, revealed using item identification";
+				itemLabelTooltip 	= GetDictionaryEntry( 8175, pSocket.language ); // Secondary name of object, revealed using item identification
 				itemValue 			= myTarget.name2;
 				break;
 			case itemProp.owner:
-				itemLabelTooltip 	= "Object registered as owner of this item";
+				itemLabelTooltip 	= GetDictionaryEntry( 8176, pSocket.language ); // Object registered as owner of this item
 				itemValue 			= (ValidateObject(myTarget.owner) ? (myTarget.owner.name).toString() : "-");
 				itemValueTooltip	= (ValidateObject(myTarget.owner) ? (myTarget.owner.name).toString() + " (" + (myTarget.owner.serial).toString() + ")": "-");
 				break;
 			case itemProp.origin:
-				itemLabelTooltip 	= "Era in which item was added to the game";
+				itemLabelTooltip 	= GetDictionaryEntry( 8177, pSocket.language ); // Era in which item was added to the game
 				itemValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.origin ? (myTarget.origin).toString() : "-") + "</BASEFONT>";
 				break;
 			case itemProp.poison:
-				itemLabelTooltip 	= "Poison level of item from 0 to 5";
+				itemLabelTooltip 	= GetDictionaryEntry( 8178, pSocket.language ); // Poison level of item from 0 to 5
 				itemValue 			= (myTarget.poison).toString();
 				break;
 			case itemProp.race:
-				itemLabelTooltip 	= "Item deals double damage versus specified race";
+				itemLabelTooltip 	= GetDictionaryEntry( 8179, pSocket.language ); // Item deals double damage versus specified race
 				itemValue 			= (myTarget.race != null ? (myTarget.race.id).toString() + " (" + (myTarget.race.name).toString() + ")" : "-");
 				break;
 			case itemProp.rank:
-				itemLabelTooltip 	= "Quality of item determined at time of crafting";
+				itemLabelTooltip 	= GetDictionaryEntry( 8180, pSocket.language ); // Quality of item determined at time of crafting
 				itemValue 			= (myTarget.rank).toString();
 				break;
 			case itemProp.resistHeat:
-				itemLabelTooltip 	= "Item's Heat/Fire Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8181, pSocket.language ); // Item's Heat/Fire Resistance
 				itemValue 			= (parseFloat(myTarget.resistHeat/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.resistCold:
-				itemLabelTooltip 	= "Item's Cold Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8182, pSocket.language ); // Item's Cold Resistance
 				itemValue 			= (parseFloat(myTarget.resistCold/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.resistLight:
-				itemLabelTooltip 	= "Item's Light Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8183, pSocket.language ); // Item's Light Resistance"
 				itemValue 			= (parseFloat(myTarget.resistLight/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.resistLightning:
-				itemLabelTooltip 	= "Item's Lightning/Energy Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8184, pSocket.language ); // Item's Lightning/Energy Resistance"
 				itemValue 			= (parseFloat(myTarget.resistLightning/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.resistPoison:
-				itemLabelTooltip 	= "Item's Poison Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8185, pSocket.language ); // Item's Poison Resistance"
 				itemValue 			= (parseFloat(myTarget.resistPoison/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.resistRain:
-				itemLabelTooltip 	= "Item's Rain Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8186, pSocket.language ); // Item's Rain Resistance"
 				itemValue 			= (parseFloat(myTarget.resistRain/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.resistSnow:
-				itemLabelTooltip 	= "Item's Snow Resistance";
+				itemLabelTooltip 	= GetDictionaryEntry( 8187, pSocket.language ); // Item's Snow Resistance"
 				itemValue 			= (parseFloat(myTarget.resistSnow/10).toFixed(2)).toString() + "%";
 				break;
 			case itemProp.restock:
-				itemLabelTooltip 	= "Amount of this item that vendors will restock by default";
+				itemLabelTooltip 	= GetDictionaryEntry( 8188, pSocket.language ); // Amount of this item that vendors will restock by default"
 				itemValue 			= (myTarget.restock).toString();
 				break;
 			case itemProp.scripttrigger:
-				itemLabelTooltip 	= "JS Script assigned to item";
+				itemLabelTooltip 	= GetDictionaryEntry( 8189, pSocket.language ); // JS Script assigned to item
 				itemValue 			= (myTarget.scripttrigger).toString();
 				break;
 			case itemProp.sectionalist:
-				itemLabelTooltip 	= "True if spawn section is a list - SpawnObject only";
+				itemLabelTooltip 	= GetDictionaryEntry( 8190, pSocket.language ); // True if spawn section is a list - SpawnObject only
 				if( myTarget.isSpawner )
 				{
 					itemValue 		= (myTarget.hasOwnProperty('sectionalist') ? (myTarget.sectionalist).toString() : "-");
@@ -1180,11 +1191,11 @@ function HandleItemTarget( pSocket, myTarget )
 				}
 				break;
 			case itemProp.sellvalue:
-				itemLabelTooltip 	= "Item's sell value - price player can sell item to NPC shopkeeper for";
+				itemLabelTooltip 	= GetDictionaryEntry( 8191, pSocket.language ); // Item's sell value - price player can sell item to NPC shopkeeper for
 				itemValue 			= (myTarget.sellvalue).toString();
 				break;
 			case itemProp.spawnsection:
-				itemLabelTooltip 	= "SpawnSection used to spawn objects from - SpawnObject only";
+				itemLabelTooltip 	= GetDictionaryEntry( 8192, pSocket.language ); // SpawnSection used to spawn objects from - SpawnObject only
 				if( myTarget.isSpawner )
 				{
 					itemValue 		= (myTarget.hasOwnProperty('spawnSection') ? (myTarget.spawnSection).toString() : "-");
@@ -1195,54 +1206,54 @@ function HandleItemTarget( pSocket, myTarget )
 				}
 				break;
 			case itemProp.speed:
-				itemLabelTooltip 	= "Attack speed of item - used by weapons";
+				itemLabelTooltip 	= GetDictionaryEntry( 8193, pSocket.language ); // Attack speed of item - used by weapons
 				itemValue 			= (myTarget.speed).toString();
 				break;
 			case itemProp.strength:
-				itemLabelTooltip 	= "Strength required to equip item";
+				itemLabelTooltip 	= GetDictionaryEntry( 8194, pSocket.language ); // Strength required to equip item
 				itemValue 			= (myTarget.strength).toString();
 				break;
 			case itemProp.tempTimer:
-				itemLabelTooltip 	= "Temporary timer used by spawners";
+				itemLabelTooltip 	= GetDictionaryEntry( 8195, pSocket.language ); // Temporary timer used by spawners
 				itemValue 			= (myTarget.tempTimer).toString();
 				break;
 			case itemProp.type:
-				itemLabelTooltip 	= "Item type of item - determines double-click behaviour";
+				itemLabelTooltip 	= GetDictionaryEntry( 8171, pSocket.language ); // Item type of item - determines double-click behaviour
 				itemValue 			= (myTarget.type).toString()
 				itemValueTooltip 	= itemTypeNames[myTarget.type];
 				break;
 			case itemProp.visible:
-				itemLabelTooltip 	= "Determines who item is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8197, pSocket.language ); // Determines who item is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 				itemValue 			= (myTarget.visible).toString();
 				break;
 			case itemProp.weight:
-				itemLabelTooltip 	= "Weight of item (100 = 1.0 stone)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8198, pSocket.language ); // Weight of item (100 = 1.0 stone)
 				itemValue 			= (myTarget.weight).toString();
 				itemValueTooltip 	= (parseFloat(myTarget.weight/100).toFixed(2)).toString() + " stones";
 				break;
 			case itemProp.weightMax:
-				itemLabelTooltip 	= "Maximum weight a container can hold (100 = 1.0 stone)";
+				itemLabelTooltip 	= GetDictionaryEntry( 8199, pSocket.language ); // Maximum weight a container can hold (100 = 1.0 stone)
 				itemValue 			= (myTarget.weightMax).toString();
 				itemValueTooltip 	= (parseFloat(myTarget.weightMax/100).toFixed(2)).toString() + " stones";
 				break;
 			case itemProp.wipable:
-				itemLabelTooltip 	= "Marks item as wipable with WIPE command";
+				itemLabelTooltip 	= GetDictionaryEntry( 8200, pSocket.language ); // Marks item as wipable with WIPE command
 				itemValue 			= (myTarget.wipable ? "true" : "false");
 				break;
 			case itemProp.worldnumber:
-				itemLabelTooltip 	= "World that item exists in";
+				itemLabelTooltip 	= GetDictionaryEntry( 8201, pSocket.language ); // World that item exists in
 				itemValue 			= (myTarget.worldnumber).toString();
 				break;
 			case itemProp.x:
-				itemLabelTooltip 	= "X coordinate of item in the world - or in container";
+				itemLabelTooltip 	= GetDictionaryEntry( 8202, pSocket.language ); // X coordinate of item in the world - or in container
 				itemValue 			= (myTarget.x).toString();
 				break;
 			case itemProp.y:
-				itemLabelTooltip 	= "Y coordinate of item in the world - or in container";
+				itemLabelTooltip 	= GetDictionaryEntry( 8203, pSocket.language ); // Y coordinate of item in the world - or in container
 				itemValue 			= (myTarget.y).toString();
 				break;
 			case itemProp.z:
-				itemLabelTooltip 	= "Z coordinate of item in the world - or in container";
+				itemLabelTooltip 	= GetDictionaryEntry( 8204, pSocket.language ); // Z coordinate of item in the world - or in container
 				itemValue 			= (myTarget.z).toString();
 				break;
 			default:
@@ -1257,26 +1268,28 @@ function HandleItemTarget( pSocket, myTarget )
 		{
 			// Labels
 			itemGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
-			itemGump.AddToolTip( 1050045, pSocket, itemLabelTooltip.toString() );
+			if( enableTooltips )
+				itemGump.AddToolTip( 1050045, pSocket, itemLabelTooltip.toString() );
 
 			if( itemValue == "-" )
-				itemValueTooltip = "Value not set";
+				itemValueTooltip = GetDictionaryEntry( 8205, pSocket.language ); // Value not set
 
 			// Buttons
 			if( propertyName != "Itemsinside" && propertyName != "Container" && propertyName != "IsGuarded" && propertyName != "Origin" && (myTarget.isSpawner || ( !myTarget.isSpawner &&
 			 ( propertyName != "Maxinterval" && propertyName != "Mininterval" && propertyName != "Spawnsection" && propertyName != "Sectionalist" ))))
 			{
 				itemGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-				itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ));
+				if( enableTooltips )
+					itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ));
 			}
 
 			// Values
 			itemGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + itemValue + propertyValueEnd );
-			if( propertyName == "Itemsinside" || propertyName == "Container" || propertyName == "IsGuarded" || propertyName == "Origin" )
+			if( enableTooltips && propertyName == "Itemsinside" || propertyName == "Container" || propertyName == "IsGuarded" || propertyName == "Origin" )
 			{
 				itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ) + " (Read-Only)");
 			}
-			else if( !myTarget.isSpawner && ( propertyName == "Maxinterval" || propertyName == "Mininterval" || propertyName == "Spawnsection" || propertyName == "Sectionalist" ))
+			else if( enableTooltips && !myTarget.isSpawner && ( propertyName == "Maxinterval" || propertyName == "Mininterval" || propertyName == "Spawnsection" || propertyName == "Sectionalist" ))
 			{
 				itemGump.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>n/a</BASEFONT> (SpawnObject Only)");
 			}
@@ -1405,109 +1418,109 @@ function HandleCharTarget( pSocket, myTarget )
 		switch( i + 200 )
 		{
 			case charProp.accountNum:
-				charLabelTooltip 	= "Account number associated with player. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8300, pSocket.language ); // Account number associated with player. Controlled by server (Read-Only)
 				charValue 			= myTarget.npc ? "<BASEFONT color=#EECD8B>" + "n/a"  + "</BASEFONT>" : "<BASEFONT color=#32668A>[click to view]</BASEFONT>"; //myTarget.npc ? "<BASEFONT color=#EECD8B>" + "n/a"  + "</BASEFONT>" : "<BASEFONT color=#EECD8B>" + (myTarget.accountNum).toString() + "</BASEFONT>";
 				charValueTooltip  	= myTarget.accountNum;
 				break;
 			case charProp.aitype:
-				charLabelTooltip 	= "NPC AI Type";
+				charLabelTooltip 	= GetDictionaryEntry( 8301, pSocket.language ); // NPC AI Type
 				charValue 			= (myTarget.aitype).toString();
 				charValueTooltip 	= aiTypeName[myTarget.aitype];
 				break;
 			case charProp.allmove:
-				charLabelTooltip 	= "Toggles being able to move all items regardless of movable status";
+				charLabelTooltip 	= GetDictionaryEntry( 8302, pSocket.language ); // Toggles being able to move all items regardless of movable status
 				charValue 			= (myTarget.allmove ? "true" : "false");
 				break;
 			case charProp.attack:
-				charLabelTooltip 	= "Gets calculated attack value for character based on skills, equipment, etc. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8303, pSocket.language ); // Gets calculated attack value for character based on skills, equipment, etc. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.attack).toString() + "</BASEFONT>";
 				break;
 			case charProp.attacker:
-				charLabelTooltip 	= "Character's current attacker";
+				charLabelTooltip 	= GetDictionaryEntry( 8304, pSocket.language ); // Character's current attacker
 				// charValue 			= (( myTarget.hasOwnProperty('attacker') && myTarget.attacker != null ) ? "0x" + (myTarget.attacker).toString(16) : "-");
 
 				charValue 			= (ValidateObject(myTarget.attacker) ? (myTarget.attacker.name).toString() : "-");
 				charValueTooltip	= (ValidateObject(myTarget.attacker) ? (myTarget.attacker.name).toString() + " (" + (myTarget.attacker.serial).toString() + ")": "-");
 				break;
 			case charProp.attackFirst:
-				charLabelTooltip 	= "Did character attack first?";
+				charLabelTooltip 	= GetDictionaryEntry( 8305, pSocket.language ); // Did character attack first?
 				charValue 			= (myTarget.attackFirst ? "true" : "false");
 				break;
 			case charProp.atWar:
-				charLabelTooltip 	= "Toggles combat mode for NPC characters (NPC Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8306, pSocket.language ); // Toggles combat mode for NPC characters (NPC Only)
 				charValue 			= (myTarget.atWar).toString();
 				break;
 			case charProp.baseskills:
-				charLabelTooltip 	= "Base skill values for character";
+				charLabelTooltip 	= GetDictionaryEntry( 8307, pSocket.language ); // Base skill values for character
 				charValue 			= "<BASEFONT color=#32668A>[click to view]</BASEFONT>";
 				break;
 			case charProp.brkPeaceChance:
-				charLabelTooltip 	= "Chance of character affected by peacemaking will break out of peace state";
+		charLabelTooltip 	= GetDictionaryEntry( 8308, pSocket.language ); // Chance of character affected by peacemaking will break out of peace state
 				charValue 			= (myTarget.brkPeaceChance).toString() + "%";
 				break;
 			case charProp.canAttack:
-				charLabelTooltip 	= "Toggles whether character can attack other characters";
+		charLabelTooltip 	= GetDictionaryEntry( 8309, pSocket.language ); // Toggles whether character can attack other characters
 				charValue 			= (myTarget.canAttack ? "true" : "false");
 				break;
 			case charProp.canBroadcast:
-				charLabelTooltip 	= "Toggles whether character can broadcast messages";
+		charLabelTooltip 	= GetDictionaryEntry( 8310, pSocket.language ); // Toggles whether character can broadcast messages
 				charValue 			= (myTarget.canBroadcast ? "true" : "false");
 				break;
 			case charProp.canRun:
-				charLabelTooltip 	= "Toggles whether character can run";
+		charLabelTooltip 	= GetDictionaryEntry( 8311, pSocket.language ); // Toggles whether character can run
 				charValue 			= (myTarget.canRun ? "true" : "false");
 				break;
 			case charProp.canSnoop:
-				charLabelTooltip 	= "Toggles whether character can snoop in other character's backpacks";
+		charLabelTooltip 	= GetDictionaryEntry( 8312, pSocket.language ); // Toggles whether character can snoop in other character's backpacks
 				charValue 			= (myTarget.canSnoop ? "true" : "false");
 				break;
 			case charProp.cell:
-				charLabelTooltip 	= "Current jail character is locked up in, if any";
+		charLabelTooltip 	= GetDictionaryEntry( 8313, pSocket.language ); // Current jail character is locked up in, if any
 				charValue 			=  (myTarget.cell).toString();
 				break;
 			case charProp.colour:
-				charLabelTooltip 	= "Colour of character's body";
+		charLabelTooltip 	= GetDictionaryEntry( 8314, pSocket.language ); // Colour of character's body
 				charValue 			=  "0x" + (myTarget.colour).toString(16);
 				break;
 			case charProp.commandlevel:
 				if( myTarget.commandlevel >= pSocket.currentChar.commandlevel )
 				{
-					charLabelTooltip 	= "Character's command level (Read-Only, cannot adjust command level of fellow GMs/Admins)";
+					charLabelTooltip 	= GetDictionaryEntry( 8315, pSocket.language ); // Character's command level (Read-Only, cannot adjust command level of fellow GMs/Admins)
 					charValue 			=  "<BASEFONT color=#EECD8B>" + (myTarget.commandlevel).toString() + "</BASEFONT>";
 				}
 				else
 				{
-					charLabelTooltip 	= "Character's command level.";
+					charLabelTooltip 	= GetDictionaryEntry( 8316, pSocket.language ); // Character's command level.
 					charValue 			=  (myTarget.commandlevel).toString();
 				}
 				break;
 			case charProp.criminal:
-				charLabelTooltip 	= "Marks character as criminal, instead of innocent, neutral or murderer";
+				charLabelTooltip 	= GetDictionaryEntry( 8317, pSocket.language ); // Marks character as criminal, instead of innocent, neutral or murderer
 				charValue 			= (myTarget.criminal ? "true" : "false");
 				break;
 			case charProp.dead:
-				charLabelTooltip 	= "Is (player) character dead? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8318, pSocket.language ); // Is (player) character dead? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.dead ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.deaths:
-				charLabelTooltip 	= "Total amount of times (player) character has died";
+				charLabelTooltip 	= GetDictionaryEntry( 8319, pSocket.language ); // Total amount of times (player) character has died
 				charValue 			=  (myTarget.deaths).toString();
 				break;
 			case charProp.dexterity:
-				charLabelTooltip 	= "Dexterity attribute of character";
+				charLabelTooltip 	= GetDictionaryEntry( 8320, pSocket.language ); // Dexterity attribute of character
 				charValue 			= (myTarget.dexterity).toString();
 				break;
 			case charProp.direction:
-				charLabelTooltip 	= "Current direction character is facing";
+				charLabelTooltip 	= GetDictionaryEntry( 8321, pSocket.language ); // Current direction character is facing
 				charValue 			= "0x" + (myTarget.direction).toString(16);
 				charValueTooltip 	= "0x" + (myTarget.direction).toString(16) + " (" + (myTarget.direction).toString() + ")";
 				break;
 			case charProp.emoteColour:
-				charLabelTooltip 	= "Colour of character's emotes";
+				charLabelTooltip 	= GetDictionaryEntry( 8322, pSocket.language ); // Colour of character's emotes
 				charValue 			= "0x" + (myTarget.emoteColour).toString(16);
 				break;
 			case charProp.fame:
-				charLabelTooltip 	= "Character's current fame level";
+				charLabelTooltip 	= GetDictionaryEntry( 8323, pSocket.language ); // Character's current fame level
 				charValue 			= (myTarget.fame).toString();
 				break;
 			case charProp.flag:
@@ -1517,207 +1530,207 @@ function HandleCharTarget( pSocket, myTarget )
 				charValueTooltip	= "0x" + (myTarget.flag).toString(16) + flagText;
 				break;
 			case charProp.fontType:
-				charLabelTooltip 	= "Font type used by character's speech";
+				charLabelTooltip 	= GetDictionaryEntry( 8324, pSocket.language ); // Font type used by character's speech
 				charValue 			= (myTarget.fontType).toString();
 				break;
 			case charProp.foodList:
-				charLabelTooltip 	= "ID of foodlist that a tamed creature will accept as food";
+				charLabelTooltip 	= GetDictionaryEntry( 8325, pSocket.language ); // ID of foodlist that a tamed creature will accept as food
 				charValue 			= myTarget.hasOwnProperty('foodList') ? (myTarget.foodList).toString() : "-";
 				break;
 			case charProp.frozen:
-				charLabelTooltip 	= "Toggles whether object is frozen (immovable) or not";
+				charLabelTooltip 	= GetDictionaryEntry( 8326, pSocket.language ); // Toggles whether object is frozen (immovable) or not
 				charValue 			= (myTarget.frozen ? "true" : "false");
 				break;
 			case charProp.gender:
-				charLabelTooltip 	= "Gender of character (male/female)";
+				charLabelTooltip 	= GetDictionaryEntry( 8327, pSocket.language ); // Gender of character (male/female)
 				charValue 			= (myTarget.gender).toString();
 				break;
 			case charProp.guild:
-				charLabelTooltip 	= "Player guild character belongs to, if any";
+				charLabelTooltip 	= GetDictionaryEntry( 8328, pSocket.language ); // Player guild character belongs to, if any
 				charValue 			= (myTarget.guild != null ? ( myTarget.guild.name + " (Guildstone: " + ( myTarget.guild.stone != null && myTarget.guild.stone.serial ) + ")") : "Not in Guild");
 				break;
 			case charProp.guildTitle:
-				charLabelTooltip 	= "Guild title of character";
+				charLabelTooltip 	= GetDictionaryEntry( 8329, pSocket.language ); // Guild title of character
 				charValue 			= myTarget.guildTitle != "" ? (myTarget.guildTitle).toString() : "-";
 				break;
 			case charProp.health:
-				charLabelTooltip 	= "Character's current health/hitpoints (cannot exceed value of maxhp property)";
+				charLabelTooltip 	= GetDictionaryEntry( 8330, pSocket.language ); // Character's current health/hitpoints (cannot exceed value of maxhp property)
 				charValue 			= (myTarget.health).toString();
 				break;
 			case charProp.hidamage:
-				charLabelTooltip 	= "Highest damage character can deal in combat with wrestlin/unarmed attacks";
+				charLabelTooltip 	= GetDictionaryEntry( 8331, pSocket.language ); // Highest damage character can deal in combat with wrestlin/unarmed attacks
 				charValue 			= (myTarget.hidamage).toString();
 				break;
 			case charProp.houseicons:
-				charLabelTooltip 	= "Toggles whether house icons/deeds are shown instead of multis for character";
+				charLabelTooltip 	= GetDictionaryEntry( 8332, pSocket.language ); // Toggles whether house icons/deeds are shown instead of multis for character
 				charValue 			= (myTarget.houseicons).toString();
 				break;
 			case charProp.housesCoOwned:
-				charLabelTooltip 	= "Number of houses co-owned by character. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8333, pSocket.language ); // Number of houses co-owned by character. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.housesCoOwned).toString() + "</BASEFONT>";
 				break;
 			case charProp.housesOwned:
-				charLabelTooltip 	= "Number of houses owned by character. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8334, pSocket.language ); // Number of houses owned by character. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.housesOwned).toString() + "</BASEFONT>";
 				break;
 			case charProp.hunger:
-				charLabelTooltip 	= "Character's current hunger status (0-6)";
+				charLabelTooltip 	= GetDictionaryEntry( 8335, pSocket.language ); // Character's current hunger status (0-6)
 				charValue 			= (myTarget.hunger).toString();
 				break;
 			case charProp.hungerWildChance:
-				charLabelTooltip 	= "Chance for extremely hungry pet to go wild with every NPC AI loop";
+				charLabelTooltip 	= GetDictionaryEntry( 8336, pSocket.language ); // Chance for extremely hungry pet to go wild with every NPC AI loop
 				charValue 			= (myTarget.hungerWildChance).toString() + "%";
 				break;
 			case charProp.innocent:
-				charLabelTooltip 	= "Marks character as innocent, instead of neutral, criminal or murderer";
+				charLabelTooltip 	= GetDictionaryEntry( 8337, pSocket.language ); // Marks character as innocent, instead of neutral, criminal or murderer
 				charValue 			= (myTarget.innocent ? "true" : "false");
 				break;
 			case charProp.instanceID:
-				charLabelTooltip 	= "ID of instance character is currently in. Objects in different instances will not be able to interact with one another!";
+				charLabelTooltip 	= GetDictionaryEntry( 8338, pSocket.language ); // ID of instance character is currently in. Objects in different instances will not be able to interact with one another!
 				charValue 			= (myTarget.instanceID).toString();
 				break;
 			case charProp.intelligence:
-				charLabelTooltip 	= "Intelligence attribute of character";
+				charLabelTooltip 	= GetDictionaryEntry( 8339, pSocket.language ); // Intelligence attribute of character
 				charValue 			= (myTarget.intelligence).toString();
 				break;
 			case charProp.isAnimal:
-				charLabelTooltip 	= "Is character an animal? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8340, pSocket.language ); // Is character an animal? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isAnimal ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.isCasting:
-				charLabelTooltip 	= "Is character casting a spell?";
+				charLabelTooltip 	= GetDictionaryEntry( 8341, pSocket.language ); // Is character casting a spell?
 				charValue 			= (myTarget.isCasting ? "true" : "false");
 				break;
 			case charProp.isCounselor:
-				charLabelTooltip 	= "Is character a counselor?";
+				charLabelTooltip 	= GetDictionaryEntry( 8342, pSocket.language ); // Is character a counselor?
 				charValue 			= (myTarget.isCounselor ? "true" : "false");
 				break;
 			case charProp.isDispellable:
-				charLabelTooltip 	= "Can character be dispelled by the Dispel spell? (NPC only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8343, pSocket.language ); // Can character be dispelled by the Dispel spell? (NPC only)
 				charValue 			= (myTarget.isDispellable ? "true" : "false");
 				break;
 			case charProp.isflying:
-				charLabelTooltip 	= "Is character flying? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8344, pSocket.language ); // Is character flying? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isflying ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.isGM:
 				if( myTarget.commandlevel >= pSocket.currentChar.commandlevel )
 				{
-					charLabelTooltip 	= "Is character a GM? (Read-Only)";
+					charLabelTooltip 	= GetDictionaryEntry( 8345, pSocket.language ); // Is character a GM? (Read-Only)
 					charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isGM ? "true" : "false") + "</BASEFONT>";
 				}
 				else
 				{
-					charLabelTooltip 	= "Is character a GM?";
+					charLabelTooltip 	= GetDictionaryEntry( 8346, pSocket.language ); // Is character a GM?
 					charValue 			= (myTarget.isGM ? "true" : "false");
 				}
 				break;
 			case charProp.isGMPageable:
-				charLabelTooltip 	= "Is character able to see and respond to GM pages?";
+				charLabelTooltip 	= GetDictionaryEntry( 8347, pSocket.language ); // Is character able to see and respond to GM pages?
 				charValue 			= (myTarget.isGMPageable ? "true" : "false");
 				break;
 			case charProp.isHuman:
-				charLabelTooltip 	= "Is character a human? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8348, pSocket.language ); // Is character a human? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isHuman ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.isIncognito:
-				charLabelTooltip 	= "Is character incognito?";
+				charLabelTooltip 	= GetDictionaryEntry( 8349, pSocket.language ); // Is character incognito?
 				charValue 			= (myTarget.isIncognito ? "true" : "false");
 				break;
 			case charProp.isJailed:
-				charLabelTooltip 	= "Is character jailed? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8350, pSocket.language ); // Is character jailed? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isJailed ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.isMeditating:
-				charLabelTooltip 	= "Is character meditating? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8351, pSocket.language ); // Is character meditating? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isMeditating ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.isonhorse:
-				charLabelTooltip 	= "Is character on a mount? Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8352, pSocket.language ); // Is character on a mount? Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.isonhorse ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.isPolymorphed:
-				charLabelTooltip 	= "Is character polymorphed?";
+				charLabelTooltip 	= GetDictionaryEntry( 8353, pSocket.language ); // Is character polymorphed?
 				charValue 			= (myTarget.isPolymorphed ? "true" : "false");
 				break;
 			case charProp.isShop:
-				charLabelTooltip 	= "Is character a vendor? (NPC only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8354, pSocket.language ); // Is character a vendor? (NPC only)
 				charValue 			= (myTarget.isShop ? "true" : "false");
 				break;
 			case charProp.isUsingPotion:
-				charLabelTooltip 	= "Is character using a potion?";
+				charLabelTooltip 	= GetDictionaryEntry( 8355, pSocket.language ); // Is character using a potion?
 				charValue 			= (myTarget.isUsingPotion ? "true" : "false");
 				break;
 			case charProp.karma:
-				charLabelTooltip 	= "Character's current karma level";
+				charLabelTooltip 	= GetDictionaryEntry( 8356, pSocket.language ); // Character's current karma level
 				charValue 			= (myTarget.karma).toString();
 				break;
 			case charProp.lightlevel:
-				charLabelTooltip 	= "Character's current individual light level";
+				charLabelTooltip 	= GetDictionaryEntry( 8357, pSocket.language ); // Character's current individual light level
 				charValue 			= (myTarget.lightlevel).toString();
 				break;
 			case charProp.lodamage:
-				charLabelTooltip 	= "Minimum damage dealt by character in combat when using wrestling/unarmed attacks";
+				charLabelTooltip 	= GetDictionaryEntry( 8358, pSocket.language ); // Minimum damage dealt by character in combat when using wrestling/unarmed attacks
 				charValue 			= (myTarget.lodamage).toString();
 				break;
 			case charProp.magicReflect:
-				charLabelTooltip 	= "Is magic reflection active for character?";
+				charLabelTooltip 	= GetDictionaryEntry( 8359, pSocket.language ); // Is magic reflection active for character?
 				charValue 			= (myTarget.magicReflect ? "true" : "false");
 				break;
 			case charProp.mana:
-				charLabelTooltip 	= "Character's current mana";
+				charLabelTooltip 	= GetDictionaryEntry( 8360, pSocket.language ); // Character's current mana
 				charValue 			= (myTarget.mana).toString();
 				break;
 			case charProp.maxhp:
-				charLabelTooltip 	= "Maximum HP character can have (max value that can display properly in player status window is 9999)";
+				charLabelTooltip 	= GetDictionaryEntry( 8361, pSocket.language ); // Maximum HP character can have (max value that can display properly in player status window is 9999)
 				charValue 			= (myTarget.maxhp).toString();
 				break;
 			case charProp.maxmana:
-				charLabelTooltip 	= "Maximum mana character can have";
+				charLabelTooltip 	= GetDictionaryEntry( 8362, pSocket.language ); // Maximum mana character can have
 				charValue 			= (myTarget.maxmana).toString();
 				break;
 			case charProp.maxstamina:
-				charLabelTooltip 	= "Maximum stamina character can have";
+				charLabelTooltip 	= GetDictionaryEntry( 8363, pSocket.language ); // Maximum stamina character can have
 				charValue 			= (myTarget.maxstamina).toString();
 				break;
 			case charProp.mounted:
-				charLabelTooltip 	= "Is mount carrying someone?";
+				charLabelTooltip 	= GetDictionaryEntry( 8364, pSocket.language ); // Is mount carrying someone?
 				charValue 			= (myTarget.mounted ? "true" : "false");
 				break;
 			case charProp.multi:
-				charLabelTooltip 	= "Object for multi the character is currently in";
+				charLabelTooltip 	= GetDictionaryEntry( 8365, pSocket.language ); // Object for multi the character is currently in
 				charValue 			= ValidateObject(myTarget.multi) ? "<BASEFONT color=#32668A>[click to view]</BASEFONT>" : "<BASEFONT color=#EECD8B>N/A</BASEFONT>";
 				break;
 			case charProp.murdercount:
-				charLabelTooltip 	= "Amount of players character has killed";
+				charLabelTooltip 	= GetDictionaryEntry( 8366, pSocket.language ); // Amount of players character has killed
 				charValue 			= (myTarget.murdercount).toString();
 				break;
 			case charProp.murderer:
-				charLabelTooltip 	= "Is character a murderer?";
+				charLabelTooltip 	= GetDictionaryEntry( 8367, pSocket.language ); // Is character a murderer?
 				charValue 			= (myTarget.murderer ? "true" : "false");
 				break;
 			case charProp.neutral:
-				charLabelTooltip 	= "Is character neutrally flagged?";
+				charLabelTooltip 	= GetDictionaryEntry( 8368, pSocket.language ); // Is character neutrally flagged?
 				charValue 			= (myTarget.neutral ? "true" : "false");
 				break;
 			case charProp.nextAct:
-				charLabelTooltip 	= "The next spellcasting action character is going to do. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8369, pSocket.language ); // The next spellcasting action character is going to do. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + "0x" + (myTarget.nextAct).toString(16) + "</BASEFONT>";
 				break;
 			case charProp.noNeedMana:
-				charLabelTooltip 	= "Mana is not needed for character to cast spells";
+				charLabelTooltip 	= GetDictionaryEntry( 8370, pSocket.language ); // Mana is not needed for character to cast spells
 				charValue 			= (myTarget.noNeedMana ? "true" : "false");
 				break;
 			case charProp.noNeedReags:
-				charLabelTooltip 	= "Reagents are not needed for character to cast spells";
+				charLabelTooltip 	= GetDictionaryEntry( 8371, pSocket.language ); // Reagents are not needed for character to cast spells
 				charValue 			= (myTarget.noNeedReags ? "true" : "false");
 				break;
 			case charProp.noSkillTitles:
-				charLabelTooltip 	= "Skill titles are not displayed for character";
+				charLabelTooltip 	= GetDictionaryEntry( 8372, pSocket.language ); // Skill titles are not displayed for character
 				charValue 			= (myTarget.noSkillTitles ? "true" : "false");
 				break;
 			case charProp.npc:
-				charLabelTooltip 	= "Whether character is an NPC. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8373, pSocket.language ); // Whether character is an NPC. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.npc ? "true" : "false") + "</BASEFONT>";
 				break;
 			case charProp.npcFlag:
@@ -1727,235 +1740,235 @@ function HandleCharTarget( pSocket, myTarget )
 				charValueTooltip	= (myTarget.npcFlag).toString() + npcFlagText;
 				break;
 			case charProp.oldWandertype:
-				charLabelTooltip 	= "NPC's old/previous wandertype";
+				charLabelTooltip 	= GetDictionaryEntry( 8374, pSocket.language ); // NPC's old/previous wandertype
 				charValue 			= (myTarget.oldWandertype).toString();
 				break;
 			case charProp.online:
-				charLabelTooltip 	= "Whether player character is online or not. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8375, pSocket.language ); // Whether player character is online or not. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.online).toString() + "</BASEFONT>";
 				break;
 			case charProp.orgID:
-				charLabelTooltip 	= "Character's original body ID";
+				charLabelTooltip 	= GetDictionaryEntry( 8376, pSocket.language ); // Character's original body ID
 				charValue 			= "0x" + (myTarget.orgID).toString(16);
 				break;
 			case charProp.orgSkin:
-				charLabelTooltip 	= "Character's original skin (colour)";
+				charLabelTooltip 	= GetDictionaryEntry( 8377, pSocket.language ); // Character's original skin (colour)
 				charValue 			= "0x" + (myTarget.orgSkin).toString(16);
 				break;
 			case charProp.ownedItemsCount:
-				charLabelTooltip 	= "Number of items owned by character. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8378, pSocket.language ); // Number of items owned by character. Controlled by server (Read-Only)
 				charValue 			=  "<BASEFONT color=#EECD8B>" + (myTarget.ownedItemsCount).toString() + "</BASEFONT>";
 				break;
 			case charProp.owner:
-				charLabelTooltip 	= "Character's owner, if any";
+				charLabelTooltip 	= GetDictionaryEntry( 8379, pSocket.language ); // Character's owner, if any
 				charValue 			= ( myTarget.hasOwnProperty('owner') && myTarget.owner != null ) ? (myTarget.owner.name).toString() : "-";
 				break;
 			case charProp.pack:
-				charLabelTooltip 	= "Object of character's root backpack";
+				charLabelTooltip 	= GetDictionaryEntry( 8380, pSocket.language ); // Object of character's root backpack
 				charValue 			= ( myTarget.hasOwnProperty('pack') && myTarget.pack != null ) ? (myTarget.pack).toString() : "-";
 				break;
 			case charProp.party:
-				charLabelTooltip 	= "Object of party character is member of";
+				charLabelTooltip 	= GetDictionaryEntry( 8381, pSocket.language ); // Object of party character is member of
 				charValue 			= myTarget.hasOwnProperty('party') ? (myTarget.party).toString() : "-";
 				break;
 			case charProp.partyLootable:
-				charLabelTooltip 	= "Is character lootable by party members when dead?";
+				charLabelTooltip 	= GetDictionaryEntry( 8382, pSocket.language ); // Is character lootable by party members when dead?
 				charValue 			= (myTarget.partyLootable).toString();
 				break;
 			case charProp.petCount:
-				charLabelTooltip 	= "Total amount of pets controlled by character. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8383, pSocket.language ); // Total amount of pets controlled by character. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.petCount).toString() + "</BASEFONT>";
 				break;
 			case charProp.poison:
-				charLabelTooltip 	= "Character's current poisoned state (0-5)";
+				charLabelTooltip 	= GetDictionaryEntry( 8384, pSocket.language ); // Character's current poisoned state (0-5)
 				charValue 			= (myTarget.poison).toString();
 				break;
 			case charProp.poisonStrength:
-				charLabelTooltip 	= "Strength of poison applied by unarmed/wrestling attacks (0-5)";
+				charLabelTooltip 	= GetDictionaryEntry( 8385, pSocket.language ); // Strength of poison applied by unarmed/wrestling attacks (0-5)
 				charValue 			= (myTarget.poisonStrength).toString();
 				break;
 			case charProp.race:
-				charLabelTooltip 	= "Race character belongs to";
+				charLabelTooltip 	= GetDictionaryEntry( 8386, pSocket.language ); // Race character belongs to
 				charValue 			= (myTarget.race.id).toString();
 				charValueTooltip 	= (myTarget.race.name).toString();
 				break;
 			case charProp.raceGate:
-				charLabelTooltip 	= "ID of Race for which character has used a Race Gate, if any";
+				charLabelTooltip 	= GetDictionaryEntry( 8387, pSocket.language ); // ID of Race for which character has used a Race Gate, if any
 				charValue 			= (myTarget.raceGate == 65535 ? "-" : (myTarget.raceGate).toString());
 				break;
 			case charProp.region:
-				charLabelTooltip 	= "Object of region character is currently in. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8388, pSocket.language ); // Object of region character is currently in. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.region).toString() + "</BASEFONT>";
 				charValueTooltip	= "<BASEFONT color=#EECD8B>" + (myTarget.region.name).toString() + "</BASEFONT>";
 				break;
 			case charProp.sayColour:
-				charLabelTooltip 	= "Colour of character's speech text";
+				charLabelTooltip 	= GetDictionaryEntry( 8389, pSocket.language ); // Colour of character's speech text
 				charValue 			= "0x" + (myTarget.sayColour).toString(16);
 				break;
 			case charProp.scripttrigger:
-				charLabelTooltip 	= "JS Script assigned to character";
+				charLabelTooltip 	= GetDictionaryEntry( 8390, pSocket.language ); // JS Script assigned to character
 				charValue 			= (myTarget.scripttrigger).toString();
 				break;
 			case charProp.singClickSer:
-				charLabelTooltip 	= "Toggles whether single-clicks shows serial of clicked object";
+				charLabelTooltip 	= GetDictionaryEntry( 8391, pSocket.language ); // Toggles whether single-clicks shows serial of clicked object
 				charValue 			= (myTarget.singClickSer).toString();
 				break;
 			case charProp.skillLock:
-				charLabelTooltip 	= "Toggles skill lock for specific character skills (N/A)";
+				charLabelTooltip 	= GetDictionaryEntry( 8392, pSocket.language ); // Toggles skill lock for specific character skills (N/A)
 				charValue 			= "<BASEFONT color=#EECD8B>N/A</BASEFONT>";
 				break;
 			case charProp.skills:
-				charLabelTooltip 	= "Set value for a specific character skill";
+				charLabelTooltip 	= GetDictionaryEntry( 8393, pSocket.language ); // Set value for a specific character skill
 				charValue 			= "<BASEFONT color=#32668A>[click to view]</BASEFONT>";
 				break;
 			case charProp.skillsused:
-				charLabelTooltip 	= "Marks whether specific skills are in use (N/A)";
+				charLabelTooltip 	= GetDictionaryEntry( 8394, pSocket.language ); // Marks whether specific skills are in use (N/A)
 				charValue 			= "<BASEFONT color=#EECD8B>N/A</BASEFONT>";
 				break;
 			case charProp.skillToPeace:
-				charLabelTooltip 	= "Peacemaking skill required to peacemake this NPC";
+				charLabelTooltip 	= GetDictionaryEntry( 8395, pSocket.language ); // Peacemaking skill required to peacemake this NPC
 				charValue 			= (myTarget.skillToPeace).toString();
 				break;
 			case charProp.skillToProv:
-				charLabelTooltip 	= "Provocation skill required to provoke this NPC";
+				charLabelTooltip 	= GetDictionaryEntry( 8396, pSocket.language ); // Provocation skill required to provoke this NPC
 				charValue 			= (myTarget.skillToProv).toString();
 				break;
 			case charProp.skillToTame:
-				charLabelTooltip 	= "Animal Taming skill required to tame this NPC";
+				charLabelTooltip 	= GetDictionaryEntry( 8397, pSocket.language ); // Animal Taming skill required to tame this NPC
 				charValue 			= (myTarget.skillToTame).toString();
 				break;
 			case charProp.spattack:
-				charLabelTooltip 	= "NPC will cast spells from this spell circle #";
+				charLabelTooltip 	= GetDictionaryEntry( 8398, pSocket.language ); // NPC will cast spells from this spell circle #
 				charValue 			= (myTarget.spattack).toString();
 				break;
 			case charProp.spdelay:
-				charLabelTooltip 	= "Delay between spellcasts for NPC character";
+				charLabelTooltip 	= GetDictionaryEntry( 8399, pSocket.language ); // Delay between spellcasts for NPC character
 				charValue 			= (myTarget.spdelay).toString();
 				break;
 			case charProp.spellCast:
-				charLabelTooltip 	= "Spell currently being cast by character. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8400, pSocket.language ); // Spell currently being cast by character. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.spellCast).toString() + "</BASEFONT>";
 				break;
 			case charProp.split:
-				charLabelTooltip 	= "Determines how many NPCs character will split into when hit in combat";
+				charLabelTooltip 	= GetDictionaryEntry( 8401, pSocket.language ); // Determines how many NPCs character will split into when hit in combat
 				charValue 			= (myTarget.split).toString();
 				break;
 			case charProp.splitchance:
-				charLabelTooltip 	= "Chance of creature to split when hit in combat";
+				charLabelTooltip 	= GetDictionaryEntry( 8402, pSocket.language ); // Chance of creature to split when hit in combat
 				charValue 			= (myTarget.splitchance).toString();
 				break;
 			case charProp.squelch:
-				charLabelTooltip 	= "Toggles whether character is squelched/muted";
+				charLabelTooltip 	= GetDictionaryEntry( 8403, pSocket.language ); // Toggles whether character is squelched/muted
 				charValue 			= (myTarget.squelch).toString();
 				break;
 			case charProp.stabled:
-				charLabelTooltip 	= "Toggles whether creature is in a stable";
+				charLabelTooltip 	= GetDictionaryEntry( 8404, pSocket.language ); // Toggles whether creature is in a stable
 				charValue 			= (myTarget.stabled).toString();
 				break;
 			case charProp.stamina:
-				charLabelTooltip 	= "Character's current stamina";
+				charLabelTooltip 	= GetDictionaryEntry( 8405, pSocket.language ); // Character's current stamina
 				charValue 			= (myTarget.stamina).toString();
 				break;
 			case charProp.stealth:
-				charLabelTooltip 	= "Number of steps character has taken in stealth. Controlled by server (Read-Only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8406, pSocket.language ); // Number of steps character has taken in stealth. Controlled by server (Read-Only)
 				charValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.stealth).toString() + "</BASEFONT>";
 				break;
 			case charProp.strength:
-				charLabelTooltip 	= "Strength attribute of character";
+				charLabelTooltip 	= GetDictionaryEntry( 8407, pSocket.language ); // Strength attribute of character
 				charValue 			= (myTarget.strength).toString();
 				break;
 			case charProp.tamed:
-				charLabelTooltip 	= "Determines if a creature is tame";
+				charLabelTooltip 	= GetDictionaryEntry( 8408, pSocket.language ); // Determines if a creature is tame
 				charValue 			= (myTarget.tamed).toString();
 				break;
 			case charProp.tamedHungerRate:
-				charLabelTooltip 	= "The rate at which a pet grows hungry";
+				charLabelTooltip 	= GetDictionaryEntry( 8409, pSocket.language ); // The rate at which a pet grows hungry
 				charValue 			= (myTarget.tamedHungerRate).toString();
 				break;
 			case charProp.tamedThirstRate:
-				charLabelTooltip 	= "The rate at which a pet grows thirsty";
+				charLabelTooltip 	= GetDictionaryEntry( 8410, pSocket.language ); // The rate at which a pet grows thirsty
 				charValue 			= (myTarget.tamedThirstRate).toString();
 				break;
 			case charProp.target:
-				charLabelTooltip 	= "Character's current target";
+				charLabelTooltip 	= GetDictionaryEntry( 8411, pSocket.language ); // Character's current target
 				charValue 			= ( myTarget.hasOwnProperty('target') && myTarget.target != null ) ? (myTarget.target).toString() : "-";
 				break;
 			case charProp.tempdex:
-				charLabelTooltip 	= "Character's temporary dex, as affected by equipped items, spells and potions";
+				charLabelTooltip 	= GetDictionaryEntry( 8412, pSocket.language ); // Character's temporary dex, as affected by equipped items, spells and potions
 				charValue 			= (myTarget.tempdex).toString();
 				break;
 			case charProp.tempint:
-				charLabelTooltip 	= "Character's temporary int, as affected by equipped items, spells and potions";
+				charLabelTooltip 	= GetDictionaryEntry( 8413, pSocket.language ); // Character's temporary int, as affected by equipped items, spells and potions
 				charValue 			= (myTarget.tempint).toString();
 				break;
 			case charProp.tempstr:
-				charLabelTooltip 	= "Character's temporary str, as affected by equipped items, spells and potions";
+				charLabelTooltip 	= GetDictionaryEntry( 8414, pSocket.language ); // Character's temporary str, as affected by equipped items, spells and potions
 				charValue 			= (myTarget.tempstr).toString();
 				break;
 			case charProp.thirst:
-				charLabelTooltip 	= "Character's current thirst status (0-6)";
+				charLabelTooltip 	= GetDictionaryEntry( 8415, pSocket.language ); // Character's current thirst status (0-6)
 				charValue 			= (myTarget.thirst).toString();
 				break;
 			case charProp.thirstWildChance:
-				charLabelTooltip 	= "Chance for extremely thirsty pet to go wild with every NPC AI loop";
+				charLabelTooltip 	= GetDictionaryEntry( 8416, pSocket.language ); // Chance for extremely thirsty pet to go wild with every NPC AI loop
 				charValue 			= (myTarget.thirstWildChance).toString() + "%";
 				break;
 			case charProp.title:
-				charLabelTooltip 	= "The title of the character";
+				charLabelTooltip 	= GetDictionaryEntry( 8417, pSocket.language ); // The title of the character
 				charValue 			= myTarget.hasOwnProperty('title') ? (myTarget.title).toString() : "-";
 				break;
 			case charProp.town:
-				charLabelTooltip 	= "The town the player belongs to (N/A)";
+				charLabelTooltip 	= GetDictionaryEntry( 8418, pSocket.language ); // The town the player belongs to (N/A)
 				charValue 			= ( myTarget.hasOwnProperty('town') && myTarget.town ? (myTarget.town).toString() : "-");
 				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.hasOwnProperty('town') && myTarget.town ? (myTarget.town).toString() : "N/A") + "</BASEFONT>";
 				charValueTooltip	= "<BASEFONT color=#EECD8B>" + ( myTarget.hasOwnProperty('town') && myTarget.town ? (myTarget.town.name).toString() : "N/A") + "</BASEFONT>";
 				break;
 			case charProp.townPriv:
-				charLabelTooltip 	= "The privileges the character has with their town (1 = Resident, 2 = Mayor)";
+				charLabelTooltip 	= GetDictionaryEntry( 8419, pSocket.language ); // The privileges the character has with their town (1 = Resident, 2 = Mayor)
 				charValue 			= (myTarget.townPriv).toString();
 				break;
 			case charProp.trainer:
-				charLabelTooltip 	= "Toggles if NPC can train players in skills";
+				charLabelTooltip 	= GetDictionaryEntry( 8420, pSocket.language ); // Toggles if NPC can train players in skills
 				charValue 			= (myTarget.trainer).toString();
 				break;
 			case charProp.visible:
-				charLabelTooltip 	= "Determines visibility of character to other players (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)";
+				charLabelTooltip 	= GetDictionaryEntry( 8421, pSocket.language ); // Determines visibility of character to other players (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 				charValue 			= (myTarget.visible).toString();
 				break;
 			case charProp.vulnerable:
-				charLabelTooltip 	= "Toggles vulnerability/invulnerability for character";
+				charLabelTooltip 	= GetDictionaryEntry( 8422, pSocket.language ); // Toggles vulnerability/invulnerability for character
 				charValue 			= (myTarget.vulnerable).toString();
 				break;
 			case charProp.wandertype:
-				charLabelTooltip 	= "Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)";
+				charLabelTooltip 	= GetDictionaryEntry( 8423, pSocket.language ); // Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)
 				charValue 			= (myTarget.wandertype).toString();
 				break;
 			case charProp.weight:
-				charLabelTooltip 	= "Total weight of character (100 = 1.0 stone)";
+				charLabelTooltip 	= GetDictionaryEntry( 8424, pSocket.language ); // Total weight of character (100 = 1.0 stone)
 				charValue 			= (myTarget.weight).toString();
 				break;
 			case charProp.willhunger:
-				charLabelTooltip 	= "Enables (true) or disables (false) hunger-mode";
+				charLabelTooltip 	= GetDictionaryEntry( 8425, pSocket.language ); // Enables (true) or disables (false) hunger-mode
 				charValue 			= (myTarget.willhunger).toString();
 				break;
 			case charProp.willthirst:
-				charLabelTooltip 	= "Enables (true) or disables (false) thirst-mode";
+				charLabelTooltip 	= GetDictionaryEntry( 8426, pSocket.language ); // Enables (true) or disables (false) thirst-mode
 				charValue 			= (myTarget.willthirst).toString();
 				break;
 			case charProp.worldnumber:
-				charLabelTooltip 	= "World that character exists in";
+				charLabelTooltip 	= GetDictionaryEntry( 8427, pSocket.language ); // World that character exists in
 				charValue 			= (myTarget.worldnumber).toString();
 				break;
 			case charProp.x:
-				charLabelTooltip 	= "X coordinate of character in the world";
+				charLabelTooltip 	= GetDictionaryEntry( 8428, pSocket.language ); // X coordinate of character in the world
 				charValue 			= (myTarget.x).toString();
 				break;
 			case charProp.y:
-				charLabelTooltip 	= "Y coordinate of character in the world";
+				charLabelTooltip 	= GetDictionaryEntry( 8429, pSocket.language ); // Y coordinate of character in the world
 				charValue 			= (myTarget.y).toString();
 				break;
 			case charProp.z:
-				charLabelTooltip 	= "Z coordinate of character in the world";
+				charLabelTooltip 	= GetDictionaryEntry( 8430, pSocket.language ); // Z coordinate of character in the world
 				charValue 			= (myTarget.z).toString();
 				break;
 			default:
@@ -2126,7 +2139,8 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				// Next/Prev buttons
 				skillGump.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>Page 1/" + totalPages + "</BASEFONT>" );
 				skillGump.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, 2, 0 );
-					skillGump.AddToolTip( 1050045, pSocket, "Next page" );
+				if( enableTooltips )
+					skillGump.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 			}
 		}
 		else // All other pages
@@ -2161,12 +2175,14 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				{
 					// Add next page button for all subsequent pages except last one
 					skillGump.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, gumpPage + 1, 0 );
-					skillGump.AddToolTip( 1050045, pSocket, "Next page" );
+					if( enableTooltips )
+						skillGump.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 				}
 
 				// Add previous page button for all subsequent pages
 				skillGump.AddButton( 14, 420, gumpPrevButtonOff, gumpPrevButtonOn, 0, gumpPage - 1, 0 );
-				skillGump.AddToolTip( 1050045, pSocket, "Previous page" );
+				if( enableTooltips )
+					skillGump.AddToolTip( 1050045,  GetDictionaryEntry( 8124, pSocket.language )); // Previous page
 			}
 		}
 
@@ -2457,11 +2473,13 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 		{
 			// Labels
 			skillGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
-			skillGump.AddToolTip( 1050045, pSocket, charSkillsToolTip.toString() );
+			if( enableTooltips )
+				skillGump.AddToolTip( 1050045, pSocket, charSkillsToolTip.toString() );
 
 			// Buttons
 			skillGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-			skillGump.AddToolTip( 1050045, pSocket, ( charSkillsValueTooltip != "" ? charSkillsValueTooltip : charSkillsValue ));
+			if( enableTooltips )
+				skillGump.AddToolTip( 1050045, pSocket, ( charSkillsValueTooltip != "" ? charSkillsValueTooltip : charSkillsValue ));
 
 			// Values
 			skillGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + charSkillsValue + propertyValueEnd );
@@ -2577,132 +2595,132 @@ function HandleMultiTarget( pSocket, myTarget )
 		switch( i + 500 )
 		{
 			case multiProp.bans:
-				multiLabelTooltip 	= "Current number of players banned from Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8500, pSocket.language ); // Current number of players banned from Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.bans != null ? myTarget.bans : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.banX:
-				multiLabelTooltip 	= "X coordinate for Multi's ban-location";
+				multiLabelTooltip 	= GetDictionaryEntry( 8501, pSocket.language ); // X coordinate for Multi's ban-location
 				multiValue 			= (myTarget.banX != null ? myTarget.banX : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.banY:
-				multiLabelTooltip 	= "Y coordinate for Multi's ban-location";
+				multiLabelTooltip 	= GetDictionaryEntry( 8502, pSocket.language ); // Y coordinate for Multi's ban-location
 				multiValue 			= (myTarget.banY != null ? myTarget.banY : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.buildTimestamp:
-				multiLabelTooltip 	= "Timestamp for when Multi was created. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8503, pSocket.language ); // Timestamp for when Multi was created. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.buildTimestamp != null ? myTarget.buildTimestamp : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.colour:
-				multiLabelTooltip 	= "Colour of Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8504, pSocket.language ); // Colour of Multi
 				multiValue 			= "0x" + (myTarget.colour).toString(16);
 				break;
 			case multiProp.deed:
-				multiLabelTooltip 	= "Section Item ID for deed used to build Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8505, pSocket.language ); // Section Item ID for deed used to build Multi
 				multiValue 			= (myTarget.deed != null ? myTarget.deed : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.dir:
-				multiLabelTooltip 	= "Direction of Multi (Does this do anything for multis? Maybe boats?)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8506, pSocket.language ); // Direction of Multi (Does this do anything for multis? Maybe boats?)
 				multiValue 			= (myTarget.dir).toString();
 				break;
 			case multiProp.friends:
-				multiLabelTooltip 	= "Amount of friends added to Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8507, pSocket.language ); // Amount of friends added to Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.friends != null ? myTarget.friends : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.guests:
-				multiLabelTooltip 	= "Amount of guests added to Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8508, pSocket.language ); // Amount of guests added to Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.guests != null ? myTarget.guests : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.isPublic:
-				multiLabelTooltip 	= "Is the Multi flagged as Public?";
+				multiLabelTooltip 	= GetDictionaryEntry( 8509, pSocket.language ); // Is the Multi flagged as Public?
 				multiValue 			= (myTarget.isPublic ? "true" : "false");
 				break;
 			case multiProp.instanceID:
-				multiLabelTooltip 	= "ID of instance of world that Multi exists in. Objects in different instances will not be able to interact with one another!";
+				multiLabelTooltip 	= GetDictionaryEntry( 8510, pSocket.language ); // ID of instance of world that Multi exists in. Objects in different instances will not be able to interact with one another!
 				multiValue 			= (myTarget.instanceID).toString();
 				break;
 			case multiProp.lockdowns:
-				multiLabelTooltip 	= "Amount of locked down items in Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8511, pSocket.language ); // Amount of locked down items in Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.lockdowns != null ? myTarget.lockdowns : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.maxBans:
-				multiLabelTooltip 	= "Maximum amount of bans supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8512, pSocket.language ); // Maximum amount of bans supported by Multi
 				multiValue 			= (myTarget.maxBans != null ? myTarget.maxBans : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxFriends:
-				multiLabelTooltip 	= "Maximum amount of friends supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8513, pSocket.language ); // Maximum amount of friends supported by Multi
 				multiValue 			= (myTarget.maxFriends != null ? myTarget.maxFriends : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxGuests:
-				multiLabelTooltip 	= "Maximum amount of guests supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8514, pSocket.language ); // Maximum amount of guests supported by Multi
 				multiValue 			= (myTarget.maxGuests != null ? myTarget.maxGuests : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxLockdowns:
-				multiLabelTooltip 	= "Maximum amount of lockdowns supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8515, pSocket.language ); // Maximum amount of lockdowns supported by Multi
 				multiValue 			= (myTarget.maxLockdowns != null ? myTarget.maxLockdowns : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxOwners:
-				multiLabelTooltip 	= "Maximum amount of owners supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8516, pSocket.language ); // Maximum amount of owners supported by Multi
 				multiValue 			= (myTarget.maxOwners != null ? myTarget.maxOwners : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxSecureContainers:
-				multiLabelTooltip 	= "Maximum amount of secure containers supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8517, pSocket.language ); // Maximum amount of secure containers supported by Multi
 				multiValue 			= (myTarget.maxSecureContainers != null ? myTarget.maxSecureContainers : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxTrashContainers:
-				multiLabelTooltip 	= "Maximum amount of trash containers supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8518, pSocket.language ); // Maximum amount of trash containers supported by Multi
 				multiValue 			= (myTarget.maxTrashContainers != null ? myTarget.maxTrashContainers : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.maxVendors:
-				multiLabelTooltip 	= "Maximum amount of vendors supported by Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8519, pSocket.language ); // Maximum amount of vendors supported by Multi
 				multiValue 			= (myTarget.maxVendors != null ? myTarget.maxVendors : '<BASEFONT color=#EECD8B>N/A</BASEFONT>').toString();
 				break;
 			case multiProp.owner:
-				multiLabelTooltip 	= "Object registered as owner of this Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8520, pSocket.language ); // Object registered as owner of this Multi
 				multiValue 			= (ValidateObject(myTarget.owner) ? (myTarget.owner.name).toString() : "-");
 				multiValueTooltip	= (ValidateObject(myTarget.owner) ? (myTarget.owner.name).toString() + " (" + (myTarget.owner.serial).toString() + ")": "-");
 				break;
 			case multiProp.owners:
-				multiLabelTooltip 	= "Current amount of owners of Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8521, pSocket.language ); // Current amount of owners of Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.owners != null ? myTarget.owners : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.scripttrigger:
-				multiLabelTooltip 	= "JS Script assigned to Multi";
+				multiLabelTooltip 	= GetDictionaryEntry( 8522, pSocket.language ); // JS Script assigned to Multi
 				multiValue 			= (myTarget.scripttrigger).toString();
 				break;
 			case multiProp.secureContainers:
-				multiLabelTooltip 	= "Current amount of secure containers in Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8523, pSocket.language ); // Current amount of secure containers in Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.secureContainers != null ? myTarget.secureContainers : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.tradeTimestamp:
-				multiLabelTooltip 	= "Timestamp for last time Multi was traded. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8524, pSocket.language ); // Timestamp for last time Multi was traded. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.tradeTimestamp != null ? myTarget.tradeTimestamp : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.trashContainers:
-				multiLabelTooltip 	= "Current amount of trash containers in Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8525, pSocket.language ); // Current amount of trash containers in Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.trashContainers != null ? myTarget.trashContainers : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.vendors:
-				multiLabelTooltip 	= "Current amount of vendors in Multi. Controlled by Server (Read-Only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8526, pSocket.language ); // Current amount of vendors in Multi. Controlled by Server (Read-Only)
 				multiValue 			= "<BASEFONT color=#EECD8B>" + (myTarget.vendors != null ? myTarget.vendors : 'N/A').toString() + "</BASEFONT>";
 				break;
 			case multiProp.visible:
-				multiLabelTooltip 	= "Determines who Multi is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)";
+				multiLabelTooltip 	= GetDictionaryEntry( 8527, pSocket.language ); // Determines who Multi is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 				multiValue 			= (myTarget.visible).toString();
 				break;
 			case multiProp.worldnumber:
-				multiLabelTooltip 	= "World that Multi exists in";
+				multiLabelTooltip 	= GetDictionaryEntry( 8528, pSocket.language ); // World that Multi exists in
 				multiValue 			= (myTarget.worldnumber).toString();
 				break;
 			case multiProp.x:
-				multiLabelTooltip 	= "X coordinate of Multi in the world";
+				multiLabelTooltip 	= GetDictionaryEntry( 8529, pSocket.language ); // X coordinate of Multi in the world
 				multiValue 			= (myTarget.x).toString();
 				break;
 			case multiProp.y:
-				multiLabelTooltip 	= "Y coordinate of Multi in the world";
+				multiLabelTooltip 	= GetDictionaryEntry( 8530, pSocket.language ); // Y coordinate of Multi in the world
 				multiValue 			= (myTarget.y).toString();
 				break;
 			case multiProp.z:
-				multiLabelTooltip 	= "Z coordinate of Multi in the world";
+				multiLabelTooltip 	= GetDictionaryEntry( 8531, pSocket.language ); // Z coordinate of Multi in the world
 				multiValue 			= (myTarget.z).toString();
 				break;
 			default:
@@ -2717,7 +2735,8 @@ function HandleMultiTarget( pSocket, myTarget )
 		{
 			// Labels
 			multiGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
-			multiGump.AddToolTip( 1050045, pSocket, multiLabelTooltip.toString() );
+			if( enableTooltips )
+				multiGump.AddToolTip( 1050045, pSocket, multiLabelTooltip.toString() );
 
 			if( multiValue == "-" )
 				multiValueTooltip = "Value not set";
@@ -2750,7 +2769,8 @@ function HandleMultiTarget( pSocket, myTarget )
 						break;
 				default:
 					multiGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-					multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ));
+					if( enableTooltips )
+						multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ));
 					break;
 			}
 
@@ -2769,7 +2789,8 @@ function HandleMultiTarget( pSocket, myTarget )
 				case multiProp.tradeTimestamp:
 				case multiProp.trashContainers:
 				case multiProp.vendors:
-					multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ) + " (Read-Only)");
+					if( enableTooltips )
+						multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -2885,7 +2906,7 @@ function HandleRegionTarget( pSocket, myTarget )
 		{
 			case regionProp.appearance:
 			{
-				regionLabelTooltip 	= "Appearance of world within the Region (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown)";
+				regionLabelTooltip 	= GetDictionaryEntry( 8626, pSocket.language ) + " (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown)"; // Appearance of world within the Region
 				regionValue 		= (myTarget.appearance).toString();
 				var appearanceTooltip = "Unknown";
 				switch( myTarget.appearance )
@@ -2902,109 +2923,109 @@ function HandleRegionTarget( pSocket, myTarget )
 				break;
 			}
 			case regionProp.canCastAggressive:
-				regionLabelTooltip 	= "Can aggressive spells be cast in the Region?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8600, pSocket.language ); // Can aggressive spells be cast in the Region?
 				regionValue 		= (myTarget.canCastAggressive ? "true" : "false");
 				break;
 			case regionProp.canGate:
-				regionLabelTooltip 	= "Can the Gate spell be used in the Region?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8601, pSocket.language ); // Can the Gate spell be used in the Region?
 				regionValue 		= (myTarget.canGate ? "true" : "false");
 				break;
 			case regionProp.canMark:
-				regionLabelTooltip 	= "Can the Mark spell be used in the Region?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8602, pSocket.language ); // Can the Mark spell be used in the Region?
 				regionValue 		= (myTarget.canMark ? "true" : "false");
 				break;
 			case regionProp.canPlaceHouse:
-				regionLabelTooltip 	= "Can players place houses in the Region?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8603, pSocket.language ); // Can players place houses in the Region?
 				regionValue 		= (myTarget.canPlaceHouse ? "true" : "false");
 				break;
 			case regionProp.canRecall:
-				regionLabelTooltip 	= "Can the Recall spell be used in the Region?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8604, pSocket.language ); // Can the Recall spell be used in the Region?
 				regionValue 		= (myTarget.canRecall ? "true" : "false");
 				break;
 			case regionProp.canTeleport:
-				regionLabelTooltip 	= "Can the Teleport spell be used in the Region?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8605, pSocket.language ); // Can the Teleport spell be used in the Region?
 				regionValue 		= (myTarget.canTeleport ? "true" : "false");
 				break;
 			case regionProp.chanceBigOre:
-				regionLabelTooltip 	= "Chance to find big ore in the Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8606, pSocket.language ); // Chance to find big ore in the Region
 				regionValue 		= (myTarget.chanceBigOre).toString() + "%";
 				break;
 			case regionProp.health:
-				regionLabelTooltip 	= "Health of Townstone in Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8607, pSocket.language ); // Health of Townstone in Region
 				regionValue 		= (myTarget.health).toString();
 				break;
 			case regionProp.instanceID:
-				regionLabelTooltip 	= "Instance ID Region exists in";
+				regionLabelTooltip 	= GetDictionaryEntry( 8608, pSocket.language ); // Instance ID Region exists in
 				regionValue 		= (myTarget.instanceID).toString();
 				break;
 			case regionProp.isDungeon:
-				regionLabelTooltip 	= "Is Region considered a dungeon?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8609, pSocket.language ); // Is Region considered a dungeon?
 				regionValue 		= (myTarget.isDungeon ? "true" : "false");
 				break;
 			case regionProp.isGuarded:
-				regionLabelTooltip 	= "Is Region protected by guards?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8610, pSocket.language ); // Is Region protected by guards?
 				regionValue 		= (myTarget.isGuarded ? "true" : "false");
 				break;
 			case regionProp.isSafeZone:
-				regionLabelTooltip 	= "Is Region considered safe for players?";
+				regionLabelTooltip 	= GetDictionaryEntry( 8611, pSocket.language ); // Is Region considered safe for players?
 				regionValue 		= (myTarget.isSafeZone ? "true" : "false");
 				break;
 			case regionProp.mayor:
-				regionLabelTooltip 	= "Character voted as Mayor of the Town in this Region (if any)";
+				regionLabelTooltip 	= GetDictionaryEntry( 8612, pSocket.language ); // Character voted as Mayor of the Town in this Region (if any)
 				regionValue 		= (ValidateObject(myTarget.mayor) ? (myTarget.mayor.name).toString() : "-");
 				regionValueTooltip	= (ValidateObject(myTarget.mayor) ? (myTarget.mayor.name).toString() + " (" + (myTarget.mayor.serial).toString() + ")": "-");
 				break;
 			case regionProp.music:
-				regionLabelTooltip 	= "Music-list for Region, as specified in regions.dfn";
+				regionLabelTooltip 	= GetDictionaryEntry( 8613, pSocket.language ); // Music-list for Region, as specified in regions.dfn
 				regionValue 		= (myTarget.music).toString();
 				break;
 			case regionProp.numGuards:
-				regionLabelTooltip 	= "The number of guards in the Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8614, pSocket.language ); // The number of guards in the Region
 				regionValue 		= (myTarget.numGuards).toString();
 				break;
 			case regionProp.numOrePrefs:
-				regionLabelTooltip 	= "The number of ore preferences present for the Region. Controlled by Server (Read-Only)";
+				regionLabelTooltip 	= GetDictionaryEntry( 8615, pSocket.language ); // The number of ore preferences present for the Region. Controlled by Server (Read-Only)
 				regionValue 		= "<BASEFONT color=#EECD8B>" + (myTarget.numOrePrefs).toString() + "</BASEFONT>";
 				break;
 			case regionProp.owner:
 				regionLabel 		= "Owner of Guards";
-				regionLabelTooltip 	= "The owner of guards in the Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8616, pSocket.language ); // The owner of guards in the Region
 				regionValue 		= (myTarget.owner).toString();
 				break;
 			case regionProp.population:
-				regionLabelTooltip 	= "Number of players registered as citizens of the town (if any) in this Region. Controlled by server (Read-Only)";
+				regionLabelTooltip 	= GetDictionaryEntry( 8617, pSocket.language ); // Number of players registered as citizens of the town (if any) in this Region. Controlled by server (Read-Only)
 				regionValue 		= "<BASEFONT color=#EECD8B>" + (myTarget.population).toString() + "</BASEFONT>";
 				break;
 			case regionProp.race:
-				regionLabelTooltip 	= "Race associated with this Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8618, pSocket.language ); // Race associated with this Region
 				regionValue 		= (myTarget.race).toString();
 				break;
 			case regionProp.reserves:
-				regionLabelTooltip 	= "Resource reserves for town (if any) in this Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8619, pSocket.language ); // Resource reserves for town (if any) in this Region
 				regionValue 		= (myTarget.reserves).toString();
 				break;
 			case regionProp.scriptTrigger:
-				regionLabelTooltip 	= "Script-trigger assigned to the Region (if any)";
+				regionLabelTooltip 	= GetDictionaryEntry( 8620, pSocket.language ); // Script-trigger assigned to the Region (if any)
 				regionValue 		= (myTarget.scriptTrigger).toString();
 				break;
 			case regionProp.tax:
-				regionLabelTooltip 	= "The amount of gold taxed from citizens of the town (if any) in this Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8621, pSocket.language ); // The amount of gold taxed from citizens of the town (if any) in this Region
 				regionValue 		= (myTarget.tax).toString();
 				break;
 			case regionProp.taxes:
-				regionLabelTooltip 	= "The gold reserves of the town (if any) in this Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8622, pSocket.language ); // The gold reserves of the town (if any) in this Region
 				regionValue 		= (myTarget.taxes).toString();
 				break;
 			case regionProp.taxResource:
-				regionLabelTooltip 	= "ID of resource taxed from citizens of the town (if any) in this Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8623, pSocket.language ); // ID of resource taxed from citizens of the town (if any) in this Region
 				regionValue 		= "0x" + (myTarget.taxResource).toString(16);
 				break;
 			case regionProp.weather:
-				regionLabelTooltip 	= "Weather ID from weather.dfn associated with this Region";
+				regionLabelTooltip 	= GetDictionaryEntry( 8624, pSocket.language ); // Weather ID from weather.dfn associated with this Region
 				regionValue 		= (myTarget.weather).toString();
 				break;
 			case regionProp.worldNumber:
-				regionLabelTooltip 	= "World number that Region exists in";
+				regionLabelTooltip 	= GetDictionaryEntry( 8625, pSocket.language ); // World number that Region exists in
 				regionValue 		= (myTarget.worldNumber).toString();
 				break;
 			default:
@@ -3019,7 +3040,8 @@ function HandleRegionTarget( pSocket, myTarget )
 		{
 			// Labels
 			regionGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + regionLabel + propertyLabelEnd );
-			regionGump.AddToolTip( 1050045, pSocket, regionLabelTooltip.toString() );
+			if( enableTooltips )
+				regionGump.AddToolTip( 1050045, pSocket, regionLabelTooltip.toString() );
 
 			if( regionValue == "-" )
 				regionValueTooltip = "Value not set";
@@ -3031,7 +3053,8 @@ function HandleRegionTarget( pSocket, myTarget )
 					break;
 				default:
 					regionGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-					regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ));
+					if( enableTooltips )
+						regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ));
 					break;
 			}
 
@@ -3042,7 +3065,8 @@ function HandleRegionTarget( pSocket, myTarget )
 			{
 				case regionProp.population:
 				case regionProp.numOrePrefs:
-					regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ) + " (Read-Only)");
+					if( enableTooltips )
+						regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3158,108 +3182,108 @@ function HandleAccountTarget( pSocket, myTarget )
 		switch( i + 800 )
 		{
 			case accountProp.comment:
-				accountLabelTooltip = "Contact info/comment for Account";
+				accountLabelTooltip = GetDictionaryEntry( 8700, pSocket.language ); // Contact info/comment for Account
 				accountValue 		= (myTarget.comment).toString();
 				break;
 			case accountProp.character1:
-				accountLabelTooltip = "Character in slot 1 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8701, pSocket.language ); // Character in slot 1 on Account
 				accountValue 		= (ValidateObject(myTarget.character1) ? (myTarget.character1.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.character2:
-				accountLabelTooltip = "Character in slot 2 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8702, pSocket.language ); // Character in slot 2 on Account
 				accountValue 		= (ValidateObject(myTarget.character2) ? (myTarget.character2.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.character3:
-				accountLabelTooltip = "Character in slot 3 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8703, pSocket.language ); // Character in slot 3 on Account
 				accountValue 		= (ValidateObject(myTarget.character3) ? (myTarget.character3.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.character4:
-				accountLabelTooltip = "Character in slot 4 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8704, pSocket.language ); // Character in slot 4 on Account
 				accountValue 		= (ValidateObject(myTarget.character4) ? (myTarget.character4.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.character5:
-				accountLabelTooltip = "Character in slot 5 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8705, pSocket.language ); // Character in slot 5 on Account
 				accountValue 		= (ValidateObject(myTarget.character5) ? (myTarget.character5.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.character6:
-				accountLabelTooltip = "Character in slot 6 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8706, pSocket.language ); // Character in slot 6 on Account
 				accountValue 		= (ValidateObject(myTarget.character6) ? (myTarget.character6.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.character7:
-				accountLabelTooltip = "Character in slot 7 on Account";
+				accountLabelTooltip = GetDictionaryEntry( 8707, pSocket.language ); // Character in slot 7 on Account
 				accountValue 		= (ValidateObject(myTarget.character7) ? (myTarget.character7.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.currentChar:
-				accountLabelTooltip = "Currently logged in character (if any)";
+				accountLabelTooltip = GetDictionaryEntry( 8708, pSocket.language ); // Currently logged in character (if any)
 				accountValue 		= (ValidateObject(myTarget.currentChar) ? (myTarget.currentChar.name).toString() : "<BASEFONT color=#EECD8B>-</BASEFONT>");
 				break;
 			case accountProp.flags:
-				accountLabelTooltip = "Flags set on Account (Read-Only)";
+				accountLabelTooltip = GetDictionaryEntry( 8709, pSocket.language ); // Flags set on Account (Read-Only)
 				accountValue 		= "<BASEFONT color=#EECD8B>0x" + (myTarget.flags).toString(16) + "</BASEFONT>";
 				break;
 			case accountProp.lastIP:
-				accountLabelTooltip = "Last IP used to login with this Account (Read-Only)";
+				accountLabelTooltip = GetDictionaryEntry( 8710, pSocket.language ); // Last IP used to login with this Account (Read-Only)
 				accountValue 		= "<BASEFONT color=#EECD8B>" + (myTarget.lastIP).toString() + "</BASEFONT>";
 				break;
 			// Flags
 			case accountProp.isBanned:
-				accountLabelTooltip = "Is this Account banned?";
+				accountLabelTooltip = GetDictionaryEntry( 8711, pSocket.language ); // Is this Account banned?
 				accountValue 		= (myTarget.isBanned ? "true" : "false");
 				break;
 			case accountProp.isCounselor:
-				accountLabelTooltip = "Is this Account marked as a Counselor account?";
+				accountLabelTooltip = GetDictionaryEntry( 8712, pSocket.language ); // Is this Account marked as a Counselor account?
 				accountValue 		= (myTarget.isCounselor ? "true" : "false");
 				break;
 			case accountProp.isGM:
-				accountLabelTooltip = "Is this Account marked as a GM account?";
+				accountLabelTooltip = GetDictionaryEntry( 8713, pSocket.language ); // Is this Account marked as a GM account?
 				accountValue 		= (myTarget.isGM ? "true" : "false");
 				break;
 			case accountProp.isOnline:
-				accountLabelTooltip = "Is someone logged on to this Account currently? (Read-Only)";
+				accountLabelTooltip = GetDictionaryEntry( 8714, pSocket.language ); // Is someone logged on to this Account currently? (Read-Only)
 				accountValue 		= "<BASEFONT color=#EECD8B>" + (myTarget.isOnline ? "true" : "false") + "</BASEFONT>";
 				break;
 			case accountProp.isPublic:
-				accountLabelTooltip = "Is contact/comments for this account marked as public? (does nothing atm)";
+				accountLabelTooltip = GetDictionaryEntry( 8715, pSocket.language ); // Is contact/comments for this account marked as public? (does nothing atm)
 				accountValue 		= (myTarget.isPublic ? "true" : "false");
 				break;
 			case accountProp.isSeer:
-				accountLabelTooltip = "Is this Account marked as a Seer account?";
+				accountLabelTooltip = GetDictionaryEntry( 8716, pSocket.language ); // Is this Account marked as a Seer account?
 				accountValue 		= (myTarget.isSeer ? "true" : "false");
 				break;
 			case accountProp.isSlot1Blocked:
-				accountLabelTooltip = "Is slot 1 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8717, pSocket.language ); // Is slot 1 on this Account blocked?
 				accountValue 		= (myTarget.isSlot1Blocked ? "true" : "false");
 				break;
 			case accountProp.isSlot2Blocked:
-				accountLabelTooltip = "Is slot 2 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8718, pSocket.language ); // Is slot 2 on this Account blocked?
 				accountValue 		= (myTarget.isSlot2Blocked ? "true" : "false");
 				break;
 			case accountProp.isSlot3Blocked:
-				accountLabelTooltip = "Is slot 3 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8719, pSocket.language ); // Is slot 3 on this Account blocked?
 				accountValue 		= (myTarget.isSlot3Blocked ? "true" : "false");
 				break;
 			case accountProp.isSlot4Blocked:
-				accountLabelTooltip = "Is slot 4 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8720, pSocket.language ); // Is slot 4 on this Account blocked?
 				accountValue 		= (myTarget.isSlot4Blocked ? "true" : "false");
 				break;
 			case accountProp.isSlot5Blocked:
-				accountLabelTooltip = "Is slot 5 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8721, pSocket.language ); // Is slot 5 on this Account blocked?
 				accountValue 		= (myTarget.isSlot5Blocked ? "true" : "false");
 				break;
 			case accountProp.isSlot6Blocked:
-				accountLabelTooltip = "Is slot 6 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8722, pSocket.language ); // Is slot 6 on this Account blocked?
 				accountValue 		= (myTarget.isSlot6Blocked ? "true" : "false");
 				break;
 			case accountProp.isSuspended:
-				accountLabelTooltip = "Is this Account suspended?";
+				accountLabelTooltip = GetDictionaryEntry( 8723, pSocket.language ); // Is this Account suspended?
 				accountValue 		= (myTarget.isSuspended ? "true" : "false");
 				break;
 			case accountProp.isSlot7Blocked:
-				accountLabelTooltip = "Is slot 7 on this Account blocked?";
+				accountLabelTooltip = GetDictionaryEntry( 8724, pSocket.language ); // Is slot 7 on this Account blocked?
 				accountValue 		= (myTarget.isSlot7Blocked ? "true" : "false");
 				break;
 			case accountProp.timeban:
-				accountLabelTooltip = "How long is user banned for, in minutes?";
+				accountLabelTooltip = GetDictionaryEntry( 8725, pSocket.language ); // How long is user banned for, in minutes?
 				if( myTarget.timeban > 0 )
 				{
 					var currentTime = new Date();
@@ -3290,7 +3314,8 @@ function HandleAccountTarget( pSocket, myTarget )
 		{
 			// Labels
 			accountGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + accountLabel + propertyLabelEnd );
-			accountGump.AddToolTip( 1050045, pSocket, accountLabelTooltip.toString() );
+			if( enableTooltips )
+				accountGump.AddToolTip( 1050045, pSocket, accountLabelTooltip.toString() );
 
 			if( accountValue == "-" )
 				accountValueTooltip = "Value not set";
@@ -3316,7 +3341,8 @@ function HandleAccountTarget( pSocket, myTarget )
 						|| ( propertyName == "CurrentChar" && !ValidateObject( myTarget.currentChar )))
 						break;
 					accountGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
-					accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
+					if( enableTooltips )
+						accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
 					break;
 			}
 
@@ -3331,7 +3357,8 @@ function HandleAccountTarget( pSocket, myTarget )
 				case accountProp.lastClientVerShort:
 				case accountProp.isOnline:
 				case accountProp.flags:
-					accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
+					if( enableTooltips )
+						accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3363,13 +3390,14 @@ function HandleAccountTarget( pSocket, myTarget )
 // Show input gump for chosen property
 function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength, maxVal, propertyHint )
 {
+	var pSocket = pUser.socket;
 	var inputBackgroundHeight = (Math.ceil(maxLength / 40) * 15);
 	var inputBackgroundWidth = 285;
 	var inputBackgroundLeft = 10;
 	var propertyTypeExtra = "";
 
 	if( propertyDesc = "" )
-		propertyDesc = "Enter new value";
+		propertyDesc = GetDictionaryEntry( 8800, pSocket.language ); // Enter new value
 
 	switch( propertyType )
 	{
@@ -3392,11 +3420,11 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 			break;
 		case "SkillValue":
 			propertyTypeExtra = ", 0.0 - ~" + parseFloat(maxVal).toFixed(1).toString();
-			propertyHint += " <BASEFONT COLOR=red>IMPORTANT:</BASEFONT> Changes made to effective skill values are not saved, and will be gone if server restarts. For permanent skill changes, adjust baseskills property instead!";
+			propertyHint += " <BASEFONT COLOR=red>IMPORTANT:</BASEFONT> " + GetDictionaryEntry( 8801, pSocket.language ); // Changes made to effective skill values are not saved, and will be gone if server restarts. For permanent skill changes, adjust baseskills property instead!
 			break;
 		case "BaseSkillValue":
 			propertyTypeExtra = ", 0.0 - ~" + parseFloat(maxVal).toFixed(1).toString();
-			propertyHint += " Traditionally ranges from 0.0 to 100.0, but varies based on UO era, power-scrolls, etc.";
+			propertyHint += " " + GetDictionaryEntry( 8802, pSocket.language ); // Traditionally ranges from 0.0 to 100.0, but varies based on UO era, power-scrolls, etc.
 			break;
 		default:
 			break;
@@ -3445,7 +3473,8 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 			{
 				var hexVal = "0x" + ("00000000"+(Number(targetObj[propertyName]).toString(16))).slice(-8)
 				inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, hexVal, maxLength );
-				inputGump.AddToolTip( 1050045, pUser.socket, (targetObj[propertyName]).toString() );
+				if( enableTooltips )
+					inputGump.AddToolTip( 1050045, pUser.socket, (targetObj[propertyName]).toString() );
 			}
 			else
 				inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, "0x" + (targetObj[propertyName]).toString(16), maxLength );
@@ -3457,9 +3486,11 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 		else if( propertyType == "UOXObject" && propertyName != "race" )
 		{
 			inputGump.AddButton( 20, 66, 0xfae, 0xfaf, 1, 0, 1002 ); // Assign new Object
-				inputGump.AddToolTip( 1050045, pUser.socket, "Assign new Object" );
+			if( enableTooltips )
+				inputGump.AddToolTip( 1050045, pUser.socket, GetDictionaryEntry( 8804, pSocket.language )); // Assign new Object
 			inputGump.AddButton( 245, 66, 0xfb4, 0xfb5, 1, 0, 1001 ); 	// Clear Object
-				inputGump.AddToolTip( 1050045, pUser.socket, "Clear Object" );
+			if( enableTooltips )
+				inputGump.AddToolTip( 1050045, pUser.socket, GetDictionaryEntry( 8805, pSocket.language )); // Clear Object
 			if( targetObj[propertyName] == null )
 				inputGump.AddHTMLGump( 50, 70, 195, 20, 0, 0, "<CENTER><BASEFONT color=#EECD8B> - </BASEFONT></CENTER>" );
 			else
@@ -3541,7 +3572,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 
 	if( targetObj == null )
 	{
-		pSocket.SysMessage( "Object no longer exists." );
+		pSocket.SysMessage( GetDictionaryEntry( 8803, pSocket.language )); // Object no longer exists.
 		pSocket.tempObj2 = null;
 		return;
 	}
@@ -3588,77 +3619,77 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 2: // ID
 			propertyName = "id";
 			propertyType = "Hexadecimal";
-			propertyHint = "ID of object";
+			propertyHint = GetDictionaryEntry( 8806, pSocket.language ); // ID of object
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case itemProp.ammoFX:
 			propertyName = "ammoFX";
 			propertyType = "Hexadecimal";
-			propertyHint = "ID of moving effect played when ranged weapon fires projectile";
+			propertyHint = GetDictionaryEntry( 8125, pSocket.language ); // ID of moving effect played when ranged weapon fires projectile
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case itemProp.ammoFXHue:
 			propertyName = "ammoFXHue";
 			propertyType = "Hexadecimal";
-			propertyHint = "Hue of moving effect played when ranged weapon fires projectile";
+			propertyHint = GetDictionaryEntry( 8126, pSocket.language ); // Hue of moving effect played when ranged weapon fires projectile
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case itemProp.ammoHue:
 			propertyName = "ammoHue";
 			propertyType = "Hexadecimal";
-			propertyHint = "Hue of item used as ammo by ranged weapon";
+			propertyHint = GetDictionaryEntry( 8128, pSocket.language ); // Hue of item used as ammo by ranged weapon
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case itemProp.ammoID:
 			propertyName = "ammoID";
 			propertyType = "Hexadecimal";
-			propertyHint = "ID of item used as ammo by ranged weapon";
+			propertyHint = GetDictionaryEntry( 8129, pSocket.language ); // ID of item used as ammo by ranged weapon
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case itemProp.colour:
 			propertyName = "colour";
 			propertyType = "Hexadecimal";
-			propertyHint = "Colour of item";
+			propertyHint = GetDictionaryEntry( 8134, pSocket.language ); // Colour of item
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case itemProp.layer:
 			propertyName = "layer";
 			propertyType = "Hexadecimal";
-			propertyHint = 'Layer that characters will equip item on <BR>(<A HREF="https://www.uox3.org/docs/index.html#itemLayers">See list of Layers in UOX3 Docs</A>)';
+			propertyHint = GetDictionaryEntry( 8162, pSocket.language ) + ' <BR>(<A HREF="https://www.uox3.org/docs/index.html#itemLayers">See list of Layers in UOX3 Docs</A>)';
 			maxLength = 4;
 			maxVal = 0x1d;
 			break;
 		case itemProp.more:
 			propertyName = "more";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			propertyHint = GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things. Can enter value as hexadecimal or decimal.
 			maxLength = 10;
 			maxVal = 0xffffffff;
 			break;
 		case itemProp.morex:
 			propertyName = "morex";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			propertyHint = GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things. Can enter value as hexadecimal or decimal.
 			maxLength = 10;
 			maxVal = 0xffffffff;
 			break;
 		case itemProp.morey:
 			propertyName = "morey";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			propertyHint = GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things. Can enter value as hexadecimal or decimal.
 			maxLength = 10;
 			maxVal = 0xffffffff;
 			break;
 		case itemProp.morez:
 			propertyName = "morez";
 			propertyType = "Hexadecimal";
-			propertyHint = "Generic item property used for many different things. Can enter value as hexadecimal or decimal.";
+			propertyHint = GetDictionaryEntry( 8170, pSocket.language ); // Generic item property used for many different things. Can enter value as hexadecimal or decimal.
 			maxLength = 10;
 			maxVal = 0xffffffff;
 			break;
@@ -3666,21 +3697,21 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.colour:
 			propertyName = "colour";
 			propertyType = "Hexadecimal";
-			propertyHint = "Colour of character's body";
+			propertyHint = GetDictionaryEntry( 8314, pSocket.language ); // Colour of character's body
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case charProp.direction:
 			propertyName = "direction";
 			propertyType = "Hexadecimal";
-			propertyHint = "Current direction character is facing";
+			propertyHint = GetDictionaryEntry( 8321, pSocket.language ); // Current direction character is facing
 			maxLength = 4;
 			maxVal = 0xff;
 			break;
 		case charProp.emoteColour:
 			propertyName = "emoteColour";
 			propertyType = "Hexadecimal";
-			propertyHint = "Colour of character's emotes";
+			propertyHint = GetDictionaryEntry( 8322, pSocket.language ); // Colour of character's emotes
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
@@ -3694,28 +3725,28 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.nextAct:
 			propertyName = "nextAct";
 			propertyType = "Hexadecimal";
-			propertyHint = "The next spellcasting action character is going to do";
+			propertyHint = GetDictionaryEntry( 8369, pSocket.language ); // The next spellcasting action character is going to do
 			maxLength = 4;
 			maxVal = 0xff;
 			break;
 		case charProp.orgID:
 			propertyName = "orgID";
 			propertyType = "Hexadecimal";
-			propertyHint = "Character's original body ID";
+			propertyHint = GetDictionaryEntry( 8376, pSocket.language ); // Character's original body ID
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case charProp.orgSkin:
 			propertyName = "orgSkin";
 			propertyType = "Hexadecimal";
-			propertyHint = "Character's original skin (colour)";
+			propertyHint = GetDictionaryEntry( 8377, pSocket.language ); // Character's original skin (colour)
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
 		case charProp.sayColour:
 			propertyName = "sayColour";
 			propertyType = "Hexadecimal";
-			propertyHint = "Colour of character's speech";
+			propertyHint = GetDictionaryEntry( 8389, pSocket.language ); // Colour of character's speech
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
@@ -3723,7 +3754,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case multiProp.colour:
 			propertyName = "colour";
 			propertyType = "Hexadecimal";
-			propertyHint = "Colour of Multi";
+			propertyHint = GetDictionaryEntry( 8504, pSocket.language ); // Colour of Multi
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
@@ -3731,7 +3762,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case regionProp.taxResource:
 			propertyName = "taxResource";
 			propertyType = "Hexadecimal";
-			propertyHint = "ID of the type of resource being taxed in the Region";
+			propertyHint = GetDictionaryEntry( 8623, pSocket.language ); // ID of the type of resource being taxed in the Region
 			maxLength = 6;
 			maxVal = 0xffff;
 			break;
@@ -3740,77 +3771,77 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 10: // Item or Multi Name
 			propertyName = "name";
 			propertyType = "Text";
-			propertyHint = "Name of Item/Multi, capped at 127 characters";
+			propertyHint = GetDictionaryEntry( 8807, pSocket.language ); // Name of Item/Multi, capped at 127 characters
 			maxLength = 127;
 			break;
 		case 11: // Character Name
 			propertyName = "name";
 			propertyType = "Text";
-			propertyHint = "Name of character, capped at 30 characters";
+			propertyHint = GetDictionaryEntry( 8808, pSocket.language ); // Name of character, capped at 30 characters
 			maxLength = 30;
 			break;
 		case 12: // Region Name
 			propertyName = "name";
 			propertyType = "Text";
-			propertyHint = "Name of Region, capped at 50 characters";
+			propertyHint = GetDictionaryEntry( 8809, pSocket.language ); // Name of Region, capped at 50 characters
 			maxLength = 50;
 			break;
 		case itemProp.desc:
 			propertyName = "desc";
 			propertyType = "Text";
-			propertyHint = "Tip: Description for item on player vendor";
+			propertyHint = GetDictionaryEntry( 8147, pSocket.language ); // Description of item - used for items sold on player vendors
 			maxLength = 127;
 			break;
 		case itemProp.name2:
 			propertyName = "name2";
 			propertyType = "Text";
-			propertyHint = "Tip: Second name, revealed with Item ID";
+			propertyHint = GetDictionaryEntry( 8175, pSocket.language ); // Secondary name of object, revealed using item identification
 			maxLength = 127;
 			break;
 		case itemProp.spawnsection:
 			propertyName = "spawnSection";
 			propertyType = "Text";
-			propertyHint = "Tip: itemSectionID to spawn";
+			propertyHint = GetDictionaryEntry( 8192, pSocket.language ); // SpawnSection used to spawn objects from - SpawnObject only
 			maxLength = 127;
 			break;
 		// Character properties
 		case charProp.foodList:
 			propertyName = "foodList";
 			propertyType = "Text";
-			propertyHint = "SectionID for list of food that creature will accept as food, from UOX3/dfndata/items/itemlists/foodlist.dfn";
+			propertyHint = GetDictionaryEntry( 8325, pSocket.language ); // ID of foodlist that a creature will accept as food, from UOX3/dfndata/items/itemlists/foodlists.dfn
 			maxLength = 127;
 			break;
 		case charProp.guildTitle:
 			propertyName = "guildTitle";
 			propertyType = "Text";
-			propertyHint = "Guild title of character. Normally set by Guild Master via Guild menu.";
+			propertyHint = GetDictionaryEntry( 8329, pSocket.language ); // Guild title of character. Normally set by Guild Master via Guild menu.
 			maxLength = 127;
 			break;
 		case charProp.title:
 			propertyName = "title";
 			propertyType = "Text";
-			propertyHint = "The title of the character";
+			propertyHint = GetDictionaryEntry( 8417, pSocket.language ); // The title of the character
 			maxLength = 59;
 			break;
 		// Multi Properties
 		case multiProp.deed:
 			propertyName = "deed";
 			propertyType = "Text";
-			propertyHint = "Section Item ID of deed used to create Multi";
+			propertyHint = GetDictionaryEntry( 8505, pSocket.language ); // Section Item ID of deed used to create Multi
 			maxLength = 127;
 			break;
 		// Region Properties
 		case regionProp.owner:
 			propertyName = "owner";
 			propertyType = "Text";
-			propertyHint = "The owner of guards in the Region";
+			propertyHint = GetDictionaryEntry( 8616, pSocket.language ); // The owner of guards in the Region
 			maxLength = 30;
 			break;
 		// Account Properties
 		case accountProp.comment:
 			propertyName = "comment";
 			propertyType = "Text";
-			propertyHint = "Contact info/comment for Account";
+			propertyHint = GetDictionaryEntry( 8700, pSocket.language ); // Contact info/comment for Account
 			maxLength = 200;
 			break;
 
@@ -3818,255 +3849,262 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case itemProp.ammoFXRender:
 			propertyName = "ammoFXRender";
 			propertyType = "Integer";
-			propertyHint = "Render mode of moving effect played when ranged weapon fires projectile (0 - normal, 1 - transparent, 2 - additive, 3 - dark colors transparent, 4 - bright colors transparent, 5 - semi transparent, 6 - subtractive/negative colors, 7 - inverted colors?)";
+			propertyHint = GetDictionaryEntry( 8127, pSocket.language ) + " (0 - normal, 1 - transparent, 2 - additive, 3 - dark colors transparent, 4 - bright colors transparent, 5 - semi transparent, 6 - subtractive/negative colors, 7 - inverted colors?)";
 			maxLength = 1;
 			maxVal = 7;
 			break;
 		case itemProp.amount:
 			propertyName = "amount";
 			propertyType = "Integer";
-			propertyHint = "Amount of items in stack";
+			propertyHint = GetDictionaryEntry( 8130, pSocket.language ); // Amount of items in pile, or amount of items restocked on shopkeeper
 			break;
 		case itemProp.baseWeight:
 			propertyName = "baseWeight";
 			propertyType = "Integer";
-			propertyHint = "Base weight of item (100 = 1.0 stones)";
+			propertyHint = GetDictionaryEntry( 8810, pSocket.language ); // Base weight of item (100 = 1.0 stones)
 			break;
 		case itemProp.buyvalue:
 			propertyName = "buyvalue";
 			propertyType = "Integer";
-			propertyHint = "Value of item when bought by NPC";
+			propertyHint = GetDictionaryEntry( 8132, pSocket.language ); // Item's buy value - price player needs to pay to buy item from NPC shopkeeper
 			break;
 		case itemProp.carveSection:
 			propertyName = "carveSection";
 			propertyType = "Integer";
-			propertyHint = "ID of section in carve DFNs that triggers if this item is carved - used for corpses";
+			propertyHint = GetDictionaryEntry( 8133, pSocket.language ); // ID of section in carve DFNs that triggers if this item is carved - used for corpses
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case itemProp.def:
 			propertyName = "def";
 			propertyType = "Integer";
-			propertyHint = "Defensive value of item, aka PHYSICAL resist (or AR in older UO)";
+			propertyHint = GetDictionaryEntry( 8146, pSocket.language ); // Defensive value of item (Physical Resistance post-AoS, AR in older UO)
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.dir:
 			propertyName = "dir";
 			propertyType = "Integer";
-			propertyHint = "Direction of item - used to determine light type on light sources";
+			propertyHint = GetDictionaryEntry( 8149, pSocket.language ); // Direction of item - used to determine light type on light sources
 			maxLength = 4;
 			maxVal = 128;
 			break;
 		case itemProp.entryMadeFrom:
 			propertyName = "entryMadeFrom";
 			propertyType = "Integer";
-			propertyHint = "The ID of entry from Create DFN that item was crafted from (if any)";
+			propertyHint = GetDictionaryEntry( 8150, pSocket.language ); // The ID of entry from Create DFN that item was crafted from (if any)
 			break;
 		case itemProp.health:
 			propertyName = "health";
 			propertyType = "Integer";
-			propertyHint = "Item's current health/hitpoints (cannot exceed value of maxhp property)";
+			propertyHint = GetDictionaryEntry( 8151, pSocket.language ); // Item's current health/hitpoints (cannot exceed value of maxhp property)
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case itemProp.hidamage:
 			propertyName = "hidamage";
 			propertyType = "Integer";
-			propertyHint = "Max damage item can deal in combat (randomized between lodamage and hidamage)";
+			propertyHint = GetDictionaryEntry( 8152, pSocket.language ); // Max damage item can deal in combat (randomized between lodamage and hidamage)
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case itemProp.instanceID:
 			propertyName = "instanceID";
 			propertyType = "Integer";
-			propertyHint = "ID of instance of world that item exists in. Objects in different instances will not be able to interact with one another!";
+			propertyHint = GetDictionaryEntry( 8153, pSocket.language ); // ID of instance of world that item exists in. Objects in different instances will not be able to interact with one another!
 			break;
 		case itemProp.lodamage:
 			propertyName = "lodamage";
 			propertyType = "Integer";
-			propertyHint = "Lowest damage item can deal in combat";
+			propertyHint = GetDictionaryEntry( 8163, pSocket.language ); // Lowest damage item can deal in combat
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case itemProp.madeWith:
 			propertyName = "madeWith";
 			propertyType = "Integer";
-			propertyHint = "Skill ID used to create item";
+			propertyHint = GetDictionaryEntry( 8164, pSocket.language ); // Skill ID used to create item
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case itemProp.maxhp:
 			propertyName = "maxhp";
 			propertyType = "Integer";
-			propertyHint = "Maximum amount of hitpoints item can have";
+			propertyHint = GetDictionaryEntry( 8165, pSocket.language ); // Maximum amount of hitpoints item can have
 			maxVal = 32767;
 			break;
 		case itemProp.maxinterval:
 			propertyName = "maxinterval";
 			propertyType = "Integer";
-			propertyHint = "Max interval in seconds between respawns - SpawnObjects only";
+			propertyHint = GetDictionaryEntry( 8166, pSocket.language ); // Max interval in seconds between respawns - SpawnObjects only
 			maxLength = 3;
 			maxVal = 255;
 			break;
 		case itemProp.maxItems:
 			propertyName = "maxItems";
 			propertyType = "Integer";
-			propertyHint = "Max items a container can contain";
+			propertyHint = GetDictionaryEntry( 8167, pSocket.language ); // Max items a container can contain
 			break;
 		case itemProp.mininterval:
 			propertyName = "mininterval";
 			propertyType = "Integer";
-			propertyHint = "Min interval in seconds between respawns - SpawnObjects only";
+			propertyHint = GetDictionaryEntry( 8169, pSocket.language ); // Min interval in seconds between respawns - SpawnObjects only
 			maxLength = 3;
 			maxVal = 255;
+			break;
+		case itemProp.movable:
+			propertyName = "movable";
+			propertyHint = GetDictionaryEntry( 8174, pSocket.language ); // Movable state of item (0 - default, 1 - movable, 2 - not movable, 3 - locked down)
+			propertyType = "Integer";
+			maxLength = 1;
+			maxVal = 9;
 			break;
 		case itemProp.poison:
 			propertyName = "poison";
 			propertyType = "Integer";
-			propertyHint = "Poison level of item from 0 to 5";
+			propertyHint = GetDictionaryEntry( 8178, pSocket.language ); // Poison level of item from 0 to 5
 			maxLength = 1;
 			maxVal = 5;
 			break;
 		case itemProp.race:
 			propertyName = "race";
 			propertyType = "Integer";
-			propertyHint = "Item deals double damage versus specified race";
+			propertyHint = GetDictionaryEntry( 8179, pSocket.language ); // Item deals double damage versus specified race
 			break;
 		case itemProp.rank:
 			propertyName = "rank";
 			propertyType = "Integer";
-			propertyHint = "Quality of item determined at time of crafting";
+			propertyHint = GetDictionaryEntry( 8180, pSocket.language ); // Quality of item determined at time of crafting
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case itemProp.resistHeat:
 			propertyName = "resistHeat";
 			propertyType = "Integer";
-			propertyHint = "Item's Heat/Fire Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8181, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Heat/Fire Resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.resistCold:
 			propertyName = "resistCold";
 			propertyType = "Integer";
-			propertyHint = "Item's Cold Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8182, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Cold Resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.resistLight:
 			propertyName = "resistLight";
 			propertyType = "Integer";
-			propertyHint = "Item's Light Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8183, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Light resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.resistLightning:
 			propertyName = "resistLightning";
 			propertyType = "Integer";
-			propertyHint = "Item's Lightning Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8184, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Lightning/Energy Resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.resistPoison:
 			propertyName = "resistPoison";
 			propertyType = "Integer";
-			propertyHint = "Item's Poison Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8185, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Poison Resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.resistRain:
 			propertyName = "resistRain";
 			propertyType = "Integer";
-			propertyHint = "Item's Rain/Water Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8186, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Rain Resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.resistSnow:
 			propertyName = "resistSnow";
 			propertyType = "Integer";
-			propertyHint = "Item's Snow Resistance value (0-1000, where 1000 = 100.0%)";
+			propertyHint = GetDictionaryEntry( 8187, pSocket.language ) + " (0-1000, where 1000 = 100.0%)"; // Item's Snow Resistance
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case itemProp.restock:
 			propertyName = "restock";
 			propertyType = "Integer";
-			propertyHint = "Amount of this item that vendors will restock by default";
+			propertyHint = GetDictionaryEntry( 8188, pSocket.language ); // Amount of this item that vendors will restock by default
 			break;
 		case itemProp.scripttrigger:
 			propertyName = "scripttrigger";
 			propertyType = "Integer";
-			propertyHint = "JS Script from jse_fileassociations.scp assigned to Item";
+			propertyHint = GetDictionaryEntry( 8189, pSocket.language ); // JS Script from jse_fileassociations.scp assigned to Item
 			break;
 		case itemProp.sellvalue:
 			propertyName = "sellvalue";
 			propertyType = "Integer";
-			propertyHint = "Item's sell value - price player can sell item to NPC shopkeeper for";
+			propertyHint = GetDictionaryEntry( 8191, pSocket.language ); // Item's sell value - price player can sell item to NPC shopkeeper for
 			break;
 		case itemProp.speed:
 			propertyName = "speed";
 			propertyType = "Integer";
-			propertyHint = "Attack speed of item - used by weapons";
+			propertyHint = GetDictionaryEntry( 8193, pSocket.language ); // Attack speed of item - used by weapons
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case itemProp.strength:
 			propertyName = "strength";
 			propertyType = "Integer";
-			propertyHint = "Strength required to equip item";
+			propertyHint = GetDictionaryEntry( 8194, pSocket.language ); // Strength required to equip item
 			maxVal = 32767;
 			break;
 		case itemProp.tempTimer:
 			propertyName = "tempTimer";
 			propertyType = "Integer";
-			propertyHint = "Temporary timer used by spawners";
+			propertyHint = GetDictionaryEntry( 8195, pSocket.language ); // Temporary timer used by spawners
 			break;
 		case itemProp.type:
 			propertyName = "type";
 			propertyType = "Integer";
-			propertyHint = 'Item type of item - determines double-click behaviour<BR><A HREF="https://www.uox3.org/docs/index.html#itemTypes">See list of Item Types in UOX3 Docs</A>';
+			propertyHint = GetDictionaryEntry( 8171, pSocket.language ) + '<BR><A HREF="https://www.uox3.org/docs/index.html#itemTypes">See list of Item Types in UOX3 Docs</A>'; // Item type of item - determines double-click
 			break;
 		case itemProp.visible:
 			propertyName = "visible";
 			propertyType = "Integer";
-			propertyHint = "Determines who item is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)";
+			propertyHint = GetDictionaryEntry( 8197, pSocket.language ); // Determines who item is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 			maxLength = 1;
 			maxVal = 3;
 			break;
 		case itemProp.weight:
 			propertyName = "weight";
 			propertyType = "Integer";
-			propertyHint = "Total weight of item (100 = 1.0 stone)";
+			propertyHint = GetDictionaryEntry( 8198, pSocket.language ); // Weight of item (100 = 1.0 stone)
 			break;
 		case itemProp.weightMax:
 			propertyName = "weightMax";
 			propertyType = "Integer";
-			propertyHint = "Maximum weight a container can hold (100 = 1.0 stone)";
+			propertyHint = GetDictionaryEntry( 8199, pSocket.language ); // Maximum weight a container can hold (100 = 1.0 stone)
 			break;
 		case itemProp.worldnumber:
 			propertyName = "worldnumber";
 			propertyType = "Integer";
-			propertyHint = "World that item exists in";
+			propertyHint = GetDictionaryEntry( 8201, pSocket.language ); // World that item exists in
 			break;
 		case itemProp.x:
 			propertyName = "x";
 			propertyType = "Integer";
-			propertyHint = "X coordinate of item in the world - or in container";
+			propertyHint = GetDictionaryEntry( 8202, pSocket.language ); // X coordinate of item in the world - or in container
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case itemProp.y:
 			propertyName = "y";
 			propertyType = "Integer";
-			propertyHint = "Y coordinate of item in the world - or in container";
+			propertyHint = GetDictionaryEntry( 8203, pSocket.language ); // Y coordinate of item in the world - or in container
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case itemProp.z:
 			propertyName = "z";
 			propertyType = "Integer";
-			propertyHint = "Z coordinate of item in the world - or in container";
+			propertyHint = GetDictionaryEntry( 8204, pSocket.language ); // Z coordinate of item in the world - or in container
 			maxLength = 3;
 			maxVal = 127;
 			break;
@@ -4074,175 +4112,175 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.aitype:
 			propertyName = "aitype";
 			propertyType = "Integer";
-			propertyHint = 'NPC AI Type<BR>(<A HREF="https://www.uox3.org/docs/index.html#uox3NPCAI">See more info on NPC AIs in UOX3 Docs</A>)';
+			propertyHint = GetDictionaryEntry( 8301, pSocket.language ) + '<BR>(<A HREF="https://www.uox3.org/docs/index.html#uox3NPCAI">See more info on NPC AIs in UOX3 Docs</A>)'; // NPC AI Type
 			maxLength = 3;
 			maxVal = 128;
 			break;
 		case charProp.brkPeaceChance:
 			propertyName = "brkPeaceChance";
 			propertyType = "Integer";
-			propertyHint = "Chance of character affected by peacemaking will break out of peace state";
+			propertyHint = GetDictionaryEntry( 8308, pSocket.language ); // Chance of character affected by peacemaking will break out of peace state
 			maxLength = 3;
 			maxVal = 100;
 			break;
 		case charProp.cell:
 			propertyName = "cell";
 			propertyType = "Integer";
-			propertyHint = "Jail cell character is locked up in. If -1, means character is not jailed.";
+			propertyHint = GetDictionaryEntry( 8313, pSocket.language ); // Jail cell character is locked up in. If -1, means character is not jailed.
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case charProp.commandlevel:
 			propertyName = "commandlevel";
 			propertyType = "Integer";
-			propertyHint = "Character's access level to commands. Default setup: 0 = Player, 1 = Counselor, 2 = GM, 5 = Admin";
+			propertyHint = GetDictionaryEntry( 8316, pSocket.language ); // Character's access level to commands. Default setup: 0 = Player, 1 = Counselor, 2 = GM, 5 = Admin
 			maxLength = 1;
 			maxVal = 9;
 			break;
 		case charProp.deaths:
 			propertyName = "deaths";
 			propertyType = "Integer";
-			propertyHint = "Total amount of times (player) character has died";
+			propertyHint = GetDictionaryEntry( 8319, pSocket.language ); // Total amount of times (player) character has died
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case charProp.dexterity:
 			propertyName = "dexterity";
 			propertyType = "Integer";
-			propertyHint = "Dexterity attribute of character";
+			propertyHint = GetDictionaryEntry( 8320, pSocket.language ); // Dexterity attribute of character
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.fame:
 			propertyName = "fame";
 			propertyType = "Integer";
-			propertyHint = "Character's current fame level";
+			propertyHint = GetDictionaryEntry( 8323, pSocket.language ); // Character's current fame level
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.fontType:
 			propertyName = "fontType";
 			propertyType = "Integer";
-			propertyHint = "Font type used by character's speech (0-9 ASCII, 0-12 Unicode)";
+			propertyHint = GetDictionaryEntry( 8324, pSocket.language ); // Font type used by character's speech
 			maxLength = 2;
 			maxVal = 12;
 			break;
 		case charProp.gender:
 			propertyName = "gender";
 			propertyType = "Integer";
-			propertyHint = "Gender of character (male/female)";
+			propertyHint = GetDictionaryEntry( 8327, pSocket.language ); // Gender of character (male/female)
 			maxLength = 1;
 			maxVal = 1;
 			break;
 		case charProp.health:
 			propertyName = "health";
 			propertyType = "Integer";
-			propertyHint = "Character's current health/hitpoints (cannot exceed value of maxhp property)";
+			propertyHint = GetDictionaryEntry( 8330, pSocket.language ); // Character's current health/hitpoints (cannot exceed value of maxhp property)
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.hidamage:
 			propertyName = "hidamage";
 			propertyType = "Integer";
-			propertyHint = "Highest damage character can deal in combat with wrestling/unarmed attacks";
+			propertyHint = GetDictionaryEntry( 8331, pSocket.language ); // Highest damage character can deal in combat with wrestling/unarmed attacks
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.housesCoOwned:
 			propertyName = "housesCoOwned";
 			propertyType = "Integer";
-			propertyHint = "Number of houses co-owned by character (Read-Only)";
+			propertyHint = GetDictionaryEntry( 8333, pSocket.language ); // Number of houses co-owned by character (Read-Only)
 			maxLength = 3;
 			maxVal = 999;
 			break;
 		case charProp.housesOwned:
 			propertyName = "housesOwned";
 			propertyType = "Integer";
-			propertyHint = "Number of houses owned by character (Read-Only)";
+			propertyHint = GetDictionaryEntry( 8334, pSocket.language ); // Number of houses owned by character (Read-Only)
 			maxLength = 3;
 			maxVal = 999;
 			break;
 		case charProp.hunger:
 			propertyName = "hunger";
 			propertyType = "Integer";
-			propertyHint = "Character's current hunger status (0 - 6, where 0 is max hungry and 6 is max full. At 0, characters may start take hunger damage depending on server settings.)";
+			propertyHint = GetDictionaryEntry( 8335, pSocket.language ); // Character's current hunger status (0 - 6, where 0 is max hungry and 6 is max full. At 0, characters may start take hunger damage depending on server settings.)
 			maxLength = 1;
 			maxVal = 6;
 			break;
 		case charProp.hungerWildChance:
 			propertyName = "hungerWildChance";
 			propertyType = "Integer";
-			propertyHint = "Chance for extremely hungry pet to go wild with every NPC AI loop";
+			propertyHint = GetDictionaryEntry( 8336, pSocket.language ); // Chance for extremely hungry pet to go wild with every NPC AI loop
 			maxLength = 3;
 			maxVal = 100;
 			break;
 		case charProp.instanceID:
 			propertyName = "instanceID";
 			propertyType = "Integer";
-			propertyHint = "ID of instance character is currently in. Objects in different instances will not be able to interact with one another!";
+			propertyHint = GetDictionaryEntry( 8338, pSocket.language ); // ID of instance character is currently in. Objects in different instances will not be able to interact with one another!
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case charProp.intelligence:
 			propertyName = "intelligence";
 			propertyType = "Integer";
-			propertyHint = "Intelligence attribute of character";
+			propertyHint = GetDictionaryEntry( 8339, pSocket.language ); // Intelligence attribute of character
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.karma:
 			propertyName = "karma";
 			propertyType = "Integer";
-			propertyHint = "Character's current karma level";
+			propertyHint = GetDictionaryEntry( 8356, pSocket.language ); // Character's current karma level
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.lightlevel:
 			propertyName = "lightlevel";
 			propertyType = "Integer";
-			propertyHint = "Character's current individual light level";
+			propertyHint = GetDictionaryEntry( 8357, pSocket.language ); // Character's current individual light level
 			maxLength = 3;
 			maxVal = 255;
 			break;
 		case charProp.lodamage:
 			propertyName = "lodamage";
 			propertyType = "Integer";
-			propertyHint = "Minimum damage dealt by character in combat when using wrestling/unarmed attacks";
+			propertyHint = GetDictionaryEntry( 8358, pSocket.language ); // Minimum damage dealt by character in combat when using wrestling/unarmed attacks
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.mana:
 			propertyName = "mana";
 			propertyType = "Integer";
-			propertyHint = "Character's current mana";
+			propertyHint = GetDictionaryEntry( 8360, pSocket.language ); // Character's current mana
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.maxhp:
 			propertyName = "maxhp";
 			propertyType = "Integer";
-			propertyHint = "Maximum HP character can have (max value that can display properly in player status window is 9999)";
+			propertyHint = GetDictionaryEntry( 8361, pSocket.language ); // Maximum HP character can have (max value that can display properly in player status window is 9999)
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.maxmana:
 			propertyName = "maxmana";
 			propertyType = "Integer";
-			propertyHint = "Maximum mana character can have";
+			propertyHint = GetDictionaryEntry( 8362, pSocket.language ); // Maximum mana character can have
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.maxstamina:
 			propertyName = "maxstamina";
 			propertyType = "Integer";
-			propertyHint = "Maximum stamina character can have";
+			propertyHint = GetDictionaryEntry( 8363, pSocket.language ); // Maximum stamina character can have
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.murdercount:
 			propertyName = "murdercount";
 			propertyType = "Integer";
-			propertyHint = "Amount of players character has killed";
+			propertyHint = GetDictionaryEntry( 8366, pSocket.language ); // Amount of players character has killed
 			maxLength = 5;
 			maxVal = 32767;
 			break;
@@ -4256,135 +4294,135 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.oldWandertype:
 			propertyName = "oldWandertype";
 			propertyType = "Integer";
-			propertyHint = "Character's old/previous wandertype";
+			propertyHint = GetDictionaryEntry( 8374, pSocket.language ); // NPC's old/previous wandertype
 			maxLength = 1;
 			maxVal = 7;
 			break;
 		case charProp.poison:
 			propertyName = "poison";
 			propertyType = "Integer";
-			propertyHint = "Character's current poisoned state (0-5)";
+			propertyHint = GetDictionaryEntry( 8384, pSocket.language ); // Character's current poisoned state (0-5)
 			maxLength = 1;
 			maxVal = 5;
 			break;
 		case charProp.poisonStrength:
 			propertyName = "poisonStrength";
 			propertyType = "Integer";
-			propertyHint = "Strength of poison applied by unarmed/wrestling attacks (0-5)";
+			propertyHint = GetDictionaryEntry( 8385, pSocket.language ); // Strength of poison applied by unarmed/wrestling attacks (0-5)
 			maxLength = 1;
 			maxVal = 5;
 			break;
 		case charProp.race:
 			propertyName = "race";
 			propertyType = "Integer";
-			propertyHint = "Race character belongs to";
+			propertyHint = GetDictionaryEntry( 8386, pSocket.language ); // Race character belongs to
 			break;
 		case charProp.raceGate:
 			propertyName = "raceGate";
 			propertyType = "Integer";
-			propertyHint = "ID of Race for which character has used a Race Gate, if any";
+			propertyHint = GetDictionaryEntry( 8387, pSocket.language ); // ID of Race for which character has used a Race Gate, if any
 			break;
 		case charProp.scripttrigger:
 			propertyName = "scripttrigger";
 			propertyType = "Integer";
-			propertyHint = "JS Script from jse_fileassociations.scp assigned to Character";
+			propertyHint = GetDictionaryEntry( 8390, pSocket.language ); // JS Script from jse_fileassociations.scp assigned to Character
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case charProp.skillToPeace:
 			propertyName = "skillToPeace";
 			propertyType = "Integer";
-			propertyHint = "Peacemaking skill required to peacemake this NPC";
+			propertyHint = GetDictionaryEntry( 8395, pSocket.language ); // Peacemaking skill required to peacemake this NPC
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.skillToProv:
 			propertyName = "skillToProv";
 			propertyType = "Integer";
-			propertyHint = "Provocation skill required to provoke this NPC";
+			propertyHint = GetDictionaryEntry( 8396, pSocket.language ); // Provocation skill required to provoke this NPC
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.skillToTame:
 			propertyName = "skillToTame";
 			propertyType = "Integer";
-			propertyHint = "Animal Taming skill required to tame this NPC";
+			propertyHint = GetDictionaryEntry( 8397, pSocket.language ); // Animal Taming skill required to tame this NPC
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.spattack:
 			propertyName = "spattack";
 			propertyType = "Integer";
-			propertyHint = "NPC will cast spells from this spell circle #";
+			propertyHint = GetDictionaryEntry( 8398, pSocket.language ); // NPC will cast spells from this spell circle #
 			maxLength = 1;
 			maxVal = 8;
 			break;
 		case charProp.spdelay:
 			propertyName = "spdelay";
 			propertyType = "Integer";
-			propertyHint = "Delay between spellcasts for NPC character";
+			propertyHint = GetDictionaryEntry( 8399, pSocket.language ); // Delay between spellcasts for NPC character
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.split:
 			propertyName = "split";
-			propertyHint = "Determines how many NPCs character will split into when hit in combat";
+			propertyHint = GetDictionaryEntry( 8401, pSocket.language ); // Determines how many NPCs character will split into when hit in combat
 			propertyType = "Integer";
 			maxLength = 3;
 			maxVal = 255;
 			break;
 		case charProp.splitchance:
 			propertyName = "splitchance";
-			propertyHint = "Chance of creature to split when hit in combat";
+			propertyHint = GetDictionaryEntry( 8402, pSocket.language ); // Chance of creature to split when hit in combat
 			propertyType = "Integer";
 			maxLength = 3;
 			maxVal = 100;
 			break;
 		case charProp.stamina:
 			propertyName = "stamina";
-			propertyHint = "Character's current stamina";
+			propertyHint = GetDictionaryEntry( 8405, pSocket.language ); // Character's current stamina
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
 			break;
 		case charProp.strength:
 			propertyName = "strength";
-			propertyHint = "Strength attribute of character";
+			propertyHint = GetDictionaryEntry( 8407, pSocket.language ); // Strength attribute of character
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
 			break;
 		case charProp.tamedHungerRate:
 			propertyName = "tamedHungerRate";
-			propertyHint = "The rate at which a pet grows hungry";
+			propertyHint = GetDictionaryEntry( 8409, pSocket.language ); // The rate at which a pet grows hungry
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
 			break;
 		case charProp.tamedThirstRate:
 			propertyName = "tamedThirstRate";
-			propertyHint = "The rate at which a pet grows thirsty";
+			propertyHint = GetDictionaryEntry( 8410, pSocket.language ); // The rate at which a pet grows thirsty
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
 			break;
 		case charProp.tempdex:
 			propertyName = "tempdex";
-			propertyHint = "Character's temporary dex, as affected by equipped items, spells and potions";
+			propertyHint = GetDictionaryEntry( 8412, pSocket.language ); // Character's temporary dex, as affected by equipped items, spells and potions
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
 			break;
 		case charProp.tempint:
 			propertyName = "tempint";
-			propertyHint = "Character's temporary int, as affected by equipped items, spells and potions";
+			propertyHint = GetDictionaryEntry( 8413, pSocket.language ); // Character's temporary int, as affected by equipped items, spells and potions
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
 			break;
 		case charProp.tempstr:
 			propertyName = "tempstr";
-			propertyHint = "Character's temporary str, as affected by equipped items, spells and potions";
+			propertyHint = GetDictionaryEntry( 8414, pSocket.language ); // Character's temporary str, as affected by equipped items, spells and potions
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 32737;
@@ -4392,41 +4430,41 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.thirst:
 			propertyName = "thirst";
 			propertyType = "Integer";
-			propertyHint = "Character's current thirst status (0 - 6, where 0 is max thirsty and 6 is max full. At 0, characters may start take stamina damage depending on server settings.)";
+			propertyHint = GetDictionaryEntry( 8415, pSocket.language ); // Character's current thirst status (0 - 6, where 0 is max thirsty and 6 is max full. At 0, characters may start take stamina damage depending on server settings.)
 			maxLength = 1;
 			maxVal = 6;
 			break;
 		case charProp.thirstWildChance:
 			propertyName = "thirstWildChance";
 			propertyType = "Integer";
-			propertyHint = "Chance for extremely thirsty pet to go wild with every NPC AI loop";
+			propertyHint = GetDictionaryEntry( 8416, pSocket.language ); // Chance for extremely thirsty pet to go wild with every NPC AI loop
 			maxLength = 3;
 			maxVal = 100;
 			break;
 		case charProp.townPriv:
 			propertyName = "townPriv";
-			propertyHint = "The privileges the character has with their town (1 = Resident, 2 = Mayor)";
+			propertyHint = GetDictionaryEntry( 8419, pSocket.language ); // The privileges the character has with their town (1 = Resident, 2 = Mayor)
 			propertyType = "Integer";
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case charProp.visible:
 			propertyName = "visible";
-			propertyHint = "Determines visibility of character to other players (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)";
+			propertyHint = GetDictionaryEntry( 8421, pSocket.language ); // Determines visibility of character to other players (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 			propertyType = "Integer";
 			maxLength = 1;
 			maxVal = 3;
 			break;
 		case charProp.wandertype:
 			propertyName = "wandertype";
-			propertyHint = "Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)";
+			propertyHint = GetDictionaryEntry( 8423, pSocket.language ); // Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)
 			propertyType = "Integer";
 			maxLength = 1;
 			maxVal = 7;
 			break;
 		case charProp.weight:
 			propertyName = "weight";
-			propertyHint = "Total weight of character (100 = 1.0 stone)";
+			propertyHint = GetDictionaryEntry( 8424, pSocket.language ); // Total weight of character (100 = 1.0 stone)
 			propertyType = "Integer";
 			maxLength = 5;
 			maxVal = 65535;
@@ -4434,28 +4472,28 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.worldnumber:
 			propertyName = "worldnumber";
 			propertyType = "Integer";
-			propertyHint = "World that character exists in";
+			propertyHint = GetDictionaryEntry( 8427, pSocket.language ); // World that character exists in
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case charProp.x:
 			propertyName = "x";
 			propertyType = "Integer";
-			propertyHint = "X coordinate of character in the world";
+			propertyHint = GetDictionaryEntry( 8428, pSocket.language ); // X coordinate of character in the world
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.y:
 			propertyName = "y";
 			propertyType = "Integer";
-			propertyHint = "Y coordinate of character in the world";
+			propertyHint = GetDictionaryEntry( 8429, pSocket.language ); // Y coordinate of character in the world
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case charProp.z:
 			propertyName = "z";
 			propertyType = "Integer";
-			propertyHint = "Z coordinate of character in the world";
+			propertyHint = GetDictionaryEntry( 8430, pSocket.language ); // Z coordinate of character in the world
 			maxLength = 3;
 			maxVal = 127;
 			break;
@@ -4463,124 +4501,124 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case multiProp.banX:
 			propertyName = "banX";
 			propertyType = "Integer";
-			propertyHint = "X coordinate for Multi's ban-location";
+			propertyHint = GetDictionaryEntry( 8501, pSocket.language ); // X coordinate for Multi's ban-location
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case multiProp.banY:
 			propertyName = "banY";
 			propertyType = "Integer";
-			propertyHint = "Y coordinate for Multi's ban-location";
+			propertyHint = GetDictionaryEntry( 8502, pSocket.language ); // Y coordinate for Multi's ban-location
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case multiProp.dir:
 			propertyName = "dir";
 			propertyType = "Integer";
-			propertyHint = "Direction of Multi - used for direction of boats?";
+			propertyHint = GetDictionaryEntry( 8506, pSocket.language ); // Direction of Multi - used for direction of boats?
 			maxLength = 4;
 			maxVal = 128;
 			break;
 		case multiProp.instanceID:
 			propertyName = "instanceID";
 			propertyType = "Integer";
-			propertyHint = "ID of instance of world that Multi exists in. Objects in different instances will not be able to interact with one another!";
+			propertyHint = GetDictionaryEntry( 8510, pSocket.language ); // ID of instance of world that Multi exists in. Objects in different instances will not be able to interact with one another!
 			break;
 		case multiProp.maxBans:
 			propertyName = "maxBans";
 			propertyType = "Integer";
-			propertyHint = "Max bans supported by Multi";
+			propertyHint = GetDictionaryEntry( 8512, pSocket.language ); // Max amount of bans supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxFriends:
 			propertyName = "maxFriends";
 			propertyType = "Integer";
-			propertyHint = "Max friends supported by Multi";
+			propertyHint = GetDictionaryEntry( 8513, pSocket.language ); // Max amount of friends supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxGuests:
 			propertyName = "maxGuests";
 			propertyType = "Integer";
-			propertyHint = "Max guests supported by Multi";
+			propertyHint = GetDictionaryEntry( 8514, pSocket.language ); // Max amount of guests supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxLockdowns:
 			propertyName = "maxLockdowns";
 			propertyType = "Integer";
-			propertyHint = "Max lockdowns supported by Multi";
+			propertyHint = GetDictionaryEntry( 8515, pSocket.language ); // Max amount of lockdowns supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxOwners:
 			propertyName = "maxOwners";
 			propertyType = "Integer";
-			propertyHint = "Max owners supported by Multi";
+			propertyHint = GetDictionaryEntry( 8516, pSocket.language ); // Max amount of owners supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxSecureContainers:
 			propertyName = "maxSecureContainers";
 			propertyType = "Integer";
-			propertyHint = "Max secure containers supported by Multi";
+			propertyHint = GetDictionaryEntry( 8517, pSocket.language ); // Max amount of secure containers supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxTrashContainers:
 			propertyName = "maxTrashContainers";
 			propertyType = "Integer";
-			propertyHint = "Max trash containers supported by Multi";
+			propertyHint = GetDictionaryEntry( 8518, pSocket.language ); // Max amount of trash containers supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.maxVendors:
 			propertyName = "maxVendors";
 			propertyType = "Integer";
-			propertyHint = "Max vendors supported by Multi";
+			propertyHint = GetDictionaryEntry( 8519, pSocket.language ); // Max amount of vendors supported by Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.scripttrigger:
 			propertyName = "scripttrigger";
 			propertyType = "Integer";
-			propertyHint = "JS Script from jse_fileassociations.scp assigned to Multi";
+			propertyHint = GetDictionaryEntry( 8522, pSocket.language ); // JS Script from jse_fileassociations.scp assigned to Multi
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case multiProp.visible:
 			propertyName = "visible";
 			propertyType = "Integer";
-			propertyHint = "Determines who Multi is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)";
+			propertyHint = GetDictionaryEntry( 8527, pSocket.language ); // Determines who Multi is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
 			maxLength = 1;
 			maxVal = 3;
 			break;
 		case multiProp.worldnumber:
 			propertyName = "worldnumber";
 			propertyType = "Integer";
-			propertyHint = "World that Multi exists in";
+			propertyHint = GetDictionaryEntry( 8528, pSocket.language ); // World that Multi exists in
 			maxLength = 3;
 			maxVal = 127;
 			break;
 		case multiProp.x:
 			propertyName = "x";
 			propertyType = "Integer";
-			propertyHint = "X coordinate of Multi in the world";
+			propertyHint = GetDictionaryEntry( 8529, pSocket.language ); // X coordinate of Multi in the world
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case multiProp.y:
 			propertyName = "y";
 			propertyType = "Integer";
-			propertyHint = "Y coordinate of Multi in the world";
+			propertyHint = GetDictionaryEntry( 8530, pSocket.language ); // Y coordinate of Multi in the world
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case multiProp.z:
 			propertyName = "z";
 			propertyType = "Integer";
-			propertyHint = "Z coordinate of Multi in the world";
+			propertyHint = GetDictionaryEntry( 8531, pSocket.language ); // Z coordinate of Multi in the world
 			maxLength = 3;
 			maxVal = 127;
 			break;
@@ -4588,91 +4626,91 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case regionProp.appearance:
 			propertyName = "appearance";
 			propertyType = "Integer";
-			propertyHint = "Appearance of world within the Region (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown)";
+			propertyHint = GetDictionaryEntry( 8626, pSocket.language ); // Appearance of world within the Region (0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown)
 			maxLength = 1;
 			maxVal = 5;
 			break;
 		case regionProp.chanceBigOre:
 			propertyName = "chanceBigOre";
 			propertyType = "Integer";
-			propertyHint = "Chance to find big ore in the Region";
+			propertyHint = GetDictionaryEntry( 8606, pSocket.language ); // Chance to find big ore in the Region
 			maxLength = 3;
 			maxVal = 100;
 			break;
 		case regionProp.health:
 			propertyName = "health";
 			propertyType = "Integer";
-			propertyHint = "Health of townstone (if any) in Region";
+			propertyHint = GetDictionaryEntry( 8607, pSocket.language ); // Health of townstone (if any) in Region
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case regionProp.instanceID:
 			propertyName = "instanceID";
 			propertyType = "Integer";
-			propertyHint = "InstanceID region exists in";
+			propertyHint = GetDictionaryEntry( 8608, pSocket.language ); // InstanceID region exists in
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case regionProp.music:
 			propertyName = "music";
 			propertyType = "Integer";
-			propertyHint = "Music-list for Region, as specified in regions.dfn";
+			propertyHint = GetDictionaryEntry( 8613, pSocket.language ); // Music-list for Region, as specified in regions.dfn
 			maxLength = 3;
 			maxVal = 255;
 			break;
 		case regionProp.numGuards:
 			propertyName = "numGuards";
 			propertyType = "Integer";
-			propertyHint = "The number of guards for the town (if any) in the Region";
+			propertyHint = GetDictionaryEntry( 8614, pSocket.language ); // The number of guards for the town (if any) in the Region
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case regionProp.race:
 			propertyName = "race";
 			propertyType = "Integer";
-			propertyHint = "Race associated with the Region";
+			propertyHint = GetDictionaryEntry( 8618, pSocket.language ); // Race associated with the Region
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case regionProp.reserves:
 			propertyName = "reserves";
 			propertyType = "Integer";
-			propertyHint = "Resource reserves for town (if any) in the Region";
+			propertyHint = GetDictionaryEntry( 8619, pSocket.language ); // Resource reserves for town (if any) in the Region
 			maxLength = 10;
 			maxVal = 4294967295;
 			break;
 		case regionProp.scriptTrigger:
 			propertyName = "scriptTrigger";
 			propertyType = "Integer";
-			propertyHint = "Script-trigger assigned to the Region (if any)";
+			propertyHint = GetDictionaryEntry( 8620, pSocket.language ); // Script-trigger assigned to the Region (if any)
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case regionProp.tax:
 			propertyName = "tax";
 			propertyType = "Integer";
-			propertyHint = "The amount of gold taxed from citizens of the Town (if any) in this Region";
+			propertyHint = GetDictionaryEntry( 8621, pSocket.language ); // The amount of gold taxed from citizens of the Town (if any) in this Region
 			maxLength = 5;
 			maxVal = 32767;
 			break;
 		case regionProp.taxes:
 			propertyName = "taxes";
 			propertyType = "Integer";
-			propertyHint = "The gold reserves of the Town (if any) in this Region";
+			propertyHint = GetDictionaryEntry( 8622, pSocket.language ); // The gold reserves of the Town (if any) in this Region
 			maxLength = 10;
 			maxVal = 4294967295;
 			break;
 		case regionProp.weather:
 			propertyName = "weather";
 			propertyType = "Integer";
-			propertyHint = "Weather ID from weather.dfn associated with this Region";
+			propertyHint = GetDictionaryEntry( 8624, pSocket.language ); // Weather ID from weather.dfn associated with this Region
 			maxLength = 5;
 			maxVal = 65535;
 			break;
 		case regionProp.worldNumber:
 			propertyName = "worldNumber";
 			propertyType = "Integer";
-			propertyHint = "World number that Region exists in";
+			propertyHint = GetDictionaryEntry( 8625, pSocket.language ); // World number that Region exists in
 			maxLength = 3
 			maxVal = 255;
 			break;
@@ -4680,7 +4718,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case accountProp.timeban:
 			propertyName = "timeban";
 			propertyType = "Integer";
-			propertyHint = "How long is the user banned for, in minutes?";
+			propertyHint = GetDictionaryEntry( 8725, pSocket.language ); // How long is the user banned for, in minutes?
 			maxLength = 6;
 			maxVal = 999999;
 			break;
@@ -4924,12 +4962,11 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case itemProp.container:
 			propertyName = "container";
 			propertyType = "UOXObject";
-			propertyHint = "Container item is inside";
-			break;
+			propertyHint = GetDictionaryEntry( 8135, pSocket.language ); // Item/Character the item is contained in/on
 		case itemProp.owner:
 			propertyName = "owner";
 			propertyType = "UOXObject";
-			propertyHint = "Owner of item";
+			propertyHint = GetDictionaryEntry( 8176, pSocket.language ); // Owner of item"
 			break;
 		case charProp.accountNum:
 			pSocket.currentChar.SetTag( "tweakAccount", true );
@@ -4938,12 +4975,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.attacker:
 			propertyName = "attacker";
 			propertyType = "UOXObject";
-			propertyHint = "Character's current attacker";
+			propertyHint = GetDictionaryEntry( 8304, pSocket.language ); // Character's current attacker
 			break;
 		case charProp.guild:
 			propertyName = "guild";
 			propertyType = "UOXObject";
-			propertyHint = "Object for guild character belongs to";
+			propertyHint = GetDictionaryEntry( 8308, pSocket.language ); // Object for guild character belongs to
 			break;
 		// case charProp.multi:
 		// 	propertyName = "multi";
@@ -4954,7 +4991,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			var multiObj = targetObj.multi;
 			if( multiObj == null )
 			{
-				pSocket.SysMessage( "Multi not found. Is character still inside Multi?" );
+				pSocket.SysMessage( GetDictionaryEntry( 8811, pSocket.language )); // Multi not found. Is character still inside Multi?
 				HandleCharTarget( pSocket, targetObj );
 			}
 			else
@@ -4967,32 +5004,32 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.owner:
 			propertyName = "owner";
 			propertyType = "UOXObject";
-			propertyHint = "Owner of character";
+			propertyHint = GetDictionaryEntry( 8379, pSocket.language ); // Character's owner, if any
 			break;
 		case charProp.pack:
 			propertyName = "pack";
 			propertyType = "UOXObject";
-			propertyHint = "Root backpack object for character";
+			propertyHint = GetDictionaryEntry( 8380, pSocket.language ); // Object of character's root backpack
 			break;
 		case charProp.party:
 			propertyName = "party";
 			propertyType = "UOXObject";
-			propertyHint = "Object of party character is member of";
+			propertyHint = GetDictionaryEntry( 8381, pSocket.language ); // Object of party character is member of
 			break;
 		case charProp.region:
 			propertyName = "region";
 			propertyType = "UOXObject";
-			propertyHint = "Object of region character is currently in";
+			propertyHint = GetDictionaryEntry( 8388, pSocket.language ); // Object of region character is currently in
 			break;
 		case charProp.target:
 			propertyName = "target";
 			propertyType = "UOXObject";
-			propertyHint = "Character's current target";
+			propertyHint = GetDictionaryEntry( 8411, pSocket.language ); // Character's current target
 			break;
 		case charProp.town:
 			propertyName = "town";
 			propertyType = "UOXObject";
-			propertyHint = "The town the player belongs to";
+			propertyHint = GetDictionaryEntry( 8418, pSocket.language ); // The town the player belongs to
 			break;
 		case charProp.baseskills:
 			HandleSkillGump( pSocket, targetObj, true );
@@ -5006,13 +5043,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case multiProp.owner:
 			propertyName = "owner";
 			propertyType = "UOXObject";
-			propertyHint = "Owner of Multi";
+			propertyHint = GetDictionaryEntry( 8520, pSocket.language ); // Object registered as owner of this Multi
 			break;
 		// Region Properties
 		case regionProp.mayor:
 			propertyName = "mayor";
 			propertyType = "UOXObject";
-			propertyHint = "Character voted as Mayor of the Town (if any) in this Region";
+			propertyHint = GetDictionaryEntry( 8612, pSocket.language ); // Character voted as Mayor of the Town (if any) in this Region
 			break;
 		// Account Properties
 		case accountProp.character1:
@@ -5059,446 +5096,437 @@ function onGumpPress( pSocket, pButton, gumpData )
 		// Boolean ------------------------------------------------------
 		case itemProp.corpse:
 			propertyName = "corpse";
-			propertyHint = "Is item a corpse?"
+			propertyHint = GetDictionaryEntry( 8136, pSocket.language ); // Marks item as corpse
 			propertyType = "Boolean";
 			break;
 		case itemProp.damageHeat:
 			propertyName = "damageHeat";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Heat/Fire elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8137, pSocket.language ); // Weapon deals Heat/Fire elemental damage (true/false)
 			break;
 		case itemProp.damageCold:
 			propertyName = "damageCold";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Cold elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8138, pSocket.language ); // Weapon deals Cold elemental damage (true/false)
 			break;
 		case itemProp.damageLight:
 			propertyName = "damageLight";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Light elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8139, pSocket.language ); // Weapon deals Light elemental damage (true/false)
 			break;
 		case itemProp.damageLightning:
 			propertyName = "damageLightning";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Lightning elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8140, pSocket.language ); // Weapon deals Lightning elemental damage (true/false)
 			break;
 		case itemProp.damagePoison:
 			propertyName = "damagePoison";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Poison elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8141, pSocket.language ); // Weapon deals Poison elemental damage (true/false)
 			break;
 		case itemProp.damageRain:
 			propertyName = "damageRain";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Rain/Water elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8142, pSocket.language ); // Weapon deals Rain/Water elemental damage (true/false)
 			break;
 		case itemProp.damageSnow:
 			propertyName = "damageSnow";
 			propertyType = "Boolean";
-			propertyHint = "Weapon deals Snow elemental damage (true/false)";
+			propertyHint = GetDictionaryEntry( 8143, pSocket.language ); // Weapon deals Snow elemental damage (true/false)
 			break;
 		case itemProp.decayable:
 			propertyName = "decayable";
-			propertyHint = "Can item decay?"
+			propertyHint = GetDictionaryEntry( 8144, pSocket.language ); // Is item decayable?
 			propertyType = "Boolean";
 			break;
 		case itemProp.divinelock:
 			propertyName = "divinelock";
-			propertyHint = "Has item been locked by a GM?"
+			propertyHint = GetDictionaryEntry( 8148, pSocket.language ); // Has item been locked by a GM?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isDispellable:
 			propertyName = "isDispellable";
-			propertyHint = "Is item dispellable?"
+			propertyHint = GetDictionaryEntry( 8154, pSocket.language ); // Is item dispellable with Magic Dispel?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isDoorOpen:
 			propertyName = "isDoorOpen";
-			propertyHint = "Is door open?"
+			propertyHint = GetDictionaryEntry( 8155, pSocket.language ); // Is door open?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isDyeable:
 			propertyName = "isDyeable";
-			propertyHint = "Is item dyable?"
+			propertyHint = GetDictionaryEntry( 8156, pSocket.language ); // Is item dyable?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isGuarded:
 			propertyName = "isGuarded";
-			propertyHint = "Is item guarded by a pet?"
+			propertyHint = GetDictionaryEntry( 8157, pSocket.language ); // Is item guarded by a pet/hireling?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isNewbie:
 			propertyName = "isNewbie";
-			propertyHint = "Is item marked as newbie/blessed?"
+			propertyHint = GetDictionaryEntry( 8158, pSocket.language ); // Is item marked as newbie/blessed?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isPileable:
 			propertyName = "isPileable";
-			propertyHint = "Can item be stacked?"
+			propertyHint = GetDictionaryEntry( 8159, pSocket.language ); // Is item pileable?
 			propertyType = "Boolean";
 			break;
 		case itemProp.isWipeable:
+		case itemProp.wipable:
 			propertyName = "isWipeable";
-			propertyHint = "Can item be deleted with wipe command?"
-			propertyType = "Boolean";
-			break;
-		case itemProp.movable:
-			propertyName = "movable";
-			propertyHint = "Is item movable?"
+			propertyHint = GetDictionaryEntry( 8160, pSocket.language ); // Is item wipeable with WIPE command?
 			propertyType = "Boolean";
 			break;
 		case itemProp.sectionalist:
 			propertyName = "sectionalist";
-			propertyHint = "?"
-			propertyType = "Boolean";
-			break;
-		case itemProp.wipable:
-			propertyName = "wipable";
-			propertyHint = "Can item be deleted by wipe command?"
+			propertyHint = GetDictionaryEntry( 8190, pSocket.language ); // True if spawn section is a list - SpawnObject only
 			propertyType = "Boolean";
 			break;
 		// Character Properties
 		case charProp.allmove:
 			propertyName = "allmove";
-			propertyHint = "Allow character to move all items freely?"
+			propertyHint = GetDictionaryEntry( 8302, pSocket.language ); // Toggles being able to move all items regardless of movable status
 			propertyType = "Boolean";
 			break;
 		case charProp.attackFirst:
 			propertyName = "attackFirst";
-			propertyHint = "Did character attack first in combat?";
+			propertyHint = GetDictionaryEntry( 8305, pSocket.language ); // Did character attack first in combat?
 			propertyType = "Boolean";
 			break;
 		case charProp.atWar:
 			propertyName = "atWar";
-			propertyHint = "Is NPC in combat mode?";
+			propertyHint = GetDictionaryEntry( 8306, pSocket.language ); // Toggles combat mode for NPC characters
 			propertyType = "Boolean";
 			break;
 		case charProp.canAttack:
 			propertyName = "canAttack";
-			propertyHint = "Can character attack other characters?";
+			propertyHint = GetDictionaryEntry( 8309, pSocket.language ); // Toggles whether character can attack other characters
 			propertyType = "Boolean";
 			break;
 		case charProp.canBroadcast:
 			propertyName = "canBroadcast";
-			propertyHint = "Can character broadcast messages?";
+			propertyHint = GetDictionaryEntry( 8310, pSocket.language ); // Toggles whether character can broadcast messages
 			propertyType = "Boolean";
 			break;
 		case charProp.canRun:
 			propertyName = "canRun";
-			propertyHint = "Can character run?";
+			propertyHint = GetDictionaryEntry( 8311, pSocket.language ); // Toggles whether NPC can run
 			propertyType = "Boolean";
 			break;
 		case charProp.canSnoop:
 			propertyName = "canSnoop";
-			propertyHint = "Can character snoop in other char's backpacks?";
+			propertyHint = GetDictionaryEntry( 8312, pSocket.language ); // Toggles whether character can snoop in other characters' backpacks
 			propertyType = "Boolean";
 			break;
 		case charProp.criminal:
 			propertyName = "criminal";
-			propertyHint = "Is character flagged as a criminal?";
+			propertyHint = GetDictionaryEntry( 8317, pSocket.language ); // Is character flagged as a criminal?
 			propertyType = "Boolean";
 			break;
 		case charProp.dead:
 			propertyName = "dead";
-			propertyHint = "Is (player) character dead?";
+			propertyHint = GetDictionaryEntry( 8318, pSocket.language ); // Is (player) character dead?
 			propertyType = "Boolean";
 			break;
 		case charProp.frozen:
 			propertyName = "frozen";
-			propertyHint = "Is character frozen on the spot?";
+			propertyHint = GetDictionaryEntry( 8326, pSocket.language ); // Toggles whether object is frozen (immovable) or not
 			propertyType = "Boolean";
 			break;
 		case charProp.houseicons:
 			propertyName = "houseicons";
-			propertyHint = "Show house icons/deeds instead of multis?";
+			propertyHint = GetDictionaryEntry( 8332, pSocket.language ); // Toggles whether house icons/deeds are shown instead of multis for character
 			propertyType = "Boolean";
 			break;
 		case charProp.innocent:
 			propertyName = "innocent";
-			propertyHint = "Is character flagged as innocent?";
+			propertyHint = GetDictionaryEntry( 8337, pSocket.language ); // Is character flagged as innocent?
 			propertyType = "Boolean";
 			break;
 		case charProp.isAnimal:
 			propertyName = "isAnimal";
-			propertyHint = "Is character an animal?";
+			propertyHint = GetDictionaryEntry( 8340, pSocket.language ); // Is character an animal?
 			propertyType = "Boolean";
 			break;
 		case charProp.isCasting:
 			propertyName = "isCasting";
-			propertyHint = "Is character casting a spell? Automatically handled by magic system.";
+			propertyHint = GetDictionaryEntry( 8341, pSocket.language ); // Is character casting a spell? Automatically handled by magic system.
 			propertyType = "Boolean";
 			break;
 		case charProp.isCounselor:
 			propertyName = "isCounselor";
-			propertyHint = "Is character a counselor?";
+			propertyHint = GetDictionaryEntry( 8342, pSocket.language ); // Is character a counselor?
 			propertyType = "Boolean";
 			break;
 		case charProp.isDispellable:
 			propertyName = "isDispellable";
-			propertyHint = "Is character dispellable?";
+			propertyHint = GetDictionaryEntry( 8343, pSocket.language ); // Is character dispellable?
 			propertyType = "Boolean";
 			break;
 		case charProp.isflying:
 			propertyName = "isflying";
-			propertyHint = "Is character flying?";
+			propertyHint = GetDictionaryEntry( 8344, pSocket.language ); // Is character flying?
 			propertyType = "Boolean";
 			break;
 		case charProp.isGM:
 			propertyName = "isGM";
-			propertyHint = "Is character a GM?";
+			propertyHint = GetDictionaryEntry( 8346, pSocket.language ); // Is character a GM?
 			propertyType = "Boolean";
 			break;
 		case charProp.isGMPageable:
 			propertyName = "isGMPageable";
-			propertyHint = "Is character able to respond to GM pages?";
+			propertyHint = GetDictionaryEntry( 8347, pSocket.language ); // Is character able to respond to GM pages?
 			propertyType = "Boolean";
 			break;
 		case charProp.isHuman:
 			propertyName = "isHuman";
-			propertyHint = "Is character human?";
+			propertyHint = GetDictionaryEntry( 8348, pSocket.language ); // Is character human?
 			propertyType = "Boolean";
 			break;
 		case charProp.isIncognito:
 			propertyName = "isIncognito";
-			propertyHint = "Is character incognito?";
+			propertyHint = GetDictionaryEntry( 8349, pSocket.language ); // Is character incognito?
 			propertyType = "Boolean";
 			break;
 		case charProp.isJailed:
 			propertyName = "isJailed";
-			propertyHint = "Is character jailed?";
+			propertyHint = GetDictionaryEntry( 8350, pSocket.language ); // Is character jailed?
 			propertyType = "Boolean";
 			break;
 		case charProp.isMeditating:
 			propertyName = "isMeditating";
-			propertyHint = "Is character meditating?";
+			propertyHint = GetDictionaryEntry( 8351, pSocket.language ); // Is character meditating?
 			propertyType = "Boolean";
 			break;
 		case charProp.isonhorse:
 			propertyName = "isonhorse";
-			propertyHint = "Is character on a mount?";
+			propertyHint = GetDictionaryEntry( 8352, pSocket.language ); // Is character on a mount?
 			propertyType = "Boolean";
 			break;
 		case charProp.isPolymorphed:
 			propertyName = "isPolymorphed";
-			propertyHint = "Is character polymorphed?";
+			propertyHint = GetDictionaryEntry( 8353, pSocket.language ); // Is character polymorphed?
 			propertyType = "Boolean";
 			break;
 		case charProp.isShop:
 			propertyName = "isShop";
-			propertyHint = "Is NPC a shopkeeper?";
+			propertyHint = GetDictionaryEntry( 8354, pSocket.language ); // Is NPC a shopkeeper?
 			propertyType = "Boolean";
 			break;
 		case charProp.isUsingPotion:
 			propertyName = "isUsingPotion";
-			propertyHint = "Is character using a potion?";
+			propertyHint = GetDictionaryEntry( 8355, pSocket.language ); // Is character using a potion?
 			propertyType = "Boolean";
 			break;
 		case charProp.magicReflect:
 			propertyName = "magicReflect";
-			propertyHint = "Is magic reflection active for character?";
+			propertyHint = GetDictionaryEntry( 8359, pSocket.language ); // Is magic reflection active for character?
 			propertyType = "Boolean";
 			break;
 		case charProp.mounted:
 			propertyName = "mounted";
-			propertyHint = "Is mount carrying someone?";
+			propertyHint = GetDictionaryEntry( 8364, pSocket.language ); // Is mount carrying someone?
 			propertyType = "Boolean";
 			break;
 		case charProp.murderer:
 			propertyName = "murderer";
-			propertyHint = "Is character a murderer?";
+			propertyHint = GetDictionaryEntry( 8367, pSocket.language ); // Is character flagged as a murderer?
 			propertyType = "Boolean";
 			break;
 		case charProp.neutral:
 			propertyName = "neutral";
-			propertyHint = "Is character neutrally flagged?";
+			propertyHint = GetDictionaryEntry( 8368, pSocket.language ); // Is character neutrally flagged?
 			propertyType = "Boolean";
 			break;
 		case charProp.noNeedMana:
 			propertyName = "noNeedMana";
-			propertyHint = "Allow spellcasting without mana for char?";
+			propertyHint = GetDictionaryEntry( 8370, pSocket.language ); // Mana is not needed for character to cast spells
 			propertyType = "Boolean";
 			break;
 		case charProp.noNeedReags:
 			propertyName = "noNeedReags";
-			propertyHint = "Allow spellcasting without reagents for char?";
+			propertyHint = GetDictionaryEntry( 8371, pSocket.language ); // Reagents are not needed for character to cast spells
 			propertyType = "Boolean";
 			break;
 		case charProp.noSkillTitles:
 			propertyName = "noSkillTitles";
-			propertyHint = "Hide skill titles for character?";
+			propertyHint = GetDictionaryEntry( 8372, pSocket.language ); // Skill titles are not displayed for character
 			propertyType = "Boolean";
 			break;
 		case charProp.npc:
 			propertyName = "npc";
-			propertyHint = "Is character an NPC?";
+			propertyHint = GetDictionaryEntry( 8373, pSocket.language ); // Is character an NPC?
 			propertyType = "Boolean";
 			break;
 		case charProp.online:
 			propertyName = "online";
-			propertyHint = "Is (player) character online?";
+			propertyHint = GetDictionaryEntry( 8375, pSocket.language ); // Is (player) character online?
 			propertyType = "Boolean";
 			break;
 		case charProp.partyLootable:
 			propertyName = "partyLootable";
-			propertyHint = "Is character lootable by party members when dead?";
+			propertyHint = GetDictionaryEntry( 8382, pSocket.language ); // Is character lootable by party members when dead?
 			propertyType = "Boolean";
 			break;
 		case charProp.singClickSer:
 			propertyName = "singClickSer";
-			propertyHint = "Toggles whether single-clicks shows serial of clicked object";
+			propertyHint = GetDictionaryEntry( 8391, pSocket.language ); // Toggles whether single-clicks shows serial of clicked object
 			propertyType = "Boolean";
 			break;
 		case charProp.squelch:
 			propertyName = "squelch";
-			propertyHint = "The squelched status of this character. (0 = not squelched - can talk, 1 = squelched - can't talk)";
+			propertyHint = GetDictionaryEntry( 8403, pSocket.language ); // Toggles whether character is squelched/muted
 			propertyType = "Boolean";
 			break;
 		case charProp.stabled:
 			propertyName = "stabled";
-			propertyHint = "Is pet stabled?";
+			propertyHint = GetDictionaryEntry( 8404, pSocket.language ); // Is pet stabled?
 			propertyType = "Boolean";
 			break;
 		case charProp.tamed:
 			propertyName = "tamed";
-			propertyHint = "Is NPC tamed?";
+			propertyHint = GetDictionaryEntry( 8408, pSocket.language ); // Is NPC tame?
 			propertyType = "Boolean";
 			break;
 		case charProp.trainer:
 			propertyName = "trainer";
-			propertyHint = "Is NPC a skill-trainer?";
+			propertyHint = GetDictionaryEntry( 8420, pSocket.language ); // Is NPC a skill-trainer?
 			propertyType = "Boolean";
 			break;
 		case charProp.vulnerable:
 			propertyName = "vulnerable";
-			propertyHint = "Is character vulnerable to damage?";
+			propertyHint = GetDictionaryEntry( 8422, pSocket.language ); // Is character vulnerable to damage?
 			propertyType = "Boolean";
 			break;
 		case charProp.willhunger:
 			propertyName = "willhunger";
-			propertyHint = "Will character grow hungry?";
+			propertyHint = GetDictionaryEntry( 8425, pSocket.language ); // Enables (true) or disables (false) hunger-mode
 			propertyType = "Boolean";
 			break;
 		case charProp.willthirst:
 			propertyName = "willthirst";
-			propertyHint = "Will character grow thirsty?";
+			propertyHint = GetDictionaryEntry( 8426, pSocket.language ); // Enables (true) or disables (false) thirst-mode
 			propertyType = "Boolean";
 			break;
 		// Multi Properties
 		case multiProp.isPublic:
 			propertyName = "isPublic";
-			propertyHint = "Is the Multi flagged as Public?";
+			propertyHint = GetDictionaryEntry( 8509, pSocket.language ); // Is the Multi flagged as Public?
 			propertyType = "Boolean";
 			break;
 		// Region Properties
 		case regionProp.canCastAggressive:
 			propertyName = "canCastAggressive";
-			propertyHint = "Can aggressive spells be cast in the Region?";
+			propertyHint = GetDictionaryEntry( 8600, pSocket.language ); // Can aggressive spells be cast in the Region?
 			propertyType = "Boolean";
 			break;
 		case regionProp.canGate:
 			propertyName = "canGate";
-			propertyHint = "Can the Gate spell be used in the Region?";
+			propertyHint = GetDictionaryEntry( 8601, pSocket.language ); // Can the Gate spell be used in the Region?
 			propertyType = "Boolean";
 			break;
 		case regionProp.canMark:
 			propertyName = "canMark";
-			propertyHint = "Can the Mark spell be used in the Region?";
+			propertyHint = GetDictionaryEntry( 8602, pSocket.language ); // Can the Mark spell be used in the Region?
 			propertyType = "Boolean";
 			break;
 		case regionProp.canPlaceHouse:
 			propertyName = "canPlaceHouse";
-			propertyHint = "Can players place houses in the Region?";
+			propertyHint = GetDictionaryEntry( 8603, pSocket.language ); // Can players place houses in the Region?
 			propertyType = "Boolean";
 			break;
 		case regionProp.canRecall:
 			propertyName = "canRecall";
-			propertyHint = "Can the Recall spell be used in the Region?";
+			propertyHint = GetDictionaryEntry( 8604, pSocket.language ); // Can the Recall spell be used in the Region?
 			propertyType = "Boolean";
 			break;
 		case regionProp.canTeleport:
 			propertyName = "canTeleport";
-			propertyHint = "Can the Teleport spell be used in the Region?";
+			propertyHint = GetDictionaryEntry( 8605, pSocket.language ); // Can the Teleport spell be used in the Region?
 			propertyType = "Boolean";
 			break;
 		case regionProp.isDungeon:
 			propertyName = "isDungeon";
-			propertyHint = "Is Region considered a dungeon?";
+			propertyHint = GetDictionaryEntry( 8609, pSocket.language ); // Is Region considered a dungeon?
 			propertyType = "Boolean";
 			break;
 		case regionProp.isGuarded:
 			propertyName = "isGuarded";
-			propertyHint = "Is Region protected by guards?";
+			propertyHint = GetDictionaryEntry( 8610, pSocket.language ); // Is Region protected by guards?
 			propertyType = "Boolean";
 			break;
 		case regionProp.isSafeZone:
 			propertyName = "isSafeZone";
-			propertyHint = "Is Region considered safe for players?";
+			propertyHint = GetDictionaryEntry( 8611, pSocket.language ); // Is Region considered safe for players?
 			propertyType = "Boolean";
 			break;
 		// Account Properties
 		case accountProp.isBanned:
 			propertyName = "isBanned";
-			propertyHint = "Is this Account banned?";
+			propertyHint = GetDictionaryEntry( 8711, pSocket.language ); // Is this Account banned?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isCounselor:
 			propertyName = "isCounselor";
-			propertyHint = "Is this Account marked as a Counselor account?";
+			propertyHint = GetDictionaryEntry( 8712, pSocket.language ); // Is this Account marked as a Counselor account?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isGM:
 			propertyName = "isGM";
-			propertyHint = "Is this Account marked as a GM account?";
+			propertyHint = GetDictionaryEntry( 8713, pSocket.language ); // Is this Account marked as a GM account?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isPublic:
 			propertyName = "isPublic";
-			propertyHint = "Is contact/comments for this account marked as public? (does nothing atm)";
+			propertyHint = GetDictionaryEntry( 8715, pSocket.language ); // Is contact/comments for this account marked as public? (does nothing atm)
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSeer:
 			propertyName = "isSeer";
-			propertyHint = "Is this Account marked as a Seer account?";
+			propertyHint = GetDictionaryEntry( 8716, pSocket.language ); // Is this Account marked as a Seer account?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot1Blocked:
 			propertyName = "isSlot1Blocked";
-			propertyHint = "Is slot 1 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8717, pSocket.language ); // Is slot 1 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot2Blocked:
 			propertyName = "isSlot2Blocked";
-			propertyHint = "Is slot 2 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8718, pSocket.language ); // Is slot 2 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot3Blocked:
 			propertyName = "isSlot3Blocked";
-			propertyHint = "Is slot 3 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8719, pSocket.language ); // Is slot 3 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot4Blocked:
 			propertyName = "isSlot4Blocked";
-			propertyHint = "Is slot 4 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8720, pSocket.language ); // Is slot 4 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot5Blocked:
 			propertyName = "isSlot5Blocked";
-			propertyHint = "Is slot 5 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8721, pSocket.language ); // Is slot 5 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot6Blocked:
 			propertyName = "isSlot6Blocked";
-			propertyHint = "Is slot 6 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8722, pSocket.language ); // Is slot 6 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSlot7Blocked:
 			propertyName = "isSlot7Blocked";
-			propertyHint = "Is slot 7 on this Account blocked?";
+			propertyHint = GetDictionaryEntry( 8724, pSocket.language ); // Is slot 7 on this Account blocked?
 			propertyType = "Boolean";
 			break;
 		case accountProp.isSuspended:
 			propertyName = "isSuspended";
-			propertyHint = "Is this Account suspended?";
+			propertyHint = GetDictionaryEntry( 8723, pSocket.language ); // Is this Account suspended?
 			propertyType = "Boolean";
 			break;
 
@@ -5506,7 +5534,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case itemProp.decaytime:
 			propertyName = "decaytime";
 			propertyType = "Timer";
-			propertyHint = "Time in seconds for item to decay";
+			propertyHint = GetDictionaryEntry( 8145, pSocket.language ); // Time in seconds for item to decay
 			break;
 		default:
 			break;
@@ -5522,9 +5550,9 @@ function onGumpPress( pSocket, pButton, gumpData )
 				maxVal = 120.0;
 
 			if( baseSkills )
-				propertyHint = "Base skill, before bonuses from stats and items are applied.";
+				propertyHint = GetDictionaryEntry( 8812, pSocket.language ); // Base skill, before bonuses from stats and items are applied.
 			else
-				propertyHint = "Effective skill, after bonuses from stats and items are applied.";
+				propertyHint = GetDictionaryEntry( 8813, pSocket.language ); // Effective skill, after bonuses from stats and items are applied.
 
 			if( !modifyData )
 				ShowInputGump( pSocket.currentChar, targetObj, propertyName, propertyType, maxLength, maxVal, propertyHint );
@@ -5533,7 +5561,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				var targetValue = parseFloat( gumpData.getEdit(0) );
 				if( targetValue !== targetValue )
 				{
-					pSocket.SysMessage( "The entered value is not a valid number.")
+					pSocket.SysMessage( GetDictionaryEntry( 8814, pSocket.language )); // The entered value is not a valid number.
 				}
 				else
 				{
@@ -5594,17 +5622,17 @@ function onGumpPress( pSocket, pButton, gumpData )
 				var targetValue = parseInt(gumpData.getEdit(0));
 				if( targetValue !== targetValue )
 				{
-					pSocket.SysMessage( "The entered value is not a valid number.")
+					pSocket.SysMessage( GetDictionaryEntry( 8814, pSocket.language )); // The entered value is not a valid number.
 				}
 				else
 				{
 					if( pButton == charProp.commandlevel && targetValue >= pSocket.currentChar.commandlevel )
 					{
-						pSocket.SysMessage( "You cannot give someone a command level higher or equal to your own!" );
+						pSocket.SysMessage( GetDictionaryEntry( 8815, pSocket.language )); // You cannot give someone a command level higher or equal to your own!
 					}
 					else if( pButton == itemProp.type && (( targetValue >= 61 && targetValue <= 65 ) || targetValue == 69 || targetValue == 125 ) && !targetObj.isSpawner )
 					{
-						pSocket.SysMessage( "This item type can only be set on spawner objects added with the 'add spawner # command." );
+						pSocket.SysMessage( GetDictionaryEntry( 8816, pSocket.language )); // This item type can only be set on spawner objects added with the 'add spawner # command.
 					}
 					else
 					{
@@ -5731,7 +5759,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			{
 				if( pButton == charProp.isGM && pSocket.currentChar.commandlevel < 5 )
 				{
-					pSocket.SysMessage( "Only Admins can modify someone's GM status!" );
+					pSocket.SysMessage( GetDictionaryEntry( 8817, pSocket.language )); // Only Admins can modify someone's GM status!
 				}
 				else
 					targetObj[propertyName] = !gumpData.getButton(0);
@@ -5790,7 +5818,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				else if( selectNewObject )
 				{
 					// Select new object
-					pSocket.CustomTarget( 1, "Select new object:"); // Select new object
+					pSocket.CustomTarget( 1, GetDictionaryEntry( 8818, pSocket.language )); // Select new object:
 					return;
 				}
 				//targetObj[propertyName] = parseInt(gumpData.getEdit(0));

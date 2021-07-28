@@ -46,6 +46,7 @@
 #include "books.h"
 #include "power.h"
 #include "StringUtility.hpp"
+#include <charconv>
 
 const UI32 BIT_DOOROPEN		=	1;
 const UI32 BIT_PILEABLE		=	2;
@@ -1449,12 +1450,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() == 2 )
 					{
-						SetAmmoID( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetAmmoHue( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetAmmoID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetAmmoHue( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetAmmoID( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+						SetAmmoID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 						SetAmmoHue( ( 0 ) );
 					}
 					rvalue = true;
@@ -1463,13 +1464,13 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() == 2 )
 					{
-						SetAmmoFX( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetAmmoFXHue( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
-						SetAmmoFXRender( static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetAmmoFX( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetAmmoFXHue( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetAmmoFXRender( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetAmmoFX( static_cast<UI16>(std::stoul( strutil::stripTrim( data ), nullptr, 0 )));
+						SetAmmoFX( static_cast<UI16>(std::stoul( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 )));
 						SetAmmoFXHue( ( 0 ) );
 						SetAmmoFXRender( ( 0 ) );
 					}
@@ -1477,41 +1478,41 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "AMOUNT" )
 				{
-					amount = static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+					amount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "AC" )
 				{
-					SetArmourClass( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetArmourClass( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'B':
 				if( UTag == "BOOLS" )
 				{
-					bools = static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+					bools = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					temp_container_serial = static_cast<SERIAL>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+					temp_container_serial = static_cast<SERIAL>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetCreator( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CORPSE" )
 				{
-					SetCorpse( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetCorpse( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "COLD" )
 				{
-					SetWeatherDamage( COLD, static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetWeatherDamage( COLD, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
@@ -1523,91 +1524,91 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				if( UTag == "DIR" )
 				{
-					SetDir( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)));
+					SetDir( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "DYEABLE" )
 				{
-					SetDye( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetDye( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'E':
 				if( UTag == "ENTRYMADEFROM" )
 				{
-					EntryMadeFrom( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					EntryMadeFrom( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GRIDLOC" )
 				{
-					SetGridLocation( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGridLocation( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOWTYPE" )
 				{
-					SetGlowEffect( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGlowEffect( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOWBC" )
 				{
-					SetGlowColour( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGlowColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOW" )
 				{
-					SetGlow( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGlow( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GOOD" )
 				{
-					SetGood( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetGood( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'H':
 				if( UTag == "HEAT" )
 				{
-					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'L':
 				if( UTag == "LAYER" )
 				{
-					layer = static_cast<ItemLayers>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+					layer = static_cast<ItemLayers>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "LIGHT" )
 				{
-					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "LIGHTNING" )
 				{
-					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'M':
 				if( UTag == "MAXITEMS" )
 				{
-					SetMaxItems( static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetMaxItems( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MORE" )
 				{
 					if( csecs.size() >= 4 )
 					{
-						SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetTempVar( CITV_MORE, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
@@ -1617,23 +1618,23 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					rvalue = true;
 				else if( UTag == "MOREXYZ" )
 				{
-					SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
-					SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0)) );
+					SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOREX" )
 				{
 					if( csecs.size() >= 4 )
 					{
-						SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
@@ -1641,14 +1642,14 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() >= 4 )
 					{
-						SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
@@ -1656,25 +1657,25 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() >= 4 )
 					{
-						SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[0] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[1] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[2] ), nullptr, 0 ) ) );
-						SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( strutil::stripTrim( csecs[3] ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( strutil::stripTrim( data ), nullptr, 0 ) ) );
+						SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "MOVABLE" )
 				{
-					SetMovable( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetMovable( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXHP" )
 				{
-					SetMaxHP( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetMaxHP( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -1688,46 +1689,46 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'O':
 				if( UTag == "OFFSPELL" )
 				{
-					SetOffSpell( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetOffSpell( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PRIV" )
 				{
-					SetPriv( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetPriv( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PILEABLE" )
 				{
-					SetPileable( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetPileable( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'R':
 				if( UTag == "RESTOCK" )
 				{
-					SetRestock( static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetRestock( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RACEDAMAGE" )
 				{
-					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) == 1 );
-					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) == 1 );
-					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0)) == 1 );
-					SetWeatherDamage( COLD, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[3] ), nullptr, 0)) == 1 );
-					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[4] ), nullptr, 0)) == 1 );
-					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[5] ), nullptr, 0)) == 1 );
+					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( COLD, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "RANK" )
 				{
-					SetRank( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetRank( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RAIN" )
 				{
-					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "REPUTATION" )
@@ -1736,24 +1737,24 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'S':
 				if( UTag == "SPEED" )
 				{
-					SetSpeed( static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+					SetSpeed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SK_MADE" )
 				{
-					SetMadeWith( static_cast<SI08>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetMadeWith( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SNOW" )
 				{
-					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1 );
+					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "SPELLS" )
 				{
-					SetSpell( 0, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetSpell( 1, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
-					SetSpell( 2, static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[2] ), nullptr, 0)) );
+					SetSpell( 0, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetSpell( 1, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetSpell( 2, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -1762,11 +1763,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() != 1 )
 					{
-						SetType( static_cast<ItemTypes>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
+						SetType( static_cast<ItemTypes>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetType( static_cast<ItemTypes>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) );
+						SetType( static_cast<ItemTypes>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
@@ -1778,12 +1779,12 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() > 1 )
 					{
-						SetBuyValue( static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetSellValue( static_cast<UI32>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetBuyValue( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetSellValue( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						auto val = static_cast<UI32>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+						auto val = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 						SetBuyValue( val );
 						SetSellValue( val / 2 );
 					}
@@ -1793,7 +1794,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'W':
 				if( UTag == "WEIGHTMAX" )
 				{
-					SetWeightMax( static_cast<SI32>(std::stoi(strutil::stripTrim( data ), nullptr, 0)) );
+					SetWeightMax( static_cast<SI32>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -2110,20 +2111,43 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	if( txt.empty() )
 		return;
 
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( txt );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( GetSerial() );
-	toAdd.SpokenTo( speakTo );
-	toAdd.Type( OBJ );
-	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( target );
-	if( Colour == 0x0 || Colour == 0x1700)
-		toAdd.Colour( 0x03B2 );
-	else
-		toAdd.Colour( Colour );
-}
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	{
+		bool sendAll = true;
+		if( target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER )
+			sendAll = false;
 
+		if( Colour == 0x0 || Colour == 0x1700)
+			Colour = 0x03B2;
+
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( txt );
+		unicodeMessage.Font( FNT_NORMAL );
+		unicodeMessage.Colour( 0x000B );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( GetName() );
+		unicodeMessage.ID( GetID() );
+		unicodeMessage.Serial( GetSerial() );
+
+		s->Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( txt );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( GetSerial() );
+		toAdd.SpokenTo( speakTo );
+		toAdd.Type( OBJ );
+		toAdd.At( BuildTimeValue( secsFromNow ) );
+		toAdd.TargType( target );
+		if( Colour == 0x0 || Colour == 0x1700)
+			toAdd.Colour( 0x03B2 );
+		else
+			toAdd.Colour( Colour );
+	}
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Update( CSocket *mSock )
@@ -2171,7 +2195,12 @@ void CItem::Update( CSocket *mSock )
 				if( !(*cIter)->LoginComplete() )
 					continue;
 				(*cIter)->Send( &toWear );
-				(*cIter)->Send( &pSend );
+
+				// Only send tooltip if server feature for tooltips is enabled
+				if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+				{
+					(*cIter)->Send( &pSend );
+				}
 			}
 			return;
 		}
@@ -2233,8 +2262,12 @@ void CItem::SendToSocket( CSocket *mSock )
 		}
 		if( !CanBeObjType( OT_MULTI ) )
 		{
-			CPToolTip pSend( GetSerial() );
-			mSock->Send( &pSend );
+			// Only send tooltip if server feature for tooltips is enabled
+			if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+			{
+				CPToolTip pSend( GetSerial(), mSock );
+				mSock->Send( &pSend );
+			}
 		}
 	}
 }
@@ -2265,8 +2298,12 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 			itemSend.Colour( 0x00C6 );
 		}
 		mSock->Send( &itemSend );
-		CPToolTip pSend( GetSerial() );
-		mSock->Send( &pSend );
+		// Only send tooltip if server feature for tooltips is enabled
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		{
+			CPToolTip pSend( GetSerial(), mSock );
+			mSock->Send( &pSend );
+		}
 	}
 }
 
@@ -2475,9 +2512,13 @@ void CItem::Cleanup( void )
 				CSocket *ownerSocket = rootOwner->GetSocket();
 				if( ownerSocket != nullptr )
 				{
-					// Refresh container tooltip
-					CPToolTip pSend( iCont->GetSerial() );
-					ownerSocket->Send(&pSend);
+					// Only send tooltip if server feature for tooltips is enabled
+					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+					{
+						// Refresh container tooltip
+						CPToolTip pSend( iCont->GetSerial(), ownerSocket );
+						ownerSocket->Send(&pSend);
+					}
 				}
 			}
 			else
@@ -2488,9 +2529,13 @@ void CItem::Cleanup( void )
 					if( !(*cIter)->LoginComplete() )
 						continue;
 
-					// Refresh container tooltip
-					CPToolTip pSend( iCont->GetSerial() );
-					(*cIter)->Send(&pSend);
+					// Only send tooltip if server feature for tooltips is enabled
+					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+					{
+						// Refresh container tooltip
+						CPToolTip pSend( iCont->GetSerial(), (*cIter) );
+						(*cIter)->Send(&pSend);
+					}
 				}
 			}
 		}
@@ -2656,13 +2701,13 @@ bool CSpawnItem::HandleLine( std::string &UTag, std::string &data )
 			case 'I':
 				if( UTag == "INTERVAL" )
 				{
-					SetInterval( 0, static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-					SetInterval( 1, static_cast<UI08>(std::stoul(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+					SetInterval( 0, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetInterval( 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSECTIONALIST" )
 				{
-					IsSectionAList( (static_cast<UI08>(std::stoul(strutil::stripTrim( data ), nullptr, 0)) == 1) );
+					IsSectionAList( (static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;

@@ -2,18 +2,20 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 {
 	if( pUser && iUsed && iUsed.isItem )
 	{
+		var socket = pUser.socket;
+		var pLanguage = socket.language;
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
+			if( socket != null )
+				socket.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
 			return;
 		}
 
-		var socket = pUser.socket;
-		if( socket )
+		if( socket != null )
 		{
 			if( pUser.skillsused.healing || pUser.skillsused.veterinary )
 			{
-				socket.SysMessage( "You are too busy to do that." );
+				socket.SysMessage( GetDictionaryEntry( 1971, pLanguage ) ); // You are too busy to do that.
 			}
 			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
 			{
@@ -23,7 +25,7 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 473, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 473, pLanguage ) ); // You must wait a few moments before using another skill.
 			}
 		}
 	}
@@ -34,6 +36,7 @@ function onUseChecked( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
+		var pLanguage = socket.language;
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
@@ -41,16 +44,16 @@ function onUseChecked( pUser, iUsed )
 		}
 
 		if( pUser.skillsused.healing || pUser.skillsused.veterinary )
-			socket.SysMessage( "You are too busy to do that." );
+			socket.SysMessage( GetDictionaryEntry( 1971, pLanguage ) ); // You are too busy to do that.
 		else if( socket.GetTimer( 0 ) <= GetCurrentClock() )	// Skill timer
 		{
 			socket.tempObj = iUsed;
-			var targMsg = GetDictionaryEntry( 472, socket.language );
+			var targMsg = GetDictionaryEntry( 472, pLanguage ); // Who will you use the bandages on?
 			socket.CustomTarget( 1, targMsg );
 			socket.SetTimer( 0, 5000 );		// Reset the skill timer
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 473, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 473, pLanguage ) ); // You must wait a few moments before using another skill.
 	}
 	return false;
 }
@@ -75,7 +78,7 @@ function onCallback1( socket, ourObj )
 				}
 				else
 				{
-					socket.SysMessage( "They are already being healed." );
+					socket.SysMessage( GetDictionaryEntry( 6013, socket.language )); // They are already being healed.
 					return;
 				}
 			}
@@ -87,14 +90,14 @@ function onCallback1( socket, ourObj )
 				healSkill = mChar.baseskills.healing;
 				skillNum  = 17;
 			}
-			else if( ourObj.isAnimal && ourObj.tamed && ourObj.owner )
+			else if( ourObj.tamed && ourObj.owner )
 			{
 				healSkill = mChar.baseskills.veterinary;
 				skillNum  = 39;
 			}
 			else
 			{
-				socket.SysMessage( "You can't heal that!" );
+				socket.SysMessage( GetDictionaryEntry( 6014, socket.language )); // You can't heal that!
 				return;
 			}
 
@@ -105,7 +108,7 @@ function onCallback1( socket, ourObj )
 				{
 					if( !iMulti.IsOnOwnerList( ourObj ) && !iMulti.IsOnOwnerList( mChar ) )
 					{
-						socket.SysMessage( "Your target is in another character's house, healing attempt aborted." );
+						socket.SysMessage( GetDictionaryEntry( 6015, socket.language )); // Your target is in another character's house, healing attempt aborted.
 						return;
 					}
 				}
@@ -130,10 +133,10 @@ function onCallback1( socket, ourObj )
 						mChar.StartTimer( healTimer, 0, true );
 					}
 					else
-						socket.SysMessage( GetDictionaryEntry( 1492, socket.language ) );
+						socket.SysMessage( GetDictionaryEntry( 1492, socket.language ) ); // You do not have the ability to resurrect the ghost.
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 1493, socket.language ) );
+					socket.SysMessage( GetDictionaryEntry( 1493, socket.language ) ); // You are not skilled enough to resurrect.
 			}
 			else if( ourObj.poison > 0 )	// Cure Poison
 			{
@@ -158,17 +161,17 @@ function onCallback1( socket, ourObj )
 						mChar.StartTimer( healTimer, 1, true );
 					}
 					else
-						socket.SysMessage( GetDictionaryEntry( 1494, socket.language ) );
+						socket.SysMessage( GetDictionaryEntry( 1494, socket.language ) ); // You fail to counter the poison.
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 1495, socket.language ) );
-					socket.SysMessage( GetDictionaryEntry( 1496, socket.language ) );
+					socket.SysMessage( GetDictionaryEntry( 1495, socket.language ) ); // You are not skilled enough to cure poison.
+					socket.SysMessage( GetDictionaryEntry( 1496, socket.language ) ); // The poison in your target's system counters the bandage's effect.
 				}
 
 			}
 			else if( ourObj.health == ourObj.maxhp )
-				socket.SysMessage( GetDictionaryEntry( 1497, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 1497, socket.language ) ); // That being is undamaged.
 			else	// Heal
 			{
 				if( bItem.amount > 1 )
@@ -179,7 +182,10 @@ function onCallback1( socket, ourObj )
 				if( ourObj.murderer || ourObj.criminal )
 					mChar.criminal = true;
 				if( ourObj != mChar && ourObj.socket )
-					ourObj.SysMessage( mChar.name+" is attempting to heal you." );
+				{
+					var tempMsg = GetDictionaryEntry( 6016, socket.language ); // %s is attempting to heal you.
+					ourObj.SysMessage( tempMsg.replace(/%s/gi, mChar.name ));
+				}
 				if( mChar.CheckSkill( skillNum, 0, 1000 ) )
 				{
 					var healTimer;
@@ -197,14 +203,14 @@ function onCallback1( socket, ourObj )
 					ourObj.health = ourObj.health+1;
 
 					if( skillNum == 17 ) // Healing
-						socket.SysMessage( GetDictionaryEntry( 1499, socket.language ) );
+						socket.SysMessage( GetDictionaryEntry( 1499, socket.language ) ); // You are not skilled enough to heal that person.
 					else
-						socket.SysMessage( GetDictionaryEntry( 1500, socket.language ) );
+						socket.SysMessage( GetDictionaryEntry( 1500, socket.language ) ); // You are not skilled enough to heal that creature.
 				}
 			}
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 1498, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 1498, socket.language ) ); // You are not close enough to apply the bandages.
 	}
 }
 
@@ -213,7 +219,7 @@ function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
 	if( setVal )
 	{
 		if( socket )
-			socket.SysMessage( "You begin to apply the bandages." );
+			socket.SysMessage( GetDictionaryEntry( 6017, socket.language ) ); // You begin to apply the bandages.
 		mChar.SetTag( "SK_HEALINGTYPE", skillNum );
 	}
 	else
@@ -245,7 +251,7 @@ function onTimer( mChar, timerID )
 	{
 		if( mChar.dead )
 		{
-			socket.SysMessage( GetDictionaryEntry( 330, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 330, socket.language ) ); // You are dead and cannot do that.
 		}
 		else if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) )
 		{
@@ -253,16 +259,16 @@ function onTimer( mChar, timerID )
 			{
 			case 0:	// Resurrect
 				ourObj.Resurrect();
-				socket.SysMessage( GetDictionaryEntry( 1272, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 1272, socket.language ) ); // You successfully resurrected the patient!
 				break;
 			case 1:	// Cure Poison
 				ourObj.SetPoisoned( 0, 0 );
 				ourObj.StaticEffect( 0x373A, 0, 15 );
 				ourObj.SoundEffect( 0x01E0, true );
-				socket.SysMessage( GetDictionaryEntry( 1274, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 1274, socket.language ) ); // You have cured the poison.
 				var objSock = ourObj.socket;
 				if( objSock )
-					objSock.SysMessage( GetDictionaryEntry( 1273, objSock.language ) );
+					objSock.SysMessage( GetDictionaryEntry( 1273, objSock.language ) ); // You have been cured of poison.
 				break;
 			case 2:	// Heal
 				var healSkill;
@@ -272,12 +278,12 @@ function onTimer( mChar, timerID )
 					healSkill = mChar.skills.veterinary;
 
 				ourObj.Heal( (RandomNumber( 3, 10 ) + parseInt(mChar.skills.anatomy / 50) + RandomNumber( parseInt(healSkill / 50), parseInt(healSkill / 20) )), mChar );
-				socket.SysMessage( GetDictionaryEntry( 1271, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 1271, socket.language ) ); // You apply the bandages and the patient looks a bit healthier.
 				break;
 			}
 		}
 		else
-			socket.SysMessage( "You are no longer close enough to heal your target." );
+			socket.SysMessage( GetDictionaryEntry( 6018, socket.language ) ); // You are no longer close enough to heal your target.
 	}
 	SetSkillInUse( socket, mChar, ourObj, skillNum, 0, false );
 }

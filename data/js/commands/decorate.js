@@ -133,8 +133,11 @@ function command_DECORATE( socket, cmdString )
 				HandleDecorateCopy( socket, splitString );
 				break;
 			default:
-				socket.SysMessage( "Unknown subcommand (" + splitString[0] + ") provided for DECORATE command." );
+			{
+				var tempMsg = GetDictionaryEntry( 8012, socket.language ); // Unknown subcommand (%s) provided for DECORATE command.
+				socket.SysMessage( tempMsg.replace(/%s/gi, splitString[0] ));
 				break;
+			}
 		}
 	}
 	/*else
@@ -236,7 +239,7 @@ function GetFacet( socket, splitString )
 				facetID = 5;
 				break;
 			default:
-				socket.SysMessage( "No valid facet type specified. Facets supported: felucca, trammel, ilshenar, malas, tokuno or termur" );
+				socket.SysMessage( GetDictionaryEntry( 8013, socket.language )); // No valid facet type specified. Facets supported: felucca, trammel, ilshenar, malas, tokuno or termur
 				break;
 		}
 	}
@@ -258,7 +261,9 @@ function HandleDecorateCopy( socket, splitString )
 		targetFacet = splitString[2].toUpperCase();
 	if( sourceFacet != "" && targetFacet != "" )
 	{
-		socket.SysMessage( "Copying ALL decorations from facet '" + sourceFacet.toLowerCase() + "' to facet '" + targetFacet.toLowerCase() + "'..." );
+		var tempMsg = GetDictionaryEntry( 8014, socket.language ); // Copying ALL decorations from facet '%s' to facet '%t'...
+		tempMsg = tempMsg.replace(/%s/gi, sourceFacet.toLowerCase() );
+		socket.SysMessage( tempMsg.replace(/%t/gi, targetFacet.toLowerCase() ));
 
 		switch( sourceFacet )
 		{
@@ -310,16 +315,19 @@ function HandleDecorateCopy( socket, splitString )
 
 		if( facetID != -1 && targetFacetID != -1 )
 		{
-			DisplayProgressGump( socket, "Copying Decorations", 0 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8015, socket.language ), 0 ); // Copying Decorations
 
 			totalCopied = IterateOver( "ITEM" );
 			if( totalCopied > 0 )
 			{
-				socket.SysMessage( totalCopied + " decorations copied from " + sourceFacet + " to " + targetFacet + "." );
+				var tempMsg = GetDictionaryEntry( 8016, socket.language ); // %i decorations copied from %s to %t.
+				tempmsg = tempMsg.replace(/%i/gi, totalCopied.toString() );
+				tempmsg = tempMsg.replace(/%s/gi, sourceFacet );
+				socket.SysMessage( tempMsg.replace(/%t/gi, targetFacet ));
 			}
 			else
 			{
-				socket.SysMessage( "No decorations were copied." );
+				socket.SysMessage( GetDictionaryEntry( 8017, socket.language )); // No decorations were copied.
 			}
 
 			socket.CloseGump( scriptID + 0xffff, 0 );
@@ -327,18 +335,19 @@ function HandleDecorateCopy( socket, splitString )
 	}
 	else
 	{
-		socket.SysMessage( "Invalid facets provided as arguments (fromFacet, toFacet) to copy command. Valid arguments: felucca, trammel, ilshenar, malas, tokuno, termur" );
+		// Invalid facets provided as arguments (fromFacet, toFacet) to copy command. Valid arguments: felucca, trammel, ilshenar, malas, tokuno, termur
+		socket.SysMessage( GetDictionaryEntry( 8018, socket.language ));
 	}
 }
 
 // Handle cleaning up of duplicate decorations, if any
 function HandleDecorateClean( socket )
 {
-	socket.SysMessage( "Cleaning decorations..." );
+	socket.SysMessage( GetDictionaryEntry( 8019, socket.language )); // Cleaning decorations...
 	cleanMode = true;
 	totalCleaned = 0;
 
-	DisplayProgressGump( socket, "Cleaning Duplicates", 0 );
+	DisplayProgressGump( socket, GetDictionaryEntry( 8020, socket.language ), 0 ); // Cleaning Duplicates
 
 	var progressOne = true;
 	var progressTwo = true;
@@ -354,27 +363,27 @@ function HandleDecorateClean( socket )
 
 		if( progressFive && i >= 5 )
 		{
-			DisplayProgressGump( socket, "Cleaning Duplicates", 75 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8020, socket.language ), 75 ); // Cleaning Duplicates
 			progressFive = false;
 		}
 		else if( progressFour && i >= 4 )
 		{
-			DisplayProgressGump( socket, "Cleaning Duplicates", 60 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8020, socket.language ), 60 ); // Cleaning Duplicates
 			progressFour = false;
 		}
 		else if( progressThree && i >= 3 )
 		{
-			DisplayProgressGump( socket, "Cleaning Duplicates", 45 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8020, socket.language ), 45 ); // Cleaning Duplicates
 			progressThree = false;
 		}
 		else if( progressTwo && i >= 2 )
 		{
-			DisplayProgressGump( socket, "Cleaning Duplicates", 30 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8020, socket.language ), 30 ); // Cleaning Duplicates
 			progressTwo = false;
 		}
 		else if( progressOne && i >= 1 )
 		{
-			DisplayProgressGump( socket, "Cleaning Duplicates", 15 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8020, socket.language ), 15 ); // Cleaning Duplicates
 			progressOne = false;
 		}
 
@@ -384,18 +393,19 @@ function HandleDecorateClean( socket )
 
 	if( totalCleaned > 0 )
 	{
-		socket.SysMessage( totalCleaned + " duplicate items removed." );
+		var tempMsg = GetDictionaryEntry( 8021, socket.language ); // %i duplicate items removed.
+		socket.SysMessage( tempMsg.replace(/%i/gi, totalCleaned.toString() ));
 	}
 	else
 	{
-		socket.SysMessage( "No duplicate items found amongst decorations." );
+		socket.SysMessage( GetDictionaryEntry( 8022, socket.language )); // No duplicate items found amongst decorations.
 	}
 }
 
 // Handle saving of decorations, based on parameters in command string
 function HandleDecorateSave( socket, splitString )
 {
-	socket.SysMessage( "Saving decorations..." );
+	socket.SysMessage( GetDictionaryEntry( 8023, socket.language )); // Saving decorations...
 	saveAll = false;
 	saveCustom = false;
 
@@ -424,43 +434,43 @@ function HandleDecorateSave( socket, splitString )
 				switch( i )
 				{
 					case 0:
-						socket.SysMessage( "Saving decorations for Felucca..." );
+						socket.SysMessage( GetDictionaryEntry( 8024, socket.language )); // Saving decorations for Felucca...
 						facetID = 0;
 						facetName = "felucca";
-						DisplayProgressGump( socket, "Saving Decorations", 0 );
+						DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 0 ); // Saving Decorations
 						break;
 					case 1:
-						socket.SysMessage( "Saving decorations for Trammel..." );
+						socket.SysMessage( GetDictionaryEntry( 8025, socket.language )); // Saving decorations for Trammel...
 						facetID = 1;
 						facetName = "trammel";
-						DisplayProgressGump( socket, "Saving Decorations", 20 );
+						DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 20 ); // Saving Decorations
 						break;
 					case 2:
-						socket.SysMessage( "Saving decorations for Ilshenar..." );
+						socket.SysMessage( GetDictionaryEntry( 8026, socket.language )); // Saving decorations for Ilshenar...
 						facetID = 2;
 						facetName = "ilshenar";
-						DisplayProgressGump( socket, "Saving Decorations", 35 );
+						DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 35 ); // Saving Decorations
 						break;
 					case 3:
-						socket.SysMessage( "Saving decorations for Malas..." );
+						socket.SysMessage( GetDictionaryEntry( 8027, socket.language )); // Saving decorations for Malas...
 						facetID = 3;
 						facetName = "malas";
-						DisplayProgressGump( socket, "Saving Decorations", 50 );
+						DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 50 ); // Saving Decorations
 						break;
 					case 4:
-						socket.SysMessage( "Saving decorations for Tokuno..." );
+						socket.SysMessage( GetDictionaryEntry( 8028, socket.language )); // Saving decorations for Tokuno...
 						facetID = 4;
 						facetName = "tokuno";
-						DisplayProgressGump( socket, "Saving Decorations", 65 );
+						DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 65 ); // Saving Decorations
 						break;
 					case 5:
-						socket.SysMessage( "Saving decorations for Termur..." );
+						socket.SysMessage( GetDictionaryEntry( 8029, socket.language )); // Saving decorations for Termur...
 						facetID = 5;
 						facetName = "termur";
-						DisplayProgressGump( socket, "Saving Decorations", 80 );
+						DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 80 ); // Saving Decorations
 						break;
 					default:
-						socket.SysMessage( "Invalid facet selected, saving aborted!" );
+						socket.SysMessage( GetDictionaryEntry( 8031, socket.language )); // Invalid facet selected, saving aborted!
 						return;
 				}
 
@@ -469,7 +479,8 @@ function HandleDecorateSave( socket, splitString )
 				if( iterateCount == 0 )
 					continue; // No decorations found, of any type. Check next facet!
 
-				socket.SysMessage( "..." + ( iterateCount ) + " decorations saved!" );
+				var tempMsg = GetDictionaryEntry( 8032, socket.language ); // ...%i decorations saved!
+				socket.SysMessage( tempMsg.replace(/%i/gi, iterateCount.toString() ));
 
 				// With facetID/Name sorted, let's loop through each objectType
 				for( var j = 0; j < objectTypeCount; j++ )
@@ -510,7 +521,7 @@ function HandleDecorateSave( socket, splitString )
 							SaveDecorationsToFile( socket, decorateMiscArray, false  );
 							break;
 						default:
-							socket.SysMessage( "Invalid objectType selected, saving aborted!" );
+							socket.SysMessage( GetDictionaryEntry( 8032, socket.language )); // Invalid objectType selected, saving aborted!
 							return;
 					}
 				}
@@ -543,23 +554,25 @@ function HandleDecorateSave( socket, splitString )
 				saveCustom = true;
 				saveAll = true;
 
-				DisplayProgressGump( socket, "Saving Decorations", 0 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 0 ); // Saving Decorations
 
 				var iterateCount = IterateOver( "ITEM" );
 				if( iterateCount > 0 )
 				{
 					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
-						socket.SysMessage( iterateCount + " decorations saved to custom world template '" + objectType + "'. Check <SCRIPTSDATADIRECTORY>/worldtemplates/ for output files!" );
+						var tempMsg2 = GetDictionaryEntry( 8033, socket.language ); // %i decorations saved to custom world template '%s'. Check <SCRIPTSDATADIRECTORY>/worldtemplates/ for output files!
+						tempMsg2 = tempMsg2.replace(/%i/gi, iterateCount.toString() );
+						socket.SysMessage( tempMsg2.replace(/%s/gi, objectType ));
 					}
 					else
 					{
-						socket.SysMessage( "Unable to save decorations to template. Something may have gone wrong!" );
+						socket.SysMessage( GetDictionaryEntry( 8034, socket.language )); // Unable to save decorations to template. Something may have gone wrong!
 					}
 				}
 				else
 				{
-					socket.SysMessage( "No decorations found. None saved!" );
+					socket.SysMessage( GetDictionaryEntry( 8035, socket.language )); // No decorations found. None saved!
 				}
 				socket.CloseGump( scriptID + 0xffff, 0 );
 			}
@@ -569,7 +582,7 @@ function HandleDecorateSave( socket, splitString )
 				{
 					saveAll = true;
 
-					DisplayProgressGump( socket, "Saving Decorations", 0 );
+					DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 0 ); // Saving Decorations
 
 					var iterateCount = IterateOver( "ITEM" );
 					if( iterateCount > 0 )
@@ -583,50 +596,53 @@ function HandleDecorateSave( socket, splitString )
 								case 0:
 									objectType = "doors";
 									SaveDecorationsToFile( socket, decorateDoorsArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 12 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 12 ); // Saving Decorations
 									break;
 								case 1:
 									objectType = "signs";
 									SaveDecorationsToFile( socket, decorateSignsArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 24 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 24 ); // Saving Decorations
 									break;
 								case 2:
 									objectType = "lights";
 									SaveDecorationsToFile( socket, decorateLightsArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 36 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 36 ); // Saving Decorations
 									break;
 								case 3:
 									objectType = "containers";
 									SaveDecorationsToFile( socket, decorateContainersArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 48 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 48 ); // Saving Decorations
 									break;
 								case 4:
 									objectType = "moongates";
 									SaveDecorationsToFile( socket, decorateMoongatesArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 60 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 60 ); // Saving Decorations
 									break;
 								case 5:
 									objectType = "teleporters";
 									SaveDecorationsToFile( socket, decorateTeleportersArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 72 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 72 ); // Saving Decorations
 									break;
 								case 6:
 									objectType = "spawners";
 									SaveDecorationsToFile( socket, decorateSpawnersArray, false );
-									DisplayProgressGump( socket, "Saving Decorations", 84 );
+									DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 84 ); // Saving Decorations
 									break;
 								case 7:
 									objectType = "misc";
 									SaveDecorationsToFile( socket, decorateMiscArray );
 									break;
 								default:
-									socket.SysMessage( "Invalid objectType selected, saving aborted!" );
+									socket.SysMessage( GetDictionaryEntry( 8032, socket.language )); // Invalid objectType selected, saving aborted!
 									socket.CloseGump( scriptID + 0xffff, 0 );
 									return;
 							}
 						}
 						socket.CloseGump( scriptID + 0xffff, 0 );
-						socket.SysMessage( iterateCount + " decorations successfully saved to templates for facet '" + facetName + "'. Check <SCRIPTDATADIRECTORY/worldtemplates/ for saved template files!" );
+
+						var tempMsg3 = GetDictionaryEntry( 8035, socket.language ); // %i decorations successfully saved to templates for facet '%s'. Check <SCRIPTDATADIRECTORY/worldtemplates/ for saved template files!
+						tempMsg3 = tempMsg3.replace(/%i/gi, iterateCount.toString() );
+						socket.SysMessage( tempMsg3.replace(/%s/gi, facetName ));
 					}
 				}
 				else if( objectType != "" && facetID == -1 )
@@ -648,35 +664,35 @@ function HandleDecorateSave( socket, splitString )
 							case 0:
 								facetID = 0;
 								facetName = "felucca";
-								DisplayProgressGump( socket, "Saving Decorations", 15 );
+								DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 15 ); // Saving Decorations
 								break;
 							case 1:
 								facetID = 1;
 								facetName = "trammel";
-								DisplayProgressGump( socket, "Saving Decorations", 30 );
+								DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 30 ); // Saving Decorations
 								break;
 							case 2:
 								facetID = 2;
 								facetName = "ilshenar";
-								DisplayProgressGump( socket, "Saving Decorations", 45 );
+								DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 45 ); // Saving Decorations
 								break;
 							case 3:
 								facetID = 3;
 								facetName = "malas";
-								DisplayProgressGump( socket, "Saving Decorations", 60 );
+								DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 60 ); // Saving Decorations
 								break;
 							case 4:
 								facetID = 4;
 								facetName = "tokuno";
-								DisplayProgressGump( socket, "Saving Decorations", 75 );
+								DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 75 ); // Saving Decorations
 								break;
 							case 5:
 								facetID = 5;
 								facetName = "termur";
-								DisplayProgressGump( socket, "Saving Decorations", 90 );
+								DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 90 ); // Saving Decorations
 								break;
 							default:
-								socket.SysMessage( "Invalid facet selected, saving aborted!" );
+								socket.SysMessage( GetDictionaryEntry( 8031, socket.language )); // Invalid facet selected, saving aborted!
 								socket.CloseGump( scriptID + 0xffff, 0 );
 								return;
 						}
@@ -685,7 +701,10 @@ function HandleDecorateSave( socket, splitString )
 						if( iterateCount == 0 )
 							continue;
 
-						socket.SysMessage( "Saving " + iterateCount + " decorations of type '" + objectType + "' for facet '" + facetName + "'..." );
+						var tempMsg3 = GetDictionaryEntry( 8036, socket.language ); // Saving %i decorations of type '%s' for facet '%t'...
+						tempMsg3 = tempMsg3.replace(/%i/gi, iterateCount.toString() );
+						tempMsg3 = tempMsg3.replace(/%s/gi, objectType );
+						socket.SysMessage( tempMsg3.replace(/%t/gi, facetName ));
 
 						switch( objectType.toUpperCase() )
 						{
@@ -714,7 +733,7 @@ function HandleDecorateSave( socket, splitString )
 								SaveDecorationsToFile( socket, decorateMiscArray, false );
 								break;
 							default:
-								socket.SysMessage( "Invalid objectType selected, saving aborted!" );
+								socket.SysMessage( GetDictionaryEntry( 8032, socket.language )); // Invalid objectType selected, saving aborted!
 								socket.CloseGump( scriptID + 0xffff, 0 );
 								return;
 						}
@@ -730,24 +749,30 @@ function HandleDecorateSave( socket, splitString )
 			GetFacet( socket, splitString[2] );
 			if( facetID != -1 && objectType != "" )
 			{
-				DisplayProgressGump( socket, "Saving Decorations", 0 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 0 ); // Saving Decorations
 
 				var iterateCount = IterateOver( "ITEM" );
 				if( iterateCount > 0 )
 				{
-					socket.SysMessage( iterateCount + " items of type '" + objectType + "' detected in facet '" + facetName + "'. Saving..." );
+					var tempMsg4 = GetDictionaryEntry( 8037, socket.language ); // %i items of type '%s' detected in facet '%t'. Saving...
+					tempMsg4 = tempMsg4.replace(/%i/gi, iterateCount.toString() );
+					tempMsg4 = tempMsg4.replace(/%s/gi, objectType );
+					socket.SysMessage( tempMsg4.replace(/%t/gi, facetName ));
+
 					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
-						socket.SysMessage( "World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!" );
+						socket.SysMessage( GetDictionaryEntry( 8038, socket.language )); // World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!
 					}
 					else
 					{
-						socket.SysMessage( "Unable to save decorations to template. Something may have gone wrong!" );
+						socket.SysMessage( GetDictionaryEntry( 8039, socket.language )); // Unable to save decorations to template. Something may have gone wrong!
 					}
 				}
 				else
 				{
-					socket.SysMessage( "No decorations of type '" + objectType + "' was found in facet '" + facetName + "'." );
+					var tempMsg5 = GetDictionaryEntry( 8040, socket.language ); // No decorations of type '%s' was found in facet '%t'.
+					tempMsg5 = tempMsg5.replace(/%s/gi, objectType );
+					socket.SysMessage( tempMsg5.replace(/%t/gi, facetName ));
 				}
 
 				socket.CloseGump( scriptID + 0xffff, 0 );
@@ -770,24 +795,27 @@ function HandleDecorateSave( socket, splitString )
 
 				if( isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2) || objectType == "" || facetID == -1 )
 				{
-					socket.SysMessage( "Invalid arguments provided - with 7 arguments the syntax is: 'decorate save <filename> <facetName> x1 y1 x2 y2" );
+					socket.SysMessage( GetDictionaryEntry( 8041, socket.language )); // Invalid arguments provided - with 7 arguments the syntax is: 'decorate save <filename> <facetName> x1 y1 x2 y2
 					return;
 				}
 
-				DisplayProgressGump( socket, "Saving Decorations", 0 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 0 ); // Saving Decorations
 
 				// If both facet and objectType is defined...
 				var iterateCount = IterateOver( "ITEM" );
 				if( iterateCount > 0 )
 				{
-					socket.SysMessage( iterateCount + " items detected in facet '" + facetName + "'. Saving to custom world template titled '" + objectType + "'..." );
+					var tempMsg6 = GetDictionaryEntry( 8042, socket.language ); // %i items detected in facet '%s'. Saving to custom world template titled '%t'...
+					tempMsg6 = tempMsg6.replace(/%i/gi, iterateCount.toString() );
+					tempMsg6 = tempMsg6.replace(/%s/gi, objectType );
+					socket.SysMessage( tempMsg6.replace(/%t/gi, facetName ));
 					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
-						socket.SysMessage( "World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!" );
+						socket.SysMessage( GetDictionaryEntry( 8043, socket.language )); // World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!
 					}
 					else
 					{
-						socket.SysMessage( "Unable to save decorations to template. Something may have gone wrong!" );
+						socket.SysMessage( GetDictionaryEntry( 8034, socket.language )); // Unable to save decorations to template. Something may have gone wrong!
 					}
 				}
 
@@ -853,7 +881,7 @@ function SaveDecorationsToFile( socket, arrayRef, singleSave )
 {
 	if( !arrayRef )
 	{
-		socket.SysMessage( "No valid array reference was provided. Aborting save of decorations." );
+		socket.SysMessage( GetDictionaryEntry( 8044, socket.language )); // No valid array reference was provided. Aborting save of decorations.
 		return;
 	}
 
@@ -898,27 +926,27 @@ function SaveDecorationsToFile( socket, arrayRef, singleSave )
 
 			if( displayProgressEighty && (( i * 100 ) / arrayLength ) >= 80 )
 			{
-				DisplayProgressGump( socket, "Saving Decorations", 80 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 80 ); // Saving Decorations
 				displayProgressEighty = false;
 			}
 			else if( displayProgressSixty && (( i * 100 ) / arrayLength ) >= 60 )
 			{
-				DisplayProgressGump( socket, "Saving Decorations", 60 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 60 ); // Saving Decorations
 				displayProgressSixty = false;
 			}
 			else if( displayProgressForty && (( i * 100 ) / arrayLength ) >= 40 )
 			{
-				DisplayProgressGump( socket, "Saving Decorations", 40 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 40 ); // Saving Decorations
 				displayProgressForty = false;
 			}
 			else if( displayProgressTwenty && (( i * 100 ) / arrayLength ) >= 20 )
 			{
-				DisplayProgressGump( socket, "Saving Decorations", 20 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 20 ); // Saving Decorations
 				displayProgressTwenty = false;
 			}
 			else if( displayProgressTen )
 			{
-				DisplayProgressGump( socket, "Saving Decorations", 10 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8030, socket.language ), 10 ); // Saving Decorations
 				displayProgressTen = false;
 			}
 		}
@@ -948,50 +976,50 @@ function HandleDecorateLoad( socket, splitString )
 			// Load everything
 			// If no facet OR object type is specified - load everything
 			decorateArray.length = 0;
-			DisplayProgressGump( socket, "Loading Decorations", 0 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8045, socket.language ), 0 ); // Loading Decorations
 			for( var i = 0; i < facetCount; i++ )
 			{
 				switch( i )
 				{
 					case 0:
 						if( !silentMode )
-							socket.SysMessage( "Loading decorations for Felucca..." );
+							socket.SysMessage( GetDictionaryEntry( 8046, socket.language )); // Loading decorations for Felucca...
 						facetID = 0;
 						facetName = "felucca";
 						break;
 					case 1:
 						if( !silentMode )
-							socket.SysMessage( "Loading decorations for Trammel..." );
+							socket.SysMessage( GetDictionaryEntry( 8047, socket.language )); // Loading decorations for Trammel...
 						facetID = 1;
 						facetName = "trammel";
 						break;
 					case 2:
 						if( !silentMode )
-							socket.SysMessage( "Loading decorations for Ilshenar..." );
+							socket.SysMessage( GetDictionaryEntry( 8048, socket.language )); // Loading decorations for Ilshenar...
 						facetID = 2;
 						facetName = "ilshenar";
 						break;
 					case 3:
 						if( !silentMode )
-							socket.SysMessage( "Loading decorations for Malas..." );
+							socket.SysMessage( GetDictionaryEntry( 8049, socket.language )); // Loading decorations for Malas...
 						facetID = 3;
 						facetName = "malas";
 						break;
 					case 4:
 						if( !silentMode )
-							socket.SysMessage( "Loading decorations for Tokuno..." );
+							socket.SysMessage( GetDictionaryEntry( 8050, socket.language )); // Loading decorations for Tokuno...
 						facetID = 4;
 						facetName = "tokuno";
 						break;
 					case 5:
 						if( !silentMode )
-							socket.SysMessage( "Loading decorations for Termur..." );
+							socket.SysMessage( GetDictionaryEntry( 8051, socket.language )); // Loading decorations for Termur...
 						facetID = 5;
 						facetName = "termur";
 						break;
 					default:
 						if( !silentMode )
-							socket.SysMessage( "Invalid facet selected, loading aborted!" );
+							socket.SysMessage( GetDictionaryEntry( 8052, socket.language )); // Invalid facet selected, loading aborted!
 						return;
 				}
 
@@ -1026,7 +1054,7 @@ function HandleDecorateLoad( socket, splitString )
 							break;
 						default:
 							if( !silentMode )
-								socket.SysMessage( "Invalid objectType selected, loading aborted!" );
+								socket.SysMessage( GetDictionaryEntry( 8053, socket.language )); // Invalid objectType selected, loading aborted!
 							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
@@ -1062,19 +1090,22 @@ function HandleDecorateLoad( socket, splitString )
 			//if( objectType != "" && objectType != "doors" && objectType != "signs" && objectType != "lights" && objectType != "moongates" && objectType != "teleporters" && objectType != "misc" )
 			if( objectType != "" && objectTypeList.indexOf( objectType.toLowerCase() ) == -1 )
 			{
-				DisplayProgressGump( socket, "Loading Decorations", 0 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8045, socket.language ), 0 ); // Loading Decorations
 				loadCustom = true;
 				if( !LoadDecorationsFromFile( socket ))
 				{
 					if( !silentMode )
-						socket.SysMessage( "Unable to load decorations from custom file. Does the file (" + objectType + ".jsdata" + ") exist?" );
+					{
+						var tempMsg = GetDictionaryEntry( 8054, socket.language ); // Unable to load decorations from custom file. Does the file (%s.jsdata) exist?
+						socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+					}
 					socket.CloseGump( scriptID + 0xffff, 0 );
 					return;
 				}
 			}
 			else if( objectType != "" && facetID == -1 )
 			{
-				DisplayProgressGump( socket, "Loading Decorations", 0 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8045, socket.language ), 0 ); // Loading Decorations
 				// Object type specified, but not facet. Load object type for ALL facets
 				for( var i = 0; i < facetCount; i++ )
 				{
@@ -1082,49 +1113,67 @@ function HandleDecorateLoad( socket, splitString )
 					{
 						case 0:
 							if( !silentMode )
-								socket.SysMessage( "Loading " + objectType + " for Felucca..." );
+							{
+								var tempMsg = GetDictionaryEntry( 8055, socket.language ); // Loading %s for Felucca...
+								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+							}
 							facetID = 0;
 							facetName = "felucca";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 1:
 							if( !silentMode )
-								socket.SysMessage( "Loading " + objectType + " for Trammel..." );
+							{
+								var tempMsg = GetDictionaryEntry( 8056, socket.language ); // Loading %s for Trammel...
+								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+							}
 							facetID = 1;
 							facetName = "trammel";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 2:
 							if( !silentMode )
-								socket.SysMessage( "Loading " + objectType + " for Ilshenar..." );
+							{
+								var tempMsg = GetDictionaryEntry( 8057, socket.language ); // Loading %s for Ilshenar...
+								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+							}
 							facetID = 2;
 							facetName = "ilshenar";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 3:
 							if( !silentMode )
-								socket.SysMessage( "Loading " + objectType + " for Malas..." );
+							{
+								var tempMsg = GetDictionaryEntry( 8058, socket.language ); // Loading %s for Malas...
+								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+							}
 							facetID = 3;
 							facetName = "malas";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 4:
 							if( !silentMode )
-								socket.SysMessage( "Loading " + objectType + " for Tokuno..." );
+							{
+								var tempMsg = GetDictionaryEntry( 8059, socket.language ); // Loading %s for Tokuno...
+								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+							}
 							facetID = 4;
 							facetName = "tokuno";
 							LoadDecorationsFromFile( socket );
 							break;
 						case 5:
 							if( !silentMode )
-								socket.SysMessage( "Loading " + objectType + " for Termur..." );
+							{
+								var tempMsg = GetDictionaryEntry( 8060, socket.language ); // Loading %s for Termur...
+								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+							}
 							facetID = 5;
 							facetName = "termur";
 							LoadDecorationsFromFile( socket );
 							break;
 						default:
 							if( !silentMode )
-								socket.SysMessage( "Invalid facet selected, loading aborted!" );
+								socket.SysMessage( GetDictionaryEntry( 8052, socket.language )); // Invalid facet selected, loading aborted!
 							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
@@ -1133,7 +1182,7 @@ function HandleDecorateLoad( socket, splitString )
 			else// if( objectType == "" && facetID != -1 )
 			{
 				// Load all contents of a specific facet, regardless of object type
-				DisplayProgressGump( socket, "Loading Decorations", 0 );
+				DisplayProgressGump( socket, GetDictionaryEntry( 8045, socket.language ), 0 ); // Loading Decorations
 				for( var i = 0; i < objectTypeCount; i++ )
 				{
 					switch( i )
@@ -1172,7 +1221,7 @@ function HandleDecorateLoad( socket, splitString )
 							break;
 						default:
 							if( !silentMode )
-								socket.SysMessage( "Invalid objectType selected, loading aborted!" );
+								socket.SysMessage( GetDictionaryEntry( 8053, socket.language )); // Invalid objectType selected, loading aborted!
 							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
@@ -1202,13 +1251,17 @@ function HandleDecorateLoad( socket, splitString )
 			// Fetch info on what facet to load
 			GetFacet( socket, splitString[2] );
 
-			DisplayProgressGump( socket, "Loading Decorations", 0 );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8045, socket.language ), 0 ); // Loading Decorations
 
 			// Attempt to load specified decorations of specified objectType and facet from file
 			if( !LoadDecorationsFromFile( socket ))
 			{
 				if( !silentMode )
-					socket.SysMessage( "Unable to load decorations from file. Does the file (" + facetName + "_" + objectType + ".jsdata" + ") you're trying to load exist?" );
+				{
+					var tempMsg = GetDictionaryEntry( 8061, socket.language ); // Unable to load decorations from file. Does the file (%s_%t.jsdata) you're trying to load exist?
+					tempMsg = tempMsg.replace(/%s/gi, facetName );
+					socket.SysMessage( tempMsg.replace(/%t/gi, objectType ));
+				}
 				socket.CloseGump( scriptID + 0xffff, 0 );
 				return;
 			}
@@ -1220,14 +1273,14 @@ function HandleDecorateLoad( socket, splitString )
 
 	if( decorateArray.length == 0 )
 	{
-		socket.SysMessage( "No decorations were loaded from world template files, unable to decorate world." );
+		socket.SysMessage( GetDictionaryEntry( 8062, socket.language )); // No decorations were loaded from world template files, unable to decorate world.
 		socket.CloseGump( scriptID + 0xffff, 0 );
 		return;
 	}
 	else if( !multipleCmd )
 	{
 		// socket.SysMessage( "Decorations loaded; please wait while world is decorated..." );
-		BroadcastMessage( "Decorations loaded; please wait while world is decorated..." );
+		BroadcastMessage( GetDictionaryEntry( 8063, socket.language )); // Decorations loaded; please wait while world is decorated...
 		socket.currentChar.StartTimer( 100, 1, true );
 	}
 	else
@@ -1269,7 +1322,7 @@ function DisplayProgressGump( socket, progressText, percentage )
 	progressGump.AddCheckerTrans( 0, 5, 175, 45 );
 
 	progressGump.AddHTMLGump( 10, 7, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>" + progressText + "...</BASEFONT></BIG></CENTER>" );
-	progressGump.AddHTMLGump( 10, 27, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=" + fontColor + ">Please wait... " + ( percentage >= 20 ? percentage + "%" : "") + "</BASEFONT></BIG></CENTER>" );
+	progressGump.AddHTMLGump( 10, 27, 155, 20, 0, 0, "<CENTER><BIG><BASEFONT color=" + fontColor + ">" + GetDictionaryEntry( 8064, socket.language ) +" " + ( percentage >= 20 ? percentage + "%" : "") + "</BASEFONT></BIG></CENTER>" );
 	progressGump.Send( socket );
 	progressGump.Free();
 }
@@ -1436,7 +1489,7 @@ function DecorateWorld( socket )
 		if( progress == 20 || progress == 40 || progress == 60 || progress == 80 )
 		{
 			socket.CloseGump( scriptID + 0xffff, 0 );
-			DisplayProgressGump( socket, "Decorating World", progress );
+			DisplayProgressGump( socket, GetDictionaryEntry( 8065, socket.language ), progress ); // Decorating World
 			/*var decorateWait = new Gump;
 			decorateWait.NoClose();
 			decorateWait.NoMove();
@@ -1505,7 +1558,9 @@ function DecorateWorld( socket )
 			newItemCount++;
 		}
 	}
-	socket.SysMessage( newItemCount + " decorations added!" );
+
+	var tempMsg = GetDictionaryEntry( 8066, socket.language ); // %i decorations added!
+	socket.SysMessage( tempMsg.replace(/%i/gi, newItemCount.toString() ));
 	socket.CloseGump( scriptID + 0xffff, 0 );
 }
 

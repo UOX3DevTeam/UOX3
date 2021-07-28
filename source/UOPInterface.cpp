@@ -162,46 +162,57 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
 			l = k + 11;
             c += (s[l] << 24);
         }
-        case 11: {
+		[[fallthrough]];
+		case 11: {
 			l = k + 10;
             c += (s[l] << 16);
         }
+		[[fallthrough]];
         case 10: {
 			l = k + 9;
 			c += (s[l] << 8);
         }
+		[[fallthrough]];
         case 9: {
 			l = k + 8;
 			c += (s[l]);
         }
+		[[fallthrough]];
         case 8: {
 			l = k + 7;
 			b += (s[l] << 24);
         }
+		[[fallthrough]];
         case 7: {
 			l = k + 6;
 			b += (s[l] << 16);
         }
+		[[fallthrough]];
         case 6: {
 			l = k + 5;
 			b += (s[l] << 8);
         }
+		[[fallthrough]];
         case 5: {
 			l = k + 4;
 			b += (s[l]);
         }
+		[[fallthrough]];
         case 4: {
 			l = k + 3;
 			a += (s[l] << 24);
         }
+		[[fallthrough]];
         case 3: {
 			l = k + 2;
 			a += (s[l] << 16);
         }
+		[[fallthrough]];
         case 2: {
 			l = k + 1;
 			a += (s[l] << 8);
         }
+		[[fallthrough]];
         case 1: {
 			a += (s[k]);
             c ^= b; c -= b << 14 | b >> 18;

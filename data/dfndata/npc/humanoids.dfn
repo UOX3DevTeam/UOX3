@@ -9,7 +9,7 @@
 
 [orc]
 {
-NAME=an orc
+NAME=#//an orc
 NAMELIST=3
 ID=0x0011
 DIRECTION=RND
@@ -47,7 +47,7 @@ ID=0x0029
 
 [orccaptain]
 {
-NAME=an orcish captain
+NAME=#//an orc captain
 NAMELIST=3
 ID=0x0007
 DIRECTION=RND
@@ -79,7 +79,7 @@ FLAG=NEUTRAL
 
 [orcmage]
 {
-NAME=an orcish mage
+NAME=#//an orcish mage
 ID=0x008c
 DIRECTION=RND
 BACKPACK
@@ -114,7 +114,7 @@ FLAG=NEUTRAL
 
 [orclord]
 {
-NAME=an orcish lord
+NAME=#//an orcish lord
 ID=0x008a
 DIRECTION=RND
 BACKPACK
@@ -146,7 +146,7 @@ FLAG=NEUTRAL
 
 [orcbomber]
 {
-NAME=an orc bomber
+NAME=#//an orc bomber
 ID=0x00b6
 DIRECTION=RND
 BACKPACK
@@ -177,7 +177,7 @@ FLAG=NEUTRAL
 
 [orcscout]
 {
-NAME=an orc scout
+NAME=#//an orc scout
 ID=0x00b5
 DIRECTION=RND
 BACKPACK
@@ -213,7 +213,7 @@ FLAG=NEUTRAL
 
 [lizardman]
 {
-NAME=a lizardman
+NAME=#//a lizardman
 NAMELIST=4
 ID=0x0021
 DIRECTION=RND
@@ -265,7 +265,7 @@ MACEFIGHTING=501 700
 
 [ratman]
 {
-NAME=a ratman
+NAME=#//a ratman
 NAMELIST=6
 ID=0x002a
 DIRECTION=RND
@@ -316,7 +316,7 @@ SWORDSMANSHIP=501 750
 
 [ratmanmage]
 {
-NAME=a ratman shaman
+NAME=#//a ratman shaman
 NAMELIST=6
 ID=0x008f
 SKIN=0x03ea
@@ -360,7 +360,7 @@ FLAG=NEUTRAL
 
 [ratmanarcher]
 {
-NAME=a ratman
+NAME=#//a ratman
 NAMELIST=6
 ID=0x008e
 DIRECTION=RND

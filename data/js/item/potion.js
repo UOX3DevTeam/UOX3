@@ -379,7 +379,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 		var targetRegion = targetChar.region;
 		if( targetRegion.isSafeZone )
 		{
-			sourceChar.SysMessage( "Your target is in a safe zone!" );
+			sourceChar.SysMessage( GetDictionaryEntry( 2756, sourceChar.socket.language )); // Your target is in a safe zone!
 			return;
 		}
 

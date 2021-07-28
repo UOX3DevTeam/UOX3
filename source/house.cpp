@@ -37,9 +37,9 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
 		data = House->GrabData();
-		if( strutil::toupper( tag ) == "ID" )
+		if( strutil::upper( tag ) == "ID" )
 		{
-			houseID = static_cast<UI16>(std::stoul(strutil::stripTrim( data ), nullptr, 0));
+			houseID = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 			break;
 		}
 	}
@@ -111,9 +111,9 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 			hItem = nullptr;	// clear it out
 			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
-				UTag = strutil::toupper( tag );
+				UTag = strutil::upper( tag );
 				data = HouseItem->GrabData();
-				data = strutil::stripTrim( data );
+				data = strutil::trim( strutil::removeTrailing( data, "//" ));
 				if( UTag == "ITEM" )
 				{
 					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1, hInstanceID );
@@ -262,7 +262,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum, instanceID );
 					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) )
 					{
-						mSock->sysmessage( "This object must be placed in your house" );
+						mSock->sysmessage( 9027 ); // This object must be placed in your house
 						return false;
 					}
 
@@ -296,14 +296,14 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 								UI16 origY = mItem->GetY() - doorY.m_IntValue;
 								if( x - origX < 2 || origX - x < 2 || y - origY < 2 || origY - y < 2 )
 								{
-									mSock->sysmessage( "You cannot place a house-addon adjacent to a door." );
+									mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
 									return false;
 								}
 							}
 
 							if( getDist( point3( x, y, z ), mItem->GetLocation() ) < 2 )
 							{
-								mSock->sysmessage( "You cannot place a house-addon adjacent to a door." );
+								mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
 								return false;
 							}
 						}
@@ -367,13 +367,13 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 							switch( retVal1 )
 							{
 							case 0: // Blocked by terrain
-								mSock->sysmessage( "You cannot build your house on the selected terrain!" );
+								mSock->sysmessage( 9029 ); // You cannot build your house on the selected terrain!
 								break;
 							case 2: // Blocked by static item
-								mSock->sysmessage( "You cannot build your house there - location is blocked by one or more items!" );
+								mSock->sysmessage( 9030 ); // You cannot build your house there - location is blocked by one or more items!
 								break;
 							case 3: // Blocked by region settings
-								mSock->sysmessage( "You cannot build your house there - houses not allowed in this region!" );
+								mSock->sysmessage( 9031 ); // You cannot build your house there - houses not allowed in this region!
 								break;
 							default:
 								mSock->sysmessage( 577 ); // You cannot build your house there!
@@ -455,9 +455,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	std::vector<UI16> scriptIDs;
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data = House->GrabData();
-		data = strutil::stripTrim( data );
+		data = strutil::trim( strutil::removeTrailing( data, "//" ));
 		
 		if( UTag == "ID" )
 		{
@@ -582,16 +582,16 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 				{
 					if( count == 1 )
 					{
-						result = strutil::stripTrim( sec );
+						result = strutil::trim( strutil::removeTrailing( sec, "//" ));
 					}
 					else
 					{
-						result = result + " " + strutil::stripTrim( sec );
+						result = result + " " + strutil::trim( strutil::removeTrailing( sec, "//" ));
 					}
 				}
 				count++;
 			}
-			customTagName			= strutil::stripTrim( ssecs[0] );
+			customTagName			= strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
 			customTagStringValue	= result;
 
 			if( !customTagName.empty() && !customTagStringValue.empty() )
@@ -602,19 +602,45 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 				customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
 			}
+			else
+			{
+				Console.warning( strutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside House script [%s] - Supported data format: <tagName> <text>", sect.c_str() ) );
+			}
+			break;
 		}
 		else if( UTag == "CUSTOMINTTAG" )
 		{
 			auto ssecs = strutil::sections( data, " " );
-			customTagName			= strutil::stripTrim( ssecs[0] );
-			customTagStringValue	= strutil::stripTrim( ssecs[1] );
+			auto count = 0;
+			std::string result;
+			for( auto &sec : ssecs )
+			{
+				if( count > 0 )
+				{
+					if( count == 1 )
+					{
+						result = strutil::trim( strutil::removeTrailing( sec, "//" ));
+					}
+				}
+				count++;
+			}
+			customTagName			= strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
+			customTagStringValue	= result;
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
 				customTag.m_Destroy		= FALSE;
-				customTag.m_IntValue 	= std::stoi(strutil::stripTrim( customTagStringValue ), nullptr, 0);
+				customTag.m_IntValue 	= std::stoi(strutil::trim( strutil::removeTrailing( customTagStringValue, "//" )), nullptr, 0);
 				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 				customTag.m_StringValue	= "";
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
+				if( count > 1 )
+				{
+					Console.warning( strutil::format( "Multiple values detected for CUSTOMINTTAG in House script [%s] - only first value will be used! Supported data format: <tagName> <value>", sect.c_str() ) );
+				}
+			}
+			else
+			{
+				Console.warning( strutil::format( "Invalid data found in CUSTOMINTTAG tag in House script [%s] - Supported data format: <tagName> <value>", sect.c_str() ) );
 			}
 		}
 	}
@@ -757,14 +783,14 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			}
 			else
 			{
-				mSock->sysmessage( "This house has reached the limit on locked down items already!" );
+				mSock->sysmessage( 9032 ); // This house has reached the limit on locked down items already!
 				fakeHouse->Delete();
 				return;
 			}
 		}
 		else
 		{
-			mSock->sysmessage( "House addons can only be placed in houses!" );
+			mSock->sysmessage( 9033 ); // House addons can only be placed in houses!
 			fakeHouse->Delete();
 			return;
 		}

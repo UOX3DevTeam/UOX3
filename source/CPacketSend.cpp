@@ -8,6 +8,12 @@
 #include "mapstuff.h"
 #include "PartySystem.h"
 #include "cGuild.h"
+#include "townregion.h"
+#include "classes.h"
+#include "Dictionary.h"
+#include <string>
+#include <locale>
+#include <codecvt>
 
 // Unknown bytes
 // 5->8
@@ -215,7 +221,8 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 			ourChar = calcCharObjFromSer( toCopy.Speaker() );
 			if( ValidateObject( ourChar ) )
 			{
-				SpeakerName( ourChar->GetName() );
+				std::string speakerName = getNpcDictName( ourChar );
+				SpeakerName( speakerName );
 				SpeakerModel( ourChar->GetID() );
 			}
 			else
@@ -445,34 +452,36 @@ void CPExtMove::SetFlags( CChar &toCopy )
 	   cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
 	{
 		// Clients 7.0.0.0 and later
-		const UI08 BIT_FROZEN = 0;	//	0x01, frozen/paralyzed
-		const UI08 BIT_FEMALE = 1;	//	0x02, female flag
-		const UI08 BIT_FLYING = 2;	//	0x04, flying (post 7.0.0.0)
-		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
-		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__FROZEN = 0;	//	0x01, frozen/paralyzed
+		const UI08 BIT__FEMALE = 1;	//	0x02, female flag
+		const UI08 BIT__FLYING = 2;	//	0x04, flying (post 7.0.0.0)
+		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
+		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
-		flag.set( BIT_FROZEN, toCopy.IsFrozen() );
-		flag.set( BIT_FEMALE, ( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E ) || toCopy.GetID() == 0x029B );
-		flag.set( BIT_FLYING, ( toCopy.IsFlying() ));
+		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
+		flag.set( BIT__FEMALE, ( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E ) || toCopy.GetID() == 0x029B );
+		flag.set( BIT__FLYING, ( toCopy.IsFlying() ) );
+		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ));
 	}
 	else
 	{
 		// Clients earlier than 7.0.0.0
-		const UI08 BIT_INVUL = 0;	//	0x01
-		const UI08 BIT_DEAD = 1;	//	0x02
-		const UI08 BIT_POISON = 2;	//	0x04, poison
-		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
-		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__INVUL = 0;	//	0x01
+		const UI08 BIT__DEAD = 1;	//	0x02
+		const UI08 BIT__POISON = 2;	//	0x04, poison
+		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
+		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
-		flag.set( BIT_INVUL, toCopy.IsInvulnerable() );
-		flag.set( BIT_DEAD, toCopy.IsDead() );
-		flag.set( BIT_POISON, ( toCopy.GetPoisoned() != 0 ) );
+		flag.set( BIT__INVUL, toCopy.IsInvulnerable() );
+		flag.set( BIT__DEAD, toCopy.IsDead() );
+		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ) );
+		flag.set( BIT__GOLDEN, ( toCopy.IsInvulnerable() ) );
 	}
 
-	const UI08 BIT_ATWAR = 6;	// 0x40
-	const UI08 BIT_DEAD = 7;	// 0x80, dead or hidden
-	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
-	flag.set( BIT_DEAD, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ) );
+	const UI08 BIT__ATWAR = 6;	// 0x40
+	const UI08 BIT__DEAD = 7;	// 0x80, dead or hidden
+	flag.set( BIT__ATWAR, toCopy.IsAtWar() );
+	flag.set( BIT__DEAD, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ) );
 
 	pStream.WriteByte( 15, static_cast<UI08>( flag.to_ulong() ) );
 }
@@ -1120,35 +1129,37 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 	   cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
 	{
 		// Clients 7.0.0.0 and later
-		const UI08 BIT_FROZEN	= 0;	//	0x01, frozen/paralyzed
-		const UI08 BIT_FEMALE	= 1;	//	0x02, should be female flag
-		const UI08 BIT_FLYING	= 2;	//	0x04, flying (post 7.0.0.0)
-		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
-		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__FROZEN	= 0;	//	0x01, frozen/paralyzed
+		const UI08 BIT__FEMALE	= 1;	//	0x02, should be female flag
+		const UI08 BIT__FLYING	= 2;	//	0x04, flying (post 7.0.0.0)
+		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
+		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
-		flag.set( BIT_FROZEN, toCopy.IsFrozen() );
-		flag.set( BIT_FEMALE, ( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E ) );
-		flag.set( BIT_FLYING, toCopy.IsFlying() );
+		flag.set( BIT__FROZEN, toCopy.IsFrozen() );
+		flag.set( BIT__FEMALE, ( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E ) );
+		flag.set( BIT__FLYING, toCopy.IsFlying() );
+		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
 	}
 	else
 	{
 		// Clients below 7.0.0.0
-		const UI08 BIT_INVUL	= 0;	//	0x01
-		const UI08 BIT_DEAD		= 1;	//	0x02
-		const UI08 BIT_POISON	= 2;	//	0x04, poison
-		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
-		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__INVUL	= 0;	//	0x01
+		const UI08 BIT__DEAD	= 1;	//	0x02
+		const UI08 BIT__POISON	= 2;	//	0x04, poison
+		const UI08 BIT__GOLDEN	= 3;	//	0x08, yellow healthbar
+		//const UI08 BIT__IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
-		flag.set( BIT_INVUL, toCopy.IsInvulnerable() );
-		flag.set( BIT_DEAD, toCopy.IsDead() );
-		flag.set( BIT_POISON, ( toCopy.GetPoisoned() != 0 ) );
+		flag.set( BIT__INVUL, toCopy.IsInvulnerable() );
+		flag.set( BIT__DEAD, toCopy.IsDead() );
+		flag.set( BIT__POISON, ( toCopy.GetPoisoned() != 0 ) );
+		flag.set( BIT__GOLDEN, toCopy.IsInvulnerable() );
 	}
 
-	const UI08 BIT_ATWAR	= 6;	//	0x40
-	const UI08 BIT_INVIS	= 7;	//	0x80
+	const UI08 BIT__ATWAR	= 6;	//	0x40
+	const UI08 BIT__INVIS	= 7;	//	0x80
 
-	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
-	flag.set( BIT_INVIS, (toCopy.GetVisible() != VT_VISIBLE) || toCopy.IsDead() );
+	flag.set( BIT__ATWAR, toCopy.IsAtWar() );
+	flag.set( BIT__INVIS, (toCopy.GetVisible() != VT_VISIBLE) || toCopy.IsDead() );
 
 	pStream.WriteByte( 10, static_cast< UI08 >(flag.to_ulong()) );
 }
@@ -1570,7 +1581,7 @@ void CPUpdateStat::InternalReset( void )
 	pStream.ReserveSize( 9 );
 	pStream.WriteByte( 0, 0xA1 );
 }
-CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum )
+CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeStats )
 {
 	InternalReset();
 	Serial( toUpdate.GetSerial() );
@@ -1604,14 +1615,58 @@ CPUpdateStat::CPUpdateStat( CBaseObject &toUpdate, UI08 statNum )
 
 	switch( statNum )
 	{
-		case 0:	MaxVal( maxHP );
-			CurVal( toUpdate.GetHP() );
+		case 0:
+			if( normalizeStats )
+			{
+				MaxVal( 100 );
+				CurVal( static_cast<SI16>( ceil( 100 * ( static_cast<float>( toUpdate.GetHP() ) / static_cast<float>( maxHP )))));
+			}
+			else
+			{
+				MaxVal( maxHP );
+				CurVal( toUpdate.GetHP() );
+			}
 			break;
-		case 2:	MaxVal( maxStam );
-			CurVal( toUpdate.GetStamina() );
+		case 2:
+			if( normalizeStats )
+			{
+				if( maxStam > 0 )
+				{
+					MaxVal( 100 );
+					CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetStamina()) / static_cast<float>(maxStam) ))) );
+				}
+				else
+				{
+					MaxVal( 0 );
+					CurVal( 0 );
+				}
+			}
+			else
+			{
+				MaxVal( maxStam );
+				CurVal( toUpdate.GetStamina() );
+			}
 			break;
-		case 1:	MaxVal( maxMana );
-			CurVal( toUpdate.GetMana() );
+		case 1:
+			if( normalizeStats )
+			{
+				if( maxMana > 0 )
+				{
+					MaxVal( 100 );
+					CurVal(( toUpdate.GetMana() * 100 ) / maxMana );
+					CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana) ))) );
+				}
+				else
+				{
+					MaxVal( 0 );
+					CurVal( 0 );
+				}
+			}
+			else
+			{
+				MaxVal( maxMana );
+				CurVal( static_cast<SI16>(ceil( 100 * ( static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana) ))) );
+			}
 			break;
 	}
 
@@ -2125,7 +2180,9 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		pStream.WriteByte( 2, 43 );
 		Flag( 0 );
 		Serial( toCopy.GetSerial() );
-		Name( toCopy.GetName() );
+
+		std::string charName = getNpcDictName( &toCopy, &target );
+		Name( charName );
 		SI16 currentHP = toCopy.GetHP();
 		UI16 maxHP = toCopy.GetMaxHP();
 		SI16 percentHP = 0;
@@ -2135,7 +2192,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		}
 		CurrentHP( percentHP );
 		MaxHP( 100 );
-		NameChange( false );
+		if( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwner() == mChar->GetSerial() )
+			NameChange( true );
+		else
+			NameChange( false );
 	}
 	else
 	{
@@ -2212,8 +2272,18 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		if( extended3 )
 		{
 			StatCap( cwmWorldState->ServerData()->ServerStatCapStatus() );
-			CurrentPets( static_cast<UI08>(toCopy.GetPetList()->Num()) );
-			MaxPets( 0xFF );
+			if( cwmWorldState->ServerData()->MaxControlSlots() > 0 )
+			{
+				// If pet control slots are enabled, send amount of pet slots used, and max value specified in ini (higher than 0 is enabled)
+				CurrentPets( static_cast<UI08>(toCopy.GetControlSlotsUsed()));
+				MaxPets( static_cast<UI08>(cwmWorldState->ServerData()->MaxControlSlots() ));
+			}
+			else
+			{
+				// If pet control slots are disabled, send petCount and maxFollowers value specified in ini instead
+				CurrentPets( static_cast<UI08>(toCopy.GetPetList()->Num()) );
+				MaxPets( static_cast<UI08>(cwmWorldState->ServerData()->MaxFollowers() ));
+			}
 		}
 		if( extended4 )
 		{
@@ -3315,7 +3385,8 @@ void CPSkillsValues::CopyData( CChar &toCopy )
 
 void CPSkillsValues::SetCharacter( CChar &toCopy )
 {
-	for( SI08 i = 0; i < NumSkills(); ++i )
+	UI08 numSkills = NumSkills();
+	for( SI08 i = 0; i < numSkills; ++i )
 		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ) );
 }
 
@@ -4333,8 +4404,12 @@ void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock )
 
 	toAdd->SetDecayTime( 0 );
 
-	CPToolTip pSend( toAdd->GetSerial(), !isVendor, isPlayerVendor );
-	mSock->Send( &pSend );
+	// Only send tooltip if server feature for tooltips is enabled
+	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+	{
+		CPToolTip pSend( toAdd->GetSerial(), mSock, !isVendor, isPlayerVendor );
+		mSock->Send( &pSend );
+	}
 }
 
 void CPItemsInContainer::Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount )
@@ -4358,7 +4433,9 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 		{
 			if( !ctr->isFree() )
 			{
-				if( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() ) // don't show GM hidden objects to non-GM players.
+				// don't show GM hidden objects to non-GM players.
+				// don't show hairs and beards to anyone
+				if(( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() ) && ctr->GetLayer() != IL_HAIR && ctr->GetLayer() != IL_FACIALHAIR )
 				{
 					AddItem( ctr, itemCount, mSock );
 					++itemCount;
@@ -5135,13 +5212,13 @@ void CPDrawObject::AddItem( CItem *toAdd, bool alwaysAddItemHue )
 	UI16 cPos = curLen;
 
 	pStream.WriteLong(  cPos, toAdd->GetSerial() );
-	pStream.WriteShort( cPos+=4, toAdd->GetID() );
+	pStream.WriteShort( cPos+=4, static_cast<SI32>(toAdd->GetID()) );
 	pStream.WriteByte(  cPos+=2, toAdd->GetLayer() );
 
 	if( alwaysAddItemHue )
 	{
 		// Always send color to clients 7.0.33.1 and above
-		pStream.WriteShort( cPos+=1, toAdd->GetColour() );
+		pStream.WriteShort( cPos+=1, static_cast<SI32>(toAdd->GetColour()) );
 		SetLength( curLen + 9 );
 	}
 	else
@@ -5152,7 +5229,7 @@ void CPDrawObject::AddItem( CItem *toAdd, bool alwaysAddItemHue )
 		{
 			SetLength( curLen + 9 );
 			pStream.WriteByte( cPos-2, pStream.GetByte( cPos-2 ) | 0x80 );
-			pStream.WriteShort( ++cPos, toAdd->GetColour() );
+			pStream.WriteShort( ++cPos, static_cast<SI32>(toAdd->GetColour()) );
 		}
 		else
 		{
@@ -5174,7 +5251,7 @@ void CPDrawObject::CopyData( CChar& mChar )
 	pStream.WriteShort( 11, mChar.GetY() );
 	pStream.WriteByte(  13, mChar.GetZ() );
 	pStream.WriteByte(  14, mChar.GetDir() );
-	pStream.WriteShort( 15, mChar.GetSkin() );
+	pStream.WriteShort( 15, static_cast<SI32>(mChar.GetSkin()) );
 
 	//	0	0x01 - Frozen/Invulnerable
 	//	1	0x02 - Female/Dead
@@ -5193,34 +5270,36 @@ void CPDrawObject::CopyData( CChar& mChar )
 	   cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
 	{
 		// Clients 7.0.0.0 and later
-		const UI08 BIT_FROZEN = 0;	//	0x01, frozen/paralyzed
-		const UI08 BIT_FEMALE = 1;	//	0x02, female
-		const UI08 BIT_FLYING = 2;	//	0x04, flying (post 7.0.0.0)
-		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
-		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__FROZEN = 0;	//	0x01, frozen/paralyzed
+		const UI08 BIT__FEMALE = 1;	//	0x02, female
+		const UI08 BIT__FLYING = 2;	//	0x04, flying (post 7.0.0.0)
+		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
+		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
-		flag.set( BIT_FROZEN, mChar.IsFrozen() );
-		flag.set( BIT_FEMALE, ( mChar.GetID() == 0x0191 || mChar.GetID() == 0x025E ) );
-		flag.set( BIT_FLYING, mChar.IsFlying() );
+		flag.set( BIT__FROZEN, mChar.IsFrozen() );
+		flag.set( BIT__FEMALE, ( mChar.GetID() == 0x0191 || mChar.GetID() == 0x025E ) );
+		flag.set( BIT__FLYING, mChar.IsFlying() );
+		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
 	}
 	else
 	{
 		// Clients below 7.0.0.0
-		const UI08 BIT_INVUL = 0;	//	0x01, invulnerable
-		const UI08 BIT_DEAD = 1;	//	0x02, dead
-		const UI08 BIT_POISON = 2;	//	0x04, poison
-		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
-		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+		const UI08 BIT__INVUL = 0;	//	0x01, invulnerable
+		const UI08 BIT__DEAD = 1;	//	0x02, dead
+		const UI08 BIT__POISON = 2;	//	0x04, poison
+		const UI08 BIT__GOLDEN = 3;	//	0x08, yellow healthbar
+		//const UI08 BIT__IGNOREMOBILES = 4;	// 0x10, ignore other mobiles?
 
-		flag.set( BIT_INVUL, mChar.IsInvulnerable() );
-		flag.set( BIT_DEAD, mChar.IsDead() );
-		flag.set( BIT_POISON, ( mChar.GetPoisoned() != 0 ) );
+		flag.set( BIT__INVUL, mChar.IsInvulnerable() );
+		flag.set( BIT__DEAD, mChar.IsDead() );
+		flag.set( BIT__POISON, ( mChar.GetPoisoned() != 0 ) );
+		flag.set( BIT__GOLDEN, mChar.IsInvulnerable() );
 	}
 
-	const UI08 BIT_ATWAR = 6;	//	0x40
-	const UI08 BIT_OTHER = 7;	//	0x80
-	flag.set( BIT_ATWAR, mChar.IsAtWar() );
-	flag.set( BIT_OTHER, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE ) || ( mChar.IsDead() && !mChar.IsAtWar() ) ) );
+	const UI08 BIT__ATWAR = 6;	//	0x40
+	const UI08 BIT__OTHER = 7;	//	0x80
+	flag.set( BIT__ATWAR, mChar.IsAtWar() );
+	flag.set( BIT__OTHER, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE ) || ( mChar.IsDead() && !mChar.IsAtWar() ) ) );
 
 	pStream.WriteByte( 17, static_cast<UI08>( flag.to_ulong() ) );
 }
@@ -5738,7 +5817,14 @@ void CPUnicodeSpeech::CopyData( CBaseObject &toCopy )
 {
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
-	Name( toCopy.GetName() );
+
+	std::string charName = toCopy.GetName();
+	if( charName == "#" )
+	{
+		// If character name is #, display default name from dictionary files instead - using base entry 3000 + character's ID
+		charName = Dictionary->GetEntry( 3000 + toCopy.GetID() );
+	}
+	Name( charName );
 }
 void CPUnicodeSpeech::CopyData( CPITalkRequestAscii &talking )
 {
@@ -5780,6 +5866,149 @@ void CPUnicodeSpeech::GhostIt( UI08 method )
 		if( pStream.GetByte( j ) != 32 )
 			pStream.WriteByte( j, ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' ) );
 	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPUnicodeMessage()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with unicode message from server
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xAE (Unicode Speech message)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] blockSize
+//|						BYTE[4] ID
+//|						BYTE[2] Model
+//|						BYTE Type
+//|						BYTE[2] Color
+//|						BYTE[2] Font
+//|						BYTE[4] Language
+//|						BYTE[30] Name
+//|						BYTE[?][2] Msg – Null Terminated (blockSize - 48)
+//|
+//|					The various types of text is as follows:
+//|						0x00 - Normal
+//|						0x01 - Broadcast/System
+//|						0x02 - Emote
+//|						0x06 - System/Lower Corner
+//|						0x07 - Message/Corner With Name
+//|						0x08 - Whisper
+//|						0x09 - Yell
+//|						0x0A - Spell
+//|						0x0D - Guild Chat
+//|						0x0E - Alliance Chat
+//|						0x0F - Command Prompts
+//o-----------------------------------------------------------------------------------------------o
+CPUnicodeMessage::CPUnicodeMessage()
+{
+	InternalReset();
+}
+CPUnicodeMessage::CPUnicodeMessage( CBaseObject &toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
+void CPUnicodeMessage::InternalReset( void )
+{
+	SetLength( 48 );
+	pStream.WriteByte( 0, 0xAE );
+	Language( "ENU" );
+}
+CPUnicodeMessage &CPUnicodeMessage::operator=( CBaseObject &toCopy )
+{
+	CopyData( toCopy );
+	return (*this);
+}
+void CPUnicodeMessage::CopyData( CBaseObject &toCopy )
+{
+	Serial( toCopy.GetSerial() );
+	ID( toCopy.GetID() );
+
+	std::string charName = toCopy.GetName();
+	if(charName == "#")
+	{
+		// If character name is #, display default name from dictionary files instead - using base entry 3000 + character's ID
+		charName = Dictionary->GetEntry( 3000 + toCopy.GetID() );
+	}
+	Name( charName );
+}
+void CPUnicodeMessage::Object( CBaseObject &talking )
+{
+	CopyData( talking );
+}
+void CPUnicodeMessage::Type( UI08 value )
+{
+	pStream.WriteByte( 9, (value & 0x0F) );
+}
+void CPUnicodeMessage::Colour( COLOUR value )
+{
+	pStream.WriteShort( 10, value );
+}
+void CPUnicodeMessage::Font( UI16 value )
+{
+	pStream.WriteShort( 12, value );
+}
+void CPUnicodeMessage::Language( char *value )
+{
+	pStream.WriteString( 14, value, 4 );
+}
+void CPUnicodeMessage::Language( const char *value )
+{
+	pStream.WriteString( 14, value, 4 );
+}
+void CPUnicodeMessage::Lanaguge( const std::string& value )
+{
+	pStream.WriteString( 14, value.c_str(), 4 );
+}
+void CPUnicodeMessage::Name( std::string value )
+{
+	pStream.WriteString( 18, value, 30 );
+}
+void CPUnicodeMessage::Message( const char *value )
+{
+	size_t length = strlen( value );
+	SetLength( static_cast<UI16>(48 + (2 * length) + 2) );
+	for(size_t i = 0; i < length; ++i)
+		pStream.WriteByte( 49 + i * 2, value[i] );
+}
+void CPUnicodeMessage::Message( const std::string msg )
+{
+	std::wstring wMsg = strutil::stringToWstring( msg );
+	if( wMsg != L"" )
+	{
+		const size_t stringLen = wMsg.size();
+
+		const UI16 packetLen = static_cast<UI16>(48 + (stringLen * 2) + 2);
+		SetLength( packetLen );
+
+		for(size_t i = 0; i < stringLen; ++i)
+			pStream.WriteByte( 49 + i * 2, wMsg[i] );
+	}
+	else
+	{
+		const size_t stringLen = msg.size();
+
+		const UI16 packetLen = static_cast<UI16>(48 + (stringLen * 2) + 2);
+		SetLength( packetLen );
+
+		for(size_t i = 0; i < stringLen; ++i)
+			pStream.WriteByte( 49 + i * 2, msg[i] );
+	}
+}
+void CPUnicodeMessage::SetLength( UI16 value )
+{
+	pStream.ReserveSize( value );
+	pStream.WriteShort( 1, value );
+}
+void CPUnicodeMessage::Serial( SERIAL toSet )
+{
+	pStream.WriteLong( 3, toSet );
+}
+void CPUnicodeMessage::ID( UI16 toSet )
+{
+	pStream.WriteShort( 7, toSet );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5951,7 +6180,10 @@ void CPAllNames3D::InternalReset( void )
 void CPAllNames3D::CopyData( CBaseObject& obj )
 {
 	pStream.WriteLong(   3, obj.GetSerial() );
-	pStream.WriteString( 7, obj.GetName(), obj.GetName().length() );
+
+	CChar *objChar = calcCharObjFromSer( obj.GetSerial() );
+	std::string objName = getNpcDictName( objChar );
+	pStream.WriteString( 7, objName, objName.length() );
 }
 CPAllNames3D::CPAllNames3D()
 {
@@ -6523,6 +6755,16 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
+	if( cItem.isGuarded() )
+	{
+		CTownRegion *itemTownRegion = calcRegionFromXY( cItem.GetX(), cItem.GetY(), cItem.WorldNumber(), cItem.GetInstanceID() );
+		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		{
+			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ) ); // [Guarded]
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{	
 		tempEntry.stringNum = 1050044; // ~1_COUNT~ items, ~2_WEIGHT~ stones
@@ -6542,7 +6784,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_LOCKEDCONTAINER || cItem.GetType() == IT_LOCKEDSPAWNCONT )
 	{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", "[Locked]" );
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9050 ), tSock->Language() ); // [Locked]
 			FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_HOUSESIGN )
@@ -6738,9 +6980,35 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
 	toolTipEntry tempEntry = {};
+	if( mChar.IsGuarded() )
+	{
+		CTownRegion *itemTownRegion = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
+		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		{
+			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ) ); // [Guarded]
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
+
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-	tempEntry.ourText = strutil::format( " \t%s\t ",mChar.GetName().c_str() );
+
+	std::string mCharName = getNpcDictName( &mChar, tSock );
+	std::string convertedString = strutil::stringToWstringToString( mCharName );
+	tempEntry.ourText = strutil::format( " \t%s\t ", convertedString.c_str() );
+
 	FinalizeData( tempEntry, totalStringLen );
+
+	if( cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() && mChar.IsNpc() && mChar.GetTitle() != "" )
+	{
+		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+
+		std::string mCharTitle = getNpcDictTitle( &mChar, tSock );
+		convertedString = strutil::stringToWstringToString( mCharTitle );
+		tempEntry.ourText = strutil::format( " \t%s\t ", convertedString.c_str() );
+
+		FinalizeData( tempEntry, totalStringLen );
+	}
 }
 
 void CPToolTip::CopyData( SERIAL objSer, bool addAmount, bool playerVendor )
@@ -6792,8 +7060,9 @@ CPToolTip::CPToolTip()
 {
 	InternalReset();
 }
-CPToolTip::CPToolTip( SERIAL objSer, bool addAmount, bool playerVendor )
+CPToolTip::CPToolTip( SERIAL objSer, CSocket *mSock, bool addAmount, bool playerVendor )
 {
+	tSock = mSock;
 	InternalReset();
 	CopyData( objSer, addAmount, playerVendor );
 }
@@ -7300,10 +7569,10 @@ CPHealthBarStatus::CPHealthBarStatus()
 	InternalReset();
 }
 
-CPHealthBarStatus::CPHealthBarStatus( CChar &mChar, CSocket &tSock )
+CPHealthBarStatus::CPHealthBarStatus( CChar &mChar, CSocket &tSock, UI08 healthBarColor )
 {
 	InternalReset();
-	SetHBStatusData( mChar, tSock );
+	SetHBStatusData( mChar, tSock, healthBarColor );
 	//CopyData( mChar );
 }
 
@@ -7312,7 +7581,7 @@ void CPHealthBarStatus::InternalReset( void )
 	pStream.ReserveSize( 9 );
 }
 
-void CPHealthBarStatus::SetHBStatusData( CChar &mChar, CSocket &tSock )
+void CPHealthBarStatus::SetHBStatusData( CChar &mChar, CSocket &tSock, UI08 healthBarColor )
 {
 	if( tSock.ClientType() == CV_UO3D || tSock.ClientType() == CV_KR3D || tSock.ClientType() == CV_SA3D || tSock.ClientType() == CV_HS3D )
 	{
@@ -7347,18 +7616,21 @@ void CPHealthBarStatus::SetHBStatusData( CChar &mChar, CSocket &tSock )
 		pStream.WriteLong( 3, mChar.GetSerial() );
 		pStream.WriteShort( 7, 0x01 );
 		CChar *sockChar = tSock.CurrcharObj();
-		if( mChar.GetGuildNumber() == sockChar->GetGuildNumber() )
+
+		if( healthBarColor == 1 ) // poisoned?
+		{
 			pStream.WriteShort( 9, 1 );
-		else if( mChar.IsInvulnerable() )
+			if( mChar.GetPoisoned() > 0 )
+				pStream.WriteByte( 11, mChar.GetPoisoned() );
+			else
+				pStream.WriteByte( 11, 0 );
+		}
+		else // invulnerable?
+		{
+			// healthBarColor == 2
 			pStream.WriteShort( 9, 2 );
-		else if( mChar.GetNPCAiType() == AI_EVIL || mChar.IsMurderer() )
-			pStream.WriteShort( 9, 3 );
-		else
-			pStream.WriteShort( 9, 0 );
-		if( mChar.GetPoisoned() > 0 )
-			pStream.WriteByte( 11, mChar.GetPoisoned() );
-		else
-			pStream.WriteByte( 11, 0 );
+			pStream.WriteByte( 11, mChar.IsInvulnerable() );
+		}
 	}
 }
 
@@ -7561,10 +7833,10 @@ CPPopupMenu::CPPopupMenu( void )
 	InternalReset();
 }
 
-CPPopupMenu::CPPopupMenu( CChar& toCopy )
+CPPopupMenu::CPPopupMenu( CChar& toCopy, CSocket &tSock )
 {
 	InternalReset();
-	CopyData( toCopy );
+	CopyData( toCopy, tSock );
 }
 
 void CPPopupMenu::InternalReset( void )
@@ -7576,67 +7848,535 @@ void CPPopupMenu::InternalReset( void )
 	pStream.WriteShort( 5, 0x0001 );
 }
 
-void CPPopupMenu::CopyData( CChar& toCopy )
+void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 {
 	UI16 packetLen = (12 + (4 * 8));
 	pStream.ReserveSize( packetLen );
 	pStream.WriteShort( 1, packetLen );
 
 	pStream.WriteLong( 7, toCopy.GetSerial() );
-	pStream.WriteByte( 11, 4 );
 	size_t offset = 12;
+	UI08 numEntries = 0;
 
-	pStream.WriteShort( offset, 0x000A );	// Open Paperdoll
-	pStream.WriteShort( offset+=2, 6123 );
+	CChar *mChar = nullptr;
+	if( ValidateObject( tSock.CurrcharObj() ))
+	{
+		mChar = tSock.CurrcharObj();
+	}
+
+	// Stop moving for 2 seconds when someone opens a context menu, to give them 
+	// the chance to select something before walking out of range
+	if( toCopy.GetNpcWander() != WT_PATHFIND && toCopy.GetNpcWander() != WT_FOLLOW && toCopy.GetNpcWander() != WT_FLEE )
+		toCopy.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ) );
+
+	// Open Paperdoll
 	if( cwmWorldState->creatures[toCopy.GetID()].IsHuman() )
 	{
-		pStream.WriteShort( offset+=2, 0x0020 );
-		pStream.WriteShort( offset+=2, 0x03E0 );
+		numEntries++;
+		pStream.WriteShort( offset, 0x000A );	// Unique ID
+		pStream.WriteShort( offset += 2, 6123 );
+		pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+		pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
 	}
-	else
+	/*else
 	{
-		pStream.WriteShort( offset+=2, 0x0021 );
-		pStream.WriteShort( offset+=2, 0xFFFF );
+		// Left this here as an example of how to show a disabled context menu option
+		pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
+		pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
+	}*/
+
+	// Open Backpack
+	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
+	if( toCopy.GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 
+		|| toCopy.GetID() == 0x0123 || toCopy.GetID() == 0x0124 || toCopy.GetID() == 0x0317 ) && ValidateObject( toCopy.GetPackItem() )))
+	{
+		if( numEntries > 0 )
+			offset += 2;
+
+		numEntries++;
+		pStream.WriteShort( offset, 0x000B );	// Unique ID
+		pStream.WriteShort( offset += 2, 6145 );
+		if( objInRange( mChar, &toCopy, 8 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
 	}
 
-	pStream.WriteShort( offset+=2, 0x000B );	// Open Backpack
-	pStream.WriteShort( offset+=2, 6145 );
-	if( ( cwmWorldState->creatures[toCopy.GetID()].IsHuman() || toCopy.GetID() == 0x0123 || toCopy.GetID() == 0x0124 ) && ValidateObject( toCopy.GetPackItem() )  )
+	// Banker
+	if( toCopy.IsNpc() && toCopy.GetNPCAiType() == AI_BANKER )
 	{
-		pStream.WriteShort( offset+=2, 0x0020 );
-		pStream.WriteShort( offset+=2, 0x03E0 );
-	}
-	else
-	{
-		pStream.WriteShort( offset+=2, 0x0021 );
-		pStream.WriteShort( offset+=2, 0xFFFF );
+		if( numEntries > 0 )
+			offset += 2;
+
+		// Open Bankbox
+		numEntries++;
+		pStream.WriteShort( offset, 0x000E );	// Unique ID
+		pStream.WriteShort( offset += 2, 6105 );
+		if( objInRange( mChar, &toCopy, 8 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+			pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
 	}
 
-	pStream.WriteShort( offset+=2, 0x000C );	// Shopkeep
-	pStream.WriteShort( offset+=2, 6103 );
+	// Stablemaster
+	if( toCopy.GetNPCAiType() == AI_STABLEMASTER )
+	{
+		if( numEntries > 0 )
+			offset += 2;
+
+		// Claim All Pets
+		numEntries++;
+		pStream.WriteShort( offset, 0x0019 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6127 );
+		if( objInRange( mChar, &toCopy, 8 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Stable Pet
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x001a );	// Unique ID
+		pStream.WriteShort( offset += 2, 6126 );
+		if( objInRange( mChar, &toCopy, 8 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// Hireling
+	if( toCopy.IsNpc() && toCopy.CanBeHired() && !ValidateObject( toCopy.GetOwnerObj() ))
+	{
+		if( numEntries > 0 )
+			offset += 2;
+
+		// Hire (Hireling)
+		numEntries++;
+		pStream.WriteShort( offset, 0x001e );	// Unique ID
+		pStream.WriteShort( offset += 2, 6120 );
+		if( objInRange( mChar, &toCopy, 3 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+	}
+
+	// NPC Escort
+	if( toCopy.IsNpc() && toCopy.GetQuestType() == QT_ESCORTQUEST )
+	{
+		if( numEntries > 0 )
+			offset += 2;
+
+		// Ask Destination
+		numEntries++;
+		pStream.WriteShort( offset, 0x001b );	// Unique ID
+		pStream.WriteShort( offset += 2, 6100 );
+		if( objInRange( mChar, &toCopy, 3 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+			pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Accept Escort
+		if( toCopy.GetOwnerObj() == nullptr )
+		{
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x001c );	// Unique ID
+			pStream.WriteShort( offset += 2, 6101 );
+			if( objInRange( mChar, &toCopy, 3 ) )
+			{
+				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+				pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+		}
+
+		// Abandon Escort
+		if( toCopy.GetOwnerObj() == mChar )
+		{
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x001d );	// Unique ID
+			pStream.WriteShort( offset += 2, 6102 );
+			pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+			pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+		}
+	}
+
+	// Shopkeeper
 	if( toCopy.IsShop() )
 	{
-		pStream.WriteShort( offset+=2, 0x0020 );
-		pStream.WriteShort( offset+=2, 0x03E0 );
-	}
-	else
-	{
-		pStream.WriteShort( offset+=2, 0x0021 );
-		pStream.WriteShort( offset+=2, 0xFFFF );
+		// Shopkeeper - Buy
+		CItem *sellContainer = toCopy.GetItemAtLayer( IL_SELLCONTAINER );
+		if( ValidateObject( sellContainer ) && sellContainer->GetContainsList()->Num() > 0 )
+		{
+			if( numEntries > 0 )
+				offset += 2;
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x000C );	// Unique ID
+			pStream.WriteShort( offset += 2, 6103 );
+			
+			if( objInRange( mChar, &toCopy, 8 ) )
+			{
+				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+				pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+		}
+
+		// Shopkeeper - Sell
+		CItem *buyContainer = toCopy.GetItemAtLayer( IL_BUYCONTAINER );
+		if( ValidateObject( buyContainer ) && buyContainer->GetContainsList()->Num() > 0 )
+		{
+			if( numEntries > 0 )
+				offset += 2;
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x000D );	// Unique ID
+			pStream.WriteShort( offset += 2, 6104 );
+			if( objInRange( mChar, &toCopy, 8 ) )
+			{
+				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
+				pStream.WriteShort( offset += 2, 0x03E0 );	// Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+		}
 	}
 
-	pStream.WriteShort( offset+=2, 0x000D );
-	pStream.WriteShort( offset+=2, 6104 );
-	if( toCopy.IsShop() )
+	// Tame
+	if( toCopy.IsNpc() && cwmWorldState->creatures[toCopy.GetID()].IsAnimal() && !ValidateObject( toCopy.GetOwnerObj() ))
 	{
-		pStream.WriteShort( offset+=2, 0x0020 );
-		pStream.WriteShort( offset+=2, 0x03E0 );
+		auto skillToTame = toCopy.GetTaming();
+		if( skillToTame > 0 )
+		{
+			if( numEntries > 0 )
+				offset += 2;
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x000F );	// Unique ID
+			pStream.WriteShort( offset += 2, 6130 );
+			if( skillToTame <= mChar->GetSkill( TAMING ) && objInRange( mChar, &toCopy, 8 ))
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
+			}
+		}
 	}
-	else
+
+	// Pet commands
+	bool playerIsOwner = ( ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar );
+	bool playerIsFriend = Npcs->checkPetFriend( mChar, &toCopy );
+	if( toCopy.IsNpc() && toCopy.GetQuestType() != QT_ESCORTQUEST && ( toCopy.IsTamed() || toCopy.CanBeHired() )
+		&& ( playerIsOwner || playerIsFriend ))
 	{
-		pStream.WriteShort( offset+=2, 0x0021 );
-		pStream.WriteShort( offset+=2, 0xFFFF );
+		if( numEntries > 0 )
+			offset += 2;
+
+		// Command: Kill (Pet)
+		numEntries++;
+		pStream.WriteShort( offset, 0x0010 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6111 );
+		if( objInRange( mChar, &toCopy, 12 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Stop (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0011 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6112 );
+		if( objInRange( mChar, &toCopy, 12 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Follow (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0012 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6108 );
+		if( objInRange( mChar, &toCopy, 12 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Stay (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0013 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6114 );
+		if( objInRange( mChar, &toCopy, 12 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Command: Guard (Pet)
+		numEntries++;
+		pStream.WriteShort( offset += 2, 0x0014 );	// Unique ID
+		pStream.WriteShort( offset += 2, 6107 );
+		if( objInRange( mChar, &toCopy, 12 ) )
+		{
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+		else
+		{
+			pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+			pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+		}
+
+		// Restrict to owner only
+		if( playerIsOwner )
+		{
+			// Add Friend (Pet)
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x0015 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6110 );
+			if( objInRange( mChar, &toCopy, 12 ) )
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+
+			// Remove Friend (Pet)
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x001f );	// Unique ID
+
+			pStream.WriteShort( offset += 2, 6099 );
+			if( objInRange( mChar, &toCopy, 12 ) )
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+
+			// Transfer (Pet)
+			numEntries++;
+			pStream.WriteShort( offset += 2, 0x0016 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6113 );
+			if( objInRange( mChar, &toCopy, 12 ) )
+			{
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			else
+			{
+				pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+				pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+			}
+
+			if( toCopy.IsTamed() )
+			{
+				// Release (Pet)
+				numEntries++;
+				pStream.WriteShort( offset += 2, 0x0017 );	// Unique ID
+				pStream.WriteShort( offset += 2, 6118 );
+				if( objInRange( mChar, &toCopy, 12 ) )
+				{
+					pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+					pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+				}
+				else
+				{
+					pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+					pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+				}
+			}
+
+			if( toCopy.CanBeHired() )
+			{
+				// Dismiss (Hireling)
+				numEntries++;
+				pStream.WriteShort( offset += 2, 0x0018 );	// Unique ID
+				pStream.WriteShort( offset += 2, 6129 );
+				if( objInRange( mChar, &toCopy, 12 ) )
+				{
+					pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+					pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+				}
+				else
+				{
+					pStream.WriteShort( offset += 2, 0x0021 ); // Flag, color enabled, entry disabled
+					pStream.WriteShort( offset += 2, 0xFFFF ); // Hue of text
+				}
+			}
+		}
 	}
+
+	// Skill training - IDs 0x006D to 0x009C
+	if( toCopy.IsNpc() && !toCopy.IsTamed() && !cwmWorldState->creatures[toCopy.GetID()].IsAnimal() && toCopy.CanTrain() )
+	{
+		auto idTracker = 0x0071;
+		auto clilocTracker = 6000;
+		auto skillEntries = 0;
+		for( UI08 i = 0; i < ALLSKILLS; ++i )
+		{
+			// Limit it to 10 entries per NPC. Context menus are not scrollable
+			if( skillEntries >= 10 )
+				break;
+
+			auto trainerSkillPoints = toCopy.GetSkill( i );
+			if( mChar->GetSkill( i ) < ( trainerSkillPoints / 3 ) )
+			{
+				if( numEntries > 0 )
+					offset += 2;
+				numEntries++;
+				skillEntries++;
+
+				switch( i )
+				{
+					case ANATOMY:			pStream.WriteShort( offset, 0x0154 ); break;
+					case PARRYING:			pStream.WriteShort( offset, 0x006d ); break;
+					case HEALING:			pStream.WriteShort( offset, 0x006e ); break;
+					case HIDING:			pStream.WriteShort( offset, 0x006f ); break;
+					case STEALING:			pStream.WriteShort( offset, 0x0070 ); break;
+					case ALCHEMY:			pStream.WriteShort( offset, 0x0071 ); break;
+					case ANIMALLORE:		pStream.WriteShort( offset, 0x0072 ); break;
+					case ITEMID:			pStream.WriteShort( offset, 0x0073 ); break;
+					case ARMSLORE:			pStream.WriteShort( offset, 0x0074 ); break;
+					case BEGGING:			pStream.WriteShort( offset, 0x0075 ); break;
+					case BLACKSMITHING:		pStream.WriteShort( offset, 0x0076 ); break;
+					case BOWCRAFT:			pStream.WriteShort( offset, 0x0077 ); break;
+					case PEACEMAKING:		pStream.WriteShort( offset, 0x0078 ); break;
+					case CAMPING:			pStream.WriteShort( offset, 0x0079 ); break;
+					case CARPENTRY:			pStream.WriteShort( offset, 0x007a ); break;
+					case CARTOGRAPHY:		pStream.WriteShort( offset, 0x007b ); break;
+					case COOKING:			pStream.WriteShort( offset, 0x007c ); break;
+					case DETECTINGHIDDEN:	pStream.WriteShort( offset, 0x007d ); break;
+					case ENTICEMENT:		pStream.WriteShort( offset, 0x007e ); break;
+					case EVALUATINGINTEL:	pStream.WriteShort( offset, 0x007f ); break;
+					case FISHING:			pStream.WriteShort( offset, 0x0080 ); break;
+					case PROVOCATION:		pStream.WriteShort( offset, 0x0081 ); break;
+					case LOCKPICKING:		pStream.WriteShort( offset, 0x0082 ); break;
+					case MAGERY:			pStream.WriteShort( offset, 0x0083 ); break;
+					case MAGICRESISTANCE:	pStream.WriteShort( offset, 0x0084 ); break;
+					case TACTICS:			pStream.WriteShort( offset, 0x0085 ); break;
+					case SNOOPING:			pStream.WriteShort( offset, 0x0086 ); break;
+					case REMOVETRAPS:		pStream.WriteShort( offset, 0x0087 ); break;
+					case MUSICIANSHIP:		pStream.WriteShort( offset, 0x0088 ); break;
+					case POISONING:			pStream.WriteShort( offset, 0x0089 ); break;
+					case ARCHERY:			pStream.WriteShort( offset, 0x008a ); break;
+					case SPIRITSPEAK:		pStream.WriteShort( offset, 0x008b ); break;
+					case TAILORING:			pStream.WriteShort( offset, 0x008c ); break;
+					case TAMING:			pStream.WriteShort( offset, 0x008d ); break;
+					case TASTEID:			pStream.WriteShort( offset, 0x008e ); break;
+					case TINKERING:			pStream.WriteShort( offset, 0x008f ); break;
+					case VETERINARY:		pStream.WriteShort( offset, 0x0090 ); break;
+					case FORENSICS:			pStream.WriteShort( offset, 0x0091 ); break;
+					case HERDING:			pStream.WriteShort( offset, 0x0092 ); break;
+					case TRACKING:			pStream.WriteShort( offset, 0x0093 ); break;
+					case STEALTH:			pStream.WriteShort( offset, 0x0094 ); break;
+					case INSCRIPTION:		pStream.WriteShort( offset, 0x0095 ); break;
+					case SWORDSMANSHIP:		pStream.WriteShort( offset, 0x0096 ); break;
+					case MACEFIGHTING:		pStream.WriteShort( offset, 0x0097 ); break;
+					case FENCING:			pStream.WriteShort( offset, 0x0098 ); break;
+					case WRESTLING:			pStream.WriteShort( offset, 0x0099 ); break;
+					case LUMBERJACKING:		pStream.WriteShort( offset, 0x009a ); break;
+					case MINING:			pStream.WriteShort( offset, 0x009b ); break;
+					case MEDITATION:		pStream.WriteShort( offset, 0x009c ); break;
+					case NECROMANCY:		pStream.WriteShort( offset, 0x017c ); break;
+					case CHIVALRY:			pStream.WriteShort( offset, 0x017d ); break;
+					case FOCUS:				pStream.WriteShort( offset, 0x017e ); break;
+					default:
+						break;
+				}
+				pStream.WriteShort( offset += 2, clilocTracker );
+				pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+				pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+			}
+			idTracker++;
+			clilocTracker++;
+		}
+	}
+
+	// Write number of entries
+	pStream.WriteByte( 11, numEntries );
+
+	// Update size of packet
+	packetLen = ( 12 + ( numEntries * 8 ) );
+	pStream.ReserveSize( packetLen );
+	pStream.WriteShort( 1, packetLen );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -7694,7 +8434,15 @@ void CPClilocMessage::CopyData( CBaseObject& toCopy )
 {
 	Serial( toCopy.GetSerial() );
 	Body( toCopy.GetID() );
-	Name( toCopy.GetName() );
+
+	std::string toCopyName = toCopy.GetName();
+	
+	if( toCopy.CanBeObjType( OT_CHAR ) )
+	{
+		CChar *toCopyChar = calcCharObjFromSer( toCopy.GetSerial() );
+		toCopyName = getNpcDictName( toCopyChar );
+	}
+	Name( toCopyName );
 }
 
 void CPClilocMessage::Serial( SERIAL toSet )
@@ -7740,13 +8488,15 @@ void CPClilocMessage::Name( const std::string& name )
 
 void CPClilocMessage::ArgumentString( const std::string& arguments )
 {
-	const size_t stringLen = arguments.size();
+	std::wstring wArguments = strutil::stringToWstring( arguments );
+	const size_t stringLen = wArguments.size();
+
 	const UI16 packetLen = static_cast<UI16>(pStream.GetShort( 1 ) + (stringLen * 2) + 2);
 	pStream.ReserveSize( packetLen );
 	pStream.WriteShort( 1, packetLen );
 
 	for( size_t i = 0; i < stringLen; ++i )
-		pStream.WriteByte( 48 + i * 2, arguments[i] );
+		pStream.WriteByte( 48 + i * 2, wArguments[i] );
 }
 
 //o-----------------------------------------------------------------------------------------------o

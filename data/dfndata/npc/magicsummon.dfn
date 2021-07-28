@@ -1,6 +1,6 @@
 [energyvortex-summon]
 {
-NAME=an energy vortex
+NAME=#//an energy vortex
 ID=0x00a4
 SKIN=0x0075
 DIRECTION=RND
@@ -25,7 +25,7 @@ POISONSTRENGTH=3
 
 [airele-summon]
 {
-NAME=an air elemental
+NAME=#//an air elemental
 ID=0x000D
 SKIN=0x777f
 DIRECTION=RND
@@ -45,11 +45,12 @@ SPADELAY=7
 DEF=8
 NPCWANDER=2
 RACE=16
+CONTROLSLOTS=2
 }
 
 [earthele-summon]
 {
-NAME=an earth elemental
+NAME=#//an earth elemental
 ID=0x000e
 SKIN=0x0000
 DIRECTION=RND
@@ -64,11 +65,12 @@ DAMAGE=8 28
 DEF=13
 NPCWANDER=2
 RACE=17
+CONTROLSLOTS=2
 }
 
 [firele-summon]
 {
-NAME=a fire elemental
+NAME=#//a fire elemental
 ID=0x000f
 SKIN=0x0000
 DIRECTION=RND
@@ -87,11 +89,12 @@ SPATTACK=7
 SPADELAY=7
 NPCWANDER=2
 RACE=14
+CONTROLSLOTS=4
 }
 
 [waterele-summon]
 {
-NAME=a water elemental
+NAME=#//a water elemental
 ID=0x0010
 SKIN=0x0000
 DIRECTION=RND
@@ -110,11 +113,12 @@ SPATTACK=6
 SPADELAY=6
 NPCWANDER=2
 RACE=15
+CONTROLSLOTS=3
 }
 
 [bladespirit-summon]
 {
-NAME=a blade spirit
+NAME=#//a blade spirit
 ID=0x023E
 SKIN=0x0000
 DIRECTION=RND
@@ -132,11 +136,12 @@ DEF=8
 NPCWANDER=2
 NPCAI=88
 POISONSTRENGTH=2
+CONTROLSLOTS=2
 }
 
 [daemon-summon]
 {
-NAME=a daemon
+NAME=#//a daemon
 ID=0x000a
 SKIN=0x0000
 DIRECTION=RND
@@ -155,6 +160,7 @@ DEF=12
 NPCWANDER=2
 RUNS
 RACE=10
+CONTROLSLOTS=4
 }
 
 [dupre-summon]
@@ -181,6 +187,7 @@ DEF=50
 NPCWANDER=2
 FAME=10000
 KARMA=10000
+CONTROLSLOTS=3
 }
 
 [blacknight-summon]
@@ -206,5 +213,6 @@ SPADELAY=5
 DAMAGE=50 100
 DEF=50
 NPCWANDER=2
+CONTROLSLOTS=4
 }
 

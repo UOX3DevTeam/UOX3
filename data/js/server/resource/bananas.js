@@ -1,7 +1,7 @@
 // Banana-Picking Script
-// 20/02/2006 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) banana tree is double-clicked, it's setup with
-// 5 banans ripe for picking. After they've been picked, a timer starts,
+// 5 bananas ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more bananas can be picked. Once the timer is over,
 // new bananas are added.
 var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
@@ -12,7 +12,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( "You are too far away to reach that." );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pUser.socket.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -26,25 +26,28 @@ function onUseChecked( pUser, iUsed )
 	var BananaCount = iUsed.GetTag("BananaCounter");
 	if (Bananas == 0)
 	{	
-		pUser.SysMessage( "You find no ripe bananas to pick. Try again later." );
+		pUser.SysMessage( GetDictionaryEntry( 2506, pUser.socket.language )); // You find no ripe bananas to pick. Try again later.
 	}
 	if( Bananas == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
-			pUser.SysMessage( "You fail to pick any bananas." );
+			pUser.SysMessage( GetDictionaryEntry( 2507, pUser.socket.language )); // You fail to pick any bananas.
 		if( loot == 3 || loot == 1 )
 	 	{
-			pUser.SysMessage( "You pick a banana from the tree." );
+			pUser.SysMessage( GetDictionaryEntry( 2508, pUser.socket.language )); // You pick a banana from the tree.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x171f", 1, "ITEM", true );
 			BananaCount--;
 			iUsed.SetTag( "BananaCounter", BananaCount );
 			if( BananaCount == 1)
-				pUser.SysMessage( "There is "+BananaCount+" ripe bananas left on the tree." );
+				pUser.SysMessage( GetDictionaryEntry( 2509, pUser.socket.language )); // There is 1 ripe bananas left on the tree.
 			else
-				pUser.SysMessage( "There are "+BananaCount+" ripe bananas left on the tree." );
-		    	if( BananaCount == 0 )
+			{
+				var bananaCountMsg = GetDictionaryEntry( 2510, pUser.socket.language ); // There are %i ripe bananas left on the tree.
+				pUser.SysMessage( bananaCountMsg.replace(/%i/gi, BananaCount ));
+			}
+		    if( BananaCount == 0 )
 			{
 				iUsed.SetTag( "Bananas", 0 );
 				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time bananas respawn

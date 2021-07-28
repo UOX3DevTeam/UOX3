@@ -185,7 +185,7 @@ void command_addaccount( CSocket *s)
 
 		if( newUsername == "" || newPassword == "" )
 		{
-			s->sysmessage( "Unable to add account, insufficient data provided (syntax: [username] [password] [flags])" );
+			s->sysmessage( 9018 ); // Unable to add account, insufficient data provided (syntax: [username] [password] [flags])
 			return;
 		}
 
@@ -196,12 +196,12 @@ void command_addaccount( CSocket *s)
 			Accounts->AddAccount( newUsername, newPassword, "NA", newFlags );
 			Console << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
 
-			s->sysmessage( strutil::format( "Account Added: %s:%s:%i", newUsername.c_str(), newPassword.c_str(), newFlags ) );
+			s->sysmessage( 9019, newUsername.c_str(), newPassword.c_str(), newFlags ); // Account Added: %s:%s:%i
 		}
 		else
 		{
 			Console << "o Account was not added, an account with that username already exists!" << myendl;
-			s->sysmessage( "Account not added, an account with that username already exists!" );
+			s->sysmessage( 9020 ); // Account not added, an account with that username already exists!
 		}
 	}
 }
@@ -255,7 +255,7 @@ void command_setpost( CSocket *s )
 		return;
 
 	PostTypes type = PT_LOCAL;
-	std::string upperCommand = strutil::toupper( Commands->CommandString( 2, 2 ));
+	std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
 	if( upperCommand == "GLOBAL" ) // user's next post appears in ALL bulletin boards
 		type = PT_GLOBAL;
 	else if( upperCommand == "REGIONAL" ) // user's next post appears in all bulletin boards in current region
@@ -336,7 +336,7 @@ void command_tile( CSocket *s )
 		return;
 
 	UI16 targID = 0;
-	if( strutil::toupper( Commands->CommandString( 2, 2 )) == "STATIC" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "STATIC" )
 	{
 		targID = static_cast<UI16>(Commands->Argument( 2 ));
 	}
@@ -395,7 +395,7 @@ void command_tile( CSocket *s )
 		// tile static itemID
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		if( strutil::toupper( Commands->CommandString( 2, 2 )) != "STATIC" )
+		if( strutil::upper( Commands->CommandString( 2, 2 )) != "STATIC" )
 		{
 			s->TempInt2( static_cast<SI32>(Commands->Argument( 2 )));
 		}
@@ -518,21 +518,42 @@ void command_tell( CSocket *s )
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
 		std::string temp	= mChar->GetName() + " tells " + tChar->GetName() + ": " + txt;
-		CSpeechEntry& toAdd	= SpeechSys->Add();
-		toAdd.Font( (FontType)mChar->GetFontType() );
-		toAdd.Speech( temp );
-		toAdd.Speaker( mChar->GetSerial() );
-		toAdd.SpokenTo( tChar->GetSerial() );
-		toAdd.Type( TALK );
-		toAdd.At( cwmWorldState->GetUICurrentTime() );
-		toAdd.TargType( SPTRG_INDIVIDUAL );
-		if( mChar->GetSayColour() == 0x1700 )
-			toAdd.Colour( 0x5A );
-		else if( mChar->GetSayColour() == 0x0 )
-			toAdd.Colour( 0x5A );
-		else
-			toAdd.Colour( mChar->GetSayColour() );
 
+		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+		{
+			CPUnicodeMessage unicodeMessage;
+			unicodeMessage.Message( temp );
+			unicodeMessage.Font( (FontType)mChar->GetFontType() );
+			if( mChar->GetSayColour() == 0x1700 )
+				unicodeMessage.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				unicodeMessage.Colour( 0x5A );
+			else
+				unicodeMessage.Colour( mChar->GetSayColour() );
+			unicodeMessage.Type( TALK );
+			unicodeMessage.Language( "ENG" );
+			unicodeMessage.Name( mChar->GetName() );
+			unicodeMessage.ID( INVALIDID );
+			unicodeMessage.Serial( mChar->GetSerial() );
+			s->Send( &unicodeMessage );
+		}
+		else
+		{
+			CSpeechEntry& toAdd	= SpeechSys->Add();
+			toAdd.Font( (FontType)mChar->GetFontType() );
+			toAdd.Speech( temp );
+			toAdd.Speaker( mChar->GetSerial() );
+			toAdd.SpokenTo( tChar->GetSerial() );
+			toAdd.Type( TALK );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
+			if( mChar->GetSayColour() == 0x1700 )
+				toAdd.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				toAdd.Colour( 0x5A );
+			else
+				toAdd.Colour( mChar->GetSayColour() );
+		}
 	}
 }
 
@@ -561,7 +582,7 @@ void command_command( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 1 )
 	{
-		HandleGumpCommand( s, strutil::toupper( Commands->CommandString( 2, 2 )), strutil::toupper( Commands->CommandString( 3 )) );
+		HandleGumpCommand( s, strutil::upper( Commands->CommandString( 2, 2 )), strutil::upper( Commands->CommandString( 3 )) );
 	}
 }
 
@@ -614,7 +635,7 @@ void command_memstats( CSocket *s )
 void command_restock( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	if( strutil::toupper( Commands->CommandString( 2, 2 )) == "ALL" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 	{
 		restock( true );
 		s->sysmessage( 55 );
@@ -704,7 +725,7 @@ void command_regspawn( CSocket *s )
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
 
-		if( strutil::toupper( Commands->CommandString( 2, 2 )) == "ALL" )
+		if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
 			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
@@ -716,9 +737,9 @@ void command_regspawn( CSocket *s )
 				++spIter;
 			}
 			if( itemsSpawned || npcsSpawned )
-				s->sysmessage( "Spawned %u items and %u npcs in %u SpawnRegions", itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() );
+				s->sysmessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions
 			else
-				s->sysmessage( "Failed to spawn any new items or npcs in %u SpawnRegions", cwmWorldState->spawnRegions.size() );
+				s->sysmessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
 		}
 		else
 		{
@@ -730,13 +751,13 @@ void command_regspawn( CSocket *s )
 				{
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 					if( itemsSpawned || npcsSpawned )
-						s->sysmessage( "Region: '%s'(%u) spawned %u items and %u npcs", spawnReg->GetName().c_str(), spawnRegNum, itemsSpawned, npcsSpawned );
+						s->sysmessage( 9023, spawnReg->GetName().c_str(), spawnRegNum, itemsSpawned, npcsSpawned ); // Region: '%s'(%u) spawned %u items and %u npcs
 					else
-						s->sysmessage( "Region: '%s'(%u) failed to spawn any new items or npcs", spawnReg->GetName().c_str(), spawnRegNum );
+						s->sysmessage( 9024, spawnReg->GetName().c_str(), spawnRegNum ); // Region: '%s'(%u) failed to spawn any new items or npcs
 					return;
 				}
 			}
-			s->sysmessage( "Invalid SpawnRegion %u", spawnRegNum );
+			s->sysmessage( 9025, spawnRegNum ); // Invalid SpawnRegion %u
 		}
 	}
 }
@@ -762,7 +783,7 @@ void command_cq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		std::string upperCommand = strutil::toupper( Commands->CommandString( 2, 2 ));
+		std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in Counselor queue
 		{
 			nextCall( s, false );
@@ -815,7 +836,7 @@ void command_gq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		std::string upperCommand = strutil::toupper( Commands->CommandString( 2, 2 ));
+		std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in GM queue
 		{
 			nextCall( s, true );
@@ -856,12 +877,12 @@ void command_minecheck( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_guards( void )
 {
-	if( strutil::toupper( Commands->CommandString( 2, 2 )) == "ON" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( true );
 		sysBroadcast( Dictionary->GetEntry( 61 ) );
 	}
-	else if( strutil::toupper( Commands->CommandString( 2, 2 )) == "OFF" )
+	else if( strutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( false );
 		sysBroadcast( Dictionary->GetEntry( 62 ) );
@@ -875,12 +896,12 @@ void command_guards( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_announce( void )
 {
-	if( strutil::toupper( Commands->CommandString( 2, 2 )) == "ON" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( true );
 		sysBroadcast( Dictionary->GetEntry( 63 ) );
 	}
-	else if( strutil::toupper( Commands->CommandString( 2, 2 )) == "OFF" )
+	else if( strutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( false );
 		sysBroadcast( Dictionary->GetEntry( 64 ) );
@@ -939,7 +960,7 @@ void command_spawnkill( CSocket *s )
 				++killed;
 			}
 		}
-		s->sysmessage( "Done." );
+		s->sysmessage( 84 ); // Done.
 		s->sysmessage( 350, killed, regNum );
 	}
 }
@@ -1099,7 +1120,7 @@ void command_validcmd( CSocket *s )
 void command_howto( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	std::string commandStart = strutil::toupper( Commands->CommandString( 2 ));
+	std::string commandStart = strutil::upper( Commands->CommandString( 2 ));
 	if( commandStart.empty() )
 	{
 		CChar *mChar = s->CurrcharObj();
@@ -1399,7 +1420,7 @@ void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 	Console.print(strutil::format( "   UnRegistering command %s\n", cmdName.c_str()));
 #endif
 	std::string upper	= cmdName;
-	upper				= strutil::toupper( upper );
+	upper				= strutil::upper( upper );
 	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
 	if( p != JSCommandMap.end() )
 		JSCommandMap.erase( p );
@@ -1430,7 +1451,7 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 	Console.TurnNormal();
 #endif
 	std::string upper	= cmdName;
-	upper				= strutil::toupper( upper );
+	upper				= strutil::upper( upper );
 	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
@@ -1442,7 +1463,7 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
 	std::string upper				= cmdName;
-	upper							= strutil::toupper( upper );
+	upper							= strutil::upper( upper );
 	JSCOMMANDMAP_ITERATOR	toFind	= JSCommandMap.find( upper );
 	if( toFind != JSCommandMap.end() )
 	{

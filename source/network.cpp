@@ -86,8 +86,6 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 	CChar *currChar = connClients[s]->CurrcharObj();
 	Console << "Client " << (UI32)s << " disconnected. [Total:" << (SI32)(cwmWorldState->GetPlayersOnline()-1) << "]" << myendl;
 
-
-
 	if( currChar != nullptr )
 	{
 		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
@@ -1276,10 +1274,10 @@ void cNetworkStuff::LoadFirewallEntries( void )
 				{
 					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
 					{
-						if( strutil::toupper( tag ) == "IP" )
+						if( strutil::upper( tag ) == "IP" )
 						{
 							data = firewallSect->GrabData();
-							data = strutil::stripTrim( data );
+							data = strutil::trim( strutil::removeTrailing( data, "//" ));
 							if( !data.empty() )
 							{
 								auto psecs = strutil::sections( data, "." );

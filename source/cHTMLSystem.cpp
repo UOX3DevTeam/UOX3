@@ -654,7 +654,7 @@ void cHTMLTemplate::Load( ScriptSection *found )
 	for( tag = found->First(); !found->AtEnd(); tag = found->Next() )
 	{
 		data = found->GrabData();
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 
 		if( UTag == "UPDATE" )
 		{
@@ -662,7 +662,7 @@ void cHTMLTemplate::Load( ScriptSection *found )
 		}
 		else if( UTag == "TYPE" )
 		{
-			UData = strutil::toupper( data );
+			UData = strutil::upper( data );
 			if( UData == "STATUS" )
 			{
 				Type = ETT_ONLINE;

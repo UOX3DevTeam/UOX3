@@ -8,29 +8,36 @@
 #define StringUtility_hpp
 
 #include <string>
-#include <tuple>
-#include <cstdarg>
-
-#include <string>
-#include <tuple>
 #include <vector>
 #include <sstream>
+#include <iomanip>
+#include <tuple>
+#include <cstdarg>
 #include <type_traits>
+
 namespace strutil {
-	std::string ltrim(const std::string& s) ;
-	std::string rtrim(const std::string& s) ;
-	
-	std::string trim(const std::string& s) ;
-	
-	std::string stripComment(const std::string& input,const std::string &commentdelim = "//");
-	
-	std::string toupper(const std::string &s);
-	std::string tolower(const std::string &s);
-	
-	std::string& stripTrim(std::string& s) ;
-	
-	std::tuple<std::string,std::string> separate(const std::string& input,
-								   const std::string& separator);
+	// Uppercase the string
+	std::string lower(const std::string &value);
+	// Lowercase the string
+	std::string upper(const std::string &value);
+
+	// Remove leading whitespace
+	std::string ltrim(const std::string &value);
+	// Remove trailing whitespace
+	std::string rtrim(const std::string &value);
+	// Remove leading/trailing whitespace
+	std::string trim(const std::string &value);
+	// Remove leading/trailing whitepace, and reduce all other whitespace to one " "
+	std::string simplify(const std::string &value);
+
+	// Removing everything after a delimiter. Normally "//" for comments
+	std::string removeTrailing(const std::string& value,const std::string& delim="//");
+
+	// Return the values between two delimitors.
+	std::string contents(const std::string &value,const std::string& startdelim, const std::string &enddelim,std::string::size_type location=0);
+
+	// Split a string based on a separator
+	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep);
 	
 	
 	std::string format(std::size_t maxsize, const std::string fmtstring,...) ;
@@ -39,8 +46,7 @@ namespace strutil {
 	std::string format(const std::string fmtstring,...) ;
 	std::string format(const std::string fmtstring,va_list &list);
 	std::string formatMessage(const std::string& uformat, const std::string& data) ;
-	
-	std::string simplify(const std::string& input);
+
 	
 	std::vector<std::string> sections(const std::string& value, const std::string& sep=",", std::string::size_type start = 0, std::string::size_type end = std::string::npos) ;
 	std::vector<std::wstring> sections(const std::wstring& value, const std::wstring& sep=L",", std::wstring::size_type start = 0, std::wstring::size_type end = std::wstring::npos) ;
@@ -77,6 +83,15 @@ namespace strutil {
 	
 	// Convert a string to wstring (for UTF8 characters)
 	std::wstring stringToWstring( const std::string& t_str );
+
+	// Convert a wstring to string (retaining UTF8 characters)
+	std::string wStringToString( const std::wstring& t_str );
+
+	// Convert a string to wstring and back to string (retaining UTF8 characters)
+	std::string stringToWstringToString( const std::string& t_str );
+	
+	// Tackles converting text loaded from dictionary into japanese
+	std::wstring FromUTF8( const char* str );
 	
 	template<typename T>
 	std::string number(T n, int base=10){
@@ -132,8 +147,6 @@ namespace strutil {
 		}
 	}
 	
-	// split a string by a sep
-	std::tuple<std::string,std::string> split(const std::string &value, const std::string &sep);
 
 }
 #endif /* StringUtility_hpp */

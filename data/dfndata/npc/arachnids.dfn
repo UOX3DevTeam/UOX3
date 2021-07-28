@@ -1,6 +1,6 @@
 [giantblackwidow]
 {
-NAME=a giant black widow
+NAME=#//a giant black widow
 ID=0x009d
 DIRECTION=RND
 BACKPACK
@@ -34,7 +34,7 @@ FLAG=NEUTRAL
 
 [dreadspider]
 {
-NAME=a dread spider
+NAME=#//a dread spider
 ID=0x000b
 DIRECTION=RND
 BACKPACK
@@ -69,7 +69,7 @@ FLAG=NEUTRAL
 
 [frostspider]
 {
-NAME=a frost spider
+NAME=#//a frost spider
 ID=0x0014
 DIRECTION=RND
 BACKPACK
@@ -100,11 +100,12 @@ FOOD=meat
 RUNS
 RACE=6
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [giantspider]
 {
-NAME=a giant spider
+NAME=#//a giant spider
 ID=0x001c
 DIRECTION=RND
 BACKPACK
@@ -136,12 +137,13 @@ FOOD=meat
 RUNS
 RACE=6
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 //Terathans
 [teradrone]
 {
-NAME=terathan drone
+NAME=#//terathan drone
 ID=0x0047
 DIRECTION=RND
 SAYCOLOR=0x0026
@@ -174,7 +176,7 @@ FLAG=NEUTRAL
 
 [terawarrior]
 {
-NAME=terathan warrior
+NAME=#//terathan warrior
 ID=0x0046
 DIRECTION=RND
 SAYCOLOR=0x0026
@@ -209,7 +211,7 @@ FLAG=NEUTRAL
 
 [teraavenger]
 {
-NAME=terathan avenger
+NAME=#//terathan avenger
 ID=0x0098
 SKIN=0x066d
 DIRECTION=RND
@@ -253,7 +255,7 @@ FLAG=NEUTRAL
 
 [teramatriarch]
 {
-NAME=terathan matriarch
+NAME=#//terathan matriarch
 ID=0x0048
 SKIN=0000
 DIRECTION=RND

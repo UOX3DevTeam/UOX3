@@ -36,12 +36,6 @@
     <Filter Include="Header Files\UOData">
       <UniqueIdentifier>{d191cb74-b6ab-4daa-9a7d-23c417c8efa5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Text Processing">
-      <UniqueIdentifier>{34f92469-3e9c-4f7c-a34a-5e5c42ac7387}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Text Processing">
-      <UniqueIdentifier>{bb050419-8c67-4f08-986f-0be97cc215d7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utility">
       <UniqueIdentifier>{39d50936-dc83-4b6c-b219-2f79d292d75b}</UniqueIdentifier>
     </Filter>
@@ -290,26 +284,11 @@
     <ClCompile Include="network.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Socket.cpp">
-      <Filter>Source Files\Network</Filter>
-    </ClCompile>
     <ClCompile Include="IP4Address.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="UOPInterface.cpp">
       <Filter>Source Files\UOData</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyValue.cpp">
-      <Filter>Source Files\Text Processing</Filter>
-    </ClCompile>
-    <ClCompile Include="DataSection.cpp">
-      <Filter>Source Files\Text Processing</Filter>
-    </ClCompile>
-    <ClCompile Include="DataCategory.cpp">
-      <Filter>Source Files\Text Processing</Filter>
-    </ClCompile>
-    <ClCompile Include="DataSettings.cpp">
-      <Filter>Source Files\Text Processing</Filter>
     </ClCompile>
     <ClCompile Include="StringUtility.cpp">
       <Filter>Source Files\Utility</Filter>
@@ -556,23 +535,8 @@
     <ClInclude Include="IP4Address.hpp">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Socket.hpp">
-      <Filter>Header Files\Network</Filter>
-    </ClInclude>
     <ClInclude Include="UOPInterface.hpp">
       <Filter>Header Files\UOData</Filter>
-    </ClInclude>
-    <ClInclude Include="DataCategory.hpp">
-      <Filter>Header Files\Text Processing</Filter>
-    </ClInclude>
-    <ClInclude Include="DataSection.hpp">
-      <Filter>Header Files\Text Processing</Filter>
-    </ClInclude>
-    <ClInclude Include="DataSettings.hpp">
-      <Filter>Header Files\Text Processing</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyValue.hpp">
-      <Filter>Header Files\Text Processing</Filter>
     </ClInclude>
     <ClInclude Include="StringUtility.hpp">
       <Filter>Header Files\Utility</Filter>

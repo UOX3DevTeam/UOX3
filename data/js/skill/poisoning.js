@@ -66,7 +66,7 @@ function onCallback1( pSock, ourObj )
 			{
 				if( ourObj.poison >= pPotion.morez )
 				{
-					pSock.SysMessage( "That item is already poisoned!" );
+					pSock.SysMessage( GetDictionaryEntry( 6020, pLanguage ) ); // That item is already poisoned!
 					return;
 				}
 				ourObj.poison = pPotion.morez;

@@ -3867,34 +3867,34 @@ Wochickeki
 //Balron Names
 [RANDOMNAME 7]
 {
-the Collector of Souls
-the Slayer
-the Lord of the Abyss
+5096//the Collector of Souls
+5097//the Slayer
+5098//the Lord of the Abyss
 }
 
 //Small Birds
 [RANDOMNAME 8]
 {
-a wren
-a swallow
-a warbler
-a nuthatch
-a chickadee
-a thrush
-a nightingale
-a starling
-a skylark
-a finch
-a crossbill
-a sparrow
-a towhee
-a woodpecker
-a kingfisher
-a tern
-a plover
-a lapwing
-a cuckoo
-a swift
+5076//a wren
+5077//a swallow
+5078//a warbler
+5079//a nuthatch
+5080//a chickadee
+5081//a thrush
+5082//a nightingale
+5083//a starling
+5084//a skylark
+5085//a finch
+5086//a crossbill
+5087//a sparrow
+5088//a towhee
+5089//a woodpecker
+5090//a kingfisher
+5091//a tern
+5092//a plover
+5093//a lapwing
+5094//a cuckoo
+5095//a swift
 }
 
 //Ethereal Warrior Names
@@ -4018,15 +4018,15 @@ Deresh
 //Fire-Gargoyle Names
 [RANDOMNAME 13]
 {
-a fiery gargoyle
-a burning gargoyle
-a smoldering gargoyle
-a blistering gargoyle
-a sweltering gargoyle
-a flaming gargoyle
-a scorching gargoyle
-a blazing gargoyle
-a searing gargoyle
+5067//a fiery gargoyle
+5068//a burning gargoyle
+5069//a smoldering gargoyle
+5070//a blistering gargoyle
+5071//a sweltering gargoyle
+5072//a flaming gargoyle
+5073//a scorching gargoyle
+5074//a blazing gargoyle
+5075//a searing gargoyle
 }
 
 // Random names of the Dark Father,
@@ -4034,7 +4034,8 @@ a searing gargoyle
 [RANDOMNAME 14]
 {
 Ankou
-Arhaios Ophis
+Arhaios
+Ophis
 Armarus
 Arsat
 Azazel

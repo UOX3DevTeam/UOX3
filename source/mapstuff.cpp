@@ -116,9 +116,9 @@ void CMulHandler::LoadMapsDFN( void )
 		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			UTag = strutil::toupper( tag );
+			UTag = strutil::upper( tag );
 			data = toFind->GrabData();
-			data = strutil::stripTrim( data );
+			data = strutil::trim( strutil::removeTrailing( data, "//" ));
 			switch( (UTag.data()[0]) )
 			{
 				case 'M':
@@ -1357,7 +1357,7 @@ void CMulHandler::LoadDFNOverrides( void )
 			}
 			entryName	= mapScp->EntryName();
 			entryNum	= strutil::value<std::uint16_t>(strutil::extractSection(entryName," ", 1, 1 ));
-			titlePart	= strutil::toupper(strutil::extractSection(entryName, " ", 0, 0 ));
+			titlePart	= strutil::upper( strutil::extractSection( entryName, " ", 0, 0 ));
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
@@ -1372,8 +1372,8 @@ void CMulHandler::LoadDFNOverrides( void )
 					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 					{
 						data	= toScan->GrabData();
-						data 	= strutil::stripTrim( data );
-						UTag	= strutil::toupper( tag );
+						data 	= strutil::trim( strutil::removeTrailing( data, "//" ));
+						UTag	= strutil::upper( tag );
 						
 						// CTile properties
 						if( UTag == "WEIGHT" )

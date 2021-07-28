@@ -627,6 +627,40 @@ myChar.Heal( 15 );
 myChar.Heal( 15, healerChar );
 </pre></table>
 
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="AddFriend">AddFriend</a>
+<tr><td class="property">Prototype		<td class="value"><pre>bool AddFriend( trgPlayer )</pre>
+<tr><td class="property">Purpose		<td class="value">Add a targeted player character to a pet/follower's friend list
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myPet.AddFriend( myTarget );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="RemoveFriend">RemoveFriend</a>
+<tr><td class="property">Prototype		<td class="value"><pre>bool RemoveFriend( trgPlayer )</pre>
+<tr><td class="property">Purpose		<td class="value">Remove a targeted player character from a pet/follower's friend list
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myPet.RemoveFriend( myTarget );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetFriendList">GetFriendList</a>
+<tr><td class="property">Prototype		<td class="value"><pre>array GetFriendList()</pre>
+<tr><td class="property">Purpose		<td class="value">Returns list of pet/follower's friends
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+var friendList = myPet.GetFriendList();
+for( var i = 0; i < friendList.length; i++ )
+{
+	myPet.TextMessage( friendList[i].name + " is my friend!" );
+}
+</pre></table>
+
 <p>&nbsp;</p><center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font> |||

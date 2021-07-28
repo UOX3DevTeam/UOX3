@@ -79,11 +79,6 @@ add_library(uox
 		MultiMul.cpp
 		IDXMul.cpp
 		IP4Address.cpp
-		Socket.cpp
-		KeyValue.cpp
-		DataSection.cpp
-		DataCategory.cpp
-		DataSettings.cpp
 		TimeUtility.cpp
 )
 

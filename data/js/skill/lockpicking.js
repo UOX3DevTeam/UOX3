@@ -5,12 +5,12 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage ) ); // That is locked down and you cannot use it.
+			pSock.SysMessage( GetDictionaryEntry( 774, pSock.language ) ); // That is locked down and you cannot use it.
 			return;
 		}
 
 		pSock.tempObj = iUsed;
-		pSock.CustomTarget( 0, GetDictionaryEntry( 475, pSock.language ) );
+		pSock.CustomTarget( 0, GetDictionaryEntry( 475, pSock.language ) ); // What lock would you like to pick?
 	}
 	return false;
 }
@@ -26,7 +26,7 @@ function onCallback0( pSock, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			pSock.SysMessage( "That does not have a lock." );
+			pSock.SysMessage(GetDictionaryEntry( 678, pSock.language ) ); // That does not have a lock.
 			return;
 		}
 		var iType = ourObj.type;
@@ -35,14 +35,21 @@ function onCallback0( pSock, ourObj )
 		case 1:		// Container
 		case 12:	// Door
 		case 63:	// Spawn Container
-			pSock.SysMessage( GetDictionaryEntry( 932, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 932, pSock.language ) ); // That is not locked.
 			break;
 		case 8:		// Locked Container
 		case 13:	// Locked Door
 		case 64:	// Locked Spawn Container
 			if( ourObj.more == 0 )
 			{
-				if( pUser.CheckSkill( 24, 0, 1000 ) )
+				var minSkill = 0;
+				var isTrapped = ( ourObj.morez >> 24 );
+				if( isTrapped == 1 )
+				{
+					minSkill = 500;
+				}
+
+				if( pUser.CheckSkill( 24, minSkill, 1000 ) )
 				{
 					if( iType == 8 )
 						ourObj.type = 1;
@@ -52,27 +59,27 @@ function onCallback0( pSock, ourObj )
 						ourObj.type = 63;
 					ourObj.Refresh();
 					pSock.SoundEffect( 0x01FF, false );
-					pSock.SysMessage( GetDictionaryEntry( 935, pSock.language ) );
+					pSock.SysMessage( GetDictionaryEntry( 935, pSock.language ) ); // You manage to pick the lock.
 				}
 				else
 				{
 					if( RandomNumber( 0, 1 ) )
 					{
-						pSock.SysMessage( GetDictionaryEntry( 933, pSock.language ) );
+						pSock.SysMessage( GetDictionaryEntry( 933, pSock.language ) ); // You broke your lockpick!
 						if( bItem.amount > 1 )
 							bItem.amount = (bItem.amount-1);
 						else
 							bItem.Delete();
 					}
 					else
-						pSock.SysMessage( GetDictionaryEntry( 936, pSock.language ) );
+						pSock.SysMessage( GetDictionaryEntry( 936, pSock.language ) ); // You fail to open the lock!
 				}
 			}
 			else
-				pSock.SysMessage( GetDictionaryEntry( 937, pSock.language ) );
+				pSock.SysMessage( GetDictionaryEntry( 937, pSock.language ) ); // That cannot be unlocked without a key!
 			break;
 		default:
-			pSock.SysMessage( "That does not have a lock" );
+			pSock.SysMessage( GetDictionaryEntry( 678, pSock.language ) ); // That does not have a lock
 			break;
 		}
 	}

@@ -1,5 +1,5 @@
 // tailoring script
-// Last Updated: January 24th 2005
+// Last Updated: July 24th 2021
 // flax bundle : spinning wheel : six spools of thread
 
 function onUseChecked ( pUser, iUsed )
@@ -13,10 +13,10 @@ function onUseChecked ( pUser, iUsed )
 		if( iPackOwner && pUser.serial == iPackOwner.serial )
 		{
 			srcSock.tempObj = iUsed;
-			srcSock.CustomTarget( 0, "What spinning wheel do you want to spin the flax on?" ); // Select spinning wheel to spin flax on
+			srcSock.CustomTarget( 0, GetDictionaryEntry( 6024, srcSock.language ) ); // What spinning wheel do you want to spin the flax on?
 		}
 		else
-			pUser.SysMessage( GetDictionaryEntry( 775, srcSock.language ) ); //You can't use material outside your backpack.
+			srcSock.SysMessage( GetDictionaryEntry( 775, srcSock.language ) ); // You can't use material outside your backpack.
 	}
 	return false;
 }
@@ -30,26 +30,26 @@ function onCallback0( tSock, myTarget )
 
 	if( myTarget == null || myTarget.isChar )
 	{ //Target is a Maptile/Character
-		pUser.SysMessage("You may only spin flax on a spinning wheel.");
+		tSock.SysMessage( GetDictionaryEntry( 6025, tSock.language ) ); // You may only spin flax on a spinning wheel.
 		return;
 	}
 	if( !(tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C )) //only allow first IDs in the spinning wheel anims
 	{
 		if( tileID == 0x1015+1 || tileID == 0x1019+1 || tileID == 0x101c+1 )
-			pUser.SysMessage("That is already in use.");
+			tSock.SysMessage( GetDictionaryEntry( 6026, tSock.language ) ); // That is already in use.
 		else
-			pUser.SysMessage("You may only spin flax on a spinning wheel.");
+			tSock.SysMessage( GetDictionaryEntry( 6025, tSock.language ) ); // You may only spin flax on a spinning wheel.
 		return;
 	}
 	if( !pUser.InRange( myTarget, 3 ) )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 393, tSock.language ) ); //That is too far away
+		tSock.SysMessage( GetDictionaryEntry( 393, tSock.language ) ); //That is too far away
 		return;
 	}
     var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
     if( iMakeResource < 1 )
     {
-		pUser.SysMessage( "You don't seem to have enough flax bundles!" );
+		tSock.SysMessage( GetDictionaryEntry( 6027, tSock.language ) ); // You don't seem to have enough flax bundles!
   		return;
 	}
 	if( pUser.CheckSkill( 34, 0, 1000 ) )
@@ -59,10 +59,10 @@ function onCallback0( tSock, myTarget )
 		myTarget.id++;
 		myTarget.StartTimer( 2000, 1, true );
 		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fA0", 1, "ITEM", true ); // makes spools of thread
-		pUser.SysMessage( "You spin some spools of thread, and put them in your backpack." );
+		tSock.SysMessage( GetDictionaryEntry( 6028, tSock.language ) ); // You spin some spools of thread, and put them in your backpack.
 	}
 	else
-		pUser.SysMessage( GetDictionaryEntry( 821, tSock.language ) ); //You failed to spin your material.
+		tSock.SysMessage( GetDictionaryEntry( 821, tSock.language ) ); //You failed to spin your material.
         return;
 }
 

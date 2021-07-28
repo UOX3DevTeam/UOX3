@@ -5,7 +5,7 @@
 
 [gargoyle]
 {
-NAME=a gargoyle
+NAME=#//a gargoyle
 NAMELIST=12
 ID=0x0004
 DIRECTION=RND
@@ -45,7 +45,7 @@ FLAG=NEUTRAL
 
 [stonegargoyle]
 {
-NAME=a stone gargoyle
+NAME=#//a stone gargoyle
 ID=0x0043
 SKINLIST=7
 DIRECTION=RND
@@ -80,8 +80,8 @@ FLAG=NEUTRAL
 
 [enslavedgargoyle]
 {
-NAME=an enslaved gargoyle
-TITLE=the enslaved gargoyle
+NAME=#//an enslaved gargoyle
+TITLE=5066//the enslaved gargoyle
 ID=0x02f1
 DIRECTION=RND
 BACKPACK
@@ -110,7 +110,7 @@ FLAG=NEUTRAL
 
 [firegargoyle]
 {
-NAME=a fire gargoyle
+NAME=#//a fire gargoyle
 NAMELIST=13
 ID=0x0082
 DIRECTION=RND
@@ -149,8 +149,8 @@ FLAG=NEUTRAL
 
 [gargoyledestroyer]
 {
-NAME=a gargoyle destroyer
-TITLE=the gargoyle destroyer
+NAME=#//a gargoyle destroyer
+TITLE=5099//the gargoyle destroyer
 ID=0x02f3
 DIRECTION=RND
 BACKPACK
@@ -188,8 +188,8 @@ FLAG=NEUTRAL
 
 [gargoyleenforcer]
 {
-NAME=a gargoyle enforcer
-TITLE=the gargoyle enforcer
+NAME=#//a gargoyle enforcer
+TITLE=5100//the gargoyle enforcer
 ID=0x02f2
 DIRECTION=RND
 BACKPACK
@@ -227,9 +227,9 @@ FLAG=NEUTRAL
 
 [gargoylealchemist]
 {
-NAME=a gargoyle alchemist
+NAME=5101//a gargoyle alchemist
 NAMELIST=12
-TITLE=the gargoyle alchemist
+TITLE=5102//the gargoyle alchemist
 ID=0x02f6
 DIRECTION=RND
 BACKPACK
@@ -261,9 +261,9 @@ FLAG=NEUTRAL
 
 [gargoylemason]
 {
-NAME=a gargoyle stone worker
+NAME=5103//a gargoyle stone worker
 NAMELIST=12
-TITLE=the gargoyle stone worker
+TITLE=5104//the gargoyle stone worker
 ID=0x02f6
 DIRECTION=RND
 BACKPACK

@@ -103,7 +103,7 @@ void cRaces::load( void )
 		}
 		else
 		{
-			if( strutil::toupper( tag ) != "MODCOUNT" )
+			if( strutil::upper( tag ) != "MODCOUNT" )
 			{
 				Console.error( "MODCOUNT must come before any entries!" );
 				DefaultInitCombat();
@@ -1245,7 +1245,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 	for( tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next() )
 	{
-		UTag = strutil::toupper( tag );
+		UTag = strutil::upper( tag );
 		data = RacialPart->GrabData();
 		
 		switch( tag[0] )
@@ -1266,7 +1266,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
-						subUTag = strutil::toupper( subTag );
+						subUTag = strutil::upper( subTag );
 						subData = RacialEquipment->GrabData();
 						switch( subTag[0] )
 						{
@@ -1277,7 +1277,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 									auto csecs = strutil::sections( subData, "," );
 									for( int i = 0; i < csecs.size() - 1; i++ )
 									{
-										UI16 temp = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[i] ) ,nullptr, 0));
+										UI16 temp = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[i], "//" )), nullptr, 0));
 										//allowedEquipment.push_back( temp );
 										allowedEquipment.insert( temp );
 									}
@@ -1310,7 +1310,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
 					{
-						subUTag = strutil::toupper( subTag );
+						subUTag = strutil::upper( subTag );
 						subData = RacialEquipment->GrabData();
 						switch( subTag[0] )
 						{
@@ -1321,7 +1321,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 									auto csecs = strutil::sections( subData, "," );
 									for( int i = 0; i < csecs.size() - 1; i++ )
 									{
-										UI16 temp = static_cast<UI16>(std::stoul(strutil::stripTrim( csecs[i] ), nullptr, 0));
+										UI16 temp = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[i], "//" )), nullptr, 0));
 										//bannedEquipment.push_back( temp );
 										bannedEquipment.insert( temp );
 									}
@@ -1378,7 +1378,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			case 'G':
 				if( UTag == "GENDER" )
 				{
-					auto udata = strutil::toupper( data );
+					auto udata = strutil::upper( data );
 					if( udata == "MALE" )
 					{
 						GenderRestriction( MALE );
@@ -1434,8 +1434,8 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					auto csecs = strutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{
-						SetHungerRate( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetHungerDamage( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetHungerRate( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetHungerDamage( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
@@ -1568,7 +1568,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					auto ssecs = strutil::sections(data," ");
 					if( ssecs.size() > 1 )
 					{
-						RaceRelation( static_cast<RaceRelate>(std::stoi(strutil::stripTrim( ssecs[1] ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::stripTrim( ssecs[0] ), nullptr, 0)) );
+						RaceRelation( static_cast<RaceRelate>(std::stoi(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
 					}
 				}
 				else if( UTag == "RACIALENEMY" )
@@ -1648,8 +1648,8 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					auto csecs = strutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{
-						SetThirstRate( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[0] ), nullptr, 0)) );
-						SetThirstDrain( static_cast<SI16>(std::stoi(strutil::stripTrim( csecs[1] ), nullptr, 0)) );
+						SetThirstRate( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetThirstDrain( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{

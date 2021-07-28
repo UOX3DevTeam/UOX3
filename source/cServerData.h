@@ -45,13 +45,13 @@ enum ServerFeatures
 	SF_BIT_LIMITCHAR,		// 0x10 - Limit amount of chars, combine with OneChar
 	SF_BIT_AOS,				// 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
 	SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
-	SF_BIT_SE,				// 0x80 - Samurai and Ninja classes
-	SF_BIT_ML,				// 0x100 - Elven race
+	SF_BIT_SE,				// 0x80 - Samurai and Ninja classes, bushido, ninjitsu
+	SF_BIT_ML,				// 0x100 - Elven race, spellweaving
 	SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
 	SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
 	SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA
 	SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
-	SF_BIT_UNKNOWN5,		// 0x2000 - added with UO:SA launch
+	SF_BIT_UNKNOWN5,		// 0x2000 - added with UO:SA launch, imbuing, mysticism, throwing?
 	SF_BIT_NEWMOVE,			// 0x4000 - new movement system
 	SF_BIT_FACTIONAREAS = 15,	// 0x8000 - Unlock new Felucca faction-areas
 	SF_BIT_COUNT
@@ -121,6 +121,7 @@ enum cSD_TID
 	tSERVER_BLOODDECAY,			// Delay in seconds before blood spatter spawned from combat decays
 	tSERVER_BLOODDECAYCORPSE,	// Delay in seconds before blood spawned along with corpses decays
 	tSERVER_NPCCORPSEDECAY,		// Delay in seconds before NPC corpses decay
+	tSERVER_LOYALTYRATE,		// Amount of time between each time loyalty decreases for a pet
 	tSERVER_COUNT
 };
 
@@ -168,13 +169,14 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 65 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 68 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
 	UI16		port;							//	Port number that the server listens on, for connections
 	std::string externalIP;
 	std::vector< physicalServer > serverList;	//	Series of server entries for shard list
+	UI16		serverLanguage;					// Default language used on server
 	UI08		consolelogenabled;				//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
 	char		commandprefix;					//	Character that acts as the command prefix
 	SI16		backupRatio;					//	Number of saves before a backup occurs
@@ -185,6 +187,7 @@ private:
 	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
 	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
 	UI16		jsEngineSize;					// gcMaxBytes limit in MB per JS runtime
+	bool		useUnicodeMessages;				// Enable or disable sending messages originating on server in Unicode format
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
@@ -228,6 +231,11 @@ private:
 	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
 	UI16		maxPlayerPackItems;				//	The max amount of items a player's backpack can contain
 	UI16		maxPlayerBankItems;				//	The max amount of items a player's bankbox can contain
+	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
+	UI08		maxFollowers;					//	The default max amount of followers a player can have active
+	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
+	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
+	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -301,6 +309,9 @@ private:
 	UI08		combatarmordamagechance;		//  Chance of armor being damaged when defending in combat (0-100)
 	UI08		combatarmordamagemin;			//  Minimum amount of hitpoints an armor can lose when being damaged in combat
 	UI08		combatarmordamagemax;			//  Maximum amount of hitpoints an armor can lose when being damaged in combat
+	UI08		combatparrydamagechance;		//  Chance of shield being damaged when parrying in combat (0-100)
+	UI08		combatparrydamagemin;			//  Minimum amount of hitpoints a shield/weapon can lose when successfully parrying in combat
+	UI08		combatparrydamagemax;			//  Maximum amount of hitpoints a shield/weapon can lose when successfully parrying in combat
 	UI08		combatbloodeffectchance;		//  Chance of blood splatter effects spawning during combat
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 
@@ -362,6 +373,9 @@ public:
 	void		SetClassicUOMapTracker( bool value );
 	bool		GetClassicUOMapTracker( void ) const;
 
+	void		UseUnicodeMessages( bool value );
+	bool		UseUnicodeMessages( void ) const;
+
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel( void ) const;
 	LIGHTLEVEL	WorldLightBrightLevel( void ) const;
@@ -416,6 +430,8 @@ public:
 	bool		ServerMulCachingStatus( void ) const;
 	void		ServerBackups( bool setting );
 	bool		ServerBackupStatus( void ) const;
+	void		ServerContextMenus( bool setting );
+	bool		ServerContextMenus( void ) const;
 	void		ServerSavesTimer( UI32 timer );
 	UI32		ServerSavesTimerStatus( void ) const;
 	void		ServerMainThreadTimer( UI32 threadtimer );
@@ -534,6 +550,9 @@ public:
 	void		CutScrollRequirementStatus( bool value );
 	bool		CutScrollRequirementStatus( void ) const;
 
+	void		CheckPetControlDifficulty( bool value );
+	bool		CheckPetControlDifficulty( void ) const;
+
 	void		NPCTrainingStatus( bool setting );
 	bool		NPCTrainingStatus( void ) const;
 
@@ -569,6 +588,9 @@ public:
 
 	void		AlchemyDamageBonusModifier( UI08 value );
 	UI08		AlchemyDamageBonusModifier( void ) const;
+
+	void		CombatArmorClassDamageBonus( bool value );
+	bool		CombatArmorClassDamageBonus( void ) const;
 
 	void		CombatDisplayHitMessage( bool value );
 	bool		CombatDisplayHitMessage( void ) const;
@@ -611,6 +633,9 @@ public:
 
 	void		BasicTooltipsOnly( bool value );
 	bool		BasicTooltipsOnly( void ) const;
+
+	void		ShowNpcTitlesInTooltips( bool value );
+	bool		ShowNpcTitlesInTooltips( void ) const;
 
 	void		GlobalItemDecay( bool value );
 	bool		GlobalItemDecay( void ) const;
@@ -669,6 +694,15 @@ public:
 	void		CombatArmorDamageMax( UI08 value );
 	UI08		CombatArmorDamageMax( void ) const;
 
+	void		CombatParryDamageChance( UI08 value );
+	UI08		CombatParryDamageChance( void ) const;
+
+	void		CombatParryDamageMin( UI08 value );
+	UI08		CombatParryDamageMin( void ) const;
+
+	void		CombatParryDamageMax( UI08 value );
+	UI08		CombatParryDamageMax( void ) const;
+
 	void		CombatBloodEffectChance( UI08 value );
 	UI08		CombatBloodEffectChance( void ) const;
 
@@ -686,6 +720,21 @@ public:
 
 	void		TravelSpellsWhileAggressor( bool value );
 	bool		TravelSpellsWhileAggressor( void ) const;
+
+	void		MaxControlSlots( UI08 value );
+	UI08		MaxControlSlots( void ) const;
+
+	void		MaxFollowers( UI08 value );
+	UI08		MaxFollowers( void ) const;
+
+	void		MaxPetOwners( UI08 value );
+	UI08		MaxPetOwners( void ) const;
+
+	void		SetPetLoyaltyGainOnSuccess( UI16 value );
+	UI16		GetPetLoyaltyGainOnSuccess( void ) const;
+
+	void		SetPetLoyaltyLossOnFailure( UI16 value );
+	UI16		GetPetLoyaltyLossOnFailure( void ) const;
 
 	void		HungerSystemEnabled( bool value );
 	bool		HungerSystemEnabled( void ) const;
@@ -853,6 +902,9 @@ public:
 
 	UI16			ServerSecondsPerUOMinute( void ) const;
 	void			ServerSecondsPerUOMinute( UI16 newVal );
+
+	UI16			ServerLanguage( void ) const;
+	void			ServerLanguage( UI16 newVal );
 
 	UI16			GetJSEngineSize( void ) const;
 	void			SetJSEngineSize( UI16 newVal );

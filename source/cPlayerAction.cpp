@@ -172,6 +172,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	return iToStack;
 }
 
+CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIGetItem::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -279,7 +280,13 @@ bool CPIGetItem::Handle( void )
 					if( corpseTargChar->IsGuarded() ) // Is the corpse being guarded?
 						Combat->petGuardAttack( ourChar, corpseTargChar, corpseTargChar );
 					else if( x->isGuarded() )
-						Combat->petGuardAttack( ourChar, corpseTargChar, x );
+					{
+						CTownRegion *itemTownRegion = calcRegionFromXY( x->GetX(), x->GetY(), x->WorldNumber(), x->GetInstanceID() );
+						if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+						{
+							Combat->petGuardAttack( ourChar, corpseTargChar, x );
+						}
+					}
 				}
 			}
 		}
@@ -317,13 +324,35 @@ bool CPIGetItem::Handle( void )
 		i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 	if( i->isGuarded() )
 	{
-		if( oType == OT_CHAR && tSock->PickupSpot() == PL_OTHERPACK )
-			Combat->petGuardAttack( ourChar, static_cast<CChar *>(iOwner), i );
+		// Only care about guarded state if outside of a guarded/safezone region
+		CTownRegion *itemTownRegion = calcRegionFromXY( x->GetX(), x->GetY(), x->WorldNumber(), x->GetInstanceID() );
+		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		{
+			// Let's loop through a list of nearby characters to see if anyone is guarding the object
+			CHARLIST charList = findNearbyChars( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID(), DIST_INRANGE );
+			for( CHARLIST_CITERATOR charCtr = charList.begin(); charCtr != charList.end(); ++charCtr )
+			{
+				CChar *nearbyChar = ( *charCtr );
 
-		CChar *petGuard = Npcs->getGuardingPet( ourChar, i );
-		if( ValidateObject( petGuard ) )
-			petGuard->SetGuarding( nullptr );
-		i->SetGuarded( false );
+				// Only proceed if the character is guarding the object
+				if( nearbyChar->GetGuarding() == i )
+				{
+					CChar *nearbyCharOwner = nearbyChar->GetOwnerObj();
+					if( ValidateObject( nearbyCharOwner ) )
+					{
+						// Turn the player who picked up the guarded item criminal
+						criminal( ourChar );
+
+						// Have pet/follower attack the player who picked up the item
+						Combat->petGuardAttack( ourChar, nearbyCharOwner, i, nearbyChar );
+					
+						// Stop guarding item, it is now in someone else's possession
+						nearbyChar->SetGuarding( nullptr );
+						i->SetGuarded( false );
+					}
+				}
+			}
+		}
 	}
 
 	CTile& tile = Map->SeekTile( i->GetID() );
@@ -645,7 +674,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 		{
 			if( !tag.empty() )
 			{
-				if( strutil::toupper( tag ) == "FOODLIST" )
+				if( strutil::upper( tag ) == "FOODLIST" )
 				{
 					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
 				}
@@ -738,6 +767,13 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				if( cwmWorldState->creatures[targNPC->GetID()].IsAnimal() )
 				{
 					Effects->PlayCharacterAnimation( targNPC, 3 );
+
+					// Restore loyalty to max upon feeding pet
+					if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
+					{
+						targNPC->SetLoyalty( targNPC->GetMaxLoyalty() );
+						mSock->sysmessage( 2416 ); // Your pet looks happier.
+					}
 				}
 
 				if( i->GetPoisoned() && targNPC->GetPoisoned() < i->GetPoisoned() )
@@ -745,18 +781,25 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 					Effects->PlaySound( mSock, 0x0246, true ); // poison sound - SpaceDog
 					targNPC->SetPoisoned( i->GetPoisoned() );
 					targNPC->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+
+					// Cut loyalty in half if pet was fed poisoned food
+					if( targNPC->GetLoyalty() > 0 )
+					{
+						targNPC->SetLoyalty( std::clamp( static_cast<UI16>(targNPC->GetLoyalty() / 2), static_cast<UI16>(0), static_cast<UI16>(100)) );
+					}
 				}
+
 				//Remove a food item
 				bool iDeleted = i->IncAmount( -1 );
 				targNPC->SetHunger( static_cast<SI08>(targNPC->GetHunger() + 1) );
-				mSock->sysmessage( 1781 );
+				mSock->sysmessage( 1781 ); // That pet accepts your food and happily eats it.
 				if( iDeleted )
 					return true; //stackdeleted
 			}
 			else
 				mSock->sysmessage( 1780 );
 		}
-		else if( isGM || targNPC->GetID() == 0x0123 || targNPC->GetID() == 0x0124 )	// It's a pack animal
+		else if( isGM || targNPC->GetID() == 0x0123 || targNPC->GetID() == 0x0124 || targNPC->GetID() == 0x0317 )	// It's a pack animal
 			dropResult = 2;
 	}
 	else if( cwmWorldState->creatures[targNPC->GetID()].IsHuman() )
@@ -1301,7 +1344,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			}
 		}
 		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() ||
-													  ( contOwner->GetID() != 0x0123 && contOwner->GetID() != 0x0124 ) ||
+													  ( contOwner->GetID() != 0x0123 && contOwner->GetID() != 0x0124 && contOwner->GetID() != 0x0317 ) ||
 													  ( contOwner->GetOwnerObj() != &mChar && !Npcs->checkPetFriend( &mChar, contOwner ) ) ) )
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
@@ -1356,9 +1399,13 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		iDropped.SetZ( 9 );
 		iDropped.SetGridLocation( gridLoc );
 
-		// Refresh target container tooltip
-		CPToolTip pSend(droppedOn.GetSerial());
-		mSock.Send(&pSend);
+		// Only send tooltip if server feature for tooltips is enabled
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		{
+			// Refresh target container tooltip
+			CPToolTip pSend( droppedOn.GetSerial(), &mSock );
+			mSock.Send(&pSend);
+		}
 	}
 	else // Drop directly on a container, placing it randomly inside
 	{
@@ -1378,9 +1425,13 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 				Weight->subtractItemWeight( &mChar, &iDropped );
 		}
 
-		// Refresh target container tooltip
-		CPToolTip pSend(droppedOn.GetSerial());
-		mSock.Send(&pSend);
+		// Only send tooltip if server feature for tooltips is enabled
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		{
+			// Refresh target container tooltip
+			CPToolTip pSend( droppedOn.GetSerial(), &mSock);
+			mSock.Send(&pSend);
+		}
 	}
 	return true;
 }
@@ -1543,9 +1594,13 @@ bool CPIDropItem::Handle( void )
 		tSock->sysmessage( 1784, currentWeight, maxWeight ); //You are overloaded. Current / Max: %i / %i
 	}
 
-	// Refresh source container tooltip
-	CPToolTip pSend(tSock->PickupSerial());
-	tSock->Send(&pSend);
+	// Only send tooltip if server feature for tooltips is enabled
+	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+	{
+		// Refresh source container tooltip
+		CPToolTip pSend( tSock->PickupSerial(), tSock );
+		tSock->Send(&pSend);
+	}
 
 	//Reset PickupSpot after dropping the item
 	tSock->PickupSpot( PL_NOWHERE );
@@ -1775,7 +1830,7 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			{
 				FameTitle = Dictionary->GetEntry( 1181 ) + std::string(" ");
 			}
-			else if( !strutil::stripTrim( thetitle ).empty() )
+			else if( !( thetitle = strutil::trim( strutil::removeTrailing( thetitle, "//" ))).empty() )
 			{
 				FameTitle = strutil::format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
 			}
@@ -1834,7 +1889,10 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	if( pdoll->IsGM() )
 		tempstr = pdoll->GetName() + " " + pdoll->GetTitle();
 	else if( pdoll->IsNpc() )
-		tempstr = FameTitle + pdoll->GetName() + " " + pdoll->GetTitle();
+	{
+		std::string tempTitle = getNpcDictTitle( pdoll, s );
+		tempstr = FameTitle + pdoll->GetName() + " " + tempTitle;
+	}
 	else if( pdoll->IsDead() )
 		tempstr = pdoll->GetName();
 	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn
@@ -1891,12 +1949,16 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 
 	s->Send( &pd );
 
-	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); wearItem = pdoll->NextItem() )
+	// Only send tooltip if server feature for tooltips is enabled
+	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
 	{
-		if( ValidateObject( wearItem ) )
+		for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); wearItem = pdoll->NextItem() )
 		{
-			CPToolTip pSend( wearItem->GetSerial() );
-			s->Send( &pSend );
+			if( ValidateObject( wearItem ) )
+			{
+				CPToolTip pSend( wearItem->GetSerial(), s );
+				s->Send( &pSend );
+			}
 		}
 	}
 }
@@ -1953,7 +2015,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 		}
 		else if( !cwmWorldState->creatures[c->GetID()].IsHuman() && !c->IsDead() )
 		{
-			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 )	// Is a pack animal
+			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 || c->GetID() == 0x0317 )	// Is a pack animal
 			{
 				if( mChar->IsDead() )
 					mSock->sysmessage( 392 );
@@ -2044,7 +2106,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					{
 						if( baseContMultiObj && baseContMultiObj->IsSecureContainer( static_cast<CItem *>( baseCont ) ) && !mChar->GetMultiObj()->IsOnOwnerList( mChar ) )
 						{
-							mSock->sysmessage( "That container is secure. You cannot use this unless you are the owner." );
+							mSock->sysmessage( 9011 ); // That container is secure. You cannot use this unless you are the owner.
 							return true;
 						}
 						else
@@ -2548,7 +2610,7 @@ ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
-	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strutil::toupper(strToFind) );
+	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strutil::upper(strToFind) );
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;
@@ -2671,12 +2733,13 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 				return false;
 			}
 		}
+
+		iChar = iUsed->GetOwnerObj();
 		if( iUsed->isCorpse() )
 		{
 			if( cwmWorldState->ServerData()->LootingIsCrime() )
 			{
 				bool willCrim	= false;
-				iChar			= iUsed->GetOwnerObj();
 				if( ValidateObject( iChar ) )
 				{
 					// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
@@ -2692,10 +2755,14 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 
 			if( ValidateObject( iChar ) )
 			{
-				if( iChar->IsGuarded() ) // Is the corpse being guarded?
-					Combat->petGuardAttack( ourChar, iChar, iChar );
-				else if( iUsed->isGuarded() )
-					Combat->petGuardAttack( ourChar, iChar, iUsed );
+				CTownRegion *itemTownRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), iUsed->WorldNumber(), iUsed->GetInstanceID() );
+				if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+				{
+					if( iChar->IsGuarded() ) // Is the corpse being guarded?
+						Combat->petGuardAttack( ourChar, iChar, iChar );
+					else if( iUsed->isGuarded() )
+						Combat->petGuardAttack( ourChar, iChar, iUsed );
+				}
 			}
 		}
 		else if( iUsed->isGuarded() )
@@ -2706,6 +2773,15 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 				CChar *multiOwner = multi->GetOwnerObj();
 				if( ValidateObject( multiOwner ) && multiOwner != ourChar )
 					Combat->petGuardAttack( ourChar, multiOwner, iUsed );
+			}
+			else
+			{
+				CTownRegion *itemTownRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), iUsed->WorldNumber(), iUsed->GetInstanceID() );
+				if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+				{
+					if( ValidateObject( iChar ))
+						Combat->petGuardAttack( ourChar, iChar, iUsed );
+				}
 			}
 		}
 	}
@@ -2768,32 +2844,32 @@ bool CPIDblClick::Handle( void )
 	}
 
 	bool itemUsageCheckComplete = false;
+	// Then loop through all scripts again, checking for OnUseChecked event - but first run item usage check
+	// once to make sure player can actually use item!
+	// If it hasn't been done at least once already, run the usual item-usage checks
+	if( !itemUsageCheckComplete )
+	{
+		if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
+		{
+			return true;
+		}
+
+		// If item is disabled, don't continue
+		if( iUsed->isDisabled() )
+		{
+			tSock->sysmessage( 394 ); // You cannot do that at the moment.
+			return true;
+		}
+
+		// Item-usage check completed!
+		itemUsageCheckComplete = true;
+	}
+
 	for( auto scriptTrig : scriptTriggers )
 	{
-		// Then loop through all scripts again, checking for OnUseChecked event - but first run item usage check
-		// once to make sure player can actually use item!
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			// If it hasn't been done at least once already, run the usual item-usage checks
-			if( !itemUsageCheckComplete )
-			{
-				if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
-				{
-					return true;
-				}
-
-				// If item is disabled, don't continue
-				if( iUsed->isDisabled() )
-				{
-					tSock->sysmessage( 394 ); // You cannot do that at the moment.
-					return true;
-				}
-
-				// Item-usage check completed!
-				itemUsageCheckComplete = true;
-			}
-
 			// Check if OnUseChecked event is present in script
 			SI08 retVal = toExecute->OnUseChecked( ourChar, iUsed );
 			if( retVal == 1 )
@@ -2851,8 +2927,9 @@ bool CPIDblClick::Handle( void )
 //|	Function	-	const char *AppendData( CItem *i, std::string currentName )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add data onto the end of the string in singleclick() based on an items type
+//|					This is used by legacy singleclick names that don't show tooltips
 //o-----------------------------------------------------------------------------------------------o
-const char *AppendData( CItem *i, std::string &currentName )
+const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 {
 	std::string dataToAdd;
 	switch( i->GetType() )
@@ -2866,10 +2943,10 @@ const char *AppendData( CItem *i, std::string &currentName )
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
 			dataToAdd = std::string(" (") + strutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += strutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones) [Locked]");
+			dataToAdd += strutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
 			break;
 		case IT_LOCKEDDOOR:
-			dataToAdd = " [Locked]";
+			dataToAdd = " " + Dictionary->GetEntry( 9050 ); // [Locked]
 			break;
 		case IT_RECALLRUNE:
 		case IT_GATE:
@@ -2882,6 +2959,16 @@ const char *AppendData( CItem *i, std::string &currentName )
 		default:
 			break;
 	}
+
+	if( i->isGuarded() )
+	{
+		CTownRegion *itemTownRegion = calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID() );
+		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		{
+			dataToAdd += " " + Dictionary->GetEntry( 9051, s->Language() ); // [Guarded]
+		}
+	}
+
 	currentName += dataToAdd;
 	// Question: Do we put the creator thing here, saves some redundancy a bit later
 	return currentName.c_str();
@@ -2965,11 +3052,14 @@ bool CPISingleClick::Handle( void )
 				std::string temp ;
 				if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 				{
-					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
-					if( ValidateObject( mCreater ) ){
-						temp2 = strutil::format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+					CChar *mCreator = calcCharObjFromSer( i->GetCreator() );
+					if( ValidateObject( mCreator ) )
+					{
+						std::string creatorName = getNpcDictName( mCreator, tSock );
+						temp2 = strutil::format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
 					}
-					else{
+					else
+					{
 						temp2 =  i->GetDesc();
 					}
 				}
@@ -2977,7 +3067,7 @@ bool CPISingleClick::Handle( void )
 					temp2= i->GetDesc();
 				}
 				temp = temp2 + std::string(" at ")+std::to_string(i->GetBuyValue())+std::string("gp");
-				tSock->objMessage( AppendData( i, temp ), i );
+				tSock->objMessage( AppendData( tSock, i, temp ), i );
 				return true;
 			}
 		}
@@ -3022,11 +3112,14 @@ bool CPISingleClick::Handle( void )
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{
-		CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
-		if( ValidateObject( mCreater ) ){
-			temp2=strutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+		CChar *mCreator = calcCharObjFromSer( i->GetCreator() );
+		if( ValidateObject( mCreator ) )
+		{
+			std::string creatorName = getNpcDictName( mCreator, tSock );
+			temp2=strutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
 		}
-		else{
+		else
+		{
 			temp2= realname;
 		}
 	}
@@ -3038,11 +3131,17 @@ bool CPISingleClick::Handle( void )
 	{
 		auto iMultiObj = i->GetMultiObj();
 		if( ValidateObject( iMultiObj ) && iMultiObj->IsSecureContainer( i ) )
-			tSock->objMessage( "[locked down & secure]", i );
+			tSock->objMessage( Dictionary->GetEntry( 9052, tSock->Language() ), i ); // [locked down & secure]
 		else
-			tSock->objMessage( "[locked down]", i );
+			tSock->objMessage( Dictionary->GetEntry( 9053, tSock->Language() ), i ); // [locked down]
 	}
 	if( i->isGuarded() )
-		tSock->objMessage( "[Guarded]", i );
+	{
+		CTownRegion *itemTownRegion = calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID() );
+		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		{
+			tSock->objMessage( Dictionary->GetEntry( 9051, tSock->Language() ), i ); // [Guarded]
+		}
+	}
 	return true;
 }

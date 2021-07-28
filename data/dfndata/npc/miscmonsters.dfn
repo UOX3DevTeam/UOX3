@@ -1,6 +1,6 @@
 [succubus]
 {
-NAME=a succubus
+NAME=#//a succubus
 NAMELIST=11
 ID=0x0095
 DIRECTION=RND
@@ -34,7 +34,7 @@ FLAG=NEUTRAL
 
 [pixie]
 {
-NAME=a pixie
+NAME=#//a pixie
 NAMELIST=11
 ID=0x0080
 DIRECTION=RND
@@ -68,7 +68,7 @@ FLAG=NEUTRAL
 
 [centaur]
 {
-NAME=a centaur
+NAME=#//a centaur
 NAMELIST=10
 ID=0x0065
 DIRECTION=RND
@@ -100,7 +100,7 @@ FLAG=NEUTRAL
 
 [ethwarrior]
 {
-NAME=an ethereal warrior
+NAME=#//an ethereal warrior
 NAMELIST=9
 ID=0x007b
 DIRECTION=RND
@@ -139,7 +139,7 @@ FLAG=NEUTRAL
 
 [efreet]
 {
-NAME=an efreet
+NAME=#//an efreet
 ID=0x0083
 SKIN=0x084D
 DIRECTION=RND
@@ -177,7 +177,7 @@ FLAG=NEUTRAL
 
 [hellcat]
 {
-NAME=a hellcat
+NAME=#//a predator hellcat
 ID=0x007f
 SKINLIST=1
 DIRECTION=RND
@@ -212,11 +212,12 @@ CARVE=67
 RACE=8
 NPCAI=6
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [hellhound]
 {
-NAME=a hell hound
+NAME=#//a hell hound
 ID=0x0061
 SKIN=0x0481
 DIRECTION=RND
@@ -251,11 +252,12 @@ CARVE=65
 RACE=8
 NPCAI=6
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [largehellcat]
 {
-NAME=a large hellcat
+NAME=5107//a large hellcat
 ID=0x007f
 SKINLIST=1
 DIRECTION=RND
@@ -291,11 +293,12 @@ CARVE=67
 RACE=8
 NPCAI=6
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [stoneharpy]
 {
-NAME=a stone harpy
+NAME=#//a stone harpy
 ID=0x0049
 SKINLIST=7
 DIRECTION=RND
@@ -324,7 +327,7 @@ FLAG=NEUTRAL
 
 [gazer]
 {
-NAME=a gazer
+NAME=#//a gazer
 ID=0x0016
 DIRECTION=RND
 BACKPACK
@@ -363,7 +366,7 @@ FLAG=NEUTRAL
 
 [gazerlarva]
 {
-NAME=a gazer larva
+NAME=#//a gazer larva
 ID=0x030a
 DIRECTION=RND
 BACKPACK
@@ -393,7 +396,7 @@ FLAG=NEUTRAL
 
 [harpy]
 {
-NAME=a harpy
+NAME=#//a harpy
 ID=0x001e
 DIRECTION=RND
 BACKPACK
@@ -425,7 +428,7 @@ FLAG=NEUTRAL
 
 [headless]
 {
-NAME=a headless one
+NAME=#//a headless one
 ID=0x001f
 DIRECTION=RND
 BACKPACK
@@ -458,7 +461,7 @@ FLAG=NEUTRAL
 
 [eldergazer]
 {
-NAME=an elder gazer
+NAME=#//an elder gazer
 ID=0x0044
 DIRECTION=RND
 BACKPACK
@@ -498,7 +501,7 @@ FLAG=NEUTRAL
 
 [slime]
 {
-NAME=a slime
+NAME=#//a slime
 ID=0x0033
 SKINLIST=12
 DIRECTION=RND
@@ -532,11 +535,12 @@ FOOD=fish
 RACE=24
 FLAG=NEUTRAL
 SCRIPT=3203
+CONTROLSLOTS=1
 }
 
 [jwilson]
 {
-NAME=a jwilson
+NAME=5108//a jwilson
 ID=0x0033
 SKINLIST=12
 DIRECTION=RND
@@ -574,7 +578,7 @@ SCRIPT=3203
 
 [frostooze]
 {
-NAME=a frost ooze
+NAME=#//a frost ooze
 ID=0x005e
 SKIN=0x0481
 DIRECTION=RND
@@ -607,10 +611,11 @@ FLAG=NEUTRAL
 
 [wisp]
 {
-NAME=a wisp
+NAME=#//a wisp
 ID=0x003a
 DIRECTION=RND
 BACKPACK
+EQUIPITEM=wispglow
 LOOT=lowlevelscrolls
 LOOT=lowlevelscrolls
 LOOT=lowlevelscrolls
@@ -643,10 +648,11 @@ FLAG=NEUTRAL
 
 [shadowwisp]
 {
-NAME=a shadow wisp
+NAME=#//a shadow wisp
 ID=0x00a5
 DIRECTION=RND
 BACKPACK
+EQUIPITEM=shadowwispglow
 STR=16 40
 DEX=16 45
 INT=11 25
@@ -676,7 +682,7 @@ FLAG=NEUTRAL
 
 [evilmage]
 {
-NAME=an evil mage
+NAME=#//an evil mage
 ID=0x007c
 DIRECTION=RND
 BACKPACK
@@ -709,7 +715,7 @@ FLAG=NEUTRAL
 
 [evilmagelord]
 {
-NAME=an evil mage lord
+NAME=#//an evil mage lord
 ID=0x007d
 DIRECTION=RND
 BACKPACK

@@ -8,6 +8,8 @@ enum TriggerWords
 	TW_BALANCE			= 0x0001,		// balance/statement
 	TW_BANK				= 0x0002,		// bank
 	TW_GUARDS			= 0x0007,		// guard/guards
+	TW_STABLE			= 0x0008,		// stable
+	TW_CLAIM			= 0x0009,		// claim
 	TW_QUESTDEST		= 0x001D,		// destination
 	TW_QUESTTAKE		= 0x001E,		// I will take thee
 	TW_HOUSELOCKDOWN	= 0x0023,		// I wish to lock this down
@@ -90,6 +92,7 @@ enum TriggerWords
 	TW_KILL				= 0x015D,		// Kill
 	TW_ATTACK			= 0x015E,		// Attack
 	TW_STOP				= 0x0161,		// Stop
+	TW_HIRE				= 0x0162,		// Hire
 	TW_FOLLOWME			= 0x0163,		// Follow Me
 	TW_ALLCOME			= 0x0164,		// All Come
 	TW_ALLFOLLOW		= 0x0165,		// All Follow
@@ -146,24 +149,13 @@ public:
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
-class CBankResponse : public CBaseResponse
-{
-protected:
-	bool			checkBalance;
-public:
-	CBankResponse( bool newVal = false );
-	virtual			~CBankResponse()
-	{
-	}
-	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
-};
-
 class CTrainingResponse : public CBaseResponse
 {
 protected:
-	std::string		ourText;
+	UI16			ourTrigWord;
+	CChar			*trigChar;
 public:
-	CTrainingResponse( const std::string &text );
+	CTrainingResponse( UI16 trigWord, CChar *tChar );
 	virtual			~CTrainingResponse()
 	{
 	}
@@ -181,7 +173,7 @@ public:
 	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
-	bool			canControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false );
+	//bool			canControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false, bool checkDifficulty = false );
 };
 
 class CPetMultiResponse : public CBasePetResponse
@@ -190,8 +182,10 @@ protected:
 	SI32			dictEntry;
 	TargetIDs		targID;
 	bool			isRestricted;
+	bool			allSaid;
+	bool			checkDifficulty;
 public:
-	CPetMultiResponse( const std::string &text, bool isRestricted, TargetIDs targVal, SI32 dictVal );
+	CPetMultiResponse( const std::string &text, bool isRestricted, TargetIDs targVal, SI32 dictVal, bool saidAll, bool checkControlDifficulty );
 	virtual			~CPetMultiResponse()
 	{
 	}

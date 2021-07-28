@@ -1,5 +1,6 @@
 // Handler for Server Poll requests from
-// UOGateway website (https://www.uogateway.com)
+// UOGateway (https://www.uogateway.com)
+// ShardPortal (https://www.shardportal.com)
 // Last Updated: 21. June, 2021
 
 function PacketRegistration()

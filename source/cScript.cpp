@@ -58,7 +58,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetHour",					SE_GetHour,					0, 0, 0 },
 	{ "GetMinute",					SE_GetMinute,				0, 0, 0 },
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
-	{ "GetSecondsPerUOMinute",		SE_SecondsPerUOMinute,		0, 0, 0 },
+	{ "SecondsPerUOMinute",			SE_SecondsPerUOMinute,		0, 0, 0 },
 	{ "GetCurrentClock",			SE_GetCurrentClock,			0, 0, 0 },
 	{ "GetMurderThreshold",			SE_GetMurderThreshold,		0, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
@@ -150,6 +150,7 @@ static JSFunctionSpec my_functions[] =
 
 	{ "ApplyDamageBonuses",			SE_ApplyDamageBonuses,		6, 0, 0 },
 	{ "ApplyDefenseModifiers",		SE_ApplyDefenseModifiers,	7, 0, 0 },
+	{ "WillResultInCriminal",		SE_WillResultInCriminal,	2, 0, 0 },
 
 	{ "CreateParty",				SE_CreateParty,				1, 0, 0 },
 
@@ -185,11 +186,11 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 TryParseJSVal( jsval toParse )
+//|	Function	-	SI32 TryParseJSVal( jsval toParse )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper function to parse jsval returned from script
 //o-----------------------------------------------------------------------------------------------o
-SI08 TryParseJSVal( jsval toParse )
+SI32 TryParseJSVal( jsval toParse )
 {
 	if( JSVAL_IS_NULL( toParse ) || ( !JSVAL_IS_BOOLEAN( toParse ) && !JSVAL_IS_INT( toParse ) ))
 	{
@@ -199,7 +200,7 @@ SI08 TryParseJSVal( jsval toParse )
 	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_FALSE && JSVAL_IS_INT( toParse ) )
 	{
 		// jsval is an int!
-		return static_cast<SI08>(JSVAL_TO_INT( toParse ));
+		return static_cast<SI32>(JSVAL_TO_INT( toParse ));
 	}
 	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_TRUE )
 	{
@@ -444,7 +445,7 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	JSString *strSpeech 	= nullptr;
 	std::string lwrSpeech	= speech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, strutil::lower( lwrSpeech ).c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj = nullptr;
@@ -513,7 +514,7 @@ bool cScript::InRange( CChar *person, CBaseObject *objInRange )
 	else
 		params[2] = INT_TO_JSVAL( 1 );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
 		SetEventExists( seInRange, false );
@@ -1896,6 +1897,33 @@ JSObject *cScript::Object( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for NPC character with event attached when loyalty level changes
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( pChanging ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnLoyaltyChange, "onLoyaltyChange" ) )
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pChanging, runTime );
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = INT_TO_JSVAL( newStatus );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLoyaltyChange", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnLoyaltyChange, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 OnHungerChange( CChar *pChanging, SI08 newStatus )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when hunger level changes
@@ -2262,17 +2290,22 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams )
+bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal )
 {
 	if( eventToCall == nullptr )
 		return false;
 
-	jsval rval;
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	JS_SetGlobalObject( targContext, targObject );
-	//JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
-	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
-	return ( JSVAL_TO_BOOLEAN( rval ) != JS_FALSE );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, eventRetVal );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnSpellSuccess, false );
+		return false;
+	}
+	
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2393,7 +2426,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	JSString *strSpeech		= nullptr;
 	std::string lwrSpeech	= mySpeech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, strutil::tolower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, strutil::lower( lwrSpeech ).c_str() );
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 
@@ -2627,7 +2660,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	jsval params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	JSString *strCmd = nullptr;
-	strCmd = JS_NewStringCopyZ( targContext, strutil::tolower( command ).c_str() );
+	strCmd = JS_NewStringCopyZ( targContext, strutil::lower( command ).c_str() );
 	params[0]	= OBJECT_TO_JSVAL( myObj );
 	params[1]	= STRING_TO_JSVAL( strCmd );
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onCommand", 2, params, &rval );
