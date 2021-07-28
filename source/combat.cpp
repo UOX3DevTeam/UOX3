@@ -2027,7 +2027,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		// Do a skill check so the fight skill is increased
 		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min( 1000, (SI32)((getDefTactics * 1.25) + 100) ) );
 
-		const R32 hitChance = ( ( ( (R32)attackSkill + 500.0 ) / ( ( (R32)defendSkill + 500.0 ) * 2.0) ) * 100.0 );
+		R32 hitChance = ( ( ( (R32)attackSkill + 500.0 ) / ( ( (R32)defendSkill + 500.0 ) * 2.0) ) * 100.0 );
 		if( hitChance < 0 )
 			hitChance = 0;
 		else if( hitChance > 100 )
