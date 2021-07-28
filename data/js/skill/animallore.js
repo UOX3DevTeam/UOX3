@@ -7,6 +7,7 @@ var OSIGumpEnabled = 1;	// If this option is set to 0 you will see the old schoo
 var SEenabled = 1;		// If this option is set to 0 you will not see any SE Features
 var AOSenabled = 1;		// If this option is set to 0 you will not see any AOS Features
 var SAenabled = 1;		// If this option is set to 0 you will not see any SA Features
+var position = 20;
 
 function onSkill( pUser, objType, skillUsed )
 {
@@ -271,6 +272,7 @@ function onCallback0( pSock, ourObj )
 							yHeight += 15;
 						}
 					}
+					AnimalLoreGump.AddButton( 217, 328, 0x15E3, 0x15E7, 0, 7, 0 );
 					AnimalLoreGump.Send( pSock );
 					AnimalLoreGump.Free();
 				}

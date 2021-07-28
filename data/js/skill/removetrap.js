@@ -29,6 +29,13 @@ function onSkill( pUser, objType, skillUsed )
 
 function onCallback0( pSock, ourObj )
 {
+	if( !ValidateObject( ourObj ) || !ourObj.isItem )
+	{
+		// You feel that such an action would be inappropriate
+		pSock.SysMessage( GetDictionaryEntry( 2094, pSock.language ) );
+		return;
+	}
+
 	var pUser = pSock.currentChar;
 	var iMoreZ = ourObj.morez;
 	var iMoreZPart1 = ( iMoreZ >> 24 ); // Trap set
@@ -44,12 +51,7 @@ function onCallback0( pSock, ourObj )
 		return;
 	}
 
-	if( !ValidateObject( ourObj ) || !ourObj.isItem )
-	{
-		// You feel that such an action would be inappropriate
-		pSock.SysMessage( GetDictionaryEntry( 2094, pSock.language ) );
-	}
-	else if( !pUser.CanSee( ourObj ) )
+	if( !pUser.CanSee( ourObj ) )
 	{
 		// You cannot see that
 		pSock.SysMessage( GetDictionaryEntry( 1646, pSock.language) );
