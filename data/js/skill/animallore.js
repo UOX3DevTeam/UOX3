@@ -245,7 +245,7 @@ function onCallback0( pSock, ourObj )
 					AnimalLoreGump.AddHTMLGump( 53, 182, 160, 18, false, false, "<basefont color=#0000C8>" + GetDictionaryEntry(2165, pSock.language) + "</basefont>" );				 // Lore & Knowledge
 
 					AnimalLoreGump.AddHTMLGump( 53, 200, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2202, pSock.language ) + "</basefont>" );				 // Pet Slots
-					AnimalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, ourObj.controlSlotsUsed.toString() );
+					AnimalLoreGump.AddHTMLGump( position, 200, 100, 18, false, false, ourObj.controlSlots.toString() );
 
 				    AnimalLoreGump.AddHTMLGump( 53, 218, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry( 2203, pSock.language ) + "</basefont>" );				 // Control Chance
 					AnimalLoreGump.AddHTMLGump( position, 218, 100, 18, false, false, ourObj.CalculateControlChance(pUser).toString() + "%" );
