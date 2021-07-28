@@ -31,6 +31,7 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 n
 	switch( tag )
 	{
 		case DFNTAG_SPAWNOBJLIST:				applyTo->IsSectionAList( true );
+			[[fallthrough]];
 		case DFNTAG_SPAWNOBJ:
 			applyTo->SetSpawnSection( cdata );
 			return true;

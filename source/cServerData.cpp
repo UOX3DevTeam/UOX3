@@ -4676,6 +4676,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 230:	// MAPDIFFSENABLED[0219]
 			MapDiffsEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
+			break;
 		case 240:	// PARRYDAMAGECHANCE[0229]
 			CombatParryDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
