@@ -1,3 +1,8 @@
+29/07/2021 - Dragon Slayer
+	Implemented Remove Trap skill, which depends on player's detect hidden and lockpicking skills being at least 50.0, and removes or fails to remove traps based on trap difficulty vs skill checks. Trap difficulty is set in the last part of a 4-part MOREZ value, using the following format:
+		MOREZ=0x01 0x32 0x11 0x37 	// First part is trap enabled/disabled, second part is damage dealt by trap, third part is minimum remove trap skill required to remove trap, and fourth part is minimum skill required for guaranteed removal success
+	Updated Animal Lore skill with more details, more options. Defaults to showing UOX animal lore gump, but alternate gump with additional details for AoS and beyond can be enabled
+
 29/07/2021 - Xuri
 	Fixed some issues with whispers and yells (both server and client-sent ones)
 	Fixed an issue with EmoteMessage JS Method that didn't work with anything other than 5 arguments
