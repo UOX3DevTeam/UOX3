@@ -11,10 +11,10 @@ function command_KILL( socket, cmdString )
 	if( cmdString )
 	{
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, "Select target to kill: " + cmdString );
+		socket.CustomTarget( 0, GetDictionaryEntry( 8089, socket.language ) + " " + cmdString ); // Select target to kill:
 	}
 	else
-		socket.SysMessage( "This command takes at least 1 argument." );
+		socket.SysMessage( GetDictionaryEntry( 8090, socket.language )); // This command takes at least 1 argument.
 }
 
 // Alias of 'kill hair
@@ -53,10 +53,10 @@ function onCallback0( socket, ourObj )
 					ourObj.Kill();
 				}
 				else
-					socket.SysMessage( "That character is already dead!" );
+					socket.SysMessage( GetDictionaryEntry( 8091, socket.language )); // That character is already dead!
 				break;
 		default:
-				socket.SysMessage( "Invalid argument passed for KILL command" );
+				socket.SysMessage( GetDictionaryEntry( 8092, socket.language )); // Invalid argument passed for KILL command
 				break;
 		}
 		if( layer > 0 )

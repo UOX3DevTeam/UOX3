@@ -66,7 +66,7 @@ function onCallback1( socket, ourObj )
 					socket.SysMessage( GetDictionaryEntry( 988, socket.language ) );
 			}
 			else
-				socket.SysMessage( "You must have that item in your pack to repair it!" );
+				socket.SysMessage( GetDictionaryEntry( 6021, socket.language ) ); // You must have that item in your pack to repair it!
 		}
 		else
 			socket.SysMessage( GetDictionaryEntry( 986, socket.language ) );

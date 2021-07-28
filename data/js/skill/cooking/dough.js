@@ -2,6 +2,7 @@
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // 21/07/2003 Xuri; Updated/rewrote the script
 // 14/06/2005 Xuri; Fixed the script :P
+// 25/07/2021 Updated to use dictionary messages
 // use flour : target water pitcher : get dough
 
 function onUseChecked ( pUser, iUsed )
@@ -12,7 +13,7 @@ function onUseChecked ( pUser, iUsed )
 		var iPackOwner = GetPackOwner( iUsed, 0 );
 		if( iPackOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( "This has to be in your backpack!" );
+			srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
 		}
 		else
 		{
@@ -23,12 +24,12 @@ function onUseChecked ( pUser, iUsed )
 			else
 			{
 				srcSock.tempObj = iUsed;
-				srcSock.CustomTarget( 0, "Which pitcher of water to use?" );// let the user target a pitcher of water to use
+				srcSock.CustomTarget( 0, GetDictionaryEntry( 6074, srcSock.language )); // Which pitcher of water to use?
 			}
 		}
 	}
 	else
-		pUser.SysMessage( "This has to be in your backpack!" );
+		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
 	return false;
 }
 
@@ -43,7 +44,7 @@ function onCallback0( tSock, myTarget )
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 || ( StrangeByte == 0 && myTarget.isChar ))
 	{ //Target is a MapTile, or a Character
-		pUser.SysMessage("That is not a pitcher of water");
+		tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
 		return;
 	}
 	// Target is a Dynamic Item
@@ -57,7 +58,7 @@ function onCallback0( tSock, myTarget )
 		}
 		if( myTarget.id != 0x0FF8 && myTarget.id != 0x0FF9 && myTarget.id != 0x1f9d && myTarget.id != 0x1f9e ) // is the item of the right type?
 		{
-			tSock.SysMessage( "That is not a pitcher of water #3." );
+			tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
 			return;
 		}
 		// Check if its in range
@@ -66,19 +67,19 @@ function onCallback0( tSock, myTarget )
 			var iPackOwner = GetPackOwner( iUsed, 0 );
 			if( iPackOwner.serial != pUser.serial )
 			{
-				pUser.SysMessage( "The target is out of reach." );
+				tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
 			}
 		}
 		else if( myTarget.isItemHeld )
 		{
-			pUser.SysMessage( "The target is out of reach." );
+			tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
 			return;
 		}
 		else
 		{
 			if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
 			{
-				pUser.SysMessage( "You are too far away from the target!" );
+				tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
 				return;
 			}
 		}
@@ -95,7 +96,7 @@ function onCallback0( tSock, myTarget )
 					var iMakeResource = pUser.ResourceCount( 0x103a );	// is there enough resources to use up to make it
 					if( iMakeResource < 1 )
 					{
-						pUser.SysMessage( "There is not enough flour in your pack!" );
+						tSock.SysMessage( GetDictionaryEntry( 6076, tSock.language )); // There is not enough flour in your pack!
 						return;
 					}
 					else
@@ -115,7 +116,7 @@ function onCallback0( tSock, myTarget )
 		// check the skill
 		if( !pUser.CheckSkill( 13, 1, 1000 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
-			pUser.SysMessage( "You tried to make dough but failed." );
+			tSock.SysMessage( GetDictionaryEntry( 6077, tSock.language )); // You tried to make dough but failed.
 			return;
 		}
 		if( myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e)
@@ -127,9 +128,9 @@ function onCallback0( tSock, myTarget )
 		myTarget.SetTag( "UsesLeft", 0 );
 		myTarget.SetTag( "ContentsName", "nothing" );
 
-		var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
-		pUser.SysMessage( "You make some dough." );
+		var itemMade = CreateBlankItem( tSock, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
+		tSock.SysMessage( GetDictionaryEntry( 6078, tSock.language )); // You make some dough.
 	}
 	else // Target is a static item
-		pUser.SysMessage( "You cannot use that for making dough." );
+		tSock.SysMessage( GetDictionaryEntry( 6079, tSock.language )); // You cannot use that for making dough.
 }

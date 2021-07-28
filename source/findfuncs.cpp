@@ -90,7 +90,11 @@ SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 }
 SOCKLIST FindNearbyPlayers( CChar *mChar )
 {
-	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ));
+	UI16 visRange = MAX_VISRANGE;
+	if( mChar->GetSocket() != nullptr )
+		visRange = static_cast<UI16>(mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() ));
+	else
+		visRange += static_cast<UI16>(Races->VisRange( mChar->GetRace() ));
 	return FindNearbyPlayers( mChar, visRange );
 }
 

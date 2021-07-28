@@ -12,7 +12,7 @@ function command_AREACOMMAND( socket, cmdString )
 		socket.CustomTarget( 0, targMsg );
 	}
 	else
-		socket.SysMessage( "AREACOMMAND requires a subcommand" );
+		socket.SysMessage( GetDictionaryEntry( 8076, socket.language )); // AREACOMMAND requires a subcommand
 }
 
 function onCallback0( socket, ourObj )

@@ -10,7 +10,7 @@
 
 [corpser]
 {
-NAME=a corpser
+NAME=#//a corpser
 ID=0x0008
 DIRECTION=RND
 BACKPACK
@@ -37,7 +37,7 @@ FLAG=NEUTRAL
 
 [reaper]
 {
-NAME=a reaper
+NAME=#//a reaper
 ID=0x002f
 DIRECTION=RND
 BACKPACK
@@ -69,7 +69,7 @@ FLAG=NEUTRAL
 
 [swamptentacle]
 {
-NAME=a swamp tentacle
+NAME=#//a swamp tentacle
 ID=0x0042
 DIRECTION=RND
 BACKPACK
@@ -95,7 +95,7 @@ FLAG=NEUTRAL
 
 [whippingvine]
 {
-NAME=a whipping vine
+NAME=5000//a whipping vine
 ID=0x0008
 DIRECTION=RND
 BACKPACK
@@ -121,7 +121,7 @@ FLAG=NEUTRAL
 
 [quagmire]
 {
-NAME=a quagmire
+NAME=#//a quagmire
 ID=0x0315
 DIRECTION=RND
 BACKPACK
@@ -152,7 +152,7 @@ FLAG=NEUTRAL
 
 [bogthing]
 {
-NAME=a bog thing
+NAME=#//a bog thing
 ID=0x030c
 DIRECTION=RND
 BACKPACK
@@ -182,7 +182,7 @@ FLAG=NEUTRAL
 
 [bogling]
 {
-NAME=a bogling
+NAME=#//a bogling
 ID=0x030b
 DIRECTION=RND
 BACKPACK

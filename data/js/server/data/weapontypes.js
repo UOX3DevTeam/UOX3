@@ -2,47 +2,44 @@
 // or combat skill based on equipped weapon type.
 //
 // To get weapon-type of the equipped weapon, use the following in an external script:
-//		TriggerEvent( 2500, "getWeaponType", pUser );
-//		var weaponType = pUser.GetTag( "weaponType" );
-//		pUser.SetTag( "weaponType", null );
+//		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser );
 //
 // To get combat skill based on equipped weapon type, use the following in an external script:
-//		TriggerEvent( 2500, "getCombatSkill", pUser );
-//		var combatSkill = pUser.GetTag( "combatSkill" );
-//		pUser.SetTag( "combatSkill", null );
+//		var combatSkill = TriggerEvent( 2500, "getCombatSkill", pUser );
 //
-//	List of potential weaponTypes returned:
+//	List of potential weaponTypes returned (as strings)
 //		Unarmed:
-//			WRESTLING
+//			"WRESTLING"
 //		Swordsmanship-weapons:
-//			DEF_SWORDS
-//			SLASH_SWORDS
-//			ONEHND_LG_SWORDS
-//			TWOHND_LG_SWORDS
-//			BARDICHE
-//			ONEHND_AXES
-//			TWOHND_AXES
+//			"DEF_SWORDS"
+//			"SLASH_SWORDS"
+//			"ONEHND_LG_SWORDS"
+//			"TWOHND_LG_SWORDS"
+//			"BARDICHE"
+//			"ONEHND_AXES"
+//			"TWOHND_AXES"
+//			"DUAL_SWORD"
 //		Macefighting-weapons:
-//			DEF_MACES:
-//			LG_MACES:
+//			"DEF_MACES"
+//			"LG_MACES"
 //		Fencing-weapons:
-//			DEF_FENCING:
-//			TWOHND_FENCING:
-//			DUAL_FENCING_SLASH:
-//			DUAL_FENCING_STAB:
+//			"DEF_FENCING"
+//			"TWOHND_FENCING"
+//			"DUAL_FENCING_SLASH"
+//			"DUAL_FENCING_STAB"
 //		Archery-weapons:
-//			BOWS:
-//			XBOWS:
+//			"BOWS"
+//			"XBOWS"
 //		Thrown-weapons:
-//			THROWN:
+//			"THROWN"
 //
 //	List of combat skills returned by script:
-//		SWORDSMANSHIP
-//		MACEFIGHTING
-//		FENCING
-//		ARCHERY
-//		WRESTLING
-//		THROWING
+//		"SWORDSMANSHIP"
+//		"MACEFIGHTING"
+//		"FENCING"
+//		"ARCHERY"
+//		"WRESTLING"
+//		"THROWING"
 
 function getWeaponType( pUser )
 {
@@ -55,7 +52,7 @@ function getWeaponType( pUser )
 
 	// If no equipped item, weapontype is WRESTLING
 	if( tempItem == null )
-		pUser.SetTag( "weaponType", "WRESTLING" );
+		return "WRESTLING";
 	else
 	{
 		switch( tempItem.id )
@@ -372,23 +369,14 @@ function getWeaponType( pUser )
 			default: // Wrestling
 				weaponType = "WRESTLING"; break;
 		}
-		if( weaponType )
-		{
-			// Save weaponType-tag on character, to be read from external script
-			pUser.SetTag( "weaponType", weaponType );
-		}
 	}
-	return true;
+
+	return weaponType;
 }
 
-function getCombatSkill()
+function getCombatSkill( weaponType )
 {
 	var combatSkill;
-
-	// Call the getWeaponType() function and load the value of the tag it
-	// saves on character into weaponType variable.
-	getWeaponType( pUser );
-	var weaponType = pUser.GetTag( "weaponType" );
 
 	// Determine combatskill based on weaponType:
 	switch( weaponType )
@@ -419,13 +407,6 @@ function getCombatSkill()
 		default:
 			combatSkill = "WRESTLING"; break;
 	}
-	if( combatSkill )
-	{
-		// Save combatSkill-tag on character, to be read from external script
-		pUser.SetTag( "combatSkill", combatSkill );
 
-		// Nullify the temporary tag that was set by calling getWeaponType function earlier
-		pUser.SetTag( "weaponType", null );
-	}
-	return true;
+	return weaponType;
 }

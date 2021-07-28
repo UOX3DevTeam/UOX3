@@ -20,7 +20,7 @@ function onCallback0( pSock, ourObj )
 		if( ourObj.dead )
 			pSock.SysMessage( GetDictionaryEntry( 1571, pSock.language ) );
 		else if( !ourObj.InRange( pUser, 7 ) )
-			pSock.SysMessage( "That is too far away." );
+			pSock.SysMessage( GetDictionaryEntry( 393, pSock.language )); // That is too far away.
 		else if( !pUser.CheckSkill( 16, 0, 1000 ) )
 			pSock.SysMessage( GetDictionaryEntry( 1504, pSock.language ) );
 		else

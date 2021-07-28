@@ -19,11 +19,11 @@ function onSkill( pUser, objType, skillUsed )
 			else
 			{
 				PlayInstrument( pSock, myInstrument, false );
-				pSock.SysMessage( GetDictionaryEntry( 1441, pSock.language ) );
+				pSock.SysMessage( GetDictionaryEntry( 1441, pSock.language ) ); // You attempt to calm everyone, but fail.
 			}
 		}
 		else
-			pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 1438, pSock.language ) ); // You do not have an instrument to play on!
 	}
 	return true;
 }
@@ -117,7 +117,7 @@ function PeaceMakeArea( pUser, targChar )
 	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ) )
 	{
 		if( targSock )
-			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.language ) );
+			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.language ) ); // You hear some lovely music, and forget about fighting.
 		targChar.setPeace = 60;
 		return true;
 	}

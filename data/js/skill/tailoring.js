@@ -4,7 +4,7 @@ function onUseChecked( pUser, iUsed )
 	if( socket && iUsed && iUsed.isItem )
 	{
 		socket.tempObj = iUsed;
-		var targMsg = GetDictionaryEntry( 459, socket.language );
+		var targMsg = GetDictionaryEntry( 459, socket.language ); // Select material to use.
 		socket.CustomTarget( 1, targMsg );
 	}
 	return false;
@@ -21,13 +21,13 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 777, socket.language ) );
+			socket.SysMessage( GetDictionaryEntry( 777, socket.language ) ); // You cannot use that material for tailoring.
 			return;
 		}
 
 		if( ourObj.movable == 2 || ourObj.movable == 3 )
 		{
-			socket.SysMessage( "This has to be in your backpack before you can use it." );
+			socket.SysMessage( GetDictionaryEntry( 6022, socket.language ) ); // This has to be in your backpack before you can use it.
 			return;
 		}
 
@@ -46,10 +46,10 @@ function onCallback1( socket, ourObj )
 			if( ownerObj && mChar.serial == ownerObj.serial )
 				socket.MakeMenu( 39, 34 );
 			else
-				socket.SysMessage( GetDictionaryEntry( 775, socket.language ) );
+				socket.SysMessage( GetDictionaryEntry( 775, socket.language ) ); // You can't use material outside your backpack.
 		}
 		else
-			socket.SysMessage( "You can't make anything from that material." );
+			socket.SysMessage( GetDictionaryEntry( 6006, socket.language ) ); // You can't make anything from that material.
 	}
 }
 

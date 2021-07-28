@@ -1,6 +1,6 @@
 [balron]
 {
-NAME=balron
+NAME=#//a balron
 NAMELIST=7
 ID=0x0028
 SKIN=0x096c
@@ -48,11 +48,12 @@ CARVE=52
 RUNS
 RACE=10
 FLAG=NEUTRAL
+CONTROLSLOTS=4
 }
 
 [daemon]
 {
-NAME=a daemon
+NAME=#//a daemon
 NAMELIST=5
 ID=0x0009
 SKIN=0000
@@ -106,7 +107,7 @@ ID=0x000a
 
 [exodus]
 {
-NAME=Exodus
+NAME=#//Exodus
 ID=0x0066
 SKIN=0x096c
 DIRECTION=RND
@@ -157,7 +158,7 @@ FLAG=NEUTRAL
 
 [icefiend]
 {
-NAME=an ice fiend
+NAME=#//an ice fiend
 ID=0x002b
 SKIN=0x0480
 DIRECTION=RND
@@ -200,7 +201,7 @@ FLAG=NEUTRAL
 
 [imp]
 {
-NAME=an Imp
+NAME=#//an imp
 NAMELIST=5
 ID=0x004a
 SKIN=0x0676
@@ -239,11 +240,12 @@ CARVE=68
 RUNS
 RACE=10
 FLAG=NEUTRAL
+CONTROLSLOTS=2
 }
 
 [mongbat]
 {
-NAME=a mongbat
+NAME=#//a mongbat
 ID=0x0027
 DIRECTION=RND
 BACKPACK
@@ -275,12 +277,13 @@ CARVE=2
 RUNS
 RACE=10
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [greatermongbat]
 {
 GET=mongbat
-NAME=a greater mongbat
+NAME=5011//a greater mongbat
 ID=0x0027
 STR=56 80
 DEX=61 80
@@ -296,13 +299,14 @@ TOPEACE=313 5
 TOTAME=711
 TAMEDHUNGER=600 30
 FOOD=meat
+CONTROLSLOTS=1
 }
 
 //AoS Daemons
 
 [arcanedaemon]
 {
-NAME=an arcane daemon
+NAME=#//an arcane daemon
 ID=0x0310
 DIRECTION=RND
 BACKPACK
@@ -354,7 +358,7 @@ FLAG=NEUTRAL
 
 [moloch]
 {
-NAME=a moloch
+NAME=#//a moloch
 ID=0x0311
 DIRECTION=RND
 BACKPACK
@@ -401,7 +405,7 @@ FLAG=NEUTRAL
 
 [chaosdaemon]
 {
-NAME=a chaos daemon
+NAME=#//a chaos daemon
 ID=0x0318
 DIRECTION=RND
 BACKPACK
@@ -448,7 +452,7 @@ FLAG=NEUTRAL
 
 [shadowfiend]
 {
-NAME=a shadow fiend
+NAME=#//a shadow fiend
 ID=0x00a8
 DIRECTION=RND
 STR=46 55

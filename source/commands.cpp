@@ -175,7 +175,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
 				}
 				else
-					s->sysmessage( "This command requires more arguments!" );
+					s->sysmessage( 9026 ); // This command requires more arguments!
 				break;
 		}
 	}

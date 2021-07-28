@@ -573,7 +573,7 @@ function ConvertPawn( iDropped )
 			if( finalPosX > 25 && finalPosX <= 55 )
 			{
 				// Turn White Pawn into White Queen
-				var whiteQueen = CreateDFNItem( null, null, "0x358a", 1, "ITEM", false, iDropped.worldnumber, iDropped.instanceID );
+				var whiteQueen = CreateDFNItem( null, null, "0x358a", 1, "ITEM", false, 0, iDropped.worldnumber, iDropped.instanceID );
 				whiteQueen.container = iDropped.container;
 				whiteQueen.x = iDropped.x - 1;
 				whiteQueen.y = iDropped.y - 10;
@@ -590,7 +590,7 @@ function ConvertPawn( iDropped )
 			if( finalPosX > 205 && finalPosX <= 235 )
 			{
 				// Turn Black Pawn into Black Queen
-				var blackQueen = CreateDFNItem( null, null, "0x3591", 1, "ITEM", false, iDropped.worldnumber, iDropped.instanceID );
+				var blackQueen = CreateDFNItem( null, null, "0x3591", 1, "ITEM", false, 0, iDropped.worldnumber, iDropped.instanceID );
 				blackQueen.container = iDropped.container;
 				blackQueen.x = iDropped.x - 1;
 				blackQueen.y = iDropped.y - 10;
@@ -791,7 +791,8 @@ function ConfirmSurrender( pDropper, iDropped, gameBoard )
 	if( ValidateObject( iDropped ))
 		iDropped.Delete();
 
-	gameBoard.TextMessage( team + " Surrenders! Resetting game board." );
+	var tempMsg = GetDictionaryEntry( 2721 ) // %s Surrenders! Resetting game board.
+	gameBoard.TextMessage( tempMsg.replace(/%s/gi, team ) );
 	TriggerEvent( 5024, "onUseChecked", pDropper, gameBoard );
 }
 

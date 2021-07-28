@@ -3,12 +3,12 @@ function onUseChecked( pUser, iUsed )
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner != pUser )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); //That item must be in your backpack before it can be used.
+		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); // That item must be in your backpack before it can be used.
 	}
 	else
 	{
 		pUser.socket.tempObj = iUsed;
-		pUser.CustomTarget( 0, "Select the weapon or armor you wish to use the cloth on." );
+		pUser.CustomTarget( 0, GetDictionaryEntry( 2751, pUser.socket.language )); // Select the weapon or armour you wish to use the cloth on.
 	}
 	return false;
 }
@@ -34,15 +34,15 @@ function onCallback0( pSock, myTarget )
 				else
 					myTarget.poison = 0;
 				if( myTarget.poison == 0 )
-					pSock.SysMessage( "You carefully wipe the item clean of poison." );
+					pSock.SysMessage( GetDictionaryEntry( 2752, pSock.language )); // You carefully wipe the item clean of poison.
 				else
-					pSock.SysMessage( "You carefully wipe the item, but some poison still lingers." );
-				pUser.UseResource( 1, 0x175d, 0x07d1 );//iUsed.Delete();
+					pSock.SysMessage( GetDictionaryEntry( 2753, pSock.language )); // You carefully wipe the item, but some poison still lingers.
+				pUser.UseResource( 1, 0x175d, 0x07d1 );
 			}
 			else
-				pSock.SysMessage( "That item is not poisoned." );
+				pSock.SysMessage( GetDictionaryEntry( 2754, pSock.language )); // That item is not poisoned.
 		}
 	}
 	else
-		pSock.SysMessage( "That's not an item!" );
+		pSock.SysMessage( GetDictionaryEntry( 2755, pSock.language )); // That's not an item!
 }

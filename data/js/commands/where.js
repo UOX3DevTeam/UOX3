@@ -10,9 +10,12 @@ function command_WHERE( socket, cmdString )
 	{
 		var mRegion = mChar.region;
 		if( mRegion && mRegion.name )
-			socket.SysMessage( "You are at: " + mRegion.name );
+		{
+			var tempMsg = GetDictionaryEntry( 8000, socket.language ); // You are at: %s
+			socket.SysMessage( tempMsg.replace(/%s/gi, mRegion.name ));
+		}
 		else
-			socket.SysMessage( "You are nowhere" );
+			socket.SysMessage( GetDictionaryEntry( 8001, socket.language )); // You are nowhere
 
 		var x 		= mChar.x.toString();
 		var y 		= mChar.y.toString();

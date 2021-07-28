@@ -490,7 +490,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
 			std::string data = newbieData->GrabData();
-			data = strutil::trim(strutil::removeTrailing( data,"//") );
+			data = strutil::trim( strutil::removeTrailing( data, "//" ));
 			if( !data.empty() )
 			{
 				auto UTag = strutil::upper( tag );
@@ -499,8 +499,8 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 					auto csecs = strutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{						
-						UI16 nAmount = static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0));
-						n = Items->CreateScriptItem( socket, c, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nAmount, OT_ITEM, true );
+						UI16 nAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+						n = Items->CreateScriptItem( socket, c, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
 					}
 					else
 					{
@@ -509,7 +509,20 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 				}
 				else if( UTag == "EQUIPITEM" )
 				{
-					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
+					UI16 itemHue = 0;
+					std::string itemSection;
+					auto csecs = strutil::sections( data, "," );
+					if( csecs.size() > 1 )
+					{
+						itemSection = strutil::trim( strutil::removeTrailing( csecs[0], "//" ));
+						itemHue = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+					}
+					else
+					{
+						itemSection = data;
+					}
+
+					n = Items->CreateScriptItem( socket, c, itemSection.c_str(), 1, OT_ITEM, true, itemHue );
 					if( n != nullptr && n->GetLayer() != IL_NONE )
 					{
 						bool conflictItem = true;
@@ -1315,13 +1328,13 @@ void startChar( CSocket *mSock, bool onCreate )
 			{
 				CPNegotiateAssistantFeatures ii( mSock );
 				mSock->Send( &ii );
-				mSock->sysmessage( "Attempting to negotiate features with assistant tool..." );
+				mSock->sysmessage( 9012 ); // Attempting to negotiate features with assistant tool...
 
 				// Set 30s negotiation timer if KICKONASSISTANTSILENCE setting is enabled in uox.ini
 				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 				{
 					// Start timer to kick player if assistant tool hasn't responded in 30 seconds
-					mSock->sysmessage( "This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds." );
+					mSock->sysmessage( 9013 ); // This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds.
 					mSock->NegotiateTimeout( cwmWorldState->GetUICurrentTime() + ( 30 * 1000 ));
 				}
 			}
@@ -1344,6 +1357,8 @@ void startChar( CSocket *mSock, bool onCreate )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fallDirection )
 {
+	std::string corpseName = getNpcDictName( &mChar );
+
 	CItem *iCorpse = nullptr;
 	if( !createPack )
 	{
@@ -1351,7 +1366,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fall
 		if( !ValidateObject( iCorpse ) )
 			return nullptr;
 
-		iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), mChar.GetName().c_str() ) );
+		iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), corpseName.c_str() ) );
 		iCorpse->SetCarve( mChar.GetCarve() );
 		iCorpse->SetMovable( 2 );//non-movable
 		if( fallDirection )
@@ -1379,7 +1394,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fall
 		canCarve = static_cast<UI08>(RandomNum( 0, 1 ));
 
 	iCorpse->SetDecayable( true );
-	iCorpse->SetName2( mChar.GetName().c_str() );
+	iCorpse->SetName2( corpseName.c_str() );
 	iCorpse->SetType( IT_CONTAINER );
 	iCorpse->SetTempVar( CITV_MOREY, 1, canCarve );
 	iCorpse->SetTempVar( CITV_MOREY, 2, cwmWorldState->creatures[mChar.GetID()].IsHuman() );
@@ -1448,7 +1463,8 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 					if( !ValidateObject( k ) )
 						continue;
 
-					if( !k->isNewbie() && k->GetType() != IT_SPELLBOOK )
+					// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
+					if(( mChar.GetID() == 0x0123 || mChar.GetID() == 0x0124 || mChar.GetID() == 0x0317 ) || ( !k->isNewbie() && k->GetType() != IT_SPELLBOOK ))
 					{
 						k->SetCont( iCorpse );
 						k->SetX( static_cast<SI16>(20 + ( RandomNum( 0, 49 ) )) );
@@ -1510,6 +1526,24 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
 			Effects->deathAction( mChar, iCorpse, fallDirection );
+
+		// Prevent pets from following ghost of dead player
+		GenericList< CChar * > *mPetList = mChar->GetPetList();
+		mPetList->Push();
+		for( CChar *tempChar = mPetList->First(); !mPetList->Finished(); tempChar = mPetList->Next() )
+		{
+			if( !ValidateObject( tempChar ) )
+				continue;
+			if( !tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW && tempChar->GetFTarg() == mChar )
+			{
+				tempChar->SetFTarg( nullptr );
+				tempChar->SetOldNpcWander( WT_NONE );
+				tempChar->SetNpcWander( WT_NONE );
+				tempChar->SetGuarding( iCorpse );
+				iCorpse->SetGuarded( true );
+			}
+		}
+		mPetList->Pop();
 
 		// Spawn blood effect below corpse
 		UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property

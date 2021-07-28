@@ -36,6 +36,7 @@ enum JSPrototypes
 	JSP_PARTY,
 	JSP_CREATEENTRY,
 	JSP_CREATEENTRIES,
+	JSP_TIMER,
 	JSP_COUNT
 };
 
@@ -53,6 +54,7 @@ private:
 	JSObject * accountsObj;
 	JSObject * consoleObj;
 	JSObject * createEntriesObj;
+	JSObject * timerObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;

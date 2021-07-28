@@ -1,6 +1,6 @@
 [direwolf]
 {
-NAME=a dire wolf
+NAME=#//a dire wolf
 ID=0x0017
 DIRECTION=RND
 BACKPACK
@@ -30,11 +30,12 @@ RUNS
 CARVE=12
 RACE=8
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [giantrat]
 {
-NAME=a giant rat
+NAME=#//a giant rat
 ID=0x00d7
 DIRECTION=RND
 BACKPACK
@@ -54,7 +55,7 @@ FX1=-1
 FY1=-1
 FZ1=-1
 FX2=20
-NPCAI=2
+NPCAI=23
 LOOT 6
 TOPROV=258
 TOPEACE=258 5
@@ -64,11 +65,12 @@ FOOD=rat
 CARVE=18
 RACE=2
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [gianttoad]
 {
-NAME=a giant toad
+NAME=#//a giant toad
 ID=0x0050
 SKIN=0000
 DIRECTION=RND
@@ -98,11 +100,12 @@ FOOD=toad
 CARVE=19
 RACE=8
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [scorpion]
 {
-NAME=a giant scorpion
+NAME=#//a giant scorpion
 ID=0x0030
 SKIN=0000
 DIRECTION=RND
@@ -134,11 +137,12 @@ FOOD=meat
 RUNS
 RACE=8
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [sewerrat]
 {
-NAME=a sewer rat
+NAME=5005//a sewer rat
 ID=0x00ee
 DIRECTION=RND
 BACKPACK
@@ -167,11 +171,12 @@ NPCAI=2
 CARVE=44
 RACE=2
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [phoenix]
 {
-NAME=a phoenix
+NAME=3832//a phoenix
 ID=0x0005
 SKIN=0x04B9
 DIRECTION=RND

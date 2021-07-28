@@ -16,13 +16,13 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( iMulti.owner != pUser )
 			{
-				pUser.socket.SysMessage( "Only the house owner can rotate furniture." );
+				pUser.socket.SysMessage( GetDictionaryEntry( 2700, pUser.socket.language )); // Only the house owner can rotate furniture.
 				return true;
 			}
 		}
 		else
 		{
-			pUser.socket.SysMessage( "That does not appear to work." );
+			pUser.socket.SysMessage( GetDictionaryEntry( 2701, pUser.socket.language )); // That does not appear to work.
 			return true;
 		}
 	}

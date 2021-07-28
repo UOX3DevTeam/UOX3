@@ -319,7 +319,8 @@ function ConfirmSurrender( pDropper, iDropped, gameBoard )
 	if( ValidateObject( iDropped ))
 		iDropped.Delete();
 
-	gameBoard.TextMessage( team + " Surrenders! Resetting game board." );
+	var tempMsg = GetDictionaryEntry( 2721 ) // %s Surrenders! Resetting game board.
+	gameBoard.TextMessage( tempMsg.replace(/%s/gi, team ) );
 	TriggerEvent( 5024, "onUseChecked", pDropper, gameBoard );
 }
 

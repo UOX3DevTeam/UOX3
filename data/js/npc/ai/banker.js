@@ -2,196 +2,245 @@
 //	Responds to bank-commands:
 // 	BANK, BALANCE/STATEMENT, CHECK, WITHDRAW # and DEPOSIT # or DEPOSIT without arguments to get target cursor
 
-//The maximum amount of items depositable in a bank box
-// - unfortunately only used when depositing items using the DEPOSIT command
+// The maximum amount of items depositable in a bank box
 var maxBankItemAmt = 125;
+
+// Script ID for banker AI script
 var bankCheckTrigger = 5015;
 
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {
 	if( strSaid )
 	{
+		var pSock = pTalking.socket;
+		if( pSock == null )
+			return false;
+
 		if( pTalking.criminal || pTalking.murderer )
 		{
-			pTalkingTo.TextMessage( "Thou art a criminal and cannot access thy bank box.", true, 0x03b2 );
+			pTalkingTo.TextMessage( GetDictionaryEntry( 7000, pSock.language ), true, 0x03b2 ); // Thou art a criminal and cannot access thy bank box.
 			return false;
 		}
+
 		var bankBox = pTalking.FindItemLayer( 29 );
-		var goldInBank = 0;
+		var trigWordHandled = false;
+		for( var trigWord = pSock.FirstTriggerWord(); !pSock.FinishedTriggerWords(); trigWord = pSock.NextTriggerWord() )
+		{
+			if( trigWordHandled )
+				break;
+
+			switch( trigWord )
+			{
+				case 0: // Withdraw
+					WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid );
+					trigWordHandled = true;
+					break;
+				case 1: // Balance, Statement
+					CheckBalance( pSock, pTalking, pTalkingTo, bankBox );
+					trigWordHandled = true;
+					break;
+				case 2: // Bank
+					OpenBank( pSock, pTalking, pTalkingTo, bankBox );
+					trigWordHandled = true;
+					break;
+				case 3: // Check
+					CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid );
+					trigWordHandled = true;
+					break;
+				default:
+					break;
+			}
+		}
+
+		// Handle non-triggerword based commands here
 		var splitString = strSaid.split( " " );
 		switch( splitString[0].toUpperCase() )
 		{
-		case "BANK":
-			if( !bankBox )
-			{
-				//This should rarely be necessary, all players should have had a bank-box added
-				//upon character creation.
-				bankBox = createNewBankBox( pTalking );
-				if( !bankBox )
+			case "DEPOSIT": // uox3 specific command, add other languages as needed
+				if( bankBox.totalItemCount >= bankBox.maxItems )
 				{
+					pSock.SysMessage( GetDictionaryEntry( 1818, pSock.language )); // The container is already at capacity.
 					return false;
 				}
-			}
-			pTalking.OpenBank( pTalking.socket );
-			var bankContents = countBankContents( pTalking, bankBox );
-			if( bankContents )
-			{
-				var itemAmount = parseInt( bankContents[0], 10 );
-				var stones = parseInt( bankContents[1], 10 );
-				stones = stones.toFixed( 2 );
-				pTalking.TextMessage( "Bank container has " + bankContents[0] + " items, " + stones + " stones", false, 0x096a );
-			}
-			break;
-		case "BALANCE":
-		case "STATEMENT":
-			if( bankBox )
-			{
-				goldInBank = countGoldInBank( pTalking, bankBox );
-				pTalkingTo.TextMessage( "Thy current bank balance is: " + goldInBank, true, 0x03b2 );
-			}
-			break;
-		case "CHECK":
-			if( bankBox.totalItemCount >= bankBox.maxItems )
-			{
-				pTalking.socket.SysMessage( GetDictionaryEntry( 1818, pTalking.socket.language )); // The container is already at capacity.
-				return false;
-			}
-			else if( splitString[1] && ( parseInt( splitString[1], 10 ) >= 5000 ))
-			{
-				var checkSize = parseInt( splitString[1], 10 );
-				if( bankBox )
+
+				if( !splitString[1])
 				{
-					goldInBank = countGoldInBank( pTalking, bankBox );
-					if( checkSize > goldInBank )
-					{
-						pTalkingTo.TextMessage( "Ah, art thou trying to fool me? Thou hast not so much gold!", true, 0x03b2 );
-					}
-					else
-					{
-						var newCheck = CreateDFNItem( pTalking.socket, pTalking, "0x14F0", 1, "ITEM", false ); //Add check
-						if( newCheck )
-						{
-							bankBox.UseResource( checkSize, 0x0EED, 0 );
-							newCheck.SetTag( "CheckSize", checkSize );
-							newCheck.name = "A bank check";
-							newCheck.colour = 0x34;
-							newCheck.AddScriptTrigger( bankCheckTrigger );
-							newCheck.isNewbie = true;
-							newCheck.weight = 100;
-							newCheck.container = bankBox;
-							pTalkingTo.TextMessage( "Into your bank box I have placed a check in the amount of " + checkSize, true, 0x03b2 );
-						}
-					}
+					pTalking.tempObj = pTalkingTo;
+					pTalkingTo.TextMessage( GetDictionaryEntry( 7001, pSock.language ), true, 0x03b2 ); // Which item do you wish to deposit in your bank box?
+					pTalking.CustomTarget( 0, "" );
 				}
-			}
-			else
-			{
-				pTalkingTo.TextMessage( "We cannot create checks for such a paltry amount of gold!", true, 0x03b2 );
-			}
-			break;
-		case "WITHDRAW":
-			var playerPack = pTalking.charpack;
-			if( playerPack.totalItemCount >= playerPack.maxItems )
-			{
-				pTalking.socket.SysMessage( 1819 ); // Your backpack cannot hold any more items!
-				return false;
-			}
-			if( splitString[1] && splitString[1] != 0 )
-			{
-				var withdrawAmt = parseInt( splitString[1], 10 );
-				if( !isNaN( withdrawAmt ) && withdrawAmt > 0 )
+				else if( splitString[1] && splitString[1] > 0 )
 				{
-					pTalking.TextMessage( withdrawAmt );
-					if( bankBox )
+					var depositAmt = parseInt( splitString[1], 10 );
+					var goldInPack = pTalking.ResourceCount( 0x0EED, 0 );
+					if( !isNaN( depositAmt ) && depositAmt > 0)
 					{
-						goldInBank = countGoldInBank( pTalking, bankBox );
-						if( withdrawAmt > goldInBank )
+						if( bankBox )
 						{
-							pTalkingTo.TextMessage( "Ah, art thou trying to fool me? Thou hast not so much gold!", true, 0x03b2 );
-						}
-						else
-						{
-							if( withdrawAmt > 65535 )
+							if( goldInPack < depositAmt )
 							{
-								divideWithdrawnGold( pTalking, bankBox, withdrawAmt );
+								pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
 							}
 							else
 							{
-								var newWithdrawGoldPile = CreateDFNItem( pTalking.socket, pTalking, "0x0EED", withdrawAmt, "ITEM", true );
+								var bankContents = countBankContents( pTalking, bankBox );
+								if( parseInt( bankContents[0] ) < maxBankItemAmt )
+								{
+									pTalking.UseResource( depositAmt, 0x0EED, 0 );
+									divideDepositedGold( pTalking, bankBox, depositAmt );
+									pTalkingTo.TextMessage( GetDictionaryEntry( 7003, pSock.language ), true, 0x03b2 ); // Thou hast deposited gold to thy account.
+								}
+								else
+								{
+									pSock.SysMessage( GetDictionaryEntry( 1935, pSock.language )); // That container cannot hold any more items!
+								}
 							}
-							bankBox.UseResource( withdrawAmt, 0x0EED, 0 );
-							pTalkingTo.TextMessage( "Thou hast withdrawn gold from thy account.", true, 0x03b2 );
 						}
 					}
 				}
-			}
-			else
-			{
-				pTalkingTo.TextMessage( "Thou must tell me how much thou wishest to withdraw.", true, 0x03b2 );
-			}
-			break;
-		case "DEPOSIT": //uox3 specific command
-			if( bankBox.totalItemCount >= bankBox.maxItems )
-			{
-				pTalking.socket.SysMessage( GetDictionaryEntry( 1818, pTalking.socket.language )); // The container is already at capacity.
-				return false;
-			}
-			if( !splitString[1])
-			{
-				pTalking.tempObj = pTalkingTo;
-				pTalkingTo.TextMessage( "Which item do you wish to deposit in your bank box?", true, 0x03b2 );
-				pTalking.CustomTarget( 0, "" );
-			}
-			else if( splitString[1] && splitString[1] > 0 )
-			{
-				var depositAmt = parseInt( splitString[1], 10 );
-				var goldInPack = pTalking.ResourceCount( 0x0EED, 0 );
-				if( !isNaN( depositAmt ) && depositAmt > 0)
+				else
 				{
-					if( bankBox )
-					{
-						if( goldInPack < depositAmt )
-						{
-							pTalkingTo.TextMessage( "Ah, art thou trying to fool me? Thou hast not so much gold!", true, 0x03b2 );
-						}
-						else
-						{
-							var bankContents = countBankContents( pTalking, bankBox );
-							if( parseInt( bankContents[0] ) < maxBankItemAmt )
-							{
-								pTalking.UseResource( depositAmt, 0x0EED, 0 );
-								divideDepositedGold( pTalking, bankBox, depositAmt );
-								pTalkingTo.TextMessage( "Thou hast deposited gold to thy account.", true, 0x03b2 );
-							}
-							else
-							{
-								pTalking.SysMessage( "That container cannot hold more items." );
-							}
-						}
-					}
+					pTalkingTo.TextMessage( GetDictionaryEntry( 7004, pSock.language ), true, 0x03b2 ); // Thou must tell me how much thou wishest to deposit.
 				}
-			}
-			else
-			{
-				pTalkingTo.TextMessage( "Thou must tell me how much thou wishest to deposit.", true, 0x03b2 );
-			}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 	}
+
 	return false;
 }
 
-/* Checks to see if the player already has a bank box.
-function checkForBankBox( pTalking )
+function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 {
-	var bankBox = pTalking.FindItemLayer( 29 );
-    if( bankBox == null || !bankBox.isItem )
-    {
-    	return false;
+	var playerPack = pTalking.pack;
+	if( playerPack.totalItemCount >= playerPack.maxItems )
+	{
+		pSock.SysMessage( 1819 ); // Your backpack cannot hold any more items!
+		return;
 	}
-}*/
+
+	var splitString = strSaid.split( " " );
+	if( splitString[1] && splitString[1] != 0 )
+	{
+		var withdrawAmt = parseInt( splitString[1], 10 );
+		if( !isNaN( withdrawAmt ) && withdrawAmt > 0 )
+		{
+			pTalking.TextMessage( withdrawAmt );
+			if( bankBox )
+			{
+				var goldInBank = countGoldInBank( pTalking, bankBox );
+				if( withdrawAmt > goldInBank )
+				{
+					pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
+				}
+				else
+				{
+					if( withdrawAmt > 65535 )
+					{
+						divideWithdrawnGold( pTalking, bankBox, withdrawAmt );
+					}
+					else
+					{
+						var newWithdrawGoldPile = CreateDFNItem( pTalking.socket, pTalking, "0x0EED", withdrawAmt, "ITEM", true );
+					}
+					bankBox.UseResource( withdrawAmt, 0x0EED, 0 );
+					pTalkingTo.TextMessage( GetDictionaryEntry( 7005, pSock.language ), true, 0x03b2 ); // Thou hast withdrawn gold from thy account.
+				}
+			}
+		}
+	}
+	else
+	{
+		pTalkingTo.TextMessage( GetDictionaryEntry( 7006, pSock.language ), true, 0x03b2 ); // Thou must tell me how much thou wishest to withdraw.
+	}
+}
+
+function CheckBalance( pSock, pTalking, pTalkingTo, bankBox )
+{
+	if( bankBox )
+	{
+		var goldInBank = countGoldInBank( pTalking, bankBox );
+		pTalkingTo.TextMessage( GetDictionaryEntry( 7007, pSock.language ) + " " + goldInBank, true, 0x03b2 ); // Thy current bank balance is:
+	}
+}
+
+function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
+{
+	if( !pTalking.InRange( pTalkingTo, 8 ))
+	{
+		return;
+	}
+
+	if( !ValidateObject( bankBox ))
+	{
+		// This should rarely be necessary, all players should have had a bank-box added
+		// upon character creation.
+		bankBox = createNewBankBox( pTalking );
+		if( !ValidateObject( bankBox ))
+		{
+			return;
+		}
+	}
+
+	pTalking.OpenBank( pSock );
+	var bankContents = countBankContents( pTalking, bankBox );
+	if( bankContents )
+	{
+		var itemAmount = parseInt( bankContents[0], 10 );
+		var stones = parseInt( bankContents[1], 10 );
+		stones = stones.toFixed( 2 );
+
+		var bankMsg = GetDictionaryEntry( 7008, pSock.language ); // Bank container has %i items, %u stones
+		bankMsg = bankMsg.replace(/%i/gi, itemAmount);
+		pTalking.TextMessage( bankMsg.replace(/%u/gi, stones ), false, 0x096a );
+	}
+}
+
+function CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid )
+{
+	if( bankBox.totalItemCount >= bankBox.maxItems )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 1818, pSock.language )); // The container is already at capacity.
+		return;
+	}
+
+	var splitString = strSaid.split( " " );
+	if( splitString[1] && ( parseInt( splitString[1], 10 ) >= 5000 ))
+	{
+		var checkSize = parseInt( splitString[1], 10 );
+		if( bankBox )
+		{
+			var goldInBank = countGoldInBank( pTalking, bankBox );
+			if( checkSize > goldInBank )
+			{
+				pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
+			}
+			else
+			{
+				var newCheck = CreateDFNItem( pSock, pTalking, "0x14F0", 1, "ITEM", false ); //Add check
+				if( newCheck )
+				{
+					bankBox.UseResource( checkSize, 0x0EED, 0 );
+					newCheck.SetTag( "CheckSize", checkSize );
+					newCheck.name = "A bank check";
+					newCheck.colour = 0x34;
+					newCheck.AddScriptTrigger( bankCheckTrigger );
+					newCheck.isNewbie = true;
+					newCheck.weight = 100;
+					newCheck.container = bankBox;
+
+					var checkMsg = GetDictionaryEntry( 7009, pSock.language ); // Into your bank box I have placed a check in the amount of %i
+					pTalkingTo.TextMessage( checkMsg.replace(/%i/gi, checkSize ), true, 0x03b2 );
+				}
+			}
+		}
+	}
+	else
+	{
+		pTalkingTo.TextMessage( GetDictionaryEntry( 7010, pSock.language ), true, 0x03b2 ); // We cannot create checks for such a paltry amount of gold!
+	}
+}
 
 // Creates a new bank box for players that, for some reason, do not already have one
 function createNewBankBox( pTalking )
@@ -258,7 +307,7 @@ function onCallback0( pSock, ourObj )
 	var pTalking = pSock.currentChar;
 	var pTalkingTo = pTalking.tempObj;
 	var bankBox = pTalking.FindItemLayer( 29 );
-	var isInRange = pTalking.InRange( pTalkingTo, 7 );
+	var isInRange = pTalking.InRange( pTalkingTo, 8 );
 	if( isInRange )
 	{
 		if( !pSock.GetWord( 1 ) && ourObj.isItem )
@@ -269,11 +318,11 @@ function onCallback0( pSock, ourObj )
 				if( parseInt( bankContents[0] ) < maxBankItemAmt )
 				{
 					ourObj.container = bankBox;
-					pTalkingTo.TextMessage( "You have deposited the selected item in your bank box.", true, 0x03b2 );
+					pTalkingTo.TextMessage( GetDictionaryEntry( 7011, pSock.language ), true, 0x03b2 ); // You have deposited the selected item in your bank box.
 				}
 				else
 				{
-					pTalking.SysMessage( "That container cannot hold more items." );
+					pTalking.SysMessage( GetDictionaryEntry( 1935, pSock.language )); // That container cannot hold any more items.
 				}
 			}
 			else
@@ -284,11 +333,11 @@ function onCallback0( pSock, ourObj )
 	}
 	else
 	{
-		pTalking.SysMessage( "You are out of range from the banker." );
+		pTalking.SysMessage( GetDictionaryEntry( 7012, pSock.language )); // You are out of range from the banker.
 	}
 }
 
-//Divide gold to be withdrawn into several piles of max 65535 each
+// Divide gold to be withdrawn into several piles of max 65535 each
 function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 {
 	var numOfGoldPiles = ( withdrawAmt / 65535 );
@@ -309,7 +358,7 @@ function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 	}
 }
 
-//Divide gold to be deposited into several piles of max 65535 each
+// Divide gold to be deposited into several piles of max 65535 each
 function divideDepositedGold( pTalking, bankBox, depositAmt )
 {
 	var numOfGoldPiles = ( depositAmt / 65535 );

@@ -1,3 +1,219 @@
+28/07/2021 - Xuri (0.99.4v)
+	Added JS command to reload dictionaries
+		'reloaddictionaries
+	Fixed a server crash related to casting of spells
+	Fixed some issues with Line-of-Sight checks related to items under/above ground, LoS checks between different floors of buildings, etc.
+	Updated handling of skill-training keywords to be based on language-independent keyword IDs rather than trying to match player-input text to specific skill-names
+	Updated animal-trainer/stablemasterscript (js/npc/ai/stablemaster.js) with several changes:
+		Fixed an issue where the same pet would be stabled in all available slots if payment was taken from player's bank account instead of their backpack
+		Fixed an issue where stablemaster would not pause walking for a while when a player interacts with them
+		Converted all system messages and text messages in stablemaster script to dictionary entries
+	Added new NPC AI type to source - AI_STABLEMASTER (9) - and assigned this to animal trainers. This is used to identify this type of NPCs for the purpose of displaying relevant context menus
+	Reworked banker AI script (js/npc/ai/banker.js) to use triggerwords from client instead of hard-defined strings, to work better with multiple languages (and work with all relevant triggerwords)
+	Fixed a bug with banker AI script (js/npc/ai/banker.js) that prevented players from using the "withdraw" command
+	Re-added NPC AI 8 to banker NPCs (dfndata/npc/male_vendors.dfn and female_vendors.dfn) so code can check for presence of this AI when handling context menus
+	Removed remaining hard-coded banking functionality - all handled by script anyway
+	Added new context menu option for NPC bankers - Open Bankbox
+	Updated code handling of context menus to only show context menus when relevant:
+		Open Paperdoll - Shows for all characters with a paperdoll
+		Open Backpack - Shows for player's character, pack animals and hirelings
+		Open Bankbox - Shows for banker NPCs (if within 8 tiles)
+		Buy/Sell - Shows for vendor NPCs (if within 8 tiles, and if they have anything for sale/are buying anything)
+	Added new context menu entries for pets, which can be used if player is within 12 tiles of pet:
+		Command: Kill
+		Command: Stop
+		Command: Follow
+		Command: Stay
+		Command: Guard
+		Add Friend
+		Remove Friend
+		Transfer
+		Release
+	Added new context menu entries for stablemasters/animal trainers:
+		Claim All Pets
+		Stable Pet
+	Added new context menu entries for Escort Quest NPCs
+		Ask Destination (if within 3 tiles)
+		Accept Escort (if within 3 tiles)
+		Abandon Escort
+	Added new context menus for NPCs that can teach skills to players (limited to max 10 per NPC)
+		Train [skillName]
+	Added new AI script for NPC hirelings (3204=js/npc/ai/hireling.js), who can be hired to follow the player around for a limited amount of time, and function the same way as pets. In addition to the regular pet commands, these speech commands are supported:
+		hire 	// The hireling will respond with the cost to hire them
+		dismiss // Replaces the "release" command for pets; will dismiss the hireling
+		patrol 	// The hireling will patrol between it's current location and a second targeted location nearby
+		move 	// The hireling will try to shuffle out of the way
+		fetch 	// The hireling will try to fetch a targeted item
+		drop 	// The hireling will drop to the ground all loot they're currently carrying
+		report 	// The hireling will report on the remaining time they're hired for
+	Added new NPC DFN tag used by code to detect hireling NPCs for the purpose of displaying context menus:
+		HIRELING 	// No additional value/data needed for tag
+	Added new context menu entries for Hireling NPCs, in addition to the ones for regular pets:
+		Hire 	// Can be used within 3 steps of the hireling, who will respond with cost to hire them
+		Dismiss // Replaces the "release" command for pets, will dismiss the hireling
+	Added HIRELING tag and SCRIPT=3204 to and updated stats of various NPCs that will be hireable:
+		m_fighter, f_fighter, m_beggar, f_beggar, m_peasant, f_peasant, m_sailor, f_sailor, m_pirate, f_pirate
+	Added new hireling NPC:
+		m_paladin, f_paladin
+	Added new UOX ini setting to enable/disable context menus
+		CONTEXTMENUS=1/0 (defaults to 1)
+	Added new Item JS Method to check if an item's ID is on a specified food list
+		.IsOnFoodList( foodList )	// Returns true/false if item's ID is on specified foodList
+	Added new OMNIVORE food list and assigned it to [basehuman] DFN section
+	Added new Character JS Properties
+		.isGuarded 		// Gets/Sets whether character is guarded by a pet/hireling
+		.guarding 		// Gets/Sets the object (if any) being guarded by a pet/hireling
+	Fixed multiple issues with health bars, flagging and character highlighting
+	Added some crash protection for invalid data used with CUSTOMINTTAG and CUSTOMSTRINGTAG DFN tags for Items, NPCs and Multis
+	Fixed an issue which prevented hard-coded checks from running when using items
+	Added new global js object (Timer) to make the use of character timers in JS more robust, with properties matching timer names from enum in source.
+		Properties:
+			.TIMEOUT 		// Time until next attack can be done in combat
+			.INVIS			// Time until invisible character becomes visible
+			.HUNGER			// Time until character grows more hungry
+			.THIRST			// Time until character grows more thirsty
+			.POISONTIME		// Time until next tick of poison damage
+			.POISONTEXT		// Time until next message about suffering from poison
+			.POISONWEAROFF	// Time until poison wears off
+			.SPELLTIME		// Time until spell cast is completed. Can be set to 0 to interrupt
+			.ANTISPAM		// Time until next speech message can be sent (for anti spam purposes)
+			.CRIMFLAG		// Time until criminal flag runs out
+			.MURDERRATE		// Time until next murder count decay
+			.PEACETIMER		// Time until character can re-enter combat after being affected by peacemaking
+			.FLYINGTOGGLE	// Time until next time flying ability can be toggled for gargoyles
+			.MOVETIME		// Time until NPC can move again
+			.SPATIMER		// Time until next time NPC can cast a spell
+			.SUMMONTIME		// Time until a summoned NPC will vanish
+			.EVADETIME		// Time until an NPC will exit evade state
+			.LOGOUT			// Time it takes for a player char to vanish after logout
+		Examples of use:
+			var hungerTimer = myChar.GetTimer( Timer.HUNGER )
+			myChar.SetTimer( Timer.HUNGER, 15000 )
+	Added new Character JS Methods to add, remove and list friends of a pet/hireling:
+		.AddFriend( playerToAdd )		// Adds player to friend list
+		.RemoveFriend( playerToRemove )	// Removes player from friend list
+		.GetFriendList()				// Gets list of friends
+		.ClearFriendList()				// Clears list of friends
+	Added new Character JS Method to fetch a player character's list of pets/followers
+		.GetPetList()		// Gets list of pets/followers
+	Added new persistent NPC property to keep track of a pet's previous owners, whether those tamed the pet or had it transferred to them. Every time a pet is tamed, or is transferred to a new owner, this list is updated:
+		GenericList< CChar * >	petOwnerList
+	Added new Character JS Method to check if a player is on a pet's owner list as a previous owner:
+		.HasBeenOwner( mChar )
+	Previous owners of a pet can re-tame it with guaranteed chance of success
+	Updated JS Method Refresh() to be usable with both items or characters, to send updated state of object to nearby players
+	Added character tooltip [Guarded] for characters being guarded by a pet/hireling
+	Pets/hirelings that are transferred will now immediately start following their new master instead of wandering freely
+	Pets/hirelings can no longer be transferred between players as long as either party is flagged as a criminal
+	Pets/hirelings can no longer be transferred to dead players
+	Pets/hirelings can no longer be transferred to NPCs
+	Summoned creatures can no longer be transferred to other players
+	Summoned creatures can no longer have friends
+	Friend lists of pets/hirelings are now cleared when the pet/hireling is transferred to another player
+	Added new UOX.INI settings to control how many pets players can have active:
+		MAXCONTROLSLOTS=0 	// Maximum number of pet control slots available to player. Disabled if 0
+		MAXFOLLOWERS=5 		// Maximum pets/followers a player can have active at the same time. Used if control slots are disabled
+		MAXPETOWNERS=5 		// Maximum number of different owners a pet can have over its lifetime before it becomes impossible to retame
+	Added new NPC property and NPC DFN tag that keeps track of how many pet control slots an NPC would take up if owned by a player:
+		UI08 controlSlots 	// source property
+		CONTROLSLOTS=# 		// DFN tag
+	Added new Character JS properties:
+		.ownerCount		// Get the total number of owners a pet/hireling has had, based on NPC's petOwnerList
+		.controlSlots 	// Get/Set number of pet control slots an NPC will occupy
+		.controlSlotsUsed // Get/Set the number of control slots used by a player
+	Updated get (js/commands/targeting/get.js) and set (js/commands/targeting/set.js) commands to support getting/setting the following character properties:
+		deaths
+		ownerCount (read only)
+		controlSlots
+		controlSlotsUsed
+	Updated NPC DFNs with default CONTROLSLOT=# tags
+	Increased the max distance from player that onSpeech JS event will trigger from 7 to 12
+	Updated how "all attack" and "all follow" commands for pets are handled. Now loops through all pets owned by character and executes command for each eligible pet
+	Fixed an issue where NPCs could follow characters in different worlds/instances than them selves
+	Updated default max amount of items that can be sold to NPC vendors from 5 to 250
+	Guards can no longer train players in skills
+	Updated equipment itemlists (dfndata/items/itemlists/itemlists.dfn) with blank entries to introduce some more variety in the type of clothes NPCs wear in general
+	Added new NPCs to DFNs (dfndata/npc/undead.dfn) and added them to undead npclist:
+		[skeletalmage]		// variation of [bonemage]
+		[skeletalknight]  	// variation of [boneknight]
+	Updated Titles (dfndata/titles/titles.dfn) with up-to-date titles for skills around Pub 15, and added titles for skills added after that. Also added "Elder" and "Legendary" titles for 110 and 120 skillpoints
+	Updated EQUIPITEM tag in newbie.dfn (dfndata/newbie/newbie.dfn) to support an optional hue parameter (EQUIPITEM=id,hue)
+	Updated starting equipment for new characters (dfndata/newbie/newbie.dfn), with commented out practice weapons. Uncomment to use
+	Added item definitions for practice weapons (dfndata/items/gear/weapons/practice_weapons.dfn):
+		practice_skinning_knife
+		practice_hatchet
+		practice_axe
+		practice_mace
+		practice_longsword
+		practice_spear
+		practice_bow
+		practice_club
+		practice_crook
+		practice_gnarled_staff
+	Updated mount statues DFN (dfndata/items/misc/mount-statues.dfn) and JS (js/npc/pets/*.js) files to include pet control slot related stuff
+	Pets now inherit the karma of their owners, but revert to their original karma upon release
+	Pets and hirelings will no longer follow the ghosts of their dead owners, but stay to guard their corpse
+	Added optional 9th parameter for JS Function CreateDFNItem to specify a color for item created. This comes before the other optional parameters - worldNumber and instanceID (which are only used if character is NULL):
+		CreateDFNItem( mSock, mChar, sectionName, inPack, iAmount, itemType, iColor, worldNumber, instanceID )
+	Added ID of Giant Beetle to various pack animal checks
+	Pack animals will now drop any newbie/blessed items stored in their packs upon death
+	Added new NPC properties to track pet loyalty, and exposed these as Character JS properties, and NPC DFN tags:
+		JS Properties
+			.maxLoyalty 	// Defaults to 100
+			.loyalty 		// Starts at 25
+		DFN Tags
+			MAXLOYALTY=# 	// Defaults to 100
+			LOYALTY=# 		// Starts at 25
+	Updated TriggerEvent JS function to support return values (int, bool, string, object) from called script
+	Updated various JS scripts to make use of new TriggerEvent functionality and reduce reliance on custom tags:
+		js/item/archerybutte.js
+		js/item/trainingdummy.js
+		js/server/data/combatanims.js
+		js/server/data/weapontypes.js
+	Updated archerybutte script to use dictionary for system and text messages
+	Updated archerybutte script to support increased range, distance penalty and dex/str bonuses when calculating score
+	Added new UOX.INI settings under [pets and hirelings] section related to pet control and loyalty:
+		CHECKPETCONTROLDIFFICULTY=1 	// Enable/Disable pet control difficulty system
+		PETLOYALTYGAINONSUCCESS=1 		// Amount of pet loyalty gained on successful pet command use
+		PETLOYALTYLOSSONFAILURE=3 		// Amount of pet loyalty lost on failed pet command use
+		PETLOYALTYRATE=900 				// Amount of seconds between each time pet loyalty is automatically reduced by 1. Takes 25 hours to deplete completely from max
+	Added new persistent NPC property that keeps track of the difficulty of taming and controlling a pet, and exposed it as a Character JS property:
+		.orneriness
+	Every time a tamed pet is released or goes wild, its "orneriness" increases, making it more difficult for other players to tame, and more difficult for anyone to control.
+	Updated CBasePetResponse::canControlPet() function to use pet control difficulty system if enabled, which checks player's animal taming/animal lore skill vs a pet's "orneriness" to determine chance of pet accepting a given pet command
+		On successful use of pet command, increases pet loyalty by value defined in PETLOYALTYGAINONSUCCESS ini setting
+		On failed use of pet command, decreases pet loyalty by value defined in PETLOYALTYLOSSONFAILURE ini setting
+	Added new Character JS Method to calculate chance of a player successfully controlling the pet:
+		.CalculateControlChance( mChar )	// Returns value between 0 and 1000 indicating chance of success
+	Feeding a pet will now restore its loyalty to maximum
+	Pets will now lose loyalty on hunger checks when at maximum hunger
+	Pets that are maximum hungry will now only have a chance to go wild if loyalty has dropped to zero
+	Added new DFN tag for creatures.dfn - TYPE - which contains a string describing the type of creature
+	Added secure pet trading. Players who trade pets will now see a pet transfer deed appear in a secure trade window with the name and type of creature, and upon completion of the trade the associated pet will be instantly transferred to the other player
+	Updated resource JS scripts (js/server/resource/*) to use dictionaries for all system messages
+	Updated skill JS scripts (js/skill/*) to use dictionaries for all system messages
+	Updated housing JS scripts (js/server/house/*) to use dictionaries for all system messages
+	Updated item JS scripts (js/item/*) to use dictionaries for all system messages
+	Updated magic JS scripts (js/magic/*) to use dictionaries for all system messages
+	Updated NPC AI JS scripts (js/npc/ai/*) to use dictionaries for all system messages
+	Updated command JS scripts (js/commands/*) to use dictionaries for all system messages, gump tooltips, etc
+	Updated code to use dictionaries for all system messages
+	Fixed incorrect spelling for UOX.INI setting HIDEW(H)ILEMOUNTED and updated hiding skill (js/skill/hiding.js) to actually allow/disallow hiding while mounted based on this setting
+	Added new Character JS Method to make it easier to make one NPC initiate combat with another:
+		.InitiateCombat( targetChar )	// Character attempts to initiate combat with target character
+	Updated parrying portion of combat code to be in line with Pub15/pre-AoS parrying mechanics. High AR shields now absorb more damage on a successful parry, while low AR shields have a higher chance of parrying. Shields are also now more effective against archery attacks (full absorption potential) than melee attacks (half absorption potential).
+	Updated combat damage calculations to be in line with Pub15/pre-AoS damage calculations
+	Adjusted default value of COMBATNPCDAMAGERATE ini setting (damage divisor when target is a player) from 2 to 1 to account for these changes.
+	Removed dictionary.UNK, and made dictionary.ZRO the default dictionary used for all unsupported languages
+	Added dictionary support for additional languages: Portuguese, Italian, Czech
+	Updated default dictionaries for the following languages: English, French
+	Added default dictionaries for the following languages: German, Spanish, Portuguese, Italian, Czech (note that translations have been provided by automatic services and will contain inaccuracies!)
+	Added new UOX.INI setting to allow specifying a default dictionary language for server, which if set will force that language for all dictionary messages, regardless of client settings:
+		SERVERLANGUAGE=0 	// Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 5 - French, 6 - Portuguese, 7 - Italian, 8 - Czech
+	Added new function in combat.cpp - AdjustArmorClassDamage() - which adjusts the damage dealt in combat based on whether armour class (AC DFN tag or .ac JS property) of weapon and armour equipped on hit location of target match up. A weapon with armour class 1 would essentially be doubly effective against armour of armour class 1. Allows setting up things like piercing weapons being better against some armor types than mace weapons, etc.
+	Added new UOX.INI setting under [combat] to enable/disable double damage from armour class bonuses:
+		ARMORCLASSDAMAGEBONUS=0/1 //defaults to 0)
+
 06/07/2021 - Xuri
 	Updated how UOX3 handles more, morex, morey and morez properties:
 		DFN tags for these properties can now handle data in multiple formats. Example:

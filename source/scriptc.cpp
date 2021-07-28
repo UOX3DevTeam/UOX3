@@ -51,7 +51,7 @@ void Script::reload( bool disp )
 				input.getline(line, 2047);
 				line[input.gcount()] = 0 ;
 				sLine = std::string(line);
-				sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
+				sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 				if( !sLine.empty() )
 				{
 					// We have some real data
@@ -67,7 +67,7 @@ void Script::reload( bool disp )
 							input.getline(line, 2047);
 							line[input.gcount()] = 0 ;
 							sLine = std::string(line);
-							sLine = strutil::trim(strutil::removeTrailing( sLine,"//") );
+							sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 						}
 						// We are finally in the actual section!
 						// We waited until now to create it, incase a total invalid file
@@ -157,7 +157,7 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
 	ScriptSection *rvalue = nullptr;
 	auto usection = std::string( section );
-	usection = strutil::upper(usection);
+	usection = strutil::upper( usection );
 	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
 	{
 		if( iSearch->first.find( usection ) != std::string::npos )	// FOUND IT!

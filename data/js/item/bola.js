@@ -7,18 +7,18 @@ function onUseChecked( pUser, iUsed )
 		//Check to see if it's locked down
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
+			socket.SysMessage( GetDictionaryEntry( 774, socket.language )); // That is locked down and you cannot use it
 			return false;
 		}
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( "The bola must be in your pack to use it." );
+			pUser.SysMessage( GetDictionaryEntry( 2712, socket.language )); // The bola must be in your pack to use it.
 			return false;
 		}
 		else if( pUser.isonhorse )
 		{
-			pUser.SysMessage( "You cannot use this while riding a mount." );
+			pUser.SysMessage( GetDictionaryEntry( 2713, socket.language )); // You cannot use this while riding a mount.
 			return false;
 		}
 		if(pUser.GetTag("bola") == null || pUser.GetTag("bola") == 0)
@@ -26,14 +26,14 @@ function onUseChecked( pUser, iUsed )
 			socket.tempObj = iUsed;
 			pUser.SetTag("bola", 1);
 
-			//the addition of the false-flag in the TextMessage below tells the server to only
+			//the addition of the false-flag in the EmoteMessage below tells the server to only
 			//send the message to this character
-			pUser.TextMessage("* You begin to swing the bola...*", false );
+			pUser.EmoteMessage( GetDictionaryEntry( 2714, socket.language ), false ); // * You begin to swing the bola...*
 			pUser.StartTimer(3000, 0, true);
 		}
-		else if(pUser.GetTag("bola") == 1)
+		else if( pUser.GetTag( "bola" ) == 1 )
 		{
-			pUser.SysMessage("You have to wait a few moments before you can use another bola!");
+			pUser.SysMessage( GetDictionaryEntry( 2715, socket.language )); // You have to wait a few moments before you can use another bola!
 		}
 		else
 			return true;
@@ -55,30 +55,32 @@ function onCallback0( socket, myTarget)
 				myTarget.Dismount();
 				pUser.DoAction( 0x9 );
 				DoMovingEffect( pUser, myTarget, 0x26AC, 0x10, 0x00, false );
-				myTarget.SysMessage( "You have been knocked off your mount!" );
+				if( myTarget.socket != null )
+					myTarget.SysMessage( GetDictionaryEntry( 2716, myTarget.socket.language )); // You have been knocked off your mount!
 				iUsed.Delete();
 			}
 			else
-				pUser.SysMessage( "Your target isn't mounted." );
+				pUser.SysMessage( GetDictionaryEntry( 2717, socket.language )); // Your target isn't mounted.
 		}
 		else
-			pUser.SysMessage( "Your target is out of range." );
+			pUser.SysMessage( GetDictionaryEntry( 2718, socket.language )); // Your target is out of range.
 	}
 	else
-		pUser.SysMessage( "You cannot throw a bola at that." );
+		pUser.SysMessage( GetDictionaryEntry( 2719, socket.language )); // You cannot throw a bola at that.
 }
 
-function onTimer(pUser,timerID)
+function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;
 
-	if(timerID == 0)
+	if( timerID == 0 )
 	{
-		pUser.EmoteMessage( pUser.name + " begins to menacingly swing a bola..");
+		var tempMsg = GetDictionaryEntry( 2720, socket.language ); // %s begins to menacingly swing a bola...
+		pUser.EmoteMessage( tempMsg.replace(/%s/gi, pUser.name ) );
 		pUser.StartTimer(1000, 1, true);
 	}
 
-	if(timerID == 1)
+	if( timerID == 1 )
 	{
 		pUser.SetTag("bola", null);
 		socket.CustomTarget(0);

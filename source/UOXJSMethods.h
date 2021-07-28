@@ -115,14 +115,22 @@ JSMethodFunc CChar_FindItemType;
 JSMethodFunc CChar_InitWanderArea;
 JSMethodFunc CChar_ReactOnDamage;
 JSMethodFunc CChar_Damage;
+JSMethodFunc CChar_InitiateCombat;
 JSMethodFunc CChar_Heal;
 JSMethodFunc CChar_Defense;
+JSMethodFunc CChar_AddFriend;
+JSMethodFunc CChar_RemoveFriend;
+JSMethodFunc CChar_GetFriendList;
+JSMethodFunc CChar_ClearFriendList;
+JSMethodFunc CChar_GetPetList;
+JSMethodFunc CChar_HasBeenOwner;
+JSMethodFunc CChar_CalculateControlChance;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
 JSMethodFunc CItem_SetCont;
-JSMethodFunc CItem_Refresh;
 JSMethodFunc CItem_ApplyRank;
+JSMethodFunc CItem_IsOnFoodList;
 JSMethodFunc CItem_Glow;
 JSMethodFunc CItem_UnGlow;
 JSMethodFunc CItem_PlaceInPack;
@@ -156,6 +164,7 @@ JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
 JSMethodFunc CBase_AddScriptTrigger;
 JSMethodFunc CBase_RemoveScriptTrigger;
+JSMethodFunc CBase_Refresh;
 
 // Multi Methods
 JSMethodFunc CMulti_GetMultiCorner;
@@ -366,6 +375,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "ExplodeItem",		CChar_ExplodeItem,		1, 0, 0 },
 	{ "SetInvisible",		CChar_SetInvisible,		2, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,		1, 0, 0 },
+	{ "Refresh",			CBase_Refresh,			0, 0, 0 },
 	{ "AddSpell",			CChar_AddSpell,			1, 0, 0 },
 	{ "SpellFail",			CChar_SpellFail,		0, 0, 0 },
 	{ "FirstItem",			CBase_FirstItem,		0, 0, 0 },
@@ -396,11 +406,20 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "CanSee",				CBase_CanSee,			1, 0, 0 },
 	{ "ReactOnDamage",		CChar_ReactOnDamage,	1, 0, 0 },
 	{ "Damage",				CChar_Damage,			1, 0, 0 },
+	{ "InitiateCombat",		CChar_InitiateCombat,	1, 0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
+	{ "AddFriend",			CChar_AddFriend,			1, 0, 0 },
+	{ "RemoveFriend",		CChar_RemoveFriend,			1, 0, 0 },
+	{ "GetFriendList",		CChar_GetFriendList,		0, 0, 0 },
+	{ "ClearFriendList",	CChar_ClearFriendList,		0, 0, 0 },
+	{ "GetPetList",			CChar_GetPetList,			0, 0, 0 },
+	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
+	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
+	
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
@@ -445,8 +464,9 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "UpdateStats",		CBase_UpdateStats,			1, 0, 0 },
 	{ "SetCont",			CItem_SetCont,				1, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,			1, 0, 0 },
-	{ "Refresh",			CItem_Refresh,				0, 0, 0 },
+	{ "Refresh",			CBase_Refresh,				0, 0, 0 },
 	{ "ApplyRank",			CItem_ApplyRank,			2, 0, 0 },
+	{ "IsOnFoodList",		CItem_IsOnFoodList,			1, 0, 0 },
 	{ "FirstItem",			CBase_FirstItem,			0, 0, 0 },
 	{ "NextItem",			CBase_NextItem,				0, 0, 0 },
 	{ "FinishedItems",		CBase_FinishedItems,		0, 0, 0 },

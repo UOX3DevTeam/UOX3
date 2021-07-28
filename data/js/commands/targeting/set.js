@@ -20,17 +20,17 @@ function command_SET( socket, cmdString )
 		}
 
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, "Choose target to set: " + cmdString );
+		socket.CustomTarget( 0, GetDictionaryEntry( 8102, socket.language ) + " " + cmdString );
 	}
 	else
-		socket.SysMessage( "No property was specified for the SET command." );
+		socket.SysMessage( GetDictionaryEntry( 8103, socket.language )); // No property was specified for the SET command.
 }
 
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) )
 	{
-		socket.SysMessage( "'Set': Invalid target" );
+		socket.SysMessage( "'Set': " + GetDictionaryEntry( 2353, socket.language )); // Invalid target
 		return;
 	}
 
@@ -95,7 +95,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "OWNER":
 		socket.tempObj = ourObj;
-		socket.CustomTarget( 1, "Choose character to own this object" );
+		socket.CustomTarget( 1, GetDictionaryEntry( 8104, socket.language )); // Choose character to own this object
 		break;
 	case "POISON":
 		ourObj.poison = nVal;
@@ -177,7 +177,7 @@ function onCallback0( socket, ourObj )
 		else if( ourObj.isItem )
 			HandleSetItem( socket, ourObj, uKey, splitString );
 		else
-			socket.SysMessage( "Invalid set command " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 		break;
 	}
 }
@@ -297,7 +297,7 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 			}
 			else
 			{
-				socket.SysMessage( "Only objects added using the 'ADD SPAWNER # command can be assigned spawner item types!" );
+				socket.SysMessage( GetDictionaryEntry( 8106, socket.language )); // Only objects added using the 'ADD SPAWNER # command can be assigned spawner item types!
 			}
 		}
 		else
@@ -375,11 +375,11 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		{
 			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
 			{
-				socket.SysMessage( "This can only be set on objects added as spawner objects through the 'ADD SPAWNER # command!" );
+				socket.SysMessage( GetDictionaryEntry( 8107, socket.language )); // This can only be set on objects added as spawner objects through the 'ADD SPAWNER # command!
 			}
 			else
 			{
-			socket.SysMessage( "Invalid set command " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 			}
 		}
 		break;
@@ -415,7 +415,7 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 		okMsg( socket );
 		break;
 	default:
-		socket.SysMessage( "Invalid set command " + uKey );
+		socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 	}
 }
 
@@ -436,6 +436,26 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 			ourChar.orgID = nVal;
 			okMsg( socket );
 		}
+		break;
+	case "CONTROLSLOTS":
+		ourChar.controlSlots = nVal;
+		okMsg( socket );
+		break;
+	case "CONTROLSLOTSUSED":
+		ourChar.controlSlotsUsed = nVal;
+		okMsg( socket );
+		break;
+	case "DEATHS":
+		ourChar.deaths = nVal;
+		okMsg( socket );
+		break;
+	case "LOYALTY":
+		ourChar.loyalty = nVal;
+		okMsg( socket );
+		break;
+	case "MAXLOYALTY":
+		ourChar.maxLoyalty = nVal;
+		okMsg( socket );
 		break;
 	case "FONT":
 		ourChar.font = nVal;
@@ -567,7 +587,7 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 	case "CHARACTER6":
 	case "CHARACTER7":
 	case "LASTIP":
-		socket.SysMessage( "This is a read-only property." );
+		socket.SysMessage( GetDictionaryEntry( 8108, socket.language )); // This is a read-only property.
 		break;
 	case "PASSWORD":
 		{
@@ -582,7 +602,7 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 					okMsg( socket );
 				}
 				else
-					socket.SysMessage( "Password must be longer than 3 characters! Current length: " + newPass.length );
+					socket.SysMessage( GetDictionaryEntry( 8109, socket.language ) + " " + newPass.length ); // Password must be longer than 3 characters! Current length:
 			}
 			break;
 		}
@@ -765,7 +785,7 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
 		else
-			socket.SysMessage( "Invalid set command " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 		break;
 	}
 }

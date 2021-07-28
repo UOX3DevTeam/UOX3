@@ -185,7 +185,7 @@ void command_addaccount( CSocket *s)
 
 		if( newUsername == "" || newPassword == "" )
 		{
-			s->sysmessage( "Unable to add account, insufficient data provided (syntax: [username] [password] [flags])" );
+			s->sysmessage( 9018 ); // Unable to add account, insufficient data provided (syntax: [username] [password] [flags])
 			return;
 		}
 
@@ -196,12 +196,12 @@ void command_addaccount( CSocket *s)
 			Accounts->AddAccount( newUsername, newPassword, "NA", newFlags );
 			Console << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
 
-			s->sysmessage( strutil::format( "Account Added: %s:%s:%i", newUsername.c_str(), newPassword.c_str(), newFlags ) );
+			s->sysmessage( 9019, newUsername.c_str(), newPassword.c_str(), newFlags ); // Account Added: %s:%s:%i
 		}
 		else
 		{
 			Console << "o Account was not added, an account with that username already exists!" << myendl;
-			s->sysmessage( "Account not added, an account with that username already exists!" );
+			s->sysmessage( 9020 ); // Account not added, an account with that username already exists!
 		}
 	}
 }
@@ -518,21 +518,42 @@ void command_tell( CSocket *s )
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
 		std::string temp	= mChar->GetName() + " tells " + tChar->GetName() + ": " + txt;
-		CSpeechEntry& toAdd	= SpeechSys->Add();
-		toAdd.Font( (FontType)mChar->GetFontType() );
-		toAdd.Speech( temp );
-		toAdd.Speaker( mChar->GetSerial() );
-		toAdd.SpokenTo( tChar->GetSerial() );
-		toAdd.Type( TALK );
-		toAdd.At( cwmWorldState->GetUICurrentTime() );
-		toAdd.TargType( SPTRG_INDIVIDUAL );
-		if( mChar->GetSayColour() == 0x1700 )
-			toAdd.Colour( 0x5A );
-		else if( mChar->GetSayColour() == 0x0 )
-			toAdd.Colour( 0x5A );
-		else
-			toAdd.Colour( mChar->GetSayColour() );
 
+		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+		{
+			CPUnicodeMessage unicodeMessage;
+			unicodeMessage.Message( temp );
+			unicodeMessage.Font( (FontType)mChar->GetFontType() );
+			if( mChar->GetSayColour() == 0x1700 )
+				unicodeMessage.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				unicodeMessage.Colour( 0x5A );
+			else
+				unicodeMessage.Colour( mChar->GetSayColour() );
+			unicodeMessage.Type( TALK );
+			unicodeMessage.Language( "ENG" );
+			unicodeMessage.Name( mChar->GetName() );
+			unicodeMessage.ID( INVALIDID );
+			unicodeMessage.Serial( mChar->GetSerial() );
+			s->Send( &unicodeMessage );
+		}
+		else
+		{
+			CSpeechEntry& toAdd	= SpeechSys->Add();
+			toAdd.Font( (FontType)mChar->GetFontType() );
+			toAdd.Speech( temp );
+			toAdd.Speaker( mChar->GetSerial() );
+			toAdd.SpokenTo( tChar->GetSerial() );
+			toAdd.Type( TALK );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
+			if( mChar->GetSayColour() == 0x1700 )
+				toAdd.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				toAdd.Colour( 0x5A );
+			else
+				toAdd.Colour( mChar->GetSayColour() );
+		}
 	}
 }
 
@@ -716,9 +737,9 @@ void command_regspawn( CSocket *s )
 				++spIter;
 			}
 			if( itemsSpawned || npcsSpawned )
-				s->sysmessage( "Spawned %u items and %u npcs in %u SpawnRegions", itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() );
+				s->sysmessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions
 			else
-				s->sysmessage( "Failed to spawn any new items or npcs in %u SpawnRegions", cwmWorldState->spawnRegions.size() );
+				s->sysmessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
 		}
 		else
 		{
@@ -730,13 +751,13 @@ void command_regspawn( CSocket *s )
 				{
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 					if( itemsSpawned || npcsSpawned )
-						s->sysmessage( "Region: '%s'(%u) spawned %u items and %u npcs", spawnReg->GetName().c_str(), spawnRegNum, itemsSpawned, npcsSpawned );
+						s->sysmessage( 9023, spawnReg->GetName().c_str(), spawnRegNum, itemsSpawned, npcsSpawned ); // Region: '%s'(%u) spawned %u items and %u npcs
 					else
-						s->sysmessage( "Region: '%s'(%u) failed to spawn any new items or npcs", spawnReg->GetName().c_str(), spawnRegNum );
+						s->sysmessage( 9024, spawnReg->GetName().c_str(), spawnRegNum ); // Region: '%s'(%u) failed to spawn any new items or npcs
 					return;
 				}
 			}
-			s->sysmessage( "Invalid SpawnRegion %u", spawnRegNum );
+			s->sysmessage( 9025, spawnRegNum ); // Invalid SpawnRegion %u
 		}
 	}
 }
@@ -939,7 +960,7 @@ void command_spawnkill( CSocket *s )
 				++killed;
 			}
 		}
-		s->sysmessage( "Done." );
+		s->sysmessage( 84 ); // Done.
 		s->sysmessage( 350, killed, regNum );
 	}
 }

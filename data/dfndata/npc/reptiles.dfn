@@ -1,6 +1,6 @@
 [alligator]
 {
-NAME=an alligator
+NAME=#//an alligator
 ID=0x00ca
 DIRECTION=RND
 BACKPACK
@@ -30,11 +30,12 @@ FOOD=carnivore
 CARVE=1
 RACE=5
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [giantserpent]
 {
-NAME=a giant serpent
+NAME=#//a giant serpent
 ID=0x0015
 DIRECTION=RND
 BACKPACK
@@ -66,7 +67,7 @@ FLAG=NEUTRAL
 
 [icesnake]
 {
-NAME=an ice snake
+NAME=5113//an ice snake
 ID=0x0034
 SKIN=0x0482
 DIRECTION=RND
@@ -98,7 +99,7 @@ FLAG=NEUTRAL
 
 [iceserpent]
 {
-NAME=a giant ice serpent
+NAME=#//a giant ice serpent
 ID=0x0059
 SKIN=0x0480
 DIRECTION=RND
@@ -122,14 +123,16 @@ NPCAI=2
 POISONSTRENGTH=2
 TOPROV=481
 TOPEACE=431 5
+TOTAME=711
 CARVE=16
 RACE=5
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [lavalizard]
 {
-NAME=a lava lizard
+NAME=#//a lava lizard
 ID=0x00CE
 SKIN=0x0028
 DIRECTION=RND
@@ -161,11 +164,12 @@ FOOD=metal
 CARVE=72
 RACE=5
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }
 
 [lavasnake]
 {
-NAME=a lava snake
+NAME=5114//a lava snake
 ID=0x0034
 SKIN=0x0028
 DIRECTION=RND
@@ -199,7 +203,7 @@ FLAG=NEUTRAL
 
 [lavaserpent]
 {
-NAME=a lava serpent
+NAME=#//a giant lava serpent
 ID=0x005a
 SKIN=0x0028
 DIRECTION=RND
@@ -233,7 +237,7 @@ FLAG=NEUTRAL
 //Ophidians
 [ophwarrior]
 {
-NAME=ophidian warrior
+NAME=#//an ophidian warrior
 ID=0x0056
 SKIN=0x0000
 DIRECTION=RND
@@ -268,7 +272,7 @@ FLAG=NEUTRAL
 
 [ophenforcer]
 {
-NAME=ophidian enforcer
+NAME=5115//an ophidian enforcer
 ID=0x0056
 SKIN=0x0000
 DIRECTION=RND
@@ -303,7 +307,7 @@ FLAG=NEUTRAL
 
 [ophknight]
 {
-NAME=ophidian knight-errant
+NAME=#//an ophidian knight-errant
 ID=0x0089
 DIRECTION=RND
 BACKPACK
@@ -339,7 +343,7 @@ FLAG=NEUTRAL
 
 [ophavenger]
 {
-NAME=ophidian avenger
+NAME=5116//an ophidian avenger
 ID=0x0089
 SKIN=0x066d
 DIRECTION=RND
@@ -397,7 +401,7 @@ FLAG=NEUTRAL
 
 [ophapprentice]
 {
-NAME=ophidian apprentice mage
+NAME=5117//an ophidian apprentice mage
 ID=0x0055
 DIRECTION=RND
 BACKPACK
@@ -439,7 +443,7 @@ FLAG=NEUTRAL
 
 [ophshaman]
 {
-NAME=ophidian shaman
+NAME=5118//an ophidian shaman
 ID=0x0055
 DIRECTION=RND
 BACKPACK
@@ -480,7 +484,7 @@ FLAG=NEUTRAL
 
 [ophmatriarch]
 {
-NAME=ophidian matriarch
+NAME=#//an ophidian matriarch
 ID=0x0057
 DIRECTION=RND
 BACKPACK
@@ -526,7 +530,7 @@ FLAG=NEUTRAL
 
 [ophjusticar]
 {
-NAME=ophidian justicar
+NAME=5119//an ophidian justicar
 ID=0x0055
 DIRECTION=RND
 BACKPACK
@@ -561,7 +565,7 @@ FLAG=NEUTRAL
 
 [ophzealot]
 {
-NAME=ophidian zealot
+NAME=5120//an ophidian zealot
 ID=0x0055
 DIRECTION=RND
 BACKPACK
@@ -596,7 +600,7 @@ FLAG=NEUTRAL
 
 [silverserpent]
 {
-NAME=a silver serpent
+NAME=#//a silver serpent
 ID=0x005b
 SKIN=0x0482
 DIRECTION=RND
@@ -629,7 +633,7 @@ FLAG=NEUTRAL
 
 [snake]
 {
-NAME=a snake
+NAME=#//a snake
 ID=0x0034
 SKINLIST=10
 DIRECTION=RND
@@ -661,4 +665,5 @@ FOOD=snake
 CARVE=45
 RACE=5
 FLAG=NEUTRAL
+CONTROLSLOTS=1
 }

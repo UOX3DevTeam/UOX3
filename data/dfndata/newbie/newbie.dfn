@@ -1,12 +1,13 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.99.3                     *
+//*                         UOX3 DFNs v0.99.4                     *
 //*                https://github.com/UOX3DevTeam/UOX3         	  *
 //*                                                               *
-//* Last Update : 1/4/2003                                        *
+//* Last Update : 17/7/2021                                       *
 //* Script : newbie.dfn                                           *
 //*****************************************************************
 // v1.0; 12/10/02; initial release; §ymbiotic; confound@iprimus.com.au
 // v1.1; 1/4/03; Updated Version & contents; Xuri
+// v1.2; 17/7/21; Updated version & contents; Xuri
 // (add new version comments here, use format of above line please.)
 // for use with the uox3 emulator, or any, with permission from the author.
 
@@ -19,33 +20,35 @@ PACKITEM=0x0f85,3
 PACKITEM=0x0f8d,3
 PACKITEM=0x0f0e,4
 PACKITEM=0x0e9b
-EQUIPITEM=0x1F03
+EQUIPITEM=0x1F03,0x4ca
 }
 
 // Anatomy.
 [BESTSKILL 1]
 {
-EQUIPITEM=0x1F03
+EQUIPITEM=0x1F03,0x6be
 PACKITEM=0x0E21,3
 }
 
 // Animal Lore.
 [BESTSKILL 2]
 {
+//EQUIPITEM=practice_crook
 EQUIPITEM=0x13f5
-EQUIPITEM=0x1F03
+EQUIPITEM=0x1F03,0x52e
 }
 
 // Item Identification.
 [BESTSKILL 3]
 {
+//EQUIPITEM=practice_gnarled_staff
 EQUIPITEM=0x13f8
 }
 
 // Arms Lore.
 [BESTSKILL 4]
 {
-PACKITEM=0x0f5c
+//PACKITEM=listobject120 // random practice weapon
 }
 
 // Parrying.
@@ -57,22 +60,24 @@ PACKITEM=0x1b7A
 // Begging.
 [BESTSKILL 6]
 {
+//EQUIPITEM=practice_gnarled_staff
 EQUIPITEM=0x13f8
 }
 
 // Blacksmithing.
 [BESTSKILL 7]
 {
-EQUIPITEM=0x153b
+EQUIPITEM=0x153b,0x6be
 EQUIPITEM=0x13c6
+EQUIPITEM=0x13e3
 PACKITEM=0x1bf2,50
-PACKITEM=0x13e3,2
+PACKITEM=0x0f39
+PACKITEM=0x0e85
 }
 
 // Bowcraft/Fletching.
 [BESTSKILL 8]
 {
-PACKITEM=0x1022
 PACKITEM=0x1bd1,5
 PACKITEM=0x1BD4,5
 PACKITEM=0x1bd7,14
@@ -96,7 +101,7 @@ PACKITEM=0x0DE1,5
 {
 PACKITEM=0x1bd7,10
 PACKITEM=0x1034
-PACKITEM=0x153b
+EQUIPITEM=0x153b,0x6be
 }
 
 // Cartography.
@@ -109,13 +114,12 @@ PACKITEM=0x1057
 // Cooking.
 [BESTSKILL 13]
 {
-PACKITEM=0x1043
-PACKITEM=0x09b9
-PACKITEM=0x09f1
-PACKITEM=0x1f9e
-PACKITEM=0x1045
 PACKITEM=0x0DE1,2
-PACKITEM=0x103f
+PACKITEM=0x097a
+PACKITEM=0x1609
+PACKITEM=0x1607
+PACKITEM=0x1045
+PACKITEM=0x1f9e
 }
 
 // Detecting Hidden.
@@ -124,7 +128,7 @@ PACKITEM=0x103f
 EQUIPITEM=0x1515
 }
 
-// Discordance.
+// Enticement.
 [BESTSKILL 15]
 {
 PACKITEM=listobject6
@@ -139,12 +143,14 @@ PACKITEM=listobject6
 [BESTSKILL 17]
 {
 PACKITEM=0x0E21,50
+PACKITEM=0x0f9e
 }
 
 // Fishing.
 [BESTSKILL 18]
 {
 EQUIPITEM=0x0dbf
+EQUIPITEM=0x1713,0x6be
 }
 
 // Forensic Evaluation.
@@ -155,6 +161,7 @@ EQUIPITEM=0x0dbf
 // Herding.
 [BESTSKILL 20]
 {
+//EQUIPITEM=practice_crook
 EQUIPITEM=0x13f5
 }
 
@@ -186,13 +193,14 @@ PACKITEM=0x14FB,20
 // Magery.
 [BESTSKILL 25]
 {
-EQUIPITEM=0x1F03
-EQUIPITEM=0x1718
-EQUIPITEM=0x0efa
+PACKITEM=listobject100
+PACKITEM=listobject100
+PACKITEM=listobject100
 PACKITEM=bagofreagents
-PACKITEM=listobject9
-PACKITEM=listobject9
-PACKITEM=listobject9
+PACKITEM=listobject100
+PACKITEM=listobject100
+PACKITEM=listobject100
+EQUIPITEM=0x0efa
 }
 
 // Resisting Spells.
@@ -203,6 +211,8 @@ PACKITEM=listobject9
 // Tactics.
 [BESTSKILL 27]
 {
+//EQUIPITEM=practice_longsword
+PACKITEM=0x13fe
 }
 
 // Snooping.
@@ -226,6 +236,7 @@ PACKITEM=0x0F0A,2
 // Archery.
 [BESTSKILL 31]
 {
+EQUIPITEM=practice_bow
 EQUIPITEM=0x13b1
 PACKITEM=0x0f3f,25
 }
@@ -247,32 +258,32 @@ PACKITEM=0x14FB,20
 {
 PACKITEM=0x0F95
 PACKITEM=0x0f9d
-PACKITEM=0x0f9e
 }
 
 // Animal Taming.
 [BESTSKILL 35]
 {
+//EQUIPITEM=practice_crook
 EQUIPITEM=0x13f5
 }
 
 // Taste Identification.
 [BESTSKILL 36]
 {
-PACKITEM=0x0F0D,3
+PACKITEM=listobject4,3
 }
 
 // Tinkering.
 [BESTSKILL 37]
 {
 PACKITEM=0x1eb8
-PACKITEM=0x1051
 }
 
 // Tracking.
 [BESTSKILL 38]
 {
-EQUIPITEM=0x170b
+//EQUIPITEM=practice_skinning_knife
+EQUIPITEM=0x170b,0x6be
 EQUIPITEM=0x0ec4
 }
 
@@ -286,18 +297,21 @@ PACKITEM=0x0f9e
 // Swordsmanship.
 [BESTSKILL 40]
 {
+//EQUIPITEM=practice_longsword
 EQUIPITEM=0x13fe
 }
 
 // Macefighting.
 [BESTSKILL 41]
 {
+//EQUIPITEM=practice_mace
 PACKITEM=0x13b3
 }
 
 // Fencing.
 [BESTSKILL 42]
 {
+//EQUIPITEM=practice_spear
 PACKITEM=0x1400
 }
 
@@ -310,6 +324,7 @@ EQUIPITEM=0x13c6
 // Lumberjacking.
 [BESTSKILL 44]
 {
+//EQUIPITEM=practice_hatchet
 PACKITEM=0x0f43
 }
 
@@ -357,6 +372,8 @@ EQUIPITEM=0x170d
 // Focus
 [BESTSKILL 50]
 {
+EQUIPITEM=0x1F03,0x65a
+EQUIPITEM=0x0f51
 }
 
 // Chivalry
@@ -407,13 +424,13 @@ PACKITEM=0x23a0 //book of ninjitsu
 // Imbuing
 [BESTSKILL 55]
 {
-
+EQUIPITEM=0x1F03,0x65a
 }
 
 // Mysticism
 [BESTSKILL 56]
 {
-
+PACKITEM=0x2d9d
 }
 
 // Throwing

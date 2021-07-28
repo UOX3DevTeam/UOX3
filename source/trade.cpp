@@ -132,17 +132,30 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		{
 			if( i->GetType() == IT_TRADEWINDOW )
 			{
-				CChar *k = FindItemOwner( i );
-				if( ValidateObject( k ) )
+				// Find owner of trade window (each player has their own)
+				CChar *tradeWindowOwner = FindItemOwner( i );
+				if( ValidateObject( tradeWindowOwner ) )
 				{
-					CItem *p = k->GetPackItem();
-					if( ValidateObject( p ) )
+					// Fetch backpack of owner of trade window
+					CItem *ownerPack = tradeWindowOwner->GetPackItem();
+					if( ValidateObject( ownerPack ) )
 					{
+						// Iterate through all objects in trade window
 						GenericList< CItem * > *iCont = i->GetContainsList();
 						for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
 						{
 							if( ValidateObject( j ) )
-								j->SetCont( p );
+							{
+								// Delete pet transfer deeds - they only live inside trade windows
+								if( j->GetType() == IT_PETTRANSFERDEED )
+								{
+									j->Delete();
+									continue;
+								}
+
+								// Throw item from trade window back into owner's backpack
+								j->SetCont( ownerPack );
+							}
 						}
 					}
 				}
@@ -204,9 +217,41 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 			if( ValidateObject( i ) )
 			{
 				if( tradeSuccess )
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Find serial of pet
+						SERIAL petSerial = i->GetTempVar( CITV_MORE );
+						if( petSerial != INVALIDSERIAL )
+						{
+							CChar *petChar = calcCharObjFromSer( petSerial );
+							if( ValidateObject( petChar ) )
+							{
+								// Transfer pet to other player
+								Npcs->finalizeTransfer( petChar, p1, p2 );
+							}
+						}
+
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move transferred item to other player
 					i->SetCont( bp2 );
+				}
 				else
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move item back to original player's backpack
 					i->SetCont( bp1 );
+				}
 				i->PlaceInPack();
 			}
 		}
@@ -216,9 +261,41 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 			if( ValidateObject( i ) )
 			{
 				if( tradeSuccess )
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Find serial of pet
+						SERIAL petSerial = i->GetTempVar( CITV_MORE );
+						if( petSerial != INVALIDSERIAL )
+						{
+							CChar *petChar = calcCharObjFromSer( petSerial );
+							if( ValidateObject( petChar ) )
+							{
+								// Transfer pet to other player
+								Npcs->finalizeTransfer( petChar, p2, p1 );
+							}
+						}
+
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move transferred item to other player
 					i->SetCont( bp1 );
+				}
 				else
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move item back to original player's backpack
 					i->SetCont( bp2 );
+				}
 				i->PlaceInPack();
 			}
 		}

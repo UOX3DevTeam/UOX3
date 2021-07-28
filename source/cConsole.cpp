@@ -31,6 +31,7 @@
 #include "cScript.h"
 #include "StringUtility.hpp"
 #include <iostream>
+#include <cctype>
 
 #if PLATFORM != WINDOWS
 #include <termios.h>
@@ -875,7 +876,8 @@ void CConsole::Process( SI32 c )
 #if defined( UOX_DEBUG_MODE )
 					print(strutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
 #endif
-					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0 );
+					jsval eventRetVal;
+					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
 				}
 				return;
 			}

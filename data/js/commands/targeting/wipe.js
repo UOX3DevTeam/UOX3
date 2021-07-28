@@ -84,15 +84,23 @@ function CallWipe( socket, cmdString )
 						break;
 					default:
 						all = false;
-						socket.SysMessage( "Facet (" + facetString + ") not found. Valid facets: 0/felucca, 1/trammel, 2/ilshenar, 3/malas, 4/tokuno")
+						// Facet (%s) not found. Valid facets: 0/felucca, 1/trammel, 2/ilshenar, 3/malas, 4/tokuno, 5/termur
+						var tempMsg = GetDictionaryEntry( 8111, socket.language );
+						socket.SysMessage( tempMsg.replace(/%s/gi, facetString ));
 						return;
 				}
 			}
 
 			if( facetString != "" )
-				socket.SysMessage( "Wiping " + uKey + " on facet: " + facetString );
+			{
+				var tempMsg = GetDictionaryEntry( 8112, socket.language ); // Wiping %s on facet: " + facetString
+				socket.SysMessage( tempMsg.replace(/%s/gi, uKey ) + " " + facetString );
+			}
 			else
-				socket.SysMessage( "Wiping " + uKey + " on ALL facets..." );
+			{
+				var tempMsg = GetDictionaryEntry( 8113, socket.language ); // Wiping %s on ALL facets...
+				socket.SysMessage( tempMsg.replace(/%s/gi, uKey ));
+			}
 
 			Console.PrintSectionBegin();
 			var iterateString = "";
@@ -165,7 +173,8 @@ function CallWipe( socket, cmdString )
 			// If no wipe was performed, it means the first param provided was invalid
 			if( !wipePerformed )
 			{
-				socket.SysMessage( "Invalid parameter (" + uKey + "). Valid params: all / items / npcs / spawners / (x1 y1 x2 y2), facet")
+				var tempMsg = GetDictionaryEntry( 8114, socket.language ); // Invalid parameter %s. Valid params: all / items / npcs / spawners / (x1 y1 x2 y2), facet
+				socket.SysMessage( tempMsg.replace(/%s/gi, uKey ));
 			}
 
 			Console.PrintDone();
@@ -178,7 +187,7 @@ function CallWipe( socket, cmdString )
 		facetToWipe = socket.currentChar.worldnumber;
 		socket.clickX = -1;
 		socket.clickY = -1;
-		socket.CustomTarget( 0, "Choose top corner to wipe" );
+		socket.CustomTarget( 0, GetDictionaryEntry( 8115, socket.language )); // Choose top corner to wipe:
 	}
 }
 
@@ -192,7 +201,7 @@ function onCallback0( socket, ourObj )
 	{
 		socket.clickX 	= socket.GetWord( 11 );
 		socket.clickY 	= socket.GetWord( 13 );
-		socket.CustomTarget( 1, "Choose bottom corner to wipe" );
+		socket.CustomTarget( 1, GetDictionaryEntry( 8116, socket.language )); // Choose bottom corner to wipe
 	}
 }
 
@@ -245,10 +254,12 @@ function DoWipe( socket, ourObj )
 	// Perform the wipe
 	Console.PrintSectionBegin();
 	Console.Print( mChar.name + " has initiated a wipe.\n" );
-	socket.SysMessage( "Wiping.." );
+	socket.SysMessage( GetDictionaryEntry( 8117, socket.language )); // Wiping..
 	var counter 	= IterateOver( "ITEM" );
 	var counterStr	= counter.toString();
-	socket.SysMessage( "Wiped " + counterStr + " items" );
+
+	var tempMsg = GetDictionaryEntry( 8118, socket.language ); // Wiped %i items
+	socket.SysMessage( tempMsg.replace(/%s/gi, counterStr ));
 	Console.Print( "Wipe deleted " + counterStr + " items.\n" );
 	Console.PrintDone();
 
