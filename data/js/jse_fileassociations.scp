@@ -157,6 +157,7 @@
 3200=npc/ai/cow_tipping.js
 3201=npc/ai/banker.js
 3203=npc/ai/splitting_npc.js
+3204=npc/ai/hireling.js
 
 // General Skills
 4000=skill/healing.js

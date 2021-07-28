@@ -38,23 +38,23 @@ function onCallback0( pSock, ourObj )
 	var isInRange = pUser.InRange( ourObj, 3 );
 
 	pSock.tempObj = null;
-	if ( !isInRange )
+	if( !isInRange )
 	{
 		pSock.SysMessage(GetDictionaryEntry( 461, pSock.Language ) ); // You are too far away.
 		return;
 	}
 
-	if ( !ValidateObject( ourObj ) || !ourObj.isItem )
+	if( !ValidateObject( ourObj ) || !ourObj.isItem )
 	{
 		// You feel that such an action would be inappropriate
 		pSock.SysMessage( GetDictionaryEntry( 2094, pSock.language ) );
 	}
-	else if ( !pUser.CanSee( ourObj ) )
+	else if( !pUser.CanSee( ourObj ) )
 	{
 		// You cannot see that
 		pSock.SysMessage( GetDictionaryEntry( 1646, pSock.language) );
 	}
-	else if ( iMoreZPart1 == 0 )
+	else if( iMoreZPart1 == 0 )
 	{
 		// That doesn't appear to be trapped
 		pSock.SysMessage( GetDictionaryEntry( 2095, pSock.language ) );
@@ -63,11 +63,11 @@ function onCallback0( pSock, ourObj )
 	{
 		var skillCheckModifier = 0;
 		var iGloves = pUser.FindItemLayer( 7 ); // hands layer
-		if ( ValidateObject( iGloves ) )
+		if( ValidateObject( iGloves ) )
 		{
 			skillCheckModifier = iGloves.weight;
 		}
-		if ( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, ( iMoreZPart3 + skillCheckModifier ), 1000 ) )
+		if( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, ( iMoreZPart3 + skillCheckModifier ), 1000 ) )
 		{
 			// You successfully render the trap harmless
 			pSock.SysMessage( GetDictionaryEntry( 2096, pSock.language ) );
@@ -76,7 +76,7 @@ function onCallback0( pSock, ourObj )
 		}
 		else
 		{
-			if ( RandomNumber( 0, 1 ) )
+			if( RandomNumber( 0, 1 ) )
 			{
 				// Oops.
 				pSock.SysMessage( GetDictionaryEntry( 2097, pSock.language ) );
