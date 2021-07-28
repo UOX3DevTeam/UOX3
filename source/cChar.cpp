@@ -2451,7 +2451,7 @@ void CChar::SendToSocket( CSocket *s )
 		toSend.Finalize();
 		s->Send( &toSend );
 
-		if( s->ClientVerShort() >= CV_SA2D )
+		if( s->ClientType() >= CV_SA2D )
 		{
 			// Send poison state of healthbar
 			CPHealthBarStatus hpBarStatus1( ( *this ), ( *s ), 1 );
