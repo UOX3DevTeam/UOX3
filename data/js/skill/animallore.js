@@ -3,7 +3,7 @@ function SkillRegistration()
 	RegisterSkill( 2, true );	// Animal Lore
 }
 
-var OSIGumpEnabled = 0;	// If this option is set to 0 you will see the old school uox gump
+var OSIGumpEnabled = 1;	// If this option is set to 0 you will see the old school uox gump
 var SEenabled = 1;		// If this option is set to 0 you will not see any SE Features
 var AOSenabled = 1;		// If this option is set to 0 you will not see any AOS Features
 var SAenabled = 1;		// If this option is set to 0 you will not see any SA Features
@@ -308,6 +308,7 @@ function onCallback0( pSock, ourObj )
 					UOXAnimalLoreGump.AddPageButton( 10, 260, 4014, 1 );
 					UOXAnimalLoreGump.Send( pSock );
 					UOXAnimalLoreGump.Free();
+					UOXposition = 20;
 				}
 			}
 		}
