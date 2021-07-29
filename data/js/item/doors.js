@@ -7,10 +7,6 @@ doorTypes = new Array (
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
-	{
-		pUser.visible = 0;
-	}
 	if( socket )
 	{
 		if( !pUser.InRange( iUsed, 3 ) )
