@@ -9,6 +9,7 @@
 	Max charges for a newly crafted Runebook ranges from 5 to 10 depending on the Inscriber's skill (if rank system for crafting is enabled), and is stored in the book's direction property
 	Newbie/blessed items will now have [Blessed] displayed in the item tooltip
 	Ghosts can no longer "speedhack" by spamming the tab button to go in and out of combat rapidly
+	Updated various JS item scripts to unhide characters when the items are used (Dragon Slayer)
 
 29/07/2021 - Dragon Slayer
 	Implemented Remove Trap skill, which depends on player's detect hidden and lockpicking skills being at least 50.0, and removes or fails to remove traps based on trap difficulty vs skill checks. Trap difficulty is set in the last part of a 4-part MOREZ value, using the following format:
