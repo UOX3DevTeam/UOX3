@@ -5,11 +5,6 @@
 function onUseChecked( pUser, iUsed )
 {
 	var bankBox = pUser.FindItemLayer(29);
-	if ( pUser.visible == 1 || pUser.visible == 2 )
-	{
-		pUser.visible = 0;
-	}
-
 	if( ValidateObject( bankBox ) && iUsed.container && iUsed.container.serial == bankBox.serial )
 	{
 		var checkSize = iUsed.GetTag( "CheckSize" );

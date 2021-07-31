@@ -77,6 +77,10 @@ function onUseUnChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 1757, pSock.language )); // Please dismount first.
 			return false;
 		}
+		if( pUser.visible == 1 || pUser.visible == 2 )
+		{
+			pUser.visible = 0;
+		}
 		if( iUsed.id == 0x100a)
 		{
 			if( pUser.direction != 6 )
