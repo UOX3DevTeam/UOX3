@@ -1,11 +1,6 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
-	{
-		pUser.visible = 0;
-	}
-
 	if( socket && iUsed && iUsed.isItem )
 	{
 		var itemOwner = GetPackOwner( iUsed, 0 );
@@ -28,11 +23,6 @@ function onUseChecked( pUser, iUsed )
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
-	if ( mChar.visible == 1 || mChar.visible == 2 )
-	{
-		mChar.visible = 0;
-	}
-
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
@@ -71,6 +61,10 @@ function onCallback1( socket, ourObj )
 							}
 							else
 							{
+								if( mChar.visible == 1 || mChar.visible == 2 )
+								{
+									mChar.visible = 0;
+								}
 								socket.SoundEffect( 0x3B3, true);
 								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
 								ourObj.Delete();
@@ -89,6 +83,10 @@ function onCallback1( socket, ourObj )
 								socket.SysMessage( GetDictionaryEntry( 1966, socket.language )); // You must unsecure the trash barrel before you can destroy it!
 							else
 							{
+								if( mChar.visible == 1 || mChar.visible == 2 )
+								{
+									mChar.visible = 0;
+								}
 								socket.SoundEffect( 0x3B3, true);
 								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
 								objMulti.RemoveTrashCont( ourObj );
@@ -155,6 +153,11 @@ function onCallback1( socket, ourObj )
 								tempItem.Delete();
 						}
 
+						if( mChar.visible == 1 || mChar.visible == 2 )
+						{
+							mChar.visible = 0;
+						}
+
 						// Finally delete the parent item for the house add-on
 						addonParent.Delete();
 					}
@@ -206,6 +209,11 @@ function ChopTree( socket, mChar )
 		return;
 	}
 
+	if( mChar.visible == 1 || mChar.visible == 2 )
+	{
+		mChar.visible = 0;
+	}
+
 	mChar.TurnToward( targX, targY );
 
 	socket.clickX = targX;
@@ -231,10 +239,6 @@ function CheckDistance( socket, mChar )
 function onTimer( mChar, timerID )
 {
 	var socket = mChar.socket;
-	if ( mChar.visible == 1 || mChar.visible == 2 )
-	{
-		mChar.visible = 0;
-	}
 	switch( timerID )
 	{
 	case 0:
@@ -274,6 +278,10 @@ function onTimer( mChar, timerID )
 				return;
 			}
 		}
+		if( mChar.visible == 1 || mChar.visible == 2 )
+		{
+			mChar.visible = 0;
+		}
 		if( mChar.isonhorse )
 			mChar.DoAction( 0x1C );
 		else
@@ -284,6 +292,10 @@ function onTimer( mChar, timerID )
 		mChar.StartTimer( 1500, 0, true );
 		break;
 	case 2:
+		if( mChar.visible == 1 || mChar.visible == 2 )
+		{
+			mChar.visible = 0;
+		}
 		if( mChar.isonhorse )
 			mChar.DoAction( 0x1C );
 		else
