@@ -295,3 +295,9 @@ STANDABLE=0
 {
 LIQUIDWET=1
 }
+
+// Standable items that probably shouldn't be standable
+[TILE 0x163c]
+{
+STANDABLE=0
+}

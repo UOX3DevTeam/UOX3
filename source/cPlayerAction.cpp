@@ -2968,6 +2968,10 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 			dataToAdd += " " + Dictionary->GetEntry( 9051, s->Language() ); // [Guarded]
 		}
 	}
+	if( i->isNewbie() )
+	{
+		s->objMessage( Dictionary->GetEntry( 9055, s->Language() ), i ); // [Blessed]
+	}
 
 	currentName += dataToAdd;
 	// Question: Do we put the creator thing here, saves some redundancy a bit later
@@ -3142,6 +3146,10 @@ bool CPISingleClick::Handle( void )
 		{
 			tSock->objMessage( Dictionary->GetEntry( 9051, tSock->Language() ), i ); // [Guarded]
 		}
+	}
+	if( i->isNewbie() )
+	{
+		tSock->objMessage( Dictionary->GetEntry( 9055, tSock->Language() ), i ); // [Blessed]
 	}
 	return true;
 }

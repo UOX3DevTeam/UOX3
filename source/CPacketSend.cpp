@@ -6764,6 +6764,12 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
+	if( cItem.isNewbie() )
+	{
+		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+		tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9055, tSock->Language() ).c_str() ); // [Blessed]
+		FinalizeData( tempEntry, totalStringLen );
+	}
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{	
 		tempEntry.stringNum = 1050044; // ~1_COUNT~ items, ~2_WEIGHT~ stones
@@ -6805,7 +6811,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = strutil::number( cItem.GetTempVar( CITV_MOREZ ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
-	else if( cItem.GetType() == IT_RECALLRUNE )
+	else if( cItem.GetType() == IT_RECALLRUNE && cItem.GetTempVar( CITV_MOREX ) != 0 && cItem.GetTempVar( CITV_MOREY ) != 0 )
 	{
 		// Add a tooltip that says something about where the recall rune is marked
 		switch( cItem.GetTempVar( CITV_MORE ) )

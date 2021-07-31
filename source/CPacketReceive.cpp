@@ -2040,7 +2040,7 @@ bool CPITalkRequest::HandleCommon( void )
 			ourChar->SetSpeechMode( 0 );
 			break;
 		case 7: // Rune renaming
-			speechItem->SetName( strutil::format(Dictionary->GetEntry( 684 ).c_str(), Text() ) );
+			speechItem->SetName( Text() );
 			tSock->sysmessage( 757, Text() );
 			ourChar->SetSpeechMode( 0 );
 			break;

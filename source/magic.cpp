@@ -1100,6 +1100,12 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 		return false;
 	}
 
+	if( i->GetType() == IT_RUNEBOOK )
+	{
+		sock->sysmessage( 710 ); // That item is not a recall rune.
+		return false;
+	}
+
 	bool markedInMulti = false;
 	CMultiObj *multi = caster->GetMultiObj();
 	if( ValidateObject( multi ) )
@@ -1148,6 +1154,9 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			tempitemname=Dictionary->GetEntry( 685 );
 		}
 		i->SetName( tempitemname );
+
+		// Change ID of rune from a blank, unmarked rune (0x1f17) to a marked one (0x1f14)
+		i->SetID( 0x1f14 );
 	}
 
 	sock->sysmessage( 686 ); // Recall rune marked.
@@ -3366,7 +3375,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			{
 				if( i->GetCont() != nullptr || LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 				{
-					if( i->GetType() == IT_RECALLRUNE || (curSpell != 45 && i->GetType() == IT_KEY && cwmWorldState->ServerData()->TravelSpellsFromBoatKeys() ))
+					if(( i->GetType() == IT_RECALLRUNE || (( curSpell == 32 || curSpell == 52 ) && i->GetType() == IT_RUNEBOOK )) || (curSpell != 45 && i->GetType() == IT_KEY && cwmWorldState->ServerData()->TravelSpellsFromBoatKeys() ))
 					{
 						playSound( src, curSpell );
 						doMoveEffect( curSpell, i, src );

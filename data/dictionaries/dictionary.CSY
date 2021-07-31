@@ -3858,5 +3858,35 @@
 9052=[uzamčeno a zabezpečeno]
 9053=[uzamčeno]
 9054=Mrtvý nemůžeš používat dovednosti.
+9055=[Požehnáno]
+// [9250-9300] Runebooks
+9250=Tato kniha potřebuje čas na dobití.
+9251=Nemůžete používat runbook z cizího batohu!
+9252=Nabíjí:
+9253=Max. nabití:
+9254=Název knihy
+9255=Prázdná
+9256=Nastavit výchozí
+9257=Pustit runu
+9258=Nepodařilo se zjistit runovou knihu. Existuje ještě?
+9259=Nastaveno nové výchozí umístění.
+9260=Toto místo v knize je prázdné.
+9261=Prosím, zadejte název runové knihy:
+9262=Toto nemá žádné další poplatky.
+9263=V batohu nemáte místo pro runu.
+9264=Vyjmul jsi runu.
+9265=Není zde žádná runa, kterou bys mohl odložit.
+9266=Toto kouzlo nemáš.
+9267=Nezdá se, že by to byla platná runová kniha.
+9268=To je nepřístupné.
+9269=To nelze provést, dokud je kniha uzamčena.
+9270=Toto jméno je příliš krátké nebo nebylo zadáno žádné jméno.
+9271=Toto jméno je příliš dlouhé. Maximálně 50 znaků.
+9272=Nový název runové knihy je: %s
+9273=Tento runebook je plný.
+9274=Do svého Runebooku jsi přidal runu s názvem %s.
+9275=Tato kniha již obsahuje maximální množství nábojů.
+9276=Nabíjíš runovou knihu hromádkou svitku odvolání.
+9277=Nabíjíš Runebook svitkem odvolání.
 }
 EOF

@@ -3858,5 +3858,35 @@
 9052=[bloccato e sicuro]
 9053=[bloccato]
 9054=Non puoi usare le abilità da morto.
+9055=[Benedetto]
+// [9250-9300] Runebooks
+9250=Questo libro ha bisogno di tempo per ricaricarsi.
+9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
+9252=Cariche:
+9253=Carica massima:
+9254=Rinomina libro
+9255=Vuoto
+9256=Impostare il default
+9257=Lascia perdere Rune
+9258=Impossibile rilevare il Runebook. Esiste ancora?
+9259=Nuovo posto di default impostato.
+9260=Questo posto nel libro è vuoto.
+9261=Inserisci un titolo per il runebook:
+9262=Questo non ha più cariche.
+9263=Non hai spazio per una runa nel tuo zaino.
+9264=Hai rimosso la runa.
+9265=Non c'è nessuna runa da scaricare.
+9266=Non hai quell'incantesimo.
+9267=Quello non sembra essere un Runebook valido.
+9268=Quello è inaccessibile.
+9269=Quello non può essere fatto mentre il libro è bloccato.
+9270=Quel nome è troppo corto, o non è stato inserito alcun nome.
+9271=Quel nome è troppo lungo. Massimo 50 caratteri.
+9272=Il nuovo nome del Runebook è: %s
+9273=Questo Runebook è pieno.
+9274=Hai aggiunto una runa chiamata %s al tuo Runebook.
+9275=Questo libro ha già il massimo delle cariche.
+9276=Carichi il Runebook con una pila di scroll di richiamo.
+9277=Carichi il Runebook con una pergamena di richiamo.
 }
 EOF

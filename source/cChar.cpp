@@ -2426,8 +2426,9 @@ void CChar::SendToSocket( CSocket *s )
 			alwaysSendItemHue = true;
 		}
 
-		if( mCharObj == this )
+		if( mCharObj == this && !mCharObj->IsDead() )
 		{
+			// Don't do this with ghost players, or they'll be able to speed their way across the map by spamming tab
 			CPDrawGamePlayer gpToSend( (*this) );
 			s->Send( &gpToSend );
 

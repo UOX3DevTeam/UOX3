@@ -11801,8 +11801,10 @@ ITEMMENU=7
 misc_magic.dfn
 0x0efa=a spellbook
 ADDITEM=0x0efa
-0x1f14=a recall rune
-ADDITEM=0x1f14
+0x1f17=a recall rune (blank)
+ADDITEM=0x1f17
+0x22c5=a runebook
+ADDITEM=runebook
 0x0e2d=crystal ball
 ADDITEM=0x0e2d
 0x0e2e=crystal ball
