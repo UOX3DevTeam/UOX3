@@ -1,6 +1,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var itemOwner = GetPackOwner( iUsed, 0 );
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( itemOwner == null || itemOwner != pUser )
 	{
 		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); // That item must be in your backpack before it can be used.

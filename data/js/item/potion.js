@@ -10,6 +10,10 @@ const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to 
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( socket && iUsed && iUsed.isItem )
 	{
 		if( pUser.isUsingPotion )

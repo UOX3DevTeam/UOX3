@@ -1,6 +1,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 
 	if( socket && iUsed && iUsed.isItem )
 	{
@@ -45,6 +49,10 @@ function onCallback0( socket, myTarget)
 {
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 
 	if( !socket.GetWord( 1 ) && myTarget.isChar )
 	{
@@ -72,6 +80,10 @@ function onCallback0( socket, myTarget)
 function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 
 	if( timerID == 0 )
 	{

@@ -1,7 +1,6 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
-
 	//Check if user is in range of pickpocket dip
 	if( !iUsed.InRange( pUser, 1 ) )
 	{
