@@ -2,6 +2,7 @@
 // 24/07/2021 Xuri; xuri@uox3.org
 // This script contains all the default functions of the scissors,
 // from sheep-shearing to cloth cutting.
+var AOSEnabled = 1;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -24,7 +25,9 @@ function onCallback0( pSock, myTarget )
 {
 	var pUser 	= pSock.currentChar;
 	var StrangeByte	= pSock.GetWord( 1 );
-	var tileID	= pSock.GetWord( 17 );
+	var tileID = pSock.GetWord( 17 );
+	myTarget.SetTag( "ResourceColor", myTarget.colour );
+	var ResourceColor = myTarget.GetTag( "ResourceColor" );
 
 	if( !ValidateObject( myTarget ) || tileID == 0 )
 	{ //Target is invalid or a Maptile
@@ -41,7 +44,9 @@ function onCallback0( pSock, myTarget )
 				return;
 			}
 			else if( myTarget.id == 0x00df || myTarget.id == 0x00cf )
+			{
 				TriggerEvent( 2012, "shearSheep", pUser, myTarget );
+			}
 			else
 				pSock.SysMessage( GetDictionaryEntry( 6030, pSock.language ) ); // You can't use the scissors on that.
 			return;
@@ -68,34 +73,82 @@ function onCallback0( pSock, myTarget )
 					return;
 				}
 			}
-			else // ...or is the target item on the ground?
+			else
 			{
 				pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language ) ); // This has to be in your backpack before you can use it.
 				return;
 			}
-			tileID = myTarget.id;
-			if( tileID >= 3989 && tileID <= 3996 ) // <-- Decimal item-ids
+
+			if (myTarget.isNewbie == true)
+			{
+				pSock.SysMessage(GetDictionaryEntry(6036, pSock.language)); // Scissors cannot be used on that to produce anything.
+				return;
+			}
+
+			if( CutBolts( tileID ) )
 			{ //Cut bolts of cloth into cut cloth
+				pUser.SoundEffect( 0x248, true );
 				pSock.SysMessage( GetDictionaryEntry( 6033, pSock.language ) ); // You cut the material and place it into your backpack.
-				var itemMade = CreateDFNItem( pSock, pUser, "0x1766", myTarget.amount*50, "ITEM", true );  //give the player some cut cloth
+				CreateDFNItem( pSock, pUser, "0x1766", myTarget.amount*50, "ITEM", true, ResourceColor );  //give the player some cut cloth
 				myTarget.Delete();
 				return;
 			}
-			else if(( tileID >= 5981 && tileID <= 5992 ) || ( tileID >= 5397 && tileID <= 5400 ) || ( tileID >= 5422 && tileID <= 5444 ) || ( tileID >= 7933 && tileID <= 7940 )) // <-- Decimal item-ids
-			{ //Cut folded cloth/clothes into bandages
+			else if( CutCloth( tileID ) )
+			{ //Cut folded cloth and cut cloth into bandages
+				pUser.SoundEffect( 0x248, true );
 				pSock.SysMessage( GetDictionaryEntry( 6034, pSock.language ) ); // You cut the material into bandage and place it in your backpack.
-				var itemMade = CreateDFNItem( pSock, pUser, "0x0e21", myTarget.amount, "ITEM", true );  //give the player some bandages
+				CreateDFNItem( pSock, pUser, "0x0e21", myTarget.amount, "ITEM", true, ResourceColor );  //give the player some bandages
 				myTarget.Delete();
 				return;
 			}
-			else if( tileID >= 4216 && tileID <= 4217 ) // <-- Decimal item-ids
+			else if( CutLeather( tileID ) )
 			{ //Cut up hides into leather
+				pUser.SoundEffect( 0x248, true );
 				pSock.SysMessage( GetDictionaryEntry( 6035, pSock.language ) ); // You cut the material into leather and place it in your backpack.
-				var itemMade = CreateDFNItem( pSock, pUser, "0x1081", myTarget.amount, "ITEM", true );  //give the player some leather
+				CreateDFNItem( pSock, pUser, "0x1081", myTarget.amount, "ITEM", true, ResourceColor );
+				myTarget.Delete();
+				return;
+			}
+			else if ( CutClothing ( tileID ) )
+			{//Cut Clothing into cut cloth
+				pUser.SoundEffect( 0x248, true );
+				CreateDFNItem( pSock, pUser, "0x1766", myTarget.amount*2 , "ITEM", true, ResourceColor );
+				myTarget.Delete();
+				return;
+			}
+			else if ( AOSEnabled == 1  && CutBones ( tileID ) )
+			{//Cut Bones Parts into Bone
+				pUser.SoundEffect( 0x248, true );
+				CreateDFNItem( pSock, pUser, "0x0f7e", myTarget.amount*10 , "ITEM", true, ResourceColor );
 				myTarget.Delete();
 				return;
 			}
 		}
 		pSock.SysMessage( GetDictionaryEntry( 6036, pSock.language ) ); // Scissors cannot be used on that to produce anything.
 	}
+}
+
+function CutClothing( tileID )
+{
+	return ( ( tileID >= 5397 && tileID <= 5400 ) || ( tileID >= 5422 && tileID <= 5444 ) || ( tileID >= 7933 && tileID <= 7940 ) );
+}
+
+function CutLeather( tileID )
+{
+	return ( tileID >= 4216 && tileID <= 4217 );
+}
+
+function CutCloth( tileID )
+{
+	return ( tileID >= 5981 && tileID <= 5992 );
+}
+
+function CutBolts( tileID )
+{
+	return ( tileID >= 3989 && tileID <= 3996 );
+}
+
+function CutBones( tileID )
+{
+	return ( tileID >= 6921 && tileID <= 6929 || ( tileID >= 6935 && tileID <= 6937 ) );
 }
