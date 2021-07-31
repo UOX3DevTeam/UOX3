@@ -1,5 +1,9 @@
 function onUseChecked( pUser, iUsed )
-{ 
+{
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	var iDice1 = RandomNumber( 1, 6 );
 	var iDice2 = RandomNumber( 1, 6 );
 	

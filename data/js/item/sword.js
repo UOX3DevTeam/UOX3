@@ -23,7 +23,6 @@ function onUseChecked( pUser, iUsed )
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
-
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
@@ -117,6 +116,10 @@ function CarveCorpse( socket, mChar, ourObj )
 {
 	if( mChar.InRange( ourObj, 3 ) )
 	{
+		if( mChar.visible == 1 || mChar.visible == 2 )
+		{
+			mChar.visible = 0;
+		}
 		mChar.DoAction( 0x20 );
 		if( (ourObj.morey>>24) == 0 )
 		{
