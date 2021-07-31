@@ -34,8 +34,14 @@ function onCallback0( pSock, ourObj )
 	var pUser = pSock.currentChar;
 	if( ValidateObject( pUser ) && ValidateObject( ourObj ) && ourObj.isItem )
 	{
-		if( ourObj.id == 0x0E34 || ourObj.id == 0x0EF3 )
+		if( ourObj.id == 0x0E34 || ourObj.id == 0x0EF3 || ourObj.type == 50 )
 		{
+			if( ourObj.id == 0x1f14 )
+			{
+				pUser.SysMessage( "That rune is not blank." );
+				return;
+			}
+
 			var pPack = pUser.pack;
 			if( ValidateObject( pPack ) )
 			{

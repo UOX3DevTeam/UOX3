@@ -15,6 +15,10 @@ function command_DUPE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	if( !socket.GetWord( 1 ) && ValidateObject( ourObj ))
 	{
 		if( ourObj.isItem || ourObj.isChar )

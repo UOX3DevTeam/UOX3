@@ -1,3 +1,15 @@
+31/07/2021 - Xuri
+	Fixed a bug with PACKITEM tag which seeped in with previous commit, which could cause a server crash due to incorrect handling of the tag data
+	Blank recall runes will no longer have a tooltip with the world the runes were marked in
+	A west-facing rune with item ID 0x1f17 has been added to represent blank, unmarked runes. This is now the rune that vendors sell, and which can be added through the magic-portion of the 'add menu. Upon being marked by a Mark spell, the rune will change ID to the north-facing one with ID 0x1f14. This is to accommodate the Inscription crafting skill, which will use the blank 0x1f17 runes as a crafting resource.
+	Inscription skill can now be used to craft Runebooks. In addition to the skill requirement (min 45.0 Inscription), it requires 8 blank scrolls, 1 blank recall rune, 1 Recall scroll and 1 Gate Travel spell.
+	Added new item type - IT_RUNEBOOK (49)
+	Added new item definition for Runebook ([runebook]) to dfndata/items/magic/misc_magic.dfn
+	Integrated a version of the Runebook JS script rewritten from scratch to support all the features that ~pub15 era Runebooks did, including dropping runes and Recall scrolls on the books, recalling/gating directly from the spell icons in the Runebook, and more.
+	Max charges for a newly crafted Runebook ranges from 5 to 10 depending on the Inscriber's skill (if rank system for crafting is enabled), and is stored in the book's direction property
+	Newbie/blessed items will now have [Blessed] displayed in the item tooltip
+	Ghosts can no longer "speedhack" by spamming the tab button to go in and out of combat rapidly
+
 29/07/2021 - Dragon Slayer
 	Implemented Remove Trap skill, which depends on player's detect hidden and lockpicking skills being at least 50.0, and removes or fails to remove traps based on trap difficulty vs skill checks. Trap difficulty is set in the last part of a 4-part MOREZ value, using the following format:
 		MOREZ=0x01 0x32 0x11 0x37 	// First part is trap enabled/disabled, second part is damage dealt by trap, third part is minimum remove trap skill required to remove trap, and fourth part is minimum skill required for guaranteed removal success

@@ -3857,6 +3857,36 @@
 9051=[Bewacht]
 9052=[Abgesperrt & gesichert]
 9053=[Abgesperrt]
-9054=Sie können im toten Zustand keine Fähigkeiten verwenden.
+9054=Du kannst keine Fertigkeiten benutzen, wenn du tot bist.
+9055=[Gesegnet]
+// [9250-9300] Runenbücher
+9250=Dieses Buch braucht Zeit zum Aufladen.
+9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
+9252=Aufladungen:
+9253=Max. Aufladungen:
+9254=Buch umbenennen
+9255=Leer
+9256=Standard setzen
+9257=Rune ablegen
+9258=Runenbuch kann nicht erkannt werden. Ist es noch vorhanden?
+9259=Neuer Standardort festgelegt.
+9260=Dieser Platz im Buch ist leer.
+9261=Bitte geben Sie einen Titel für das Runenbuch ein:
+9262=Dies hat keine weiteren Kosten.
+9263=Du hast keinen Platz für eine Rune in deinem Rucksack.
+9264=Du hast die Rune entfernt.
+9265=Es ist keine Rune zum Ablegen vorhanden.
+9266=Du hast diesen Zauberspruch nicht.
+9267=Das scheint kein gültiges Runenbuch zu sein.
+9268=Das ist unzugänglich.
+9269=Das kann nicht getan werden, solange das Buch gesperrt ist.
+9270=Der Name ist zu kurz, oder es wurde kein Name eingegeben.
+9271=Dieser Name ist zu lang. Maximal 50 Zeichen.
+9272=Der neue Name des Runenbuchs lautet: %s
+9273=Dieses Runebook ist voll.
+9274=Du hast eine Rune namens %s zu deinem Runenbuch hinzugefügt.
+9275=Dieses Buch hat bereits die maximale Anzahl an Ladungen.
+9276=Du hast das Runenbuch mit einem Stapel Rückruf-Schriftrolle aufgeladen.
+9277=Du hast das Runenbuch mit einer Rückruf-Schriftrolle aufgeladen.
 }
 EOF
