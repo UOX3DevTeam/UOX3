@@ -12,11 +12,26 @@ good=28
 layer=1
 }
 
+// Used recall rune
 [0x1f14]
 {
 get=base_item
 name=a recall rune
 id=0x1f14
+weight=100
+value=18 9
+type=50
+restock=15
+decay=1
+good=28
+}
+
+// Blank recall rune
+[0x1f17]
+{
+get=base_item
+name=a recall rune
+id=0x1f17
 weight=100
 value=18 9
 type=50
@@ -90,4 +105,21 @@ value=2 1
 decay=1
 good=28
 script=5016
+}
+
+[runebook]
+{
+get=base_item
+name=a runebook
+id=0x22c5
+color=0x0461
+weight=0
+value=22 11
+type=49
+restock=15
+decay=1
+maxhp=10
+good=28
+newbie
+script=5029
 }

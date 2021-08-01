@@ -801,6 +801,26 @@ type=62
 amount=2
 }
 
+[tavernkeep-spawn]
+{
+get=base_spawner
+name=Tavernkeeper Spawn
+spawnobjlist=tavernkeeper
+id=0x1397
+type=62
+amount=2
+}
+
+[waiter-spawn]
+{
+get=base_spawner
+name=Waiter Spawn
+spawnobjlist=waiter
+id=0x1397
+type=62
+amount=2
+}
+
 [jewler-spawn]
 {
 get=base_spawner
@@ -816,6 +836,26 @@ amount=2
 get=base_spawner
 name=Leatherworker Spawn
 spawnobjlist=leatherworker
+id=0x1397
+type=62
+amount=2
+}
+
+[furtrader-spawn]
+{
+get=base_spawner
+name=Furtrader Spawn
+spawnobjlist=furtrader
+id=0x1397
+type=62
+amount=2
+}
+
+[tanner-spawn]
+{
+get=base_spawner
+name=Tanner Spawn
+spawnobjlist=tanner
 id=0x1397
 type=62
 amount=2
@@ -871,6 +911,16 @@ type=62
 amount=2
 }
 
+[mapmaker-spawn]
+{
+get=base_spawner
+name=Mapmaker Spawn
+spawnobjlist=mapmaker
+id=0x1397
+type=62
+amount=2
+}
+
 [spinner-spawn]
 {
 get=base_spawner
@@ -906,6 +956,16 @@ amount=2
 get=base_spawner
 name=Weaponsmith Spawn
 spawnobjlist=weaponsmith
+id=0x1397
+type=62
+amount=2
+}
+
+[weaver-spawn]
+{
+get=base_spawner
+name=Weaver Spawn
+spawnobjlist=weaver
 id=0x1397
 type=62
 amount=2
@@ -957,6 +1017,16 @@ amount=2
 get=base_spawner
 name=Fighter Spawn
 spawnobjlist=fighter
+id=0x1397
+type=62
+amount=2
+}
+
+[ranger-spawn]
+{
+get=base_spawner
+name=Ranger Spawn
+spawnobjlist=ranger
 id=0x1397
 type=62
 amount=2
@@ -1080,6 +1150,61 @@ id=0x1f14
 type=125
 spawnobjlist=escorts
 amount=1
+}
+
+[areaspawnertest]
+{
+get=base_spawner
+name=Area Spawner Test
+id=0x1f14
+type=69
+spawnobj=m_fighter
+amount=3
+more=0x00000505
+}
+
+[areaspawnertest2]
+{
+get=base_spawner
+name=Area Spawner Test
+id=0x1f14
+type=69
+spawnobj=m_fighter
+amount=3
+more=0 0 5 5
+}
+
+[areaspawnertest3]
+{
+get=base_spawner
+name=Area Spawner Test
+id=0x1f14
+type=69
+spawnobj=m_fighter
+amount=3
+more=0x00 0x00 0x05 0x05
+}
+
+[areaspawnertest4]
+{
+get=base_spawner
+name=Area Spawner Test
+id=0x1f14
+type=69
+spawnobj=m_fighter
+amount=3
+more=0x0 0x0 0x5 0x5
+}
+
+[spawn_container]
+{
+get=base_spawner
+id=0x0e40
+visible=0
+name=Spawn Container
+type=63
+spawnobjlist=diggingweapons
+morez=0x01320000
 }
 
 EOF

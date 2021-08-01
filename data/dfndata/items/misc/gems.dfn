@@ -21,7 +21,6 @@ get=base_gem
 name=star sapphire
 id=0x0F0F
 value=150 75
-
 }
 
 [0x0F10]

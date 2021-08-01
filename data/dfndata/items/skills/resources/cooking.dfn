@@ -5,3 +5,14 @@ name=cookie mix
 id=0x103f
 weight=100
 }
+
+// wheat shea(f/ves)
+[0x1ebd]
+{
+get=base_item
+name=#
+id=0x1ebd
+weight=100
+pileable=1
+value=2 1
+}

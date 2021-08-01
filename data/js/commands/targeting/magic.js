@@ -62,12 +62,12 @@ function onCallback1( socket, ourObj )
 		}
 		else if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
-			txtMessage = GetDictionaryEntry( 431, socket.language );
+			txtMessage = GetDictionaryEntry( 431, socket.language ); // That rune is not yet marked!
 			socket.SysMessage( txtMessage );
 		}
 		else
 		{
-			txtMessage = GetDictionaryEntry( 682, socket.language );
+			txtMessage = GetDictionaryEntry( 682, socket.language ); // You have recalled from the rune.
 			socket.SysMessage( txtMessage );
 			mChar.Recall( ourObj );
 		}
@@ -85,8 +85,25 @@ function onCallback2( socket, ourObj )
 	var mChar 	= socket.currentChar;
 	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
-		var txtMessage = GetDictionaryEntry( 686 );
-		socket.SysMessage( txtMessage );
+		if( ourObj.type != 50 ) // Is it a recall rune?
+		{
+			socket.SysMessage( GetDictionaryEntry( 710 )); // That item is not a recall rune.
+			return;
+		}
+
+		if( !ValidateObject( ourObj.container ) || FindRootContainer( ourObj, 0 ) != mChar.pack )
+		{
+			socket.SysMessage( GetDictionaryEntry( 1763 )); // That item must be in your backpack before it can be used.
+			return;
+		}
+
+		if( ourObj.id != 0x1f17 )
+		{
+			pUser.SysMessage( "That rune is not blank." );
+			return;
+		}
+
+		socket.SysMessage( GetDictionaryEntry( 686 )); // Recall rune marked.
 		mChar.Mark( ourObj );
 
 		var worldNum = mChar.worldnumber;
@@ -112,5 +129,7 @@ function onCallback2( socket, ourObj )
 				break;
 		}
 
+		// Change ID of recall rune from blank, unmarked rune to a marked rune
+		ourObj.id = 0x1f14;
 	}
 }

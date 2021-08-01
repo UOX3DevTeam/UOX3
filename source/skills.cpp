@@ -97,6 +97,11 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetBuyValue() > 0 )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
+		if( c->GetID() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
+		{
+			// Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10 based on rank
+			c->SetMaxHP( static_cast<UI16>( std::max( static_cast<UI16>(5), static_cast<UI16>(( rank * c->GetMaxHP() ) / 10 ))));
+		}
 
 		// Convert item's rank to a value between 1 and 10, to fit rank system messages
 		UI08 tempRank = floor(static_cast<R32>((( rank * 100 ) / maxrank ) / 10 ));
