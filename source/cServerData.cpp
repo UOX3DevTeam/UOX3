@@ -438,7 +438,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("PETLOYALTYLOSSONFAILURE", 276);
 	regINIValue("PETLOYALTYRATE", 277);
 	regINIValue("SHOWNPCTITLESINTOOLTIPS", 278);
-
+	regINIValue("FISHPERAREA", 279);
+	regINIValue("FISHRESPAWNTIMER", 280);
+	regINIValue("FISHRESPAWNAREA", 281);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -669,6 +671,9 @@ void CServerData::ResetDefaults( void )
 	ResOre( 10 );
 	ResOreTime( 600 );
 	ResOreArea( 10 );
+	ResFish( 10 );
+	ResFishTime( 600 );
+	ResFishArea( 10 );
 	//REPSYS
 	SystemTimer( tSERVER_CRIMINAL, 120 );
 	RepMaxKills( 4 );
@@ -3242,6 +3247,53 @@ void CServerData::ResOreArea( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 ResFish( void ) const
+//|					void ResFish( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum number of fish in a given resource area
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::ResFish( void ) const
+{
+	return fishperarea;
+}
+void CServerData::ResFish( SI16 value )
+{
+	fishperarea = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ResFishTime( void ) const
+//|					void ResFishTime( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time it takes for 1 single fish to respawn in a resource area
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ResFishTime( void ) const
+{
+	return fishrespawntimer;
+}
+void CServerData::ResFishTime( UI16 value )
+{
+	fishrespawntimer = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 CServerData::ResFishArea( void ) const
+//|					void CServerData::ResFishArea( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the number of fish-areas to split the world into (min 10)
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ResFishArea( void ) const
+{
+	return fishrespawnarea;
+}
+void CServerData::ResFishArea( UI16 value )
+{
+	if( value < 10 )
+		value = 10;
+	fishrespawnarea = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	R64 AccountFlushTimer( void ) const
 //|					void AccountFlushTimer( R64 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3696,6 +3748,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
 		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
 		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << '\n';
+		ofsOutput << "FISHPERAREA=" << ResFish() << '\n';
+		ofsOutput << "FISHRESPAWNTIMER=" << ResFishTime() << '\n';
+		ofsOutput << "FISHRESPAWNAREA=" << ResFishArea() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
@@ -4795,6 +4850,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 278:	// SHOWNPCTITLESINTOOLTIPS[0262]
 			ShowNpcTitlesInTooltips( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 279:	 // FISHPERAREA
+			ResFish(static_cast<SI16>(std::stoi(value, nullptr, 0)) );
+			break;
+		case 280:	 // FISHRESPAWNTIMER
+			ResFishTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 281:	 // FISHRESPAWNAREA
+			ResFishArea( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		default:
 			rvalue = false;

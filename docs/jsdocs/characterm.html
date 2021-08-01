@@ -250,10 +250,29 @@ myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SpeechInput">SpeechInput</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void SpeechInput( speechID );</pre>
-<tr><td class="property">Purpose		<td class="value">Calls up the onSpeechInput event with the <br>text the user types.
+<tr><td class="property">Prototype		<td class="value"><pre>void SpeechInput( speechID, (speechItem) );</pre>
+<tr><td class="property">Purpose		<td class="value">Calls up the onSpeechInput event using specified ID, with the text the user types. Also supports an optional speechItem parameter, which allows passing along an object to the onSPeechInput event.
 <tr><td class="property">Example of Usage	<td class="value"><pre>
+// Example 1, in some function, we call upon user to enter some text:
 myChar.SpeechInput( 1 );
+
+// When user enters their text, the onSpeechInput() event gets triggered
+function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
+{
+	// In this case, iUsed is null, because no item was passed along with SpeechInput
+}
+
+// Example 2, this time we pass along an item object called iUsed
+myChar.SpeechInput( 1, iUsed );
+
+function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
+{
+	// After checking to make sure iUsed is valid, we assign the text the user entered as the new name of iUsed
+	if( ValidateObject( iUsed ))
+	{
+		iUsed.name = pSpeech;
+	}
+}
 </pre></table>
 
 <p>&nbsp;</p>

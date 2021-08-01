@@ -3206,6 +3206,8 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 			case CRESP_LOGTIME:				gPriv->logTime	= encaps.toInt();						break;
 			case CRESP_OREAMT:				gPriv->oreAmt	= encaps.toInt();						break;
 			case CRESP_ORETIME:				gPriv->oreTime	= encaps.toInt();						break;
+			case CRESP_FISHAMT:				gPriv->fishAmt	= encaps.toInt();						break;
+			case CRESP_FISHTIME:			gPriv->fishTime	= encaps.toInt();						break;
 			default:																				break;
 		}
 	}
@@ -3226,6 +3228,8 @@ JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 			case CRESP_LOGTIME:				*vp = INT_TO_JSVAL( gPriv->logTime );					break;
 			case CRESP_OREAMT:				*vp = INT_TO_JSVAL( gPriv->oreAmt );					break;
 			case CRESP_ORETIME:				*vp = INT_TO_JSVAL( gPriv->oreTime );					break;
+			case CRESP_FISHAMT:				*vp = INT_TO_JSVAL( gPriv->fishAmt );					break;
+			case CRESP_FISHTIME:			*vp = INT_TO_JSVAL( gPriv->fishTime );					break;
 			default:																				break;
 		}
 	}

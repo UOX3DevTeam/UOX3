@@ -2504,6 +2504,10 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		{
 			cwmWorldState->ServerData()->ResOreArea( newVal );
 		}
+		else if( resType == "FISH" ) // Fish
+		{
+			cwmWorldState->ServerData()->ResFishArea( newVal );
+		}
 	}
 
 	if( resType == "LOGS" )
@@ -2514,6 +2518,10 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreArea() );
 	}
+	else if( resType == "FISH" )
+	{
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResFishArea() );
+	}
 
 	return JS_TRUE;
 }
@@ -2522,7 +2530,7 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Function	-	JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	18th September, 2005
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets amount of resources (logs/ore) in each resource area on the server
+//|	Purpose		-	Gets/Sets amount of resources (logs/ore/fish) in each resource area on the server
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -2545,6 +2553,10 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		{
 			cwmWorldState->ServerData()->ResOre( newVal );
 		}
+		else if( resType == "FISH" )
+		{
+			cwmWorldState->ServerData()->ResFish( newVal );
+		}
 	}
 
 	if( resType == "LOGS" )
@@ -2554,6 +2566,10 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	else if( resType == "ORE" )
 	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOre() );
+	}
+	else if( resType == "FISH" )
+	{
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResFish() );
 	}
 
 	return JS_TRUE;
@@ -2586,6 +2602,10 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		{
 			cwmWorldState->ServerData()->ResOreTime( newVal );
 		}
+		else if( resType == "FISH" )
+		{
+			cwmWorldState->ServerData()->ResFishTime( newVal );
+		}
 	}
 
 	if( resType == "LOGS" )
@@ -2595,6 +2615,10 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	else if( resType == "ORE" )
 	{
 		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreTime() );
+	}
+	else if( resType == "FISH" )
+	{
+		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResFishTime() );
 	}
 
 	return JS_TRUE;
@@ -4096,6 +4120,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 278:	 // SHOWNPCTITLESINTOOLTIPS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() );
+				break;
+			case 279:	 // FISHPERAREA
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ResFish()));
+				break;
+			case 280:	 // FISHRESPAWNTIMER
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishTime()));
+				break;
+			case 281:	 // FISHRESPAWNAREA
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishArea()));
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

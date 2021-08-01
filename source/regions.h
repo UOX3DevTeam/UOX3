@@ -25,8 +25,10 @@ struct MapResource_st
 	UI32	oreTime;
 	SI16	logAmt;
 	UI32	logTime;
+	SI16	fishAmt;
+	UI32	fishTime;
 
-	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
+	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 ), fishAmt( 0 ), fishTime( 0 )
 	{
 	}
 };

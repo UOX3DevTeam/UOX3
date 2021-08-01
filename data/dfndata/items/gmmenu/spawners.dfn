@@ -1042,6 +1042,76 @@ type=62
 amount=2
 }
 
+[gambler-spawn]
+{
+get=base_spawner
+name=Gambler Spawn
+spawnobjlist=gambler
+id=0x1397
+type=62
+amount=2
+}
+
+[judge-spawn]
+{
+get=base_spawner
+name=Judge Spawn
+spawnobjlist=judge
+id=0x1397
+type=62
+amount=2
+}
+
+[miller-spawn]
+{
+get=base_spawner
+name=Miller Spawn
+spawnobjlist=miller
+id=0x1397
+type=62
+amount=2
+}
+
+[monk-spawn]
+{
+get=base_spawner
+name=Monk Spawn
+spawnobjlist=monk
+id=0x1397
+type=62
+amount=2
+}
+
+[rancher-spawn]
+{
+get=base_spawner
+name=Rancher Spawn
+spawnobjlist=rancher
+id=0x1397
+type=62
+amount=2
+}
+
+[prisoner-spawn]
+{
+get=base_spawner
+name=Prisoner Spawn
+spawnobjlist=prisoner
+id=0x1397
+type=62
+amount=2
+}
+
+[sculptor-spawn]
+{
+get=base_spawner
+name=Sculptor Spawn
+spawnobjlist=sculptor
+id=0x1397
+type=62
+amount=2
+}
+
 [brigand-spawn]
 {
 get=base_spawner
