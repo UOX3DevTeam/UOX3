@@ -246,6 +246,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM },
 	{ "online",			CCP_ONLINE,			JSPROP_ENUMPERMRO  },
 	{ "direction",		CCP_DIRECTION,		JSPROP_ENUMANDPERM },
+	{ "isRunning",		CCP_ISRUNNING,		JSPROP_ENUMANDPERM },
 	{ "region",			CCP_REGION,			JSPROP_ENUMANDPERM },
 	{ "town",			CCP_TOWN,			JSPROP_ENUMANDPERM },
 	{ "guild",			CCP_GUILD,			JSPROP_ENUMANDPERM },
