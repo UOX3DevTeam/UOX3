@@ -105,6 +105,21 @@
 0x09cf
 }
 
+[ITEMLIST randomfootwear]
+{
+0x170b
+0x170f
+0x1711
+}
+
+[ITEMLIST randommagicfish]
+{
+prized_magic_fish
+wondrous_magic_fish
+truly_rare_magic_fish
+highly_peculiar_magic_fish
+}
+
 // Fishing listobjects - use these when you want to add a random item from a fishing itemlist
 // either in-game with the add command or in scripts
 
@@ -138,5 +153,16 @@ itemlist=fishbones
 itemlist=randomfish
 }
 
+//Random footwear
+[randomfootwear]
+{
+itemlist=randomfootwear
+}
+
+//Random magic fish
+[randommagicfish]
+{
+itemlist=randommagicfish
+}
 
 EOF

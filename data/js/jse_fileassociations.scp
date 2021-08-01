@@ -173,6 +173,7 @@
 4010=skill/tinkerawg.js
 4011=skill/tinkerclock.js
 4012=skill/tinkersextant.js
+4013=skill/fishing.js
 
 // Doors
 4500=item/doors.js
@@ -206,6 +207,7 @@
 5027=item/interiordecorator.js
 5028=item/hairrestyle.js
 5029=item/runebook.js
+5030=item/magicfish.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

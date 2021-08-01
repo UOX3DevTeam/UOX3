@@ -3888,5 +3888,17 @@
 9275=This book already has the maximum amount of charges.
 9276=You charge the Runebook with a stack of recall scroll.
 9277=You charge the Runebook with a recall scroll.
+// [9301-9310] Magic Fish
+9301=You are already under a similar effect.
+9302=You swallow the fish whole!
+// [9310-9400] Fishing Skill
+9310=What water do you want to fish in?
+9311=The fish don't seem to be biting here.
+9312=You are already fishing.
+9313=You need to be closer to the water to fish!
+9314=You fish a while, but fail to catch anything.
+9315=You pull out an item : magic fish
+9316=You pull out an item : fish
+9317=You pull out an item : footwear
 }
 EOF
