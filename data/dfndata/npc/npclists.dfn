@@ -933,6 +933,18 @@ m_innkeeper
 f_innkeeper
 }
 
+[NPCLIST tavernkeeper]
+{
+m_tavernkeeper
+f_tavernkeeper
+}
+
+[NPCLIST waiter]
+{
+m_waiter
+f_waitress
+}
+
 [NPCLIST herbalist]
 {
 m_herbalist
@@ -949,6 +961,12 @@ f_butcher
 {
 m_tailor
 f_tailor
+}
+
+[NPCLIST weaver]
+{
+m_weaver
+f_weaver
 }
 
 [NPCLIST bowyer]
@@ -969,6 +987,19 @@ m_leatherworker
 f_leatherworker
 }
 
+[NPCLIST furtrader]
+{
+m_furtrader
+f_furtrader
+}
+
+[NPCLIST tanner]
+{
+m_tanner
+f_tanner
+}
+
+
 [NPCLIST mage]
 {
 m_mage
@@ -985,6 +1016,12 @@ f_scribe
 {
 m_shipwright
 f_shipwright
+}
+
+[NPCLIST mapmaker]
+{
+m_mapmaker
+f_mapmaker
 }
 
 [NPCLIST spinner]
@@ -1103,10 +1140,58 @@ m_fighter
 f_fighter
 }
 
+[NPCLIST ranger]
+{
+m_ranger
+f_ranger
+}
+
 [NPCLIST sailor]
 {
 m_sailor
 f_sailor
+}
+
+[NPCLIST gambler]
+{
+m_gambler
+f_gambler
+}
+
+[NPCLIST judge]
+{
+m_judge
+f_judge
+}
+
+[NPCLIST miller]
+{
+m_miller
+f_miller
+}
+
+[NPCLIST monk]
+{
+m_monk
+f_monk
+}
+
+[NPCLIST rancher]
+{
+m_rancher
+f_rancher
+}
+
+[NPCLIST prisoner]
+{
+m_prisoner
+f_prisoner
+}
+
+[NPCLIST sculptor]
+{
+m_sculptor
+f_sculptor
 }
 
 [NPCLIST brigand]

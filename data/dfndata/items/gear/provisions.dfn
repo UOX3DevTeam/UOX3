@@ -16,9 +16,20 @@ script=5021
 get=base_item
 name=world map
 id=0x14EB
-weight=200
+weight=100
 value=75 37
 type=10
+restock=20
+decay=1
+}
+
+[0x14ec]
+{
+get=base_item
+name=blank map
+id=0x14ec
+weight=100
+value=75 37
 restock=20
 decay=1
 }

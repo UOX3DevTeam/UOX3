@@ -297,11 +297,14 @@ function onCallback8( pSock, myTarget )
 				tempItem.x = targX;
 				tempItem.y = targY;
 				tempItem.z = targZ;
-				var tempMsg = GetDictionaryEntry( 8940, pSock.language ); // Select target location for item %s:
-				pSock.CustomTarget( 8, tempMsg.replace(/%s/gi, TempItemID ));
 			}
 			else
+			{
 				pSock.SysMessage( GetDictionaryEntry( 8941, pSock.language )); // That doesn't seem to be a valid item-id from the DFNs. No item added!
+			}
+
+			var tempMsg = GetDictionaryEntry( 8940, pSock.language ); // Select target location for item %s:
+			pSock.CustomTarget( 8, tempMsg.replace(/%s/gi, TempItemID ));
 		}
 		else
 			pSock.SysMessage( GetDictionaryEntry( 8941, pSock.language )); // That doesn't seem to be a valid item-id from the DFNs. No item added!

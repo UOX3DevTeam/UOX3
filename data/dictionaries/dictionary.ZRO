@@ -3858,5 +3858,35 @@
 9052=[locked down & secure]
 9053=[locked down]
 9054=You cannot use skills while dead.
+9055=[Blessed]
+// [9250-9300] Runebooks
+9250=This book needs time to recharge.
+9251=You cannot use a Runebook from someone else's backpack!
+9252=Charges:
+9253=Max Charges:
+9254=Rename Book
+9255=Empty
+9256=Set Default
+9257=Drop Rune
+9258=Unable to detect Runebook. Does it still exist?
+9259=New default location set.
+9260=This place in the book is empty.
+9261=Please enter a title for the runebook:
+9262=This has no more charges.
+9263=You have no room for a rune in your backpack.
+9264=You have removed the rune.
+9265=There is no rune to be dropped.
+9266=You don't have that spell.
+9267=That does not seem to be a valid Runebook.
+9268=That is inaccessible.
+9269=That cannot be done while the book is locked down.
+9270=That name is too short, or no name was entered.
+9271=That name is too long. Maximum 50 chars.
+9272=The new name of the Runebook is: %s
+9273=This runebook is full.
+9274=You've added a rune named %s to your Runebook.
+9275=This book already has the maximum amount of charges.
+9276=You charge the Runebook with a stack of recall scroll.
+9277=You charge the Runebook with a recall scroll.
 }
 EOF

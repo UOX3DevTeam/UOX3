@@ -3861,5 +3861,35 @@
 9052=[fechado & seguro]
 9053=[bloqueado]
 9054=Não se pode usar competências enquanto morto.
+9055=[Bendito]
+// [9250-9300] Runebooks
+9250=Este livro precisa de tempo para ser recarregado.
+9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
+9252= Recarga:
+9253=Cargas Máximas:
+9254=Livro de nome
+9255=Empty
+9256=Padrão definido
+9257=Drop Rune
+9258=Não foi possível detectar o Runebook. Será que ainda existe?
+9259=Nova localização padrão definida.
+9260=Este local no livro está vazio.
+9261=Por favor introduza um título para o livro de runebook:
+9262=Este não tem mais encargos.
+9263=Não tem espaço para uma runa na sua mochila.
+9264=Tem retirado a runa.
+9265=Não há rúnica a ser retirada.
+9266=Não tem esse feitiço.
+9267=Não parece ser um livro de runas válido.
+9268=Isso é inacessível.
+9269=Isso não pode ser feito enquanto o livro estiver bloqueado.
+9270=Esse nome é demasiado curto, ou não foi introduzido nenhum nome.
+9271=Aquele nome é demasiado longo. Máximo 50 caracteres.
+9272=O novo nome do livro de Runebook é: %s
+9273=Este runebook está cheio.
+9274= Adicionou uma runa chamada %s ao seu livro de runas.
+9275= Este livro já tem o montante máximo de encargos.
+9276= Você cobra o livro de rúnicas com uma pilha de pergaminho de recolha.
+9277= Carrega-se o livro de ronda com um pergaminho de recolha.
 }
 EOF

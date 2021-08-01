@@ -378,7 +378,6 @@ blank
 [ITEMLIST 34]
 {
 0x1ffd
-0x1f9f
 0x1f7b
 0x1541
 blank
@@ -391,6 +390,7 @@ blank
 [ITEMLIST 35]
 {
 0x1f03
+blank
 blank
 }
 
@@ -458,7 +458,9 @@ blank
 [ITEMLIST 45]
 {
 0x1fa1
+0x1fa1
 0x1f03
+0x1f01
 0x1f01
 blank
 blank
@@ -511,7 +513,6 @@ blank
 [ITEMLIST 54]
 {
 0x1ffd
-0x1f9f
 0x1f7b
 0x1eff
 0x1541
@@ -526,6 +527,7 @@ blank
 [ITEMLIST 55]
 {
 0x1f03
+0x1eff
 0x1eff
 blank
 blank
@@ -545,6 +547,42 @@ blank
 0x09cd
 0x09ce
 0x09cf
+}
+
+// 1-H Weapons
+[ITEMLIST 58]
+{
+0x0f5c
+0x0f5e
+0x0f61
+0x13b4
+0x13b6
+0x13b8
+0x13b0
+0x13ff
+0x1401
+0x1405
+0x1407
+0x143b
+0x1441
+}
+
+// 1-H Swords
+[ITEMLIST 59]
+{
+0x0f5e
+0x0f61
+0x13b6
+0x13b8
+0x13ff
+}
+
+// 1-H Fencing
+[ITEMLIST 60]
+{
+0x0f51
+0x1401
+0x1405
 }
 
 // Treasure hunt list
@@ -1101,6 +1139,24 @@ itemlist=56
 [listobject57]
 {
 itemlist=57
+}
+
+// 1-H Weapons
+[listobject58]
+{
+itemlist=58
+}
+
+// 1-H Swords
+[listobject59]
+{
+itemlist=59
+}
+
+// 1-H Fencing
+[listobject60]
+{
+itemlist=60
 }
 
 // // Treasure hunt list
