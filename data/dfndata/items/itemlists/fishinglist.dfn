@@ -105,5 +105,38 @@
 0x09cf
 }
 
+// Fishing listobjects - use these when you want to add a random item from a fishing itemlist
+// either in-game with the add command or in scripts
+
+//Random Treasure (Paintings)
+[fishtreasure]
+{
+itemlist=fishtreasure
+}
+
+//Random weapons
+[fishweapons]
+{
+itemlist=fishweapons
+}
+
+//Random gems
+[fishgems]
+{
+itemlist=fishgems
+}
+
+//Random bones and discards
+[fishbones]
+{
+itemlist=fishbones
+}
+
+//Random Fish
+[randomfish]
+{
+itemlist=randomfish
+}
+
 
 EOF

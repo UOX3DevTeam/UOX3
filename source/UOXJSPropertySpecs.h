@@ -671,6 +671,8 @@ static JSPropertySpec CResourceProperties[] =
 	{ "logTime",	CRESP_LOGTIME,		JSPROP_ENUMANDPERM },
 	{ "oreAmount",	CRESP_OREAMT,		JSPROP_ENUMANDPERM },
 	{ "oreTime",	CRESP_ORETIME,		JSPROP_ENUMANDPERM },
+	{ "fishAmount",	CRESP_FISHAMT,		JSPROP_ENUMANDPERM },
+	{ "fishTime",	CRESP_FISHTIME,		JSPROP_ENUMANDPERM },
 	{	nullptr,	(SI08)0,			(UI08)0				}
 };
 

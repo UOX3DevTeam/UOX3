@@ -288,6 +288,9 @@ private:
 	SI16		logsperarea;					//	Maximum number of logs in a resource area
 	UI16		logsrespawntimer;				//	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
 	UI16		logsrespawnarea;				//	Number of log areas (ie Y x Y where Y == value)
+	SI16		fishperarea;					//	Maximum number of fish in a resource area
+	UI16		fishrespawntimer;				//	TIMERVAL? Time at which fish are respawned (only 1 fish, not all)
+	UI16		fishrespawnarea;				//	Number of fish areas (ie Y x Y where Y == value)
 
 	// Hunger & Food
 	SI16		hungerdamage;					//	Amount of damage applied if hungry and below threshold
@@ -855,6 +858,15 @@ public:
 
 	void		ResOreArea( UI16 value );
 	UI16		ResOreArea( void ) const;
+
+	void		ResFish( SI16 value );
+	SI16		ResFish( void ) const;
+
+	void		ResFishTime( UI16 value );
+	UI16		ResFishTime( void ) const;
+
+	void		ResFishArea( UI16 value );
+	UI16		ResFishArea( void ) const;
 
 	void		AccountFlushTimer( R64 value );
 	R64			AccountFlushTimer( void ) const;

@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 28. July, 2021</small></p>
+	<p style="margin:0"><small>Last Updated: 1. August, 2021</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4v</small></p>
 </div>
 
@@ -58,6 +58,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 1st, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with latest additions (pets and followers, fishing resource type)</li>
+						</ul>
 						<h4>July 28th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#uox3Dictionaries">Dictionaries</a> feature info with details on UOX3's multilingual support</li>
@@ -785,6 +789,10 @@ packitem=0x0f8d,30
 							Port number that server listens on for connections.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="highlight">SERVERLANGUAGE</span><strong>=0</strong><br>
+							Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 4 - French, 5 - Portuguese, 6 - Italian, 7 - Czech</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="highlight">NETRCVTIMEOUT</span><strong>=0</strong><br>
 							The time it takes for a connection to be dropped if no packets are received.</p>
 						</div>
@@ -1289,6 +1297,39 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_ini_petsandfollowers">
+					<label for="spoiler_ini_petsandfollowers">[pets and followers] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="highlight">MAXCONTROLSLOTS</span><strong>=5</strong><br>
+							Maximum number of pet control slots available to player. Disabled if 0</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">MAXFOLLOWERS</span><strong>=5</strong><br>
+							Maximum pets/followers a player can have active at the same time. Used if control slots are disabled</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">MAXPETOWNERS</span><strong>=10</strong><br>
+							Maximum number of different owners a pet can have over its lifetime before it becomes impossible to retame</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">CHECKPETCONTROLDIFFICULTY</span><strong>=1</strong><br>
+							Enable/Disable pet control difficulty system</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">PETLOYALTYGAINONSUCCESS</span><strong>=1</strong><br>
+							Amount of pet loyalty gained on successful pet command use</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">PETLOYALTYLOSSONFAILURE</span><strong>=3</strong><br>
+							Amount of pet loyalty lost on failed pet command use</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">PETLOYALTYRATE</span><strong>=900</strong><br>
+							Amount of seconds between each time pet loyalty is automatically reduced by 1. Takes 25 hours to deplete completely from max</p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_ini_speedup">
 					<label for="spoiler_ini_speedup">[speedup] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -1454,6 +1495,18 @@ packitem=0x0f8d,30
 							<p><span class="highlight">LOGSRESPAWNAREA</span><strong>=10</strong><br>
 							Number of log-areas to split the world into.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">FISHPERAREA</span><strong>=3</strong><br>
+							Maximum number of fish in a given resource area.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">FISHRESPAWNTIMER</span><strong>=600</strong><br>
+							Amount of time it takes for 1 single fish to respawn in a resource area.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">FISHRESPAWNAREA</span><strong>=10</strong><br>
+							Number of fish-areas to split the world into.</p>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_hunger">
@@ -1567,6 +1620,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="highlight">ALCHEMYBONUSMODIFIER</span><strong>=5</strong><br>
 							The modifier used to add bonus damage based on Alchemy skill for explosion potions. Defaults to 1 bonus damage per 5 skill-points in Alchemy skill, using the following formula: bonusDamage = alchemySkill / modifier</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="highlight">ARMORCLASSDAMAGEBONUS</span><strong>=0</strong><br>
+							Enables/disables double damage from armour class bonuses. Defaults to disabled.</p>
 						</div>
 					</div>
 
