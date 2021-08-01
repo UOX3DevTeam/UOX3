@@ -1891,7 +1891,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	else if( pdoll->IsNpc() )
 	{
 		std::string tempTitle = getNpcDictTitle( pdoll, s );
-		tempstr = FameTitle + pdoll->GetName() + " " + tempTitle;
+		tempstr = FameTitle + " " + pdoll->GetName() + " " + tempTitle;
 	}
 	else if( pdoll->IsDead() )
 		tempstr = pdoll->GetName();

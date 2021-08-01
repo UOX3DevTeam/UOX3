@@ -13,6 +13,11 @@ function shearSheep( pUser, sheep )
 	}
 	else
 	{
+		if( pUser.visible == 1 || pUser.visible == 2 )
+		{
+			pUser.visible = 0;
+		}
+
 		pUser.SysMessage( GetDictionaryEntry( 1773, pSock.language ) ); // You shear some wool from the sheep
 		sheep.SoundEffect( 0x0248, true );
 
