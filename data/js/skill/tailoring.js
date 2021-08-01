@@ -40,7 +40,7 @@ function onCallback1( socket, ourObj )
 			else
 				ourObj.Delete();
 		}
-		else if( ( resID >= 0x175D && resID <= 0x1768 ) || resID == 0x1078 || resID == 0x1079 )	// A valid tailoring resource
+		else if( ( resID >= 0x175D && resID <= 0x1768 ) || resID == 0x1078 || resID == 0x1079 || resID == 0x1081 || resID == 0x1082 ) // A valid tailoring resource
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )

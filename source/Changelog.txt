@@ -1,3 +1,17 @@
+01/08/2021 - Dragon Slayer
+	Added AOS Bone cutting to create bones
+	Added AOS toggle switch for the bone cutting.
+	Fixed So cutting clothing up will give back cloth and not bandages.
+	Fixed so the material will keeps its color when cut up.
+	Added Scissor sound to cutting up the material.
+	Made 5 new functions for ids so it can easily be expanded on to without having to edit any of the main function.
+	Added a Newbie Check so you can not cut up your starting items.
+	Added new Character JS property to detect if a character is running, which also accounts for sprinting while mounted, or fast flying for characters who can fly (Xuri):
+		.isRunning 		// Returns true if character is running, false if they're walking
+	Updated scissors script to verify that scissors still exist and are within range upon targeting an object, and a check to ensure characters cannot use scissors while running (Xuri)
+	Updated scissors script to base the amount of returned cloth/leather from cut up clothes/leather armor on the amount of resources used to craft the items, as well as on the player's Tailoring skill. The higher the player's skill, the more resources returned, capped at half the amount of resources used to craft the item. If the item was not crafted by a player, it returns 1 resource only. (Xuri)
+	Updated Tailoring script (js/skills/tailoring.js) to accept cut leather as a valid tailoring resource
+
 01/08/2021 - Xuri
 	Added missing NPCs to DFN (thanks, Dragon Slayer)
 		f_warrior, f_ranger, f_gambler, f_judge, f_mayor, f_prisoner, f_sculptor
