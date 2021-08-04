@@ -3128,6 +3128,21 @@
 5123=a bone axeman
 5124=a bone knight
 5125=a bone magi
+5126=the Weaver
+5127=the Mapmaker
+5128=the Furtrader
+5129=the Tanner
+5130=the Waitress
+5131=the Waiter
+5132=the Ranger
+5133=the Warrior
+5134=the Gambler
+5135=the Judge
+5136=the Miller
+5137=the Monk
+5138=the Rancher
+5139=the Prisoner
+5140=the Sculptor
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.

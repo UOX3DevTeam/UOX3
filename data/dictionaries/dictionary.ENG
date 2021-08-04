@@ -2465,6 +2465,8 @@
 2756=Your target is in a safe zone!
 2757=You peer into the heavens, seeking the moons...
 2758=You slice a fish to steaks.
+2759=Didn't your parents ever tell you not to run with scissors in your hand?!
+2760=You cannot unravel the magic of a blessed item.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -3128,6 +3130,22 @@
 5123=a bone axeman
 5124=a bone knight
 5125=a bone magi
+5126=the Weaver
+5127=the Mapmaker
+5128=the Furtrader
+5129=the Tanner
+5130=the Waitress
+5131=the Waiter
+5132=the Ranger
+5133=the Warrior
+5134=the Gambler
+5135=the Judge
+5136=the Miller
+5137=the Monk
+5138=the Rancher
+5139=the Prisoner
+5140=the Sculptor
+5141=the Mayor
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
