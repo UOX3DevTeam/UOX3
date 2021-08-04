@@ -2465,6 +2465,8 @@
 2756=Tvůj cíl je v bezpečné zóně!
 2757=Nahlížíš do nebe a hledáš měsíce...
 2758=Rybu nakrájíš na steaky.
+2759=Neříkali ti rodiče, že nemáš běhat s nůžkami v ruce?!
+2760=Kouzlo požehnaného předmětu nemůžeš rozluštit.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
@@ -3128,6 +3130,21 @@
 5123=kostěný sekerník
 5124=kostěný rytíř
 5125=kostěný mág
+5126=tkalcovský stav
+5127=Mapotvůrce
+5128=obchodník s kožešinami
+5129=koželuh
+5130=číšnice
+5131=číšník
+5132=strážce
+5133=Válečník
+5134=Hazardér
+5135=soudce
+5136=mlynář
+5137=Mnich
+5138=Rančer
+5139=Vězeň
+5140=sochař
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.

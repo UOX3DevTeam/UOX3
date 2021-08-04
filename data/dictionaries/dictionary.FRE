@@ -2629,6 +2629,8 @@
 2756=Votre cible est dans une zone sûre !
 2757=Vous regardez dans les cieux, à la recherche des lunes...
 2758=Vous découpez un poisson en steaks.
+2759=Tes parents ne t'ont jamais dit de ne pas courir avec des ciseaux dans la main ? !
+2760=Vous ne pouvez pas démêler la magie d'un objet béni.
 // [2800-2999] House script
 2800=Propriétaire de la maison :
 2801=CO-PARENTS
@@ -3292,6 +3294,21 @@
 5123=une hache en os
 5124=un chevalier des os
 5125=un mage des os
+5126=le tisserand
+5127=le cartographe
+5128=le commerçant de fourrures
+5129=le tanneur
+5130=la Serveuse
+5131=le Serveur
+5132=le Ranger
+5133=le guerrier
+5134=le joueur
+5135=le Juge
+5136=le meunier
+5137=le moine
+5138=le Rancher
+5139=le Prisonnier
+5140=le Sculpteur
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
