@@ -2465,6 +2465,8 @@
 2756=¡Su objetivo está en una zona segura!
 2757=Miras al cielo, buscando las lunas...
 2758=Se corta un pescado en filetes.
+2759=¿Tus padres nunca te dijeron que no corrieras con las tijeras en la mano?
+2760=No puedes deshacer la magia de un objeto bendecido.
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
@@ -3128,6 +3130,21 @@
 5123=un hachero de hueso
 5124=un caballero de hueso
 5125=un magi de hueso
+5126=el Tejedor
+5127=el Cartógrafo
+5128=el Peletero
+5129=el Curtidor
+5130=la Camarera
+5131=camarero
+5132=el Guardabosques
+5133=el Guerrero
+5134=el Jugador
+5135=el Juez
+5136=el Molinero
+5137=el Monje
+5138=el Ganadero
+5139=el Prisionero
+5140=el Escultor
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
