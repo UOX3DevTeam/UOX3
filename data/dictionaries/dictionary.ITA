@@ -2465,6 +2465,8 @@
 2756=Il tuo obiettivo è in una zona sicura!
 2757=Tu scruti il cielo, cercando le lune...
 2758=Si affetta un pesce a bistecche.
+2759=I tuoi genitori non ti hanno mai detto di non correre con le forbici in mano?
+2760=Non puoi svelare la magia di un oggetto benedetto.
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI
@@ -3128,6 +3130,21 @@
 5123=un uomo con l'ascia per le ossa
 5124=un cavaliere d'ossa
 5125=un mago delle ossa
+5126=il Tessitore
+5127=il cartografo
+5128=il Commerciante di pellicce
+5129=il Conciatore
+5130=la Cameriera
+5131=il Cameriere
+5132=il Ranger
+5133=il Guerriero
+5134=il Giocatore d'azzardo
+5135=il giudice
+5136=il Mugnaio
+5137=il Monaco
+5138=il Rancher
+5139=il prigioniero
+5140=lo scultore
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.

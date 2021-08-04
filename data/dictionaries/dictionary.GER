@@ -2465,6 +2465,8 @@
 2756=Dein Ziel befindet sich in einer sicheren Zone!
 2757=Du spähst in den Himmel und suchst die Monde...
 2758=Du schneidest einen Fisch zu Steaks.
+2759=Haben dir deine Eltern nie gesagt, dass du nicht mit einer Schere in der Hand rennen sollst?!
+2760=Die Magie eines gesegneten Gegenstandes kann man nicht enträtseln.
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER
@@ -3128,6 +3130,21 @@
 5123=ein Knochenaxtmann
 5124=ein Knochen-Ritter
 5125=ein Knochenmagier
+5126=die Weberin
+5127=der Kartenmacher
+5128=der Pelzhändler
+5129=der Gerber
+5130=die Kellnerin
+5131=der Kellner
+5132=der Waldläufer
+5133=die Kriegerin
+5134=der Glücksspieler
+5135=die Richterin
+5136=der Müller
+5137=der Mönch
+5138=der Viehzüchter
+5139=der Gefangene
+5140=der Bildhauer
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.

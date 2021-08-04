@@ -2465,6 +2465,8 @@
 2756=Seu alvo está numa zona segura!
 2757=Você espreita para os céus, procurando as luas...
 2758=Cortas um peixe aos bifes.
+2759=Os teus pais nunca te disseram para não correres com uma tesoura na mão?!
+2760=Não se pode desvendar a magia de um objecto abençoado.
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS
@@ -3128,6 +3130,21 @@
 5123=um axeman ósseo
 5124=um cavaleiro ósseo
 5125=um magi ósseo
+5126=a Weaver
+5127=o Mapeador
+5128=o Furtrader
+5129=o curtidor
+5130=a empregada de mesa
+5131=o empregado de mesa
+5132=o Ranger
+5133=o Guerreiro
+5134=o Jogador
+5135=o Juiz
+5136=o Miller
+5137=o Monge
+5138=o Rancheiro
+5139=o Prisioneiro
+5140=o Escultor
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
