@@ -71,6 +71,7 @@
 	Added support for an optional third parameter for Character/Socket JS Method .CustomTarget() to allow highlighting targeting cursors as neutral (0, default aura), harmful (1, red aura), helpful (2, blue aura). A value of 3 will cancel the currently active targeting cursor. New syntax:
 		myChar/mySock.CustomTarget( targetID, txtToSay, cursorType ) 	// supported cursorTypes: 0 = neutral, 1 = harmful, 2 = helpful, 3 = cancel current target cursor
 	Various target cursors triggered by code (like hard-coded spells, some pet commands) also make use of these cursorTypes
+	Fixed an bug that caused segmentation fault on Linux, related to item tooltips and socket language
 
 01/08/2021 - Xuri
 	Added Fish as another resource type (in addition to logs and ore) for UOX3 to keep track of and respawn based on resource areas
