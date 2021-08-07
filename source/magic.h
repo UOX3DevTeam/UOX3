@@ -104,7 +104,9 @@ private:
 	SI16		mana;
 	SI16		stamina;
 	SI16		health;
-	SI32		delay;
+	R32			delay;			// Casting time of spell
+	R32			damageDelay;	// Minimum delay between targeting of a damage spell and the application of damage
+	R32			recoveryDelay;	// Minimum delay between the end of one spellcast and the start of another
 	UI16		action;
 	reag_st		reags;
 	std::string mantra;
@@ -122,7 +124,7 @@ private:
 	UI16		jsScript;
 	SI16		baseDmg;
 public:
-	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
+	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
 	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
@@ -131,9 +133,17 @@ public:
 	{
 		return action;
 	}
-	SI32 Delay( void ) const
+	R32 Delay( void ) const
 	{
 		return delay;
+	}
+	R32 DamageDelay( void ) const
+	{
+		return damageDelay;
+	}
+	R32 RecoveryDelay( void ) const
+	{
+		return recoveryDelay;
 	}
 	SI16 Health( void ) const
 	{
@@ -152,9 +162,17 @@ public:
 	{
 		action = newVal;
 	}
-	void Delay( SI32 newVal )
+	void Delay( R32 newVal )
 	{
 		delay = newVal;
+	}
+	void DamageDelay( R32 newVal )
+	{
+		damageDelay = newVal;
+	}
+	void RecoveryDelay( R32 newVal )
+	{
+		recoveryDelay = newVal;
 	}
 	void Health( SI16 newVal )
 	{
@@ -357,7 +375,7 @@ struct MagicTable_s
 
 bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell );
 bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
-bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir );
+bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum );
 bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted );

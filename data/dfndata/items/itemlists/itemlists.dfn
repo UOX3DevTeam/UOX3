@@ -585,6 +585,14 @@ blank
 0x1405
 }
 
+// Archery Weapons
+[ITEMLIST 61]
+{
+0x0f4f
+0x13b2
+0x13fd
+}
+
 // Treasure hunt list
 [ITEMLIST 69]
 {
@@ -1157,6 +1165,12 @@ itemlist=59
 [listobject60]
 {
 itemlist=60
+}
+
+// Archery Weapons
+[listobject61]
+{
+itemlist=61
 }
 
 // // Treasure hunt list

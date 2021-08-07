@@ -56,7 +56,7 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 		}
 		else
 		{
-			mSock->target( 0, TARGET_BUILDHOUSE, 576 );
+			mSock->target( 0, TARGET_BUILDHOUSE, 0, 576 );
 		}
 	}
 }

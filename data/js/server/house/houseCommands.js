@@ -741,7 +741,7 @@ function BanPlayer( pSocket, iMulti )
 		if( iMulti.IsOnFriendList( pUser ) || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
 		{
 			pSocket.tempObj = iMulti;
-			pSocket.CustomTarget( 5, GetDictionaryEntry( 585, pSocket.language ) ); // Select person to ban from the house.
+			pSocket.CustomTarget( 5, GetDictionaryEntry( 585, pSocket.language ), 1 ); // Select person to ban from the house.
 		}
 		else
 			pSocket.SysMessage( GetDictionaryEntry( 1871, pSocket.language ) ); // Only house owners, co-owners and friends can ban someone from a house!
@@ -898,7 +898,7 @@ function EjectPlayer( pSocket, iMulti )
 		if( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
 		{
 			pSocket.tempObj = iMulti;
-			pSocket.CustomTarget( 7, GetDictionaryEntry( 587, pSocket.language )); // Select person to eject from the house.
+			pSocket.CustomTarget( 7, GetDictionaryEntry( 587, pSocket.language ), 1 ); // Select person to eject from the house.
 		}
 		else
 			pSocket.SysMessage( GetDictionaryEntry( 1881, pSocket.language )); // Only house owners, co-owners and friends can eject someone from a house!

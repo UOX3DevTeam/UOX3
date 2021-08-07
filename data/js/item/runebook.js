@@ -10,6 +10,7 @@ var maxCharges = 10;		// Default maximum amount of charges a runebook can hold
 const showCoords = true; 	// Show regular coordinates in tooltip above latitude/longitude values
 const scriptID = 5029;		// Script ID assigned to this script in jse_fileassociations.scp
 const useDelay = 7000; 		// 7 seconds between each time a runebook can be used
+const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
 function onUseChecked( pUser, runeBook )
 {
@@ -179,7 +180,7 @@ function displayGump( pSocket, pUser, runeBook )
 			else
 			{
 				runeBookGump.AddHTMLGump( leftTxtOffsetX, leftTxtOffsetY + ( 15 * ( i - 1)), 120, 20, 1, 1, "<BASEFONT color=#0xfd size=10>" + splitData[0] + "</BASEFONT>" );
-				runeBookGump.AddToolTip( 1050045, pSocket, splitData[0] );
+				runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 			}
 			runeBookGump.AddButton( leftBtnOffsetX, leftBtnOffsetY + ( 15 * ( i - 1)), 0x837, 1, 0, 30 + i );
 		}
@@ -193,7 +194,7 @@ function displayGump( pSocket, pUser, runeBook )
 			else
 			{
 				runeBookGump.AddHTMLGump( rightTxtOffsetX, rightTxtOffsetY + ( 15 * ( i - 9 )), 120, 20, 1, 1, "<BASEFONT color=0xfd size=5>" + splitData[0] + "</BASEFONT>" );
-				runeBookGump.AddToolTip( 1050045, pSocket, splitData[0] );
+				runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 			}
 			runeBookGump.AddButton( rightBtnOffsetX, rightBtnOffsetY + ( 15 * ( i - 9 )), 0x837, 1, 0, 30 + i );
 		}
@@ -273,11 +274,11 @@ function displayGump( pSocket, pUser, runeBook )
 		  	let ySouth = mapCoords[5];
 
 		  	runeBookGump.AddHTMLGump( 41, 52, 130, 40, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
-		  	runeBookGump.AddToolTip( 1050045, pSocket, splitData[0] );
+		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 
 		  	runeBookGump.AddHTMLGump( 35, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "S" : "N" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "E" : "W" ) + "</BASEFONT></CENTER>" );
 		  	if( showCoords )
-		  		runeBookGump.AddToolTip( 1050045, pSocket, splitData[2] + ", " + splitData[3].toString() );
+		  		runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[2] + ", " + splitData[3].toString() );
 	  	}
 
 	  	// Add drop rune button
@@ -324,11 +325,11 @@ function displayGump( pSocket, pUser, runeBook )
 		  	let ySouth = mapCoords[2];
 
 		  	runeBookGump.AddHTMLGump( 203, 52, 120, 50, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
-		  	runeBookGump.AddToolTip( 1050045, pSocket, splitData[0] );
+		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
 
 		  	runeBookGump.AddHTMLGump( 195, 90, 125, 25, 1, 1, "<CENTER><BASEFONT size=3>" + yLatDeg + "o " + yLatMin + "'" + ( ySouth ? "S" : "N" ) + " " + xLongDeg + "o " + xLongMin + "'" + ( xEast ? "E" : "W" ) + "</BASEFONT></CENTER>" );
 		  	if( showCoords )
-		  		runeBookGump.AddToolTip( 1050045, pSocket, splitData[2] + ", " + splitData[3].toString() );
+		  		runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[2] + ", " + splitData[3].toString() );
 		}
 
 	  	// Add drop rune button

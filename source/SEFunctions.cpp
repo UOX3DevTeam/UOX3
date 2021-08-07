@@ -3102,7 +3102,7 @@ JSBool SE_CheckStaticFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
 	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
-	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	SI08 z			= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
 	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
 	TileFlags toCheck	= static_cast<TileFlags>(JSVAL_TO_INT( argv[4] ));
 	bool hasStaticFlag = Map->CheckStaticFlag( x, y, z, worldNum, toCheck, false );
@@ -3125,7 +3125,7 @@ JSBool SE_CheckDynamicFlag( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	SI16 x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ) );
 	SI16 y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ) );
-	UI08 z = static_cast<SI16>( JSVAL_TO_INT( argv[2] ) );
+	SI08 z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ) );
 	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[3] ) );
 	UI08 instanceID = static_cast<UI08>( JSVAL_TO_INT( argv[4] ) );
 	TileFlags toCheck = static_cast<TileFlags>( JSVAL_TO_INT( argv[5] ) );
@@ -3170,7 +3170,7 @@ JSBool SE_DoesStaticBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
 	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
-	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	SI08 z			= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
 	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
 	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool staticBlocks = Map->DoesStaticBlock( x, y, z, worldNum, checkWater );
@@ -3193,7 +3193,7 @@ JSBool SE_DoesDynamicBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
 	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
-	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	SI08 z			= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
 	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
 	UI08 instanceID	= static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
 	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
@@ -3220,7 +3220,7 @@ JSBool SE_DoesMapBlock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 	SI16 x			= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
 	SI16 y			= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
-	UI08 z			= static_cast<SI16>(JSVAL_TO_INT( argv[2] ));
+	SI08 z			= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
 	UI08 worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
 	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
@@ -3809,9 +3809,6 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 161:	 // ITEMDECAYINHOUSES[0153]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemDecayInHouses() );
 				break;
-			case 162:	// COMBATEXPLODEDELAY[0154]
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatExplodeDelay() );
-				break;
 			case 163:	// PAPERDOLLGUILDBUTTON[0155]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PaperdollGuildButton() );
 				break;
@@ -4115,20 +4112,26 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 276:	// PETLOYALTYLOSSONFAILURE[0264]
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure() ) );
 				break;
-			case 277:	 // PETLOYALTYRATE
+			case 277:	// PETLOYALTYRATE
 				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE ) ) );
 				break;
-			case 278:	 // SHOWNPCTITLESINTOOLTIPS
+			case 278:	// SHOWNPCTITLESINTOOLTIPS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() );
 				break;
-			case 279:	 // FISHPERAREA
+			case 279:	// FISHPERAREA
 				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ResFish()));
 				break;
-			case 280:	 // FISHRESPAWNTIMER
+			case 280:	// FISHRESPAWNTIMER
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishTime()));
 				break;
-			case 281:	 // FISHRESPAWNAREA
+			case 281:	// FISHRESPAWNAREA
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishArea()));
+				break;
+			case 282:	// ITEMSINTERRUPTCASTING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemsInterruptCasting() );
+				break;
+			case 283:	// SYSMESSAGECOLOUR
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SysMsgColour()));
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

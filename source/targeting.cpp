@@ -609,7 +609,7 @@ void Tiling( CSocket *s )
 	{
 		s->ClickX( s->GetWord( 11 ) );
 		s->ClickY( s->GetWord( 13 ) );
-		s->target( 0, TARGET_TILING, 1038 );
+		s->target( 0, TARGET_TILING, 0, 1038 );
 		return;
 	}
 

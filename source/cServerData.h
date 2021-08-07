@@ -169,7 +169,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 68 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 69 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -188,6 +188,7 @@ private:
 	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
 	UI16		jsEngineSize;					// gcMaxBytes limit in MB per JS runtime
 	bool		useUnicodeMessages;				// Enable or disable sending messages originating on server in Unicode format
+	UI16		sysMsgColour;					//	Default text colour for system messages displayed in bottom left corner of screen
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
@@ -305,7 +306,6 @@ private:
 	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
 	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
-	UI16		combatExplodeDelay;				//	Time from casting to actual explosion
 	UI08		combatweapondamagechance;		//  Chance of weapons being damaged when attacking in combat (0-100)
 	UI08		combatweapondamagemin;			//  Minimum amount of hitpoints a weapon can lose when being damaged in combat
 	UI08		combatweapondamagemax;			//  Maximum amount of hitpoints a weapon can lose when being damaged in combat
@@ -454,6 +454,8 @@ public:
 	void		SystemTimer( cSD_TID timerid, UI16 value );
 	UI16		SystemTimer( cSD_TID timerid ) const;
 	TIMERVAL	BuildSystemTimeValue( cSD_TID timerID ) const;
+	void		SysMsgColour( UI16 value );
+	UI16		SysMsgColour( void ) const;
 
 	bool		ServerUOGEnabled(void) const { return uogEnabled; }
 	void		ServerUOGEnabled(bool uogValue) {	uogEnabled = uogValue; }
@@ -591,6 +593,9 @@ public:
 
 	void		AlchemyDamageBonusModifier( UI08 value );
 	UI08		AlchemyDamageBonusModifier( void ) const;
+
+	void		ItemsInterruptCasting( bool value );
+	bool		ItemsInterruptCasting( void ) const;
 
 	void		CombatArmorClassDamageBonus( bool value );
 	bool		CombatArmorClassDamageBonus( void ) const;
@@ -771,9 +776,6 @@ public:
 
 	void		CombatMaxSpellRange( SI16 value );
 	SI16		CombatMaxSpellRange( void ) const;
-
-	void		CombatExplodeDelay( UI16 value );
-	UI16		CombatExplodeDelay( void ) const;
 
 	void		CombatAnimalsGuarded( bool value );
 	bool		CombatAnimalsGuarded( void ) const;

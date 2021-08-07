@@ -4530,7 +4530,7 @@ bool CPIPopupMenuSelect::Handle( void )
 				// Store reference to pet in tempObj
 				tSock->TempObj( targChar );
 
-				tSock->target( 0, TARGET_REMOVEFRIEND, 1852 ); // Select player to remove as friend:
+				tSock->target( 0, TARGET_REMOVEFRIEND, 0, 1852 ); // Select player to remove as friend:
 			}
 			else
 			{

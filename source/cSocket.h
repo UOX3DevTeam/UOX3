@@ -79,6 +79,8 @@ private:
 	CChar *			currCharObj;
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
+	bool			objDelayMsgShown;
+	bool			skillDelayMsgShown;
 	SI32			negotiateTimeout;
 	bool			negotiatedWithAssistant;
 
@@ -191,6 +193,8 @@ public:
 	bool			FirstPacket( void ) const;
 	SI32			IdleTimeout( void ) const;
 	bool			WasIdleWarned( void ) const;
+	bool			ObjDelayMsgShown( void ) const;
+	bool			SkillDelayMsgShown( void ) const;
 	SI32			NegotiateTimeout( void ) const;
 	bool			NegotiatedWithAssistant( void ) const;
 	UI08 *			Buffer( void );
@@ -257,6 +261,8 @@ public:
 	void			FirstPacket( bool newValue );
 	void			IdleTimeout( SI32 newValue );
 	void			WasIdleWarned( bool value );
+	void			ObjDelayMsgShown( bool value );
+	void			SkillDelayMsgShown( bool value );
 	void			NegotiateTimeout( SI32 newValue );
 	void			NegotiatedWithAssistant( bool value );
 	void			WalkSequence( SI16 newValue );
@@ -330,8 +336,8 @@ public:
 
 	void			ShowCharName( CChar *i, bool showSer  );
 
-	void			target( UI08 targType, UI08 targID, const std::string& txt );
-	void			target( UI08 targType, UI08 targID,  SI32 dictEntry, ... );
+	void			target( UI08 targType, UI08 targID, const std::string& txt, UI08 cursorType = 0 );
+	void			target( UI08 targType, UI08 targID, UI08 cursorType, SI32 dictEntry, ... );
 	void			mtarget( UI16 itemID, SI32 dictEntry );
 
 	void			statwindow( CBaseObject *i );

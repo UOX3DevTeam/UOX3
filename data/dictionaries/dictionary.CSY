@@ -2467,6 +2467,7 @@
 2758=Rybu nakrájíš na steaky.
 2759=Neříkali ti rodiče, že nemáš běhat s nůžkami v ruce?!
 2760=Kouzlo požehnaného předmětu nemůžeš rozluštit.
+2761=Tvor odolal pokusu o rozptýlení!
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
@@ -2530,6 +2531,7 @@
 2859=Další prodejce hráčů do tohoto domu umístit nemůžete!
 2860=Hráčské prodejce lze umístit pouze do veřejných domů!
 2861=Prodejce hráčů nelze umístit do sousedství dveří!
+2862=Pro sesílání kouzel nebo meditaci musíš mít volné ruce.
 // [3000-4999] Animal and Monster names
 3001=zlobr
 3002=ettin

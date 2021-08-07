@@ -2467,6 +2467,7 @@
 2758=Du schneidest einen Fisch zu Steaks.
 2759=Haben dir deine Eltern nie gesagt, dass du nicht mit einer Schere in der Hand rennen sollst?!
 2760=Die Magie eines gesegneten Gegenstandes kann man nicht enträtseln.
+2761=Die Kreatur widerstand dem Versuch, sie zu vertreiben!
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER
@@ -2530,6 +2531,7 @@
 2859=Sie können keine weiteren Spielerverkäufer in diesem Haus platzieren!
 2860=Spielerverkäufer können nur in öffentlichen Häusern platziert werden!
 2861=Sie können keinen Spielerverkäufer neben einer Tür platzieren!
+2862=Deine Hände müssen frei sein, um zu zaubern oder zu meditieren.
 // [3000-4999] Animal and Monster names
 3001=ein Oger
 3002=ein Ettin

@@ -17,10 +17,10 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			{
 				socket.SysMessage( GetDictionaryEntry( 1971, pLanguage ) ); // You are too busy to do that.
 			}
-			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			else if( socket.GetTimer( Timer.SOCK_SKILLDELAY ) <= GetCurrentClock() )
 			{
 				socket.tempObj = iUsed;
-				socket.SetTimer( 0, 5000 );
+				socket.SetTimer( Timer.SOCK_SKILLDELAY, 5000 );
 				onCallback1( socket, targChar );
 			}
 			else
@@ -45,12 +45,12 @@ function onUseChecked( pUser, iUsed )
 
 		if( pUser.skillsused.healing || pUser.skillsused.veterinary )
 			socket.SysMessage( GetDictionaryEntry( 1971, pLanguage ) ); // You are too busy to do that.
-		else if( socket.GetTimer( 0 ) <= GetCurrentClock() )	// Skill timer
+		else if( socket.GetTimer( Timer.SOCK_SKILLDELAY ) <= GetCurrentClock() )	// Skill timer
 		{
 			socket.tempObj = iUsed;
 			var targMsg = GetDictionaryEntry( 472, pLanguage ); // Who will you use the bandages on?
 			socket.CustomTarget( 1, targMsg );
-			socket.SetTimer( 0, 5000 );		// Reset the skill timer
+			socket.SetTimer( Timer.SOCK_SKILLDELAY, 5000 );		// Reset the skill timer
 		}
 		else
 			socket.SysMessage( GetDictionaryEntry( 473, pLanguage ) ); // You must wait a few moments before using another skill.

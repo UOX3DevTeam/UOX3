@@ -14,7 +14,7 @@ function onSkill( pUser, objType, skillUsed )
 		{
 			pUser.SoundEffect( 0x024A, true );
 			pSock.SysMessage( GetDictionaryEntry( 1502, pSock.language ) );
-			pSock.SetTimer( 2, (1000 * (30 + (pUser.skills.spiritspeak / 10) + pUser.intelligence)) );
+			pSock.SetTimer( Timer.SOCK_SPIRITSPEAK, (1000 * (30 + (pUser.skills.spiritspeak / 10) + pUser.intelligence)) );
 		}
 	}
 	return true;

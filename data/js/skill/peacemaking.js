@@ -20,6 +20,10 @@ function onSkill( pUser, objType, skillUsed )
 			{
 				PlayInstrument( pSock, myInstrument, false );
 				pSock.SysMessage( GetDictionaryEntry( 1441, pSock.language ) ); // You attempt to calm everyone, but fail.
+
+				// Fetch skill-specific skill delay
+				var skillDelay = Skills[9].skillDelay;
+				pSock.SetTimer( Timer.SOCK_SKILLDELAY, skillDelay * 1000 ); // Full skill delay for failed used of skill
 			}
 		}
 		else
@@ -114,11 +118,17 @@ function PeaceMakeArea( pUser, targChar )
 
 	var targSock = targChar.socket;
 
+	// Fetch skill-specific skill delay
+	var skillDelay = Skills[9].skillDelay;
+
 	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ) )
 	{
 		if( targSock )
 			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.language ) ); // You hear some lovely music, and forget about fighting.
 		targChar.setPeace = 60;
+
+		// Half skill delay on successful use of peacemaking
+		pUser.socket.SetTimer( Timer.SOCK_SKILLDELAY, ( skillDelay * 1000 ) / 2 );
 		return true;
 	}
 }

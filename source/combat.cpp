@@ -56,8 +56,24 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		return false;
 	if( cAttack->GetNPCAiType() == AI_DUMMY ) // If passive, don't allow attack
 		return false;
-	if( cAttack->IsNpc() && cTarget->IsNpc() && cAttack->GetRace() == cTarget->GetRace() && ( cAttack->GetOwner() == INVALIDSERIAL && cTarget->GetOwner() == INVALIDSERIAL )) // Don't allow combat between NPCs of the same race
-		return false;
+
+	// If two NPCs try to fight, do some extra checks to make sure they're allowed to (ignore if both are pets)
+	if( cAttack->IsNpc() && cTarget->IsNpc() && ( cAttack->GetOwner() == INVALIDSERIAL && cTarget->GetOwner() == INVALIDSERIAL ))
+	{
+		// Are both the NPCs non-human?
+		if( !cwmWorldState->creatures[cAttack->GetID()].IsHuman() && !cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
+		{
+			// Don't allow if the NPCs belong to same race
+			if( cAttack->GetRace() == cTarget->GetRace() )
+				return false;
+		}
+		else
+		{
+			// Don't allow if they both have same NPC Flag (evil, innocent, neutral)
+			if( cAttack->GetNPCFlag() == cTarget->GetNPCFlag() )
+				return false;
+		}
+	}
 
 	// Check if combat is allowed in attacker AND target's regions, but allow it if it's a guard
 	if( cAttack->GetNPCAiType() != AI_GUARD && ( cAttack->GetRegion()->IsSafeZone() || cTarget->GetRegion()->IsSafeZone() ))
@@ -2247,91 +2263,181 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 				spattacks = 8;
 
 			npcAttack->StopSpell();
-			switch( ( RandomNum( static_cast< SI16 >(0), spattacks ) + 1 ) )
+
+			UI16 offensiveWeight = 0;
+
+			// Establish a simple baseline for letting NPC determine whether to cast offensive or defensive spells
+			// The higher the NPC's current health percentage, the more likely they will be to cast offensive spells
+			// The lower their health percentage, the more likely they will be to cast defensive spells
+			offensiveWeight = static_cast<UI16>(std::round(( npcAttack->GetHP() * 100 ) / npcAttack->GetMaxHP() ));
+
+			UI16 rndNum = RandomNum( 1, 100 );
+
+			// Cut weighting towards offensive spells in half if NPC is poisoned; we want him to cast cures!
+			if( npcAttack->GetPoisoned() > 0 )
+				offensiveWeight /= 2;
+
+			if( offensiveWeight > rndNum )
 			{
-				case 1:
-					switch( RandomNum( 1, 6 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 1 );			break;	// Clumsy
-						case 2:		CastSpell( npcAttack, cDefend, 3 );			break;	// Feeble Mind
-						case 3:		CastSpell( npcAttack, cDefend, 4 );			break;	// Heal (personal...switch target temporarily to self and then back after casting)
-						case 4:		CastSpell( npcAttack, cDefend, 5 );			break;	// Magic Arrow
-						case 5:		CastSpell( npcAttack, cDefend, 7 );			break;	// Reactive Armor (personal...switch target temporarily to self and then back after casting)
-						case 6:			// Check if poisoned and cast cure (switch to self)
-							if( !CastSpell( npcAttack, cDefend, 11 ) )					// cure
-								CastSpell( npcAttack, cDefend, 8 );						// weaken
-							break;
-					}
-					break;
-				case 2:			CastSpell( npcAttack, cDefend, 12 );		break;	// Harm
-				case 3:
-					switch( RandomNum( 1, 2 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 18 );		break;	// Fireball
-						case 2:		CastSpell( npcAttack, cDefend, 20 );		break;	// Poison
-					}
-					break;
-				case 4:
-					switch( RandomNum( 1, 4 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 27 );		break;	// Curse
-						case 2:		CastSpell( npcAttack, cDefend, 29 );		break;	// Greater Healing (personal...switch target temporarily to self and then back after casting)
-						case 3:		CastSpell( npcAttack, cDefend, 30 );		break;	// Lightning
-						case 4:		CastSpell( npcAttack, cDefend, 31 );		break;	// Mana Drain
-					}
-					break;
-				case 5:
-					switch( RandomNum( 1, 3 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 36 );		break;	// Magic Reflection (personal...no target switching required)
-						case 2:		CastSpell( npcAttack, cDefend, 37 );		break;	// Mind Blast
-						case 3:		CastSpell( npcAttack, cDefend, 38 );		break;	// Paralyze
-							//case 4:		CastSpell( npcAttack, cDefend, 33 );		break;	// Blade Spirits
-					}
-					break;
-				case 6:	// If NPC is fighting summoned NPC, cast dispel...else cast other spells
-					if( cDefend->IsNpc() )
-					{
-						if( cDefend->GetTimer( tNPC_SUMMONTIME ) > 0 && cDefend->GetNPCAiType() != AI_GUARD )
+				// Cast offensive spells
+				switch(( RandomNum( static_cast<SI16>(0), spattacks ) + 1 ))
+				{
+					case 1: // Spell Circle 1 - Offensive Spells
+						switch( RandomNum( 1, 4 ) )
 						{
-							CastSpell( npcAttack, cDefend, 41 );
-							break;
+							case 1:		CastSpell( npcAttack, cDefend, 1 );			break;	// Clumsy
+							case 2:		CastSpell( npcAttack, cDefend, 3 );			break;	// Feeble Mind
+							case 3:		CastSpell( npcAttack, cDefend, 5 );			break;	// Magic Arrow
+							case 4: 	CastSpell( npcAttack, cDefend, 8 );			break;	// weaken
 						}
-					}
-					switch( RandomNum( 1, 3 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 42 );		break;	// Energy Bolt
-						case 2:		CastSpell( npcAttack, cDefend, 43 );		break;	// Explosion
-						case 3:		CastSpell( npcAttack, cDefend, 46 );		break;	// Mass Curse
-					}
-					break;
-				case 7:
-					switch( RandomNum( 1, 4 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 49 );		break;	// Chain Lightning
-						case 2:		CastSpell( npcAttack, cDefend, 51 );		break;	// Flamestrike
-						case 3:		CastSpell( npcAttack, cDefend, 53 );		break;	// Mana Vampire
-						case 4:		CastSpell( npcAttack, cDefend, 55 );		break;	// Meteor Swarm
-					}
-					break;
-				case 8:
-					switch( RandomNum( 1, 2 ) )
-					{
-						case 1:		CastSpell( npcAttack, cDefend, 57 );		break;	// Earthquake
-						case 2:		break; //CastSpell( npcAttack, cDefend, 58 );		break;	// Energy Vortex
-					}
-					break;
-					// This is where dragon attacks go eventually when the NPC DFNs are fixed...
+						break;
+					case 2:
+						CastSpell( npcAttack, cDefend, 12 ); // Harm
+						break;
+					case 3:
+						CastSpell( npcAttack, cDefend, 18 ); // Fireball
+						break;
+					case 4:
+						CastSpell( npcAttack, cDefend, 30 ); // Lightning
+						break;
+					case 5:
+						switch( RandomNum( 1, 2 ) )
+						{
+							case 1:		CastSpell( npcAttack, cDefend, 37 );		break;	// Mind Blast
+							case 2:		CastSpell( npcAttack, cDefend, 38 );		break;	// Paralyze
+							//case 3:		CastSpell( npcAttack, cDefend, 33 );		break;	// Blade Spirits
+						}
+						break;
+					case 6:
+						if( cDefend->IsNpc() )
+						{
+							if( cDefend->GetTimer( tNPC_SUMMONTIME ) > 0 && cDefend->IsDispellable() && cDefend->GetNPCAiType() != AI_GUARD )
+							{
+								if( npcAttack->GetSkill( MAGERY ) > RandomNum( 1, 1000 ) )
+								{
+									CastSpell( npcAttack, cDefend, 41 );
+									break;
+								}
+							}
+						}
+						switch( RandomNum( 1, 2 ) )
+						{
+							case 1:		CastSpell( npcAttack, cDefend, 42 );		break;	// Energy Bolt
+							case 2:		CastSpell( npcAttack, cDefend, 43 );		break;	// Explosion
+						}
+						break;
+					case 7:
+						switch( RandomNum( 1, 3 ) )
+						{
+							case 1:		CastSpell( npcAttack, cDefend, 49 );		break;	// Chain Lightning
+							case 2:		CastSpell( npcAttack, cDefend, 51 );		break;	// Flamestrike
+							case 3:		CastSpell( npcAttack, cDefend, 55 );		break;	// Meteor Swarm
+						}
+						break;
+					case 8:
+						CastSpell( npcAttack, cDefend, 57 ); // Earthquake
+						// case 2:		break; //CastSpell( npcAttack, cDefend, 58 );		break;	// Energy Vortex
+					// This is where dragon attacks go eventually when the NPC DFNs are fixed...*/
 					/*
-					 case 9:
-					 case 10:
-					 case 11:
-					 */
-				default:
-					break;
+					case 9:
+					case 10:
+					case 11:
+					*/
+						break;
+					default:
+						break;
+				}
 			}
+			else
+			{
+				// If situation not too bad yet, let's go for some buffs/debuffs
+				if( offensiveWeight > rndNum / 1.5 )
+				{
+					// Cast buffs/debuffs
+					switch(( RandomNum( static_cast<SI16>(0), spattacks ) + 1 ))
+					{
+						case 1:
+							[[fallthrough]];
+						case 2:
+							switch( RandomNum( 1, 4 ) )
+							{
+								case 1:		CastSpell( npcAttack, cDefend, 1 );			break;	// Clumsy
+								case 2:		CastSpell( npcAttack, cDefend, 3 );			break;	// Feeble Mind
+								case 3:		CastSpell( npcAttack, cDefend, 7 );			break;	// Reactive Armor (personal...switch target temporarily to self and then back after casting)
+								case 4:		CastSpell( npcAttack, cDefend, 8 );			break; 	// weaken
+							}
+							break;
+						case 3:
+							if( cDefend->GetPoisoned() == 0 )
+							{
+								CastSpell( npcAttack, cDefend, 20 ); // Poison
+								break;
+							}
+							if( spattacks + 1 == 3 )
+								break;
+							[[fallthrough]]; // Fallthrough if target is poisoned already and if NPC can cast spells from next circle
+						case 4:
+							switch( RandomNum( 1, 2 ) )
+							{
+								case 1:		CastSpell( npcAttack, cDefend, 27 );		break;	// Curse
+								case 2:		CastSpell( npcAttack, cDefend, 31 );		break;	// Mana Drain
+							}
+							break;
+						case 5:
+							CastSpell( npcAttack, cDefend, 36 ); // Magic Reflection (personal...no target switching required)
+							break;
+						case 6:
+							CastSpell( npcAttack, cDefend, 46 ); // Mass Curse
+							break;
+						case 7:
+							if( spattacks + 1 == 7 )
+								break; // Don't fallthrough if NPC cannot cast spells from next circle!
+							[[fallthrough]];
+						case 8:
+							CastSpell( npcAttack, cDefend, 53 ); // Mana Vampire
+							break;
+						default:
+							break;
+					}
+				}
+				else
+				{
+					// Critical health levels! Let's focus on heals and cures
+					switch(( RandomNum( static_cast<SI16>(0), spattacks ) + 1 ))
+					{
+						case 1:
+							if(( spattacks + 1 >= 2 ) && !CastSpell( npcAttack, cDefend, 11 )) // Cast cure if we're poisoned, else move on to Heal
+								CastSpell( npcAttack, cDefend, 4 );	// Heal (personal...switch target temporarily to self and then back after casting)
+							break;
+						case 2:
+							[[fallthrough]];
+						case 3:
+							if( !CastSpell( npcAttack, cDefend, 11 )) // Cast cure if we're poisoned, else move on to Heal
+								CastSpell( npcAttack, cDefend, 4 );	// Heal (personal...switch target temporarily to self and then back after casting)
+							break;
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+							CastSpell( npcAttack, cDefend, 29 ); // Greater Healing (personal...switch target temporarily to self and then back after casting)
+							break;
+						default:
+							break;
+					}
+				}
+			}
+
 			if( npcAttack->GetSpellCast() != -1 )
+			{
+				if( npcAttack->GetBodyType() == BT_HUMAN || npcAttack->GetBodyType() == BT_ELF || npcAttack->GetBodyType() == BT_GARGOYLE )
+				{
+					SpellInfo curSpellCasting = Magic->spells[npcAttack->GetSpellCast()];
+					Effects->PlaySpellCastingAnimation( npcAttack, curSpellCasting.Action() ); // do the action
+					npcAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( 0.75 ) );
+				}
 				Magic->CastSpell( nullptr, npcAttack );
+			}
 
 			//Adjust spellDelay based on UOX.INI setting:
 			SI08 spellDelay = floor( ( npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed() ) + 0.5 );
@@ -2507,7 +2613,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 
 	if( mChar.IsNpc() && mChar.GetTimer( tNPC_EVADETIME ) > cwmWorldState->GetUICurrentTime() )
 	{
-#ifdef DEBUG_COMBAT
+#if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
 		Console.warning( "DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n" );
 #endif
 		return;

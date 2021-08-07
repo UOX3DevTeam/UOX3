@@ -238,14 +238,14 @@ function onCallback6( pSock, myTarget )
 //Repeated Command: REMOVE
 function command_RREMOVE( pSock, execString )
 {
-	pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language )); // Which object do you wish to remove?
+	pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language ), 1 ); // Which object do you wish to remove?
 }
 //Repeated Command: M DELETE
 function command_M( pSock, execString )
 {
 	var splitString = execString.split( " " );
 	if( splitString[0].toUpperCase() == "DELETE" )
-		pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language )); // Which object do you wish to remove?
+		pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language ), 1 ); // Which object do you wish to remove?
 }
 function onCallback7( pSock, myTarget )
 {
@@ -264,7 +264,7 @@ function onCallback7( pSock, myTarget )
 		else
 			pSock.SysMessage( GetDictionaryEntry( 8939, pSock.language )); // You can only remove items or NPCs.
 
-		pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language )); // Which object do you wish to remove?
+		pSock.CustomTarget( 7, GetDictionaryEntry( 8938, pSock.language ), 1 ); // Which object do you wish to remove?
 	}
 	else
 		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.

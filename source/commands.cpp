@@ -146,7 +146,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 		switch( findTarg->second.cmdType )
 		{
 			case CMD_TARGET:
-				s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+				s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				break;
 			case CMD_TARGETXYZ:
 				if( NumArguments() == 4 )
@@ -154,7 +154,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 					s->ClickX( static_cast<SI16>(Argument( 1 )) );
 					s->ClickY( static_cast<SI16>(Argument( 2 )) );
 					s->ClickZ( static_cast<SI08>(Argument( 3 )) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				}
 				else
 					s->sysmessage( 340 );
@@ -163,7 +163,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 				if( NumArguments() == 2 )
 				{
 					s->TempInt( Argument( 1 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				}
 				else
 					s->sysmessage( 338 );
@@ -172,7 +172,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 				if( NumArguments() > 1 )
 				{
 					s->XText( CommandString( 2 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				}
 				else
 					s->sysmessage( 9026 ); // This command requires more arguments!
