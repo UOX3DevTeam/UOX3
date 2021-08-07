@@ -1,5 +1,6 @@
 #include "uox3.h"
 #include "skills.h"
+#include "magic.h"
 #include "cMagic.h"
 #include "CJSMapping.h"
 #include "mapstuff.h"
@@ -240,6 +241,8 @@ void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed
 	toSend.SourceLocation( (*target) );
 	if( target->GetObjType() != OT_CHAR )
 		toSend.TargetLocation( (*target) );
+	else
+		toSend.ZTrg( 15 );
 	toSend.Speed( speed );
 	toSend.Duration( loop );
 	toSend.AdjustDir( false );
@@ -688,6 +691,100 @@ void cEffects::checktempeffects( void )
 				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
 				equipCheckNeeded = true;
 				break;
+			case 28: // Magic Arrow Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 5 );
+				Magic->doMoveEffect( 5, s, src );
+				Magic->doStaticEffect( s, 5 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
+			case 29: // Harm Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 12 );
+				Magic->doMoveEffect( 12, s, src );
+				Magic->doStaticEffect( s, 12 );
+				Magic->MagicDamage( s, Effect->More1(), src, COLD );
+				equipCheckNeeded = true;
+				break;
+			case 30: // Fireball Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 18 );
+				Magic->doMoveEffect( 18, s, src );
+				Magic->doStaticEffect( s, 18 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
+			case 31: // Lightning Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Effects->bolteffect( s );
+				Magic->playSound( src, 30 );
+				Magic->doMoveEffect( 30, s, src );
+				Magic->doStaticEffect( s, 30 );
+				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+				equipCheckNeeded = true;
+				break;
+			case 32: // Mind Blast
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 37 );
+				Magic->doMoveEffect( 37, s, src );
+				Magic->doStaticEffect( s, 37 );
+				Magic->MagicDamage( s, Effect->More1(), src, COLD );
+				equipCheckNeeded = true;
+				break;
+			case 33: // Energy Bolt
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( s, 42 );
+				Magic->doMoveEffect( 42, s, src );
+				Magic->doStaticEffect( s, 42 );
+				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+				equipCheckNeeded = true;
+				break;
+			case 34: // Chain Lightning
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Effects->bolteffect( s );
+				Magic->playSound( s, 49 );
+				Magic->doMoveEffect( 49, s, src );
+				Magic->doStaticEffect( s, 49 );
+				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+				equipCheckNeeded = true;
+				break;
+			case 35: // Flame Strike
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( s, 51 );
+				Magic->doMoveEffect( 51, s, src );
+				Magic->doStaticEffect( s, 51 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
+			case 36: // Meteor Swarm
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 55 );
+				Magic->doMoveEffect( 55, s, src );
+				Magic->doStaticEffect( s, 55 );
+				//Effects->PlaySound( target, 0x160 );
+				//Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
 			case 40: // Used by JS timers
 			{
 				// Default/Global script ID
@@ -1074,7 +1171,43 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->SetUsingPotion( true );
 			break;
 		case 27: // Explosion Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->CombatExplodeDelay()) ) );
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[43].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 28: // Magic Arrow Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[5].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 29: // Harm Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[12].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 30: // Fireball Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[18].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 31: // Lightning Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[30].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 32: // Mind Blast Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[37].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 33: // Energy Bolt Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[42].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 34: // Chain Lightning Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[49].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 35: // Flamestrike Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[51].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 36: // Meteor Swarm
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[55].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 40: // Used by JS timers

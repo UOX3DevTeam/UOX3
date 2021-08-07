@@ -28,6 +28,8 @@ enum JSPrototypes
 	JSP_SPAWNREGION,
 	JSP_SPELL,
 	JSP_SPELLS,
+	JSP_GLOBALSKILL,
+	JSP_GLOBALSKILLS,
 	JSP_RESOURCE,
 	JSP_ACCOUNT,
 	JSP_ACCOUNTS,
@@ -51,6 +53,7 @@ private:
 	std::vector< JSObject * >								protoList;
 
 	JSObject * spellsObj;
+	JSObject * skillsObj;
 	JSObject * accountsObj;
 	JSObject * consoleObj;
 	JSObject * createEntriesObj;

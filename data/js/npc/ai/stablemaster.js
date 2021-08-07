@@ -39,7 +39,7 @@ function onSpeech( strSaid, pTalking, stableMaster )
 		stableMaster.TurnToward( pTalking );
 
 		// Let's pause the NPC in his tracks for X seconds (defined at top of script) so he doesn't wander off
-		stableMaster.SetTimer( 13, NPCPause );
+		stableMaster.SetTimer( Timer.MOVETIME, NPCPause );
 
 		// Let's check the player's skills and set the max amount of slots he
 	   	// has available in the stables depending on those

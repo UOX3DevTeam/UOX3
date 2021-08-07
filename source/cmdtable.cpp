@@ -387,7 +387,7 @@ void command_tile( CSocket *s )
 
 		s->AddID1( static_cast<UI08>(targID>>8) );
 		s->AddID2( static_cast<UI08>(targID%256) );
-		s->target( 0, TARGET_TILING, 24 );
+		s->target( 0, TARGET_TILING, 0, 24 );
 	}
 	else if( Commands->NumArguments() == 3 )
 	{
@@ -402,7 +402,7 @@ void command_tile( CSocket *s )
 
 		s->AddID1( static_cast<UI08>(targID>>8) );
 		s->AddID2( static_cast<UI08>(targID%256) );
-		s->target( 0, TARGET_TILING, 24 );
+		s->target( 0, TARGET_TILING, 0, 24 );
 	}
 	else if( Commands->NumArguments() == 2 )
 	{
@@ -412,7 +412,7 @@ void command_tile( CSocket *s )
 
 		s->AddID1( static_cast<UI08>(targID>>8) );
 		s->AddID2( static_cast<UI08>(targID%256) );
-		s->target( 0, TARGET_TILING, 24 );
+		s->target( 0, TARGET_TILING, 0, 24 );
 	}
 }
 
@@ -453,7 +453,7 @@ void command_dye( CSocket *s )
 		s->AddID1( 0xFF );
 		s->AddID2( 0xFF );
 	}
-	s->target( 0, TARGET_DYE, 31 );
+	s->target( 0, TARGET_DYE, 0, 31 );
 }
 
 //o-----------------------------------------------------------------------------------------------o

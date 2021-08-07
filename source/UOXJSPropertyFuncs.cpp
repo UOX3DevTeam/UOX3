@@ -107,7 +107,9 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				break;
 			case CSP_ACTION:			*vp = INT_TO_JSVAL( gPriv->Action() );					break;
 			case CSP_BASEDMG:			*vp = INT_TO_JSVAL( gPriv->BaseDmg() );					break;
-			case CSP_DELAY:				*vp = INT_TO_JSVAL( gPriv->Delay() );					break;
+			case CSP_DELAY:				JS_NewNumberValue( cx, gPriv->Delay(), vp );			break;
+			case CSP_DAMAGEDELAY:		JS_NewNumberValue( cx, gPriv->DamageDelay(), vp );		break;
+			case CSP_RECOVERYDELAY:		JS_NewNumberValue( cx, gPriv->RecoveryDelay(), vp );	break;
 			case CSP_HEALTH:			*vp = INT_TO_JSVAL( gPriv->Health() );					break;
 			case CSP_STAMINA:			*vp = INT_TO_JSVAL( gPriv->Stamina() );					break;
 			case CSP_MANA:				*vp = INT_TO_JSVAL( gPriv->Mana() );					break;
@@ -158,30 +160,107 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	return JS_TRUE;
 }
 
+JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	size_t skillID = JSVAL_TO_INT(id);
+
+	if( skillID < ALCHEMY || skillID > THROWING )
+	{
+		Console.error( "Invalid Skill ID, must be between 0 and 57" ); // Revise please...
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
+
+	CWorldMain::skill_st *mySkill = &cwmWorldState->skill[skillID];
+	if( mySkill == nullptr )
+	{
+		Console.error( "Invalid Skill" );
+		*vp = JSVAL_NULL;
+		return JS_FALSE;
+	}
+
+	JSObject *jsSkill = JS_NewObject( cx, &UOXGlobalSkill_class, nullptr, obj );
+	JS_DefineProperties( cx, jsSkill, CGlobalSkillProperties );
+	JS_SetPrivate( cx, jsSkill, mySkill );
+
+	*vp = OBJECT_TO_JSVAL( jsSkill );
+	return JS_TRUE;
+}
+
+JSBool CGlobalSkillProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	return JS_TRUE;
+}
+
+JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+{
+	CWorldMain::skill_st *gPriv = static_cast<CWorldMain::skill_st*>( JS_GetPrivate( cx, obj ) );
+	if( gPriv == nullptr )
+		return JS_FALSE;
+	std::string skillName = "";
+
+	if( JSVAL_IS_INT( id ) )
+	{
+		JSString *tString = nullptr;
+		bool bDone = false;
+		size_t i = 0;
+		switch( JSVAL_TO_INT( id ) )
+		{
+			case CGSKILL_NAME:	
+				tString = JS_NewStringCopyZ( cx, gPriv->name.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			case CGSKILL_MADEWORD:
+				tString = JS_NewStringCopyZ( cx, gPriv->madeword.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			case CGSKILL_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->strength );		break;
+			case CGSKILL_DEXTERITY:		*vp = INT_TO_JSVAL( gPriv->dexterity );		break;
+			case CGSKILL_INTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->intelligence );	break;
+			case CGSKILL_SKILLDELAY:	*vp = INT_TO_JSVAL( gPriv->skillDelay );	break;
+			case CGSKILL_SCRIPTID:		*vp = INT_TO_JSVAL( gPriv->jsScript );		break;
+			default:																break;
+		}
+	}
+	return JS_TRUE;
+}
+
 JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ) )
 	{
 		switch( JSVAL_TO_INT( id ) )
 		{
+			// Character timers (PC and NPC)
 			case TIMER_TIMEOUT:			*vp = INT_TO_JSVAL( tCHAR_TIMEOUT );		break;
-			case TIMER_INVIS:			*vp = INT_TO_JSVAL( TIMER_INVIS );			break;
-			case TIMER_HUNGER:			*vp = INT_TO_JSVAL( TIMER_HUNGER );			break;
-			case TIMER_THIRST:			*vp = INT_TO_JSVAL( TIMER_THIRST );			break;
-			case TIMER_POISONTIME:		*vp = INT_TO_JSVAL( TIMER_POISONTIME );		break;
-			case TIMER_POISONTEXT:		*vp = INT_TO_JSVAL( TIMER_POISONTEXT );		break;
-			case TIMER_POISONWEAROFF:	*vp = INT_TO_JSVAL( TIMER_POISONWEAROFF );	break;
-			case TIMER_SPELLTIME:		*vp = INT_TO_JSVAL( TIMER_SPELLTIME );		break;
-			case TIMER_ANTISPAM:		*vp = INT_TO_JSVAL( TIMER_ANTISPAM );		break;
-			case TIMER_CRIMFLAG:		*vp = INT_TO_JSVAL( TIMER_CRIMFLAG );		break;
-			case TIMER_MURDERRATE:		*vp = INT_TO_JSVAL( TIMER_MURDERRATE );		break;
-			case TIMER_PEACETIMER:		*vp = INT_TO_JSVAL( TIMER_PEACETIMER );		break;
-			case TIMER_FLYINGTOGGLE:	*vp = INT_TO_JSVAL( TIMER_FLYINGTOGGLE );	break;
-			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( TIMER_MOVETIME );		break;
-			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( TIMER_SPATIMER );		break;
-			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( TIMER_SUMMONTIME );		break;
-			case TIMER_EVADETIME:		*vp = INT_TO_JSVAL( TIMER_EVADETIME );		break;
-			case TIMER_LOGOUT:			*vp = INT_TO_JSVAL( TIMER_LOGOUT );			break;
+			case TIMER_INVIS:			*vp = INT_TO_JSVAL( tCHAR_INVIS );			break;
+			case TIMER_HUNGER:			*vp = INT_TO_JSVAL( tCHAR_HUNGER );			break;
+			case TIMER_THIRST:			*vp = INT_TO_JSVAL( tCHAR_THIRST );			break;
+			case TIMER_POISONTIME:		*vp = INT_TO_JSVAL( tCHAR_POISONTIME );		break;
+			case TIMER_POISONTEXT:		*vp = INT_TO_JSVAL( tCHAR_POISONTEXT );		break;
+			case TIMER_POISONWEAROFF:	*vp = INT_TO_JSVAL( tCHAR_POISONWEAROFF );	break;
+			case TIMER_SPELLTIME:		*vp = INT_TO_JSVAL( tCHAR_SPELLTIME );		break;
+			case TIMER_SPELLRECOVERYTIME:		*vp = INT_TO_JSVAL( tCHAR_SPELLRECOVERYTIME );		break;
+			case TIMER_ANTISPAM:		*vp = INT_TO_JSVAL( tCHAR_ANTISPAM );		break;
+			case TIMER_CRIMFLAG:		*vp = INT_TO_JSVAL( tCHAR_CRIMFLAG );		break;
+			case TIMER_MURDERRATE:		*vp = INT_TO_JSVAL( tCHAR_MURDERRATE );		break;
+			case TIMER_PEACETIMER:		*vp = INT_TO_JSVAL( tCHAR_PEACETIMER );		break;
+			case TIMER_FLYINGTOGGLE:	*vp = INT_TO_JSVAL( tCHAR_FLYINGTOGGLE );	break;
+			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( tNPC_MOVETIME );		break;
+			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( tNPC_SPATIMER );		break;
+			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( tNPC_SUMMONTIME );		break;
+			case TIMER_EVADETIME:		*vp = INT_TO_JSVAL( tNPC_EVADETIME );		break;
+			case TIMER_LOYALTYTIME:		*vp = INT_TO_JSVAL( tNPC_LOYALTYTIME );		break;
+			case TIMER_LOGOUT:			*vp = INT_TO_JSVAL( tPC_LOGOUT );			break;
+
+			// Socket Timers (PC only)
+			case TIMER_SOCK_SKILLDELAY:		*vp = INT_TO_JSVAL( tPC_SKILLDELAY );		break;
+			case TIMER_SOCK_OBJDELAY:		*vp = INT_TO_JSVAL( tPC_OBJDELAY );			break;
+			case TIMER_SOCK_SPIRITSPEAK:	*vp = INT_TO_JSVAL( tPC_SPIRITSPEAK );		break;
+			case TIMER_SOCK_TRACKING:		*vp = INT_TO_JSVAL( tPC_TRACKING );			break;
+			case TIMER_SOCK_FISHING:		*vp = INT_TO_JSVAL( tPC_FISHING );			break;
+			case TIMER_SOCK_MUTETIME:		*vp = INT_TO_JSVAL( tPC_MUTETIME );			break;
+			case TIMER_SOCK_TRACKINGDISPLAY: *vp = INT_TO_JSVAL( tPC_TRACKINGDISPLAY );	break;
 			default:
 				break;
 		}
@@ -2456,8 +2535,8 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CRP_LANGUAGESKILLMIN:	*vp = INT_TO_JSVAL( gPriv->LanguageMin() );				break;
 			case CRP_SKILLADJUSTMENT:
 				break;
-			case CRP_POISONRESISTANCE:	*vp = DOUBLE_TO_JSVAL( gPriv->PoisonResistance() );		break;
-			case CRP_MAGICRESISTANCE:	*vp = DOUBLE_TO_JSVAL( gPriv->MagicResistance() );		break;
+			case CRP_POISONRESISTANCE:	JS_NewNumberValue( cx, gPriv->PoisonResistance(), vp ); break;
+			case CRP_MAGICRESISTANCE:	JS_NewNumberValue( cx, gPriv->MagicResistance(), vp );  break;
 			case CRP_VISIBLEDISTANCE:	*vp = INT_TO_JSVAL( gPriv->VisibilityRange() );			break;
 			case CRP_NIGHTVISION:		*vp = INT_TO_JSVAL( gPriv->NightVision() );				break;
 			default:

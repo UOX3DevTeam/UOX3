@@ -325,6 +325,10 @@ void LoadSkills( void )
 								}
 								cwmWorldState->skill[i].advancement.push_back( tempAdvance );
 							}
+							else if( UTag == "SKILLDELAY" )
+							{
+								cwmWorldState->skill[i].skillDelay = static_cast<SI32>( std::stoi( data, nullptr, 0 ));
+							}
 							else if( UTag == "MADEWORD" )
 							{
 								cwmWorldState->skill[i].madeword = data;

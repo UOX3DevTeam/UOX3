@@ -6,32 +6,36 @@ function SpellRegistration()
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we already casting?
-	if( mChar.GetTimer( 6 ) != 0 )
+	if( mChar.GetTimer( Timer.SPELLTIME ) != 0 )
 	{
 		if( mChar.isCasting )
 		{
-			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
+			if( mSock != null )
+				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language ) );
 			return true;
 		}
-		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
+		else if( mChar.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
-			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
+			if( mSock != null )
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language ) );
 			return true;
 		}
 	}
 
 	var mSpell	= Spells[spellNum];
-	var spellType 	= mChar.currentSpellType;
+	var spellType = 0
+
+	// Fetch spelltype; 0 = normal spell, 1 = scroll, 2 = wand
+	if( mSock != null )
+		spellType = mSock.currentSpellType;
 
 	mChar.spellCast = spellNum;
 
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
-		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
-		mChar.SetTimer( 6, 0 );
+		if( mSock != null )
+			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language ) );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
 		return true;
@@ -43,19 +47,19 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( ourRegion.isSafeZone )
 		{
-			if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 1799, mSock.Language ) );
-			mChar.SetTimer( 6, 0 );
+			if( mSock != null )
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-				return;
+				return true;
 		}
 
 		if( !ourRegion.canCastAggressive )
 		{
-			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
-			mChar.SetTimer( 6, 0 );
+			if( mSock != null )
+				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language ) );
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
 			return true;
@@ -64,9 +68,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	if( !mSpell.enabled )
 	{
-		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
-		mChar.SetTimer( 6, 0 );
+		if( mSock != null )
+			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language ) );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
 		return true;
@@ -94,9 +98,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			var itemLHand = mChar.FindItemLayer( 0x02 );
 			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
 			{
-				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
-				mChar.SetTimer( 6, 0 );
+				if( mSock != null )
+					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language ) );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
@@ -107,7 +111,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( mChar.visible == 1 || mChar.visible == 2 )
 		mChar.visible = 0;
 
-	if( mSock )
+	if( mSock != null )
 		mChar.BreakConcentration( mSock );
 
 	if( mChar.commandlevel < 2  )
@@ -116,7 +120,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		// type == 0 -> SpellBook
 		if( spellType == 0 && !checkReagents( mChar, mSpell ) )
 		{
-			mChar.SetTimer( 6, 0 );
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
 			return true;
@@ -127,27 +131,27 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
-				if( mSock )
+				if( mSock != null )
 					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
-				mChar.SetTimer( 6, 0 );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
-				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
-				mChar.SetTimer( 6, 0 );
+				if( mSock != null )
+					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language ) );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
 			}
 			if( mSpell.health >= mChar.health )
 			{
-				if( mSock )
-					mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
-				mChar.SetTimer( 6, 0 );
+				if( mSock != null )
+					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language ) );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
@@ -162,7 +166,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			deleteReagents( mChar, mSpell );
 			mChar.SpellFail();
-			mChar.SetTimer( 6, 0 );
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
 			return true;
@@ -171,14 +175,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	mChar.nextAct = 75;		// why 75?
 
-	var delay = mSpell.delay * 100;
+	var delay = mSpell.delay;
 	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
-		mChar.SetTimer( 6, delay );
+		mChar.SetTimer( Timer.SPELLTIME, delay * 1000 );
 		mChar.frozen = true;
 	}
 	else
-		mChar.SetTimer( 6, 0 );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 
 	if( !mChar.isonhorse )
 	{
@@ -255,8 +259,8 @@ function onTimer( mChar, timerID )
 	else
 	{
 		var mSock = mChar.socket;
-		if( mSock )
-			mSock.CustomTarget( 0, Spells[timerID].strToSay );
+		if( mSock != null )
+			mSock.CustomTarget( 0, Spells[timerID].strToSay, 1 ); // hostile cursor type
 	}
 }
 
@@ -280,10 +284,10 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	var spellType	= 0;
 	var sourceChar	= mChar;
 
-	if( mSock )
+	if( mSock != null )
 		spellType = mSock.currentSpellType;
 
-	mChar.SetTimer( 6, 0 );
+	mChar.SetTimer( Timer.SPELLTIME, 0 );
 	mChar.spellCast = -1;
 
 	if( mChar.npc || spellType != 2 )
@@ -297,8 +301,8 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 
 	if( !mChar.InRange( ourTarg, 10 ) )
 	{
-		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 712, mSock.Language ) );
+		if( mSock != null )
+			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language ) );
 		return;
 	}
 
@@ -311,21 +315,21 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	if( mSpell.aggressiveSpell )
 	{
 		if( targRegion.isSafeZone )
-	{
-			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.Language ) );
+		{
+			if( mSock != null )
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
 			return;
 		}
 		if( !targRegion.canCastAggressive )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 709, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language ) );
 			return;
 		}
 		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 713, mSock.Language ) );
+				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language ) );
 			return;
 		}
 //		mChar.AttackTarget( ourTarg );

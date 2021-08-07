@@ -2467,6 +2467,7 @@
 2758=Cortas um peixe aos bifes.
 2759=Os teus pais nunca te disseram para não correres com uma tesoura na mão?!
 2760=Não se pode desvendar a magia de um objecto abençoado.
+2761=A criatura resistiu à tentativa de a dispersar!
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS
@@ -2530,6 +2531,7 @@
 2859=Não pode colocar mais vendedores de jogadores nesta casa!
 2860=Vendedores-jogadores só podem ser colocados em casas públicas!
 2861=Não se pode colocar um vendedor de jogadores ao lado de uma porta!
+2862=As suas mãos devem estar livres para lançar feitiços ou meditar.
 // [3000-4999] Animal and Monster names
 3001=um ogre
 3002=an ettin

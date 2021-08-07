@@ -11,7 +11,7 @@ function command_JAIL( socket, cmdString )
 		socket.tempint = parseInt( cmdString );
 
 	var targMsg = GetDictionaryEntry( 180, socket.language );
-	socket.CustomTarget( 0, targMsg );
+	socket.CustomTarget( 0, targMsg, 1 );
 }
 
 function onCallback0( socket, ourObj )
@@ -34,7 +34,7 @@ function onCallback0( socket, ourObj )
 function command_RELEASE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 181, socket.language );
-	socket.CustomTarget( 1, targMsg );
+	socket.CustomTarget( 1, targMsg, 2 );
 }
 
 function onCallback1( socket, ourObj )

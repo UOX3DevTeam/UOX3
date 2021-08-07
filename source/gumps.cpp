@@ -180,7 +180,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 			mChar->SetTownTitle( !mChar->GetTownTitle() );
 			ourRegion->DisplayTownMenu( nullptr, s );
 			break;
-		case 5:		s->target( 0, TARGET_VOTEFORMAYOR, 542 );								break;		// vote for town mayor
+		case 5:		s->target( 0, TARGET_VOTEFORMAYOR, 0, 542 );								break;		// vote for town mayor
 		case 6:		TextEntryGump(  s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 543 );	break;		// gold donation
 		case 7:		ourRegion->ViewBudget( s );			break;		// View Budget
 		case 8:		ourRegion->SendAlliedTowns( s );		break;		// View allied towns
@@ -194,7 +194,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 23:	ourRegion->ForceEarlyElection();		break;	// force early election
 		case 24:	s->sysmessage( 545 );	break;	// purchase more guards
 		case 25:	s->sysmessage( 546 );	break;	// fire a guard
-		case 26:	s->target( 0, TARGET_TOWNALLY, 547 );								break;	// make a town an ally
+		case 26:	s->target( 0, TARGET_TOWNALLY, 0, 547 );								break;	// make a town an ally
 		case 40:	ourRegion->DisplayTownMenu( nullptr, s );	break;	// we can't return from mayor menu if we weren't mayor!
 		case 41:	// join town!
 			if( !(calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() )->AddAsTownMember( (*mChar) ) ) )
@@ -1040,7 +1040,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				if( data.empty() )
 					return;
 				s->XText( data );
-				s->target( 0, TARGET_ADDSCRIPTNPC, 1212, data.c_str() );
+				s->target( 0, TARGET_ADDSCRIPTNPC, 0, 1212, data.c_str() );
 			}
 			break;
 		case 'P':

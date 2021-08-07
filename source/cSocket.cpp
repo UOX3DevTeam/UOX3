@@ -433,6 +433,36 @@ void CSocket::WasIdleWarned( bool value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool objDelayMsgShown( void ) const
+//|					void objDelayMsgShown( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player has been shown message about object use delay
+//o-----------------------------------------------------------------------------------------------o
+bool CSocket::ObjDelayMsgShown( void ) const
+{
+	return objDelayMsgShown;
+}
+void CSocket::ObjDelayMsgShown( bool value )
+{
+	objDelayMsgShown = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SkillDelayMsgShown( void ) const
+//|					void SkillDelayMsgShown( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player has been shown message about skill use delay
+//o-----------------------------------------------------------------------------------------------o
+bool CSocket::SkillDelayMsgShown( void ) const
+{
+	return skillDelayMsgShown;
+}
+void CSocket::SkillDelayMsgShown( bool value )
+{
+	skillDelayMsgShown = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 NegotiateTimeout( void ) const
 //|					void NegotiateTimeout( SI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
@@ -1569,7 +1599,7 @@ CItem *CSocket::GetCursorItem( void ) const
 }
 void CSocket::SetCursorItem( CItem *newCursorItem )
 {
-	if( ValidateObject( newCursorItem ) )
+	if( ValidateObject( newCursorItem ) || newCursorItem == nullptr )
 		cursorItem = newCursorItem;
 }
 
@@ -1749,18 +1779,19 @@ void CSocket::sysmessage( const std::string txt, ... )
 	if( !ValidateObject( mChar ) )
 		return;
 	va_start( argptr, txt );
-	auto msg = strutil::format(txt,argptr);
-	if (msg.size()>512){
-		msg = msg.substr(0,512);
+	auto msg = strutil::format( txt, argptr );
+	if( msg.size() > 512 )
+	{
+		msg = msg.substr(0, 512);
 	}
 
 
-	if(cwmWorldState->ServerData()->UseUnicodeMessages())
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		CPUnicodeMessage unicodeMessage;
 		unicodeMessage.Message( msg );
 		unicodeMessage.Font( 4 );
-		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Colour( cwmWorldState->ServerData()->SysMsgColour() );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
 		unicodeMessage.Name( "System" );
@@ -1776,7 +1807,7 @@ void CSocket::sysmessage( const std::string txt, ... )
 		toAdd.Font( FNT_NORMAL );
 		toAdd.Speaker( INVALIDSERIAL );
 		toAdd.SpokenTo( mChar->GetSerial() );
-		toAdd.Colour( 0x0040 );
+		toAdd.Colour( cwmWorldState->ServerData()->SysMsgColour() );
 		toAdd.Type( SYSTEM );
 		toAdd.At( cwmWorldState->GetUICurrentTime() );
 		toAdd.TargType( SPTRG_INDIVIDUAL );
@@ -1800,12 +1831,12 @@ void CSocket::sysmessageJS( const std::string& uformat, const std::string& data 
 		msg = msg.substr( 0, 512 );
 	}
 	
-	if(cwmWorldState->ServerData()->UseUnicodeMessages())
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		CPUnicodeMessage unicodeMessage;
 		unicodeMessage.Message( msg );
 		unicodeMessage.Font( 4 );
-		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Colour( cwmWorldState->ServerData()->SysMsgColour() );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
 		unicodeMessage.Name( "System" );
@@ -1822,7 +1853,7 @@ void CSocket::sysmessageJS( const std::string& uformat, const std::string& data 
 		toAdd.Font( FNT_NORMAL );
 		toAdd.Speaker( INVALIDSERIAL );
 		toAdd.SpokenTo( mChar->GetSerial() );
-		toAdd.Colour( 0x0040 );
+		toAdd.Colour( cwmWorldState->ServerData()->SysMsgColour() );
 		toAdd.Type( SYSTEM );
 		toAdd.At( cwmWorldState->GetUICurrentTime() );
 		toAdd.TargType( SPTRG_INDIVIDUAL );
@@ -1844,9 +1875,10 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 	if( txt.empty() )
 		return;
 	va_start( argptr, dictEntry );
-	auto msg = strutil::format(txt,argptr);
-	if (msg.size()>512){
-		msg = msg.substr(0,512);
+	auto msg = strutil::format( txt, argptr );
+	if( msg.size() > 512 )
+	{
+		msg = msg.substr(0, 512);
 	}
 
 	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
@@ -1854,7 +1886,7 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 		CPUnicodeMessage unicodeMessage;
 		unicodeMessage.Message( msg );
 		unicodeMessage.Font( 4 );
-		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Colour( cwmWorldState->ServerData()->SysMsgColour() );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
 		unicodeMessage.Name( "System" );
@@ -1871,7 +1903,7 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 		toAdd.Font( FNT_NORMAL );
 		toAdd.Speaker( INVALIDSERIAL );
 		toAdd.SpokenTo( mChar->GetSerial() );
-		toAdd.Colour( 0x0040 );
+		toAdd.Colour( cwmWorldState->ServerData()->SysMsgColour() );
 		toAdd.Type( SYSTEM );
 		toAdd.At( cwmWorldState->GetUICurrentTime() );
 		toAdd.TargType( SPTRG_INDIVIDUAL );
@@ -1909,12 +1941,14 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 {
 	UI16 targColour = Colour;
 
-	if( txt.empty() ){
+	if( txt.empty() )
+	{
 		return;
 	}
 	auto temp = txt ;
-	if (temp.size()>=512){
-		temp = txt.substr(0,512);
+	if( temp.size() >= 512 )
+	{
+		temp = txt.substr(0, 512);
 	}
 	CChar *mChar		= CurrcharObj();
 
@@ -1930,24 +1964,24 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 		unicodeMessage.ID( INVALIDID );
 		unicodeMessage.Serial( getObj->GetSerial() );
 
-		if(getObj->GetObjType() == OT_ITEM)
+		if( getObj->GetObjType() == OT_ITEM )
 		{
 			CItem *getItem = static_cast<CItem *>(getObj);
-			if(getItem->isCorpse())
+			if( getItem->isCorpse() )
 			{
 				CChar *targChar = getItem->GetOwnerObj();
-				if(ValidateObject( targChar ))
+				if( ValidateObject( targChar ))
 					targColour = GetFlagColour( mChar, targChar );
 				else
 				{
-					switch(getItem->GetTempVar( CITV_MOREZ ))
+					switch( getItem->GetTempVar( CITV_MOREZ ))
 					{
-					case 0x01:	targColour = 0x0026;	break;	//red
-					case 0x02:	targColour = 0x03B2;	break;	// gray
-					case 0x08:	targColour = 0x0049;	break;	// green
-					case 0x10:	targColour = 0x0030;	break;	// orange
-					default:
-					case 0x04:	targColour = 0x005A;	break;	// blue
+						case 0x01:	targColour = 0x0026;	break;	//red
+						case 0x02:	targColour = 0x03B2;	break;	// gray
+						case 0x08:	targColour = 0x0049;	break;	// green
+						case 0x10:	targColour = 0x0030;	break;	// orange
+						default:
+						case 0x04:	targColour = 0x005A;	break;	// blue
 					}
 				}
 			}
@@ -2107,11 +2141,12 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a system message
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::target( UI08 targType, UI08 targID, const std::string& txt )
+void CSocket::target( UI08 targType, UI08 targID, const std::string& txt, UI08 cursorType )
 {
 	CPTargetCursor toSend;
 	toSend.ID( calcserial( 0, 1, targType, targID ) );
 	toSend.Type( 1 );
+	toSend.CursorType( cursorType );
 	TargetOK( true );
 	sysmessage( txt );
 	Send( &toSend );
@@ -2122,7 +2157,7 @@ void CSocket::target( UI08 targType, UI08 targID, const std::string& txt )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a dictionary-based system message
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
+void CSocket::target( UI08 targType, UI08 targID, UI08 cursorType, SI32 dictEntry, ... )
 {
 	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
 	if( txt.empty() )
@@ -2134,7 +2169,7 @@ void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
 	if (msg.size()>512) {
 		msg = msg.substr(0,512) ;
 	}
-	target( targType, targID, msg );
+	target( targType, targID, msg, cursorType );
 }
 
 //o-----------------------------------------------------------------------------------------------o
