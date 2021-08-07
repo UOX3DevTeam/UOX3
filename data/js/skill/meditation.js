@@ -8,6 +8,9 @@ function onSkill( pUser, objType, skillUsed )
 	var pSock = pUser.socket;
 	if( pSock )
 	{
+		// Fetch skill-specific skill delay to use on failure
+		var pSkillDelay = Skills[46].skillDelay;
+
 		if( pUser.Defense( 0, 1, false ) > 10 )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 967, pSock.language ) ); // The energies cannot be absorbed through your armour.
@@ -17,11 +20,13 @@ function onSkill( pUser, objType, skillUsed )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 968, pSock.language ) ); // You cannot meditate with a weapon or shield equipped!
 			pUser.isMeditating = false;
+			pSock.SetTimer( Timer.SOCK_SKILLDELAY, ( pSkillDelay * 1000) / 4 );
 		}
 		else if( pUser.mana == pUser.maxMana )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 969, pSock.language ) ); // You are at peace.
 			pUser.isMeditating = false;
+			pSock.SetTimer( Timer.SOCK_SKILLDELAY, ( pSkillDelay * 1000 ) / 2 );
 		}
 		else if( !pUser.CheckSkill( 46, 0, 1000 ) )
 		{

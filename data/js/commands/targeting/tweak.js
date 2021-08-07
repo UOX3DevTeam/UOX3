@@ -31,7 +31,8 @@ const propertyLabelEnd = "</BASEFONT>";
 
 // Settings
 const enableTransparentGump = true;
-var enableTooltips = true; // Too much data for regular UO client, but works with ClassicUO client
+var enableTooltips = false; // Too much data for regular UO client, but works with ClassicUO client
+const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
 // If any properties are removed or added, make sure to update the value behind each entry so there
 // are no duplicate or skipped values
@@ -658,12 +659,12 @@ function RenderZeroethPage( pSocket, gumpObj, targetObj, tweakSkills, baseSkills
 		gumpObj.AddButton( 230, 2, 4017, 4018, 1, 0, 0 ); 	// Exit
 	if( enableTooltips )
 	{
-		gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 2010, socketLang )); // Close Tweak menu
+		gumpObj.AddToolTip( tooltipClilocID, pSocket, GetDictionaryEntry( 2010, socketLang )); // Close Tweak menu
 	}
 	gumpObj.AddHTMLGump( 10, 2, 230, 60, 0, 0, "<CENTER><BIG><BASEFONT color=#EECD8B>" + GetDictionaryEntry( 2011, socketLang ) + " " + objType + " " + objPropHeader + "</BASEFONT></BIG></CENTER>" );
 	gumpObj.AddHTMLGump( 10, 27, 230, 20, 0, 0, "<BIG><BASEFONT color=" + nameColor + "><CENTER>" + objName + "</CENTER></BASEFONT></BIG>" );
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1050045, pSocket, objName );
+		gumpObj.AddToolTip( tooltipClilocID, pSocket, objName );
 	if( tweakSkills )
 	{
 		gumpObj.AddHTMLGump( 0, 402, 235, 20, 0, 0, '<CENTER><BASEFONT color=#cdcdcd>' + GetDictionaryEntry( 2012, socketLang ) + ' ' + objType + ' ' + GetDictionaryEntry( 2013, socketLang ) + ': ' + (skillTotal/10).toFixed(1).toString() + '</BASEFONT></CENTER>' );
@@ -692,17 +693,17 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Serial</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, objType + " Serial - " + GetDictionaryEntry( 8119, pSocket.language )); // set automatically by UOX3
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, objType + " Serial - " + GetDictionaryEntry( 8119, pSocket.language )); // set automatically by UOX3
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, "ID of " + objType );
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, "ID of " + objType );
 		gumpObj.AddHTMLGump( 15, 99, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
 	else if( objType == "Region" )
 	{
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Region ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - " + GetDictionaryEntry( 8120, pSocket.language )); // Region number defined in regions.dfn
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, objType + " ID - " + GetDictionaryEntry( 8120, pSocket.language )); // Region number defined in regions.dfn
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Name</BASEFONT>" );
 	}
 	else
@@ -710,14 +711,14 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		// Account
 		gumpObj.AddHTMLGump( 15, 59, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Account ID</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, objType + " ID - " + GetDictionaryEntry( 8121, pSocket.language )); // Account ID defined for this account in accounts.dfn
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, objType + " ID - " + GetDictionaryEntry( 8121, pSocket.language )); // Account ID defined for this account in accounts.dfn
 		gumpObj.AddHTMLGump( 15, 79, 100, 20, 0, 0, "<BASEFONT color=#ffffff>Username</BASEFONT>" );
 	}
 
 	if( enableTooltips )
 	{
 		var tempMsg = GetDictionaryEntry( 8122, pSocket.language ); // Name of %s
-		gumpObj.AddToolTip( 1050045, pSocket, tempMsg.replace(/%s/gi, objType ));
+		gumpObj.AddToolTip( tooltipClilocID, pSocket, tempMsg.replace(/%s/gi, objType ));
 	}
 
 	// Buttons
@@ -725,7 +726,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 2); // ID
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, "0x" + (targetObj.id).toString(16) + " (" + (targetObj.id).toString() + ")" );
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, "0x" + (targetObj.id).toString(16) + " (" + (targetObj.id).toString() + ")" );
 		if( objType == "Item" || objType == "Multi" )
 			gumpObj.AddButton( 120, 100, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 10); // Name
 		else if( objType == "Character" )
@@ -737,7 +738,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		//gumpObj.AddButton( 120, 80, gumpMainButtonOff, gumpMainButtonOn, 1, 0, 13); // Username
 
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1050045, pSocket, objName );
+		gumpObj.AddToolTip( tooltipClilocID, pSocket, objName );
 
 	if( objName.length > 16 )
 		objName = objName.substr(0, 16-1) + '..';
@@ -747,7 +748,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.serial).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.serial).toString() + "</BASEFONT> (Read-Only)" );
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.serial).toString() + "</BASEFONT> (Read-Only)" );
 		gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, propertyValueStart + "0x" + (targetObj.id).toString(16) + " (" + (targetObj.id).toString() + ")" + propertyValueEnd );
 		gumpObj.AddHTMLGump( 125, 99, 105, 20, 0, 0, propertyValueStart + objName + propertyValueEnd );
 	}
@@ -755,7 +756,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 	{
 		gumpObj.AddHTMLGump( 125, 59, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + (targetObj.id).toString() + propertyValueEnd + "</BASEFONT>" );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.id).toString() + "</BASEFONT> (Read-Only)" );
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, "<BASEFONT color=#EECD8B>" + (targetObj.id).toString() + "</BASEFONT> (Read-Only)" );
 		if( objType == "Account" )
 			gumpObj.AddHTMLGump( 125, 79, 105, 20, 0, 0, "<BASEFONT color=#EECD8B>" + propertyValueStart + objName + propertyValueEnd + "</BASEFONT>"  );
 		else
@@ -768,7 +769,7 @@ function RenderFirstPage( pSocket, gumpObj, targetObj, objType, propCount, total
 		gumpObj.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>" + GetDictionaryEntry( 8819, pSocket.language ) + " 1/" + totalPages + "</BASEFONT>" );
 		gumpObj.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, 2, 0 );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 	}
 
 	return gumpObj;
@@ -787,13 +788,13 @@ function RenderOtherPages( pSocket, gumpObj, gumpPage, totalPages )
 		// Add next page button for all subsequent pages except last one
 		gumpObj.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, gumpPage + 1, 0 );
 		if( enableTooltips )
-			gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
+			gumpObj.AddToolTip( tooltipClilocID, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 	}
 
 	// Add previous page button for all subsequent pages
 	gumpObj.AddButton( 14, 420, gumpPrevButtonOff, gumpPrevButtonOn, 0, gumpPage - 1, 0 );
 	if( enableTooltips )
-		gumpObj.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8124, pSocket.language )); // Previous page
+		gumpObj.AddToolTip( tooltipClilocID, pSocket, GetDictionaryEntry( 8124, pSocket.language )); // Previous page
 
 	return gumpObj;
 }
@@ -1269,7 +1270,7 @@ function HandleItemTarget( pSocket, myTarget )
 			// Labels
 			itemGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
 			if( enableTooltips )
-				itemGump.AddToolTip( 1050045, pSocket, itemLabelTooltip.toString() );
+				itemGump.AddToolTip( tooltipClilocID, pSocket, itemLabelTooltip.toString() );
 
 			if( itemValue == "-" )
 				itemValueTooltip = GetDictionaryEntry( 8205, pSocket.language ); // Value not set
@@ -1280,18 +1281,18 @@ function HandleItemTarget( pSocket, myTarget )
 			{
 				itemGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 				if( enableTooltips )
-					itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ));
+					itemGump.AddToolTip( tooltipClilocID, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ));
 			}
 
 			// Values
 			itemGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + itemValue + propertyValueEnd );
 			if( enableTooltips && propertyName == "Itemsinside" || propertyName == "Container" || propertyName == "IsGuarded" || propertyName == "Origin" )
 			{
-				itemGump.AddToolTip( 1050045, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ) + " (Read-Only)");
+				itemGump.AddToolTip( tooltipClilocID, pSocket, ( itemValueTooltip != "" ? itemValueTooltip : itemValue ) + " (Read-Only)");
 			}
 			else if( enableTooltips && !myTarget.isSpawner && ( propertyName == "Maxinterval" || propertyName == "Mininterval" || propertyName == "Spawnsection" || propertyName == "Sectionalist" ))
 			{
-				itemGump.AddToolTip( 1050045, pSocket, "<BASEFONT color=#EECD8B>n/a</BASEFONT> (SpawnObject Only)");
+				itemGump.AddToolTip( tooltipClilocID, pSocket, "<BASEFONT color=#EECD8B>n/a</BASEFONT> (SpawnObject Only)");
 			}
 		}
 
@@ -1987,7 +1988,7 @@ function HandleCharTarget( pSocket, myTarget )
 			else
 				charGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
 			if( enableTooltips )
-				charGump.AddToolTip( 1050045, pSocket, charLabelTooltip.toString() );
+				charGump.AddToolTip( tooltipClilocID, pSocket, charLabelTooltip.toString() );
 
 			if( charValue == "-" )
 				charValueTooltip = "Value not set";
@@ -2029,7 +2030,7 @@ function HandleCharTarget( pSocket, myTarget )
 						break;
 					charGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 					if( enableTooltips )
-						charGump.AddToolTip( 1050045, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
+						charGump.AddToolTip( tooltipClilocID, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
 					break;
 			}
 
@@ -2069,12 +2070,12 @@ function HandleCharTarget( pSocket, myTarget )
 					if(( propertyName != "Commandlevel" && propertyName != "IsGM" ) || ( myTarget.commandlevel >= pSocket.currentChar.commandlevel ))
 					{
 						if( enableTooltips )
-							charGump.AddToolTip( 1050045, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ) + " (Read-Only)");
+							charGump.AddToolTip( tooltipClilocID, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ) + " (Read-Only)");
 					}
 					break;
 				case charProp.multi:
 					if( myTarget.multi == null && enableTooltips )
-						charGump.AddToolTip( 1050045, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
+						charGump.AddToolTip( tooltipClilocID, pSocket, ( charValueTooltip != "" ? charValueTooltip : charValue ));
 					break;
 				default:
 					break;
@@ -2140,7 +2141,7 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 				skillGump.AddHTMLGump( 100, 420, 80, 20, 0, 0, "<BASEFONT color=#EECD8B>Page 1/" + totalPages + "</BASEFONT>" );
 				skillGump.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, 2, 0 );
 				if( enableTooltips )
-					skillGump.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
+					skillGump.AddToolTip( tooltipClilocID, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 			}
 		}
 		else // All other pages
@@ -2176,13 +2177,13 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 					// Add next page button for all subsequent pages except last one
 					skillGump.AddButton( 210, 420, gumpNextButtonOff, gumpNextButtonOn, 0, gumpPage + 1, 0 );
 					if( enableTooltips )
-						skillGump.AddToolTip( 1050045, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
+						skillGump.AddToolTip( tooltipClilocID, pSocket, GetDictionaryEntry( 8123, pSocket.language )); // Next page
 				}
 
 				// Add previous page button for all subsequent pages
 				skillGump.AddButton( 14, 420, gumpPrevButtonOff, gumpPrevButtonOn, 0, gumpPage - 1, 0 );
 				if( enableTooltips )
-					skillGump.AddToolTip( 1050045,  GetDictionaryEntry( 8124, pSocket.language )); // Previous page
+					skillGump.AddToolTip( tooltipClilocID,  GetDictionaryEntry( 8124, pSocket.language )); // Previous page
 			}
 		}
 
@@ -2474,12 +2475,12 @@ function HandleSkillGump( pSocket, myTarget, baseSkills )
 			// Labels
 			skillGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
 			if( enableTooltips )
-				skillGump.AddToolTip( 1050045, pSocket, charSkillsToolTip.toString() );
+				skillGump.AddToolTip( tooltipClilocID, pSocket, charSkillsToolTip.toString() );
 
 			// Buttons
 			skillGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 			if( enableTooltips )
-				skillGump.AddToolTip( 1050045, pSocket, ( charSkillsValueTooltip != "" ? charSkillsValueTooltip : charSkillsValue ));
+				skillGump.AddToolTip( tooltipClilocID, pSocket, ( charSkillsValueTooltip != "" ? charSkillsValueTooltip : charSkillsValue ));
 
 			// Values
 			skillGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + charSkillsValue + propertyValueEnd );
@@ -2736,7 +2737,7 @@ function HandleMultiTarget( pSocket, myTarget )
 			// Labels
 			multiGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + propertyName + propertyLabelEnd );
 			if( enableTooltips )
-				multiGump.AddToolTip( 1050045, pSocket, multiLabelTooltip.toString() );
+				multiGump.AddToolTip( tooltipClilocID, pSocket, multiLabelTooltip.toString() );
 
 			if( multiValue == "-" )
 				multiValueTooltip = "Value not set";
@@ -2770,7 +2771,7 @@ function HandleMultiTarget( pSocket, myTarget )
 				default:
 					multiGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 					if( enableTooltips )
-						multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ));
+						multiGump.AddToolTip( tooltipClilocID, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ));
 					break;
 			}
 
@@ -2790,7 +2791,7 @@ function HandleMultiTarget( pSocket, myTarget )
 				case multiProp.trashContainers:
 				case multiProp.vendors:
 					if( enableTooltips )
-						multiGump.AddToolTip( 1050045, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ) + " (Read-Only)");
+						multiGump.AddToolTip( tooltipClilocID, pSocket, ( multiValueTooltip != "" ? multiValueTooltip : multiValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3041,7 +3042,7 @@ function HandleRegionTarget( pSocket, myTarget )
 			// Labels
 			regionGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + regionLabel + propertyLabelEnd );
 			if( enableTooltips )
-				regionGump.AddToolTip( 1050045, pSocket, regionLabelTooltip.toString() );
+				regionGump.AddToolTip( tooltipClilocID, pSocket, regionLabelTooltip.toString() );
 
 			if( regionValue == "-" )
 				regionValueTooltip = "Value not set";
@@ -3054,7 +3055,7 @@ function HandleRegionTarget( pSocket, myTarget )
 				default:
 					regionGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 					if( enableTooltips )
-						regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ));
+						regionGump.AddToolTip( tooltipClilocID, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ));
 					break;
 			}
 
@@ -3066,7 +3067,7 @@ function HandleRegionTarget( pSocket, myTarget )
 				case regionProp.population:
 				case regionProp.numOrePrefs:
 					if( enableTooltips )
-						regionGump.AddToolTip( 1050045, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ) + " (Read-Only)");
+						regionGump.AddToolTip( tooltipClilocID, pSocket, ( regionValueTooltip != "" ? regionValueTooltip : regionValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3315,7 +3316,7 @@ function HandleAccountTarget( pSocket, myTarget )
 			// Labels
 			accountGump.AddHTMLGump( 15, labelStartY, 100, 20, 0, 0, propertyLabelStart + accountLabel + propertyLabelEnd );
 			if( enableTooltips )
-				accountGump.AddToolTip( 1050045, pSocket, accountLabelTooltip.toString() );
+				accountGump.AddToolTip( tooltipClilocID, pSocket, accountLabelTooltip.toString() );
 
 			if( accountValue == "-" )
 				accountValueTooltip = "Value not set";
@@ -3342,7 +3343,7 @@ function HandleAccountTarget( pSocket, myTarget )
 						break;
 					accountGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID);
 					if( enableTooltips )
-						accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
+						accountGump.AddToolTip( tooltipClilocID, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ));
 					break;
 			}
 
@@ -3358,7 +3359,7 @@ function HandleAccountTarget( pSocket, myTarget )
 				case accountProp.isOnline:
 				case accountProp.flags:
 					if( enableTooltips )
-						accountGump.AddToolTip( 1050045, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
+						accountGump.AddToolTip( tooltipClilocID, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
 					break;
 				default:
 					break;
@@ -3474,7 +3475,7 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 				var hexVal = "0x" + ("00000000"+(Number(targetObj[propertyName]).toString(16))).slice(-8)
 				inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, hexVal, maxLength );
 				if( enableTooltips )
-					inputGump.AddToolTip( 1050045, pUser.socket, (targetObj[propertyName]).toString() );
+					inputGump.AddToolTip( tooltipClilocID, pUser.socket, (targetObj[propertyName]).toString() );
 			}
 			else
 				inputGump.AddTextEntryLimited( 30, 70, 240, 10 + inputBackgroundHeight, 55, 1, 5, "0x" + (targetObj[propertyName]).toString(16), maxLength );
@@ -3487,10 +3488,10 @@ function ShowInputGump( pUser, targetObj, propertyName, propertyType, maxLength,
 		{
 			inputGump.AddButton( 20, 66, 0xfae, 0xfaf, 1, 0, 1002 ); // Assign new Object
 			if( enableTooltips )
-				inputGump.AddToolTip( 1050045, pUser.socket, GetDictionaryEntry( 8804, pSocket.language )); // Assign new Object
+				inputGump.AddToolTip( tooltipClilocID, pUser.socket, GetDictionaryEntry( 8804, pSocket.language )); // Assign new Object
 			inputGump.AddButton( 245, 66, 0xfb4, 0xfb5, 1, 0, 1001 ); 	// Clear Object
 			if( enableTooltips )
-				inputGump.AddToolTip( 1050045, pUser.socket, GetDictionaryEntry( 8805, pSocket.language )); // Clear Object
+				inputGump.AddToolTip( tooltipClilocID, pUser.socket, GetDictionaryEntry( 8805, pSocket.language )); // Clear Object
 			if( targetObj[propertyName] == null )
 				inputGump.AddHTMLGump( 50, 70, 195, 20, 0, 0, "<CENTER><BASEFONT color=#EECD8B> - </BASEFONT></CENTER>" );
 			else

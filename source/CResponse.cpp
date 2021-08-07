@@ -703,9 +703,12 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			{
 				if( Npcs->canControlPet( mChar, Npc, isRestricted, checkDifficulty ))
 				{
+					UI08 cursorType = 0;
+					if( targID == 25 ) // Guard
+						cursorType = 2; // helpful
 					mSock->TempObj( Npc );
 					mSock->TempInt( 1 );
-					mSock->target( 0, targID, dictEntry );
+					mSock->target( 0, targID, cursorType, dictEntry );
 					return false;
 				}
 			}
@@ -725,7 +728,10 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			if( Npcs->canControlPet( mChar, Npc, isRestricted, checkDifficulty ) )
 			{
 				mSock->TempObj( Npc );
-				mSock->target( 0, targID, dictEntry );
+				UI08 cursorType = 0;
+				if( targID == 25 ) // Guard
+					cursorType = 2; // helpful
+				mSock->target( 0, targID, cursorType, dictEntry );
 				return false;
 			}
 		}
@@ -813,7 +819,7 @@ bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			mSock->TempObj( Npc );
 			if( saidAll )
 				mSock->TempInt( 1 );
-			mSock->target( 0, TARGET_ATTACK, 1313 );
+			mSock->target( 0, TARGET_ATTACK, 1, 1313 );
 			//if( !saidAll )
 
 				return false;
@@ -1155,7 +1161,7 @@ void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( realHouse->IsOwner( mChar ) )
 			{
 				mSock->TempObj( realHouse );
-				mSock->target( 0, targID, dictEntry );
+				mSock->target( 0, targID, 0, dictEntry );
 			}
 		}
 	}

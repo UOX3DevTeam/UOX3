@@ -167,8 +167,8 @@ void UseResource( amount, realitemid, colour );</pre>
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="CustomTarget">CustomTarget</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void CustomTarget( tNum, toSay );</pre>
-<tr><td class="property">Purpose		<td class="value">Very similar to PopUpTarget. It's a callback situation instead. tNum must be between 0 and 255. Says toSay, and shows a cursor. Reenters the script associated with the socket's player (ie player who gets the cursor). Enters function name based on the value of tNum. if tNum is 0, then the function would be onCallback0. Prototype of callback is: <pre>function onCallback0( tSock, targSerial )</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>void CustomTarget( tNum, toSay, (cursorType) );</pre>
+<tr><td class="property">Purpose		<td class="value">Very similar to PopUpTarget. It's a callback situation instead. tNum must be between 0 and 255. Says toSay, and shows a cursor. Supports an optional cursorType (0 = default, 1 = harmful, 2 = helpful - these will show up as different colored auras around target cursor in supported clients like ClassicUO). Reenters the script associated with the socket's player (ie player who gets the cursor). Enters function name based on the value of tNum. if tNum is 0, then the function would be onCallback0. Prototype of callback is: <pre>function onCallback0( tSock, targSerial )</pre>
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.CustomTarget( 0, "Select your custom target:" );
 </pre></table>
 

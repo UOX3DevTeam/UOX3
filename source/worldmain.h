@@ -84,25 +84,6 @@ public:
 class CWorldMain
 {
 private:
-	struct skill_st
-	{
-		UI16 strength			= 0;
-		UI16 dexterity			= 0;
-		UI16 intelligence		= 0;
-		std::string madeword	= "made";
-		std::vector< advance_st > advancement;
-		UI16 jsScript			= 0xFFFF;
-		std::string name		= "";
-		skill_st()
-		{
-			ResetDefaults();
-		}
-		void ResetDefaults( void )
-		{
-			advancement.resize( 0 );
-		}
-	};
-
 	// Custom Titles
 	struct title_st
 	{
@@ -143,6 +124,26 @@ private:
 	bool		classesInitialized;
 
 public:
+	struct skill_st
+	{
+		UI16 strength			= 0;
+		UI16 dexterity			= 0;
+		UI16 intelligence		= 0;
+		SI32 skillDelay			= -1;
+		std::string madeword	= "made";
+		std::vector< advance_st > advancement;
+		UI16 jsScript			= 0xFFFF;
+		std::string name		= "";
+		skill_st()
+		{
+			ResetDefaults();
+		}
+		void ResetDefaults( void )
+		{
+			advancement.resize( 0 );
+		}
+	};
+
 	// Timers
 	void		SetTimer( CWM_TID timerID, TIMERVAL newVal );
 	TIMERVAL	GetTimer( CWM_TID timerID ) const;

@@ -491,7 +491,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( cdata, "//" )), "," );
 				if( csecs.size() > 1 )
 				{
-					Items->AddRespawnItem( applyTo, strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), true, false, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0))); //section 0 = id, section 1 = amount
+					Items->AddRespawnItem( applyTo, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), true, false, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0))); //section 0 = id, section 1 = amount
 				}
 				else
 				{

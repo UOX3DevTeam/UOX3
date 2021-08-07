@@ -721,7 +721,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( mChar.IsNpc() && mChar.IsEvading() && mChar.GetTimer( tNPC_EVADETIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetEvadeState( false );
-#ifdef DEBUG_COMBAT
+#if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
 		std::string mCharName = getNpcDictName( &mChar );
 		Console.print( strutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
@@ -929,16 +929,26 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		}
 	}
 
-	if( mChar.IsCasting() && !mChar.IsJSCasting() )	// Casting a spell
+	if( mChar.IsCasting() && !mChar.IsJSCasting() && mChar.GetSpellCast() != -1 )	// Casting a spell
 	{
+		auto spellNum = mChar.GetSpellCast();
 		mChar.SetNextAct( mChar.GetNextAct() - 1 );
 		if( mChar.GetTimer( tCHAR_SPELLTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )//Spell is complete target it.
 		{
-			if( Magic->spells[mChar.GetSpellCast()].RequireTarget() )
+			// Set the recovery time before another spell can be cast
+			mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue( static_cast<R32>( Magic->spells[spellNum].RecoveryDelay()) ));
+
+			if( Magic->spells[spellNum].RequireTarget() )
 			{
 				mChar.SetCasting( false );
 				mChar.SetFrozen( false );
-				mSock->target( 0, TARGET_CASTSPELL, Magic->spells[mChar.GetSpellCast()].StringToSay().c_str() );
+				UI08 cursorType = 0;
+				if( Magic->spells[spellNum].AggressiveSpell() )
+					cursorType = 1;
+				else if( spellNum == 4 || spellNum == 6 || spellNum == 7 || spellNum == 9 || spellNum == 10 || spellNum == 11 || spellNum == 15 || spellNum == 16 || spellNum == 17
+					|| spellNum == 25 || spellNum == 26 || spellNum == 29 || spellNum == 44 || spellNum == 59 )
+					cursorType = 2;
+				mSock->target( 0, TARGET_CASTSPELL, Magic->spells[spellNum].StringToSay().c_str(), cursorType );
 			}
 			else
 			{

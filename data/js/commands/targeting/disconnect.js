@@ -36,7 +36,7 @@ function command_BAN( socket, cmdString )
 	socket.tempint = banDuration;
 	var targMsg = GetDictionaryEntry( 2015, socket.language ); // Select character to ban for %d minutes.
 	targMsg = targMsg.replace('%d', banDuration );
-	socket.CustomTarget( 1, targMsg );
+	socket.CustomTarget( 1, targMsg, 1 );
 }
 
 function command_UNBAN( socket, cmdString )

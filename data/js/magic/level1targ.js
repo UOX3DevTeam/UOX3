@@ -7,7 +7,7 @@ function SpellRegistration()
 
 function spellTimerCheck( mChar, mSock )
 {
-	if( mChar.GetTimer( 6 ) != 0 )
+	if( mChar.GetTimer( Timer.SPELLTIME ) != 0 )
 	{
 		if( mChar.isCasting )
 		{
@@ -15,7 +15,7 @@ function spellTimerCheck( mChar, mSock )
 				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language ) );
 			return false;
 		}
-		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
+		else if( mChar.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
 			if( mSock )
 				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language ) );
@@ -30,7 +30,7 @@ function jailTimerCheck( mChar, mSock )
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
 		mSock.SysMessage( GetDictionaryEntry( 704, mSock.language ) );
-		mChar.SetTimer( 6, 0 );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
 		return false;
@@ -44,7 +44,7 @@ function spellEnableCheck( mChar, mSock, mSpell )
 	{
 		if( mSock )
 			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language ) );
-		mChar.SetTimer( 6, 0 );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
 		return false;
@@ -65,7 +65,7 @@ function itemInHandCheck( mChar, mSock, spellType )
 			{
 				if( mSock )
 					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language ) );
-				mChar.SetTimer( 6, 0 );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return false;
@@ -77,12 +77,27 @@ function itemInHandCheck( mChar, mSock, spellType )
 
 function onSpellCast( mSock, mChar, directCast, spellNum )
 {
+	// Are we recovering from another spell that was just cast
+	if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) != 0 )
+	{
+		if( mChar.GetTimer( Timer.SPELLRECOVERYTIME ) > GetCurrentClock() )
+		{
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language ) ); // You must wait a little while before casting
+			return true;
+		}
+	}
+
 	// Are we already casting?
 	if( !spellTimerCheck( mChar, mSock ) )
 		return true;
 
 	var mSpell	= Spells[spellNum];
-	var spellType = mChar.currentSpellType;
+	var spellType = 0
+
+	// Fetch spelltype; 0 = normal spell, 1 = scroll, 2 = wand
+	if( mSock != null )
+		spellType = mSock.currentSpellType;
 
 	mChar.spellCast = spellNum;
 
@@ -95,7 +110,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( mSock )
 			mSock.SysMessage( GetDictionaryEntry( 705, mSock.language ) );
-		mChar.SetTimer( 6, 0 );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
 		return true;
@@ -107,7 +122,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSock )
 				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
-			mChar.SetTimer( 6, 0 );
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
 			return;
@@ -117,7 +132,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSock )
 				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language ) );
-			mChar.SetTimer( 6, 0 );
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
 			return true;
@@ -126,19 +141,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	if( !spellEnableCheck( mChar, mSock, mSpell ) )
 		return true;
-
-	// Cut the casting requirement on scrolls
-	var lowSkill, highSkill;
-	if( spellType == 1 )
-	{
-		lowSkill	= mSpell.scrollLow;
-		highSkill	= mSpell.scrollHigh;
-	}
-	else
-	{
-		lowSkill	= mSpell.lowSkill;
-		highSkill	= mSpell.highSkill;
-	}
 
 	if( !itemInHandCheck( mChar, mSock, spellType ) )
 		return true;
@@ -151,16 +153,6 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	if( mChar.commandlevel < 2  )
 	{
-		//Check for enough reagents
-		// type == 0 -> SpellBook
-		if( spellType == 0 && !checkReagents( mChar, mSpell ) )
-		{
-			mChar.SetTimer( 6, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return true;
-		}
-
 		// type == 2 - Wands
 		if( spellType != 2 )
 		{
@@ -168,7 +160,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			{
 				if( mSock )
 					mSock.SysMessage( GetDictionaryEntry( 696, mSock.language ) );
-				mChar.SetTimer( 6, 0 );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
@@ -177,7 +169,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			{
 				if( mSock )
 					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language ) );
-				mChar.SetTimer( 6, 0 );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
@@ -186,7 +178,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			{
 				if( mSock )
 					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language ) );
-				mChar.SetTimer( 6, 0 );
+				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
 				return true;
@@ -194,30 +186,16 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		}
 	}
 
-	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
-	{
-		mChar.TextMessage( mSpell.mantra );
-		if( spellType == 0 )
-		{
-			deleteReagents( mChar, mSpell );
-			mChar.SpellFail();
-			mChar.SetTimer( 6, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			return true;
-		}
-	}
-
 	mChar.nextAct = 75;		// why 75?
 
-	var delay = mSpell.delay * 100;
+	var delay = mSpell.delay;
 	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
-		mChar.SetTimer( 6, delay );
+		mChar.SetTimer( Timer.SPELLTIME, delay * 1000 );
 		mChar.frozen = true;
 	}
 	else
-		mChar.SetTimer( 6, 0 );
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
 
 	if( !mChar.isonhorse )
 	{
@@ -235,7 +213,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	mChar.TextMessage( tempString );
 	mChar.isCasting = true;
 
-	mChar.StartTimer( delay, spellNum, true );
+	mChar.StartTimer( delay * 1000, spellNum, true );
 
 	return true;
 }
@@ -263,7 +241,8 @@ function checkReagents( mChar, mSpell )
 			failedCheck = 1;
 		if( failedCheck == 1 )
 		{
-			mChar.SysMessage( GetDictionaryEntry( 702, mChar.socket.language ) );  // not enough reagents to cast spell
+			if( mChar.socket != null )
+				mChar.socket.SysMessage( GetDictionaryEntry( 702, mChar.socket.language )); // You do not have enough reagents to cast that spell.
 			return false;
 		}
 	}
@@ -299,17 +278,37 @@ function onTimer( mChar, timerID )
 	{
 		var mSock = mChar.socket;
 		if( mSock )
-			mSock.CustomTarget( 0, Spells[timerID].strToSay );
+		{
+			var cursorType = 0;
+			var spellNum = mChar.spellCast;
+			if( Spells[spellNum].aggressiveSpell )
+				cursorType = 1; // Hostile cursor type
+			else if( spellNum == 4 ) // Heal
+				cursorType = 2; // Friendly cursor type
+
+			mChar.SetTimer( Timer.SPELLRECOVERYTIME, Spells[spellNum].recoveryDelay );
+			mSock.CustomTarget( 0, Spells[timerID].strToSay, cursorType );
+		}
 	}
 }
 
 function onCallback0( mSock, ourTarg )
 {
+	var mChar = mSock.currentChar;
 	if( ourTarg && ourTarg.isChar )
 	{
-		var mChar = mSock.currentChar;
 		if( mChar )
 			onSpellSuccess( mSock, mChar, ourTarg, 0 );
+	}
+	else
+	{
+		if( mChar )
+		{
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			mChar.frozen = false;
+		}
 	}
 }
 
@@ -332,11 +331,53 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	var spellType	= 0;
 	var sourceChar	= mChar;
 
-	if( mSock )
+	if( mSock != null )
 		spellType = mSock.currentSpellType;
 
-	mChar.SetTimer( 6, 0 );
+	mChar.SetTimer( Timer.SPELLTIME, 0 );
 	mChar.spellCast = -1;
+
+	// If player commandlevel is below GM-level, check for reagents
+	if( mSock != null && mChar.commandlevel < 2  )
+	{
+		//Check for enough reagents
+		// type == 0 -> SpellBook
+		if( spellType == 0 && !checkReagents( mChar, mSpell ) )
+		{
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return;
+		}
+	}
+
+	// Cut the casting requirement on scrolls
+	var lowSkill, highSkill;
+	if( spellType == 1 )
+	{
+		lowSkill	= mSpell.scrollLow;
+		highSkill	= mSpell.scrollHigh;
+	}
+	else
+	{
+		lowSkill	= mSpell.lowSkill;
+		highSkill	= mSpell.highSkill;
+	}
+
+	// Do skillcheck
+	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
+	{
+		mChar.TextMessage( mSpell.mantra );
+		if( spellType == 0 )
+		{
+			deleteReagents( mChar, mSpell );
+			mChar.SpellFail();
+			mChar.SetTimer( Timer.SPELLTIME, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return;
+		}
+	}
 
 	if( mChar.npc || spellType != 2 )
 	{
@@ -391,12 +432,15 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 		}
 	}
 
-	if( sourceChar.npc )
-		ourTarg.SoundEffect( mSpell.soundEffect, true );
-	else
-		sourceChar.SoundEffect( mSpell.soundEffect, true );
-	sourceChar.SpellMoveEffect( ourTarg, mSpell );
-	ourTarg.SpellStaticEffect( mSpell );
+	if( spellNum != 5 )
+	{
+		if( sourceChar.npc )
+			ourTarg.SoundEffect( mSpell.soundEffect, true );
+		else
+			sourceChar.SoundEffect( mSpell.soundEffect, true );
+		sourceChar.SpellMoveEffect( ourTarg, mSpell );
+		ourTarg.SpellStaticEffect( mSpell );
+	}
 
 	// This is where the code actually executes ... all of this setup for a single line of code!
 
@@ -461,7 +505,6 @@ function CalculateHitLoc( )
 
 function MagicDamage( p, amount, attacker, mSock, element )
 {
-
 	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
 		return;
 
@@ -497,8 +540,10 @@ function MagicDamage( p, amount, attacker, mSock, element )
 		if( p.npc && !p.isHuman )
 			damage *= 2;
 
-		p.Damage( damage, attacker, true );
-		p.ReactOnDamage( element, attacker );
+		DoTempEffect( 0, attacker, p, 28, damage, 0, 0 );
+
+		/*p.Damage( damage, attacker, true );
+		p.ReactOnDamage( element, attacker );*/
 	}
 }
 

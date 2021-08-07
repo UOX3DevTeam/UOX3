@@ -54,7 +54,6 @@ const UI32 BIT_ITEMDECAYINHOUSES	= 32;
 const UI32 BIT_PAPERDOLLGUILDBUTTON = 33;
 const UI32 BIT_ATTSPEEDFROMSTAMINA	= 34;
 const UI32 BIT_SHOWDAMAGENUMBERS	= 35;
-// 36 free!
 // 37 free!
 const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
 const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
@@ -86,6 +85,7 @@ const UI32 BIT_SPEECHLOG					= 64;
 const UI32 BIT_CONTEXTMENUS					= 65;
 const UI32 BIT_CHECKPETCONTROLDIFFICULTY	= 66;
 const UI32 BIT_SHOWNPCTITLESINTOOLTIPS		= 67;
+const UI32 BIT_ITEMSINTERRUPTCASTING		= 68;
 
 
 // New uox3.ini format lookup
@@ -334,7 +334,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SCRIPTITEMSDECAYABLE", 159);
 	regINIValue("BASEITEMSDECAYABLE", 160);
 	regINIValue("ITEMDECAYINHOUSES", 161);
-	regINIValue("COMBATEXPLODEDELAY", 162);
+	// 162 free
 	regINIValue("PAPERDOLLGUILDBUTTON", 163);
 	regINIValue("ATTACKSPEEDFROMSTAMINA", 164);
 	regINIValue("DISPLAYDAMAGENUMBERS", 169);
@@ -441,6 +441,8 @@ void	CServerData::regAllINIValues() {
 	regINIValue("FISHPERAREA", 279);
 	regINIValue("FISHRESPAWNTIMER", 280);
 	regINIValue("FISHRESPAWNAREA", 281);
+	regINIValue("ITEMSINTERRUPTCASTING", 282);
+	regINIValue("SYSMESSAGECOLOUR", 283);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -491,7 +493,6 @@ void CServerData::ResetDefaults( void )
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
-	CombatExplodeDelay( 2 );
 
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
@@ -537,6 +538,7 @@ void CServerData::ResetDefaults( void )
 	ServerUOGEnabled( true );
 	ConnectUOServerPoll( true );
 	ServerContextMenus( true );
+	SysMsgColour( 0x0048 );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 5 );
@@ -569,6 +571,7 @@ void CServerData::ResetDefaults( void )
 	SetPetLoyaltyGainOnSuccess( 1 );
 	SetPetLoyaltyLossOnFailure( 3 );
 	SystemTimer( tSERVER_LOYALTYRATE, 900 );
+	ItemsInterruptCasting( true );
 
 	auto curWorkingDir = std::filesystem::current_path().string();
 
@@ -1023,6 +1026,21 @@ bool CServerData::ServerContextMenus( void ) const
 void CServerData::ServerContextMenus( bool newVal )
 {
 	boolVals.set( BIT_CONTEXTMENUS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 SysMsgColour( void ) const
+//|					void SysMsgColour( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default text colour for system messages displayed in bottom left
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::SysMsgColour( void ) const
+{
+	return sysMsgColour;
+}
+void CServerData::SysMsgColour( UI16 value )
+{
+	sysMsgColour = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1895,6 +1913,21 @@ UI08 CServerData::AlchemyDamageBonusModifier( void ) const
 void CServerData::AlchemyDamageBonusModifier( UI08 value )
 {
 	alchemyDamageBonusModifier = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemsInterruptCasting( void ) const
+//|					void ItemsInterruptCasting( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether manipulation of items interrupts casting
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ItemsInterruptCasting( void ) const
+{
+	return boolVals.test( BIT_ITEMSINTERRUPTCASTING );
+}
+void CServerData::ItemsInterruptCasting( bool newVal )
+{
+	boolVals.set( BIT_ITEMSINTERRUPTCASTING, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2823,21 +2856,6 @@ void CServerData::CombatMaxSpellRange( SI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 CombatExplodeDelay( void ) const
-//|					void CombatExplodeDelay( UI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the delay in seconds for the explosion spell to go into effect
-//o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::CombatExplodeDelay( void ) const
-{
-	return combatExplodeDelay;
-}
-void CServerData::CombatExplodeDelay( UI16 value )
-{
-	combatExplodeDelay = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CombatAnimalsGuarded( void ) const
 //|					void CombatAnimalsGuarded( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -3556,6 +3574,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "JSENGINESIZE=" << static_cast<UI16>(GetJSEngineSize()) << '\n';
 		ofsOutput << "USEUNICODEMESSAGES=" << (UseUnicodeMessages()?1:0) << '\n';
 		ofsOutput << "CONTEXTMENUS=" << ( ServerContextMenus() ? 1 : 0 ) << '\n';
+		ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -3782,7 +3801,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
 		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
 		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
-		ofsOutput << "COMBATEXPLODEDELAY=" << CombatExplodeDelay() << '\n';
 		ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<UI16>(CombatWeaponDamageChance()) << '\n';
 		ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<UI16>(CombatWeaponDamageMin()) << '\n';
 		ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<UI16>(CombatWeaponDamageMax()) << '\n';
@@ -3796,6 +3814,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
 		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
 		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
+		ofsOutput << "ITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
@@ -4537,9 +4556,6 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 161:	 // ITEMDECAYINHOUSES[0153]
 			ItemDecayInHouses( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
-		case 162:	// COMBATEXPLODEDELAY[0154]
-			CombatExplodeDelay( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
-			break;
 		case 163:	// PAPERDOLLGUILDBUTTON[0155]
 			PaperdollGuildButton( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
@@ -4859,6 +4875,12 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 281:	 // FISHRESPAWNAREA
 			ResFishArea( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 282:    // ITEMSINTERRUPTCASTING
+			ItemsInterruptCasting( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 283:	 // SYSMESSAGECOLOUR
+			SysMsgColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		default:
 			rvalue = false;

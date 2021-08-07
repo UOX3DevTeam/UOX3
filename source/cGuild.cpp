@@ -1428,10 +1428,10 @@ void CGuildCollection::GumpChoice( CSocket *s )
 		case BasePage+1:								// Main menu
 			switch( button )
 			{
-				case 2:		s->target( 2, 0, 156 );				break;	// recruit into guild
+				case 2:		s->target( 2, 0, 0, 156 );				break;	// recruit into guild
 				case 3:		Menu( s, BasePage + 7, trgGuild );	break;
 				case 4:		Menu( s, BasePage + 5, trgGuild );	break;
-				case 5:		s->target( 2, 1, 157 );				break;	// declare fealty
+				case 5:		s->target( 2, 1, 0, 157 );				break;	// declare fealty
 				case 6:		ToggleAbbreviation( s );			break;	// toggle abbreviation
 				case 7:		Resign( s );						break;	//	Resign from guild
 				case 8:		Menu( s, BasePage + 6, trgGuild );	break;	// View candidates
@@ -1450,10 +1450,10 @@ void CGuildCollection::GumpChoice( CSocket *s )
 				case 5:		Menu( s, BasePage + 4, trgGuild );		break;	// set guild charter
 				case 6:		Menu( s, BasePage + 8, trgGuild );		break;	// dismiss a member
 				case 7:		Menu( s, BasePage + 13, trgGuild );		break;	// declare war from menu
-				case 8:		s->target( 2, 2, 160 );					break;	// declare war from target
+				case 8:		s->target( 2, 2, 0, 160 );					break;	// declare war from target
 				case 9:		Menu( s, BasePage + 14, trgGuild );		break;	// declare peace
 				case 10:	Menu( s, BasePage + 19, trgGuild );		break;	// declare ally from menu
-				case 11:	s->target( 2, 3, 161 );			break;	// declare ally from target
+				case 11:	s->target( 2, 3, 0, 161 );			break;	// declare ally from target
 				case 12:	Menu( s, BasePage + 10, trgGuild );		break;	// accept candidate seeking membership
 				case 13:	Menu( s, BasePage + 9, trgGuild );		break;	// refuse candidate seeking membership
 				case 14:	TextEntryGump( s, ser, 100, 3, 15,  162 );	break;	// set guild master's title

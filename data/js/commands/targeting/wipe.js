@@ -187,7 +187,7 @@ function CallWipe( socket, cmdString )
 		facetToWipe = socket.currentChar.worldnumber;
 		socket.clickX = -1;
 		socket.clickY = -1;
-		socket.CustomTarget( 0, GetDictionaryEntry( 8115, socket.language )); // Choose top corner to wipe:
+		socket.CustomTarget( 0, GetDictionaryEntry( 8115, socket.language ), 1 ); // Choose top corner to wipe:
 	}
 }
 
@@ -201,7 +201,7 @@ function onCallback0( socket, ourObj )
 	{
 		socket.clickX 	= socket.GetWord( 11 );
 		socket.clickY 	= socket.GetWord( 13 );
-		socket.CustomTarget( 1, GetDictionaryEntry( 8116, socket.language )); // Choose bottom corner to wipe
+		socket.CustomTarget( 1, GetDictionaryEntry( 8116, socket.language ), 1 ); // Choose bottom corner to wipe
 	}
 }
 

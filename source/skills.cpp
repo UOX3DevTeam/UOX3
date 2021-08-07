@@ -310,8 +310,6 @@ void cSkills::Mine( CSocket *s )
 		return;
 	}
 
-	mSock.SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-
 	const UI08 targetID1 = mSock.GetByte( 17 );
 	const UI08 targetID2 = mSock.GetByte( 18 );
 
@@ -1268,7 +1266,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsDead() )
 	{
-		//ClilocMessage( s, SYSTEM, 0x0040, FNT_NORMAL, 500012 );
+		//ClilocMessage( s, SYSTEM, cwmWorldState->ServerData()->SysMsgColour(), FNT_NORMAL, 500012 );
 		s->sysmessage( 9054 ); // You cannot use skills while dead.
 		return;
 	}
@@ -1282,6 +1280,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	}
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || mChar->IsGM() )
 	{
+		s->SkillDelayMsgShown( false );
 		bool doSwitch = true;
 		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 		for( auto scriptTrig : scriptTriggers )
@@ -1309,7 +1308,6 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 				{
 					doSwitch = false;
 				}
-
 			}
 		}
 
@@ -1318,7 +1316,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		{
 			switch( x )
 			{
-				case ITEMID:			s->target( 0, TARGET_ITEMID, 857 );			break;
+				case ITEMID:			s->target( 0, TARGET_ITEMID, 0, 857 );			break;
 				case STEALING:
 					// Check if stealing is allowed in player's current region
 					if( mChar->GetRegion()->IsSafeZone() )
@@ -1327,7 +1325,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 						s->sysmessage( 1799 );
 					}
 					else if( cwmWorldState->ServerData()->RogueStatus() )
-						s->target( 0, TARGET_STEALING, 863 );
+						s->target( 0, TARGET_STEALING, 1, 863 );
 					else
 						s->sysmessage( 864 );
 					break;
@@ -1335,11 +1333,31 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 				default:				s->sysmessage( 871 );					break;
 			}
 		}
-		s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+
+		// If skilldelay timer is still below currenttimer, it wasn't modified in onSkill event. So let's update it now!
+		if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() )
+		{
+			if( cwmWorldState->skill[x].skillDelay != -1 )
+			{
+				// Use skill-specific skill delay if one has been set
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->skill[x].skillDelay )) );
+			}
+			else
+			{
+				// Otherwise use global skill delay from uox.ini
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+			}
+		}
 		return;
 	}
 	else
-		s->sysmessage( 872 );
+	{
+		if( !s->SkillDelayMsgShown() )
+		{
+			s->sysmessage( 872 ); // You must wait a few moments before using another skill.
+			s->SkillDelayMsgShown( true );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1838,7 +1856,7 @@ void cSkills::Persecute( CSocket *s )
 	if( !ValidateObject( targChar ) || targChar->IsGM() )
 		return;
 
-	SI32 decrease = (SI32)( c->GetIntelligence() / 10 ) + 3;
+	SI32 decrease = static_cast<SI32>(( c->GetSkill( SPIRITSPEAK ) / 100 ) + ( c->GetIntelligence() / 20 )) + 3;
 
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || c->IsGM() )
 	{
@@ -1849,7 +1867,17 @@ void cSkills::Persecute( CSocket *s )
 			s->sysmessage( 972 ); // Your spiritual forces disturb the enemy!
 			if( tSock != nullptr )
 				tSock->sysmessage( 973 ); // A damned soul is disturbing your mind!
-			s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+
+			if( cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1 )
+			{
+				// Use skill-specific skill delay if one has been set
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->skill[SPIRITSPEAK].skillDelay )) );
+			}
+			else
+			{
+				// Otherwise use global skill delay from uox.ini
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+			}
 
 			std::string targCharName = getNpcDictName( targChar );
 			targChar->TextMessage( nullptr, 974, EMOTE, 1, targCharName.c_str() ); // %s is persecuted by a ghost!
