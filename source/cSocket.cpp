@@ -1621,10 +1621,7 @@ CSocket *CPInputBuffer::GetSocket( void ) const
 //o-----------------------------------------------------------------------------------------------o
 UnicodeTypes CSocket::Language( void ) const
 {
-	if( this != nullptr )
-		return lang;
-	else
-		return UT_ENG;
+	return lang;
 }
 void CSocket::Language( UnicodeTypes newVal )
 {
