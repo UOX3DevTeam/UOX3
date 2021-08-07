@@ -184,7 +184,18 @@ bool CPIGetItem::Handle( void )
 	SERIAL serial	= tSock->GetDWord( 1 );
 	if( serial == INVALIDSERIAL )
 		return true;
+
+	// Break their meditation/concentration
 	ourChar->BreakConcentration( tSock );
+
+	// In case player is casting a spell, cancel their targeting cursor (if enabled in INI)
+	if(( ourChar->IsCasting() || ourChar->GetSpellCast() != -1 ) && cwmWorldState->ServerData()->ItemsInterruptCasting() )
+	{
+		tSock->target( 0, 0x00000000, Dictionary->GetEntry( 2862, tSock->Language() ), 3 ); // Your hands must be free to cast spells or meditate.
+		ourChar->StopSpell();
+		if( ourChar->IsFrozen() )
+			ourChar->SetFrozen( false );
+	}
 
 	CItem *i = calcItemObjFromSer( serial );
 	if( !ValidateObject( i ) )
@@ -604,6 +615,15 @@ bool CPIEquipItem::Handle( void )
 	tSock->PickupSpot( PL_NOWHERE );
 	tSock->SetCursorItem( nullptr );
 
+	// In case player is casting a spell, cancel their targeting cursor (if enabled in INI)
+	if(( ourChar->IsCasting() || ourChar->GetSpellCast() != -1 ) && cwmWorldState->ServerData()->ItemsInterruptCasting() )
+	{
+		tSock->target( 0, 0x00000000, Dictionary->GetEntry( 2862, tSock->Language() ), 3 ); // Your hands must be free to cast spells or meditate.
+		ourChar->StopSpell();
+		if( ourChar->IsFrozen() )
+			ourChar->SetFrozen( false );
+	}
+
 	CPDropItemApproved lc;
 	tSock->Send( &lc );
 
@@ -916,11 +936,11 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool  CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, UI08 z )
+//|	Function	-	bool  CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI08 z )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for a valid drop location at the location where client attempts to drop an item
 //o-----------------------------------------------------------------------------------------------o
-bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, UI08 z )
+bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI08 z )
 {
 	bool dropLocationBlocked = false;
 
@@ -930,8 +950,9 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, UI
 
 	if( !dropLocationBlocked )
 	{
-		// Check static items for TF_BLOCKING flag
-		dropLocationBlocked = Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false );
+		// Check static items for TF_BLOCKING flag, or if map tile blocks dropping item
+		dropLocationBlocked = ( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false )
+			|| Map->DoesMapBlock( x, y, z, nChar->WorldNumber(), true, false, false, false ));
 		if( !dropLocationBlocked )
 		{
 			// No? Well, then check static flags for TF_ROOF flag
@@ -939,7 +960,7 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, UI
 			if( !dropLocationBlocked )
 			{
 				// Still no? Time to check dynamic items for TF_BLOCKING flag...
-				dropLocationBlocked = Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceID(), TF_BLOCKING );
+				dropLocationBlocked = ( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceID(), TF_BLOCKING ));
 				if( !dropLocationBlocked )
 				{
 					// ...and then for TF_ROOF flag
@@ -1890,8 +1911,19 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		tempstr = pdoll->GetName() + " " + pdoll->GetTitle();
 	else if( pdoll->IsNpc() )
 	{
-		std::string tempTitle = getNpcDictTitle( pdoll, s );
-		tempstr = FameTitle + " " + pdoll->GetName() + " " + tempTitle;
+		// Prefix name with fame title, if it exists
+		if( FameTitle != "" )
+			tempstr = FameTitle;
+		
+		// Then add actual name
+		tempstr += pdoll->GetName();
+
+		// Append title, if one exists
+		if( pdoll->GetTitle() != "" )
+		{
+			std::string tempTitle = getNpcDictTitle( pdoll, s );
+			tempstr += " " + tempTitle;
+		}
 	}
 	else if( pdoll->IsDead() )
 		tempstr = pdoll->GetName();
@@ -2384,11 +2416,11 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				return true;
 
 			mSock->TempObj( iUsed );
-			mSock->target( 0, TARGET_REPAIRMETAL, 485 );	// What do we wish to repair?
+			mSock->target( 0, TARGET_REPAIRMETAL, 0, 485 );	// What do we wish to repair?
 			return true;
 		case IT_FORGE:	// Forges
 			mSock->TempObj( iUsed );
-			mSock->target( 0, TARGET_SMELT, 440 );
+			mSock->target( 0, TARGET_SMELT, 0, 440 );
 			return true;
 		case IT_DYE:	// Dye
 			// If item is locked down, check if player has access to use it
@@ -2397,7 +2429,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 
 			mSock->TempObj( iUsed );
 			mSock->DyeAll( 0 );
-			mSock->target( 0, TARGET_DYEALL, 441 );
+			mSock->target( 0, TARGET_DYEALL, 0, 441 );
 			return true;
 		case IT_DYEVAT:	// Dye vat
 			// If item is locked down, check if player has access to use it
@@ -2407,7 +2439,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			mSock->TempObj( iUsed );
 			mSock->AddID1( iUsed->GetColour( 1 ) );
 			mSock->AddID2( iUsed->GetColour( 2 ) );
-			mSock->target( 0, TARGET_DVAT, 442 );
+			mSock->target( 0, TARGET_DVAT, 0, 442 );
 			return true;
 		case IT_MODELMULTI:	// Model boat/Houses
 			if( iType != IT_TOWNSTONE && iType != IT_GUILDSTONE )
@@ -2429,7 +2461,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				return true;
 
 			mSock->TempObj( iUsed );
-			mSock->target( 0, TARGET_SMITH, 444 );
+			mSock->target( 0, TARGET_SMITH, 0, 444 );
 			return true;
 		case IT_MININGTOOL:	// Mining
 			// If item is locked down, check if player has access to use it
@@ -2437,7 +2469,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				return true;
 
 			mSock->TempObj( iUsed );
-			mSock->target( 0, TARGET_MINE, 446 );
+			mSock->target( 0, TARGET_MINE, 0, 446 );
 			return true;
 		case IT_EMPTYVIAL:	// empty vial
 			// If item is locked down, check if player has access to use it
@@ -2450,7 +2482,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				if( iUsed->GetCont() == i )
 				{
 					mSock->TempObj( iUsed );
-					mSock->target( 0, TARGET_VIAL, 447 );
+					mSock->target( 0, TARGET_VIAL, 0, 447 );
 				}
 				else
 					mSock->sysmessage( 448 );
@@ -2469,9 +2501,9 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			{
 				mSock->TempObj( iUsed );
 				if( iUsed->GetID() == 0x19B7 )
-					mSock->target( 0, TARGET_SMELTORE, 460 ); // Select the forge on which to smelt the ore.
+					mSock->target( 0, TARGET_SMELTORE, 0, 460 ); // Select the forge on which to smelt the ore.
 				else
-					mSock->target( 0, TARGET_SMELTORE, 1815 ); // Select the forge on which to smelt the ore, or another pile of ore with which to combine it.
+					mSock->target( 0, TARGET_SMELTORE, 0, 1815 ); // Select the forge on which to smelt the ore, or another pile of ore with which to combine it.
 			}
 			return true;
 		case IT_MESSAGEBOARD:	// Message board opening
@@ -2515,7 +2547,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			else
 			{
 				mSock->TempObj( iUsed );
-				mSock->target( 0, TARGET_FISH, 468 );
+				mSock->target( 0, TARGET_FISH, 0, 468 );
 			}
 			return true;
 		case IT_SEXTANT:	// sextants
@@ -2708,10 +2740,15 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	{
 		if( ( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
-			tSock->sysmessage( 386 ); // You must wait to perform another action.
+			if( !tSock->ObjDelayMsgShown() )
+			{
+				tSock->sysmessage( 386 ); // You must wait to perform another action.
+				tSock->ObjDelayMsgShown( true );
+			}
 			return false;
 		}
 		tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
+		tSock->ObjDelayMsgShown( false );
 
 		CChar *iChar = nullptr;
 		if( iUsed->GetCont() != nullptr )

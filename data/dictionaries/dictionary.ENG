@@ -2467,6 +2467,7 @@
 2758=You slice a fish to steaks.
 2759=Didn't your parents ever tell you not to run with scissors in your hand?!
 2760=You cannot unravel the magic of a blessed item.
+2761=The creature resisted the attempt to dispel it!
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -2530,6 +2531,7 @@
 2859=You cannot place any more player vendors in this house!
 2860=Player vendors can only be placed in public houses!
 2861=You cannot place a player vendor adjacent to a door!
+2862=Your hands must be free to cast spells or meditate.
 // [3000-4999] Animal and Monster names
 3001=an ogre
 3002=an ettin

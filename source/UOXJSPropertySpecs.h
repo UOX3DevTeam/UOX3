@@ -18,6 +18,8 @@ static JSPropertySpec CSpellProperties[] =
 	{ "id",					CSP_ID,					JSPROP_ENUMANDPERM },
 	{ "action",				CSP_ACTION,				JSPROP_ENUMANDPERM },
 	{ "delay",				CSP_DELAY,				JSPROP_ENUMANDPERM },
+	{ "damageDelay",		CSP_DAMAGEDELAY,		JSPROP_ENUMANDPERM },
+	{ "recoveryDelay",		CSP_RECOVERYDELAY,		JSPROP_ENUMANDPERM },
 	{ "health",				CSP_HEALTH,				JSPROP_ENUMANDPERM },
 	{ "stamina",			CSP_STAMINA,			JSPROP_ENUMANDPERM },
 	{ "mana",				CSP_MANA,				JSPROP_ENUMANDPERM },
@@ -52,6 +54,19 @@ static JSPropertySpec CSpellProperties[] =
 	{ nullptr,				(SI08)0,				(UI08)0			   }
 };
 
+static JSPropertySpec CGlobalSkillProperties[] =
+{
+	{ "name",				CGSKILL_NAME,			JSPROP_ENUMANDPERM },
+	{ "madeWord",			CGSKILL_MADEWORD,		JSPROP_ENUMANDPERM },
+	{ "strength",			CGSKILL_STRENGTH,		JSPROP_ENUMANDPERM },
+	{ "dexterity",			CGSKILL_DEXTERITY,		JSPROP_ENUMANDPERM },
+	{ "intelligence",		CGSKILL_INTELLIGENCE,	JSPROP_ENUMANDPERM },
+	{ "skillDelay",			CGSKILL_SKILLDELAY,		JSPROP_ENUMANDPERM },
+	{ "scriptID",			CGSKILL_SCRIPTID,		JSPROP_ENUMANDPERM },
+
+	{ nullptr,				(SI08)0,				(UI08)0			   }
+};
+
 static JSPropertySpec CCreateEntryProperties[] =
 {
 	{ "id",					CMAKE_ID,				JSPROP_ENUMANDPERM },
@@ -72,6 +87,7 @@ static JSPropertySpec CCreateEntryProperties[] =
 
 static JSPropertySpec CTimerProperties[] =
 {
+	// Character Timers
 	{ "TIMEOUT",			TIMER_TIMEOUT,			JSPROP_ENUMPERMRO },
 	{ "INVIS",				TIMER_INVIS,			JSPROP_ENUMPERMRO },
 	{ "HUNGER",				TIMER_HUNGER,			JSPROP_ENUMPERMRO },
@@ -90,7 +106,16 @@ static JSPropertySpec CTimerProperties[] =
 	{ "SUMMONTIME",			TIMER_SUMMONTIME,		JSPROP_ENUMPERMRO },
 	{ "EVADETIME",			TIMER_EVADETIME,		JSPROP_ENUMPERMRO },
 	{ "LOGOUT",				TIMER_LOGOUT,			JSPROP_ENUMPERMRO },
-	{ nullptr,				(SI08)0,				(UI08)0			   }
+
+	// Socket Timers
+	{ "SOCK_SKILLDELAY",		TIMER_SOCK_SKILLDELAY,		JSPROP_ENUMPERMRO },
+	{ "SOCK_OBJDELAY",			TIMER_SOCK_OBJDELAY,		JSPROP_ENUMPERMRO },
+	{ "SOCK_SPIRITSPEAK",		TIMER_SOCK_SPIRITSPEAK,		JSPROP_ENUMPERMRO },
+	{ "SOCK_TRACKING",			TIMER_SOCK_TRACKING,		JSPROP_ENUMPERMRO },
+	{ "SOCK_FISHING",			TIMER_SOCK_FISHING,			JSPROP_ENUMPERMRO },
+	{ "SOCK_MUTETIME",			TIMER_SOCK_MUTETIME,		JSPROP_ENUMPERMRO },
+	{ "SOCK_TRACKINGDISPLAY",	TIMER_SOCK_TRACKINGDISPLAY,	JSPROP_ENUMPERMRO },
+	{ nullptr,					(SI08)0,					(UI08)0			   }
 };
 
 static JSPropertySpec CRaceProperties[] =

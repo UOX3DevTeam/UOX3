@@ -214,7 +214,7 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 			SpeakerName( "System" );
 			SpeakerModel( INVALIDID );
 			if( toCopy.Colour() == 0 )
-				Colour( 0x0040 );
+				Colour( cwmWorldState->ServerData()->SysMsgColour() ); // 0x0048 by default
 			break;
 		case SPK_CHARACTER:
 			CChar *ourChar;
@@ -1966,7 +1966,10 @@ void CPOpenGump::Serial( SERIAL toSet )
 //|							0x01 = Select X, Y, Z
 //|						BYTE[4] cursorID
 //|						BYTE Cursor Type
-//|							Always 0 now
+//|							0: Neutral
+//|							1: Harmful
+//|							2: Helpful
+//|							3: Cancel current targetting (server sent)
 //|						The following are always sent but are only valid if sent by client
 //|						BYTE[4] Clicked On ID
 //|						BYTE[2] click xLoc
@@ -6759,19 +6762,26 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		CTownRegion *itemTownRegion = calcRegionFromXY( cItem.GetX(), cItem.GetY(), cItem.WorldNumber(), cItem.GetInstanceID() );
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
-			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = strutil::format( "%s", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
 	if( cItem.isNewbie() )
 	{
-		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-		tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9055, tSock->Language() ).c_str() ); // [Blessed]
+		tempEntry.stringNum = 1042971; // ~1_NOTHING~
+		tempEntry.ourText = strutil::format( "%s", Dictionary->GetEntry( 9055, tSock->Language() ).c_str() ); // [Blessed]
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{	
+		if( cItem.GetType() == IT_LOCKEDCONTAINER  )
+		{
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = strutil::format( "%s", Dictionary->GetEntry( 9050 ).c_str(), tSock->Language() ); // [Locked]
+			FinalizeData( tempEntry, totalStringLen );
+		}
+
 		tempEntry.stringNum = 1050044; // ~1_COUNT~ items, ~2_WEIGHT~ stones
 		//tempEntry.ourText = strutil::format( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
 		tempEntry.ourText = strutil::format( "%u\t%i", GetTotalItemCount( &cItem ), ( cItem.GetWeight() / 100 ) );
@@ -6786,7 +6796,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
-	else if( cItem.GetType() == IT_LOCKEDCONTAINER || cItem.GetType() == IT_LOCKEDSPAWNCONT )
+	else if( cItem.GetType() == IT_LOCKEDSPAWNCONT )
 	{
 			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9050 ).c_str(), tSock->Language() ); // [Locked]
@@ -6985,32 +6995,35 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
 	toolTipEntry tempEntry = {};
-	if( mChar.IsGuarded() )
-	{
-		CTownRegion *itemTownRegion = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
-		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
-		{
-			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
-			FinalizeData( tempEntry, totalStringLen );
-		}
-	}
 
+	// Character Name
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-
 	std::string mCharName = getNpcDictName( &mChar, tSock );
 	std::string convertedString = strutil::stringToWstringToString( mCharName );
 	tempEntry.ourText = strutil::format( " \t%s\t ", convertedString.c_str() );
 
 	FinalizeData( tempEntry, totalStringLen );
 
+	// Is character Guarded?
+	if( mChar.IsGuarded() )
+	{
+		CTownRegion *itemTownRegion = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
+		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		{
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = strutil::format( "%s", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
+
+	// Does NPC have a title, and should we show it?
 	if( cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() && mChar.IsNpc() && mChar.GetTitle() != "" )
 	{
-		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+		tempEntry.stringNum = 1042971; // ~1_NOTHING~
 
 		std::string mCharTitle = getNpcDictTitle( &mChar, tSock );
 		convertedString = strutil::stringToWstringToString( mCharTitle );
-		tempEntry.ourText = strutil::format( " \t%s\t ", convertedString.c_str() );
+		tempEntry.ourText = strutil::format( "%s", convertedString.c_str() );
 
 		FinalizeData( tempEntry, totalStringLen );
 	}
@@ -8301,8 +8314,8 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 			if( skillEntries >= 10 )
 				break;
 
-			auto trainerSkillPoints = toCopy.GetSkill( i );
-			if( mChar->GetSkill( i ) < ( trainerSkillPoints / 3 ) )
+			auto trainerSkillPoints = toCopy.GetBaseSkill( i );
+			if( trainerSkillPoints > 600 && ( mChar->GetSkill( i ) < trainerSkillPoints / 3 ))
 			{
 				if( numEntries > 0 )
 					offset += 2;

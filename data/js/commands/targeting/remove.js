@@ -12,12 +12,13 @@ function command_REMOVE( socket, cmdString )
 	{
 		socket.tempint = parseInt( cmdString );
 		var tempMsg = GetDictionaryEntry( 8095, socket.language ); // Select container to remove item (%s) from:
-		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ));
+		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ), 1 );
 	}
 	else
 	{
-		var targMsg = GetDictionaryEntry( 188, socket.language ); // Select item to remove.
-		socket.CustomTarget( 0, targMsg );
+		var targMsg = GetDictionaryEntry( 188, socket.language, 1 ); // Select item to remove.
+		// socket.CustomTarget( 0, targMsg, 1 );
+		socket.CustomTarget( 0, targMsg, 3 );
 	}
 }
 
@@ -81,7 +82,7 @@ function onCallback0( socket, ourObj )
 function command_DELETECHAR( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 1618, socket.language ); // Which player do you wish to delete?
-	socket.CustomTarget( 1, targMsg );
+	socket.CustomTarget( 1, targMsg, 1 );
 }
 
 function onCallback1( socket, ourObj )

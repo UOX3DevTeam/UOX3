@@ -2467,6 +2467,7 @@
 2758=Se corta un pescado en filetes.
 2759=¿Tus padres nunca te dijeron que no corrieras con las tijeras en la mano?
 2760=No puedes deshacer la magia de un objeto bendecido.
+2761=¡La criatura ha resistido el intento de disipación!
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
@@ -2530,6 +2531,7 @@
 2859=¡No puedes colocar más vendedores de jugadores en esta casa!
 2860=¡Los vendedores de jugadores sólo pueden colocarse en casas públicas!
 2861=¡No puedes colocar un vendedor de jugadores junto a una puerta!
+2862=Tus manos deben estar libres para lanzar hechizos o meditar.
 // [3000-4999] Nombres de animales y monstruos
 3001=un ogro
 3002=un ettin

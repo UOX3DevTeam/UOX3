@@ -2467,6 +2467,7 @@
 2758=Si affetta un pesce a bistecche.
 2759=I tuoi genitori non ti hanno mai detto di non correre con le forbici in mano?
 2760=Non puoi svelare la magia di un oggetto benedetto.
+2761=La creatura ha resistito al tentativo di dissipazione!
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI
@@ -2530,6 +2531,7 @@
 2859=Non puoi mettere altri venditori di giocatori in questa casa!
 2860=I venditori di giocatori possono essere messi solo nelle case pubbliche!
 2861=Non puoi piazzare un venditore di giocatori adiacente a una porta!
+2862=Le tue mani devono essere libere per lanciare incantesimi o meditare.
 // [3000-4999] Animal and Monster names
 3001=un orco
 3002=un ettin

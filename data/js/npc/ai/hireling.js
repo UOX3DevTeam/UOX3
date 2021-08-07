@@ -165,10 +165,13 @@ function onSpeech( pSpeech, pChar, hireling )
 								tempPet.TextMessage( getRandomString( pSock, accepted_messages ));
 							tempPet.Follow( pChar );
 						}
-						else if( ValidateObject( tempPet ))
+						/*else if( ValidateObject( tempPet ))
 						{
+							// Commented out, since it would allow players to teleport their hirelings across the entire world!
+							// Leave them somewhere nice and cozy.... then teleport them to you to do unexpected ambushes of other
+							// players!
 							tempPet.Teleport( pChar.x, pChar.y, pChar.z, pChar.worldnumber, pChar.instanceID );
-						}
+						}*/
 					}
 					return 1;
 				}
@@ -228,7 +231,7 @@ function onSpeech( pSpeech, pChar, hireling )
 						hireling.TextMessage( GetDictionaryEntry( 2334, cliLang )); // Tell me what to guard.
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 4;
-					pChar.CustomTarget( 0, GetDictionaryEntry( 2302, cliLang )); // Select target for your follower to guard:
+					pChar.CustomTarget( 0, GetDictionaryEntry( 2302, cliLang ), 2 ); // Select target for your follower to guard:
 					return 1;
 				}
 				break;
@@ -286,7 +289,7 @@ function onSpeech( pSpeech, pChar, hireling )
 						hireling.TextMessage( GetDictionaryEntry( 2335, cliLang )); // Who should I attack?
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 5;
-					pChar.CustomTarget( 0, GetDictionaryEntry( 1313, cliLang )); // Select the target to attack.
+					pChar.CustomTarget( 0, GetDictionaryEntry( 1313, cliLang ), 1 ); // Select the target to attack.
 					return (pSpeech != "" ? 1 : 2 );
 				}
 				break;
@@ -304,7 +307,7 @@ function onSpeech( pSpeech, pChar, hireling )
 
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 9;
-					pChar.CustomTarget( 0, GetDictionaryEntry( 1313, cliLang )); // Select the target to attack.
+					pChar.CustomTarget( 0, GetDictionaryEntry( 1313, cliLang ), 1 ); // Select the target to attack.
 					return (pSpeech != "" ? 1 : 2 );
 				}
 				break;
@@ -679,6 +682,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		}
 
 		hireling.Follow( pChar );
+		hireling.SetTimer( Timer.MOVETIME, 0 );
 		return 2;
 	}
 	else

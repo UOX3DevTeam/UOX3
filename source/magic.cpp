@@ -137,11 +137,11 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
+//|	Function	-	bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates rows of items for field spells like firewalls, wall of stone, etc
 //o-----------------------------------------------------------------------------------------------o
-bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
+bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum )
 {
 	SI16 fx[5], fy[5];
 	if( fieldDir )
@@ -180,6 +180,10 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 				i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber, instanceID ) );
 				i->SetDir( 29 );
 				i->SetMovable( 2 );
+
+				CMagicStat temp = Magic->spells[spellNum].StaticEffect();
+				if( temp.Effect() != INVALIDID )
+					Effects->PlayStaticAnimation( i, temp.Effect(), temp.Speed(), temp.Loop() );
 			}
 		}
 	}
@@ -301,7 +305,7 @@ bool splHarm( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	spellDamage = Magic->spells[curSpell].BaseDmg();
 	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
 
-	Magic->MagicDamage( target, spellDamage, caster, COLD );
+	Effects->tempeffect( src, target, 29, spellDamage, 0, 0 );
 	return true;
 }
 
@@ -314,8 +318,13 @@ bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() && target->GetID() != 0x0E75 )
 	{
-		target->SetTempVar( CITV_MOREZ, calcserial( 1, caster->GetSkill( MAGERY ) / 20, caster->GetSkill( MAGERY ) / 10, 0 ) );
-		Effects->PlaySound( target, 0x01F0 );
+		target->SetTempVar( CITV_MOREZ, calcserial( 1, caster->GetSkill( MAGERY ) / 200, caster->GetSkill( MAGERY ) / 100, 0 ) );
+		if( Magic->spells[13].Effect() != INVALIDID )
+			Effects->PlaySound( caster, Magic->spells[13].Effect() );
+
+		CMagicStat temp = Magic->spells[13].StaticEffect();
+		if( temp.Effect() != INVALIDID )
+			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
 	else
 		sock->sysmessage( 663 );
@@ -335,8 +344,13 @@ bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell 
 		{
 			if( RandomNum( 1, 100 ) <= 50 + ( caster->GetSkill( MAGERY )/10) - target->GetTempVar( CITV_MOREZ, 3 ) )
 			{
-				target->SetTempVar( CITV_MOREZ, 0 );
-				Effects->PlaySound(target, 0x01F1 );
+				target->SetTempVar( CITV_MOREZ, 1, 0 );
+				if( Magic->spells[14].Effect() != INVALIDID )
+					Effects->PlaySound( caster, Magic->spells[14].Effect() );
+
+				CMagicStat temp = Magic->spells[14].StaticEffect();
+				if( temp.Effect() != INVALIDID )
+					Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 				sock->sysmessage( 664 );
 			}
 			else
@@ -403,7 +417,7 @@ bool splFireball( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	spellDamage = Magic->spells[curSpell].BaseDmg();
 	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
 
-	Magic->MagicDamage( target, spellDamage, caster, HEAT );
+	Effects->tempeffect( src, target, 30, spellDamage, 0, 0 );
 	return true;
 }
 
@@ -426,7 +440,12 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 				Console.error( "Fallout of switch statement without default. magic.cpp, magiclocktarget()" );
 				break;
 		}
-		Effects->PlaySound( target, 0x0200 );
+		if( Magic->spells[19].Effect() != INVALIDID )
+			Effects->PlaySound( caster, Magic->spells[19].Effect() );
+
+		CMagicStat temp = Magic->spells[19].StaticEffect();
+		if( temp.Effect() != INVALIDID )
+			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
 	else
 		sock->sysmessage( 669 );
@@ -458,10 +477,18 @@ bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell 
 {
 	if( target->IsContType() )
 	{
-		if( target->GetTempVar( CITV_MORE, 1 ) == 1 )
+		if( target->GetTempVar( CITV_MOREZ, 1 ) == 1 )
 		{
-			target->SetTempVar( CITV_MORE, 0 );
-			Effects->PlaySound( target, 0x01FA, true);
+			target->SetTempVar( CITV_MOREZ, 1, 0 );
+
+			if( Magic->spells[21].Effect() != INVALIDID )
+				Effects->PlaySound( caster, Magic->spells[21].Effect() );
+
+			CMagicStat temp = Magic->spells[21].StaticEffect();
+			if( temp.Effect() != INVALIDID )
+				Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
+
+			Magic->MagicTrap( caster, target );
 		}
 		else
 			sock->sysmessage( 667 );
@@ -508,8 +535,13 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 			return false;
 		}
 	}
-	caster->SetLocation( x, y, z );
-	Magic->doStaticEffect( caster, 22 );
+	CMagicStat temp = Magic->spells[22].StaticEffect();
+	if( temp.Effect() != INVALIDID )
+	{
+		Effects->PlayStaticAnimation( caster->GetX(), caster->GetY(), caster->GetZ(), temp.Effect(), temp.Speed(), temp.Loop(), false );
+		caster->SetLocation( x, y, z );
+		Magic->doStaticEffect( caster, 22 );
+	}
 	return true;
 }
 
@@ -531,6 +563,13 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		sock->sysmessage( 674 );
 		target->RemoveFromSight();
 		target->Update();
+
+		if( Magic->spells[23].Effect() != INVALIDID )
+			Effects->PlaySound( caster, Magic->spells[23].Effect() );
+
+		CMagicStat temp = Magic->spells[23].StaticEffect();
+		if( temp.Effect() != INVALIDID )
+			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
 	else if( target->GetType() == IT_LOCKEDSPAWNCONT )
 	{
@@ -538,6 +577,13 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		sock->sysmessage( 675 );
 		target->RemoveFromSight();
 		target->Update();
+
+		if( Magic->spells[23].Effect() != INVALIDID )
+			Effects->PlaySound( caster, Magic->spells[23].Effect() );
+
+		CMagicStat temp = Magic->spells[23].StaticEffect();
+		if( temp.Effect() != INVALIDID )
+			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
 	else if( target->GetType() == IT_CONTAINER || target->GetType() == IT_SPAWNCONT || target->GetType() == IT_LOCKEDSPAWNCONT || target->GetType() == IT_TRASHCONT )
 		sock->sysmessage( 676 );
@@ -555,7 +601,7 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
-	return FieldSpell( caster, 0x0080, x, y, z, fieldDir );
+	return FieldSpell( caster, 0x0080, x, y, z, fieldDir, curSpell );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -623,9 +669,9 @@ bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
-		return FieldSpell( caster, 0x398C, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x398C, x, y, z, fieldDir, curSpell );
 	else
-		return FieldSpell( caster, 0x3996, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3996, x, y, z, fieldDir, curSpell );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -659,8 +705,7 @@ bool splLightning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	spellDamage = Magic->spells[curSpell].BaseDmg();
 	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
 
-	Effects->bolteffect( target );
-	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
+	Effects->tempeffect( src, target, 31, spellDamage, 0, 0 );
 	return true;
 }
 
@@ -957,7 +1002,7 @@ bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	if( spellDamage > baseDamage * 1.20 )
 		spellDamage = baseDamage * 1.20;
 
-	Magic->MagicDamage( target, spellDamage, src, COLD );
+	Effects->tempeffect( src, target, 32, spellDamage, 0, 0 );
 	return true;
 }
 
@@ -981,9 +1026,9 @@ bool splParalyze( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
-		return FieldSpell( caster, 0x3915, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3915, x, y, z, fieldDir, curSpell );
 	else
-		return FieldSpell( caster, 0x3921, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3921, x, y, z, fieldDir, curSpell );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1009,7 +1054,7 @@ bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( target->IsDispellable() )
 	{
-		Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
+		//Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
 		if( target->IsNpc() )
 		{
 			std::vector<UI16> scriptTriggers = target->GetScriptTriggers();
@@ -1023,7 +1068,36 @@ bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 				}
 			}
 
-			target->Delete();
+			// Base chance of dispelling on Dispel caster's Magery skill vs summoner's magicresistance
+			UI16 casterMagery = caster->GetSkill( MAGERY );
+			UI16 targetResist = 0;
+			targetResist = target->GetSkill( MAGICRESISTANCE );
+
+			// If creature was summoned, use highest of creature's resist and summoner's resist
+			if( target->GetOwner() != INVALIDSERIAL )
+				targetResist = std::max( targetResist, target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ));
+
+			UI16 dispelChance = static_cast<UI16>(std::max( static_cast<UI16>(950),  static_cast<UI16>(std::ceil(( 500 - ( targetResist - casterMagery )) / 1.5 ))));
+			if( dispelChance > RandomNum( 0, 1000 ) )
+			{
+				// Dispel succeeded!
+				if( Magic->spells[41].Effect() != INVALIDID )
+					Effects->PlaySound( target, Magic->spells[41].Effect() );
+
+				CMagicStat temp = Magic->spells[41].StaticEffect();
+				if( temp.Effect() != INVALIDID )
+				{
+					// Play static effect at target's location, since target gets destroyed
+					Effects->PlayStaticAnimation( target->GetX(), target->GetY(), target->GetZ(), temp.Effect(), temp.Speed(), temp.Loop(), false );
+				}
+
+				target->Delete();
+			}
+			else if( caster->GetSocket() != nullptr )
+			{
+				// Dispel resisted!
+				caster->GetSocket()->sysmessage( 2761 ); // The creature resisted the attempt to dispel it!
+			}
 		}
 		else
 			HandleDeath( target, nullptr );
@@ -1044,7 +1118,7 @@ bool splEnergyBolt( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	spellDamage = Magic->spells[curSpell].BaseDmg();
 	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
 
-	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
+	Effects->tempeffect( src, target, 33, spellDamage, 0, 0 );
 	return true;
 }
 
@@ -1206,9 +1280,9 @@ bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08
 bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
-		return FieldSpell( caster, 0x3967, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3967, x, y, z, fieldDir, curSpell );
 	else
-		return FieldSpell( caster, 0x3979, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3979, x, y, z, fieldDir, curSpell );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1237,18 +1311,22 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 			{
 				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
 					continue;
-				if( tempChar->GetVisible() == VT_INVISIBLE )
+				if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
 				{
 					point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
 					if( difference.MagSquared() <= ( range * range ) ) // char to reveal is within radius or range
 					{
 						tempChar->ExposeToView();
+						CMagicStat temp = Magic->spells[48].StaticEffect();
+						if( temp.Effect() != INVALIDID )
+							Effects->PlayStaticAnimation( tempChar, temp.Effect(), temp.Speed(), temp.Loop() );
 					}
 				}
 			}
 			regChars->Pop();
 		}
-		Effects->PlaySound( sock, 0x01FD, true );
+		if( Magic->spells[48].Effect() != INVALIDID )
+			Effects->PlaySound( sock, Magic->spells[48].Effect(), true );
 	}
 	else
 		sock->sysmessage( 687 );
@@ -1268,14 +1346,12 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 		return;	// GMs/Invuls can't be killed
 	if( target->IsNpc() )
 		Combat->AttackTarget( target, caster );
-	Effects->PlaySound( caster, 0x0029 );
+	/*Effects->PlaySound( caster, 0x0029 );*/
 	CChar *def = nullptr;
 	if( Magic->CheckMagicReflect( target ) )
 		def = caster;
 	else
 		def = target;
-
-	Effects->bolteffect( def );
 
 	SI16 spellDamage = 0;
 	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
@@ -1287,7 +1363,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 	if( targCount > 1 )
 		spellDamage = ( spellDamage * 2 ) / targCount;
 
-	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
+	Effects->tempeffect( caster, target, 34, spellDamage, 0, 0 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1309,9 +1385,9 @@ bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src,
 bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
-		return FieldSpell( caster, 0x3946, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3946, x, y, z, fieldDir, curSpell );
 	else
-		return FieldSpell( caster, 0x3956, x, y, z, fieldDir );
+		return FieldSpell( caster, 0x3956, x, y, z, fieldDir, curSpell );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1327,7 +1403,7 @@ bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	spellDamage = Magic->spells[curSpell].BaseDmg();
 	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
 
-	Magic->MagicDamage( target, spellDamage, caster, HEAT );
+	Effects->tempeffect( caster, target, 35, spellDamage, 0, 0 );
 	return true;
 }
 
@@ -1428,11 +1504,7 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 {
 	if( target->IsDispellable() )
 	{
-		if( Magic->CheckResist( caster, target, 7 ) && RandomNum( 0, 1 ) == 0 )  // cant be 100% resisted , osi
-		{
-			if( target->IsNpc() )
-				Combat->AttackTarget( caster, target );
-		}
+		//Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );		// why the specifics here?
 		if( target->IsNpc() )
 		{
 			std::vector<UI16> scriptTriggers = target->GetScriptTriggers();
@@ -1445,10 +1517,40 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 						return;
 				}
 			}
-			Effects->PlaySound( target, 0x0204 );
-			Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );
-			HandleDeath( target, caster );
+
+			// Base chance of dispelling on Dispel caster's Magery skill vs summoner's magicresistance
+			UI16 casterMagery = caster->GetSkill( MAGERY );
+			UI16 targetResist = 0;
+			targetResist = target->GetSkill( MAGICRESISTANCE );
+
+			// If creature was summoned, use highest of creature's resist and summoner's resist
+			if( target->GetOwner() != INVALIDSERIAL )
+				targetResist = std::max( targetResist, target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ));
+
+			UI16 dispelChance = static_cast<UI16>(std::max( static_cast<UI16>(950),  static_cast<UI16>(std::ceil(( 500 - ( targetResist - casterMagery )) / 1.5 ))));
+			if( dispelChance > RandomNum( 0, 1000 ) )
+			{
+				// Dispel succeeded!
+				if( Magic->spells[41].Effect() != INVALIDID )
+					Effects->PlaySound( target, Magic->spells[41].Effect() );
+
+				CMagicStat temp = Magic->spells[41].StaticEffect();
+				if( temp.Effect() != INVALIDID )
+				{
+					// Play static effect at target's location, since target gets destroyed
+					Effects->PlayStaticAnimation( target->GetX(), target->GetY(), target->GetZ(), temp.Effect(), temp.Speed(), temp.Loop(), false );
+				}
+
+				target->Delete();
+			}
+			else if( caster->GetSocket() != nullptr )
+			{
+				// Dispel resisted!
+				caster->GetSocket()->sysmessage( 2761 ); // The creature resisted the attempt to dispel it!
+			}
 		}
+		else
+			HandleDeath( target, nullptr );
 	}
 }
 
@@ -1487,10 +1589,7 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 	if( targCount > 1 )
 		spellDamage = ( spellDamage * 2 ) / targCount;
 
-	Effects->PlaySound( target, 0x160 );
-	Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
-
-	Magic->MagicDamage( target, spellDamage, caster, HEAT );
+	Effects->tempeffect( caster, target, 36, spellDamage, 0, 0 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1608,6 +1707,11 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	spellDamage += dmgmod;
 
 	target->Damage( spellDamage, caster, true );
+
+	// If this killed the target, don't continue
+	if( target->IsDead() )
+		return;
+
 	target->SetStamina( target->GetStamina() - ( RandomNum( 0, 9 ) + 5 ) );
 
 	if( target->GetStamina() == -1 )
@@ -2233,6 +2337,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	}
 
 	UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
+
 	UI08 maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
 	UI08 controlSlotsUsed = caster->GetControlSlotsUsed();
 	UI08 petCount = static_cast<UI08>(caster->GetPetList()->Num());
@@ -2242,7 +2347,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	switch( id )
 	{
 		case 0:	// summon monster
-			Effects->PlaySound( s, 0x0217, true );
+		{
 			newChar = Npcs->CreateRandomNPC( "10000" );
 			if( !ValidateObject( newChar ) )
 			{
@@ -2264,6 +2369,16 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 				if( validSocket )
 					s->sysmessage( 2346, maxFollowers ); // You can maximum have %i pets / followers active at the same time.
 			}
+
+			if( Magic->spells[40].Effect() != INVALIDID )
+				Effects->PlaySound( newChar, Magic->spells[40].Effect() );
+
+			CMagicStat temp = Magic->spells[40].StaticEffect();
+			if( temp.Effect() != INVALIDID )
+			{
+				Magic->doStaticEffect( newChar, 40 );
+			}
+
 			newChar->SetOwner( caster );
 			caster->SetControlSlotsUsed( std::clamp(controlSlotsUsed + newChar->GetControlSlots(), 0, 255) );
 			newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
@@ -2271,9 +2386,11 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
 			newChar->SetFTarg( caster );
 			newChar->SetNpcWander( WT_FOLLOW );
+			newChar->SetDispellable( true );
 			if( validSocket )
 				s->sysmessage( 695 );
 			return;
+		}
 		case 1: // Energy Vortex
 			Effects->PlaySound( s, 0x0216, true ); // EV
 			newChar = Npcs->CreateNPCxyz( "energyvortex-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
@@ -2807,18 +2924,60 @@ void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void MagicTrap( CChar *s, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Do the visual effect and apply magic damage when a player opens a trapped container
+//|	Purpose		-	Do the visual effect and apply damage when a player opens a trapped container
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::MagicTrap( CChar *s, CItem *i )
 {
 	if( !ValidateObject( s ) || !ValidateObject( i ) )
 		return;
-	Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
-	Effects->PlaySound( s, 0x0207 );
-	if( CheckResist( nullptr, s, 4 ) )
-		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 4, nullptr, LIGHTNING );
+	if( FindItemOwner( i ) == s || objInRange( s, i, DIST_NEARBY ) )
+	{
+		Effects->PlayStaticAnimation( i, 0x36B0, 0x09, 0x09 );
+		Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
+		Effects->PlaySound( s, 0x0207 );
+		if( CheckResist( nullptr, s, 4 ) )
+			MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, nullptr, HEAT );
+		else
+			MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ), nullptr, HEAT );
+	}
 	else
-		MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, nullptr, LIGHTNING );
+	{
+		// Player is out of range, possibly opened the trapped container using Telekinesis from a safe distance
+		Effects->PlayStaticAnimation( i, 0x36B0, 0x09, 0x09 );
+		Effects->PlaySound( i, 0x0207 );
+
+		// Find nearby players and apply damage to them?
+		REGIONLIST nearbyRegions = MapRegion->PopulateList( s );
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		{
+			CMapRegion *MapArea = (*rIter);
+			if( MapArea == nullptr )	// no valid region
+				continue;
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+			{
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != s->GetInstanceID() || tempChar->GetSerial() == s->GetSerial() )
+					continue;
+
+				if( objInRange( tempChar, i, DIST_NEARBY ) )
+				{
+					if( CheckResist( nullptr, tempChar, 4 ) )
+						MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ) / 2, s, HEAT );
+					else
+						MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ), s, HEAT );
+
+					// Reveal hidden players impacted by the explosion
+					if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
+					{
+						tempChar->ExposeToView();
+					}
+				}
+
+			}
+			regChars->Pop();
+		}
+	}
 
 	// Set first part of MOREZ to 0 to disable trap, but leave other parts intact
 	i->SetTempVar( CITV_MOREZ, 1, 0 );
@@ -2930,10 +3089,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 //o-----------------------------------------------------------------------------------------------o
 void cMagic::SpellFail( CSocket *s )
 {
-	// Use Reagents on failure ( if casting from a spellbook )
 	CChar *mChar = s->CurrcharObj();
-	if( s->CurrentSpellType() == 0 )
-		DelReagents( mChar, spells[mChar->GetSpellCast()].Reagants() );
 	Effects->PlayStaticAnimation( mChar, 0x3735, 0, 30 );
 	Effects->PlaySound( mChar, 0x005C );
 	mChar->TextMessage( s, 771, EMOTE, false );
@@ -2959,7 +3115,7 @@ void cMagic::SpellFail( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 {
-	SI16 lowSkill = 0, highSkill = 0;
+	/*SI16 lowSkill = 0, highSkill = 0;*/
 	CChar *mChar = mSock->CurrcharObj();
 
 	cScript *jsScript	= JSMapping->GetScript( spells[num].JSScript() );
@@ -2997,22 +3153,41 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	if( !mChar->GetCanAttack() )
 	{
-		mSock->sysmessage( 1778 );
+		mSock->sysmessage( 1778 ); // You are currently under the effect of peace and can not attack!
 		return false;
 	}
+
+	if( mSock->GetCursorItem() != nullptr )
+	{
+		// Player is holding an item, disallow casting while holding items on the cursor
+		mSock->sysmessage( Dictionary->GetEntry( 2862, mSock->Language() )); // Your hands must be free to cast spells or meditate.
+		return false;
+	}
+
 	SI32 type = mSock->CurrentSpellType();
 	SpellInfo curSpellCasting = spells[num];
 
+	// Spell recovery time active? This timer stars as soon as targeting cursor is ready, and defaults to 1.0 seconds unless set otherwise in spells.dfn
+	if( mChar->GetTimer( tCHAR_SPELLRECOVERYTIME ) != 0 )
+	{
+		if( mChar->GetTimer( tCHAR_SPELLRECOVERYTIME ) > cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		{
+			mSock->sysmessage( 1638 ); // You must wait a little while before casting
+			return false;
+		}
+	}
+
+	// Player already casting a spell?
 	if( mChar->GetTimer( tCHAR_SPELLTIME ) != 0 )
 	{
 		if( mChar->IsCasting() )
 		{
-			mSock->sysmessage( 762 );
+			mSock->sysmessage( 762 ); // You are already casting a spell.
 			return false;
 		}
 		else if( mChar->GetTimer( tCHAR_SPELLTIME ) > cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			mSock->sysmessage( 1638 );
+			mSock->sysmessage( 1638 ); // You must wait a little while before casting
 			return false;
 		}
 	}
@@ -3022,7 +3197,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 		Log( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, nullptr, "(Attempted)");
 	if( mChar->IsJailed() && !mChar->IsGM() )
 	{
-		mSock->sysmessage( 704 );
+		mSock->sysmessage( 704 ); // You are in jail and cannot cast spells!
 		mChar->StopSpell();
 		return false;
 	}
@@ -3032,7 +3207,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 	if(( num == 45 && !ourReg->CanMark() ) || ( num == 52 && !ourReg->CanGate() ) ||
 	   ( num == 32 && !ourReg->CanRecall() ) || ( num == 22 && !ourReg->CanTeleport() ))
 	{
-		mSock->sysmessage( 705 );
+		mSock->sysmessage( 705 ); // This is not allowed here.
 		mChar->StopSpell();
 		return false;
 	}
@@ -3043,12 +3218,12 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 		bool allowCasting = true;
 		if( mChar->GetRegion()->IsSafeZone() )
 		{
-			mSock->sysmessage( 1799 );
+			mSock->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 			allowCasting = false;
 		}
 		else if( !mChar->GetRegion()->CanCastAggressive() )
 		{
-			mSock->sysmessage( 706 );
+			mSock->sysmessage( 706 ); // This is not allowed in town.
 			allowCasting = false;
 		}
 
@@ -3062,23 +3237,10 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	if( !curSpellCasting.Enabled() )
 	{
-		mSock->sysmessage( 707 );
+		mSock->sysmessage( 707 ); // That spell is currently not enabled.
 		mChar->StopSpell();
 		return false;
 	}
-
-	//Cut the casting requirement on scrolls
-	if( type == 1 && cwmWorldState->ServerData()->CutScrollRequirementStatus() ) // only if enabled
-	{
-		lowSkill	= curSpellCasting.ScrollLow();
-		highSkill	= curSpellCasting.ScrollHigh();
-	}
-	else
-	{
-		lowSkill	= curSpellCasting.LowSkill();
-		highSkill	= curSpellCasting.HighSkill();
-	}
-
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
 	if( !mChar->IsGM() )
@@ -3089,7 +3251,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 			CItem *itemLHand = mChar->GetItemAtLayer( IL_LEFTHAND );
 			if( itemLHand != nullptr || ( itemRHand != nullptr && itemRHand->GetType() != IT_SPELLBOOK ) )
 			{
-				mSock->sysmessage( 708 );
+				mSock->sysmessage( 708 ); // You cannot cast with a weapon equipped.
 				mChar->StopSpell();
 				return false;
 			}
@@ -3144,44 +3306,28 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 
 	if( ( Delay == -2 ) && !mChar->IsGM() )
 	{
-		//Check for enough reagents
-		// type == 0 -> SpellBook
-		if( type == 0 && !CheckReagents( mChar, curSpellCasting.ReagantsPtr() ) )
-		{
-			mChar->StopSpell();
-			return false;
-		}
-
 		// type == 2 - Wands
 		if( type != 2 )
 		{
 			if( !CheckMana( mChar, num ) )
 			{
-				mSock->sysmessage( 696 );
+				mSock->sysmessage( 696 ); // You have insufficient mana to cast that spell.
 				mChar->StopSpell();
 				return false;
 			}
 			if( !CheckStamina( mChar, num ) )
 			{
-				mSock->sysmessage( 697 );
+				mSock->sysmessage( 697 ); // You have insufficient stamina to cast that spell.
 				mChar->StopSpell();
 				return false;
 			}
 			if( !CheckHealth( mChar, num ) )
 			{
-				mSock->sysmessage( 698 );
+				mSock->sysmessage( 698 ); // You have insufficient health to cast that spell.
 				mChar->StopSpell();
 				return false;
 			}
 		}
-	}
-
-	if( ( !mChar->IsGM() ) && ( !Skills->CheckSkill( mChar, MAGERY, lowSkill, highSkill ) ) )
-	{
-		mChar->TextMessage( nullptr, curSpellCasting.Mantra().c_str(), TALK, false );
-		SpellFail( mSock );
-		mChar->StopSpell();
-		return false;
 	}
 
 	mChar->SetNextAct( 75 );		// why 75?
@@ -3194,7 +3340,7 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 	}
 	else if( type == 0 && !mChar->IsGM() ) // if they are a gm they don't have a delay :-)
 	{
-		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R32>(curSpellCasting.Delay() / 10 )) );
+		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R32>(curSpellCasting.Delay() )) );
 		mChar->SetFrozen( true );
 	}
 	else
@@ -3279,6 +3425,11 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	SI08 curSpell;
 
 	curSpell = caster->GetSpellCast();
+	
+	// No spell! Abort
+	if( curSpell == -1 )
+		return;
+
 	cScript *jsScript = JSMapping->GetScript( spells[curSpell].JSScript() );
 	if( jsScript != nullptr )
 	{
@@ -3318,14 +3469,14 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		{
 			// Caster is in a safe zone, where all aggressive actions are forbidden
 			if( validSocket )
-				s->sysmessage( 1799 );
+				s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 			allowCasting = false;
 		}
 		else if( !caster->GetRegion()->CanCastAggressive() )
 		{
 			// Caster is in a region where casting aggressive spells is forbidden
 			if( validSocket )
-				s->sysmessage( 709 );
+				s->sysmessage( 709 ); // You can't cast in town!
 			allowCasting = false;
 		}
 		if( !allowCasting )
@@ -3342,17 +3493,52 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 	}
 
-	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
-		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, nullptr, "(Succeeded)");
-	if( caster->IsNpc() || (validSocket && (s->CurrentSpellType() != 2)) )	// delete mana if NPC, s is -1 otherwise!
+	//Check for enough reagents
+	// type == 0 -> SpellBook
+	if( validSocket && s->CurrentSpellType() == 0 && !CheckReagents( caster, spells[curSpell].ReagantsPtr() ) )
+	{
+		caster->StopSpell();
+		return;
+	}
+
+	// Consume mana/health/stamina for the spellcast attempt, if 
+	// caster is an NPC or spelltype is spellbook or scrolls
+	if( caster->IsNpc() || (validSocket && (s->CurrentSpellType() != 2)) )
 	{
 		SubtractMana( caster, spells[curSpell].Mana() );
 		if( spells[curSpell].Health() > 0 )
 			SubtractHealth( caster, spells[curSpell].Health(), curSpell );
 		SubtractStamina( caster, spells[curSpell].Stamina() );
 	}
+
+	// Consume reagents for the spellcast attempt
 	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() )
 		DelReagents( caster, spells[curSpell].Reagants() );
+
+	// Cut the casting requirement on scrolls
+	SI16 lowSkill = 0, highSkill = 0;
+	if( validSocket && s->CurrentSpellType() == 1 && cwmWorldState->ServerData()->CutScrollRequirementStatus() ) // only if enabled
+	{
+		lowSkill	= spells[curSpell].ScrollLow();
+		highSkill	= spells[curSpell].ScrollHigh();
+	}
+	else
+	{
+		lowSkill	= spells[curSpell].LowSkill();
+		highSkill	= spells[curSpell].HighSkill();
+	}
+
+	// Do the skill check, and fizzle if player fails
+	if( !caster->IsNpc() && !caster->IsGM() && ( !Skills->CheckSkill( caster, MAGERY, lowSkill, highSkill )))
+	{
+		if( validSocket )
+			SpellFail( s );
+		caster->StopSpell();
+		return;
+	}
+
+	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
+		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, nullptr, "(Succeeded)");
 
 	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
@@ -3365,7 +3551,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			   ( curSpell == 32 && !ourReg->CanRecall() ) || ( curSpell == 22 && !ourReg->CanTeleport() ))
 			{
 				if( validSocket )
-					s->sysmessage( 705 );
+					s->sysmessage( 705 ); // This is not allowed here.
 				return;
 			}
 			// mark, recall and gate go here
@@ -3411,13 +3597,13 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						}
 					}
 					else if( validSocket )
-						s->sysmessage( 710 );
+						s->sysmessage( 710 ); // That item is not a recall rune.
 				}
 				else if( validSocket )
-					s->sysmessage( 683 );
+					s->sysmessage( 683 ); // There seems to be something in the way.
 			}
 			else if( validSocket )
-				s->sysmessage( 710 );
+				s->sysmessage( 710 ); // That item is not a recall rune.
 			return;
 		}
 
@@ -3435,7 +3621,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				if( !objInRange( c, caster, cwmWorldState->ServerData()->CombatMaxSpellRange() ) )
 				{
 					if( validSocket )
-						s->sysmessage( 712 );
+						s->sysmessage( 712 ); // You can't cast on someone that far away!
 					return;
 				}
 				if( LineOfSight( s, caster, c->GetX(), c->GetY(), ( c->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
@@ -3472,7 +3658,11 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							c = caster;
 						}
 					}
-					if( curSpell != 43 )
+
+					// Don't play sound and effects for these direct damagespells - it's handled
+					// in effect.cpp after their damage delay timer has expired. Dispel is also a special case
+					if( curSpell != 5 && curSpell != 12 && curSpell != 18 && curSpell != 30 && curSpell != 41
+						&& curSpell != 42 && curSpell != 43 && curSpell != 49 && curSpell != 51 && curSpell != 55 )
 					{
 						if( caster->IsNpc() )
 							playSound( c, curSpell );
@@ -3555,10 +3745,10 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 					}
 				}
 				else if( validSocket )
-					s->sysmessage( 683 );
+					s->sysmessage( 683 ); // There seems to be something in the way.
 			}
 			else if( validSocket )
-				s->sysmessage( 715 );
+				s->sysmessage( 715 ); // That is not a person.
 		}
 		else if( spells[curSpell].RequireLocTarget() )
 		{
@@ -3596,7 +3786,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				}
 				else if( validSocket )
 				{
-					s->sysmessage( 717 );
+					s->sysmessage( 717 ); // That is not a valid location.
 					return;
 				}
 			}
@@ -3608,14 +3798,14 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				{
 					// Target location is in a region where hostile actions are forbidden, disallow
 					if( validSocket )
-						s->sysmessage( 1799 );
+						s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 					return;
 				}
 				else if( !targetRegion->CanCastAggressive() )
 				{
 					// Target location is in a region where casting aggressive spells is forbidden, disallow
 					if( validSocket )
-						s->sysmessage( 709 );
+						s->sysmessage( 709 ); // You can't cast in town!
 					return;
 				}
 			}
@@ -3643,8 +3833,11 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				}
 				else if( spells[curSpell].RequireNoTarget() )
 				{
-					playSound( src, curSpell );
-					doStaticEffect( src, curSpell );
+					if( curSpell != 48 )
+					{
+						playSound( src, curSpell );
+						doStaticEffect( src, curSpell );
+					}
 					switch( curSpell )
 					{
 						case 2: //create food
@@ -3653,9 +3846,9 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 26:// Arch Protection
 						case 33:// Blade Spirits
 						case 34:// Dispel Field
-						case 40:	// Summon Creature
+						case 40:// Summon Creature
 						case 46:// Mass curse
-						case 48:
+						case 48:// Reveal
 						case 49:// Chain Lightning
 						case 54:// Mass Dispel
 						case 55:// Meteor Swarm
@@ -3675,42 +3868,51 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				}
 			}
 			else if( validSocket )
-				s->sysmessage( 717 );
+				s->sysmessage( 717 ); // That is not a valid location.
 		}
 		else if( spells[curSpell].RequireItemTarget() && validSocket )
 		{
 			i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( ValidateObject( i ) )
 			{
-				if( ( i->GetCont() != nullptr && FindItemOwner( i ) != caster ) || ( !objInRange( caster, i, cwmWorldState->ServerData()->CombatMaxSpellRange() ) ) )
+				auto iCont = i->GetCont();
+				if( iCont != nullptr && FindItemOwner( i ) != caster )
 				{
-					s->sysmessage( 718 );
+					s->sysmessage( 718 ); // You can't cast on an item that far away!
 					return;
 				}
-				if( LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
+
+				if( iCont == nullptr && !objInRange( caster, i, cwmWorldState->ServerData()->CombatMaxSpellRange() ) )
 				{
-					switch( curSpell )
-					{
-						case 13:	// Magic Trap
-						case 14:	// Magic Untrap
-						case 19:	// Magic Lock
-						case 23:	// Magic Unlock
-						case 21:	// Telekinesis
-							(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
-							break;
-						default:
-							Console.error( strutil::format(" Unknown ItemTarget spell %i, magic.cpp", curSpell) );
-							break;
-					}
+					s->sysmessage( 718 ); // You can't cast on an item that far away!
+					return;
 				}
-				else
-					s->sysmessage( 683 );
+
+				if( iCont == nullptr && !LineOfSight( s, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) && !caster->IsGM() )
+				{
+					s->sysmessage( 683 ); // There seems to be something in the way.
+					return;
+				}
+
+				switch( curSpell )
+				{
+					case 13:	// Magic Trap
+					case 14:	// Magic Untrap
+					case 19:	// Magic Lock
+					case 23:	// Magic Unlock
+					case 21:	// Telekinesis
+						(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
+						break;
+					default:
+						Console.error( strutil::format(" Unknown ItemTarget spell %i, magic.cpp", curSpell) );
+						break;
+				}
 			}
 			else
-				s->sysmessage( 711 );
+				s->sysmessage( 711 ); // That is not a valid item.
 		}
 		else if( validSocket )
-			s->sysmessage( 720 );
+			s->sysmessage( 720 ); // Can't cope with this spell, requires a target but it doesn't specify what type.
 		return;
 	}
 	else if( spells[curSpell].RequireNoTarget() )
@@ -3817,9 +4019,13 @@ void cMagic::LoadScript( void )
 								}
 								break;
 							case 'D':
-								if( UTag == "DELAY" )
+								if( UTag == "DAMAGEDELAY" )
 								{
-									spells[i].Delay( std::stoi(data, nullptr, 0) );
+									spells[i].DamageDelay( static_cast<R32>(std::stof(data)) );
+								}
+								else if( UTag == "DELAY" )
+								{
+									spells[i].Delay( static_cast<R32>(std::stof(data)) );
 								}
 								else if( UTag == "DRAKE" )
 								{
@@ -3904,6 +4110,12 @@ void cMagic::LoadScript( void )
 								if( UTag == "PEARL" )
 								{
 									mRegs->pearl = static_cast<UI08>(std::stoul(data,nullptr,0));
+								}
+								break;
+							case 'R':
+								if( UTag == "RECOVERYDELAY" )
+								{
+									spells[i].RecoveryDelay( static_cast<R32>(std::stof(data)) );
 								}
 								break;
 							case 'S':

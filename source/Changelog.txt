@@ -1,3 +1,95 @@
+08/08/2021 - Xuri (0.99.4w)
+	Added support for new Skills DFN tag:
+		SKILLDELAY=# 	// Delay in seconds before another skill can be used after using this skill. Overrides global delay from UOX.INI
+	Updated skill cSkills::SkillUse() to use skill-specific skill delays if set for a given skill, or global delay from ini if not. Also added a check to see if skill delay timer has been modified by onSkill JS event before attempting to set a default timer
+	Updated skill delays to better match ~pub15 era:
+		Reduced global SKILLDELAY setting in UOX.INI from 2 to 1 second
+		Detecting Hidden skill now has a default skill delay of 10 seconds
+		Herding skill now has a default skill delay of 10 seconds
+		Hiding skill now has a default skill delay of 10 seconds, with shorter delays (global skill delay) for trying to hide while in combat or for successfully hiding
+		Meditation skill now has a default skill delay of 10 seconds, with shorter delays (global skill delay) for failing due to hands being occupied or already being at max mana
+		Peacemaking skill now has a default skill delay of 10 seconds for failed skill checks, and 5 seconds delay for successful ones
+		Poisoning skill now has a default skill delay of 10 seconds
+		Provocation skill now has a default skill delay of 10 seconds
+		Remove Trap skill now has a default skill delay of 10 seconds
+		Stealing skill now has a default skill delay of 10 seconds
+		Stealth skill now has a default skill delay of 10 seconds
+		Tracking skill now has a default skill delay of 10 seconds
+		Veterinary skill now has a default skill delay of 10 seconds
+	Fixed an issue with global JS Timer object that would reference the wrong timerIDs
+	Extended global JS timer object to include timers from socket as well (marked with SOCK_ prefix):
+		.SOCK_SKILLDELAY	// Delay before the next time player can use another skill
+		.SOCK_OBJDELAY		// Delay before next time player can use another object
+		.SOCK_SPIRITSPEAK 	// Timer that tracks remaining duration of player's Spirit Speak
+		.SOCK_TRACKING		// Timer that tracks remaining duration for player's Tracking skill
+		.SOCK_FISHING		// Timer that tracks remaining duration for player's Fishing skill
+		.SOCK_MUTETIME 		// Timer that tracks remaining duration a player remains muted
+		.SOCK_TRACKINGDISPLAY 	// Timer that tracks interval between each time tracking display is updated
+	Updated various JS scripts to use the new Timer.TIMERNAME with .GetTimer()/.SetTimer() JS Methods for Characters and Sockets
+	Updated Persecution ability for player ghosts to use the skill delay of the Spirit Speak skill, if set
+	Updated Persecution ability to base mana damage primarily on player's Spirit Speak skill rather than their Intelligence
+	In order to cut down on the amount of messages sent from server to players trying to spam-use objects/skills, UOX3 now only sends a maximum of one message for object use delay and one message for skill use delay while the delay timers for these are in effect. This resets on the next successful use of an object or skill. This is tracked via bools in cSocket class:
+		bool objDelayMsgShown
+		bool skillDelayMsgShown
+	Converted DELAY tag in spells.dfn to use seconds (with decimals) instead of tenths of a second, which was not precise enough. This controls the cast time of spells. What would previously say DELAY=10 (10/10ths of a second) now says DELAY=1.0 (1 second)
+	Added support for new Spells DFN tag to control delay until damage takes place after casting a spell, replacing UOX.INI setting COMBATEXPLODEDELAY, which is no longer used:
+		DAMAGEDELAY=# 		// Delay in seconds (decimal) until a direct damage spell deals its damage
+	Added support for a new Spells DFN tag to control cast recovery time, during which additional spells cannot be cast:
+		RECOVERYDELAY=# 	// Delay in seconds (decimal) until player can cast another spell
+	Added new setting in UOX.INI to control whether player spellcasting gets interrupted upon equipping/picking up items:
+		ITEMSINTERRUPTCASTING=1 	// If enabled, spellcasting gets interrupted by equipping/picking up items. Defaults to enabled.
+	All direct damage spells by default have a 1.0s delay before damage (and VFX) is applied, except Explosion which has a 2.5s delay
+	All spells by default have a cast recovery duration of 1.0s; from the moment a spellcast is completed/moment targeting cursor appears, the player will be unable to cast any other spell for the duration of the cast recovery
+	Reagent checks and skill-check now take place AFTER the spellcast animation, not before!
+	Spell cast times now follow this formula, though values set per spell and can be modified: 0.25 + ( spellCircle * 0.25 )
+	Overhauled spell sound FX and VFX for for all spells
+	Players can no longer cast spells while holding items on the cursor
+	Fixed Magic Trap, Magic Untrap, Magic Lock and Magic Unlock not being usable on containers in one's own backpack
+	Fixed an issue that caused Magic Trap to deal between 50 to 100 damage to the player. New damage: 5 to 10, depending on Magery skill
+	Fixed an issue where Magic Untrap spell would completely remove traps from spawn containers instead of disable them
+	Fixed an issue where Telekinesis spell would not set off traps on containers properly
+	Added additional FX for Teleport spell played at player's original location before the teleport took place
+	Fixed a bug where creatures summoned with the Summon Creature spell were not dispellable
+	Fixed an issue where the Reveal spell would not reveal players hidden using the Hiding skill
+	Dispel and Mass Dispel spells are no longer guaranteed to succeed at dispelling summoned creatures. Instead, the chance to dispel is based on the following simple formula, with dispelChance capped at 95% to always leave some chance for a creature to resist a dispel:
+		dispelChance = ( 50 - ( targetResistSkill - casterMagerySkill )) / 1.5
+			The targetResistSkill is based on the highest value of the summoned creature's spell resistance skill and the spell resistance skill of its summoner
+	Fixed an issue where the Create Food spell attempted to create an invalid item
+	Fixed issue where code that checked for valid drop locations for items didn't allow negative z values (Dragon Slayer)
+	Fixed issue where players could drop items on blocking map tiles like water or mountains (Dragon Slayer)
+	Fixed issue where some JS functions like CheckStaticFlag, CheckDynamicFlag, DoesStaticBlock, DoesDynamicBlock and DoesMapBlock would not work correctly when passed negative Z values
+	Fixed issue where context menu were listing skills to train from NPCs based on effective skill rather than base skill
+	Fixed issue where NPCs would offer skills for training even if those skills were not above the minimum 60 skillpoints
+	Updated clilocID used for Gump JS Method AddToolTip - as well as for some item/character tooltip data - from 1050045 to 1042971 for improved client compatibility
+	Human/Elf/Gargoyle NPCs with spellcasting capabilities will now play a casting animation and briefly stop moving when they cast spells
+	Updated NPC spellcasting code to help NPCs make a bit better choices of what spells to cast during combat. Now they take their own health percentage into account, and cast more offensive spells when at near full health vs more defensive spells as their health drops
+	Fixed an issue where Hirelings wouldn't always immediately start following their new owners
+	Fixed a bug where the Earthquake spell could incorrectly add NPC characters marked for deletion to the refresh queue
+	Updated skills and stats of all implemented human NPCs (including vendors) to better match the state of those NPCs around the time of Pub15
+	Fixed SPATTACK values for a couple of NPCs that were still using values based on spell bitmask instead of spell circle value
+	Updated stats of Jukan and Meer NPCs (dfndata/npc/lbrraces.dfn) to match stats from official LBR guide
+	Added support for an optional third parameter for Character/Socket JS Method .CustomTarget() to allow highlighting targeting cursors as neutral (0, default aura), harmful (1, red aura), helpful (2, blue aura). A value of 3 will cancel the currently active targeting cursor. New syntax:
+		myChar/mySock.CustomTarget( targetID, txtToSay, cursorType ) 	// supported cursorTypes: 0 = neutral, 1 = harmful, 2 = helpful, 3 = cancel current target cursor
+	Various target cursors triggered by code (like hard-coded spells, some pet commands) also make use of these cursorTypes
+
+01/08/2021 - Xuri
+	Added Fish as another resource type (in addition to logs and ore) for UOX3 to keep track of and respawn based on resource areas
+	Added new UOX.INI settings to control the availability of and respawn times for fish:
+		FISHPERAREA=10 			// Maximum number of fish in a given resource area
+		FISHRESPAWNTIMER=600 	// Amount of time it takes for 1 single fish to respawn in a resource area
+		FISHRESPAWNAREA=10 		// Number of fish-areas to split the world into
+	Exposed the fish resource type to Resource JS functions, which now take "FISH" as an additional resource type on top of "LOGS" and "ORE:
+		ResourceTime( resourceType ) 		// Return respawn timer for specified resource type
+		ResourceTime( resourceType, int ) 	// Set respawn timer (in seconds) for specified resource type
+		ResourceAmount( resourceType ) 		// Get max amount of resources per resource area for specified resource type
+		ResourceAmount( resourceType, int ) // Set max amount of resources per resource area for specified resource type
+		ResourceArea( resourceType ) 		// Get number of resource areas that world has been split into for specified resource type
+		ResourceArea( resourceType, int ) 	// Set number of resource areas to split the world into for specified resource type
+	Updated Resource JS properties with properties to get current amount of fish in a region, and the current respawn timer for fish:
+		.fishAmount		// Returns/Sets the amount of fish in given resource object
+		.fishTime		// Returns/Sets the respawn timer of fish in given resource object
+	Updated fishinglist.dfn (dfndata/items/itemlists/fishinglist.dfn) with list objects that can be referenced by in-game ADD command or scripts to add random items from the fishing itemlists
+
 01/08/2021 - Dragon Slayer
 	Added AOS Bone cutting to create bones
 	Added AOS toggle switch for the bone cutting.

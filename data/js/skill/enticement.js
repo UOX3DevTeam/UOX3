@@ -18,7 +18,7 @@ function onSkill( pUser, objType, skillUsed )
 			}
 			else
 			{
-		pSock.CustomTarget( 0, GetDictionaryEntry( 862, pSock.language ) );
+				pSock.CustomTarget( 0, GetDictionaryEntry( 862, pSock.language ), 1 );
 			}
 		}
 	}
@@ -52,7 +52,7 @@ function onCallback0( pSock, ourObj )
 				if( ValidateObject( myInstrument ) )
 				{
 					pSock.tempObj = ourObj;
-					pSock.CustomTarget( 1, GetDictionaryEntry( 1446, pSock.language ) );
+					pSock.CustomTarget( 1, GetDictionaryEntry( 1446, pSock.language ), 1 );
 					PlayInstrument( pSock, myInstrument, true );
 				}
 				else

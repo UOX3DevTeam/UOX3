@@ -2631,6 +2631,7 @@
 2758=Vous découpez un poisson en steaks.
 2759=Tes parents ne t'ont jamais dit de ne pas courir avec des ciseaux dans la main ? !
 2760=Vous ne pouvez pas démêler la magie d'un objet béni.
+2761=La créature a résisté à la tentative de la dissiper !
 // [2800-2999] House script
 2800=Propriétaire de la maison :
 2801=CO-PARENTS
@@ -2694,6 +2695,7 @@
 2859=Vous ne pouvez plus placer de vendeurs de joueurs dans cette maison !
 2860=Les vendeurs de joueurs ne peuvent être placés que dans les maisons publiques !
 2861=On ne peut pas placer un vendeur de joueurs à côté d'une porte !
+2862=Vos mains doivent être libres pour lancer des sorts ou méditer.
 // [3000-4999] Animal and Monster names
 3001=un ogre
 3002=un ettin

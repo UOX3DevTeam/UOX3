@@ -80,13 +80,16 @@ function onEntrance( iMulti, charEntering, objType )
 		}
 
 		// Prevent unauthorized visitors from entering private buildings
-		if( !iMulti.isPublic && protectPrivateHouses
-			&& ( !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ) && !iMulti.IsOnGuestList( charEntering )
-				&& ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
+		if( !ValidateObject( charEntering.owner ) || ( ValidateObject( charEntering.owner ) && charEntering.owner != iMulti.owner ))
 		{
-			// Prevent unauthorized visitors from entering private buildings
-			PreventMultiAccess( iMulti, charEntering, 1, 1817 ); // This is a private home
-			return false;
+			if( !iMulti.isPublic && protectPrivateHouses
+				&& ( !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ) && !iMulti.IsOnGuestList( charEntering )
+					&& ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
+			{
+				// Prevent unauthorized visitors from entering private buildings
+				PreventMultiAccess( iMulti, charEntering, 1, 1817 ); // This is a private home
+				return false;
+			}
 		}
 
 		// Update visitor count for players entering a public building (don't count owners, or friends of owners)

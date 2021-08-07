@@ -64,6 +64,34 @@ static  JSClass UOXSpells_class =
 	JS_FinalizeStub
 };
 
+static JSClass UOXGlobalSkill_class =
+{
+	"UOXGlobalSkill",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CGlobalSkillProps_getProperty,
+	CGlobalSkillProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
+static  JSClass UOXGlobalSkills_class =
+{
+	"UOXGlobalSkills",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CGlobalSkillsProps_getProperty,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
 static  JSClass UOXCreateEntry_class =
 {
 	"UOXCreateEntry",
