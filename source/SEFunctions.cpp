@@ -4133,6 +4133,24 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 283:	// SYSMESSAGECOLOUR
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SysMsgColour()));
 				break;
+			case 284:	// AF_AUTOBANDAGE
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_AUTOBANDAGE ) );
+				break;
+			case 285:	// AF_ENEMYTARGETSHARE
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE ) );
+				break;
+			case 286:	// AF_FILTERSEASON
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_FILTERSEASON ) );
+				break;
+			case 287:	// AF_SPELLTARGETSHARE
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPELLTARGETSHARE ) );
+				break;
+			case 288:	// AF_HUMANOIDHEALTHCHECKS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS ) );
+				break;
+			case 289:	// AF_SPEECHJOURNALCHECKS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS ) );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;

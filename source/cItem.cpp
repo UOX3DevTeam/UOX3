@@ -2111,7 +2111,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	if( txt.empty() )
 		return;
 
-	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	if( s != nullptr && cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		bool sendAll = true;
 		if( target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER )
@@ -2188,7 +2188,6 @@ void CItem::Update( CSocket *mSock )
 		if( charCont != nullptr )
 		{
 			CPWornItem toWear = (*this);
-			CPToolTip pSend( GetSerial() );
 			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
@@ -2199,6 +2198,7 @@ void CItem::Update( CSocket *mSock )
 				// Only send tooltip if server feature for tooltips is enabled
 				if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
 				{
+					CPToolTip pSend( GetSerial(), (*cIter) );
 					(*cIter)->Send( &pSend );
 				}
 			}
