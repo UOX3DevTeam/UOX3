@@ -4386,7 +4386,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 					SOCKLIST nearbyChars = FindNearbyPlayers( this, searchDistance );
 					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 					{
-						if( sendSock && (*cIter) == s )
+						if( (*cIter) == s && sendSock )
 							sendSock = false;
 						(*cIter)->Send( &unicodeMessage );
 					}
