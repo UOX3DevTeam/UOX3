@@ -385,7 +385,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("AF_BONECUTTERAGENT", 214);
 	regINIValue("AF_JSCRIPTMACROS", 215);
 	regINIValue("AF_AUTOREMOUNT", 216);
-	regINIValue("AF_ALL", 217);
+	// 217 free
 	regINIValue("CLASSICUOMAPTRACKER", 218);
 	regINIValue("DECAYTIMERINHOUSE", 219);
 	regINIValue("PROTECTPRIVATEHOUSES", 220);
@@ -443,6 +443,12 @@ void	CServerData::regAllINIValues() {
 	regINIValue("FISHRESPAWNAREA", 281);
 	regINIValue("ITEMSINTERRUPTCASTING", 282);
 	regINIValue("SYSMESSAGECOLOUR", 283);
+	regINIValue("AF_AUTOBANDAGE", 284);
+	regINIValue("AF_ENEMYTARGETSHARE", 285);
+	regINIValue("AF_FILTERSEASON", 286);
+	regINIValue("AF_SPELLTARGETSHARE", 287);
+	regINIValue("AF_HUMANOIDHEALTHCHECKS", 288);
+	regINIValue("AF_SPEECHJOURNALCHECKS", 289);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -730,28 +736,7 @@ void CServerData::ResetDefaults( void )
 	SetServerFeature( SF_BIT_SE, true );
 	SetServerFeature( SF_BIT_ML, true );
 
-	SetDisabledAssistantFeature( AF_NONE, true );
-	SetDisabledAssistantFeature( AF_FILTERWEATHER, false );
-	SetDisabledAssistantFeature( AF_FILTERLIGHT, false );
-	SetDisabledAssistantFeature( AF_SMARTTARGET, false );
-	SetDisabledAssistantFeature( AF_RANGEDTARGET, false );
-	SetDisabledAssistantFeature( AF_AUTOOPENDOORS, false );
-	SetDisabledAssistantFeature( AF_DEQUIPONCAST, false );
-	SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, false );
-	SetDisabledAssistantFeature( AF_POISONEDCHECKS, false );
-	SetDisabledAssistantFeature( AF_LOOPEDMACROS, false );
-	SetDisabledAssistantFeature( AF_USEONCEAGENT, false );
-	SetDisabledAssistantFeature( AF_RESTOCKAGENT, false );
-	SetDisabledAssistantFeature( AF_SELLAGENT, false );
-	SetDisabledAssistantFeature( AF_BUYAGENT, false );
-	SetDisabledAssistantFeature( AF_POTIONHOTKEYS, false );
-	SetDisabledAssistantFeature( AF_RANDOMTARGETS, false );
-	SetDisabledAssistantFeature( AF_CLOSESTTARGETS, false );
-	SetDisabledAssistantFeature( AF_OVERHEADHEALTH, false );
-	SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, false );
-	SetDisabledAssistantFeature( AF_BONECUTTERAGENT, false );
-	SetDisabledAssistantFeature( AF_JSCRIPTMACROS, false );
-	SetDisabledAssistantFeature( AF_AUTOREMOUNT, false );
+	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
 
 	// Enable login-support for any supported client version by default.
@@ -3863,28 +3848,33 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
-		ofsOutput << "AF_FILTERWEATHER=" << GetDisabledAssistantFeature( AF_FILTERWEATHER ) << '\n';
-		ofsOutput << "AF_FILTERLIGHT=" << GetDisabledAssistantFeature( AF_FILTERLIGHT ) << '\n';
-		ofsOutput << "AF_SMARTTARGET=" << GetDisabledAssistantFeature( AF_SMARTTARGET ) << '\n';
-		ofsOutput << "AF_RANGEDTARGET=" << GetDisabledAssistantFeature( AF_RANGEDTARGET ) << '\n';
-		ofsOutput << "AF_AUTOOPENDOORS=" << GetDisabledAssistantFeature( AF_AUTOOPENDOORS ) << '\n';
-		ofsOutput << "AF_DEQUIPONCAST=" << GetDisabledAssistantFeature( AF_DEQUIPONCAST ) << '\n';
-		ofsOutput << "AF_AUTOPOTIONEQUIP=" << GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP ) << '\n';
-		ofsOutput << "AF_POISONEDCHECKS=" << GetDisabledAssistantFeature( AF_POISONEDCHECKS ) << '\n';
-		ofsOutput << "AF_LOOPEDMACROS=" << GetDisabledAssistantFeature( AF_LOOPEDMACROS ) << '\n';
-		ofsOutput << "AF_USEONCEAGENT=" << GetDisabledAssistantFeature( AF_USEONCEAGENT ) << '\n';
-		ofsOutput << "AF_RESTOCKAGENT=" << GetDisabledAssistantFeature( AF_RESTOCKAGENT ) << '\n';
-		ofsOutput << "AF_SELLAGENT=" << GetDisabledAssistantFeature( AF_SELLAGENT ) << '\n';
-		ofsOutput << "AF_BUYAGENT=" << GetDisabledAssistantFeature( AF_BUYAGENT ) << '\n';
-		ofsOutput << "AF_POTIONHOTKEYS=" << GetDisabledAssistantFeature( AF_POTIONHOTKEYS ) << '\n';
-		ofsOutput << "AF_RANDOMTARGETS=" << GetDisabledAssistantFeature( AF_RANDOMTARGETS ) << '\n';
-		ofsOutput << "AF_CLOSESTTARGETS=" << GetDisabledAssistantFeature( AF_CLOSESTTARGETS ) << '\n';
-		ofsOutput << "AF_OVERHEADHEALTH=" << GetDisabledAssistantFeature( AF_OVERHEADHEALTH ) << '\n';
-		ofsOutput << "AF_AUTOLOOTAGENT=" << GetDisabledAssistantFeature( AF_AUTOLOOTAGENT ) << '\n';
-		ofsOutput << "AF_BONECUTTERAGENT=" << GetDisabledAssistantFeature( AF_BONECUTTERAGENT ) << '\n';
-		ofsOutput << "AF_JSCRIPTMACROS=" << GetDisabledAssistantFeature( AF_JSCRIPTMACROS ) << '\n';
-		ofsOutput << "AF_AUTOREMOUNT=" << GetDisabledAssistantFeature( AF_AUTOREMOUNT ) << '\n';
-		ofsOutput << "AF_ALL=" << GetDisabledAssistantFeature( AF_ALL ) << '\n';
+		ofsOutput << "AF_FILTERWEATHER=" << (GetDisabledAssistantFeature( AF_FILTERWEATHER )?1:0) << '\n';
+		ofsOutput << "AF_FILTERLIGHT=" << (GetDisabledAssistantFeature( AF_FILTERLIGHT )?1:0) << '\n';
+		ofsOutput << "AF_SMARTTARGET=" << (GetDisabledAssistantFeature( AF_SMARTTARGET )?1:0) << '\n';
+		ofsOutput << "AF_RANGEDTARGET=" << (GetDisabledAssistantFeature( AF_RANGEDTARGET )?1:0) << '\n';
+		ofsOutput << "AF_AUTOOPENDOORS=" << (GetDisabledAssistantFeature( AF_AUTOOPENDOORS )?1:0) << '\n';
+		ofsOutput << "AF_DEQUIPONCAST=" << (GetDisabledAssistantFeature( AF_DEQUIPONCAST )?1:0) << '\n';
+		ofsOutput << "AF_AUTOPOTIONEQUIP=" << (GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP )?1:0) << '\n';
+		ofsOutput << "AF_POISONEDCHECKS=" << (GetDisabledAssistantFeature( AF_POISONEDCHECKS )?1:0) << '\n';
+		ofsOutput << "AF_LOOPEDMACROS=" << (GetDisabledAssistantFeature( AF_LOOPEDMACROS )?1:0) << '\n';
+		ofsOutput << "AF_USEONCEAGENT=" << (GetDisabledAssistantFeature( AF_USEONCEAGENT )?1:0) << '\n';
+		ofsOutput << "AF_RESTOCKAGENT=" << (GetDisabledAssistantFeature( AF_RESTOCKAGENT )?1:0) << '\n';
+		ofsOutput << "AF_SELLAGENT=" << (GetDisabledAssistantFeature( AF_SELLAGENT )?1:0) << '\n';
+		ofsOutput << "AF_BUYAGENT=" << (GetDisabledAssistantFeature( AF_BUYAGENT )?1:0) << '\n';
+		ofsOutput << "AF_POTIONHOTKEYS=" << (GetDisabledAssistantFeature( AF_POTIONHOTKEYS )?1:0) << '\n';
+		ofsOutput << "AF_RANDOMTARGETS=" << (GetDisabledAssistantFeature( AF_RANDOMTARGETS )?1:0) << '\n';
+		ofsOutput << "AF_CLOSESTTARGETS=" << (GetDisabledAssistantFeature( AF_CLOSESTTARGETS )?1:0) << '\n';
+		ofsOutput << "AF_OVERHEADHEALTH=" << (GetDisabledAssistantFeature( AF_OVERHEADHEALTH )?1:0) << '\n';
+		ofsOutput << "AF_AUTOLOOTAGENT=" << (GetDisabledAssistantFeature( AF_AUTOLOOTAGENT )?1:0) << '\n';
+		ofsOutput << "AF_BONECUTTERAGENT=" << (GetDisabledAssistantFeature( AF_BONECUTTERAGENT )?1:0) << '\n';
+		ofsOutput << "AF_JSCRIPTMACROS=" << (GetDisabledAssistantFeature( AF_JSCRIPTMACROS )?1:0) << '\n';
+		ofsOutput << "AF_AUTOREMOUNT=" << (GetDisabledAssistantFeature( AF_AUTOREMOUNT )?1:0) << '\n';
+		ofsOutput << "AF_AUTOBANDAGE=" << (GetDisabledAssistantFeature( AF_AUTOBANDAGE )?1:0) << '\n';
+		ofsOutput << "AF_ENEMYTARGETSHARE=" << (GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE )?1:0) << '\n';
+		ofsOutput << "AF_FILTERSEASON=" << (GetDisabledAssistantFeature( AF_FILTERSEASON )?1:0) << '\n';
+		ofsOutput << "AF_SPELLTARGETSHARE=" << (GetDisabledAssistantFeature( AF_SPELLTARGETSHARE )?1:0) << '\n';
+		ofsOutput << "AF_HUMANOIDHEALTHCHECKS=" << (GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS )?1:0) << '\n';
+		ofsOutput << "AF_SPEECHJOURNALCHECKS=" << (GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS )?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
 
@@ -4706,9 +4696,6 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 216:	// AF_AUTOREMOUNT[0205]
 			SetDisabledAssistantFeature( AF_AUTOREMOUNT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
-		case 217:	// AF_ALL[0206]
-			SetDisabledAssistantFeature( AF_ALL, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
-			break;
 		case 218:	// CLASSICUOMAPTRACKER[0207]
 			SetClassicUOMapTracker( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
@@ -4881,6 +4868,24 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 283:	 // SYSMESSAGECOLOUR
 			SysMsgColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 284:	// AF_AUTOBANDAGE
+			SetDisabledAssistantFeature( AF_AUTOBANDAGE, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 285:	// AF_ENEMYTARGETSHARE
+			SetDisabledAssistantFeature( AF_ENEMYTARGETSHARE, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 286:	// AF_FILTERSEASON
+			SetDisabledAssistantFeature( AF_FILTERSEASON, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 287:	// AF_SPELLTARGETSHARE
+			SetDisabledAssistantFeature( AF_SPELLTARGETSHARE, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 288:	// AF_HUMANOIDHEALTHCHECKS
+			SetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 289:	// AF_SPEECHJOURNALCHECKS
+			SetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		default:
 			rvalue = false;

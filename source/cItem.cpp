@@ -2111,7 +2111,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	if( txt.empty() )
 		return;
 
-	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	if( s != nullptr && cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		bool sendAll = true;
 		if( target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER )
