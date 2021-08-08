@@ -1425,7 +1425,8 @@ void CWorldMain::CheckAutoTimers( void )
 
 				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 				{
-					if( tSock->NegotiateTimeout() != -1 && (UI32)tSock->NegotiateTimeout() <= GetUICurrentTime() )
+					auto negotiateTimeout = tSock->NegotiateTimeout();
+					if( !tSock->NegotiatedWithAssistant() && negotiateTimeout != -1 && static_cast<UI32>(negotiateTimeout) <= GetUICurrentTime() )
 					{
 						const CChar *tChar = tSock->CurrcharObj();
 						if( !ValidateObject( tChar ) )
@@ -1458,7 +1459,7 @@ void CWorldMain::CheckAutoTimers( void )
 					}
 					if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 					{
-						if( (UI32)wsSocket->NegotiateTimeout() < GetUICurrentTime() )
+						if( !wsSocket->NegotiatedWithAssistant() && static_cast<UI32>(wsSocket->NegotiateTimeout()) < GetUICurrentTime() )
 						{
 							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ) );
 						}

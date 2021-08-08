@@ -61,31 +61,39 @@ enum AssistantFeatures : UI64
 {
 	AF_NONE = 0,
 
-	// Razor
-	AF_FILTERWEATHER = 1 << 0, // Weather Filter
-	AF_FILTERLIGHT = 1 << 1, // Light Filter
-	AF_SMARTTARGET = 1 << 2, // Smart Last Target
-	AF_RANGEDTARGET = 1 << 3, // Range Check Last Target
-	AF_AUTOOPENDOORS = 1 << 4, // Automatically Open Doors
-	AF_DEQUIPONCAST = 1 << 5, // Unequip Weapon on spell cast
-	AF_AUTOPOTIONEQUIP = 1 << 6, // Un/Re-equip weapon on potion use
-	AF_POISONEDCHECKS = 1 << 7, // Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self
-	AF_LOOPEDMACROS = 1 << 8, // Disallow Looping macros, For loops, and macros that call other macros
-	AF_USEONCEAGENT = 1 << 9, // The use once agent
-	AF_RESTOCKAGENT = 1 << 10, // The restock agent
-	AF_SELLAGENT = 1 << 11, // The sell agent
-	AF_BUYAGENT = 1 << 12, // The buy agent
-	AF_POTIONHOTKEYS = 1 << 13, // All potion hotkeys
-	AF_RANDOMTARGETS = 1 << 14, // All random target hotkeys (Not target next, last target, target self)
-	AF_CLOSESTTARGETS = 1 << 15, // All closest target hotkeys
-	AF_OVERHEADHEALTH = 1 << 16, // Health and Mana/Stam messages shown over player's heads
+	// Razor/RE/AssistUO
+	AF_FILTERWEATHER = 1 << 0,			// Weather Filter
+	AF_FILTERLIGHT = 1 << 1,			// Light Filter
+	AF_SMARTTARGET = 1 << 2,			// Smart Last Target
+	AF_RANGEDTARGET = 1 << 3,			// Range Check Last Target
+	AF_AUTOOPENDOORS = 1 << 4,			// Automatically Open Doors
+	AF_DEQUIPONCAST = 1 << 5,			// Unequip Weapon on spell cast
+	AF_AUTOPOTIONEQUIP = 1 << 6,		// Un/Re-equip weapon on potion use
+	AF_POISONEDCHECKS = 1 << 7,			// Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self
+	AF_LOOPEDMACROS = 1 << 8,			// Disallow Looping macros, For loops, and macros that call other macros
+	AF_USEONCEAGENT = 1 << 9,			// The use once agent
+	AF_RESTOCKAGENT = 1 << 10,			// The restock agent
+	AF_SELLAGENT = 1 << 11,				// The sell agent
+	AF_BUYAGENT = 1 << 12,				// The buy agent
+	AF_POTIONHOTKEYS = 1 << 13,			// All potion hotkeys
+	AF_RANDOMTARGETS = 1 << 14,			// All random target hotkeys (Not target next, last target, target self)
+	AF_CLOSESTTARGETS = 1 << 15,		// All closest target hotkeys
+	AF_OVERHEADHEALTH = 1 << 16,		// Health and Mana/Stam messages shown over player's heads
+	
+	// AssistUO only?
+	AF_AUTOLOOTAGENT = 1 << 17,			// The autoloot agent
+	AF_BONECUTTERAGENT = 1 << 18,		// The bone cutter agent
+	AF_JSCRIPTMACROS = 1 << 19,			// Javascript macro engine
+	AF_AUTOREMOUNT = 1 << 20,			// Auto remount after dismount
 
-	// AssistUO Only
-	AF_AUTOLOOTAGENT = 1 << 17, // The autoloot agent
-	AF_BONECUTTERAGENT = 1 << 18, // The bone cutter agent
-	AF_JSCRIPTMACROS = 1 << 19, // Javascript macro engine
-	AF_AUTOREMOUNT = 1 << 20, // Auto remount after dismount
-	AF_ALL = 0xFFFFFFFFFFFFFFFF // Every feature possible
+	// UOSteam
+	AF_AUTOBANDAGE = 1 << 21,			// Automatically apply bandages when health is low
+	AF_ENEMYTARGETSHARE = 1 << 22,		// Share target with party/guild/alliance
+	AF_FILTERSEASON = 1 << 23,			// Season filter that forces a specific season
+	AF_SPELLTARGETSHARE = 1 << 24,		// Share spell target with party/guild/alliance
+	AF_HUMANOIDHEALTHCHECKS = 1 << 25,	// 
+	AF_SPEECHJOURNALCHECKS = 1 << 26,	// ???
+	AF_ALL = 0xFFFFFFFFFFFFFFFF			// Every feature possible
 };
 
 enum cSD_TID

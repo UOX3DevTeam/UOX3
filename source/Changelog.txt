@@ -1,3 +1,15 @@
+08/08/2021 - Xuri
+	Fixed an issue where AF_ALL option in [disabled assistant features] of UOX.INI would override (duh) the setting for all the other assistant features, essentially leaving the shard admin with only two options (all features disabled, or none). The AF_ALL option has now been removed entirely.
+	Extended support for negotiating with assistant tools to disable these additional assistant tool features (from UOS) via the [disabled assistant features] section of UOX.INI:
+		AF_AUTOBANDAGE=0/1 			// Automatically apply bandages when low on health
+		AF_ENEMYTARGETSHARE=0/1 	// Share enemy target in party/guild/alliance chat
+		AF_FILTERSEASON=0/1 		// Force client to display a fixed season
+		AF_SPELLTARGETSHARE=0/1 	// Share spell target in party/guild/alliance chat
+		AF_HUMANOIDHEALTHCHECKS=0/1 // Check health of nearby humanoid characters?
+		AF_SPEECHJOURNALCHECKS=0/1 	// Check journal for specific messages sent from server
+	Applied a potential fix for an issue that could cause players to get disconnected immediately without delay before assistant tool had a chance to respond to feature negotiation request
+	Addressed a couple of minor code issues that caused some warnings
+
 08/08/2021 - Xuri (0.99.4w)
 	Added support for new Skills DFN tag:
 		SKILLDELAY=# 	// Delay in seconds before another skill can be used after using this skill. Overrides global delay from UOX.INI
@@ -71,7 +83,7 @@
 	Added support for an optional third parameter for Character/Socket JS Method .CustomTarget() to allow highlighting targeting cursors as neutral (0, default aura), harmful (1, red aura), helpful (2, blue aura). A value of 3 will cancel the currently active targeting cursor. New syntax:
 		myChar/mySock.CustomTarget( targetID, txtToSay, cursorType ) 	// supported cursorTypes: 0 = neutral, 1 = harmful, 2 = helpful, 3 = cancel current target cursor
 	Various target cursors triggered by code (like hard-coded spells, some pet commands) also make use of these cursorTypes
-	Fixed an bug that caused segmentation fault on Linux, related to item tooltips and socket language
+	Fixed a bug that caused segmentation fault on Linux, related to item tooltips and socket language
 
 01/08/2021 - Xuri
 	Added Fish as another resource type (in addition to logs and ore) for UOX3 to keep track of and respawn based on resource areas

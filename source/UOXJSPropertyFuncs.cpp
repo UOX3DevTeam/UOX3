@@ -164,7 +164,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 {
 	size_t skillID = JSVAL_TO_INT(id);
 
-	if( skillID < ALCHEMY || skillID > THROWING )
+	if( skillID > THROWING )
 	{
 		Console.error( "Invalid Skill ID, must be between 0 and 57" ); // Revise please...
 		*vp = JSVAL_NULL;
