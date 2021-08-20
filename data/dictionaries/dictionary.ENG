@@ -3920,25 +3920,5 @@
 9315=You pull out an item : magic fish
 9316=You pull out an item : fish
 9317=You pull out an item : footwear
-// [9900 - 10000] Door Command
-9900=Metal Door S
-9901=Metal Door E
-9902=Barred Metal Door S
-9903=Barred Metal Door E
-9904=Rotten Door S
-9905=Rotten Door E
-9906=Wooden Door S
-9907=Wooden Door E
-9908=Tall Wooden Door S
-9909=Tall Wooden Door E
-9910=Tall Metal Door S
-9911=Tall Metal Door E
-9912=Light Wooden Door S
-9913=Light Wooden Door E
-9914=Wooden Metal Brace Door S
-9915=Wooden Metal Brace Door E
-9916=Page
-9917=Next
-9918=Back
 }
 EOF
