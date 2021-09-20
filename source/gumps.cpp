@@ -485,13 +485,32 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.addText( szBuffer );
 
 		// Shard Menu Description
-		szBuffer = "Greetings! Using these menus you can\nquickly and easily add Items, Spawners,\nNPCs and more to your shard, in order\nto customize it to your needs.";
+		szBuffer = "Greetings! Using these menus you can";
 		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 120, 94, linenum++) );
 		toSend.addText( szBuffer );
 
-		szBuffer = "Use the Objects tab to find stuff to\nadd, and the Settings tab to configure\noptions for this menu and the objects\nyou add!";
-		szBuffer = "Objects tab is used to find stuff to\nadd. Use Settings tab to configure\nvarious options for this menu!";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 200, 94, linenum++) );
+		szBuffer = "quickly and easily add Items, Spawners,";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 135, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "NPCs and more to your shard, in order";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 150, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "to customize it to your needs.";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 165, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "Objects tab is used to find stuff to";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 190, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "add. Use Settings tab to configure";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 205, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "various options for this menu!";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 220, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "Don't forget to check out the UOX3 Docs!";
@@ -742,8 +761,12 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	{
 		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x867, 0x869, 1, 0, 50000));
 	}
-	szBuffer = "Add item at specific location\ninstead of in GM's backpack";
+	szBuffer = "Add item at specific location";
 	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 80, 94, linenum++) );
+	toSend.addText( szBuffer );
+
+	szBuffer = "instead of in GM's backpack";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 95, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Repeat Add Object
@@ -756,8 +779,12 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	{
 		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x867, 0x869, 1, 0, 50001));
 	}
-	szBuffer = "Add item repeatedly\nuntil cancelled";
+	szBuffer = "Add item repeatedly";
 	toSend.addCommand( strutil::format("text %u %u %u %u", 280, 120, 94, linenum++) );
+	toSend.addText( szBuffer );
+
+	szBuffer = "until cancelled";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 280, 135, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Auto-reopen Menu
@@ -770,8 +797,12 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	{
 		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x867, 0x869, 1, 0, 50003));
 	}
-	szBuffer = "Automatically reopen menu\nafter selecting object to add";
+	szBuffer = "Automatically reopen menu";
 	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 160, 94, linenum++) );
+	toSend.addText( szBuffer );
+
+	szBuffer = "after selecting object to add";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 175, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Force-Decayable Off
