@@ -144,7 +144,6 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-	TargetFunc FishTarget;
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
 	TargetFunc Mine;
@@ -167,7 +166,6 @@ public:
 	void Track( CChar *i );
 	void Tracking( CSocket *s, SI32 selection );
 	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
-	void Fish( CSocket *mSock, CChar *mChar );
 
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 

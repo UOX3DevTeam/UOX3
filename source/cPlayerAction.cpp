@@ -2537,22 +2537,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			else
 				mSock->sysmessage( 466 );
 			return true;
-		case IT_FISHINGPOLE:	// fishing
-			// If item is locked down, check if player has access to use it
-			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
-				return true;
-
-			if( mSock->GetTimer( tPC_FISHING ) )
-				mSock->sysmessage( 467 );
-			else
-			{
-				mSock->TempObj( iUsed );
-				mSock->target( 0, TARGET_FISH, 0, 468 );
-			}
-			return true;
-		case IT_SEXTANT:	// sextants
-			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );
-			return true;
 		case IT_HAIRDYE:	// Hair Dye
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))

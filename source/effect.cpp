@@ -97,6 +97,8 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 		return;
 
 	CPGraphicalEffect2 toSend( 0, (*source), (*dest) );
+	if( source == dest )
+		toSend.Effect( 0x03 );
 	toSend.Model( effect );
 	toSend.SourceLocation( (*source) );
 	toSend.TargetLocation( (*dest) );
@@ -104,7 +106,7 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 	toSend.Duration( loop );
 	toSend.ExplodeOnImpact( explode );
 	toSend.Hue( hue );
-	toSend.RenderMode( renderMode );
+	toSend.RenderMode( renderMode );//0x00000004
 
 	//std::scoped_lock lock(Network->internallock);
 
@@ -147,15 +149,44 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
+//|	Function	-	void PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect,
+//|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends a message to client to display a moving animation from source object to target location
+//o-----------------------------------------------------------------------------------------------o
+void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+{	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
+
+	CPGraphicalEffect2 toSend( 0 );
+	toSend.TargetSerial( INVALIDSERIAL );
+	toSend.Model( effect );
+	toSend.SourceLocation( srcX, srcY, srcZ );
+	toSend.TargetLocation( x, y, z );
+	toSend.Speed( speed );
+	toSend.Duration( loop );
+	toSend.ExplodeOnImpact( explode );
+	toSend.Hue( hue );
+	toSend.RenderMode( renderMode );
+
+	SOCKLIST nearbyChars = FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN );
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	{
+		(*cIter)->Send( &toSend );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay, bool playBackwards )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to make character perform specified action/anim
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
+void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay, UI08 frameCount, bool playBackwards )
 {
 	CPCharacterAnimation toSend = (*mChar);
 	toSend.Action( actionID );
 	toSend.FrameDelay( frameDelay );
+	toSend.FrameCount( frameCount );
+	toSend.DoBackwards( playBackwards );
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{

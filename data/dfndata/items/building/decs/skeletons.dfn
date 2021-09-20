@@ -157,7 +157,7 @@ get=base_item
 name=skull
 id=0x1ae1
 weight=100
-movable=2
+movable=1
 }
 
 [0x1ae2]
@@ -166,7 +166,7 @@ get=base_item
 name=skull
 id=0x1ae2
 weight=100
-movable=2
+movable=1
 }
 
 [0x1ae3]
@@ -175,7 +175,7 @@ get=base_item
 name=skull
 id=0x1ae3
 weight=100
-movable=2
+movable=1
 }
 
 [0x1ae4]
@@ -184,7 +184,7 @@ get=base_item
 name=skull
 id=0x1ae4
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b09]
@@ -193,7 +193,7 @@ get=base_item
 name=bone pile
 id=0x1b09
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b0a]
@@ -202,7 +202,7 @@ get=base_item
 name=bone pile
 id=0x1b0a
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b0b]
@@ -211,7 +211,7 @@ get=base_item
 name=bone pile
 id=0x1b0b
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b0c]
@@ -220,7 +220,7 @@ get=base_item
 name=bone pile
 id=0x1b0c
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b0d]
@@ -229,7 +229,7 @@ get=base_item
 name=bone pile
 id=0x1b0d
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b0e]
@@ -238,7 +238,7 @@ get=base_item
 name=bone pile
 id=0x1b0e
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b0f]
@@ -247,7 +247,7 @@ get=base_item
 name=bone pile
 id=0x1b0f
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b10]
@@ -256,7 +256,7 @@ get=base_item
 name=bone pile
 id=0x1b10
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b11]
@@ -301,7 +301,7 @@ get=base_item
 name=pelvis bone
 id=0x1b15
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b16]
@@ -310,7 +310,7 @@ get=base_item
 name=pelvis bone
 id=0x1b16
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b17]
@@ -319,7 +319,7 @@ get=base_item
 name=rib cage
 id=0x1b17
 weight=100
-movable=2
+movable=1
 }
 
 [0x1b18]

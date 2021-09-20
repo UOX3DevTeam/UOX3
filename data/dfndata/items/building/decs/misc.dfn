@@ -453,7 +453,7 @@ get=base_item
 name=conch shell
 id=0x0fc4
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fc5]
@@ -462,7 +462,7 @@ get=base_item
 name=shells
 id=0x0fc5
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fc6]
@@ -471,7 +471,7 @@ get=base_item
 name=shells
 id=0x0fc6
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fc7]
@@ -480,7 +480,7 @@ get=base_item
 name=nautilus
 id=0x0fc7
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fc8]
@@ -489,7 +489,7 @@ get=base_item
 name=shell
 id=0x0fc8
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fc9]
@@ -498,7 +498,7 @@ get=base_item
 name=shells
 id=0x0fc9
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fca]
@@ -507,7 +507,7 @@ get=base_item
 name=shells
 id=0x0fca
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fcb]
@@ -516,7 +516,7 @@ get=base_item
 name=shell
 id=0x0fcb
 weight=100
-movable=2
+movable=1
 }
 
 [0x0fcc]
@@ -525,7 +525,7 @@ get=base_item
 name=shell
 id=0x0fcc
 weight=100
-movable=2
+movable=1
 }
 
 [0x104b]
@@ -684,13 +684,14 @@ weight=1000
 movable=2
 }
 
+// Occasionally drops as loot from krakens fished up with fishing nets
 [0x14f8]
 { E
 get=base_item
 name=rope
 id=0x14f8
 weight=100
-movable=2
+movable=1
 }
 
 [0x14f9]

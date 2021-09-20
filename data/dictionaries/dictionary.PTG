@@ -646,7 +646,7 @@
 654=Elemental Terra Summon
 655=Summon Fire Elemental
 656=Elemental Água Summon
-657=Randomandom (aleatório)
+657=Identificação
 658=Necro1
 659=Necro2
 660=Necro3
@@ -3881,6 +3881,18 @@
 9053=[bloqueado]
 9054=Não se pode usar competências enquanto morto.
 9055=[Bendito]
+9056=Que o alvo é imune à magia!
+9057=*O sangue ácido salpicado cicatriza a sua arma!
+9058=Não se pode curar no seu estado actual.
+9059= Decides contra beber esta poção, uma vez que já estás em plena saúde.
+9060=Seleccionar o local alvo para a %s de Spawner:
+9061= O calor intenso libertado por uma serpente de lava está a causar-lhe danos!
+9062=O ataque de gás do elemento bronze está a causar-lhe danos!
+9063=O frio intenso está a causar-lhe danos!
+9064=Não se pode apanhar isso.
+9065=Aquele item não lhe pertence. Terá de o roubar.
+9066=Pertence a outra pessoa.
+9067=Não pode deixar cair o item... De onde foi apanhado?
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
@@ -3910,5 +3922,42 @@
 9275= Este livro já tem o montante máximo de encargos.
 9276= Você cobra o livro de rúnicas com uma pilha de pergaminho de recolha.
 9277= Carrega-se o livro de ronda com um pergaminho de recolha.
+// [9301-9310] Peixe Mágico
+9301=Já se encontra sob um efeito semelhante.
+9302= Engoles o peixe inteiro!
+// [9310-9400] Habilidade de pesca
+9310=Em que água queres pescar?
+9311=Os peixes não parecem estar a morder aqui.
+9312=Já está a pescar.
+9313=Tem de estar mais perto da água para pescar!
+9314=Pesca-se um pouco, mas não se pesca nada.
+9315=Você retira um item : %s
+9316=Você puxa um item juntamente com um monstro : %s
+9317=Só se pode usar esta rede em águas profundas!
+9318= Mergulha-se a rede no mar...
+9319=Não é possível detectar o item que iniciou a acção. Será que ainda existe?
+9320= Extrai-se a mensagem da garrafa.
+9321=Ajuda! Navio a fazer...n fortes tempestades...carga preciosa...st alcançar dest...coordenadas actuais %s...ve quaisquer sobreviventes...ease!
+9322=...era um cad e um boor, não importa o que a mãe s...rebobinava-o ao mar! Oh, Anna, 'twas so exciting! Unfort...y ele agarrou-o...est, e todas as suas riquezas foram com ele! ...esquivou-se ao capitão, e ele diz que estamos em %s ... por isso talvez ...
+9323=....saiba que o naufrágio está perto das %s mas não o encontrou. Poderá a mensagem transmitida na minha família durante gerações estar errada? Não... Juro pela alma do meu avô, vou encontrar...
+9324=...Ar! %s e, um vento favorável! Sem chance...tempestades, no entanto...ar! É uma serpente marinha...<br>>br>uh oh.
+9325=PEDIDO: mergulhadores exp...d em naufrágio...overy. Deve ter o seu próprio Vaso....pply a %s...bons benefícios, horários flexíveis...
+9326=...isaster de facto. Capitão McQ...ao mar, receia o pior. Estes são dias t...ast do bom navio Norr...ast posição conhecida era %s mas ...estão além do salvag...
+9327=...nunca esperou um iceberg...mulher tola na proa esmagada instantaneamente...enviar ajuda a %s...ey'll never forgety the tragedy of the sinking of the...
+9328=...por isso atirei o tesouro borda fora, antes que a maldição também me pudesse apanhar. Mas cheguei demasiado tarde. Agora estou condenado a vaguear por estes mares, um fantasma para sempre. Junta-te a mim: procurai a %s se desejais a minha companhia...
+9329=...então o navio explodiu. Um dragão passou por cima. O lodo engoliu Bertie inteiro - ele gritou, foi espantoso. O céu brilhava laranja...Uma leitura sextante colocou-nos em %s. Norma estava a tagarelar sobre navegar na borda do mundo. Olhei para as minhas mãos e vi através delas...".
+9330=....há três dias que estou dentro desta baleia. Fiquei sem comida que possa tirar dos seus dentes. Fiz uma leitura sextante através do espiráculo: %s. Nunca mais verei o meu tesouro...
+9331=...grande aventura! O Capitão Quacklebush mandou-me fazer uma zaragatoa diariamente pelos conveses... ...vieram piratas, eu estava a praticar com o meu sextante. ... ... ... ... ... e a nossa preciosa carga foi com ela e com os piratas aos gritos, até ao fundo do mar...
+9332=....ninguém sabia que eu era uma rapariga. Eles apenas assumiram que eu era outro marinheiro...então conhecemos a undine. %s. Exigia sacrifício...eu era a mais nova, eles pensaram...agarraram o tesouro do capitão, gritaram "Vai afundar comigo! ...eles levaram-me para cima.
+9333=...preso numa ilha deserta com uma fonte mágica que fornecia comida, nascentes de água doce, paisagens deslumbrantes, e a minha adorável jovem esposa. Conheço o navio com todos os nossos ganhos de vida afundado a ~1_SEXTANT ~ mas não sei quais são as nossas coordenadas...alguém tem GOT para me salvar antes do jogo da final de domingo ou enlouqueço...
+9334=...redondo Jhelom towne nós deambulamos, bebendo toda a noite. Entramos numa luta...içamos vela pela manhã, toda a tripulação a bordo, mas o cozinheiro...ull quebra, últimas coordenadas conhecidas %s...estar melhor na cela da prisão de Stone!
+9335=Você puxa um pesado peito para cima das profundezas do oceano!
+9336=A tua vara de pesca dobra-se ao puxar um grande peixe das profundezas!
+9337=Precisas de água para pescar!
+9338=Cortas o teu peixe em bifes de peixe cru.
+// [9401-9450] Itens mágicos
+9401=Este artigo mágico está sem carga.
+9402=[Não identificado]
+9403=utilizações restantes: %i
 }
 EOF

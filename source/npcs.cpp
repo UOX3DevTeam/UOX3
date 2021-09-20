@@ -66,7 +66,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			if( tcsecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
 				iAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tcsecs[1], "//" )), nullptr, 0));
-				retItem = Items->CreateBaseScriptItem( strutil::trim( strutil::removeTrailing( tcsecs[0], "//" )), s->WorldNumber(),  iAmount );
+				retItem = Items->CreateBaseScriptItem( s, strutil::trim( strutil::removeTrailing( tcsecs[0], "//" )), s->WorldNumber(),  iAmount, s->GetInstanceID(), OT_ITEM, 0xFFFF );
 				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
@@ -75,7 +75,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			}
 			else
 			{
-				retItem = Items->CreateBaseScriptItem( tag, s->WorldNumber(), 1 );
+				retItem = Items->CreateBaseScriptItem( s, tag, s->WorldNumber(), 1, s->GetInstanceID(), OT_ITEM, 0xFFFF );
 				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
@@ -452,7 +452,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_RSHOPITEM:
 				if( ValidateObject( buyLayer ) )
 				{
-					retItem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF );
 					if( retItem != nullptr )
 					{
 						retItem->SetCont( buyLayer );
@@ -467,7 +467,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SELLITEM:
 				if( ValidateObject( sellLayer ) )
 				{
-					retItem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF );
 					if( retItem != nullptr )
 					{
 						retItem->SetCont( sellLayer );
@@ -483,7 +483,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SHOPITEM:
 				if( ValidateObject( boughtLayer ) )
 				{
-					retItem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF );
 					if( retItem != nullptr )
 					{
 						retItem->SetCont( boughtLayer );
@@ -587,7 +587,7 @@ void MakeShop( CChar *c )
 		tPack = c->GetItemAtLayer( static_cast<ItemLayers>(i) );
 		if( !ValidateObject( tPack ) )
 		{
-			tPack = Items->CreateItem( nullptr, c, 0x2AF8, 1, 0, OT_ITEM );
+			tPack = Items->CreateItem( nullptr, c, 0x2AF8, 1, 0, OT_ITEM, false );
 			if( ValidateObject( tPack ) )
 			{
 				tPack->SetDecayable( false );
@@ -665,7 +665,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						mypack = applyTo->GetPackItem();
 					if( mypack == nullptr )
 					{
-						mypack = Items->CreateItem( nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM );
+						mypack = Items->CreateItem( nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM, false );
 						if( ValidateObject( mypack ) )
 						{
 							mypack->SetDecayable( false );
@@ -826,7 +826,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_EQUIPITEM:
 				if( !isGate )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+					retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF );
 					if( retitem != nullptr )
 					{
 						if( retitem->GetLayer() == IL_NONE )
@@ -937,11 +937,11 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						{
 							if( odata && odata > ndata )
 							{
-								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true, 0xFFFF );
 							}
 							else
 							{
-								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", ndata, OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", ndata, OT_ITEM, true, 0xFFFF );
 							}
 						}
 						else
@@ -1018,6 +1018,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				break;
 			case DFNTAG_ITEMID:				skillToSet = ITEMID;					break;
 			case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );		break;
+			case DFNTAG_PACKITEM:
+				[[fallthrough]];
 			case DFNTAG_LOOT:
 				if( !isGate )
 				{
@@ -1027,30 +1029,38 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						if( !cdata.empty() )
 						{
-							if( csects.size() > 1 )
+							auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( cdata, "//" )), "," );
+							if( csecs.size() > 1 )
 							{
 								UI16 iAmount = 0;
-								std::string amountData = strutil::trim( strutil::removeTrailing( csects[1], "//" ));
+								std::string amountData = strutil::trim( strutil::removeTrailing( csecs[1], "//" ));
 								auto tsects = strutil::sections( amountData, " " );
 								if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
 								{
 									auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
 									auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
 									// Tag contained a minimum and maximum value for amount! Let's randomize!
 									iAmount = static_cast<UI16>(RandomNum( first, second ));
 								}
 								else
 								{
-									iAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csects[0], "//" )), nullptr, 0));
+									iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
 								}
-								auto tdata = strutil::trim( strutil::removeTrailing( csects[0], "//" ));
-								for( UI16 iCount = 0; iCount < iAmount;  ++iCount )
-								{
-									retitem = addRandomLoot( mypack, tdata );
-								}
+								auto tdata = strutil::trim( strutil::removeTrailing( csecs[0], "//" ));
+
+								if( tag == DFNTAG_LOOT )
+									Items->AddRespawnItem( mypack, tdata, true, true, iAmount, true );
+								else
+									Items->AddRespawnItem( mypack, tdata, true, false, iAmount, false );
 							}
 							else
-								retitem = addRandomLoot( mypack, cdata );
+							{
+								if( tag == DFNTAG_LOOT )
+									Items->AddRespawnItem( mypack, cdata, true, true, 1, true );
+								else
+									Items->AddRespawnItem( mypack, cdata, true, false, 1, false );
+							}
 						}
 					}
 					else
@@ -1122,40 +1132,6 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_NOTRAIN:
 				if( !isGate )
 					applyTo->SetCanTrain( false );
-				break;
-			case DFNTAG_PACKITEM:
-				if( !isGate )
-				{
-					if( !ValidateObject( mypack ) )
-						mypack = applyTo->GetPackItem();
-					if( ValidateObject( mypack ) )
-					{
-						if( !cdata.empty() )
-						{
-							if( csects.size() > 1 ) // Check if the tag-data contains more than just the itemid
-							{
-								UI16 iAmount = 0;
-								std::string amountData =strutil::trim( strutil::removeTrailing( csects[1], "//" ));
-								auto tsects = strutil::sections( amountData, " " );
-								if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
-								{
-									
-									// Tag contained a minimum and maximum value for amount! Let's randomize!
-									iAmount = static_cast<UI16>(RandomNum( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0)) ));
-								}
-								else
-								{
-									iAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
-								}
-								retitem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim( strutil::removeTrailing( csects[0], "//" )), iAmount, OT_ITEM, true );
-							}
-							else
-								retitem = Items->CreateScriptItem( nullptr, applyTo, cdata, 1, OT_ITEM, true );
-						}
-					}
-					else
-						Console << "Warning: Bad NPC Script ([" << sectionID.c_str() << "]) with problem no backpack for packitem" << myendl;
-				}
 				break;
 			case DFNTAG_POISONSTRENGTH:		applyTo->SetPoisonStrength( static_cast<UI08>(ndata) ); break;
 			case DFNTAG_PRIV:
@@ -1233,7 +1209,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						buyPack = applyTo->GetItemAtLayer( IL_BUYCONTAINER );
 					if( ValidateObject( buyPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1 );
 						if( retitem != nullptr )
 						{
 							retitem->SetCont( buyPack );
@@ -1278,7 +1254,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						sellPack = applyTo->GetItemAtLayer( IL_SELLCONTAINER );
 					if( ValidateObject( sellPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF );
 						if( retitem != nullptr )
 						{
 							retitem->SetCont( sellPack );
@@ -1298,7 +1274,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						boughtPack = applyTo->GetItemAtLayer( IL_BOUGHTCONTAINER );
 					if( ValidateObject( boughtPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF );
 						if( retitem != nullptr )
 						{
 							retitem->SetCont( boughtPack );

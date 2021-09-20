@@ -962,9 +962,9 @@ void CPCharacterAnimation::Action( UI16 model )
 {
 	pStream.WriteShort( 5, model );
 }
-void CPCharacterAnimation::Direction( UI08 dir )
+void CPCharacterAnimation::FrameCount( UI08 frameCount )
 {
-	pStream.WriteByte( 8, dir );
+	pStream.WriteByte( 8, frameCount );
 }
 void CPCharacterAnimation::Repeat( SI16 repeatValue )
 {
@@ -992,7 +992,7 @@ void CPCharacterAnimation::InternalReset( void )
 	pStream.ReserveSize( 14 );
 	pStream.WriteByte( 0, 0x6E );
 	pStream.WriteByte( 7, 0x00 );
-	pStream.WriteByte( 8, 0x07 ); // Animation Length, default to 7
+	pStream.WriteByte( 8, 0x07 ); // Animation Length/Frame Count, default to 7
 	Repeat( 1 );
 	DoBackwards( false );
 	RepeatFlag( false );
@@ -2194,6 +2194,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		}
 		CurrentHP( percentHP );
 		MaxHP( 100 );
+
 		if( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwner() == mChar->GetSerial() )
 			NameChange( true );
 		else

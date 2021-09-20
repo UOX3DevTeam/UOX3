@@ -70,6 +70,7 @@ public:
 	~CMapWorld( void );
 
 	CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
+	std::vector< CMapRegion > *		GetMapRegions();
 
 	MapResource_st&	GetResource( SI16 x, SI16 y );
 

@@ -1945,7 +1945,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;
 						// Skills Functions
 					case TARGET_ITEMID:			Skills->ItemIDTarget( tSock );			break;
-					case TARGET_FISH:			Skills->FishTarget( tSock );			break;
 					case TARGET_SMITH:			Skills->Smith( tSock );					break;
 					case TARGET_MINE:			Skills->Mine( tSock );					break;
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;

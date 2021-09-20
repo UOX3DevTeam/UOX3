@@ -1,3 +1,43 @@
+20/09/2021 - Xuri
+	Extended Character JS Method DoAction() to support two additional parameters - frameCount and playBackwards - which define the length of the animation (defaults to 7) and whether the animation should be played backwards (defaults to false). Note that this only works for old-style animations, and thus is not available for Gargoyle characters. Updated method syntax:
+		.DoAction( actionID ) // Old animation packet
+		.DoAction( actionID, null, frameCount) // Old animation packet with frameCount
+		.DoAction( actionID, null, frameCount, frameDelay ) // Old animation packet with frameCount, frameDelay
+		.DoAction( actionID, null, frameCount, frameDelay, playBackwards) // Old animation packet with frameCount, frameDelay, playBackwards
+		.DoAction( actionID, subActionID ) // New animation packet
+	Extended fishing JS script to include:
+		Fishing special fishing nets, big fish, messages in a bottle/SOS messages and associated shipwreck treasures, with chances of attracting sea serpents, deep sea serpents, water elementals and krakens while fishing.
+		Enhanced detection of fishing in shallow vs deep water, with deep water now being defined as any water tile that's 16 or more tiles away from the nearest land area.
+		Updated timer system, LoS checks,
+	Implemented SOS messages and shipwreck locations, with areas valid for potential shipwreck locations being defined in a new section of regions.dfn named [SOSAREAS], which follows the same syntax as the INSTALOG section in the same file. Once a message in a bottle is opened, a SOS message is generated with coordinates for a random shipwreck location, which players can sail to and fish near in order to find a sunken treasure (and other items).
+	Implemented shipwreck treasures, which come in 3 levels of quality (with an optional 4th quality level available), with increasing amount of gold, gems, scrolls, reagents and magic items (coming in next commit!) per quality level of treasure
+	Implemented special fishing nets, which can be used to fish up a variety of sea creatures (sea serpents, deep sea serpents, water elementals, kraken), which have a high chance of having SOS bottles on their corpses when defeated
+	Updated fishinglist.dfn, itemlist.dfn and lootlist.dfn to support new fishing updates
+	Updated movable state of various items that can be fished up (pillows, some pieces of furniture) to ensure players can move them!
+	Renamed ORERESPAWNAREA ini setting to RESOURCEAREASIZE (it's also used for ore, and logs) and reduced it from 10 to 8 to divide each world into 8x8 sized resource areas
+	Fixed a bug where the new fish resource type was not getting regenerated or saved properly
+	Added INSTANCEID support to INSTALOG section of regions.dfn, and added default WORLD and INSTANCEID entries to all areas
+	Fixed an issue with Runebooks (js/item/runebook.js) where the coordinates of a rune location would not be displayed properly
+	Separated map coordinate function from Runebook script to its own script (js/server/data/map_coordinates.js), which other scripts can call upon to get map coords using TriggerEvent() JS function
+	Ported sextant implementation from code to JS (5033=js/item/sextant.js), and removed the hard-coded version of this.
+	Updated Item DFN entry for sextants to include script=5033 tag
+	Fixed a bug in handling of the LOOT tag for NPCs where server would crash if a number was specified behind the item/itemlist to add as loot
+	The DFN tags PACKITEM and LOOT are now handled similarly when used for NPCs and Items respectively. PACKITEM can be used for adding items with specific IDs, or "list objects" from itemlists.dfn, while LOOT can be used to add items from lootlists.dfn. One big difference between these is that if the optional amount parameter is specified for either tag when used with itemlists/lootlists (PACKITEM=listObject,amount vs LOOT=lootlist,amount), PACKITEM will add the specified amount of the specified/randomly chosen item, while LOOT will add X amount of random items.
+	Updated implementation of ITEMLISTs and LOOTLISTs to support an optional weighting system, which can be used to adjust the probability of some items being chosen from these lists over other items. In the below example, specialfishingnet has a weight of 10, while the blank entry has a weight of 90, making it 9 times more likely for the blank entry to be chosen than the specialfishingnet! Note that higher weighted items should be sorted first for this to be accurate:
+		[LOOTLIST shipwreck_treasure_special]
+		{
+		90|blank
+		10|specialfishingnet
+		}
+	Using bladed weapons on stacks of fish will now cut the entire stack at once, instead of one fish at a time
+	Updated DFN entries for various sea creatures (dfndata/npc/seacreatures.dfn) to adjust color of NPCs, loot and NPC AI
+	Extended functionality of JS Function DoMovingEffect() to allow a set of coordinates as source location, without having to specify a character as either the source or target of the effect
+	Fixed an issue with sea creatures being unable to pathfind in shallow water due to underwater land tiles being treated as blocking
+
+02/08/2021 - Dragon Slayer
+	Moved fishing skill out of code and into js for more user friendly control
+	Added js/item/magicfish.js for the magic fish food
+
 08/08/2021 - Xuri
 	Fixed an issue where AF_ALL option in [disabled assistant features] of UOX.INI would override (duh) the setting for all the other assistant features, essentially leaving the shard admin with only two options (all features disabled, or none). The AF_ALL option has now been removed entirely.
 	Extended support for negotiating with assistant tools to disable these additional assistant tool features (from UOS) via the [disabled assistant features] section of UOX.INI:
