@@ -44,6 +44,7 @@ UI16	getDist3D( CBaseObject *a, CBaseObject *b );
 UI16	getDist3D( point3 a, point3 b );
 SOCKLIST	FindPlayersInVisrange( CBaseObject *myObj );
 SOCKLIST	FindPlayersInOldVisrange( CBaseObject *myObj );
+SOCKLIST	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance );
 SOCKLIST	FindNearbyPlayers( CBaseObject *myObj, UI16 distance );
 SOCKLIST	FindNearbyPlayers( CBaseObject *myObj );
 SOCKLIST	FindNearbyPlayers( CChar *mChar );
