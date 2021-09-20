@@ -8,41 +8,50 @@
 // for use with the uox emulator or any with permission from the author
 // food
 
-[0x0976]
+[base_food]
 {
-get=base_food
-name=slab of bacon
-id=0x0976
-weight=400
-value=8 4
-pileable=1
+get=base_item
+weight=100
+type=14
+restock=10
+movable=1
+good=34
 }
 
-[0x0977]
+[0x1ad3]
 {
 get=base_food
-name=slab of bacon
-id=0x0977
-weight=400
-value=8 4
-pileable=1
-}
-
-[0x0978]
-{
-get=base_food
-name=slice of bacon
-id=0x0978
+name=donuts
+id=0x1ad3
 value=3 1
 pileable=1
 }
 
-[0x0979]
+[0x1e1c]
 {
 get=base_food
-name=slice of bacon
-id=0x0979
-value=3 1
+name=cooked fish
+id=0x1e1c
+value=16 8
+pileable=1
+}
+
+[0x1e1d]
+{
+get=base_food
+name=cooked fish
+id=0x1e1d
+value=16 8
+pileable=1
+}
+
+[0x1e1e]
+{
+get=base_food
+name=cooked fish
+id=0x1e1e
+weight=50
+value=8 4
 pileable=1
 }
 
@@ -96,112 +105,11 @@ value=6 3
 pileable=1
 }
 
-[0x09b7]
-{
-get=base_food
-name=cooked bird
-id=0x09b7
-value=6 3
-pileable=1
-}
-
-[0x09b8]
-{
-get=base_food
-name=cooked bird
-id=0x09b8
-value=6 3
-pileable=1
-}
-
-[0x09bb]
-{
-get=base_food
-name=roast pig
-id=0x09bb
-weight=4500
-value=128 64
-pileable=1
-}
-
-[0x09bc]
-{
-get=base_food
-name=roast pig
-id=0x09bc
-weight=4500
-value=128 64
-pileable=1
-}
-
-[0x09c0]
-{
-get=base_food
-name=sausage
-id=0x09c0
-value=20 10
-pileable=1
-}
-
-[0x09c1]
-{
-get=base_food
-name=sausage
-id=0x09c1
-value=20 10
-pileable=1
-}
-
-[0x09c9]
-{
-get=base_food
-name=ham
-id=0x09c9
-value=24 12
-pileable=1
-}
-
-[0x09d3]
-{
-get=base_food
-name=ham
-id=0x09d3
-value=24 12
-pileable=1
-}
-
-[0x09d0]
-{
-get=base_food
-name=apple
-id=0x09d0
-value=3 1
-pileable=1
-}
-
-[0x09d1]
-{
-get=base_food
-name=grape bunch
-id=0x09d1
-value=3 1
-pileable=1
-}
-
-[0x09d2]
-{
-get=base_food
-name=peach
-id=0x09d2
-value=3 1
-pileable=1
-}
-
-[0x09ea]
+[0x09EA]
 {
 get=base_food
 name=muffin
-id=0x09ea
+id=0x09EA
 value=3 1
 pileable=1
 }
@@ -226,31 +134,13 @@ value=4 2
 pileable=1
 }
 
-[0x09e9]
+[0x09E9]
 {
 get=base_food
 name=cake
-id=0x09e9
+id=0x09E9
 value=11 5
 pileable=1
-}
-
-[0x09f2]
-{
-get=base_food
-name=cooked ribs
-id=0x09f2
-value=12 6
-pileable=1
-}
-
-[0x0993]
-{
-get=base_food
-name=fruit basket
-id=0x0993
-weight=500
-value=100 50
 }
 
 [0x09af]
@@ -261,11 +151,11 @@ id=0x09af
 value=12 6
 }
 
-[0x160b]
+[0x160B]
 {
 get=base_food
 name=pan of cookies
-id=0x160b
+id=0x160B
 value=3 1
 }
 
@@ -345,22 +235,52 @@ id=0x1041
 value=8 4
 }
 
-[0x1608]
+[baked_apple_pie]
 {
 get=base_food
-name=chicken leg
-id=0x1608
-value=6 3
-pileable=1
+name=baked apple pie
+id=0x1041
+value=8 4
 }
 
-[0x160a]
+[baked_pumpkin_pie]
 {
 get=base_food
-name=leg of lamb
-id=0x160a
-value=12 6
-pileable=1
+name=baked pumpkin pie
+id=0x1041
+value=8 4
+}
+
+[baked_meat_pie]
+{
+get=base_food
+name=baked meat pie
+id=0x1041
+value=8 4
+}
+
+[baked_fruit_pie]
+{
+get=base_food
+name=baked fruit pie
+id=0x1041
+value=8 4
+}
+
+[baked_peach_cobbler]
+{
+get=base_food
+name=baked peach cobbler
+id=0x1041
+value=8 4
+}
+
+[baked_quiche]
+{
+get=base_food
+name=baked quiche
+id=0x1041
+value=8 4
 }
 
 // soup
@@ -446,15 +366,6 @@ weight=2
 value=12 6
 }
 
-[0x0a1e]
-{
-get=base_food
-name=bowl of flour
-id=0x0a1e
-weight=400
-value=8 4
-}
-
 [0x1606]
 {
 get=base_food
@@ -462,4 +373,20 @@ name=tomato soup
 id=0x1606
 weight=100
 value=3 1
+}
+
+[0x09B4]
+{
+get=base_item
+name=eggshells
+id=0x09B4
+weight=50
+}
+
+[0x15F8]
+{
+get=base_item
+name=wooden bowl
+id=0x15F8
+weight=50
 }

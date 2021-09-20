@@ -366,9 +366,15 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			return;
 		}
 		//If Target is an open sack of flour, or a bowl of flour
-		if( tileID == 0x0aed || tileID == 0x1046 || tileID == 0x154d )
+		if( tileID == 0x0A1E || tileID == 0x1046 || tileID == 0x103A)
 		{
-
+			myTarget.Delete();
+			var itemMade = CreateBlankItem( pSock, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
+			pSock.SysMessage( GetDictionaryEntry( 6078, pSock.language )); // You make some dough.
+			Pitcher.SetTag( "ContentsType", 1 );
+			Pitcher.SetTag( "EmptyGlass", 3 );
+			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.SetTag( "ContentsName", "nothing" );
 		}
 		if(( tileID == 0x0ff8 || tileID == 0xff9) || ( tileID >= 0x1f7d && tileID <= 0x1f80 ) || ( tileID >= 0x1f85 && tileID <= 0x1f94 ) ||
 		( tileID >= 0x1f95 && tileID <= 0x1f9e ) || ( myTarget.GetTag( "ContentsType" ) > 1 ))

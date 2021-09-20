@@ -50,15 +50,13 @@
 // SYSTEM:[100-2999] Rerserved for specific core server needs
 //-------------------------------------------
 // Cooking start[100-129]
-101=skill/cooking/flour.js
-102=skill/cooking/dough.js
-103=skill/cooking/bread.js
-105=skill/cooking/cookedfish.js
-106=skill/cooking/cookedribs.js
-107=skill/cooking/cookedbird.js
-109=skill/cooking/cookedchicken.js
-110=skill/cooking/cookedlegoflamb.js
-111=skill/cooking/friedeggs.js
+101=skill/cooking/wheat.js
+102=skill/cooking/flour.js
+103=skill/cooking/dough.js
+104=skill/cooking/cooking.js
+105=skill/cooking/baking.js
+106=skill/cooking/heatsources.js
+107=skill/cooking/flourmill.js
 //-------------------------------------------
 // Tailoring and spinning start[130-159]
 131=skill/tailoring/scissors.js
