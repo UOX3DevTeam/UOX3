@@ -347,6 +347,7 @@
 815=skill/inscription.js
 816=skill/meditation.js
 817=skill/removetrap.js
+818=skill/itemid.js
 }
 
 [PACKET_SCRIPTS]
