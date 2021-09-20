@@ -1,136 +1,180 @@
-// cooking script
-// 17/06/2001 Yeshe; yeshe@manofmystery.org
-// 21/07/2003 Xuri; Updated/rewrote the script
-// 14/06/2005 Xuri; Fixed the script :P
-// 25/07/2021 Updated to use dictionary messages
-// use flour : target water pitcher : get dough
+// use dough : target heat source : bread
+// use dough : target jar of honey : sweet dough
+// use dough : target apple : Unbaked Apple Pie
+// use dough : target Peach : Unbaked Peach Cobbler
+// use dough : target Pear : Unbaked Fruit Pie
+// use dough : target Pumpkin  : Unbaked Pumpkin Pie
+// use dough : target Eggs : Unbaked Quiche/Eggshells
+// use dough : target Bird, Ham or Fish  : Unbaked Meat Pie
+// use dough : target Sausage : Sausage Pizza
+// use dough : target Cheese Wheel : Cheese Pizza
 
 function onUseChecked ( pUser, iUsed )
 {
-	var srcSock = pUser.socket;	// get users socket
-	if( iUsed.container != null )	// is it in users pack?
+	// get users socket
+	var srcSock = pUser.socket;
+
+	// is it in users pack?
+	if (iUsed.container != null)
 	{
-		var iPackOwner = GetPackOwner( iUsed, 0 );
-		if( iPackOwner.serial != pUser.serial )
+		var iPackOwner = GetPackOwner(iUsed, 0);
+		if (iPackOwner.serial != pUser.serial)
 		{
-			srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
+			srcSock.SysMessage(GetDictionaryEntry(6022, srcSock.language)); // This has to be in your backpack before you can use it.
 		}
 		else
 		{
-			if( iUsed.id == 0x1039 || iUsed.id == 0x1045 )
+			if (iUsed.colour == 150)
 			{
-				iUsed.id++;
+				srcSock.tempObj = iUsed;
+				srcSock.CustomTarget(1, GetDictionaryEntry(6047, srcSock.language)); // What do you want to use the dough with?
 			}
 			else
 			{
 				srcSock.tempObj = iUsed;
-				srcSock.CustomTarget( 0, GetDictionaryEntry( 6074, srcSock.language )); // Which pitcher of water to use?
+				srcSock.CustomTarget(0, GetDictionaryEntry(6047, srcSock.language)); // What do you want to use the dough with?
 			}
 		}
 	}
 	else
-		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
+	{
+		srcSock.SysMessage(GetDictionaryEntry(6022, srcSock.language)); // This has to be in your backpack before you can use it.
+	}
 	return false;
 }
 
-function onCallback0( tSock, myTarget )
+function onCallback0(tSock, targSerial)
 {
 	var pUser = tSock.currentChar;
 	var iUsed = tSock.tempObj;
-	var StrangeByte   = tSock.GetWord( 1 );
+	var tileID = tSock.GetWord(17);
+	var iPackOwner = GetPackOwner(targSerial, 0);
+	var targColor = targSerial.colour;
+	var doughColor = iUsed.colour;
+
+	if (TriggerEvent( 106, "HeatSource", tileID ))
+	{
+		TriggerEvent(107, "Cooking", tSock, targSerial)
+		return;
+	}
+
+	if (ValidateObject(iPackOwner)) // Is the target item in a backpack?
+	{
+		if (iPackOwner.serial != pUser.serial) //And if so does the pack belong to the user?
+		{
+			tSock.SysMessage(GetDictionaryEntry(6032, tSock.language)); // That resource is in someone else's backpack!
+			return;
+		}
+	}
+	else
+	{
+		tSock.SysMessage(GetDictionaryEntry(6022, tSock.language)); // This has to be in your backpack before you can use it.
+		return;
+	}
+
+	switch (tileID)
+	{
+		case 0x09EC://jar of honey
+			CreateDFNItem(tSock, pUser, "sweet_dough", 1, "ITEM", true);
+			break;
+		case 0x09D0://apple
+			CreateDFNItem(tSock, pUser, "unbaked_apple_pie", 1, "ITEM", true);
+			break;
+		case 0x09D2://peach
+		case 0x172C:
+			CreateDFNItem(tSock, pUser, "unbaked_peach_cobbler", 1, "ITEM", true);
+			break;
+		case 0x0994://pear
+		case 0x172D:
+			CreateDFNItem(tSock, pUser, "unbaked_fruit_pie", 1, "ITEM", true);
+			break;
+		case 0x0C6A://pumpkin
+		case 0x0C6B:
+			CreateDFNItem(tSock, pUser, "unbaked_pumpkin_pie", 1, "ITEM", true);
+			break;
+		case 0x0C6C://pumpkin
+			CreateDFNItem(tSock, pUser, "unbaked_pumpkin_pie", 1, "ITEM", true);
+			break;
+		case 0x09b5://egg
+			CreateDFNItem(tSock, pUser, "unbaked_quiche", 1, "ITEM", true);
+			CreateDFNItem(tSock, pUser, "0x09B4", 1, "ITEM", true);
+			break;
+		case 0x1E1C://Bird, Ham or Fish
+		case 0x1E1D:
+			CreateDFNItem(tSock, pUser, "unbaked_meat_pie", 1, "ITEM", true);
+			break;
+		case 0x1E1E://Bird, Ham or Fish
+		case 0x09B7:
+			CreateDFNItem(tSock, pUser, "unbaked_meat_pie", 1, "ITEM", true);
+			break;
+		case 0x09B8://Bird, Ham or Fish
+		case 0x09C9:
+			CreateDFNItem(tSock, pUser, "unbaked_meat_pie", 1, "ITEM", true);
+			break;
+		case 0x09D3://Bird, Ham or Fish
+			CreateDFNItem(tSock, pUser, "unbaked_meat_pie", 1, "ITEM", true);
+			break;
+		case 0x09C0://Sausage
+		case 0x09C1:
+			CreateDFNItem(tSock, pUser, "uncooked_sausage_pizza", 1, "ITEM", true);
+			break;
+		case 0x097E://Cheese Wheel
+			CreateDFNItem(tSock, pUser, "uncooked_cheese_pizza", 1, "ITEM", true);
+			break;
+	}
+	pUser.UseResource(1, targSerial.id, targColor);
+	pUser.UseResource(1, iUsed.id, doughColor);
+	pUser.SoundEffect(0x0055, true);
+}
+
+function onCallback1(tSock, targSerial)
+{
+	var pUser = tSock.currentChar;
+	var iUsed = tSock.tempObj;
+	var tileID = tSock.GetWord(17);
+	var iPackOwner = GetPackOwner(targSerial, 0);
+	var targColor = targSerial.colour;
+	var doughColor = iUsed.colour;
+
+	if (TriggerEvent( 106, "HeatSource", tileID ))
+	{
+		TriggerEvent(107, "Cooking", tSock, targSerial)
+		return;
+	}
+
+	if (ValidateObject(iPackOwner)) // Is the target item in a backpack?
+	{
+		if (iPackOwner.serial != pUser.serial) //And if so does the pack belong to the user?
+		{
+			tSock.SysMessage(GetDictionaryEntry(6032, tSock.language)); // That resource is in someone else's backpack!
+			return;
+		}
+	}
+	else
+	{
+		tSock.SysMessage(GetDictionaryEntry(6022, tSock.language)); // This has to be in your backpack before you can use it.
+		return;
+	}
+
+	switch (tileID)
+	{
+		case 0x09EC://jar of honey
+			CreateDFNItem(tSock, pUser, "0x103F", 1, "ITEM", true);
+			break;
+		case 0x1046://Open Sack Flour
+	    case 0x103A:
+			CreateDFNItem(tSock, pUser, "cake_mix", 1, "ITEM", true);
+			break;
+	}
+	pUser.UseResource(1, targSerial.id, targColor);
+	pUser.UseResource(1, iUsed.id, doughColor);
+	pUser.SoundEffect(0x0055, true);
+}
+
+function RangeCheck(tSock, pUser)
+{
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
 	var targZ	= tSock.GetSByte( 16 );
-	var tileID	= tSock.GetWord( 17 );
-	if( tileID == 0 || ( StrangeByte == 0 && myTarget.isChar ))
-	{ //Target is a MapTile, or a Character
-		tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
-		return;
-	}
-	// Target is a Dynamic Item
-	if( StrangeByte == 0 )
-	{
-		// If target self, close the flour bag
-		if( myTarget == iUsed )
-		{
-			myTarget.id--;
-			return;
-		}
-		if( myTarget.id != 0x0FF8 && myTarget.id != 0x0FF9 && myTarget.id != 0x1f9d && myTarget.id != 0x1f9e ) // is the item of the right type?
-		{
-			tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
-			return;
-		}
-		// Check if its in range
-		if( iUsed.container != null )
-		{
-			var iPackOwner = GetPackOwner( iUsed, 0 );
-			if( iPackOwner.serial != pUser.serial )
-			{
-				tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
-			}
-		}
-		else if( myTarget.isItemHeld )
-		{
-			tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
-			return;
-		}
-		else
-		{
-			if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 10 ) || ( pUser.z < targZ - 10 ))
-			{
-				tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
-				return;
-			}
-		}
-		// remove one flour
-		var iMakeResource = pUser.ResourceCount( 0x1045 );	// is there enough resources to use up to make it
-		if( iMakeResource < 1 )
-		{
-			var iMakeResource = pUser.ResourceCount( 0x1046 );	// is there enough resources to use up to make it
-			if( iMakeResource < 1 )
-			{
-				var iMakeResource = pUser.ResourceCount( 0x1039 );	// is there enough resources to use up to make it
-				if( iMakeResource <1 )
-				{
-					var iMakeResource = pUser.ResourceCount( 0x103a );	// is there enough resources to use up to make it
-					if( iMakeResource < 1 )
-					{
-						tSock.SysMessage( GetDictionaryEntry( 6076, tSock.language )); // There is not enough flour in your pack!
-						return;
-					}
-					else
-						var iID = 0x103a;
-				}
-				else
-					var iID = 0x1039;
-			}
-			else
-				var iID = 0x1046;
-		}
-		else
-			var iID = 0x1045;
-		//pUser.UseResource( 1, iID ); // uses up a resource (amount, item ID, item colour)
-		iUsed.Delete();
-		pUser.SoundEffect( 0x0134, true );
-		// check the skill
-		if( !pUser.CheckSkill( 13, 1, 1000 ) )	// character to check, skill #, minimum skill, and maximum skill
-		{
-			tSock.SysMessage( GetDictionaryEntry( 6077, tSock.language )); // You tried to make dough but failed.
-			return;
-		}
-		if( myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e)
-			myTarget.id = 0x0FF7;
-		if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
-			myTarget.id = 0x0FF6;
-		myTarget.SetTag( "ContentsType", 1 );
-		myTarget.SetTag( "EmptyGlass", 3 );
-		myTarget.SetTag( "UsesLeft", 0 );
-		myTarget.SetTag( "ContentsName", "nothing" );
-
-		var itemMade = CreateBlankItem( tSock, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
-		tSock.SysMessage( GetDictionaryEntry( 6078, tSock.language )); // You make some dough.
-	}
-	else // Target is a static item
-		tSock.SysMessage( GetDictionaryEntry( 6079, tSock.language )); // You cannot use that for making dough.
+	return (pUser.x > targX + 3) || (pUser.x < targX - 3) || (pUser.y > targY + 3) || (pUser.y < targY - 3) || (pUser.z > targZ + 10) || (pUser.z < targZ - 10);
 }

@@ -1,9 +1,83 @@
-[0x103f]
+[0x103F]
 {
 get=base_item
 name=cookie mix
+id=0x103F
+weight=100
+}
+
+[cake_mix]
+{
+get=base_item
+name=cake mix
 id=0x103f
 weight=100
+}
+
+[0x103D]
+{
+get=base_item
+name=dough
+id=0x103D
+weight=100
+}
+
+[sweet_dough]
+{
+get=base_item
+name=sweet dough
+id=0x103d
+weight=100
+color=150
+}
+
+[0x09EC]
+{
+get=base_item
+name=jar honey
+id=0x09EC
+weight=100
+}
+
+[0x1039]
+{
+get=base_item
+name=sack of flour
+id=0x1039
+weight=100
+}
+
+[0x1045]
+{
+get=base_item
+name=sack of flour
+id=0x1045
+weight=100
+}
+
+[0x1046]
+{
+get=base_item
+name=open sack of flour
+id=0x1046
+weight=100
+}
+
+[0x103A]
+{
+get=base_item
+name=open sack of flour
+id=0x103A
+weight=100
+}
+
+[0x0a1e]
+{
+get=base_food
+name=bowl of flour
+id=0x0a1e
+weight=400
+value=8 4
 }
 
 // wheat shea(f/ves)
