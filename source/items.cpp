@@ -1373,7 +1373,7 @@ void cItem::AddRespawnItem( CItem *mCont, const std::string& iString, const bool
 	if( randomItem )
 	{
 		// LOOT tag was used
-		iCreated = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), true, useLootlist );
+		iCreated = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), useLootlist );
 	}
 	else
 	{
@@ -1394,7 +1394,7 @@ void cItem::AddRespawnItem( CItem *mCont, const std::string& iString, const bool
 			if( randomItem )
 			{
 				// If amount was specified for a LOOT tag, spawn a random item each time
-				iCreated2 = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), true, useLootlist );
+				iCreated2 = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), useLootlist );
 			}
 			else
 			{
