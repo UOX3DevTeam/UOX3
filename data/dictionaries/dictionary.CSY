@@ -646,7 +646,7 @@
 654=Přivolání elementála země
 655=Přivolání ohnivého elementála
 656=Přivolání vodního živlu
-657=Náhodný
+657=Identifikace
 658=Necro1
 659=Necro2
 660=Necro3
@@ -3878,6 +3878,18 @@
 9053=[uzamčeno]
 9054=Mrtvý nemůžeš používat dovednosti.
 9055=[Požehnáno]
+9056=Tento cíl je imunní vůči magii!
+9057=*Stříkající kyselá krev zanechává jizvy na tvé zbrani!*
+9058=V současném stavu se nemůžeš vyléčit.
+9059=Rozhodl ses tento lektvar nevypít, protože jsi již plně zdráv.
+9060=Vyberte cílové místo pro spawnera %s:
+9061=Intenzivní žár vydávaný lávovým hadem ti způsobuje poškození!
+9062=Plynový útok bronzového elementála ti způsobuje poškození!
+9063=Intenzivní chlad tě poškozuje!
+9064=Nemůžeš to zvednout.
+9065=Tento předmět ti nepatří. Budeš ho muset ukrást.
+9066=Ten předmět patří někomu jinému.
+9067=Nemůžeš upustit předmět... odkud byl sebrán?
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -3907,5 +3919,42 @@
 9275=Tato kniha již obsahuje maximální množství nábojů.
 9276=Nabíjíš runovou knihu hromádkou svitku odvolání.
 9277=Nabíjíš Runebook svitkem odvolání.
+// [9301-9310] Kouzelná ryba
+9301=Jste již pod podobným účinkem.
+9302=Rybu spolkneš celou!
+// [9310-9400] Rybářská dovednost
+9310=V jaké vodě chceš lovit ryby?
+9311=Tady ryby zřejmě neberou.
+9312=Už rybaříš.
+9313=Potřebuješ být blíž k vodě, abys mohl rybařit!
+9314=Chvíli rybaříte, ale nedaří se vám nic chytit.
+9315=Vytáhli jste předmět : %s
+9316=Vytáhl jsi předmět spolu s příšerou : %s
+9317=Tuto síť můžeš použít pouze v hluboké vodě!
+9318=Síť ponoříš do moře...
+9319=Nepodařilo se zjistit předmět, který inicioval akci. Existuje ještě?
+9320=Vyjmete zprávu z láhve.
+9321=Pomoc! Loď pluje do...n silných bouří...drahocenný náklad...st dosáhne cíle...aktuální souřadnice %s...ve všech přeživších...ulehčete!
+9322=...byl to hulvát a neurvalec, ať si máma dělá, co chce...přehoďte ho přes palubu! Ach, Anno, to bylo tak vzrušující! Nešťastný byl, když se chytil a všechno jeho bohatství šlo s ním! ...sked kapitánovi, a ten říká, že jsme na %s... takže možná...
+9323=...vím, že vrak je poblíž %s, ale nenašli jsme ho. Že by se zpráva předávaná v naší rodině po generace mýlila? Ne... Přísahám na duši svého dědečka, že najdu...
+9324=...Ar! %s a, spravedlivý vítr! Bez šance... bouře, i když... Ar! Je to mořský had...<br><br>uh oh.
+9325=POTŘEBUJEME: potápěče zkušené v lodní dopravě...overy. Musí mít vlastní plavidlo...pply na %s...dobré benefity, flexibilní pracovní doba...
+9326=...isaster indeed. Kapitán McQ...přes palubu, obávejte se nejhoršího. Tohle jsou t...asté dny dobré lodi Norr...astá známá pozice byla %s, ale ...jsou mimo záchrannou...
+9327=...nikdy nečekal ledovec...hloupá žena na přídi okamžitě rozdrcena...pošlete pomoc %s...ej nikdy nezapomeneme na tragédii potopení...
+9328=...tak jsem ten poklad hodil přes palubu, než mě ta kletba taky stihne. Ale přišel jsem pozdě. Teď jsem odsouzen bloudit těmito moři, navždy jako duch. Přidej se ke mně: hledej mě na %s, chceš-li mou společnost...
+9329=...pak loď explodovala. Přilétl drak. Sliz pohltil Bertieho celého - křičel, bylo to úžasné. Obloha zářila oranžově... Podle údajů sextantu jsme byli na %s. Norma žvatlala o plavbě přes okraj světa. Podíval jsem se na své ruce a viděl skrz ně..."
+9330=...jsem v té velrybě už tři dny. Došlo mi jídlo, které bych mu mohl vybírat ze zubů. Přes výduch jsem sextantem naměřil: %s. Svůj poklad už nikdy neuvidím...
+9331=...velké dobrodružství! Kapitán Quacklebush mě denně nutil stírat paluby... ...přišli piráti, já jsem byl v lanoví a cvičil se sextantem. Jestli se nemýlím, tak loď potopili a náš drahocenný náklad šel s ní a s křičícími piráty na dno moře...
+9332=...nikdo nevěděl, že jsem dívka. Mysleli si, že jsem jen další námořník... pak jsme potkali undinu. %s. Vyžadovala oběti... byla jsem nejmladší, usoudili... popadla kapitánův poklad a křičela: "Půjde ke dnu se mnou!". ...vzali mě za slovo.
+9333=...uvězněn na opuštěném ostrově s kouzelnou fontánou dodávající jídlo, prameny čerstvé vody, nádhernou krajinou a mou krásnou mladou ženou. Vím, že loď s veškerým naším životním výdělkem se potopila na ~1_SEXTANT ~, ale nevím, jaké jsou naše souřadnice... někdo mě musí MUSÍ zachránit před nedělním finálovým zápasem, jinak se zblázním...
+9334=...kolem města Jhelom jsme se toulali a pili celou noc. Ráno jsme se poprali... zvedli plachty, celá posádka kromě kuchaře byla na palubě... ull breach, poslední známé souřadnice %s... bylo by mi líp ve Stoneově vězeňské cele!
+9335=Vytáhneš z hlubin oceánu těžkou truhlu!
+9336=Tvůj rybářský prut se ohne, když z hlubin vytáhneš velkou rybu!
+9337=Potřebuješ vodu, abys mohl lovit ryby!
+9338=Rybu nakrájíš na syrové rybí steaky.
+// [9401-9450] Kouzelné předměty
+9401=Tento kouzelný předmět je bez náboje.
+9402=[Neidentifikováno]
+9403=Zbývající použití: %i
 }
 EOF

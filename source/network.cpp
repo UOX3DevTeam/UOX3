@@ -175,6 +175,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	bool valid = false;
 	SI16 x = p->GetX(), y = p->GetY();
 	UI08 world = p->WorldNumber();
+	UI08 instanceID = p->GetInstanceID();
 
 	killTrades( p );
 
@@ -182,9 +183,10 @@ void cNetworkStuff::LogOut( CSocket *s )
 		valid = true;
 	else
 	{
-		for( size_t a = 0; a < cwmWorldState->logoutLocs.size(); ++a )
+		auto logoutLocs = cwmWorldState->logoutLocs;
+		for( size_t a = 0; a < logoutLocs.size(); ++a )
 		{
-			if( cwmWorldState->logoutLocs[a].x1 <= x && cwmWorldState->logoutLocs[a].y1 <= y && cwmWorldState->logoutLocs[a].x2 >= x && cwmWorldState->logoutLocs[a].y2 >= y && cwmWorldState->logoutLocs[a].worldNum == world )
+			if( logoutLocs[a].x1 <= x && logoutLocs[a].y1 <= y && logoutLocs[a].x2 >= x && logoutLocs[a].y2 >= y && logoutLocs[a].worldNum == world && logoutLocs[a].instanceID == instanceID )
 			{
 				valid = true;
 				break;

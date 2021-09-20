@@ -736,7 +736,7 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 	SI08 z;
 	if( FindItemSpotToSpawn( x, y, z ) )
 	{
-		ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1 );
+		ISpawn = Items->CreateBaseScriptItem( nullptr, sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1, instanceID, OT_ITEM, 0xFFFF );
 		if( ISpawn != nullptr )
 		{
 			ISpawn->SetLocation( x, y, z );

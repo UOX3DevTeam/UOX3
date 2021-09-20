@@ -290,16 +290,14 @@ private:
 	UI16		maxmurdersallowed;				//	Maximum number of kills before turning red
 
 	// Resources
+	UI16		resourceAreaSize;				//	Size of each resource area to split each world into
 	UI08		minecheck;						//	Type of mining check performed - 0 anywhere 1 only mountains/floors 2 region based (not working)
 	SI16		oreperarea;						//	TIMERVAL? Maximum number of ores in a resource area
 	UI16		orerespawntimer;				//	Time at which ore is respawned (only 1 ore, not all)
-	UI16		orerespawnarea;					//	Number of ore areas (ie Y x Y where Y == value)
 	SI16		logsperarea;					//	Maximum number of logs in a resource area
 	UI16		logsrespawntimer;				//	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
-	UI16		logsrespawnarea;				//	Number of log areas (ie Y x Y where Y == value)
 	SI16		fishperarea;					//	Maximum number of fish in a resource area
 	UI16		fishrespawntimer;				//	TIMERVAL? Time at which fish are respawned (only 1 fish, not all)
-	UI16		fishrespawnarea;				//	Number of fish areas (ie Y x Y where Y == value)
 
 	// Hunger & Food
 	SI16		hungerdamage;					//	Amount of damage applied if hungry and below threshold
@@ -857,26 +855,20 @@ public:
 	void		ResLogTime( UI16 value );
 	UI16		ResLogTime( void ) const;
 
-	void		ResLogArea( UI16 value );
-	UI16		ResLogArea( void ) const;
-
 	void		ResOre( SI16 value );
 	SI16		ResOre( void ) const;
 
 	void		ResOreTime( UI16 value );
 	UI16		ResOreTime( void ) const;
 
-	void		ResOreArea( UI16 value );
-	UI16		ResOreArea( void ) const;
+	void		ResourceAreaSize( UI16 value );
+	UI16		ResourceAreaSize( void ) const;
 
 	void		ResFish( SI16 value );
 	SI16		ResFish( void ) const;
 
 	void		ResFishTime( UI16 value );
 	UI16		ResFishTime( void ) const;
-
-	void		ResFishArea( UI16 value );
-	UI16		ResFishArea( void ) const;
 
 	void		AccountFlushTimer( R64 value );
 	R64			AccountFlushTimer( void ) const;

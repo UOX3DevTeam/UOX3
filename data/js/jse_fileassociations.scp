@@ -133,9 +133,10 @@
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
 //-------------------------------------------
-// Server Data
+// Server Data [2500-2999]
 2500=server/data/weapontypes.js
 2501=server/data/combatanims.js
+2503=server/data/map_coordinates.js
 
 //-------------------------------------------
 // NPC, and AI[3000-5999]
@@ -208,6 +209,9 @@
 5028=item/hairrestyle.js
 5029=item/runebook.js
 5030=item/magicfish.js
+5031=item/messageinabottle.js
+5032=item/waterstainedsos.js
+5033=item/sextant.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

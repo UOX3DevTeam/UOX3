@@ -251,6 +251,18 @@ struct LogoutLocationEntry
 	SI16 x2 = 0;
 	SI16 y2 = 0;
 	UI08 worldNum = 0;
+	UI16 instanceID = 0;
+};
+
+// SOS Locations
+struct SOSLocationEntry
+{
+	SI16 x1 = 0;
+	SI16 y1 = 0;
+	SI16 x2 = 0;
+	SI16 y2 = 0;
+	UI08 worldNum = 0;
+	UI16 instanceID = 0;
 };
 
 struct advance_st

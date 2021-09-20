@@ -36,15 +36,6 @@ weight=100
 movable=2
 }
 
-
-
-
-
-
-
-
-
-
 [0x0a6c]
 {
 get=base_item
@@ -90,7 +81,6 @@ weight=100
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13a4]
@@ -102,7 +92,6 @@ weight=100
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13a5]
@@ -114,7 +103,6 @@ weight=100
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13a6]
@@ -127,7 +115,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13a7]
@@ -140,7 +127,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13a8]
@@ -153,7 +139,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13a9]
@@ -166,7 +151,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13aa]
@@ -179,7 +163,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060a
 }
 
 [0x13ab]
@@ -192,7 +175,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x13ac]
@@ -205,7 +187,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x13ad]
@@ -218,7 +199,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x13ae]
@@ -231,7 +211,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x163a]
@@ -244,7 +223,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x163b]
@@ -257,7 +235,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x163c]
@@ -270,7 +247,6 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }
 
 [0x1914]
@@ -292,5 +268,4 @@ value=0
 movable=1
 dyeable=1
 decay=1
-defaultcolor=060c
 }

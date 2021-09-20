@@ -259,7 +259,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("MINECHECK", 84);
 	regINIValue("OREPERAREA", 85);
 	regINIValue("ORERESPAWNTIMER", 86);
-	regINIValue("ORERESPAWNAREA", 87);
+	regINIValue("RESOURCEAREASIZE", 87);
 	regINIValue("LOGSPERAREA", 88);
 	regINIValue("LOGSRESPAWNTIMER", 89);
 	regINIValue("LOGSRESPAWNAREA", 90);
@@ -440,7 +440,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SHOWNPCTITLESINTOOLTIPS", 278);
 	regINIValue("FISHPERAREA", 279);
 	regINIValue("FISHRESPAWNTIMER", 280);
-	regINIValue("FISHRESPAWNAREA", 281);
+	// 281 free
 	regINIValue("ITEMSINTERRUPTCASTING", 282);
 	regINIValue("SYSMESSAGECOLOUR", 283);
 	regINIValue("AF_AUTOBANDAGE", 284);
@@ -674,15 +674,15 @@ void CServerData::ResetDefaults( void )
 	NPCMountedFleeingSpeed( 0.2 );
 	AccountFlushTimer( 0.0 );
 
+	// RESOURCES
+	ResourceAreaSize( 8 );
 	ResLogs( 3 );
 	ResLogTime( 600 );
-	ResLogArea( 10 );
 	ResOre( 10 );
 	ResOreTime( 600 );
-	ResOreArea( 10 );
 	ResFish( 10 );
 	ResFishTime( 600 );
-	ResFishArea( 10 );
+
 	//REPSYS
 	SystemTimer( tSERVER_CRIMINAL, 120 );
 	RepMaxKills( 4 );
@@ -3186,23 +3186,6 @@ void CServerData::ResLogTime( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 CServerData::ResLogArea( void ) const
-//|					void CServerData::ResLogArea( UI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the number of log-areas to split the world into (min 10)
-//o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResLogArea( void ) const
-{
-	return logsrespawnarea;
-}
-void CServerData::ResLogArea( UI16 value )
-{
-	if( value < 10 )
-		value = 10;
-	logsrespawnarea = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 ResOre( void ) const
 //|					void ResOre( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3233,20 +3216,20 @@ void CServerData::ResOreTime( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 ResOreArea( void ) const
-//|					void ResOreArea( UI16 value )
+//|	Function	-	UI16 ResourceAreaSize( void ) const
+//|					void ResourceAreaSize( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the number of ore-areas to split the world into (min 10)
+//|	Purpose		-	Gets/Sets the size of each resource area to split the world into (min 8x8)
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResOreArea( void ) const
+UI16 CServerData::ResourceAreaSize( void ) const
 {
-	return orerespawnarea;
+	return resourceAreaSize;
 }
-void CServerData::ResOreArea( UI16 value )
+void CServerData::ResourceAreaSize( UI16 value )
 {
-	if( value < 10 )
-		value = 10;
-	orerespawnarea = value;
+	if( value < 8 )
+		value = 8;
+	resourceAreaSize = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3277,23 +3260,6 @@ UI16 CServerData::ResFishTime( void ) const
 void CServerData::ResFishTime( UI16 value )
 {
 	fishrespawntimer = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 CServerData::ResFishArea( void ) const
-//|					void CServerData::ResFishArea( UI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the number of fish-areas to split the world into (min 10)
-//o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResFishArea( void ) const
-{
-	return fishrespawnarea;
-}
-void CServerData::ResFishArea( UI16 value )
-{
-	if( value < 10 )
-		value = 10;
-	fishrespawnarea = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3745,16 +3711,14 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
+		ofsOutput << "RESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
 		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
 		ofsOutput << "OREPERAREA=" << ResOre() << '\n';
 		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << '\n';
-		ofsOutput << "ORERESPAWNAREA=" << ResOreArea() << '\n';
 		ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
 		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
-		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << '\n';
 		ofsOutput << "FISHPERAREA=" << ResFish() << '\n';
 		ofsOutput << "FISHRESPAWNTIMER=" << ResFishTime() << '\n';
-		ofsOutput << "FISHRESPAWNAREA=" << ResFishArea() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
@@ -4276,17 +4240,14 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 86:	 // ORERESPAWNTIMER[0079]
 			ResOreTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
-		case 87:	 // ORERESPAWNAREA[0080]
-			ResOreArea( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+		case 87:	 // RESOURCEAREASIZE
+			ResourceAreaSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 88:	 // LOGSPERAREA[0081]
 			ResLogs( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 89:	 // LOGSRESPAWNTIMER[0082]
 			ResLogTime( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
-			break;
-		case 90:	 // LOGSRESPAWNAREA[0083]
-			ResLogArea(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 91:	 // HUNGERRATE[0084]
 			SystemTimer( tSERVER_HUNGERRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
@@ -4859,9 +4820,6 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 280:	 // FISHRESPAWNTIMER
 			ResFishTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
-			break;
-		case 281:	 // FISHRESPAWNAREA
-			ResFishArea( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 282:    // ITEMSINTERRUPTCASTING
 			ItemsInterruptCasting( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );

@@ -2435,11 +2435,12 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	landBlock = land.CheckFlag( TF_BLOCKING );
 	
 	// If it does, but it's WET and character can swim, it doesn't block!
-	if( landBlock && waterWalk && land.CheckFlag( TF_WET ))
-		landBlock = false;
-	else if( waterWalk && !land.CheckFlag( TF_WET ))
-		landBlock = true;
-	
+	if( landBlock && waterWalk )
+	{
+		// Don't count the underwater coastal landtiles as blocking
+		if( land.CheckFlag( TF_WET ) || ( land.TextureID() >= 76 && land.TextureID() <= 111 ))
+			landBlock = false;
+	}
 	
 	bool considerLand = Map->IsIgnored( map.id ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
 

@@ -226,7 +226,7 @@
 0x1ebc
 }
 
-//Regs
+// Reagents
 [ITEMLIST 12]
 {
 0x0f7a
@@ -276,23 +276,19 @@
 // Male Plain Hats
 [ITEMLIST 20]
 {
-0x1713
-0x1716
-0x1717
-0x1540
-0x1544
-blank
-blank
-blank
-blank
-blank
+0x1713,10
+0x1716,10
+0x1717,10
+0x1540,10
+0x1544,10
+blank,50
 }
 
 // Male Plain Shirts
 [ITEMLIST 21]
 {
-0x1517
-blank
+0x1517,75
+blank,1
 }
 
 // Male Plain Pants
@@ -315,42 +311,35 @@ blank
 // Male Plain Tunic & Aprons
 [ITEMLIST 24]
 {
-0x1fa1
-0x153b
-0x153d
-blank
-blank
-blank
+0x1fa1,166
+0x153b,166
+0x153d,166
+blank,500
 }
 
 // Male Plain Tunic & Robe
 [ITEMLIST 25]
 {
-0x1fa1
-0x1f03
-blank
-blank
+0x1fa1,25
+0x1f03,25
+blank,50
 }
 
 // Male Plain Cape
 [ITEMLIST 26]
 {
-0x1515
-blank
-blank
+0x1515,33
+blank,66
 }
 
 // Male Fancy Hats
 [ITEMLIST 30]
 {
-0x1714
-0x1715
-0x171a
-0x171b
-blank
-blank
-blank
-blank
+0x1714,125
+0x1715,125
+0x171a,125
+0x171b,125
+blank,500
 }
 
 // Male Fancy Shirts
@@ -377,21 +366,17 @@ blank
 // Male Fancy Surcoat, Tunic, Doublet & Sash 
 [ITEMLIST 34]
 {
-0x1ffd
-0x1f7b
-0x1541
-blank
-blank
-blank
-blank
+0x1ffd,143
+0x1f7b,143
+0x1541,143
+blank,571
 }
 
 // Male Fancy Robe
 [ITEMLIST 35]
 {
-0x1f03
-blank
-blank
+0x1f03,33
+blank,66
 }
 
 // Male Fancy Cape
@@ -404,16 +389,12 @@ blank
 // Female Plain Hats
 [ITEMLIST 40]
 {
-0x1713
-0x1716
-0x1717
-0x1540
-0x1544
-blank
-blank
-blank
-blank
-blank
+0x1713,10
+0x1716,10
+0x1717,10
+0x1540,10
+0x1544,10
+blank,50
 }
 
 // Female Plain Shirts
@@ -434,36 +415,32 @@ blank
 // Female Plain Sandal, Shoe & Boots
 [ITEMLIST 43]
 {
-0x170b
-0x170d
-0x170f
-0x1711
-blank
+0x170b,20
+0x170d,20
+0x170f,20
+0x1711,20
+blank,20
 }
 
 // Female Plain Tunic, Dress & Aprons
 [ITEMLIST 44]
 {
-0x1fa1
-0x1f01
-0x153b
-0x153d
-blank
-blank
-blank
-blank
+0x1fa1,125
+0x1f01,125
+0x153b,125
+0x153d,125
+blank,500
 }
 
 // Female Plain Tunic, Robe & Dress
 [ITEMLIST 45]
 {
-0x1fa1
-0x1fa1
-0x1f03
-0x1f01
-0x1f01
-blank
-blank
+0x1fa1,143
+0x1fa1,143
+0x1f03,143
+0x1f01,143
+0x1f01,143
+blank,285
 }
 
 // Female Plain Cape
@@ -476,14 +453,11 @@ blank
 // Female Fancy Hats
 [ITEMLIST 50]
 {
-0x1714
-0x1719
-0x171a
-0x171b
-blank
-blank
-blank
-blank
+0x1714,125
+0x1719,125
+0x171a,125
+0x171b,125
+blank,500
 }
 
 // Female Fancy Shirts
@@ -512,25 +486,20 @@ blank
 // Female Fancy Surcoat, Tunic, Doublet, Dress & Sash
 [ITEMLIST 54]
 {
-0x1ffd
-0x1f7b
-0x1eff
-0x1541
-blank
-blank
-blank
-blank
-blank
+0x1ffd,111
+0x1f7b,111
+0x1eff,111
+0x1541,111
+blank,555
 }
 
 // Female Fancy Robe & Dress
 [ITEMLIST 55]
 {
-0x1f03
-0x1eff
-0x1eff
-blank
-blank
+0x1f03,20
+0x1eff,20
+0x1eff,20
+blank,40
 }
 
 // Female Fancy Cape
@@ -833,6 +802,58 @@ blank
 0x0c79
 0x0c7b
 0x0c82
+}
+
+// Random gems
+[ITEMLIST 73]
+{
+0x0F0F
+0x0F10
+0x0F11
+0x0F12
+0x0F13
+0x0F14
+0x0F15
+0x0F16
+0x0F17
+0x0F18
+0x0F19
+0x0f1a
+0x0f1b
+0x0f1c
+0x0f1d
+0x0f1e
+0x0f1f
+0x0f20
+0x0f21
+0x0f22
+0x0f23
+0x0f24
+0x0F25
+0x0F26
+0x0F27
+0x0F28
+0x0F29
+0x0F2a
+0x0F2b
+0x0F2c
+0x0F2d
+0x0F2e
+0x0F2f
+0x0F30
+}
+
+// Reagents, stacks of 10 each
+[ITEMLIST 74]
+{
+0x0f7a-10
+0x0f7b-10
+0x0f84-10
+0x0f85-10
+0x0f86-10
+0x0f88-10
+0x0f8c-10
+0x0f8d-10
 }
 
 // Scrolls from first four circles
@@ -1195,6 +1216,12 @@ itemlist=71
 [listobject72]
 {
 itemlist=72
+}
+
+// Random gems
+[listobject73]
+{
+itemlist=73
 }
 
 // Scrolls from first four spell circles
