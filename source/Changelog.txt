@@ -1,3 +1,9 @@
+21/09/2021 - Xuri (0.99.4x+)
+	Updated entry for Wisp in creatures.dfn to mark them as animals to stop monsters from attacking them (and dying)
+	Removed some debug messages from pixie_death.js
+	Fixed some lines of text in new 'add menu that would display incorrectly in regular UO client
+	Disabled tooltips for admin welcome gump; too much for regular UO client to handle
+
 20/09/2021 - Xuri (0.99.4x)
 	Fixed an issue where the color of NPC corpse names would not always match up with the NPC's flag color
 	Fixed a bug where the baseRange and maxRange properties of ranged weapons would not get saved to world files. These values are now saved in the format of RANGE=baseRange,maxRange

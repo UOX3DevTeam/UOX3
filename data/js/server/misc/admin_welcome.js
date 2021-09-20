@@ -26,7 +26,7 @@ const exitButtonOn = 4018;
 const enableTransparentGump = true;
 
 // Tooltips for extra info
-var enableTooltips = true;
+var enableTooltips = false;
 const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
 // script ID assigned to script in jse_fileassocations.scp
