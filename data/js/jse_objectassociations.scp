@@ -18,60 +18,44 @@
 // use : on : to get
 // Wheat (4 sheaves) : Flour mill : Flour
 0x1ebd=101
-
 // Flour : Water : Dough
 0x1039=102
 0x103a=102
 0x1045=102
 0x1046=102
-
 // Dough : Heat source : Bread
+// use dough : target jar of honey : sweet dough
+// use dough : target apple : Unbaked Apple Pie
+// use dough : target Peach : Unbaked Peach Cobbler
+// use dough : target Pear : Unbaked Fruit Pie
+// use dough : target Pumpkin  : Unbaked Pumpkin Pie
+// use dough : target Eggs : Unbaked Quiche/Eggshells
+// use dough : target Bird, Ham or Fish  : Unbaked Meat Pie
+// use dough : target Sausage : Sausage Pizza
+// use dough : target Cheese Wheel : Cheese Pizza
 0x103d=103
-
 // Raw fish steak  : Heat source : Cooked fish steak
-0x097a=105
+0x097a=104
 // Raw cut of ribs : heat source : Cut of ribs 
-0x09f1=106
+0x09f1=104
 // Raw bird : Heat source : Cooked bird
-0x09b9=107
-0x09ba=107
-
+0x09b9=104
+0x09ba=104
 // Raw chicken leg : Heat source : Chicken Leg
-0x1607=109
-
+0x1607=104
 // Raw leg of lamb : Heat source : Leg of Lamb
-0x1609=110
-
+0x1609=104
 // Eggs : Heat source : Fried Eggs
-0x09b5=111
-// !! Following arent scripted yet because the resources have to be defined
-// !! They would be done by using existing resources and alter them with colors
-// !! Alternative uses for e.g. "dough" had to be scripted in the existing scripts for the resource
-// Dough : Apple : Unbaked apple pie -> unbaked apple pie not defined yet
-// Dough : Cooked bird : Unbaked meat pie -> unbaked meat pie not defined yet
-// Dough : Cooked fish steak : Unbaked fish steak -> unbaked fish steak not defined yet
-// Dough : Eggs : Unbaked quiche -> unbaked quiche not defined yet
-// Dough : Ham : Unbaked meat pie -> unbaked meat pie not defined yet
-// Dough : Peach : Unbaked peach cobbler -> unbaked peach cobbler not defined yet
-// Dough : Pear : Unbaked fruit pie -> unbaked fruit pie not defined yet
-// Dough : Pumpkin : Unbaked pumpkin pie -> unbaked pumpkin pie not defined yet
-// Dough : Cooked fish steak : Unbaked meat pie -> unbaked meat pie not defined yet
-// Dough : Cheese : Unbaked cheese pizza -> unbaked cheese pizza not defined yet
-// Dough : Sausage : Unbaked sausage pizza -> unbaked sausage pizza not defined yet
-// Dough : Honey : Sweet dough
-// Flour : Sweet dough : Cake mix -> sweet dough not defined yet
-// Sweet dough : Honey : Cookie mix
-// Sweet dough : Heat source : Muffins
-// Cake mix (for Cake) : Heat source : Cake
-// Cookie mix : Heat source : Pan of cookies
-// Unbaked apple pie : Oven : Baked apple pie
-// Unbaked fruit pie : Oven : Baked fruit pie
-// Unbaked meat pie : Oven : Baked meat pie
-// Unbaked peach cobbler : Oven : Baked peach cobbler
-// Unbaked pumpkin pie : Oven : Baked pumpkin pie
-// Unbaked quiche : Oven : Baked quiche
-// Unbaked cheese pizza : Heat source : Pizza
-// Unbaked sausage pizza : Heat source : Pizza
+0x09b5=104
+//Pies
+0x1042=105
+//Cookie mix
+//cake mix
+0x103F=105
+//Pizzas
+0x1083=104
+//flourmills
+0x1927=107
 // cooking end
 // -----------
 
