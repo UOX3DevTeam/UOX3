@@ -2058,11 +2058,11 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			hitChance = 100;
 
 		// Bonus to hit chance for archery skill since Pub 5/UOR
-		if( cwmWorldState->ServerData()->ExpansionCombatRuleset() >= ER_UOR && getFightSkill == ARCHERY )
+		if( getFightSkill == ARCHERY )
 		{
 			hitChance += cwmWorldState->ServerData()->CombatArcheryHitBonus();
 		}
-				
+
 		skillPassed = ( RandomNum( 0, 100 ) <= hitChance );
 
 		if( !skillPassed )
