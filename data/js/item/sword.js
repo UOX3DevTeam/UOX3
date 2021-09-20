@@ -79,12 +79,28 @@ function MakeFishSteaks( socket, mChar, ourObj )
 	var ownerObj = GetPackOwner( ourObj, 0 );
 	if( ownerObj && mChar.serial == ownerObj.serial )
 	{
-		CreateDFNItem( mChar.socket, mChar, "0x097A", 4, "ITEM", true );
-		mChar.SysMessage( GetDictionaryEntry( 2758, socket.language )); // You slice a fish to steaks.
-		if( ourObj.amount > 1 )
-			ourObj.amount = ourObj.amount-1;
+		var fishSteakAmount = ourObj.amount * 4;
+		if( fishSteakAmount > 65534 )
+		{
+			var pilesOfSteaks = Math.ceil(fishSteakAmount / 65535);
+			for( var i = 0; i < pilesOfSteaks; i++ )
+			{
+				if( fishSteakAmount > 65534 )
+				{
+					CreateDFNItem( mChar.socket, mChar, "0x097A", 65535, "ITEM", true );
+					fishSteakAmount -= 65535;
+				}
+				else
+					CreateDFNItem( mChar.socket, mChar, "0x097A", fishSteakAmount, "ITEM", true );
+			}
+		}
 		else
-			ourObj.Delete();
+		{
+			CreateDFNItem( mChar.socket, mChar, "0x097A", fishSteakAmount, "ITEM", true );
+		}
+
+		mChar.SysMessage( GetDictionaryEntry( 9338, socket.language )); // You slice your fish into raw fish steaks
+		ourObj.Delete();
 	}
 	else
 		socket.SysMessage( GetDictionaryEntry( 775, socket.language ) );

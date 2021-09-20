@@ -1791,7 +1791,11 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 
 		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
+		{
 			speechTarget = SPTRG_INDIVIDUAL;
+			if( speechTargetSerial == INVALIDSERIAL )
+				speechTargetSerial = myChar->GetSerial();
+		}
 
 		if( speechFontType == FNT_NULL )
 			speechFontType = (FontType)myChar->GetFontType();
@@ -1978,16 +1982,29 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 1 || argc > 2 )
+	if( argc < 1 || argc > 5 )
 	{
-		MethodError( "DoAction: Invalid number of arguments (takes 1 to 2 - action, subAction)" );
+		MethodError( "DoAction: Invalid number of arguments (takes 1 - (actionID), 2 (actionID, subActionID), 3 (actionID, null, frameCount), 4 (actionID, null, frameCount, frameDelay ) or 5 (actionID, null, frameCount, frameDelay, playBackwards)" );
 		return JS_FALSE;
 	}
 
 	UI16 targAction = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
 	SI16 targSubAction = -1;
+	UI16 frameCount = 7;
+	UI16 frameDelay = 0;
+	bool playBackwards = false;
 	if( argc > 1 )
-		targSubAction = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+	{
+		if( argv[1] != JSVAL_NULL )
+			targSubAction = static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+	}
+	if( argc > 2 )
+		frameCount = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
+	if( argc > 3 )
+		frameDelay = static_cast<UI16>(JSVAL_TO_INT( argv[3] ));
+	if( argc > 4 )
+		playBackwards = JSVAL_TO_BOOLEAN( argv[4] );
+
 	CChar *myChar = static_cast<CChar*>(JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ) )
@@ -1995,10 +2012,10 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		MethodError( "Action: Invalid character" );
 		return JS_FALSE;
 	}
-	if( myChar->GetBodyType() == BT_GARGOYLE || targSubAction >= 0 )
+	if( myChar->GetBodyType() == BT_GARGOYLE || targSubAction != -1 )
 		Effects->PlayNewCharacterAnimation( myChar, targAction, static_cast<UI16>(targSubAction) );
 	else
-		Effects->PlayCharacterAnimation( myChar, targAction );
+		Effects->PlayCharacterAnimation( myChar, targAction, frameDelay, frameCount, playBackwards );
 	return JS_TRUE;
 }
 

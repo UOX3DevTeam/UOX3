@@ -210,8 +210,8 @@ CMapWorld::CMapWorld( UI08 worldNum )
 	MapData_st& mMap	= Map->GetMapData( worldNum );
 	upperArrayX			= static_cast<SI16>(mMap.xBlock / MapColSize);
 	upperArrayY			= static_cast<SI16>(mMap.yBlock / MapRowSize);
-	resourceX			= static_cast<UI16>(mMap.xBlock / cwmWorldState->ServerData()->ResOreArea());
-	resourceY			= static_cast<UI16>(mMap.yBlock / cwmWorldState->ServerData()->ResOreArea());
+	resourceX			= static_cast<UI16>(mMap.xBlock / cwmWorldState->ServerData()->ResourceAreaSize());
+	resourceY			= static_cast<UI16>(mMap.yBlock / cwmWorldState->ServerData()->ResourceAreaSize());
 
 	size_t resourceSize = (static_cast<size_t>(resourceX) * static_cast<size_t>(resourceY));
 	if( resourceSize < 1 )	// ALWAYS initialize at least one resource region.
@@ -247,6 +247,11 @@ CMapRegion * CMapWorld::GetMapRegion( SI16 xOffset, SI16 yOffset )
 	return mRegion;
 }
 
+std::vector< CMapRegion > * CMapWorld::GetMapRegions()
+{
+	return &mapRegions;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	MapResource_st& GetResource( SI16 x, SI16 y )
 //|	Date		-	9/17/2005
@@ -255,8 +260,8 @@ CMapRegion * CMapWorld::GetMapRegion( SI16 xOffset, SI16 yOffset )
 //o-----------------------------------------------------------------------------------------------o
 MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 {
-	const UI16 gridX = (x / cwmWorldState->ServerData()->ResOreArea());
-	const UI16 gridY = (y / cwmWorldState->ServerData()->ResOreArea());
+	const UI16 gridX = (x / cwmWorldState->ServerData()->ResourceAreaSize());
+	const UI16 gridY = (y / cwmWorldState->ServerData()->ResourceAreaSize());
 
 	size_t resIndex = ((static_cast<size_t>(gridX) * static_cast<size_t>(resourceY)) + static_cast<size_t>(gridY));
 
@@ -289,6 +294,10 @@ void CMapWorld::SaveResources( UI08 worldNum )
 			wBuffer[0] = static_cast<SI08>((*mIter).logAmt>>8);
 			wBuffer[1] = static_cast<SI08>((*mIter).logAmt%256);
 			toWrite.write( (const char *)&wBuffer, 2 );
+
+			wBuffer[0] = static_cast<SI08>((*mIter).fishAmt>>8);
+			wBuffer[1] = static_cast<SI08>((*mIter).fishAmt%256);
+			toWrite.write( (const char *)&wBuffer, 2 );
 		}
 		toWrite.close();
 	}
@@ -306,8 +315,10 @@ void CMapWorld::LoadResources( UI08 worldNum )
 {
 	const SI16 resOre				= cwmWorldState->ServerData()->ResOre();
 	const SI16 resLog				= cwmWorldState->ServerData()->ResLogs();
-	const UI32 oreTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResOreTime() ));
+	const SI16 resFish				= cwmWorldState->ServerData()->ResFish();
+	const UI32 oreTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResOreTime()) );
 	const UI32 logTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResLogTime()) );
+	const UI32 fishTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResFishTime()) );
 	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + strutil::number( worldNum ) + std::string("].bin");
 
 	char rBuffer[2];
@@ -328,16 +339,21 @@ void CMapWorld::LoadResources( UI08 worldNum )
 			toRead.read( rBuffer, 2 );
 			(*mIter).logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
 
+			toRead.read( rBuffer, 2 );
+			(*mIter).fishAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+
 			fileExists = toRead.eof();
 		}
 		else
 		{
 			(*mIter).oreAmt  = resOre;
 			(*mIter).logAmt  = resLog;
+			(*mIter).fishAmt  = resFish;
 		}
 		// No need to preserve time.  Do a refresh automatically
 		(*mIter).oreTime = oreTime;
 		(*mIter).logTime = logTime;
+		(*mIter).fishTime = fishTime;
 	}
 	if( fileExists )
 		toRead.close();
@@ -798,7 +814,6 @@ void CMapHandler::Load( void )
 
 	UI32 runningCount = 0;
 	SI32 fileSizes[AreaX][AreaY];
-
 	for( SI16 cx = 0; cx < AreaX; ++cx )
 	{
 		for( SI16 cy = 0; cy < AreaY; ++cy )

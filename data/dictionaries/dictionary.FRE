@@ -698,7 +698,7 @@
 654=Summon Earth Elemental
 655=Summon Fire Elemental
 656=Summon Water Elemental
-657=Random
+657=Identification
 658=Necro1
 659=Necro2
 660=Necro3
@@ -4042,6 +4042,18 @@
 9053=[verrouillé]
 9054=Vous ne pouvez pas utiliser de compétences en étant mort.
 9055=[Bienheureux]
+9056=Cette cible est immunisée contre la magie !
+9057=*Les éclaboussures de sang acide marquent votre arme !*
+9058=Tu ne peux pas te guérir dans ton état actuel.
+9059=Tu décides de ne pas boire cette potion, car tu es déjà en pleine santé.
+9060=Sélectionne l'emplacement cible pour le Spawner %s :
+9061=La chaleur intense dégagée par un serpent de lave vous cause des dégâts !
+9062=L'attaque au gaz de l'élémentaire de bronze vous cause des dégâts !
+9063=Le froid intense vous cause des dégâts !
+9064=Tu ne peux pas ramasser cet objet.
+9065=Cet objet ne vous appartient pas. Tu devras le voler.
+9066=Cet objet appartient à quelqu'un d'autre.
+9067=Incapable de déposer l'objet... où a-t-il été ramassé ?
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !
@@ -4071,5 +4083,42 @@
 9275=Ce livre a déjà le nombre maximum de charges.
 9276=Tu charges le Runebook avec une pile de parchemin de rappel.
 9277=Vous chargez le Livre des Runes avec un parchemin de rappel.
+// [9301-9310] Poisson magique
+9301=Vous êtes déjà sous un effet similaire.
+9302=Vous avalez le poisson tout entier !
+// [9310-9400] Compétences de pêche
+9310=Dans quelle eau veux-tu pêcher ?
+9311=Les poissons n'ont pas l'air de mordre ici.
+9312=Tu es déjà en train de pêcher.
+9313=Tu dois être plus près de l'eau pour pêcher !
+9314=Tu pêches un moment, mais tu n'attrapes rien.
+9315=Tu sors un objet : %s
+9316=Tu sors un objet en même temps qu'un monstre : %s
+9317=Tu ne peux utiliser ce filet qu'en eau profonde !
+9318=Tu plonges le filet dans la mer...
+9319=Incapable de détecter l'objet qui a déclenché l'action. Existe-t-il encore ?
+9320=Tu extrais le message de la bouteille.
+9321=A l'aide ! Navire en train de faire...n fortes tempêtes...précieuse cargaison...st atteindre dest...coordonnées actuelles %s...y a t-il des survivants...facilité !
+9322=...était un goujat et un mufle, peu importe ce que maman lui a... jeté par-dessus bord ! Oh, Anna, c'était si excitant ! Malheureusement, il a été attrapé, et toutes ses richesses sont parties avec lui ! J'ai appelé le capitaine, et il a dit que nous étions à %s... alors peut-être...
+9323=...savent que l'épave est près de %s mais ne l'ont pas trouvée. Le message transmis dans ma famille depuis des générations pourrait-il être faux ? Non... Je jure sur l'âme de mon grand-père, je trouverai...
+9324=...Ar ! %s et, un bon vent ! Aucune chance... des tempêtes, cependant... Ar ! Est-ce un serpent de mer...<br><br>uh oh.
+9325=NOUS RECHERCHONS : plongeurs exp...rimentés en navigation. Doit avoir sa propre vessie...ppliquez à %s...bons avantages, horaires flexibles...
+9326=...isaster indeed. Capitaine McQ... par-dessus bord, craignez le pire. Ce sont les derniers jours du bon navire Norr... La dernière position connue était %s mais ... c'est au-delà du sauvetage...
+9327=...je ne m'attendais pas à un iceberg...une femme stupide à l'avant écrasée sur le coup...envoyez de l'aide à %s...nous n'oublierons jamais la tragédie du naufrage du...
+9328=...alors j'ai jeté le trésor par-dessus bord, avant que la malédiction ne m'atteigne aussi. Mais je suis arrivé trop tard. Je suis condamné à errer sur ces mers, un fantôme à jamais. Rejoignez-moi : rendez-vous à %s si vous souhaitez ma compagnie...
+9329=...puis le bateau a explosé. Un dragon a plongé au-dessus. La bave a avalé Bertie tout entier. Il a crié, c'était incroyable. Le ciel était orange... Le sextant a indiqué qu'on était à %s. Norma parlait de naviguer au bout du monde. J'ai regardé mes mains et j'ai vu à travers elles..."
+9330=... je suis à l'intérieur de cette baleine depuis trois jours maintenant. Je n'ai plus de nourriture que je puisse récupérer dans ses dents. J'ai fait une lecture au sextant à travers l'évent : %s. Je ne reverrai jamais mon trésor...
+9331=...grande aventure ! Le capitaine Quacklebush me faisait nettoyer les ponts tous les jours... ...les pirates sont arrivés, j'étais dans le gréement à m'entraîner avec mon sextant. %s si je ne me trompe pas... ...a sabordé le navire, et notre précieuse cargaison est partie avec lui et les pirates hurlants, au fond de la mer...
+9332=...personne ne savait que j'étais une fille. Ils ont juste pensé que j'étais un autre marin... puis nous avons rencontré l'ondine. %s. Il a exigé un sacrifice... j'étais la plus jeune, ils ont compris... j'ai attrapé le trésor du capitaine, j'ai crié "Il coulera avec moi !" ...ils m'ont pris au mot.
+9333=...piégé sur une île déserte avec une fontaine magique fournissant de la nourriture, des sources d'eau fraîche, un paysage magnifique, et ma charmante jeune femme. Je sais que le bateau avec tous les gains de notre vie a coulé à ~1_SEXTANT ~ mais je ne sais pas quelles sont nos coordonnées... quelqu'un doit absolument me sauver avant le match de dimanche ou je vais devenir fou...
+9334=...autour de Jhelom towne nous avons erré, bu toute la nuit. On s'est battus... on a hissé les voiles le matin, tout l'équipage était à bord sauf le cuisinier... on est entré, dernières coordonnées connues %s... on serait mieux dans la cellule de Stone !
+9335=Vous tirez un lourd coffre des profondeurs de l'océan !
+9336=Ta canne à pêche se plie lorsque tu tires un gros poisson des profondeurs !
+9337=Il faut de l'eau pour pêcher !
+9338=Tu découpes ton poisson en steaks de poisson cru.
+// [9401-9450] Objets magiques
+9401=Cet objet magique est en rupture de charge.
+9402=[Non identifié]
+9403=Utilisations restantes : %i
 }
 EOF

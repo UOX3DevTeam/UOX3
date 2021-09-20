@@ -104,6 +104,24 @@ SOCKLIST FindNearbyPlayers( CBaseObject *mObj )
 	return FindNearbyPlayers( mObj, visRange );
 }
 
+SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
+{
+	SOCKLIST nearbyChars;
+	//std::scoped_lock lock(Network->internallock);
+	Network->pushConn();
+	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+	{
+		CChar *mChar = mSock->CurrcharObj();
+		if( ValidateObject( mChar ))
+		{
+			if( getDist( point3( mChar->GetX(), mChar->GetY(), mChar->GetZ() ), point3( x, y, z ) ) <= distance )
+				nearbyChars.push_back( mSock );
+		}
+	}
+	Network->popConn();
+	return nearbyChars;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CHARLIST findNearbyChars( CChar *mChar, distLocs distance )
 //o-----------------------------------------------------------------------------------------------o

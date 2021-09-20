@@ -445,6 +445,9 @@ void LoadRegions( void )
 		delete ourRegions;
 		ourRegions = nullptr;
 	}
+
+	// Load Instant Logout regions from [INSTALOG] section of regions.dfn
+	// Note that all the tags below are required to setup valid locations
 	ScriptSection *InstaLog = FileLookup->FindEntry( "INSTALOG", regions_def );
 	if( InstaLog == nullptr )
 		return;
@@ -474,7 +477,49 @@ void LoadRegions( void )
 		else if( UTag == "WORLD" )
 		{
 			toAdd.worldNum = static_cast<SI08>(std::stoi(data, nullptr, 0));
+		}
+		else if( UTag == "INSTANCEID" )
+		{
+			toAdd.instanceID = static_cast<UI16>(std::stoul(data, nullptr, 0));
 			cwmWorldState->logoutLocs.push_back( toAdd );
+		}
+	}
+
+	// Load areas valid for SOS coordinates from [SOSAREAS] section of regions.dfn
+	// Note that all the tags below are required to setup valid locations
+	ScriptSection *sosAreas = FileLookup->FindEntry( "SOSAREAS", regions_def );
+	if( sosAreas == nullptr )
+		return;
+	SOSLocationEntry toAddSOS;
+	for( std::string tag = sosAreas->First(); !sosAreas->AtEnd(); tag = sosAreas->Next() )
+	{
+		UTag = strutil::upper( tag );
+		data = sosAreas->GrabData();
+		data = strutil::trim( strutil::removeTrailing( data, "//" ));
+		if( UTag == "X1" )
+		{
+			toAddSOS.x1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+		}
+		else if( UTag == "Y1" )
+		{
+			toAddSOS.y1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+		}
+		else if( UTag == "X2" )
+		{
+			toAddSOS.x2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+		}
+		else if( UTag == "Y2" )
+		{
+			toAddSOS.y2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+		}
+		else if( UTag == "WORLD" )
+		{
+			toAddSOS.worldNum = static_cast<SI08>(std::stoi(data, nullptr, 0));
+		}
+		else if( UTag == "INSTANCEID" )
+		{
+			toAddSOS.instanceID = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			cwmWorldState->sosLocs.push_back( toAddSOS );
 		}
 	}
 }

@@ -69,6 +69,7 @@ reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLAS
 	teleLocs.resize( 0 );
 	escortRegions.resize( 0 );
 	logoutLocs.resize( 0 );
+	sosLocs.resize( 0 );
 	goPlaces.clear();
 	refreshQueue.clear();
 	deletionQueue.clear();
@@ -85,6 +86,7 @@ CWorldMain::~CWorldMain()
 	murdererTags.clear();
 	teleLocs.clear();
 	logoutLocs.clear();
+	sosLocs.clear();
 	escortRegions.clear();
 	creatures.clear();
 	goPlaces.clear();

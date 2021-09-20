@@ -1002,15 +1002,6 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		}
 	}
 
-	if( mSock->GetTimer( tPC_FISHING ) )
-	{
-		if( mSock->GetTimer( tPC_FISHING ) <= cwmWorldState->GetUICurrentTime() )
-		{
-			Skills->Fish( mSock, &mChar );
-			mSock->SetTimer( tPC_FISHING, 0 );
-		}
-	}
-
 	if( mChar.IsOnHorse() )
 	{
 		CItem *horseItem = mChar.GetItemAtLayer( IL_MOUNT );
@@ -2102,7 +2093,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_ENTICEMENT:			skillToSet = ENTICEMENT;						break;
 				case DFNTAG_EVALUATINGINTEL:	skillToSet = EVALUATINGINTEL;					break;
 				case DFNTAG_EQUIPITEM:
-					retItem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1 );
 					if( retItem != nullptr )
 					{
 						if( !retItem->SetCont( applyTo ) )

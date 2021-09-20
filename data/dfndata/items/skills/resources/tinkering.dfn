@@ -233,6 +233,7 @@ value=15 7
 restock=20
 decay=1
 good=50
+script=5033
 }
 
 [0x1059]

@@ -485,17 +485,44 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:
 				break;
-			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break;
+			case DFNTAG_LOOT:
+				[[fallthrough]];
 			case DFNTAG_PACKITEM:
 			{
-				auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( cdata, "//" )), "," );
-				if( csecs.size() > 1 )
+				if( !cdata.empty() )
 				{
-					Items->AddRespawnItem( applyTo, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), true, false, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0))); //section 0 = id, section 1 = amount
-				}
-				else
-				{
-					Items->AddRespawnItem( applyTo, strutil::trim( strutil::removeTrailing( cdata, "//" )), true, false, 1 );
+					auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( cdata, "//" )), "," );
+					if( csecs.size() > 1 )
+					{
+						UI16 iAmount = 0;
+						std::string amountData = strutil::trim( strutil::removeTrailing( csecs[1], "//" ));
+						auto tsects = strutil::sections( amountData, " " );
+						if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
+						{
+							auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+							auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
+							// Tag contained a minimum and maximum value for amount! Let's randomize!
+							iAmount = static_cast<UI16>(RandomNum( first, second ));
+						}
+						else
+						{
+							iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+						}
+						auto tdata = strutil::trim( strutil::removeTrailing( csecs[0], "//" ));
+
+						if( tag == DFNTAG_LOOT )
+							Items->AddRespawnItem( applyTo, tdata, true, true, iAmount, true );
+						else
+							Items->AddRespawnItem( applyTo, tdata, true, false, iAmount, false );
+					}
+					else
+					{
+						if( tag == DFNTAG_LOOT )
+							Items->AddRespawnItem( applyTo, cdata, true, true, 1, true );
+						else
+							Items->AddRespawnItem( applyTo, cdata, true, false, 1, false );
+					}
 				}
 				break;
 			}
@@ -612,7 +639,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 		}
 	}
 
-	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType );
+	CItem *iCreated = CreateBaseScriptItem( nullptr, item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType, 0xFFFF );
 	if( iCreated == nullptr )
 		return nullptr;
 
@@ -622,9 +649,16 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 	{
 		// Turns out we need to spawn more than one item, let's do that here:
 		CItem *iCreated2 = nullptr;
-		for( UI16 i = 0; i < iAmount-1; ++i ) //minus 1 because 1 item has already been created at this point
+		for( UI16 i = 1; i < iAmount; i++ )
 		{
-			iCreated2 = CreateBaseScriptItem( item, mChar->WorldNumber(), 1, mChar->GetInstanceID(), itemType );
+			if( inPack )
+			{
+				CItem *mPack = mChar->GetPackItem();
+				iCreated2 = CreateBaseScriptItem( mPack, item, mChar->WorldNumber(), 1, mChar->GetInstanceID(), itemType );
+			}
+			else
+				iCreated2 = CreateBaseScriptItem( nullptr, item, mChar->WorldNumber(), 1, mChar->GetInstanceID(), itemType );
+
 			if( iCreated2 )
 			{
 				if( iColor != 0xFFFF )
@@ -632,10 +666,9 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 				PlaceItem( mSock, mChar, iCreated2, inPack );
 			}
 		}
-		// Return the original item created in the function.
-		return PlaceItem( mSock, mChar, iCreated, inPack );
 	}
 
+	// Return the original item created in the function.
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
 
@@ -652,7 +685,7 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 	if( !ValidateObject( mChar ) )
 		return nullptr;
 
-	CItem *iCreated = CreateRandomItem( itemList, mChar->WorldNumber(), mChar->GetInstanceID() );
+	CItem *iCreated = CreateRandomItem( nullptr, itemList, mChar->WorldNumber(), mChar->GetInstanceID() );
 	if( iCreated == nullptr )
 		return nullptr;
 
@@ -673,31 +706,167 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file
 //o-----------------------------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNum, const UI16 instanceID )
+CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNum, const UI16 instanceID, bool useLootlist )
 {
 	CItem * iCreated	= nullptr;
-	std::string sect	= "ITEMLIST " + sItemList;
+	std::string sect	= "";
+
+	// Are we looking for a LOOTLIST, or an ITEMLIST?
+	if( useLootlist )
+		sect = "LOOTLIST " + sItemList;
+	else
+		sect = "ITEMLIST " + sItemList;
 	sect				= strutil::trim( strutil::removeTrailing( sect, "//" ));
 
+	// This is never "blank", since we assign "LOOTLIST" or "ITEMLIST" in the previous step!!
 	if( sect == "blank" ) // The itemlist-entry is just a blank filler item
 		return nullptr;
 
+	// Look up the relevant LOOTLIST or ITEMLIST from DFNs
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
 	if( ItemList != nullptr )
 	{
-		const size_t i = ItemList->NumEntries();
-		if( i > 0 )
+		// Count the number of entries in the list
+		const size_t itemListSize = ItemList->NumEntries();
+		if( itemListSize > 0 )
 		{
-			std::string k = ItemList->MoveTo( RandomNum( static_cast<size_t>(0), i - 1 ) );
-			if( !k.empty() )
+			int itemEntryToSpawn = -1;
+			int sum_of_weight = 0;
+
+			// Let's see if the entries in the list are setup with randomization weights,
+			// and sum them all up if that's the case. Format of string:
+			//	weight|sectionName,amount
+			//	weight|sectionName,amountMin amountMax
+			//	weight|LOOTLIST=sectionName,amount
+			//	weight|LOOTLIST=sectionName,amountMin amountMax
+			//	weight|ITEMLIST=sectionName,amount
+			//	weight|ITEMLIST=sectionName,amountMin amountMax
+			for( int j = 0; j < itemListSize; j++ )
 			{
-				if( strutil::upper( k ) == "ITEMLIST" )
+				// Split string for entry into a stringlist, based on | as a separator
+				auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
+				if( csecs.size() == 2 )
 				{
-					iCreated = CreateRandomItem( ItemList->GrabData(), worldNum, instanceID );
+					// The entry has a weight assigned to it - let's add the weight to the total
+					sum_of_weight += static_cast<int>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
 				}
 				else
 				{
-					iCreated = CreateBaseScriptItem( k, worldNum, 1, instanceID );
+					// The entry has no weight assigned to it - add a default weight of 1
+					sum_of_weight += 1;
+				}
+			}
+
+			// Choose a random number between 0 and the total sum of all weights
+			int rndChoice = RandomNum( 0, sum_of_weight );
+			int itemWeight = 0;
+
+			// Prepare a vector to hold multiple entries, if more than one qualifies based on weighting
+			std::vector<int> matchingEntries;
+
+			// Loop through the items in the itemlist/lootlist
+			int weightOfChosenItem = 0;
+			for( int j = 0; j < itemListSize; j++ )
+			{
+				auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
+				if( csecs.size() == 2 )
+				{
+					// Ok, item entry has a weight, let's compare that weight to our chosen random number
+					itemWeight = static_cast<int>( std::stoul( strutil::trim( strutil::removeTrailing( csecs[0], "//" ) ), nullptr, 0 ) );
+					if( rndChoice < itemWeight )
+					{
+						// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
+						if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight )
+						{
+							itemEntryToSpawn = j;
+
+							// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
+							matchingEntries.push_back( j );
+							continue;
+						}
+					}
+					rndChoice -= itemWeight;
+				}
+			}
+
+			// Did we find more than one entry that matched our random weight criteria?
+			if( matchingEntries.size() > 1 )
+			{
+				// Choose a random one of these!
+				itemEntryToSpawn = static_cast<int>(RandomNum( static_cast<size_t>(0), matchingEntries.size() ));
+			}
+			matchingEntries.clear();
+
+			int amountToSpawn = 1;
+			std::string k = "";
+			STRINGLIST csecs;
+			if( itemEntryToSpawn != -1 )
+			{
+				// If an entry has been selected based on weights, use that
+				csecs = strutil::sections( strutil::trim( strutil::removeTrailing( ItemList->MoveTo( itemEntryToSpawn ), "//" )), "," );
+				auto csecs2 = strutil::sections( strutil::trim( csecs[0] ), "|" );
+				if( csecs2.size() > 1 )
+					k = csecs2[1];
+				else
+					k = csecs2[0];
+			}
+			else
+			{
+				// Otherwise choose a random entry
+				csecs = strutil::sections( strutil::trim( strutil::removeTrailing( ItemList->MoveTo( RandomNum( static_cast<size_t>(0), itemListSize - 1 )), "//" )), "," );
+				auto csecs2 = strutil::sections( strutil::trim( csecs[0] ), "|" );
+				if( csecs2.size() > 1 )
+					k = csecs2[1];
+				else
+					k = csecs2[0];
+			}
+
+			// Also fetch amount to spawn, if specified
+			if( csecs.size() > 1 )
+			{
+				UI16 iAmount = 0;
+				std::string amountData = strutil::trim( strutil::removeTrailing( csecs[1], "//" ));
+				auto tsects = strutil::sections( amountData, " " );
+				if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
+				{
+					auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+					auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
+					// Tag contained a minimum and maximum value for amount! Let's randomize!
+					amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+				}
+				else
+				{
+					amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+				}
+			}
+
+			if( !k.empty() )
+			{
+				if( strutil::upper( k ) == "ITEMLIST" || strutil::upper( k ) == "LOOTLIST" )
+				{
+					// The chosen entry contained another ITEMLIST or LOOTLIST reference! Let's dive back into it...
+					iCreated = CreateRandomItem( mCont, ItemList->GrabData(), worldNum, instanceID );
+				}
+				else
+				{
+					// Finally, we have an item! Spawn it!
+					iCreated = CreateBaseScriptItem( nullptr, k, worldNum, amountToSpawn, instanceID, OT_ITEM, 0xFFFF );
+
+					// However, we have a valid container, and the amount is larger than 1, and the item is not stackable, let's spawn some more items!
+					if( ValidateObject( mCont ) && amountToSpawn > 1 && !iCreated->isPileable() )
+					{
+						for( int i = 1; i < amountToSpawn; i++ )
+						{
+							CItem *iCreated2 = CreateBaseScriptItem( mCont, k, worldNum, 1, instanceID, OT_ITEM, 0xFFFF );
+							if( ValidateObject( iCreated2 ))
+							{
+								// Place item in container and randomize location
+								iCreated2->SetCont( mCont );
+								iCreated2->PlaceInPack();
+							}
+						}
+					}
 				}
 			}
 		}
@@ -756,7 +925,7 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, c
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item from the scripts
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType, const UI16 iColor )
+CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType, const UI16 iColor )
 {
 	ourItem						= strutil::trim( strutil::removeTrailing( ourItem, "//" ));
 
@@ -772,7 +941,7 @@ CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, c
 
 	CItem *iCreated = nullptr;
 	if( itemCreate->ItemListExist() )
-		iCreated = CreateRandomItem( itemCreate->ItemListData(), worldNum, instanceID );
+		iCreated = CreateRandomItem( mCont, itemCreate->ItemListData(), worldNum, instanceID );
 	else
 	{
 		iCreated = CreateBaseItem( worldNum, itemType, instanceID );
@@ -801,10 +970,13 @@ CItem * cItem::CreateBaseScriptItem( std::string ourItem, const UI08 worldNum, c
 			}
 		}
 	}
-	if( iColor != 0xFFFF )
-		iCreated->SetColour( iColor );
-	if( iAmount > 1 && iCreated->isPileable() )
-		iCreated->SetAmount( iAmount );
+	if( ValidateObject( iCreated ))
+	{
+		if( iColor != 0xFFFF )
+			iCreated->SetColour( iColor );
+		if( iAmount > 1 && iCreated->isPileable() )
+			iCreated->SetAmount( iAmount );
+	}
 
 	return iCreated;
 }
@@ -1193,98 +1365,77 @@ PackTypes cItem::getPackType( CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spawning of items from spawn objects/containers
 //o-----------------------------------------------------------------------------------------------o
-void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem, const UI16 itemAmount )
+void cItem::AddRespawnItem( CItem *mCont, const std::string& iString, const bool inCont, const bool randomItem, const UI16 itemAmount, bool useLootlist )
 {
-	if( !ValidateObject( s ) || x.empty() )
+	if( !ValidateObject( mCont ) || iString.empty() )
 		return;
-	CItem *c = nullptr;
+	CItem *iCreated = nullptr;
 	if( randomItem )
-		c = CreateRandomItem( x, s->WorldNumber(), s->GetInstanceID() );
+	{
+		// LOOT tag was used
+		iCreated = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), useLootlist );
+	}
 	else
-		c = CreateBaseScriptItem( x, s->WorldNumber(), itemAmount, s->GetInstanceID() );
-	if( c == nullptr )
+	{
+		// PACKITEM tag was used
+		iCreated = CreateBaseScriptItem( mCont, iString, mCont->WorldNumber(), itemAmount, mCont->GetInstanceID() );
+	}
+
+	if( iCreated == nullptr )
 		return;
 
-	if( itemAmount > 1 && !c->isPileable() ) //Not stackable? Okay, spawn 'em all individually
+	// If item is stackable and amount is > 1, amount should have been set already
+	// However, if item is not stackable, spawn each item individually
+	if( itemAmount > 1 && ( !randomItem && !iCreated->isPileable() || randomItem ))
 	{
 		CItem *iCreated2 = nullptr;
-		for( UI08 i = 0; i < itemAmount; ++i )
+		for( UI08 i = 1; i < itemAmount; ++i )
 		{
 			if( randomItem )
-				iCreated2 = CreateRandomItem( x, s->WorldNumber(), s->GetInstanceID() );
+			{
+				// If amount was specified for a LOOT tag, spawn a random item each time
+				iCreated2 = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), useLootlist );
+			}
 			else
-				iCreated2 = CreateBaseScriptItem( x, s->WorldNumber(), 1, s->GetInstanceID() );
+			{
+				// If amount was specified for a PACKITEM tag, spawn more copies of the same item
+				iCreated2 = CreateBaseScriptItem( mCont, iString, mCont->WorldNumber(), 1, mCont->GetInstanceID() );
+			}
 			if( iCreated2 )
 			{
 				if( inCont )
 				{
-					iCreated2->SetCont( s );
+					// Place item randomly in container
+					iCreated2->SetCont( mCont );
 					iCreated2->PlaceInPack();
 				}
 				else
-					iCreated2->SetLocation( s );
-				iCreated2->SetSpawn( s->GetSerial() );
+					iCreated2->SetLocation( mCont ); // Set item'mCont location in the world
+				iCreated2->SetSpawn( mCont->GetSerial() ); // Set source item was spawned from
+
+				// Try to stack the new item with existing items in the container, if any
+				if( iCreated2->isPileable() )
+					autoStack( nullptr, iCreated2, mCont );
 			}
 		}
 	}
 
+	// Ok, time to finalize setup of original item that was spawned
 	if( inCont )
-		c->SetCont( s );
+		iCreated->SetCont( mCont );
 	else
-		c->SetLocation( s );
-	c->SetSpawn( s->GetSerial() );
+		iCreated->SetLocation( mCont );
+	iCreated->SetSpawn( mCont->GetSerial() );
 
 	if( inCont )
 	{
-		if( ValidateObject( s ) )
+		if( ValidateObject( mCont ) )
 		{
-			c->SetX( RandomNum( 0, 99 ) + 18 );
-			c->SetZ( 9 );
-			switch( getPackType( s ) )
-			{
-				case PT_PACK:
-				case PT_BAG:
-				case PT_SQBASKET:
-				case PT_RBASKET:
-				case PT_SEBASKET:
-					c->SetY( ( RandomNum( 0, 49 ) ) + 50 );
-					break;
-				case PT_BOOKCASE:
-				case PT_FARMOIRE:
-				case PT_WARMOIRE:
-				case PT_DRAWER:
-				case PT_DRESSER:
-				case PT_SECHEST1:
-				case PT_SECHEST2:
-				case PT_SECHEST3:
-				case PT_SECHEST4:
-				case PT_SECHEST5:
-				case PT_SEARMOIRE1:
-				case PT_SEARMOIRE2:
-				case PT_SEARMOIRE3:
-					c->SetY( ( RandomNum( 0, 49 ) ) + 30 );
-					break;
-				case PT_MBOX:
-				case PT_WBOX:
-				case PT_BARREL:
-					c->SetY( ( RandomNum( 0, 39 ) ) + 100 );
-					break;
-				case PT_CRATE:
-				case PT_WCHEST:
-				case PT_SCHEST:
-				case PT_GCHEST:
-					c->SetY( ( RandomNum( 0, 79 ) ) + 60 );
-					c->SetX( ( RandomNum( 0, 79 ) ) + 60 );
-					break;
-				case PT_COFFIN:
-				case PT_SHOPPACK:
-				case PT_PACK2:
-				case PT_BANK:
-				case PT_UNKNOWN:
-				default:
-					Console.warning( " A non-container item was set as container spawner" );
-					break;
-			}
+			// Determine random location within container to place item
+			iCreated->PlaceInPack();
+
+			// Try to stack the new item with existing items in the container, if any
+			autoStack( nullptr, iCreated, mCont );
 		}
 	}
 }

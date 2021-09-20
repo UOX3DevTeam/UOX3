@@ -63,6 +63,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetMurderThreshold",			SE_GetMurderThreshold,		0, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },
+	{ "GetRandomSOSArea",			SE_GetRandomSOSArea,		2, 0, 0 },
 	{ "DoTempEffect",				SE_DoTempEffect,			7, 0, 0 },
 	{ "MakeItem",					SE_MakeItem,				3, 0, 0 },
 	{ "FindMulti",					SE_FindMulti,				4, 0, 0 },

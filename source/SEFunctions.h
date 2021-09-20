@@ -81,6 +81,7 @@ SEngineFunc SE_GetCurrentClock;			//										***
 SEngineFunc SE_GetMurderThreshold;		//										***
 SEngineFunc SE_RollDice;				//										***
 SEngineFunc SE_RaceCompareByRace;		//										***
+SEngineFunc SE_GetRandomSOSArea;		//										***
 
 SEngineFunc SE_FindMulti;				//										***
 SEngineFunc SE_GetItem;					//										***

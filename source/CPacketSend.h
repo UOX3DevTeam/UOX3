@@ -221,7 +221,7 @@ public:
 	CPCharacterAnimation( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Action( UI16 model );
-	virtual void	Direction( UI08 dir );
+	virtual void	FrameCount( UI08 frameCount );
 	virtual void	Repeat( SI16 repeatValue );
 	virtual void	DoBackwards( bool newValue );
 	virtual void	RepeatFlag( bool newValue );

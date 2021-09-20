@@ -287,51 +287,109 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 {
 	if( argc < 6 )
 	{
-		DoSEErrorMessage( "DoMovingEffect: Invalid number of arguments (takes 6->8 or 8->10)" );
+		DoSEErrorMessage( "DoMovingEffect: Invalid number of arguments (takes 6->8 or 8->10, or 10->12)" );
 		return JS_FALSE;
 	}
-	JSObject *srcObj	= JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *src	= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcObj ));
-	if( !ValidateObject( src ) )
-	{
-		DoSEErrorMessage( "DoMovingEffect: Invalid source object" );
-		return JS_FALSE;
-	}
+
+	CBaseObject *src	= nullptr;
+	CBaseObject *trg	= nullptr;
+	bool srcLocation	= false;
 	bool targLocation	= false;
 	UI08 offset			= 0;
+	UI16 srcX			= 0;
+	UI16 srcY			= 0;
+	SI08 srcZ			= 0;
 	UI16 targX			= 0;
 	UI16 targY			= 0;
 	SI08 targZ			= 0;
-	CBaseObject *trg	= nullptr;
-	if( JSVAL_IS_INT( argv[1] ) )
-	{	// Location moving effect
-		targLocation	= true;
-		offset			= true;
-		targX			= (UI16)JSVAL_TO_INT( argv[1] );
-		targY			= (UI16)JSVAL_TO_INT( argv[2] );
-		targZ			= (SI08)JSVAL_TO_INT( argv[3] );
+	UI16 effect			= 0;
+	UI08 speed			= 0;
+	UI08 loop			= 0;
+	bool explode		= 0;
+	UI32 hue			= 0;
+	UI32 renderMode		= 0;
+
+	if( JSVAL_IS_INT( argv[0] ))
+	{
+		// 10, 11 or 12 arguments
+		// srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
+		srcLocation = true;
+		targLocation = true;
+		targLocation = true;
+		srcX	= (SI16)JSVAL_TO_INT( argv[0] );
+		srcY	= (SI16)JSVAL_TO_INT( argv[1] );
+		srcZ	= (SI08)JSVAL_TO_INT( argv[2] );
+		targX	= (SI16)JSVAL_TO_INT( argv[3] );
+		targY	= (SI16)JSVAL_TO_INT( argv[4] );
+		targZ	= (SI08)JSVAL_TO_INT( argv[5] );
+		effect	= (UI16)JSVAL_TO_INT( argv[6] );
+		speed	= (UI08)JSVAL_TO_INT( argv[7] );
+		loop	= (UI08)JSVAL_TO_INT( argv[8] );
+		explode	= ( JSVAL_TO_BOOLEAN( argv[9] ) == JS_TRUE );
+		if( argc >= 11 )
+			hue = (UI32)JSVAL_TO_INT( argv[10] );
+		if( argc >= 12 )
+			renderMode = (UI32)JSVAL_TO_INT( argv[11] );
 	}
 	else
 	{
-		JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
-		trg					= static_cast<CBaseObject *>(JS_GetPrivate( cx, trgObj ));
-		if( !ValidateObject( trg ) )
+		JSObject *srcObj	= JSVAL_TO_OBJECT( argv[0] );
+		src					= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcObj ));
+		if( !ValidateObject( src ) )
 		{
-			DoSEErrorMessage( "DoMovingEffect: Invalid target object" );
+			DoSEErrorMessage( "DoMovingEffect: Invalid source object" );
 			return JS_FALSE;
 		}
-	}
-	UI16 effect		= (UI16)JSVAL_TO_INT( argv[2+offset] );
-	UI08 speed		= (UI08)JSVAL_TO_INT( argv[3+offset] );
-	UI08 loop		= (UI08)JSVAL_TO_INT( argv[4+offset] );
-	bool explode	= ( JSVAL_TO_BOOLEAN( argv[5+offset] ) == JS_TRUE );
-	UI32 hue = 0, renderMode = 0;
-	if( argc - offset >= 7 ) // there's at least 7/9 parameters
-		hue = (UI32)JSVAL_TO_INT( argv[6+offset] );
-	if( argc - offset >= 8 ) // there's at least 8/10 parameters
-		renderMode = (UI32)JSVAL_TO_INT( argv[7+offset] );
 
-	if( targLocation )
+		if( JSVAL_IS_INT( argv[1] ))
+		{
+			// 8, 9 or 10 arguments
+			// srcObj, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
+			targLocation = true;
+			targX	= (UI16)JSVAL_TO_INT( argv[1] );
+			targY	= (UI16)JSVAL_TO_INT( argv[2] );
+			targZ	= (SI08)JSVAL_TO_INT( argv[3] );
+			effect	= (UI16)JSVAL_TO_INT( argv[4] );
+			speed	= (UI08)JSVAL_TO_INT( argv[5] );
+			loop	= (UI08)JSVAL_TO_INT( argv[6] );
+			explode	= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+			if( argc >= 9 )
+				hue = (UI32)JSVAL_TO_INT( argv[8] );
+			if( argc >= 10 )
+				renderMode = (UI32)JSVAL_TO_INT( argv[9] );
+		}
+		else
+		{
+			// 6, 7 or 8 arguments
+			// srcObj, targObj, effect, speed, loop, explode, [hue], [renderMode]
+			if( !JSVAL_IS_OBJECT( argv[1] ) )
+			{
+				DoSEErrorMessage( "DoMovingEffect: Invalid target object" );
+				return JS_FALSE;
+			}
+
+			JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
+			trg = static_cast<CBaseObject *>(JS_GetPrivate( cx, trgObj ));
+			if( !ValidateObject( trg ) )
+			{
+				DoSEErrorMessage( "DoMovingEffect: Invalid target object" );
+				return JS_FALSE;
+			}
+
+			effect	= (UI16)JSVAL_TO_INT( argv[2] );
+			speed	= (UI08)JSVAL_TO_INT( argv[3] );
+			loop	= (UI08)JSVAL_TO_INT( argv[4] );
+			explode	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+			if( argc >= 7 )
+				hue = (UI32)JSVAL_TO_INT( argv[6] );
+			if( argc >= 8 )
+				renderMode = (UI32)JSVAL_TO_INT( argv[7] );
+		}
+	}
+
+	if( srcLocation && targLocation )
+		Effects->PlayMovingAnimation( srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
+	else if( !srcLocation && targLocation )
 		Effects->PlayMovingAnimation( src, targX, targY, targZ, effect, speed, loop, explode, hue, renderMode );
 	else
 		Effects->PlayMovingAnimation( src, trg, effect, speed, loop, explode, hue, renderMode );
@@ -918,6 +976,78 @@ JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetRandomSOSArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets a random SOS area from list of such areas loaded from [SOSAREAS] section of regions.dfn
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetRandomSOSArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "GetRandomSOSArea: Invalid number of arguments (takes 2)" );
+		return JS_FALSE;
+	}
+
+	UI08 worldNum	= 0;
+	UI16 instanceID	= 0;
+	if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) )
+	{
+		worldNum	= static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+		instanceID	= static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+	}
+	else
+	{
+		DoSEErrorMessage( "GetRandomSOSArea: Invalid values passed in for worldNum and instanceID - must be integers!" );
+		return JS_FALSE;
+	}
+
+	// Fetch vector of SOS locations
+	auto sosLocs = cwmWorldState->sosLocs;
+	if( sosLocs.size() == 0 )
+	{
+		DoSEErrorMessage( "GetRandomSOSArea: No valid SOS areas found. Is the [SOSAREAS] section of regions.dfn setup correctly?" );
+		return JS_FALSE;
+	}
+
+	// Prepare a vector to hold the areas with correct worldNum and instanceID
+	std::vector<SOSLocationEntry> validSOSLocs;
+
+	// Loop through all SOS areas and cherry-pick the ones with correct worldNum and instanceID
+	for( size_t i = 0; i < sosLocs.size(); ++i )
+	{
+		if( sosLocs[i].worldNum == worldNum && sosLocs[i].instanceID == instanceID )
+		{
+			validSOSLocs.push_back( sosLocs[i] );
+		}
+	}
+
+	// Choose a random SOS area from the generated list of such areas
+	auto rndSosLoc = validSOSLocs[RandomNum(static_cast<size_t>(0), validSOSLocs.size() - 1)];
+
+	// Convert properties of chosen SOS area to jsvals, so we can pass them to a JSObject
+	jsval jsX1			= INT_TO_JSVAL( rndSosLoc.x1 );
+	jsval jsY1			= INT_TO_JSVAL( rndSosLoc.y1 );
+	jsval jsX2			= INT_TO_JSVAL( rndSosLoc.x2 );
+	jsval jsY2			= INT_TO_JSVAL( rndSosLoc.y2 );
+	jsval jsWorldNum	= INT_TO_JSVAL( rndSosLoc.worldNum );
+	jsval jsInstanceID	= INT_TO_JSVAL( rndSosLoc.instanceID );
+
+	// Construct a JS Object with the properties of the chosen SOS area
+	JSObject *rndSosLocObj = JS_NewArrayObject( cx, 0, nullptr );
+	JS_SetElement( cx, rndSosLocObj, 0, &jsX1 );
+	JS_SetElement( cx, rndSosLocObj, 1, &jsY1 );
+	JS_SetElement( cx, rndSosLocObj, 2, &jsX2 );
+	JS_SetElement( cx, rndSosLocObj, 3, &jsY2 );
+	JS_SetElement( cx, rndSosLocObj, 4, &jsWorldNum );
+	JS_SetElement( cx, rndSosLocObj, 5, &jsInstanceID );
+
+	// Pass the JS object to script
+	*rval = OBJECT_TO_JSVAL( rndSosLocObj );
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spawns NPC based on definition in NPC DFNs
@@ -1004,7 +1134,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( myChar != nullptr )
 		newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack, iColor );
 	else
-		newItem = Items->CreateBaseScriptItem( bpSectNumber, worldNumber, iAmount, instanceID, itemType, iColor );
+		newItem = Items->CreateBaseScriptItem( nullptr, bpSectNumber, worldNumber, iAmount, instanceID, itemType, iColor );
 
 	if( newItem != nullptr )
 	{
@@ -2485,7 +2615,7 @@ JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc > 2 || argc == 0 )
+	if( argc != 0 )
 	{
 		DoSEErrorMessage( strutil::format("ResourceArea: Invalid Count of Arguments: %d", argc) );
 		return JS_FALSE;
@@ -2493,35 +2623,8 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )) );
 	resType = strutil::upper( strutil::trim( strutil::removeTrailing( resType, "//" )));
-	if( argc == 2 )
-	{
-		UI16 newVal = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
-		if( resType == "LOGS" ) // Logs
-		{
-			cwmWorldState->ServerData()->ResLogArea( newVal );
-		}
-		else if( resType == "ORE" ) // Ore
-		{
-			cwmWorldState->ServerData()->ResOreArea( newVal );
-		}
-		else if( resType == "FISH" ) // Fish
-		{
-			cwmWorldState->ServerData()->ResFishArea( newVal );
-		}
-	}
 
-	if( resType == "LOGS" )
-	{
-		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResLogArea() );
-	}
-	else if( resType == "ORE" )
-	{
-		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResOreArea() );
-	}
-	else if( resType == "FISH" )
-	{
-		*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResFishArea() );
-	}
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResourceAreaSize() );
 
 	return JS_TRUE;
 }
@@ -3587,17 +3690,14 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 86:	 // ORERESPAWNTIMER[0079]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResOreTime()));
 				break;
-			case 87:	 // ORERESPAWNAREA[0080]
-				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResOreArea()));
+			case 87:	 // RESOURCEAREASIZE
+				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResourceAreaSize()));
 				break;
 			case 88:	 // LOGSPERAREA[0081]
 				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->ResLogs()));
 				break;
 			case 89:	 // LOGSRESPAWNTIMER[0082]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResLogTime()));
-				break;
-			case 90:	 // LOGSRESPAWNAREA[0083]
-				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResLogArea()));
 				break;
 			case 91:	 // HUNGERRATE[0084]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE )));
@@ -4123,9 +4223,6 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 280:	// FISHRESPAWNTIMER
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishTime()));
-				break;
-			case 281:	// FISHRESPAWNAREA
-				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishArea()));
 				break;
 			case 282:	// ITEMSINTERRUPTCASTING
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemsInterruptCasting() );
