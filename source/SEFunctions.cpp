@@ -126,12 +126,17 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	JSObject *mysrc		= JSVAL_TO_OBJECT( argv[1] );
-	CChar *mysrcChar	= static_cast<CChar*>(JS_GetPrivate( cx, mysrc ));
+	CChar *mysrcChar	= nullptr;
 
-	if( !ValidateObject( mysrcChar ) )
+	// Check if mysrc is null before continuing - it could be this temp effect as no character-based source!
+	if( !JSVAL_IS_NULL( mysrc ))
 	{
-		DoSEErrorMessage( "DoTempEffect: Invalid src" );
-		return JS_FALSE;
+		mysrcChar = static_cast<CChar*>(JS_GetPrivate( cx, mysrc ));
+		if( !ValidateObject( mysrcChar ) )
+		{
+			DoSEErrorMessage( "DoTempEffect: Invalid src" );
+			return JS_FALSE;
+		}
 	}
 
 	if( iType == 0 )	// character
@@ -1068,6 +1073,10 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	UI08 world			= (UI08)JSVAL_TO_INT( argv[4] );
 	UI16 instanceID = ( argc == 6 ? (SI16)JSVAL_TO_INT( argv[5] ) : 0 );
 
+	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
+	auto origContext = cx;
+	auto origObject = obj;
+
 	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceID );
 	if( cMade != nullptr )
 	{
@@ -1076,6 +1085,9 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 	else
 		*rval = JSVAL_NULL;
+
+	// Restore original script context and object
+	JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -1130,6 +1142,10 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc > 8 )
 		instanceID				= static_cast<UI16>(JSVAL_TO_INT( argv[8] ));
 
+	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
+	auto origContext = cx;
+	auto origObject = obj;
+
 	CItem *newItem = nullptr;
 	if( myChar != nullptr )
 		newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack, iColor );
@@ -1143,6 +1159,9 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	else
 		*rval = JSVAL_NULL;
+
+	// Restore original script context and object
+	JS_SetGlobalObject( origContext, origObject );
 	return JS_TRUE;
 }
 
@@ -3049,7 +3068,7 @@ JSBool SE_GetTownRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 {
 	if( argc != 1 )
 	{
-		DoSEErrorMessage( "GetRegion: Invalid number of parameters (1)" );
+		DoSEErrorMessage( "GetTownRegion: Invalid number of parameters (1)" );
 		return JS_FALSE;
 	}
 
@@ -3699,6 +3718,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 89:	 // LOGSRESPAWNTIMER[0082]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResLogTime()));
 				break;
+			case 90:	 // STATSAFFECTSKILLCHECKS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->StatsAffectSkillChecks() );
+				break;
 			case 91:	 // HUNGERRATE[0084]
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE )));
 				break;
@@ -4224,6 +4246,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 280:	// FISHRESPAWNTIMER
 				*rval = INT_TO_JSVAL( static_cast<UI16>(cwmWorldState->ServerData()->ResFishTime()));
 				break;
+			case 281:	 // ARCHERYHITBONUS
+				*rval = INT_TO_JSVAL( static_cast<SI16>(cwmWorldState->ServerData()->CombatArcheryHitBonus()));
+				break;
 			case 282:	// ITEMSINTERRUPTCASTING
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemsInterruptCasting() );
 				break;
@@ -4247,6 +4272,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 289:	// AF_SPEECHJOURNALCHECKS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS ) );
+				break;
+			case 290:	// ARCHERYSHOOTDELAY
+				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->CombatArcheryShootDelay()));
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

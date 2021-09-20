@@ -55,7 +55,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 	if( SpellID >= Magic->spells.size() )
 	{
-		Console.error( "Invalid Spell ID" ); // Revise please...
+		Console.error( strutil::format( "Spells: Invalid Spell ID (%i) provided", SpellID )); // Revise please...
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -63,7 +63,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	SpellInfo *mySpell = &Magic->spells[SpellID];
 	if( mySpell == nullptr )
 	{
-		Console.error( "Invalid Spell" );
+		Console.error( strutil::format( "Spells: Invalid Spell with SpellID %i", SpellID ));
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -645,6 +645,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );		break;
 			case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
+			case CIP_CREATOR:		*vp = INT_TO_JSVAL( gPriv->GetCreator() );		break;
 			case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
 			case CIP_DIR:			*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
 			case CIP_WIPABLE:		*vp = INT_TO_JSVAL( gPriv->isWipeable() );		break;
@@ -665,6 +666,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() );			break;
+			case CIP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
 			case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isNewbie() );			break;
 			case CIP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDispellable() );		break;
 			case CIP_MADEWITH:		*vp = INT_TO_JSVAL( gPriv->GetMadeWith() );				break;
@@ -1076,6 +1078,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
 			case CIP_RANK:			gPriv->SetRank( (SI08)encaps.toInt() );						break;
+			case CIP_CREATOR:		gPriv->SetCreator( (SERIAL)encaps.toInt() );				break;
 			case CIP_POISON:		gPriv->SetPoisoned( (UI08)encaps.toInt() );					break;
 			case CIP_DIR:			gPriv->SetDir( (SI16)encaps.toInt() );						break;
 			case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
@@ -1098,6 +1101,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					newTime = BuildTimeValue( newTime );
 				gPriv->SetTempTimer( newTime );
 				break;
+			case CIP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );						break;
 			case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
 			case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
 			case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;
@@ -1575,6 +1579,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ATWAR:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsAtWar() );			break;
 			case CCP_SPELLCAST:		*vp = INT_TO_JSVAL( gPriv->GetSpellCast() );		break;
 			case CCP_ISCASTING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
+			case CCP_PRIV:			*vp = INT_TO_JSVAL( gPriv->GetPriv() );				break;
 			case CCP_TOWNPRIV:		*vp = INT_TO_JSVAL( gPriv->GetTownPriv() );			break;
 			case CCP_GUILDTITLE:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetGuildTitle().c_str() );
@@ -1624,7 +1629,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
 			case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
 			case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
-			case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
+			case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsTempReflected() );			break;
+			case CCP_PERMMAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );		break;
 			case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
 			case CCP_TAMEDHUNGERRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerRate() );		break;
 			case CCP_TAMEDTHIRSTRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedThirstRate() );		break;
@@ -1675,6 +1681,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				*vp = INT_TO_JSVAL( loyaltyRate );
 				break;
 			}
+			case CCP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
 			case CCP_PARTYLOOTABLE:
 			{
 				Party *toGet = PartyFactory::getSingleton().Get( gPriv );
@@ -1983,6 +1990,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				gPriv->SetJSCasting( isCasting );
 			}
 				break;
+			case CCP_PRIV:			gPriv->SetPriv( (UI16)encaps.toInt() );				break;
 			case CCP_TOWNPRIV:		gPriv->SetTownpriv( (SI08)encaps.toInt() );			break;
 			case CCP_GUILDTITLE:	gPriv->SetGuildTitle( encaps.toString() );			break;
 			case CCP_FONTTYPE:		gPriv->SetFontType( (SI08)encaps.toInt() );			break;
@@ -2015,7 +2023,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );				break;
 			case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
 			case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
-			case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
+			case CCP_MAGICREFLECT:	gPriv->SetTempReflected( encaps.toBool() );			break;
+			case CCP_PERMMAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );		break;
 			case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
 			case CCP_TAMEDHUNGERRATE: gPriv->SetTamedHungerRate( (UI16)encaps.toInt() ); break;
 			case CCP_TAMEDTHIRSTRATE: gPriv->SetTamedThirstRate( (UI16)encaps.toInt() ); break;
@@ -2082,7 +2091,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ATTACKFIRST:	gPriv->SetAttackFirst( encaps.toBool() );		break;
 			case CCP_MAXLOYALTY:	gPriv->SetMaxLoyalty( (UI16)encaps.toInt() );	break;
 			case CCP_LOYALTY:		gPriv->SetLoyalty( (UI16)encaps.toInt() );		break;
-
+			case CCP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );			break;
 			case CCP_PARTYLOOTABLE:
 			{
 				Party *toGet = PartyFactory::getSingleton().Get( gPriv );

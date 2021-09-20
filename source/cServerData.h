@@ -177,7 +177,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 69 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 70 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -258,6 +258,7 @@ private:
 	R32			npcMountedRunningSpeed;			//	Speed at which (mounted) running NPCs move
 	R32			npcMountedFleeingSpeed;			//	Speed at which (mounted) fleeing NPCs move
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
+	R32			archeryShootDelay;				//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
 	R32			globalattackspeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
 	R32			npcspellcastspeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 
@@ -312,6 +313,7 @@ private:
 	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
 	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
+	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
 	UI08		combatweapondamagechance;		//  Chance of weapons being damaged when attacking in combat (0-100)
 	UI08		combatweapondamagemin;			//  Minimum amount of hitpoints a weapon can lose when being damaged in combat
 	UI08		combatweapondamagemax;			//  Maximum amount of hitpoints a weapon can lose when being damaged in combat
@@ -502,6 +504,9 @@ public:
 	bool		ClientSupport70610( void ) const { return Clients70610Enabled; }
 	void		ClientSupport70610( bool cliSuppValue ) { Clients70610Enabled = cliSuppValue; }
 
+	void		StatsAffectSkillChecks( bool setting );
+	bool		StatsAffectSkillChecks( void ) const;
+
 	// Enable/disable higher total for starting stats, and/or fourth starting skill in clients 7.0.16+
 	void		ExtendedStartingStats( bool setting );
 	bool		ExtendedStartingStats( void ) const;
@@ -689,6 +694,12 @@ public:
 
 	void		CombatAnimalsAttackChance( UI16 value );
 	UI16		CombatAnimalsAttackChance( void ) const;
+
+	void		CombatArcheryShootDelay( R32 value );
+	R32			CombatArcheryShootDelay( void ) const;
+
+	void		CombatArcheryHitBonus( SI08 value );
+	SI08		CombatArcheryHitBonus( void ) const;
 
 	void		CombatWeaponDamageChance( UI08 value );
 	UI08		CombatWeaponDamageChance( void ) const;

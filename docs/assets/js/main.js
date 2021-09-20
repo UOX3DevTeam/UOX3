@@ -119,7 +119,7 @@
 		{
 			hash = "commandList";
 		}
-		else if( hash = "usefirstgmcommands" )
+		else if( hash == "usefirstgmcommands" )
 		{
 			hash = "useFirstGMCommands";
 		}
@@ -143,14 +143,14 @@
     	// parentElement.getElementsByClassName('cd-faq__trigger')[0].click();
 
     // Open new section and clear away hash
-	var targetLink = document.getElementById(e.target.href.split('#')[1]);
-	if( targetLink != null )
-	{
-	    setTimeout(function(){
-	    	targetLink.click();
-	    	history.replaceState(null, null, ' ');
-	    }, 1);
-	}
+		var targetLink = document.getElementById(e.target.href.split('#')[1]);
+		if( targetLink != null )
+		{
+		    setTimeout(function(){
+		    	targetLink.click();
+		    	history.replaceState(null, null, ' ');
+		    }, 1);
+		}
   }
 
   if (document.addEventListener)

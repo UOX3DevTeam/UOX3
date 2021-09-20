@@ -2104,9 +2104,9 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o-----------------------------------------------------------------------------------------------o
 JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc == 0 || argc > 10 )
+	if( argc == 0 || argc > 11 )
 	{
-		MethodError( "SysMessage: Invalid number of arguments (takes at least 1, and at most 10)" );
+		MethodError( "SysMessage: Invalid number of arguments (takes at least 1, and at most 11)" );
 		return JS_FALSE;
 	}
 
@@ -2129,7 +2129,14 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	JSString *targMessage = JS_ValueToString( cx, argv[0] );
+	UI16 msgColor = 0;
+	UI08 argCounter = 0;
+	if( argc > 1 && JSVAL_IS_INT( argv[0] ) )
+	{
+		msgColor = static_cast<UI16>(JSVAL_TO_INT( argv[argCounter++] ));
+	}
+
+	JSString *targMessage = JS_ValueToString( cx, argv[argCounter++] );
 	char *trgMessage = JS_GetStringBytes( targMessage );
 
 	if( trgMessage == nullptr )
@@ -2139,7 +2146,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	std::string msgArg;
-	for( UI32 i = 1; i < argc; i++ )
+	for( UI32 i = argCounter; i < argc; i++ )
 	{
 		if( msgArg.empty() )
 			msgArg += JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
@@ -2147,7 +2154,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			msgArg += std::string(",") + JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
 	}
 
-	mySock->sysmessageJS( trgMessage, msgArg );
+	mySock->sysmessageJS( trgMessage, msgColor, msgArg );
 	return JS_TRUE;
 }
 
@@ -2703,14 +2710,14 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 {
 	if( argc != 1 )
 	{
-		MethodError( "Invalid Count of Parameters: %d, need: 1", argc );
+		MethodError( "GetTag: Invalid Count of Parameters: %d, need: 1", argc );
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ) )
 	{
-		MethodError( "Invalid Object assigned (GetTag)" );
+		MethodError( "GetTag: Invalid Object assigned" );
 		return JS_FALSE;
 	}
 
@@ -2747,7 +2754,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	if( !ValidateObject( myObj ) )
 	{
-		MethodError( "Invalid Object assigned (SetTag)" );
+		MethodError( "SetTag: Invalid Object assigned (SetTag)" );
 		return JS_FALSE;
 	}
 
@@ -2824,6 +2831,142 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		localObject.m_IntValue		= 0;
 		localObject.m_StringValue	= "";
 		myObj->SetTag( localString, localObject );
+	}
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	tagdata GetTempTag( "TagName" )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns value for temporary tag with specified name, if tag has been stored on the object
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "GetTempTag: Invalid Count of Parameters: %d, need: 1", argc );
+	}
+
+	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "GetTempTag: Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	std::string localString		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	TAGMAPOBJECT localObject	= myObj->GetTempTag( localString );
+	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
+	{
+		JSString *localJSString = JS_NewStringCopyN( cx, (const char*)localObject.m_StringValue.c_str(),localObject.m_StringValue.length() );
+		*rval = (jsval)STRING_TO_JSVAL(localJSString);
+	}
+	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
+		*rval = (jsval)BOOLEAN_TO_JSVAL((localObject.m_IntValue == 1));
+	else
+		*rval = (jsval)INT_TO_JSVAL(localObject.m_IntValue);
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void SetTempTag( "TagName", "TagStringValue" )
+//|					void SetTempTag( "TagName", TagIntValue )
+//|					void SetTempTag( "TagName", TagBoolValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Stores temporary tag with specified name and value on object, does not persist
+//|					across server restart (or character reconnect)
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if(( argc != 2 ) && ( argc != 1 ))
+	{
+		MethodError( "SetTempTag: Invalid Count of Parameters: %d, need: 2", argc );
+	}
+
+	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate( cx, obj ));
+
+	if( !ValidateObject( myObj ) )
+	{
+		MethodError( "SetTempTag: Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	TAGMAPOBJECT localObject;
+	if( argc == 2 )
+	{
+		JSEncapsulate encaps( cx, &(argv[1]) );
+		if( encaps.isType( JSOT_STRING ) )
+		{			// String value handling
+			const std::string stringVal = encaps.toString();
+			if( stringVal == "" )
+			{
+				localObject.m_Destroy		= TRUE;
+				localObject.m_IntValue		= 0;
+				localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+				localObject.m_StringValue	= "";
+			}
+			else
+			{
+				localObject.m_Destroy		= FALSE;
+				localObject.m_StringValue	= stringVal;
+				localObject.m_IntValue		= static_cast<SI32>(localObject.m_StringValue.length());
+				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
+			}
+		}
+		else if( encaps.isType( JSOT_BOOL ) )
+		{
+			const bool boolVal = encaps.toBool();
+			if( !boolVal )
+			{
+				localObject.m_Destroy		= TRUE;
+				localObject.m_IntValue		= 0;
+			}
+			else
+			{
+				localObject.m_Destroy		= FALSE;
+				localObject.m_IntValue		= 1;
+			}
+			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
+			localObject.m_StringValue	= "";
+		}
+		else if( encaps.isType( JSOT_INT ) )
+		{
+			const SI32 intVal = encaps.toInt();
+			if( !intVal )
+			{
+				localObject.m_Destroy		= TRUE;
+				localObject.m_IntValue		= 0;
+			}
+			else
+			{
+				localObject.m_Destroy		= FALSE;
+				localObject.m_IntValue		= intVal;
+			}
+			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+			localObject.m_StringValue	= "";
+		}
+		else if( encaps.isType( JSOT_NULL ) )
+		{
+			localObject.m_Destroy		= TRUE;
+			localObject.m_IntValue		= 0;
+			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+			localObject.m_StringValue	= "";
+		}
+		else
+			return JS_TRUE;
+		myObj->SetTempTag( localString, localObject );
+	}
+	else
+	{
+		localObject.m_Destroy		= TRUE;
+		localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+		localObject.m_IntValue		= 0;
+		localObject.m_StringValue	= "";
+		myObj->SetTempTag( localString, localObject );
 	}
 	return JS_TRUE;
 }
@@ -3261,7 +3404,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
-	if( argc == 2 )
+	if( argc >= 2 )
 	{
 		toSay = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 		if( toSay.size() > maxsize )
@@ -6714,7 +6857,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			// 0 == script returned false, 0, or nothing - don't execute hard code
 			// 1 == script returned true or 1
 			if( retStatus == 0 )
-				return JS_FALSE;
+				return JS_TRUE;
 		}
 	}
 
@@ -8298,17 +8441,18 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void Damage( amount )
-//|					void Damage( amount, attacker )
-//|					void Damage( amount, attacker, doRepsys )
+//|					void Damage( amount, damageType )
+//|					void Damage( amount, damageType, attacker )
+//|					void Damage( amount, damageType, attacker, doRepsys )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Deals damage to a character, with optional parameters to include attacker and
+//|	Purpose		-	Deals damage of a specified damageType to a character, with optional parameters to include attacker and
 //|					whether or not attacker should be flagged as a criminal
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 && argc != 2 && argc != 3)
+	if( argc < 1 || argc > 4 )
 	{
-		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount and attacker) or 3 (amount, attacker and doRepsys)", argc );
+		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount, damageType), 3 (amount, damageType and attacker) or 4 (amount, damageType, attacker and doRepsys)", argc );
 		return JS_TRUE;
 	}
 
@@ -8321,9 +8465,13 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	JSEncapsulate damage( cx, &(argv[0]) );
 
+	WeatherType element = PHYSICAL;
 	if( argc >= 2 )
+		element = static_cast<WeatherType>(JSVAL_TO_INT( argv[1] ));
+
+	if( argc >= 3 )
 	{
-		JSEncapsulate attackerClass( cx, &(argv[1]) );
+		JSEncapsulate attackerClass( cx, &(argv[2]) );
 		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
 		{
 			MethodError( "CChar_Damage: Passed an invalid Character" );
@@ -8343,11 +8491,11 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		}
 	}
 	bool doRepsys = false;
-	if( argc >= 3 )
+	if( argc >= 4 )
 	{
-		doRepsys = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+		doRepsys = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 	}
-	mChar->Damage( damage.toInt(), attacker, doRepsys );
+	mChar->Damage( damage.toInt(), element, attacker, doRepsys );
 	return JS_TRUE;
 }
 
@@ -8380,6 +8528,31 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget ));
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	bool InvalidateAttacker()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resets the attacker attack so that it cancels attack setup.
+//o-----------------------------------------------------------------------------------------------o
+JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(InvalidateAttacker) Invalid Number of Arguments %d, takes: 0)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ) );
+	if( !ValidateObject( mChar ) )
+	{
+		MethodError( "(InvalidateAttacker): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	Combat->InvalidateAttacker( mChar );
 	return JS_TRUE;
 }
 

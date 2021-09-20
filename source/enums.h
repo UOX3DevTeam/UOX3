@@ -11,6 +11,7 @@ enum DistinctLanguage
 	DL_PORTUGUESE,
 	DL_ITALIAN,
 	DL_CZECH,
+	DL_POLISH,
 	DL_RUSSIAN,
     DL_JAPANESE,
     DL_COUNT

@@ -1,0 +1,41 @@
+[0x45a4]
+{
+get=base_item
+name=gargish cloth wing armor
+id=0x45a4
+layer=0x14
+decay=1
+weight=200
+}
+
+[0x4002]
+{
+get=base_item
+name=gargish fancy robe
+id=0x4002
+layer=0x14
+decay=1
+weight=300
+}
+
+[0x4003]
+{
+get=0x4002
+id=0x4003
+}
+
+[0x4000]
+{
+get=base_item
+name=gargish robe
+id=0x4000
+layer=0x14
+decay=1
+weight=300
+}
+
+[0x4001]
+{
+get=0x4000
+id=0x4001
+}

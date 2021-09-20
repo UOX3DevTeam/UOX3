@@ -39,11 +39,14 @@ private:
 	GenericList< CItem * >	itemData;
 	GenericList< CChar * >	charData;
 	RegionSerialList< SERIAL > regionSerialData;
+	bool hasRegionChanged = false;
 
 public:
 	GenericList< CItem * > *	GetItemList( void );
 	GenericList< CChar * > *	GetCharList( void );
 	RegionSerialList< SERIAL > *	GetRegionSerialList( void );
+	bool						HasRegionChanged( void );
+	void						HasRegionChanged( bool newVal );
 
 	CMapRegion()
 	{
@@ -87,7 +90,7 @@ private:
 	WORLDLIST		mapWorlds;
 	CMapRegion		overFlow;
 
-	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize );
+	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
 public:
 	CMapHandler();
 	~CMapHandler();

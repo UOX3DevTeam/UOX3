@@ -34,6 +34,28 @@ packitem=0x0f8c,30
 packitem=0x0f8d,30
 }
 
+[smallbagofreagents]
+{
+get=base_item
+name=bag
+id=0x0e76
+weight=100
+weightmax=40000
+value=7 3
+type=1
+restock=10
+decay=1
+good=5
+packitem=0x0f7a,6
+packitem=0x0f7b,6
+packitem=0x0f84,6
+packitem=0x0f85,6
+packitem=0x0f86,6
+packitem=0x0f88,6
+packitem=0x0f8c,6
+packitem=0x0f8d,6
+}
+
 [0x0f7a]
 {
 get=base_reagent

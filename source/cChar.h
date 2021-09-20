@@ -39,10 +39,11 @@ enum cC_TID
 
 struct DamageTrackEntry
 {
-	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageDone( INVALIDSERIAL ) { }
-	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageDone( lstDmgDn ) { }
+	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageType( PHYSICAL ), lastDamageDone( INVALIDSERIAL ) { }
+	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageType( dmgType ), lastDamageDone( lstDmgDn ) { }
 	SERIAL		damager;			// who did the damage?
 	SI32		damageDone;			// how much damage has been accumulated?
+	WeatherType lastDamageType;			// what type of damage was dealt most recently?
 	TIMERVAL	lastDamageDone;		// when was the last time that damage was done?
 };
 
@@ -213,6 +214,7 @@ protected:
 	SI08		cell; // Reserved for jailing players
 	UI08		running; // Stamina Loose while running
 	UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
+	UI32		lastMoveTime; // Timestamp for when character moved last
 
 	CItem *		packitem; // Characters backpack
 	SERIAL		targ; // Current combat target
@@ -272,6 +274,7 @@ public:
 	bool		GetUpdate( UpdateTypes updateType ) const;
 	void		ClearUpdate( void );
 	virtual void	Dirty( UpdateTypes updateType ) override;
+	void		UpdateRegion( void );
 
 	void		UpdateDamageTrack( void );
 
@@ -461,6 +464,7 @@ public:
 	bool		ViewHouseAsIcon( void ) const;
 	bool		NoNeedMana( void ) const;
 	bool		IsDispellable( void ) const;
+	bool		IsTempReflected( void ) const;
 	bool		IsPermReflected( void ) const;
 	bool		NoNeedReags( void ) const;
 
@@ -477,6 +481,7 @@ public:
 	void		SetViewHouseAsIcon( bool newValue );
 	void		SetNoNeedMana( bool newValue );
 	void		SetDispellable( bool newValue );
+	void		SetTempReflected( bool newValue );
 	void		SetPermReflected( bool newValue );
 	void		SetNoNeedReags( bool newValue );
 
@@ -514,8 +519,8 @@ public:
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = nullptr ) override;
-	virtual void	SendToSocket( CSocket *s ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false ) override;
+	virtual void	SendToSocket( CSocket *s, bool drawGamePlayer = false ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );
 	bool			WearItem( CItem *toWear );
@@ -604,7 +609,7 @@ public:
 
 	FlagColors		FlagColour( CChar *toCompare );
 	void			Heal( SI16 healValue, CChar *healer = nullptr );
-	void			Damage( SI16 damageValue, CChar *attacker = nullptr, bool doRepsys = false );
+	void			Damage( SI16 damageValue, WeatherType damageType, CChar *attacker = nullptr, bool doRepsys = false );
 	SI16			GetKarma( void ) const;
 	void			ReactOnDamage( WeatherType damageType, CChar *attacker = nullptr );
 	void			Die( CChar *attacker, bool doRepsys );
@@ -761,6 +766,9 @@ public:
 	std::string GetLastOn( void ) const;
 	void		SetLastOnSecs( UI32 newValue );
 	UI32		GetLastOnSecs( void ) const;
+
+	UI32		LastMoveTime( void ) const;
+	void		LastMoveTime( UI32 newValue );
 
 
 	CChar *		GetTrackingTarget( void ) const;

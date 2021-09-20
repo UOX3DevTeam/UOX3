@@ -329,7 +329,7 @@ public:
 	void			Language( UnicodeTypes newVal );
 
 	void			sysmessage( const std::string txt, ... );
-	void			sysmessageJS( const std::string& uformat,const std::string& data );
+	void			sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data );
 	void			sysmessage( SI32 dictEntry, ... );
 	void			objMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
 	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI32 Color = 0x03B2, ... );
@@ -340,7 +340,7 @@ public:
 	void			target( UI08 targType, UI08 targID, UI08 cursorType, SI32 dictEntry, ... );
 	void			mtarget( UI16 itemID, SI32 dictEntry );
 
-	void			statwindow( CBaseObject *i );
+	void			statwindow( CBaseObject *i, bool updateParty = true );
 	void			updateskill( UI08 skillnum );
 	void			openPack( CItem *i, bool isPlayerVendor = false );
 	void			openBank( CChar *i );

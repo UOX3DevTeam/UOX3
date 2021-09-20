@@ -185,6 +185,10 @@ function CheckTameSuccess( pUser, toTame )
 			}
 		}
 
+		// Apply modifications to certain pets the first time they're tamed
+		if( toTame.ownerCount == 1 )
+			ApplyPostTameModifications( toTame );
+
 		toTame.Follow( pUser );
 		pUser.controlSlotsUsed = pUser.controlSlotsUsed + toTame.controlSlots;
 		if( toTame.atWar )
@@ -198,6 +202,25 @@ function CheckTameSuccess( pUser, toTame )
 			pUser.atWar	= false;
 		}
 		return true;
+	}
+}
+
+function ApplyPostTameModifications( toTame )
+{
+	switch( toTame.id )
+	{
+		case 0x00f3: // Hiryu
+		case 0x0115: // Cu Sidhe
+			// Halve stats after taming
+			toTame.strength /= 2;
+			toTame.dexterity /= 2;
+			toTame.intelligence /= 2;
+			toTame.health = Math.min( toTame.maxHealth, toTame.strength );
+			toTame.stamina = Math.min( toTame.maxStamina, toTame.dexterity );
+			toTame.mana = Math.min( toTame.maxMana, toTame.intelligence );
+			break;
+		default:
+			break;
 	}
 }
 
@@ -279,6 +302,11 @@ function RunTameChecks( pUser )
 		pSock.SysMessage( GetDictionaryEntry( 2395, pSock.language )); // You do not have a clear path to the animal you are taming, and must cease your attempt.
 		return false;
 	}
+	else if( CheckTamingRestrictions( toTame, pUser ))
+	{
+		// Unable to tame because of taming restrictions
+		return false;
+	}
 	else if( !toTame.skillToTame )
 	{
 		pUser.TextMessage( GetDictionaryEntry( 1593, pSock.language ), false, 0x3b2 ); // You can't tame that creature.
@@ -298,9 +326,56 @@ function RunTameChecks( pUser )
 			return false;
 		}
 	}
-	/*else if( toTame.needsSubduing ) // Creature needs to be subdued before it can be tamed
+	else if( toTame.ownerCount == 0 && NeedsSubduing( toTame )) // Creature needs to be subdued before it can be tamed
 	{
-
-	}*/
+		toTame.TextMessage( GetDictionaryEntry( 2432, pSock.language ), false, 0x3b2, 0, pUser.serial ); // You must subdue this creature before you can tame it!
+		return false;
+	}
 	return true;
+}
+
+function NeedsSubduing( toTame )
+{
+	switch( toTame.id )
+	{
+		case 0x0317: // Giant Beetle
+		case 0x00a9: // Fire Beetle
+		{
+			if( toTame.health > ( toTame.maxHealth / 10 )) // If health is higher than 10% of max
+				return true;
+			break;
+		}
+		default:
+			return false;
+	}
+}
+
+function CheckTamingRestrictions( toTame, pUser )
+{
+	switch( toTame.id )
+	{
+		case 0x007a: // Unicorn
+			if( pUser.gender != 1 && pUser.gender != 3 && pUser.gender != 5 ) // Only females can tame Unicorns
+			{
+				pUser.socket.SysMessage( GetDictionaryEntry( 2433, pUser.socket.language )); // That creature can only be tamed by females.
+				return true;
+			}
+			break;
+		case 0x0084: // Ki-rin
+			if( pUser.gender != 0 && pUser.gender != 2 && pUser.gender != 4 ) // Only males can tame Ki-rins
+			{
+				pUser.socket.SysMessage( GetDictionaryEntry( 2434, pUser.socket.language )); // That creature can only be tamed by males.
+				return true;
+			}
+			break;
+		case 0x0115: // Cu Sidhe
+			if( pUser.gender != 2 && pUser.gender != 3 ) // Only Elves can tame Cu Sidhes
+			{
+				pUser.socket.SysMessage( GetDictionaryEntry( 2435, pUser.socket.language )); // Only Elves may use this.
+				return true;
+			}
+			break;
+		default:
+			return false;
+	}
 }

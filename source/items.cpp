@@ -471,7 +471,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
 					applyTo->SetTag( customTagName, customTag );
-					if( count > 1 )
+					if( count > 2 )
 					{
 						Console.warning( strutil::format( "Multiple values detected for CUSTOMINTTAG in Item script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionID.c_str() ) );
 					}
@@ -544,7 +544,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 //|					automatically look for an entry in harditems.dfn and set its location (be it in
 //|					a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack, bool shouldSave )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -568,7 +568,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 		}
 	}
 
-	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID() );
+	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID(), shouldSave );
 	if( iCreated == nullptr )
 		return nullptr;
 
@@ -615,7 +615,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 //|	Purpose		-	Creates a script item, gives it an amount, and sets
 //|					its location (be it in a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack, const UI16 iColor )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack, const UI16 iColor, bool shouldSave )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -639,7 +639,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 		}
 	}
 
-	CItem *iCreated = CreateBaseScriptItem( nullptr, item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType, 0xFFFF );
+	CItem *iCreated = CreateBaseScriptItem( nullptr, item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType, 0xFFFF, shouldSave );
 	if( iCreated == nullptr )
 		return nullptr;
 
@@ -706,7 +706,7 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file
 //o-----------------------------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNum, const UI16 instanceID, bool useLootlist )
+CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNum, const UI16 instanceID, bool shouldSave, bool useLootlist )
 {
 	CItem * iCreated	= nullptr;
 	std::string sect	= "";
@@ -846,19 +846,19 @@ CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, cons
 				if( strutil::upper( k ) == "ITEMLIST" || strutil::upper( k ) == "LOOTLIST" )
 				{
 					// The chosen entry contained another ITEMLIST or LOOTLIST reference! Let's dive back into it...
-					iCreated = CreateRandomItem( mCont, ItemList->GrabData(), worldNum, instanceID );
+					iCreated = CreateRandomItem( mCont, ItemList->GrabData(), worldNum, instanceID, shouldSave );
 				}
 				else
 				{
 					// Finally, we have an item! Spawn it!
-					iCreated = CreateBaseScriptItem( nullptr, k, worldNum, amountToSpawn, instanceID, OT_ITEM, 0xFFFF );
+					iCreated = CreateBaseScriptItem( nullptr, k, worldNum, amountToSpawn, instanceID, OT_ITEM, 0xFFFF, shouldSave );
 
 					// However, we have a valid container, and the amount is larger than 1, and the item is not stackable, let's spawn some more items!
 					if( ValidateObject( mCont ) && amountToSpawn > 1 && !iCreated->isPileable() )
 					{
 						for( int i = 1; i < amountToSpawn; i++ )
 						{
-							CItem *iCreated2 = CreateBaseScriptItem( mCont, k, worldNum, 1, instanceID, OT_ITEM, 0xFFFF );
+							CItem *iCreated2 = CreateBaseScriptItem( mCont, k, worldNum, 1, instanceID, OT_ITEM, 0xFFFF, shouldSave );
 							if( ValidateObject( iCreated2 ))
 							{
 								// Place item in container and randomize location
@@ -903,7 +903,7 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, const UI16 instanceID )
+CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, const UI16 instanceID, bool shouldSave )
 {
 	if( itemType != OT_ITEM && itemType != OT_SPAWNER )
 		return nullptr;
@@ -912,6 +912,7 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, c
 	if( iCreated == nullptr )
 		return nullptr;
 
+	iCreated->ShouldSave( shouldSave );
 	iCreated->SetWipeable( true );
 	iCreated->WorldNumber( worldNum );
 	iCreated->SetInstanceID( instanceID );
@@ -925,7 +926,7 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, c
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item from the scripts
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType, const UI16 iColor )
+CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType, const UI16 iColor, bool shouldSave )
 {
 	ourItem						= strutil::trim( strutil::removeTrailing( ourItem, "//" ));
 
@@ -941,10 +942,10 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 
 	CItem *iCreated = nullptr;
 	if( itemCreate->ItemListExist() )
-		iCreated = CreateRandomItem( mCont, itemCreate->ItemListData(), worldNum, instanceID );
+		iCreated = CreateRandomItem( mCont, itemCreate->ItemListData(), worldNum, instanceID, shouldSave );
 	else
 	{
-		iCreated = CreateBaseItem( worldNum, itemType, instanceID );
+		iCreated = CreateBaseItem( worldNum, itemType, instanceID, shouldSave );
 		if( iCreated == nullptr )
 			return nullptr;
 
@@ -1373,7 +1374,7 @@ void cItem::AddRespawnItem( CItem *mCont, const std::string& iString, const bool
 	if( randomItem )
 	{
 		// LOOT tag was used
-		iCreated = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), useLootlist );
+		iCreated = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), true, useLootlist );
 	}
 	else
 	{
@@ -1394,7 +1395,7 @@ void cItem::AddRespawnItem( CItem *mCont, const std::string& iString, const bool
 			if( randomItem )
 			{
 				// If amount was specified for a LOOT tag, spawn a random item each time
-				iCreated2 = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), useLootlist );
+				iCreated2 = CreateRandomItem( mCont, iString, mCont->WorldNumber(), mCont->GetInstanceID(), true, useLootlist );
 			}
 			else
 			{

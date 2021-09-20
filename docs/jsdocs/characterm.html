@@ -286,10 +286,12 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SysMessage">SysMessage</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void SysMessage( string message, ... );</pre>
-<tr><td class="property">Purpose		<td class="value">Sends a string as a sysmessage. Accepts up to 10 additional arguments which can be injected into the string as needed.
+<tr><td class="property">Prototype		<td class="value"><pre>void SysMessage( string message, ... );
+void SysMessage( msgColor, string message, ... );</pre>
+<tr><td class="property">Purpose		<td class="value">Sends a string as a sysmessage. Accepts up to 10 additional arguments which can be injected into the string as needed. Text color can also be provided prior to the string itself
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.SysMessage( "Isn't the world great?" );
 myChar.SysMessage( GetDictionaryEntry(388), myNPC.name ); // Hello sir! My name is %s and I will be working for you.
+myChar.SysMessage( 0x42, "This message has a different color!" );
 </pre></table>
 
 <p>&nbsp;</p>

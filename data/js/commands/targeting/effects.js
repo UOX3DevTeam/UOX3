@@ -10,7 +10,11 @@ function command_ACTION( socket, cmdString )
 	if( cmdString )
 	{
 		var splitString = cmdString.split( " " );
-		if( splitString[1] )
+		if( splitString[3] )
+			socket.currentChar.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]), ( parseInt(splitString[3]) == 1 ? true : false ));
+		else if( splitString[2] )
+			socket.currentChar.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]) );
+		else if( splitString[1] )
 			socket.currentChar.DoAction( parseInt(splitString[0]), parseInt(splitString[1]) );
 		else
 			socket.currentChar.DoAction( parseInt( cmdString ));
@@ -48,7 +52,11 @@ function onCallback0( socket, ourObj )
 	{
 		var cmdString = socket.xtext;
 		var splitString = cmdString.split( " " );
-		if( splitString[1] )
+		if( splitString[3] )
+			ourObj.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]), ( parseInt(splitString[3]) == 1 ? true : false ));
+		else if( splitString[2] )
+			ourObj.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]) );
+		else if( splitString[1] )
 			ourObj.DoAction( parseInt(splitString[0]), parseInt(splitString[1]) );
 		else
 			ourObj.DoAction( parseInt( cmdString ));

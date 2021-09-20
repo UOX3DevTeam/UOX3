@@ -1857,7 +1857,7 @@ void VialTarget( CSocket *mSock )
 				mSock->sysmessage( 747 ); // That individual is not anywhere near you.
 				return;
 			}
-			targChar->Damage( RandomNum( 0, 5 ) + 2 );
+			targChar->Damage( RandomNum( 0, 5 ) + 2, PHYSICAL );
 			Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
 		}
 	}
@@ -1944,7 +1944,6 @@ bool CPITargetCursor::Handle( void )
 						// Magic
 					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;
 						// Skills Functions
-					case TARGET_ITEMID:			Skills->ItemIDTarget( tSock );			break;
 					case TARGET_SMITH:			Skills->Smith( tSock );					break;
 					case TARGET_MINE:			Skills->Mine( tSock );					break;
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;

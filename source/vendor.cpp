@@ -216,7 +216,8 @@ bool CPIBuyItem::Handle( void )
 				}
 				else
 				{
-					switch( layer[i] )
+					CItem * biTempCont = static_cast<CItem *>(biTemp->GetCont());
+					switch( biTempCont->GetLayer() )
 					{
 						case 0x1A: // Sell Container
 							if( biTemp->isPileable() )

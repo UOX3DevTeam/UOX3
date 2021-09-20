@@ -97,6 +97,10 @@ function onCallback0( socket, ourObj )
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, GetDictionaryEntry( 8104, socket.language )); // Choose character to own this object
 		break;
+	case "PERMANENTMAGICREFLECT":
+		ourObj.permanentMagicReflect = (nVal == 1);
+		okMsg( socket );
+		break;
 	case "POISON":
 		ourObj.poison = nVal;
 		okMsg( socket );
@@ -171,6 +175,10 @@ function onCallback0( socket, ourObj )
 			okMsg( socket );
 		}
 		break;
+	case "SHOULDSAVE":
+		ourObj.shouldSave = (nVal == 1);
+		okMsg( socket );
+		break;
 	default:
 		if( ourObj.isChar )
 			HandleSetChar( socket, ourObj, uKey, splitString );
@@ -199,6 +207,11 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 	case "MOVEABLE":
 	case "MOVABLE":
 		ourItem.movable = nVal;
+		ourItem.Refresh(); // Refresh so movable state updates for nearby clients!
+		okMsg( socket );
+		break;
+	case "BASERANGE":
+		ourItem.baseRange = nVal;
 		okMsg( socket );
 		break;
 	case "BUYVALUE":
@@ -215,6 +228,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "MAXITEMS":
 		ourItem.maxItems = nVal;
+		okMsg( socket );
+		break;
+	case "MAXRANGE":
+		ourItem.maxRange = nVal;
 		okMsg( socket );
 		break;
 	case "MORE":

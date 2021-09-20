@@ -85,6 +85,12 @@ void	doLight( CSocket *s, UI08 level );
 void	doLight( CChar *mChar, UI08 level );
 
 //o-----------------------------------------------------------------------------------------------o
+// Poison related functions
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL getPoisonDuration( UI08 poisonStrength );
+TIMERVAL getPoisonTickTime( UI08 poisonStrength );
+
+//o-----------------------------------------------------------------------------------------------o
 // Amount related
 //o-----------------------------------------------------------------------------------------------o
 UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000 );

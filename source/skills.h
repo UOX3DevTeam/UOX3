@@ -145,7 +145,6 @@ public:
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
 	TargetFunc GraveDig;
-	TargetFunc ItemIDTarget;
 	TargetFunc Mine;
 	TargetFunc Persecute;
 	TargetFunc RepairMetal;

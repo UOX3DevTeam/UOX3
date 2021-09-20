@@ -4721,7 +4721,7 @@ bool CPIClosedStatusGump::Handle( void )
 	{
 		SERIAL statusGumpCharSerial = tSock->GetDWord( 5 );
 		CChar *statusGumpChar = calcCharObjFromSer( statusGumpCharSerial );
-		if( ValidateObject( statusGumpChar ) )
+		if( ValidateObject( statusGumpChar ))
 		{
 			tSock->statwindow( statusGumpChar );
 			return true;

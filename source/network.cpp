@@ -670,12 +670,12 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 									&& !cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 								{
 									// If human or elf, and new animation packet is disabled
-									Effects->PlayCharacterAnimation( ourChar, ACT_EMOTE_BOW ); // 0x20
+									Effects->PlayCharacterAnimation( ourChar, ACT_EMOTE_BOW, 0, 5 ); // 0x20
 								}
 								else
 								{
 									// If polymorphed to other creatures
-									Effects->PlayCharacterAnimation( ourChar, 0x12 ); // Monster fidget 1
+									Effects->PlayCharacterAnimation( ourChar, 0x12, 0, 5 ); // Monster fidget 1
 								}
 							}
 							if( !strcmp( (char *)&buffer[4], "salute" ) )
@@ -691,12 +691,12 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 									&& !cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 								{
 									// If human or elf, and new animation packet is disabled
-									Effects->PlayCharacterAnimation( ourChar, ACT_EMOTE_SALUTE ); // 0x21
+									Effects->PlayCharacterAnimation( ourChar, ACT_EMOTE_SALUTE, 0, 5 ); // 0x21
 								}
 								else
 								{
 									// If polymorphed to other creatures
-									Effects->PlayCharacterAnimation( ourChar, 0x11 ); // Monster fidget 2
+									Effects->PlayCharacterAnimation( ourChar, 0x11, 0, 5 ); // Monster fidget 2
 								}
 							}
 							break;

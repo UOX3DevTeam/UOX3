@@ -263,10 +263,11 @@ public:
 	bool			CanBeLockedDown( void ) const;
 	void			LockDown( void );
 	bool			IsContType( void ) const;
+	void			UpdateRegion( void );
 
 	void			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A );
-	virtual void	Update( CSocket *mSock = nullptr ) override;
-	virtual void	SendToSocket( CSocket *mSock ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false ) override;
+	virtual void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) override;
 	void			SendPackItemToSocket( CSocket *mSock );
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
 

@@ -667,6 +667,36 @@ bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string OnTooltip( CBaseObject *myObj )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for objects which server is about to send tooltip to client for
+//o-----------------------------------------------------------------------------------------------o
+std::string cScript::OnTooltip( CBaseObject *myObj )
+{
+	if( !ValidateObject( myObj ))
+		return "";
+	if( !ExistAndVerify( seOnTooltip, "onTooltip" ) )
+		return "";
+
+	jsval rval, params[1];
+	JSObject *tooltipObj = nullptr;
+	if( myObj->CanBeObjType( OT_CHAR ))
+		tooltipObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+	else if( myObj->CanBeObjType( OT_ITEM ))
+		tooltipObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( tooltipObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTooltip", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnTooltip, false );
+
+	JSString *str = JS_ValueToString( targContext, rval );
+	std::string returnString = JS_GetStringBytes( str );
+
+	return returnString;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool OnAttack( CChar *attacker, CChar *defender )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when attacking someone
@@ -3122,14 +3152,14 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached takes damage
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
+bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType )
 {
 	if( !ValidateObject( damaged ) )
 		return false;
 	if( !ExistAndVerify( seOnDamage, "onDamage" ) )
 		return false;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
 	params[0] = OBJECT_TO_JSVAL( damagedObj );
 
@@ -3142,8 +3172,9 @@ bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
 		params[1] = JSVAL_NULL;
 
 	params[2] = INT_TO_JSVAL( damageValue );
+	params[3] = INT_TO_JSVAL( damageType );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamage", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamage", 4, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnDamage, false );
 

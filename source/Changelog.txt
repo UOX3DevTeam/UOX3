@@ -1,3 +1,156 @@
+20/09/2021 - Xuri (0.99.4x)
+	Fixed an issue where the color of NPC corpse names would not always match up with the NPC's flag color
+	Fixed a bug where the baseRange and maxRange properties of ranged weapons would not get saved to world files. These values are now saved in the format of RANGE=baseRange,maxRange
+	Changed the way items are added to containers, to ensure that the order in which the items are displayed to the player always reflects the order in which they were added; now the most recent item added/moved in a container will always be rendered on top of older items.
+	Made adjustments to how items are randomly added to containers; should use more of a given container gump's available area now
+	Exposed Item property to JS engine, which contains serial of the creator of an item:
+		.creator 	// contains serial of the creator of an item. If set, maker's marks will show up in the item's tooltip
+	Fixed an issue where JS engine would lose track of script context if one script used CreateDFNItem() or SpawnNPC() functions and the new objects had events that triggered upon creation. UOX3 now restores the original script context at the tail end of these functions.
+	Added new JS Event to allow inserting custom tooltip text for objects, which will be displayed in tooltips right after the object name. Any text returned from the event will be displayed, and the text can make use of the same HTML tags as gumps to make changes to color, font, etc.
+		onTooltip( myObj ) 		// Triggers for objects right before the object's tooltip properties are sent to client
+	Updated 'tweak and 'set commands to refresh item being modified if movable state of item changes, so the change is reflected in nearby clients
+	Fixed an issue with NPC vendors and items bought from players not being properly removed from the vendor's "bought container" when players buy them again
+	Ported Item Identification skill from code to JS (js/skill/itemid.js) and removed hard-coded version
+	Implemented magic item generator in JS (js/item/magic_item.js). When this script is attached to an NPC, it has a chance to generate magic weapons, armors, wands/staffs and rings as loot on the NPC's corpse when slain. The chance of getting quality magical items increases with the fame level of the NPC in question. The types of magical items generated follows the pattern of such items as implemented in UO prior to the AoS expansion.
+		Examples:
+			exceedingly accurate war hammer of vanquishing
+			substantial, accurate axe of power and Daemon's Breath
+			silver long sword
+			massive platemail arms of Protection
+			metal shield of defense
+			durable ringmail tunic of guarding
+		All magic items have a chance to have spell effects attached (with rings/wands being guaranteed to have these), with a limited amount of charges available. For weapons, these effects activate on successful hits in combat, while for armors they activate on equip, and then periodically as long as the item is worn. Rings and wands/staffs have to be manually activated and targeted - with the exception of rings of invisibility, which activate the moment you equip them!
+		Related scripts:
+			js/item/magic_armor_equipeffects.js
+			js/item/magic_weapon_accbonus.js
+			js/item/magic_weapon_equip.js
+			js/item/magic_weapon_spell_attack.js
+		The magic item loot generation script has been attached to a number of different NPCs, all of which now have a chance to drop magic items as loot when defeated.
+	A bonus magical item - the glacial staff - has also been implemented (js/item/magic_glacial_staff.js), and has a chance to drop as loot from Giant Ice Serpents!
+	Fixed an issue with CustomTarget where the target message would not be displayed if the cursorType parameter was provided
+	Fixed bug with 'rename command, which referenced a non-existing variable that caused a script crash
+	Added additional object properties to 'get and 'set commands:
+		.shouldSave 		// Determines if an item should be saved in worldfiles or not
+		.baseRange 			// Determines the base range of a ranged weapon, less than which it becomes less effective
+		.maxRange 			// Determines the max range of a ranged weapon, beyond which it cannot reach its target
+	The feature that allows stats like Strength, Dexterity and Intelligence to provide bonuses to skill checks has been turned into a UOX.INI setting, which is disabled by default. The bonuses have also been nerfed; they will no longer contribute more to the success of a skill check than the actual skill being checked!
+		STATSAFFECTSKILLCHECKS=0/1 	// If enabled, stats can provide bonuses to skill checks based on the weighting for those stats as setup in dfndata/skills/skills.dfn
+	Updated damage tracking code to include the type of damage that was dealt (PHYSICAl vs HEAT vs COLD, etc)
+	Updated Character JS Method Damage() to include a new parameter that can specify the type of damage that was dealt to the character. The new parameter must always be included if other optional parameters are used. Note that updates might be required for scripts making use of this method.Updated syntax:
+		.Damage( amount )
+		.Damage( amount, damageType )
+		.Damage( amount, damageType, attacker )
+		.Damage( amount, damageType, attacker, doRepsys )
+		Supported damageTypes:
+			PHYSICAL 	= 1
+			LIGHT 		= 2
+			RAIN 		= 3
+			COLD 		= 4
+			HEAT 		= 5
+			LIGHTNING 	= 6 // magic damage
+			POISON 		= 7
+			SNOW 		= 8
+	Updated JS Event OnDamage to include an additional parameter that describes the type of damage that was dealt. New syntax:
+		onDamage( damaged, attacker, damageValue, damageType )
+	Updated JS Event OnSpellTarget to allow rejecting a spell being cast on a target by returning a value of 2 from the script
+	Split the character priv flag for magic reflection into a temporary one (one-time magic reflection spell) and a permanent one (innate permanent reflection ability). The temporary effect is put in place by Magic Reflection spell, and is removed after a successful spell reflect. The permanent one is an innate ability of a character and is not removed even after a spell is reflected.
+	Added new Character JS property to get/set state of a character's permanent magic reflect ability:
+		.permanentMagicReflect 		// 0 = disable, 1 = enable
+	Added special abilities/effects for the following NPCs:
+		Acid Elementals now have a chance to damage the melee weapons of their attackers
+		Dull Copper Elementals now explode on death
+		Shadow Iron Elemental is immune to targeted spell damage
+		Copper Elementals have permanent magic reflect, and reflect some physical damage back at their attacker
+		Bronze Elementals deal passive area damage to nearby players every 5 to 10 seconds
+		Valorite Elementals have permanent magic reflect, reflect some physical damage back at their attacker
+		Snow/Ice Elementals deal passive area damage to nearby players every 5 to 10 seconds
+		Lava Serpents deal passive area damage to nearby players every 5 to 10 seconds
+		Phoenixes deal passive area damage to nearby players every 5 to 10 seconds
+		Pixies have a chance to cast a random spell upon receiving a death blow:
+			Bless (target)
+			Curse (target)
+			Explosion (target)
+			Greater Poison (target)
+			Greater Heal (self, prevents death)
+		Ethereal Warriors will now resurrect dead players with positive karma
+		Ethereal Warriors now have a chance to drain target's health, stamina or mana on hit
+		Fire Breath special ability added to the following NPCs, with the random ability damage scaling with the NPCs current health:
+			Hell Cat, 5 to 8 dmg at max health
+			Fire Steed, 6 to 9 dmg at max health
+			Hell Hounds, 8 to 11 dmg at max health
+			Lava Lizard, 8 to 11 dmg at max health
+			Predator Hell Cat, 9 to 14 dmg at max health
+			Sea Serpent, 11 to 17 dmg at max health
+			Swamp Dragon, 15 to 22 dmg at max health
+			Armored Swamp Dragon, 15 to 22 dmg at max health
+			Fire Gargoyle, 20 to 30 dmg at max health
+			Deep Sea Serpent, 21 to 32 dmg at max health
+			Serpentine Dragon, 22 to 32 dmg at max health
+			Drake (Gray), 22 to 32 dmg at max health
+			Drake (Red), 22 to 32 dmg at max health
+			Nightmare, 26 to 39 dmg at max health
+			Dark Steed, 26 to 39 dmg at max health
+			Silver Steed, 26 to 39 dmg at max health
+			Kraken, 39 to 59 dmg at max health
+			Dragon (Red), 41 to 62 dmg at max health
+			Dragon (Gray), 41 to 62 dmg at max health
+			Shadow Wyrm, 50 to 75 dmg at max health
+			Reptalon, 51 to 77 dmg at max health
+			Skeletal Dragon, 52 to 77 dmg at max health
+			Ancient Wyrm, 60 to 90 dmg at max health
+	Update stats, skills and loot for all currently implemented NPCs
+	Removed an ancient piece of code that prevented corpses from being generated for various elementals and blade spirits on death. This was originally put in place because these creatures had no corpses, and would replace it with a backpack instead, but these creatures now all have corpses in all client versions supported by UOX3
+	Updated potions script (js/item/potion.js) with updated formula for amount of hitpoints healed by healing potions, and added restrictions for using them when at full health and/or if poisoned (Dragon Slayer)
+	Fixed a bug where creatures (and humans, if FORCENEWANIMATIONPACKET was disabled in uox.ini) would play animations with wrong frame count, causing the animations to either freeze for a few frames at the end, or get cut off a couple of frames early
+	Implemented bonus hit chance for Archery skill, based on mention of such a bonus in Publish 5 patch notes and related UO House of Commons chat. This has been exposed as a UOX.INI setting where this bonus can be tweaked:
+		ARCHERYHITBONUS=10 	// Bonus hit chance for Archery skill added to regular hit chance in combat. Defaults to 10%
+	Implemented optional extra delay between moving and being able to shoot with ranged weapons in combat (in addition to whatever delay is there due to speed of the ranged weapon). This is exposed as a UOX.INI setting:
+		ARCHERYSHOOTDELAY=0.5 // Minimum delay in seconds from a player stops moving until they can start to fire their ranged weapon. Defaults to 0.5s
+	Fixed a bug where players who never entered combat mode could fire ranged weapons while moving
+	Updated Add-menu with some improvements for usability:
+		Menu now directly on the Objects (previously "Shard") tab for quicker access, with a small welcome text and quick-link button for UOX3 docs
+		Settings tab contains some (persistent, will be saved with character) options for how the Add-menu behaves, along with a few quick-access buttons to some useful commands. Available options:
+			Option to add chosen item at specific location instead of in GM's backpack
+			Option to add chosen item repeatedly until cancelled
+			Option to automatically reopen Add-menu on last menu that was open when a selection is made
+			Option to force decayable state of all added items to either off (doesn't decay), on (decays) or nothing (use item default)
+			Option to force movable state of all added items to either off (not movable), on (movable) or nothing (use item default)
+		Added a Home button at the bottom of the menu, that takes the user back to the front page of the Add-menu regardless of which menu page they're on
+	Updated Character/Socket JS Method SysMessage() with an optional parameter to specify the color used to display the system message. Updated syntax:
+		.SysMessage( "Text" ) 									// Display "Text" to user as a system message with default system message color from ini
+		.SysMessage( "Text %s %s", txtArg1, txtArg2 ) 			// Display "Text" to player with string arguments injected into text
+		.SysMessage( txtColor, "Text" ) 						// Display "Text" to user with a specified color
+		.SysMessage( txtColor, "Text %s %s", txtArg1, txtArg2 ) // Combination of text color, text and string arguments
+	Fixed a bug where hair/beard items could show up inside corpses
+	Fixed a bug where items could sometimes vanish (visually) from containers when bouncing back because player was not able to pick them up
+	Fixed a bug where players would be unable to pick up a freely movable item from a locked down container
+	Updated handling of item bouncing on pickup to use UOX3 dictionary messages instead of hard-coded client messages
+	Added support for new Dictionary language:
+		dictionary.POL - Polish (SERVERLANGUAGE=8 in uox.ini, or client language 83 if SERVERLANGUAGE is set to 0)
+	Added taming restrictions for Unicorn, Ki-Rin and Cu Sidhe (js/skill/taming.js)
+	Added modification of some creatures stats after they've been tamed (js/skill/taming.js)
+	Added restrictions for who can ride certain creatures (Unicorn, Ki-Rin, Cu Sidhe)
+	Updated words of power for Meteor Swarm spell to follow the same logic as other spells using Kal (Summon): Kal Des Flam Ylem
+	Added new Item/Character JS Methods to get/set temporary custom tags which don't persist across worldsaves (or across reconnects, for players):
+		.GetTempTag( "tagName" )
+		.SetTempTag( "tagName", tagValue )
+	When applying HPMAX, STAMINAMAX AND MANAMAX DFN tags to new NPCs, their current HP, STAMINA and MANA properties will now be automatically updated to match
+	Fixed a server crash caused by empty speech messages sent from certain clients
+	Fixed a bug that prevented teleport locations in Felucca/Trammel from working properly
+	Updated calculations in code for duration and damage of existing poison strengths (1 - Lesser, 2 - Normal, 3 - Greater, 4 - Deadly) to match with ~Publish 15 (LBR/pre-AoS), and added another poison strength for monster usage (5 - Lethal)
+	The strength of the Poison and Poison Field spells is now based on the average of the caster's Magery and Poisoning skills, the distance from the target (Poison spell only) and the target's Resisting Spells skill. If caster is further away than 2 tiles from target, the poison strength always equals Lesser Poison, otherwise the following rules apply:
+		If caster's combined skill is higher than 100.0, poison strength equals Greater Poison, with 5% chance of Deadly Poison (if Poison spell) or Deadly Poison (if Poison Field spell)
+		If caster's combined skill is higher than 70.2, poison strength equals Greater Poison
+		If caster's combined skill is higher than 30.2, poison strength equals Normal Poison
+		If caster's combined skill is 30.2 or lower, poison strength equals Lesser Poison
+		If target resists spell, poison strength is reduced by 1 level, unless it's already at the lowest level
+	Fixed an issue that would would let players move faster than they should have been allowed to
+	Fixed misc issues with Party System:
+		Mana and Stamina should now update for Party Members when added to the party, when going in/out of range and when their stats update while in range
+		Players who get disconnected or relog should now find themselves back in the same party they were in previously
+		Added system messages to inform party members about updates to their party, and to let invited players know they've successfully joined a party (or rejoined, if relogging)
+	World saves now operate on the principle of only saving changes done since the last world save. Combined with the fact that NPCs in UOX3 are only active if there are players in the same/neighbouring map regions, shard owners may expect to see a decrease in world save times ranging from ~11% to ~99%, depending on how active and how spread out their player base is. If no changes have taken place since last save, saves are virtually instantaneous!
+
 20/09/2021 - Xuri
 	Extended Character JS Method DoAction() to support two additional parameters - frameCount and playBackwards - which define the length of the animation (defaults to 7) and whether the animation should be played backwards (defaults to false). Note that this only works for old-style animations, and thus is not available for Gargoyle characters. Updated method syntax:
 		.DoAction( actionID ) // Old animation packet

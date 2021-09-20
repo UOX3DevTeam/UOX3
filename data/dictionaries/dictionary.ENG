@@ -2299,6 +2299,12 @@
 2429=Your pet looks very happy
 2430=Your pet looks extremely happy
 2431=Your pet looks wonderfully happy
+2432=You must subdue this creature before you can tame it!
+2433=That creature can only be tamed by females.
+2434=That creature can only be tamed by males.
+2435=Only Elves may use this.
+2436=The Unicorn refuses to allow you to ride it.
+2437=The Ki-Rin refuses your attempts to mount it.
 // [2450-2475] Archerybutte
 2450=Someone else is using this right now.
 2451=You retrieve %i arrows from the target.
@@ -2658,7 +2664,7 @@
 3124=an evil mage
 3125=an evil mage lord
 3126=an evil mage lord
-3127=a predator hellcat
+3127=a hellcat
 3128=a pixie
 3129=Tentacles of the Harrower
 3130=a fire gargoyle
@@ -3113,7 +3119,7 @@
 5104=the gargoyle stone worker
 5105=the Brigand
 5106=The Player Vendor
-5107=a large hellcat
+5107=a predator hellcat
 5108=a jwilson
 5109=an ethereal hiryu
 5110=an ethereal reptalon
@@ -3148,6 +3154,9 @@
 5139=the Prisoner
 5140=the Sculptor
 5141=the Mayor
+5142=a lesser daemon
+5143=a cacodaemon
+5144=a beastly daemon
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3201,10 +3210,6 @@
 6049=You don't seem to have any dough!
 6050=You burnt the dough to crisp.
 6051=You bake a loaf of bread.
-6048=What do you want to use the raw bird with?
-6049=You cannot cook your raw bird on that.
-6050=You don't seem to have any raw birds!
-6051=You are not skilled enough to do that.
 6052=You burnt the raw bird to crisp.
 6053=You cook a bird. Smells good!
 6054=What do you want to use the raw chicken leg with?
@@ -3242,6 +3247,10 @@
 6086=You don't seem to have any raw eggs!
 6087=You burnt the eggs crisp.
 6088=You fry the eggs.
+6089=What do you want to use the raw bird with?
+6090=You cannot cook your raw bird on that.
+6091=You don't seem to have any raw birds!
+6092=You are not skilled enough to do that.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3891,6 +3900,15 @@
 9065=That item does not belong to you. You'll have to steal it.
 9066=That belongs to someone else.
 9067=Unable to drop item... where was it picked up from?
+9068=You feel your life force being stolen away!
+9069=I can grant life, and I can sap it as easily.
+9070=You'll go nowhere, unless I deem it should be so.
+9071=Your power is mine to use as I will.
+9072=You have been added to the party.
+9073=You have rejoined the party.
+9074=You have been removed from the party.
+9075=A player has been removed from your party.
+9076=%s joined the party.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -3957,5 +3975,6 @@
 9401=This magic item is out of charges.
 9402=[Unidentified]
 9403=uses remaining: %i
+9404= with %d charges
 }
 EOF

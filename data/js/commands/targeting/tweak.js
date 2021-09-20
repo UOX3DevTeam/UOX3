@@ -5662,6 +5662,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 							if( targetObj.isOnline && ValidateObject( targetObj.currentChar ) && targetObj.currentChar.socket != null )
 								targetObj.currentChar.Disconnect();
 						}
+						else if( propertyName == "movable" )
+						{
+							targetObj.Refresh();
+						}
 
 						if( ValidateObject(targetObj) )
 						{

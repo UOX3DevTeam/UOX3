@@ -116,6 +116,7 @@ JSMethodFunc CChar_InitWanderArea;
 JSMethodFunc CChar_ReactOnDamage;
 JSMethodFunc CChar_Damage;
 JSMethodFunc CChar_InitiateCombat;
+JSMethodFunc CChar_InvalidateAttacker;
 JSMethodFunc CChar_Heal;
 JSMethodFunc CChar_Defense;
 JSMethodFunc CChar_AddFriend;
@@ -147,6 +148,8 @@ JSMethodFunc CBase_Teleport;
 JSMethodFunc CBase_StaticEffect;
 JSMethodFunc CBase_GetTag;
 JSMethodFunc CBase_SetTag;
+JSMethodFunc CBase_GetTempTag;
+JSMethodFunc CBase_SetTempTag;
 JSMethodFunc CBase_GetNumTags;
 JSMethodFunc CBase_InRange;
 JSMethodFunc CBase_StartTimer;
@@ -349,6 +352,8 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "RemoveSpell",		CMisc_RemoveSpell,		1, 0, 0 },
 	{ "GetTag",				CBase_GetTag,			1, 0, 0 },
 	{ "SetTag",				CBase_SetTag,			2, 0, 0 },
+	{ "GetTempTag",			CBase_GetTempTag,		1, 0, 0 },
+	{ "SetTempTag",			CBase_SetTempTag,		2, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,		0, 0, 0 },
 	{ "OpenBank",			CChar_OpenBank,			1, 0, 0 },
 	{ "DirectionTo",		CChar_DirectionTo,		1, 0, 0 },
@@ -407,6 +412,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "ReactOnDamage",		CChar_ReactOnDamage,	1, 0, 0 },
 	{ "Damage",				CChar_Damage,			1, 0, 0 },
 	{ "InitiateCombat",		CChar_InitiateCombat,	1, 0, 0 },
+	{ "InvalidateAttacker",	CChar_InvalidateAttacker,	0, 0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },

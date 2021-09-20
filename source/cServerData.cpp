@@ -86,6 +86,7 @@ const UI32 BIT_CONTEXTMENUS					= 65;
 const UI32 BIT_CHECKPETCONTROLDIFFICULTY	= 66;
 const UI32 BIT_SHOWNPCTITLESINTOOLTIPS		= 67;
 const UI32 BIT_ITEMSINTERRUPTCASTING		= 68;
+const UI32 BIT_STATSAFFECTSKILLCHECKS		= 69;
 
 
 // New uox3.ini format lookup
@@ -262,7 +263,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("RESOURCEAREASIZE", 87);
 	regINIValue("LOGSPERAREA", 88);
 	regINIValue("LOGSRESPAWNTIMER", 89);
-	regINIValue("LOGSRESPAWNAREA", 90);
+	regINIValue("STATSAFFECTSKILLCHECKS", 90 );
 	regINIValue("HUNGERRATE", 91);
 	regINIValue("HUNGERDMGVAL", 92);
 	regINIValue("MAXRANGE", 93);
@@ -440,7 +441,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SHOWNPCTITLESINTOOLTIPS", 278);
 	regINIValue("FISHPERAREA", 279);
 	regINIValue("FISHRESPAWNTIMER", 280);
-	// 281 free
+	regINIValue("ARCHERYHITBONUS", 281);
 	regINIValue("ITEMSINTERRUPTCASTING", 282);
 	regINIValue("SYSMESSAGECOLOUR", 283);
 	regINIValue("AF_AUTOBANDAGE", 284);
@@ -449,6 +450,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("AF_SPELLTARGETSHARE", 287);
 	regINIValue("AF_HUMANOIDHEALTHCHECKS", 288);
 	regINIValue("AF_SPEECHJOURNALCHECKS", 289);
+	regINIValue("ARCHERYSHOOTDELAY", 290);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -489,6 +491,10 @@ void CServerData::ResetDefaults( void )
 	WorldLightBrightLevel( 0 );
 	WorldLightDarkLevel( 5 );
 
+	ServerNetRcvTimeout( 3 );
+	ServerNetSndTimeout( 3 );
+	ServerNetRetryCount( 3 );
+
 	ServerSecondsPerUOMinute( 5 );
 	ServerTimeDay( 0 );
 	ServerTimeHours( 0 );
@@ -508,6 +514,7 @@ void CServerData::ResetDefaults( void )
 	ServerSkillTotalCap( 7000 );
 	ServerSkillCap( 1000 );
 	ServerStatCap( 225 );
+	StatsAffectSkillChecks( false );
 	CorpseLootDecay( true );
 	ServerSavesTimer( 600 );
 
@@ -557,6 +564,8 @@ void CServerData::ResetDefaults( void )
 	SellMaxItemsStatus( 250 );
 	CombatNPCDamageRate( 1 );
 	RankSystemStatus( true );
+	CombatArcheryHitBonus( 10 );
+	CombatArcheryShootDelay( 1.0 );
 	CombatWeaponDamageChance( 17 );
 	CombatWeaponDamageMin( 0 );
 	CombatWeaponDamageMax( 1 );
@@ -1450,6 +1459,22 @@ void CServerData::SnoopIsCrime( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool StatsAffectSkillChecks( void ) const
+//|					void StatsAffectSkillChecks( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether stats like strength, dexterity and intelligence provide
+//|					bonuses to skillchecks
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::StatsAffectSkillChecks( void ) const
+{
+	return boolVals.test( BIT_STATSAFFECTSKILLCHECKS );
+}
+void CServerData::StatsAffectSkillChecks( bool newVal )
+{
+	boolVals.set( BIT_STATSAFFECTSKILLCHECKS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ExtendedStartingStats( void ) const
 //|					void ExtendedStartingStats( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -2270,10 +2295,47 @@ void CServerData::CombatAnimalsAttackChance( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 CombatArcheryHitBonus( void ) const
+//|					void CombatArcheryHitBonus( SI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the delay hit bonus (in percentage) in combat for Archery. Can be negative!
+//|					This bonus was mentioned in official patch notes for Publish 5 (UOR patch).
+//o-----------------------------------------------------------------------------------------------o
+SI08 CServerData::CombatArcheryHitBonus( void ) const
+{
+	return combatArcheryHitBonus;
+}
+void CServerData::CombatArcheryHitBonus( SI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatArcheryHitBonus = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 CombatArcheryShootDelay( void ) const
+//|					void CombatArcheryShootDelay( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the delay (in seconds, with decimals) after archers stop moving until
+//|					they can fire a shot in combat
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::CombatArcheryShootDelay( void ) const
+{
+	return archeryShootDelay;
+}
+void CServerData::CombatArcheryShootDelay( R32 value )
+{
+	if( value < 0.0 )
+		archeryShootDelay = 0.0;
+	else
+		archeryShootDelay = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 CombatWeaponDamageChance( void ) const
 //|					void CombatWeaponDamageChance( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether combat will damage weapons or not
+//|	Purpose		-	Gets/Sets chance for weapons to take damage in combat (on hit)
 //o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::CombatWeaponDamageChance( void ) const
 {
@@ -3504,7 +3566,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "PORT=" << ServerPort() << '\n';
 		ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
-		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
+		ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
 		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
 		ofsOutput << "CONSOLELOG=" << ( ServerConsoleLog() ? 1 : 0 ) << '\n';
 		ofsOutput << "NETWORKLOG=" << ( ServerNetworkLog() ? 1 : 0 ) << '\n';
@@ -3562,6 +3624,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
 		ofsOutput << "SKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << '\n';
 		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
+		ofsOutput << "STATSAFFECTSKILLCHECKS=" << (StatsAffectSkillChecks()?1:0) << '\n';
 		ofsOutput << "EXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats()?1:0) << '\n';
 		ofsOutput << "EXTENDEDSTARTINGSKILLS=" << (ExtendedStartingSkills()?1:0) << '\n';
 		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
@@ -3749,6 +3812,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
 		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
 		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
+		ofsOutput << "ARCHERYHITBONUS=" << static_cast<SI16>(CombatArcheryHitBonus()) << '\n';
+		ofsOutput << "ARCHERYSHOOTDELAY=" << CombatArcheryShootDelay() << '\n';
 		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
 		ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<UI16>(CombatWeaponDamageChance()) << '\n';
 		ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<UI16>(CombatWeaponDamageMin()) << '\n';
@@ -4248,6 +4313,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 89:	 // LOGSRESPAWNTIMER[0082]
 			ResLogTime( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 90:	 // STATSAFFECTSKILLCHECKS
+			StatsAffectSkillChecks( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 91:	 // HUNGERRATE[0084]
 			SystemTimer( tSERVER_HUNGERRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
@@ -4821,6 +4889,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 280:	 // FISHRESPAWNTIMER
 			ResFishTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
+		case 281:	 // ARCHERYHITBONUS
+			CombatArcheryHitBonus( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
+			break;
 		case 282:    // ITEMSINTERRUPTCASTING
 			ItemsInterruptCasting( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
@@ -4844,6 +4915,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 289:	// AF_SPEECHJOURNALCHECKS
 			SetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 290:	// ARCHERYSHOOTDELAY
+			CombatArcheryShootDelay( std::stof(value) );
 			break;
 		default:
 			rvalue = false;

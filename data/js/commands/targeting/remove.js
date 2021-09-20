@@ -12,13 +12,12 @@ function command_REMOVE( socket, cmdString )
 	{
 		socket.tempint = parseInt( cmdString );
 		var tempMsg = GetDictionaryEntry( 8095, socket.language ); // Select container to remove item (%s) from:
-		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ), 1 );
+		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ) );
 	}
 	else
 	{
-		var targMsg = GetDictionaryEntry( 188, socket.language, 1 ); // Select item to remove.
-		// socket.CustomTarget( 0, targMsg, 1 );
-		socket.CustomTarget( 0, targMsg, 3 );
+		var targMsg = GetDictionaryEntry( 188, socket.language ); // Select item to remove.
+		socket.CustomTarget( 0, targMsg );
 	}
 }
 

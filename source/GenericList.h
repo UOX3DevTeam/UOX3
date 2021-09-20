@@ -114,6 +114,23 @@ public:
 		return true;
 	}
 
+	bool AddInFront( T toAdd, bool checkForExisting = true )
+	{
+		if( checkForExisting && FindEntry( toAdd ) != objData.end() )
+		{
+			return false;
+		}
+
+		const bool updateCounter = (objIterator == objData.end());
+		objData.push_front(toAdd);
+		if( updateCounter )
+		{
+			objIterator = objData.end();
+		}
+
+		return true;
+	}
+
 	bool Remove( T toRemove, bool handleAlloc = false )
 	{
 		GENERICLIST_ITERATOR rIter = FindEntry( toRemove );
@@ -158,13 +175,16 @@ public:
 	void Push( void )
 	{
 		objIteratorBackup.push_back(objIterator);
+	}
 
+	void Reverse( void )
+	{
+		objData.reverse();
 	}
 
 	void Sort( void )
 	{
 		objData.sort();
-
 	}
 
 	void Sort( bool Comparer( T one, T two ))

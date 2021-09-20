@@ -4,6 +4,7 @@
 #include "speech.h"
 #include "cRaces.h"
 #include "cGuild.h"
+#include "PartySystem.h"
 #include "commands.h"
 #include "combat.h"
 #include "classes.h"
@@ -1812,11 +1813,11 @@ void CSocket::sysmessage( const std::string txt, ... )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void sysmessageJS( const std::string& uformat, const std::string& data )
+//|	Function	-	void sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified system message in lower left corner of client screen
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::sysmessageJS( const std::string& uformat, const std::string& data )
+void CSocket::sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data )
 {
 	CChar *mChar = CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -1828,12 +1829,17 @@ void CSocket::sysmessageJS( const std::string& uformat, const std::string& data 
 		msg = msg.substr( 0, 512 );
 	}
 	
+	if( txtColor == 0 )
+	{
+		txtColor = cwmWorldState->ServerData()->SysMsgColour();
+	}
+	
 	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		CPUnicodeMessage unicodeMessage;
 		unicodeMessage.Message( msg );
 		unicodeMessage.Font( 4 );
-		unicodeMessage.Colour( cwmWorldState->ServerData()->SysMsgColour() );
+		unicodeMessage.Colour( txtColor );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
 		unicodeMessage.Name( "System" );
@@ -1850,7 +1856,7 @@ void CSocket::sysmessageJS( const std::string& uformat, const std::string& data 
 		toAdd.Font( FNT_NORMAL );
 		toAdd.Speaker( INVALIDSERIAL );
 		toAdd.SpokenTo( mChar->GetSerial() );
-		toAdd.Colour( cwmWorldState->ServerData()->SysMsgColour() );
+		toAdd.Colour( txtColor );
 		toAdd.Type( SYSTEM );
 		toAdd.At( cwmWorldState->GetUICurrentTime() );
 		toAdd.TargType( SPTRG_INDIVIDUAL );
@@ -1971,20 +1977,21 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 					targColour = GetFlagColour( mChar, targChar );
 				else
 				{
-					switch( getItem->GetTempVar( CITV_MOREZ ))
+					UI08 flag = getItem->GetTempVar( CITV_MOREZ ); // Get flag, to help determine color of corpse
+					switch( flag )
 					{
-						case 0x01:	targColour = 0x0026;	break;	//red
-						case 0x02:	targColour = 0x03B2;	break;	// gray
-						case 0x08:	targColour = 0x0049;	break;	// green
-						case 0x10:	targColour = 0x0030;	break;	// orange
+						case 0x01:	targColour = 0x0026;	break;	// Murderer, red
+						case 0x02:	// Criminal, gray
+							[[fallthrough]];
+						case 0x08:	targColour = 0x03B2;	break;	// Neutral, gray
 						default:
-						case 0x04:	targColour = 0x005A;	break;	// blue
+						case 0x04:	targColour = 0x005A;	break;	// Innocent, blue
 					}
 				}
 			}
 		}
 
-		if(targColour == 0x0 || targColour == 0x1700)
+		if( targColour == 0x0 || targColour == 0x1700 )
 			unicodeMessage.Colour( 0x03B2 );
 		else
 			unicodeMessage.Colour( targColour );
@@ -2012,14 +2019,15 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 					targColour = GetFlagColour( mChar, targChar );
 				else
 				{
-					switch( getItem->GetTempVar( CITV_MOREZ ) )
+					UI08 flag = getItem->GetTempVar( CITV_MOREZ ); // Get flag, to help determine color of corpse
+					switch( flag )
 					{
-						case 0x01:	targColour = 0x0026;	break;	//red
-						case 0x02:	targColour = 0x03B2;	break;	// gray
-						case 0x08:	targColour = 0x0049;	break;	// green
-						case 0x10:	targColour = 0x0030;	break;	// orange
+						case 0x01:	targColour = 0x0026;	break;	// Murderer, red
+						case 0x02:	// Criminal, gray
+							[[fallthrough]];
+						case 0x08:	targColour = 0x03B2;	break;	// Neutral, gray
 						default:
-						case 0x04:	targColour = 0x005A;	break;	// blue
+						case 0x04:	targColour = 0x005A;	break;	// Innocent, blue
 					}
 				}
 			}
@@ -2227,12 +2235,12 @@ UI32 CSocket::BytesReceived( void ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void statwindow( CBaseObject *targObj )
+//|	Function	-	void statwindow( CBaseObject *targObj, bool updateParty )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the status window/health bar for characters 
 //|					and/or items/multis with damageable flag set
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::statwindow( CBaseObject *targObj )
+void CSocket::statwindow( CBaseObject *targObj, bool updateParty )
 {
 	if( !ValidateObject(targObj) )
 		return;
@@ -2281,6 +2289,62 @@ void CSocket::statwindow( CBaseObject *targObj )
 		{
 			CPExtendedStats exStats(( *targChar ));
 			Send(&exStats);
+		}
+
+		if( !updateParty )
+			return;
+
+		// If targObj is a party member, also send their updated mana and stamina!
+		Party * myParty = PartyFactory::getSingleton().Get( mChar );
+		if( myParty != nullptr && isOnline( *mChar ))
+		{
+			// Fetch list of party members
+			std::vector< PartyEntry * > *mList = myParty->MemberList();
+			if( mList != nullptr )
+			{
+				for( size_t j = 0; j < mList->size(); ++j )
+				{
+					PartyEntry *mEntry = ( *mList )[j];
+					CChar * partyMember = mEntry->Member();
+
+					if( !isOnline( *partyMember ) || !isOnline( *mChar) || partyMember->GetSerial() == mChar->GetSerial() )
+						continue;
+
+					// If partyMember is online, send their info to each other
+					if( targObj->GetSerial() == partyMember->GetSerial() )
+					{
+						CSocket *s = partyMember->GetSocket();
+						if( s == nullptr )
+							break;
+
+						CBaseObject *thisBaseObj = mChar;
+
+						// Send stat window update for new member to existing party members
+						s->statwindow( mChar, false );
+
+						// Prepare the stat update packet for new member to existing party members
+						CPUpdateStat toSendHp( (*mChar), 0, true );
+						s->Send( &toSendHp );
+						CPUpdateStat toSendMana( (*mChar), 1, true );
+						s->Send( &toSendMana );
+						CPUpdateStat toSendStam( (*mChar), 2, true );
+						s->Send( &toSendStam );
+
+						// Also send info on the existing party member to the new member!
+						// Send stat window update packet for existing member to new party member
+						statwindow( partyMember, false );
+
+						// Prepare the stat update packet for existing member to new party members
+						CPUpdateStat toSendHp2( (*partyMember), 0, true );
+						Send( &toSendHp2 );
+						CPUpdateStat toSendMana2( (*partyMember), 1, true );
+						Send( &toSendMana2 );
+						CPUpdateStat toSendStam2( (*partyMember), 2, true );
+						Send( &toSendStam2 );
+						break;
+					}
+				}
+			}
 		}
 	}
 	else

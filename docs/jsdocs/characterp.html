@@ -159,6 +159,26 @@
 	3 = Admin</ul></td>
   </tr>
   <tr>
+    <td>priv</td>
+    <td>Get/Set the privilege flags enabled for this character (16-bit bitfield). Combine values to set multiple flags.
+      <ul>0x1 - GM (Character is a GM)<br>
+      0x2 - Broadcast (Character can broadcast globally on server)<br>
+      0x4 - Invulnerable (Character is invulnerable to damage?)<br>
+      0x8 - SingleClickSerial (Show character serials on single click/all-names)<br>
+      0x10 - Show Skill Titles (Show skill titles in paperdoll)<br>
+      0x20 - GM Pageable (Character can answer GM Pages from players)<br>
+      0x40 - Snoop Freely (Character can snoop freely in backpacks independent of snooping skill)<br>
+      0x80 - Counselor (Character is a Counselor)<br>
+      0x100 - AllMove (Character can move any dynamic item)<br>
+      0x200 - Frozen (Character is frozen and cannot move)<br>
+      0x400 - ViewHouseAsIcon (Character views multis as item deeds instead of multis)<br>
+      0x800 - NoNeedMana (Character doesn't need mana to cast spells)<br>
+      0x1000 - Dispellable (Character can be dispelled by the Dispel spell)<br>
+      0x2000 - TempReflected (Character has a temporary magic reflection spell active)<br>
+      0x4000 - NoNeedReags (Character doesn't need reagents to cast spells)<br>
+      0x8000 - PermReflected (Character has a permanent magic reflection spell active)</ul></td>
+  </tr>
+  <tr>
     <td>race</td>
     <td>Returns the character's race as a JS-object.</td>
   </tr>

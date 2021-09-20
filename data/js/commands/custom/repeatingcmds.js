@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at uox3.org)
-// v1.13
-// Last updated: 26/07/2021
+// v1.14
+// Last updated: 30/08/2021
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -21,6 +21,7 @@ function CommandRegistration()
 	RegisterCommand( "radditem", 2, true ); // Use 'RADDITEM <item-id from dfns>
 	RegisterCommand( "rtele", 2, true ); //Use 'RTELE <target teleport location>
 	RegisterCommand( "raddnpc", 2, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
+	RegisterCommand( "raddspawner", 2, true ); //Use 'RADDSPAWNER <id from DFNs> - Adds specified Spawner at multiple targeted locations
 }
 
 //Repeated Command: INCX <value>
@@ -294,9 +295,34 @@ function onCallback8( pSock, myTarget )
 			var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
 			if( tempItem )
 			{
-				tempItem.x = targX;
-				tempItem.y = targY;
-				tempItem.z = targZ;
+				if( ValidateObject( myTarget ) && ValidateObject( myTarget.container ))
+				{
+					tempItem.container = myTarget.container;
+					tempItem.PlaceInPack();
+				}
+				else if( ValidateObject( myTarget ) && myTarget.isChar && ValidateObject( myTarget.pack ))
+				{
+					tempItem.container = myTarget.pack;
+					tempItem.PlaceInPack();
+				}
+				else
+				{
+					tempItem.x = targX;
+					tempItem.y = targY;
+					tempItem.z = targZ;
+				}
+
+				// Check if force movable off/on option has been set in 'add menu
+				if( pUser.GetTag( "forceMovableOff" ))
+					tempItem.movable = 2;
+				else if( pUser.GetTag( "forceMovableOn" ))
+					tempItem.movable = 1;
+
+				// Check if force decay off/on option has been set in 'add menu
+				if( pUser.GetTag( "forceDecayOff" ))
+					tempItem.decayable = 0;
+				else if( pUser.GetTag( "forceDecayOn" ))
+					tempItem.decayable = 1;
 			}
 			else
 			{
@@ -364,6 +390,69 @@ function onCallback10( pSock, myTarget )
 		}
 		else
 			pSock.SysMessage( GetDictionaryEntry( 8944, pSock.language )); // That doesn't seem to be a valid NPC-id from the DFNs.
+	}
+	else
+		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
+}
+
+//Repeated Command: ADD SPAWNER <item-id from dfns>
+function command_RADDSPAWNER( pSock, execString )
+{
+	pSock.xText = execString;
+	var tempMsg = GetDictionaryEntry( 9060, pSock.language ); // Select target location for spawner %s:
+	pSock.CustomTarget( 11, tempMsg.replace(/%s/gi, execString ));
+}
+function onCallback11( pSock, myTarget )
+{
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
+	{
+		var pUser = pSock.currentChar;
+		var TempItemID = pSock.xText;
+		if( !(TempItemID == null) )
+		{
+			var targX = pSock.GetWord( 11 );
+			var targY = pSock.GetWord( 13 );
+			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+			var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "SPAWNER", false );
+			if( tempItem )
+			{
+				if( ValidateObject( myTarget ) && ValidateObject( myTarget.container ))
+				{
+					tempItem.container = myTarget.container;
+					tempItem.PlaceInPack();
+				}
+				else
+				{
+					tempItem.x = targX;
+					tempItem.y = targY;
+					tempItem.z = targZ;
+				}
+
+				// Check if force movable off/on option has been set in 'add menu
+				if( pUser.GetTag( "forceMovableOff" ))
+					tempItem.movable = 2;
+				else if( pUser.GetTag( "forceMovableOn" ))
+					tempItem.movable = 1;
+
+				// Check if force decay off/on option has been set in 'add menu
+				if( pUser.GetTag( "forceDecayOff" ))
+					tempItem.decayable = 0;
+				else if( pUser.GetTag( "forceDecayOn" ))
+					tempItem.decayable = 1;
+			}
+			else
+			{
+				pSock.SysMessage( GetDictionaryEntry( 8941, pSock.language )); // That doesn't seem to be a valid item-id from the DFNs. No item added!
+			}
+
+			var tempMsg = GetDictionaryEntry( 9060, pSock.language ); // Select target location for spawner %s:
+			pSock.CustomTarget( 11, tempMsg.replace(/%s/gi, TempItemID ));
+		}
+		else
+			pSock.SysMessage( GetDictionaryEntry( 8941, pSock.language )); // That doesn't seem to be a valid item-id from the DFNs. No item added!
 	}
 	else
 		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.

@@ -276,19 +276,19 @@
 // Male Plain Hats
 [ITEMLIST 20]
 {
-0x1713,10
-0x1716,10
-0x1717,10
-0x1540,10
-0x1544,10
-blank,50
+50|blank
+10|0x1713
+10|0x1716
+10|0x1717
+10|0x1540
+10|0x1544
 }
 
 // Male Plain Shirts
 [ITEMLIST 21]
 {
-0x1517,75
-blank,1
+75|0x1517
+25|blank
 }
 
 // Male Plain Pants
@@ -311,35 +311,35 @@ blank
 // Male Plain Tunic & Aprons
 [ITEMLIST 24]
 {
-0x1fa1,166
-0x153b,166
-0x153d,166
-blank,500
+500|blank
+166|0x1fa1
+166|0x153b
+166|0x153d
 }
 
 // Male Plain Tunic & Robe
 [ITEMLIST 25]
 {
-0x1fa1,25
-0x1f03,25
-blank,50
+50|blank
+25|0x1fa1
+25|0x1f03
 }
 
 // Male Plain Cape
 [ITEMLIST 26]
 {
-0x1515,33
-blank,66
+66|blank
+33|0x1515
 }
 
 // Male Fancy Hats
 [ITEMLIST 30]
 {
-0x1714,125
-0x1715,125
-0x171a,125
-0x171b,125
-blank,500
+500|blank
+125|0x1714
+125|0x1715
+125|0x171a
+125|0x171b
 }
 
 // Male Fancy Shirts
@@ -366,17 +366,17 @@ blank,500
 // Male Fancy Surcoat, Tunic, Doublet & Sash 
 [ITEMLIST 34]
 {
-0x1ffd,143
-0x1f7b,143
-0x1541,143
-blank,571
+571|blank
+143|0x1ffd
+143|0x1f7b
+143|0x1541
 }
 
 // Male Fancy Robe
 [ITEMLIST 35]
 {
-0x1f03,33
-blank,66
+66|blank
+33|0x1f03
 }
 
 // Male Fancy Cape
@@ -389,12 +389,12 @@ blank
 // Female Plain Hats
 [ITEMLIST 40]
 {
-0x1713,10
-0x1716,10
-0x1717,10
-0x1540,10
-0x1544,10
-blank,50
+50|blank
+10|0x1713
+10|0x1716
+10|0x1717
+10|0x1540
+10|0x1544
 }
 
 // Female Plain Shirts
@@ -415,32 +415,32 @@ blank,50
 // Female Plain Sandal, Shoe & Boots
 [ITEMLIST 43]
 {
-0x170b,20
-0x170d,20
-0x170f,20
-0x1711,20
-blank,20
+0x170b
+0x170d
+0x170f
+0x1711
+blank
 }
 
 // Female Plain Tunic, Dress & Aprons
 [ITEMLIST 44]
 {
-0x1fa1,125
-0x1f01,125
-0x153b,125
-0x153d,125
-blank,500
+500|blank
+125|0x1fa1
+125|0x1f01
+125|0x153b
+125|0x153d
 }
 
 // Female Plain Tunic, Robe & Dress
 [ITEMLIST 45]
 {
-0x1fa1,143
-0x1fa1,143
-0x1f03,143
-0x1f01,143
-0x1f01,143
-blank,285
+285|blank
+143|0x1fa1
+143|0x1fa1
+143|0x1f03
+143|0x1f01
+143|0x1f01
 }
 
 // Female Plain Cape
@@ -453,11 +453,11 @@ blank
 // Female Fancy Hats
 [ITEMLIST 50]
 {
-0x1714,125
-0x1719,125
-0x171a,125
-0x171b,125
-blank,500
+500|blank
+125|0x1714
+125|0x1719
+125|0x171a
+125|0x171b
 }
 
 // Female Fancy Shirts
@@ -486,20 +486,20 @@ blank,500
 // Female Fancy Surcoat, Tunic, Doublet, Dress & Sash
 [ITEMLIST 54]
 {
-0x1ffd,111
-0x1f7b,111
-0x1eff,111
-0x1541,111
-blank,555
+555|blank
+111|0x1ffd
+111|0x1f7b
+111|0x1eff
+111|0x1541
 }
 
 // Female Fancy Robe & Dress
 [ITEMLIST 55]
 {
-0x1f03,20
-0x1eff,20
-0x1eff,20
-blank,40
+40|blank
+20|0x1f03
+20|0x1eff
+20|0x1eff
 }
 
 // Female Fancy Cape
@@ -908,6 +908,58 @@ practice_crook
 practice_gnarled_staff
 }
 
+// Random Magic Items - Max Tier 1
+[ITEMLIST 130]
+{
+80|blank
+20|random_magic_armor_1
+}
+
+// Random Magic Items - Max Tier 2
+[ITEMLIST 131]
+{
+80|blank
+20|random_magic_armor_2
+}
+
+// Random Magic Items - Max Tier 3
+[ITEMLIST 132]
+{
+80|blank
+20|random_magic_armor_3
+}
+
+// Random Magic Items - Max Tier 4
+[ITEMLIST 133]
+{
+80|blank
+20|random_magic_armor_4
+}
+
+// Random Magic Items - Max Tier 5
+[ITEMLIST 134]
+{
+80|blank
+20|random_magic_armor_5
+}
+
+// Random polearm - Halberd, Bardiche
+[ITEMLIST 150]
+{
+200|itemlist=134,10
+50|blank
+25|0x143e
+25|0x0f4d
+}
+
+// Juka Warrior Weapons - Halberd, Spear, Black Staff
+[ITEMLIST 200]
+{
+0x143e
+0x0f62
+0xdf1
+}
+
 //**************************
 //* LISTOBJECTS START HERE *
 //**************************
@@ -1234,4 +1286,46 @@ itemlist=100
 [listobject120]
 {
 itemlist=120
+}
+
+// Random magic items - Max Tier 1
+[listobject130]
+{
+itemlist=130
+}
+
+// Random magic items - Max Tier 2
+[listobject131]
+{
+itemlist=131
+}
+
+// Random magic items - Max Tier 3
+[listobject132]
+{
+itemlist=132
+}
+
+// Random magic items - Max Tier 4
+[listobject133]
+{
+itemlist=133
+}
+
+// Random magic items - Max Tier 5
+[listobject134]
+{
+itemlist=134
+}
+
+// Random polearm - Halberd, Bardiche
+[listobject150]
+{
+itemlist=150
+}
+
+// Juka Warrior Weapons - Halberd, Spear, Black Staff
+[listobject200]
+{
+itemlist=200
 }

@@ -3,7 +3,7 @@
 // flat white stone roof partial southeast
 [0x0550]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0550
 }
@@ -11,7 +11,7 @@ id=0x0550
 // red stone roof light brown accent southeast
 [0x0554]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0554
 }
@@ -19,7 +19,7 @@ id=0x0554
 // red stone roof light brown accent northwest
 [0x0555]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0555
 }
@@ -27,7 +27,7 @@ id=0x0555
 // red stone roof light brown accent northeast
 [0x0556]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0556
 }
@@ -35,7 +35,7 @@ id=0x0556
 // red stone roof large light brown accent southwest
 [0x0557]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0557
 }
@@ -43,7 +43,7 @@ id=0x0557
 // white stone roof light brown accent northeast
 [0x0558]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0558
 }
@@ -51,7 +51,7 @@ id=0x0558
 // white stone roof large brown accent southwest
 [0x0559]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0559
 }
@@ -59,7 +59,7 @@ id=0x0559
 // white stone light brown accent southeast
 [0x055A]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x055A
 }
@@ -67,7 +67,7 @@ id=0x055A
 // white stone roof light brown accent northwest
 [0x055B]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x055B
 }
@@ -75,42 +75,42 @@ id=0x055B
 // red stone roof
 [0x055C]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x055C
 }
 
 [0x055D]
 {
-get=base_item
+get=base_roof
 name=stone roofs
 id=0x055D
 }
 
 [0x055E]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x055E
 }
 
 [0x055F]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x055F
 }
 
 [0x0560]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0560
 }
 
 [0x0561]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0561
 }
@@ -118,7 +118,7 @@ id=0x0561
 // red stone roof thin light brown border northeast
 [0x0562]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0562
 }
@@ -126,7 +126,7 @@ id=0x0562
 // red stone roof thin light brown border east
 [0x0563]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0563
 }
@@ -134,7 +134,7 @@ id=0x0563
 // red stone roof thin light brown border west
 [0x0564]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0564
 }
@@ -142,7 +142,7 @@ id=0x0564
 // red stone roof thick light brown border southwest
 [0x0565]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0565
 }
@@ -150,7 +150,7 @@ id=0x0565
 // red stone roof thick light brown border west thin north
 [0x0566]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0566
 }
@@ -158,7 +158,7 @@ id=0x0566
 // red stone roof thick light brown border west
 [0x0567]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0567
 }
@@ -166,7 +166,7 @@ id=0x0567
 // red stone roof thick light brown border south thin east
 [0x0568]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0568
 }
@@ -174,7 +174,7 @@ id=0x0568
 // red stone roof thick light brown border south
 [0x0569]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0569
 }
@@ -182,7 +182,7 @@ id=0x0569
 // partial cave floor southeast
 [0x056A]
 {
-get=base_item
+get=base_roof
 name=cave floor
 id=0x056A
 }
@@ -190,7 +190,7 @@ id=0x056A
 // white stone roof thick light brown border south
 [0x056B]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x056B
 }
@@ -198,7 +198,7 @@ id=0x056B
 // white stone roof thick roof south thin east
 [0x056C]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x056C
 }
@@ -206,7 +206,7 @@ id=0x056C
 // white stone roof thick light brown border west
 [0x056D]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x056D
 }
@@ -214,7 +214,7 @@ id=0x056D
 // white stone roof thick light brown border west thin north
 [0x056E]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x056E
 }
@@ -222,7 +222,7 @@ id=0x056E
 // white stone roof thick light brown southeast
 [0x056F]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x056F
 }
@@ -230,7 +230,7 @@ id=0x056F
 // white stone roof thin light brown border north
 [0x0570]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0570
 }
@@ -238,7 +238,7 @@ id=0x0570
 // white stone roof thin light border east
 [0x0571]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0571
 }
@@ -246,7 +246,7 @@ id=0x0571
 // white stone roof thin light brown border northeast
 [0x0572]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0572
 }
@@ -254,42 +254,42 @@ id=0x0572
 // white stone roof
 [0x0573]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0573
 }
 
 [0x0574]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0574
 }
 
 [0x0575]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0575
 }
 
 [0x0576]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0576
 }
 
 [0x0577]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0577
 }
 
 [0x0578]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0578
 }
@@ -297,42 +297,42 @@ id=0x0578
 // black stone roof
 [0x0579]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x0579
 }
 
 [0x057A]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x057A
 }
 
 [0x057B]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x057B
 }
 
 [0x057C]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x057C
 }
 
 [0x057D]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x057D
 }
 
 [0x057E]
 {
-get=base_item
+get=base_roof
 name=stone roof
 id=0x057E
 }
@@ -340,14 +340,14 @@ id=0x057E
 // large blue slate roof east west
 [0x057F]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x057F
 }
 
 [0x0580]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x0580
 }
@@ -355,7 +355,7 @@ id=0x0580
 // large blue slate roof north south
 [0x0581]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x0581
 }
@@ -363,7 +363,7 @@ id=0x0581
 // large blue slate roof east west
 [0x0582]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x0582
 }
@@ -371,7 +371,7 @@ id=0x0582
 // large blue slate roof north south
 [0x0583]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x0583
 }
@@ -379,14 +379,14 @@ id=0x0583
 // large blue slate roof center
 [0x0584]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x0584
 }
 
 [0x0585]
 {
-get=base_item
+get=base_roof
 name=slate roof
 id=0x0585
 }

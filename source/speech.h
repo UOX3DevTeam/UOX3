@@ -31,6 +31,7 @@ const std::string DistinctLanguageNames[DL_COUNT] =
 	"PTG",
 	"ITA",
 	"CSY",
+	"POL",
 	"RUS",
 	"JPN"
 };
@@ -258,7 +259,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_DEFAULT,	// Dutch Belgium
 	DL_DEFAULT,	// Norwegian Norway (Bokmål)
 	DL_DEFAULT,	// Norwegian Norway (Nynorsk)
-	DL_DEFAULT,	// Polish Poland
+	DL_POLISH,	// Polish Poland
 	DL_PORTUGUESE,	// Portuguese Brazil
 	DL_PORTUGUESE,	// Portuguese Portugal
 	DL_DEFAULT,	// Romanian Romania

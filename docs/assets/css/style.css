@@ -98,8 +98,13 @@ input[id^="spoiler"] + label:hover {
 	padding-top: 10px;
 }
 
-.highlight {
+.hl {
 	color: #BD0000;
+	font-weight: bold;
+}
+
+.hlBlue {
+	color: #578bb8;
 	font-weight: bold;
 }
 

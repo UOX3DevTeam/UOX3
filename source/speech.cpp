@@ -260,6 +260,8 @@ bool CPITalkRequest::Handle( void )
 		return true;
 
 	char *asciiText		= Text();
+	if( strlen(asciiText) == 0 )
+		return true;
 
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
