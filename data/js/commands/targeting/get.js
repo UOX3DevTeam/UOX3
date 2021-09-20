@@ -36,7 +36,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "DEX":
 	case "DEXTERITY":
-		socket.SysMessage( ourObj.dexterity );
+		socket.SysMessage( ourObj.dexterity + " (tempdex: " + ourObj.tempdex + ")" );
 		break;
 	case "INT":
 	case "INTELLIGENCE":
@@ -70,6 +70,9 @@ function onCallback0( socket, ourObj )
 			socket.SysMessage( ourObj.owner.serial + " - " + ourObj.owner.name );
 		else
 			socket.SysMessage( "null" );
+		break;
+	case "PERMANENTMAGICREFLECT":
+		socket.SysMessage( ourObj.permanentMagicReflect );
 		break;
 	case "POISON":
 		socket.SysMessage( ourObj.poison );
@@ -130,6 +133,9 @@ function onCallback0( socket, ourObj )
 		}
 		break;
 	}
+	case "SHOULDSAVE":
+		socket.SysMessage( ourObj.shouldSave );
+		break;
 	default:
 		if( ourObj.isChar )
 			HandleGetChar( socket, ourObj, uKey );
@@ -155,6 +161,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "MOVABLE":
 		socket.SysMessage( ourItem.movable );
 		break;
+	case "BASERANGE":
+		socket.SysMessage( ourItem.baseRange );
+		break;
 	case "BUYVALUE":
 		socket.SysMessage( ourItem.buyvalue );
 		break;
@@ -166,6 +175,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "MAXITEMS":
 		socket.SysMessage( ourItem.maxItems );
+		break;
+	case "MAXRANGE":
+		socket.SysMessage( ourItem.maxRange );
 		break;
 	case "MORE":
 		var hexVal = "0x" + ("00000000"+(Number(ourItem.more).toString(16))).slice(-8)

@@ -188,7 +188,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 	CSocket *mSock = s->GetSocket();
 	if( !pRace->IsPlayerRace() )
 	{
-		mSock->sysmessage( 369 );
+		mSock->sysmessage( 369 ); // This race is not for players!
 		return;
 	}
 	if( s->GetRaceGate() == 65535 || always )

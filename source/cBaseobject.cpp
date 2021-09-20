@@ -166,6 +166,10 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		if( I->second.m_Destroy || tagval.m_Destroy )
 		{
 			tags.erase( I );
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
 			return;
 		}
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
@@ -184,11 +188,96 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			I->second.m_StringValue	= "";
 			I->second.m_IntValue	= tagval.m_IntValue;
 		}
+
+		if( CanBeObjType( OT_ITEM ))
+			(static_cast<CItem *>(this))->UpdateRegion();
+		else if( CanBeObjType( OT_CHAR ))
+			(static_cast<CChar *>(this))->UpdateRegion();
 	}
 	else
 	{	// We need to create a TAGMAPOBJECT and initialize and store into the tagmap
 		if( !tagval.m_Destroy )
+		{
 			tags[tagname] = tagval;
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
+		}
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TAGMAPOBJECT GetTempTag( std::string tempTagName ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetch custom, temporary tag with specified name from object's temporary tag map
+//o-----------------------------------------------------------------------------------------------o
+TAGMAPOBJECT CBaseObject::GetTempTag( std::string tempTagName ) const
+{
+	TAGMAPOBJECT localObject;
+	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+	localObject.m_IntValue		= 0;
+	localObject.m_Destroy		= FALSE;
+	localObject.m_StringValue	= "";
+	TAGMAP2_CITERATOR CI = tempTags.find( tempTagName );
+	if( CI != tempTags.end() )
+		localObject = CI->second;
+
+	return localObject;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Store custom, temporary string/int tag in an object's temporary tag map
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
+{
+	TAGMAP2_ITERATOR I = tempTags.find( tempTagName );
+	if( I != tempTags.end() )
+	{
+		// Check to see if this object needs to be destroyed
+		if( I->second.m_Destroy || tagVal.m_Destroy )
+		{
+			tempTags.erase( I );
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
+			return;
+		}
+		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
+		else if( tagVal.m_ObjectType == TAGMAP_TYPE_STRING )
+		{
+			I->second.m_Destroy		= FALSE;
+			I->second.m_ObjectType	= tagVal.m_ObjectType;
+			I->second.m_StringValue	= tagVal.m_StringValue;
+			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
+			I->second.m_IntValue	= static_cast<SI32>(tagVal.m_StringValue.length());
+		}
+		else
+		{
+			I->second.m_Destroy		= FALSE;
+			I->second.m_ObjectType	= tagVal.m_ObjectType;
+			I->second.m_StringValue	= "";
+			I->second.m_IntValue	= tagVal.m_IntValue;
+		}
+
+		if( CanBeObjType( OT_ITEM ))
+			(static_cast<CItem *>(this))->UpdateRegion();
+		else if( CanBeObjType( OT_CHAR ))
+			(static_cast<CChar *>(this))->UpdateRegion();
+	}
+	else
+	{	// We need to create a TAGMAPOBJECT and initialize and store into the tagmap
+		if( !tagVal.m_Destroy )
+		{
+			tempTags[tempTagName] = tagVal;
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
+		}
 	}
 }
 
@@ -304,6 +393,11 @@ UI16 CBaseObject::GetResist( WeatherType damage ) const
 void CBaseObject::SetResist( UI16 newValue, WeatherType damage )
 {
 	resistances[damage] = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -377,6 +471,8 @@ void CBaseObject::SetColour( UI16 newValue )
 {
 	colour = newValue;
 	Dirty( UT_UPDATE );
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -578,7 +674,18 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 
 	// Decimal / String Values
 	outStream << std::dec;
-	outStream << "Name=" << name << '\n';
+
+	std::string objName = name;
+	if( CanBeObjType( OT_CHAR ) )
+	{
+		if( objName == "#" )
+		{
+			// If character name is #, use default name from dictionary files instead - using base entry 3000 + character's ID
+			objName = "#//" + Dictionary->GetEntry( 3000 + id );
+		}
+	}
+
+	outStream << "Name=" << objName << '\n';
 	outStream << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << "," << (UI16)instanceID << '\n';
 	outStream << "Title=" << title << '\n';
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
@@ -667,6 +774,11 @@ RACEID CBaseObject::GetRace( void ) const
 void CBaseObject::SetRace( RACEID newValue )
 {
 	race = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -684,6 +796,11 @@ void CBaseObject::SetName( std::string newName )
 {
 	name = newName.substr( 0, MAX_NAME - 1 );
 	Dirty( UT_UPDATE );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -700,6 +817,9 @@ SI16 CBaseObject::GetStrength( void ) const
 void CBaseObject::SetStrength( SI16 newValue )
 {
 	strength = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -716,6 +836,9 @@ SI16 CBaseObject::GetDexterity( void ) const
 void CBaseObject::SetDexterity( SI16 newValue )
 {
 	dexterity = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -732,6 +855,9 @@ SI16 CBaseObject::GetIntelligence( void ) const
 void CBaseObject::SetIntelligence( SI16 newValue )
 {
 	intelligence = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -748,6 +874,8 @@ SI16 CBaseObject::GetHP( void ) const
 void CBaseObject::SetHP( SI16 newValue )
 {
 	hitpoints = newValue;
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -776,6 +904,11 @@ void CBaseObject::SetDir( UI08 newDir )
 {
 	dir = newDir;
 	Dirty( UT_UPDATE );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -798,6 +931,11 @@ void CBaseObject::SetVisible( VisibleTypes newValue )
 {
 	visible = newValue;
 	Dirty( UT_HIDE );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -962,14 +1100,24 @@ void CBaseObject::SetSpawn( SERIAL newSpawn )
 {
 	CSpawnItem *ourSpawner = GetSpawnObj();
 	if( ourSpawner != nullptr )
+	{
 		ourSpawner->spawnedList.Remove( this );
+		ourSpawner->UpdateRegion();
+	}
 	spawnserial = newSpawn;
 	if( newSpawn != INVALIDSERIAL )
 	{
 		ourSpawner = GetSpawnObj();
 		if( ourSpawner != nullptr )
+		{
 			ourSpawner->spawnedList.Add( this );
+			ourSpawner->UpdateRegion();
+		}
 	}
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1023,6 +1171,11 @@ SI16 CBaseObject::GetHiDamage( void ) const
 void CBaseObject::SetHiDamage( SI16 newValue )
 {
 	hidamage = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1039,6 +1192,11 @@ SI16 CBaseObject::GetLoDamage( void ) const
 void CBaseObject::SetLoDamage( SI16 newValue )
 {
 	lodamage = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1127,6 +1285,11 @@ void CBaseObject::AddScriptTrigger( UI16 newValue )
 
 	// Sort vector in ascending order, so order in which scripts are evaluated is predictable
 	std::sort(scriptTriggers.begin(), scriptTriggers.end());
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1138,6 +1301,11 @@ void CBaseObject::RemoveScriptTrigger( UI16 newValue )
 {
 	// Remove all elements containing specified script trigger from vector
 	scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue), scriptTriggers.end());
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1149,6 +1317,11 @@ void CBaseObject::ClearScriptTriggers( void )
 {
 	scriptTriggers.clear();
 	scriptTriggers.shrink_to_fit();
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1175,6 +1348,9 @@ SI16 CBaseObject::GetStrength2( void ) const
 void CBaseObject::SetStrength2( SI16 nVal )
 {
 	st2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1191,6 +1367,9 @@ SI16 CBaseObject::GetDexterity2( void ) const
 void CBaseObject::SetDexterity2( SI16 nVal )
 {
 	dx2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1207,6 +1386,9 @@ SI16 CBaseObject::GetIntelligence2( void ) const
 void CBaseObject::SetIntelligence2( SI16 nVal )
 {
 	in2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1745,6 +1927,11 @@ void CBaseObject::WorldNumber( UI08 value )
 {
 	worldNumber = value;
 	Dirty( UT_LOCATION );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1762,6 +1949,11 @@ void CBaseObject::SetInstanceID( UI16 value )
 {
 	instanceID = value;
 	Dirty( UT_LOCATION );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1777,6 +1969,9 @@ UI08 CBaseObject::GetPoisoned( void ) const
 void CBaseObject::SetPoisoned( UI08 newValue )
 {
 	poisoned = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1792,6 +1987,11 @@ SI16 CBaseObject::GetCarve( void ) const
 void CBaseObject::SetCarve( SI16 newValue )
 {
 	carve = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1882,6 +2082,11 @@ bool CBaseObject::isDisabled( void ) const
 void CBaseObject::SetDisabled( bool newVal )
 {
 	objSettings.set( BIT_DISABLED, newVal );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2002,6 +2207,11 @@ SI16 CBaseObject::GetKarma( void ) const
 void CBaseObject::SetKarma( SI16 value )
 {
 	karma = value;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2017,6 +2227,11 @@ SI16 CBaseObject::GetFame( void ) const
 void CBaseObject::SetFame( SI16 value )
 {
 	fame = value;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2032,6 +2247,11 @@ SI16 CBaseObject::GetKills( void ) const
 void CBaseObject::SetKills( SI16 value )
 {
 	kills = value;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2062,4 +2282,9 @@ bool CBaseObject::isDamageable(void) const
 void CBaseObject::SetDamageable(bool newValue)
 {
 	objSettings.set( BIT_DAMAGEABLE, newValue );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }

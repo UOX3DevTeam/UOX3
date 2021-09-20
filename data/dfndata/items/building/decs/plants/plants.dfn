@@ -7,7 +7,7 @@
 
 [0xc4f]
 {
-get=base_item
+get=base_plant
 name=cotton
 id=0x0c4f
 weight=5
@@ -15,7 +15,7 @@ weight=5
 
 [0xc50]
 {
-get=base_item
+get=base_plant
 name=cotton
 id=0x0c50
 weight=5
@@ -23,7 +23,7 @@ weight=5
 
 [0xc51]
 {
-get=base_item
+get=base_plant
 name=cotton
 id=0x0c51
 weight=5
@@ -31,7 +31,7 @@ weight=5
 
 [0xc52]
 {
-get=base_item
+get=base_plant
 name=cotton
 id=0x0c52
 weight=5
@@ -39,7 +39,7 @@ weight=5
 
 [0xc53]
 {
-get=base_item
+get=base_plant
 name=cotton
 id=0x0c53
 weight=5
@@ -47,7 +47,7 @@ weight=5
 
 [0xc54]
 {
-get=base_item
+get=base_plant
 name=cotton
 id=0x0c54
 weight=5
@@ -55,7 +55,7 @@ weight=5
 
 [0xc55]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c55
 weight=5
@@ -63,7 +63,7 @@ weight=5
 
 [0xc56]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c56
 weight=5
@@ -71,7 +71,7 @@ weight=5
 
 [0xc57]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c57
 weight=5
@@ -79,7 +79,7 @@ weight=5
 
 [0xc58]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c58
 weight=5
@@ -87,7 +87,7 @@ weight=5
 
 [0xc59]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c59
 weight=5
@@ -95,7 +95,7 @@ weight=5
 
 [0xc5a]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c5a
 weight=5
@@ -103,7 +103,7 @@ weight=5
 
 [0xc5b]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0c5b
 weight=5
@@ -111,7 +111,7 @@ weight=5
 
 [0xc5e]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0c5e
 weight=5
@@ -119,7 +119,7 @@ weight=5
 
 [0xc5f]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0c5f
 weight=5
@@ -127,7 +127,7 @@ weight=5
 
 [0xc60]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0c60
 weight=5
@@ -135,7 +135,7 @@ weight=5
 
 [0xc68]
 {
-get=base_item
+get=base_plant
 name=sprouts
 id=0x0c68
 weight=5
@@ -143,7 +143,7 @@ weight=5
 
 [0xc69]
 {
-get=base_item
+get=base_plant
 name=sprouts
 id=0x0c69
 weight=5
@@ -151,7 +151,7 @@ weight=5
 
 [0xc6f]
 {
-get=base_item
+get=base_plant
 name=onions
 id=0x0c6f
 weight=5
@@ -159,7 +159,7 @@ weight=5
 
 [0xc7d]
 {
-get=base_item
+get=base_plant
 name=corn stalk
 id=0x0c7d
 weight=5
@@ -167,7 +167,7 @@ weight=5
 
 [0xc8f]
 {
-get=base_item
+get=base_plant
 name=hedge
 id=0x0c8f
 weight=5
@@ -175,7 +175,7 @@ weight=5
 
 [0xc90]
 {
-get=base_item
+get=base_plant
 name=hedge
 id=0x0c90
 weight=5
@@ -183,7 +183,7 @@ weight=5
 
 [0xc91]
 {
-get=base_item
+get=base_plant
 name=untrimmed hedge
 id=0x0c91
 weight=5
@@ -191,7 +191,7 @@ weight=5
 
 [0xc92]
 {
-get=base_item
+get=base_plant
 name=untrimmed hedge
 id=0x0c92
 weight=5
@@ -199,7 +199,7 @@ weight=5
 
 [0xc93]
 {
-get=base_item
+get=base_plant
 name=blade plant
 id=0x0c93
 weight=5
@@ -207,7 +207,7 @@ weight=5
 
 [0xc94]
 {
-get=base_item
+get=base_plant
 name=bulrushes
 id=0x0c94
 weight=5
@@ -216,7 +216,7 @@ weight=5
 
 [0xc97]
 {
-get=base_item
+get=base_plant
 name=elephant ear plant
 id=0x0c97
 weight=5
@@ -224,7 +224,7 @@ weight=5
 
 [0xc98]
 {
-get=base_item
+get=base_plant
 name=fan plant
 id=0x0c98
 weight=5
@@ -232,7 +232,7 @@ weight=5
 
 [0xc9f]
 {
-get=base_item
+get=base_plant
 name=fern
 id=0x0c9f
 weight=5
@@ -240,7 +240,7 @@ weight=5
 
 [0xca0]
 {
-get=base_item
+get=base_plant
 name=fern
 id=0x0ca0
 weight=5
@@ -248,7 +248,7 @@ weight=5
 
 [0xca1]
 {
-get=base_item
+get=base_plant
 name=large fern
 id=0x0ca1
 weight=5
@@ -256,7 +256,7 @@ weight=5
 
 [0xca2]
 {
-get=base_item
+get=base_plant
 name=fern
 id=0x0ca2
 weight=5
@@ -264,7 +264,7 @@ weight=5
 
 [0xca3]
 {
-get=base_item
+get=base_plant
 name=fern
 id=0x0ca3
 weight=5
@@ -272,7 +272,7 @@ weight=5
 
 [0xca4]
 {
-get=base_item
+get=base_plant
 name=fern
 id=0x0ca4
 weight=5
@@ -280,7 +280,7 @@ weight=5
 
 [0xca5]
 {
-get=base_item
+get=base_plant
 name=pampas grass
 id=0x0ca5
 weight=5
@@ -288,7 +288,7 @@ weight=5
 
 [0xca7]
 {
-get=base_item
+get=base_plant
 name=rushes
 id=0x0ca7
 weight=5
@@ -296,7 +296,7 @@ weight=5
 
 [0xca9]
 {
-get=base_item
+get=base_plant
 name=snake plant
 id=0x0ca9
 weight=5
@@ -304,7 +304,7 @@ weight=5
 
 [0xcac]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cac
 weight=5
@@ -312,7 +312,7 @@ weight=5
 
 [0xcad]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cad
 weight=5
@@ -320,7 +320,7 @@ weight=5
 
 [0xcae]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cae
 weight=5
@@ -328,7 +328,7 @@ weight=5
 
 [0xcaf]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0caf
 weight=5
@@ -336,7 +336,7 @@ weight=5
 
 [0xcb0]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb0
 weight=5
@@ -344,7 +344,7 @@ weight=5
 
 [0xcb1]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb1
 weight=5
@@ -352,7 +352,7 @@ weight=5
 
 [0xcb2]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb2
 weight=5
@@ -360,7 +360,7 @@ weight=5
 
 [0xcb3]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb3
 weight=5
@@ -368,7 +368,7 @@ weight=5
 
 [0xcb4]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb4
 weight=5
@@ -376,7 +376,7 @@ weight=5
 
 [0xcb5]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb5
 weight=5
@@ -384,7 +384,7 @@ weight=5
 
 [0xcb6]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb6
 weight=5
@@ -392,7 +392,7 @@ weight=5
 
 [0xcb7]
 {
-get=base_item
+get=base_plant
 name=cattails
 id=0x0cb7
 weight=5
@@ -400,7 +400,7 @@ weight=5
 
 [0xcb8]
 {
-get=base_item
+get=base_plant
 name=cattails
 id=0x0cb8
 weight=5
@@ -408,7 +408,7 @@ weight=5
 
 [0xcb9]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cb9
 weight=5
@@ -416,7 +416,7 @@ weight=5
 
 [0xcba]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cba
 weight=5
@@ -424,7 +424,7 @@ weight=5
 
 [0xcbb]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cbb
 weight=5
@@ -432,7 +432,7 @@ weight=5
 
 [0xcbc]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cbc
 weight=5
@@ -440,7 +440,7 @@ weight=5
 
 [0xcbd]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cbd
 weight=5
@@ -448,7 +448,7 @@ weight=5
 
 [0xcc3]
 {
-get=base_item
+get=base_plant
 name=muck
 id=0x0cc3
 weight=5
@@ -456,7 +456,7 @@ weight=5
 
 [0xcc4]
 {
-get=base_item
+get=base_plant
 name=pampas grass
 id=0x0cc4
 weight=5
@@ -464,7 +464,7 @@ weight=5
 
 [0xcc5]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cc5
 weight=5
@@ -472,7 +472,7 @@ weight=5
 
 [0xcc6]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0cc6
 weight=5
@@ -480,7 +480,7 @@ weight=5
 
 [0xcc7]
 {
-get=base_item
+get=base_plant
 name=weed
 id=0x0cc7
 weight=5
@@ -488,7 +488,7 @@ weight=5
 
 [0xcc8]
 {
-get=base_item
+get=base_plant
 name=juniper bush
 id=0x0cc8
 weight=5
@@ -496,7 +496,7 @@ weight=5
 
 [0xceb]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0ceb
 weight=5
@@ -504,7 +504,7 @@ weight=5
 
 [0xcec]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0cec
 weight=5
@@ -512,7 +512,7 @@ weight=5
 
 [0xced]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0ced
 weight=5
@@ -520,7 +520,7 @@ weight=5
 
 [0xcee]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0cee
 weight=5
@@ -528,7 +528,7 @@ weight=5
 
 [0xcef]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0cef
 weight=5
@@ -536,7 +536,7 @@ weight=5
 
 [0xcf0]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0cf0
 weight=5
@@ -544,7 +544,7 @@ weight=5
 
 [0xcf1]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0cf1
 weight=5
@@ -552,7 +552,7 @@ weight=5
 
 [0xcf2]
 {
-get=base_item
+get=base_plant
 name=vines
 id=0x0cf2
 weight=5
@@ -560,7 +560,7 @@ weight=5
 
 [0xcf3]
 {
-get=base_item
+get=base_plant
 name=fallen log
 id=0x0cf3
 weight=5
@@ -568,7 +568,7 @@ weight=5
 
 [0xcf4]
 {
-get=base_item
+get=base_plant
 name=fallen log
 id=0x0cf4
 weight=5
@@ -576,7 +576,7 @@ weight=5
 
 [0xcf5]
 {
-get=base_item
+get=base_plant
 name=fallen log
 id=0x0cf5
 weight=5
@@ -584,7 +584,7 @@ weight=5
 
 [0xcf6]
 {
-get=base_item
+get=base_plant
 name=fallen log
 id=0x0cf6
 weight=5
@@ -592,7 +592,7 @@ weight=5
 
 [0xcf7]
 {
-get=base_item
+get=base_plant
 name=fallen log
 id=0x0cf7
 weight=5
@@ -600,7 +600,7 @@ weight=5
 
 [0xd04]
 {
-get=base_item
+get=base_plant
 name=water plants
 id=0x0d04
 weight=5
@@ -608,7 +608,7 @@ weight=5
 
 [0xd05]
 {
-get=base_item
+get=base_plant
 name=reeds
 id=0x0d05
 weight=5
@@ -616,7 +616,7 @@ weight=5
 
 [0xd06]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0d06
 weight=5
@@ -624,7 +624,7 @@ weight=5
 
 [0xd07]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0d07
 weight=5
@@ -632,7 +632,7 @@ weight=5
 
 [0xd08]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0d08
 weight=5
@@ -640,7 +640,7 @@ weight=5
 
 [0xd09]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0d09
 weight=5
@@ -648,7 +648,7 @@ weight=5
 
 [0xd0a]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0d0a
 weight=5
@@ -656,7 +656,7 @@ weight=5
 
 [0xd0b]
 {
-get=base_item
+get=base_plant
 name=lilypads
 id=0x0d0b
 weight=5
@@ -664,7 +664,7 @@ weight=5
 
 [0xd0c]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d0c
 weight=5
@@ -672,7 +672,7 @@ weight=5
 
 [0xd0d]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d0d
 weight=5
@@ -680,7 +680,7 @@ weight=5
 
 [0xd0e]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d0e
 weight=5
@@ -688,7 +688,7 @@ weight=5
 
 [0xd0f]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d0f
 weight=5
@@ -696,7 +696,7 @@ weight=5
 
 [0xd10]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d10
 weight=5
@@ -704,7 +704,7 @@ weight=5
 
 [0xd11]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d11
 weight=5
@@ -712,7 +712,7 @@ weight=5
 
 [0xd12]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d12
 weight=5
@@ -720,7 +720,7 @@ weight=5
 
 [0xd13]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d13
 weight=5
@@ -728,7 +728,7 @@ weight=5
 
 [0xd14]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d14
 weight=5
@@ -736,7 +736,7 @@ weight=5
 
 [0xd15]
 {
-get=base_item
+get=base_plant
 name=mushrooms
 id=0x0d15
 weight=5
@@ -744,7 +744,7 @@ weight=5
 
 [0x0d16]
 {
-get=base_item
+get=base_plant
 name=mushroom
 id=0x0d16
 weight=1
@@ -761,7 +761,7 @@ good=3
 
 [0x0d17]
 {
-get=base_item
+get=base_plant
 name=mushroom
 id=0x0d17
 weight=1
@@ -778,7 +778,7 @@ good=3
 
 [0x0d18]
 {
-get=base_item
+get=base_plant
 name=mushroom
 id=0x0d18
 weight=1
@@ -795,7 +795,7 @@ good=3
 
 [0x0d19]
 {
-get=base_item
+get=base_plant
 name=mushroom
 id=0x0d19
 weight=1
@@ -812,7 +812,7 @@ good=3
 
 [0xd1b]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d1b
 weight=5
@@ -820,7 +820,7 @@ weight=5
 
 [0xd1c]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d1c
 weight=5
@@ -828,7 +828,7 @@ weight=5
 
 [0xd1d]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d1d
 weight=5
@@ -836,7 +836,7 @@ weight=5
 
 [0xd1e]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d1e
 weight=5
@@ -844,7 +844,7 @@ weight=5
 
 [0xd1f]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d1f
 weight=5
@@ -852,7 +852,7 @@ weight=5
 
 [0xd20]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d20
 weight=5
@@ -860,7 +860,7 @@ weight=5
 
 [0xd21]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d21
 weight=5
@@ -868,7 +868,7 @@ weight=5
 
 [0xd22]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d22
 weight=5
@@ -876,7 +876,7 @@ weight=5
 
 [0xd23]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d23
 weight=5
@@ -884,7 +884,7 @@ weight=5
 
 [0xd24]
 {
-get=base_item
+get=base_plant
 name=grapevines
 id=0x0d24
 weight=5
@@ -892,7 +892,7 @@ weight=5
 
 [0xd25]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d25
 weight=5
@@ -900,7 +900,7 @@ weight=5
 
 [0xd26]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d26
 weight=5
@@ -908,7 +908,7 @@ weight=5
 
 [0xd27]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d27
 weight=5
@@ -916,7 +916,7 @@ weight=5
 
 [0xd28]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d28
 weight=5
@@ -924,7 +924,7 @@ weight=5
 
 [0xd2a]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d2a
 weight=5
@@ -932,7 +932,7 @@ weight=5
 
 [0xd2c]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d2c
 weight=5
@@ -941,7 +941,7 @@ weight=5
 
 [0xd2e]
 {
-get=base_item
+get=base_plant
 name=cactus
 id=0x0d2e
 weight=5
@@ -949,7 +949,7 @@ weight=5
 
 [0xd30]
 {
-get=base_item
+get=base_plant
 name=century plant
 id=0x0d30
 weight=5
@@ -957,7 +957,7 @@ weight=5
 
 [0xd31]
 {
-get=base_item
+get=base_plant
 name=century plant
 id=0x0d31
 weight=5
@@ -965,7 +965,7 @@ weight=5
 
 [0xd32]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0d32
 weight=5
@@ -973,7 +973,7 @@ weight=5
 
 [0xd33]
 {
-get=base_item
+get=base_plant
 name=grasses
 id=0x0d33
 weight=5
@@ -981,7 +981,7 @@ weight=5
 
 [0xd34]
 {
-get=base_item
+get=base_plant
 name=morning glories
 id=0x0d34
 weight=5
@@ -989,7 +989,7 @@ weight=5
 
 [0xd35]
 {
-get=base_item
+get=base_plant
 name=pipe cactus
 id=0x0d35
 weight=5
@@ -997,7 +997,7 @@ weight=5
 
 [0xd37]
 {
-get=base_item
+get=base_plant
 name=yucca
 id=0x0d37
 weight=5
@@ -1005,7 +1005,7 @@ weight=5
 
 [0xd38]
 {
-get=base_item
+get=base_plant
 name=yucca
 id=0x0d38
 weight=5
@@ -1013,7 +1013,7 @@ weight=5
 
 [0xd3f]
 {
-get=base_item
+get=base_plant
 name=brambles
 id=0x0d3f
 weight=5
@@ -1021,7 +1021,7 @@ weight=5
 
 [0xd40]
 {
-get=base_item
+get=base_plant
 name=brambles
 id=0x0d40
 weight=5
@@ -1029,7 +1029,7 @@ weight=5
 
 [0xdae]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0dae
 weight=5
@@ -1037,7 +1037,7 @@ weight=5
 
 [0xdaf]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x0daf
 weight=5
@@ -1045,7 +1045,7 @@ weight=5
 
 [0xdb8]
 {
-get=base_item
+get=base_plant
 name=hedge
 id=0x0db8
 weight=5
@@ -1053,7 +1053,7 @@ weight=5
 
 [0xdb9]
 {
-get=base_item
+get=base_plant
 name=hedge
 id=0x0db9
 weight=5
@@ -1061,7 +1061,7 @@ weight=5
 
 [0xdba]
 {
-get=base_item
+get=base_plant
 name=seaweed
 id=0x0dba
 weight=5
@@ -1069,7 +1069,7 @@ weight=5
 
 [0xdbb]
 {
-get=base_item
+get=base_plant
 name=seaweed
 id=0x0dbb
 weight=5
@@ -1077,7 +1077,7 @@ weight=5
 
 [0xdbc]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0dbc
 weight=5
@@ -1085,7 +1085,7 @@ weight=5
 
 [0xdbd]
 {
-get=base_item
+get=base_plant
 name=lilypad
 id=0x0dbd
 weight=5
@@ -1093,7 +1093,7 @@ weight=5
 
 [0xdbe]
 {
-get=base_item
+get=base_plant
 name=lilypads
 id=0x0dbe
 weight=5
@@ -1101,7 +1101,7 @@ weight=5
 
 [0xdc1]
 {
-get=base_item
+get=base_plant
 name=water lily
 id=0x0dc1
 weight=5
@@ -1109,7 +1109,7 @@ weight=5
 
 [0xdc2]
 {
-get=base_item
+get=base_plant
 name=water lily
 id=0x0dc2
 weight=5
@@ -1117,7 +1117,7 @@ weight=5
 
 [0xdc3]
 {
-get=base_item
+get=base_plant
 name=water lily
 id=0x0dc3
 weight=5
@@ -1125,7 +1125,7 @@ weight=5
 
 [0x1865]
 {
-get=base_item
+get=base_plant
 name=dishing stump
 id=0x1865
 weight=5
@@ -1133,7 +1133,7 @@ weight=5
 
 [0x1866]
 {
-get=base_item
+get=base_plant
 name=dishing stump
 id=0x1866
 weight=5
@@ -1141,7 +1141,7 @@ weight=5
 
 [0x1e0f]
 {
-get=base_item
+get=base_plant
 name=potted cactus
 id=0x1e0f
 weight=1
@@ -1149,7 +1149,7 @@ weight=1
 
 [0x1e10]
 {
-get=base_item
+get=base_plant
 name=potted cactus
 id=0x1e10
 weight=1
@@ -1157,7 +1157,7 @@ weight=1
 
 [0x1e11]
 {
-get=base_item
+get=base_plant
 name=potted cactus
 id=0x1e11
 weight=1
@@ -1165,7 +1165,7 @@ weight=1
 
 [0x1e12]
 {
-get=base_item
+get=base_plant
 name=potted cactus
 id=0x1e12
 weight=1
@@ -1173,7 +1173,7 @@ weight=1
 
 [0x1e13]
 {
-get=base_item
+get=base_plant
 name=potted cactus
 id=0x1e13
 weight=1
@@ -1181,7 +1181,7 @@ weight=1
 
 [0x1e14]
 {
-get=base_item
+get=base_plant
 name=potted cactus
 id=0x1e14
 weight=1
@@ -1189,7 +1189,7 @@ weight=1
 
 [0x1a92]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x1a92
 weight=1
@@ -1197,7 +1197,7 @@ weight=1
 
 [0x1a93]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x1a93
 weight=1
@@ -1205,7 +1205,7 @@ weight=1
 
 [0x1a94]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x1a94
 weight=1
@@ -1213,7 +1213,7 @@ weight=1
 
 [0x1a95]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x1a95
 weight=1
@@ -1221,7 +1221,7 @@ weight=1
 
 [0x1a96]
 {
-get=base_item
+get=base_plant
 name=wheat
 id=0x1a96
 weight=1
@@ -1229,7 +1229,7 @@ weight=1
 
 [0x1a99]
 {
-get=base_item
+get=base_plant
 name=flax
 id=0x1a99
 weight=1
@@ -1237,7 +1237,7 @@ weight=1
 
 [0x1a9a]
 {
-get=base_item
+get=base_plant
 name=flax
 id=0x1a9a
 weight=1
@@ -1245,7 +1245,7 @@ weight=1
 
 [0x1a9b]
 {
-get=base_item
+get=base_plant
 name=flax
 id=0x1a9b
 weight=1
@@ -1253,7 +1253,7 @@ weight=1
 
 [0x1a9e]
 {
-get=base_item
+get=base_plant
 name=hops
 id=0x1a9e
 weight=1
@@ -1261,7 +1261,7 @@ weight=1
 
 [0x1a9f]
 {
-get=base_item
+get=base_plant
 name=hops
 id=0x1a9f
 weight=1
@@ -1269,7 +1269,7 @@ weight=1
 
 [0x1aa0]
 {
-get=base_item
+get=base_plant
 name=hops
 id=0x1aa0
 weight=1
@@ -1277,7 +1277,7 @@ weight=1
 
 [0x1aa1]
 {
-get=base_item
+get=base_plant
 name=hops
 id=0x1aa1
 weight=1
@@ -1285,7 +1285,7 @@ weight=1
 
 [0x1aa2]
 {
-get=base_item
+get=base_plant
 name=hoprs cones
 id=0x1aa2
 weight=1

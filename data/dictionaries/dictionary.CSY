@@ -2299,6 +2299,12 @@
 2429=Váš domácí mazlíček vypadá velmi šťastně
 2430=Váš domácí mazlíček vypadá velmi šťastně
 2431=Váš domácí mazlíček vypadá úžasně šťastně
+2432=Toto stvoření si musíš podmanit, než ho zkrotíš!
+2433=Toto stvoření si mohou ochočit pouze samice.
+2434=Toto stvoření si mohou ochočit pouze samci.
+2435=Toto mohou používat pouze elfové.
+2436=Unicorn ti nedovolí na něm jezdit.
+2437=Ki-Rin odmítá tvé pokusy o nasednutí na něj.
 // [2450-2475] Archerybutte
 2450=Někdo jiný právě používá toto.
 2451=Získáte %i šípy z terče.
@@ -2658,7 +2664,7 @@
 3124=zlý mág
 3125=zlý pán mágů
 3126=zlý mág lord
-3127=pekelný dravec
+3127=pekelný kocour
 3128=skřítek
 3129=Tentakly harrowera
 3130=ohnivý chrlič
@@ -3005,6 +3011,9 @@
 4528=mládě kapybary
 4541=Králík zkázy
 4542=Mládě králíka zkázy
+4543=menší démon
+4544=akodaemon
+4545=zvířecí démon
 // [5000-5499] Additional NPC names and titles (not linked to ID)
 5000=bičující liána
 5001=kanárek
@@ -3113,7 +3122,7 @@
 5104=chrlič kamene, který pracuje s kameny
 5105=zloděj
 5106=Prodejce hráčů
-5107=velký pekelný kocour
+5107=pekelný dravec
 5108=a jwilson
 5109=ethereální hiryu
 5110=éterický reptalon
@@ -3890,6 +3899,15 @@
 9065=Tento předmět ti nepatří. Budeš ho muset ukrást.
 9066=Ten předmět patří někomu jinému.
 9067=Nemůžeš upustit předmět... odkud byl sebrán?
+9068=Cítíš, jak ti někdo krade životní sílu!
+9069=Mohu darovat život a stejně snadno ho mohu vysát.
+9070=Nikam se nedostaneš, pokud to tak nepovažuji za vhodné.
+9071=Tvá síla je moje a mohu s ní nakládat, jak se mi zlíbí.
+9072=Byli jste přidáni do party.
+9073=Znovu jste se připojili ke straně.
+9074=Byl/a jste vyřazen/a ze strany.
+9075=Hráč byl odstraněn z vaší party.
+9076=Do party se přidal%s.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -3956,5 +3974,6 @@
 9401=Tento kouzelný předmět je bez náboje.
 9402=[Neidentifikováno]
 9403=Zbývající použití: %i
+9404= s %d náloží
 }
 EOF

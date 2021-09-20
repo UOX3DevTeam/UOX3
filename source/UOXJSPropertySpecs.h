@@ -304,6 +304,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "atWar",			CCP_ATWAR,			JSPROP_ENUMANDPERM },
 	{ "spellCast",		CCP_SPELLCAST,		JSPROP_ENUMANDPERM },
 	{ "isCasting",		CCP_ISCASTING,		JSPROP_ENUMANDPERM },
+	{ "priv",			CCP_PRIV,			JSPROP_ENUMANDPERM },
 
 	{ "townPriv",		CCP_TOWNPRIV,		JSPROP_ENUMANDPERM },
 	{ "guildTitle",		CCP_GUILDTITLE,		JSPROP_ENUMANDPERM },
@@ -332,6 +333,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM },
 	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO  },
 	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM },
+	{ "permanentMagicReflect",	CCP_PERMMAGICREFLECT,	JSPROP_ENUMANDPERM },
 	{ "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM },
 	{ "tamedHungerRate",CCP_TAMEDHUNGERRATE,JSPROP_ENUMANDPERM },
 	{ "tamedThirstRate",CCP_TAMEDTHIRSTRATE,JSPROP_ENUMANDPERM },
@@ -369,6 +371,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "maxLoyalty",		CCP_MAXLOYALTY,		JSPROP_ENUMANDPERM },
 	{ "loyalty",		CCP_LOYALTY,		JSPROP_ENUMANDPERM },
 	{ "loyaltyRate",	CCP_LOYALTYRATE,	JSPROP_ENUMANDPERM },
+	{ "shouldSave",		CCP_SHOULDSAVE,		JSPROP_ENUMANDPERM },
 
 	{ "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM },
 	{ "party",			CCP_PARTY,			JSPROP_ENUMPERMRO  },
@@ -440,6 +443,7 @@ static JSPropertySpec CItemProps[] =
 	{ "race",			CIP_RACE,			JSPROP_ENUMANDPERM },
 	{ "maxhp",			CIP_MAXHP,			JSPROP_ENUMANDPERM },
 	{ "rank",			CIP_RANK,			JSPROP_ENUMANDPERM },
+	{ "creator",		CIP_CREATOR,		JSPROP_ENUMANDPERM },
 	{ "poison",			CIP_POISON,			JSPROP_ENUMANDPERM },
 	{ "dir",			CIP_DIR,			JSPROP_ENUMANDPERM },
 	{ "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM },
@@ -457,6 +461,7 @@ static JSPropertySpec CItemProps[] =
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
 	{ "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM },
+	{ "shouldSave",		CIP_SHOULDSAVE,		JSPROP_ENUMANDPERM },
 
 	{ "isNewbie",		CIP_ISNEWBIE,		JSPROP_ENUMANDPERM },
 	{ "isDispellable",	CIP_ISDISPELLABLE,	JSPROP_ENUMANDPERM },

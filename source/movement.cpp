@@ -5,6 +5,7 @@
 //|	Ultima Offline eXperiment III
 //|	UO Server Emulation Program
 //|
+//| Copyright 1998 - 2021 by UOX3 contributors
 //|	Copyright 1997 - 2001 by Marcus Rating (Cironian)
 //|
 //|	This program is free software; you can redistribute it and/or modify
@@ -117,7 +118,7 @@ void HandleTeleporters( CChar *s )
 		getTeleLoc		= &cwmWorldState->teleLocs[i];
 		if( getTeleLoc == nullptr )
 			continue;
-		if(( getTeleLoc->SourceWorld() == 0xFF && charWorld > 1 ) || getTeleLoc->SourceWorld() == charWorld )
+		if(( getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
 		{
 			if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
 				isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
@@ -409,6 +410,9 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	// no need to check for teleporters and the weather shouldn't change
 	if( !amTurning )
 	{
+		// Update timestamp for when character last moved
+		c->LastMoveTime( cwmWorldState->GetUICurrentTime() );
+
 		OutputShoveMessage( c, mSock );
 
 		HandleItemCollision( c, mSock, oldx, oldy );
@@ -687,7 +691,7 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 	if( !c->IsNpc() )
 	{	// if we're a PC in combat, or casting, we want to break/adjust their timers
 		const bool casting = (c->IsCasting() || c->IsJSCasting());
-		if( ( c->IsAtWar() || casting ) && isOnline( *c ) )
+		if( ( c->IsAtWar() || c->GetAttacker() != nullptr || casting ) && isOnline( *c ) )
 		{	// if it's not an NPC, in combat or casting, and it's online
 			if( casting )
 			{
@@ -702,7 +706,7 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 				CItem *mWeapon				= Combat->getWeapon( c );
 				const UI08 getFightSkill	= Combat->getCombatSkill( mWeapon );
 				if( getFightSkill == ARCHERY )
-					c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( Combat->GetCombatTimeout( c ) ) );
+					c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( cwmWorldState->ServerData()->CombatArcheryShootDelay() + Combat->GetCombatTimeout( c ) ) );
 			}
 		}
 	}
@@ -1101,6 +1105,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 		}
 		else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 		{
+#pragma note( "Is it necessary to send packets with item removal when they go out of range, or does client handle this itself?" )
 			if( mSock != nullptr )
 				tItem->RemoveFromSight( mSock );
 			DoJSOutOfRange( mChar, tItem );
@@ -1164,7 +1169,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 		case IT_DAMAGEOBJECT:														// damage objects
 			if( !mChar->IsInvulnerable() )
 			{
-				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), nullptr );
+				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), PHYSICAL, nullptr );
 			}
 			break;
 		case IT_SOUNDOBJECT:														// sound objects

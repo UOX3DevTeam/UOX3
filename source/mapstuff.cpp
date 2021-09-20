@@ -237,7 +237,7 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 	}
 	else
 	{
-		Console.PrintSpecial( CRED, "not found" );
+		Console.PrintSpecial( CRED, "not found/wrong size" );
 	}
 
 	mMap.staticsObj				= loadFile( basePath + mMap.staticsFile );

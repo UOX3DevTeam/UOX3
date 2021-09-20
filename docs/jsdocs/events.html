@@ -282,28 +282,57 @@ If script is attached to a character, will also trigger when the AllNames macro 
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDamage">onDamage</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDamage( damaged, attacker, damageValue );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDamage( damaged, attacker, damageValue, damageType );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the char "damaged" gets damaged
-<tr><td valign="top" width="25%"><b>Notes</b><td>The attacker can be a char or NULL
+<tr><td valign="top" width="25%"><b>Notes</b><td>The attacker can be a char or NULL, damageType is the type of damage being dealt. Supported damageTypes: 1 (Physical), 2 (Light), 3 (Rain), 4 (Cold), 5 (Heat), 6 (Lightning/Magic), 7 (Poison), 8 (Snow)
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Custom reactions to damage.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onDamage( damaged, attacker, damageValue )
+function onDamage( damaged, attacker, damageValue, damageType )
 {
-	damaged.TextMessage( "Ouch, those "+damageValue+" points of damage hurt." );
+	var dmgTypeString = "";
+	switch( damageType )
+	{
+		case 1:
+			dmgTypeString = "Physical";
+			break;
+		case 2:
+			dmgTypeString = "Light";
+			break;
+		case 3:
+			dmgTypeString = "Rain";
+			break;
+		case 4:
+			dmgTypeString = "Cold";
+			break;
+		case 5:
+			dmgTypeString = "Heat";
+			break;
+		case 6:
+			dmgTypeString = "Lightning/Magic";
+			break;
+		case 7:
+			dmgTypeString = "Poison";
+			break;
+		case 8:
+			dmgTypeString = "Snow";
+			break;
+	}
+	damaged.TextMessage( "Ouch, those "+damageValue+" points of " + dmgTypeString + " damage hurt." );
 }
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDeathEvent">onDeath</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeath( pDead );
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the player or NPC pDead dies
-<tr><td valign="top" width="25%"><b>Notes</b>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeath( pDead, iCorpse );
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>After the player or NPC pDead dies
+<tr><td valign="top" width="25%"><b>Notes</b>iCorpse is the newly created corpse of the character who died
   <td>Return false/0 or nothing to allow other scripts with event to also run. Return true/1 to prevent other scripts with event from running
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Custom death sequence.  Can do things like an explosion anim and what not here, for impact's sake.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onDeath( pDead )
+function onDeath( pDead, iCorpse )
 {
-	pDead.Teleport( 1000, 1000, 0 );
+	if( !pDead.npc )
+		pDead.Teleport( 1000, 1000, 0 );
 	return true;
 }
 </pre></table>
@@ -311,10 +340,8 @@ function onDeath( pDead )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDeathBlowEvent">onDeathBlow</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeathBlow( pKilled, pKiller );
-</pre>
-<tr><td valign="top" width="25%"><b>When triggered</b>
-<td>When a killing blow has been made
-<tr><td valign="top" width="25%"><b>Notes</b>Return false to prevent deathblow from killing character, or true to allow it
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a killing blow has been made
+<tr><td valign="top" width="25%"><b>Notes</b><td>Return false to prevent deathblow from killing character, or true to allow it</td></tr>
 <tr><td valign="top" width="25%"><b>Purpose</b>
 <td>Custom reactions after a potential killing blow has been made
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
@@ -1192,12 +1219,12 @@ function onSpellCast( pUser, spellID )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="onSpellTarget">onSpellTarget</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellTarget( myTarget, pUser, spellID )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When targeting something/someone with a spell
-<tr><td valign="top" width="25%"><b>Notes</b><td>myTarget can be both items and characters. Return false/0 or nothing to allow other scripts with event to also run. Return true/1 to prevent other scripts with event from running
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellTarget( myTarget, pCaster, spellID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggered on myTarget when targeted by a spell
+<tr><td valign="top" width="25%"><b>Notes</b><td>myTarget can be both items and characters. Return false/0 or nothing to allow other scripts with event to also run. Return true/1 to prevent other scripts with event from running. Return 2 to reject spell being cast on target.
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onSpellTarget( myTarget, pUser, spellID )
+function onSpellTarget( myTarget, pCaster, spellID )
 {
 	if( spellID == 18 )
 	{

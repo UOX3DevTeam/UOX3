@@ -2299,6 +2299,12 @@
 2429=Il tuo animale sembra molto felice
 2430=Il tuo animale domestico sembra estremamente felice
 2431=Il tuo animale domestico sembra meravigliosamente felice
+2432=Devi sottomettere questa creatura prima di poterla domare!
+2433=Quella creatura può essere domata solo da femmine.
+2434=Quella creatura può essere domata solo da maschi.
+2435=Solo gli Elfi possono usarlo.
+2436=L'Unicorno rifiuta di permetterti di cavalcarlo.
+2437=Il Ki-Rin rifiuta i tuoi tentativi di montarlo.
 // [2450-2475] Archerybutte
 2450=qualcun altro lo sta usando in questo momento.
 2451=Riprendi %i frecce dal bersaglio.
@@ -2658,7 +2664,7 @@
 3124=un mago malvagio
 3125=un signore mago malvagio
 3126=un signore mago malvagio
-3127=un predatore hellcat
+3127=un hellcat
 3128=un folletto
 3129=Tentacoli dell'erpice
 3130=un gargoyle di fuoco
@@ -3113,7 +3119,7 @@
 5104=lavoratore di pietra gargoyle
 5105=il Brigante
 5106=Il venditore di giocatori
-5107=un grande hellcat
+5107=un predatore hellcat
 5108=a jwilson
 5109=un hiryu etereo
 5110=un reptalon etereo
@@ -3147,6 +3153,10 @@
 5138=il Rancher
 5139=il prigioniero
 5140=lo scultore
+5141=il sindaco
+5142=un demone minore
+5143=un cacodemone
+5144=un demone bestiale
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -3200,10 +3210,6 @@
 6049=Sembra che tu non abbia pasta!
 6050=Hai bruciato l'impasto per renderlo croccante.
 6051=Tu cuoci una pagnotta di pane.
-6048=Con cosa vuoi usare l'uccello crudo?
-6049=Non potete cuocere il vostro uccello crudo su questo.
-6050=Sembra che tu non abbia nessun uccello crudo!
-6051=Non sei abbastanza abile per farlo.
 6052=Hai bruciato l'uccello crudo fino a farlo diventare croccante.
 6053=Cucini un uccello. Che buon profumo!
 6054=Con cosa vuoi usare la coscia di pollo cruda?
@@ -3241,6 +3247,10 @@
 6086=Sembra che tu non abbia uova crude!
 6087=Hai bruciato le uova croccanti.
 6088=Si friggono le uova.
+6089=Con cosa vuoi usare l'uccello crudo?
+6090=Non potete cuocere il vostro uccello crudo su questo.
+6091=Sembra che tu non abbia nessun uccello crudo!
+6092=Non sei abbastanza abile per farlo.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -3890,6 +3900,15 @@
 9065=Quell'oggetto non ti appartiene. Dovrai rubarlo.
 9066=Quell'oggetto appartiene a qualcun altro.
 9067=Impossibile far cadere l'oggetto... da dove è stato raccolto?
+9068=Senti che la tua forza vitale ti viene rubata!
+9069=Posso concedere la vita, e posso privarla altrettanto facilmente.
+9070=Non andrai da nessuna parte, a meno che io non ritenga che debba essere così.
+9071=Il tuo potere è mio da usare come voglio.
+9072=Sei stato aggiunto al partito.
+9073=Tu ti sei ricongiunto al partito.
+9074=Sei stato rimosso dal party.
+9075=Un giocatore è stato rimosso dal tuo party.
+9076=%s si è unito al partito.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
@@ -3956,5 +3975,6 @@
 9401=Questo oggetto magico è scarico.
 9402=[Non identificato]
 9403=Uso rimanente: %i
+9404= con %d cariche
 }
 EOF

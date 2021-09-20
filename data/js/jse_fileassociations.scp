@@ -70,7 +70,7 @@
 // Musicianship (Play Instrument)
 136=skill/musicianship.js
 //-------------------------------------------
-// Lightsources startSYSTEM[500-699]
+// Lightsources start [500-699]
 501=server/light/candle01_on.js
 502=server/light/candle01_off.js
 503=server/light/candle02_on.js
@@ -139,12 +139,12 @@
 2503=server/data/map_coordinates.js
 
 //-------------------------------------------
-// NPC, and AI[3000-5999]
+// NPC, and AI [3000-3999]
 //-------------------------------------------
-// NPC Basic Speech[3000-3099]
+// NPC Basic Speech [3000-3099]
 3000=npc/speech/speech_001.js
 //-------------------------------------------
-// Pets, and Stable Hands[3100-3199]
+// Pets, and Stable Hands [3100-3199]
 3100=npc/pets/static_horse.js
 3101=npc/pets/static_ostard.js
 3102=npc/pets/static_llama.js
@@ -152,6 +152,7 @@
 3104=npc/pets/static_packllama.js
 // pets from pet static end
 3105=npc/ai/stablemaster.js
+3106=npc/pets/mount_restrictions.js
 // ------------------------
 
 // AI-Stuff
@@ -159,8 +160,32 @@
 3201=npc/ai/banker.js
 3203=npc/ai/splitting_npc.js
 3204=npc/ai/hireling.js
+3205=npc/ai/monster/ethereal_warrior.js
+3206=npc/ai/pack_ai.js
 
-// General Skills
+// Magic Items
+3300=item/magic_items.js
+3301=item/magic_weapon_accbonus.js
+3302=item/magic_armor_equipeffects.js
+3303=item/magic_glacial_staff.js
+3304=item/magic_weapon_equip.js
+3305=item/magic_weapon_spell_attack.js
+
+// NPC Special Abilities/Effects
+3500=npc/special/dull_copper_elemental.js
+3501=npc/special/copper_elemental.js
+3502=npc/special/shadow_elemental.js
+3503=npc/special/damage_aura.js
+3504=npc/special/valorite_elemental.js
+3506=npc/special/corrosion_damage.js
+3507=npc/special/fire_breath.js
+3508=npc/special/life_drain_aura.js
+3509=npc/special/pixie_death.js
+3510=npc/special/immortality.js
+
+//-------------------------------------------
+// General Skills [4000-4499]
+//-------------------------------------------
 4000=skill/healing.js
 4001=skill/repairbow.js
 4002=skill/repairleather.js
@@ -179,7 +204,9 @@
 // Doors
 4500=item/doors.js
 
-// Miscellaneous Item Types
+//-------------------------------------------
+// Miscellaneous Item Types [5000-5499]
+//-------------------------------------------
 5000=item/teleportrune.js
 5001=item/food.js
 5003=item/potion.js

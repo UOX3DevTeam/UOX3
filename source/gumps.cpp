@@ -376,13 +376,14 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u",xStart,yStart, bgImage, xWidth, yWidth) );
 	toSend.addCommand( strutil::format("checkertrans %u %u %u %u",xStart+5,yStart+5,xWidth-10,yWidth-11));
 
-	// Next we create and position the close window button as well set its Down, and Up states.
-	toSend.addCommand(strutil::format( "button %u %u %u %u %u %u %u",xWidth-28,yStart+1,0xA51, 0xA50, 1, 0, 1));
 	// Grab the first tag/value pair from the gump itemmenu respectivly
 	std::string tag		= ItemMenu->First();
 	std::string data	= ItemMenu->GrabData();
-	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",2,4,0xDAC,470,40));
+	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",2,4,0xDAC,495,40));
 	// Create the text stuff for what appears to be the title of the gump. This appears to change from page to page.
+
+	// Next we create and position the close window button as well set its Down, and Up states.
+	toSend.addCommand(strutil::format( "button %u %u %u %u %u %u %u",xWidth-32,yStart+10,0xA51, 0xA50, 1, 0, 1));
 
 	linenum = 0;
 	toSend.addCommand( strutil::format("text %u %u %u %u",30,yStart+13, 39, linenum++));
@@ -422,44 +423,40 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addText( szBuffer );
 
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
-	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 0x13EC, 190, 300));
+	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 5054, 190, 300));
 	UI32 tabNumber = 1;
 	if( m == 1 )
 	{
 		// Do the shard tab
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 2, 0));
-		szBuffer = "Shard";
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
+		szBuffer = "Objects";
 		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
 		toSend.addText( szBuffer );
 		// Do the server tab
 		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
 		toSend.addCommand( strutil::format("text %u %u %u %u",132,yStart+46, 47, linenum++));
-		toSend.addText( "Server" );
+		toSend.addText( "Settings" );
 	}
 	else
 	{
 		// Do the shard tab
 		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
-		szBuffer = "Shard";
+		szBuffer = "Objects";
 		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
 		toSend.addText( szBuffer );
 		// Do the server tab
 		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
 		toSend.addCommand(strutil::format( "text %u %u %u %u",132,yStart+46, 47, linenum++));
-		toSend.addText( "Server" );
+		toSend.addText( "Settings" );
 	}
 
 	// Need a seperator
-	// 0x2393 does NOT exist on early clients!  Someone's been naughty!
-	if( s->ClientVersionMajor() >= 4 ) {
-		toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u",xStart+22,yWidth-50,165,5,0x2393));
-	}
-	else {
-		toSend.addCommand(strutil::format( "gumppictiled %u %u %u %u %u", xStart + 22, yWidth - 50, 165, 5, 0x145E ));
-	}
+	toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u",xStart+22,yWidth-50,165,5,0x2393));
+
 	// Ok, now the job of pulling the rest of the first itemmenu information and making tabs for them
-	toSend.addCommand(strutil::format( "text %u %u %u %u",20,yWidth-40, 94, linenum++ ));
-	toSend.addText( "Enjoy the fish!" );
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 65, yWidth-40, 0x4B9, 0x4BA, 1, 0, 50002));
+	toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u", 85, yWidth-42, 150, 20, 94, linenum++ ));
+	toSend.addText( "Home" );
 
 	// Ok here we have some conditions that we need to filter. First being the menu called.
 	UI32 xOffset;
@@ -470,47 +467,38 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 #define XOFFSET	68
 	if( m == 1 )
 	{
-		// Now we make the fisrt page that will escentially display our list of Main GM Groups.
-		toSend.addCommand( "page 1" );
-		// Thanks for choosing UOX3 text
-		toSend.addCommand( strutil::format("text %u %u %u %u", 15, yStart+65, 52, linenum++));
-		toSend.addText( "Thank you for choosing UOX3!" );
-		toSend.addCommand(strutil::format( "htmlgump %u %u %u %u %u %u %u", 58, yStart+83, 200, 20, linenum++,0,0));
-		toSend.addText(strutil::format( "<a href=\"http://www.uox3.org/\">www.uox3.org</a>" ));
-		// Need a seperator
-		if( s->ClientVersionMajor() >= 4 ) {
-			toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 ));
-		}
-		else {
-			toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x145E) );
-		}
-		toSend.addCommand( strutil::format("htmlgump %u %u %u %u %u %u %u", xStart+16,yStart+120,175,140,linenum++,1,1));
-		toSend.addText( "<b>Server:</b>\n\nThe 'Server' tab is where a shard op will find most of the server related configuration tools.\n\n<b>Shard:</b>\n\nThe 'Shard'  tab is where a ShardOP will find the tools, items, and objects related to operating a shard, and filling it content.\n" );
-		// Show the version and total memory used by UOX3
-		toSend.addCommand( strutil::format("text %u %u %u %u",40,305,121,linenum++));
-		toSend.addText( "Version: " );
-		toSend.addCommand( strutil::format("text %u %u %u %u",100,305,120,linenum++));
-		szBuffer = " v" + CVersionClass::GetVersion() + "." + CVersionClass::GetBuild();
-		toSend.addText( szBuffer );
-		// Do the UOX logo (okok so what! O_o)
-		toSend.addCommand( strutil::format("gumppic %u %u %u",248,98,0x1392));
-		if( s->ClientVersionMajor() >= 4 )
-			toSend.addCommand( strutil::format("gumppic %u %u %u",315,150,0x2328));
-		else
-			toSend.addCommand( strutil::format("gumppic %u %u %u", 315, 150, 0x1580) );
-		toSend.addCommand(strutil::format( "text %u %u %u %u",370,180,37,linenum++));
-		toSend.addText( "X" );
-		toSend.addCommand( strutil::format("text %u %u %u %u",370,190,67,linenum++));
-		toSend.addText( "3" );
-
-		// Now we make the fisrt page that will escentially display our list of Main GM Groups.
+		// Now we make the first page that will escentially display our list of Main GM Groups.
 		pagenum = 2;
-		toSend.addCommand( "page 2" );
+		toSend.addCommand( "page 1" );
 		// Do the shard tab
 		toSend.addCommand( strutil::format("gumppic %u %u %u ",17,yStart+47,0x138F));
-		szBuffer = "Shard";
+		szBuffer = "Objects";
 		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 70, linenum++) );
 		toSend.addText( szBuffer );
+
+		toSend.addCommand( strutil::format( "htmlgump %i %i %i %i %u %i %i", 245, 70, 220, 30, linenum++, 0, 0 ) );
+		toSend.addText( "<CENTER><BIG><BASEFONT color=#F64040>Ultima Offline eXperiment 3</BASEFONT></BIG></CENTER>" );
+
+		// Shard Menu Version
+		szBuffer = "v" + CVersionClass::GetVersion() + "." + CVersionClass::GetBuild();
+		toSend.addCommand( strutil::format("text %u %u %u %u", 320, 90, 27, linenum++));
+		toSend.addText( szBuffer );
+
+		// Shard Menu Description
+		szBuffer = "Greetings! Using these menus you can\nquickly and easily add Items, Spawners,\nNPCs and more to your shard, in order\nto customize it to your needs.";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 120, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "Use the Objects tab to find stuff to\nadd, and the Settings tab to configure\noptions for this menu and the objects\nyou add!";
+		szBuffer = "Objects tab is used to find stuff to\nadd. Use Settings tab to configure\nvarious options for this menu!";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 200, 94, linenum++) );
+		toSend.addText( szBuffer );
+
+		szBuffer = "Don't forget to check out the UOX3 Docs!";
+		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 260, 27, linenum++) );
+		toSend.addText( szBuffer );
+
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 295, 295, 0x5d1, 0x5d3, 1, 0, 50020));
 
 		// here we hunt tags to make sure that we get them all from the itemmenus etc.
 		UI08 numCounter = 0;
@@ -530,7 +518,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			// Drop in the page number text area image
 			toSend.addCommand(strutil::format( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E));
 			// Add the page number text to the text area for display
-			toSend.addCommand( strutil::format("text %u %u %u %u",xStart+295,yWidth-27,901,linenum++));
+			toSend.addCommand( strutil::format("text %u %u %u %u",xStart+295,yWidth-27,39,linenum++));
 			szBuffer = strutil::format( "Menu %i - Page %i", m, pagenum-1 );
 			toSend.addText( szBuffer );
 			// Spin the tagged items loaded in from the dfn files.
@@ -565,21 +553,11 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			toSend.addCommand(strutil::format( "page %i", currentPage ));
 			if( i >= 10 )
 			{
-				if( s->ClientVersionMajor() >= 4 ){
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1));
-				}//back button
-				else {
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x15A2, 0x15A3,0, currentPage-1));
-				}//back button
+				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1));
 			}
 			if( ( numCounter > 12 ) && ( ( i + 12 ) < numCounter ) )
 			{
-				if( s->ClientVersionMajor() >= 4 ){
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
-				}
-				else{
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x15A5, 0x15A6,0 ,currentPage+1));
-				}
+				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
 			}
 			currentPage++;
 		}
@@ -592,7 +570,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		// Do the shard tab
 		toSend.addCommand(strutil::format( "gumppic %u %u %u ",17,yStart+47,0x138F));
 		szBuffer = "Shard";
-		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 70, linenum++ ));
+		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 39, linenum++ ));
 		toSend.addText( szBuffer );
 		// here we hunt tags to make sure that we get them all from the itemmenus etc.
 		UI08 numCounter = 0;
@@ -603,7 +581,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		// Drop in the page number text area image
 		toSend.addCommand( strutil::format("gumppic %u %u %u",xStart+260,yWidth-28,0x98E));
 		// Add the page number text to the text area for display
-		toSend.addCommand( strutil::format("text %u %u %u %u",xStart+295,yWidth-27,901,linenum++));
+		toSend.addCommand( strutil::format("text %u %u %u %u",xStart+295,yWidth-27,39,linenum++));
 		szBuffer = strutil::format( "Menu %i - Page %i", m, pagenum-1 );
 		toSend.addText( szBuffer );
 
@@ -688,20 +666,11 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			toSend.addCommand( strutil::format("page %i", currentPage) );
 			if( i >= 10 )
 			{
-				if( s->ClientVersionMajor() >= 4 ) {
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1)); //back button
-				}
-				else {
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x15A2, 0x15A3,0, currentPage-1)); //back button
-				}
+				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1)); //back button
 			}
 			if( ( numCounter > 12 ) && ( ( i + 12 ) < numCounter ) )
 			{
-				if( s->ClientVersionMajor() >= 4 ){
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
-				}
-				else
-					toSend.addCommand(strutil::format( "button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x15A5, 0x15A6,0 ,currentPage+1));
+				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
 			}
 			++currentPage;
 		}
@@ -713,28 +682,158 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// Show the selected tab image for this page.
 	toSend.addCommand( strutil::format("gumppic %u %u %u",105, yStart + 47, 0x138F) );
 	toSend.addCommand( strutil::format("text %u %u %u %u",132, yStart + 46, 70, linenum++ ));
-	toSend.addText( "Server" );
-	// Create the Server Shutdown button
-	if( s->ClientVersionMajor() >= 4 ){
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 72, 0x2A58, 0x2A44, 1, 4, tabNumber++ ));
-	}
-	else{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 72, 0x047F, 0x0480, 1, 4, tabNumber++) );
-	}
-	toSend.addCommand(strutil::format( "text %u %u %u %u", 54, yStart + 76, 52, linenum++) );
-	toSend.addText( "ShutdownServer" );
-	if( s->ClientVersionMajor() >= 4 )
-		toSend.addCommand(strutil::format( "button %u %u %u %u %u %u %u", 165, yStart + 75, 0x5689, 0x568A, 0, 31, tabNumber++ ));
-	else
-		toSend.addCommand(strutil::format( "button %u %u %u %u %u %u %u", 165, yStart + 75, 0x047F, 0x0480, 0, 31, tabNumber++) );
+	toSend.addText( "Settings" );
+
+	// Create the Quick Access Menu
+	toSend.addCommand(strutil::format( "text %u %u %u %u", 57, yStart + 76, 52, linenum++) );
+	toSend.addText( "Quick-Access" );
+
 	// Need a seperator
-	if( s->ClientVersionMajor() >= 4 )
-		toSend.addCommand(strutil::format( "gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 ));
+	toSend.addCommand(strutil::format( "gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 ));
+
+	// Create the Commandlist button
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 125, 0x2A30, 0x2A44, 1, 4, 50008 ));
+	toSend.addCommand(strutil::format( "text %u %u %u %u", 65, yStart + 129, 52, linenum++) );
+	toSend.addText( "Commandlist" );
+
+	// Create the Wholist Online button
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 155, 0x2A30, 0x2A44, 1, 4, 50009 ));
+	toSend.addCommand(strutil::format( "text %u %u %u %u", 62, yStart + 159, 52, linenum++) );
+	toSend.addText( "Who is Online" );
+
+	// Create the Wholist Offline button
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 185, 0x2A30, 0x2A44, 1, 4, 50010 ));
+	toSend.addCommand(strutil::format( "text %u %u %u %u", 60, yStart + 189, 52, linenum++) );
+	toSend.addText( "Who is Offline" );
+
+	// Create the Reload DFNs button
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 215, 0x2A30, 0x2A44, 1, 4, 50011 ));
+	toSend.addCommand(strutil::format( "text %u %u %u %u", 60, yStart + 219, 52, linenum++) );
+	toSend.addText( "Reload DFNs" );
+
+	// Create the Server Shutdown button
+	if( mChar->GetCommandLevel() >= CL_ADMIN )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 275, 0x2A58, 0x2A44, 1, 4, 50012 ));
+		toSend.addCommand(strutil::format( "text %u %u %u %u", 73, yStart + 279, 52, linenum++) );
+		toSend.addText( "Shutdown" );
+	}
+
+	// Settings Backgrounds
+	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", 210, 55, 5120, 250, 150) );
+	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", 210, 205, 5120, 250, 150) );
+
+	// Settings Header 1
+	toSend.addCommand( strutil::format( "htmlgump %i %i %i %i %u %i %i", 235, 60, 200, 60, linenum++, 0, 0 ) );
+	toSend.addText( "<CENTER><BIG><BASEFONT color=#EECD8B>Menu Settings</BASEFONT></BIG></CENTER>" );
+
+	// Settings Header 2
+	toSend.addCommand( strutil::format( "htmlgump %i %i %i %i %u %i %i", 235, 220, 200, 60, linenum++, 0, 0 ) );
+	toSend.addText( "<CENTER><BIG><BASEFONT color=#EECD8B>Item Settings</BASEFONT></BIG></CENTER>" );
+
+	// Settings Options START
+	// Add at Location
+	TAGMAPOBJECT addAtLoc = mChar->GetTag( "addAtLoc" );
+	if( addAtLoc.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x869, 0x867, 1, 0, 50000));
+	}
 	else
-		toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x145E ));
-	// Ok short message saying that were working on this tab.
-	toSend.addCommand( strutil::format("htmlgump %u %u %u %u %u %u %u", xStart + 16, yStart + 130, 175, 50, linenum++, 2, 0 ));
-	toSend.addText( strutil::format("Currently this tab is under construction.") );
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x867, 0x869, 1, 0, 50000));
+	}
+	szBuffer = "Add item at specific location\ninstead of in GM's backpack";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 80, 94, linenum++) );
+	toSend.addText( szBuffer );
+
+	// Repeat Add Object
+	TAGMAPOBJECT repeatAdd = mChar->GetTag( "repeatAdd" );
+	if( repeatAdd.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x869, 0x867, 1, 0, 50001));
+	}
+	else
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x867, 0x869, 1, 0, 50001));
+	}
+	szBuffer = "Add item repeatedly\nuntil cancelled";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 280, 120, 94, linenum++) );
+	toSend.addText( szBuffer );
+
+	// Auto-reopen Menu
+	TAGMAPOBJECT reopenMenu = mChar->GetTag( "reopenMenu" );
+	if( reopenMenu.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x869, 0x867, 1, 0, 50003));
+	}
+	else
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x867, 0x869, 1, 0, 50003));
+	}
+	szBuffer = "Automatically reopen menu\nafter selecting object to add";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 160, 94, linenum++) );
+	toSend.addText( szBuffer );
+
+	// Force-Decayable Off
+	TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
+	if( forceDecayOff.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004));
+	}
+	else
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004));
+	}
+	// Force-Decayable On
+	TAGMAPOBJECT forceDecayOn = mChar->GetTag( "forceDecayOn" );
+	if( forceDecayOn.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005));
+	}
+	else
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c0, 0x16c1, 1, 0, 50005));
+	}
+	szBuffer = "Default Decayable Status of Items";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 230, 240, 94, linenum++) );
+	toSend.addText( szBuffer );
+	szBuffer = "Force OFF";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 275, 265, 27, linenum++) );
+	toSend.addText( szBuffer );
+	szBuffer = "Force ON";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 385, 265, 72, linenum++) );
+	toSend.addText( szBuffer );
+
+	// Force-Movable Off
+	TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
+	if( forceMovableOff.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006));
+	}
+	else
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006));
+	}
+	// Force-Movable On
+	TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
+	if( forceMovableOn.m_IntValue == 1 )
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007));
+	}
+	else
+	{
+		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c0, 0x16c1, 1, 0, 50007));
+	}
+	szBuffer = "Default Movable State of Items";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 230, 300, 94, linenum++) );
+	toSend.addText( szBuffer );
+	szBuffer = "Force OFF";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 275, 325, 27, linenum++) );
+	toSend.addText( szBuffer );
+	szBuffer = "Force ON";
+	toSend.addCommand( strutil::format("text %u %u %u %u", 385, 325, 72, linenum++) );
+	toSend.addText( szBuffer );
+	// Settings Options END
 
 	// Reserved pages 900-999 for the online help system. (comming soon)
 	toSend.addCommand( "page 31" );
@@ -930,19 +1029,110 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					runCommand = true;
 					itemType = OT_SPAWNER;
 				}
+				TAGMAPOBJECT reopenMenu = mChar->GetTag( "reopenMenu" );
 				if( runCommand )
 				{
+					TAGMAPOBJECT addAtLoc = mChar->GetTag( "addAtLoc" );
+					TAGMAPOBJECT repeatAdd = mChar->GetTag( "repeatAdd" );
+					TAGMAPOBJECT forceDecayOn = mChar->GetTag( "forceDecayOn" );
+					TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
+					TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
+					TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
 					auto secs = strutil::sections( data, "," );
 					if( secs.size() > 1 )
 					{
 						std::string tmp		= strutil::trim( strutil::removeTrailing( secs[0], "//" ));
 						UI16 num			= strutil::value<std::uint16_t>(strutil::trim( strutil::removeTrailing( secs[1], "//" )));
-						Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
+
+						if( addAtLoc.m_IntValue == 1 )
+						{
+							std::string addCmd = "";
+							if( repeatAdd.m_IntValue == 1 )
+							{
+								if( itemType == OT_SPAWNER )
+									addCmd = strutil::format( "raddspawner %s", tmp.c_str() );
+								else
+									addCmd = strutil::format( "radditem %s", tmp.c_str() );
+							}
+							else
+							{
+								if( itemType == OT_SPAWNER )
+									addCmd = strutil::format( "add spawner %s", tmp.c_str() );
+								else
+									addCmd = strutil::format( "add item %s", tmp.c_str() );
+							}
+							Commands->Command( s, mChar, addCmd );
+						}
+						else if( repeatAdd.m_IntValue == 1 )
+						{
+							std::string addCmd = "";
+							if( itemType == OT_SPAWNER )
+								addCmd = strutil::format( "raddspawner %s", tmp.c_str() );
+							else
+								addCmd = strutil::format( "radditem %s", tmp.c_str() );
+							Commands->Command( s, mChar, addCmd );
+						}
+						else
+						{
+							CItem * newItem = Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
+							if( forceDecayOff.m_IntValue == 1 )
+								newItem->SetDecayable( false );
+							else if( forceDecayOn.m_IntValue == 1 )
+								newItem->SetDecayable( true );
+							if( forceMovableOff.m_IntValue == 1 )
+								newItem->SetMovable( 2 );
+							else if( forceMovableOn.m_IntValue == 1 )
+								newItem->SetMovable( 1 );
+						}
 					}
 					else
 					{
-						Items->CreateScriptItem( s, mChar, data, 0, itemType, true );
+						if( addAtLoc.m_IntValue == 1 )
+						{
+							std::string addCmd = "";
+							if( repeatAdd.m_IntValue == 1 )
+							{
+								if( itemType == OT_SPAWNER )
+									addCmd = strutil::format( "raddspawner %s", data.c_str() );
+								else
+									addCmd = strutil::format( "radditem %s", data.c_str() );
+							}
+							else
+							{
+								if( itemType == OT_SPAWNER )
+									addCmd = strutil::format( "add spawner %s", data.c_str() );
+								else
+									addCmd = strutil::format( "add item %s", data.c_str() );
+							}
+							Commands->Command( s, mChar, addCmd );
+						}
+						else if( repeatAdd.m_IntValue == 1 )
+						{
+							std::string addCmd = "";
+							if( itemType == OT_SPAWNER )
+								addCmd = strutil::format( "raddspawner %s", data.c_str() );
+							else
+								addCmd = strutil::format( "radditem %s", data.c_str() );
+							Commands->Command( s, mChar, addCmd );
+						}
+						else
+						{
+							CItem * newItem = Items->CreateScriptItem( s, mChar, data, 0, itemType, true );
+							if( forceDecayOff.m_IntValue == 1 )
+								newItem->SetDecayable( false );
+							else if( forceDecayOn.m_IntValue == 1 )
+								newItem->SetDecayable( true );
+							if( forceMovableOff.m_IntValue == 1 )
+								newItem->SetMovable( 2 );
+							else if( forceMovableOn.m_IntValue == 1 )
+								newItem->SetMovable( 1 );
+						}
 					}
+				}
+				if( reopenMenu.m_IntValue == 1 )
+				{
+					std::string menuString = strutil::format( "itemmenu %d", s->TempInt() );
+					Commands->Command( s, mChar, menuString );
 				}
 			}
 			break;
@@ -1039,8 +1229,21 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 			{
 				if( data.empty() )
 					return;
-				s->XText( data );
-				s->target( 0, TARGET_ADDSCRIPTNPC, 0, 1212, data.c_str() );
+
+				std::string menuString = strutil::format( "itemmenu %d", s->TempInt() );
+				Commands->Command( s, mChar, menuString );
+
+				TAGMAPOBJECT repeatAdd = mChar->GetTag( "repeatAdd" );
+				if( repeatAdd.m_IntValue == 1 )
+				{
+					std::string addCmd = strutil::format( "raddnpc %s", data.c_str() );
+					Commands->Command( s, mChar, addCmd );
+				}
+				else
+				{
+					s->XText( data );
+					s->target( 0, TARGET_ADDSCRIPTNPC, 0, 1212, data.c_str() );
+				}
 			}
 			break;
 		case 'P':
@@ -1104,6 +1307,217 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 {
 	SI32 addMenuLoc	= s->TempInt();
 	std::string sect = std::string("ITEMMENU ") + strutil::number( addMenuLoc );
+	CChar *mChar = s->CurrcharObj();
+
+	if( button >= 50000 && button <= 50020 )
+	{
+		TAGMAPOBJECT addAtLoc = mChar->GetTag( "addAtLoc" );
+		TAGMAPOBJECT repeatAdd = mChar->GetTag( "repeatAdd" );
+		TAGMAPOBJECT reopenMenu = mChar->GetTag( "reopenMenu" );
+		TAGMAPOBJECT forceDecayOn = mChar->GetTag( "forceDecayOn" );
+		TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
+		TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
+		TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
+
+		std::string tagName = "";
+		SI32 tagVal = 0;
+		TAGMAPOBJECT customTag;
+		std::map<std::string, TAGMAPOBJECT> customTagMap;
+		if( button == 50000 ) // Add item at specific location
+		{
+			tagName = "addAtLoc";
+			TAGMAPOBJECT addAtLoc = mChar->GetTag( "addAtLoc" );
+			if( addAtLoc.m_IntValue == 1 )
+			{
+				tagVal = 0;
+				if( repeatAdd.m_IntValue == 1 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 0;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "repeatAdd", customTag ));
+				}
+			}
+			else
+				tagVal = 1;
+		}
+		else if( button == 50001 ) // Repeatedly add items until cancelled
+		{
+			tagName = "repeatAdd";
+			TAGMAPOBJECT addAtLoc = mChar->GetTag( "repeatAdd" );
+			if( addAtLoc.m_IntValue == 1 )
+				tagVal = 0;
+			else
+			{
+				tagVal = 1;
+				if( addAtLoc.m_IntValue == 0 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 1;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "addAtLoc", customTag ));
+				}
+			}
+		}
+		else if( button == 50002 )
+		{
+			// Return to home page of menu
+			Commands->Command( s, mChar, "add" );
+			return;
+		}
+		else if( button == 50003 ) // Automatically reopen menu after adding objects
+		{
+			tagName = "reopenMenu";
+			TAGMAPOBJECT reopenMenu = mChar->GetTag( "reopenMenu" );
+			if( reopenMenu.m_IntValue == 1 )
+				tagVal = 0;
+			else
+			{
+				tagVal = 1;
+				if( reopenMenu.m_IntValue == 0 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 1;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "reopenMenu", customTag ));
+				}
+			}
+		}
+		else if( button == 50004 ) // Toggle Force Decay state for items on/off
+		{
+			tagName = "forceDecayOff";
+			TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
+			if( forceDecayOff.m_IntValue == 1 )
+				tagVal = 0;
+			else
+			{
+				tagVal = 1;
+				if( forceDecayOn.m_IntValue == 1 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 0;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "forceDecayOn", customTag ));
+				}
+			}
+		}
+		else if( button == 50005 ) // Toggle Force Decay state for items on/off
+		{
+			tagName = "forceDecayOn";
+			TAGMAPOBJECT forceDecayOn = mChar->GetTag( "forceDecayOn" );
+			if( forceDecayOn.m_IntValue == 1 )
+				tagVal = 0;
+			else
+			{
+				tagVal = 1;
+				if( forceDecayOff.m_IntValue == 1 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 0;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "forceDecayOff", customTag ));
+				}
+			}
+		}
+		else if( button == 50006 ) // Toggle Force OFF Movable state for items
+		{
+			tagName = "forceMovableOff";
+			TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
+			if( forceMovableOff.m_IntValue == 1 )
+				tagVal = 0;
+			else
+			{
+				tagVal = 1;
+				if( forceMovableOn.m_IntValue == 1 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 0;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "forceMovableOn", customTag ));
+				}
+			}
+		}
+		else if( button == 50007 ) // Toggle Force ON Movable state for items
+		{
+			tagName = "forceMovableOn";
+			TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
+			if( forceMovableOn.m_IntValue == 1 )
+				tagVal = 0;
+			else
+			{
+				tagVal = 1;
+				if( forceMovableOff.m_IntValue == 1 )
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue 	= 0;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+					customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( "forceMovableOff", customTag ));
+				}
+			}
+		}
+		else if( button == 50008 )
+		{
+			// Show command list
+			Commands->Command( s, mChar, "howto" );
+			return;
+		}
+		else if( button == 50009 )
+		{
+			// Show wholist online
+			Commands->Command( s, mChar, "wholist on" );
+			return;
+		}
+		else if( button == 50010 )
+		{
+			// Show wholist offline
+			Commands->Command( s, mChar, "wholist off" );
+			return;
+		}
+		else if( button == 50011 )
+		{
+			// Reload DFNs
+			Commands->Command( s, mChar, "reloaddefs" );
+			return;
+		}
+		else if( button == 50012 )
+		{
+			// Shutdown Server
+			if( mChar->GetCommandLevel() >= CL_ADMIN )
+				Commands->Command( s, mChar, "shutdown 1" );
+			return;
+		}
+		else if( button == 50020 )
+		{
+			// Browse UOX3 Docs online
+			Commands->Command( s, mChar, "browse https://www.uox3.org/docs" );
+			
+			// Reopen menu
+			Commands->Command( s, mChar, sect );
+			return;
+		}
+		customTag.m_Destroy		= FALSE;
+		customTag.m_IntValue 	= tagVal;
+		customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+		customTag.m_StringValue	= "";
+		customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( tagName, customTag ));
+
+		// Add custom tags to multi
+		for (const auto& [key, value] : customTagMap) {
+			mChar->SetTag( key, value );
+		}
+
+		// Reopen menu
+		Commands->Command( s, mChar, sect );
+		return;
+	}
+
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
 	if( ItemMenu == nullptr )
 		return;
@@ -1285,7 +1699,7 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	BuildTextLocations();
 
-	if( buttonID > 10000 )
+	if( buttonID > 10000 && buttonID < 20000 )
 	{
 		BuildGumpFromScripts( tSock, (UI16)(buttonID - 10000) );
 		return true;

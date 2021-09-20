@@ -348,9 +348,9 @@ void cSkills::Mine( CSocket *s )
 		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
 		Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // action 0x00, subAction 0x03
 	else if( mChar->IsOnHorse() ) // Human/Elf, mounted, pre-v7.0.0.0
-		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H ); // 0x1A
+		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H, 0, 5 ); // 0x1A
 	else // Human/Elf, on foot, pre-v7.0.0.0
-		Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH ); // 0x0B
+		Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH, 0, 7 ); // 0x0B
 
 	Effects->PlaySound( &mSock, 0x0125, true );
 
@@ -398,9 +398,9 @@ void cSkills::GraveDig( CSocket *s )
 		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientType() >= CV_SA2D )))
 		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
 	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
-		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
+		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H, 0, 5 ); // Action 0x1A
 	else // Human/Elf, on foot
-		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH ); // Action 0x0B
+		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH, 0, 7 ); // Action 0x0B
 
 	Effects->PlaySound( s, 0x0125, true );
 	if( !CheckSkill( nCharID, MINING, 0, 800 ) )
@@ -416,9 +416,9 @@ void cSkills::GraveDig( CSocket *s )
 		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientType() >= CV_SA2D )))
 		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
 	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
-		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H ); // Action 0x1A
+		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H, 0, 5 ); // Action 0x1A
 	else // Human/Elf, on foot
-		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH ); // Action 0x0B
+		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH, 0, 7 ); // Action 0x0B
 
 	Effects->PlaySound( s, 0x0125, true );
 	CChar *spawnCreature = nullptr;
@@ -834,7 +834,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 
 	if( !exists )
 	{
-		SI32 chanceskillsuccess = 0;
+		R32 chanceSkillSuccess = 0;
 
 		if( ( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) <= lowSkill )
 			return false;
@@ -849,17 +849,25 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		if( s->GetSkill( sk ) >= highSkill )
 			return true;
 
+		// Calculate base chance of success at using a skill
+		chanceSkillSuccess = static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill );
+		if( cwmWorldState->ServerData()->StatsAffectSkillChecks() )
+		{
+			// Modify base chance of success with bonuses from stats, if this feature is enabled in ini
+			chanceSkillSuccess += static_cast<R32>( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 1000.0f;
+			chanceSkillSuccess += static_cast<R32>( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 1000.0f;
+			chanceSkillSuccess += static_cast<R32>( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence ) / 1000.0f;
+		}
 
-		chanceskillsuccess = (SI32)( (R32)( ( (R32)( s->GetSkill( sk ) - lowSkill ) / 1000.0f ) +
-										   (R32)( (R32)( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 100000.0f ) +
-										   (R32)( (R32)( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 100000.0f ) +
-										   (R32)( (R32)( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence  ) / 100000.0f ) ) * 1000 );
-
-		// chanceskillsuccess is a number between 0 and 1000, lets throw the dices now
+		// chanceSkillSuccess is a number between 0 and 1000, lets throw the dices now
 		if( s->GetCommandLevel() > 0 )
 			skillCheck = true;
 		else
-			skillCheck = ( chanceskillsuccess >= RandomNum( 0, std::min( 1000, (highSkill+100) ) ) );
+		{
+			// Generate a random number between 0 and highSkill (if less than 1000) or 1000 (if higher than 1000)
+			SI16 rnd = RandomNum( 0, std::min( 1000, ( highSkill + 100 )));
+			skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
+		}
 
 		CSocket *mSock = s->GetSocket();
 		if( mSock != nullptr )
@@ -1002,109 +1010,6 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::ItemIDTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Called when player uses the ItemID skill on an item, can give valuable
-//|					information on items (Will reveal hidden magical names and charges on items as well)
-//o-----------------------------------------------------------------------------------------------o
-void cSkills::ItemIDTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-
-	CChar *mChar = s->CurrcharObj();
-
-	if( mChar->WorldNumber() != i->WorldNumber() || mChar->GetInstanceID() != i->GetInstanceID() )
-	{
-		s->sysmessage( 393 ); // That is too far away.
-		return;
-	}
-
-	if( i->isCorpse() )
-	{
-		s->sysmessage( 1546 ); // You have to use your forensics evaluation skill to know more about this corpse.
-		return;
-	}
-
-	if( i->isHeldOnCursor() || !checkItemRange( mChar, i ) )
-	{
-		s->sysmessage( 400 ); // That is too far away!
-		return;
-	}
-
-	if( CheckSkill( mChar, ITEMID, 250, 500 ) )
-	{
-		UnicodeTypes sLang = s->Language();
-
-		std::string name;
-		name.reserve( MAX_NAME );
-		if( i->GetName2() && strcmp( i->GetName2(), "#" ) )
-			i->SetName( i->GetName2() );
-		if( i->GetName()[0] == '#')
-			getTileName( (*i), name );
-		else
-			name = i->GetName();
-		s->sysmessage( 1547, name.c_str() ); // You found that this item appears to be called: %s
-
-		std::string temp;
-		if( i->GetCreator() != INVALIDSERIAL )
-		{
-			CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
-			if( ValidateObject( mCreater ) )
-			{
-				if( i->GetMadeWith() > 0 ){
-					temp = strutil::format( 1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
-				}
-				else if( i->GetMadeWith() < 0 ){
-					temp = strutil::format( 1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
-				}
-				else{
-					temp = strutil::format( 1024, temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
-				}
-			}
-			else
-			{
-				temp = strutil::format( 1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
-			}
-		}
-		else
-		{
-			temp = strutil::format( 1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
-		}
-		s->sysmessage( temp );
-
-		if( mChar->GetSkill( ITEMID ) > 350 )
-		{
-			if( i->GetType() != IT_MAGICWAND )
-			{
-				// Only display "no magical properties" message if Name2 is different from "#"
-				if( i->GetName2()[0] && ( !strcmp( i->GetName2(), "#" ) ) )
-					s->sysmessage( 1553 ); // This item has no hidden magical properties.
-				return;
-			}
-			if( CheckSkill( mChar, ITEMID, 500, 750 ) )
-			{
-				UI16 spellToScan = static_cast<UI16>(( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1);
-				// Fetch spellname from Dictionary-files, based on entry from magic_table[]
-				std::string spellName = Dictionary->GetEntry( magic_table[spellToScan].spell_name );
-				if( !CheckSkill( mChar, ITEMID, 750, 1000 ) )
-					s->sysmessage( 1555, spellName.c_str() ); // It is enchanted with the spell %s, but you cannot determine how many charges remain.
-				else
-					s->sysmessage( 1556, spellName.c_str(), i->GetTempVar( CITV_MOREZ ) ); // It is enchanted with the spell %s, and has %d charges remaining.
-			}
-			else
-				s->sysmessage( 1554 ); // This item is enchanted with a spell, but you cannot determine which.
-		}
-		else
-			s->sysmessage( 1552 ); // You can't tell if it is magical or not.
-	}
-	else
-		s->sysmessage( 1545 ); // You can't quite tell what this item is...
-}
-
-//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void cSkills::SkillUse( CSocket *s, UI08 x )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player uses a skill from the skill list
@@ -1166,7 +1071,6 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		{
 			switch( x )
 			{
-				case ITEMID:			s->target( 0, TARGET_ITEMID, 0, 857 );			break;
 				case STEALING:
 					// Check if stealing is allowed in player's current region
 					if( mChar->GetRegion()->IsSafeZone() )

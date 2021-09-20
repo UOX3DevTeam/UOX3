@@ -155,6 +155,7 @@ SI08 CItem::GetGridLocation( void ) const
 void CItem::SetGridLocation( SI08 newLoc )
 {
 	gridLoc = newLoc;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -177,6 +178,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 		return;
 
 	tempVars[whichVar] = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -224,6 +226,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 		case 4:		part4 = newVal;		break;
 	}
 	tempVars[whichVar] = (part1<<24) + (part2<<16) + (part3<<8) + part4;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -281,6 +284,9 @@ bool CItem::SetCont( CBaseObject *newCont )
 						Weight->addItemWeight( charWearing, this );
 					if( this->GetLayer() == IL_MOUNT && charWearing->IsNpc() )
 						charWearing->SetOnHorse( true );
+
+					// Set new save flag on item based on save flag of new owner
+					ShouldSave( charWearing->ShouldSave() );
 				}
 			}
 		}
@@ -301,10 +307,19 @@ bool CItem::SetCont( CBaseObject *newCont )
 							oldItem->Delete();
 
 						SetCont( itemPackOwner );
+
+						// Set new save flag on item based on save flag of new owner
+						ShouldSave( itemPackOwner->ShouldSave() );
 					}
 				}
 				else
-					itemHolder->GetContainsList()->Add( this );
+				{
+					//itemHolder->GetContainsList()->Add( this );
+					itemHolder->GetContainsList()->AddInFront( this );
+
+					// Set new save flag on item based on save flag of new container
+					ShouldSave( itemHolder->ShouldSave() );
+				}
 				if( isPostLoaded() )
 					Weight->addItemWeight( itemHolder, this );
 			}
@@ -315,10 +330,15 @@ bool CItem::SetCont( CBaseObject *newCont )
 	{
 		contObj = nullptr;
 		MapRegion->AddItem( this );
+
+		// If item has been moved to the ground, make sure we save it
+		ShouldSave( true );
 	}
 
 	if( GetGlow() != INVALIDSERIAL )
 		Items->GlowItem( this );
+
+	UpdateRegion();
 
 	return !contIsGround;
 }
@@ -336,6 +356,7 @@ bool CItem::isDoorOpen( void ) const
 void CItem::SetDoorOpen( bool newValue )
 {
 	bools.set( BIT_DOOROPEN, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -351,6 +372,7 @@ bool CItem::isPileable( void ) const
 void CItem::SetPileable( bool newValue )
 {
 	bools.set( BIT_PILEABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -366,6 +388,7 @@ bool CItem::isDyeable( void ) const
 void CItem::SetDye( bool newValue )
 {
 	bools.set( BIT_DYEABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -381,6 +404,7 @@ bool CItem::isCorpse( void ) const
 void CItem::SetCorpse( bool newValue )
 {
 	bools.set( BIT_CORPSE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -396,6 +420,7 @@ bool CItem::isHeldOnCursor( void ) const
 void CItem::SetHeldOnCursor( bool newValue )
 {
 	bools.set( BIT_HELDONCURSOR, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -411,6 +436,7 @@ bool CItem::isGuarded( void ) const
 void CItem::SetGuarded( bool newValue )
 {
 	bools.set( BIT_GUARDED, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -426,6 +452,7 @@ bool CItem::isSpawnerList( void ) const
 void CItem::SetSpawnerList( bool newValue )
 {
 	bools.set( BIT_SPAWNERLIST, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -441,6 +468,7 @@ const char *CItem::GetName2( void ) const
 void CItem::SetName2( const char *newValue )
 {
 	strncpy( name2, newValue, MAX_NAME - 1 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -456,6 +484,7 @@ SERIAL CItem::GetCreator( void ) const
 void CItem::SetCreator( SERIAL newValue )
 {
 	creator = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -471,6 +500,7 @@ std::string CItem::GetDesc( void ) const
 void CItem::SetDesc( std::string newValue )
 {
 	desc = newValue.substr( 0, MAX_NAME - 1 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -481,6 +511,7 @@ void CItem::SetDesc( std::string newValue )
 void CItem::IncZ( SI16 newValue )
 {
 	SetZ( z + newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -503,6 +534,7 @@ void CItem::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 	oldLocX = newX;
 	oldLocY = newY;
 	oldLocZ = newZ;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -564,6 +596,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 			}
 		}
 	}
+	UpdateRegion();
 	Dirty( UT_LOCATION );
 }
 
@@ -599,10 +632,12 @@ void CItem::SetLayer( ItemLayers newValue )
 				charAffected->TakeOffItem( layer );
 			layer = newValue;
 			charAffected->WearItem( this );
+			charAffected->UpdateRegion();
 			return;
 		}
 	}
 	layer = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -618,6 +653,7 @@ ItemTypes CItem::GetType( void ) const
 void CItem::SetType( ItemTypes newValue )
 {
 	type = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -633,6 +669,7 @@ SI08 CItem::GetOffSpell( void ) const
 void CItem::SetOffSpell( SI08 newValue )
 {
 	offspell = newValue;
+	UpdateRegion();
 }
 
 
@@ -660,6 +697,7 @@ void CItem::SetAmount( UI32 newValue )
 	if( ValidateObject( getCont ) )
 		Weight->addItemWeight( getCont, this );
 	Dirty( UT_UPDATE );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -700,6 +738,7 @@ UI16 CItem::GetMaxHP( void ) const
 void CItem::SetMaxHP( UI16 newValue )
 {
 	maxhp = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -715,6 +754,7 @@ UI08 CItem::GetSpeed( void ) const
 void CItem::SetSpeed( UI08 newValue )
 {
 	spd = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -730,6 +770,7 @@ UI08 CItem::GetMaxRange( void ) const
 void CItem::SetMaxRange( UI08 newValue )
 {
 	maxRange = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -745,6 +786,7 @@ UI08 CItem::GetBaseRange( void ) const
 void CItem::SetBaseRange( UI08 newValue )
 {
 	baseRange = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -760,6 +802,7 @@ SI08 CItem::GetMovable( void ) const
 void CItem::SetMovable( SI08 newValue )
 {
 	movable = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -805,6 +848,7 @@ UI08 CItem::GetPriv( void ) const
 void CItem::SetPriv( UI08 newValue )
 {
 	priv = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -820,6 +864,7 @@ UI32 CItem::GetSellValue( void ) const
 void CItem::SetSellValue( UI32 newValue )
 {
 	value[1] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -835,6 +880,7 @@ UI32 CItem::GetBuyValue( void ) const
 void CItem::SetBuyValue( UI32 newValue )
 {
 	value[0] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -850,6 +896,7 @@ UI16 CItem::GetRestock( void ) const
 void CItem::SetRestock( UI16 newValue )
 {
 	restock = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -865,6 +912,7 @@ ARMORCLASS CItem::GetArmourClass( void ) const
 void CItem::SetArmourClass( ARMORCLASS newValue )
 {
 	armorClass = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -880,6 +928,7 @@ SI08 CItem::GetRank( void ) const
 void CItem::SetRank( SI08 newValue )
 {
 	rank = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -895,6 +944,7 @@ SI16 CItem::GetGood( void ) const
 void CItem::SetGood( SI16 newValue )
 {
 	good = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -925,6 +975,7 @@ SI08 CItem::GetMadeWith( void ) const
 void CItem::SetMadeWith( SI08 newValue )
 {
 	madewith = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -940,6 +991,7 @@ SERIAL CItem::GetGlow( void ) const
 void CItem::SetGlow( SERIAL newValue )
 {
 	glow = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -955,6 +1007,7 @@ COLOUR CItem::GetGlowColour( void ) const
 void CItem::SetGlowColour( COLOUR newValue )
 {
 	glowColour = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -970,6 +1023,7 @@ UI08 CItem::GetGlowEffect( void ) const
 void CItem::SetGlowEffect( UI08 newValue )
 {
 	glow_effect = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -985,6 +1039,7 @@ UI16 CItem::GetAmmoID( void ) const
 void CItem::SetAmmoID( UI16 newValue )
 {
 	ammo[0] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1000,6 +1055,7 @@ UI16 CItem::GetAmmoHue( void ) const
 void CItem::SetAmmoHue( UI16 newValue )
 {
 	ammo[1] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1015,6 +1071,7 @@ UI16 CItem::GetAmmoFX( void ) const
 void CItem::SetAmmoFX( UI16 newValue )
 {
 	ammoFX[0] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1030,6 +1087,7 @@ UI16 CItem::GetAmmoFXHue( void ) const
 void CItem::SetAmmoFXHue( UI16 newValue )
 {
 	ammoFX[1] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1045,6 +1103,7 @@ UI16 CItem::GetAmmoFXRender( void ) const
 void CItem::SetAmmoFXRender( UI16 newValue )
 {
 	ammoFX[2] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1060,6 +1119,7 @@ SI32 CItem::GetWeightMax( void ) const
 void CItem::SetWeightMax( SI32 newValue )
 {
 	weightMax = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1075,6 +1135,7 @@ SI32 CItem::GetBaseWeight( void ) const
 void CItem::SetBaseWeight( SI32 newValue )
 {
 	baseWeight = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1090,6 +1151,7 @@ UI16 CItem::GetMaxItems( void ) const
 void CItem::SetMaxItems( UI16 newValue )
 {
 	maxItems = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1144,6 +1206,7 @@ bool CItem::IsLockedDown( void ) const
 void CItem::LockDown( void )
 {
 	movable = 3;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1198,7 +1261,13 @@ void CItem::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
 	if( oldOwner != nullptr )
+	{
 		oldOwner->RemoveOwnedItem( this );
+		oldOwner->UpdateRegion();
+	}
+	
+	if( oldOwner == nullptr || oldOwner->ShouldSave() || ( !oldOwner->ShouldSave() && !isDeleted() ))
+		UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1212,7 +1281,11 @@ void CItem::AddSelfToOwner( void )
 	if( !ValidateObject( newOwner ) )
 		return;
 	if( newOwner->GetSerial() != GetSerial() )
+	{
 		newOwner->AddOwnedItem( this );
+		newOwner->UpdateRegion();
+	}
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1231,6 +1304,11 @@ void CItem::RemoveSelfFromCont( void )
 			{
 				Weight->subtractItemWeight( targChar, this );
 				targChar->TakeOffItem( GetLayer() );
+				if( ShouldSave() && targChar->ShouldSave() )
+				{
+					UpdateRegion();
+					targChar->UpdateRegion();
+				}
 			}
 		}
 		else
@@ -1240,6 +1318,7 @@ void CItem::RemoveSelfFromCont( void )
 			{
 				Weight->subtractItemWeight( targItem, this );
 				targItem->GetContainsList()->Remove( this );
+				UpdateRegion();
 			}
 		}
 	}
@@ -1367,6 +1446,7 @@ bool CItem::GetWeatherDamage( WeatherType effectNum ) const
 void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
 {
 	weatherBools.set( effectNum, value );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1425,6 +1505,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "Bools=" << (SI16)(bools.to_ulong()) << '\n';
 	outStream << "Good=" << GetGood() << '\n';
 	outStream << "GlowType=" << (SI16)GetGlowEffect() << '\n';
+	outStream << "Range=" << static_cast<SI16>(GetBaseRange()) << "," << static_cast<SI16>(GetMaxRange()) << '\n';
 	outStream << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( HEAT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( COLD ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << '\n';
@@ -1731,6 +1812,21 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
+				else if( UTag == "RANGE" )
+				{
+					if( csecs.size() > 1 )
+					{
+						SetBaseRange( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetMaxRange( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					}
+					else
+					{
+						auto val = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+						SetBaseRange( val );
+						SetMaxRange( val / 2 );
+					}
+					rvalue = true;
+				}
 				else if( UTag == "REPUTATION" )
 					rvalue = true;
 				break;
@@ -1942,6 +2038,7 @@ void CItem::SetDecayable( bool newValue )
 		SetDecayTime( 0 );
 
 	priv.set( BIT_DECAYABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1957,6 +2054,7 @@ bool CItem::isNewbie( void ) const
 void CItem::SetNewbie( bool newValue )
 {
 	priv.set( BIT_NEWBIE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1972,6 +2070,7 @@ bool CItem::isDispellable( void ) const
 void CItem::SetDispellable( bool newValue )
 {
 	priv.set( BIT_DISPELLABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1987,6 +2086,7 @@ bool CItem::isDivineLocked( void ) const
 void CItem::SetDivineLock( bool newValue )
 {
 	priv.set( BIT_DIVINELOCK, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2003,6 +2103,7 @@ UI16 CItem::EntryMadeFrom( void ) const
 void CItem::EntryMadeFrom( UI16 newValue )
 {
 	entryMadeFrom = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2023,6 +2124,7 @@ void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 
 	if( ValidateObject( checkCont ) )
 		Weight->addItemWeight( checkCont, this );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2154,7 +2256,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o-----------------------------------------------------------------------------------------------o
-void CItem::Update( CSocket *mSock )
+void CItem::Update( CSocket *mSock, bool drawGamePlayer )
 {
 	if( GetType() == IT_TRADEWINDOW )
 		return;
@@ -2225,12 +2327,12 @@ void CItem::Update( CSocket *mSock )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendToSocket( CSocket *mSock )
+//|	Function	-	void SendToSocket( CSocket *mSock, bool drawGamePlayer )
 //|	Date		-	July 27, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates an item on the ground to specified socket
 //o-----------------------------------------------------------------------------------------------o
-void CItem::SendToSocket( CSocket *mSock )
+void CItem::SendToSocket( CSocket *mSock, bool drawGamePlayer )
 {
 	if( !mSock->LoginComplete() )
 		return;
@@ -2319,7 +2421,9 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	CBaseObject *iCont		= GetCont();
 
 	ObjectType oType	= OT_CBO;
-	CBaseObject *iOwner	= FindItemOwner( this, oType );
+	CBaseObject *iOwner	= nullptr;
+	if( this->GetOwner() != INVALIDSERIAL )
+		iOwner = FindItemOwner( this, oType );
 
 	if( iCont == nullptr || oType == OT_ITEM )
 	{
@@ -2486,6 +2590,7 @@ void CItem::PlaceInPack( void )
 			break;
 	}
 	SetZ( 9 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2504,7 +2609,10 @@ UI32 CItem::GetSpell( UI08 part ) const
 void CItem::SetSpell( UI08 part, UI32 newValue )
 {
 	if( part < 3 )
+	{
 		spells[part] = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2625,6 +2733,21 @@ void CItem::Cleanup( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool UpdateRegion( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Marks region item exists in as updated since last save
+//o-----------------------------------------------------------------------------------------------o
+void CItem::UpdateRegion( void )
+{
+	// Make sure to only mark region as changed if item is supposed to be saved
+	if( ShouldSave() )
+	{
+		CMapRegion *curCell = MapRegion->GetMapRegion( this );
+		curCell->HasRegionChanged( true );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
 //o-----------------------------------------------------------------------------------------------o
@@ -2655,6 +2778,7 @@ void CItem::Delete( void )
 		Cleanup();
 		SetDeleted( true );
 		ShouldSave( false );
+		UpdateRegion();
 	}
 }
 
@@ -2701,7 +2825,10 @@ UI08 CSpawnItem::GetInterval( UI08 part ) const
 void CSpawnItem::SetInterval( UI08 part, UI08 newVal )
 {
 	if( part < 2 )
+	{
 		Interval[part] = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2718,6 +2845,7 @@ std::string CSpawnItem::GetSpawnSection( void ) const
 void CSpawnItem::SetSpawnSection( const std::string &newVal )
 {
 	spawnSection = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2734,6 +2862,7 @@ bool CSpawnItem::IsSectionAList( void ) const
 void CSpawnItem::IsSectionAList( bool newVal )
 {
 	isSectionAList = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o

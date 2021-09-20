@@ -62,24 +62,25 @@
 #define DEBUGMOVEMULTIPLIER 1.75
 
 // Bitmask bits
+// Character Privs
+const UI32 BIT_GM				=	0; // 0x1
+const UI32 BIT_BROADCAST		=	1; // 0x2
+const UI32 BIT_INVULNERABLE		=	2; // 0x4
+const UI32 BIT_SINGCLICKSER		=	3; // 0x8
+const UI32 BIT_SKILLTITLES		=	4; // 0x10
+const UI32 BIT_GMPAGEABLE		=	5; // 0x20
+const UI32 BIT_SNOOP			=	6; // 0x40
+const UI32 BIT_COUNSELOR		=	7; // 0x80
+const UI32 BIT_ALLMOVE			=	8; // 0x100
+const UI32 BIT_FROZEN			=	9; // 0x200
+const UI32 BIT_VIEWHOUSEASICON	=	10; // 0x400
+const UI32 BIT_NONEEDMANA		=	11; // 0x800
+const UI32 BIT_DISPELLABLE		=	12; // 0x1000
+const UI32 BIT_TEMPREFLECTED	=	13; // 0x2000
+const UI32 BIT_NONEEDREAGS		=	14; // 0x4000
+const UI32 BIT_PERMREFLECTED	=	15; // 0x8000
 
-const UI32 BIT_GM				=	0;
-const UI32 BIT_BROADCAST		=	1;
-const UI32 BIT_INVULNERABLE		=	2;
-const UI32 BIT_SINGCLICKSER		=	3;
-const UI32 BIT_SKILLTITLES		=	4;
-const UI32 BIT_GMPAGEABLE		=	5;
-const UI32 BIT_SNOOP			=	6;
-const UI32 BIT_COUNSELOR		=	7;
-const UI32 BIT_ALLMOVE			=	8;
-const UI32 BIT_FROZEN			=	9;
-const UI32 BIT_VIEWHOUSEASICON	=	10;
-const UI32 BIT_NONEEDMANA		=	11;
-const UI32 BIT_DISPELLABLE		=	12;
-const UI32 BIT_PERMREFLECTED	=	13;
-const UI32 BIT_NONEEDREAGS		=	14;
-
-
+// Character Bools
 const UI32 BIT_UNICODE			=	1;
 const UI32 BIT_NPC				=	2;
 const UI32 BIT_SHOP				=	3;
@@ -235,6 +236,7 @@ const UI08			DEFCHAR_RUNNING				= 0;
 const RACEID		DEFCHAR_RACEGATE 			= INVALIDID;
 const UI08			DEFCHAR_STEP				= 1;
 const UI16			DEFCHAR_PRIV				= 0;
+const UI32			DEFCHAR_LASTMOVETIME		= 0;
 //const UI16			DEFCHAR_NOMOVE 				= 0;
 //const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
@@ -254,7 +256,7 @@ emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( nullptr ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), thirst( DEFCHAR_THIRST ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
 advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
-raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE )
+raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME )
 {
 	ownedItems.clear();
 	itemLayers.clear();
@@ -270,10 +272,13 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	memset( &baseskill[0],		0, sizeof( SKILLVAL )	* ALLSKILLS );
 	memset( &skill[0],			0, sizeof( SKILLVAL )	* (INTELLECT+1) );
 
-	SetCanTrain( true );
+	//SetCanTrain( true );
+	bools.set( BIT_TRAIN, true );
 
-	SetHungerStatus( true );
-	SetThirstStatus( true );
+	//SetHungerStatus( true );
+	bools.set( BIT_WILLHUNGER, true );
+	//SetThirstStatus( true );
+	bools.set( BIT_WILLTHIRST, true );
 
 	skillUsed[0].reset();
 	skillUsed[1].reset();
@@ -284,12 +289,18 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	mPlayer	= nullptr;
 	mNPC	= nullptr;
 
-	SetMaxHPFixed( false );
-	SetMaxManaFixed( false );
-	SetMaxStamFixed( false );
-	SetCanAttack( true );
-	SetBrkPeaceChanceGain( 0 );
-	SetBrkPeaceChance( 0 );
+	//SetMaxHPFixed( false );
+	bools.set( BIT_MAXHPFIXED, false );
+	//SetMaxManaFixed( false );
+	bools.set( BIT_MAXMANAFIXED, false );
+	//SetMaxStamFixed( false );
+	bools.set( BIT_MAXSTAMFIXED, false );
+	//SetCanAttack( true );
+	bools.set( BIT_CANATTACK, true );
+	//SetBrkPeaceChanceGain( 0 );
+	brkPeaceChanceGain = 0;
+	//SetBrkPeaceChance( 0 );
+	brkPeaceChance = 0;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -359,7 +370,9 @@ SI08 CChar::GetPathFail( void ) const
 void CChar::SetPathFail( SI08 newValue )
 {
 	if( IsValidNPC() )
+	{
 		mNPC->pathFail = newValue;
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -444,6 +457,7 @@ bool CChar::SetHunger( SI08 newValue )
 	}
 
 	hunger = newValue;
+	UpdateRegion();
 
 	return true;
 }
@@ -502,7 +516,7 @@ void CChar::DoHunger( CSocket *mSock )
 					else if( GetHP() > 0 && hungerDamage > 0)
 					{
 						mSock->sysmessage( 1228 );
-						Damage( hungerDamage );
+						Damage( hungerDamage, PHYSICAL );
 						if( GetHP() <= 0 )
 							mSock->sysmessage( 1229 );
 					}
@@ -524,7 +538,7 @@ void CChar::DoHunger( CSocket *mSock )
 				if( GetHunger() > 0 )
 					DecHunger();
 				else if( GetHP() > 0 && hungerDamage > 0)
-					Damage( hungerDamage );
+					Damage( hungerDamage, PHYSICAL );
 				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 			}
 		}
@@ -610,6 +624,7 @@ bool CChar::SetThirst( SI08 newValue )
 	}
 
 	thirst = newValue;
+	UpdateRegion();
 
 	return true;
 }
@@ -783,6 +798,7 @@ UI16 CChar::GetTown( void ) const
 void CChar::SetTown( UI16 newValue )
 {
 	town = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -843,6 +859,7 @@ UI08 CChar::GetBrkPeaceChanceGain( void ) const
 void CChar::SetBrkPeaceChanceGain( UI08 newValue )
 {
 	brkPeaceChanceGain = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -859,6 +876,7 @@ UI08 CChar::GetBrkPeaceChance( void ) const
 void CChar::SetBrkPeaceChance( UI08 newValue )
 {
 	brkPeaceChance = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -889,6 +907,7 @@ bool CChar::IsNpc( void ) const
 void CChar::SetNpc( bool newVal )
 {
 	bools.set( BIT_NPC, newVal );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -905,6 +924,7 @@ bool CChar::IsEvading( void ) const
 void CChar::SetEvadeState( bool newVal )
 {
 	bools.set( BIT_EVADE, newVal );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -920,6 +940,7 @@ bool CChar::IsShop( void ) const
 void CChar::SetShop( bool newVal )
 {
 	bools.set( BIT_SHOP, newVal );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -935,6 +956,7 @@ bool CChar::IsDead( void ) const
 void CChar::SetDead( bool newValue )
 {
 	bools.set( BIT_DEAD, newValue );
+	UpdateRegion();
 
 	if( !IsNpc() )
 	{
@@ -960,6 +982,7 @@ void CChar::SetCanAttack( bool newValue )
 {
 	bools.set( BIT_CANATTACK, newValue );
 	SetBrkPeaceChance( 0 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -975,6 +998,7 @@ bool CChar::IsAtWar( void ) const
 void CChar::SetWar( bool newValue )
 {
 	bools.set( BIT_ATWAR, newValue );
+	UpdateRegion();
 
 	if( !IsNpc() )
 	{
@@ -1028,6 +1052,7 @@ bool CChar::GetTownTitle( void ) const
 void CChar::SetTownTitle( bool newValue )
 {
 	bools.set( BIT_TOWNTITLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1058,6 +1083,7 @@ bool CChar::CanTrain( void ) const
 void CChar::SetCanTrain( bool newValue )
 {
 	bools.set( BIT_TRAIN, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1073,6 +1099,7 @@ bool CChar::CanBeHired( void ) const
 void CChar::SetCanHire( bool newValue )
 {
 	bools.set( BIT_HIRELING, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1088,6 +1115,7 @@ bool CChar::GetGuildToggle( void ) const
 void CChar::SetGuildToggle( bool newValue )
 {
 	bools.set( BIT_GUILDTOGGLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1133,6 +1161,7 @@ bool CChar::CanRun( void ) const
 void CChar::SetRun( bool newValue )
 {
 	bools.set( BIT_RUN, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1194,6 +1223,7 @@ bool CChar::MayLevitate( void ) const
 void CChar::SetLevitate( bool newValue )
 {
 	bools.set( BIT_MAYLEVITATE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1209,6 +1239,7 @@ bool CChar::WillHunger( void ) const
 void CChar::SetHungerStatus( bool newValue )
 {
 	bools.set( BIT_WILLHUNGER, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1321,7 +1352,9 @@ void CChar::RemoveSelfFromOwner( void )
 	if( ValidateObject( oldOwner ) )
 	{
 		oldOwner->GetPetList()->Remove( this );
+		oldOwner->UpdateRegion();
 	}
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1340,6 +1373,7 @@ void CChar::AddSelfToOwner( void )
 	else
 	{
 		newOwner->GetPetList()->Add( this );
+		newOwner->UpdateRegion();
 		if( !CanBeHired() )
 		{
 			SetTamed( true );
@@ -1347,6 +1381,7 @@ void CChar::AddSelfToOwner( void )
 	}
 	UpdateFlag( this );
 	Dirty( UT_UPDATE );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1363,6 +1398,7 @@ UI32 CChar::GetGuildFealty( void ) const
 void CChar::SetGuildFealty( UI32 newValue )
 {
 	guildfealty = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1378,6 +1414,7 @@ std::string CChar::GetGuildTitle( void ) const
 void CChar::SetGuildTitle( const std::string &newValue )
 {
 	guildtitle = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1441,7 +1478,13 @@ TIMERVAL CChar::GetTimer( cC_TID timerID ) const
 void CChar::SetTimer( cC_TID timerID, TIMERVAL value )
 {
 	if( timerID != tCHAR_COUNT )
+	{
 		charTimers[timerID] = value;
+		if( timerID == tNPC_SUMMONTIME || timerID == tCHAR_MURDERRATE || timerID == tCHAR_PEACETIMER )
+		{
+			UpdateRegion();
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1457,6 +1500,7 @@ UI08 CChar::GetPoisonStrength( void ) const
 void CChar::SetPoisonStrength( UI08 value )
 {
 	PoisonStrength = value;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1472,6 +1516,7 @@ COLOUR CChar::GetEmoteColour( void ) const
 void CChar::SetEmoteColour( COLOUR newValue )
 {
 	emotecolor = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1487,6 +1532,7 @@ COLOUR CChar::GetSayColour( void ) const
 void CChar::SetSayColour( COLOUR newValue )
 {
 	saycolor = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1502,6 +1548,7 @@ UI16 CChar::GetSkin( void ) const
 void CChar::SetSkin( UI16 value )
 {
 	SetColour( value );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1517,6 +1564,7 @@ SI08 CChar::GetStealth( void ) const
 void CChar::SetStealth( SI08 newValue )
 {
 	stealth = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1532,6 +1580,7 @@ SI08 CChar::GetCell( void ) const
 void CChar::SetCell( SI08 newVal )
 {
 	cell = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1581,6 +1630,7 @@ CTownRegion *CChar::GetRegion( void ) const
 void CChar::SetRegion( UI16 newValue )
 {
 	regionNum = newValue;
+	UpdateRegion();
 }
 UI16 CChar::GetRegionNum( void ) const
 {
@@ -1717,6 +1767,7 @@ UI16 CChar::GetAdvObj( void ) const
 void CChar::SetAdvObj( UI16 newValue )
 {
 	advobj = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1732,6 +1783,7 @@ RACEID CChar::GetRaceGate( void ) const
 void CChar::SetRaceGate( RACEID newValue )
 {
 	raceGate = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1762,6 +1814,7 @@ UI16 CChar::GetPriv( void ) const
 void CChar::SetPriv( UI16 newValue )
 {
 	priv = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1780,7 +1833,10 @@ SKILLVAL CChar::GetBaseSkill( UI08 skillToGet ) const
 void CChar::SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 {
 	if( skillToSet < ALLSKILLS )
+	{
 		baseskill[skillToSet] = newSkillValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1823,6 +1879,7 @@ SI16 CChar::GetGuildNumber( void ) const
 void CChar::SetGuildNumber( SI16 newValue )
 {
 	guildnumber = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1853,6 +1910,7 @@ SI08 CChar::GetFontType( void ) const
 void CChar::SetFontType( SI08 newType )
 {
 	fonttype = newType;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1988,6 +2046,7 @@ bool CChar::AllMove( void ) const
 void CChar::SetAllMove( bool newValue )
 {
 	priv.set( BIT_ALLMOVE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2052,10 +2111,25 @@ void CChar::SetDispellable( bool newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	bool IsTempReflected( void ) const
+//|					void SetTempReflected( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Checks/Sets whether character is temporarily protected by the magic reflect spell
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::IsTempReflected( void ) const
+{
+	return priv.test( BIT_TEMPREFLECTED );
+}
+void CChar::SetTempReflected( bool newValue )
+{
+	priv.set( BIT_TEMPREFLECTED, newValue );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	bool IsPermReflected( void ) const
 //|					void SetPermReflected( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Checks/Sets whether character is protected by the magic reflect spell
+//| Purpose		-	Checks/Sets whether character is permanently protected by the magic reflect spell
 //o-----------------------------------------------------------------------------------------------o
 bool CChar::IsPermReflected( void ) const
 {
@@ -2398,7 +2472,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendToSocket( CSocket *s )
+//|	Function	-	void SendToSocket( CSocket *s, bool drawGamePlayer )
 //|	Date		-	April 7th, 2000
 //|	Modified	-	(June 16, 2003)
 //|						Got rid of array based packet sending, replaced with
@@ -2407,7 +2481,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 //| Purpose     -	Sends the information about this person to socket S
 //|					IF in range.  Essentially a replacement for impowncreate
 //o-----------------------------------------------------------------------------------------------o
-void CChar::SendToSocket( CSocket *s )
+void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 {
 	if( s != nullptr && s->LoginComplete() )
 	{
@@ -2426,9 +2500,9 @@ void CChar::SendToSocket( CSocket *s )
 			alwaysSendItemHue = true;
 		}
 
-		if( mCharObj == this && !mCharObj->IsDead() )
+		if( mCharObj == this && drawGamePlayer )
 		{
-			// Don't do this with ghost players, or they'll be able to speed their way across the map by spamming tab
+			// Only send this when updating after a teleport/world change
 			CPDrawGamePlayer gpToSend( (*this) );
 			s->Send( &gpToSend );
 
@@ -2483,7 +2557,7 @@ void CChar::Teleport( void )
 {
 	CSocket *mSock = GetSocket();
 	RemoveFromSight();
-	Update();
+	Update( nullptr, true );
 	if( mSock != nullptr )
 	{
 		UI16 visrange = mSock->Range() + Races->VisRange( GetRace() );
@@ -2579,10 +2653,10 @@ void CChar::ExposeToView( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends update to all those in range
 //o-----------------------------------------------------------------------------------------------o
-void CChar::Update( CSocket *mSock )
+void CChar::Update( CSocket *mSock, bool drawGamePlayer )
 {
 	if( mSock != nullptr )
-		SendToSocket( mSock );
+		SendToSocket( mSock, drawGamePlayer );
 	else
 	{
 		SOCKLIST nearbyChars = FindPlayersInVisrange( this );
@@ -2593,9 +2667,9 @@ void CChar::Update( CSocket *mSock )
 
 			// Send one extra update to self to fix potential issues with world changing
 			if( (*cIter)->CurrcharObj() == this )
-				SendToSocket( (*cIter) );
+				SendToSocket( (*cIter), drawGamePlayer );
 
-			SendToSocket( (*cIter) );
+			SendToSocket( (*cIter), drawGamePlayer );
 		}
 	}
 }
@@ -3263,6 +3337,7 @@ void CChar::SetStrength( SI16 newValue )
 {
 	CBaseObject::SetStrength( newValue );
 	Dirty( UT_HITPOINTS );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3291,6 +3366,7 @@ void CChar::SetIntelligence( SI16 newValue )
 {
 	CBaseObject::SetIntelligence( newValue );
 	Dirty( UT_MANA );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3319,6 +3395,7 @@ void CChar::SetDexterity( SI16 newValue )
 {
 	CBaseObject::SetDexterity( newValue );
 	Dirty( UT_STAMINA );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4634,6 +4711,7 @@ void CChar::SetHP( SI16 newValue )
 {
 	CBaseObject::SetHP( std::min( std::max( static_cast<SI16>(0), newValue ), static_cast<SI16>(GetMaxHP()) ) );
 	Dirty( UT_HITPOINTS );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4645,6 +4723,7 @@ void CChar::SetMana( SI16 newValue )
 {
 	CBaseObject::SetMana( std::min( std::max( static_cast<SI16>(0), newValue ), GetMaxMana() ) );
 	Dirty( UT_MANA );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4656,6 +4735,7 @@ void CChar::SetStamina( SI16 newValue )
 {
 	CBaseObject::SetStamina( std::min( std::max( static_cast<SI16>(0), newValue ), GetMaxStam() ) );
 	Dirty( UT_STAMINA );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4667,6 +4747,7 @@ void CChar::SetPoisoned( UI08 newValue )
 {
 	CBaseObject::SetPoisoned( newValue );
 	Dirty( UT_UPDATE );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4678,6 +4759,7 @@ void CChar::SetStrength2( SI16 nVal )
 {
 	CBaseObject::SetStrength2( nVal );
 	Dirty( UT_HITPOINTS );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4689,6 +4771,7 @@ void CChar::SetDexterity2( SI16 nVal )
 {
 	CBaseObject::SetDexterity2( nVal );
 	Dirty( UT_STAMINA );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4700,6 +4783,7 @@ void CChar::SetIntelligence2( SI16 nVal )
 {
 	CBaseObject::SetIntelligence2( nVal );
 	Dirty( UT_MANA );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4817,7 +4901,10 @@ void CChar::SetAccountNum( UI16 newVal )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->accountNum = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4841,7 +4928,25 @@ void CChar::SetRobe( SERIAL newValue )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->robe = newValue;
+		UpdateRegion();
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI32 LastMoveTime( void ) const
+//|					void LastMoveTime( UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp for when player last moved
+//o-----------------------------------------------------------------------------------------------o
+UI32 CChar::LastMoveTime( void ) const
+{
+	return lastMoveTime;
+}
+void CChar::LastMoveTime( UI32 newValue )
+{
+	lastMoveTime = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4865,7 +4970,10 @@ void CChar::SetLastOn( std::string newValue )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->lastOn = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4884,7 +4992,10 @@ UI32 CChar::GetLastOnSecs( void ) const
 void CChar::SetLastOnSecs( UI32 newValue )
 {
 	if( IsValidPlayer() )
+	{
 		mPlayer->lastOnSecs = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4903,7 +5014,10 @@ UI08 CChar::GetAtrophy( UI08 skillToGet ) const
 void CChar::SetAtrophy( UI08 newValue, UI08 skillToSet )
 {
 	if( IsValidPlayer() && skillToSet <= INTELLECT )
+	{
 		mPlayer->atrophy[skillToSet] = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4922,7 +5036,10 @@ SkillLock CChar::GetSkillLock( UI08 skillToGet ) const
 void CChar::SetSkillLock( SkillLock newValue, UI08 skillToSet )
 {
 	if( IsValidPlayer() && skillToSet <= INTELLECT )
+	{
 		mPlayer->lockState[skillToSet] = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4943,7 +5060,10 @@ bool CChar::GetMounted( void ) const
 void CChar::SetMounted( bool newValue )
 {
 	if( IsValidNPC() )
+	{
 		mNPC->boolFlags.set( BIT_MOUNTED, newValue );
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4965,16 +5085,20 @@ void CChar::SetStabled( bool newValue )
 	if( IsValidNPC() )
 	{
 		mNPC->boolFlags.set( BIT_STABLED, newValue );
+		UpdateRegion();
+
 		CChar *oldOwner = GetOwnerObj();
 		if( ValidateObject( oldOwner ))
 		{
 			if( newValue == true )
 			{
 				oldOwner->GetPetList()->Remove( this );
+				oldOwner->UpdateRegion();
 			}
 			else if( newValue == false )
 			{
 				oldOwner->GetPetList()->Add( this );
+				oldOwner->UpdateRegion();
 			}
 		}
 	}
@@ -5082,6 +5206,7 @@ bool CChar::GetMaxHPFixed( void ) const
 void CChar::SetMaxHPFixed( bool newValue )
 {
 	bools.set( BIT_MAXHPFIXED, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5098,6 +5223,7 @@ bool CChar::GetMaxManaFixed( void ) const
 void CChar::SetMaxManaFixed( bool newValue )
 {
 	bools.set( BIT_MAXMANAFIXED, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5114,6 +5240,7 @@ bool CChar::GetMaxStamFixed( void ) const
 void CChar::SetMaxStamFixed( bool newValue )
 {
 	bools.set( BIT_MAXSTAMFIXED, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5137,7 +5264,10 @@ void CChar::SetOrgName( std::string newName )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->origName = newName;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5161,7 +5291,10 @@ void CChar::SetOrgID( UI16 value )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->origID = value;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5209,7 +5342,10 @@ void CChar::SetHairStyle( UI16 value )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->hairStyle = value;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5233,7 +5369,10 @@ void CChar::SetBeardStyle( UI16 value )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->beardStyle = value;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5368,7 +5507,10 @@ void CChar::SetCommandLevel( UI08 newValue )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->commandLevel = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5464,7 +5606,10 @@ void CChar::SetSquelched( UI08 newValue )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->squelched = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5601,7 +5746,10 @@ void CChar::SetFixedLight( UI08 newVal )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->fixedLight = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5625,7 +5773,10 @@ void CChar::SetDeaths( UI16 newVal )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->deaths = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5674,7 +5825,10 @@ void CChar::SetTownVote( UI32 newValue )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->townvote = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5698,7 +5852,10 @@ void CChar::SetTownpriv( SI08 newValue )
 			CreatePlayer();
 	}
 	if( IsValidPlayer() )
+	{
 		mPlayer->townpriv = newValue;
+		UpdateRegion();
+	}
 }
 
 // NPC Specific Functions
@@ -5724,7 +5881,10 @@ void CChar::SetMaxLoyalty( UI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->maxLoyalty = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5765,6 +5925,7 @@ void CChar::SetLoyalty( UI16 newValue )
 		}
 
 		mNPC->loyalty = newValue;
+		UpdateRegion();
 	}
 }
 
@@ -5883,7 +6044,10 @@ void CChar::SetTamedHungerRate( UI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->tamedHungerRate = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5907,7 +6071,10 @@ void CChar::SetTamedThirstRate( UI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->tamedThirstRate = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5931,7 +6098,10 @@ void CChar::SetTamedHungerWildChance( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->hungerWildChance = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5955,7 +6125,10 @@ void CChar::SetTamedThirstWildChance( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->thirstWildChance = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -5979,7 +6152,10 @@ void CChar::SetFood( std::string food )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->foodList = food.substr( 0, MAX_NAME - 1 );
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6003,7 +6179,10 @@ void CChar::SetNPCAiType( SI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->aiType = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6051,7 +6230,10 @@ void CChar::SetTaming( SI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->taming = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6073,7 +6255,10 @@ SI16 CChar::GetPeaceing( void ) const
 void CChar::SetPeaceing( SI16 newValue )
 {
 	if( IsValidNPC() )
+	{
 		mNPC->peaceing = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6095,7 +6280,10 @@ SI16 CChar::GetProvoing( void ) const
 void CChar::SetProvoing( SI16 newValue )
 {
 	if( IsValidNPC() )
+	{
 		mNPC->provoing = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6143,7 +6331,10 @@ void CChar::SetHoldG( UI32 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->goldOnHand = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6167,7 +6358,10 @@ void CChar::SetSplit( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->splitNum = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6191,7 +6385,10 @@ void CChar::SetSplitChance( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->splitChance = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6220,7 +6417,10 @@ void CChar::SetFx( SI16 newVal, UI08 part )
 	if( IsValidNPC() )
 	{
 		if( part < 2 )
+		{
 			mNPC->fx[part] = newVal;
+			UpdateRegion();
+		}
 	}
 }
 
@@ -6250,7 +6450,10 @@ void CChar::SetFy( SI16 newVal, UI08 part )
 	if( IsValidNPC() )
 	{
 		if( part < 2 )
+		{
 			mNPC->fy[part] = newVal;
+			UpdateRegion();
+		}
 	}
 }
 
@@ -6275,7 +6478,10 @@ void CChar::SetFz( SI08 newVal )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->fz = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6299,12 +6505,19 @@ void CChar::SetNpcWander( SI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->wanderMode = newValue;
+		UpdateRegion();
+	}
 
 	// Make shure the wanderarea is properly initialized
 	if( ( newValue == WT_BOX ) || ( newValue == WT_CIRCLE ) )
+	{
 		if( ( mNPC->fx[0] == -1 ) || ( mNPC->fy[0] == -1 ) )
+		{
 			InitializeWanderArea( this, 10, 10 );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6328,7 +6541,10 @@ void CChar::SetOldNpcWander( SI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->oldWanderMode = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6376,7 +6592,10 @@ void CChar::SetSpAttack( SI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->spellAttack = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6400,7 +6619,10 @@ void CChar::SetSpDelay( SI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->spellDelay = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6424,7 +6646,10 @@ void CChar::SetQuestType( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->questType = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6448,7 +6673,10 @@ void CChar::SetQuestOrigRegion( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->questOrigRegion = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6472,7 +6700,10 @@ void CChar::SetQuestDestRegion( UI08 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->questDestRegion = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6496,7 +6727,10 @@ void CChar::SetFleeAt( SI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->fleeAt = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6520,7 +6754,10 @@ void CChar::SetReattackAt( SI16 newValue )
 			CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->reAttackAt = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6598,6 +6835,7 @@ GenericList< CChar * > *CChar::GetPetOwnerList( void )
 void CChar::ClearPetOwnerList( void )
 {
 	GetPetOwnerList()->Clear();
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6609,7 +6847,11 @@ bool CChar::AddPetOwnerToList( CChar *toAdd )
 {
 	if( ValidateObject( toAdd ) )
 	{
-		return GetPetOwnerList()->Add( toAdd );
+		if( GetPetOwnerList()->Add( toAdd ) )
+		{
+			UpdateRegion();
+			return true;
+		}
 	}
 	return false;
 }
@@ -6623,7 +6865,11 @@ bool CChar::RemovePetOwnerFromList( CChar *toRemove )
 {
 	if( ValidateObject( toRemove ) )
 	{
-		return GetPetOwnerList()->Remove( toRemove );
+		if( GetPetOwnerList()->Remove( toRemove ) )
+		{
+			UpdateRegion();
+			return true;
+		}
 	}
 	return false;
 }
@@ -6767,6 +7013,7 @@ void CChar::SetControlSlotsUsed( UI08 newVal )
 	{
 		mPlayer->controlSlotsUsed = newVal;
 		Dirty( UT_STATWINDOW );
+		UpdateRegion();
 	}
 }
 
@@ -6790,7 +7037,10 @@ void CChar::SetControlSlots( UI08 newVal )
 		CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->controlSlots = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6813,7 +7063,10 @@ void CChar::SetOrneriness( UI16 newVal )
 		CreateNPC();
 	}
 	if( IsValidNPC() )
+	{
 		mNPC->orneriness = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6838,7 +7091,10 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->npcFlag = flagType;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6867,7 +7123,10 @@ void CChar::SetWalkingSpeed( R32 newValue )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->walkingSpeed = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6896,7 +7155,10 @@ void CChar::SetRunningSpeed( R32 newValue )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->runningSpeed = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6925,7 +7187,10 @@ void CChar::SetFleeingSpeed( R32 newValue )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->fleeingSpeed = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6953,7 +7218,10 @@ void CChar::SetMountedWalkingSpeed( R32 newValue )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->mountedWalkingSpeed = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -6981,7 +7249,10 @@ void CChar::SetMountedRunningSpeed( R32 newValue )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->mountedRunningSpeed = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -7009,7 +7280,10 @@ void CChar::SetMountedFleeingSpeed( R32 newValue )
 		CreateNPC();
 
 	if( IsValidNPC() )
+	{
 		mNPC->mountedFleeingSpeed = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -7043,6 +7317,7 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 			if( i->damager == healerSerial )
 			{
 				i->damageDone		+= healValue;
+				i->lastDamageType	= NONE;
 				i->lastDamageDone	= cwmWorldState->GetUICurrentTime();
 				persFound			= true;
 				break;
@@ -7050,7 +7325,7 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 		}
 		if( !persFound )
 		{
-			damageHealed.Add( new DamageTrackEntry( healerSerial, healValue, cwmWorldState->GetUICurrentTime() ) );
+			damageHealed.Add( new DamageTrackEntry( healerSerial, healValue, NONE, cwmWorldState->GetUICurrentTime() ) );
 		}
 		damageHealed.Sort( DTEgreater );
 	}
@@ -7094,18 +7369,18 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	void Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
+//| Function	-	void Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Damage character, and keep track of attacker and damage amount
 //o-----------------------------------------------------------------------------------------------o
-void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
+void CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
 {
 	std::vector<UI16> scriptTriggers = GetScriptTriggers();
 	for( auto i : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( i );
 		if( toExecute != nullptr )
-			toExecute->OnDamage(  this, attacker, damageValue );
+			toExecute->OnDamage(  this, attacker, damageValue, damageType );
 	}
 
 	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
@@ -7202,6 +7477,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 			if( i->damager == attackerSerial )
 			{
 				i->damageDone		+= damageValue;
+				i->lastDamageType	= damageType;
 				i->lastDamageDone	= cwmWorldState->GetUICurrentTime();
 				persFound			= true;
 				break;
@@ -7209,7 +7485,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		}
 		if( !persFound )
 		{
-			damageDealt.Add( new DamageTrackEntry( attackerSerial, damageValue, cwmWorldState->GetUICurrentTime() ) );
+			damageDealt.Add( new DamageTrackEntry( attackerSerial, damageValue, damageType, cwmWorldState->GetUICurrentTime() ) );
 		}
 		damageDealt.Sort( DTEgreater );
 	}
@@ -7335,6 +7611,7 @@ void CChar::SetWeight( SI32 newVal, bool doWeightUpdate )
 {
 	Dirty( UT_STATWINDOW );
 	weight = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -7349,6 +7626,21 @@ void CChar::Dirty( UpdateTypes updateType )
 	{
 		updateTypes.set( updateType, true );
 		CBaseObject::Dirty( updateType );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool UpdateRegion( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Marks region character exists in as updated since last save
+//o-----------------------------------------------------------------------------------------------o
+void CChar::UpdateRegion( void )
+{
+	// Make sure to only mark region as changed if this is a character we're supposed to save!
+	if( ShouldSave() )
+	{
+		CMapRegion *curCell = MapRegion->GetMapRegion( this );
+		curCell->HasRegionChanged( true );
 	}
 }
 

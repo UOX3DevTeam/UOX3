@@ -8,6 +8,7 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
+#include "PartySystem.h"
 #include "classes.h"
 #include "townregion.h"
 #include "Dictionary.h"
@@ -1046,9 +1047,9 @@ void CPICreateCharacter::SetNewCharGenderAndRace( CChar *mChar )
 	UI16 pGenderID = 0x0190;
 	bool gargCreation = false;
 	bool elfCreation = false;
-	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SA ) )
+	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SA ))
 		gargCreation = true;
-	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_ML ) )
+	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ))
 		elfCreation = true;
 
 	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
@@ -1346,48 +1347,47 @@ void startChar( CSocket *mSock, bool onCreate )
 				// Without this, world will not be properly updated in regular UO clients until they take the first step
 				mChar->Update();
 			}
+
+			// Re-add player to party, if they are in one!
+			Party *mCharParty = PartyFactory::getSingleton().Get( mChar );
+			if( mCharParty != nullptr )
+			{
+				// Player's in a party! Send the details
+				mCharParty->SendList( nullptr );
+				mSock->sysmessage( 9073 ); // You have rejoined the party.
+			}
 		}
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fallDirection )
+//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
 //o-----------------------------------------------------------------------------------------------o
-CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fallDirection )
+CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 {
 	std::string corpseName = getNpcDictName( &mChar );
 
 	CItem *iCorpse = nullptr;
-	if( !createPack )
-	{
-		iCorpse = Items->CreateItem( nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM, false );
-		if( !ValidateObject( iCorpse ) )
-			return nullptr;
+	bool shouldSave = mChar.ShouldSave();
 
-		iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), corpseName.c_str() ) );
-		iCorpse->SetCarve( mChar.GetCarve() );
-		iCorpse->SetMovable( 2 );//non-movable
-		if( fallDirection )
-			iCorpse->SetDir( mChar.GetDir() | 0x80 );
-		else
-			iCorpse->SetDir( mChar.GetDir() );
+	iCorpse = Items->CreateItem( nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM, false, shouldSave );
+	if( !ValidateObject( iCorpse ) )
+		return nullptr;
 
-		iCorpse->SetAmount( mChar.GetID() );
-		iCorpse->SetWeightMax( 50000 ); // 500 stones
-		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
-		iCorpse->SetCorpse( true );
-	}
+	iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), corpseName.c_str() ) );
+	iCorpse->SetCarve( mChar.GetCarve() );
+	iCorpse->SetMovable( 2 );//non-movable
+	if( fallDirection )
+		iCorpse->SetDir( mChar.GetDir() | 0x80 );
 	else
-	{
-		iCorpse = Items->CreateItem( nullptr, &mChar, 0x09B2, 1, 0x0000, OT_ITEM, false );
-		if( iCorpse== nullptr )
-			return nullptr;
+		iCorpse->SetDir( mChar.GetDir() );
 
-		iCorpse->SetName( Dictionary->GetEntry( 1611 ) );
-		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
-	}
+	iCorpse->SetAmount( mChar.GetID() );
+	iCorpse->SetWeightMax( 50000 ); // 500 stones
+	iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
+	iCorpse->SetCorpse( true );
 
 	UI08 canCarve = 0;
 	if( mChar.GetID( 1 ) == 0x00 && ( mChar.GetID( 2 ) == 0x0C || ( mChar.GetID( 2 ) >= 0x3B && mChar.GetID( 2 ) <= 0x3D ) ) ) // If it's a dragon, 50/50 chance you can carve it
@@ -1417,11 +1417,11 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fall
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
+//|	Function	-	void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves Items from Character to Corpse
 //o-----------------------------------------------------------------------------------------------o
-void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
+void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse )
 {
 	CItem *k			= nullptr;
 	CItem *packItem		= mChar.GetPackItem();
@@ -1472,7 +1472,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 						k->SetZ( 9 );
 					}
 				}
-				if( !mChar.IsShop() && !createPack )
+				if( !mChar.IsShop() )
 					j->SetLayer( IL_BUYCONTAINER );
 				break;
 			default:
@@ -1514,16 +1514,14 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	if( mChar->GetID() != mChar->GetOrgID() )
 		mChar->SetID( mChar->GetOrgID() );
 
-	bool createPack = ( mChar->GetID( 2 ) == 0x0D || mChar->GetID( 2 ) == 0x0F || mChar->GetID( 2 ) == 0x10 || mChar->GetID() == 0x023E );
-
 	UI08 fallDirection = (UI08)(RandomNum( 0, 100 ) % 2);
 	mChar->SetDead( true );
 
 	Effects->playDeathSound( mChar );
-	CItem *iCorpse = CreateCorpseItem( (*mChar), attacker, createPack, fallDirection );
+	CItem *iCorpse = CreateCorpseItem( (*mChar), attacker, fallDirection );
 	if( iCorpse != nullptr )
 	{
-		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
+		MoveItemsToCorpse( (*mChar), iCorpse );
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
 			Effects->deathAction( mChar, iCorpse, fallDirection );
 

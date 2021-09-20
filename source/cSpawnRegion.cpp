@@ -698,7 +698,7 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 	if( FindCharSpotToSpawn( x, y, z, waterCreature, amphiCreature ) )
 	{
 		CChar *CSpawn = nullptr;
-		CSpawn = Npcs->CreateBaseNPC( ourNPC );
+		CSpawn = Npcs->CreateBaseNPC( ourNPC, false );
 
 		if( CSpawn != nullptr )
 		{
@@ -736,7 +736,7 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 	SI08 z;
 	if( FindItemSpotToSpawn( x, y, z ) )
 	{
-		ISpawn = Items->CreateBaseScriptItem( nullptr, sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1, instanceID, OT_ITEM, 0xFFFF );
+		ISpawn = Items->CreateBaseScriptItem( nullptr, sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1, instanceID, OT_ITEM, 0xFFFF, false );
 		if( ISpawn != nullptr )
 		{
 			ISpawn->SetLocation( x, y, z );

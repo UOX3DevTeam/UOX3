@@ -174,8 +174,17 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, 
 			{
 				i->SetDispellable( true );
 				i->SetDecayable( true );
+
+				// Duration of field item based on caster's Magery skill
 				i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
-				i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+
+				// If Poison Field, use average of caster's Magery and Poisoning skills
+				if( spellNum == 39 ) // Poison Field
+					i->SetTempVar( CITV_MOREX, static_cast<UI16>((caster->GetSkill( MAGERY ) + caster->GetSkill( POISONING )) / 2) );
+				else
+					i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
+
+				// Store caster's serial in field item
 				i->SetTempVar( CITV_MOREY, caster->GetSerial() );
 				i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber, instanceID ) );
 				i->SetDir( 29 );
@@ -453,17 +462,67 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CalculateMagicPoisonStrength( CChar *caster, CChar *target, UI16 skillVal, bool checkDistance, UI08 spellCircle )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate strength of magic poison based on caster and target
+//o-----------------------------------------------------------------------------------------------o
+UI08 CalculateMagicPoisonStrength( CChar *caster, CChar *target, UI16 skillVal, bool checkDistance, UI08 spellCircle )
+{
+	// Default to Lesser Poison if caster is further than 2 tiles away from target
+	UI08 poisonStrength = 1;
+
+	// Check if caster is within 2 tiles of target
+	if( !checkDistance || getDist( caster, target ) <= 2 )
+	{
+		// Calculate poison strength based on average of caster's Magery and Poisoning skills
+		if( skillVal == 0 )
+			skillVal = static_cast<UI16>(( caster->GetSkill( MAGERY ) + caster->GetSkill( POISONING )) / 2);
+		if( skillVal >= 1000 ) // GM in both skills
+		{
+			// 5% chance of Deadly Poison if spellCircle is lower than 5, or always Deadly if spellCircle is 5
+			if( spellCircle == 5 || RandomNum( 1, 100 ) <= 5 ) 
+				poisonStrength = 4; // Deadly Poison
+			else
+				poisonStrength = 3; // Greater Poison
+		}
+		else if( skillVal > 701 )
+			poisonStrength = 3; // Greater Poison
+		else if( skillVal > 301 )
+			poisonStrength = 2; // Regular Poison
+	}
+
+	// If target resists spell, reduce strength of poison
+	if( Magic->CheckResist( caster, target, 3 ) )
+	{
+		if( poisonStrength > 1 )
+			poisonStrength--;
+	}
+
+	return poisonStrength;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Poison spell
 //o-----------------------------------------------------------------------------------------------o
 bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( Magic->CheckResist( caster, target, 1 ) )
-		return false;
+	// Calculate poison strength of spell based on caster's skills, range to target and whether target resists
+	UI08 poisonStrength = CalculateMagicPoisonStrength( caster, target, 0, true, 3 );
 
-	target->SetPoisoned( 2 );
-	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+	// Apply poison on target
+	target->SetPoisoned( poisonStrength );
+
+	// Set time until poison wears off completely
+	target->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( getPoisonDuration( poisonStrength )));
+
+	// Handle criminal flagging
+	if( ValidateObject( caster ) && target->IsInnocent() )
+	{
+		if( WillResultInCriminal( caster, target ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
+			criminal( caster );
+	}
 
 	return true;
 }
@@ -967,7 +1026,7 @@ bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 bool splMagicReflection( CSocket *sock, CChar *caster, SI08 curSpell )
 {
-	caster->SetPermReflected( true );
+	caster->SetTempReflected( true );
 	return true;
 }
 
@@ -1574,7 +1633,7 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
-	if( target->IsGM() || target->IsInvulnerable() )
+	if( target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
 	if( target->IsNpc() )
 		Combat->AttackTarget( target, caster );
@@ -1706,7 +1765,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	//Apply bonus damage based on target distance from center of earthquake
 	spellDamage += dmgmod;
 
-	target->Damage( spellDamage, caster, true );
+	target->Damage( spellDamage, LIGHTNING, caster, true );
 
 	// If this killed the target, don't continue
 	if( target->IsDead() )
@@ -1728,9 +1787,9 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 			else // BT_HUMAN and BT_ELF
 			{
 				if( RandomNum( 0, 1 ) )
-					Effects->PlayCharacterAnimation( target, ACT_DIE_BACKWARD ); // Death anim variation 1 - 0x15, forward
+					Effects->PlayCharacterAnimation( target, ACT_DIE_BACKWARD, 0, 6 ); // Death anim variation 1 - 0x15, forward
 				else
-					Effects->PlayCharacterAnimation( target, ACT_DIE_FORWARD ); // Death anim variation 2 - 0x16, backward
+					Effects->PlayCharacterAnimation( target, ACT_DIE_FORWARD, 0, 6 ); // Death anim variation 2 - 0x16, backward
 			}
 		}
 	}
@@ -1738,7 +1797,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	{
 		if( target->GetHP() > 0 )
 		{
-			Effects->PlayCharacterAnimation( target, 0x2 );
+			Effects->PlayCharacterAnimation( target, 0x2, 0, 4 );
 		}
 	}
 }
@@ -2383,7 +2442,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			caster->SetControlSlotsUsed( std::clamp(controlSlotsUsed + newChar->GetControlSlots(), 0, 255) );
 			newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
 			newChar->SetLocation( caster );
-			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
+			Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA, 0, 7 ); // 0x11, used to be 0x0C
 			newChar->SetFTarg( caster );
 			newChar->SetNpcWander( WT_FOLLOW );
 			newChar->SetDispellable( true );
@@ -2473,7 +2532,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 
 	newChar->SetSpDelay( 10 );
 	newChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 5 )) );
-	Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA ); // 0x11, used to be 0x0C
+	Effects->PlayCharacterAnimation( newChar, ACT_SPELL_AREA, 0, 7 ); // 0x11, used to be 0x0C
 	// (9/99) - added the chance to make the monster attack
 	// the person you targeted ( if you targeted a char, naturally :) )
 	CChar *i = nullptr;
@@ -2629,12 +2688,20 @@ void cMagic::SubtractHealth( CChar *s, SI32 health, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character is protected by MagicReflect.
 //|						If yes, remove the protection and do visual effect.
+//|						However, don't touch the protection if character is permanently protected
 //o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckMagicReflect( CChar *i )
 {
-	if( i->IsPermReflected() )
+	if( i->IsTempReflected() )
 	{
-		i->SetPermReflected( false );
+		// Is character temporarily protected by a magic reflect spell?
+		i->SetTempReflected( false );
+		Effects->PlayStaticAnimation( i, 0x373A, 0, 15 );
+		return true;
+	}
+	else if( i->IsPermReflected() )
+	{
+		// Is character permanently protected by a magic reflect spell?
 		Effects->PlayStaticAnimation( i, 0x373A, 0, 15 );
 		return true;
 	}
@@ -2664,7 +2731,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 		{
 			s = defender->GetSocket();
 			if( s != nullptr )
-				s->sysmessage( 699 );
+				s->sysmessage( 699 ); // You feel yourself resisting magical energy!
 			i = true;
 		}
 		else
@@ -2676,9 +2743,40 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 		{
 			s = defender->GetSocket();
 			if( s != nullptr )
-				s->sysmessage( 699 );
+				s->sysmessage( 699 ); // You feel yourself resisting magical energy!
 		}
 	}
+	return i;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckResist( SI16 *resistDifficulty, CChar *defender, SI32 circle )
+//|	Changes		-	to add EV.INT. check
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check character's magic resistance.
+//o-----------------------------------------------------------------------------------------------o
+bool cMagic::CheckResist( SI16 resistDifficulty, CChar *defender, SI32 circle )
+{
+	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
+	CSocket *s = nullptr;
+	
+	// Calculate chance of resisting the magic effect based on defender's magic resistance vs the resistDifficulty
+	SI16 defaultChance = defender->GetSkill( MAGICRESISTANCE ) / 5;
+	SI16 resistChance = defender->GetSkill( MAGICRESISTANCE ) - ((( resistDifficulty - 20 ) / 5 ) + ( circle * 5 ));
+
+	if( defaultChance > resistChance )
+		resistChance = defaultChance;
+
+	if( RandomNum( 1, 100 ) < resistChance / 10 )
+	{
+		s = defender->GetSocket();
+		if( s != nullptr )
+			s->sysmessage( 699 ); // You feel yourself resisting magical energy!
+		i = true;
+	}
+	else
+		i = false;
+
 	return i;
 }
 
@@ -2748,7 +2846,7 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 		if( damage <= 0 )
 			damage = 1;
 
-		p->Damage( damage, attacker, true );
+		p->Damage( damage, element, attacker, true );
 		p->ReactOnDamage( element, attacker );
 	}
 }
@@ -2776,8 +2874,11 @@ void cMagic::PoisonDamage( CChar *p, SI32 poison )
 		if( poison < 0 )
 			poison = 1;
 
+		// Apply poison on target
 		p->SetPoisoned( poison );
-		p->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+
+		// Set time until poison wears off completely
+		p->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( getPoisonDuration( poison )));
 	}
 }
 
@@ -2832,23 +2933,25 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 	}
 	else if( id >= 0x3914 && id <= 0x3929 ) //poison field
 	{
-		if( mChar->IsInnocent() )
+		caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// caster is stored in MOREY
+		if( ValidateObject( caster ) && mChar->IsInnocent() )
 		{
-			caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
 			if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 				criminal( caster );
 		}
-		if( RandomNum( 0, 2 ) == 1 )
+		if( RandomNum( 0, 2 ) == 1 ) // 33% chance that poison effect from poison field is applied
 		{
-			if( !CheckResist( nullptr, mChar, 5 ) )
-			{
-				if( fieldItem->GetTempVar( CITV_MOREX ) < 997 )
-					PoisonDamage( mChar, 2 );
-				else
-					PoisonDamage( mChar, 3 );
-			}
-			else
-				PoisonDamage( mChar, 1 );
+			// Calculate strength of poison, but disregard range check
+			UI08 poisonStrength = 1;
+
+			// Fetch average skill value of poison field caster's Magery and Poisoning skills
+			UI16 skillVal = fieldItem->GetTempVar( CITV_MOREX );
+
+			// Calculate strength of poison
+			poisonStrength = CalculateMagicPoisonStrength( caster, mChar, skillVal, false, 5 );
+
+			// Apply poison on character
+			PoisonDamage( mChar, poisonStrength );
 			Effects->PlaySound( mChar, 520 );
 		}
 		return true;
@@ -3581,10 +3684,12 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 									if( toExecute != nullptr )
 									{
 										// If script returns true/1, prevent other scripts with event from running
-										if( toExecute->OnSpellTarget( i, caster, curSpell ) == 1 )
-										{
+										// If script returns 2, spell being cast on this target was rejected
+										auto retVal = toExecute->OnSpellTarget( i, caster, curSpell );
+										if( retVal == 1 )
 											break;
-										}
+										else if( retVal == 2 )
+											return;
 									}
 								}
 
@@ -3712,7 +3817,11 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
 								if( toExecute != nullptr )
 								{
-									toExecute->OnSpellTarget( c, caster, curSpell );
+									auto retVal = toExecute->OnSpellTarget( c, caster, curSpell );
+									if( retVal == 1 )
+										break;
+									else if( retVal == 2 )
+										return;
 								}
 							}
 							(*((MAGIC_CHARFUNC)magic_table[curSpell-1].mag_extra))( caster, c, src, curSpell );
@@ -3733,7 +3842,11 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
 								if( toExecute != nullptr )
 								{
-									toExecute->OnSpellTarget( c, caster, curSpell );
+									auto retVal = toExecute->OnSpellTarget( c, caster, curSpell );
+									if( retVal == 1 )
+										break;
+									else if( retVal == 2 )
+										return;
 								}
 							}
 							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );

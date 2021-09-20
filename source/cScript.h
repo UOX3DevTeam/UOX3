@@ -18,6 +18,7 @@ enum ScriptEvent
 	seOnDispel,				//	**
 	seOnSkill,
 	seOnStat,
+	seOnTooltip,
 	seOnAttack,
 	seOnDefense,
 	seOnSkillGain,			//	**
@@ -175,6 +176,7 @@ public:
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
+	std::string		OnTooltip( CBaseObject *myObj );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );
 	bool		OnSkillGain( CChar *player, SI08 skill );
@@ -251,7 +253,7 @@ public:
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
 
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
-	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue );
+	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
 	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
 	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );

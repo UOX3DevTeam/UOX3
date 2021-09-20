@@ -72,7 +72,7 @@ CItem * cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodCo
 	}
 	
 	// Spawn the blood effect item
-	CItem *blood = Items->CreateBaseItem( worldNum, OT_ITEM, instanceID );
+	CItem *blood = Items->CreateBaseItem( worldNum, OT_ITEM, instanceID, false );
 	if( ValidateObject( blood ) )
 	{
 		blood->SetID( bloodEffectID );
@@ -243,14 +243,14 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 	else if( mChar->IsOnHorse() )
 	{
 		if( actionID == 0x10 )
-			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H ); // 0x1A
+			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H, 0, 5 ); // 0x1A
 		else if( actionID == 0x11 )
-			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_BOW ); // 0x1B
+			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_BOW, 0, 5 ); // 0x1B
 		return;
 	}
 	if( !cwmWorldState->creatures[mChar->GetID()].IsHuman() && actionID == 0x22 )
 		return;
-	PlayCharacterAnimation( mChar, actionID );
+	PlayCharacterAnimation( mChar, actionID, 0, 7 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -389,7 +389,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 				{
 					//UI08 hitLoc = Combat->CalculateHitLoc();
 					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - std::min( dx, dy ) ) ), true);
-					tempChar->Damage( damage, c, true );
+					tempChar->Damage( damage, HEAT, c, true );
 				}
 			}
 		}
@@ -809,7 +809,8 @@ void cEffects::checktempeffects( void )
 				if( !ValidateObject( src ) || !ValidateObject( s ) )
 					break;
 				Magic->playSound( src, 55 );
-				Magic->doMoveEffect( 55, s, src );
+				if( s != src )
+					Magic->doMoveEffect( 55, s, src );
 				Magic->doStaticEffect( s, 55 );
 				//Effects->PlaySound( target, 0x160 );
 				//Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
@@ -994,14 +995,17 @@ void reverseEffect( CTEffect *Effect )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
 {
-	if( !ValidateObject( source ) || !ValidateObject( dest ) )
+	//if( !ValidateObject( source ) || !ValidateObject( dest ) )
+	if( !ValidateObject( dest ) )
 		return;
 
 	bool spellResisted = false;
 	CTEffect *toAdd	= new CTEffect;
-	SERIAL sourSer	= source->GetSerial();
+	SERIAL sourceSerial	= 0;
+	if( source != nullptr )
+		sourceSerial = source->GetSerial();
 	SERIAL targSer	= dest->GetSerial();
-	toAdd->Source( sourSer );
+	toAdd->Source( sourceSerial );
 	toAdd->Destination( targSer );
 
 	cwmWorldState->tempEffects.Push();
@@ -1039,75 +1043,181 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	switch( num )
 	{
 		case 1: // Paralyse Spell
+		{
 			dest->SetFrozen( true );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 100.0f ) );
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				effectDuration = static_cast<R32>(more2);
+			}
+			else
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY )) / 100.0f;
+			}
+			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 2: // Nightsight Potion (JS) and Spell (code)
+		{
 			SI16 worldbrightlevel;
 			worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
 			dest->SetFixedLight( static_cast<UI08>(worldbrightlevel) );
 			doLight( tSock, static_cast<SI08>(worldbrightlevel) );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 2.0f ) );
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				effectDuration = static_cast<R32>(more2);
+			}
+			else
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY )) / 2.0f;
+			}
+			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 3: // Clumsy Spell (JS)
+		{
 			if( dest->GetDexterity() < more1 )
 				more1 = dest->GetDexterity();
 			dest->IncDexterity2( -more1 );
 			dest->SetStamina( std::min( dest->GetStamina(), dest->GetMaxStam() ) );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 1 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+				
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 1 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY ) / 10.0f);
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 1 );
+			}
+
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ) );
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
+
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 4: // Feeblemind Spell (JS)
+		{
 			if( dest->GetIntelligence() < more1 )
 				more1 = dest->GetIntelligence();
 			dest->IncIntelligence2( -more1 );
-			dest->SetMana( std::min(dest->GetMana(), dest->GetMaxMana() ) );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 1 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+			dest->SetMana( std::min(dest->GetMana(), dest->GetMaxMana() ));
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 3 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY ) / 10.0f);
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 1 );
+			}
+
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
+
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 5: // Weaken Spell
+		{
 			if( dest->GetStrength() < more1 )
 				more1 = dest->GetStrength();
 			dest->IncStrength2( -more1 );
 			dest->SetHP( std::min( dest->GetHP(), static_cast<SI16>(dest->GetMaxHP()) ) );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 4 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 1 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY ) / 10.0f);
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 1 );
+			}
+
+			//Halve effect-timer on resist
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 6: // Agility Potion (JS) and Spell (code)
+		{
 			dest->IncDexterity( more1 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+			}
+			else
+			{
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 7: // Cunning Spell
 			dest->IncIntelligence2( more1 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+			}
+			else
+			{
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
 		case 8: // Strength Potion (JS) and Spell (code)
 			dest->IncStrength2( more1 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+			}
+			else
+			{
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
@@ -1124,36 +1234,86 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More2( more2 );
 			break;
 		case 11: // Bless Spell
-			dest->IncStrength2( more1 );
-			dest->IncDexterity2( more2 );
-			dest->IncIntelligence2( more3 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
-			toAdd->More1( more1 );
-			toAdd->More2( more2 );
-			toAdd->More3( more3 );
+			if( source != nullptr )
+			{
+				// No source! Effect gotten from equipping an item?
+				// Apply same bonus to all stats
+				dest->IncStrength2( more1 );
+				dest->IncDexterity2( more1 );
+				dest->IncIntelligence2( more1 );
+				toAdd->ExpireTime( BuildTimeValue( more2 ));
+				toAdd->More1( more1 );
+				toAdd->More2( more1 );
+				toAdd->More3( more1 );
+			}
+			else
+			{
+				// Effect gotten from a spell cast by another character
+				dest->IncStrength2( more1 );
+				dest->IncDexterity2( more2 );
+				dest->IncIntelligence2( more3 );
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+				toAdd->More1( more1 );
+				toAdd->More2( more2 );
+				toAdd->More3( more3 );
+			}
 			toAdd->Dispellable( true );
 			break;
 		case 12: // Curse Spell
-			if( dest->GetStrength() < more1 )
-				more1 = dest->GetStrength();
-			if( dest->GetDexterity() < more2 )
-				more2 = dest->GetDexterity();
-			if( dest->GetIntelligence() < more3 )
-				more3 = dest->GetIntelligence();
-			dest->IncStrength2( -more1 );
-			dest->IncDexterity2( -more2 );
-			dest->IncIntelligence2( -more3 );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 4 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+		{
+			bool spellResisted = false;
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				auto effectStrength = more1;
+				if( dest->GetStrength() < more1 )
+					effectStrength = dest->GetStrength();
+				dest->IncStrength2( -effectStrength );
+				if( dest->GetDexterity() < more1 )
+					effectStrength = dest->GetDexterity();
+				dest->IncDexterity2( -effectStrength );
+				if( dest->GetIntelligence() < more1 )
+					effectStrength = dest->GetIntelligence();
+				dest->IncIntelligence2( -effectStrength );
+				toAdd->More1( more1 );
+				toAdd->More2( more1 );
+				toAdd->More3( more1 );
+
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 4 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
-			toAdd->More1( more1 );
-			toAdd->More2( more2 );
-			toAdd->More3( more3 );
+			{
+				if( dest->GetStrength() < more1 )
+					more1 = dest->GetStrength();
+				if( dest->GetDexterity() < more2 )
+					more2 = dest->GetDexterity();
+				if( dest->GetIntelligence() < more3 )
+					more3 = dest->GetIntelligence();
+				dest->IncStrength2( -more1 );
+				dest->IncDexterity2( -more2 );
+				dest->IncIntelligence2( -more3 );
+				toAdd->More1( more1 );
+				toAdd->More2( more2 );
+				toAdd->More3( more3 );
+
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY )) / 10.0f;
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 4 );
+			}
+
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
+
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 15: // Reactive Armor Spell
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
 			toAdd->Dispellable( true );
@@ -1186,11 +1346,22 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->Dispellable( false );
 			break;
 		case 21: // Protection Spell
-			toAdd->ExpireTime( BuildTimeValue( 120.0f ) );
+		{
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				effectDuration = static_cast<R32>(more2);
+			}
+			else
+			{
+				effectDuration = 120.0f;
+			}
+			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
 			toAdd->More1( more1 );
 			dest->SetBaseSkill( dest->GetBaseSkill( PARRYING ) + more1, PARRYING );
 			break;
+		}
 		case 25: // Temporarily set item as disabled
 			toAdd->ExpireTime( BuildTimeValue( (R32)more1 ) );
 			toAdd->ObjPtr( dest );

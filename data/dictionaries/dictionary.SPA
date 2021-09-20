@@ -2299,6 +2299,12 @@
 2429=Su mascota parece muy feliz
 2430=Su mascota parece extremadamente feliz
 2431=Su mascota parece maravillosamente feliz
+2432=¡Debes someter a esta criatura antes de poder domarla!
+2433=Esa criatura sólo puede ser domada por hembras.
+2434=Esa criatura sólo puede ser domada por machos.
+2435=Sólo los elfos pueden usar esto.
+2436=El Unicornio se niega a que lo montes.
+2437=El Ki-Rin rechaza tus intentos de montarlo.
 // [2450-2475] Archerybutte
 2450=Alguien más está usando esto ahora mismo.
 2451=Retiras %i flechas del objetivo.
@@ -2658,7 +2664,7 @@
 3124=un mago malvado
 3125=un señor mago malvado
 3126=un señor mago malvado
-3127=un predator hellcat
+3127=un hellcat
 3128=un duendecillo
 3129=Tentáculos de la Grada
 3130=una gárgola de fuego
@@ -3113,7 +3119,7 @@
 5104=la gárgola cantera
 5105=el brigadista
 5106=El vendedor de jugadores
-5107=un gran Hellcat
+5107=un hellcat depredador
 5108=a jwilson
 5109=un hiryu etéreo
 5110=un reptalón etéreo
@@ -3147,6 +3153,10 @@
 5138=el Ganadero
 5139=el Prisionero
 5140=el Escultor
+5141=el alcalde
+5142=un demonio menor
+5143=un cacodemonio
+5144=un demonio bestial
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -3200,10 +3210,6 @@
 6049=¡Parece que no tienes pasta!
 6050=Has quemado la masa hasta dejarla crujiente.
 6051=Haces una barra de pan.
-6048=¿Con qué quiere utilizar el ave cruda?
-6049=No puedes cocinar tu ave cruda en eso.
-6050=¡Parece que no tienes ningún pájaro crudo!
-6051=No tienes la suficiente habilidad para hacerlo.
 6052=Has quemado el ave cruda hasta dejarla crujiente.
 6053=Cocinas un pájaro. ¡Huele bien!
 6054=¿Con qué quiere utilizar el muslo de pollo crudo?
@@ -3241,6 +3247,10 @@
 6086=¡Parece que no tiene huevos crudos!
 6087=Quemaste los huevos crujientes.
 6088=Se fríen los huevos.
+6089=¿Con qué quiere utilizar el ave cruda?
+6090=No puedes cocinar tu ave cruda en eso.
+6091=¡Parece que no tienes ningún pájaro crudo!
+6092=No tienes la suficiente habilidad para hacerlo.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3890,6 +3900,15 @@
 9065=Ese objeto no te pertenece. Tendrás que robarlo.
 9066=Eso pertenece a otra persona.
 9067=No se puede soltar el objeto... ¿de dónde se ha recogido?
+9068=¡Sientes que te roban la fuerza vital!
+9069=Puedo conceder la vida, y puedo minarla con la misma facilidad.
+9070=No irás a ninguna parte, a menos que yo lo considere así.
+9071=Tu poder es mío para usarlo como yo quiera.
+9072=Has sido añadido a la fiesta.
+9073=Se ha reincorporado al partido.
+9074=Has sido eliminado del grupo.
+9075=Un jugador ha sido eliminado del grupo.
+9076=%s se ha unido al grupo.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!
@@ -3956,5 +3975,6 @@
 9401=Este objeto mágico no tiene carga.
 9402=[Sin identificar]
 9403=Cargas restantes: %i
+9404= con %d cargas
 }
 EOF

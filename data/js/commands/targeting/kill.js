@@ -11,7 +11,7 @@ function command_KILL( socket, cmdString )
 	if( cmdString )
 	{
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, GetDictionaryEntry( 8089, socket.language ) + " " + cmdString, 1 ); // Select target to kill:
+		socket.CustomTarget( 0, GetDictionaryEntry( 8089, socket.language ) + " " + cmdString ); // Select target to kill:
 	}
 	else
 		socket.SysMessage( GetDictionaryEntry( 8090, socket.language )); // This command takes at least 1 argument.
@@ -71,7 +71,7 @@ function onCallback0( socket, ourObj )
 function command_RESURRECT( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 194, socket.language );
-	socket.CustomTarget( 1, targMsg, 2 );
+	socket.CustomTarget( 1, targMsg );
 }
 
 function onCallback1( socket, ourObj )

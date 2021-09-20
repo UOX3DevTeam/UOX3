@@ -1,0 +1,88 @@
+// Daemon Bone Arms
+[daemon_bone_arms]
+{
+get=base_item
+name=daemon bone arms
+id=0x144e
+color=0x0648
+decay=1
+good=14
+layer=0x13
+def=43
+dexadd=-2
+hp=26 30
+str=40
+value=156 78
+weight=200
+}
+
+// Daemon Bone Armor
+[daemon_bone_chest]
+{
+get=base_item
+name=daemon bone armor
+id=0x144f
+color=0x0648
+decay=1
+good=14
+layer=0x0d
+def=43
+dexadd=-6
+hp=26 30
+str=40
+value=234 117
+weight=600
+}
+
+// Daemon Bone Gauntlets
+[daemon_bone_gauntlets]
+{
+get=base_item
+name=daemon bone gauntlets
+id=0x1450
+color=0x0648
+decay=1
+good=14
+layer=0x07
+def=43
+dexadd=-1
+hp=26 30
+str=40
+value=133 66
+weight=200
+}
+
+// Daemon Bone Helm
+[daemon_bone_helm]
+{
+get=base_item
+name=daemon bone helm
+id=0x1451
+color=0x0648
+decay=1
+good=14
+layer=0x06
+def=43
+hp=26 30
+str=40
+value=157 71
+weight=300
+}
+
+// Daemon Bone Legs
+[daemon_bone_legs]
+{
+get=base_item
+name=daemon bone legs
+id=0x1452
+color=0x0648
+decay=1
+good=14
+layer=0x04
+def=43
+dexadd=-4
+hp=26 30
+str=40
+value=179 89
+weight=300
+}

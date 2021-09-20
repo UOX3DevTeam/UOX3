@@ -11,6 +11,8 @@
 #include "townregion.h"
 #include "classes.h"
 #include "Dictionary.h"
+#include "cScript.h"
+#include "CJSMapping.h"
 #include <string>
 #include <locale>
 #include <codecvt>
@@ -4430,6 +4432,9 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	bool itemIsCorpse	= toCopy.isCorpse();
 
 	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
+
+	//tcCont->Reverse(); // This will reverse the order in which items are displayed in the container
+
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
 		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) )
@@ -4438,7 +4443,7 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 			{
 				// don't show GM hidden objects to non-GM players.
 				// don't show hairs and beards to anyone
-				if(( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() ) && ctr->GetLayer() != IL_HAIR && ctr->GetLayer() != IL_FACIALHAIR )
+				if( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() )
 				{
 					AddItem( ctr, itemCount, mSock );
 					++itemCount;
@@ -5353,7 +5358,7 @@ void CPCorpseClothing::NumberOfItems( UI16 numItems )
 void CPCorpseClothing::AddItem( CItem *toAdd, UI16 itemNum )
 {
 	UI16 baseOffset = (UI16)(7 + itemNum * 5);
-	pStream.WriteByte( baseOffset, toAdd->GetLayer() );
+	pStream.WriteByte( baseOffset, toAdd->GetLayer() + 1 );
 	pStream.WriteLong( static_cast<size_t>(baseOffset) + 1, toAdd->GetSerial() );
 }
 CPCorpseClothing& CPCorpseClothing::operator=( CItem& corpse )
@@ -6774,6 +6779,24 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = strutil::format( "%s", Dictionary->GetEntry( 9055, tSock->Language() ).c_str() ); // [Blessed]
 		FinalizeData( tempEntry, totalStringLen );
 	}
+
+	// Custom item tooltips
+	std::vector<UI16> scriptTriggers = cItem.GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			std::string textFromScript = toExecute->OnTooltip( &cItem );
+			if( !textFromScript.empty() )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = textFromScript;
+				FinalizeData( tempEntry, totalStringLen );
+			}
+		}
+	}
+
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{	
 		if( cItem.GetType() == IT_LOCKEDCONTAINER  )
@@ -6818,9 +6841,19 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	}
 	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
 	{
-		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
-		tempEntry.ourText = strutil::number( cItem.GetTempVar( CITV_MOREZ ) );
-		FinalizeData( tempEntry, totalStringLen );
+		std::string name2( cItem.GetName2() );
+		if( name2 == "#" || name2 == "" )
+		{
+			tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
+			tempEntry.ourText = strutil::number( cItem.GetTempVar( CITV_MOREZ ) );
+			FinalizeData( tempEntry, totalStringLen );
+		}
+		else
+		{
+			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+			tempEntry.ourText = strutil::format( " \t%s\t ", Dictionary->GetEntry( 9402 ).c_str(), tSock->Language() ); // [Unidentified]
+			FinalizeData( tempEntry, totalStringLen );
+		}
 	}
 	else if( cItem.GetType() == IT_RECALLRUNE && cItem.GetTempVar( CITV_MOREX ) != 0 && cItem.GetTempVar( CITV_MOREY ) != 0 )
 	{
@@ -6867,6 +6900,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
+
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )
 	{
 		if( cItem.GetLayer() != IL_NONE )
@@ -7027,6 +7061,23 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		tempEntry.ourText = strutil::format( "%s", convertedString.c_str() );
 
 		FinalizeData( tempEntry, totalStringLen );
+	}
+
+	// Custom item tooltips
+	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			std::string textFromScript = toExecute->OnTooltip( &mChar );
+			if( !textFromScript.empty() )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = textFromScript;
+				FinalizeData( tempEntry, totalStringLen );
+			}
+		}
 	}
 }
 

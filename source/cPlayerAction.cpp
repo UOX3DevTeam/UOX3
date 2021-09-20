@@ -33,15 +33,15 @@ CBoatObj *	GetBoat( CSocket *s );
 void		ModelBoat( CSocket *s, CBoatObj *i );
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Bounce( CSocket *bouncer, CItem *bouncing )
+//|	Function	-	void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back from where they came
 //o-----------------------------------------------------------------------------------------------o
-void Bounce( CSocket *bouncer, CItem *bouncing )
+void Bounce( CSocket *bouncer, CItem *bouncing, UI08 mode = 5 )
 {
 	if( bouncer == nullptr || !ValidateObject( bouncing ) )
 		return;
-	CPBounce bounce( 5 );
+	CPBounce bounce( mode );
 	PickupLocations from	= bouncer->PickupSpot();
 	SERIAL spot				= bouncer->PickupSerial();
 	switch( from )
@@ -83,11 +83,11 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back if pickup is illegal. Doesn't require updating item.
 //o-----------------------------------------------------------------------------------------------o
-void PickupBounce( CSocket *bouncer )
+void PickupBounce( CSocket *bouncer, UI08 mode = 0 )
 {
 	if( bouncer == nullptr )
 		return;
-	CPBounce bounce( 0 );
+	CPBounce bounce( mode );
 	bouncer->Send( &bounce );
 	bouncer->PickupSpot( PL_NOWHERE );
 	bouncer->SetCursorItem( nullptr );
@@ -236,7 +236,8 @@ bool CPIGetItem::Handle( void )
 			}
 			if( otherPackCheck || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			{
-				PickupBounce( tSock );
+				tSock->sysmessage( 9065 ); // That item does not belong to you. You'll have to steal it.
+				Bounce( tSock, i );
 				return true;
 			}
 			if( iCont->CanBeObjType( OT_ITEM ) )
@@ -244,7 +245,8 @@ bool CPIGetItem::Handle( void )
 				CItem *contItem = static_cast<CItem *>(iCont);
 				if( contItem->GetType() == IT_TRADEWINDOW ) // Trade Window
 				{
-					PickupBounce( tSock );
+					tSock->sysmessage( 9064 ); // You cannot pick that up.
+					Bounce( tSock, i );
 					return true;
 				}
 				CItem *recurseItem = FindRootContainer( contItem );
@@ -279,7 +281,12 @@ bool CPIGetItem::Handle( void )
 			CItem *x = static_cast<CItem *>(iOwner);
 			if( !objInRange( ourChar, x, DIST_NEARBY ) )
 			{
-				PickupBounce( tSock );
+				Bounce( tSock, i );
+				tSock->sysmessage( 393 ); // That is too far away.
+
+				// Resend items in container after bounce, or the bounced item will vanish from player's screen
+				CPItemsInContainer itemsIn( tSock, static_cast<CItem *>(iCont), 0x01 );
+				tSock->Send( &itemsIn );
 				return true;
 			}
 
@@ -309,15 +316,16 @@ bool CPIGetItem::Handle( void )
 		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
 		if( !ourChar->IsGM() && ( !objInRange( ourChar, i, DIST_NEARBY ) || !LineOfSight( tSock, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS, true )))
 		{
-			tSock->sysmessage( 683 );
-			PickupBounce( tSock );
+			tSock->sysmessage( 683 ); // There seems to be something in the way
+			Bounce( tSock, i );
 			return true;
 		}
 	}
 
 	if( i->isCorpse() || !checkItemRange( ourChar, x ) )
 	{
-		PickupBounce( tSock );
+		tSock->sysmessage( 9064 ); // You cannot pick that up.
+		Bounce( tSock, i );
 		return true;
 	}
 
@@ -325,7 +333,8 @@ bool CPIGetItem::Handle( void )
 	{
 		if( ( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND ) && ( x->GetMultiObj() != ourChar->GetMultiObj() || x->IsLockedDown() ))
 		{
-			PickupBounce( tSock );
+			tSock->sysmessage( 9064 ); // You cannot pick that up.
+			Bounce( tSock, i );
 			return true;
 		}
 		i->SetMulti( INVALIDSERIAL );
@@ -370,7 +379,8 @@ bool CPIGetItem::Handle( void )
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
-		PickupBounce( tSock );
+		tSock->sysmessage( 9064 ); // You cannot pick that up.
+		Bounce( tSock, i );
 		return true;
 	}
 
@@ -387,7 +397,7 @@ bool CPIGetItem::Handle( void )
 			// 1 == script returned true or 1
 			if( retStatus == 0 )
 			{
-				PickupBounce( tSock );
+				Bounce( tSock, i );
 				return true;
 			}
 		}
@@ -421,8 +431,8 @@ bool CPIGetItem::Handle( void )
 	{
 		if( !Weight->checkCharWeight( nullptr, ourChar, i ) )
 		{
-			tSock->sysmessage( 1743 );
-			PickupBounce( tSock );
+			tSock->sysmessage( 1743 ); // That person can not possibly hold more weight
+			Bounce( tSock, i );
 			return true;
 		}
 	}
@@ -468,6 +478,7 @@ bool CPIEquipItem::Handle( void )
 			CChar *pOChar = static_cast< CChar * >( pOwner );
 			if( ( ( pOChar != ourChar ) && ( ( !ourChar->IsGM() && ( pOChar->GetOwnerObj() != ourChar ) ) ) ) || !objInRange( ourChar, pOwner, DIST_NEARBY ) )
 			{
+				tSock->sysmessage( 9066 ); // That belongs to someone else.
 				Bounce( tSock, i );
 				return true;
 			}
@@ -476,18 +487,9 @@ bool CPIEquipItem::Handle( void )
 		{
 			if( !objInRange( ourChar, pOwner, DIST_NEARBY ) )
 			{
+				tSock->sysmessage( 393 ); // That is too far away
 				Bounce( tSock, i );
 				return true;
-			}
-			CItem *pOItem = static_cast< CItem * >( pOwner );
-			if( pOItem->IsLockedDown() )
-			{
-				CMultiObj *ourMulti = pOwner->GetMultiObj();
-				if( ValidateObject( ourMulti ) && !ourMulti->IsOwner( ourChar ) )
-				{
-					Bounce( tSock, i );
-					return true;
-				}
 			}
 		}
 
@@ -496,6 +498,7 @@ bool CPIEquipItem::Handle( void )
 	{
 		if( !objInRange( ourChar, i, DIST_NEARBY ) )
 		{
+			tSock->sysmessage( 393 ); // That is too far away
 			Bounce( tSock, i );
 			return true;
 		}
@@ -507,13 +510,14 @@ bool CPIEquipItem::Handle( void )
 	if( !ourChar->IsGM() && k != ourChar )	// players cant equip items on other players or npc`s paperdolls.  // GM PRIVS
 	{
 		Bounce( tSock, i );
-		tSock->sysmessage( 1186 );
+		tSock->sysmessage( 1186 ); // You can't put items on other players!
 		return true;
 	}
 
 	if( ourChar->IsDead() )
 	{
-		tSock->sysmessage( 1185 );
+		Bounce( tSock, i );
+		tSock->sysmessage( 1185 ); // You can't do much in your current state.
 		return true;
 	}
 	if( !ValidateObject( k ) )
@@ -533,7 +537,7 @@ bool CPIEquipItem::Handle( void )
 
 	if( ac1 != 0 && ( (ac1&ac2) == 0 ) )	// bit comparison, if they have ANYTHING in common, they can wear it
 	{
-		tSock->sysmessage( 1187 );
+		tSock->sysmessage( 1187 ); // You are unable to equip that due to your race.
 		Bounce( tSock, i );
 		return true;
 	}
@@ -541,11 +545,11 @@ bool CPIEquipItem::Handle( void )
 	{
 		bool canWear = false;
 		if( i->GetStrength() > k->GetStrength() )
-			tSock->sysmessage( 1188 );
+			tSock->sysmessage( 1188 ); // You are not strong enough to use that. (NOTE: Should these messages use color 0x096a to stand out and replicate hard coded client message?)
 		else if( i->GetDexterity() > k->GetDexterity() )
-			tSock->sysmessage( 1189 );
+			tSock->sysmessage( 1189 ); // You are not agile enough to use that.
 		else if( i->GetIntelligence() > k->GetIntelligence() )
-			tSock->sysmessage( 1190 );
+			tSock->sysmessage( 1190 ); // You are not smart enough to use that.
 		else
 			canWear = true;
 		if( !canWear )
@@ -564,6 +568,7 @@ bool CPIEquipItem::Handle( void )
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
+		tSock->sysmessage( 9064 ); // You cannot pick that up.
 		Bounce( tSock, i );
 		return true;
 	}
@@ -595,7 +600,7 @@ bool CPIEquipItem::Handle( void )
 		}
 		if( conflictItem == true )
 		{
-			tSock->sysmessage( 1744 );
+			tSock->sysmessage( 1744 ); // You can't equip two items in the same slot
 			Bounce( tSock, i );
 			return true;
 		}
@@ -603,7 +608,7 @@ bool CPIEquipItem::Handle( void )
 
 	if( !Weight->checkCharWeight( ourChar, k, i ) )
 	{
-		tSock->sysmessage( 1743 );
+		tSock->sysmessage( 1743 ); // That person can not possibly hold more weight
 		Bounce( tSock, i );
 		return true;
 	}
@@ -627,7 +632,11 @@ bool CPIEquipItem::Handle( void )
 	CPDropItemApproved lc;
 	tSock->Send( &lc );
 
-	Effects->PlaySound( tSock, 0x0057, false );
+	auto weaponType = Combat->getCombatSkill( i );
+	if( weaponType == SWORDSMANSHIP || weaponType == MACEFIGHTING || weaponType == FENCING )
+		Effects->PlaySound( tSock, 0x0056, false ); // Play unsheath sound if 
+	else
+		Effects->PlaySound( tSock, 0x0057, false );
 	return true;
 }
 
@@ -670,6 +679,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( mChar, i );
+			mSock->sysmessage( 1754 ); // That character is not online.
 			Bounce( mSock, i );
 			return true;
 		}
@@ -734,7 +744,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				default:
 					executeNpc = true;
 					break;
-				case 0:	// bounce, no code
+				case 0:	// bounce, no code, error message handled in script
 					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 						Weight->subtractItemWeight( mChar, i );
 					Bounce( mSock, i );
@@ -764,7 +774,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 					case 1:	// we don't want to bounce, use code
 					default:
 						break;
-					case 0:	// we want to bounce and return
+					case 0:	// we want to bounce and return. Handle error message in script
 							// If we want to bounce, then it's safe to assume the item still exists!
 						if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 							Weight->subtractItemWeight( mChar, i );
@@ -786,7 +796,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				Effects->PlaySound( mSock, static_cast<UI16>(0x003A + RandomNum( 0, 2 )), true );
 				if( cwmWorldState->creatures[targNPC->GetID()].IsAnimal() )
 				{
-					Effects->PlayCharacterAnimation( targNPC, 3 );
+					Effects->PlayCharacterAnimation( targNPC, 3, 0, 5 );
 
 					// Restore loyalty to max upon feeding pet
 					if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
@@ -796,11 +806,19 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 					}
 				}
 
-				if( i->GetPoisoned() && targNPC->GetPoisoned() < i->GetPoisoned() )
+				UI08 poisonStrength = i->GetPoisoned();
+				if( poisonStrength && targNPC->GetPoisoned() < poisonStrength )
 				{
 					Effects->PlaySound( mSock, 0x0246, true ); // poison sound - SpaceDog
-					targNPC->SetPoisoned( i->GetPoisoned() );
-					targNPC->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+
+					// Apply poison on target
+					targNPC->SetPoisoned( poisonStrength );
+
+					// Set time until next time poison "ticks"
+					targNPC->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32>(getPoisonTickTime( poisonStrength ))));
+
+					// Set time until poison wears off completely
+					targNPC->SetTimer( tCHAR_POISONWEAROFF, targNPC->GetTimer( tCHAR_POISONTIME ) + ( 1000 * getPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
 
 					// Cut loyalty in half if pet was fed poisoned food
 					if( targNPC->GetLoyalty() > 0 )
@@ -1009,6 +1027,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	//Bounce if no valid pickupspot exists
 	if( mSock->PickupSpot() == PL_NOWHERE )
 	{
+		mSock->sysmessage( 9067 ); // Unable to drop item... where was it picked up from?
 		Bounce( mSock, i );
 		return;
 	}
@@ -1026,7 +1045,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 				case -1:	// no such event
 				default:
 					break;
-				case 0:	// bounce, no code
+				case 0:	// bounce, no code, handle error message in client
 					Bounce( mSock, i );
 					return;	// stack not deleted, as we're bouncing
 				case 2:	// don't bounce, don't use code
@@ -1041,6 +1060,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( nChar, i );
+		mSock->sysmessage( 9064 ); // You cannot pick that up.
 		Bounce( mSock, i );
 		return;
 	}
@@ -1053,7 +1073,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
 			Bounce( mSock, i );
-			mSock->sysmessage( 683 );
+			mSock->sysmessage( 683 ); // There seems to be something in the way
 			return;
 		}
 
@@ -1094,6 +1114,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			//Bounces items dropped in illegal locations in 3D UO client!!!
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
+			mSock->sysmessage( 683 ); // There seems to be something in the way
 			Bounce( mSock, i );
 			return;
 		}
@@ -1191,14 +1212,14 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	if( iDropped.GetID( 1 ) != 0x1F || iDropped.GetID( 2 ) < 0x2D || iDropped.GetID( 2 ) > 0x72 )
 	{
 		Bounce( &mSock, &iDropped );
-		mSock.sysmessage( 1202 );
+		mSock.sysmessage( 1202 ); // You can only place spell scrolls in a spellbook!
 		return;
 	}
 	CChar *sbOwner = FindItemOwner( &spellBook );
 	if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
 	{
 		Bounce( &mSock, &iDropped );
-		mSock.sysmessage( 1203 );
+		mSock.sysmessage( 1203 ); // You cannot place spells in other peoples spellbooks.
 		return;
 	}
 	std::string name;
@@ -1210,7 +1231,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 
 	if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
 	{
-		mSock.sysmessage( 1204 );
+		mSock.sysmessage( 1204 ); // There are no empty pages left in your book.
 		Bounce( &mSock, &iDropped );
 		return;
 	}
@@ -1219,7 +1240,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	{
 		if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && spellBook.GetSpell( 1 ) == INVALIDSERIAL && spellBook.GetSpell( 2 ) == INVALIDSERIAL )
 		{
-			mSock.sysmessage( 1205 );
+			mSock.sysmessage( 1205 ); // You already have a full book!
 			Bounce( &mSock, &iDropped );
 			return;
 		}
@@ -1240,7 +1261,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 
 		if( Magic->HasSpell( &spellBook, targSpellNum ) )
 		{
-			mSock.sysmessage( 1206 );
+			mSock.sysmessage( 1206 ); // You already have that spell.
 			Bounce( &mSock, &iDropped );
 			return;
 		}
@@ -1269,6 +1290,7 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 	{
 		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( &mChar, &iDropped );
+		mSock.sysmessage( 774 ); // That is locked down and you cannot use it.
 		Bounce( &mSock, &iDropped );
 		return false;
 	}
@@ -1284,9 +1306,9 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 	if( !canHold )
 	{
 		if( droppedOn.GetContSerial() >= BASEITEMSERIAL )
-			mSock.sysmessage( 1385 );
+			mSock.sysmessage( 1385 ); // That pack cannot hold any more weight
 		else
-			mSock.sysmessage( 1743 );
+			mSock.sysmessage( 1743 ); // That person can not possibly hold more weight
 		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( &mChar, &iDropped );
 		Bounce( &mSock, &iDropped );
@@ -1359,7 +1381,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			{
 				if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 					Weight->subtractItemWeight( &mChar, &iDropped );
-				mSock.sysmessage( 1630 );
+				mSock.sysmessage( 1630 ); // You cannot put items in other players packs!
 				Bounce( &mSock, &iDropped );
 				return false;
 			}
@@ -1370,7 +1392,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( &mChar, &iDropped );
-			mSock.sysmessage( 1630 );
+			mSock.sysmessage( 1630 ); // You cannot put items in other players packs!
 			Bounce( &mSock, &iDropped );
 			return false;
 		}
@@ -1386,6 +1408,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			{
 				if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 					Weight->subtractItemWeight( &mChar, &iDropped );
+				mSock.sysmessage( 774 ); // That is locked down and you cannot use it.
 				Bounce( &mSock, &iDropped );
 				return false;
 			}
@@ -1396,9 +1419,9 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 	if( iDropped.GetContSerial() != droppedOn.GetSerial() && ( mSock.PickupSpot() != PL_OWNPACK && ( GetTotalItemCount( &droppedOn ) >= droppedOn.GetMaxItems() ||
 		GetTotalItemCount( &droppedOn ) + std::max(static_cast<UI32>(1), 1 + GetTotalItemCount( &iDropped )) > droppedOn.GetMaxItems() )))
 	{
-		mSock.sysmessage( 1818 ); // The container is already at capacity.
 		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( &mChar, &iDropped );
+		mSock.sysmessage( 1818 ); // The container is already at capacity.
 		Bounce( &mSock, &iDropped );
 		return false;
 	}
@@ -1410,7 +1433,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 
 		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
 		{
-			mSock.sysmessage( 1385 );
+			mSock.sysmessage( 1385 ); // That pack cannot hold any more weight
 			Bounce( &mSock, &iDropped );
 			return false;
 		}
@@ -1434,7 +1457,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( &mChar, &iDropped );
-			mSock.sysmessage( 1385 );
+			mSock.sysmessage( 1385 ); // That pack cannot hold any more weight
 			Bounce( &mSock, &iDropped );
 			return false;
 		}
@@ -1489,7 +1512,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 				default:
 					executeCont = true;
 					break;
-				case 0:	// bounce, no code
+				case 0:	// bounce, no code, handle player feedback in script
 					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 						Weight->subtractItemWeight( mChar, nItem );
 					Bounce( mSock, nItem );
@@ -1519,7 +1542,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 					case -1:	// no such event
 					default:
 						break;
-					case 0:	// bounce, no code
+					case 0:	// bounce, no code, handle player feedback in script
 						if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 							Weight->subtractItemWeight( mChar, nItem );
 						Bounce( mSock, nItem );
@@ -1539,6 +1562,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
+		mSock->sysmessage( 9064 ); // You cannot pick that up.
 		Bounce( mSock, nItem );
 		return;
 	}
@@ -1551,7 +1575,7 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
 		nItem->Delete();
-		mSock->sysmessage( 1201 );
+		mSock->sysmessage( 1201 ); // As you let go of the item it disappears.
 		return;
 	}
 	else if( nCont->GetType() == IT_SPELLBOOK )	// Spell Book
@@ -2252,10 +2276,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			if( iUsed->GetTempVar( CITV_MOREZ ) != 0 )
 			{
 				mSock->CurrentSpellType( 2 );
-				if( Magic->SelectSpell( mSock, ( 8 * ( iUsed->GetTempVar( CITV_MOREX ) - 1 ) ) + iUsed->GetTempVar( CITV_MOREY ) ) )
+				if( Magic->SelectSpell( mSock, iUsed->GetTempVar( CITV_MOREY )))
 				{
 					iUsed->SetTempVar( CITV_MOREZ, iUsed->GetTempVar( CITV_MOREZ ) - 1 );
-					if( iUsed->GetTempVar( CITV_MOREZ ) == 0 )
+					if( iUsed->GetTempVar( CITV_MOREZ ) == 0 ) // Number of charges have dropped to zero
 					{
 						iUsed->SetType( IT_NOTYPE );
 						iUsed->SetTempVar( CITV_MOREX, 0 );
@@ -2994,6 +3018,12 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		s->objMessage( Dictionary->GetEntry( 9055, s->Language() ), i ); // [Blessed]
 	}
 
+	std::string name2( i->GetName2() );
+	if( name2 != "#" && name2 != "" )
+	{
+		s->objMessage( Dictionary->GetEntry( 9402, s->Language() ), i ); // [Unidentified]
+	}
+
 	currentName += dataToAdd;
 	// Question: Do we put the creator thing here, saves some redundancy a bit later
 	return currentName.c_str();
@@ -3124,12 +3154,15 @@ bool CPISingleClick::Handle( void )
 
 	if( i->GetType() == IT_MAGICWAND )
 	{
-		SI32 spellNum = ( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1;	// we pick it up from the array anyway
-		realname += " of ";
-		realname += Dictionary->GetEntry( magic_table[spellNum].spell_name, tSock->Language() );
-		realname += " with ";
-		realname += std::to_string( i->GetTempVar( CITV_MOREZ ) );
-		realname += " charges";
+		std::string name2( i->GetName2() );
+		if( name2 == "#" || name2 == "" )
+		{
+			realname += strutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
+		}
+		else
+		{
+			realname += " (unidentified)";
+		}
 	}
 	else if( i->IsContType() )
 	{
@@ -3141,15 +3174,15 @@ bool CPISingleClick::Handle( void )
 		if( ValidateObject( mCreator ) )
 		{
 			std::string creatorName = getNpcDictName( mCreator, tSock );
-			temp2=strutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
+			temp2 = strutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
 		}
 		else
 		{
-			temp2= realname;
+			temp2 = realname;
 		}
 	}
 	else{
-		temp2= realname;
+		temp2 = realname;
 	}
 	tSock->objMessage( temp2, i );
 	if( i->IsLockedDown() )

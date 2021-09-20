@@ -24,6 +24,7 @@ public:
 	void DelReagents( CChar *s, reag_st reags );
 	void CastSpell( CSocket *s, CChar *caster );	// changed for NPC casting
 	bool CheckResist( CChar *attacker, CChar *defender, SI32 circle );
+	bool CheckResist( SI16 resistDifficulty, CChar *defender, SI32 circle );
 	void PoisonDamage( CChar *p, SI32 posion );
 	void CheckFieldEffects( CChar& mChar );
 	bool HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id );

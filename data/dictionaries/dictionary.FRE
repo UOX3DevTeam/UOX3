@@ -2463,6 +2463,12 @@
 2429=Ton animal a l'air très heureux
 2430=Ton animal a l'air extrêmement heureux
 2431=Votre animal a l'air merveilleusement heureux
+2432=Vous devez soumettre cette créature avant de pouvoir la dompter !
+2433=Cette créature ne peut être apprivoisée que par des femelles.
+2434=Cette créature ne peut être apprivoisée que par les mâles.
+2435=Seuls les Elfes peuvent l'utiliser.
+2436=La Licorne refuse de vous laisser la monter.
+2437=Le Ki-Rin refuse vos tentatives pour la monter.
 // [2450-2475] Archerybutte
 2450=Quelqu'un d'autre l'utilise en ce moment.
 2451=Vous récupérez %i flèches de la cible.
@@ -2822,7 +2828,7 @@
 3124=un mage maléfique
 3125=un seigneur mage maléfique
 3126=un seigneur mage maléfique
-3127=un prédateur hellcat
+3127=un hellcat
 3128=un lutin
 3129=Tentacules de la herse
 3130=une gargouille de feu
@@ -3277,7 +3283,7 @@
 5104=le tailleur de pierre gargouille
 5105=le brigand
 5106=le joueur vendeur
-5107=un grand Hellcat
+5107=un predator hellcat
 5108=un jwilson
 5109=un hiryu éthéré
 5110=un reptalon éthéré
@@ -3311,6 +3317,9 @@
 5138=le Rancher
 5139=le Prisonnier
 5140=le Sculpteur
+5141=un petit démon
+5142=un cacodaemon
+5143=un démon bestial
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -3364,10 +3373,6 @@
 6049=Tu n'as pas l'air d'avoir de la pâte !
 6050=Tu as brûlé la pâte pour la rendre croustillante.
 6051=Tu fais cuire une miche de pain.
-6048=Que voulez-vous faire de l'oiseau cru ?
-6049=Tu ne peux pas faire cuire ton oiseau cru avec ça.
-6050=Vous ne semblez pas avoir d'oiseau cru !
-6051=Vous n'êtes pas assez compétent pour le faire.
 6052=Tu as brûlé l'oiseau cru pour le rendre croustillant.
 6053=Tu fais cuire un oiseau. Ça sent bon !
 6054=Que veux-tu faire de la cuisse de poulet crue ?
@@ -3405,6 +3410,10 @@
 6086=Tu n'as pas l'air d'avoir d'oeufs crus !
 6087=Tu as brûlé les oeufs croustillants.
 6088=Tu fais frire les oeufs.
+6089=Que voulez-vous faire de l'oiseau cru ?
+6090=Tu ne peux pas faire cuire ton oiseau cru avec ça.
+6091=Vous ne semblez pas avoir d'oiseau cru !
+6092=Vous n'êtes pas assez compétent pour le faire.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4054,6 +4063,15 @@
 9065=Cet objet ne vous appartient pas. Tu devras le voler.
 9066=Cet objet appartient à quelqu'un d'autre.
 9067=Incapable de déposer l'objet... où a-t-il été ramassé ?
+9068=Vous sentez votre force vitale vous être volée !
+9069=Je peux donner la vie, et je peux la détruire aussi facilement.
+9070=Tu n'iras nulle part, sauf si je le juge nécessaire.
+9071=Ton pouvoir est à moi, je l'utilise comme je veux.
+9072=Vous avez été ajouté à la fête.
+9073=Vous avez rejoint le groupe.
+9074=Tu as été retiré du groupe.
+9075=Un joueur a été retiré de votre groupe.
+9076=%s a rejoint la partie.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !
@@ -4120,5 +4138,6 @@
 9401=Cet objet magique est en rupture de charge.
 9402=[Non identifié]
 9403=Utilisations restantes : %i
+9404= avec %d charges
 }
 EOF

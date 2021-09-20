@@ -189,6 +189,26 @@ RegionSerialList< SERIAL > * CMapRegion::GetRegionSerialList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HasRegionChanged( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a flag that says whether the region has seen any updates since last save
+//o-----------------------------------------------------------------------------------------------o
+bool CMapRegion::HasRegionChanged( void )
+{
+	return hasRegionChanged;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HasRegionChanged( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets a flag that says whether the region has seen any updates since last save
+//o-----------------------------------------------------------------------------------------------o
+void CMapRegion::HasRegionChanged( bool newVal )
+{
+	hasRegionChanged = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CMapWorld Constructor/Destructor
 //|	Date		-	17 October, 2005
 //o-----------------------------------------------------------------------------------------------o
@@ -412,10 +432,17 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 			Console.warning( strutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		}
+		else
+		{
+			if( nItem->ShouldSave() )
+				curCell->HasRegionChanged( true );
+		}
 
 		if( newCell->GetRegionSerialList()->Add( nItem->GetSerial() ))
 		{
 			newCell->GetItemList()->Add( nItem, false );
+			if( nItem->ShouldSave() )
+				newCell->HasRegionChanged( true );
 			return true;
 		}
 		else
@@ -450,10 +477,17 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 			Console.warning( strutil::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
 #endif
 		}
-		
+		else
+		{
+			if( nChar->ShouldSave() )
+				curCell->HasRegionChanged( true );
+		}
+
 		if( newCell->GetRegionSerialList()->Add( nChar->GetSerial() ))
 		{
 			newCell->GetCharList()->Add( nChar, false );
+			if( nChar->ShouldSave() )
+				newCell->HasRegionChanged( true );
 			return true;
 		}
 		else
@@ -481,6 +515,8 @@ bool CMapHandler::AddItem( CItem *nItem )
 	if( cell->GetRegionSerialList()->Add( nItem->GetSerial() ))
 	{
 		cell->GetItemList()->Add( nItem, false );
+		if( nItem->ShouldSave() )
+			cell->HasRegionChanged( true );
 		return true;
 	}
 	else
@@ -506,6 +542,8 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	if( cell->GetRegionSerialList()->Remove( nItem->GetSerial() ) )
 	{
 		cell->GetItemList()->Remove( nItem );
+		if( nItem->ShouldSave() )
+			cell->HasRegionChanged( true );
 	}
 	else
 	{
@@ -532,6 +570,8 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	if( cell->GetRegionSerialList()->Add( toAdd->GetSerial() ))
 	{
 		cell->GetCharList()->Add( toAdd, false );
+		if( toAdd->ShouldSave() )
+			cell->HasRegionChanged( true );
 		return true;
 	}
 	else
@@ -557,6 +597,8 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	if( cell->GetRegionSerialList()->Remove( toRemove->GetSerial() ) )
 	{
 		cell->GetCharList()->Remove( toRemove );
+		if( toRemove->ShouldSave() )
+			cell->HasRegionChanged( true );
 	}
 	else
 	{
@@ -720,6 +762,31 @@ void CMapHandler::Save( void )
 		{
 			const SI32 baseY	= counter2 * 8;								// calculate x grid offset
 			filename	= basePath + strutil::number( counter1 ) + std::string(".") + strutil::number( counter2 ) + std::string(".wsc");	// let's name our file
+
+			bool changesDetected = false;
+			for( UI08 xCnt = 0; !changesDetected && xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
+			{
+				for( UI08 yCnt = 0; !changesDetected && yCnt < 8; ++yCnt )				// walk the row
+				{
+					for( WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )
+					{
+						CMapRegion * mRegion = (*mIter)->GetMapRegion( (baseX+xCnt), (baseY+yCnt) );
+						if( mRegion != nullptr )
+						{
+							// Only save objects mapRegions marked as "changed" by objects updated in said regions
+							if( mRegion->HasRegionChanged() )
+							{
+								changesDetected = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			if( !changesDetected )
+				continue;
+
 			writeDestination.open( filename.c_str() );
 
 			if( !writeDestination )
@@ -742,10 +809,15 @@ void CMapHandler::Save( void )
 							else if( count/onePercent <= 100 )
 								Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
 						}
+
 						CMapRegion * mRegion = (*mIter)->GetMapRegion( (baseX+xCnt), (baseY+yCnt) );
 						if( mRegion != nullptr )
+						{
 							mRegion->SaveToDisk( writeDestination, houseDestination );
 
+							// Remove "changed" flag from region, to avoid it saving again needlessly on next save
+							mRegion->HasRegionChanged( false );
+						}
 						writeDestination << blockDiscriminator;
 					}
 				}
@@ -889,12 +961,12 @@ void CMapHandler::Load( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize )
+//|	Function	-	void LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize )
 //|	Date		-	23 July, 2000
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in objects from specified file
 //o-----------------------------------------------------------------------------------------------o
-void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize )
+void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize )
 {
 	char line[1024];
 	R32 basePercent	= (R32)baseValue / (R32)maxSize * 100.0f;

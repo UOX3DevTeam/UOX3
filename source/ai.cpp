@@ -177,7 +177,7 @@ void HandleHealerAI( CChar& mChar )
 					}
 					else // Characters pre-v7.0.0.0
 					{
-						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET ); // Action 0x10
+						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET, 0, 7 ); // Action 0x10
 					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
@@ -215,7 +215,7 @@ void HandleEvilHealerAI( CChar& mChar )
 					}
 					else // Characters pre-v7.0.0.0
 					{
-						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET ); // Action 0x10
+						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET, 0, 7 ); // Action 0x10
 					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect

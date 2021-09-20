@@ -8,7 +8,7 @@
 // sandstone battlement south facing
 [0x01A4]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x01A4
 }
@@ -16,7 +16,7 @@ id=0x01A4
 // rough light grey stone wall corner southwest
 [0x001A]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x001A
 }
@@ -24,7 +24,7 @@ id=0x001A
 // rough light grey stone wall south
 [0x001B]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x001B
 }
@@ -32,7 +32,7 @@ id=0x001B
 // rough light grey stone wall
 [0x001C]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x001C
 }
@@ -40,7 +40,7 @@ id=0x001C
 // rough light grey stone post
 [0x001D]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x001D
 }
@@ -48,7 +48,7 @@ id=0x001D
 // rough light grey stone wall west wood frame on north edge
 [0x001E]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x001E
 }
@@ -56,7 +56,7 @@ id=0x001E
 // rough light grey stone wall south wood frame on east edge
 [0x001F]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x001F
 }
@@ -64,7 +64,7 @@ id=0x001F
 // rough light grey stone wall south wood frame on west edge
 [0x0020]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0020
 }
@@ -72,7 +72,7 @@ id=0x0020
 // rough light grey stone wall west wood frame on south edge
 [0x0021]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0021
 }
@@ -80,7 +80,7 @@ id=0x0021
 // rough light grey wall west with window
 [0x0022]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0022
 }
@@ -88,7 +88,7 @@ id=0x0022
 // rough light grey stone wall south with window
 [0x0023]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0023
 }
@@ -96,7 +96,7 @@ id=0x0023
 // short rough light grey stone wall corner southwest
 [0x0024]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0024
 }
@@ -104,7 +104,7 @@ id=0x0024
 // short rough light grey stone wall west
 [0x0025]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0025
 }
@@ -112,7 +112,7 @@ id=0x0025
 // short rough light grey stone wall south
 [0x0026]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0026
 }
@@ -120,7 +120,7 @@ id=0x0026
 // short rough light grey stone post
 [0x0027]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0027
 }
@@ -128,7 +128,7 @@ id=0x0027
 // rough light grey stone arch corner southwest
 [0x0028]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x0028
 }
@@ -136,7 +136,7 @@ id=0x0028
 // rough light grey stone arch west with keystone to top
 [0x0029]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x0029
 }
@@ -144,7 +144,7 @@ id=0x0029
 // rough light grey stone arch south with keystone to top
 [0x002A]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x002A
 }
@@ -152,7 +152,7 @@ id=0x002A
 // rough light grey stone arch south with keystone to bottom
 [0x002B]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x002B
 }
@@ -160,7 +160,7 @@ id=0x002B
 // rough light grey stone arch west with keystone to bottom
 [0x002C]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x002C
 }
@@ -168,7 +168,7 @@ id=0x002C
 // very short rough light grey stone wall corner southwest
 [0x002D]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x002D
 }
@@ -176,7 +176,7 @@ id=0x002D
 // very short rough light grey stone wall south
 [0x002F]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x002F
 }
@@ -184,7 +184,7 @@ id=0x002F
 // light grey stone block
 [0x0030]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0030
 }
@@ -192,7 +192,7 @@ id=0x0030
 // very short rough light grey stone wall west
 [0x0031]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0031
 }
@@ -200,7 +200,7 @@ id=0x0031
 // very short rough light grey stone wall south
 [0x0032]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0032
 }
@@ -208,7 +208,7 @@ id=0x0032
 // small light grey brick wall southwest corner
 [0x0033]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0033
 }
@@ -216,7 +216,7 @@ id=0x0033
 // small light grey brick wall south
 [0x0034]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0034
 }
@@ -224,7 +224,7 @@ id=0x0034
 // small light grey brick wall south
 [0x0035]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0035
 }
@@ -232,7 +232,7 @@ id=0x0035
 // small light grey brick post
 [0x0036]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0036
 }
@@ -240,7 +240,7 @@ id=0x0036
 // small light grey brick wall west with wood frame north edge
 [0x0037]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0037
 }
@@ -248,7 +248,7 @@ id=0x0037
 // small light grey brick wall south with wood frame north edge
 [0x0038]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0038
 }
@@ -256,7 +256,7 @@ id=0x0038
 // small light grey brick wall with wood frame east edge
 [0x0039]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0039
 }
@@ -264,7 +264,7 @@ id=0x0039
 // small light grey brick wall south with wood frame west edge
 [0x003A]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x003A
 }
@@ -272,7 +272,7 @@ id=0x003A
 // small light grey brick wall west with window
 [0x003B]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x003B
 }
@@ -280,7 +280,7 @@ id=0x003B
 // small light grey brick wall south with window
 [0x003C]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x003C
 }
@@ -288,7 +288,7 @@ id=0x003C
 // small light grey brick wall southwest corner
 [0x003D]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x003D
 }
@@ -296,7 +296,7 @@ id=0x003D
 // small light grey brick wall west
 [0x003E]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x003E
 }
@@ -304,7 +304,7 @@ id=0x003E
 // small light grey brick wall south
 [0x003F]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x003F
 }
@@ -312,7 +312,7 @@ id=0x003F
 // small light grey brick post
 [0x0040]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0040
 }
@@ -320,7 +320,7 @@ id=0x0040
 // short small light grey brick wall corner southwest
 [0x0041]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0041
 }
@@ -328,7 +328,7 @@ id=0x0041
 // short small light grey brick wall west
 [0x0042]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0042
 }
@@ -336,7 +336,7 @@ id=0x0042
 // short small light grey brick wall south
 [0x0043]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0043
 }
@@ -344,7 +344,7 @@ id=0x0043
 // short small light grey brick post
 [0x0044]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0044
 }
@@ -352,7 +352,7 @@ id=0x0044
 // small light grey brick arch corner southwest
 [0x0045]
 {
-get=base_item
+get=base_wall
 name=brick arch
 id=0x0045
 }
@@ -360,7 +360,7 @@ id=0x0045
 // small light grey brick arch south with keystone to top
 [0x0046]
 {
-get=base_item
+get=base_wall
 name=brick arch
 id=0x0046
 }
@@ -368,7 +368,7 @@ id=0x0046
 // small light grey brick arch west with keystone to bottom
 [0x0047]
 {
-get=base_item
+get=base_wall
 name=brick arch
 id=0x0047
 }
@@ -376,7 +376,7 @@ id=0x0047
 // small light grey brick arch west with keystone to top
 [0x0048]
 {
-get=base_item
+get=base_wall
 name=brick arch
 id=0x0048
 }
@@ -384,7 +384,7 @@ id=0x0048
 // small light grey brick arch south with keystone to bottom
 [0x0049]
 {
-get=base_item
+get=base_wall
 name=brick arch
 id=0x0049
 }
@@ -392,7 +392,7 @@ id=0x0049
 // small light grey brick wall west
 [0x004A]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x004A
 }
@@ -400,14 +400,14 @@ id=0x004A
 // small light grey brick wall south
 [0x004B]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x004B
 }
 
 [0x004C]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x004C
 }
@@ -415,7 +415,7 @@ id=0x004C
 // small light grey brick wall west
 [0x004D]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x004D
 }
@@ -423,7 +423,7 @@ id=0x004D
 // very short small light grey brick west
 [0x004E]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x004E
 }
@@ -431,7 +431,7 @@ id=0x004E
 // very short edge small light grey brick south
 [0x004F]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x004F
 }
@@ -439,7 +439,7 @@ id=0x004F
 // small light grey brick keystone west
 [0x0050]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0050
 }
@@ -447,7 +447,7 @@ id=0x0050
 // small light grey brick keystone south
 [0x0051]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0051
 }
@@ -455,7 +455,7 @@ id=0x0051
 // very short edge small light grey brick corner southwest
 [0x0052]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0052
 }
@@ -463,7 +463,7 @@ id=0x0052
 // very short small light grey brick wall west
 [0x0053]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0053
 }
@@ -471,7 +471,7 @@ id=0x0053
 // very short small light grey brick wall south
 [0x0054]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0054
 }
@@ -479,7 +479,7 @@ id=0x0054
 // short small light grey brick wall west
 [0x0055]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0055
 }
@@ -487,7 +487,7 @@ id=0x0055
 // short small light grey brick wall south
 [0x0056]
 {
-get=base_item
+get=base_wall
 name=brick wall
 id=0x0056
 }
@@ -495,7 +495,7 @@ id=0x0056
 // light grey stone block wall south
 [0x0057]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0057
 }
@@ -503,7 +503,7 @@ id=0x0057
 // light grey stone block wall west
 [0x0058]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0058
 }
@@ -511,7 +511,7 @@ id=0x0058
 // light grey stone block corner southwest
 [0x0059]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0059
 }
@@ -519,7 +519,7 @@ id=0x0059
 // light grey stone block post
 [0x005A]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x005A
 }
@@ -527,7 +527,7 @@ id=0x005A
 // light grey stone block wall south with arrow loop
 [0x005B]
 {
-get=base_item
+get=base_wall
 name=arrow loop
 id=0x005B
 }
@@ -535,7 +535,7 @@ id=0x005B
 // light grey stone block wall west with arrow loop
 [0x005C]
 {
-get=base_item
+get=base_wall
 name=arrow loop
 id=0x005C
 }
@@ -543,7 +543,7 @@ id=0x005C
 // light grey stone block wall south with window
 [0x005D]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x005D
 }
@@ -551,7 +551,7 @@ id=0x005D
 // light grey stone block wall west with window
 [0x005E]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x005E
 }
@@ -559,7 +559,7 @@ id=0x005E
 // light grey stone block wall west
 [0x005F]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x005F
 }
@@ -567,7 +567,7 @@ id=0x005F
 // light grey stone block wall south
 [0x0060]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0060
 }
@@ -575,7 +575,7 @@ id=0x0060
 // light grey stone block corner southwest
 [0x0061]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0061
 }
@@ -583,7 +583,7 @@ id=0x0061
 // light grey stone block post
 [0x0062]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0062
 }
@@ -591,7 +591,7 @@ id=0x0062
 // short light grey stone block wall west
 [0x0063]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0063
 }
@@ -599,7 +599,7 @@ id=0x0063
 // short light grey stone block wall south
 [0x0064]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0064
 }
@@ -607,7 +607,7 @@ id=0x0064
 // short light grey stone block corner southwest
 [0x0065]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0065
 }
@@ -615,21 +615,21 @@ id=0x0065
 // short light grey stone block post
 [0x0066]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0066
 }
 
 [0x0067]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0067
 }
 
 [0x0068]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0068
 }
@@ -637,7 +637,7 @@ id=0x0068
 // very short light grey stone block wall west
 [0x0069]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0069
 }
@@ -645,7 +645,7 @@ id=0x0069
 // very short light grey stone block wall south
 [0x006A]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x006A
 }
@@ -653,7 +653,7 @@ id=0x006A
 // very short light grey stone block corner southwest
 [0x006B]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x006B
 }
@@ -661,7 +661,7 @@ id=0x006B
 // very short light grey stone post
 [0x006C]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x006C
 }
@@ -669,7 +669,7 @@ id=0x006C
 // light grey stone block sloped battlement north south facing
 [0x0072]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0072
 }
@@ -677,7 +677,7 @@ id=0x0072
 // light grey stone block pointed battlement
 [0x0073]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0073
 }
@@ -685,7 +685,7 @@ id=0x0073
 // light grey stone block sloped battlement east west facing
 [0x0074]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0074
 }
@@ -693,7 +693,7 @@ id=0x0074
 // light grey stone block half slope battlement south facing
 [0x0075]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0075
 }
@@ -701,7 +701,7 @@ id=0x0075
 // light grey stone block half sloped battlement west facing
 [0x0076]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0076
 }
@@ -709,7 +709,7 @@ id=0x0076
 // light grey stone block arch corner southwest with keystone to top
 [0x006D]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x006D
 }
@@ -717,7 +717,7 @@ id=0x006D
 // light grey stone block arch south with keystone to top
 [0x006E]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x006E
 }
@@ -725,7 +725,7 @@ id=0x006E
 // light grey stone block arch west with keystone to bottom
 [0x006F]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x006F
 }
@@ -733,7 +733,7 @@ id=0x006F
 // light grey stone block arch west with keystone to top
 [0x0070]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x0070
 }
@@ -741,7 +741,7 @@ id=0x0070
 // light grey stone block arch south with keystone to bottom
 [0x0071]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x0071
 }
@@ -749,7 +749,7 @@ id=0x0071
 // light grey stone block column
 [0x0077]
 {
-get=base_item
+get=base_wall
 name=stone column
 id=0x0077
 }
@@ -757,7 +757,7 @@ id=0x0077
 // very short light grey stone block wall west
 [0x0078]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0078
 }
@@ -765,7 +765,7 @@ id=0x0078
 // light grey stone block wall south
 [0x0079]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0079
 }
@@ -773,7 +773,7 @@ id=0x0079
 // dark grey large stone block arch south north facing with keystone to top
 [0x007A]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x007A
 }
@@ -781,7 +781,7 @@ id=0x007A
 // dark grey large stone block arch west east facing with keystone to bottom
 [0x007B]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x007B
 }
@@ -789,14 +789,14 @@ id=0x007B
 // dark grey large stone block keystone
 [0x007C]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x007C
 }
 
 [0x007D]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x007D
 }
@@ -804,7 +804,7 @@ id=0x007D
 // dark grey stone block arch west facing with keystone to top
 [0x007E]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x007E
 }
@@ -812,7 +812,7 @@ id=0x007E
 // dark grey stone block arch south facing with keystone to top
 [0x007F]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x007F
 }
@@ -820,21 +820,21 @@ id=0x007F
 // dark grey stone block wall
 [0x0080]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0080
 }
 
 [0x0081]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0081
 }
 
 [0x0082]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0082
 }
@@ -842,7 +842,7 @@ id=0x0082
 // dark grey stone block wall with window west facing
 [0x0083]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0083
 }
@@ -850,7 +850,7 @@ id=0x0083
 // dark grey stone block wall
 [0x0084]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0084
 }
@@ -858,7 +858,7 @@ id=0x0084
 // dark grey stone block wall with window south facing
 [0x0085]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0085
 }
@@ -866,7 +866,7 @@ id=0x0085
 // dark grey stone block arch west facing with keystone to bottom
 [0x0086]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x0086
 }
@@ -874,7 +874,7 @@ id=0x0086
 // dark grey stone block arch south facing with keystone to bottom
 [0x0087]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x0087
 }
@@ -882,14 +882,14 @@ id=0x0087
 // dark grey stone block keystone block very short
 [0x0088]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0088
 }
 
 [0x0089]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x0089
 }
@@ -897,7 +897,7 @@ id=0x0089
 // dark grey stone block arch west facing with keystone to top
 [0x008A]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x008A
 }
@@ -905,7 +905,7 @@ id=0x008A
 // dark grey stone block arch south facing with keystone to top
 [0x008B]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x008B
 }
@@ -913,7 +913,7 @@ id=0x008B
 // dark grey stone block wall
 [0x008C]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x008C
 }
@@ -921,7 +921,7 @@ id=0x008C
 // dark grey stone block wall with window facing west
 [0x008D]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x008D
 }
@@ -929,7 +929,7 @@ id=0x008D
 // dark grey stone block wall
 [0x008E]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x008E
 }
@@ -937,7 +937,7 @@ id=0x008E
 // dark grey stone block wall with window facing south
 [0x008F]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x008F
 }
@@ -945,7 +945,7 @@ id=0x008F
 // rough dark grey stone block wall
 [0x00C5]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00C5
 }
@@ -953,7 +953,7 @@ id=0x00C5
 // rough dark grey stone block arch corner southwest with keystone to top
 [0x00C6]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00C6
 }
@@ -961,7 +961,7 @@ id=0x00C6
 // rough dark grey stone block corner southwest facing
 [0x00C7]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00C7
 }
@@ -969,7 +969,7 @@ id=0x00C7
 // rough dark grey stone block wall west facing
 [0x00C8]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00C8
 }
@@ -977,7 +977,7 @@ id=0x00C8
 // rough dark grey stone block wall south facing
 [0x00C9]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00C9
 }
@@ -985,7 +985,7 @@ id=0x00C9
 // rough dark grey stone block wall with arrow loop facing west
 [0x00CA]
 {
-get=base_item
+get=base_wall
 name=arrow loop
 id=0x00CA
 }
@@ -993,7 +993,7 @@ id=0x00CA
 // rough dark grey stone block wall with arrow loop facing south
 [0x00CB]
 {
-get=base_item
+get=base_wall
 name=arrow loop
 id=0x00CB
 }
@@ -1001,7 +1001,7 @@ id=0x00CB
 // rough dark grey stone block post
 [0x00CC]
 {
-get=base_item
+get=base_wall
 name=stone post
 id=0x00CC
 }
@@ -1009,7 +1009,7 @@ id=0x00CC
 // rough dark grey stone block stone arch southwest with keystone to top
 [0x00CD]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00CD
 }
@@ -1017,7 +1017,7 @@ id=0x00CD
 // rough dark grey stone block arch south facing with keystone to top
 [0x00CE]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00CE
 }
@@ -1025,7 +1025,7 @@ id=0x00CE
 // rough dark grey stone block arch west facing with keystone to top
 [0x00CF]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00CF
 }
@@ -1033,7 +1033,7 @@ id=0x00CF
 // rough dark grey stone block arch south facing with keystone to bottom
 [0x00D0]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D0
 }
@@ -1041,7 +1041,7 @@ id=0x00D0
 // rough dark grey stone block arch west facing with keystone to bottom
 [0x00D1]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D1
 }
@@ -1049,7 +1049,7 @@ id=0x00D1
 // rough dark grey stone block buttress south facing
 [0x00D2]
 {
-get=base_item
+get=base_wall
 name=stone buttress
 id=0x00D2
 }
@@ -1057,7 +1057,7 @@ id=0x00D2
 // rough dark grey stone block buttress west facing
 [0x00D3]
 {
-get=base_item
+get=base_wall
 name=stone buttress
 id=0x00D3
 }
@@ -1065,7 +1065,7 @@ id=0x00D3
 // rough dark grey stone block curved arch southwest with keystone to top
 [0x00D4]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D4
 }
@@ -1073,7 +1073,7 @@ id=0x00D4
 // rough dark grey stone block arch curved part west facing
 [0x00D5]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D5
 }
@@ -1081,7 +1081,7 @@ id=0x00D5
 // rough dark grey stone block arch curved part south facing
 [0x00D6]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D6
 }
@@ -1089,7 +1089,7 @@ id=0x00D6
 // rough dark grey stone block curved arch south facing with keystone to top
 [0x00D7]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D7
 }
@@ -1097,7 +1097,7 @@ id=0x00D7
 // rough dark grey stone block curved arch west facing with keystone to top
 [0x00D8]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D8
 }
@@ -1105,7 +1105,7 @@ id=0x00D8
 // rough dark grey stone block curved arch south facing with keystone to bottom
 [0x00D9]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00D9
 }
@@ -1113,7 +1113,7 @@ id=0x00D9
 // rough dark grey stone block curved arch west facing with keystone to bottom
 [0x00DA]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00DA
 }
@@ -1121,7 +1121,7 @@ id=0x00DA
 // rough dark grey stone block pillar with pointed cap
 [0x00DB]
 {
-get=base_item
+get=base_wall
 name=stone pillar
 id=0x00DB
 }
@@ -1129,7 +1129,7 @@ id=0x00DB
 // low rough dark grey stone block corner southwest
 [0x00DC]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00DC
 }
@@ -1137,7 +1137,7 @@ id=0x00DC
 //  low rough dark grey stone block wall facing south
 [0x00DD]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00DD
 }
@@ -1145,7 +1145,7 @@ id=0x00DD
 //  low rough dark grey stone block wall west
 [0x00DE]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00DE
 }
@@ -1153,7 +1153,7 @@ id=0x00DE
 //  low rough dark grey stone block post
 [0x00DF]
 {
-get=base_item
+get=base_wall
 name=stone post
 id=0x00DF
 }
@@ -1161,7 +1161,7 @@ id=0x00DF
 //  rough dark grey stone block curved arch piece west with keystone to top
 [0x00E0]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00E0
 }
@@ -1169,7 +1169,7 @@ id=0x00E0
 // rough dark grey stone block curved arch piece west with keystone to bottom
 [0x00E1]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00E1
 }
@@ -1177,7 +1177,7 @@ id=0x00E1
 // rough dark grey stone block curved arch piece south with keystone to bottom
 [0x00E2]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00E2
 }
@@ -1185,7 +1185,7 @@ id=0x00E2
 // rough dark grey stone block curved arch piece south with keystone to top
 [0x00E3]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00E3
 }
@@ -1193,14 +1193,14 @@ id=0x00E3
 // rough dark grey stone block post for arch
 [0x00E4]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00E4
 }
 
 [0x00E5]
 {
-get=base_item
+get=base_wall
 name=stone arch
 id=0x00E5
 }
@@ -1208,7 +1208,7 @@ id=0x00E5
 // very short rough dark grey stone block wall west
 [0x00E6]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00E6
 }
@@ -1216,7 +1216,7 @@ id=0x00E6
 // very short rough dark grey stone block wall south
 [0x00E7]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00E7
 }
@@ -1224,7 +1224,7 @@ id=0x00E7
 // rough dark grey stone block wall west
 [0x00E8]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00E8
 }
@@ -1232,7 +1232,7 @@ id=0x00E8
 // rough dark grey stone block wall west
 [0x00EA]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00EA
 }
@@ -1240,7 +1240,7 @@ id=0x00EA
 // rough dark grey stone block wall west facing
 [0x00EC]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00EC
 }
@@ -1248,7 +1248,7 @@ id=0x00EC
 // rough dark grey stone block wall west facing
 [0x00EE]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00EE
 }
@@ -1256,7 +1256,7 @@ id=0x00EE
 // rough dark grey stone block wall south facing
 [0x00F0]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00F0
 }
@@ -1264,7 +1264,7 @@ id=0x00F0
 // rough dark grey stone block wall south facing
 [0x00F2]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00F2
 }
@@ -1272,7 +1272,7 @@ id=0x00F2
 // rough dark grey stone block wall south facing
 [0x00F4]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00F4
 }
@@ -1280,7 +1280,7 @@ id=0x00F4
 // rough dark grey stone block wall south facing
 [0x00F6]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x00F6
 }
@@ -1288,7 +1288,7 @@ id=0x00F6
 // white marble corner southwest with stringcourse top & bottom
 [0x00F8]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00F8
 }
@@ -1296,7 +1296,7 @@ id=0x00F8
 // white marble wall west with stringcourse top & bottom
 [0x00F9]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00F9
 }
@@ -1304,7 +1304,7 @@ id=0x00F9
 // white marble wall south with stringcourse top & bottom
 [0x00FA]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00FA
 }
@@ -1312,7 +1312,7 @@ id=0x00FA
 // white marble post with stringcourse top & bottom
 [0x00FB]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00FB
 }
@@ -1320,7 +1320,7 @@ id=0x00FB
 // white marble wall west with window with stringcourse top & bottom
 [0x00FC]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x00FC
 }
@@ -1328,7 +1328,7 @@ id=0x00FC
 // white marble wall south with window with stringcourse top & bottom
 [0x00FD]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00FD
 }
@@ -1336,7 +1336,7 @@ id=0x00FD
 // white marble corner southwest with wainscotting top & bottom
 [0x00FE]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00FE
 }
@@ -1344,7 +1344,7 @@ id=0x00FE
 // white marble wall west with wainscotting top & bottom
 [0x00FF]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x00FF
 }
@@ -1352,7 +1352,7 @@ id=0x00FF
 // white marble wall south with wainscotting top & bottom
 [0x0100]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0100
 }
@@ -1360,7 +1360,7 @@ id=0x0100
 // white marble post with wainscotting top & bottom
 [0x0101]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0101
 }
@@ -1368,7 +1368,7 @@ id=0x0101
 // white marble wall west with window with wainscotting top & bottom
 [0x102]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0102
 }
@@ -1376,7 +1376,7 @@ id=0x0102
 // white marble wall south with window with wainscotting top & bottom
 [0x0103]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0103
 }
@@ -1384,7 +1384,7 @@ id=0x0103
 // plain white marble corner southwest
 [0x104]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0104
 }
@@ -1392,7 +1392,7 @@ id=0x0104
 // plain white marble wall west
 [0x0105]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0105
 }
@@ -1400,7 +1400,7 @@ id=0x0105
 // plain white marble wall south
 [0x0106]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0106
 }
@@ -1408,7 +1408,7 @@ id=0x0106
 // plain white marble post
 [0x0107]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0107
 }
@@ -1416,7 +1416,7 @@ id=0x0107
 // plain white marble wall west with window
 [0x0108]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0108
 }
@@ -1424,7 +1424,7 @@ id=0x0108
 // plain white marble wall south with window
 [0x0109]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0109
 }
@@ -1432,7 +1432,7 @@ id=0x0109
 // short plain white marble corner southwest
 [0x010A]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x010A
 }
@@ -1440,7 +1440,7 @@ id=0x010A
 // short plain white wall west
 [0x010B]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x010B
 }
@@ -1448,7 +1448,7 @@ id=0x010B
 // short plain white marble wall south
 [0x010C]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x010C
 }
@@ -1456,7 +1456,7 @@ id=0x010C
 // short plain white marble post
 [0x010D]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x010D
 }
@@ -1464,7 +1464,7 @@ id=0x010D
 // white marble stringcourse part southwest
 [0x010E]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x010E
 }
@@ -1472,7 +1472,7 @@ id=0x010E
 // white marble stringcourse part west
 [0x010F]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x010F
 }
@@ -1480,7 +1480,7 @@ id=0x010F
 // white marble stringcourse part south
 [0x0110]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0110
 }
@@ -1488,7 +1488,7 @@ id=0x0110
 // white marble stringcourse part stub
 [0x0111]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0111
 }
@@ -1496,7 +1496,7 @@ id=0x0111
 // plain white marble arch southwest with keystone to top
 [0x0112]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0112
 }
@@ -1504,7 +1504,7 @@ id=0x0112
 // plain white marble arch west with keystone to top
 [0x0113]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0113
 }
@@ -1512,7 +1512,7 @@ id=0x0113
 // plain white marble arch west with keystone to bottom
 [0x0114]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0114
 }
@@ -1520,7 +1520,7 @@ id=0x0114
 // plain white marble arch south with keystone to top
 [0x0115]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0115
 }
@@ -1528,7 +1528,7 @@ id=0x0115
 // plain white marble arch south with keystone to bottom
 [0x0116]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0116
 }
@@ -1536,7 +1536,7 @@ id=0x0116
 // very short plain white marble corner southwest
 [0x0117]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0117
 }
@@ -1544,7 +1544,7 @@ id=0x0117
 // very short plain white marble west
 [0x0118]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0118
 }
@@ -1552,7 +1552,7 @@ id=0x0118
 // very short plain white marble wall south
 [0x0119]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0119
 }
@@ -1560,7 +1560,7 @@ id=0x0119
 // very short plain white marble post
 [0x011A]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x011A
 }
@@ -1568,42 +1568,42 @@ id=0x011A
 // marble column
 [0x011B]
 {
-get=base_item
+get=base_wall
 name=marble column
 id=0x011B
 }
 
 [0x011C]
 {
-get=base_item
+get=base_wall
 name=marble column
 id=0x011C
 }
 
 [0x011D]
 {
-get=base_item
+get=base_wall
 name=marble column
 id=0x011D
 }
 
 [0x011E]
 {
-get=base_item
+get=base_wall
 name=marble column
 id=0x011E
 }
 
 [0x011F]
 {
-get=base_item
+get=base_wall
 name=marble column
 id=0x011F
 }
 
 [0x0120]
 {
-get=base_item
+get=base_wall
 name=marble column
 id=0x0120
 }
@@ -1611,7 +1611,7 @@ id=0x0120
 // plain thin white marble archway south with keystone to top
 [0x0121]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0121
 }
@@ -1619,7 +1619,7 @@ id=0x0121
 // plain white thin marble archway south with keystone to bottom
 [0x0122]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0122
 }
@@ -1627,7 +1627,7 @@ id=0x0122
 // plain white marble thin archway west with keystone to top
 [0x0123]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0123
 }
@@ -1635,7 +1635,7 @@ id=0x0123
 // plain white marble thin arch west with keystone to bottom
 [0x0124]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0124
 }
@@ -1643,7 +1643,7 @@ id=0x0124
 // very short plain white marble wall part west
 [0x0125]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0125
 }
@@ -1651,7 +1651,7 @@ id=0x0125
 // very short plain white marble wall part south
 [0x0126]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0126
 }
@@ -1659,7 +1659,7 @@ id=0x0126
 // low sandstone ruins south facing partial highpoint east
 [0x03B7]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03B7
 }
@@ -1667,7 +1667,7 @@ id=0x03B7
 // low sandstone ruins south west corner
 [0x03B8]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03B8
 }
@@ -1675,7 +1675,7 @@ id=0x03B8
 // low sandstone ruin wall south
 [0x03B9]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03B9
 }
@@ -1683,7 +1683,7 @@ id=0x03B9
 // low sandstone ruins west
 [0x03BA]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03BA
 }
@@ -1691,7 +1691,7 @@ id=0x03BA
 // low sandstone ruins block
 [0x03BB]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03BB
 }
@@ -1699,7 +1699,7 @@ id=0x03BB
 // low sandstone ruins south high point west
 [0x03BC]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03BC
 }
@@ -1707,7 +1707,7 @@ id=0x03BC
 // low sandstone ruins south
 [0x03BD]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03BD
 }
@@ -1715,7 +1715,7 @@ id=0x03BD
 // short sandstone ruins southwest corner
 [0x03BE]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03BE
 }
@@ -1723,7 +1723,7 @@ id=0x03BE
 // short sandstone ruins southwest corner crumbling northeast
 [0x03BF]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03BF
 }
@@ -1731,7 +1731,7 @@ id=0x03BF
 // short sandstone ruins west
 [0x03C0]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03C0
 }
@@ -1739,7 +1739,7 @@ id=0x03C0
 // short sandstone ruins wall south
 [0x03C1]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03C1
 }
@@ -1747,7 +1747,7 @@ id=0x03C1
 // short sandstone ruins post
 [0x03C2]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03C2
 }
@@ -1755,7 +1755,7 @@ id=0x03C2
 // short sandstone ruins partial west high point south
 [0x03C3]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03C3
 }
@@ -1763,7 +1763,7 @@ id=0x03C3
 // short sandstone ruins south highpoint west
 [0x03C4]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03C4
 }
@@ -1771,7 +1771,7 @@ id=0x03C4
 // short sandstone ruins west highpoint north
 [0x03C5]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03C5
 }
@@ -1779,7 +1779,7 @@ id=0x03C5
 // short sandstone ruins south hightpoint east
 [0x03C6]
 {
-get=base_item
+get=base_wall
 name=stone ruins
 id=0x03C6
 }
@@ -1787,7 +1787,7 @@ id=0x03C6
 // full sandstone rubble corner southwest
 [0x03C7]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03C7
 }
@@ -1795,7 +1795,7 @@ id=0x03C7
 // full sandstone rubble wall west
 [0x03C8]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03C8
 }
@@ -1803,7 +1803,7 @@ id=0x03C8
 // full sandstone rubble wall south
 [0x03C9]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03C9
 }
@@ -1811,7 +1811,7 @@ id=0x03C9
 // full sandstone rubble wall post
 [0x03CA]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03CA
 }
@@ -1819,7 +1819,7 @@ id=0x03CA
 // mortared rough stone corner southwest
 [0x03CB]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03CB
 }
@@ -1827,7 +1827,7 @@ id=0x03CB
 // mortared rough stone wall west
 [0x03CC]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03CC
 }
@@ -1835,7 +1835,7 @@ id=0x03CC
 // mortared rough stone wall south
 [0x03CD]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03CD
 }
@@ -1843,7 +1843,7 @@ id=0x03CD
 // mortared rough stone post
 [0x03CE]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03CE
 }
@@ -1851,7 +1851,7 @@ id=0x03CE
 // short mortared top rough stone bottom wall southwest corner
 [0x03CF]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03CF
 }
@@ -1859,7 +1859,7 @@ id=0x03CF
 // short mortared top rough stone bottom wall west
 [0x03D0]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D0
 }
@@ -1867,7 +1867,7 @@ id=0x03D0
 // short mortared top rough stone bottom wall south
 [0x03D1]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D1
 }
@@ -1875,7 +1875,7 @@ id=0x03D1
 // short mortared top rough stone bottom post
 [0x03D2]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D2
 }
@@ -1883,7 +1883,7 @@ id=0x03D2
 // rough stone top mortared bottom southwest corner
 [0x03D3]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D3
 }
@@ -1891,7 +1891,7 @@ id=0x03D3
 // rough stone top mortared bottom west
 [0x03D4]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D4
 }
@@ -1899,7 +1899,7 @@ id=0x03D4
 // rough stone top mortared bottom south
 [0x03D5]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D5
 }
@@ -1907,7 +1907,7 @@ id=0x03D5
 // rough stone top mortared bottom post
 [0x03D6]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D6
 }
@@ -1915,7 +1915,7 @@ id=0x03D6
 // rough stone top curved mortared bottom west
 [0x03D7]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D7
 }
@@ -1923,7 +1923,7 @@ id=0x03D7
 // rough stone top curved mortared bottom south
 [0x03D8]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D8
 }
@@ -1931,7 +1931,7 @@ id=0x03D8
 // full mortared southwest corner
 [0x03D9]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03D9
 }
@@ -1939,7 +1939,7 @@ id=0x03D9
 // full mortared wall west
 [0x03DA]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03DA
 }
@@ -1947,7 +1947,7 @@ id=0x03DA
 // full mortared wall south
 [0x03DB]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03DB
 }
@@ -1955,7 +1955,7 @@ id=0x03DB
 // full mortared post
 [0x03DC]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03DC
 }
@@ -1963,7 +1963,7 @@ id=0x03DC
 // rough sandstone southwest corner with arched windows
 [0x03DD]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x03Dd
 }
@@ -1971,7 +1971,7 @@ id=0x03Dd
 // rough sandstone west wall with arched window
 [0x03DE]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x03DE
 }
@@ -1979,7 +1979,7 @@ id=0x03DE
 // rough sandstone top mortared bottom southwest corner
 [0x03E0]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03E0
 }
@@ -1987,7 +1987,7 @@ id=0x03E0
 // rough sandstone top mortared bottom west wall
 [0x03E1]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03E1
 }
@@ -1995,7 +1995,7 @@ id=0x03E1
 // rough sandstone top mortared bottom south wall
 [0x03E2]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x03E2
 }
@@ -2003,7 +2003,7 @@ id=0x03E2
 // golden marble archway southwest stringcourse top & bottom
 [0x0438]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0438
 }
@@ -2011,7 +2011,7 @@ id=0x0438
 // golden marble archway west keystone north stringcourse top & bottom
 [0x0439]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0439
 }
@@ -2019,7 +2019,7 @@ id=0x0439
 // golden marble archway west keystone south stringcourse top & bottom
 [0x043A]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x043A
 }
@@ -2027,7 +2027,7 @@ id=0x043A
 // golden marble archway south keystone east stringcourse top & bottom
 [0x043B]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x043B
 }
@@ -2035,7 +2035,7 @@ id=0x043B
 // golden marble archway south keystone west stringcourse top & bottom
 [0x043C]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x043C
 }
@@ -2043,7 +2043,7 @@ id=0x043C
 // golden marble archway corner southwest wainscotting top & bottom
 [0x043D]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x043D
 }
@@ -2051,7 +2051,7 @@ id=0x043D
 // golden marble arch west keystone north wainscotting top & bottom
 [0x043E]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x043E
 }
@@ -2059,7 +2059,7 @@ id=0x043E
 // golden marble arch west keystone south wainscotting top & bottom
 [0x043F]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x043F
 }
@@ -2067,7 +2067,7 @@ id=0x043F
 // golden marble arch south keystone east wainscotting top & bottom
 [0x0440]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0440
 }
@@ -2075,7 +2075,7 @@ id=0x0440
 // golden marble arch south keystone west wainscotting top & bottom
 [0x0441]
 {
-get=base_item
+get=base_wall
 name=marble arch
 id=0x0441
 }
@@ -2083,7 +2083,7 @@ id=0x0441
 // very short golden marble corner southwest
 [0x0442]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0442
 }
@@ -2091,7 +2091,7 @@ id=0x0442
 // very short golden marble wall west
 [0x0443]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0443
 }
@@ -2099,7 +2099,7 @@ id=0x0443
 // very short golden marble wall south
 [0x0444]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0444
 }
@@ -2107,7 +2107,7 @@ id=0x0444
 // very short golden marble stub
 [0x0445]
 {
-get=base_item
+get=base_wall
 name=marble wall
 id=0x0445
 }
@@ -2115,7 +2115,7 @@ id=0x0445
 // blue marble archway southwest corner stringcourse top & bottom
 [0x0446]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x0446
 }
@@ -2123,7 +2123,7 @@ id=0x0446
 // blue marble arch west keystone north stringcourse top & bottom
 [0x0447]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x0447
 }
@@ -2131,7 +2131,7 @@ id=0x0447
 // blue marble arch west keystone south stringcourse top & bottom
 [0x0448]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x0448
 }
@@ -2139,7 +2139,7 @@ id=0x0448
 // blue marble arch south keystone east stringcourse top & bottom
 [0x0449]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x0449
 }
@@ -2147,7 +2147,7 @@ id=0x0449
 // blue marble arch south keystone west stringcourse top & bottom
 [0x044A]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x044A
 }
@@ -2155,7 +2155,7 @@ id=0x044A
 // blue marble arch southwest corner wainscotting top & bottom
 [0x044B]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x044B
 }
@@ -2163,7 +2163,7 @@ id=0x044B
 // blue marble arch west keystone north wainscotting top & bottom
 [0x044C]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x044C
 }
@@ -2171,7 +2171,7 @@ id=0x044C
 // blue marble arch west keystone south wainscotting top & bottom
 [0x044D]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x044D
 }
@@ -2179,7 +2179,7 @@ id=0x044D
 // blue marble arch south keystone east wainscotting top & bottom
 [0x044E]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x044E
 }
@@ -2187,7 +2187,7 @@ id=0x044E
 // blue marble arch south keystone west wainscotting top & bottom
 [0x044F]
 {
-get=base_item
+get=base_wall
 name=arch
 id=0x044F
 }
@@ -2195,7 +2195,7 @@ id=0x044F
 // very short blue marble corner southwest
 [0x0450]
 {
-get=base_item
+get=base_wall
 name=wall
 id=0x0450
 }
@@ -2203,7 +2203,7 @@ id=0x0450
 // very short blue marble wall west
 [0x0451]
 {
-get=base_item
+get=base_wall
 name=wall
 id=0x0451
 }
@@ -2211,7 +2211,7 @@ id=0x0451
 // very short blue marble wall south
 [0x0452]
 {
-get=base_item
+get=base_wall
 name=wall
 id=0x0452
 }
@@ -2219,7 +2219,7 @@ id=0x0452
 // very short blue marble stub
 [0x0453]
 {
-get=base_item
+get=base_wall
 name=wall
 id=0x0453
 }
@@ -2227,7 +2227,7 @@ id=0x0453
 // rough small stone block corner southwest
 [0x3127]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x3127
 }
@@ -2235,7 +2235,7 @@ id=0x3127
 // rough large stone block curved wall south facing
 [0x253F]
 {
-get=base_item
+get=base_wall
 name=stone wall
 id=0x253F
 }
@@ -2243,7 +2243,7 @@ id=0x253F
 // fancy sandstone corner southwest
 [0x0158]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0158
 }
@@ -2251,7 +2251,7 @@ id=0x0158
 // fancy sandstone wall west
 [0x0159]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0159
 }
@@ -2259,7 +2259,7 @@ id=0x0159
 // fancy sandstone wall south
 [0x015A]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x015A
 }
@@ -2267,7 +2267,7 @@ id=0x015A
 // fancy sandstone post
 [0x015B]
 {
-get=base_item
+get=base_wall
 name=sandstone post
 id=0x015B
 }
@@ -2275,7 +2275,7 @@ id=0x015B
 // fancy sandstone wall west with window
 [0x015C]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x015C
 }
@@ -2283,7 +2283,7 @@ id=0x015C
 // fancy sandstone wall south with window
 [0x015D]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x015D
 }
@@ -2291,7 +2291,7 @@ id=0x015D
 // plain sandstone corner southwest
 [0x015E]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x015E
 }
@@ -2299,7 +2299,7 @@ id=0x015E
 // plain sandstone wall south
 [0x015F]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x015F
 }
@@ -2307,7 +2307,7 @@ id=0x015F
 // plain sandstone wall west
 [0x0160]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0160
 }
@@ -2315,7 +2315,7 @@ id=0x0160
 // plain sandstone post
 [0x0161]
 {
-get=base_item
+get=base_wall
 name=sandstone post
 id=0x0161
 }
@@ -2323,7 +2323,7 @@ id=0x0161
 // plain sandstone wall south with window
 [0x0162]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0162
 }
@@ -2331,7 +2331,7 @@ id=0x0162
 // plain sandstone wall west with window
 [0x0163]
 {
-get=base_item
+get=base_wall
 name=window
 id=0x0163
 }
@@ -2339,7 +2339,7 @@ id=0x0163
 // short fancy sandstone corner
 [0x0164]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0164
 }
@@ -2347,7 +2347,7 @@ id=0x0164
 // short fancy sandstone wall west
 [0x0165]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0165
 }
@@ -2355,7 +2355,7 @@ id=0x0165
 // short fancy sandstone wall south
 [0x0166]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0166
 }
@@ -2363,7 +2363,7 @@ id=0x0166
 // short fancy sandstone post
 [0x0167]
 {
-get=base_item
+get=base_wall
 name=sandstone post
 id=0x0167
 }
@@ -2371,7 +2371,7 @@ id=0x0167
 // short plain sandstone corner southwest
 [0x0168]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0168
 }
@@ -2379,7 +2379,7 @@ id=0x0168
 // short plain sandstone wall south
 [0x0169]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0169
 }
@@ -2387,7 +2387,7 @@ id=0x0169
 // short plain sandstone wall west
 [0x016A]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x016A
 }
@@ -2395,7 +2395,7 @@ id=0x016A
 // short plain sandstone wall south
 [0x016B]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x016B
 }
@@ -2403,7 +2403,7 @@ id=0x016B
 // plain sandstone arch corner southwest
 [0x016C]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x016C
 }
@@ -2411,7 +2411,7 @@ id=0x016C
 // plain sandstone arch west facing with keystone to north
 [0x016D]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x016D
 }
@@ -2419,7 +2419,7 @@ id=0x016D
 // plain sandstone arch south with keystone to east
 [0x016E]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x016E
 }
@@ -2427,7 +2427,7 @@ id=0x016E
 // plain sandstone arch south with keystone to west
 [0x016F]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x016F
 }
@@ -2435,7 +2435,7 @@ id=0x016F
 // plain sandstone arch west with keystone to south
 [0x0170]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x0170
 }
@@ -2443,7 +2443,7 @@ id=0x0170
 // keystone north south facing
 [0x0171]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0171
 }
@@ -2451,7 +2451,7 @@ id=0x0171
 // sandstone keystone east west facing
 [0x0172]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0172
 }
@@ -2459,7 +2459,7 @@ id=0x0172
 // sandstone battlement east facing
 [0x0173]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0173
 }
@@ -2467,7 +2467,7 @@ id=0x0173
 // short sandstone corner southeast
 [0x0174]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0174
 }
@@ -2475,21 +2475,21 @@ id=0x0174
 // large block sandstone walls
 [0x0175]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0175
 }
 
 [0x0176]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0176
 }
 
 [0x0177]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0177
 }
@@ -2497,7 +2497,7 @@ id=0x0177
 // sandstone battlement south facing
 [0x0179]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x0179
 }
@@ -2505,7 +2505,7 @@ id=0x0179
 // sandstone battlement west facing
 [0x017A]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x017A
 }
@@ -2513,7 +2513,7 @@ id=0x017A
 // sandstone battlement cap southwest
 [0x017B]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x017B
 }
@@ -2521,7 +2521,7 @@ id=0x017B
 // sandstone battlement leaning south
 [0x017C]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x017C
 }
@@ -2529,7 +2529,7 @@ id=0x017C
 // sandstone battlement leaning west
 [0x017D]
 {
-get=base_item
+get=base_wall
 name=battlement
 id=0x017D
 }
@@ -2537,7 +2537,7 @@ id=0x017D
 // large block sandstone arch south facing with keystone to west
 [0x017E]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x017E
 }
@@ -2545,7 +2545,7 @@ id=0x017E
 // large block sandstone arch west facing with keystone to south
 [0x017F]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x017F
 }
@@ -2553,7 +2553,7 @@ id=0x017F
 // large block sandstone arch south facing with keystone to east
 [0x0180]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0180
 }
@@ -2561,7 +2561,7 @@ id=0x0180
 // large block sandstone arch west facing with keystone to north
 [0x0181]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0181
 }
@@ -2569,7 +2569,7 @@ id=0x0181
 // short plain sandstone corner northwest
 [0x0182]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0182
 }
@@ -2577,7 +2577,7 @@ id=0x0182
 // short plain sandstone corner northeast
 [0x0183]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0183
 }
@@ -2585,7 +2585,7 @@ id=0x0183
 // short plain sandstone wall west facing
 [0x0184]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0184
 }
@@ -2593,7 +2593,7 @@ id=0x0184
 // short plain sandstone wall south facing
 [0x0185]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0185
 }
@@ -2601,7 +2601,7 @@ id=0x0185
 // large block sandstone arch south facing with keystone to west
 [0x0186]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0186
 }
@@ -2609,7 +2609,7 @@ id=0x0186
 // large block sandstone arch west facing with keystone to south
 [0x0187]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0187
 }
@@ -2617,7 +2617,7 @@ id=0x0187
 // large block sandstone arch corner southwest
 [0x0188]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0188
 }
@@ -2625,7 +2625,7 @@ id=0x0188
 // large block sandstone arch piece
 [0x0189]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0189
 }
@@ -2633,7 +2633,7 @@ id=0x0189
 // fancy sandstone arch south with keystone to west
 [0x018A]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x018A
 }
@@ -2641,7 +2641,7 @@ id=0x018A
 // fancy sandstone arch south with keystone to east
 [0x018B]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x018B
 }
@@ -2649,7 +2649,7 @@ id=0x018B
 // fancy sandstone arch west with keystone to south
 [0x018C]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x018C
 }
@@ -2657,7 +2657,7 @@ id=0x018C
 // fancy sandstone arch west with keystone north
 [0x018D]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x018D
 }
@@ -2665,7 +2665,7 @@ id=0x018D
 // semi fancy sandstone arch west with keystone south
 [0x018E]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x018E
 }
@@ -2673,7 +2673,7 @@ id=0x018E
 // semi fancy sandstone arch south with keystone west
 [0x018F]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x018F
 }
@@ -2681,7 +2681,7 @@ id=0x018F
 // plain sandstone arch south with keystone to east
 [0x0190]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x0190
 }
@@ -2689,7 +2689,7 @@ id=0x0190
 // plain sandstone arch south with keystone to west
 [0x0191]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x0191
 }
@@ -2697,7 +2697,7 @@ id=0x0191
 // plain sandstone arch west with keystone to north
 [0x0192]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x0192
 }
@@ -2705,7 +2705,7 @@ id=0x0192
 // plain sandstone arch west with keystone to south
 [0x0193]
 {
-get=base_item
+get=base_wall
 name=sandstone arch
 id=0x0193
 }
@@ -2713,21 +2713,21 @@ id=0x0193
 // sandstone columns
 [0x0194]
 {
-get=base_item
+get=base_wall
 name=sandstone column
 id=0x0194
 }
 
 [0x0195]
 {
-get=base_item
+get=base_wall
 name=sandstone column
 id=0x0195
 }
 
 [0x0196]
 {
-get=base_item
+get=base_wall
 name=sandstone column
 id=0x0196
 }
@@ -2735,7 +2735,7 @@ id=0x0196
 // very short thin sandstone block west
 [0x0197]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0197
 }
@@ -2743,7 +2743,7 @@ id=0x0197
 // very short thin sandstone block south
 [0x0198]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0198
 }
@@ -2751,7 +2751,7 @@ id=0x0198
 // very short sandstone block west
 [0x0199]
 {
-get=base_item
+get=base_wall
 name=sandstone wall
 id=0x0199
 }

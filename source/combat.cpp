@@ -213,7 +213,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 								if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 								{
 									//let's resurrect him!
-									Effects->PlayCharacterAnimation( i, 0x10 );
+									Effects->PlayCharacterAnimation( i, 0x10, 0, 7 );
 									NpcResurrectTarget( ourChar );
 									Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
 									i->TextMessage( nullptr, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
@@ -241,7 +241,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 											&& ( i->GetBodyType() == BT_HUMAN || i->GetBodyType() == BT_ELF )))
 										Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
 									else
-										Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET ); // 0x10
+										Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET, 0, 5 ); // 0x10
 									NpcResurrectTarget( ourChar );
 									Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
 									i->TextMessage( nullptr, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
@@ -1310,13 +1310,17 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 
 	UI16 animToPlay = ACT_MOUNT_ATT_1H; // 0x1A;
 	CItem *j		= getWeapon( i );
+	UI08 frameCount = 5;
 
 	// Normal mounted characters
 	switch( getWeaponType( j ) )
 	{
 		case BOWS:				animToPlay = ACT_MOUNT_ATT_BOW;		break; // 0x1B
 		case XBOWS:
-		case BLOWGUNS:			animToPlay = ACT_MOUNT_ATT_XBOW;	break; // 0x1C
+		case BLOWGUNS:			
+			animToPlay = ACT_MOUNT_ATT_XBOW;
+			frameCount = 7;
+			break; // 0x1C
 		case THROWN:
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
@@ -1335,7 +1339,7 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 		case WRESTLING:
 		default:				animToPlay = ACT_MOUNT_ATT_1H;	break; // 0x1A
 	}
-	Effects->PlayCharacterAnimation( i, animToPlay );
+	Effects->PlayCharacterAnimation( i, animToPlay, 0, frameCount );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1379,7 +1383,7 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 			}
 			break;
 	}
-	Effects->PlayCharacterAnimation( i, animToPlay );
+	Effects->PlayCharacterAnimation( i, animToPlay, 0, 7 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1406,7 +1410,7 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 				case 2: aa = 0x4;  break;
 			}
 		}
-		Effects->PlayCharacterAnimation( mChar, aa );
+		Effects->PlayCharacterAnimation( mChar, aa, 0, 4 ); // Creature attack anims are only 4 frames long
 		if( RandomNum( 0, 4 ) )
 		{
 			UI16 toPlay = cwmWorldState->creatures[charID].GetSound( SND_ATTACK );
@@ -2012,6 +2016,10 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 		if( getFightSkill == ARCHERY )
 		{
+			// If amount of time since character last moved is less than the minimum delay for shooting after coming to a halt, return
+			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 10 ))
+				return;
+
 			UI16 ammoID = mWeapon->GetAmmoID();
 			UI16 ammoHue = mWeapon->GetAmmoHue();
 			UI16 ammoFX = mWeapon->GetAmmoFX();
@@ -2021,7 +2029,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if( mChar.IsNpc() || ( ammoID != 0 && DeleteItemAmount( &mChar, 1, ammoID,  ammoHue ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
-				Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
+				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
 			}
 			else
 			{
@@ -2049,6 +2057,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		else if( hitChance > 100 )
 			hitChance = 100;
 
+		// Bonus to hit chance for archery skill since Pub 5/UOR
+		if( cwmWorldState->ServerData()->ExpansionCombatRuleset() >= ER_UOR && getFightSkill == ARCHERY )
+		{
+			hitChance += cwmWorldState->ServerData()->CombatArcheryHitBonus();
+		}
+				
 		skillPassed = ( RandomNum( 0, 100 ) <= hitChance );
 
 		if( !skillPassed )
@@ -2088,13 +2102,21 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				}
 			}
 
-			if( mChar.GetPoisonStrength() && ourTarg->GetPoisoned() < mChar.GetPoisonStrength() )
+			UI08 poisonStrength = mChar.GetPoisonStrength();
+			if( poisonStrength && ourTarg->GetPoisoned() < poisonStrength )
 			{
 				if( (( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
 				{
-					ourTarg->SetPoisoned( mChar.GetPoisonStrength() );
-					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32> (40 / ourTarg->GetPoisoned() )) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs
-					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * cwmWorldState->ServerData()->SystemTimer( tSERVER_POISON ) ) ); //wear off starts after poison takes effect
+					// Apply poison on target
+					ourTarg->SetPoisoned( poisonStrength );
+
+					// Set time until next time poison "ticks"
+					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32>(getPoisonTickTime( poisonStrength ))));
+
+					// Set time until poison wears off completely
+					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * getPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
+
+
 					if( targSock != nullptr )
 						targSock->sysmessage( 282 );
 				}
@@ -2122,15 +2144,15 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if( ourTarg->GetReactiveArmour() )
 				{
 					SI32 retDamage = (SI32)( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ) );
-					ourTarg->Damage( ourDamage - retDamage, &mChar );
+					ourTarg->Damage( ourDamage - retDamage, PHYSICAL, &mChar );
 					if( ourTarg->IsNpc() )
 						retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
-					mChar.Damage( retDamage, &mChar );
+					mChar.Damage( retDamage, PHYSICAL, &mChar );
 					Effects->PlayStaticAnimation( ourTarg, 0x374A, 0, 15 );
 				}
 				else
 				{
-					ourTarg->Damage( ourDamage, &mChar, true );
+					ourTarg->Damage( ourDamage, PHYSICAL, &mChar, true );
 				}
 			}
 			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )
@@ -2208,7 +2230,7 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 				return false;
 			break;
 		case 36:
-			if( !mChar->IsPermReflected() )
+			if( !mChar->IsTempReflected() && !mChar->IsPermReflected() )
 				mChar->SetSpellCast( spellNum );
 			else
 				return false;
@@ -2571,7 +2593,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 	{
 		if( mChar->GetNPCAiType() == AI_GUARD && ourTarg->IsNpc() )
 		{
-			Effects->PlayCharacterAnimation( ourTarg, ( RandomNum( 0, 1 ) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD )); // 0x15 or 0x16
+			Effects->PlayCharacterAnimation( ourTarg, ( RandomNum( 0, 1 ) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD ), 0, 6 ); // 0x15 or 0x16, either is 6 frames long
 			Effects->playDeathSound( ourTarg );
 
 			ourTarg->Delete(); // NPC was killed by a Guard, don't leave a corpse behind
@@ -2586,6 +2608,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 
 			if( ourTarg->IsNpc() )
 			{
+				// Note: What if ourTarg is a non-human NPC which doesn't have death animation 0x15?
 				Effects->PlayCharacterAnimation( ourTarg, 0x15 );
 				Effects->playDeathSound( ourTarg );
 

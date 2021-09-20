@@ -2299,6 +2299,12 @@
 2429=Ihr Haustier sieht sehr glücklich aus
 2430=Ihr Haustier sieht sehr glücklich aus
 2431=Ihr Haustier sieht wunderbar glücklich aus
+2432=Du musst diese Kreatur unterwerfen, bevor du sie zähmen kannst!
+2433=Diese Kreatur kann nur von Weibchen gezähmt werden.
+2434=Diese Kreatur kann nur von Männchen gezähmt werden.
+2435=Nur Elfen können es benutzen.
+2436=Das Einhorn weigert sich, dir zu erlauben, es zu reiten.
+2437=Das Ki-Rin weigert sich, es zu besteigen.
 // [2450-2475] Archerybutte
 2450=Jemand anderes benutzt dies gerade.
 2451=Sie holen %i Pfeile aus der Zielscheibe.
@@ -2658,7 +2664,7 @@
 3124=ein böser Magier
 3125=ein böser Magier-Lord
 3126=ein böser Magier-Fürst
-3127=ein Raubtier-Höllenkater
+3127=eine Höllenkatze
 3128=ein Kobold
 3129=Tentakel des Harrowers
 3130=ein Feuerspeier
@@ -3113,7 +3119,7 @@
 5104=der Gargoyle-Steinarbeiter
 5105=der Brigant
 5106=Der Spielerverkäufer
-5107=eine große Höllenkatze
+5107=eine Raubtier-Höllenkatze
 5108=ein Jwilson
 5109=ein ätherischer Hiryu
 5110=ein ätherischer Reptalon
@@ -3147,6 +3153,9 @@
 5138=der Viehzüchter
 5139=der Gefangene
 5140=der Bildhauer
+5141=ein kleinerer Daemon
+5142=ein Kakadu-Dämon
+5142=ein bestialischer Dämon
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -3200,10 +3209,6 @@
 6049=Du scheinst keinen Teig zu haben!
 6050=Du hast den Teig knusprig gebrannt.
 6051=Sie backen einen Laib Brot.
-6048=Wozu willst du den rohen Vogel verwenden?
-6049=Den rohen Vogel können Sie nicht darauf garen.
-6050=Sie scheinen keine rohen Vögel zu haben!
-6051=Sie sind nicht geschickt genug, um das zu tun.
 6052=Sie haben den rohen Vogel knusprig gebraten.
 6053=Sie kochen einen Vogel. Das riecht gut!
 6054=Wozu wollen Sie die rohe Hähnchenkeule verwenden?
@@ -3241,6 +3246,10 @@
 6086=Du scheinst keine rohen Eier zu haben!
 6087=Du brätst die Eier knusprig.
 6088=Du brätst die Eier an.
+6089=Wozu willst du den rohen Vogel verwenden?
+6090=Den rohen Vogel können Sie nicht darauf garen.
+6091=Sie scheinen keine rohen Vögel zu haben!
+6092=Sie sind nicht geschickt genug, um das zu tun.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -3890,6 +3899,15 @@
 9065=Dieser Gegenstand gehört dir nicht. Du wirst ihn stehlen müssen.
 9066=Dieser Gegenstand gehört jemand anderem.
 9067=Ich kann den Gegenstand nicht ablegen... woher wurde er genommen?
+9068=Du spürst, wie dir die Lebenskraft gestohlen wird!
+9069=Ich kann Leben gewähren, und ich kann es ebenso leicht entziehen.
+9070=Du gehst nirgendwohin, es sei denn, ich entscheide, dass es so sein soll.
+9071=Ich kann mit deiner Kraft machen, was ich will.
+9072=Du wurdest der Gruppe hinzugefügt.
+9073=Sie sind der Gruppe wieder beigetreten.
+9074=Du wurdest aus der Gruppe entfernt.
+9075=Ein Spieler wurde aus deiner Gruppe entfernt.
+9076=%s ist der Gruppe beigetreten.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -3956,5 +3974,6 @@
 9401=Dieser magische Gegenstand hat keine Ladung mehr.
 9402=[Unbekannt]
 9403=Verbleibende Verwendungen: %i
+9404= mit %d Gebühren
 }
 EOF

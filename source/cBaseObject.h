@@ -49,6 +49,7 @@ class CBaseObject
 {
 protected:
 	TAGMAP2			tags;
+	TAGMAP2			tempTags;
 	std::string 	title;
 	SI16			mana;
 	SI16			stamina;
@@ -117,6 +118,9 @@ public:
 
 	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
+
+	TAGMAPOBJECT			GetTempTag( std::string tempTagName ) const;
+	void					SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal );
 
 	void					SetResist( UI16 newValue, WeatherType damage );
 	UI16					GetResist( WeatherType damage ) const;
@@ -252,8 +256,8 @@ public:
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual void			Update( CSocket *mSock = nullptr ) = 0;
-	virtual void			SendToSocket( CSocket *mSock ) = 0;
+	virtual void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false ) = 0;
+	virtual void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
 	virtual void			Dirty( UpdateTypes updateType );
 	void					RemoveFromRefreshQueue( void );
 

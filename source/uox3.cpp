@@ -3,6 +3,7 @@
  Ultima Offline eXperiment III (UOX3)
  UO Server Emulation Program
 
+ Copyright 1998 - 2021 by UOX3 contributors
  Copyright 1997, 98 by Marcus Rating (Cironian)
 
  This program is free software; you can redistribute it and/or modify
@@ -744,48 +745,73 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 				{
 					std::string mCharName = getNpcDictName( &mChar );
 
-					SI16 pcalc = 0;
 					switch( mChar.GetPoisoned() )
 					{
-						case 1:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
+						case 1: // Lesser Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 2 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
-								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 6 ) );
 								mChar.TextMessage( nullptr, 1240, EMOTE, 1, mCharName.c_str() ); // * %s looks a bit nauseous *
 							}
-							mChar.Damage( (SI16)RandomNum( 1, 2 ) );
+							SI16 poisonDmgPercent = RandomNum( 3, 6 ); // 3% to 6% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(3), poisonDmg), POISON ); // Minimum 3 damage per tick
 							break;
-						case 2:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
+						}
+						case 2: // Normal Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
 								mChar.TextMessage( nullptr, 1241, EMOTE, 1, mCharName.c_str() ); // * %s looks disoriented and nauseous! *
 							}
-							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
-							mChar.Damage( (SI16)pcalc );
+							SI16 poisonDmgPercent = RandomNum( 4, 8 ); // 4% to 8% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(5), poisonDmg), POISON ); // Minimum 5 damage per tick
 							break;
-						case 3:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+						}
+						case 3: // Greater Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
 								mChar.TextMessage( nullptr, 1242, EMOTE, 1, mCharName.c_str() ); // * %s is in severe pain! *
 							}
-							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
-							mChar.Damage( (SI16)pcalc );
+							SI16 poisonDmgPercent = RandomNum( 8, 12 ); // 8% to 12% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(8), poisonDmg), POISON ); // Minimum 8 damage per tick
 							break;
-						case 4:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+						}
+						case 4: // Deadly Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
 								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
 							}
-							pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-							mChar.Damage( (SI16)pcalc );
+							SI16 poisonDmgPercent = RandomNum( 12, 25 ); // 12% to 25% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(14), poisonDmg), POISON ); // Minimum 14 damage per tick
 							break;
+						}
+						case 5: // Lethal Poison - Used by monsters only
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							{
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
+								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
+							}
+							SI16 poisonDmgPercent = RandomNum( 25, 50 ); // 25% to 50% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(17), poisonDmg), POISON ); // Minimum 14 damage per tick
+							break;
+						}
 						default:
 							Console.error( " Fallout of switch statement without default. uox3.cpp, genericCheck(), mChar.GetPoisoned() not within valid range." );
 							mChar.SetPoisoned( 0 );
@@ -1416,8 +1442,7 @@ void CWorldMain::CheckAutoTimers( void )
 
 				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 				{
-					auto negotiateTimeout = tSock->NegotiateTimeout();
-					if( !tSock->NegotiatedWithAssistant() && negotiateTimeout != -1 && static_cast<UI32>(negotiateTimeout) <= GetUICurrentTime() )
+					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && static_cast<UI32>(tSock->NegotiateTimeout()) <= GetUICurrentTime() )
 					{
 						const CChar *tChar = tSock->CurrcharObj();
 						if( !ValidateObject( tChar ) )
@@ -1721,7 +1746,7 @@ void CWorldMain::CheckAutoTimers( void )
 				else if( uChar->GetUpdate( UT_HIDE ) )
 				{
 					uChar->RemoveFromSight();
-					uChar->Update();
+					uChar->Update( nullptr, true );
 				}
 				else if( uChar->GetUpdate( UT_UPDATE ) )
 					uChar->Update();
@@ -2390,6 +2415,66 @@ void doLight( CChar *mChar, UI08 level )
 	}
 
 	Weather->DoNPCStuff( mChar );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL getPoisonDuration( UI08 poisonStrength )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates the duration of poison based on its strength
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL getPoisonDuration( UI08 poisonStrength )
+{
+	// Calculate duration of poison, based on the strength of the poison
+	TIMERVAL poisonDuration = 0;
+	switch( poisonStrength )
+	{
+		case 1: // Lesser poison - 9 to 13 pulses, 2 second frequency
+			poisonDuration = RandomNum( 9, 13 ) * 2;
+			break;
+		case 2: // Normal poison - 10 to 14 pulses, 3 second frequency
+			poisonDuration = RandomNum( 10, 14 ) * 3;
+			break;
+		case 3: // Greater poison - 11 to 15 pulses, 4 second frequency
+			poisonDuration = RandomNum( 11, 15 ) * 4;
+			break;
+		case 4: // Deadly poison - 12 to 16 pulses, 5 second frequency
+			poisonDuration = RandomNum( 12, 16 ) * 5;
+			break;
+		case 5: // Lethal poison - 13 to 17 pulses, 5 second frequency
+			poisonDuration = RandomNum( 13, 17 ) * 5;
+			break;
+	}
+	return poisonDuration;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL getPoisonTickTime( UI08 poisonStrength )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates the time between each tick of a poison, based on its strength
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL getPoisonTickTime( UI08 poisonStrength )
+{
+	// Calculate duration of poison, based on the strength of the poison
+	TIMERVAL poisonTickTime = 0;
+	switch( poisonStrength )
+	{
+		case 1: // Lesser poison - 2 second frequency
+			poisonTickTime = 2;
+			break;
+		case 2: // Normal poison - 3 second frequency
+			poisonTickTime = 3;
+			break;
+		case 3: // Greater poison - 4 second frequency
+			poisonTickTime = 4;
+			break;
+		case 4: // Deadly poison - 5 second frequency
+			poisonTickTime = 5;
+			break;
+		case 5: // Lethal poison - 5 second frequency
+			poisonTickTime = 5;
+			break;
+	}
+	return poisonTickTime;
 }
 
 //o-----------------------------------------------------------------------------------------------o

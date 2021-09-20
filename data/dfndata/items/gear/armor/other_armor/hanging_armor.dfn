@@ -195,6 +195,7 @@ id=0x13ea
 weight=500
 movable=2
 }
+
 [0x1508]
 { E phase1
 get=base_item
@@ -265,4 +266,756 @@ name=decorative armor
 id=0x151d
 weight=1000
 movable=2
+}
+
+// Hanging Agapite Ringmail
+
+// Hanging Agapite Ringmail Leggings - N/S
+[0x13e5-a]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x979
+movable=2
+weight=500
+}
+
+// Hanging Agapite Ringmail Leggings - E/W
+[0x13e6-a]
+{
+get=0x13e5-a
+id=0x13e6
+}
+
+// Hanging Agapite Ringmail Tunic - N/S
+[0x13e7-a]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x979
+movable=2
+weight=500
+}
+
+// Hanging Agapite Ringmail Tunic - E/W
+[0x13e8-a]
+{
+get=0x13e7-a
+id=0x13e8
+}
+
+// Hanging Agapite Ringmail Sleeves - N/S
+[0x13e9-a]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x979
+movable=2
+weight=500
+}
+
+// Hanging Agapite Ringmail Sleeves - E/W
+[0x13ea-a]
+{
+get=0x13e9-a
+id=0x13ea
+}
+
+// Hanging Agapite Chainmail
+
+// Hanging Agapite Chainmail Leggings - N/S
+[0x13bc-a]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x979
+movable=2
+weight=500
+}
+
+// Hanging Agapite Chainmail Leggings - E/W
+[0x13c1-a]
+{
+get=0x13bc-a
+id=0x13c1
+}
+
+// Hanging Agapite Chainmail Tunic - N/S
+[0x13bd-a]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x979
+movable=2
+weight=500
+}
+
+// Hanging Agapite Chainmail Tunic - E/W
+[0x13c2-a]
+{
+get=0x13bd-a
+id=0x13c2
+}
+
+// Hanging Bronze Ringmail
+
+// Hanging Bronze Ringmail Leggings - N/S
+[0x13e5-b]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x8a9
+movable=2
+weight=500
+}
+
+// Hanging Bronze Ringmail Leggings - E/W
+[0x13e6-b]
+{
+get=0x13e5-b
+id=0x13e6
+}
+
+// Hanging Bronze Ringmail Tunic - N/S
+[0x13e7-b]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x8a9
+movable=2
+weight=500
+}
+
+// Hanging Bronze Ringmail Tunic - E/W
+[0x13e8-b]
+{
+get=0x13e7-b
+id=0x13e8
+}
+
+// Hanging Bronze Ringmail Sleeves - N/S
+[0x13e9-b]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x8a9
+movable=2
+weight=500
+}
+
+// Hanging Bronze Ringmail Sleeves - E/W
+[0x13ea-b]
+{
+get=0x13e9-b
+id=0x13ea
+}
+
+// Hanging Bronze Chainmail
+
+// Hanging Bronze Chainmail Leggings - N/S
+[0x13bc-b]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x8a9
+movable=2
+weight=500
+}
+
+// Hanging Bronze Chainmail Leggings - E/W
+[0x13c1-b]
+{
+get=0x13bc-b
+id=0x13c1
+}
+
+// Hanging Bronze Chainmail Tunic - N/S
+[0x13bd-b]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x8a9
+movable=2
+weight=500
+}
+
+// Hanging Bronze Chainmail Tunic - E/W
+[0x13c2-b]
+{
+get=0x13bd-b
+id=0x13c2
+}
+
+// Hanging Copper Ringmail
+
+// Hanging Copper Ringmail Leggings - N/S
+[0x13e5-c]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x96e
+movable=2
+weight=500
+}
+
+// Hanging Copper Ringmail Leggings - E/W
+[0x13e6-c]
+{
+get=0x13e5-c
+id=0x13e6
+}
+
+// Hanging Copper Ringmail Tunic - N/S
+[0x13e7-c]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x96e
+movable=2
+weight=500
+}
+
+// Hanging Copper Ringmail Tunic - E/W
+[0x13e8-c]
+{
+get=0x13e7-c
+id=0x13e8
+}
+
+// Hanging Copper Ringmail Sleeves - N/S
+[0x13e9-c]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x96e
+movable=2
+weight=500
+}
+
+// Hanging Copper Ringmail Sleeves - E/W
+[0x13ea-c]
+{
+get=0x13e9-c
+id=0x13ea
+}
+
+// Hanging Copper Chainmail
+
+// Hanging Copper Chainmail Leggings - N/S
+[0x13bc-c]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x96e
+movable=2
+weight=500
+}
+
+// Hanging Copper Chainmail Leggings - E/W
+[0x13c1-c]
+{
+get=0x13bc-c
+id=0x13c1
+}
+
+// Hanging Copper Chainmail Tunic - N/S
+[0x13bd-c]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x96e
+movable=2
+weight=500
+}
+
+// Hanging Copper Chainmail Tunic - E/W
+[0x13c2-c]
+{
+get=0x13bd-c
+id=0x13c2
+}
+
+// Hanging Dull Copper Ringmail
+
+// Hanging Dull Copper Ringmail Leggings - N/S
+[0x13e5-d]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x973
+movable=2
+weight=500
+}
+
+// Hanging Dull Copper Ringmail Leggings - E/W
+[0x13e6-d]
+{
+get=0x13e5-d
+id=0x13e6
+}
+
+// Hanging Dull Copper Ringmail Tunic - N/S
+[0x13e7-d]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x973
+movable=2
+weight=500
+}
+
+// Hanging Dull Copper Ringmail Tunic - E/W
+[0x13e8-d]
+{
+get=0x13e7-d
+id=0x13e8
+}
+
+// Hanging Dull Copper Ringmail Sleeves - N/S
+[0x13e9-d]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x973
+movable=2
+weight=500
+}
+
+// Hanging Dull Copper Ringmail Sleeves - E/W
+[0x13ea-d]
+{
+get=0x13e9-d
+id=0x13ea
+}
+
+// Hanging Dull Copper Chainmail
+
+// Hanging Dull Copper Chainmail Leggings - N/S
+[0x13bc-d]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x973
+movable=2
+weight=500
+}
+
+// Hanging Dull Copper Chainmail Leggings - E/W
+[0x13c1-d]
+{
+get=0x13bc-d
+id=0x13c1
+}
+
+// Hanging Dull Copper Chainmail Tunic - N/S
+[0x13bd-d]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x973
+movable=2
+weight=500
+}
+
+// Hanging Dull Copper Chainmail Tunic - E/W
+[0x13c2-d]
+{
+get=0x13bd-d
+id=0x13c2
+}
+
+// Hanging Gold Ringmail
+
+// Hanging Gold Ringmail Leggings - N/S
+[0x13e5-g]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x8a5
+movable=2
+weight=500
+}
+
+// Hanging Gold Ringmail Leggings - E/W
+[0x13e6-g]
+{
+get=0x13e5-g
+id=0x13e6
+}
+
+// Hanging Gold Ringmail Tunic - N/S
+[0x13e7-g]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x8a5
+movable=2
+weight=500
+}
+
+// Hanging Gold Ringmail Tunic - E/W
+[0x13e8-g]
+{
+get=0x13e7-g
+id=0x13e8
+}
+
+// Hanging Gold Ringmail Sleeves - N/S
+[0x13e9-g]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x8a5
+movable=2
+weight=500
+}
+
+// Hanging Gold Ringmail Sleeves - E/W
+[0x13ea-g]
+{
+get=0x13e9-g
+id=0x13ea
+}
+
+// Hanging Gold Chainmail
+
+// Hanging Gold Chainmail Leggings - N/S
+[0x13bc-g]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x8a5
+movable=2
+weight=500
+}
+
+// Hanging Gold Chainmail Leggings - E/W
+[0x13c1-g]
+{
+get=0x13bc-g
+id=0x13c1
+}
+
+// Hanging Gold Chainmail Tunic - N/S
+[0x13bd-g]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x8a5
+movable=2
+weight=500
+}
+
+// Hanging Gold Chainmail Tunic - E/W
+[0x13c2-g]
+{
+get=0x13bd-g
+id=0x13c2
+}
+
+// Hanging Shadow Ringmail
+
+// Hanging Shadow Ringmail Leggings - N/S
+[0x13e5-s]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x966
+movable=2
+weight=500
+}
+
+// Hanging Shadow Ringmail Leggings - E/W
+[0x13e6-s]
+{
+get=0x13e5-s
+id=0x13e6
+}
+
+// Hanging Shadow Ringmail Tunic - N/S
+[0x13e7-s]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x966
+movable=2
+weight=500
+}
+
+// Hanging Shadow Ringmail Tunic - E/W
+[0x13e8-s]
+{
+get=0x13e7-s
+id=0x13e8
+}
+
+// Hanging Shadow Ringmail Sleeves - N/S
+[0x13e9-s]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x966
+movable=2
+weight=500
+}
+
+// Hanging Shadow Ringmail Sleeves - E/W
+[0x13ea-s]
+{
+get=0x13e9-s
+id=0x13ea
+}
+
+// Hanging Shadow Chainmail
+
+// Hanging Shadow Chainmail Leggings - N/S
+[0x13bc-s]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x966
+movable=2
+weight=500
+}
+
+// Hanging Shadow Chainmail Leggings - E/W
+[0x13c1-s]
+{
+get=0x13bc-s
+id=0x13c1
+}
+
+// Hanging Shadow Chainmail Tunic - N/S
+[0x13bd-s]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x966
+movable=2
+weight=500
+}
+
+// Hanging Shadow Chainmail Tunic - E/W
+[0x13c2-s]
+{
+get=0x13bd-s
+id=0x13c2
+}
+
+// Hanging Valorite Ringmail
+
+// Hanging Valorite Ringmail Leggings - N/S
+[0x13e5-va]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x8ab
+movable=2
+weight=500
+}
+
+// Hanging Valorite Ringmail Leggings - E/W
+[0x13e6-va]
+{
+get=0x13e5-va
+id=0x13e6
+}
+
+// Hanging Valorite Ringmail Tunic - N/S
+[0x13e7-va]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x8ab
+movable=2
+weight=500
+}
+
+// Hanging Valorite Ringmail Tunic - E/W
+[0x13e8-va]
+{
+get=0x13e7-va
+id=0x13e8
+}
+
+// Hanging Valorite Ringmail Sleeves - N/S
+[0x13e9-va]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x8ab
+movable=2
+weight=500
+}
+
+// Hanging Valorite Ringmail Sleeves - E/W
+[0x13ea-va]
+{
+get=0x13e9-va
+id=0x13ea
+}
+
+// Hanging Valorite Chainmail
+
+// Hanging Valorite Chainmail Leggings - N/S
+[0x13bc-va]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x8ab
+movable=2
+weight=500
+}
+
+// Hanging Valorite Chainmail Leggings - E/W
+[0x13c1-va]
+{
+get=0x13bc-va
+id=0x13c1
+}
+
+// Hanging Valorite Chainmail Tunic - N/S
+[0x13bd-va]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x8ab
+movable=2
+weight=500
+}
+
+// Hanging Valorite Chainmail Tunic - E/W
+[0x13c2-va]
+{
+get=0x13bd-va
+id=0x13c2
+}
+
+// Hanging Verite Ringmail
+
+// Hanging Verite Ringmail Leggings - N/S
+[0x13e5-ve]
+{
+get=base_item
+name=ringmail leggings
+id=0x13e5
+color=0x89f
+movable=2
+weight=500
+}
+
+// Hanging Verite Ringmail Leggings - E/W
+[0x13e6-ve]
+{
+get=0x13e5-ve
+id=0x13e6
+}
+
+// Hanging Verite Ringmail Tunic - N/S
+[0x13e7-ve]
+{
+get=base_item
+name=ringmail tunic
+id=0x13e7
+color=0x89f
+movable=2
+weight=500
+}
+
+// Hanging Verite Ringmail Tunic - E/W
+[0x13e8-ve]
+{
+get=0x13e7-ve
+id=0x13e8
+}
+
+// Hanging Verite Ringmail Sleeves - N/S
+[0x13e9-ve]
+{
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+color=0x89f
+movable=2
+weight=500
+}
+
+// Hanging Verite Ringmail Sleeves - E/W
+[0x13ea-ve]
+{
+get=0x13e9-ve
+id=0x13ea
+}
+
+// Hanging Verite Chainmail
+
+// Hanging Verite Chainmail Leggings - N/S
+[0x13bc-ve]
+{
+get=base_item
+name=chainmail leggings
+id=0x13bc
+color=0x89f
+movable=2
+weight=500
+}
+
+// Hanging Verite Chainmail Leggings - E/W
+[0x13c1-ve]
+{
+get=0x13bc-ve
+id=0x13c1
+}
+
+// Hanging Verite Chainmail Tunic - N/S
+[0x13bd-ve]
+{
+get=base_item
+name=chainmail tunic
+id=0x13bd
+color=0x89f
+movable=2
+weight=500
+}
+
+// Hanging Verite Chainmail Tunic - E/W
+[0x13c2-ve]
+{
+get=0x13bd-ve
+id=0x13c2
 }

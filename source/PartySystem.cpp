@@ -20,6 +20,7 @@ PartyEntry::PartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m )
 	settings.set( BIT_LOOTABLE, isLootable );
 }
 
+void updateStats( CBaseObject *mObj, UI08 x );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool AddMember( CChar *i )
 //o-----------------------------------------------------------------------------------------------o
@@ -28,7 +29,7 @@ PartyEntry::PartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m )
 bool Party::AddMember( CChar *i )
 {
 	bool retVal = false;
-	if( ValidateObject( i ) )
+	if( ValidateObject( i ) && isOnline( *i ))
 	{
 		if( !HasMember( i ) )
 		{
@@ -37,6 +38,53 @@ bool Party::AddMember( CChar *i )
 			members.push_back( toAdd );
 			SendList( nullptr );
 			retVal = true;
+
+			CSocket *newSock = i->GetSocket();
+			newSock->sysmessage( 9072 ); // You have been added to the party.
+
+			// Send status update to ALL party members
+			for( size_t j = 0; j < members.size(); ++j )
+			{
+				PartyEntry *toFind = members[j];
+				CChar * partyMember = toFind->Member();
+				if( partyMember != nullptr )
+				{
+					if( partyMember->GetSerial() != i->GetSerial() )
+					{
+						// If party member is online, send them info on the new member
+						if( isOnline( *partyMember ) )
+						{
+							CSocket *s = partyMember->GetSocket();
+							CBaseObject *baseObj = partyMember;
+
+							// Send stat window update for new member to existing party members
+							s->statwindow( i );
+
+							// Prepare the stat update packet for new member to existing party members
+							CPUpdateStat toSendHp( (*i), 0, true );
+							s->Send( &toSendHp );
+							CPUpdateStat toSendMana( (*i), 1, true );
+							s->Send( &toSendMana );
+							CPUpdateStat toSendStam( (*i), 2, true );
+							s->Send( &toSendStam );
+
+							// Also send info on the existing party member to the new member!
+								// Send stat window update packet for existing member to new party member
+							newSock->statwindow( partyMember );
+
+							// Prepare the stat update packet for existing member to new party members
+							CPUpdateStat toSendHp2( (*partyMember), 0, true );
+							newSock->Send( &toSendHp2 );
+							CPUpdateStat toSendMana2( (*partyMember), 1, true );
+							newSock->Send( &toSendMana2 );
+							CPUpdateStat toSendStam2( (*partyMember), 2, true );
+							newSock->Send( &toSendStam2 );
+
+							s->sysmessage( 9076, i->GetName().c_str() ); // %s joined the party.
+						}
+					}
+				}
+			}
 		}
 	}
 	return retVal;
@@ -92,11 +140,16 @@ bool Party::RemoveMember( CChar *i )
 			{
 				PartyEntry *toFind = members[j];
 				toSend.AddMember( toFind->Member() );
+				if( isOnline( *toFind->Member() ) && !toFind->IsLeader() )
+					toFind->Member()->GetSocket()->sysmessage( 9075 ); // A player has been removed from your party.
 			}
 
 			SendPacket( &toSend, nullptr );
 			if( i->GetSocket() != nullptr )
+			{
 				SendPacket( &toSend, i->GetSocket() );
+				i->GetSocket()->sysmessage( 9074 ); // You have been removed from the party.
+			}
 			retVal = true;
 		}
 	}

@@ -25,7 +25,7 @@ cCharStuff *Npcs = nullptr;
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add loot to monsters packs
 //o-----------------------------------------------------------------------------------------------o
-CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
+CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist, bool shouldSave )
 {
 	CItem *retItem			= nullptr;
 	std::string sect		= std::string("LOOTLIST ") + lootlist;
@@ -53,12 +53,12 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 				CItem *retItemNested = nullptr;
 				for( UI16 iCount = 0; iCount < iAmount; ++iCount )
 				{
-					retItemNested = addRandomLoot( s, strutil::trim( strutil::removeTrailing( csecs[0], "//" )));
+					retItemNested = addRandomLoot( s, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), shouldSave );
 				}
 			}
 			else
 			{
-				retItem = addRandomLoot( s, LootList->GrabData() );
+				retItem = addRandomLoot( s, LootList->GrabData(), shouldSave );
 			}
 		}
 		else
@@ -66,7 +66,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			if( tcsecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
 				iAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tcsecs[1], "//" )), nullptr, 0));
-				retItem = Items->CreateBaseScriptItem( s, strutil::trim( strutil::removeTrailing( tcsecs[0], "//" )), s->WorldNumber(),  iAmount, s->GetInstanceID(), OT_ITEM, 0xFFFF );
+				retItem = Items->CreateBaseScriptItem( s, strutil::trim( strutil::removeTrailing( tcsecs[0], "//" )), s->WorldNumber(),  iAmount, s->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
@@ -75,7 +75,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 			}
 			else
 			{
-				retItem = Items->CreateBaseScriptItem( s, tag, s->WorldNumber(), 1, s->GetInstanceID(), OT_ITEM, 0xFFFF );
+				retItem = Items->CreateBaseScriptItem( s, tag, s->WorldNumber(), 1, s->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 				if( retItem != nullptr )
 				{
 					retItem->SetCont( s );
@@ -93,7 +93,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic npc from the scripts
 //o-----------------------------------------------------------------------------------------------o
-CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
+CChar *cCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 {
 	ourNPC						= strutil::trim( strutil::removeTrailing( ourNPC, "//" ));
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
@@ -111,6 +111,8 @@ CChar *cCharStuff::CreateBaseNPC( std::string ourNPC )
 		cCreated = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
 		if( cCreated == nullptr )
 			return nullptr;
+		if( !shouldSave )
+			cCreated->ShouldSave( false );
 
 		cCreated->SetSkillTitles( true );
 		cCreated->SetNpc( true );
@@ -440,7 +442,8 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 	ScriptSection *ShoppingList = FileLookup->FindEntry( sect, items_def );
 	if( ShoppingList == nullptr )
 		return;
-
+	
+	bool shouldSave = c->ShouldSave();
 	std::string cdata;
 	SI32 ndata		= -1, odata = -1;
 	CItem *retItem	= nullptr;
@@ -452,7 +455,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_RSHOPITEM:
 				if( ValidateObject( buyLayer ) )
 				{
-					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 					if( retItem != nullptr )
 					{
 						retItem->SetCont( buyLayer );
@@ -467,7 +470,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SELLITEM:
 				if( ValidateObject( sellLayer ) )
 				{
-					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 					if( retItem != nullptr )
 					{
 						retItem->SetCont( sellLayer );
@@ -483,7 +486,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SHOPITEM:
 				if( ValidateObject( boughtLayer ) )
 				{
-					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF );
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 					if( retItem != nullptr )
 					{
 						retItem->SetCont( boughtLayer );
@@ -587,7 +590,8 @@ void MakeShop( CChar *c )
 		tPack = c->GetItemAtLayer( static_cast<ItemLayers>(i) );
 		if( !ValidateObject( tPack ) )
 		{
-			tPack = Items->CreateItem( nullptr, c, 0x2AF8, 1, 0, OT_ITEM, false );
+			bool shouldSave = c->ShouldSave();
+			tPack = Items->CreateItem( nullptr, c, 0x2AF8, 1, 0, OT_ITEM, false, shouldSave );
 			if( ValidateObject( tPack ) )
 			{
 				tPack->SetDecayable( false );
@@ -665,7 +669,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						mypack = applyTo->GetPackItem();
 					if( mypack == nullptr )
 					{
-						mypack = Items->CreateItem( nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM, false );
+						bool shouldSave = applyTo->ShouldSave();
+						mypack = Items->CreateItem( nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM, false, shouldSave );
 						if( ValidateObject( mypack ) )
 						{
 							mypack->SetDecayable( false );
@@ -826,7 +831,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_EQUIPITEM:
 				if( !isGate )
 				{
-					retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF );
+					bool shouldSave = applyTo->ShouldSave();
+					retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 					if( retitem != nullptr )
 					{
 						if( retitem->GetLayer() == IL_NONE )
@@ -935,13 +941,14 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						if( ndata >= 0 )
 						{
+							bool shouldSave = applyTo->ShouldSave();
 							if( odata && odata > ndata )
 							{
-								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true, 0xFFFF );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true, 0xFFFF, shouldSave );
 							}
 							else
 							{
-								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", ndata, OT_ITEM, true, 0xFFFF );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", ndata, OT_ITEM, true, 0xFFFF, shouldSave );
 							}
 						}
 						else
@@ -990,6 +997,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						applyTo->SetFixedMaxHP( ndata );
 					}
+
+					// Update current HP
+					applyTo->SetHP( applyTo->GetMaxHP() );
 				}
 				else
 					Console.warning( strutil::format("Invalid data found in HPMAX tag inside NPC script [%s]", sectionID.c_str() ));				
@@ -1102,6 +1112,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						applyTo->SetFixedMaxMana( ndata );
 					}
+
+					// Update current Mana
+					applyTo->SetMana( applyTo->GetMaxMana() );
 				}
 				else
 					Console.warning( strutil::format("Invalid data found in MANAMAX tag inside NPC script [%s]", sectionID.c_str() ));				
@@ -1254,7 +1267,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						sellPack = applyTo->GetItemAtLayer( IL_SELLCONTAINER );
 					if( ValidateObject( sellPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF );
+						bool shouldSave = applyTo->ShouldSave();
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 						if( retitem != nullptr )
 						{
 							retitem->SetCont( sellPack );
@@ -1274,7 +1288,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						boughtPack = applyTo->GetItemAtLayer( IL_BOUGHTCONTAINER );
 					if( ValidateObject( boughtPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF );
+						bool shouldSave = applyTo->ShouldSave();
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
 						if( retitem != nullptr )
 						{
 							retitem->SetCont( boughtPack );
@@ -1354,6 +1369,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						applyTo->SetFixedMaxStam( ndata );
 					}
+
+					// Update current Stamina
+					applyTo->SetStamina( applyTo->GetMaxStam() );
 				}
 				else
 					Console.warning( strutil::format("Invalid data found in STAMINA tag inside NPC script [%s]", sectionID.c_str() ));				

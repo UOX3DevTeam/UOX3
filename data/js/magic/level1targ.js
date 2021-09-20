@@ -281,6 +281,8 @@ function onTimer( mChar, timerID )
 		{
 			var cursorType = 0;
 			var spellNum = mChar.spellCast;
+			if( spellNum == -1 )
+				return;
 			if( Spells[spellNum].aggressiveSpell )
 				cursorType = 1; // Hostile cursor type
 			else if( spellNum == 4 ) // Heal
@@ -542,7 +544,7 @@ function MagicDamage( p, amount, attacker, mSock, element )
 
 		DoTempEffect( 0, attacker, p, 28, damage, 0, 0 );
 
-		/*p.Damage( damage, attacker, true );
+		/*p.Damage( damage, 6, attacker, true );
 		p.ReactOnDamage( element, attacker );*/
 	}
 }
@@ -612,7 +614,7 @@ function CheckTargetResist( caster, ourTarg, circle )
 	var i = ourTarg.CheckSkill( 26, 80*circle, 800+(80*circle) );
 	if( ValidateObject( ourTarg ) )
 	{
-		var defaultChance = ourTarg.skills.magigresistance / 5;
+		var defaultChance = ourTarg.skills.magicresistance / 5;
 		var resistChance = ourTarg.skills.magicresistance - ((( caster.skills.magery - 20 ) / 5 ) + ( circle * 5 ));
 		if( defaultChance > resistChance )
 			resistChance = defaultChance;
@@ -625,15 +627,6 @@ function CheckTargetResist( caster, ourTarg, circle )
 		}
 		else
 			i = false;
-	}
-	else
-	{
-		if( i )
-		{
-			var tSock = ourTarg.socket;
-			if( tSock != null )
-				tSock.SysMessage( GetDictionaryEntry( 699, tSock.language ) );
-		}
 	}
 	return i;
 }

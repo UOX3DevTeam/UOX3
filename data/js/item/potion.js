@@ -149,27 +149,40 @@ function onUseChecked( pUser, iUsed )
 				}
 				break;
 			case 4:		// Heal Potion
-				switch( iUsed.morez )
+				if( pUser.health < pUser.maxhp )
 				{
-					case 1:
-						pUser.health = (pUser.health + 5 + RandomNumber( 1, 5 ));
-						pUser.SysMessage( GetDictionaryEntry( 1349, socket.language ) ); //You feel a little better!
-						break;
-					case 2:
-						pUser.health = (pUser.health + 15 + RandomNumber( 1, 10 ));
-						pUser.SysMessage( GetDictionaryEntry( 1350, socket.language ) ); //You feel better!
-						break;
-					case 3:
-						pUser.health = (pUser.health + 20 + RandomNumber( 1, 20 ));
-						pUser.SysMessage( GetDictionaryEntry( 1351, socket.language ) ); //You feel much better!
-						break;
-					default:
-						break;
+					if( pUser.poison > 0 )
+					{
+						pUser.SysMessage( GetDictionaryEntry( 9058, socket.language )); // You can not heal yourself in your current state.
+						return;
+					}
+
+					switch( iUsed.morez )
+					{
+						case 1:
+							pUser.health = ( pUser.health + RandomNumber( 3, 10 ));
+							pUser.SysMessage( GetDictionaryEntry( 1349, socket.language )); // You feel a little better!
+							break;
+						case 2:
+							pUser.health = ( pUser.health + RandomNumber( 6, 20 ));
+							pUser.SysMessage( GetDictionaryEntry( 1350, socket.language )); // You feel better!
+							break;
+						case 3:
+							pUser.health = ( pUser.health + RandomNumber( 9, 30 ));
+							pUser.SysMessage( GetDictionaryEntry( 1351, socket.language )); // You feel much better!
+							break;
+						default:
+							break;
+					}
+					pUser.StaticEffect( 0x376A, 0x09, 0x06 );
+					pUser.SoundEffect( 0x01E3, true );
+					pUser.isUsingPotion = true;
+					DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); // Disallow immediately using another potion
 				}
-				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
-				pUser.SoundEffect( 0x01E3, true );
-				pUser.isUsingPotion = true;
-				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
+				else
+				{
+					pUser.SysMessage( GetDictionaryEntry( 9059, socket.language )); // You decide against drinking this potion, as you are already at full health.
+				}
 				break;
 			case 5:		// Night Sight Potion
 				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
@@ -350,7 +363,7 @@ function onTimer( timerObj, timerID )
 					alchemyBonus = Math.round(packOwner.skills.alchemy / alchemyBonusModifier);
 
 				// Deal damage to player holding the potion
-				packOwner.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus );
+				packOwner.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, 5 );
 			}
 		}
 	  	timerObj.Delete();
@@ -401,7 +414,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 			alchemyBonus = Math.round(sourceChar.skills.alchemy / alchemyBonusModifier);
 
 		// Deal damage, and do criminal check for source character!
-		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, sourceChar, true );
+		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, 5, sourceChar, true );
 
 		// If target is an NPC, make them attack the person who threw the potion!
 		if( targetChar.npc && targetChar.target == null && targetChar.atWar == false )
@@ -414,6 +427,6 @@ function ApplyExplosionDamage( timerObj, targetChar )
 	else
 	{
 		// Source character not found - apply damage on general basis
-		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ));
+		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ), 5 );
 	}
 }

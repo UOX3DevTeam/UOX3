@@ -97,21 +97,18 @@ function command_INVUL( pSock, execString )
 	else
 		pSock.SysMessage( GetDictionaryEntry( 8858, pSock.language )); // Accepted arguments for this command: true or false, 1 or 0!
 }
-// Alias for 'invul true'
-function command_IMMORTAL( pSock, execString )
-{
-	command_INVUL( pSock, "true" );
-}
-
-// Alias for 'invul false
 function command_NOINVUL( pSock, execString )
 {
 	command_INVUL( pSock, "false" );
 }
-// Alias for 'invul false'
+
+function command_IMMORTAL( pSock, execString )
+{
+	pSock.CustomTarget( 25, GetDictionaryEntry( 8856, pSock.language )); // Whom do you wish to make immortal?
+}
 function command_MORTAL( pSock, execString )
 {
-	command_INVUL( pSock, "false" );
+	pSock.CustomTarget( 26, GetDictionaryEntry( 8856, pSock.language )); // Whom do you wish to make mortal?
 }
 
 function command_ADDPACK( pSock, execString )
@@ -199,13 +196,13 @@ function command_XSAY( pSock, execString )
 function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
-	var NewName = pSock.xText;
+	var newName = pSock.xText;
 	if( !pSock.GetWord( 1 ))
 	{
 		var tempMsg = GetDictionaryEntry( 8870, pSock.language ); // '%s' has been renamed to '%t'.
 		tempMsg = tempMsg.replace(/%s/gi, myTarget.name );
 		pUser.SysMessage( tempMsg.replace(/%t/gi, newName ));
-		myTarget.name = NewName;
+		myTarget.name = newName;
 	}
 	else
 	{
@@ -261,6 +258,7 @@ function onCallback2( pSock, myTarget )
 		pUser.SysMessage( GetDictionaryEntry( 8879, pSock.language )); // You cannot unfreeze that.
 }
 
+// Make target invulnerable
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -280,6 +278,8 @@ function onCallback3( pSock, myTarget )
 	else
 		pUser.SysMessage( GetDictionaryEntry( 8882, pSock.language )); // That is not a character. Try again.
 }
+
+// Make target vulnerable
 function onCallback4( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
@@ -773,6 +773,57 @@ function onCallback24( pSock, myTarget )
 	}
 	else
 		pUser.SysMessage( GetDictionaryEntry( 8925, pSock.language )); // Target is not a character.
+}
+
+// Make target immortal (can take damage, but will never die)
+function onCallback25( pSock, myTarget )
+{
+	var immortalScript = 3510; // Script ID of immortality.js, set in jse_fileassociations.scp
+
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{
+		var scriptTriggers = myTarget.scriptTriggers;
+		var size = scriptTriggers.length;
+		for( var i = 0; i < size; i++ )
+		{
+			if( scriptTriggers[i] == immortalScript )
+			{
+				pUser.SysMessage( GetDictionaryEntry( 8883, pSock.language )); // That target is already immortal!
+				return;
+			}
+		}
+
+		pUser.SysMessage( GetDictionaryEntry( 8884, pSock.language )); // The selected target has been made immortal; they can bleed, but they cannot die!.
+		myTarget.AddScriptTrigger( immortalScript );
+	}
+	else
+		pUser.SysMessage( GetDictionaryEntry( 8885, pSock.language )); // That is not a character. Try again.
+}
+
+// Make target mortal (can die)
+function onCallback26( pSock, myTarget )
+{
+	var immortalScript = 3510; // Script ID of immortality.js, set in jse_fileassociations.scp
+
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{
+		var scriptTriggers = myTarget.scriptTriggers;
+		var size = scriptTriggers.length;
+		for( var i = 0; i < size; i++ )
+		{
+			if( scriptTriggers[i] == immortalScript )
+			{
+				pUser.SysMessage( GetDictionaryEntry( 8884, pSock.language )); // The selected target has been made mortal; they can now die!
+				myTarget.RemoveScriptTrigger( immortalScript );
+				return;
+			}
+		}
+		pUser.SysMessage( GetDictionaryEntry( 8883, pSock.language )); // That target is already a mortal!
+	}
+	else
+		pUser.SysMessage( GetDictionaryEntry( 8885, pSock.language )); // That is not a character. Try again.
 }
 
 function command_WELCOME( pSock, execString )
