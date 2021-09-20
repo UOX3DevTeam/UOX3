@@ -646,7 +646,7 @@
 654=Summon Earth Elemental
 655=Summon Fire Elemental
 656=Summon Water Elemental
-657=Random
+657=Identification
 658=Necro1
 659=Necro2
 660=Necro3
@@ -3817,7 +3817,7 @@
 8937=The specified itemID does not seem to be valid. No item added!
 8938=Which object do you wish to remove?
 8939=You can only remove items or NPCs.
-8940=Select target location for item %s:
+8940=Select target location for Item %s:
 8941=That doesn't seem to be a valid item-id from the DFNs. No item added!
 8942=Select location to teleport to:
 8943=Select target location for the [%s]:
@@ -3879,6 +3879,18 @@
 9053=[locked down]
 9054=You cannot use skills while dead.
 9055=[Blessed]
+9056=That target is immune to magic!
+9057=*Splashing acid blood scars your weapon!*
+9058=You can not heal yourself in your current state.
+9059=You decide against drinking this potion, as you are already at full health.
+9060=Select target location for Spawner %s:
+9061=The intense heat given off by a lava serpent is causing you damage!
+9062=The bronze elemental's gas attack is causing you damage!
+9063=The intense cold is damaging you!
+9064=You cannot pick that up.
+9065=That item does not belong to you. You'll have to steal it.
+9066=That belongs to someone else.
+9067=Unable to drop item... where was it picked up from?
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -3917,8 +3929,33 @@
 9312=You are already fishing.
 9313=You need to be closer to the water to fish!
 9314=You fish a while, but fail to catch anything.
-9315=You pull out an item : magic fish
-9316=You pull out an item : fish
-9317=You pull out an item : footwear
+9315=You pull out an item : %s
+9316=You pull out an item along with a monster : %s
+9317=You can only use this net in deep water!
+9318=You plunge the net into the sea...
+9319=Unable to detect item that initiated action. Does it still exist?
+9320=You extract the message from the bottle.
+9321=Help! Ship going do...n heavy storms...precious cargo...st reach dest...current coordinates %s...ve any survivors...ease!
+9322=...was a cad and a boor, no matter what momma s...rew him overboard! Oh, Anna, 'twas so exciting! Unfort...y he grabbe...est, and all his riches went with him! ...sked the captain, and he says we're at %s ... so maybe ...
+9323=...know that the wreck is near %s but have not found it. Could the message passed down in my family for generations be wrong? No... I swear on the soul of my grandfather, I will find...
+9324=...Ar! %s and, a fair wind! No chance...storms, though--ar! Is that a sea serp...<br><br>uh oh.
+9325=WANTED: divers exp...d in shipwre...overy. Must have own vess...pply at %s...good benefits, flexible hours...
+9326=...isaster indeed. Capt. McQ...overboard, fear the worst. These are t...ast days of the good ship Norr...ast known position was %s but ...'re beyond salvag...
+9327=...never expected an iceberg...silly woman on bow crushed instantly...send help to %s...ey'll never forget the tragedy of the sinking of the...
+9328=...so I threw the treasure overboard, before the curse could get me too. But I was too late. Now I am doomed to wander these seas, a ghost forever. Join me: seek ye at %s if thou wishest my company...
+9329=...then the ship exploded. A dragon swooped over. The slime swallowed Bertie whole--he screamed, it was amazing. The sky glowed orange...A sextant reading put us at %s. Norma was chattering about sailing over the edge of the world. I looked at my hands and saw through them..."
+9330=...been inside this whale for three days now. I've run out of food I can pick out of his teeth. I took a sextant reading through the blowhole: %s. I'll never see my treasure again...
+9331=...grand adventure! Captain Quacklebush had me swab down the decks daily... ...pirates came, I was in the rigging practicing with my sextant. %s if I am not mistaken... ...scuttled the ship, and our precious cargo went with her and the screaming pirates, down to the bottom of the sea...
+9332=...nobody knew I was a girl. They just assumed I was another sailor...then we met the undine. %s. It demanded sacrifice...I was youngest, they figured...grabbed the captain's treasure, screamed "It'll go down with me!" ...they took me up on it.
+9333=...trapped on a deserted island with a magic fountain supplying food, fresh water springs, gorgeous scenery, and my lovely young wife. I know the ship with all our life's earnings sank at ~1_SEXTANT ~ but I don't know what our coordinates are...someone has GOT to rescue me before Sunday's finals game or I'll go mad...
+9334=...round Jhelom towne we did roam, drinking all night. Got into a fight...hoisted sail on the morn, all crew aboard but the cook...ull breach, last known coordinates %s...be better off in Stone's jail cell!
+9335=You pull up a heavy chest from the depths of the ocean!
+9336=Your fishing pole bends as you pull a big fish from the depths!
+9337=You need water to fish in!
+9338=You slice your fish into raw fish steaks.
+// [9401-9450] Magic Items
+9401=This magic item is out of charges.
+9402=[Unidentified]
+9403=uses remaining: %i
 }
 EOF

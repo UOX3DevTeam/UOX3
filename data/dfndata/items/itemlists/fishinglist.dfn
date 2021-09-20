@@ -23,15 +23,22 @@
 //*****************************************************************
 
 //Random Treasure (Paintings)
-[ITEMLIST fishtreasure]
+[ITEMLIST randompaintings]
 {
-0x0ec8
-0x0ee7
-0x0ea0
-0x0ea1
-0x0ea2
-0x0ea5
-0x0ea6
+shipwreck_painting
+shipwreck_painting-2
+shipwreck_portrait
+shipwreck_portrait-2
+shipwreck_painting-3
+shipwreck_painting-4
+shipwreck_painting-5
+shipwreck_painting-6
+shipwreck_painting-7
+shipwreck_portrait-3
+shipwreck_portrait-4
+shipwreck_portrait-5
+shipwreck_portrait-6
+0x0c2c
 }
 
 //Random weapons
@@ -84,16 +91,24 @@
 0x0f30
 }
 
-//Random bones and discards
-[ITEMLIST fishbones]
+//Random bones
+[ITEMLIST randombones]
 {
-0x170b
-0x1b17
+0x1ae0
+0x1ae1
+0x1ae2
+0x1ae3
+0x1ae4
+0x1b09
 0x1b0a
-0x0c10
-0x0c19
-0x0c1f
-0x0c2c
+0x1b0b
+0x1b0c
+0x1b0d
+0x1b0e
+0x1b0f
+0x1b10
+0x1b15
+0x1b16
 }
 
 //Random Fish
@@ -105,13 +120,16 @@
 0x09cf
 }
 
+// Random footwear (boots, sandals, shoes, thigh boots)
 [ITEMLIST randomfootwear]
 {
 0x170b
+0x170d
 0x170f
 0x1711
 }
 
+// Random magic fish
 [ITEMLIST randommagicfish]
 {
 prized_magic_fish
@@ -120,13 +138,66 @@ truly_rare_magic_fish
 highly_peculiar_magic_fish
 }
 
+// Random hats (skullcap, tricorne)
+[ITEMLIST randomhats]
+{
+0x171b
+0x1544
+}
+
+// Random Shells
+[ITEMLIST randomshells]
+{
+0x0fc4
+0x0fc5
+0x0fc6
+0x0fc7
+0x0fc8
+0x0fc9
+0x0fca
+0x0fcb
+0x0fcc
+}
+
+// Random Pillows
+[ITEMLIST randompillows]
+{
+0x1397
+0x13a4
+0x13a5
+0x13a6
+0x13a7
+0x13a8
+0x13a9
+0x13aa
+0x13ab
+0x13ac
+0x13ad
+0x13ae
+}
+
+// Random miscellaneous items (Barrel staves, unfinished barrel, stool, candelabra, broken clock, globe)
+[ITEMLIST randommisc]
+{
+0x1eb1
+0x1eb2
+0x1eb3
+0x1eb4
+0x1eb5
+0x0a2a
+0x0a27
+0x0c1f
+0x1047
+0x1048
+}
+
 // Fishing listobjects - use these when you want to add a random item from a fishing itemlist
 // either in-game with the add command or in scripts
 
 //Random Treasure (Paintings)
-[fishtreasure]
+[randompaintings]
 {
-itemlist=fishtreasure
+itemlist=randompaintings
 }
 
 //Random weapons
@@ -141,10 +212,10 @@ itemlist=fishweapons
 itemlist=fishgems
 }
 
-//Random bones and discards
-[fishbones]
+//Random bones
+[randombones]
 {
-itemlist=fishbones
+itemlist=randombones
 }
 
 //Random Fish
@@ -163,6 +234,30 @@ itemlist=randomfootwear
 [randommagicfish]
 {
 itemlist=randommagicfish
+}
+
+// Random hats
+[randomhats]
+{
+itemlist=randomhats
+}
+
+// Random Shells
+[randomshells]
+{
+itemlist=randomshells
+}
+
+// Random Pillows
+[randompillows]
+{
+itemlist=randompillows
+}
+
+// Random Misc
+[randommisc]
+{
+itemlist=randommisc
 }
 
 EOF

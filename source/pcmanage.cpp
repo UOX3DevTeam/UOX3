@@ -1362,7 +1362,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fall
 	CItem *iCorpse = nullptr;
 	if( !createPack )
 	{
-		iCorpse = Items->CreateItem( nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
+		iCorpse = Items->CreateItem( nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM, false );
 		if( !ValidateObject( iCorpse ) )
 			return nullptr;
 
@@ -1381,7 +1381,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, bool createPack, UI08 fall
 	}
 	else
 	{
-		iCorpse = Items->CreateItem( nullptr, &mChar, 0x09B2, 1, 0x0000, OT_ITEM );
+		iCorpse = Items->CreateItem( nullptr, &mChar, 0x09B2, 1, 0x0000, OT_ITEM, false );
 		if( iCorpse== nullptr )
 			return nullptr;
 

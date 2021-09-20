@@ -116,7 +116,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 				data = strutil::trim( strutil::removeTrailing( data, "//" ));
 				if( UTag == "ITEM" )
 				{
-					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1, hInstanceID );
+					hItem = Items->CreateBaseScriptItem( nullptr, data, mChar->WorldNumber(), 1, hInstanceID );
 					if( hItem == nullptr )
 					{
 						Console << "Error in house creation, item " << data << " could not be made" << myendl;
@@ -821,12 +821,6 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		bObj->SetWeightMax( weightMax );
 		bObj->SetMaxItems( maxItems );
 		bObj->SetDamageable( isDamageable );
-
-		if( !CreateBoat( mSock, bObj, ( houseID % 256 ), houseEntry ) )
-		{
-			house->Delete();
-			return;
-		}
 	}
 
 	mChar->GetSpeechItem()->Delete();

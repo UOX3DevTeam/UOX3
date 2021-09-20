@@ -210,6 +210,7 @@ public:
 	std::vector< TitlePair_st >			murdererTags;
 	std::vector< CTeleLocationEntry >	teleLocs;
 	std::vector< LogoutLocationEntry >	logoutLocs;
+	std::vector< SOSLocationEntry >		sosLocs;
 	std::vector< UI08 >					escortRegions;
 	std::map< UI16, GoPlaces_st >		goPlaces;
 	SPAWNMAP							spawnRegions;

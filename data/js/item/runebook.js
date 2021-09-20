@@ -263,7 +263,7 @@ function displayGump( pSocket, pUser, runeBook )
 	  		runeBookGump.AddHTMLGump( 41, 52, 120, 25, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
 	  	else
 	  	{
-		  	let mapCoords = GetMapCoordinates( parseInt(splitData[2]), parseInt(splitData[3]), parseInt(splitData[5]) );
+		  	let mapCoords = TriggerEvent( 2503, "GetMapCoordinates", parseInt(splitData[2]), parseInt(splitData[3]), parseInt(splitData[5]) )
 		  	let xLongDeg = mapCoords[0];
 		  	let xLongMin = mapCoords[1];
 		  	let xEast = mapCoords[2];
@@ -314,15 +314,15 @@ function displayGump( pSocket, pUser, runeBook )
 		  	runeBookGump.AddHTMLGump( 203, 52, 120, 25, 1, 1, "<BASEFONT size=5>" + GetDictionaryEntry( 9255, pSocket.language ) + "</BASEFONT>" ); // Empty
 		else
 		{
-		  	let mapCoords = GetMapCoordinates( parseInt(splitData[2]), parseInt(splitData[3]), parseInt(splitData[5]) );
+		  	let mapCoords = TriggerEvent( 2503, "GetMapCoordinates", parseInt(splitData[2]), parseInt(splitData[3]), parseInt(splitData[5]) )
 		  	let xLongDeg = mapCoords[0];
 		  	let xLongMin = mapCoords[1];
 		  	let xEast = mapCoords[2];
 
 		  	// let yLatitude = GetLatitude( parseInt(splitData[2]), parseInt(splitData[3]), parseInt(splitData[5]) );
-		  	let yLatDeg = mapCoords[0];
-		  	let yLatMin = mapCoords[1];
-		  	let ySouth = mapCoords[2];
+		  	let yLatDeg = mapCoords[3];
+		  	let yLatMin = mapCoords[4];
+		  	let ySouth = mapCoords[5];
 
 		  	runeBookGump.AddHTMLGump( 203, 52, 120, 50, 1, 1, "<BASEFONT color=#0xfd size=5>" + splitData[0] + "</BASEFONT>" );
 		  	runeBookGump.AddToolTip( tooltipClilocID, pSocket, splitData[0] );
@@ -1006,7 +1006,6 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 
 function GetMapCoordinates( xCoord, yCoord, worldNum )
 {
-	//var xLongitude = new Array();
 	var resultArray = new Array();
 	var xCenter = 0;
 	var yCenter = 0;
@@ -1096,82 +1095,5 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 	resultArray[4] = yLatMin;
 	resultArray[5] = ySouth;
 
-	/*xLongitude[0] = xLongDeg;
-	xLongitude[1] = xLongMin;
-	xLongitude[2] = xEast;*/
-
-	// return xLongitude;
 	return resultArray;
 }
-
-/*function GetLatitude( xCoord, yCoord, worldNum )
-{
-	var yLatitude = new Array();
-	var xCenter = 0;
-	var yCenter = 0;
-	var xWidth = 5120;
-	var yHeight = 4096;
-
-	switch( worldNum )
-	{
-		case 0: // Trammel
-		case 1: // Felucca
-			if( xCoord >= 0 && yCoord >= 0 && xCoord < 5120 && yCoord < 4096 )
-			{
-				xCenter = 1323;
-				yCenter = 1624;
-			}
-			else if( xCoord >= 5120 && yCoord >= 0 && xCoord < 7168 && yCoord < 4096)
-			{
-				xCenter = 5936;
-				yCenter = 3112;
-			}
-			else
-			{
-				yLatitude[0] = "-1";
-				yLatitude[1] = "-1";
-				yLatitude[2] = true;
-				return yLatitude;
-			}
-			break;
-		case 2: // Ilshenar
-		case 3: // Tokuno
-		case 4: // Malas
-		case 5: // Termur
-			if( xCoord >= 0 && yCoord >= 0 && xCoord < 7168 && yCoord < 4096 )
-			{
-				xCenter = 1323;
-				yCenter = 1624;
-			}
-			else
-			{
-				yLatitude[0] = "-1";
-				yLatitude[1] = "-1";
-				yLatitude[2] = true;
-				return yLatitude;
-			}
-			break;
-		default:
-			break;
-	}
-
-	var absLat = (( yCoord - yCenter ) * 360 ) / yHeight;
-	if( absLat > 180 )
-		absLat = -180 + ( absLat % 180 );
-
-	var south = ( absLat >= 0 );
-
-	if( absLat < 0 )
-		absLat = -absLat;
-
-	var yLatDeg = Math.round( absLat );
-	var yLatMin = Math.round(( absLat % 1 ) * 60 );
-
-	var ySouth = south;
-
-	yLatitude[0] = yLatDeg;
-	yLatitude[1] = yLatMin;
-	yLatitude[2] = ySouth;
-
-	return yLatitude;
-}*/

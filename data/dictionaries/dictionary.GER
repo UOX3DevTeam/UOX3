@@ -646,7 +646,7 @@
 654=Erd-Elementar beschwören
 655=Feuer-Elementar beschwören
 656=Wasser-Elementar beschwören
-657=Zufällig
+657=Identifizierung
 658=Nekro1
 659=Nekro2
 660=Nekro3
@@ -3878,6 +3878,18 @@
 9053=[Abgesperrt]
 9054=Du kannst keine Fertigkeiten benutzen, wenn du tot bist.
 9055=[Gesegnet]
+9056=Das Ziel ist immun gegen Magie!
+9057=*Spritzendes Säureblut vernarbt deine Waffe!
+9058=Du kannst dich in deinem jetzigen Zustand nicht selbst heilen.
+9059=Du entscheidest dich dagegen, diesen Trank zu trinken, da du bereits über volle Gesundheit verfügst.
+9060=Wählen Sie den Zielort für den Spawner %s:
+9061=Die intensive Hitze, die von einer Lavaschlange ausgeht, fügt dir Schaden zu!
+9062=Der Gasangriff des Bronze-Elementars fügt dir Schaden zu!
+9063=Die intensive Kälte fügt dir Schaden zu!
+9064=Das kannst du nicht aufheben.
+9065=Dieser Gegenstand gehört dir nicht. Du wirst ihn stehlen müssen.
+9066=Dieser Gegenstand gehört jemand anderem.
+9067=Ich kann den Gegenstand nicht ablegen... woher wurde er genommen?
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -3907,5 +3919,42 @@
 9275=Dieses Buch hat bereits die maximale Anzahl an Ladungen.
 9276=Du hast das Runenbuch mit einem Stapel Rückruf-Schriftrolle aufgeladen.
 9277=Du hast das Runenbuch mit einer Rückruf-Schriftrolle aufgeladen.
+// [9301-9310] Zauberfisch
+9301=Du stehst bereits unter einem ähnlichen Effekt.
+9302=Du verschluckst den Fisch ganz!
+// [9310-9400] Fischereifähigkeit
+9310=In welchem Gewässer wollt Ihr angeln?
+9311=Die Fische scheinen hier nicht zu beißen.
+9312=Du fischst bereits.
+9313=Du musst näher am Wasser sein, um zu angeln!
+9314=Du angelst eine Weile, fängst aber nichts.
+9315=Du ziehst einen Gegenstand heraus : %s
+9316=Du ziehst einen Gegenstand zusammen mit einem Monster heraus: %s
+9317=Dieses Netz kannst du nur in tiefem Wasser benutzen!
+9318=Du wirfst das Netz ins Meer...
+9319=Der Gegenstand, der die Aktion ausgelöst hat, kann nicht gefunden werden. Ist er noch vorhanden?
+9320=Du holst die Nachricht aus der Flasche.
+9321=Hilfe! Schiff in schwerem Sturm... wertvolle Ladung... erreicht Ziel... aktuelle Koordinaten %s... gibt es Überlebende... Hilfe!
+9322=...war ein Schurke und ein Rüpel, egal was Mama...warf ihn über Bord! Oh, Anna, es war so aufregend! Leider schnappte er sich den Schatz, und all sein Reichtum ging mit ihm. ...rief den Kapitän an, und er sagte, wir sind bei %s... also vielleicht...
+9323=...wissen, dass das Wrack in der Nähe von %s liegt, haben es aber nicht gefunden. Könnte die Nachricht, die seit Generationen in meiner Familie weitergegeben wird, falsch sein? Nein... Ich schwöre bei der Seele meines Großvaters, ich werde es finden...
+9324=...Ar! %s und, ein schöner Wind! Keine Chance... Stürme, obwohl... Ar! Ist das eine Seeschlange...<br><br>Oh oh.
+9325=Gesucht: Taucher mit Erfahrung in der Schiffs...overy. Muss eigenes Fahrzeug haben...pply bei %s...gute Leistungen, flexible Arbeitszeiten...
+9326=...isaster indeed. Kapitän McQ... über Bord, befürchte das Schlimmste. Dies sind die letzten Tage des guten Schiffes Norr... die letzte bekannte Position war %s, aber ... sind nicht mehr zu retten...
+9327=...hätte nie mit einem Eisberg gerechnet...dumme Frau am Bug auf der Stelle zerquetscht...schicke Hilfe zu %s...ich werde nie die Tragödie des Untergangs der...
+9328=...also warf ich den Schatz über Bord, bevor der Fluch auch mich erwischen konnte. Aber ich kam zu spät. Jetzt bin ich dazu verdammt, für immer als Geist durch die Meere zu irren. Schließt Euch mir an: Sucht mich bei %s, wenn Ihr meine Gesellschaft wünscht...
+9329=...dann explodierte das Schiff. Ein Drache stürzte herbei. Der Schleim verschluckte Bertie ganz - er schrie, es war unglaublich. Der Himmel leuchtete orange... Ein Sextant zeigte uns bei %s an. Norma plapperte davon, über den Rand der Welt zu segeln. Ich schaute auf meine Hände und sah durch sie hindurch..."
+9330=...bin jetzt seit drei Tagen in diesem Wal. Mir ist das Futter ausgegangen, das ich ihm aus den Zähnen reißen kann. Ich habe mit einem Sextanten durch das Blasloch abgelesen: %s. Ich werde meinen Schatz nie wieder sehen...
+9331=...großes Abenteuer! Kapitän Quacklebush ließ mich täglich die Decks schrubben... ...Piraten kamen, ich war in der Takelage und übte mit meinem Sextanten. Wenn ich mich nicht irre, versenkten sie das Schiff, und unsere kostbare Fracht stürzte mit ihr und den schreienden Piraten auf den Meeresgrund.
+9332=... niemand wusste, dass ich ein Mädchen war. Sie hielten mich einfach für einen weiteren Seemann... dann trafen wir die Undine. %s. Sie verlangte ein Opfer... Ich war die Jüngste, dachten sie... schnappten sich den Schatz des Kapitäns und schrien: "Er wird mit mir untergehen!" ...und sie haben mich beim Wort genommen.
+9333=...gefangen auf einer einsamen Insel mit einer magischen Quelle, die uns mit Nahrung, frischem Wasser, einer herrlichen Landschaft und meiner schönen jungen Frau versorgt. Ich weiß, dass das Schiff mit all unseren Lebenseinkünften bei ~1_SEXTANT ~ gesunken ist, aber ich weiß nicht, wie unsere Koordinaten lauten...jemand muss mich vor dem Endspiel am Sonntag retten, sonst werde ich verrückt...
+9334=...um Jhelom Towne sind wir herumgewandert und haben die ganze Nacht getrunken. Gerieten in eine Schlägerei... hissten am Morgen die Segel, alle Besatzungsmitglieder außer dem Koch an Bord... Totalschaden, letzte bekannte Koordinaten %s... wären besser in Stones Gefängniszelle aufgehoben!
+9335=Du ziehst eine schwere Truhe aus den Tiefen des Ozeans!
+9336=Deine Angelrute biegt sich, als du einen großen Fisch aus der Tiefe ziehst!
+9337=Du brauchst Wasser zum Fischen!
+9338=Du schneidest deinen Fisch in rohe Fischsteaks.
+// [9401-9450] Magische Gegenstände
+9401=Dieser magische Gegenstand hat keine Ladung mehr.
+9402=[Unbekannt]
+9403=Verbleibende Verwendungen: %i
 }
 EOF
