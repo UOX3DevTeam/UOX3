@@ -1580,6 +1580,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 
 	mChar->SetWar( false );
 	mChar->StopSpell();
+	mChar->SetFrozen( false );
 	mChar->SetHP( 0 );
 	mChar->SetPoisoned( 0 );
 	mChar->SetPoisonStrength( 0 );

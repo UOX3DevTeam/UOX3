@@ -2123,6 +2123,14 @@ void cMovement::NpcMovement( CChar& mChar )
 									return;
 								}
 
+								if( mChar.GetPathFail() < 10 )
+								{
+									// Let's try just resetting the target first - maybe NPC will find another target that's closer?
+									mChar.SetTarg( nullptr );
+									mChar.SetWar( false );
+									return;
+								}
+
 								mChar.FlushPath();
 								mChar.SetOldTargLocX( 0 );
 								mChar.SetOldTargLocY( 0 );
@@ -2764,6 +2772,8 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 //o-----------------------------------------------------------------------------------------------o
 bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun, UI16 maxSteps )
 {
+	UI16 startX			= mChar->GetX();
+	UI16 startY			= mChar->GetY();
 	UI16 curX			= mChar->GetX();
 	UI16 curY			= mChar->GetY();
 	SI08 curZ			= mChar->GetZ();;
@@ -2867,6 +2877,12 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 #if defined( UOX_DEBUG_MODE )
 		Console.warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
 #endif
+		mChar->SetPathResult( -1 ); // Pathfinding failed
+		return false;
+	}
+	else if( mChar->GetX() == startX && mChar->GetY() == startY && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
+	{
+		// NPC never moved, and target location is not nearby
 		mChar->SetPathResult( -1 ); // Pathfinding failed
 		return false;
 	}

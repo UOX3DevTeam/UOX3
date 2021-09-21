@@ -245,6 +245,11 @@ void HandleEvilAI( CChar& mChar )
 			if( MapArea == nullptr )	// no valid region
 				continue;
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
+
+			// Chance to reverse list of chars
+			if( RandomNum( 0, 1 ))
+				regChars->Reverse();
+
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{

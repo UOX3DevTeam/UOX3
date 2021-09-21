@@ -2014,7 +2014,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 		}
 
-		if( getFightSkill == ARCHERY )
+		if( getFightSkill == ARCHERY && mWeapon != nullptr )
 		{
 			// If amount of time since character last moved is less than the minimum delay for shooting after coming to a halt, return
 			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 10 ))
