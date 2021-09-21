@@ -114,6 +114,7 @@ function onDeath( cNpc, iCorpse )
 						break;
 					case 3: // Wand
 						itemType = 2;
+						break;
 					case 4: // Ring
 						itemType = 3;
 						break;
@@ -157,6 +158,7 @@ function onCreateDFN( objMade, objType )
 					break;
 				case 3: // Wand
 					itemType = 2;
+					break;
 				case 4: // Ring
 					itemType = 3;
 					break;

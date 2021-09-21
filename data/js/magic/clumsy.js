@@ -348,7 +348,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	if( sourceChar.npc )
 		ourTarg.SoundEffect( mSpell.soundEffect, true );
 	else
-		sourceChar.SoundEffect( spellNum, true );
+		sourceChar.SoundEffect( mSpell.soundEffect, true );
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 

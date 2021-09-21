@@ -291,7 +291,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	else if( !mChar.npc && spellType == 0 )
 		deleteReagents( mChar, mSpell );
 
-	sourceChar.SoundEffect( spellNum, true );
+	sourceChar.SoundEffect( mSpell.soundEffect, true );
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 
