@@ -825,6 +825,7 @@ void CMapHandler::Save( void )
 			writeDestination.close();
 		}
 	}
+	Console << "\b\b\b" << (UI32)(100) << "%";
 	houseDestination.close();
 
 	filename = basePath + "overflow.wsc";

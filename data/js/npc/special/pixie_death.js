@@ -1,8 +1,6 @@
 // Random spells cast by pixies upon death
 function onDeathBlow( pKilled, pKiller )
 {
-	pKiller.TextMessage( "I am the killer!" );
-	pKilled.TextMessage( "I was killed!" );
 	if( CastRandomSpell( pKilled ))
 		return true;
 	else

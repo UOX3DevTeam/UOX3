@@ -246,6 +246,9 @@ JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case TIMER_MURDERRATE:		*vp = INT_TO_JSVAL( tCHAR_MURDERRATE );		break;
 			case TIMER_PEACETIMER:		*vp = INT_TO_JSVAL( tCHAR_PEACETIMER );		break;
 			case TIMER_FLYINGTOGGLE:	*vp = INT_TO_JSVAL( tCHAR_FLYINGTOGGLE );	break;
+			case TIMER_FIREFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_FIREFIELDTICK );	break;
+			case TIMER_POISONFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_POISONFIELDTICK );break;
+			case TIMER_PARAFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_PARAFIELDTICK );	break;
 			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( tNPC_MOVETIME );		break;
 			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( tNPC_SPATIMER );		break;
 			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( tNPC_SUMMONTIME );		break;
