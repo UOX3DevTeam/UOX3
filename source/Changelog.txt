@@ -1,3 +1,16 @@
+22/09/2021 - Xuri
+	Fixed bug where player might get stuck as frozen in ghost form and unable to move if dying in the midst of casting a spell
+	Fixed bug where reagents could not be dropped directly from ground and into newbie reagents bag, as the bag didn't have the proper setup for a container. Now inherits its setup from a regular bag (dfndata/items/magic/reagents.dfn)
+	Fixed two broken timer references in JS: Timer.SPELLRECOVERYTIME and Timer.LOYALTYTIME
+	Fixed a bug where players could gain points in Evaluating Intelligence skill by targeting themselves (js/skills/evaluateintel.js)
+	Updated Evaluating Intelligence skill to show more detailed information about targets (js/skills/evaluateintel.js)
+	Fixed some issues with sound effects in JS based spells
+	UOX3 console should now show 100% when done saving, regardless of the amount of data it has to save
+	Earthquake spell can no longer harm invulnerable characters
+	Fixed issue where NPC would evade instead of change to a different nearby target if unable to pathfind to current target
+	Damage dealt by Fire Field spell is now determined by BASEDMG tag (defaults to 2, if resisted, half of that) in spells.dfn
+	The rate at which the effects of field spells (Fire Field, Poison Field and Paralyze Field) are applied is now determined via the DAMAGEDELAY tag in spells.dfn, which defaults to 1.0 seconds
+
 21/09/2021 - Xuri (0.99.4x+)
 	Updated entry for Wisp in creatures.dfn to mark them as animals to stop monsters from attacking them (and dying)
 	Removed some debug messages from pixie_death.js

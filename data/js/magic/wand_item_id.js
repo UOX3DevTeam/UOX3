@@ -117,7 +117,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
     mChar.spellCast = -1;
 
     // Play SFX associated with spell
-    mChar.SoundEffect( spellNum, true );
+    mChar.SoundEffect( mSpell.soundEffect, true );
 
     // Set a special variable we can check for in skill script to avoid skill checks
     mSock.tempInt2 = 42;

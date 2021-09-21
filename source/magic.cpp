@@ -190,6 +190,9 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, 
 				i->SetDir( 29 );
 				i->SetMovable( 2 );
 
+				// Don't save these temporary effect items!
+				i->ShouldSave( false );
+
 				CMagicStat temp = Magic->spells[spellNum].StaticEffect();
 				if( temp.Effect() != INVALIDID )
 					Effects->PlayStaticAnimation( i, temp.Effect(), temp.Speed(), temp.Loop() );
@@ -1740,10 +1743,10 @@ bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
-	// Check if target is in a safe zone
-	if( target->GetRegion()->IsSafeZone() )
+	// Check if target is in a safe zone, or invulnerable
+	if( target->GetRegion()->IsSafeZone() || target->IsInvulnerable() )
 	{
-		// Target is in a safe zone, ignore spell effect
+		// Target is in a safe zone, or invulnerable ignore spell effect
 		return;
 	}
 
@@ -2900,8 +2903,7 @@ void cMagic::CheckFieldEffects( CChar& mChar )
 			continue;
 		if( inItemList->GetX() == mChar.GetX() && inItemList->GetY() == mChar.GetY() )
 		{
-			if( HandleFieldEffects( (&mChar), inItemList, inItemList->GetID() ) )
-				break;
+			HandleFieldEffects( (&mChar), inItemList, inItemList->GetID() );
 		}
 	}
 	regItems->Pop();
@@ -2920,12 +2922,19 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 		caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
 		if( ValidateObject( caster) )
 		{
-			if( RandomNum( 0, 2 ) == 1 )
+			if( mChar->GetTimer( tCHAR_FIREFIELDTICK ) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
+				// Set a timer, so another field spell cannot "tick" for this character for a short while
+				mChar->SetTimer( tCHAR_FIREFIELDTICK, BuildTimeValue( static_cast<R32>( Magic->spells[28].DamageDelay() )));
+
+				// Fetch spell damage from Fire Field spell
+				auto spellDamage = Magic->spells[28].BaseDmg();
+
+				// Apply magic damage
 				if( !CheckResist( nullptr, mChar, 4 ) )
-					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 50, caster, HEAT );
+					MagicDamage( mChar, spellDamage, caster, HEAT );
 				else
-					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, caster, HEAT );
+					MagicDamage( mChar, spellDamage / 2, caster, HEAT );
 				Effects->PlaySound( mChar, 520 );
 			}
 		}
@@ -2939,8 +2948,11 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 				criminal( caster );
 		}
-		if( RandomNum( 0, 2 ) == 1 ) // 33% chance that poison effect from poison field is applied
+		if( mChar->GetTimer( tCHAR_POISONFIELDTICK ) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
+			// Set a timer, so another field spell cannot "tick" for this character for a short while
+			mChar->SetTimer( tCHAR_POISONFIELDTICK, BuildTimeValue( static_cast<R32>( Magic->spells[39].DamageDelay() )));
+
 			// Calculate strength of poison, but disregard range check
 			UI08 poisonStrength = 1;
 
@@ -2964,10 +2976,16 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 				criminal( caster );
 		}
-		if( RandomNum( 0, 2 ) == 1 && !CheckResist( nullptr, mChar, 6 ) )
+		if( mChar->GetTimer( tCHAR_PARAFIELDTICK ) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			Effects->tempeffect( caster, mChar, 1, 0, 0, 0 );
-			Effects->PlaySound( mChar, 520 );
+			// Set a timer, so another field spell cannot "tick" for this character for a short while
+			mChar->SetTimer( tCHAR_PARAFIELDTICK, BuildTimeValue( static_cast<R32>( Magic->spells[39].DamageDelay() )));
+
+			if( !CheckResist( nullptr, mChar, 6 ) )
+			{
+				Effects->tempeffect( caster, mChar, 1, 0, 0, 0 );
+				Effects->PlaySound( mChar, 520 );
+			}
 		}
 		return true;
 	}
