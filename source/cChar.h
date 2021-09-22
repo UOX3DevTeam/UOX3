@@ -522,7 +522,7 @@ public:
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
 	virtual void	SendToSocket( CSocket *s, bool drawGamePlayer = false ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );

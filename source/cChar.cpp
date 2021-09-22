@@ -2653,7 +2653,7 @@ void CChar::ExposeToView( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends update to all those in range
 //o-----------------------------------------------------------------------------------------------o
-void CChar::Update( CSocket *mSock, bool drawGamePlayer )
+void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 {
 	if( mSock != nullptr )
 		SendToSocket( mSock, drawGamePlayer );
@@ -2666,8 +2666,10 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer )
 				continue;
 
 			// Send one extra update to self to fix potential issues with world changing
-			if( (*cIter)->CurrcharObj() == this )
+			if( (*cIter)->CurrcharObj() == this && sendToSelf )
 				SendToSocket( (*cIter), drawGamePlayer );
+			else if( (*cIter)->CurrcharObj() == this && !sendToSelf  )
+				continue;
 
 			SendToSocket( (*cIter), drawGamePlayer );
 		}
