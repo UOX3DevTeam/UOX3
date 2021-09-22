@@ -325,6 +325,7 @@
 600=magic/clumsy.js
 601=magic/level1targ.js
 602=magic/createfood.js
+700=magic/wand_item_id.js
 }
 
 [SKILLUSE_SCRIPTS]
