@@ -643,7 +643,9 @@ function onTimer( fishingTool, timerID )
 					let rndNum = RandomNumber( 1, 100 );
 					if( rndNum <= 5 ) // 5% chance of fishing sea serpent on failure
 					{
-						socket.SysMessage( "You pull out a sea serpent!" );
+						// Spawn Sea Serpent
+						socket.SysMessage( GetDictionaryEntry( 9339, socket.language )); // You pull out a sea serpent!
+						var nSpawned = SpawnNPC( "seaserpent", targX, targY, targZ, mChar.worldnumber, mChar.instanceID );
 					}
 					else
 					{
