@@ -4072,6 +4072,11 @@
 9074=Tu as été retiré du groupe.
 9075=Un joueur a été retiré de votre groupe.
 9076=%s a rejoint la partie.
+9077=Il semble assez intelligent pour se souvenir des nouvelles.  Demande-lui ce qu'il en est.
+9078=Il a l'air plus intelligent qu'une pierre, mais plus bête qu'un morceau de bois.
+9079=Cette personne pourrait probablement calculer le coût de ce que vous lui achetez.
+9080=Hmm, cette personne a l'air vraiment stupide.
+9081=Cet être est à %d de force mentale.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

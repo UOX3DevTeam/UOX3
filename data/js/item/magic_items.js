@@ -165,8 +165,6 @@ function onCreateDFN( objMade, objType )
 			}
 		}
 
-		Console.Print( "itemType: " + itemType + "\n" );
-
 		// Actually create the magic loot, and place it in the target Container
 		var magicItem = GenerateMagicItem( itemType, objMade );
 
