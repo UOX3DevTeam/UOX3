@@ -2256,7 +2256,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o-----------------------------------------------------------------------------------------------o
-void CItem::Update( CSocket *mSock, bool drawGamePlayer )
+void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 {
 	if( GetType() == IT_TRADEWINDOW )
 		return;

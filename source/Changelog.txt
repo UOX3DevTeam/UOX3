@@ -13,6 +13,7 @@
 	Added missing reference to wand_item_id.js in jse_fileassociations.scp
 	Removed debug message from magic item generation script
 	Fixed an issue with fishing script that prevented fishing up random sea serpents
+	Adjusted how updates are sent to clients when TurnToward JS Method is used, to prevent an issue where animations triggered immediately after would not play properly in the client
 
 21/09/2021 - Xuri (0.99.4x+)
 	Updated entry for Wisp in creatures.dfn to mark them as animals to stop monsters from attacking them (and dying)

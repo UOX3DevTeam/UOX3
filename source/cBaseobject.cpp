@@ -900,10 +900,11 @@ UI08 CBaseObject::GetDir( void ) const
 {
 	return dir;
 }
-void CBaseObject::SetDir( UI08 newDir )
+void CBaseObject::SetDir( UI08 newDir, bool sendUpdate )
 {
 	dir = newDir;
-	Dirty( UT_UPDATE );
+	if( sendUpdate )
+		Dirty( UT_UPDATE );
 
 	if( CanBeObjType( OT_ITEM ))
 		(static_cast<CItem *>(this))->UpdateRegion();
