@@ -3117,10 +3117,26 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	// Just don't do anything if NewDir eq OldDir
 
-	UI08 NewDir = Movement->Direction( myChar, x, y );
+	UI08 newDir = Movement->Direction( myChar, x, y );
 
-	if( NewDir != myChar->GetDir() )
-		myChar->SetDir( NewDir );
+	if( newDir != myChar->GetDir() )
+	{
+		CSocket *mySock = myChar->GetSocket();
+		if( mySock != nullptr )
+		{
+			// Update direction, but don't mark character as "dirty" to add them to update queue - we want to send the update straight away
+			myChar->SetDir( newDir, false );
+			CPDrawGamePlayer gpToSend( (*myChar) );
+			myChar->GetSocket()->Send( &gpToSend );
+			myChar->Update( nullptr, false, false );
+		}
+		else
+		{
+			// NPCs have no socket, treat slightly different!
+			myChar->SetDir( newDir, false );
+			myChar->Update( myChar->GetSocket(), true );
+		}
+	}
 
 	return JS_TRUE;
 }

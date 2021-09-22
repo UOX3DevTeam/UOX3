@@ -249,7 +249,7 @@ function FishingWithNet( socket, mChar, fishingNet, targX, targY, targZ )
 
 	// Turn player towards targeted location, and play the "cast out" animation
 	mChar.TurnToward( targX, targY );
-	mChar.DoAction( 0x0b );
+	mChar.DoAction( 0x00, 0x03 );
 
 	DoMovingEffect( mChar.x, mChar.y, mChar.z + 5, targX, targY, targZ + 1, fishingNet.id, 0x01, 0x00, false );
 	DoStaticEffect( targX, targY, targZ, 0x352D, 0x3, 0x10, false );
@@ -279,11 +279,10 @@ function FishingWithPole( socket, mChar, fishingPole, targX, targY, targZ )
 		mChar.SysMessage( GetDictionaryEntry( 845, socket.language )); // You are too tired to fish.
 		return;
 	}
-	mChar.stamina -= fishingStaminaLoss
 
 	// Turn player towards targeted location, and play the "cast out" animation
 	mChar.TurnToward( targX, targY );
-	mChar.DoAction( 0x0b );
+	mChar.DoAction( 0x00, 0x03 );
 
 	// Store the targeted location in socket variables
 	socket.clickX = targX;
@@ -306,6 +305,7 @@ function FishingWithPole( socket, mChar, fishingPole, targX, targY, targZ )
 
 	// mChar.StartTimer( 1000, 3, true );
 	fishingPole.StartTimer( 1000, 3, true );
+	mChar.stamina -= fishingStaminaLoss
 }
 
 function CheckDistance( socket, mChar, maxDistance )
@@ -643,7 +643,9 @@ function onTimer( fishingTool, timerID )
 					let rndNum = RandomNumber( 1, 100 );
 					if( rndNum <= 5 ) // 5% chance of fishing sea serpent on failure
 					{
-						socket.SysMessage( "You pull out a sea serpent!" );
+						// Spawn Sea Serpent
+						socket.SysMessage( GetDictionaryEntry( 9339, socket.language )); // You pull out a sea serpent!
+						var nSpawned = SpawnNPC( "seaserpent", targX, targY, targZ, mChar.worldnumber, mChar.instanceID );
 					}
 					else
 					{
