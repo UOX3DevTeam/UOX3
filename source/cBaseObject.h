@@ -209,7 +209,7 @@ public:
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
 
-	void					SetDir( UI08 newDir );
+	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
 
 	void					SetVisible( VisibleTypes newValue );
@@ -256,7 +256,7 @@ public:
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false ) = 0;
+	virtual void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) = 0;
 	virtual void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
 	virtual void			Dirty( UpdateTypes updateType );
 	void					RemoveFromRefreshQueue( void );
