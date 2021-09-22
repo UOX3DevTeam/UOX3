@@ -12,6 +12,7 @@
 	The rate at which the effects of field spells (Fire Field, Poison Field and Paralyze Field) are applied is now determined via the DAMAGEDELAY tag in spells.dfn, which defaults to 1.0 seconds
 	Added missing reference to wand_item_id.js in jse_fileassociations.scp
 	Removed debug message from magic item generation script
+	Fixed an issue with fishing script that prevented fishing up random sea serpents
 
 21/09/2021 - Xuri (0.99.4x+)
 	Updated entry for Wisp in creatures.dfn to mark them as animals to stop monsters from attacking them (and dying)
