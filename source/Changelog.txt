@@ -5,6 +5,7 @@
 		NETTRAFFICTIMEBAN=30 		// Duration (in minutes) of temporary ban for exceeding these limits
 	Fixed an issue that prevented GMs from using CSTATS and TWEAK buttons in 'wholist
 	Updated documentation with most recent changes to UOX.INI settings
+	Increased MAXBUFFER size for socket operations from 2560 to 4096
 	Minor code cleanup
 
 22/09/2021 - Xuri
