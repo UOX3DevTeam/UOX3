@@ -1479,6 +1479,7 @@ void CWorldMain::CheckAutoTimers( void )
 					if( tSock->BytesSent() > serverData->MaxClientBytesOut() )
 					{
 						// This is data sent from server, so should be more lenient before a kick (though could still be initiated by player somehow)
+						tSock->sysmessage( Dictionary->GetEntry( 9082, tSock->Language() )); // Excessive data usage detected! Sending too many requests to the server in a short amount of time will get you banned.
 						tSock->BytesSentWarning( tSock->BytesSentWarning() + 1 );
 						if( tSock->BytesSentWarning() > 2 )
 						{
