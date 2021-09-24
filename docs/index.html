@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 20. September, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4x</small></p>
+	<p style="margin:0"><small>Last Updated: 24. September, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4x+</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -58,6 +58,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>September 24th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with latest additions and changes (unicode messages, context menus, system message hue, client network budget, stats affect skills, resource areas, archery hit bonus, archery shoot delay)</li>
+						</ul>
 						<h4>August 27th, 2021</h4>
 						<ul>
 							<li>Added <a href="#characterPrivs">Character Priv Flags</a> feature info with details on character privilege flags, how they work, and how to set/modify them</li>
@@ -800,7 +804,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SERVERLANGUAGE</span><strong>=0</strong><br>
-							Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 4 - French, 5 - Portuguese, 6 - Italian, 7 - Czech</p>
+							Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 4 - French, 5 - Portuguese, 6 - Italian, 7 - Czech, 8 - Polish</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">NETRCVTIMEOUT</span><strong>=0</strong><br>
@@ -812,7 +816,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">NETRETRYCOUNT</span><strong>=0</strong><br>
-							The number of times a network recieve will be attempted before it throws an error.</p>
+							The number of times a network receive will be attempted before it throws an error.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">CONSOLELOG</span><strong>=1</strong><br>
@@ -873,6 +877,30 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">JSENGINESIZE</span><strong>=256</strong><br>
 							gcMaxBytes limited in MB per JS Runtime. Must be between 16 and 4095! Essentially defines how much memory JS engine should be allowed to allocate before last-ditch GC kicks in.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">USEUNICODEMESSAGES</span><strong>=1</strong><br>
+							If 1, UOX3 will send messages/text to client in Unicode mode, which changes the font used to display the text, but also ensures that characters with accents used in languages like Czech, French, Spanish, etc are displayed properly.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">CONTEXTMENUS</span><strong>=1</strong><br>
+							If 1, context menus will be displayed when clicking on/hovering over dynamic objects. If 0, such context menus are disabled.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SYSMESSAGECOLOUR</span><strong>=72</strong><br>
+							Default colour of system messages sent to players.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXCLIENTBYTESIN</span><strong>=25000</strong><br>
+							Network budget for incoming traffic from a given connected client, usage beyond which they will receive warnings for, or temporary bans.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXCLIENTBYTESOUT</span><strong>=100000</strong><br>
+							Network budget for outgoing traffic to a given connected client, usage beyond which they will receive warnings for, or temporary bans.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NETTRAFFICTIMEBAN</span><strong>=30</strong><br>
+							Duration in minutes that an account will be banned after exceeding network budget three times in same session.</p>
 						</div>
 					</div>
 
@@ -949,6 +977,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">STATCAP</span><strong>=225</strong><br>
 							Total number of statpoints available for each player.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STATSAFFECTSKILLCHECKS</span><strong>=0</strong><br>
+							If 1, stats can provide bonuses to skill checks based on the weighting for those stats as setup in dfndata/skills/skills.dfn.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">EXTENDEDSTARTINGSTATS</span><strong>=1</strong><br>
@@ -1482,16 +1514,16 @@ packitem=0x0f8d,30
 							Type of mining check performed - 0 = anywhere, 1 = mountains/cavefloors</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">RESOURCEAREASIZE</span><strong>=8</strong><br>
+							Affects the number of resource-areas the world is split into. A value of 8 splits the world into areas sized 8x8 tiles</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">OREPERAREA</span><strong>=10</strong><br>
 							Maximum number of ores in a given resource area.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ORERESPAWNTIMER</span><strong>=600</strong><br>
 							Amount of time it takes for 1 single ore to respawn in a resource area.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">ORERESPAWNAREA</span><strong>=10</strong><br>
-							Number of ore-areas to split the world into.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">LOGSPERAREA</span><strong>=3</strong><br>
@@ -1502,20 +1534,12 @@ packitem=0x0f8d,30
 							Amount of time it takes for 1 single log to respawn in a resource area.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">LOGSRESPAWNAREA</span><strong>=10</strong><br>
-							Number of log-areas to split the world into.</p>
-						</div>
-						<div class="settingsDiv">
 							<p><span class="hl">FISHPERAREA</span><strong>=3</strong><br>
 							Maximum number of fish in a given resource area.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">FISHRESPAWNTIMER</span><strong>=600</strong><br>
 							Amount of time it takes for 1 single fish to respawn in a resource area.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">FISHRESPAWNAREA</span><strong>=10</strong><br>
-							Number of fish-areas to split the world into.</p>
 						</div>
 					</div>
 
@@ -1590,6 +1614,14 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">ATTACKSPEEDFROMSTAMINA</span><strong>=1</strong><br>
 							If 1, attack speed in combat is derived from stamina instead of dexterity.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ARCHERYHITBONUS</span><strong>=10</strong><br>
+							Bonus hit chance for Archery skill added to regular hit chance in combat. Defaults to 10%</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ARCHERYSHOOTDELAY</span><strong>=0.5</strong><br>
+							If 1, adds an extra delay between moving and being able to shoot with ranged weapons in combat (in addition to whatever delay is there due to speed of the ranged weapon)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SHOOTONANIMALBACK</span><strong>=0</strong><br>
