@@ -880,7 +880,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						SI32 nfds;
 						nfds = static_cast<int>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, nullptr, nullptr, &cwmWorldState->uoxtimeout ) > 0 )
-							mSock->Receive( 2560 );
+							mSock->Receive( MAXBUFFER );
 
 						Console << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID ) << myendl;
 						break;
@@ -1178,7 +1178,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 						FD_SET( mSock->CliSocket(), &all );
 						nfds = static_cast<UOXSOCKET>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, nullptr, nullptr, &cwmWorldState->uoxtimeout ) > 0 )
-							mSock->Receive( 2560 );
+							mSock->Receive( MAXBUFFER );
 						messageLoop << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID );
 						break;
 				}

@@ -124,7 +124,7 @@ const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 18;
-const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
+const UI16 MAXBUFFER	= 4096;	// Buffer Size (For socket operations)
 const UI08 MAXPOSTS		= 128;	// Maximum number of posts on a messageboard
 
 const SI08 ILLEGAL_Z	= -128;

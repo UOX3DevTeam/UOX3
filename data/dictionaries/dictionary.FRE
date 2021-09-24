@@ -4077,6 +4077,7 @@
 9079=Cette personne pourrait probablement calculer le coût de ce que vous lui achetez.
 9080=Hmm, cette personne a l'air vraiment stupide.
 9081=Cet être est à %d de force mentale.
+9082=Utilisation excessive des données détectée ! Si vous envoyez trop de requêtes au serveur dans un court laps de temps, vous serez banni.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !
