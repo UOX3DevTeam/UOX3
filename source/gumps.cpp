@@ -425,30 +425,16 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
 	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 5054, 190, 300));
 	UI32 tabNumber = 1;
-	if( m == 1 )
-	{
-		// Do the shard tab
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
-		szBuffer = "Objects";
-		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
-		toSend.addText( szBuffer );
-		// Do the server tab
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
-		toSend.addCommand( strutil::format("text %u %u %u %u",132,yStart+46, 47, linenum++));
-		toSend.addText( "Settings" );
-	}
-	else
-	{
-		// Do the shard tab
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
-		szBuffer = "Objects";
-		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
-		toSend.addText( szBuffer );
-		// Do the server tab
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
-		toSend.addCommand(strutil::format( "text %u %u %u %u",132,yStart+46, 47, linenum++));
-		toSend.addText( "Settings" );
-	}
+
+	// Do the shard tab
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
+	szBuffer = "Objects";
+	toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
+	toSend.addText( szBuffer );
+	// Do the server tab
+	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
+	toSend.addCommand( strutil::format("text %u %u %u %u",132,yStart+46, 47, linenum++));
+	toSend.addText( "Settings" );
 
 	// Need a seperator
 	toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u",xStart+22,yWidth-50,165,5,0x2393));

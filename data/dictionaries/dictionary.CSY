@@ -3913,6 +3913,7 @@
 9079=Ten člověk by nejspíš dokázal spočítat cenu toho, co si u něj koupíš.
 9080=Hmm, ta osoba vypadá opravdu hloupě.
 9081=Tato bytost má %d procent duševní síly.
+9082=Detekováno nadměrné využití dat! Odeslání příliš mnoha požadavků na server v krátkém časovém úseku vám bude zakázáno.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

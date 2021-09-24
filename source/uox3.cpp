@@ -1373,6 +1373,7 @@ void CWorldMain::CheckAutoTimers( void )
 	static UI32 accountFlush			= 0;
 	bool doWeather						= false;
 	bool doPetOfflineCheck				= false;
+	CServerData *serverData				= ServerData();
 
 	// modify this stuff to take into account more variables
 	if( accountFlush <= GetUICurrentTime() || GetOverflow() )
@@ -1408,7 +1409,7 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 			}
 		}
-		accountFlush = BuildTimeValue( (R32)ServerData()->AccountFlushTimer() );
+		accountFlush = BuildTimeValue( (R32)serverData->AccountFlushTimer() );
 	}
 	//Network->On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
 					// PushConn and PopConn lock and unlock as well (yes, bad)
@@ -1440,7 +1441,7 @@ void CWorldMain::CheckAutoTimers( void )
 					tSock->WasIdleWarned( true );
 				}
 
-				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+				if( serverData->KickOnAssistantSilence() )
 				{
 					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && static_cast<UI32>(tSock->NegotiateTimeout()) <= GetUICurrentTime() )
 					{
@@ -1454,6 +1455,52 @@ void CWorldMain::CheckAutoTimers( void )
 							Network->Disconnect( tSock );
 						}
 					}
+				}
+
+				// Check player's network traffic usage versus caps set in ini
+				if( tSock->LoginComplete() && tSock->AcctNo() != 0 && tSock->GetTimer( tPC_TRAFFICWARDEN ) <= GetUICurrentTime() )
+				{
+					if( !ValidateObject( tSock->CurrcharObj() ) || tSock->CurrcharObj()->IsGM() )
+						continue;
+
+					bool tempTimeBan = false;
+					if( tSock->BytesReceived() > serverData->MaxClientBytesIn() )
+					{
+						// Player has exceeded the cap! Send one warning - next time kick player
+						tSock->sysmessage( Dictionary->GetEntry( 9082, tSock->Language() )); // Excessive data usage detected! Sending too many requests to the server in a short amount of time will get you banned.
+						tSock->BytesReceivedWarning( tSock->BytesReceivedWarning() + 1 );
+						if( tSock->BytesReceivedWarning() > 2 )
+						{
+							// If it happens 3 times in the same session, give player a temporary ban
+							tempTimeBan = true;
+						}
+					}
+
+					if( tSock->BytesSent() > serverData->MaxClientBytesOut() )
+					{
+						// This is data sent from server, so should be more lenient before a kick (though could still be initiated by player somehow)
+						tSock->BytesSentWarning( tSock->BytesSentWarning() + 1 );
+						if( tSock->BytesSentWarning() > 2 )
+						{
+							// If it happens 3 times or more in the same session, give player a temporary ban
+							tempTimeBan = true;
+						}
+					}
+
+					if( tempTimeBan )
+					{
+						// Give player a 30 minute temp ban
+						CAccountBlock& myAccount = Accounts->GetAccountByID( tSock->GetAccount().wAccountIndex );
+						myAccount.wFlags.set( AB_FLAGS_BANNED, true );
+						myAccount.wTimeBan = GetMinutesSinceEpoch() + serverData->NetTrafficTimeban();
+						Network->Disconnect( tSock );
+						continue;
+					}
+
+					// Reset amount of bytes received and sent, and restart timer
+					tSock->BytesReceived( 0 );
+					tSock->BytesSent( 0 );
+					tSock->SetTimer( tPC_TRAFFICWARDEN, BuildTimeValue( static_cast<R32>( 10 )) );
 				}
 			}
 			Network->popConn();
@@ -1502,7 +1549,7 @@ void CWorldMain::CheckAutoTimers( void )
 		JailSys->PeriodicCheck();
 	}
 
-	if( nextCheckSpawnRegions <= GetUICurrentTime() && ServerData()->CheckSpawnRegionSpeed() != -1 )//Regionspawns
+	if( nextCheckSpawnRegions <= GetUICurrentTime() && serverData->CheckSpawnRegionSpeed() != -1 )//Regionspawns
 	{
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
@@ -1518,12 +1565,12 @@ void CWorldMain::CheckAutoTimers( void )
 			}
 			++spIter;
 		}
-		nextCheckSpawnRegions = BuildTimeValue( (R32)ServerData()->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
+		nextCheckSpawnRegions = BuildTimeValue( (R32)serverData->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
 	}
 
 	HTMLTemplates->Poll( ETT_ALLTEMPLATES );
 
-	const UI32 saveinterval = ServerData()->ServerSavesTimerStatus();
+	const UI32 saveinterval = serverData->ServerSavesTimerStatus();
 	if( saveinterval != 0 )
 	{
 		time_t oldTime = GetOldTime();
@@ -1584,26 +1631,26 @@ void CWorldMain::CheckAutoTimers( void )
 	//Time functions
 	if( GetUOTickCount() <= GetUICurrentTime() || ( GetOverflow() ) )
 	{
-		UI08 oldHour = ServerData()->ServerTimeHours();
-		if( ServerData()->incMinute() )
+		UI08 oldHour = serverData->ServerTimeHours();
+		if( serverData->incMinute() )
 			Weather->NewDay();
-		if( oldHour != ServerData()->ServerTimeHours() )
+		if( oldHour != serverData->ServerTimeHours() )
 			Weather->NewHour();
 
-		SetUOTickCount( BuildTimeValue( ServerData()->ServerSecondsPerUOMinute() ) );
+		SetUOTickCount( BuildTimeValue( serverData->ServerSecondsPerUOMinute() ) );
 	}
 
 	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() || GetOverflow() )
 	{
 		doWorldLight();  //Changes lighting, if it is currently time to.
 		Weather->DoStuff();	// updates the weather types
-		SetTimer( tWORLD_LIGHTTIME, ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );
+		SetTimer( tWORLD_LIGHTTIME, serverData->BuildSystemTimeValue( tSERVER_WEATHER ) );
 		doWeather = true;
 	}
 
 	if( GetTimer( tWORLD_PETOFFLINECHECK ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_PETOFFLINECHECK, ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
+		SetTimer( tWORLD_PETOFFLINECHECK, serverData->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
 		doPetOfflineCheck = true;
 	}
 
@@ -1652,24 +1699,24 @@ void CWorldMain::CheckAutoTimers( void )
 	bool setNPCFlags = false, checkItems = false, checkAI = false, doRestock = false;
 	if( nextSetNPCFlagTime <= GetUICurrentTime() || GetOverflow() )
 	{
-		nextSetNPCFlagTime = ServerData()->BuildSystemTimeValue( tSERVER_NPCFLAGUPDATETIMER );	// Slow down lag "needed" for setting flags, they are set often enough ;-)
+		nextSetNPCFlagTime = serverData->BuildSystemTimeValue( tSERVER_NPCFLAGUPDATETIMER );	// Slow down lag "needed" for setting flags, they are set often enough ;-)
 		setNPCFlags = true;
 	}
 	if( nextCheckItems <= GetUICurrentTime() || GetOverflow() )
 	{
-		nextCheckItems = BuildTimeValue( static_cast<R32>(ServerData()->CheckItemsSpeed()) );
-		nextDecayItems = ServerData()->BuildSystemTimeValue( tSERVER_DECAY );
-		nextDecayItemsInHouses = ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE );
+		nextCheckItems = BuildTimeValue( static_cast<R32>(serverData->CheckItemsSpeed()) );
+		nextDecayItems = serverData->BuildSystemTimeValue( tSERVER_DECAY );
+		nextDecayItemsInHouses = serverData->BuildSystemTimeValue( tSERVER_DECAYINHOUSE );
 		checkItems = true;
 	}
 	if( GetTimer( tWORLD_NEXTNPCAI ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)ServerData()->CheckNpcAISpeed() ) );
+		SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)serverData->CheckNpcAISpeed() ) );
 		checkAI = true;
 	}
 	if( GetTimer( tWORLD_SHOPRESTOCK ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_SHOPRESTOCK, ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
+		SetTimer( tWORLD_SHOPRESTOCK, serverData->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
 		doRestock = true;
 	}
 

@@ -1315,7 +1315,10 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			break;
 		}
 		case 15: // Reactive Armor Spell
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source != nullptr )
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			else
+				toAdd->ExpireTime( BuildTimeValue( 6.0f ));
 			toAdd->Dispellable( true );
 			break;
 		case 16: // Explosion potion messages (JS)
