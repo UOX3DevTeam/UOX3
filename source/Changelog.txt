@@ -1,3 +1,13 @@
+24/09/2021 - Xuri
+	Added new system that lets shard admins assign a "network" budget to connected clients, which determines the maximum amount of bytes clients are allowed to send to/receive from server over a period of ten seconds. If a client exceeds these limits three times in the same connected session, they'll receive a temporary ban and get kicked from the server. The following new UOX.INI settings under the [system] section can be used to control this feature:
+		MAXCLIENTBYTESIN=25000		// Max bytes client can send to server over 10 seconds
+		MAXCLIENTBYTESOUT=100000 	// Max bytes client can receive from server over 10 seconds
+		NETTRAFFICTIMEBAN=30 		// Duration (in minutes) of temporary ban for exceeding these limits
+	Fixed an issue that prevented GMs from using CSTATS and TWEAK buttons in 'wholist
+	Updated documentation with most recent changes to UOX.INI settings
+	Increased MAXBUFFER size for socket operations from 2560 to 4096
+	Minor code cleanup
+
 22/09/2021 - Xuri
 	Fixed bug where player might get stuck as frozen in ghost form and unable to move if dying in the midst of casting a spell
 	Fixed bug where reagents could not be dropped directly from ground and into newbie reagents bag, as the bag didn't have the proper setup for a container. Now inherits its setup from a regular bag (dfndata/items/magic/reagents.dfn)

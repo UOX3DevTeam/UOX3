@@ -87,7 +87,7 @@ void cCommands::CommandString( std::string newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Command( CSocket *s, CChar *mChar, std::string text )
+//|	Function	-	void Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles commands sent from client
 //o-----------------------------------------------------------------------------------------------o
@@ -95,7 +95,7 @@ void cCommands::CommandString( std::string newValue )
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
 //o-----------------------------------------------------------------------------------------------o
-void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
+void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
 {
 	CommandString( strutil::simplify( text ));
 	if( NumArguments() < 1 )
@@ -111,11 +111,18 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 	{
 		if( toFind->second.isEnabled )
 		{
-			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			bool plClearance = false;
+			if( checkSocketAccess )
+				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			else
+				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( command, mChar, nullptr, "Insufficient clearance" );
+				if( checkSocketAccess )
+					Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+				else
+					Log( command, mChar, nullptr, "Insufficient clearance" );
 				s->sysmessage( 337 );
 				return;
 			}
@@ -127,7 +134,10 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
-			Log( command, mChar, nullptr, "Cleared" );
+			if( checkSocketAccess )
+				Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+			else
+				Log( command, mChar, nullptr, "Cleared" );
 			return;
 		}
 	}
@@ -135,14 +145,24 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 	TARGETMAP_ITERATOR findTarg = TargetMap.find( command );
 	if( findTarg != TargetMap.end() )
 	{
-		bool plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+		bool plClearance = false;
+		if( checkSocketAccess )
+			plClearance = ( s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+		else
+			plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 		if( !plClearance )
 		{
-			Log( command, mChar, nullptr, "Insufficient clearance" );
+			if( checkSocketAccess )
+				Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+			else
+				Log( command, mChar, nullptr, "Insufficient clearance" );
 			s->sysmessage( 337 );
 			return;
 		}
-		Log( command, mChar, nullptr, "Cleared" );
+		if( checkSocketAccess )
+			Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+		else
+			Log( command, mChar, nullptr, "Cleared" );
 		switch( findTarg->second.cmdType )
 		{
 			case CMD_TARGET:
@@ -209,15 +229,25 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text )
 		}
 		else
 		{
-			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			bool plClearance = false;
+			if( checkSocketAccess )
+				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			else
+				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( command, mChar, nullptr, "Insufficient clearance" );
+				if( checkSocketAccess )
+					Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+				else
+					Log( command, mChar, nullptr, "Insufficient clearance" );
 				s->sysmessage( 337 );
 				return;
 			}
-			Log( command, mChar, nullptr, "Cleared" );
+			if( checkSocketAccess )
+				Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+			else
+				Log( command, mChar, nullptr, "Cleared" );
 
 			switch( toFind->second.cmdType )
 			{

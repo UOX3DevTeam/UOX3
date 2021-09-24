@@ -262,7 +262,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
 			// Trigger scripted command
-			Commands->Command( toSendTo, targetChar, "cstats" );
+			Commands->Command( toSendTo, targetChar, "cstats", true );
 			break;
 		case 207:	// remote tweak
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
@@ -272,7 +272,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
 			// Trigger scripted command
-			Commands->Command( toSendTo, targetChar, "tweak" );
+			Commands->Command( toSendTo, targetChar, "tweak", true );
 			break;
 		default:
 			Console.error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );

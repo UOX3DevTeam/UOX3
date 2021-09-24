@@ -195,6 +195,9 @@ private:
 	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
 	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
 	UI16		jsEngineSize;					// gcMaxBytes limit in MB per JS runtime
+	UI32		maxBytesIn;						// Max bytes that can be received from a client in a 10-second window before client is warned/kicked for excessive data use
+	UI32		maxBytesOut;					// Max bytes that can be sent to a client in a 10-second window before client is warned/kicked for excessive data use
+	UI32		trafficTimeban;					// Duration in minutes that player will be banned for if they exceed their network traffic budget
 	bool		useUnicodeMessages;				// Enable or disable sending messages originating on server in Unicode format
 	UI16		sysMsgColour;					//	Default text colour for system messages displayed in bottom left corner of screen
 
@@ -930,6 +933,15 @@ public:
 
 	UI16			ServerLanguage( void ) const;
 	void			ServerLanguage( UI16 newVal );
+
+	UI32			MaxClientBytesIn( void ) const;
+	void			MaxClientBytesIn( UI32 newVal );
+
+	UI32			MaxClientBytesOut( void ) const;
+	void			MaxClientBytesOut( UI32 newVal );
+
+	UI32			NetTrafficTimeban( void ) const;
+	void			NetTrafficTimeban( UI32 newVal );
 
 	UI16			GetJSEngineSize( void ) const;
 	void			SetJSEngineSize( UI16 newVal );

@@ -57,6 +57,7 @@ enum cS_TID
 	tPC_FISHING,
 	tPC_MUTETIME,
 	tPC_TRACKINGDISPLAY,
+	tPC_TRAFFICWARDEN,
 	tPC_COUNT
 };
 
@@ -122,6 +123,8 @@ private:
 
 	UI32			bytesReceived;
 	UI32			bytesSent;
+	UI16			bytesRecvWarningCount;
+	UI16			bytesSentWarningCount;
 
 	bool			targetok;
 
@@ -350,7 +353,13 @@ public:
 	void			ReceivedVersion( bool value );
 
 	UI32			BytesSent( void ) const;
+	void			BytesSent( UI32 newValue );
 	UI32			BytesReceived( void ) const;
+	void			BytesReceived( UI32 newValue );
+	UI16			BytesReceivedWarning( void ) const;
+	void			BytesReceivedWarning( UI16 newValue );
+	UI16			BytesSentWarning( void ) const;
+	void			BytesSentWarning( UI16 newValue );
 
 	TIMERVAL		GetTimer( cS_TID timerID ) const;
 	void			SetTimer( cS_TID timerID, TIMERVAL value );

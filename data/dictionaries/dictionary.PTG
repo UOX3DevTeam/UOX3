@@ -3909,14 +3909,15 @@
 9075=Um jogador foi removido da sua festa.
 9076=%s aderiram à festa.
 9077=Ele parece suficientemente inteligente para se lembrar das notícias.  Pergunte-lhe sobre isso.
-9078= Parece mais esperto que uma pedra, mas mais burro que um pedaço de madeira.
-9079= Essa pessoa poderia provavelmente calcular o custo do que se compra a ela.
+9078=Parece mais esperto que uma pedra, mas mais burro que um pedaço de madeira.
+9079=Essa pessoa poderia provavelmente calcular o custo do que se compra a ela.
 9080=Hmm, essa pessoa tem um aspecto realmente idiota.
 9081=Este ser está a %d por cento da força mental.
+9082=Excessivo uso de dados detectado! O envio de demasiados pedidos para o servidor num curto espaço de tempo fará com que seja banido.
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
-9252= Recarga:
+9252=Recarga:
 9253=Cargas Máximas:
 9254=Livro de nome
 9255=Empty
