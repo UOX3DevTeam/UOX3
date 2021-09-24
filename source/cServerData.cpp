@@ -451,6 +451,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("AF_HUMANOIDHEALTHCHECKS", 288);
 	regINIValue("AF_SPEECHJOURNALCHECKS", 289);
 	regINIValue("ARCHERYSHOOTDELAY", 290);
+	regINIValue("MAXCLIENTBYTESIN", 291);
+	regINIValue("MAXCLIENTBYTESOUT", 292);
+	regINIValue("NETTRAFFICTIMEBAN", 293);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -494,6 +497,9 @@ void CServerData::ResetDefaults( void )
 	ServerNetRcvTimeout( 3 );
 	ServerNetSndTimeout( 3 );
 	ServerNetRetryCount( 3 );
+	MaxClientBytesIn( 25000 );
+	MaxClientBytesOut( 100000 );
+	NetTrafficTimeban( 30 );
 
 	ServerSecondsPerUOMinute( 5 );
 	ServerTimeDay( 0 );
@@ -3588,6 +3594,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "USEUNICODEMESSAGES=" << (UseUnicodeMessages()?1:0) << '\n';
 		ofsOutput << "CONTEXTMENUS=" << ( ServerContextMenus() ? 1 : 0 ) << '\n';
 		ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
+		ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<UI32>(MaxClientBytesIn()) << '\n';
+		ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>(MaxClientBytesOut()) << '\n';
+		ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>(NetTrafficTimeban()) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -4919,6 +4928,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 290:	// ARCHERYSHOOTDELAY
 			CombatArcheryShootDelay( std::stof(value) );
 			break;
+		case 291:	 // MAXCLIENTBYTESIN
+			MaxClientBytesIn( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 292:	 // MAXCLIENTBYTESOUT
+			MaxClientBytesOut( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 293:	 // NETTRAFFICTIMEBAN
+			NetTrafficTimeban( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
 		default:
 			rvalue = false;
 			break;
@@ -5148,6 +5166,54 @@ void CServerData::ServerLanguage( UI16 newVal )
 		serverLanguage = newVal;
 	else
 		serverLanguage = DL_DEFAULT;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 MaxClientBytesIn( void ) const
+//|					void MaxClientBytesIn( UI32 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets max incoming bytes received from a socket in each 10 second period
+//|					If amount exceeds this cap, client might receive a warning/get kicked
+//o-----------------------------------------------------------------------------------------------o
+UI32 CServerData::MaxClientBytesIn( void ) const
+{
+	return maxBytesIn;
+}
+void CServerData::MaxClientBytesIn( UI32 newVal )
+{
+	maxBytesIn = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 MaxClientBytesOut( void ) const
+//|					void MaxClientBytesOut( UI32 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets max outgoing bytes sent to a socket in each 10 second period
+//|					If amount exceeds this cap, client might receive a warning/get kicked
+//o-----------------------------------------------------------------------------------------------o
+UI32 CServerData::MaxClientBytesOut( void ) const
+{
+	return maxBytesOut;
+}
+void CServerData::MaxClientBytesOut( UI32 newVal )
+{
+	maxBytesOut = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 NetTrafficTimeban( void ) const
+//|					void NetTrafficTimeban( UI32 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets max amount of time a player will be temporarily banned for if they
+//|					exceed their alotted network traffic budget
+//o-----------------------------------------------------------------------------------------------o
+UI32 CServerData::NetTrafficTimeban( void ) const
+{
+	return trafficTimeban;
+}
+void CServerData::NetTrafficTimeban( UI32 newVal )
+{
+	trafficTimeban = newVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o

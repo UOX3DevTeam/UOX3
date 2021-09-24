@@ -4276,6 +4276,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 290:	// ARCHERYSHOOTDELAY
 				*rval = INT_TO_JSVAL( static_cast<R32>(cwmWorldState->ServerData()->CombatArcheryShootDelay()));
 				break;
+			case 291:	 // MAXCLIENTBYTESIN
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->MaxClientBytesIn()));
+				break;
+			case 292:	 // MAXCLIENTBYTESOUT
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->MaxClientBytesOut()));
+				break;
+			case 293:	 // NETTRAFFICTIMEBAN
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->NetTrafficTimeban()));
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;

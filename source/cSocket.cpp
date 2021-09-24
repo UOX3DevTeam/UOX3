@@ -621,7 +621,9 @@ const ClientTypes		DEFSOCK_CLITYPE					= CV_DEFAULT;
 const ClientVersions	DEFSOCK_CLIVERSHORT				= CVS_DEFAULT;
 const UI32				DEFSOCK_CLIENTVERSION			= calcserial( 4, 0, 0, 0 );
 const UI32				DEFSOCK_BYTESSENT				= 0;
+const UI32				DEFSOCK_BYTESSENTWARNINGCOUNT		= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
+const UI32				DEFSOCK_BYTESRECEIVEDWARNINGCOUNT	= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
 const bool				DEFSOCK_LOGINCOMPLETE			= false;
 
@@ -636,7 +638,8 @@ range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum )
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ),
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ),
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr ), 
+bytesRecvWarningCount( DEFSOCK_BYTESRECEIVEDWARNINGCOUNT ), bytesSentWarningCount( DEFSOCK_BYTESSENTWARNINGCOUNT )
 {
 	InternalReset();
 }
@@ -1026,7 +1029,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 				throw socket_error( "Socket receive error" );
 		}
 	}
-	while( x != 2560 && x != inlength );
+	while( x != MAXBUFFER && x != inlength );
 	if( doLog )
 		ReceiveLogging( nullptr );
 	bytesReceived += count;
@@ -2216,22 +2219,62 @@ void CSocket::ReceivedVersion( bool value )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 BytesSent( void ) const
+//|					void BytesSent( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets the amount of bytes sent to socket
+//|	Purpose		-	Gets/Sets the amount of bytes sent to socket
 //o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::BytesSent( void ) const
 {
 	return bytesSent;
 }
+void CSocket::BytesSent( UI32 newValue )
+{
+	bytesSent = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 BytesReceived( void ) const
+//|					void BytesReceived( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets the amount of bytes received from socket
+//|	Purpose		-	Gets/Sets the amount of bytes received from socket
 //o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::BytesReceived( void ) const
 {
 	return bytesReceived;
+}
+void CSocket::BytesReceived( UI32 newValue )
+{
+	bytesReceived = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 BytesReceivedWarning( void ) const
+//|					void BytesReceivedWarning( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets warning count for player having exceeded received bytes cap
+//o-----------------------------------------------------------------------------------------------o
+UI16 CSocket::BytesReceivedWarning( void ) const
+{
+	return bytesRecvWarningCount;
+}
+void CSocket::BytesReceivedWarning( UI16 newValue )
+{
+	bytesRecvWarningCount = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 BytesSentWarning( void ) const
+//|					void BytesSentWarning( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets warning count for player having exceeded sent bytes cap
+//o-----------------------------------------------------------------------------------------------o
+UI16 CSocket::BytesSentWarning( void ) const
+{
+	return bytesSentWarningCount;
+}
+void CSocket::BytesSentWarning( UI16 newValue )
+{
+	bytesSentWarningCount = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o

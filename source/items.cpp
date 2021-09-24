@@ -779,6 +779,7 @@ CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, cons
 						if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight )
 						{
 							itemEntryToSpawn = j;
+							weightOfChosenItem = itemWeight;
 
 							// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
 							matchingEntries.push_back( j );
