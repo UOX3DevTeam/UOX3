@@ -1337,3 +1337,12 @@ id=0x100d
 weight=100
 decay=1
 }
+
+[fakeflourbees]
+{
+get=base_item
+name=flour
+id=0x091b
+weight=255
+movable=2
+}

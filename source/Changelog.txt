@@ -1,3 +1,19 @@
+27/09/2021 - Dragon Slayer
+	Split food2.dfn into new dfn files: cooking.dfn, vegetables.dfn, meats.dfn, fruits.dfn
+	Fixed pitcher of water so it can be poured onto the bag of flour and remove one content and set 20 contents for flour bag
+	Fixed four bag can be double clicked and target water and use one content of water. and give it self 20 uses for dough
+	Added all dough baking
+	Added all meat cooking
+	Added Heatsources
+	Fixed Flourmill to have animation and give bag of flour when double clicked
+	Cleaned up baking and cooking - not every thing needed a skill check
+	Misc style cleanup and bugfixes (Xuri)
+	Tweaked flour mill usage and animation setup to make it more resistant to breaking (Xuri)
+	Added tooltip with uses remaining for pitchers of water and sacks of flour (Xuri)
+	Randomized the type of bread created when baking dough (Xuri)
+	Updated dictionaries with cooking-specific messages (Xuri)
+	Finalized implementation of GetTempTag and SetTempTag (Xuri)
+
 24/09/2021 - Xuri
 	Added new system that lets shard admins assign a "network" budget to connected clients, which determines the maximum amount of bytes clients are allowed to send to/receive from server over a period of ten seconds. If a client exceeds these limits three times in the same connected session, they'll receive a temporary ban and get kicked from the server. The following new UOX.INI settings under the [system] section can be used to control this feature:
 		MAXCLIENTBYTESIN=25000		// Max bytes client can send to server over 10 seconds

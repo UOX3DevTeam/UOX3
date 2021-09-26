@@ -1,0 +1,150 @@
+// meats.dfn
+
+[0x1e1f]
+{
+get=base_food
+name=sliced ham
+id=0x1e1f
+weight=20
+value=4 2
+pileable=1
+}
+
+[0x0976]
+{
+get=base_food
+name=slab of bacon
+id=0x0976
+weight=400
+value=8 4
+pileable=1
+}
+
+[0x0977]
+{
+get=base_food
+name=slab of bacon
+id=0x0977
+weight=400
+value=8 4
+pileable=1
+}
+
+[0x0978]
+{
+get=base_food
+name=slice of bacon
+id=0x0978
+value=3 1
+pileable=1
+}
+
+[0x0979]
+{
+get=base_food
+name=slice of bacon
+id=0x0979
+value=3 1
+pileable=1
+}
+
+[0x09b7]
+{
+get=base_food
+name=cooked bird
+id=0x09b7
+value=6 3
+pileable=1
+}
+
+[0x09b8]
+{
+get=base_food
+name=cooked bird
+id=0x09b8
+value=6 3
+pileable=1
+}
+
+[0x09bb]
+{
+get=base_food
+name=roast pig
+id=0x09bb
+weight=4500
+value=128 64
+pileable=1
+}
+
+[0x09bc]
+{
+get=base_food
+name=roast pig
+id=0x09bc
+weight=4500
+value=128 64
+pileable=1
+}
+
+[0x09c0]
+{
+get=base_food
+name=sausage
+id=0x09c0
+value=20 10
+pileable=1
+}
+
+[0x09c1]
+{
+get=base_food
+name=sausage
+id=0x09c1
+value=20 10
+pileable=1
+}
+
+[0x09c9]
+{
+get=base_food
+name=ham
+id=0x09c9
+value=24 12
+pileable=1
+}
+
+[0x09d3]
+{
+get=base_food
+name=ham
+id=0x09d3
+value=24 12
+pileable=1
+}
+
+[0x09f2]
+{
+get=base_food
+name=cooked ribs
+id=0x09f2
+value=12 6
+pileable=1
+}
+
+[0x1608]
+{
+get=base_food
+name=chicken leg
+id=0x1608
+value=6 3
+pileable=1
+}
+
+[0x160a]
+{
+get=base_food
+name=leg of lamb
+id=0x160a
+value=12 6
+pileable=1
+}

@@ -1,0 +1,237 @@
+// fruit.dfn
+
+[0x09D0]
+{
+get=base_food
+name=apple
+id=0x09D0
+value=3 1
+pileable=1
+}
+
+[0x09d1]
+{
+get=base_food
+name=grape bunch
+id=0x09d1
+value=3 1
+pileable=1
+}
+
+[0x0d1a]
+{
+get=base_food
+name=grape bunch
+id=0x0d1a
+value=3 1
+pileable=1
+}
+
+[0x09D2]
+{
+get=base_food
+name=peach
+id=0x09D2
+value=3 1
+pileable=1
+}
+
+[0x172c]
+{
+get=base_food
+name=peach
+id=0x172c
+value=3 1
+pileable=1
+}
+
+[0x0994]
+{
+get=base_food
+name=pear
+id=0x0994
+value=3 1
+pileable=1
+}
+
+[0x172d]
+{
+get=base_food
+name=pear
+id=0x172d
+value=3 1
+pileable=1
+}
+
+[0x172b]
+{
+get=base_food
+name=lemons
+id=0x172b
+value=3 1
+pileable=1
+}
+
+[0x172a]
+{
+get=base_food
+name=lemon
+id=0x172a
+value=3 1
+pileable=1
+}
+
+[0x1729]
+{
+get=base_food
+name=limes
+id=0x1729
+value=3 1
+pileable=1
+}
+
+[0x1728]
+{
+get=base_food
+name=lime
+id=0x1728
+value=3 1
+pileable=1
+}
+
+[0x1727]
+{
+get=base_food
+name=bunch of dates
+id=0x1727
+value=3 1
+pileable=1
+}
+
+[0x1726]
+{
+get=base_food
+name=coconut
+id=0x1726
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1725]
+{
+get=base_food
+name=coconut
+id=0x1725
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1724]
+{
+get=base_food
+name=coconut
+id=0x1724
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1723]
+{
+get=base_food
+name=coconut
+id=0x1723
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1722]
+{
+get=base_item
+name=bananas
+id=0x1722
+weight=300
+value=6 3
+pileable=1
+}
+
+[0x1721]
+{
+get=base_item
+name=bananas
+id=0x1721
+weight=300
+value=6 3
+pileable=1
+}
+
+[0x1720]
+{
+get=base_item
+name=banana
+id=0x1720
+weight=100
+value=3 1
+pileable=1
+}
+
+[0x171f]
+{
+get=base_item
+name=banana
+id=0x171f
+weight=100
+value=3 1
+pileable=1
+}
+
+[0x171e]
+{
+get=base_item
+name=banana
+id=0x171e
+weight=100
+value=3 1
+pileable=1
+}
+
+[0x171d]
+{
+get=base_food
+name=banana
+id=0x171d
+value=3 1
+pileable=1
+}
+
+[0x0c5c]
+{
+get=base_food
+name=watermelon
+id=0x0c5c
+weight=500
+value=8 4
+pileable=1
+}
+
+[0x0c5d]
+{
+get=base_food
+name=watermelon
+id=0x0c5d
+weight=500
+value=8 4
+pileable=1
+}
+
+[0x0993]
+{
+get=base_food
+name=fruit basket
+id=0x0993
+weight=500
+value=100 50
+}

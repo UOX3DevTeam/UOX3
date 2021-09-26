@@ -3251,6 +3251,18 @@
 6090=Non potete cuocere il vostro uccello crudo su questo.
 6091=Sembra che tu non abbia nessun uccello crudo!
 6092=Non sei abbastanza abile per farlo.
+6093=Si brucia il %s fino a ridurlo in cenere! È rovinato.
+6094=Stai già cucinando qualcosa.
+6095=Non puoi cucinare il tuo %s su quello.
+6096=Cucini una pizza.
+6097=Su cosa vuoi cucinarla?
+6098=Cucini un muffin.
+6099=Tu cuoci una torta.
+6100=Tu cucini una torta.
+6101=Cuoci un biscotto.
+6102=Non puoi usare l'impasto con questo.
+6103=Il mulino della farina è attualmente occupato.
+6104=Farina pronta per la raccolta.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
