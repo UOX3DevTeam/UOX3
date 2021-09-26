@@ -212,6 +212,22 @@
 0x1434=544
 // light sources end
 // -----------------
+// -------------------
+// container effects start
+0xA4D=61
+0x0A4F=61
+0xA51=61
+0xA53=61
+0x0A2C=61
+0x0A34=61
+0x0A30=61
+0x0A38=61
+0x0A3C=61
+0x0A3D=61
+0x0A44=61
+0x0A45=61
+// container effects end
+// -----------------
 // -----------------------------------
 // harvesting and picking fruits start
 
