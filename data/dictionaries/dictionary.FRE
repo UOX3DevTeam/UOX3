@@ -3414,6 +3414,18 @@
 6090=Tu ne peux pas faire cuire ton oiseau cru avec ça.
 6091=Vous ne semblez pas avoir d'oiseau cru !
 6092=Vous n'êtes pas assez compétent pour le faire.
+6093=Tu as réduit le %s en cendres ! Il est fichu.
+6094=Vous êtes déjà en train de cuire quelque chose.
+6095=Vous ne pouvez pas faire cuire votre %s sur cela.
+6096=Vous faites cuire une pizza.
+6097=Sur quoi voulez-vous la faire cuire ?
+6098=Vous faites cuire un muffin.
+6099=Vous faites cuire une tarte.
+6100=Tu fais cuire un gâteau.
+6101=Tu fais cuire un cookie.
+6102=Vous ne pouvez pas utiliser la pâte avec cela.
+6103=Le moulin à farine est actuellement occupé.
+6104=Farine prête pour la collecte.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

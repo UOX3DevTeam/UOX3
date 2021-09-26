@@ -442,6 +442,8 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "RemoveSpell",		CMisc_RemoveSpell,			1, 0, 0 },
 	{ "GetTag",				CBase_GetTag,				1, 0, 0 },
 	{ "SetTag",				CBase_SetTag,				1, 0, 0 },
+	{ "GetTempTag",			CBase_GetTempTag,			1, 0, 0 },
+	{ "SetTempTag",			CBase_SetTempTag,			2, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,			0, 0, 0 },
 	{ "InRange",			CBase_InRange,				2, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,			2, 0, 0 },

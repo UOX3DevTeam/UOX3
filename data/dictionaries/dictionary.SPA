@@ -3251,6 +3251,18 @@
 6090=No puedes cocinar tu ave cruda en eso.
 6091=¡Parece que no tienes ningún pájaro crudo!
 6092=No tienes la suficiente habilidad para hacerlo.
+6093=¡Quemaste el %s hasta quebrarlo! Está arruinado.
+6094=Ya estás cocinando algo.
+6095=No puedes cocinar tus %s en eso.
+6096=Cocinas una pizza.
+6097=¿En qué quiere cocinar esto?
+6098=Usted cocina una magdalena.
+6099=Cocinas una tarta.
+6100=Cocinas un pastel.
+6101=Cocinas una galleta.
+6102=No puede usar la masa con eso.
+6103=El molino de harina está actualmente ocupado.
+6104=Harina lista para recoger.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?

@@ -3247,6 +3247,18 @@
 6090=You cannot cook your raw bird on that.
 6091=You don't seem to have any raw birds!
 6092=You are not skilled enough to do that.
+6093=You burn the %s to a crisp! It's ruined.
+6094=You are already cooking something.
+6095=You cannot cook your %s on that.
+6096=You cook a pizza.
+6097=What do you want to cook this on?
+6098=You cook a muffin.
+6099=You bake a pie.
+6100=You bake a cake.
+6101=You bake a cookie.
+6102=You cannot use the dough with that.
+6103=The flour mill is currently busy.
+6104=Flour ready for collection.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?

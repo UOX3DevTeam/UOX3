@@ -20,9 +20,10 @@ function onUseChecked ( pUser, iUsed )
 			if( iUsed.id == 0x1039 || iUsed.id == 0x1045 )
 			{
 				iUsed.id++;
-				if (!iUsed.GetTag("FlourLeft"))
+				if( !iUsed.GetTag( "UsesLeft" ))
 				{
-					iUsed.SetTag("FlourLeft", 20);
+					iUsed.SetTag( "UsesLeft", 20 );
+					iUsed.AddScriptTrigger( 2200 ); // UsesLeft tooltip
 				}
 			}
 			else
@@ -45,12 +46,15 @@ function onCallback0( tSock, myTarget )
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
 	var targZ	= tSock.GetSByte( 16 );
+
 	var tileID = tSock.GetWord(17);
 	if( tileID == 0 || ( StrangeByte == 0 && myTarget.isChar ))
-	{ //Target is a MapTile, or a Character
+	{
+		//Target is a MapTile, or a Character
 		tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
 		return;
 	}
+
 	// Target is a Dynamic Item
 	if( StrangeByte == 0 )
 	{
@@ -81,75 +85,48 @@ function onCallback0( tSock, myTarget )
 		}
 		else
 		{
-			if(TriggerEvent( 103, "RangeCheck", tSock, pUser ))
+			if( TriggerEvent( 103, "RangeCheck", tSock, pUser ))
 			{
 				tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
 				return;
 			}
 		}
+
 		// remove one flour
-		var iMakeResource = pUser.ResourceCount( 0x1045 );	// is there enough resources to use up to make it
-		if( iMakeResource < 1 )
+		UsesLeft = iUsed.GetTag( "UsesLeft" );
+		if( UsesLeft > 0 )
 		{
-			var iMakeResource = pUser.ResourceCount( 0x1046 );	// is there enough resources to use up to make it
-			if( iMakeResource < 1 )
-			{
-				var iMakeResource = pUser.ResourceCount( 0x1039 );	// is there enough resources to use up to make it
-				if( iMakeResource <1 )
-				{
-					var iMakeResource = pUser.ResourceCount( 0x103a );	// is there enough resources to use up to make it
-					if( iMakeResource < 1 )
-					{
-						tSock.SysMessage( GetDictionaryEntry( 6076, tSock.language )); // There is not enough flour in your pack!
-						return;
-					}
-					else
-						var iID = 0x103a;
-				}
-				else
-					var iID = 0x1039;
-			}
-			else
-				var iID = 0x1046;
-		}
-		else
-			var iID = 0x1045;
-		FlourLeft = iUsed.GetTag( "FlourLeft" );
-		if( FlourLeft > 0 )
-		{
-			FlourLeft = FlourLeft - 1;
-			iUsed.SetTag("FlourLeft", FlourLeft);
+			UsesLeft = UsesLeft - 1;
+			iUsed.SetTag( "UsesLeft", UsesLeft );
+			iUsed.Refresh();
 		}
 		else
 			iUsed.Delete();
 
 		pUser.SoundEffect( 0x0134, true );
-		// check the skill
-		if( !pUser.CheckSkill( 13, 1, 1000 ) )	// character to check, skill #, minimum skill, and maximum skill
-		{
-			tSock.SysMessage( GetDictionaryEntry( 6077, tSock.language )); // You tried to make dough but failed.
-			return;
-		}
 
-	    UsesLeft = myTarget.GetTag("UsesLeft");
-		if (UsesLeft > 0)
+		// Reduce uses left in water source
+	    var usesLeft = myTarget.GetTag( "UsesLeft" );
+		if (usesLeft > 0)
 		{
-			UsesLeft = UsesLeft - 1;
-			myTarget.SetTag("UsesLeft", UsesLeft);
+			usesLeft = usesLeft - 1;
+			myTarget.SetTag( "UsesLeft", usesLeft );
+			myTarget.Refresh();
 		}
 		else
 		{
-			if (myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e)
+			if( myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e )
 				myTarget.id = 0x0FF7;
-			if (myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d)
+			if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
 				myTarget.id = 0x0FF6;
-			myTarget.SetTag("ContentsType", 1);
-			myTarget.SetTag("EmptyGlass", 3);
-			myTarget.SetTag("UsesLeft", 0);
-			myTarget.SetTag("ContentsName", "nothing");
+			myTarget.SetTag( "ContentsType", 1 );
+			myTarget.SetTag( "EmptyGlass", 3 );
+			myTarget.SetTag( "UsesLeft", 0 );
+			myTarget.SetTag( "ContentsName", "nothing" );
+			TriggerEvent( 2100, "switchPitcherID", tSock, myTarget );
 		}
 
-		var itemMade = CreateBlankItem( tSock, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
+		var itemMade = CreateDFNItem( tSock, pUser, "0x103d", 1, "ITEM", true );
 		tSock.SysMessage( GetDictionaryEntry( 6078, tSock.language )); // You make some dough.
 	}
 	else // Target is a static item
