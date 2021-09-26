@@ -131,6 +131,9 @@
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
 //-------------------------------------------
+// Miscellaneous [2200-2499]
+2200=server/misc/uses_left_tooltip.js
+//-------------------------------------------
 // Server Data [2500-2999]
 2500=server/data/weapontypes.js
 2501=server/data/combatanims.js

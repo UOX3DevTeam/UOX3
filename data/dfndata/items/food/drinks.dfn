@@ -7,6 +7,7 @@ get=base_item
 type=105
 restock=10
 good=33
+script=2100
 }
 
 [0x1f9e]

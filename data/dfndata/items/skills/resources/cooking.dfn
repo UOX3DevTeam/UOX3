@@ -1,8 +1,8 @@
-[0x103F]
+[0x103f]
 {
 get=base_item
 name=cookie mix
-id=0x103F
+id=0x103f
 weight=100
 }
 
@@ -14,12 +14,13 @@ id=0x103f
 weight=100
 }
 
-[0x103D]
+[0x103d]
 {
 get=base_item
 name=dough
-id=0x103D
+id=0x103d
 weight=100
+pileable=1
 }
 
 [sweet_dough]
@@ -29,13 +30,14 @@ name=sweet dough
 id=0x103d
 weight=100
 color=150
+pileable=1
 }
 
-[0x09EC]
+[0x09ec]
 {
 get=base_item
 name=jar honey
-id=0x09EC
+id=0x09ec
 weight=100
 }
 
@@ -63,11 +65,11 @@ id=0x1046
 weight=100
 }
 
-[0x103A]
+[0x103a]
 {
 get=base_item
 name=open sack of flour
-id=0x103A
+id=0x103a
 weight=100
 }
 

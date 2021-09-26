@@ -13,7 +13,7 @@
 // Targeting the ground when pouring will empty the pitcher/bottle/jug.
 //
 // Todo: Descriptions for how full a liquid container is
-scriptID = 2100;
+var scriptID = 2100;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -108,7 +108,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 		}
 		else
 		{
-			pSock.SysMessage( GetDictionaryEntry( 2558, pSock.language )); // You cannot fill the pitcher with anything from that character!
+			pSock.SysMessage( GetDictionaryEntry( 2560, pSock.language )); // You cannot fill the pitcher with anything from that character!
 		}
 		return;
 	}
@@ -368,13 +368,36 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		//If Target is an open sack of flour, or a bowl of flour
 		if( tileID == 0x0A1E || tileID == 0x1046 || tileID == 0x103A)
 		{
-			myTarget.Delete();
-			var itemMade = CreateBlankItem( pSock, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
+			// Reduce remaining uses of flour bag by 1 (or delete it if it only has 1 use left)
+			if( myTarget.GetTag( "UsesLeft" ) <= 1 )
+				myTarget.Delete();
+			else
+			{
+				// Reduce uses left in flour bag by 1
+				myTarget.SetTag( "UsesLeft", myTarget.GetTag( "UsesLeft" ) - 1 );
+				myTarget.Refresh();
+			}
+
+			// Create some dough in player's backpack
+			var itemMade = CreateDFNItem( pSock, pUser, "0x103d", 1, "ITEM", true );
 			pSock.SysMessage( GetDictionaryEntry( 6078, pSock.language )); // You make some dough.
-			Pitcher.SetTag( "ContentsType", 1 );
-			Pitcher.SetTag( "EmptyGlass", 3 );
-			Pitcher.SetTag( "UsesLeft", 0 );
-			Pitcher.SetTag( "ContentsName", "nothing" );
+
+			// Reduce uses remaining in pitcher
+			if( Pitcher.GetTag( "UsesLeft" ) == 1 )
+			{
+				// Pitcher is empty
+				Pitcher.SetTag( "ContentsType", 1 );
+				Pitcher.SetTag( "EmptyGlass", 3 );
+				Pitcher.SetTag( "UsesLeft", 0 );
+				Pitcher.SetTag( "ContentsName", "nothing" );
+				switchPitcherID( pSock, Pitcher );
+			}
+			else
+			{
+				// Reduce uses left in pitcher by 1
+				Pitcher.SetTag( "UsesLeft", Pitcher.GetTag( "UsesLeft" ) - 1 );
+				Pitcher.Refresh();
+			}
 		}
 		if(( tileID == 0x0ff8 || tileID == 0xff9) || ( tileID >= 0x1f7d && tileID <= 0x1f80 ) || ( tileID >= 0x1f85 && tileID <= 0x1f94 ) ||
 		( tileID >= 0x1f95 && tileID <= 0x1f9e ) || ( myTarget.GetTag( "ContentsType" ) > 1 ))
@@ -1006,11 +1029,12 @@ function setupLiquidObject( myTarget )
 		case 0x1f81:case 0x1f82:case 0x1f83:case 0x1f84: //empty glasses
 			myTarget.SetTag( "ContentsName", "nothing" );
 			myTarget.SetTag( "ContentsType", 1 );
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.SetTag( "UsesLeft", 0 );
 			myTarget.SetTag( "EmptyGlass", 2 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
 	}
+	myTarget.Refresh();
 }
 
 function switchGobletID( Pitcher )
@@ -1032,6 +1056,29 @@ function switchGobletID( Pitcher )
 		Pitcher.name = "empty goblet";
 	}
 }
+
+// Display remaining uses left in a tooltip
+function onTooltip( myObj )
+{
+	var tooltipText = "";
+	var usesLeft = myObj.GetTag( "UsesLeft" );
+	if( usesLeft > 0 )
+	{
+		tooltipText = GetDictionaryEntry( 9403 ); // uses remaining: %i
+		tooltipText = ( tooltipText.replace(/%i/gi, (usesLeft).toString()) );
+	}
+	return tooltipText;
+}
+
+// Set up tags for any new items added
+function onCreateDFN( objMade, objType )
+{
+	if( !objMade.GetTag( "ContentsType" ))
+	{
+		setupLiquidObject( objMade );
+	}
+}
+
 // Sound Effects:
 //38 = "grab" some water with a pitcher
 //49 = drinking a little

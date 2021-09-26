@@ -32,74 +32,99 @@ function onUseChecked ( pUser, iUsed )
 	return false;
 }
 
-function onCallback0( tSock, targSerial )
+function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
-	var StrangeByte   = tSock.GetWord( 1 );
 	var tileID = tSock.GetWord(17);
+	var StrangeByte = tSock.GetWord( 1 );
 
-	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
-	{ //Target is a MapTile or a Character
+	if( tileID == 0 || ( StrangeByte == 0 && myTarget.isChar ))
+	{
+		//Target is a MapTile or a Character
 		tSock.SysMessage( GetDictionaryEntry( 6082, tSock.language )); // You cannot grind your wheat on that.
 		return;
 	}
 
-	if(TriggerEvent( 107, "FlourMill", tileID))
+	if( TriggerEvent( 107, "FlourMill", tileID ))
 	{
-		if (tileID == 0x1922)
+		if( myTarget.GetTag( "millStatus" ) == 0 )
 		{
-			AreaItemFunction("myAreaFunc", pUser, 4, targSerial);
-			targSerial.StartTimer(100, 1, true);
-		}
+			if( TriggerEvent( 103, "RangeCheck", tSock, pUser ))
+			{
+				tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
+				return;
+			}
 
-		if(TriggerEvent( 103, "RangeCheck", tSock, pUser ))
-		{
-			tSock.SysMessage( GetDictionaryEntry( 393, tSock.language )); // That is too far away.
-			return;
+			// remove 4 sheaves of wheat
+			var iMakeResource = pUser.ResourceCount( 0x1EBD );// is there enough resources to use up to make it
+			if( iMakeResource < 4 )
+			{
+				tSock.SysMessage( GetDictionaryEntry( 6080, tSock.language )); // You do not have enough resources! You need 4 sheaves of wheat!
+				return;
+			}
+			pUser.UseResource( 4, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
+			pUser.SoundEffect( 0x021e, true );
+
+			if( tileID == 0x1922 || tileID == 0x192e )
+			{
+				myTarget.SetTag( "millStatus", 1 ); // busy
+				AreaItemFunction( "myAreaFunc", myTarget, 1 );
+				myTarget.StartTimer( 100, 1, true );
+			}
 		}
-		// remove 4 sheaves of wheat
-		var iMakeResource = pUser.ResourceCount( 0x1EBD );// is there enough resources to use up to make it
-		if( iMakeResource < 4 )
+		else
 		{
-			tSock.SysMessage( GetDictionaryEntry( 6080, tSock.language )); // You do not have enough resources! You need 4 sheaves of wheat!
-			return;
+			// busy
+			tSock.SysMessage( GetDictionaryEntry( 6103, tSock.language )); // The flour mill is currently busy.
 		}
-		pUser.UseResource( 4, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
-		pUser.SoundEffect(0x021e, true);
 	}
 }
 
-function myAreaFunc(srcChar, trgItem, iUsed)
+function myAreaFunc( srcChar, trgItem, iUsed )
 {
-	if (trgItem.id == 0x1920)
-		trgItem.StartTimer(100, 4, true);
+	if( trgItem.id == 0x1920 || trgItem.id == 0x192c )
+		trgItem.StartTimer( 100, 4, true );
 }
 
-function onTimer(targSerial, timerID)
+function onTimer( timerObj, timerID )
 {
-	switch (timerID)
+	switch( timerID )
 	{
 		case 1:
-			targSerial.id = 0x1923;
-			targSerial.StartTimer(100, 2, true);
+			timerObj.id++; // 0x1922 becomes 0x1923, 0x192e becomes 0x192f
+			timerObj.StartTimer( 100, 2, true );
 			break;
 		case 2:
-			targSerial.id = 0x1926;
-			targSerial.StartTimer(2100, 3, true);
+			if( timerObj == 0x1923 )
+				timerObj.id = 0x1926;
+			else
+				timerObj.id = 0x1932;
+			var fakeFlourBees = CreateDFNItem( null, null, "fakeflourbees", 1, "ITEM", false, 0, timerObj.worldnumber, timerObj.instanceID );
+			fakeFlourBees.x = timerObj.x;
+			fakeFlourBees.y = timerObj.y;
+			fakeFlourBees.z = 2;
+			timerObj.StartTimer( 4500, 3, true );
+			timerObj.SetTempTag( "fakeFlourSerial", (fakeFlourBees.serial).toString() );
 			break;
 		case 3:
-			targSerial.id = 0x1927;
+			if( timerObj == 0x1926 )
+				timerObj.id = 0x1927;
+			else
+				timerObj.id = 0x1933;
+			timerObj.SetTag( "millStatus", 2 ); // Ready for collection
+			var fakeFlourSerial = timerObj.GetTempTag( "fakeFlourSerial" );
+			timerObj.SetTempTag( "fakeFlourSerial", null );
+			var fakeFlourBees = CalcItemFromSer( parseInt(fakeFlourSerial) );
+			if( ValidateObject( fakeFlourBees ))
+				fakeFlourBees.Delete();
+			timerObj.TextMessage( GetDictionaryEntry( 6104 ), true, 0x096a ); // Flour ready for collection.
 			break;
 		case 4:
-			targSerial.id = 0x1921;
-			targSerial.StartTimer(100, 5, true);
+			timerObj.id++;
+			timerObj.StartTimer( 4600, 5, true );
 			break;
 		case 5:
-			targSerial.id = 0x1921;
-			targSerial.StartTimer(2100, 6, true);
-			break;
-		case 6:
-			targSerial.id = 0x1921;
+			timerObj.id--;
 			break;
 	}
 }
