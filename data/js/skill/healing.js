@@ -11,6 +11,11 @@ function onUseCheckedTriggered( pUser, targChar, iUsed )
 			return;
 		}
 
+		if ( pUser.visible == 1 || pUser.visible == 2 )// Using bandages will now unhide you. February_2,_1999
+		{
+			pUser.visible = 0;
+		}
+
 		if( socket != null )
 		{
 			if( pUser.skillsused.healing || pUser.skillsused.veterinary )
@@ -43,14 +48,21 @@ function onUseChecked( pUser, iUsed )
 			return;
 		}
 
-		if( pUser.skillsused.healing || pUser.skillsused.veterinary )
-			socket.SysMessage( GetDictionaryEntry( 1971, pLanguage ) ); // You are too busy to do that.
+		if ( pUser.visible == 1 || pUser.visible == 2 )// Using bandages will now unhide you. February_2,_1999
+		{
+			pUser.visible = 0;
+		}
+
+		if ( pUser.skillsused.healing || pUser.skillsused.veterinary )
+		{
+			socket.SysMessage( GetDictionaryEntry(1971, pLanguage) ); // You are too busy to do that.
+		}
 		else if( socket.GetTimer( Timer.SOCK_SKILLDELAY ) <= GetCurrentClock() )	// Skill timer
 		{
 			socket.tempObj = iUsed;
 			var targMsg = GetDictionaryEntry( 472, pLanguage ); // Who will you use the bandages on?
 			socket.CustomTarget( 1, targMsg );
-			socket.SetTimer( Timer.SOCK_SKILLDELAY, 5000 );		// Reset the skill timer
+			socket.SetTimer( 0, 5000 );		// Reset the skill timer
 		}
 		else
 			socket.SysMessage( GetDictionaryEntry( 473, pLanguage ) ); // You must wait a few moments before using another skill.
@@ -78,14 +90,14 @@ function onCallback1( socket, ourObj )
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 6013, socket.language )); // They are already being healed.
+					socket.SysMessage( GetDictionaryEntry( 6013, socket.language ) ); // They are already being healed.
 					return;
 				}
 			}
 
 			var healSkill;
 			var skillNum;
-			if( ourObj.isHuman || ourObj.id == 0x0192 || ourObj.id == 0x0193 || ourObj.id == 0x025f || ourObj.id == 0x0260 )
+			if( CanHeal( ourObj ) )
 			{
 				healSkill = mChar.baseskills.healing;
 				skillNum  = 17;
@@ -97,7 +109,7 @@ function onCallback1( socket, ourObj )
 			}
 			else
 			{
-				socket.SysMessage( GetDictionaryEntry( 6014, socket.language )); // You can't heal that!
+				socket.SysMessage( GetDictionaryEntry( 6014, socket.language ) ); // You can't heal that!
 				return;
 			}
 
@@ -108,7 +120,7 @@ function onCallback1( socket, ourObj )
 				{
 					if( !iMulti.IsOnOwnerList( ourObj ) && !iMulti.IsOnOwnerList( mChar ) )
 					{
-						socket.SysMessage( GetDictionaryEntry( 6015, socket.language )); // Your target is in another character's house, healing attempt aborted.
+						socket.SysMessage( GetDictionaryEntry( 6015, socket.language ) ); // Your target is in another character's house, healing attempt aborted.
 						return;
 					}
 				}
@@ -149,13 +161,17 @@ function onCallback1( socket, ourObj )
 
 					if( ourObj.murderer || ourObj.criminal )
 						mChar.criminal = true;
+
 					if( mChar.CheckSkill( skillNum, 600, 1000 ) && mChar.CheckSkill( 1, 600, 1000 ) )
 					{
 						var healTimer;
-						if( mChar.serial == ourObj.serial ) // Curing yourself has a 9 to 15 second delay, depending on dexterity
-							healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);
+						if ( mChar.serial == ourObj.serial ) // Curing Self has a 13 second delay depending on Dexterity 15-(100 / 20) = 13
+						{
+							//healTimer = 9400 + ( ( 0.6 * ( ( 120 - mChar.dexterity ) / 10 ) ) * 1000 ); old uox formula
+							healTimer = 18000 - ( mChar.dexterity / 20 ) * 1000 ;
+						}
 						else
-							healTimer = 6000; // Curing others has a 6 second delay
+							healTimer = 6000 - ( mChar.dexterity / 20 ) * 1000 ; // Curing others has a 6 second delay at 0 dex
 
 						SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 						mChar.StartTimer( healTimer, 1, true );
@@ -171,7 +187,9 @@ function onCallback1( socket, ourObj )
 
 			}
 			else if( ourObj.health == ourObj.maxhp )
-				socket.SysMessage( GetDictionaryEntry( 1497, socket.language ) ); // That being is undamaged.
+			{
+				socket.SysMessage(GetDictionaryEntry(1497, socket.language)); // That being is undamaged.
+			}
 			else	// Heal
 			{
 				if( bItem.amount > 1 )
@@ -181,6 +199,7 @@ function onCallback1( socket, ourObj )
 
 				if( ourObj.murderer || ourObj.criminal )
 					mChar.criminal = true;
+
 				if( ourObj != mChar && ourObj.socket )
 				{
 					var tempMsg = GetDictionaryEntry( 6016, socket.language ); // %s is attempting to heal you.
@@ -189,10 +208,13 @@ function onCallback1( socket, ourObj )
 				if( mChar.CheckSkill( skillNum, 0, 1000 ) )
 				{
 					var healTimer;
-					if( mChar.serial == ourObj.serial ) // Healing yourself has a 9 to 16 second delay, depending on your dexterity.
-						healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);
+					if ( mChar.serial == ourObj.serial ) // Healing yourself has a 10 second delay, depending on your dexterity.
+					{
+						//healTimer = 9400 + ( (0.6 * ( (120 - mChar.dexterity ) / 10) ) * 1000 ); old uox formula
+						healTimer = 15000 - ( ( mChar.dexterity / 20 ) * 1000 );
+					}
 					else
-						healTimer = 5000; // Healing others has a 5 second delay
+						healTimer = 5000 - ( ( mChar.dexterity / 20 ) * 1000 ); // Healing others has a 5 second delay
 
 					SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 					mChar.CheckSkill( 1, 0, 1000 );
@@ -212,6 +234,16 @@ function onCallback1( socket, ourObj )
 		else
 			socket.SysMessage( GetDictionaryEntry( 1498, socket.language ) ); // You are not close enough to apply the bandages.
 	}
+}
+
+function CanHeal( ourObj )
+{
+	//Trolls, Cyclopes, Ophidians, Ogres, Ettins, Orcs, Harpies, Headlesses, Lizardmen, Ratmen, Humans and Human Players, gargoyle players, elf players
+	return ( ourObj.isHuman || ourObj.id == 0x0192 || ourObj.id == 0x0193 || ourObj.id == 0x025f || ourObj.id == 0x0260 || ourObj.id == 0x0011 || ourObj.id == 0x0029
+		|| ourObj.id == 0x0007 || ourObj.id == 0x008c || ourObj.id == 0x008a || ourObj.id == 0x00b6 || ourObj.id == 0x00b5 || ourObj.id == 0x0021 || ourObj.id == 0x0023
+		|| ourObj.id == 0x0024 || ourObj.id == 0x002a || ourObj.id == 0x002c || ourObj.id == 0x002d || ourObj.id == 0x008f || ourObj.id == 0x008e || ourObj.id == 0x0002
+		|| ourObj.id == 0x0012 || ourObj.id == 0x0001 || ourObj.id == 0x0054 || ourObj.id == 0x0087 || ourObj.id == 0x0036 || ourObj.id == 0x0035 || ourObj.id == 0x004b
+		|| ourObj.id == 0x004c || ourObj.id == 0x001f || ourObj.id == 0x001e || ourObj.id == 0x007c || ourObj.id == 0x007d );
 }
 
 function SetSkillInUse( socket, mChar, ourObj, skillNum, healingTime, setVal )
@@ -246,8 +278,8 @@ function onTimer( mChar, timerID )
 {
 	var skillNum	= mChar.GetTag( "SK_HEALINGTYPE" );
 	var ourObj	= CalcCharFromSer( mChar.GetTag( "SK_HEALINGTARG" ) );
-	var socket 	= mChar.socket;
-	if( socket )
+	var socket = mChar.socket;
+	if ( socket )
 	{
 		if( mChar.dead )
 		{
@@ -255,31 +287,37 @@ function onTimer( mChar, timerID )
 		}
 		else if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) )
 		{
-			switch( timerID )
+			switch ( timerID )
 			{
-			case 0:	// Resurrect
-				ourObj.Resurrect();
-				socket.SysMessage( GetDictionaryEntry( 1272, socket.language ) ); // You successfully resurrected the patient!
-				break;
-			case 1:	// Cure Poison
-				ourObj.SetPoisoned( 0, 0 );
-				ourObj.StaticEffect( 0x373A, 0, 15 );
-				ourObj.SoundEffect( 0x01E0, true );
-				socket.SysMessage( GetDictionaryEntry( 1274, socket.language ) ); // You have cured the poison.
-				var objSock = ourObj.socket;
-				if( objSock )
-					objSock.SysMessage( GetDictionaryEntry( 1273, objSock.language ) ); // You have been cured of poison.
-				break;
-			case 2:	// Heal
-				var healSkill;
-				if( skillNum == 17 )
-					healSkill = mChar.skills.healing;
-				else if( skillNum == 39 )
-					healSkill = mChar.skills.veterinary;
-
-				ourObj.Heal( (RandomNumber( 3, 10 ) + parseInt(mChar.skills.anatomy / 50) + RandomNumber( parseInt(healSkill / 50), parseInt(healSkill / 20) )), mChar );
-				socket.SysMessage( GetDictionaryEntry( 1271, socket.language ) ); // You apply the bandages and the patient looks a bit healthier.
-				break;
+				case 0:	// Resurrect
+					ourObj.Resurrect();
+					ourObj.StaticEffect( 0x376A, 10, 16 );
+					ourObj.SoundEffect( 0x214, true );
+					socket.SysMessage( GetDictionaryEntry( 1272, socket.language ) ); // You successfully resurrected the patient!
+					break;
+				case 1:	// Cure Poison
+					ourObj.SetPoisoned( 0, 0 );
+					ourObj.StaticEffect( 0x373A, 0, 15 );
+					ourObj.SoundEffect(0x01E0, true );
+					socket.SysMessage(GetDictionaryEntry( 1274, socket.language ) ); // You have cured the poison.
+					var objSock = ourObj.socket;
+					if ( objSock )
+						objSock.SysMessage(GetDictionaryEntry( 1273, objSock.language ) ); // You have been cured of poison.
+					break;
+				case 2:	// Heal
+					var healSkill;
+					if ( skillNum == 17 )
+						healSkill = mChar.skills.healing;
+					else if ( skillNum == 39 )
+						healSkill = mChar.skills.veterinary;
+					//Minimum amount healed = Anatomy/5 + Healing/5 + 3  Maximum amount healed = Anatomy/5 + Healing/2 + 10
+					var minValue = Math.min(parseInt( mChar.skills.anatomy / 50 ) ) + 3 + ( parseInt ( healSkill / 50 ) );
+					var maxValue = Math.max(( parseInt( mChar.skills.anatomy / 50 ) ) + ( parseInt( healSkill / 20 ) + 10 ) );
+					ourObj.Heal((RandomNumber(minValue, maxValue)))
+					socket.SysMessage( GetDictionaryEntry( 1271, socket.language ) ); // You apply the bandages and the patient looks a bit healthier.
+					if (ourObj != mChar)
+						mChar.karma++;
+					break;
 			}
 		}
 		else

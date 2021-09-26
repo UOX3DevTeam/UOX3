@@ -46,6 +46,7 @@
 //-------------------------------------------
 // House addon[60-64]
 60=server/misc/furniture_destroy.js
+61=server/misc/container_effects.js
 //-------------------------------------------
 // SYSTEM:[100-2999] Rerserved for specific core server needs
 //-------------------------------------------
@@ -316,6 +317,7 @@
 1057=commands/msgmod.js
 1058=commands/targeting/scptrig.js
 1059=commands/decorate.js
+1060=commands/custom/addsign.js
 }
 
 //-------------------------------------------
