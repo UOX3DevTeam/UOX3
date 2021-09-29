@@ -3317,9 +3317,10 @@
 5138=le Rancher
 5139=le Prisonnier
 5140=le Sculpteur
-5141=un petit démon
-5142=un cacodaemon
-5143=un démon bestial
+5141=le Maire
+5142=un petit démon
+5143=un cacodaemon
+5144=un daemon bestial
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.

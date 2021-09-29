@@ -1,3 +1,9 @@
+30/09/2021 - Xuri
+	Fixed an issue with DoTempEffect JS function which prevented compilation on macOS (and potentially had unintended consequences)
+	Cleaned up a warning in sound.cpp
+	Added a bunch of additional door IDs to js/item/doors.js and dfndata/harditems/harditems.dfn
+	Fixed a few issues with various dictionary files
+
 27/09/2021 - Dragon Slayer
 	Split food2.dfn into new dfn files: cooking.dfn, vegetables.dfn, meats.dfn, fruits.dfn
 	Fixed pitcher of water so it can be poured onto the bag of flour and remove one content and set 20 contents for flour bag

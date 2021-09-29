@@ -2420,7 +2420,7 @@
 2705=Dies muss auf dem Boden liegen.
 2706=Sie können dies nicht tun, während Sie sich im Kampf befinden oder eine Verbrecherflagge haben.
 2707=Ausloggen über Camping
-27008=FORTSETZEN
+2708=FORTSETZEN
 2709=ABBRUCH
 2710=Sie brechen die Abmeldung ab.
 2711=Ausloggen.
@@ -3153,9 +3153,10 @@
 5138=der Viehzüchter
 5139=der Gefangene
 5140=der Bildhauer
-5141=ein kleinerer Daemon
-5142=ein Kakadu-Dämon
-5142=ein bestialischer Dämon
+5141=der Bürgermeister
+5142=ein kleinerer Dämon
+5143=ein Kakadu-Dämon
+5144=ein bestialischer Dämon
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
