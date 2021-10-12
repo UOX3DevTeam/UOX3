@@ -3156,7 +3156,7 @@
 5141=burmistrz
 5142=mniejszy demon
 5143=kakodaemon
-5144=demon bestii
+5144=potworny demon
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -3927,6 +3927,13 @@
 9080=Hmm, ta osoba wygląda naprawdę głupio.
 9081=Ta istota ma %d procent siły psychicznej.
 9082=Wykrywane nadmierne zużycie danych! Wysyłanie zbyt wielu żądań do serwera w krótkim czasie spowoduje, że zostaniesz zbanowany.
+9083=Nie byłeś w stanie dokończyć swojej pracy przed śmiercią.
+9084=Nie jesteś w stanie wskrzesić swojego pacjenta.
+9085=Cel nie jest martwy.
+9086=Nie możesz uzdrowić tego, co nie jest żywe.
+9087=Cel nie może zostać wskrzeszony w tym miejscu.
+9088=Twoje palce się ślizgają!
+9089=Skończyłeś nakładać bandaże, ale ledwo pomagają.
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!
@@ -3995,4 +4002,8 @@
 9402=[Niezidentyfikowany]
 9403=pozostały czas użycia: %i
 9404= z %d ładunkami
+// [9900 - 10000] Polecenia dotyczące drzwi i znaków
+9916=Strona
+9917=Następny
+9918=Powrót
 }

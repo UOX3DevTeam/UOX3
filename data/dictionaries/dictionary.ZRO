@@ -3153,6 +3153,10 @@
 5138=the Rancher
 5139=the Prisoner
 5140=the Sculptor
+5141=the Mayor
+5142=a lesser daemon
+5143=a cacodaemon
+5144=a beastly daemon
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3923,6 +3927,13 @@
 9080=Hmm, that person looks really silly.
 9081=This being is at %d percent mental strength.
 9082=Excessive data usage detected! Sending too many requests to the server in a short amount of time will get you banned.
+9083=You were unable to finish your work before you died.
+9084=You are unable to resurrect your patient.
+9085=The target is not dead.
+9086=You cannot heal that which is not alive.
+9087=Target cannot be resurrected at that location.
+9088=Your fingers slip!
+9089=You finish applying the bandages, but they barely help.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -3991,5 +4002,9 @@
 9402=[Unidentified]
 9403=uses remaining: %i
 9404= with %d charges
+// [9900 - 10000] Door and Sign Commands
+9916=Page
+9917=Next
+9918=Back
 }
 EOF

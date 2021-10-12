@@ -2420,7 +2420,7 @@
 2705=Dies muss auf dem Boden liegen.
 2706=Sie können dies nicht tun, während Sie sich im Kampf befinden oder eine Verbrecherflagge haben.
 2707=Ausloggen über Camping
-27008=FORTSETZEN
+2708=FORTSETZEN
 2709=ABBRUCH
 2710=Sie brechen die Abmeldung ab.
 2711=Ausloggen.
@@ -3153,9 +3153,10 @@
 5138=der Viehzüchter
 5139=der Gefangene
 5140=der Bildhauer
-5141=ein kleinerer Daemon
-5142=ein Kakadu-Dämon
-5142=ein bestialischer Dämon
+5141=der Bürgermeister
+5142=ein kleinerer Dämon
+5143=ein Kakadu-Dämon
+5144=ein bestialischer Dämon
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -3926,6 +3927,13 @@
 9080=Hmm, diese Person sieht wirklich dumm aus.
 9081=Dieses Wesen hat %d Prozent mentale Stärke.
 9082=Übermäßiger Datenverbrauch festgestellt! Wenn Sie in kurzer Zeit zu viele Anfragen an den Server senden, werden Sie gebannt.
+9083=Sie waren nicht in der Lage, Ihre Arbeit zu beenden, bevor Sie gestorben sind.
+9084=Sie sind nicht in der Lage, Ihren Patienten wiederzubeleben.
+9085=Das Ziel ist nicht tot.
+9086=Sie können nicht heilen, was nicht lebendig ist.
+9087=Das Ziel kann an diesem Ort nicht wiederbelebt werden.
+9088=Deine Finger rutschen ab!
+9089=Du bringst die Verbände zu Ende, aber sie helfen kaum.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -3994,5 +4002,9 @@
 9402=[Unbekannt]
 9403=Verbleibende Verwendungen: %i
 9404= mit %d Gebühren
+// [9900 - 10000] Befehle für Türen und Schilder
+9916=Seite
+9917=Weiter
+9918=Zurück
 }
 EOF
