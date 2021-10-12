@@ -40,6 +40,7 @@ function onUseChecked( pUser, iUsed )
 	var canOpen = false;
 	var doorID = iUsed.id;
 
+
 	if( doorID < 0x241F )
 	{
 		for( var i = 0; i < 20; ++i )
@@ -86,8 +87,9 @@ function onUseChecked( pUser, iUsed )
 			}
 		}
 	}
-	else if( doorID == 0x241F || doorID == 0x2D46 || doorID == 0x319E || doorID == 0x31A2 ||
-		 doorID == 0x31A6 || doorID == 0x31AA || doorID == 0x31AC )
+	else if( doorID == 0x2D46 || doorID == 0x319E || doorID == 0x31A2 || doorID == 0x31A6 ||
+		doorID == 0x31AC || doorID == 0x46e3 || doorID == 0x4d20 || doorID == 0x4d28 || doorID == 0x50ce ||
+		doorID == 0x50d6 || doorID == 0x5148 || doorID == 0x9ae5 || doorID == 0x9b4a )
 	{
 		canOpen = OpenDoor( iUsed, 1, 0, -1 );
 		isDoor = true;
@@ -106,12 +108,16 @@ function onUseChecked( pUser, iUsed )
 		 doorID == 0x2A09 || doorID == 0x2A0B || doorID == 0x2A0D || doorID == 0x2A0F ||
 		 doorID == 0x2A11 || doorID == 0x2A13 || doorID == 0x2A15 || doorID == 0x2A17 ||
 		 doorID == 0x2A19 || doorID == 0x2A1B || doorID == 0x2D48 || doorID == 0x2D63 ||
-		 doorID == 0x2D67 || doorID == 0x2D6B || doorID == 0x2FE2 )
+		 doorID == 0x2D67 || doorID == 0x2D6B || doorID == 0x2FE2 || doorID == 0x46e1 ||
+		 doorID == 0x4d1e || doorID == 0x4d26 || doorID == 0x50cc || doorID == 0x50d4 ||
+		 doorID == 0x5146 || doorID == 0x9ae3 || doorID == 0x9b48 )
 	{
 		canOpen = OpenDoor( iUsed, 1, 0, 0 );
 		isDoor = true;
 	}
-	else if( doorID == 0x2D65 || doorID == 0x2D69 || doorID == 0x2D6D || doorID == 0x2FE4 )
+	else if( doorID == 0x2D65 || doorID == 0x2D69 || doorID == 0x2D6D || doorID == 0x2FE4 ||
+		doorID == 0x46dd || doorID == 0x4d1a || doorID == 0x4d22 || doorID == 0x50c8 ||
+		doorID == 0x50d0 || doorID == 0x5142 || doorID == 0x9adb || doorID == 0x9b40 )
 	{
 		canOpen = OpenDoor( iUsed, 1, -1, 0 );
 		isDoor = true;
@@ -121,9 +127,22 @@ function onUseChecked( pUser, iUsed )
 		canOpen = OpenDoor( iUsed, 1, 1, 0 );
 		isDoor = true;
 	}
-	else if( doorID == 0x31A0 || doorID == 0x31A4 || doorID == 0x31A8 || doorID == 0x31AE )
+	else if( doorID == 0x241F || doorID == 0x31AA || doorID == 0x31A0 || doorID == 0x31A4 ||
+		doorID == 0x31A8 || doorID == 0x31AE || doorID == 0x46df || doorID == 0x4d1c ||
+		doorID == 0x4d24 || doorID == 0x50ca || doorID == 0x50d2 || doorID == 0x5144 ||
+		doorID == 0x9add || doorID == 0x9ae1 || doorID == 0x9b42 || doorID == 0x9b46 )
 	{
 		canOpen = OpenDoor( iUsed, 1, 1, -1 );
+		isDoor = true;
+	}
+	else if( doorID == 0x9ad7 || doorID == 0x9b3c )
+	{
+		canOpen = OpenDoor( iUsed, 1, -1, 1 );
+		isDoor = true;
+	}
+	else if( doorID == 0x9ad9 || doorID == 0x9adf || doorID == 0x9b3e || doorID == 0x9b44 )
+	{
+		canOpen = OpenDoor( iUsed, 1, 1, 1 );
 		isDoor = true;
 	}
 
@@ -299,10 +318,15 @@ function DoorCloseSound( doorType )
 
 function GetDoorType( iUsed )
 {
-	var retVal = 0;
+	var retVal = 1; // Default to wooden door
 	var doorID = iUsed.id;
 	if( ( doorID >= 0x0695 && doorID < 0x06C5 ) || 		// wooden / ratan door
-	    ( doorID >= 0x06D5 && doorID <= 0x06F4 ) )
+	    ( doorID >= 0x06D5 && doorID <= 0x06F4 ) ||
+	    ( doorID >= 0x50c8 && doorID <= 0x50d6 ) ||
+	    ( doorID >= 0x9ad7 && doorID <= 0x9ae5 ) ||
+	    ( doorID >= 0x9b3c && doorID <= 0x9b4a ) ||
+	    ( doorID >= 0x46dd && doorID <= 0x46e3 ) ||
+	    ( doorID >= 0x4d1a && doorID <= 0x4d28 ))
 	{
 			retVal = 1;
 	}
@@ -313,7 +337,8 @@ function GetDoorType( iUsed )
 			retVal = 2;
 	}
 	else if( ( doorID >= 0x0675 && doorID < 0x0695 ) || 	// metal
-		 ( doorID >= 0x06C5 && doorID < 0x06D5 ) )
+		 ( doorID >= 0x06C5 && doorID < 0x06D5 ) ||
+		 ( doorID >= 0x5142 && doorID <= 0x5148 ))
 	{
 			retVal = 3;
 	}
