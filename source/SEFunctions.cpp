@@ -129,7 +129,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	CChar *mysrcChar	= nullptr;
 
 	// Check if mysrc is null before continuing - it could be this temp effect as no character-based source!
-	if( !JSVAL_IS_NULL( mysrc ))
+	if( mysrc != nullptr )
 	{
 		mysrcChar = static_cast<CChar*>(JS_GetPrivate( cx, mysrc ));
 		if( !ValidateObject( mysrcChar ) )

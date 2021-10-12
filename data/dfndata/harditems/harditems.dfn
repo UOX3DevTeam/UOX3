@@ -139,6 +139,27 @@ type=12
 type=12
 }
 
+// Additional doors - Ruin/Queen
+[x46ddx46dfx46e1x46e3x4d1ax4d1cx4d1ex4d20x4d22x4d24x4d26x4d28]
+{
+type=12
+name=a wooden door
+}
+
+// Additional doors
+[x50c8x50cax50ccx50cex50d0x50d2x50d4x50d6x9ad7x9ad9x9adbx9addx9adfx9ae1x9ae3x9ae5x9b3cx9b3ex9b40x9b42x9b44x9b46x9b48x9b4a]
+{
+type=12
+name=a wooden door
+}
+
+// Additional metal doors
+[x5142x5144x5146x5148]
+{
+type=12
+name=a metal door
+}
+
 //Arrows and Crossbow-bolts
 [x0f3fx1bfb]
 {
