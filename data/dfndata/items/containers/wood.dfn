@@ -77,6 +77,8 @@ decay=1
 good=8
 movable 1
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a3c]
@@ -89,6 +91,8 @@ weightmax=40000
 type=1
 decay=1
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a3d]
@@ -112,6 +116,8 @@ weightmax=40000
 type=1
 decay=1
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a45]
@@ -139,6 +145,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a30]
@@ -155,6 +163,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a38]
@@ -171,6 +181,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a4f]
@@ -187,6 +199,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a53]
@@ -203,6 +217,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a4d]
@@ -219,6 +235,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a51]
@@ -235,6 +253,8 @@ movable=1
 decay=1
 good=8
 maxitems=125
+script=50
+script=61
 }
 
 [0x0a97]
