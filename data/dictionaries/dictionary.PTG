@@ -3926,6 +3926,13 @@
 9080=Hmm, essa pessoa tem um aspecto realmente idiota.
 9081=Este ser está a %d por cento da força mental.
 9082=Excessivo uso de dados detectado! O envio de demasiados pedidos para o servidor num curto espaço de tempo fará com que seja banido.
+9083=Você não foi capaz de terminar o seu trabalho antes de morrer.
+9084=Não foi capaz de ressuscitar o seu paciente.
+9085=O alvo não está morto.
+9086=Não consegues curar o que não está vivo.
+9087=O alvo não pode ser ressuscitado nesse local.
+9088=Os seus dedos escorregam!
+9089=Acaba de aplicar os pensos, mas eles mal ajudam.
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
@@ -3994,5 +4001,9 @@
 9402=[Não identificado]
 9403=utilizações restantes: %i
 9404= com taxas %d
+// [9900 - 10000] Comandos de Porta e de Sinal
+9916=Página
+9917=Próximo
+9918=Voltar
 }
 EOF

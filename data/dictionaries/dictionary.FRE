@@ -3317,9 +3317,10 @@
 5138=le Rancher
 5139=le Prisonnier
 5140=le Sculpteur
-5141=un petit démon
-5142=un cacodaemon
-5143=un démon bestial
+5141=le Maire
+5142=un petit démon
+5143=un cacodaemon
+5144=un daemon bestial
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -4090,6 +4091,13 @@
 9080=Hmm, cette personne a l'air vraiment stupide.
 9081=Cet être est à %d de force mentale.
 9082=Utilisation excessive des données détectée ! Si vous envoyez trop de requêtes au serveur dans un court laps de temps, vous serez banni.
+9083=Vous n'avez pas pu terminer votre travail avant de mourir.
+9084=Vous ne pouvez pas ressusciter votre patient.
+9085=La cible n'est pas morte.
+9086=Vous ne pouvez pas guérir ce qui n'est pas vivant.
+9087=La cible ne peut pas être ressuscitée à cet endroit.
+9088=Vos doigts glissent !
+9089=Tu finis d'appliquer les bandages, mais ils n'aident pas vraiment.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !
@@ -4158,5 +4166,9 @@
 9402=[Non identifié]
 9403=Utilisations restantes : %i
 9404= avec %d charges
+// [9900 - 10000] Commandes pour les portes et les enseignes
+9916=Page
+9917=Suivant
+9918=Retour
 }
 EOF

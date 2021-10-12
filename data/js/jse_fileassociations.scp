@@ -202,6 +202,7 @@
 4011=skill/tinkerclock.js
 4012=skill/tinkersextant.js
 4013=skill/fishing.js
+4014=skill/healing_slip.js
 
 // Doors
 4500=item/doors.js

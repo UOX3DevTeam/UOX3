@@ -3156,6 +3156,10 @@
 5138=Rančer
 5139=Vězeň
 5140=sochař
+5141=starosta
+5142=menší démon
+5143=akodaemon
+5144=zvířecí démon
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3930,6 +3934,13 @@
 9080=Hmm, ta osoba vypadá opravdu hloupě.
 9081=Tato bytost má %d procent duševní síly.
 9082=Detekováno nadměrné využití dat! Odeslání příliš mnoha požadavků na server v krátkém časovém úseku vám bude zakázáno.
+9083=Nedokázal jsi dokončit svou práci před smrtí.
+9084=Nejsi schopen vzkřísit svého pacienta.
+9085=Cíl není mrtvý.
+9086=Nemůžeš léčit to, co není živé.
+9087=Cíl nemůže být na tomto místě vzkříšen.
+9088=Uklouzly ti prsty!
+9089=Dokončíš přikládání obvazů, ale sotva ti pomohou.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -3998,5 +4009,9 @@
 9402=[Neidentifikováno]
 9403=Zbývající použití: %i
 9404= s %d náloží
+// [9900 - 10000] Příkazy pro dveře a značky
+9916=Strana
+9917=Další
+9918=Zpět
 }
 EOF

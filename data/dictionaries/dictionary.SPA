@@ -3012,7 +3012,7 @@
 4541=Conejo de la Perdición
 4542=Conejo de la perdición
 // [5000-5499] Nombres y títulos de PNJ adicionales (no vinculados a la ID)
-5.000=una vid de látigo
+5000=una vid de látigo
 5001=un canario
 5002=un halcón
 5003=un halcón
@@ -3927,6 +3927,13 @@
 9080=Hmm, esa persona parece muy tonta.
 9081=Este ser tiene un %d de fuerza mental.
 9082=¡Detección de uso excesivo de datos! El envío de demasiadas solicitudes al servidor en un corto periodo de tiempo hará que te baneen.
+9083=No pudo terminar su trabajo antes de morir.
+9084=No puede resucitar a su paciente.
+9085=El objetivo no está muerto.
+9086=No puede curar lo que no está vivo.
+9087=El objetivo no puede ser resucitado en ese lugar.
+9088=Se te resbalan los dedos.
+9089=Termina de aplicar las vendas, pero apenas ayudan.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!
@@ -3995,5 +4002,9 @@
 9402=[Sin identificar]
 9403=Cargas restantes: %i
 9404= con %d cargas
+// [9900 - 10000] Comandos de puertas y señales
+9916=Página
+9917=Siguiente
+9918=Atrás
 }
 EOF

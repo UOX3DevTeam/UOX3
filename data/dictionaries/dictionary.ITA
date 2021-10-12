@@ -3155,7 +3155,7 @@
 5140=lo scultore
 5141=il sindaco
 5142=un demone minore
-5143=un cacodemone
+5143=un cacodaemon
 5144=un demone bestiale
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
@@ -3927,6 +3927,13 @@
 9080=Hmm, quella persona sembra davvero stupida.
 9081=Questo essere è al %d di forza mentale.
 9082=Rilevato uso eccessivo di dati! Inviando troppe richieste al server in un breve lasso di tempo verrai bannato.
+9083=Non sei stato in grado di finire il tuo lavoro prima di morire.
+9084=Non sei in grado di resuscitare il tuo paziente.
+9085=Il bersaglio non è morto.
+9086=Non puoi guarire ciò che non è vivo.
+9087=Il bersaglio non può essere resuscitato in quel luogo.
+9088=Le tue dita scivolano!
+9089=Finisci di applicare le bende, ma aiutano a malapena.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
@@ -3995,5 +4002,9 @@
 9402=[Non identificato]
 9403=Uso rimanente: %i
 9404= con %d cariche
+// [9900 - 10000] Comandi per porte e insegne
+9916=Pagina
+9917=Prossimo
+9918=Indietro
 }
 EOF
