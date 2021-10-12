@@ -1,3 +1,13 @@
+12/10/2021 - Dragon Slayer
+	Healing someone with bandages now unhides player
+	Updated calculations for duration it takes to heal self/another target, and for the amount of health healed
+	Added karma gain for healing innocent players
+	Added ability to heal various humanoid monsters with bandages and Healing skill
+	Added ability to heal various animals with bandages and Veterinary skill (Xuri)
+	Added chance for healer's fingers to slip if taking damage while healing (js/skill/healing_slip.js), with amount of health healed being reduced with each slip, though this effect is countered somewhat by healer's Healing skill and Dexterity stat (Xuri)
+	Added some opening effects to some containers like armoires, chests of drawers and dressers
+	Added new command to allow shard admins and GMs to quickly add signs to their world: 'addsign
+
 30/09/2021 - Xuri
 	Fixed an issue with DoTempEffect JS function which prevented compilation on macOS (and potentially had unintended consequences)
 	Cleaned up a warning in sound.cpp
