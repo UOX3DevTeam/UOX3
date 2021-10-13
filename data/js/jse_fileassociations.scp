@@ -203,6 +203,22 @@
 4012=skill/tinkersextant.js
 4013=skill/fishing.js
 4014=skill/healing_slip.js
+4015=skill/craft/blacksmith/bronze.js
+4016=skill/craft/blacksmith/copper.js
+4017=skill/craft/blacksmith/agapite.js
+4018=skill/craft/blacksmith/dullcopper.js
+4019=skill/craft/blacksmith/gold.js
+4020=skill/craft/blacksmith/shadowiron.js
+4021=skill/craft/blacksmith/valorite.js
+4022=skill/craft/blacksmith/verite.js
+4023=skill/craft/blacksmith/blacksmithing.js
+4025=skill/craft/carpentry.js
+4026=skill/craft/itemdetailgump.js
+4027=skill/craft/craftgump.js
+4028=skill/craft/alchemy.js
+4029=skill/craft/fletching.js
+4030=skill/craft/tailoring.js
+4031=skill/craft/crafttool.js
 
 // Doors
 4500=item/doors.js

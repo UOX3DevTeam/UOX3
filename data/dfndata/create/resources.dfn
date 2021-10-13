@@ -69,3 +69,8 @@ ID=0x1079
 ID=0x1081
 ID=0x1082
 }
+
+[RESOURCE BONE]
+{
+ID=0x0f7e
+}
