@@ -2,6 +2,7 @@
 // v1.0; 08/05/01; initial release / total overhaul; Carsten Germer / Yeshe; yeshe@manofmystery.org 
 // v1.1; 17/06/01; added candles menu 67 to tinkering; Carsten Germer / Yeshe; yeshe@manofmystery.org 
 // v1.2; 12/01/02; fixed the damn carpentry bug that had the wrong ids; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com 
+// v1.3; 8/28/21; Added missing Buckle, Fixed Names one armors and shields; Dragon Slayer
 // (add new version comments here, use format of above line please!) 
 // For use with the UOX emulator or any with permission from the author 
 // 
@@ -67,7 +68,7 @@ MENU=0
 } 
 [SUBMENU 3] 
 { Shields 
-ITEM=367
+ITEM=1
 ITEM=2 
 ITEM=3 
 ITEM=4 
@@ -244,33 +245,43 @@ ITEM=364
 ITEM=365 
 ITEM=366 
 MENU=3 
-} 
-
+}
+[ITEM 1] 
+{ 
+NAME=buckle
+ID=0x1b73
+RESOURCE=METAL 10
+SKILL=7 0 100
+ADDITEM=0x1b73
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
+}
 [ITEM 2] 
 { 
-NAME=bronze 
-ID=0x1b72 
-RESOURCE=0x1bf2 12 
-SKILL=7 0 150 
-ADDITEM=0x1b72 
+NAME=bronze shield
+ID=0x1b72
+RESOURCE=0x1bf2 12
+SKILL=7 0 150
+ADDITEM=0x1b72
 MINRANK=1
-MAXRANK=10 
-SOUND=0x002A 
-} 
+MAXRANK=10
+SOUND=0x002A
+}
 [ITEM 3] 
 { 
-NAME=metal 
+NAME=metal shield
 ID=0x1b7b
-RESOURCE=METAL 14 
-SKILL=7 0 200 
-ADDITEM=0x1b7b 
-MINRANK=1 
-MAXRANK=10 
-SOUND=0x002A 
+RESOURCE=METAL 14
+SKILL=7 0 200
+ADDITEM=0x1b7b
+MINRANK=1
+MAXRANK=10
+SOUND=0x002A
 } 
 [ITEM 4] 
 { 
-NAME=small kite 
+NAME=tear kite shield
 ID=0x1b78 
 RESOURCE=METAL 8 
 SKILL=7 0 250 
@@ -281,7 +292,7 @@ SOUND=0x002A
 } 
 [ITEM 5] 
 { 
-NAME=kite 
+NAME=metal kite shield
 ID=0x1b74 
 RESOURCE=METAL 16 
 SKILL=7 46 350 
@@ -292,7 +303,7 @@ SOUND=0x002A
 } 
 [ITEM 6] 
 { 
-NAME=heater 
+NAME=heater shield
 ID=0x1b76 
 RESOURCE=METAL 18 
 SKILL=7 243 750 
@@ -303,7 +314,7 @@ SOUND=0x002A
 } 
 [ITEM 7] 
 { 
-NAME=gloves 
+NAME=ringmail gloves 
 ID=0x13f2 
 RESOURCE=METAL 10 
 SKILL=7 120 620 
@@ -314,7 +325,7 @@ SOUND=0x002A
 } 
 [ITEM 8] 
 { 
-NAME=sleeves 
+NAME=ringmail sleeves 
 ID=0x13ee 
 RESOURCE=METAL 14 
 SKILL=7 169 670 
@@ -325,7 +336,7 @@ SOUND=0x002A
 } 
 [ITEM 9] 
 { 
-NAME=leggings 
+NAME=ringmail leggings 
 ID=0x13f0 
 RESOURCE=METAL 16 
 SKILL=7 194 700 
@@ -336,7 +347,7 @@ SOUND=0x002A
 } 
 [ITEM 10] 
 { 
-NAME=tunic 
+NAME=ringmail tunic 
 ID=0x13ec 
 RESOURCE=METAL 18 
 SKILL=7 219 720 
@@ -347,7 +358,7 @@ SOUND=0x002A
 } 
 [ITEM 11] 
 { 
-NAME=coif 
+NAME=chainmail coif 
 ID=0x13bb 
 RESOURCE=METAL 10 
 SKILL=7 145 650 
@@ -358,7 +369,7 @@ SOUND=0x002A
 } 
 [ITEM 12] 
 { 
-NAME=leggings 
+NAME=chainmail leggings 
 ID=0x13be 
 RESOURCE=METAL 18 
 SKILL=7 367 870 
@@ -369,7 +380,7 @@ SOUND=0x002A
 } 
 [ITEM 13] 
 { 
-NAME=tunic 
+NAME=chainmail tunic 
 ID=0x13bf 
 RESOURCE=METAL 20 
 SKILL=7 391 900 
@@ -380,7 +391,7 @@ SOUND=0x002A
 } 
 [ITEM 14] 
 { 
-NAME=gorget 
+NAME=platemail gorget 
 ID=0x1413 
 RESOURCE=METAL 10 
 SKILL=7 564 1100 
@@ -391,7 +402,7 @@ SOUND=0x002A
 } 
 [ITEM 15] 
 { 
-NAME=gloves 
+NAME=platemail gloves 
 ID=0x1414 
 RESOURCE=METAL 12 
 SKILL=7 589 1100 
@@ -402,7 +413,7 @@ SOUND=0x002A
 } 
 [ITEM 16] 
 { 
-NAME=arms 
+NAME=platemail arms 
 ID=0x1410 
 RESOURCE=METAL 18 
 SKILL=7 663 1160 
@@ -413,7 +424,7 @@ SOUND=0x002A
 } 
 [ITEM 17] 
 { 
-NAME=legs 
+NAME=platemail legs 
 ID=0x1411 
 RESOURCE=METAL 20 
 SKILL=7 688 1190 
@@ -424,7 +435,7 @@ SOUND=0x002A
 } 
 [ITEM 18] 
 { 
-NAME=tunic 
+NAME=platemail (tunic)
 ID=0x1415 
 RESOURCE=METAL 25 
 SKILL=7 750 1250 
@@ -435,7 +446,7 @@ SOUND=0x002A
 } 
 [ITEM 19] 
 { 
-NAME=female plate 
+NAME=platemail (female)
 ID=0x1c04 
 RESOURCE=METAL 20 
 SKILL=7 441 940 
@@ -556,7 +567,7 @@ SOUND=0x002A
 } 
 [ITEM 30] 
 { 
-NAME=executioners axe 
+NAME=executioner's axe 
 ID=0x0f45 
 RESOURCE=METAL 16 
 SKILL=7 342 840 
@@ -611,7 +622,7 @@ SOUND=0x002A
 } 
 [ITEM 35] 
 { 
-NAME=shortspear 
+NAME=short spear 
 ID=0x1403 
 RESOURCE=METAL 6 
 SKILL=7 453 950 
@@ -633,7 +644,7 @@ SOUND=0x002A
 } 
 [ITEM 37] 
 { 
-NAME=warfork 
+NAME=war fork 
 ID=0x1405 
 RESOURCE=METAL 12 
 SKILL=7 379 880 
@@ -721,7 +732,7 @@ SOUND=0x002A
 } 
 [ITEM 45] 
 { 
-NAME=helm 
+NAME=helmet 
 ID=0x140a 
 RESOURCE=METAL 15 
 SKILL=7 379 880 
@@ -963,18 +974,6 @@ ID=0x27fa
 RESOURCE=METAL 12 
 SKILL=7 500 1120 
 ADDITEM=0x27fa 
-MINRANK=1 
-MAXRANK=10 
-SOUND=0x002A 
-} 
-
-[ITEM 367] 
-{ 
-NAME=buckler 
-ID=0x1b73 
-RESOURCE=METAL 10 
-SKILL=7 0 100 
-ADDITEM=0x1b73 
 MINRANK=1 
 MAXRANK=10 
 SOUND=0x002A 

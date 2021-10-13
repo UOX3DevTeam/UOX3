@@ -1089,5 +1089,29 @@ MAXRANK=10
 SOUND=0x023D
 }
 
+[ITEM 123]
+{
+NAME=Club
+ID=0x13b3
+RESOURCE=WOOD 10
+SKILL=11 650 1450
+ADDITEM=0x13b3
+MINRANK=1
+MAXRANK=10
+SOUND=0x023D
+}
+
+[ITEM 124]
+{
+NAME=Black Staff
+ID=0x0df0
+RESOURCE=WOOD 9
+SKILL=11 815 1450
+ADDITEM=0x0df0
+MINRANK=1
+MAXRANK=10
+SOUND=0x023D
+}
+
 // end of carpentry section
 //*****************************************
