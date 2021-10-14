@@ -3,7 +3,7 @@ var LabelColor = 0x7FFF;			// Second Color of text.
 const scriptID = 4025;				// Use this to tell the gump what script to close.
 const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
 const resourceDelay = 200;			// Timer for the gump to reapear after selecting a resource.
-var blacksmithID = 4014;
+var blacksmithID = 4023;
 var bronzeID = 4015;
 var copperID = 4016;
 var agapiteID = 4017;
@@ -12,7 +12,6 @@ var goldID = 4019;
 var shadowironID = 4020;
 var valoriteID = 4021;
 var veriteID = 4022;
-var Cooking = 4023;
 var Carpentry = 4025;
 var Alchemy = 4028;
 var Bowcraft = 4029;
@@ -269,9 +268,6 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
-				case 6:
-					TriggerEvent( Cooking, "page1", pSock, pUser );
-					break;
 			}
 			break;
 		case 2:
@@ -321,9 +317,6 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( veriteID, "page2", pSock, pUser );
 							break;
 					}
-					break;
-				case 6:
-					TriggerEvent( Cooking, "page2", pSock, pUser );
 					break;
 			}
 			break;
@@ -375,9 +368,6 @@ function onGumpPress( pSock, pButton, gumpData )
 							break;
 					}
 					break;
-				case 6:
-					TriggerEvent( Cooking, "page3", pSock, pUser );
-					break;
 			}
 			break;
 		case 4:
@@ -424,9 +414,6 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( veriteID, "page4", pSock, pUser );
 							break;
 					}
-					break;
-				case 6:
-					TriggerEvent( Cooking, "page4", pSock, pUser );
 					break;
 			}
 			break;
