@@ -319,6 +319,7 @@
 1058=commands/targeting/scptrig.js
 1059=commands/decorate.js
 1060=commands/custom/addsign.js
+1061=commands/spawn.js
 }
 
 //-------------------------------------------

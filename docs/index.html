@@ -27,9 +27,11 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 24. September, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4x+</small></p>
+	<p style="margin:0"><small>Last Updated: 18. October, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4y</small></p>
 </div>
+
+<div id="filterMainDocs" contenteditable="true" placeholder="(Filter)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px"></div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
 	<ul class="cd-faq__categories topicListDocs">
@@ -58,6 +60,12 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>October 18th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section (CONSOLELOG, NETWORKLOG, SPEECHLOG, BANKBUYTHRESHOLD, NPCMOUNTEDWALKINGSPEED, NPCMOUNTEDFLEEINGSPEED, NPCMOUNTEDRUNNINGSPEED, SPAWNREGIONSFACETS)</li>
+							<li>Updated <a href="#skillAndStatGain">Skill and Stat Gain</a> section with details on SKILLDELAY tag, and the role that the STR, DEX and INT tags play</li>
+							<li>Added a simple filter function to make it easier to find stuff in the docs</li>
+						</ul>
 						<h4>September 24th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with latest additions and changes (unicode messages, context menus, system message hue, client network budget, stats affect skills, resource areas, archery hit bonus, archery shoot delay)</li>
@@ -820,7 +828,15 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">CONSOLELOG</span><strong>=1</strong><br>
-							Allows various levels of logging; 0 = none, 1 = errors/warnings, 2 = errors/warnings + all speech</p>
+							Toggles logging of console messages, warnings and errors</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NETWORKLOG</span><strong>=1</strong><br>
+							Toggles logging of network traffic (packets)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SPEECHLOG</span><strong>=1</strong><br>
+							Toggles logging of player/staff speech</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">COMMANDPREFIX</span><strong>='</strong><br>
@@ -1200,6 +1216,10 @@ packitem=0x0f8d,30
 							Maximum number of items that can be sold to a vendor at a time.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">BANKBUYTHRESHOLD</span><strong>=2000</strong><br>
+							Defines the lower limit for when a purchase will withdraw money from bank instead of backpack</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">TRADESYSTEM</span><strong>=0</strong><br>
 							Determines if the Tradesystem is enabled or not (fluctuation of vendor prices across regions - check documentation for Advanced Trade System.)</p>
 						</div>
@@ -1283,6 +1303,23 @@ packitem=0x0f8d,30
 								<strong>(0x4000)</strong> <span class="hl">16384</span>: new movement system (Not implemented)<br>
 								<strong>(0x8000)</strong> <span class="hl">32768</span>: Unlock new Felucca faction-areas (Not implemented)</p><br>
 								<p>The above flags can be mixed and matched to enable specific features on the server. Simply <strong>add together</strong> the decimal numbers of the desired features, and put the end-result in the SERVERFEATURES tag.</p>
+							</div>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SPAWNREGIONSFACETS</span><strong>=0</strong><br>
+							Can be used to enable/disable spawn regions for specific facets of the shard. See facet list for details:</p>
+							<input type="checkbox" id="spoiler_setting_facetlist">
+							<label for="spoiler_setting_facetlist">facet list <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>(0x00)</strong> <span class="hl">0</span>: All spawn regions disabled<br>
+								<strong>(0x01)</strong> <span class="hl">1</span>: Felucca enabled<br>
+								<strong>(0x02)</strong> <span class="hl">2</span>: Trammel enabled<br>
+								<strong>(0x04)</strong> <span class="hl">4</span>: Ilshenar enabled<br>
+								<strong>(0x08)</strong> <span class="hl">8</span>: Malas enabled<br>
+								<strong>(0x10)</strong> <span class="hl">16</span>: Tokuno enabled<br>
+								<strong>(0x20)</strong> <span class="hl">32</span>: Ter Mur enabled</p><br>
+								<p>The above flags can be mixed and matched to enable spawn regions for one or more facets on the server. Simply <strong>add together</strong> the decimal numbers of the desired facets, and put the end-result in the SPAWNREGIONSFACETS tag.</p><br>
+								<p>Examples: SPAWNREGIONSFACETS=1 means only Felucca has spawn regions enabled. A value of 3 means Felucca plus Trammel are enabled. A value of 10 means Malas plus Trammel (the only ones that add up to 10), and 63 equals ALL facets being enabled.</p>
 							</div>
 						</div>
 						<div class="settingsDiv">
@@ -1402,6 +1439,18 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">NPCFLEEINGSPEED</span><strong>=0.4</strong><br>
 							Allows customization of NPC fleeing speed. Can be overridden by FLEEINGSPEED tag in NPC-DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCMOUNTEDWALKINGSPEED</span><strong>=0.3</strong><br>
+							Allows customization of mounted NPC movement speed. Can be overridden by WALKINGSPEEDMOUNTED tag in NPC-DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCMOUNTEDRUNNINGSPEED</span><strong>=0.12</strong><br>
+							Allows customization of mounted NPC running speed. Can be overridden by RUNNINGSPEEDMOUNTED tag in NPC-DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">NPCMOUNTEDFLEEINGSPEED</span><strong>=0.25</strong><br>
+							Allows customization of mounted NPC fleeing speed. Can be overridden by FLEEINGSPEEDMOUNTED tag in NPC-DFNs</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">NPCSPELLCASTSPEED</span><strong>=1</strong><br>
@@ -2204,6 +2253,14 @@ packitem=0x0f8d,30
 							Parameters: <span class="hl"><em>(h)</em></span></p>
 						</div>
 
+						<input type="checkbox" id="spoiler_cmd_disablespawns">
+						<label for="spoiler_cmd_disablespawns">disablespawns <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Disable spawn regions for the specified facet (0 = Felucca, 1 = Trammel, 2 = Ilshenar, 3 = Malas, 4 = Tokuno, 5 = Ter Mur), using facet ID or name.</p>
+							<p>Command: <span class="hl">'disablespawns</span><br>
+							Parameters: <span class="hl"><em>(facetID / facetName)</em></span></p>
+						</div>
+
 						<input type="checkbox" id="spoiler_cmd_disconnect">
 						<label for="spoiler_cmd_disconnect">disconnect <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -2240,6 +2297,13 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_cmd_E">
 					<label for="spoiler_cmd_E">E <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<input type="checkbox" id="spoiler_cmd_enablespawns">
+						<label for="spoiler_cmd_enablespawns">enablespawns <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>Enable spawn regions for the specified facet (0 = Felucca, 1 = Trammel, 2 = Ilshenar, 3 = Malas, 4 = Tokuno, 5 = Ter Mur), using facet ID or name.</p>
+							<p>Command: <span class="hl">'enablespawns</span><br>
+							Parameters: <span class="hl"><em>(facetID / facetName)</em></span></p>
+						</div>
 						<input type="checkbox" id="spoiler_cmd_endfight">
 						<label for="spoiler_cmd_endfight">endFight <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -5438,13 +5502,15 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					<span class="hl">SKILLPOINT=990,5,0</span><br>
 					<span class="hl">SKILLPOINT=1000,0,0</span><br>
 					<strong>MADEWORD=mixed</strong><br>
+					<strong>(optional)SKILLDELAY=10</strong><br>
 					<strong>}</strong></p>
-					<p>SKILLPOINT Entries work in this way:
+					<p>The STR, DEX and INT tags determine how likely those stats are to increase when the skill is used, as well as how much impact they have on the potential success of skill checks if the UOX.INI setting STATSAFFECTSKILLCHECKS is enabled.</p>
+					<p>SKILLPOINT tags work in this way:
 						<ul>
 							<li>The <strong>first</strong> value is the skill level at which this entry takes effect.</li>
 							<li>The <strong>second</strong> value is the chance to gain skill on success.</li>
 							<li>The <strong>third</strong> value is the chance to gain skill on failure.</li>
-							<li>The <strong>fourth</strong> (optional) value is the amount to gain on success.</li>
+							<li>The <strong>fourth</strong> (optional) value is the amount to gain on success - defaults to 1 (0.1) points if nothing else is specified</li>
 						</ul>
 					</p>
 					<p>Each additional SKILLPOINT entry sets a ceiling for the previous one. Thus entries should be created for every step you wish there to be, to gradually slow down skill gain. By default these steps are: 0-100, 100-200, 200-300, 300-400, 400-500, 500-600, 600-700, 700-800, 800-900, 900-990, 990-1000. Note that all skill values are *10, thus 100 instead of 10.0</p>
@@ -10430,7 +10496,7 @@ function commandTitle()
 							<p><span class="hl">EvilDeD</span><br> Matthew Randall, Programmer, DevTeam Lead, Web Admin, CVS admin, v69.00-v0.98.x</p>
 							<p><span class="hl">Pellinore Dragon</span><br> Programmer, v69.01</p>
 							<p><span class="hl">Homey</span><br> Programmer, v69.02</p>
-							<p><span class="hl">Crwth</span><br> Programmer, v69.02</p>
+							<p><span class="hl">Crwth</span><br> Wayne Pearson, Programmer, v69.02</p>
 							<p><span class="hl">Phantom</span><br> Programmer, v69.02</p>
 							<p><span class="hl">Wolfgang</span><br> Programmer, v69.02</p>
 						</div>
@@ -10656,6 +10722,100 @@ function commandTitle()
 	<p><small>Documentation revamp by Geir Ove Alnes @ Copyright 2020 - 2021</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
+<script defer>
+// Handle filters
+document.getElementById("filterMainDocs").addEventListener("keyup", filterInputHandler, false);
+
+function filterInputHandler( e ) {
+	if( e.keyCode == 32 ) // spacebar
+		return;
+	var filterInput = this.textContent.toUpperCase();
+	//var parentDivID = e.path[0].closest('ul').id;
+	var parentDiv = e.path[0].closest('body');
+	var filterElements = parentDiv.getElementsByClassName('cd-faq__content');
+	var filterCategories = parentDiv.getElementsByClassName('cd-faq__item');
+
+	if( filterInput == "" )
+	{
+		this.style.border = "none";
+		ResetFilter( filterElements, filterCategories, parentDiv );
+	}
+	else
+	{
+		this.style.border = "2px solid yellow";
+		ApplyFilter( filterElements, filterCategories, parentDiv, filterInput );
+	}
+}
+
+function ResetFilter( filterElements, filterCategories, parentDiv ) {
+	for( i = 0; i < filterElements.length; i++ ) {
+		filterElements[i].style.display = "";
+		filterElements[i].style.border = "none";
+	}
+
+	for( i = 0; i < filterCategories.length; i++ ) {
+		filterCategories[i].style.display = "";
+		if( filterCategories[i].classList.contains('cd-faq__item-visible') )
+			filterCategories[i].firstElementChild.click();
+		filterCategories[i].closest('.cd-faq__group').style.display = "";
+	}
+}
+
+function ApplyFilter( filterElements, filterCategories, parentDiv, filterInput ) {
+	// Loop through all list items, and hide those who don't match the search query
+	for( i = 0; i < filterElements.length; i++ ) {
+		var txtValue = filterElements[i].textContent;
+		var filterElem = filterElements[i];
+		//var spoilerWrapper = filterElem.closest(".spoilerWrapper");
+		if( txtValue.toUpperCase().indexOf(filterInput) > -1 ) {
+			//if( spoilerWrapper != null )
+				//spoilerWrapper.style.display = "";
+			filterElements[i].style.display = "";
+			if( filterInput !== "" )
+			{
+				filterElements[i].style.border = "2px solid yellow";
+				if( !filterElements[i].closest('.cd-faq__item').classList.contains('cd-faq__item-visible') )
+					filterElements[i].closest('.cd-faq__item').firstElementChild.click();
+				filterElements[i].closest('.cd-faq__group').style.display = "";
+			}
+
+		} else {
+			//if( spoilerWrapper != null )
+				//spoilerWrapper.style.display = "none";
+			filterElements[i].style.display = "none";
+			filterElements[i].style.border = "none";
+
+			for( j = 0; j < filterCategories.length; j++ ) {
+				var filterChildren = filterCategories[j].getElementsByClassName("cd-faq__content");
+
+				var divsArray = [].slice.call(filterChildren);
+	    		var displayShow = divsArray.filter(function(el) {
+				    return getComputedStyle(el).display !== "none";
+				});
+
+				if( displayShow.length == 0 )
+				{
+					filterCategories[j].style.display = "none";
+
+					var filterChildren2 = filterCategories[j].closest('.cd-faq__group').getElementsByClassName("cd-faq__item");
+
+					var divsArray2 = [].slice.call(filterChildren2);
+		    		var displayShow2 = divsArray2.filter(function(el) {
+					    return getComputedStyle(el).display !== "none";
+					});
+
+		    	if( displayShow2.length == 0 )
+		    	{
+						filterCategories[j].closest('.cd-faq__group').style.display = "none";
+		    	}
+				}
+				else
+					filterCategories[j].style.display = "";
+			}
+		}
+	}
+}
+</script>
 <script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->
 <script src="assets/js/main.js"></script>
 <script src="assets/js/prism.js"></script>

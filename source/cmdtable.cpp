@@ -703,7 +703,9 @@ void command_respawn( void )
 	{
 		CSpawnRegion *spawnReg = spIter->second;
 		if( spawnReg != nullptr )
+		{
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
+		}
 		++spIter;
 	}
 
