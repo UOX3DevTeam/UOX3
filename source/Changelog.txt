@@ -1,3 +1,15 @@
+17/10/2021 - Xuri
+	Updated onSkillGain, onSkillLoss and onSkillChange JS events:
+		Additional parameters now supported by events - skillGainAmount and skillLossAmount
+			onSkillGain( player, skillID, skillGainAmount ) 	// skillGainAmount is always positive
+			onSkillLoss( player, skillID, skillLossAmount ) 	// skillLossAmount is always positive
+			onSkillChange( player, skillID, skillChangeAmount ) // skillChangeAmount can be negative or positive
+		The return value from onSkillGain and onSkillLoss events can now be used to control behavior:
+			return true - skill gain/loss is allowed, and server will go through with the skill update
+			return false - skill gain/loss is not allowed, and server will prevent the skill update, but will not block additional scripts with same event from running
+		onSkillChange will now run as long as onSkillGain or onSkillLoss events return true, and if those events are not defined
+	Updated JS Docs
+	
 12/10/2021 - Dragon Slayer
 	Healing someone with bandages now unhides player
 	Updated calculations for duration it takes to heal self/another target, and for the amount of health healed

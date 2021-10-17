@@ -179,9 +179,9 @@ public:
 	std::string		OnTooltip( CBaseObject *myObj );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );
-	bool		OnSkillGain( CChar *player, SI08 skill );
-	bool		OnSkillLoss( CChar *player, SI08 skill );
-	bool		OnSkillChange( CChar *player, SI08 skill );
+	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
+	SI08		OnSkillLoss( CChar *player, SI08 skill, UI32 skillAmtLost );
+	bool		OnSkillChange( CChar *player, SI08 skill, SI32 skillAmtChanged );
 	bool		OnStatGained( CChar *player, UI32 stat, SI08 skill );
 	bool		OnStatGain( CChar *player, UI32 stat, SI08 skill );
 	bool		OnStatLoss( CChar *player, UI32 stat );
