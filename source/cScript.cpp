@@ -748,27 +748,32 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSkillGain( CChar *player, SI08 skill )
+//|	Function	-	SI08 OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when gaining skillpoints
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnSkillGain( CChar *player, SI08 skill )
+SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 {
-	if( !ValidateObject( player ) )
-		return false;
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( player ))
+		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSkillGain, "onSkillGain" ) )
-		return false;
+		return RV_NOFUNC;
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillGain", 2, params, &rval );
+	params[2] = INT_TO_JSVAL( skillGainAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillGain", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnSkillGain, false );
+		return RV_NOFUNC;
+	}
 
-	return ( retVal == JS_TRUE );
+	return TryParseJSVal( rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1738,45 +1743,51 @@ bool cScript::OnStatChange( CChar *player, UI32 stat )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSkillLoss( CChar *player, SI08 skill )
+//|	Function	-	SI08 OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing skillpoints
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnSkillLoss( CChar *player, SI08 skill )
+SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 {
-	if( !ValidateObject( player ) )
-		return false;
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( player ))
+		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSkillLoss, "onSkillLoss" ) )
-		return false;
+		return RV_NOFUNC;	
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillLoss", 2, params, &rval );
+	params[2] = INT_TO_JSVAL( skillLossAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillLoss", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnSkillLoss, false );
+		return RV_NOFUNC;
+	}
 
-	return ( retVal == JS_TRUE );
+	return TryParseJSVal( rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSkillChange( CChar *player, SI08 skill )
+//|	Function	-	bool OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when skillpoints change
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnSkillChange( CChar *player, SI08 skill )
+bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 {
 	if( !ValidateObject( player ) )
 		return false;
 	if( !ExistAndVerify( seOnSkillChange, "onSkillChange" ) )
 		return false;
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillChange", 2, params, &rval );
+	params[2] = INT_TO_JSVAL( skillChangeAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnSkillChange, false );
 

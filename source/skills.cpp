@@ -918,18 +918,40 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( success )
 		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
 	UI16 skillCap			= cwmWorldState->ServerData()->ServerSkillTotalCapStatus();
+	bool updateSkill		= true;
 
 	if( c->IsNpc() )
 	{
-		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-
+		// Check for existence of onSkillGain event for NPC
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				if( !toExecute->OnSkillGain( c, sk ) )
-					toExecute->OnSkillChange( c, sk );
+				// If retVal is -1, event doesn't exist in script
+				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+				// If retVal is 1, event exists, proceed with hard code/other scripts
+				if( !toExecute->OnSkillGain( c, sk, amtToGain ) )
+				{
+					updateSkill = false;
+					return;
+				}
+			}
+		}
+
+		if( updateSkill )
+		{
+			// Increase base skill of NPC
+			c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+
+			// Check for existence of onSkillChange event for NPC
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnSkillChange( c, sk, amtToGain );
+				}
 			}
 		}
 		return;
@@ -976,36 +998,78 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	{
 		if( toDec != 0xFF )
 		{
-			totalSkill -= amtToGain;
-			c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
-
+			// Check for existence of onSkillLoss event for player
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					if( !toExecute->OnSkillLoss( c, toDec ) )
-						toExecute->OnSkillChange( c, toDec );
+					// If retVal is -1, event doesn't exist in script
+					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+					// If retVal is 1, event exists, proceed with hard code/other scripts
+					if( !toExecute->OnSkillLoss( c, toDec, amtToGain ) )
+					{
+						updateSkill = false;
+						return;
+					}
 				}
 			}
-			mSock->updateskill( toDec );
+
+			if( updateSkill )
+			{
+				// Reduce base skill of player
+				totalSkill -= amtToGain;
+				c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
+
+				// Check for existence of onSkillChange event for player
+				for( auto scriptTrig : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
+					{
+						toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
+					}
+				}
+				mSock->updateskill( toDec );
+			}
 		}
 	}
 
 	if( skillCap > static_cast<UI16>(totalSkill) )
 	{
-		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-
+		// Check for existence of onSkillGain event for player
 		for( auto scriptTrig : scriptTriggers )
 		{
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				if( !toExecute->OnSkillGain( c, sk ) )
-					toExecute->OnSkillChange( c, sk );
+				// If retVal is -1, event doesn't exist in script
+				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+				// If retVal is 1, event exists, proceed with hard code/other scripts
+				if( !toExecute->OnSkillGain( c, sk, amtToGain ) )
+				{
+					updateSkill = false;
+					break;
+				}
 			}
 		}
-		mSock->updateskill( sk );
+
+		if( updateSkill )
+		{
+			// Increase base skill of player
+			c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+
+			// Check for existence of onSkillChange event for player
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnSkillChange( c, sk, amtToGain );
+				}
+			}
+			mSock->updateskill( sk );
+		}
 	}
 }
 
