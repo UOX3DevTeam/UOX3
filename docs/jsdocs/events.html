@@ -51,7 +51,7 @@ tChar.DoAction( 111 );
 <td>When pAttacker attacks pDefender (in each "round" of combat)
 <tr><td valign="top" width="25%"><b>Notes</b><td>pAttacker's script is activated, and pDefender's onDefense event is fired<b><big>!</big></b>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onAttack( pAttacker, pDefender )<br>{<br>	pAttacker.TextMessage( &quot;Who lives in that castle?&quot; );<br>	pDefender.TextMessage( &quot;Help! Help! I'm being repressed!&quot; );<br>}
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onAttack( pAttacker, pDefender )<br>{<br>	pAttacker.TextMessage( "Who lives in that castle?" );<br>	pDefender.TextMessage( "Help! Help! I'm being repressed!" );<br>}
 </pre>
 </table>
 
@@ -258,7 +258,7 @@ If script is attached to a character, will also trigger when the AllNames macro 
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item or char is created.  Note that for PCs, this is triggered when they first enter the world.
 <tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates an item<br>objType == 1 indicates a character
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Used for customization of players at creation, or tinkering items/chars when they're made.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCreate( objMade, objType )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCreateDFN( objMade, objType )
 {
 	if( objType == 1 )
 		objMade.SysMessage( "Welcome to Our Unique World(TM)!" );
@@ -273,7 +273,7 @@ If script is attached to a character, will also trigger when the AllNames macro 
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a non-DFN based item is created.
 <tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates an item<br>objType == 1 indicates a character
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Used for customization of non-DFN based items at creation.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCreate( objMade, objType )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCreateTile( objMade, objType )
 {
 	objMade.name = "A renamed item";
 }
@@ -374,7 +374,7 @@ function onDecay( iDecaying )
 <tr><td valign="top" width="25%"><b>Notes</b><td>pDefender's script fires, pAttacker's onAttack event is also fired
 
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onDefense( pAttacker, pDefender )<br>{<br>	pAttacker.TextMessage( &quot;Who lives in that castle?&quot; );<br>	pDefender.TextMessage( &quot;Help! Help! I'm being repressed!&quot; );<br>}
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onDefense( pAttacker, pDefender )<br>{<br>	pAttacker.TextMessage( "Who lives in that castle?" );<br>	pDefender.TextMessage( "Help! Help! I'm being repressed!" );<br>}
 </pre>
 </table>
 
@@ -1044,13 +1044,16 @@ function onSkill( objUsing, skillUsed, objType )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSkillChangeEvent">onSkillChange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillChange( pPlayer, skill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>This is fired if onSkillLoss isn't defined for skill loss, or onSkillGain isn't defined for skill gain.
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Allows you to take action when your skill level changes
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillChange( pPlayer, skill )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillChange( pPlayer, skill, skillChangeAmount )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>This event is fired if onSkillLoss or onSkillGain return true, or if those events are not defined. If the events returned false, onSkillChange will not trigger.
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Allows you to take action when your skill level changes (positively or negatively)
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillChange( pPlayer, skill, skillChangeAmount )
 {
-	pPlayer.TextMessage( pPlayer, "Oh dear, my skill's changed" );
+	if( skillChangeAmount > 0 )
+		pPlayer.TextMessage( "Oh wow, I've gained some points in skill number " + skill + "!" );
+	else
+		pPlayer.TextMessage( "Oh noes, I've lost some points in skill number " + skill + "!" );
 }
 </pre></table>
 
@@ -1058,7 +1061,7 @@ function onSkill( objUsing, skillUsed, objType )
 <tr><th colspan=2 bgcolor="maroon"><a name="onSkillCheck">onSkillCheck</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillCheck( pUser, skillID, lowSkill, highSkill )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggers for character with event attached when a skillcheck is performed
-<tr><td valign="top" width="25%"><b>Notes</b><td> Runs just prior to skillcheck. Returning true will allow skillcheck to take place, but will also prevent any other scripts with same event from running.
+<tr><td valign="top" width="25%"><b>Notes</b><td>Runs just prior to skillcheck. Returning true will allow skillcheck to take place, but will also prevent any other scripts with same event from running.
 <tr><td valign="top" width="25%"><b>Purpose</b><td>For taking additional action when skillchecks are performed.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillCheck( pUser, skillID, lowSkill, highSkill )
 {
@@ -1069,25 +1072,27 @@ function onSkill( objUsing, skillUsed, objType )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSkillGainEvent">onSkillGain</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillGain( pPlayer, skill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when pPlayer gains in skill skill
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>For taking actions when you gain skill.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillGain( pPlayer, skill )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillGain( pPlayer, skill, skillGainAmount )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Just before pPlayer gains points in skill
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Allows preventing or taking special action before skill gain takes place
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillGain( pPlayer, skill, skillGainAmount )
 {
-	pPlayer.TextMessage("Wheee! I've gained some skill!");
+	pPlayer.TextMessage( "Aww, I was about to gain " + ( skillGainAmount / 10 ) + " points in skill number " + skill + ", but got denied!" );
+	return false;
 }
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSkillLossEvent">onSkillLoss</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillLoss( pPlayer, skill )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer loses in skill skill
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
-<tr><td valign="top" width="25%"><b>Purpose</b><td>For doing something when you lose skill
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillLoss( pPlayer, skill )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillLoss( pPlayer, skill, skillLossAmount )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Just before pPlayer loses points in skill
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Allows preventing or taking special action before skill loss takes place
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillLoss( pPlayer, skill, skillLossAmount )
 {
-	pPlayer.TextMessage( "Oh no, I've lost skill!" );
+	pPlayer.TextMessage( "Phew, I was about to lose " + ( skillLossAmount / 10 ) + " points in skill number " + skill + ", but it didn't happen!" );
+	return false;
 }
 </pre></table>
 
@@ -1095,7 +1100,7 @@ function onSkill( objUsing, skillUsed, objType )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSkillGump">onSkillGump</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSkillGump( pUser )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser tries opening the skill-gump
-<tr><td valign="top" width="25%"><b>Notes</b><td> 
+<tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>For overriding the client's request to open the default skillgump. Return false to prevent opening default skillgump, or true to allow.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSkillGump( pUser )
 {
@@ -1138,7 +1143,7 @@ function onSkill( objUsing, skillUsed, objType )
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow for behavioural change on snooping behaviour.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSnooped( pSnooped, pSnooping, bSuccess )
 {
-	pSnooped.TextMessage( &quot;Oi! You! Stop snooping!" );
+	pSnooped.TextMessage( "Oi! You! Stop snooping!" );
 }
 </pre>
 </table>
