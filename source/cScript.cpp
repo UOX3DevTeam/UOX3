@@ -94,6 +94,8 @@ static JSFunctionSpec my_functions[] =
 	{ "WorldBrightLevel",			SE_WorldBrightLevel,		0, 0, 0 },
 	{ "WorldDarkLevel",				SE_WorldDarkLevel,			0, 0, 0 },
 	{ "WorldDungeonLevel",			SE_WorldDungeonLevel,		0, 0, 0 },
+	{ "GetSpawnRegionFacetStatus",	SE_GetSpawnRegionFacetStatus,	1, 0, 0 },
+	{ "SetSpawnRegionFacetStatus",	SE_SetSpawnRegionFacetStatus,	2, 0, 0 },
 	{ "AreaCharacterFunction",		SE_AreaCharacterFunction,	3, 0, 0 },
 	{ "AreaItemFunction",			SE_AreaItemFunction,		3, 0, 0 },
 	{ "TriggerEvent",				SE_TriggerEvent,			3, 0, 0 },

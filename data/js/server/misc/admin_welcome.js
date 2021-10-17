@@ -175,7 +175,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddHTMLGump( 310, 215, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 7 ? "EEEEEE" : "BEBEBE") + ">TER MUR</BASEFONT>" );
 
 	// Add section with object category checkboxes
-	adminWelcome.AddBackground( 400, 30, 115, 230, gumpSecondaryBackground );
+	adminWelcome.AddBackground( 400, 30, 115, 245, gumpSecondaryBackground );
 	adminWelcome.AddHTMLGump( 410, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Types</BASEFONT></BIG></CENTER>" );
 	adminWelcome.AddCheckbox( 410, 60, 9722, 2153, 1, checkboxStartID );
 	adminWelcome.AddCheckbox( 410, 90, 9722, 2153, 1, checkboxStartID + 1 );
@@ -183,6 +183,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddCheckbox( 410, 150, 9722, 2153, 1, checkboxStartID + 3 );
 	adminWelcome.AddCheckbox( 410, 180, 9722, 2153, 1, checkboxStartID + 4 );
 	adminWelcome.AddCheckbox( 410, 210, 9722, 2153, 1, checkboxStartID + 5 );
+	adminWelcome.AddCheckbox( 410, 240, 9722, 2153, 1, checkboxStartID + 6 );
 	adminWelcome.AddHTMLGump( 445, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Doors, doors and more doors!<br> Almost every building has one - or more!" );
@@ -201,6 +202,9 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddHTMLGump( 445, 215, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Misc</BASEFONT>" );
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Miscellanous items like plants,<br> and smaller decorations in houses, etc" );
+	adminWelcome.AddHTMLGump( 445, 245, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Spawns</BASEFONT>" );
+	if( enableTooltips )
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Spawn Regions with NPCs, animals and monsters" );
 
 	adminWelcome.AddGump( 483, 0, 10410 );
 	adminWelcome.AddGump( 483, 200, 10412 );
@@ -209,10 +213,10 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddHTMLGump( 15, 30, 250, 245, true, true, "<p>Using the options on the right, select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> to load from each facet. By default <i>everything</i> is included, for <i>all</i> facets; if that sounds good, hit <basefont color=#3D9A2B><i>Okay</i> <basefont color=black>to start decorating your shard.<br><br>This process might take a minute.<br><br>Also, note that you can return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
 
 	// Add buttons to cancel/get things going
-	adminWelcome.AddButton( 308, 273, previousPageButtonOff, previousPageButtonOn, 0, 1, 0 ); 	// Previous Page Button
+	adminWelcome.AddButton( 308, 283, previousPageButtonOff, previousPageButtonOn, 0, 1, 0 ); 	// Previous Page Button
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "I changed my mind, go back!" );
-	adminWelcome.AddButton( 420, 265, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
+	adminWelcome.AddButton( 420, 275, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Load default UOX3 world" );
 
@@ -358,6 +362,7 @@ function onTimer( timerObj, timerID )
 		{
 			var facetName = "";
 			var buttonID = -1;
+			var doSpawnRegionRespawn = false;
 
 			for( var i = 0; i < numCheckedBoxes; i++ )
 			{
@@ -437,9 +442,39 @@ function onTimer( timerObj, timerID )
 					case 35:
 						pSocket.currentChar.ExecuteCommand( "decorate load misc " + facetName + " silent multiple" );
 						break;
+					case 36: // Spawns, Felucca
+						pSocket.currentChar.ExecuteCommand( "enablespawns 0" );
+						doSpawnRegionRespawn = true;
+						break;
+					case 37: // Spawns, Trammel
+						pSocket.currentChar.ExecuteCommand( "enablespawns 1" );
+						doSpawnRegionRespawn = true;
+						break;
+					case 38: // Spawns, Ilshenar
+						pSocket.currentChar.ExecuteCommand( "enablespawns 2" );
+						doSpawnRegionRespawn = true;
+						break;
+					case 39: // Spawns, Malas
+						pSocket.currentChar.ExecuteCommand( "enablespawns 3" );
+						doSpawnRegionRespawn = true;
+						break;
+					case 40: // Spawns, Tokuno
+						pSocket.currentChar.ExecuteCommand( "enablespawns 4" );
+						doSpawnRegionRespawn = true;
+						break;
+					case 41: // Spawns, Ter Mur
+						pSocket.currentChar.ExecuteCommand( "enablespawns 5" );
+						doSpawnRegionRespawn = true;
+						break;
 					default:
 						break;
 				}
+			}
+
+			if( doSpawnRegionRespawn )
+			{
+				pSocket.SysMessage( "Triggering spawn cycle in regional spawn system..." );
+				pSocket.currentChar.ExecuteCommand( "regspawn all" );
 			}
 		}
 	}

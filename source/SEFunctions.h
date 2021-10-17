@@ -123,6 +123,8 @@ SEngineFunc SE_IterateOverSpawnRegions;
 SEngineFunc SE_WorldBrightLevel;
 SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
+SEngineFunc SE_GetSpawnRegionFacetStatus;
+SEngineFunc SE_SetSpawnRegionFacetStatus;
 SEngineFunc SE_GetSocketFromIndex;
 SEngineFunc SE_ResourceArea;
 SEngineFunc SE_ResourceAmount;

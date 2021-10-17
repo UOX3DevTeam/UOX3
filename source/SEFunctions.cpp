@@ -2571,6 +2571,57 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th July, 2004
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets and sets default light level in dungeons
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		DoSEErrorMessage( strutil::format("GetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc) );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		UI32 spawnRegionFacet = static_cast<UI32>(JSVAL_TO_INT( argv[0] ));
+		bool spawnRegionFacetStatus = cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( spawnRegionFacet );
+		if( spawnRegionFacetStatus )
+			*rval = INT_TO_JSVAL( 1 );
+		else
+			*rval = INT_TO_JSVAL( 0 );
+	}
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets enabled state of spawn regions
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_SetSpawnRegionFacetStatus( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 2 )
+	{
+		DoSEErrorMessage( strutil::format("SetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc) );
+		return JS_FALSE;
+	}
+	else if( argc == 1 )
+	{
+		UI32 spawnRegionFacetVal = static_cast<UI32>(JSVAL_TO_INT( argv[0] ));
+		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacetVal );
+	}
+	else if( argc == 2 )
+	{
+		UI32 spawnRegionFacet = static_cast<UI32>(JSVAL_TO_INT( argv[0] ));
+		bool spawnRegionFacetStatus = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacet, spawnRegionFacetStatus );
+	}
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	3rd August, 2004
 //o-----------------------------------------------------------------------------------------------o
@@ -3930,6 +3981,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 161:	 // ITEMDECAYINHOUSES[0153]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemDecayInHouses() );
+				break;
+			case 162:	 // SPAWNREGIONSFACETS
+				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus()));
 				break;
 			case 163:	// PAPERDOLLGUILDBUTTON[0155]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PaperdollGuildButton() );

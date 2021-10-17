@@ -608,6 +608,10 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 {
+	// Only perform the region spawn if the spawn region in question is active
+	if( !cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( static_cast<UI32>(WorldNumber()) ))
+		return;
+
 	if( sNpcs.empty() )
 		maxcspawn = 0;
 	if( sItems.empty() )

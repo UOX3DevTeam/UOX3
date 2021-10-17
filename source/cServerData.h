@@ -178,6 +178,7 @@ private:
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
 	std::bitset< 70 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 64 >	spawnRegionsFacets;			// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -383,6 +384,11 @@ public:
 
 	void		SetAssistantNegotiation( bool value );
 	bool		GetAssistantNegotiation( void ) const;
+
+	bool		GetSpawnRegionsFacetStatus( UI32 value ) const;
+	void		SetSpawnRegionsFacetStatus( UI32 value, bool status );
+	UI32		GetSpawnRegionsFacetStatus() const;
+	void		SetSpawnRegionsFacetStatus( UI32 value );
 
 	void		SetClassicUOMapTracker( bool value );
 	bool		GetClassicUOMapTracker( void ) const;
