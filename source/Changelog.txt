@@ -1,3 +1,14 @@
+24/10/2021 - Xuri
+	Added an [ADMIN] section to dfndata/commands/commands.dfn to make it easier to give shard admins (via 'make admin) a different default look than other GMs
+	Stackable items given to newly created characters will no longer by default be marked as newbiefied/blessed items
+	Added new Character JS Properties
+		.actualDexterity 		// Returns the actual dexterity (minus temporary mods) of the character
+		.actualIntelligence 	// Returns the actual intelligence (minus temporary mods) of the character
+		.actualStrength 		// Returns the actual strength (minus temporary mods) of the character
+	Updated 'get command (js/commands/targeting/get.js) to support fetching actualDexterity, actualIntelligence and actualStrength properties for Characters
+	Fixed an issue where 'wipe command could wipe NPCs and/or multis despite those being set as "unwipable"
+	Fixed an issue where NPCs would be stuck not moving if they ended up trying to flee from non-existent targets
+
 18/10/2021 - Xuri (0.99.4y)
 	Shifted [directories] section of UOX.INI further up in the file, to make it easier to find
 	Added new UOX.INI setting to control for which facets spawn regions are enabled (defaults to none):

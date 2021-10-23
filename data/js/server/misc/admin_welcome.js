@@ -2,7 +2,7 @@
 // Triggered for characters logging in with admin account (account 0) until a
 // choice has been made in these gumps, regarding starting with a blank world or loading default UOX3 world templates
 //
-// Last updated: 10th of June, 2021
+// Last updated: 19th of October, 2021
 
 // Backgrounds
 const gumpMainBackground = 5054;
@@ -65,7 +65,7 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddHTMLGump( 20, 30, 350, 80, true, false, "<p>Greetings, Administrator, and welcome to your brand new <basefont color=#2D61D6>Ultima Offline eXperiment 3</basefont> shard! If this is your first login, please take a moment to look through the following startup options:</p>" );
 
 	// adminWelcome.AddBackground( 15, 117, 260, 80, 3000 );
-	adminWelcome.AddHTMLGump( 20, 117, 240, 80, true, false, "<p>Start with the <basefont color=#3D9A2B>default UOX3 world</basefont> to get a world that's already decorated with doors, signs, lights and other items!</p>" );
+	adminWelcome.AddHTMLGump( 20, 117, 240, 80, true, false, "<p>Start with the <basefont color=#3D9A2B>default world</basefont> to get a world that's already decorated with doors, signs, lights, other items, and a variety of NPCs!</p>" );
 	adminWelcome.AddHTMLGump( 120, 117, 120, 80, false, false, " " );
 		if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
@@ -210,7 +210,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddGump( 483, 200, 10412 );
 
 	// Add some helpful text
-	adminWelcome.AddHTMLGump( 15, 30, 250, 245, true, true, "<p>Using the options on the right, select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> to load from each facet. By default <i>everything</i> is included, for <i>all</i> facets; if that sounds good, hit <basefont color=#3D9A2B><i>Okay</i> <basefont color=black>to start decorating your shard.<br><br>This process might take a minute.<br><br>Also, note that you can return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
+	adminWelcome.AddHTMLGump( 15, 30, 250, 245, true, true, "<p>Using the options on the right, select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> and NPC Spawns to load for each facet. By default <i>everything</i> is enabled, for <i>all</i> facets; if that sounds good, hit <basefont color=#3D9A2B><i>Okay</i> <basefont color=black>to start decorating your shard.<br><br>This process might take a minute.<br><br>Return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
 
 	// Add buttons to cancel/get things going
 	adminWelcome.AddButton( 308, 283, previousPageButtonOff, previousPageButtonOn, 0, 1, 0 ); 	// Previous Page Button
