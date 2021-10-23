@@ -335,7 +335,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SCRIPTITEMSDECAYABLE", 159);
 	regINIValue("BASEITEMSDECAYABLE", 160);
 	regINIValue("ITEMDECAYINHOUSES", 161);
-	// 162 free
+	regINIValue("SPAWNREGIONSFACETS", 162);
 	regINIValue("PAPERDOLLGUILDBUTTON", 163);
 	regINIValue("ATTACKSPEEDFROMSTAMINA", 164);
 	regINIValue("DISPLAYDAMAGENUMBERS", 169);
@@ -750,6 +750,9 @@ void CServerData::ResetDefaults( void )
 	SetServerFeature( SF_BIT_SIXCHARS, true );
 	SetServerFeature( SF_BIT_SE, true );
 	SetServerFeature( SF_BIT_ML, true );
+
+	// Disable spawn regions for all facets by default
+	SetSpawnRegionsFacetStatus( 0 );
 
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
@@ -3410,6 +3413,31 @@ void CServerData::SetServerFeatures( size_t nVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetSpawnRegionsFacetStatus( UI32 value ) const
+//|					UI32 GetSpawnRegionsFacetStatus() const
+//|					void SetSpawnRegionsFacetStatus( UI32 nVal, bool status )
+//|					void SetSpawnRegionsFacetStatus( UI32 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets active status of spawn regions per facet
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetSpawnRegionsFacetStatus( UI32 value ) const
+{
+	return spawnRegionsFacets.test( value );
+}
+void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal, bool status )
+{
+	spawnRegionsFacets.set( nVal, status );
+}
+UI32 CServerData::GetSpawnRegionsFacetStatus() const
+{
+	return static_cast<UI32>(spawnRegionsFacets.to_ulong());
+}
+void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal )
+{
+	spawnRegionsFacets = nVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool GetAssistantNegotiation( void ) const
 //|					void SetAssistantNegotiation( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -3628,6 +3656,23 @@ bool CServerData::save( std::string filename )
 		}
 		ofsOutput << "}" << '\n';*/
 
+		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
+		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
+		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
+		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
+		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
+		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
+		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
+		ofsOutput << "SCRIPTDATADIRECTORY=" << Directory( CSDDP_SCRIPTDATA ) << '\n';
+		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
+		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
+		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
+		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
+		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
+		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
+		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
@@ -3666,23 +3711,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
 
-		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
-		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
-		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
-		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
-		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
-		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
-		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
-		ofsOutput << "SCRIPTDATADIRECTORY=" << Directory( CSDDP_SCRIPTDATA ) << '\n';
-		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
-		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
-		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
-		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
-		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
-		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
-		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
-		ofsOutput << "}" << '\n';
-
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
 		ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << '\n';
 		ofsOutput << "GUARDSACTIVE=" << (GuardsStatus()?1:0) << '\n';
@@ -3708,6 +3736,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
 		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
 		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
+		ofsOutput << "SPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << '\n';
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << '\n';
 		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << '\n';
@@ -4583,6 +4612,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 161:	 // ITEMDECAYINHOUSES[0153]
 			ItemDecayInHouses( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
+			break;
+		case 162:	 // SPAWNREGIONSFACETS
+			SetSpawnRegionsFacetStatus( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 163:	// PAPERDOLLGUILDBUTTON[0155]
 			PaperdollGuildButton( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );

@@ -1,3 +1,33 @@
+24/10/2021 - Xuri
+	Added an [ADMIN] section to dfndata/commands/commands.dfn to make it easier to give shard admins (via 'make admin) a different default look than other GMs
+	Stackable items given to newly created characters will no longer by default be marked as newbiefied/blessed items
+	Added new Character JS Properties
+		.actualDexterity 		// Returns the actual dexterity (minus temporary mods) of the character
+		.actualIntelligence 	// Returns the actual intelligence (minus temporary mods) of the character
+		.actualStrength 		// Returns the actual strength (minus temporary mods) of the character
+	Updated 'get command (js/commands/targeting/get.js) to support fetching actualDexterity, actualIntelligence and actualStrength properties for Characters
+	Fixed an issue where 'wipe command could wipe NPCs and/or multis despite those being set as "unwipable"
+	Fixed an issue where NPCs would be stuck not moving if they ended up trying to flee from non-existent targets
+
+18/10/2021 - Xuri (0.99.4y)
+	Shifted [directories] section of UOX.INI further up in the file, to make it easier to find
+	Added new UOX.INI setting to control for which facets spawn regions are enabled (defaults to none):
+		SPAWNREGIONSFACETS=#	// # is a bitmask that determines which facets to enable spawn regions for. Supported values:
+			0 = No facets enabled (default)
+			1 = Felucca
+			2 = Trammel
+			4 = Ilshenar
+			8 = Malas
+			16 = Tokuno
+			32 = Ter Mur
+				Examples: A value of 1 = only Felucca is enabled, value of 3 = Felucca + Trammel, 10 = Malas + Ilshenar, 63 = all facets enabled, etc.
+	Added new Admin commands to enable/disable spawn regions in specific facets (note that this does not affect already spawned objects):
+		'enablespawns <facetNum/facetName>
+		'disablespawns <facetNum/facetName>
+	Updated CSpawnRegion::doRegionSpawn() function to only spawn objects in spawn region if world associated with spawn region is enabled in SPAWNREGIONSFACET uox.ini setting
+	The community-based spawn file now comes bundled with UOX3, and shard admins can choose whether to activate the spawns from this file during the welcome gump that pops up first time they log in
+	Updated main UOX3 docs to add a simple filter feature, to make it easier to find stuff in the docs
+
 17/10/2021 - Xuri
 	Updated onSkillGain, onSkillLoss and onSkillChange JS events:
 		Additional parameters now supported by events - skillGainAmount and skillLossAmount

@@ -298,7 +298,7 @@ function onIterate( toCheck )
 			}
 			else if( !isItem && toCheck.isChar == true )
 			{
-				if( toCheck.npc && toCheck.aitype != 17 && !toCheck.tamed )
+				if( toCheck.npc && toCheck.aitype != 17 && !toCheck.tamed && ( toCheck.wipable || forceWipe ))
 				{
 					toCheck.Delete();
 					return true;
@@ -309,12 +309,12 @@ function onIterate( toCheck )
 				toCheck.Delete();
 				return true;
 			}
-			else if( isMulti && toCheck.IsMulti() )
+			else if( isMulti && toCheck.IsMulti() && ( toCheck.wipable || forceWipe ))
 			{
 				toCheck.Delete();
 				return true;
 			}
-			else if( isBoat && toCheck.IsBoat() )
+			else if( isBoat && toCheck.IsBoat() && ( toCheck.wipable || forceWipe ))
 			{
 				toCheck.Delete();
 				return true;
