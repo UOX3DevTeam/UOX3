@@ -46,6 +46,17 @@ CNS=1
 PLAYER=0
 }
 
+[ADMIN]
+{
+NICKCOLOUR=0x1332
+DEFAULTPRIV=0x787F
+ALLSKILL=0000
+BODYID=0x03db
+BODYCOLOUR=0x8001
+STRIPITEMS
+STRIPHAIR
+}
+
 [GM]
 {
 NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change

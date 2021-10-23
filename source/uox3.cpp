@@ -1122,12 +1122,16 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 
 	if( mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_FROZEN && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ) )
 	{
-		mChar.SetOldNpcWander( mChar.GetNpcWander() );
-		mChar.SetNpcWander( WT_FLEE );
-		if( mChar.GetMounted() )
-			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ) );
-		else
-			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+		CChar *mTarget = mChar.GetTarg();
+		if( ValidateObject( mTarget ) && !mTarget->IsDead() && objInRange( &mChar, mTarget, DIST_SAMESCREEN ))
+		{
+			mChar.SetOldNpcWander( mChar.GetNpcWander() );
+			mChar.SetNpcWander( WT_FLEE );
+			if( mChar.GetMounted() )
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ) );
+			else
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+		}
 	}
 	else if( mChar.GetNpcWander() == WT_FLEE && (mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100))
 	{

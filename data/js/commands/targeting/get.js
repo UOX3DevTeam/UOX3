@@ -36,7 +36,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "DEX":
 	case "DEXTERITY":
-		socket.SysMessage( ourObj.dexterity + " (tempdex: " + ourObj.tempdex + ")" );
+		socket.SysMessage( ourObj.dexterity );
 		break;
 	case "INT":
 	case "INTELLIGENCE":
@@ -317,6 +317,18 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "ORGID":
 		socket.SysMessage( "0x" + (ourChar.orgID).toString(16) + " (" + ourChar.orgID + ")" );
+		break;
+	case "ACTUALSTR":
+	case "ACTUALSTRENGTH":
+		socket.SysMessage( ourChar.actualStrength );
+		break;
+	case "ACTUALDEX":
+	case "ACTUALDEXTERITY":
+		socket.SysMessage( ourChar.actualDexterity );
+		break;
+	case "ACTUALINT":
+	case "ACTUALINTELLIGENCE":
+		socket.SysMessage( ourChar.actualIntelligence );
 		break;
 	case "CONTROLSLOTS":
 		socket.SysMessage( ourChar.controlSlots );

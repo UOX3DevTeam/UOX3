@@ -568,8 +568,11 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 						}
 					}
 				}
-				if( n != nullptr )
+				if( n != nullptr && !n->isPileable() )
+				{
+					// Set item as newbiefied/blessed by default - as long as it's not pileable!
 					n->SetNewbie( true );
+				}
 			}
 		}
 	}
