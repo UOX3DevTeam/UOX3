@@ -1359,6 +1359,9 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_DEXTERITY:		*vp = INT_TO_JSVAL( gPriv->GetDexterity() );	break;
 			case CCP_INTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence() );	break;
 			case CCP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
+			case CCP_ACTUALDEXTERITY: *vp = INT_TO_JSVAL( gPriv->ActualDexterity() ); break;
+			case CCP_ACTUALINTELLIGENCE: *vp = INT_TO_JSVAL( gPriv->ActualIntelligence() ); break;
+			case CCP_ACTUALSTRENGTH: *vp = INT_TO_JSVAL( gPriv->ActualStrength() ); break;
 			case CCP_BASESKILLS:
 				TempObject = JS_NewObject( cx, &UOXBaseSkills_class, nullptr, obj );
 				JS_DefineProperties( cx, TempObject, CSkillsProps );
