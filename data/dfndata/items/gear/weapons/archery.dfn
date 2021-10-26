@@ -19,6 +19,7 @@ decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
+maxrange=8
 }
 
 [0x0f50]
@@ -40,6 +41,7 @@ decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
+maxrange=8
 }
 
 [0x13b1]
@@ -61,6 +63,7 @@ decay=1
 good=23
 ammo=0x0f3f
 ammofx=0x0f42
+maxrange=10
 }
 
 [0x13b2]
@@ -82,6 +85,7 @@ decay=1
 good=23
 ammo=0x0f3f
 ammofx=0x0f42
+maxrange=10
 }
 
 [0x13fc]
@@ -103,6 +107,7 @@ decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
+maxrange=8
 }
 
 [0x13fd]
@@ -124,6 +129,7 @@ decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
+maxrange=8
 }
 
 [0x0f3f]

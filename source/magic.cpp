@@ -3236,6 +3236,12 @@ void cMagic::SpellFail( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 {
+	if( num < 1 )
+	{
+		Console.error( "Invalid spell ID passed to cMagic::SelectSpell() - aborting spellcast attempt!" );
+		return false;
+	}
+
 	/*SI16 lowSkill = 0, highSkill = 0;*/
 	CChar *mChar = mSock->CurrcharObj();
 
