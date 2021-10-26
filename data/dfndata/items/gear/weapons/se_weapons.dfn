@@ -135,6 +135,7 @@ decay=1
 good=23
 ammo=0x0f3f
 ammofx=0x0f42
+maxrange=10
 }
 
 [0x27f0]
@@ -156,6 +157,7 @@ decay=1
 good=23
 ammo=0x0f3f
 ammofx=0x0f42
+maxrange=10
 }
 
 [0x27a6]

@@ -1422,6 +1422,8 @@ void CItem::CopyData( CItem *target )
 	target->SetMaxItems( GetMaxItems() );
 	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
+	target->SetBaseRange( GetBaseRange() );
+	target->SetMaxRange( GetMaxRange() );
 
 	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
