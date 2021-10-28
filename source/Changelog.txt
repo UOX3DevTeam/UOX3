@@ -1,3 +1,9 @@
+26/10/2021 - Xuri (0.99.4z)
+	Providing an invalid spellID with CastSpell() Character JS Method will no longer crash the server
+	Fixed an issue where ranged weapons bought from NPC vendors would not have their baserange/maxrange properties set properly
+	Added missing maxrange DFN tags to Item definitions for ranged weapons (dfndata/items/gear/weapons/archery.dfn, aos_weapons.dfn and se_weapons.dfn)
+	Removed some dummy data that snuck into dfndata/items/gmmenu/spawners.dfn
+
 24/10/2021 - Xuri
 	Added an [ADMIN] section to dfndata/commands/commands.dfn to make it easier to give shard admins (via 'make admin) a different default look than other GMs
 	Stackable items given to newly created characters will no longer by default be marked as newbiefied/blessed items
