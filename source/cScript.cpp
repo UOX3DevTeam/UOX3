@@ -779,49 +779,55 @@ SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnStatGained( CChar *player, UI32 stat, SI08 skill )
+//|	Function	-	SI08 OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when gaining stats
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill )
+SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount )
 {
+	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ) )
-		return false;
+		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnStatGained, "onStatGained" ) )
-		return false;
+		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( stat );
 	params[2] = INT_TO_JSVAL( skill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGained", 3, params, &rval );
+	params[3] = INT_TO_JSVAL( statGainedAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGained", 4, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnStatGained, false );
+		return RV_NOFUNC;
+	}
 
-	return ( retVal == JS_TRUE );
+	return TryParseJSVal( rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnStatGain( CChar *player, UI32 stat, SI08 skill )
+//|	Function	-	bool OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill )
+bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount )
 {
 	if( !ValidateObject( player ) )
 		return false;
 	if( !ExistAndVerify( seOnStatGain, "onStatGain" ) )
 		return false;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( stat );
 	params[2] = INT_TO_JSVAL( skill );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGain", 3, params, &rval );
+	params[3] = INT_TO_JSVAL( statGainAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGain", 4, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnStatGain, false );
 
@@ -1699,26 +1705,31 @@ bool cScript::OnTimer( CBaseObject *tObject, UI08 timerID )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnStatLoss( CChar *player, UI32 stat )
+//|	Function	-	SI08 OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing stats
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnStatLoss( CChar *player, UI32 stat )
+SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 {
+	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ) )
-		return false;
+		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnStatLoss, "onStatLoss" ) )
-		return false;
+		return RV_NOFUNC;
 
-	jsval rval, params[2];
+	jsval rval, params[3];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( stat );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatLoss", 2, params, &rval );
+	params[2] = INT_TO_JSVAL( statLossAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatLoss", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnStatLoss, false );
+		return RV_NOFUNC;
+	}
 
-	return ( retVal == JS_TRUE );
+	return TryParseJSVal( rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1726,18 +1737,19 @@ bool cScript::OnStatLoss( CChar *player, UI32 stat )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when stats change
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnStatChange( CChar *player, UI32 stat )
+bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 {
 	if( !ValidateObject( player ) )
 		return false;
 	if( !ExistAndVerify( seOnStatChange, "onStatChange" ) )
 		return false;
 
-	jsval rval, params[2];
+	jsval rval, params[3];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( stat );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatChange", 2, params, &rval );
+	params[2] = INT_TO_JSVAL( statChangeAmount );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnStatChange, false );
 
@@ -2236,11 +2248,12 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	if( !ExistAndVerify( seOnGumpInput, "onGumpInput" ) )
 		return;
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime );
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( pressing->Index() );
-	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 2, params, &rval );
+	params[2] = STRING_TO_JSVAL( &pressing->Reply() );
+	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 3, params, &rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
