@@ -182,10 +182,10 @@ public:
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
 	SI08		OnSkillLoss( CChar *player, SI08 skill, UI32 skillAmtLost );
 	bool		OnSkillChange( CChar *player, SI08 skill, SI32 skillAmtChanged );
-	bool		OnStatGained( CChar *player, UI32 stat, SI08 skill );
-	bool		OnStatGain( CChar *player, UI32 stat, SI08 skill );
-	bool		OnStatLoss( CChar *player, UI32 stat );
-	bool		OnStatChange( CChar *player, UI32 stat );
+	SI08		OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount );
+	bool		OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount );
+	SI08		OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount );
+	bool		OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount );
 	SI08		OnDrop( CItem *item, CChar *dropper );
 	SI08		OnPickup( CItem *item, CChar *pickerUpper );
 	SI08		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );

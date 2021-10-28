@@ -26,7 +26,7 @@ enum WeaponTypes
 class CHandleCombat
 {
 private:
-	void	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
+	bool	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
 
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 

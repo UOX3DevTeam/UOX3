@@ -1941,11 +1941,11 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
+//|	Function	-	bool HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles combat related stuff during combat loop
 //o-----------------------------------------------------------------------------------------------o
-void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
+bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 {
 	const UI16 ourDist			= getDist( &mChar, ourTarg );
 	//Attacker Skill values
@@ -1969,7 +1969,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		{
 			if( toExecute->OnSwing( mWeapon, &mChar, ourTarg ) == 0 )
 			{
-				return;
+				return true;
 			}
 		}
 	}
@@ -1985,7 +1985,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				if( toExecute->OnSwing( mWeapon, &mChar, ourTarg ) == 0 )
 				{
-					return;
+					return true;
 				}
 			}
 		}
@@ -2017,8 +2017,8 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		if( getFightSkill == ARCHERY && mWeapon != nullptr )
 		{
 			// If amount of time since character last moved is less than the minimum delay for shooting after coming to a halt, return
-			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 10 ))
-				return;
+			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000 ))
+				return false;
 
 			UI16 ammoID = mWeapon->GetAmmoID();
 			UI16 ammoHue = mWeapon->GetAmmoHue();
@@ -2035,7 +2035,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				if( mSock != nullptr )
 					mSock->sysmessage( 309 );
-				return;
+				return false;
 			}
 		}
 		else
@@ -2178,6 +2178,8 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			}
 		}
 	}
+
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2642,6 +2644,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		return;
 	}
 
+	bool combatHandled = false;
 	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		bool validTarg = false;
@@ -2664,7 +2667,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 2 ) )
 						HandleNPCSpellAttack( &mChar, ourTarg, getDist( &mChar, ourTarg ) );
 					else
-						HandleCombat( mSock, mChar, ourTarg );
+						combatHandled = HandleCombat( mSock, mChar, ourTarg );
 
 					if( !ValidateObject( ourTarg->GetTarg() ) || !objInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ) )		//if the defender is swung at, and they don't have a target already, set this as their target
 						StartAttack( ourTarg, &mChar );
@@ -2689,7 +2692,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 			if( mChar.IsAtWar() )
 				mChar.ToggleCombat();
 		}
-		else
+		else if( combatHandled )
 			mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar ) ) );
 	}
 }
