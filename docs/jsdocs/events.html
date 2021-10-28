@@ -1258,12 +1258,12 @@ function onSpellSuccess( pUser, spellID )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnStatChangeEvent">onStatChange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatChange( pPlayer, stat )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatChange( pPlayer, stat, statChangeAmount )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>If onStatLoss isn't defined, and stat went down, or if onStatGained isn't defined and stat went up
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onStatChange( pPlayer, stat )
+function onStatChange( pPlayer, stat, statChangeAmount )
 {
 	pPlayer.TextMessage("Whee my stats changed!");
 }
@@ -1271,12 +1271,13 @@ function onStatChange( pPlayer, stat )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnStatGainEvent">onStatGained</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatGained( pPlayer, stat )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatGained( pPlayer, stat, statGainedAmount )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer gains in stat stat
-<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>return true - stat gain is allowed, and server will go through with the stat update<br>
+			return false - stat gain is not allowed, server will prevent the stat update, and will prevent additional scripts with same event and/or hard code from running
 <tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person gains in a stat
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onStatGained( pPlayer, stat )
+function onStatGained( pPlayer, stat, statGainedAmount )
 {
 	pPlayer.TextMessage("Whee I gained some stat!");
 }
@@ -1284,12 +1285,13 @@ function onStatGained( pPlayer, stat )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnStatLossEvent">onStatLoss</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatLoss( pPlayer, stat )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatLoss( pPlayer, stat, statLossAmount )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer loses in stat stat
-<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>return true - stat loss is allowed, and server will go through with the stat update<br>
+			return false - stat loss is not allowed, server will prevent the stat update, and will prevent additional scripts with same event and/or hard code from running
 <tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person loses in a stat
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onStatLoss( pPlayer, stat )
+function onStatLoss( pPlayer, stat, statLossAmount )
 {
 	pPlayer.TextMessage("Awww I lost some stats.");
 }
