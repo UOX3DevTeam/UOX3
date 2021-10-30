@@ -1,3 +1,16 @@
+28/10/2021 - Xuri
+	Updated onStatGained, onStatLoss and onStatChange JS events:
+		Additional parameters now supported by events - statGainAmount and statLossAmount
+			onStatGained( player, statID, statGainAmount ) 	// statGainAmount is always positive
+			onStatLoss( player, statID, statLossAmount ) 	// statLossAmount is always positive
+			onStatChange( player, statID, statChangeAmount ) // statChangeAmount can be negative or positive
+		The return value from onStatGain and onStatLoss events can now be used to control behaviour:
+			return true - stat gain/loss is allowed, and server will go through with the stat update
+			return false - stat gain/loss is not allowed, server will prevent the stat update, and will prevent additional scripts with same event and/or hard code from running
+		onStatChange will now run as long as onStatGain or onStatLoss events return true, and if those events are not defined
+	Fixed an issue where Healing script (js/skills/healing.js) would break because Math.Round() was used instead of Math.round() (Thanks, HeyYaNITO!)
+	Fixed an issue where players would experience higher than expected delays for firing ranged weapons after moving
+
 26/10/2021 - Xuri (0.99.4z)
 	Providing an invalid spellID with CastSpell() Character JS Method will no longer crash the server
 	Fixed an issue where ranged weapons bought from NPC vendors would not have their baserange/maxrange properties set properly

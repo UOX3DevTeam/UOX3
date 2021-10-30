@@ -918,7 +918,6 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	if( success )
 		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
 	UI16 skillCap			= cwmWorldState->ServerData()->ServerSkillTotalCapStatus();
-	bool updateSkill		= true;
 
 	if( c->IsNpc() )
 	{
@@ -933,25 +932,21 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 				// If retVal is 1, event exists, proceed with hard code/other scripts
 				if( !toExecute->OnSkillGain( c, sk, amtToGain ) )
 				{
-					updateSkill = false;
 					return;
 				}
 			}
 		}
 
-		if( updateSkill )
-		{
-			// Increase base skill of NPC
-			c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+		// Increase base skill of NPC
+		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
 
-			// Check for existence of onSkillChange event for NPC
-			for( auto scriptTrig : scriptTriggers )
+		// Check for existence of onSkillChange event for NPC
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
 			{
-				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != nullptr )
-				{
-					toExecute->OnSkillChange( c, sk, amtToGain );
-				}
+				toExecute->OnSkillChange( c, sk, amtToGain );
 			}
 		}
 		return;
@@ -1009,29 +1004,25 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 					// If retVal is 1, event exists, proceed with hard code/other scripts
 					if( !toExecute->OnSkillLoss( c, toDec, amtToGain ) )
 					{
-						updateSkill = false;
 						return;
 					}
 				}
 			}
 
-			if( updateSkill )
-			{
-				// Reduce base skill of player
-				totalSkill -= amtToGain;
-				c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
+			// Reduce base skill of player
+			totalSkill -= amtToGain;
+			c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
 
-				// Check for existence of onSkillChange event for player
-				for( auto scriptTrig : scriptTriggers )
+			// Check for existence of onSkillChange event for player
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					cScript *toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
-					{
-						toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
-					}
+					toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
 				}
-				mSock->updateskill( toDec );
 			}
+			mSock->updateskill( toDec );
 		}
 	}
 
@@ -1048,28 +1039,24 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 				// If retVal is 1, event exists, proceed with hard code/other scripts
 				if( !toExecute->OnSkillGain( c, sk, amtToGain ) )
 				{
-					updateSkill = false;
-					break;
+					return;
 				}
 			}
 		}
 
-		if( updateSkill )
+		// Increase base skill of player
+		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+
+		// Check for existence of onSkillChange event for player
+		for( auto scriptTrig : scriptTriggers )
 		{
-			// Increase base skill of player
-			c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-
-			// Check for existence of onSkillChange event for player
-			for( auto scriptTrig : scriptTriggers )
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
 			{
-				cScript *toExecute = JSMapping->GetScript( scriptTrig );
-				if( toExecute != nullptr )
-				{
-					toExecute->OnSkillChange( c, sk, amtToGain );
-				}
+				toExecute->OnSkillChange( c, sk, amtToGain );
 			}
-			mSock->updateskill( sk );
 		}
+		mSock->updateskill( sk );
 	}
 }
 
@@ -2328,44 +2315,80 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 					switch( toDec )
 					{
 						case 0:
-							s->IncStrength( -1 );
-							ttlStats--;
-
+							// First trigger onStatLoss event
 							for( auto skillTrig : skillUpdTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( skillTrig );
 								if( toExecute != nullptr )
 								{
-									if( !toExecute->OnStatLoss( s, STRENGTH ) )
-										toExecute->OnStatChange( s, STRENGTH );
+									if( !toExecute->OnStatLoss( s, STRENGTH, 1 ) )
+										return;
+								}
+							}
+
+							// Do the actual stat decrease
+							s->IncStrength( -1 );
+							ttlStats--;
+
+							// Trigger onStatChange event if onStatLoss either didn't exist, or returned true
+							for( auto skillTrig : skillUpdTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									toExecute->OnStatChange( s, STRENGTH, -1 );
 								}
 							}
 							break;
 						case 1:
-							s->IncDexterity( -1 );
-							ttlStats--;
-
+							// First trigger onStatLoss event
 							for( auto skillTrig : skillUpdTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( skillTrig );
 								if( toExecute != nullptr )
 								{
-									if( !toExecute->OnStatLoss( s, DEXTERITY ) )
-										toExecute->OnStatChange( s, DEXTERITY );
+									if( !toExecute->OnStatLoss( s, DEXTERITY, 1 ) )
+										return;
+								}
+							}
+
+							// Do the actual stat decrease
+							s->IncDexterity( -1 );
+							ttlStats--;
+
+							// Trigger onStatChange event if onStatLoss either didn't exist, or returned true
+							for( auto skillTrig : skillUpdTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									toExecute->OnStatChange( s, DEXTERITY, -1 );
 								}
 							}
 							break;
 						case 2:
-							s->IncIntelligence( -1 );
-							ttlStats--;
-
+							// First trigger onStatLoss event
 							for( auto skillTrig : skillUpdTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( skillTrig );
 								if( toExecute != nullptr )
 								{
-									if( !toExecute->OnStatLoss( s, INTELLECT ) )
-										toExecute->OnStatChange( s, INTELLECT );
+									if( !toExecute->OnStatLoss( s, INTELLECT, 1 ) )
+										return;
+								}
+							}
+
+							// Do the actual stat decrease
+							s->IncIntelligence( -1 );
+							ttlStats--;
+
+							// Trigger onStatChange event if onStatLoss either didn't exist, or returned true
+							for( auto skillTrig : skillUpdTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									toExecute->OnStatChange( s, INTELLECT, -1 );
 								}
 							}
 							break;
@@ -2378,6 +2401,18 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 				// Do we still hit the stat limit?
 				if( ( ttlStats + 1) <= ServStatCap )
 				{
+					// First trigger onStatGained
+					for( auto skillTrig : skillUpdTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( skillTrig );
+						if( toExecute != nullptr )
+						{
+							if( !toExecute->OnStatGained( s, StatCount, sk, 1 ) )
+								return;
+						}
+					}
+
+					// Do the actual stat increase
 					switch( StatCount )
 					{
 						case STRENGTH:
@@ -2393,13 +2428,13 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 							break;
 					}
 
+					// Trigger onStatChange event if onStatGained either didn't exist, or returned true
 					for( auto skillTrig : skillUpdTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( skillTrig );
 						if( toExecute != nullptr )
 						{
-							if( !toExecute->OnStatGained( s, StatCount, sk ) )
-								toExecute->OnStatChange( s, StatCount );
+							toExecute->OnStatChange( s, StatCount, 1 );
 						}
 					}
 

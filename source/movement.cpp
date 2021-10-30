@@ -406,13 +406,13 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	SendWalkToPlayer( c, mSock, sequence );
 	SendWalkToOtherPlayers( c, dir, oldx, oldy );
 
+	// Update timestamp for when character last moved
+	c->LastMoveTime( cwmWorldState->GetUICurrentTime() );
+
 	// i'm going ahead and optimizing this, if you haven't really moved, should be
 	// no need to check for teleporters and the weather shouldn't change
 	if( !amTurning )
 	{
-		// Update timestamp for when character last moved
-		c->LastMoveTime( cwmWorldState->GetUICurrentTime() );
-
 		OutputShoveMessage( c, mSock );
 
 		HandleItemCollision( c, mSock, oldx, oldy );
@@ -615,9 +615,6 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 				c->SetStamina( c->GetStamina() - 1 );
 			}
 		}
-		if( c->IsAtWar() && ValidateObject( c->GetTarg() ) )
-			if( c->GetTarg()->GetNpcWander() != WT_FLEE )
-				c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 2 ) );
 	}
 	else
 	{
@@ -700,13 +697,6 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 				c->TextMessage( c->GetSocket(), 771, EMOTE, false );
 				c->StopSpell();
 				c->SetJSCasting( false );
-			}
-			else
-			{	// otherwise, we're at war!!!  Are we using a bow?
-				CItem *mWeapon				= Combat->getWeapon( c );
-				const UI08 getFightSkill	= Combat->getCombatSkill( mWeapon );
-				if( getFightSkill == ARCHERY )
-					c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( cwmWorldState->ServerData()->CombatArcheryShootDelay() + Combat->GetCombatTimeout( c ) ) );
 			}
 		}
 	}
