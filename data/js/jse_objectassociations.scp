@@ -18,11 +18,13 @@
 // use : on : to get
 // Wheat (4 sheaves) : Flour mill : Flour
 0x1ebd=101
+
 // Flour : Water : Dough
 0x1039=102
 0x103a=102
 0x1045=102
 0x1046=102
+
 // Dough : Heat source : Bread
 // use dough : target jar of honey : sweet dough
 // use dough : target apple : Unbaked Apple Pie
@@ -34,6 +36,7 @@
 // use dough : target Sausage : Sausage Pizza
 // use dough : target Cheese Wheel : Cheese Pizza
 0x103d=103
+
 // Raw fish steak  : Heat source : Cooked fish steak
 0x097a=104
 // Raw cut of ribs : heat source : Cut of ribs 
@@ -368,6 +371,38 @@
 0x1022=4005
 0x1BD1=4005
 0x1BD4=4005
+
+//Anvils/Metalrepairtools
+0x0faf=15007
+0x0fb0=15007
+
+//Forges
+0x0fb1=15007
+0x197a=15007
+0x197e=15007
+0x1982=15007
+0x1986=15007
+0x198a=15007
+0x198e=15007
+0x1992=15007
+0x1996=15007
+0x199a=15007
+0x199e=15007
+0x19a2=15007
+0x19a6=15007
+0x2dd8=15007
+
+// Looms
+0x105f=15007
+0x1060=15007
+0x1061=15007
+0x1062=15007
+
+// Spinning Wheels
+0x1015=15007
+0x1019=15007
+0x101c=15007
+0x10a4=15007
 
 // Swords
 0x0EC4=5009 //skinning knife

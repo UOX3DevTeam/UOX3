@@ -3501,7 +3501,6 @@
 8032=Type d'objet non valide sélectionné, sauvegarde interrompue !
 8033=%i décorations enregistrées dans le modèle de monde personnalisé '%s'. Vérifiez <SCRIPTSDATADIRECTORY>/worldtemplates/ pour les fichiers de sortie !
 8034=Impossible d'enregistrer les décorations dans le modèle. Quelque chose a peut-être mal tourné !
-8034=Pas de décorations trouvées. Aucune n'a été enregistrée !
 8035=%i décorations enregistrées avec succès dans les modèles pour la facette '%s'. Vérifiez <SCRIPTDATADIRECTORY/worldtemplates/ pour les fichiers de modèles enregistrés !
 8036=Sauvegarde de %i décorations de type '%s' pour la facette '%t'...
 8037=%i éléments de type '%s' détectés dans la facette '%t'. Sauvegarde...
@@ -3671,6 +3670,8 @@
 8203=Coordonnée Y de l'objet dans le monde - ou dans le conteneur
 8204=Coordonnée Z de l'élément dans le monde - ou dans le conteneur
 8205=Valeur non définie
+8206=L'élément de l'événement du serveur est associé avec
+8207=Portée de base de l'arme à distance (SA et suivants seulement)
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ
@@ -4098,6 +4099,14 @@
 9087=La cible ne peut pas être ressuscitée à cet endroit.
 9088=Vos doigts glissent !
 9089=Tu finis d'appliquer les bandages, mais ils n'aident pas vraiment.
+9090=Casting spell %d (%s)...
+9091=...%i décorations sauvegardées !
+9092=Aucune décoration trouvée. Aucune sauvegardée !
+9093=Déchargement de l'événement...
+9094=Déchargement de l'événement
+9095=%i décorations retirées pour l'événement %s.
+9096=Aucune décoration d'événement n'a été trouvée.
+9097=Vous ne pouvez pas placer cet addon maison à cet endroit, l'emplacement est bloqué !
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

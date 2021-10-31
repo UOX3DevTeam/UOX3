@@ -468,6 +468,7 @@ static JSPropertySpec CItemProps[] =
 	{ "intelligence",	CIP_INTELLIGENCE,	JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
+	{ "event",			CIP_EVENT,			JSPROP_ENUMANDPERM },
 	{ "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM },
 	{ "shouldSave",		CIP_SHOULDSAVE,		JSPROP_ENUMANDPERM },
 

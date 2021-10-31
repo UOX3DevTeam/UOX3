@@ -3337,7 +3337,6 @@
 8032=Ungültiger ObjektTyp ausgewählt, Speichern abgebrochen!
 8033=%i Dekorationen in benutzerdefinierter Weltvorlage '%s' gespeichert. Prüfen Sie <SCRIPTSDATADIRECTORY>/worldtemplates/ auf Ausgabedateien!
 8034=Dekorationen können nicht in der Vorlage gespeichert werden. Möglicherweise ist etwas schiefgegangen!
-8034=Keine Dekorationen gefunden. Keine gespeichert!
 8035=%i Dekorationen erfolgreich in Vorlagen für Facette '%s' gespeichert. Prüfen Sie <SCRIPTDATADIRECTORY/worldtemplates/ auf gespeicherte Vorlagendateien!
 8036=Speichern von %i Dekorationen vom Typ '%s' für die Facette '%t'...
 8037=%i Elemente des Typs '%s' in der Facette '%t' erkannt. Speichern...
@@ -3507,6 +3506,8 @@
 8203=Y-Koordinate des Gegenstandes in der Welt - oder im Container
 8204=Z-Koordinate des Objekts in der Welt - oder im Container
 8205=Wert nicht gesetzt
+8206=Server-Ereignis, dem der Gegenstand zugeordnet ist
+8207=Basisreichweite der Fernkampfwaffe (nur SA und später)
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ
@@ -3934,6 +3935,14 @@
 9087=Das Ziel kann an diesem Ort nicht wiederbelebt werden.
 9088=Deine Finger rutschen ab!
 9089=Du bringst die Verbände zu Ende, aber sie helfen kaum.
+9090=Zauberspruch %d (%s) wirken...
+9091=...%i Dekorationen gespeichert!
+9092=Keine Dekorationen gefunden. Keine gespeichert!
+9093=Entlade-Ereignis...
+9094=Ereignis entladen
+9095=%i Ereignisdekorationen für Ereignis %s entfernt.
+9096=Keine Ereignisdekorationen gefunden.
+9097=Sie können dieses Haus-Addon dort nicht platzieren, der Standort ist blockiert!
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
