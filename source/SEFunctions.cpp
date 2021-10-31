@@ -2133,10 +2133,6 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		{
 			srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
 		}
-		else
-		{
-			DoSEErrorMessage( "AreaItemFunction: Argument 3 not a valid socket" );
-		}
 	}
 
 	UI16 retCounter					= 0;

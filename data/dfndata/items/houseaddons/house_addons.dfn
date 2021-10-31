@@ -378,6 +378,60 @@ dyeable=0
 decay=0
 }
 
+[0x1ec0]
+{ E
+get=base_item
+name=pickpocket dip
+id=0x1ec0
+weight=6000
+value=
+movable=1
+pileable=0
+dyeable=0
+decay=0
+damageable=1
+hp=100
+}
+
+[0x1ec1]
+{ E swinging
+get=base_item
+name=pickpocket dip
+id=0x1ec1
+weight=6000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[0x1ec3]
+{ E
+get=base_item
+name=pickpocket dip
+id=0x1ec3
+weight=6000
+value=
+movable=1
+pileable=0
+dyeable=0
+decay=0
+damageable=1
+hp=100
+}
+
+[0x1ec4]
+{ E swinging
+get=base_item
+name=pickpocket dip
+id=0x1ec4
+weight=6000
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
 // misc.
 
 [0x0b41]

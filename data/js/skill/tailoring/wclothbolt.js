@@ -1,62 +1,90 @@
 // tailoring script
-// Last Updated: July 24th 2021
-// five balls of yarn : loom : bolt of cloth
+// Last Updated: October 31st 2021
+// five balls of yarn/spools of thread : loom : bolt of cloth
 
 function onUseChecked ( pUser, iUsed )
 {
 	// get users socket
-	var srcSock = pUser.socket;
+	var pSocket = pUser.socket;
 
-	if( srcSock && iUsed && iUsed.isItem )
+	if( pSocket && iUsed && iUsed.isItem )
 	{
 		var iPackOwner = GetPackOwner( iUsed, 0 );
 		if( iPackOwner && pUser.serial == iPackOwner.serial )
 		{
-			srcSock.tempObj = iUsed;
-			srcSock.CustomTarget( 0, GetDictionaryEntry( 452, srcSock.language ) ); // Select loom to make your cloth.
+			pSocket.tempObj = iUsed;
+			pSocket.CustomTarget( 0, GetDictionaryEntry( 452, pSocket.language ) ); // Select loom to make your cloth.
 		}
 		else
-			srcSock.SysMessage( GetDictionaryEntry( 775, srcSock.language ) ); // You can't use material outside your backpack.
+			pSocket.SysMessage( GetDictionaryEntry( 775, pSocket.language ) ); // You can't use material outside your backpack.
 	}
 	return false;
 }
 
-function onCallback0( tSock, myTarget )
+function onCallback0( pSocket, myTarget )
 {
-	var iUsed = tSock.tempObj;
-	var pUser = tSock.currentChar;
-
-	var StrangeByte   = tSock.GetWord( 1 );
-	var tileID	= tSock.GetWord( 17 );
-
-	if(( myTarget == null ) || ( myTarget.isChar ) || !( tileID >= 0x105f && tileID <= 0x1066 ))
-	{ //Target is a Maptile/Character/wrong item
-		tSock.SysMessage( GetDictionaryEntry( 6037, tSock.language ) ); // You cannot weave your yarn on that!
+	if( pSocket == null )
 		return;
-	}
-	else
+
+	var iUsed 		= pSocket.tempObj;
+	var pUser 		= pSocket.currentChar;
+	var StrangeByte = pSocket.GetWord( 1 );
+	var tileID 		= pSocket.GetWord( 17 );
+
+	if( !ValidateObject( myTarget ))
 	{
-		if( !pUser.InRange( myTarget, 3 ) )
+		// Map/statictile targeted
+		if( tileID < 0x105f || tileD > 0x1066 )
 		{
-			tSock.SysMessage( GetDictionaryEntry( 393, tSock.language ) ); // That is too far away
+			pSocket.SysMessage( GetDictionaryEntry( 6037, pSocket.language ) ); // You cannot weave your yarn on that!
+			return;
+		}
+
+		// if too far away from the static loom, disallow
+		var targX = socket.GetWord( 11 );
+		var targY = socket.GetWord( 13 );
+		var targZ = socket.GetSByte( 16 );
+
+		if( Math.abs( pUser.x - targX ) > 3 || Math.abs( pUser.y - targY ) > 3 || Math.abs( pUser.z - targZ ) > 20 )
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ) ); // That is too far away
 			return;
 		}
 	}
-    	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
-    	if( iMakeResource < 5 )
+	else if( ValidateObject( myTarget ))
+	{
+		// Get tileID from myTarget, in case this function was called from the houseAddonUse.js script
+		tileID = myTarget.id;
+
+		if( !myTarget.isItem || tileID < 0x105f || tileID > 0x1066 )
+		{
+			// Non-item targeted
+			pSocket.SysMessage( GetDictionaryEntry( 6037, pSocket.language ) ); // You cannot weave your yarn on that!
+			return;
+		}
+
+		if( !pUser.InRange( myTarget, 3 ) )
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ) ); // That is too far away
+			return;
+		}
+	}
+
+    var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
+    if( iMakeResource < 5 )
   	{
-    		tSock.SysMessage( GetDictionaryEntry( 6038, tSock.language ) ); // You don't seem to have enough yarn!
+    	pSocket.SysMessage( GetDictionaryEntry( 6038, pSocket.language ) ); // You don't seem to have enough yarn!
 		return;
-        }
+	}
+
 	if( pUser.CheckSkill( 34, 0, 1000 ) )
 	{
-		tSock.SysMessage( GetDictionaryEntry( 822, tSock.language ) ); // You have successfully spun your material.
-        pUser.UseResource( 5, iUsed.id ); 	// remove five balls of yarn
+		pSocket.SysMessage( GetDictionaryEntry( 822, pSocket.language ) ); // You have successfully spun your material.
+        pUser.UseResource( 5, iUsed.id ); 	// remove five balls of yarn/spool of thread
 		pUser.SoundEffect( 0x0190, true );
-	    var itemMade = CreateDFNItem( tSock, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth
-		tSock.SysMessage( GetDictionaryEntry( 6039, tSock.language ) ); // You weave some folded cloth.
+	    var itemMade = CreateDFNItem( pSocket, pUser, "0x175f", 30, "ITEM", true ); // makes folded cloth
+		pSocket.SysMessage( GetDictionaryEntry( 6039, pSocket.language ) ); // You weave some folded cloth.
 	}
 	else
-		tSock.SysMessage( GetDictionaryEntry( 821, tSock.language ) ); // You failed to spin your material.
-        return;
+		pSocket.SysMessage( GetDictionaryEntry( 821, pSocket.language ) ); // You failed to spin your material.
 }

@@ -3337,7 +3337,6 @@
 8032=Objecto inválidoTipo seleccionado, salvando abortado!
 8033=%i decorações guardadas para modelo mundial personalizado '%s'. Verifique <SCRIPTSDATADIRECTORY>/worldtemplates/ para ficheiros de saída!
 8034=Não foi possível guardar decorações no modelo. Alguma coisa pode ter corrido mal!
-8034=Não foram encontradas decorações. Nenhuma foi guardada!
 8035=%i decorações guardadas com sucesso em templates para '%s' de faceta. Verifique <SCRIPTDATADIRECTORY/worldtemplates/ para ficheiros de modelos guardados!
 8036=Salvar decorações %i do tipo '%s' para facet '%t'...
 8037=%i artigos do tipo '%s' detectados na faceta '%t'. Guardar...
@@ -3507,6 +3506,8 @@
 8203=Y coordenada de item no mundo - ou em contentor
 8204=Z coordenada do item no mundo - ou em contentor
 8205=Valor não definido
+8206=Servidor item de evento está associado a
+8207=Base de alcance de arma à distância (SA e mais tarde apenas)
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA
@@ -3933,6 +3934,14 @@
 9087=O alvo não pode ser ressuscitado nesse local.
 9088=Os seus dedos escorregam!
 9089=Acaba de aplicar os pensos, mas eles mal ajudam.
+9090=Feitiço de fundição %d (%s)...
+9091=...%i decorações guardadas!
+9092=Não foram encontradas decorações. Nenhuma foi guardada!
+9093=Descarregar Evento...
+9094= Evento de Descarregamento
+9095=%i decorações de eventos removidas para eventos %s.
+9096=Não foram encontradas decorações para eventos.
+9097=Não é possível colocar esta casa ali, a localização está bloqueada!
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!

@@ -1645,4 +1645,8 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 		mChar->Delete();
 	else
 		mChar->Dirty( UT_LOCATION );
+
+	// Play death music
+	if( pSock != nullptr )
+		Effects->doSocketMusic( pSock );
 }

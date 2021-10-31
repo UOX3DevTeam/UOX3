@@ -80,7 +80,7 @@ id=0x0def
 weight=400
 value=122 61
 movable=1
-pileable=1
+pileable=0
 decay=1
 good=49
 }
@@ -114,7 +114,7 @@ good=49
 {
 get=base_item
 name=flax bundle
-id=0x109d
+id=0x1a9d
 weight=100
 value=122 61
 pileable=1

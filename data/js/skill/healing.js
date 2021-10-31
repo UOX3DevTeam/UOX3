@@ -395,7 +395,7 @@ function onTimer( mChar, timerID )
 							for( var i = 0; i < slipCount; i++ )
 							{
 								// Reduce health by a percentage (35%) modified by healer's Healing skills and Dexterity for each slip up
-								healAmt -= Math.Round( healAmt * ( 0.35 - (( Math.round( healSkill / 10 ) + ourObj.dexterity ) / 750 )));
+								healAmt -= Math.round( healAmt * ( 0.35 - (( Math.round( healSkill / 10 ) + ourObj.dexterity ) / 750 )));
 
 								// Example: Healing reduction per slip, based a 35% percentage reduction, adjusted by 100.0 Healing and 100 Dexterity
 								// 80 > 74 > 68 > 63 > 58

@@ -1,3 +1,52 @@
+31/10/2021 - Xuri (0.99.4z+)
+	Fixed incorrect non-combat music entry [MUSICLIST COMBAT] section of dfndata/regions/regions.dfn
+	Added new music section to dfndata/regions/regions.dfn
+		[MUSICLIST DEATH]	// Plays music from this list for players who are in the realm of the dead
+	Assigned different MOREZ value to each explosion potion (dfndata/item/magic/potions.dfn) to make distinguishing between them easier
+	Updated item stacking code to disallow stacking items that have different more, morex, morey, morez, buyvalue or sellvalue
+	Fixed issue where monsters would erroneously show context menu entries with skill training options
+	Fixed issue where some iron ore in GM add menu was showing up and being added as a brazier instead
+	Added baseRange and maxRange to 'tweak menu (js/command/targeting/tweak.js)
+	Added new Item property that can be used to associate an item with a custom server event:
+		DFN Tag:
+			EVENT=eventName	// Name of event in one word, with no spaces
+		JS Property:
+			.event
+	Updated 'get, 'set, 'tweak and 'areacommand commands to support the new event property
+	Extended 'decorate command with some additional features to support saving, loading and unloading event decorations (example: xmas, halloween, etc):
+		'decorate saveevent eventName	// Save all items with event property matching eventName to event_[eventName].jsdata
+		'decorate loadevent eventName 	// Load all items from event_[eventName].jsdata and assign eventName to their event property
+		'decorate unloadevent eventName	// Clear up all items associated with eventName
+	Added some new house addons to house.dfn, and in the 'add menu, under Deeds > Houseaddon Deeds:
+		loom (south)
+		small forge
+		anvil (south/east)
+		spinning wheel (north/south/east/west)
+		small bed 1 (south/east)
+		small bed 2 (south/east)
+		large bed 1 (south/east)
+		large bed 2 (south/east)
+		training dummy (east)
+		training dummy (south)
+		pickpocket dip 1 (east)
+		pickpocket dip 2 (east)
+		dresser (east) // Disabled, doesn't work as container after being turned into addon
+		dresser (south) // Disabled, doesn't work as container after being turned into addon
+		abattoir (stone pentagram)
+		flour mill (east)
+		flour mill (south)
+		oven (east)
+		oven (south)
+		large forge (east)
+		large forge (west)
+		large forge (north)
+		large forge (south)
+	Updated some house addons (bear rugs, pentagram) to be added from top-left to bottom right, for more consistency when placing items
+	Added a code-check when placing house-addons to see if there's space in multi to place addon at selected location, starting from coordinates of target location and checking tiles east and south of that location based on the addon's SPACEX and SPACEY settings in house.dfn
+	Added new script (js/server/house/houseAddonUse.js) that will restore the double-click functionality of some house addons that would lose their regular functionality in the process of becoming house addons, as their item type changed. The same script also adds some extra functionality to a couple of other house addons (looms and spinning wheels), allowing players to choose between using the addons and then targeting materials like yarn or wool or using the materials and then targeting the addons
+	Fixed an issue with the interior decorator tool that would allow using it outside one's house
+	Updated dictionary files
+
 28/10/2021 - Xuri
 	Updated onStatGained, onStatLoss and onStatChange JS events:
 		Additional parameters now supported by events - statGainAmount and statLossAmount

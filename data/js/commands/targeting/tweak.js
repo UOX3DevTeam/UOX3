@@ -45,80 +45,82 @@ const itemProp = {
 	ammoHue:23,
 	ammoID:24,
 	amount:25,
-	baseWeight:26,
-	buyvalue:27,
-	carveSection:28,
-	colour:29,
-	container:30,
-	corpse:31,
-	damageHeat:32,
-	damageCold:33,
-	damageLight:34,
-	damageLightning:35,
-	damagePoison:36,
-	damageRain:37,
-	damageSnow:38,
-	decayable:39,
-	decaytime:40,
-	def:41,
-	desc:42,
-	divinelock:43,
-	dir:44,
-	entryMadeFrom:45,
-	health:46,
-	hidamage:47,
-	instanceID:48,
-	isDispellable:49,
-	isDoorOpen:50,
-	isDyeable:51,
-	isGuarded:52,
-	isNewbie:53,
-	isPileable:54,
-	isWipeable:55,
-	itemsinside:56,
-	layer:57,
-	lodamage:58,
-	madeWith:59,
-	maxhp:60,
-	maxinterval:61,
-	maxItems:62,
-	maxRange:63,
-	mininterval:64,
-	more:65,
-	morex:66,
-	morey:67,
-	morez:68,
-	movable:69,
-	name2:70,
-	origin:71,
-	owner:72,
-	poison:73,
-	race:74,
-	rank:75,
-	resistHeat:76,
-	resistCold:77,
-	resistLight:78,
-	resistLightning:79,
-	resistPoison:80,
-	resistRain:81,
-	resistSnow:82,
-	restock:83,
-	scripttrigger:84,
-	sectionalist:85,
-	sellvalue:86,
-	spawnsection:87,
-	speed:88,
-	strength:89,
-	tempTimer:90,
-	type:91,
-	visible:92,
-	weight:93,
-	weightMax:94,
-	wipable:95,
-	worldnumber:96,
-	x:97,
-	y:98,
-	z:99
+	baseRange:26,
+	baseWeight:27,
+	buyvalue:28,
+	carveSection:29,
+	colour:30,
+	container:31,
+	corpse:32,
+	damageHeat:33,
+	damageCold:34,
+	damageLight:35,
+	damageLightning:36,
+	damagePoison:37,
+	damageRain:38,
+	damageSnow:39,
+	decayable:40,
+	decaytime:41,
+	def:42,
+	desc:43,
+	divinelock:44,
+	dir:45,
+	entryMadeFrom:46,
+	event:47,
+	health:48,
+	hidamage:49,
+	instanceID:50,
+	isDispellable:51,
+	isDoorOpen:52,
+	isDyeable:53,
+	isGuarded:54,
+	isNewbie:55,
+	isPileable:56,
+	isWipeable:57,
+	itemsinside:58,
+	layer:59,
+	lodamage:60,
+	madeWith:61,
+	maxhp:62,
+	maxinterval:63,
+	maxItems:64,
+	maxRange:65,
+	mininterval:66,
+	more:67,
+	morex:68,
+	morey:69,
+	morez:70,
+	movable:71,
+	name2:72,
+	origin:73,
+	owner:74,
+	poison:75,
+	race:76,
+	rank:77,
+	resistHeat:78,
+	resistCold:79,
+	resistLight:80,
+	resistLightning:81,
+	resistPoison:82,
+	resistRain:83,
+	resistSnow:84,
+	restock:85,
+	scripttrigger:86,
+	sectionalist:87,
+	sellvalue:88,
+	spawnsection:89,
+	speed:90,
+	strength:91,
+	tempTimer:92,
+	type:93,
+	visible:94,
+	weight:95,
+	weightMax:96,
+	wipable:97,
+	worldnumber:98,
+	x:99,
+	y:100,
+	z:101
 };
 
 // List of character properties to handle
@@ -422,7 +424,7 @@ var accountProp = {
 };*/
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
-const itemPropCount = 80;
+const itemPropCount = 82;
 const charPropCount = 131;
 const charSkillCount = 58;
 const multiPropCount = 32;
@@ -845,10 +847,13 @@ function HandleItemTarget( pSocket, myTarget )
 				case 64:
 					gumpPage = 5;
 					break;
+				case 81:
+					gumpPage = 6;
+					break;
 			}
 
 			// Only add these when it's time for a new page
-			if( i == 13 || i == 30 || i == 47 || i == 64 )
+			if( i == 13 || i == 30 || i == 47 || i == 64 || i == 81 )
 			{
 				pageXlabelStartY = 59;
 				pageXbuttonStartY = 60;
@@ -914,6 +919,10 @@ function HandleItemTarget( pSocket, myTarget )
 			case itemProp.amount:
 				itemLabelTooltip 	= GetDictionaryEntry( 8130, pSocket.language ); // Amount of items in pile, or amount of items restocked on shopkeeper
 				itemValue 			= (myTarget.amount).toString();
+				break;
+			case itemProp.baseRange:
+				itemLabelTooltip 	= GetDictionaryEntry( 8207, pSocket.language ); // Base range of ranged weapon (SA and later only)
+				itemValue 			= (myTarget.baseRange).toString();
 				break;
 			case itemProp.baseWeight:
 				itemLabelTooltip 	= GetDictionaryEntry( 8131, pSocket.language ); // Base weight of item - primarily used for tracking the 'true' weight of containers, without adding weight of other items
@@ -996,6 +1005,10 @@ function HandleItemTarget( pSocket, myTarget )
 			case itemProp.entryMadeFrom:
 				itemLabelTooltip 	= GetDictionaryEntry( 8150, pSocket.language ); // The ID of entry from Create DFN that item was crafted from (if any)";
 				itemValue 			= (myTarget.entryMadeFrom).toString();
+				break;
+			case itemProp.event:
+				itemLabelTooltip 	= GetDictionaryEntry( 8206, pSocket.language ); // Server event item is associated with
+				itemValue 			= (myTarget.event ? (myTarget.event).toString() : "-");
 				break;
 			case itemProp.health:
 				itemLabelTooltip 	= GetDictionaryEntry( 8151, pSocket.language ); // Item's current health/hitpoints (cannot exceed value of maxhp property)
@@ -3793,6 +3806,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = GetDictionaryEntry( 8147, pSocket.language ); // Description of item - used for items sold on player vendors
 			maxLength = 127;
 			break;
+		case itemProp.event:
+			propertyName = "event";
+			propertyType = "Text";
+			propertyHint = GetDictionaryEntry( 8206, pSocket.language ); // Server event item is associated with
+			maxLength = 127;
+			break;
 		case itemProp.name2:
 			propertyName = "name2";
 			propertyType = "Text";
@@ -3858,6 +3877,11 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "amount";
 			propertyType = "Integer";
 			propertyHint = GetDictionaryEntry( 8130, pSocket.language ); // Amount of items in pile, or amount of items restocked on shopkeeper
+			break;
+		case itemProp.baseRange:
+			propertyName = "baseRange";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8207, pSocket.language ); // Base range of ranged weapon (SA and later only)
 			break;
 		case itemProp.baseWeight:
 			propertyName = "baseWeight";
@@ -3945,6 +3969,11 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "maxItems";
 			propertyType = "Integer";
 			propertyHint = GetDictionaryEntry( 8167, pSocket.language ); // Max items a container can contain
+			break;
+		case itemProp.maxRange:
+			propertyName = "maxRange";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8168, pSocket.language ); // Maximum range of ranged weapon
 			break;
 		case itemProp.mininterval:
 			propertyName = "mininterval";

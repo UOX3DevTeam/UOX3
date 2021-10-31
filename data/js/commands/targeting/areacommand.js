@@ -89,6 +89,7 @@ function onIterate( toCheck )
 			case "SETY":		toCheck.y = value;		break;
 			case "SETZ":		toCheck.z = value;		break;
 			case "SETTYPE":		toCheck.type = value;		break;
+			case "SETEVENT":	toCheck.event = value;		break;
 //			case "NEWBIE":		toCheck.newbie = value;		break;
 			case "SETSCPTRIG":	toCheck.scripttrigger = value;	break;
 			case "ADDSCPTRIG": 	toCheck.AddScriptTrigger( value ); break;

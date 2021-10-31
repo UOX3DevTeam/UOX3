@@ -547,7 +547,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					}
 				}
 				break;
-			case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI08>(gPriv->GetType()) );		break;
+			case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI16>(gPriv->GetType()) );		break;
 			case CIP_MORE:
 			{
 				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE ) ) )
@@ -666,6 +666,10 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
 			case CIP_DESC:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetDesc().c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			case CIP_EVENT:
+				tString = JS_NewStringCopyZ( cx, gPriv->GetEvent().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() );			break;
@@ -1098,6 +1102,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_INTELLIGENCE:	gPriv->SetIntelligence( (SI16)encaps.toInt() );				break;
 			case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 			case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
+			case CIP_EVENT:			gPriv->SetEvent( encaps.toString() );						break;
 			case CIP_TEMPTIMER:
 				newTime = encaps.toInt();
 				if( newTime != 0 )

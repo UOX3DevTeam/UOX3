@@ -3337,7 +3337,6 @@
 8032=Invalid objectType selected, saving aborted!
 8033=%i decorations saved to custom world template '%s'. Check <SCRIPTSDATADIRECTORY>/worldtemplates/ for output files!
 8034=Unable to save decorations to template. Something may have gone wrong!
-8034=No decorations found. None saved!
 8035=%i decorations successfully saved to templates for facet '%s'. Check <SCRIPTDATADIRECTORY/worldtemplates/ for saved template files!
 8036=Saving %i decorations of type '%s' for facet '%t'...
 8037=%i items of type '%s' detected in facet '%t'. Saving...
@@ -3507,6 +3506,8 @@
 8203=Y coordinate of item in the world - or in container
 8204=Z coordinate of item in the world - or in container
 8205=Value not set
+8206=Server event item is associated with
+8207=Base range of ranged weapon (SA and later only)
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type
@@ -3934,6 +3935,14 @@
 9087=Target cannot be resurrected at that location.
 9088=Your fingers slip!
 9089=You finish applying the bandages, but they barely help.
+9090=Casting spell %d (%s)...
+9091=...%i decorations saved!
+9092=No decorations found. None saved!
+9093=Unloading Event...
+9094=Unloading Event
+9095=%i event decorations removed for event %s.
+9096=No event decorations found.
+9097=You cannot place this house-addon there, location is blocked!
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
