@@ -8355,7 +8355,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	}
 
 	// Skill training - IDs 0x006D to 0x009C
-	if( toCopy.IsNpc() && !toCopy.IsTamed() && !cwmWorldState->creatures[toCopy.GetID()].IsAnimal() && toCopy.CanTrain() )
+	if( toCopy.IsNpc() && !toCopy.IsTamed() && !cwmWorldState->creatures[toCopy.GetID()].IsAnimal() && toCopy.CanTrain() && cwmWorldState->creatures[toCopy.GetID()].IsHuman() )
 	{
 		auto idTracker = 0x0071;
 		auto clilocTracker = 6000;

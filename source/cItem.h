@@ -24,6 +24,7 @@ protected:
 	char				name2[MAX_NAME];
 	SERIAL				creator;	// Store the serial of the player made this item
 	std::string			desc;
+	std::string			eventName;	// Name of custom event item belongs to
 
 	ItemLayers		layer; // Layer if equipped on paperdoll
 	ItemTypes		type; // For things that do special things on doubleclicking
@@ -127,10 +128,12 @@ public:
 	const char *	GetName2( void ) const;
 	SERIAL			GetCreator( void ) const;
 	std::string 	GetDesc( void ) const;
+	std::string 	GetEvent( void ) const;
 
 	void			SetName2( const char *newValue );
 	void			SetCreator( SERIAL newValue );
 	void			SetDesc( std::string newValue );
+	void			SetEvent( std::string newValue );
 
 	void			PlaceInPack( void );
 	virtual void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) override;

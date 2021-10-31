@@ -278,7 +278,11 @@ void cEffects::doSocketMusic( CSocket *s )
 		return;
 	}
 
-	if( mChar->IsAtWar() )
+	if( mChar->IsDead() )
+	{
+		sect = "MUSICLIST DEATH";
+	}
+	else if( mChar->IsAtWar() )
 	{
 		sect = "MUSICLIST COMBAT";
 	}

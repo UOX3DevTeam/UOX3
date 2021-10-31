@@ -251,6 +251,7 @@
 15004=server/house/trashbarrel.js
 15005=server/house/strongbox.js
 15006=server/house/playerVendorDeed.js
+15007=server/house/houseAddonUse.js
 }
 
 //-------------------------------------------

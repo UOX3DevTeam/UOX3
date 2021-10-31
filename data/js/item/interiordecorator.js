@@ -10,8 +10,9 @@ function onUseChecked( pUser, iUsed )
 		}
 		else
 		{
-			var pMulti = pUser.multi;
-			if( ValidateObject( pMulti ) && pMulti.owner == pUser )
+			var iMulti = pUser.multi;
+			if( ValidateObject( iMulti ) && ( iMulti.IsOnOwnerList( pUser )
+				|| ( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum == pUser.accountNum )))
 			{
 				var ret = displaygump(iUsed, pUser);
 			}
@@ -43,37 +44,53 @@ function displaygump( socket, pUser )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
-	switch( pButton )
+	var iMulti = pUser.multi;
+	if( ValidateObject( iMulti ) && ( iMulti.IsOnOwnerList( pUser )
+		|| ( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum == pUser.accountNum )))
 	{
-		case 0:
-			break;//close
-		case 1: // Turn
-  			var targMsg3 = GetDictionaryEntry( 2068, socket.language ); // Select an object to turn.
-    		socket.CustomTarget( 3, targMsg3 );
-			var ret = displaygump( socket, pUser );
-			break;
-		case 2: // Up
-			var targMsg2 = GetDictionaryEntry( 2069, socket.language ); // Select an object to increase its height.
-    		socket.CustomTarget( 2, targMsg2 );
-			var ret = displaygump( socket, pUser );
-			break;
-		case 3: // Down
-			var targMsg1 = GetDictionaryEntry( 2070, socket.language ); // Select an object to lower its height.
-    		socket.CustomTarget( 1, targMsg1 );
-			var ret = displaygump( socket, pUser );
-			break;
-		default:
-			break;
+		switch( pButton )
+		{
+			case 0:
+				break;//close
+			case 1: // Turn
+	  			var targMsg3 = GetDictionaryEntry( 2068, socket.language ); // Select an object to turn.
+	    		socket.CustomTarget( 3, targMsg3 );
+				var ret = displaygump( socket, pUser );
+				break;
+			case 2: // Up
+				var targMsg2 = GetDictionaryEntry( 2069, socket.language ); // Select an object to increase its height.
+	    		socket.CustomTarget( 2, targMsg2 );
+				var ret = displaygump( socket, pUser );
+				break;
+			case 3: // Down
+				var targMsg1 = GetDictionaryEntry( 2070, socket.language ); // Select an object to lower its height.
+	    		socket.CustomTarget( 1, targMsg1 );
+				var ret = displaygump( socket, pUser );
+				break;
+			default:
+				break;
+		}
 	}
+    else
+        pUser.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
 }
 
 function onCallback1( socket, ourObj )
 {
 	var tChar = socket.currentChar;
-	var iMulti = ourObj.multi;
-	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 || !ValidateObject( iMulti ) || iMulti.owner != tChar )
+	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language ) ); // You can only use the interior decorator on locked down items.
+		return;
+	}
+
+	var iMulti = tChar.multi;
+	if( !ValidateObject( iMulti )
+		|| ( !iMulti.IsOnOwnerList( tChar )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum != tChar.accountNum )
+				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
+	{
+		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
 		return;
 	}
 
@@ -100,10 +117,19 @@ function onCallback1( socket, ourObj )
 function onCallback2( socket, ourObj )
 {
 	var tChar = socket.currentChar;
-	var iMulti = ourObj.multi;
-	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 || !ValidateObject( iMulti ) || iMulti.owner != tChar )
+	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language ) ); // You can only use the interior decorator on locked down items.
+		return;
+	}
+
+	var iMulti = ourObj.multi;
+	if( !ValidateObject( iMulti )
+		|| ( !iMulti.IsOnOwnerList( tChar )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum != tChar.accountNum )
+				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
+	{
+		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
 		return;
 	}
 
@@ -112,7 +138,7 @@ function onCallback2( socket, ourObj )
 	if( ourObj.z == 127 || ourObj.z == ( iMultiZ + 22 ) || ourObj.z == ( iMultiZ + 44 ) || ourObj.z == ( iMultiZ + 66 ) || ourObj.z == ( iMultiZ + 88 )
 		|| objHeight == 127 || objHeight == ( iMultiZ + 22 ) || objHeight == ( iMultiZ + 44 ) || objHeight == ( iMultiZ + 66 ) || objHeight == ( iMultiZ + 88 ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 2073, socket.language ) ); // You cannot raise it up any higher.
+		socket.SysMessage( GetDictionaryEntry( 2074, socket.language ) ); // You cannot raise it up any higher.
 		return;
 	}
 
@@ -130,10 +156,19 @@ function onCallback2( socket, ourObj )
 function onCallback3( socket, ourObj )
 {
 	var tChar = socket.currentChar;
-	var iMulti = ourObj.multi;
-	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 || !ValidateObject( iMulti ) || iMulti.owner != tChar )
+	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2072, socket.language ) ); // You can only use the interior decorator on locked down items.
+		return;
+	}
+
+	var iMulti = ourObj.multi;
+	if( !ValidateObject( iMulti )
+		|| ( !iMulti.IsOnOwnerList( tChar )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum != tChar.accountNum )
+				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
+	{
+		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
 		return;
 	}
 

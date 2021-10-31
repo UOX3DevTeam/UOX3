@@ -3337,7 +3337,6 @@
 8032=Wybrano nieprawidłowy obiektTyp, zapisywanie przerwane!
 8033=%i dekoracje zapisane do niestandardowego szablonu świata '%s'. Sprawdź <SCRIPTSDATADIRECTORY>/worldtemplates/ dla plików wyjściowych!
 8034=Nie można zapisać dekoracji do szablonu. Coś mogło pójść nie tak!
-8034=Nie znaleziono żadnych dekoracji. Żadna nie została zapisana!
 8035=%i dekoracje zostały pomyślnie zapisane do szablonów dla fasety '%s'. Sprawdź <SCRIPTDATADIRECTORY/worldtemplates/ pod kątem zapisanych plików szablonów!
 8036=Zapisanie %i dekoracji typu '%s' dla fasety '%t'...
 8037=Wykryto %i elementów typu '%s' w fasecie '%t'. Zapisywanie...
@@ -3507,6 +3506,8 @@
 8203=Współrzędna Y elementu w świecie - lub w kontenerze
 8204=Współrzędna Z elementu w świecie - lub w kontenerze
 8205=Wartość nieustalona
+8206=Zdarzenie serwera, z którym związany jest element
+8207=Zasięg bazowy broni dystansowej (tylko SA i późniejsze)
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC
@@ -3934,6 +3935,14 @@
 9087=Cel nie może zostać wskrzeszony w tym miejscu.
 9088=Twoje palce się ślizgają!
 9089=Skończyłeś nakładać bandaże, ale ledwo pomagają.
+9090=Casting zaklęcia %d (%s)...
+9091=...%i dekoracje zapisane!
+9092=Nie znaleziono żadnych dekoracji. Żadna nie została zapisana!
+9093=Zdarzenie rozładowywania...
+9094=Zdarzenie rozładowywania
+9095=%i dekoracje wydarzenia usunięte dla wydarzenia %s.
+9096=Nie znaleziono żadnych dekoracji.
+9097=Nie możesz tam umieścić tego house-addona, lokalizacja jest zablokowana!
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!

@@ -3344,7 +3344,6 @@
 8032=Vybrán nesprávný typ objektu, ukládání přerušeno!
 8033=%i dekorace uloženy do vlastní šablony světa '%s'. Zkontrolujte <SCRIPTSDATADIRECTORY>/worldtemplates/ pro výstupní soubory!
 8034=Nepodařilo se uložit dekorace do šablony. Něco se mohlo pokazit!
-8034=Nenašly se žádné dekorace. Žádné nebyly uloženy!
 8035=%i dekorace úspěšně uloženy do šablony pro aspekt '%s'. Zkontrolujte <SCRIPTDATADIRECTORY/worldtemplates/ pro uložené soubory šablon!
 8036=Ukládání %i dekorací typu '%s' pro facet '%t'...
 8037=Detekováno %i položek typu '%s' ve fasetě '%t'. Ukládání...
@@ -3514,6 +3513,8 @@
 8203=Souřadnice Y předmětu ve světě - nebo v kontejneru
 8204=Z souřadnice položky ve světě - nebo v kontejneru
 8205=Hodnota není nastavena
+8206=Položka události serveru je spojena s
+8207=Základní dosah zbraně na dálku (pouze SA a novější)
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -3941,6 +3942,14 @@
 9087=Cíl nemůže být na tomto místě vzkříšen.
 9088=Uklouzly ti prsty!
 9089=Dokončíš přikládání obvazů, ale sotva ti pomohou.
+9090=Kouzlo %d (%s)...
+9091=...%i dekorace uloženy!
+9092=Nenašly se žádné dekorace. Žádná není uložena!
+9093=Vyložení události...
+9094=Událost vykládání
+9095=%i dekorace události odstraněny pro událost %s.
+9096=Nebyly nalezeny žádné dekorace události.
+9097=Tento dům-addon tam nelze umístit, umístění je blokováno!
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

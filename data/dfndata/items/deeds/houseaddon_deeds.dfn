@@ -1,8 +1,8 @@
 [pentagramdeed]
 {
-NAME=pentagram deed
-ID=0x14F0
-MOREX=18
+name=pentagram deed
+id=0x14F0
+morex=18
 }
 
 [brownbearrugdeedeast]
@@ -35,7 +35,238 @@ morex=43
 
 [loomdeed]
 {
-NAME=loom deed
-ID=0x14F0
-MOREX=19
+name=loom (east)
+id=0x14F0
+morex=19
+}
+
+[loomdeedsouth]
+{
+name=loom (south)
+id=0x14F0
+morex=47
+}
+
+[smallforgedeed]
+{
+name=small forge
+id=0x14F0
+morex=44
+}
+
+[anvildeedeast]
+{
+name=anvil (east)
+id=0x14F0
+morex=45
+}
+
+[anvildeedsouth]
+{
+name=anvil (south)
+id=0x14F0
+morex=46
+}
+
+[spinningwheeldeednorth]
+{
+name=spinning wheel (north)
+id=0x14F0
+morex=48
+}
+
+[spinningwheeldeedsouth]
+{
+name=spinning wheel (south)
+id=0x14F0
+morex=49
+}
+
+[spinningwheeldeedeast]
+{
+name=spinning wheel (east)
+id=0x14F0
+morex=50
+}
+
+[spinningwheeldeedwest]
+{
+name=spinning wheel (west)
+id=0x14F0
+morex=51
+}
+
+[smallbed1deedsouth]
+{
+name=small bed 1 (south)
+id=0x14f0
+morex=52
+}
+
+[smallbed2deedsouth]
+{
+name=small bed 2 (south)
+id=0x14f0
+morex=53
+}
+
+[smallbed1deedeast]
+{
+name=small bed 1 (east)
+id=0x14f0
+morex=54
+}
+
+[smallbed2deedeast]
+{
+name=small bed 2 (east)
+id=0x14f0
+morex=55
+}
+
+[largebed1deedeast]
+{
+name=large bed 1 (east)
+id=0x14f0
+morex=56
+}
+
+[largebed2deedeast]
+{
+name=large bed 2 (east)
+id=0x14f0
+morex=57
+}
+
+[largebed1deedsouth]
+{
+name=large bed 1 (south)
+id=0x14f0
+morex=58
+}
+
+[largebed2deedsouth]
+{
+name=large bed 2 (south)
+id=0x14f0
+morex=59
+}
+
+[trainingdummydeedeast]
+{
+name=training dummy (east)
+id=0x14f0
+morex=60
+}
+
+[trainingdummydeedsouth]
+{
+name=training dummy (south)
+id=0x14f0
+morex=61
+}
+
+[pickpocketdipdeedeast]
+{
+name=pickpocket dip (east)
+id=0x14f0
+morex=62
+}
+
+[pickpocketdipdeedsouth]
+{
+name=pickpocket dip (east)
+id=0x14f0
+morex=63
+}
+
+[dresserdeedeast]
+{
+name=dresser (east)
+id=0x14f0
+morex=64
+}
+
+[dresserdeedsouth]
+{
+name=dresser (south)
+id=0x14f0
+morex=65
+}
+
+[abattoirdeed]
+{
+name=abattoir
+id=0x14f0
+morex=66
+}
+
+[flourmilldeedeast]
+{
+name=flour mill (east)
+id=0x14f0
+morex=67
+}
+
+[flourmilldeedsouth]
+{
+name=flour mill (south)
+id=0x14f0
+morex=68
+}
+
+[sandstoneovendeedeast]
+{
+name=sandstone oven (east)
+id=0x14f0
+morex=69
+}
+
+[sandstoneovendeedsouth]
+{
+name=sandstone oven (south)
+id=0x14f0
+morex=70
+}
+
+[brickovendeedeast]
+{
+name=brick oven (east)
+id=0x14f0
+morex=71
+}
+
+[brickovendeedsouth]
+{
+name=brick oven (south)
+id=0x14f0
+morex=72
+}
+
+[largeforgedeedeast]
+{
+name=large forge (east)
+id=0x14f0
+morex=73
+}
+
+[largeforgedeedwest]
+{
+name=large forge (west)
+id=0x14f0
+morex=74
+}
+
+[largeforgedeednorth]
+{
+name=large forge (north)
+id=0x14f0
+morex=75
+}
+
+[largeforgedeedsouth]
+{
+name=large forge (south)
+id=0x14f0
+morex=76
 }

@@ -143,6 +143,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 					applyTo->SetResist( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[3], "//" )), nullptr, 0)), POISON );
 				}
 				break;
+			case DFNTAG_EVENT:			applyTo->SetEvent( cdata );					break;
 			case DFNTAG_DAMAGEABLE:		applyTo->SetDamageable(ndata != 0);			break;
 			case DFNTAG_DEF:
 				if( ndata >= 0 )

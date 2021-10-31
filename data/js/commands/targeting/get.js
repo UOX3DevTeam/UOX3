@@ -173,6 +173,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "RESTOCK":
 		socket.SysMessage( ourItem.restock );
 		break;
+	case "EVENT":
+		socket.SysMessage( ourItem.event );
+		break;
 	case "MAXITEMS":
 		socket.SysMessage( ourItem.maxItems );
 		break;

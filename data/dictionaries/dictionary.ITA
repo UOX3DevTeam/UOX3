@@ -3337,7 +3337,6 @@
 8032=Invalid objectType selected, saving aborted!
 8033=%i decorazioni salvate nel modello di mondo personalizzato '%s'. Controlla <SCRIPTSDATADIRECTORY>/worldtemplates/ per i file di output!
 8034=Impossibile salvare le decorazioni nel modello. Qualcosa potrebbe essere andato storto!
-8034=Nessuna decorazione trovata. Nessuna salvata!
 8035=%i decorazioni salvate con successo nei modelli per la faccetta '%s'. Controlla <SCRIPTDATADIRECTORY/worldtemplates/ per i file dei modelli salvati!
 8036=Salvataggio di %i decorazioni di tipo '%s' per la faccetta '%t'...
 8037=%i elementi di tipo '%s' rilevati nella sfaccettatura '%t'. Salvataggio...
@@ -3507,6 +3506,8 @@
 8203=Coordinata Y dell'elemento nel mondo - o nel contenitore
 8204=Coordinata Z dell'elemento nel mondo - o nel contenitore
 8205=Valore non impostato
+8206=Evento server a cui è associato l'oggetto
+8207=Gamma base dell'arma a distanza (solo SA e successivi)
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
@@ -3934,6 +3935,14 @@
 9087=Il bersaglio non può essere resuscitato in quel luogo.
 9088=Le tue dita scivolano!
 9089=Finisci di applicare le bende, ma aiutano a malapena.
+9090=Casting incantesimo %d (%s)...
+9091=...%i decorazioni salvate!
+9092=Nessuna decorazione trovata. Nessuna salvata!
+9093=Evento di scarico...
+9094=Evento di scarico
+9095=%i decorazioni dell'evento rimosse per l'evento %s.
+9096=Nessuna decorazione dell'evento trovata.
+9097=Non puoi mettere questa casa-addon lì, la posizione è bloccata!
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!

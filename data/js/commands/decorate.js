@@ -1,5 +1,11 @@
 // Decorate command - by Xuri (xuri@uox3.org)
-// v1.2
+// v1.3
+//
+//		1.3 - 31/10/2021
+//			Fixed a few bugs with incorrect dictionary messages
+//			Added new sub commands to allow saving/loading/unloading of event decorations
+//				based on event name (.event property) assigned to items
+//				saveevent [eventName], loadevent [eventName] and unloadevent [eventName]
 //
 //		1.2 - 12/06/2021
 //			Added new objectType - spawners
@@ -29,11 +35,20 @@
 // 'decorate save <objectType>
 // 		Save all items of objectType, regardless of facet
 //
+// 'decorate save <facetName>
+//		Save all items on specified facet, regardless of objectType
+//
+// 'decorate ssave <customFileName>
+// 		Save all items of all objectTypes on all facets to custom template file
+//
 // 'decorate save <objectType> <facetName>
 // 		Save all items of objectType in the specified facet
 //
 // 'decorate save <customObjectType> <facetName> x1 y1 x2 y2
 // 		Save all items within specified coordinates on specified facet to file with same name as customObjectType
+//
+// 'decorate saveevent <eventName>
+//		Save all items with .event property that match eventName to file named event_<eventName>
 //
 // LOADING WORLD TEMPLATES
 // 'decorate load
@@ -42,16 +57,25 @@
 // 'decorate load <objectType>
 // 		Load all items of objectType, regardless of facet
 //
+// 'decorate load <facetName>
+//		Load all items on specified facet, regardless of objectType
+//
+// 'decorate load <customFileName>
+//		Load all items from file named <customFileName>
+//
 // 'decorate load <objectType> <facetName>
 // 		Load all items of objectType in the specified facet
 //
-// 'decorate load <customObjectType>
-// 		Load all items from file with same name as <customObjectType>
+// 'decorate loadevent <eventName>
+//		Load all items from file named event_<eventName>, and assign eventName to their .event property
 //
 // CLEANING UP DECORATIONS
 // 'decorate clean
 // 		Clean up duplicate decorations that might have been loaded/added by accident. Counts as duplicate if
 // 		item ID, location, type and hue are identical. BEWARE: Might affect player items on a live shard!
+//
+// 'decorate unloadevent <eventName>
+//		Remove all items with .event property that matches eventName
 
 // Save/load arrays
 var decorateArray = [];
@@ -76,15 +100,12 @@ const signIDs = [ 0x0b97,0x0b96,0x0b97,0x0b98,0x0b99,0x0b9a,0x0b9b,0x0b9c,0x0b9d
 // List of moongate IDs
 const moongateIDs = [ 0x0dda,0x0ddb,0x0ddc,0x0ddd,0x0dde,0x0f6c,0x0f6d,0x0f6e,0x0f6f,0x0f70,0x1ae5,0x1ae6,0x1ae7,0x1ae8,0x1ae9,0x1aea,0x1aeb,0x1aec,0x1aed,0x1af3,0x1af4,0x1af5,0x1af6,0x1af7,0x1af8,0x1af9,0x1afa,0x1afb,0x1fcb,0x1fcc,0x1fcd,0x1fce,0x1fcf,0x1fd0,0x1fd1,0x1fd2,0x1fd3,0x1fd4,0x1fd5,0x1fd6,0x1fd7,0x1fd8,0x1fde,0x1fdf,0x1fe0,0x1fe1,0x1fe2,0x1fe3,0x1fe4,0x1fe5,0x1fe6,0x1fe7,0x1fe8,0x1fe9,0x1fea,0x1feb,0x4b8f,0x4b90,0x4b91,0x4b92,0x4b93,0x4b94,0x4b95,0x4b96,0x4b97,0x4b98,0x4b99,0x4b9a,0x4b9b,0x4b9c,0x4bcb,0x4bcc,0x4bcd,0x4bce,0x4bcf,0x4bd0,0x4bd1,0x4bd2,0x4bd3,0x4bd4,0x4bd5,0x4bd6,0x4bd7,0x4bd8 ]
 
-// List of object properties to save
-const objectProps = [];
-
 // ScriptID of this script, used to identify and close some gumps
 const scriptID = 1059;
 
 function CommandRegistration()
 {
-	RegisterCommand( "decorate", 2, true );
+	RegisterCommand( "decorate", 5, true ); // Admin only command
 }
 
 function command_DECORATE( socket, cmdString )
@@ -106,9 +127,13 @@ function command_DECORATE( socket, cmdString )
 	saveAll = false;
 	saveCustom = false;
 	loadCustom = false;
+	saveEvent = false;
+	loadEvent = false;
+	unloadEvent = false;
 	facetID = -1;
 	facetName = "";
 	objectType = "";
+	eventName = "";
 
 	if( cmdString )
 	{
@@ -123,6 +148,32 @@ function command_DECORATE( socket, cmdString )
 			case "LOAD":
 				// Load decorations from world template files
 				HandleDecorateLoad( socket, splitString );
+				break;
+			case "SAVEEVENT":
+				// Save event decorations to event world template file
+				if( splitString[1] != "" )
+				{
+					// Keep event info for later
+					eventName = splitString[1].toLowerCase();
+					HandleDecorateSave( socket, splitString );
+				}
+				break;
+			case "LOADEVENT":
+				// Load event decorations from event world template file
+				if( splitString[1] != "" )
+				{
+					// Keep event info for later
+					eventName = splitString[1].toLowerCase();
+					HandleDecorateLoad( socket, splitString );
+				}
+				break;
+			case "UNLOADEVENT":
+				if( splitString[1] != "" )
+				{
+					// Keep event info for later
+					eventName = splitString[1].toLowerCase();
+					HandleDecorateUnloadEvent( socket );
+				}
 				break;
 			case "CLEAN":
 				// Clean up duplicate decorations
@@ -402,16 +453,87 @@ function HandleDecorateClean( socket )
 	}
 }
 
+// Handle unloading of event decorations, if any
+function HandleDecorateUnloadEvent( socket )
+{
+	socket.SysMessage( GetDictionaryEntry( 9093, socket.language )); // Unloading Event...
+	cleanMode = true;
+	unloadEvent = true;
+	totalCleaned = 0;
+
+	DisplayProgressGump( socket, GetDictionaryEntry( 9094, socket.language ), 0 ); // Unloading Event...
+
+	var progressOne = true;
+	var progressTwo = true;
+	var progressThree = true;
+	var progressFour = true;
+	var progressFive = true;
+
+	var facetCount = facetList.length;
+	for( var i = 0; i < facetCount; i++ )
+	{
+		facetID = i;
+		IterateOver( "ITEM" );
+
+		if( progressFive && i >= 5 )
+		{
+			DisplayProgressGump( socket, GetDictionaryEntry( 9094, socket.language ), 75 ); // Unloading Event...
+			progressFive = false;
+		}
+		else if( progressFour && i >= 4 )
+		{
+			DisplayProgressGump( socket, GetDictionaryEntry( 9094, socket.language ), 60 ); // Unloading Event...
+			progressFour = false;
+		}
+		else if( progressThree && i >= 3 )
+		{
+			DisplayProgressGump( socket, GetDictionaryEntry( 9094, socket.language ), 45 ); // Unloading Event...
+			progressThree = false;
+		}
+		else if( progressTwo && i >= 2 )
+		{
+			DisplayProgressGump( socket, GetDictionaryEntry( 9094, socket.language ), 30 ); // Unloading Event...
+			progressTwo = false;
+		}
+		else if( progressOne && i >= 1 )
+		{
+			DisplayProgressGump( socket, GetDictionaryEntry( 9094, socket.language ), 15 ); // Unloading Event...
+			progressOne = false;
+		}
+
+	}
+
+	socket.CloseGump( scriptID + 0xffff, 0 );
+
+	if( totalCleaned > 0 )
+	{
+		var tempMsg = GetDictionaryEntry( 9095, socket.language ); // %i event decorations removed for event %s.
+		tempMsg = tempMsg.replace(/%s/gi, eventName.toLowerCase() );
+		socket.SysMessage( tempMsg.replace(/%i/gi, totalCleaned.toString() ));
+	}
+	else
+	{
+		socket.SysMessage( GetDictionaryEntry( 9096, socket.language )); // No event decorations found.
+	}
+}
+
 // Handle saving of decorations, based on parameters in command string
 function HandleDecorateSave( socket, splitString )
 {
 	socket.SysMessage( GetDictionaryEntry( 8023, socket.language )); // Saving decorations...
 	saveAll = false;
 	saveCustom = false;
+	saveEvent = false;
 
 	var facetCount = facetList.length;
 	var objectTypeCount = objectTypeList.length;
 	var numArguments = splitString.length;
+
+	if( eventName != "" )
+	{
+		saveEvent = true;
+	}
+
 	switch( numArguments )
 	{
 		case 1: // No additional arguments provided, save everything
@@ -479,7 +601,7 @@ function HandleDecorateSave( socket, splitString )
 				if( iterateCount == 0 )
 					continue; // No decorations found, of any type. Check next facet!
 
-				var tempMsg = GetDictionaryEntry( 8032, socket.language ); // ...%i decorations saved!
+				var tempMsg = GetDictionaryEntry( 9091, socket.language ); // ...%i decorations saved!
 				socket.SysMessage( tempMsg.replace(/%i/gi, iterateCount.toString() ));
 
 				// With facetID/Name sorted, let's loop through each objectType
@@ -513,7 +635,6 @@ function HandleDecorateSave( socket, splitString )
 							break;
 						case 6:
 							objectType = "spawners";
-							socket.SysMessage( "Spawners!" );
 							SaveDecorationsToFile( socket, decorateSpawnersArray, false  );
 							break;
 						case 7:
@@ -572,7 +693,7 @@ function HandleDecorateSave( socket, splitString )
 				}
 				else
 				{
-					socket.SysMessage( GetDictionaryEntry( 8035, socket.language )); // No decorations found. None saved!
+					socket.SysMessage( GetDictionaryEntry( 9092, socket.language )); // No decorations found. None saved!
 				}
 				socket.CloseGump( scriptID + 0xffff, 0 );
 			}
@@ -831,10 +952,10 @@ function HandleDecorateSave( socket, splitString )
 function SaveDecorationToArray( toCheck, arrayRef )
 {
 	// Item properties to save
+	var itemType = (toCheck.type).toString();
 	var itemID = (toCheck.id).toString();
 	var itemName = toCheck.name;
 	var itemHue = (toCheck.colour).toString();
-	var itemType = (toCheck.type).toString();
 	var itemX = (toCheck.x).toString();
 	var itemY = (toCheck.y).toString();
 	var itemZ = (toCheck.z).toString();
@@ -909,7 +1030,9 @@ function SaveDecorationsToFile( socket, arrayRef, singleSave )
 	// Create a new file object
 	var mFile = new UOXCFile();
 	var fileName = "";
-	if( saveCustom )
+	if( saveEvent )
+		fileName = "event_" + eventName + ".jsdata";
+	else if( saveCustom )
 		fileName = objectType + ".jsdata";
 	else
 		fileName = facetName + "_" + objectType +".jsdata";
@@ -969,6 +1092,13 @@ function HandleDecorateLoad( socket, splitString )
 	var facetCount = facetList.length;
 	var objectTypeCount = objectTypeList.length;
 	var numArguments = splitString.length;
+	loadEvent = false;
+
+	if( eventName != "" )
+	{
+		loadEvent = true;
+	}
+
 	switch( numArguments )
 	{
 		case 1:
@@ -1340,7 +1470,9 @@ function LoadDecorationsFromFile( socket )
 	var mFile = new UOXCFile();
 	var fileName = "";
 
-	if( loadCustom )
+	if( loadEvent )
+		fileName = "event_" + eventName + ".jsdata";
+	else if( loadCustom )
 		fileName = objectType + ".jsdata";
 	else
 		fileName = facetName + "_" + objectType + ".jsdata";
@@ -1555,6 +1687,12 @@ function DecorateWorld( socket )
 					newItem.AddScriptTrigger( scriptTriggers[k] );
 				}
 			}
+
+			if( loadEvent )
+			{
+				// Associate the item with the event being loaded
+				newItem.event = eventName;
+			}
 			newItemCount++;
 		}
 	}
@@ -1568,8 +1706,15 @@ function onIterate( toCheck )
 {
 	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti )
 	{
-		if( saveCustom && saveAll )
+		if(( saveCustom || saveEvent ) && saveAll )
 		{
+			// Only save items that match event type if we're saving event deocrations
+			if( saveEvent && (toCheck.event).toLowerCase() != eventName )
+				return false;
+
+			if( !saveEvent && toCheck.worldnumber != facetID )
+				return false;
+
 			// Save ALL decorations on ALL facets to one custom file
 			SaveDecorationToArray( toCheck, decorateArray );
 			return true;
@@ -1584,6 +1729,16 @@ function onIterate( toCheck )
 			if( ValidateObject( newItem ))
 			{
 				newItem.worldnumber = targetFacetID;
+				return true;
+			}
+		}
+		else if( unloadEvent )
+		{
+			// Remove event decorations
+			var eventItemCount = AreaItemFunction( "CheckForEventItems", toCheck, 2, null );
+			if( eventItemCount > 0 )
+			{
+				totalCleaned += eventItemCount;
 				return true;
 			}
 		}
@@ -1746,6 +1901,16 @@ function onIterate( toCheck )
 		}
 	}
 
+	return false;
+}
+
+function CheckForEventItems( srcItem, trgItem, pSock )
+{
+	if( (trgItem.event).toLowerCase() == eventName )
+	{
+		trgItem.Delete();
+		return true;
+	}
 	return false;
 }
 
