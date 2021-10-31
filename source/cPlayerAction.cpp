@@ -150,6 +150,13 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 		const UI16 itID		= iToStack->GetID();
 		const SERIAL itSer	= iToStack->GetSerial();
 		const UI16 itCol	= iToStack->GetColour();
+		const UI32 itMore	= iToStack->GetTempVar( CITV_MORE );
+		const UI32 itMoreX	= iToStack->GetTempVar( CITV_MOREX );
+		const UI32 itMoreY	= iToStack->GetTempVar( CITV_MOREY );
+		const UI32 itMoreZ	= iToStack->GetTempVar( CITV_MOREZ );
+		const UI32 itBuyValue = iToStack->GetBuyValue();
+		const UI32 itSellValue = iToStack->GetSellValue();
+
 		GenericList< CItem * > *ipCont = iPack->GetContainsList();
 		for( CItem *stack = ipCont->First(); !ipCont->Finished(); stack = ipCont->Next() )
 		{
@@ -157,7 +164,8 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 				continue;
 
 			if( stack->isPileable() && stack->GetAmount() < MAX_STACK &&
-			   stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol )
+			   stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol && stack->GetTempVar( CITV_MORE ) == itMore && stack->GetTempVar( CITV_MOREX ) == itMoreX 
+				&& stack->GetTempVar( CITV_MOREY ) == itMoreY && stack->GetTempVar( CITV_MOREZ ) == itMoreZ && stack->GetBuyValue() == itBuyValue && stack->GetSellValue() == itSellValue )
 			{ // Autostack
 				if( doStacking( mSock, mChar, iToStack, stack ) == stack )	// compare to stack, if doStacking returned the stack, then the raw object was deleted
 					return stack;	// return the stack
@@ -1588,7 +1596,9 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 		if( !DropOnContainer( (*mSock), (*mChar), (*nCont), (*nItem), stackDeleted, x, y, gridLoc ) )
 			return;
 	}
-	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
+	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() && nCont->GetTempVar( CITV_MORE ) == nItem->GetTempVar( CITV_MORE )
+		&& nCont->GetTempVar( CITV_MOREX ) == nItem->GetTempVar( CITV_MOREX ) && nCont->GetTempVar( CITV_MOREY ) == nItem->GetTempVar( CITV_MOREY ) && nCont->GetTempVar( CITV_MOREZ ) == nItem->GetTempVar( CITV_MOREZ )
+		&& nCont->GetBuyValue() == nItem->GetBuyValue() && nCont->GetSellValue() == nItem->GetSellValue() )
 	{	// Stacking
 		if( !DropOnStack( (*mSock), (*mChar), (*nCont), (*nItem), stackDeleted ) )
 			return;
@@ -2138,6 +2148,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 	{
 		case IT_NOTYPE:
 		case IT_COUNT:
+		case IT_HOUSEADDON:
 			return false;
 		case IT_CONTAINER:	// Container, Backpack
 		case IT_SPAWNCONT: // Item spawn container

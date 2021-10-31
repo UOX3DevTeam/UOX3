@@ -459,9 +459,9 @@ HOUSE_ITEM=51
 }
 
 [HOUSE 19]
-{ LOOM
+{ LOOM (east)
 ID=0x14F0
-SPACEX=1
+SPACEX=2
 SPACEY=1
 CHARX=0
 CHARY=0
@@ -704,8 +704,8 @@ SCRIPT=15000
 [HOUSE 40]
 {
 ID=0x14F0
-SPACEX=1
-SPACEY=1
+SPACEX=3
+SPACEY=3
 CHARX=0
 CHARY=0
 CHARZ=0
@@ -725,8 +725,8 @@ HOUSE_ITEM=394
 [HOUSE 41]
 {
 ID=0x14F0
-SPACEX=1
-SPACEY=1
+SPACEX=3
+SPACEY=3
 CHARX=0
 CHARY=0
 CHARZ=0
@@ -746,8 +746,8 @@ HOUSE_ITEM=403
 [HOUSE 42]
 {
 ID=0x14F0
-SPACEX=1
-SPACEY=1
+SPACEX=3
+SPACEY=3
 CHARX=0
 CHARY=0
 CHARZ=0
@@ -767,8 +767,8 @@ HOUSE_ITEM=412
 [HOUSE 43]
 {
 ID=0x14F0
-SPACEX=1
-SPACEY=1
+SPACEX=3
+SPACEY=3
 CHARX=0
 CHARY=0
 CHARZ=0
@@ -782,6 +782,478 @@ HOUSE_ITEM=418
 HOUSE_ITEM=419
 HOUSE_ITEM=420
 HOUSE_ITEM=421
+}
+
+// House Addon - Small Forge
+[HOUSE 44]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallforgedeed
+HOUSE_ITEM=422
+}
+
+// House Addon - Anvil (south)
+[HOUSE 45]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=anvildeedsouth
+HOUSE_ITEM=423
+}
+
+// House Addon - Anvil (east)
+[HOUSE 46]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=anvildeedeast
+HOUSE_ITEM=424
+}
+
+// House Addon - Loom (south)
+[HOUSE 47]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=loomsouthdeed
+HOUSE_ITEM=425
+HOUSE_ITEM=426
+}
+
+// House Addon - Spinning Wheel (north)
+[HOUSE 48]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=spinningwheeldeednorth
+HOUSE_ITEM=427
+}
+
+// House Addon - Spinning Wheel (south)
+[HOUSE 49]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=spinningwheeldeedsouth
+HOUSE_ITEM=428
+}
+
+// House Addon - Spinning Wheel (east)
+[HOUSE 50]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=spinningwheeldeedeast
+HOUSE_ITEM=429
+}
+
+// House Addon - Spinning Wheel (west)
+[HOUSE 51]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=spinningwheeldeedwest
+HOUSE_ITEM=430
+}
+
+// House Addon - Small Bed 1 (south)
+[HOUSE 52]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallbed1deedsouth
+HOUSE_ITEM=431
+HOUSE_ITEM=432
+}
+
+// House Addon - Small Bed 2 (south)
+[HOUSE 53]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallbed2deedsouth
+HOUSE_ITEM=433
+HOUSE_ITEM=434
+}
+
+// House Addon - Small Bed 1 (east)
+[HOUSE 54]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallbed1deedeast
+HOUSE_ITEM=435
+HOUSE_ITEM=436
+}
+
+// House Addon - Small Bed 2 (east)
+[HOUSE 55]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=smallbed2deedeast
+HOUSE_ITEM=437
+HOUSE_ITEM=438
+}
+
+// House Addon - Large Bed 1 (east)
+[HOUSE 56]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largebed1deedeast
+HOUSE_ITEM=439
+HOUSE_ITEM=440
+HOUSE_ITEM=441
+HOUSE_ITEM=442
+}
+
+// House Addon - Large Bed 2 (east)
+[HOUSE 57]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largebed2deedeast
+HOUSE_ITEM=443
+HOUSE_ITEM=444
+HOUSE_ITEM=445
+HOUSE_ITEM=446
+}
+
+// House Addon - Large Bed 1 (south)
+[HOUSE 58]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largebed1deedsouth
+HOUSE_ITEM=447
+HOUSE_ITEM=448
+HOUSE_ITEM=449
+HOUSE_ITEM=450
+}
+
+// House Addon - Large Bed 2 (south)
+[HOUSE 59]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largebed2deedsouth
+HOUSE_ITEM=451
+HOUSE_ITEM=452
+HOUSE_ITEM=453
+HOUSE_ITEM=454
+}
+
+// House Addon - Training Dummy (east)
+[HOUSE 60]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=trainingdummydeedeast
+HOUSE_ITEM=455
+}
+
+// House Addon - Training Dummy (south)
+[HOUSE 61]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=trainingdummydeedsouth
+HOUSE_ITEM=456
+}
+
+// House Addon - Pickpocket Dip (east)
+[HOUSE 62]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=pickpocketdipdeedeast
+HOUSE_ITEM=457
+}
+
+// House Addon - Pickpocket Dip (south)
+[HOUSE 63]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=pickpocketdipdeedsouth
+HOUSE_ITEM=458
+}
+
+// House Addon - Dresser (east)
+[HOUSE 64]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=dresserdeedeast
+HOUSE_ITEM=459
+HOUSE_ITEM=460
+}
+
+// House Addon - Dresser (south)
+[HOUSE 65]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=dresserdeedsouth
+HOUSE_ITEM=461
+HOUSE_ITEM=462
+}
+
+// House Addon - Abattoir (stone pentagram)
+[HOUSE 66]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=abattoirdeed
+HOUSE_ITEM=463
+HOUSE_ITEM=464
+HOUSE_ITEM=465
+HOUSE_ITEM=466
+HOUSE_ITEM=467
+HOUSE_ITEM=468
+HOUSE_ITEM=469
+HOUSE_ITEM=470
+HOUSE_ITEM=471
+}
+
+// House Addon - Flour Mill (east)
+[HOUSE 67]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=flourmilldeedeast
+HOUSE_ITEM=472
+HOUSE_ITEM=473
+HOUSE_ITEM=474
+}
+
+// House Addon - Flour Mill (south)
+[HOUSE 68]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=flourmilldeedsouth
+HOUSE_ITEM=475
+HOUSE_ITEM=476
+HOUSE_ITEM=477
+}
+
+// House Addon - Sandstone Oven (east)
+[HOUSE 69]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=sandstoneovendeedeast
+HOUSE_ITEM=478
+HOUSE_ITEM=479
+}
+
+// House Addon - Sandstone Oven (south)
+[HOUSE 70]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=sandstoneovendeedsouth
+HOUSE_ITEM=480
+HOUSE_ITEM=481
+}
+
+// House Addon - Brick Oven (east)
+[HOUSE 71]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=brickovendeedeast
+HOUSE_ITEM=482
+HOUSE_ITEM=483
+}
+
+// House Addon - Brick Oven (south)
+[HOUSE 72]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=brickovendeedsouth
+HOUSE_ITEM=484
+HOUSE_ITEM=485
+}
+
+// House Addon - Large Forge (east)
+[HOUSE 73]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largeforgedeedeast
+HOUSE_ITEM=486
+HOUSE_ITEM=487
+HOUSE_ITEM=488
+}
+
+// House Addon - Large Forge (west)
+[HOUSE 74]
+{
+ID=0x14F0
+SPACEX=3
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largeforgedeedwest
+HOUSE_ITEM=489
+HOUSE_ITEM=490
+HOUSE_ITEM=491
+}
+
+// House Addon - Large Forge (north)
+[HOUSE 75]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largeforgedeednorth
+HOUSE_ITEM=492
+HOUSE_ITEM=493
+HOUSE_ITEM=494
+}
+
+// House Addon - Large Forge (south)
+[HOUSE 76]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=3
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largeforgedeedsouth
+HOUSE_ITEM=495
+HOUSE_ITEM=496
+HOUSE_ITEM=497
 }
 
 [HOUSE ITEM 1]
@@ -1216,73 +1688,73 @@ Z=0
 }
 
 [HOUSE ITEM 43]
-{ PENTA-MIDDLE
-ITEM=0x0FEA
+{ PENTA-T-LEFT
+ITEM=0x0FE7
 X=0
 Y=0
 Z=0
 }
 [HOUSE ITEM 44]
-{ PENTA-T-LEFT
-ITEM=0x0FE7
-X=-1
-Y=-1
+{ PENTA-TOP
+ITEM=0x0FE8
+X=1
+Y=0
 Z=0
 }
 [HOUSE ITEM 45]
-{ PENTA-TOP
-ITEM=0x0FE8
-X=0
-Y=-1
+{ PENTA-TOP-RIGHT
+ITEM=0x0FEB
+X=2
+Y=0
 Z=0
 }
 [HOUSE ITEM 46]
-{ PENTA-B-LEFT
-ITEM=0x0FE9
-X=-1
+{ PENTA-LEFT
+ITEM=0x0FE6
+X=0
 Y=1
 Z=0
 }
 [HOUSE ITEM 47]
-{ PENTA-LEFT
-ITEM=0x0FE6
-X=-1
-Y=0
+{ PENTA-MIDDLE
+ITEM=0x0FEA
+X=1
+Y=1
 Z=0
 }
 [HOUSE ITEM 48]
-{ TOP-RIGHT
-ITEM=0x0FEB
-X=1
-Y=-1
+{ PENTA-RIGHT
+ITEM=0x0FEE
+X=2
+Y=1
 Z=0
 }
 [HOUSE ITEM 49]
-{ BOTTOM
-ITEM=0x0FEC
+{ PENTA-B-LEFT
+ITEM=0x0FE9
 X=0
-Y=1
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 50]
-{ BOTTOM-RIGHT
-ITEM=0x0FED
+{ PENTA-B
+ITEM=0x0FEC
 X=1
-Y=1
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 51]
-{ RIGHT
-ITEM=0x0FEE
-X=1
-Y=0
+{ PENTA-B-RIGHT
+ITEM=0x0FED
+X=2
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 52]
-{ LOOM-PT1
+{ LOOM-PT1 (east)
 ITEM=0x1061
 X=0
 Y=0
@@ -1290,7 +1762,7 @@ Z=0
 }
 
 [HOUSE ITEM 53]
-{ LOOM-PT2
+{ LOOM-PT2 (east)
 ITEM=0x1062
 X=1
 Y=0
@@ -1521,15 +1993,15 @@ Z=29
 
 [HOUSE ITEM 386]
 { brown bear rug east 1/9
-ITEM=brownbearrug1
-X=1
-Y=1
+ITEM=brownbearrug9
+X=0
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 387]
 { brown bear rug east 2/9
-ITEM=brownbearrug2
+ITEM=brownbearrug4
 X=1
 Y=0
 Z=0
@@ -1538,31 +2010,31 @@ Z=0
 [HOUSE ITEM 388]
 { brown bear rug east 3/9
 ITEM=brownbearrug3
-X=1
-Y=-1
+X=2
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 389]
 { brown bear rug east 4/9
-ITEM=brownbearrug4
+ITEM=brownbearrug8
 X=0
-Y=-1
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 390]
 { brown bear rug east 5/9
 ITEM=brownbearrug5
-X=0
-Y=0
+X=1
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 391]
 { brown bear rug east 6/9
-ITEM=brownbearrug6
-X=0
+ITEM=brownbearrug2
+X=2
 Y=1
 Z=0
 }
@@ -1570,110 +2042,110 @@ Z=0
 [HOUSE ITEM 392]
 { brown bear rug east 7/9
 ITEM=brownbearrug7
-X=-1
-Y=1
+X=0
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 393]
 { brown bear rug east 8/9
-ITEM=brownbearrug8
-X=-1
-Y=0
+ITEM=brownbearrug6
+X=1
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 394]
 { brown bear rug east 9/9
-ITEM=brownbearrug9
-X=-1
-Y=-1
+ITEM=brownbearrug1
+X=2
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 395]
 { brown bear rug south 1/9
-ITEM=brownbearrug10
-X=1
-Y=1
+ITEM=brownbearrug18
+X=0
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 396]
 { brown bear rug south 2/9
-ITEM=brownbearrug11
-X=0
-Y=1
+ITEM=brownbearrug17
+X=1
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 397]
 { brown bear rug south 3/9
-ITEM=brownbearrug12
-X=-1
-Y=1
+ITEM=brownbearrug16
+X=2
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 398]
 { brown bear rug south 4/9
 ITEM=brownbearrug13
-X=-1
-Y=0
+X=0
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 399]
 { brown bear rug south 5/9
 ITEM=brownbearrug14
-X=0
-Y=0
+X=1
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 400]
 { brown bear rug south 6/9
 ITEM=brownbearrug15
-X=1
-Y=0
+X=2
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 401]
 { brown bear rug south 7/9
-ITEM=brownbearrug16
-X=1
-Y=-1
+ITEM=brownbearrug12
+X=0
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 402]
 { brown bear rug south 8/9
-ITEM=brownbearrug17
-X=0
-Y=-1
+ITEM=brownbearrug11
+X=1
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 403]
 { brown bear rug south 9/9
-ITEM=brownbearrug18
-X=-1
-Y=-1
+ITEM=brownbearrug10
+X=2
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 404]
 { polar bear rug east 1/9
-ITEM=polarbearrug1
-X=1
-Y=1
+ITEM=polarbearrug9
+X=0
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 405]
 { polar bear rug east 2/9
-ITEM=polarbearrug2
+ITEM=polarbearrug4
 X=1
 Y=0
 Z=0
@@ -1682,31 +2154,31 @@ Z=0
 [HOUSE ITEM 406]
 { polar bear rug east 3/9
 ITEM=polarbearrug3
-X=1
-Y=-1
+X=2
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 407]
 { polar bear rug east 4/9
-ITEM=polarbearrug4
+ITEM=polarbearrug8
 X=0
-Y=-1
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 408]
 { polar bear rug east 5/9
 ITEM=polarbearrug5
-X=0
-Y=0
+X=1
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 409]
 { polar bear rug east 6/9
-ITEM=polarbearrug6
-X=0
+ITEM=polarbearrug2
+X=2
 Y=1
 Z=0
 }
@@ -1714,95 +2186,774 @@ Z=0
 [HOUSE ITEM 410]
 { polar bear rug east 7/9
 ITEM=polarbearrug7
-X=-1
-Y=1
+X=0
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 411]
 { polar bear rug east 8/9
-ITEM=polarbearrug8
-X=-1
-Y=0
+ITEM=polarbearrug6
+X=1
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 412]
 { polar bear rug east 9/9
-ITEM=polarbearrug9
-X=-1
-Y=-1
+ITEM=polarbearrug1
+X=2
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 413]
 { polar bear rug south 1/9
-ITEM=polarbearrug10
-X=1
-Y=1
+ITEM=polarbearrug18
+X=0
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 414]
 { polar bear rug south 2/9
-ITEM=polarbearrug11
-X=0
-Y=1
+ITEM=polarbearrug17
+X=1
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 415]
 { polar bear rug south 3/9
-ITEM=polarbearrug12
-X=-1
-Y=1
+ITEM=polarbearrug16
+X=2
+Y=0
 Z=0
 }
 
 [HOUSE ITEM 416]
 { polar bear rug south 4/9
 ITEM=polarbearrug13
-X=-1
-Y=0
+X=0
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 417]
 { polar bear rug south 5/9
 ITEM=polarbearrug14
-X=0
-Y=0
+X=1
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 418]
 { polar bear rug south 6/9
 ITEM=polarbearrug15
-X=1
-Y=0
+X=2
+Y=1
 Z=0
 }
 
 [HOUSE ITEM 419]
 { polar bear rug south 7/9
-ITEM=polarbearrug16
-X=1
-Y=-1
+ITEM=polarbearrug12
+X=0
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 420]
 { polar bear rug south 8/9
-ITEM=polarbearrug17
-X=0
-Y=-1
+ITEM=polarbearrug11
+X=1
+Y=2
 Z=0
 }
 
 [HOUSE ITEM 421]
 { polar bear rug south 9/9
-ITEM=polarbearrug18
-X=-1
+ITEM=polarbearrug10
+X=2
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 422]
+{ small forge
+ITEM=0x0fb1
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 423]
+{ anvil (south)
+ITEM=0x0faf
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 424]
+{ anvil (east)
+ITEM=0x0fb0
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 425]
+{ loom (south)
+ITEM=0x105f
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 426]
+{ loom (south)
+ITEM=0x1060
+X=0
 Y=-1
+Z=0
+}
+
+// spinning wheel (north)
+[HOUSE ITEM 427]
+{
+ITEM=0x1015
+X=0
+Y=0
+Z=0
+}
+
+// spinning wheel (south)
+[HOUSE ITEM 428]
+{
+ITEM=0x1019
+X=0
+Y=0
+Z=0
+}
+
+// spinning wheel (east)
+[HOUSE ITEM 429]
+{
+ITEM=0x101c
+X=0
+Y=0
+Z=0
+}
+
+// spinning wheel (west)
+[HOUSE ITEM 430]
+{
+ITEM=0x10a4
+X=0
+Y=0
+Z=0
+}
+
+// small bed 1 (south) 1/2
+[HOUSE ITEM 431]
+{
+ITEM=0x0a63
+X=0
+Y=0
+Z=0
+}
+
+// small bed 1 (south) 2/2
+[HOUSE ITEM 432]
+{
+ITEM=0x0a5c
+X=0
+Y=1
+Z=0
+}
+
+// small bed 2 (south) 1/2
+[HOUSE ITEM 433]
+{
+ITEM=0x0a66
+X=0
+Y=0
+Z=0
+}
+
+// small bed 2 (south) 2/2
+[HOUSE ITEM 434]
+{
+ITEM=0x0a68
+X=0
+Y=1
+Z=0
+}
+
+// small bed 1 (east) 1/2
+[HOUSE ITEM 435]
+{
+ITEM=0x0a5d
+X=0
+Y=0
+Z=0
+}
+
+// small bed 1 (east) 2/2
+[HOUSE ITEM 436]
+{
+ITEM=0x0a62
+X=1
+Y=0
+Z=0
+}
+
+// small bed 2 (east) 1/2
+[HOUSE ITEM 437]
+{
+ITEM=0x0a69
+X=0
+Y=0
+Z=0
+}
+
+// small bed 2 (east) 2/2
+[HOUSE ITEM 438]
+{
+ITEM=0x0a6b
+X=1
+Y=0
+Z=0
+}
+
+// large bed 1 (east) 1/4
+[HOUSE ITEM 439]
+{
+ITEM=0x0a78
+X=1
+Y=1
+Z=0
+}
+
+// large bed 1 (east) 2/4
+[HOUSE ITEM 440]
+{
+ITEM=0x0a79
+X=1
+Y=0
+Z=0
+}
+
+// large bed 1 (east) 3/4
+[HOUSE ITEM 441]
+{
+ITEM=0x0a7a
+X=0
+Y=1
+Z=0
+}
+
+// large bed 1 (east) 4/4
+[HOUSE ITEM 442]
+{
+ITEM=0x0a7b
+X=0
+Y=0
+Z=0
+}
+
+// large bed 2 (east) 1/4
+[HOUSE ITEM 443]
+{
+ITEM=0x0a78
+X=1
+Y=1
+Z=0
+}
+
+// large bed 2 (east) 2/4
+[HOUSE ITEM 444]
+{
+ITEM=0x0a79
+X=1
+Y=0
+Z=0
+}
+
+// large bed 2 (east) 3/4
+[HOUSE ITEM 445]
+{
+ITEM=0x0a7c
+X=0
+Y=1
+Z=0
+}
+
+// large bed 2 (east) 4/4
+[HOUSE ITEM 446]
+{
+ITEM=0x0a7d
+X=0
+Y=0
+Z=0
+}
+
+// large bed 1 (south) 1/4
+[HOUSE ITEM 447]
+{
+ITEM=0x0a7e
+X=1
+Y=1
+Z=0
+}
+
+// large bed 1 (south) 2/4
+[HOUSE ITEM 448]
+{
+ITEM=0x0a7f
+X=0
+Y=1
+Z=0
+}
+
+// large bed 1 (south) 3/4
+[HOUSE ITEM 449]
+{
+ITEM=0x0a80
+X=0
+Y=0
+Z=0
+}
+
+// large bed 1 (south) 4/4
+[HOUSE ITEM 450]
+{
+ITEM=0x0a81
+X=1
+Y=0
+Z=0
+}
+
+// large bed 2 (south) 1/4
+[HOUSE ITEM 451]
+{
+ITEM=0x0a7e
+X=1
+Y=1
+Z=0
+}
+
+// large bed 2 (south) 2/4
+[HOUSE ITEM 452]
+{
+ITEM=0x0a7f
+X=0
+Y=1
+Z=0
+}
+
+// large bed 2 (south) 3/4
+[HOUSE ITEM 453]
+{
+ITEM=0x0a83
+X=0
+Y=0
+Z=0
+}
+
+// large bed 2 (south) 4/4
+[HOUSE ITEM 454]
+{
+ITEM=0x0a82
+X=1
+Y=0
+Z=0
+}
+
+// training dummy (east)
+[HOUSE ITEM 455]
+{
+ITEM=0x1070
+X=0
+Y=0
+Z=0
+}
+
+// training dummy (south)
+[HOUSE ITEM 456]
+{
+ITEM=0x1074
+X=0
+Y=0
+Z=0
+}
+
+// pickpocket dip (east)
+[HOUSE ITEM 457]
+{
+ITEM=0x1ec0
+X=0
+Y=0
+Z=0
+}
+
+// pickpocket dip (east)
+[HOUSE ITEM 458]
+{
+ITEM=0x1ec3
+X=0
+Y=0
+Z=0
+}
+
+// dresser (east) 1/2
+[HOUSE ITEM 459]
+{
+ITEM=0x0A3D
+X=0
+Y=0
+Z=0
+}
+
+// dresser (east) 2/2
+[HOUSE ITEM 460]
+{
+ITEM=0x0A3C
+X=1
+Y=0
+Z=0
+}
+
+// dresser (south) 1/2
+[HOUSE ITEM 461]
+{
+ITEM=0x0A45
+X=0
+Y=0
+Z=0
+}
+
+// dresser (south) 2/2
+[HOUSE ITEM 462]
+{
+ITEM=0x0A44
+X=0
+Y=1
+Z=0
+}
+
+// abattoir (stone pentagram) 1/9
+[HOUSE ITEM 463]
+{
+ITEM=0x120e
+X=0
+Y=0
+Z=0
+}
+
+// abattoir (stone pentagram) 2/9
+[HOUSE ITEM 464]
+{
+ITEM=0x120f
+X=1
+Y=0
+Z=0
+}
+
+// abattoir (stone pentagram) 3/9
+[HOUSE ITEM 465]
+{
+ITEM=0x1210
+X=2
+Y=0
+Z=0
+}
+
+// abattoir (stone pentagram) 4/9
+[HOUSE ITEM 466]
+{
+ITEM=0x1215
+X=0
+Y=1
+Z=0
+}
+
+// abattoir (stone pentagram) 5/9
+[HOUSE ITEM 467]
+{
+ITEM=0x1216
+X=1
+Y=1
+Z=0
+}
+
+// abattoir (stone pentagram) 6/9
+[HOUSE ITEM 468]
+{
+ITEM=0x1211
+X=2
+Y=1
+Z=0
+}
+
+// abattoir (stone pentagram) 7/9
+[HOUSE ITEM 469]
+{
+ITEM=0x1214
+X=0
+Y=2
+Z=0
+}
+
+// abattoir (stone pentagram) 8/9
+[HOUSE ITEM 470]
+{
+ITEM=0x1213
+X=1
+Y=2
+Z=0
+}
+
+// abattoir (stone pentagram) 9/9
+[HOUSE ITEM 471]
+{
+ITEM=0x1212
+X=2
+Y=2
+Z=0
+}
+
+// flour mill (east) 1/3
+[HOUSE ITEM 472]
+{
+ITEM=0x1920
+X=0
+Y=0
+Z=0
+}
+
+// flour mill (east) 2/3
+[HOUSE ITEM 473]
+{
+ITEM=0x1922
+X=1
+Y=0
+Z=0
+}
+
+// flour mill (east) 3/3
+[HOUSE ITEM 474]
+{
+ITEM=0x1924
+X=2
+Y=0
+Z=0
+}
+
+// flour mill (south) 1/3
+[HOUSE ITEM 475]
+{
+ITEM=0x192c
+X=0
+Y=0
+Z=0
+}
+
+// flour mill (south) 2/3
+[HOUSE ITEM 476]
+{
+ITEM=0x192e
+X=0
+Y=1
+Z=0
+}
+
+// flour mill (south) 3/3
+[HOUSE ITEM 477]
+{
+ITEM=0x1930
+X=0
+Y=2
+Z=0
+}
+
+// sandstone oven (east) 1/2
+[HOUSE ITEM 478]
+{
+ITEM=0x0461
+X=0
+Y=1
+Z=0
+}
+
+// sandstone oven (east) 2/2
+[HOUSE ITEM 479]
+{
+ITEM=0x0462
+X=0
+Y=0
+Z=0
+}
+
+// sandstone oven (south) 1/2
+[HOUSE ITEM 480]
+{
+ITEM=0x046c
+X=0
+Y=0
+Z=0
+}
+
+// sandstone oven (south) 2/2
+[HOUSE ITEM 481]
+{
+ITEM=0x046f
+X=1
+Y=0
+Z=0
+}
+
+// brick oven (east) 1/2
+[HOUSE ITEM 482]
+{
+ITEM=0x092b
+X=0
+Y=1
+Z=0
+}
+
+// brick oven (east) 2/2
+[HOUSE ITEM 483]
+{
+ITEM=0x092c
+X=0
+Y=0
+Z=0
+}
+
+// brick oven (south) 1/2
+[HOUSE ITEM 484]
+{
+ITEM=0x0931
+X=0
+Y=0
+Z=0
+}
+
+// brick oven (south) 2/2
+[HOUSE ITEM 485]
+{
+ITEM=0x0930
+X=1
+Y=0
+Z=0
+}
+
+// large forge (east) 1/3
+[HOUSE ITEM 486]
+{
+ITEM=0x197a
+X=0
+Y=0
+Z=0
+}
+
+// large forge (east) 2/3
+[HOUSE ITEM 487]
+{
+ITEM=0x197e
+X=1
+Y=0
+Z=0
+}
+
+// large forge (east) 3/3
+[HOUSE ITEM 488]
+{
+ITEM=0x1982
+X=2
+Y=0
+Z=0
+}
+
+// large forge (west) 1/3
+[HOUSE ITEM 489]
+{
+ITEM=0x19a6
+X=0
+Y=0
+Z=0
+}
+
+// large forge (west) 2/3
+[HOUSE ITEM 490]
+{
+ITEM=0x19a2
+X=1
+Y=0
+Z=0
+}
+
+// large forge (west) 3/3
+[HOUSE ITEM 491]
+{
+ITEM=0x199e
+X=2
+Y=0
+Z=0
+}
+
+// large forge (north) 1/3
+[HOUSE ITEM 492]
+{
+ITEM=0x199a
+X=0
+Y=0
+Z=0
+}
+
+// large forge (north) 2/3
+[HOUSE ITEM 493]
+{
+ITEM=0x1996
+X=0
+Y=1
+Z=0
+}
+
+// large forge (north) 3/3
+[HOUSE ITEM 494]
+{
+ITEM=0x1992
+X=0
+Y=2
+Z=0
+}
+
+// large forge (south) 1/3
+[HOUSE ITEM 495]
+{
+ITEM=0x1986
+X=0
+Y=0
+Z=0
+}
+
+// large forge (south) 2/3
+[HOUSE ITEM 496]
+{
+ITEM=0x198a
+X=0
+Y=1
+Z=0
+}
+
+// large forge (south) 3/3
+[HOUSE ITEM 497]
+{
+ITEM=0x198e
+X=0
+Y=2
 Z=0
 }

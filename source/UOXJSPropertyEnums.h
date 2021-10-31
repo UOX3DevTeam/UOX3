@@ -452,6 +452,7 @@ enum CI_Properties
 	CIP_INTELLIGENCE,
 	CIP_CORPSE,
 	CIP_DESC,
+	CIP_EVENT,
 	CIP_TEMPTIMER,
 	CIP_SHOULDSAVE,
 	// The following entries are specifically for CSpawnItem objects

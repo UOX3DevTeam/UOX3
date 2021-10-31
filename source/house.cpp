@@ -251,10 +251,10 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	if( !isMulti )
 	{
 		// House addon
-		for( SI16 k = -spaceX; k <= spaceX; ++k )
+		for( SI16 k = 0; k <= spaceX - 1; ++k )
 		{
 			curX = x + k;
-			for( SI16 l = ( -spaceY ); l <= spaceY; ++l )
+			for( SI16 l = 0; l <= spaceY - 1; ++l )
 			{
 				curY = y + l;
 				if( mChar->GetCommandLevel() < CL_GM )
@@ -304,6 +304,14 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 							if( getDist( point3( x, y, z ), mItem->GetLocation() ) < 2 )
 							{
 								mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+								return false;
+							}
+
+							// Don't allow placing addon if it collides with a blocking tile at same height
+							bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceID, TF_BLOCKING ));
+							if( locationBlocked )
+							{
+								mSock->sysmessage( 9097 ); // You cannot place this house-addon there, location is blocked!
 								return false;
 							}
 						}

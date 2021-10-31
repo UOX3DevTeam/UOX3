@@ -107,6 +107,7 @@ maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE )
 	race		= 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
+	eventName.reserve( MAX_NAME );
 	id			= 0x0000;
 }
 
@@ -500,6 +501,22 @@ std::string CItem::GetDesc( void ) const
 void CItem::SetDesc( std::string newValue )
 {
 	desc = newValue.substr( 0, MAX_NAME - 1 );
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetEvent( void ) const
+//|					void SetEvent( std::string newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's event property - used to attach items to specific events
+//o-----------------------------------------------------------------------------------------------o
+std::string CItem::GetEvent( void ) const
+{
+	return eventName;
+}
+void CItem::SetEvent( std::string newValue )
+{
+	eventName = newValue.substr( 0, MAX_NAME - 1 );
 	UpdateRegion();
 }
 
@@ -1359,6 +1376,7 @@ void CItem::CopyData( CItem *target )
 	target->SetCorpse( isCorpse() );
 	target->SetDecayTime( GetDecayTime() );
 	target->SetDesc( GetDesc() );
+	target->SetEvent( GetEvent() );
 	target->SetDexterity( GetDexterity() );
 	target->SetDexterity2( GetDexterity2() );
 	target->SetResist( GetResist( PHYSICAL ), PHYSICAL );
@@ -1489,6 +1507,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << std::dec;
 	outStream << "Name2=" << GetName2() << '\n';
 	outStream << "Desc=" << GetDesc() << '\n';
+	outStream << "Event=" << GetEvent() << '\n';
 	outStream << "Type=" << static_cast<SI16>(GetType()) << '\n';
 	outStream << "Offspell=" << (SI16)GetOffSpell() << '\n';
 	outStream << "Amount=" << GetAmount() << '\n';
@@ -1620,6 +1639,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				if( UTag == "ENTRYMADEFROM" )
 				{
 					EntryMadeFrom( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "EVENT" )
+				{
+					SetEvent( data.c_str() );
 					rvalue = true;
 				}
 				break;

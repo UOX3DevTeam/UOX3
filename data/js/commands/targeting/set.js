@@ -226,6 +226,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.restock = nVal;
 		okMsg( socket );
 		break;
+	case "EVENT":
+		ourItem.event = socket.xText.substring( 6 );
+		okMsg( socket );
+		break;
 	case "MAXITEMS":
 		ourItem.maxItems = nVal;
 		okMsg( socket );

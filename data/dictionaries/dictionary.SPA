@@ -3337,7 +3337,6 @@
 8032=¡Tipo de objeto no válido seleccionado, guardado abortado!
 8033=%i decoraciones guardadas en la plantilla de mundo personalizada '%s'. Compruebe <SCRIPTSDATADIRECTORY>/worldtemplates/ para ver los archivos de salida.
 8034=No se han podido guardar las decoraciones en la plantilla. Algo puede haber ido mal!
-8034=No se han encontrado decoraciones. No se ha guardado ninguna.
 8035=%i decoraciones guardadas con éxito en las plantillas para la faceta '%s'. Comprueba en <SCRIPTDATADIRECTORY/worldtemplates/ los archivos de plantillas guardados.
 8036=Guardando decoraciones %i del tipo '%s' para la faceta '%t'...
 8037=%i elementos del tipo '%s' detectados en la faceta '%t'. Guardando...
@@ -3507,6 +3506,8 @@
 8203=coordenada Y del elemento en el mundo - o en el contenedor
 8204=coordenada Z del elemento en el mundo - o en el contenedor
 8205=Valor no fijado
+8206=El evento del servidor está asociado con
+8207=Alcance básico del arma a distancia (sólo en SA y posteriores)
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ
@@ -3934,6 +3935,14 @@
 9087=El objetivo no puede ser resucitado en ese lugar.
 9088=Se te resbalan los dedos.
 9089=Termina de aplicar las vendas, pero apenas ayudan.
+9090=Hechizo %d (%s)...
+9091=...¡%i decoraciones guardadas!
+9092=No se han encontrado decoraciones. ¡No se ha guardado ninguna!
+9093=Evento de descarga...
+9094=Evento de descarga
+9095=%i decoraciones de evento eliminadas para el evento %s.
+9096=No se han encontrado decoraciones para el evento.
+9097=No puede colocar esta casa-addon allí, ¡la ubicación está bloqueada!
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!
