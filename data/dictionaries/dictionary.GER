@@ -3368,7 +3368,7 @@
 8063=Dekorationen wurden geladen; bitte warten Sie, während die Welt dekoriert wird...
 8064=Bitte warten...
 8065=Welt dekorieren
-8066=%i Dekorationen hinzugefügt!
+8066=%i %s hinzugefügt!
 8067=%i Leichen oder Tore wurden gelöscht
 8068=Ort für NPC auswählen:
 8069=Ort für geskripteten Gegenstand auswählen:
@@ -3943,6 +3943,8 @@
 9095=%i Ereignisdekorationen für Ereignis %s entfernt.
 9096=Keine Ereignisdekorationen gefunden.
 9097=Sie können dieses Haus-Addon dort nicht platzieren, der Standort ist blockiert!
+9098=Gegenstand für normale Spieler unbeweglich, kann aber von GM-Charakteren aus dem Rucksack gezogen werden.
+9099=Tipp: Versuchen Sie den Befehl 'ALLMOVE ON' oder ändern Sie die bewegliche Eigenschaft des Objekts mit dem Befehl 'TWEAK'!
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!

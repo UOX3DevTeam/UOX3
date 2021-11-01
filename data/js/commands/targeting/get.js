@@ -152,7 +152,13 @@ function HandleGetItem( socket, ourItem, uKey )
 	switch( uKey )
 	{
 	case "ID":
-		socket.SysMessage( "0x" + (ourItem.id).toString(16) + " (" + ourItem.id + ")" );
+		var ourID = (ourItem.id).toString(16);
+		while( ourID.length < 4 )
+		{
+			ourID = "0" + ourID;
+		}
+		ourID = "0x" + ourID;
+		socket.SysMessage( ourID + " (" + ourItem.id + ")" );
 		break;
 	case "AMOUNT":
 		socket.SysMessage( ourItem.amount );

@@ -5,6 +5,8 @@ name=fletcher's tools
 id=0x1022
 weight=400
 movable=1
+value=20 10
+restock=15
 }
 
 [0x1023]
@@ -14,4 +16,6 @@ name=fletcher's tools
 id=0x1023
 weight=400
 movable=1
+value=20 10
+restock=15
 }

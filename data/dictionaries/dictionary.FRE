@@ -3532,7 +3532,7 @@
 8063=Décorations chargées ; veuillez patienter pendant que le monde est décoré...
 8064=S'il vous plaît attendez...
 8065=Décoration du monde
-8066=%i décorations ajoutées !
+8066=%i %s ajoutées !
 8067=%i les cadavres ou les portes ont été supprimés
 8068=Sélectionnez l'emplacement du PNJ :
 8069=Sélectionnez l'emplacement de l'objet scénarisé :
@@ -4107,6 +4107,8 @@
 9095=%i décorations retirées pour l'événement %s.
 9096=Aucune décoration d'événement n'a été trouvée.
 9097=Vous ne pouvez pas placer cet addon maison à cet endroit, l'emplacement est bloqué !
+9098=Il est inamovible pour les joueurs normaux, mais peut être tiré hors du sac à dos par les personnages GM.
+9099=Tip : Essayez la commande 'ALLMOVE ON' ou modifiez la propriété mobile de l'objet avec la commande 'TWEAK' !
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

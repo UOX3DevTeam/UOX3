@@ -427,7 +427,10 @@ bool CPISellItem::Handle( void )
 						l = j;
 
 					if( ValidateObject( l ) )
+					{
 						l->SetCont( boughtPack );
+						l->RemoveFromSight();
+					}
 				}
 				if( l )
 				{

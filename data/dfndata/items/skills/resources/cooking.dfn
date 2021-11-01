@@ -47,6 +47,7 @@ get=base_item
 name=sack of flour
 id=0x1039
 weight=100
+restock=10
 }
 
 [0x1045]
