@@ -253,6 +253,7 @@ layer=0x07
 def=13
 hp=37
 str=10
+restock=15
 decay=1
 good=13
 }
@@ -316,6 +317,7 @@ layer=0x0d
 def=13
 hp=37
 str=15
+restock=15
 decay=1
 good=13
 }
