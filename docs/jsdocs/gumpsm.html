@@ -52,18 +52,18 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddButtonTileArt">AddButtonTileArt</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButtonTileArt( topHeight, topLeft, buttonImage, buttonPressedImage, unk1, unk2, unk3, tileID, hue, tileX, tileY );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButtonTileArt( gumpX, gumpY, gumpIdUnpressed, gumpIdPressed, closeGump, goPageNum, buttonID, tileArtID, tileArtHue, tileXOffset, tileYOffset );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump, with tileArt as part of the button
 <tr><td valign="top" width="25%"><b>Other info</b>
-    <td>Having an unk1 of 1 indicates the gump will close. unk2
-      is the page it will call, while unk3 is the button's unique ID. tileID is tileArt added as part of the button, hue is the tileArt hue, and tileX and tileY is the tileArt's offset compared to the topHeight, topLeft coordinates<br>
+    <td>If closeGump is 1, gump will close when button is pressed. goPageNum indicates page gump will call when button is pressed. buttonID is the button's unique ID. tileArtID is tileArt added as part of the button, tileArtHue is the custom tileArt hue, and tileXOffset and tileYOffset is the tileArt's offset compared to the gumpX, gumpY coordinates<br>
       <br>
       When the button is pressed, onGumpPress event is called, iButton is 0 if
       the gump has been closed without pressing a button.<br>
       <br>
       function onGumpPress( Sock, iButton ) { }
   <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
-      <pre>myGump.AddButtonTileArt( 13, 290, 5050, 5050, 1, 1, 1, 1193, 0, 10, 10 );
+      <pre>myGump.AddButtonTileArt( 10, 50, 0x0a9f, 0x0aa1, 1, 0, 3, 0x0002, 0, 25, 25 );
+    myGump.AddToolTip( 1042971, socket, "ankh - 0x0002 (2)" );
 </pre>
 </table>
 

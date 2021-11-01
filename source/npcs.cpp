@@ -478,6 +478,10 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 						retItem->PlaceInPack();
 						if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) )
 							retItem->SetName( retItem->GetName2() );
+
+						// Let's start out with the shops fully restocked after spawning
+						retItem->IncAmount( retItem->GetRestock() );
+						retItem->SetRestock( 0 );
 					}
 				}
 				else

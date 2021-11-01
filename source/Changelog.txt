@@ -1,3 +1,34 @@
+02/11/2021 - Xuri (0.99.4z++)
+	Updated 'decorate save command to not save items that are inside multis (the multis themselves are not saved anyway!)
+	Fixed some issues that would crash decorate script when attempting to use event subcommands without event names
+	Renamed 'fixcontweight command to 'fixcont and updated it to also fix maxItems property for containers that don't already have that set
+	Updated container world file template for Felucca with containers with proper maxWeight and maxItems seet
+	Updated admin welcome gump (js/server/misc/admin_welcome.js) to also include containers (previously missing) and disable facets that don't have any decorations yet. Anyone who already used the admin welcome gump to place default decorations for their shards can use 'decorate load containers to add the missing containers.
+	Changed how house addons are marked as addons; they will no longer have their item type set to 201 (IT_HOUSEADDON), as this would override any existing item type functionality of the items being setup as addons (like the dresser, which is a container). Instead, house addons are now marked with a custom tag "addon", which is used by scripts like axe.js to identify them as house addons instead of relying on the item type.
+	Uncommented the dresser house-addon from 'add menu, as it now works as intended
+	Added house-addons to ArchitectShopping SHOPLIST so they can be bought from Architect shopkeepers for roughly the cost of the material it would have taken to craft them. This is a temporary solution until crafting these have been implemented.
+	Updated default region spawn file to evict the beekeeper from Skara Brae bank to make room for some actual bankers! The beekeeper is now tending to the bees outside the bank instead.
+	Fixed issue where NPC vendors would not restock more than 1 leather tunic and/or leather gloves, because of a missing restock tag in the DFN entries for those items
+	Removed kindling from the shoplist of Armourer vendors
+	Bananas are now edible
+	Bowyer shopkeepers will now restock more than 1 shaft and/or feather
+	Provisioner shopkeepers will now restock more than 1 candle, lantern, various masks, kindling, flour
+	Jeweler shopkeepers will now buy some gems (star sapphire and tourmaline) they were previously not so interested in
+	Bowyer shopkeepers now sell fletching tools
+	Added fletcher's tools as newbie item for players starting with Bowcraft/Fletching skill
+	NPC shopkeepers now spawn with full stocks of goods, instead of the bare minimum
+	Fixed item weight tooltip for pileable items appearing in vendor shoplists
+	Fixed an issue where selling items to NPC shopkeepers would sometimes not visually remove the items from player's backpack
+	Fixed missing base_item inheritance and missing restock property for mount statues sold by animal trainers/stablekeepers, which prevented them from being presented for sale
+	Hairs and Beards no longer count towards the total item count showing for corpses
+	All leather containers are now dyable
+	Animals that belong in the Arctic (polar bears, snow leopards, walrus) will no longer spawn in forests and jungles
+	Hellhounds will no longer spawn in forest and jungles; they can now only be found in dungeons
+	Silver Serpents have been removed from the "weakforestlist" NPCLIST, because they are anything but
+	GM/Admin characters can now drag immovable items out of their own backpack even with "allmove" disabled
+	A tip to enable "allmove" or modify item's movable property now shows for GMs attempting to pick up immovable items from the ground
+	Hungry creatures with AI type 6 (AI_ANIMAL) will no longer suicide by indiscriminately attacking creatures with AI type 2 (AI_EVIL), but will instead only attack "peaceful" animals, or - if really hungry - other types of predatory animals (including humans...)
+
 31/10/2021 - Xuri (0.99.4z+)
 	Fixed incorrect non-combat music entry [MUSICLIST COMBAT] section of dfndata/regions/regions.dfn
 	Added new music section to dfndata/regions/regions.dfn
@@ -26,21 +57,15 @@
 		small bed 2 (south/east)
 		large bed 1 (south/east)
 		large bed 2 (south/east)
-		training dummy (east)
-		training dummy (south)
+		training dummy (south/east)
 		pickpocket dip 1 (east)
 		pickpocket dip 2 (east)
-		dresser (east) // Disabled, doesn't work as container after being turned into addon
-		dresser (south) // Disabled, doesn't work as container after being turned into addon
+		dresser (south/east) // Disabled, doesn't work as container after being turned into addon
 		abattoir (stone pentagram)
-		flour mill (east)
-		flour mill (south)
-		oven (east)
-		oven (south)
-		large forge (east)
-		large forge (west)
-		large forge (north)
-		large forge (south)
+		flour mill (south/east)
+		sandstone oven (south/east)
+		brick oven (south/east)
+		large forge (north/south/east/west)
 	Updated some house addons (bear rugs, pentagram) to be added from top-left to bottom right, for more consistency when placing items
 	Added a code-check when placing house-addons to see if there's space in multi to place addon at selected location, starting from coordinates of target location and checking tiles east and south of that location based on the addon's SPACEX and SPACEY settings in house.dfn
 	Added new script (js/server/house/houseAddonUse.js) that will restore the double-click functionality of some house addons that would lose their regular functionality in the process of becoming house addons, as their item type changed. The same script also adds some extra functionality to a couple of other house addons (looms and spinning wheels), allowing players to choose between using the addons and then targeting materials like yarn or wool or using the materials and then targeting the addons

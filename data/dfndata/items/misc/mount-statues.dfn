@@ -6,53 +6,63 @@
 
 [horse_statue]
 {
-ID=0x2120
-NAME=horse
-VALUE=700 350
-SCRIPT=3100
+get=base_item
+id=0x2120
+name=horse
+value=700 350
+script=3100
 good=39
 morez=1
+restock=10
 }
 
 [ostard_statue]
 {
-ID=0x2135
-NAME=desert ostard
-VALUE=700 350
-SCRIPT=3101
+get=base_item
+id=0x2135
+name=desert ostard
+value=700 350
+script=3101
 good=39
 morez=1
+restock=10
 }
 
 [llama_statue]
 {
-ID=0x20F6
-NAME=llama
+get=base_item
+id=0x20F6
+name=llama
 morez=0xDC
-VALUE=700 350
-SCRIPT=3102
+value=700 350
+script=3102
 good=39
 morez=1
+restock=10
 }
 
 [pack_horse_statue]
 {
-ID=0x2126
-NAME=pack horse
-VALUE=700 350
-SCRIPT=3103
+get=base_item
+id=0x2126
+name=pack horse
+value=700 350
+script=3103
 good=39
 morez=1
+restock=10
 }
 
 [pack_llama_statue]
 {
-ID=0x2127
-NAME=pack llama
-VALUE=700 350
-SCRIPT=3104
+get=base_item
+id=0x2127
+name=pack llama
+value=700 350
+script=3104
 good=39
 morez=1
+restock=10
 }
 
 EOF

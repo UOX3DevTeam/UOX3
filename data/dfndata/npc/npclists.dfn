@@ -213,7 +213,6 @@ npclist=allbirdlist
 hind
 giantspider
 snake
-silverserpent
 chicken
 dog
 rabbit
@@ -547,7 +546,6 @@ chicken
 panther
 dog
 alligator
-polarbear
 rabbit
 jackrabbit
 sheep
@@ -567,10 +565,7 @@ direwolf
 dog
 dog
 dog
-hellhound
 cougar
-snowleopard
-walrus
 goat
 sheep
 }
@@ -595,10 +590,7 @@ direwolf
 dog
 dog
 dog
-hellhound
 cougar
-snowleopard
-walrus
 goat
 sheep
 }

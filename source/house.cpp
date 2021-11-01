@@ -132,7 +132,14 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 						{
 							// House is not actually a house, but a house addon! Store reference to addon on item
 							hItem->SetTempVar( CITV_MORE, house->GetSerial() );
-							hItem->SetType( IT_HOUSEADDON );
+
+							// Store a custom tag on addon to mark it as a house addon
+							TAGMAPOBJECT addonTagObject;
+							addonTagObject.m_Destroy		= FALSE;
+							addonTagObject.m_IntValue 		= 1;
+							addonTagObject.m_ObjectType	= TAGMAP_TYPE_INT;
+							addonTagObject.m_StringValue	= "";
+							hItem->SetTag( "addon", addonTagObject );
 
 							// Also add the addon's sub-items to the multi
 							CMultiObj *mMulti = house->GetMultiObj();
@@ -806,7 +813,6 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		fakeHouse->SetOwner( mChar );
 		fakeHouse->SetDecayable( false );
 		fakeHouse->SetVisible( VT_PERMHIDDEN );
-		fakeHouse->SetType( IT_HOUSEADDON );
 
 		// Store name of deed in a custom tag on the addon
 		TAGMAPOBJECT deedObject;

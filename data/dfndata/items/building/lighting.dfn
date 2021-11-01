@@ -168,6 +168,7 @@ name=candle
 id=0x0a0f
 weight=200
 value=6 3
+restock=15
 decay=1
 dir=2
 }
@@ -218,6 +219,7 @@ name=lantern
 id=0x0a15
 weight=200
 value=7 2
+restock=15
 decay=1
 dir=8
 }
@@ -747,7 +749,7 @@ id=0x0F64
 layer=2
 weight=100
 value=7 3
-restock=100
+restock=15
 decay=1
 }
 

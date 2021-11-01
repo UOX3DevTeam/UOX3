@@ -3,6 +3,8 @@
 name=pentagram deed
 id=0x14F0
 morex=18
+value=750 350
+restock=15
 }
 
 [brownbearrugdeedeast]
@@ -10,6 +12,8 @@ morex=18
 name=brown bear rug (east)
 id=0x14F0
 morex=40
+value=1000 500
+restock=15
 }
 
 [brownbearrugdeedsouth]
@@ -17,6 +21,8 @@ morex=40
 name=brown bear rug (south)
 id=0x14F0
 morex=41
+value=1000 500
+restock=15
 }
 
 [polarbearrugdeedeast]
@@ -24,6 +30,8 @@ morex=41
 name=polar bear rug (east)
 id=0x14F0
 morex=42
+value=1500 750
+restock=15
 }
 
 [polarbearrugdeedsouth]
@@ -31,6 +39,8 @@ morex=42
 name=polar bear rug (south)
 id=0x14F0
 morex=43
+value=1500 750
+restock=15
 }
 
 [loomdeed]
@@ -38,6 +48,8 @@ morex=43
 name=loom (east)
 id=0x14F0
 morex=19
+value=400 200
+restock=15
 }
 
 [loomdeedsouth]
@@ -45,6 +57,8 @@ morex=19
 name=loom (south)
 id=0x14F0
 morex=47
+value=400 200
+restock=15
 }
 
 [smallforgedeed]
@@ -52,6 +66,8 @@ morex=47
 name=small forge
 id=0x14F0
 morex=44
+value=750 375
+restock=15
 }
 
 [anvildeedeast]
@@ -59,6 +75,8 @@ morex=44
 name=anvil (east)
 id=0x14F0
 morex=45
+value=2000 1000
+restock=15
 }
 
 [anvildeedsouth]
@@ -73,6 +91,8 @@ morex=46
 name=spinning wheel (north)
 id=0x14F0
 morex=48
+value=400 200
+restock=15
 }
 
 [spinningwheeldeedsouth]
@@ -80,6 +100,8 @@ morex=48
 name=spinning wheel (south)
 id=0x14F0
 morex=49
+value=400 200
+restock=15
 }
 
 [spinningwheeldeedeast]
@@ -87,6 +109,8 @@ morex=49
 name=spinning wheel (east)
 id=0x14F0
 morex=50
+value=400 200
+restock=15
 }
 
 [spinningwheeldeedwest]
@@ -94,6 +118,8 @@ morex=50
 name=spinning wheel (west)
 id=0x14F0
 morex=51
+value=400 200
+restock=15
 }
 
 [smallbed1deedsouth]
@@ -101,6 +127,8 @@ morex=51
 name=small bed 1 (south)
 id=0x14f0
 morex=52
+value=750 375
+restock=15
 }
 
 [smallbed2deedsouth]
@@ -108,6 +136,8 @@ morex=52
 name=small bed 2 (south)
 id=0x14f0
 morex=53
+value=750 375
+restock=15
 }
 
 [smallbed1deedeast]
@@ -115,6 +145,8 @@ morex=53
 name=small bed 1 (east)
 id=0x14f0
 morex=54
+value=750 375
+restock=15
 }
 
 [smallbed2deedeast]
@@ -122,6 +154,8 @@ morex=54
 name=small bed 2 (east)
 id=0x14f0
 morex=55
+value=750 375
+restock=15
 }
 
 [largebed1deedeast]
@@ -129,6 +163,8 @@ morex=55
 name=large bed 1 (east)
 id=0x14f0
 morex=56
+value=1000 500
+restock=15
 }
 
 [largebed2deedeast]
@@ -136,6 +172,8 @@ morex=56
 name=large bed 2 (east)
 id=0x14f0
 morex=57
+value=1000 500
+restock=15
 }
 
 [largebed1deedsouth]
@@ -143,6 +181,8 @@ morex=57
 name=large bed 1 (south)
 id=0x14f0
 morex=58
+value=1000 500
+restock=15
 }
 
 [largebed2deedsouth]
@@ -150,6 +190,8 @@ morex=58
 name=large bed 2 (south)
 id=0x14f0
 morex=59
+value=1000 500
+restock=15
 }
 
 [trainingdummydeedeast]
@@ -157,6 +199,8 @@ morex=59
 name=training dummy (east)
 id=0x14f0
 morex=60
+value=400 200
+restock=15
 }
 
 [trainingdummydeedsouth]
@@ -164,6 +208,8 @@ morex=60
 name=training dummy (south)
 id=0x14f0
 morex=61
+value=400 200
+restock=15
 }
 
 [pickpocketdipdeedeast]
@@ -171,6 +217,8 @@ morex=61
 name=pickpocket dip (east)
 id=0x14f0
 morex=62
+value=500 250
+restock=15
 }
 
 [pickpocketdipdeedsouth]
@@ -178,6 +226,8 @@ morex=62
 name=pickpocket dip (east)
 id=0x14f0
 morex=63
+value=500 250
+restock=15
 }
 
 [dresserdeedeast]
@@ -185,6 +235,8 @@ morex=63
 name=dresser (east)
 id=0x14f0
 morex=64
+value=150 75
+restock=15
 }
 
 [dresserdeedsouth]
@@ -192,6 +244,8 @@ morex=64
 name=dresser (south)
 id=0x14f0
 morex=65
+value=150 75
+restock=15
 }
 
 [abattoirdeed]
@@ -199,6 +253,8 @@ morex=65
 name=abattoir
 id=0x14f0
 morex=66
+value=750 375
+restock=15
 }
 
 [flourmilldeedeast]
@@ -206,6 +262,8 @@ morex=66
 name=flour mill (east)
 id=0x14f0
 morex=67
+value=1000 500
+restock=15
 }
 
 [flourmilldeedsouth]
@@ -213,6 +271,8 @@ morex=67
 name=flour mill (south)
 id=0x14f0
 morex=68
+value=1000 500
+restock=15
 }
 
 [sandstoneovendeedeast]
@@ -220,6 +280,8 @@ morex=68
 name=sandstone oven (east)
 id=0x14f0
 morex=69
+value=1500 750
+restock=15
 }
 
 [sandstoneovendeedsouth]
@@ -227,6 +289,8 @@ morex=69
 name=sandstone oven (south)
 id=0x14f0
 morex=70
+value=1500 750
+restock=15
 }
 
 [brickovendeedeast]
@@ -234,6 +298,8 @@ morex=70
 name=brick oven (east)
 id=0x14f0
 morex=71
+value=1500 750
+restock=15
 }
 
 [brickovendeedsouth]
@@ -241,6 +307,8 @@ morex=71
 name=brick oven (south)
 id=0x14f0
 morex=72
+value=1500 750
+restock=15
 }
 
 [largeforgedeedeast]
@@ -248,6 +316,8 @@ morex=72
 name=large forge (east)
 id=0x14f0
 morex=73
+value=1000 500
+restock=15
 }
 
 [largeforgedeedwest]
@@ -255,6 +325,8 @@ morex=73
 name=large forge (west)
 id=0x14f0
 morex=74
+value=1000 500
+restock=15
 }
 
 [largeforgedeednorth]
@@ -262,6 +334,8 @@ morex=74
 name=large forge (north)
 id=0x14f0
 morex=75
+value=1000 500
+restock=15
 }
 
 [largeforgedeedsouth]
@@ -269,4 +343,6 @@ morex=75
 name=large forge (south)
 id=0x14f0
 morex=76
+value=1000 500
+restock=15
 }
