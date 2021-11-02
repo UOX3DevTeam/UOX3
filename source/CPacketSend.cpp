@@ -6897,7 +6897,17 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetType() == IT_ITEMSPAWNER || cItem.GetType() == IT_NPCSPAWNER )
 			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) );
 		else
+		{
+			CItem *cItemCont = static_cast<CItem *>(cItem.GetCont());
+			if( ValidateObject( cItemCont ) && cItemCont->GetLayer() == IL_SELLCONTAINER )
+			{
+				tempEntry.ourText = strutil::number(( cItem.GetWeight() / 100 ));
+			}
+			else
+			{
 			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
+			}
+		}
 		FinalizeData( tempEntry, totalStringLen );
 	}
 

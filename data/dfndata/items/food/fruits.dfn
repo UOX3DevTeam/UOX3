@@ -170,7 +170,7 @@ pileable=1
 
 [0x1720]
 {
-get=base_item
+get=base_food
 name=banana
 id=0x1720
 weight=100
@@ -180,7 +180,7 @@ pileable=1
 
 [0x171f]
 {
-get=base_item
+get=base_food
 name=banana
 id=0x171f
 weight=100
@@ -190,7 +190,7 @@ pileable=1
 
 [0x171e]
 {
-get=base_item
+get=base_food
 name=banana
 id=0x171e
 weight=100

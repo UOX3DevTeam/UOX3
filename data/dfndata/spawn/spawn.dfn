@@ -2982,13 +2982,13 @@ CALL=1
 }
 [REGIONSPAWN 211]
 {
-NAME=Skara Brae beekeeper-m
-NPC=m_beekeeper
+NAME=Skara Brae beekeeper
+NPCLIST=beekeeper
 MAXNPCS=1
-X1=585
-Y1=2145
-X2=588
-Y2=2148
+X1=592
+Y1=2136
+X2=598
+Y2=2142
 WORLD=0
 MINTIME=0
 MAXTIME=1
@@ -3752,8 +3752,8 @@ CALL=1
 }
 [REGIONSPAWN 266]
 {
-NAME=Vesper beekeeper-m
-NPC=m_beekeeper
+NAME=Vesper beekeeper
+NPCLIST=beekeeper
 MAXNPCS=1
 X1=2958
 Y1=705
@@ -8615,4 +8615,17 @@ MINTIME=5
 MAXTIME=15
 CALL=8
 }
-
+[REGIONSPAWN 599]
+{
+NAME=Skara Brae banker
+NPCLIST=banker
+MAXNPCS=2
+X1=585
+Y1=2145
+X2=598
+Y2=2150
+WORLD=0
+MINTIME=0
+MAXTIME=1
+CALL=1
+}

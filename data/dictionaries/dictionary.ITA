@@ -3368,7 +3368,7 @@
 8063=Decorazioni caricate; per favore aspetta mentre il mondo viene decorato...
 8064=Per favore aspetta...
 8065=Mondo della decorazione
-8066=%i decorazioni aggiunte!
+8066=%i %s aggiunte!
 8067=%i cadaveri o porte sono stati cancellati
 8068=Seleziona la posizione del PNG:
 8069=Selezionare la posizione per l'oggetto dello script:
@@ -3943,6 +3943,8 @@
 9095=%i decorazioni dell'evento rimosse per l'evento %s.
 9096=Nessuna decorazione dell'evento trovata.
 9097=Non puoi mettere questa casa-addon lì, la posizione è bloccata!
+9098=Impossibile per i giocatori normali, ma può essere trascinato fuori dallo zaino dai personaggi GM.
+9099=Suggerimento: Prova il comando 'ALLMOVE ON o modifica la proprietà mobile dell'oggetto con il comando 'TWEAK!
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!

@@ -20,7 +20,12 @@ UI32 GetSubTotalItemCount( CItem *objCont )
 				total += GetSubTotalItemCount( i );
 			}
 			else
+			{
+				if( i->GetLayer() == IL_FACIALHAIR || i->GetLayer() == IL_HAIR )
+					continue;
+
 				total += 1;
+			}
 		}
 	}
 	return total;

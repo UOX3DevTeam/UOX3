@@ -329,7 +329,7 @@
 1051=commands/targeting/rndtile.js
 1052=commands/time.js
 1053=commands/accountlogins.js
-1054=commands/fixcontweight.js
+1054=commands/fixcont.js
 1055=commands/targeting/tweak.js
 1056=commands/targeting/get.js
 1057=commands/msgmod.js
