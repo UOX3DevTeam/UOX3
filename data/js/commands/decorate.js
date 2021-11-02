@@ -151,7 +151,7 @@ function command_DECORATE( socket, cmdString )
 				break;
 			case "SAVEEVENT":
 				// Save event decorations to event world template file
-				if( splitString[1] != "" )
+				if( typeof(splitString[1]) != "undefined" )
 				{
 					// Keep event info for later
 					eventName = splitString[1].toLowerCase();
@@ -160,7 +160,7 @@ function command_DECORATE( socket, cmdString )
 				break;
 			case "LOADEVENT":
 				// Load event decorations from event world template file
-				if( splitString[1] != "" )
+				if( typeof(splitString[1]) != "undefined" )
 				{
 					// Keep event info for later
 					eventName = splitString[1].toLowerCase();
@@ -168,7 +168,7 @@ function command_DECORATE( socket, cmdString )
 				}
 				break;
 			case "UNLOADEVENT":
-				if( splitString[1] != "" )
+				if( typeof(splitString[1]) != "undefined" )
 				{
 					// Keep event info for later
 					eventName = splitString[1].toLowerCase();
@@ -1698,17 +1698,18 @@ function DecorateWorld( socket )
 	}
 
 	var tempMsg = GetDictionaryEntry( 8066, socket.language ); // %i decorations added!
-	socket.SysMessage( tempMsg.replace(/%i/gi, newItemCount.toString() ));
+	tempMsg = tempMsg.replace(/%i/gi, newItemCount.toString() );
+	socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
 	socket.CloseGump( scriptID + 0xffff, 0 );
 }
 
 function onIterate( toCheck )
 {
-	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti )
+	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ))
 	{
 		if(( saveCustom || saveEvent ) && saveAll )
 		{
-			// Only save items that match event type if we're saving event deocrations
+			// Only save items that match event type if we're saving event decorations
 			if( saveEvent && (toCheck.event).toLowerCase() != eventName )
 				return false;
 

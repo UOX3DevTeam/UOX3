@@ -3375,7 +3375,7 @@
 8063=Dekorace se načetly; počkejte prosím, než se svět vyzdobí...
 8064=Prosím počkejte...
 8065=Zdobí se svět
-8066=%i dekorace přidány!
+8066=%i %s přidány!
 8067=%i mrtvoly nebo brány byly odstraněny.
 8068=Vyberte místo pro NPC:
 8069=Vyberte umístění pro skriptovaný předmět:
@@ -3950,6 +3950,8 @@
 9095=%i dekorace události odstraněny pro událost %s.
 9096=Nebyly nalezeny žádné dekorace události.
 9097=Tento dům-addon tam nelze umístit, umístění je blokováno!
+9098=Předmět je pro normální hráče nepohyblivý, ale GM postavy ho mohou vytáhnout z batohu.
+9099=Tip: Zkuste příkaz 'ALLMOVE ON nebo upravte vlastnost předmětu jako pohyblivého pomocí příkazu 'TWEAK!
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

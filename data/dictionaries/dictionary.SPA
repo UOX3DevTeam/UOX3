@@ -3368,7 +3368,7 @@
 8063=Decoraciones cargadas; por favor, espere mientras se decora el mundo...
 8064=Por favor, espere...
 8065=Mundo de la decoración
-8066=%i decoraciones añadidas!
+8066=%i %s añadidas!
 8067=%i cadáveres o puertas han sido borrados
 8068=Seleccionar ubicación para el NPC:
 8069=Seleccione la ubicación del elemento con guión:
@@ -3943,6 +3943,8 @@
 9095=%i decoraciones de evento eliminadas para el evento %s.
 9096=No se han encontrado decoraciones para el evento.
 9097=No puede colocar esta casa-addon allí, ¡la ubicación está bloqueada!
+9098=Estímulo inamovible para los jugadores normales, pero puede ser arrastrado fuera de la mochila por los personajes del GM.
+9099=Consejo: Pruebe el comando 'ALLMOVE ON' o modifique la propiedad móvil del elemento con el comando 'TWEAK'.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!

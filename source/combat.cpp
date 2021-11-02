@@ -63,13 +63,23 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		// Are both the NPCs non-human?
 		if( !cwmWorldState->creatures[cAttack->GetID()].IsHuman() && !cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
 		{
-			// Don't allow if the NPCs belong to same race
-			if( cAttack->GetRace() == cTarget->GetRace() )
+			if( cAttack->GetNPCAiType() == AI_ANIMAL && cTarget->GetNPCAiType() == AI_ANIMAL )
+			{
+				// Don't allow combat if both attacker and target have AI_ANIMAL, same body type and belong to same race
+				if( cAttack->GetID() == cTarget->GetID() && cAttack->GetRace() == cTarget->GetRace() )
+				{
+					return false;
+				}
+			}
+			else if( cAttack->GetRace() == cTarget->GetRace() )
+			{
+				// Otherwise, don't allow combat if both attacker and target have same race
 				return false;
+		}
 		}
 		else
 		{
-			// Don't allow if they both have same NPC Flag (evil, innocent, neutral)
+			// Don't allow human NPC to human NPC combat if they both have same NPC Flag (evil, innocent, neutral)
 			if( cAttack->GetNPCFlag() == cTarget->GetNPCFlag() )
 				return false;
 		}

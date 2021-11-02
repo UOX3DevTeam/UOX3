@@ -12,6 +12,7 @@ restock=10
 decay=1
 good=5
 maxitems=125
+dyeable=1
 }
 
 [0x09b2]
@@ -27,6 +28,7 @@ restock=10
 decay=1
 good=5
 maxitems=125
+dyeable=1
 }
 
 [0x0e75]
@@ -42,6 +44,7 @@ restock=10
 decay=1
 good=5
 maxitems=125
+dyeable=1
 }
 
 [0x0e76]
@@ -57,6 +60,7 @@ restock=10
 decay=1
 good=5
 maxitems=125
+dyeable=1
 }
 
 [0x0e79]
@@ -72,6 +76,7 @@ restock=10
 decay=1
 good=5
 maxitems=125
+dyeable=1
 }
 
 [0x0e7a]
@@ -87,4 +92,5 @@ restock=10
 decay=1
 good=5
 maxitems=125
+dyeable=1
 }

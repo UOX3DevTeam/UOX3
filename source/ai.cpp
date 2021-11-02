@@ -329,7 +329,7 @@ void HandleAnimalAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			const SI08 hunger = mChar.GetHunger();
-			if( hunger <= 4 )
+			if( hunger <= 3 )
 			{
 				CMapRegion *MapArea = (*rIter);
 				if( MapArea == nullptr )	// no valid region
@@ -340,9 +340,10 @@ void HandleAnimalAI( CChar& mChar )
 				{
 					if( isValidAttackTarget( mChar, tempChar ) )
 					{
-						if( ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() != AI_ANIMAL ) || hunger < 2  )
+						if(( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() == AI_NONE ) 
+							|| ( hunger <= 1 && ( tempChar->GetNPCAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetID()].IsHuman() )))
 						{
-							if( RandomNum( 0, 100 ) >= 50 ) // 50% chance to attack tempChar, 50% chance to attack next tempChar
+							if( RandomNum( 0, 100 ) >= 5 ) // 5% chance (per AI cycle to attack tempChar)
 								continue;
 							Combat->AttackTarget( &mChar, tempChar );
 							regChars->Pop();

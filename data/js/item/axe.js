@@ -22,6 +22,10 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback1( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var mChar = socket.currentChar;
 	if( mChar && mChar.isChar )
 	{
@@ -47,7 +51,7 @@ function onCallback1( socket, ourObj )
 			}
 			else if( ourObj )
 			{
-				if( ourObj.type == 1 && ourObj.movable == 2 ) // Strongbox
+				if( ourObj.type == 1 && ourObj.movable == 2 && !ourObj.GetTag( "addon" )) // Strongbox, and not an addon
 				{
 					var objMulti = ourObj.multi;
 					if( ValidateObject( objMulti ))
@@ -99,7 +103,7 @@ function onCallback1( socket, ourObj )
 					else
 						socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 				}
-				else if( ourObj.type == 201 )
+				else if( ourObj.GetTag( "addon" ) || ourObj.type == 201 ) // looks for item type for backwards compatibility only!
 				{
 					var addonParent;
 					if( ourObj.more == 0 )
@@ -146,7 +150,7 @@ function onCallback1( socket, ourObj )
 							if( !ValidateObject( tempItem.multi ))
 								continue;
 
-							if( tempItem.type != 201 )
+							if( !tempItem.GetTag( "addon" ) && tempItem.type != 201 )
 								continue;
 
 							if( tempItem.more == addonParent.serial )

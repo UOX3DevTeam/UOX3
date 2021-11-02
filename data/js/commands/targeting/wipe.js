@@ -42,13 +42,13 @@ function CallWipe( socket, cmdString )
 			forceWipe = false;
 			var uKey 	= splitString[0].toUpperCase();
 			var saidAll 	= ( uKey == "ALL" );
-			if( saidAll )
-			{
+			//if( saidAll )
+			//{
 				if( splitString[1] && splitString[1].toUpperCase() == "FORCE" )
 				{
 					forceWipe = true;
 				}
-			}
+			//}
 
 			// Check if a facet was provided as parameter
 			facetToWipe = -1;

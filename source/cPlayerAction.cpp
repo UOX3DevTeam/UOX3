@@ -387,9 +387,18 @@ bool CPIGetItem::Handle( void )
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
+		if( ourChar->GetCommandLevel() < 2 || tSock->PickupSpot() != PL_OWNPACK )
+		{
 		tSock->sysmessage( 9064 ); // You cannot pick that up.
+			if( ourChar->GetCommandLevel() >= 2 )
+				tSock->sysmessage( 9099 ); // Tip: Try 'ALLMOVE ON command or modify item's movable property with 'TWEAK command!
 		Bounce( tSock, i );
 		return true;
+	}
+		else
+		{
+			tSock->sysmessage( 9098 ); // Item immovable to normal players, but can be dragged out of backpack by GM characters.
+		}
 	}
 
 	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
@@ -1066,11 +1075,14 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
 								( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
+		if( nChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
+		{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( nChar, i );
 		mSock->sysmessage( 9064 ); // You cannot pick that up.
 		Bounce( mSock, i );
 		return;
+	}
 	}
 
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
@@ -1568,11 +1580,14 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
 								( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 	{
+		if( mChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
+		{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
 		mSock->sysmessage( 9064 ); // You cannot pick that up.
 		Bounce( mSock, nItem );
 		return;
+	}
 	}
 
 	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )	// Trade window
@@ -2395,6 +2410,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 				return true;
 
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
+
 			mChar->SetSpeechItem( iUsed );
 			mChar->SetSpeechMode( 6 );
 			mSock->sysmessage( 434 );
@@ -2462,6 +2484,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 				return true;
 
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
+
 			mSock->TempObj( iUsed );
 			mSock->DyeAll( 0 );
 			mSock->target( 0, TARGET_DYEALL, 0, 441 );
@@ -2470,6 +2499,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
 				return true;
+
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
 
 			mSock->TempObj( iUsed );
 			mSock->AddID1( iUsed->GetColour( 1 ) );
@@ -2495,6 +2531,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
 				return true;
 
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
+
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_SMITH, 0, 444 );
 			return true;
@@ -2503,6 +2546,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
 				return true;
 
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
+
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_MINE, 0, 446 );
 			return true;
@@ -2510,6 +2560,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, true ))
 				return true;
+
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
 
 			i = mChar->GetPackItem();
 			if( ValidateObject( i ) )
@@ -2527,6 +2584,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 				return true;
+
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
 
 			if( iUsed->GetID() == 0x19B7 && iUsed->GetAmount() < 2 )
 			{
@@ -2576,6 +2640,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			// If item is locked down, check if player has access to use it
 			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
 				return true;
+
+			// Don't allow using GM-locked down tools
+			if( iUsed->GetMovable() == 2 )
+			{
+				mSock->sysmessage( 1032 ); // This is not yours!
+				return true;
+			}
 
 			mSock->TempObj( iUsed );
 			BuildGumpFromScripts( mSock, 6 );
@@ -3177,7 +3248,16 @@ bool CPISingleClick::Handle( void )
 	}
 	else if( i->IsContType() )
 	{
-		realname += strutil::format( ", (%u items, %u stones)", i->GetContainsList()->Num(), (i->GetWeight()/100) );
+		SI32 iCount = 0;
+		if( i->isCorpse() )
+		{
+			iCount = static_cast<SI32>(GetTotalItemCount( i ));
+		}
+		else
+		{
+			iCount = static_cast<SI32>(i->GetContainsList()->Num());
+		}
+		realname += strutil::format( ", (%u items, %u stones)", iCount, (i->GetWeight()/100) );
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{

@@ -3368,7 +3368,7 @@
 8063=Dekoracje zostały załadowane; proszę czekać na dekorowanie świata...
 8064=Proszę czekać...
 8065=Dekorowanie świata
-8066=%i dekoracje dodane!
+8066=%i %s dodane!
 8067=%i zwłoki lub bramy zostały usunięte
 8068=Wybierz lokalizację dla NPC:
 8069=Wybierz lokalizację dla elementu skryptowego:
@@ -3943,6 +3943,8 @@
 9095=%i dekoracje wydarzenia usunięte dla wydarzenia %s.
 9096=Nie znaleziono żadnych dekoracji.
 9097=Nie możesz tam umieścić tego house-addona, lokalizacja jest zablokowana!
+9098=Przedmiot nieruchomy dla normalnych graczy, ale może być wyciągnięty z plecaka przez postacie GM.
+9099=Porada: Spróbuj komendy 'ALLMOVE ON lub zmodyfikuj właściwość movable elementu komendą 'TWEAK!
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!
