@@ -81,8 +81,8 @@ function onUseChecked( pUser, iUsed )
 				return;
 			}
 			socket.CloseGump( gumpID, 0 );
-			pUser.SetTag( "CRAFT", 1 )
-			switch ( pUser.GetTag( "page" ) )
+			pUser.SetTempTag( "CRAFT", 1 )
+			switch ( pUser.GetTempTag( "page" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page1", socket, pUser );
@@ -126,8 +126,8 @@ function onUseChecked( pUser, iUsed )
 				return;
 			}
 			socket.CloseGump( gumpID2, 0 );
-			pUser.SetTag( "CRAFT", 2 )
-			switch ( pUser.GetTag( "page" ) )
+			pUser.SetTempTag( "CRAFT", 2 )
+			switch ( pUser.GetTempTag( "page" ) )
 			{
 				case 1:
 					TriggerEvent( Alchemy, "page1", socket, pUser );
@@ -153,8 +153,8 @@ function onUseChecked( pUser, iUsed )
 				return;
 			}
 			socket.CloseGump( gumpID3, 0 );
-			pUser.SetTag( "CRAFT", 3 )
-			switch ( pUser.GetTag( "page" ) )
+			pUser.SetTempTag( "CRAFT", 3 )
+			switch ( pUser.GetTempTag( "page" ) )
 			{
 				case 1:
 					TriggerEvent( Fletching, "page1", socket, pUser );
@@ -177,8 +177,8 @@ function onUseChecked( pUser, iUsed )
 				return;
 			}
 			socket.CloseGump( gumpID4, 0 );
-			pUser.SetTag( "CRAFT", 4 )
-			switch ( pUser.GetTag( "page" ) )
+			pUser.SetTempTag( "CRAFT", 4 )
+			switch ( pUser.GetTempTag( "page" ) )
 			{
 				case 1:
 					TriggerEvent( Tailoring, "page1", socket, pUser );
@@ -223,8 +223,8 @@ function onUseChecked( pUser, iUsed )
 			socket.CloseGump( gumpID11, 0 );
 			socket.CloseGump( gumpID12, 0 );
 			socket.CloseGump( gumpID13, 0 );
-			pUser.SetTag( "CRAFT", 5 )
-			switch ( pUser.GetTag( "page" ) )
+			pUser.SetTempTag( "CRAFT", 5 )
+			switch ( pUser.GetTempTag( "page" ) )
 			{
 				case 1:
 					TriggerEvent( blacksmithID, "page1", socket, pUser );

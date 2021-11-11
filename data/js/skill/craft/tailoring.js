@@ -24,7 +24,7 @@ var myPage8 = [11465, 11466, 11467, 11468, 11469];// Bone Armor
 function page1( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 1 );
+	pUser.SetTempTag( "page", 1 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage1.length; i++ )
 	{
@@ -58,7 +58,7 @@ function page1( socket, pUser )
 function page2( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 2 );
+	pUser.SetTempTag( "page", 2 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage2.length; i++ )
 	{
@@ -92,7 +92,7 @@ function page2( socket, pUser )
 function page3( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 3 );
+	pUser.SetTempTag( "page", 3 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage3.length; i++ )
 	{
@@ -126,7 +126,7 @@ function page3( socket, pUser )
 function page4( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 4 );
+	pUser.SetTempTag( "page", 4 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage4.length; i++ )
 	{
@@ -160,7 +160,7 @@ function page4( socket, pUser )
 function page5( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 5 );
+	pUser.SetTempTag( "page", 5 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage5.length; i++ )
 	{
@@ -194,7 +194,7 @@ function page5( socket, pUser )
 function page6( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 6 );
+	pUser.SetTempTag( "page", 6 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage6.length; i++ )
 	{
@@ -228,7 +228,7 @@ function page6( socket, pUser )
 function page7( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 7 );
+	pUser.SetTempTag( "page", 7 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage7.length; i++ )
 	{
@@ -262,7 +262,7 @@ function page7( socket, pUser )
 function page8( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 8 );
+	pUser.SetTempTag( "page", 8 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage8.length; i++ )
 	{
@@ -312,7 +312,7 @@ function onCallback2( socket, ourObj )
 		{
 			socket.tempObj = bItem;
 			socket.CloseGump( gumpID, 0 );
-			mChar.SetTag( "CANTREPAIR", 1 );
+			mChar.SetTempTag( "CANTREPAIR", 1 );
 			mChar.StartTimer( repairDelay, 1, true );
 			return;
 		}
@@ -349,7 +349,7 @@ function onCallback2( socket, ourObj )
 					{
 						socket.tempObj = bItem;
 						socket.CloseGump( gumpID, 0 );
-						mChar.SetTag( "CANTREPAIR", 1 );
+						mChar.SetTempTag( "CANTREPAIR", 1 );
 						mChar.StartTimer( repairDelay, 1, true );
 						return;
 					}
@@ -358,7 +358,7 @@ function onCallback2( socket, ourObj )
 					{
 						socket.CloseGump( gumpID, 0 );
 						ourObj.health = ourObj.maxhp;
-						mChar.SetTag( "REPAIRSUCCESS", 1 );
+						mChar.SetTempTag( "REPAIRSUCCESS", 1 );
 						socket.SoundEffect( 0x002A, true );
 						mChar.StartTimer( repairDelay, 1, true );
 					}
@@ -366,7 +366,7 @@ function onCallback2( socket, ourObj )
 					{
 						socket.tempObj = bItem;
 						socket.CloseGump( gumpID, 0 );
-						mChar.SetTag( "FAILREPAIR", 1 );
+						mChar.SetTempTag( "FAILREPAIR", 1 );
 						mChar.StartTimer( repairDelay, 1, true );
 					}
 				}
@@ -374,7 +374,7 @@ function onCallback2( socket, ourObj )
 				{
 					socket.tempObj = bItem;
 					socket.CloseGump( gumpID, 0 );
-					mChar.SetTag( "FULLREPAIR", 1 );
+					mChar.SetTempTag( "FULLREPAIR", 1 );
 					mChar.StartTimer( repairDelay, 1, true );
 				}
 			}
@@ -382,7 +382,7 @@ function onCallback2( socket, ourObj )
 			{
 				socket.tempObj = bItem;
 				socket.CloseGump( gumpID, 0 );
-				mChar.SetTag( "CHECKPACK", 1 );
+				mChar.SetTempTag( "CHECKPACK", 1 );
 				mChar.StartTimer( repairDelay, 1, true );
 			}
 		}
@@ -390,7 +390,7 @@ function onCallback2( socket, ourObj )
 		{
 			socket.tempObj = bItem;
 			socket.CloseGump( gumpID, 0 );
-			mChar.SetTag( "CANTREPAIR", 1 );
+			mChar.SetTempTag( "CANTREPAIR", 1 );
 			mChar.StartTimer( repairDelay, 1, true );
 		}
 	}
@@ -465,8 +465,8 @@ function onGumpPress(pSock, pButton, gumpData) {
 	var gumpID = scriptID + 0xffff;
 	switch (pButton) {
 		case 0:
-			pUser.SetTag("MAKELAST", null);
-			pUser.SetTag("CRAFT", null)
+			pUser.SetTempTag("MAKELAST", null);
+			pUser.SetTempTag("CRAFT", null)
 			pSock.CloseGump(gumpID, 0);
 			break;// abort and do nothing
 		case 1:
@@ -508,775 +508,775 @@ function onGumpPress(pSock, pButton, gumpData) {
 		case 100:
 			MakeItem(pSock, pUser, 130);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 100);
+			pUser.SetTempTag("MAKELAST", 100);
 			break;//skullcap
 		case 101:
 			MakeItem(pSock, pUser, 131);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 101);
+			pUser.SetTempTag("MAKELAST", 101);
 			break;//bandana
 		case 102:
 			MakeItem(pSock, pUser, 132);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 102);
+			pUser.SetTempTag("MAKELAST", 102);
 			break;//floppy hat
 		case 103:
 			MakeItem(pSock, pUser, 134);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 103);
+			pUser.SetTempTag("MAKELAST", 103);
 			break;//cap
 		case 104:
 			MakeItem(pSock, pUser, 133);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 104);
+			pUser.SetTempTag("MAKELAST", 104);
 			break;//wide-brim hat
 		case 105:
 			MakeItem(pSock, pUser, 136);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 105);
+			pUser.SetTempTag("MAKELAST", 105);
 			break;//straw hat
 		case 106:
 			MakeItem(pSock, pUser, 137);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 106);
+			pUser.SetTempTag("MAKELAST", 106);
 			break;//wizard's hat
 		case 107:
 			MakeItem(pSock, pUser, 138);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 107);
+			pUser.SetTempTag("MAKELAST", 107);
 			break;//bonnet
 		case 108:
 			MakeItem(pSock, pUser, 139);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 108);
+			pUser.SetTempTag("MAKELAST", 108);
 			break;//feather hat
 		case 109:
 			MakeItem(pSock, pUser, 140);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 109);
+			pUser.SetTempTag("MAKELAST", 109);
 			break;//tricorne hat
 		case 110:
 			MakeItem(pSock, pUser, 141);
 			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTag("MAKELAST", 110);
+			pUser.SetTempTag("MAKELAST", 110);
 			break;//jester hat
 		case 200:
 			MakeItem(pSock, pUser, 142);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 200);
+			pUser.SetTempTag("MAKELAST", 200);
 			break;//doublet
 		case 201:
 			MakeItem(pSock, pUser, 143);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 201);
+			pUser.SetTempTag("MAKELAST", 201);
 			break;//shirt
 		case 202:
 			MakeItem(pSock, pUser, 144);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 202);
+			pUser.SetTempTag("MAKELAST", 202);
 			break;//fancy shirt
 		case 203:
 			MakeItem(pSock, pUser, 145);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 203);
+			pUser.SetTempTag("MAKELAST", 203);
 			break;//tunic
 		case 204:
 			MakeItem(pSock, pUser, 146);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 204);
+			pUser.SetTempTag("MAKELAST", 204);
 			break;//surcoat
 		case 205:
 			MakeItem(pSock, pUser, 147);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 205);
+			pUser.SetTempTag("MAKELAST", 205);
 			break;//plain dress
 		case 206:
 			MakeItem(pSock, pUser, 148);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 206);
+			pUser.SetTempTag("MAKELAST", 206);
 			break;//fancy dress
 		case 207:
 			MakeItem(pSock, pUser, 149);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 207);
+			pUser.SetTempTag("MAKELAST", 207);
 			break;//cloak
 		case 208:
 			MakeItem(pSock, pUser, 150);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 208);
+			pUser.SetTempTag("MAKELAST", 208);
 			break;//robe
 		case 209:
 			MakeItem(pSock, pUser, 151);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 209);
+			pUser.SetTempTag("MAKELAST", 209);
 			break;//jester suit
 		case 210:
 			MakeItem(pSock, pUser, 180);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 210);
+			pUser.SetTempTag("MAKELAST", 210);
 			break;//short pants
 		case 211:
 			MakeItem(pSock, pUser, 152);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 211);
+			pUser.SetTempTag("MAKELAST", 211);
 			break;//long pants
 		case 212:
 			MakeItem(pSock, pUser, 153);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 212);
+			pUser.SetTempTag("MAKELAST", 212);
 			break;//kilt
 		case 213:
 			MakeItem(pSock, pUser, 154);
 			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTag("MAKELAST", 213);
+			pUser.SetTempTag("MAKELAST", 213);
 			break;//skirt
 		case 300:
 			MakeItem(pSock, pUser, 155);
 			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTag("MAKELAST", 300);
+			pUser.SetTempTag("MAKELAST", 300);
 			break;//body sash
 		case 301:
 			MakeItem(pSock, pUser, 156);
 			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTag("MAKELAST", 301);
+			pUser.SetTempTag("MAKELAST", 301);
 			break;//half apron
 		case 302:
 			MakeItem(pSock, pUser, 157);
 			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTag("MAKELAST", 302);
+			pUser.SetTempTag("MAKELAST", 302);
 			break;//full apron
 		case 303:
 			MakeItem(pSock, pUser, 158);
 			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTag("MAKELAST", 303);
+			pUser.SetTempTag("MAKELAST", 303);
 			break;//oil cloth
 		case 400:
 			MakeItem(pSock, pUser, 159);
 			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTag("MAKELAST", 400);
+			pUser.SetTempTag("MAKELAST", 400);
 			break;//sandals
 		case 401:
 			MakeItem(pSock, pUser, 160);
 			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTag("MAKELAST", 401);
+			pUser.SetTempTag("MAKELAST", 401);
 			break;//shoes
 		case 402:
 			MakeItem(pSock, pUser, 161);
 			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTag("MAKELAST", 402);
+			pUser.SetTempTag("MAKELAST", 402);
 			break;//boots
 		case 403:
 			MakeItem(pSock, pUser, 162);
 			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTag("MAKELAST", 403);
+			pUser.SetTempTag("MAKELAST", 403);
 			break;//thigh boots
 		case 500:
 			MakeItem(pSock, pUser, 163);
 			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTag("MAKELAST", 500);
+			pUser.SetTempTag("MAKELAST", 500);
 			break;//leather gorget
 		case 501:
 			MakeItem(pSock, pUser, 164);
 			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTag("MAKELAST", 501);
+			pUser.SetTempTag("MAKELAST", 501);
 			break;//leather cap
 		case 502:
 			MakeItem(pSock, pUser, 165);
 			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTag("MAKELAST", 502);
+			pUser.SetTempTag("MAKELAST", 502);
 			break;//leather gloves
 		case 503:
 			MakeItem(pSock, pUser, 166);
 			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTag("MAKELAST", 503);
+			pUser.SetTempTag("MAKELAST", 503);
 			break;//leather sleeves
 		case 504:
 			MakeItem(pSock, pUser, 167);
 			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTag("MAKELAST", 504);
+			pUser.SetTempTag("MAKELAST", 504);
 			break;//leather legging
 		case 505:
 			MakeItem(pSock, pUser, 168);
 			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTag("MAKELAST", 505);
+			pUser.SetTempTag("MAKELAST", 505);
 			break;//leather tunic
 		case 600:
 			MakeItem(pSock, pUser, 169);
 			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTag("MAKELAST", 600);
+			pUser.SetTempTag("MAKELAST", 600);
 			break;//studded gorget
 		case 601:
 			MakeItem(pSock, pUser, 170);
 			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTag("MAKELAST", 601);
+			pUser.SetTempTag("MAKELAST", 601);
 			break;//studded gloves
 		case 602:
 			MakeItem(pSock, pUser, 171);
 			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTag("MAKELAST", 602);
+			pUser.SetTempTag("MAKELAST", 602);
 			break;//studded sleeves
 		case 603:
 			MakeItem(pSock, pUser, 172);
 			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTag("MAKELAST", 603);
+			pUser.SetTempTag("MAKELAST", 603);
 			break;//studded leggings
 		case 604:
 			MakeItem(pSock, pUser, 173);
 			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTag("MAKELAST", 604);
+			pUser.SetTempTag("MAKELAST", 604);
 			break;//studded tunic
 		case 700:
 			MakeItem(pSock, pUser, 174);
 			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTag("MAKELAST", 700);
+			pUser.SetTempTag("MAKELAST", 700);
 			break;//leather shorts
 		case 701:
 			MakeItem(pSock, pUser, 175);
 			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTag("MAKELAST", 701);
+			pUser.SetTempTag("MAKELAST", 701);
 			break;//leather skirts
 		case 802:
 			MakeItem(pSock, pUser, 176);
 			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTag("MAKELAST", 702);
+			pUser.SetTempTag("MAKELAST", 702);
 			break;//leather bustier
 		case 703:
 			MakeItem(pSock, pUser, 177);
 			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTag("MAKELAST", 703);
+			pUser.SetTempTag("MAKELAST", 703);
 			break;//studded bustier
 		case 704:
 			MakeItem(pSock, pUser, 178);
 			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTag("MAKELAST", 704);
+			pUser.SetTempTag("MAKELAST", 704);
 			break;//feamle leather armor
 		case 705:
 			MakeItem(pSock, pUser, 179);
 			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTag("MAKELAST", 705);
+			pUser.SetTempTag("MAKELAST", 705);
 			break;//studded armor
 		case 800:
 			MakeItem(pSock, pUser, 181);
 			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTag("MAKELAST", 800);
+			pUser.SetTempTag("MAKELAST", 800);
 			break;//bone helmet
 		case 901:
 			MakeItem(pSock, pUser, 182);
 			pUser.StartTimer(gumpDelay, 9, true);
-			pUser.SetTag("MAKELAST", 901);
+			pUser.SetTempTag("MAKELAST", 901);
 			break;//bone gloves
 		case 802:
 			MakeItem(pSock, pUser, 183);
 			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTag("MAKELAST", 802);
+			pUser.SetTempTag("MAKELAST", 802);
 			break;//bone arms
 		case 803:
 			MakeItem(pSock, pUser, 184);
 			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTag("MAKELAST", 803);
+			pUser.SetTempTag("MAKELAST", 803);
 			break;//bone leggings
 		case 804:
 			MakeItem(pSock, pUser, 185);
 			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTag("MAKELAST", 804);
+			pUser.SetTempTag("MAKELAST", 804);
 			break;//bone armor
 		case 2100:
-			pUser.SetTag("ITEMDETAILS", 130);
+			pUser.SetTempTag("ITEMDETAILS", 130);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//skullcap
 		case 2101:
-			pUser.SetTag("ITEMDETAILS", 131);
+			pUser.SetTempTag("ITEMDETAILS", 131);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bandana
 		case 2102:
-			pUser.SetTag("ITEMDETAILS", 132);
+			pUser.SetTempTag("ITEMDETAILS", 132);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//floppy hat
 		case 2103:
-			pUser.SetTag("ITEMDETAILS", 134);
+			pUser.SetTempTag("ITEMDETAILS", 134);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//cap
 		case 2104:
-			pUser.SetTag("ITEMDETAILS", 133);
+			pUser.SetTempTag("ITEMDETAILS", 133);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//wide-brim hat
 		case 2105:
-			pUser.SetTag("ITEMDETAILS", 136);
+			pUser.SetTempTag("ITEMDETAILS", 136);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//straw hat
 		case 2106:
-			pUser.SetTag("ITEMDETAILS", 137);
+			pUser.SetTempTag("ITEMDETAILS", 137);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//wizard's hat
 		case 2107:
-			pUser.SetTag("ITEMDETAILS", 138);
+			pUser.SetTempTag("ITEMDETAILS", 138);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bonnet
 		case 2108:
-			pUser.SetTag("ITEMDETAILS", 139);
+			pUser.SetTempTag("ITEMDETAILS", 139);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//feather hat
 		case 2109:
-			pUser.SetTag("ITEMDETAILS", 140);
+			pUser.SetTempTag("ITEMDETAILS", 140);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//tricorne hat
 		case 2110:
-			pUser.SetTag("ITEMDETAILS", 141);
+			pUser.SetTempTag("ITEMDETAILS", 141);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//jester hat
 		case 2200:
-			pUser.SetTag("ITEMDETAILS", 142);
+			pUser.SetTempTag("ITEMDETAILS", 142);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//doublet
 		case 2201:
-			pUser.SetTag("ITEMDETAILS", 143);
+			pUser.SetTempTag("ITEMDETAILS", 143);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//shirt
 		case 2202:
-			pUser.SetTag("ITEMDETAILS", 144);
+			pUser.SetTempTag("ITEMDETAILS", 144);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//fancy shirt
 		case 2203:
-			pUser.SetTag("ITEMDETAILS", 145);
+			pUser.SetTempTag("ITEMDETAILS", 145);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//tunic
 		case 2204:
-			pUser.SetTag("ITEMDETAILS", 146);
+			pUser.SetTempTag("ITEMDETAILS", 146);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//surcoat
 		case 2205:
-			pUser.SetTag("ITEMDETAILS", 147);
+			pUser.SetTempTag("ITEMDETAILS", 147);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//plain dress
 		case 2206:
-			pUser.SetTag("ITEMDETAILS", 148);
+			pUser.SetTempTag("ITEMDETAILS", 148);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//fancy dress
 		case 2207:
-			pUser.SetTag("ITEMDETAILS", 149);
+			pUser.SetTempTag("ITEMDETAILS", 149);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//cloak
 		case 2208:
-			pUser.SetTag("ITEMDETAILS", 150);
+			pUser.SetTempTag("ITEMDETAILS", 150);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//robe
 		case 2209:
-			pUser.SetTag("ITEMDETAILS", 151);
+			pUser.SetTempTag("ITEMDETAILS", 151);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//jester suit
 		case 2210:
-			pUser.SetTag("ITEMDETAILS", 180);
+			pUser.SetTempTag("ITEMDETAILS", 180);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//short pants
 		case 2211:
-			pUser.SetTag("ITEMDETAILS", 152);
+			pUser.SetTempTag("ITEMDETAILS", 152);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//long pants
 		case 2212:
-			pUser.SetTag("ITEMDETAILS", 153);
+			pUser.SetTempTag("ITEMDETAILS", 153);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//kilt
 		case 2213:
-			pUser.SetTag("ITEMDETAILS", 154);
+			pUser.SetTempTag("ITEMDETAILS", 154);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//skirt
 		case 2300:
-			pUser.SetTag("ITEMDETAILS", 155);
+			pUser.SetTempTag("ITEMDETAILS", 155);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//body sash
 		case 2301:
-			pUser.SetTag("ITEMDETAILS", 156);
+			pUser.SetTempTag("ITEMDETAILS", 156);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//half apron
 		case 2302:
-			pUser.SetTag("ITEMDETAILS", 157);
+			pUser.SetTempTag("ITEMDETAILS", 157);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//full apron
 		case 2303:
-			pUser.SetTag("ITEMDETAILS", 158);
+			pUser.SetTempTag("ITEMDETAILS", 158);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//oil cloth
 		case 2400:
-			pUser.SetTag("ITEMDETAILS", 159);
+			pUser.SetTempTag("ITEMDETAILS", 159);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//sandals
 		case 2401:
-			pUser.SetTag("ITEMDETAILS", 160);
+			pUser.SetTempTag("ITEMDETAILS", 160);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//shoes
 		case 2402:
-			pUser.SetTag("ITEMDETAILS", 161);
+			pUser.SetTempTag("ITEMDETAILS", 161);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//boots
 		case 2403:
-			pUser.SetTag("ITEMDETAILS", 162);
+			pUser.SetTempTag("ITEMDETAILS", 162);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//thigh boots
 		case 2500:
-			pUser.SetTag("ITEMDETAILS", 163);
+			pUser.SetTempTag("ITEMDETAILS", 163);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather gorget
 		case 2501:
-			pUser.SetTag("ITEMDETAILS", 164);
+			pUser.SetTempTag("ITEMDETAILS", 164);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather cap
 		case 2502:
-			pUser.SetTag("ITEMDETAILS", 165);
+			pUser.SetTempTag("ITEMDETAILS", 165);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather gloves
 		case 2503:
-			pUser.SetTag("ITEMDETAILS", 166);
+			pUser.SetTempTag("ITEMDETAILS", 166);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather sleeves
 		case 2504:
-			pUser.SetTag("ITEMDETAILS", 167);
+			pUser.SetTempTag("ITEMDETAILS", 167);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather legging
 		case 2505:
-			pUser.SetTag("ITEMDETAILS", 168);
+			pUser.SetTempTag("ITEMDETAILS", 168);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather tunic
 		case 2600:
-			pUser.SetTag("ITEMDETAILS", 169);
+			pUser.SetTempTag("ITEMDETAILS", 169);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded gorget
 		case 2601:
-			pUser.SetTag("ITEMDETAILS", 170);
+			pUser.SetTempTag("ITEMDETAILS", 170);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded gloves
 		case 2602:
-			pUser.SetTag("ITEMDETAILS", 171);
+			pUser.SetTempTag("ITEMDETAILS", 171);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded sleeves
 		case 2603:
-			pUser.SetTag("ITEMDETAILS", 172);
+			pUser.SetTempTag("ITEMDETAILS", 172);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded leggings
 		case 2604:
-			pUser.SetTag("ITEMDETAILS", 173);
+			pUser.SetTempTag("ITEMDETAILS", 173);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded tunic
 		case 2700:
-			pUser.SetTag("ITEMDETAILS", 174);
+			pUser.SetTempTag("ITEMDETAILS", 174);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather shorts
 		case 2701:
-			pUser.SetTag("ITEMDETAILS", 175);
+			pUser.SetTempTag("ITEMDETAILS", 175);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather skirts
 		case 2702:
-			pUser.SetTag("ITEMDETAILS", 176);
+			pUser.SetTempTag("ITEMDETAILS", 176);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//leather bustier
 		case 2703:
-			pUser.SetTag("ITEMDETAILS", 177);
+			pUser.SetTempTag("ITEMDETAILS", 177);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded bustier
 		case 2704:
-			pUser.SetTag("ITEMDETAILS", 178);
+			pUser.SetTempTag("ITEMDETAILS", 178);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//feamle leather armor
 		case 2705:
-			pUser.SetTag("ITEMDETAILS", 179);
+			pUser.SetTempTag("ITEMDETAILS", 179);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//studded armor
 		case 2800:
-			pUser.SetTag("ITEMDETAILS", 181);
+			pUser.SetTempTag("ITEMDETAILS", 181);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bone helmet
 		case 2801:
-			pUser.SetTag("ITEMDETAILS", 182);
+			pUser.SetTempTag("ITEMDETAILS", 182);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bone gloves
 		case 2802:
-			pUser.SetTag("ITEMDETAILS", 183);
+			pUser.SetTempTag("ITEMDETAILS", 183);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bone arms
 		case 2803:
-			pUser.SetTag("ITEMDETAILS", 184);
+			pUser.SetTempTag("ITEMDETAILS", 184);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bone leggings
 		case 2804:
-			pUser.SetTag("ITEMDETAILS", 185);
+			pUser.SetTempTag("ITEMDETAILS", 185);
 			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
 			break;//bone armor
 		case 5000:
-			switch (pUser.GetTag("MAKELAST"))
+			switch (pUser.GetTempTag("MAKELAST"))
 			{
 				case 100:
 					MakeItem(pSock, pUser, 130);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 100);
+					pUser.SetTempTag("MAKELAST", 100);
 					break;//skullcap
 				case 101:
 					MakeItem(pSock, pUser, 131);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 101);
+					pUser.SetTempTag("MAKELAST", 101);
 					break;//bandana
 				case 102:
 					MakeItem(pSock, pUser, 132);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 102);
+					pUser.SetTempTag("MAKELAST", 102);
 					break;//floppy hat
 				case 103:
 					MakeItem(pSock, pUser, 134);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 103);
+					pUser.SetTempTag("MAKELAST", 103);
 					break;//cap
 				case 104:
 					MakeItem(pSock, pUser, 133);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 104);
+					pUser.SetTempTag("MAKELAST", 104);
 					break;//wide-brim hat
 				case 105:
 					MakeItem(pSock, pUser, 136);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 105);
+					pUser.SetTempTag("MAKELAST", 105);
 					break;//straw hat
 				case 106:
 					MakeItem(pSock, pUser, 137);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 106);
+					pUser.SetTempTag("MAKELAST", 106);
 					break;//wizard's hat
 				case 107:
 					MakeItem(pSock, pUser, 138);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 107);
+					pUser.SetTempTag("MAKELAST", 107);
 					break;//bonnet
 				case 108:
 					MakeItem(pSock, pUser, 139);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 108);
+					pUser.SetTempTag("MAKELAST", 108);
 					break;//feather hat
 				case 109:
 					MakeItem(pSock, pUser, 140);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 109);
+					pUser.SetTempTag("MAKELAST", 109);
 					break;//tricorne hat
 				case 110:
 					MakeItem(pSock, pUser, 141);
 					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTag("MAKELAST", 110);
+					pUser.SetTempTag("MAKELAST", 110);
 					break;//jester hat
 				case 200:
 					MakeItem(pSock, pUser, 142);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 200);
+					pUser.SetTempTag("MAKELAST", 200);
 					break;//doublet
 				case 201:
 					MakeItem(pSock, pUser, 143);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 201);
+					pUser.SetTempTag("MAKELAST", 201);
 					break;//shirt
 				case 202:
 					MakeItem(pSock, pUser, 144);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 202);
+					pUser.SetTempTag("MAKELAST", 202);
 					break;//fancy shirt
 				case 203:
 					MakeItem(pSock, pUser, 145);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 203);
+					pUser.SetTempTag("MAKELAST", 203);
 					break;//tunic
 				case 204:
 					MakeItem(pSock, pUser, 146);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 204);
+					pUser.SetTempTag("MAKELAST", 204);
 					break;//surcoat
 				case 205:
 					MakeItem(pSock, pUser, 147);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 205);
+					pUser.SetTempTag("MAKELAST", 205);
 					break;//plain dress
 				case 206:
 					MakeItem(pSock, pUser, 148);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 206);
+					pUser.SetTempTag("MAKELAST", 206);
 					break;//fancy dress
 				case 207:
 					MakeItem(pSock, pUser, 149);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 207);
+					pUser.SetTempTag("MAKELAST", 207);
 					break;//cloak
 				case 208:
 					MakeItem(pSock, pUser, 150);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 208);
+					pUser.SetTempTag("MAKELAST", 208);
 					break;//robe
 				case 209:
 					MakeItem(pSock, pUser, 151);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 209);
+					pUser.SetTempTag("MAKELAST", 209);
 					break;//jester suit
 				case 210:
 					MakeItem(pSock, pUser, 180);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 210);
+					pUser.SetTempTag("MAKELAST", 210);
 					break;//short pants
 				case 211:
 					MakeItem(pSock, pUser, 152);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 211);
+					pUser.SetTempTag("MAKELAST", 211);
 					break;//long pants
 				case 212:
 					MakeItem(pSock, pUser, 153);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 212);
+					pUser.SetTempTag("MAKELAST", 212);
 					break;//kilt
 				case 213:
 					MakeItem(pSock, pUser, 154);
 					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTag("MAKELAST", 213);
+					pUser.SetTempTag("MAKELAST", 213);
 					break;//skirt
 				case 300:
 					MakeItem(pSock, pUser, 155);
 					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTag("MAKELAST", 300);
+					pUser.SetTempTag("MAKELAST", 300);
 					break;//body sash
 				case 301:
 					MakeItem(pSock, pUser, 156);
 					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTag("MAKELAST", 301);
+					pUser.SetTempTag("MAKELAST", 301);
 					break;//half apron
 				case 302:
 					MakeItem(pSock, pUser, 157);
 					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTag("MAKELAST", 302);
+					pUser.SetTempTag("MAKELAST", 302);
 					break;//full apron
 				case 303:
 					MakeItem(pSock, pUser, 158);
 					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTag("MAKELAST", 303);
+					pUser.SetTempTag("MAKELAST", 303);
 					break;//oil cloth
 				case 400:
 					MakeItem(pSock, pUser, 159);
 					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTag("MAKELAST", 400);
+					pUser.SetTempTag("MAKELAST", 400);
 					break;//sandals
 				case 401:
 					MakeItem(pSock, pUser, 160);
 					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTag("MAKELAST", 401);
+					pUser.SetTempTag("MAKELAST", 401);
 					break;//shoes
 				case 402:
 					MakeItem(pSock, pUser, 161);
 					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTag("MAKELAST", 402);
+					pUser.SetTempTag("MAKELAST", 402);
 					break;//boots
 				case 403:
 					MakeItem(pSock, pUser, 162);
 					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTag("MAKELAST", 403);
+					pUser.SetTempTag("MAKELAST", 403);
 					break;//thigh boots
 				case 500:
 					MakeItem(pSock, pUser, 163);
 					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTag("MAKELAST", 500);
+					pUser.SetTempTag("MAKELAST", 500);
 					break;//leather gorget
 				case 501:
 					MakeItem(pSock, pUser, 164);
 					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTag("MAKELAST", 501);
+					pUser.SetTempTag("MAKELAST", 501);
 					break;//leather cap
 				case 502:
 					MakeItem(pSock, pUser, 165);
 					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTag("MAKELAST", 502);
+					pUser.SetTempTag("MAKELAST", 502);
 					break;//leather gloves
 				case 503:
 					MakeItem(pSock, pUser, 166);
 					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTag("MAKELAST", 503);
+					pUser.SetTempTag("MAKELAST", 503);
 					break;//leather sleeves
 				case 504:
 					MakeItem(pSock, pUser, 167);
 					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTag("MAKELAST", 504);
+					pUser.SetTempTag("MAKELAST", 504);
 					break;//leather legging
 				case 505:
 					MakeItem(pSock, pUser, 168);
 					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTag("MAKELAST", 505);
+					pUser.SetTempTag("MAKELAST", 505);
 					break;//leather tunic
 				case 600:
 					MakeItem(pSock, pUser, 169);
 					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTag("MAKELAST", 600);
+					pUser.SetTempTag("MAKELAST", 600);
 					break;//studded gorget
 				case 601:
 					MakeItem(pSock, pUser, 170);
 					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTag("MAKELAST", 601);
+					pUser.SetTempTag("MAKELAST", 601);
 					break;//studded gloves
 				case 602:
 					MakeItem(pSock, pUser, 171);
 					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTag("MAKELAST", 602);
+					pUser.SetTempTag("MAKELAST", 602);
 					break;//studded sleeves
 				case 603:
 					MakeItem(pSock, pUser, 172);
 					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTag("MAKELAST", 603);
+					pUser.SetTempTag("MAKELAST", 603);
 					break;//studded leggings
 				case 604:
 					MakeItem(pSock, pUser, 173);
 					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTag("MAKELAST", 604);
+					pUser.SetTempTag("MAKELAST", 604);
 					break;//studded tunic
 				case 700:
 					MakeItem(pSock, pUser, 174);
 					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTag("MAKELAST", 700);
+					pUser.SetTempTag("MAKELAST", 700);
 					break;//leather shorts
 				case 701:
 					MakeItem(pSock, pUser, 175);
 					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTag("MAKELAST", 701);
+					pUser.SetTempTag("MAKELAST", 701);
 					break;//leather skirts
 				case 802:
 					MakeItem(pSock, pUser, 176);
 					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTag("MAKELAST", 702);
+					pUser.SetTempTag("MAKELAST", 702);
 					break;//leather bustier
 				case 703:
 					MakeItem(pSock, pUser, 177);
 					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTag("MAKELAST", 703);
+					pUser.SetTempTag("MAKELAST", 703);
 					break;//studded bustier
 				case 704:
 					MakeItem(pSock, pUser, 178);
 					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTag("MAKELAST", 704);
+					pUser.SetTempTag("MAKELAST", 704);
 					break;//feamle leather armor
 				case 705:
 					MakeItem(pSock, pUser, 179);
 					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTag("MAKELAST", 705);
+					pUser.SetTempTag("MAKELAST", 705);
 					break;//studded armor
 				case 800:
 					MakeItem(pSock, pUser, 181);
 					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTag("MAKELAST", 800);
+					pUser.SetTempTag("MAKELAST", 800);
 					break;//bone helmet
 				case 901:
 					MakeItem(pSock, pUser, 182);
 					pUser.StartTimer(gumpDelay, 9, true);
-					pUser.SetTag("MAKELAST", 901);
+					pUser.SetTempTag("MAKELAST", 901);
 					break;//bone gloves
 				case 802:
 					MakeItem(pSock, pUser, 183);
 					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTag("MAKELAST", 802);
+					pUser.SetTempTag("MAKELAST", 802);
 					break;//bone arms
 				case 803:
 					MakeItem(pSock, pUser, 184);
 					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTag("MAKELAST", 803);
+					pUser.SetTempTag("MAKELAST", 803);
 					break;//bone leggings
 				case 804:
 					MakeItem(pSock, pUser, 185);
 					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTag("MAKELAST", 804);
+					pUser.SetTempTag("MAKELAST", 804);
 					break;//bone armor
 			}break;
 	}

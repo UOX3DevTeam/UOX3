@@ -19,7 +19,7 @@ var myPage4 = [10925]; // Explosive // 10926, 10927 needs scripted
 function page1( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 1 );
+	pUser.SetTempTag( "page", 1 );
 	TriggerEvent(craftGumpID, "craftinggump", myGump, socket);
 	for ( var i = 0; i < myPage1.length; i++ )
 	{
@@ -53,7 +53,7 @@ function page1( socket, pUser )
 function page2( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 2 );
+	pUser.SetTempTag( "page", 2 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage2.length; i++ )
 	{
@@ -87,7 +87,7 @@ function page2( socket, pUser )
 function page3( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 3 );
+	pUser.SetTempTag( "page", 3 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage3.length; i++ )
 	{
@@ -121,7 +121,7 @@ function page3( socket, pUser )
 function page4( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 4 );
+	pUser.SetTempTag( "page", 4 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage4.length; i++ )
 	{
@@ -181,8 +181,8 @@ function onGumpPress( pSock, pButton, gumpData )
 	switch ( pButton )
 	{
 		case 0:
-			pUser.SetTag( "MAKELAST", null );
-			pUser.SetTag( "CRAFT", null )
+			pUser.SetTempTag( "MAKELAST", null );
+			pUser.SetTempTag( "CRAFT", null )
 			pSock.CloseGump( gumpID, 0 );
 			break;// abort and do nothing
 		case 1:
@@ -204,285 +204,285 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 100:
 			MakeItem( pSock, pUser, 305 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 100 );
+			pUser.SetTempTag( "MAKELAST", 100 );
 			break;//refresh
 		case 101:
 			MakeItem( pSock, pUser, 306 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 101 );
+			pUser.SetTempTag( "MAKELAST", 101 );
 			break;//greater refrehment
 		case 102:
 			MakeItem( pSock, pUser, 298 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 102 );
+			pUser.SetTempTag( "MAKELAST", 102 );
 			break;//lesser heal
 		case 103:
 			MakeItem( pSock, pUser, 299 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 103 );
+			pUser.SetTempTag( "MAKELAST", 103 );
 			break;//heal
 		case 104:
 			MakeItem( pSock, pUser, 300 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 104 );
+			pUser.SetTempTag( "MAKELAST", 104 );
 			break;//greater heal
 		case 105:
 			MakeItem( pSock, pUser, 292 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 105 );
+			pUser.SetTempTag( "MAKELAST", 105 );
 			break;//lesser cure
 		case 106:
 			MakeItem( pSock, pUser, 293 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 106 );
+			pUser.SetTempTag( "MAKELAST", 106 );
 			break;//cure
 		case 107:
 			MakeItem( pSock, pUser, 293 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 107 );
+			pUser.SetTempTag( "MAKELAST", 107 );
 			break;//greater cure
 		case 200:
 			MakeItem( pSock, pUser, 290 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 200 );
+			pUser.SetTempTag( "MAKELAST", 200 );
 			break;//agility
 		case 201:
 			MakeItem( pSock, pUser, 291 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 201 );
+			pUser.SetTempTag( "MAKELAST", 201 );
 			break;//greater agility
 		case 202:
 			MakeItem( pSock, pUser, 309 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 202 );
+			pUser.SetTempTag( "MAKELAST", 202 );
 			break;//night sight
 		case 203:
 			MakeItem( pSock, pUser, 307 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 203 );
+			pUser.SetTempTag( "MAKELAST", 203 );
 			break;//strength
 		case 204:
 			MakeItem( pSock, pUser, 308 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 204 );
+			pUser.SetTempTag( "MAKELAST", 204 );
 			break;//greater strength
 		case 300:
 			MakeItem( pSock, pUser, 301 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 300 );
+			pUser.SetTempTag( "MAKELAST", 300 );
 			break;//lesser poison
 		case 301:
 			MakeItem( pSock, pUser, 302 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 301 );
+			pUser.SetTempTag( "MAKELAST", 301 );
 			break;//poison
 		case 302:
 			MakeItem( pSock, pUser, 303 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 302 );
+			pUser.SetTempTag( "MAKELAST", 302 );
 			break;//greater poison
 		case 303:
 			MakeItem( pSock, pUser, 304 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 303 );
+			pUser.SetTempTag( "MAKELAST", 303 );
 			break;//deadly poison
 		case 400:
 			MakeItem( pSock, pUser, 295 );
 			pUser.StartTimer( gumpDelay, 4, true );
-			pUser.SetTag( "MAKELAST", 400 );
+			pUser.SetTempTag( "MAKELAST", 400 );
 			break;//lesser explosion
 		case 401:
 			MakeItem( pSock, pUser, 296 );
 			pUser.StartTimer( gumpDelay, 4, true );
-			pUser.SetTag( "MAKELAST", 401 );
+			pUser.SetTempTag( "MAKELAST", 401 );
 			break;//explosion
 		case 402:
 			MakeItem( pSock, pUser, 297 );
 			pUser.StartTimer( gumpDelay, 4, true );
-			pUser.SetTag( "MAKELAST", 402 );
+			pUser.SetTempTag( "MAKELAST", 402 );
 			break;//greater explosion
 		case 2100:
-			pUser.SetTag( "ITEMDETAILS", 305 );
+			pUser.SetTempTag( "ITEMDETAILS", 305 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//refresh
 		case 2101:
-			pUser.SetTag( "ITEMDETAILS", 306 );
+			pUser.SetTempTag( "ITEMDETAILS", 306 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater refrehment
 		case 2102:
-			pUser.SetTag( "ITEMDETAILS", 298 );
+			pUser.SetTempTag( "ITEMDETAILS", 298 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//lesser heal
 		case 2103:
-			pUser.SetTag( "ITEMDETAILS", 299 );
+			pUser.SetTempTag( "ITEMDETAILS", 299 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//heal
 		case 2104:
-			pUser.SetTag( "ITEMDETAILS", 300 );
+			pUser.SetTempTag( "ITEMDETAILS", 300 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater heal
 		case 2105:
-			pUser.SetTag( "ITEMDETAILS", 292 );
+			pUser.SetTempTag( "ITEMDETAILS", 292 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//lesser cure
 		case 2106:
-			pUser.SetTag( "ITEMDETAILS", 293 );
+			pUser.SetTempTag( "ITEMDETAILS", 293 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//cure
 		case 2107:
-			pUser.SetTag( "ITEMDETAILS", 293 );
+			pUser.SetTempTag( "ITEMDETAILS", 293 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater cure
 		case 2200:
-			pUser.SetTag( "ITEMDETAILS", 290 );
+			pUser.SetTempTag( "ITEMDETAILS", 290 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//agility
 		case 2201:
-			pUser.SetTag( "ITEMDETAILS", 291 );
+			pUser.SetTempTag( "ITEMDETAILS", 291 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater agility
 		case 2202:
-			pUser.SetTag( "ITEMDETAILS", 309 );
+			pUser.SetTempTag( "ITEMDETAILS", 309 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//night sight
 		case 2203:
-			pUser.SetTag( "ITEMDETAILS", 307 );
+			pUser.SetTempTag( "ITEMDETAILS", 307 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//strength
 		case 2204:
-			pUser.SetTag( "ITEMDETAILS", 308 );
+			pUser.SetTempTag( "ITEMDETAILS", 308 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater strength
 		case 2300:
-			pUser.SetTag( "ITEMDETAILS", 301 );
+			pUser.SetTempTag( "ITEMDETAILS", 301 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//lesser poison
 		case 2301:
-			pUser.SetTag( "ITEMDETAILS", 302 );
+			pUser.SetTempTag( "ITEMDETAILS", 302 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//poison
 		case 2302:
-			pUser.SetTag( "ITEMDETAILS", 303 );
+			pUser.SetTempTag( "ITEMDETAILS", 303 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater poison
 		case 2303:
-			pUser.SetTag( "ITEMDETAILS", 304 );
+			pUser.SetTempTag( "ITEMDETAILS", 304 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//deadly poison
 		case 2400:
-			pUser.SetTag( "ITEMDETAILS", 295 );
+			pUser.SetTempTag( "ITEMDETAILS", 295 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//lesser explosion
 		case 2401:
-			pUser.SetTag( "ITEMDETAILS", 296 );
+			pUser.SetTempTag( "ITEMDETAILS", 296 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//explosion
 		case 2402:
-			pUser.SetTag( "ITEMDETAILS", 297 );
+			pUser.SetTempTag( "ITEMDETAILS", 297 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//greater explosion
 		case 5000:
-			switch ( pUser.GetTag( "MAKELAST" ) )
+			switch ( pUser.GetTempTag( "MAKELAST" ) )
 			{
 				case 100:
 					MakeItem( pSock, pUser, 305 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 100 );
+					pUser.SetTempTag( "MAKELAST", 100 );
 					break;//refresh
 				case 101:
 					MakeItem( pSock, pUser, 306 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 101 );
+					pUser.SetTempTag( "MAKELAST", 101 );
 					break;//greater refrehment
 				case 102:
 					MakeItem( pSock, pUser, 298 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 102 );
+					pUser.SetTempTag( "MAKELAST", 102 );
 					break;//lesser heal
 				case 103:
 					MakeItem( pSock, pUser, 299 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 103 );
+					pUser.SetTempTag( "MAKELAST", 103 );
 					break;//heal
 				case 104:
 					MakeItem( pSock, pUser, 300 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 104 );
+					pUser.SetTempTag( "MAKELAST", 104 );
 					break;//greater heal
 				case 105:
 					MakeItem( pSock, pUser, 292 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 105 );
+					pUser.SetTempTag( "MAKELAST", 105 );
 					break;//lesser cure
 				case 106:
 					MakeItem( pSock, pUser, 293 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 106 );
+					pUser.SetTempTag( "MAKELAST", 106 );
 					break;//cure
 				case 107:
 					MakeItem( pSock, pUser, 293 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 107 );
+					pUser.SetTempTag( "MAKELAST", 107 );
 					break;//greater cure
 				case 200:
 					MakeItem( pSock, pUser, 290 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 200 );
+					pUser.SetTempTag( "MAKELAST", 200 );
 					break;//agility
 				case 201:
 					MakeItem( pSock, pUser, 291 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 201 );
+					pUser.SetTempTag( "MAKELAST", 201 );
 					break;//greater agility
 				case 202:
 					MakeItem( pSock, pUser, 309 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 202 );
+					pUser.SetTempTag( "MAKELAST", 202 );
 					break;//night sight
 				case 203:
 					MakeItem( pSock, pUser, 307 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 203 );
+					pUser.SetTempTag( "MAKELAST", 203 );
 					break;//strength
 				case 204:
 					MakeItem( pSock, pUser, 308 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 204 );
+					pUser.SetTempTag( "MAKELAST", 204 );
 					break;//greater strength
 				case 300:
 					MakeItem( pSock, pUser, 301 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 300 );
+					pUser.SetTempTag( "MAKELAST", 300 );
 					break;//lesser poison
 				case 301:
 					MakeItem( pSock, pUser, 302 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 301 );
+					pUser.SetTempTag( "MAKELAST", 301 );
 					break;//poison
 				case 302:
 					MakeItem( pSock, pUser, 303 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 302 );
+					pUser.SetTempTag( "MAKELAST", 302 );
 					break;//greater poison
 				case 303:
 					MakeItem( pSock, pUser, 304 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 303 );
+					pUser.SetTempTag( "MAKELAST", 303 );
 					break;//deadly poison
 				case 400:
 					MakeItem( pSock, pUser, 295 );
 					pUser.StartTimer( gumpDelay, 4, true );
-					pUser.SetTag( "MAKELAST", 400 );
+					pUser.SetTempTag( "MAKELAST", 400 );
 					break;//lesser explosion
 				case 401:
 					MakeItem( pSock, pUser, 296 );
 					pUser.StartTimer( gumpDelay, 4, true );
-					pUser.SetTag( "MAKELAST", 401 );
+					pUser.SetTempTag( "MAKELAST", 401 );
 					break;//explosion
 				case 402:
 					MakeItem( pSock, pUser, 297 );
 					pUser.StartTimer( gumpDelay, 4, true );
-					pUser.SetTag( "MAKELAST", 402 );
+					pUser.SetTempTag( "MAKELAST", 402 );
 					break;//greater explosion
 			}break;
 	}

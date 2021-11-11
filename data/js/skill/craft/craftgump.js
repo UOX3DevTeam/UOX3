@@ -38,7 +38,7 @@ function craftinggump( myGump, socket )
 	var hides = pUser.ResourceCount( 0x1078 );
 	var hides1 = pUser.ResourceCount( 0x1079 );
 
-	switch (pUser.GetTag("CRAFT"))
+	switch (pUser.GetTempTag("CRAFT"))
 	{
 		case 1:
 			var grouplist = [10601, 10602, 10603, 10604, 10605, 10606, 10607, 10608, 10609, 10610]; //CATEGORIES
@@ -68,7 +68,7 @@ function craftinggump( myGump, socket )
 		case 5:
 			var grouplist = [10279, 10280, 10281, 10282, 10283, 10284, 10285] //CATEGORIES
 			var name = 10188;//Blacksmithing Menu
-			switch (pUser.GetTag("ORE"))
+			switch (pUser.GetTempTag("ORE"))
 			{
 				case 1:
 					var resourcename = 10291;
@@ -135,49 +135,49 @@ function craftinggump( myGump, socket )
 
 	myGump.AddHTMLGump( 10, 302, 150, 25, 0, 0, "<center> <basefont color=#ffffff>" + GetDictionaryEntry( 10288, socket.language ) + "</basefont> </center>" ); // <CENTER>NOTICES</CENTER>
 
-	if (pUser.GetTag("FAILED") >= 1 && pUser.GetTag("FAILED") <= 8)
+	if (pUser.GetTempTag("FAILED") >= 1 && pUser.GetTempTag("FAILED") <= 8)
 	{
 		myGump.AddHTMLGump(170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry(10292, socket.language) + "</basefont>");
-		pUser.SetTag("FAILED", null);
+		pUser.SetTempTag("FAILED", null);
 	}
 
-	if (pUser.GetTag("NOANVIL") == 1)
+	if (pUser.GetTempTag("NOANVIL") == 1)
 	{
 		myGump.AddHTMLGump(170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry(10213, socket.language) + "</basefont>");
-		pUser.SetTag("NOANVIL", null);
+		pUser.SetTempTag("NOANVIL", null);
 	}
 
-	if ( pUser.GetTag( "CANTREPAIR" ) == 1 )
+	if ( pUser.GetTempTag( "CANTREPAIR" ) == 1 )
 	{
 		myGump.AddHTMLGump( 170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 987, socket.Language ) + "</basefont>" );
-		pUser.SetTag( "CANTREPAIR", null );
+		pUser.SetTempTag( "CANTREPAIR", null );
 	}
 
-	if ( pUser.GetTag( "REPAIRSUCCESS" ) == 1 )
+	if ( pUser.GetTempTag( "REPAIRSUCCESS" ) == 1 )
 	{
 		myGump.AddHTMLGump( 170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 989, socket.Language ) + "</basefont>" );
-		pUser.SetTag( "REPAIRSUCCESS", null );
+		pUser.SetTempTag( "REPAIRSUCCESS", null );
 	}
 
-	if ( pUser.GetTag( "FAILREPAIR" ) == 1 )
+	if ( pUser.GetTempTag( "FAILREPAIR" ) == 1 )
 	{
 		myGump.AddHTMLGump( 170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 990, socket.Language ) + "</basefont>" );
-		pUser.SetTag( "CHECKPACK", null );
+		pUser.SetTempTag( "CHECKPACK", null );
 	}
 
-	if ( pUser.GetTag( "FULLREPAIR" ) == 1 )
+	if ( pUser.GetTempTag( "FULLREPAIR" ) == 1 )
 	{
 		myGump.AddHTMLGump( 170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 988, socket.Language ) + "</basefont>" );
-		pUser.SetTag( "FULLREPAIR", null );
+		pUser.SetTempTag( "FULLREPAIR", null );
 	}
 
-	if ( pUser.GetTag( "CHECKPACK" ) == 1 )
+	if ( pUser.GetTempTag( "CHECKPACK" ) == 1 )
 	{
 		myGump.AddHTMLGump( 170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10265, socket.Language ) + "</basefont>" );
-		pUser.SetTag( "CHECKPACK", null );
+		pUser.SetTempTag( "CHECKPACK", null );
 	}
 
-	if (pUser.GetTag( "CRAFT" ) != 2 || pUser.GetTag( "CRAFT" ) != 6 )
+	if (pUser.GetTempTag( "CRAFT" ) != 2 || pUser.GetTempTag( "CRAFT" ) != 6 )
 	{
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 
@@ -185,7 +185,7 @@ function craftinggump( myGump, socket )
 
 		myGump.AddButton(270, 342, 0xfa5, 1, 0, repair);
 		myGump.AddHTMLGump(305, 345, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10212, socket.language ) + "</basefont>" );// REPAIR ITEM
-		if (pUser.GetTag( "CRAFT" ) == 5)
+		if (pUser.GetTempTag( "CRAFT" ) == 5)
 		{
 			myGump.AddButton( 15, 342, 0xfa5, 1, 0, 52 );
 			myGump.AddHTMLGump( 50, 345, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10289, socket.language ) + "</basefont>" );// SMELT ITEM
@@ -216,13 +216,13 @@ function onGumpPress( pSock, pButton, gumpData )
 	switch ( pButton )
 	{
 		case 0:
-			pUser.SetTag( "MAKELAST", null );
-			pUser.SetTag( "CRAFT", null )
+			pUser.SetTempTag( "MAKELAST", null );
+			pUser.SetTempTag( "CRAFT", null )
 			pSock.CloseGump( gumpID, 0 );
 			break;// abort and do nothing
 		case 1:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page1", pSock, pUser );
@@ -237,7 +237,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page1", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page1", pSock, pUser );
@@ -272,7 +272,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 2:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page2", pSock, pUser );
@@ -287,7 +287,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page2", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page2", pSock, pUser );
@@ -322,7 +322,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 3:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page3", pSock, pUser );
@@ -337,7 +337,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page3", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page3", pSock, pUser );
@@ -372,7 +372,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 4:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page4", pSock, pUser );
@@ -384,7 +384,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page4", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page4", pSock, pUser );
@@ -419,7 +419,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 5:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page5", pSock, pUser );
@@ -428,7 +428,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page5", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page5", pSock, pUser );
@@ -463,7 +463,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 6:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page6", pSock, pUser );
@@ -472,7 +472,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page6", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page6", pSock, pUser );
@@ -507,7 +507,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 7:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page7", pSock, pUser );
@@ -516,7 +516,7 @@ function onGumpPress( pSock, pButton, gumpData )
 					TriggerEvent( Tailoring, "page7", pSock, pUser );
 					break;
 				case 5:
-					switch ( pUser.GetTag( "ORE" ) )
+					switch ( pUser.GetTempTag( "ORE" ) )
 					{
 						case 1:
 							TriggerEvent( blacksmithID, "page7", pSock, pUser );
@@ -551,7 +551,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 8:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page8", pSock, pUser );
@@ -563,7 +563,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 9:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page9", pSock, pUser );
@@ -575,7 +575,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 10:
 			pSock.CloseGump( gumpID, 0 );
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
 					TriggerEvent( Carpentry, "page10", pSock, pUser );
