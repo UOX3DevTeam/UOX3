@@ -9,7 +9,7 @@ function ItemDetailGump( pUser )
 {
 	var socket = pUser.socket;
 	var itemGump = new Gump;
-	switch ( pUser.GetTag( "ITEMDETAILS" ) )
+	switch ( pUser.GetTempTag( "ITEMDETAILS" ) )
 	{
 		//Start Blacksmith
 		case 1:
@@ -1212,17 +1212,17 @@ function onGumpPress( pSock, pButton, gumpData )
 	switch ( pButton )
 	{
 		case 0:
-			pUser.SetTag( "ITEMDETAILS", null )
-			pUser.SetTag( "CRAFT", null )
+			pUser.SetTempTag( "ITEMDETAILS", null )
+			pUser.SetTempTag( "CRAFT", null )
 			pSock.CloseGump( gumpID, 0 );
 			break;
 		case 1:
-			switch ( pUser.GetTag( "CRAFT" ) )
+			switch ( pUser.GetTempTag( "CRAFT" ) )
 			{
 				case 1:
-					pUser.SetTag( "ITEMDETAILS", null )
+					pUser.SetTempTag( "ITEMDETAILS", null )
 					pSock.CloseGump( gumpID, 0 );
-					switch ( pUser.GetTag("page" ) )
+					switch ( pUser.GetTempTag("page" ) )
 					{
 						case 1:
 							TriggerEvent( Carpentry, "page1", pSock, pUser );
@@ -1259,9 +1259,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					}
 					break;
 				case 2:
-					pUser.SetTag( "ITEMDETAILS", null )
+					pUser.SetTempTag( "ITEMDETAILS", null )
 					pSock.CloseGump( gumpID, 0 );
-					switch ( pUser.GetTag("page" ) )
+					switch ( pUser.GetTempTag("page" ) )
 					{
 						case 1:
 							TriggerEvent( Alchemy, "page1", pSock, pUser );
@@ -1280,9 +1280,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					}
 					break;
 				case 3:
-					pUser.SetTag( "ITEMDETAILS", null )
+					pUser.SetTempTag( "ITEMDETAILS", null )
 					pSock.CloseGump( gumpID, 0 );
-					switch ( pUser.GetTag("page" ) )
+					switch ( pUser.GetTempTag("page" ) )
 					{
 						case 1:
 							TriggerEvent( Fletching, "page1", pSock, pUser );
@@ -1298,9 +1298,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					}
 					break;
 				case 4:
-					pUser.SetTag( "ITEMDETAILS", null )
+					pUser.SetTempTag( "ITEMDETAILS", null )
 					pSock.CloseGump( gumpID, 0 );
-					switch ( pUser.GetTag("page" ) )
+					switch ( pUser.GetTempTag("page" ) )
 					{
 						case 1:
 							TriggerEvent( Tailoring, "page1", pSock, pUser );
@@ -1331,9 +1331,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					}
 					break;
 				case 5:
-					pUser.SetTag( "ITEMDETAILS", null )
+					pUser.SetTempTag( "ITEMDETAILS", null )
 					pSock.CloseGump( gumpID, 0 );
-					switch ( pUser.GetTag("page" ) )
+					switch ( pUser.GetTempTag("page" ) )
 					{
 						case 1:
 							TriggerEvent( Blacksmithing, "page1", pSock, pUser );

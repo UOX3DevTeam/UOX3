@@ -19,7 +19,7 @@ var myPage3 = [11218, 11219, 11220]; // Weapons
 function page1( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 1 );
+	pUser.SetTempTag( "page", 1 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage1.length; i++ )
 	{
@@ -53,7 +53,7 @@ function page1( socket, pUser )
 function page2( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 2 );
+	pUser.SetTempTag( "page", 2 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage2.length; i++ )
 	{
@@ -87,7 +87,7 @@ function page2( socket, pUser )
 function page3( socket, pUser )
 {
 	var myGump = new Gump;
-	pUser.SetTag( "page", 3 );
+	pUser.SetTempTag( "page", 3 );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
 	for ( var i = 0; i < myPage3.length; i++ )
 	{
@@ -144,8 +144,8 @@ function onGumpPress( pSock, pButton, gumpData )
 	switch ( pButton )
 	{
 		case 0:
-			pUser.SetTag( "MAKELAST", null );
-			pUser.SetTag( "CRAFT", null )
+			pUser.SetTempTag( "MAKELAST", null );
+			pUser.SetTempTag( "CRAFT", null )
 			pSock.CloseGump( gumpID, 0 );
 			break;// abort and do nothing
 		case 1:
@@ -163,229 +163,229 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 100:
 			MakeItem( pSock, pUser, 190 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 100 );
+			pUser.SetTempTag( "MAKELAST", 100 );
 			break;//Kindling
 		case 101:
 			MakeItem( pSock, pUser, 194 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 101 );
+			pUser.SetTempTag( "MAKELAST", 101 );
 			break;//Shaft
 		case 102:
 			MakeItem( pSock, pUser, 195 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 102 );
+			pUser.SetTempTag( "MAKELAST", 102 );
 			break;//Five Shafts
 		case 103:
 			MakeItem( pSock, pUser, 196 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 103 );
+			pUser.SetTempTag( "MAKELAST", 103 );
 			break;//Twenty Shafts
 		case 104:
 			MakeItem( pSock, pUser, 197 );
 			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTag( "MAKELAST", 104 );
+			pUser.SetTempTag( "MAKELAST", 104 );
 			break;//Fifty Shafts
 		case 200:
 			MakeItem( pSock, pUser, 198 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 200 );
+			pUser.SetTempTag( "MAKELAST", 200 );
 			break;//Arrow
 		case 201:
 			MakeItem( pSock, pUser, 199 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 201 );
+			pUser.SetTempTag( "MAKELAST", 201 );
 			break;//Five Arrows
 		case 202:
 			MakeItem( pSock, pUser, 200 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 202 );
+			pUser.SetTempTag( "MAKELAST", 202 );
 			break;//Twenty Arrows
 		case 203:
 			MakeItem( pSock, pUser, 201 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 203 );
+			pUser.SetTempTag( "MAKELAST", 203 );
 			break;//Fifty Arrows
 		case 204:
 			MakeItem( pSock, pUser, 202 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 204 );
+			pUser.SetTempTag( "MAKELAST", 204 );
 			break;//Bolt
 		case 205:
 			MakeItem( pSock, pUser, 203 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 205 );
+			pUser.SetTempTag( "MAKELAST", 205 );
 			break;//Five Bolts
 		case 206:
 			MakeItem( pSock, pUser, 204 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 206 );
+			pUser.SetTempTag( "MAKELAST", 206 );
 			break;//Twenty Bolts
 		case 207:
 			MakeItem( pSock, pUser, 205 );
 			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTag( "MAKELAST", 207 );
+			pUser.SetTempTag( "MAKELAST", 207 );
 			break;//Fifty Bolts
 		case 300:
 			MakeItem( pSock, pUser, 191 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 300 );
+			pUser.SetTempTag( "MAKELAST", 300 );
 			break;//Bow
 		case 301:
 			MakeItem( pSock, pUser, 192 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 301 );
+			pUser.SetTempTag( "MAKELAST", 301 );
 			break;//Crossbow
 		case 302:
 			MakeItem( pSock, pUser, 193 );
 			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTag( "MAKELAST", 302 );
+			pUser.SetTempTag( "MAKELAST", 302 );
 			break;//Heavy Crossbow
 		case 2100:
-			pUser.SetTag( "ITEMDETAILS", 190 );
+			pUser.SetTempTag( "ITEMDETAILS", 190 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Kindling
 		case 2101:
-			pUser.SetTag( "ITEMDETAILS", 194 );
+			pUser.SetTempTag( "ITEMDETAILS", 194 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Shaft
 		case 2102:
-			pUser.SetTag( "ITEMDETAILS", 195 );
+			pUser.SetTempTag( "ITEMDETAILS", 195 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Five Shafts
 		case 2103:
-			pUser.SetTag( "ITEMDETAILS", 196 );
+			pUser.SetTempTag( "ITEMDETAILS", 196 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Twenty Shafts
 		case 2104:
-			pUser.SetTag( "ITEMDETAILS", 197 );
+			pUser.SetTempTag( "ITEMDETAILS", 197 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Fifty Shafts
 		case 2200:
-			pUser.SetTag( "ITEMDETAILS", 198 );
+			pUser.SetTempTag( "ITEMDETAILS", 198 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Arrow
 		case 2201:
-			pUser.SetTag( "ITEMDETAILS", 199 );
+			pUser.SetTempTag( "ITEMDETAILS", 199 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Five Arrows
 		case 2202:
-			pUser.SetTag( "ITEMDETAILS", 200 );
+			pUser.SetTempTag( "ITEMDETAILS", 200 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Twenty Arrows
 		case 2203:
-			pUser.SetTag( "ITEMDETAILS", 201 );
+			pUser.SetTempTag( "ITEMDETAILS", 201 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Fifty Arrows
 		case 2204:
-			pUser.SetTag( "ITEMDETAILS", 202 );
+			pUser.SetTempTag( "ITEMDETAILS", 202 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Bolt
 		case 2205:
-			pUser.SetTag( "ITEMDETAILS", 203 );
+			pUser.SetTempTag( "ITEMDETAILS", 203 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Five Bolts
 		case 2206:
-			pUser.SetTag( "ITEMDETAILS", 204 );
+			pUser.SetTempTag( "ITEMDETAILS", 204 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Twenty Bolts
 		case 2207:
-			pUser.SetTag( "ITEMDETAILS", 205 );
+			pUser.SetTempTag( "ITEMDETAILS", 205 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Fifty Bolts
 		case 2300:
-			pUser.SetTag( "ITEMDETAILS", 191 );
+			pUser.SetTempTag( "ITEMDETAILS", 191 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Bow
 		case 2301:
-			pUser.SetTag( "ITEMDETAILS", 192 );
+			pUser.SetTempTag( "ITEMDETAILS", 192 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Crossbow
 		case 2302:
-			pUser.SetTag( "ITEMDETAILS", 193 );
+			pUser.SetTempTag( "ITEMDETAILS", 193 );
 			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
 			break;//Heavy Crossbow
 		case 5000:
-			switch ( pUser.GetTag( "MAKELAST" ) )
+			switch ( pUser.GetTempTag( "MAKELAST" ) )
 			{
 				case 100:
 					MakeItem( pSock, pUser, 190 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 100 );
+					pUser.SetTempTag( "MAKELAST", 100 );
 					break;//Kindling
 				case 101:
 					MakeItem( pSock, pUser, 194 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 101 );
+					pUser.SetTempTag( "MAKELAST", 101 );
 					break;//Shaft
 				case 102:
 					MakeItem( pSock, pUser, 195 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 102 );
+					pUser.SetTempTag( "MAKELAST", 102 );
 					break;//Five Shafts
 				case 103:
 					MakeItem( pSock, pUser, 196 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 103 );
+					pUser.SetTempTag( "MAKELAST", 103 );
 					break;//Twenty Shafts
 				case 104:
 					MakeItem( pSock, pUser, 197 );
 					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTag( "MAKELAST", 104 );
+					pUser.SetTempTag( "MAKELAST", 104 );
 					break;//Fifty Shafts
 				case 200:
 					MakeItem( pSock, pUser, 198 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 200 );
+					pUser.SetTempTag( "MAKELAST", 200 );
 					break;//Arrow
 				case 201:
 					MakeItem( pSock, pUser, 199 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 201 );
+					pUser.SetTempTag( "MAKELAST", 201 );
 					break;//Five Arrows
 				case 202:
 					MakeItem( pSock, pUser, 200 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 202 );
+					pUser.SetTempTag( "MAKELAST", 202 );
 					break;//Twenty Arrows
 				case 203:
 					MakeItem( pSock, pUser, 201 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 203 );
+					pUser.SetTempTag( "MAKELAST", 203 );
 					break;//Fifty Arrows
 				case 204:
 					MakeItem( pSock, pUser, 202 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 204 );
+					pUser.SetTempTag( "MAKELAST", 204 );
 					break;//Bolt
 				case 205:
 					MakeItem( pSock, pUser, 203 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 205 );
+					pUser.SetTempTag( "MAKELAST", 205 );
 					break;//Five Bolts
 				case 206:
 					MakeItem( pSock, pUser, 204 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 206 );
+					pUser.SetTempTag( "MAKELAST", 206 );
 					break;//Twenty Bolts
 				case 207:
 					MakeItem( pSock, pUser, 205 );
 					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTag( "MAKELAST", 207 );
+					pUser.SetTempTag( "MAKELAST", 207 );
 					break;//Fifty Bolts
 				case 300:
 					MakeItem( pSock, pUser, 191 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 300 );
+					pUser.SetTempTag( "MAKELAST", 300 );
 					break;//Bow
 				case 301:
 					MakeItem( pSock, pUser, 192 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 301 );
+					pUser.SetTempTag( "MAKELAST", 301 );
 					break;//Crossbow
 				case 302:
 					MakeItem( pSock, pUser, 193 );
 					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTag( "MAKELAST", 302 );
+					pUser.SetTempTag( "MAKELAST", 302 );
 					break;//Heavy Crossbow
 			}break;
 	}
