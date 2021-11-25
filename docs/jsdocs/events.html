@@ -15,8 +15,9 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="InRangeEvent">inRange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function inRange( pCharacter, objInRange )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>objInRange comes into visible range of pCharacter.  pCharacter's script is activated
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function inRange( srcChar, objInRange )
+function inRange( srcItem, pCharInRange )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When objInRange comes into visible range of srcChar, or, srcChar's script is activated. When pCharInRange comes within range of srcItem, srcItem's script is activated
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Useful for when you want to do something when a certain thing comes into range.  You could yell out guards when a murderer comes into range, for instance, if you're in a guarded region.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function inRange( pCharacter, objInRange )
 {
@@ -250,6 +251,17 @@ If script is attached to a character, will also trigger when the AllNames macro 
 {
 	socket.SysMessage( "You attempted to execute the command '', but no such command exists... yet!" );
 	return true;
+}</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onContRemoveItem">onContRemoveItem</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onContRemoveItem( iCont, objRemoved, pChar )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item has already been removed from a container, script activates on container
+<tr><td valign="top" width="25%"><b>Notes</b><td>No return values supported
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow reactions to items being removed from a container
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onContRemoveItem( iCont, objRemoved, pChar )
+{
+	// ... do something when an item has been removed from container
 }</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -783,6 +795,18 @@ function onLightChange( object, lightlevel )
 <br>{
 <br>	sockPlayer.SysMessage ( "Farewell! Come back soon." );
 <br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="onMoveDetect">onMoveDetect</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onMoveDetect( srcObj, pChar, rangeToChar, oldCharX, oldCharY )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an object detects movement by a character nearby, based on range defined in item's MORE property
+<tr><td valign="top" width="25%"><b>Notes</b><td>Use long ranges with care!
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow detection of movement near an object (items only, for now). Distance at which it triggers determined by part 1 of the item's MORE property.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onMoveDetect( srcObj, pChar, rangeToChar, oldCharX, oldCharY )
+{
+	// .. do something when character is in range of object
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -1381,6 +1405,27 @@ function onSwing( iSwung, pSwinging, pSwingAt )
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow reactions for characters/items when temperature changes
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnTooltip">onTooltip</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTooltip( myObject )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggers for object (char/item) when server is about to send tooltip data to client
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow adding new/custom object properties for objects when server sends tooltip data to client
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>// Display remaining uses left in a tooltip, based on item's UsesLeft tag
+function onTooltip( myObj )
+{
+	var tooltipText = "";
+	var usesLeft = myObj.GetTag( "UsesLeft" );
+	if( usesLeft > 0 )
+	{
+		tooltipText = GetDictionaryEntry( 9403 ); // uses remaining: %i
+		tooltipText = ( tooltipText.replace(/%i/gi, (usesLeft).toString()) );
+		myObj.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~
+	}
+	return tooltipText;
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">

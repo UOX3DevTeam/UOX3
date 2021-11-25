@@ -3945,6 +3945,14 @@
 9097=Nie możesz tam umieścić tego house-addona, lokalizacja jest zablokowana!
 9098=Przedmiot nieruchomy dla normalnych graczy, ale może być wyciągnięty z plecaka przez postacie GM.
 9099=Porada: Spróbuj komendy 'ALLMOVE ON lub zmodyfikuj właściwość movable elementu komendą 'TWEAK!
+9100=*uniknie pułapki*
+9101=Wybierz cel, aby zmodyfikować ID o %i:
+9102=Tego zamka nie można odblokować za pomocą magii!
+9103=%i przedmiotów dotkniętych przez %s %d
+9104=Wybierz pierwszy róg pola dowodzenia:
+9105=Wybierz drugi róg okna dowodzenia:
+9106=Słyszysz dźwięk bramy poruszającej się w pobliżu.
+9107=Nie jesteś godzien wejścia do miasta Wiatru!
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!

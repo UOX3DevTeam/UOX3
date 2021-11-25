@@ -43,13 +43,22 @@ function onCallback0( pSock, ourObj )
 			if( ourObj.more == 0 )
 			{
 				var minSkill = 0;
+				var maxSkill = 1000;
 				var isTrapped = ( ourObj.morez >> 24 );
 				if( isTrapped == 1 )
 				{
 					minSkill = 500;
 				}
 
-				if( pUser.CheckSkill( 24, minSkill, 1000 ) )
+				// Check if the lock has been setup with a difficulty in morey property
+				if( ourObj.morey != 0 )
+				{
+					// morey part 2 is a flag that says whether lock can be magically unlocked or not
+					minSkill = ourObj.GetMoreVar( "morey", 3 ); // Min skill requirement to unlock
+					maxSkill = ourObj.GetMoreVar( "morey", 4 ); // Max skill possible to gain from this lock
+				}
+
+				if( pUser.CheckSkill( 24, minSkill, maxSkill ) )
 				{
 					if( iType == 8 )
 						ourObj.type = 1;

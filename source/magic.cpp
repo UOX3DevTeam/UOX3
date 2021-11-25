@@ -616,13 +616,32 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->isDivineLocked() )
 	{
-		sock->sysmessage( 673 );
+		sock->sysmessage( 673 ); // This item has been protected with divine magic.  You cannot unlock this item.
 		return false;
 	}
 	if( target->GetType() == IT_LOCKEDCONTAINER )
 	{
+		bool canMagicUnlock = true;
+		if( target->GetTempVar( CITV_MOREY ) > 0 )
+		{
+			canMagicUnlock = static_cast<bool>(target->GetTempVar( CITV_MOREY, 2 ));
+			if( !canMagicUnlock )
+			{
+				sock->sysmessage( 9102 ); // That lock cannot be unlocked with magic!
+				return false;
+			}
+		}
+
+		UI08 minSkill = ( target->GetTempVar( CITV_MOREY, 3 ) * 10 );
+		UI08 maxSkill = ( target->GetTempVar( CITV_MOREY, 4 ) * 10 );
+		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
+		{
+			sock->sysmessage( 6092 ); // You are not skilled enough to do that.
+			return false;
+		}
+
 		target->SetType( IT_CONTAINER );
-		sock->sysmessage( 674 );
+		sock->sysmessage( 674 ); // You unlock the item.
 		target->RemoveFromSight();
 		target->Update();
 
@@ -635,8 +654,27 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 	}
 	else if( target->GetType() == IT_LOCKEDSPAWNCONT )
 	{
+		bool canMagicUnlock = true;
+		if( target->GetTempVar( CITV_MOREY ) > 0 )
+		{
+			canMagicUnlock = static_cast<bool>(target->GetTempVar( CITV_MOREY, 2 ));
+			if( !canMagicUnlock )
+			{
+				sock->sysmessage( 9102 ); // That lock cannot be unlocked with magic!
+				return false;
+			}
+		}
+
+		UI08 minSkill = ( target->GetTempVar( CITV_MOREY, 3 ) * 10 );
+		UI08 maxSkill = ( target->GetTempVar( CITV_MOREY, 4 ) * 10 );
+		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
+		{
+			sock->sysmessage( 6092 ); // You are not skilled enough to do that.
+			return false;
+		}
+
 		target->SetType( IT_SPAWNCONT );
-		sock->sysmessage( 675 );
+		sock->sysmessage( 675 ); // You unlock the item.
 		target->RemoveFromSight();
 		target->Update();
 
@@ -648,11 +686,11 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
 	else if( target->GetType() == IT_CONTAINER || target->GetType() == IT_SPAWNCONT || target->GetType() == IT_LOCKEDSPAWNCONT || target->GetType() == IT_TRASHCONT )
-		sock->sysmessage( 676 );
+		sock->sysmessage( 676 ); // That is not locked.
 	else if( target->GetType() == IT_DOOR )
-		sock->sysmessage( 677 );
+		sock->sysmessage( 937 ); // That cannot be unlocked without a key!
 	else
-		sock->sysmessage( 678 );
+		sock->sysmessage( 678 ); // That does not have a lock.
 	return true;
 }
 
@@ -809,6 +847,20 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 		{
 			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
 			{
+				// Teleport player's pets too
+				GenericList< CChar * > *myPets = caster->GetPetList();
+				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+				{
+					if( !ValidateObject( myPet ) )
+						continue;
+					if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+					{
+						if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
+							myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+					}
+				}
+
+				// Teleport player
 				caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
 				return true;
 			}
@@ -838,6 +890,19 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 				{
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
 					{
+						// Teleport player's pets too
+						GenericList< CChar * > *myPets = caster->GetPetList();
+						for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+						{
+							if( !ValidateObject( myPet ) )
+								continue;
+							if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+							{
+								if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
+									myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+							}
+						}
+
 						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
 						return true;
 					}
@@ -867,6 +932,20 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			{
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
 				{
+					// Teleport player's pets too
+					GenericList< CChar * > *myPets = caster->GetPetList();
+					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+					{
+						if( !ValidateObject( myPet ) )
+							continue;
+						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+						{
+							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
+								myPet->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+						}
+					}
+
+					// Teleport the player
 					caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
 					SendMapChange( caster->WorldNumber(), sock, false );
 				}
@@ -877,7 +956,23 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 				}
 			}
 			else
+			{
+				// Teleport player's pets too
+				GenericList< CChar * > *myPets = caster->GetPetList();
+				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+				{
+					if( !ValidateObject( myPet ) )
+						continue;
+					if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+					{
+						if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
+							myPet->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+					}
+				}
+
+				// Teleport the player
 				caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+			}
 			sock->sysmessage( 682 ); // You have recalled from the rune.
 			return true;
 		}
@@ -2347,23 +2442,26 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 {
 	if( type == IT_GATE )
 	{
-		CItem *otherGate = calcItemObjFromSer( itemCheck->GetTempVar( CITV_MOREX ) );
-		if( !ValidateObject( otherGate ) )
-			return;
-		SI08 dirOffset = 0;
-		if( mChar->GetDir() < SOUTH )
-			dirOffset = 1;
-		else
-			dirOffset = -1;
-		if( otherGate->WorldNumber() != mChar->WorldNumber() )
-		{
-			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
-			SendMapChange( mChar->WorldNumber(), mSock, false );
-		}
-		else
-			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
 		if( !mChar->IsNpc() )
 		{
+			CItem *otherGate = calcItemObjFromSer( itemCheck->GetTempVar( CITV_MOREX ) );
+			if( !ValidateObject( otherGate ) )
+				return;
+			SI08 dirOffset = 0;
+			if( mChar->GetDir() < SOUTH )
+				dirOffset = 1;
+			else
+				dirOffset = -1;
+			if( otherGate->WorldNumber() != mChar->WorldNumber() )
+			{
+				mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
+				SendMapChange( mChar->WorldNumber(), mSock, false );
+			}
+			else
+			{
+				mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
+			}
+
 			GenericList< CChar * > *myPets = mChar->GetPetList();
 			for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
 			{
@@ -2371,13 +2469,13 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 					continue;
 				if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
 				{
-					if( objInOldRange( mChar, myPet, DIST_INRANGE ) )
+					if( objInOldRange( mChar, myPet, DIST_CMDRANGE ) )
 						myPet->SetLocation( mChar );
 				}
 			}
+			Effects->PlaySound( mSock, 0x01FE, true );
+			Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 		}
-		Effects->PlaySound( mSock, 0x01FE, true );
-		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 	}
 }
 

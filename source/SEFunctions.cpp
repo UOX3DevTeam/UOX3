@@ -1055,13 +1055,13 @@ JSBool SE_GetRandomSOSArea( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Spawns NPC based on definition in NPC DFNs
+//|	Purpose		-	Spawns NPC based on definition in NPC DFNs (or an NPCLIST)
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 5 || argc > 6 )
+	if( argc < 5 || argc > 7 )
 	{
-		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 5 or 6)" );
+		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 5, 6 or 7)" );
 		return JS_FALSE;
 	}
 
@@ -1072,12 +1072,13 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	SI08 z				= (SI08)JSVAL_TO_INT( argv[3] );
 	UI08 world			= (UI08)JSVAL_TO_INT( argv[4] );
 	UI16 instanceID = ( argc == 6 ? (SI16)JSVAL_TO_INT( argv[5] ) : 0 );
+	bool useNpcList = ( argc == 7 ? ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE ) : false );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
 	auto origContext = cx;
 	auto origObject = obj;
 
-	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceID );
+	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceID, useNpcList );
 	if( cMade != nullptr )
 	{
 		JSObject *myobj		= JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -2103,7 +2104,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( argc != 3 && argc != 4 )
 	{
 		// function name, source character, range
-		DoSEErrorMessage( "AreaItemFunction: Invalid number of arguments (takes 3/4, function name, source character, range, optional socket)" );
+		DoSEErrorMessage( "AreaItemFunction: Invalid number of arguments (takes 3/4, function name, source object, range, optional socket)" );
 		return JS_FALSE;
 	}
 

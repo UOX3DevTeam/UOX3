@@ -32,6 +32,7 @@ private:
 	SI08		prefZ;				// Maximum Z influence static and dynamic items can have on spawning.
 
 	bool		onlyOutside;		// Should Chars, Items only spawn outside of buildings
+	bool		isSpawner;			// Whether the items spawned are spawner objects or not
 	UI16		call;				// # of times that an NPC or Item is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
 	UI16		instanceID;			// Which instance are we spawning in?
@@ -69,6 +70,7 @@ public:
 	SI08		GetPrefZ( void ) const;
 	UI16		GetCall( void ) const;
 	bool		GetOnlyOutside( void ) const;
+	bool		IsSpawner( void ) const;
 	STRINGLIST	GetNPC( void ) const;
 	STRINGLIST	GetItem( void ) const;
 
@@ -88,6 +90,7 @@ public:
 	void		SetPrefZ( SI08 newVal );
 	void		SetCall( UI16 newVal );
 	void		SetOnlyOutside( bool newVal );
+	void		IsSpawner( bool newVal );
 	void		SetNPC( const std::string &newVal );
 	void		SetNPCList( std::string newVal );
 	void		SetItem( const std::string &newVal );

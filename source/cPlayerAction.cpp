@@ -464,6 +464,20 @@ bool CPIGetItem::Handle( void )
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
 
+	if( ValidateObject( iCont ) && iCont->CanBeObjType( OT_ITEM ))
+	{
+		std::vector<UI16> contScriptTriggers = iCont->GetScriptTriggers();
+		for( auto scriptTrig : contScriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				CItem *contItem = static_cast<CItem *>(iCont);
+				toExecute->OnContRemoveItem( contItem, i, ourChar );
+			}
+		}
+	}
+
 	return true;
 }
 

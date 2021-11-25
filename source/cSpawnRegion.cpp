@@ -25,6 +25,7 @@ const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
 const SI08		DEFSPAWN_PREFZ			= 18;
 const bool		DEFSPAWN_ONLYOUTSIDE	= false;
+const bool		DEFSPAWN_ISSPAWNER		= false;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Class		-	CSpawnRegion()
@@ -34,7 +35,7 @@ const bool		DEFSPAWN_ONLYOUTSIDE	= false;
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionnum( spawnregion ), maxcspawn( DEFSPAWN_MAXCSPAWN ), maxispawn( DEFSPAWN_MAXISPAWN ),
 curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ),
 nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ),
-call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE )
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE ), isSpawner( DEFSPAWN_ISSPAWNER )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
@@ -334,6 +335,21 @@ void CSpawnRegion::SetOnlyOutside( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsSpawner( void ) const
+//|					void IsSpawner( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items spawned from spawnregion is a spawner or not
+//o-----------------------------------------------------------------------------------------------o
+bool CSpawnRegion::IsSpawner( void ) const
+{
+	return isSpawner;
+}
+void CSpawnRegion::IsSpawner( bool newVal )
+{
+	isSpawner = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 GetCall( void ) const
 //|					void SetCall( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -521,6 +537,10 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 			{
 				sItems.push_back( data );
 			}
+			else if( UTag == "ISSPAWNER" )
+			{
+				isSpawner = (static_cast<SI08>(std::stoi(data, nullptr, 0)) == 1);
+			}
 			else if( UTag == "MAXITEMS" )
 			{
 				maxispawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
@@ -681,7 +701,7 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 		switch( tag )
 		{
 			case DFNTAG_ID:
-				npcID = static_cast<UI16>( ndata );
+				npcID = strutil::value<std::uint16_t>( cdata ); // static_cast<UI16>( ndata );
 				goto foundNpcID;
 			default:
 				break;
@@ -740,7 +760,11 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 	SI08 z;
 	if( FindItemSpotToSpawn( x, y, z ) )
 	{
-		ISpawn = Items->CreateBaseScriptItem( nullptr, sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1, instanceID, OT_ITEM, 0xFFFF, false );
+		auto objType = OT_ITEM;
+		if( isSpawner )
+			objType = OT_SPAWNER;
+
+		ISpawn = Items->CreateBaseScriptItem( nullptr, sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1, instanceID, objType, 0xFFFF, false );
 		if( ISpawn != nullptr )
 		{
 			ISpawn->SetLocation( x, y, z );

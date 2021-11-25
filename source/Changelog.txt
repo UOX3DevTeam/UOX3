@@ -1,3 +1,74 @@
+26/11/2021 - Xuri (0.99.4z+++)
+	Added new JS Item Methods to get/set the value (0-255) for specific parts (1-4) of temp variables ("more", "morex", "morey", "morez"):
+		.GetMoreVar( moreVarName, moreVarPart )
+		.SetMoreVar( moreVarName, moreVarPart, moreVarValue )
+	Updated Remove Trap script (js/skill/removetrap.js) to make use of GetMoreVar() and SetMoreVar methods
+	Updated inRange JS event to also trigger for Items with this event attached, when player characters come within update range. Updated syntax:
+		inRange( srcItem, pCharInRange )
+		inRange( srcChar, objInRange )
+	When UOX3 retrieves data from the onToolTip() JS event to potentially display custom object tooltips, it will use the ID specified in a temporary JS tag ("tooltipCliloc") on the object as the clilocID being sent to the client with the tooltip text returned from the script. If no such tag exists on the object, it defaults to cliloc ID 1042971.
+	Added new JS event that triggers _after_ an item has been removed from a container (no return values supported):
+		onContRemoveItem( iCont, objRemoved, pChar )
+	The JS Function SpawnNPC() can now spawn NPCs from NPCLISTS if provided with a boolean parameter flag (useNpcList). Updated syntax:
+		CChar SpawnNPC( npcSection/npclist, x, y, z, worldnumber, instanceID, useNpcList )
+	Added new JS Event to allow detection of movement near an object (items only, for now). Distance at which it triggers determined by part 1 of the item's MORE property. Use long ranges with care! Syntax:
+		onMoveDetect( srcObj, pChar, rangeToChar, oldCharX, oldCharY )
+
+	Added new JS script (js/server/misc/dungeon_traps.js) for handling trap mechanics in (primarily) dungeons. The traps all trigger on collision, and use different parts of the "morez" property to determine enabled/disabled status, damage, min skill required to disarm, max skill at which player can still gain skill from disarming. Disarming renders trap inactive for 60 seconds. Implemented trap types:
+		Spike Traps 		// Active for ~5 seconds after triggered, deals damage every 1 second.
+		Giant Spike Trap 	// Active for ~1 second after triggered, deals high instant damage one time
+		Saw Traps			// Active for ~5 seconds after triggered, deals damage every 1 second.
+		Gas Traps			// Active for ~5 seconds after triggered, applies poison to target every 1 second
+		Fire Column Trap 	// Active for ~5 seconds after triggered, deals damage every 1 second after initial delay of 1 second
+		Stone Face Traps	// Active for ~3 seconds after triggered, deals damage every 1 second after initial delay of 1 second
+		Mushroom Trap 		// Active for ~2 seconds after triggered, applies poison to target every 1 second after an initial delay of 1 second
+	Added dungeon traps to 'add menu, under Buildings > Decs > Dungeon Traps
+	Added new commands to make modifying IDs of items (and NPCs) easier:
+		'incid #	// Increment/decrement ID of target by specified amount
+		'rincid #	// Repeatedly increment/decrement ID of target/multiple targets by specified amount
+	Updated 'add and 'radd commands with new, optional syntax to make adding trees easier (potentially with GM tools/macros), as it will add both trunk and leaf at same location with a single command:
+		'add tree [trunkID] [leafID]
+		'radd tree [trunkID] [leafID]
+	Updated AreaCommand GM command to include support for setting the .decayable property on multiple items at once. Also updated the script with appropriate system messages throughout, which now also show how many items were affected by use of the command
+	Added new item script (js/item/gate_opener.js) that can be used to make switches/levers raise/lower multiple nearby gates. See script comments for details on setup
+	Updated various JS scripts that used GetSByte() to retrieve Z of last targeted location from Socket to manually add height of targeted tile for client version below 7.0.9 only
+	Fixed an issue where items created with 'decorate load command could be set as decayable
+	Fixed an issue where multiple timers could be running on a single door by manually opening and closing it repeatedly. Closing a door will now kill the associated timer on said door.
+	Fixed incorrect IDs for secret doors in Item DFNs (they were off by 1, so would not work properly)
+	Updated name of all secret doors in dfndata/items/building/doors.dfn to inherit name from tiledata instead
+	Added secret door IDs to dfndata/harditems/harditems.dfn
+	Item and NPC definitions can now make use of randomization for the ID tag, for more variety. Syntax:
+		id=[id1] [id2] [etc] // Example: id=0x0e42 0x0e43
+	Fixed MORE values of "hard scripted" books in dfndata/items/misc/books.dfn
+	Added Ice and Fire dungeon locations (dfndata/location/location.dfn) and added these to the GM travel menu (dfndata/item/travelmenu.dfn/travelmenu.bulk.dfn)
+	Fixed body ID for ancient wyrm NPCs, which also fixes their name (dfndata/npc/dragons.dfn)
+	Added more pre-defined books to dfndata/misc/books.dfn (and dfndata/items/misc/books.dfn):
+		Quest of the Virtues – Volume 1 	// [quest_of_the_virtues_vol1]
+		Fropoz's Journal 					// [fropoz_journal]
+		Translated Gargoyle Journal 		// [translated_gargoyle_journal]
+		Kabur's Journal 					// [kaburs_journal]
+	Updated code for spawn containers to allow spawning more than one item per container; by default, a spawn container will now spawn every item from an itemlist if set as the spawnobjlist property for that spawn container. These itemlists can contain direct item references, references to other itemlists or even lootlists
+	Added 4 levels of dungeon treasure chests that can be placed out as spawn objects in dungeons, with items and valuables spawning inside on a regular interval. These can be found in dfndata/items/gmmenu/dungeon_treasure_spawners.dfn, with associated itemlists being found in dfndata/items/itemlists/itemlists.dfn (dungeontreasureloot1, dungeontreasureloot2, dungeontreasureloot3 and dungeontreasureloot4). They can also be located in the 'add menu under GM Menu > Dungeon Treasures
+	Added spawn regions for dungeon treasure chests in the following areas:
+		Covetous, Deceit, Despise, Destard, Fire, Hythloth, Ice, Shame, Wrong, Yew Crypts, Daemon Temple, Trinsic Passage, Cove Orc Fort, Terathan Keep, Vesper Bank, Trinsic Bank
+	Updated Lockpicking skill to check for the existence of skill difficulty on locks, and use those to perform skill checks when attempting to pick those locks. Difficulty on a lock can be setup using the morey property using this syntax:
+		morey=[0x00] [0x00/0x01] [0x##] [0x##] // the first part is unused, the second is used with Unlock spell, the third and fourth are the minimum skill to unlock and the max skill that can be gained from picking the lock
+	Updated Unlock spell to check for existence of morey property value on lock. If there's a value, and the second part of the value is not 0x01, Unlock cannot be used to unlock the lock. By default, dungeon treasure containers level 1 and 2 are unlockable with the Unlock spell, while levels 3 and 4 are not, and require Lockpicking skill to unlock.
+	Fixed an issue where player characters would "skip a step" when moving under certain circumstances (like coming out of hiding)
+	Added new decorations in default world templates for the following areas:
+		Covetous, Deceit, Despise, Destard, Fire, Hythloth, Ice, Shame, Wrong, Hedge Maze, Wind (city), Terathan Keep, Orc Caves, Ilshenar facet, Ilshenar dungeons
+	Updated decorations in default world templates for the following areas:
+		All cities in Britannia and the Lost Lands
+	Updated decorations in default world templates to address issues like missing water/swamp tiles, floor/roof tiles, etc. in various places
+	Added special behaviours in some areas:
+		Lever puzzle in Covetous
+		Monster-spawning brazier in Deceit
+		Switch/portcullis behaviour in Hedge Maze
+	Updated teleport.scp with teleport locations for:
+		Hedge maze, Hythloth lvl 2 teleport maze, Wrong dungeon, Buccaneer's Den to/from mainland, various Ilshenar teleport locations
+	Players flagged as criminals or non-innocent aggressors in PvP combat can no longer use public moongates
+	Pets will now teleport along with the player both when using moongates (public or spell-based), recall, object-based teleporters or hard-defined teleport locations from teleport.scp
+
 02/11/2021 - Xuri (0.99.4z++)
 	Updated 'decorate save command to not save items that are inside multis (the multis themselves are not saved anyway!)
 	Fixed some issues that would crash decorate script when attempting to use event subcommands without event names

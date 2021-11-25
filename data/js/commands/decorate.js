@@ -1,5 +1,8 @@
 // Decorate command - by Xuri (xuri@uox3.org)
-// v1.3
+// v1.4
+//
+//		1.4 - 08/11/2021
+// 			Added version system so updates won't break older template versions
 //
 //		1.3 - 31/10/2021
 //			Fixed a few bugs with incorrect dictionary messages
@@ -102,6 +105,7 @@ const moongateIDs = [ 0x0dda,0x0ddb,0x0ddc,0x0ddd,0x0dde,0x0f6c,0x0f6d,0x0f6e,0x
 
 // ScriptID of this script, used to identify and close some gumps
 const scriptID = 1059;
+const templateSystemVer = 2;
 
 function CommandRegistration()
 {
@@ -968,6 +972,10 @@ function SaveDecorationToArray( toCheck, arrayRef )
 	var itemWeightMax = (toCheck.weightMax).toString();
 	var itemMaxItems = (toCheck.maxItems).toString();
 	var itemAmount = (toCheck.amount).toString();
+	var more = (toCheck.more).toString();
+	var moreX = (toCheck.morex).toString();
+	var moreY = (toCheck.morey).toString();
+	var moreZ = (toCheck.morez).toString();
 	var spawnSection = 0;
 	var sectionAList = 0;
 	var minInterval = 0;
@@ -983,8 +991,9 @@ function SaveDecorationToArray( toCheck, arrayRef )
 	// Form new string with object properties separated by a |
 	var newEntry = itemID + "|" + itemName + "|" + itemHue + "|" + itemType + "|" + itemX + "|"
 		+ itemY + "|" + itemZ + "|" + itemWorld + "|" + itemInstanceID + "|" + itemMovable + "|"
-		+ itemVisible + "|" + itemDirection + "|" + itemWeight + "|" + "|" + itemMaxItems + "|" + itemAmount + "|"
-		+ spawnSection + "|" + sectionAList + "|" + minInterval + "|" + maxInterval;
+		+ itemVisible + "|" + itemDirection + "|" + itemWeight + "|" + itemWeightMax + "|" + itemMaxItems + "|"
+		+ itemAmount + "|" + spawnSection + "|" + sectionAList + "|" + minInterval + "|"
+		+ maxInterval + "|" + more + "|" + moreX + "|" + moreY + "|" + moreZ;
 
 	// Append any ScriptTriggers attached to object to string
 	var scriptTriggers = toCheck.scriptTriggers;
@@ -1043,6 +1052,8 @@ function SaveDecorationsToFile( socket, arrayRef, singleSave )
 	{
 		// Append each line in arrayRef to a new line in the file
 		var newLine = "";
+		mFile.Write( templateSystemVer + "\n" );
+
 		for( var i = 0; i < arrayLength; i++ )
 		{
 			mFile.Write( arrayRef[i] + "\n" );
@@ -1486,7 +1497,7 @@ function LoadDecorationsFromFile( socket )
 		{
 			// Read a line of text from the file
 			var line = mFile.ReadUntil( "\n" );
-			if( line.length <= 1 || line == "" )
+			if( line.length <= 0 || line == "" )
 				continue;
 
 			// Add each line to the array of decorations to load
@@ -1522,7 +1533,7 @@ function DecorateWorld( socket )
 	var visible = 1;
 	var dir = 0;
 	var weight = 0;
-	var weightMax = 0;
+	var itemWeightMax = 0;
 	var maxItems = 0;
 	var amount = 0;
 	var spawnSection = "";
@@ -1530,6 +1541,10 @@ function DecorateWorld( socket )
 	var minInterval = 0;
 	var maxInterval = 0;
 	var scriptTriggers = [];
+	var more = 0;
+	var moreX = 0;
+	var moreY = 0;
+	var moreZ = 0;
 
 	var newItemCount = 0;
 	var twentyPercent = Math.round(arrayLength * 0.2);
@@ -1539,14 +1554,26 @@ function DecorateWorld( socket )
 	var progress = 0;
 	var fontColor = "";
 
+	var templateVer = 0;
+
 	for( var i = 0; i < arrayLength; i++ )
 	{
 		// Reset scriptTriggers array for each line
 		scriptTriggers.length = 0;
 		var splitString = decorateArray[i].split( "|" );
 		var splitStringLength = splitString.length;
+		if( splitStringLength == 1 )
+		{
+			// Version number exists, read it and move on to the next go
+			templateVer = parseInt(splitString);
+			continue;
+		}
+
 		for( var j = 0; j < splitString.length; j++ )
 		{
+			if( typeof(splitString[j]) == "undefined" )
+				continue;
+
 			if( j == 0 ) // ID
 				id = parseInt(splitString[j]);
 			else if ( j == 1 ) // Name
@@ -1574,9 +1601,9 @@ function DecorateWorld( socket )
 			else if( j == 12 ) // Weight
 				weight = parseInt(splitString[j]);
 			else if( j == 13 ) // WeightMax
-				amount = parseInt(splitString[j]);
+				itemWeightMax = parseInt(splitString[j]);
 			else if( j == 14 ) // MaxItems
-				amount = parseInt(splitString[j]);
+				maxItems = parseInt(splitString[j]);
 			else if( j == 15 ) // Amount
 				amount = parseInt(splitString[j]);
 			else if( j == 16 ) // SpawnSection
@@ -1586,10 +1613,27 @@ function DecorateWorld( socket )
 			else if( j == 18 ) // minInterval
 				minInterval = parseInt(splitString[j]);
 			else if( j == 19 ) // maxInterval
-				maxInterval = parseInt(splitString[j])
-			else if( j >= 20 ) // ScriptTriggers
+				maxInterval = parseInt(splitString[j]);
+			else if( templateVer == 0 )
 			{
-				scriptTriggers.push(parseInt(splitString[j]));
+				if( j >= 20 ) // ScriptTriggers
+				{
+					scriptTriggers.push(parseInt(splitString[j]));
+				}
+			}
+			else if( templateVer >= 1 )
+			{
+				// more, morex, morey and morez were added
+				if( j == 20 )
+					more = parseInt(splitString[j]);
+				else if( j == 21 )
+					moreX = parseInt(splitString[j]);
+				else if( j == 22 )
+					moreY = parseInt(splitString[j]);
+				else if( j == 23 )
+					moreZ = parseInt(splitString[j]);
+				else if( j >= 24 )
+					scriptTriggers.push(parseInt(splitString[j]));
 			}
 		}
 
@@ -1667,6 +1711,13 @@ function DecorateWorld( socket )
 		if( ValidateObject( newItem ))
 		{
 			newItem.type = type;
+			if( x < 0 || y < 0 )
+			{
+				newItem.Delete();
+				socket.SysMessage( "Error: Invalid coordinates (x "+x+", y "+y+") detected for an item with ID " + id + ". Deleting item."  );
+				Console.Error( "Error: Invalid coordinates (x "+x+", y "+y+") detected for an item with ID " + id + ". Deleting item." );
+				continue;
+			}
 			newItem.x = x;
 			newItem.y = y;
 			newItem.z = z;
@@ -1676,9 +1727,49 @@ function DecorateWorld( socket )
 			newItem.visible = visible;
 			newItem.dir = dir;
 			newItem.weight = weight;
-			newItem.weightMax = weightMax;
 			newItem.maxItems = maxItems;
+			newItem.decayable = false;
+			if( maxItems == 0 )
+				newItem.maxItems = 125;
+			newItem.weightMax = itemWeightMax;
+			if( itemWeightMax == 0 )
+				newItem.weightMax = 400000;
 			newItem.amount = amount;
+
+			// Add new if statements with each version of worldfile templates
+			// Generally, changes are made based on difference between
+			// previous version and current, and changes from all previous versions are
+			// usually made
+			if( templateVer >= 1 )
+			{
+				newItem.more = more;
+				newItem.morex = moreX;
+				newItem.morey = moreY;
+				newItem.morez = moreZ;
+			}
+			if( templateVer >= 2 )
+			{
+				if( spawnSection == "dungeontreasureloot1" )
+				{
+					newItem.mininterval = 15;
+					newItem.maxinterval = 20;
+				}
+				else if( spawnSection == "dungeontreasureloot2" )
+				{
+					newItem.mininterval = 20;
+					newItem.maxinterval = 25;
+				}
+				else if( spawnSection == "dungeontreasureloot3" )
+				{
+					newItem.mininterval = 25;
+					newItem.maxinterval = 30;
+				}
+				else if( spawnSection == "dungeontreasureloot4" )
+				{
+					newItem.mininterval = 30;
+					newItem.maxinterval = 35;
+				}
+			}
 
 			if( scriptTriggers.length > 0 )
 			{
@@ -1705,7 +1796,7 @@ function DecorateWorld( socket )
 
 function onIterate( toCheck )
 {
-	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ))
+	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave )
 	{
 		if(( saveCustom || saveEvent ) && saveAll )
 		{
@@ -1713,8 +1804,8 @@ function onIterate( toCheck )
 			if( saveEvent && (toCheck.event).toLowerCase() != eventName )
 				return false;
 
-			if( !saveEvent && toCheck.worldnumber != facetID )
-				return false;
+			/*if( !saveEvent && toCheck.worldnumber != facetID )
+				return false;*/
 
 			// Save ALL decorations on ALL facets to one custom file
 			SaveDecorationToArray( toCheck, decorateArray );
@@ -1769,12 +1860,6 @@ function onIterate( toCheck )
 				SaveDecorationToArray( toCheck, decorateSignsArray );
 				return true;
 			}
-			else if( CheckTileFlag( toCheck.id, 23 )) // 23 = TF_LIGHT
-			{
-				// Lights
-				SaveDecorationToArray( toCheck, decorateLightsArray );
-				return true;
-			}
 			else if( toCheck.type == 1 || toCheck.type == 8 || toCheck.type == 87 || CheckTileFlag( toCheck.id, 21 )) // 21 = TF_CONTAINER
 			{
 				// Containers
@@ -1797,6 +1882,12 @@ function onIterate( toCheck )
 			{
 				// Spawner Objects
 				SaveDecorationToArray( toCheck, decorateSpawnersArray );
+				return true;
+			}
+			else if( CheckTileFlag( toCheck.id, 23 )) // 23 = TF_LIGHT
+			{
+				// Lights
+				SaveDecorationToArray( toCheck, decorateLightsArray );
 				return true;
 			}
 			else

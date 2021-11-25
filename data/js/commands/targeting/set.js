@@ -337,10 +337,11 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	case "VISIBLE":
 		ourItem.visible = nVal;
+		ourItem.Refresh();
 		okMsg( socket );
 		break;
 	case "DESC":
-		ourItem.desc = nVal;
+		ourItem.desc = socket.xText.substring( 5 );
 		okMsg( socket );
 		break;
 	case "DEF":

@@ -164,16 +164,16 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddHTMLGump( 280, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Facets</BASEFONT></BIG></CENTER>" );
 	adminWelcome.AddButton( 280, 60, (pageNum == 2 ? 10820 : 10800), (pageNum == 2 ? 10800 : 10820), 0, 2, 0 );
 	// adminWelcome.AddButton( 280, 100, (pageNum == 3 ? 10820 : 10800), (pageNum == 3 ? 10800 : 10820), 0, 3, 0 );
-	// adminWelcome.AddButton( 280, 140, (pageNum == 4 ? 10820 : 10800), (pageNum == 4 ? 10800 : 10820), 0, 4, 0 );
+	adminWelcome.AddButton( 280, 140, (pageNum == 4 ? 10820 : 10800), (pageNum == 4 ? 10800 : 10820), 0, 4, 0 );
 	// adminWelcome.AddButton( 280, 180, (pageNum == 5 ? 10820 : 10800), (pageNum == 5 ? 10800 : 10820), 0, 5, 0 );
 	// adminWelcome.AddButton( 280, 220, (pageNum == 6 ? 10820 : 10800), (pageNum == 6 ? 10800 : 10820), 0, 6, 0 );
 	// adminWelcome.AddButton( 280, 260, (pageNum == 7 ? 10820 : 10800), (pageNum == 7 ? 10800 : 10820), 0, 7, 0 );
 	adminWelcome.AddGump( 280, 100, 10840 );
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
-	adminWelcome.AddGump( 280, 140, 10840 );
+	/*adminWelcome.AddGump( 280, 140, 10840 );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );*/
 	adminWelcome.AddGump( 280, 180, 10840 );
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
@@ -193,16 +193,16 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	// Add section with object category checkboxes
 	adminWelcome.AddBackground( 400, 30, 115, 275, gumpSecondaryBackground );
 	adminWelcome.AddHTMLGump( 410, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Types</BASEFONT></BIG></CENTER>" );
-	if( pageNum == 2 )
+	if( pageNum == 2 || pageNum == 4 )
 	{
 		// Only add checkboxes for pages that actually have decorations
-	adminWelcome.AddCheckbox( 410, 60, 9722, 2153, 1, checkboxStartID );
-	adminWelcome.AddCheckbox( 410, 90, 9722, 2153, 1, checkboxStartID + 1 );
-	adminWelcome.AddCheckbox( 410, 120, 9722, 2153, 1, checkboxStartID + 2 );
-	adminWelcome.AddCheckbox( 410, 150, 9722, 2153, 1, checkboxStartID + 3 );
-	adminWelcome.AddCheckbox( 410, 180, 9722, 2153, 1, checkboxStartID + 4 );
-	adminWelcome.AddCheckbox( 410, 210, 9722, 2153, 1, checkboxStartID + 5 );
-	adminWelcome.AddCheckbox( 410, 240, 9722, 2153, 1, checkboxStartID + 6 );
+		adminWelcome.AddCheckbox( 410, 60, 9722, 2153, 1, checkboxStartID );
+		adminWelcome.AddCheckbox( 410, 90, 9722, 2153, 1, checkboxStartID + 1 );
+		adminWelcome.AddCheckbox( 410, 120, 9722, 2153, 1, checkboxStartID + 2 );
+		adminWelcome.AddCheckbox( 410, 150, 9722, 2153, 1, checkboxStartID + 3 );
+		adminWelcome.AddCheckbox( 410, 180, 9722, 2153, 1, checkboxStartID + 4 );
+		adminWelcome.AddCheckbox( 410, 210, 9722, 2153, 1, checkboxStartID + 5 );
+		adminWelcome.AddCheckbox( 410, 240, 9722, 2153, 1, checkboxStartID + 6 );
 		adminWelcome.AddCheckbox( 410, 270, 9722, 2153, 1, checkboxStartID + 7 );
 	}
 	adminWelcome.AddHTMLGump( 445, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );

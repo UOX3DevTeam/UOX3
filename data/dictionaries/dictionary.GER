@@ -3945,6 +3945,14 @@
 9097=Sie können dieses Haus-Addon dort nicht platzieren, der Standort ist blockiert!
 9098=Gegenstand für normale Spieler unbeweglich, kann aber von GM-Charakteren aus dem Rucksack gezogen werden.
 9099=Tipp: Versuchen Sie den Befehl 'ALLMOVE ON' oder ändern Sie die bewegliche Eigenschaft des Objekts mit dem Befehl 'TWEAK'!
+9100=*vermeidet eine Falle*
+9101=Ziel auswählen, um ID um %i zu ändern:
+9102=Dieses Schloss kann nicht mit Magie entriegelt werden!
+9103=%i Gegenstände betroffen von %s %d
+9104=Wählen Sie die erste Ecke des Befehlsfeldes:
+9105=Wählen Sie die zweite Ecke des Befehlsfeldes:
+9106=Du hörst das Geräusch eines Tores, das sich in der Nähe bewegt.
+9107=Du bist es nicht wert, die Stadt des Windes zu betreten!
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!

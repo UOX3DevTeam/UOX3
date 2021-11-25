@@ -36,7 +36,11 @@ function onCallback1( socket, ourObj )
 		{
 			targX = socket.GetWord( 11 );
 			targY = socket.GetWord( 13 );
-			targZ = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			targZ = socket.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+				targZ += GetTileHeight( socket.GetWord( 17 ));
 		}
 		mChar.SoundEffect( 0x01FE, true );
 		mChar.SetLocation( targX, targY, targZ );

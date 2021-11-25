@@ -2487,6 +2487,7 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 	{
 		CChar *mCharObj = s->CurrcharObj();
 		bool alwaysSendItemHue = false;
+
 		if( s->ReceivedVersion() )
 		{
 			if( s->ClientVerShort() >= CVS_70331 )
@@ -2500,7 +2501,7 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 			alwaysSendItemHue = true;
 		}
 
-		if( mCharObj == this && drawGamePlayer )
+		if( mCharObj == this && drawGamePlayer && mCharObj->GetVisible() == 0 )
 		{
 			// Only send this when updating after a teleport/world change
 			CPDrawGamePlayer gpToSend( (*this) );
@@ -2510,7 +2511,8 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 		}
 		else if( GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel() )
 			return;
-		else if( ( ( GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN ) || ( !IsNpc() && !isOnline( (*this) ) ) ) && GetCommandLevel() >= mCharObj->GetCommandLevel() )
+		else if( mCharObj != this && GetCommandLevel() >= mCharObj->GetCommandLevel() 
+			&& (( GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN ) || ( !IsNpc() && !isOnline( (*this) ))))
 			return;
 
 		CPDrawObject toSend( (*this) );
@@ -2666,10 +2668,11 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 				continue;
 
 			// Send one extra update to self to fix potential issues with world changing
-			if( (*cIter)->CurrcharObj() == this && sendToSelf )
+			if( ( *cIter )->CurrcharObj() == this && sendToSelf )
+			{
 				SendToSocket( (*cIter), drawGamePlayer );
-			else if( (*cIter)->CurrcharObj() == this && !sendToSelf  )
 				continue;
+			}
 
 			SendToSocket( (*cIter), drawGamePlayer );
 		}
