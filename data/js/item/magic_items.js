@@ -323,7 +323,6 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 	// Create random Weapon from chosen tier
 	var rndWeapon;
 	var rndWeaponNum;
-	Console.Print( "tierNum: " + tierNum + "\n" );
 	switch( tierNum )
 	{
 		case 1:
@@ -535,7 +534,6 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 						placeHolderItem.race = rndWeapon.race.id;
 					else
 					{
-						//Console.Print( itemProp + ": " + rndWeapon[itemProp] );
 						placeHolderItem[itemProp] = rndWeapon[itemProp];
 					}
 				}

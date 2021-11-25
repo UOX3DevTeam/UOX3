@@ -218,12 +218,14 @@ function onCallback1( pSock, myTarget )
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		myTarget.frozen = true;
+		myTarget.Refresh();
 		pUser.SysMessage( GetDictionaryEntry( 8872, pSock.language )); // The selected character has been frozen.
 	}
 	else if( !pSock.GetWord( 1 ) && myTarget.isItem  )
 	{
 		myTarget.movable = 2;
 		myTarget.decayable = false;
+		myTarget.Refresh();
 		pUser.SysMessage( GetDictionaryEntry( 8873, pSock.language )); // The selected item has been frozen.
 	}
 	else
@@ -239,6 +241,7 @@ function onCallback2( pSock, myTarget )
 		if( myTarget.frozen == true )
 		{
 			myTarget.frozen = false;
+			myTarget.Refresh();
 			pUser.SysMessage( GetDictionaryEntry( 8875, pSock.language )); // The selected item has been unfrozen.
 		}
 		else
@@ -251,6 +254,7 @@ function onCallback2( pSock, myTarget )
 		else
 		{
 			myTarget.movable = 1;
+			myTarget.Refresh();
 			pUser.SysMessage( GetDictionaryEntry( 8878, pSock.language )); // The selected item has been unfrozen.
 		}
 	}

@@ -4109,6 +4109,14 @@
 9097=Vous ne pouvez pas placer cet addon maison à cet endroit, l'emplacement est bloqué !
 9098=Il est inamovible pour les joueurs normaux, mais peut être tiré hors du sac à dos par les personnages GM.
 9099=Tip : Essayez la commande 'ALLMOVE ON' ou modifiez la propriété mobile de l'objet avec la commande 'TWEAK' !
+9100=*évite les pièges*
+9101=Sélectionner la cible pour modifier l'ID par %i :
+9102=Cette serrure ne peut pas être déverrouillée par la magie !
+9103=%i objets affectés par %s %d
+9104=Sélectionner le premier coin de la boîte de commande :
+9105=Sélectionnez le deuxième coin de la boîte de commande :
+9106=Vous entendez le bruit d'une porte qui bouge à proximité.
+9107=Vous n'êtes pas digne d'entrer dans la cité du vent !
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

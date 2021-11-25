@@ -1,0 +1,8 @@
+[nodraw_blocking_tile]
+{
+get=base_item
+id=0x21a3
+name=nodraw_blocking_tile
+movable=2
+decay=0
+}

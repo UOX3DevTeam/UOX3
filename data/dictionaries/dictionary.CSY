@@ -3952,6 +3952,14 @@
 9097=Tento dům-addon tam nelze umístit, umístění je blokováno!
 9098=Předmět je pro normální hráče nepohyblivý, ale GM postavy ho mohou vytáhnout z batohu.
 9099=Tip: Zkuste příkaz 'ALLMOVE ON nebo upravte vlastnost předmětu jako pohyblivého pomocí příkazu 'TWEAK!
+9100=*vyhne se pasti*
+9101=Vyberte cíl pro změnu ID podle %i:
+9102=Tento zámek nelze odemknout pomocí magie!
+9103=%i položek ovlivněných %s %d
+9104=Vyberte první roh areálupříkazového pole:
+9105=Vyberte druhý roh areálu příkazového pole:
+9106=Slyšíte zvuk brány, která se pohybuje poblíž.
+9107=Nejsi hoden vstupu do města Větru!
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at uox3.org)
-// v1.14
-// Last updated: 30/08/2021
+// v1.15
+// Last updated: 06/11/2021
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -22,6 +22,7 @@ function CommandRegistration()
 	RegisterCommand( "rtele", 2, true ); //Use 'RTELE <target teleport location>
 	RegisterCommand( "raddnpc", 2, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
 	RegisterCommand( "raddspawner", 2, true ); //Use 'RADDSPAWNER <id from DFNs> - Adds specified Spawner at multiple targeted locations
+	RegisterCommand( "rincid", 2, true ); // Use 'RINCID <value> - repeatedly increase/decrease ID of target by <value>
 }
 
 //Repeated Command: INCX <value>
@@ -187,9 +188,36 @@ function command_RADD( pSock, execString )
 	// if( !isNaN(execString))
 	// {
 		var splitString = execString.split( " " );
+		if( isNaN(splitString[0]) && isNaN(splitString[1]) )
+			return;
+
+		if( splitString[0] == "item" )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 9111, pSock.language )); // Try the 'radditem command instead!
+			return;
+		}
+
+		var itemID;
+		if( splitString[0] == "tree" )
+		{
+			if( splitString[1] )
+			{
+				itemID = parseInt(splitString[1]).toString(16);
+			}
+			else
+			{
+				pSock.SysMessage( GetDictionaryEntry( 9108, pSock.language )); // IDs for both tree trunk AND leaves are required by this command. Syntax: cmd tree [trunkID] [leafID]
+				return;
+			}
+		}
+		else
+		{
+			itemID = parseInt(splitString[0]).toString(16);
+		}
+
 		pSock.xText = execString;
 		var tempMsg = GetDictionaryEntry( 8936, pSock.language ); // Select target location for item 0x%i:
-		pSock.CustomTarget( 6, tempMsg.replace(/%i/gi, parseInt(splitString[0]).toString(16) ));
+		pSock.CustomTarget( 6, tempMsg.replace(/%i/gi, itemID ));
 	// }
 	// else
 		// pSock.SysMessage( ReqNum );
@@ -202,9 +230,20 @@ function onCallback6( pSock, myTarget )
 	if( cancelCheck != 255 )
 	{
 		var tempItemID = ""; //pSock.xText;
+		var tempItemID2 = "";
 
 		var splitString = pSock.xText.split( " " );
-		if( splitString[1] )
+		if( splitString[0] == "tree")
+		{
+			if( !splitString[1] || !splitString[2] )
+			{
+				pSock.SysMessage( GetDictionaryEntry( 9108, pSock.language )); // IDs for both tree trunk AND leaves are required by this command. Syntax: cmd tree [trunkID] [leafID]
+				return;
+			}
+			tempItemID = splitString[1];
+			tempItemID2 = splitString[2];
+		}
+		else if( splitString[1] )
 		{
 			// radd itemID rndValue
 			tempItemID = (parseInt(splitString[0]) + RandomNumber(0, parseInt(splitString[1]))).toString();
@@ -217,7 +256,11 @@ function onCallback6( pSock, myTarget )
 		// Find targeted location
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+		var targZ = pSock.GetSByte( 16 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+			targZ += GetTileHeight( pSock.GetWord( 17 ));
 
 		// Create item and set it's location
 		var pUser = pSock.currentChar;
@@ -226,6 +269,16 @@ function onCallback6( pSock, myTarget )
 		{
 			tempItem.SetLocation( targX, targY, targZ );
 			tempItem.decayable = false;
+
+			if( tempItemID2 != "" )
+			{
+				var tempItem2 = CreateBlankItem( pSock, pUser, 1, "#", parseInt(tempItemID2) + RandomNumber( 0, 1 ), 0x0, "ITEM", false );
+				if( tempItem2 )
+				{
+					tempItem2.SetLocation( targX, targY, targZ );
+					tempItem2.decayable = false;
+				}
+			}
 			var tempMsg = GetDictionaryEntry( 8936, pSock.language ); // Select target location for item 0x%i:
 			pSock.CustomTarget( 6, tempMsg.replace(/%i/gi, parseInt(tempItemID).toString(16) ));
 		}
@@ -354,7 +407,11 @@ function onCallback9( pSock, myTarget )
 		var pUser = pSock.currentChar;
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+		var targZ = pSock.GetSByte( 16 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+			targZ += GetTileHeight( pSock.GetWord( 17 ));
 
 		pUser.Teleport( targX, targY, targZ );
 		pSock.CustomTarget( 9, GetDictionaryEntry( 8942, pSock.language )); // Select location to teleport to:
@@ -383,7 +440,12 @@ function onCallback10( pSock, myTarget )
 		{
 			var targX = pSock.GetWord( 11 );
 			var targY = pSock.GetWord( 13 );
-			var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+			var targZ = pSock.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+				targZ += GetTileHeight( pSock.GetWord( 17 ));
+
 			var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber, pUser.instanceID );
 			var tempMsg = GetDictionaryEntry( 8943, pSock.language ); // Select target location for the [%s]:
 			pSock.CustomTarget( 10, tempMsg.replace(/%s/gi, TempNPCID ));
@@ -453,6 +515,37 @@ function onCallback11( pSock, myTarget )
 		}
 		else
 			pSock.SysMessage( GetDictionaryEntry( 8941, pSock.language )); // That doesn't seem to be a valid item-id from the DFNs. No item added!
+	}
+	else
+		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
+}
+
+//Repeated Command: RINCID <value>
+function command_RINCID( pSock, execString )
+{
+	if( !isNaN(execString))
+	{
+		pSock.xText = execString;
+		var tempMsg = GetDictionaryEntry( 9101, pSock.language ); // Select target to modify ID by %i:
+		pSock.CustomTarget( 12, tempMsg.replace(/%i/gi, execString ));
+	}
+	else
+		pSock.SysMessage( ReqNum );
+}
+function onCallback12( pSock, myTarget )
+{
+	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
+	// regular UO client), but one byte in the packet is always 255 when this happens
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck != 255 )
+	{
+		var rincIDVal = pSock.xText;
+		var rincIDVal = Number(rincIDVal);
+		if( !pSock.GetWord( 1 ))
+				myTarget.id += rincIDVal;
+
+		var tempMsg = GetDictionaryEntry( 9101, pSock.language ); // Select target to modify ID by %i:
+		pSock.CustomTarget( 12, tempMsg.replace(/%i/gi, rincIDVal ));
 	}
 	else
 		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.

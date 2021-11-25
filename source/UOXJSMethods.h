@@ -139,6 +139,8 @@ JSMethodFunc CItem_Dupe;
 JSMethodFunc CItem_LockDown;
 JSMethodFunc CItem_Carve;
 JSMethodFunc CItem_GetTileName;
+JSMethodFunc CItem_GetMoreVar;
+JSMethodFunc CItem_SetMoreVar;
 
 
 // BaseObject Methods
@@ -486,6 +488,8 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "LockDown",			CItem_LockDown,				0, 0, 0 },
 	{ "Carve",				CItem_Carve,				1, 0, 0 },
 	{ "GetTileName",		CItem_GetTileName,			0, 0, 0 },
+	{ "GetMoreVar",			CItem_GetMoreVar,			2, 0, 0 },
+	{ "SetMoreVar",			CItem_SetMoreVar,			3, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },

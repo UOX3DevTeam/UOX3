@@ -27,11 +27,11 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 18. October, 2021</small></p>
+	<p style="margin:0"><small>Last Updated: 19. October, 2021</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4y</small></p>
 </div>
 
-<div id="filterMainDocs" contenteditable="true" placeholder="(Filter)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px"></div>
+<div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
 	<ul class="cd-faq__categories topicListDocs">
@@ -238,7 +238,7 @@ packitem=0x0f8d,30
 							<li><strong>Dynamic Reloading of Scripts</strong> - Any scripts, definition files and ini files used by UOX3 can be reloaded on the fly - in just a few seconds - while the server is already running. This makes it easy for shard admins and developers to quickly iterate on changes and additions, without having to restart the server from scratch and reconnect the client to see each change.</li>
 							<li><strong>Custom Object Tags</strong> - Custom string/int tags can be added to any character or item (including multis) via JS scripts or Item/NPC definitions - either of which can be reloaded on the fly if needed. No need to ask developers to add a custom tag in the source... just add it yourself! No serialization headaches required.</li>
 							<li><strong>UO Client Support</strong> - UOX3 supports a wide range of UO client versions, all the way from the 4.x versions originally introduced with the Age of Shadows expansion in 2003, to the most recent 7.0.x series available today.</li>
-							<li><strong>Multi-Language Support</strong> - UOX3 comes with a custom dictionary system that allows for sending script and system messages to connected clients in the client's default language, or to specify a default language for the server which is used for all connected clients regardless of their language settings. Languages supported by server (translation quality may vary):<br><span class="hl">English (Default), Czech, French, German, Italian, Portuguese, Spanish</span></li>
+							<li><strong>Multi-Language Support</strong> - UOX3 comes with a custom dictionary system that allows for sending script and system messages to connected clients in the client's default language, or to specify a default language for the server which is used for all connected clients regardless of their language settings. Languages supported by server (translation quality may vary):<br><span class="hl">English (Default), Czech, French, German, Italian, Polish, Portuguese, Spanish</span></li>
 							<li><strong>Extensive Log System</strong> - UOX3 comes with an extensive log system that tracks server errors, warnings, network packets sent and received for each client, commands used, spells cast, combat events, player speech and more.</li>
 						</ul>
 					</div>
@@ -375,15 +375,16 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 						<p>Refer to this Quick Start guide to get up and running with UOX3 in just a couple of minutes! If you run into any problems along the way, check the <a href="index.html#uox3Requirements">full setup guide below</a> for more detailed instructions with additional information that might help you resolve your issue. Also feel free to jump onto our <a href="https://discord.gg/uBAXxhF" title="UOX3 @ Discord">Discord server</a> or post in the <a href="https://www.uox3.org/forums" title="UOX3 Community Forums">community forums</a> for more hands-on support!</p>
 						<ol>
-							<li>Download the <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">UO Client</a>, and <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a>. Run Razor in WinXP SP2/3 Compatibility mode. For Linux/macOS users, find a way to copy the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on <a href="https://www.classicuo.eu/" target="_blank" title="ClassicUO - Open Source UO Client">ClassicUO</a> client (also available for Windows-users!) instead of the UO+Razor combination.</li>
+							<li>Download the <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">UO Client</a>, and either <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - Open Source UO Client">ClassicUO</a> (recommended) or <a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO Assistant">Razor Community Edition</a> (or both!). For Linux/macOS users, find a way to copy the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on <strong>ClassicUO</strong> client to run the game.</li>
 							<li>Download <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3</a> for your platform of choice.</li>
 							<li>Update <strong>SERVERNAME</strong> (name of your shard) and optionally <strong>EXTERNALIP</strong> (your internet IP) in <em>[system]</em> section of <strong>UOX.INI</strong>. If you just want to connect locally on same computer, leave EXTERNALIP alone</li>
 							<li>Set client versions allowed on your shard via <strong>CLIENTSUPPORT#</strong> lines in <em>[clientsupport]</em> section of <strong>UOX.INI</strong>.</li>
 							<li>Update <strong>DATADIRECTORY</strong> path in <em>[directories]</em> section of <strong>UOX.INI</strong>; point it to UO folder, or folder with UO data files.</li>
 							<li>Change default <strong>username</strong>/<strong>password</strong> for <em>account 0</em> (admin account) in <strong>UOX3/accounts/accounts.adm</strong>.</li>
 							<li>Start UOX3!</li>
-							<li>Start Razor and use it to load up the UO client (or use ClassicUO), then log in using the new username and password you created for the admin account!</li>
+							<li>Start ClassicUO (or Razor), where you set up a user profile, then use it to load up the UO client and log in using the new username and password you created for the admin account!</li>
 						</ol>
+						<p>(Bonus tip: If you run into trouble launching the UO client using either ClassicUO or Razor, try running these tools in WinXP SP2/3 Compatibility mode)</p>
 						<p>Assuming the setup process went without a hitch, you can now skip ahead to the section titled <a href="index.html#logInAndCreateChar">Logging In and Creating a Character</a> for a taking your first steps in your UOX3 shard! However, if you ran into any trouble along the way, refer to the full setup guide in the next few sections below!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -415,10 +416,8 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<p>Clients after v7.0.24.2 started using new file format for map files - uop - that previously required conversion to mul format in order to be loaded by UOX3, leading to a recommendation of using a client version earlier than this. However, starting with v0.99.3, UOX3 <strong>can</strong> now load these uop files directly. <strong>No need to convert!</strong> If for whatever reason you still want to convert files between the .mul and .uop formats, check out the <a href="#convertUOP">Additional UOX3 Info > Converting UOP to MUL</a> section!</p>
 					</div>
-					<p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">the community forums</a> to read more about UOX3's compatibility with various UO Client versions.</p>
-					<p>While you're at it, go grab the <a href="http://www.uor-razor.com/" target="_blank">UO:R Community Edition of Razor</a>, a tool you'll need later to remove the encryption from the UO client, allowing it to connect to UOX3 - which only accepts encryption-less connections. Alternatively, you can use <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a> - an open source client with many extra bells and whistles.</p>
-					<h3>Linux/macOS Platforms</h3>
-					<p>While UOX3 supports both Linux and macOS, neither the standard UO client nor Razor run natively on these platforms. As an alternative, have a look at <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source, cross-platform client that supports both Linux and macOS (and Windows!), and which does not rely on Razor to work.</p>
+					<p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">the community forums</a> to read more about UOX3's compatibility with various UO Client versions.</p>
+					<p>While you're at it, go grab <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source implementation of the UO client with many bells and whistles, which is the de-facto standard for connecting to private UO shards these days. It supports both Windows, Linux and macOS - though it still relies on the data files from the original UO client. You can also grab <a href="http://www.razorce.com/" target="_blank">Razor Community Edition</a>, which on its own can be used to run the original UO client and provides many quality of life options, though it can also be used in tandem with ClassicUO for the best of both worlds.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -432,9 +431,9 @@ packitem=0x0f8d,30
 					<p>The first, and most straight-forward option is to download the latest stable <strong>All-in-One UOX3 package</strong> for your platform (Windows/Linux/macOS) from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
 					<h3>2) Experimental Build</h3>
 					<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to the "cutting edge" nature.</p>
-					<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3.</p></div>
+					<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3 for Windows, or your home directory for Linux/macOS.</p></div>
 					<h3>3) Compile Source Yourself</h3>
-					<p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, or just like to live life on the edge and want to stay up-to-date with the most recent changes at any given point of time, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
+					<p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, or just like to live life on the cutting edge and want to stay up-to-date with the most recent changes at any given point of time, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -455,6 +454,7 @@ packitem=0x0f8d,30
 					<p>Speaking of ports - the ini setting <span class="hl">PORT=2593</span> determines the port UOX3 will be listening for incoming connections on. Usually this can be left as the default value, unless you have specific reasons to use a different port.</p>
 					<h3>Step 4) Limit Allowed Client Versions</h3>
 					<p>Under the <span class="hl">[clientsupport]</span> section, enable or disable specific UO client version ranges to determine which versions of the UO client are allowed to connect to your UOX3 shard. As a general rule, try to keep the allowed ranges as narrow as possible to avoid potential issues with different client versions behaving differently. Any client version you enable here also enable a range of versions up to the version in the next available setting.</p>
+					<p>If you're using the latest available version of the UO client, no need to make any changes here - the latest versions are allowed by default.</p>
 					<h3>Step 5) Set the path to UO files</h3>
 					<p>Scroll down to the <strong>[directories]</strong> section of the ini file, and locate this line:</p>
 					<p style="margin-left: 20px"><span class="hl">DATADIRECTORY=C:\Program Files (x86)\Electronic Arts\Ultima Online Classic</span></p>
@@ -570,25 +570,6 @@ packitem=0x0f8d,30
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#populateUOX3" id="populateUOX3"><span>Decorating and Populating Your UOX3 Shard</span></a>
-				<div class="cd-faq__content">
-				  <div class="text-component">
-				  <h3>Decorating your World with Items</h3>
-				  <p>By default, UOX3 comes as a blank slate - <strong>a tabula rasa</strong> - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you will - on first login with a character on the admin account - <strong>get the option</strong> to <span class="hl">automatically decorate your shard</span> based on some default <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world templates</a> (based on the older "<em>default UOX3 worldfiles</em>") provided with UOX3, which generates items such as doors, signs, lights and more. For now, these templates cover all the mainland UO towns on the Felucca facet (world 0).</p>
-				  <p>This option is presented in a <strong>gump</strong> (UO term for menu) that pops up on login, where you can choose between <strong>starting with a blank shard</strong> and do your own thing, or to <strong>make use of the default UOX3 world templates</strong> to generate decorations and provide a starting point for your shard.</p>
-				  <p style="padding-left: 10%; padding-right: 10%"><img src="assets/images/uox3_welcome_1.jpg" style="padding: 20px;max-width: 50%; max-height: 316px;float: left"/><img src="assets/images/uox3_welcome_2.jpg" style="padding: 20px;max-width: 50%;max-height: 316px;float: right"/></p>
-				  <p style="clear:both">If you don't want to make this choice on your first login, you can always return to the welcome screen using the <span class="hl">'welcome</span> command, or alternatively skip that altogether and rely on the <span class="hl">'decorate load</span> command to get the job done. Either way, any custom content you have added or changes you have made to your shard will not be overwritten.</p>
-				  <p>For more info on how to actually create a character and login to your shard, check the <a href="#logInAndCreateChar">Logging In and Creating a Character</a> section of the docs.</p>
-				  <h3>Populating your World with NPCs</h3>
-				  <p>You can supplement the world decorations from above with a community-made spawn file, which <strong>will populate your world with all kinds of NPCs</strong>, from animals and monsters to shopkeepers and townfolk. This also covers mainland Britannia on the Felucca facet, as well as the dungeons and various monster camps on that map:</p>
-					<h4>Community-made Spawn.dfn</h4>
-					<p>Click the <span class="hl">Community-made Spawn.dfn</span> link over at the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3.org Downloads-page</a> (<a href="https://www.uox3.org/files/community_made_spawns_v2.zip" title="UOX3.org Downloads - Community-made Spawns">direct link</a>) to download a zip-file with regional spawns setup to spawn a variety of NPCs across the Felcuca facet (world 0) of your UOX3 shard. Unzip this file into the <em>UOX3/dfndata/spawn/</em> folder, overwriting any existing (and presumably empty) spawn.dfn file in that folder.</p>
-					<p><span class="hl">Linux/MacOS users take note:</span> you might need to run the spawn file through dos2unix to convert the line breaks to the correct format for your platform, or UOX3 might not be able to read them properly. Just run the command "<span class="hl">dos2unix *</span>" on the files before copying them into the UOX3/dfndata/spawn directory.</p>
-				  </div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#startUpUOX3" id="startUpUOX3"><span>Starting Up Your UOX3 Shard</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -618,17 +599,18 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 					<p>A couple of things are required to connect and login to your UOX3 shard; an <strong>Ultima Online</strong> client, and a <strong>tool that can remove encryption</strong> from said client. Such a tool is needed since UOX3 does not accept connections from encrypted clients.</p>
 					<h3>Ultima Online</h3>
-					<p>If you followed the recommendations in the Requirements section up above, you will already have an Ultima Online client installed, and can skip to the next step about Razor. If not - don't panic! Go grab the latest client download - titled <em>Classic Client</em> - from <a href="https://uo.com/client-download/" target="_blank" title="Official UO homepage - client download">the official UO website</a> and install it, or visit the UOX3 community forums to read more about different <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">UO client versions/expansions and compatibility with UOX3</a>.</p>
-					<h3>Removing the Client Encryption with Razor</h3>
-					<p>With a UO client downloaded and installed, it's time to take care of the encryption. Go grab the <a href="http://www.uor-razor.com/" target="_blank" title="UO:R Community Edition of Razor">UO:R Community Edition of Razor</a> if you haven't already. It's being regularly maintained and updated, unlike the original Razor. Once you've got it unzipped (or installed, if there's an installer), <strong>right-click on Razor.exe</strong>, choose <strong>Properties</strong>, click the <strong>Compatibility</strong> tab, and check the checkbox for "<em>Run this program in compatibility mode for Windows XP (Service Pack 3)</em>". This, to avoid some potential issues with performance/client freezing on startup or login. Once done, <strong>start Razor</strong>!</p>
-					<p>After a short wait, you'll be greeted by a welcome screen. Unless you encounter any issues, or you have multiple UO Client versions installed, just leave the <strong>Load Client</strong> part at <em>2D Client (Auto Detect)</em>. Make sure <strong>Patch client encryption</strong> is checked, and that the <strong>IP and Port</strong> matches what you setup for UOX3 in UOX.INI. If running client and server on same computer, the default UOX3 settings are <strong>127.0.0.1</strong> as IP and <strong>2593</strong> as Port.</p>
-					<p>Once basic setup of Razor is complete, click the <strong>Okay</strong> button to launch the UO client. At this point you are now ready to enter your UOX3 username and password and log in!</p>
-					<h3>Alternative for Linux/macOS users - Use ClassicUO Client</h3>
-					<p>Note for <span class="hl">Linux/macOS</span> (and even <span class="hl">Windows</span>) users: An alternative to the regular UO client and Razor, neither of which run natively on Linux or macOS, is the <strong>ClassicUO</strong> client - an open-source, cross-platform client that can be used to connect to UOX3 without Razor - though it still requires the original UO data files to run, so you'll need to figure out a way to get those files over to your Linux/macOS machine.</p>
+					<p>If you followed the recommendations in the Requirements section up above, you will already have an Ultima Online client installed, and can skip to the next step. If not - don't panic! Go grab the latest client download - titled <em>Classic Client</em> - from <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">the official UO website</a> and install it, or visit the UOX3 community forums to read more about different <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">UO client versions/expansions and compatibility with UOX3</a>.</p>
+
+					<h3>Option 1) Launch UO using ClassicUO</h3>
+					<p>The de-facto standard way of connecting to private UO shards these days is using <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source, cross-platform implementation of the UO client that also works on both <span class="hl">Windows</span>, <span class="hl">Linux</span> and <span class="hl">macOS</span> (data from original UO client still required).</p>
+					<p>Download, install and launch it, and after a short wait you'll be greeted by a screen similar to this:</p>
+					<div style="text-align:center; margin-bottom:10px;"><img style="width: 60%;" src="assets/images/classicuo_profile_setup.png" alt="Guide to ClassicUO profile setup"></div>
+					<p>Follow the arrows in the above image; <span class="hl">Add</span> a new profile, <strong>select it</strong>, then fill in your <strong>shard's name</strong>, your <strong>shard username/password</strong>, the <strong>shard's IP and port</strong>, and the <strong>path to your UO client</strong> installation/data folder. Hit <span class="hl">Save profile</span> and then <span class="hl">Back</span>!</p>
+					<p>From the next window that shows up, make sure your new profile is selected, then hit the <span class="hl">PLAY!</span> button. At this point the ClassicUO client should start up, and you should be ready to log in to your shard!</p>
 					<input type="checkbox" id="spoiler_classicUO"/>
-					<label for="spoiler_classicUO">ClassicUO Client <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_classicUO">More info about ClassicUO <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p><a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO - open source UO client">ClassicUO</a> is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client. Some of the interesting features it offers:</p>
+						<p><a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO</a> is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client. Some of the interesting features it offers:</p>
 						<ul>
 							<li>Run client at up to 250 FPS</li>
 							<li>Run at any resolution, and any window size</li>
@@ -638,7 +620,32 @@ packitem=0x0f8d,30
 							<li>Show network stats</li>
 							<li>Various quality of life features that have been available in various assist tools for decades... like showing stumps instead of trees, hiding roofs (a bit dubious...), etc.</li>
 						</ul>
-						<p>Check it out at the <a href="https://www.classicuo.eu/" target="_blank" title="ClassicUO - open source UO client">ClassicUO Website</a> or <a href="https://github.com/andreakarasho/ClassicUO" target="_blank" title="ClassicUO @ GitHub">@ GitHub</a>!</p>
+						<p>Check it out at the <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO Website</a> or <a href="https://github.com/ClassicUO/ClassicUO" target="_blank" rel="noopener" title="ClassicUO @ GitHub">@ GitHub</a>!</p>
+					</div>
+
+					<h3>Option 2) Launch UO using Razor CE</h3>
+					<p>If you want to experience UO in all its old-school nostalgia, your best bet might be to rely on an <span class="hl">UO</span> + <span class="hl">Razor CE</span> combination instead of a custom client. <a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO assistant">Razor Community Edition</a> is able to disable the encryption in the regular UO client, which is required in order to log in to UOX3 shards. As a bonus, Razor also provides a whole host of additional bells, whistles and quality of life options.</p>
+					<p>Download, install and launch it. After a short wait, you'll be greeted by a screen similar to this:</p>
+					<div style="text-align:center; margin-bottom:10px;"><img style="width: 60%;" src="assets/images/quick_start_razor_profile.png" alt="Guide to Razor CE profile setup"></div>
+					<p>Unless you encounter any issues, or you have multiple UO Client versions installed, just leave the <strong>Load Client</strong> part at <em>2D Client (Auto Detect)</em> - otherwise, select the specific client.exe and UO Data Folder for the client version you want to use. Make sure <strong>Patch client encryption</strong> is checked, then hit <span class="hl">New</span> to create a new shard profile. Ensure that the <strong>IP and Port</strong> matches what you setup for UOX3 in UOX.INI. If running client and server on same computer, the default UOX3 settings are <strong>127.0.0.1</strong> as IP and <strong>2593</strong> as Port.</p>
+					<p>Once basic setup of Razor is complete, click <span class="hl">Save</span> to save your shard profile, followed by the <span class="hl">Launch UO</span> button. At this point the UO client should start up, and you should be ready to enter your UOX3 username and password to log in to your shard!</p>
+					<p>(Note that in certain cases it might be advisable to run Razor in compatibility mode for Windows XP (Service Pack 3) to avoid some freezes/lockups on startup or login).</p>
+					<input type="checkbox" id="spoiler_razorce"/>
+					<label for="spoiler_razorce">More info about Razor CE <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p><a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO assistant">Razor Community Edition</a> is an open-source assistant tool for Ultima Online, which also supports integration with the open-source client ClassicUO. Not only can it disable encryption in the original UO client if needed, it also provides a number of different features:</p>
+						<ul>
+							<li>Encryption removal and handling of what IP client should connect to</li>
+							<li>Management of different shard profiles/client versions via profile system</li>
+							<li>Show incoming objects, container labels, health above characters, damage dealt/damage taken</li>
+							<li>Smart targeting, action-queue, auto-opening of nearby corpses, block trade requests, block party invites, auto-open doors</li>
+							<li>Timer display, damage tracker, resource counter, dress/undress macros</li>
+							<li>Filter specific sounds or music, text messages, system messages or targets</li>
+							<li>Packet logging, feature negotiation with shards, automatic screenshot capabilities</li>
+							<li>Built-in scripting engine</li>
+							<li>And much more</li>
+						</ul>
+						<p>Check it out at the <a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO assistant">Razor CE Website</a> or <a href="https://github.com/markdwags/Razor" target="_blank" rel="noopener" title="RazorCE @ GitHub">@ GitHub</a>!</p>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -653,7 +660,23 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 					<p>Once your UOX3 shard has successfully started up (and importantly, <strong>remains running</strong>), and the UO client has loaded the login screen after you started it using a tool like Razor, you are ready to log in to your UOX3 shard for the first time.</p>
 					<p>Enter the same <span class="hl">username</span> and <span class="hl">password</span> that you added in <strong>UOX3/accounts/accounts.adm</strong> during the initial UOX3 setup, and click <span class="hl">Login</span>. Select your UOX3 shard from the server listing that appears, and proceed through character creation to create your first character. Note that if you are logging in using the first account listed in accounts.adm - account 0 - all characters created on this account will automatically receive GM powers!</p>
-					<p>As previously outlined in <a href="#populateUOX3">Decorating and Populating your UOX3 Shard</a>, the first thing that will greet you on your first login is a <strong>welcome gump</strong> with options to <strong>start with a blank slate</strong>, or to use the default UOX3 world template to <strong>automatically generate decorations</strong> for your shard. If you skipped that step, or need a refresher on the options available to you, go read it now, and then continue to the next step here once done!</a>
+					<p>The next step after logging on to your UOX3 shard will be to determine whether you want to start with an empty shard, or to apply default world decorations and NPC spawns! See the next section for more details!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#populateUOX3" id="populateUOX3"><span>Decorating and Populating Your UOX3 Shard</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  <h3>Decorating Your Shard with Items</h3>
+				  <p>By default, UOX3 comes as a blank slate - <strong>a tabula rasa</strong> - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you will - on first login with a character on the admin account - <strong>get the option</strong> to <span class="hl">automatically decorate your shard</span> based on some default <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world templates</a> (which themselves were based on the older "<em>default UOX3 worldfiles</em>") provided with UOX3, which generates items such as doors, signs, lights and more. For now, these templates cover all the UO towns on the Felucca facet (world 0).</p>
+				  <h3>Populating Your Shard with NPCs</h3>
+				  <p>Similarly, you'll get the option to supplement the world decorations with <span class="hl">all kinds of NPCs</span>, from animals and monsters to shopkeepers and townfolk. By default, UOX3 comes bundled with <a href="#uox3SpawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Region</a> files (based on the old "<em>community-based spawn.dfn file</em>") that cover Britannia on the Felucca facet, as well as dungeons, forests and various monster camps on that map.</p>
+				  <h3>Admin Welcome Gump</h3>
+				  <p>These options are presented in a <strong>gump</strong> (UO term for menu) that pops up on login, where you can choose between <strong>starting with a blank shard</strong> and do your own thing, or to utilize the <strong>default UOX3 world</strong> to get a pre-defined starting point for your shard.</p>
+				  <p style="padding-left: 10%; padding-right: 10%"><img src="assets/images/uox3_welcome_1.jpg" style="padding: 20px;max-width: 50%; max-height: 316px;float: left"/><img src="assets/images/uox3_welcome_2.jpg" style="padding: 20px;max-width: 50%;max-height: 316px;float: right"/></p>
+				  <p style="clear:both">If you don't want to make this choice on your first login, you can always return to the welcome screen using the <span class="hl">'welcome</span> command, or alternatively skip that altogether and rely on the <span class="hl">'decorate load</span> command to get the job done for items, or the <span class="hl">'enablespawns [facetNum/facetName]</span> and <span class="hl">'disablespawns [facetNum/facetName]</span> commands to manually enable/disable Spawn Regions for different facets. Either way, any custom content you have added or changes you have made to your shard will not be overwritten!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -662,12 +685,13 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#useFirstGMCommands" id="useFirstGMCommands"><span>Using Your First GM Commands</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>Great! You have a character. Now what?</p>
+					<p>Great! You have a character, and you have (potentially) <a href="#populateUOX3" title="UOX3 Documentation - Decorating and Populating Your UOX3 Shard">decorated your world with items and populated it with NPCs</a>. Now what?</p>
 					<p>If you're playing on the first account listed in <strong>UOX3\ACCOUNTS\accounts.adm</strong> (as you should), your characters will be classified as "admin" characters with automatic access to all Game Master and Admin powers and commands. However, the character doesn't quite look the part yet!</p>
 					<h3>Becoming a GM</h3>
 					<p>Let's start by turning your character into a proper Game Master. Type the following command into the UO client (don't forget the command prefix at the start of the command!):<br>
 					<span class="hl">'make gm</span></p>
-					<p>Once you hit Enter, your regular UO mouse cursor (a hand) will be replaced by a targeting cursor, so go ahead and target your own character, who should now get a nice, new, shiny red GM robe, which also grants the awesome, ultimate destructive power of... being able to walk through doors. For admin characters, who already have access to all commands, this is more of a formality than anything else.</p>
+					<p>Once you hit Enter, your regular UO mouse cursor (a hand) will be replaced by a targeting cursor, so go ahead and target your own character, who should now get a nice, new, shiny red GM robe, which also grants the awesome, ultimate destructive power of... being able to walk through doors! These powers can also be bestowed upon other players using the same command, but choose with care who you provide such unlimited power!</p>
+					<p>As an admin character who already has access to all commands, there's no requirement to use this command on yourself, it's more a formality to look the part than anything else. In fact, you could easily give yourself a different look using the <span class="hl">'make admin</span> command instead!</p>
 					<input type="checkbox" id="spoiler_commandprefix">
 					<label for="spoiler_commandprefix">Bonus Tip - Changing the Command Prefix <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -2256,7 +2280,7 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_disablespawns">
 						<label for="spoiler_cmd_disablespawns">disablespawns <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Disable spawn regions for the specified facet (0 = Felucca, 1 = Trammel, 2 = Ilshenar, 3 = Malas, 4 = Tokuno, 5 = Ter Mur), using facet ID or name.</p>
+							<p>Disable spawn regions for the specified facet (0 = Felucca, 1 = Trammel, 2 = Ilshenar, 3 = Malas, 4 = Tokuno, 5 = Ter Mur), using facet ID or name. Also see <strong>enablespawns</strong> command.</p>
 							<p>Command: <span class="hl">'disablespawns</span><br>
 							Parameters: <span class="hl"><em>(facetID / facetName)</em></span></p>
 						</div>
@@ -2300,7 +2324,7 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_enablespawns">
 						<label for="spoiler_cmd_enablespawns">enablespawns <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Enable spawn regions for the specified facet (0 = Felucca, 1 = Trammel, 2 = Ilshenar, 3 = Malas, 4 = Tokuno, 5 = Ter Mur), using facet ID or name.</p>
+							<p>Enable spawn regions for the specified facet (0 = Felucca, 1 = Trammel, 2 = Ilshenar, 3 = Malas, 4 = Tokuno, 5 = Ter Mur), using facet ID or name. Also see <strong>disablespawns</strong> command.</p>
 							<p>Command: <span class="hl">'enablespawns</span><br>
 							Parameters: <span class="hl"><em>(facetID / facetName)</em></span></p>
 						</div>
@@ -3724,7 +3748,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">51</span><strong> - IT_GATE</strong><br>
-							When a player steps into a gate, they are teleported to another gate's location. The gates are either spawned automatically when using the Gate spell, but can also be setup manually (and permanently) by linking two separate gate objects together by setting their MORE values to the other gate's serial.</p>
+							When a player steps into a gate, they are teleported to another gate's location. The gates are either spawned automatically when using the Gate spell, but can also be setup manually (and permanently) by linking two separate gate objects together by setting their MOREX values to the other gate's serial.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">60</span><strong> - IT_OBJTELEPORTER</strong><br>
@@ -3790,7 +3814,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">89</span><strong> - IT_MAPCHANGEOBJECT</strong><br>
-							Map change objects can be used to teleport to another map/world on the server, like from Felucca to Trammel, or vice versa. To specify which world to travel to, use <span class="hl">'set more worldNum</span>.</p>
+							Map change objects can be used to teleport to another map/world on the server, like from Felucca to Trammel, or vice versa. To specify which world to travel to, use <span class="hl">'set more worldNum</span>. Like type 60 (IT_), the teleport location can be set using <span class="hl">'set morex #</span> (X coordinate), <span class="hl">'set morey #</span> (Y coordinate) and <span class="hl">'set morez #</span> (Z coordinate). Players can trigger the teleporter by walking onto it, or by double-clicking it.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">90</span><strong> - IT_WORLDCHANGEGATE</strong><br>
@@ -4575,19 +4599,12 @@ packitem=0x0f8d,30
 						<p>Later on he rewrote UOX2 completely and released UOX3 - which he eventually also open-sourced - which is still the same version we're using now, though quite a lot has changed since then, and a lot of people have contributed to what we're using right now.</p>
 					</div>
 
-					<input type="checkbox" id="spoiler_faq_legal"/>
-					<label for="spoiler_faq_legal">Is UOX3 Legal? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>Disclaimer: This should not be considered as legal advice - it was not written by and is not the opinion or the advice of a lawyer</p>
-						<p>Running an UOX3 shard, developing the UOX3 code, distributing the UOX3 program - all that is perfectly legal. There are some more complicated issues however, when it comes to client-files distribution (custom maps, specific versions of client.exe, etc). I suggest you read up on the following document, written by Knox: legality.txt (Note that this should not be considered as legal advice!)</p>
-					</div>
-
 					<input type="checkbox" id="spoiler_faq_connectionerror"/>
 					<label for="spoiler_faq_connectionerror">Why am I getting connection-errors when trying to log in? <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p>There can be a number of different reasons for why you are unable to connect to a UOX3 shard. Here are some of the most common ones:</p>
 						<p><strong>You're trying to connect to UOX3 using an encrypted UO client</strong><br>
-						Make sure you remove/patch away the UO client encryption through the use of <a href="https://github.com/markdwags/Razor" target="_blank" title="UO:R Community Edition of Razor">Razor</a> or a similar programs before trying to connect to a UOX3 shard. UOX3 will only accept clients with no encryption.</p>
+						Make sure you remove/patch away the UO client encryption through the use of <a href=http://www.razorce.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a> or a similar programs before trying to connect to a UOX3 shard. UOX3 will only accept clients with no encryption.</p>
 						<p><strong>You set the IP and/or Port incorrectly in UOX.INI</strong><br>
 						Having the wrong IP or Port in UOX.INI will give you a connection-error when you try to select the UOX3 shard in your client's server-list. The initial connection that checks for user-name/password might still go through, but not the server-selection part.</p>
 						<p><strong>You set the IP and/or Port incorrectly in Razor/other tool used to start the client</strong><br>
@@ -4603,7 +4620,7 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_faq_uox3era"/>
 					<label for="spoiler_faq_uox3era">What era of UO is UOX3 based on? <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Various parts of UOX3 such as combat calculations, weapon/armor values etc are roughly <a href="http://web.archive.org/web/20020806221331/http://uo.stratics.com:80/content/arms-armor/arms.shtml" target="_blank" title="UO Stratics Arms info from archive.org">based around UO from the time just before</a> (archive.org) the Age of Shadows expansion (Publish 17) was released. NPC stats less so, due to the lack of accurate data on such stats from back then.</p>
+						<p>Various parts of UOX3 such as combat calculations, weapon/armor values, NPC stats etc. are <a href="http://web.archive.org/web/20020806221331/http://uo.stratics.com:80/content/arms-armor/arms.shtml" target="_blank" title="UO Stratics Arms info from archive.org">based around Publish 15 of UO, from the time just before</a> (archive.org) the Age of Shadows expansion was released. Not all features are exact replicas of this era, though, and usually options are provided to allow shard admins to put their own twist on a feature.</p>
 						<p>Note that the combat calculations are hardcoded, but can be overridden through the JavaScript system (or changed in code, of course). The stats of gear and NPCs can be easily tweaked with any text editor, and there are UOX.INI settings that can globally increase/decrease combat difficulty and/or speed.</p>
 					</div>
 
@@ -4974,7 +4991,8 @@ packitem=0x0f8d,30
 					<span class="hl">4 - FRE</span> (French - FRA, FRB, FRC, FRS, FRL, FRM)<br>
 					<span class="hl">5 - PTG</span> (Portuguese - PTG, PTB)<br>
 					<span class="hl">6 - ITA</span> (Italian - ITA, ITS)<br>
-					<span class="hl">7 - CSY</span> (Czech - CSY)</p>
+					<span class="hl">7 - CSY</span> (Czech - CSY)<br>
+					<span class="hl">8 - POL</span> (Polish - POL)</p>
 					<h4>Language Codes supported by UO client via cliloc system (depending on client version):</h4>
 					<p><span class="hl">ENG</span> (English)<br>
 					<span class="hl">DEU</span> (German)<br>
@@ -5856,6 +5874,13 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						 	item ID, location, type and hue are identical. BEWARE: Might affect player items on a live shard!</p>
 						<p><span class="hl">'decorate copy [sourceFacetName] [targetFacetName]</span><br>
 						 	Copy all items from one facet (sourceFacetName) to another (targetFacetName)</p>
+					</div>
+					<input type="checkbox" id="spoiler_worldtemplates_fileformat">
+					<label for="spoiler_worldtemplates_fileformat">World Template File Format Details <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Each line inside a world template file represents data of one object. Example of such an object, with explanation of which values that represent which properties of the object:<br>
+						1701|#|0|12|2891|655|0|0|0|2|0|0|0|0||0|1|0|0|0|0|0|0|0|0</p>
+						<p>id|name|hue|type|x|y|z|world|instance|movable|visible|dir|weight|weightmax|maxitems|amount|spawnsection|sectionalist|mininterval|maxinterval|more|morex|morey|morez|[|scriptid]</p>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -7572,93 +7597,7 @@ function commandTitle()
 				<a class="cd-faq__trigger" href="#uox3JsTutorial" id="uox3JsTutorial"><span>JS Tutorial</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<input type="checkbox" id="spoiler_jse_guide_basics">
-					<label for="spoiler_jse_guide_basics">JavaScript Fundamentals <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<input type="checkbox" id="spoiler_jse_guide_variables">
-						<label for="spoiler_jse_guide_variables">Working with values <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<h4>Assigning values to variables</h4>
-	<pre><code><span class="hl">var v;</span> // Initialize the variable v, without assigning it a value
-
-	<span class="hl">v = 0;</span> // Int
-	<span class="hl">v = 0.5;</span> // Double
-	<span class="hl">v = someString;</span> // String
-	<span class="hl">v = null;</span> // Null value
-	<span class="hl">v = undefined;</span> // Undefined value
-	<span class="hl">v = false;</span> // Boolean</code></pre>
-							<h4>Checking variable/value type</h4>
-							<p>To check whether a value has a particular type, the following methods can be used:</p>
-	<pre><span class="hl">var v = computeSomeValue();</span>
-
-	<span class="hl">var isString = typeof v === "string";</span> // Check if variable v contains a String
-	<span class="hl">var isNumber = typeof v === "number";</span> // Check if variable v contains a Number
-	<span class="hl">var isNull = v === null;</span> // Check if variable v contains a Null value
-	<span class="hl">var isBoolean = typeof v === "boolean";</span> // Check if variable v contains a Boolean
-	<span class="hl">var isObject = typeof v === "object" && v !== null;</span> // Check if variable v contains an Object</pre>
-						</div>
-						<input type="checkbox" id="spoiler_jse_guide_function">
-						<label for="spoiler_jse_guide_function">Working with functions <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<h4>Defining a function</h4>
-							<p>When defining a function within a script, other portions of said script can call on the function to perform some specific work. To define a function:</p>
-	<pre><span class="hl">function myJsFunction( myParam )
-	{
-		Console.Print( myParam.toString() + "\n" );</span> // Prints the value of provided parameter, as a string
-	<span class="hl">return true;</span> // returns the Boolean value true from the function
-	}</span></pre>
-							<h4>Calling a function</h4>
-							<p>To call a function from elsewhere inside a script, and have the code inside said function run, just type the name of the function, along with any parameters required:</p>
-	<pre><span class="hl">var myTestBool = myJsFunction( 42 );</span></pre>
-						</div>
-						<input type="checkbox" id="spoiler_jse_guide_array">
-						<label for="spoiler_jse_guide_array">Creating an array <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>Arrays can be created using either of the below methods:</p>
-	<pre><span class="hl">var x = [];
-	x = Array();
-	x = new Array;</span></pre>
-						</div>
-						<input type="checkbox" id="spoiler_jse_guide_object">
-						<label for="spoiler_jse_guide_object">Creating an object <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>Custom JS Objects can be created using either of the below methods:</p>
-	<pre><span class="hl">var x = {};
-	x = Object();
-	x = new Object;</span></pre>
-						</div>
-						<input type="checkbox" id="spoiler_jse_guide_exception">
-						<label for="spoiler_jse_guide_exception">Exception handling <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<h4>throw</h4>
-	<pre><span class="hl">throw new Error("This will result in a custom error displayed in the UOX3 console!");</span></pre>
-							<h4>catch</h4>
-							<h4>finally</h4>
-						</div>
-						<input type="checkbox" id="spoiler_jse_guide_properties">
-						<label for="spoiler_jse_guide_properties">Object properties <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-						</div>
-						<input type="checkbox" id="spoiler_jse_guide_loops">
-						<label for="spoiler_jse_guide_loops">For and While loops <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-						</div>
-						<h4>Advanced Topics</h4>
-						<p><em>Generator functions and yield</em></p>
-					</div>
-					<input type="checkbox" id="spoiler_jse_guide_uox3js">
-					<label for="spoiler_jse_guide_uox3js">JS Events, Functions and Objects for UOX3 <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<input type="checkbox" id="spoiler_jse_guide_variables">
-						<label for="spoiler_jse_guide_variables">Events/Triggers <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-						</div>
-					</div>
-					<h4>Other Resources</h4>
-					<p><ul>
-						<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript" target="_blank" title="A re-introduction to JavaScript (JS tutorial)">[mozilla.org] A re-introduction to JavaScript (JS tutorial)</a></li>
-						<li></li>
-					</ul></p>
+				  	<p>Coming soon!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -7706,14 +7645,14 @@ function commandTitle()
 				<a class="cd-faq__trigger" href="#thirdPartyTools" id="thirdPartyTools"><span>Third Party Tools</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
+					<h4><a href="https://www.classicuo.eu/" title="ClassicUO - open source UO client">ClassicUO</a></h4>
+					<p>ClassicUO is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client. Removes the need to use Razor for encryption removal.</p>
+					<h4><a href="http://www.razorce.com/" title="Razor Community Edition">Razor Community Edition</a></h4>
+					<p>Razor is both a necessary tool to remove encryption from the UO client, allowing you to actually connect to UOX3, as well as a tool that can provide many quality-of-life improvements over the regular old UO client.</p>
 					<h4><a href="https://wb.uox3.org/" target="_blank" title="Xuri's WorldBuilder - a GM Tool for UOX3">Xuri's WorldBuilder</a></h4>
 					<p>Xuri's WorldBuilder is a GM Tool for UOX3 that allows GMs to easily create custom houses, add decorations and even plant entire forests. Mainly focusing on worldbuilding, it also functions as a traditional GM Tool, giving the user easy access to all the most used commands in UOX3.</p>
-					<h4><a href="http://www.uor-razor.com/" title="UO:R Community Edition of Razor">UO:R Community Edition of Razor</a></h4>
-					<p>Razor is both a necessary tool to remove encryption from the UO client, allowing you to actually connect to UOX3, as well as a tool that can provide many quality-of-life improvements over the regular old UO client.</p>
-					<h4><a href="https://github.com/andreakarasho/ClassicUO" title="ClassicUO - open source UO client">ClassicUO</a></h4>
-					<p>ClassicUO is a cross-platform (Windows, Linux, macOS), open source implementation of the Ultima Online Classic Client that runs faster, smoother and with more features and customizability than the original UO client.</p>
 					<h4><a href="http://orionuo.online/	" title="OrionUO - alternative open source UO client">OrionUO</a></h4>
-					<p>OrionUO is an alterntive open source UO client that uses OpenGL for rendering. It's available for Windows and Linux, and comes with a metric ton of customization options on top of smoother performance compared to the original UO client.</p>
+					<p>OrionUO is an alternative open source UO client that uses OpenGL for rendering. It's available for Windows and Linux, and comes with a metric ton of customization options on top of smoother performance compared to the original UO client.</p>
 					<h4><a href="https://github.com/polserver/UOFiddler/releases" title="UOFiddler - UO viewing/editing tool">UOFiddler</a></h4>
 					<p>UOFiddler is the spiritual successor of <a href="https://uo.stratics.com/heptazane/insideuo/index.shtml" target="_blank" title="InsideUO homepage">InsideUO</a>, though it has gone far beyond that by now. Tool that can be used to view and alter almost every file in the UO client.</p>
 					<h4><a href="http://dev.uoquint.ru/projects/centred" target="_blank" title="CentrED+ - server/client based map editor that allows multiple people to collaborate on the same map">CentrED+</a></h4>
@@ -7728,8 +7667,6 @@ function commandTitle()
 				  <div class="text-component">
 					<h4><a href="https://community.stratics.com/categories/uoemu-stratics.1095/" target="_blank" title="UOEmu Stratics Community Forums">UOEmu Stratics Community Forums</a></h4>
 					<p>A home for discussion of non-Official Ultima Online Servers, also known as Freeshards - hosted by Stratics (who once upon a time also hosted the UOX3 website and IRC channels!)</p>
-					<h4><a href="https://connectuo.net/" target="_blank" title="ConnectUO - Launcher, Patcher, Shard Portal">ConnectUO</a></h4>
-					<p>A combined launcher, patcher and UO freeshard portal that supports Linux, MacOS and Windows and the ClassicUO open source client. Being made in the spirit of the original ConnectUO/UOGateway tools. Beta starts on March 29th, and shard admins can sign up here to get a first look and help make the software stable for release.</p>
 					<h4><a href="https://shardportal.com/" target="_blank" title="ShardPortal - UO Freeshard portal">ShardPortal</a></h4>
 					<p>The ShardPortal is a place for anyone to advertise their shard as well as search out other active shards.</p>
 					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway</a></h4>
@@ -10490,7 +10427,7 @@ function commandTitle()
 							<p><span class="hl">redbaron</span><br> Programmer, 13/11/1998</p>
 							<p><span class="hl">Thunderstorm</span><br> Programmer, 13/11/1998</p>
 							<p><span class="hl">Myth</span><br> Programmer, 13/11/1998</p>
-							<p><span class="hl">Ripper</span><br> Scripter/Programmer, 17/11/1998 - eventually founded Wolfpack Emu (https://web.archive.org/web/20000818115820/http://members.home.net/farmrr/)</p>
+							<p><span class="hl">Ripper</span><br> Fred Robinson, Scripter/Programmer, 17/11/1998 - eventually founded Wolfpack Emu (https://web.archive.org/web/20000818115820/http://members.home.net/farmrr/)</p>
 							<p><span class="hl">Zippy</span><br> Bryan Pass, Programmer, v0.68.026.07</p>
 							<p><span class="hl">Ray</span><br> Programmer, ??/??/98, v0.68.026.07</p>
 							<p><span class="hl">EvilDeD</span><br> Matthew Randall, Programmer, DevTeam Lead, Web Admin, CVS admin, v69.00-v0.98.x</p>
@@ -10573,7 +10510,7 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_2001"/>
 						<label for="spoiler_history_halloffame_2001"><h3>2001</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><span class="hl">Rainman/Cobol Junky</span><br> Web Admin, ~Jan-Sept 2001</p>
+							<p><span class="hl">Rainman/Cobol Junky</span><br> Peter J. Macomber, Web Admin, ~Jan-Sept 2001</p>
 							<p><span class="hl">Jedda</span><br> Programmer, 17/01/2001, 0.70.03.21</p>
 							<p><span class="hl">Tom2</span><br> Programmer, 17/01/2001, 0.70.03.21</p>
 							<p><span class="hl">Correa</span><br> Thiago A. Corrêa, Programmer, Freelancers, 17/01/2001, 0.70.03.21</p>
@@ -10587,16 +10524,16 @@ function commandTitle()
 							<p><span class="hl">Zane/Giwo</span><br> Scott Thompson, Scripter/Programmer, Web Admin, 03/07/2001</p>
 							<p><span class="hl">seank</span><br> Programmer, 04/07/2001</p>
 							<p><span class="hl">Gimli</span><br> Programmer, 12/07/2001</p>
-							<p><span class="hl">Dreoth</span><br> Scripter/Programmer, ~2001-2003</p>
+							<p><span class="hl">Dreoth</span><br> Richard Meyer, Scripter/Programmer, ~2001-2003</p>
 							<p><span class="hl">harkon</span><br> Programmer, 0.95.01 Build 1</p>
 							<p><span class="hl">Mr_Fixit</span><br> Daniel Storjordet, Programmer, Tool Programmer, 0.95.01 Build 1, UOGateway</p>
 							<p><span class="hl">JoeMC</span><br> Programmer, 0.95.01 Build 1</p>
 							<p><span class="hl">Spud</span><br> Programmer, 05/08/2001</p>
 							<p><span class="hl">Shadowlord</span><br> Programmer, 01/11/2001</p>
-							<p><span class="hl">Krrios</span><br> Programmer, 05/11/2001, creator of KUOC - Krrios UO Client, ModifyUO and RunUO</p>
+							<p><span class="hl">Krrios</span><br> Zachary Torkelson, Programmer, 05/11/2001, creator of KUOC - Krrios UO Client, ModifyUO and RunUO</p>
 							<p><span class="hl">Bel-CMC</span><br> Programmer, 12/11/2001</p>
 							<p><span class="hl">silver2000</span><br> Programmer, 19/12/2001</p>
-							<p><span class="hl">DarkStorm</span><br> Programmer, 20/12/2001</p>
+							<p><span class="hl">DarkStorm</span><br> Sebastian Hartte, Programmer, 20/12/2001</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_history_halloffame_2002"/>
@@ -10609,7 +10546,7 @@ function commandTitle()
 							<p><span class="hl">duckhead</span><br> Programmer, 0.97.00 Build 20</p>
 							<p><span class="hl">SwamiHajjiJoe</span><br> Scripter, 02/01/2002</p>
 							<p><span class="hl">Cavalier</span><br> Chris Bailey, Scripter, 12/01/2002</p>
-							<p><span class="hl">sereg</span><br> Scripter/Programmer, 15/02/2002</p>
+							<p><span class="hl">sereg</span><br> Jörg Stückler, Scripter/Programmer, 15/02/2002</p>
 							<p><span class="hl">§ymb!ot!c</span><br> Ben Bellert, Scripter, 17/03/2002</p>
 							<p><span class="hl">Lynxx</span><br> Scripter, 11/03/2002</p>
 							<p><span class="hl">MACTEP</span><br> Programmer, 18/04/2002</p>
@@ -10620,14 +10557,16 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_2003"/>
 						<label for="spoiler_history_halloffame_2003"><h3>2003</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><span class="hl">Malketh</span><br> Programmer, 19/03/2003</p>
+							<p><span class="hl">SlasHeR</span><br> Florian Maetschke, Scripter/Programmer, ~2003</p>
+							<p><span class="hl">Malketh</span><br> Bryan Hoover, Programmer, 19/03/2003</p>
 							<p><span class="hl">Philantrop</span><br> Programmer, 19/03/2003</p>
 							<p><span class="hl">almiller1963</span><br> Programmer, 07/05/2003, v0.97.5.2g</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_history_halloffame_2004"/>
-						<label for="spoiler_history_halloffame_2004"><h4>2004</h4> <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_history_halloffame_2004"><h3>2004</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
+							<p><span class="hl">Rynet</span><br> David Jones, Programmer, 29/07/2004</p>
 							<p><span class="hl">xir</span><br> Programmer, 31/07/2004</p>
 						</div>
 
@@ -10650,7 +10589,7 @@ function commandTitle()
 						<label for="spoiler_history_halloffame_2007"><h3>2007</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<p><span class="hl">supermoleet</span><br> Programmer, 17/01/2009, 0.98-4.0</p>
-							<p><span class="hl">Jediman</span><br> Programmer, 05/11/2009</p>
+							<p><span class="hl">Jediman</span><br> Erich Weihrauch, Programmer, 05/11/2009</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_history_halloffame_2008"/>
@@ -10659,7 +10598,7 @@ function commandTitle()
 							<p><span class="hl">Ghostwolf</span><br> Scripter, 19/03/2012, 0.99</p>
 							<p><span class="hl">dragon slayer</span><br> Scripter, 19/03/2012, 0.99</p>
 							<p><span class="hl">xantier</span><br> Programmer, 19/03/2012, 0.99</p>
-							<p><span class="hl">Eolirin</span><br> Programmer, 19/03/2012, 0.99</p>
+							<p><span class="hl">Eolirin</span><br> Matthew Solomon, Programmer, 19/03/2012, 0.99</p>
 							<p><span class="hl">Puck</span><br> Scripter, 19/03/2012, 0.99</p>
 							<p><span class="hl">spddmn</span><br> Programmer, 19/03/2012, 0.99</p>
 							<p><span class="hl">Shudderz</span><br> Programmer, 19/03/2012, 0.99</p>
@@ -10695,7 +10634,7 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_toplace"/>
 						<label for="spoiler_history_halloffame_toplace"><h3>To Place in Timeline</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p><span class="hl">Allmight</span><br> Documentation, ~November 1998</p>
+							<p><span class="hl">Allmight</span><br> Mans Sjoberg, Documentation, ~November 1998</p>
 							<p><span class="hl">TeHb</span><br> Scripter, ~November 2002</p>
 							<p><span class="hl">Tim</span><br> ???</p>
 						</div>
@@ -10719,8 +10658,8 @@ function commandTitle()
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Documentation revamp by Geir Ove Alnes @ Copyright 2020 - 2021</small></p>
-	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
+	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2021</small></p>
+	<p><small>Built on <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framework by CodyHouse</a>.</small></p>
 </div>
 <script defer>
 // Handle filters
@@ -10730,19 +10669,20 @@ function filterInputHandler( e ) {
 	if( e.keyCode == 32 ) // spacebar
 		return;
 	var filterInput = this.textContent.toUpperCase();
-	//var parentDivID = e.path[0].closest('ul').id;
 	var parentDiv = e.path[0].closest('body');
 	var filterElements = parentDiv.getElementsByClassName('cd-faq__content');
 	var filterCategories = parentDiv.getElementsByClassName('cd-faq__item');
 
 	if( filterInput == "" )
 	{
-		this.style.border = "none";
+		//this.style.border = "none";
+		this.style.outline = "inherit";
 		ResetFilter( filterElements, filterCategories, parentDiv );
 	}
 	else
 	{
-		this.style.border = "2px solid yellow";
+		//this.style.border = "2px solid yellow";
+		this.style.outline = "#A50000 auto 1px";
 		ApplyFilter( filterElements, filterCategories, parentDiv, filterInput );
 	}
 }
@@ -10750,7 +10690,8 @@ function filterInputHandler( e ) {
 function ResetFilter( filterElements, filterCategories, parentDiv ) {
 	for( i = 0; i < filterElements.length; i++ ) {
 		filterElements[i].style.display = "";
-		filterElements[i].style.border = "none";
+		//filterElements[i].style.border = "none";
+		filterElements[i].style.outline = "inherit";
 	}
 
 	for( i = 0; i < filterCategories.length; i++ ) {
@@ -10766,24 +10707,26 @@ function ApplyFilter( filterElements, filterCategories, parentDiv, filterInput )
 	for( i = 0; i < filterElements.length; i++ ) {
 		var txtValue = filterElements[i].textContent;
 		var filterElem = filterElements[i];
-		//var spoilerWrapper = filterElem.closest(".spoilerWrapper");
 		if( txtValue.toUpperCase().indexOf(filterInput) > -1 ) {
-			//if( spoilerWrapper != null )
-				//spoilerWrapper.style.display = "";
+
 			filterElements[i].style.display = "";
 			if( filterInput !== "" )
 			{
-				filterElements[i].style.border = "2px solid yellow";
+				//filterElements[i].style.border = "1px solid yellow";
+				filterElements[i].style.outline = "#A50000 auto 1px";
 				if( !filterElements[i].closest('.cd-faq__item').classList.contains('cd-faq__item-visible') )
+				{
 					filterElements[i].closest('.cd-faq__item').firstElementChild.click();
-				filterElements[i].closest('.cd-faq__group').style.display = "";
+					//filterElements[i].closest('.cd-faq__item').classList.add('cd-faq__item-visible');
+					document.getElementById("filterMainDocs").focus();
+				}
+				//filterElements[i].closest('.cd-faq__group').style.display = "";
 			}
 
 		} else {
-			//if( spoilerWrapper != null )
-				//spoilerWrapper.style.display = "none";
 			filterElements[i].style.display = "none";
-			filterElements[i].style.border = "none";
+			//filterElements[i].style.border = "none";
+			filterElements[i].style.outline = "inherit";
 
 			for( j = 0; j < filterCategories.length; j++ ) {
 				var filterChildren = filterCategories[j].getElementsByClassName("cd-faq__content");

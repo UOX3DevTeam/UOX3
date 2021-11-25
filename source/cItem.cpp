@@ -45,6 +45,8 @@
 #include "msgboard.h"
 #include "books.h"
 #include "power.h"
+#include "cServerDefinitions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include <charconv>
 
@@ -3050,7 +3052,120 @@ bool CSpawnItem::HandleSpawnContainer( void )
 			}
 		}
 		if( !listObj.empty() )
-			Items->AddRespawnItem( this, listObj, true, IsSectionAList(), 1 );
+		{
+			std::string sect	= "ITEMLIST " + listObj;
+			sect				= strutil::trim( strutil::removeTrailing( sect, "//" ));
+
+			// Look up the relevant ITEMLIST from DFNs
+			ScriptSection *itemList = FileLookup->FindEntry( sect, items_def );
+			if( itemList != nullptr )
+			{
+				// Count the number of entries in the list
+				const size_t itemListSize = itemList->NumEntries();
+				if( itemListSize > 0 )
+				{
+					// Spawn one instance of EACH entry in the list
+					std::string listEntry = "";
+					for( int i = 0; i < itemListSize; i++ )
+					{
+						// listObj will either contain an itemID and amount, or an itemlist/lootlist tag
+						STRINGLIST listObj = strutil::sections( strutil::trim( strutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );
+						if( !listObj.empty() )
+						{
+							UI16 amountToSpawn = 1;
+							STRINGLIST itemListData;
+							if( strutil::upper( listObj[0] ) == "ITEMLIST" || strutil::upper( listObj[0] ) == "LOOTLIST" )
+							{
+								bool useLootList = strutil::upper( listObj[0] ) == "LOOTLIST";
+
+								// Itemlist/Lootlist
+								itemListData = strutil::sections( strutil::trim( strutil::removeTrailing( itemList->GrabData(), "//" )), "," );
+								listEntry = itemListData[0];
+
+								if( itemListData.size() > 1 )
+								{
+									// Also grab amount
+									std::string amountData = strutil::trim( strutil::removeTrailing( itemListData[1], "//" ));
+									auto tsects = strutil::sections( amountData, " " );
+									if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
+									{
+										auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+										auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
+										// Tag contained a minimum and maximum value for amount! Let's randomize!
+										amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+									}
+									else
+									{
+										amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+									}
+								}
+
+								// The chosen entry contained another ITEMLIST or LOOTLIST reference! Let's dive back into it...
+								for( int i = 0; i < amountToSpawn; i++ )
+								{
+									CItem *iCreated = Items->CreateRandomItem( this, listEntry, this->WorldNumber(), this->GetInstanceID(), false, useLootList );
+									if( ValidateObject( iCreated ))
+									{
+										// Place item in container and randomize location
+										iCreated->SetCont( this );
+										iCreated->PlaceInPack();
+									}
+								}
+							}
+							else
+							{
+								// Direct item reference
+								listEntry = listObj[0];
+
+								if( listObj.size() > 1 )
+								{
+									// Grab amount
+									std::string amountData = strutil::trim( strutil::removeTrailing( listObj[1], "//" ));
+									auto tsects = strutil::sections( amountData, " " );
+									if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
+									{
+										auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+										auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
+										// Tag contained a minimum and maximum value for amount! Let's randomize!
+										amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+									}
+									else
+									{
+										amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+									}
+								}
+
+								// We have a direct item reference, it seems like. Spawn it!
+								CItem *iCreated = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), amountToSpawn, this->GetInstanceID(), OT_ITEM, 0xFFFF, false );
+								if( ValidateObject( iCreated ))
+								{
+									// Place item in container and randomize location
+									iCreated->SetCont( this );
+									iCreated->PlaceInPack();
+								}
+
+								if( amountToSpawn > 1 && !iCreated->isPileable() )
+								{
+									// Eee, item cannot pile, we need to spawn individual ones
+									for( int i = 1; i < amountToSpawn; i++ )
+									{
+										CItem *iCreated2 = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceID(), OT_ITEM, 0xFFFF, false );
+										if( ValidateObject( iCreated2 ))
+										{
+											// Place item in container and randomize location
+											iCreated2->SetCont( this );
+											iCreated2->PlaceInPack();
+										}
+									}
+								}
+							}	
+						}
+					}
+				}
+			}
+		}
 		else if( GetTempVar( CITV_MOREX ) != 0 )
 			Items->AddRespawnItem( this, strutil::number( GetTempVar( CITV_MOREX ) ), true, 1 );
 		else

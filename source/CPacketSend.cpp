@@ -6784,14 +6784,27 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	std::vector<UI16> scriptTriggers = cItem.GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
-		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != nullptr )
+		cScript *toExecute1 = JSMapping->GetScript( scriptTrig );
+		if( toExecute1 != nullptr )
 		{
-			std::string textFromScript = toExecute->OnTooltip( &cItem );
-			if( !textFromScript.empty() )
+			// Custom tooltip - each word capitalized
+			std::string textFromScript1 = toExecute1->OnTooltip( &cItem );
+			if( !textFromScript1.empty() )
 			{
-				tempEntry.stringNum = 1042971; // ~1_NOTHING~
-				tempEntry.ourText = textFromScript;
+				UI32 clilocNumFromScript = 0;
+				TAGMAPOBJECT tempTagObj = cItem.GetTempTag( "tooltipCliloc" );
+				if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+				{
+					// Use cliloc set in tooltipCliloc temptag, if present
+					clilocNumFromScript = tempTagObj.m_IntValue;
+				}
+				else
+				{
+					// Fallback to this cliloc if no other cliloc was set in temptag for object
+					clilocNumFromScript = 1042971; // ~1_NOTHING~
+				}
+				tempEntry.stringNum = clilocNumFromScript;
+				tempEntry.ourText = textFromScript1;
 				FinalizeData( tempEntry, totalStringLen );
 			}
 		}
@@ -6905,7 +6918,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			}
 			else
 			{
-			tempEntry.ourText = strutil::number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
+				tempEntry.ourText = strutil::number(( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
 			}
 		}
 		FinalizeData( tempEntry, totalStringLen );
@@ -7080,10 +7093,23 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
+			// Custom tooltip - each word capitalized
 			std::string textFromScript = toExecute->OnTooltip( &mChar );
 			if( !textFromScript.empty() )
 			{
-				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				UI32 clilocNumFromScript = 0;
+				TAGMAPOBJECT tempTagObj = mChar.GetTempTag( "tooltipCliloc" );
+				if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+				{
+					// Use cliloc set in tooltipCliloc temptag, if present
+					clilocNumFromScript = tempTagObj.m_IntValue;
+				}
+				else
+				{
+					// Fallback to this cliloc if no other cliloc was set in temptag for object
+					clilocNumFromScript = 1042971; // ~1_NOTHING~
+				}
+				tempEntry.stringNum = clilocNumFromScript;
 				tempEntry.ourText = textFromScript;
 				FinalizeData( tempEntry, totalStringLen );
 			}

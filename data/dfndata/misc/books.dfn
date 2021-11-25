@@ -49,7 +49,7 @@ LINE=This is page four.
 LINE=(End of this book)
 }
 
-// ============================ A Grammer of Orcish
+// ============================ A Grammar of Orcish
 [BOOK 2]
 {
 PAGES=23
@@ -6809,4 +6809,1122 @@ LINE=More News....
 {
 LINE=Well 5 Pages Should
 LINE=Be Enough :)
+}
+
+// ============================ Quest of the Virtues – Volume 1
+[BOOK 33]
+{
+PAGES=45
+TITLE=Quest of the Virtues – Volume 1
+AUTHOR=Autenil
+PAGE=518
+PAGE=519
+PAGE=520
+PAGE=521
+PAGE=522
+PAGE=523
+PAGE=524
+PAGE=525
+PAGE=526
+PAGE=527
+PAGE=528
+PAGE=529
+PAGE=530
+PAGE=531
+PAGE=532
+PAGE=533
+PAGE=534
+PAGE=535
+PAGE=536
+PAGE=537
+PAGE=538
+PAGE=539
+PAGE=540
+PAGE=541
+PAGE=542
+PAGE=543
+PAGE=544
+PAGE=545
+PAGE=546
+PAGE=547
+PAGE=548
+PAGE=549
+PAGE=550
+PAGE=551
+PAGE=552
+PAGE=553
+PAGE=554
+PAGE=555
+PAGE=556
+PAGE=557
+PAGE=558
+PAGE=559
+PAGE=560
+PAGE=561
+PAGE=562
+}
+
+[PAGE 518]
+{
+LINE=Chapter 1:
+LINE=Starting out
+LINE=
+LINE=I begin my Quest in
+LINE=the fine bank of
+LINE=Skara  Brae.  My
+LINE=Quest is to travel by
+LINE=foot to the eight
+}
+
+[PAGE 519]
+{
+LINE=shrines of Britannia.
+LINE= Although this may
+LINE=sound easy,  it is
+LINE=hampered because I
+LINE=have forsaken my
+LINE=abilities and worldly
+LINE=possessions.
+LINE=Instead, all that I
+}
+
+[PAGE 520]
+{
+LINE=have to live by are a
+LINE=set of plain clothes,
+LINE=a ship to sail the
+LINE=seas and my diary in
+LINE=which to record my
+LINE=adventures.  Onward
+LINE=Ho towards the Shrine
+LINE=of Spirituality!
+}
+
+[PAGE 521]
+{
+LINE=Chapter 2:  The Road
+LINE=to Spirituality
+LINE=Since I have forsaken
+LINE=magic as a form of
+LINE=travel, I must find a
+LINE=way to the mainland
+LINE=from this island
+LINE=town.  Fortunately I
+}
+
+[PAGE 522]
+{
+LINE=was able to barter a
+LINE=ride from the
+LINE=ferryman.  Upon
+LINE=reaching the
+LINE=mainland, I followed
+LINE=the road until it
+LINE=turned North, yes I
+LINE=must continue
+}
+
+[PAGE 523]
+{
+LINE=Eastward.  I paused
+LINE=to listen to the
+LINE=pleasant sounds of
+LINE=the birds chirping
+LINE=and enjoyed the peace
+LINE=away from the busy
+LINE=life.  Upon reaching
+LINE=the Hedge Maze I
+}
+
+[PAGE 524]
+{
+LINE=recalled a story
+LINE=about the mage
+LINE=Relvinian in the days
+LINE=of old and turned
+LINE=South to go around
+LINE=it.  Possessing no
+LINE=weapons and having
+LINE=forsaken my training.
+}
+
+[PAGE 525]
+{
+LINE= I heeded the sign
+LINE=that said, “Enter and
+LINE=Become One Among
+LINE=Ghosts.”  The River
+LINE=forced me to turn
+LINE=South and then
+LINE=continue East.
+}
+
+[PAGE 526]
+{
+LINE=Chapter 3:
+LINE=Spirituality
+LINE=Spirituality is the
+LINE=leader of the
+LINE=Virtues.  It is the
+LINE=meditation and
+LINE=understanding of all
+LINE=other  Virtues.
+}
+
+[PAGE 527]
+{
+LINE=Without Spirituality,
+LINE=one cannot completely
+LINE=follow the Virtues,
+LINE=for it is the
+LINE=dedication and
+LINE=adherance to them.
+}
+
+[PAGE 528]
+{
+LINE=Chapter 4:
+LINE=Finding Honor
+LINE=My next visit will be
+LINE=to the Shrine of
+LINE=Honor, which lies a
+LINE=fair distance to the
+LINE=South.  there is a
+LINE=road to my East that
+}
+
+[PAGE 529]
+{
+LINE=I will follow to the
+LINE=town of Trinsic.  I
+LINE=found a warm room at
+LINE=the Traveller’s Inn,
+LINE=and woke refreshed in
+LINE=the morning to hear
+LINE=the sounds of nature
+LINE=as I prepared to
+}
+
+[PAGE 530]
+{
+LINE=continue my journeys.
+LINE= I thanked the kind
+LINE=innkeeper and headed
+LINE=out of Trinsic and
+LINE=South.  I conversed
+LINE=briefly with one
+LINE=lucky enough to own a
+LINE=house in the
+}
+
+[PAGE 531]
+{
+LINE=beautiful country and
+LINE=he bade me good
+LINE=fortune on my
+LINE=travels.  I used my
+LINE=rusty blade to cut
+LINE=through dense jungles
+LINE=past ruins of a
+LINE=forgotten realm, now
+}
+
+[PAGE 532]
+{
+LINE=inhabited only by the
+LINE=Undead.  Many a
+LINE=mongbat did hamper my
+LINE=journey, but finally
+LINE=I arrived at the
+LINE=Shrine of Honor.
+}
+
+[PAGE 533]
+{
+LINE=Chapter 5: Honor
+LINE=Many link Honor and
+LINE=battle, but it can be
+LINE=used with any aspect
+LINE=of Life.  Honor is to
+LINE=abide by the rules,
+LINE=dishonor is to cheat:
+LINE=to seek the unfair
+}
+
+[PAGE 534]
+{
+LINE=advantage.  I vowed
+LINE=to alway live life
+LINE=with Honor.
+LINE=
+LINE=Chapter 6:
+LINE=Seeking Valor
+LINE=I must now embark on
+LINE=my trusty small ship,
+}
+
+[PAGE 535]
+{
+LINE=the Hollandia, to the
+LINE=South and East,  to a
+LINE=small island where
+LINE=few have travelled.
+LINE=I know not yet what I
+LINE=will encounter at
+LINE=sea, so I bid the
+LINE=Virtues grant me
+}
+
+[PAGE 536]
+{
+LINE=safety.  So begins my
+LINE=voyage.  I managed to
+LINE=sail unnoticed past
+LINE=some water elementals
+LINE=which took a fair bit
+LINE=of navigation from my
+LINE=tillerman.  However,
+LINE=I arrived without
+}
+
+[PAGE 537]
+{
+LINE=incident.
+LINE=
+LINE=Chapter 7: Valor
+LINE=The Shrine of Valor
+LINE=is protected by many
+LINE=a beast far too
+LINE=poisonous and foul
+LINE=for myself to
+}
+
+[PAGE 538]
+{
+LINE=vanquish. One must
+LINE=show Valor to
+LINE=approach the Shrine!
+LINE=Valor is often shown
+LINE=in one’s willingness
+LINE=to fight what maybe a
+LINE=losing battle upon
+LINE=which he believes.
+}
+
+[PAGE 539]
+{
+LINE=It takes Valor to
+LINE=stand your ground
+LINE=against the many
+LINE=murderers and
+LINE=lawbreakers in our
+LINE=lands.  You may lose,
+LINE=but you show Valor in
+LINE=that you fight that
+}
+
+[PAGE 540]
+{
+LINE=which must be
+LINE=opposed.  Fight the
+LINE=fights you believe
+LINE=in, not just the
+LINE=fights you think you
+LINE=can win.
+}
+
+[PAGE 541]
+{
+LINE=Chapter 8: The voyage
+LINE=to Humility
+LINE=My journey will
+LINE=continue to the East
+LINE=towards the Shrine of
+LINE=Humility.  I launch
+LINE=my boat from the West
+LINE=side of the Island of
+}
+
+[PAGE 542]
+{
+LINE=Valor, where I made
+LINE=my daring escape from
+LINE=the many Giant
+LINE=Serpents chasing me
+LINE=with their poisonous
+LINE=venom and hissing
+LINE=tongues.  Beautiful
+LINE=blue waves washed
+}
+
+[PAGE 543]
+{
+LINE=over the bow of the
+LINE=boat as dolphins
+LINE=played, merrily
+LINE=leading me on.  The
+LINE=voyage is long and
+LINE=the water turbulent
+LINE=but finally land was
+LINE=struck.  Quickly I
+}
+
+[PAGE 544]
+{
+LINE=ran, eager to find my
+LINE=final destination for
+LINE=the day.
+LINE=
+LINE=Chapter 9: Humility
+LINE=The Shrine of
+LINE=Humility is
+LINE=surprisingly spartan;
+}
+
+[PAGE 545]
+{
+LINE=it is merely a grove
+LINE=of stone pillars with
+LINE=an ankh and the
+LINE=Humility stone at its
+LINE=center.  I would
+LINE=characterize Humility
+LINE=as this Quest;
+LINE=returning to my roots
+}
+
+[PAGE 546]
+{
+LINE=in this world.  I
+LINE=have rejected my
+LINE=possessions and my
+LINE=wealth in order to
+LINE=rely  only upon my
+LINE=cunning and
+LINE=instincts.  No longer
+LINE=have I that which
+}
+
+[PAGE 547]
+{
+LINE=makes me Glorious to
+LINE=others, but I have
+LINE=only that which I
+LINE=need to survive.  I
+LINE=may no longer rely
+LINE=upon myself, I must
+LINE=rely upon others for
+LINE=my survival.  My
+}
+
+[PAGE 548]
+{
+LINE=journey to Humility
+LINE=has only made me
+LINE=realise even more how
+LINE=Blessed I have been.
+LINE=
+LINE=Chapter 10: Onward to
+LINE=Honesty
+LINE=Now the journey will
+}
+
+[PAGE 549]
+{
+LINE=turn South towards
+LINE=the Island of Ice.
+LINE=However, my voyages
+LINE=and excursions into
+LINE=the jungle have made
+LINE=me quite tired, so I
+LINE=will camp here beside
+LINE=a river near the
+}
+
+[PAGE 550]
+{
+LINE=Shrine of Humility
+LINE=for the night.  I
+LINE=awake the next
+LINE=morning refreshed and
+LINE=invigorated, but also
+LINE=under attack!  A
+LINE=Headless One has
+LINE=noticed my rise from
+}
+
+[PAGE 551]
+{
+LINE=slumber and attacks
+LINE=me viciously.  My
+LINE=trusty cleaver was in
+LINE=my hand instantly but
+LINE=my lack of skill with
+LINE=the weapon delayed
+LINE=the death of the
+LINE=creature.  I launched
+}
+
+[PAGE 552]
+{
+LINE=the Hollandia and set
+LINE=sail for the Island
+LINE=of Ice, seeking the
+LINE=Shrine of Honesty.
+LINE=As I sail the vast
+LINE=oceans, I find myself
+LINE=desiring the company
+LINE=of my fellow man.
+}
+
+[PAGE 553]
+{
+LINE=Hopefully I shall
+LINE=meet some kind of
+LINE=traveller with whom I
+LINE=may exchange a few
+LINE=words.  Shortly I was
+LINE=landing my boat on
+LINE=the North end of the
+LINE=Island of Ice. I
+}
+
+[PAGE 554]
+{
+LINE=quickly made my way
+LINE=through snow across
+LINE=the frigid tundra
+LINE=while trying to keep
+LINE=warm.  The Shrine of
+LINE=Honesty bid me
+LINE=welcome as I felt the
+LINE=warmth radiate
+}
+
+[PAGE 555]
+{
+LINE=throughout me.
+LINE=
+LINE=Chapter 11: Honesty
+LINE=Honesty is to uphold
+LINE=and defend he truth
+LINE=at all times.
+LINE=Furthermore, Honesty
+LINE=requires us to be
+}
+
+[PAGE 556]
+{
+LINE=fair and true to our
+LINE=fellow man; not
+LINE=taking undue
+LINE=advantage.  Honesty
+LINE=is a Virtue often
+LINE=lacking in today’s
+LINE=world.  It seems as
+LINE=though people are out
+}
+
+[PAGE 557]
+{
+LINE=to gain wealth with
+LINE=no regard to Honesty
+LINE=towards other people.
+LINE= Honesty is the
+LINE=foundation upon which
+LINE=trust is built.  If
+LINE=the foundation
+LINE=crumbles, everything
+}
+
+[PAGE 558]
+{
+LINE=build upon it must
+LINE=fall.   The cold
+LINE=environment which
+LINE=houses the Shrine of
+LINE=Honesty is a
+LINE=testament to its
+LINE=value in today’s
+LINE=society.  the
+}
+
+[PAGE 559]
+{
+LINE=symbolic cold and
+LINE=secluded location
+LINE=show us that only the
+LINE=most dedicated to
+LINE=pursuing Honesty will
+LINE=achieve it.   May we
+LINE=all be Honest with
+LINE=our rellow man and
+}
+
+[PAGE 560]
+{
+LINE=remember to treat
+LINE=them how we would
+LINE=like to be treated.
+LINE=
+LINE=Chapter 12:  The Path
+LINE=to Sacrifice
+LINE=I made my way to the
+LINE=West side of the
+}
+
+[PAGE 561]
+{
+LINE=Island of Ice.  From
+LINE=there I launch the
+LINE=Hollandia and sail
+LINE=slightly North and
+LINE=West.  I land my boat
+LINE=just East of the
+LINE=Shrine of Sacrifice,
+LINE=so my road is West.
+}
+
+[PAGE 562]
+{
+LINE=Although I enjoy the
+LINE=sea, I am happy to be
+LINE=back on the mainland
+LINE=for the final three
+LINE=shrines.
+}
+
+// ============================ Fropoz's Journal
+[BOOK 34]
+{
+PAGES=11
+TITLE=Fropoz's Journal
+AUTHOR=Fropoz
+PAGE=563
+PAGE=564
+PAGE=565
+PAGE=566
+PAGE=567
+PAGE=568
+PAGE=569
+PAGE=570
+PAGE=571
+PAGE=572
+PAGE=573
+}
+
+[PAGE 563]
+{
+LINE=I have done as my
+LINE=Master has instructed
+LINE=me.
+LINE=
+LINE=The painted humans
+LINE=have been driven into
+LINE=Britannia and are
+LINE=even now wreaking
+}
+
+[PAGE 564]
+{
+LINE=havoc across the
+LINE=land, providing us
+LINE=with the distraction
+LINE=my Master requested.
+LINE=We have provided them
+LINE=with the masks
+LINE=necessary to defeat
+LINE=the orcs, thus
+}
+
+[PAGE 565]
+{
+LINE=causing even more
+LINE=distress for the
+LINE=people of Britannia.
+LINE=The unsuspecting
+LINE=fools are too busy
+LINE=dealing with the orc
+LINE=hordes to continue
+LINE=their exploration of
+}
+
+[PAGE 566]
+{
+LINE=our lands. We are
+LINE=safe...for now.
+LINE=
+LINE=
+LINE=The attacks continue
+LINE=exactly as planned.
+LINE=My Master is pleased
+LINE=with my work and we
+}
+
+[PAGE 567]
+{
+LINE=are closer to our
+LINE=goals than ever
+LINE=before. The gargoyles
+LINE=have proven to be
+LINE=more troublesome than
+LINE=we first anticipated,
+LINE=but I believe we can
+LINE=subjugate them fully
+}
+
+[PAGE 568]
+{
+LINE=given enough time.
+LINE=It’s unfortunate that
+LINE=we did not discover
+LINE=their knowledge
+LINE=sooner. Even now they
+LINE=prepare our armies
+LINE=for battle, but not
+LINE=without resistance.
+}
+
+[PAGE 569]
+{
+LINE=Now that some of them
+LINE=know of the other
+LINE=lands and of humans,
+LINE=they will double
+LINE=their efforts to seek
+LINE=help. This cannot be
+LINE=allowed.
+}
+
+[PAGE 570]
+{
+LINE=Damn them!! The
+LINE=humans proved more
+LINE=resourceful than we
+LINE=thought them capable
+LINE=of. Already their
+LINE=homes are free of
+LINE=orcs and savages and
+LINE=they once again are
+}
+
+[PAGE 571]
+{
+LINE=treading in our
+LINE=lands. We may have to
+LINE=move sooner than we
+LINE=thought. I will
+LINE=prepare my brethren
+LINE=and our golems.
+LINE=Hopefully, we can buy
+LINE=our Master some more
+}
+
+[PAGE 572]
+{
+LINE=time before the
+LINE=humans discover us.
+LINE=It’s too late. The
+LINE=gargoyles who have
+LINE=evaded our capture
+LINE=have opened the doors
+LINE=to our land. They
+LINE=pray the humans will
+}
+
+[PAGE 573]
+{
+LINE=help them, despite
+LINE=the actions of their
+LINE=cousins in Britannia.
+LINE=I fear they are
+LINE=right. I must go to
+LINE=warn the master...
+}
+
+// ============================ Translated Gargoyle Journal
+[BOOK 35]
+{
+PAGES=10
+TITLE=Translated Gargoyle Journal
+AUTHOR=Velis
+PAGE=574
+PAGE=575
+PAGE=576
+PAGE=577
+PAGE=578
+PAGE=579
+PAGE=580
+PAGE=581
+PAGE=582
+PAGE=583
+}
+
+[PAGE 574]
+{
+LINE=This text has been
+LINE=translated from a
+LINE=gargoyle’s journal
+LINE=following his capture
+LINE=and subsequent
+LINE=reeducation –
+LINE=Velis
+}
+
+[PAGE 575]
+{
+LINE=I write this in the
+LINE=hopes that someday a
+LINE=soul of pure heart
+LINE=and mind will read
+LINE=it. We are not the
+LINE=evil beings that our
+LINE=cousin gargoyles have
+LINE=made us out to be. We
+}
+
+[PAGE 576]
+{
+LINE=consider them
+LINE=uncivilized and they
+LINE=have no concept of
+LINE=the Principles. To
+LINE=you who read this, I
+LINE=beg for your help in
+LINE=saving my brethren
+LINE=and preserving my
+}
+
+[PAGE 577]
+{
+LINE=race. We stand at the
+LINE=edge of destruction
+LINE=as does the rest of
+LINE=the world. Once it
+LINE=was written law that
+LINE=we would not allow
+LINE=the knowledge of our
+LINE=civilization to
+}
+
+[PAGE 578]
+{
+LINE=spread into the
+LINE=world, now we are
+LINE=left with little
+LINE=choice…contact the
+LINE=outside world in the
+LINE=hopes of finding help
+LINE=to save it or
+LINE=becoming the
+}
+
+[PAGE 579]
+{
+LINE=unwilling bringers of
+LINE=its damnation. I fear
+LINE=my capture is
+LINE=certain, the
+LINE=controllers grow ever
+LINE=closer to my hiding
+LINE=place and I know if
+LINE=they discover me, my
+}
+
+[PAGE 580]
+{
+LINE=fate will be as that
+LINE=of my brothers.
+LINE=
+LINE=Although we resisted
+LINE=with all our
+LINE=strength, it is now
+LINE=clear that we must
+}
+
+[PAGE 581]
+{
+LINE=have assistance or
+LINE=our people will be
+LINE=gone. And if our
+LINE=oppressor achieves
+LINE=his goals our race
+LINE=will surely be joined
+LINE=by others.
+}
+
+[PAGE 582]
+{
+LINE=Those of us who have
+LINE=not yet been taken
+LINE=hope to open a path
+LINE=from the outside
+LINE=world into the city.
+LINE=We believe we have
+LINE=found weak areas in
+LINE=the mountains that we
+}
+
+[PAGE 583]
+{
+LINE=can successfully
+LINE=knock through with
+LINE=our limited supplies.
+LINE=We will have to work
+LINE=quickly and the risk
+LINE=of being discovered
+LINE=is great, but no
+LINE=choice remains…
+}
+
+// ============================ Kabur’s Journal
+[BOOK 36]
+{
+PAGES=19
+TITLE=Kabur’s Journal
+AUTHOR=Kabur
+PAGE=584
+PAGE=585
+PAGE=586
+PAGE=587
+PAGE=588
+PAGE=589
+PAGE=590
+PAGE=591
+PAGE=592
+PAGE=593
+PAGE=594
+PAGE=595
+PAGE=596
+PAGE=597
+PAGE=598
+PAGE=599
+PAGE=600
+PAGE=601
+PAGE=602
+}
+
+[PAGE 584]
+{
+LINE=The Campaign to
+LINE=slaughter the meer
+LINE=goes well. Although
+LINE=they seem to oppose
+LINE=the forces of ours at
+LINE=every turn, we still
+LINE=defeat them in
+LINE=combat. Spies of the
+}
+
+[PAGE 585]
+{
+LINE=Meer have been found
+LINE=and slain outside of
+LINE=the fortress of ours.
+LINE=The fools
+LINE=underestimate us. We
+LINE=have the power of
+LINE=Lord Exodus behind
+LINE=us. Soon they will
+}
+
+[PAGE 586]
+{
+LINE=learn to serve the
+LINE=Juka and I shall
+LINE=carry the head of the
+LINE=wench, Dasha, for all
+LINE=warriors to share
+LINE=triumph
+LINE=under.
+}
+
+[PAGE 587]
+{
+LINE=One of the warriors
+LINE=of the Juka died
+LINE=today. During the
+LINE=training of ours he
+LINE=spoke out in favor of
+LINE=the warriors of the
+LINE=Meer, saying that
+LINE=they were indeed
+}
+
+[PAGE 588]
+{
+LINE=powerful and would
+LINE=provide a challenge
+LINE=to the Juka. A Juka
+LINE=in fear is no Juka. I
+LINE=gave him death of a
+LINE=coward outside
+LINE=battle.
+}
+
+[PAGE 589]
+{
+LINE=More spies of the
+LINE=Meer have been found
+LINE=around the fortress
+LINE=of ours. Many have
+LINE=been seen and escaped
+LINE=warriors of ours.
+LINE=Those who have been
+LINE=captured and tortured
+}
+
+[PAGE 590]
+{
+LINE=have revealed nothing
+LINE=to us, even when
+LINE=subject to the spells
+LINE=of the females. I
+LINE=know the Meer must
+LINE=have plans against us
+LINE=if they send so many
+LINE=spies. I may send
+}
+
+[PAGE 591]
+{
+LINE=troops of the Juka to
+LINE=invade the camp of
+LINE=theirs as a
+LINE=warning.
+LINE=
+LINE=I have met Dasha in
+LINE=battle this day. The
+LINE=efforts of her to
+}
+
+[PAGE 592]
+{
+LINE=draw me into a black
+LINE=duel were foolish.
+LINE=Had we not been
+LINE=interrupted in the
+LINE=cave I would have
+LINE=ended the life of
+LINE=hers but that will
+LINE=have to wait for
+}
+
+[PAGE 593]
+{
+LINE=another battle. Lord
+LINE=Exodus ordered more
+LINE=patrols around the
+LINE=fortress of ours. If
+LINE=Dasha is any
+LINE=indication strike
+LINE=soon.
+}
+
+[PAGE 594]
+{
+LINE=More Meer stood
+LINE=outside the fortress
+LINE=of ours then i have
+LINE=ever seen at once.
+LINE=They must seek
+LINE=vengeance for the
+LINE=devastation of their
+LINE=forest. Many Juka
+}
+
+[PAGE 595]
+{
+LINE=stand ready at the
+LINE=base of the mountain
+LINE=to face the forces of
+LINE=theirs but today may
+LINE=be the final battle.
+LINE=Exodus has summoned
+LINE=me, I must prepare.
+}
+
+[PAGE 596]
+{
+LINE=Dusk has passed and
+LINE=the Juka now live in
+LINE=a new age, a later
+LINE=time. I have just
+LINE=returned from
+LINE=exploring the new
+LINE=world that surrounds
+LINE=the fortress of the
+}
+
+[PAGE 597]
+{
+LINE=Juka. During the
+LINE=attack of the Meer
+LINE=the madman Adranath
+LINE=tried to destroy the
+LINE=fortress of ours with
+LINE=great magic. At once
+LINE=he was still and
+LINE=light surrounded the
+}
+
+[PAGE 598]
+{
+LINE=fortress. Everything
+LINE=faded from view. When
+LINE=I regained the senses
+LINE=of mine I saw no sign
+LINE=of the Meer but
+LINE=Dasha. She has not
+LINE=been found since this
+LINE=new being,
+}
+
+[PAGE 599]
+{
+LINE=Blackthorn, blasted
+LINE=her from the top of
+LINE=the fortress. The
+LINE=forest was gone now
+LINE=replaced by
+LINE=grasslands. In the
+LINE=far distance I could
+LINE=see humans that had
+}
+
+[PAGE 600]
+{
+LINE=covered the bodies of
+LINE=theirs in marks. Even
+LINE=Gargoyles populated
+LINE=this place. Exodus
+LINE=has explained to me
+LINE=that the Juka and the
+LINE=fortress of ours had
+LINE=been pulled forward
+}
+
+[PAGE 601]
+{
+LINE=in time. The world we
+LINE=knew is now a
+LINE=thousand years in the
+LINE=past. Lord Exodus
+LINE=says he has saved the
+LINE=Juka from extinction,
+LINE=I do not want to
+LINE=believe him. I asked
+}
+
+[PAGE 602]
+{
+LINE=this stranger about
+LINE=the Meer but he tells
+LINE=me a new enemy
+LINE=remains to be
+LINE=destroyed. It seems
+LINE=the enemies of ours
+LINE=have passed away to
+LINE=dust like the
+LINE=forest.
 }

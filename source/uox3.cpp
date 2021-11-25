@@ -1797,8 +1797,10 @@ void CWorldMain::CheckAutoTimers( void )
 					uChar->Teleport();
 				else if( uChar->GetUpdate( UT_HIDE ) )
 				{
-					uChar->RemoveFromSight();
-					uChar->Update( nullptr, true );
+					uChar->ClearUpdate();
+					if( uChar->GetVisible() != VT_VISIBLE )
+						uChar->RemoveFromSight();
+					uChar->Update( nullptr, false );
 				}
 				else if( uChar->GetUpdate( UT_UPDATE ) )
 					uChar->Update();
@@ -2973,11 +2975,27 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 	UI16 tInstanceID = gate->GetInstanceID();
 	if( !Map->MapExists( tWorldNum ) )
 		return;
-	CChar *toMove = charMoving;
-	if( !ValidateObject( charMoving ) )
+	CChar *toMove = nullptr;
+	if( ValidateObject( charMoving ) )
+		toMove = charMoving;
+	else
 		toMove = sock->CurrcharObj();
 	if( !ValidateObject( toMove ) )
 		return;
+
+	// Teleport pets to new location too!
+	GenericList< CChar * > *myPets = toMove->GetPetList();
+	for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+	{
+		if( !ValidateObject( myPet ) )
+			continue;
+		if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == toMove )
+		{
+			if( objInOldRange( toMove, myPet, DIST_CMDRANGE ) )
+				myPet->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum, tInstanceID );
+		}
+	}
+
 	switch( sock->ClientType() )
 	{
 		case CV_UO3D:

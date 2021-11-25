@@ -1,0 +1,348 @@
+// Dungeon Treasure Spawners
+[base_dungeon_treasure]
+{
+get=base_spawner
+visible=0
+type=63
+amount=1
+movable=2
+interval=1 5
+weight=2000
+weightmax=400000
+maxitems=125
+script=2505 // dungeon_treasure_decay.js
+}
+
+[d_woodbox_1]
+{
+get=base_dungeon_treasure
+id=0x09aa 0x0e7d
+name=wooden box
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x48
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_woodbox_2]
+{
+get=base_dungeon_treasure
+id=0x09aa 0x0e7d
+name=wooden box
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_woodbox_3]
+{
+get=base_dungeon_treasure
+id=0x09aa 0x0e7d
+name=wooden box
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_woodbox_4]
+{
+get=base_dungeon_treasure
+id=0x09aa 0x0e7d
+name=wooden box
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+[d_woodchest_1]
+{
+get=base_dungeon_treasure
+id=0x0e42 0x0e43
+name=wooden chest
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x4a
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_woodchest_2]
+{
+get=base_dungeon_treasure
+id=0x0e42 0x0e43
+name=wooden chest
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_woodchest_3]
+{
+get=base_dungeon_treasure
+id=0x0e42 0x0e43
+name=wooden chest
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_woodchest_4]
+{
+get=base_dungeon_treasure
+id=0x0e42 0x0e43
+name=wooden chest
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+[d_metalchest_1]
+{
+get=base_dungeon_treasure
+id=0x09ab 0x0e7c
+name=metal chest
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x4a
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_metalchest_2]
+{
+get=base_dungeon_treasure
+id=0x09ab 0x0e7c
+name=metal chest
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_metalchest_3]
+{
+get=base_dungeon_treasure
+id=0x09ab 0x0e7c
+name=metal chest
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_metalchest_4]
+{
+get=base_dungeon_treasure
+id=0x09ab 0x0e7c
+name=metal chest
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+[d_goldmetalchest_1]
+{
+get=base_dungeon_treasure
+id=0x0e40 0x0e41
+name=metal chest
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x4a
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_goldmetalchest_2]
+{
+get=base_dungeon_treasure
+id=0x0e40 0x0e41
+name=metal chest
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_goldmetalchest_3]
+{
+get=base_dungeon_treasure
+id=0x0e40 0x0e41
+name=metal chest
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_goldmetalchest_4]
+{
+get=base_dungeon_treasure
+id=0x0e40 0x0e41
+name=metal chest
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+[d_smallcrate_1]
+{
+get=base_dungeon_treasure
+id=0x09a9 0x0e7e
+name=small crate
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x4a
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_smallcrate_2]
+{
+get=base_dungeon_treasure
+id=0x09a9 0x0e7e
+name=small crate
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_smallcrate_3]
+{
+get=base_dungeon_treasure
+id=0x09a9 0x0e7e
+name=small crate
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_smallcrate_4]
+{
+get=base_dungeon_treasure
+id=0x09a9 0x0e7e
+name=small crate
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+[d_mediumcrate_1]
+{
+get=base_dungeon_treasure
+id=0x0e3e 0x0e3f
+name=crate
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x4a
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_mediumcrate_2]
+{
+get=base_dungeon_treasure
+id=0x0e3e 0x0e3f
+name=crate
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_mediumcrate_3]
+{
+get=base_dungeon_treasure
+id=0x0e3e 0x0e3f
+name=crate
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_mediumcrate_4]
+{
+get=base_dungeon_treasure
+id=0x0e3e 0x0e3f
+name=crate
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+[d_largecrate_1]
+{
+get=base_dungeon_treasure
+id=0x0e3c 0x0e3d
+name=crate
+interval=1 2
+spawnobjlist=dungeontreasureloot1
+morey=0x01 0x01 0x34 0x4a
+morez=0x01 0x32 0x0 0x37
+}
+
+[d_largecrate_2]
+{
+get=base_dungeon_treasure
+id=0x0e3c 0x0e3d
+name=crate
+interval=1 3
+spawnobjlist=dungeontreasureloot2
+morey=0x01 0x01 0x48 0x56
+morez=0x01 0x41 0x32 0x46
+}
+
+[d_largecrate_3]
+{
+get=base_dungeon_treasure
+id=0x0e3c 0x0e3d
+name=crate
+interval=1 4
+spawnobjlist=dungeontreasureloot3
+morey=0x01 0x00 0x54 0x5e
+morez=0x01 0x50 0x41 0x55
+}
+
+[d_largecrate_4]
+{
+get=base_dungeon_treasure
+id=0x0e3c 0x0e3d
+name=crate
+interval=1 5
+spawnobjlist=dungeontreasureloot4
+morey=0x01 0x00 0x5c 0x64
+morez=0x01 0x5f 0x50 0x64
+}
+
+// Dungeon Treasure Level 1
+[d_treasure_1]
+{
+get=d_woodbox_1 d_woodchest_1 d_metalchest_1 d_goldmetalchest_1 d_smallcrate_1 d_mediumcrate_1 d_largecrate_1
+}
+
+// Dungeon Treasure Level 2
+[d_treasure_2]
+{
+get=d_woodbox_2 d_woodchest_2 d_metalchest_2 d_goldmetalchest_2 d_smallcrate_2 d_mediumcrate_2 d_largecrate_2
+}
+
+// Dungeon Treasure Level 3
+[d_treasure_3]
+{
+get=d_woodchest_3 d_metalchest_3 d_goldmetalchest_3 d_smallcrate_3 d_mediumcrate_3 d_largecrate_3
+}
+
+// Dungeon Treasure Level 4
+[d_treasure_4]
+{
+get=d_woodchest_4 d_metalchest_4 d_goldmetalchest_4 d_largecrate_4
+}
+
+EOF

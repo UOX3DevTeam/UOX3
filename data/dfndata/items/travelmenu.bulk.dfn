@@ -356,7 +356,7 @@ ITEMMENU=6002
 
 [ITEMMENU 6026]
 {
-Hyloth
+Hythloth
 <=Hythloth Outside
 GOPLACE=240
 <=Hythloth Level 1
@@ -428,4 +428,36 @@ GOPLACE=9
 GOPLACE=10
 <=Previous Menu
 ITEMMENU=6004
+}
+
+[ITEMMENU 6030]
+{
+Fire Dungeon
+<=T2A Entrance
+GOPLACE=275
+<=Britannia Entrance
+GOPLACE=276
+<=Level 1
+GOPLACE=277
+<=Level 2
+GOPLACE=278
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6031]
+{
+Ice Dungeon
+<=T2A Entrance
+GOPLACE=265
+<=Britannia Entrance
+GOPLACE=266
+<=Level 1
+GOPLACE=267
+<=Ratman Fort
+GOPLACE=268
+<=Ice Demon lair
+GOPLACE=269
+<=Previous Menu
+ITEMMENU=6002
 }

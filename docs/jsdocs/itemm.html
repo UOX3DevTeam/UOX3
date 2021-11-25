@@ -222,6 +222,26 @@ myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var itemName = myItem.GetTileName();</pre>
 </table>
 
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetMoreVar">GetMoreVar</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void GetMoreVar( moreVarName, moreVarPart );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Get the value (0-255) for a specific part (1-4) of temp variables ("more", "morex", "morey", "morez") associated with an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>// Fetch value stored in part 1 of item's "morex" property
+var moreXPart1 = myItem.GetMoreVar( "morex", 1 );</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetMoreVar">SetMoreVar</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetMoreVar( moreVarName, moreVarPart, moreVarValue );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Set the value (0-255) for a specific part (1-4) of temp variables ("more", "morex", "morey", "morez") associated with an item
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>// Set value 201 in part 1 of item's "morex" property
+myItem.SetMoreVar( "morex", 1, 201 );</pre>
+</table>
+
 <p>&nbsp;</p><center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
 </center>

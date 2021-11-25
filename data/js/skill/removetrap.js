@@ -37,11 +37,10 @@ function onCallback0( pSock, ourObj )
 	}
 
 	var pUser = pSock.currentChar;
-	var iMoreZ = ourObj.morez;
-	var iMoreZPart1 = ( iMoreZ >> 24 ); // Trap set
-	var iMoreZPart2 = ( iMoreZ >> 16 ); // Trap Damage
-	var iMoreZPart3 = ( iMoreZ >> 8 );  // Minskill
-	var iMoreZPart4 = ( iMoreZ % 256 ); // Maxskill
+	var iMoreZPart1 = ourObj.GetMoreVar( "morez", 1 ); // Trap set
+	var iMoreZPart2 = ourObj.GetMoreVar( "morez", 2 ); // Trap Damage
+	var iMoreZPart3 = ourObj.GetMoreVar( "morez", 3 ); // Minskill
+	var iMoreZPart4 = ourObj.GetMoreVar( "morez", 4 ); // Maxskill
 	var isInRange = pUser.InRange( ourObj, 3 );
 
 	pSock.tempObj = null;
@@ -63,26 +62,60 @@ function onCallback0( pSock, ourObj )
 	}
 	else
 	{
+		// Is player attempting to disarm a dungeon-trap (ex: spike trap)
+		var isDungeonTrap = false;
+		var scriptTriggers = ourObj.scriptTriggers;
+		for( var i = 0; i < scriptTriggers.length; i++ )
+		{
+			if( scriptTriggers[i] == 2504 ) // dungeon_traps.js
+			{
+				isDungeonTrap = true;
+				break;
+			}
+		}
+
 		var skillCheckModifier = 0;
 		var iGloves = pUser.FindItemLayer( 7 ); // hands layer
 		if( ValidateObject( iGloves ) )
 		{
 			skillCheckModifier = iGloves.weight;
 		}
+
 		if( pUser.skills.removetrap >= iMoreZPart4 || pUser.CheckSkill( 48, ( iMoreZPart3 + skillCheckModifier ), 1000 ) )
 		{
 			// You successfully render the trap harmless
 			pSock.SysMessage( GetDictionaryEntry( 2096, pSock.language ) );
-			ourObj.morez = "0" + " " + iMoreZPart2.toString() + " " + iMoreZPart3.toString() + " " + iMoreZPart4.toString();
+			ourObj.SetMoreVar( "morez", 1, 0 );
 			pSock.SoundEffect( 0x241, false );// lockpick sounds
+
+			// Start timer to re-activate dungeon trap, if it is one
+			if( isDungeonTrap )
+				TriggerEvent( 2504, "DeactivateTrap", ourObj );
 		}
 		else
 		{
-			if( RandomNumber( 0, 1 ) )
+			if( RandomNumber( 0, 1 ))
 			{
 				// Oops.
 				pSock.SysMessage( GetDictionaryEntry( 2097, pSock.language ) );
-				TriggerTrap( pSock, ourObj )// sets trap off
+				if( isDungeonTrap )
+				{
+					// sets dungeon trap off
+					switch( ourObj.id )
+					{
+						case 0x11a0: // spike trap
+							pUser.Teleport( ourObj );
+							TriggerEvent( 2504, "onCollide", pSock, pUser, ourObj );
+							break;
+						default:
+							break;
+					}
+				}
+				else
+				{
+					// sets trap off
+					TriggerTrap( pSock, ourObj );
+				}
 			}
 			else
 			{

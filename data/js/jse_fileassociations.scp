@@ -46,6 +46,7 @@
 //-------------------------------------------
 // House addon[60-64]
 60=server/misc/furniture_destroy.js
+//-------------------------------------------
 61=server/misc/container_effects.js
 //-------------------------------------------
 // SYSTEM:[100-2999] Rerserved for specific core server needs
@@ -134,11 +135,19 @@
 //-------------------------------------------
 // Miscellaneous [2200-2499]
 2200=server/misc/uses_left_tooltip.js
-//-------------------------------------------
-// Server Data [2500-2999]
+2201=server/misc/hint_tooltip.js
+2202=server/misc/warning_trigger.js
+
+// Server Data [2500-2749]
 2500=server/data/weapontypes.js
 2501=server/data/combatanims.js
 2503=server/data/map_coordinates.js
+2504=server/misc/dungeon_trap.js
+2505=server/misc/dungeon_treasure_decay.js
+
+// Server Teleporters [2750-2999]
+2750=server/teleporter/teleporter_wind_city_entrance.js
+2751=server/teleporter/teleporter_orc_caves_2_3.js
 
 //-------------------------------------------
 // NPC, and AI [3000-3999]
@@ -224,6 +233,12 @@
 4500=item/doors.js
 
 //-------------------------------------------
+// Dungeon Specific [4750-4999]
+//-------------------------------------------
+4750=item/dungeons/switch_puzzle_covetous.js
+4751=item/dungeons/deceit_lvl1_brazier.js
+
+//-------------------------------------------
 // Miscellaneous Item Types [5000-5499]
 //-------------------------------------------
 5000=item/teleportrune.js
@@ -258,6 +273,8 @@
 5031=item/messageinabottle.js
 5032=item/waterstainedsos.js
 5033=item/sextant.js
+5034=item/iron_maiden.js
+5035=item/gate_opener.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

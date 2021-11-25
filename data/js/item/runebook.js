@@ -841,9 +841,21 @@ function onTimer( timerObj, timerID )
 	timerObj.SpellStaticEffect( mSpell );
 
 	// Handle effect of spell
-	if( spellNum == 32 )
+	if( spellNum == 32 ) // Recall spell
 	{
-		// Recall spell
+		// Teleport player's pets
+		var petList = timerObj.GetPetList();
+		for( var i = 0; i < petList.length; i++ )
+		{
+			var tempPet = petList[i];
+			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 12 ))
+			{
+				tempPet.Teleport( targLocX, targLocY, targLocZ, targWorld );
+				tempPet.Follow( timerObj );
+			}
+		}
+
+		// Teleport player
 		timerObj.Teleport( targLocX, targLocY, targLocZ, targWorld );
 	}
 	else
