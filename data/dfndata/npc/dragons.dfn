@@ -177,7 +177,7 @@ CONTROLSLOTS=3
 [ancientwyrm]
 {
 NAME=#//an ancient wyrm
-ID=0x0069
+ID=0x002e
 DIRECTION=RND
 BACKPACK
 GOLD=1100 1300

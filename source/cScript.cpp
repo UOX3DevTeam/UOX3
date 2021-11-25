@@ -82,7 +82,7 @@ static JSFunctionSpec my_functions[] =
 	{ "FinishedCommandList",		SE_FinishedCommandList,		0, 0, 0 },
 	{ "CreateDFNItem",				SE_CreateDFNItem,			3, 0, 0 },
 	{ "CreateBlankItem",			SE_CreateBlankItem,			8, 0, 0 },
-	{ "SpawnNPC",					SE_SpawnNPC,				5, 0, 0 },
+	{ "SpawnNPC",					SE_SpawnNPC,				6, 0, 0 },
 	{ "GetPackOwner",				SE_GetPackOwner,			2, 0, 0 },
 	{ "FindRootContainer",			SE_FindRootContainer,		2, 0, 0 },
 	{ "CalcTargetedItem",			SE_CalcTargetedItem,		1, 0, 0 },
@@ -487,22 +487,26 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool InRange( CChar *person, CBaseObject *objInRange )
+//|	Function	-	bool InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when an object comes in range of a character with the event attached
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	A third parameter is provided to let script know whether object that comes into
 //|					range is a character or an item (Multi not supported yet)
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::InRange( CChar *person, CBaseObject *objInRange )
+bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 {
-	if( !ValidateObject( person ) || !ValidateObject( objInRange ) )
+	if( !ValidateObject( srcObj ) || !ValidateObject( objInRange ) )
 		return false;
 	if( !ExistAndVerify( seInRange, "inRange" ) )
 		return false;
 
 	jsval params[3], rval;
-	JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, person, runTime );
+	JSObject *myObj;
+	if( srcObj->CanBeObjType( OT_CHAR ))
+		myObj = JSEngine->AcquireObject( IUE_CHAR, srcObj, runTime );
+	else
+		myObj = JSEngine->AcquireObject( IUE_ITEM, srcObj, runTime );
 
 	JSObject *myObj2;
 	if( objInRange->CanBeObjType( OT_CHAR ) )
@@ -512,10 +516,6 @@ bool cScript::InRange( CChar *person, CBaseObject *objInRange )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( myObj2 );
-	if( objInRange->CanBeObjType( OT_CHAR ) )
-		params[2] = INT_TO_JSVAL( 0 );
-	else
-		params[2] = INT_TO_JSVAL( 1 );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 2, params, &rval );
 
@@ -554,6 +554,42 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 	if( JS_CallFunctionName( targContext, targObject, "onCollide", 3, params, &rval ) == JS_FALSE )
 	{
 		SetEventExists( seOnCollide, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY );
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for object event is attached to when movement is detected within 5 tiles
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( sourceObj ) || !ValidateObject( charInRange ))
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnMoveDetect, "onMoveDetect" ) )
+		return RV_NOFUNC;
+
+	jsval rval, params[5];
+	JSObject *myObj	= nullptr;
+	if( sourceObj->GetObjType() == OT_CHAR )
+		myObj = JSEngine->AcquireObject( IUE_CHAR, sourceObj, runTime );
+	else
+		myObj = JSEngine->AcquireObject( IUE_ITEM, sourceObj, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, charInRange, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = INT_TO_JSVAL( rangeToChar );
+	params[3] = INT_TO_JSVAL( oldCharX );
+	params[4] = INT_TO_JSVAL( oldCharY );
+
+	if( JS_CallFunctionName( targContext, targObject, "onMoveDetect", 5, params, &rval ) == JS_FALSE )
+	{
+		SetEventExists( seOnMoveDetect, false );
 		return RV_NOFUNC;
 	}
 
@@ -1020,6 +1056,34 @@ SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers on containers after an item has been removed from it
+//o-----------------------------------------------------------------------------------------------o
+bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover )
+{
+	if( !ValidateObject( contItem ) || !ValidateObject( item ) )
+		return false;
+	if( !ExistAndVerify( seOnContRemoveItem, "onContRemoveItem" ) )
+		return false;
+
+	jsval params[3], rval;
+
+	JSObject *contObj = JSEngine->AcquireObject( IUE_ITEM, contItem, runTime );
+	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, itemRemover, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( contObj );
+	params[1] = OBJECT_TO_JSVAL( itemObj );
+	params[2] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContRemoveItem", 3, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnContRemoveItem, false );
+
+	return ( retVal == JS_TRUE );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item event is attached to when swung in combat
@@ -1393,35 +1457,44 @@ SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OutOfRange( CChar *person, CBaseObject *objVanish )
+//|	Function	-	bool OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when objects go out of range
 //|	Notes		-	A third parameter in the event can be used to determine whether the object
 //|					going out of range is an ITEM or a CHARACTER
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OutOfRange( CChar *person, CBaseObject *objVanish )
+bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 {
-	if( !ValidateObject( person ) || !ValidateObject( objVanish ) )
+	if( !ValidateObject( srcObj ) || !ValidateObject( objVanish ) )
 		return false;
 	if( !ExistAndVerify( seOutOfRange, "outOfRange" ) )
 		return false;
 
-	jsval params[3], rval;
+	jsval params[2], rval;
+
 	JSObject *myObj;
-	if( objVanish->GetObjType() == OT_CHAR )
+	if( srcObj->GetObjType() == OT_CHAR )
 	{
-		myObj = JSEngine->AcquireObject( IUE_CHAR, objVanish, runTime );
-		params[2] = INT_TO_JSVAL( 0 );
+		myObj = JSEngine->AcquireObject( IUE_CHAR, srcObj, runTime );
 	}
 	else
 	{
-		myObj = JSEngine->AcquireObject( IUE_ITEM, objVanish, runTime );
-		params[2] = INT_TO_JSVAL( 1 );
+		myObj = JSEngine->AcquireObject( IUE_ITEM, srcObj, runTime );
 	}
-	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, person, runTime );
-	params[0] = OBJECT_TO_JSVAL( charObj );
-	params[1] = OBJECT_TO_JSVAL( myObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "outOfRange", 3, params, &rval );
+
+	JSObject *myObj2;
+	if( objVanish->GetObjType() == OT_CHAR )
+	{
+		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objVanish, runTime );
+	}
+	else
+	{
+		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objVanish, runTime );
+	}
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( myObj2 );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "outOfRange", 2, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOutOfRange, false );
 

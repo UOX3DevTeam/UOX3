@@ -749,6 +749,28 @@ teradrone
 terawarrior
 }
 
+[NPCLIST randomallmonster]
+{
+npclist=arcticlist
+npclist=insects
+npclist=britainsewer
+npclist=alldragonlist
+npclist=allettin
+npclist=alldaemonlist
+gargoyle
+wisp
+npclist=allelementals
+gazer
+eldergazer
+npclist=flails
+npclist=allorc
+npclist=alllizardmen
+npclist=allratmen
+npclist=alltroll
+npclist=volcaniclist
+npclist=allundeadlist
+}
+
 [NPCLIST tamewoods]
 {
 npclist=allbirdlist

@@ -231,7 +231,17 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>(ndata) );		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
-			case DFNTAG_ID:				applyTo->SetID( static_cast<UI16>(ndata) );				break;
+			case DFNTAG_ID:				// applyTo->SetID( static_cast<UI16>(ndata) );				break;
+				if( ssecs.size() == 1 )
+				{
+					applyTo->SetID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
+				}
+				else
+				{
+					SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size()-1));
+					applyTo->SetID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[rndEntry], "//" )), nullptr, 0)) );
+				}
+				break;
 			case DFNTAG_INTELLIGENCE:	applyTo->SetIntelligence( static_cast<SI16>(ndata) );	break;
 			case DFNTAG_INTADD:			applyTo->SetIntelligence2( static_cast<SI16>(ndata) );	break;
 			case DFNTAG_LODAMAGE:		applyTo->SetLoDamage( static_cast<SI16>(ndata) );		break;

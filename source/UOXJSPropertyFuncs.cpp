@@ -2355,6 +2355,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_MINTIME:				*vp = INT_TO_JSVAL( gPriv->GetMinTime() );						break;
 			case CSPAWNREGP_MAXTIME:				*vp = INT_TO_JSVAL( gPriv->GetMaxTime() );						break;
 			case CSPAWNREGP_ONLYOUTSIDE:			*vp = BOOLEAN_TO_JSVAL( gPriv->GetOnlyOutside() );				break;
+			case CSPAWNREGP_ISSPAWNER:				*vp = BOOLEAN_TO_JSVAL( gPriv->IsSpawner() );					break;
 			case CSPAWNREGP_X1:						*vp = INT_TO_JSVAL( gPriv->GetX1() );							break;
 			case CSPAWNREGP_Y1:						*vp = INT_TO_JSVAL( gPriv->GetY1() );							break;
 			case CSPAWNREGP_X2:						*vp = INT_TO_JSVAL( gPriv->GetX2() );							break;
@@ -2393,6 +2394,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_MINTIME:			gPriv->SetMinTime( (UI08)encaps.toInt() );				break;
 			case CSPAWNREGP_MAXTIME:			gPriv->SetMaxTime( (UI08)encaps.toInt() );				break;
 			case CSPAWNREGP_ONLYOUTSIDE:		gPriv->SetOnlyOutside( encaps.toBool() );				break;
+			case CSPAWNREGP_ISSPAWNER:			gPriv->IsSpawner( encaps.toBool() );					break;
 			case CSPAWNREGP_X1:					gPriv->SetX1( (SI16)encaps.toInt() );					break;
 			case CSPAWNREGP_Y1:					gPriv->SetY1( (SI16)encaps.toInt() );					break;
 			case CSPAWNREGP_X2:					gPriv->SetX2( (SI16)encaps.toInt() );					break;

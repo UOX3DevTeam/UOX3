@@ -489,7 +489,7 @@ enum ItemTypes
     IT_TOWNSTONE			= 35,
 	IT_RUNEBOOK				= 49,
 	IT_RECALLRUNE			= 50,
-    IT_GATE					= 51,
+	IT_GATE					= 51,
     IT_OBJTELEPORTER		= 60,
     IT_ITEMSPAWNER			= 61,
     IT_NPCSPAWNER			= 62,

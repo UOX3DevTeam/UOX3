@@ -308,7 +308,11 @@ function onCallback0( socket, ourObj )
 		{
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
-			var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var z = socket.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+				z += GetTileHeight( socket.GetWord( 17 ));
 
 			// We need a LineOfSight check
 			if( mChar.CanSee( x, y, z ))

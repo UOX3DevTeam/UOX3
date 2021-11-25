@@ -560,7 +560,7 @@ void CServerData::ResetDefaults( void )
 	SysMsgColour( 0x0048 );
 
 	CombatMonstersVsAnimals( true );
-	CombatAnimalsAttackChance( 5 );
+	CombatAnimalsAttackChance( 2 );
 	CombatAnimalsGuarded( false );
 	CombatNPCBaseFleeAt( 20 );
 	CombatNPCBaseReattackAt( 40 );

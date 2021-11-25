@@ -6,379 +6,387 @@
 // For use with the UOX emulator or any with permission from the author
 
 // dark wooden wall south top and bottom runner boards
-[0x0335]
+[0x0334]
 {
 get=base_door
-name=secret door
-id=0x0335
+name=#
+id=0x0334
 type=12
 }
 // shorter dark wooden wall south top and bottom runner boards
-[0x0337]
+[0x0336]
 {
 get=base_door
-name=secret door
-id=0x0337
+name=#
+id=0x0336
 type=12
 }
 // dark wooden wall south top and bottom runner boards
-[0x0339]
+[0x0338]
 {
 get=base_door
-name=secret door
-id=0x0339
+name=#
+id=0x0338
 type=12
 }
 // shorter dark wooden wall south top and bottom runner boards
-[0x033B]
+[0x033a]
 {
 get=base_door
-name=secret door
-id=0x033B
+name=#
+id=0x033a
 type=12
 }
 // shorter dark wooden wall west top and bottom runner boards
-[0x033D]
+[0x033c]
 {
 get=base_door
-name=secret door
-id=0x033D
+name=#
+id=0x033c
 type=12
 }
 // dark wooden wall west top and bottom runner boards
-[0x033F]
+[0x033e]
 {
 get=base_door
-name=secret door
-id=0x033F
+name=#
+id=0x033e
 type=12
 }
 // dark wooden wall west top and bottom runner boards
-[0x0341]
+[0x0340]
 {
 get=base_door
-name=secret door
-id=0x0341
+name=#
+id=0x0340
 type=12
 }
 // dark wooden wall west top and bottom runner boards
-[0x0343]
+[0x0342]
 {
 get=base_door
-name=secret door
-id=0x03433
+name=#
+id=0x0342
 type=12
 }
 // light wooden wall south
-[0x0345]
+[0x0344]
 {
 get=base_door
-name=secret door
-id=0x0345
+name=#
+id=0x0344
 type=12
 }
 // light wooden wall south
-[0x0347]
+[0x0346]
 {
 get=base_door
-name=secret door
-id=0x0347
+name=#
+id=0x0346
 type=12
 }
 // light wooden wall south
-[0x0349]
+[0x0348]
 {
 get=base_door
-name=secret door
-id=0x0349
+name=#
+id=0x0348
 type=12
 }
 // light wooden wall south
-[0x034B]
+[0x034a]
 {
 get=base_door
-name=secret door
-id=0x034B
+name=#
+id=0x034a
 type=12
 }
 // light wooden wall west
-[0x034D]
+[0x034c]
 {
 get=base_door
-name=secret door
-id=0x034D
+name=#
+id=0x034c
 type=12
 }
 // light wooden wall west
-[0x034F]
+[0x034e]
 {
 get=base_door
-name=secret door
-id=0x034F
+name=#
+id=0x034e
 type=12
 }
 // light wooden wall west
-[0x0351]
+[0x0350]
 {
 get=base_door
-name=secret door
-id=0x0351
+name=#
+id=0x0350
 type=12
 }
 // light wooden wall west
-[0x0353]
+[0x0352]
 {
 get=base_door
-name=secret door
-id=0x0353
+name=#
+id=0x0352
 type=12
 }
 // rough dark grey block stone south facing
-[0x00E9]
+[0x00e8]
 {
 get=base_door
-name=secret door
-id=0x00E9
+name=#
+id=0x00e8
 type=12
 }
 // rough dark grey block stone south facing
-[0x00EB]
+[0x00ea]
 {
 get=base_door
-name=secret door
-id=0x00EB
+name=#
+id=0x00ea
 type=12
 }
 // rough dark grey stone block south facing
-[0x00ED]
+[0x00ec]
 {
 get=base_door
-name=secret door
-id=0x00ED
+name=#
+id=0x00ec
 type=12
 }
 // rough dark grey stone block south facing
-[0x00EF]
+[0x00ee]
 {
 get=base_door
-name=secret door
-id=0x00EF
+name=#
+id=0x00ee
 type=12
 }
 // rough dark grey stone block west facing
-[0x00F1]
+[0x00f0]
 {
 get=base_door
-name=secret door
-id=0x00F1
+name=#
+id=0x00f0
 type=12
 }
 // rough dark grey stone block west facing
-[0x00F3]
+[0x00F2]
 {
 get=base_door
-name=secret door
-id=0x00F3
+name=#
+id=0x00F2
 type=1214
 }
 // rough dark grey stone block west facing
-[0x00F5]
+[0x00F4]
 {
 get=base_door
-name=secret door
-id=0x00F5
+name=#
+id=0x00F4
 type=12
 }
 // rough dark grey stone block west facing
-[0x00F7]
+[0x00F6]
 {
 get=base_door
-name=secret door
-id=0x00F7
+name=#
+id=0x00F6
 type=12
 }
 // dark greenish stone wall south
-[0x0315]
+[0x0314]
 {
 get=base_door
-name=secret door
-id=0x0315
+name=#
+id=0x0314
 type=12
 }
 // dark greenish stone wall south
-[0x0317]
+[0x0316]
 {
 get=base_door
-name=secret door
-id=0x0317
+name=#
+id=0x0316
 type=12
 }
 // dark greenish stone wall south dungeon
-[0x0319]
+[0x0318]
 {
 get=base_door
 name=dungeon wall
-id=0x0319
+id=0x0318
 type=12
 }
 // dark greenish stone wall south dungeon
-[0x031B]
+[0x031a]
 {
 get=base_door
-name=secret door
-id=0x031B
+name=#
+id=0x031a
 type=12
 }
 // dark greenish stone wall west
-[0x031D]
+[0x031c]
 {
 get=base_door
-name=secret door
-id=0x031D
+name=#
+id=0x031c
 type=12
 }
 // dark greenish stone wall west
-[0x031F]
+[0x031e]
 {
 get=base_door
-name=secret door
-id=0x031F
+name=#
+id=0x031e
 type=12
 }
 // dark greenish stone wall west
-[0x0321]
+[0x0320]
 {
 get=base_door
-name=secret door
-id=0x0321
+name=#
+id=0x0320
 type=12
 }
 // dark greenish stone wall west
-[0x0323]
+[0x0322]
 {
 get=base_door
-name=secret door
-id=0x0323
+name=#
+id=0x0322
 type=12
 }
 // buff colored rough hewn stone wall south
-[0x0325]
+[0x0324]
 {
 get=base_door
-name=secret door
-id=0x0325
+name=#
+id=0x0324
 type=12
 }
 // buff colored rough hewn stone wall south
-[0x0327]
+[0x0326]
 {
 get=base_door
-name=secret door
-id=0x0327
+name=#
+id=0x0326
 type=12
 }
 // buff colored rough hewn stone wall south
-[0x0329]
+[0x0328]
 {
 get=base_door
-name=secret door
-id=0x0329
+name=#
+id=0x0328
 type=12
 }
 // buff colored rough hewn stone wall south
-[0x032B]
+[0x032a]
 {
 get=base_door
-name=secret door
-id=0x032B
+name=#
+id=0x032a
 type=12
 }
 // buff colored rough hewn stone wall west
-[0x032D]
+[0x032c]
 {
 get=base_door
 name=stone wall
-id=0x032D
+id=0x032c
 type=12
 }
 // buff colored rough hewn stone wall west
-[0x032F]
+[0x032e]
 {
 get=base_door
-name=secret door
-id=0x032F
+name=#
+id=0x032e
 type=12
 }
 // buff colored rough hewn stone wall west
-[0x0331]
+[0x0330]
 {
 get=base_door
-name=secret door
-id=0x0331
+name=#
+id=0x0330
 type=12
 }
 // buff colored rough hewn stone wall west
-[0x0333]
+[0x0332]
 {
 get=base_door
-name=secret door
-id=0x0333
+name=#
+id=0x0332
 type=12
 }
 // grey large stone block wall south
-[0x0355]
+[0x0354]
 {
 get=base_door
-name=secret door
-id=0x0355
+name=#
+id=0x0354
 type=12
 }
 // grey large stone block wall south
-[0x0357]
+[0x0356]
 {
 get=base_door
-name=secret door
-id=0x0357
+name=#
+id=0x0356
 type=12
 }
 // grey large stone block wall south
-[0x0359]
+[0x0358]
 {
 get=base_door
-name=secret door
-id=0x0359
+name=#
+id=0x0358
 type=12
 }
 // grey large stone block wall south
-[0x035B]
+[0x035a]
 {
 get=base_door
-name=secret door
-id=0x035B
+name=#
+id=0x035a
 type=12
 }
 // grey large stone block wall west
-[0x035D]
+[0x035c]
 {
 get=base_door
-name=secret door
-id=0x035D
+name=#
+id=0x035c
 type=12
 }
 // grey large stone block wall west
-[0x035F]
+[0x035e]
 {
 get=base_door
-name=secret door
-id=0x035F
+name=#
+id=0x035e
 type=12
 }
 // grey large stone block wall west
-[0x0361]
+[0x0360]
 {
 get=base_door
-name=secret door
-id=0x0361
+name=#
+id=0x0360
+type=12
+}
+// grey large stone block wall west
+[0x0362]
+{
+get=base_door
+name=#
+id=0x0362
 type=12
 }
 // metal door west hinge north

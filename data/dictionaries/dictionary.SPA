@@ -3945,6 +3945,14 @@
 9097=No puede colocar esta casa-addon allí, ¡la ubicación está bloqueada!
 9098=Estímulo inamovible para los jugadores normales, pero puede ser arrastrado fuera de la mochila por los personajes del GM.
 9099=Consejo: Pruebe el comando 'ALLMOVE ON' o modifique la propiedad móvil del elemento con el comando 'TWEAK'.
+9100=*evita la trampa*
+9101=Selecciona el objetivo para modificar el ID por %i:
+9102=¡Ese candado no puede ser desbloqueado con magia!
+9103=%i elementos afectados por %s %d
+9104=Seleccione la primera esquina del cuadro de mando de la zona:
+9105=Seleccione la segunda esquina del cuadro de mando de la zona:
+9106=Oyes el sonido de una puerta moviéndose cerca.
+9107=¡No eres digno de entrar en la ciudad del Viento!
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!

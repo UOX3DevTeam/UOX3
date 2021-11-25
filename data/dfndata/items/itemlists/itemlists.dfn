@@ -125,13 +125,24 @@
 {
 0x0f06
 0x0f07
+0x0f07-b
+0x0f07-c
 0x0f08
+0x0f08-b
 0x0f09
+0x0f09-b
 0x0f0a
+0x0f0a-b
+0x0f0a-c
+0x0f0a-d
 0x0f0b
+0x0f0b-b
 0x0f0c
-0x0f0c
+0x0f0c-b
+0x0f0c-c
 0x0f0d
+0x0f0d-b
+0x0f0d-c
 }
 
 //Instruments
@@ -955,9 +966,105 @@ practice_gnarled_staff
 // Juka Warrior Weapons - Halberd, Spear, Black Staff
 [ITEMLIST 200]
 {
-0x143e
-0x0f62
-0xdf1
+100|0x143e
+50|0x0f62
+25|0x0df1
+}
+
+// Dungeon Treasures Level 1 - 4
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot1]
+{
+0x0eed,98 125
+lootlist=lowlevelscrolls,6
+lootlist=randomgemsandjewelry,4
+lootlist=magic_items_max_tier_2
+itemlist=4,2 // random potions
+itemlist=lowlevelarmor,2
+itemlist=randomlowlevelweapons,2
+}
+
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot2]
+{
+0x0eed,98 125
+lootlist=lowlevelscrolls,6
+lootlist=randomgemsandjewelry,4
+lootlist=magic_items_max_tier_2
+itemlist=4,4 // random potions
+itemlist=lowlevelarmor,2
+itemlist=midlevelarmor,2
+itemlist=randomlowlevelweapons,2
+itemlist=randommidlevelweapons,2
+}
+
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot3]
+{
+0x0eed,200 350
+lootlist=midlevelscrolls,6
+lootlist=randomgemsandjewelry,8
+lootlist=magic_items_max_tier_3
+itemlist=4,8 // random potions
+itemlist=midlevelarmor,4
+itemlist=highlevelarmor,2
+itemlist=randommidlevelweapons,4
+itemlist=randomhighlevelweapons,2
+}
+
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot4]
+{
+0x0eed,500 900
+lootlist=highlevelscrolls,6
+lootlist=randomgemsandjewelry,16
+lootlist=magic_items_max_tier_4
+itemlist=4,16 // random potions
+itemlist=midlevelarmor,2
+itemlist=highlevelarmor,4
+itemlist=randommidlevelweapons,2
+itemlist=randomhighlevelweapons,4
+}
+
+// Itemlists used by regional spawners to spawn dungeon chest spawners!
+[ITEMLIST dungeon_treasure_1-2]
+{
+d_treasure_1
+d_treasure_2
+}
+
+[ITEMLIST dungeon_treasure_1-3]
+{
+d_treasure_1
+d_treasure_2
+d_treasure_3
+}
+
+[ITEMLIST dungeon_treasure_1-4]
+{
+d_treasure_1
+d_treasure_2
+d_treasure_3
+d_treasure_4
+}
+
+[ITEMLIST dungeon_treasure_2-3]
+{
+d_treasure_2
+d_treasure_3
+}
+
+[ITEMLIST dungeon_treasure_2-4]
+{
+d_treasure_2
+d_treasure_3
+d_treasure_4
+}
+
+[ITEMLIST dungeon_treasure_3-4]
+{
+d_treasure_3
+d_treasure_4
 }
 
 //**************************
