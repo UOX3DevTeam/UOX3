@@ -142,6 +142,7 @@ void HandleTeleporters( CChar *s )
 					if( targetWorld != charWorld )
 						SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
 
+					// Teleport player's pets
 					GenericList< CChar * > *myPets = s->GetPetList();
 					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
 					{
@@ -149,7 +150,7 @@ void HandleTeleporters( CChar *s )
 							continue;
 						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s )
 						{
-							if( objInOldRange( s, myPet, DIST_INRANGE ) )
+							if( objInOldRange( s, myPet, DIST_CMDRANGE ) )
 								myPet->SetLocation( s );
 						}
 					}
@@ -974,7 +975,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	{
 		if( !ValidateObject( ourChar ) || ourChar == c || ourChar->GetInstanceID() != instanceID )
 			continue;
-		if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 2 )
+		if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 4 )
 		{
 			if(( ourChar->GetVisible() != VT_PERMHIDDEN )
 			   && ( !IsGMBody( ourChar )
@@ -1029,37 +1030,37 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
+//|	Function	-	void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger InRange JS event
 //o-----------------------------------------------------------------------------------------------o
-void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
+void DoJSInRange( CBaseObject *mObj, CBaseObject *objInRange )
 {
-	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->InRange( mChar, objInRange );
+			toExecute->InRange( mObj, objInRange );
 		}
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void DoJSOutOfRange( CChar *mChar, CBaseObject *objOutOfRange )
+//|	Function	-	void DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Trigger OutOfRange JS event
 //o-----------------------------------------------------------------------------------------------o
-void DoJSOutOfRange( CChar *mChar, CBaseObject *objOutOfRange )
+void DoJSOutOfRange( CBaseObject *mObj, CBaseObject *objOutOfRange )
 {
-	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->OutOfRange( mChar, objOutOfRange );
+			toExecute->OutOfRange( mObj, objOutOfRange );
 		}
 	}
 }
@@ -1091,6 +1092,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			if( mSock != nullptr )
 				tItem->SendToSocket( mSock );
 			DoJSInRange( mChar, tItem );
+			DoJSInRange( tItem, mChar );
 			return true;
 		}
 		else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
@@ -1099,6 +1101,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			if( mSock != nullptr )
 				tItem->RemoveFromSight( mSock );
 			DoJSOutOfRange( mChar, tItem );
+			DoJSOutOfRange( tItem, mChar );
 			return true;
 		}
 	}
@@ -1205,6 +1208,8 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	UI16 id;
 	ItemTypes type;
 	bool EffRange;
+	bool inMoveDetectRange = false;
+	UI08 moveDetectRange = 1;
 
 	bool isGM			= mChar->IsGM();
 	UI16 dxNew, dyNew, dxOld, dyOld;
@@ -1280,12 +1285,20 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 			id		= tItem->GetID();
 			type	= tItem->GetType();
 			EffRange = (	tItem->GetX() == newx && tItem->GetY() == newy &&
-					mChar->GetZ() >= tItem->GetZ() && mChar->GetZ() <= ( tItem->GetZ() + 5 ) );
-			if( EffRange )
+				std::abs(mChar->GetZ() - tItem->GetZ()) <= 4 );
+
+			// Get max movement detection range from item's MORE property (part 1)
+			moveDetectRange = tItem->GetTempVar( CITV_MORE, 1 );
+
+			// Determine if character is moving within the moveDetectRange limit
+			inMoveDetectRange = ( std::abs(tItem->GetX() - newx) <= moveDetectRange && std::abs(tItem->GetY() - newy) <= moveDetectRange &&
+				std::abs(mChar->GetZ() - tItem->GetZ()) <= 5 );
+
+			if( EffRange || inMoveDetectRange )
 			{
-				if( !Magic->HandleFieldEffects( mChar, tItem, id ) )
+				if( !Magic->HandleFieldEffects( mChar, tItem, id ))
 				{
-					if( !tItem->CanBeObjType( OT_MULTI ) )
+					if( !tItem->CanBeObjType( OT_MULTI ))
 					{
 						bool scriptExecuted = false;
 						std::vector<UI16> scriptTriggers = tItem->GetScriptTriggers();
@@ -1295,15 +1308,34 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 							cScript *toExecute = JSMapping->GetScript( i );
 							if( toExecute != nullptr )
 							{
-								// Script was found, let's check for onCollide event
-								SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
-								if( retVal != -1 )
+								if( EffRange )
 								{
-									scriptExecuted = true;
-									if( retVal == 1 )
+									// Script was found, let's check for onCollide event
+									SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
+									if( retVal != -1 )
 									{
-										// Script returned 1 - don't continue with other scripts on item
-										break;
+										scriptExecuted = true;
+										if( retVal == 1 )
+										{
+											// Script returned 1 - don't continue with other scripts on item
+											break;
+										}
+									}
+								}
+								if( inMoveDetectRange )
+								{
+									UI08 rangeToChar = getDist( point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()), point3(newx, newy, mChar->GetZ()) );
+
+									// Script was found, let's check for onMoveDetect event
+									SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
+									if( retVal != -1 )
+									{
+										scriptExecuted = true;
+										if( retVal == 1 )
+										{
+											// Script returned 1 - don't continue with other scripts on item
+											break;
+										}
 									}
 								}
 							}
@@ -1328,13 +1360,24 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 
 						if( toExecute != nullptr )
 						{
-							// We don't care about the return value from onCollide here, so suppress the warning
-							[[maybe_unused]] SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
+							if( EffRange )
+							{
+								// We don't care about the return value from onCollide here, so suppress the warning
+								[[maybe_unused]] SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
+							}
+							if( inMoveDetectRange )
+							{
+								UI08 rangeToChar = getDist( point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()), point3(newx, newy, mChar->GetZ()) );
+
+								// We don't care about the return value from onCollide here, so suppress the warning
+								[[maybe_unused]] SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
+							}
 						}
-						else
+						else if( EffRange && !scriptExecuted )
 						{
 							// Item being stepped on didn't have a script, so let's check if character has one instead
-							for( auto scriptTrig : scriptTriggers )
+							std::vector<UI16> charScriptTriggers = mChar->GetScriptTriggers();
+							for( auto scriptTrig : charScriptTriggers )
 							{
 								toExecute = JSMapping->GetScript( scriptTrig );
 								if( toExecute != nullptr )
@@ -1348,9 +1391,13 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						}
 					}
 				}
-				HandleObjectCollisions( mSock, mChar, tItem, type );
-				Magic->GateCollision( mSock, mChar, tItem, type );
+				if( EffRange )
+				{
+					HandleObjectCollisions( mSock, mChar, tItem, type );
+					Magic->GateCollision( mSock, mChar, tItem, type );
+				}
 			}
+
 			dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
 			dyNew = static_cast<UI16>(abs( tItem->GetY() - newy ));
 			if( checkX && dyNew <= (visibleRange+2) )	// Only update items on furthest x plane if our x changed

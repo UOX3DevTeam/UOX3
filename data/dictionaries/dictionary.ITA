@@ -3945,6 +3945,14 @@
 9097=Non puoi mettere questa casa-addon lì, la posizione è bloccata!
 9098=Impossibile per i giocatori normali, ma può essere trascinato fuori dallo zaino dai personaggi GM.
 9099=Suggerimento: Prova il comando 'ALLMOVE ON o modifica la proprietà mobile dell'oggetto con il comando 'TWEAK!
+9100=*evita la trappola*
+9101=Seleziona l'obiettivo per modificare l'ID di %i:
+9102=Quella serratura non può essere sbloccata con la magia!
+9103=%i oggetti colpiti da %s %d
+9104=Seleziona il primo angolo del riquadro dell'areacomando:
+9105=Seleziona il secondo angolo dell'areacommand box:
+9106=Senti il suono di un cancello che si muove nelle vicinanze.
+9107=Non sei degno di entrare nella città del Vento!
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!

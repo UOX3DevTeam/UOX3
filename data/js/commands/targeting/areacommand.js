@@ -8,7 +8,7 @@ function command_AREACOMMAND( socket, cmdString )
 	if( cmdString )
 	{
 		socket.xText 	= cmdString;
-		var targMsg 	= GetDictionaryEntry( 25, socket.language );
+		var targMsg 	= GetDictionaryEntry( 9104, socket.language ); // Select first corner of areacommand box:
 		socket.CustomTarget( 0, targMsg );
 	}
 	else
@@ -20,7 +20,7 @@ function onCallback0( socket, ourObj )
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if( cancelCheck != 255 )
 	{
-		var targMsg	= GetDictionaryEntry( 1040, socket.language );
+		var targMsg	= GetDictionaryEntry( 9105, socket.language ); // Select second corner of areacommand box:
 		socket.clickX 	= socket.GetWord( 11 );
 		socket.clickY 	= socket.GetWord( 13 );
 		socket.CustomTarget( 1, targMsg );
@@ -58,7 +58,11 @@ function onCallback1( socket, ourObj )
 				value = parseInt( splitString[1] );
 			else
 				value = 0;
-			IterateOver( "ITEM" );
+			var iCount = IterateOver( "ITEM" );
+			var tempMsg = GetDictionaryEntry( 9103, socket.language ); // %i items affected by %s %d
+			tempMsg = ( tempMsg.replace(/%s/gi, key ));
+			tempMsg = ( tempMsg.replace(/%d/gi, value ));
+			socket.SysMessage( tempMsg.replace(/%i/gi, iCount ));
 		}
 
 		socket.clickX = -1;
@@ -95,6 +99,7 @@ function onIterate( toCheck )
 			case "ADDSCPTRIG": 	toCheck.AddScriptTrigger( value ); break;
 			case "REMOVESCPTRIG":	toCheck.RemoveScriptTrigger( value );	break;
 			case "MOVABLE":		toCheck.movable = value;	break;
+			case "DECAYABLE":   toCheck.decayable = value; break;
 			default:						return false;
 			}
 			return true;

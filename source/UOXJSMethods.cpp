@@ -8749,6 +8749,126 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	int GetMoreVar( moreVarName, moreVarPart )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the value of the specified moreVarName's moreVarPart
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Valid moreVarName values: "more", "morex", "morey", "morez
+//|					Valid moreVarPart values: 1, 2, 3, 4
+//o-----------------------------------------------------------------------------------------------o
+JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, morex, morey or morez - and the moreVarPart (1 to 4))" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CItem *mItem		= nullptr;
+
+	// Let's validate the item
+	if( myClass.ClassName() == "UOXItem" )
+	{
+		mItem	= static_cast<CItem *>(myClass.toObject());
+		if( !ValidateObject( mItem ) )
+		{
+			MethodError( "GetMoreVar: Passed an invalid Item" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "GetMoreVar: Passed an invalid Item" );
+		return JS_FALSE;
+	}
+
+	// Fetch data from the function arguments, and figure out which tempVar to get data from
+	UI08 moreVar			= 0;
+	UI08 moreVarPart		= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+	std::string moreVarName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( moreVarName == "more" )
+		moreVar = 0;
+	else if( moreVarName == "morex" )
+		moreVar = 1;
+	else if( moreVarName == "morey" )
+		moreVar = 2;
+	else if( moreVarName == "morez" )
+		moreVar = 3;
+	else
+	{
+		MethodError( "GetMoreVar: Passed an invalid argument: tempVarName" );
+		return JS_FALSE;
+	}
+
+	// Fetch the value of the moreVarPart and return it to the script
+	*rval = INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>(moreVar), moreVarPart ));
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	int SetMoreVar( moreVar, moreVarPart, tempVarValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets the value of the specified moreVar's moreVarPart to moreVarValue
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Valid moreVarName values: "more", "morex", "morey", "morez
+//|					Valid moreVarPart values: 1, 2, 3, 4
+//|					Valid moreVarValue values: 0 - 255
+//o-----------------------------------------------------------------------------------------------o
+JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		MethodError( "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CItem *mItem		= nullptr;
+
+	// Let's validate the item
+	if( myClass.ClassName() == "UOXItem" )
+	{
+		mItem	= static_cast<CItem *>(myClass.toObject());
+		if( !ValidateObject( mItem ) )
+		{
+			MethodError( "SetMoreVar: Passed an invalid Item" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "SetMoreVar: Passed an invalid Item" );
+		return JS_FALSE;
+	}
+
+	// Fetch data from the function arguments, and figure out which moreVar to set data for
+	UI08 moreVar			= 0;
+	UI08 moreVarPart		= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+	UI08 moreVarValue		= static_cast<UI08>(JSVAL_TO_INT( argv[2] ));
+	std::string moreVarName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	if( moreVarName == "more" )
+		moreVar = 0;
+	else if( moreVarName == "morex" )
+		moreVar = 1;
+	else if( moreVarName == "morey" )
+		moreVar = 2;
+	else if( moreVarName == "morez" )
+		moreVar = 3;
+	else
+	{
+		MethodError( "SetMoreVar: Passed an invalid argument: moreVarName" );
+		return JS_FALSE;
+	}
+
+	// Fetch the value of the moreVarPart and return it to the script
+	mItem->SetTempVar( static_cast<CITempVars>(moreVar), moreVarPart, moreVarValue );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void AddScriptTrigger( scriptTrigger )
 //o-----------------------------------------------------------------------------------------------o

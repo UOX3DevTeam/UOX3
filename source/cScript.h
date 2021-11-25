@@ -14,6 +14,7 @@ enum ScriptEvent
 	seOnSpeech,				//	*	Missing item response at the moment
 	seInRange,				//	*	Missing character in range
 	seOnCollide,			//	**	Items only
+	seOnMoveDetect,			//	***
 	seOnSteal,				//	**
 	seOnDispel,				//	**
 	seOnSkill,
@@ -30,6 +31,7 @@ enum ScriptEvent
 	seOnStatChange,			//	**
 	seOnDrop,
 	seOnPickup,
+	seOnContRemoveItem,
 	seOnSwing,
 	seOnDecay,
 	seOnTransfer,
@@ -168,8 +170,9 @@ public:
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
-	bool		InRange( CChar *person, CBaseObject *objInRange );
+	bool		InRange( CBaseObject *srcObj, CBaseObject *objInRange );
 	SI08		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
+	SI08		OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY );
 	SI08		OnSteal( CChar *thief, CItem *theft, CChar *victim );
 	SI08		OnPathfindEnd( CChar *npc, SI08 pathfindResult );
 	SI08		OnEnterEvadeState( CChar *npc, CChar *enemy );
@@ -188,6 +191,7 @@ public:
 	bool		OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount );
 	SI08		OnDrop( CItem *item, CChar *dropper );
 	SI08		OnPickup( CItem *item, CChar *pickerUpper );
+	bool		OnContRemoveItem( CItem *contItem, CItem *item, CChar *pickerUpper );
 	SI08		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	SI08		OnDecay( CItem *decaying );
 	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
@@ -198,7 +202,7 @@ public:
 	SI08		OnUnequip( CChar *equipper, CItem *equipping );
 	SI08		OnUseChecked( CChar *user, CItem *iUsing );
 	SI08		OnUseUnChecked( CChar *user, CItem *iUsing );
-	bool		OutOfRange( CChar *person, CBaseObject *objVanish );
+	bool		OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish );
 	bool		OnLogin( CSocket *sockPlayer, CChar *pPlayer );
 	bool		OnLogout( CSocket *sockPlayer, CChar *pPlayer );
 	SI08		OnClick( CSocket *sockPlayer, CBaseObject *objClicked );

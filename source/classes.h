@@ -69,11 +69,11 @@ public:
 	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat );
 	CItem *		CreateRandomItem( CSocket *mSock, const std::string& itemList );
 	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM, const UI16 instanceID = 0, bool shouldSave = true );
+	CItem *		CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNumber, const UI16 instanceID = 0, bool shouldSave = true, bool useLootlist = false );
 
 private:
 	void		GetScriptItemSettings( CItem *iCreated );
 	CItem *		PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack );
-	CItem *		CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNumber, const UI16 instanceID = 0, bool shouldSave = true, bool useLootlist = false );
 };
 
 class cCharStuff
@@ -88,7 +88,7 @@ public:
 	CChar *		CreateRandomNPC( const std::string& npcList );
 
 	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );
-	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID );
+	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool useNpcList = false );
 	void		PostSpawnUpdate( CChar *cCreated );
 	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, std::string sectionID, bool isGate = false );
 

@@ -76,7 +76,14 @@ function onCallback1( pSock, myTarget )
 	var targY = splitString[1];
 	var targZ = pSock.tempint;
 	if( !targZ && targZ != 0 ) //if no target Z has been specified, use the Z level of the target location
-		targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+	{
+		targZ = pSock.GetSByte( 16 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+			targZ += GetTileHeight( pSock.GetWord( 17 ));
+	}
+
 	var startID = parseInt( splitString[2] );
 	var endID = parseInt( splitString[3] );
 	var itemHue = splitString[4];

@@ -1135,6 +1135,78 @@ Y=639
 Z=0
 }
 
+[LOCATION 265]
+{
+// Ice - T2A Entrance
+X=5210
+Y=2321
+Z=27
+}
+
+[LOCATION 266]
+{
+// Ice - Britannia Entrance
+X=1999
+Y=80
+Z=4
+}
+
+[LOCATION 267]
+{
+// Ice - Level 1
+X=5875
+Y=148
+Z=22
+}
+
+[LOCATION 268]
+{
+// Ice - Ratman Fort
+X=5832
+Y=328
+Z=18
+}
+
+[LOCATION 269]
+{
+// Ice - Ice Demon Lair
+X=5699
+Y=305
+Z=0
+}
+
+[LOCATION 275]
+{
+// Fire - T2A Entrance
+X=5761
+Y=2908
+Z=15
+}
+
+[LOCATION 276]
+{
+// Fire - Britannia Entrance
+X=2923
+Y=3408
+Z=8
+}
+
+[LOCATION 277]
+{
+// Fire - Level 1
+X=5789
+Y=1416
+Z=39
+}
+
+[LOCATION 278]
+{
+// Fire - Level 2
+X=5702
+Y=1315
+Z=1
+}
+
 [LOCATION 300]
 {
 // Hythloth Firepit

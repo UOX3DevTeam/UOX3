@@ -211,14 +211,18 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CChar *CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
+//|	Function	-	CChar *CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool useNpcList )
 //|	Date		-	10/12/2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates an npc at location xyz
 //o-----------------------------------------------------------------------------------------------o
-CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
+CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool useNpcList )
 {
-	CChar *cCreated = CreateBaseNPC( npc );
+	CChar *cCreated = nullptr;
+	if( useNpcList )
+		cCreated = CreateRandomNPC( npc );
+	else
+		cCreated = CreateBaseNPC( npc );
 	if( cCreated == nullptr )
 		return nullptr;
 
@@ -1009,8 +1013,21 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					Console.warning( strutil::format("Invalid data found in HPMAX tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_ID:
-				applyTo->SetID( static_cast<UI16>(ndata) );
+				/*applyTo->SetID( static_cast<UI16>(ndata) );
 				applyTo->SetOrgID( static_cast<UI16>(ndata) );
+				break;*/
+
+				if( ssects.size() == 1 )
+				{
+					applyTo->SetID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[0], "//" )), nullptr, 0)) );
+					applyTo->SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[0], "//" )), nullptr, 0)) );
+				}
+				else
+				{
+					SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssects.size()-1));
+					applyTo->SetID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[rndEntry], "//" )), nullptr, 0)) );
+					applyTo->SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[rndEntry], "//" )), nullptr, 0)) );
+				}
 				break;
 			case DFNTAG_IMBUING:			skillToSet = IMBUING;					break;
 			case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;				break;

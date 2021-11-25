@@ -4,7 +4,7 @@
 function onEquip( pEquipper, iEquipped )
 {
 	// Get bonus values
-	var accBonus = iEquipped.GetTag( "accBonus" );
+	var accBonus = parseInt(iEquipped.GetTag( "accBonus" ));
 
 	// Get weapontype
 	var weaponType = TriggerEvent( 2500, "getWeaponType", pEquipper );
@@ -20,7 +20,7 @@ function onEquip( pEquipper, iEquipped )
 function onUnequip( pEquipper, iEquipped )
 {
 	// Get bonus values
-	var accBonus = iEquipped.GetTag( "accBonus" );
+	var accBonus = parseInt(iEquipped.GetTag( "accBonus" ));
 
 	// Get weapontype
 	var weaponType = TriggerEvent( 2500, "getWeaponType", pEquipper );

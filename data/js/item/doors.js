@@ -1,7 +1,7 @@
 doorTypes = new Array (
 	0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685,
 	0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839,
-	0x084C, 0x0866, 0x190E, 0x1FED
+	0x084C, 0x0866, 0x190E, 0x190f, 0x1FED
 );
 
 function onUseChecked( pUser, iUsed )
@@ -43,15 +43,22 @@ function onUseChecked( pUser, iUsed )
 
 	if( doorID < 0x241F )
 	{
-		for( var i = 0; i < 20; ++i )
+		for( var i = 0; i < 21; ++i )
 		{
 			var doorType = doorTypes[i];
 			if( doorID == doorType )
 			{
-				if( doorID != 0x190E )
+				if( doorID != 0x190E && doorID != 0x190f )
 					canOpen = OpenDoor( iUsed, 1, -1, 1 );
 				else
-					canOpen = OpenDoor( iUsed, 1, 0, 0 );
+				{
+					if( doorID == 0x190e )
+						canOpen = OpenDoor( iUsed, 1, 0, 0 );
+					else
+					{
+						canOpen = OpenDoor( iUsed, -1, 0, 0 );
+					}
+				}
 				isDoor = true;
 				break;
 			}
@@ -143,6 +150,11 @@ function onUseChecked( pUser, iUsed )
 	else if( doorID == 0x9ad9 || doorID == 0x9adf || doorID == 0x9b3e || doorID == 0x9b44 )
 	{
 		canOpen = OpenDoor( iUsed, 1, 1, 1 );
+		isDoor = true;
+	}
+	else if( doorID == 0x2421 )
+	{
+		canOpen = OpenDoor( iUsed, 1, -1, 1 );
 		isDoor = true;
 	}
 
@@ -238,6 +250,8 @@ function UseDoor( iUsed, isOpen )
 		iUsed.isDoorOpen = false;
 		if( iUsed.GetTag( "DOOR_CLOSE" ) )
 			iUsed.SoundEffect( iUsed.GetTag( "DOOR_CLOSE" ), true );
+
+		iUsed.KillTimers();
 
 		SetDoorValues( iUsed, 0, 0, 0, 0, 0 );
 	}
@@ -342,7 +356,7 @@ function GetDoorType( iUsed )
 	{
 			retVal = 3;
 	}
-	else if( doorID >= 0x0314 && doorID <= 0x0365 ) 	// secret
+	else if(( doorID >= 0x00e8 && doorID <= 0x00f7 ) || ( doorID >= 0x0314 && doorID <= 0x0365 )) 	// secret
 	{
 			retVal = 4;
 	}

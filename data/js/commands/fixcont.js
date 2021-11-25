@@ -7,28 +7,29 @@
 
 function CommandRegistration()
 {
-	RegisterCommand( "fixcontweight", 3, true );
+	RegisterCommand( "fixcont", 3, true );
 }
 
-function command_FIXCONTWEIGHT( socket, cmdString )
+function command_FIXCONT( socket, cmdString )
 {
 	var confirmGump = new Gump;
 	confirmGump.AddPage (0);
-	confirmGump.AddBackground( 0, 130, 380, 250, 9550 );
-	confirmGump.AddBackground( 5, 135, 370, 240, 83 );
+	confirmGump.AddBackground( 0, 130, 410, 250, 9550 );
+	confirmGump.AddBackground( 5, 135, 400, 240, 83 );
 	confirmGump.AddText( 30, 140, 1259, "WARNING!" );
-	confirmGump.AddText( 100, 140, 160, "Executing 'fixcontweight'-script" );
+	confirmGump.AddText( 100, 140, 160, "Executing 'fixcont'-script" );
 	confirmGump.AddText( 15, 165, 80, "Are you certain? This will iterate through ALL items" );
 	confirmGump.AddText( 15, 185, 80, "on your shard and force-update the baseWeight (forced)," );
 	confirmGump.AddText( 15, 205, 80, "weight (conditional) and weightMax (conditional) properties" );
 	confirmGump.AddText( 15, 225, 80, "for all non-bank/non-backpack containers to match values" );
-	confirmGump.AddText( 15, 245, 80, "defined in this script." );
+	confirmGump.AddText( 15, 245, 80, "defined in this script. It will also update maxItems for all" );
+	confirmGump.AddText( 15, 265, 80, "containers that don't already have a value for that." );
 	
-	confirmGump.AddText( 15, 265, 1259, "NOTE: This will overwrite any custom weight-related" );
-	confirmGump.AddText( 15, 285, 1259, "values you might have applied to your containers." );
-	confirmGump.AddText( 15, 305, 1259, "You should rarely have to use this command." );
-	confirmGump.AddButton( 75, 335, 241, 1, 0, 1 ); // Cancel
-	confirmGump.AddButton( 200, 335, 247, 1, 0, 2 ); // Continue
+	confirmGump.AddText( 15, 285, 1259, "NOTE: This will NOT overwrite any custom weight-related" );
+	confirmGump.AddText( 15, 305, 1259, "values you might have applied to your containers." );
+	confirmGump.AddText( 15, 325, 1259, "You should rarely have to use this command." );
+	confirmGump.AddButton( 75, 355, 241, 1, 0, 1 ); // Cancel
+	confirmGump.AddButton( 200, 355, 247, 1, 0, 2 ); // Continue
     confirmGump.Send( socket );
 	confirmGump.Free();
 }
@@ -45,7 +46,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	case 2: //Action confirmed, iterate through objects and fix weight
 		pSock.SysMessage( "Iterating over all items, checking for containers..." );
 		var count = IterateOver( "ITEM" );
-		pSock.SysMessage( "A total of "+count+" containers had their baseWeight property force-updated." );
+		pSock.SysMessage( "A total of "+count+" containers were updated." );
 		break;
 	default:
 		break;
@@ -94,6 +95,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 100
 					toCheck.baseWeight = 100;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0990:	// round basket
 				case 0x09AC:	// round bushel
@@ -103,6 +106,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 200
 					toCheck.baseWeight = 200;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0E83:	// empty tub
 					if( toCheck.weightMax == 0 )
@@ -110,6 +115,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 300
 					toCheck.baseWeight = 300;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0E7F:	// keg
 					if( toCheck.weightMax == 0 )
@@ -117,6 +124,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 400
 					toCheck.baseWeight = 400;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0E77:	// barrel
 				case 0x0FAE:	// barrel with lids
@@ -129,6 +138,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 500
 					toCheck.baseWeight = 500;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0E3C:	// large wooden crate
 				case 0x0E3D:	// large wooden crate
@@ -137,6 +148,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 600
 					toCheck.baseWeight = 600;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0E7D:	// wooden box
 				case 0x09AA:	// wooden box
@@ -145,6 +158,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 700
 					toCheck.baseWeight = 700;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x1AD7:	// potion keg
 				case 0x1940:	// potion keg
@@ -165,6 +180,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 1000
 					toCheck.baseWeight = 1000;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x280B:	// SE chest
 				case 0x280C:	// SE chest
@@ -181,6 +198,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 1500
 					toCheck.baseWeight = 1500;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0A30:   	// chest of drawers (fancy)
 				case 0x0A38:   	// chest of drawers (fancy)
@@ -211,6 +230,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 2000
 					toCheck.baseWeight = 2000;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0E40:	// gold chest
 				case 0x0E41:	// gold chest
@@ -221,6 +242,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 3000
 					toCheck.baseWeight = 3000;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0A3C:	// dresser
 				case 0x0A44:	// dresser
@@ -229,6 +252,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 5000
 					toCheck.baseWeight = 5000;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				case 0x0ECA:	// bones
 				case 0x0ECB:	// bones
@@ -244,6 +269,8 @@ function onIterate( toCheck )
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
 						toCheck.weight = 2500
 					toCheck.baseWeight = 2500;
+					if( toCheck.maxItems == 0 )
+						toCheck.maxItems = 125;
 					break;
 				default:
 					countThis = false; // The id didn't match any of the entries
