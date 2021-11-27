@@ -3960,6 +3960,13 @@
 9105=Vyberte druhý roh areálu příkazového pole:
 9106=Slyšíte zvuk brány, která se pohybuje poblíž.
 9107=Nejsi hoden vstupu do města Větru!
+9108=Tímto příkazem jsou vyžadovány identifikátory kmene i listů stromu. Syntaxe: cmd tree [trunkID] [leafID]
+9109=Nenašla se definice položky, pokus o přidání prázdné položky pomocí desetinného ID...
+9110=[CHYBA] Objekt Spawner přidán jako ITEM, ale musí být SPAWNER!
+9111=Zkuste místo toho použít příkaz 'radditem!
+9112=Jsi zločinec a nemůžeš tak snadno uniknout.
+9113=Chceš utéct v zápalu boje??
+9114=Na to jsi v tuto chvíli příliš zaneprázdněn.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
