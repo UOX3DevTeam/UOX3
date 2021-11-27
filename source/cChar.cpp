@@ -4254,7 +4254,7 @@ bool CChar::LoadRemnants( void )
 	if( IsNpc() && IsAtWar() )
 		SetWar( false );
 
-	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber, instanceID );
+	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber, instanceID, this );
 	SetRegion( (tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF) );
 	SetTimer( tCHAR_ANTISPAM, 0 );
 	if( GetID() != GetOrgID() && !IsDead() )
