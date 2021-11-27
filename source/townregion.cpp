@@ -265,7 +265,7 @@ bool CTownRegion::Save( std::ofstream &outStream )
 	outStream << "POLLTIME=" << timeToNextPoll << '\n';
 	outStream << "WORLD=" << static_cast<UI16>(worldNumber) << '\n';
 	outStream << "INSTANCEID=" << static_cast<UI16>(instanceID) << '\n';
-	outStream << "PARENTREGION=" << static_cast<UI16>(parentRegion) << '\n'
+	outStream << "PARENTREGION=" << static_cast<UI16>(parentRegion) << '\n';
 	outStream << "NUMGUARDS=" << numGuards << '\n';
 
 	std::vector< townPers >::const_iterator mIter;
