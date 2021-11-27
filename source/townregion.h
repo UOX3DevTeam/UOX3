@@ -43,11 +43,12 @@ private:
 	};
 
 	UI16				regionNum;
+	UI16				parentRegion; // reference to parent region
 	std::string			name;
 	UI16				musicList;
 	UI08				worldNumber;
 	UI16				instanceID;
-	std::bitset< 11 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
+	std::bitset< 12 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
 	// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 	// 0x80 Dungeon region
 	std::string					guardowner;
@@ -114,6 +115,7 @@ public:
 	bool				CanCastAggressive( void ) const;
 	bool				IsSafeZone( void ) const;
 	bool				IsDungeon( void ) const;
+	bool				IsSubRegion( void ) const;
 	bool				IsMemberOfTown( CChar *player ) const;
 	bool				IsAlliedTown( UI16 townToCheck ) const;
 	bool				MakeAlliedTown( UI16 townToMake );
@@ -127,6 +129,7 @@ public:
 	void				CanCastAggressive( bool value );
 	void				IsSafeZone( bool value );
 	void				IsDungeon( bool value );
+	void				IsSubRegion( bool value );
 	void				SetName( std::string toSet );
 	void				SetRace( RACEID newRace );
 	void				TellMembers( SI32 dictEntry, ... );

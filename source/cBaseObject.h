@@ -86,6 +86,7 @@ protected:
 
 	UI08			worldNumber;
 	UI16			instanceID;
+	UI16			subRegion;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -249,6 +250,9 @@ public:
 
 	UI16					GetInstanceID( void ) const;
 	void					SetInstanceID( UI16 value );
+
+	UI16					GetSubRegion( void ) const;
+	void					SetSubRegion( UI16 value );
 
 	UI08					GetPoisoned( void ) const;
 	virtual void			SetPoisoned( UI08 newValue );

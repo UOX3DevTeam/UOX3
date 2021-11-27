@@ -1,3 +1,9 @@
+27/11/2021 - Xuri
+	Fixed an issue where the music set for a given region would not play for characters upon login, but only after exiting/re-entering the region
+	If player moves between two guarded regions with identical GUARDOWNER, they will no longer receive a message saying they're protected by the guards of the new region (since there's no change in guarded status)
+	Regions marked with PARENTREGION=# (# refers to parent region number) are loaded by UOX3 as "sub-regions". Entering or existing such a sub-region will not change the actual region a player is in, but they can be assigned a different MUSICLIST that will play instead of the music in the actual region the character is in. Sub-regions like these must have a lower region number than the region they're contained within
+	Added some missing dictionary entries
+
 26/11/2021 - Xuri (0.99.4z+++)
 	Added new JS Item Methods to get/set the value (0-255) for specific parts (1-4) of temp variables ("more", "morex", "morey", "morez"):
 		.GetMoreVar( moreVarName, moreVarPart )
@@ -13,7 +19,6 @@
 		CChar SpawnNPC( npcSection/npclist, x, y, z, worldnumber, instanceID, useNpcList )
 	Added new JS Event to allow detection of movement near an object (items only, for now). Distance at which it triggers determined by part 1 of the item's MORE property. Use long ranges with care! Syntax:
 		onMoveDetect( srcObj, pChar, rangeToChar, oldCharX, oldCharY )
-
 	Added new JS script (js/server/misc/dungeon_traps.js) for handling trap mechanics in (primarily) dungeons. The traps all trigger on collision, and use different parts of the "morez" property to determine enabled/disabled status, damage, min skill required to disarm, max skill at which player can still gain skill from disarming. Disarming renders trap inactive for 60 seconds. Implemented trap types:
 		Spike Traps 		// Active for ~5 seconds after triggered, deals damage every 1 second.
 		Giant Spike Trap 	// Active for ~1 second after triggered, deals high instant damage one time
