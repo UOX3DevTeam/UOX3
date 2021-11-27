@@ -68,6 +68,7 @@ const SERIAL		DEFBASE_SPAWNSER	= INVALIDSERIAL;
 const SERIAL		DEFBASE_OWNER		= INVALIDSERIAL;
 const UI08			DEFBASE_WORLD		= 0;
 const UI16			DEFBASE_INSTANCEID	= 0;
+const UI16			DEFBASE_SUBREGION	= 0;
 const SI16			DEFBASE_STR			= 0;
 const SI16			DEFBASE_DEX			= 0;
 const SI16			DEFBASE_INT			= 0;
@@ -105,7 +106,7 @@ lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION )
 {
 	multis = nullptr;
 	tempmulti = INVALIDSERIAL;
@@ -1955,6 +1956,21 @@ void CBaseObject::SetInstanceID( UI16 value )
 		(static_cast<CItem *>(this))->UpdateRegion();
 	else if( CanBeObjType( OT_CHAR ))
 		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetSubRegion( void ) const
+//|					void SetSubRegion( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the subregion the character is in
+//o-----------------------------------------------------------------------------------------------o
+UI16 CBaseObject::GetSubRegion( void ) const
+{
+	return subRegion;
+}
+void CBaseObject::SetSubRegion( UI16 value )
+{
+	subRegion = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
