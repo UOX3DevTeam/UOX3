@@ -31,6 +31,7 @@ const UI32 BIT_DUNGEON		=	7;
 const UI32 BIT_SAFEZONE		=	8;
 const UI32 BIT_TELEPORT		=	9;
 const UI32 BIT_HOUSING		=	10;
+const UI32 BIT_SUBREGION	=	11;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
@@ -52,6 +53,7 @@ const UI16		DEFTOWN_INSTANCEID			= 0;
 const UI16		DEFTOWN_JSSCRIPT			= 0xFFFF;
 const UI08		DEFTOWN_FINDBIGORE			= 0;
 const UI16		DEFTOWN_NUMGUARDS			= 10;
+const UI16		DEFTOWN_PARENTREGION		= 0;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion( UI16 region )
@@ -64,7 +66,7 @@ taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guards
 resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ),
 timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL ), timeSinceGuardsPaid( DEFTOWN_GUARDSPAID ),
 timeSinceTaxedMembers( DEFTOWN_TAXEDMEMBERS ), worldNumber( DEFTOWN_WORLDNUMBER ), instanceID( DEFTOWN_INSTANCEID ), jsScript( DEFTOWN_JSSCRIPT ),
-chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS )
+chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS ), parentRegion( DEFTOWN_PARENTREGION )
 {
 	priv.reset();
 	townMember.resize( 0 );
@@ -179,7 +181,12 @@ bool CTownRegion::Load( Script *ss )
 				}
 				break;
 			case 'P':
-				if( UTag == "PRIV" )
+				if( UTag == "PARENTREGION" )
+				{
+					parentRegion = static_cast<UI16>(duint);
+					IsSubRegion( true );
+				}
+				else if( UTag == "PRIV" )
 				{
 					// Overwrites privs loaded from regions.dfn, making it impossible to change privs after initial server startup
 					// Currently not used for anything, so we disable until we find a better solution.
@@ -258,6 +265,7 @@ bool CTownRegion::Save( std::ofstream &outStream )
 	outStream << "POLLTIME=" << timeToNextPoll << '\n';
 	outStream << "WORLD=" << static_cast<UI16>(worldNumber) << '\n';
 	outStream << "INSTANCEID=" << static_cast<UI16>(instanceID) << '\n';
+	outStream << "PARENTREGION=" << static_cast<UI16>(parentRegion) << '\n'
 	outStream << "NUMGUARDS=" << numGuards << '\n';
 
 	std::vector< townPers >::const_iterator mIter;
@@ -609,6 +617,16 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					{
 						Console.error( strutil::format("Invalid ore preference in region %i as %s", regionNum, oreName.c_str() ));
 					}
+				}
+				break;
+			case 'P':
+				if( UTag == "PARENTREGION" )
+				{
+					// Region has a parent region! Store reference to parent region...
+					parentRegion = static_cast<UI16>(duint);
+
+					// ...and mark this region as a subregion
+					IsSubRegion( true );
 				}
 				break;
 			case 'R':
@@ -1940,6 +1958,21 @@ bool CTownRegion::IsDungeon( void ) const
 void CTownRegion::IsDungeon( bool value )
 {
 	priv.set( BIT_DUNGEON, value );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsSubRegion( void ) const
+//|					void IsSubRegion( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether townregion is subregion of another region
+//o-----------------------------------------------------------------------------------------------o
+bool CTownRegion::IsSubRegion( void ) const
+{
+	return priv.test( BIT_SUBREGION );
+}
+void CTownRegion::IsSubRegion( bool value )
+{
+	priv.set( BIT_SUBREGION, value );
 }
 
 //o-----------------------------------------------------------------------------------------------o

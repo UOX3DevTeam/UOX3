@@ -2646,10 +2646,11 @@ std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
 void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
 	// Get character's old/previous region
-	CTownRegion *iRegion	= mChar.GetRegion();
+	CTownRegion *iRegion = mChar.GetRegion();
+	UI16 oldSubRegionNum = mChar.GetSubRegion();
 
 	// Calculate character's current region
-	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID(), &mChar );
+	CTownRegion *calcReg = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID(), &mChar );
 
 	if( iRegion == nullptr && calcReg != nullptr )
 		mChar.SetRegion( calcReg->GetRegionNum() );
@@ -2769,9 +2770,16 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
 	}
-	else if( forceUpdateLight )
+	else
 	{
-		if( mSock != nullptr )
+		// Main region didn't change, but subregion did! Update music
+		if( oldSubRegionNum != mChar.GetSubRegion() )
+		{
+			Effects->doSocketMusic( mSock );
+		}
+
+		// Update lighting
+		if( forceUpdateLight && mSock != nullptr )
 		{
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
