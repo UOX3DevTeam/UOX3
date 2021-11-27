@@ -266,10 +266,26 @@ void cEffects::doSocketMusic( CSocket *s )
 
 	CChar *mChar = s->CurrcharObj();
 
-	CTownRegion *mReg = mChar->GetRegion();
+	CTownRegion *mReg = nullptr;
+
+	// Fetch subregion player is in, if any
+	auto subRegionNum = mChar->GetSubRegion();
+	if( subRegionNum != 0 )
+	{
+		if( cwmWorldState->townRegions.find( subRegionNum ) != cwmWorldState->townRegions.end() )
+		{
+			mReg = cwmWorldState->townRegions[subRegionNum];
+		}
+	}
+
 	if( mReg == nullptr )
 	{
-		return;
+		// Otherwise, fetch the actual region player is in
+		mReg = mChar->GetRegion();
+		if( mReg == nullptr )
+		{
+			return;
+		}
 	}
 
 	UI16 musicList = mReg->GetMusicList();

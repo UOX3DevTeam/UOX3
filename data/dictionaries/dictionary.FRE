@@ -4117,6 +4117,13 @@
 9105=Sélectionnez le deuxième coin de la boîte de commande :
 9106=Vous entendez le bruit d'une porte qui bouge à proximité.
 9107=Vous n'êtes pas digne d'entrer dans la cité du vent !
+9108=Les identifiants du tronc et des feuilles sont requis par cette commande. Syntaxe : cmd tree [trunkID] [leafID].
+9109=Définition d'élément introuvable, tentative d'ajout d'un élément vide avec un ID décimal...
+9110=[ERREUR] Objet Spawner ajouté comme ITEM, mais doit être SPAWNER !
+9111=Essayez plutôt la commande 'radditem !
+9112=Tu es un criminel et tu ne peux pas t'échapper si facilement.
+9113=Tu t'enfuirais dans le feu de l'action ?
+9114=Tu es trop occupé pour le faire en ce moment.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

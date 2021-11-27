@@ -60,8 +60,12 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 //o--------------------------------------------------------------------------
 //|	Purpose		-	Find what region x and y are in
 //o--------------------------------------------------------------------------
-CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID )
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CChar *mChar )
 {
+	// Reset sub region of character
+	if( ValidateObject( mChar ))
+		mChar->SetSubRegion( 0 );
+
 	const regLocs *getLoc	= nullptr;
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
 	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
@@ -76,7 +80,15 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 				if( getLoc != nullptr )
 				{
 					if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
+					{
+						// If character is in a subregion, store a reference to it
+						if( myReg->IsSubRegion() && ValidateObject( mChar ))
+						{
+							mChar->SetSubRegion( myReg->GetRegionNum() );
+							continue;
+						}
 						return myReg;
+					}
 				}
 			}
 		}
