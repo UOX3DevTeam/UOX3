@@ -3953,6 +3953,13 @@
 9105=Wybierz drugi róg okna dowodzenia:
 9106=Słyszysz dźwięk bramy poruszającej się w pobliżu.
 9107=Nie jesteś godzien wejścia do miasta Wiatru!
+9108=ID dla pnia i liści drzewa są wymagane przez to polecenie. Składnia: cmd tree [trunkID] [leafID]
+9109=Nie znaleziono definicji elementu, próba dodania pustego elementu przy użyciu ID dziesiętnego...
+9110=[ERROR] Obiekt Spawner dodany jako ITEM, ale musi być SPAWNER!
+9111=Wypróbuj zamiast tego komendę 'radditem'!
+9112=Jesteś przestępcą i nie możesz tak łatwo uciec.
+9113=Czy uciekłbyś w ferworze walki?
+9114=Jesteś zbyt zajęty, aby to zrobić w tej chwili.
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!

@@ -2645,8 +2645,12 @@ std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
 //o-----------------------------------------------------------------------------------------------o
 void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
+	// Get character's old/previous region
 	CTownRegion *iRegion	= mChar.GetRegion();
-	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
+
+	// Calculate character's current region
+	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID(), &mChar );
+
 	if( iRegion == nullptr && calcReg != nullptr )
 		mChar.SetRegion( calcReg->GetRegionNum() );
 	else if( calcReg != iRegion )
@@ -2655,31 +2659,34 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 		{
 			if( iRegion != nullptr && calcReg != nullptr )
 			{
-				// Drake 08-30-99 If region name are the same, do not display message
-				//                for playing music when approaching Tavern
+				// Don't display left/entered region messages if name of region is identical
 				if( iRegion->GetName() != calcReg->GetName() )
 				{
 					if( !iRegion->GetName().empty() )
-						mSock->sysmessage( 1358, iRegion->GetName().c_str() );
+						mSock->sysmessage( 1358, iRegion->GetName().c_str() ); // You have left %s.
 
 					if( !calcReg->GetName().empty() )
-						mSock->sysmessage( 1359, calcReg->GetName().c_str() );
+						mSock->sysmessage( 1359, calcReg->GetName().c_str() ); // You have entered %s.
 				}
 				if( calcReg->IsGuarded() || iRegion->IsGuarded() )
 				{
 					if( calcReg->IsGuarded() )
 					{
-						if( calcReg->GetOwner().empty() )
-							mSock->sysmessage( 1360 );
-						else
-							mSock->sysmessage( 1361, calcReg->GetOwner().c_str() );
+						// Don't display change of guard message if guardowner is identical
+						if( !iRegion->IsGuarded() || ( iRegion->IsGuarded() && calcReg->GetOwner() != iRegion->GetOwner() ) )
+						{
+							if( calcReg->GetOwner().empty() )
+								mSock->sysmessage( 1360 ); // You are now under the protection of the guards.
+							else
+								mSock->sysmessage( 1361, calcReg->GetOwner().c_str() ); // You are now under the protection of %s guards.
+						}
 					}
 					else
 					{
 						if( iRegion->GetOwner().empty() )
-							mSock->sysmessage( 1362 );
+							mSock->sysmessage( 1362 ); // You are no longer under the protection of the guards.
 						else
-							mSock->sysmessage( 1363, iRegion->GetOwner().c_str() );
+							mSock->sysmessage( 1363, iRegion->GetOwner().c_str() ); // You are no longer under the protection of %s guards.
 					}
 					UpdateFlag( &mChar );
 				}
@@ -2690,7 +2697,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 				}
 				if( calcReg == cwmWorldState->townRegions[mChar.GetTown()] )	// enter our home town
 				{
-					mSock->sysmessage( 1364 );
+					mSock->sysmessage( 1364 ); // You feel loved and cherished under the protection of your home town.
 					CItem *packItem = mChar.GetPackItem();
 					if( ValidateObject( packItem ) )
 					{
@@ -2702,7 +2709,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 								if( toScan->GetType() == IT_TOWNSTONE )
 								{
 									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI16>(toScan->GetTempVar( CITV_MOREX ))];
-									mSock->sysmessage( 1365, targRegion->GetName().c_str() );
+									mSock->sysmessage( 1365, targRegion->GetName().c_str() ); // You have successfully returned the townstone of %s to your home town.
 									targRegion->DoDamage( targRegion->GetHealth() );	// finish it off
 									targRegion->Possess( calcReg );
 									mChar.SetFame( (SI16)( mChar.GetFame() + mChar.GetFame() / 5 ) );	// 20% fame boost

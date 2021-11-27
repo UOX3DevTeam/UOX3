@@ -1359,6 +1359,9 @@ void startChar( CSocket *mSock, bool onCreate )
 				mCharParty->SendList( nullptr );
 				mSock->sysmessage( 9073 ); // You have rejoined the party.
 			}
+
+			// Play music associated with region player is logging into!
+			Effects->doSocketMusic( mSock );
 		}
 	}
 }
