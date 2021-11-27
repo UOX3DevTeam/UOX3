@@ -3953,6 +3953,13 @@
 9105=Wählen Sie die zweite Ecke des Befehlsfeldes:
 9106=Du hörst das Geräusch eines Tores, das sich in der Nähe bewegt.
 9107=Du bist es nicht wert, die Stadt des Windes zu betreten!
+9108=Die IDs für den Stamm UND die Blätter des Baumes werden von diesem Befehl benötigt. Syntax: cmd tree [trunkID] [leafID]
+9109=Eintragsdefinition nicht gefunden, Versuch, leeren Eintrag mit dezimaler ID hinzuzufügen...
+9110=[ERROR] Spawner Objekt wurde als ITEM hinzugefügt, muss aber SPAWNER sein!
+9111=Versuchen Sie stattdessen den Befehl 'radditem!
+9112=Du bist ein Verbrecher und kannst nicht so leicht entkommen.
+9113=Willst du in der Hitze des Gefechts fliehen?
+9114=Dafür bist du im Moment zu beschäftigt.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
