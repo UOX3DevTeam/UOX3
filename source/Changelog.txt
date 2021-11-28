@@ -1,3 +1,6 @@
+29/11/2021 - Xuri
+	Fixed a bug that snuck in when adding in PARENTREGION support in previous commit, that resulted in all regions being seen as sub-regions upon loading regions from regions.wsc
+
 27/11/2021 - Xuri
 	Fixed an issue where the music set for a given region would not play for characters upon login, but only after exiting/re-entering the region
 	If player moves between two guarded regions with identical GUARDOWNER, they will no longer receive a message saying they're protected by the guards of the new region (since there's no change in guarded status)
