@@ -183,8 +183,11 @@ bool CTownRegion::Load( Script *ss )
 			case 'P':
 				if( UTag == "PARENTREGION" )
 				{
-					parentRegion = static_cast<UI16>(duint);
-					IsSubRegion( true );
+					if( parentRegion > 0 )
+					{
+						parentRegion = static_cast<UI16>(duint);
+						IsSubRegion( true );
+					}
 				}
 				else if( UTag == "PRIV" )
 				{
