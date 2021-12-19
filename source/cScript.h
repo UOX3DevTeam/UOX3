@@ -233,7 +233,7 @@ public:
 	bool		OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech );
 	SI08		OnSpellGain( CItem *book, const UI08 spellNum );
 	SI08		OnSpellLoss( CItem *book, const UI08 spellNum );
-	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill );
+	SI08		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill );
 	SI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i );
 	SI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID );

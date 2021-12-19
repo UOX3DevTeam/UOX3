@@ -156,7 +156,7 @@ public:
 
 	void NewMakeMenu( CSocket *s, SI32 menu, UI08 skill );
 	createEntry *FindItem( UI16 itemNum );
-	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry );
+	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry, UI16 resourceColour = 0 );
 	void ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank );
 	void HandleMakeMenu( CSocket *s, SI32 button, SI32 menu );
 
@@ -169,7 +169,7 @@ public:
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
 	UI16 CalculatePetControlChance( CChar *mChar, CChar *Npc );
-	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );
+	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false );
 	void SkillUse( CSocket *s, UI08 x );
 	void updateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );

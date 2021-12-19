@@ -346,3 +346,57 @@ morex=76
 value=1000 500
 restock=15
 }
+
+[waterthroughdeedeast]
+{
+name=water trough (east)
+id=0x14f0
+morex=77
+value=1000 500
+restock=15
+}
+
+[waterthroughdeedsouth]
+{
+name=water trough (south)
+id=0x14f0
+morex=78
+value=1000 500
+restock=15
+}
+
+[dartboarddeedeast]
+{
+name=dart board (east)
+id=0x14f0
+morex=79
+value=1000 500
+restock=15
+}
+
+[dartboarddeedsouth]
+{
+name=dart board (south)
+id=0x14f0
+morex=80
+value=1000 500
+restock=15
+}
+
+[ballotboxdeedeast]
+{
+name=ballot box (east)
+id=0x14f0
+morex=81
+value=1000 500
+restock=15
+}
+
+[ballotboxdeedsouth]
+{
+name=ballot box (south)
+id=0x14f0
+morex=82
+value=1000 500
+restock=15
+}
