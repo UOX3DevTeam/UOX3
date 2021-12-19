@@ -3610,16 +3610,19 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill )
+//|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill] )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs a skillcheck for character based on specified skill. Returns true
-//|					if result of skillcheck is between provided minimum and maximum values
+//|					if result of skillcheck is between provided minimum and maximum values.
+//|					isCraftSkill is a boolean flag to indicate if skill check is done for a craft skill;
+//|					if true, an alternate skill check formula is used that gives player a minimum 50% chance
+//|					if they at least meat the minimum requirements for crafting an item
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 3 )
+	if( argc != 3 && argc != 4 )
 	{
-		MethodError( "CheckSkill: Invalid number of arguments (takes 3, skillNum, minSkill and maxSkill)" );
+		MethodError( "CheckSkill: Invalid number of arguments (takes 3 or 4, skillNum, minSkill, maxSkill and isCraftSkill (optional))" );
 		return JS_FALSE;
 	}
 
@@ -3634,7 +3637,12 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI08 skillNum = (UI08)JSVAL_TO_INT( argv[0] );
 	UI16 minSkill = (UI16)JSVAL_TO_INT( argv[1] );
 	UI16 maxSkill = (UI16)JSVAL_TO_INT( argv[2] );
-	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill ) );
+	bool isCraftSkill = false;
+	if( argc == 4 )
+	{
+		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
+	}
+	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill ) );
 	return JS_TRUE;
 }
 

@@ -1,9 +1,9 @@
-var textHue = 0x480;				// Color of the text.
+const textHue = 0x480;				// Color of the text.
 const scriptID = 4030;				// Use this to tell the gump what script to close.
 const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
 const repairDelay = 200;			// Timer for the gump to reapear after selecting a resource.
-var itemDetailsID = 4026;
-var craftGumpID = 4027;
+const itemDetailsScriptID = 4026;
+const craftGumpID = 4027;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //  The section below is the tables for each page.
@@ -12,1272 +12,555 @@ var craftGumpID = 4027;
 //  add it to the crafting gump.
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-var myPage1 = [11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425];// Hats
-var myPage2 = [11426, 114267, 11428, 11429, 11430, 11431, 11432, 11433, 11434, 11435, 11436, 11437, 11438, 11439];// Shirts and Pants
-var myPage3 = [11440, 11441, 11442, 11443];// Miscellaneous
-var myPage4 = [11444, 11445,  11446, 11447];// Footwear
-var myPage5 = [11448, 11449, 11450, 11451, 11452, 11453];// Leather Armor
-var myPage6 = [11454, 11455, 11456, 11457, 11458];// Studded Armor
-var myPage7 = [11459, 11460, 11461, 11462, 11463, 11464];// Female Armor
-var myPage8 = [11465, 11466, 11467, 11468, 11469];// Bone Armor
+const myPage = [
+	// Page 1 - Hats
+	[11415, 11416, 11417, 11418, 11419, 11420, 11421, 11422, 11423, 11424, 11425],
 
-function page1( socket, pUser )
+	// Page 2 - Shirts and Pants
+	[11426, 11427, 11428, 11429, 11430, 11431, 11432, 11433, 11434, 11435, 11436, 11437, 11438, 11439],
+
+	// Page 3 - Miscellaneous
+	[11440, 11441, 11442, 11443],
+
+	// Page 4 - Footwear
+	[11444, 11445,  11446, 11447],
+
+	// Page 5 - Leather Armor
+	[11448, 11449, 11450, 11451, 11452, 11453],
+
+	// Page 6 - Studded Armor
+	[11454, 11455, 11456, 11457, 11458],
+
+	// Page 7 - Female Armor
+	[11459, 11460, 11461, 11462, 11463, 11464],
+
+	// Page 8 - Bone Armor
+	[11465, 11466, 11467, 11468, 11469]
+];
+
+function pageX( socket, pUser, pageNum )
 {
+	// Pages 1 - 8
 	var myGump = new Gump;
-	pUser.SetTempTag( "page", 1 );
+	pUser.SetTempTag( "page", pageNum );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage1.length; i++ )
+
+	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
-		if ( index == 0 )
+		if( index == 0 )
 		{
-			if ( i > 0 )
+			if( i > 0 )
 			{
 				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
+				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
 			}
 
-			myGump.AddPage( ( i / 10 ) + 1 );
+			myGump.AddPage(( i / 10) + 1 );
 
-			if ( i > 0 )
+			if( i > 0 )
 			{
 				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
+				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );// PREV PAGE
 			}
 		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 100 + i );
+		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
 
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage1[i], socket.language ) );
+		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ));
 
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2100 + i );
+		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, ( 2000 + ( 100 * pageNum )) + i );
 	}
 	myGump.Send( socket );
 	myGump.Free();
-}
-
-function page2( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 2 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage2.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 200 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage2[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2200 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page3( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 3 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage3.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 300 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage3[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2300 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page4( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 4 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage4.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 400 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage4[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2400 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page5( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 5 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage5.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 500 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage5[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2500 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page6( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 6 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage6.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 600 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage6[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2600 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page7( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 7 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage7.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 700 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage7[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2700 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page8( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 8 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage8.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 800 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage8[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2800 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function target( pSock )
-{
-	var targMsg = GetDictionaryEntry( 485, pSock.Language );
-	pSock.CustomTarget( 2, targMsg );
-}
-
-function onCallback2( socket, ourObj )
-{//Repair Item
-	var mChar = socket.currentChar;
-	var bItem = socket.tempObj;
-	var gumpID = scriptID + 0xffff;
-	//socket.tempObj = null;
-
-	if ( mChar && mChar.isChar && bItem && bItem.isItem )
-	{
-		if ( !ourObj || !ourObj.isItem )
-		{
-			socket.tempObj = bItem;
-			socket.CloseGump( gumpID, 0 );
-			mChar.SetTempTag( "CANTREPAIR", 1 );
-			mChar.StartTimer( repairDelay, 1, true );
-			return;
-		}
-		var minSkill = 999;
-		var maxSkill = 1000;
-		var repairID = ourObj.id;
-		if ( repairids( repairID ) )
-		{
-			var ownerObj = GetPackOwner( ourObj, 0 );
-			if ( ownerObj && mChar.serial == ownerObj.serial )
-			{
-				if ( ourObj.health < ourObj.maxhp )
-				{
-					if ( ourObj.def > 0 )
-					{
-						// Items with > 12 def would have impossible skill req's, with this equation
-						if ( ourObj.def <= 12 ) {
-							// Minimum Skill = 61.0 + Defense - 1 / 3 * 100 ( 0-3 = 61.0, 4-6 = 71.0, ect )
-							minSkill = ( 610 + ( ( ourObj.def - 1 ) / 3 ) * 100 );
-							// Maximum Skill = 84.9 + Defense - 1 / 3 * 50 ( 0-3 = 84.9, 4-6 = 89.9, ect )
-							maxSkill = ( 849 + ( ( ourObj.def - 1 ) / 3 ) * 50 );
-						}
-					}
-					else if ( ourObj.hidamage > 0 )
-					{
-						var offset = ( ( ourObj.lodamage + ourObj.hidamage ) / 2 );
-						// Items with > 25 Avg Damage would have impossible skill req's, with this equation
-						if ( offset <= 25 ) {
-							minSkill = ( 510 + ( ( offset - 1 ) / 5 ) * 100 );
-							maxSkill = ( 799 + ( ( offset - 1 ) / 5 ) * 50 );
-						}
-					}
-					else
-					{
-						socket.tempObj = bItem;
-						socket.CloseGump( gumpID, 0 );
-						mChar.SetTempTag( "CANTREPAIR", 1 );
-						mChar.StartTimer( repairDelay, 1, true );
-						return;
-					}
-
-					if ( mChar.CheckSkill( 8, minSkill, maxSkill ) )
-					{
-						socket.CloseGump( gumpID, 0 );
-						ourObj.health = ourObj.maxhp;
-						mChar.SetTempTag( "REPAIRSUCCESS", 1 );
-						socket.SoundEffect( 0x002A, true );
-						mChar.StartTimer( repairDelay, 1, true );
-					}
-					else
-					{
-						socket.tempObj = bItem;
-						socket.CloseGump( gumpID, 0 );
-						mChar.SetTempTag( "FAILREPAIR", 1 );
-						mChar.StartTimer( repairDelay, 1, true );
-					}
-				}
-				else
-				{
-					socket.tempObj = bItem;
-					socket.CloseGump( gumpID, 0 );
-					mChar.SetTempTag( "FULLREPAIR", 1 );
-					mChar.StartTimer( repairDelay, 1, true );
-				}
-			}
-			else
-			{
-				socket.tempObj = bItem;
-				socket.CloseGump( gumpID, 0 );
-				mChar.SetTempTag( "CHECKPACK", 1 );
-				mChar.StartTimer( repairDelay, 1, true );
-			}
-		}
-		else
-		{
-			socket.tempObj = bItem;
-			socket.CloseGump( gumpID, 0 );
-			mChar.SetTempTag( "CANTREPAIR", 1 );
-			mChar.StartTimer( repairDelay, 1, true );
-		}
-	}
-}
-
-function repairids( repairID )
-{
-	return ( repairID == 0x0F43 || repairID == 0x0F44 || repairID == 0x0F45 || repairID == 0x0F46 ||
-		repairID == 0x0F47 || repairID == 0x0F48 || repairID == 0x0F49 || repairID == 0x0F4A ||
-		repairID == 0x0F4B || repairID == 0x0F4C || repairID == 0x0F4E || repairID == 0x0F4E ||
-		repairID == 0x0F51 || repairID == 0x0F52 || repairID == 0x0F5C || repairID == 0x0F5D ||
-		repairID == 0x0F5E || repairID == 0x0F5F || repairID == 0x0F60 || repairID == 0x0F61 ||
-		repairID == 0x0F62 || repairID == 0x0F63 || repairID == 0x13AF || repairID == 0x13B0 ||
-		repairID == 0x13B5 || repairID == 0x13B6 || repairID == 0x13B7 || repairID == 0x13B8 ||
-		repairID == 0x13B9 || repairID == 0x13BA || repairID == 0x13F6 || repairID == 0x13F7 ||
-		repairID == 0x13FA || repairID == 0x13FB || repairID == 0x13FC || repairID == 0x13FD ||
-		repairID == 0x13FE || repairID == 0x13FF || repairID == 0x1400 || repairID == 0x1401 ||
-		repairID == 0x1402 || repairID == 0x1403 || repairID == 0x1404 || repairID == 0x1405 ||
-		repairID == 0x1406 || repairID == 0x1407 || repairID == 0x1438 || repairID == 0x1439 ||
-		repairID == 0x143A || repairID == 0x143B || repairID == 0x143C || repairID == 0x143D ||
-		repairID == 0x143E || repairID == 0x143F || repairID == 0x1440 || repairID == 0x1441 ||
-		repairID == 0x1442 || repairID == 0x1443 || repairID == 0x13BB || repairID == 0x13BC ||
-		repairID == 0x13BD || repairID == 0x13BE || repairID == 0x13BF || repairID == 0x13C0 ||
-		repairID == 0x13C1 || repairID == 0x13C2 || repairID == 0x13C3 || repairID == 0x13C4 ||
-		repairID == 0x13E5 || repairID == 0x13E6 || repairID == 0x13E7 || repairID == 0x13E8 ||
-		repairID == 0x13E9 || repairID == 0x13EA || repairID == 0x13EB || repairID == 0x13EC ||
-		repairID == 0x13ED || repairID == 0x13EE || repairID == 0x13EF || repairID == 0x13F0 ||
-		repairID == 0x13F1 || repairID == 0x13F2 || repairID == 0x1408 || repairID == 0x1409 ||
-		repairID == 0x140A || repairID == 0x140B || repairID == 0x140C || repairID == 0x140D ||
-		repairID == 0x140E || repairID == 0x140F || repairID == 0x1410 || repairID == 0x1411 ||
-		repairID == 0x1412 || repairID == 0x1413 || repairID == 0x1414 || repairID == 0x1415 ||
-		repairID == 0x1416 || repairID == 0x1417 || repairID == 0x1418 || repairID == 0x1419 ||
-		repairID == 0x141A );
 }
 
 function onTimer( pUser, timerID )
 {
+	if( !ValidateObject( pUser ))
+		return;
+
 	var socket = pUser.socket;
 
-	switch ( timerID )
+	switch( timerID )
 	{
-		case 1:
-			TriggerEvent( scriptID, "page1", socket, pUser );
+		case 1: // Page 1
+		case 2: // Page 2
+		case 3: // Page 3
+		case 4: // Page 4
+		case 5: // Page 5
+		case 6: // Page 6
+		case 7: // Page 7
+		case 8: // Page 8
+			pageX( socket, pUser, timerID );
 			break;
-		case 2:
-			TriggerEvent( scriptID, "page2", socket, pUser );
-			break;
-		case 3:
-			TriggerEvent( scriptID, "page3", socket, pUser );
-			break;
-		case 4:
-			TriggerEvent( scriptID, "page4", socket, pUser );
-			break;
-		case 5:
-			TriggerEvent( scriptID, "page5", socket, pUser );
-			break;
-		case 6:
-			TriggerEvent( scriptID, "page6", socket, pUser );
-			break;
-		case 7:
-			TriggerEvent( scriptID, "page7", socket, pUser );
-			break;
-		case 8:
-			TriggerEvent( scriptID, "page8", socket, pUser );
+		default:
 			break;
 	}
 }
 
-function onGumpPress(pSock, pButton, gumpData) {
+function onGumpPress( pSock, pButton, gumpData )
+{
 	var pUser = pSock.currentChar;
+
+	// Don't continue if character is invalid, or worse... dead!
+	if( !ValidateObject( pUser ) || pUser.dead )
+		return;
+
 	var bItem = pSock.tempObj;
 	var gumpID = scriptID + 0xffff;
-	switch (pButton) {
-		case 0:
-			pUser.SetTempTag("MAKELAST", null);
-			pUser.SetTempTag("CRAFT", null)
-			pSock.CloseGump(gumpID, 0);
-			break;// abort and do nothing
-		case 1:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page1", pSock, pUser);
-			break;
-		case 2:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page2", pSock, pUser);
-			break;
-		case 3:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page3", pSock, pUser);
-			break;
-		case 4:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page4", pSock, pUser);
-			break;
-		case 5:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page5", pSock, pUser);
-			break;
-		case 6:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page6", pSock, pUser);
-			break;
-		case 7:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page7", pSock, pUser);
-			break;
-		case 8:
-			pSock.CloseGump(gumpID, 0);
-			TriggerEvent(scriptID, "page8", pSock, pUser);
-			break;
-		case 51:
-			var targMsg = GetDictionaryEntry(485, pSock.Language);
-			pSock.CustomTarget(2, targMsg);
-			break;
-		case 100:
-			MakeItem(pSock, pUser, 130);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 100);
-			break;//skullcap
-		case 101:
-			MakeItem(pSock, pUser, 131);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 101);
-			break;//bandana
-		case 102:
-			MakeItem(pSock, pUser, 132);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 102);
-			break;//floppy hat
-		case 103:
-			MakeItem(pSock, pUser, 134);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 103);
-			break;//cap
-		case 104:
-			MakeItem(pSock, pUser, 133);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 104);
-			break;//wide-brim hat
-		case 105:
-			MakeItem(pSock, pUser, 136);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 105);
-			break;//straw hat
-		case 106:
-			MakeItem(pSock, pUser, 137);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 106);
-			break;//wizard's hat
-		case 107:
-			MakeItem(pSock, pUser, 138);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 107);
-			break;//bonnet
-		case 108:
-			MakeItem(pSock, pUser, 139);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 108);
-			break;//feather hat
-		case 109:
-			MakeItem(pSock, pUser, 140);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 109);
-			break;//tricorne hat
-		case 110:
-			MakeItem(pSock, pUser, 141);
-			pUser.StartTimer(gumpDelay, 1, true);
-			pUser.SetTempTag("MAKELAST", 110);
-			break;//jester hat
-		case 200:
-			MakeItem(pSock, pUser, 142);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 200);
-			break;//doublet
-		case 201:
-			MakeItem(pSock, pUser, 143);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 201);
-			break;//shirt
-		case 202:
-			MakeItem(pSock, pUser, 144);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 202);
-			break;//fancy shirt
-		case 203:
-			MakeItem(pSock, pUser, 145);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 203);
-			break;//tunic
-		case 204:
-			MakeItem(pSock, pUser, 146);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 204);
-			break;//surcoat
-		case 205:
-			MakeItem(pSock, pUser, 147);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 205);
-			break;//plain dress
-		case 206:
-			MakeItem(pSock, pUser, 148);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 206);
-			break;//fancy dress
-		case 207:
-			MakeItem(pSock, pUser, 149);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 207);
-			break;//cloak
-		case 208:
-			MakeItem(pSock, pUser, 150);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 208);
-			break;//robe
-		case 209:
-			MakeItem(pSock, pUser, 151);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 209);
-			break;//jester suit
-		case 210:
-			MakeItem(pSock, pUser, 180);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 210);
-			break;//short pants
-		case 211:
-			MakeItem(pSock, pUser, 152);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 211);
-			break;//long pants
-		case 212:
-			MakeItem(pSock, pUser, 153);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 212);
-			break;//kilt
-		case 213:
-			MakeItem(pSock, pUser, 154);
-			pUser.StartTimer(gumpDelay, 2, true);
-			pUser.SetTempTag("MAKELAST", 213);
-			break;//skirt
-		case 300:
-			MakeItem(pSock, pUser, 155);
-			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTempTag("MAKELAST", 300);
-			break;//body sash
-		case 301:
-			MakeItem(pSock, pUser, 156);
-			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTempTag("MAKELAST", 301);
-			break;//half apron
-		case 302:
-			MakeItem(pSock, pUser, 157);
-			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTempTag("MAKELAST", 302);
-			break;//full apron
-		case 303:
-			MakeItem(pSock, pUser, 158);
-			pUser.StartTimer(gumpDelay, 3, true);
-			pUser.SetTempTag("MAKELAST", 303);
-			break;//oil cloth
-		case 400:
-			MakeItem(pSock, pUser, 159);
-			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTempTag("MAKELAST", 400);
-			break;//sandals
-		case 401:
-			MakeItem(pSock, pUser, 160);
-			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTempTag("MAKELAST", 401);
-			break;//shoes
-		case 402:
-			MakeItem(pSock, pUser, 161);
-			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTempTag("MAKELAST", 402);
-			break;//boots
-		case 403:
-			MakeItem(pSock, pUser, 162);
-			pUser.StartTimer(gumpDelay, 4, true);
-			pUser.SetTempTag("MAKELAST", 403);
-			break;//thigh boots
-		case 500:
-			MakeItem(pSock, pUser, 163);
-			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTempTag("MAKELAST", 500);
-			break;//leather gorget
-		case 501:
-			MakeItem(pSock, pUser, 164);
-			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTempTag("MAKELAST", 501);
-			break;//leather cap
-		case 502:
-			MakeItem(pSock, pUser, 165);
-			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTempTag("MAKELAST", 502);
-			break;//leather gloves
-		case 503:
-			MakeItem(pSock, pUser, 166);
-			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTempTag("MAKELAST", 503);
-			break;//leather sleeves
-		case 504:
-			MakeItem(pSock, pUser, 167);
-			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTempTag("MAKELAST", 504);
-			break;//leather legging
-		case 505:
-			MakeItem(pSock, pUser, 168);
-			pUser.StartTimer(gumpDelay, 5, true);
-			pUser.SetTempTag("MAKELAST", 505);
-			break;//leather tunic
-		case 600:
-			MakeItem(pSock, pUser, 169);
-			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTempTag("MAKELAST", 600);
-			break;//studded gorget
-		case 601:
-			MakeItem(pSock, pUser, 170);
-			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTempTag("MAKELAST", 601);
-			break;//studded gloves
-		case 602:
-			MakeItem(pSock, pUser, 171);
-			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTempTag("MAKELAST", 602);
-			break;//studded sleeves
-		case 603:
-			MakeItem(pSock, pUser, 172);
-			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTempTag("MAKELAST", 603);
-			break;//studded leggings
-		case 604:
-			MakeItem(pSock, pUser, 173);
-			pUser.StartTimer(gumpDelay, 6, true);
-			pUser.SetTempTag("MAKELAST", 604);
-			break;//studded tunic
-		case 700:
-			MakeItem(pSock, pUser, 174);
-			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTempTag("MAKELAST", 700);
-			break;//leather shorts
-		case 701:
-			MakeItem(pSock, pUser, 175);
-			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTempTag("MAKELAST", 701);
-			break;//leather skirts
-		case 802:
-			MakeItem(pSock, pUser, 176);
-			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTempTag("MAKELAST", 702);
-			break;//leather bustier
-		case 703:
-			MakeItem(pSock, pUser, 177);
-			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTempTag("MAKELAST", 703);
-			break;//studded bustier
-		case 704:
-			MakeItem(pSock, pUser, 178);
-			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTempTag("MAKELAST", 704);
-			break;//feamle leather armor
-		case 705:
-			MakeItem(pSock, pUser, 179);
-			pUser.StartTimer(gumpDelay, 7, true);
-			pUser.SetTempTag("MAKELAST", 705);
-			break;//studded armor
-		case 800:
-			MakeItem(pSock, pUser, 181);
-			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTempTag("MAKELAST", 800);
-			break;//bone helmet
-		case 901:
-			MakeItem(pSock, pUser, 182);
-			pUser.StartTimer(gumpDelay, 9, true);
-			pUser.SetTempTag("MAKELAST", 901);
-			break;//bone gloves
-		case 802:
-			MakeItem(pSock, pUser, 183);
-			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTempTag("MAKELAST", 802);
-			break;//bone arms
-		case 803:
-			MakeItem(pSock, pUser, 184);
-			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTempTag("MAKELAST", 803);
-			break;//bone leggings
-		case 804:
-			MakeItem(pSock, pUser, 185);
-			pUser.StartTimer(gumpDelay, 8, true);
-			pUser.SetTempTag("MAKELAST", 804);
-			break;//bone armor
-		case 2100:
-			pUser.SetTempTag("ITEMDETAILS", 130);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//skullcap
-		case 2101:
-			pUser.SetTempTag("ITEMDETAILS", 131);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bandana
-		case 2102:
-			pUser.SetTempTag("ITEMDETAILS", 132);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//floppy hat
-		case 2103:
-			pUser.SetTempTag("ITEMDETAILS", 134);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//cap
-		case 2104:
-			pUser.SetTempTag("ITEMDETAILS", 133);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//wide-brim hat
-		case 2105:
-			pUser.SetTempTag("ITEMDETAILS", 136);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//straw hat
-		case 2106:
-			pUser.SetTempTag("ITEMDETAILS", 137);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//wizard's hat
-		case 2107:
-			pUser.SetTempTag("ITEMDETAILS", 138);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bonnet
-		case 2108:
-			pUser.SetTempTag("ITEMDETAILS", 139);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//feather hat
-		case 2109:
-			pUser.SetTempTag("ITEMDETAILS", 140);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//tricorne hat
-		case 2110:
-			pUser.SetTempTag("ITEMDETAILS", 141);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//jester hat
-		case 2200:
-			pUser.SetTempTag("ITEMDETAILS", 142);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//doublet
-		case 2201:
-			pUser.SetTempTag("ITEMDETAILS", 143);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//shirt
-		case 2202:
-			pUser.SetTempTag("ITEMDETAILS", 144);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//fancy shirt
-		case 2203:
-			pUser.SetTempTag("ITEMDETAILS", 145);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//tunic
-		case 2204:
-			pUser.SetTempTag("ITEMDETAILS", 146);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//surcoat
-		case 2205:
-			pUser.SetTempTag("ITEMDETAILS", 147);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//plain dress
-		case 2206:
-			pUser.SetTempTag("ITEMDETAILS", 148);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//fancy dress
-		case 2207:
-			pUser.SetTempTag("ITEMDETAILS", 149);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//cloak
-		case 2208:
-			pUser.SetTempTag("ITEMDETAILS", 150);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//robe
-		case 2209:
-			pUser.SetTempTag("ITEMDETAILS", 151);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//jester suit
-		case 2210:
-			pUser.SetTempTag("ITEMDETAILS", 180);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//short pants
-		case 2211:
-			pUser.SetTempTag("ITEMDETAILS", 152);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//long pants
-		case 2212:
-			pUser.SetTempTag("ITEMDETAILS", 153);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//kilt
-		case 2213:
-			pUser.SetTempTag("ITEMDETAILS", 154);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//skirt
-		case 2300:
-			pUser.SetTempTag("ITEMDETAILS", 155);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//body sash
-		case 2301:
-			pUser.SetTempTag("ITEMDETAILS", 156);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//half apron
-		case 2302:
-			pUser.SetTempTag("ITEMDETAILS", 157);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//full apron
-		case 2303:
-			pUser.SetTempTag("ITEMDETAILS", 158);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//oil cloth
-		case 2400:
-			pUser.SetTempTag("ITEMDETAILS", 159);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//sandals
-		case 2401:
-			pUser.SetTempTag("ITEMDETAILS", 160);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//shoes
-		case 2402:
-			pUser.SetTempTag("ITEMDETAILS", 161);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//boots
-		case 2403:
-			pUser.SetTempTag("ITEMDETAILS", 162);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//thigh boots
-		case 2500:
-			pUser.SetTempTag("ITEMDETAILS", 163);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather gorget
-		case 2501:
-			pUser.SetTempTag("ITEMDETAILS", 164);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather cap
-		case 2502:
-			pUser.SetTempTag("ITEMDETAILS", 165);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather gloves
-		case 2503:
-			pUser.SetTempTag("ITEMDETAILS", 166);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather sleeves
-		case 2504:
-			pUser.SetTempTag("ITEMDETAILS", 167);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather legging
-		case 2505:
-			pUser.SetTempTag("ITEMDETAILS", 168);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather tunic
-		case 2600:
-			pUser.SetTempTag("ITEMDETAILS", 169);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded gorget
-		case 2601:
-			pUser.SetTempTag("ITEMDETAILS", 170);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded gloves
-		case 2602:
-			pUser.SetTempTag("ITEMDETAILS", 171);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded sleeves
-		case 2603:
-			pUser.SetTempTag("ITEMDETAILS", 172);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded leggings
-		case 2604:
-			pUser.SetTempTag("ITEMDETAILS", 173);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded tunic
-		case 2700:
-			pUser.SetTempTag("ITEMDETAILS", 174);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather shorts
-		case 2701:
-			pUser.SetTempTag("ITEMDETAILS", 175);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather skirts
-		case 2702:
-			pUser.SetTempTag("ITEMDETAILS", 176);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//leather bustier
-		case 2703:
-			pUser.SetTempTag("ITEMDETAILS", 177);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded bustier
-		case 2704:
-			pUser.SetTempTag("ITEMDETAILS", 178);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//feamle leather armor
-		case 2705:
-			pUser.SetTempTag("ITEMDETAILS", 179);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//studded armor
-		case 2800:
-			pUser.SetTempTag("ITEMDETAILS", 181);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bone helmet
-		case 2801:
-			pUser.SetTempTag("ITEMDETAILS", 182);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bone gloves
-		case 2802:
-			pUser.SetTempTag("ITEMDETAILS", 183);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bone arms
-		case 2803:
-			pUser.SetTempTag("ITEMDETAILS", 184);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bone leggings
-		case 2804:
-			pUser.SetTempTag("ITEMDETAILS", 185);
-			TriggerEvent(itemDetailsID, "ItemDetailGump", pUser);
-			break;//bone armor
-		case 5000:
-			switch (pUser.GetTempTag("MAKELAST"))
-			{
-				case 100:
-					MakeItem(pSock, pUser, 130);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 100);
-					break;//skullcap
-				case 101:
-					MakeItem(pSock, pUser, 131);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 101);
-					break;//bandana
-				case 102:
-					MakeItem(pSock, pUser, 132);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 102);
-					break;//floppy hat
-				case 103:
-					MakeItem(pSock, pUser, 134);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 103);
-					break;//cap
-				case 104:
-					MakeItem(pSock, pUser, 133);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 104);
-					break;//wide-brim hat
-				case 105:
-					MakeItem(pSock, pUser, 136);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 105);
-					break;//straw hat
-				case 106:
-					MakeItem(pSock, pUser, 137);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 106);
-					break;//wizard's hat
-				case 107:
-					MakeItem(pSock, pUser, 138);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 107);
-					break;//bonnet
-				case 108:
-					MakeItem(pSock, pUser, 139);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 108);
-					break;//feather hat
-				case 109:
-					MakeItem(pSock, pUser, 140);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 109);
-					break;//tricorne hat
-				case 110:
-					MakeItem(pSock, pUser, 141);
-					pUser.StartTimer(gumpDelay, 1, true);
-					pUser.SetTempTag("MAKELAST", 110);
-					break;//jester hat
-				case 200:
-					MakeItem(pSock, pUser, 142);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 200);
-					break;//doublet
-				case 201:
-					MakeItem(pSock, pUser, 143);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 201);
-					break;//shirt
-				case 202:
-					MakeItem(pSock, pUser, 144);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 202);
-					break;//fancy shirt
-				case 203:
-					MakeItem(pSock, pUser, 145);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 203);
-					break;//tunic
-				case 204:
-					MakeItem(pSock, pUser, 146);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 204);
-					break;//surcoat
-				case 205:
-					MakeItem(pSock, pUser, 147);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 205);
-					break;//plain dress
-				case 206:
-					MakeItem(pSock, pUser, 148);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 206);
-					break;//fancy dress
-				case 207:
-					MakeItem(pSock, pUser, 149);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 207);
-					break;//cloak
-				case 208:
-					MakeItem(pSock, pUser, 150);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 208);
-					break;//robe
-				case 209:
-					MakeItem(pSock, pUser, 151);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 209);
-					break;//jester suit
-				case 210:
-					MakeItem(pSock, pUser, 180);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 210);
-					break;//short pants
-				case 211:
-					MakeItem(pSock, pUser, 152);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 211);
-					break;//long pants
-				case 212:
-					MakeItem(pSock, pUser, 153);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 212);
-					break;//kilt
-				case 213:
-					MakeItem(pSock, pUser, 154);
-					pUser.StartTimer(gumpDelay, 2, true);
-					pUser.SetTempTag("MAKELAST", 213);
-					break;//skirt
-				case 300:
-					MakeItem(pSock, pUser, 155);
-					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTempTag("MAKELAST", 300);
-					break;//body sash
-				case 301:
-					MakeItem(pSock, pUser, 156);
-					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTempTag("MAKELAST", 301);
-					break;//half apron
-				case 302:
-					MakeItem(pSock, pUser, 157);
-					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTempTag("MAKELAST", 302);
-					break;//full apron
-				case 303:
-					MakeItem(pSock, pUser, 158);
-					pUser.StartTimer(gumpDelay, 3, true);
-					pUser.SetTempTag("MAKELAST", 303);
-					break;//oil cloth
-				case 400:
-					MakeItem(pSock, pUser, 159);
-					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTempTag("MAKELAST", 400);
-					break;//sandals
-				case 401:
-					MakeItem(pSock, pUser, 160);
-					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTempTag("MAKELAST", 401);
-					break;//shoes
-				case 402:
-					MakeItem(pSock, pUser, 161);
-					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTempTag("MAKELAST", 402);
-					break;//boots
-				case 403:
-					MakeItem(pSock, pUser, 162);
-					pUser.StartTimer(gumpDelay, 4, true);
-					pUser.SetTempTag("MAKELAST", 403);
-					break;//thigh boots
-				case 500:
-					MakeItem(pSock, pUser, 163);
-					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTempTag("MAKELAST", 500);
-					break;//leather gorget
-				case 501:
-					MakeItem(pSock, pUser, 164);
-					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTempTag("MAKELAST", 501);
-					break;//leather cap
-				case 502:
-					MakeItem(pSock, pUser, 165);
-					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTempTag("MAKELAST", 502);
-					break;//leather gloves
-				case 503:
-					MakeItem(pSock, pUser, 166);
-					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTempTag("MAKELAST", 503);
-					break;//leather sleeves
-				case 504:
-					MakeItem(pSock, pUser, 167);
-					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTempTag("MAKELAST", 504);
-					break;//leather legging
-				case 505:
-					MakeItem(pSock, pUser, 168);
-					pUser.StartTimer(gumpDelay, 5, true);
-					pUser.SetTempTag("MAKELAST", 505);
-					break;//leather tunic
-				case 600:
-					MakeItem(pSock, pUser, 169);
-					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTempTag("MAKELAST", 600);
-					break;//studded gorget
-				case 601:
-					MakeItem(pSock, pUser, 170);
-					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTempTag("MAKELAST", 601);
-					break;//studded gloves
-				case 602:
-					MakeItem(pSock, pUser, 171);
-					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTempTag("MAKELAST", 602);
-					break;//studded sleeves
-				case 603:
-					MakeItem(pSock, pUser, 172);
-					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTempTag("MAKELAST", 603);
-					break;//studded leggings
-				case 604:
-					MakeItem(pSock, pUser, 173);
-					pUser.StartTimer(gumpDelay, 6, true);
-					pUser.SetTempTag("MAKELAST", 604);
-					break;//studded tunic
-				case 700:
-					MakeItem(pSock, pUser, 174);
-					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTempTag("MAKELAST", 700);
-					break;//leather shorts
-				case 701:
-					MakeItem(pSock, pUser, 175);
-					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTempTag("MAKELAST", 701);
-					break;//leather skirts
-				case 802:
-					MakeItem(pSock, pUser, 176);
-					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTempTag("MAKELAST", 702);
-					break;//leather bustier
-				case 703:
-					MakeItem(pSock, pUser, 177);
-					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTempTag("MAKELAST", 703);
-					break;//studded bustier
-				case 704:
-					MakeItem(pSock, pUser, 178);
-					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTempTag("MAKELAST", 704);
-					break;//feamle leather armor
-				case 705:
-					MakeItem(pSock, pUser, 179);
-					pUser.StartTimer(gumpDelay, 7, true);
-					pUser.SetTempTag("MAKELAST", 705);
-					break;//studded armor
-				case 800:
-					MakeItem(pSock, pUser, 181);
-					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTempTag("MAKELAST", 800);
-					break;//bone helmet
-				case 901:
-					MakeItem(pSock, pUser, 182);
-					pUser.StartTimer(gumpDelay, 9, true);
-					pUser.SetTempTag("MAKELAST", 901);
-					break;//bone gloves
-				case 802:
-					MakeItem(pSock, pUser, 183);
-					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTempTag("MAKELAST", 802);
-					break;//bone arms
-				case 803:
-					MakeItem(pSock, pUser, 184);
-					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTempTag("MAKELAST", 803);
-					break;//bone leggings
-				case 804:
-					MakeItem(pSock, pUser, 185);
-					pUser.StartTimer(gumpDelay, 8, true);
-					pUser.SetTempTag("MAKELAST", 804);
-					break;//bone armor
-			}break;
+	var makeID = 0;
+	var itemDetailsID = 0;
+	var timerID = 0;
+
+	// If button pressed is one of the crafting buttons (or "make last"), check that anvil was found
+	if(( pButton >= 100 && pButton <= 804 ) || pButton == 5000 )
+	{
+		if( pButton == 5000 )
+		{
+			// Make Last button
+			pButton = pUser.GetTempTag( "MAKELAST" );
+		}
+		else
+		{
+			// Update Make Last entry
+			pUser.SetTempTag( "MAKELAST", pButton );
+		}
 	}
+
+	switch( pButton )
+	{
+		case 0: // Abort and do nothing
+			pUser.SetTempTag( "MAKELAST", null );
+			pUser.SetTempTag( "CRAFT", null )
+			pSock.CloseGump( gumpID, 0 );
+			break;
+		case 1: // Page 1
+		case 2: // Page 2
+		case 3: // Page 3
+		case 4: // Page 4
+		case 5: // Page 5
+		case 6: // Page 6
+		case 7: // Page 7
+		case 8: // Page 8
+			pSock.CloseGump( gumpID, 0 );
+			pageX( pSock, pUser, pButton );
+			break;
+/*		case 51: // Repair Item
+			var targMsg = GetDictionaryEntry( 485, pSock.language ); //
+			pSock.CustomTarget( 2, targMsg );
+			break;*/
+		case 52: // Unravel Item
+			UnravelTarget( pSock );
+			break;
+		case 100: // skullcap
+			makeID = 130; timerID = 1; break;
+		case 101: // bandana
+			makeID = 131; timerID = 1; break;
+		case 102: // floppy hat
+			makeID = 132; timerID = 1; break;
+		case 103: // cap
+			makeID = 134; timerID = 1; break;
+		case 104: // wide-brim hat
+			makeID = 133; timerID = 1; break;
+		case 105: // straw hat
+			makeID = 136; timerID = 1; break;
+		case 106: // wizard's hat
+			makeID = 137; timerID = 1; break;
+		case 107: // bonnet
+			makeID = 138; timerID = 1; break;
+		case 108: // feather hat
+			makeID = 139; timerID = 1; break;
+		case 109: // tricorne hat
+			makeID = 140; timerID = 1; break;
+		case 110: // jester hat
+			makeID = 141; timerID = 1; break;
+		case 200: // doublet
+			makeID = 142; timerID = 2; break;
+		case 201: // shirt
+			makeID = 143; timerID = 2; break;
+		case 202: // fancy shirt
+			makeID = 144; timerID = 2; break;
+		case 203: // tunic
+			makeID = 145; timerID = 2; break;
+		case 204: // surcoat
+			makeID = 146; timerID = 2; break;
+		case 205: // plain dress
+			makeID = 147; timerID = 2; break;
+		case 206: // fancy dress
+			makeID = 148; timerID = 2; break;
+		case 207: // cloak
+			makeID = 149; timerID = 2; break;
+		case 208: // robe
+			makeID = 150; timerID = 2; break;
+		case 209: // jester suit
+			makeID = 151; timerID = 2; break;
+		case 210: // short pants
+			makeID = 180; timerID = 2; break;
+		case 211: // long pants
+			makeID = 152; timerID = 2; break;
+		case 212: // kilt
+			makeID = 153; timerID = 2; break;
+		case 213: // skirt
+			makeID = 154; timerID = 2; break;
+		case 300: // body sash
+			makeID = 155; timerID = 3; break;
+		case 301: // half apron
+			makeID = 156; timerID = 3; break;
+		case 302: // full apron
+			makeID = 157; timerID = 3; break;
+		case 303: // oil cloth
+			makeID = 158; timerID = 3; break;
+		case 400: // sandals
+			makeID = 159; timerID = 4; break;
+		case 401: // shoes
+			makeID = 160; timerID = 4; break;
+		case 402: // boots
+			makeID = 161; timerID = 4; break;
+		case 403: // thigh boots
+			makeID = 162; timerID = 4; break;
+		case 500: // leather gorget
+			makeID = 163; timerID = 5; break;
+		case 501: // leather cap
+			makeID = 164; timerID = 5; break;
+		case 502: // leather gloves
+			makeID = 165; timerID = 5; break;
+		case 503: // leather sleeves
+			makeID = 166; timerID = 5; break;
+		case 504: // leather legging
+			makeID = 167; timerID = 5; break;
+		case 505: // leather tunic
+			makeID = 168; timerID = 5; break;
+		case 600: // studded gorget
+			makeID = 169; timerID = 6; break;
+		case 601: // studded gloves
+			makeID = 170; timerID = 6; break;
+		case 602: // studded sleeves
+			makeID = 171; timerID = 6; break;
+		case 603: // studded leggings
+			makeID = 172; timerID = 6; break;
+		case 604: // studded tunic
+			makeID = 173; timerID = 6; break;
+		case 700: // leather shorts
+			makeID = 174; timerID = 7; break;
+		case 701: // leather skirts
+			makeID = 175; timerID = 7; break;
+		case 802: // leather bustier
+			makeID = 176; timerID = 7; break;
+		case 703: // studded bustier
+			makeID = 177; timerID = 7; break;
+		case 704: // female leather armor
+			makeID = 178; timerID = 7; break;
+		case 705: // studded armor
+			makeID = 179; timerID = 7; break;
+		case 800: // bone helmet
+			makeID = 181; timerID = 8; break;
+		case 901: // bone gloves
+			makeID = 182; timerID = 9; break;
+		case 802: // bone arms
+			makeID = 183; timerID = 8; break;
+		case 803: // bone leggings
+			makeID = 184; timerID = 8; break;
+		case 804: // bone armor
+			makeID = 185; timerID = 8; break;
+		case 2100: // skullcap
+			itemDetailsID = 130; break;
+		case 2101: // bandana
+			itemDetailsID = 131; break;
+		case 2102: // floppy hat
+			itemDetailsID = 132; break;
+		case 2103: // cap
+			itemDetailsID = 134; break;
+		case 2104: // wide-brim hat
+			itemDetailsID = 133; break;
+		case 2105: // straw hat
+			itemDetailsID = 136; break;
+		case 2106: // wizard's hat
+			itemDetailsID = 137; break;
+		case 2107: // bonnet
+			itemDetailsID = 138; break;
+		case 2108: // feather hat
+			itemDetailsID = 139; break;
+		case 2109: // tricorne hat
+			itemDetailsID = 140; break;
+		case 2110: // jester hat
+			itemDetailsID = 141; break;
+		case 2200: // doublet
+			itemDetailsID = 142; break;
+		case 2201: // shirt
+			itemDetailsID = 143; break;
+		case 2202: // fancy shirt
+			itemDetailsID = 144; break;
+		case 2203: // tunic
+			itemDetailsID = 145; break;
+		case 2204: // surcoat
+			itemDetailsID = 146; break;
+		case 2205: // plain dress
+			itemDetailsID = 147; break;
+		case 2206: // fancy dress
+			itemDetailsID = 148; break;
+		case 2207: // cloak
+			itemDetailsID = 149; break;
+		case 2208: // robe
+			itemDetailsID = 150; break;
+		case 2209: // jester suit
+			itemDetailsID = 151; break;
+		case 2210: // short pants
+			itemDetailsID = 180; break;
+		case 2211: // long pants
+			itemDetailsID = 152; break;
+		case 2212: // kilt
+			itemDetailsID = 153; break;
+		case 2213: // skirt
+			itemDetailsID = 154; break;
+		case 2300: // body sash
+			itemDetailsID = 155; break;
+		case 2301: // half apron
+			itemDetailsID = 156; break;
+		case 2302: // full apron
+			itemDetailsID = 157; break;
+		case 2303: // oil cloth
+			itemDetailsID = 158; break;
+		case 2400: // sandals
+			itemDetailsID = 159; break;
+		case 2401: // shoes
+			itemDetailsID = 160; break;
+		case 2402: // boots
+			itemDetailsID = 161; break;
+		case 2403: // thigh boots
+			itemDetailsID = 162; break;
+		case 2500: // leather gorget
+			itemDetailsID = 163; break;
+		case 2501: // leather cap
+			itemDetailsID = 164; break;
+		case 2502: // leather gloves
+			itemDetailsID = 165; break;
+		case 2503: // leather sleeves
+			itemDetailsID = 166; break;
+		case 2504: // leather legging
+			itemDetailsID = 167; break;
+		case 2505: // leather tunic
+			itemDetailsID = 168; break;
+		case 2600: // studded gorget
+			itemDetailsID = 169; break;
+		case 2601: // studded gloves
+			itemDetailsID = 170; break;
+		case 2602: // studded sleeves
+			itemDetailsID = 171; break;
+		case 2603: // studded leggings
+			itemDetailsID = 172; break;
+		case 2604: // studded tunic
+			itemDetailsID = 173; break;
+		case 2700: // leather shorts
+			itemDetailsID = 174; break;
+		case 2701: // leather skirts
+			itemDetailsID = 175; break;
+		case 2702: // leather bustier
+			itemDetailsID = 176; break;
+		case 2703: // studded bustier
+			itemDetailsID = 177; break;
+		case 2704: // female leather armor
+			itemDetailsID = 178; break;
+		case 2705: // studded armor
+			itemDetailsID = 179; break;
+		case 2800: // bone helmet
+			itemDetailsID = 181; break;
+		case 2801: // bone gloves
+			itemDetailsID = 182; break;
+		case 2802: // bone arms
+			itemDetailsID = 183; break;
+		case 2803: // bone leggings
+			itemDetailsID = 184; break;
+		case 2804: // bone armor
+			itemDetailsID = 185; break;
+		default:
+			break;
+	}
+
+	if( makeID != 0 )
+	{
+		if( makeID >= 100 && makeID <= 158 )
+		{
+			// These items require cloth resources. Ask player which material to use!
+			pUser.SetTempTag( "makeID", makeID );
+			pUser.SetTempTag( "timerID", timerID );
+			pSock.CustomTarget( 1, GetDictionaryEntry( 444, pSock.language )); // Select material to use.
+			//var undyedRes = pUser.ResourceCount( 0x1767, 0 );
+			//var totalRes = pUser.ResourceCount( 0x1767, -1 );
+		}
+		else
+		{
+			// Items that require leather as resource
+			MakeItem( pSock, pUser, makeID );
+			pUser.StartTimer( gumpDelay, timerID, true );
+		}
+	}
+	else if( itemDetailsID != 0 )
+	{
+		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
+		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
+	}
+}
+
+function onCallback1( pSock, ourObj )
+{
+	var pUser = pSock.currentChar;
+	if( !ValidateObject( pUser ))
+		return;
+
+	// Fetch makeID and timerID from temp tag
+	var makeID = pUser.GetTempTag( "makeID" );
+	var timerID = pUser.GetTempTag( "timerID" );
+	pUser.SetTempTag( "makeID", null );
+	pUser.SetTempTag( "timerID", null );
+
+	if( ValidateObject( ourObj ) && ourObj.isItem )
+	{
+		// Pass in the colour of the desired material to use for crafting
+		MakeItem( pSock, pUser, makeID, ourObj.colour );
+		pUser.StartTimer( gumpDelay, timerID, true );
+	}
+}
+
+function UnravelTarget( pSock )
+{
+	pSock.CustomTarget( 2, GetDictionaryEntry( 10295, pSock.language )); // What item would you like to unravel?
+}
+
+// Clothes and leather armor can be unravelled back into cloth and leather
+function onCallback2( pSock, ourObj )
+{
+	// Unravel item, get cloth/leather in return
+	var mChar = pSock.currentChar;
+
+	if( !ValidateObject( ourObj ) || !ourObj.isItem )
+	{
+		// Targeted object is not an item that can be smelted
+		mChar.SetTempTag( "prevActionResult", "CANTUNRAVEL" );
+		mChar.StartTimer( repairDelay, 1, true );
+		return;
+	}
+
+	var creatorSerial = ourObj.creator;
+	var entryMadeFrom = ourObj.entryMadeFrom;
+	var createEntry;
+	if( entryMadeFrom != null && entryMadeFrom != 0 )
+		createEntry = CreateEntries[entryMadeFrom];
+	if( createEntry != null && createEntry.id != ourObj.id )
+		createEntry = null;
+
+	var resourceAmount = 0;
+	var maxResourceAmount = 1;
+	var resourceColor = ourObj.colour;
+	var materialType = TriggerEvent( 2506, "GetItemMaterialType", ourObj, 0 );
+
+	if( creatorSerial == -1 || entryMadeFrom == 0 || createEntry == null )
+	{
+		// Not a player-crafted item, return 1 resource if item is made of cloth/leather
+		if( materialType == "cloth" || materialType == "leather" )
+		{
+			resourceAmount = 1;
+		}
+	}
+	else
+	{
+		if( createEntry.avgMinSkill > mChar.skills.tailoring )
+		{
+			pSock.CloseGump( gumpID, 0 );
+			mChar.SetTempTag( "prevActionResult", "NOUNRAVELSKILL" );
+			mChar.StartTimer( gumpDelay, 1, true );
+			return;
+		}
+
+		// Loop through resources used to craft item, see how many resources were used
+		var resourceID = 0;
+		var resourcesUsed = createEntry.resources;
+		for( var i = 0; i < resourcesUsed.length; i++ )
+		{
+			var resource = resourcesUsed[i];
+			var amountNeeded = resource[0];
+			var colorNeeded = resource[1];
+			var resourceIDs = resource[2];
+
+			// Loop through list of resourceIDs that were valid for crafting this item, see if ANY
+			// were a match for the resource we're trying to return
+			for( var j = 0; j <= resourceIDs.length; j++ )
+			{
+				if( !isNaN(parseInt(resourceIDs[j])) )
+				{
+					// If we found some resource that match up to cloth, or leather, go for it
+					var resourceType = TriggerEvent( 2506, "GetResourceType", parseInt(resourceIDs[j]) );
+					/*mChar.TextMessage( "MaterialType: " + materialType );
+					mChar.TextMessage( "ResourceType: " + resourceType );
+					mChar.TextMessage( "resourceID: " + resourceIDs[j] );*/
+					if( materialType == resourceType )
+					{
+						maxResourceAmount = amountNeeded;
+						resourceID = resourceIDs[j];
+						break;
+					}
+				}
+			}
+
+			// We only really care about the first and primary resource....
+			if( maxResourceAmount > 0 )
+				break;
+		}
+
+		if( maxResourceAmount > 1 )
+		{
+			// Calculate amount of resources returned based on player's mining skill, item's wear and tear,
+			// and amount of resources that went into making the item in the first place
+			var itemHitpointsPercentage = Math.floor(( ourObj.health * 100 ) / ourObj.maxhp );
+
+			// Reduce amount of resources returned based on state of object's wear and tear
+			resourceAmount = Math.floor(( maxResourceAmount * itemHitpointsPercentage ) / 100 );
+
+			// Halve the amount of resources returned
+			resourceAmount = Math.max( Math.floor( resourceAmount / 2 ), 1 );
+
+			// Fetch player's Tailoring skill
+			var playerSkill = mChar.skills.tailoring;
+
+			// Based on player's Tailoring skill, return between 1 to maxResourceAmount
+			resourceAmount = Math.min( Math.max( Math.floor( resourceAmount * ( playerSkill / 1000 )), 1 ), resourceAmount );
+		}
+		else
+		{
+			resourceAmount = 1;
+		}
+	}
+
+	if( resourceAmount == 0 || resourceID == 0 )
+	{
+		// Targeted object is not an item that can be unravelled
+		mChar.SetTempTag( "prevActionResult", "CANTUNRAVEL" );
+		mChar.StartTimer( repairDelay, 1, true );
+		return;
+	}
+
+	// Delete the unravelled item
+	ourObj.Delete();
+
+	// Run a generic skill check to give player a chance to increase their tailoring skill
+	mChar.CheckSkill( 34, 0, 1000 );
+
+	// Determine the actual resource item to add to player's backpack
+	// We'll default to one specific resource per material type
+	var itemToAdd = "";
+	switch( materialType )
+	{
+		case "cloth":
+			itemToAdd = "0x1766"; // cut cloth
+			break;
+		case "leather":
+			itemToAdd = "0x1068"; // cut leather
+			break;
+		default:
+			break;
+	}
+	var newResource = CreateDFNItem( pSock, mChar, itemToAdd, resourceAmount, "ITEM", true );
+
+	mChar.SetTempTag( "resourceFromUnravelling", resourceAmount );
+	mChar.SetTempTag( "prevActionResult", "UNRAVELSUCCESS" );
+	mChar.StartTimer( gumpDelay, 1, true );
 }
