@@ -772,7 +772,7 @@ function checkReagents( pUser, mSpell )
 	if( failedCheck == 1 )
 	{
 		if( pUser.socket != null )
-			pUser.socket.SysMessage( GetDictionaryEntry( 702, pUser.socket.Language )); // You do not have enough reagents to cast that spell.
+			pUser.socket.SysMessage( GetDictionaryEntry( 702, pUser.socket.language )); // You do not have enough reagents to cast that spell.
 		return false;
 	}
 	else

@@ -2569,9 +2569,8 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Date		-	18th July, 2004
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets and sets default light level in dungeons
+//|	Purpose		-	Gets enabled state of given spawn region
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetSpawnRegionFacetStatus( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {

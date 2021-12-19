@@ -1,3 +1,11 @@
+19/12/2021 - Xuri
+	Fixed an issue where Socket JS Property .account did not properly return an object reference to the account associated with the socket
+	Added sound-effect for when lockpicks break (js/skill/lockpicking.js)
+	Cleaned up door-section of add-menu so only doors in their closed state remain (dfndata/items/building/doors.dfn)
+	Misc fixes to default world templates (some missing doors, a few duplicate decorations)
+	Fixed an issue where incorrect property name for max health, max stamina and max mana were used in taming script (js/skill/taming.js) and fire breath script (js/npc/special/fire_breath.js)
+	Updated JS Character Method .ResourceCount() to support -1 as value for the color argument, which will cause UOX3 to count all items of the specified ID, regardless of color
+
 29/11/2021 - Xuri
 	Fixed a bug that snuck in when adding in PARENTREGION support in previous commit, that resulted in all regions being seen as sub-regions upon loading regions from regions.wsc
 

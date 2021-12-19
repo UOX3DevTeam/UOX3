@@ -1248,9 +1248,9 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	void AddPicInPic( topLeft, topHeight, gumpImage, width, height, spriteX, spriteY )
+//|	Prototype	-	void AddPicInPic( topLeft, topHeight, gumpImage, spriteX, spriteY, width, height )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Adds a picinpic gump to the gump stream, with additional parameter for hue
+//|	Purpose		-	Adds a picinpic gump to the gump stream
 //|	Notes		-	Requires client v7.0.80.0 or above
 //o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
@@ -1264,10 +1264,10 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	SI16 x = (SI16)JSVAL_TO_INT( argv[0] ); // starting x
 	SI16 y = (SI16)JSVAL_TO_INT( argv[1] ); // starting y
 	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] ); // GumpID
-	SI16 width = (SI16)JSVAL_TO_INT( argv[3] ); // width
-	SI16 height = (SI16)JSVAL_TO_INT( argv[4] ); // height
-	SI16 spriteX = (SI16)JSVAL_TO_INT( argv[5] ); // spriteX
-	SI16 spriteY = (SI16)JSVAL_TO_INT( argv[6] ); // spriteY
+	SI16 spriteX = (SI16)JSVAL_TO_INT( argv[3] ); // spriteX
+	SI16 spriteY = (SI16)JSVAL_TO_INT( argv[4] ); // spriteY
+	SI16 width = (SI16)JSVAL_TO_INT( argv[5] ); // width
+	SI16 height = (SI16)JSVAL_TO_INT( argv[6] ); // height
 
 	SEGump *gList = static_cast<SEGump*>( JS_GetPrivate( cx, obj ) );
 	if( gList == nullptr )
@@ -1276,7 +1276,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( strutil::format("picinpic %i %i %i %i %i %i %i", x, y, gImage, width, height, spriteX, spriteY ) );
+	gList->one->push_back( strutil::format("picinpic %i %i %i %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ) );
 
 	return JS_TRUE;
 }
@@ -1289,7 +1289,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Attaches item property element to previous element added to JS Gump, which
 //|					causes client to display the known properties of an object based on the
 //|					object serial that was provided as a regular tooltip on cursor. Could be used to
-//|					show item stats for items on a custom paperdoll, for isntance.
+//|					show item stats for items on a custom paperdoll, for instance.
 //o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -3277,7 +3277,7 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	UI16 realID = (UI16)JSVAL_TO_INT( argv[0] );
-	UI16 itemColour = 0;
+	SI32 itemColour = 0;
 
 	if(( argc < 1 ) || ( argc > 2 ))
 	{
@@ -3287,10 +3287,12 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	if( argc == 2 )
 	{
-		itemColour = (UI16)JSVAL_TO_INT( argv[1] );
+		itemColour = (SI32)JSVAL_TO_INT( argv[1] );
 	}
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realID, itemColour ) );
+	bool colorCheck = ( itemColour != -1 ? true : false );
+
+	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realID, static_cast<UI16>( itemColour ), colorCheck ));
 	return JS_TRUE;
 }
 
@@ -9343,7 +9345,7 @@ JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	bool HasBeenOwner( pChar )
+//|	Prototype	-	int CalculateControlChance( pChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns chance (in values ranging from 0 to 1000) of pChar (player) successfully controlling mChar (pet)
 //o-----------------------------------------------------------------------------------------------o
