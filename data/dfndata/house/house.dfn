@@ -1256,6 +1256,86 @@ HOUSE_ITEM=496
 HOUSE_ITEM=497
 }
 
+// House Addon - Water Trough (east)
+[HOUSE 77]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=2
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=waterthroughdeedeast
+HOUSE_ITEM=498
+HOUSE_ITEM=499
+}
+
+// House Addon - Water Trough (south)
+[HOUSE 78]
+{
+ID=0x14F0
+SPACEX=2
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=waterthroughdeedsouth
+HOUSE_ITEM=500
+HOUSE_ITEM=501
+}
+
+// House Addon - Dart Board (east)
+[HOUSE 79]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=dartboarddeedeast
+HOUSE_ITEM=502
+}
+
+// House Addon - Dart Board (south)
+[HOUSE 80]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=dartboarddeedsouth
+HOUSE_ITEM=503
+}
+
+// House Addon - Ballot Box (east)
+[HOUSE 81]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=ballotboxdeedeast
+HOUSE_ITEM=504
+}
+
+// House Addon - Ballot Box (south)
+[HOUSE 82]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=ballotboxdeedsouth
+HOUSE_ITEM=505
+}
+
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -2955,5 +3035,77 @@ Z=0
 ITEM=0x198e
 X=0
 Y=2
+Z=0
+}
+
+// water trough (east) 1/2
+[HOUSE ITEM 498]
+{
+ITEM=0x0b41
+X=0
+Y=0
+Z=0
+}
+
+// water trough (east) 2/2
+[HOUSE ITEM 499]
+{
+ITEM=0x0b42
+X=0
+Y=1
+Z=0
+}
+
+// water trough (south) 1/2
+[HOUSE ITEM 500]
+{
+ITEM=0x0b43
+X=0
+Y=0
+Z=0
+}
+
+// water trough (south) 2/2
+[HOUSE ITEM 501]
+{
+ITEM=0x0b44
+X=1
+Y=0
+Z=0
+}
+
+// dart board (east) 1/1
+[HOUSE ITEM 502]
+{
+ITEM=0x1e2f
+X=0
+Y=0
+Z=0
+}
+
+// dart board (south) 1/1
+[HOUSE ITEM 503]
+{
+ITEM=0x1e2e
+X=0
+Y=0
+Z=0
+}
+
+// ballot box (east) 1/1
+[HOUSE ITEM 504]
+{
+ITEM=0x0e80
+X=0
+Y=0
+Z=0
+}
+
+// ballot box (south) 1/1
+[HOUSE ITEM 505]
+{
+ITEM=0x09a8
+X=0
+Y=0
 Z=0
 }
