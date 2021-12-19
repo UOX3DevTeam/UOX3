@@ -39,6 +39,22 @@ maxitems=25
 script=15005
 }
 
+[ballotbox-east]
+{
+get=0x0e80
+name=ballot box
+id=0x0e80
+movable=2
+}
+
+[ballotbox-south]
+{
+get=0x0e80
+name=ballot box
+id=0x09a8
+movable=2
+}
+
 [0x09ab]
 { S
 get=base_item

@@ -1,8 +1,8 @@
-var textHue = 0x480;				// Color of the text.
-var scriptID = 4028;				// Use this to tell the gump what script to close.
-var gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
-var itemDetailsID = 4026;
-var craftGumpID = 4027;
+const textHue = 0x480;				// Color of the text.
+const scriptID = 4028;				// Use this to tell the gump what script to close.
+const gumpDelay = 2000;				// Timer for the gump to reapear after crafting.
+const itemDetailsScriptID = 4026;
+const craftGumpID = 4027;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //  The section below is the tables for each page.
@@ -11,142 +11,50 @@ var craftGumpID = 4027;
 //  add it to the crafting gump.
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-var myPage1 = [10908, 10909, 10910, 10911, 10912, 10913, 10914, 10915];	// Healing and Curative
-var myPage2 = [10916, 10917, 10918, 10919, 10920]; // Enhancement
-var myPage3 = [10921, 10922, 10923, 10924]; // Toxic
-var myPage4 = [10925]; // Explosive // 10926, 10927 needs scripted
+const myPage = [
+	// Page 1 - Healing and Curative
+	[10908, 10909, 10910, 10911, 10912, 10913, 10914, 10915],
 
-function page1( socket, pUser )
+	// Page 2 - Enhancement
+	[10916, 10917, 10918, 10919, 10920],
+
+	// Page 3 - Toxic
+	[10921, 10922, 10923, 10924],
+
+	// Page 4 - Explosives
+	[10925, 10926, 10927]
+];
+
+function pageX( socket, pUser, pageNum )
 {
+	// Pages 1 - 4
 	var myGump = new Gump;
-	pUser.SetTempTag( "page", 1 );
-	TriggerEvent(craftGumpID, "craftinggump", myGump, socket);
-	for ( var i = 0; i < myPage1.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 100 + i );
-
-		myGump.AddText(255, 60 + (index * 20), textHue, GetDictionaryEntry( myPage1[i], socket.language ) );
-
-		myGump.AddButton(480, 60 + (index * 20), 4011, 4012, 1, 0, 2100 + i);
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page2( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 2 );
+	pUser.SetTempTag( "page", pageNum );
 	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage2.length; i++ )
+	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
-		if ( index == 0 )
+		if( index == 0 )
 		{
-			if ( i > 0 )
+			if( i > 0 )
 			{
 				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
+				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
 			}
 
-			myGump.AddPage( ( i / 10 ) + 1 );
+			myGump.AddPage(( i / 10 ) + 1 );
 
-			if ( i > 0 )
+			if( i > 0 )
 			{
 				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
+				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.language ) + "</basefont>" );// PREV PAGE
 			}
 		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 200 + i );
+		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
 
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage2[i], socket.language ) );
+		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ));
 
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2200 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page3( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 3 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage3.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 300 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage3[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2300 + i );
-	}
-	myGump.Send( socket );
-	myGump.Free();
-}
-
-function page4( socket, pUser )
-{
-	var myGump = new Gump;
-	pUser.SetTempTag( "page", 4 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
-	for ( var i = 0; i < myPage4.length; i++ )
-	{
-		var index = i % 10;
-		if ( index == 0 )
-		{
-			if ( i > 0 )
-			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
-				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.Language ) + "</basefont>" );// NEXT PAGE
-			}
-
-			myGump.AddPage( ( i / 10 ) + 1 );
-
-			if ( i > 0 )
-			{
-				myGump.AddButton( 220, 260, 4014, 4015, 0, i / 10, 0 );
-				myGump.AddHTMLGump( 255, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10101, socket.Language ) + "</basefont>" );// PREV PAGE
-			}
-		}
-		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, 400 + i );
-
-		myGump.AddText( 255, 60 + ( index * 20 ), textHue, GetDictionaryEntry( myPage4[i], socket.language ) );
-
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2400 + i );
+		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, ( 2000 + ( 100 * pageNum )) + i );
 	}
 	myGump.Send( socket );
 	myGump.Free();
@@ -154,21 +62,20 @@ function page4( socket, pUser )
 
 function onTimer( pUser, timerID )
 {
+	if( !ValidateObject( pUser ))
+		return;
+
 	var socket = pUser.socket;
 
-	switch ( timerID )
+	switch( timerID )
 	{
-		case 1:
-			TriggerEvent( scriptID, "page1", socket, pUser );
+		case 1: // Page 1
+		case 2: // Page 2
+		case 3: // Page 3
+		case 4: // Page 4
+			TriggerEvent( scriptID, "pageX", socket, pUser, timerID );
 			break;
-		case 2:
-			TriggerEvent( scriptID, "page2", socket, pUser );
-			break;
-		case 3:
-			TriggerEvent( scriptID, "page3", socket, pUser );
-			break;
-		case 4:
-			TriggerEvent( scriptID, "page4", socket, pUser );
+		default:
 			break;
 	}
 }
@@ -176,314 +83,138 @@ function onTimer( pUser, timerID )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
+
+	// Don't continue if character is invalid, or worse... dead!
+	if( !ValidateObject( pUser ) || pUser.dead )
+		return;
+
 	var bItem = pSock.tempObj;
 	var gumpID = scriptID + 0xffff;
-	switch ( pButton )
+	var makeID = 0;
+	var itemDetailsID = 0;
+	var timerID = 0;
+
+	if(( pButton >= 100 && pButton <= 402 ) || pButton == 5000 )
+	{
+		if( pButton == 5000 )
+		{
+			// Make Last button
+			pButton = pUser.GetTempTag( "MAKELAST" );
+		}
+		else
+		{
+			pUser.SetTempTag( "MAKELAST", pButton );
+		}
+	}
+
+	switch( pButton )
 	{
 		case 0:
 			pUser.SetTempTag( "MAKELAST", null );
 			pUser.SetTempTag( "CRAFT", null )
 			pSock.CloseGump( gumpID, 0 );
 			break;// abort and do nothing
-		case 1:
+		case 1: // Page 1
+		case 2: // Page 2
+		case 3: // Page 3
+		case 4: // Page 4
 			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "page1", pSock, pUser );
+			TriggerEvent( scriptID, "pageX", pSock, pUser, pButton );
 			break;
-		case 2:
-			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "page2", pSock, pUser );
+		// Make Items
+		case 100: // Refresh
+			makeID = 305; timerID = 1; break;
+		case 101: // Greater Refresh
+			makeID = 306; timerID = 1; break;
+		case 102: // Lesser Heal
+			makeID = 298; timerID = 1; break;
+		case 103: // Heal
+			makeID = 299; timerID = 1; break;
+		case 104: // Greater Heal
+			makeID = 300; timerID = 1; break;
+		case 105: // Lesser Cure
+			makeID = 292; timerID = 1; break;
+		case 106: // Cure
+			makeID = 293; timerID = 1; break;
+		case 107: // Greater Cure
+			makeID = 294; timerID = 1; break;
+		case 200: // Agility
+			makeID = 290; timerID = 2; break;
+		case 201: // Greater Agility
+			makeID = 291; timerID = 2; break;
+		case 202: // Night Sight
+			makeID = 309; timerID = 2; break;
+		case 203: // Strength
+			makeID = 307; timerID = 2; break;
+		case 204: // Greater Strength
+			makeID = 308; timerID = 2; break;
+		case 300: // Lesser Poison
+			makeID = 301; timerID = 3; break;
+		case 301: // Poison
+			makeID = 302; timerID = 3; break;
+		case 302: // Greater Poison
+			makeID = 303; timerID = 3; break;
+		case 303: // Deadly Poison
+			makeID = 304; timerID = 3; break;
+		case 400: // Lesser Explosion
+			makeID = 295; timerID = 4; break;
+		case 401: // Explosion
+			makeID = 296; timerID = 4; break;
+		case 402: // Greater Explosion
+			makeID = 297; timerID = 4; break;
+		// Show Item Details
+		case 2100: // Item Details - Refresh
+			itemDetailsID = 305; break;
+		case 2101: // Item Details - Greater Refreshment
+			itemDetailsID = 306; break;
+		case 2102: // Item Details - Lesser Heal
+			itemDetailsID = 298; break;
+		case 2103: // Item Details - Heal
+			itemDetailsID = 299; break;
+		case 2104: // Item Details - Greater Heal
+			itemDetailsID = 300; break;
+		case 2105: // Item Details - Lesser Cure
+			itemDetailsID = 292; break;
+		case 2106: // Item Details - Cure
+			itemDetailsID = 293; break;
+		case 2107: // Item Details - Greater Cure
+			itemDetailsID = 294; break;
+		case 2200: // Item Details - Agility
+			itemDetailsID = 290; break;
+		case 2201: // Item Details - Greater Agility
+			itemDetailsID = 291; break;
+		case 2202: // Item Details - Night Sight
+			itemDetailsID = 309; break;
+		case 2203: // Item Details - Strength
+			itemDetailsID = 307; break;
+		case 2204: // Item Details - Greater Strength
+			itemDetailsID = 308; break;
+		case 2300: // Item Details - Lesser Poison
+			itemDetailsID = 301; break;
+		case 2301: // Item Details - Poison
+			itemDetailsID = 302; break;
+		case 2302: // Item Details - Greater Poison
+			itemDetailsID = 303; break;
+		case 2303: // Item Details - Deadly Poison
+			itemDetailsID = 304; break;
+		case 2400: // Item Details - Lesser Explosion
+			itemDetailsID = 295; break;
+		case 2401: // Item Details - Explosion
+			itemDetailsID = 296; break;
+		case 2402: // Item Details - Greater Explosion
+			itemDetailsID = 297; break;
+		default:
 			break;
-		case 3:
-			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "page3", pSock, pUser );
-			break;
-		case 4:
-			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "page4", pSock, pUser );
-			break;
-		case 100:
-			MakeItem( pSock, pUser, 305 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 100 );
-			break;//refresh
-		case 101:
-			MakeItem( pSock, pUser, 306 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 101 );
-			break;//greater refrehment
-		case 102:
-			MakeItem( pSock, pUser, 298 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 102 );
-			break;//lesser heal
-		case 103:
-			MakeItem( pSock, pUser, 299 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 103 );
-			break;//heal
-		case 104:
-			MakeItem( pSock, pUser, 300 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 104 );
-			break;//greater heal
-		case 105:
-			MakeItem( pSock, pUser, 292 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 105 );
-			break;//lesser cure
-		case 106:
-			MakeItem( pSock, pUser, 293 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 106 );
-			break;//cure
-		case 107:
-			MakeItem( pSock, pUser, 293 );
-			pUser.StartTimer( gumpDelay, 1, true );
-			pUser.SetTempTag( "MAKELAST", 107 );
-			break;//greater cure
-		case 200:
-			MakeItem( pSock, pUser, 290 );
-			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTempTag( "MAKELAST", 200 );
-			break;//agility
-		case 201:
-			MakeItem( pSock, pUser, 291 );
-			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTempTag( "MAKELAST", 201 );
-			break;//greater agility
-		case 202:
-			MakeItem( pSock, pUser, 309 );
-			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTempTag( "MAKELAST", 202 );
-			break;//night sight
-		case 203:
-			MakeItem( pSock, pUser, 307 );
-			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTempTag( "MAKELAST", 203 );
-			break;//strength
-		case 204:
-			MakeItem( pSock, pUser, 308 );
-			pUser.StartTimer( gumpDelay, 2, true );
-			pUser.SetTempTag( "MAKELAST", 204 );
-			break;//greater strength
-		case 300:
-			MakeItem( pSock, pUser, 301 );
-			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTempTag( "MAKELAST", 300 );
-			break;//lesser poison
-		case 301:
-			MakeItem( pSock, pUser, 302 );
-			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTempTag( "MAKELAST", 301 );
-			break;//poison
-		case 302:
-			MakeItem( pSock, pUser, 303 );
-			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTempTag( "MAKELAST", 302 );
-			break;//greater poison
-		case 303:
-			MakeItem( pSock, pUser, 304 );
-			pUser.StartTimer( gumpDelay, 3, true );
-			pUser.SetTempTag( "MAKELAST", 303 );
-			break;//deadly poison
-		case 400:
-			MakeItem( pSock, pUser, 295 );
-			pUser.StartTimer( gumpDelay, 4, true );
-			pUser.SetTempTag( "MAKELAST", 400 );
-			break;//lesser explosion
-		case 401:
-			MakeItem( pSock, pUser, 296 );
-			pUser.StartTimer( gumpDelay, 4, true );
-			pUser.SetTempTag( "MAKELAST", 401 );
-			break;//explosion
-		case 402:
-			MakeItem( pSock, pUser, 297 );
-			pUser.StartTimer( gumpDelay, 4, true );
-			pUser.SetTempTag( "MAKELAST", 402 );
-			break;//greater explosion
-		case 2100:
-			pUser.SetTempTag( "ITEMDETAILS", 305 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//refresh
-		case 2101:
-			pUser.SetTempTag( "ITEMDETAILS", 306 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater refrehment
-		case 2102:
-			pUser.SetTempTag( "ITEMDETAILS", 298 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//lesser heal
-		case 2103:
-			pUser.SetTempTag( "ITEMDETAILS", 299 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//heal
-		case 2104:
-			pUser.SetTempTag( "ITEMDETAILS", 300 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater heal
-		case 2105:
-			pUser.SetTempTag( "ITEMDETAILS", 292 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//lesser cure
-		case 2106:
-			pUser.SetTempTag( "ITEMDETAILS", 293 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//cure
-		case 2107:
-			pUser.SetTempTag( "ITEMDETAILS", 293 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater cure
-		case 2200:
-			pUser.SetTempTag( "ITEMDETAILS", 290 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//agility
-		case 2201:
-			pUser.SetTempTag( "ITEMDETAILS", 291 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater agility
-		case 2202:
-			pUser.SetTempTag( "ITEMDETAILS", 309 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//night sight
-		case 2203:
-			pUser.SetTempTag( "ITEMDETAILS", 307 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//strength
-		case 2204:
-			pUser.SetTempTag( "ITEMDETAILS", 308 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater strength
-		case 2300:
-			pUser.SetTempTag( "ITEMDETAILS", 301 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//lesser poison
-		case 2301:
-			pUser.SetTempTag( "ITEMDETAILS", 302 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//poison
-		case 2302:
-			pUser.SetTempTag( "ITEMDETAILS", 303 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater poison
-		case 2303:
-			pUser.SetTempTag( "ITEMDETAILS", 304 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//deadly poison
-		case 2400:
-			pUser.SetTempTag( "ITEMDETAILS", 295 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//lesser explosion
-		case 2401:
-			pUser.SetTempTag( "ITEMDETAILS", 296 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//explosion
-		case 2402:
-			pUser.SetTempTag( "ITEMDETAILS", 297 );
-			TriggerEvent( itemDetailsID, "ItemDetailGump", pUser );
-			break;//greater explosion
-		case 5000:
-			switch ( pUser.GetTempTag( "MAKELAST" ) )
-			{
-				case 100:
-					MakeItem( pSock, pUser, 305 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 100 );
-					break;//refresh
-				case 101:
-					MakeItem( pSock, pUser, 306 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 101 );
-					break;//greater refrehment
-				case 102:
-					MakeItem( pSock, pUser, 298 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 102 );
-					break;//lesser heal
-				case 103:
-					MakeItem( pSock, pUser, 299 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 103 );
-					break;//heal
-				case 104:
-					MakeItem( pSock, pUser, 300 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 104 );
-					break;//greater heal
-				case 105:
-					MakeItem( pSock, pUser, 292 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 105 );
-					break;//lesser cure
-				case 106:
-					MakeItem( pSock, pUser, 293 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 106 );
-					break;//cure
-				case 107:
-					MakeItem( pSock, pUser, 293 );
-					pUser.StartTimer( gumpDelay, 1, true );
-					pUser.SetTempTag( "MAKELAST", 107 );
-					break;//greater cure
-				case 200:
-					MakeItem( pSock, pUser, 290 );
-					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTempTag( "MAKELAST", 200 );
-					break;//agility
-				case 201:
-					MakeItem( pSock, pUser, 291 );
-					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTempTag( "MAKELAST", 201 );
-					break;//greater agility
-				case 202:
-					MakeItem( pSock, pUser, 309 );
-					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTempTag( "MAKELAST", 202 );
-					break;//night sight
-				case 203:
-					MakeItem( pSock, pUser, 307 );
-					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTempTag( "MAKELAST", 203 );
-					break;//strength
-				case 204:
-					MakeItem( pSock, pUser, 308 );
-					pUser.StartTimer( gumpDelay, 2, true );
-					pUser.SetTempTag( "MAKELAST", 204 );
-					break;//greater strength
-				case 300:
-					MakeItem( pSock, pUser, 301 );
-					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTempTag( "MAKELAST", 300 );
-					break;//lesser poison
-				case 301:
-					MakeItem( pSock, pUser, 302 );
-					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTempTag( "MAKELAST", 301 );
-					break;//poison
-				case 302:
-					MakeItem( pSock, pUser, 303 );
-					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTempTag( "MAKELAST", 302 );
-					break;//greater poison
-				case 303:
-					MakeItem( pSock, pUser, 304 );
-					pUser.StartTimer( gumpDelay, 3, true );
-					pUser.SetTempTag( "MAKELAST", 303 );
-					break;//deadly poison
-				case 400:
-					MakeItem( pSock, pUser, 295 );
-					pUser.StartTimer( gumpDelay, 4, true );
-					pUser.SetTempTag( "MAKELAST", 400 );
-					break;//lesser explosion
-				case 401:
-					MakeItem( pSock, pUser, 296 );
-					pUser.StartTimer( gumpDelay, 4, true );
-					pUser.SetTempTag( "MAKELAST", 401 );
-					break;//explosion
-				case 402:
-					MakeItem( pSock, pUser, 297 );
-					pUser.StartTimer( gumpDelay, 4, true );
-					pUser.SetTempTag( "MAKELAST", 402 );
-					break;//greater explosion
-			}break;
+	}
+
+	if( makeID != 0 )
+	{
+		MakeItem( pSock, pUser, makeID );
+		pUser.StartTimer( gumpDelay, timerID, true );
+	}
+	else if( itemDetailsID != 0 )
+	{
+		pUser.SetTempTag( "ITEMDETAILS", itemDetailsID );
+		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 	}
 }
