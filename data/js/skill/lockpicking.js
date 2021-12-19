@@ -74,6 +74,7 @@ function onCallback0( pSock, ourObj )
 				{
 					if( RandomNumber( 0, 1 ) )
 					{
+						pSock.SoundEffect( 0x013A, false ); // or 0x004b ?
 						pSock.SysMessage( GetDictionaryEntry( 933, pSock.language ) ); // You broke your lockpick!
 						if( bItem.amount > 1 )
 							bItem.amount = (bItem.amount-1);

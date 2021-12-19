@@ -46,7 +46,7 @@ function onCallback0( pSock, ourObj )
 	pSock.tempObj = null;
 	if( !isInRange )
 	{
-		pSock.SysMessage(GetDictionaryEntry( 461, pSock.Language ) ); // You are too far away.
+		pSock.SysMessage(GetDictionaryEntry( 461, pSock.language ) ); // You are too far away.
 		return;
 	}
 

@@ -41,7 +41,7 @@
 // 'decorate save <facetName>
 //		Save all items on specified facet, regardless of objectType
 //
-// 'decorate ssave <customFileName>
+// 'decorate save <customFileName>
 // 		Save all items of all objectTypes on all facets to custom template file
 //
 // 'decorate save <objectType> <facetName>

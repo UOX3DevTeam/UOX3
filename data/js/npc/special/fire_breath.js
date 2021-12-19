@@ -81,8 +81,8 @@ function onTimer( mNPC, timerID )
 			var fireBreathDamage = Math.round( RandomNumber( currentHealth * 0.05, currentHealth * 0.075 ));
 
 			// If NPC health is too low, Dragon Breath essentially does so little damage it's pointless. Let's throw in a minimum!
-			if( fireBreathDamage < mNPC.maxHealth / 50 )
-				fireBreathDamage = Math.round( mNPC.maxHealth );
+			if( fireBreathDamage < mNPC.maxhp / 50 )
+				fireBreathDamage = Math.round( mNPC.maxhp );
 
 			// Apply damage
 			mNPC.target.Damage( fireBreathDamage, 5, mNPC );
