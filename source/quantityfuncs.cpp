@@ -44,11 +44,11 @@ UI32 GetTotalItemCount( CItem *objCont )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
+//|	Function	-	UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, bool colorCheck = false )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o-----------------------------------------------------------------------------------------------o
-UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
+UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, bool colorCheck = false )
 {
 	UI32 total = 0;
 	GenericList< CItem * > *pCont = p->GetContainsList();
@@ -58,7 +58,7 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 		{
 			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )
 				total += GetSubItemAmount( i, realID, realColour );
-			else if( i->GetID() == realID && i->GetColour() == realColour )
+			else if( i->GetID() == realID && ( !colorCheck || ( colorCheck && i->GetColour() == realColour )))
 				total += i->GetAmount();
 		}
 	}
@@ -66,16 +66,16 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
+//|	Function	-	UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour, bool colorCheck )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item on a character
 //o-----------------------------------------------------------------------------------------------o
-UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
+UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour, bool colorCheck )
 {
 	CItem *p = s->GetPackItem();
 	if( !ValidateObject( p ) )
 		return 0;
-	return GetSubItemAmount( p, realID, realColour );
+	return GetSubItemAmount( p, realID, realColour, colorCheck );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -156,7 +156,7 @@ UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
 		if( ValidateObject( oItem ) || I == ownedItems->end() )
 		{
 			if( oItem->GetType() == IT_CONTAINER && oItem->GetTempVar( CITV_MOREX ) == 1 )
-				goldCount += GetSubItemAmount( oItem, itemID, colour );
+				goldCount += GetSubItemAmount( oItem, itemID, colour, false );
 		}
 	}
 	return goldCount;

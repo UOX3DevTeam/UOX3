@@ -3277,7 +3277,7 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	UI16 realID = (UI16)JSVAL_TO_INT( argv[0] );
-	UI16 itemColour = 0;
+	SI32 itemColour = 0;
 
 	if(( argc < 1 ) || ( argc > 2 ))
 	{
@@ -3287,10 +3287,12 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	if( argc == 2 )
 	{
-		itemColour = (UI16)JSVAL_TO_INT( argv[1] );
+		itemColour = (SI32)JSVAL_TO_INT( argv[1] );
 	}
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realID, itemColour ) );
+	bool colorCheck = ( itemColour != -1 ? true : false );
+
+	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realID, static_cast<UI16>( itemColour ), colorCheck ));
 	return JS_TRUE;
 }
 
