@@ -215,9 +215,9 @@ function ApplyPostTameModifications( toTame )
 			toTame.strength /= 2;
 			toTame.dexterity /= 2;
 			toTame.intelligence /= 2;
-			toTame.health = Math.min( toTame.maxHealth, toTame.strength );
-			toTame.stamina = Math.min( toTame.maxStamina, toTame.dexterity );
-			toTame.mana = Math.min( toTame.maxMana, toTame.intelligence );
+			toTame.health = Math.min( toTame.maxhp, toTame.strength );
+			toTame.stamina = Math.min( toTame.maxstamina, toTame.dexterity );
+			toTame.mana = Math.min( toTame.maxmana, toTame.intelligence );
 			break;
 		default:
 			break;

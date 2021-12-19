@@ -72,7 +72,6 @@ slime
 giantrat
 }
 
-
 [NPCLIST alltownfolk]
 {
 npclist=poorfolk
@@ -1012,7 +1011,6 @@ f_furtrader
 m_tanner
 f_tanner
 }
-
 
 [NPCLIST mage]
 {

@@ -264,6 +264,7 @@ JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case TIMER_SOCK_FISHING:		*vp = INT_TO_JSVAL( tPC_FISHING );			break;
 			case TIMER_SOCK_MUTETIME:		*vp = INT_TO_JSVAL( tPC_MUTETIME );			break;
 			case TIMER_SOCK_TRACKINGDISPLAY: *vp = INT_TO_JSVAL( tPC_TRACKINGDISPLAY );	break;
+			case TIMER_SOCK_TRAFFICWARDEN: *vp = INT_TO_JSVAL( tPC_TRAFFICWARDEN );		break;
 			default:
 				break;
 		}
@@ -2685,6 +2686,17 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		switch( JSVAL_TO_INT( id ) )
 		{
 			case CSOCKP_ACCOUNT:
+			{
+				CAccountBlock *accountBlock = &gPriv->GetAccount();
+				if( accountBlock == nullptr )
+					*vp = JSVAL_NULL;
+				else
+				{	// Otherwise Acquire an object
+					JSObject *accountObj	= JSEngine->AcquireObject( IUE_ACCOUNT, accountBlock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					*vp = OBJECT_TO_JSVAL( accountObj );
+				}
+				break;
+			}
 			case CSOCKP_CURRENTCHAR:
 				myChar = gPriv->CurrcharObj();
 				if( !ValidateObject( myChar ) )
