@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	else if( iUsed.id == 0x1070 || iUsed.id == 0x1074 ) //if training dummy is motionless
 	{
 		//Determine weapon-type by calling external script and loading a value set there afterwards
-		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser );
+		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser, null );
 		if( weaponType == "BOWS" || weaponType == "XBOWS" )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 938, pSock.language )); //Practice archery on archery buttes!

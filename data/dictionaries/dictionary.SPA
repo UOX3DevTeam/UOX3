@@ -1950,16 +1950,7 @@
 1978=Malas
 1979=Islas Tokuno
 1980=Ter Mur
-1981=Los humanos no pueden llevar esto.
-1982=Los elfos no pueden llevar esto.
-1983=Las gárgolas no pueden llevar esto.
-1984=Reservado para las razas de jugadores adicionales
-1985=Reservado para las razas de jugadores adicionales
-1986=Reservado para las razas de jugadores adicionales
-1987=Reservado para las razas de jugadores adicionales
-1988=Reservado para las razas de jugadores adicionales
-1989=Reservado para las razas de jugadores adicionales
-1990=Reservado para las razas de jugadores adicionales
+1981=Los miembros de la raza %s no pueden llevar esto
 // Menú de ajustes basado en JS
 1991=¡Objeto inválido apuntado!
 1992=¡Objetivo desconocido!

@@ -1950,16 +1950,7 @@
 1978=Malas
 1979=Isole Tokuno
 1980=Ter Mur
-1981=Gli umani non possono indossarlo.
-1982=Gli elfi non possono indossare questo.
-1983=I gargoyle non possono indossare questo.
-1984=Riservato per razze di giocatori addizionali
-1985=Riservato per razze di giocatori addizionali
-1986=Riservato per razze di giocatori addizionali
-1987=Riservato per razze di giocatori addizionali
-1988=Riservato per razze di giocatori addizionali
-1989=Riservato per razze di giocatori addizionali
-1990=Riservato per razze di giocatori addizionali
+1981=I membri della razza %s non possono indossare questo
 // JS-Based Tweak Menu
 1991=Oggetto non valido mirato!
 1992=Oggetto sconosciuto preso di mira!

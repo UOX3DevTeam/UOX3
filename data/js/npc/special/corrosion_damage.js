@@ -15,7 +15,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		if( ValidateObject( weaponInHand ) && weaponInHand.hidamage > 0 )
 		{
 			// ... and a melee weapon...
-			var weaponType = TriggerEvent( 2500, "getWeaponType", attacker );
+			var weaponType = TriggerEvent( 2500, "getWeaponType", attacker, null );
 			if( weaponType == "WRESTLING" || weaponType == "BOWS" || weaponType == "XBOWS" || weaponType == "BLOWGUNS" || weaponType == "THROWN" )
 				return;
 

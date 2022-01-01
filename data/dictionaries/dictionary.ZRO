@@ -1950,16 +1950,7 @@
 1978=Malas
 1979=Tokuno Islands
 1980=Ter Mur
-1981=Humans can't wear this.
-1982=Elves can't wear this.
-1983=Gargoyles can't wear this.
-1984=Reserved for additional player races
-1985=Reserved for additional player races
-1986=Reserved for additional player races
-1987=Reserved for additional player races
-1988=Reserved for additional player races
-1989=Reserved for additional player races
-1990=Reserved for additional player races
+1981=Members of the %s race cannot wear this
 // JS-Based Tweak Menu
 1991=Invalid object targeted!
 1992=Unknown object targeted!

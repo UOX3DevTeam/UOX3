@@ -1425,8 +1425,8 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				}
 				else if( UTag == "HPMOD" )
 				{
-					// how much additional percent of strength are hitpoints
-					HPModifier( static_cast<UI16>(std::stoul(data,nullptr,0)) );
+					// how high percentage of strength is added as bonus hitpoints
+					HPModifier( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
 				}
 				else if( UTag == "HUNGER" )	
 				{
@@ -1504,7 +1504,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				{
 					MagicResistance( std::stof(data)  );
 				}
-				else if( UTag == "MANAMOD" ) // how much additional percent of int are mana
+				else if( UTag == "MANAMOD" ) // how high percentage of int to add as bonus mana
 				{
 					ManaModifier( static_cast<SI16>(std::stoi(data, nullptr, 0))  );
 				}
@@ -1635,9 +1635,9 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				{
 					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)), STORM );
 				}
-				else if( UTag == "STAMMOD" ) // how much additional percent of int are mana
+				else if( UTag == "STAMMOD" ) // how high percentage of dex is added as bonus stamina
 				{
-					StamModifier( static_cast<UI16>(std::stoul(data, nullptr, 0)));
+					StamModifier( static_cast<SI16>(std::stoi(data, nullptr, 0)));
 				}
 				break;
 			case 't':
