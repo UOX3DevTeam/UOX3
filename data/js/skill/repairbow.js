@@ -53,7 +53,7 @@ function onCallback1( socket, ourObj )
 						return;
 					}
 
-					if( mChar.CheckSkill( 8, minSkill, maxSkill ) )
+					if( mChar.CheckSkill( 8, minSkill, maxSkill, true ) )
 					{
 						ourObj.health = ourObj.maxhp;
 						socket.SysMessage( GetDictionaryEntry( 989, socket.language ) );

@@ -37,6 +37,7 @@ function onUseChecked( pUser, iUsed )
 	}
 
 	pSock.tempObj = iUsed;
+	var legacyUsesLeft = iUsed.GetTag( "UsesLeft" );
 	if( !iUsed.GetTag( "ContentsType" ))
 	{
 		// Setup "ContentsType"-tags for various pitchers/bottles if they don't have one
@@ -46,8 +47,14 @@ function onUseChecked( pUser, iUsed )
 	{
 		pUser.SysMessage( GetDictionaryEntry( 2554, pSock.language )); // It's empty.
 	}
-	else if( iUsed.GetTag( "UsesLeft" ) > 0 )
+	else if( iUsed.usesLeft > 0 || legacyUsesLeft > 0 )
 	{
+		if( legacyUsesLeft > 0 )
+		{
+			// Legacy item that has some uses remaining as part of custom "UsesLeft" tag. Convert to .usesLeft property!
+			iUsed.usesLeft = legacyUsesLeft;
+			iUsed.SetTag( "UsesLeft", null );
+		}
 		pUser.CustomTarget( 1, GetDictionaryEntry( 2552, pSock.language )); // Where would you like to pour this?
 	}
 	else if( iUsed.GetTag( "ContentsType" ) == 1 && iUsed.GetTag( "EmptyGlass" ) == 3 )
@@ -82,7 +89,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 		{
 			Pitcher.SetTag( "ContentsName", "milk" );
 			Pitcher.SetTag( "ContentsType", 3);
-			Pitcher.SetTag( "UsesLeft", 5 );
+			Pitcher.usesLeft = 5;
 			switch( Pitcher.id )
 			{
 				case 0x09a7:case 0x0ff7:
@@ -100,7 +107,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				case 0x09c8:
 					pSock.SysMessage( GetDictionaryEntry( 2558, pSock.language )); // You fill the jug with some milk from the cow.
 					Pitcher.name = "jug of milk";
-					Pitcher.SetTag( "UsesLeft", 9 );
+					Pitcher.usesLeft = 9;
 					break;
 			}
 			Pitcher.AddScriptTrigger( scriptID );
@@ -133,7 +140,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				var Liquid = myTarget.GetTag( "ContentsName" );
 				var ContentsType = myTarget.GetTag( "ContentsType" );
 				var ContentsName = myTarget.GetTag( "ContentsName" );
-				var UsesLeft = myTarget.GetTag( "UsesLeft" );
+				var UsesLeft = myTarget.usesLeft;
 				pUser.SoundEffect( 37, 1 );
 				switch( Pitcher.id )
 				{
@@ -163,10 +170,10 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 					break;
 				}
 				Pitcher.SetTag( "ContentsType", ContentsType );
-				Pitcher.SetTag( "UsesLeft", UsesLeft );
+				Pitcher.usesLeft = UsesLeft;
 				Pitcher.SetTag( "ContentsName", ContentsName );
 				myTarget.SetTag( "ContentsType", 1);
-				myTarget.SetTag( "UsesLeft", 0 );
+				myTarget.usesLeft = 0;
 				myTarget.SetTag( "ContentsName", "nothing" );
 				return;
 			}
@@ -184,28 +191,28 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				Pitcher.id = 0x1f9d;
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
-				Pitcher.SetTag( "UsesLeft", 5 );
+				Pitcher.usesLeft = 5;
 				break;
 			case 0x0ff7:case 0x09a7:
 				pSock.SysMessage( GetDictionaryEntry( 2565, pSock.language )); // You fill the pitcher with water.
 				Pitcher.id = 0x01f9e;
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
-				Pitcher.SetTag( "UsesLeft", 5 );
+				Pitcher.usesLeft = 5;
 				break;
 			case 0x099b:case 0x099f:case 0x09c7:
 				pSock.SysMessage( GetDictionaryEntry( 2566, pSock.language )); // You fill the bottle with water.
 				Pitcher.name = "bottle of water";
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
-				Pitcher.SetTag( "UsesLeft", 5 );
+				Pitcher.usesLeft = 5;
 				break;
 			case 0x09c8:
 				pSock.SysMessage( GetDictionaryEntry( 2567, pSock.language )); // You fill the jug with water.
 				Pitcher.name = "jug of water";
 				Pitcher.SetTag( "ContentsType", 2);
 				Pitcher.SetTag( "ContentsName", "water" );
-				Pitcher.SetTag( "UsesLeft", 9 );
+				Pitcher.usesLeft = 5;
 				break;
 			}
 			return;
@@ -241,7 +248,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsName", "nothing" );
 			Pitcher.SetTag( "ContentsType", 1 );
-			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.usesLeft = 0;
 			switchPitcherID( pSock, Pitcher );
 			switchGobletID( Pitcher );
 		}
@@ -251,7 +258,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			pUser.SysMessage( GetDictionaryEntry( 2569, pSock.language )); // You pour out the contents of the jug.
 			Pitcher.name = "empty jug";
 			Pitcher.SetTag( "ContentsType", 1 );
-			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.usesLeft = 0;
 			Pitcher.SetTag( "ContenstName", "nothing" );
 		}
 		//if the container is a bottle
@@ -260,16 +267,15 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			pUser.SysMessage( GetDictionaryEntry( 2570, pSock.language )); // You pour out the contents of the bottle.
 			Pitcher.name = "empty bottle";
 			Pitcher.SetTag( "ContentsType", 1 );
-			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.usesLeft = 0;
 			Pitcher.SetTag( "ContenstName", "nothing" );
 		}
 		//if the container is a pitcher
 		else
 		{
 			pUser.SysMessage( GetDictionaryEntry( 2571, pSock.language )); // You pour out the contents of the pitcher.
-			Pitcher.SetTag( "UsesLeft", 0 );
 			Pitcher.SetTag( "ContentsType", 1);
-			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.usesLeft = 0;
 			Pitcher.SetTag( "ContenstName", "nothing" );
 			switchPitcherID( pSock, Pitcher );
 		}
@@ -311,20 +317,18 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				Pitcher.SetTag( "EmptyGlass", 2 );
 				Pitcher.SetTag( "ContentsName", "nothing" );
 				Pitcher.SetTag( "ContentsType", 1 );
-				Pitcher.SetTag( "UsesLeft", 0 );
+				Pitcher.usesLeft = 0;
 				switchPitcherID( pSock, Pitcher );
 				switchGobletID( Pitcher );
 				return;
 			}
-			UsesLeft = Pitcher.GetTag( "UsesLeft" );
-			if( UsesLeft > 0 )
+			if( Pitcher.usesLeft > 0 )
 			{
-				UsesLeft = UsesLeft - 1;
-				Pitcher.SetTag( "UsesLeft", UsesLeft );
+				Pitcher.usesLeft--;
 			}
 			pUser.SoundEffect( 48, 1 );
 			pUser.DoAction ( 0x22 );
-			if( UsesLeft <= 0 )
+			if( Pitcher.usesLeft <= 0 )
 			{
 				if( Pitcher.id == 0x09c8 )
 				{
@@ -369,12 +373,12 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		if( tileID == 0x0A1E || tileID == 0x1046 || tileID == 0x103A)
 		{
 			// Reduce remaining uses of flour bag by 1 (or delete it if it only has 1 use left)
-			if( myTarget.GetTag( "UsesLeft" ) <= 1 )
+			if( Pitcher.usesLeft <= 1 )
 				myTarget.Delete();
 			else
 			{
 				// Reduce uses left in flour bag by 1
-				myTarget.SetTag( "UsesLeft", myTarget.GetTag( "UsesLeft" ) - 1 );
+				myTarget.usesLeft--;
 				myTarget.Refresh();
 			}
 
@@ -383,19 +387,19 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			pSock.SysMessage( GetDictionaryEntry( 6078, pSock.language )); // You make some dough.
 
 			// Reduce uses remaining in pitcher
-			if( Pitcher.GetTag( "UsesLeft" ) == 1 )
+			if( Pitcher.usesLeft == 1 )
 			{
 				// Pitcher is empty
 				Pitcher.SetTag( "ContentsType", 1 );
 				Pitcher.SetTag( "EmptyGlass", 3 );
-				Pitcher.SetTag( "UsesLeft", 0 );
+				Pitcher.usesLeft = 0;
 				Pitcher.SetTag( "ContentsName", "nothing" );
 				switchPitcherID( pSock, Pitcher );
 			}
 			else
 			{
 				// Reduce uses left in pitcher by 1
-				Pitcher.SetTag( "UsesLeft", Pitcher.GetTag( "UsesLeft" ) - 1 );
+				Pitcher.usesLeft--;
 				Pitcher.Refresh();
 			}
 		}
@@ -416,11 +420,11 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.SetTag( "ContentsType", Pitcher.GetTag( "ContentsType" ));
 			myTarget.SetTag( "ContentsName", Pitcher.GetTag( "ContentsName" ));
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsType", 1);
 			Pitcher.SetTag( "ContentsName", "nothing");
-			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.usesLeft = 0;
 			switchTargetID( pSock, myTarget, Pitcher ); //Mark
 			switchPitcherID( pSock, Pitcher );
 			switchGobletID( Pitcher );
@@ -431,16 +435,14 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		if(( tileID >= 0x1f81 && tileID <= 0x1f84 ) || (tileID >= 0x0995 && tileID <= 0x099a) || tileID == 0x09b3 || tileID == 0x09bf || tileID == 0x09ca ||
 		tileID == 0x09cb || tileID == 0x0e78 || tileID == 0x1009 || tileID == 0x0e83 || tileID == 0x14e0 || ( tileID >= 0x0ffb && tileID <= 0x1002 ))
 		{
-			UsesLeft = Pitcher.GetTag( "UsesLeft" );
-			UsesLeft = UsesLeft - 1;
-			Pitcher.SetTag( "UsesLeft", UsesLeft );
+			Pitcher.usesLeft--;
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.SetTag( "ContentsType", Pitcher.GetTag( "ContentsType" ));
 			myTarget.SetTag( "ContentsName", Pitcher.GetTag( "ContentsName" ));
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			switchTargetID( pSock, myTarget, Pitcher );
 			pUser.SoundEffect( 576, 1 );
-			if( !UsesLeft )
+			if( Pitcher.usesLeft == 0 )
 			{
 				if( Pitcher.id == 0x09c8 )
 				{
@@ -469,11 +471,10 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			var Liquid = Pitcher.GetTag( "ContentsName" );
 			var ContentsType = Pitcher.GetTag( "ContentsType" );
 			var ContentsName = Pitcher.GetTag( "ContentsName" );
-			UsesLeft = Pitcher.GetTag( "UsesLeft" );
 			myTarget.SetTag( "ContentsType", ContentsType );
 			myTarget.SetTag( "ContentsName", ContentsName );
 			Pitcher.SetTag( "ContentsType", 1);
-			Pitcher.SetTag( "UsesLeft", 0 );
+			Pitcher.usesLeft = 0;
 			Pitcher.SetTag( "ContentsName", "nothing" );
 			pUser.SoundEffect( 38, 1 );
 			switch( myTarget.id )
@@ -481,11 +482,11 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			case 0x0ff6:case 0x0ff7:case 0x09a7:
 				var tmpMsg = GetDictionaryEntry( 2578, pSock.language ); // You pour the %s into the empty pitcher.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
-				if( UsesLeft > 5 )
+				if( Pitcher.usesLeft > 5 )
 				{
-					UsesLeft = 5;
+					Pitcher.usesLeft = 5;
 				}
-				myTarget.SetTag( "UsesLeft", UsesLeft );
+				myTarget.usesLeft = Pitcher.usesLeft;
 				switchPitcherID( pSock, myTarget );
 				switchPitcherID( pSock, Pitcher );
 				break;
@@ -493,18 +494,18 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				var tmpMsg = GetDictionaryEntry( 2579, pSock.language ); // You pour the %s into the empty bottle.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				myTarget.name = "bottle of "+Liquid;
-				if( UsesLeft > 5 )
+				if( Pitcher.usesLeft > 5 )
 				{
-					UsesLeft = 5;
+					Pitcher.usesLeft = 5;
 				}
-				myTarget.SetTag( "UsesLeft", UsesLeft );
+				myTarget.usesLeft = Pitcher.usesLeft;
 				switchPitcherID( pSock, Pitcher );
 				break;
 			case 0x09c8:
 				var tmpMsg = GetDictionaryEntry( 2580, pSock.language ); // You pour the %s into the empty jug.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
 				myTarget.name = "jug of "+Liquid;
-				myTarget.SetTag( "UsesLeft", UsesLeft );
+				myTarget.usesLeft = Pitcher.usesLeft;
 				switchPitcherID( pSock, Pitcher );
 				break;
 			}
@@ -514,7 +515,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			( Pitcher.id >= 0x1f7d && Pitcher.id <= 0x1f80 ) || ( Pitcher.id >= 0x1f85 && Pitcher.id <= 0x1f94 ))
 			{
 				Pitcher.SetTag( "EmptyGlass", 2 );
-				myTarget.SetTag( "UsesLeft", 1 );
+				myTarget.usesLeft = 1;
 				switchPitcherID( pSock, Pitcher );
 				switchGobletID( Pitcher );
 			}
@@ -603,12 +604,12 @@ function switchTargetID( pSock, myTarget, Pitcher )
 					break;
 				case 0x0e83: //empty tub -> water tub
 					myTarget.id = 0x0e7b;
-					Pitcher.SetTag( "UsesLeft", 0 );
+					Pitcher.usesLeft = 0;
 					switchPitcherID( pSock, Pitcher );
 					break;
 				case 0x14e0: // empty bucket -> water bucket
 					myTarget.id = 0x0ffa;
-					Pitcher.SetTag( "UsesLeft", 0 );
+					Pitcher.usesLeft = 0;
 					switchPitcherID( pSock, Pitcher );
 					break;
 
@@ -890,7 +891,7 @@ function setupLiquidObject( myTarget )
 			//Empty pitchers
 			myTarget.SetTag( "ContentsType", 1 );
 			myTarget.SetTag( "ContentsName", "nothing" );
-			myTarget.SetTag( "UsesLeft", 0 );
+			myTarget.usesLeft = 0;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -898,7 +899,7 @@ function setupLiquidObject( myTarget )
 			//Pitchers of water
 			myTarget.SetTag( "ContentsType", 2 );
 			myTarget.SetTag( "ContentsType", "water" );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -906,7 +907,7 @@ function setupLiquidObject( myTarget )
 			//Pitchers of milk
 			myTarget.SetTag( "ContentsType", 3 );
 			myTarget.SetTag( "ContentsType", "milk" );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -914,7 +915,7 @@ function setupLiquidObject( myTarget )
 			//Pitchers of ale
 			myTarget.SetTag( "ContentsType", 4 );
 			myTarget.SetTag( "ContentsType", "ale" );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -923,11 +924,11 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "ContentsType", 5 );
 			if( myTarget.id == 0x09c8 )
 			{
-				myTarget.SetTag( "UsesLeft", 9 );
+				myTarget.usesLeft = 9;
 			}
 			else
 			{
-				myTarget.SetTag( "UsesLeft", 5 );
+				myTarget.usesLeft = 5;
 			}
 			myTarget.SetTag( "ContentsName", "cider" );
 			myTarget.SetTag( "EmptyGlass", 3 );
@@ -936,7 +937,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f99:case 0x1f9a:
 			//Pitchers of liquor
 			myTarget.SetTag( "ContentsType", 6 );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "ContentsName", "liquor" );
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
@@ -944,7 +945,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f9b:case 0x1f9c:
 			//Pitchers of wine
 			myTarget.SetTag( "ContentsType", 7 );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "ContentsName", "wine" );
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
@@ -953,7 +954,7 @@ function setupLiquidObject( myTarget )
 			//Bottle of liquor
 			myTarget.SetTag( "ContentsType", 6 );
 			myTarget.SetTag( "ContentsName", "liquor" );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -961,7 +962,7 @@ function setupLiquidObject( myTarget )
 			//Bottle of ale
 			myTarget.SetTag( "ContentsType", 4 );
 			myTarget.SetTag( "ContentsName", "ale" );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -969,7 +970,7 @@ function setupLiquidObject( myTarget )
 			//Bottle of wine
 			myTarget.SetTag( "ContentsType", 7 );
 			myTarget.SetTag( "ContentsName", "wine" );
-			myTarget.SetTag( "UsesLeft", 5 );
+			myTarget.usesLeft = 5;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -977,7 +978,7 @@ function setupLiquidObject( myTarget )
 			//Bottle of cider
 			myTarget.SetTag( "ContentsType", 5 );
 			myTarget.SetTag( "ContentsName", "cider" );
-			myTarget.SetTag( "UsesLeft", 9 );
+			myTarget.usesLeft = 9;
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -985,7 +986,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f7d: case 0x1f7e: case 0x1f7f: case 0x1f80:
 			myTarget.SetTag( "ContentsName", "cider" );
 			myTarget.SetTag( "ContentsType", 5 );
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -993,7 +994,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f85: case 0x1f86: case 0x1f87: case 0x1f88:
 			myTarget.SetTag( "ContentsName", "liquor" );
 			myTarget.SetTag( "ContentsType", 6 );
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -1001,7 +1002,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f89: case 0x1f8a: case 0x1f8b: case 0x1f8c:
 			myTarget.SetTag( "ContentsName", "milk" );
 			myTarget.SetTag( "ContentsType", 3 );
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -1009,7 +1010,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f8d: case 0x1f8e: case 0x1f8f: case 0x1f90:
 			myTarget.SetTag( "ContentsName", "wine" );
 			myTarget.SetTag( "ContentsType", 7 );
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -1017,7 +1018,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f91: case 0x1f92: case 0x1f93: case 0x1f94:
 			myTarget.SetTag( "ContentsName", "water" );
 			myTarget.SetTag( "ContentsType", 2 );
-			myTarget.SetTag( "UsesLeft", 1 );
+			myTarget.usesLeft = 1;
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -1029,7 +1030,7 @@ function setupLiquidObject( myTarget )
 		case 0x1f81:case 0x1f82:case 0x1f83:case 0x1f84: //empty glasses
 			myTarget.SetTag( "ContentsName", "nothing" );
 			myTarget.SetTag( "ContentsType", 1 );
-			myTarget.SetTag( "UsesLeft", 0 );
+			myTarget.usesLeft = 0;
 			myTarget.SetTag( "EmptyGlass", 2 );
 			myTarget.AddScriptTrigger( scriptID );
 			break;
@@ -1061,11 +1062,12 @@ function switchGobletID( Pitcher )
 function onTooltip( myObj )
 {
 	var tooltipText = "";
-	var usesLeft = myObj.GetTag( "UsesLeft" );
+	var usesLeft = myObj.usesLeft;
 	if( usesLeft > 0 )
 	{
 		tooltipText = GetDictionaryEntry( 9403 ); // uses remaining: %i
 		tooltipText = ( tooltipText.replace(/%i/gi, (usesLeft).toString()) );
+		myObj.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~
 	}
 	return tooltipText;
 }

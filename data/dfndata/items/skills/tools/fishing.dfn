@@ -9,6 +9,9 @@ restock=20
 decay=1
 good=54
 layer=0x02
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x0dc0]
@@ -22,6 +25,9 @@ restock=20
 decay=1
 good=54
 layer=0x02
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [specialfishingnet]

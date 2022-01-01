@@ -85,42 +85,44 @@ const itemProp = {
 	maxinterval:63,
 	maxItems:64,
 	maxRange:65,
-	mininterval:66,
-	more:67,
-	morex:68,
-	morey:69,
-	morez:70,
-	movable:71,
-	name2:72,
-	origin:73,
-	owner:74,
-	poison:75,
-	race:76,
-	rank:77,
-	resistHeat:78,
-	resistCold:79,
-	resistLight:80,
-	resistLightning:81,
-	resistPoison:82,
-	resistRain:83,
-	resistSnow:84,
-	restock:85,
-	scripttrigger:86,
-	sectionalist:87,
-	sellvalue:88,
-	spawnsection:89,
-	speed:90,
-	strength:91,
-	tempTimer:92,
-	type:93,
-	visible:94,
-	weight:95,
-	weightMax:96,
-	wipable:97,
-	worldnumber:98,
-	x:99,
-	y:100,
-	z:101
+	maxUses:66,
+	mininterval:67,
+	more:68,
+	morex:69,
+	morey:70,
+	morez:71,
+	movable:72,
+	name2:73,
+	origin:74,
+	owner:75,
+	poison:76,
+	race:77,
+	rank:78,
+	resistHeat:79,
+	resistCold:80,
+	resistLight:81,
+	resistLightning:82,
+	resistPoison:83,
+	resistRain:84,
+	resistSnow:85,
+	restock:86,
+	scripttrigger:87,
+	sectionalist:88,
+	sellvalue:89,
+	spawnsection:90,
+	speed:91,
+	strength:92,
+	tempTimer:93,
+	type:94,
+	usesLeft:95,
+	visible:96,
+	weight:97,
+	weightMax:98,
+	wipable:99,
+	worldnumber:100,
+	x:101,
+	y:102,
+	z:103
 };
 
 // List of character properties to handle
@@ -424,7 +426,7 @@ var accountProp = {
 };*/
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
-const itemPropCount = 82;
+const itemPropCount = 84;
 const charPropCount = 131;
 const charSkillCount = 58;
 const multiPropCount = 32;
@@ -1090,6 +1092,10 @@ function HandleItemTarget( pSocket, myTarget )
 				itemLabelTooltip 	= GetDictionaryEntry( 8168, pSocket.language ); // Maximum range of ranged weapon
 				itemValue 			= (myTarget.maxRange).toString();
 				break;
+			case itemProp.maxUses:
+				itemLabelTooltip 	= GetDictionaryEntry( 8209, pSocket.language ); // Maximum amount of uses item can have
+				itemValue 			= (myTarget.maxUses).toString();
+				break;
 			case itemProp.mininterval:
 				itemLabelTooltip 	= GetDictionaryEntry( 8169, pSocket.language ); // Min interval in seconds between respawns - SpawnObjects only
 				if( myTarget.isSpawner )
@@ -1235,6 +1241,10 @@ function HandleItemTarget( pSocket, myTarget )
 				itemLabelTooltip 	= GetDictionaryEntry( 8171, pSocket.language ); // Item type of item - determines double-click behaviour
 				itemValue 			= (myTarget.type).toString()
 				itemValueTooltip 	= itemTypeNames[myTarget.type];
+				break;
+			case itemProp.usesLeft:
+				itemLabelTooltip 	= GetDictionaryEntry( 8208, pSocket.language ); // Item's current remaining uses (cannot exceed value of maxUses property)
+				itemValue 			= (myTarget.usesLeft).toString();
 				break;
 			case itemProp.visible:
 				itemLabelTooltip 	= GetDictionaryEntry( 8197, pSocket.language ); // Determines who item is visible for (0 = Visible, 1 = Hidden, 2 = Magically Invisible, 3 = Visible to GMs only)
@@ -3975,6 +3985,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyType = "Integer";
 			propertyHint = GetDictionaryEntry( 8168, pSocket.language ); // Maximum range of ranged weapon
 			break;
+		case itemProp.maxUses:
+			propertyName = "maxUses";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8209, pSocket.language ); // Maximum amount of uses item can have
+			maxLength = 5;
+			maxVal = 65535;
+			break;
 		case itemProp.mininterval:
 			propertyName = "mininterval";
 			propertyType = "Integer";
@@ -4094,6 +4111,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "type";
 			propertyType = "Integer";
 			propertyHint = GetDictionaryEntry( 8171, pSocket.language ) + '<BR><A HREF="https://www.uox3.org/docs/index.html#itemTypes">See list of Item Types in UOX3 Docs</A>'; // Item type of item - determines double-click
+			break;
+		case itemProp.usesLeft:
+			propertyName = "usesLeft";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8208, pSocket.language ); // Item's current health/hitpoints (cannot exceed value of maxhp property)
+			maxLength = 5;
+			maxVal = 65535;
 			break;
 		case itemProp.visible:
 			propertyName = "visible";

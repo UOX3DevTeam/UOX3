@@ -452,6 +452,8 @@ static JSPropertySpec CItemProps[] =
 	{ "isSpawner",		CIP_ISSPAWNER,		JSPROP_ENUMPERMRO  },
 	{ "race",			CIP_RACE,			JSPROP_ENUMANDPERM },
 	{ "maxhp",			CIP_MAXHP,			JSPROP_ENUMANDPERM },
+	{ "maxUses",		CIP_MAXUSES,		JSPROP_ENUMANDPERM },
+	{ "usesLeft",		CIP_USESLEFT,		JSPROP_ENUMANDPERM },
 	{ "rank",			CIP_RANK,			JSPROP_ENUMANDPERM },
 	{ "creator",		CIP_CREATOR,		JSPROP_ENUMANDPERM },
 	{ "poison",			CIP_POISON,			JSPROP_ENUMANDPERM },

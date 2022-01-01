@@ -20,9 +20,9 @@ function onUseChecked ( pUser, iUsed )
 			if( iUsed.id == 0x1039 || iUsed.id == 0x1045 )
 			{
 				iUsed.id++;
-				if( !iUsed.GetTag( "UsesLeft" ))
+				if( iUsed.usesLeft == 0 )
 				{
-					iUsed.SetTag( "UsesLeft", 20 );
+					iUsed.usesLeft = 20;
 					iUsed.AddScriptTrigger( 2200 ); // UsesLeft tooltip
 				}
 			}
@@ -93,11 +93,9 @@ function onCallback0( tSock, myTarget )
 		}
 
 		// remove one flour
-		UsesLeft = iUsed.GetTag( "UsesLeft" );
-		if( UsesLeft > 0 )
+		if( iUsed.usesLeft > 0 )
 		{
-			UsesLeft = UsesLeft - 1;
-			iUsed.SetTag( "UsesLeft", UsesLeft );
+			iUsed.usesLeft--;
 			iUsed.Refresh();
 		}
 		else
@@ -106,11 +104,9 @@ function onCallback0( tSock, myTarget )
 		pUser.SoundEffect( 0x0134, true );
 
 		// Reduce uses left in water source
-	    var usesLeft = myTarget.GetTag( "UsesLeft" );
-		if (usesLeft > 0)
+		if( myTarget.usesLeft > 0 )
 		{
-			usesLeft = usesLeft - 1;
-			myTarget.SetTag( "UsesLeft", usesLeft );
+			myTarget.usesLeft--;
 			myTarget.Refresh();
 		}
 		else
@@ -121,7 +117,7 @@ function onCallback0( tSock, myTarget )
 				myTarget.id = 0x0FF6;
 			myTarget.SetTag( "ContentsType", 1 );
 			myTarget.SetTag( "EmptyGlass", 3 );
-			myTarget.SetTag( "UsesLeft", 0 );
+			myTarget.usesLeft = 0;
 			myTarget.SetTag( "ContentsName", "nothing" );
 			TriggerEvent( 2100, "switchPitcherID", tSock, myTarget );
 		}

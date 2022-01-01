@@ -87,6 +87,9 @@ const UI32 BIT_CHECKPETCONTROLDIFFICULTY	= 66;
 const UI32 BIT_SHOWNPCTITLESINTOOLTIPS		= 67;
 const UI32 BIT_ITEMSINTERRUPTCASTING		= 68;
 const UI32 BIT_STATSAFFECTSKILLCHECKS		= 69;
+const UI32 BIT_TOOLUSELIMIT					= 70;
+const UI32 BIT_TOOLUSEBREAK					= 71;
+const UI32 BIT_ITEMREPAIRDURABILITYLOSS		= 72;
 
 
 // New uox3.ini format lookup
@@ -454,6 +457,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("MAXCLIENTBYTESIN", 291);
 	regINIValue("MAXCLIENTBYTESOUT", 292);
 	regINIValue("NETTRAFFICTIMEBAN", 293);
+	regINIValue("TOOLUSELIMIT", 294);
+	regINIValue("TOOLUSEBREAK", 295);
+	regINIValue("ITEMREPAIRDURABILITYLOSS", 296);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -657,6 +663,9 @@ void CServerData::ResetDefaults( void )
 	MaxControlSlots( 0 ); // Default to 0, which is equal to off
 	MaxFollowers( 5 );
 	MaxPetOwners( 10 );
+	ToolUseLimit( true );
+	ToolUseBreak( true );
+	ItemRepairDurabilityLoss( true );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -2867,6 +2876,51 @@ void CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ToolUseLimit( void ) const
+//|					void ToolUseLimit( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether tools have usage limits (based on item health)
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ToolUseLimit( void ) const
+{
+	return boolVals.test( BIT_TOOLUSELIMIT );
+}
+void CServerData::ToolUseLimit( bool newVal )
+{
+	boolVals.set( BIT_TOOLUSELIMIT, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ToolUseBreak( void ) const
+//|					void ToolUseBreak( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether tools will break if they reach 0 health
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ToolUseBreak( void ) const
+{
+	return boolVals.test( BIT_TOOLUSEBREAK );
+}
+void CServerData::ToolUseBreak( bool newVal )
+{
+	boolVals.set( BIT_TOOLUSEBREAK, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemRepairDurabilityLoss( void ) const
+//|					void ItemRepairDurabilityLoss( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items will have their durability reduced when repaired
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ItemRepairDurabilityLoss( void ) const
+{
+	return boolVals.test( BIT_ITEMREPAIRDURABILITYLOSS );
+}
+void CServerData::ItemRepairDurabilityLoss( bool newVal )
+{
+	boolVals.set( BIT_ITEMREPAIRDURABILITYLOSS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 BackupRatio( void ) const
 //|					void BackupRatio( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3752,6 +3806,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
 		ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
 		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
+		ofsOutput << "TOOLUSELIMIT=" << ToolUseLimit() << '\n';
+		ofsOutput << "TOOLUSEBREAK=" << ToolUseBreak() << '\n';
+		ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -4968,6 +5025,15 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 293:	 // NETTRAFFICTIMEBAN
 			NetTrafficTimeban( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 294:    // TOOLUSELIMIT
+			ToolUseLimit( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 295:    // TOOLUSEBREAK
+			ToolUseBreak( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 296:    // ITEMREPAIRDURABILITYLOSS
+			ItemRepairDurabilityLoss( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		default:
 			rvalue = false;

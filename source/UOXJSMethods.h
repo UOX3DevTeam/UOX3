@@ -367,7 +367,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "InRange",			CBase_InRange,			2, 0, 0 },
 	{ "FindItemLayer",		CChar_FindItemLayer,	1, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,		2, 0, 0 },
-	{ "CheckSkill",			CChar_CheckSkill,		3, 0, 0 },
+	{ "CheckSkill",			CChar_CheckSkill,		4, 0, 0 },
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },
 	{ "SysMessage",			CMisc_SysMessage,		10, 0, 0 },

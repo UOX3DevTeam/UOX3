@@ -648,6 +648,8 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 			}
 			case CIP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );		break;
+			case CIP_MAXUSES:		*vp = INT_TO_JSVAL( gPriv->GetMaxUses() );		break;
+			case CIP_USESLEFT:		*vp = INT_TO_JSVAL( gPriv->GetUsesLeft() );		break;
 			case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
 			case CIP_CREATOR:		*vp = INT_TO_JSVAL( gPriv->GetCreator() );		break;
 			case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
@@ -1085,6 +1087,8 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
 			case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
+			case CIP_MAXUSES:		gPriv->SetMaxUses( (UI16)encaps.toInt() );					break;
+			case CIP_USESLEFT:		gPriv->SetUsesLeft( (UI16)encaps.toInt() );					break;
 			case CIP_RANK:			gPriv->SetRank( (SI08)encaps.toInt() );						break;
 			case CIP_CREATOR:		gPriv->SetCreator( (SERIAL)encaps.toInt() );				break;
 			case CIP_POISON:		gPriv->SetPoisoned( (UI08)encaps.toInt() );					break;
