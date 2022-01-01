@@ -1571,7 +1571,12 @@ void MakeStatusTarget( CSocket *sock )
 	CChar *targetChar = calcCharObjFromSer( sock->GetDWord( 7 ) );
 	if( !ValidateObject( targetChar ) )
 	{
-		sock->sysmessage( 1110 );
+		sock->sysmessage( 1110 ); // No such character exists!
+		return;
+	}
+	if( targetChar->IsDead() )
+	{
+		sock->sysmessage( 7509 ); // Some people just won't let the dead rest in peace.
 		return;
 	}
 	UI08 origCommand			= targetChar->GetCommandLevel();
@@ -1580,7 +1585,7 @@ void MakeStatusTarget( CSocket *sock )
 
 	if( targLevel == nullptr )
 	{
-		sock->sysmessage( 1112 );
+		sock->sysmessage( 1112 ); // No such clearance level!
 		return;
 	}
 	CChar *mChar = sock->CurrcharObj();

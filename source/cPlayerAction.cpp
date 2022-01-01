@@ -558,7 +558,7 @@ bool CPIEquipItem::Handle( void )
 	CRace *race = Races->Race( raceID );
 	if( !race->CanEquipItem( i->GetID() ))
 	{
-		tSock->sysmessage( 1981 + static_cast<SI32>( raceID )); // <Race> cannot wear this.
+		tSock->sysmessage( 1981, race->Name().c_str() ); // Members of the %s race cannot wear this
 		Bounce( tSock, i );
 		return true;
 	}

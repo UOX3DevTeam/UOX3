@@ -1950,16 +1950,7 @@
 1978=Malas
 1979=Ostrovy Tokuno
 1980=Ter Mur
-1981=Lidé to nemohou nosit.
-1982=Elfové to nemohou nosit.
-1983=Gargoylové nemohou nosit toto.
-1984=Vyhrazeno pro další hráčské rasy
-1985=Vyhrazeno pro další rasy hráčů
-1986=vyhrazeno pro další rasy hráčů
-1987=Vyhrazeno pro další rasy hráčů
-1988=Vyhrazeno pro další rasy hráčů
-1989=vyhrazeno pro další rasy hráčů
-1990=Rezervováno pro další rasy hráčů
+1981=Příslušníci rasy %s nemohou nosit toto.
 // JS-Based Tweak Menu
 1991=Neplatný objekt zaměřen!
 1992=Neznámý cílový objekt!
@@ -3515,6 +3506,8 @@
 8205=Hodnota není nastavena
 8206=Položka události serveru je spojena s
 8207=Základní dosah zbraně na dálku (pouze SA a novější)
+8208=Aktuální zbývající použití položky (nesmí překročit hodnotu vlastnosti maxUses)
+8209=Maximální počet použití, které může položka mít
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -4062,6 +4055,7 @@
 10025=Černá perla
 10026=Kořen mandragory
 10028=Pírko
+10029=Hřídele
 // [10100-10599] Kovářská řemeslná dovednost
 10100=DALŠÍ STRANA
 10101=PŘEDCHOZÍ STRÁNKA
@@ -4422,6 +4416,113 @@
 11633=smažená vejce
 11634=jehněčí stehno
 11635=krájená žebra
+// 11801 - 12000 Dovednost řemeslné výroby
+// Strana 1 - Dřevěné předměty
+11801=Náprava
+11802=Rám hodin
+11803=Spojovací deska
+11804=Frézovací deska
+11805=Hladicí hoblík
+// Strana 2 - Nástroje
+11820=Pila na čepy
+11821=Kreslicí nůž
+11822=Přilnavý nůž
+11823=Mlátek
+11824=Sekera
+11825=Břitva
+11826=Klíšťata
+11827=Mortar a pěchovadlo
+11828=Sekera na sekání
+11829=Pila
+11830=Nůžky
+11831=Scorp
+11832=Šicí souprava
+11833=Lopatka
+11834=Kladivo na sáně
+11835=Kovářské kladivo
+11836=Kleště
+11837=Sada nářadí (dráteník)
+// Strana 3 - Díly
+11860=Obruče na hlavně
+11861=Závit na hlaveň
+11862=Díly hodin
+11863=Převody
+11864=Závěs
+11865=Díly pro šestihran 11865=Díly pro šestihran 11865=Díly pro šestihran
+11866=Pružiny
+// Strana 4 - Nádobí
+11880=Řeznický nůž
+11881=Sekáček na maso
+11882=Vidlice
+11883=Vidlice
+11884=Hoblík
+11885=Nůž
+11886=Nůž
+11887=Kufřík z měděného kovu
+11888=Tácek
+11889=Nůž na kůži
+11890=Lžička
+11891=Lžička
+// Strana 5 - Šperky
+11900=Náramek
+11901=Náušnice
+11902=Náhrdelník (zlaté korálky)
+11903=Náhrdelník (stříbrné korálky)
+11904=Náhrdelník (kulatý)
+11905=Svatební náramek (newbiefied)
+// Strana 6 - Různé
+11920=Svícen
+11921=Klobouk
+11922=Stojan na topení
+11923=Železný klíč
+11924=Klíčový kroužek
+11925=Svítilna
+11926=Váhy
+11927=Sklenice na špionáž
+// Strana 7 - Vícesložkové předměty		
+11940=Náprava a ozubená kola
+11941=Hodiny
+11942=Hodiny
+11943=Části hodin
+11944=Zamčená skříňka
+11945=Zamčená truhla
+11946=Zásobník na lektvary
+11947=Sextant
+11948=Součástky sextantu
+// Strana 8 - Svíčky
+11960=Svícen
+11961=Stojanový svícen
+11962=Stálá svíčka
+11963=Kulatá svíčka
+11964=Svícen se svíčkou
+11965=Malá svíčka
+11966=Vysoká svíčka
+11967=Tlustá svíčka
+// Strana 9 - Pasti
+11980=Šipková past
+11981=Výbušná past
+11982=Jedovatá past
+// Kategorie a název nabídky
+11990=Menu Tinkering
+11991=Dřevěné předměty
+11992=Nástroje
+11993=Díly
+11994=Nástroje
+11995=Šperky
+11996=Různé
+11997=Vícesložkové předměty
+11998=Svíčky
+11999=Kapičky
+12000=Beeswax
+12001=Šroub kuše
+12002=Elixír jedu
+12003=Explozivní lektvar
+12004=Lebečník
+12005=Drahokamy
+12006=Diamanty
+12007=To není zdroj drahokamů!
+12008=Vyberte materiál, který chcete použít:
+12009=Přidal jsi do nádoby zámek a klíč!
 // 15000 Dovednosti
 15000=Alchymie
 15001=Anatomie

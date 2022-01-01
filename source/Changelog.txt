@@ -1,3 +1,9 @@
+01/12/2021 - Xuri (0.99.5[RC1])
+	Fixed an issue where negative values could not be used with Race DFN tags STAMMOD and HPMOD
+	Fixed an issue where messages about being unable to equip race-restricted items would only appear properly for the first three races in races.dfn
+	The 'make command can no longer be used on dead player-characters; the character must be alive before its status can change!
+	Updated getWeaponType() server script to support getting weapon type directly by ID instead of looking for item equipped by character
+
 01/01/2022 - DragonSlayer, Xuri
 	Crafting skills (Alchemy, Blacksmithing, Carpentry, Fletching, Tailoring) have been updated with new JS-based menus, up-to-date create DFNs with additional craftable items and extra features to fit the Pub15 era of UO (DragonSlayer)
 	Optimized portions of new crafting menus and added some additional features (Xuri)

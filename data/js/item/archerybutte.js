@@ -115,7 +115,7 @@ function onUseUnChecked( pUser, iUsed )
 				return false;
 			}
 		}
-		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser );
+		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser, null );
 		if( weaponType != "BOWS" && weaponType != "XBOWS" )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 947, pSock.language )); // You need to equip a bow to use this.

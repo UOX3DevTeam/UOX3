@@ -2114,16 +2114,7 @@
 1978=Malas
 1979=Tokuno (Îles)
 1980=Ter Mur
-1981=Les humains ne peuvent pas porter ceci.
-1982=Les elfes ne peuvent pas porter ceci.
-1983=Les gargouilles ne peuvent pas le porter.
-1984=Réservé pour les races supplémentaires des joueurs
-1985=Réservé pour des races supplémentaires de joueurs
-1986=Réservé pour d'autres races de joueurs
-1987=Réservé aux autres races de joueurs
-1988=Réservé pour les courses de joueurs supplémentaires
-1989=Réservé pour les courses de joueurs supplémentaires
-1990=Réservé pour les courses de joueurs supplémentaires
+1981=Les membres de la race %s ne peuvent pas porter ceci
 // JS-Based Tweak Menu
 1991=Objet invalide visé !
 1992=Objet inconnu visé !

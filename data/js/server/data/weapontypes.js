@@ -2,10 +2,13 @@
 // or combat skill based on equipped weapon type.
 //
 // To get weapon-type of the equipped weapon, use the following in an external script:
-//		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser );
+//		var weaponType = TriggerEvent( 2500, "getWeaponType", mChar, null );
+//
+// To get weapon-type based on a specific ID, use the following in an external script:
+// 		var weaponType = TriggerEvent( 2500, "getWeaponType, null, [item ID]" );
 //
 // To get combat skill based on equipped weapon type, use the following in an external script:
-//		var combatSkill = TriggerEvent( 2500, "getCombatSkill", pUser );
+//		var combatSkill = TriggerEvent( 2500, "getCombatSkill", weaponType );
 //
 //	List of potential weaponTypes returned (as strings)
 //		Unarmed:
@@ -41,21 +44,29 @@
 //		"WRESTLING"
 //		"THROWING"
 
-function getWeaponType( pUser )
+function getWeaponType( mChar, itemID )
 {
 	var weaponType;
 
-	// Check first layer1 then layer2 for equipped weapons on character
-	var tempItem = pUser.FindItemLayer( 1 );
-	if( tempItem == null )
-		tempItem = pUser.FindItemLayer( 2 );
-
-	// If no equipped item, weapontype is WRESTLING
-	if( tempItem == null )
-		return "WRESTLING";
-	else
+	// If a valid character was passed in, try to find what weapon (if any) they have equipped
+	if( ValidateObject( mChar ))
 	{
-		switch( tempItem.id )
+	// Check first layer1 then layer2 for equipped weapons on character
+		var tempItem = mChar.FindItemLayer( 1 );
+	if( tempItem == null )
+			tempItem = mChar.FindItemLayer( 2 );
+
+		if( tempItem != null )
+			itemID = tempItem.id;
+		else
+			itemID = null;
+	}
+
+	// If no equipped item, and no manually provided itemID, weaponType is WRESTLING
+	if( itemID == null || itemID == 0 )
+		return "WRESTLING";
+
+	switch( itemID )
 		{
 			// Slashing Swords
 			case 0x0EC4: //skinning knife
@@ -368,7 +379,6 @@ function getWeaponType( pUser )
 				weapontype = "THROWN"; break;
 			default: // Wrestling
 				weaponType = "WRESTLING"; break;
-		}
 	}
 
 	return weaponType;

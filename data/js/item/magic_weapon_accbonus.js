@@ -7,7 +7,7 @@ function onEquip( pEquipper, iEquipped )
 	var accBonus = parseInt(iEquipped.GetTag( "accBonus" ));
 
 	// Get weapontype
-	var weaponType = TriggerEvent( 2500, "getWeaponType", pEquipper );
+	var weaponType = TriggerEvent( 2500, "getWeaponType", pEquipper, null );
 
 	// If weapon is a ranged weapon, add to archery skill
 	// If not, add to tactics
@@ -23,7 +23,7 @@ function onUnequip( pEquipper, iEquipped )
 	var accBonus = parseInt(iEquipped.GetTag( "accBonus" ));
 
 	// Get weapontype
-	var weaponType = TriggerEvent( 2500, "getWeaponType", pEquipper );
+	var weaponType = TriggerEvent( 2500, "getWeaponType", pEquipper, null );
 
 	// If weapon is a ranged weapon, add to archery skill
 	// If not, add to tactics
