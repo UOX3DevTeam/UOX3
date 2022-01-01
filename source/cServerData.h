@@ -177,7 +177,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 70 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 73 >	boolVals;						// Many values stored this way, rather than using bools.
 	std::bitset< 64 >	spawnRegionsFacets;			// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
@@ -754,6 +754,15 @@ public:
 
 	void		TravelSpellsWhileAggressor( bool value );
 	bool		TravelSpellsWhileAggressor( void ) const;
+
+	void		ToolUseLimit( bool value );
+	bool		ToolUseLimit( void ) const;
+
+	void		ToolUseBreak( bool value );
+	bool		ToolUseBreak( void ) const;
+
+	void		ItemRepairDurabilityLoss( bool value );
+	bool		ItemRepairDurabilityLoss( void ) const;
 
 	void		MaxControlSlots( UI08 value );
 	UI08		MaxControlSlots( void ) const;

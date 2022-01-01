@@ -151,24 +151,6 @@ weight=6000
 movable=2
 }
 
-[0x102c]
-{ S
-get=base_item
-name=moulding planes
-id=0x102c
-weight=1000
-movable=1
-}
-
-[0x102d]
-{ E
-get=base_item
-name=moulding planes
-id=0x102d
-weight=1000
-movable=1
-}
-
 [0x14e9]
 { S
 get=base_item

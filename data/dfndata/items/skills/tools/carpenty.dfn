@@ -10,6 +10,9 @@ value=14 7
 restock=100
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1027]
@@ -22,6 +25,9 @@ value=14 7
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1028]
@@ -34,6 +40,9 @@ value=14 7
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1029]
@@ -46,6 +55,9 @@ value=14 7
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x102a]
@@ -58,6 +70,9 @@ value=28 14
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x102b]
@@ -70,6 +85,9 @@ value=28 14
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x102C]
@@ -82,6 +100,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x102d]
@@ -94,6 +115,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x102E]
@@ -106,6 +130,9 @@ value=2 1
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x102f]
@@ -118,6 +145,9 @@ value=2 1
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1030]
@@ -130,6 +160,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1031]
@@ -142,6 +175,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1032]
@@ -154,6 +190,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1033]
@@ -166,6 +205,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1034]
@@ -178,6 +220,9 @@ value=18 9
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1035]
@@ -190,6 +235,9 @@ value=18 9
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x10E4]
@@ -202,6 +250,9 @@ value=14 7
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x10E5]
@@ -214,6 +265,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x10E6]
@@ -226,6 +280,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x10E7]
@@ -238,6 +295,9 @@ value=12 6
 restock=20
 decay=1
 good=53
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 

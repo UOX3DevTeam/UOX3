@@ -248,9 +248,10 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 			case DFNTAG_LAYER:			applyTo->SetLayer( static_cast<ItemLayers>(ndata) );	break;
 			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
 			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
-			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<SI16>(ndata) );			break;
+			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<UI16>(ndata) );			break;
 			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>(ndata) );		break;
+			case DFNTAG_MAXUSES:		applyTo->SetMaxUses( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
 			case DFNTAG_MORE:
 				if( ssecs.size() >= 4 )
@@ -395,6 +396,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				if( iType < IT_COUNT )
 					applyTo->SetType( iType );
 				break;
+			case DFNTAG_USESLEFT:		applyTo->SetUsesLeft( static_cast<UI16>(ndata) );	break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
 			case DFNTAG_VALUE:
 				if( ndata >= 0 )
@@ -954,7 +956,9 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 
 	CItem *iCreated = nullptr;
 	if( itemCreate->ItemListExist() )
+	{
 		iCreated = CreateRandomItem( mCont, itemCreate->ItemListData(), worldNum, instanceID, shouldSave );
+	}
 	else
 	{
 		iCreated = CreateBaseItem( worldNum, itemType, instanceID, shouldSave );
@@ -968,11 +972,28 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 		}
 
 		if( !ApplyItemSection( iCreated, itemCreate, ourItem ) )
+		{
 			Console.error( "Trying to apply an item section failed" );
+		}
 
+		// If maxHP has not been defined for a new item, set it to the same value as HP
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() )
+		{
 			iCreated->SetMaxHP( iCreated->GetHP() );
+		}
 
+		// If maxUses is higher than usesLeft for a new item, randomize the amount of usesLeft the item should have!
+		if( iCreated->GetMaxUses() > iCreated->GetUsesLeft() )
+		{
+			iCreated->SetUsesLeft( static_cast<UI16>( RandomNum( iCreated->GetUsesLeft(), iCreated->GetMaxUses() )));
+		}
+		else if( !iCreated->GetMaxUses() && iCreated->GetUsesLeft() )
+		{
+			// Also, if maxUses has not been defined, but usesLeft HAS, set maxUses to equal usesLeft
+			iCreated->SetMaxUses( iCreated->GetUsesLeft() );
+		}
+
+		// Check for (and run) onCreateDFN() event for newly created item
 		std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
 		for( auto scriptTrig : scriptTriggers )
 		{
@@ -986,9 +1007,13 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 	if( ValidateObject( iCreated ))
 	{
 		if( iColor != 0xFFFF )
+		{
 			iCreated->SetColour( iColor );
+		}
 		if( iAmount > 1 && iCreated->isPileable() )
+		{
 			iCreated->SetAmount( iAmount );
+		}
 	}
 
 	return iCreated;

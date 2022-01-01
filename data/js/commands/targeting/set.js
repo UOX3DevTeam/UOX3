@@ -26,6 +26,7 @@ function command_SET( socket, cmdString )
 		socket.SysMessage( GetDictionaryEntry( 8103, socket.language )); // No property was specified for the SET command.
 }
 
+// Common Object properties
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) )
@@ -190,6 +191,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+// Item-specific properties
 function HandleSetItem( socket, ourItem, uKey, splitString )
 {
 	var nVal 	= parseInt( splitString[1] );
@@ -390,6 +392,14 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.race = nVal;
 		okMsg( socket );
 		break;
+	case "MAXUSES":
+		ourItem.maxUses = nVal;
+		okMsg( socket );
+		break;
+	case "USESLEFT":
+		ourItem.usesLeft = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 			HandleSetSpawner( socket, ourItem, uKey, splitString );
@@ -408,6 +418,7 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 	}
 }
 
+// Spawner-specific properties
 function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
 	var nVal 	= parseInt( splitString[1] );
@@ -441,6 +452,7 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 	}
 }
 
+// Character-specific properties
 function HandleSetChar( socket, ourChar, uKey, splitString )
 {
 	var nVal 	= parseInt( splitString[1] );

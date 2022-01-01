@@ -48,9 +48,9 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		rk_range = skillMake.maxRank - skillMake.minRank;
 		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
 		if( sk_range <= 0 )
-			sk_range = skillMake.minRank;
+			sk_range = skillMake.minRank * 10;
 		else if( sk_range >= 1000 )
-			sk_range = skillMake.maxRank;
+			sk_range = skillMake.maxRank * 10;
 		randnum = static_cast<R32>(RandomNum( 0, 999 ));
 		if( randnum <= sk_range )
 			rank = skillMake.maxRank;
@@ -81,7 +81,8 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 	char tmpmsg[512];
 	*tmpmsg='\0';
 
-	if( cwmWorldState->ServerData()->RankSystemStatus() )
+	// Only apply rank system if enabled in ini, and only for non-pileable items!
+	if( cwmWorldState->ServerData()->RankSystemStatus() && !c->isPileable() )
 	{
 		c->SetRank( rank );
 
@@ -97,6 +98,8 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetBuyValue() > 0 )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
+		if( c->GetMaxUses() > 0 )
+			c->SetUsesLeft( static_cast<UI16>(( rank * c->GetMaxUses() ) / 10 ));
 		if( c->GetID() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
 		{
 			// Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10 based on rank
@@ -110,7 +113,6 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			s->sysmessage( 783 + tempRank );
 		else if( tempRank < 1 )
 			s->sysmessage( 784 );
-
 	}
 	else
 		c->SetRank( rank );
@@ -788,13 +790,13 @@ UI16 cSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
+//|	Function	-	bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to check a players skill based on the highskill and lowskill it was called
 //|					with.  If skill is < than lowskill check will fail, but player will gain in the
 //|					skill, if the players skill is > than highskill player will not gain
 //o-----------------------------------------------------------------------------------------------o
-bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
+bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill )
 {
 	bool skillCheck		= false;
 	bool exists			= false;
@@ -805,7 +807,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		if( toExecute != nullptr )
 		{
 			// If script returns true/1, allows skillcheck to proceed, but also prevents other scripts with event from running
-			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill ) == 1 )
+			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill, isCraftSkill ) == 1 )
 			{
 				exists = true;
 				break;
@@ -842,7 +844,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		if( s->IsDead() )
 		{
 			CSocket *sSock = s->GetSocket();
-			sSock->sysmessage( 1487 );
+			sSock->sysmessage( 1487 ); // You are dead and cannot gain skill.
 			return false;
 		}
 
@@ -850,7 +852,18 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 			return true;
 
 		// Calculate base chance of success at using a skill
-		chanceSkillSuccess = static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill );
+		chanceSkillSuccess = ( static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill ));
+		if( isCraftSkill )
+		{
+			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill )) * 1000;
+			chanceSkillSuccess += 500; // Base starting chance for crafting skills when player's skill is over lowSkill
+		}
+		else
+		{
+			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill ));
+		}
+		chanceSkillSuccess = std::min( static_cast<R32>( 1000 ), chanceSkillSuccess ); // Cap chance of success at 1000 (100.0%)
+
 		if( cwmWorldState->ServerData()->StatsAffectSkillChecks() )
 		{
 			// Modify base chance of success with bonuses from stats, if this feature is enabled in ini
@@ -859,13 +872,16 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 			chanceSkillSuccess += static_cast<R32>( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence ) / 1000.0f;
 		}
 
-		// chanceSkillSuccess is a number between 0 and 1000, lets throw the dices now
-		if( s->GetCommandLevel() > 0 )
+		// If player's command-level is equal to Counselor or higher, pass the skill-check automatically
+		// Same if chance of success is 100% already - no need to proceed!
+		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
 			skillCheck = true;
 		else
 		{
 			// Generate a random number between 0 and highSkill (if less than 1000) or 1000 (if higher than 1000)
 			SI16 rnd = RandomNum( 0, std::min( 1000, ( highSkill + 100 )));
+
+			// Compare to chanceOfSkillSuccess to see if player succeeds!
 			skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
 		}
 
@@ -879,6 +895,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 			{
 				if( sk != MAGERY || mageryUp )
 				{
+					// Advance player's skill based on result of skillCheck
 					if( AdvanceSkill( s, sk, skillCheck ) )
 					{
 						updateSkillLevel( s, sk );
@@ -1081,7 +1098,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	mChar->BreakConcentration( s );
 	if( mChar->GetTimer( tCHAR_SPELLTIME ) != 0 || mChar->IsCasting() )
 	{
-		s->sysmessage( 854 );
+		s->sysmessage( 854 ); // You can't do that while you are casting!
 		return;
 	}
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || mChar->IsGM() )
@@ -1127,12 +1144,12 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 					if( mChar->GetRegion()->IsSafeZone() )
 					{
 						// Player is in a safe zone where all aggressive actions are forbidden, disallow
-						s->sysmessage( 1799 );
+						s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 					}
 					else if( cwmWorldState->ServerData()->RogueStatus() )
-						s->target( 0, TARGET_STEALING, 1, 863 );
+						s->target( 0, TARGET_STEALING, 1, 863 ); // What do you wish to steal?
 					else
-						s->sysmessage( 864 );
+						s->sysmessage( 864 ); // Contact your shard operator if you want stealing available.
 					break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
 				default:				s->sysmessage( 871 );					break;
@@ -1183,14 +1200,14 @@ void cSkills::RandomSteal( CSocket *s )
 	if( npc->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->sysmessage( 1799 );
+		s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 		return;
 	}
 
 	CItem *p = npc->GetPackItem();
 	if( !ValidateObject( p ) )
 	{
-		s->sysmessage( 875 );
+		s->sysmessage( 875 ); // Bad luck, your victim doesn't have a backpack.
 		return;
 	}
 
@@ -1213,7 +1230,7 @@ void cSkills::RandomSteal( CSocket *s )
 
 	if( !ValidateObject( item ) )
 	{
-		s->sysmessage( 876 );
+		s->sysmessage( 876 ); // Muahaha, your victim doesn't have possessions.
 		return;
 	}
 	doStealing( s, mChar, npc, item );
@@ -1246,13 +1263,13 @@ void cSkills::StealingTarget( CSocket *s )
 	if( npc->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->sysmessage( 1799 );
+		s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 		return;
 	}
 
 	if( item->GetCont() == npc || item->GetCont() == nullptr || item->isNewbie() )
 	{
-		s->sysmessage( 874 );
+		s->sysmessage( 874 ); // You cannot steal that.
 		return;
 	}
 	doStealing( s, mChar, npc, item );
@@ -1719,7 +1736,7 @@ void cSkills::Smith( CSocket *s )
 
 	if( !ValidateObject( packnum ) )
 	{
-		s->sysmessage( 773 );
+		s->sysmessage( 773 ); // Time to buy a backpack.
 		return;
 	}
 
@@ -1737,11 +1754,11 @@ void cSkills::Smith( CSocket *s )
 			miningData *oreType = FindOre( i->GetColour() );
 			if( oreType == nullptr )
 			{
-				s->sysmessage( 977 );
+				s->sysmessage( 977 ); // Unknown ingot type.
 				return;
 			}
 			if( FindItemOwner( i ) != mChar )
-				s->sysmessage( 978, oreType->name.c_str() );
+				s->sysmessage( 978, oreType->name.c_str() ); // You can't smith %s ingots outside your backpack.
 			else
 				AnvilTarget( s, (*i), oreType );
 		}
@@ -1749,7 +1766,7 @@ void cSkills::Smith( CSocket *s )
 			RepairMetal( s );
 		return;
 	}
-	s->sysmessage( 979 );
+	s->sysmessage( 979 ); // You cannot use that material for blacksmithing!
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1782,7 +1799,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );
 					if( getAmt == 0 )
 					{
-						s->sysmessage( 980, oreType->name.c_str() );
+						s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
 						regItems->Pop();
 						return;
 					}
@@ -1794,7 +1811,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 		}
 		regItems->Pop();
 	}
-	s->sysmessage( 981 );
+	s->sysmessage( 981 ); // The anvil is too far away.
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2651,13 +2668,24 @@ createEntry *cSkills::FindItem( UI16 itemNum )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock )
+//|	Function	-	void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 resourceColour )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes an item selected in the new make menu system
 //o-----------------------------------------------------------------------------------------------o
-void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry )
+void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry, UI16 resourceColour )
 {
 	VALIDATESOCKET( sock );
+
+	if( !ValidateObject( player ))
+		return;
+
+	// Get potential tag with ID of a targeted sub-resource
+	UI16 targetedSubResourceID = 0;
+	TAGMAPOBJECT tempTagObj = player->GetTempTag( "targetedSubResourceID" );
+	if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+	{
+		targetedSubResourceID = static_cast<UI16>( tempTagObj.m_IntValue );
+	}
 
 	std::vector< resAmountPair >::const_iterator resCounter;
 	std::vector< resSkillReq >::const_iterator sCounter;
@@ -2674,10 +2702,28 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		targColour	= resEntry.colour;
+		if( resCounter == toMake.resourceNeeded.begin() && resourceColour != 0 )
+		{
+			// If a specific colour was provided for the function as the intended colour of the material, use a material of that colour
+			targColour = resourceColour;
+		}
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
-			toDelete -= std::min( GetItemAmount( player, targID, targColour ), static_cast<UI32>(toDelete) );
+			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
+			{
+				// Primary resource, or generic subresource
+			toDelete -= std::min( GetItemAmount( player, targID, targColour, true ), static_cast<UI32>(toDelete) );
+			}
+			else
+			{
+				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
+				{
+					// Player specifically targeted a secondary resource
+					toDelete -= std::min( GetItemAmount( player, targID, targColour, true ), static_cast<UI32>(toDelete) );
+				}
+			}
+
 			if( toDelete == 0 )
 				break;
 		}
@@ -2686,23 +2732,39 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	}
 	if( !canDelete )
 	{
-		sock->sysmessage( 1651 );
+		sock->sysmessage( 1651 ); // You have insufficient resources on hand to do that
 		return;
 	}
 
 	bool canMake = true;
 
-	// we need to check ALL skills, even if the first one fails
+	// Loop through the skills listed as skill requirement for crafting the item
 	for( sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter )
 	{
 		if( player->SkillUsed( (*sCounter).skillNumber ) )
 		{
-			sock->sysmessage( 1650 );
+			sock->sysmessage( 1650 ); // You are already using that skill
 			return;
 		}
 
-		if( !CheckSkill( player, (*sCounter).skillNumber, (*sCounter).minSkill, (*sCounter).maxSkill ) )
-			canMake = false;
+		if( sCounter == toMake.skillReqs.begin() )
+		{
+			// Only perform skill check for first and main skill in skill requirement
+			if( !CheckSkill( player, ( *sCounter ).skillNumber, ( *sCounter ).minSkill, ( *sCounter ).maxSkill, true ))
+			{
+				canMake = false;
+				break;
+			}
+		}
+		else
+		{
+			// For supporting skills, we only check if player has more than or equal to the minimum skill required
+			if( player->GetSkill( ( *sCounter ).skillNumber ) < ( *sCounter ).minSkill )
+			{
+				canMake = false;
+				break;
+			}
+		}
 	}
 
 	if( !canMake )
@@ -2710,10 +2772,18 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		// delete anywhere up to half of the resources needed
 		if( toMake.soundPlayed )
 			Effects->PlaySound( sock, toMake.soundPlayed, true );
-		sock->sysmessage( 984 );
+		sock->sysmessage( 984 ); // You fail to create the item.
 	}
 	else
 	{
+		// Store temp tag on player with colour of item to craft
+		TAGMAPOBJECT tagObject;
+		tagObject.m_Destroy = FALSE;
+		tagObject.m_StringValue = "";
+		tagObject.m_IntValue = resourceColour;
+		tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+		player->SetTempTag( "craftItemColor", tagObject );
+
 		for( sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter )
 			player->SkillUsed( true, (*sCounter).skillNumber );
 
@@ -2727,6 +2797,20 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 			}
 		}
 	}
+
+	if( !canMake || !canDelete )
+	{
+		// Trigger onMakeItem() JS event for character who tried to craft item, even though they failed
+		std::vector<UI16> scriptTriggers = player->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				toExecute->OnMakeItem( sock, player, nullptr, 0 );
+			}
+		}
+	}
 	for( resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter )
 	{
 		resEntry	= (*resCounter);
@@ -2734,10 +2818,28 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		if( !canMake )
 			toDelete = RandomNum( 0, std::max(1, toDelete / 2 ));
 		targColour	= resEntry.colour;
+		if( resCounter == toMake.resourceNeeded.begin() && resourceColour != 0 )
+		{
+			// If a specific colour was provided for the function as the intended colour of the material, use a material of that colour
+			targColour = resourceColour;
+		}
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
+			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
+			{
+				// Primary resource, or generic subresource
 			toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+			}
+			else
+			{
+				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
+				{
+					// Player specifically targeted a secondary resource
+					toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+				}
+			}
+
 			if( toDelete == 0 )
 				break;
 		}

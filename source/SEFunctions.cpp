@@ -452,9 +452,9 @@ JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 3 )
+	if( argc != 3 && argc != 4 )
 	{
-		DoSEErrorMessage( "MakeItem: Invalid number of arguments (takes 3)" );
+		DoSEErrorMessage( "MakeItem: Invalid number of arguments (takes 3, or 4 - socket, character, createID - and optionally - resourceColour)" );
 		return JS_FALSE;
 	}
 	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
@@ -473,7 +473,12 @@ JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		DoSEErrorMessage( strutil::format("MakeItem: Invalid make item (%i)", itemMenu) );
 		return JS_FALSE;
 	}
-	Skills->MakeItem( *toFind, player, sock, itemMenu );
+	UI16 resourceColour = 0;
+	if( argc == 4 )
+	{
+		resourceColour = (UI16)JSVAL_TO_INT( argv[3] );
+	}
+	Skills->MakeItem( *toFind, player, sock, itemMenu, resourceColour );
 	return JS_TRUE;
 }
 
@@ -4334,6 +4339,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 293:	 // NETTRAFFICTIMEBAN
 				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->NetTrafficTimeban()));
+				break;
+			case 294:	 // TOOLUSELIMIT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ToolUseLimit() );
+				break;
+			case 295:	 // TOOLUSEBREAK
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ToolUseBreak() );
+				break;
+			case 296:	 // ITEMREPAIRDURABILITYLOSS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemRepairDurabilityLoss() );
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

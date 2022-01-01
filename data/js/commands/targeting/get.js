@@ -15,6 +15,7 @@ function command_GET( socket, cmdString )
 		socket.SysMessage( GetDictionaryEntry( 8080, socket.language )); // No property was specified for the GET command.
 }
 
+// Common Object Properties
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) )
@@ -147,6 +148,7 @@ function onCallback0( socket, ourObj )
 	}
 }
 
+// Item-specific Properties
 function HandleGetItem( socket, ourItem, uKey )
 {
 	switch( uKey )
@@ -278,6 +280,12 @@ function HandleGetItem( socket, ourItem, uKey )
 		else
 			socket.SysMessage( "null" );
 		break;
+	case "MAXUSES":
+		socket.SysMessage( ourItem.maxUses );
+		break;
+	case "USESLEFT":
+		socket.SysMessage( ourItem.usesLeft );
+		break;
 	default:
 		if( ourItem.isSpawner )
 			HandleGetSpawner( socket, ourItem, uKey );
@@ -296,6 +304,7 @@ function HandleGetItem( socket, ourItem, uKey )
 	}
 }
 
+// Spawner-specific properties
 function HandleGetSpawner( socket, ourSpawn, uKey )
 {
 	switch( uKey )
@@ -317,6 +326,7 @@ function HandleGetSpawner( socket, ourSpawn, uKey )
 	}
 }
 
+// Character-specific properties
 function HandleGetChar( socket, ourChar, uKey )
 {
 	switch( uKey )

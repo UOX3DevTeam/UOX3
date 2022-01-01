@@ -451,7 +451,18 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		addItem		= strutil::extractSection(addItem, ",", 0, 0 );
 	}
 
-	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true );
+	UI16 iColour = 0;
+	if( ValidateObject( src ))
+	{
+		// Get colour of the resource targeted by player (if any), so it can be applied to the item being made
+		TAGMAPOBJECT tempTagObj = src->GetTempTag( "craftItemColor" );
+		if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+		{
+			iColour = static_cast<UI16>( tempTagObj.m_IntValue );
+		}
+	}
+
+	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true, iColour );
 	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == nullptr )
@@ -495,6 +506,17 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 
 	if( FindItemOwner( targItem ) == src )
 		sock->sysmessage( 985 ); // You create the item and place it in your backpack.
+
+	// Trigger onMakeItem() JS event for character who crafted the item
+	std::vector<UI16> scriptTriggers = src->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			toExecute->OnMakeItem( sock, src, targItem, iMaking );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
