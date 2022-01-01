@@ -3508,6 +3508,8 @@
 8205=Wert nicht gesetzt
 8206=Server-Ereignis, dem der Gegenstand zugeordnet ist
 8207=Basisreichweite der Fernkampfwaffe (nur SA und später)
+8208=Aktuell verbleibende Verwendungen des Artikels (kann den Wert der Eigenschaft maxUses nicht überschreiten)
+8209=Maximale Anzahl von Verwendungen, die ein Element haben kann
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ
@@ -4055,6 +4057,7 @@
 10025=Schwarze Perle
 10026=Mandrake-Wurzel
 10028=Feder
+10029=Shafts
 // [10100-10599] Handwerkliche Fertigkeit des Schmieds
 10100=NÄCHSTE SEITE
 10101=VORIGE SEITE
@@ -4415,6 +4418,113 @@
 11633=Spiegeleier
 11634=Lammkeule
 11635=Rippenstück
+// 11801 - 12000 Handwerkliches Geschick
+// Seite 1 - Hölzerne Gegenstände
+11801=Achse
+11802=Uhrenrahmen
+11803=Fugenhobel
+11804=Formhobel
+11805=Glättungshobel
+// Seite 2 - Werkzeuge
+11820=Schwalbenschwanzsäge
+11821=Zeichenmesser
+11822=Froe
+11823=Hammer
+11824=Knüppel
+11825=Rasiermesser
+11826=Lockpick
+11827=Mörser und Stößel
+11828=Pickelaxt
+11829=Säge
+11830=Schere
+11831=Skorpion
+11832=Nähzeug
+11833=Schaufel
+11834=Schlegelhammer
+11835=Schmiedehammer
+11836=Zange
+11837=Werkzeugsatz (Bastelwerkzeug)
+// Seite 3 - Teile
+11860=Laufbügel
+11861=Fassgewindebohrer
+11862=Uhrenteile
+11863=Zahnräder
+11864=Scharnier
+11865=Sextantenteile
+11866=Federn
+// Seite 4 - Utensilien
+11880=Metzgermesser
+11881=Beile
+11882=Gabel
+11883=Gabel
+11884=Kelch
+11885=Messer
+11886=Messer
+11887=Zinnbecher
+11888=Teller
+11889=Skinning Messer
+11890=Löffel
+11891=Löffel
+// Seite 5 - Schmuck
+11900=Armreif
+11901=Ohrringe
+11902=Halskette (Goldene Perlen)
+11903=Halskette (Silberne Perlen)
+11904=Halskette (Rund)
+11905=Hochzeitsarmband (neuwertig)
+// Seite 6 - Sonstiges
+11920=Kronleuchter
+11921=Globus
+11922=Heizstab
+11923=Eisenschlüssel
+11924=Schlüsselring
+11925=Laterne
+11926=Waage
+11927=Spionageglas
+// Seite 7 - Mehrteilige Artikel		
+11940=Achse und Zahnräder
+11941=Uhr
+11942=Uhr
+11943=Uhrenteile
+11944=Verschlossene Kiste
+11945=Verschlossene Truhe
+11946=Trankfass
+11947=Sextant
+11948=Sextant-Teile
+// Seite 8 - Kerzen
+11960=Kandelaber
+11961=Stand-Kandelaber
+11962=Rechteckige Kerze
+11963=Runde Kerze
+11964=Schädel mit Kerze
+11965=Kleine Kerze
+11966=Hohe Kerze
+11967=Dicke Kerze
+// Seite 9 - Fallen
+11980=Pfeil-Falle
+11981=Explosionsfalle
+11982=Giftfalle
+// Kategorien und Menünamen
+11990=Bastel-Menü
+11991=Holzgegenstände
+11992=Werkzeuge
+11993=Teile
+11994=Utensilien
+11995=Schmuck
+11996=Sonstiges
+11997=Mehrkomponentige Artikel
+11998=Kerzen
+11999=Fallen
+12000=Bienenwachs
+12001=Armbrustbolzen
+12002=Gifttrank
+12003=Explosionstrank
+12004=Schädel
+12005=Edelsteine
+12006=Diamanten
+12007=Das ist keine Edelstein-Ressource!
+12008=Wählen Sie das zu verwendende Material:
+12009=Du hast ein Schloss und einen Schlüssel in den Container gelegt!
 // 15000 Fertigkeiten
 15000=Alchemie
 15001=Anatomie

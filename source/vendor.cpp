@@ -205,6 +205,18 @@ bool CPIBuyItem::Handle( void )
 							iMade = Items->DupeItem( tSock, biTemp, 1 );
 							if( iMade != nullptr )
 							{
+								CItem * biTempCont = static_cast<CItem *>(biTemp->GetCont());
+								if( biTempCont->GetLayer() == 0x1A )
+								{
+									// Only do this for new items sold from vendor's sell container
+									SI16 iMadeHP = iMade->GetHP();
+									SI16 iMadeMaxHP = static_cast<SI16>(iMade->GetMaxHP());
+									if( iMadeMaxHP > iMadeHP )
+									{
+										// Randomize the item's HP from HP to MaxHP
+										iMade->SetHP( static_cast<SI16>( RandomNum( iMadeHP, iMadeMaxHP )));
+									}
+								}
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
 								boughtItems.push_back( iMade );
@@ -237,6 +249,13 @@ bool CPIBuyItem::Handle( void )
 									iMade = Items->DupeItem( tSock, biTemp, 1 );
 									if( iMade != nullptr )
 									{
+										SI16 iMadeHP = iMade->GetHP();
+										SI16 iMadeMaxHP = static_cast<SI16>(iMade->GetMaxHP());
+										if( iMadeMaxHP > iMadeHP )
+										{
+											// Randomize the item's HP from HP to MaxHP
+											iMade->SetHP( static_cast<SI16>( RandomNum( iMadeHP, iMadeMaxHP )));
+										}
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
 										boughtItems.push_back( iMade );

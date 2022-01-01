@@ -3508,6 +3508,8 @@
 8205=Valore non impostato
 8206=Evento server a cui è associato l'oggetto
 8207=Gamma base dell'arma a distanza (solo SA e successivi)
+8208=Utilizzo corrente rimanente dell'articolo (non può superare il valore della proprietà maxUses)
+8209=Massimo numero di usi che l'oggetto può avere
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
@@ -4055,6 +4057,7 @@
 10025=Perla Nera
 10026=Rota di mandragola
 10028=Piuma
+10029=Alberi
 // [10100-10599] Abilità artigianale del fabbro
 10100=PAGINA SUCCESSIVA
 10101=PAGINA PRECEDENTE
@@ -4415,6 +4418,113 @@
 11633=uova fritte
 11634=gamba di agnello
 11635=taglio di costolette
+// 11801 - 12000 Abilità Artigianato Tinkering
+// Pagina 1 - Oggetti in legno
+11801=Assale
+11802=Cornice dell'orologio
+11803=Piano di giunzione
+11804=Piano per modellare
+11805=Lisciatrice
+// Pagina 2 - Strumenti
+11820=Sega a coda di rondine
+11821=Coltello da disegno
+11822=Froccia
+11823=Martello
+11824=Chiave di comando
+11825=Rasoio
+11826=Morsetto
+11827=Mortaio e pestello
+11828=Ascia da picco
+11829=Sega
+11830=Forbici
+11831=Scorp
+11832=Computer per cucire
+11833=Sciabola
+11834=Martello da mazza
+11835=Martello da fabbro
+11836=Tonghe
+11837=Kit di attrezzi (attrezzi da scultore)
+// Pagina 3 - Parti
+11860=Cerchi per canne
+11861=Barile Tap
+11862=Parti dell'orologio
+11863=Ingranaggi
+11864=Cerniera
+11865=Parti sestanti
+11866=Molle
+// Pagina 4 - Utensili
+11880=Coltello da macellaio
+11881=Cleaver
+11882=Forcella
+11883=Forcella
+11884=Goblet
+11885=Coltello
+11886=Coltello
+11887=Tazzina di peltro
+11888=Piatto
+11889=Coltello per scuoio
+11890=Cucchiaio
+11891=Cucchiaio
+// Pagina 5 - Gioielli
+11900=Bracciale
+11901=Orecchini
+11902=Collana (Perle d'oro)
+11903=Collana (Perle d'argento)
+11904=Collana (Rotonda)
+11905=Cintura nuziale (nuovo)
+// Pagina 6 - Varie
+11920=Candelabro
+11921=Globo
+11922=Supporto per il riscaldamento
+11923=Chiave di ferro
+11924=Chiave
+11925=Lanterna
+11926=Scala
+11927=Vetro spia
+// Pagina 7 - Articoli multi-componente		
+11940=Assale e ingranaggi
+11941=Orologio
+11942=Orologio
+11943=Parti dell'orologio
+11944=Cassa chiusa a chiave
+11945=Cassa chiusa a chiave
+11946=Botte di Pozione
+11947=Sestante
+11948=Parti Sestante
+// Pagina 8 - Candele
+11960=Candelabro
+11961=Candelabro a stelo
+11962=Candela regolare
+11963=Candela rotonda
+11964=Cuoio con candela
+11965=Candela piccola
+11966=Candela alta
+11967=Candela spessa
+// Pagina 9 - Trappole
+11980=Trappola a dardo
+11981=Trappola a Esplosione
+11982=Trappola per Veleni
+// Categorie e nome del menu
+11990=Menù di armeggiare
+11991=Articoli in legno
+11992=Strumenti
+11993=Parti
+11994=Utensili
+11995=Gioielli
+11996=Varie
+11997=Articoli multi-componente
+11998=Candele
+11999=Trappole
+12000=Cera d'api
+12001=Bastone della balestra
+12002=Pozione velenosa
+12003=Pozione esplosiva
+12004=Tesoro
+12005=Pietre
+12006=Diamanti
+12007=Questa non è una risorsa di gemme!
+12008=Seleziona il materiale da usare:
+12009=Hai aggiunto un lucchetto e una chiave al contenitore!
 // 15000 Abilità
 15000=Alchimia
 15001=Anatomia

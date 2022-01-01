@@ -3508,6 +3508,8 @@
 8205=Valor não definido
 8206=Servidor item de evento está associado a
 8207=Base de alcance de arma à distância (SA e mais tarde apenas)
+8208=Funções remanescentes actuais do ITEM (não pode exceder o valor da propriedade maxUses)
+8209=Máxima quantidade de utilizações que o artigo pode ter
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA
@@ -4054,6 +4056,7 @@
 10025=Pérola Preta
 10026=Raiz de Mandrágora
 10028=Pé
+10029=Eixos
 // [10100-10599] Habilidade de Artesanato de Ferreiro
 10100=PRÓXIMA PÁGINA
 10101=PREV PÁGINA
@@ -4414,6 +4417,113 @@
 11633=ovos fritos
 11634=leg of lamb
 11635=corte de costelas
+// 11801 - 12000 Habilidade de Artesanato de Sininho
+// Página 1 - Artigos de madeira
+11801=Eixo
+11802=Armação do relógio
+11803=Plano de Junção
+11804=Plano de moldagem
+11805=Plano suavizante
+// Página 2 - Ferramentas
+11820=Serra de Rabo de Rabo
+11821=Faca de Rastejar
+11822=Froe
+11823=Martelo
+11824=Hatchet
+11825=Inshave
+11826=Pickpick de bloqueio
+11827=Mortar e Pestle
+11828=Escolher Machado
+11829=Serra
+11830=Tesoura
+11831=Scorp
+11832=Kit de costura
+11833=Pá
+11834=Martelo de martelo de juramento
+11835=Martelo de martelo de Smith
+11836=Tenazes
+11837=Kit de ferramentas (Tinker's tools)
+// Página 3 - Peças
+11860=Anéis de Barril
+11861=Torneira de barril
+11862=Peças de relógio
+11863=Engrenagens
+11864=Dobradiça
+11865=Sextante peças
+11866=Molas
+// Página 4 - Utensílios
+11880=Faca de Holandês
+11881=Cleaver
+11882=Garfo
+11883=Garfo
+11884=Goblet
+11885=Faca
+11886=Faca
+11887=Caneca de estanho
+11888=Placa
+11889=Faca de corte
+11890=Colher
+11891=Colher
+// Página 5 - Jóias
+11900=Bracelete
+11901=Brincos
+11902=Goteca (Contas de ouro)
+11903=Laçar (Contas de prata)
+11904=Laçar (Redondo)
+11905=Banda de leito (newbiefied)
+// Página 6 - Diversos
+11920=Candelabro
+11921=Globo
+11922=Suporte de aquecimento
+11923=Chave de iões
+11924=Porta-chaves
+11925=Lanterna
+11926=Escalas
+11927=Vidro espião
+// Página 7 - Itens de Multi-Componentes		
+11940=Eixos e engrenagens
+11941=Relógio
+11942=Relógio
+11943=Peças de Relógio
+11944=Caixa Trancada
+11945=Tórax fechado
+11946=Barril de poção
+11947=Sextante
+11948=Sextante Peças
+// Página 8 - Velas
+11960=Candelabro
+11961=Candelabro de Estanqueidade
+11962=Vela Regular
+11963=Vela de corda
+11964=Touro com Vela
+11965=Vela pequena
+11966=Vela alta
+11967=Vela espessa
+// Página 9 - Armadilhas
+11980=Armadilha de Dardos
+11981=Armadilha de Explosão
+11982=Armadilha Venenosa
+// Categorias e Nome do Menu
+11990=Menu de Remendos
+11991=Artigos de madeira
+11992=Ferramentas
+11993=Peças
+11994=Utensilios
+11995=Jóias
+11996=Diversos
+11997=Itens múltiplos componentes
+11998=Velas
+11999=Trapas
+12000=Cera de abelha
+12001=Cavilha de besta cruzada
+12002=Poção Poison
+12003=Poção de explosão
+12004=Skull
+12005=Gems
+12006=Diamonds
+12007=Isso não é um recurso precioso!
+12008=Selecionar material a utilizar:
+12009=Adicionou uma fechadura e uma chave ao recipiente!
 // 15000 Competências
 15000=Alchemia
 15001=Anatomia

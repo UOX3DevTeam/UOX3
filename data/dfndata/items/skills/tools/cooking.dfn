@@ -4,6 +4,9 @@ get=base_item
 name=rolling pin
 id=0x1043
 weight=100
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x0461]

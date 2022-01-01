@@ -8,6 +8,7 @@ const Carpentry = 4025;
 const Alchemy = 4028;
 const Bowcraft = 4029;
 const Tailoring = 4030;
+const Tinkering = 4032;
 
 function craftinggump( myGump, socket )
 {
@@ -57,7 +58,7 @@ function craftinggump( myGump, socket )
 			gumpMenuName = 11201;//Bowcraft Menu
 			resourcename = 10687;
 			resource = ( logs + boards );
-			repair = 51;
+			//repair = 51;
 			break;
 		case 4: // Tailoring
 			grouplist = [11404, 11405, 11406, 11407, 11408, 11410, 11411, 11412]; //CATEGORIES
@@ -116,7 +117,11 @@ function craftinggump( myGump, socket )
 			break;
 		case 6:
 			grouplist = [11602, 11603, 11604, 11605]; //CATEGORIES
-			name = 11601;//Cooking Menu
+			gumpMenuName = 11601;//Cooking Menu
+			break;
+		case 7: // Tinkering
+			grouplist = [11991, 11992, 11993, 11994, 11995, 11996, 11997, 11998, 11999]; // CATEGORIES
+			gumpMenuName = 11990; // Tinkering Menu
 			break;
 	}
 
@@ -218,13 +223,15 @@ function craftinggump( myGump, socket )
 	{
 		myGump.AddText( 50, 362, textHue, GetDictionaryEntry( resourcename, socket.language ) + " (" + resource.toString() + ")" );
 
-		if( craftingSkillUsed != 4 && craftingSkillUsed != 1 ) // No material selection for leather for Tailoring yet, or wood for Carpentry
+		// No material selection for these crafting skills yet
+		if( craftingSkillUsed != 1 && craftingSkillUsed != 3 && craftingSkillUsed != 4 && craftingSkillUsed != 7 )
 		{
 			myGump.AddButton(15, 362, 4005, 4007, 1, 0, 50); // Material Selection Button
 		}
 
 		if( craftingSkillUsed == 5 )
 		{
+			// Blacksmithing
 			myGump.AddButton(270, 342, 0xfa5, 1, 0, repair); // Repair Button
 			myGump.AddHTMLGump(305, 345, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10212, socket.language ) + "</basefont>" );// REPAIR ITEM
 			myGump.AddButton( 15, 342, 0xfa5, 1, 0, 52 ); // Smelt Item Button
@@ -232,6 +239,7 @@ function craftinggump( myGump, socket )
 		}
 		else if( craftingSkillUsed == 4 )
 		{
+			// Tailoring
 			myGump.AddButton( 15, 342, 0xfa5, 1, 0, 52 ); // Unravel Item Button
 			myGump.AddHTMLGump( 50, 345, 150, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10294, socket.language ) + "</basefont>" );// UNRAVEL ITEM
 		}
@@ -292,6 +300,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 1 );
 					}
 					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 1 );
+					break;
 				default:
 					break;
 			}
@@ -316,6 +327,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					{
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 2 );
 					}
+					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 2 );
 					break;
 				default:
 					break;
@@ -342,6 +356,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 3 );
 					}
 					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 3 );
+					break;
 				default:
 					break;
 			}
@@ -364,6 +381,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 4 );
 					}
 					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 4 );
+					break;
 				default:
 					break;
 			}
@@ -382,6 +402,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					{
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 5 );
 					}
+					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 5 );
 					break;
 				default:
 					break;
@@ -402,6 +425,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 6 );
 					}
 					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 6 );
+					break;
 				default:
 					break;
 			}
@@ -421,6 +447,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 7 );
 					}
 					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 7 );
+					break;
 				default:
 					break;
 			}
@@ -434,6 +463,9 @@ function onGumpPress( pSock, pButton, gumpData )
 				case 4:
 					TriggerEvent( Tailoring, "pageX", pSock, pUser, 8 );
 					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 8 );
+					break;
 			}
 			break;
 		case 9:
@@ -445,6 +477,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					break;
 				case 4:
 					TriggerEvent( Tailoring, "pageX", pSock, pUser, 9 );
+					break;
+				case 7:
+					TriggerEvent( Tinkering, "pageX", pSock, pUser, 9 );
 					break;
 			}
 			break;

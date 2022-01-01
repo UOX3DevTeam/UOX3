@@ -1,8 +1,8 @@
-// Display remaining uses left in a tooltip, based on item's UsesLeft tag
+// Display remaining uses left in a tooltip, based on item's usesLeft property
 function onTooltip( myObj )
 {
 	var tooltipText = "";
-	var usesLeft = myObj.GetTag( "UsesLeft" );
+	var usesLeft = myObj.usesLeft;
 	if( usesLeft > 0 )
 	{
 		tooltipText = GetDictionaryEntry( 9403 ); // uses remaining: %i

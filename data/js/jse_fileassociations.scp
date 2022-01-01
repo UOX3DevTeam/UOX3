@@ -221,6 +221,8 @@
 4029=skill/craft/fletching.js
 4030=skill/craft/tailoring.js
 4031=skill/craft/crafttool.js
+4032=skill/craft/tinkering.js
+4033=skill/craft/crafting_complete.js
 
 // Doors
 4500=item/doors.js

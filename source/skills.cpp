@@ -98,6 +98,8 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetBuyValue() > 0 )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
+		if( c->GetMaxUses() > 0 )
+			c->SetUsesLeft( static_cast<UI16>(( rank * c->GetMaxUses() ) / 10 ));
 		if( c->GetID() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
 		{
 			// Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10 based on rank
@@ -2674,6 +2676,17 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 {
 	VALIDATESOCKET( sock );
 
+	if( !ValidateObject( player ))
+		return;
+
+	// Get potential tag with ID of a targeted sub-resource
+	UI16 targetedSubResourceID = 0;
+	TAGMAPOBJECT tempTagObj = player->GetTempTag( "targetedSubResourceID" );
+	if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+	{
+		targetedSubResourceID = static_cast<UI16>( tempTagObj.m_IntValue );
+	}
+
 	std::vector< resAmountPair >::const_iterator resCounter;
 	std::vector< resSkillReq >::const_iterator sCounter;
 	resAmountPair resEntry;
@@ -2697,7 +2710,20 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
+			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
+			{
+				// Primary resource, or generic subresource
 			toDelete -= std::min( GetItemAmount( player, targID, targColour, true ), static_cast<UI32>(toDelete) );
+			}
+			else
+			{
+				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
+				{
+					// Player specifically targeted a secondary resource
+					toDelete -= std::min( GetItemAmount( player, targID, targColour, true ), static_cast<UI32>(toDelete) );
+				}
+			}
+
 			if( toDelete == 0 )
 				break;
 		}
@@ -2771,6 +2797,20 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 			}
 		}
 	}
+
+	if( !canMake || !canDelete )
+	{
+		// Trigger onMakeItem() JS event for character who tried to craft item, even though they failed
+		std::vector<UI16> scriptTriggers = player->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				toExecute->OnMakeItem( sock, player, nullptr, 0 );
+			}
+		}
+	}
 	for( resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter )
 	{
 		resEntry	= (*resCounter);
@@ -2786,7 +2826,20 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
+			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
+			{
+				// Primary resource, or generic subresource
 			toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+			}
+			else
+			{
+				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
+				{
+					// Player specifically targeted a secondary resource
+					toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+				}
+			}
+
 			if( toDelete == 0 )
 				break;
 		}

@@ -3508,6 +3508,8 @@
 8205=Wartość nieustalona
 8206=Zdarzenie serwera, z którym związany jest element
 8207=Zasięg bazowy broni dystansowej (tylko SA i późniejsze)
+8208=Obecne pozostałe użycia elementu (nie może przekroczyć wartości właściwości maxUses)
+8209=Maksymalna ilość użyć, jakie może mieć element
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC
@@ -4055,6 +4057,7 @@
 10025=Czarna Perła
 10026=Korzeń Mandrake
 10028=Pióro
+10029=Wały
 // [10100-10599] Kowalska Umiejętność Rzemieślnicza
 10100=NASTĘPNA STRONA
 10101=POPRZEDNIA STRONA
@@ -4415,6 +4418,113 @@
 11633=jaja sadzone
 11634=noga jagnięca
 11635=cięcie żeberek
+// 11801 - 12000 Umiejętność majsterkowania
+// Strona 1 - Przedmioty z drewna
+11801=Oś
+11802=Obramowanie zegara
+11803=Płyta łącząca
+11804=Płyta formierska
+11805=Płytka wygładzająca
+// Strona 2 - Narzędzia
+11820=Piła do rowków
+11821=Nóż kreślarski
+11822=Żabka
+11823=Młotek
+11824=Grzechotka
+11825=Nożyce do golenia
+11826=Klucz
+11827=Mortar i tłuczek
+11828=Siekiera
+11829=Piła
+11830=Nożyce
+11831=Skorpion
+11832=Zestaw do szycia
+11833=Saperka
+11834=Młot kowalski
+11835=Młotek kowalski
+11836=Zęby
+11837=Zestaw narzędzi (narzędzia dla majsterkowiczów)
+// Strona 3 - Części
+11860=Obręcze lufy
+11861=Kran do lufy
+11862=Części zegara
+11863=Grabiny
+11864=Zawias
+11865=części do sekstantu
+11866=Szprychy
+// Strona 4 - Przybory kuchenne
+11880=Nóż rzeźniczy
+11881=tasak
+11882=Widelec
+11883=Widelec
+11884=Goblet
+11885=Nóż
+11886=Nóż
+11887=Pewny kubek
+11888=Płytka
+11889=Scyzoryk
+11890=Łyżeczka
+11891=Łyżeczka
+// Strona 5 - Biżuteria
+11900=Bransoletka
+11901=Kolczyki
+11902=Naszyjnik (Złote koraliki)
+11903=Naszyjnik (Srebrne koraliki)
+11904=Naszyjnik (Okrągły)
+11905=Weddingband (newbiefied)
+// Strona 6 - Różne
+11920=Kandelabr
+11921=Globus
+11922=Podstawka grzewcza
+11923=Klucz żelazny
+11924=Krążek do kluczy
+11925=Latarnia
+11926=Skalki
+11927=Szkło szpiegowskie
+// Strona 7 - Przedmioty wieloskładnikowe		
+11940=Oś i koła zębate
+11941=Zegar
+11942=Zegar
+11943=Części zegara
+11944=Zamknięta skrzynia
+11945=Zamknięta skrzynia
+11946=Potion Keg
+11947=Sextant
+11948=Części sekstantu
+// Strona 8 - Świece
+11960=Kandelabr
+11961=Kandelabr stojący
+11962=Świeca zwykła
+11963=Świeca okrągła
+11964=Czaszka ze świecą
+11965=Mała świeca
+11966=Wysoka świeca
+11967=Gruba świeca
+// Strona 9 - Pułapki
+11980=Pułapka na rzutki
+11981=Pułapka na eksplozje
+11982=Pułapka na truciznę
+// Kategorie i nazwy menu
+11990=Menu majsterkowania
+11991=Przedmioty z drewna
+11992=Narzędzia
+11993=Części
+11994=Urządzenia
+11995=Biżuteria
+11996=Różne
+11997=Przedmioty wieloskładnikowe
+11996=Świece
+11999=pułapki
+12000=Wosk pszczeli
+12001=Pocisk do kuszy
+12002=Potężna mikstura trucizny
+12003=Eksplozja
+12004=Czaszka
+12005=Kamienie
+12006=Diamenty
+12007=To nie jest zasób klejnotów!
+12008=Wybierz materiał do użycia:
+12009=Dodałeś zamek i klucz do pojemnika!
 // 15000 Umiejętności
 15000=Alchemia
 15001=Anatomia

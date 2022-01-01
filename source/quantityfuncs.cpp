@@ -56,7 +56,7 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, bool colorCheck =
 	{
 		if( ValidateObject( i ) )
 		{
-			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )
+			if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
 				total += GetSubItemAmount( i, realID, realColour );
 			else if( i->GetID() == realID && ( !colorCheck || ( colorCheck && i->GetColour() == realColour )))
 				total += i->GetAmount();
@@ -94,7 +94,7 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 	{
 		if( ValidateObject( i ) )
 		{
-			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ) // Is item an pack or container?
+			if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )) // Is item an pack or container?
 				amtDeleted += DeleteSubItemAmount( i, total, realID, realColour );
 			else if( i->GetID() == realID && i->GetColour() == realColour )
 			{

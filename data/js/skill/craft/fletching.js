@@ -52,7 +52,7 @@ function pageX( socket, pUser, pageNum )
 
 		myGump.AddText( 255, 60 + ( index * 20 ), LabelHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ) );
 
-		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2100 + ( 100 * pageNum ) + i );
+		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2000 + ( 100 * pageNum ) + i );
 	}
 	myGump.Send( socket );
 	myGump.Free();
@@ -83,7 +83,35 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
+	// Don't continue if player no longer has access to the crafting tool
 	var bItem = pSock.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		return;
+	}
+
+	if( bItem.movable == 3 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		return;
+	}
+
+	var iPackOwner = GetPackOwner( bItem, 0 );
+	if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+	{
+		if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+		{
+			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			return;
+		}
+	}
+	else
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+		return;
+	}
+
 	var gumpID = scriptID + 0xffff;
 	var makeID = 0;
 	var itemDetailsID = 0;
@@ -113,7 +141,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 2: // Page 2 - Ammunition
 		case 3: // Page 3 - Weapons
 			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "pageX", pSock, pUser, pButton );
+			pageX( pSock, pUser, pButton );
 			break;
 		// Make Items
 		case 100: // Kindling
@@ -188,6 +216,16 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( makeID != 0 )
 	{
 		MakeItem( pSock, pUser, makeID );
+		if( GetServerSetting( "ToolUseLimit" ))
+		{
+			bItem.usesLeft -= 1;
+			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+			{
+				bItem.Delete();
+				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+				// Play sound effect of tool breaking
+			}
+		}		
 		pUser.StartTimer( gumpDelay, timerID, true );
 	}
 	else if( itemDetailsID != 0 )

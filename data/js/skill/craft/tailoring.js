@@ -106,7 +106,35 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
+	// Don't continue if player no longer has access to the crafting tool
 	var bItem = pSock.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		return;
+	}
+
+	if( bItem.movable == 3 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		return;
+	}
+
+	var iPackOwner = GetPackOwner( bItem, 0 );
+	if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+	{
+		if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+		{
+			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			return;
+		}
+	}
+	else
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+		return;
+	}
+
 	var gumpID = scriptID + 0xffff;
 	var makeID = 0;
 	var itemDetailsID = 0;
@@ -391,6 +419,16 @@ function onGumpPress( pSock, pButton, gumpData )
 		{
 			// Items that require leather as resource
 			MakeItem( pSock, pUser, makeID );
+			if( GetServerSetting( "ToolUseLimit" ))
+			{
+				bItem.health -= 1;
+				if( bItem.health == 0 && GetServerSetting( "ToolUseBreak" ))
+				{
+					bItem.Delete();
+					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+					// Play sound effect of tool breaking
+				}
+			}			
 			pUser.StartTimer( gumpDelay, timerID, true );
 		}
 	}
@@ -413,11 +451,41 @@ function onCallback1( pSock, ourObj )
 	pUser.SetTempTag( "makeID", null );
 	pUser.SetTempTag( "timerID", null );
 
+	var bItem = pSock.tempObj;
+	if( ValidateObject( bItem ))
+	{
 	if( ValidateObject( ourObj ) && ourObj.isItem )
 	{
+			// Make sure targeted item is in player's backpack
+			var iPackOwner = GetPackOwner( ourObj, 0 );
+			if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+			{
+				if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+				{
+					pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+					return;
+				}
+			}
+			else
+			{
+				pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+				return;
+			}
+
 		// Pass in the colour of the desired material to use for crafting
 		MakeItem( pSock, pUser, makeID, ourObj.colour );
+			if( GetServerSetting( "ToolUseLimit" ))
+			{
+				bItem.usesLeft -= 1;
+				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
+				{
+					bItem.Delete();
+					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+					// Play sound effect of tool breaking
+				}
+			}		
 		pUser.StartTimer( gumpDelay, timerID, true );
+		}
 	}
 }
 

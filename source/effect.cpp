@@ -506,6 +506,17 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 
 	if( FindItemOwner( targItem ) == src )
 		sock->sysmessage( 985 ); // You create the item and place it in your backpack.
+
+	// Trigger onMakeItem() JS event for character who crafted the item
+	std::vector<UI16> scriptTriggers = src->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			toExecute->OnMakeItem( sock, src, targItem, iMaking );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o

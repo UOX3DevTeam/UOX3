@@ -517,6 +517,7 @@ function onCallback2( pSock, ourObj )
 			return;
 		}
 
+		var itemDurabilityLossEnabled = GetServerSetting( "ItemDurabilityLoss" );
 		var repairID = ourObj.id;
 		var ownerObj = GetPackOwner( ourObj, 0 );
 		if( ownerObj && mChar.serial == ownerObj.serial )
@@ -559,7 +560,10 @@ function onCallback2( pSock, ourObj )
 					}
 
 					// Reduce object's max durability by 1
+					if( itemDurabilityLossEnabled )
+					{
 					ourObj.maxhp -= 1;
+					}
 
 					// Repair item here
 					ourObj.health = ourObj.maxhp;
@@ -671,7 +675,35 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
+	// Don't continue if player no longer has access to the crafting tool
 	var bItem = pSock.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		return;
+	}
+
+	if( bItem.movable == 3 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
+		return;
+	}
+
+	var iPackOwner = GetPackOwner( bItem, 0 );
+	if( ValidateObject( iPackOwner )) // Is the item in a backpack?
+	{
+		if( iPackOwner.serial != pUser.serial ) // And if so does the pack belong to the user?
+		{
+			pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
+			return;
+		}
+	}
+	else
+	{
+		pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
+		return;
+	}
+
 	var gumpID = blacksmithID + 0xffff;
 	var makeID = 0;
 	var itemDetailsID = 0;
@@ -1035,6 +1067,16 @@ function onGumpPress( pSock, pButton, gumpData )
 		if( anvil > 0 )
 		{
 			MakeItem( pSock, pUser, makeID );
+			if( GetServerSetting( "ToolUseLimit" ))
+			{
+				bItem.health -= 1;
+				if( bItem.health == 0 && GetServerSetting( "ToolUseBreak" ))
+				{
+					bItem.Delete();
+					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+					// Play sound effect of tool breaking
+				}
+			}
 		}
 		pUser.StartTimer( gumpDelay, timerID, true );
 	}

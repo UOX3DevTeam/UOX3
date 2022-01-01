@@ -10,6 +10,9 @@ value=16 8
 restock=20
 decay=1
 good=52
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x0fbc]
@@ -22,6 +25,9 @@ value=16 8
 restock=20
 decay=1
 good=52
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x0faf]

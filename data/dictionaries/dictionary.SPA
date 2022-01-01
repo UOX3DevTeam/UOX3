@@ -3508,6 +3508,8 @@
 8205=Valor no fijado
 8206=El evento del servidor está asociado con
 8207=Alcance básico del arma a distancia (sólo en SA y posteriores)
+8208=Usos restantes actuales del artículo (no puede superar el valor de la propiedad maxUses)
+8209=Máxima cantidad de usos que puede tener el artículo
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ
@@ -4055,6 +4057,7 @@
 10025=Perla Negra
 10026=Raíz de Mandrágora
 10028=Pluma
+10029=Ejes
 // [10100-10599] Habilidad de Artesanía del Herrero
 10100=SIGUIENTE PÁGINA
 10101=PÁGINA ANTERIOR
@@ -4415,6 +4418,113 @@
 11633=huevos fritos
 11634=pierna de cordero
 11635=corte de costillas
+// 11801 - 12000 Habilidad de Artesanía
+// Página 1 - Artículos de madera
+11801=Eje
+11802=Marco de reloj
+11803=Plano de unión
+11804=Plano de moldear
+11805=Plano de alisar
+// Página 2 - Herramientas
+11820=Sierra de cola de milano
+11821=Cuchilla de arrastre
+11822=Froe
+11823=Martillo
+11824=Herramienta
+11825=Asesino
+11826=Pitón
+11827=Mortero y maja
+11828=Hacha de picar
+11829=Sierra
+11830=Tijeras
+11831=Escorpajo
+11832=Juego de costura
+11833=Pala
+11834=Martillo
+11835=Martillo de herrero
+11836=Pinzas
+11837=Juego de herramientas (herramientas de calderero)
+// Página 3 - Piezas
+11860=Aros de barril
+11861=Grifo de barril
+11862=Partes de reloj
+11863=Engranajes
+11864=Bisagra
+11865=Partes del extensor
+11866=Muelles
+// Página 4 - Utensilios
+11880=Cuchillo de carnicero
+11881=Cuchilla
+11882=Horquilla
+11883=Horquilla
+11884=Galleta
+11885=Cuchillo
+11886=Cuchillo
+11887=Taza de estaño
+11888=Plato
+11889=Cuchillo de pelar
+11890=Cuchara
+11891=Cuchara
+// Página 5 - Joyas
+11900=Pulsera
+11901=Pendientes
+11902=Collar (Cuentas de oro)
+11903=Collar (Cuentas de plata)
+11904=Collar (Redondo)
+11905=Collar de boda (con cuentas nuevas)
+// Página 6 - Varios
+11920=Candelabro
+11921=Globo
+11922=Calentador
+11923=Llave de hierro
+11924=Llavero
+11925=Linterna
+11926=Escala
+11927=Cristal de espía
+// Página 7 - Artículos multicomponentes		
+11940=Eje y engranajes
+11941=Reloj
+11942=Reloj
+11943=Piezas de reloj
+11944=Caja cerrada
+11945=Caja con cerradura
+11946=Bote de pociones
+11947=Sextante
+11948=Partes del extensor
+// Página 8 - Velas
+11960=Candelabro
+11961=Candelabro de pie
+11962=Candelabro Regular
+11963=Candelero redondo
+11964=Cascarilla con Vela
+11965=Vela pequeña
+11966=Vela alta
+11967=Vela Gruesa
+// Página 9 - Trampas
+11980=Trampa de dardos
+11981=Trampa de explosión
+11982=Trampa de Veneno
+// Categorías y nombre del menú
+11990=Menú de Artesanía
+11991=Artículos de madera
+11992=Herramientas
+11993=Piezas
+11994=Utensilios
+11995=Joyería
+11996=Varios
+11997=Artículos de varios componentes
+11998=Velas
+11999=Trampas
+12000=Cera de abeja
+12001=Perno de ballesta
+12002=Poción de veneno
+12003=Poción de explosión
+12004=Cráneo
+12005=Gemas
+12006=Diamantes
+12007=¡Eso no es un recurso de gemas!
+12008=Seleccione el material a utilizar:
+12009=¡Ha añadido una cerradura y una llave al contenedor!
 // 15000 Habilidades
 15000=Alquimia
 15001=Anatomía

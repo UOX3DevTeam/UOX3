@@ -84,6 +84,8 @@ const SI32			DEFITEM_BASEWEIGHT		= 0;
 const UI16			DEFITEM_MAXITEMS		= 0;
 const UI08			DEFITEM_MAXRANGE		= 0;
 const UI08			DEFITEM_BASERANGE		= 0;
+const UI16			DEFITEM_USESLEFT		= 0;
+const UI16			DEFITEM_MAXUSES			= 0;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -97,7 +99,7 @@ restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMP
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
-maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE )
+maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -757,6 +759,38 @@ UI16 CItem::GetMaxHP( void ) const
 void CItem::SetMaxHP( UI16 newValue )
 {
 	maxhp = newValue;
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetMaxUses( void ) const
+//|					void SetMaxUses( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's max uses property
+//o-----------------------------------------------------------------------------------------------o
+UI16 CItem::GetMaxUses( void ) const
+{
+	return maxUses;
+}
+void CItem::SetMaxUses( UI16 newValue )
+{
+	maxUses = newValue;
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetUsesLeft( void ) const
+//|					void SetUsesLeft( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's property for remaining uses
+//o-----------------------------------------------------------------------------------------------o
+UI16 CItem::GetUsesLeft( void ) const
+{
+	return usesLeft;
+}
+void CItem::SetUsesLeft( UI16 newValue )
+{
+	usesLeft = newValue;
 	UpdateRegion();
 }
 
@@ -1444,6 +1478,8 @@ void CItem::CopyData( CItem *target )
 	target->SetPriv( GetPriv() );
 	target->SetBaseRange( GetBaseRange() );
 	target->SetMaxRange( GetMaxRange() );
+	target->SetMaxUses( GetMaxUses() );
+	target->SetUsesLeft( GetUsesLeft() );
 
 	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
@@ -1529,6 +1565,8 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "Good=" << GetGood() << '\n';
 	outStream << "GlowType=" << (SI16)GetGlowEffect() << '\n';
 	outStream << "Range=" << static_cast<SI16>(GetBaseRange()) << "," << static_cast<SI16>(GetMaxRange()) << '\n';
+	outStream << "MaxUses=" << GetMaxUses() << '\n';
+	outStream << "UsesLeft=" << GetUsesLeft() << '\n';
 	outStream << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( HEAT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( COLD ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << '\n';
@@ -1787,6 +1825,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetMaxHP( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
+				else if( UTag == "MAXUSES" )
+				{
+					SetMaxUses( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
 				break;
 			case 'N':
 				if( UTag == "NAME2" )
@@ -1897,6 +1940,13 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "TYPE2" )
 					rvalue = true;
+				break;
+			case 'U':
+				if( UTag == "USESLEFT" )
+				{
+					SetUsesLeft( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
 				break;
 			case 'V':
 				if( UTag == "VALUE" )

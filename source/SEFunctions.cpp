@@ -4340,6 +4340,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 293:	 // NETTRAFFICTIMEBAN
 				*rval = INT_TO_JSVAL( static_cast<UI32>(cwmWorldState->ServerData()->NetTrafficTimeban()));
 				break;
+			case 294:	 // TOOLUSELIMIT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ToolUseLimit() );
+				break;
+			case 295:	 // TOOLUSEBREAK
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ToolUseBreak() );
+				break;
+			case 296:	 // ITEMREPAIRDURABILITYLOSS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemRepairDurabilityLoss() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;
