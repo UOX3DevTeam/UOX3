@@ -4055,6 +4055,7 @@
 10025=Black Pearl
 10026=Mandrake Root
 10028=Feather
+10029=Shafts
 // [10100-10599] Blacksmith Crafting Skill
 10100=NEXT PAGE
 10101=PREV PAGE
@@ -4415,6 +4416,113 @@
 11633=fried eggs
 11634=leg of lamb
 11635=cut of ribs
+// 11801 - 12000 Tinkering Crafting Skill
+// Page 1 - Wooden Items
+11801=Axle
+11802=Clock Frame
+11803=Jointing Plane
+11804=Moulding Plane
+11805=Smoothing Plane
+// Page 2 - Tools
+11820=Dovetail Saw
+11821=Draw Knife
+11822=Froe
+11823=Hammer
+11824=Hatchet
+11825=Inshave
+11826=Lockpick
+11827=Mortar and Pestle
+11828=Pick Axe
+11829=Saw
+11830=Scissors
+11831=Scorp
+11832=Sewing Kit
+11833=Shovel
+11834=Sledge Hammer
+11835=Smith's Hammer
+11836=Tongs
+11837=Tool Kit (Tinker's tools)
+// Page 3 - Parts
+11860=Barrel Hoops
+11861=Barrel Tap
+11862=Clock parts
+11863=Gears
+11864=Hinge
+11865=Sextant parts
+11866=Springs
+// Page 4 - Utensils
+11880=Butcher Knife
+11881=Cleaver
+11882=Fork
+11883=Fork
+11884=Goblet
+11885=Knife
+11886=Knife
+11887=Pewter Mug
+11888=Plate
+11889=Skinning Knife
+11890=Spoon
+11891=Spoon
+// Page 5 - Jewelry
+11900=Bracelet
+11901=Earrings
+11902=Necklage (Golden beads)
+11903=Necklace (Silver beads)
+11904=Necklace (Round)
+11905=Weddingband (newbiefied)
+// Page 6 - Miscellaneous
+11920=Candelabra
+11921=Globe
+11922=Heating stand
+11923=Iron Key
+11924=Keyring
+11925=Lantern
+11926=Scales
+11927=Spy glass
+// Page 7 - Multi-Component Items
+11940=Axle and Gears
+11941=Clock
+11942=Clock
+11943=Clock Parts
+11944=Locked Box
+11945=Locked Chest
+11946=Potion Keg
+11947=Sextant
+11948=Sextant Parts
+// Page 8 - Candles
+11960=Candelabra
+11961=Standing Candelabra
+11962=Regular Candle
+11963=Round Candle
+11964=Skull with Candle
+11965=Small Candle
+11966=Tall Candle
+11967=Thick Candle
+// Page 9 - Traps
+11980=Dart Trap
+11981=Explosion Trap
+11982=Poison Trap
+// Categories and Menu Name
+11990=Tinkering Menu
+11991=Wooden Items
+11992=Tools
+11993=Parts
+11994=Utensils
+11995=Jewelry
+11996=Miscellaneous
+11997=Multi-Component Items
+11998=Candles
+11999=Traps
+12000=Beeswax
+12001=Crossbow bolt
+12002=Poison potion
+12003=Explosion potion
+12004=Skull
+12005=Gems
+12006=Diamonds
+12007=That's not a gem resource!
+12008=Select material to use:
+12009=You added a lock and key to the container!
 // 15000 Skills
 15000=Alchemy
 15001=Anatomy

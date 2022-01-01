@@ -100,6 +100,7 @@ enum ScriptEvent
 	seOnVirtueGumpPress,
 	seOnUseBandageMacro,	//	**	allows overriding what happens when client uses bandage macros
 	seOnHouseCommand,		//	**	allows overriding what happens when player speaks house commands
+	seOnMakeItem,
 	seOnPathfindEnd,
 	seOnEnterEvadeState,
 	seOnQuestGump,
@@ -265,6 +266,7 @@ public:
 	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
 	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targID );
+	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryID );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

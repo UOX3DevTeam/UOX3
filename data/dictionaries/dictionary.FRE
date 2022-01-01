@@ -3672,6 +3672,8 @@
 8205=Valeur non définie
 8206=L'élément de l'événement du serveur est associé avec
 8207=Portée de base de l'arme à distance (SA et suivants seulement)
+8208=Utilisations restantes de l'article (ne peut pas dépasser la valeur de la propriété maxUses)
+8209=Maximum d'utilisations que l'article peut avoir
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ
@@ -4219,6 +4221,7 @@
 10025=Perle noire
 10026=Racine de mandragore
 10028=Plume
+10029=Arbres
 // [10100-10599] Compétence d'artisanat du forgeron
 10100=PAGE SUIVANTE
 10101=PAGE PRÉCÉDENTE
@@ -4579,6 +4582,113 @@
 11633=oeufs au plat
 11634=cuisse d'agneau
 11635=coupe de côtes
+// 11801 - 12000 Compétence en artisanat de bricolage
+// Page 1 - Objets en bois
+11801=Axe
+11802=Cadre d'horloge
+11803=Plan d'assemblage
+11804=Plan de moulage
+11805=Plan de lissage
+// Page 2 - Outils
+11820=Scie à queue d'aronde
+11821=Couteau à dessiner
+11822=Froe
+11823=Marteau
+11824=Cheville
+11825=Rasoir
+11826=piqueur de poche
+11827=Mortier et Pilon
+11828=Hache à piquer
+11829=Scie
+11830=Ciseaux
+11831=Scorp
+11832=Kit de couture
+11833=Pelle
+11834=Marteau de forgeron
+11835=Marteau de forgeron
+11836=Tongs
+11837=Kit d'outils (outils de bricolage)
+// Page 3 - Pièces détachées
+11860=Cerceaux de canon
+11861=Taraud de canon
+11862=Pièces d'horlogerie
+11863=Engrenages
+11864=Charnière
+11865=Pièces de sextant
+11866=Ressorts
+// Page 4 - Ustensiles
+11880=Couteau de boucher
+11881=Couteau de boucher
+11882=Fourchette
+11883=Fourchette
+11884=Goblet
+11885=Couteau
+11886=Couteau
+11887=Tasse en étain
+11888=Assiette
+11889=Couteau d'écorcheur
+11890=Cuillère
+11891=Cuillère
+// Page 5 - Bijoux
+11900=Bracelet
+11901=Boucles d'oreilles
+11902=Collier (perles dorées)
+11903=Collier (perles argentées)
+11904=Collier (rond)
+11905=Bandeau de mariage (newbiefied)
+// Page 6 - Divers
+11920=Candélabre
+11921=Globe
+11922=Chauffeuse
+11923=Clé en fer
+11924=Clef
+11925=Lanterne
+11926=Balances
+11927=Verre d'espionnage
+// Page 7 - Articles multi-composants		
+11940=Axe et engrenages
+11941=Clock
+11942=Clock
+11943=Pièces d'horloge
+11944=Caisse verrouillée
+11945=Coffre verrouillée
+11946=Fût de potion
+11947=Sextant
+11948=Pièces de sextant
+// Page 8 - Bougies
+11960=Candélabre
+11961=Chandelier sur pied
+11962=Bougie ordinaire
+11963=Bougie ronde
+11964=Crâne avec bougie
+11965=Petite bougie
+11966=Bougie haute
+11967=Bougie épaisse
+// Page 9 - Pièges
+11980=Piège à fléchettes
+11981=Piège à explosion
+11982=Piège à poison
+// Catégories et nom du menu
+11990=Menu de bricolage
+11991=Articles en bois
+11992=Outils
+11993=Pièces détachées
+11994=Ustensiles
+11995=Bijoux
+11996=Divers
+11997=Articles à plusieurs composants
+11998=Bougies
+11999=Pièges
+12000=Cire d'abeille
+12001=Crochet d'arbalète
+12002=Potion empoisonnée
+12003=Potion d'explosion
+12004=Crâne
+12005=Gemmes
+12006=Diamants
+12007=Ce n'est pas une ressource en gemmes !
+12008=Sélectionnez le matériau à utiliser :
+12009=Tu as ajouté une serrure et une clé au conteneur !
 // 15000 compétences
 15000=Alchimie
 15001=Anatomie

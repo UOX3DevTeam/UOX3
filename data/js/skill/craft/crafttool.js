@@ -1,11 +1,10 @@
-const enableHPLOSS = 0;				// Disable or enable hp on tools to break.
 const enableUOX3Craft = 0;            // Disable or enable to use old uox3 mneus.
-const enableBreak = 0;				// Disable or enable Breaking of tools.
 const blacksmithID = 4023;			// Use this to tell the gump what script to close.
 const Carpentry = 4025;
 const Alchemy = 4028;
 const Fletching = 4029;
 const Tailoring = 4030;
+const Tinkering = 4032;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -18,42 +17,37 @@ function onUseChecked( pUser, iUsed )
 
 	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
-		if( enableHPLOSS == 1 )
+		if( GetServerSetting( "ToolUseLimit" ) && iUsed.usesLeft == 0 )
 		{
-			iUsed.health -= 1;
-		}
-
-		if( enableBreak == 1 && iUsed.health == 0 )
-		{
-			iUsed.Delete();
-			pUser.SysMessage( GetDictionaryEntry( 10202, socket.language ));
+			// Tool has no hitpoints left and cannot be used!
+			socket.SysMessage( GetDictionaryEntry( 9262, socket.language )); // This has no more charges.
 			return false;
 		}
 
 		if( !pUser.InRange( iUsed, 3 ))
 		{
-			pUser.SysMessage( GetDictionaryEntry( 461, socket.language )); // You are too far away.
+			socket.SysMessage( GetDictionaryEntry( 461, socket.language )); // You are too far away.
 			return false;
 		}
 
 		if( iUsed.movable == 3 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 6031, socket.language )); // Locked down resources cannot be used!
+			socket.SysMessage( GetDictionaryEntry( 6031, socket.language )); // Locked down resources cannot be used!
 			return false;
 		}
 
 		var iPackOwner = GetPackOwner( iUsed, 0 );
-		if( ValidateObject( iPackOwner )) // Is the target item in a backpack?
+		if( ValidateObject( iPackOwner )) // Is the item in a backpack?
 		{
 			if( iPackOwner.serial != pUser.serial ) //And if so does the pack belong to the user?
 			{
-				pUser.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That resource is in someone else's backpack!
+				socket.SysMessage( GetDictionaryEntry( 6032, socket.language )); // That resource is in someone else's backpack!
 				return false;
 			}
 		}
 		else
 		{
-			pUser.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This has to be in your backpack before you can use it.
+			socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This has to be in your backpack before you can use it.
 			return false;
 		}
 
@@ -130,7 +124,7 @@ function onUseChecked( pUser, iUsed )
 					break;
 			}
 		}
-		else if( iUsed.id == 0x0F9D )
+		else if( iUsed.id == 0x0F9D ) // Sewing Kit
 		{
 			// Tailoring
 			if( enableUOX3Craft == 1 )
@@ -180,6 +174,33 @@ function onUseChecked( pUser, iUsed )
 					TriggerEvent( blacksmithID, "page8", socket, pUser );
 					break;
 				default: TriggerEvent( blacksmithID, "pageX", socket, pUser, 1 );
+					break;
+			}
+		}
+		else if( iUsed.id == 0x1eb8 || iUsed.id == 0x1eb9 || iUsed.id == 0x1eba || iUsed.id == 0x1ebb || iUsed.id == 0x1ebc ) // Tinker's tools
+		{
+			// Tinkering
+			if( enableUOX3Craft == 1 )
+			{
+				TriggerEvent( 4003, "onUseChecked", pUser, iUsed );
+				return;
+			}
+			socket.CloseGump( gumpID, 0 );
+			pUser.SetTempTag( "CRAFT", 7 )
+			switch( tempPage )
+			{
+				case 1: // Page 1
+				case 2: // Page 2
+				case 3: // Page 3
+				case 4: // Page 4
+				case 5: // Page 5
+				case 6: // Page 6
+				case 7: // Page 7
+				case 8: // Page 8
+				case 9: // Page 9
+					TriggerEvent( Tinkering, "pageX", socket, pUser, tempPage );
+					break;
+				default: TriggerEvent( Tinkering, "pageX", socket, pUser, 1 );
 					break;
 			}
 		}

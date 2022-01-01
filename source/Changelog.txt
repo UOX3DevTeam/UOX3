@@ -1,3 +1,20 @@
+01/01/2022 - DragonSlayer, Xuri
+	Crafting skills (Alchemy, Blacksmithing, Carpentry, Fletching, Tailoring) have been updated with new JS-based menus, up-to-date create DFNs with additional craftable items and extra features to fit the Pub15 era of UO (DragonSlayer)
+	Optimized portions of new crafting menus and added some additional features (Xuri)
+		Updated Character JS Method .CheckSkill to support an optional fourth parameter - isCraftSkill. This is a boolean flag that, if set to true, will use an alternate formula for skill-checks that give players at least 50% chance at success if they at least meat the minimum requirements. The formula used:
+		successChance = 500 + ((( playerSkill - minSkill ) / ( maxSkill - minSkill )) * 1000
+		Fixed an issue where the Rank System for crafting could mess with stacking of items; stackable items now default to max rank
+		Added new Item DFN tags:
+			usesleft=# 	// The current amount of uses remaining for an item with limited use
+			maxuses=# 	// The maximum amount of uses for an item with limted use
+		Added new JS Item properties to match DFN tags:
+			.usesLeft
+			.maxUses
+		Updated scripts to make use of .usesLeft property instead of custom "UsesLeft" tag
+		Updated DFNs to include usesleft and maxuses tags and uses_left_tooltip script for all tools with limited use
+		Crafting and gathering tools bought from NPC vendors will now support a random and limited amount of uses (between what is defined as "current" and "max" uses)
+		Crafting and gathering tools created by player crafters will support a limited amount of uses based on the quality of the item crafted
+
 19/12/2021 - Xuri
 	Fixed an issue where Socket JS Property .account did not properly return an object reference to the account associated with the socket
 	Added sound-effect for when lockpicks break (js/skill/lockpicking.js)
@@ -1119,7 +1136,7 @@
 			'decorate clean
 				Clean up duplicate decorations that might have been loaded/added by accident.
 		Note that world templates are by default stored in and read from a subfolder named "worldtemplates" under the new SCRIPTDATADIRECTORY (which defaults to UOX3/js/jsdata/)
-	Added welcome gump that is displayed automatically for characters on the admin account (account 0) on first login. This welcome gump gives new shard admins the option to either start with a blank and empty world, or to load the default UOX3 world - based on the default set of worldfile templates provided with UOX3, if any. It also provides a few tips to get started, as well as links to various documentation pages, forum and Discord server. The welcome gump can also be re-opened at a later stage using a new admin command: 'welcome
+	Added welcome gump that is displayed automatically for characters on the admin account (account 0) on first login. This welcome gump gives new shard admins the option to either start with a blank and empty world, or to load the default UOX3 world - based on the default set of world templates provided with UOX3, if any. It also provides a few tips to get started, as well as links to various documentation pages, forum and Discord server. The welcome gump can also be re-opened at a later stage using a new admin command: 'welcome
 	Updated Item JS Method Dupe() to support passing NULL instead of a socket, for duplicating items without needing to place them in a player's backpack
 
 11/06/2021 - Xuri

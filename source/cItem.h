@@ -33,6 +33,8 @@ protected:
 	UI32			tempVars[CITV_COUNT];
 	UI16			amount; // Amount of items in pile
 	UI16			maxhp; // Max number of hit points an item can have.
+	UI16			maxUses; // Max number of uses an item can have
+	UI16			usesLeft; // Current number of uses left on an item
 	UI08			spd; //The speed of the weapon
 	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
 	UI08			dir; //direction an item can have
@@ -193,6 +195,12 @@ public:
 
 	UI16			GetRestock( void ) const;
 	void			SetRestock( UI16 newValue );
+
+	UI16			GetMaxUses( void ) const;
+	void			SetMaxUses( UI16 newValue );
+
+	UI16			GetUsesLeft( void ) const;
+	void			SetUsesLeft( UI16 newValue );
 
 	ARMORCLASS		GetArmourClass( void ) const;
 	void			SetArmourClass( ARMORCLASS newValue );

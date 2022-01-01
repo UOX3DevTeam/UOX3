@@ -9,8 +9,11 @@ weight=100
 value=9 4
 restock=20
 decay=1
-script=4007
 good=51
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+script=4031// craft tool
 }
 
 [0x0f0e]

@@ -4,6 +4,7 @@ const Carpentry = 4025;
 const Alchemy = 4028;
 const Fletching = 4029;
 const Tailoring = 4030;
+const Tinkering = 4032;
 const scriptID = 4026; // This script
 const exceptionalWearablesOnly = true;
 
@@ -926,84 +927,84 @@ function ItemDetailGump( pUser )
 			HARVEST = [10014];
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 190:
+		case 190: // Kindling
 			createEntry = CreateEntries[190];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 191:
+		case 191: // Bow
 			createEntry = CreateEntries[191];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 192:
+		case 192: // Crossbow
 			createEntry = CreateEntries[192];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 193:
+		case 193: // Heavy Crossbow
 			createEntry = CreateEntries[193];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 194:
+		case 194: // Shaft
 			createEntry = CreateEntries[194];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 195:
+		case 195: // Five Shafts
 			createEntry = CreateEntries[195];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 196:
+		case 196: // Twenty Shafts
 			createEntry = CreateEntries[196];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 197:
+		case 197: // Fifty Shafts
 			createEntry = CreateEntries[197];
-			HARVEST = [10014];
+			HARVEST = [10014]; // Boards or Logs
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 198:
+		case 198: // Arrow
 			createEntry = CreateEntries[198];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 199:
+		case 199: // Five Arrows
 			createEntry = CreateEntries[199];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 200:
+		case 200: // Twenty Arrows
 			createEntry = CreateEntries[200];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 201:
+		case 201: // Fifty Arrows
 			createEntry = CreateEntries[201];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 202:
+		case 202: // Bolt
 			createEntry = CreateEntries[202];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 203:
+		case 203: // Five Bolts
 			createEntry = CreateEntries[203];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 204:
+		case 204: // Twenty Bolts
 			createEntry = CreateEntries[204];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
-		case 205:
+		case 205: // Fifty Bolts
 			createEntry = CreateEntries[205];
-			HARVEST = [10014, 10028];
+			HARVEST = [10029, 10028]; // Shaft, Feather
 			mainSkill = parseInt( pUser.skills.bowcraft );
 			break;
 		case 206:
@@ -1020,6 +1021,390 @@ function ItemDetailGump( pUser )
 			createEntry = CreateEntries[208];
 			HARVEST = [10014];
 			mainSkill = parseInt( pUser.skills.bowcraft );
+			break;
+		// Start Tinkering
+		case 274: // Axle
+			createEntry = CreateEntries[274];
+			HARVEST = [10014];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 273: // Clock Frame
+			createEntry = CreateEntries[273];
+			HARVEST = [10014];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 270: // Jointing Plane
+			createEntry = CreateEntries[270];
+			HARVEST = [10014];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 271: // Moulding Plane
+			createEntry = CreateEntries[271];
+			HARVEST = [10014];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 272: // Smoothing Plane
+			createEntry = CreateEntries[272];
+			HARVEST = [10014];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 2 - Tools
+		case 218: // Dovetail Saw
+			createEntry = CreateEntries[218];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 215: // Draw Knife
+			createEntry = CreateEntries[215];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 252: // Froe
+			createEntry = CreateEntries[252];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 255: // Hammer
+			createEntry = CreateEntries[255];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 214: // Hatchet
+			createEntry = CreateEntries[214];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 258: // Inshave
+			createEntry = CreateEntries[258];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 260: // Lockpick
+			createEntry = CreateEntries[260];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 211: // Mortar and Pestle
+			createEntry = CreateEntries[211];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 259: // Pick Axe
+			createEntry = CreateEntries[259];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 217: // Saw
+			createEntry = CreateEntries[217];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 210: // Scissors
+			createEntry = CreateEntries[210];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 212: // Scorp
+			createEntry = CreateEntries[212];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 216: // Sewing Kit
+			createEntry = CreateEntries[216];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 254: // Shovel
+			createEntry = CreateEntries[254];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 257: // Sledge Hammer
+			createEntry = CreateEntries[257];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 256: // Smith's Hammer
+			createEntry = CreateEntries[256];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 253: // Tongs
+			createEntry = CreateEntries[253];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 213: // Tool Kit (Tinker's tools)
+			createEntry = CreateEntries[213];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 3 - Parts
+		case 224: // Barrel Hoops
+			createEntry = CreateEntries[224];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 221: // Barrel Tap
+			createEntry = CreateEntries[221];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 220: // Clock parts
+			createEntry = CreateEntries[220];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 219: // Gears
+			createEntry = CreateEntries[219];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 225: // Hinge
+			createEntry = CreateEntries[225];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 223: // Sextant parts
+			createEntry = CreateEntries[223];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 222: // Springs
+			createEntry = CreateEntries[222];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 4 - Utensils
+		case 226: // Butcher Knife
+			createEntry = CreateEntries[226];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 232: // Cleaver
+			createEntry = CreateEntries[232];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 230: // Fork
+			createEntry = CreateEntries[230];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 231: // Fork
+			createEntry = CreateEntries[231];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 235: // Goblet
+			createEntry = CreateEntries[235];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 233: // Knife
+			createEntry = CreateEntries[233];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 234: // Knife
+			createEntry = CreateEntries[234];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 236: // Pewter Mug
+			createEntry = CreateEntries[236];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 229: // Plate
+			createEntry = CreateEntries[229];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 237: // Skinning Knife
+			createEntry = CreateEntries[237];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 227: // Spoon
+			createEntry = CreateEntries[227];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 228: // Spoon
+			createEntry = CreateEntries[228];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 5 - Jewelry
+		case 243: // Bracelet
+			createEntry = CreateEntries[243];
+			HARVEST = [10015, 12005];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 241: // Earrings
+			createEntry = CreateEntries[241];
+			HARVEST = [10015, 12005];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 239: // Necklage (Golden beads)
+			createEntry = CreateEntries[239];
+			HARVEST = [10015, 12005];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 240: // Necklace (Silver beads)
+			createEntry = CreateEntries[240];
+			HARVEST = [10015, 12005];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 242: // Necklace (Round)
+			createEntry = CreateEntries[242];
+			HARVEST = [10015, 12005];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 238: // Weddingband (newbiefied)
+			createEntry = CreateEntries[238];
+			HARVEST = [10015, 12006];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 6 - Miscellaneous
+		case 248: // Globe
+			createEntry = CreateEntries[248];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 251: // Heating stand
+			createEntry = CreateEntries[251];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 247: // Iron Key
+			createEntry = CreateEntries[247];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 244: // Keyring
+			createEntry = CreateEntries[244];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 250: // Lantern
+			createEntry = CreateEntries[250];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 246: // Scales
+			createEntry = CreateEntries[246];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 249: // Spy glass
+			createEntry = CreateEntries[249];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 7 - Multi-Component Items
+		case 275: // Axle and Gears
+			createEntry = CreateEntries[275];
+			HARVEST = [11801, 11863];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 276: // Clock
+			createEntry = CreateEntries[276];
+			HARVEST = [11802, 11862];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 277: // Clock
+			createEntry = CreateEntries[277];
+			HARVEST = [11802, 11862];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 278: // Clock Parts
+			createEntry = CreateEntries[278];
+			HARVEST = [11801, 11863];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 279: // Locked Box
+			createEntry = CreateEntries[279];
+			HARVEST = [10634];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 280: // Locked Chest
+			createEntry = CreateEntries[280];
+			HARVEST = [10638];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 281: // Potion Keg
+			createEntry = CreateEntries[281];
+			HARVEST = [10642];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 282: // Sextant
+			createEntry = CreateEntries[282];
+			HARVEST = [11948];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 283: // Sextant Parts
+			createEntry = CreateEntries[283];
+			HARVEST = [11801, 11863];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 8 - Candles
+		case 245: // Candelabra
+			createEntry = CreateEntries[245];
+			HARVEST = [10015, 12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 310: // Standing Candelabra
+			createEntry = CreateEntries[310];
+			HARVEST = [10015, 12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 315: // Regular Candle
+			createEntry = CreateEntries[315];
+			HARVEST = [10015, 12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 312: // Round Candle
+			createEntry = CreateEntries[312];
+			HARVEST = [12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 316: // Skull with Candle
+			createEntry = CreateEntries[316];
+			HARVEST = [12000, 12004];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 314: // Small Candle
+			createEntry = CreateEntries[314];
+			HARVEST = [12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 311: // Tall Candle
+			createEntry = CreateEntries[311];
+			HARVEST = [10015, 12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 313: // Thick Candle
+			createEntry = CreateEntries[313];
+			HARVEST = [12000];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		// Page 9 - Traps
+		case 261: // Dart Trap
+			createEntry = CreateEntries[261];
+			HARVEST = [10015, 12001];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 263: // Explosion Trap
+			createEntry = CreateEntries[263];
+			HARVEST = [10015, 12003];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
+		case 262: // Poison Trap
+			createEntry = CreateEntries[262];
+			HARVEST = [10015, 12002];
+			mainSkill = parseInt( pUser.skills.tinkering );
 			break;
 		//Start Alchemy
 		case 290:
@@ -1389,6 +1774,26 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( Blacksmithing, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
 						default: TriggerEvent( Blacksmithing, "pageX", pSock, pUser, 1 );
+							break;
+					}
+					break;
+				case 7: // Tinkering
+					pUser.SetTempTag( "ITEMDETAILS", null )
+					pSock.CloseGump( gumpID, 0 );
+					switch( pUser.GetTempTag( "page" ))
+					{
+						case 1: // Page 1
+						case 2: // Page 2
+						case 3: // Page 3
+						case 4: // Page 4
+						case 5: // Page 5
+						case 6: // Page 6
+						case 7: // Page 7
+						case 8: // Page 8
+						case 9: // Page 9
+							TriggerEvent( Tinkering, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							break;
+						default: TriggerEvent( Tinkering, "pageX", pSock, pUser, 1 );
 							break;
 					}
 					break;

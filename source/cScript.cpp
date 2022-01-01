@@ -3526,6 +3526,40 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnMakeItem( CSocket *tSock, CChar *objChar, CItem *objItem, UI16 createEntryID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows doing additional stuff with newly crafted items
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryID )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( objChar ) || mSock == nullptr )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnMakeItem, "onMakeItem" ) )
+		return RV_NOFUNC;
+
+	jsval rval, params[4];
+	JSObject *mySock	= JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, objChar, runTime );
+	JSObject *myItem	= JSEngine->AcquireObject( IUE_ITEM, objItem, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( mySock );
+	params[1] = OBJECT_TO_JSVAL( myChar );
+	params[2] = OBJECT_TO_JSVAL( myItem );
+	params[3] = INT_TO_JSVAL( createEntryID );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMakeItem", 4, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnMakeItem, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 OnPathfindEnd( CChar *ncp, SI08 pathfindResult )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs after their pathfinding efforts come to and end
