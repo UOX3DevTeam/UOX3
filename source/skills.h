@@ -8,7 +8,8 @@ struct resAmountPair
 	std::vector< UI16 > idList;
 	UI08 amountNeeded;
 	UI16 colour;
-	resAmountPair() : amountNeeded( 1 ), colour( 0 )
+	UI32 moreVal;
+	resAmountPair() : amountNeeded( 1 ), colour( 0 ), moreVal( 0 )
 	{
 		idList.resize( 0 );
 	}

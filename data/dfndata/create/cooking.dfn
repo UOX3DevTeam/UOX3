@@ -1,0 +1,431 @@
+// cooking.dfn
+
+//*****************************************
+// start of cooking section
+
+[SUBMENU 750]
+{ cooking
+MENU=2001 // Ingredients
+MENU=2002 // Preparation
+MENU=2003 // Baking
+MENU=2004 // Barbecue
+}
+
+[MENUENTRY 2000]
+{
+NAME=Previous Menu
+SUBMENU=750
+}
+
+// Ingredients
+[MENUENTRY 2001]
+{
+NAME=Ingredients
+ID=0x103a
+SUBMENU=2001
+}
+
+// Preparation
+[MENUENTRY 2002]
+{
+NAME=Preparation
+ID=0x1042
+SUBMENU=2002
+}
+
+// Baking
+[MENUENTRY 2003]
+{
+NAME=Baking
+ID=0x09e9
+SUBMENU=2003
+}
+
+// Barbecue
+[MENUENTRY 2004]
+{
+NAME=Barbecue
+ID=0x09b7
+SUBMENU=2004
+}
+
+[SUBMENU 2001]
+{
+ITEM=1500 // Sack of Flour
+ITEM=1501 // Dough
+ITEM=1502 // Sweet Dough
+ITEM=1503 // Cake Mix
+ITEM=1504 // Cookie Mix
+MENU=2000
+}
+[SUBMENU 2002]
+{
+ITEM=1550 // Unbaked Quiche
+ITEM=1551 // Unbaked Meat Pie
+ITEM=1552 // Uncooked Sausage Pizza
+ITEM=1553 // Uncooked Cheese Pizza
+ITEM=1554 // Unbaked Fruit Pie
+ITEM=1555 // Unbaked Peach Cobbler
+ITEM=1556 // Unbaked Apple Pie
+ITEM=1557 // Unbaked Pumpkin Pie
+MENU=2000
+}
+[SUBMENU 2003]
+{
+ITEM=1600 // Bread Loaf
+ITEM=1601 // Pan of Cookies
+ITEM=1602 // Cake
+ITEM=1603 // Muffins
+ITEM=1604 // Baked Quiche
+ITEM=1605 // Baked Meat Pie
+ITEM=1606 // Sausage Pizza
+ITEM=1607 // Cheese Pizza
+ITEM=1608 // Baked Fruit Pie
+ITEM=1609 // Baked Peach Cobbler
+ITEM=1610 // Baked Apple Pie
+ITEM=1611 // Baked Pumpkin Pie
+MENU=2000
+}
+[SUBMENU 2004]
+{
+ITEM=1650 // Cooked Bird
+ITEM=1651 // Chicken Leg
+ITEM=1652 // Fish Steak
+ITEM=1653 // Fried Eggs
+ITEM=1654 // Leg of Lamb
+ITEM=1655 // Cut of Ribs
+MENU=2000
+}
+
+// Ingredients
+[ITEM 1500]
+{
+NAME=sack of flour
+ID=0x1039
+RESOURCE=0x1ebd 1
+SKILL=13 0 1000
+ADDITEM=0x1039
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1501]
+{
+NAME=dough
+ID=0x103d
+RESOURCE=FLOUR 1
+RESOURCE=WATER 1
+SKILL=13 0 1000
+ADDITEM=0x103d
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1502]
+{
+NAME=sweet dough
+ID=0x103d
+RESOURCE=0x103d 1 0x0
+RESOURCE=0x09ec 1
+SKILL=13 0 1000
+ADDITEM=sweet_dough
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1503]
+{
+NAME=cake mix
+ID=0x103f
+RESOURCE=FLOUR 1
+RESOURCE=0x103d 1 0x96
+SKILL=13 0 1000
+ADDITEM=cake_mix
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1504]
+{
+NAME=cookie mix
+ID=0x103f
+RESOURCE=0x09ec 1
+RESOURCE=0x103d 1 0x96
+SKILL=13 0 1000
+ADDITEM=0x103f
+MINRANK=1
+MAXRANK=10
+}
+
+// Preparations
+[ITEM 1550]
+{
+NAME=unbaked quiche
+ID=0x1042
+RESOURCE=0x103d 1 0x0
+RESOURCE=0x09b5
+SKILL=13 0 1000
+ADDITEM=unbaked_quiche
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1551]
+{
+NAME=unbaked meat pie
+ID=0x1042
+RESOURCE=0x103d 1 0x0
+RESOURCE=RAWMEAT
+SKILL=13 0 1000
+ADDITEM=unbaked_meat_pie
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1552]
+{
+NAME=unbaked sausage pizza
+ID=0x1083
+RESOURCE=0x103d 1 0x0
+RESOURCE=SAUSAGES
+SKILL=13 0 1000
+ADDITEM=uncooked_sausage_pizza
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1553]
+{
+NAME=uncooked cheese pizza
+ID=0x1083
+RESOURCE=0x103d 1 0x0
+RESOURCE=0x097e
+SKILL=13 0 1000
+ADDITEM=uncooked_cheese_pizza
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1554]
+{
+NAME=unbaked fruit pie
+ID=0x1042
+RESOURCE=0x103d 1 0x0
+RESOURCE=0x0994
+SKILL=13 0 1000
+ADDITEM=unbaked_fruit_pie
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1555]
+{
+NAME=unbaked peach cobbler
+ID=0x1042
+RESOURCE=0x103d 1 0x0
+RESOURCE=0x09d2
+SKILL=13 0 1000
+ADDITEM=unbaked_peach_cobbler
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1556]
+{
+NAME=unbaked apple pie
+ID=0x1042
+RESOURCE=0x103d 1 0x0
+RESOURCE=0x09d0
+SKILL=13 0 1000
+ADDITEM=unbaked_apple_pie
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1557]
+{
+NAME=unbaked pumpkin pie
+ID=0x1042
+RESOURCE=0x103d 1 0x0
+RESOURCE=PUMPKINS
+SKILL=13 0 1000
+ADDITEM=unbaked_pumpkin_pie
+MINRANK=1
+MAXRANK=10
+}
+
+// Baking
+[ITEM 1600]
+{
+NAME=bread loaf
+ID=0x103b
+RESOURCE=0x103d 1 0x0
+SKILL=13 0 1000
+ADDITEM=0x103b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1601]
+{
+NAME=pan of cookies
+ID=0x160b
+RESOURCE=0x103f 1 0x0
+SKILL=13 0 1000
+ADDITEM=0x160b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1602]
+{
+NAME=cake
+ID=0x09e9
+RESOURCE=0x103f 1 0x0 0x1
+SKILL=13 0 1000
+ADDITEM=0x09e9
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1603]
+{
+NAME=muffin
+ID=0x09ea
+RESOURCE=0x103d 1 0x96
+SKILL=13 0 1000
+ADDITEM=0x09ea
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1604]
+{
+NAME=baked quiche
+ID=0x1041
+RESOURCE=0x1042 1 0x0
+SKILL=13 0 1000
+ADDITEM=baked_quiche
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1605]
+{
+NAME=baked meat pie
+ID=0x1041
+RESOURCE=0x1042 1 0x0 0x1
+SKILL=13 0 1000
+ADDITEM=baked_meat_pie
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1606]
+{
+NAME=sausage pizza
+ID=0x1040
+RESOURCE=0x1042 1 0x0
+SKILL=13 0 1000
+ADDITEM=sausage_pizza
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1607]
+{
+NAME=cheese pizza
+ID=0x1040
+RESOURCE=0x1042 1 0x0 0x1
+SKILL=13 0 1000
+ADDITEM=cheese_pizza
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1608]
+{
+NAME=baked fruit pie
+ID=0x1041
+RESOURCE=0x1042 1 0x0 0x2
+SKILL=13 0 1000
+ADDITEM=baked_fruit_pie
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1609]
+{
+NAME=baked peach cobbler
+ID=0x1041
+RESOURCE=0x1042 1 0x0 0x3
+SKILL=13 0 1000
+ADDITEM=baked_peach_cobbler
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1610]
+{
+NAME=baked apple pie
+ID=0x1041
+RESOURCE=0x1042 1 0x0 0x4
+SKILL=13 0 1000
+ADDITEM=baked_apple_pie
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1611]
+{
+NAME=baked pumpkin pie
+ID=0x1041
+RESOURCE=0x1042 1 0x0 0x5
+SKILL=13 0 1000
+ADDITEM=baked_pumpkin_pie
+MINRANK=1
+MAXRANK=10
+}
+
+// Barbecue
+[ITEM 1650]
+{
+NAME=cooked bird
+ID=0x09b7
+RESOURCE=RAWBIRDS
+SKILL=13 0 1000
+ADDITEM=0x09b7
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1651]
+{
+NAME=chicken leg
+ID=0x1608
+RESOURCE=0x1607
+SKILL=13 0 1000
+ADDITEM=0x1608
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1652]
+{
+NAME=fish steak
+ID=0x097b
+RESOURCE=0x097a
+SKILL=13 0 1000
+ADDITEM=0x097b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1653]
+{
+NAME=fried eggs
+ID=0x09b6
+RESOURCE=0x09b5
+SKILL=13 0 1000
+ADDITEM=0x09b6
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1654]
+{
+NAME=leg of lamb
+ID=0x160a
+RESOURCE=0x1609
+SKILL=13 0 1000
+ADDITEM=0x160a
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 1655]
+{
+NAME=cut of ribs
+ID=0x09f2
+RESOURCE=0x09f1
+SKILL=13 0 1000
+ADDITEM=0x09f2
+MINRANK=1
+MAXRANK=10
+}
+
+// end of cooking section
+//*****************************************

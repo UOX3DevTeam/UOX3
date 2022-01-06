@@ -1513,7 +1513,7 @@ bool CTownRegion::PeriodicCheck( void )
 
 				if( taxedAmount > numResources )
 				{
-					UI32 bankAmount = GetBankCount( townMem, resourceID, 0 );
+					UI32 bankAmount = GetBankCount( townMem, resourceID, 0, 0 );
 					if( taxedAmount > ( numResources + bankAmount ) )
 						JailSys->JailPlayer( townMem, 900 );
 					else

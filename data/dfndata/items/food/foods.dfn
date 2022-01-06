@@ -227,6 +227,24 @@ value=8 4
 pileable=1
 }
 
+[sausage_pizza]
+{
+get=base_food
+name=sausage pizza
+id=0x1040
+value=8 4
+pileable=1
+}
+
+[cheese_pizza]
+{
+get=base_food
+name=cheese pizza
+id=0x1040
+value=8 4
+pileable=1
+}
+
 [0x1041]
 {
 get=base_food
@@ -256,6 +274,7 @@ value=8 4
 get=base_food
 name=baked meat pie
 id=0x1041
+color=0xf0
 value=8 4
 }
 

@@ -93,12 +93,12 @@ TIMERVAL getPoisonTickTime( UI08 poisonStrength );
 //o-----------------------------------------------------------------------------------------------o
 // Amount related
 //o-----------------------------------------------------------------------------------------------o
-UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000, bool colorCheck = false );
+UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false );
 UI32	GetTotalItemCount( CItem *objCont );
-UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
-UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
-UI32	GetBankCount( CChar *p, UI16 itemID, UI16 realColour = 0x0000 );
-UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000 );
+UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	GetBankCount( CChar *p, UI16 itemID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
 
 //o-----------------------------------------------------------------------------------------------o
 // Region related

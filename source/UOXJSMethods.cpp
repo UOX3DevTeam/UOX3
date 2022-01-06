@@ -3263,8 +3263,9 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	int ResourceCount( realitemid, colour )
+//|					int ResourceCount( realitemid, colour, moreVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the amount of the items of given ID and colour character has in packs
+//|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character has in packs
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -3276,23 +3277,28 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	UI16 realID = (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 realID = static_cast<UI16>(JSVAL_TO_INT( argv[0] ));
 	SI32 itemColour = 0;
+	UI32 moreVal = 0;
 
-	if(( argc < 1 ) || ( argc > 2 ))
+	if(( argc < 1 ) || ( argc > 3 ))
 	{
-		MethodError( "(ResourceCount) Invalid count of parameters: %d, either needs 1 or 2" , argc );
+		MethodError( "(ResourceCount) Invalid count of parameters: %d, either needs 1, 2 or 3" , argc );
 		return JS_FALSE;
 	}
 
-	if( argc == 2 )
+	if( argc >= 2 )
 	{
-		itemColour = (SI32)JSVAL_TO_INT( argv[1] );
+		itemColour = static_cast<SI32>(JSVAL_TO_INT( argv[1] ));
+	}
+	if( argc >= 3 )
+	{
+		moreVal = static_cast<UI32>(JSVAL_TO_INT( argv[2] ));
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realID, static_cast<UI16>( itemColour ), colorCheck ));
+	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realID, static_cast<UI16>( itemColour ), moreVal, colorCheck ));
 	return JS_TRUE;
 }
 
@@ -3300,9 +3306,10 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Function	-	JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	int UseResource( amount, realitemid )
 //|					int UseResource( amount, realitemid, colour )
+//|					int UseResource( amount, realitemid, colour, moreVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Removes specified amount of items of given ID and colour from char's packs,
-//|					and returns amount deleted
+//|	Purpose		-	Removes specified amount of items of given ID, colour and MORE value from
+//|					char's packs, and returns amount deleted
 //o-----------------------------------------------------------------------------------------------o
 JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -3315,20 +3322,25 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	UI16 realID		= (UI16)JSVAL_TO_INT( argv[1] );
+	UI32 amount		= static_cast<UI32>(JSVAL_TO_INT( argv[0] ));
+	UI16 realID		= static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
 	UI16 itemColour = 0;
-	UI32 amount		= (UI32)JSVAL_TO_INT( argv[0] );
+	UI32 moreVal	= 0;
 
-	// Min. 2 Arguments (amount + id) or 3
-	if(( argc < 2 ) || ( argc > 3 ))
+	// Min. 2 Arguments (amount + id) or max 4 (amount + id + color + moreVal)
+	if(( argc < 2 ) || ( argc > 4 ))
 	{
-		MethodError( "(UseResource) Invalid count of parameters: %d, either needs 2 or 3" , argc );
+		MethodError( "(UseResource) Invalid count of parameters: %d, either needs 2, 3 or 4" , argc );
 		return JS_FALSE;
 	}
 
-	if( argc == 3 )
+	if( argc >= 3 )
 	{
-		itemColour = (UI16)JSVAL_TO_INT( argv[2] );
+		itemColour = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
+	}
+	if( argc >= 4 )
+	{
+		moreVal = static_cast<UI16>(JSVAL_TO_INT( argv[3] ));
 	}
 
 	UI32 retVal = 0;
@@ -3336,12 +3348,12 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		CChar *myChar	= static_cast<CChar *>(myObj);
-		retVal			= DeleteItemAmount( myChar, amount, realID, itemColour );
+		retVal			= DeleteItemAmount( myChar, amount, realID, itemColour, moreVal );
 	}
 	else
 	{
 		CItem *myItem	= static_cast<CItem *>(myObj);
-		retVal			= DeleteSubItemAmount( myItem, amount, realID, itemColour );
+		retVal			= DeleteSubItemAmount( myItem, amount, realID, itemColour, moreVal );
 	}
 	*rval = INT_TO_JSVAL( retVal );
 	return JS_TRUE;

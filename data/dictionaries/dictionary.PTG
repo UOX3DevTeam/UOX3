@@ -3229,7 +3229,7 @@
 6077=Tentou fazer massa mas falhou.
 6078=Você faz alguma massa.
 6079=Não se pode usar isso para fazer massa.
-6080=Não tem recursos suficientes! Precisa de 4 roldanas de trigo!
+6080=Você não tem recursos suficientes! Precisa de 1 molho de trigo!
 6081=Onde deseja moer o trigo?
 6082=Não pode moer o seu trigo com isso.
 6083=Mói algum trigo e coloca um saco de farinha na sua mochila!
@@ -3952,6 +3952,7 @@
 9112=Tu'rt um criminoso e não pode escapar tão facilmente.
 9113=Fugirás durante o calor da batalha?
 9114=Tu estás demasiado ocupado para o fazer neste momento.
+9115=Você deve esvaziar a arca antes de poder retirar esta tenda!
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
@@ -4408,6 +4409,27 @@
 11633=ovos fritos
 11634=leg of lamb
 11635=corte de costelas
+11636=trigo
+11637=flor
+11638=água
+11639=honey
+11640=egg
+11641=carne em rama
+11642=sausagem
+11643=queijo
+11644=pear
+11645=peach
+11646=maçã
+11647=abóbora
+11648=ave de tracção
+11649=Perna de frango de trave
+11650=bife de peixe
+11651=egg
+11652=Perna de cordeiro de rastelo
+11653=costela de traço
+11654=É preciso estar perto de uma fonte de calor para cozinhar os alimentos.
+11655=Tem de estar perto de um moinho para criar farinha.
+11656=Tem de estar perto de um forno para cozer alimentos.
 // 11801 - 12000 Habilidade de Artesanato de Sininho
 // Página 1 - Artigos de madeira
 11801=Eixo

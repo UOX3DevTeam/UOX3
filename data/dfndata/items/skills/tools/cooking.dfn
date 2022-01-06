@@ -9,6 +9,45 @@ usesleft=25
 script=2200// uses left tooltip
 }
 
+// Skillet/Frying Pan
+[0x097f]
+{
+get=base_item
+name=skillet
+id=0x097f
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+}
+
+// Skillet/Frying Pan
+[0x09e2]
+{
+get=0x097f
+id=0x09e2
+}
+
+// Sifter/Flour Sifter
+[0x103e]
+{
+get=base_item
+name=sifter
+id=0x103e
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+}
+
 [0x0461]
 {
 get=base_item

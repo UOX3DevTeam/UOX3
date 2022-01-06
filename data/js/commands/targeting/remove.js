@@ -1,6 +1,7 @@
 function CommandRegistration()
 {
 	RegisterCommand( "remove", 2, true );
+	RegisterCommand( "removemulti", 3, true );
 	RegisterCommand( "delete", 2, true );
 	RegisterCommand( "deletechar", 3, true );
 }
@@ -69,6 +70,13 @@ function onCallback0( socket, ourObj )
 					// any items locked down inside?
 
 					socket.SysMessage( GetDictionaryEntry( 1013, socket.language )); // Removing item.
+
+					if( ourObj.type == 1 && ourObj.id == 0x0e43 && ValidateObject( ourObj.multi ) && ourObj.more == ourObj.multi.serial )
+					{
+						// Chest of a tent multi. Destroy the multi too!
+						var objMulti = ourObj.multi;
+						objMulti.Delete();
+					}
 					ourObj.Delete();
 				}
 			}
@@ -98,5 +106,62 @@ function onCallback1( socket, ourObj )
 			}
 		}
 		ourObj.Delete();
+	}
+}
+
+function command_REMOVEMULTI( socket, cmdString )
+{
+	socket.tempint = null;
+	var targMsg = GetDictionaryEntry( 188, socket.language ); // Select item to remove.
+	socket.CustomTarget( 2, targMsg );
+}
+
+function onCallback2( socket, ourObj )
+{
+	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ) )
+	{
+		// Find multi at target location
+		var targX = socket.GetWord( 11 );
+		var targY = socket.GetWord( 13 );
+		var targZ = socket.GetSByte( 16 );
+		var iMulti = FindMulti( targX, targY, targZ, socket.currentChar.worldnumber, socket.currentChar.instanceID )
+		if( iMulti && iMulti.IsMulti() )
+		{
+			// Iterate through characters in house, delete player vendors and eject all other characters from house
+			for( var charInHouse = iMulti.FirstChar(); !iMulti.FinishedChars(); charInHouse = iMulti.NextChar() )
+			{
+				if( !ValidateObject( charInHouse ))
+					continue;
+
+				if( !ValidateObject( charInHouse.multi ))
+					continue;
+
+				if( charInHouse.aitype == 17 ) // player vendor AI
+				{
+					charInHouse.Delete();
+				}
+				else
+				{
+					// Eject character from house
+					TriggerEvent( 15002, "EjectPlayerActual", iMulti, charInHouse );
+				}
+			}
+
+			// Iterate through items in the house and remove those too
+			var itemInHouse;
+			for( itemInHouse = iMulti.FirstItem(); !iMulti.FinishedItems(); itemInHouse = iMulti.NextItem() )
+			{
+				if( !ValidateObject( itemInHouse ))
+					continue;
+
+				if( !ValidateObject( itemInHouse.multi ))
+					continue;
+
+				itemInHouse.Delete();
+			}
+
+			// Finally, delete the multi itself
+			iMulti.Delete();
+		}
 	}
 }

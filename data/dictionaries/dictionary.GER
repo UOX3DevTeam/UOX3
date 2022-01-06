@@ -3229,7 +3229,7 @@
 6077=Du hast versucht, Teig zu machen, bist aber gescheitert.
 6078=Du machst etwas Teig.
 6079=Das kannst du nicht zum Teigmachen verwenden.
-6080=Du hast nicht genug Rohstoffe! Du brauchst 4 Garben Weizen!
+6080=Du hast nicht genug Ressourcen! Du brauchst 1 Garbe Weizen!
 6081=Wo wollen Sie den Weizen mahlen?
 6082=Damit können Sie Ihren Weizen nicht mahlen.
 6083=Du mahlst etwas Weizen und packst einen Sack Mehl in deinen Rucksack!
@@ -3953,6 +3953,7 @@
 9112=Du bist ein Verbrecher und kannst nicht so leicht entkommen.
 9113=Willst du in der Hitze des Gefechts fliehen?
 9114=Dafür bist du im Moment zu beschäftigt.
+9115=Du musst die Truhe leeren, bevor du dieses Zelt entfernen kannst!
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -4409,6 +4410,27 @@
 11633=Spiegeleier
 11634=Lammkeule
 11635=Rippenstück
+11636=Weizen
+11637=Mehl
+11638=Wasser
+11639=Honig
+11640=Ei
+11641=Rohfleisch
+11642=Würstchen
+11643=Käse
+11644=Birne
+11645=Pfirsich
+11646=Apfel
+11647=Kürbis
+11648=Rohvogel
+11649=rohe Hühnerkeule
+11650=Fischsteak
+11651=Ei
+11652=Lammkeule, roh
+11653=rohe Rippe
+11654=Du musst in der Nähe einer Wärmequelle sein, um Essen zu kochen.
+11655=Du musst in der Nähe einer Mühle sein, um Mehl herzustellen.
+11656=Du musst in der Nähe eines Ofens sein, um Essen zu backen.
 // 11801 - 12000 Handwerkliches Geschick
 // Seite 1 - Hölzerne Gegenstände
 11801=Achse

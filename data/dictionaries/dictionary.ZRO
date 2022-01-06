@@ -3229,7 +3229,7 @@
 6077=You tried to make dough but failed.
 6078=You make some dough.
 6079=You cannot use that for making dough.
-6080=You do not have enough resources! You need 4 sheaves of wheat!
+6080=You do not have enough resources! You need 1 sheaf of wheat!
 6081=Where do you wish to grind the wheat?
 6082=You cannot grind your wheat on that.
 6083=You grind some wheat and put a sack of flour in your pack!
@@ -3951,6 +3951,7 @@
 9112=Thou'rt a criminal and cannot escape so easily.
 9113=Wouldst thou flee during the heat of battle??
 9114=You are too busy to do that at the moment.
+9115=You must empty the chest before you can remove this tent!
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -4407,6 +4408,24 @@
 11633=fried eggs
 11634=leg of lamb
 11635=cut of ribs
+11636=wheat
+11637=flour
+11638=water
+11639=honey
+11640=egg
+11641=raw meat
+11642=sausage
+11643=cheese
+11644=pear
+11645=peach
+11646=apple
+11647=pumpkin
+11648=raw bird
+11649=raw chicken leg
+11650=fish steak
+11651=egg
+11652=raw leg of lamb
+11653=raw rib
 // 11801 - 12000 Tinkering Crafting Skill
 // Page 1 - Wooden Items
 11801=Axle

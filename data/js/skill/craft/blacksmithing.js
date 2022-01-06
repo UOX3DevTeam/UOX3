@@ -1069,8 +1069,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			MakeItem( pSock, pUser, makeID );
 			if( GetServerSetting( "ToolUseLimit" ))
 			{
-				bItem.health -= 1;
-				if( bItem.health == 0 && GetServerSetting( "ToolUseBreak" ))
+				bItem.usesLeft -= 1;
+				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 				{
 					bItem.Delete();
 					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!

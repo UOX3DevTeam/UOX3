@@ -131,7 +131,7 @@ function CallWipe( socket, cmdString )
 					case 1: // MULTIS
 						if( saidAll || uKey == "MULTIS" )
 						{
-							isSpawner = true;
+							isMulti = true;
 							iterateString = "MULTI";
 						}
 						break;
@@ -145,7 +145,7 @@ function CallWipe( socket, cmdString )
 					case 3: // NPCS
 						if( saidAll || uKey == "NPCS" )
 						{
-							isBoat = true;
+							isNPC = true;
 							iterateString = "CHARACTER";
 						}
 						break;

@@ -3229,7 +3229,7 @@
 6077=Intentaste hacer masa pero no lo lograste.
 6078=Haces algo de pasta.
 6079=No se puede utilizar para hacer la masa.
-6080=¡No tienes suficientes recursos! Necesitas 4 gavillas de trigo!
+6080=¡No tienes suficientes recursos! ¡Necesitas 1 gavilla de trigo!
 6081=¿Dónde desea moler el trigo?
 6082=No puedes moler tu trigo en eso.
 6083=Mueles un poco de trigo y metes un saco de harina en tu mochila.
@@ -3953,6 +3953,7 @@
 9112=Eres un criminal y no puedes escapar tan fácilmente.
 9113=¿Quieres huir en el fragor de la batalla?
 9114=Estás demasiado ocupado para hacerlo en este momento.
+9115=¡Debes vaciar el cofre antes de poder quitar esta tienda!
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!
@@ -4409,6 +4410,27 @@
 11633=huevos fritos
 11634=pierna de cordero
 11635=corte de costillas
+11636=trigo
+11637=harina
+11638=agua
+11639=miel
+11640=huevo
+11641=carne cruda
+11642=embutido
+11643=queso
+11644=perro
+11645=melocotón
+11646=manzana
+11647=calabaza
+11648=pájaro crudo
+11649=pierna de pollo cruda
+11650=bistec de pescado
+11651=huevo
+11652=pierna de cordero cruda
+11653=costilla cruda
+11654=Debes estar cerca de una fuente de calor para cocinar los alimentos.
+11655=Debes estar cerca de un molino para crear harina.
+11656=Debes estar cerca de un horno para cocer alimentos.
 // 11801 - 12000 Habilidad de Artesanía
 // Página 1 - Artículos de madera
 11801=Eje

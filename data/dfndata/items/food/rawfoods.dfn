@@ -227,19 +227,10 @@ value=2 1
 restock=10
 }
 
-[unbaked_apple_pie]
+[unbaked_quiche]
 {
 get=base_raw_food
-name=unbaked apple pie
-id=0x1042
-weight=100
-value=4 2
-}
-
-[unbaked_pumpkin_pie]
-{
-get=base_raw_food
-name=unbaked pumpkin pie
+name=unbaked quiche
 id=0x1042
 weight=100
 value=4 2
@@ -252,6 +243,7 @@ name=unbaked meat pie
 id=0x1042
 weight=100
 value=4 2
+more=0x1
 }
 
 [unbaked_fruit_pie]
@@ -261,6 +253,7 @@ name=unbaked fruit pie
 id=0x1042
 weight=100
 value=4 2
+more=0x2
 }
 
 [unbaked_peach_cobbler]
@@ -270,15 +263,28 @@ name=unbaked peach cobbler
 id=0x1042
 weight=100
 value=4 2
+more=0x3
 }
 
-[unbaked_quiche]
+[unbaked_apple_pie]
 {
 get=base_raw_food
-name=unbaked quiche
+name=unbaked apple pie
+id=0x1042
+weight=100
+more=1
+value=4 2
+more=0x4
+}
+
+[unbaked_pumpkin_pie]
+{
+get=base_raw_food
+name=unbaked pumpkin pie
 id=0x1042
 weight=100
 value=4 2
+more=0x5
 }
 
 [uncooked_sausage_pizza]
@@ -299,4 +305,5 @@ id=0x1083
 weight=100
 value=4 2
 restock=10
+more=0x1
 }

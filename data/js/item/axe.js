@@ -51,7 +51,7 @@ function onCallback1( socket, ourObj )
 			}
 			else if( ourObj )
 			{
-				if( ourObj.type == 1 && ourObj.movable == 2 && !ourObj.GetTag( "addon" )) // Strongbox, and not an addon
+				if( ourObj.type == 1 && ourObj.movable == 2 && !ourObj.GetTag( "addon" )) // Strongbox or Tent chest, and not an addon
 				{
 					var objMulti = ourObj.multi;
 					if( ValidateObject( objMulti ))
@@ -60,6 +60,9 @@ function onCallback1( socket, ourObj )
 						{
 							if( ourObj.itemsinside > 0 )
 							{
+								if( ourObj.id == 0x0e43 ) // Tent chest
+									socket.SysMessage( GetDictionaryEntry( 9115, socket.language )); // You must empty the chest before you can remove this tent!
+								else // Strongbox
 								socket.SysMessage( GetDictionaryEntry( 1964, socket.language )); // You must empty the strongbox before you can destroy it!
 								return;
 							}
@@ -71,7 +74,28 @@ function onCallback1( socket, ourObj )
 								}
 								socket.SoundEffect( 0x3B3, true);
 								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
+
+								if( ourObj.id == 0x0e43 ) // Tent chest
+								{
+									// First delete the chest
+									ourObj.Delete();
+
+									// Then add a new deed for the tent
+									var newDeed = CreateDFNItem( socket, mChar, objMulti.deed, 1, "ITEM", true );
+									if( newDeed )
+									{
+										socket.SysMessage( GetDictionaryEntry( 578, socket.language ), objMulti.name ); // Demolishing House %s.
+										socket.SysMessage( GetDictionaryEntry( 579, socket.language ), newDeed.name ); // Converted into a %s.
+									}
+
+									// Finally, remove the tent itself
+									objMulti.Delete();
+								}
+								else
+								{
+									// Strongbox
 								ourObj.Delete();
+								}
 							}
 						}
 					}

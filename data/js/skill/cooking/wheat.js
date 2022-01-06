@@ -17,12 +17,13 @@ function onUseChecked ( pUser, iUsed )
 			srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
 		else
 		{
-			var countOfResource = pUser.ResourceCount( 0x1EBD );	// item ID
+			// Not needed, in Pub15 era it takes 1 wheat to get 1 sack of flour
+			/*var countOfResource = pUser.ResourceCount( 0x1EBD );	// item ID
 			if( countOfResource < 4 )
 			{
 				srcSock.SysMessage( GetDictionaryEntry( 6080, srcSock.language )); // You do not have enough resources! You need 4 sheaves of wheat!
 			}
-			else
+			else*/
 				srcSock.CustomTarget( 0, GetDictionaryEntry( 6081, srcSock.language )); // Where do you wish to grind the wheat?
 		}
 	}
@@ -57,12 +58,12 @@ function onCallback0( tSock, myTarget )
 
 			// remove 4 sheaves of wheat
 			var iMakeResource = pUser.ResourceCount( 0x1EBD );// is there enough resources to use up to make it
-			if( iMakeResource < 4 )
+			if( iMakeResource < 1 )
 			{
 				tSock.SysMessage( GetDictionaryEntry( 6080, tSock.language )); // You do not have enough resources! You need 4 sheaves of wheat!
 				return;
 			}
-			pUser.UseResource( 4, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
+			pUser.UseResource( 1, 0x1EBD ); // uses up a resource (amount, item ID, item colour)
 			pUser.SoundEffect( 0x021e, true );
 
 			if( tileID == 0x1922 || tileID == 0x192e )
@@ -95,7 +96,7 @@ function onTimer( timerObj, timerID )
 			timerObj.StartTimer( 100, 2, true );
 			break;
 		case 2:
-			if( timerObj == 0x1923 )
+			if( timerObj.id == 0x1923 )
 				timerObj.id = 0x1926;
 			else
 				timerObj.id = 0x1932;
@@ -107,7 +108,7 @@ function onTimer( timerObj, timerID )
 			timerObj.SetTempTag( "fakeFlourSerial", (fakeFlourBees.serial).toString() );
 			break;
 		case 3:
-			if( timerObj == 0x1926 )
+			if( timerObj.id == 0x1926 )
 				timerObj.id = 0x1927;
 			else
 				timerObj.id = 0x1933;

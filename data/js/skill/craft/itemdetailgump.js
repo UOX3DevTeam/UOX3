@@ -6,13 +6,14 @@ const Fletching = 4029;
 const Tailoring = 4030;
 const Tinkering = 4032;
 const scriptID = 4026; // This script
+const Cooking = 4034;
 const exceptionalWearablesOnly = true;
 
 function ItemDetailGump( pUser )
 {
 	var socket = pUser.socket;
 	var itemGump = new Gump;
-	var createEntry;
+	var createEntry = null;
 	var HARVEST;
 	var mainSkill;
 	switch( pUser.GetTempTag( "ITEMDETAILS" ))
@@ -1507,6 +1508,173 @@ function ItemDetailGump( pUser )
 			HARVEST = [10023];
 			mainSkill = parseInt( pUser.skills.alchemy );
 			break;
+		// Start Cooking
+		// Page 1 - Ingredients
+		case 1500: // Sack of Flour
+			createEntry = CreateEntries[1500];
+			HARVEST = [11636];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1501: // Dough
+			createEntry = CreateEntries[1501];
+			HARVEST = [11637, 11639];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1502: // Sweet Dough
+			createEntry = CreateEntries[1502];
+			HARVEST = [11607, 11638];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1503: // Cake Mix
+			createEntry = CreateEntries[1503];
+			HARVEST = [11637, 11608];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1504: // Cookie Mix
+			createEntry = CreateEntries[1504];
+			HARVEST = [11639, 11608];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		// Page 2 - Preparation
+		case 1550: // Unbaked Quiche
+			createEntry = CreateEntries[1550];
+			HARVEST = [11607, 11640];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1551: // Unbaked Meat Pie
+			createEntry = CreateEntries[1551];
+			HARVEST = [11607, 11641];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1552: // Uncooked Sausage Pizza
+			createEntry = CreateEntries[1552];
+			HARVEST = [11607, 11642];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1553: // Uncooked Cheese Pizza
+			createEntry = CreateEntries[1553];
+			HARVEST = [11607, 11643];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1554: // Unbaked Fruit Pie
+			createEntry = CreateEntries[1554];
+			HARVEST = [11607, 11644];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1555: // Unbaked Peach Cobbler
+			createEntry = CreateEntries[1555];
+			HARVEST = [11607, 11645];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1556: // Unbaked Apple Pie
+			createEntry = CreateEntries[1556];
+			HARVEST = [11607, 11646];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1557: // Unbaked Pumpkin Pie
+			createEntry = CreateEntries[1557];
+			HARVEST = [11607, 11647];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		// Page 3 - Baking
+		case 1600: // Bread Loaf
+			createEntry = CreateEntries[1600];
+			HARVEST = [11607];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1601: // Pan of Cookies
+			createEntry = CreateEntries[1601];
+			HARVEST = [11610];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1602: // Cake
+			createEntry = CreateEntries[1602];
+			HARVEST = [11609];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1603: // Muffins
+			createEntry = CreateEntries[1603];
+			HARVEST = [11608];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1604: // Baked Quiche
+			createEntry = CreateEntries[1604];
+			HARVEST = [11611];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1605: // Baked Meat Pie
+			createEntry = CreateEntries[1605];
+			HARVEST = [11612];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1606: // Sausage Pizza
+			createEntry = CreateEntries[1606];
+			HARVEST = [11613];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1607: // Cheese Pizza
+			createEntry = CreateEntries[1607];
+			HARVEST = [11614];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1608: // Baked Fruit Pie
+			createEntry = CreateEntries[1608];
+			HARVEST = [11615];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1609: // Baked Peach Cobbler
+			createEntry = CreateEntries[1609];
+			HARVEST = [11616];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1610: // Baked Apple Pie
+			createEntry = CreateEntries[1610];
+			HARVEST = [11617];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1611: // Baked Pumpkin Pie
+			createEntry = CreateEntries[1611];
+			HARVEST = [11618];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		// Page 4 - Barbecue
+		case 1650: // Cooked Bird
+			createEntry = CreateEntries[1650];
+			HARVEST = [11648];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1651: // Chicken Leg
+			createEntry = CreateEntries[1651];
+			HARVEST = [11649];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1652: // Fish Steak
+			createEntry = CreateEntries[1652];
+			HARVEST = [11650];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1653: // Fried Eggs
+			createEntry = CreateEntries[1653];
+			HARVEST = [11651];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1654: // Leg of Lamb
+			createEntry = CreateEntries[1654];
+			HARVEST = [11652];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		case 1655: // Cut of Ribs
+			createEntry = CreateEntries[1655];
+			HARVEST = [11653];
+			mainSkill = parseInt( pUser.skills.cooking );
+			break;
+		default:
+			break;
+	}
+
+	if( createEntry == null )
+	{
+		return;
 	}
 
 	// Fetch properties of create entry
@@ -1774,6 +1942,21 @@ function onGumpPress( pSock, pButton, gumpData )
 							TriggerEvent( Blacksmithing, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
 						default: TriggerEvent( Blacksmithing, "pageX", pSock, pUser, 1 );
+							break;
+					}
+					break;
+				case 6: // Cooking
+					pUser.SetTempTag( "ITEMDETAILS", null )
+					pSock.CloseGump( gumpID, 0 );
+					switch( pUser.GetTempTag("page" ))
+					{
+						case 1: // Page 1
+						case 2: // Page 2
+						case 3: // Page 3
+						case 4: // Page 4
+							TriggerEvent( Cooking, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							break;
+						default: TriggerEvent( Cooking, "pageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
