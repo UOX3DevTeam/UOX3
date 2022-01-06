@@ -61,18 +61,6 @@ id=0x0975
 weight=1000
 }
 
-[0x097f]
-{ 
-get=base_item
-name=frypan
-id=0x097f
-weight=100
-value=6 3
-restock=15
-decay=1
-good=4
-}
-
 [0x0991]
 { S
 get=base_item
@@ -346,14 +334,6 @@ weight=100
 get=base_item
 name=pot
 id=0x09e1
-weight=100
-}
-
-[0x09e2]
-{
-get=base_item
-name=frypan
-id=0x09e2
 weight=100
 }
 

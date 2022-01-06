@@ -3229,7 +3229,7 @@
 6077=Próbowałeś zrobić ciasto, ale ci się nie udało.
 6078=Upieczesz trochę ciasta.
 6079=Nie możesz użyć tego do zrobienia ciasta.
-6080=Nie masz wystarczającej ilości zasobów! Potrzebujesz 4 snopów pszenicy!
+6080=Nie masz wystarczających zasobów! Potrzebujesz 1 snop pszenicy!
 6081=Gdzie chcesz zmielić pszenicę?
 6082=Nie możesz zmielić pszenicy na tym.
 6083=Umiel trochę pszenicy i włóż worek mąki do plecaka!
@@ -3953,6 +3953,7 @@
 9112=Jesteś przestępcą i nie możesz tak łatwo uciec.
 9113=Czy uciekłbyś w ferworze walki?
 9114=Jesteś zbyt zajęty, aby to zrobić w tej chwili.
+9115=Musisz opróżnić skrzynię zanim będziesz mógł zdjąć ten namiot!
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!
@@ -4409,6 +4410,27 @@
 11633=jaja sadzone
 11634=noga jagnięca
 11635=cięcie żeberek
+11636=pszenica
+11637=mąka
+11638=woda
+11639=miód
+11640=jajko
+11641=surowe mięso
+11642=kiełbasa
+11643=ser
+11644=gruszka
+11645=brzoskwinia
+11646=ananas
+11647=dynia
+11648=surowy ptak
+11649=surowe udko z kurczaka
+11650=stek z ryby
+11651=jajko
+11652=surowy udziec jagnięcy
+11653=surowe żeberka
+11654=Musisz być w pobliżu źródła ciepła, aby gotować jedzenie.
+11655=Musisz być w pobliżu młyna, aby wytworzyć mąkę.
+11656=Musisz być w pobliżu piekarnika, aby upiec jedzenie.
 // 11801 - 12000 Umiejętność majsterkowania
 // Strona 1 - Przedmioty z drewna
 11801=Oś

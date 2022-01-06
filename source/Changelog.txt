@@ -1,4 +1,18 @@
-01/12/2021 - Xuri (0.99.5[RC1])
+06/01/2022 - Xuri (0.99.5[RC2])
+	Added support for an additional optional parameter in the RESOURCE tag in Create/Crafting system to make it easier to distinguish between resources with same ID, color but different name - moreValue. This can be set for a resource using the Item DFN tag MORE=#. Syntax:
+		RESOURCE=id/resourcename amount color moreValue
+	Updated ResourceCount() and UseResource() JS Methods to support optional paramter moreValue
+	Updated internal quantity functions (GetSubItemAmount, GetItemAmount, DeleteItemAmount, DeleteSubItemAmount, GetBankCount and DeleteBankItem) in code to also compare against moreValue, if passed in.
+	The above functions will now also prioritize reducing remaining uses on an item (if any) over consuming the item itself
+	Added new crafting menu and create DFN entries for Cooking skill
+	Fixed an error with wheat.js that could cause flour mills to get incorrect IDs assigned
+	Added some missing doors in a Serpent's Hold building to default world templates
+	Players can now demolish a tent multi and convert it back to a deed by chopping up the tent's (empty) chest with an axe
+	GMs can now force the removal of a tent multi by using the 'remove command and targeting the tent's chest (whether empty or not)
+	Fixed some issues with 'wipe command that prevented some items (including multis) from being removed
+	Added a new admin-command to force the removal of a targeted multi and all items contained within: 'removemulti
+
+01/01/2022 - Xuri (0.99.5[RC1])
 	Fixed an issue where negative values could not be used with Race DFN tags STAMMOD and HPMOD
 	Fixed an issue where messages about being unable to equip race-restricted items would only appear properly for the first three races in races.dfn
 	The 'make command can no longer be used on dead player-characters; the character must be alive before its status can change!
@@ -7,7 +21,7 @@
 01/01/2022 - DragonSlayer, Xuri
 	Crafting skills (Alchemy, Blacksmithing, Carpentry, Fletching, Tailoring) have been updated with new JS-based menus, up-to-date create DFNs with additional craftable items and extra features to fit the Pub15 era of UO (DragonSlayer)
 	Optimized portions of new crafting menus and added some additional features (Xuri)
-		Updated Character JS Method .CheckSkill to support an optional fourth parameter - isCraftSkill. This is a boolean flag that, if set to true, will use an alternate formula for skill-checks that give players at least 50% chance at success if they at least meat the minimum requirements. The formula used:
+		Updated Character JS Method .CheckSkill to support an optional fourth parameter - isCraftSkill. This is a boolean flag that, if set to true, will use an alternate formula for skill-checks that give players at least 50% chance at success if they at least meet the minimum requirements. The formula used:
 		successChance = 500 + ((( playerSkill - minSkill ) / ( maxSkill - minSkill )) * 1000
 		Fixed an issue where the Rank System for crafting could mess with stacking of items; stackable items now default to max rank
 		Added new Item DFN tags:
@@ -20,6 +34,8 @@
 		Updated DFNs to include usesleft and maxuses tags and uses_left_tooltip script for all tools with limited use
 		Crafting and gathering tools bought from NPC vendors will now support a random and limited amount of uses (between what is defined as "current" and "max" uses)
 		Crafting and gathering tools created by player crafters will support a limited amount of uses based on the quality of the item crafted
+		Added new JS event that triggers for characters right after an item has been crafted (or failed to be crafted):
+			onMakeItem( socket, crafter, craftedItem, createEntryID )
 
 19/12/2021 - Xuri
 	Fixed an issue where Socket JS Property .account did not properly return an object reference to the account associated with the socket

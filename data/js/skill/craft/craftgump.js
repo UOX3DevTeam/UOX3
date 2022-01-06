@@ -9,6 +9,7 @@ const Alchemy = 4028;
 const Bowcraft = 4029;
 const Tailoring = 4030;
 const Tinkering = 4032;
+const Cooking = 4034;
 
 function craftinggump( myGump, socket )
 {
@@ -115,7 +116,7 @@ function craftinggump( myGump, socket )
 			}
 			repair = 49;
 			break;
-		case 6:
+		case 6: // Cooking
 			grouplist = [11602, 11603, 11604, 11605]; //CATEGORIES
 			gumpMenuName = 11601;//Cooking Menu
 			break;
@@ -215,6 +216,18 @@ function craftinggump( myGump, socket )
 			socket.SysMessage( tmpText );
 			break;
 		}
+		case "NOHEATSOURCE":
+			myGump.AddHTMLGump(170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 11654, socket.language ) + "</basefont>"); // You must be near a heat source to cook food.
+			socket.SysMessage( GetDictionaryEntry( 11654, socket.language ));
+			break;
+		case "NOMILL":
+			myGump.AddHTMLGump(170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 11655, socket.language ) + "</basefont>"); // You must be near a mill to create flour.
+			socket.SysMessage( GetDictionaryEntry( 11655, socket.language ));
+			break;
+		case "NOOVEN":
+			myGump.AddHTMLGump(170, 295, 350, 40, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 11656, socket.language ) + "</basefont>"); // You must be near an oven to bake food.
+			socket.SysMessage( GetDictionaryEntry( 11656, socket.language ));
+			break;
 		default:
 			break;
 	}
@@ -300,6 +313,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 1 );
 					}
 					break;
+				case 6:
+					TriggerEvent( Cooking, "pageX", pSock, pUser, 1 );
+					break;
 				case 7:
 					TriggerEvent( Tinkering, "pageX", pSock, pUser, 1 );
 					break;
@@ -327,6 +343,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					{
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 2 );
 					}
+					break;
+				case 6:
+					TriggerEvent( Cooking, "pageX", pSock, pUser, 2 );
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "pageX", pSock, pUser, 2 );
@@ -356,6 +375,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 3 );
 					}
 					break;
+				case 6:
+					TriggerEvent( Cooking, "pageX", pSock, pUser, 3 );
+					break;
 				case 7:
 					TriggerEvent( Tinkering, "pageX", pSock, pUser, 3 );
 					break;
@@ -380,6 +402,9 @@ function onGumpPress( pSock, pButton, gumpData )
 					{
 						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 4 );
 					}
+					break;
+				case 6:
+					TriggerEvent( Cooking, "pageX", pSock, pUser, 4 );
 					break;
 				case 7:
 					TriggerEvent( Tinkering, "pageX", pSock, pUser, 4 );

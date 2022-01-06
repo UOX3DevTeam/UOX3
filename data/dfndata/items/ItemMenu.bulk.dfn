@@ -13531,6 +13531,10 @@ ITEMMENU=93
 cooking.dfn
 0x1043=rolling pin
 ADDITEM=0x1043
+0x097f=skillet
+ADDITEM=0x097f
+0x103e=sifter
+ADDITEM=0x103e
 0x1039=sack of flour
 ADDITEM=0x1039
 0x1045=sack of flour
@@ -13639,6 +13643,35 @@ ADDITEM=0x10fc
 ADDITEM=0x110f
 0x1125=mushroom
 ADDITEM=0x1125
+<=Previous Menu
+ITEMMENU=0
+}
+
+[ITEMMENU 203]
+{
+cooking.dfn
+0x103f=cookie mix
+ADDITEM=0x103f
+0x103f=cake mix
+ADDITEM=0x103f
+0x103d=dough
+ADDITEM=0x103d
+0x103d=sweet dough
+ADDITEM=0x103d
+0x09ec=honey
+ADDITEM=0x09ec
+0x1039=sack of flour
+ADDITEM=0x1039
+0x1045=sack of flour
+ADDITEM=0x1045
+0x1046=open sack of flour
+ADDITEM=0x1046
+0x103a=open sack of flour
+ADDITEM=0x103a
+0x0a1e=bowl of flour
+ADDITEM=0x0a1e
+0x1ebd=wheat sheaf
+ADDITEM=0x1ebd
 <=Previous Menu
 ITEMMENU=0
 }

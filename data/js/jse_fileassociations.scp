@@ -223,6 +223,7 @@
 4031=skill/craft/crafttool.js
 4032=skill/craft/tinkering.js
 4033=skill/craft/crafting_complete.js
+4034=skill/craft/cooking.js
 
 // Doors
 4500=item/doors.js

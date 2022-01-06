@@ -26,9 +26,17 @@ function onUseChecked( pUser, iUsed )
 		}
 		else
 		{
+			// If player used a cooking tool, open the crafting menu
+			if( iUsed.id == 0x1043 || iUsed.id == 0x097f || iUsed.id == 0x09e2 || iUsed.id == 0x103e )
+			{
+				srcSock.MakeMenu( 750, 13 ); // Open submenu 750 using Cooking skill
+			}
+			else
+			{
 			// let the user target the heat source
 			srcSock.tempObj = iUsed;
 			srcSock.CustomTarget( 0, GetDictionaryEntry( 6097, srcSock.language )); // What do you want to cook this on?
+			}
 		}
 	}
 	else

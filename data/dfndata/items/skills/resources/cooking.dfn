@@ -11,6 +11,7 @@ weight=100
 get=base_item
 name=cake mix
 id=0x103f
+more=1
 weight=100
 }
 
@@ -29,7 +30,7 @@ get=base_item
 name=sweet dough
 id=0x103d
 weight=100
-color=150
+more=1
 pileable=1
 }
 

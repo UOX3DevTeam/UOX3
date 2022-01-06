@@ -75,6 +75,21 @@ input[id^="spoiler"] + label:hover {
 	font-size: 16px;
 }
 
+.title-maindoc {
+	border-top: 5px solid #578bb8;
+	border-bottom: 5px solid #578bb8;
+}
+
+.title-jsdoc {
+	border-top: 5px solid #b20000;
+	border-bottom: 5px solid #b20000;
+}
+
+.title-codedoc {
+	border-top: 5px solid #222;
+	border-bottom: 5px solid #222;
+}
+
 .cd-faq__title h1 {
 	color: white;
 }
@@ -94,11 +109,17 @@ input[id^="spoiler"] + label:hover {
 	color: white !important;
 }
 
+.docs {
+	background-color: #578bb8 !important;
+	color: white !important;
+}
+
 .text-component {
 	padding-top: 10px;
 }
 
-.hl {
+.hl,
+.highlight {
 	color: #BD0000;
 	font-weight: bold;
 }

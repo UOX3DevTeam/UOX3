@@ -3236,7 +3236,7 @@
 6077=Zkoušel jsi zadělat těsto, ale nepodařilo se ti to.
 6078=Udělal jsi nějaké těsto.
 6079=To nemůžeš použít na výrobu těsta.
-6080=Nemáš dostatek surovin! Potřebuješ 4 snopy pšenice!
+6080=Nemáte dostatek prostředků! Potřebujete 1 snop pšenice!
 6081=Kde chceš semlít pšenici?
 6082=Nemůžeš na tom mlít pšenici.
 6083=Meleš pšenici a dáváš si do batohu pytel mouky!
@@ -3960,6 +3960,7 @@
 9112=Jsi zločinec a nemůžeš tak snadno uniknout.
 9113=Chceš utéct v zápalu boje??
 9114=Na to jsi v tuto chvíli příliš zaneprázdněn.
+9115=Před odstraněním tohoto stanu musíte vyprázdnit truhlu!
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -4416,6 +4417,27 @@
 11633=smažená vejce
 11634=jehněčí stehno
 11635=krájená žebra
+11636=pšenice
+11637=mouka
+11638=voda
+11639=med
+11640=vejce
+11641=surové maso
+11642=uzenina
+11643=sýr
+11644=hruška
+11645=brambory
+11646=jablka
+11647=dýně
+11648=surový pták
+11649=surová kuřecí stehna
+11650=rybí steak
+11651=vajíčko
+11652=surová jehněčí kýta
+11653=surové žebro
+11654=Pro přípravu jídla musíte být v blízkosti zdroje tepla.
+11655=Musíte být v blízkosti mlýna, abyste mohli vyrábět mouku.
+11656=Musíte být v blízkosti pece, abyste mohli péct jídlo.
 // 11801 - 12000 Dovednost řemeslné výroby
 // Strana 1 - Dřevěné předměty
 11801=Náprava

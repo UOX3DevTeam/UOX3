@@ -3393,7 +3393,7 @@
 6077=Tu as essayé de faire de la pâte mais tu as échoué.
 6078=Tu fais de la pâte.
 6079=Tu ne peux pas utiliser cela pour faire de la pâte.
-6080=Vous n'avez pas assez de ressources ! Il vous faut 4 gerbes de blé !
+6080=Vous n'avez pas assez de ressources ! Il vous faut 1 gerbe de blé !
 6081=Où voulez-vous moudre le blé ?
 6082=Tu ne peux pas moudre ton blé là-dessus.
 6083=Tu mouds du blé et tu mets un sac de farine dans ton sac !
@@ -4117,6 +4117,7 @@
 9112=Tu es un criminel et tu ne peux pas t'échapper si facilement.
 9113=Tu t'enfuirais dans le feu de l'action ?
 9114=Tu es trop occupé pour le faire en ce moment.
+9115=Vous devez vider le coffre avant de pouvoir retirer cette tente !
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !
@@ -4573,6 +4574,27 @@
 11633=oeufs au plat
 11634=cuisse d'agneau
 11635=coupe de côtes
+11636=blé
+11637=farine
+11638=eau
+11639=miel
+11640=œuf
+11641=viande crue
+11642=saucisse
+11643=fromage
+11644=poire
+11645=pêche
+11646=pomme
+11647=potiron
+11648=oiseau cru
+11649=cuisse de poulet crue
+11650=steak de poisson
+11651=oeuf
+11652=cuisse d'agneau crue
+11653=côte crue
+11654=Il faut être près d'une source de chaleur pour cuire les aliments.
+11655=Il faut être près d'un moulin pour créer de la farine.
+11656=Il faut être près d'un four pour cuire des aliments.
 // 11801 - 12000 Compétence en artisanat de bricolage
 // Page 1 - Objets en bois
 11801=Axe

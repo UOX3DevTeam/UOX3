@@ -1796,7 +1796,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 			{
 				if( objInRange( mChar, tempItem, DIST_NEARBY ) )
 				{
-					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );
+					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour(), item.GetTempVar( CITV_MORE ));
 					if( getAmt == 0 )
 					{
 						s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
@@ -2103,14 +2103,17 @@ void cSkills::LoadCreateMenus( void )
 						auto ssecs = strutil::sections(data," ");
 						if( ssecs.size() > 1 )
 						{
-							if( ssecs.size() == 2 )
+							if( ssecs.size() == 4 )
 							{
-								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
+								tmpResource.moreVal			= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[3], "//" )), nullptr, 0));
 							}
-							else
+							if( ssecs.size() >= 3 )
+							{
+								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 0));
+							}
+							if( ssecs.size() >= 2 )
 							{
 								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
-								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 0));
 							}
 						}
 						std::string resType = "RESOURCE " + strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
@@ -2693,6 +2696,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	UI16 toDelete;
 	UI16 targColour;
 	UI16 targID;
+	UI32 targMoreVal;
 	bool canDelete = true;
 
 	//Moved resource-check to top of file to disallow gaining skill by attempting to
@@ -2702,6 +2706,8 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		targColour	= resEntry.colour;
+		targMoreVal = resEntry.moreVal;
+
 		if( resCounter == toMake.resourceNeeded.begin() && resourceColour != 0 )
 		{
 			// If a specific colour was provided for the function as the intended colour of the material, use a material of that colour
@@ -2713,14 +2719,14 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
 			{
 				// Primary resource, or generic subresource
-			toDelete -= std::min( GetItemAmount( player, targID, targColour, true ), static_cast<UI32>(toDelete) );
+				toDelete -= std::min( GetItemAmount( player, targID, targColour, targMoreVal, true ), static_cast<UI32>(toDelete) );
 			}
 			else
 			{
 				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
 				{
 					// Player specifically targeted a secondary resource
-					toDelete -= std::min( GetItemAmount( player, targID, targColour, true ), static_cast<UI32>(toDelete) );
+					toDelete -= std::min( GetItemAmount( player, targID, targColour, targMoreVal, true ), static_cast<UI32>(toDelete) );
 				}
 			}
 
@@ -2818,6 +2824,8 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		if( !canMake )
 			toDelete = RandomNum( 0, std::max(1, toDelete / 2 ));
 		targColour	= resEntry.colour;
+		targMoreVal = resEntry.moreVal;
+
 		if( resCounter == toMake.resourceNeeded.begin() && resourceColour != 0 )
 		{
 			// If a specific colour was provided for the function as the intended colour of the material, use a material of that colour
@@ -2829,14 +2837,14 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
 			{
 				// Primary resource, or generic subresource
-			toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+				toDelete -= DeleteItemAmount( player, toDelete, targID, targColour, targMoreVal );
 			}
 			else
 			{
 				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
 				{
 					// Player specifically targeted a secondary resource
-					toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+					toDelete -= DeleteItemAmount( player, toDelete, targID, targColour, targMoreVal );
 				}
 			}
 

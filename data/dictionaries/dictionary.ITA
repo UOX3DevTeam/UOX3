@@ -3229,7 +3229,7 @@
 6077=Hai provato a fare la pasta ma hai fallito.
 6078=Fai un po' di pasta.
 6079=Non si può usare per fare la pasta.
-6080=Non hai abbastanza risorse! Hai bisogno di 4 covoni di grano!
+6080=Non hai abbastanza risorse! Hai bisogno di 1 covone di grano!
 6081=Dove vuoi macinare il grano?
 6082=Non puoi macinare il tuo grano su questo.
 6083=Si macina del grano e si mette un sacco di farina nello zaino!
@@ -3953,6 +3953,7 @@
 9112=Tu sei un criminale e non puoi fuggire così facilmente.
 9113=Fuggiresti durante il calore della battaglia?
 9114=Sei troppo occupato per farlo al momento.
+9115=Devi svuotare il forziere prima di poter rimuovere questa tenda!
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
@@ -4409,6 +4410,27 @@
 11633=uova fritte
 11634=gamba di agnello
 11635=taglio di costolette
+11636=grano
+11637=farina
+11638=acqua
+11639=miele
+11640=uovo
+11641=carne cruda
+11642=salsiccia
+11643=formaggio
+11644=pera
+11645=pesca
+11646=mela
+11647=zucca
+11648=uccello crudo
+11649=coscia di pollo cruda
+11650=bistecca di pesce
+11651=uovo
+11652=costola di agnello cruda
+11653=costola cruda
+11654=Devi essere vicino a una fonte di calore per cucinare il cibo.
+11655=Devi essere vicino a un mulino per creare farina.
+11656=Devi essere vicino a un forno per cuocere il cibo.
 // 11801 - 12000 Abilità Artigianato Tinkering
 // Pagina 1 - Oggetti in legno
 11801=Assale

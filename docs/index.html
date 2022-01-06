@@ -22,13 +22,13 @@
 
 <div class="text-component text-center navbar-container">
 	<div class="navbar-wrapper">
-		<p class="navbar"><a href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a></p>
+		<p class="navbar docs"><a class="docs" href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a class="docs" href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a class="docs" href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a> | <a class="docs" href="jsdocs.html" title="UOX3 JavaScript Engine Documentation">UOX3 JSE Docs</a></p>
 	</div>
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 19. October, 2021</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.4y</small></p>
+	<p style="margin:0"><small>Last Updated: 26. December, 2021</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -49,7 +49,7 @@
 
 	<div class="cd-faq__items">
 		<ul id="about" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>About UOX3</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>About UOX3</h1></li>
 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#aboutUOX3docs" id="aboutUOX3docs"><span>About this Document</span></a>
@@ -60,6 +60,17 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>December 26th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#raceSystem">Race System</a> feature info with details on armor class restrictions</li>
+							<li>Updated <a href="#dfnTagSystem">DFN Tag Overview</a> with full list of tags supported by the Create/crafting system</li>
+						</ul>						
+						<h4>December 6th, 2021</h4>
+						<ul>
+							<li>Updated <a href="#regionSystem">Regions</a> feature info with details on regions, and how they interconnect with other systems in UOX3</li>
+							<li>Updated <a href="#weatherSystem">Weather System</a> feature info with details on weather systems and how they can be used in regions</li>
+							<li>Updated <a href="#worldTemplates">World Templates</a> feature info with details on saving/loading event-specific decorations</li>
+						</ul>
 						<h4>October 18th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section (CONSOLELOG, NETWORKLOG, SPEECHLOG, BANKBUYTHRESHOLD, NPCMOUNTEDWALKINGSPEED, NPCMOUNTEDFLEEINGSPEED, NPCMOUNTEDRUNNINGSPEED, SPAWNREGIONSFACETS)</li>
@@ -367,7 +378,7 @@ packitem=0x0f8d,30
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="installation" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>Installation and Setup</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>Installation and Setup</h1></li>
 
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#quickStartGuide" id="quickStartGuide"><span>UOX3 Quick Start Guide</span></a>
@@ -653,7 +664,7 @@ packitem=0x0f8d,30
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="firstFiveMinutes" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>First Five Minutes</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>First Five Minutes</h1></li>
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#logInAndCreateChar" id="logInAndCreateChar"><span>Logging In and Creating a Character</span></a>
 				<div class="cd-faq__content">
@@ -801,7 +812,7 @@ packitem=0x0f8d,30
 					<h3>The Feature Documentation</h3>
 					<p>Extensive documentation is also available for each major feature supported by UOX3. Go to the <a href="#featureDocs">Feature Documentation</a> section of this document if you want to dig into the various systems.</p>
 					<h3>The JS Engine</h3>
-					<p>The <a href="#scriptingJS" target="_blank" title="UOX3 Documentation - Scripting - JavaScript Engine">JavaScript Engine</a> section of this documentation provides information about the scripting engine used in UOX3, along with details of all the various events/triggers, methods, functions and properties that you can make use of in your JS scripts to make your shard come to life.</p>
+					<p>The <a href="#scriptingJS" title="UOX3 Documentation - Scripting - JavaScript Engine">JavaScript Engine</a> section of this documentation provides information about the scripting engine used in UOX3, along with details of all the various events/triggers, methods, functions and properties that you can make use of in your JS scripts to make your shard come to life.</p>
 					<h3>The Community Forums</h3>
 					<p>The <a href="https://www.uox3.org/forums" target="_blank" title="UOX3 Community Forums">community forums</a> at UOX3.org contains many resources for both coding, scripting and managing your UOX3 shard. It can also be a great place to have a discussion on topics that don't require an immediate and instant response.</p>
 					<h3>The Community Discord</h3>
@@ -813,7 +824,7 @@ packitem=0x0f8d,30
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="additionalInfo" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>Additional UOX3 Info</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>Additional UOX3 Info</h1></li>
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uoxINISettings" id="uoxINISettings"><span>UOX.INI Settings</span></a>
 				<div class="cd-faq__content">
@@ -4649,7 +4660,7 @@ packitem=0x0f8d,30
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="featureDocs" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>Feature Documentation</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>Feature Documentation</h1></li>
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#advancedTradeSystem" id="advancedTradeSystem"><span>Advanced Trade System</span></a>
 				<div class="cd-faq__content">
@@ -4944,6 +4955,7 @@ packitem=0x0f8d,30
 						<span class="hl">ITEM</span> - menu-system tag that points to an ITEM section.<br>
 						<span class="hl">NAME</span> - the label applied to the item when shown in the crafting menu, which is not necessarily a reflection of the name of the actual item that will be crafted in the end.<br>
 						<span class="hl">ID</span> - the artwork ID used to display the item in the crafting menu.<br>
+						<span class="hl">COLOUR</span> - colour associated with item (unused, but present in Create entry generated - could be used by scripts).<br>
 						<span class="hl">RESOURCE</span> - contains the ID and/or resource type (see below) of the resource required to craft the item, as well as optional amount and colour values. In this case the colour tag is omitted, but the amount is specified, so 12 items with the ID 0x1bf2 (and the colour 0) are required to craft this item. Each item entry can contain multiple RESOURCE tags, if more than one type of resource is required to craft an item.<br>
 						<span class="hl">SKILL</span> - the skill ID of a skill required to craft the item, along with minimum (minimum skill-points to be able to attempt crafting the item) and maximum (skill-points higher than which player will always succeed) skill-point values. Each item entry can contain multiple SKILL tags, if more than one skill is required to craft an item.<br>
 						<span class="hl">ADDITEM</span> - the tag pointing to the [section header] name of the actual item that will be crafted, as defined in the item DFNs in UOX3/dfndata/items/<br>
@@ -5347,7 +5359,7 @@ packitem=0x0f8d,30
 					<p style="margin-left: 20px"><span class="hl">npcwander=5</span> (Frozen)<br>
 					NPCs in wanderMode 5 are cool as cucumbers, so cool, in fact, that they remain frozen in place on the same spot, unable to move. Come hell or high water, they will remain steadfast and stick to their spot no matter what.</p>
 					<h3>Altering WanderMode through JavaScript</h3>
-					<p>In addition to DFNs and code, an NPC's wanderMode can also be adjusted in JavaScripts used with UOX3's JS Engine, either via JS Methods for characters like <span class="hl">Wander( x1, y1, x2 (radius), y2 )</span> and <span class="hl">Wander ( x1, y1, radius )</span>, or the <span class="hl">wandertype</span> JS property for characters. See the <a href="https://www.uox3.org/jsdocs/index.html" target="_blank" title="UOX3 JS Engine Documentation">UOX3 JS Docs</a> for more details on syntax and some examples!</p>
+					<p>In addition to DFNs and code, an NPC's wanderMode can also be adjusted in JavaScripts used with UOX3's JS Engine, either via JS Methods for characters like <span class="hl">Wander( x1, y1, x2 (radius), y2 )</span> and <span class="hl">Wander ( x1, y1, radius )</span>, or the <span class="hl">wandertype</span> JS property for characters. See the <a href="jsdocs.html" target="_blank" title="UOX3 JS Engine Documentation">UOX3 JSE Docs</a> for more details on syntax and some examples!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5360,7 +5372,7 @@ packitem=0x0f8d,30
 					<p>The race system in UOX3 is integrated with both player and NPC characters, and offers numerous options for customizing the behaviour and properties of each race, like taking double damage from silver weapons, dealing more damage with a particular weapon skill, or being allied to or the sworn enemy of another race.</p>
 					<p>By default, UOX3 is setup to work with the default player races that can be selected in the UO client's character creation (depending on client version) - i.e. humans, elves and gargoyles - and will automatically assign players to the associated race in the race system, but there's nothing preventing a shard admin from creating multiple other player races, and to provide players with other means of selecting a race for their character.</p>
 					<p>Some default races have also been setup for monsters, like Orcs, Ratmen, Undead and Daemons (and more), while animals are generally divided into some predefined Predator and Animal races (with a few other special cases for Birds, Arachnids, etc).</p>
-					<h3>How does it work?</h3>
+						<h4>How does it work?</h4>
 					<p>Each race in UOX3 is setup in its own <span class="hl">[RACE #]</span> section of <strong>UOX3/dfndata/race/races.dfn</strong>, which contain the various properties, bonuses and penalties associated with the race. For a full list of properties available in the race system, check the Race DFN Tags portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
 					<input type="checkbox" id="spoiler_race_examples">
 					<label for="spoiler_race_examples">A few example race sections <i class="fas fa-angle-down"></i></label>
@@ -5482,6 +5494,55 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						ITEMS=0x1086,0x108A,0x1F06,0x1F09<br>
 						}</span></p>
 					</div>
+						<h4>Restrict via Armor Classes</h4>
+						<p>The above method of restricting/allowing equipment is based on <strong>raw item IDs</strong>, which means it's not possible to use that system to for instance allow a race to equip one set of leather armor, but ban them from equipping another - since both sets are based on the same IDs! Fret not, though. There's always <strong>Armor Classes</strong>!</p>
+						<p>All equippable items can be assigned an <strong>armor class</strong> (<em>ac</em>) via the item DFN tag <span class="hl">ac=#</span>. When a character attempts to equip such an item, UOX3 checks the character's Race to see if any armor class restrictions apply. Those restrictions are set via the <span class="hl">armorrest=#</span> tag for the race's definition in race.dfn, and if the <em>ac</em> in question matches the <em>armorrest</em> value, the character is restricted from equipping the item.</p>
+						<p>Note that <strong>multiple armor classes can be restricted simultaneously</strong> via the armorrest tag, by <strong>combining the values</strong> of each restrcted armor class. UOX3 uses bit comparison to check this, so this <em>does require</em> that the armor classes in question use values like these: <strong>1, 2, 4, 8, 16, 32, 64, 128</strong>. Example setup:</p>
+						<input type="checkbox" id="spoiler_race_acrestrictions">
+						<label for="spoiler_race_acrestrictions">Example of Armor Class Restrictions <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><strong><em>// Leather armor, setup with armor class of 1 (ac=1):</em></strong><br>
+							[leather_sleeves]<br>
+							{ left facing<br>
+							get=base_item<br>
+							name=leather sleeves<br>
+							id=0x13c5<br>
+							... // some tags snipped out<br>
+							<span class="hl">ac=1</span><br>
+							}</p>
+							<p><strong><em>// ... ringmail armor, setup with armor class of 1 (ac=4):</em></strong><br>
+							[ring_tunic]<br>
+							{<br>
+							get=base_item<br>
+							name=ringmail tunic<br>
+							id=0x13ec<br>
+							... // some tags snipped out<br>
+							<span class="hl">ac=4</span><br>
+							}</p>							
+							<p><strong><em>// ... and chainmail armor with armor class of 8 (ac=8):</em></strong><br>
+							[chain_leggings]<br>
+							{ left facing<br>
+							get=base_item<br>
+							name=chainmail leggings<br>
+							id=0x13be<br>
+							... // some tags snipped out<br>
+							<span class="hl">ac=8</span><br>
+							}</p>
+							<p><strong><em>And finally, a race setup with armor restrictions that disallow using leather (1) and chainmail armor (8), but allows using ringmail (4, by omission):</em></strong><br>
+							[RACE 1]<br>
+							{<br>
+							PARENTRACE=0<br>
+							NAME=Elf<br>
+							PLAYERRACE=0<br>
+							<span class="hl">ARMORREST=9</span> // 1 + 8<br>
+							}</p>
+							<p>When using the armor class system in this way, it is recommended to only make use of armor class values of 1, 2, 4, 8, 16, 32, 64 and 128, so they can be combined and mixed and matched in the armorrest value without causing any issues. Also note that this system can be combined with the equipment-list system from above for more granularity.</p>
+							<input type="checkbox" id="spoiler_race_acbonusdamage">
+							<label for="spoiler_race_acbonusdamage">Bonus Tip - AC Based Bonus Damage <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p>Did you know that if you enable a setting in UOX.INI called <strong>ARMORCLASSDAMAGEBONUS</strong>, any weapons with an AC of 1 <span class="hl">will deal double damage</span> if attempting to hit someone wearing armor with an AC of 1? Similarly, a weapon with AC 8 will deal double damage against armor with AC 8!</p>
+							</div>							
+						</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5490,7 +5551,100 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 				<a class="cd-faq__trigger" href="#regionSystem" id="regionSystem"><span>Regions</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>More details on UOX3 region system coming here soon! Until then, check out <strong>UOX3/dfndata/regions/regions.dfn</strong> for examples.</p>
+				  	<p>The Region System in UOX3 is generally used to help players identify and later recognize where in the world they are at any given point in time. When players move from one region to another, they will see system messages notifying them that they have "left region X" and "entered region Y". These messages also call out whether the region the player is headed into is protected by town guards or not.</p>
+
+				  	<p>Regions are setup via DFN files in the <strong>UOX3/dfndata/regions/</strong> folder, and typically look something like this:
+				  	</p>
+						<input type="checkbox" id="spoiler_region_example_1">
+						<label for="spoiler_region_example_1">Region Example <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">[REGION 5]</span> // Unique region identifier<br>
+							{<br>
+							<span class="hl">NAME=Lord British's castle</span> // Name of region<br>
+							<span class="hl">MUSICLIST=4</span> // Music to play in region<br>
+							<span class="hl">GUARDED=1</span> // Region is protected by guards<br>
+							<span class="hl">GUARDLIST=guard</span> // Guards are spawned from "guards" NPCLIST<br>
+							<span class="hl">GUARDOWNER=Lord British's Personal</span> // Owner of guards<br>
+							<span class="hl">MAGICDAMAGE=1</span> // Magic damage is enabled<br>
+							<span class="hl">MARK=1</span> // Mark spell is enabled<br>
+							<span class="hl">GATE=1</span> // Gate spell is enabled<br>
+							<span class="hl">RECALL=1</span> // Recall spell is enabled<br>
+							<span class="hl">ABWEATH=6</span> // Weather system to apply in region<br>
+							<span class="hl">X1=1295</span> // Coordinates that make up region<br>
+							<span class="hl">Y1=1559</span> // Coordinates that make up region<br>
+							<span class="hl">X2=1407</span> // Coordinates that make up region<br>
+							<span class="hl">Y2=1695</span> // Coordinates that make up region<br>
+							}</span></p>
+						</div>
+						<p>Each region can be setup with its own rules; one region might allow hostile spells being cast, while another disallows such spells, but at the same time bans the usage of magical travel spells such as Mark, Gate and Recall. For a full list of which DFN tags can be added to a region to customize its ruleset, check the <strong>Region DFN Tags</strong> portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
+						<p>You can also check out existing regions that come with UOX3 by default (see above) for additional examples</p>
+						<h4>Relationship with Spawn Regions</h4>
+						<p>Normally Regions and Spawn Regions are two completely separate systems that don't rely on or interact with one another, but check the Predefined Spawns portion of the <a href="#uox3SpawnRegions">Spawn Regions</a> feature to see how some spawn sections can be applied in multiple different regular regions!</p>
+						<h4>Relationship with Mining System</h4>
+						<p>Check the Region-based Ore Preferences portion of the <a href="#uox3mining">Mining and Ore System</a> to see how different regions can be setup with preferences for different types of ore and chances of finding such ore in these regions.</p>
+						<h4>Relationship with Townstones</h4>
+						<p>Each region supports the placement of a Townstone, which can be used to set up player-run local governments in the different regions around the game world. See the <a href="#uox3Townstones">Townstones</a> section for more details on how that system works!</p>
+						<h4>Relationship with Weather System</h4>
+						<p>Regions can be assigned weather systems that increase or lower the chance of rain, snow, thunder for players who enter those regions. The weather systems can also control the light levels and/or temperature in those regions, which can have effects like cause damage to character races that are weak to certain elements like light, heat, cold, etc. See the <a href="#weatherSystem">Weather System</a> feature for more details on how that system works!</p>
+						<h4>Music Lists</h4>
+						<p>Each region can point to a <span class="hl">[MUSICLIST #]</span> entry to determine which music to player for players who enter a given region. These music lists can consist of one or more music IDs (randomizes if more than one), which refer to music entries from a file called Config.txt in the UO client's Music folder.</p>
+						<p>The exact music available depends on the client version you're using, but the config file will list out the music entries with IDs ranging from 0-67 (v5.0.0b to v6.0.1.10?), 0-87 (v7.0.8.2 to v7.0.20.0+) or 0-102 (v7.0.30.1 to v7.0.90.x).</p>
+						<input type="checkbox" id="spoiler_region_musiclist">
+						<label for="spoiler_region_musiclist">Music List Example <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">[MUSICLIST 1]</span><br>
+							{<br>
+							<span class="hl">MUSIC=09</span><br>
+							}</p>
+							<p>// Tavern Music<br>
+							<span class="hl">[MUSICLIST 22]</span><br>
+							{<br>
+							<span class="hl">MUSIC=34</span><br>
+							<span class="hl">MUSIC=35</span><br>
+							<span class="hl">MUSIC=36</span><br>
+							<span class="hl">MUSIC=37</span><br>
+							}</p>
+							<p>Each music list has its own [MUSICLIST #] entry, with a unique ID. If there's more than one entry in a music list, UOX3 will randomize which one plays when a player enters a region using that music list.</p>
+						</div>
+						<h4>Inn/Instalog Regions</h4>
+						<p>Inns are buildings in UO where players can instantly log out without worrying about their character lingering behind in the world for other players (or NPCs) to see and/or interact with. These areas are setup as a sub-feature of the region system, under the <span class="hl">[INSTALOG]</span> ("instant logout") section of regions.dfn. Any time a player logs out in one of the areas listed in this section, they'll be instantly logged out (unless they've got a criminal flag active).</p>
+						<input type="checkbox" id="spoiler_region_instalog">
+						<label for="spoiler_region_instalog">Instalog Area Example <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">[INSTALOG]</span><br>
+							{<br>
+							// Britain (northeast of bank) - Part 1<br>
+							<span class="hl">X1=1492</span><br>
+							<span class="hl">Y1=1602</span><br>
+							<span class="hl">X2=1498</span><br>
+							<span class="hl">Y2=1624</span><br>
+							<span class="hl">WORLD=0</span><br>
+							<span class="hl">INSTANCEID=0</span><br>
+							...<br>
+							}<br>
+							<p>Each "instalog" area <strong>must</strong> consist of two sets of coordinates - X1, Y1 and X2, Y2 (forming the top-left and bottom-right corners of a square area), a world number and an instanceID.</p>
+							<p>The instanceID can be left at 0, but must still be present, as it determines the "end" of a given instalog area.</p>
+						</div>
+						<h4>SOS Areas</h4>
+						<p>Similar in setup to instalog regions, are SOS Areas. These are areas of the map (in the ocean) the server can randomly pick from when generating shipwreck locations for players to discover via the SOS/Message in a Bottle feature.</p>
+						<p>These areas are setup in the <span class="hl">[SOSAREAS]</span> section of the same file, and follow the same pattern as above:</p>
+						<input type="checkbox" id="spoiler_region_sosareas">
+						<label for="spoiler_region_sosareas">SOS Area Example <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">[SOSAREAS]</span><br>
+							{<br>
+							// FELUCCA<br>
+							// Yew West<br>
+							<span class="hl">X1=55</span><br>
+							<span class="hl">Y1=100</span><br>
+							<span class="hl">X2=290</span><br>
+							<span class="hl">Y2=1300</span><br>
+							<span class="hl">WORLD=0</span><br>
+							<span class="hl">INSTANCEID=0</span><br>
+							...<br>
+							}<br>
+							<p>As with "instalog" areas, these must have two sets of coordinates, a world number and an instanceID (which marks the end of each SOS Area).</p>
+						</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5791,38 +5945,35 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 				<a class="cd-faq__trigger" href="#uox3Townstones" id="uox3Townstones"><span>Townstones</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3 comes with a system for townstones that allows players to setup their own player-run governments in different regions of the world.</p>
-					<p>The basics of the system is as follows:
+					<p>UOX3 comes with a system for <span class="hl">Townstones</span> that allows players to setup their own <span class="hl">player-run governments</span> in different regions of the world.</p>
+					<h4>Townstone Basics</h4>
 						<ul>
-							<li>Player gets hold of a Townstone Deed, and uses it while in a given region of the world to found a new Town.</li>
-							<li>Using the Townstone Deed will place a Townstone on the ground, which the player can interact with to see details of the newly established Town</li>
+							<li>Player gets hold of a <strong>Townstone Deed</strong> (from a vendor, or by a GM using <span class="hl">'add item townstonedeed</span>), and uses it while in a given region of the world to found a new Town.</li>
+							<li>Using the Townstone Deed will <strong>place a Townstone on the ground</strong>, which the player can interact with to see details of the newly established Town</li>
 						</ul>
-					</p>
-					<p>List of features in Townstones System:<br>
+					<h4>Townstones System Features</h4>
 						<ul>
 						<li>Townstones are based on regions</li>
-						<li>Multiple Townstones may be placed in one region, but they all give
-						 info about the same region.</li>
-						<li>Townstones are of two types (automatically determined) based on the
-						 information in regions.scp file.</li>
+							<li>Multiple Townstones may be placed in one region, but they all give info about the same region.</li>
+							<li>Townstones are of two types (automatically determined) based on the information in regions.dfn file.</li>
 						<li>Players may become a resident of a town, wilderness, or none at all.</li>
 						<li>Residents of a town may freely leave residency to none.</li>
-						<li>If a player is a resident of another town then the one he/she wants to join, then they will automatically leave the prior town upon their joining the new town.</li>
+							<li>If a player is already a resident of one town, but want to join another, they will automatically leave their previous town upon joining the new one.</li>
 						<li>Residents of a town (other then wilderness type) may vote for mayor.</li>
 						<li>Residents of a town may vote however often they wish, but votes are not tallied until the 'election day'.</li>
 						<li>Residents of a town may opt to display the town they are from on their paperdoll. If they choose to display their town title, their reputation title will not be shown (may be changed at a future date).</li>
-						<li>The elected Mayor is forced to display their town title on their paperdoll. It is in the format of "Mayor <playername> of <townname>, <skilllevel> <skill>"</li>
+							<li>The elected Mayor is forced to display their town title on their paperdoll. It is in the format of "Mayor [playername] of [townname], [skilllevel] [skill]"</li>
 						<li>The elected Mayor has "Mayor" prefixed to their displayname from allnames.</li>
 						<li>If a mayor leaves residency of the town for either none, or another, then a new mayor is automatically detected based on number of votes at that time.</li>
 						<li>Townstones display the current mayor on them.</li>
 						<li>Townstones display the total population for that town.</li>
 						<li>Wilderness regions display 'unruled region' for mayor.</li>
 						<li>Wilderness regions display 'unknown' for population.</li>
-						<li>To cast a vote for Mayor, the person whom the player wants to vote for must be online, and preferably onscreen. (Target based).</li>
+							<li>To cast a vote for Mayor, the person whom the player wants to vote for must be online, and preferably onscreen (target based).</li>
 						<li>If voting is 'mis-targeted' then the previous vote is unchanged.</li>
 						<li>Residents may not vote for players who are not a resident of their same town.</li>
 						<li>The player whom a person is currently voting for is displayed on the townstone.</li>
-					   </p>
+						</ul>
 					<p>More details being added soon!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -5832,8 +5983,33 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 				<a class="cd-faq__trigger" href="#weatherSystem" id="weatherSystem"><span>Weather System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3 comes with an extensive weather system that ties in with regions and player races.</p>
-					<p>More details being added soon!</p>
+				  	<p>Weather systems are setup in <strong>UOX3/dfndata/weather/weatherab.dfn</strong>, and can be referenced per <a href="#regionSystem">Region</a> in <strong>UOX3/dfndata/region/regions.dfn</strong>. This system allows individual regions to have their own setup for weather, temperature, light levels and more, which in turn can also have effects on members of specific character <a href="#raceSystem">Races</a>, if setup with appropriate strengths/weaknesses towards different weather elements like rain, snow, cold and heat.</p>
+				  	<input type="checkbox" id="spoiler_weathersystem_example">
+						<label for="spoiler_weathersystem_example">Weather System Example <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p>// Weather System for Lord British's Castle
+							<span class="hl">[WEATHERAB 6]</span> // Unique weather system ID<br>
+							{<br>
+							<span class="hl">RAINCHANCE=40</span> // Chance of rain in next hour (if it fails to snow)<br>
+							<span class="hl">RAININTENSITY=35,70</span> // Min and max damage in percent rain can do, based on damage value in Race setup<br>
+							<span class="hl">RAINTEMPDROP=5</span> // Amount temperature will drop when it rains<br>
+							<span class="hl">SNOWCHANCE=5</span> // Chance of snow in the next hour (takes precedence over rain)<br>
+							<span class="hl">SNOWINTENSITY=20,100</span> // Min and max damage in percent snow can do, based on damage value in Race setup<br>
+							<span class="hl">SNOWTHRESHOLD=10</span> // Upper temperature limit for when snow can occur<br>
+							<span class="hl">STORMCHANCE=5</span> // Chance of a storm happening in next hour (takes precedence over snow)<br>
+							<span class="hl">STORMINTENSITY=5,30</span> // Min and max damage in percent storm can do, based on damage value in Race setup<br>
+							<span class="hl">STORMTEMPDROP=10</span> // Amount temperature will drop when it storms<br>
+							<span class="hl">MAXTEMP=25</span> // Max temperature of the day. Can be affected by heat waves<br>
+							<span class="hl">MINTEMP=5</span> // Min temperature of the day. Can be affected by cold snaps<br>
+							<span class="hl">COLDCHANCE=10</span> // Chance of there being a cold snap on the day. If it happens, temp is fixed between MINTEMP and COLDINTENSITY<br>
+							<span class="hl">COLDINTENSITY=0</span> // See above<br>
+							<span class="hl">HEATCHANCE=10</span> // Chance of there being a heat wave on the day. If it happens, temp is fixed between MAXTEMP and HEATINTENSITY<br>
+							<span class="hl">HEATINTENSITY=30</span> // See above<br>
+							<span class="hl">//LIGHTMIN=0</span> // Min light level of the day (at noon)<br>
+							<span class="hl">//LIGHTMAX=9</span> // Max light level of the day (at midnight)<br>
+							}</p>
+						</div>
+						<p>For a full list of tags that can be set in a weather system, and what they do, check out the <strong>Weather System DFN Tags</strong> portion of the <a href="#dfnTagSystem">DFN Tag Overview</a> section of this document.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5849,7 +6025,11 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					trammel_doors.jsdata<br>
 					trammel_spawners.jsdata</em></p>
 					<p>UOX3 already comes with a default set of such world template files stored in <strong>UOX3/js/jsdata/worldtemplates/</strong>, but they are optional to use, and new shard admins can choose between starting out with an empty world or to load the default templates - either select parts of them or in full.</p>
+					<h4>Save to Pre-Defined or Custom Files</h4>
 					<p>Through the 'decorate command, shard admins can save out templates to <strong>pre-defined files per facet and object-type</strong>, or to <strong>custom template files</strong> where all objects are saved to the same file. Example: <span class="hl">'decorate save myCustomTemplate</span> would save <em>ALL</em> items on <em>ALL</em> facets to a custom template file called "<strong>myCustomTemplate.jsdata</strong>", which is then stored in <strong>UOX3/js/jsdata/worldtemplates</strong>. Note that the location of these files might differ for a given UOX3 configuration, depending on whether the SCRIPTDATADIRECTORY in uox.ini has been modified from the default.</p>
+					<p>Once written to file, decorations can be loaded again at a different time using the <span class="hl">'decorate load</span> command. See full list of supported commands below for details.</p>
+					<h4>Manage Event Decorations</h4>
+					<p>The 'decorate command also makes it easy to manage event-specific decorations for one's shard! Through a combination with the <span class="hl">.event</span> property on Items, decorations for specific events can be saved, loaded and unloaded using <span class="hl">'decorate saveevent [eventName]</span>, <span class="hl">'decorate loadevent [eventName]</span> and <span class="hl">'decorate unloadevent [eventName]</span>. The eventName used with these subcommands must match up with the name assigned in the .event property of items. Can be used to load festive decorations for specific festive occasions, and to unload them again after the event ends!</p>
 					<input type="checkbox" id="spoiler_worldtemplates_commands">
 					<label for="spoiler_worldtemplates_commands">Full list of supported sub-commands for 'decorate <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5860,7 +6040,9 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<span class="hl">'decorate save [objectType] [facetName]</span><br>
 						 	Save all items of objectType in the specified facet<br>
 						<span class="hl">'decorate save [customObjectType] [facetName] x1 y1 x2 y2</span><br>
-						 	Save all items within specified coordinates on specified facet to file with same name as customObjectType</p>
+						 	Save all items within specified coordinates on specified facet to file with same name as customObjectType<br>
+						<span class="hl">'decorate saveevent [eventName]</span><br>
+							Save all items with .event property that match eventName to file named event_[eventName]</p>
 						<p><span class="hl">'decorate load</span><br>
 						 	Load all items from the default templates, regardless of objectType and facet<br>
 						<span class="hl">'decorate load [objectType]</span><br>
@@ -5868,19 +6050,23 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<span class="hl">'decorate load [objectType] [facetName]</span><br>
 						 	Load all items of objectType in the specified facet<br>
 						<span class="hl">'decorate load [customObjectType]</span><br>
-						 	Load all items from file with same name as [customObjectType]</p>
+						 	Load all items from file with same name as [customObjectType]<br>
+						<span class="hl">'decorate loadevent [eventName]</span><br>
+							Load all items from file named event_[eventName], and assign eventName to their .event property</p>
 						<p><span class="hl">'decorate clean</span><br>
 						 	Clean up duplicate decorations that might have been loaded/added by accident. Counts as duplicate if
-						 	item ID, location, type and hue are identical. BEWARE: Might affect player items on a live shard!</p>
+						 	item ID, location, type and hue are identical. BEWARE: Might affect player items on a live shard!<br>
+						<span class="hl">'decorate unloadevent [eventName]</span><br>
+							Remove all items with .event property that matches eventName</p>
 						<p><span class="hl">'decorate copy [sourceFacetName] [targetFacetName]</span><br>
 						 	Copy all items from one facet (sourceFacetName) to another (targetFacetName)</p>
 					</div>
 					<input type="checkbox" id="spoiler_worldtemplates_fileformat">
 					<label for="spoiler_worldtemplates_fileformat">World Template File Format Details <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>Each line inside a world template file represents data of one object. Example of such an object, with explanation of which values that represent which properties of the object:<br>
-						1701|#|0|12|2891|655|0|0|0|2|0|0|0|0||0|1|0|0|0|0|0|0|0|0</p>
-						<p>id|name|hue|type|x|y|z|world|instance|movable|visible|dir|weight|weightmax|maxitems|amount|spawnsection|sectionalist|mininterval|maxinterval|more|morex|morey|morez|[|scriptid]</p>
+						<p>Each line inside a world template file represents data of one object. Example of such an object, with explanation of which values that represent which properties of the object:
+						<pre><code class="language-javascript">1701|#|0|12|2891|655|0|0|0|2|0|0|0|0||0|1|0|0|0|0|0|0|0|0
+id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|maxitems|amount|spawnsection|sectionalist|  mininterval|maxinterval|more|morex|morey|morez|[|scriptid]</code></pre></p>
 					</div>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -5888,7 +6074,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="scriptingDFN" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>Scripting - DFN System</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>Scripting - DFN System</h1></li>
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#dfnSystem" id="dfnSystem"><span>Introduction to DFN System in UOX3</span></a>
 				<div class="cd-faq__content">
@@ -6591,6 +6777,66 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_dfn_tags_create">
+					<label for="spoiler_dfn_tags_create">Create DFN Tags <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">menu</span>=<strong>[menuentry #]</strong></strong><br>
+							Tag in crafting menu system that points to a menuentry section in crafting DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">submenu</span>=<strong>[submenu #]</strong><br>
+							Tag in crafting menu system that points to a submenu section in crafting DNFs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">item</span>=<strong>[item #]</strong><br>
+							Tag in crafting menu system that points to an item section in crafting DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">name</span>=<strong>[text]</strong><br>
+							Label applied to item when shown in the crafting menu. Not necessarily a reflection of the actual name of item being crafted.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">id</span>=<strong>[value]</strong><br>
+							Artwork ID to display in the crafting menu for a given item.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">colour</span>=<strong>[value]</strong><br>
+							Colour associated with item - unused by hard-coded crafting system, but could be used by scripts.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">resource</span>=<strong>[value/text]</strong><br>
+							Contains ID and/or resource type of resource required to craft a given item, as well as optional amount/colour values, to specify the amount (if more than 1) of resources to consume, and what colour the resource needs to be. Each item entry in crafting DFNs can contain multiple resource tags, if more than one type of resource is required to craft the item. Be aware that the primary resource needed should be listed first - this is also the resource returned to player in cases of smelting (smithing) or unravelling (tailoring) items.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">skill</span>=<strong>[value]</strong><br>
+							The skill ID of a skill required to craft a given item, along with minimum (minimum skill-points to be able to attempt crafting the item) and maximum (skill-points higher than which player will always succeed) skill-point values. Each item entry can contain multiple SKILL tags, if more than one skill is required to craft an item. </p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">additem</span>=<strong>[text]</strong><br>
+							The [section header] name of the actual item that will be crafted, as defined in the item DFNs in UOX3/dfndata/items/</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">minrank</span>=<strong>[value]</strong><br>
+							Represents the minimum item rank (1-10) that can be randomly applied to the crafted item based on the rank system, which can cause items to become weaker or stronger than average.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">maxrank</span>=<strong>[value]</strong><br>
+							Represents the maximum item rank (1-10) that can be randomly applied to the crafted item based on the rank system, which can cause items to become weaker or stronger than average. If rank system is off, the default rank value is 10.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">sound</span>=<strong>[value]</strong><br>
+							The sound FX that plays when a given item is being crafted.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">delay</span>=<strong>[value]</strong><br>
+							The delay in milliseconds before the crafting process completes and the item has been crafted.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">spell</span>=<strong>[value]</strong><br>
+							The ID of a spell required to be in the player's possession (in a spellbook) in order to craft the item. Primarily used by the Inscription skill.</p>
+						</div>
+					</div>
 					<input type="checkbox" id="spoiler_dfn_tags_items">
 					<label for="spoiler_dfn_tags_items">Item DFN Tags <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -6935,7 +7181,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ARMORREST</span>=<strong>[number]</strong></strong><br>
-							Sets the armor class restriction of the race (0-127). Race will be unable to equip any armor with the specified AC</p>
+							Sets the armor class restriction of the race (0-127). Race will be unable to equip any armor with the specified AC, or which contains an AC included in the ARMORREST value (which can combine multiple ac values, which are checked using bit comparison)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">BANEQUIPLIST</span>=<strong>[number]</strong></strong><br>
@@ -7382,7 +7628,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">coldintensity</span>=<strong>[temperature]</strong><br>
-							???</p>
+							Set min temperature that can be caused by a cold snap</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">heatchance</span>=<strong>[percentage]</strong><br>
@@ -7390,15 +7636,15 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">heatintensity</span>=<strong>[temperature]</strong><br>
-							???</p>
+							Set max temperature that can be caused by a heat wave</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">lightmin</span>=<strong>[lightLevel]</strong><br>
-							Set minimum light level (0-20)</p>
+							Set minimum light level (0-20) of the day (at noon)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">lightmax</span>=<strong>[lightLevel]</strong><br>
-							Set maximum light level (0-20)</p>
+							Set maximum light level (0-20) of the day (at midnight)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">maxtemp</span>=<strong>[temperature]</strong><br>
@@ -7410,47 +7656,47 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">maxwind</span>=<strong>[text]</strong><br>
-							Set name of the spawn region</p>
+							Set max wind strength of the day. UNUSED</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">minwind</span>=<strong>[npcSectionID]</strong><br>
-							Set sectionID of NPC to spawn from NPC DFNs</p>
+							Set min wind strength of the day. UNUSED</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">rainchance</span>=<strong>[npcListID]</strong><br>
-							Set which npclist from UOX3/dfndata/npc/npclists.dfn to randomly spawn an NPC from. Can be used instead of <strong>npc</strong> tag</p>
+							Set chance of rain in the next hour, if it doesn't already snow or storm.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">rainintensity</span>=<strong>[0/1]</strong><br>
-							If set to 1, UOX3 will attempt to only spawn objects from this spawn region outside buildings</p>
+							Set min and max damage in percent that rain can cause, based on damage values for specific races in races.dfn</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">raintempdrop</span>=<strong>[value]</strong><br>
-							Set the maximum Z influence a dynamic or static item can have on spawning</p>
+							Set amount that temperature will drop if it rains</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">snowchance</span>=<strong>[x],[y],[z]</strong><br>
-							Can be used to pre-define valid spawn locations on land for this spawn region. Useful in case it's an area with few valid spawn locations, to ensure the server can always find one</p>
+							Set chance of snow in the next hour, if it does not already storm. Overrides rain</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">snowintensity</span>=<strong>[x],[y],[z]</strong><br>
-							Can be used to pre-define valid spawn locations on water for this spawn region. Useful in case it's an area with few valid spawn locations, to ensure the server can always find one</p>
+							Set min and max damage in percent that snow can cause, based on damage values for specific races in races.dfn</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">snowthreshold</span>=<strong>[worldNumber]</strong><br>
-							Set the world that this spawn region should be spawning objects in</p>
+							Set max temperature at which snow can take place. At temperatures above this threshold, it will never snow</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">stormchance</span>=<strong>[x coordinate]</strong><br>
-							Upper left corner of coordinate set</p>
+							Set chance of storm happening in the next hour. Overrides snow and rain.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">stormintensity</span>=<strong>[x coordinate]</strong><br>
-							Lower right corner of coordinate set</p>
+							Set min and max damage in percent that storm can cause, based on damage values for specific races in races.dfn</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">stormtempdrop</span>=<strong>[y coordinate]</strong><br>
-							Upper left corner of coordinate set</p>
+							Set amount that temperature will drop if it storms</p>
 						</div>
 					</div>
 				  </div>
@@ -7486,7 +7732,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="scriptingJS" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>Scripting - JavaScript Engine</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>Scripting - JavaScript Engine</h1></li>
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#jsIntro" id="jsIntro"><span>Introduction to JS Engine in UOX3</span></a>
 				<div class="cd-faq__content">
@@ -7494,7 +7740,8 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
 					<p>UOX3's JavaScripts can be reloaded dynamically without restarting the server, making it very easy to iterate on new features or modify existing ones.</p>
 					<p>Example of a simple JavaScript in UOX3, used with the Dice and Cup object to allow players to roll a dice and have the number displayed for others to see:<br>
-<pre><code class="language-javascript">function onUseChecked( pUser, iUsed )
+<pre><code class="language-javascript">// The onUseChecked event triggers when the player double-clicks an item
+function onUseChecked( pUser, iUsed )
 {
 	// Generate two random numbers from 1-6
 	var iDice1 = RandomNumber( 1, 6 );
@@ -7503,7 +7750,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 	// Fetch the name of the player using the object
 	var pName = pUser.name;
 
-	// Display the result either as an emote above player (if object is in a container) or a message above item (if on ground)</em>
+	// Display result either as emote above player (if object is in a container) or message above item (if on ground)</em>
 	if( iUsed.container != null )
 		pUser.EmoteMessage( pName+" rolls the dice and gets a "+iDice1+" and a "+iDice2+"." );
 	else
@@ -7552,7 +7799,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 	if( cmd != packetNum )
 		return;</span>
 
-	<span class="hl">...</span> <em>// Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods, and respond if needed, by creating a new packet object followed by WriteByte, WriteShort, WriteLong, Send and Free packet methods. See <a href="https://www.uox3.org/jsdocs/" target="_blank">UOX3 JavaScript Docs</a> for additional details and examples.</em>
+	<span class="hl">...</span> <em>// Read packet data here, using ReadBytes, GetByte, GetWord, GetDWord, GetSByte, GetSWord, GetSDWord and GetString socket methods, and respond if needed, by creating a new packet object followed by WriteByte, WriteShort, WriteLong, Send and Free packet methods. See <a href="jsdocs.html" target="_blank" title="UOX3 JavaScript Engine Documentation">UOX3 JSE Docs</a> for additional details and examples.</em>
 
 	<span class="hl">return;</span>
 }</pre></p>
@@ -7586,7 +7833,7 @@ function commandTitle()
 				<a class="cd-faq__trigger" href="#uox3JsDocs" id="uox3JsDocs"><span>JS Engine Documentation</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>The <a href="https://www.uox3.org/jsdocs/">UOX3 JS documentation</a> documents all the UOX3-specific events, triggers, methods, functions and properties available to script writers.</p>
+					<p>The <a href="jsdocs.html">UOX3 JSE Documentation</a> covers all the UOX3-specific events, triggers, methods, functions and properties available to script writers. You can also find some tutorials and/or tips for achieving specific things with UOX3's scripting engine in this document!</p>
 					<p>UOX3 contains an embedded scripting engine based on <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
 					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 				  </div>
@@ -7594,15 +7841,7 @@ function commandTitle()
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#uox3JsTutorial" id="uox3JsTutorial"><span>JS Tutorial</span></a>
-				<div class="cd-faq__content">
-				  <div class="text-component">
-				  	<p>Coming soon!</p>
-				  </div>
-				</div> <!-- cd-faq__content -->
-			</li>
 
-			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#uox3JSresources" id="uox3JSresources"><span>JSE Resources</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
@@ -7622,7 +7861,7 @@ function commandTitle()
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="resources" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>Resources and Links</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>Resources and Links</h1></li>
 			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#communityLinks" id="communityLinks"><span>UOX3 Community Links</span></a>
 				<div class="cd-faq__content">
@@ -7634,7 +7873,7 @@ function commandTitle()
 					<h4><a href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a></h4>
 					<p>Main community site for UOX3 can be found at UOX3.org. There you'll find downloads, support forums, useful tools and guides beyond what is covered by these docs.</p>
 					<h4><a href="https://guide.uox3.org/" target="_blank" title="Xuri's UOX3 Guide">Xuri's UOX3 Guide</a></h4>
-					<p>Xuri's UOX3 Guide, while originally written for a different era of UOX3, still offers a myriad of tips, tricks and advice for shard admins and GMs, as well as lists of various data such as IDs, light-settings, etc. Recommended read for both novices and veterans.</p>
+					<p>Xuri's UOX3 Guide, while originally written for a different era of UOX3, still offers a myriad of tips, tricks and advice for shard admins and GMs, as well as lists of various data such as IDs, light-settings, etc. Recommended read for both novices and veterans - though be mindful that some of the details in this document might be out of date.</p>
 					<h4>Legacy SourceForge Repositories</h4>
 					<p>Legacy, ready-only CVS repositories for older versions of UOX3 can be found at <a href="https://www.sf.net/projects/openuo" target="_blank" title="OpenUO @ SourceForge">OpenUO @ SourceForge</a> and <a href="https://www.sf.net/projects/uox3" target="_blank" title="UOX3 @ SourceForge">UOX3 @ SourceForge</a>.</p>
 				  </div>
@@ -7669,8 +7908,8 @@ function commandTitle()
 					<p>A home for discussion of non-Official Ultima Online Servers, also known as Freeshards - hosted by Stratics (who once upon a time also hosted the UOX3 website and IRC channels!)</p>
 					<h4><a href="https://shardportal.com/" target="_blank" title="ShardPortal - UO Freeshard portal">ShardPortal</a></h4>
 					<p>The ShardPortal is a place for anyone to advertise their shard as well as search out other active shards.</p>
-					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway</a></h4>
-					<p>A top site list for free UO shards made in the spirit of and in honor of Mr. Fixit's original UOGateway tool.</p>
+					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway (Dead?)</a></h4>
+					<p>(Possibly dead) A top site list for free UO shards made in the spirit of and in honor of Mr. Fixit's original UOGateway tool.</p>
 					<h4><a href="http://www.uo-pixel.de/" target="_blank" title="UO-Pixel - custom artwork assets for UO client">UO-Pixel</a></h4>
 					<p>Another nice (German) website focusing on providing custom artwork for UO shards. Amongst other things, it has some very nice animated item artwork (including a moving water-mill).</p>
 					<h4><a href="https://www.ryandor.com/" target="_blank" title="Ryandor.com UO MapMaking Forums">Ryandor.com</a></h4>
@@ -7681,7 +7920,7 @@ function commandTitle()
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="history" class="cd-faq__group">
-			<li class="cd-faq__title"><h1>History and Credits</h1></li>
+			<li class="cd-faq__title title-maindoc"><h1>History and Credits</h1></li>
 
 
 			<li class="cd-faq__item">
@@ -10219,7 +10458,7 @@ function commandTitle()
 							</div>
 						</div>
 						<input type="checkbox" id="spoiler_history_UOX3_timeline_099_era"/>
-						<label for="spoiler_history_UOX3_timeline_099_era">0.99 Versions (2012 - 2020) <i class="fas fa-angle-down"></i></label>
+						<label for="spoiler_history_UOX3_timeline_099_era">0.99 Versions (2012 - 2021) <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
 							<h4>March, 2012</h4>
 							<input type="checkbox" id="spoiler_history_UOX3_099"/>
@@ -10317,10 +10556,19 @@ function commandTitle()
 							<input type="checkbox" id="spoiler_history_UOX3_099_4"/>
 							<label for="spoiler_history_UOX3_099_4">UOX3 v0.99.4 <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
-								<p><strong>Release date:</strong> ?? November, 2020</p>
+								<p><strong>Release date:</strong> 8 November, 2020</p>
 								<p><strong>Released by:</strong> UOX3 Dev Team</p>
-								<p><strong>Contributors:</strong> Xuri</p>
+								<p><strong>Contributors:</strong> Xuri, punt, dragon slayer</p>
 								<p><strong>Fun Facts:</strong> Housing revamp!</p>
+							</div>
+							<h4>December, 2021</h4>
+							<input type="checkbox" id="spoiler_history_UOX3_099_5"/>
+							<label for="spoiler_history_UOX3_099_5">UOX3 v0.99.5 <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p><strong>Release date:</strong> ?? December, 2021</p>
+								<p><strong>Released by:</strong> UOX3 Dev Team</p>
+								<p><strong>Contributors:</strong> Xuri, punt, dragon slayer</p>
+								<p><strong>Fun Facts:</strong> Big performance improvements! Object refresh bug fixed! Code modernization! Revamped JS docs! Streamlined shard setup! World Templates!</p>
 							</div>
 						</div>
 					</div>

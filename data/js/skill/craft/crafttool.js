@@ -1,10 +1,11 @@
-const enableUOX3Craft = 0;            // Disable or enable to use old uox3 mneus.
+const enableUOX3Craft = 0;            // Disable or enable to use old uox3 menus.
 const blacksmithID = 4023;			// Use this to tell the gump what script to close.
 const Carpentry = 4025;
 const Alchemy = 4028;
 const Fletching = 4029;
 const Tailoring = 4030;
 const Tinkering = 4032;
+const Cooking = 4034;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -14,6 +15,8 @@ function onUseChecked( pUser, iUsed )
 	var gumpID3 = Fletching + 0xffff;
 	var gumpID4 = Tailoring + 0xffff;
 	var gumpID5 = blacksmithID + 0xffff;
+	var gumpID6 = Cooking + 0xffff;
+	var gumpID7 = Tinkering + 0xffff;
 
 	if( socket && ValidateObject( iUsed ) && iUsed.isItem )
 	{
@@ -177,6 +180,29 @@ function onUseChecked( pUser, iUsed )
 					break;
 			}
 		}
+		else if( iUsed.id == 0x1043 || iUsed.id == 0x097f || iUsed.id == 0x09e2 || iUsed.id == 0x103e )
+		{
+			// Cooking
+			if( enableUOX3Craft == 1 )
+			{
+				//socket.SysMessage( "Old-school crafting gumps have not been implemented for Cooking. Use raw food with heat sources to cook!" );
+				TriggerEvent( 104, "onUseChecked", pUser, iUsed );
+				return;
+			}
+			socket.CloseGump( gumpID6, 0 );
+			pUser.SetTempTag( "CRAFT", 6 )
+			switch( tempPage )
+			{
+				case 1: // Page 1
+				case 2: // Page 2
+				case 3: // Page 3
+				case 4: // Page 4
+					TriggerEvent( Cooking, "pageX", socket, pUser, tempPage );
+					break;
+				default: TriggerEvent( Cooking, "pageX", socket, pUser, 1 );
+					break;
+			}
+		}
 		else if( iUsed.id == 0x1eb8 || iUsed.id == 0x1eb9 || iUsed.id == 0x1eba || iUsed.id == 0x1ebb || iUsed.id == 0x1ebc ) // Tinker's tools
 		{
 			// Tinkering
@@ -185,7 +211,7 @@ function onUseChecked( pUser, iUsed )
 				TriggerEvent( 4003, "onUseChecked", pUser, iUsed );
 				return;
 			}
-			socket.CloseGump( gumpID, 0 );
+			socket.CloseGump( gumpID7, 0 );
 			pUser.SetTempTag( "CRAFT", 7 )
 			switch( tempPage )
 			{

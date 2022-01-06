@@ -791,6 +791,7 @@ UI16 CItem::GetUsesLeft( void ) const
 void CItem::SetUsesLeft( UI16 newValue )
 {
 	usesLeft = newValue;
+	Dirty( UT_UPDATE );
 	UpdateRegion();
 }
 
