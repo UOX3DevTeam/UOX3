@@ -157,7 +157,7 @@ function onCallback2( pSock, ourObj )
 					// Reduce object's max durability by 1
 					if( itemDurabilityLossEnabled )
 					{
-					ourObj.maxhp -= 1;
+						ourObj.maxhp -= 1;
 					}
 
 					// Repair item here
@@ -654,7 +654,6 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( makeID != 0 )
 	{
-		pSock.SysMessage( "Adding crafting complete script..." );
 		pUser.AddScriptTrigger( 4033 ); // crafting_complete.js for applying locks to crafted containers
 		MakeItem( pSock, pUser, makeID );
 		if( GetServerSetting( "ToolUseLimit" ))
