@@ -4349,6 +4349,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 296:	 // ITEMREPAIRDURABILITYLOSS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ItemRepairDurabilityLoss() );
 				break;
+			case 297:	 // HIDESTATSFORUNKNOWNMAGICITEMS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HideStatsForUnknownMagicItems() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;

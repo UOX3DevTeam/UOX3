@@ -421,8 +421,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			MakeItem( pSock, pUser, makeID );
 			if( GetServerSetting( "ToolUseLimit" ))
 			{
-				bItem.health -= 1;
-				if( bItem.health == 0 && GetServerSetting( "ToolUseBreak" ))
+				bItem.usesLeft -= 1;
+				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 				{
 					bItem.Delete();
 					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
@@ -474,16 +474,16 @@ function onCallback1( pSock, ourObj )
 
 		// Pass in the colour of the desired material to use for crafting
 		MakeItem( pSock, pUser, makeID, ourObj.colour );
-			if( GetServerSetting( "ToolUseLimit" ))
+		if( GetServerSetting( "ToolUseLimit" ))
+		{
+			bItem.usesLeft -= 1;
+			if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
 			{
-				bItem.usesLeft -= 1;
-				if( bItem.usesLeft == 0 && GetServerSetting( "ToolUseBreak" ))
-				{
-					bItem.Delete();
-					pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
-					// Play sound effect of tool breaking
-				}
-			}		
+				bItem.Delete();
+				pSock.SysMessage( GetDictionaryEntry( 10202, pSock.language )); // You have worn out your tool!
+				// Play sound effect of tool breaking
+			}
+		}		
 		pUser.StartTimer( gumpDelay, timerID, true );
 		}
 	}

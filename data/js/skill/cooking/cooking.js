@@ -33,9 +33,9 @@ function onUseChecked( pUser, iUsed )
 			}
 			else
 			{
-			// let the user target the heat source
-			srcSock.tempObj = iUsed;
-			srcSock.CustomTarget( 0, GetDictionaryEntry( 6097, srcSock.language )); // What do you want to cook this on?
+				// let the user target the heat source
+				srcSock.tempObj = iUsed;
+				srcSock.CustomTarget( 0, GetDictionaryEntry( 6097, srcSock.language )); // What do you want to cook this on?
 			}
 		}
 	}

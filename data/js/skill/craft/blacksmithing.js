@@ -562,7 +562,7 @@ function onCallback2( pSock, ourObj )
 					// Reduce object's max durability by 1
 					if( itemDurabilityLossEnabled )
 					{
-					ourObj.maxhp -= 1;
+						ourObj.maxhp -= 1;
 					}
 
 					// Repair item here

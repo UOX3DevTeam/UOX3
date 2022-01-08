@@ -90,7 +90,7 @@ const UI32 BIT_STATSAFFECTSKILLCHECKS		= 69;
 const UI32 BIT_TOOLUSELIMIT					= 70;
 const UI32 BIT_TOOLUSEBREAK					= 71;
 const UI32 BIT_ITEMREPAIRDURABILITYLOSS		= 72;
-
+const UI32 BIT_HIDESTATSFORUNKNOWNMAGICITEMS = 73;
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -460,6 +460,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("TOOLUSELIMIT", 294);
 	regINIValue("TOOLUSEBREAK", 295);
 	regINIValue("ITEMREPAIRDURABILITYLOSS", 296);
+	regINIValue("HIDESTATSFORUNKNOWNMAGICITEMS", 297);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -666,6 +667,7 @@ void CServerData::ResetDefaults( void )
 	ToolUseLimit( true );
 	ToolUseBreak( true );
 	ItemRepairDurabilityLoss( true );
+	HideStatsForUnknownMagicItems( true );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -2921,6 +2923,21 @@ void CServerData::ItemRepairDurabilityLoss( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HideStatsForUnknownMagicItems( void ) const
+//|					void HideStatsForUnknownMagicItems( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether stats are displayed for unknown/unidentified magic items
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::HideStatsForUnknownMagicItems( void ) const
+{
+	return boolVals.test( BIT_HIDESTATSFORUNKNOWNMAGICITEMS );
+}
+void CServerData::HideStatsForUnknownMagicItems( bool newVal )
+{
+	boolVals.set( BIT_HIDESTATSFORUNKNOWNMAGICITEMS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 BackupRatio( void ) const
 //|					void BackupRatio( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3932,6 +3949,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "MARKRUNESINMULTIS=" << ( MarkRunesInMultis() ? 1 : 0 ) << '\n';
 		ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << ( TravelSpellsBetweenWorlds() ? 1 : 0 ) << '\n';
 		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -5034,6 +5052,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 296:    // ITEMREPAIRDURABILITYLOSS
 			ItemRepairDurabilityLoss( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 297:    // HIDESTATSFORUNKNOWNMAGICITEMS
+			HideStatsForUnknownMagicItems( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		default:
 			rvalue = false;

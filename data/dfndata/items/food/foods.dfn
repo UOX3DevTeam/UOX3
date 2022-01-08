@@ -274,7 +274,6 @@ value=8 4
 get=base_food
 name=baked meat pie
 id=0x1041
-color=0xf0
 value=8 4
 }
 

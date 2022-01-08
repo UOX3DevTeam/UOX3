@@ -6924,7 +6924,8 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
-	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )
+	bool hideMagicItemStats = cwmWorldState->ServerData()->HideStatsForUnknownMagicItems();
+	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() && ( !hideMagicItemStats || ( hideMagicItemStats && ( cItem.GetName2()[0] && !strcmp( cItem.GetName2(), "#" )))))
 	{
 		if( cItem.GetLayer() != IL_NONE )
 		{

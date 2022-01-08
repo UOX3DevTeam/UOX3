@@ -1,3 +1,9 @@
+08/01/2022 - Xuri (0.99.5[RC3])
+	Fixed an issue in HandleGumpInput that prevented compiling UOX3 properly on Linux
+	Added new uox.ini setting that determines if item stats on unidentified magic items are shown or hidden:
+		HIDESTATSFORUNKNOWNMAGICITEMS=0/1 // Defaults to 1
+	Some minor updates to crafting related scripts
+
 06/01/2022 - Xuri (0.99.5[RC2])
 	Added support for an additional optional parameter in the RESOURCE tag in Create/Crafting system to make it easier to distinguish between resources with same ID, color but different name - moreValue. This can be set for a resource using the Item DFN tag MORE=#. Syntax:
 		RESOURCE=id/resourcename amount color moreValue

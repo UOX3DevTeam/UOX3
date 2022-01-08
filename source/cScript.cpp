@@ -2323,9 +2323,11 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 
 	jsval params[3], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime );
+	JSString *gumpReply = nullptr;
+	gumpReply = JS_NewStringCopyZ( targContext, pressing->Reply().c_str() );
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( pressing->Index() );
-	params[2] = STRING_TO_JSVAL( &pressing->Reply() );
+	params[2] = STRING_TO_JSVAL( gumpReply );
 	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 3, params, &rval );
 }
 
