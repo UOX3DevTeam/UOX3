@@ -389,12 +389,12 @@ bool CPIGetItem::Handle( void )
 	{
 		if( ourChar->GetCommandLevel() < 2 || tSock->PickupSpot() != PL_OWNPACK )
 		{
-		tSock->sysmessage( 9064 ); // You cannot pick that up.
+			tSock->sysmessage( 9064 ); // You cannot pick that up.
 			if( ourChar->GetCommandLevel() >= 2 )
 				tSock->sysmessage( 9099 ); // Tip: Try 'ALLMOVE ON command or modify item's movable property with 'TWEAK command!
-		Bounce( tSock, i );
-		return true;
-	}
+			Bounce( tSock, i );
+			return true;
+		}
 		else
 		{
 			tSock->sysmessage( 9098 ); // Item immovable to normal players, but can be dragged out of backpack by GM characters.
@@ -1091,12 +1091,12 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	{
 		if( nChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
 		{
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( nChar, i );
-		mSock->sysmessage( 9064 ); // You cannot pick that up.
-		Bounce( mSock, i );
-		return;
-	}
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( nChar, i );
+			mSock->sysmessage( 9064 ); // You cannot pick that up.
+			Bounce( mSock, i );
+			return;
+		}
 	}
 
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
@@ -1596,12 +1596,12 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	{
 		if( mChar->GetCommandLevel() < 2 || mSock->PickupSpot() != PL_OWNPACK )
 		{
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, nItem );
-		mSock->sysmessage( 9064 ); // You cannot pick that up.
-		Bounce( mSock, nItem );
-		return;
-	}
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
+			mSock->sysmessage( 9064 ); // You cannot pick that up.
+			Bounce( mSock, nItem );
+			return;
+		}
 	}
 
 	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )	// Trade window

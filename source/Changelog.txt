@@ -1,7 +1,13 @@
+10/01/2022 - Xuri (0.99.5[RC4])
+	UOX3 now stores a timestamp for when an account receives its first login, which can be accessed via the new (read-only) JS Account Property .firstLogin.
+	UOX3 now stores a timestamp for when a player character is created, which can be accessed via the new (read-only) JS Character Property .createdOn. For legacy player characters, the creation timestamp is set the first time UOX3 loads the characters after this update.
+	Fixed an issue on Linux where pressing the arrow keys in the console would cause UOX3 to shut down
+	Updated UOX3 documentation
+
 08/01/2022 - Xuri (0.99.5[RC3])
 	Fixed an issue in HandleGumpInput that prevented compiling UOX3 properly on Linux
 	Added new uox.ini setting that determines if item stats on unidentified magic items are shown or hidden:
-		HIDESTATSFORUNKNOWNMAGICITEMS=0/1 // Defaults to 1
+		HIDESTATSFORUNKNOWNMAGICITEMS=0/1 // Toggles whether item stats for unidentified magic items are hidden from tooltips. Defaults to 1
 	Some minor updates to crafting related scripts
 
 06/01/2022 - Xuri (0.99.5[RC2])
@@ -32,7 +38,7 @@
 		Fixed an issue where the Rank System for crafting could mess with stacking of items; stackable items now default to max rank
 		Added new Item DFN tags:
 			usesleft=# 	// The current amount of uses remaining for an item with limited use
-			maxuses=# 	// The maximum amount of uses for an item with limted use
+			maxuses=# 	// The maximum amount of uses for an item with limited use
 		Added new JS Item properties to match DFN tags:
 			.usesLeft
 			.maxUses

@@ -756,13 +756,13 @@ bool CPICreateCharacter::Handle( void )
 				}
 			}
 
-			if (toGo == nullptr)
+			if( toGo == nullptr )
 			{
 				// Invalid locationNumber; check if there are ANY start locations loaded
-				if (serverCount == 0)
+				if( serverCount == 0 )
 				{
 					// No start locations found, use a default hardcoded one
-					Console.error("No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10).");
+					Console.error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
 					SI16 startX;
 					SI16 startY;
 					SI08 startZ;
@@ -773,7 +773,7 @@ bool CPICreateCharacter::Handle( void )
 					startZ = 10;
 					startWorld = 0;
 					startInstanceID = 0;
-					mChar->SetLocation(startX, startY, startZ, startWorld, startInstanceID);
+					mChar->SetLocation( startX, startY, startZ, startWorld, startInstanceID );
 				}
 				else
 				{
@@ -808,6 +808,10 @@ bool CPICreateCharacter::Handle( void )
 					Console.print( "Accepted a Krrios client without GM Privs\n" );
 				}
 			}
+
+			// Set character creation timestamp
+			mChar->SetCreatedOn( GetMinutesSinceEpoch() );
+
 			startChar( tSock, true );
 		}
 	}

@@ -416,7 +416,8 @@ var accountProp = {
 	isSlot6Blocked:822,
 	isSlot7Blocked:823,
 	isSuspended:824,
-	timeban:825
+	timeban:825,
+	firstLogin:826
 }
 
 /*var regionProp2 = {
@@ -431,7 +432,7 @@ const charPropCount = 131;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
-const accountPropCount = 25;
+const accountPropCount = 26;
 
 function CommandRegistration()
 {
@@ -3326,6 +3327,18 @@ function HandleAccountTarget( pSocket, myTarget )
 					accountValue = 0;
 				}
 				break;
+			case accountProp.firstLogin:
+				accountLabelTooltip = GetDictionaryEntry( 8726, pSocket.language ); // When was the account logged into the first time? (Read-Only)
+				if( myTarget.firstLogin > 0 )
+				{
+					accountValue = "<BASEFONT color=#EECD8B>" + myTarget.firstLogin + "</BASEFONT>";
+					accountValueTooltip = new Date(myTarget.firstLogin * 60 * 1000);
+				}
+				else
+				{
+					accountValue = 0;
+				}
+				break;
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
@@ -3353,6 +3366,7 @@ function HandleAccountTarget( pSocket, myTarget )
 				case accountProp.lastClientVerShort:
 				case accountProp.isOnline:
 				case accountProp.flags:
+				case accountProp.firstLogin:
 					break;
 				default:
 					if(( propertyName == "Character1" && !ValidateObject( myTarget.character1 ))
@@ -3381,6 +3395,7 @@ function HandleAccountTarget( pSocket, myTarget )
 				case accountProp.lastClientVerShort:
 				case accountProp.isOnline:
 				case accountProp.flags:
+				case accountProp.firstLogin:
 					if( enableTooltips )
 						accountGump.AddToolTip( tooltipClilocID, pSocket, ( accountValueTooltip != "" ? accountValueTooltip : accountValue ) + " (Read-Only)");
 					break;

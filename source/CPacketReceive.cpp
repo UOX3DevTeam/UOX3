@@ -577,6 +577,10 @@ bool CPISecondLogin::Handle( void )
 	}
 	else
 	{
+		// If first login timestamp has not been set, set it here
+		if( actbTemp.wFirstLogin == 0 )
+			actbTemp.wFirstLogin = GetMinutesSinceEpoch();
+
 		//Send supported client features before character-list stuff
 		CPEnableClientFeatures ii( tSock );
 		tSock->Send( &ii );

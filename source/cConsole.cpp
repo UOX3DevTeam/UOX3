@@ -795,12 +795,26 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 SI32 CConsole::cl_getch( void )
 {
 #if PLATFORM != WINDOWS
-	char buffer[2];
-	std::string rvalue = "";
-	buffer[1] = 0;
-	auto a = ::read(0, buffer, 1);  // This doesn't block on getting a line due to initalization
+	constexpr int bufsize = 3;
+	auto buffer = std::vector<char>(bufsize, 0);
+
+	auto a = ::read(0, buffer.data(), 1);  // This doesn't block on getting a line due to initalization
 	if( a > 0 )
 	{
+		if( buffer[0] == 27 )
+		{
+			// This was an escape, see if we have another item
+			a = ::read(0, buffer.data(), buffer.size() - 1); // This doesn't block on getting a line due to initalization
+			if( a > 0 )
+			{
+				// There shouldn't be any more data
+				return -1;
+			}
+			else
+			{
+				return 27; // return escape
+			}
+		}
 		return static_cast<SI32>(buffer[0]);
 	}
 	else

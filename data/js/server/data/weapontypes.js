@@ -51,11 +51,10 @@ function getWeaponType( mChar, itemID )
 	// If a valid character was passed in, try to find what weapon (if any) they have equipped
 	if( ValidateObject( mChar ))
 	{
-	// Check first layer1 then layer2 for equipped weapons on character
+		// Check first layer1 then layer2 for equipped weapons on character
 		var tempItem = mChar.FindItemLayer( 1 );
-	if( tempItem == null )
+		if( tempItem == null )
 			tempItem = mChar.FindItemLayer( 2 );
-
 		if( tempItem != null )
 			itemID = tempItem.id;
 		else

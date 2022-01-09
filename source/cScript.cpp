@@ -2691,7 +2691,7 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ) )
 		return RV_NOFUNC;
 
-	jsval params[4], rval;
+	jsval params[5], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = INT_TO_JSVAL( skill );

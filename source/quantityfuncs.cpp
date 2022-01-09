@@ -66,9 +66,9 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 realMoreVal,
 				}
 				else
 				{
-				total += i->GetAmount();
-		}
-	}
+					total += i->GetAmount();
+				}
+			}
 		}
 	}
 	return total;
@@ -126,15 +126,15 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour, U
 				else
 				{
 					// There are no uses on item, but there might be a stack of the item, or multiple items
-				if( i->GetAmount() <= total )
-				{
-					amtDeleted += i->GetAmount();
-					i->Delete();
-				}
-				else
-				{
+					if( i->GetAmount() <= total )
+					{
+						amtDeleted += i->GetAmount();
+						i->Delete();
+					}
+					else
+					{
 						i->IncAmount( -(static_cast<SI32>(total) ));
-					amtDeleted += total;
+						amtDeleted += total;
 					}
 				}
 			}
