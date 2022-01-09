@@ -70,7 +70,7 @@ private:
 #endif
 public:
 	CAccountBlock( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
-	wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
+	wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), wFirstLogin( 0x0000 ), dwInGame( INVALIDSERIAL ),
 	dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 )
 	{
 		for( UI08 i = 0; i < 7; ++i )
@@ -87,6 +87,7 @@ public:
 		sPath			= "";
 		wAccountIndex	= 0xFFFF;
 		wTimeBan		= 0x00000000;
+		wFirstLogin		= 0x00000000;
 		dwInGame		= 0xFFFFFFFF;
 		dwLastIP		= 0x00000000;
 		bChanged		= false;
@@ -104,6 +105,7 @@ public:
 	UI16						wAccountIndex;
 	std::bitset< AB_FLAGS_ALL >	wFlags;
 	UI32						wTimeBan;
+	UI32						wFirstLogin;
 	UI32						dwInGame;
 	UI32						dwLastIP;
 	UI32						dwLastClientVer;

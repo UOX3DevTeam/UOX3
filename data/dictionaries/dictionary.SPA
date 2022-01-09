@@ -3721,6 +3721,7 @@
 8723=¿Esta cuenta está suspendida?
 8724=¿Está bloqueada la ranura 7 de esta Cuenta?
 8725=¿Cuánto tiempo lleva el usuario baneado, en minutos?
+8726=¿Cuándo se conectó la cuenta por primera vez? (Sólo lectura)
 // [8800-8849] Menú de ajustes generales
 8800=Introducir nuevo valor
 8801=Los cambios realizados en los valores efectivos de las habilidades no se guardan, y desaparecerán si se reinicia el servidor. Para cambios permanentes en las habilidades, ajusta la propiedad basekills en su lugar.

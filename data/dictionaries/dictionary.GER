@@ -3721,6 +3721,7 @@
 8723=Ist dieses Konto gesperrt?
 8724=Ist Slot 7 für dieses Konto gesperrt?
 8725=Wie lange ist der Benutzer gesperrt, in Minuten?
+8726=Wann wurde das Konto das erste Mal angemeldet? (Schreibgeschützt)
 // [8800-8849] General Tweak Menu
 8800=Eingabe eines neuen Wertes
 8801=Änderungen an effektiven Skill-Werten werden nicht gespeichert und sind nach einem Server-Neustart nicht mehr vorhanden. Für permanente Skill-Änderungen, passen Sie stattdessen die Eigenschaft baseskills an!

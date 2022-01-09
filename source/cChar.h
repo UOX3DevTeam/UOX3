@@ -160,6 +160,7 @@ private:
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 		UI16		deaths;
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
+		UI32		createdOn;	// Timestamp for when player character was created
 
 		SERIAL		townvote;
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
@@ -769,6 +770,9 @@ public:
 	std::string GetLastOn( void ) const;
 	void		SetLastOnSecs( UI32 newValue );
 	UI32		GetLastOnSecs( void ) const;
+
+	void		SetCreatedOn( UI32 newValue );
+	UI32		GetCreatedOn( void ) const;
 
 	UI32		LastMoveTime( void ) const;
 	void		LastMoveTime( UI32 newValue );

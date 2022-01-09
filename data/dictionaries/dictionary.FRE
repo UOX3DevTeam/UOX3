@@ -3885,6 +3885,7 @@
 8723=Ce compte est-il suspendu ?
 8724=L'emplacement 7 de ce compte est-il bloqué ?
 8725=Pour combien de temps l'utilisateur est-il banni, en minutes ?
+8726=Quand le compte a-t-il été connecté pour la première fois ? (Lecture seule)
 // [8800-8849] General Tweak Menu
 8800=Entrer une nouvelle valeur
 8801=Les modifications apportées aux valeurs effectives des compétences ne sont pas sauvegardées, et disparaîtront si le serveur redémarre. Pour des changements permanents de compétences, ajustez plutôt la propriété baseskills !

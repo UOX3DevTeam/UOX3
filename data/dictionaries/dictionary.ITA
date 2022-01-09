@@ -3721,6 +3721,7 @@
 8723=Questo account è sospeso?
 8724=Lo slot 7 di questo account è bloccato?
 8725=Per quanto tempo l'utente è stato bandito, in minuti?
+8726=Quando è stato effettuato il primo accesso all'account? (Solo lettura)
 // [8800-8849] General Tweak Menu
 8800=Inserire il nuovo valore
 8801=Le modifiche apportate ai valori effettivi delle abilità non vengono salvate, e spariranno se il server si riavvia. Per modifiche permanenti alle abilità, regola invece la proprietà baseskills!

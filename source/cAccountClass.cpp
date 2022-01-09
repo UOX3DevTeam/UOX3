@@ -431,6 +431,20 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			std::getline( fs2, sLine );
 			continue;
 		}
+		else if( l == "FIRSTLOGIN" )
+		{
+			if( !r.empty() && r.length() != 0 )
+			{
+				actb.wFirstLogin = static_cast<UI32>(std::stoul(r, nullptr, 0));
+			}
+			else
+			{
+				actb.wFirstLogin = 0;
+			}
+
+			std::getline( fs2, sLine );
+			continue;
+		}
 		else if( l == "LOCK" )
 		{
 			if( nLockCount <= 5 )
@@ -625,6 +639,7 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 	fsOut << "FLAGS 0x" << std::hex << actbTemp.wFlags.to_ulong() << std::dec << std::endl;
 	fsOut << "PATH " << strutil::replaceSlash(actbTemp.sPath) << std::endl;
 	fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
+	fsOut << "FIRSTLOGIN 0x" << std::hex << actbTemp.wFirstLogin << std::dec << std::endl;
 	fsOut << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
 	fsOut << "CONTACT " << (actbTemp.sContact.length()?actbTemp.sContact:"NA") << std::endl;
 	for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
@@ -693,6 +708,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	actbTemp.sContact	= sContact;
 	actbTemp.wFlags		= wAttributes;
 	actbTemp.wTimeBan	= 0;
+	actbTemp.wFirstLogin = 0;
 	actbTemp.dwLastIP	= 0;
 	for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
 	{
@@ -764,6 +780,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	fsAccountsUAD << "NAME " << actbTemp.sUsername << "\n";
 	fsAccountsUAD << "PASS " << actbTemp.sPassword << "\n";
 	fsAccountsUAD << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << "\n";
+	fsAccountsUAD << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << "\n";
 	fsAccountsUAD << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << "\n";
 	fsAccountsUAD << "CONTACT " << actbTemp.sContact << "\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------\n";
@@ -1085,6 +1102,21 @@ UI16 cAccountClass::Load(void)
 			else
 			{
 				actb.wTimeBan = 0;
+			}
+
+			std::getline( fsAccountsADM, sLine );
+			sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
+			continue;
+		}
+		else if( l == "FIRSTLOGIN" )
+		{
+			if( !r.empty() && r.length() != 0 )
+			{
+				actb.wFirstLogin = static_cast<UI32>(std::stoul(r, nullptr, 0));
+			}
+			else
+			{
+				actb.wFirstLogin = 0;
 			}
 
 			std::getline( fsAccountsADM, sLine );
@@ -2006,6 +2038,7 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 	fsOut << "//         FLAGS 0x0000" << std::endl;
 	fsOut << "//         PATH c:/uox3/Accounts/path2userdata/" << std::endl;
 	fsOut << "//         TIMEBAN 0" << std::endl;
+	fsOut << "//         FIRSTLOGIN 0" << std::endl;
 	fsOut << "//         LASTIP 127.0.0.1" << std::endl;
 	fsOut << "//         CONTACT NONE" << std::endl;
 	fsOut << "//         CHARACTER-1 0xffffffff" << std::endl;
@@ -2025,6 +2058,9 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 	fsOut << "//" << std::endl;
 	fsOut << "//   TIMEBAN: " << std::endl;
 	fsOut << "//      This would be the end date of a timed ban." << std::endl;
+	fsOut << "//" << std::endl;
+	fsOut << "//   FIRSTLOGIN: " << std::endl;
+	fsOut << "//      This would be timestamp of the account's first login." << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   CONTACT: " << std::endl;
 	fsOut << "//      Usually this is the email address, but can be used as a comment or ICQ" << std::endl;
@@ -2105,6 +2141,7 @@ void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp
 	fsOut << "NAME " << actbTemp.sUsername << std::endl;
 	fsOut << "PASS " << actbTemp.sPassword << std::endl;
 	fsOut << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << std::endl;
+	fsOut << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << std::endl;
 	fsOut << "LASTIP " << (SI32)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (SI32)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (SI32)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (SI32)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
 	fsOut << "CONTACT " << actbTemp.sContact << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;

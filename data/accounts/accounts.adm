@@ -1,4 +1,4 @@
-//AV3.0-UV0.99-BD4x-DS1632140942-ED0
+//AV3.0-UV0.99-BD5[RC4]-DS1641771100-ED0
 //------------------------------------------------------------------------------
 //accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers
 //
@@ -10,6 +10,7 @@
 //         FLAGS 0x0000
 //         PATH c:/uox3/Accounts/path2userdata/
 //         TIMEBAN 0
+//         FIRSTLOGIN 0
 //         LASTIP 127.0.0.1
 //         CONTACT NONE
 //         CHARACTER-1 0xffffffff
@@ -30,6 +31,9 @@
 //   TIMEBAN: 
 //      This would be the end date of a timed ban.
 //
+//   FIRSTLOGIN: 
+//      This would be timestamp of the account's first login.
+//
 //   CONTACT: 
 //      Usually this is the email address, but can be used as a comment or ICQ
 //
@@ -43,6 +47,7 @@ PASS admin
 FLAGS 0x8000
 PATH ./accounts/admin/
 TIMEBAN 0x0
+FIRSTLOGIN 0x0
 LASTIP 127.0.0.1
 CONTACT unknown
 CHARACTER-1 0xffffffff [UNKNOWN]
@@ -61,6 +66,7 @@ PASS guest1
 FLAGS 0x0
 PATH ./accounts/guest1/
 TIMEBAN 0x0
+FIRSTLOGIN 0x0
 LASTIP 0.0.0.0
 CONTACT unknown
 CHARACTER-1 0xffffffff [UNKNOWN]

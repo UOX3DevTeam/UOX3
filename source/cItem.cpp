@@ -48,6 +48,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+
 #include <charconv>
 
 const UI32 BIT_DOOROPEN		=	1;

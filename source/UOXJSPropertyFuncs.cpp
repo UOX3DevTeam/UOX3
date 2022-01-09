@@ -1252,6 +1252,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			}
+			case CCP_CREATEDON: *vp = INT_TO_JSVAL( gPriv->GetCreatedOn() );		break;
 			case CCP_NAME:
 				{
 					CSocket *tSock = nullptr;
@@ -1764,6 +1765,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		switch( JSVAL_TO_INT( id ) )
 		{
 			case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( (UI16)encaps.toInt() );						break;
+			case CCP_CREATEDON:		break;
 			case CCP_NAME:	gPriv->SetName( encaps.toString() );										break;
 			case CCP_TITLE:	gPriv->SetTitle( encaps.toString() );										break;
 			case CCP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );	break;
@@ -2986,6 +2988,7 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->wTimeBan );		break;
+			case CACCOUNT_FIRSTLOGIN: *vp = INT_TO_JSVAL( myAccount->wFirstLogin );		break;
 			case CACCOUNT_CHARACTER1:
 			{
 				if( myAccount->dwCharacters[0] != INVALIDSERIAL )
@@ -3197,6 +3200,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_CHARACTER7:
 			case CACCOUNT_CURRENTCHAR:
 			case CACCOUNT_LASTIP:
+			case CACCOUNT_FIRSTLOGIN:
 				break;
 			case CACCOUNT_PASSWORD:
 			{

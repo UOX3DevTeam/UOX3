@@ -3721,6 +3721,7 @@
 8723=Czy to Konto jest zawieszone?
 8724=Czy Slot 7 na tym Koncie jest zablokowany?
 8725=Jak długo użytkownik jest zbanowany, w minutach?
+8726=Kiedy konto było zalogowane po raz pierwszy? (Tylko do odczytu)
 // [8800-8849] Ogólne menu ustawień
 8800=Wprowadź nową wartość
 8801=Zmiany dokonane w efektywnych wartościach umiejętności nie są zapisywane i znikną po ponownym uruchomieniu serwera. Aby na stałe zmienić umiejętności, dostosuj właściwość baseskills zamiast tego!

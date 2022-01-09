@@ -140,12 +140,14 @@ const UI16			DEFPLAYER_DEATHS			= 0;
 const SERIAL		DEFPLAYER_TOWNVOTE 			= INVALIDSERIAL;
 const SI08			DEFPLAYER_TOWNPRIV 			= 0;
 const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
+const UI32			DEFPLAYER_CREATEDON			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
 speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ),
-fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED )
+fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED ),
+createdOn( DEFPLAYER_CREATEDON )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -2320,6 +2322,7 @@ void CChar::CopyData( CChar *target )
 			target->SetAtrophy( mPlayer->atrophy[j], j );
 			target->SetSkillLock( mPlayer->lockState[j], j );
 		}
+		target->SetCreatedOn( GetCreatedOn() );
 	}
 
 	// Add any script triggers present on object to the new object
@@ -3018,6 +3021,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "Account=" << accountNum << '\n';
 	outStream << "LastOn=" << lastOn << '\n';
 	outStream << "LastOnSecs=" << lastOnSecs << '\n';
+	outStream << "CreatedOn=" << createdOn << '\n';
 	outStream << "OrgName=" << origName << '\n';
 	outStream << "CommandLevel=" << (SI16)commandLevel << '\n';	// command level
 	outStream << "Squelched=" << (SI16)squelched << '\n';
@@ -3697,6 +3701,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetControlSlotsUsed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
+				else if( UTag == "CREATEDON" )
+				{
+					SetCreatedOn( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
 				break;
 			case 'D':
 				if( UTag == "DEATHS" )
@@ -4360,6 +4369,11 @@ void CChar::PostLoadProcessing( void )
 		SetWeight( Weight->calcCharWeight( this ) );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		Skills->updateSkillLevel( this, i );
+
+	// If character belongs to a player and doesn't have a created timestamp, add one now
+	if( !IsNpc() && GetCreatedOn() == 0 )
+		SetCreatedOn( GetMinutesSinceEpoch() );
+
 	// We need to add things to petlists, so we can cleanup after ourselves properly -
 	SetPostLoaded( true );
 }
@@ -4999,6 +5013,28 @@ void CChar::SetLastOnSecs( UI32 newValue )
 	if( IsValidPlayer() )
 	{
 		mPlayer->lastOnSecs = newValue;
+		UpdateRegion();
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI32 GetCreatedOn( void ) const
+//|					void SetCreatedOn( UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was created
+//o-----------------------------------------------------------------------------------------------o
+UI32 CChar::GetCreatedOn( void ) const
+{
+	UI32 rVal = 0;
+	if( IsValidPlayer() )
+		rVal = mPlayer->createdOn;
+	return rVal;
+}
+void CChar::SetCreatedOn( UI32 newValue )
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->createdOn = newValue;
 		UpdateRegion();
 	}
 }

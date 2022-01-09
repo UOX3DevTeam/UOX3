@@ -3721,6 +3721,7 @@
 8723=Está esta Conta suspensa?
 8724=Está bloqueada a ranhura 7 desta Conta?
 8725=Quanto tempo está o utilizador banido, em minutos?
+8726=Quando é que a conta foi registada pela primeira vez? (Apenas para leitura)
 // [8800-8849] General Tweak Menu
 8800=Entrar novo valor
 8801=Alterações feitas aos valores efectivos de competências não são guardadas, e desaparecerão se o servidor for reiniciado. Para alterações permanentes de perícia, ajuste antes a propriedade baseskills!

@@ -465,6 +465,32 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "TOWNPRIV":
 		socket.SysMessage( ourChar.townPriv );
 		break;
+	case "CREATEDON":
+		if( !ourChar.npc )
+		{
+			if( ourChar.createdOn > 0 )
+			{
+				socket.SysMessage( ourChar.createdOn );
+				var createdDate = new Date( ourChar.createdOn * 60 * 1000 );
+				socket.SysMessage( "Character was created on " + createdDate );
+
+				var currentDate = new Date();
+
+				// Calculate the time difference between character creation and now
+				var timeDifference = currentDate.getTime() - createdDate.getTime();
+
+				// Calculate the amount of days
+				var daysDifference = timeDifference / (1000 * 3600 * 24);
+
+				// Display final number of days
+				socket.SysMessage( "Character is " + daysDifference.toFixed(2) + " days old." );
+			}
+			else
+			{
+				socket.SysMessage( "Character was created at an unknown date." );
+			}
+		}
+		break;
 
 	// Account Properties
 	case "USERNAME":
@@ -747,6 +773,34 @@ function HandleGetChar( socket, ourChar, uKey )
 			else
 				socket.SysMessage( "Timeban: 0 minutes" );
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET TIMEBAN> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+		}
+		break;
+	case "FIRSTLOGIN":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			var firstLogin = myAccount.firstLogin;
+			if( firstLogin > 0 )
+			{
+				var firstLoginDate = new Date( firstLogin * 60 * 1000 );
+				socket.SysMessage( "Account saw it's first login on " + firstLoginDate );
+
+				var currentDate = new Date();
+
+				// Calculate the time difference between first login and now
+				var timeDifference = currentDate.getTime() - firstLoginDate.getTime();
+
+				// Calculate the amount of days
+				var daysDifference = timeDifference / (1000 * 3600 * 24);
+
+				// Display final number of days
+				socket.SysMessage( "Account is " + daysDifference.toFixed(2) + " days old." );
+			}
+			else
+			{
+				socket.SysMessage( "Account has had no login activity yet." );
+			}
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET FIRSTLOGIN> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
 	default:

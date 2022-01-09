@@ -3728,6 +3728,7 @@
 8723=Je tento účet pozastaven?
 8724=Je slot 7 na tomto účtu zablokován?
 8725=Na jak dlouho je uživatel zablokován, v minutách?
+8726=Kdy byl účet poprvé přihlášen? (Pouze pro čtení)
 // [8800-8849] General Tweak Menu
 8800=Zadejte novou hodnotu
 8801=Změny provedené v efektivních hodnotách dovedností se neukládají a po restartu serveru zmizí. Pro trvalé změny dovedností upravte raději vlastnost baseskills!

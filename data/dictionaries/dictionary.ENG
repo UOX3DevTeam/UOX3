@@ -3721,6 +3721,7 @@
 8723=Is this Account suspended?
 8724=Is slot 7 on this Account blocked?
 8725=How long is user banned for, in minutes?
+8726=When was the account logged into the first time? (Read-Only)
 // [8800-8849] General Tweak Menu
 8800=Enter new value
 8801=Changes made to effective skill values are not saved, and will be gone if server restarts. For permanent skill changes, adjust baseskills property instead!
