@@ -1,71 +1,46 @@
-[0x0df2]
+// Wand - Base item
+[base_wand]
 {
 get=base_item
 name=wand
 id=0x0df2
-weight=200
-value=30 15
 layer=1
-lodamage=2
-hidamage=6
-hp=31 70
-spd=35
-str=0
 restock=5
 decay=1
 good=27
 }
 
+// Wand
+[0x0df2]
+{
+getpub15=0x0df2_pub15
+getaos=0x0df2_aos
+gettol=0x0df2_tol
+}
+
+// Wand
 [0x0df3]
 {
-get=base_item
-name=wand
+get=0x0df2
 id=0x0df3
-weight=200
-value=30 15
-layer=1
-lodamage=2
-hidamage=6
-hp=31 70
-spd=35
-str=0
-restock=5
-decay=1
-good=27
 }
 
+// Wand
 [0x0df4]
 {
-get=base_item
-name=wand
+get=0x0df2
 id=0x0df4
-weight=200
-value=30 15
-layer=1
-lodamage=2
-hidamage=6
-hp=31 70
-spd=35
-str=0
-restock=5
-decay=1
-good=27
 }
 
+// Wand
 [0x0df5]
 {
-get=base_item
-name=wand
+get=0x0df2
 id=0x0df5
-weight=200
-value=30 15
-layer=1
-lodamage=2
-hidamage=6
-hp=31 70
-spd=35
-str=0
-restock=5
-decay=1
-good=27
+}
+
+// Wand - Alias
+[wand]
+{
+get=0x0df2 0x0df3 0x0df4 0x0df5
 }

@@ -38,7 +38,6 @@ add_library(uox
 		cGuild.cpp
 		combat.cpp
 		network.cpp
-		ustring.cpp
 		cHTMLSystem.cpp
 		commands.cpp
 		npcs.cpp
@@ -76,11 +75,17 @@ add_library(uox
 		sound.cpp
 		UOPInterface.cpp
 		StringUtility.cpp
+		UOPData.cpp
+		MultiMul.cpp
+		IDXMul.cpp
+		IP4Address.cpp
+		TimeUtility.cpp
 )
 
 target_include_directories(uox
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/spidermonkey
+		${PROJECT_SOURCE_DIR}/zlib
 )
 
 target_compile_definitions(uox
@@ -93,6 +98,7 @@ target_compile_definitions(uox
 target_link_libraries(uox
 	PUBLIC
 		js32
+		zlibstatic
 		$<$<PLATFORM_ID:Windows>:wsock32>
 		$<$<PLATFORM_ID:Windows>:ws2_32>
 )

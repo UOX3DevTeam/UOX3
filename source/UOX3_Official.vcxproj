@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugProfile|Win32">
@@ -100,18 +100,18 @@
     <OutDir>.\Release\x86\</OutDir>
     <IntDir>.\Release\x86\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x86;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\spidermonkey\Release\x86;..\zlib\Release;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\spidermonkey;..\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\spidermonkey;..\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x64;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\zlib\x64\Release;..\spidermonkey\Release\x64;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\zlib;..\spidermonkey;$(SourcePath)</SourcePath>
+    <IncludePath>..\zlib;..\spidermonkey;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -130,16 +130,16 @@
     <OutDir>.\Debug\x86\</OutDir>
     <IntDir>.\Debug\x86\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x86;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\spidermonkey\Release\x86;..\zlib\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\spidermonkey;..\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\spidermonkey;..\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\spidermonkey\Release\x64;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\spidermonkey\Release\x64;..\zlib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\spidermonkey;..\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\spidermonkey;..\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
     <OutDir>.\Debug\x64\</OutDir>
     <IntDir>.\Debug\x64\</IntDir>
@@ -166,15 +166,18 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\spidermonkey\Release\x86;..\zlib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Midl>
       <TypeLibraryName>.\Release/UOX3_Official.tlb</TypeLibraryName>
@@ -208,14 +211,17 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\zlib\x64\Release\;..\spidermonkey\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Midl>
       <TypeLibraryName>.\Release/UOX3_Official.tlb</TypeLibraryName>
@@ -317,12 +323,13 @@
       <CompileAs>Default</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x86%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\spidermonkey\Release\x86;..\zlib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -361,10 +368,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;js32.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\spidermonkey\Release\x64;..\zlib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -916,6 +923,8 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="IDXMul.cpp" />
+    <ClCompile Include="IP4Address.cpp" />
     <ClCompile Include="items.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1028,6 +1037,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="MultiMul.cpp" />
     <ClCompile Include="network.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1254,6 +1264,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="UOPData.cpp" />
     <ClCompile Include="UOPInterface.cpp" />
     <ClCompile Include="uox3.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
@@ -1284,20 +1295,6 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="UOXJSPropertyFuncs.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
-    </ClCompile>
-    <ClCompile Include="ustring.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1367,6 +1364,20 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="TimeUtility.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">true</BrowseInformation>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Disabled</Optimization>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BrowseInformation>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MaxSpeed</Optimization>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
+      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="books.h" />
@@ -1374,7 +1385,6 @@
     <ClInclude Include="cBaseObject.h" />
     <ClInclude Include="cChar.h" />
     <ClInclude Include="cConsole.h" />
-    <ClInclude Include="CDataList.h" />
     <ClInclude Include="cdice.h" />
     <ClInclude Include="cEffects.h" />
     <ClInclude Include="cGuild.h" />
@@ -1388,7 +1398,7 @@
     <ClInclude Include="cMultiObj.h" />
     <ClInclude Include="combat.h" />
     <ClInclude Include="commands.h" />
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigOS.h" />
     <ClInclude Include="CPacketReceive.h" />
     <ClInclude Include="CPacketSend.h" />
     <ClInclude Include="cRaces.h" />
@@ -1406,7 +1416,10 @@
     <ClInclude Include="enums.h" />
     <ClInclude Include="fileio.h" />
     <ClInclude Include="funcdecl.h" />
+    <ClInclude Include="GenericList.h" />
     <ClInclude Include="gump.h" />
+    <ClInclude Include="IDXMul.hpp" />
+    <ClInclude Include="IP4Address.hpp" />
     <ClInclude Include="jail.h" />
     <ClInclude Include="JSEncapsulate.h" />
     <ClInclude Include="magic.h" />
@@ -1414,6 +1427,7 @@
     <ClInclude Include="mapstuff.h" />
     <ClInclude Include="movement.h" />
     <ClInclude Include="msgboard.h" />
+    <ClInclude Include="MultiMul.hpp" />
     <ClInclude Include="network.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="PageVector.h" />
@@ -1433,6 +1447,7 @@
     <ClInclude Include="teffect.h" />
     <ClInclude Include="townregion.h" />
     <ClInclude Include="typedefs.h" />
+    <ClInclude Include="UOPData.hpp" />
     <ClInclude Include="UOPInterface.hpp" />
     <ClInclude Include="uox3.h" />
     <ClInclude Include="UOXJSClasses.h" />
@@ -1442,10 +1457,10 @@
     <ClInclude Include="UOXJSPropertySpecs.h" />
     <ClInclude Include="UOXStdHeaders.h" />
     <ClInclude Include="uoxstruct.h" />
-    <ClInclude Include="ustring.h" />
     <ClInclude Include="weight.h" />
     <ClInclude Include="wholist.h" />
     <ClInclude Include="worldmain.h" />
+    <ClInclude Include="TimeUtility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="uox3.ico" />

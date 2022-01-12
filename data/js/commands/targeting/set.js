@@ -20,21 +20,22 @@ function command_SET( socket, cmdString )
 		}
 
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, "Choose target to set: " + cmdString );
+		socket.CustomTarget( 0, GetDictionaryEntry( 8102, socket.language ) + " " + cmdString );
 	}
 	else
-		socket.SysMessage( "No property was specified for the SET command." );
+		socket.SysMessage( GetDictionaryEntry( 8103, socket.language )); // No property was specified for the SET command.
 }
 
+// Common Object properties
 function onCallback0( socket, ourObj )
 {
 	if( socket.GetWord( 1 ) )
 	{
-		socket.SysMessage( "'Set': Invalid target" );
+		socket.SysMessage( "'Set': " + GetDictionaryEntry( 2353, socket.language )); // Invalid target
 		return;
 	}
 
-	var splitString = socket.xText.split( " ", 2 );
+	var splitString = socket.xText.split( " " );
 	var uKey 	= splitString[0].toUpperCase();
 	var nVal 	= parseInt( splitString[1] );
 	switch( uKey )
@@ -65,6 +66,11 @@ function onCallback0( socket, ourObj )
 	case "HP":
 	case "HEALTH":
 		ourObj.health = nVal;
+		if( ourObj.isDamageable )
+		{
+			// Refresh potential health bar for damageable objects
+			ourObj.UpdateStats( 0 );
+		}
 		okMsg( socket );
 		break;
 	case "KARMA":
@@ -84,9 +90,17 @@ function onCallback0( socket, ourObj )
 		ourObj.maxhp = nVal;
 		okMsg( socket );
 		break;
+	case "MANA":
+		ourObj.mana = nVal;
+		okMsg( socket );
+		break;
 	case "OWNER":
 		socket.tempObj = ourObj;
-		socket.CustomTarget( 1, "Choose character to own this object" );
+		socket.CustomTarget( 1, GetDictionaryEntry( 8104, socket.language )); // Choose character to own this object
+		break;
+	case "PERMANENTMAGICREFLECT":
+		ourObj.permanentMagicReflect = (nVal == 1);
+		okMsg( socket );
 		break;
 	case "POISON":
 		ourObj.poison = nVal;
@@ -132,19 +146,56 @@ function onCallback0( socket, ourObj )
 		ourObj.worldnumber = nVal;
 		okMsg( socket );
 		break;
+	case "DAMAGEABLE":
+		ourObj.isDamageable = nVal;
+		okMsg( socket );
+		break;
+	case "SCRIPTTRIGGER":
+		// Add a single script trigger to object; overwrites existing list of scripts
+		if( parseInt(nVal) == 0 )
+		{
+			ourObj.RemoveScriptTrigger( 0 );
+			socket.SysMessage( GetDictionaryEntry( 2044, socket.language )); // All script triggers have been cleared from target!
+		}
+		else
+		{
+			ourObj.scripttrigger = nVal;
+			okMsg( socket );
+		}
+		break;
+	case "SCRIPTTRIGGERS":
+		// Add script trigger to list of triggers on objects
+		if( parseInt(nVal) == 0 )
+		{
+			ourObj.RemoveScriptTrigger( 0 );
+			socket.SysMessage( GetDictionaryEntry( 2044, socket.language )); // All script triggers have been cleared from target!
+		}
+		else
+		{
+			ourObj.AddScriptTrigger( nVal );
+			okMsg( socket );
+		}
+		break;
+	case "SHOULDSAVE":
+		ourObj.shouldSave = (nVal == 1);
+		okMsg( socket );
+		break;
 	default:
 		if( ourObj.isChar )
-			HandleSetChar( socket, ourObj, uKey, nVal );
+			HandleSetChar( socket, ourObj, uKey, splitString );
 		else if( ourObj.isItem )
-			HandleSetItem( socket, ourObj, uKey, nVal );
+			HandleSetItem( socket, ourObj, uKey, splitString );
 		else
-			socket.SysMessage( "Invalid set command " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 		break;
 	}
 }
 
-function HandleSetItem( socket, ourItem, uKey, nVal )
+// Item-specific properties
+function HandleSetItem( socket, ourItem, uKey, splitString )
 {
+	var nVal 	= parseInt( splitString[1] );
+
 	switch( uKey )
 	{
 	case "ID":
@@ -158,6 +209,11 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 	case "MOVEABLE":
 	case "MOVABLE":
 		ourItem.movable = nVal;
+		ourItem.Refresh(); // Refresh so movable state updates for nearby clients!
+		okMsg( socket );
+		break;
+	case "BASERANGE":
+		ourItem.baseRange = nVal;
 		okMsg( socket );
 		break;
 	case "BUYVALUE":
@@ -172,33 +228,68 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.restock = nVal;
 		okMsg( socket );
 		break;
+	case "EVENT":
+		ourItem.event = socket.xText.substring( 6 );
+		okMsg( socket );
+		break;
 	case "MAXITEMS":
 		ourItem.maxItems = nVal;
 		okMsg( socket );
 		break;
+	case "MAXRANGE":
+		ourItem.maxRange = nVal;
+		okMsg( socket );
+		break;
 	case "MORE":
-		ourItem.more = nVal;
+		if( splitString[4] )
+		{
+			ourItem.more = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREX":
-		ourItem.morex = nVal;
+		if( splitString[4] )
+		{
+			ourItem.morex = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.morex = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREY":
-		ourItem.morey = nVal;
+		if( splitString[4] )
+		{
+			ourItem.morey = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.morey = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREZ":
-		ourItem.morez = nVal;
+		if( splitString[4] )
+		{
+			ourItem.morez = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.morez = nVal;
+		}
 		okMsg( socket );
 		break;
 	case "MOREXYZ":
-		var splitValues = socket.xText.split( " " );
-		if( splitValues[3] )
+		if( splitString[3] )
 		{
-			ourItem.morex = parseInt( splitValues[1] );
-			ourItem.morey = parseInt( splitValues[2] );
-			ourItem.morez = parseInt( splitValues[3] );
+			ourItem.morex = parseInt( splitString[1] );
+			ourItem.morey = parseInt( splitString[2] );
+			ourItem.morez = parseInt( splitString[3] );
 			okMsg( socket );
 		}
 		break;
@@ -206,8 +297,8 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.isNewbie = (nVal == 1);
 		okMsg( socket );
 		break;
-	case "DEVINELOCK":
-		ourItem.devinelock = (nVal == 1);
+	case "DIVINELOCK":
+		ourItem.divinelock = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "DIR":
@@ -229,7 +320,7 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 			}
 			else
 			{
-				socket.SysMessage( "Only objects added using the 'ADD SPAWNER # command can be assigned spawner item types!" );
+				socket.SysMessage( GetDictionaryEntry( 8106, socket.language )); // Only objects added using the 'ADD SPAWNER # command can be assigned spawner item types!
 			}
 		}
 		else
@@ -248,14 +339,21 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		break;
 	case "VISIBLE":
 		ourItem.visible = nVal;
+		ourItem.Refresh();
 		okMsg( socket );
 		break;
 	case "DESC":
-		ourItem.desc = nVal;
+		ourItem.desc = socket.xText.substring( 5 );
 		okMsg( socket );
 		break;
 	case "DEF":
 		ourItem.Resist( 1, nVal );
+		okMsg( socket );
+		break;
+	case "ARMORCLASS":
+	case "ARMOURCLASS":
+	case "AC":
+		ourItem.ac( nVal );
 		okMsg( socket );
 		break;
 	case "LAYER":
@@ -274,8 +372,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.weight = nVal;
 		okMsg( socket );
 		break;
+	case "MAXWEIGHT":
+		socket.SysMessage( "Setting value of property: .weightMax" );
 	case "WEIGHTMAX":
-		ourItem.weightmax = nVal;
+		ourItem.weightMax = nVal;
 		okMsg( socket );
 		break;
 	case "SPEED":
@@ -292,26 +392,37 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.race = nVal;
 		okMsg( socket );
 		break;
+	case "MAXUSES":
+		ourItem.maxUses = nVal;
+		okMsg( socket );
+		break;
+	case "USESLEFT":
+		ourItem.usesLeft = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
-			HandleSetSpawner( socket, ourItem, uKey, nVal );
+			HandleSetSpawner( socket, ourItem, uKey, splitString );
 		else
 		{
 			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
 			{
-				socket.SysMessage( "This can only be set on objects added as spawner objects through the 'ADD SPAWNER # command!" );
+				socket.SysMessage( GetDictionaryEntry( 8107, socket.language )); // This can only be set on objects added as spawner objects through the 'ADD SPAWNER # command!
 			}
 			else
 			{
-			socket.SysMessage( "Invalid set command " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 			}
 		}
 		break;
 	}
 }
 
-function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
+// Spawner-specific properties
+function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
+	var nVal 	= parseInt( splitString[1] );
+
 	switch( uKey )
 	{
 	case "SPAWNSECTION":
@@ -337,12 +448,15 @@ function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
 		okMsg( socket );
 		break;
 	default:
-		socket.SysMessage( "Invalid set command " + uKey );
+		socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 	}
 }
 
-function HandleSetChar( socket, ourChar, uKey, nVal )
+// Character-specific properties
+function HandleSetChar( socket, ourChar, uKey, splitString )
 {
+	var nVal 	= parseInt( splitString[1] );
+
 	switch( uKey )
 	{
 	case "ALLSKILLS":
@@ -356,6 +470,26 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 			ourChar.orgID = nVal;
 			okMsg( socket );
 		}
+		break;
+	case "CONTROLSLOTS":
+		ourChar.controlSlots = nVal;
+		okMsg( socket );
+		break;
+	case "CONTROLSLOTSUSED":
+		ourChar.controlSlotsUsed = nVal;
+		okMsg( socket );
+		break;
+	case "DEATHS":
+		ourChar.deaths = nVal;
+		okMsg( socket );
+		break;
+	case "LOYALTY":
+		ourChar.loyalty = nVal;
+		okMsg( socket );
+		break;
+	case "MAXLOYALTY":
+		ourChar.maxLoyalty = nVal;
+		okMsg( socket );
 		break;
 	case "FONT":
 		ourChar.font = nVal;
@@ -395,6 +529,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		}
 		break;
 	case "NPCWANDER":
+		ourChar.oldWandertype = nVal;
 		ourChar.wandertype = nVal;
 		okMsg( socket );
 		break;
@@ -470,11 +605,221 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 			okMsg ( socket );
 		}
 		break;
+	case "THIRST":
+		ourChar.thirst = nVal;
+		okMsg( socket );
+		break;
+	// Account Properties
+	case "USERNAME":
+	case "CURRENTCHAR":
+	case "ISONLINE":
+	case "CHARACTER1":
+	case "CHARACTER2":
+	case "CHARACTER3":
+	case "CHARACTER4":
+	case "CHARACTER5":
+	case "CHARACTER6":
+	case "CHARACTER7":
+	case "LASTIP":
+		socket.SysMessage( GetDictionaryEntry( 8108, socket.language )); // This is a read-only property.
+		break;
+	case "PASSWORD":
+		{
+			if( !ourChar.npc )
+			{
+				var newPass = socket.xText.substring( 9 );
+				if( newPass.length > 3 )
+				{
+					var myAccount = ourChar.account;
+					myAccount.password = newPass;
+   					Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET PASSWORD> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+					okMsg( socket );
+				}
+				else
+					socket.SysMessage( GetDictionaryEntry( 8109, socket.language ) + " " + newPass.length ); // Password must be longer than 3 characters! Current length:
+			}
+			break;
+		}
+	case "COMMENT":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.comment = socket.xText.substring( 8 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET COMMENT> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISBANNED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isBanned = ( nVal == 1 );
+			if( nVal == 1 )
+			{
+				// Also set a default timeban of 24 hours (60 * 24), and disconnect user, if online
+				myAccount.timeban = 60 * 24;
+				if( myAccount.isOnline && ValidateObject( myAccount.currentChar ) && myAccount.currentChar.socket != null )
+					myAccount.currentChar.Disconnect();
+			}
+			else
+			{
+				// Remove timeban as well
+				myAccount.timeban = 0;
+			}
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISBANNED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSUSPENDED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSuspended = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSUSPENDED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISPUBLIC":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isPublic = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISPUBLIC " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT1BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot1Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT1BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT2BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot2Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT2BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT3BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot3Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT3BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT4BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot4Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT4BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT5BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot5Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT5BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT6BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot6Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT6BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSLOT7BLOCKED":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSlot7Blocked = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSLOT6BLOCKED " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "UNUSED9":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.unused9 = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET UNUSED9 " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "UNUSED10":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.unused10 = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET UNUSED10 " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISSEER":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isSeer = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISSEER " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISCOUNSELOR":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isCounselor = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISCOUNSELOR " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "ISGM":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.isGM = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISGM " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
+	case "TIMEBAN":
+		if( !ourChar.npc )
+		{
+			var myAccount = ourChar.account;
+			myAccount.timeban = nVal;
+			if( nVal > 0 )
+			{
+				// Ban player if timeban is over zero
+				myAccount.isBanned = 1;
+				if( myAccount.isOnline && ValidateObject( myAccount.currentChar ) && myAccount.currentChar.socket != null )
+				{
+					// Disconnect currently logged in character on account, if they're online
+					myAccount.currentChar.socket.Disconnect();
+				}
+			}
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") useD command <SET TIMEBAN " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			okMsg( socket );
+		}
+		break;
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
 		else
-			socket.SysMessage( "Invalid set command " + uKey );
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 		break;
 	}
 }

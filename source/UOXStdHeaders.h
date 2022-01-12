@@ -41,7 +41,7 @@
 #   include <sys/stat.h>
 
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 
 #undef min
 #undef max
@@ -50,7 +50,7 @@
 #include <sys/timeb.h>
 #endif
 
-#if UOX_PLATFORM == PLATFORM_LINUX
+#if PLATFORM != WINDOWS
 
 
 #   include <unistd.h>

@@ -5,7 +5,7 @@
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
-#include "ustring.h"
+
 #include "typedefs.h"
 #include "uoxstruct.h"
 
@@ -49,6 +49,7 @@ class CBaseObject
 {
 protected:
 	TAGMAP2			tags;
+	TAGMAP2			tempTags;
 	std::string 	title;
 	SI16			mana;
 	SI16			stamina;
@@ -62,11 +63,12 @@ protected:
 	UI16			colour;
 	UI08			dir;
 	SERIAL			serial;
+	SERIAL			tempmulti;
 	CMultiObj *	multis;
 	SERIAL			spawnserial;
 	SERIAL			owner;
 	RACEID			race;
-	UString		 	name;
+	std::string 	name;
 	SI16			strength;
 	SI16			dexterity;
 	SI16			intelligence;
@@ -78,17 +80,19 @@ protected:
 	SI16			hidamage;
 	SI16			lodamage;
 	UI16			scriptTrig;
+	std::vector<UI16>	scriptTriggers;
 
 	SI16			carve; // Carve.dfn entry
 
 	UI08			worldNumber;
 	UI16			instanceID;
+	UI16			subRegion;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
 
 	UI08					poisoned;
-	std::bitset< 7 >		objSettings;
+	std::bitset< 8 >		objSettings;
 
 	UI16			resistances[WEATHNUM];
 
@@ -102,6 +106,8 @@ protected:
 	SI16			fame;
 	SI16			karma;
 	SI16			kills;
+	
+	SERIAL			temp_container_serial;
 
 	void			CopyData( CBaseObject *target );
 
@@ -113,6 +119,9 @@ public:
 
 	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
+
+	TAGMAPOBJECT			GetTempTag( std::string tempTagName ) const;
+	void					SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal );
 
 	void					SetResist( UI16 newValue, WeatherType damage );
 	UI16					GetResist( WeatherType damage ) const;
@@ -182,7 +191,7 @@ public:
 	bool					DumpFooter( std::ofstream &outStream ) const;
 	bool					Load( std::ifstream &inStream );
 
-	virtual bool			HandleLine( UString &UTag, UString &data );
+	virtual bool			HandleLine( std::string &UTag, std::string &data );
 
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );
@@ -201,7 +210,7 @@ public:
 	virtual void			SetHP( SI16 newValue );
 	void					IncHP( SI16 amtToChange );
 
-	void					SetDir( UI08 newDir );
+	void					SetDir( UI08 newDir, bool sendUpdate = true );
 	UI08					GetDir( void ) const;
 
 	void					SetVisible( VisibleTypes newValue );
@@ -216,8 +225,10 @@ public:
 	void					SetHiDamage( SI16 newValue );
 	void					SetLoDamage( SI16 newValue );
 
-	UI16					GetScriptTrigger( void ) const;
-	void					SetScriptTrigger( UI16 newValue );
+	std::vector<UI16>		GetScriptTriggers( void );
+	void					AddScriptTrigger( UI16 newValue );
+	void					RemoveScriptTrigger( UI16 newValue );
+	void					ClearScriptTriggers( void );
 
 	SI16					GetStrength2( void ) const;
 	SI16					GetDexterity2( void ) const;
@@ -240,15 +251,19 @@ public:
 	UI16					GetInstanceID( void ) const;
 	void					SetInstanceID( UI16 value );
 
+	UI16					GetSubRegion( void ) const;
+	void					SetSubRegion( UI16 value );
+
 	UI08					GetPoisoned( void ) const;
 	virtual void			SetPoisoned( UI08 newValue );
 
 	SI16					GetCarve( void ) const;
 	void					SetCarve( SI16 newValue );
 
-	virtual void			Update( CSocket *mSock = NULL ) = 0;
-	virtual void			SendToSocket( CSocket *mSock ) = 0;
+	virtual void			Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) = 0;
+	virtual void			SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) = 0;
 	virtual void			Dirty( UpdateTypes updateType );
+	void					RemoveFromRefreshQueue( void );
 
 	virtual void			Delete( void ) = 0;
 	virtual void			Cleanup( void );
@@ -263,6 +278,7 @@ public:
 	bool					ShouldSave( void ) const;
 	bool					isDisabled( void ) const;
 	bool					isWipeable( void ) const;
+	bool					isDamageable( void ) const;
 
 	void					SetFree( bool newVal );
 	void					SetDeleted( bool newVal );
@@ -271,6 +287,7 @@ public:
 	void					ShouldSave( bool newVal );
 	void					SetDisabled( bool newVal );
 	void					SetWipeable( bool newValue );
+	void					SetDamageable( bool newValue );
 
 	SI16					GetFame( void ) const;
 	void					SetFame( SI16 value );

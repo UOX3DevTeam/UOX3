@@ -253,23 +253,39 @@ inline line2D line3D::Projection2D( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 //o-----------------------------------------------------------------------------------------------o
-bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
+bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
 {
+	// Map tile at previous coordinate along the LoS path
 	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );
+
+	// Map tile at next coordinate along the LoS path
 	const map_st trgMap = Map->SeekMap( x2, y2, worldNum );
 
+	// Get tileIDs for previous tile in LoS path, and next one
 	const UI16 mID1		= srcMap.id;
 	const UI16 mID2		= trgMap.id;
-	if( mID1 != 2 && mID2 != 2 )
+
+	// Continue if neither of the two tiles is a NoDraw tile, or a cave entrance tile
+	if(( mID1 != 2 && mID2 != 2 ) && ( mID1 != 475 && mID2 != 475 ))
 	{
+		// Get z for previous tile in LoS path, and for next one
 		const SI16 mz1	= srcMap.z;
 		const SI16 mz2	= trgMap.z;
-		// Mountain walls
-		if( ( mz1 < mz2 && z <= mz2 && z >= mz1 ) ||									// 1) Collides with a map "wall"
-		   ( mz1 > mz2 && z <= mz1 && z >= mz2 ) ||
-		   ( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
-		   ( stat == NULL &&															// Ensure there is no static item
-			( ( mID1 >= 431  && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 475  ) ||
+		const SI08 startLocZ = LoS.loc.z;
+
+		// Check if LoS intersects with map/mountain walls
+		//if( ( mz1 < mz2 && z2Top <= mz2 && z >= mz1 ) ||									// 1) Collides with a map "wall"
+		  // ( mz1 > mz2 && z2Top <= mz1 && z >= mz2 ) ||
+		/*if((( startLocZ > mz1 && ( z < mz1 && z2Top < mz1 )) || ( startLocZ < mz1 && z > mz1 )) ||
+			(( startLocZ > mz2 && ( z < mz2 && z2Top < mz2 )) || ( startLocZ < mz2 && z > mz2 )) ||
+			( startLocZ > mz1 && ( z2Top < mz1 )) ||
+			( startLocZ > mz2 && ( z2Top < mz2 )) ||*/
+		   //( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
+		if( ( startLocZ > mz2 && z2Top < mz2 ) ||
+			( startLocZ < mz2 && z2Top > mz2 ) ||
+			( startLocZ > mz1 && ( mz1 < mz2 && ( mz2 > z2Top ) ) ) ||
+		   ( stat == nullptr &&															// Ensure there is no static item
+			( ( mID1 >= 431  && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 474  ) ||
 			 (   mID1 >= 543  && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
 			 (   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
 			 (   mID1 >= 1851 && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
@@ -358,32 +374,17 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	const SI16 curY		= toCheck->GetY();
 	const SI08 curZ		= toCheck->GetZ();
 	SI32 i				= 0;
-	vector3D *checkLoc	= NULL;
+	vector3D *checkLoc	= nullptr;
 	if( !toCheck->CanBeObjType( OT_MULTI ) )
 	{
 		if( toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2 )
 		{
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			CTile& iTile = Map->SeekTile( toCheck->GetID() );
+			for( i = 0; i < collisioncount; ++i )
 			{
-				//7.0.9.0 data and later
-				CTileHS& iTile = Map->SeekTileHS( toCheck->GetID() );
-				for( i = 0; i < collisioncount; ++i )
-				{
-					checkLoc = &collisions[i];
-					if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
-						return toCheck->GetID();
-				}
-			}
-			else
-			{
-				//7.0.8.2 data and earlier
-				CTile& iTile = Map->SeekTile( toCheck->GetID() );
-				for( i = 0; i < collisioncount; ++i )
-				{
-					checkLoc = &collisions[i];
-					if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
-						return toCheck->GetID();
-				}
+				checkLoc = &collisions[i];
+				if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
+					return toCheck->GetID();
 			}
 		}
 	}
@@ -391,121 +392,39 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	{
 		const UI16 multiID = static_cast<UI16>(toCheck->GetID() - 0x4000);
 		SI32 length = 0;
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-			length = Map->SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
-		else
-			length = Map->SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
-		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (13 Sept 1999)
+		
+		if( !Map->multiExists( multiID ))
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-			{
-				//7.0.9.0 tiledata and later
-				CLandHS& land = Map->SeekLandHS( map1.id );
-				if( land.CheckFlag( TF_WET ) ) // is it water?
-					toCheck->SetID( 0x4001 );
-				else
-					toCheck->SetID( 0x4064 );
-			}
+			CLand& land = Map->SeekLand( map1.id );
+			if( land.CheckFlag( TF_WET ) ) // is it water?
+				toCheck->SetID( 0x4001 );
 			else
-			{
-				//7.0.8.2 tiledata and earlier
-				CLand& land = Map->SeekLand( map1.id );
-				if( land.CheckFlag( TF_WET ) ) // is it water?
-					toCheck->SetID( 0x4001 );
-				else
-					toCheck->SetID( 0x4064 );
-			}
+				toCheck->SetID( 0x4064 );
 			length = 0;
-		}
-
-		if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
-		{
-			for( SI32 k = 0; k < length; ++k )
-			{
-				MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, k );
-				if( multi.visible )
-				{
-					const SI16 checkX = (curX + multi.x);
-					const SI16 checkY = (curY + multi.y);
-					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
-					{
-						const SI08 checkZ = (curZ + multi.z);
-						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-						{
-							//7.0.9.2 tiledata and later
-							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
-						}
-						else
-						{
-							//7.0.8.2 tiledata and earlier
-							CTile& multiTile = Map->SeekTile( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 		else
 		{
-			for( SI32 k = 0; k < length; ++k )
+			for( auto &multi : Map->SeekMulti( multiID ).allItems() )
 			{
-				Multi_st& multi = Map->SeekIntoMulti( multiID, k );
+				
 				if( multi.visible )
 				{
-					const SI16 checkX = (curX + multi.x);
-					const SI16 checkY = (curY + multi.y);
+					const SI16 checkX = (curX + multi.xoffset);
+					const SI16 checkY = (curY + multi.yoffset);
 					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
 					{
-						const SI08 checkZ = (curZ + multi.z);
-						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+						const SI08 checkZ = (curZ + multi.zoffset);
+						CTile& multiTile = Map->SeekTile( multi.tileid );
+						for( i = 0; i < collisioncount; ++i )
 						{
-							//7.0.9.0 data and later
-							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
+							checkLoc = &collisions[i];
+							if( checkX == checkLoc->x && checkY == checkLoc->y &&
+							   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+							    ( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
-							}
-						}
-						else
-						{
-							//7.0.8.2 data and earlier
-							CTile& multiTile = Map->SeekTile( multi.tile );
-							for( i = 0; i < collisioncount; ++i )
-							{
-								checkLoc = &collisions[i];
-								if( checkX == checkLoc->x && checkY == checkLoc->y &&
-								   ( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
-								{
-									return multi.tile;
-								}
+								return multi.tileid;
 							}
 						}
 					}
@@ -541,7 +460,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 //|
 //|					it WAS based on the P.T., now its based on linear algebra ;)
 //o-----------------------------------------------------------------------------------------------o
-bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ )
+bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ, SI08 destZTop, bool checkDistance )
 {
 	const bool blocked		= false;
 	const bool not_blocked	= true;
@@ -559,21 +478,31 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	const UI16 instanceID = mChar->GetInstanceID();
 
 	const SI32 distX	= abs( static_cast<SI32>(destX - startX) ), distY = abs( static_cast<SI32>(destY - startY) );
-	const SI32 distZ	= abs( static_cast<SI32>(destZ - startZ) );
+	const SI32 distZ	= destZ - startZ; // abs( static_cast<SI32>( destZ - startZ ) );
 
 	line3D lineofsight	= line3D( vector3D( startX, startY, startZ ), vector3D( distX, distY, distZ ) );
 
-	const R64 rBlah		= (distX * distX) + (distY * distY);
+	const R64 rBlah		= (static_cast<R64>(distX) * static_cast<R64>(distX)) + (static_cast<R64>(distY) * static_cast<R64>(distY));
 	const SI32 distance	= static_cast<SI32>(sqrt( rBlah ));
 
-	if( distance > 18 )
+	// Let's provide some leeway based on height of object
+	destZTop = destZ + destZTop;
+
+	if( checkDistance && distance > 18 )
 		return blocked;
 
+	// DISABLED; Allows placing items within walls when standing next to them...
 	//If target is next to us and within our field of view
-	if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
+	//if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
+		//return not_blocked;
+	if( distance == 0 && destZ <= ( startZ + 3 ) && destZTop >= ( useSurfaceZ ? ( startZ  ) : ( startZ - 15 ) ) )
 		return not_blocked;
 
-	vector3D collisions[ MAX_COLLISIONS ];
+	//vector3D *collisions = new vector3D[ MAX_COLLISIONS ];
+	std::vector<vector3D> vec;
+	vec.resize( MAX_COLLISIONS );
+	auto collisions = vec.data();
+
 	SI16 x1, y1, x2, y2;
 	SI32 i				= 0;
 	const SI08 sgn_x	= GetSGN( startX, destX, x1, x2 );
@@ -595,7 +524,7 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 
 	if( sgn_x == 0 && sgn_y == 0 && sgn_z != 0 ) // should fix shooting through floor issues
 	{
-		for( i = 1; i <= distZ; ++i )
+		for( i = 1; i <= abs(distZ); ++i )
 		{
 			collisions[collisioncount] = vector3D( startX, startY, (SI08)(startZ + (i * sgn_z)) );
 			++collisioncount;
@@ -681,9 +610,9 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
 		{
@@ -697,22 +626,11 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 			if( idToPush != INVALIDID )
 			{
-				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-				{
-					//7.0.9.0 data and later
-					CTileHS& itemToCheck = Map->SeekTileHS( idToPush );
-					losItemList[itemCount].Height(itemToCheck.Height());
-					losItemList[itemCount].SetID( idToPush );
-					losItemList[itemCount].Flags( itemToCheck.Flags() );
-				}
-				else
-				{
-					//7.0.8.2 data and earlier
-					CTile& itemToCheck = Map->SeekTile( idToPush );
-					losItemList[itemCount].Height(itemToCheck.Height());
-					losItemList[itemCount].SetID( idToPush );
-					losItemList[itemCount].Flags( itemToCheck.Flags() );
-				}
+				CTile& itemToCheck = Map->SeekTile( idToPush );
+				losItemList[itemCount].Height(itemToCheck.Height());
+				losItemList[itemCount].SetID( idToPush );
+				losItemList[itemCount].Flags( itemToCheck.Flags() );
+
 				++itemCount;
 				if( itemCount >= LOSXYMAX )	// don't overflow
 					break;
@@ -729,36 +647,37 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		Static_st *stat = msi.First();
 
 		// Texture mapping
-		if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber ) )
-			return blocked;
+		if( checkLoc.x == destX && checkLoc.y == destY )
+		{
+			// Don't overshoot. We don't care about height of tile BEHIND our target
+			if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x, checkLoc.y, worldNumber, destZTop ) )
+			{
+				//delete[] collisions;
+				return blocked;
+			}
+		}
+		else
+		{
+			// Check next tile along the LoS path
+			if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber, destZTop ) )
+			{
+				//delete[] collisions;
+				return blocked;
+			}
+		}
 
 		// Statics
-		while( stat != NULL )
+		while( stat != nullptr )
 		{
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			CTile& tile = Map->SeekTile( stat->itemid );
+			if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
+			   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
 			{
-				//7.0.9.0 data and later
-				CTileHS& tile = Map->SeekTileHS( stat->itemid );
-				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-				   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
-				{
-					losItemList[itemCount].Height(tile.Height());
-					losItemList[itemCount].SetID( stat->itemid );
-					losItemList[itemCount].Flags( tile.Flags() );
-				}
+				losItemList[itemCount].Height(tile.Height());
+				losItemList[itemCount].SetID( stat->itemid );
+				losItemList[itemCount].Flags( tile.Flags() );
 			}
-			else
-			{
-				//7.0.8.2 data and earlier
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-				   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
-				{
-					losItemList[itemCount].Height(tile.Height());
-					losItemList[itemCount].SetID( stat->itemid );
-					losItemList[itemCount].Flags( tile.Flags() );
-				}
-			}
+
 			++itemCount;
 			if( itemCount >= LOSXYMAX )	// don't overflow
 				break;
@@ -774,10 +693,15 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		for( j = 0; j < checkthistotal; ++j )
 		{
 			tb = &losItemList[i];
-			if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
+			//if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
+			if( CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ) )
+			{
+				//delete[] collisions;
 				return blocked;
+			}
 		}
 	}
+	//delete[] collisions;
 	return not_blocked;
 }
 
@@ -794,11 +718,11 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 	CBaseObject *itemOwner	= i;
 	bool inSight			= false;
 
-	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate the lof
+	if( i->GetCont() != nullptr ) // It's inside another container, we need root container to calculate the lof
 	{
 		ObjectType objType	= OT_CBO;
 		CBaseObject *iOwner = FindItemOwner( i, objType );
-		if( iOwner != NULL )
+		if( iOwner != nullptr )
 			itemOwner = iOwner;
 	}
 
@@ -806,25 +730,25 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 		inSight = true;
 	else
 	{
-		if( mChar->GetInstanceID() != i->GetInstanceID() )
+		if( mChar->GetInstanceID() != itemOwner->GetInstanceID() )
 			return false;
 
 		const SI08 height = Map->TileHeight( itemOwner->GetID() ); // Retrieves actual height of item, unrelated to world-coordinate
 		// Can we see the top or bottom of the item
-		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+		if( LineOfSight( nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 		{
 			inSight = true;
 		}
 		else if( height > 0 ) // Only bother checking for the top of the item if the item has an actual height value, otherwise it's essentially same check twice
 		{
-			if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+			if( LineOfSight( nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				inSight = true;
 			}
 		}
 		if( inSight == false )// If both the previous checks failed, try checking from character's Z location to top of item instead
 		{
-			if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true ) )
+			if( LineOfSight( nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true ) )
 			{
 				inSight = true;
 			}

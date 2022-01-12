@@ -125,13 +125,24 @@
 {
 0x0f06
 0x0f07
+0x0f07-b
+0x0f07-c
 0x0f08
+0x0f08-b
 0x0f09
+0x0f09-b
 0x0f0a
+0x0f0a-b
+0x0f0a-c
+0x0f0a-d
 0x0f0b
+0x0f0b-b
 0x0f0c
-0x0f0c
+0x0f0c-b
+0x0f0c-c
 0x0f0d
+0x0f0d-b
+0x0f0d-c
 }
 
 //Instruments
@@ -226,7 +237,7 @@
 0x1ebc
 }
 
-//Regs
+// Reagents
 [ITEMLIST 12]
 {
 0x0f7a
@@ -276,17 +287,19 @@
 // Male Plain Hats
 [ITEMLIST 20]
 {
-0x1713
-0x1716
-0x1717
-0x1540
-0x1544
+50|blank
+10|0x1713
+10|0x1716
+10|0x1717
+10|0x1540
+10|0x1544
 }
 
 // Male Plain Shirts
 [ITEMLIST 21]
 {
-0x1517
+75|0x1517
+25|blank
 }
 
 // Male Plain Pants
@@ -303,46 +316,41 @@
 0x170d
 0x170f
 0x1711
+blank
 }
 
 // Male Plain Tunic & Aprons
 [ITEMLIST 24]
 {
-0x1fa1
-//0x153b
-0x153d
-//0x0e75
-//0x0e75
-//0x0e75
+500|blank
+166|0x1fa1
+166|0x153b
+166|0x153d
 }
 
 // Male Plain Tunic & Robe
 [ITEMLIST 25]
 {
-0x1fa1
-0x1f03
-//0x0e75
-//0x0e75
+50|blank
+25|0x1fa1
+25|0x1f03
 }
 
 // Male Plain Cape
 [ITEMLIST 26]
 {
-0x1515
-//0x0e75
+66|blank
+33|0x1515
 }
 
 // Male Fancy Hats
 [ITEMLIST 30]
 {
-0x1714
-0x1715
-0x171a
-0x171b
-//0x0e75
-//0x0e75
-//0x0e75
-//0x0e75
+500|blank
+125|0x1714
+125|0x1715
+125|0x171a
+125|0x171b
 }
 
 // Male Fancy Shirts
@@ -369,38 +377,35 @@
 // Male Fancy Surcoat, Tunic, Doublet & Sash 
 [ITEMLIST 34]
 {
-0x1ffd
-0x1f9f
-0x1f7b
-0x1541
-//0x0e75
-//0x0e75
-//0x0e75
-//0x0e75
+571|blank
+143|0x1ffd
+143|0x1f7b
+143|0x1541
 }
 
 // Male Fancy Robe
 [ITEMLIST 35]
 {
-0x1f03
-//0x0e75
+66|blank
+33|0x1f03
 }
 
 // Male Fancy Cape
 [ITEMLIST 36]
 {
 0x1515
-//0x0e75
+blank
 }
 
 // Female Plain Hats
 [ITEMLIST 40]
 {
-0x1713
-0x1716
-0x1717
-0x1540
-0x1544
+50|blank
+10|0x1713
+10|0x1716
+10|0x1717
+10|0x1540
+10|0x1544
 }
 
 // Female Plain Shirts
@@ -425,50 +430,45 @@
 0x170d
 0x170f
 0x1711
+blank
 }
 
 // Female Plain Tunic, Dress & Aprons
 [ITEMLIST 44]
 {
-0x1fa1
-0x1f01
-0x153b
-0x153d
-//0x0e75
-//0x0e75
-//0x0e75
-//0x0e75
+500|blank
+125|0x1fa1
+125|0x1f01
+125|0x153b
+125|0x153d
 }
 
 // Female Plain Tunic, Robe & Dress
 [ITEMLIST 45]
 {
-0x1fa1
-0x1f03
-0x1f01
-//0x0e75
-//0x0e75
-//0x0e75
+285|blank
+143|0x1fa1
+143|0x1fa1
+143|0x1f03
+143|0x1f01
+143|0x1f01
 }
 
 // Female Plain Cape
 [ITEMLIST 46]
 {
 0x1515
-//0x0e75
+blank
 }
 
 // Female Fancy Hats
 [ITEMLIST 50]
 {
-0x1714
-0x1719
-0x171a
-0x171b
-//0x0e75
-//0x0e75
-//0x0e75
-//0x0e75
+500|blank
+125|0x1714
+125|0x1719
+125|0x171a
+125|0x171b
 }
 
 // Female Fancy Shirts
@@ -497,32 +497,27 @@
 // Female Fancy Surcoat, Tunic, Doublet, Dress & Sash
 [ITEMLIST 54]
 {
-0x1ffd
-0x1f9f
-0x1f7b
-0x1eff
-0x1541
-//0x0e75
-//0x0e75
-//0x0e75
-//0x0e75
-//0x0e75
+555|blank
+111|0x1ffd
+111|0x1f7b
+111|0x1eff
+111|0x1541
 }
 
 // Female Fancy Robe & Dress
 [ITEMLIST 55]
 {
-0x1f03
-0x1eff
-//0x0e75
-//0x0e75
+40|blank
+20|0x1f03
+20|0x1eff
+20|0x1eff
 }
 
 // Female Fancy Cape
 [ITEMLIST 56]
 {
 0x1515
-//0x0e75
+blank
 }
 
 // Types of Fish
@@ -532,6 +527,50 @@
 0x09cd
 0x09ce
 0x09cf
+}
+
+// 1-H Weapons
+[ITEMLIST 58]
+{
+0x0f5c
+0x0f5e
+0x0f61
+0x13b4
+0x13b6
+0x13b8
+0x13b0
+0x13ff
+0x1401
+0x1405
+0x1407
+0x143b
+0x1441
+}
+
+// 1-H Swords
+[ITEMLIST 59]
+{
+0x0f5e
+0x0f61
+0x13b6
+0x13b8
+0x13ff
+}
+
+// 1-H Fencing
+[ITEMLIST 60]
+{
+0x0f51
+0x1401
+0x1405
+}
+
+// Archery Weapons
+[ITEMLIST 61]
+{
+0x0f4f
+0x13b2
+0x13fd
 }
 
 // Treasure hunt list
@@ -774,6 +813,258 @@
 0x0c79
 0x0c7b
 0x0c82
+}
+
+// Random gems
+[ITEMLIST 73]
+{
+0x0F0F
+0x0F10
+0x0F11
+0x0F12
+0x0F13
+0x0F14
+0x0F15
+0x0F16
+0x0F17
+0x0F18
+0x0F19
+0x0f1a
+0x0f1b
+0x0f1c
+0x0f1d
+0x0f1e
+0x0f1f
+0x0f20
+0x0f21
+0x0f22
+0x0f23
+0x0f24
+0x0F25
+0x0F26
+0x0F27
+0x0F28
+0x0F29
+0x0F2a
+0x0F2b
+0x0F2c
+0x0F2d
+0x0F2e
+0x0F2f
+0x0F30
+}
+
+// Reagents, stacks of 10 each
+[ITEMLIST 74]
+{
+0x0f7a-10
+0x0f7b-10
+0x0f84-10
+0x0f85-10
+0x0f86-10
+0x0f88-10
+0x0f8c-10
+0x0f8d-10
+}
+
+// Scrolls from first four circles
+[ITEMLIST 100]
+{
+0x1f2d
+0x1f2e
+0x1f2f
+0x1f30
+0x1f31
+0x1f32
+0x1f33
+0x1f34
+0x1f35
+0x1f36
+0x1f37
+0x1f38
+0x1f39
+0x1f3a
+0x1f3b
+0x1f3c
+0x1f3d
+0x1f3e
+0x1f3f
+0x1f40
+0x1f41
+0x1f42
+0x1f43
+0x1f44
+0x1f45
+0x1f46
+0x1f47
+0x1f48
+0x1f49
+0x1f4a
+0x1f4b
+0x1f4c
+}
+
+// Random practice weapon
+[ITEMLIST 120]
+{
+practice_skinning_knife
+practice_hatchet
+practice_axe
+practice_mace
+practice_longsword
+practice_spear
+practice_bow
+practice_club
+practice_crook
+practice_gnarled_staff
+}
+
+// Random Magic Items - Max Tier 1
+[ITEMLIST 130]
+{
+80|blank
+20|random_magic_armor_1
+}
+
+// Random Magic Items - Max Tier 2
+[ITEMLIST 131]
+{
+80|blank
+20|random_magic_armor_2
+}
+
+// Random Magic Items - Max Tier 3
+[ITEMLIST 132]
+{
+80|blank
+20|random_magic_armor_3
+}
+
+// Random Magic Items - Max Tier 4
+[ITEMLIST 133]
+{
+80|blank
+20|random_magic_armor_4
+}
+
+// Random Magic Items - Max Tier 5
+[ITEMLIST 134]
+{
+80|blank
+20|random_magic_armor_5
+}
+
+// Random polearm - Halberd, Bardiche
+[ITEMLIST 150]
+{
+200|itemlist=134,10
+50|blank
+25|0x143e
+25|0x0f4d
+}
+
+// Juka Warrior Weapons - Halberd, Spear, Black Staff
+[ITEMLIST 200]
+{
+100|0x143e
+50|0x0f62
+25|0x0df1
+}
+
+// Dungeon Treasures Level 1 - 4
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot1]
+{
+0x0eed,98 125
+lootlist=lowlevelscrolls,6
+lootlist=randomgemsandjewelry,4
+lootlist=magic_items_max_tier_2
+itemlist=4,2 // random potions
+itemlist=lowlevelarmor,2
+itemlist=randomlowlevelweapons,2
+}
+
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot2]
+{
+0x0eed,98 125
+lootlist=lowlevelscrolls,6
+lootlist=randomgemsandjewelry,4
+lootlist=magic_items_max_tier_2
+itemlist=4,4 // random potions
+itemlist=lowlevelarmor,2
+itemlist=midlevelarmor,2
+itemlist=randomlowlevelweapons,2
+itemlist=randommidlevelweapons,2
+}
+
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot3]
+{
+0x0eed,200 350
+lootlist=midlevelscrolls,6
+lootlist=randomgemsandjewelry,8
+lootlist=magic_items_max_tier_3
+itemlist=4,8 // random potions
+itemlist=midlevelarmor,4
+itemlist=highlevelarmor,2
+itemlist=randommidlevelweapons,4
+itemlist=randomhighlevelweapons,2
+}
+
+// Special Itemlist for Container Spawn Objects!
+[ITEMLIST dungeontreasureloot4]
+{
+0x0eed,500 900
+lootlist=highlevelscrolls,6
+lootlist=randomgemsandjewelry,16
+lootlist=magic_items_max_tier_4
+itemlist=4,16 // random potions
+itemlist=midlevelarmor,2
+itemlist=highlevelarmor,4
+itemlist=randommidlevelweapons,2
+itemlist=randomhighlevelweapons,4
+}
+
+// Itemlists used by regional spawners to spawn dungeon chest spawners!
+[ITEMLIST dungeon_treasure_1-2]
+{
+d_treasure_1
+d_treasure_2
+}
+
+[ITEMLIST dungeon_treasure_1-3]
+{
+d_treasure_1
+d_treasure_2
+d_treasure_3
+}
+
+[ITEMLIST dungeon_treasure_1-4]
+{
+d_treasure_1
+d_treasure_2
+d_treasure_3
+d_treasure_4
+}
+
+[ITEMLIST dungeon_treasure_2-3]
+{
+d_treasure_2
+d_treasure_3
+}
+
+[ITEMLIST dungeon_treasure_2-4]
+{
+d_treasure_2
+d_treasure_3
+d_treasure_4
+}
+
+[ITEMLIST dungeon_treasure_3-4]
+{
+d_treasure_3
+d_treasure_4
 }
 
 //**************************
@@ -1038,6 +1329,30 @@ itemlist=56
 itemlist=57
 }
 
+// 1-H Weapons
+[listobject58]
+{
+itemlist=58
+}
+
+// 1-H Swords
+[listobject59]
+{
+itemlist=59
+}
+
+// 1-H Fencing
+[listobject60]
+{
+itemlist=60
+}
+
+// Archery Weapons
+[listobject61]
+{
+itemlist=61
+}
+
 // // Treasure hunt list
 [listobject69]
 {
@@ -1060,4 +1375,64 @@ itemlist=71
 [listobject72]
 {
 itemlist=72
+}
+
+// Random gems
+[listobject73]
+{
+itemlist=73
+}
+
+// Scrolls from first four spell circles
+[listobject100]
+{
+itemlist=100
+}
+
+// Random practice weapon
+[listobject120]
+{
+itemlist=120
+}
+
+// Random magic items - Max Tier 1
+[listobject130]
+{
+itemlist=130
+}
+
+// Random magic items - Max Tier 2
+[listobject131]
+{
+itemlist=131
+}
+
+// Random magic items - Max Tier 3
+[listobject132]
+{
+itemlist=132
+}
+
+// Random magic items - Max Tier 4
+[listobject133]
+{
+itemlist=133
+}
+
+// Random magic items - Max Tier 5
+[listobject134]
+{
+itemlist=134
+}
+
+// Random polearm - Halberd, Bardiche
+[listobject150]
+{
+itemlist=150
+}
+
+// Juka Warrior Weapons - Halberd, Spear, Black Staff
+[listobject200]
+{
+itemlist=200
 }

@@ -8,19 +8,22 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "CPacketSend.h"
+#include "PartySystem.h"
 #include "classes.h"
 #include "townregion.h"
 #include "Dictionary.h"
 #include "cEffects.h"
+#include "cRaces.h"
 #include "StringUtility.hpp"
 
 #include "ObjectFactory.h"
+#include <algorithm>
 
 
 template< class T >
 T Capped( const T value, const T minimum, const T maximum )
 {
-	return UOX_MAX( UOX_MIN( value, maximum ), minimum );
+	return std::max( std::min( value, maximum ), minimum );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -317,14 +320,14 @@ void startChar( CSocket *mSock, bool onCreate = false );
 //o-----------------------------------------------------------------------------------------------o
 bool CPIPlayCharacter::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
 			bool disconnect = false;
 			CAccountBlock&  actbRec	= tSock->GetAccount();
-			CChar *kChar			= NULL;
-			CChar *ourChar			= NULL;
+			CChar *kChar			= nullptr;
+			CChar *ourChar			= nullptr;
 			if( actbRec.wAccountIndex == AB_INVALID_ID )
 			{
 				Network->Disconnect( tSock );
@@ -333,7 +336,7 @@ bool CPIPlayCharacter::Handle( void )
 			else
 			{
 				ourChar = actbRec.lpCharacters[slotChosen];
-				if( ourChar != NULL )
+				if( ourChar != nullptr )
 				{
 					if( !ourChar->IsNpc() && !ourChar->isFree() )
 						kChar = ourChar;
@@ -413,8 +416,9 @@ bool CPIPlayCharacter::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CPIDeleteCharacter::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
+		SI08 deleteResult = -1;
 		CAccountBlock * actbTemp = &tSock->GetAccount();
 		UI08 slot = tSock->GetByte( 0x22 );
 		if( actbTemp->wAccountIndex != AB_INVALID_ID )
@@ -422,8 +426,9 @@ bool CPIDeleteCharacter::Handle( void )
 			CChar *ourObj = actbTemp->lpCharacters[slot];
 			if( ValidateObject( ourObj ) )	// we have a char
 			{
-				Accounts->DelCharacter( actbTemp->wAccountIndex , slot );
-				ourObj->Delete();
+				deleteResult = Accounts->DelCharacter( actbTemp->wAccountIndex , slot );
+				if( deleteResult == CDR_SUCCESS )
+					ourObj->Delete();
 			}
 		}
 		else
@@ -433,23 +438,39 @@ bool CPIDeleteCharacter::Handle( void )
 			actbTemp = &Accounts->GetAccountByID( actbTemp->wAccountIndex );
 		}
 
-		UI08 charCount = 0;
-		for( UI08 i = 0; i < 7; ++i )
+		// For modern clients (?) we need to send packets 0x85 and 0x86 here!
+		if( deleteResult != CDR_SUCCESS )
 		{
-			if( ValidateObject( actbTemp->lpCharacters[i] ) )
-				++charCount;
+			// 0x85 - DeleteResult - only send if deletion failed!
+			CPCharDeleteResult pckDelResult( static_cast<CharacterDeletionResult>(deleteResult) );
+			tSock->Send( &pckDelResult );
 		}
-		CServerData *sd		= cwmWorldState->ServerData();
-		UI08 serverCount	= static_cast<UI08>(sd->NumServerLocations());
-		CPCharAndStartLoc toSend( (*actbTemp), charCount, serverCount, tSock );
-		for( UI08 j = 0; j < serverCount; ++j )
+		else
 		{
-			if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13 )
-				toSend.NewAddStartLocation( sd->ServerLocation( j ), j );
-			else
-				toSend.AddStartLocation( sd->ServerLocation( j ), j );
+			UI08 charCount = 0;
+			for( UI08 i = 0; i < 7; ++i )
+			{
+				if( ValidateObject( actbTemp->lpCharacters[i] ) )
+					++charCount;
+			}
+
+			// 0x86 - Resend Characters after Delete
+			CharacterListUpdate pckCharList( charCount );
+			for( UI08 i = 0; i < charCount; ++i )
+			{
+				if( ValidateObject( actbTemp->lpCharacters[i] ) )
+					pckCharList.AddCharName( i, actbTemp->lpCharacters[i]->GetName() );
+				else
+					pckCharList.AddCharName( i, "" );
+			}
+
+			// If no characters exist, send an empty character list
+			if( charCount == 0 )
+			{
+				pckCharList.AddCharName( 0, "" );
+			}
+			tSock->Send( &pckCharList );
 		}
-		tSock->Send( &toSend );
 	}
 	return true;
 }
@@ -464,21 +485,23 @@ bool CPIDeleteCharacter::Handle( void )
 void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour )
 {
 	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
-	if( newbieData != NULL )
+	if( newbieData != nullptr )
 	{
-		CItem *n = NULL;
-		for( UString tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
+		CItem *n = nullptr;
+		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
-			UString data = newbieData->GrabData();
+			std::string data = newbieData->GrabData();
+			data = strutil::trim( strutil::removeTrailing( data, "//" ));
 			if( !data.empty() )
 			{
-				UString UTag = tag.upper();
+				auto UTag = strutil::upper( tag );
 				if( UTag == "PACKITEM" )
 				{
-					if( data.sectionCount( "," ) != 0 )
-					{
-						UI16 nAmount = str_value<std::uint16_t>(trim(extractSection(data, ",", 1, 1 )));
-						n = Items->CreateScriptItem( socket, c, trim(extractSection(data, ",", 0, 0 )), nAmount, OT_ITEM, true );
+					auto csecs = strutil::sections( data, "," );
+					if( csecs.size() > 1 )
+					{						
+						UI16 nAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+						n = Items->CreateScriptItem( socket, c, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
 					}
 					else
 					{
@@ -487,8 +510,21 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 				}
 				else if( UTag == "EQUIPITEM" )
 				{
-					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
-					if( n != NULL && n->GetLayer() != IL_NONE )
+					UI16 itemHue = 0;
+					std::string itemSection;
+					auto csecs = strutil::sections( data, "," );
+					if( csecs.size() > 1 )
+					{
+						itemSection = strutil::trim( strutil::removeTrailing( csecs[0], "//" ));
+						itemHue = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+					}
+					else
+					{
+						itemSection = data;
+					}
+
+					n = Items->CreateScriptItem( socket, c, itemSection.c_str(), 1, OT_ITEM, true, itemHue );
+					if( n != nullptr && n->GetLayer() != IL_NONE )
 					{
 						bool conflictItem = true;
 						CItem *j = c->GetItemAtLayer( n->GetLayer() );
@@ -532,8 +568,11 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 						}
 					}
 				}
-				if( n != NULL )
+				if( n != nullptr && !n->isPileable() )
+				{
+					// Set item as newbiefied/blessed by default - as long as it's not pileable!
 					n->SetNewbie( true );
+				}
 			}
 		}
 	}
@@ -556,14 +595,14 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		ITOTAL
 	};
 
-	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL };
+	CItem *CreatedItems[ITOTAL] = { nullptr, nullptr, nullptr, nullptr, nullptr };
 	UI16 ItemID, ItemColour;
 	if( validHairStyle( hairStyle, mChar->GetID() ) )
 	{
 		ItemID				= hairStyle;
 		ItemColour			= validHairColour( hairColour, mChar->GetID() );
 		CreatedItems[HAIR]	= Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
-		if( CreatedItems[HAIR] != NULL )
+		if( CreatedItems[HAIR] != nullptr )
 		{
 			CreatedItems[HAIR]->SetDecayable( false );
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
@@ -580,7 +619,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		else // human male
 			ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
 		CreatedItems[BEARD] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
-		if( CreatedItems[BEARD] != NULL )
+		if( CreatedItems[BEARD] != nullptr )
 		{
 			CreatedItems[BEARD]->SetDecayable( false );
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
@@ -590,9 +629,10 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		}
 	}
 	CreatedItems[PACK] = Items->CreateItem( tSock, mChar, 0x0E75, 1, 0, OT_ITEM );
-	if( CreatedItems[PACK] != NULL )
+	if( CreatedItems[PACK] != nullptr )
 	{
 		mChar->SetPackItem( CreatedItems[PACK] );
+		CreatedItems[PACK]->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
 		CreatedItems[PACK]->SetDecayable( false );
 		CreatedItems[PACK]->SetLayer( IL_PACKITEM );
 		CreatedItems[PACK]->SetCont( mChar );
@@ -600,9 +640,9 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[PACK]->SetDye( true );
 	}
 	CreatedItems[BANK] = Items->CreateItem( tSock, mChar, 0x09AB, 1, 0, OT_ITEM );
-	if( CreatedItems[BANK] != NULL )
+	if( CreatedItems[BANK] != nullptr )
 	{
-		CreatedItems[BANK]->SetName( format(1024,Dictionary->GetEntry( 1283 ), mChar->GetName().c_str() ) );
+		CreatedItems[BANK]->SetName( strutil::format(1024,Dictionary->GetEntry( 1283 ), mChar->GetName().c_str() ) );
 		CreatedItems[BANK]->SetDecayable( false );
 		CreatedItems[BANK]->SetLayer( IL_BANKBOX );
 		CreatedItems[BANK]->SetType( IT_CONTAINER );
@@ -628,7 +668,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	{
 		if( vecSkills[i].value > 0 )
 		{
-			whichsect = format( "BESTSKILL %i", vecSkills[i].skill );
+			whichsect = strutil::format( "BESTSKILL %i", vecSkills[i].skill );
 			addNewbieItem( tSock, mChar, whichsect.c_str(), 0, 0 );
 		}
 	}
@@ -665,10 +705,10 @@ bool CPICreateCharacter::Handle( void )
 	// Way too large from a maintenance perspective
 	// --> I split certain things out into a few new functions to make this a bit more manageable
 
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		CChar *mChar = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-		if( mChar != NULL )
+		if( mChar != nullptr )
 		{
 			CPClientVersion verCheck;
 			tSock->Send( &verCheck );
@@ -686,7 +726,7 @@ bool CPICreateCharacter::Handle( void )
 				mChar->SetAccount( actbRec );
 			}
 
-			SetNewCharGender( mChar );
+			SetNewCharGenderAndRace( mChar );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 
@@ -716,13 +756,13 @@ bool CPICreateCharacter::Handle( void )
 				}
 			}
 
-			if (toGo == NULL)
+			if( toGo == nullptr )
 			{
 				// Invalid locationNumber; check if there are ANY start locations loaded
-				if (serverCount == 0)
+				if( serverCount == 0 )
 				{
 					// No start locations found, use a default hardcoded one
-					Console.error("No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10).");
+					Console.error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
 					SI16 startX;
 					SI16 startY;
 					SI08 startZ;
@@ -733,7 +773,7 @@ bool CPICreateCharacter::Handle( void )
 					startZ = 10;
 					startWorld = 0;
 					startInstanceID = 0;
-					mChar->SetLocation(startX, startY, startZ, startWorld, startInstanceID);
+					mChar->SetLocation( startX, startY, startZ, startWorld, startInstanceID );
 				}
 				else
 				{
@@ -768,6 +808,10 @@ bool CPICreateCharacter::Handle( void )
 					Console.print( "Accepted a Krrios client without GM Privs\n" );
 				}
 			}
+
+			// Set character creation timestamp
+			mChar->SetCreatedOn( GetMinutesSinceEpoch() );
+
 			startChar( tSock, true );
 		}
 	}
@@ -810,7 +854,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( 10 );
 				break;
 			case 2: // Mage
-				skill[0] = ( extSkills ? 25 : 25 ); // Magery or Magery
+				skill[0] = 25; // Magery
 				skill[1] = ( extSkills ? 16 : 46 ); // Evaulate Intelligence or Meditation
 				skill[2] = ( extSkills ? 46 : 43 ); // Meditation or Wrestling
 				skill[3] = ( extSkills ? 43 : 0xFF ); // Wrestling or nothing
@@ -823,7 +867,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( 45 );
 				break;
 			case 3: // Blacksmith
-				skill[0] = ( extSkills ? 7 : 7 );	// Blacksmithing
+				skill[0] = 7;	// Blacksmithing
 				skill[1] = ( extSkills ? 45 : 37 );	// Mining or Tinkering
 				skill[2] = ( extSkills ? 37 : 45 );	// Tinkering or Mining
 				skill[3] = ( extSkills ? 34 : 0xFF );	// Tailoring or nothing
@@ -836,7 +880,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 15 : 10);
 				break;
 			case 4: // Necromancer
-				skill[0] = ( extSkills ? 49 : 49 );	// Necromancy
+				skill[0] = 49;	// Necromancy
 				skill[1] = ( extSkills ? 32 : 40 );	// Spirit Speak or Swordsmanship
 				skill[2] = ( extSkills ? 40 : 27 );	// Swordsmanship or Tactics
 				skill[3] = ( extSkills ? 46 : 0xFF );	// Meditation or nothing
@@ -849,7 +893,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 45 : 35 );
 				break;
 			case 5: // Paladin
-				skill[0] = ( extSkills ? 51 : 51 );	// Chivalry
+				skill[0] = 51;	// Chivalry
 				skill[1] = ( extSkills ? 40 : 27 );	// Swordsmanship or Tactics
 				skill[2] = ( extSkills ? 27 : 43 );	// Tactics or Wrestling
 				skill[3] = ( extSkills ? 50 : 0xFF );	// Focus or nothing
@@ -862,7 +906,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 25 : 15 );
 				break;
 			case 6: // Samurai
-				skill[0] = ( extSkills ? 52 : 52 );	// Bushido
+				skill[0] = 52;	// Bushido
 				skill[1] = ( extSkills ? 40 : 40 );	// Swordsmanship
 				skill[2] = ( extSkills ? 50 : 43 );	// Focus or Wrestling
 				skill[3] = ( extSkills ? 5 : 0xFF );	// Parrying or nothing
@@ -875,7 +919,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 20 : 10 );
 				break;
 			case 7: // Ninja
-				skill[0] = ( extSkills ? 53 : 53 ); // Ninjitsu or Ninjitsu
+				skill[0] = 53; // Ninjitsu
 				skill[1] = ( extSkills ? 42 : 21 ); // Fencing or Hiding
 				skill[2] = ( extSkills ? 21 : 43 ); // Hiding or Wrestling
 				skill[3] = ( extSkills ? 47 : 0xFF ); // Stealth or nothing
@@ -888,7 +932,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 20 : 10 );
 				break;
 			default:
-				Console.error( format("Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( strutil::format("Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				break;
 		}
 	}
@@ -905,7 +949,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 80 )
 			{
 				// If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
-				Console.error( format("Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( strutil::format("Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				percheck = ( mChar->GetStrength() / (R32)totalstats );
 				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 80, 10.0f, 60.0f ) ) );
 				percheck = ( mChar->GetDexterity() / (R32)totalstats );
@@ -915,7 +959,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.error(format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error(strutil::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else if( totalstats != 90 && cwmWorldState->ServerData()->ExtendedStartingStats() )
@@ -923,7 +967,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 90 )
 			{
 				// If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
-				Console.error( format("Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
+				Console.error( strutil::format("Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
 				percheck = ( mChar->GetStrength() / (R32)totalstats );
 				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 90, 10.0f, 60.0f ) ) );
 				percheck = ( mChar->GetDexterity() / (R32)totalstats );
@@ -933,7 +977,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.error( format("Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
+				Console.error( strutil::format("Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
 			}
 		}
 
@@ -952,7 +996,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[2];
 			if( totalskills < 100 )
 			{
-				Console.error( format("Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( strutil::format("Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else // If ExtendedStartingSkills is enabled, allow for the fourth starting skill
@@ -967,7 +1011,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[3];
 			if( totalskills < 120 )
 			{
-				Console.error( format("Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( strutil::format("Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 	}
@@ -976,7 +1020,6 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 	mChar->SetStamina( mChar->GetMaxStam() );
 	mChar->SetMana( mChar->GetMaxMana() );
 
-	mChar->SetRace( 0 );
 	mChar->SetRaceGate( 65535 );
 	UI08 firstSkill		= skill[0];
 	UI08 secondSkill	= skill[1];
@@ -1002,18 +1045,18 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SetNewCharGender( CChar *mChar )
+//|	Function	-	void SetNewCharGenderAndRace( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sets gender for newly created characters
+//|	Purpose		-	Sets gender and race for newly created characters
 //o-----------------------------------------------------------------------------------------------o
-void CPICreateCharacter::SetNewCharGender( CChar *mChar )
+void CPICreateCharacter::SetNewCharGenderAndRace( CChar *mChar )
 {
 	UI16 pGenderID = 0x0190;
 	bool gargCreation = false;
 	bool elfCreation = false;
-	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SA ) )
+	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SA ))
 		gargCreation = true;
-	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_ML ) )
+	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ))
 		elfCreation = true;
 
 	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
@@ -1023,34 +1066,68 @@ void CPICreateCharacter::SetNewCharGender( CChar *mChar )
 			case 0:
 				switch( race )
 				{
-					case 1: pGenderID = 0x0190; break;	// human male
-					case 2:	pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
-					case 3: pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
+					case 0: pGenderID = 0x0190; break;	// human male
+					case 1:	pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
+					case 2: pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
 				}
 				break;
 			case 1:
 				switch( race )
 				{
-					case 1: pGenderID = 0x0191;	break;	// human female
-					case 2: pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
-					case 3: pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
+					case 0: pGenderID = 0x0191;	break;	// human female
+					case 1: pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
+					case 2: pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
 				}
 				break;
+			default:
+				break;
 		}
+
+		// Set race to match data sent from client. This should correspond with race setup in races.dfn
+		// 0 = human, 1 = elf, 2 = gargoyle
+		mChar->SetRace( race );
 	}
 	else if( tSock->ClientType() >= CV_SA2D )
 	{
 		switch( sex )
 		{
-			case 0:		pGenderID = 0x0190; break;	// human male
-			case 1:		pGenderID = 0x0191;	break;	// human female
-			case 2:		pGenderID = 0x0190; break;	// human male
-			case 3:		pGenderID = 0x0191;	break;	// human female
-			case 4:		pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
-			case 5:		pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
-			case 6:		pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
-			case 7:		pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
-			default:	break;
+			case 0:
+				// human male
+				pGenderID = 0x0190;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 1:	// human female
+				pGenderID = 0x0191;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 2:	// human male
+				pGenderID = 0x0190;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 3:	// human female
+				pGenderID = 0x0191;
+				mChar->SetRace( 0 ); // Human
+				break;
+			case 4: // elf male
+				pGenderID = ( elfCreation ? 0x025D : 0x0190 );
+				mChar->SetRace( 1 ); // Elf
+				break;
+			case 5: // elf female
+				pGenderID = ( elfCreation ? 0x025E : 0x0191 );
+				mChar->SetRace( 1 ); // Elf
+				break;
+			case 6: // Gargoyle male
+				pGenderID = ( gargCreation ? 0x029A : 0x0190 );
+				mChar->SetLevitate( true ); // Enable potential for flying
+				mChar->SetRace( 2 ); // Gargoyle
+				break;
+			case 7: // Gargoyle female
+				pGenderID = ( gargCreation ? 0x029B : 0x0191 );
+				mChar->SetLevitate( true ); // Enable potential for flying
+				mChar->SetRace( 2 ); // Gargoyle
+				break;
+			default:
+				break;
 		}
 	}
 	else
@@ -1079,14 +1156,14 @@ void CPICreateCharacter::SetNewCharGender( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 void updates( CSocket *s )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 	ScriptSection *Updates = FileLookup->FindEntry( "MOTD", misc_def );
-	if( Updates == NULL )
+	if( Updates == nullptr )
 		return;
 
-	UString updateData = "";
-	for( UString tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
+	std::string updateData = "";
+	for( std::string tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
 	{
 		updateData += Updates->GrabData() + " ";
 	}
@@ -1104,7 +1181,7 @@ void sysBroadcast( const std::string& txt );
 //o-----------------------------------------------------------------------------------------------o
 void startChar( CSocket *mSock, bool onCreate )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		/*
 		 //Login Packet Sequence per Krrios
@@ -1151,8 +1228,11 @@ void startChar( CSocket *mSock, bool onCreate )
 
 			SendMapChange( mChar->WorldNumber(), mSock, true );
 
-			CPEnableMapDiffs mDiff;
-			mSock->Send( &mDiff );
+			if( cwmWorldState->ServerData()->MapDiffsEnabled() )
+			{
+				CPEnableMapDiffs mDiff;
+				mSock->Send( &mDiff );
+			}
 
 			CPWorldChange wrldChange( mChar->GetRegion()->GetAppearance(), 1 );
 			mSock->Send( &wrldChange );	// need to add this?
@@ -1189,7 +1269,7 @@ void startChar( CSocket *mSock, bool onCreate )
 			if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 			{
 				//message upon entering a server
-				sysBroadcast( format(1024,Dictionary->GetEntry( 1208 ), mChar->GetName().c_str() ) );//message upon entering a server
+				sysBroadcast( strutil::format(1024,Dictionary->GetEntry( 1208 ), mChar->GetName().c_str() ) );//message upon entering a server
 			}
 			updates( mSock );
 #if defined( _MSC_VER )
@@ -1198,19 +1278,34 @@ void startChar( CSocket *mSock, bool onCreate )
 			if( onCreate )
 			{
 				cScript *onCreateScp = JSMapping->GetScript( (UI16)0 );	// 0 == global script
-				if( onCreateScp != NULL )
+				if( onCreateScp != nullptr )
 					onCreateScp->OnCreate( mChar, true );
 			}
 
-			cScript *onLoginScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-			if( onLoginScp != NULL )
-				onLoginScp->OnLogin( mSock, mChar );
-			else
+			bool loginEventHandled = false;
+			std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				onLoginScp = JSMapping->GetScript( (UI16)0 );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					// 0 == no such event was found
+					// 1 == event was found, and executed
+					if( toExecute->OnLogin( mSock, mChar ) == 1 )
+					{
+						loginEventHandled = true;
+					}
+				}
+			}
 
-				if( onLoginScp != NULL )
-					onLoginScp->OnLogin( mSock, mChar );
+			if( !loginEventHandled )
+			{
+				// No script attached to character handled onLoginevent. Let's check global script!
+				cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnLogin( mSock, mChar );
+				}
 			}
 
 			// Store hair and beard (if they have any) properly for characters created pre-0.99.2j
@@ -1230,7 +1325,7 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( mChar->GetBeardStyle() == 0xFFFF )
 				{
 					mChar->SetBeardStyle( beardObject->GetID() );
-					mChar->SetHairColour( hairObject->GetColour() );
+					mChar->SetBeardColour( beardObject->GetColour() );
 				}
 			}
 
@@ -1241,69 +1336,75 @@ void startChar( CSocket *mSock, bool onCreate )
 			{
 				CPNegotiateAssistantFeatures ii( mSock );
 				mSock->Send( &ii );
-				mSock->sysmessage( "Attempting to negotiate features with assistant tool..." );
+				mSock->sysmessage( 9012 ); // Attempting to negotiate features with assistant tool...
 
 				// Set 30s negotiation timer if KICKONASSISTANTSILENCE setting is enabled in uox.ini
 				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 				{
 					// Start timer to kick player if assistant tool hasn't responded in 30 seconds
-					mSock->sysmessage( "This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds." );
+					mSock->sysmessage( 9013 ); // This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds.
 					mSock->NegotiateTimeout( cwmWorldState->GetUICurrentTime() + ( 30 * 1000 ));
 				}
 			}
 
+			mChar->Dirty( UT_LOCATION );
+
 			if( mChar->WorldNumber() > 0 )
 			{
-				mSock->sysmessage( "Adjusting character position..." );
-				mChar->Teleport();
+				// Without this, world will not be properly updated in regular UO clients until they take the first step
+				mChar->Update();
 			}
+
+			// Re-add player to party, if they are in one!
+			Party *mCharParty = PartyFactory::getSingleton().Get( mChar );
+			if( mCharParty != nullptr )
+			{
+				// Player's in a party! Send the details
+				mCharParty->SendList( nullptr );
+				mSock->sysmessage( 9073 ); // You have rejoined the party.
+			}
+
+			// Play music associated with region player is logging into!
+			Effects->doSocketMusic( mSock );
 		}
 	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
+//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
 //o-----------------------------------------------------------------------------------------------o
-CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
+CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 {
-	CItem *iCorpse = NULL;
-	if( !createPack )
-	{
-		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
-		if( !ValidateObject( iCorpse ) )
-			return NULL;
+	std::string corpseName = getNpcDictName( &mChar );
 
-		iCorpse->SetName( format(512, Dictionary->GetEntry( 1612 ), mChar.GetName().c_str() ) );
-		iCorpse->SetCarve( mChar.GetCarve() );
-		iCorpse->SetMovable( 2 );//non-movable
-		if( fallDirection )
-			iCorpse->SetDir( mChar.GetDir() | 0x80 );
-		else
-			iCorpse->SetDir( mChar.GetDir() );
+	CItem *iCorpse = nullptr;
+	bool shouldSave = mChar.ShouldSave();
 
-		iCorpse->SetAmount( mChar.GetID() );
-		iCorpse->SetWeightMax( 50000 ); // 500 stones
-		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
-		iCorpse->SetCorpse( true );
-	}
+	iCorpse = Items->CreateItem( nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM, false, shouldSave );
+	if( !ValidateObject( iCorpse ) )
+		return nullptr;
+
+	iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), corpseName.c_str() ) );
+	iCorpse->SetCarve( mChar.GetCarve() );
+	iCorpse->SetMovable( 2 );//non-movable
+	if( fallDirection )
+		iCorpse->SetDir( mChar.GetDir() | 0x80 );
 	else
-	{
-		iCorpse = Items->CreateItem( NULL, &mChar, 0x09B2, 1, 0x0000, OT_ITEM );
-		if( iCorpse== NULL )
-			return NULL;
+		iCorpse->SetDir( mChar.GetDir() );
 
-		iCorpse->SetName( Dictionary->GetEntry( 1611 ) );
-		iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
-	}
+	iCorpse->SetAmount( mChar.GetID() );
+	iCorpse->SetWeightMax( 50000 ); // 500 stones
+	iCorpse->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() + 25 );
+	iCorpse->SetCorpse( true );
 
 	UI08 canCarve = 0;
 	if( mChar.GetID( 1 ) == 0x00 && ( mChar.GetID( 2 ) == 0x0C || ( mChar.GetID( 2 ) >= 0x3B && mChar.GetID( 2 ) <= 0x3D ) ) ) // If it's a dragon, 50/50 chance you can carve it
 		canCarve = static_cast<UI08>(RandomNum( 0, 1 ));
 
 	iCorpse->SetDecayable( true );
-	iCorpse->SetName2( mChar.GetName().c_str() );
+	iCorpse->SetName2( corpseName.c_str() );
 	iCorpse->SetType( IT_CONTAINER );
 	iCorpse->SetTempVar( CITV_MOREY, 1, canCarve );
 	iCorpse->SetTempVar( CITV_MOREY, 2, cwmWorldState->creatures[mChar.GetID()].IsHuman() );
@@ -1315,26 +1416,26 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY ) ) );
 	}
 	else
-		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ) ) );
+		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY ) ) );
 
-	if( !ValidateObject( mChar.GetAttacker() ) )
+	if( !ValidateObject( killer ) )
 		iCorpse->SetTempVar( CITV_MOREX, INVALIDSERIAL );
 	else
-		iCorpse->SetTempVar( CITV_MOREX, mChar.GetAttacker()->GetSerial() );
+		iCorpse->SetTempVar( CITV_MOREX, killer->GetSerial() );
 
 	return iCorpse;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
+//|	Function	-	void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves Items from Character to Corpse
 //o-----------------------------------------------------------------------------------------------o
-void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
+void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse )
 {
-	CItem *k			= NULL;
+	CItem *k			= nullptr;
 	CItem *packItem		= mChar.GetPackItem();
-	CItem *dupeItem		= NULL;
+	CItem *dupeItem		= nullptr;
 	bool packIsValid	= ValidateObject( packItem );
 	for( CItem *j = mChar.FirstItem(); !mChar.FinishedItems(); j = mChar.NextItem() )
 	{
@@ -1353,22 +1454,27 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 				continue;
 			case IL_HAIR:
 			case IL_FACIALHAIR:
-				dupeItem = j->Dupe();
-				dupeItem->SetCont( iCorpse );
-				dupeItem->SetName( "Hair/Beard" );
-				dupeItem->SetX( 0x47 );
-				dupeItem->SetY( 0x93 );
-				dupeItem->SetZ( 0 );
+				if( mChar.GetBodyType() != BT_GARGOYLE ) // Ignore if gargoyle - doesn't seem to display properly on corpses
+				{
+					dupeItem = j->Dupe();
+					dupeItem->SetCont( iCorpse );
+					dupeItem->SetName( "Hair/Beard" );
+					dupeItem->SetX( 0x47 );
+					dupeItem->SetY( 0x93 );
+					dupeItem->SetZ( 0 );
+					dupeItem->SetMovable( 2 );
+				}
 				break;
 			case IL_PACKITEM:
-				CDataList< CItem * > *jCont;
+				GenericList< CItem * > *jCont;
 				jCont = j->GetContainsList();
 				for( k = jCont->First(); !jCont->Finished(); k = jCont->Next() )
 				{
 					if( !ValidateObject( k ) )
 						continue;
 
-					if( !k->isNewbie() && k->GetType() != IT_SPELLBOOK )
+					// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
+					if(( mChar.GetID() == 0x0123 || mChar.GetID() == 0x0124 || mChar.GetID() == 0x0317 ) || ( !k->isNewbie() && k->GetType() != IT_SPELLBOOK ))
 					{
 						k->SetCont( iCorpse );
 						k->SetX( static_cast<SI16>(20 + ( RandomNum( 0, 49 ) )) );
@@ -1376,7 +1482,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 						k->SetZ( 9 );
 					}
 				}
-				if( !mChar.IsShop() && !createPack )
+				if( !mChar.IsShop() )
 					j->SetLayer( IL_BUYCONTAINER );
 				break;
 			default:
@@ -1396,44 +1502,95 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 
 void killTrades( CChar *i );
 //o-----------------------------------------------------------------------------------------------o
-//|	Function    -	void HandleDeath( CChar *mChar )
+//|	Function    -	void HandleDeath( CChar *mChar, CChar *attacker )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose     -	Performs death stuff. I.E.- creates a corpse, moves items
 //|                  to it, take out of war mode, does animation and sound, etc.
 //o-----------------------------------------------------------------------------------------------o
-void HandleDeath( CChar *mChar )
+void HandleDeath( CChar *mChar, CChar *attacker )
 {
 	if( !ValidateObject( mChar ) || mChar->IsDead() || mChar->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!
 		return;
 
-	CSocket *pSock = NULL;
+	CSocket *pSock = nullptr;
 	if( !mChar->IsNpc() )
 		pSock = mChar->GetSocket();
 
 	DismountCreature( mChar );
 
-	if( pSock != NULL )
+	if( pSock != nullptr )
 		killTrades( mChar );
 
 	if( mChar->GetID() != mChar->GetOrgID() )
 		mChar->SetID( mChar->GetOrgID() );
 
-	bool createPack = ( mChar->GetID( 2 ) == 0x0D || mChar->GetID( 2 ) == 0x0F || mChar->GetID( 2 ) == 0x10 || mChar->GetID() == 0x023E );
-
 	UI08 fallDirection = (UI08)(RandomNum( 0, 100 ) % 2);
 	mChar->SetDead( true );
 
-	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack, fallDirection );
-	if( iCorpse != NULL )
+	Effects->playDeathSound( mChar );
+	CItem *iCorpse = CreateCorpseItem( (*mChar), attacker, fallDirection );
+	if( iCorpse != nullptr )
 	{
-		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
+		MoveItemsToCorpse( (*mChar), iCorpse );
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
 			Effects->deathAction( mChar, iCorpse, fallDirection );
+
+		// Prevent pets from following ghost of dead player
+		GenericList< CChar * > *mPetList = mChar->GetPetList();
+		mPetList->Push();
+		for( CChar *tempChar = mPetList->First(); !mPetList->Finished(); tempChar = mPetList->Next() )
+		{
+			if( !ValidateObject( tempChar ) )
+				continue;
+			if( !tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW && tempChar->GetFTarg() == mChar )
+			{
+				tempChar->SetFTarg( nullptr );
+				tempChar->SetOldNpcWander( WT_NONE );
+				tempChar->SetNpcWander( WT_NONE );
+				tempChar->SetGuarding( iCorpse );
+				iCorpse->SetGuarded( true );
+			}
+		}
+		mPetList->Pop();
+
+		// Spawn blood effect below corpse
+		UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property
+		if( bloodColour == 0xffff )
+		{
+			// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
+			bloodColour = mChar->GetSkin();
+		}
+		CItem * bloodEffect = Effects->SpawnBloodEffect( iCorpse->WorldNumber(), iCorpse->GetInstanceID(), bloodColour, BLOOD_DEATH );
+		if( ValidateObject( bloodEffect ))
+		{
+			// Set a timestamp for when the bloodeffect was created, and match it to the corpse!
+			bloodEffect->SetTempTimer( iCorpse->GetTempTimer() );
+
+			if( !mChar->IsNpc() )
+			{
+				// Set character as owner of blood-effects, if not an NPC
+				bloodEffect->SetOwner( mChar );
+			}
+
+			// If there's a valid attacker still, store the serial on the blood item (just like the corpse)
+			// so it could be accessed by something like forensics skill
+			if( ValidateObject( attacker ) )
+			{
+				bloodEffect->SetTempVar( CITV_MOREX, attacker->GetSerial() );
+			}
+			else
+			{
+				bloodEffect->SetTempVar( CITV_MOREX, INVALIDSERIAL );
+			}
+
+			// Finally, set blood's location to match that of the corpse
+			bloodEffect->SetLocation( iCorpse );
+		}
 	}
-	Effects->playDeathSound( mChar );
 
 	mChar->SetWar( false );
 	mChar->StopSpell();
+	mChar->SetFrozen( false );
 	mChar->SetHP( 0 );
 	mChar->SetPoisoned( 0 );
 	mChar->SetPoisonStrength( 0 );
@@ -1457,8 +1614,8 @@ void HandleDeath( CChar *mChar )
 			case 0x02EF:	mChar->SetID( 0x0192 );	break;	// savage female
 		}
 
-		CItem *c = Items->CreateItem( NULL, mChar, 0x204E, 1, 0, OT_ITEM );
-		if( c == NULL )
+		CItem *c = Items->CreateItem( nullptr, mChar, 0x204E, 1, 0, OT_ITEM );
+		if( c == nullptr )
 			return;
 		c->SetName( Dictionary->GetEntry( 1610 ) );
 		mChar->SetRobe( c->GetSerial() );
@@ -1468,7 +1625,7 @@ void HandleDeath( CChar *mChar )
 
 		if( mChar->GetAccount().wAccountIndex != AB_INVALID_ID )
 		{
-			if( pSock != NULL )
+			if( pSock != nullptr )
 			{
 				CPResurrectMenu toSend( 0 );
 				pSock->Send( &toSend );
@@ -1477,13 +1634,26 @@ void HandleDeath( CChar *mChar )
 		}
 	}
 
-	UI16 targTrig		= mChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
-		toExecute->OnDeath( mChar, iCorpse );
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// If script returns true/1, prevent other scripts with event from running
+			if( toExecute->OnDeath( mChar, iCorpse ) == 1 )
+			{
+				break;
+			}
+		}
+	}
 
 	if( mChar->IsNpc() )
 		mChar->Delete();
 	else
 		mChar->Dirty( UT_LOCATION );
+
+	// Play death music
+	if( pSock != nullptr )
+		Effects->doSocketMusic( pSock );
 }

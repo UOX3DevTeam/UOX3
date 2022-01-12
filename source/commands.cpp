@@ -8,7 +8,7 @@
 #include "StringUtility.hpp"
 
 
-cCommands *Commands			= NULL;
+cCommands *Commands			= nullptr;
 
 cCommands::cCommands()
 {
@@ -23,7 +23,7 @@ cCommands::~cCommands()
 	for( size_t clearIter = 0; clearIter < clearance.size(); ++clearIter )
 	{
 		delete clearance[clearIter];
-		clearance[clearIter] = NULL;
+		clearance[clearIter] = nullptr;
 	}
 	clearance.clear();
 }
@@ -36,7 +36,8 @@ cCommands::~cCommands()
 //o-----------------------------------------------------------------------------------------------o
 UI08 cCommands::NumArguments( void )
 {
-	return static_cast<UI08>(commandString.sectionCount( " " ) + 1 );
+	auto secs = strutil::sections( commandString, " ");
+	return static_cast<UI08>(secs.size());
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -47,35 +48,46 @@ UI08 cCommands::NumArguments( void )
 SI32 cCommands::Argument( UI08 argNum )
 {
 	SI32 retVal = 0;
-	UString tempString = CommandString( argNum + 1, argNum + 1 );
+	std::string tempString = CommandString( argNum + 1, argNum + 1 );
 	if( !tempString.empty() )
-		retVal = tempString.toInt();
+	{
+		try {
+			retVal = std::stoi(tempString, nullptr, 0);
+		} 
+		catch (const std::invalid_argument & e) {
+			Console.error( strutil::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
+		}
+	}
 
 	return retVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UString CommandString( UI08 section, UI08 end )
+//|	Function	-	std::string CommandString( UI08 section, UI08 end )
 //|	Date		-	4/02/2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
 //o-----------------------------------------------------------------------------------------------o
-UString cCommands::CommandString( UI08 section, UI08 end )
+std::string cCommands::CommandString( UI08 section, UI08 end )
 {
-	UString retString;
+	std::string retString;
 	if( end != 0 )
-		retString = extractSection(commandString, " ", section - 1, end - 1 );
+	{
+		retString = strutil::extractSection(commandString, " ", section - 1, end - 1 );
+	}
 	else
-		retString = extractSection(commandString, " ", section - 1 );
+	{
+		retString = strutil::extractSection(commandString, " ", section - 1 );
+	}
 	return retString;
 }
-void cCommands::CommandString( UString newValue )
+void cCommands::CommandString( std::string newValue )
 {
 	commandString = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Command( CSocket *s, CChar *mChar, UString text )
+//|	Function	-	void Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles commands sent from client
 //o-----------------------------------------------------------------------------------------------o
@@ -83,35 +95,49 @@ void cCommands::CommandString( UString newValue )
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
 //o-----------------------------------------------------------------------------------------------o
-void cCommands::Command( CSocket *s, CChar *mChar, UString text )
+void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
 {
-	CommandString( text.simplifyWhiteSpace() );
+	CommandString( strutil::simplify( text ));
 	if( NumArguments() < 1 )
+	{
 		return;
-	UString command = CommandString( 1, 1 ).upper();	// discard the leading '
+	}
+	
+	// Discard the leading command prefix
+	std::string command = strutil::upper( CommandString( 1, 1 ));
 
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
 	{
 		if( toFind->second.isEnabled )
 		{
-			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			bool plClearance = false;
+			if( checkSocketAccess )
+				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			else
+				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( command, mChar, NULL, "Insufficient clearance" );
+				if( checkSocketAccess )
+					Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+				else
+					Log( command, mChar, nullptr, "Insufficient clearance" );
 				s->sysmessage( 337 );
 				return;
 			}
 			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
-			if( toExecute != NULL )
+			if( toExecute != nullptr )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.print( format("Executing JS command %s\n", command.c_str() ));
+				Console.print( strutil::format("Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
 			}
-			Log( command, mChar, NULL, "Cleared" );
+			if( checkSocketAccess )
+				Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+			else
+				Log( command, mChar, nullptr, "Cleared" );
 			return;
 		}
 	}
@@ -119,18 +145,28 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 	TARGETMAP_ITERATOR findTarg = TargetMap.find( command );
 	if( findTarg != TargetMap.end() )
 	{
-		bool plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+		bool plClearance = false;
+		if( checkSocketAccess )
+			plClearance = ( s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+		else
+			plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 		if( !plClearance )
 		{
-			Log( command, mChar, NULL, "Insufficient clearance" );
+			if( checkSocketAccess )
+				Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+			else
+				Log( command, mChar, nullptr, "Insufficient clearance" );
 			s->sysmessage( 337 );
 			return;
 		}
-		Log( command, mChar, NULL, "Cleared" );
+		if( checkSocketAccess )
+			Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+		else
+			Log( command, mChar, nullptr, "Cleared" );
 		switch( findTarg->second.cmdType )
 		{
 			case CMD_TARGET:
-				s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+				s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				break;
 			case CMD_TARGETXYZ:
 				if( NumArguments() == 4 )
@@ -138,7 +174,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 					s->ClickX( static_cast<SI16>(Argument( 1 )) );
 					s->ClickY( static_cast<SI16>(Argument( 2 )) );
 					s->ClickZ( static_cast<SI08>(Argument( 3 )) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				}
 				else
 					s->sysmessage( 340 );
@@ -147,7 +183,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 				if( NumArguments() == 2 )
 				{
 					s->TempInt( Argument( 1 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				}
 				else
 					s->sysmessage( 338 );
@@ -156,10 +192,10 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 				if( NumArguments() > 1 )
 				{
 					s->XText( CommandString( 2 ) );
-					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
 				}
 				else
-					s->sysmessage( "This command requires more arguments!" );
+					s->sysmessage( 9026 ); // This command requires more arguments!
 				break;
 		}
 	}
@@ -168,22 +204,50 @@ void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 		COMMANDMAP_ITERATOR toFind = CommandMap.find( command );
 		if( toFind == CommandMap.end() )
 		{
-			cScript *toGrab = JSMapping->GetScript( mChar->GetScriptTrigger() );
-			if( toGrab == NULL || !toGrab->OnCommand( s ) )
-				s->sysmessage( 336 );
+			bool cmdHandled = false;
+			std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					// -1 == event doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing
+					// 1 == script returned true or 1, don't execute hard code
+					if( toExecute->OnCommand( s, command ) == 1 )
+					{
+						cmdHandled = true;
+					}
+				}
+			}
+
+			if( !cmdHandled )
+			{
+				s->sysmessage( 336 ); // Unrecognized command.
+			}
 			return;
 		}
 		else
 		{
-			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			bool plClearance = false;
+			if( checkSocketAccess )
+				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			else
+				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( command, mChar, NULL, "Insufficient clearance" );
+				if( checkSocketAccess )
+					Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+				else
+					Log( command, mChar, nullptr, "Insufficient clearance" );
 				s->sysmessage( 337 );
 				return;
 			}
-			Log( command, mChar, NULL, "Cleared" );
+			if( checkSocketAccess )
+				Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+			else
+				Log( command, mChar, nullptr, "Cleared" );
 
 			switch( toFind->second.cmdType )
 			{
@@ -210,15 +274,15 @@ void cCommands::Load( void )
 {
 	SI16 commandCount = 0;
 	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
-	if( commands == NULL )
+	if( commands == nullptr )
 	{
 		InitClearance();
 		return;
 	}
 
-	UString tag;
-	UString data;
-	UString UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 
 	STRINGLIST	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
@@ -232,9 +296,13 @@ void cCommands::Load( void )
 		{
 			++commandCount;
 			if( toFind != CommandMap.end() )
-				toFind->second.cmdLevelReq		= data.toUByte();
+			{
+				toFind->second.cmdLevelReq		= static_cast<UI08>(std::stoul(data, nullptr, 0)) ;
+			}
 			else if( findTarg != TargetMap.end() )
-				findTarg->second.cmdLevelReq	= data.toUByte();
+			{
+				findTarg->second.cmdLevelReq	= static_cast<UI08>(std::stoul(data, nullptr, 0));
+			}
 		}
 		// check for commands here
 	}
@@ -251,7 +319,7 @@ void cCommands::Load( void )
 
 	Console << "   o Loading command levels" << myendl;
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
-	if( cmdClearance == NULL )
+	if( cmdClearance == nullptr )
 		InitClearance();
 	else
 	{
@@ -262,37 +330,45 @@ void cCommands::Load( void )
 			currentWorking	= clearance.size();
 			clearance.push_back( new commandLevel_st );
 			clearance[currentWorking]->name			= tag;
-			clearance[currentWorking]->commandLevel = data.toUByte();
+			clearance[currentWorking]->commandLevel = static_cast<UI08>(std::stoul(data, nullptr, 0));
 		}
 		std::vector< commandLevel_st * >::const_iterator cIter;
 		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
 		{
 			commandLevel_st *ourClear = (*cIter);
-			if( ourClear == NULL )
+			if( ourClear == nullptr )
 				continue;
 			cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
-			if( cmdClearance == NULL )
+			if( cmdClearance == nullptr )
 				continue;
 			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
 			{
-				UTag = tag.upper();
+				UTag = strutil::upper( tag );
 				data = cmdClearance->GrabData();
-				if( UTag == "NICKCOLOUR" )
-					ourClear->nickColour = data.toUShort();
-				else if( UTag == "DEFAULTPRIV" )
-					ourClear->defaultPriv = data.toUShort();
-				else if( UTag == "BODYID" )
-					ourClear->targBody = data.toUShort();
-				else if( UTag == "ALLSKILL" )
-					ourClear->allSkillVals = data.toUShort();
-				else if( UTag == "BODYCOLOUR" )
-					ourClear->bodyColour = data.toUShort();
-				else if( UTag == "STRIPHAIR" )
+				if( UTag == "NICKCOLOUR" ) {
+					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "DEFAULTPRIV" ) {
+					ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "BODYID" ) {
+					ourClear->targBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "ALLSKILL" ) {
+					ourClear->allSkillVals = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "BODYCOLOUR" ) {
+					ourClear->bodyColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "STRIPHAIR" ) {
 					ourClear->stripOff.set( BIT_STRIPHAIR, true );
-				else if( UTag == "STRIPITEMS" )
+				}
+				else if( UTag == "STRIPITEMS" ) {
 					ourClear->stripOff.set( BIT_STRIPITEMS, true );
-				else
+				}
+				else {
 					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+				}
 			}
 		}
 	}
@@ -301,7 +377,7 @@ void cCommands::Load( void )
 	CJSMappingSection *commandSection = JSMapping->GetSection( SCPT_COMMAND );
 	for( cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Command" );
 	}
 }
@@ -318,39 +394,43 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.error( format("Unable to open command log file %s!", logName.c_str() ));
+		Console.error( strutil::format("Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
 	RealTime( dateTime );
 
 	logDestination << "[" << dateTime << "] ";
-	logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << " ) ";
-	logDestination << "used command <" << command << "> ";
+	logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << ") ";
+	logDestination << "used command <" << command << (CommandString( 2 ) != "" ? " " : "") << CommandString( 2 ) << "> ";
 	if( ValidateObject( player2 ) )
-		logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " ) ";
+		logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " )";
 	logDestination << "Extra Info: " << extraInfo << std::endl;
 	logDestination.close();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *GetClearance( UString clearName )
+//|	Function	-	commandLevel_st *GetClearance( std::string clearName )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
 //o-----------------------------------------------------------------------------------------------o
-commandLevel_st *cCommands::GetClearance( UString clearName )
+commandLevel_st *cCommands::GetClearance( std::string clearName )
 {
 	if( clearance.empty() )
-		return NULL;
+	{
+		return nullptr;
+	}
 	commandLevel_st *clearPointer;
 	std::vector< commandLevel_st * >::const_iterator clearIter;
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
 		clearPointer = (*clearIter);
-		if( clearName.upper() == clearPointer->name )
+		if( strutil::upper( clearName ) == clearPointer->name )
+		{
 			return clearPointer;
+		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -429,7 +509,7 @@ commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 {
 	size_t clearanceSize = clearance.size();
 	if( clearanceSize == 0 )
-		return NULL;
+		return nullptr;
 	if( commandLevel > clearance[0]->commandLevel )
 		return clearance[0];
 
@@ -498,9 +578,9 @@ bool cCommands::FinishedCommandList( void )
 CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 {
 	if( !CommandExists( cmdName ) )
-		return NULL;
+		return nullptr;
 	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
 	if( toFind == CommandMap.end() )
-		return NULL;
+		return nullptr;
 	return &(toFind->second);
 }

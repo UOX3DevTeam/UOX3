@@ -1,6 +1,6 @@
 #ifndef __CSOCKET_H__
 #define __CSOCKET_H__
-
+#include "IP4Address.hpp"
 enum ClientTypes
 {
 	CV_DEFAULT = 0,
@@ -57,6 +57,7 @@ enum cS_TID
 	tPC_FISHING,
 	tPC_MUTETIME,
 	tPC_TRACKINGDISPLAY,
+	tPC_TRAFFICWARDEN,
 	tPC_COUNT
 };
 
@@ -69,6 +70,7 @@ public:
 	//
 
 	void			InternalReset( void );
+	IP4Address		ipaddress;
 
 private:
 	std::vector< UI16 >				trigWords;
@@ -78,6 +80,8 @@ private:
 	CChar *			currCharObj;
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
+	bool			objDelayMsgShown;
+	bool			skillDelayMsgShown;
 	SI32			negotiateTimeout;
 	bool			negotiatedWithAssistant;
 
@@ -119,6 +123,8 @@ private:
 
 	UI32			bytesReceived;
 	UI32			bytesSent;
+	UI16			bytesRecvWarningCount;
+	UI16			bytesSentWarningCount;
 
 	bool			targetok;
 
@@ -190,6 +196,8 @@ public:
 	bool			FirstPacket( void ) const;
 	SI32			IdleTimeout( void ) const;
 	bool			WasIdleWarned( void ) const;
+	bool			ObjDelayMsgShown( void ) const;
+	bool			SkillDelayMsgShown( void ) const;
 	SI32			NegotiateTimeout( void ) const;
 	bool			NegotiatedWithAssistant( void ) const;
 	UI08 *			Buffer( void );
@@ -256,6 +264,8 @@ public:
 	void			FirstPacket( bool newValue );
 	void			IdleTimeout( SI32 newValue );
 	void			WasIdleWarned( bool value );
+	void			ObjDelayMsgShown( bool value );
+	void			SkillDelayMsgShown( bool value );
 	void			NegotiateTimeout( SI32 newValue );
 	void			NegotiatedWithAssistant( bool value );
 	void			WalkSequence( SI16 newValue );
@@ -322,18 +332,18 @@ public:
 	void			Language( UnicodeTypes newVal );
 
 	void			sysmessage( const std::string txt, ... );
-	void			sysmessageJS( const std::string& uformat,const std::string& data );
+	void			sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data );
 	void			sysmessage( SI32 dictEntry, ... );
 	void			objMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
 	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI32 Color = 0x03B2, ... );
 
 	void			ShowCharName( CChar *i, bool showSer  );
 
-	void			target( UI08 targType, UI08 targID, const std::string& txt );
-	void			target( UI08 targType, UI08 targID,  SI32 dictEntry, ... );
+	void			target( UI08 targType, UI08 targID, const std::string& txt, UI08 cursorType = 0 );
+	void			target( UI08 targType, UI08 targID, UI08 cursorType, SI32 dictEntry, ... );
 	void			mtarget( UI16 itemID, SI32 dictEntry );
 
-	void			statwindow( CChar *i );
+	void			statwindow( CBaseObject *i, bool updateParty = true );
 	void			updateskill( UI08 skillnum );
 	void			openPack( CItem *i, bool isPlayerVendor = false );
 	void			openBank( CChar *i );
@@ -343,15 +353,21 @@ public:
 	void			ReceivedVersion( bool value );
 
 	UI32			BytesSent( void ) const;
+	void			BytesSent( UI32 newValue );
 	UI32			BytesReceived( void ) const;
+	void			BytesReceived( UI32 newValue );
+	UI16			BytesReceivedWarning( void ) const;
+	void			BytesReceivedWarning( UI16 newValue );
+	UI16			BytesSentWarning( void ) const;
+	void			BytesSentWarning( UI16 newValue );
 
 	TIMERVAL		GetTimer( cS_TID timerID ) const;
 	void			SetTimer( cS_TID timerID, TIMERVAL value );
 	void			ClearTimers( void );
+	COLOUR			GetFlagColour( CChar *src, CChar *trg );
 
 private:
 
-	COLOUR			GetFlagColour( CChar *src, CChar *trg );
 
 };
 #endif

@@ -1,6 +1,6 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
-#include "CDataList.h"
+#include "GenericList.h"
 enum CITempVars
 {
 	CITV_MORE	= 0,
@@ -13,7 +13,7 @@ enum CITempVars
 class CItem : public CBaseObject
 {
 protected:
-	CDataList< CItem * >	Contains;
+	GenericList< CItem * >	Contains;
 
 	SI08				gridLoc;
 
@@ -24,6 +24,7 @@ protected:
 	char				name2[MAX_NAME];
 	SERIAL				creator;	// Store the serial of the player made this item
 	std::string			desc;
+	std::string			eventName;	// Name of custom event item belongs to
 
 	ItemLayers		layer; // Layer if equipped on paperdoll
 	ItemTypes		type; // For things that do special things on doubleclicking
@@ -32,6 +33,8 @@ protected:
 	UI32			tempVars[CITV_COUNT];
 	UI16			amount; // Amount of items in pile
 	UI16			maxhp; // Max number of hit points an item can have.
+	UI16			maxUses; // Max number of uses an item can have
+	UI16			usesLeft; // Current number of uses left on an item
 	UI08			spd; //The speed of the weapon
 	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
 	UI08			dir; //direction an item can have
@@ -55,6 +58,8 @@ protected:
 	UI08			glow_effect;
 	UI16			ammo[2]; // Ammo ID and Hue
 	UI16			ammoFX[3]; // Ammo-effect ID, Hue and rendermode
+	UI08			baseRange; // Base range of thrown weapon
+	UI08			maxRange; // Max range of ranged weapon
 	SI32			weightMax; //Maximum weight a container can hold
 	SI32			baseWeight; //Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems; // Maximum amount of items a container can hold
@@ -76,7 +81,7 @@ protected:
 
 public:
 
-	CDataList< CItem * > *	GetContainsList( void );
+	GenericList< CItem * > *	GetContainsList( void );
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 	UI16			EntryMadeFrom( void ) const;
@@ -100,33 +105,37 @@ public:
 	bool			isPileable( void ) const;
 	bool			isDyeable( void ) const;
 	bool			isCorpse( void ) const;
+	bool			isHeldOnCursor( void ) const;
 	bool			isGuarded( void ) const;
 	bool			isSpawnerList( void ) const;
 
 	bool			isNewbie( void ) const;
 	bool			isDecayable( void ) const;
 	bool			isDispellable( void ) const;
-	bool			isDevineLocked( void ) const;
+	bool			isDivineLocked( void ) const;
 
 	void			SetDoorOpen( bool newValue );
 	void			SetPileable( bool newValue );
 	void			SetDye( bool newValue );
 	void			SetCorpse( bool newValue );
+	void			SetHeldOnCursor( bool newValue );
 	virtual void	SetGuarded( bool newValue );
 	void			SetSpawnerList( bool newValue );
 
 	void			SetNewbie( bool newValue );
 	void			SetDecayable( bool newValue );
 	void			SetDispellable( bool newValue );
-	void			SetDevineLock( bool newValue );
+	void			SetDivineLock( bool newValue );
 
 	const char *	GetName2( void ) const;
 	SERIAL			GetCreator( void ) const;
 	std::string 	GetDesc( void ) const;
+	std::string 	GetEvent( void ) const;
 
 	void			SetName2( const char *newValue );
 	void			SetCreator( SERIAL newValue );
 	void			SetDesc( std::string newValue );
+	void			SetEvent( std::string newValue );
 
 	void			PlaceInPack( void );
 	virtual void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
@@ -161,6 +170,12 @@ public:
 	UI08			GetSpeed( void ) const;
 	void			SetSpeed( UI08 newValue );
 
+	UI08			GetMaxRange( void ) const;
+	void			SetMaxRange( UI08 newValue );
+
+	UI08			GetBaseRange( void ) const;
+	void			SetBaseRange( UI08 newValue );
+
 	SI08			GetMovable( void ) const;
 	void			SetMovable( SI08 newValue );
 
@@ -180,6 +195,12 @@ public:
 
 	UI16			GetRestock( void ) const;
 	void			SetRestock( UI16 newValue );
+
+	UI16			GetMaxUses( void ) const;
+	void			SetMaxUses( UI16 newValue );
+
+	UI16			GetUsesLeft( void ) const;
+	void			SetUsesLeft( UI16 newValue );
 
 	ARMORCLASS		GetArmourClass( void ) const;
 	void			SetArmourClass( ARMORCLASS newValue );
@@ -226,7 +247,7 @@ public:
 	//    Ex) madewith = 34, 34 - 1 = 33, 33 = STEALING
 	// if is a negative value, add 1 from it and invert value.
 	//    Ex) madewith = -34, -34 + 1 = -33, Abs(-33) = 33 = STEALING.
-	// 0 = NULL
+	// 0 = nullptr
 	// So... a positive value is used when the item is made by a
 	// player with 95.0+ at that skill. Infact in this way when
 	// you click on the item appear its name and the name of the
@@ -253,16 +274,17 @@ public:
 	bool			CanBeLockedDown( void ) const;
 	void			LockDown( void );
 	bool			IsContType( void ) const;
+	void			UpdateRegion( void );
 
 	void			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A );
-	virtual void	Update( CSocket *mSock = NULL ) override;
-	virtual void	SendToSocket( CSocket *mSock ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) override;
 	void			SendPackItemToSocket( CSocket *mSock );
-	virtual void	RemoveFromSight( CSocket *mSock = NULL );
+	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
 
 	virtual bool	Save( std::ofstream &outStream ) override;
 	virtual bool	DumpBody( std::ofstream &outStream ) const override;
-	virtual bool	HandleLine( UString &UTag, UString &data ) override;
+	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual void	PostLoadProcessing( void ) override;
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;
@@ -281,7 +303,7 @@ protected:
 
 	void				CopyData( CSpawnItem *target );
 public:
-	CDataList< CBaseObject * >		spawnedList;
+	GenericList< CBaseObject * >		spawnedList;
 
 	CSpawnItem();
 	virtual				~CSpawnItem()
@@ -298,7 +320,7 @@ public:
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
-	virtual bool		HandleLine( UString &UTag, UString &data ) override;
+	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
 	bool				DoRespawn( void );	// Will replace RespawnItem() eventually
 	bool				HandleItemSpawner( void );

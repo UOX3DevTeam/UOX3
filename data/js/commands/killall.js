@@ -10,7 +10,9 @@ function command_KILLALL( socket, cmdString )
 		percentToKill = parseInt( cmdString );
 
 	var count = IterateOver( "CHARACTER" );
-	socket.SysMessage( "Killed " + count.toString() + " characters" );
+
+	var tempMsg = GetDictionaryEntry( 8010, socket.language ); // Killed %i characters
+	socket.SysMessage( tempMsg.replace(/%i/gi, count.toString() ));
 }
 
 function onIterate( toCheck )

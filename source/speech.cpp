@@ -10,17 +10,18 @@
 #include "CPacketSend.h"
 #include "CResponse.h"
 #include "movement.h"
+#include "Dictionary.h"
 #include "StringUtility.hpp"
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+//|	Function	-	void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system message
 //o-----------------------------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
 {
 	bool multipleArgs		= false;
-	UString argList			= "";
+	std::string argList		= "";
 	std::string stringVal	= "";
 	const char *typesPtr	= types;
 
@@ -29,7 +30,7 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 	while( *typesPtr != '\0' )
 	{
 		if( *typesPtr == 'i' ){
-			stringVal = str_number( va_arg( marker, SI32 ) );
+			stringVal = strutil::number( va_arg( marker, SI32 ) );
 		}
 		else if( *typesPtr == 's' ){
 			stringVal = va_arg( marker, char * );
@@ -43,14 +44,14 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 				argList = stringVal;
 			}
 			else
-				argList += format( "\t%s", stringVal.c_str() );
+				argList += strutil::format( "\t%s", stringVal.c_str() );
 		}
 		++typesPtr;
 	}
 	va_end( marker );
 
 	CPClilocMessage toSend;
-	toSend.Type( type );
+	toSend.Type( speechType );
 	toSend.Hue( hue );
 	toSend.Font( font );
 	toSend.Message( messageNum );
@@ -60,14 +61,14 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
+//|	Function	-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if said by srcObj
 //o-----------------------------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
+void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
 {
 	bool multipleArgs		= false;
-	UString argList			= "";
+	std::string argList		= "";
 	std::string stringVal	= "";
 	const char *typesPtr	= types;
 
@@ -76,7 +77,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 	while( *typesPtr != '\0' )
 	{
 		if( *typesPtr == 'i' )
-			stringVal = str_number( va_arg( marker, SI32 ) );
+			stringVal = strutil::number( va_arg( marker, SI32 ) );
 		else if( *typesPtr == 's' )
 			stringVal = va_arg( marker, char * );
 
@@ -88,23 +89,31 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 				argList = stringVal;
 			}
 			else
-				argList += format( "\t%s", stringVal.c_str() );
+				argList += strutil::format( "\t%s", stringVal.c_str() );
 		}
 		++typesPtr;
 	}
 	va_end( marker );
 
 	CPClilocMessage toSend( (*srcObj) );
-	toSend.Type( type );
+	toSend.Type( speechType );
 	toSend.Hue( hue );
 	toSend.Font( font );
 	toSend.Message( messageNum );
 	toSend.ArgumentString( argList );
 
-	bool sendSock = (mSock != NULL);
+	bool sendSock = (mSock != nullptr);
 	if( sendAll )
 	{
-		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, DIST_INRANGE );
+		UI16 searchDistance = DIST_SAMESCREEN;
+		if( speechType == WHISPER || speechType == ASCIIWHISPER )
+			searchDistance = DIST_SAMETILE;
+		else if( speechType == YELL || speechType == ASCIIYELL )
+			searchDistance = DIST_SAMESCREEN * 1.5;
+		else if( speechType == EMOTE || speechType == ASCIIEMOTE )
+			searchDistance = DIST_INRANGE;
+
+		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, searchDistance );
 		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			if( sendSock && (*cIter) == mSock )
@@ -112,6 +121,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 			(*cIter)->Send( &toSend );
 		}
 	}
+
 	if( sendSock )
 		mSock->Send( &toSend );
 }
@@ -133,7 +143,7 @@ void InitializeLookup( void )
 //o-----------------------------------------------------------------------------------------------o
 UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return ZERO;
 
 	char langCode[4];
@@ -142,8 +152,8 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 	langCode[2] = s->GetByte( ++offset );
 	langCode[3] = 0;
 
-	UString ulangCode = langCode;
-	ulangCode = ulangCode.upper();
+	std::string ulangCode = langCode;
+	ulangCode = strutil::upper( ulangCode );
 
 	UnicodeTypes cLang = s->Language();
 	if( LanguageCodes[cLang] != ulangCode.c_str() )
@@ -152,7 +162,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 		if( p != codeLookup.end() )
 			return p->second;
 		else
-			Console.error( format("Unknown language type \"%s\".  PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str()) );
+			Console.error( strutil::format("Unknown language type \"%s\".  PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str()) );
 	}
 	return cLang;
 }
@@ -170,21 +180,46 @@ void sysBroadcast( const std::string& txt )
 {
 	if( !txt.empty() )
 	{
-		CSpeechEntry& toAdd = SpeechSys->Add();
-		toAdd.Speech( txt );
-		toAdd.Font( FNT_NORMAL );
-		toAdd.Speaker( INVALIDSERIAL );
-		toAdd.SpokenTo( INVALIDSERIAL );
-		toAdd.Type( SYSTEM );
-		toAdd.At( cwmWorldState->GetUICurrentTime() );
-		toAdd.TargType( SPTRG_BROADCASTPC );
-		toAdd.Colour( 0x084D );
-		toAdd.Font( FNT_BOLD );
-		toAdd.SpeakerName( "System: " );
+		/*if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+		{
+			Network->pushConn();
+			for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+			{
+				CChar *mChar = mSock->CurrcharObj();
+				if( ValidateObject( mChar ))
+				{
+						CPUnicodeMessage unicodeMessage;
+						unicodeMessage.Message( txt );
+						unicodeMessage.Font( 0xFFFF );
+						unicodeMessage.Colour( 0xFFFF );
+						unicodeMessage.Type( 1 );
+						unicodeMessage.Language( "ENG" );
+						unicodeMessage.Name( "System" );
+						unicodeMessage.ID( 0 );
+						unicodeMessage.Serial( 0 );
+						mSock->Send( &unicodeMessage );
+				}
+			}
+			Network->popConn();
+		}
+		else
+		{*/
+			CSpeechEntry& toAdd = SpeechSys->Add();
+			toAdd.Speech( txt );
+			toAdd.Font( FNT_NORMAL );
+			toAdd.Speaker( INVALIDSERIAL );
+			toAdd.SpokenTo( INVALIDSERIAL );
+			toAdd.Type( SYSTEM );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_BROADCASTPC );
+			toAdd.Colour( 0x084D );
+			toAdd.Font( FNT_BOLD );
+			toAdd.SpeakerName( "System: " );
+		//}
 	}
 }
 
-bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
+bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPITalkRequest::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -225,11 +260,21 @@ bool CPITalkRequest::Handle( void )
 		return true;
 
 	char *asciiText		= Text();
-	cScript *myScript	= JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( myScript != NULL )
+	if( strlen(asciiText) == 0 )
+		return true;
+
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( !myScript->OnTalk( mChar, asciiText ) )
-			return true;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// If script returned false/0, prevent hard-code (and other scripts with event) from running
+			if( toExecute->OnTalk( mChar, asciiText ) == 0 )
+			{
+				return true;
+			}
+		}
 	}
 
 	if( ( asciiText[0] == cwmWorldState->ServerData()->ServerCommandPrefix() ) || ( ( asciiText[0] == '.' ) && ( asciiText[1] != '.' ) ) )
@@ -246,7 +291,7 @@ bool CPITalkRequest::Handle( void )
 			}
 		}
 
-		if( Type() != WHISPER && ( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ))
+		if(( Type() != WHISPER && Type() != ASCIIWHISPER ) && ( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ))
 			mChar->ExposeToView();
 
 		if( ( Type() == YELL || Type() == ASCIIYELL ) && mChar->CanBroadcast() )
@@ -266,25 +311,31 @@ bool CPITalkRequest::Handle( void )
 			else
 				toAdd.Colour( mChar->GetSayColour() );
 			toAdd.Font( FNT_BOLD );
-			toAdd.SpeakerName( mChar->GetName() );
+
+			std::string mCharName = getNpcDictName( mChar );
+			toAdd.SpeakerName( mCharName );
 		}
 		else
 		{
-			UString text( asciiText );
-			text = text.upper();
+			std::string text( asciiText );
 
 			if( Type() == 0 )
-				mChar->SetSayColour( TextColour() );
-			if( Type() == 2 )
-				mChar->SetEmoteColour( TextColour() );
-			if( cwmWorldState->ServerData()->ServerConsoleLogStatus() == 2 ) //Logging
 			{
-				auto temp = format("%s.log", mChar->GetName().c_str() );
-				auto temp2 = format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
+				mChar->SetSayColour( TextColour() );
+			}
+			if( Type() == 2 )
+			{
+				mChar->SetEmoteColour( TextColour() );
+			}
+			if( cwmWorldState->ServerData()->ServerSpeechLog() && !mChar->IsNpc() ) //Logging
+			{
+				auto temp = strutil::format("%s.log", mChar->GetName().c_str() );
+				auto temp2 = strutil::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
 				Console.log( temp, temp2 );
 			}
 
-			if( text.find( "DEVTEAM033070" ) != std::string::npos )
+			std::string upperText = strutil::upper( text );
+			if( upperText.find( "DEVTEAM033070" ) != std::string::npos )
 			{
 				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
 				tSock->sysmessage( temp3.c_str() );
@@ -293,12 +344,12 @@ bool CPITalkRequest::Handle( void )
 			if( !WhichResponse( tSock, mChar, text ) )
 				return true;
 
-			CPUOXBuffer *txtToSend				= NULL;
-			CPUOXBuffer *ghostedText			= NULL;
-			CPUnicodeSpeech *uniTxtToSend		= NULL;
-			CPUnicodeSpeech *uniGhostedText		= NULL;
-			CPacketSpeech *asciiTxtToSend		= NULL;
-			CPacketSpeech *asciiGhostedText		= NULL;
+			CPUOXBuffer *txtToSend				= nullptr;
+			CPUOXBuffer *ghostedText			= nullptr;
+			CPUnicodeSpeech *uniTxtToSend		= nullptr;
+			CPUnicodeSpeech *uniGhostedText		= nullptr;
+			CPacketSpeech *asciiTxtToSend		= nullptr;
+			CPacketSpeech *asciiGhostedText		= nullptr;
 
 			if( IsUnicode() )
 			{
@@ -318,7 +369,9 @@ bool CPITalkRequest::Handle( void )
 				asciiTxtToSend = new CPacketSpeech( *(static_cast<CPITalkRequestAscii *>(this)) );
 				asciiTxtToSend->SpeakerSerial( mChar->GetSerial() );
 				asciiTxtToSend->SpeakerModel( mChar->GetID() );
-				asciiTxtToSend->SpeakerName( mChar->GetName() );
+
+				std::string mCharName = getNpcDictName( mChar );
+				asciiTxtToSend->SpeakerName( mCharName );
 				txtToSend = asciiTxtToSend;
 
 				asciiGhostedText = new CPacketSpeech();
@@ -331,18 +384,15 @@ bool CPITalkRequest::Handle( void )
 
 			SOCKLIST nearbyChars;
 			// Distance at which other players can hear the speech depends on speech-type
-			if( Type() == WHISPER && !mChar->IsGM() && !mChar->IsCounselor() )
+			if(( Type() == WHISPER || Type() == ASCIIWHISPER ) && !mChar->IsGM() && !mChar->IsCounselor() )
 				nearbyChars = FindNearbyPlayers( mChar, 1 );
-			else if( Type() == WHISPER && ( mChar->IsGM() || mChar->IsCounselor() ))
+			else if(( Type() == WHISPER || Type() == ASCIIWHISPER ) && ( mChar->IsGM() || mChar->IsCounselor() ))
 				nearbyChars = FindNearbyPlayers( mChar, 3 );
-			else if( Type() == YELL )
+			else if( Type() == YELL || Type() == ASCIIYELL )
 				nearbyChars = FindNearbyPlayers( mChar, ( DIST_SAMESCREEN * 1.5 ));
 			else
 				nearbyChars = FindNearbyPlayers( mChar );
 
-			SI16 mCharX = mChar->GetX();
-			SI16 mCharY = mChar->GetY();
-			SI08 mCharZ = mChar->GetZ();
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				CSocket *tSock	= (*cIter);
@@ -350,7 +400,7 @@ bool CPITalkRequest::Handle( void )
 				if( mChar != tChar )
 				{
 					// Line of Sight check!
-					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+					if( !tChar->IsGM() && !LineOfSight( mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(), mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, 0, false ) )
 						continue;
 					if( mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
 					{
@@ -368,19 +418,21 @@ bool CPITalkRequest::Handle( void )
 					}
 					else
 					{
+						std::string mCharName = getNpcDictName( mChar );
+
 						if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE || mChar->GetVisible() == VT_PERMHIDDEN )
 						{
-							if(( tChar->IsGM() || tChar->IsCounselor() ) || Type() == WHISPER )
+							if(( tChar->IsGM() || tChar->IsCounselor() ) || ( Type() == WHISPER || Type() == ASCIIWHISPER ))
 							{
-								tSock->sysmessage( 1794, mChar->GetName().c_str() );
+								tSock->sysmessage( 1794, mCharName.c_str() ); // (Whisper from %s)
 								tSock->Send( txtToSend );
 							}
 						}
 						else
 						{
-							if( Type() == YELL && !objInRange( tChar, mChar, DIST_SAMESCREEN ) )
+							if(( Type() == YELL || Type() == ASCIIYELL ) && !objInRange( tChar, mChar, DIST_SAMESCREEN ) )
 							{
-								tSock->sysmessage( 1795, mChar->GetName().c_str() );
+								tSock->sysmessage( 1795, mCharName.c_str() ); // (Yelled by %s)
 								tSock->Send( txtToSend );
 							}
 							else
@@ -409,7 +461,7 @@ CSpeechQueue::~CSpeechQueue()
 	for( SPEECHLIST_ITERATOR slIter = speechList.begin(); slIter != speechList.end(); ++slIter )
 	{
 		delete (*slIter);
-		(*slIter) = NULL;
+		(*slIter) = nullptr;
 	}
 	speechList.clear();
 }
@@ -422,10 +474,10 @@ CSpeechQueue::~CSpeechQueue()
 void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 {
 	CPacketSpeech toSend	= toSay;
-	CChar *thisChar			= NULL;
-	CItem *thisItem			= NULL;
-	CBaseObject *thisObj	= NULL;
-	CSocket *thisSock		= NULL;
+	CChar *thisChar			= nullptr;
+	CItem *thisItem			= nullptr;
+	CBaseObject *thisObj	= nullptr;
+	CSocket *thisSock		= nullptr;
 	if( toSay.Speaker() > BASEITEMSERIAL )
 	{
 		thisItem	= calcItemObjFromSer( toSay.Speaker() );
@@ -436,22 +488,22 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 		thisChar	= calcCharObjFromSer( toSay.Speaker() );
 		thisObj		= thisChar;
 	}
-	CChar *sChar	= NULL;
-	CSocket *mSock	= NULL;
+	CChar *sChar	= nullptr;
+	CSocket *mSock	= nullptr;
 	switch( toSay.TargType() )
 	{
 		case SPTRG_INDIVIDUAL:		// aimed at individual person
 			if( ValidateObject( thisChar ) )
 			{
 				thisSock = thisChar->GetSocket();
-				if( thisSock != NULL )
+				if( thisSock != nullptr )
 					thisSock->Send( &toSend );
 			}
 			sChar = calcCharObjFromSer( toSay.SpokenTo() );
 			if( ValidateObject( sChar ) && sChar != thisChar )
 			{
 				mSock = sChar->GetSocket();
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->Send( &toSend );
 			}
 			break;
@@ -460,7 +512,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 		{
 			if( !ValidateObject( thisObj ) )
 				break;
-			if( ValidateObject( thisItem ) && thisItem->GetCont() != NULL )	// not on ground, can't guarantee speech
+			if( ValidateObject( thisItem ) && thisItem->GetCont() != nullptr )	// not on ground, can't guarantee speech
 				break;
 			SOCKLIST nearbyChars = FindPlayersInVisrange( thisObj );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
@@ -482,7 +534,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 			Network->pushConn();
 			for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
 			{
-				if( mSock != NULL )
+				if( mSock != nullptr )
 				{
 					CChar *mChar = mSock->CurrcharObj();
 					if( ValidateObject( mChar ) )
@@ -500,9 +552,11 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 			if( ValidateObject( sChar ) && sChar != thisChar )
 			{
 				mSock = sChar->GetSocket();
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->Send( &toSend );
 			}
+			break;
+		case SPTRG_NULL:
 			break;
 	};
 }
@@ -515,7 +569,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 bool CSpeechQueue::InternalPoll( void )
 {
 	bool retVal = false;
-	CSpeechEntry *toCheck = NULL;
+	CSpeechEntry *toCheck = nullptr;
 
 	SPEECHLIST_ITERATOR slIter = speechList.begin();
 	while( slIter != speechList.end() )
@@ -528,7 +582,7 @@ bool CSpeechQueue::InternalPoll( void )
 			SayIt( (*toCheck) );
 
 			delete (*slIter);
-			(*slIter) = NULL;
+			(*slIter) = nullptr;
 
 			slIter = speechList.erase( slIter );
 		}
@@ -586,7 +640,7 @@ void CSpeechQueue::DumpInFile( void )
 	std::ofstream speechDestination( speechFile.c_str() );
 	if( !speechDestination )
 	{
-		Console.error( format("Failed to open %s for writing", speechFile.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", speechFile.c_str()) );
 		return;
 	}
 	SPEECHLIST_ITERATOR toWrite;

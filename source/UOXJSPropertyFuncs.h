@@ -15,6 +15,16 @@ JSPropertyFunc CSpellsProps_getProperty;
 JSPropertyFunc CSpellProps_getProperty;
 JSPropertyFunc CSpellProps_setProperty;
 
+JSPropertyFunc CGlobalSkillsProps_getProperty;
+JSPropertyFunc CGlobalSkillProps_getProperty;
+JSPropertyFunc CGlobalSkillProps_setProperty;
+
+JSPropertyFunc CCreateEntriesProps_getProperty;
+JSPropertyFunc CCreateEntryProps_getProperty;
+JSPropertyFunc CCreateEntryProps_setProperty;
+
+JSPropertyFunc CTimerProps_getProperty;
+
 JSPropertyFunc CItemProps_getProperty;
 JSPropertyFunc CItemProps_setProperty;
 JSPropertyFunc CCharacterProps_getProperty;

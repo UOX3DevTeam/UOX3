@@ -221,12 +221,30 @@ public:
 	CPCharacterAnimation( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Action( UI16 model );
-	virtual void	Direction( UI08 dir );
+	virtual void	FrameCount( UI08 frameCount );
 	virtual void	Repeat( SI16 repeatValue );
 	virtual void	DoBackwards( bool newValue );
 	virtual void	RepeatFlag( bool newValue );
 	virtual void	FrameDelay( UI08 delay );
 	CPCharacterAnimation &operator=( CChar &toCopy );
+};
+
+class CPNewCharacterAnimation : public CPUOXBuffer
+{
+protected:
+	virtual void	CopyData( CChar &toCopy );
+	virtual void	InternalReset( void ) override;
+public:
+	CPNewCharacterAnimation();
+	virtual			~CPNewCharacterAnimation()
+	{
+	}
+	CPNewCharacterAnimation( CChar &toCopy );
+	virtual void	Serial( SERIAL toSet );
+	virtual void	Action( UI16 action );
+	virtual void	SubAction( UI16 subAction );
+	virtual void	SubSubAction( UI08 subSubAction );
+	CPNewCharacterAnimation &operator=( CChar &toCopy );
 };
 
 class CPDrawGamePlayer : public CPUOXBuffer
@@ -352,7 +370,7 @@ public:
 	virtual ~CPUpdateStat()
 	{
 	}
-	CPUpdateStat( CChar &toUpdate, UI08 statNum );
+	CPUpdateStat( CBaseObject &toUpdate, UI08 statNum, bool normalizeStats );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	MaxVal( SI16 maxVal );
 	virtual void	CurVal( SI16 curVal );
@@ -470,7 +488,7 @@ public:
 	virtual			~CPStatWindow()
 	{
 	}
-	CPStatWindow( CChar &toCopy, CSocket &target );
+	CPStatWindow( CBaseObject &toCopy, CSocket &target );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Name( const std::string& nName );
 	virtual void	CurrentHP( SI16 nValue );
@@ -870,6 +888,20 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPCloseGump : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+	UI32			_gumpID;
+	UI32			_buttonID;
+public:
+	CPCloseGump( UI32 dialogID, UI32 buttonID );
+	virtual			~CPCloseGump()
+	{
+	}
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+};
+
 class CPItemsInContainer : public CPUOXBuffer
 {
 protected:
@@ -1047,6 +1079,7 @@ public:
 	CPGameServerList( UI16 numServers );
 	virtual void	NumberOfServers( UI16 numItems );
 	virtual void	AddServer( UI16 servNum, physicalServer *data );
+	virtual void 	addEntry( const std::string & name, UI32 addressBig );
 };
 
 class CPSecureTrading : public CPUOXBuffer
@@ -1101,6 +1134,33 @@ public:
 	CPLoginDeny();
 	CPLoginDeny( LoginDenyReason reason );
 	virtual void	DenyReason( LoginDenyReason reason );
+};
+
+class CPCharDeleteResult : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+public:
+	virtual			~CPCharDeleteResult()
+	{
+	}
+	CPCharDeleteResult();
+	CPCharDeleteResult( SI08 result );
+	virtual void	DeleteResult( SI08 result );
+};
+
+class CharacterListUpdate : public CPUOXBuffer
+{
+protected:
+	UI08			numChars;
+	virtual void	InternalReset( void ) override;
+public:
+	virtual			~CharacterListUpdate()
+	{
+	}
+	CharacterListUpdate();
+	CharacterListUpdate( UI08 charCount );
+	virtual void	AddCharName( UI08 charCount, std::string charName );
 };
 
 class CPKREncryptionRequest : public CPUOXBuffer
@@ -1160,6 +1220,33 @@ public:
 	CPUnicodeSpeech &operator=( CBaseObject &toCopy );
 	CPUnicodeSpeech &operator=( CPITalkRequestAscii &talking );
 	CPUnicodeSpeech &operator=( CPITalkRequestUnicode &talking );
+};
+
+class CPUnicodeMessage : public CPUOXBuffer
+{
+protected:
+	void			CopyData( CBaseObject &toCopy );
+	void			InternalReset( void ) override;
+	void			SetLength( UI16 value );
+public:
+	CPUnicodeMessage();
+	virtual			~CPUnicodeMessage()
+	{
+	}
+	CPUnicodeMessage( CBaseObject &toCopy );
+	void			ID( UI16 toSet );
+	void			Serial( SERIAL toSet );
+	void			Object( CBaseObject &toCopy );
+	void			Language( char *value );
+	void            Language( const char *value );
+	void            Lanaguge( const std::string& value );
+	void			Type( UI08 value );
+	void			Colour( COLOUR value );
+	void			Font( UI16 value );
+	void			Name( std::string value );
+	void			Message( const char *value );
+	void			Message( const std::string value );
+	CPUnicodeMessage &operator=( CBaseObject &toCopy );
 };
 
 class CPAllNames3D : public CPUOXBuffer
@@ -1271,17 +1358,27 @@ protected:
 		size_t stringLen;
 	};
 	std::vector< toolTipEntry > ourEntries;
+
+	struct toolTipEntryWide
+	{
+		std::wstring ourText;
+		UI32 stringNum;
+		size_t stringLen;
+	};
+	std::vector< toolTipEntryWide > ourWideEntries;
+	CSocket *tSock;
 	virtual void	InternalReset( void ) override;
 	virtual void	CopyData( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
 	void				CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount = true, bool playerVendor = false );
 	void				CopyCharData( CChar& mChar, size_t &totalStringLen );
 	void				FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen );
+	void				FinalizeWideData( toolTipEntryWide tempEntry, size_t &totalStringLen );
 public:
 	virtual			~CPToolTip()
 	{
 	}
 	CPToolTip();
-	CPToolTip( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
+	CPToolTip( SERIAL objSer, CSocket *mSock = nullptr, bool addAmount = true, bool playerVendor = false );
 };
 
 class CPSellList : public CPUOXBuffer
@@ -1350,13 +1447,13 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPHealthBarStatus();
-	CPHealthBarStatus( CChar& mChar, CSocket &target );
+	CPHealthBarStatus( CChar& mChar, CSocket &target, UI08 healthBarColor );
 	virtual			~CPHealthBarStatus()
 	{
 	}
 
 	virtual void	CopyData( CChar& mChar );
-	virtual void	SetHBStatusData( CChar& mChar, CSocket &target );
+	virtual void	SetHBStatusData( CChar& mChar, CSocket &target, UI08 healthBarColor );
 };
 
 class CPExtendedStats : public CPUOXBuffer
@@ -1411,11 +1508,11 @@ protected:
 	virtual void	InternalReset( void ) override;
 public:
 	CPPopupMenu();
-	CPPopupMenu( CChar& );
+	CPPopupMenu( CChar&, CSocket& );
 	virtual			~CPPopupMenu()
 	{
 	}
-	virtual void	CopyData( CChar& );
+	virtual void	CopyData( CChar&, CSocket& );
 };
 
 class CPClilocMessage : public CPUOXBuffer

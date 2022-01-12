@@ -5,7 +5,7 @@
 #include "ssection.h"
 #include "StringUtility.hpp"
 
-CJSMapping *JSMapping = NULL;
+CJSMapping *JSMapping = nullptr;
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	CJSMapping.cpp
 //|	Date		-	Feb 7, 2005
@@ -67,22 +67,22 @@ void CJSMapping::Cleanup( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		if( mapSection[1] != NULL )
+		if( mapSection[1] != nullptr )
 		{
 			delete mapSection[i];
-			mapSection[i] = NULL;
+			mapSection[i] = nullptr;
 		}
 	}
 
-	if( envokeByID != NULL )
+	if( envokeByID != nullptr )
 	{
 		delete envokeByID;
-		envokeByID = NULL;
+		envokeByID = nullptr;
 	}
-	if( envokeByType != NULL )
+	if( envokeByType != nullptr )
 	{
 		delete envokeByType;
-		envokeByType = NULL;
+		envokeByType = nullptr;
 	}
 }
 
@@ -96,7 +96,7 @@ void CJSMapping::Reload( UI16 scriptID )
 {
 	if( scriptID != 0xFFFF )
 	{
-		Console.print( format("CMD: Attempting Reload of JavaScript (ScriptID %u)\n", scriptID) );
+		Console.print( strutil::format("CMD: Attempting Reload of JavaScript (ScriptID %u)\n", scriptID) );
 		for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 		{
 			if( mapSection[i]->IsInMap( scriptID ) )
@@ -105,11 +105,11 @@ void CJSMapping::Reload( UI16 scriptID )
 				return;
 			}
 		}
-		Console.warning( format("Unable to locate specified JavaScript in the map (ScriptID %u)", scriptID) );
+		Console.warning( strutil::format("Unable to locate specified JavaScript in the map (ScriptID %u)", scriptID) );
 	}
 	else
 	{
-		Console.print( format("CMD: Loading JSE Scripts... \n") );
+		Console.print( strutil::format("CMD: Loading JSE Scripts... \n") );
 		Cleanup();
 		ResetDefaults();
 		envokeByID->Parse();
@@ -125,8 +125,8 @@ void CJSMapping::Reload( UI16 scriptID )
 //o-----------------------------------------------------------------------------------------------o
 void CJSMapping::Reload( SCRIPTTYPE sectionID )
 {
-	Console.print( format("CMD: Attempting Reload of JavaScript (SectionID %u)\n", static_cast<SI32>(sectionID) ));
-	if( mapSection[sectionID] != NULL )
+	Console.print( strutil::format("CMD: Attempting Reload of JavaScript (SectionID %u)\n", static_cast<SI32>(sectionID) ));
+	if( mapSection[sectionID] != nullptr )
 	{
 		delete mapSection[sectionID];
 		mapSection[sectionID] =  new CJSMappingSection( sectionID );
@@ -147,23 +147,23 @@ void CJSMapping::Parse( SCRIPTTYPE toParse )
 	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
 	if( !FileExists( scpFileName ) )
 	{
-		Console.error( format("Failed to open %s", scpFileName.c_str() ));
+		Console.error( strutil::format("Failed to open %s", scpFileName.c_str() ));
 		return;
 	}
 
 	Script *fileAssocData	= new Script( scpFileName, NUM_DEFS, false );
-	if( fileAssocData != NULL )
+	if( fileAssocData != nullptr )
 	{
 		if( toParse != SCPT_COUNT )
 		{
-			if( mapSection[toParse] != NULL )
+			if( mapSection[toParse] != nullptr )
 				mapSection[toParse]->Parse( fileAssocData );
 		}
 		else
 		{
 			for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 			{
-				if( mapSection[i] != NULL )
+				if( mapSection[i] != nullptr )
 					mapSection[i]->Parse( fileAssocData );
 			}
 		}
@@ -180,10 +180,10 @@ void CJSMapping::Parse( SCRIPTTYPE toParse )
 //o-----------------------------------------------------------------------------------------------o
 CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 {
-	if( mapSection[toGet] != NULL )
+	if( mapSection[toGet] != nullptr )
 		return mapSection[toGet];
 
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -213,13 +213,13 @@ UI16 CJSMapping::GetScriptID( JSObject *toFind )
 //o-----------------------------------------------------------------------------------------------o
 cScript * CJSMapping::GetScript( JSObject *toFind )
 {
-	cScript *retVal		= NULL;
-	cScript *toCheck	= NULL;
+	cScript *retVal		= nullptr;
+	cScript *toCheck	= nullptr;
 
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
 		toCheck = mapSection[i]->GetScript( toFind );
-		if( toCheck != NULL )
+		if( toCheck != nullptr )
 		{
 			retVal = toCheck;
 			break;
@@ -236,13 +236,13 @@ cScript * CJSMapping::GetScript( JSObject *toFind )
 //o-----------------------------------------------------------------------------------------------o
 cScript * CJSMapping::GetScript( UI16 toFind )
 {
-	cScript *retVal		= NULL;
-	cScript *toCheck	= NULL;
+	cScript *retVal		= nullptr;
+	cScript *toCheck	= nullptr;
 
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
 		toCheck = mapSection[i]->GetScript( toFind );
-		if( toCheck != NULL )
+		if( toCheck != nullptr )
 		{
 			retVal = toCheck;
 			break;
@@ -293,7 +293,7 @@ CJSMappingSection::~CJSMappingSection()
 	for( std::map< UI16, cScript * >::const_iterator sIter = scriptIDMap.begin(); sIter != scriptIDMap.end(); ++sIter )
 	{
 		cScript *toDelete = sIter->second;
-		if( toDelete != NULL )
+		if( toDelete != nullptr )
 			delete toDelete;
 	}
 
@@ -310,32 +310,32 @@ CJSMappingSection::~CJSMappingSection()
 //o-----------------------------------------------------------------------------------------------o
 void CJSMappingSection::Parse( Script *fileAssocData )
 {
-	UString basePath		= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
 	ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
 	UI08 runTime			= 0;
 
 	if( scriptType == SCPT_CONSOLE )
 		runTime = 1;
 
-	if( mSection != NULL )
+	if( mSection != nullptr )
 	{
 		UI16 scriptID = 0xFFFF;
 		size_t i = 0;
-		UString data, fullPath;
-		for( UString tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
+		std::string data, fullPath;
+		for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 		{
-			scriptID	= tag.toUShort();
+			scriptID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
 			data		= mSection->GrabData();
 			fullPath	= basePath + data;
 
 			if( !FileExists( fullPath ) )
-				Console.error( format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
+				Console.error( strutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
 			else
 			{
 				try
 				{
 					cScript *toAdd = new cScript( fullPath, runTime );
-					if( toAdd != NULL )
+					if( toAdd != nullptr )
 					{
 						scriptIDMap[scriptID]			= toAdd;
 						scriptJSMap[toAdd->Object()]	= scriptID;
@@ -344,21 +344,21 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 				}
 				catch( std::runtime_error &e )
 				{
-					Console.error( format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
+					Console.error( strutil::format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
 				}
 			}
 		}
 		Console.print( "  o Loaded " );
 		Console.TurnYellow();
-		Console.print( format("%4u ", i) );
+		Console.print( strutil::format("%4u ", i) );
 		Console.TurnNormal();
 		Console.print( "scripts from section " );
 		Console.TurnYellow();
-		Console.print( format("%s\n", ScriptNames[scriptType].c_str()) );
+		Console.print( strutil::format("%s\n", ScriptNames[scriptType].c_str()) );
 		Console.TurnNormal();
 	}
 	else
-		Console.warning( format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
+		Console.warning( strutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -372,32 +372,32 @@ void CJSMappingSection::Reload( UI16 toLoad )
 	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
 	if( !FileExists( scpFileName ) )
 	{
-		Console.error( format("Failed to open %s", scpFileName.c_str()) );
+		Console.error( strutil::format("Failed to open %s", scpFileName.c_str()) );
 		return;
 	}
 
 	Script *fileAssocData	= new Script( scpFileName, NUM_DEFS, false );
-	if( fileAssocData != NULL )
+	if( fileAssocData != nullptr )
 	{
 		ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
-		if( mSection != NULL )
+		if( mSection != nullptr )
 		{
-			UI16 scriptID		= 0xFFFF;
-			UString basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
-			UString data, fullPath;
+			UI16 scriptID = 0xFFFF;
+			std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+			std::string data, fullPath;
 			UI08 runTime = 0;
 			if( scriptType == SCPT_CONSOLE )
 				runTime = 1;
-			for( UString tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
+			for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 			{
-				scriptID		= tag.toUShort();
+				scriptID		= static_cast<UI16>(std::stoul(tag, nullptr, 0));
 				if( scriptID == toLoad )
 				{
 					data		= mSection->GrabData();
 					fullPath	= basePath + data;
 
 					if( !FileExists( fullPath ) )
-						Console.error( format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
+						Console.error( strutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
 					else
 					{
 						try
@@ -405,7 +405,7 @@ void CJSMappingSection::Reload( UI16 toLoad )
 							std::map< UI16, cScript * >::const_iterator iFind = scriptIDMap.find( toLoad );
 							if( iFind != scriptIDMap.end() )
 							{
-								if( scriptIDMap[toLoad] != NULL )
+								if( scriptIDMap[toLoad] != nullptr )
 								{
 									JSObject *jsObj = scriptIDMap[toLoad]->Object();
 									std::map< JSObject *, UI16 >::iterator jFind = scriptJSMap.find( jsObj );
@@ -413,30 +413,30 @@ void CJSMappingSection::Reload( UI16 toLoad )
 										scriptJSMap.erase( jFind );
 
 									delete scriptIDMap[toLoad];
-									scriptIDMap[toLoad] = NULL;
+									scriptIDMap[toLoad] = nullptr;
 								}
 							}
 							cScript *toAdd = new cScript( fullPath, runTime );
-							if( toAdd != NULL )
+							if( toAdd != nullptr )
 							{
 								scriptIDMap[scriptID]			= toAdd;
 								scriptJSMap[toAdd->Object()]	= scriptID;
-								Console.print( format("Reload of JavaScript (ScriptID %u) Successful\n", toLoad) );
+								Console.print( strutil::format("Reload of JavaScript (ScriptID %u) Successful\n", toLoad) );
 							}
 						}
 						catch( std::runtime_error &e )
 						{
-							Console.error( format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
+							Console.error( strutil::format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
 						}
 					}
 					delete fileAssocData;
 					return;
 				}
 			}
-			Console.warning(format( "Unable to locate the specified JavaScript in the file (ScriptID %u)", toLoad) );
+			Console.warning(strutil::format( "Unable to locate the specified JavaScript in the file (ScriptID %u)", toLoad) );
 		}
 		else
-			Console.warning( format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
+			Console.warning( strutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
 		delete fileAssocData;
 	}
 }
@@ -483,7 +483,7 @@ UI16 CJSMappingSection::GetScriptID( JSObject *toFind )
 //o-----------------------------------------------------------------------------------------------o
 cScript * CJSMappingSection::GetScript( UI16 toFind )
 {
-	cScript *retVal = NULL;
+	cScript *retVal = nullptr;
 
 	std::map< UI16, cScript * >::const_iterator idIter = scriptIDMap.find( toFind );
 	if( idIter != scriptIDMap.end() )
@@ -516,7 +516,7 @@ cScript * CJSMappingSection::First( void )
 	if( !Finished() )
 		return scriptIDIter->second;
 
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -533,7 +533,7 @@ cScript * CJSMappingSection::Next( void )
 		if( !Finished() )
 			return scriptIDIter->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -599,7 +599,6 @@ void CEnvoke::Parse( void )
 {
 	envokeList.clear();
 
-	//std::ifstream envokefile; //Unused variable?
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
 	if( !FileExists( filename ) )
 	{
@@ -608,24 +607,24 @@ void CEnvoke::Parse( void )
 	}
 
 	Script *fileAssocData	= new Script( filename, NUM_DEFS, false );
-	if( fileAssocData != NULL )
+	if( fileAssocData != nullptr )
 	{
 		ScriptSection *mSection = fileAssocData->FindEntry( "ENVOKE" );
-		if( mSection != NULL )
+		if( mSection != nullptr )
 		{
-			UString tag, data;
+			std::string tag, data;
 			for( tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 			{
 				if( !tag.empty() && tag != "\n" && tag != "\r" )
 				{
 					data			= mSection->GrabData();
-					UI16 envokeID	= tag.toUShort();
-					UI16 scriptID	= data.toUShort();
+					UI16 envokeID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
+					UI16 scriptID	= static_cast<UI16>(std::stoul(data, nullptr, 0));
 					cScript *verify	= JSMapping->GetScript( scriptID );
-					if( verify != NULL )
+					if( verify != nullptr )
 						envokeList[envokeID] = scriptID;
 					else
-						Console.error(format( "(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag.c_str(), scriptID) );
+						Console.error(strutil::format( "(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag.c_str(), scriptID) );
 				}
 			}
 		}

@@ -1,8 +1,10 @@
 [pentagramdeed]
 {
-NAME=pentagram deed
-ID=0x14F0
-MOREX=18
+name=pentagram deed
+id=0x14F0
+morex=18
+value=750 350
+restock=15
 }
 
 [brownbearrugdeedeast]
@@ -10,6 +12,8 @@ MOREX=18
 name=brown bear rug (east)
 id=0x14F0
 morex=40
+value=1000 500
+restock=15
 }
 
 [brownbearrugdeedsouth]
@@ -17,6 +21,8 @@ morex=40
 name=brown bear rug (south)
 id=0x14F0
 morex=41
+value=1000 500
+restock=15
 }
 
 [polarbearrugdeedeast]
@@ -24,6 +30,8 @@ morex=41
 name=polar bear rug (east)
 id=0x14F0
 morex=42
+value=1500 750
+restock=15
 }
 
 [polarbearrugdeedsouth]
@@ -31,11 +39,364 @@ morex=42
 name=polar bear rug (south)
 id=0x14F0
 morex=43
+value=1500 750
+restock=15
 }
 
 [loomdeed]
 {
-NAME=loom deed
-ID=0x14F0
-MOREX=19
+name=loom (east)
+id=0x14F0
+morex=19
+value=400 200
+restock=15
+}
+
+[loomdeedsouth]
+{
+name=loom (south)
+id=0x14F0
+morex=47
+value=400 200
+restock=15
+}
+
+[smallforgedeed]
+{
+name=small forge
+id=0x14F0
+morex=44
+value=750 375
+restock=15
+}
+
+[anvildeedeast]
+{
+name=anvil (east)
+id=0x14F0
+morex=45
+value=2000 1000
+restock=15
+}
+
+[anvildeedsouth]
+{
+name=anvil (south)
+id=0x14F0
+morex=46
+}
+
+[spinningwheeldeednorth]
+{
+name=spinning wheel (north)
+id=0x14F0
+morex=48
+value=400 200
+restock=15
+}
+
+[spinningwheeldeedsouth]
+{
+name=spinning wheel (south)
+id=0x14F0
+morex=49
+value=400 200
+restock=15
+}
+
+[spinningwheeldeedeast]
+{
+name=spinning wheel (east)
+id=0x14F0
+morex=50
+value=400 200
+restock=15
+}
+
+[spinningwheeldeedwest]
+{
+name=spinning wheel (west)
+id=0x14F0
+morex=51
+value=400 200
+restock=15
+}
+
+[smallbed1deedsouth]
+{
+name=small bed 1 (south)
+id=0x14f0
+morex=52
+value=750 375
+restock=15
+}
+
+[smallbed2deedsouth]
+{
+name=small bed 2 (south)
+id=0x14f0
+morex=53
+value=750 375
+restock=15
+}
+
+[smallbed1deedeast]
+{
+name=small bed 1 (east)
+id=0x14f0
+morex=54
+value=750 375
+restock=15
+}
+
+[smallbed2deedeast]
+{
+name=small bed 2 (east)
+id=0x14f0
+morex=55
+value=750 375
+restock=15
+}
+
+[largebed1deedeast]
+{
+name=large bed 1 (east)
+id=0x14f0
+morex=56
+value=1000 500
+restock=15
+}
+
+[largebed2deedeast]
+{
+name=large bed 2 (east)
+id=0x14f0
+morex=57
+value=1000 500
+restock=15
+}
+
+[largebed1deedsouth]
+{
+name=large bed 1 (south)
+id=0x14f0
+morex=58
+value=1000 500
+restock=15
+}
+
+[largebed2deedsouth]
+{
+name=large bed 2 (south)
+id=0x14f0
+morex=59
+value=1000 500
+restock=15
+}
+
+[trainingdummydeedeast]
+{
+name=training dummy (east)
+id=0x14f0
+morex=60
+value=400 200
+restock=15
+}
+
+[trainingdummydeedsouth]
+{
+name=training dummy (south)
+id=0x14f0
+morex=61
+value=400 200
+restock=15
+}
+
+[pickpocketdipdeedeast]
+{
+name=pickpocket dip (east)
+id=0x14f0
+morex=62
+value=500 250
+restock=15
+}
+
+[pickpocketdipdeedsouth]
+{
+name=pickpocket dip (east)
+id=0x14f0
+morex=63
+value=500 250
+restock=15
+}
+
+[dresserdeedeast]
+{
+name=dresser (east)
+id=0x14f0
+morex=64
+value=150 75
+restock=15
+}
+
+[dresserdeedsouth]
+{
+name=dresser (south)
+id=0x14f0
+morex=65
+value=150 75
+restock=15
+}
+
+[abattoirdeed]
+{
+name=abattoir
+id=0x14f0
+morex=66
+value=750 375
+restock=15
+}
+
+[flourmilldeedeast]
+{
+name=flour mill (east)
+id=0x14f0
+morex=67
+value=1000 500
+restock=15
+}
+
+[flourmilldeedsouth]
+{
+name=flour mill (south)
+id=0x14f0
+morex=68
+value=1000 500
+restock=15
+}
+
+[sandstoneovendeedeast]
+{
+name=sandstone oven (east)
+id=0x14f0
+morex=69
+value=1500 750
+restock=15
+}
+
+[sandstoneovendeedsouth]
+{
+name=sandstone oven (south)
+id=0x14f0
+morex=70
+value=1500 750
+restock=15
+}
+
+[brickovendeedeast]
+{
+name=brick oven (east)
+id=0x14f0
+morex=71
+value=1500 750
+restock=15
+}
+
+[brickovendeedsouth]
+{
+name=brick oven (south)
+id=0x14f0
+morex=72
+value=1500 750
+restock=15
+}
+
+[largeforgedeedeast]
+{
+name=large forge (east)
+id=0x14f0
+morex=73
+value=1000 500
+restock=15
+}
+
+[largeforgedeedwest]
+{
+name=large forge (west)
+id=0x14f0
+morex=74
+value=1000 500
+restock=15
+}
+
+[largeforgedeednorth]
+{
+name=large forge (north)
+id=0x14f0
+morex=75
+value=1000 500
+restock=15
+}
+
+[largeforgedeedsouth]
+{
+name=large forge (south)
+id=0x14f0
+morex=76
+value=1000 500
+restock=15
+}
+
+[waterthroughdeedeast]
+{
+name=water trough (east)
+id=0x14f0
+morex=77
+value=1000 500
+restock=15
+}
+
+[waterthroughdeedsouth]
+{
+name=water trough (south)
+id=0x14f0
+morex=78
+value=1000 500
+restock=15
+}
+
+[dartboarddeedeast]
+{
+name=dart board (east)
+id=0x14f0
+morex=79
+value=1000 500
+restock=15
+}
+
+[dartboarddeedsouth]
+{
+name=dart board (south)
+id=0x14f0
+morex=80
+value=1000 500
+restock=15
+}
+
+[ballotboxdeedeast]
+{
+name=ballot box (east)
+id=0x14f0
+morex=81
+value=1000 500
+restock=15
+}
+
+[ballotboxdeedsouth]
+{
+name=ballot box (south)
+id=0x14f0
+morex=82
+value=1000 500
+restock=15
 }

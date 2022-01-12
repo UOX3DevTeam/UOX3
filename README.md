@@ -1,13 +1,15 @@
 # UOX3
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) [![Coverity Scan Build Status](https://scan.coverity.com/projects/23322/badge.svg)](https://scan.coverity.com/projects/ultima-offline-experiment-3)
 
 **master** ![Windows x86 Build](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x86%20Build/badge.svg?branch=master) ![Windows x64 Build](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x64%20Build/badge.svg?branch=master) ![Linux x64 Build](https://github.com/UOX3DevTeam/UOX3/workflows/Linux%20x64%20Build/badge.svg?branch=master)
 
 **develop** ![Windows x86 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x86%20Build/badge.svg?branch=develop) ![Windows x64 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x64%20Build/badge.svg?branch=develop) ![Windows x64 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Linux%20x64%20Build/badge.svg?branch=develop)
 
-Ultima Offline eXperiment 3 - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
+**Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux** and **macOS**. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
 
-Supported UO Client versions: **~4.0.0p** to **~7.0.86.2** (with encryption removed by [Razor](https://github.com/msturgill/razor/releases) or similar tool). For additional details on UO client compatibility, check http://www.uox3.org/forums/viewtopic.php?f=1&t=2289
+Supported UO Client versions: **~4.0.0p** to **~7.0.91.15** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
+
+UOX3 relies on **SpiderMonkey v1.7.0** for its JS-based scripting engine, and on **zlib-1.2.11** for data compression matters, and comes bundled with specific, compatible versions of these.
 
 Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick chat!
 
@@ -16,12 +18,14 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 # How to compile UOX3...
 # ...under Linux or macOS
 ## Step 1: Clone the UOX3 Git Repository
-### Using git and Terminal ###
+<details>
+  <summary>Using git and Terminal</summary>
+
 First step, open a new terminal and enter the commands below:
 
 1) (Linux) `sudo apt install git` - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
 1) (macOS) `xcode-select --install` - This will install git if not already installed, along with required make and gcc tools
-2) `git clone https://github.com/UOX3DevTeam/UOX3.git` - This will clone the stable master branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7) is also included.
+2) `git clone https://github.com/UOX3DevTeam/UOX3.git` - This will clone the stable master branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7.0) is also included, as well as a minimal set of files required to compile zlib-1.2.11.
 
 <details>
   <summary>Checking out Other Branches</summary>
@@ -29,6 +33,7 @@ First step, open a new terminal and enter the commands below:
   If you'd rather grab another branch of the git repository, like the **develop** branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step:
   `git checkout develop`
 
+</details>
 </details>
 
 <details>
@@ -42,15 +47,31 @@ First step, open a new terminal and enter the commands below:
 </details>
 
 ## Step 2: Compile UOX3
-### GNU Make and GCC ###
-You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc**. Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):
+<details>
+  <summary>Compiling with GNU Make and GCC (v9.x and above)</summary>
+
+You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc** (*v9.x* or higher recommended). Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (example specific to Debian/Ubuntu Linux flavours):
 
 1) (Linux only) `sudo apt install build-essential`
 
-Once these are in place, navigate to the **UOX3** project folder in your terminal and execute the following commands from the project's root directory, in order:
+Once these are in place, navigate to the **UOX3** project folder in your terminal and execute the following command from the project's root directory:
 
-1) `chmod +x automake.sh` - Makes the automake.sh bash script executable.
-2) `./automake.sh` - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
+`./automake.sh` - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the included zlib library, and finally compiles the actual UOX3 build, before copying the compiled binary to the **root** UOX3 project directory.
+</details>
+
+<details>
+  <summary>Special note for users of Debian/GCC versions below 9.x</summary>
+
+  If your version of gcc is below 9.x, you'll need to add *-lstdc++fs* in *Makefile* to include the experimental filesystem library from c++17.
+
+  Change the following line (~34) from
+
+    `$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)`
+
+  to
+
+    `$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs`
+</details>
 
 <details>
   <summary>Manual Instructions</summary>
@@ -66,12 +87,21 @@ Once these are in place, navigate to the **UOX3** project folder in your termina
   - `ar rcs libjs32.a Darwin_DBG.OBJ/*.o`
   - `cp Darwin_DBG.OBJ/jsautocfg.h ./`
 
+  *Next up, compile a static library of the included zlib package:*
+
+  - `cd ../zlib`
+  - `make distclean`
+  - `./configure`
+  - `make`
+
   *At this point, now cd to the root UOX3 project directory and build UOX3:*
 
   - `cd ../source`
   - `make`
 
 </details>
+
+---
 
 Once done compiling, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory.
 
@@ -98,11 +128,16 @@ Once you have all the required files in place, you can follow the regular steps 
 1) Download and install [GitHub Desktop](https://desktop.githubc.om). If you already have another tool for git installed, you can use that instead.
 2) Run GitHub Desktop (or your preferred git tool) and click **File->Clone Repository** from the menu.
 3) Click the **URL** tab, enter `https://github.com/UOX3DevTeam/UOX3.git`, then provide a local path for where you want the UOX3 git repository cloned on your drive.
-4) Hit the **Clone** button to clone the stable master branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (v1.7).
+4) Hit the **Clone** button to clone the stable master branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (v1.7.0).
 
 ## Step 2: Compile UOX3
 ### Option A) Visual Studio 2017/2019 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
+<details>
+  <summary>Visual Studio 2017/2019</summary>
+
 *This option will let you use Visual Studio solution/project files to compile both UOX3 and SpiderMonkey with Visual Studio's default VC++ compiler. Note that you can download the [Free Community edition](https://visualstudio.microsoft.com/downloads/) of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either **32-bit** or **64-bit** (default) versions of UOX3.*
+
+***Note:*** You'll need to install **"Desktop development with C++"** via the Visual Studio Installer if you don't have it already, along with the option for this titled **MSVC v141 - VS 2017 C++ x64/x86 build tools (v14.16)**
 
 #### SpiderMonkey ####
 1) Navigate to the **UOX3\spidermonkey** folder and open **SpiderMonkey.sln** in Visual Studio.
@@ -110,25 +145,32 @@ Once you have all the required files in place, you can follow the regular steps 
 3) Click **Build > Build js32** from the menu.
 4) Visual Studio will compile SpiderMonkey and create **spidermonkey\Release\x64** (64-bit) or **spidermonkey\Release\x86** (32-bit) folders with the compiled **js32.lib** library file contained within. No further actions are necessary here, so you can close the SpiderMonkey VS Solution.
 
+### zlib ###
+1) Navigate to the **UOX3\zlib** folder and open **zlib.sln** in Visual Studio.
+2) Select **Release** and either **x64** (64-bit) or **Win32** (32-bit) in the Solution Configuration/Platform dropdown menus
+3) Click **Build > Build zlib-static** from the menu.
+4) Visual Studio will compile zlib and create **zlib\x64\Release** (64-bit) or **zlib\x86\Release** (32-bit) folders with the compiled **zlib-static.lib** library file contained within. No further actions are necessary here, so you can close the zlib VS Solution.
+
 #### UOX3 ####
 1) Open **UOX3_Official.sln** from the **UOX3\source** folder.
 2) Make sure you have **UOX3_Official** selected in the Solution Explorer, then select either **Release** or **Debug**, and either **x64** (64-bit) or **Win32** (32-bit) in the *Solution Configuration/Platform dropdown menus*, or via **Build -> Configuration Manager**.
 3) Select **Build -> Build UOX3_Official** to start compiling UOX3. When done, you'll find **UOX3.exe** either in **UOX3\source\Release\x64** (or **\x86**) or in **UOX3\source\Debug\x64** (or **\86**), depending on your choices in the previous step.
 
 <details>
-  <summary>Adding SpiderMonkey references in Configuration Manager</summary>
+  <summary>Adding SpiderMonkey/zlib references in Configuration Manager</summary>
 
-If VS give you link errors when attempting to build UOX3, references to SpiderMonkey might have gone missing! Try the following steps to add them back.
+If VS give you link errors when attempting to build UOX3, references to SpiderMonkey or zlib might have gone missing! Try the following steps to add them back.
 
 1) Right click on **UOX3_Official** in the Solution Explorer, and select Properties.
-2) With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey in these sections:
-  * *VC++ Directories >* **Include Directories** (add path to SpiderMonkey root folder)
-  * *VC++ Directories >* **Library Directories** (add path to SpiderMonkey release\x64 or \x86 folder depending on desired configuration)
-  * *VC++ Directories >* **Source Directories** (add path to SpiderMonkey root folder)
-  * *Linker >* **Additional Library Dependencies** (add path to SpiderMonkey **release\x64** or **\x86** folder depending on desired configuration)
+2) With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey and zlib in these sections:
+  * *VC++ Directories >* **Include Directories** (add path to SpiderMonkey and zlib root folders)
+  * *VC++ Directories >* **Library Directories** (add path to SpiderMonkey **Release\x64** or **Release\x86** folder, as well as zlib **\x64\Release** or **\x86\Release** folder, depending on desired configuration)
+  * *VC++ Directories >* **Source Directories** (add path to SpiderMonkey and zlib root folders)
+  * *Linker >* **Additional Library Dependencies** (add path to SpiderMonkey **Release\x64** or **Release\x86** folder, as well as zlib **\x64\Release** or **\x86\Release** folder, depending on desired configuration)
 Press apply!
 Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!
 
+</details>
 </details>
 
 ### Option B) Visual Studio 2017/2019 and CMake ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
@@ -144,6 +186,8 @@ Repeat process for both Release and Debug configurations (chosen at top of panel
 5) Note that the **js32.dll** file must be copied to the same folder as UOX3.exe.
 
 </details>
+
+---
 
 Once done compiling, you can copy your new **uox3.exe** (and if using CMake, **js32.dll**) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these.
 

@@ -1,0 +1,157 @@
+// -----------= ARMS =----------- //
+
+// Gargish Plate Arms - N/S
+[0x0308]
+{
+get=base_gargish_plate_arms
+}
+
+// Gargish Plate Arms - E/W
+[0x4050]
+{
+get=0x0308
+id=0x4050
+}
+
+// Gargish Plate Arms - Alias
+[gargishplatearms]
+{
+get=0x0308 0x4050
+}
+
+// Female Gargish Plate Arms - N/S
+[0x0307]
+{
+get=base_female_gargish_plate_arms
+}
+
+// Female Gargish Plate Arms - E/W
+[0x404f]
+{
+get=0x0307
+id=0x404f
+}
+
+// Female Gargish Plate Arms - Alias
+[femalegargishplatearms]
+{
+get=0x0307 0x404f
+}
+
+// -----------= CHEST =----------- //
+
+// Gargish Plate Chest - E/W
+[0x030a]
+{
+get=base_gargish_plate_chest
+}
+
+// Gargish Plate Chest - N/S
+[0x4052]
+{
+get=0x030a
+id=0x4052
+}
+
+// Gargish Plate Chest - Alias
+[gargishplatechest]
+{
+get=0x030a 0x4052
+}
+
+// Female Gargish Plate Chest - E/W
+[0x0309]
+{
+get=base_female_gargish_plate_chest
+}
+
+// Female Gargish Plate Chest - N/S
+[0x4051]
+{
+get=0x0309
+id=0x4051
+}
+
+// Female Gargish Plate Chest - Alias
+[femalegargishplatechest]
+{
+get=0x0309 0x4051
+}
+
+// -----------= LEGS =----------- //
+
+// Gargish Plate Leggings - N/S
+[0x030e]
+{
+get=base_gargish_plate_leggings
+}
+
+// Gargish Plate Leggings - E/W
+[0x4056]
+{
+get=0x030e
+id=0x4056
+}
+
+// Gargish Plate Leggings - Alias
+[gargishplateleggings]
+{
+get=0x030e 0x4056
+}
+
+// Female Gargish Plate Leggings - E/W
+[0x030d]
+{
+get=base_female_gargish_plate_leggings
+}
+
+// Female Gargish Plate Leggings - N/S
+[0x4055]
+{
+get=0x030d
+id=0x4055
+}
+
+// Female Gargish Plate Leggings - Alias
+[femalegargishplateleggings]
+{
+get=0x030d 0x4055
+}
+
+// Gargish Plate Kilt - E/W
+[0x030c]
+{
+get=base_gargish_plate_kilt
+}
+
+// Gargish Plate Kilt - N/S
+[0x4054]
+{
+get=0x030c
+id=0x4054
+}
+
+// Gargish Plate Kilt - Alias
+[gargishplatekilt]
+{
+get=0x030c 0x4054
+}
+
+// Female Gargish Plate Kilt - E/W
+[0x030b]
+{
+get=base_female_gargish_plate_kilt
+}
+
+// Female Gargish Plate Kilt - N/S
+[0x4053]
+{
+get=0x030b
+id=0x4053
+}
+
+// Female Gargish Plate Kilt - Alias
+[femalegargishplatekilt]
+{
+get=0x030b 0x4053
+}

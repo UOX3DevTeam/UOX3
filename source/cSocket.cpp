@@ -4,6 +4,7 @@
 #include "speech.h"
 #include "cRaces.h"
 #include "cGuild.h"
+#include "PartySystem.h"
 #include "commands.h"
 #include "combat.h"
 #include "classes.h"
@@ -12,7 +13,7 @@
 #include "StringUtility.hpp"
 #include "typedefs.h"
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #include <sys/ioctl.h>
 #endif
 
@@ -145,7 +146,7 @@ void CSocket::CliSocket( size_t newValue )
 	cliSocket = newValue;
 	unsigned long mode = 1;
 	// set the socket to nonblocking
-	ioctlsocket( cliSocket, FIONBIO, &mode );
+	ioctlsocket( static_cast<UOXSOCKET>(cliSocket), FIONBIO, &mode );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -364,7 +365,7 @@ void CSocket::DyeAll( UI08 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::CloseSocket( void )
 {
-	closesocket( cliSocket );
+	closesocket( static_cast<UOXSOCKET>(cliSocket) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -430,6 +431,36 @@ bool CSocket::WasIdleWarned( void ) const
 void CSocket::WasIdleWarned( bool value )
 {
 	wasIdleWarned = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool objDelayMsgShown( void ) const
+//|					void objDelayMsgShown( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player has been shown message about object use delay
+//o-----------------------------------------------------------------------------------------------o
+bool CSocket::ObjDelayMsgShown( void ) const
+{
+	return objDelayMsgShown;
+}
+void CSocket::ObjDelayMsgShown( bool value )
+{
+	objDelayMsgShown = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SkillDelayMsgShown( void ) const
+//|					void SkillDelayMsgShown( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player has been shown message about skill use delay
+//o-----------------------------------------------------------------------------------------------o
+bool CSocket::SkillDelayMsgShown( void ) const
+{
+	return skillDelayMsgShown;
+}
+void CSocket::SkillDelayMsgShown( bool value )
+{
+	skillDelayMsgShown = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -590,7 +621,9 @@ const ClientTypes		DEFSOCK_CLITYPE					= CV_DEFAULT;
 const ClientVersions	DEFSOCK_CLIVERSHORT				= CVS_DEFAULT;
 const UI32				DEFSOCK_CLIENTVERSION			= calcserial( 4, 0, 0, 0 );
 const UI32				DEFSOCK_BYTESSENT				= 0;
+const UI32				DEFSOCK_BYTESSENTWARNINGCOUNT		= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
+const UI32				DEFSOCK_BYTESRECEIVEDWARNINGCOUNT	= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
 const bool				DEFSOCK_LOGINCOMPLETE			= false;
 
@@ -599,13 +632,14 @@ const bool				DEFSOCK_LOGINCOMPLETE			= false;
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 //o-----------------------------------------------------------------------------------------------o
-CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
+CSocket::CSocket( size_t sockNum ) : currCharObj( nullptr ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ),
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ),
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ),
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ),
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), tmpObj2( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr ), 
+bytesRecvWarningCount( DEFSOCK_BYTESRECEIVEDWARNINGCOUNT ), bytesSentWarningCount( DEFSOCK_BYTESSENTWARNINGCOUNT )
 {
 	InternalReset();
 }
@@ -620,8 +654,8 @@ CSocket::~CSocket()
 	JSEngine->ReleaseObject( IUE_SOCK, this );
 
 	if( ValidateObject( currCharObj ) )
-		currCharObj->SetSocket( NULL );
-	closesocket( cliSocket );
+		currCharObj->SetSocket( nullptr );
+	closesocket( static_cast<UOXSOCKET>(cliSocket) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -638,7 +672,7 @@ void CSocket::InternalReset( void )
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking
 	unsigned long mode = 1;
-	ioctlsocket( cliSocket, FIONBIO, &mode );
+	ioctlsocket( static_cast<UOXSOCKET>(cliSocket), FIONBIO, &mode );
 	for( SI32 mTID = (SI32)tPC_SKILLDELAY; mTID < (SI32)tPC_COUNT; ++mTID )
 		pcTimers[mTID] = 0;
 	accountNum = AB_INVALID_ID;
@@ -700,18 +734,18 @@ bool CSocket::FlushBuffer( bool doLog )
 			UI32 len;
 			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
-			send( cliSocket, (char *)xoutbuffer, len, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)xoutbuffer, len, 0 );
 		}
 		else
-			send( cliSocket, (char *)&outbuffer[0], outlength, 0 );
-		if( Logging() && doLog )
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0 );
+		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
 			SERIAL toPrint;
 			if( !ValidateObject( currCharObj ) )
 				toPrint = INVALIDSERIAL;
 			else
 				toPrint = currCharObj->GetSerial();
-			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".snd");
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + strutil::number( toPrint ) + std::string(".snd");
 			std::ofstream logDestination;
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
@@ -721,7 +755,7 @@ bool CSocket::FlushBuffer( bool doLog )
 				logDestination.close();
 			}
 			else
-				Console.error( format("Failed to open socket log %s", logFile.c_str() ));
+				Console.error( strutil::format("Failed to open socket log %s", logFile.c_str() ));
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -742,21 +776,21 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 	{
 		if( cryptclient )
 		{
-			largePackBuffer.resize( outlength * 2 );
+			largePackBuffer.resize( static_cast<size_t>(outlength) * static_cast<size_t>(2) );
 			SI32 len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
-			send( cliSocket, (char *)&largePackBuffer[0], len, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&largePackBuffer[0], len, 0 );
 		}
 		else
-			send( cliSocket, (char *)&largeBuffer[0], outlength, 0 );
+			[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0 );
 
-		if( Logging() && doLog )
+		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
 			SERIAL toPrint;
 			if( !ValidateObject( currCharObj ) )
 				toPrint = INVALIDSERIAL;
 			else
 				toPrint = currCharObj->GetSerial();
-			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".snd");
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + strutil::number( toPrint ) + std::string(".snd");
 			std::ofstream logDestination;
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
@@ -766,7 +800,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 				logDestination.close();
 			}
 			else
-				Console.error( format("Failed to open socket log %s", logFile.c_str() ));
+				Console.error( strutil::format("Failed to open socket log %s", logFile.c_str() ));
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -883,12 +917,12 @@ void CSocket::Send( const void *point, SI32 length )
 	if( outlength + length > MAXBUFFER )
 		FlushBuffer();
 	if( outlength > 0 )
-		Console.print( format("Fragmented packet! [packet: %i]\n", outbuffer[0]) );
+		Console.print( strutil::format("Fragmented packet! [packet: %i]\n", outbuffer[0]) );
 	// sometimes we send enormous packets... oh what fun
 	if( length > MAXBUFFER )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.print( format("Large packet found [%i]\n", outbuffer[0]) );
+		Console.print( strutil::format("Large packet found [%i]\n", outbuffer[0]) );
 #endif
 		largeBuffer.resize( length );
 		memcpy( &largeBuffer[0], point, length );
@@ -902,7 +936,7 @@ void CSocket::Send( const void *point, SI32 length )
 	outlength += length;
 }
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 SI32 GrabLastError( void )
 {
 	return errno;
@@ -919,7 +953,7 @@ void CSocket::FlushIncoming( void )
 	SI32 count = 0;
 	do
 	{
-		count = recv( cliSocket, (char *)&buffer[inlength], 1, 0 );
+		count = static_cast<int>(recv( static_cast<UOXSOCKET>(cliSocket), (char *)&buffer[static_cast<int>(inlength)], 1, 0 ));
 	} while( count > 0 );
 }
 
@@ -930,22 +964,22 @@ void CSocket::FlushIncoming( void )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 {
-	if( Logging() )
+	if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() )
 	{
 		SERIAL toPrint;
 		if( !ValidateObject( currCharObj ) )
 			toPrint = INVALIDSERIAL;
 		else
 			toPrint = currCharObj->GetSerial();
-		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".rcv");
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + strutil::number( toPrint ) + std::string(".rcv");
 		std::ofstream logDestination;
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.error( format("Failed to open socket log %s", logFile.c_str()));
+			Console.error( strutil::format("Failed to open socket log %s", logFile.c_str()));
 			return;
 		}
-		if( toLog != NULL )
+		if( toLog != nullptr )
 			toLog->Log( logDestination );
 		else
 		{
@@ -969,7 +1003,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 	UI32 nexTime		= curTime;
 	do
 	{
-		count = recv( cliSocket, (char *)&buffer[inlength], x - inlength, 0 );
+		count = static_cast<int>(recv( static_cast<UOXSOCKET>(cliSocket), (char *)&buffer[inlength], x - inlength, 0 ));
 		if( count > 0 )
 		{
 			inlength += count;
@@ -977,7 +1011,7 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 		else if( count == -1 )
 		{
 			SI32 lastError = GrabLastError();
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 			if( lastError != EWOULDBLOCK )
 #else
 				if( lastError != WSAEWOULDBLOCK )
@@ -995,9 +1029,9 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 				throw socket_error( "Socket receive error" );
 		}
 	}
-	while( x != 2560 && x != inlength );
+	while( x != MAXBUFFER && x != inlength );
 	if( doLog )
-		ReceiveLogging( NULL );
+		ReceiveLogging( nullptr );
 	bytesReceived += count;
 	return count;
 }
@@ -1062,7 +1096,7 @@ void CSocket::CurrcharObj( CChar *newValue )
 	if( ValidateObject( currCharObj ) )
 	{
 		if( currCharObj->GetSocket() == this )
-			currCharObj->SetSocket( NULL );
+			currCharObj->SetSocket( nullptr );
 	}
 	if( ValidateObject( newValue ) )
 		newValue->SetSocket( this );
@@ -1186,7 +1220,7 @@ UI32 CSocket::GetDWord( size_t offset )
 {
 	UI32 retVal = 0;
 	if( offset+3 >= MAXBUFFER )
-		Console.error( format("GetDWord was passed an invalid offset value 0x%X", offset) );
+		Console.error( strutil::format("GetDWord was passed an invalid offset value 0x%X", offset) );
 	else
 		retVal = calcserial( buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3] );
 	return retVal;
@@ -1201,7 +1235,7 @@ UI16 CSocket::GetWord( size_t offset )
 {
 	UI16 retVal = 0;
 	if( offset+1 >= MAXBUFFER )
-		Console.error( format("GetWord was passed an invalid offset value 0x%X", offset ));
+		Console.error( strutil::format("GetWord was passed an invalid offset value 0x%X", offset ));
 	else
 		retVal = (UI16)((buffer[offset]<<8) + buffer[offset+1]);
 	return retVal;
@@ -1216,7 +1250,7 @@ UI08 CSocket::GetByte( size_t offset )
 {
 	UI08 retVal = 0;
 	if( offset >= MAXBUFFER )
-		Console.error( format("GetByte was passed an invalid offset value 0x%X", offset) );
+		Console.error( strutil::format("GetByte was passed an invalid offset value 0x%X", offset) );
 	else
 		retVal = buffer[offset];
 	return retVal;
@@ -1428,7 +1462,7 @@ void CSocket::PostAcked( SERIAL newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::Send( CPUOXBuffer *toSend )
 {
-	if( toSend == NULL )
+	if( toSend == nullptr )
 		return;
 
 	// If the client cannot receive it validly, abort, abort!
@@ -1439,29 +1473,29 @@ void CSocket::Send( CPUOXBuffer *toSend )
 	if( cryptclient )
 	{
 		len = toSend->Pack();
-		send( cliSocket, (char *)toSend->PackedPointer(), len, 0 );
+		[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->PackedPointer(), len, 0 );
 	}
 	else
 	{
-		len = toSend->GetPacketStream().GetSize();
-		send( cliSocket, (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
+		len = static_cast<UI32>(toSend->GetPacketStream().GetSize());
+		[[maybe_unused]] int sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
 	}
 
 	bytesSent += len;
 
-	if( Logging() )
+	if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() )
 	{
 		SERIAL toPrint;
 		if( !ValidateObject( currCharObj ) )
 			toPrint = INVALIDSERIAL;
 		else
 			toPrint = currCharObj->GetSerial();
-		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + str_number( toPrint ) + std::string(".snd");
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + strutil::number( toPrint ) + std::string(".snd");
 		std::ofstream logDestination;
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.error( format("Failed to open socket log %s", logFile.c_str() ));
+			Console.error( strutil::format("Failed to open socket log %s", logFile.c_str() ));
 			return;
 		}
 		toSend->Log( logDestination );
@@ -1569,7 +1603,7 @@ CItem *CSocket::GetCursorItem( void ) const
 }
 void CSocket::SetCursorItem( CItem *newCursorItem )
 {
-	if( ValidateObject( newCursorItem ) )
+	if( ValidateObject( newCursorItem ) || newCursorItem == nullptr )
 		cursorItem = newCursorItem;
 }
 
@@ -1746,46 +1780,90 @@ void CSocket::sysmessage( const std::string txt, ... )
 	if( !ValidateObject( mChar ) )
 		return;
 	va_start( argptr, txt );
-	auto msg = format(txt,argptr);
-	if (msg.size()>512){
-		msg = msg.substr(0,512);
+	auto msg = strutil::format( txt, argptr );
+	if( msg.size() > 512 )
+	{
+		msg = msg.substr(0, 512);
 	}
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( msg );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( 0x0040 );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+
+
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( msg );
+		unicodeMessage.Font( 4 );
+		unicodeMessage.Colour( cwmWorldState->ServerData()->SysMsgColour() );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( msg );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( cwmWorldState->ServerData()->SysMsgColour() );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void sysmessageJS( const std::string& uformat, const std::string& data )
+//|	Function	-	void sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified system message in lower left corner of client screen
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::sysmessageJS( const std::string& uformat, const std::string& data )
+void CSocket::sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data )
 {
 	CChar *mChar = CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
 
-	auto msg = formatMessage( uformat, data );
+	auto msg = strutil::formatMessage( uformat, data );
 	if( msg.size() > 512 )
 	{
 		msg = msg.substr( 0, 512 );
 	}
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( msg );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( 0x0040 );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+	
+	if( txtColor == 0 )
+	{
+		txtColor = cwmWorldState->ServerData()->SysMsgColour();
+	}
+	
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( msg );
+		unicodeMessage.Font( 4 );
+		unicodeMessage.Colour( txtColor );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Unicode( true );
+		toAdd.Speech( msg );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( txtColor );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+	}
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void sysmessage( SI32 dictEntry, ... )
@@ -1803,19 +1881,39 @@ void CSocket::sysmessage( SI32 dictEntry, ... )
 	if( txt.empty() )
 		return;
 	va_start( argptr, dictEntry );
-	auto msg = format(txt,argptr);
-	if (msg.size()>512){
-		msg = msg.substr(0,512);
+	auto msg = strutil::format( txt, argptr );
+	if( msg.size() > 512 )
+	{
+		msg = msg.substr(0, 512);
 	}
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( msg );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( 0x0040 );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+
+	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( msg );
+		unicodeMessage.Font( 4 );
+		unicodeMessage.Colour( cwmWorldState->ServerData()->SysMsgColour() );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( INVALIDSERIAL );
+
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Unicode( true );
+		toAdd.Speech( msg );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( INVALIDSERIAL );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( cwmWorldState->ServerData()->SysMsgColour() );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_INDIVIDUAL );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1836,7 +1934,7 @@ void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 	va_list argptr;
 	va_start( argptr, Colour );
 
-	objMessage( format(txt,argptr).c_str(), getObj, secsFromNow, Colour );
+	objMessage( strutil::format(txt,argptr).c_str(), getObj, secsFromNow, Colour );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1849,56 +1947,106 @@ void CSocket::objMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 {
 	UI16 targColour = Colour;
 
-	if( txt.empty() ){
+	if( txt.empty() )
+	{
 		return;
 	}
 	auto temp = txt ;
-	if (temp.size()>=512){
-		temp = txt.substr(0,512);
+	if( temp.size() >= 512 )
+	{
+		temp = txt.substr(0, 512);
 	}
 	CChar *mChar		= CurrcharObj();
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( temp );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( getObj->GetSerial() );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Type( SYSTEM );
-	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( SPTRG_ONLYRECEIVER );
 
-	if( getObj->GetObjType() == OT_ITEM )
+	if(cwmWorldState->ServerData()->UseUnicodeMessages())
 	{
-		CItem *getItem = static_cast< CItem *>(getObj);
-		if( getItem->isCorpse() )
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( temp );
+		unicodeMessage.Font( FNT_NORMAL );
+		unicodeMessage.Colour( 0x0048 );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( getObj->GetSerial() );
+
+		if( getObj->GetObjType() == OT_ITEM )
 		{
-			CChar *targChar = getItem->GetOwnerObj();
-			if( ValidateObject( targChar ) )
-				targColour = GetFlagColour( mChar, targChar );
-			else
+			CItem *getItem = static_cast<CItem *>(getObj);
+			if( getItem->isCorpse() )
 			{
-				switch( getItem->GetTempVar( CITV_MOREZ ) )
+				CChar *targChar = getItem->GetOwnerObj();
+				if( ValidateObject( targChar ))
+					targColour = GetFlagColour( mChar, targChar );
+				else
 				{
-					case 0x01:	targColour = 0x0026;	break;	//red
-					case 0x02:	targColour = 0x03B2;	break;	// gray
-					case 0x08:	targColour = 0x0049;	break;	// green
-					case 0x10:	targColour = 0x0030;	break;	// orange
-					default:
-					case 0x04:	targColour = 0x005A;	break;	// blue
+					UI08 flag = getItem->GetTempVar( CITV_MOREZ ); // Get flag, to help determine color of corpse
+					switch( flag )
+					{
+						case 0x01:	targColour = 0x0026;	break;	// Murderer, red
+						case 0x02:	// Criminal, gray
+							[[fallthrough]];
+						case 0x08:	targColour = 0x03B2;	break;	// Neutral, gray
+						default:
+						case 0x04:	targColour = 0x005A;	break;	// Innocent, blue
+					}
 				}
 			}
 		}
-	}
 
-	if( targColour == 0x0 || targColour == 0x1700)
-		toAdd.Colour( 0x03B2 );
+		if( targColour == 0x0 || targColour == 0x1700 )
+			unicodeMessage.Colour( 0x03B2 );
+		else
+			unicodeMessage.Colour( targColour );
+
+		Send( &unicodeMessage );
+	}
 	else
-		toAdd.Colour( targColour );
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( temp );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( getObj->GetSerial() );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Type( SYSTEM );
+		toAdd.At( BuildTimeValue( secsFromNow ) );
+		toAdd.TargType( SPTRG_ONLYRECEIVER );
+
+		if( getObj->GetObjType() == OT_ITEM )
+		{
+			CItem *getItem = static_cast< CItem *>(getObj);
+			if( getItem->isCorpse() )
+			{
+				CChar *targChar = getItem->GetOwnerObj();
+				if( ValidateObject( targChar ) )
+					targColour = GetFlagColour( mChar, targChar );
+				else
+				{
+					UI08 flag = getItem->GetTempVar( CITV_MOREZ ); // Get flag, to help determine color of corpse
+					switch( flag )
+					{
+						case 0x01:	targColour = 0x0026;	break;	// Murderer, red
+						case 0x02:	// Criminal, gray
+							[[fallthrough]];
+						case 0x08:	targColour = 0x03B2;	break;	// Neutral, gray
+						default:
+						case 0x04:	targColour = 0x005A;	break;	// Innocent, blue
+					}
+				}
+			}
+		}
+
+		if( targColour == 0x0 || targColour == 0x1700)
+			toAdd.Colour( 0x03B2 );
+		else
+			toAdd.Colour( targColour );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ShowCharName( CChar *i, bool showSer )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Shows character name/text on single click
+//|	Purpose		-	Shows character name/text on single click (and via all-names macro)
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::ShowCharName( CChar *i, bool showSer )
 {
@@ -1906,7 +2054,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	UI08 a2 = i->GetSerial( 2 );
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
-	UString newName = i->GetName();
+	std::string charName = getNpcDictName( i, this );
 	CChar *mChar = CurrcharObj();
 	if( mChar->GetSingClickSer() || showSer )
 		objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );
@@ -1917,44 +2065,60 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		if( i->GetCommandLevel() < CL_CNS && i->GetFame() >= 10000 )	//  only normal players have titles now
 		{
 			if( i->GetID( 2 ) == 0x91 )
-				newName = format( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead
+				charName = strutil::format( Dictionary->GetEntry( 1740, Language() ).c_str(), charName.c_str() );	// Morrolan, added Lord/Lady to title overhead
 			else if( i->GetID( 1 ) == 0x90 )
-				newName = format( Dictionary->GetEntry( 1739, Language() ).c_str(), newName.c_str() );
+				charName = strutil::format( Dictionary->GetEntry( 1739, Language() ).c_str(), charName.c_str() );
 		}
 		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race ( )
 		{
-			newName += " (";
-			newName += Races->Name( i->GetRace() );
-			newName += ")";
+			charName += " (";
+			charName += Races->Name( i->GetRace() );
+			charName += ")";
 		}
 		if( i->GetTownPriv() == 2 )
-			newName = format( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
+			charName = strutil::format( Dictionary->GetEntry( 1738, Language() ).c_str(), charName.c_str() );
 		if( !isOnline( (*i) ) )
-			newName += " (OFF)";
+			charName += " (OFF)";
 	}
 	else
 	{
 		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetID()].IsHuman() )
-			newName += " (tame) ";
+			charName += " (tame) ";
 	}
 	if( i->IsInvulnerable() )
-		newName += " (invulnerable)";
+		charName += " (invulnerable)";
 	if( i->IsFrozen() )
-		newName += " (frozen) ";
+		charName += " (frozen) ";
 	if( i->IsGuarded() )
-		newName += " (guarded)";
+		charName += " (guarded)";
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
 		GuildSys->DisplayTitle( this, i );
 
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( newName );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( i->GetSerial() );
-	toAdd.SpokenTo( mChar->GetSerial() );
-	toAdd.Colour( GetFlagColour( mChar, i ) );
-	toAdd.Type( SYSTEM );
-	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_ONLYRECEIVER );
+	if(cwmWorldState->ServerData()->UseUnicodeMessages())
+	{
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( charName );
+		unicodeMessage.Font( FNT_NORMAL );
+		unicodeMessage.Colour( GetFlagColour( mChar, i ));
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( "System" );
+		unicodeMessage.ID( INVALIDID );
+		unicodeMessage.Serial( i->GetSerial() );
+		Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( charName );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( i->GetSerial() );
+		toAdd.SpokenTo( mChar->GetSerial() );
+		toAdd.Colour( GetFlagColour( mChar, i ) );
+		toAdd.Type( SYSTEM );
+		toAdd.At( cwmWorldState->GetUICurrentTime() );
+		toAdd.TargType( SPTRG_ONLYRECEIVER );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1967,13 +2131,13 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 	COLOUR retVal = 0x0058;
 	switch( trg->FlagColour( src ) )
 	{
-		case FC_INNOCENT:		retVal = 0x0058;		break;	// Blue
+		case FC_INNOCENT:		retVal = 0x0059;		break;	// Blue
 		case FC_NEUTRAL:
 		case FC_CRIMINAL:
 		default:				retVal = 0x03B2;		break;	// Gray
-		case FC_MURDERER:		retVal = 0x0026;		break;	// Red
-		case FC_FRIEND:			retVal = 0x0043;		break;	// Green
-		case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
+		case FC_MURDERER:		retVal = 0x0022;		break;	// Red
+		case FC_FRIEND:			retVal = 0x003F;		break;	// Green
+		case FC_ENEMY:			retVal = 0x0090;		break;	// Orange
 		case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
 	}
 
@@ -1985,11 +2149,12 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a system message
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::target( UI08 targType, UI08 targID, const std::string& txt )
+void CSocket::target( UI08 targType, UI08 targID, const std::string& txt, UI08 cursorType )
 {
 	CPTargetCursor toSend;
 	toSend.ID( calcserial( 0, 1, targType, targID ) );
 	toSend.Type( 1 );
+	toSend.CursorType( cursorType );
 	TargetOK( true );
 	sysmessage( txt );
 	Send( &toSend );
@@ -2000,7 +2165,7 @@ void CSocket::target( UI08 targType, UI08 targID, const std::string& txt )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a dictionary-based system message
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
+void CSocket::target( UI08 targType, UI08 targID, UI08 cursorType, SI32 dictEntry, ... )
 {
 	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
 	if( txt.empty() )
@@ -2008,11 +2173,11 @@ void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
 
 	va_list argptr;
 	va_start( argptr, dictEntry );
-	auto msg = format(txt,argptr);
+	auto msg = strutil::format(txt,argptr);
 	if (msg.size()>512) {
 		msg = msg.substr(0,512) ;
 	}
-	target( targType, targID, msg );
+	target( targType, targID, msg, cursorType );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2054,32 +2219,73 @@ void CSocket::ReceivedVersion( bool value )
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 BytesSent( void ) const
+//|					void BytesSent( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets the amount of bytes sent to socket
+//|	Purpose		-	Gets/Sets the amount of bytes sent to socket
 //o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::BytesSent( void ) const
 {
 	return bytesSent;
 }
+void CSocket::BytesSent( UI32 newValue )
+{
+	bytesSent = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 BytesReceived( void ) const
+//|					void BytesReceived( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets the amount of bytes received from socket
+//|	Purpose		-	Gets/Sets the amount of bytes received from socket
 //o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::BytesReceived( void ) const
 {
 	return bytesReceived;
 }
+void CSocket::BytesReceived( UI32 newValue )
+{
+	bytesReceived = newValue;
+}
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void statwindow( CChar *targChar )
+//|	Function	-	UI16 BytesReceivedWarning( void ) const
+//|					void BytesReceivedWarning( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Opens the status window
+//|	Purpose		-	Gets/Sets warning count for player having exceeded received bytes cap
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::statwindow( CChar *targChar )
+UI16 CSocket::BytesReceivedWarning( void ) const
 {
-	if( !ValidateObject( targChar ) )
+	return bytesRecvWarningCount;
+}
+void CSocket::BytesReceivedWarning( UI16 newValue )
+{
+	bytesRecvWarningCount = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 BytesSentWarning( void ) const
+//|					void BytesSentWarning( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets warning count for player having exceeded sent bytes cap
+//o-----------------------------------------------------------------------------------------------o
+UI16 CSocket::BytesSentWarning( void ) const
+{
+	return bytesSentWarningCount;
+}
+void CSocket::BytesSentWarning( UI16 newValue )
+{
+	bytesSentWarningCount = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void statwindow( CBaseObject *targObj, bool updateParty )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens the status window/health bar for characters 
+//|					and/or items/multis with damageable flag set
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::statwindow( CBaseObject *targObj, bool updateParty )
+{
+	if( !ValidateObject(targObj) )
 		return;
 
 	if( !LoginComplete() )
@@ -2087,24 +2293,119 @@ void CSocket::statwindow( CChar *targChar )
 
 	CChar *mChar = CurrcharObj();
 
-	if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS &&
-	   (targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
-		return;
+	if( targObj->CanBeObjType(OT_CHAR) )
+	{
+		// Character specific
+		CChar *targChar = static_cast<CChar*>( targObj );
 
-	CPHealthBarStatus hpBarStatus( (*targChar), (*this ));
-	Send( &hpBarStatus );
+		if( mChar->GetCommandLevel() < CL_CNS && (( mChar != targChar && targChar->GetVisible() != VT_VISIBLE )
+			|| ( !targChar->IsNpc() && !isOnline( *targChar ))))
+			return;
 
-	CPStatWindow toSend( (*targChar), (*this) );
+		if( !charInRange( mChar, targChar ) )
+			return;
 
-	// 9/17/01 : fixed bug of your name on your own stat window
-	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
-	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
-	toSend.AC( Combat->calcDef( targChar, 0, false ) );
+		if( ClientType() >= CV_SA2D )
+		{
+			// Send poison state of healthbar
+			CPHealthBarStatus hpBarStatus1( ( *targChar ), ( (*this) ), 1 );
+			Send( &hpBarStatus1 );
 
-	Send( &toSend );
+			// Send invulnerable state of healthbar
+			CPHealthBarStatus hpBarStatus2( ( *targChar ), ( (*this) ), 2 );
+			Send( &hpBarStatus2 );
+		}
 
-	CPExtendedStats exStats( (*targChar) );
-	Send( &exStats );
+		CPStatWindow toSend(( *targObj ), ( *this ));
+
+		// 9/17/01 : fixed bug of your name on your own stat window
+		toSend.NameChange(mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ));
+		if( !targChar->IsNpc() && mChar == targChar )
+		{
+			toSend.Gold(GetItemAmount(targChar, 0x0EED));
+			toSend.AC(Combat->calcDef(targChar, 0, false));
+		}
+
+		Send(&toSend);
+
+		if( !targChar->IsNpc() && mChar == targChar )
+		{
+			CPExtendedStats exStats(( *targChar ));
+			Send(&exStats);
+		}
+
+		if( !updateParty )
+			return;
+
+		// If targObj is a party member, also send their updated mana and stamina!
+		Party * myParty = PartyFactory::getSingleton().Get( mChar );
+		if( myParty != nullptr && isOnline( *mChar ))
+		{
+			// Fetch list of party members
+			std::vector< PartyEntry * > *mList = myParty->MemberList();
+			if( mList != nullptr )
+			{
+				for( size_t j = 0; j < mList->size(); ++j )
+				{
+					PartyEntry *mEntry = ( *mList )[j];
+					CChar * partyMember = mEntry->Member();
+
+					if( !isOnline( *partyMember ) || !isOnline( *mChar) || partyMember->GetSerial() == mChar->GetSerial() )
+						continue;
+
+					// If partyMember is online, send their info to each other
+					if( targObj->GetSerial() == partyMember->GetSerial() )
+					{
+						CSocket *s = partyMember->GetSocket();
+						if( s == nullptr )
+							break;
+
+						CBaseObject *thisBaseObj = mChar;
+
+						// Send stat window update for new member to existing party members
+						s->statwindow( mChar, false );
+
+						// Prepare the stat update packet for new member to existing party members
+						CPUpdateStat toSendHp( (*mChar), 0, true );
+						s->Send( &toSendHp );
+						CPUpdateStat toSendMana( (*mChar), 1, true );
+						s->Send( &toSendMana );
+						CPUpdateStat toSendStam( (*mChar), 2, true );
+						s->Send( &toSendStam );
+
+						// Also send info on the existing party member to the new member!
+						// Send stat window update packet for existing member to new party member
+						statwindow( partyMember, false );
+
+						// Prepare the stat update packet for existing member to new party members
+						CPUpdateStat toSendHp2( (*partyMember), 0, true );
+						Send( &toSendHp2 );
+						CPUpdateStat toSendMana2( (*partyMember), 1, true );
+						Send( &toSendMana2 );
+						CPUpdateStat toSendStam2( (*partyMember), 2, true );
+						Send( &toSendStam2 );
+						break;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		// Item specific
+		SI16 visRange = MAX_VISRANGE;
+		if( mChar->GetSocket() != nullptr )
+			visRange = mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() );
+		else
+			visRange += Races->VisRange( mChar->GetRace() );
+
+		if( mChar->GetCommandLevel() < CL_CNS &&
+			( targObj->GetVisible() != VT_VISIBLE || !objInRange( mChar, targObj, static_cast<UI16>( visRange )) ) )
+			return;
+
+		CPStatWindow toSend(( *targObj ), ( *this ));
+		Send(&toSend);
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2278,7 +2579,7 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 				contSend.Model( 0x11A ); // Square gray mailbox
 				break;
 			case PT_UNKNOWN:
-				Console.warning( format("openPack() passed an invalid container type: 0x%X", i->GetSerial()) );
+				Console.warning( strutil::format("openPack() passed an invalid container type: 0x%X", i->GetSerial()) );
 				return;
 		}
 	}
@@ -2297,7 +2598,7 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::openBank( CChar *i )
 {
-	CItem *bankBox = NULL;
+	CItem *bankBox = nullptr;
 	bankBox = i->GetItemAtLayer( IL_BANKBOX );
 	if( ValidateObject( bankBox ) )
 	{
@@ -2311,8 +2612,8 @@ void CSocket::openBank( CChar *i )
 	}
 	
 	// No bankbox was found, so let's create one!
-	auto temp = format(1024, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
-	bankBox = Items->CreateItem( NULL, i, 0x09AB, 1, 0, OT_ITEM );
+	auto temp = strutil::format(1024, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
+	bankBox = Items->CreateItem( nullptr, i, 0x09AB, 1, 0, OT_ITEM );
 	bankBox->SetName( temp );
 	bankBox->SetLayer( IL_BANKBOX );
 	bankBox->SetOwner( i );
@@ -2438,7 +2739,7 @@ UI32 CPUOXBuffer::Pack( void )
 
 	isPacked	= true;
 
-	packedLength = DoPack( pIn, pOut, len );
+	packedLength = DoPack( pIn, pOut, static_cast<SI32>(len) );
 	return packedLength;
 }
 
@@ -2464,7 +2765,7 @@ void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
 	doPacketLogging( outStream, pStream.GetSize(), pStream.GetBuffer() );
 }
 
-CPInputBuffer::CPInputBuffer() : tSock( NULL )
+CPInputBuffer::CPInputBuffer() : tSock( nullptr )
 {
 }
 CPInputBuffer::CPInputBuffer( CSocket *input )

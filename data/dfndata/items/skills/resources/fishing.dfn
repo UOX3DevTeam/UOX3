@@ -1,0 +1,248 @@
+[base_magic_fish]
+{
+get=base_food
+id=0xDD6
+weight=100
+pileable=1
+}
+
+[prized_magic_fish]
+{
+get=base_magic_fish
+name=prized fish
+color=0x51
+script=5030
+morey=1
+}
+
+[wondrous_magic_fish]
+{
+get=base_magic_fish
+name=wondrous fish
+color=0x86
+script=5030
+morey=2
+}
+
+[truly_rare_magic_fish]
+{
+get=base_magic_fish
+name=truly rare fish
+color=0x76
+script=5030
+morey=3
+}
+
+[highly_peculiar_magic_fish]
+{
+get=base_magic_fish
+name=highly peculiar fish
+color=0x66
+script=5030
+morey=4
+}
+
+[big_fish]
+{
+get=base_item
+id=0x09cc
+name=big fish
+color=0x58c
+}
+
+[shipwreck_painting]
+{ E
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ec8
+weight=100
+decay=1
+}
+
+[shipwreck_painting-2]
+{ E
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ec9
+weight=100
+decay=1
+}
+
+[shipwreck_portrait]
+{ S
+get=base_item
+name=portrait recovered from a shipwreck
+id=0x0ee7
+weight=100
+decay=1
+}
+
+[shipwreck_portrait-2]
+{ S
+get=base_item
+name=portrait recovered from a shipwreck
+id=0x0e9f
+weight=100
+decay=1
+}
+
+[shipwreck_painting-3]
+{ S
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ea0
+weight=100
+decay=1
+}
+
+[shipwreck_painting-4]
+{ E
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ea1
+weight=100
+decay=1
+}
+
+[shipwreck_painting-5]
+{ S
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ea2
+weight=100
+decay=1
+}
+
+[shipwreck_painting-6]
+{ S
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ea3
+weight=100
+decay=1
+}
+
+[shipwreck_painting-7]
+{ E
+get=base_item
+name=painting recovered from a shipwreck
+id=0x0ea4
+weight=100
+decay=1
+}
+
+[shipwreck_portrait-3]
+{ E
+get=base_item
+name=portrait recovered from a shipwreck
+id=0x0ea5
+weight=100
+decay=1
+}
+
+[shipwreck_portrait-4]
+{ S
+get=base_item
+name=portrait recovered from a shipwreck
+id=0x0ea6
+weight=100
+decay=1
+}
+
+[shipwreck_portrait-5]
+{ S
+get=base_item
+name=portrait recovered from a shipwreck
+id=0x0ea7
+weight=100
+decay=1
+}
+
+[shipwreck_portrait-6]
+{ E
+get=base_item
+name=portrait recovered from a shipwreck
+id=0x0ea8
+weight=100
+decay=1
+}
+
+[messageinabottle]
+{
+get=base_item
+name=message in a bottle
+id=0x099f
+weight=100
+value=8 4
+script=5031
+}
+
+[waterstainedsos]
+{
+get=base_item
+name=waterstained SOS
+id=0x14ee
+weight=100
+value=8 4
+script=5032
+}
+
+[waterstainedsos_tol]
+{
+get=waterstainedsos
+id=0xa30c
+}
+
+[shipwreck_treasure_1]
+{
+get=0x0e42
+name=treasure chest recovered from a shipwreck
+packitem=0x0eed,1000
+loot=reagents,15 20
+loot=midlevelscrolls,2 5
+loot=randomgems,10
+packitem=random_magic_item_3,2 6
+loot=shipwreck_treasure_special
+}
+
+[shipwreck_treasure_2]
+{
+get=0x0e7c
+name=treasure chest recovered from a shipwreck
+packitem=0x0eed,2000
+loot=reagents,30 40
+loot=midlevelscrolls,4 7
+loot=lowlevelscrolls,2 3
+loot=randomgems,20
+packitem=random_magic_item_4,10 15
+loot=shipwreck_treasure_special
+}
+
+[shipwreck_treasure_3]
+{
+get=0x0e40
+name=treasure chest recovered from a shipwreck
+packitem=0x0eed,3000
+loot=reagents,45 60
+loot=highlevelscrolls,3 5
+loot=midlevelscrolls,3 5
+loot=lowlevelscrolls,3 5
+loot=randomgems,30
+packitem=random_magic_item_5,15 20
+loot=shipwreck_treasure_special
+}
+
+[shipwreck_treasure_4]
+{
+get=0x0e40
+color=0x0481
+name=treasure chest recovered from a shipwreck
+packitem=0x0eed,4000
+loot=reagents,65 80
+loot=highlevelscrolls,3 5
+loot=midlevelscrolls,8 10
+loot=lowlevelscrolls,3 5
+loot=randomgems,40
+packitem=random_magic_item_5,20 25
+loot=shipwreck_treasure_special
+}

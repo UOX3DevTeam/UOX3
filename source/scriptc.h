@@ -30,7 +30,7 @@ public:
 private:
 	void deleteMap( void );
 	void reload( bool disp = true );
-	bool createSection( UString& name );
+	bool createSection( std::string& name );
 
 	SSMAP					defEntries;			// string is the name of section
 	SSMAP::iterator			iSearch;

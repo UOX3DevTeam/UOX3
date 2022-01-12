@@ -29,7 +29,7 @@
 #include "StringUtility.hpp"
 
 
-cBooks *Books = NULL;
+cBooks *Books = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPINewBookHeader::Handle( void )
@@ -39,14 +39,14 @@ cBooks *Books = NULL;
 //o-----------------------------------------------------------------------------------------------o
 bool CPINewBookHeader::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		const SERIAL bookSer = tSock->GetDWord( 3 );
 		CItem *mBook = calcItemObjFromSer( bookSer );
 		if( !ValidateObject( mBook ) )
 			return true;
 
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( bookSer, 16 ) + std::string(".bok");
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( bookSer, 16 ) + std::string(".bok");
 
 		if( !FileExists( fileName ) )
 			Books->CreateBook( fileName, tSock->CurrcharObj(), mBook );
@@ -76,14 +76,14 @@ bool CPINewBookHeader::Handle( void )
 				file.write( authBuff, 32 );
 
 				if( file.fail() )
-					Console.error( format("Couldn't write to book file %s", fileName.c_str()) );
+					Console.error( strutil::format("Couldn't write to book file %s", fileName.c_str()) );
 			}
 			else
-				Console.error( format("Failed to seek to book file %s", fileName.c_str() ));
+				Console.error( strutil::format("Failed to seek to book file %s", fileName.c_str() ));
 			file.close();
 		}
 		else
-			Console.error( format("Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
+			Console.error( strutil::format("Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
 	}
 	return true;
 }
@@ -96,13 +96,13 @@ bool CPINewBookHeader::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
-		UString temp		= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
+		std::string temp	= std::string("BOOK ") + strutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
-		if( book != NULL )
+		if( book != nullptr )
 		{
-			UString data, UTag;
+			std::string data, UTag;
 
 			CPNewBookHeader toSend;
 			toSend.Serial( i->GetSerial() );
@@ -110,14 +110,14 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 			toSend.Flag2( 0 );
 
 			bool part1 = false, part2 = false, part3 = false;
-			for( UString tag = book->First(); !book->AtEnd(); tag = book->Next() )
+			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
-				UTag = tag.upper();
+				UTag = strutil::upper( tag );
 				data = book->GrabData();
 				if( UTag == "PAGES" )
 				{
 					part1 = true;
-					toSend.Pages( data.toShort() );
+					toSend.Pages( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
 				}
 				else if( UTag == "TITLE" )
 				{
@@ -149,7 +149,7 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		CPBookPage cpbpToSend;
 		CPNewBookHeader bInfo;
@@ -158,7 +158,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 		UI16 numPages = 0;
 
 		std::string bookTitle, bookAuthor;
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( mBook->GetSerial(), 16 ) + std::string(".bok");
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( mBook->GetSerial(), 16 ) + std::string(".bok");
 
 		std::ifstream file( fileName.c_str(), std::ios::in | std::ios::binary );
 
@@ -201,7 +201,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 				cpbpToSend.Finalize();
 			}
 			else
-				Console.error( format("Failed to seek to book file %s", fileName.c_str()) );
+				Console.error( strutil::format("Failed to seek to book file %s", fileName.c_str()) );
 
 			file.close();
 		}
@@ -253,14 +253,14 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 {
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
-		UString temp		= std::string("BOOK ") + str_number( i->GetTempVar( CITV_MORE ) );
+		std::string temp	= std::string("BOOK ") + strutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
-		if( book != NULL )
+		if( book != nullptr )
 		{
 			UI16 curPage = p;
-			for( UString tag = book->First(); !book->AtEnd(); tag = book->Next() )
+			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
 				if( tag != "PAGE" )
 					continue;
@@ -270,7 +270,7 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 				{
 					temp = "PAGE " + book->GrabData();
 					ScriptSection *page = FileLookup->FindEntry( temp, misc_def );
-					if( page != NULL )
+					if( page != nullptr )
 					{
 						CPBookPage cpbpSend( (*i) );
 						cpbpSend.NewPage( p );
@@ -298,7 +298,7 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 //o-----------------------------------------------------------------------------------------------o
 bool CPIBookPage::Handle( void )
 {
-	if( tSock != NULL )
+	if( tSock != nullptr )
 	{
 		CItem *mBook = calcItemObjFromSer( tSock->GetDWord( 3 ) );
 		if( !ValidateObject( mBook ) )
@@ -313,7 +313,7 @@ bool CPIBookPage::Handle( void )
 			return true;
 		}
 
-		const std::string fileName	= cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( mBook->GetSerial(), 16 ) + std::string(".bok");
+		const std::string fileName	= cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( mBook->GetSerial(), 16 ) + std::string(".bok");
 		UI16 totalLines		= tSock->GetWord( 11 );
 
 		// Cap amount of lines sent in one go at 8 per page
@@ -346,7 +346,7 @@ bool CPIBookPage::Handle( void )
 		std::fstream file( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 		if( file.is_open() )
 		{
-			file.seekp( (((pageNum-1)*272)+32+62+2), std::ios::beg );
+			file.seekp( (((static_cast<size_t>(pageNum)-1)*272)+32+62+2), std::ios::beg );
 			if( !file.fail() )
 			{
 				for( UI08 j = 0; j < totalLines; ++j )
@@ -355,11 +355,11 @@ bool CPIBookPage::Handle( void )
 				}
 			}
 			else
-				Console.error( format("Failed to seek to book file %s", fileName.c_str()) );
+				Console.error( strutil::format("Failed to seek to book file %s", fileName.c_str()) );
 			file.close();
 		}
 		else
-			Console.error( format("Couldn't write to book file %s", fileName.c_str()) );
+			Console.error( strutil::format("Couldn't write to book file %s", fileName.c_str()) );
 	}
 	return true;
 }
@@ -372,8 +372,8 @@ bool CPIBookPage::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 void cBooks::DeleteBook( CItem *id )
 {
-	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + str_number( id->GetSerial(), 16 ) + std::string(".bok");
-	remove( fileName.c_str() );
+	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + strutil::number( id->GetSerial(), 16 ) + std::string(".bok");
+	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -410,8 +410,8 @@ void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook
 	file.write( titleBuff, 62 );
 	file.write( authBuff, 32 );
 
-	wBuffer[0] = static_cast<char>(maxpages>>8);
-	wBuffer[1] = static_cast<char>(maxpages%256);
+	wBuffer[0] = static_cast<SI08>(maxpages>>8);
+	wBuffer[1] = static_cast<SI08>(maxpages%256);
 	file.write( (const char *)&wBuffer, 2 );
 
 	for( UI16 i = 0; i < maxpages; ++i )

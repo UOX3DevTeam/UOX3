@@ -3,6 +3,7 @@
 
 enum SpeechTarget
 {
+	SPTRG_NULL = -1,
 	SPTRG_INDIVIDUAL = 0,		// aimed at individual person
 	SPTRG_PCS,					// all PCs in range
 	SPTRG_PCNPC,				// all NPCs and PCs in range
@@ -13,6 +14,7 @@ enum SpeechTarget
 
 enum SpeakerType
 {
+	SPK_NULL = -1,
 	SPK_SYSTEM = 0,
 	SPK_CHARACTER,
 	SPK_ITEM,
@@ -21,12 +23,16 @@ enum SpeakerType
 
 const std::string DistinctLanguageNames[DL_COUNT] =
 {
-	"UNK",
 	"ZRO",
 	"ENG",
 	"GER",
 	"SPA",
 	"FRE",
+	"PTG",
+	"ITA",
+	"CSY",
+	"POL",
+	"RUS",
 	"JPN"
 };
 
@@ -171,37 +177,37 @@ const std::string LanguageCodes[TOTAL_LANGUAGES] =
 const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 {
 	DL_DEFAULT,	// default server language
-	DL_UNKNOWN,	// Arabic Saudi Arabia
-	DL_UNKNOWN,	// Arabic Iraq
-	DL_UNKNOWN,	// Arabic Egypt
-	DL_UNKNOWN,	// Arabic Libya
-	DL_UNKNOWN,	// Arabic Algeria
-	DL_UNKNOWN,	// Arabic Morocco
-	DL_UNKNOWN,	// Arabic Tunisia
-	DL_UNKNOWN,	// Arabic Oman
-	DL_UNKNOWN,	// Arabic Yemen
-	DL_UNKNOWN,	// Arabic Syria
-	DL_UNKNOWN,	// Arabic Jordan
-	DL_UNKNOWN,	// Arabic Lebanon
-	DL_UNKNOWN,	// Arabic Kuwait
-	DL_UNKNOWN,	// Arabic U.A.E.
-	DL_UNKNOWN,	// Arabic Bahrain
-	DL_UNKNOWN,	// Arabic Qatar
-	DL_UNKNOWN,	// Bulgarian Bulgaria
-	DL_UNKNOWN,	// Catalan Spain
-	DL_UNKNOWN,	// Chinese Taiwan
-	DL_UNKNOWN,	// Chinese PRC
-	DL_UNKNOWN,	// Chinese Hong Kong
-	DL_UNKNOWN,	// Chinese Singapore
-	DL_UNKNOWN,	// Chinese Macau
-	DL_UNKNOWN,	// Czech Czech Republic
-	DL_UNKNOWN,	// Danish Denmark
+	DL_DEFAULT,	// Arabic Saudi Arabia
+	DL_DEFAULT,	// Arabic Iraq
+	DL_DEFAULT,	// Arabic Egypt
+	DL_DEFAULT,	// Arabic Libya
+	DL_DEFAULT,	// Arabic Algeria
+	DL_DEFAULT,	// Arabic Morocco
+	DL_DEFAULT,	// Arabic Tunisia
+	DL_DEFAULT,	// Arabic Oman
+	DL_DEFAULT,	// Arabic Yemen
+	DL_DEFAULT,	// Arabic Syria
+	DL_DEFAULT,	// Arabic Jordan
+	DL_DEFAULT,	// Arabic Lebanon
+	DL_DEFAULT,	// Arabic Kuwait
+	DL_DEFAULT,	// Arabic U.A.E.
+	DL_DEFAULT,	// Arabic Bahrain
+	DL_DEFAULT,	// Arabic Qatar
+	DL_DEFAULT,	// Bulgarian Bulgaria
+	DL_DEFAULT,	// Catalan Spain
+	DL_DEFAULT,	// Chinese Taiwan
+	DL_DEFAULT,	// Chinese PRC
+	DL_DEFAULT,	// Chinese Hong Kong
+	DL_DEFAULT,	// Chinese Singapore
+	DL_DEFAULT,	// Chinese Macau
+	DL_CZECH,	// Czech Czech Republic
+	DL_DEFAULT,	// Danish Denmark
 	DL_GERMAN,	// German Germany
 	DL_GERMAN,	// German Switzerland
 	DL_GERMAN,	// German Austria
 	DL_GERMAN,	// German Luxembourg
 	DL_GERMAN,	// German Liechtenstein
-	DL_UNKNOWN,	// Greek Greece
+	DL_DEFAULT,	// Greek Greece
 	DL_ENGLISH,	// English United States
 	DL_ENGLISH,	// English United Kingdom
 	DL_ENGLISH,	// English Australia
@@ -235,75 +241,75 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_SPANISH,	// Spanish Honduras
 	DL_SPANISH,	// Spanish Nicaragua
 	DL_SPANISH,	// Spanish Puerto Rico
-	DL_UNKNOWN,	// Finnish Finland
+	DL_DEFAULT,	// Finnish Finland
 	DL_FRENCH,	// French France
 	DL_FRENCH,	// French Belgium
 	DL_FRENCH,	// French Canada
 	DL_FRENCH,	// French Switzerland
 	DL_FRENCH,	// French Luxembourg
 	DL_FRENCH,	// French Monaco
-	DL_UNKNOWN,	// Hebrew Israel
-	DL_UNKNOWN,	// Hungarian Hungary
-	DL_UNKNOWN,	// Icelandic Iceland
-	DL_UNKNOWN,	// Italian Italy
-	DL_UNKNOWN,	// Italian Switzerland
+	DL_DEFAULT,	// Hebrew Israel
+	DL_DEFAULT,	// Hungarian Hungary
+	DL_DEFAULT,	// Icelandic Iceland
+	DL_ITALIAN,	// Italian Italy
+	DL_ITALIAN,	// Italian Switzerland
 	DL_JAPANESE,	// Japanese Japan
-	DL_UNKNOWN,	// Korean (Extended Wansung) Korea
-	DL_UNKNOWN,	// Dutch Netherlands
-	DL_UNKNOWN,	// Dutch Belgium
-	DL_UNKNOWN,	// Norwegian Norway (Bokmål)
-	DL_UNKNOWN,	// Norwegian Norway (Nynorsk)
-	DL_UNKNOWN,	// Polish Poland
-	DL_UNKNOWN,	// Portuguese Brazil
-	DL_UNKNOWN,	// Portuguese Portugal
-	DL_UNKNOWN,	// Romanian Romania
-	DL_UNKNOWN,	// Russian Russia
-	DL_UNKNOWN,	// Croatian Croatia
-	DL_UNKNOWN,	// Serbian Serbia (Latin)
-	DL_UNKNOWN,	// Serbian Serbia (Cyrillic)
-	DL_UNKNOWN,	// Slovak Slovakia
-	DL_UNKNOWN,	// Albanian Albania
-	DL_UNKNOWN,	// Swedish Sweden
-	DL_UNKNOWN,	// Swedish Finland
-	DL_UNKNOWN,	// Thai Thailand
-	DL_UNKNOWN,	// Turkish Turkey
-	DL_UNKNOWN,	// Urdu Pakistan
-	DL_UNKNOWN,	// Indonesian Indonesia
-	DL_UNKNOWN,	// Ukrainian Ukraine
-	DL_UNKNOWN,	// Belarusian Belarus
-	DL_UNKNOWN,	// Slovene Slovenia
-	DL_UNKNOWN,	// Estonian Estonia
-	DL_UNKNOWN,	// Latvian Latvia
-	DL_UNKNOWN,	// Lithuanian Lithuania
-	DL_UNKNOWN,	// Classic Lithuanian Lithuania
-	DL_UNKNOWN,	// Farsi Iran
-	DL_UNKNOWN,	// Vietnamese Viet Nam
-	DL_UNKNOWN,	// Armenian Armenia
-	DL_UNKNOWN,	// Azeri Azerbaijan (Latin)
-	DL_UNKNOWN,	// Basque Spain
-	DL_UNKNOWN,	// Macedonian Macedonia
-	DL_UNKNOWN,	// Afrikaans South Africa
-	DL_UNKNOWN,	// Georgian Georgia
-	DL_UNKNOWN,	// Faeroese Faeroe Islands
-	DL_UNKNOWN,	// Hindi India
-	DL_UNKNOWN,	// Malay Malaysia
-	DL_UNKNOWN,	// Malay Brunei Darussalam
-	DL_UNKNOWN,	// Kazak Kazakstan
-	DL_UNKNOWN,	// Swahili Kenya
-	DL_UNKNOWN,	// Uzbek Uzbekistan (Cyrillic)
-	DL_UNKNOWN,	// Tatar Tatarstan
-	DL_UNKNOWN,	// Bengali India
-	DL_UNKNOWN,	// Punjabi India
-	DL_UNKNOWN,	// Gujarati India
-	DL_UNKNOWN,	// Oriya India
-	DL_UNKNOWN,	// Tamil India
-	DL_UNKNOWN,	// Telugu India
-	DL_UNKNOWN,	// Kannada India
-	DL_UNKNOWN,	// Malayalam India
-	DL_UNKNOWN,	// Assamese India
-	DL_UNKNOWN,	// Marathi India
-	DL_UNKNOWN,	// Sanskrit India
-	DL_UNKNOWN	// Konkani India
+	DL_DEFAULT,	// Korean (Extended Wansung) Korea
+	DL_DEFAULT,	// Dutch Netherlands
+	DL_DEFAULT,	// Dutch Belgium
+	DL_DEFAULT,	// Norwegian Norway (Bokmål)
+	DL_DEFAULT,	// Norwegian Norway (Nynorsk)
+	DL_POLISH,	// Polish Poland
+	DL_PORTUGUESE,	// Portuguese Brazil
+	DL_PORTUGUESE,	// Portuguese Portugal
+	DL_DEFAULT,	// Romanian Romania
+	DL_RUSSIAN,	// Russian Russia
+	DL_DEFAULT,	// Croatian Croatia
+	DL_DEFAULT,	// Serbian Serbia (Latin)
+	DL_DEFAULT,	// Serbian Serbia (Cyrillic)
+	DL_DEFAULT,	// Slovak Slovakia
+	DL_DEFAULT,	// Albanian Albania
+	DL_DEFAULT,	// Swedish Sweden
+	DL_DEFAULT,	// Swedish Finland
+	DL_DEFAULT,	// Thai Thailand
+	DL_DEFAULT,	// Turkish Turkey
+	DL_DEFAULT,	// Urdu Pakistan
+	DL_DEFAULT,	// Indonesian Indonesia
+	DL_DEFAULT,	// Ukrainian Ukraine
+	DL_DEFAULT,	// Belarusian Belarus
+	DL_DEFAULT,	// Slovene Slovenia
+	DL_DEFAULT,	// Estonian Estonia
+	DL_DEFAULT,	// Latvian Latvia
+	DL_DEFAULT,	// Lithuanian Lithuania
+	DL_DEFAULT,	// Classic Lithuanian Lithuania
+	DL_DEFAULT,	// Farsi Iran
+	DL_DEFAULT,	// Vietnamese Viet Nam
+	DL_DEFAULT,	// Armenian Armenia
+	DL_DEFAULT,	// Azeri Azerbaijan (Latin)
+	DL_DEFAULT,	// Basque Spain
+	DL_DEFAULT,	// Macedonian Macedonia
+	DL_DEFAULT,	// Afrikaans South Africa
+	DL_DEFAULT,	// Georgian Georgia
+	DL_DEFAULT,	// Faeroese Faeroe Islands
+	DL_DEFAULT,	// Hindi India
+	DL_DEFAULT,	// Malay Malaysia
+	DL_DEFAULT,	// Malay Brunei Darussalam
+	DL_DEFAULT,	// Kazak Kazakstan
+	DL_DEFAULT,	// Swahili Kenya
+	DL_DEFAULT,	// Uzbek Uzbekistan (Cyrillic)
+	DL_DEFAULT,	// Tatar Tatarstan
+	DL_DEFAULT,	// Bengali India
+	DL_DEFAULT,	// Punjabi India
+	DL_DEFAULT,	// Gujarati India
+	DL_DEFAULT,	// Oriya India
+	DL_DEFAULT,	// Tamil India
+	DL_DEFAULT,	// Telugu India
+	DL_DEFAULT,	// Kannada India
+	DL_DEFAULT,	// Malayalam India
+	DL_DEFAULT,	// Assamese India
+	DL_DEFAULT,	// Marathi India
+	DL_DEFAULT,	// Sanskrit India
+	DL_DEFAULT	// Konkani India
 };
 
 #define MAX_SPEECH 255

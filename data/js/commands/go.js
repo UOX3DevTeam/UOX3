@@ -76,4 +76,8 @@ function command_GO( socket, cmdString )
 			break;
 		}
 	}
+	else if( mChar )
+	{
+		mChar.ExecuteCommand( "itemmenu 6000" );
+	}
 }

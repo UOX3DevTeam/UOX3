@@ -212,27 +212,26 @@ MINRANK=1
 MAXRANK=10
 SOUND=0x0242
 }
-//No code-support in UOX3 yet
-//[ITEM 296]
-//{
-//NAME=Explosion
-//ID=0x0f0d
-//RESOURCE=0x0f8c 5
-//SKILL=0 351 850
-//ADDITEM=0x0f0d
-//MINRANK=1
-//MAXRANK=10
-//}
-//[ITEM 297]
-//{
-//NAME=Greater Explosion
-//ID=0x0f0d
-//RESOURCE=0x0f8c 10
-//SKILL=0 651 1150
-//ADDITEM=0x0f0d-b
-//MINRANK=1
-//MAXRANK=10
-//}
+[ITEM 296]
+{
+NAME=Explosion
+ID=0x0f0d
+RESOURCE=0x0f8c 5
+SKILL=0 351 850
+ADDITEM=0x0f0d-b
+MINRANK=1
+MAXRANK=10
+}
+[ITEM 297]
+{
+NAME=Greater Explosion
+ID=0x0f0d
+RESOURCE=0x0f8c 10
+SKILL=0 651 1150
+ADDITEM=0x0f0d-c
+MINRANK=1
+MAXRANK=10
+}
 [ITEM 298]
 {
 NAME=Lesser Heal

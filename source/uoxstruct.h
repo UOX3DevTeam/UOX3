@@ -28,12 +28,13 @@ class CCreatures
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
+	UI16				creatureID;
 	UI16				soundList[SND_COUNT];
 	std::bitset< 6 >	who_am_i;
 	UI16				icon;
 	UI16				mountID;
 public:
-	CCreatures() : icon( 0 ), mountID( 0 )
+	CCreatures() : creatureID( 0 ), icon( 0 ), mountID( 0 )
 	{
 		who_am_i.reset();
 		memset( soundList, 0x00, SND_COUNT );
@@ -67,6 +68,15 @@ public:
 	void	MountID( UI16 value )
 	{
 		mountID = value;
+	}
+
+	UI16 CreatureID( void ) const
+	{
+		return creatureID;
+	}
+	void	CreatureID( UI16 value )
+	{
+		creatureID = value;
 	}
 
 	bool	IsAnimal( void ) const		{		return who_am_i.test( BIT_ANIMAL );		}
@@ -236,11 +246,23 @@ public:
 // Instalog Locations
 struct LogoutLocationEntry
 {
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
-	UI08 worldNum;
+	SI16 x1 = 0;
+	SI16 y1 = 0;
+	SI16 x2 = 0;
+	SI16 y2 = 0;
+	UI08 worldNum = 0;
+	UI16 instanceID = 0;
+};
+
+// SOS Locations
+struct SOSLocationEntry
+{
+	SI16 x1 = 0;
+	SI16 y1 = 0;
+	SI16 x2 = 0;
+	SI16 y2 = 0;
+	UI08 worldNum = 0;
+	UI16 instanceID = 0;
 };
 
 struct advance_st

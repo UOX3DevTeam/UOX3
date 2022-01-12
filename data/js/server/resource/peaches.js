@@ -1,5 +1,5 @@
 // Peach-Picking Script
-// 20/02/2006 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@uox3.org
 // When a (dynamic) peach tree is double-clicked, it's setup with
 // 5 peaches ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more peaches can be picked. Once the timer is over,
@@ -13,7 +13,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( "You are too far away to reach that." );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pUser.socket.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -27,25 +27,28 @@ function onUseChecked( pUser, iUsed )
 	var PeachCount = iUsed.GetTag("PeachCounter");
 	if (Peaches == 0)
 	{	
-		pUser.SysMessage( "You find no ripe peaches to pick. Try again later." );
+		pUser.SysMessage( GetDictionaryEntry( 2539, pUser.socket.language )); // You find no ripe peaches to pick. Try again later.
 	}
 	if( Peaches == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
-			pUser.SysMessage( "You fail to pick any peaches." );
+			pUser.SysMessage( GetDictionaryEntry( 2540, pUser.socket.language )); // You fail to pick any peaches.
 		if( loot == 3 || loot == 1 )
 	 	{
-			pUser.SysMessage( "You pick a peach from the tree." );
+			pUser.SysMessage( GetDictionaryEntry( 2541, pUser.socket.language )); // You pick a peach from the tree.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09d2", 1, "ITEM", true );
 			PeachCount--;
 			iUsed.SetTag( "PeachCounter", PeachCount );
 			if( PeachCount == 1)
-				pUser.SysMessage( "There is "+PeachCount+" ripe peach left on the tree." );
+				pUser.SysMessage( GetDictionaryEntry( 2542, pUser.socket.language )); // There is 1 ripe peach left on the tree.
 			else
-				pUser.SysMessage( "There are "+PeachCount+" ripe peaches left on the tree." );
-		    	if( PeachCount == 0 )
+			{
+				var peachCountMsg = GetDictionaryEntry( 2543, pUser.socket.language ); // There are %i ripe peaches left on the tree.
+				pUser.SysMessage( peachCountMsg.replace(/%i/gi, PeachCount ));
+			}
+		    if( PeachCount == 0 )
 			{
 				if( iUsed.id == 0x0d9e )
 					iUsed.id = 0x0d9d;

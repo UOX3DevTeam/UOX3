@@ -16,34 +16,28 @@
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
+#include <algorithm>
 
-CJSEngine *JSEngine = NULL;
+CJSEngine *JSEngine = nullptr;
 
 CJSEngine::CJSEngine( void )
 {
 	runtimeList.resize( 0 );
 
-	const SI32 DefEngineSize = 0x1000000;
+	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
-	std::ifstream engineData( "engine.dat" );
-	SI32 engineSize = DefEngineSize;
-	if( engineData.is_open() )
-	{
-		char line[1024];
-		engineData.getline( line, 1024 );
-		UString sLine( line );
-		sLine = sLine.removeComment().stripWhiteSpace();
-		if( !sLine.empty() )
-			engineSize = UOX_MAX( sLine.toInt(), DefEngineSize );
+	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
+	auto maxBytesSize = std::max( static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
 
-		engineData.close();
-	}
+	// Use minimum of INI-provided value and hard-defined maximum
+	// maxBytes definition: "Maximum nominal heap before last ditch GC"
+	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>(maxBytesSize) * 1024 * 1024 ), maxEngineSize );
 
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;
 
-	runtimeList.push_back( new CJSRuntime( engineSize ) );	// Default Runtime
-	runtimeList.push_back( new CJSRuntime( engineSize ) );	// Console Runtime
+	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Default Runtime
+	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Console Runtime
 
 	Console << "JavaScript engine startup complete." << myendl;
 	Console.PrintSectionBegin();
@@ -54,10 +48,10 @@ CJSEngine::~CJSEngine( void )
 
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != NULL )
+		if( (*rIter) != nullptr )
 		{
 			delete (*rIter);
-			(*rIter) = NULL;
+			(*rIter) = nullptr;
 		}
 	}
 
@@ -70,7 +64,7 @@ void CJSEngine::Reload( void )
 {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != NULL )
+		if( (*rIter) != nullptr )
 			(*rIter)->Reload();
 	}
 }
@@ -78,7 +72,7 @@ void CJSEngine::CollectGarbage( void )
 {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != NULL )
+		if( (*rIter) != nullptr )
 			(*rIter)->CollectGarbage();
 	}
 }
@@ -109,7 +103,7 @@ UI08 CJSEngine::FindActiveRuntime( JSRuntime *rT ) const
 {
 	for( RUNTIMELIST_CITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != NULL )
+		if( (*rIter) != nullptr )
 		{
 			if( rT == (*rIter)->GetRuntime() )
 				return static_cast<UI08>(rIter - runtimeList.begin());
@@ -120,7 +114,7 @@ UI08 CJSEngine::FindActiveRuntime( JSRuntime *rT ) const
 
 JSObject *CJSEngine::GetPrototype( UI08 runTime, JSPrototypes protoNum ) const
 {
-	JSObject *retVal = NULL;
+	JSObject *retVal = nullptr;
 	if( runTime < runtimeList.size() )
 		retVal = runtimeList[runTime]->GetPrototype( protoNum );
 
@@ -129,8 +123,8 @@ JSObject *CJSEngine::GetPrototype( UI08 runTime, JSPrototypes protoNum ) const
 
 JSObject *CJSEngine::AcquireObject( IUEEntries iType, void *index, UI08 runTime )
 {
-	JSObject *retVal = NULL;
-	if( index != NULL && runTime < runtimeList.size() )
+	JSObject *retVal = nullptr;
+	if( index != nullptr && runTime < runtimeList.size() )
 		retVal = runtimeList[runTime]->AcquireObject( iType, index );
 
 	return retVal;
@@ -139,7 +133,7 @@ void CJSEngine::ReleaseObject( IUEEntries iType, void *index )
 {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != NULL )
+		if( (*rIter) != nullptr )
 			(*rIter)->ReleaseObject( iType, index );
 	}
 }
@@ -148,15 +142,22 @@ void CJSEngine::ReleaseObject( IUEEntries iType, void *index )
 CJSRuntime::CJSRuntime( UI32 engineSize )
 {
 	jsRuntime = JS_NewRuntime( engineSize );
-	if( jsRuntime == NULL )
+	if( jsRuntime == nullptr )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 
-	jsContext = JS_NewContext( jsRuntime, 0x500000 );
-	if( jsContext == NULL )
+	// No need to use a large number here, it's not stack size as documentation indicated,
+	// but "chunk size of the stack pool". Recommendations are to leave it at 8192. In
+	// debug builds, larger values can even degrade performance drastically
+	jsContext = JS_NewContext( jsRuntime, 8192 );
+
+	// Specify JS 1.7 as version to unlock const variables, let, etc
+	JS_SetVersion( jsContext, JSVERSION_1_7 );
+
+	if( jsContext == nullptr )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 
-	jsGlobal = JS_NewObject( jsContext, &global_class, NULL, NULL );
-	if( jsGlobal == NULL )
+	jsGlobal = JS_NewObject( jsContext, &global_class, nullptr, nullptr );
+	if( jsGlobal == nullptr )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	JS_LockGCThing( jsContext, jsGlobal );
 	//JS_AddRoot( jsContext, &jsGlobal );
@@ -172,10 +173,16 @@ CJSRuntime::~CJSRuntime( void )
 
 	JS_UnlockGCThing( jsContext, spellsObj );
 	//JS_RemoveRoot( jsContext, &spellsObj );
+	JS_UnlockGCThing( jsContext, skillsObj );
+	//JS_RemoveRoot( jsContext, &skillsObj );
 	JS_UnlockGCThing( jsContext, accountsObj );
 	//JS_RemoveRoot( jsContext, &accountsObj );
 	JS_UnlockGCThing( jsContext, consoleObj );
 	//JS_RemoveRoot( jsContext, &consoleObj );
+	JS_UnlockGCThing( jsContext, createEntriesObj );
+	//JS_RemoveRoot( jsContext, &createEntriesObj );
+	JS_UnlockGCThing( jsContext, timerObj );
+	//JS_RemoveRoot( jsContext, &timersObj );
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
@@ -199,7 +206,7 @@ void CJSRuntime::Cleanup( void )
 			JS_UnlockGCThing( jsContext, (*lIter).second );
 			//JS_RemoveRoot( jsContext, &(*lIter).second );
 
-			JS_SetPrivate( jsContext, (*lIter).second, NULL );
+			JS_SetPrivate( jsContext, (*lIter).second, nullptr );
 		}
 		ourList.clear();
 	}
@@ -223,31 +230,46 @@ void CJSRuntime::InitializePrototypes( void )
 	JSContext *cx			= jsContext;
 	JSObject *obj			= jsGlobal;
 
-	protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, NULL, &UOXChar_class.base,	NULL,		0,		CCharacterProps,		CChar_Methods,		NULL,	NULL );
-	protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, NULL, &UOXItem_class.base,	NULL,		0,		CItemProps,				CItem_Methods,		NULL,	NULL );
-	protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, NULL, &UOXSpell_class,		NULL,		0,		CSpellProperties,		NULL,				NULL,	NULL );
-	protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, NULL, &UOXSpells_class,		NULL,		0,		NULL,					NULL,				NULL,	NULL );
-	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, NULL, &UOXSocket_class.base,	NULL,		0,		CSocketProps,			CSocket_Methods,	NULL,	NULL );
-	protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, NULL, &UOXAccount_class,		NULL,		0,		CAccountProperties,		CAccount_Methods,	NULL,	NULL );
-	protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, NULL, &UOXConsole_class,		NULL,		0,		CConsoleProperties,		CConsole_Methods,	NULL,	NULL );
-	protoList[JSP_REGION]	=	JS_InitClass( cx, obj, NULL, &UOXRegion_class,		NULL,		0,		CRegionProperties,		NULL,				NULL,	NULL );
-	protoList[JSP_SPAWNREGION]=	JS_InitClass( cx, obj, NULL, &UOXSpawnRegion_class,	NULL,		0,		CSpawnRegionProperties,	NULL,				NULL,	NULL );
-	protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, NULL, &UOXResource_class,	NULL,		0,		CResourceProperties,	NULL,				NULL,	NULL );
-	protoList[JSP_RACE]		=	JS_InitClass( cx, obj, NULL, &UOXRace_class,		NULL,		0,		CRaceProperties,		CRace_Methods,		NULL,	NULL );
-	protoList[JSP_GUILD]	=	JS_InitClass( cx, obj, NULL, &UOXGuild_class,		NULL,		0,		CGuildProperties,		CGuild_Methods,		NULL,	NULL );
-	protoList[JSP_PARTY]	=	JS_InitClass( cx, obj, NULL, &UOXParty_class.base,	NULL,		0,		CPartyProperties,		CParty_Methods,		NULL,	NULL );
-	protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, NULL, &UOXPacket_class,		Packet,		0,		NULL,					NULL,				NULL,	NULL );
-	protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, NULL, &UOXGump_class,		Gump,		0,		NULL,					NULL,				NULL,	NULL );
-	protoList[JSP_FILE]		=	JS_InitClass( cx, obj, NULL, &UOXFile_class,		UOXCFile,	0,		NULL,					NULL,				NULL,	NULL );
+	protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, nullptr, &UOXChar_class.base,	nullptr,		0,		CCharacterProps,		CChar_Methods,		nullptr,	nullptr );
+	protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, nullptr, &UOXItem_class.base,	nullptr,		0,		CItemProps,				CItem_Methods,		nullptr,	nullptr );
+	protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, nullptr, &UOXSpell_class,		nullptr,		0,		CSpellProperties,		nullptr,			nullptr,	nullptr );
+	protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, nullptr, &UOXSpells_class,		nullptr,		0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_GLOBALSKILL]	=	JS_InitClass( cx, obj, nullptr, &UOXGlobalSkill_class,		nullptr,		0,		CGlobalSkillProperties,	nullptr,			nullptr,	nullptr );
+	protoList[JSP_GLOBALSKILLS]	=	JS_InitClass( cx, obj, nullptr, &UOXGlobalSkills_class,		nullptr,		0,		nullptr,					nullptr,			nullptr,	nullptr );
+	protoList[JSP_CREATEENTRY]		= JS_InitClass( cx, obj, nullptr, &UOXCreateEntry_class,	nullptr, 0,		CCreateEntryProperties, nullptr,			nullptr,	nullptr );
+	protoList[JSP_CREATEENTRIES]	= JS_InitClass( cx, obj, nullptr, &UOXCreateEntries_class,	nullptr, 0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_TIMER]	=	JS_InitClass( cx, obj, nullptr, &UOXTimer_class,		nullptr,		0,		CTimerProperties,		nullptr,			nullptr,	nullptr );
+	protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, nullptr, &UOXSocket_class.base,	nullptr,		0,		CSocketProps,			CSocket_Methods,	nullptr,	nullptr );
+	protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, nullptr, &UOXAccount_class,		nullptr,		0,		CAccountProperties,		CAccount_Methods,	nullptr,	nullptr );
+	protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, nullptr, &UOXConsole_class,		nullptr,		0,		CConsoleProperties,		CConsole_Methods,	nullptr,	nullptr );
+	protoList[JSP_REGION]	=	JS_InitClass( cx, obj, nullptr, &UOXRegion_class,		nullptr,		0,		CRegionProperties,		CRegion_Methods,	nullptr,	nullptr );
+	protoList[JSP_SPAWNREGION]=	JS_InitClass( cx, obj, nullptr, &UOXSpawnRegion_class,	nullptr,		0,		CSpawnRegionProperties,	nullptr,			nullptr,	nullptr );
+	protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, nullptr, &UOXResource_class,		nullptr,		0,		CResourceProperties,	nullptr,			nullptr,	nullptr );
+	protoList[JSP_RACE]		=	JS_InitClass( cx, obj, nullptr, &UOXRace_class,			nullptr,		0,		CRaceProperties,		CRace_Methods,		nullptr,	nullptr );
+	protoList[JSP_GUILD]	=	JS_InitClass( cx, obj, nullptr, &UOXGuild_class,		nullptr,		0,		CGuildProperties,		CGuild_Methods,		nullptr,	nullptr );
+	protoList[JSP_PARTY]	=	JS_InitClass( cx, obj, nullptr, &UOXParty_class.base,	nullptr,		0,		CPartyProperties,		CParty_Methods,		nullptr,	nullptr );
+	protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, nullptr, &UOXPacket_class,		Packet,			0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, nullptr, &UOXGump_class,			Gump,			0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_FILE]		=	JS_InitClass( cx, obj, nullptr, &UOXFile_class,			UOXCFile,		0,		nullptr,				nullptr,			nullptr,	nullptr );
 	spellsObj				=	JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
+	skillsObj				=	JS_DefineObject( cx, obj, "Skills", &UOXGlobalSkills_class, protoList[JSP_GLOBALSKILLS], 0 );
 	accountsObj				=	JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
 	consoleObj				=	JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
+	createEntriesObj		=	JS_DefineObject( cx, obj, "CreateEntries", &UOXCreateEntries_class, protoList[JSP_CREATEENTRIES], 0 );
+	timerObj				=	JS_DefineObject( cx, obj, "Timer", &UOXTimer_class, protoList[JSP_TIMER], 0 );
 	JS_LockGCThing( cx, spellsObj );
 	//JS_AddRoot( cx, &spellsObj );
+	JS_LockGCThing( cx, skillsObj );
+	//JS_AddRoot( cx, &skillsObj );
 	JS_LockGCThing( cx, accountsObj );
 	//JS_AddRoot( cx, &accountsObj );
 	JS_LockGCThing( cx, consoleObj );
 	//JS_AddRoot( cx, &consoleObj );
+	JS_LockGCThing( cx, createEntriesObj );
+	//JS_AddRoot( cx, &createEntriesObj );
+	JS_LockGCThing( cx, timerObj );
+	//JS_AddRoot( cx, &timersObj );
+
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
 		JS_LockGCThing( cx, protoList[i] );
@@ -270,7 +292,7 @@ JSObject *CJSRuntime::GetObject( void ) const
 
 JSObject *CJSRuntime::GetPrototype( JSPrototypes protoNum ) const
 {
-	JSObject *retVal = NULL;
+	JSObject *retVal = nullptr;
 	if( protoNum != JSP_COUNT )
 		retVal = protoList[protoNum];
 
@@ -279,14 +301,14 @@ JSObject *CJSRuntime::GetPrototype( JSPrototypes protoNum ) const
 
 JSObject *CJSRuntime::AcquireObject( IUEEntries iType, void *index )
 {
-	JSObject *retVal = NULL;
+	JSObject *retVal = nullptr;
 	if( iType != IUE_COUNT && static_cast<size_t>(iType) < objectList.size() )
 	{
 		retVal = FindAssociatedObject( iType, index );
-		if( retVal == NULL )
+		if( retVal == nullptr )
 		{
 			retVal = MakeNewObject( iType );
-			if( retVal != NULL )
+			if( retVal != nullptr )
 			{
 				objectList[iType][index] = retVal;
 				JS_SetPrivate( jsContext, retVal, index );
@@ -303,13 +325,13 @@ void CJSRuntime::ReleaseObject( IUEEntries iType, void *index )
 		JSObject *toRelease = (*toSearch).second;
 		JS_UnlockGCThing( jsContext, toRelease );
 		//JS_RemoveRoot( jsContext, &toRelease );
-		JS_SetPrivate( jsContext, toRelease, NULL );
+		JS_SetPrivate( jsContext, toRelease, nullptr );
 		objectList[iType].erase( toSearch );
 	}
 }
 JSObject *CJSRuntime::FindAssociatedObject( IUEEntries iType, void *index )
 {
-	JSObject *retVal = NULL;
+	JSObject *retVal = nullptr;
 	JSOBJECTMAP_CITERATOR toSearch = objectList[iType].find( index );
 	if( toSearch != objectList[iType].end() )
 		retVal = (*toSearch).second;
@@ -318,68 +340,75 @@ JSObject *CJSRuntime::FindAssociatedObject( IUEEntries iType, void *index )
 }
 JSObject *CJSRuntime::MakeNewObject( IUEEntries iType )
 {
-	JSObject *toMake = NULL;
+	JSObject *toMake = nullptr;
 	switch( iType )
 	{
 		case IUE_RACE:
 			toMake = JS_NewObject( jsContext, &UOXRace_class, protoList[JSP_RACE], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CRace_Methods );
 			//JS_DefineProperties( jsContext, toMake, CRaceProperties );
 			break;
 		case IUE_CHAR:
 			toMake = JS_NewObject( jsContext, &UOXChar_class.base, protoList[JSP_CHAR], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineProperties( jsContext, toMake, CCharacterProps );
 			//JS_DefineFunctions( jsContext, toMake, CChar_Methods );
 			break;
 		case IUE_ITEM:
 			toMake = JS_NewObject( jsContext, &UOXItem_class.base, protoList[JSP_ITEM], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CItem_Methods );
 			//JS_DefineProperties( jsContext, toMake, CItemProps );
 			break;
 		case IUE_SOCK:
 			toMake = JS_NewObject( jsContext, &UOXSocket_class.base, protoList[JSP_SOCK], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CSocket_Methods );
 			//JS_DefineProperties( jsContext, toMake, CSocketProps );
 			break;
 		case IUE_GUILD:
 			toMake = JS_NewObject( jsContext, &UOXGuild_class, protoList[JSP_GUILD], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CGuild_Methods );
 			//JS_DefineProperties( jsContext, toMake, CGuildProperties );
 			break;
 		case IUE_REGION:
 			toMake = JS_NewObject( jsContext, &UOXRegion_class, protoList[JSP_REGION], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
 			//JS_DefineProperties( jsContext, toMake, CRegionProperties );
 			break;
 		case IUE_SPAWNREGION:
 			toMake = JS_NewObject( jsContext, &UOXSpawnRegion_class, protoList[JSP_SPAWNREGION], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CSpawnRegion_Methods );
 			//JS_DefineProperties( jsContext, toMake, CSpawnRegionProperties );
 			break;
 		case IUE_PARTY:
 			toMake = JS_NewObject( jsContext, &UOXParty_class.base, protoList[JSP_PARTY], jsGlobal );
-			if( toMake == NULL )
-				return NULL;
+			if( toMake == nullptr )
+				return nullptr;
 			//JS_DefineFunctions( jsContext, toMake, CParty_Methods );
 			//JS_DefineProperties( jsContext, toMake, CPartyProperties );
 			break;
+		case IUE_ACCOUNT:
+			toMake = JS_NewObject( jsContext, &UOXAccount_class, protoList[JSP_ACCOUNT], jsGlobal );
+			if( toMake == nullptr )
+				return nullptr;
+			//JS_DefineFunctions( jsContext, toMake, CAccount_Methods );
+			//JS_DefineProperties( jsContext, toMake, CAccountProperties );
+			break;
 		default:
 		case IUE_COUNT:
-			return NULL;
+			return nullptr;
 	}
 
 	// DAMN! Using the deprecated function it works!

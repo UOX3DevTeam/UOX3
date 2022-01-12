@@ -11,6 +11,7 @@ enum IUEEntries
 	IUE_REGION,
 	IUE_SPAWNREGION,
 	IUE_PARTY,
+	IUE_ACCOUNT,
 	IUE_COUNT
 };
 
@@ -27,11 +28,17 @@ enum JSPrototypes
 	JSP_SPAWNREGION,
 	JSP_SPELL,
 	JSP_SPELLS,
+	JSP_GLOBALSKILL,
+	JSP_GLOBALSKILLS,
 	JSP_RESOURCE,
+	JSP_ACCOUNT,
 	JSP_ACCOUNTS,
 	JSP_CONSOLE,
 	JSP_FILE,
 	JSP_PARTY,
+	JSP_CREATEENTRY,
+	JSP_CREATEENTRIES,
+	JSP_TIMER,
 	JSP_COUNT
 };
 
@@ -46,8 +53,11 @@ private:
 	std::vector< JSObject * >								protoList;
 
 	JSObject * spellsObj;
+	JSObject * skillsObj;
 	JSObject * accountsObj;
 	JSObject * consoleObj;
+	JSObject * createEntriesObj;
+	JSObject * timerObj;
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;

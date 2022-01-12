@@ -65,7 +65,7 @@
 //|								checkCharWeight() returns false if a character is at their maximum weight or not based upon MAX_CHARWEIGHT
 //o-----------------------------------------------------------------------------------------------o
 
-CWeight *Weight = NULL;
+CWeight *Weight = nullptr;
 
 //const SI32 MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
 //o-----------------------------------------------------------------------------------------------o
@@ -81,7 +81,7 @@ SI32 CWeight::calcWeight( CItem *pack )
 	SI32 totalWeight = 0;
 	SI32 contWeight = 0;
 
-	CDataList< CItem * > *pCont = pack->GetContainsList();
+	GenericList< CItem * > *pCont = pack->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
 		if( !ValidateObject( i ) )
@@ -96,18 +96,8 @@ SI32 CWeight::calcWeight( CItem *pack )
 			contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item was created
 			if( contWeight == 0 )	// If they have no weight grab the tiledata weight for the item
 			{
-				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-				{
-					//7.0.9.0 data and later
-					CTileHS& tile = Map->SeekTileHS( i->GetID() );
-					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-				}
-				else
-				{
-					//7.0.8.2 data and earlier
-					CTile& tile = Map->SeekTile( i->GetID() );
-					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-				}
+				CTile& tile = Map->SeekTile( i->GetID() );
+				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
 			}
 			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
 			i->SetWeight( contWeight, false );		// Also update the weight property of the container
@@ -149,18 +139,8 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 				contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item was created
 				if( contWeight == 0 )	// If they have no weight grab the tiledata weight for the item
 				{
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-					{
-						//7.0.9.0 data and later
-						CTileHS& tile = Map->SeekTileHS( i->GetID() );
-						contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-					}
-					else
-					{
-						//7.0.8.2 data and earlier
-						CTile& tile = Map->SeekTile( i->GetID() );
-						contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-					}
+					CTile& tile = Map->SeekTile( i->GetID() );
+					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
 				}
 				contWeight += calcWeight( i );	// Find and add the weight of the items in the container
 				i->SetWeight( contWeight, false );		// Also update the weight property of the container
@@ -187,18 +167,8 @@ bool CWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 data and later
-			CTileHS& tile = Map->SeekTileHS( item->GetID() );
-			itemWeight = static_cast<SI32>( tile.Weight() * 100);
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			CTile& tile = Map->SeekTile( item->GetID() );
-			itemWeight = static_cast<SI32>( tile.Weight() * 100);
-		}
+		CTile& tile = Map->SeekTile( item->GetID() );
+		itemWeight = static_cast<SI32>( tile.Weight() * 100);
 	}
 
 	if( item->GetAmount() > 1 )	// Stackable items weight is Amount * Weight
@@ -223,18 +193,8 @@ bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 data and later
-			CTileHS& tile = Map->SeekTileHS( item->GetID() );
-			itemWeight = static_cast<SI32>( tile.Weight() * 100 );
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			CTile& tile = Map->SeekTile( item->GetID() );
-			itemWeight = static_cast<SI32>( tile.Weight() * 100 );
-		}
+		CTile& tile = Map->SeekTile( item->GetID() );
+		itemWeight = static_cast<SI32>( tile.Weight() * 100 );
 	}
 
 	if( item->GetAmount() > 1 )	// Stackable items weight is Amount * Weight
@@ -447,7 +407,7 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 		itemWeight *= item->GetAmount();
 	if( (itemWeight + packWeight) <= packWeightMax ) // <= MAX_PACKWEIGHT )
 	{	// Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
-		if( pack->GetCont() == NULL )	// No container above pack
+		if( pack->GetCont() == nullptr )	// No container above pack
 			return true;
 		if( pack->GetContSerial() >= BASEITEMSERIAL )	// pack is in another pack, lets ensure it won't overload that pack
 			return checkPackWeight( ourChar, static_cast<CItem *>(pack->GetCont()), item );

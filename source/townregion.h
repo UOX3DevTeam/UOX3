@@ -11,10 +11,10 @@ struct orePref
 
 struct regLocs
 {
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
+	SI16 x1 = 0;
+	SI16 y1 = 0;
+	SI16 x2 = 0;
+	SI16 y2 = 0;
 };
 
 
@@ -43,11 +43,12 @@ private:
 	};
 
 	UI16				regionNum;
+	UI16				parentRegion; // reference to parent region
 	std::string			name;
 	UI16				musicList;
 	UI08				worldNumber;
 	UI16				instanceID;
-	std::bitset< 11 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
+	std::bitset< 12 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
 	// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 	// 0x80 Dungeon region
 	std::string					guardowner;
@@ -78,6 +79,7 @@ private:
 	UI08				chanceFindBigOre;		// chance of finding big ore
 
 	UI16				jsScript;
+	std::vector<UI16>	scriptTriggers;
 
 	void				SendEnemyGump( CSocket *sock );
 	void				SendBasicInfo( CSocket *sock );
@@ -113,6 +115,7 @@ public:
 	bool				CanCastAggressive( void ) const;
 	bool				IsSafeZone( void ) const;
 	bool				IsDungeon( void ) const;
+	bool				IsSubRegion( void ) const;
 	bool				IsMemberOfTown( CChar *player ) const;
 	bool				IsAlliedTown( UI16 townToCheck ) const;
 	bool				MakeAlliedTown( UI16 townToMake );
@@ -126,6 +129,7 @@ public:
 	void				CanCastAggressive( bool value );
 	void				IsSafeZone( bool value );
 	void				IsDungeon( bool value );
+	void				IsSubRegion( bool value );
 	void				SetName( std::string toSet );
 	void				SetRace( RACEID newRace );
 	void				TellMembers( SI32 dictEntry, ... );
@@ -143,6 +147,7 @@ public:
 	void				SetResourceID( UI16 resID );
 	void				SetHealth( SI16 newValue );
 	void				SetChanceBigOre( UI08 newValue );
+	void				SetAppearance( WorldType worldType );
 
 	WorldType			GetAppearance( void ) const;
 	UI08				GetChanceBigOre( void ) const;
@@ -153,7 +158,9 @@ public:
 	SI16				GetHealth( void ) const;
 	CChar *				GetMayor( void );						// returns the mayor character
 	SERIAL				GetMayorSerial( void ) const;			// returns the mayor's serial
+	void				SetMayorSerial( SERIAL newvValue );			// sets the mayor's serial
 	UI16				GetMusicList( void ) const;
+	void				SetMusicList( UI16 newValue );
 	std::string			GetName( void ) const;
 	size_t				GetNumOrePreferences( void ) const;
 	const orePref *		GetOrePreference( size_t targValue ) const;
@@ -166,13 +173,19 @@ public:
 	UI16				GetResourceID( void ) const;
 	UI32				GetTaxes( void ) const;
 	weathID				GetWeather( void ) const;
+	void				SetWeather( weathID newValue );
 	UI16				NumGuards( void ) const;
+	void				SetNumGuards( UI16 newValue );
 	UI16				TaxedAmount( void ) const;
 	UI08				WorldNumber( void ) const;
+	void				WorldNumber( UI08 newValue );
 	UI16				GetInstanceID( void ) const;
+	void				SetInstanceID( UI16 newValue );
 
-	UI16				GetScriptTrigger( void ) const;
-	void				SetScriptTrigger( UI16 newValue );
+	std::vector<UI16>	GetScriptTriggers( void );
+	void				AddScriptTrigger( UI16 newValue );
+	void				RemoveScriptTrigger( UI16 newValue );
+	void				ClearScriptTriggers( void );
 
 	UI16				GetRegionNum( void ) const;
 	void				SetRegionNum( UI16 newVal );
@@ -181,6 +194,7 @@ public:
 	const regLocs *		GetLocation( size_t locNum ) const;
 
 	std::string			GetTownMemberSerials( void ) const;
+	std::vector< townPers >		GetTownMembers( void ) const;
 };
 
 #endif

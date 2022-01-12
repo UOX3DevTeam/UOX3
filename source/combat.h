@@ -26,12 +26,11 @@ enum WeaponTypes
 class CHandleCombat
 {
 private:
-	bool	StartAttack( CChar *mChar, CChar *ourTarg );
-	void	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
+	bool	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
 
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
-	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill );
+	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );
@@ -44,12 +43,13 @@ private:
 	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE);
 
 public:
+	bool	StartAttack( CChar *mChar, CChar *ourTarg );
 	void	InvalidateAttacker( CChar *mChar );
 
 	R32		GetCombatTimeout( CChar *mChar );
 	void	PlayerAttack( CSocket *s );
 	void	AttackTarget( CChar *mChar, CChar *ourTarg );
-	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded );
+	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard = nullptr );
 
 	void	CombatLoop( CSocket *mSock, CChar& mChar );
 	void	Kill( CChar *mChar, CChar *ourTarg );
@@ -71,9 +71,11 @@ public:
 	SI16	ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage );
 
 	SI16	AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc, UI08 getFightSkill );
+	SI16	AdjustArmorClassDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc );
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
 
 	// Combat Animations & Sound Effects
+	void	CombatAnimsNew( CChar *mChar );
 	void	CombatOnHorse( CChar *mChar );
 	void	CombatOnFoot( CChar *mChar );
 };

@@ -15,19 +15,26 @@ enum cC_TID
 	tCHAR_TIMEOUT = 0,
 	tCHAR_INVIS,
 	tCHAR_HUNGER,
+	tCHAR_THIRST,
 	tCHAR_POISONTIME,
 	tCHAR_POISONTEXT,
 	tCHAR_POISONWEAROFF,
 	tCHAR_SPELLTIME,
+	tCHAR_SPELLRECOVERYTIME,
 	tCHAR_ANTISPAM,
 	tCHAR_CRIMFLAG,
 	tCHAR_MURDERRATE,
 	tCHAR_PEACETIMER,
+	tCHAR_FLYINGTOGGLE,
+	tCHAR_FIREFIELDTICK,
+	tCHAR_POISONFIELDTICK,
+	tCHAR_PARAFIELDTICK,
 	// NPC Timers
 	tNPC_MOVETIME,
 	tNPC_SPATIMER,
 	tNPC_SUMMONTIME,
 	tNPC_EVADETIME,
+	tNPC_LOYALTYTIME,
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
@@ -35,10 +42,11 @@ enum cC_TID
 
 struct DamageTrackEntry
 {
-	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageDone( INVALIDSERIAL ) { }
-	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageDone( lstDmgDn ) { }
+	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageType( PHYSICAL ), lastDamageDone( INVALIDSERIAL ) { }
+	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageType( dmgType ), lastDamageDone( lstDmgDn ) { }
 	SERIAL		damager;			// who did the damage?
 	SI32		damageDone;			// how much damage has been accumulated?
+	WeatherType lastDamageType;			// what type of damage was dealt most recently?
 	TIMERVAL	lastDamageDone;		// when was the last time that damage was done?
 };
 
@@ -49,7 +57,7 @@ class CChar : public CBaseObject
 private:
 	typedef std::map< ItemLayers, CItem * >				LAYERLIST;
 	typedef std::map< ItemLayers, CItem * >::iterator	LAYERLIST_ITERATOR;
-	typedef CDataList< DamageTrackEntry * >				DAMAGETRACK;
+	typedef GenericList< DamageTrackEntry * >				DAMAGETRACK;
 
 	struct NPCValues_st
 	{
@@ -68,6 +76,9 @@ private:
 		UI08				splitChance;
 
 		SI08				pathFail;
+		SI08				pathResult;
+		UI16				pathTargX;
+		UI16				pathTargY;
 
 		SI16				fx[2]; //NPC Wander Point x
 		SI16				fy[2]; //NPC Wander Point y
@@ -87,10 +98,18 @@ private:
 		SI16				fleeAt;		// HP Level to flee at
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
-		CHARLIST			petFriends;
+		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
+		CHARLIST			petFriends;			// Temporary list of friends a pet has
+		GenericList< CChar * >	petOwnerList;	// Persistent list of owners a pet has previously had
+		UI16				maxLoyalty;			// Pet's maximum loyalty to its master
+		UI16				loyalty;			// Pet's current loyalty to its master
+		UI16				orneriness;			// Difficulty to control pet
+
 		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
-		UI08				hungerWildChance;	// The chance that the char get's wild when hungry
-		UString				foodList;
+		UI16				tamedThirstRate;    // The rate at which thirst decreases when char is tamed
+		UI08				hungerWildChance;	// The chance that the char goes wild when hungry
+		UI08				thirstWildChance;   // The chance that the char goes wild when thirsty
+		std::string			foodList;
 
 		SERIAL				fTarg; // NPC Follow Target
 
@@ -101,6 +120,9 @@ private:
 		R32					walkingSpeed;
 		R32					runningSpeed;
 		R32					fleeingSpeed;
+		R32					mountedWalkingSpeed;
+		R32					mountedRunningSpeed;
+		R32					mountedFleeingSpeed;
 	};
 
 	struct PlayerValues_st
@@ -137,6 +159,8 @@ private:
 		UI08		squelched; // Squelching
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 		UI16		deaths;
+		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
+		UI32		createdOn;	// Timestamp for when player character was created
 
 		SERIAL		townvote;
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
@@ -166,13 +190,14 @@ protected:
 	PlayerValues_st	*	mPlayer;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
+	SI08		thirst;		// Level of thirstiness, 6 = full, 0 = "empty"
 	UI16		town;       // Matches Region number in regions.dfn
 	UI16		regionNum;
 
 	UI08		brkPeaceChanceGain;
 	UI08		brkPeaceChance;
 
-	std::bitset< 32 >		bools;	// lots of flags
+	std::bitset< 64 >		bools;	// lots of flags
 	std::bitset< 16 >		priv;
 
 	SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
@@ -193,6 +218,7 @@ protected:
 	SI08		cell; // Reserved for jailing players
 	UI08		running; // Stamina Loose while running
 	UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
+	UI32		lastMoveTime; // Timestamp for when character moved last
 
 	CItem *		packitem; // Characters backpack
 	SERIAL		targ; // Current combat target
@@ -209,7 +235,7 @@ protected:
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
-	CDataList< CChar * >	petsControlled;
+	GenericList< CChar * >	petsControlled;
 	ITEMLIST				ownedItems;
 	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
 	std::bitset< UT_COUNT >	updateTypes;
@@ -222,6 +248,8 @@ protected:
 	UI16		maxStam_olddex;
 	RACEID		oldRace;
 
+	BodyType	bodyType;
+
 	UI08		PoisonStrength;
 
 	DAMAGETRACK		damageDealt;
@@ -229,7 +257,7 @@ protected:
 
 	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool	DumpBody( std::ofstream &outStream ) const override;
-	virtual bool	HandleLine( UString &UTag, UString &data ) override;
+	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual bool	LoadRemnants( void ) override;
 
 	void		CopyData( CChar *target );
@@ -243,34 +271,46 @@ protected:
 
 public:
 
+	BodyType	GetBodyType( void );
+
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 
 	bool		GetUpdate( UpdateTypes updateType ) const;
 	void		ClearUpdate( void );
 	virtual void	Dirty( UpdateTypes updateType ) override;
+	void		UpdateRegion( void );
 
 	void		UpdateDamageTrack( void );
 
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
 
-	CDataList< CChar * > *	GetPetList( void );
+	GenericList< CChar * > *	GetPetList( void );
+	GenericList< CChar * > *	GetPetOwnerList( void );
 	ITEMLIST *	GetOwnedItems( void );
 
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
 
+	void		DoLoyaltyUpdate( void );
 	void		DoHunger( CSocket *mSock );
+	void		DoThirst( CSocket* mSock );
 	void		checkPetOfflineTimeout( void );
 	SI08		GetHunger( void ) const;
+	SI08        GetThirst( void ) const;
 	UI16		GetTamedHungerRate( void ) const;
+	UI16		GetTamedThirstRate( void ) const;
 	UI08		GetTamedHungerWildChance( void ) const;
+	UI08		GetTamedThirstWildChance( void ) const;
 	UI16		GetTown( void ) const;
 	std::string GetFood( void ) const;
 
 	bool		SetHunger( SI08 newValue );
+	bool		SetThirst( SI08 newValue );
 	void		SetTamedHungerRate( UI16 newValue );
+	void		SetTamedThirstRate( UI16 newValue );
 	void		SetTamedHungerWildChance( UI08 newValue );
+	void		SetTamedThirstWildChance( UI08 newValue );
 	void		SetTown( UI16 newValue );
 	void		SetFood( std::string food );
 
@@ -285,6 +325,10 @@ public:
 
 	void		SetStabled( bool newValue );
 	bool		GetStabled( void ) const;
+	void		SetFlying( bool newValue );
+	bool		IsFlying( void ) const;
+
+	bool		ToggleFlying( void );
 
 	void		SetMaxHPFixed( bool newValue );
 	bool		GetMaxHPFixed( void ) const;
@@ -294,6 +338,7 @@ public:
 	bool		GetMaxStamFixed( void ) const;
 
 	bool		DecHunger( const SI08 amt = 1 );
+	bool		DecThirst( const SI08 amt = 1 );
 
 	bool		isUnicode( void ) const;
 	bool		IsNpc( void ) const;
@@ -307,6 +352,7 @@ public:
 	bool		GetTownTitle( void ) const;
 	bool		GetReactiveArmour( void ) const;
 	bool		CanTrain( void ) const;
+	bool		CanBeHired( void ) const;
 	bool		GetGuildToggle( void ) const;
 	bool		IsTamed( void ) const;
 	bool		IsGuarded( void ) const;
@@ -314,6 +360,7 @@ public:
 	bool		IsUsingPotion( void ) const;
 	bool		MayLevitate( void ) const;
 	bool		WillHunger( void ) const;
+	bool        WillThirst( void ) const;
 	bool		IsMeditating( void ) const;
 	bool		IsCasting( void ) const;
 	bool		IsJSCasting( void ) const;
@@ -330,6 +377,7 @@ public:
 	void		SetOnHorse( bool newValue );
 	void		SetTownTitle( bool newValue );
 	void		SetReactiveArmour( bool newValue );
+	void		SetCanHire( bool newValue );
 	void		SetCanTrain( bool newValue );
 	void		SetGuildToggle( bool newValue );
 	void		SetTamed( bool newValue );
@@ -338,6 +386,7 @@ public:
 	void		SetUsingPotion( bool newVal );
 	void		SetLevitate( bool newValue );
 	void		SetHungerStatus( bool newValue );
+	void		SetThirstStatus( bool newValue );
 	void		SetMeditating( bool newValue );
 	void		SetCasting( bool newValue );
 	void		SetJSCasting( bool newValue );
@@ -419,6 +468,7 @@ public:
 	bool		ViewHouseAsIcon( void ) const;
 	bool		NoNeedMana( void ) const;
 	bool		IsDispellable( void ) const;
+	bool		IsTempReflected( void ) const;
 	bool		IsPermReflected( void ) const;
 	bool		NoNeedReags( void ) const;
 
@@ -435,6 +485,7 @@ public:
 	void		SetViewHouseAsIcon( bool newValue );
 	void		SetNoNeedMana( bool newValue );
 	void		SetDispellable( bool newValue );
+	void		SetTempReflected( bool newValue );
 	void		SetPermReflected( bool newValue );
 	void		SetNoNeedReags( bool newValue );
 
@@ -450,10 +501,12 @@ public:
 	UI16		GetDeaths( void ) const;		// can we die 4 billion times?!
 	SI16		GetGuildNumber( void ) const;
 	UI08		GetFlag( void ) const;
+	UI08		GetControlSlotsUsed( void ) const;
 
 	void		SetDeaths( UI16 newVal );
 	void		SetFlag( UI08 newValue );
 	void		SetGuildNumber( SI16 newValue );
+	void		SetControlSlotsUsed( UI08 newValue );
 
 	SI08		GetFontType( void ) const;
 	void		SetFontType( SI08 newType );
@@ -465,13 +518,13 @@ public:
 	virtual		~CChar();
 
 	CChar *			Dupe( void );
-	virtual void	RemoveFromSight( CSocket *mSock = NULL );
-	virtual void	RemoveAllObjectsFromSight( CSocket *mSock = NULL );
+	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
+	virtual void	RemoveAllObjectsFromSight( CSocket *mSock = nullptr );
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = NULL ) override;
-	virtual void	SendToSocket( CSocket *s ) override;
+	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
+	virtual void	SendToSocket( CSocket *s, bool drawGamePlayer = false ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );
 	bool			WearItem( CItem *toWear );
@@ -481,7 +534,7 @@ public:
 	CItem *			NextItem( void );
 	bool			FinishedItems( void );
 
-	void			BreakConcentration( CSocket *sock = NULL );
+	void			BreakConcentration( CSocket *sock = nullptr );
 
 	virtual bool	Save( std::ofstream &outStream ) override;
 	virtual void	PostLoadProcessing( void ) override;
@@ -528,6 +581,8 @@ public:
 	virtual UI16	GetMaxHP( void );
 	SI16			GetMaxMana( void );
 	SI16			GetMaxStam( void );
+	UI16			GetMaxLoyalty( void ) const;
+	UI16			GetLoyalty( void ) const;
 	virtual void	SetMana( SI16 newValue ) override;
 	virtual void	SetHP( SI16 newValue ) override;
 	virtual void	SetStamina( SI16 newValue ) override;
@@ -539,6 +594,8 @@ public:
 	virtual void	SetIntelligence2( SI16 newValue ) override;
 	void			IncStamina( SI16 toInc );
 	void			IncMana( SI16 toInc );
+	void			SetMaxLoyalty( UI16 newMaxLoyalty );
+	void			SetLoyalty( UI16 newLoyalty );
 
 	void			ToggleCombat( void );
 
@@ -548,16 +605,17 @@ public:
 	bool			inBuilding( void );
 
 	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
-	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... );
+	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... );
 
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;
 	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
 
 	FlagColors		FlagColour( CChar *toCompare );
-	void			Heal( SI16 healValue, CChar *healer = NULL );
-	void			Damage( SI16 damageValue, CChar *attacker = NULL, bool doRepsys = false );
-	void			ReactOnDamage( WeatherType damageType, CChar *attacker = NULL );
+	void			Heal( SI16 healValue, CChar *healer = nullptr );
+	void			Damage( SI16 damageValue, WeatherType damageType, CChar *attacker = nullptr, bool doRepsys = false );
+	SI16			GetKarma( void ) const;
+	void			ReactOnDamage( WeatherType damageType, CChar *attacker = nullptr );
 	void			Die( CChar *attacker, bool doRepsys );
 
 	// Values determining if the character is in a party or not, save us shortcutting in a few places
@@ -571,10 +629,16 @@ protected:
 	virtual void	RemoveSelfFromOwner( void ) override;
 	virtual void	AddSelfToOwner( void ) override;
 public:
+	void		ClearFriendList( void );
 	CHARLIST *	GetFriendList( void );
 
-	void		AddFriend( CChar *toAdd );
-	void		RemoveFriend( CChar *toRemove );
+	void		ClearPetOwnerList( void );
+	bool		AddPetOwnerToList( CChar *toAdd );
+	bool		RemovePetOwnerFromList( CChar *toRemove );
+	bool		IsOnPetOwnerList( CChar *toCheck );
+
+	bool		AddFriend( CChar *toAdd );
+	bool		RemoveFriend( CChar *toRemove );
 
 	SI16		GetNPCAiType( void ) const;
 	SI16		GetTaming( void ) const;
@@ -584,6 +648,9 @@ public:
 	UI32		GetHoldG( void ) const;
 	UI08		GetSplit( void ) const;
 	UI08		GetSplitChance( void ) const;
+	UI08		GetOwnerCount( void );
+	UI08		GetControlSlots( void ) const;
+	UI16		GetOrneriness( void ) const;
 
 	void		SetNPCAiType( SI16 newValue );
 	void		SetTaming( SI16 newValue );
@@ -593,9 +660,19 @@ public:
 	void		SetHoldG( UI32 newValue );
 	void		SetSplit( UI08 newValue );
 	void		SetSplitChance( UI08 newValue );
+	void		SetControlSlots( UI08 newVal );
+	void		SetOrneriness( UI16 newVal );
 
 	SI08		GetPathFail( void ) const;
 	void		SetPathFail( SI08 newValue );
+
+	SI08		GetPathResult( void ) const;
+	void		SetPathResult( SI08 newValue );
+
+	UI16		GetPathTargX( void ) const;
+	void		SetPathTargX( UI16 newValue );
+	UI16		GetPathTargY( void ) const;
+	void		SetPathTargY( UI16 newValue );
 
 	void			SetGuarding( CBaseObject *newValue );
 
@@ -653,6 +730,15 @@ public:
 	R32			GetFleeingSpeed( void ) const;
 	void		SetFleeingSpeed( R32 newValue );
 
+	R32			GetMountedWalkingSpeed( void ) const;
+	void		SetMountedWalkingSpeed( R32 newValue );
+
+	R32			GetMountedRunningSpeed( void ) const;
+	void		SetMountedRunningSpeed( R32 newValue );
+
+	R32			GetMountedFleeingSpeed( void ) const;
+	void		SetMountedFleeingSpeed( R32 newValue );
+
 	// Player Characters
 public:
 	void					SetAccount( CAccountBlock& actbAccount );
@@ -685,9 +771,16 @@ public:
 	void		SetLastOnSecs( UI32 newValue );
 	UI32		GetLastOnSecs( void ) const;
 
+	void		SetCreatedOn( UI32 newValue );
+	UI32		GetCreatedOn( void ) const;
+
+	UI32		LastMoveTime( void ) const;
+	void		LastMoveTime( UI32 newValue );
+
 
 	CChar *		GetTrackingTarget( void ) const;
 	CChar *		GetTrackingTargets( UI08 targetNum ) const;
+	SERIAL		GetTrackingTargetSerial( void ) const;
 	void		SetTrackingTarget( CChar *newValue );
 	void		SetTrackingTargets( CChar *newValue, UI08 targetNum );
 

@@ -2,6 +2,7 @@ function CommandRegistration()
 {
 	RegisterCommand( "telestuff", 1, true );
 	RegisterCommand( "tele", 1, true );
+	RegisterCommand( "teleport", 1, true );
 }
 
 function command_TELESTUFF( socket, cmdString )
@@ -27,8 +28,8 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
-	var cancelCheck = parseInt( socket.GetDWord( 11 ));
-	if( cancelCheck != -1 )
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var dictMsg;
 		var toTele = socket.tempObj;
@@ -41,7 +42,12 @@ function onCallback1( socket, ourObj )
 
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
-			var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var z = socket.GetSByte( 16 );
+
+			// If connected with a client lower than v7.0.9, manually add height of targeted tile
+			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+				z += GetTileHeight( socket.GetWord( 17 ));
+
 			doTele( toTele, x, y, z );
 
 			socket.SysMessage( dictMsg );
@@ -56,10 +62,16 @@ function command_TELE( socket, cmdString )
 	socket.CustomTarget( 2, targMsg );
 }
 
+// Alias of TELE
+function command_TELEPORT( socket, cmdString )
+{
+	command_TELE( socket, cmdString );
+}
+
 function onCallback2( socket, ourObj )
 {
-	var cancelCheck = parseInt( socket.GetDWord( 11 ));
-	if( cancelCheck != -1 )
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck != 255 )
 	{
 		var mChar = socket.currentChar;
 		if( mChar )
@@ -77,7 +89,11 @@ function onCallback2( socket, ourObj )
 			{
 				targX = socket.GetWord( 11 );
 				targY = socket.GetWord( 13 );
-				targZ = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+				targZ = socket.GetSByte( 16 );
+
+				// If connected with a client lower than v7.0.9, manually add height of targeted tile
+				if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+					targZ += GetTileHeight( socket.GetWord( 17 ));
 			}
 			doTele( mChar, targX, targY, targZ );
 		}

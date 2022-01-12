@@ -28,7 +28,7 @@ cHTMLTemplate::~cHTMLTemplate()
 
 }
 
-UString GetUptime( void )
+std::string GetUptime( void )
 {
 	UI32 total	= (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 	UI32 ho		= total / 3600;
@@ -37,16 +37,22 @@ UString GetUptime( void )
 	total		-= mi * 60;
 	UI32 se		= total;
 	total		= 0;
-	UString builtString = "";
+	std::string builtString = "";
 	if( ho < 10 )
+	{
 		builtString += std::string("0");
-	builtString += str_number( ho ) + ":";
+	}
+	builtString += strutil::number( ho ) + ":";
 	if( mi < 10 )
+	{
 		builtString += std::string("0");
-	builtString += str_number( mi ) + std::string(":");
+	}
+	builtString += strutil::number( mi ) + std::string(":");
 	if( se < 10 )
+	{
 		builtString += std::string("0");
-	builtString += str_number( se );
+	}
+	builtString += strutil::number( se );
 	return builtString;
 }
 
@@ -88,7 +94,7 @@ void cHTMLTemplate::Process( void )
 	// Replacing Placeholders
 
 	// Account-Count
-	UString AccountCount	= str_number( (Accounts->size()) );
+	std::string AccountCount	= strutil::number( (Accounts->size()) );
 	size_t Pos				= ParsedContent.find( "%accounts" );
 	while( Pos != std::string::npos )
 	{
@@ -111,7 +117,7 @@ void cHTMLTemplate::Process( void )
 		Pos = ParsedContent.find( "%version" );
 	}
 	// Character Count
-	UString CharacterCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+	std::string CharacterCount	= strutil::number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 	Pos						= ParsedContent.find( "%charcount" );
 	while( Pos != std::string::npos )
 	{
@@ -120,7 +126,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Item Count
-	UString ItemCount	= str_number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
+	std::string ItemCount	= strutil::number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
 	Pos					= ParsedContent.find( "%itemcount" );
 	while( Pos != std::string::npos )
 	{
@@ -130,8 +136,8 @@ void cHTMLTemplate::Process( void )
 
 	// Connection Count (GMs, Counselors, Player)
 	UI32 gm = 0, cns = 0, ccount = 0;
-	CSocket *tSock	= NULL;
-	CChar *tChar	= NULL;
+	CSocket *tSock	= nullptr;
+	CChar *tChar	= nullptr;
 
 	// Get all Network Connections
 	{
@@ -154,7 +160,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// GMs
-	UString GMCount = str_number( gm );
+	std::string GMCount = strutil::number( gm );
 	Pos				= ParsedContent.find( "%online_gms" );
 	while( Pos != std::string::npos )
 	{
@@ -163,7 +169,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Counselor
-	UString CounsiCount	= str_number( cns );
+	std::string CounsiCount	= strutil::number( cns );
 	Pos					= ParsedContent.find( "%online_couns" );
 	while( Pos != std::string::npos )
 	{
@@ -172,7 +178,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Player
-	UString PlayerCount	= str_number( ccount );
+	std::string PlayerCount	= strutil::number( ccount );
 	Pos					= ParsedContent.find( "%online_player" );
 	while( Pos != std::string::npos )
 	{
@@ -181,7 +187,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Total
-	UString AllCount	= str_number( (ccount + gm + cns) );
+	std::string AllCount	= strutil::number( (ccount + gm + cns) );
 	Pos					= ParsedContent.find( "%online_all" );
 	while( Pos != std::string::npos )
 	{
@@ -190,7 +196,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Time
-	char time_str[80];
+	char time_str[256];
 	RealTime( time_str );
 	Pos = ParsedContent.find( "%time" );
 	while( Pos != std::string::npos )
@@ -212,7 +218,7 @@ void cHTMLTemplate::Process( void )
 	time_t currTime;
 	time( &currTime );
 	currTime = mktime( gmtime( &currTime ) );
-	UString timestamp = str_number( currTime );
+	std::string timestamp = strutil::number( currTime );
 	Pos = ParsedContent.find( "%tstamp" );
 	while( Pos != std::string::npos )
 	{
@@ -227,9 +233,9 @@ void cHTMLTemplate::Process( void )
 		for( UI16 i = 0; i < ServerCount; ++i )
 		{
 			physicalServer *mServ = cwmWorldState->ServerData()->ServerEntry( i );
-			auto ipToken = format( "%%ip%i", i+1 );
+			auto ipToken = strutil::format( "%%ip%i", i+1 );
 
-			if( mServ != NULL )
+			if( mServ != nullptr )
 			{
 				Pos = ParsedContent.find( ipToken );
 				while( Pos != std::string::npos )
@@ -240,28 +246,30 @@ void cHTMLTemplate::Process( void )
 			}
 
 			// i think we'll never get higher than 2 digits, anyway...
-			auto portToken = format( "%%port%i", i+1 );
+			auto portToken = strutil::format( "%%port%i", i+1 );
 
-			if( mServ != NULL )
+			if( mServ != nullptr )
 			{
 				Pos = ParsedContent.find( portToken );
 				while( Pos != std::string::npos )
 				{
 
 					auto myPort = std::to_string(mServ->getPort());
-					if (cwmWorldState->GetKeepRun()){
+
+					// Both paths do the same. Something seems missing
+					//if (cwmWorldState->GetKeepRun()){
 						ParsedContent.replace(Pos, portToken.size(), myPort);
-					}
-					else {
-						ParsedContent.replace(Pos, portToken.size(), myPort);
-					}
+					//}
+					//else {
+						//ParsedContent.replace(Pos, portToken.size(), myPort);
+					//}
 					Pos = ParsedContent.find( portToken );
 				}
 			}
 
-			auto serverToken= format( "%%server%i", i+1 );
+			auto serverToken= strutil::format( "%%server%i", i+1 );
 
-			if( mServ != NULL )
+			if( mServ != nullptr )
 			{
 				Pos = ParsedContent.find( serverToken );
 				while( Pos != std::string::npos )
@@ -294,7 +302,7 @@ void cHTMLTemplate::Process( void )
 			{
 				try
 				{
-					if( tSock != NULL )
+					if( tSock != nullptr )
 					{
 						CChar *tChar = tSock->CurrcharObj();
 						if( ValidateObject( tChar ) )
@@ -336,7 +344,7 @@ void cHTMLTemplate::Process( void )
 							{
 								CSocket *mySock = tChar->GetSocket();
 
-								auto ClientIP = format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
+								auto ClientIP = strutil::format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );
 								sPos = parsedInline.find( "%playerip" );
 							}
@@ -355,7 +363,7 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playerx" );
 							while( sPos != std::string::npos )
 							{
-								UString myX = str_number( tChar->GetX() );
+								std::string myX = strutil::number( tChar->GetX() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerx" );
 							}
@@ -364,7 +372,7 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playery" );
 							while( sPos != std::string::npos )
 							{
-								UString myY = str_number( tChar->GetY() );
+								std::string myY = strutil::number( tChar->GetY() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playery" );
 							}
@@ -373,7 +381,7 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playerz" );
 							while( sPos != std::string::npos )
 							{
-								UString myZ = str_number( tChar->GetZ() );
+								std::string myZ = strutil::number( tChar->GetZ() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerz" );
 							}
@@ -416,7 +424,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// GuildCount
-	UString GuildCount	= str_number( (SI32)GuildSys->NumGuilds() );
+	std::string GuildCount	= strutil::number( (SI32)GuildSys->NumGuilds() );
 	Pos					= ParsedContent.find( "%guildcount" );
 	while( Pos != std::string::npos )
 	{
@@ -448,7 +456,7 @@ void cHTMLTemplate::Process( void )
 			size_t sPos;
 			CGuild *myGuild = GuildSys->Guild( i );
 
-			UString GuildID	= str_number( i );
+			std::string GuildID	= strutil::number( i );
 			sPos			= parsedInline.find( "%guildid" );
 			while( sPos != std::string::npos )
 			{
@@ -474,10 +482,10 @@ void cHTMLTemplate::Process( void )
 	//NPCCount
 	UI32 npccount = 0;
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, nullptr, &CountNPCFunctor );
 	npccount	= b;
 
-	UString npcs	= str_number( npccount );
+	std::string npcs	= strutil::number( npccount );
 	Pos				= ParsedContent.find( "%npcs" );
 	while( Pos != std::string::npos )
 	{
@@ -523,7 +531,7 @@ void cHTMLTemplate::Process( void )
 	Pos = ParsedContent.find( "%uptime" );
 	while( Pos != std::string::npos )
 	{
-		UString builtString = GetUptime();
+		std::string builtString = GetUptime();
 		ParsedContent.replace( Pos, 7, builtString );
 		Pos = ParsedContent.find( "%uptime" );
 	}
@@ -554,7 +562,7 @@ void cHTMLTemplate::Process( void )
 	Pos = ParsedContent.find( "%updatetime" );
 	while( Pos != std::string::npos )
 	{
-		UString strUpdateTimer = str_number( UpdateTimer );
+		std::string strUpdateTimer = strutil::number( UpdateTimer );
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, strUpdateTimer ):ParsedContent.replace( Pos, 11, "0" );
 		Pos = ParsedContent.find( "%updatetime" );
 	}
@@ -570,7 +578,7 @@ void cHTMLTemplate::Process( void )
 		Output.close();
 	}
 	else
-		Console.error( format(" Couldn't open the template file %s for writing", OutputFile.c_str()) );
+		Console.error( strutil::format(" Couldn't open the template file %s for writing", OutputFile.c_str()) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -603,7 +611,7 @@ void cHTMLTemplate::LoadTemplate( void )
 
 	if( !InputFile1.is_open() )
 	{
-		Console.error( format("Couldn't open HTML Template File %s", InputFile.c_str()) );
+		Console.error( strutil::format("Couldn't open HTML Template File %s", InputFile.c_str()) );
 		return;
 	}
 
@@ -641,40 +649,52 @@ void cHTMLTemplate::UnloadTemplate( void )
 //o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
-	UString tag, data, UTag, UData, fullPath;
+	std::string tag, data, UTag, UData, fullPath;
 
 	for( tag = found->First(); !found->AtEnd(); tag = found->Next() )
 	{
 		data = found->GrabData();
-		UTag = tag.upper();
+		UTag = strutil::upper( tag );
 
 		if( UTag == "UPDATE" )
-			UpdateTimer = data.toUInt();
+		{
+			UpdateTimer = static_cast<UI32>(std::stoul(data, nullptr, 0));
+		}
 		else if( UTag == "TYPE" )
 		{
-			UData = data.upper();
+			UData = strutil::upper( data );
 			if( UData == "STATUS" )
+			{
 				Type = ETT_ONLINE;
+			}
 			else if( UData == "OFFLINE" )
+			{
 				Type = ETT_OFFLINE;
+			}
 			else if( UData == "PLAYER" )
+			{
 				Type = ETT_PLAYER;
+			}
 			else if( UData == "GUILD" )
+			{
 				Type = ETT_GUILD;
+			}
 			else if( UData == "GMSTATUS" )
+			{
 				Type = ETT_GMSTATUS;
+			}
 		}
 		else if( UTag == "INPUT" )
 		{
 			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) + "html/" + data;
 			//LOOKATME
-			InputFile = trim(fullPath).substr( 0, MAX_PATH - 1 );
+			InputFile = strutil::trim(fullPath).substr( 0, MAX_PATH - 1 );
 		}
 		else if( UTag == "OUTPUT" )
 		{
 			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_HTML ) + data;
 			//LOOKATME
-			OutputFile = trim(fullPath).substr( 0, MAX_PATH - 1 );
+			OutputFile = strutil::trim(fullPath).substr( 0, MAX_PATH - 1 );
 		}
 		else if( UTag == "NAME" )
 			Name = data;
@@ -703,13 +723,13 @@ void cHTMLTemplates::Load( void )
 {
 	for( Script *toCheck = FileLookup->FirstScript( html_def ); !FileLookup->FinishedScripts( html_def ); toCheck = FileLookup->NextScript( html_def ) )
 	{
-		if( toCheck != NULL )
+		if( toCheck != nullptr )
 		{
 			size_t NumEntries = toCheck->NumEntries();
 			if( NumEntries == 0 )
 				continue;
 
-			for( ScriptSection *found = toCheck->FirstEntry(); found != NULL; found = toCheck->NextEntry() )
+			for( ScriptSection *found = toCheck->FirstEntry(); found != nullptr; found = toCheck->NextEntry() )
 			{
 				cHTMLTemplate *Template = new cHTMLTemplate();
 				Template->Load( found );
@@ -732,7 +752,7 @@ void cHTMLTemplates::Unload( void )
 	for( size_t i = 0; i < Templates.size(); ++i )
 	{
 		delete Templates[ i ];
-		Templates[i] = NULL;
+		Templates[i] = nullptr;
 	}
 	Templates.clear();
 }
@@ -748,7 +768,7 @@ void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 	for( tIter = Templates.begin(); tIter != Templates.end(); ++tIter )
 	{
 		cHTMLTemplate *toPoll = (*tIter);
-		if( toPoll != NULL )
+		if( toPoll != nullptr )
 		{
 			if( nTemplateID == -1 || toPoll->GetTemplateType() == nTemplateID )
 				toPoll->Poll();
@@ -796,7 +816,7 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 
 		// ~25 pixel per entry
 
-		InfoGump.AddText( 40, static_cast<UI16>( 40 + (Entries-1)*25 ), cwmWorldState->ServerData()->LeftTextColour(), format( "%s (%i)", Templates[ i ]->GetName().c_str(), i ) );
+		InfoGump.AddText( 40, static_cast<UI16>( 40 + (Entries-1)*25 ), cwmWorldState->ServerData()->LeftTextColour(), strutil::format( "%s (%i)", Templates[ i ]->GetName().c_str(), i ) );
 
 		if( Entries == 5 )
 			Entries = 0;

@@ -1,15 +1,15 @@
 // STAVES AND POLEARMS
 
+// Crook - E/W
 [0x13f4]
-{ facing West
+{
 get=base_item
 name=crook
 id=0x13f4
-weight=300
+weight=200
 value=33 24
+damage=3 12
 layer=2
-lodamage=3
-hidamage=12
 hp=31 50
 spd=30
 str=10
@@ -17,37 +17,35 @@ restock=10
 movable=1
 decay=1
 good=22
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+script=4015// herding skill
 }
 
+// Crook - N/S
 [0x13f5]
-{ facing North
-get=base_item
-name=crook
+{
+get=0x13f4
 id=0x13f5
-weight=300
-value=33 24
-layer=2
-lodamage=3
-hidamage=12
-hp=31 50
-spd=30
-str=10
-restock=10
-movable=1
-decay=1
-good=22
 }
 
+// Crook - Alias
+[crook]
+{
+get=0x13f4 0x13f5
+}
+
+// Gnarled Staff - N/S
 [0x13f8]
-{ facing North
+{
 get=base_item
 name=gnarled staff
 id=0x13f8
 weight=300
 value=24 12
+damage=10 30
 layer=2
-lodamage=10
-hidamage=30
 hp=31 50
 spd=33
 str=20
@@ -57,35 +55,29 @@ decay=1
 good=22
 }
 
+// Gnarled Staff - E/W
 [0x13f9]
-{ facing West
-get=base_item
-name=gnarled staff
+{
+get=0x13f8
 id=0x13f9
-weight=300
-value=24 12
-layer=2
-lodamage=10
-hidamage=30
-hp=31 50
-spd=33
-str=20
-restock=10
-movable=1
-decay=1
-good=22
 }
 
+// Gnarled Staff - Alias
+[gnarledstaff]
+{
+get=0x13f8 0x13f9
+}
+
+// Black Staff - E/W
 [0x0df0]
-{ facing West
+{
 get=base_item
 name=black staff
 id=0x0df0
 weight=600
 value=27 24
+damage=8 33
 layer=2
-lodamage=8
-hidamage=33
 hp=31 70
 spd=35
 str=35
@@ -95,35 +87,29 @@ decay=1
 good=22
 }
 
+// Black Staff - N/S
 [0x0df1]
-{ facing North
-get=base_item
-name=black staff
+{
+get=0x0df0
 id=0x0df1
-weight=600
-value=27 24
-layer=2
-lodamage=8
-hidamage=33
-hp=31 70
-spd=35
-str=35
-restock=10
-movable=1
-decay=1
-good=22
 }
 
+// Black Staff - Alias
+[blackstaff]
+{
+get=0x0df0 0x0df1
+}
+
+// Shepherd's Crook - E/W
 [0x0e81]
-{ facing North
+{
 get=base_item
 name=shepherd's crook
 id=0x0e81
 weight=200
 value=33 24
+damage=3 12
 layer=2
-lodamage=3
-hidamage=12
 hp=31 50
 spd=30
 str=10
@@ -131,37 +117,35 @@ restock=10
 movable=1
 decay=1
 good=22
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+script=4015// herding skill
 }
 
+// Shepherd's Crook - N/S
 [0x0e82]
-{ facing West
-get=base_item
-name=shepherd's crook
+{
+get=0x0e81
 id=0x0e82
-weight=200
-value=33 24
-layer=2
-lodamage=3
-hidamage=12
-hp=31 50
-spd=30
-str=10
-restock=10
-movable=1
-decay=1
-good=22
 }
 
+// Shepherd's Crook - Alias
+[shepherdscrook]
+{
+get=0x0e81 0x0e82
+}
+
+// Quarter Staff - N/S
 [0x0e89]
-{ facing North
+{
 get=base_item
 name=quarter staff
 id=0x0e89
 weight=400
 value=30 15
+damage=8 28
 layer=2
-lodamage=8
-hidamage=28
 hp=31 60
 spd=48
 str=30
@@ -171,35 +155,29 @@ decay=1
 good=22
 }
 
+// Quarter Staff - E/W
 [0x0e8a]
-{ facing West
-get=base_item
-name=quarter staff
+{
+get=0x0e89
 id=0x0e8a
-weight=400
-value=30 15
-layer=2
-lodamage=8
-hidamage=28
-hp=31 60
-spd=48
-str=30
-restock=10
-movable=1
-decay=1
-good=22
 }
 
+// Quarter Staff - Alias
+[quarterstaff]
+{
+get=0x0e89 0x0e8a
+}
+
+// Halberd - E/W
 [0x143e]
 { facing West
 get=base_item
 name=halberd
 id=0x143e
 weight=1600
-value=40 20
+value=50 25
+damage=5 49
 layer=2
-lodamage=5
-hidamage=49
 hp=31 80
 spd=25
 str=45
@@ -209,25 +187,20 @@ decay=1
 good=22
 }
 
+// Halberd - N/S
 [0x143f]
-{ facing North
-get=base_item
-name=halberd
+{
+get=0x143e
 id=0x143f
-weight=1600
-value=40 20
-layer=2
-lodamage=5
-hidamage=49
-hp=31 80
-spd=25
-str=45
-restock=10
-movable=1
-decay=1
-good=22
 }
 
+// Halberd - Alias
+[halberd]
+{
+get=0x143e 0x143f
+}
+
+// Guard Halberd - Special halberd wielded by NPC guards
 [guardhalberd]
 { facing North
 get=base_item
@@ -235,28 +208,27 @@ name=a guard's halberd
 id=0x143f
 weight=1600
 value=40 20
+damage=75 150
 layer=2
-lodamage=75
-hidamage=150
 hp=80
 spd=60
 str=120
 restock=10
 movable=1
 decay=1
-newbie
+newbie=1
 }
 
+// Bardiche - N/S
 [0x0f4d]
-{ facing North
+{
 get=base_item
 name=bardiche
 id=0x0f4d
 weight=700
-value=56 28
+value=68 34
+damage=5 43
 layer=2
-lodamage=5
-hidamage=43
 hp=31 100
 spd=26
 str=40
@@ -266,21 +238,313 @@ decay=1
 good=22
 }
 
+// Bardiche - E/W
 [0x0f4e]
-{ facing West
-get=base_item
-name=bardiche
+{
+get=0x0f4d
 id=0x0f4e
-weight=700
-value=56 28
+}
+
+// Bardiche - Alias
+[bardiche]
+{
+get=0x0f4d 0x0f4e
+}
+
+// AGE OF SHADOWS - Stats balanced for Pub15
+
+// Scythe - E/W
+[0x26ba]
+{
+get=base_item
+name=scythe
+id=0x26ba
+weight=500
+value=43 23
+damage=5 35
 layer=2
-lodamage=5
-hidamage=43
+hp=31 105
+spd=31
+str=40
+restock=10
+decay=1
+good=21
+movable=1
+}
+
+// Scythe - N/S
+[0x26c4]
+{
+get=0x26ba
+id=0x26c4
+}
+
+// Scythe - Alias
+[scythe]
+{
+get=0x26ba 0x26c4
+}
+
+// Bladed Staff - E/W
+[0x26bd]
+{
+get=base_item
+name=bladed staff
+id=0x26bd
+weight=400
+value=45 25
+damage=4 31
+layer=2
+hp=21 115
+spd=36
+str=35
+restock=10
+decay=1
+good=21
+movable=1
+}
+
+// Bladed Staff - N/S
+[0x26c7]
+{
+get=0x26bd
+id=0x26c7
+}
+
+// Bladed Staff - Alias
+[bladedstaff]
+{
+get=0x26bd 0x26c7
+}
+
+// Double Bladed Staff - E/W
+[0x26bf]
+{
+get=base_item
+name=double bladed staff
+id=0x26bf
+weight=200
+value=46 27
+damage=3 23
+layer=2
+hp=31 80
+spd=50
+str=20
+restock=10
+decay=1
+good=22
+movable=1
+}
+
+// Double Bladed Staff - N/S
+[0x26c9]
+{
+get=0x26bf
+id=0x26c9
+}
+
+// Double Bladed Staff - Alias
+[doublebladedstaff]
+{
+get=0x26bf 0x26c9
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY - Stats balanced for Pub15
+
+// Wild Staff - N/S
+[0x2d25]
+{
+get=base_item
+name=wild staff
+id=0x2d25
+weight=700
+value=29 15
+damage=6 23
+layer=2
+hp=30 60
+spd=48
+str=15
+restock=10
+decay=1
+good=22
+movable=1
+}
+
+// Wild Staff - E/W
+[0x2d31]
+{
+get=0x2d25
+id=0x2d31
+}
+
+// Wild Staff - Alias
+[wildstaff]
+{
+get=0x2d25 0x2d31
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS - Stats balanced for Pub15
+
+// Gargish Bardiche - N/W
+[0x48b4]
+{
+get=base_item
+name=gargish bardiche
+id=0x48b4
+weight=700
+value=68 34
+damage=5 43
+layer=2
 hp=31 100
 spd=26
 str=40
 restock=10
-movable=1
 decay=1
 good=22
+movable=1
+}
+
+// Gargish Bardiche - E/W
+[0x48b5]
+{
+get=0x48b4
+id=0x48b5
+}
+
+// Gargish Bardiche - Alias
+[gargishbardiche]
+{
+get=0x48b4 0x48b5
+}
+
+// Gargish Scythe - N/S
+[0x48c4]
+{
+get=base_item
+name=gargish scythe
+id=0x48c4
+weight=500
+value=43 23
+damage=5 35
+layer=2
+hp=31 105
+spd=31
+str=40
+restock=10
+decay=1
+good=22
+movable=1
+}
+
+// Gargish Scythe - E/W
+[0x48c5]
+{
+get=0x48c4
+id=0x48c5
+}
+
+// Gargish Scythe - Alias
+[gargishscythe]
+{
+get=0x48c4 0x48c5
+}
+
+// Serpentstone Staff - N/S
+[0x0906]
+{
+get=base_item
+name=serpentstone staff
+id=0x0906
+weight=300
+value=45 25
+damage=11 32
+layer=2
+hp=31 50
+spd=31
+str=25
+restock=10
+decay=1
+good=22
+movable=1
+}
+
+// Serpentstone Staff - E/W
+[0x406f]
+{
+get=0x0906
+id=0x406f
+}
+
+// Serpentstone Staff - Alias
+[serpentstonestaff]
+{
+get=0x0906 0x406f
+}
+
+// Gargish Gnarled Staff - N/S
+[0x48b8]
+{
+get=base_item
+name=gargish gnarled staff
+id=0x48b8
+weight=300
+value=24 12
+damage=10 30
+layer=2
+hp=31 50
+spd=33
+str=20
+restock=10
+decay=1
+good=22
+movable=1
+}
+
+// Gargish Gnarled Staff - E/W
+[0x48b9]
+{
+get=0x48b8
+id=0x48b9
+}
+
+// Gargish Gnarled Staff - Alias
+[gargishgnarledstaff]
+{
+get=0x48b8 0x48b9
+}
+
+// Glass Staff - N/S
+[0x0905]
+{
+get=base_item
+name=glass staff
+id=0x0905
+weight=300
+value=16 8
+damage=7 25
+layer=2
+hp=31 70
+spd=48
+str=15
+restock=10
+decay=1
+good=22
+movable=1
+}
+
+// Glass Staff - E/W
+[0x4070]
+{
+get=0x0905
+id=0x4070
+}
+
+// Glass Staff - Alias
+[glassstaff]
+{
+get=0x0905 0x4070
 }

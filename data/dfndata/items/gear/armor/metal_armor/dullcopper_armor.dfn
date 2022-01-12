@@ -1,346 +1,463 @@
-// ringmail
+// Ringmail
 
+// DullCopper Ringmail Tunic - N/S
 [0x13eb-d]
 {
-get=ring_gloves
-name=ringmail gloves
-id=0x13eb
-color=0x973
+get=base_ring_gloves
+color=0x96e
 }
 
-[0x13ec-d]
-{ right facing
-get=ring_tunic
-name=a ringmail tunic
-id=0x13ec
-color=0x973
-}
-
-[0x13ed-d]
-{ left facing
-get=ring_tunic
-name=a ringmail tunic
-id=0x13ed
-color=0x973
-}
-
-[0x13ee-d]
-{ right facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ee
-color=0x973
-}
-
-[0x13ef-d]
-{ left facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ef
-color=0x973
-}
-
-[0x13f0-d]
-{ rightt facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f0
-color=0x973
-}
-
-[0x13f1-d]
-{ left facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f1
-color=0x973
-}
-
+// DullCopper Ringmail Gloves - E/W
 [0x13f2-d]
 {
-get=ring_gloves
-name=ringmail gloves
+get=0x13eb-d
 id=0x13f2
-color=0x973
 }
 
-// chainmail
-
-[0x13BB-d]
-{ Left facing chainmail coif
-get=chainmail_coif
-name=a chainmail coif
-id=0x13bb
-color=0x973
+// DullCopper Ringmail Gloves - Alias
+[dullcopperringmailgloves]
+{
+get=0x13eb-d 0x13f2-d
 }
 
+// DullCopper Ringmail Tunic - N/S
+[0x13ec-d]
+{ right facing
+get=base_ring_tunic
+color=0x96e
+}
+
+// DullCopper Ringmail Tunic - E/W
+[0x13ed-d]
+{
+get=0x13ec-d
+id=0x13ed
+}
+
+// DullCopper Ringmail Tunic - Alias
+[dullcopperringmailtunic]
+{
+get=0x13ec-d 0x13ed-d
+}
+
+// DullCopper Ringmail Sleeves - N/S
+[0x13ee-d]
+{ right facing
+get=base_ring_sleeves
+color=0x96e
+}
+
+// DullCopper Ringmail Sleeves - E/W
+[0x13ef-d]
+{
+get=0x13ee-d
+id=0x13ef
+}
+
+// DullCopper Ringmail Sleeves - Alias
+[dullcopperringmailsleeves]
+{
+get=0x13ee-d 0x13ef-d
+}
+
+// DullCopper Ringmail Leggings - N/S
+[0x13f0-d]
+{ right facing
+get=base_ring_leggings
+color=0x96e
+}
+
+// DullCopper Ringmail Leggings - E/W
+[0x13f1-d]
+{
+get=0x13f0-d
+id=0x13f1
+}
+
+// DullCopper Ringmail Leggings - Alias
+[dullcopperringmailleggings]
+{
+get=0x13f0-d 0x13f1-d
+}
+
+// Chainmail
+
+// DullCopper Chainmail Leggings - N/S
 [0x13be-d]
-{ left facing
-get=chainmail_leggings
-name=chainmail leggings
-id=0x13be
-color=0x973
+{
+get=base_chain_leggings
+color=0x96e
 }
 
-[0x13bf-d]
-{ left facing
-get=chainmail_tunic
-name=chainmail tunic
-id=0x13bf
-color=0x973
-}
-
-[0x13c0-d]
-{ right facing chainmail coif
-get=chainmail_coif
-name=chainmail coif
-id=0x13c0
-color=0x973
-}
-
+// DullCopper Chainmail Leggings - E/W
 [0x13c3-d]
-{ right facing
-get=chainmail_leggings
-name=chainmail leggings
+{
+get=0x13be-d
 id=0x13c3
-color=0x973
 }
 
+// DullCopper Chainmail Leggings - Alias
+[dullcopperchainmailleggings]
+{
+get=0x13be-d 0x13c3-d
+}
+
+// DullCopper Chainmail Tunic - N/S
+[0x13bf-d]
+{
+get=base_chain_tunic
+color=0x96e
+}
+
+// DullCopper Chainmail Tunic - E/W
 [0x13c4-d]
-{ right facing
-get=chainmail_tunic
-name=a chainmail tunic
+{
+get=0x13bf-d
 id=0x13c4
-color=0x973
 }
 
-// Female Plate
+// DullCopper Chainmail Tunic - Alias
+[dullcopperchainmailtunic]
+{
+get=0x13bf-d 0x13c4-d
+}
 
+// DullCopper Chainmail Coif - N/S
+[0x13BB-d]
+{
+get=base_chain_coif
+color=0x96e
+}
+
+// DullCopper Chainmail Coif - E/W
+[0x13c0-d]
+{
+get=0x13bb-d
+id=0x13c0
+}
+
+// DullCopper Chainmail Coif - Alias
+[chainmailcoif]
+{
+get=0x13bb-d 0x13c0-d
+}
+
+// Female
+
+// DullCopper Female Plate - N/S
 [0x1c04-d]
-{ left facing - Female
-get=fem_plate
-name=plate armor
-id=0x1c04
-color=0x973
+{
+get=base_fem_plate
+color=0x96e
 }
 
+// DullCopper Female Plate - E/W
 [0x1c05-d]
-{ right facing - Female
-get=fem_plate
-name=plate armor
+{
+get=0x1c04-d
 id=0x1c05
-color=0x973
+}
+
+// DullCopper Female Plate - Alias
+[dullcopperfemaleplate]
+{
+get=0x1c04-d 0x1c05-d
 }
 
 // platemail
 
+// DullCopper Platemail Arms - E/W
 [0x1410-d]
-{ left facing
-get=plate_arms
-name=platemail arms
-id=0x1410
-color=0x973
+{
+get=base_plate_arms
+color=0x96e
 }
 
+// DullCopper Platemail Arms - N/S
+[0x1417-d]
+{
+get=0x1410-d
+id=0x1417
+}
+
+// DullCopper Platemail Arms - Alias
+[dullcopperplatemailarms]
+{
+get=0x1410-d 0x1417-d
+}
+
+// DullCopper Platemail Leggings - E/W
 [0x1411-d]
-{ left facing
-get=plate_leggings
-name=platemail leggings
-id=0x1411
-color=0x973
+{
+get=base_plate_leggings
+color=0x96e
 }
 
+// DullCopper Platemail Leggings - N/S
+[0x141a-d]
+{
+get=0x1411-d
+id=0x141a
+}
+
+// Platemail Leggings - Alias
+[dullcopperplatemailleggings]
+{
+get=0x1411-d 0x141a-d
+}
+
+// DullCopper Platemail Gorget
 [0x1413-d]
 {
-get=plate_gorget
-name=a platemail gorget
-id=0x1413
-color=0x973
+get=base_plate_gorget
+color=0x96e
 }
 
+// DullCopper Platemail Gorget - Alias
+[dullcopperplatemailgorget]
+{
+get=0x1413-d
+}
+
+// DullCopper Platemail Gloves - E/W
 [0x1414-d]
-{ left facing
-get=plate_gloves
-name=platemail gloves
-id=0x1414
-color=0x973
+{
+get=base_plate_gloves
+color=0x96e
 }
 
-[0x1415-d]
-{ left facing
-get=plate_chest
-name=platemail
-id=0x1415
-color=0x973
-}
-
-[0x1417-d]
-{ right facing
-get=plate_arms
-name=platemail arms
-id=0x1417
-color=0x973
-}
-
-[0x141a-d]
-{ right facing
-get=plate_leggings
-name=platemail leggings
-id=0x141a
-color=0x973
-}
-
+// DullCopper Platemail Gloves - N/S
 [0x1418-d]
-{ right facing
-get=plate_gloves
-name=platemail gloves
+{
+get=0x1414-d
 id=0x1418
-color=0x973
 }
 
+// DullCopper Platemail Gloves - Alias
+[dullcopperplatemailgloves]
+{
+get=0x1414-d 0x1418-d
+}
+
+// DullCopper Platemail Chest - E/W
+[0x1415-d]
+{
+get=base_plate_chest
+color=0x96e
+}
+
+// DullCopper Platemail Chest - N/S
 [0x1416-d]
-{ right facing
-get=plate_chest
-name=platemail
+{
+get=0x1415-d
 id=0x1416
-color=0x973
+}
+
+// DullCopper Platemail Chest - Alias
+[dullcopperplatemailchest]
+{
+get=0x1415-d 0x1416-d
 }
 
 // helmets
 
-[0x1419-d]
-{ right facing
-get=plate_helm
-name=plate helm
-id=0x1419
-color=0x973
-}
-
-[0x1412-d]
-{ left facing
-get=plate_helm
-name=plate helm
-id=0x1412
-color=0x973
-}
-
+// DullCopper Close Helm(et) - N/S
 [0x1408-d]
-{ right facing
-get=CLOSE_HELMET
-name=close helmet
-id=0x1408
-color=0x973
+{
+get=base_close_helmet
+color=0x96e
 }
 
+// DullCopper Close Helm(et) - E/W
 [0x1409-d]
-{ left facing
-get=CLOSE_HELMET
-name=close helm
+{
+get=0x1408-d
 id=0x1409
-color=0x973
 }
 
+// DullCopper Close Helm(et) - Alias
+[dullcopperclosehelm]
+{
+get=0x1408-d 0x1409-d
+}
+
+// DullCopper Helmet - N/S
 [0x140a-d]
-{ right facing
-get=helmet
-name=helmet
-id=0x140a
-color=0x973
+{
+get=base_helmet
+color=0x96e
 }
 
+// DullCopper Helmet - E/W
 [0x140b-d]
-{ left facing
-get=helmet
-name=helmet
+{
+get=0x140a-d
 id=0x140b
-color=0x973
 }
 
+// DullCopper Helmet - Alias
+[dullcopperhelmet]
+{
+get=0x140a-d 0x140b-d
+}
+
+// DullCopper Bascinet - N/S
 [0x140c-d]
-{ right facing
-get=bascinet
-name=bascinet
-id=0x140c
-color=0x973
+{
+get=base_bascinet
+color=0x96e
 }
 
+// DullCopper Bascinet - E/W
 [0x140d-d]
-{ left facing
-get=bascinet
-name=bascinet
+{
+get=0x140c-d
 id=0x140d
-color=0x973
 }
 
+// DullCopper Bascinet - Alias
+[dullcopperbascinet]
+{
+get=0x140c-d 0x140d-d
+}
+
+// DullCopper Norse Helm - N/S
 [0x140e-d]
-{ right facing
-get=nose_helm
-name=nose helm
-id=0x140e
-color=0x973
+{
+get=base_nose_helm
+color=0x96e
 }
 
+// DullCopper Norse Helm - E/W
 [0x140f-d]
-{ left facing
-get=nose_helm
-name=nose helm
+{
+get=0x140e-d
 id=0x140f
-color=0x973
 }
 
-// shields
+// DullCopper Norse Helm - Alias
+[dullcoppernorsehelm]
+{
+get=0x140e-d 0x140f-d
+}
 
+// DullCopper Plate Helm - E/W
+[0x1412-d]
+{
+get=base_plate_helm
+color=0x96e
+}
+
+// DullCopper Plate Helm - N/S
+[0x1419-d]
+{
+get=0x1412-d
+id=0x1419
+}
+
+// DullCopper Plate Helm - Alias
+[dullcopperplatehelm]
+{
+get=0x1412-d 0x1419-d
+}
+
+// Shields
+
+// DullCopper DullCopper Shield
 [0x1b72-d]
-{ bronze shield
-get=bronze_shield
-name=bronze shield
-id=0x1b72
-color=0x973
+{
+get=base_dullcopper_shield
+color=0x96e
 }
 
+// DullCopper DullCopper Shield - Alias
+[dullcopperdullcoppershield]
+{
+get=0x1b72-d
+}
+
+// DullCopper Buckler
 [0x1b73-d]
-{ Buckler
-get=buckler
-name=buckler
-id=0x1b73
-color=0x973
+{
+get=base_buckler
+color=0x96e
 }
 
+// DullCopper Buckler - Alias
+[dullcopperbuckler]
+{
+get=0x1b73-d
+}
+
+// DullCopper Metal Kite Shield - N/S
 [0x1b74-d]
-{ kite shield
-get=metal_kite_shield
-name=kite shield
-id=0x1b74
-color=0x973
+{
+get=base_metal_kite_shield
+color=0x96e
 }
 
+// DullCopper Metal Kite Shield - E/W
+[0x1b75-d]
+{
+get=0x1b74-d
+id=0x1b75
+}
 
+// Metal Kite Shield - Alias
+[dullcoppermetalkiteshield]
+{
+get=0x1b74-d 0x1b75-d
+}
+
+// DullCopper Heater Shield - N/S
 [0x1b76-d]
-{ heater shield
-get=heater_shield
-name=heater shield
-id=0x1b76
-color=0x973
+{
+get=base_heater_shield
+color=0x96e
 }
 
-[0x1b78-d]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b78
-color=0x973
+// DullCopper Heater Shield - E/W
+[0x1b77-d]
+{
+get=0x1b76-d
+id=0x1b77
 }
 
-[0x1b79-d]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b79
-color=0x973
+// DullCopper Heater Shield - Alias
+[dullcopperheatershield]
+{
+get=0x1b76-d 0x1b77-d
 }
 
+// DullCopper Metal Shield
 [0x1b7b-d]
-{ Metal shield
-get=metal_shield
-name=metal shield
-id=0x1b7b
-color=0x973
+{
+get=base_metal_shield
+color=0x96e
+}
+
+// DullCopper Metal Shield - Alias
+[dullcoppermetalshield]
+{
+get=0x1b7b-d
+}
+
+// Kite Shield (wooden) - N/S
+[0x1b78-d]
+{
+get=base_wooden_kite_shield
+color=0x96e
+}
+
+// Kite Shield (wooden) - E/W
+[0x1b79-d]
+{
+get=0x1b78-d
+id=0x1b79
+}
+
+// Kite Shield (wooden) - Alias
+[dullcopperwoodenkiteshield]
+{
+get=0x1b78-d 0x1b79-d
 }

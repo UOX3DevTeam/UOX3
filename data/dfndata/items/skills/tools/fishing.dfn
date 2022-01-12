@@ -9,6 +9,9 @@ restock=20
 decay=1
 good=54
 layer=0x02
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x0dc0]
@@ -22,6 +25,44 @@ restock=20
 decay=1
 good=54
 layer=0x02
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+}
+
+[specialfishingnet]
+{
+get=base_item
+name=special fishing net
+id=0x0dca
+colorlist=30
+weight=1500
+value=15 7
+restock=20
+decay=1
+good=54
+movable=1
+morey=1
+morez=2
+script=4013
+custominttag=fabledNet 1
+}
+
+[fabledfishingnet]
+{
+get=base_item
+name=fabled fishing net
+id=0x0dca
+color=0x0481
+weight=1500
+value=15 7
+restock=20
+decay=1
+good=54
+movable=1
+morey=1
+morez=2
+script=4013
 }
 
 [0x0dc8]

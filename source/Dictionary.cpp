@@ -55,26 +55,36 @@ SI32 CDictionary::LoadDictionary( void )
 	if( FileExists( PathToDictionary ) )
 	{
 		Script *dictData = new Script( PathToDictionary, NUM_DEFS, false );
-		if( dictData != NULL )
+		if( dictData != nullptr )
 		{
-			ScriptSection *dictSect = NULL;
-			UString tag, data;
-			for( dictSect = dictData->FirstEntry(); dictSect != NULL; dictSect = dictData->NextEntry() )
+			ScriptSection *dictSect = nullptr;
+			std::string tag, data;
+			for( dictSect = dictData->FirstEntry(); dictSect != nullptr; dictSect = dictData->NextEntry() )
 			{
-				if( dictSect != NULL )
+				if( dictSect != nullptr )
 				{
-					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )	// verify it is a dictionary entry
+					// verify it is a dictionary entry
+					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )
+					{
 						continue;
+					}
 					for( tag = dictSect->First(); !dictSect->AtEnd(); tag = dictSect->Next() )
 					{
 						data					= dictSect->GrabData();
-						Text2[tag.toUInt()]	= data.stripWhiteSpace();
-						++count;
+						if( data != "" )
+						{
+							Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = strutil::trim( strutil::removeTrailing( data, "//" ));
+							++count;
+						}
+						else
+						{
+							Console.warning( strutil::format( "Entry with tag %s in %s dictionary has no value!", tag.c_str(), Language.c_str() ));
+						}
 					}
 				}
 			}
 			delete dictData;
-			dictData = NULL;
+			dictData = nullptr;
 		}
 		IsValid = true;
 		Console.print( " " );
@@ -83,7 +93,9 @@ SI32 CDictionary::LoadDictionary( void )
 		Console.PrintSpecial( CGREEN, "loaded" );
 	}
 	else
+	{
 		count = dictCANTOPEN;
+	}
 
 	return count;
 }
@@ -128,7 +140,7 @@ std::string CDictionary::GetEntry( const SI32 Num )
 		if( toFind != Text2.end() )
 			rvalue = toFind->second;
 		else
-			Console.warning( format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
+			Console.warning( strutil::format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
 	}
 	return rvalue;
 }
@@ -136,7 +148,7 @@ std::string CDictionary::GetEntry( const SI32 Num )
 CDictionaryContainer::CDictionaryContainer() : defaultLang( ZERO )
 {
 	std::string buildName;
-	for( UI16 i = (UI16)DL_UNKNOWN; i < (UI16)DL_COUNT; ++i )
+	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
 	{
 		buildName = cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES ) + "dictionary." + DistinctLanguageNames[i];
 		dictList[i] = new CDictionary( buildName, DistinctLanguageNames[i] );
@@ -146,7 +158,7 @@ CDictionaryContainer::CDictionaryContainer() : defaultLang( ZERO )
 CDictionaryContainer::CDictionaryContainer( const std::string& filepath ) : defaultLang( ZERO )
 {
 	std::string buildName;
-	for( UI16 i = (UI16)DL_UNKNOWN; i < (UI16)DL_COUNT; ++i )
+	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
 	{
 		buildName = filepath + "dictionary." + DistinctLanguageNames[i];
 		dictList[i] = new CDictionary( buildName, DistinctLanguageNames[i] );
@@ -155,14 +167,14 @@ CDictionaryContainer::CDictionaryContainer( const std::string& filepath ) : defa
 
 CDictionaryContainer::~CDictionaryContainer()
 {
-	for( UI16 i = (UI16)DL_UNKNOWN; i < (UI16)DL_COUNT; ++i )
+	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
 		delete dictList[i];
 }
 
 SI32 CDictionaryContainer::LoadDictionary( void )
 {
 	SI32 rvalue = 0;
-	for( UI16 i = (UI16)DL_UNKNOWN; i < (UI16)DL_COUNT; ++i )
+	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
 	{
 		dictList[i]->LoadDictionary();
 	}
@@ -182,11 +194,21 @@ std::string CDictionaryContainer::operator[]( const SI32 Num )
 
 std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes toDisp )
 {
+	std::string RetVal;
+	if( cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT ) // defaultServerLang != DL_DEFAULT )
+	{
+		// If a default server language has been specified in uox.ini, force the use of that language
+		RetVal = dictList[cwmWorldState->ServerData()->ServerLanguage()]->GetEntry( Num );
+		if( RetVal.empty() ) // If the entry wasn't found, try the ZERO before we flat out return null
+			RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
+
+		return RetVal;
+	}
+
 	auto typetouse = toDisp ;
 	if ((static_cast<SI32>(toDisp) < 0) || (static_cast<SI32>(toDisp)>= UnicodeTypes::TOTAL_LANGUAGES)){
 		typetouse = ZERO ;
 	}
-	std::string RetVal;
 	const DistinctLanguage mLanguage = LanguageCodesLang[typetouse];
 
 	if( mLanguage < DL_COUNT )
@@ -202,3 +224,4 @@ void CDictionaryContainer::SetDefaultLang( const UnicodeTypes newType )
 	if( dictList[LanguageCodesLang[newType]]->GetValid() )
 		defaultLang = newType;
 }
+

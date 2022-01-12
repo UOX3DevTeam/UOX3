@@ -17,7 +17,7 @@ cEffects *Effects;
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 {
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -62,7 +62,7 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 		if( baseObj->GetObjType() == OT_CHAR )
 		{
 			CSocket *mSock = (static_cast<CChar *>(baseObj))->GetSocket();
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->Send( &toSend );
 		}
 	}
@@ -86,7 +86,7 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 	{
 		UI16 effectID = 0x0042;
 		CBaseObject *getCont = item->GetCont();
-		if( getCont != NULL )
+		if( getCont != nullptr )
 		{
 			if( getCont->GetObjType() == OT_ITEM )
 			{
@@ -191,9 +191,9 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
-		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -217,7 +217,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 			return;
 
 		//Play creature sounds, but add a small chance that they won't, to give players a break every now and then
-		UI08 soundChance = RandomNum( static_cast<size_t>(0), inrange.size() + 9  );
+		UI08 soundChance = static_cast<UI08>(RandomNum( static_cast<size_t>(0), inrange.size() + 9  ));
 		if( soundChance > 5 )
 		{
 			basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
@@ -262,32 +262,64 @@ void cEffects::doSocketMusic( CSocket *s )
 {
 	SI32 i = 0;
 	char musicArray[50];
-	UString sect;
+	std::string sect;
 
 	CChar *mChar = s->CurrcharObj();
 
-	CTownRegion *mReg = mChar->GetRegion();
-	if( mReg == NULL )
-		return;
+	CTownRegion *mReg = nullptr;
+
+	// Fetch subregion player is in, if any
+	auto subRegionNum = mChar->GetSubRegion();
+	if( subRegionNum != 0 )
+	{
+		if( cwmWorldState->townRegions.find( subRegionNum ) != cwmWorldState->townRegions.end() )
+		{
+			mReg = cwmWorldState->townRegions[subRegionNum];
+		}
+	}
+
+	if( mReg == nullptr )
+	{
+		// Otherwise, fetch the actual region player is in
+		mReg = mChar->GetRegion();
+		if( mReg == nullptr )
+		{
+			return;
+		}
+	}
 
 	UI16 musicList = mReg->GetMusicList();
 	if( musicList == 0 )
+	{
 		return;
+	}
 
-	if( mChar->IsAtWar() )
+	if( mChar->IsDead() )
+	{
+		sect = "MUSICLIST DEATH";
+	}
+	else if( mChar->IsAtWar() )
+	{
 		sect = "MUSICLIST COMBAT";
+	}
 	else
-		sect = std::string("MUSICLIST ") + str_number( musicList );
+	{
+		sect = std::string("MUSICLIST ") + strutil::number( musicList );
+	}
 
 	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
-	if( MusicList == NULL )
+	if( MusicList == nullptr )
+	{
 		return;
-	UString data;
-	for( UString tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
+	}
+	std::string data;
+	for( std::string tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
 	{
 		data = MusicList->GrabData();
-		if( tag.upper() == "MUSIC" )
-			musicArray[i++] = data.toByte();
+		if( strutil::upper( tag ) == "MUSIC" )
+		{
+			musicArray[i++] = static_cast<SI08>(std::stoi(data, nullptr, 0));
+		}
 	}
 	if( i != 0 )
 	{
@@ -309,6 +341,9 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 	if( mChar->GetVisible() != VT_VISIBLE || ( mChar->IsGM() || mChar->IsCounselor() ))
 		return;
 
+	if( mChar->IsFlying() ) // No footstep sounds for flying gargoyles
+		return;
+
 	enum TileType
 	{
 		TT_NORMAL = 0,
@@ -320,58 +355,29 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 	};
 	TileType tileType = TT_NORMAL;
 
-	bool onHorse = false;
-	if( mChar->IsOnHorse() )
-		onHorse = true;
-
-	bool isRunning = false;
-	if( mChar->GetRunning() > 0 )
-		isRunning = true;
+	bool onHorse = mChar->IsOnHorse();
+	bool isRunning = ( mChar->GetRunning() > 0 );
 
 	CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 	Static_st *stat = msi.Next();
 
 	if( stat )
 	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		CTile& tile = Map->SeekTile( stat->itemid );
+		if( tile.CheckFlag( TF_WET ) )
+			tileType = TT_WATER;
+		else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
 		{
-			//7.0.9.0 data and later
-			CTileHS& tile = Map->SeekTileHS( stat->itemid );
-			if( tile.CheckFlag( TF_WET ) )
-				tileType = TT_WATER;
-			else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
-			{
-				char search1[10];
-				strcpy( search1, "wood" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_WOODEN;
-				strcpy( search1, "ston" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_STONE;
-				strcpy( search1, "gras" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_GRASS;
-			}
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			CTile& tile = Map->SeekTile( stat->itemid );
-			if( tile.CheckFlag( TF_WET ) )
-				tileType = TT_WATER;
-			else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
-			{
-				char search1[10];
-				strcpy( search1, "wood" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_WOODEN;
-				strcpy( search1, "ston" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_STONE;
-				strcpy( search1, "gras" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_GRASS;
-			}
+			char search1[10];
+			strcpy( search1, "wood" );
+			if( strstr( tile.Name(), search1 ) )
+				tileType = TT_WOODEN;
+			strcpy( search1, "ston" );
+			if( strstr( tile.Name(), search1 ) )
+				tileType = TT_STONE;
+			strcpy( search1, "gras" );
+			if( strstr( tile.Name(), search1 ) )
+				tileType = TT_GRASS;
 		}
 	}
 
@@ -401,10 +407,11 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 				case TT_STONE: // stone
 					soundID = 0x0130;
 					break;
-				case TT_OTHER: // other
 				case TT_WOODEN: // wooden
 					soundID = 0x0123;
 					break;
+				case TT_OTHER: // other
+					[[fallthrough]];
 				case TT_GRASS: // grass
 					soundID = 0x012D;
 					break;
@@ -433,10 +440,11 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 				case TT_STONE: // stone
 					soundID = 0x012F;
 					break;
-				case TT_OTHER: // other
 				case TT_WOODEN: // wooden
 					soundID = 0x0122;
 					break;
+				case TT_OTHER: // other
+					[[fallthrough]];
 				case TT_GRASS: // grass
 					soundID = 0x012E;
 					break;
@@ -455,7 +463,7 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 
 	if( soundID )			// if we have a valid sound
 	{
-		if( mSock == NULL && ValidateObject( mChar ) )
+		if( mSock == nullptr && ValidateObject( mChar ) )
 		{
 			// It's an NPC!
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );

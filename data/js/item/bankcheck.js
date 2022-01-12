@@ -1,10 +1,10 @@
 // Bank Checks (by Xuri)
-// v1.01
-// Last Updated: 4. November 2020
+// v1.02
+// Last Updated: 5. July 2021
 
 function onUseChecked( pUser, iUsed )
 {
-	var bankBox = pUser.FindItemLayer( 29 );
+	var bankBox = pUser.FindItemLayer(29);
 	if( ValidateObject( bankBox ) && iUsed.container && iUsed.container.serial == bankBox.serial )
 	{
 		var checkSize = iUsed.GetTag( "CheckSize" );
@@ -49,10 +49,10 @@ function onUseChecked( pUser, iUsed )
 			var newGoldPile = CreateDFNItem( pUser.socket, pUser, "0x0EED", checkSize, "ITEM", false );
 			newGoldPile.container = bankBox;
 		}
-		pUser.TextMessage( "Gold was deposited in your account: " + checkSize, false, 0x096a );
+		pUser.TextMessage( GetDictionaryEntry( 2703, pUser.socket ) + " " + checkSize, false, 0x096a ); // Gold was deposited in your account:
 		iUsed.Delete();
 	}
 	else
-		pUser.SysMessage( "That must be in your bank box to use it." );
+		pUser.SysMessage( GetDictionaryEntry( 2702, pUser.socket )); // That must be in your bank box to use it.
 	return false;
 }

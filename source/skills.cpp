@@ -18,10 +18,12 @@
 #include "movement.h"
 #include "StringUtility.hpp"
 #include "weight.h"
+#include <algorithm>
+
 
 bool checkItemRange( CChar *mChar, CItem *i );
 
-cSkills *Skills = NULL;
+cSkills *Skills = nullptr;
 
 const UI16 CREATE_MENU_OFFSET = 5000;	// This is how we differentiate a menu button from an item button (and the limit on ITEM=# in create.dfn)
 
@@ -46,9 +48,9 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		rk_range = skillMake.maxRank - skillMake.minRank;
 		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
 		if( sk_range <= 0 )
-			rank = skillMake.minRank;
+			sk_range = skillMake.minRank * 10;
 		else if( sk_range >= 1000 )
-			rank = skillMake.maxRank;
+			sk_range = skillMake.maxRank * 10;
 		randnum = static_cast<R32>(RandomNum( 0, 999 ));
 		if( randnum <= sk_range )
 			rank = skillMake.maxRank;
@@ -79,7 +81,8 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 	char tmpmsg[512];
 	*tmpmsg='\0';
 
-	if( cwmWorldState->ServerData()->RankSystemStatus() )
+	// Only apply rank system if enabled in ini, and only for non-pileable items!
+	if( cwmWorldState->ServerData()->RankSystemStatus() && !c->isPileable() )
 	{
 		c->SetRank( rank );
 
@@ -95,6 +98,13 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetBuyValue() > 0 )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
+		if( c->GetMaxUses() > 0 )
+			c->SetUsesLeft( static_cast<UI16>(( rank * c->GetMaxUses() ) / 10 ));
+		if( c->GetID() == 0x22c5 && c->GetMaxHP() > 0 ) // Runebook
+		{
+			// Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10 based on rank
+			c->SetMaxHP( static_cast<UI16>( std::max( static_cast<UI16>(5), static_cast<UI16>(( rank * c->GetMaxHP() ) / 10 ))));
+		}
 
 		// Convert item's rank to a value between 1 and 10, to fit rank system messages
 		UI08 tempRank = floor(static_cast<R32>((( rank * 100 ) / maxrank ) / 10 ));
@@ -103,7 +113,6 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			s->sysmessage( 783 + tempRank );
 		else if( tempRank < 1 )
 			s->sysmessage( 784 );
-
 	}
 	else
 		c->SetRank( rank );
@@ -141,23 +150,23 @@ void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 //o-----------------------------------------------------------------------------------------------o
 void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 {
-	if( targRegion == NULL || !ValidateObject( mChar ) )
+	if( targRegion == nullptr || !ValidateObject( mChar ) )
 		return;
 
 	const UI16 getSkill			= mChar->GetSkill( MINING );
 	const SI32 findOreChance	= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
 	SI32 sumChance				= 0;
 	bool oreFound				= false;
-	const orePref *toFind		= NULL;
-	const miningData *found		= NULL;
+	const orePref *toFind		= nullptr;
+	const miningData *found		= nullptr;
 	for( size_t currentOre = 0; currentOre < targRegion->GetNumOrePreferences(); ++currentOre )
 	{
 		toFind = targRegion->GetOrePreference( currentOre );
-		if( toFind == NULL )
+		if( toFind == nullptr )
 			continue;
 
 		found = toFind->oreIndex;
-		if( found == NULL )
+		if( found == nullptr )
 			continue;
 
 		sumChance += toFind->percentChance;
@@ -176,7 +185,7 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 				{
 					const std::string oreName = found->name + " ore";
 					oreItem->SetName( oreName );
-					if( oreItem->GetCont() != NULL )
+					if( oreItem->GetCont() != nullptr )
 						mSock.sysmessage( 982, oreName.c_str() );
 				}
 				oreFound = true;
@@ -221,45 +230,20 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
 					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+					for( Static_st *stat = msi.Next(); stat != nullptr; stat = msi.Next() )
 					{
-						//7.0.9.0 data and later
-						for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
-						{
-							CTileHS& tile = Map->SeekTileHS( stat->itemid );
-							if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
-								return true;
-						}
-					}
-					else
-					{
-						//7.0.8.2 data and earlier
-						for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
-						{
-							CTile& tile = Map->SeekTile( stat->itemid );
-							if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
-								return true;
-						}
+						CTile& tile = Map->SeekTile( stat->itemid );
+						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
+							return true;
 					}
 				}
 				else		// or it could be a map only
 				{
 					// manually calculating the ID's if a maptype
 					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-					{
-						//7.0.9.0 tiledata and later
-						CLandHS& land = Map->SeekLandHS( map1.id );
-						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
-							return true;
-					}
-					else
-					{
-						//7.0.8.2 tiledata and earlier
-						CLand& land = Map->SeekLand( map1.id );
-						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
-							return true;
-					}
+					CLand& land = Map->SeekLand( map1.id );
+					if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
+						return true;
 				}
 			}
 			break;
@@ -289,7 +273,7 @@ void cSkills::Mine( CSocket *s )
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
 		if( !checkItemRange( mChar, tempObj ) )
@@ -328,8 +312,6 @@ void cSkills::Mine( CSocket *s )
 		return;
 	}
 
-	mSock.SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-
 	const UI08 targetID1 = mSock.GetByte( 17 );
 	const UI08 targetID2 = mSock.GetByte( 18 );
 
@@ -362,10 +344,15 @@ void cSkills::Mine( CSocket *s )
 		mSock.sysmessage( 802 );
 		return;
 	}
-	if( mChar->IsOnHorse() != 0 )	// do action and sound
-		Effects->PlayCharacterAnimation( mChar, 0x1A );
-	else
-		Effects->PlayCharacterAnimation( mChar, 0x0B );
+
+	// do action and sound
+	if( mChar->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
+		Effects->PlayNewCharacterAnimation( mChar, N_ACT_ATT, S_ACT_1H_BASH ); // action 0x00, subAction 0x03
+	else if( mChar->IsOnHorse() ) // Human/Elf, mounted, pre-v7.0.0.0
+		Effects->PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H, 0, 5 ); // 0x1A
+	else // Human/Elf, on foot, pre-v7.0.0.0
+		Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH, 0, 7 ); // 0x0B
 
 	Effects->PlaySound( &mSock, 0x0125, true );
 
@@ -380,7 +367,7 @@ void cSkills::Mine( CSocket *s )
 #endif
 
 		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber(), mChar->GetInstanceID() );
-		if( targetReg == NULL )
+		if( targetReg == nullptr )
 			return;
 
 		MakeOre( mSock, mChar, targetReg );
@@ -403,15 +390,20 @@ void cSkills::GraveDig( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	SI16	nFame;
-	CItem *	nItemID = NULL;
+	CItem *	nItemID = nullptr;
 
 	CChar *nCharID = s->CurrcharObj();
-	Karma( nCharID, NULL, -2000 ); // Karma loss no lower than the -2 pier
+	Karma( nCharID, nullptr, -2000 ); // Karma loss no lower than the -2 pier
 
-	if( nCharID->IsOnHorse() )
-		Effects->PlayCharacterAnimation( nCharID, 0x1A );
-	else
-		Effects->PlayCharacterAnimation( nCharID, 0x0b );
+	// do action and sound
+	if( nCharID->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientType() >= CV_SA2D )))
+		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
+	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
+		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H, 0, 5 ); // Action 0x1A
+	else // Human/Elf, on foot
+		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH, 0, 7 ); // Action 0x0B
+
 	Effects->PlaySound( s, 0x0125, true );
 	if( !CheckSkill( nCharID, MINING, 0, 800 ) )
 	{
@@ -420,12 +412,18 @@ void cSkills::GraveDig( CSocket *s )
 	}
 
 	nFame = nCharID->GetFame();
-	if( nCharID->IsOnHorse() )
-		Effects->PlayCharacterAnimation( nCharID, 0x1A );
-	else
-		Effects->PlayCharacterAnimation( nCharID, 0x0B );
+
+	// do action and sound (again?)
+	if( nCharID->GetBodyType() == BT_GARGOYLE 
+		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( nCharID->GetSocket() == nullptr || nCharID->GetSocket()->ClientType() >= CV_SA2D )))
+		Effects->PlayNewCharacterAnimation( nCharID, N_ACT_ATT, S_ACT_1H_BASH ); // Action 0x00, subAction 0x03
+	else if( nCharID->IsOnHorse() ) // Human/Elf, mounted
+		Effects->PlayCharacterAnimation( nCharID, ACT_MOUNT_ATT_1H, 0, 5 ); // Action 0x1A
+	else // Human/Elf, on foot
+		Effects->PlayCharacterAnimation( nCharID, ACT_ATT_1H_BASH, 0, 7 ); // Action 0x0B
+
 	Effects->PlaySound( s, 0x0125, true );
-	CChar *spawnCreature = NULL;
+	CChar *spawnCreature = nullptr;
 	switch( RandomNum( 0, 12 ) )
 	{
 		case 2:
@@ -434,7 +432,7 @@ void cSkills::GraveDig( CSocket *s )
 			break;
 		case 4:
 			nItemID = Items->CreateRandomItem( s, "diggingarmor" ); // Armor and shields - Random
-			if( nItemID == NULL )
+			if( nItemID == nullptr )
 				break;
 			if( nItemID->GetID() >= 7026 && nItemID->GetID() <= 7035 )
 				s->sysmessage( 807 );
@@ -482,7 +480,7 @@ void cSkills::GraveDig( CSocket *s )
 				s->sysmessage( 813 );
 			break;
 	}
-	if( spawnCreature != NULL )
+	if( spawnCreature != nullptr )
 		spawnCreature->SetLocation( nCharID );
 }
 
@@ -500,15 +498,28 @@ void cSkills::SmeltOre( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *chr			= s->CurrcharObj();
 	CItem *itemToSmelt	= static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	CItem *forge		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our forge
+
+	if( itemToSmelt->isHeldOnCursor() )
+	{
+		s->sysmessage( 400 ); // That is too far away!
+		return;
+	}
 
 	if( ValidateObject( forge ) )					// if we have a forge
 	{
-		if( !objInRange( chr, forge, DIST_NEARBY ) || !checkItemRange( chr, itemToSmelt ) ) // Check if forge & item to melt are in range
+		CItem *playerPack = chr->GetPackItem();
+		if( ValidateObject( playerPack ) )
 		{
-			s->sysmessage( 400 ); // That is too far away!
-			return;
+			if( FindRootContainer( itemToSmelt ) != playerPack && FindRootContainer( forge ) != playerPack )
+			{
+				if( !objInRange( chr, forge, DIST_NEARBY ) || !checkItemRange( chr, itemToSmelt ) ) // Check if forge & item to melt are in range
+				{
+					s->sysmessage( 400 ); // That is too far away!
+					return;
+				}
+			}
 		}
 
 		UI16 smeltItemID = itemToSmelt->GetID();
@@ -576,7 +587,7 @@ void cSkills::SmeltOre( CSocket *s )
 						return;	
 					}
 				}
-				else if( forge->GetCont() != NULL )
+				else if( forge->GetCont() != nullptr )
 				{
 					if( ( newTargetWeight + forge->GetCont()->GetWeight() - subtractWeight ) > 200000 ) // 2000 stones
 					{
@@ -644,7 +655,7 @@ void cSkills::SmeltOre( CSocket *s )
 				{
 					UI16 targColour		= itemToSmelt->GetColour();
 					miningData *oreType	= FindOre( targColour );
-					if( oreType == NULL )
+					if( oreType == nullptr )
 					{
 						s->sysmessage( 814 ); // That material is foreign to you.
 						return;
@@ -691,8 +702,8 @@ void cSkills::SmeltOre( CSocket *s )
 					}
 
 					CItem *ingot = Items->CreateScriptItem( s, chr, "0x1BF2", ingotNum, OT_ITEM, true, oreType->colour );
-					if( ingot != NULL ){
-						ingot->SetName( format("%s Ingot", oreType->name.c_str() ) );
+					if( ingot != nullptr ){
+						ingot->SetName( strutil::format("%s Ingot", oreType->name.c_str() ) );
 					}
 
 					if( smeltItemID == 0x19B7 && itemToSmelt->GetAmount() % 2 != 0 )
@@ -720,21 +731,89 @@ void cSkills::SmeltOre( CSocket *s )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
+//|	Function	-	UI16 cSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate a player's chance (returned as value between 0 to 1000) of controlling 
+//|					(having commands accepted) a follower
+//o-----------------------------------------------------------------------------------------------o
+UI16 cSkills::CalculatePetControlChance( CChar *mChar, CChar *Npc )
+{
+	SI16 petOrneriness = static_cast<SI16>(Npc->GetOrneriness());
+	
+	// If difficulty to control is below a certain treshold (29.1) or it's a summoned creature, 100% chance to control creature
+	if(( petOrneriness == 0 && Npc->GetTaming() <= 291 ) || petOrneriness <= 291 || Npc->IsDispellable() )
+		return static_cast<SI16>(1000);
+
+	// TODO: Check if NPC can be tamed via necromancer Dark Wolf Familiar
+	//if( petOrneriness > 249 && CheckFamiliarMastery( mChar, Npc ))
+		//toTame = 249;
+
+	// Fetch player's skill values (with modifiers)
+	SI16 tamingSkill	= static_cast<SI16>(mChar->GetSkill( TAMING ));
+	SI16 loreSkill		= static_cast<SI16>(mChar->GetSkill( ANIMALLORE ));
+
+	SI16 bonusChance	= 0;
+	SI16 totalChance	= 700; // base chance of success
+	SI16 tamingSkillMod	= 6;
+	SI16 animalLoreMod	= 6;
+
+	// Base bonuses based on skill vs orneriness
+	SI16 tamingSkillBonus = static_cast<SI16>(tamingSkill - petOrneriness);
+	SI16 animalLoreBonus = static_cast<SI16>(loreSkill - petOrneriness);
+
+	// Calculated bonus modifiers
+	if( tamingSkillBonus < 0 )
+		tamingSkillMod = 28;
+	if( animalLoreBonus < 0 )
+		animalLoreMod= 14;
+
+	tamingSkillBonus *= tamingSkillMod;
+	animalLoreBonus *= animalLoreMod;
+
+	// Bonus chance equals average of bonuses for tamingskill and animallore
+	bonusChance = static_cast<SI16>(( tamingSkillBonus + animalLoreBonus ) / 2);
+	totalChance += bonusChance;
+
+	// Modify chance based on NPCs loyalty (or lack thereof)
+	totalChance -= ( Npc->GetMaxLoyalty() - Npc->GetLoyalty() ) * 10;
+
+	// Finally, apply a 15% penalty to chance for friends of the pet trying to control
+	if( Npcs->checkPetFriend( mChar, Npc ) )
+	{
+		totalChance -= ( totalChance * 0.15 );
+	}
+
+	// Clamp lower chance to 20% and upper chance to 99%
+	totalChance = std::clamp(totalChance, static_cast<SI16>(200), static_cast<SI16>(990));
+
+	return static_cast<UI16>(totalChance);
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to check a players skill based on the highskill and lowskill it was called
 //|					with.  If skill is < than lowskill check will fail, but player will gain in the
 //|					skill, if the players skill is > than highskill player will not gain
 //o-----------------------------------------------------------------------------------------------o
-bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
+bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill )
 {
 	bool skillCheck		= false;
-	const UI16 scpNum	= s->GetScriptTrigger();
-	cScript *tScript	= JSMapping->GetScript( scpNum );
 	bool exists			= false;
-
-	if( tScript != NULL )
-		exists = tScript->OnSkillCheck( s, sk, lowSkill, highSkill );
+	std::vector<UI16> scriptTriggers = s->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// If script returns true/1, allows skillcheck to proceed, but also prevents other scripts with event from running
+			if( toExecute->OnSkillCheck( s, sk, lowSkill, highSkill, isCraftSkill ) == 1 )
+			{
+				exists = true;
+				break;
+			}
+		}
+	}
 
 	// o----------------------------------------------------------------------------o
 	// | 15 March, 2002																|
@@ -757,7 +836,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 
 	if( !exists )
 	{
-		SI32 chanceskillsuccess = 0;
+		R32 chanceSkillSuccess = 0;
 
 		if( ( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) <= lowSkill )
 			return false;
@@ -765,27 +844,49 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		if( s->IsDead() )
 		{
 			CSocket *sSock = s->GetSocket();
-			sSock->sysmessage( 1487 );
+			sSock->sysmessage( 1487 ); // You are dead and cannot gain skill.
 			return false;
 		}
 
 		if( s->GetSkill( sk ) >= highSkill )
 			return true;
 
+		// Calculate base chance of success at using a skill
+		chanceSkillSuccess = ( static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill ));
+		if( isCraftSkill )
+		{
+			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill )) * 1000;
+			chanceSkillSuccess += 500; // Base starting chance for crafting skills when player's skill is over lowSkill
+		}
+		else
+		{
+			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill ));
+		}
+		chanceSkillSuccess = std::min( static_cast<R32>( 1000 ), chanceSkillSuccess ); // Cap chance of success at 1000 (100.0%)
 
-		chanceskillsuccess = (SI32)( (R32)( ( (R32)( s->GetSkill( sk ) - lowSkill ) / 1000.0f ) +
-										   (R32)( (R32)( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 100000.0f ) +
-										   (R32)( (R32)( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 100000.0f ) +
-										   (R32)( (R32)( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence  ) / 100000.0f ) ) * 1000 );
+		if( cwmWorldState->ServerData()->StatsAffectSkillChecks() )
+		{
+			// Modify base chance of success with bonuses from stats, if this feature is enabled in ini
+			chanceSkillSuccess += static_cast<R32>( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 1000.0f;
+			chanceSkillSuccess += static_cast<R32>( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 1000.0f;
+			chanceSkillSuccess += static_cast<R32>( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence ) / 1000.0f;
+		}
 
-		// chanceskillsuccess is a number between 0 and 1000, lets throw the dices now
-		if( s->GetCommandLevel() > 0 )
+		// If player's command-level is equal to Counselor or higher, pass the skill-check automatically
+		// Same if chance of success is 100% already - no need to proceed!
+		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
 			skillCheck = true;
 		else
-			skillCheck = ( chanceskillsuccess >= RandomNum( 0, UOX_MIN( 1000, (highSkill+100) ) ) );
+		{
+			// Generate a random number between 0 and highSkill (if less than 1000) or 1000 (if higher than 1000)
+			SI16 rnd = RandomNum( 0, std::min( 1000, ( highSkill + 100 )));
+
+			// Compare to chanceOfSkillSuccess to see if player succeeds!
+			skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
+		}
 
 		CSocket *mSock = s->GetSocket();
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			bool mageryUp = true;
 			mageryUp = ( mSock->CurrentSpellType() == 0 );
@@ -794,6 +895,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 			{
 				if( sk != MAGERY || mageryUp )
 				{
+					// Advance player's skill based on result of skillCheck
 					if( AdvanceSkill( s, sk, skillCheck ) )
 					{
 						updateSkillLevel( s, sk );
@@ -826,8 +928,9 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	UI08 toDec				= 0xFF;
 	UI08 counter			= 0;
 	CSocket *mSock			= c->GetSocket();
-	const UI16 skillTrig	= c->GetScriptTrigger();
-	cScript *scpSkill		= JSMapping->GetScript( skillTrig );
+
+	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+
 	UI08 amtToGain			= 1;
 	if( success )
 		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
@@ -835,16 +938,38 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 
 	if( c->IsNpc() )
 	{
-		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-		if( scpSkill != NULL )
+		// Check for existence of onSkillGain event for NPC
+		for( auto scriptTrig : scriptTriggers )
 		{
-			if( !scpSkill->OnSkillGain( c, sk ) )
-				scpSkill->OnSkillChange( c, sk );
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				// If retVal is -1, event doesn't exist in script
+				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+				// If retVal is 1, event exists, proceed with hard code/other scripts
+				if( !toExecute->OnSkillGain( c, sk, amtToGain ) )
+				{
+					return;
+				}
+			}
+		}
+
+		// Increase base skill of NPC
+		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+
+		// Check for existence of onSkillChange event for NPC
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				toExecute->OnSkillChange( c, sk, amtToGain );
+			}
 		}
 		return;
 	}
 
-	if( mSock == NULL )
+	if( mSock == nullptr )
 		return;
 
 	//srand( getclock() ); // Randomize
@@ -885,12 +1010,34 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	{
 		if( toDec != 0xFF )
 		{
+			// Check for existence of onSkillLoss event for player
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					// If retVal is -1, event doesn't exist in script
+					// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+					// If retVal is 1, event exists, proceed with hard code/other scripts
+					if( !toExecute->OnSkillLoss( c, toDec, amtToGain ) )
+					{
+						return;
+					}
+				}
+			}
+
+			// Reduce base skill of player
 			totalSkill -= amtToGain;
 			c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
-			if( scpSkill != NULL )
+
+			// Check for existence of onSkillChange event for player
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( !scpSkill->OnSkillLoss( c, toDec ) )
-					scpSkill->OnSkillChange( c, toDec );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnSkillChange( c, toDec, ( amtToGain * -1 ));
+				}
 			}
 			mSock->updateskill( toDec );
 		}
@@ -898,287 +1045,35 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 
 	if( skillCap > static_cast<UI16>(totalSkill) )
 	{
-		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
-		if( scpSkill != NULL )
+		// Check for existence of onSkillGain event for player
+		for( auto scriptTrig : scriptTriggers )
 		{
-			if( !scpSkill->OnSkillGain( c, sk ) )
-				scpSkill->OnSkillChange( c, sk );
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				// If retVal is -1, event doesn't exist in script
+				// If retVal is 0, event exists, but returned false/0, and handles item usage. Don't proceed with hard code (or other scripts!)
+				// If retVal is 1, event exists, proceed with hard code/other scripts
+				if( !toExecute->OnSkillGain( c, sk, amtToGain ) )
+				{
+					return;
+				}
+			}
+		}
+
+		// Increase base skill of player
+		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+
+		// Check for existence of onSkillChange event for player
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				toExecute->OnSkillChange( c, sk, amtToGain );
+			}
 		}
 		mSock->updateskill( sk );
-	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::ItemIDTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Called when player uses the ItemID skill on an item, can give valuable
-//|					information on items (Will reveal hidden magical names and charges on items as well)
-//o-----------------------------------------------------------------------------------------------o
-void cSkills::ItemIDTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-
-	CChar *mChar = s->CurrcharObj();
-
-	if( mChar->WorldNumber() != i->WorldNumber() || mChar->GetInstanceID() != i->GetInstanceID() )
-	{
-		s->sysmessage( 393 ); // That is too far away.
-		return;
-	}
-
-	if( i->isCorpse() )
-	{
-		s->sysmessage( 1546 ); // You have to use your forensics evaluation skill to know more about this corpse.
-		return;
-	}
-
-	if( CheckSkill( mChar, ITEMID, 250, 500 ) )
-	{
-		UnicodeTypes sLang = s->Language();
-
-		std::string name;
-		name.reserve( MAX_NAME );
-		if( i->GetName2() && strcmp( i->GetName2(), "#" ) )
-			i->SetName( i->GetName2() );
-		if( i->GetName()[0] == '#')
-			getTileName( (*i), name );
-		else
-			name = i->GetName();
-		s->sysmessage( 1547, name.c_str() ); // You found that this item appears to be called: %s
-
-		std::string temp ;
-		if( i->GetCreator() != INVALIDSERIAL )
-		{
-			CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
-			if( ValidateObject( mCreater ) )
-			{
-				if( i->GetMadeWith() > 0 ){
-					temp = format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
-				}
-				else if( i->GetMadeWith() < 0 ){
-					temp= format(1024, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
-				}
-				else{
-					temp = format(1024, temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
-				}
-			}
-			else {
-				format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
-			}
-		}
-		else{
-			temp = format(1024, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
-		}
-		s->sysmessage( temp );
-
-		if( mChar->GetSkill( ITEMID ) > 350 )
-		{
-			if( i->GetType() != IT_MAGICWAND )
-			{
-				// Only display "no magical properties" message if Name2 is different from "#"
-				if( i->GetName2()[0] && ( !strcmp( i->GetName2(), "#" ) ) )
-					s->sysmessage( 1553 ); // This item has no hidden magical properties.
-				return;
-			}
-			if( CheckSkill( mChar, ITEMID, 500, 750 ) )
-			{
-				UI16 spellToScan = static_cast<UI16>(( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1);
-				// Fetch spellname from Dictionary-files, based on entry from magic_table[]
-				UString spellName = Dictionary->GetEntry( magic_table[spellToScan].spell_name );
-				if( !CheckSkill( mChar, ITEMID, 750, 1000 ) )
-					s->sysmessage( 1555, spellName.c_str() ); // It is enchanted with the spell %s, but you cannot determine how many charges remain.
-				else
-					s->sysmessage( 1556, spellName.c_str(), i->GetTempVar( CITV_MOREZ ) ); // It is enchanted with the spell %s, and has %d charges remaining.
-			}
-			else
-				s->sysmessage( 1554 ); // This item is enchanted with a spell, but you cannot determine which.
-		}
-		else
-			s->sysmessage( 1552 ); // You can't tell if it is magical or not.
-	}
-	else
-		s->sysmessage( 1545 ); // You can't quite tell what this item is...
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::FishTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Called when player targets an area with a fishing pole
-//o-----------------------------------------------------------------------------------------------o
-void cSkills::FishTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-
-	// Check if item used to initialize target cursor is still within range
-	CChar *mChar = s->CurrcharObj();
-	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
-	if( ValidateObject( tempObj ) )
-	{
-		if( !checkItemRange( mChar, tempObj ) )
-		{
-			s->sysmessage( 400 ); // That is too far away!
-			return;
-		}
-	}
-
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	const SI16 targetX = s->GetWord( 0x0B );
-	const SI16 targetY = s->GetWord( 0x0D );
-	const SI08 targetZ = s->GetByte( 0x10 );
-	const SI16 distX = abs( mChar->GetX() - targetX );
-	const SI16 distY = abs( mChar->GetY() - targetY );
-
-	const UI08 targetID1 = s->GetByte( 0x11 );
-	const UI08 targetID2 = s->GetByte( 0x12 );
-
-	CItem *targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
-	bool validLocation = false;
-	if( ValidateObject( targetItem ) )
-	{
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 data and later
-			validLocation = Map->SeekTileHS( targetItem->GetID() ).CheckFlag( TF_WET );
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			validLocation = Map->SeekTile( targetItem->GetID() ).CheckFlag( TF_WET );
-		}
-	}
-	else if( targetID1 != 0 && targetID2 != 0 )
-	{
-		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 data and later
-			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-			{
-				CTileHS& tile = Map->SeekTileHS( stat->itemid );
-				if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
-					validLocation = true;
-			}
-		}
-		else
-		{
-			//7.0.8.2 data and earlier
-			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-			{
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
-					validLocation = true;
-			}
-		}
-	}
-	else		// or it could be a map only
-	{
-		// manually calculating the ID's if a maptype
-		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
-		{
-			//7.0.9.0 tiledata and later
-			CLandHS& land = Map->SeekLandHS( map1.id );
-			if( land.CheckFlag( TF_WET ) )
-				validLocation = true;
-		}
-		else
-		{
-			//7.0.8.2 tiledata and earlier
-			CLand& land = Map->SeekLand( map1.id );
-			if( land.CheckFlag( TF_WET ) )
-				validLocation = true;
-		}
-	}
-	if( validLocation )
-	{
-		if( distX > 5 || distY > 5 )
-		{
-			s->sysmessage( 843 );
-			return;
-		}
-		if( mChar->GetZ() < targetZ )
-		{
-			s->sysmessage( 844 );
-			return;
-		}
-		if( mChar->GetStamina() - 2 <= 2 )
-		{
-			s->sysmessage( 845 );
-			return;
-		}
-		mChar->SetStamina( mChar->GetStamina() - cwmWorldState->ServerData()->FishingStaminaLoss() );
-		Effects->PlayCharacterAnimation( mChar, 0x0b );
-		R32 baseTime;
-		baseTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE ) / 25);
-		baseTime += RandomNum( 0, static_cast< SI32 >(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM ) / 15) );
-		s->SetTimer( tPC_FISHING, BuildTimeValue( baseTime ) ); //2x faster at war and can run
-		Effects->PlaySound( s, 0x023F, true );
-	}
-	else
-		s->sysmessage( 846 );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::Fish( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Fish up items based on skill and random values (this should
-//|					be rewritten using a resource system akin to Ore and Logs)
-//o-----------------------------------------------------------------------------------------------o
-void cSkills::Fish( CSocket *mSock, CChar *mChar )
-{
-	if( !CheckSkill( mChar, FISHING, 0, 1000 ) )
-	{
-		mSock->sysmessage( 847 );
-		return;
-	}
-	const UI16 getSkill = mChar->GetSkill( FISHING );
-	switch( RandomNum( 0, 25 ) )
-	{
-		case 1:
-			if( getSkill > 920 )
-			{
-				Items->CreateRandomItem( mSock, "fishtreasure" );	// random paintings
-				mSock->sysmessage( 848 );
-			}
-			break;
-		case 2:
-			if( getSkill > 970 )
-			{
-				Items->CreateRandomItem( mSock, "fishweapons" );	// Some new weapons
-				mSock->sysmessage( 849 );
-			}
-			break;
-		case 3:	// Random gold and gems
-			if( RandomNum( 0, 12 ) )
-			{
-				Items->CreateRandomItem( mSock, "fishgems" );
-				mSock->sysmessage( 850 );
-			}
-			else
-			{	// Create between 200 and 1300 gold
-				UI16 nAmount = RandomNum( 200, 1300 );
-				Items->CreateScriptItem( mSock, mChar, "0x0EED", nAmount, OT_ITEM, true );
-				Effects->goldSound( mSock, nAmount );
-				mSock->sysmessage( 851, nAmount );
-			}
-			break;
-		case 4:
-			if( getSkill > 850 )
-			{
-				Items->CreateRandomItem( mSock, "fishbones" );	// Random bones and crap
-				mSock->sysmessage( 852 );
-			}
-			break;
-		default:
-			Items->CreateRandomItem( mSock, "randomfish" );	// User defined fish
-			mSock->sysmessage( 853 );
-			break;
 	}
 }
 
@@ -1187,15 +1082,15 @@ void cSkills::Fish( CSocket *mSock, CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player uses a skill from the skill list
 //o-----------------------------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... );
+//void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... );
 void cSkills::SkillUse( CSocket *s, UI08 x )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsDead() )
 	{
-		ClilocMessage( s, 6, 0x0040, FNT_NORMAL, 500012 );
-		//s->sysmessage( 392 );
+		//ClilocMessage( s, SYSTEM, cwmWorldState->ServerData()->SysMsgColour(), FNT_NORMAL, 500012 );
+		s->sysmessage( 9054 ); // You cannot use skills while dead.
 		return;
 	}
 	if( ( x != STEALTH && mChar->GetVisible() == VT_TEMPHIDDEN ) || mChar->GetVisible() == VT_INVISIBLE )
@@ -1203,48 +1098,88 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	mChar->BreakConcentration( s );
 	if( mChar->GetTimer( tCHAR_SPELLTIME ) != 0 || mChar->IsCasting() )
 	{
-		s->sysmessage( 854 );
+		s->sysmessage( 854 ); // You can't do that while you are casting!
 		return;
 	}
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || mChar->IsGM() )
 	{
-		cScript *skScript = JSMapping->GetScript( mChar->GetScriptTrigger() );
+		s->SkillDelayMsgShown( false );
 		bool doSwitch = true;
-		if( skScript != NULL )
-			doSwitch = !skScript->OnSkill( mChar, x );
-		if( doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF )
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
 		{
-			skScript = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
-			if( skScript != NULL )
-				doSwitch = !skScript->OnSkill( mChar, x );
+			// Loop through attached scripts
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				if( toExecute->OnSkill( mChar, x ) )
+				{
+					// Look for onSkill JS event in script
+					doSwitch = false;
+				}
+			}
 		}
 
+		// If no onSkill event was found in a script already, check if skill has a script
+		// attached directly, with onSkill event
+		if( doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF )
+		{
+			cScript *toExecute = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
+			if( toExecute != nullptr )
+			{
+				if( toExecute->OnSkill( mChar, x ))
+				{
+					doSwitch = false;
+				}
+			}
+		}
+
+		// If no onSkill event has run yet, run the hardcoded version
 		if( doSwitch )
 		{
 			switch( x )
 			{
-				case ITEMID:			s->target( 0, TARGET_ITEMID, 857 );			break;
 				case STEALING:
 					// Check if stealing is allowed in player's current region
 					if( mChar->GetRegion()->IsSafeZone() )
 					{
 						// Player is in a safe zone where all aggressive actions are forbidden, disallow
-						s->sysmessage( 1799 );
+						s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 					}
 					else if( cwmWorldState->ServerData()->RogueStatus() )
-						s->target( 0, TARGET_STEALING, 863 );
+						s->target( 0, TARGET_STEALING, 1, 863 ); // What do you wish to steal?
 					else
-						s->sysmessage( 864 );
+						s->sysmessage( 864 ); // Contact your shard operator if you want stealing available.
 					break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
 				default:				s->sysmessage( 871 );					break;
 			}
 		}
-		s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+
+		// If skilldelay timer is still below currenttimer, it wasn't modified in onSkill event. So let's update it now!
+		if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() )
+		{
+			if( cwmWorldState->skill[x].skillDelay != -1 )
+			{
+				// Use skill-specific skill delay if one has been set
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->skill[x].skillDelay )) );
+			}
+			else
+			{
+				// Otherwise use global skill delay from uox.ini
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+			}
+		}
 		return;
 	}
 	else
-		s->sysmessage( 872 );
+	{
+		if( !s->SkillDelayMsgShown() )
+		{
+			s->sysmessage( 872 ); // You must wait a few moments before using another skill.
+			s->SkillDelayMsgShown( true );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1265,19 +1200,19 @@ void cSkills::RandomSteal( CSocket *s )
 	if( npc->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->sysmessage( 1799 );
+		s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 		return;
 	}
 
 	CItem *p = npc->GetPackItem();
 	if( !ValidateObject( p ) )
 	{
-		s->sysmessage( 875 );
+		s->sysmessage( 875 ); // Bad luck, your victim doesn't have a backpack.
 		return;
 	}
 
-	CItem *item = NULL;
-	CDataList< CItem * > *tcCont = p->GetContainsList();
+	CItem *item = nullptr;
+	GenericList< CItem * > *tcCont = p->GetContainsList();
 	const size_t numItems = tcCont->Num();
 
 	std::vector< CItem * > contList;
@@ -1295,7 +1230,7 @@ void cSkills::RandomSteal( CSocket *s )
 
 	if( !ValidateObject( item ) )
 	{
-		s->sysmessage( 876 );
+		s->sysmessage( 876 ); // Muahaha, your victim doesn't have possessions.
 		return;
 	}
 	doStealing( s, mChar, npc, item );
@@ -1328,13 +1263,13 @@ void cSkills::StealingTarget( CSocket *s )
 	if( npc->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->sysmessage( 1799 );
+		s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 		return;
 	}
 
-	if( item->GetCont() == npc || item->GetCont() == NULL || item->isNewbie() )
+	if( item->GetCont() == npc || item->GetCont() == nullptr || item->isNewbie() )
 	{
-		s->sysmessage( 874 );
+		s->sysmessage( 874 ); // You cannot steal that.
 		return;
 	}
 	doStealing( s, mChar, npc, item );
@@ -1352,72 +1287,110 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 	VALIDATESOCKET( s );
 	if( npc == mChar )
 	{
-		s->sysmessage( 873 );
+		s->sysmessage( 873 ); // You catch yourself red handed.
 		return;
 	}
 	if( npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
-		s->sysmessage( 874 );
+		s->sysmessage( 874 ); // You cannot steal that.
 		return;
 	}
 	CItem *itemCont = static_cast<CItem *>(item->GetCont());
-	if( itemCont != NULL && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
+	if( itemCont != nullptr && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
 	{
-		s->sysmessage( 874 );
+		s->sysmessage( 874 ); // You cannot steal that.
 		return;
 	}
-	s->sysmessage( 877, npc->GetName().c_str(), item->GetName().c_str() );
+
+	std::vector<UI16> scriptTriggers = item->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		// Loop through attached scripts
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			SI08 retVal = toExecute->OnSteal( mChar, item, npc );
+			if( retVal == 1 ) // Item was not stolen, and we don't want to run hard code
+			{
+				return;
+			}
+			else if( retVal == 2 ) // item was stolen, and we don't want to run hard code
+			{
+				std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
+				for( auto targScriptTrig : targetScriptTriggers )
+				{
+					cScript *targToExecute = JSMapping->GetScript( targScriptTrig );
+					if( targToExecute != nullptr )
+					{
+						if( targToExecute->OnStolenFrom( mChar, npc, item ) == 1 )
+						{
+							break;
+						}
+					}
+				}
+				return;
+			}
+		}
+	}
+
+	std::string npcTargetName = getNpcDictName( npc );
+	std::string myNpcTargetName = getNpcDictName( npc, s );
+
+	s->sysmessage( 877, myNpcTargetName.c_str(), item->GetName().c_str() ); // You reach into %s's pack and try to take something...
 	if( objInRange( mChar, npc, DIST_NEXTTILE ) )
 	{
 		if( Combat->calcDef( mChar, 0, false ) > 40 )
 		{
-			s->sysmessage( 1643 );
+			s->sysmessage( 1643 ); // Your armour is too heavy to do that
 			return;
 		}
 		SI16 stealCheck = calcStealDiff( mChar, item );
 		if( stealCheck == -1 )
 		{
-			s->sysmessage( 1551 );
+			s->sysmessage( 1551 ); // That is too heavy
 			return;
 		}
 
 		if( mChar->GetCommandLevel() < npc->GetCommandLevel() )
 		{
-			s->sysmessage( 878 );
+			s->sysmessage( 878 ); // You can't steal from gods.
 			return;
 		}
 		if( item->isNewbie() )
 		{
-			s->sysmessage( 879 );
+			s->sysmessage( 879 ); // That item has no value to you.
 			return;
 		}
 
-		const SI32 getDefOffset	= UOX_MIN( stealCheck + ( (SI32)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
+		const SI32 getDefOffset	= std::min( stealCheck + ( (SI32)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
 		const bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
 		if( canSteal )
 		{
 			CItem *pack = mChar->GetPackItem();
 			item->SetCont( pack );
-			s->sysmessage( 880 );
+			s->sysmessage( 880 ); // You successfully steal that item.
 
-			UI16 targTrig		= item->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnSteal( mChar, item );
-
-			targTrig	= npc->GetScriptTrigger();
-			toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnStolenFrom( mChar, npc, item );
+			std::vector<UI16> targetScriptTriggers = npc->GetScriptTriggers();
+			for( auto targScriptTrig : targetScriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( targScriptTrig );
+				if( toExecute != nullptr )
+				{
+					if( toExecute->OnStolenFrom( mChar, npc, item ) == 1 )
+					{
+						return;
+					}
+				}
+			}
 		}
 		else
-			s->sysmessage( 881 );
+			s->sysmessage( 881 ); // You failed to steal that item.
 
 		if( ( !canSteal && RandomNum( 1, 5 ) == 5 ) || mChar->GetSkill( STEALING ) < RandomNum( 0, 1001 ) )
 		{//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
-			s->sysmessage( 882 );
+			s->sysmessage( 882 ); // You have been caught!
 			if( npc->IsNpc() )
-				npc->TextMessage( NULL, 883, TALK, false );
+				npc->TextMessage( nullptr, 883, TALK, false ); // Guards!! A thief is among us!
 
 			if( WillResultInCriminal( mChar, npc ) )
 				criminal( mChar );
@@ -1426,20 +1399,20 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 
 			if( item->GetName()[0] != '#' )
 			{
-				temp = format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() );
-				temp2 = format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npc->GetName().c_str() );
+				temp = strutil::format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() ); // // You notice %s trying to steal %s from you!
+				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
 			}
 			else
 			{
 				std::string tileName;
 				tileName.reserve( MAX_NAME );
 				getTileName( (*item), tileName );
-				temp = format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() );
-				temp2 = format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
+				temp = strutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() ); // You notice %s trying to steal %s from you!
+				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
 			}
 
 			CSocket *npcSock = npc->GetSocket();
-			if( npcSock != NULL )
+			if( npcSock != nullptr )
 				npcSock->sysmessage( temp );
 
 			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
@@ -1453,7 +1426,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		}
 	}
 	else
-		s->sysmessage( 886 );
+		s->sysmessage( 886 ); // You are too far away to steal that item.
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 calcStealDiff( CChar *c, CItem *i )
@@ -1484,7 +1457,7 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 			itemWeight = i->GetWeight();
 			calcDiff = (SI32)((c->GetSkill( STEALING ) * 2) + 100);  // GM thieves can steal up to 21 stones, newbie only 1 stone
 			if( calcDiff > itemWeight )
-				stealDiff = (SI16)UOX_MAX( UOX_MIN( ((SI32)((itemWeight + 9) / 20) * 10), 990 ), 0 );
+				stealDiff = (SI16)std::max( std::min( ((SI32)((itemWeight + 9) / 20) * 10), 990 ), 0 );
 			break;
 	}
 	return stealDiff;
@@ -1507,7 +1480,10 @@ void cSkills::Tracking( CSocket *s, SI32 selection )
 	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )) );
 	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingRedisplayTime() ) ));
 	if( ValidateObject( i->GetTrackingTarget() ) )
-		s->sysmessage( 1644, i->GetTrackingTarget()->GetName().c_str() );
+	{
+		std::string trackingTargetName = getNpcDictName( i->GetTrackingTarget() );
+		s->sysmessage( 1644, trackingTargetName.c_str() ); // You are now tracking %s.
+	}
 	Track( i );
 }
 
@@ -1519,9 +1495,9 @@ void cSkills::Tracking( CSocket *s, SI32 selection )
 void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
-	const UString sect = std::string("TRACKINGMENU ") + str_number( m );
+	const std::string sect = std::string("TRACKINGMENU ") + strutil::number( m );
 	ScriptSection *TrackStuff = FileLookup->FindEntry( sect, menus_def );
-	if( TrackStuff == NULL )
+	if( TrackStuff == nullptr )
 		return;
 
 	enum CreatureTypes
@@ -1553,11 +1529,15 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	std::string line;
 	CPOpenGump toSend( *mChar );
 	if( m >= TRACKINGMENUOFFSET )
+	{
 		toSend.GumpIndex( m );
+	}
 	else
+	{
 		toSend.GumpIndex( m + TRACKINGMENUOFFSET );
-	UString tag		= TrackStuff->First();
-	UString data	= TrackStuff->GrabData();
+	}
+	std::string tag		= TrackStuff->First();
+	std::string data	= TrackStuff->GrabData();
 
 	line = tag + " " + data;
 	toSend.Question( line );
@@ -1566,9 +1546,9 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
-		CDataList< CChar * > *regChars = MapArea->GetCharList();
+		GenericList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
 		{
@@ -1596,7 +1576,8 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 						case EAST:		dirMessage = 897;	break;
 						default:		dirMessage = 898;	break;
 					}
-					line = tempChar->GetName() + " " + Dictionary->GetEntry( dirMessage, mLang );
+					std::string tempName = getNpcDictName( tempChar );
+					line = tempName + " " + Dictionary->GetEntry( dirMessage, mLang );
 					toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 				}
 			}
@@ -1622,10 +1603,12 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
-	const UString sect			= std::string("TRACKINGMENU ") + str_number( gmindex );
+	const std::string sect			= std::string("TRACKINGMENU ") + strutil::number( gmindex );
 	ScriptSection *TrackStuff	= FileLookup->FindEntry( sect, menus_def );
-	if( TrackStuff == NULL )
+	if( TrackStuff == nullptr )
+	{
 		return;
+	}
 	HandleCommonGump( s, TrackStuff, gmindex );
 }
 
@@ -1639,12 +1622,25 @@ void cSkills::Track( CChar *i )
 	CSocket *s = i->GetSocket();
 	VALIDATESOCKET( s );
 	CChar *trackTarg = i->GetTrackingTarget();
-	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 )
+	if( !ValidateObject( trackTarg ) || trackTarg->isDeleted() || trackTarg->GetY() == -1 )
+	{
+		s->sysmessage( 2059 ); // You have lost your quarry.
+		s->SetTimer( tPC_TRACKING, 0 );
+		CPTrackingArrow tSend;
+		tSend.Active( 0 );
+		if( s->ClientVersion() >= CV_HS2D )
+		{
+			tSend.AddSerial( i->GetTrackingTargetSerial() );
+		}
+		s->Send( &tSend );
 		return;
+	}
 	CPTrackingArrow tSend = (*trackTarg);
 	tSend.Active( 1 );
 	if( s->ClientType() >= CV_HS2D )
+	{
 		tSend.AddSerial( i->GetTrackingTarget()->GetSerial() );
+	}
 	s->Send( &tSend );
 }
 
@@ -1664,7 +1660,7 @@ void cSkills::updateSkillLevel( CChar *c, UI08 s ) const
 	UI16 bskill = c->GetBaseSkill( s );
 
 	UI16 temp = ( ( (sstr * astr) / 100 + (sdex * adex) / 100 + (sint + aint) / 100) * ( 1000 - bskill ) ) / 1000 + bskill;
-	c->SetSkill( UOX_MAX( bskill, temp ), s );
+	c->SetSkill( std::max( bskill, temp ), s );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1682,7 +1678,7 @@ void cSkills::Persecute( CSocket *s )
 	if( !ValidateObject( targChar ) || targChar->IsGM() )
 		return;
 
-	SI32 decrease = (SI32)( c->GetIntelligence() / 10 ) + 3;
+	SI32 decrease = static_cast<SI32>(( c->GetSkill( SPIRITSPEAK ) / 100 ) + ( c->GetIntelligence() / 20 )) + 3;
 
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || c->IsGM() )
 	{
@@ -1690,17 +1686,29 @@ void cSkills::Persecute( CSocket *s )
 		{
 			CSocket *tSock = targChar->GetSocket();
 			targChar->SetMana( targChar->GetMana() - decrease ); // decrease mana
-			s->sysmessage( 972 );
-			if( tSock != NULL )
-				tSock->sysmessage( 973 );
-			s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-			targChar->TextMessage( NULL, 974, EMOTE, true, targChar->GetName().c_str() );
+			s->sysmessage( 972 ); // Your spiritual forces disturb the enemy!
+			if( tSock != nullptr )
+				tSock->sysmessage( 973 ); // A damned soul is disturbing your mind!
+
+			if( cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1 )
+			{
+				// Use skill-specific skill delay if one has been set
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->skill[SPIRITSPEAK].skillDelay )) );
+			}
+			else
+			{
+				// Otherwise use global skill delay from uox.ini
+				s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+			}
+
+			std::string targCharName = getNpcDictName( targChar );
+			targChar->TextMessage( nullptr, 974, EMOTE, 1, targCharName.c_str() ); // %s is persecuted by a ghost!
 		}
 		else
-			s->sysmessage( 975 );
+			s->sysmessage( 975 ); // Your mind is not strong enough to disturb the enemy
 	}
 	else
-		s->sysmessage( 976 );
+		s->sysmessage( 976 ); // You are unable to persecute him now. Rest a little.
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1716,10 +1724,10 @@ void cSkills::Smith( CSocket *s )
 
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -1728,23 +1736,29 @@ void cSkills::Smith( CSocket *s )
 
 	if( !ValidateObject( packnum ) )
 	{
-		s->sysmessage( 773 );
+		s->sysmessage( 773 ); // Time to buy a backpack.
 		return;
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( ValidateObject( i ) )
 	{
+		if( i->isHeldOnCursor() || !checkItemRange( mChar, i ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+
 		if( i->GetID() >= 0x1BE3 && i->GetID() <= 0x1BF9 )	// is it an ingot?
 		{
 			miningData *oreType = FindOre( i->GetColour() );
-			if( oreType == NULL )
+			if( oreType == nullptr )
 			{
-				s->sysmessage( 977 );
+				s->sysmessage( 977 ); // Unknown ingot type.
 				return;
 			}
 			if( FindItemOwner( i ) != mChar )
-				s->sysmessage( 978, oreType->name.c_str() );
+				s->sysmessage( 978, oreType->name.c_str() ); // You can't smith %s ingots outside your backpack.
 			else
 				AnvilTarget( s, (*i), oreType );
 		}
@@ -1752,7 +1766,7 @@ void cSkills::Smith( CSocket *s )
 			RepairMetal( s );
 		return;
 	}
-	s->sysmessage( 979 );
+	s->sysmessage( 979 ); // You cannot use that material for blacksmithing!
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1770,9 +1784,9 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
+		if( MapArea == nullptr )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		GenericList< CItem * > *regItems = MapArea->GetItemList();
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
@@ -1782,10 +1796,10 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 			{
 				if( objInRange( mChar, tempItem, DIST_NEARBY ) )
 				{
-					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );
+					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour(), item.GetTempVar( CITV_MORE ));
 					if( getAmt == 0 )
 					{
-						s->sysmessage( 980, oreType->name.c_str() );
+						s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
 						regItems->Pop();
 						return;
 					}
@@ -1797,7 +1811,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 		}
 		regItems->Pop();
 	}
-	s->sysmessage( 981 );
+	s->sysmessage( 981 ); // The anvil is too far away.
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1828,24 +1842,26 @@ bool cSkills::LoadMiningData( void )
 	// Let's first get our ore list, in SECTION ORE_LIST
 	ScriptSection *oreList = FileLookup->FindEntry( "ORE_LIST", skills_def );
 	bool rvalue = false;
-	if( oreList != NULL )
+	if( oreList != nullptr )
 	{
 		STRINGLIST oreNameList;
-		UString tag;
-		UString data;
-		UString UTag;
+		std::string tag;
+		std::string data;
+		std::string UTag;
 		for( tag = oreList->First(); !oreList->AtEnd(); tag = oreList->Next() )
+		{
 			oreNameList.push_back( tag );
+		}
 		if( !oreNameList.empty() )
 		{
 			rvalue = true;
-			ScriptSection *individualOre = NULL;
+			ScriptSection *individualOre = nullptr;
 			STRINGLIST_CITERATOR toCheck;
 			for( toCheck = oreNameList.begin(); toCheck != oreNameList.end(); ++toCheck )
 			{
 				std::string oreName = (*toCheck);
 				individualOre = FileLookup->FindEntry( oreName, skills_def );
-				if( individualOre != NULL )
+				if( individualOre != nullptr )
 				{
 					miningData toAdd;
 					toAdd.colour	= 0;
@@ -1856,29 +1872,40 @@ bool cSkills::LoadMiningData( void )
 					toAdd.oreChance = 0;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
-						UTag = tag.upper();
+						UTag = strutil::upper( tag );
 						data = individualOre->GrabData();
+						data = strutil::trim( strutil::removeTrailing( data, "//" ));
 						switch( (UTag.data()[0]) )	// break on tag
 						{
 							case 'C':
 								if( UTag == "COLOUR" )
-									toAdd.colour = data.toUShort();
+								{
+									toAdd.colour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'F':
 								break;
 							case 'M':
 								if( UTag == "MAKEMENU" )
-									toAdd.makemenu = data.toInt();
+								{
+									toAdd.makemenu = std::stoi(data, nullptr, 0);
+								}
 								else if( UTag == "MINSKILL" )
-									toAdd.minSkill = data.toUShort();
+								{
+									toAdd.minSkill = static_cast<UI16>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							case 'N':
 								if( UTag == "NAME" )
+								{
 									toAdd.name = data;
+								}
 								break;
 							case 'O':
 								if( UTag == "ORECHANCE" )
-									toAdd.oreChance = data.toUShort();
+								{
+									toAdd.oreChance = static_cast<UI16>(std::stoul(data, nullptr, 0));
+								}
 								break;
 							default:
 								Console << "Unknown mining tag " << tag << " with data " << data << " in SECTION " << oreName << myendl;
@@ -1917,7 +1944,7 @@ void cSkills::Load( void )
 	CJSMappingSection *skillSection = JSMapping->GetSection( SCPT_SKILLUSE );
 	for( cScript *ourScript = skillSection->First(); !skillSection->Finished(); ourScript = skillSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Skill" );
 	}
 
@@ -1942,7 +1969,7 @@ size_t cSkills::GetNumberOfOres( void )
 miningData *cSkills::GetOre( size_t number )
 {
 	if( number >= ores.size() )
-		return NULL;
+		return nullptr;
 	return &ores[number];
 }
 
@@ -1959,7 +1986,7 @@ miningData *cSkills::FindOre( std::string const &name )
 		if( (*oreIter).oreName == name )
 			return &(*oreIter);
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1975,7 +2002,7 @@ miningData *cSkills::FindOre( UI16 const &colour )
 		if( (*oreIter).colour == colour )
 			return &(*oreIter);
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1989,32 +2016,43 @@ void cSkills::LoadCreateMenus( void )
 	skillMenus.clear();
 	itemsForMenus.clear();
 
-	UString tag, data, UTag;
+	std::string tag, data, UTag;
 	UI16 ourEntry;							// our actual entry number
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )
 	{
-		if( ourScript == NULL )
-			continue;
-
-		for( ScriptSection *toSearch = ourScript->FirstEntry(); toSearch != NULL; toSearch = ourScript->NextEntry() )
+		if( ourScript == nullptr )
 		{
-			UString eName = ourScript->EntryName();
+			continue;
+		}
+
+		for( ScriptSection *toSearch = ourScript->FirstEntry(); toSearch != nullptr; toSearch = ourScript->NextEntry() )
+		{
+			std::string eName = ourScript->EntryName();
 			if( "SUBMENU" == eName.substr( 0, 7 ) )	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 			{
-				ourEntry = eName.section( " ", 1 ).stripWhiteSpace().toUShort();
+				eName = strutil::trim( strutil::removeTrailing( eName, "//" ));
+				auto ssecs = strutil::sections( eName, " " );
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = tag.upper();
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					if( UTag == "MENU" )
-						actualMenus[ourEntry].menuEntries.push_back( data.toUShort() );
+					{
+						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+					}
 					else if( UTag == "ITEM" )
-						actualMenus[ourEntry].itemEntries.push_back( data.toUShort() );
+					{
+						actualMenus[ourEntry].itemEntries.push_back( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+					}
 				}
 			}
 			else if( "ITEM" == eName.substr( 0, 4 ) )	// is it an item?
 			{
-				ourEntry = eName.section( " ", 1 ).stripWhiteSpace().toUShort();
+				auto ssecs = strutil::sections( eName, " " );
+				
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 				createEntry tmpEntry;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
@@ -2024,98 +2062,136 @@ void cSkills::LoadCreateMenus( void )
 
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = tag.upper();
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					if( UTag == "COLOUR" )
-						tmpEntry.colour = data.toUShort();
+					{
+						tmpEntry.colour =  static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "ID" )
-						tmpEntry.targID = data.toUShort();
+					{
+						tmpEntry.targID =  static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "MINRANK" )
-						tmpEntry.minRank = data.toUByte();
+					{
+						tmpEntry.minRank =  static_cast<UI08>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "MAXRANK" )
-						tmpEntry.maxRank = data.toUByte();
+					{
+						tmpEntry.maxRank =  static_cast<UI08>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "NAME" )
+					{
 						tmpEntry.name = data;
+					}
 					else if( UTag == "SOUND" )
-						tmpEntry.soundPlayed = data.toUShort();
+					{
+						tmpEntry.soundPlayed =  static_cast<UI16>(std::stoul(data, nullptr, 0));
+					}
 					else if( UTag == "ADDITEM" )
+					{
 						tmpEntry.addItem = data;
+					}
 					else if( UTag == "DELAY" )
-						tmpEntry.delay = data.toShort();
+					{
+						tmpEntry.delay = static_cast<SI16>(std::stoi(data, nullptr, 0));
+					}
 					else if( UTag == "RESOURCE" )
 					{
 						resAmountPair tmpResource;
-						if( data.sectionCount( " " ) > 0 )
+						auto ssecs = strutil::sections(data," ");
+						if( ssecs.size() > 1 )
 						{
-							if( data.sectionCount( " " ) == 1 )
-								tmpResource.amountNeeded	= data.section( " ", 1 ).toUByte();
-							else
+							if( ssecs.size() == 4 )
 							{
-								tmpResource.amountNeeded	= data.section( " ", 1, 1 ).toUByte();
-								tmpResource.colour			= data.section( " ", 2, 2 ).toUShort();
+								tmpResource.moreVal			= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[3], "//" )), nullptr, 0));
+							}
+							if( ssecs.size() >= 3 )
+							{
+								tmpResource.colour			= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 0));
+							}
+							if( ssecs.size() >= 2 )
+							{
+								tmpResource.amountNeeded	= static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 							}
 						}
-						UString resType = "RESOURCE " + data.section( " ", 0, 0 );
+						std::string resType = "RESOURCE " + strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
 						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
-						if( resList != NULL )
+						if( resList != nullptr )
 						{
-							UString resData;
-							for( UString resTag = resList->First(); !resList->AtEnd(); resTag = resList->Next() )
+							std::string resData;
+							for( std::string resTag = resList->First(); !resList->AtEnd(); resTag = resList->Next() )
 							{
 								resData = resList->GrabData();
-								tmpResource.idList.push_back( resData.toUShort() );
+								tmpResource.idList.push_back( static_cast<UI16>(std::stoul(resData, nullptr, 0 )));
 							}
 						}
 						else
-							tmpResource.idList.push_back( data.section( " ", 0, 0 ).toUShort() );
+						{
+							tmpResource.idList.push_back( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )) );
+						}
 
 						tmpEntry.resourceNeeded.push_back( tmpResource );
 					}
 					else if( UTag == "SKILL" )
 					{
 						resSkillReq tmpResource;
-						if( data.sectionCount( " " ) == 0 )
+						auto ssecs = strutil::sections( data, " " );
+						if( ssecs.size() == 1 )
 						{
 							tmpResource.maxSkill	= 1000;
 							tmpResource.minSkill	= 0;
-							tmpResource.skillNumber	= data.toUByte();
+							tmpResource.skillNumber	=  static_cast<UI16>(std::stoul(data, nullptr, 0 ));
 						}
 						else
 						{
-							if( data.sectionCount( " " ) == 1 )
+							if( ssecs.size() == 2 )
 							{
 								tmpResource.maxSkill = 1000;
-								tmpResource.minSkill = data.section( " ", 1, 1 ).toUShort();
+								tmpResource.minSkill =  static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
 							}
 							else
 							{
-								tmpResource.minSkill = data.section( " ", 1, 1 ).toUShort();
-								tmpResource.maxSkill = data.section( " ", 2, 2 ).toUShort();
+								tmpResource.minSkill = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+								tmpResource.maxSkill = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ));
 							}
-							tmpResource.skillNumber = data.section( " ", 0, 0 ).toUByte();
+							tmpResource.skillNumber = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ));
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
 					else if( UTag == "SPELL" )
-						tmpEntry.spell = data.toUShort();
+					{
+						tmpEntry.spell = static_cast<UI16>(std::stoul(data, nullptr, 0 ));
+					}
 				}
 				itemsForMenus[ourEntry] = tmpEntry;
 			}
 			else if( "MENUENTRY" == eName.substr( 0, 9 ) )
 			{
-				ourEntry = eName.section( " ", 1, 1 ).toUShort();
+				auto ssecs = strutil::sections( eName, " " );
+				ourEntry = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
 				for( tag = toSearch->First(); !toSearch->AtEnd(); tag = toSearch->Next() )
 				{
-					UTag = tag.upper();
+					UTag = strutil::upper( tag );
 					data = toSearch->GrabData();
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					if( UTag == "ID" )
-						skillMenus[ourEntry].targID = data.toUShort();
+					{
+						skillMenus[ourEntry].targID =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
+					}
 					else if( UTag == "COLOUR" )
-						skillMenus[ourEntry].colour = data.toUShort();
+					{
+						skillMenus[ourEntry].colour =  static_cast<UI16>(std::stoul( data, nullptr, 0 ));
+					}
 					else if( UTag == "NAME" )
+					{
 						skillMenus[ourEntry].name = data;
+					}
 					else if( UTag == "SUBMENU" )
-						skillMenus[ourEntry].subMenu = data.toUShort();
+					{
+						skillMenus[ourEntry].subMenu = static_cast<UI16>(std::stoul(data, nullptr, 0 ));
+					}
 				}
 			}
 		}
@@ -2164,7 +2240,7 @@ SI08 cSkills::FindSkillPoint( UI08 sk, SI32 value )
 	{
 		if( cwmWorldState->skill[sk].advancement[iCounter].base <= value && value < cwmWorldState->skill[sk].advancement[iCounter+1].base )
 		{
-			retVal = iCounter;
+			retVal = static_cast<SI08>(iCounter);
 			break;
 		}
 	}
@@ -2183,7 +2259,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 	CRace *pRace = Races->Race( s->GetRace() );
 
 	// If the Race is invalid just use the default race
-	if( pRace == NULL )
+	if( pRace == nullptr )
 		pRace = Races->Race( 0 );
 
 	//make sure socket is no npc
@@ -2200,9 +2276,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 	UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence };
 	SkillLock StatLocks[3] = { s->GetSkillLock( STRENGTH ), s->GetSkillLock( DEXTERITY ), s->GetSkillLock( INTELLECT ) };
 
-	UI16 skillUpdTrig = s->GetScriptTrigger();
-	cScript *skillTrig = JSMapping->GetScript( skillUpdTrig );
-
+	std::vector<UI16> skillUpdTriggers = s->GetScriptTriggers();
 
 	for ( StatCount = STRENGTH; StatCount <= INTELLECT; ++StatCount )
 	{
@@ -2261,30 +2335,81 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 					switch( toDec )
 					{
 						case 0:
+							// First trigger onStatLoss event
+							for( auto skillTrig : skillUpdTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									if( !toExecute->OnStatLoss( s, STRENGTH, 1 ) )
+										return;
+								}
+							}
+
+							// Do the actual stat decrease
 							s->IncStrength( -1 );
 							ttlStats--;
-							if( skillTrig != NULL )
+
+							// Trigger onStatChange event if onStatLoss either didn't exist, or returned true
+							for( auto skillTrig : skillUpdTriggers )
 							{
-								if( !skillTrig->OnStatLoss( s, STRENGTH ) )
-									skillTrig->OnStatChange( s, STRENGTH );
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									toExecute->OnStatChange( s, STRENGTH, -1 );
+								}
 							}
 							break;
 						case 1:
+							// First trigger onStatLoss event
+							for( auto skillTrig : skillUpdTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									if( !toExecute->OnStatLoss( s, DEXTERITY, 1 ) )
+										return;
+								}
+							}
+
+							// Do the actual stat decrease
 							s->IncDexterity( -1 );
 							ttlStats--;
-							if( skillTrig != NULL )
+
+							// Trigger onStatChange event if onStatLoss either didn't exist, or returned true
+							for( auto skillTrig : skillUpdTriggers )
 							{
-								if( !skillTrig->OnStatLoss( s, DEXTERITY ) )
-									skillTrig->OnStatChange( s, DEXTERITY );
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									toExecute->OnStatChange( s, DEXTERITY, -1 );
+								}
 							}
 							break;
 						case 2:
+							// First trigger onStatLoss event
+							for( auto skillTrig : skillUpdTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									if( !toExecute->OnStatLoss( s, INTELLECT, 1 ) )
+										return;
+								}
+							}
+
+							// Do the actual stat decrease
 							s->IncIntelligence( -1 );
 							ttlStats--;
-							if( skillTrig != NULL )
+
+							// Trigger onStatChange event if onStatLoss either didn't exist, or returned true
+							for( auto skillTrig : skillUpdTriggers )
 							{
-								if( !skillTrig->OnStatLoss( s, INTELLECT ) )
-									skillTrig->OnStatChange( s, INTELLECT );
+								cScript *toExecute = JSMapping->GetScript( skillTrig );
+								if( toExecute != nullptr )
+								{
+									toExecute->OnStatChange( s, INTELLECT, -1 );
+								}
 							}
 							break;
 						default:
@@ -2296,6 +2421,18 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 				// Do we still hit the stat limit?
 				if( ( ttlStats + 1) <= ServStatCap )
 				{
+					// First trigger onStatGained
+					for( auto skillTrig : skillUpdTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( skillTrig );
+						if( toExecute != nullptr )
+						{
+							if( !toExecute->OnStatGained( s, StatCount, sk, 1 ) )
+								return;
+						}
+					}
+
+					// Do the actual stat increase
 					switch( StatCount )
 					{
 						case STRENGTH:
@@ -2311,10 +2448,14 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 							break;
 					}
 
-					if( skillTrig != NULL )
+					// Trigger onStatChange event if onStatGained either didn't exist, or returned true
+					for( auto skillTrig : skillUpdTriggers )
 					{
-						if( !skillTrig->OnStatGained( s, StatCount, sk ) )
-							skillTrig->OnStatChange( s, StatCount );
+						cScript *toExecute = JSMapping->GetScript( skillTrig );
+						if( toExecute != nullptr )
+						{
+							toExecute->OnStatChange( s, StatCount, 1 );
+						}
 					}
 
 					break;//only one stat at a time fellas
@@ -2353,29 +2494,35 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 	createMenu	ourMenu		= p->second;
 	UI32		textCounter = 0;
 	ScriptSection *GumpHeader = FileLookup->FindEntry( "ADDMENU HEADER", misc_def );
-	if( GumpHeader == NULL )
+	if( GumpHeader == nullptr )
 	{
-		toSend.addCommand( "noclose" );
-		toSend.addCommand( format("resizepic 0 0 %i 400 320", background) );
+		toSend.addCommand( strutil::format("resizepic 0 0 %i 400 320", background) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
 		toSend.addText( "Create menu" );
 		++textCounter;
-		toSend.addCommand( format("button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1) );
+		toSend.addCommand( strutil::format("button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1) );
 	}
 	else
 	{
-		UString tag, data, UTag;
+		std::string tag, data, UTag;
 		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
 		{
-			UTag = tag.upper();
+			UTag = strutil::upper( tag );
 			data = GumpHeader->GrabData();
+			data = strutil::trim( strutil::removeTrailing( data, "//" ));
 			if( UTag == "BUTTONLEFT" )
-				btnLeft = data.toUShort();
+			{
+				btnLeft = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "BUTTONRIGHT" )
-				btnRight = data.toUShort();
+			{
+				btnRight = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "BUTTONCANCEL" )
-				btnCancel = data.toUShort();
+			{
+				btnCancel = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else
 			{
 				std::string built = tag;
@@ -2388,7 +2535,7 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 			}
 		}
 		ScriptSection *GumpText = FileLookup->FindEntry( "ADDMENU TEXT", misc_def );
-		if( GumpText != NULL )
+		if( GumpText != nullptr )
 		{
 			for( tag = GumpText->First(); !GumpText->AtEnd(); tag = GumpText->Next() )
 			{
@@ -2444,10 +2591,10 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 			}
 			if( canMake )
 			{
-				toSend.addCommand( format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter)) );
+				toSend.addCommand( strutil::format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter)) );
 				if( iItem.targID )
-					toSend.addCommand( format("tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID ));
-				toSend.addCommand( format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ ));
+					toSend.addCommand( strutil::format("tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID ));
+				toSend.addCommand( strutil::format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ ));
 				toSend.addText( iItem.name );
 				yLoc += 40;
 				++actualItems;
@@ -2467,10 +2614,10 @@ void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 		if( smIter != skillMenus.end() )
 		{
 			createMenuEntry iMenu = smIter->second;
-			toSend.addCommand(format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter) ));
+			toSend.addCommand(strutil::format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter) ));
 			if( iMenu.targID )
-				toSend.addCommand( format("tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID) );
-			toSend.addCommand( format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++) );
+				toSend.addCommand( strutil::format("tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID) );
+			toSend.addCommand( strutil::format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++) );
 			toSend.addText( iMenu.name );
 			yLoc += 40;
 			++actualItems;
@@ -2519,18 +2666,29 @@ createEntry *cSkills::FindItem( UI16 itemNum )
 {
 	std::map< UI16, createEntry >::iterator r = itemsForMenus.find( itemNum );
 	if( r == itemsForMenus.end() )
-		return NULL;
+		return nullptr;
 	return &(r->second);
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock )
+//|	Function	-	void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 resourceColour )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes an item selected in the new make menu system
 //o-----------------------------------------------------------------------------------------------o
-void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry )
+void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry, UI16 resourceColour )
 {
 	VALIDATESOCKET( sock );
+
+	if( !ValidateObject( player ))
+		return;
+
+	// Get potential tag with ID of a targeted sub-resource
+	UI16 targetedSubResourceID = 0;
+	TAGMAPOBJECT tempTagObj = player->GetTempTag( "targetedSubResourceID" );
+	if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+	{
+		targetedSubResourceID = static_cast<UI16>( tempTagObj.m_IntValue );
+	}
 
 	std::vector< resAmountPair >::const_iterator resCounter;
 	std::vector< resSkillReq >::const_iterator sCounter;
@@ -2538,6 +2696,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	UI16 toDelete;
 	UI16 targColour;
 	UI16 targID;
+	UI32 targMoreVal;
 	bool canDelete = true;
 
 	//Moved resource-check to top of file to disallow gaining skill by attempting to
@@ -2547,10 +2706,30 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		targColour	= resEntry.colour;
+		targMoreVal = resEntry.moreVal;
+
+		if( resCounter == toMake.resourceNeeded.begin() && resourceColour != 0 )
+		{
+			// If a specific colour was provided for the function as the intended colour of the material, use a material of that colour
+			targColour = resourceColour;
+		}
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
-			toDelete -= UOX_MIN( GetItemAmount( player, targID, targColour ), static_cast<UI32>(toDelete) );
+			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
+			{
+				// Primary resource, or generic subresource
+				toDelete -= std::min( GetItemAmount( player, targID, targColour, targMoreVal, true ), static_cast<UI32>(toDelete) );
+			}
+			else
+			{
+				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
+				{
+					// Player specifically targeted a secondary resource
+					toDelete -= std::min( GetItemAmount( player, targID, targColour, targMoreVal, true ), static_cast<UI32>(toDelete) );
+				}
+			}
+
 			if( toDelete == 0 )
 				break;
 		}
@@ -2559,23 +2738,39 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	}
 	if( !canDelete )
 	{
-		sock->sysmessage( 1651 );
+		sock->sysmessage( 1651 ); // You have insufficient resources on hand to do that
 		return;
 	}
 
 	bool canMake = true;
 
-	// we need to check ALL skills, even if the first one fails
+	// Loop through the skills listed as skill requirement for crafting the item
 	for( sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter )
 	{
 		if( player->SkillUsed( (*sCounter).skillNumber ) )
 		{
-			sock->sysmessage( 1650 );
+			sock->sysmessage( 1650 ); // You are already using that skill
 			return;
 		}
 
-		if( !CheckSkill( player, (*sCounter).skillNumber, (*sCounter).minSkill, (*sCounter).maxSkill ) )
-			canMake = false;
+		if( sCounter == toMake.skillReqs.begin() )
+		{
+			// Only perform skill check for first and main skill in skill requirement
+			if( !CheckSkill( player, ( *sCounter ).skillNumber, ( *sCounter ).minSkill, ( *sCounter ).maxSkill, true ))
+			{
+				canMake = false;
+				break;
+			}
+		}
+		else
+		{
+			// For supporting skills, we only check if player has more than or equal to the minimum skill required
+			if( player->GetSkill( ( *sCounter ).skillNumber ) < ( *sCounter ).minSkill )
+			{
+				canMake = false;
+				break;
+			}
+		}
 	}
 
 	if( !canMake )
@@ -2583,10 +2778,18 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 		// delete anywhere up to half of the resources needed
 		if( toMake.soundPlayed )
 			Effects->PlaySound( sock, toMake.soundPlayed, true );
-		sock->sysmessage( 984 );
+		sock->sysmessage( 984 ); // You fail to create the item.
 	}
 	else
 	{
+		// Store temp tag on player with colour of item to craft
+		TAGMAPOBJECT tagObject;
+		tagObject.m_Destroy = FALSE;
+		tagObject.m_StringValue = "";
+		tagObject.m_IntValue = resourceColour;
+		tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+		player->SetTempTag( "craftItemColor", tagObject );
+
 		for( sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter )
 			player->SkillUsed( true, (*sCounter).skillNumber );
 
@@ -2600,17 +2803,51 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 			}
 		}
 	}
+
+	if( !canMake || !canDelete )
+	{
+		// Trigger onMakeItem() JS event for character who tried to craft item, even though they failed
+		std::vector<UI16> scriptTriggers = player->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				toExecute->OnMakeItem( sock, player, nullptr, 0 );
+			}
+		}
+	}
 	for( resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter )
 	{
 		resEntry	= (*resCounter);
 		toDelete	= resEntry.amountNeeded;
 		if( !canMake )
-			toDelete = RandomNum( 0, UOX_MAX(1, toDelete / 2 ));
+			toDelete = RandomNum( 0, std::max(1, toDelete / 2 ));
 		targColour	= resEntry.colour;
+		targMoreVal = resEntry.moreVal;
+
+		if( resCounter == toMake.resourceNeeded.begin() && resourceColour != 0 )
+		{
+			// If a specific colour was provided for the function as the intended colour of the material, use a material of that colour
+			targColour = resourceColour;
+		}
 		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
 		{
 			targID = (*idCounter);
-			toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+			if( targetedSubResourceID == 0 || resCounter == toMake.resourceNeeded.begin() )
+			{
+				// Primary resource, or generic subresource
+				toDelete -= DeleteItemAmount( player, toDelete, targID, targColour, targMoreVal );
+			}
+			else
+			{
+				if( targetedSubResourceID > 0 && targID == targetedSubResourceID )
+				{
+					// Player specifically targeted a secondary resource
+					toDelete -= DeleteItemAmount( player, toDelete, targID, targColour, targMoreVal );
+				}
+			}
+
 			if( toDelete == 0 )
 				break;
 		}
@@ -2631,10 +2868,10 @@ void cSkills::RepairMetal( CSocket *s )
 	CChar *mChar = s->CurrcharObj();
 	// Check if item used to initialize target cursor is still within range
 	CItem *tempObj = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
+	s->TempObj( nullptr );
 	if( ValidateObject( tempObj ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( tempObj->isHeldOnCursor() || !checkItemRange( mChar, tempObj ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
@@ -2645,6 +2882,12 @@ void cSkills::RepairMetal( CSocket *s )
 	if( !ValidateObject( j ) || !j->IsMetalType() )
 	{
 		s->sysmessage( 986 );
+		return;
+	}
+
+	if( j->isHeldOnCursor() || !checkItemRange( mChar, j ) )
+	{
+		s->sysmessage( 400 ); // That is too far away!
 		return;
 	}
 
@@ -2703,14 +2946,27 @@ void callGuards( CChar *mChar, CChar *targChar );
 void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
-
 	CSocket *tSock = target->GetSocket();
+
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// If script returns false, prevent hard-code and other scripts with event from running
+			if( toExecute->OnSnoopAttempt( target, mChar ) == 0 )
+			{
+				return;
+			}
+		}
+	}
 
 	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
 	{
-		s->sysmessage( 991 );
-		if( tSock != NULL )
-			tSock->sysmessage( 992, mChar->GetName().c_str() );
+		s->sysmessage( 991 ); // You failed to peek into that container.
+		if( tSock != nullptr )
+			tSock->sysmessage( 992, mChar->GetName().c_str() ); // %s is snooping you!
 		return;
 	}
 
@@ -2718,32 +2974,59 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	if( mChar->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone() )
 	{
 		// Target is in a safe zone where all aggressive actions are forbidden, disallow
-		s->sysmessage( 1799 );
+		s->sysmessage( 1799 ); // Hostile actions are not permitted in this safe area.
 		return;
 	}
+
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
+	scriptTriggers = target->GetScriptTriggers();
 
 	if( CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
 		s->openPack( pack );
-		s->sysmessage( 993 );
-		cScript *successSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
-		if( successSnoop != NULL )
-			successSnoop->OnSnooped( target, mChar, true );
+		s->sysmessage( 993 ); // You successfully peek into that container.
+
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *successSnoop = JSMapping->GetScript( scriptTrig );
+			if( successSnoop != nullptr )
+			{
+				// If script returns true/1, prevent other scripts with event from running
+				if( successSnoop->OnSnooped( target, mChar, true ) == 1 )
+				{
+					break;
+				}
+			}
+		}
 	}
 	else
 	{
 		bool doNormal = true;
-		cScript *failSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
-		if( failSnoop != NULL )
-			doNormal = !failSnoop->OnSnooped( target, mChar, true );
+
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *failSnoop = JSMapping->GetScript( scriptTrig );
+			if( failSnoop != nullptr )
+			{
+				// If script returns true/1, prevent hard code and other scripts with event from running
+				if( failSnoop->OnSnooped( target, mChar, true ) == 1 )
+				{
+					doNormal = false;
+				}
+			}
+		}
 
 		if( doNormal )
 		{
-			s->sysmessage( 991 );
+			s->sysmessage( 991 ); // You failed to peek into that container.
 			if( target->IsNpc() )
 			{
 				if( cwmWorldState->creatures[target->GetID()].IsHuman() && target->GetNPCAiType() != AI_EVIL && target->GetNPCAiType() != AI_HEALER_E )
 				{
+					// 994=Art thou attempting to disturb my privacy?
+					// 995=Stop that!
+					// 996=Be aware I am going to call the guards!
 					target->TextMessage( s, 994 + RandomNum( 0, 2 ), TALK, false );
 					if( cwmWorldState->ServerData()->SnoopIsCrime() )
 					{
@@ -2758,14 +3041,14 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 						Effects->PlaySound( target, toPlay );
 				}
 			}
-			else if( tSock != NULL )
-				tSock->sysmessage( 997, mChar->GetName().c_str() );
+			else if( tSock != nullptr )
+				tSock->sysmessage( 997, mChar->GetName().c_str() ); // You notice %s trying to peek into your pack!
 			if( cwmWorldState->ServerData()->SnoopIsCrime() )
 				criminal( mChar );
 			if( mChar->GetKarma() <= 1000 )
 			{
 				mChar->SetKarma( mChar->GetKarma() - 10 );
-				s->sysmessage( 998 );
+				s->sysmessage( 998 ); // You've lost a small bit of karma.
 			}
 		}
 	}
@@ -2778,18 +3061,18 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 //o-----------------------------------------------------------------------------------------------o
 void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 {
-	CItem *iItem = NULL;
+	CItem *iItem = nullptr;
 	CChar *iCharID = nSocket->CurrcharObj();
 
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
-		iCharID->TextMessage( NULL, 741, EMOTE, true, iCharID->GetName().c_str() );
+		iCharID->TextMessage( nullptr, 741, EMOTE, 1, iCharID->GetName().c_str() ); // %s is grinding some bone into powder
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
 		iItem = Items->CreateItem( nSocket, iCharID, 0x0F8F, 1, 0, OT_ITEM, true );
-		if( iItem == NULL )
+		if( iItem == nullptr )
 			return;
 		iItem->SetName( "bone powder" );
 		iItem->SetTempVar( CITV_MOREX, 666 );
@@ -2802,7 +3085,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 		if( nItem->GetTempVar( CITV_MORE, 1 ) == 1 )
 		{
 			iItem = Items->CreateItem( nSocket, iCharID, 0x0F82, 1, 0, OT_ITEM, true );
-			if( iItem == NULL )
+			if( iItem == nullptr )
 				return;
 			iItem->SetBuyValue( 15 );
 			iItem->SetTempVar( CITV_MOREX, 666 );
@@ -2810,7 +3093,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 		else
 		{
 			iItem = Items->CreateItem( nSocket, iCharID, 0x0F7D, 1, 0, OT_ITEM, true );
-			if( iItem == NULL )
+			if( iItem == nullptr )
 				return;
 			iItem->SetBuyValue( 10 );
 			iItem->SetTempVar( CITV_MOREX, 666 );

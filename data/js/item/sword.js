@@ -6,7 +6,7 @@ function onUseChecked( pUser, iUsed )
 		var itemOwner = GetPackOwner( iUsed, 0 );
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
-			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
+			pUser.SysMessage( GetDictionaryEntry( 6019, socket.language )); // This must be in your backpack or equipped before it can be used.
 			return false;
 		}
 		else if( iUsed.type != 15 )
@@ -23,7 +23,6 @@ function onUseChecked( pUser, iUsed )
 function onCallback1( socket, ourObj )
 {
 	var mChar = socket.currentChar;
-
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
@@ -60,7 +59,7 @@ function onCallback1( socket, ourObj )
 				else if( tileID == 0x2006 )
 					CarveCorpse( socket, mChar, ourObj );
 				else
-					socket.SysMessage( "You cannot carve that." );
+					socket.SysMessage( GetDictionaryEntry( 1968, socket.language )); // You cannot carve that.
 			}
 		}
 	}
@@ -80,12 +79,28 @@ function MakeFishSteaks( socket, mChar, ourObj )
 	var ownerObj = GetPackOwner( ourObj, 0 );
 	if( ownerObj && mChar.serial == ownerObj.serial )
 	{
-		CreateDFNItem( mChar.socket, mChar, "0x097A", 4, "ITEM", true );
-		mChar.SysMessage( "You slice a fish to steaks." );
-		if( ourObj.amount > 1 )
-			ourObj.amount = ourObj.amount-1;
+		var fishSteakAmount = ourObj.amount * 4;
+		if( fishSteakAmount > 65534 )
+		{
+			var pilesOfSteaks = Math.ceil(fishSteakAmount / 65535);
+			for( var i = 0; i < pilesOfSteaks; i++ )
+			{
+				if( fishSteakAmount > 65534 )
+				{
+					CreateDFNItem( mChar.socket, mChar, "0x097A", 65535, "ITEM", true );
+					fishSteakAmount -= 65535;
+				}
+				else
+					CreateDFNItem( mChar.socket, mChar, "0x097A", fishSteakAmount, "ITEM", true );
+			}
+		}
 		else
-			ourObj.Delete();
+		{
+			CreateDFNItem( mChar.socket, mChar, "0x097A", fishSteakAmount, "ITEM", true );
+		}
+
+		mChar.SysMessage( GetDictionaryEntry( 9338, socket.language )); // You slice your fish into raw fish steaks
+		ourObj.Delete();
 	}
 	else
 		socket.SysMessage( GetDictionaryEntry( 775, socket.language ) );
@@ -117,6 +132,10 @@ function CarveCorpse( socket, mChar, ourObj )
 {
 	if( mChar.InRange( ourObj, 3 ) )
 	{
+		if( mChar.visible == 1 || mChar.visible == 2 )
+		{
+			mChar.visible = 0;
+		}
 		mChar.DoAction( 0x20 );
 		if( (ourObj.morey>>24) == 0 )
 		{

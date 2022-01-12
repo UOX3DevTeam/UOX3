@@ -6,9 +6,10 @@
 #include "classes.h"
 #include "CJSEngine.h"
 #include "power.h"
+#include <unordered_set>
 
 
-cRaces *Races = NULL;
+cRaces *Races = nullptr;
 
 const UI08 MALE = 1;
 const UI08 FEMALE = 2;
@@ -36,7 +37,7 @@ const std::string cRaces::Name( RACEID race ) const
 CRace * cRaces::Race( RACEID x )
 {
 	if( InvalidRace( x ) )
-		return NULL;
+		return nullptr;
 	return races[x];
 }
 
@@ -53,7 +54,7 @@ cRaces::~cRaces( void )
 	for( size_t i = 0; i < races.size(); ++i )
 	{
 		delete races[i];
-		races[i] = NULL;
+		races[i] = nullptr;
 	}
 	races.clear();
 }
@@ -75,15 +76,15 @@ void cRaces::load( void )
 	UI32 raceCount = 0;
 	bool done = false;
 
-	UString sect;
-	UString tag;
-	UString data;
+	std::string sect;
+	std::string tag;
+	std::string data;
 
 	while( !done )
 	{
-		sect					= std::string("RACE ") + str_number( raceCount );
+		sect					= std::string("RACE ") + strutil::number( raceCount );
 		ScriptSection *tempSect = FileLookup->FindEntry( sect, race_def );
-		if( tempSect == NULL )
+		if( tempSect == nullptr )
 			done = true;
 		else
 			++raceCount;
@@ -93,26 +94,26 @@ void cRaces::load( void )
 		races.push_back( new CRace( raceCount ) );
 
 	ScriptSection *CombatMods = FileLookup->FindEntry( std::string("COMBAT MODS"), race_def );
-	if( CombatMods != NULL )
+	if( CombatMods != nullptr )
 	{
 		tag = CombatMods->First();
-		if( tag == NULL )	// location didn't exist!!!
+		if( tag.empty() )	// location didn't exist!!!
 		{
 			DefaultInitCombat();
 		}
 		else
 		{
-			if( tag.upper() != "MODCOUNT" )
+			if( strutil::upper( tag ) != "MODCOUNT" )
 			{
-				Console << "MODCOUNT must come before any entries!" << myendl;
+				Console.error( "MODCOUNT must come before any entries!" );
 				DefaultInitCombat();
 			}
 			else
 			{
-				UI32 modifierCount = CombatMods->GrabData().toUInt();
+				UI32 modifierCount = static_cast<UI32>(std::stoul(CombatMods->GrabData(), nullptr, 0)) ;
 				if( modifierCount < 4 )
 				{
-					Console << "MODCOUNT must be more >= 4, or it uses the defaults!" << myendl;
+					Console.warning( "MODCOUNT must be more >= 4, or it uses the defaults!" );
 					DefaultInitCombat();
 				}
 				else
@@ -123,9 +124,13 @@ void cRaces::load( void )
 						tag = CombatMods->Next();
 						data = CombatMods->GrabData();
 						if( !data.empty() )
-							combat[i].value = data.toUByte();
+						{	
+							combat[i].value = static_cast<UI08>(std::stoul(data, nullptr, 0));
+						}
 						else
+						{
 							combat[i].value = 100;
+						}
 					}
 				}
 			}
@@ -136,7 +141,9 @@ void cRaces::load( void )
 		DefaultInitCombat();
 	}
 	for( size_t er = 0; er < raceCount; ++er )
-		races[er]->Load( er, combat.size() );
+	{
+		races[er]->Load( er, static_cast<SI32>(combat.size()) );
+	}
 }
 
 RaceRelate cRaces::Compare( CChar *player1, CChar *player2 ) const
@@ -172,16 +179,16 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 {
 	if( !ValidateObject( s ) )
 		return;
-	CItem *hairobject = NULL, *beardobject = NULL;
+	CItem *hairobject = nullptr, *beardobject = nullptr;
 
 	CRace *pRace = Race( x );
-	if( pRace == NULL )
+	if( pRace == nullptr )
 		return;
 
 	CSocket *mSock = s->GetSocket();
 	if( !pRace->IsPlayerRace() )
 	{
-		mSock->sysmessage( 369 );
+		mSock->sysmessage( 369 ); // This race is not for players!
 		return;
 	}
 	if( s->GetRaceGate() == 65535 || always )
@@ -247,7 +254,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			if( pRace->NoHair() )
 			{
 				hairobject->Delete();
-				hairobject = NULL;
+				hairobject = nullptr;
 			}
 		}
 		if( pRace->RequiresBeard() && ( s->GetID() == 0x0190 || s->GetID() == 0x025D ) && !ValidateObject( beardobject ) )
@@ -256,8 +263,8 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				hairColor = RandomBeard( x );
 			else
 				hairColor = 0x0480;
-			CItem *n = Items->CreateItem( NULL, s, 0x204C, 1, hairColor, OT_ITEM );
-			if( n != NULL )
+			CItem *n = Items->CreateItem( nullptr, s, 0x204C, 1, hairColor, OT_ITEM );
+			if( n != nullptr )
 			{
 				n->SetDecayable( false );
 				n->SetLayer( IL_FACIALHAIR );
@@ -279,7 +286,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			if( pRace->NoBeard() )
 			{
 				beardobject->Delete();
-				beardobject = NULL;
+				beardobject = nullptr;
 			}
 		}
 		if( pRace->IsSkinRestricted() )	// do we have a limited skin colour range?
@@ -423,6 +430,19 @@ COLOUR cRaces::RandomBeard( RACEID x ) const
 	if( InvalidRace( x ) )
 		return 0;
 	return races[x]->RandomBeard();
+}
+
+COLOUR cRaces::BloodColour( RACEID x ) const
+{
+	if( InvalidRace( x ) )
+		return 0000;
+	return races[x]->BloodColour();
+}
+void cRaces::BloodColour( RACEID x, COLOUR newValue )
+{
+	if( InvalidRace( x ) )
+		return;
+	races[x]->BloodColour( newValue );
 }
 
 bool cRaces::beardRestricted( RACEID x ) const
@@ -603,6 +623,19 @@ bool cRaces::DoesHunger( RACEID race ) const
 	return races[race]->DoesHunger();
 }
 
+void cRaces::DoesThirst( RACEID race, bool value )
+{
+	if( InvalidRace( race ) )
+		return;
+	races[race]->DoesThirst( value );
+}
+bool cRaces::DoesThirst( RACEID race ) const
+{
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->DoesThirst();
+}
+
 void cRaces::SetHungerRate( RACEID race, UI16 value )
 {
 	if( InvalidRace( race ) )
@@ -616,6 +649,19 @@ UI16 cRaces::GetHungerRate( RACEID race ) const
 	return races[race]->GetHungerRate();
 }
 
+void cRaces::SetThirstRate( RACEID race, UI16 value )
+{
+	if( InvalidRace( race ) )
+		return;
+	races[race]->SetThirstRate( value );
+}
+UI16 cRaces::GetThirstRate( RACEID race ) const
+{
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->GetThirstRate();
+}
+
 void cRaces::SetHungerDamage( RACEID race, SI16 value )
 {
 	if( InvalidRace( race ) )
@@ -627,6 +673,19 @@ SI16 cRaces::GetHungerDamage( RACEID race ) const
 	if( InvalidRace( race ) )
 		return 0;
 	return races[race]->GetHungerDamage();
+}
+
+void cRaces::SetThirstDrain( RACEID race, SI16 value )
+{
+	if( InvalidRace( race ) )
+		return;
+	races[race]->SetThirstDrain( value );
+}
+SI16 cRaces::GetThirstDrain( RACEID race ) const
+{
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->GetThirstDrain();
 }
 
 bool cRaces::Affect( RACEID race, WeatherType element ) const
@@ -865,7 +924,6 @@ void CRace::IsPlayerRace( bool newValue )
 {
 	bools.set( BIT_PLAYERRACE, newValue );
 }
-
 void CRace::NoHair( bool newValue )
 {
 	bools.set( BIT_NOHAIR, newValue );
@@ -929,6 +987,14 @@ void CRace::SetHungerRate( UI16 newValue )
 {
 	hungerRate = newValue;
 }
+UI16 CRace::GetThirstRate( void ) const
+{
+	return thirstRate;
+}
+void CRace::SetThirstRate( UI16 newValue )
+{
+	thirstRate = newValue;
+}
 SI16 CRace::GetHungerDamage( void ) const
 {
 	return hungerDamage;
@@ -936,6 +1002,14 @@ SI16 CRace::GetHungerDamage( void ) const
 void CRace::SetHungerDamage( SI16 newValue )
 {
 	hungerDamage = newValue;
+}
+SI16 CRace::GetThirstDrain( void ) const
+{
+	return thirstDrain;
+}
+void CRace::SetThirstDrain( SI16 newValue )
+{
+	thirstDrain = newValue;
 }
 bool CRace::DoesHunger( void ) const
 {
@@ -945,9 +1019,41 @@ void CRace::DoesHunger( bool newValue )
 {
 	doesHunger = newValue;
 }
+bool CRace::DoesThirst( void ) const
+{
+	return doesThirst;
+}
+void CRace::DoesThirst( bool newValue )
+{
+	doesThirst = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cRaces::CanEquipItem( RACEID race, UI16 itemID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks whether a given race can equip a given item, based on lists of allowed
+//|					or banned equipment from dfndata/race/races.dfn
+//o-----------------------------------------------------------------------------------------------o
+bool CRace::CanEquipItem( UI16 itemID ) const
+{
+	if( allowedEquipment.size() > 0 )
+	{
+		// Race has a list of allowed equipment. If it's not in the list, disallow usage
+		//return ( std::find( allowedEquipment.begin(), allowedEquipment.end(), itemID ) != allowedEquipment.end() );
+		return ( allowedEquipment.find( itemID ) != allowedEquipment.end() );
+	}
+	
+	if( bannedEquipment.size() > 0 )
+	{
+		// Race has a list of banned equipment. If item is in the list, disallow usage
+		//return !( std::find( bannedEquipment.begin(), bannedEquipment.end(), itemID ) != bannedEquipment.end() );
+		return !( bannedEquipment.find( itemID ) != bannedEquipment.end() );
+	}
+	return true;
+}
 
 CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
-restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
+restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
 	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
@@ -962,11 +1068,14 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
+	DoesThirst( false );
+	SetThirstRate( 0 );
+	SetThirstDrain( 0 );
 }
 
 
 CRace::CRace( SI32 numRaces ) : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
-restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
+restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
 	NumEnemyRaces( numRaces );
 
@@ -983,6 +1092,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
+	DoesThirst( false );
+	SetThirstRate( 0 );
+	SetThirstDrain( 0 );
 	weatherAffected.reset();
 }
 void CRace::NumEnemyRaces( SI32 iNum )
@@ -1016,6 +1128,15 @@ COLOUR CRace::RandomBeard( void ) const
 		return 0;
 	size_t sNum = RandomNum( static_cast< size_t >(0), beardColours.size() - 1 );
 	return (COLOUR)RandomNum( beardColours[sNum].cMin, beardColours[sNum].cMax );
+}
+
+COLOUR CRace::BloodColour( void ) const
+{
+	return bloodColour;
+}
+void CRace::BloodColour( COLOUR newValue )
+{
+	bloodColour = newValue;
 }
 
 bool CRace::IsSkinRestricted( void ) const
@@ -1111,104 +1232,222 @@ void CRace::StamModifier( SI16 value )
 
 void CRace::Load( size_t sectNum, SI32 modCount )
 {
-	UString tag;
-	UString data;
-	UString UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 	SI32 raceDiff = 0;
-	UString sect = std::string("RACE ") + str_number( sectNum );
+	std::string sect = std::string("RACE ") + strutil::number( sectNum );
 	ScriptSection *RacialPart = FileLookup->FindEntry( sect, race_def );
+	if( RacialPart == nullptr )
+		return;
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
 
 	for( tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next() )
 	{
-		UTag = tag.upper();
+		UTag = strutil::upper( tag );
 		data = RacialPart->GrabData();
+		
 		switch( tag[0] )
 		{
 			case 'a':
 			case 'A':
-				if( UTag == "ARMORREST" )
-					ArmourClassRestriction( data.toUByte() );		// 8 classes, value 0 is all, else it's a bit comparison
+			{
+				if( UTag == "ALLOWEQUIPLIST" )
+				{
+					// Allowed equipment from [EQUIPMENT #] sections in races.dfn
+					std::string subTag;
+					std::string subUTag;
+					std::string subData;
+					std::string subSect = std::string( "EQUIPLIST " ) + strutil::number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
+					if( RacialEquipment == nullptr )
+						break;
+
+					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
+					{
+						subUTag = strutil::upper( subTag );
+						subData = RacialEquipment->GrabData();
+						switch( subTag[0] )
+						{
+							case 'i':
+							case 'I':
+								if( subUTag == "ITEMS" )
+								{
+									auto csecs = strutil::sections( subData, "," );
+									for( int i = 0; i < csecs.size() - 1; i++ )
+									{
+										UI16 temp = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[i], "//" )), nullptr, 0));
+										//allowedEquipment.push_back( temp );
+										allowedEquipment.insert( temp );
+									}
+								}
+								break;
+							default:
+								break;
+						}
+					}
+				}
+				else if( UTag == "ARMORREST" ) // 8 classes, value 0 is all, else it's a bit comparison
+				{
+					ArmourClassRestriction( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+				}
 				break;
+			}
 
 			case 'b':
 			case 'B':
-				if( UTag == "BEARDMIN" )
-					beardMin = data.toUShort();
+				if( UTag == "BANEQUIPLIST" )
+				{
+					// Banned equipment from [EQUIPMENT #] sections in races.dfn
+					std::string subTag;
+					std::string subUTag;
+					std::string subData;
+					std::string subSect = std::string( "EQUIPLIST " ) + strutil::number( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+					ScriptSection *RacialEquipment = FileLookup->FindEntry( subSect, race_def );
+					if( RacialEquipment == nullptr )
+						break;
+
+					for( subTag = RacialEquipment->First(); !RacialEquipment->AtEnd(); subTag = RacialEquipment->Next() )
+					{
+						subUTag = strutil::upper( subTag );
+						subData = RacialEquipment->GrabData();
+						switch( subTag[0] )
+						{
+							case 'i':
+							case 'I':
+								if( subUTag == "ITEMS" )
+								{
+									auto csecs = strutil::sections( subData, "," );
+									for( int i = 0; i < csecs.size() - 1; i++ )
+									{
+										UI16 temp = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[i], "//" )), nullptr, 0));
+										//bannedEquipment.push_back( temp );
+										bannedEquipment.insert( temp );
+									}
+								}
+								break;
+							default:
+								break;
+						}
+					}
+				}
+				else if( UTag == "BEARDMIN" )
+				{
+					beardMin = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
 				else if( UTag == "BEARDMAX" )
-					beardColours.push_back( ColourPair( beardMin, data.toUShort() ) );
+				{
+					beardColours.push_back( ColourPair( beardMin, static_cast<UI16>(std::stoul(data, nullptr, 0)) ) );
+				}
+				else if( UTag == "BLOODCOLOUR" )
+				{
+					bloodColour = static_cast<COLOUR>(std::stoul(data, nullptr, 0));
+				}
 				break;
 
 			case 'c':
 			case 'C':
-				if( UTag == "COLDAFFECT" )	// are we affected by cold?
+				if( UTag == "COLDAFFECT" ) // are we affected by cold?
+				{
 					AffectedBy( true, COLD );
-				else if( UTag == "COLDLEVEL" )	// cold level at which to take damage
-					ColdLevel( data.toUShort() );
-				else if( UTag == "COLDDAMAGE" )	// how much damage to take from cold
-					WeatherDamage( data.toUShort(), COLD );
-				else if( UTag == "COLDSECS" )		// how often cold affects in secs
-					WeatherSeconds( data.toUShort(), COLD );
+				}
+				else if( UTag == "COLDLEVEL" ) // cold level at which to take damage
+				{
+					ColdLevel( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+				}
+				else if( UTag == "COLDDAMAGE" ) // how much damage to take from cold
+				{
+					WeatherDamage( static_cast<UI16>(std::stoul(data, nullptr, 0)), COLD );
+				}
+				else if( UTag == "COLDSECS" ) // how often cold affects in secs
+				{
+					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)), COLD );
+				}
 				break;
 
 			case 'd':
 			case 'D':
 				if( UTag == "DEXCAP" )
-					Skill( data.toUShort(), DEXTERITY );
+				{
+					Skill( static_cast<UI16>(std::stoul(data, nullptr, 0)), DEXTERITY );
+				}
 				break;
 
 			case 'g':
 			case 'G':
 				if( UTag == "GENDER" )
 				{
-					if( data.upper() == "MALE" )
+					auto udata = strutil::upper( data );
+					if( udata == "MALE" )
+					{
 						GenderRestriction( MALE );
-					else if( data.upper() == "FEMALE" )
+					}
+					else if( udata == "FEMALE" )
+					{
 						GenderRestriction( FEMALE );
+					}
 					else
+					{
 						GenderRestriction( MALE );
+					}
 				}
 				break;
 
 			case 'h':
 			case 'H':
-				if( UTag == "HAIRMIN" ){
-					hairMin = data.toUShort();
+				if( UTag == "HAIRMIN" )
+				{
+					hairMin = static_cast<UI16>(std::stoul(data, nullptr, 0));
 				}
-				else if( UTag == "HAIRMAX" ){
-					hairColours.push_back( ColourPair( hairMin, data.toUShort() ) );
+				else if( UTag == "HAIRMAX" )
+				{
+					hairColours.push_back( ColourPair( hairMin, static_cast<UI16>(std::stoul(data, nullptr, 0)) ) );
 				}
-				else if( UTag == "HEATAFFECT" )	{// are we affected by light?
+				else if( UTag == "HEATAFFECT" )
+				{
+					// are we affected by light?
 					AffectedBy( true, HEAT );
 				}
-				else if( UTag == "HEATDAMAGE" )	{// how much damage to take from light
-					WeatherDamage( data.toUShort(), HEAT );
+				else if( UTag == "HEATDAMAGE" )
+				{
+					// how much damage to take from light
+					WeatherDamage( static_cast<UI16>(std::stoul(data,nullptr,0)), HEAT );
 				}
-				else if( UTag == "HEATLEVEL" ){	// heat level at which to take damage
-					HeatLevel( data.toUShort() );
+				else if( UTag == "HEATLEVEL" )
+				{
+					// heat level at which to take damage
+					HeatLevel( static_cast<UI16>(std::stoul(data,nullptr,0)) );
 				}
-				else if( UTag == "HEATSECS" ){		// how often light affects in secs
-					WeatherSeconds( data.toUShort(), HEAT );
+				else if( UTag == "HEATSECS" )
+				{		// how often light affects in secs
+					WeatherSeconds(static_cast<UI16>(std::stoul(data,nullptr,0)), HEAT );
 				}
-				else if( UTag == "HPMOD" ) {// how much additional percent of strength are hitpoints
-					HPModifier( data.toShort() );
+				else if( UTag == "HPMOD" )
+				{
+					// how high percentage of strength is added as bonus hitpoints
+					HPModifier( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
 				}
-				else if( UTag == "HUNGER" )	{// does race suffer from hunger
-					if( data.sectionCount( "," ) != 0 )
+				else if( UTag == "HUNGER" )	
+				{
+					// does race suffer from hunger
+					auto csecs = strutil::sections( data, "," );
+					if( csecs.size() > 1 )
 					{
-						SetHungerRate( static_cast<UI16>(data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() ) );
-						SetHungerDamage( static_cast<SI16>(data.section( ",", 1, 1 ).stripWhiteSpace().toShort() ) );
+						SetHungerRate( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetHungerDamage( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
 						SetHungerRate( 0 );
 						SetHungerDamage( 0 );
 					}
-					if( GetHungerRate() > 0 ){
+					if( GetHungerRate() > 0 )
+					{
 						DoesHunger( true );
 					}
-					else{
+					else
+					{
 						DoesHunger( false );
 					}
 				}
@@ -1217,138 +1456,242 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 			case 'i':
 			case 'I':
 				if( UTag == "INTCAP" )
-					Skill( data.toUShort(), INTELLECT );
+				{
+					Skill( static_cast<UI16>(std::stoul(data, nullptr, 0)) , INTELLECT );
+				}
 				break;
 
 			case 'l':
 			case 'L':
-				if( UTag == "LIGHTAFFECT" )	// are we affected by light?
+				if( UTag == "LIGHTAFFECT" ) // are we affected by light?
+				{
 					AffectedBy( true, LIGHT );
-				else if( UTag == "LIGHTDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toUShort(), LIGHT );
-				else if( UTag == "LIGHTLEVEL" )	// light level at which to take damage
-					LightLevel( data.toUShort() );
-				else if( UTag == "LIGHTSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUShort(), LIGHT );
+				}
+				else if( UTag == "LIGHTDAMAGE" ) // how much damage to take from light
+				{
+					WeatherDamage(static_cast<UI16>(std::stoul(data, nullptr, 0)) , LIGHT );
+				}
+				else if( UTag == "LIGHTLEVEL" ) // light level at which to take damage
+				{
+					LightLevel( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
+				}
+				else if( UTag == "LIGHTSECS" ) // how often light affects in secs
+				{
+					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)) , LIGHT );
+				}
 
-				else if( UTag == "LIGHTNINGAFFECT" )	// are we affected by light?
+				else if( UTag == "LIGHTNINGAFFECT" ) // are we affected by light?
+				{
 					AffectedBy( true, LIGHTNING );
-				else if( UTag == "LIGHTNINGDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toUShort(), LIGHTNING );
-				else if( UTag == "LIGHTNINGCHANCE" )		// how big is the chance to get hit by a lightning
-					WeatherSeconds( data.toUShort(), LIGHTNING );
+				}
+				else if( UTag == "LIGHTNINGDAMAGE" ) // how much damage to take from light
+				{
+					WeatherDamage( static_cast<UI16>(std::stoul(data, nullptr, 0)) , LIGHTNING );
+				}
+				else if( UTag == "LIGHTNINGCHANCE" ) // how big is the chance to get hit by a lightning
+				{
+					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)) , LIGHTNING );
+				}
 				else if( UTag == "LANGUAGEMIN" ) // set language min
-					LanguageMin( data.toUShort() );
+				{
+					LanguageMin( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
+				}
 				break;
 
 			case 'm':
 			case 'M':
 				if( UTag == "MAGICRESISTANCE" )	// magic resistance?
-					MagicResistance( data.toFloat() );
-				else if( UTag == "MANAMOD" ) // how much additional percent of int are mana
-					ManaModifier( data.toShort() );
+				{
+					MagicResistance( std::stof(data)  );
+				}
+				else if( UTag == "MANAMOD" ) // how high percentage of int to add as bonus mana
+				{
+					ManaModifier( static_cast<SI16>(std::stoi(data, nullptr, 0))  );
+				}
 				break;
 
 			case 'n':
 			case 'N':
 				if( UTag == "NAME" )
+				{
 					Name( data );
+				}
 				else if( UTag == "NOBEARD" )
+				{
 					NoBeard( true );
-				else if( UTag == "NIGHTVIS" )					// night vision level... light bonus
-					NightVision( data.toUByte() );
+				}
+				else if( UTag == "NIGHTVIS" ) // night vision level... light bonus
+				{
+					NightVision( static_cast<UI08>(std::stoul(data, nullptr, 0))  );
+				}
 				break;
 
 			case 'p':
 			case 'P':
-				if( UTag == "PLAYERRACE" ) // is it a player race?
-					IsPlayerRace( (data.toUByte() != 0) );
-				else if( UTag == "POISONRESISTANCE" )	// poison resistance?
-					PoisonResistance( data.toFloat() );
+				if( UTag == "PLAYERRACE" )// is it a player race?
+				{
+					IsPlayerRace( (static_cast<UI16>(std::stoul(data, nullptr, 0))  != 0) );
+				}
+				else if( UTag == "POISONRESISTANCE" ) // poison resistance?
+				{
+					PoisonResistance( std::stof(data)  );
+				}
 				else if( UTag == "PARENTRACE" )
 				{
-					CRace *pRace = Races->Race( data.toUShort() );
-					if( pRace != NULL )
+					CRace *pRace = Races->Race( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
+					if( pRace != nullptr ){
 						(*this) = (*pRace);
+					}
 				}
 				break;
 
 			case 'r':
 			case 'R':
 				if( UTag == "REQUIREBEARD" )
+				{
 					RequiresBeard( true );
-				else if( UTag == "RAINAFFECT" )	// are we affected by light?
+				}
+				else if( UTag == "RAINAFFECT" ) // are we affected by light?
+				{
 					AffectedBy( true, RAIN );
+				}
 				else if( UTag == "RAINDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toUShort(), RAIN );
-				else if( UTag == "RAINSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUShort(), RAIN );
+				{
+					WeatherDamage( static_cast<UI16>(std::stoul(data, nullptr, 0)) , RAIN );
+				}
+				else if( UTag == "RAINSECS" ) // how often light affects in secs
+				{
+					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)) , RAIN );
+				}
 				else if( UTag == "RACERELATION" )
 				{
-					if( data.sectionCount( " " ) != 0 )
-						RaceRelation( static_cast<RaceRelate>(data.section( " ", 1, 1 ).stripWhiteSpace().toByte()), data.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+					auto ssecs = strutil::sections(data," ");
+					if( ssecs.size() > 1 )
+					{
+						RaceRelation( static_cast<RaceRelate>(std::stoi(strutil::trim(strutil::removeTrailing( ssecs[1],"//") ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
+					}
 				}
 				else if( UTag == "RACIALENEMY" )
 				{
-					raceDiff = data.toInt();
+					raceDiff = std::stoi(data, nullptr, 0);
 					if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
-						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid enemy race " << raceDiff << myendl;
+					{
+						Console << "Error in race " << static_cast<UI32>(sectNum) << ", invalid enemy race " << raceDiff << myendl;
+					}
 					else
+					{
 						RaceRelation( RACE_ENEMY, static_cast<RACEID>(raceDiff) );
+					}
 				}
 				else if( UTag == "RACIALAID" )
 				{
-					raceDiff = data.toInt();
+					raceDiff = std::stoi(data, nullptr, 0);
 					if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
-						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid ally race " <<  raceDiff << myendl;
+					{
+						Console << "Error in race " << static_cast<UI32>(sectNum) << ", invalid ally race " <<  raceDiff << myendl;
+					}
 					else
+					{
 						RaceRelation( RACE_ALLY, static_cast<RACEID>(raceDiff ));
+					}
 				}
 				break;
 
 			case 's':
 			case 'S':
 				if( UTag == "STRCAP" )
-					Skill( data.toUShort(), STRENGTH );
+				{
+					Skill( static_cast<UI16>(std::stoul(data, nullptr, 0)), STRENGTH );
+				}
 				else if( UTag == "SKINMIN" )
-					skinMin = data.toUShort();
+				{
+					skinMin = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
 				else if( UTag == "SKINMAX" )
-					skinColours.push_back( ColourPair( skinMin, data.toUShort() ) );
-				else if( UTag == "SNOWAFFECT" )	// are we affected by light?
+				{
+					skinColours.push_back( ColourPair( skinMin, static_cast<UI16>(std::stoul(data, nullptr, 0))) );
+				}
+				else if( UTag == "SNOWAFFECT" ) // are we affected by light?
+				{
 					AffectedBy( true, SNOW );
-				else if( UTag == "SNOWDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toUShort(), SNOW );
-				else if( UTag == "SNOWSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUShort(), SNOW );
-				else if( UTag == "STORMAFFECT" )	// are we affected by storm?
+				}
+				else if( UTag == "SNOWDAMAGE" ) // how much damage to take from light
+				{
+					WeatherDamage( static_cast<UI16>(std::stoul(data, nullptr, 0)), SNOW );
+				}
+				else if( UTag == "SNOWSECS" ) // how often light affects in secs
+				{
+					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)), SNOW );
+				}
+				else if( UTag == "STORMAFFECT" ) // are we affected by storm?
+				{
 					AffectedBy( true, STORM );
-				else if( UTag == "STORMDAMAGE" )	// how much damage to take from storm
-					WeatherDamage( data.toUShort(), STORM );
-				else if( UTag == "STORMSECS" )		// how often storm affects in secs
-					WeatherSeconds( data.toUShort(), STORM );
-				else if( UTag == "STAMMOD" ) // how much additional percent of int are mana
-					StamModifier( data.toShort() );
+				}
+				else if( UTag == "STORMDAMAGE" ) // how much damage to take from storm
+				{
+					WeatherDamage( static_cast<UI16>(std::stoul(data, nullptr, 0)), STORM );
+				}
+				else if( UTag == "STORMSECS" ) // how often storm affects in secs
+				{
+					WeatherSeconds( static_cast<UI16>(std::stoul(data, nullptr, 0)), STORM );
+				}
+				else if( UTag == "STAMMOD" ) // how high percentage of dex is added as bonus stamina
+				{
+					StamModifier( static_cast<SI16>(std::stoi(data, nullptr, 0)));
+				}
+				break;
+			case 't':
+			case 'T':
+				if( UTag == "THIRST" )
+				{
+					// does race suffer from thirst
+					auto csecs = strutil::sections( data, "," );
+					if( csecs.size() > 1 )
+					{
+						SetThirstRate( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetThirstDrain( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					}
+					else
+					{
+						SetThirstRate( 0 );
+						SetThirstDrain( 0 );
+					}
+					if( GetThirstRate() > 0 )
+					{
+						DoesThirst( true );
+					}
+					else
+					{
+						DoesThirst( false );
+					}
+				}
 				break;
 
 			case 'v':
 			case 'V':
-				if( UTag == "VISRANGE" )					// set visibility range ... defaults to 18
-					VisibilityRange( data.toByte() );
+				if( UTag == "VISRANGE" ) // set visibility range ... defaults to 18
+				{
+					VisibilityRange( static_cast<char>(std::stoi(data, nullptr, 0)) );
+				}
 				break;
 		}
 
 		for( SI32 iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
 		{
-			UString skillthing = cwmWorldState->skill[iCountA].name;
+			std::string skillthing = cwmWorldState->skill[iCountA].name;
 			skillthing += "G";
 			if( skillthing == tag )
-				Skill( data.toUShort(), iCountA );
+			{
+				Skill( static_cast<UI16>(std::stoul(data, nullptr, 0)), iCountA );
+			}
 			else
 			{
 				skillthing = cwmWorldState->skill[iCountA].name;
 				skillthing += "L";
 				if( skillthing == tag )
-					Skill( modCount + data.toUShort(), iCountA );
+				{
+					Skill( modCount + static_cast<UI16>(std::stoul(data, nullptr, 0)), iCountA );
+				}
 			}
 		}
 	}
@@ -1421,6 +1764,7 @@ CRace& CRace::operator =( CRace& trgRace )
 	visDistance = trgRace.visDistance;
 	poisonResistance = trgRace.poisonResistance;
 	magicResistance = trgRace.magicResistance;
+	bloodColour = trgRace.bloodColour;
 
 	return (*this);
 }

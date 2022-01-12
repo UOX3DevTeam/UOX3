@@ -16,3 +16,4 @@ target_link_libraries(uox3 uox)
 
 add_subdirectory(source)
 add_subdirectory(spidermonkey)
+add_subdirectory(zlib)

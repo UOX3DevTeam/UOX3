@@ -154,7 +154,7 @@ void JailCell::EraseOccupant( size_t occupantID )
 JailOccupant *JailCell::Occupant( size_t occupantID )
 {
 	if( occupantID >= playersInJail.size() )
-		return NULL;
+		return nullptr;
 	return playersInJail[occupantID];
 }
 
@@ -177,6 +177,7 @@ void JailCell::PeriodicCheck( void )
 			else
 			{
 				toRelease->SetLocation( playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z, playersInJail[i]->world, playersInJail[i]->instanceID );
+				SendMapChange( toRelease->WorldNumber(), toRelease->GetSocket(), false );
 				toRelease->SetCell( -1 );
 				EraseOccupant( i );
 			}
@@ -195,7 +196,7 @@ void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 	for( jIter = playersInJail.begin(); jIter != playersInJail.end(); ++jIter )
 	{
 		JailOccupant *mOccupant = (*jIter);
-		if( mOccupant != NULL )
+		if( mOccupant != nullptr )
 		{
 			outStream << "[PRISONER]" << '\n' << "{" << '\n';
 			outStream << "CELL=" << cellNumber << '\n';
@@ -228,7 +229,7 @@ JailSystem::~JailSystem()
 void JailSystem::ReadSetup( void )
 {
 	ScriptSection *Regions = FileLookup->FindEntry( "JAILS", regions_def );
-	if( Regions == NULL )
+	if( Regions == nullptr )
 	{
 		jails.resize( 10 );
 		jails[0].X( 5276 );		jails[0].Y( 1164 );		jails[0].Z( 0 );
@@ -245,19 +246,20 @@ void JailSystem::ReadSetup( void )
 	else
 	{
 		JailCell toAdd;
-		UString tag;
-		UString data;
+		std::string tag;
+		std::string data;
 		for( tag = Regions->First(); !Regions->AtEnd(); tag = Regions->Next() )
 		{
 			if( tag.empty() )
 				continue;
 			data = Regions->GrabData();
+			data = strutil::trim( strutil::removeTrailing( data, "//" ));
 			switch( (tag.data()[0]) )
 			{
-				case 'X':	toAdd.X( data.toShort() );	break;
-				case 'Y':	toAdd.Y( data.toShort() );	break;
+				case 'X':	toAdd.X( static_cast<SI16>(std::stoi(data, nullptr, 0)) );	break;
+				case 'Y':	toAdd.Y( static_cast<SI16>(std::stoi(data, nullptr, 0)) );	break;
 				case 'Z':
-					toAdd.Z( data.toByte() );
+					toAdd.Z( static_cast<SI08>(std::stoi(data, nullptr, 0)) );
 					jails.push_back( toAdd );
 					break;
 			}
@@ -273,59 +275,84 @@ void JailSystem::ReadSetup( void )
 void JailSystem::ReadData( void )
 {
 	if( jails.empty() )
+	{
 		return;
+	}
 	std::string temp	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc";
 	if( FileExists( temp ) )
 	{
 		Script *jailData = new Script( temp, NUM_DEFS, false );
-		if( jailData != NULL )
+		if( jailData != nullptr )
 		{
-			ScriptSection *prisonerData = NULL;
-			for( prisonerData = jailData->FirstEntry(); prisonerData != NULL; prisonerData = jailData->NextEntry() )
+			ScriptSection *prisonerData = nullptr;
+			for( prisonerData = jailData->FirstEntry(); prisonerData != nullptr; prisonerData = jailData->NextEntry() )
 			{
-				if( prisonerData == NULL )
+				if( prisonerData == nullptr )
+				{
 					continue;
-				UString tag;
-				UString data;
-				UString UTag;
+				}
+				std::string tag;
+				std::string data;
+				std::string UTag;
 				JailOccupant toPush;
 				UI08 cellNumber = 0;
 				for( tag = prisonerData->First(); !prisonerData->AtEnd(); tag = prisonerData->Next() )
 				{
 					if( tag.empty() )
+					{
 						continue;
-					UTag = tag.upper();
+					}
+					UTag = strutil::upper( tag );
 					data = prisonerData->GrabData();
+					data = strutil::trim( strutil::removeTrailing( data, "//" ));
 					switch( (UTag.data()[0]) )
 					{
 						case 'C':
 							if( UTag == "CELL" )
-								cellNumber = data.toUByte();
+							{
+								cellNumber = static_cast<UI08>(std::stoul(data, nullptr, 0));
+							}
 							break;
 						case 'O':
 							if( UTag == "OLDX" )
-								toPush.x = data.toShort();
+							{
+								toPush.x = static_cast<SI16>(std::stoi(data, nullptr, 0));
+							}
 							else if( UTag == "OLDY" )
-								toPush.y = data.toShort();
+							{
+								toPush.y = static_cast<SI16>(std::stoi(data, nullptr, 0));
+							}
 							else if( UTag == "OLDZ" )
-								toPush.z = data.toByte();
+							{
+								toPush.z = static_cast<SI08>(std::stoi(data, nullptr, 0));
+							}
 							else if( UTag == "WORLD" )
-								toPush.world = data.toByte();
+							{
+								toPush.world = static_cast<SI08>(std::stoi(data, nullptr, 0));
+							}
 							break;
 						case 'R':
 							if( UTag == "RELEASE" )
-								toPush.releaseTime = data.toInt();
+							{
+								toPush.releaseTime = std::stoi(data, nullptr, 0);
+							}
 							break;
 						case 'S':
 							if( UTag == "SERIAL" )
-								toPush.pSerial = data.toUInt();
+							{
+								toPush.pSerial = static_cast<UI32>(std::stoul(data, nullptr, 0));
+							}
 							break;
 					}
 				}
 				if( cellNumber < jails.size() )
+				{
 					jails[cellNumber].AddOccupant( &toPush );
+				}
 				else
-					jails[RandomNum( static_cast< size_t >(0), jails.size() - 1 )].AddOccupant( &toPush );
+				{
+					jails[RandomNum( static_cast<size_t>(0), jails.size() - 1 )].AddOccupant( &toPush );
+				}
 			}
 		}
 		delete jailData;
@@ -343,7 +370,7 @@ void JailSystem::WriteData( void )
 	std::ofstream jailsDestination( jailsFile.c_str() );
 	if( !jailsDestination )
 	{
-		Console.error( format("Failed to open %s for writing", jailsFile.c_str() ));
+		Console.error( strutil::format("Failed to open %s for writing", jailsFile.c_str() ));
 		return;
 	}
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )
@@ -380,7 +407,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 	for( size_t iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); ++iCounter )
 	{
 		JailOccupant *mOccupant = jails[cellNum].Occupant( iCounter );
-		if( mOccupant == NULL )
+		if( mOccupant == nullptr )
 			continue;
 		if( mOccupant->pSerial == toRelease->GetSerial() )
 		{
@@ -400,7 +427,7 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 //o-----------------------------------------------------------------------------------------------o
 bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 {
-	if( jails.empty() || toJail == NULL )
+	if( jails.empty() || toJail == nullptr )
 		return false;
 	size_t minCell = 0;
 	for( size_t i = 0; i < jails.size(); ++i )
@@ -415,6 +442,6 @@ bool JailSystem::JailPlayer( CChar *toJail, SI32 numSecsToJail )
 	}
 
 	jails[minCell].AddOccupant( toJail, numSecsToJail );
-	toJail->SetCell( minCell );
+	toJail->SetCell( static_cast<SI08>(minCell) );
 	return true;
 }

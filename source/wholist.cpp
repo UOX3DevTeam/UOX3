@@ -10,8 +10,6 @@
 cWhoList *WhoList;
 cWhoList *OffList;
 
-void	TweakTarget( CSocket *s );
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ResetUpdateFlag( void )
 //|	Date		-	12th February, 2000
@@ -135,6 +133,8 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 
 	if( buttonPressed < 200 )
 	{
+		if( buttonPressed == 0 )
+			return;
 		buttonPressed -= 7;
 		toSendTo->AddID( buttonPressed );
 		Command( toSendTo, type, buttonPressed );
@@ -145,7 +145,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	SERIAL ser = toSendTo->AddID();
 	if( ser == INVALIDSERIAL )
 	{
-		toSendTo->sysmessage( 1387 );
+		toSendTo->sysmessage( 1387 ); // Selected character not found.
 		return;
 	}
 
@@ -154,16 +154,16 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	CChar *targetChar = calcCharObjFromSer( charSerial ); // find selected char ...
 	if( !ValidateObject( targetChar ) )
 	{
-		toSendTo->sysmessage( 1387 );
+		toSendTo->sysmessage( 1387 ); // Selected character not found.
 		return;
 	}
-	CSocket *trgSock = NULL;
+	CSocket *trgSock = nullptr;
 	switch( buttonPressed )
 	{
 		case 200://gochar
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1388 );
+				toSendTo->sysmessage( 1388 ); // You cannot go to such powerful beings.
 				return;
 			}
 			if( sourceChar->WorldNumber() != targetChar->WorldNumber() )
@@ -177,7 +177,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 201://xtele
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1389 );
+				toSendTo->sysmessage( 1389 ); // Such powerful beings don't come on your whim!
 				return;
 			}
 			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
@@ -192,56 +192,56 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 202://jail char
 			if( sourceChar == targetChar )
 			{
-				toSendTo->sysmessage( 1390 );
+				toSendTo->sysmessage( 1390 ); // You cannot jail yourself!
 				break;
 			}
 			else
 			{
 				if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 				{
-					toSendTo->sysmessage( 1391 );
+					toSendTo->sysmessage( 1391 ); // You cannot jail someone superior to you.
 					return;
 				}
 				if( targetChar->IsJailed() )
-					toSendTo->sysmessage( 1070 );
+					toSendTo->sysmessage( 1070 ); // That player is already in jail!
 
 				else if( !JailSys->JailPlayer( targetChar, 0xFFFFFFFF ) )
-					toSendTo->sysmessage( 1072 );
+					toSendTo->sysmessage( 1072 ); // All jails are currently full!
 				break;
 			}
 		case 203://release
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1392 );
+				toSendTo->sysmessage( 1392 ); // You release someone more powerful than you.
 				return;
 			}
 			if( !targetChar->IsJailed() )
-				toSendTo->sysmessage( 1064 );
+				toSendTo->sysmessage( 1064 ); // That player is not in jail!
 			else
 			{
 				JailSys->ReleasePlayer( targetChar );
-				toSendTo->sysmessage( 1065, targetChar->GetName().c_str() );
+				toSendTo->sysmessage( 1065, targetChar->GetName().c_str() ); // Player %s released.
 			}
 			break;
 		case 204:
 			if( targetChar == sourceChar )
 			{
-				toSendTo->sysmessage( 1393 );
+				toSendTo->sysmessage( 1393 ); // You cannot kick yourself.
 				break;
 			}
 			else
 			{
 				if( !isOnline( (*targetChar) ) )	// local var overloads it
 				{
-					toSendTo->sysmessage( 1394 );		// you realize the break isn't necessary?
+					toSendTo->sysmessage( 1394 ); // You can't kick an offline player.
 					break;
 				}
 				if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 				{
-					toSendTo->sysmessage( 1395 );
+					toSendTo->sysmessage( 1395 ); // You cannot kick someone more powerful than you.
 					return;
 				}
-				toSendTo->sysmessage( 1396 );
+				toSendTo->sysmessage( 1396 ); // Kicking player.
 				Network->Disconnect( targetChar->GetSocket() );
 				break;
 			}
@@ -249,7 +249,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			// make it prettier later!
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1397 );
+				toSendTo->sysmessage( 1397 ); // You cannot spy on your betters.
 				return;
 			}
 			toSendTo->sysmessage( "X: %i Y: %i Z: %i World: %u", targetChar->GetX(), targetChar->GetY(), targetChar->GetZ(), targetChar->WorldNumber() );
@@ -257,20 +257,22 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 		case 206:	// remote cstats
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1398 );
+				toSendTo->sysmessage( 1398 ); // You have not the right to see the intimate details of your betters!
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
-			Commands->Command( toSendTo, targetChar, "cstats" );
+			// Trigger scripted command
+			Commands->Command( toSendTo, targetChar, "cstats", true );
 			break;
 		case 207:	// remote tweak
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				toSendTo->sysmessage( 1399 );
+				toSendTo->sysmessage( 1399 ); // You certainly cannot adjust those that are your betters!
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
-			TweakTarget( toSendTo );
+			// Trigger scripted command
+			Commands->Command( toSendTo, targetChar, "tweak", true );
 			break;
 		default:
 			Console.error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
@@ -303,35 +305,33 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	UI16 tColour		= cwmWorldState->ServerData()->TitleColour();
 	UI16 butRight		= cwmWorldState->ServerData()->ButtonRight();
 	//--static pages
-	toSend.addCommand( "nomove" );
-	toSend.addCommand( "noclose" );
 	toSend.addCommand( "page 0" );
-	toSend.addCommand( format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()) );
-	toSend.addCommand( format("button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
-	toSend.addCommand( format("text 30 40 %u 0", tColour ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( format("text 30 60 %u 1", tColour) );
+	toSend.addCommand( strutil::format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()) );
+	toSend.addCommand( strutil::format("button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); //OKAY
+	toSend.addCommand( strutil::format("text 30 40 %u 0", tColour ));           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.addCommand( strutil::format("text 30 60 %u 1", tColour) );
 	toSend.addCommand( "page 1" );
 
-	toSend.addCommand( format("text 50 90 %u 2", lColour) );	//goto text
-	toSend.addCommand( format("text 50 110 %u 3", lColour) );	//gettext
-	toSend.addCommand( format("text 50 130 %u 4", lColour ));	//Jail text
-	toSend.addCommand( format("text 50 150 %u 5", lColour ));	//Release text
-	toSend.addCommand( format("text 50 170 %u 6", lColour ));	//Kick user text
-	toSend.addCommand( format("text 50 190 %u 7", lColour ));
-	toSend.addCommand( format("text 50 210 %u 8", lColour ));
-	toSend.addCommand( format("text 50 230 %u 9", lColour) );
-	toSend.addCommand( format("text 50 270 %u 10", lColour ));
-	toSend.addCommand( format("button 20 90 %u %i 1 0 200", butRight, butRight + 1 )); //goto button
-	toSend.addCommand( format("button 20 110 %u %i 1 0 201", butRight, butRight + 1 )); //get button
-	toSend.addCommand( format("button 20 130 %u %i 1 0 202", butRight, butRight + 1 )); //Jail button
-	toSend.addCommand( format("button 20 150 %u %i 1 0 203", butRight, butRight + 1 )); //Release button
-	toSend.addCommand( format("button 20 170 %u %i 1 0 204", butRight, butRight + 1 )); //kick button
-	toSend.addCommand( format("button 20 190 %u %i 1 0 205", butRight, butRight + 1 )); //Where button
-	toSend.addCommand( format("button 20 210 %u %i 1 0 206", butRight, butRight + 1 )); //Cstats button
-	toSend.addCommand( format("button 20 230 %u %i 1 0 207", butRight, butRight + 1 )); //Tweak button
+	toSend.addCommand( strutil::format("text 50 90 %u 2", lColour) );	//goto text
+	toSend.addCommand( strutil::format("text 50 110 %u 3", lColour) );	//gettext
+	toSend.addCommand( strutil::format("text 50 130 %u 4", lColour ));	//Jail text
+	toSend.addCommand( strutil::format("text 50 150 %u 5", lColour ));	//Release text
+	toSend.addCommand( strutil::format("text 50 170 %u 6", lColour ));	//Kick user text
+	toSend.addCommand( strutil::format("text 50 190 %u 7", lColour ));
+	toSend.addCommand( strutil::format("text 50 210 %u 8", lColour ));
+	toSend.addCommand( strutil::format("text 50 230 %u 9", lColour) );
+	toSend.addCommand( strutil::format("text 50 270 %u 10", lColour ));
+	toSend.addCommand( strutil::format("button 20 90 %u %i 1 0 200", butRight, butRight + 1 )); //goto button
+	toSend.addCommand( strutil::format("button 20 110 %u %i 1 0 201", butRight, butRight + 1 )); //get button
+	toSend.addCommand( strutil::format("button 20 130 %u %i 1 0 202", butRight, butRight + 1 )); //Jail button
+	toSend.addCommand( strutil::format("button 20 150 %u %i 1 0 203", butRight, butRight + 1 )); //Release button
+	toSend.addCommand( strutil::format("button 20 170 %u %i 1 0 204", butRight, butRight + 1 )); //kick button
+	toSend.addCommand( strutil::format("button 20 190 %u %i 1 0 205", butRight, butRight + 1 )); //Where button
+	toSend.addCommand( strutil::format("button 20 210 %u %i 1 0 206", butRight, butRight + 1 )); //Cstats button
+	toSend.addCommand( strutil::format("button 20 230 %u %i 1 0 207", butRight, butRight + 1 )); //Tweak button
 
-	toSend.addText(format( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex));
-	toSend.addText( format("Name: %s", targetChar->GetName().c_str() ));
+	toSend.addText(strutil::format( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex));
+	toSend.addText( strutil::format("Name: %s", targetChar->GetName().c_str() ));
 	toSend.addText( Dictionary->GetEntry( 1400, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1401, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1402, sLang ) );
@@ -340,7 +340,7 @@ void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	toSend.addText( Dictionary->GetEntry( 1405, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1406, sLang ) );
 	toSend.addText( Dictionary->GetEntry( 1407, sLang ) );
-	toSend.addText( format("Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )) );
+	toSend.addText( strutil::format("Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )) );
 
 	toSend.Finalize();
 	toSendTo->Send( &toSend );
@@ -379,17 +379,16 @@ void cWhoList::Update( void )
 	size_t k		= cwmWorldState->GetPlayersOnline();
 	SI32 realCount	= 1;
 	//--static pages
-	one.push_back( "noclose" );
 	one.push_back( "page 0"  );
 
-	one.push_back( format(maxsize, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ) );
+	one.push_back( strutil::format(maxsize, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() ) );
 
-	one.push_back( format(maxsize,"button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ) );
+	one.push_back( strutil::format(maxsize,"button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ) );
 
-	one.push_back( format(maxsize, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() ) );
+	one.push_back( strutil::format(maxsize, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() ) );
 
 
-	one.push_back( format(maxsize, "page %u", pagenum ) );
+	one.push_back( strutil::format(maxsize, "page %u", pagenum ) );
 
 
 	two.push_back( "Wholist" );
@@ -408,14 +407,14 @@ void cWhoList::Update( void )
 				position = 40;
 				++pagenum;
 
-				one.push_back( format(maxsize, "page %u", pagenum ) );
+				one.push_back( strutil::format(maxsize, "page %u", pagenum ) );
 			}
 
-			one.push_back( format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
+			one.push_back( strutil::format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
 
-			one.push_back( format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
+			one.push_back( strutil::format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
 
-			two.push_back( format(maxsize, " %s", tChar->GetName().c_str() ) );
+			two.push_back( strutil::format(maxsize, " %s", tChar->GetName().c_str() ) );
 			AddSerial( tChar->GetSerial() );
 
 			position += 20;
@@ -425,23 +424,23 @@ void cWhoList::Update( void )
 		}
 
 
-		two[0] = format(maxsize, "Wholist [%i online]", realCount - 1 );
+		two[0] = strutil::format(maxsize, "Wholist [%i online]", realCount - 1 );
 
 		pagenum = 1;
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
 
-			one.push_back( format(maxsize, "page %u", pagenum ) );
+			one.push_back( strutil::format(maxsize, "page %u", pagenum ) );
 			if( i >= numPerPage )
 			{
 				 //back button
-				one.push_back( format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
+				one.push_back( strutil::format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
 
-				one.push_back( format(maxsize, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
+				one.push_back( strutil::format(maxsize, "button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
 			}
 			++pagenum;
 		}
@@ -450,7 +449,7 @@ void cWhoList::Update( void )
 	{
 		MAPUSERNAMEID_ITERATOR I;
 		//
-		CChar *ourChar = NULL;
+		CChar *ourChar = nullptr;
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
 			CAccountBlock& actbSearch = I->second;
@@ -467,15 +466,15 @@ void cWhoList::Update( void )
 							position = 40;
 							++pagenum;
 
-							one.push_back( format(maxsize,"page %u", pagenum ) );
+							one.push_back( strutil::format(maxsize,"page %u", pagenum ) );
 						}
 
-						one.push_back( format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
+						one.push_back( strutil::format(maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ) );
 
-						one.push_back( format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
+						one.push_back( strutil::format(maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ) );
 
 
-						two.push_back( format(maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ) );
+						two.push_back( strutil::format(maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ) );
 						AddSerial( ourChar->GetSerial() );
 
 						position += 20;
@@ -487,22 +486,22 @@ void cWhoList::Update( void )
 			}
 		}
 
-		two[0] = format(maxsize,"Wholist [%i offline]", realCount-1 );
+		two[0] = strutil::format(maxsize,"Wholist [%i offline]", realCount-1 );
 
 		pagenum = 1;
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
 
-			one.push_back( format(maxsize,"page %u", pagenum ) );
+			one.push_back( strutil::format(maxsize,"page %u", pagenum ) );
 			if( i >= numPerPage )
 			{
 				 //back button
-				one.push_back( format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
+				one.push_back( strutil::format(maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ) );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				one.push_back( format(maxsize,"button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
+				one.push_back( strutil::format(maxsize,"button 260 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ) );
 			}
 			++pagenum;
 		}

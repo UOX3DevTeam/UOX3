@@ -17,11 +17,11 @@ bool checkItemRange( CChar *mChar, CItem *i )
 	CBaseObject *itemOwner	= i;
 	bool checkRange			= false;
 
-	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate distance
+	if( i->GetCont() != nullptr ) // It's inside another container, we need root container to calculate distance
 	{
 		ObjectType objType	= OT_CBO;
 		CBaseObject *iOwner = FindItemOwner( i, objType );
-		if( iOwner != NULL )
+		if( iOwner != nullptr )
 			itemOwner = iOwner;
 	}
 	if( itemOwner == mChar )
@@ -68,6 +68,29 @@ bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if an object's location is within a certain distance of another
+//|					object, but checking using a square instead of a radius
+//o-----------------------------------------------------------------------------------------------o
+bool objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+{
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
+		return false;
+	if( a == b )
+		return true;
+	if( a->WorldNumber() != b->WorldNumber() || a->GetInstanceID() != b->GetInstanceID() )
+		return false;
+
+	auto aX = a->GetX();
+	auto aY = a->GetY();
+	auto bX = b->GetX();
+	auto bY = b->GetY();
+	return ( aX >= ( bX - distance ) && aX <= ( bX + distance )
+		&& aY >= ( bY - distance ) && aY <= ( bY + distance ) );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another object
@@ -75,6 +98,30 @@ bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 bool objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
 	return ( getOldDist( a, b ) <= distance );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if an object's old location is within a certain distance of another
+//|					object, but checking using a square instead of a radius
+//o-----------------------------------------------------------------------------------------------o
+bool objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance )
+{
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
+		return false;
+	if( a == b )
+		return true;
+	if( a->WorldNumber() != b->WorldNumber() || a->GetInstanceID() != b->GetInstanceID() )
+		return false;
+
+	point3 aOldLoc = a->GetOldLocation();
+	auto aX = aOldLoc.x;
+	auto aY = aOldLoc.y;
+	auto bX = b->GetX();
+	auto bY = b->GetY();
+	return ( aX >= ( bX - distance ) && aX <= ( bX + distance )
+		&& aY >= ( bY - distance ) && aY <= ( bY + distance ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -86,8 +133,17 @@ bool charInRange( CChar *a, CChar *b )
 {
 	if( !ValidateObject( a ) )
 		return false;
-	SI16 visRange		= MAX_VISRANGE + Races->VisRange( a->GetRace() );
-	return objInRange( a, b, static_cast<UI16>(visRange) );
+
+	SI16 visRange = MAX_VISRANGE;
+	if( a->GetSocket() != nullptr )
+	{
+		visRange = a->GetSocket()->Range() + Races->VisRange( a->GetRace() );
+	}
+	else
+	{
+		visRange += Races->VisRange( a->GetRace() );
+	}
+	return objInRangeSquare( a, b, static_cast<UI16>( visRange ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -110,6 +166,12 @@ UI16 getDist( point3 a, point3 b )
 {
 	point3 difference = a - b;
 	return static_cast<UI16>(difference.Mag());
+}
+
+UI16 getDist3D( point3 a, point3 b )
+{
+	point3 difference = a - b;
+	return static_cast<UI16>( difference.Mag3D() );
 }
 
 UI16 getOldDist( CBaseObject *a, CBaseObject *b )

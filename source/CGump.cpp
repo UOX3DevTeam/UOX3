@@ -40,7 +40,7 @@ void CGump::Add( const std::string& Tag, const std::string& Text )
 //o-----------------------------------------------------------------------------------------------o
 void CGump::Send( CSocket *target )
 {
-	if( target == NULL )
+	if( target == nullptr )
 		return;
 
 	CPSendGumpMenu toSend;
@@ -105,7 +105,7 @@ void CGump::SetSerial( UI32 newSerial )
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height )
 {
-	TagList.push_back( format("resizepic %u %u %u %u %u", x, y, GumpID, width, height ) );
+	TagList.push_back( strutil::format("resizepic %u %u %u %u %u", x, y, GumpID, width, height ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -115,7 +115,7 @@ void CGump::AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height 
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddGump( UI16 x, UI16 y, UI16 GumpID )
 {
-	TagList.push_back( format( "gumppic %u %u %u", x, y, GumpID ) );
+	TagList.push_back( strutil::format( "gumppic %u %u %u", x, y, GumpID ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -125,7 +125,7 @@ void CGump::AddGump( UI16 x, UI16 y, UI16 GumpID )
 //o-----------------------------------------------------------------------------------------------o
 void CGump::AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page, UI32 UniqueID  )
 {
-	TagList.push_back( format("button %u %u %u %u %u %u %u", x, y, ImageUp, ImageDown, Behaviour, Page, UniqueID ) );
+	TagList.push_back( strutil::format("button %u %u %u %u %u %u %u", x, y, ImageUp, ImageDown, Behaviour, Page, UniqueID ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -138,7 +138,7 @@ void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 	UI32 TextID = static_cast<std::uint32_t>(TextList.size());
 
 	TextList.push_back( Text );
-	TagList.push_back( format( "text %u %u %u %u", x, y, hue, TextID ) );
+	TagList.push_back( strutil::format( "text %u %u %u %u", x, y, hue, TextID ) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -148,7 +148,7 @@ void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 //o-----------------------------------------------------------------------------------------------o
 UI16 CGump::StartPage( void )
 {
-	TagList.push_back( format( "page %u", PageCount ) );
+	TagList.push_back( strutil::format( "page %u", PageCount ) );
 
 	++PageCount;
 	return PageCount - 1;

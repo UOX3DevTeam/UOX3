@@ -13,10 +13,11 @@
 #include "classes.h"
 #include "regions.h"
 #include "townregion.h"
+#include "Dictionary.h"
 
 #include "ObjectFactory.h"
 
-cCharStuff *Npcs = NULL;
+cCharStuff *Npcs = nullptr;
 
 
 //o-----------------------------------------------------------------------------------------------o
@@ -24,88 +25,94 @@ cCharStuff *Npcs = NULL;
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add loot to monsters packs
 //o-----------------------------------------------------------------------------------------------o
-CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
+CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist, bool shouldSave )
 {
-	CItem *retitem			= NULL;
-	UString sect			= "LOOTLIST " + lootlist;
+	CItem *retItem			= nullptr;
+	std::string sect		= std::string("LOOTLIST ") + lootlist;
 	ScriptSection *LootList = FileLookup->FindEntry( sect, items_def );
-	if( LootList == NULL )
-		return NULL;
+	if( LootList == nullptr )
+		return nullptr;
 	size_t i = LootList->NumEntries();
 	if( i > 0 )
 	{
 		i = RandomNum( static_cast< size_t >(0), i - 1 );
-		UString tag = LootList->MoveTo( i );
-		UString tagData = LootList->GrabData() ;
-
+		std::string tag = LootList->MoveTo( i );
+		std::string tagData = LootList->GrabData();
+		auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( tagData, "//" )), "," );
+		auto tcsecs = strutil::sections( strutil::trim( strutil::removeTrailing( tag, "//" )), "," );
+		
 		if( tag.empty() )
-			return NULL;
+			return nullptr;
 		UI16 iAmount = 0;
-		//UI16 LootChance = 0;
-		if( tag.upper() == "LOOTLIST" )
+
+		if( strutil::upper( tag ) == "LOOTLIST" )
 		{
-			if( tagData.sectionCount( "," ) != 0 ) // Amount specified behind lootlist entry?
+			if( csecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
-				iAmount = tagData.section( ",", 1, 1).stripWhiteSpace().toUShort();
-				CItem *retitemNested = NULL;
+				iAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+				CItem *retItemNested = nullptr;
 				for( UI16 iCount = 0; iCount < iAmount; ++iCount )
 				{
-					retitemNested = addRandomLoot( s, tagData.section( ",", 0, 0).stripWhiteSpace() );
+					retItemNested = addRandomLoot( s, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), shouldSave );
 				}
 			}
 			else
-				retitem = addRandomLoot( s, LootList->GrabData() );
+			{
+				retItem = addRandomLoot( s, LootList->GrabData(), shouldSave );
+			}
 		}
 		else
 		{
-			if( tag.sectionCount( "," ) != 0 ) // Amount specified behind lootlist entry?
+			if( tcsecs.size() > 1 ) // Amount specified behind lootlist entry?
 			{
-				iAmount = tag.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
-				retitem = Items->CreateBaseScriptItem( tag.section( ",", 0, 0 ).stripWhiteSpace(), s->WorldNumber(),  iAmount );
-				if( retitem != NULL )
+				iAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tcsecs[1], "//" )), nullptr, 0));
+				retItem = Items->CreateBaseScriptItem( s, strutil::trim( strutil::removeTrailing( tcsecs[0], "//" )), s->WorldNumber(),  iAmount, s->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+				if( retItem != nullptr )
 				{
-					retitem->SetCont( s );
-					retitem->PlaceInPack();
+					retItem->SetCont( s );
+					retItem->PlaceInPack();
 				}
 			}
 			else
 			{
-				retitem = Items->CreateBaseScriptItem( tag, s->WorldNumber(), 1 );
-				if( retitem != NULL )
+				retItem = Items->CreateBaseScriptItem( s, tag, s->WorldNumber(), 1, s->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+				if( retItem != nullptr )
 				{
-					retitem->SetCont( s );
-					retitem->PlaceInPack();
+					retItem->SetCont( s );
+					retItem->PlaceInPack();
 				}
 			}
 		}
 	}
-	return retitem;
+	return retItem;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CChar *CreateBaseNPC( UString ourNPC )
+//|	Function	-	CChar *CreateBaseNPC( std::string ourNPC )
 //|	Date		-	10/12/2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic npc from the scripts
 //o-----------------------------------------------------------------------------------------------o
-CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
+CChar *cCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 {
-	ourNPC						= ourNPC.stripWhiteSpace();
+	ourNPC						= strutil::trim( strutil::removeTrailing( ourNPC, "//" ));
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
-	if( npcCreate == NULL )
+	if( npcCreate == nullptr )
 	{
-		Console.error(format( "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str()) );
-		return NULL;
+		Console.error(strutil::format( "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str()) );
+		return nullptr;
 	}
 
-	CChar *cCreated = NULL;
+	CChar *cCreated = nullptr;
 	if( npcCreate->NpcListExist() )
 		cCreated = CreateRandomNPC( npcCreate->NpcListData() );
 	else
 	{
 		cCreated = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-		if( cCreated == NULL )
-			return NULL;
+		if( cCreated == nullptr )
+			return nullptr;
+		if( !shouldSave )
+			cCreated->ShouldSave( false );
 
 		cCreated->SetSkillTitles( true );
 		cCreated->SetNpc( true );
@@ -117,9 +124,15 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 		if( !ApplyNpcSection( cCreated, npcCreate, ourNPC ) )
 			Console.error( "Trying to apply an npc section failed" );
 
-		cScript *toGrab = JSMapping->GetScript( cCreated->GetScriptTrigger() );
-		if( toGrab != NULL )
-			toGrab->OnCreate( cCreated, true );
+		std::vector<UI16> scriptTriggers = cCreated->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				toExecute->OnCreate( cCreated, true );
+			}
+		}
 	}
 	return cCreated;
 }
@@ -132,22 +145,25 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 //o-----------------------------------------------------------------------------------------------o
 CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 {
-	CChar *cCreated			= NULL;
-	UString sect			= "NPCLIST " + npcList;
-	sect					= sect.stripWhiteSpace();
+	CChar *cCreated			= nullptr;
+	std::string sect		= std::string("NPCLIST ") + npcList;
+	sect					= strutil::trim( strutil::removeTrailing( sect, "//" ));
 	ScriptSection *NPCList	= FileLookup->FindEntry( sect, npc_def );
-	if( NPCList != NULL )
+	if( NPCList != nullptr )
 	{
 		const size_t i = NPCList->NumEntries();
 		if( i > 0 )
 		{
-			UString k = NPCList->MoveTo( RandomNum( static_cast< size_t >(0), i - 1 ) );
+			std::string k = NPCList->MoveTo( RandomNum( static_cast<size_t>(0), i - 1 ));
 			if( !k.empty() )
 			{
-				if( k.upper() == "NPCLIST" )
+				if( strutil::upper( k ) == "NPCLIST" ) {
 					cCreated = CreateRandomNPC( NPCList->GrabData() );
+				}
 				else
+				{
 					cCreated = CreateBaseNPC( k );
+				}
 			}
 		}
 	}
@@ -165,19 +181,19 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 	const ItemTypes iType = iSpawner->GetType();
 	// If the spawner type is 125 and escort quests are not active then abort
 	if( iType == IT_ESCORTNPCSPAWNER && !cwmWorldState->ServerData()->EscortsEnabled() )
-		return NULL;
+		return nullptr;
 
-	CChar *cCreated = NULL;
+	CChar *cCreated = nullptr;
 	if( iSpawner->IsSectionAList() )
 		cCreated = CreateRandomNPC( npc );
 	else
 		cCreated = CreateBaseNPC( npc );
-	if( cCreated == NULL )
-		return NULL;
+	if( cCreated == nullptr )
+		return nullptr;
 
 	cCreated->SetSpawn( iSpawner->GetSerial() );
 	SI16 awayX = 0, awayY = 0;
-	if(( iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER ) && iSpawner->GetCont() == NULL )
+	if(( iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER ) && iSpawner->GetCont() == nullptr )
 	{
 		awayX = iSpawner->GetTempVar( CITV_MORE, 3 );
 		awayY = iSpawner->GetTempVar( CITV_MORE, 4 );
@@ -195,16 +211,20 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CChar *CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
+//|	Function	-	CChar *CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool useNpcList )
 //|	Date		-	10/12/2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates an npc at location xyz
 //o-----------------------------------------------------------------------------------------------o
-CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
+CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool useNpcList )
 {
-	CChar *cCreated = CreateBaseNPC( npc );
-	if( cCreated == NULL )
-		return NULL;
+	CChar *cCreated = nullptr;
+	if( useNpcList )
+		cCreated = CreateRandomNPC( npc );
+	else
+		cCreated = CreateBaseNPC( npc );
+	if( cCreated == nullptr )
+		return nullptr;
 
 	cCreated->SetLocation( x, y, z, worldNumber, instanceID );
 	// Update "old location" for new NPCs straight away
@@ -368,7 +388,7 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 {
 
 #ifdef DEBUG_SPAWN
-	Console.Print( "Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway );
+	Console.print( strutil::format( "Going to spawn at (%d,%d) within %d by %d\n", originX, originY, xAway, yAway ));
 #endif
 
 	if( !ValidateObject( cCreated ) )
@@ -421,15 +441,16 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 	CItem *boughtLayer	= c->GetItemAtLayer( IL_BOUGHTCONTAINER ); //Contains items the NPC has already bought
 	CItem *sellLayer	= c->GetItemAtLayer( IL_SELLCONTAINER ); //Contains items the NPC will sell
 
-	UString sect		= "SHOPLIST " + list;
-	sect				= sect.stripWhiteSpace();
+	std::string sect	= std::string("SHOPLIST ") + list;
+	sect				= strutil::trim( strutil::removeTrailing( sect, "//" ));
 	ScriptSection *ShoppingList = FileLookup->FindEntry( sect, items_def );
-	if( ShoppingList == NULL )
+	if( ShoppingList == nullptr )
 		return;
-
-	UString cdata;
+	
+	bool shouldSave = c->ShouldSave();
+	std::string cdata;
 	SI32 ndata		= -1, odata = -1;
-	CItem *retitem	= NULL;
+	CItem *retItem	= nullptr;
 	for( DFNTAGS tag = ShoppingList->FirstTag(); !ShoppingList->AtEndTags(); tag = ShoppingList->NextTag() )
 	{
 		cdata = ShoppingList->GrabData( ndata, odata );
@@ -438,13 +459,13 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_RSHOPITEM:
 				if( ValidateObject( buyLayer ) )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
-					if( retitem != NULL )
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+					if( retItem != nullptr )
 					{
-						retitem->SetCont( buyLayer );
-						retitem->PlaceInPack();
-						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
-							retitem->SetName( retitem->GetName2() ); // Item identified!
+						retItem->SetCont( buyLayer );
+						retItem->PlaceInPack();
+						if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) )
+							retItem->SetName( retItem->GetName2() ); // Item identified!
 					}
 				}
 				else
@@ -453,14 +474,18 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SELLITEM:
 				if( ValidateObject( sellLayer ) )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
-					if( retitem != NULL )
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+					if( retItem != nullptr )
 					{
-						retitem->SetCont( sellLayer );
+						retItem->SetCont( sellLayer );
 						//retitem->SetSellValue( retitem->GetBuyValue() / 2 );
-						retitem->PlaceInPack();
-						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
-							retitem->SetName( retitem->GetName2() );
+						retItem->PlaceInPack();
+						if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) )
+							retItem->SetName( retItem->GetName2() );
+
+						// Let's start out with the shops fully restocked after spawning
+						retItem->IncAmount( retItem->GetRestock() );
+						retItem->SetRestock( 0 );
 					}
 				}
 				else
@@ -469,32 +494,33 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SHOPITEM:
 				if( ValidateObject( boughtLayer ) )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
-					if( retitem != NULL )
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, c->WorldNumber(), 1, c->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+					if( retItem != nullptr )
 					{
-						retitem->SetCont( boughtLayer );
-						retitem->PlaceInPack();
-						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
-							retitem->SetName( retitem->GetName2() );
+						retItem->SetCont( boughtLayer );
+						retItem->PlaceInPack();
+						if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) )
+							retItem->SetName( retItem->GetName2() );
 					}
 				}
 				else
 					Console << "Warning: Bad Shopping List " << list << " with no Vendor Bought Pack for NPC " << c << " (serial: " << c->GetSerial() << myendl;
 				break;
 			case DFNTAG_VALUE:
-				if( retitem != NULL )
+				if( retItem != nullptr )
 				{
 					if( !cdata.empty() )
 					{
-						if( cdata.sectionCount( " " ) != 0 )
+						auto ssecs = strutil::sections( cdata, " " );
+						if( ssecs.size() > 1 )
 						{
-							retitem->SetBuyValue(  cdata.section( " ", 0, 0 ).stripWhiteSpace().toUInt() );
-							retitem->SetSellValue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUInt() );
+							retItem->SetBuyValue(  static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
+							retItem->SetSellValue( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)) );
 							break;
 						}
 					}
-					retitem->SetBuyValue( ndata );
-					retitem->SetSellValue( (ndata / 2) );
+					retItem->SetBuyValue( ndata );
+					retItem->SetSellValue( (ndata / 2) );
 				}
 				break;
 			default:
@@ -510,13 +536,15 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 //o-----------------------------------------------------------------------------------------------o
 void setRandomName( CChar *s, const std::string& namelist )
 {
-	UString sect	= "RANDOMNAME " + namelist;
-	sect			= sect.stripWhiteSpace();
-	UString tempName;
+	std::string sect	= std::string("RANDOMNAME ") + namelist;
+	sect				= strutil::trim( strutil::removeTrailing( sect, "//" ));
+	std::string tempName;
 
 	ScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
-	if( RandomName == NULL )
-		tempName = std::string("Error Namelist ") + namelist+std::string(" Not Found") ;
+	if( RandomName == nullptr )
+	{
+		tempName = std::string("Error Namelist ") + namelist+std::string(" Not Found");
+	}
 	else
 	{
 		size_t i = RandomName->NumEntries();
@@ -536,20 +564,20 @@ void setRandomName( CChar *s, const std::string& namelist )
 //o-----------------------------------------------------------------------------------------------o
 UI16 addRandomColor( const std::string& colorlist )
 {
-	UString sect					= "RANDOMCOLOR " + colorlist;
-	sect							= sect.stripWhiteSpace();
+	std::string sect				= std::string("RANDOMCOLOR ") + colorlist;
+	sect							= strutil::trim( strutil::removeTrailing( sect, "//" ));
 	ScriptSection *RandomColours	= FileLookup->FindEntry( sect, colors_def );
-	if( RandomColours == NULL )
+	if( RandomColours == nullptr )
 	{
-		Console.warning( format("Error Colorlist %s Not Found", colorlist.c_str() ));
+		Console.warning( strutil::format("Error Colorlist %s Not Found", colorlist.c_str() ));
 		return 0;
 	}
 	size_t i = RandomColours->NumEntries();
 	if( i > 0 )
 	{
 		i = RandomNum( static_cast<size_t>(0), i - 1 );
-		UString tag = RandomColours->MoveTo( static_cast<SI16>(i) );
-		return tag.toUShort();
+		std::string tag = RandomColours->MoveTo( static_cast<SI16>(i) );
+		return static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tag, "//" )), nullptr, 0));
 	}
 	return 0;
 }
@@ -564,13 +592,14 @@ void MakeShop( CChar *c )
 	if( !ValidateObject( c ) )
 		return;
 	c->SetShop( true );
-	CItem *tPack = NULL;
+	CItem *tPack = nullptr;
 	for( UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i )
 	{
 		tPack = c->GetItemAtLayer( static_cast<ItemLayers>(i) );
 		if( !ValidateObject( tPack ) )
 		{
-			tPack = Items->CreateItem( NULL, c, 0x2AF8, 1, 0, OT_ITEM );
+			bool shouldSave = c->ShouldSave();
+			tPack = Items->CreateItem( nullptr, c, 0x2AF8, 1, 0, OT_ITEM, false, shouldSave );
 			if( ValidateObject( tPack ) )
 			{
 				tPack->SetDecayable( false );
@@ -595,24 +624,27 @@ void MakeShop( CChar *c )
 //o-----------------------------------------------------------------------------------------------o
 bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, std::string sectionID, bool isGate )
 {
-	if( NpcCreation == NULL || !ValidateObject( applyTo ) )
+	if( NpcCreation == nullptr || !ValidateObject( applyTo ) )
 		return false;
 
 	UI16 haircolor	= INVALIDCOLOUR;
-	CItem *buyPack	= NULL, *boughtPack = NULL, *sellPack = NULL;
-	CItem *retitem	= NULL, *mypack = NULL;
+	CItem *buyPack	= nullptr, *boughtPack = nullptr, *sellPack = nullptr;
+	CItem *retitem	= nullptr, *mypack = nullptr;
 
-	UString cdata;
+	std::string cdata;
 	SI32 ndata		= -1, odata = -1;
 	UI08 skillToSet = 0xFF;
 
 	TAGMAPOBJECT customTag;
-	UString customTagName;
-	UString customTagStringValue;
+	std::string customTagName;
+	std::string customTagStringValue;
 
 	for( DFNTAGS tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
 	{
 		cdata = NpcCreation->GrabData( ndata, odata );
+		cdata = strutil::trim( strutil::removeTrailing( cdata, "//" ));
+		auto ssects = strutil::sections( cdata, " " );
+		auto csects = strutil::sections( cdata, "," );
 		switch( tag )
 		{
 			case DFNTAG_ALCHEMY:			skillToSet = ALCHEMY;				break;
@@ -636,16 +668,17 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in ATT/DAMAGE tag inside NPC script %s", sectionID.c_str() ));
+					Console.warning( strutil::format("Invalid data found in ATT/DAMAGE tag inside NPC script [%s]", sectionID.c_str() ));
 				break;
 			case DFNTAG_BACKPACK:
 				if( !isGate )
 				{
-					if( mypack == NULL )
+					if( mypack == nullptr )
 						mypack = applyTo->GetPackItem();
-					if( mypack == NULL )
+					if( mypack == nullptr )
 					{
-						mypack = Items->CreateItem( NULL, applyTo, 0x0E75, 1, 0, OT_ITEM );
+						bool shouldSave = applyTo->ShouldSave();
+						mypack = Items->CreateItem( nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM, false, shouldSave );
 						if( ValidateObject( mypack ) )
 						{
 							mypack->SetDecayable( false );
@@ -653,7 +686,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							mypack->SetName( "Backpack" );
 							mypack->SetLayer( IL_PACKITEM );
 							if( !mypack->SetCont( applyTo ) )
-								mypack = NULL;
+								mypack = nullptr;
 							else
 							{
 								mypack->SetX( 0 );
@@ -661,6 +694,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 								mypack->SetZ( 0 );
 								mypack->SetType( IT_CONTAINER );
 								mypack->SetDye( true );
+								mypack->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
 							}
 						}
 					}
@@ -680,25 +714,20 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_CHIVALRY:			skillToSet = CHIVALRY;				break;
 			case DFNTAG_COOKING:			skillToSet = COOKING;				break;
 			case DFNTAG_COLOUR:
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( static_cast<UI16>(ndata) );
 				break;
 			case DFNTAG_COLOURLIST:
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( addRandomColor( cdata ) );
 				break;
 			case DFNTAG_COLOURMATCHHAIR:
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( static_cast<UI16>(haircolor) );
 				break;
-			case DFNTAG_ELEMENTRESIST:
-				if( cdata.sectionCount( " " ) == 3 )
-				{
-					applyTo->SetResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() ), HEAT );
-					applyTo->SetResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ), COLD );
-					applyTo->SetResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() ), LIGHTNING );
-					applyTo->SetResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() ), POISON );
-				}
+			case DFNTAG_CONTROLSLOTS:
+				if( !isGate )
+					applyTo->SetControlSlots( static_cast<UI16>( ndata ) );
 				break;
 			case DFNTAG_DEX:
 				if( ndata > 0 )
@@ -714,7 +743,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					applyTo->SetStamina( applyTo->GetMaxStam() );
 				}
 				else
-					Console.warning( format("Invalid data found in DEX tag inside NPC script %s", sectionID.c_str() ));
+					Console.warning( strutil::format("Invalid data found in DEX tag inside NPC script [%s]", sectionID.c_str() ));
 				break;	
 			case DFNTAG_DETECTINGHIDDEN:	skillToSet = DETECTINGHIDDEN;			break;
 			case DFNTAG_DEF:
@@ -726,32 +755,40 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 					else
 					{
-						applyTo->SetResist( ndata, PHYSICAL );
+						applyTo->SetResist( static_cast<UI16>(ndata), PHYSICAL );
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in DEF tag inside NPC script %s", sectionID.c_str() ));
+					Console.warning( strutil::format("Invalid data found in DEF tag inside NPC script [%s]", sectionID.c_str() ));
 				break;
 			case DFNTAG_DIR:
 				if( !isGate )
 				{
-					UString cupper = cdata.upper();
-					if( cupper == "NE" )
+					std::string cupper = strutil::upper( cdata );
+					if( cupper == "NE" ) {
 						applyTo->SetDir( NORTHEAST );
-					else if( cupper == "E" )
+					}
+					else if( cupper == "E" ) {
 						applyTo->SetDir( EAST );
-					else if( cupper == "SE" )
+					}
+					else if( cupper == "SE" ) {
 						applyTo->SetDir( SOUTHEAST );
-					else if( cupper == "S" )
+					}
+					else if( cupper == "S" ) {
 						applyTo->SetDir( SOUTH );
-					else if( cupper == "SW" )
+					}
+					else if( cupper == "SW" ) {
 						applyTo->SetDir( SOUTHWEST );
-					else if( cupper == "W" )
+					}
+					else if( cupper == "W" ) {
 						applyTo->SetDir( WEST );
-					else if( cupper == "NW" )
+					}
+					else if( cupper == "NW" ) {
 						applyTo->SetDir( NORTHWEST );
-					else if( cupper == "N" )
+					}
+					else if( cupper == "N" ){
 						applyTo->SetDir( NORTH );
+					}
 					else if( cupper == "RND" )
 					{
 						UI08 rndDir = RandomNum( 0, 7 );
@@ -785,6 +822,15 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 				}
 				break;
+			case DFNTAG_ELEMENTRESIST:
+				if( ssects.size() >= 4 )
+				{
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[0], "//" )), nullptr, 0)) ), HEAT );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[1], "//" )), nullptr, 0)) ), COLD );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[2], "//" )), nullptr, 0)) ), LIGHTNING );
+					applyTo->SetResist( ( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[3], "//" )), nullptr, 0)) ), POISON );
+				}
+				break;
 			case DFNTAG_EMOTECOLOUR:
 				if( !isGate )
 					applyTo->SetEmoteColour( static_cast<UI16>(ndata) );
@@ -793,15 +839,22 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_EQUIPITEM:
 				if( !isGate )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-					if( retitem != NULL )
+					bool shouldSave = applyTo->ShouldSave();
+					retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+					if( retitem != nullptr )
 					{
 						if( retitem->GetLayer() == IL_NONE )
-							Console << "Warning: Bad NPC Script (" << sectionID.c_str() << ") with problem item " << cdata << " executed!" << myendl;
+							Console << "Warning: Bad NPC Script ([" << sectionID.c_str() << "]) with problem item " << cdata << " executed!" << myendl;
 						else if( !retitem->SetCont( applyTo ) )
 						{
 							if( !retitem->SetCont( applyTo->GetPackItem() ) )
-								retitem = NULL;
+								retitem = nullptr;
+						}
+
+						if( retitem->GetLayer() == 25 )
+						{
+							// Item equipped on mount layer. Set NPC as mounted!
+							applyTo->SetMounted( true );
 						}
 					}
 				}
@@ -815,20 +868,29 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					applyTo->SetFleeAt( static_cast<SI16>(ndata) );
 				break;
 			case DFNTAG_FLEEINGSPEED:
-				applyTo->SetFleeingSpeed( cdata.stripWhiteSpace().toFloat() );
+				applyTo->SetFleeingSpeed( std::stof(cdata) );
+				break;
+			case DFNTAG_FLEEINGSPEEDMOUNTED:
+				applyTo->SetMountedFleeingSpeed( std::stof(cdata) );
 				break;
 			case DFNTAG_FLAG:
 				if( !isGate )
 				{
 					if( !cdata.empty() )
 					{
-						UString UDat = UString( cdata ).upper();
-						if( UDat == "NEUTRAL" )
+						std::string upperData = strutil::upper( cdata );
+						if( upperData == "NEUTRAL" )
+						{
 							applyTo->SetNPCFlag( fNPC_NEUTRAL );
-						else if( UDat == "INNOCENT" )
+						}
+						else if( upperData == "INNOCENT" )
+						{
 							applyTo->SetNPCFlag( fNPC_INNOCENT );
-						else if( UDat == "EVIL" )
+						}
+						else if( upperData == "EVIL" )
+						{
 							applyTo->SetNPCFlag( fNPC_EVIL );
+						}
 					}
 				}
 				break;
@@ -857,13 +919,25 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_FOOD:				applyTo->SetFood( cdata );				break;
 			case DFNTAG_GET:
 			{
-				ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );
-				if( toFind == NULL )
-					Console.warning(format( "Invalid script entry (%s) called with GET tag, NPC serial 0x%X", cdata.c_str(), applyTo->GetSerial()) );
-				else if( toFind == NpcCreation )
-					Console.warning( format("Infinite loop avoided with GET tag inside NPC script %s", cdata.c_str() ));
+				std::string scriptEntry = "";
+				if( ssects.size() == 1 )
+				{
+					scriptEntry = cdata;
+				}
 				else
-					ApplyNpcSection( applyTo, toFind, cdata, isGate );
+				{
+					SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssects.size()-1));
+					scriptEntry = strutil::trim( strutil::removeTrailing( ssects[rndEntry], "//" ));
+				}
+
+				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, npc_def );
+				if( toFind == nullptr )
+					Console.warning( strutil::format( "Invalid script entry ([%s]) called with GET tag, NPC serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
+				else if( toFind == NpcCreation )
+					Console.warning( strutil::format( "Infinite loop avoided with GET tag inside NPC script [%s]", scriptEntry.c_str() ));
+				else
+					ApplyNpcSection( applyTo, toFind, scriptEntry, isGate );
+				break;
 			}
 				break;
 			case DFNTAG_GOLD:
@@ -875,31 +949,36 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						if( ndata >= 0 )
 						{
+							bool shouldSave = applyTo->ShouldSave();
 							if( odata && odata > ndata )
 							{
-								retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true, 0xFFFF, shouldSave );
 							}
 							else
 							{
-								retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", ndata, OT_ITEM, true );
+								retitem = Items->CreateScriptItem( nullptr, applyTo, "0x0EED", ndata, OT_ITEM, true, 0xFFFF, shouldSave );
 							}
 						}
 						else
-							Console.warning( format("Invalid data found in GOLD tag inside NPC script %s", sectionID.c_str() ));
+							Console.warning( strutil::format("Invalid data found in GOLD tag inside NPC script [%s]", sectionID.c_str() ));
 					}
 					else
-						Console.warning( format("Bad NPC Script (%s) with problem no backpack for gold", sectionID.c_str() ));
+						Console.warning( strutil::format("Bad NPC Script ([%s]) with problem no backpack for gold", sectionID.c_str() ));
 				}
 				break;
 			case DFNTAG_HAIRCOLOUR:
 				haircolor = addRandomColor( cdata );
-				if( retitem != NULL )
+				if( retitem != nullptr )
 					retitem->SetColour( haircolor );
 				break;
 			case DFNTAG_HEALING:			skillToSet = HEALING;					break;
 			case DFNTAG_HERDING:			skillToSet = HERDING;					break;
 			case DFNTAG_HIDING:				skillToSet = HIDING;					break;
 			case DFNTAG_HIDAMAGE:			applyTo->SetHiDamage( static_cast<SI16>(ndata) );	break;
+			case DFNTAG_HIRELING:
+				if( !isGate )
+					applyTo->SetCanHire( true );
+				break;
 			case DFNTAG_HP:
 				if( ndata >= 0 )
 				{
@@ -913,7 +992,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in HP tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in HP tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_HPMAX:
 				if( ndata >= 0 )
@@ -926,13 +1005,29 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						applyTo->SetFixedMaxHP( ndata );
 					}
+
+					// Update current HP
+					applyTo->SetHP( applyTo->GetMaxHP() );
 				}
 				else
-					Console.warning( format("Invalid data found in HPMAX tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in HPMAX tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_ID:
-				applyTo->SetID( static_cast<UI16>(ndata) );
+				/*applyTo->SetID( static_cast<UI16>(ndata) );
 				applyTo->SetOrgID( static_cast<UI16>(ndata) );
+				break;*/
+
+				if( ssects.size() == 1 )
+				{
+					applyTo->SetID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[0], "//" )), nullptr, 0)) );
+					applyTo->SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[0], "//" )), nullptr, 0)) );
+				}
+				else
+				{
+					SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssects.size()-1));
+					applyTo->SetID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[rndEntry], "//" )), nullptr, 0)) );
+					applyTo->SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( ssects[rndEntry], "//" )), nullptr, 0)) );
+				}
 				break;
 			case DFNTAG_IMBUING:			skillToSet = IMBUING;					break;
 			case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;				break;
@@ -950,10 +1045,12 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					applyTo->SetMana( applyTo->GetMaxMana() );
 				}
 				else
-					Console.warning( format("Invalid data found in INTELLIGENCE tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in INTELLIGENCE tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_ITEMID:				skillToSet = ITEMID;					break;
 			case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );		break;
+			case DFNTAG_PACKITEM:
+				[[fallthrough]];
 			case DFNTAG_LOOT:
 				if( !isGate )
 				{
@@ -963,35 +1060,50 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						if( !cdata.empty() )
 						{
-							if( cdata.sectionCount( "," ) != 0 )
+							auto csecs = strutil::sections( strutil::trim( strutil::removeTrailing( cdata, "//" )), "," );
+							if( csecs.size() > 1 )
 							{
 								UI16 iAmount = 0;
-								UString amountData = cdata.section( ",", 1, 1 );
-								if( amountData.sectionCount( " " ) != 0 ) // check if the second part of the tag-data contains two sections separated by a space
+								std::string amountData = strutil::trim( strutil::removeTrailing( csecs[1], "//" ));
+								auto tsects = strutil::sections( amountData, " " );
+								if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
 								{
+									auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+									auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
 									// Tag contained a minimum and maximum value for amount! Let's randomize!
-									iAmount = static_cast<UI16>(RandomNum( amountData.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), amountData.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ));
+									iAmount = static_cast<UI16>(RandomNum( first, second ));
 								}
 								else
 								{
-									iAmount = cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
+									iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
 								}
-								for( UI16 iCount = 0; iCount < iAmount;  ++iCount )
-								{
-									retitem = addRandomLoot( mypack, cdata.section( ",", 0, 0 ).stripWhiteSpace() );
-								}
+								auto tdata = strutil::trim( strutil::removeTrailing( csecs[0], "//" ));
+
+								if( tag == DFNTAG_LOOT )
+									Items->AddRespawnItem( mypack, tdata, true, true, iAmount, true );
+								else
+									Items->AddRespawnItem( mypack, tdata, true, false, iAmount, false );
 							}
 							else
-								retitem = addRandomLoot( mypack, cdata );
+							{
+								if( tag == DFNTAG_LOOT )
+									Items->AddRespawnItem( mypack, cdata, true, true, 1, true );
+								else
+									Items->AddRespawnItem( mypack, cdata, true, false, 1, false );
+							}
 						}
 					}
 					else
-						Console.warning( format("Bad NPC Script (%s) with problem no backpack for loot", sectionID.c_str() ) );
+						Console.warning( strutil::format("Bad NPC Script ([%s]) with problem no backpack for loot", sectionID.c_str() ) );
 				}
 				break;
 			case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;				break;
 			case DFNTAG_LODAMAGE:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );	break;
 			case DFNTAG_LUMBERJACKING:		skillToSet = LUMBERJACKING;				break;
+			case DFNTAG_LOYALTY:
+				applyTo->SetLoyalty( static_cast<UI16>( ndata ) );
+				break;
 			case DFNTAG_MACEFIGHTING:		skillToSet = MACEFIGHTING;				break;
 			case DFNTAG_MAGERY:				skillToSet = MAGERY;					break;
 			case DFNTAG_MAGICRESISTANCE:	skillToSet = MAGICRESISTANCE;			break;
@@ -1008,7 +1120,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in MANA tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in MANA tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_MANAMAX:
 				if( ndata >= 0 )
@@ -1021,9 +1133,15 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						applyTo->SetFixedMaxMana( ndata );
 					}
+
+					// Update current Mana
+					applyTo->SetMana( applyTo->GetMaxMana() );
 				}
 				else
-					Console.warning( format("Invalid data found in MANAMAX tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in MANAMAX tag inside NPC script [%s]", sectionID.c_str() ));				
+				break;
+			case DFNTAG_MAXLOYALTY:
+				applyTo->SetMaxLoyalty( static_cast<UI16>( ndata ) );
 				break;
 			case DFNTAG_MEDITATION:			skillToSet = MEDITATION;				break;
 			case DFNTAG_MINING:				skillToSet = MINING;					break;
@@ -1041,41 +1159,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				if( !isGate )
 					applyTo->SetNPCAiType( static_cast<SI16>(ndata) );
 				break;
+			case DFNTAG_NOHIRELING:
+				if( !isGate )
+					applyTo->SetCanHire( false );
+				break;
 			case DFNTAG_NOTRAIN:
 				if( !isGate )
 					applyTo->SetCanTrain( false );
-				break;
-			case DFNTAG_PACKITEM:
-				if( !isGate )
-				{
-					if( !ValidateObject( mypack ) )
-						mypack = applyTo->GetPackItem();
-					if( ValidateObject( mypack ) )
-					{
-						if( !cdata.empty() )
-						{
-							if( cdata.sectionCount( "," ) != 0 ) // Check if the tag-data contains more than just the itemid
-							{
-								UI16 iAmount = 0;
-								UString amountData = cdata.section( ",", 1, 1 );
-								if( amountData.sectionCount( " " ) != 0 ) // check if the second part of the tag-data contains two sections separated by a space
-								{
-									// Tag contained a minimum and maximum value for amount! Let's randomize!
-									iAmount = static_cast<UI16>(RandomNum( amountData.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), amountData.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ));
-								}
-								else
-								{
-									iAmount = cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
-								}
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), iAmount, OT_ITEM, true );
-							}
-							else
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
-						}
-					}
-					else
-						Console << "Warning: Bad NPC Script (" << sectionID.c_str() << ") with problem no backpack for packitem" << myendl;
-				}
 				break;
 			case DFNTAG_POISONSTRENGTH:		applyTo->SetPoisonStrength( static_cast<UI08>(ndata) ); break;
 			case DFNTAG_PRIV:
@@ -1086,6 +1176,66 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_PEACEMAKING:		skillToSet = PEACEMAKING;				break;
 			case DFNTAG_PROVOCATION:		skillToSet = PROVOCATION;				break;
 			case DFNTAG_POISONING:			skillToSet = POISONING;					break;
+			case DFNTAG_RESISTFIRE:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), HEAT );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, HEAT );
+					}
+				}
+				else
+					Console.warning( strutil::format("Invalid data found in RESISTFIRE tag inside NPC script [%s]", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTCOLD:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), COLD );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, COLD );
+					}
+				}
+				else
+					Console.warning( strutil::format("Invalid data found in RESISTCOLD tag inside NPC script [%s]", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTLIGHTNING:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), LIGHTNING );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, LIGHTNING );
+					}
+				}
+				else
+					Console.warning( strutil::format("Invalid data found in RESISTLIGHTNING tag inside NPC script [%s]", sectionID.c_str() ));
+				break;
+			case DFNTAG_RESISTPOISON:
+				if( ndata >= 0 )
+				{
+					if( odata && odata > ndata )
+					{
+						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), POISON );
+					}
+					else
+					{
+						applyTo->SetResist( ndata, POISON );
+					}
+				}
+				else
+					Console.warning( strutil::format("Invalid data found in RESISTPOISON tag inside NPC script [%s]", sectionID.c_str() ));
+				break;
 			case DFNTAG_RSHOPITEM:
 				if( !isGate )
 				{
@@ -1093,8 +1243,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						buyPack = applyTo->GetItemAtLayer( IL_BUYCONTAINER );
 					if( ValidateObject( buyPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-						if( retitem != NULL )
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1 );
+						if( retitem != nullptr )
 						{
 							retitem->SetCont( buyPack );
 							retitem->PlaceInPack();
@@ -1103,21 +1253,24 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						}
 					}
 					else
-						Console.warning( format("Bad NPC Script (%s) with no Vendor Buy Pack for item", sectionID.c_str() ) );
+						Console.warning( strutil::format("Bad NPC Script ([%s]) with no Vendor Buy Pack for item", sectionID.c_str() ) );
 				}
 				break;
 			case DFNTAG_REATTACKAT:
 				if( !isGate )
 					applyTo->SetReattackAt( static_cast<SI16>(ndata) );
 				break;
-			case DFNTAG_REMOVETRAPS:		skillToSet = REMOVETRAPS;				break;
+			case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;				break;
 			case DFNTAG_RACE:				applyTo->SetRace( static_cast<UI16>(ndata));		break;
 			case DFNTAG_RUNS:
 				if( !isGate )
 					applyTo->SetRun( true );
 				break;
 			case DFNTAG_RUNNINGSPEED:
-				applyTo->SetRunningSpeed( cdata.stripWhiteSpace().toFloat() );
+				applyTo->SetRunningSpeed( std::stof(cdata) );
+				break;
+			case DFNTAG_RUNNINGSPEEDMOUNTED:
+				applyTo->SetMountedRunningSpeed( std::stof(cdata) );
 				break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_SHOPKEEPER:
@@ -1135,8 +1288,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						sellPack = applyTo->GetItemAtLayer( IL_SELLCONTAINER );
 					if( ValidateObject( sellPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-						if( retitem != NULL )
+						bool shouldSave = applyTo->ShouldSave();
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+						if( retitem != nullptr )
 						{
 							retitem->SetCont( sellPack );
 							retitem->PlaceInPack();
@@ -1145,7 +1299,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						}
 					}
 					else
-						Console.warning( format("Bad NPC Script (%s) with no Vendor SellPack for item", sectionID.c_str() ));
+						Console.warning( strutil::format("Bad NPC Script ([%s]) with no Vendor SellPack for item", sectionID.c_str() ));
 				}
 				break;
 			case DFNTAG_SHOPITEM:
@@ -1155,8 +1309,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						boughtPack = applyTo->GetItemAtLayer( IL_BOUGHTCONTAINER );
 					if( ValidateObject( boughtPack ) )
 					{
-						retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-						if( retitem != NULL )
+						bool shouldSave = applyTo->ShouldSave();
+						retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1, applyTo->GetInstanceID(), OT_ITEM, 0xFFFF, shouldSave );
+						if( retitem != nullptr )
 						{
 							retitem->SetCont( boughtPack );
 							retitem->PlaceInPack();
@@ -1165,7 +1320,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						}
 					}
 					else
-						Console.warning(format( "Bad NPC Script (%s) with no Vendor Bought Pack for item", sectionID.c_str() ) );
+						Console.warning(strutil::format( "Bad NPC Script ([%s]) with no Vendor Bought Pack for item", sectionID.c_str() ) );
 				}
 				break;
 			case DFNTAG_SAYCOLOUR:
@@ -1206,7 +1361,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					applyTo->SetHP( applyTo->GetMaxHP() );
 				}
 				else
-					Console.warning( format("Invalid data found in STRENGTH tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in STRENGTH tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_SWORDSMANSHIP:		skillToSet = SWORDSMANSHIP;				break;
 			case DFNTAG_STAMINA:
@@ -1222,7 +1377,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					}
 				}
 				else
-					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in STAMINA tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;
 			case DFNTAG_STAMINAMAX:
 				if( ndata >= 0 )
@@ -1235,22 +1390,30 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						applyTo->SetFixedMaxStam( ndata );
 					}
+
+					// Update current Stamina
+					applyTo->SetStamina( applyTo->GetMaxStam() );
 				}
 				else
-					Console.warning( format("Invalid data found in STAMINA tag inside NPC script %s", sectionID.c_str() ));				
+					Console.warning( strutil::format("Invalid data found in STAMINA tag inside NPC script [%s]", sectionID.c_str() ));				
 				break;				
 			case DFNTAG_STEALTH:			skillToSet = STEALTH;					break;
 			case DFNTAG_SKINLIST:			applyTo->SetSkin( addRandomColor( cdata ) );			break;
 			case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) ); break;
 			case DFNTAG_SCRIPT:
 				if( !isGate )
-					applyTo->SetScriptTrigger( static_cast<UI16>(ndata) );
+				{
+					applyTo->AddScriptTrigger( static_cast<UI16>(ndata) );
+				}
 				break;
 			case DFNTAG_THROWING:			skillToSet = THROWING;					break;
 			case DFNTAG_TITLE:				applyTo->SetTitle( cdata );		break;
 			case DFNTAG_TOTAME:
 				if( !isGate )
+				{
 					applyTo->SetTaming( static_cast<SI16>(ndata) );
+					applyTo->SetOrneriness( static_cast<UI16>(ndata) ); // Set default difficulty to control equal to skill required to tame
+				}
 				break;
 			case DFNTAG_TOPROV:
 				if( !isGate )
@@ -1268,6 +1431,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					applyTo->SetTamedHungerWildChance( static_cast<UI08>(odata) );
 				}
 				break;
+			case DFNTAG_TAMEDTHIRST:
+				if( !isGate )
+				{
+					applyTo->SetTamedThirstRate( static_cast<UI16>( ndata ) );
+					applyTo->SetTamedThirstWildChance( static_cast<UI08>( odata ) );
+				}
+				break;
 			case DFNTAG_WILLHUNGER:
 				if( !isGate )
 				{
@@ -1278,7 +1448,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				}
 				break;
 			case DFNTAG_WALKINGSPEED:
-				applyTo->SetWalkingSpeed( cdata.stripWhiteSpace().toFloat() );
+				applyTo->SetWalkingSpeed( std::stof(cdata)  );
+				break;
+			case DFNTAG_WALKINGSPEEDMOUNTED:
+				applyTo->SetMountedWalkingSpeed( std::stof(cdata) );
 				break;
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;
@@ -1289,30 +1462,78 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 			case DFNTAG_VETERINARY:			skillToSet = VETERINARY;				break;
 			case DFNTAG_WRESTLING:			skillToSet = WRESTLING;					break;
 			case DFNTAG_CUSTOMSTRINGTAG:
-				customTagName			= cdata.section( " ", 0, 0 );
-				customTagStringValue	= cdata.section( " ", 1 );
+			{
+				auto count = 0;
+				std::string result;
+				for( auto &sec : ssects )
+				{
+					if( count > 0 )
+					{
+						if( count == 1 )
+						{
+							result = strutil::trim( strutil::removeTrailing( sec, "//" ));
+						}
+						else
+						{
+							result = result + " " + strutil::trim( strutil::removeTrailing( sec, "//" ));
+						}
+					}
+					count++;
+				}
+				customTagName			= strutil::trim( strutil::removeTrailing( ssects[0], "//" ));
+				customTagStringValue	= result;
+
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
 					customTag.m_StringValue	= customTagStringValue;
-					customTag.m_IntValue	= customTag.m_StringValue.length();
+					customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
 					applyTo->SetTag( customTagName, customTag);
 				}
-				break;
-			case DFNTAG_CUSTOMINTTAG:
-				customTagName			= cdata.section(" ", 0, 0);
-				customTagStringValue	= cdata.section(" ", 1);
-				if( !customTagName.empty() && !customTagStringValue.empty() )
+				else
 				{
-					customTag.m_Destroy		= FALSE;
-					customTag.m_IntValue = customTagStringValue.toInt();
-					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
-					customTag.m_StringValue	= "";
-					applyTo->SetTag( customTagName, customTag);
+					Console.warning( strutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside NPC script [%s] - Supported data format: <tagName> <text>", sectionID.c_str() ) );
 				}
 				break;
-			default:						Console << "Unknown tag in ApplyNpcSection(): " << (SI32)tag << myendl; break;
+			}
+			case DFNTAG_CUSTOMINTTAG:
+			{
+				auto count = 0;
+				std::string result;
+				for( auto &sec : ssects )
+				{
+					if( count > 0 )
+					{
+						if( count == 1 )
+						{
+							result = strutil::trim( strutil::removeTrailing( sec, "//" ));
+						}
+					}
+					count++;
+				}
+				customTagName = strutil::trim( strutil::removeTrailing( ssects[0], "//" ));
+				customTagStringValue = result;
+				if( !customTagName.empty() && !customTagStringValue.empty() )
+				{
+					customTag.m_Destroy = FALSE;
+					customTag.m_IntValue = std::stoi( customTagStringValue );
+					customTag.m_ObjectType = TAGMAP_TYPE_INT;
+					customTag.m_StringValue = "";
+					applyTo->SetTag( customTagName, customTag );
+					if( count > 1 )
+					{
+						Console.warning( strutil::format( "Multiple values detected for CUSTOMINTTAG in NPC script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionID.c_str() ) );
+					}
+				}
+				else
+				{
+					Console.warning( strutil::format( "Invalid data found in CUSTOMINTTAG tag in NPC script [%s] - Supported data format: <tagName> <value>", sectionID.c_str() ) );
+				}
+				break;
+			}
+			default:						
+				Console << "Unknown tag in ApplyNpcSection(): " << (SI32)tag << myendl; break;
 		}
 		if( skillToSet != 0xFF )
 		{
@@ -1323,6 +1544,150 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 	return true;
 }
 
+bool cCharStuff::canControlPet( CChar *mChar, CChar *Npc, bool isRestricted, bool checkDifficulty, bool ignoreOwnerCheck, bool ignoreLoyaltyChanges )
+{
+	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNPCAiType() != AI_PLAYERVENDOR && Npc->GetQuestType() == 0 )
+	{
+		if( !ignoreOwnerCheck && Npc->GetOwnerObj() != mChar && ( isRestricted || !Npcs->checkPetFriend( mChar, Npc ) ) )
+			return false;
+
+		if( checkDifficulty && Npc->IsTamed() && cwmWorldState->ServerData()->CheckPetControlDifficulty() )
+		{
+			// Let's base this on how difficult it is to control the pet, as well
+			UI16 chanceToControl = Skills->CalculatePetControlChance( mChar, Npc );
+			UI16 loyaltyGainOnSuccess = cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess();
+			UI16 loyaltyLossOnFailure = cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure();
+
+			// Easy to control pets/summoned creatures don't gain/lose loyalty from commands
+			if( chanceToControl == 1000 )
+				return true;
+
+			if( chanceToControl >= RandomNum( 0, 1000 ) )
+			{
+				// Succeeded in controlling pet
+				if( !ignoreLoyaltyChanges )
+				{
+					Npc->SetLoyalty( std::min( 100, Npc->GetLoyalty() + loyaltyGainOnSuccess ) );
+				}
+				return true;
+			}
+			else
+			{
+				// Failed to control pet
+				if( !ignoreLoyaltyChanges )
+				{
+					Npc->SetLoyalty( std::max( 0, Npc->GetLoyalty() - loyaltyLossOnFailure ) );
+					UI16 soundToPlay = cwmWorldState->creatures[Npc->GetID()].GetSound( SND_STARTATTACK );
+					Effects->PlaySound( Npc, soundToPlay );
+
+					if( Npc->GetLoyalty() == 0 )
+					{
+						// Reduce player's control slot usage by the amount of control slots taken up by the pet
+						mChar->SetControlSlotsUsed( std::max( 0, mChar->GetControlSlotsUsed() - Npc->GetControlSlots() ) );
+
+						// Pet goes wild for lack of loyalty
+						Npcs->releasePet( Npc );
+						return false;
+					}
+
+					CSocket *mSock = mChar->GetSocket();
+					if( mSock != nullptr )
+					{
+						std::string npcName = getNpcDictName( Npc, mSock );
+						mSock->sysmessage( 2412, npcName.c_str() ); // %s disobeys your command
+					}
+				}
+
+				return false;
+			}
+		}
+
+		// No difficulty checking needed, just allow it
+		return true;
+	}
+	return false;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void finalizeTransfer( CChar *npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Finalize transfer of pet to new owner
+//o-----------------------------------------------------------------------------------------------o
+void cCharStuff::finalizeTransfer( CChar *petChar, CChar *srcChar, CChar *targChar )
+{
+	// If the pet is guarding something, stop guarding that something
+	Npcs->stopPetGuarding( petChar );
+
+	// Clear pet's existing friend-list
+	petChar->ClearFriendList();
+
+	std::string petName = getNpcDictName( petChar );
+	petChar->TextMessage( nullptr, 1074, TALK, 0, petName.c_str(), targChar->GetName().c_str() ); // * %s will now take %s as his master *
+
+	// Transfer ownership
+	petChar->SetOwner( targChar );
+
+	// Make pet follow their new owner
+	petChar->SetFTarg( static_cast<CChar*>( targChar ) );
+	petChar->FlushPath();
+	petChar->SetNpcWander( WT_FOLLOW );
+
+	// Update control slots used for both old and new owners
+	srcChar->SetControlSlotsUsed( std::max(0, srcChar->GetControlSlotsUsed() - petChar->GetControlSlots()) );
+	targChar->SetControlSlotsUsed( std::clamp(targChar->GetControlSlotsUsed() + petChar->GetControlSlots(), 0, 255 ));
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void releasePet( CChar *npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Release the pet from its owner
+//o-----------------------------------------------------------------------------------------------o
+void cCharStuff::releasePet( CChar *pet )
+{
+	// Stop guarding
+	Npcs->stopPetGuarding( pet );
+
+	// Stop following
+	pet->SetFTarg( nullptr );
+	pet->SetNpcWander( WT_FREE );
+
+	// Remove owner
+	pet->SetOwner( nullptr );
+
+	std::string petName = getNpcDictName( pet );
+	pet->TextMessage( nullptr, 1325, TALK, 0, petName.c_str() ); // *%s appears to have decided that it is better off without a master *
+
+	// If a summoned creature, unsummon it
+	if( pet->GetTimer( tNPC_SUMMONTIME ) )
+	{
+		Effects->PlaySound( pet, 0x01FE );
+		pet->Delete();
+	}
+
+	// Reset hunger
+	pet->SetHunger( 6 );
+
+	// Increase pet orneriness, to make it more difficult to control for its next owner
+	auto ownerCount = pet->GetOwnerCount();
+	switch( ownerCount )
+	{
+	case 1:
+		pet->SetOrneriness( pet->GetTaming() + 48 );
+		break;
+	case 2:
+		pet->SetOrneriness( pet->GetTaming() + 192 );
+		break;
+	case 3:
+		pet->SetOrneriness( pet->GetTaming() + 432 );
+		break;
+	case 4:
+		pet->SetOrneriness( pet->GetTaming() + 768 );
+		break;
+	default:
+		break;
+	}
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar * getGuardingPet( CChar *mChar, CBaseObject *guarded )
 //o-----------------------------------------------------------------------------------------------o
@@ -1331,19 +1696,20 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
-		return NULL;
+		return nullptr;
 
-	CDataList< CChar * > *myPets = mChar->GetPetList();
+	GenericList< CChar * > *myPets = mChar->GetPetList();
 	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 	{
 		if( ValidateObject( pet ) )
 		{
-			if( !pet->GetMounted() && pet->GetNPCAiType() == AI_PET_GUARD &&
+			//if( !pet->GetMounted() && pet->GetNPCAiType() == AI_PET_GUARD &&
+			if( !pet->GetMounted() &&
 			   pet->GetGuarding() == guarded && pet->GetOwnerObj() == mChar )
 				return pet;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1354,9 +1720,9 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
 	CHARLIST *petFriends	= pet->GetFriendList();
-	if( petFriends != NULL )
+	if( petFriends != nullptr )
 	{
-		CChar *getFriend		= NULL;
+		CChar *getFriend		= nullptr;
 		for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
 		{
 			getFriend = (*I);
@@ -1390,7 +1756,7 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 		if( ValidateObject( charGuard ) )
 			charGuard->SetGuarded( false );
 	}
-	pet->SetGuarding( NULL );
+	pet->SetGuarding( nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1400,12 +1766,14 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 //o-----------------------------------------------------------------------------------------------o
 void MonsterGate( CChar *s, const std::string& scriptEntry )
 {
-	CItem *mypack = NULL;
+	CItem *mypack = nullptr;
 	if( s->IsNpc() )
 		return;
-
-	ScriptSection *Monster = FileLookup->FindEntry( UString( scriptEntry ).stripWhiteSpace(), npc_def );
-	if( Monster == NULL )
+		
+	auto entry = scriptEntry;
+	entry = strutil::trim( strutil::removeTrailing( entry, "//" ));
+	ScriptSection *Monster = FileLookup->FindEntry( entry, npc_def );
+	if( Monster == nullptr )
 		return;
 
 	s->SetTitle( "\0" );
@@ -1421,11 +1789,11 @@ void MonsterGate( CChar *s, const std::string& scriptEntry )
 				z->Delete();
 			else if( z->GetLayer() != IL_PACKITEM && z->GetLayer() != IL_BANKBOX )
 			{
-				if( mypack == NULL )
+				if( mypack == nullptr )
 					mypack = s->GetPackItem();
-				if( mypack == NULL )
+				if( mypack == nullptr )
 				{
-					n = Items->CreateItem( NULL, s, 0x0E75, 1, 0, OT_ITEM );
+					n = Items->CreateItem( nullptr, s, 0x0E75, 1, 0, OT_ITEM );
 					if( !ValidateObject( n ) )
 						return;
 					s->SetPackItem( n );
@@ -1491,7 +1859,7 @@ void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 		return;
 
 	CSocket *mSock = nCharID->GetSocket();
-	if( nCharID->IsNpc() || mSock == NULL )
+	if( nCharID->IsNpc() || mSock == nullptr )
 		return;
 	if( nChange <= 25 )
 	{
@@ -1550,7 +1918,7 @@ void Fame( CChar *nCharID, const SI16 nFame )
 	if( nChange == 0 )
 		return;
 	CSocket *mSock = nCharID->GetSocket();
-	if( mSock == NULL || nCharID->IsNpc() )
+	if( mSock == nullptr || nCharID->IsNpc() )
 		return;
 	if( nChange <= 25 )
 	{

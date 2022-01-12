@@ -1,70 +1,94 @@
+// Studded Do - E/W
 [0x277c]
 {
-get=studded_do
-name=studded do
-id=0x277c
+get=base_studded_do
 }
 
+// Studded Do - N/S
 [0x27c7]
 {
-get=studded_do
-name=studded do
+get=0x277c
 id=0x27c7
 }
 
-[0x277f]
+// Studded Do - Alias
+[studdeddo]
 {
-get=studded_hiro_sode
-name=studded hiro sode
-id=0x277f
+get=0x277c 0x27c7
 }
 
+// Studded Hiro Sode - E/W
+[0x277f]
+{
+get=base_studded_hiro_sode
+}
+
+// Studded Hiro Sode - N/S
 [0x27ca]
 {
-get=studded_hiro_sode
-name=studded hiro sode
+get=0x277f
 id=0x27ca
 }
 
-[0x2787]
+// Studded Hiro Sode - Alias
+[studdedhirosode]
 {
-get=studded_suneate
-name=studded suneate
-id=0x2787
+get=0x277f 0x27ca
 }
 
+// Studded Suneate - E/W
+[0x2787]
+{
+get=base_studded_suneate
+}
+
+// Studded Suneate - N/S
 [0x27d2]
 {
-get=studded_suneate
-name=studded suneate
+get=0x2787
 id=0x27d2
 }
 
-[0x278b]
+// Studded Suneate - Alias
+[studdedsuneate]
 {
-get=studded_haidate
-name=studded haidate
-id=0x278b
+get=0x2787 0x27d2
 }
 
+// Studded Haidate - N/S
+[0x278b]
+{
+get=base_studded_haidate
+}
+
+// Studded Haidate - E/W
 [0x27d6]
 {
-get=studded_haidate
-name=studded haidate
+get=0x278b
 id=0x27d6
 }
 
-[0x279d]
+// Studded Haidate - Alias
+[studdedhaidate]
 {
-get=studded_mempo
-name=studded mempo
-id=0x279d
+get=0x278b 0x27d6
 }
 
+// Studded Mempo - N/S
+[0x279d]
+{
+get=base_studded_mempo
+}
+
+// Studded Mempo - E/W
 [0x27e8]
 {
-get=studded_mempo
-name=studded mempo
+get=0x279d
 id=0x27e8
 }
 
+// Studded Mempo - Alias
+[studdedmempo]
+{
+get=0x279d 0x27e8
+}

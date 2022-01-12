@@ -1,10 +1,12 @@
 #include "uox3.h"
 #include "scriptc.h"
 #include "ssection.h"
+#include "Dictionary.h"
 #include <filesystem>
 #include <cstdint>
 #include <limits>
-#if UOX_PLATFORM != PLATFORM_WIN32
+#include "IP4Address.hpp"
+#if PLATFORM != WINDOWS
 #include <netdb.h>
 
 #include <arpa/inet.h>
@@ -14,7 +16,7 @@
 #define	MAX_TRACKINGTARGETS	128
 #define SKILLTOTALCAP		7000
 #define SKILLCAP			1000
-#define STATCAP				325
+#define STATCAP				225
 
 const UI32 BIT_ANNOUNCESAVES		= 0;
 const UI32 BIT_ANNOUNCEJOINPART		= 1;
@@ -52,24 +54,48 @@ const UI32 BIT_ITEMDECAYINHOUSES	= 32;
 const UI32 BIT_PAPERDOLLGUILDBUTTON = 33;
 const UI32 BIT_ATTSPEEDFROMSTAMINA	= 34;
 const UI32 BIT_SHOWDAMAGENUMBERS	= 35;
-const UI32 BIT_SERVERUSINGHSMULTIS	= 36;
-const UI32 BIT_SERVERUSINGHSTILES	= 37;
+// 37 free!
 const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
 const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
-const UI32 BIT_ASSISTANTNEGOTIATION = 40;
-const UI32 BIT_KICKONASSISTANTSILENCE = 41;
-const UI32 BIT_CLASSICUOMAPTRACKER = 42;
-const UI32 BIT_PROTECTPRIVATEHOUSES = 43;
-const UI32 BIT_TRACKHOUSESPERACCOUNT = 44;
-const UI32 BIT_CANOWNANDCOOWNHOUSES = 45;
+const UI32 BIT_ASSISTANTNEGOTIATION		= 40;
+const UI32 BIT_KICKONASSISTANTSILENCE	= 41;
+const UI32 BIT_CLASSICUOMAPTRACKER		= 42;
+const UI32 BIT_PROTECTPRIVATEHOUSES		= 43;
+const UI32 BIT_TRACKHOUSESPERACCOUNT	= 44;
+const UI32 BIT_CANOWNANDCOOWNHOUSES		= 45;
 const UI32 BIT_COOWNHOUSESONSAMEACCOUNT = 46;
-const UI32 BIT_ITEMSDETECTSPEECH = 47;
-
+const UI32 BIT_ITEMSDETECTSPEECH		= 47;
+const UI32 BIT_FORCENEWANIMATIONPACKET	= 48;
+const UI32 BIT_MAPDIFFSENABLED			= 49;
+const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
+const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
+const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
+const UI32 BIT_PETTHIRSTOFFLINE          = 53;
+const UI32 BIT_USEUNICODEMESSAGES 		= 54;
+const UI32 BIT_HUNGERSYSTEMENABLED		= 55;
+const UI32 BIT_THIRSTSYSTEMENABLED		= 56;
+const UI32 BIT_TRAVELSPELLSFROMBOATKEYS	= 57;
+const UI32 BIT_TRAVELSPELLSWHILEOVERWEIGHT	= 58;
+const UI32 BIT_MARKRUNESINMULTIS			= 59;
+const UI32 BIT_TRAVELSPELLSBETWEENWORLDS	= 60;
+const UI32 BIT_TRAVELSPELLSWHILEAGGRESSOR	= 61;
+const UI32 BIT_CONSOLELOG					= 62;
+const UI32 BIT_NETWORKLOG					= 63;
+const UI32 BIT_SPEECHLOG					= 64;
+const UI32 BIT_CONTEXTMENUS					= 65;
+const UI32 BIT_CHECKPETCONTROLDIFFICULTY	= 66;
+const UI32 BIT_SHOWNPCTITLESINTOOLTIPS		= 67;
+const UI32 BIT_ITEMSINTERRUPTCASTING		= 68;
+const UI32 BIT_STATSAFFECTSKILLCHECKS		= 69;
+const UI32 BIT_TOOLUSELIMIT					= 70;
+const UI32 BIT_TOOLUSEBREAK					= 71;
+const UI32 BIT_ITEMREPAIRDURABILITYLOSS		= 72;
+const UI32 BIT_HIDESTATSFORUNKNOWNMAGICITEMS = 73;
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
 // February 26 2002 	- 	Modified: to support the AccountIsolation, and left out dir3ectory tags
-// September 22 2002 	- 	Added the  "HIDEWILEMOUNTED" tag to support hide fix
+// September 22 2002 	- 	Added the  "HIDEWHILEMOUNTED" tag to support hide fix
 // September 06 2003 	- 	Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
 // October 16, 2003 	- 	Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
 // April 3, 2004 		- 	Added new tags, for UOG support, as well as new facet tags etc.
@@ -156,7 +182,7 @@ void	CServerData::regAllINIValues() {
 	// be easiest.
 	// They key is that number HAS to match the case statement number
 	// in
-	//bool CServerData::HandleLine( const UString& tag, const UString& value )
+	//bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 	// in cServerData.cpp (this file).
 	regINIValue("SERVERNAME", 1);
 	regINIValue("CONSOLELOG", 2);
@@ -184,7 +210,9 @@ void	CServerData::regAllINIValues() {
 	regINIValue("BASEFISHINGTIMER",24);
 	regINIValue("SCRIPTSDIRECTORY", 25);
 	regINIValue("JOINPARTMSGS", 26);
-	//HERE
+	regINIValue("MAXPETOWNERS", 34);
+	regINIValue("MAXFOLLOWERS", 35);
+	regINIValue("MAXCONTROLSLOTS", 36);
 	regINIValue("MANAREGENTIMER", 37);
 	regINIValue("RANDOMFISHINGTIMER", 38);
 	regINIValue("SPIRITSPEAKTIMER", 39);
@@ -235,10 +263,10 @@ void	CServerData::regAllINIValues() {
 	regINIValue("MINECHECK", 84);
 	regINIValue("OREPERAREA", 85);
 	regINIValue("ORERESPAWNTIMER", 86);
-	regINIValue("ORERESPAWNAREA", 87);
+	regINIValue("RESOURCEAREASIZE", 87);
 	regINIValue("LOGSPERAREA", 88);
 	regINIValue("LOGSRESPAWNTIMER", 89);
-	regINIValue("LOGSRESPAWNAREA", 90);
+	regINIValue("STATSAFFECTSKILLCHECKS", 90 );
 	regINIValue("HUNGERRATE", 91);
 	regINIValue("HUNGERDMGVAL", 92);
 	regINIValue("MAXRANGE", 93);
@@ -275,7 +303,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SKILLLEVEL", 124);
 	regINIValue("SNOOPISCRIME", 125);
 	regINIValue("BOOKSDIRECTORY", 126);
-	regINIValue("SERVERLIST", 127);
+	//regINIValue("SERVERLIST", 127);
 	regINIValue("PORT", 128);
 	regINIValue("ACCESSDIRECTORY", 129);
 	regINIValue("LOGSDIRECTORY", 130);
@@ -285,7 +313,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("NPCTRAININGENABLED", 134);
 	regINIValue("DICTIONARYDIRECTORY", 135);
 	regINIValue("BACKUPSAVERATIO", 136);
-	regINIValue("HIDEWILEMOUNTED", 137);
+	regINIValue("HIDEWHILEMOUNTED", 137);
 	regINIValue("SECONDSPERUOMINUTE", 138);
 	regINIValue("WEIGHTPERSTR", 139);
 	regINIValue("POLYDURATION", 140);
@@ -310,7 +338,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("SCRIPTITEMSDECAYABLE", 159);
 	regINIValue("BASEITEMSDECAYABLE", 160);
 	regINIValue("ITEMDECAYINHOUSES", 161);
-	regINIValue("COMBATEXPLODEDELAY", 162);
+	regINIValue("SPAWNREGIONSFACETS", 162);
 	regINIValue("PAPERDOLLGUILDBUTTON", 163);
 	regINIValue("ATTACKSPEEDFROMSTAMINA", 164);
 	regINIValue("DISPLAYDAMAGENUMBERS", 169);
@@ -361,7 +389,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("AF_BONECUTTERAGENT", 214);
 	regINIValue("AF_JSCRIPTMACROS", 215);
 	regINIValue("AF_AUTOREMOUNT", 216);
-	regINIValue("AF_ALL", 217);
+	// 217 free
 	regINIValue("CLASSICUOMAPTRACKER", 218);
 	regINIValue("DECAYTIMERINHOUSE", 219);
 	regINIValue("PROTECTPRIVATEHOUSES", 220);
@@ -373,7 +401,66 @@ void	CServerData::regAllINIValues() {
 	regINIValue("ITEMSDETECTSPEECH", 226);
 	regINIValue("MAXPLAYERPACKITEMS", 227);
 	regINIValue("MAXPLAYERBANKITEMS", 228);
-
+	regINIValue("FORCENEWANIMATIONPACKET", 229);
+	regINIValue("MAPDIFFSENABLED", 230);
+	regINIValue("PARRYDAMAGECHANCE", 240);
+	regINIValue("PARRYDAMAGEMIN", 241);
+	regINIValue("PARRYDAMAGEMAX", 242);
+	regINIValue("ARMORCLASSDAMAGEBONUS", 243);
+	regINIValue("CUOENABLED", 244);
+	regINIValue("ALCHEMYBONUSENABLED", 245);
+	regINIValue("ALCHEMYBONUSMODIFIER", 246);
+	regINIValue("NPCFLAGUPDATETIMER", 247);
+	regINIValue("JSENGINESIZE", 248);
+	regINIValue("USEUNICODEMESSAGES", 249);
+	regINIValue("SCRIPTDATADIRECTORY", 250);
+	regINIValue("THIRSTRATE", 251);
+	regINIValue("THIRSTDRAINVAL", 252);
+	regINIValue("PETTHIRSTOFFLINE", 253);
+	regINIValue("EXTERNALIP",254);
+	regINIValue("BLOODDECAYTIMER", 255);
+	regINIValue("BLOODDECAYCORPSETIMER", 256);
+	regINIValue("BLOODEFFECTCHANCE", 257);
+	regINIValue("NPCCORPSEDECAYTIMER", 258);
+	regINIValue("HUNGERENABLED", 259);
+	regINIValue("THIRSTENABLED", 260);
+	regINIValue("TRAVELSPELLSFROMBOATKEYS", 261);
+	regINIValue("TRAVELSPELLSWHILEOVERWEIGHT", 262);
+	regINIValue("MARKRUNESINMULTIS", 263);
+	regINIValue("TRAVELSPELLSBETWEENWORLDS", 264);
+	regINIValue("TRAVELSPELLSWHILEAGGRESSOR", 265);
+	regINIValue("BANKBUYTHRESHOLD", 266);
+	regINIValue("NETWORKLOG", 267);
+	regINIValue("SPEECHLOG", 268);
+	regINIValue("NPCMOUNTEDWALKINGSPEED", 269);
+	regINIValue("NPCMOUNTEDRUNNINGSPEED", 270);
+	regINIValue("NPCMOUNTEDFLEEINGSPEED", 271);
+	regINIValue("CONTEXTMENUS", 272);
+	regINIValue("SERVERLANGUAGE", 273);
+	regINIValue("CHECKPETCONTROLDIFFICULTY", 274);
+	regINIValue("PETLOYALTYGAINONSUCCESS", 275);
+	regINIValue("PETLOYALTYLOSSONFAILURE", 276);
+	regINIValue("PETLOYALTYRATE", 277);
+	regINIValue("SHOWNPCTITLESINTOOLTIPS", 278);
+	regINIValue("FISHPERAREA", 279);
+	regINIValue("FISHRESPAWNTIMER", 280);
+	regINIValue("ARCHERYHITBONUS", 281);
+	regINIValue("ITEMSINTERRUPTCASTING", 282);
+	regINIValue("SYSMESSAGECOLOUR", 283);
+	regINIValue("AF_AUTOBANDAGE", 284);
+	regINIValue("AF_ENEMYTARGETSHARE", 285);
+	regINIValue("AF_FILTERSEASON", 286);
+	regINIValue("AF_SPELLTARGETSHARE", 287);
+	regINIValue("AF_HUMANOIDHEALTHCHECKS", 288);
+	regINIValue("AF_SPEECHJOURNALCHECKS", 289);
+	regINIValue("ARCHERYSHOOTDELAY", 290);
+	regINIValue("MAXCLIENTBYTESIN", 291);
+	regINIValue("MAXCLIENTBYTESOUT", 292);
+	regINIValue("NETTRAFFICTIMEBAN", 293);
+	regINIValue("TOOLUSELIMIT", 294);
+	regINIValue("TOOLUSEBREAK", 295);
+	regINIValue("ITEMREPAIRDURABILITYLOSS", 296);
+	regINIValue("HIDESTATSFORUNKNOWNMAGICITEMS", 297);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -393,9 +480,19 @@ void CServerData::ResetDefaults( void )
 
 	ServerIP( "127.0.0.1" );
 	ServerPort( 2593 );
+	ExternalIP("127.0.0.1");
 	serverList[0].setPort( 2593 );
-	ServerName( "Default UOX3 Server" );
+	ServerName( "My UOX3 Shard" );
 
+	// Set default gcMaxBytes limit in MB per JS runtime
+	// If set too low, UOX3 might crash when reloading (full) JS engine
+	// JS API references describe it as "Maximum nominal heap before last ditch GC"
+	SetJSEngineSize( 256 );
+
+	// Send server-originating messages i`n Unicode format, if possible
+	UseUnicodeMessages( true );
+
+	ServerLanguage( DL_DEFAULT );
 	SystemTimer( tSERVER_POTION, 10 );
 	ServerMoon( 0, 0 );
 	ServerMoon( 1, 0 );
@@ -403,6 +500,13 @@ void CServerData::ResetDefaults( void )
 	WorldLightCurrentLevel( 0 );
 	WorldLightBrightLevel( 0 );
 	WorldLightDarkLevel( 5 );
+
+	ServerNetRcvTimeout( 3 );
+	ServerNetSndTimeout( 3 );
+	ServerNetRetryCount( 3 );
+	MaxClientBytesIn( 25000 );
+	MaxClientBytesOut( 100000 );
+	NetTrafficTimeban( 30 );
 
 	ServerSecondsPerUOMinute( 5 );
 	ServerTimeDay( 0 );
@@ -413,9 +517,7 @@ void CServerData::ResetDefaults( void )
 
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
-	CombatArcherRange( 7 );
 	CombatMaxSpellRange( 10 );
-	CombatExplodeDelay( 2 );
 
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
@@ -424,13 +526,19 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_DECAYINHOUSE, 3600 );
 	ServerSkillTotalCap( 7000 );
 	ServerSkillCap( 1000 );
-	ServerStatCap( 325 );
+	ServerStatCap( 225 );
+	StatsAffectSkillChecks( false );
 	CorpseLootDecay( true );
-	ServerSavesTimer( 300 );
+	ServerSavesTimer( 600 );
 
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
+	HungerSystemEnabled( true );
+
+	SystemTimer( tSERVER_THIRSTRATE, 6000 );
+	ThirstDrain( 2 );
+	ThirstSystemEnabled( false );
 
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
@@ -453,32 +561,49 @@ void CServerData::ResetDefaults( void )
 	ServerOverloadPackets( true );
 	AdvancedPathfinding( true );
 	LootingIsCrime( true );
+	ServerUOGEnabled( true );
+	ConnectUOServerPoll( true );
+	ServerContextMenus( true );
+	SysMsgColour( 0x0048 );
 
 	CombatMonstersVsAnimals( true );
-	CombatAnimalsAttackChance( 5 );
+	CombatAnimalsAttackChance( 2 );
 	CombatAnimalsGuarded( false );
 	CombatNPCBaseFleeAt( 20 );
 	CombatNPCBaseReattackAt( 40 );
 	ShootOnAnimalBack( false );
 	SellByNameStatus( false );
 	SkillLevel( 5 );
-	SellMaxItemsStatus( 5 );
-	CombatNPCDamageRate( 2 );
+	SellMaxItemsStatus( 250 );
+	CombatNPCDamageRate( 1 );
 	RankSystemStatus( true );
+	CombatArcheryHitBonus( 10 );
+	CombatArcheryShootDelay( 1.0 );
 	CombatWeaponDamageChance( 17 );
 	CombatWeaponDamageMin( 0 );
 	CombatWeaponDamageMax( 1 );
 	CombatArmorDamageChance( 33 );
 	CombatArmorDamageMin( 0 );
 	CombatArmorDamageMax( 1 );
+	CombatParryDamageChance( 20 );
+	CombatParryDamageMin( 0 );
+	CombatParryDamageMax( 1 );
+	CombatBloodEffectChance( 75 );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2.0 );
-
+	CombatArmorClassDamageBonus( false );
+	AlchemyDamageBonusEnabled( false );
+	AlchemyDamageBonusModifier( 5 );
+	CheckPetControlDifficulty( true );
+	SetPetLoyaltyGainOnSuccess( 1 );
+	SetPetLoyaltyLossOnFailure( 3 );
+	SystemTimer( tSERVER_LOYALTYRATE, 900 );
+	ItemsInterruptCasting( true );
 
 	auto curWorkingDir = std::filesystem::current_path().string();
 
-	auto wDir = fixDirectory(curWorkingDir);
+	auto wDir = strutil::fixDirectory(curWorkingDir);
 	std::string tDir;
 	Directory( CSDDP_ROOT, wDir );
 	tDir = wDir + std::string("muldata/");
@@ -490,6 +615,8 @@ void CServerData::ResetDefaults( void )
 	Directory( CSDDP_ACCESS, tDir );
 	tDir = wDir + std::string("js/");
 	Directory( CSDDP_SCRIPTS, tDir );
+	tDir = wDir + std::string( "js/jsdata" );
+	Directory( CSDDP_SCRIPTDATA, tDir );
 	tDir = wDir + std::string("archives/");
 	Directory( CSDDP_BACKUP, tDir );
 	tDir = wDir + std::string("msgboards/");
@@ -510,7 +637,9 @@ void CServerData::ResetDefaults( void )
 	ServerAnnounceSaves( true );
 	WorldAmbientSounds( 5 );
 	ServerJoinPartAnnouncements( true );
-	ServerConsoleLog( 1 );
+	ServerConsoleLog( true );
+	ServerNetworkLog( false );
+	ServerSpeechLog( false );
 	RogueStatus( true );
 	SystemTimer( tSERVER_WEATHER, 60 );
 	SystemTimer( tSERVER_LOGINTIMEOUT, 300 );
@@ -518,12 +647,27 @@ void CServerData::ResetDefaults( void )
 	MaxStealthMovement( 10 );
 	MaxStaminaMovement( 15 );
 	SnoopIsCrime( false );
+	SystemTimer( tSERVER_NPCFLAGUPDATETIMER, 5 );
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
 	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
 	ItemsDetectSpeech( false );
 	MaxPlayerPackItems( 125 );
 	MaxPlayerBankItems( 125 );
+	ForceNewAnimationPacket( true );
+	MapDiffsEnabled( false );
+	TravelSpellsFromBoatKeys( true );
+	TravelSpellsWhileOverweight( false );
+	MarkRunesInMultis( true );
+	TravelSpellsBetweenWorlds( false );
+	TravelSpellsWhileAggressor( false );
+	MaxControlSlots( 0 ); // Default to 0, which is equal to off
+	MaxFollowers( 5 );
+	MaxPetOwners( 10 );
+	ToolUseLimit( true );
+	ToolUseBreak( true );
+	ItemRepairDurabilityLoss( true );
+	HideStatsForUnknownMagicItems( true );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -536,6 +680,7 @@ void CServerData::ResetDefaults( void )
 	// No replacement I can see
 	EscortsEnabled( true );
 	BasicTooltipsOnly( false );
+	ShowNpcTitlesInTooltips( true );
 	GlobalItemDecay( true );
 	ScriptItemsDecayable( true );
 	BaseItemsDecayable( false );
@@ -547,17 +692,23 @@ void CServerData::ResetDefaults( void )
 
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCWalkingSpeed( 0.6 );
-	NPCRunningSpeed( 0.3 );
-	NPCFleeingSpeed( 0.4 );
+	NPCWalkingSpeed( 0.38 );
+	NPCRunningSpeed( 0.2 );
+	NPCFleeingSpeed( 0.3 );
+	NPCMountedWalkingSpeed( 0.3 );
+	NPCMountedRunningSpeed( 0.12 );
+	NPCMountedFleeingSpeed( 0.2 );
 	AccountFlushTimer( 0.0 );
 
+	// RESOURCES
+	ResourceAreaSize( 8 );
 	ResLogs( 3 );
 	ResLogTime( 600 );
-	ResLogArea( 10 );
 	ResOre( 10 );
 	ResOreTime( 600 );
-	ResOreArea( 10 );
+	ResFish( 10 );
+	ResFishTime( 600 );
+
 	//REPSYS
 	SystemTimer( tSERVER_CRIMINAL, 120 );
 	RepMaxKills( 4 );
@@ -578,7 +729,7 @@ void CServerData::ResetDefaults( void )
 	ButtonCancel( 4017 );
 	ButtonLeft( 4014 );
 	ButtonRight( 4005 );
-	BackgroundPic( 2600 );
+	BackgroundPic( 5054 );
 
 	// Houses
 	ItemDecayInHouses( true );
@@ -611,28 +762,10 @@ void CServerData::ResetDefaults( void )
 	SetServerFeature( SF_BIT_SE, true );
 	SetServerFeature( SF_BIT_ML, true );
 
-	SetDisabledAssistantFeature( AF_NONE, true );
-	SetDisabledAssistantFeature( AF_FILTERWEATHER, false );
-	SetDisabledAssistantFeature( AF_FILTERLIGHT, false );
-	SetDisabledAssistantFeature( AF_SMARTTARGET, false );
-	SetDisabledAssistantFeature( AF_RANGEDTARGET, false );
-	SetDisabledAssistantFeature( AF_AUTOOPENDOORS, false );
-	SetDisabledAssistantFeature( AF_DEQUIPONCAST, false );
-	SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, false );
-	SetDisabledAssistantFeature( AF_POISONEDCHECKS, false );
-	SetDisabledAssistantFeature( AF_LOOPEDMACROS, false );
-	SetDisabledAssistantFeature( AF_USEONCEAGENT, false );
-	SetDisabledAssistantFeature( AF_RESTOCKAGENT, false );
-	SetDisabledAssistantFeature( AF_SELLAGENT, false );
-	SetDisabledAssistantFeature( AF_BUYAGENT, false );
-	SetDisabledAssistantFeature( AF_POTIONHOTKEYS, false );
-	SetDisabledAssistantFeature( AF_RANDOMTARGETS, false );
-	SetDisabledAssistantFeature( AF_CLOSESTTARGETS, false );
-	SetDisabledAssistantFeature( AF_OVERHEADHEALTH, false );
-	SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, false );
-	SetDisabledAssistantFeature( AF_BONECUTTERAGENT, false );
-	SetDisabledAssistantFeature( AF_JSCRIPTMACROS, false );
-	SetDisabledAssistantFeature( AF_AUTOREMOUNT, false );
+	// Disable spawn regions for all facets by default
+	SetSpawnRegionsFacetStatus( 0 );
+
+	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
 
 	// Enable login-support for any supported client version by default.
@@ -655,7 +788,10 @@ void CServerData::ResetDefaults( void )
 	ServerRandomStartingLocation( false );
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
-	SystemTimer( tSERVER_CORPSEDECAY, 900 );
+	SystemTimer( tSERVER_CORPSEDECAY, 420 );
+	SystemTimer( tSERVER_NPCCORPSEDECAY, 420 );
+	SystemTimer( tSERVER_BLOODDECAYCORPSE, 210 ); // Default to half the decay timer of a npc corpse
+	SystemTimer( tSERVER_BLOODDECAY, 3 ); // Keep it short and sweet
 	resettingDefaults = false;
 	PostLoadDefaults();
 }
@@ -673,9 +809,9 @@ CServerData::~CServerData()
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Refresh IPs for servers in serverlist
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::RefreshIPs( void )
+/*void CServerData::RefreshIPs( void )
 {
-	struct hostent *lpHostEntry = NULL;
+	struct hostent *lpHostEntry = nullptr;
 
 	std::vector< physicalServer >::iterator slIter;
 	for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
@@ -683,7 +819,7 @@ void CServerData::RefreshIPs( void )
 		if( !slIter->getDomain().empty() )
 		{
 			lpHostEntry = gethostbyname( slIter->getDomain().c_str() );
-			if( lpHostEntry != NULL )
+			if( lpHostEntry != nullptr )
 			{
 				struct in_addr *pinaddr;
 				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
@@ -691,7 +827,7 @@ void CServerData::RefreshIPs( void )
 			}
 		}
 	}
-}
+}*/
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string ServerName( void ) const
@@ -710,7 +846,7 @@ void CServerData::ServerName( std::string setname )
 	serverList[0].setName( setname );
 	if( setname.empty() )
 	{
-		serverList[0].setName( "Default UOX3 Server" );
+		serverList[0].setName( "My UOX3 Shard" );
 	}
 }
 
@@ -753,7 +889,21 @@ void CServerData::ServerIP( std::string setip )
 	else
 		serverList[0].setIP(setip);
 }
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string CServerData::ExternalIP() const
+//|					void CServerData::ExternalIP( const std::string &ip )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets external (WAN) IP for server
+//o-----------------------------------------------------------------------------------------------o
+std::string CServerData::ExternalIP() const
+{
+	return externalIP;
+}
+void CServerData::ExternalIP( const std::string &ip )
+{
+	externalIP = ip;
+	IP4Address::setExternal( externalIP );
+}
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 ServerPort( void ) const
 //|					void ServerPort( UI16 setport )
@@ -773,20 +923,49 @@ void CServerData::ServerPort( UI16 setport )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 ServerConsoleLogStatus( void ) const
-//|					void ServerConsoleLog( UI08 setting )
+//|	Function	-	bool ServerConsoleLog( void ) const
+//|					void ServerConsoleLog( bool setting )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set console log enabled/disabled state
+//|	Purpose		-	Gets/Set logging of console messages, warnings and errors
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::ServerConsoleLogStatus( void ) const
+bool CServerData::ServerConsoleLog( void ) const
 {
 	return consolelogenabled;
 }
-void CServerData::ServerConsoleLog( UI08 setting )
+void CServerData::ServerConsoleLog( bool setting )
 {
 	consolelogenabled = setting;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerNetworkLog( void ) const
+//|					void ServerNetworkLog( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets logging of network traffic to logs folder
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerNetworkLog( void ) const
+{
+	return boolVals.test( BIT_NETWORKLOG );
+}
+void CServerData::ServerNetworkLog( bool newVal )
+{
+	boolVals.set( BIT_NETWORKLOG, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerSpeechLog( void ) const
+//|					void ServerSpeechLog( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets logging of player/staff speech to logs folder
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerSpeechLog( void ) const
+{
+	return boolVals.test( BIT_SPEECHLOG );
+}
+void CServerData::ServerSpeechLog( bool newVal )
+{
+	boolVals.set( BIT_SPEECHLOG, newVal );
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	char ServerCommandPrefix( void ) const
@@ -846,6 +1025,36 @@ bool CServerData::ServerBackupStatus( void ) const
 void CServerData::ServerBackups( bool newVal )
 {
 	boolVals.set( BIT_SERVERBACKUP, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerContextMenus( void ) const
+//|					void ServerContextMenus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets enabled status of context menus
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerContextMenus( void ) const
+{
+	return boolVals.test( BIT_CONTEXTMENUS );
+}
+void CServerData::ServerContextMenus( bool newVal )
+{
+	boolVals.set( BIT_CONTEXTMENUS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 SysMsgColour( void ) const
+//|					void SysMsgColour( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default text colour for system messages displayed in bottom left
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::SysMsgColour( void ) const
+{
+	return sysMsgColour;
+}
+void CServerData::SysMsgColour( UI16 value )
+{
+	sysMsgColour = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1009,6 +1218,9 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			case CSDDP_ACCESS:			verboseDirectory = "Access directory";			break;
 			case CSDDP_ACCOUNTS:		verboseDirectory = "Accounts directory";		break;
 			case CSDDP_SCRIPTS:			verboseDirectory = "Scripts directory";			break;
+			case CSDDP_SCRIPTDATA:		verboseDirectory = "ScriptData directory";
+				create_dir = true;
+				break;
 			case CSDDP_BACKUP:			verboseDirectory = "Backup directory";			break;
 			case CSDDP_MSGBOARD:		verboseDirectory = "Messageboard directory";	break;
 			case CSDDP_SHARED:			verboseDirectory = "Shared directory";
@@ -1022,13 +1234,12 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 			default:					verboseDirectory = "Unknown directory";			break;
 		};
 		// First, let's normalize the path name and fix common errors
-		//UString sText( value );
 		// remove all trailing and leading spaces...
-		auto sText = trim(value) ;
+		auto sText = strutil::trim(value) ;
 
 		if( sText.empty() )
 		{
-			Console.error( format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
+			Console.error( strutil::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 			return;
 		}
@@ -1037,7 +1248,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		// Just incase it's not set in the .ini
 		// and convert the windows backward slashes to forward slashes
 
-		sText = fixDirectory(sText);
+		sText = strutil::fixDirectory(sText);
 
 		bool error = false;
 		if( !resettingDefaults )
@@ -1059,7 +1270,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 
 		if( error )
 		{
-			Console.error( format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()) );
+			Console.error( strutil::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()) );
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
@@ -1113,18 +1324,19 @@ void CServerData::dumpPaths( void )
 {
 	Console.PrintSectionBegin();
 	Console << "PathDump: \n";
-	Console << "    Root      : " << Directory( CSDDP_ROOT ) << "\n";
-	Console << "    Accounts  : " << Directory( CSDDP_ACCOUNTS ) << "\n";
-	Console << "    Access    : " << Directory( CSDDP_ACCESS ) << "\n";
-	Console << "    Mul(Data) : " << Directory( CSDDP_DATA ) << "\n";
-	Console << "    DFN(Defs) : " << Directory( CSDDP_DEFS ) << "\n";
-	Console << "    JScript   : " << Directory( CSDDP_SCRIPTS ) << "\n";
-	Console << "    HTML      : " << Directory( CSDDP_HTML ) << "\n";
-	Console << "    MSGBoards : " << Directory( CSDDP_MSGBOARD ) << "\n";
-	Console << "    Books     : " << Directory( CSDDP_BOOKS ) << "\n";
-	Console << "    Shared    : " << Directory( CSDDP_SHARED ) << "\n";
-	Console << "    Backups   : " << Directory( CSDDP_BACKUP ) << "\n";
-	Console << "    Logs      : " << Directory( CSDDP_LOGS ) << "\n";
+	Console << "    Root        : " << Directory( CSDDP_ROOT ) << "\n";
+	Console << "    Accounts    : " << Directory( CSDDP_ACCOUNTS ) << "\n";
+	Console << "    Access      : " << Directory( CSDDP_ACCESS ) << "\n";
+	Console << "    Mul(Data)   : " << Directory( CSDDP_DATA ) << "\n";
+	Console << "    DFN(Defs)   : " << Directory( CSDDP_DEFS ) << "\n";
+	Console << "    JScript     : " << Directory( CSDDP_SCRIPTS ) << "\n";
+	Console << "    JScriptData : " << Directory( CSDDP_SCRIPTDATA ) << "\n";
+	Console << "    HTML        : " << Directory( CSDDP_HTML ) << "\n";
+	Console << "    MSGBoards   : " << Directory( CSDDP_MSGBOARD ) << "\n";
+	Console << "    Books       : " << Directory( CSDDP_BOOKS ) << "\n";
+	Console << "    Shared      : " << Directory( CSDDP_SHARED ) << "\n";
+	Console << "    Backups     : " << Directory( CSDDP_BACKUP ) << "\n";
+	Console << "    Logs        : " << Directory( CSDDP_LOGS ) << "\n";
 	Console.PrintSectionBegin();
 }
 
@@ -1264,6 +1476,22 @@ bool CServerData::SnoopIsCrime( void ) const
 void CServerData::SnoopIsCrime( bool newVal )
 {
 	boolVals.set( BIT_SNOOPISCRIME, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool StatsAffectSkillChecks( void ) const
+//|					void StatsAffectSkillChecks( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether stats like strength, dexterity and intelligence provide
+//|					bonuses to skillchecks
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::StatsAffectSkillChecks( void ) const
+{
+	return boolVals.test( BIT_STATSAFFECTSKILLCHECKS );
+}
+void CServerData::StatsAffectSkillChecks( bool newVal )
+{
+	boolVals.set( BIT_STATSAFFECTSKILLCHECKS, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1407,6 +1635,21 @@ void CServerData::CutScrollRequirementStatus( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckPetControlDifficulty( void ) const
+//|					void CheckPetControlDifficulty( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether pet control difficulty is enabled or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CheckPetControlDifficulty( void ) const
+{
+	return boolVals.test( BIT_CHECKPETCONTROLDIFFICULTY );
+}
+void CServerData::CheckPetControlDifficulty( bool newVal )
+{
+	boolVals.set( BIT_CHECKPETCONTROLDIFFICULTY, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	R64 CheckItemsSpeed( void ) const
 //|					void CheckItemsSpeed( R64 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -1529,6 +1772,36 @@ void CServerData::MineCheck( UI08 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ConnectUOServerPoll( void ) const
+//|					void ConnectUOServerPoll( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether UOX3 will respond to server poll requests from ConnectUO
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ConnectUOServerPoll( void ) const
+{
+	return boolVals.test( BIT_CONNECTUOSERVERPOLL );
+}
+void CServerData::ConnectUOServerPoll( bool newVal )
+{
+	boolVals.set( BIT_CONNECTUOSERVERPOLL, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatArmorClassDamageBonus( void ) const
+//|					void CombatArmorClassDamageBonus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of matching AC
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CombatArmorClassDamageBonus( void ) const
+{
+	return boolVals.test( BIT_ARMORCLASSDAMAGEBONUS );
+}
+void CServerData::CombatArmorClassDamageBonus( bool newVal )
+{
+	boolVals.set( BIT_ARMORCLASSDAMAGEBONUS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CombatDisplayHitMessage( void ) const
 //|					void CombatDisplayHitMessage( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -1641,33 +1914,50 @@ void CServerData::CombatNPCDamageRate( SI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ServerUsingHSMultis( void ) const
-//|					void ServerUsingHSMultis( bool newVal )
+//|	Function	-	bool AlchemyDamageBonusEnabled( void ) const
+//|					void AlchemyDamageBonusEnabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server uses multi data from High Seas expansion
+//|	Purpose		-	Gets/Sets whether Alchemy Damage Bonus Modifier is enabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerUsingHSMultis( void ) const
+bool CServerData::AlchemyDamageBonusEnabled( void ) const
 {
-	return boolVals.test( BIT_SERVERUSINGHSMULTIS );
+	return boolVals.test( BIT_ALCHEMYDAMAGEBONUSENABLED );
 }
-void CServerData::ServerUsingHSMultis( bool newVal )
+void CServerData::AlchemyDamageBonusEnabled( bool newVal )
 {
-	boolVals.set( BIT_SERVERUSINGHSMULTIS, newVal );
+	boolVals.set( BIT_ALCHEMYDAMAGEBONUSENABLED, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ServerUsingHSTiles( void ) const
-//|					void ServerUsingHSTiles( bool newVal )
+//|	Function	-	UI08 AlchemyDamageBonusModifier( void ) const
+//|					void AlchemyDamageBonusModifier( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server uses tiledata from High Seas expansion
+//|	Purpose		-	Gets/Sets the Alchemy Damage Bonus Modifier, which gives bonus damage to 
+//|					explosion potions based on this formula: 
+//|						bonusDamage = attackerAlchemySkill / alchemyDamageBonusModifier
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerUsingHSTiles( void ) const
+UI08 CServerData::AlchemyDamageBonusModifier( void ) const
 {
-	return boolVals.test( BIT_SERVERUSINGHSTILES );
+	return alchemyDamageBonusModifier;
 }
-void CServerData::ServerUsingHSTiles( bool newVal )
+void CServerData::AlchemyDamageBonusModifier( UI08 value )
 {
-	boolVals.set( BIT_SERVERUSINGHSTILES, newVal );
+	alchemyDamageBonusModifier = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemsInterruptCasting( void ) const
+//|					void ItemsInterruptCasting( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether manipulation of items interrupts casting
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ItemsInterruptCasting( void ) const
+{
+	return boolVals.test( BIT_ITEMSINTERRUPTCASTING );
+}
+void CServerData::ItemsInterruptCasting( bool newVal )
+{
+	boolVals.set( BIT_ITEMSINTERRUPTCASTING, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1732,6 +2022,37 @@ void CServerData::ItemsDetectSpeech( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ForceNewAnimationPacket( void ) const
+//|					void ForceNewAnimationPacket( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should force the use of new animation packet for NPCs
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ForceNewAnimationPacket( void ) const
+{
+	return boolVals.test( BIT_FORCENEWANIMATIONPACKET );
+}
+void CServerData::ForceNewAnimationPacket( bool newVal )
+{
+	boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MapDiffsEnabled( void ) const
+//|					void MapDiffsEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should load diff files for maps and statics
+//|	Notes		-	Diff files are not used by client versions newer than 7.0.8.2
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::MapDiffsEnabled( void ) const
+{
+	return boolVals.test( BIT_MAPDIFFSENABLED );
+}
+void CServerData::MapDiffsEnabled( bool newVal )
+{
+	boolVals.set( BIT_MAPDIFFSENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 MaxPlayerPackItems( void ) const
 //|					void MaxPlayerPackItems( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -1774,6 +2095,21 @@ bool CServerData::BasicTooltipsOnly( void ) const
 void CServerData::BasicTooltipsOnly( bool newVal )
 {
 	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ShowNpcTitlesInTooltips( void ) const
+//|					void ShowNpcTitlesInTooltips( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether NPC titles show up in tooltips
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ShowNpcTitlesInTooltips( void ) const
+{
+	return boolVals.test( BIT_SHOWNPCTITLESINTOOLTIPS );
+}
+void CServerData::ShowNpcTitlesInTooltips( bool newVal )
+{
+	boolVals.set( BIT_SHOWNPCTITLESINTOOLTIPS, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1979,10 +2315,47 @@ void CServerData::CombatAnimalsAttackChance( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 CombatArcheryHitBonus( void ) const
+//|					void CombatArcheryHitBonus( SI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the delay hit bonus (in percentage) in combat for Archery. Can be negative!
+//|					This bonus was mentioned in official patch notes for Publish 5 (UOR patch).
+//o-----------------------------------------------------------------------------------------------o
+SI08 CServerData::CombatArcheryHitBonus( void ) const
+{
+	return combatArcheryHitBonus;
+}
+void CServerData::CombatArcheryHitBonus( SI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatArcheryHitBonus = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 CombatArcheryShootDelay( void ) const
+//|					void CombatArcheryShootDelay( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the delay (in seconds, with decimals) after archers stop moving until
+//|					they can fire a shot in combat
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::CombatArcheryShootDelay( void ) const
+{
+	return archeryShootDelay;
+}
+void CServerData::CombatArcheryShootDelay( R32 value )
+{
+	if( value < 0.0 )
+		archeryShootDelay = 0.0;
+	else
+		archeryShootDelay = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 CombatWeaponDamageChance( void ) const
 //|					void CombatWeaponDamageChance( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether combat will damage weapons or not
+//|	Purpose		-	Gets/Sets chance for weapons to take damage in combat (on hit)
 //o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::CombatWeaponDamageChance( void ) const
 {
@@ -2073,6 +2446,100 @@ void CServerData::CombatArmorDamageMax( UI08 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatParryDamageChance( void ) const
+//|					void CombatParryDamageChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the chance to damage items used to parry in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatParryDamageChance( void ) const
+{
+	return combatparrydamagechance;
+}
+void CServerData::CombatParryDamageChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatparrydamagechance = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatParryDamageMin( void ) const
+//|					void CombatParryDamageMin( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the min damage dealt to items used to parry in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatParryDamageMin( void ) const
+{
+	return combatparrydamagemin;
+}
+void CServerData::CombatParryDamageMin( UI08 value )
+{
+	combatparrydamagemin = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatParryDamageMax( void ) const
+//|					void CombatParryDamageMax( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max damage dealt to items used to parry in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatParryDamageMax( void ) const
+{
+	return combatparrydamagemax;
+}
+void CServerData::CombatParryDamageMax( UI08 value )
+{
+	combatparrydamagemax = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatBloodEffectChance( void ) const
+//|					void CombatBloodEffectChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the chance to spawn blood splatter effects during combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatBloodEffectChance( void ) const
+{
+	return combatbloodeffectchance;
+}
+void CServerData::CombatBloodEffectChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatbloodeffectchance = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool HungerSystemEnabled( void ) const
+//|                 void HungerSystemEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::HungerSystemEnabled( void ) const
+{
+	return boolVals.test( BIT_HUNGERSYSTEMENABLED );
+}
+void CServerData::HungerSystemEnabled( bool newVal )
+{
+	boolVals.set( BIT_HUNGERSYSTEMENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool ThirstSystemEnabled( void ) const
+//|                 void ThirstSystemEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ThirstSystemEnabled( void ) const
+{
+	return boolVals.test( BIT_THIRSTSYSTEMENABLED );
+}
+void CServerData::ThirstSystemEnabled( bool newVal )
+{
+	boolVals.set( BIT_THIRSTSYSTEMENABLED, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 HungerDamage( void ) const
 //|					void HungerDamage( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -2085,6 +2552,21 @@ SI16 CServerData::HungerDamage( void ) const
 void CServerData::HungerDamage( SI16 value )
 {
 	hungerdamage = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   SI16 ThirstDrain( void ) const
+//|                 void ThirstDrain( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the stamina drain from players being thirsty
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::ThirstDrain( void ) const
+{
+	return thirstdrain;
+}
+void CServerData::ThirstDrain( SI16 value )
+{
+	thirstdrain = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2115,6 +2597,21 @@ bool CServerData::PetHungerOffline( void ) const
 void CServerData::PetHungerOffline( bool newVal )
 {
 	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool PetThirstOffline( void ) const
+//|                 void PetThirstOffline( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether pets should thirst while the player (owner) is offline or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::PetThirstOffline( void ) const
+{
+	return boolVals.test( BIT_PETTHIRSTOFFLINE );
+}
+void CServerData::PetThirstOffline( bool newVal )
+{
+	boolVals.set( BIT_PETTHIRSTOFFLINE, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2230,6 +2727,217 @@ void CServerData::LootingIsCrime( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsFromBoatKeys( void ) const
+//|                 void TravelSpellsFromBoatKeys( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are usable with boat keys to teleport
+//|					directly to boat's location
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsFromBoatKeys( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSFROMBOATKEYS );
+}
+void CServerData::TravelSpellsFromBoatKeys( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSFROMBOATKEYS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsWhileOverweight( void ) const
+//|                 void TravelSpellsWhileOverweight( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while overweight
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsWhileOverweight( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSWHILEOVERWEIGHT );
+}
+void CServerData::TravelSpellsWhileOverweight( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSWHILEOVERWEIGHT, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool MarkRunesInMultis( void ) const
+//|                 void MarkRunesInMultis( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether server allows marking recall runes in multis (houses, boats)
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::MarkRunesInMultis( void ) const
+{
+	return boolVals.test( BIT_MARKRUNESINMULTIS );
+}
+void CServerData::MarkRunesInMultis( bool newVal )
+{
+	boolVals.set( BIT_MARKRUNESINMULTIS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsBetweenWorlds( void ) const
+//|                 void TravelSpellsBetweenWorlds( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed between worlds
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsBetweenWorlds( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSBETWEENWORLDS );
+}
+void CServerData::TravelSpellsBetweenWorlds( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSBETWEENWORLDS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   bool TravelSpellsWhileAggressor( void ) const
+//|                 void TravelSpellsWhileAggressor( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while marked as an aggressor
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TravelSpellsWhileAggressor( void ) const
+{
+	return boolVals.test( BIT_TRAVELSPELLSWHILEAGGRESSOR );
+}
+void CServerData::TravelSpellsWhileAggressor( bool newVal )
+{
+	boolVals.set( BIT_TRAVELSPELLSWHILEAGGRESSOR, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 MaxControlSlots( void ) const
+//|                 void MaxControlSlots( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the max amount of control slots a player has available (0 for disable)
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MaxControlSlots( void ) const
+{
+	return maxControlSlots;
+}
+void CServerData::MaxControlSlots( UI08 newVal )
+{
+	maxControlSlots = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 MaxFollowers( void ) const
+//|                 void MaxFollowers( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the max amount of active followers/pets a player can have (0 for disable)
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MaxFollowers( void ) const
+{
+	return maxFollowers;
+}
+void CServerData::MaxFollowers( UI08 newVal )
+{
+	maxFollowers = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI08 MaxPetOwners( void ) const
+//|                 void MaxPetOwners( UI08 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the max amount of different owners a pet can have in its lifetime
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MaxPetOwners( void ) const
+{
+	return maxPetOwners;
+}
+void CServerData::MaxPetOwners( UI08 newVal )
+{
+	maxPetOwners = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI16 GetPetLoyaltyGainOnSuccess( void ) const
+//|                 void SetPetLoyaltyGainOnSuccess( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the pet loyalty gained on successful use of pet command
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::GetPetLoyaltyGainOnSuccess( void ) const
+{
+	return petLoyaltyGainOnSuccess;
+}
+void CServerData::SetPetLoyaltyGainOnSuccess( UI16 newVal )
+{
+	petLoyaltyGainOnSuccess = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function    -   UI16 GetPetLoyaltyLossOnFailure( void ) const
+//|                 void SetPetLoyaltyLossOnFailure( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the pet loyalty loss for failed use of pet command
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::GetPetLoyaltyLossOnFailure( void ) const
+{
+	return petLoyaltyLossOnFailure;
+}
+void CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal )
+{
+	petLoyaltyLossOnFailure = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ToolUseLimit( void ) const
+//|					void ToolUseLimit( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether tools have usage limits (based on item health)
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ToolUseLimit( void ) const
+{
+	return boolVals.test( BIT_TOOLUSELIMIT );
+}
+void CServerData::ToolUseLimit( bool newVal )
+{
+	boolVals.set( BIT_TOOLUSELIMIT, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ToolUseBreak( void ) const
+//|					void ToolUseBreak( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether tools will break if they reach 0 health
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ToolUseBreak( void ) const
+{
+	return boolVals.test( BIT_TOOLUSEBREAK );
+}
+void CServerData::ToolUseBreak( bool newVal )
+{
+	boolVals.set( BIT_TOOLUSEBREAK, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemRepairDurabilityLoss( void ) const
+//|					void ItemRepairDurabilityLoss( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items will have their durability reduced when repaired
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ItemRepairDurabilityLoss( void ) const
+{
+	return boolVals.test( BIT_ITEMREPAIRDURABILITYLOSS );
+}
+void CServerData::ItemRepairDurabilityLoss( bool newVal )
+{
+	boolVals.set( BIT_ITEMREPAIRDURABILITYLOSS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HideStatsForUnknownMagicItems( void ) const
+//|					void HideStatsForUnknownMagicItems( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether stats are displayed for unknown/unidentified magic items
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::HideStatsForUnknownMagicItems( void ) const
+{
+	return boolVals.test( BIT_HIDESTATSFORUNKNOWNMAGICITEMS );
+}
+void CServerData::HideStatsForUnknownMagicItems( bool newVal )
+{
+	boolVals.set( BIT_HIDESTATSFORUNKNOWNMAGICITEMS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 BackupRatio( void ) const
 //|					void BackupRatio( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -2260,21 +2968,6 @@ void CServerData::CombatMaxRange( SI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 CombatArcherRange( void ) const
-//|					void CombatArcherRange( SI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the maximum range at which archery can be used in combat
-//o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatArcherRange( void ) const
-{
-	return combatarcherrange;
-}
-void CServerData::CombatArcherRange( SI16 value )
-{
-	combatarcherrange = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 CombatMaxSpellRange( void ) const
 //|					void CombatMaxSpellRange( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -2287,21 +2980,6 @@ SI16 CServerData::CombatMaxSpellRange( void ) const
 void CServerData::CombatMaxSpellRange( SI16 value )
 {
 	combatmaxspellrange = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 CombatExplodeDelay( void ) const
-//|					void CombatExplodeDelay( UI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the delay in seconds for the explosion spell to go into effect
-//o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::CombatExplodeDelay( void ) const
-{
-	return combatExplodeDelay;
-}
-void CServerData::CombatExplodeDelay( UI16 value )
-{
-	combatExplodeDelay = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2392,6 +3070,51 @@ R32 CServerData::NPCFleeingSpeed( void ) const
 void CServerData::NPCFleeingSpeed( R32 value )
 {
 	npcFleeingSpeed = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCMountedWalkingSpeed( void ) const
+//|					void NPCMountedWalkingSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default walking speed for mounted NPCs
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCMountedWalkingSpeed( void ) const
+{
+	return npcMountedWalkingSpeed;
+}
+void CServerData::NPCMountedWalkingSpeed( R32 value )
+{
+	npcMountedWalkingSpeed = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCMountedRunningSpeed( void ) const
+//|					void NPCMountedRunningSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default running speed for mounted NPCs
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCMountedRunningSpeed( void ) const
+{
+	return npcMountedRunningSpeed;
+}
+void CServerData::NPCMountedRunningSpeed( R32 value )
+{
+	npcMountedRunningSpeed = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCMountedFleeingSpeed( void ) const
+//|					void NPCMountedFleeingSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default speed at which mounted NPCs flee in combat
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCMountedFleeingSpeed( void ) const
+{
+	return npcMountedFleeingSpeed;
+}
+void CServerData::NPCMountedFleeingSpeed( R32 value )
+{
+	npcMountedFleeingSpeed = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2605,23 +3328,6 @@ void CServerData::ResLogTime( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 CServerData::ResLogArea( void ) const
-//|					void CServerData::ResLogArea( UI16 value )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the number of log-areas to split the world into (min 10)
-//o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResLogArea( void ) const
-{
-	return logsrespawnarea;
-}
-void CServerData::ResLogArea( UI16 value )
-{
-	if( value < 10 )
-		value = 10;
-	logsrespawnarea = value;
-}
-
-//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 ResOre( void ) const
 //|					void ResOre( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -2652,20 +3358,50 @@ void CServerData::ResOreTime( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 ResOreArea( void ) const
-//|					void ResOreArea( UI16 value )
+//|	Function	-	UI16 ResourceAreaSize( void ) const
+//|					void ResourceAreaSize( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the number of ore-areas to split the world into (min 10)
+//|	Purpose		-	Gets/Sets the size of each resource area to split the world into (min 8x8)
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResOreArea( void ) const
+UI16 CServerData::ResourceAreaSize( void ) const
 {
-	return orerespawnarea;
+	return resourceAreaSize;
 }
-void CServerData::ResOreArea( UI16 value )
+void CServerData::ResourceAreaSize( UI16 value )
 {
-	if( value < 10 )
-		value = 10;
-	orerespawnarea = value;
+	if( value < 8 )
+		value = 8;
+	resourceAreaSize = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 ResFish( void ) const
+//|					void ResFish( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum number of fish in a given resource area
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::ResFish( void ) const
+{
+	return fishperarea;
+}
+void CServerData::ResFish( SI16 value )
+{
+	fishperarea = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ResFishTime( void ) const
+//|					void ResFishTime( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time it takes for 1 single fish to respawn in a resource area
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ResFishTime( void ) const
+{
+	return fishrespawntimer;
+}
+void CServerData::ResFishTime( UI16 value )
+{
+	fishrespawntimer = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2687,7 +3423,7 @@ void CServerData::AccountFlushTimer( R64 value )
 //|	Function	-	bool GetClientFeature( ClientFeatures bitNum ) const
 //|					void SetClientFeature( ClientFeatures bitNum, bool nVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which client side features to enable for connecting clients
+//|	Purpose		-	Gets/Sets a specific client-side feature
 //|	Notes		-	See ClientFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
@@ -2719,7 +3455,7 @@ void CServerData::SetClientFeatures( UI32 nVal )
 //|	Function	-	bool GetServerFeature( ServerFeatures bitNum ) const
 //|					void SetServerFeature( ServerFeatures bitNum, bool nVal )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which server side features to enable
+//|	Purpose		-	Gets/Sets a specific server-side feature
 //|	Notes		-	See ServerFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
@@ -2745,6 +3481,31 @@ size_t CServerData::GetServerFeatures( void ) const
 void CServerData::SetServerFeatures( size_t nVal )
 {
 	serverFeatures = nVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetSpawnRegionsFacetStatus( UI32 value ) const
+//|					UI32 GetSpawnRegionsFacetStatus() const
+//|					void SetSpawnRegionsFacetStatus( UI32 nVal, bool status )
+//|					void SetSpawnRegionsFacetStatus( UI32 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets active status of spawn regions per facet
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetSpawnRegionsFacetStatus( UI32 value ) const
+{
+	return spawnRegionsFacets.test( value );
+}
+void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal, bool status )
+{
+	spawnRegionsFacets.set( nVal, status );
+}
+UI32 CServerData::GetSpawnRegionsFacetStatus() const
+{
+	return static_cast<UI32>(spawnRegionsFacets.to_ulong());
+}
+void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal )
+{
+	spawnRegionsFacets = nVal;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2775,6 +3536,21 @@ bool CServerData::GetClassicUOMapTracker( void ) const
 void CServerData::SetClassicUOMapTracker( bool nVal )
 {
 	boolVals.set( BIT_CLASSICUOMAPTRACKER, nVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool UseUnicodeMessages( void ) const
+//|					void UseUnicodeMessages( bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should send messages originating on server as unicode
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::UseUnicodeMessages( void ) const
+{
+	return boolVals.test( BIT_USEUNICODEMESSAGES );
+}
+void CServerData::UseUnicodeMessages( bool nVal )
+{
+	boolVals.set( BIT_USEUNICODEMESSAGES, nVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2891,11 +3667,15 @@ bool CServerData::save( std::string filename )
 		ofsOutput << (static_cast<std::uint16_t>(1)<<8 | static_cast<std::uint16_t>(2)) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
+		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
-		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
+		ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
 		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
-		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << '\n';
+		ofsOutput << "CONSOLELOG=" << ( ServerConsoleLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "NETWORKLOG=" << ( ServerNetworkLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "SPEECHLOG=" << ( ServerSpeechLog() ? 1 : 0 ) << '\n';
 		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
 		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << '\n';
 		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << '\n';
@@ -2904,10 +3684,18 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
 		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
+		ofsOutput << "CUOENABLED=" << (ConnectUOServerPoll()?1:0) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
 		ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation()?1:0) << '\n';
 		ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
 		ofsOutput << "CLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker()?1:0) << '\n';
+		ofsOutput << "JSENGINESIZE=" << static_cast<UI16>(GetJSEngineSize()) << '\n';
+		ofsOutput << "USEUNICODEMESSAGES=" << (UseUnicodeMessages()?1:0) << '\n';
+		ofsOutput << "CONTEXTMENUS=" << ( ServerContextMenus() ? 1 : 0 ) << '\n';
+		ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
+		ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<UI32>(MaxClientBytesIn()) << '\n';
+		ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>(MaxClientBytesOut()) << '\n';
+		ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>(NetTrafficTimeban()) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -2925,7 +3713,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CLIENTSUPPORT70610=" << (ClientSupport70610()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
-		ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
+		/*ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
 
 		std::vector< physicalServer >::iterator slIter;
 		for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
@@ -2937,6 +3725,23 @@ bool CServerData::save( std::string filename )
 				ofsOutput << slIter->getIP() << ",";
 			ofsOutput << slIter->getPort() << '\n';
 		}
+		ofsOutput << "}" << '\n';*/
+
+		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
+		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
+		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
+		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
+		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
+		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
+		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
+		ofsOutput << "SCRIPTDATADIRECTORY=" << Directory( CSDDP_SCRIPTDATA ) << '\n';
+		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
+		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
+		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
+		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
+		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
+		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
+		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
@@ -2944,6 +3749,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
 		ofsOutput << "SKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << '\n';
 		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
+		ofsOutput << "STATSAFFECTSKILLCHECKS=" << (StatsAffectSkillChecks()?1:0) << '\n';
 		ofsOutput << "EXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats()?1:0) << '\n';
 		ofsOutput << "EXTENDEDSTARTINGSKILLS=" << (ExtendedStartingSkills()?1:0) << '\n';
 		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
@@ -2954,6 +3760,7 @@ bool CServerData::save( std::string filename )
 
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
 		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
+		ofsOutput << "NPCCORPSEDECAYTIMER=" << SystemTimer( tSERVER_NPCCORPSEDECAY ) << '\n';
 		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
 		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
 		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
@@ -2970,22 +3777,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << '\n';
 		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
 		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
-		ofsOutput << "}" << '\n';
-
-		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
-		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
-		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
-		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
-		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
-		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
-		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
-		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
-		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
-		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
-		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
-		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
-		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
-		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
+		ofsOutput << "NPCFLAGUPDATETIMER=" << SystemTimer( tSERVER_NPCFLAGUPDATETIMER ) << '\n';
+		ofsOutput << "BLOODDECAYTIMER=" << SystemTimer( tSERVER_BLOODDECAY ) << '\n';
+		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
@@ -3002,20 +3796,23 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
 		ofsOutput << "SELLBYNAME=" << (SellByNameStatus()?1:0) << '\n';
 		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
+		ofsOutput << "BANKBUYTHRESHOLD=" << BuyThreshold() << '\n';
 		ofsOutput << "TRADESYSTEM=" << (TradeSystemStatus()?1:0) << '\n';
 		ofsOutput << "RANKSYSTEM=" << (RankSystemStatus()?1:0) << '\n';
 		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << '\n';
 		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << '\n';
-		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
+		ofsOutput << "HIDEWHILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
 		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << '\n';
 		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
 		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
 		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
+		ofsOutput << "SPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << '\n';
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << '\n';
 		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << '\n';
 		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << '\n';
+		ofsOutput << "SHOWNPCTITLESINTOOLTIPS=" << (ShowNpcTitlesInTooltips()?1:0) << '\n';
 		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << '\n';
 		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << '\n';
 		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
@@ -3024,6 +3821,21 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
 		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
+		ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
+		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
+		ofsOutput << "TOOLUSELIMIT=" << ToolUseLimit() << '\n';
+		ofsOutput << "TOOLUSEBREAK=" << ToolUseBreak() << '\n';
+		ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
+		ofsOutput << "MAXCONTROLSLOTS=" << static_cast<UI16>(MaxControlSlots()) << '\n';
+		ofsOutput << "MAXFOLLOWERS=" << static_cast<UI16>(MaxFollowers()) << '\n';
+		ofsOutput << "MAXPETOWNERS=" << static_cast<UI16>(MaxPetOwners()) << '\n';
+		ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << ( CheckPetControlDifficulty() ? 1 : 0 ) << '\n';
+		ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<UI16>( GetPetLoyaltyGainOnSuccess() ) << '\n';
+		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
+		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -3034,6 +3846,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
 		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
 		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDWALKINGSPEED=" << NPCMountedWalkingSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDRUNNINGSPEED=" << NPCMountedRunningSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDFLEEINGSPEED=" << NPCMountedFleeingSpeed() << '\n';
 		ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
 		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
@@ -3071,25 +3886,33 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
+		ofsOutput << "RESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
 		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
 		ofsOutput << "OREPERAREA=" << ResOre() << '\n';
 		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << '\n';
-		ofsOutput << "ORERESPAWNAREA=" << ResOreArea() << '\n';
 		ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
 		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
-		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << '\n';
+		ofsOutput << "FISHPERAREA=" << ResFish() << '\n';
+		ofsOutput << "FISHRESPAWNTIMER=" << ResFishTime() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
+		ofsOutput << "HUNGERENABLED=" << (HungerSystemEnabled()?1:0) << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
 		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
 		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
 
+		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
+		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
+		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
+		ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
+
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
-		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
 		ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << '\n';
 		ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers()?1:0) << '\n';
@@ -3101,14 +3924,32 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
 		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
 		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
+		ofsOutput << "ARCHERYHITBONUS=" << static_cast<SI16>(CombatArcheryHitBonus()) << '\n';
+		ofsOutput << "ARCHERYSHOOTDELAY=" << CombatArcheryShootDelay() << '\n';
 		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
-		ofsOutput << "COMBATEXPLODEDELAY=" << CombatExplodeDelay() << '\n';
 		ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<UI16>(CombatWeaponDamageChance()) << '\n';
 		ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<UI16>(CombatWeaponDamageMin()) << '\n';
 		ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<UI16>(CombatWeaponDamageMax()) << '\n';
 		ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<UI16>(CombatArmorDamageChance()) << '\n';
 		ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
 		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
+		ofsOutput << "PARRYDAMAGECHANCE=" << static_cast<UI16>(CombatParryDamageChance()) << '\n';
+		ofsOutput << "PARRYDAMAGEMIN=" << static_cast<UI16>(CombatParryDamageMin()) << '\n';
+		ofsOutput << "PARRYDAMAGEMAX=" << static_cast<UI16>(CombatParryDamageMax()) << '\n';
+		ofsOutput << "ARMORCLASSDAMAGEBONUS=" << (CombatArmorClassDamageBonus()?1:0) << '\n';
+		ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
+		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
+		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
+		ofsOutput << "ITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
+		ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << ( TravelSpellsFromBoatKeys() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << ( TravelSpellsWhileOverweight() ? 1 : 0 ) << '\n';
+		ofsOutput << "MARKRUNESINMULTIS=" << ( MarkRunesInMultis() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << ( TravelSpellsBetweenWorlds() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -3149,28 +3990,33 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
-		ofsOutput << "AF_FILTERWEATHER=" << GetDisabledAssistantFeature( AF_FILTERWEATHER ) << '\n';
-		ofsOutput << "AF_FILTERLIGHT=" << GetDisabledAssistantFeature( AF_FILTERLIGHT ) << '\n';
-		ofsOutput << "AF_SMARTTARGET=" << GetDisabledAssistantFeature( AF_SMARTTARGET ) << '\n';
-		ofsOutput << "AF_RANGEDTARGET=" << GetDisabledAssistantFeature( AF_RANGEDTARGET ) << '\n';
-		ofsOutput << "AF_AUTOOPENDOORS=" << GetDisabledAssistantFeature( AF_AUTOOPENDOORS ) << '\n';
-		ofsOutput << "AF_DEQUIPONCAST=" << GetDisabledAssistantFeature( AF_DEQUIPONCAST ) << '\n';
-		ofsOutput << "AF_AUTOPOTIONEQUIP=" << GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP ) << '\n';
-		ofsOutput << "AF_POISONEDCHECKS=" << GetDisabledAssistantFeature( AF_POISONEDCHECKS ) << '\n';
-		ofsOutput << "AF_LOOPEDMACROS=" << GetDisabledAssistantFeature( AF_LOOPEDMACROS ) << '\n';
-		ofsOutput << "AF_USEONCEAGENT=" << GetDisabledAssistantFeature( AF_USEONCEAGENT ) << '\n';
-		ofsOutput << "AF_RESTOCKAGENT=" << GetDisabledAssistantFeature( AF_RESTOCKAGENT ) << '\n';
-		ofsOutput << "AF_SELLAGENT=" << GetDisabledAssistantFeature( AF_SELLAGENT ) << '\n';
-		ofsOutput << "AF_BUYAGENT=" << GetDisabledAssistantFeature( AF_BUYAGENT ) << '\n';
-		ofsOutput << "AF_POTIONHOTKEYS=" << GetDisabledAssistantFeature( AF_POTIONHOTKEYS ) << '\n';
-		ofsOutput << "AF_RANDOMTARGETS=" << GetDisabledAssistantFeature( AF_RANDOMTARGETS ) << '\n';
-		ofsOutput << "AF_CLOSESTTARGETS=" << GetDisabledAssistantFeature( AF_CLOSESTTARGETS ) << '\n';
-		ofsOutput << "AF_OVERHEADHEALTH=" << GetDisabledAssistantFeature( AF_OVERHEADHEALTH ) << '\n';
-		ofsOutput << "AF_AUTOLOOTAGENT=" << GetDisabledAssistantFeature( AF_AUTOLOOTAGENT ) << '\n';
-		ofsOutput << "AF_BONECUTTERAGENT=" << GetDisabledAssistantFeature( AF_BONECUTTERAGENT ) << '\n';
-		ofsOutput << "AF_JSCRIPTMACROS=" << GetDisabledAssistantFeature( AF_JSCRIPTMACROS ) << '\n';
-		ofsOutput << "AF_AUTOREMOUNT=" << GetDisabledAssistantFeature( AF_AUTOREMOUNT ) << '\n';
-		ofsOutput << "AF_ALL=" << GetDisabledAssistantFeature( AF_ALL ) << '\n';
+		ofsOutput << "AF_FILTERWEATHER=" << (GetDisabledAssistantFeature( AF_FILTERWEATHER )?1:0) << '\n';
+		ofsOutput << "AF_FILTERLIGHT=" << (GetDisabledAssistantFeature( AF_FILTERLIGHT )?1:0) << '\n';
+		ofsOutput << "AF_SMARTTARGET=" << (GetDisabledAssistantFeature( AF_SMARTTARGET )?1:0) << '\n';
+		ofsOutput << "AF_RANGEDTARGET=" << (GetDisabledAssistantFeature( AF_RANGEDTARGET )?1:0) << '\n';
+		ofsOutput << "AF_AUTOOPENDOORS=" << (GetDisabledAssistantFeature( AF_AUTOOPENDOORS )?1:0) << '\n';
+		ofsOutput << "AF_DEQUIPONCAST=" << (GetDisabledAssistantFeature( AF_DEQUIPONCAST )?1:0) << '\n';
+		ofsOutput << "AF_AUTOPOTIONEQUIP=" << (GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP )?1:0) << '\n';
+		ofsOutput << "AF_POISONEDCHECKS=" << (GetDisabledAssistantFeature( AF_POISONEDCHECKS )?1:0) << '\n';
+		ofsOutput << "AF_LOOPEDMACROS=" << (GetDisabledAssistantFeature( AF_LOOPEDMACROS )?1:0) << '\n';
+		ofsOutput << "AF_USEONCEAGENT=" << (GetDisabledAssistantFeature( AF_USEONCEAGENT )?1:0) << '\n';
+		ofsOutput << "AF_RESTOCKAGENT=" << (GetDisabledAssistantFeature( AF_RESTOCKAGENT )?1:0) << '\n';
+		ofsOutput << "AF_SELLAGENT=" << (GetDisabledAssistantFeature( AF_SELLAGENT )?1:0) << '\n';
+		ofsOutput << "AF_BUYAGENT=" << (GetDisabledAssistantFeature( AF_BUYAGENT )?1:0) << '\n';
+		ofsOutput << "AF_POTIONHOTKEYS=" << (GetDisabledAssistantFeature( AF_POTIONHOTKEYS )?1:0) << '\n';
+		ofsOutput << "AF_RANDOMTARGETS=" << (GetDisabledAssistantFeature( AF_RANDOMTARGETS )?1:0) << '\n';
+		ofsOutput << "AF_CLOSESTTARGETS=" << (GetDisabledAssistantFeature( AF_CLOSESTTARGETS )?1:0) << '\n';
+		ofsOutput << "AF_OVERHEADHEALTH=" << (GetDisabledAssistantFeature( AF_OVERHEADHEALTH )?1:0) << '\n';
+		ofsOutput << "AF_AUTOLOOTAGENT=" << (GetDisabledAssistantFeature( AF_AUTOLOOTAGENT )?1:0) << '\n';
+		ofsOutput << "AF_BONECUTTERAGENT=" << (GetDisabledAssistantFeature( AF_BONECUTTERAGENT )?1:0) << '\n';
+		ofsOutput << "AF_JSCRIPTMACROS=" << (GetDisabledAssistantFeature( AF_JSCRIPTMACROS )?1:0) << '\n';
+		ofsOutput << "AF_AUTOREMOUNT=" << (GetDisabledAssistantFeature( AF_AUTOREMOUNT )?1:0) << '\n';
+		ofsOutput << "AF_AUTOBANDAGE=" << (GetDisabledAssistantFeature( AF_AUTOBANDAGE )?1:0) << '\n';
+		ofsOutput << "AF_ENEMYTARGETSHARE=" << (GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE )?1:0) << '\n';
+		ofsOutput << "AF_FILTERSEASON=" << (GetDisabledAssistantFeature( AF_FILTERSEASON )?1:0) << '\n';
+		ofsOutput << "AF_SPELLTARGETSHARE=" << (GetDisabledAssistantFeature( AF_SPELLTARGETSHARE )?1:0) << '\n';
+		ofsOutput << "AF_HUMANOIDHEALTHCHECKS=" << (GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS )?1:0) << '\n';
+		ofsOutput << "AF_SPEECHJOURNALCHECKS=" << (GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS )?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
 
@@ -3178,7 +4024,7 @@ bool CServerData::save( std::string filename )
 		rvalue = true;
 	}
 	else
-		Console.error( format("Unable to open file %s for writing", filename.c_str()) );
+		Console.error( strutil::format("Unable to open file %s for writing", filename.c_str()) );
 	return rvalue;
 }
 
@@ -3188,11 +4034,11 @@ bool CServerData::save( std::string filename )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load up the uox.ini file and parse it into the internals
 //|	Returns		-	pointer to the valid inmemory serverdata storage(this)
-//|						NULL is there is an error, or invalid file type
+//|						nullptr is there is an error, or invalid file type
 //o-----------------------------------------------------------------------------------------------o
 void CServerData::Load( void )
 {
-	const UString fileName = Directory( CSDDP_ROOT ) + "uox.ini";
+	const std::string fileName = Directory( CSDDP_ROOT ) + "uox.ini";
 	ParseINI( fileName );
 }
 
@@ -3281,19 +4127,19 @@ bool CServerData::ParseINI( const std::string& filename )
 		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
 		if( !toParse.IsErrored() )
 		{
-			serverList.clear();
+			//serverList.clear();
 			startlocations.clear();
-			for( ScriptSection *sect = toParse.FirstEntry(); sect != NULL; sect = toParse.NextEntry() )
+			for( ScriptSection *sect = toParse.FirstEntry(); sect != nullptr; sect = toParse.NextEntry() )
 			{
-				if( sect == NULL )
+				if( sect == nullptr )
 					continue;
-				UString tag, data;
+				std::string tag, data;
 				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
 				{
-					data = sect->GrabData().simplifyWhiteSpace();
+					data = strutil::simplify( sect->GrabData() );
 					if( !HandleLine( tag, data ) )
 					{
-						Console.warning( format("Unhandled tag '%s'", tag.c_str()) );
+						Console.warning( strutil::format("Unhandled tag '%s'", tag.c_str()) );
 					}
 				}
 			}
@@ -3302,14 +4148,14 @@ bool CServerData::ParseINI( const std::string& filename )
 		}
 		else
 		{
-			Console.warning( format("%s File not found, Using default settings.", filename.c_str() ));
+			Console.warning( strutil::format("%s File not found, Using default settings.", filename.c_str() ));
 			cwmWorldState->ServerData()->save();
 		}
 	}
 	return rvalue;
 }
 
-bool CServerData::HandleLine( const UString& tag, const UString& value )
+bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 {
 	bool rvalue = true;
 	auto titer = uox3inicasevalue.find(tag) ;
@@ -3320,87 +4166,97 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	switch( titer->second )
 	{
 		case 1:	 // SERVERNAME[0002]
+			ServerName( value );
 			break;
 		case 2:	 // CONSOLELOG[0003]
-			ServerConsoleLog( value.toUByte() );
+			ServerConsoleLog( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		case 3:	 // COMMANDPREFIX[0005]
 			ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
 			break;
 		case 4:	 // ANNOUNCEWORLDSAVES[0006]
-			ServerAnnounceSaves( (value.toUShort()==1?true:false) );
+			ServerAnnounceSaves( (static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false) );
 			break;
 		case 26:	 // JOINPARTMSGS[0007]
-			ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
+			ServerJoinPartAnnouncements( (static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false) );
 			break;
 		case 5:	 // BACKUPSENABLED[0009]
-			ServerBackups( (value.toUShort()>0?true:false) );
+			ServerBackups( (static_cast<UI16>(std::stoul(value, nullptr, 0)) > 0 ? true : false) );
 			break;
 		case 6:	 // SAVESTIMER[0010]
-			ServerSavesTimer( value.toUInt() );
+			ServerSavesTimer( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 7:	 // SKILLCAP[0011]
-			ServerSkillTotalCap( value.toUShort() );
+			ServerSkillTotalCap( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 8:	 // SKILLDELAY[0012]
-			ServerSkillDelay( value.toUByte() );
+			ServerSkillDelay( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 9:	 // STATCAP[0013]
-			ServerStatCap( value.toUShort() );
+			ServerStatCap( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 10:	 // MAXSTEALTHMOVEMENTS[0014]
-			MaxStealthMovement( value.toShort() );
+			MaxStealthMovement( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 11:	 // MAXSTAMINAMOVEMENTS[0015]
-			MaxStaminaMovement( value.toShort() );
+			MaxStaminaMovement( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 12:	 // ARMORAFFECTMANAREGEN[0016]
-			ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
+			ArmorAffectManaRegen( (static_cast<UI08>(std::stoul(value, nullptr, 0)) > 0 ? true : false) );
 			break;
 		case 13:	 // CORPSEDECAYTIMER[0017]
-			SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
+			SystemTimer( tSERVER_CORPSEDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 14:	 // WEATHERTIMER[0018]
-			SystemTimer( tSERVER_WEATHER, value.toUShort() );
+			SystemTimer( tSERVER_WEATHER, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 15:	 // SHOPSPAWNTIMER[0019]
-			SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
+			SystemTimer( tSERVER_SHOPSPAWN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 16:	 // DECAYTIMER[0020]
-			SystemTimer( tSERVER_DECAY, value.toUShort() );
+			SystemTimer( tSERVER_DECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 17:	 // INVISIBILITYTIMER[0021]
-			SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
+			SystemTimer( tSERVER_INVISIBILITY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 18:	 // OBJECTUSETIMER[0022]
-			SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
+			SystemTimer( tSERVER_OBJECTUSAGE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 19:	 // GATETIMER[0023]
-			SystemTimer( tSERVER_GATE, value.toUShort() );
+			SystemTimer( tSERVER_GATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 20:	 // POISONTIMER[0024]
-			SystemTimer( tSERVER_POISON, value.toUShort() );
+			SystemTimer( tSERVER_POISON, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 21:	 // LOGINTIMEOUT[0025]
-			SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
+			SystemTimer( tSERVER_LOGINTIMEOUT, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 22:	 // HITPOINTREGENTIMER[0026]
-			SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
+			SystemTimer( tSERVER_HITPOINTREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 23:	 // STAMINAREGENTIMER[0027]
-			SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
-			break;
-		case 37:	 // MANAREGENTIMER[0028]
-			SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
+			SystemTimer( tSERVER_STAMINAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 24:	 // BASEFISHINGTIMER[0029]
-			SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
+			SystemTimer( tSERVER_FISHINGBASE,static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 34:	// MAXPETOWNERS[0211]
+			MaxPetOwners( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 35:	// MAXFOLLOWERS[0211]
+			MaxFollowers( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 36:	// MAXCONTROLSLOTS[0211]
+			MaxControlSlots( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 37:	 // MANAREGENTIMER[0028]
+			SystemTimer( tSERVER_MANAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 38:	 // RANDOMFISHINGTIMER[0030]
-			SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
+			SystemTimer( tSERVER_FISHINGRANDOM, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 39:	 // SPIRITSPEAKTIMER[0031]
-			SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
+			SystemTimer( tSERVER_SPIRITSPEAK, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 40:	 // DIRECTORY[0032]
 		{
@@ -3443,293 +4299,298 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			break;
 		}
 		case 47:	 // LOOTDECAYSWITHCORPSE[0040]
-			CorpseLootDecay( value.toUShort() != 0 );
+			CorpseLootDecay( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 49:	 // GUARDSACTIVE[0041]
-			GuardStatus( value.toUShort() != 0 );
+			GuardStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 27:	 // DEATHANIMATION[0042]
-			DeathAnimationStatus( value.toUShort() != 0 );
+			DeathAnimationStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 50:	 // AMBIENTSOUNDS[0043]
-			WorldAmbientSounds( value.toShort() );
+			WorldAmbientSounds( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 51:	 // AMBIENTFOOTSTEPS[0044]
-			AmbientFootsteps( value.toUShort() != 0 );
+			AmbientFootsteps( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 52:	 // INTERNALACCOUNTCREATION[0045]
-			InternalAccountStatus( value.toUShort() != 0 );
+			InternalAccountStatus( static_cast<UI16>(std::stoul(value, nullptr, 0))!= 0 );
 			break;
 		case 53:	 // SHOWOFFLINEPCS[0046]
-			ShowOfflinePCs( value.toUShort() != 0 );
+			ShowOfflinePCs( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 54:	 // ROGUESENABLED[0047]
-			RogueStatus( value.toUShort() != 0 );
+			RogueStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 55:	 // PLAYERPERSECUTION[0048]
-			PlayerPersecutionStatus( value.toUShort() != 0 );
+			PlayerPersecutionStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 56:	 // ACCOUNTFLUSH[0049]
-			AccountFlushTimer( value.toDouble() );
+			AccountFlushTimer( std::stod(value) );
 			break;
 		case 57:	 // HTMLSTATUSENABLED[0050]
-			HtmlStatsStatus( value.toShort() );
+			HtmlStatsStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 58:	 // SELLBYNAME[0051]
-			SellByNameStatus( value.toUShort() == 1 );
+			SellByNameStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 59:	 // SELLMAXITEMS[0052]
-			SellMaxItemsStatus( value.toShort() );
+			SellMaxItemsStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 60:	 // TRADESYSTEM[0053]
-			TradeSystemStatus( value.toUShort() != 0 );
+			TradeSystemStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 61:	 // RANKSYSTEM[0054]
-			RankSystemStatus( value.toUShort() != 0 );
+			RankSystemStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 62:	 // CUTSCROLLREQUIREMENTS[0055]
-			CutScrollRequirementStatus( (value.toUShort() != 0) );
+			CutScrollRequirementStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0) ;
 			break;
 		case 63:	 // CHECKITEMS[0056]
-			CheckItemsSpeed( value.toDouble() );
+			CheckItemsSpeed( std::stod(value) );
 			break;
 		case 64:	 // CHECKBOATS[0057]
-			CheckBoatSpeed( value.toDouble() );
+			CheckBoatSpeed( std::stod(value) );
 			break;
 		case 65:	 // CHECKNPCAI[0058]
-			CheckNpcAISpeed( value.toDouble() );
+			CheckNpcAISpeed( std::stod(value) );
 			break;
 		case 66:	 // CHECKSPAWNREGIONS[0059]
-			CheckSpawnRegionSpeed( value.toDouble() );
+			CheckSpawnRegionSpeed( std::stod(value) );
 			break;
 		case 67:	 // POSTINGLEVEL[0060]
-			MsgBoardPostingLevel( value.toUByte() );
+			MsgBoardPostingLevel( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 68:	 // REMOVALLEVEL[0061]
-			MsgBoardPostRemovalLevel( value.toUByte() );
+			MsgBoardPostRemovalLevel( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 69:	 // ESCORTENABLED[0062]
-			EscortsEnabled( value.toUShort() == 1 );
+			EscortsEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 70:	 // ESCORTINITEXPIRE[0063]
-			SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
+			SystemTimer( tSERVER_ESCORTWAIT, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 71:	 // ESCORTACTIVEEXPIRE[0064]
-			SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
+			SystemTimer( tSERVER_ESCORTACTIVE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 72:	 // MOON1[0065]
-			ServerMoon( 0, value.toShort() );
+			ServerMoon( 0, static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 73:	 // MOON2[0066]
-			ServerMoon( 1, value.toShort() );
+			ServerMoon( 1, static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 74:	 // DUNGEONLEVEL[0067]
-			DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
+			DungeonLightLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 75:	 // CURRENTLEVEL[0068]
-			WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
+			WorldLightCurrentLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 76:	 // BRIGHTLEVEL[0069]
-			WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
+			WorldLightBrightLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 77:	 // BASERANGE[0070]
-			TrackingBaseRange( value.toUShort() );
+			TrackingBaseRange( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 78:	 // BASETIMER[0071]
-			TrackingBaseTimer( value.toUShort() );
+			TrackingBaseTimer( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 79:	 // MAXTARGETS[0072]
-			TrackingMaxTargets( value.toUByte() );
+			TrackingMaxTargets( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 80:	 // MSGREDISPLAYTIME[0073]
-			TrackingRedisplayTime( value.toUShort() );
+			TrackingRedisplayTime( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 81:	 // MURDERDECAYTIMER[0074]
-			SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
+			SystemTimer( tSERVER_MURDERDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 82:	 // MAXKILLS[0075]
-			RepMaxKills( value.toUShort() );
+			RepMaxKills( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 83:	 // CRIMINALTIMER[0076]
-			SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
+			SystemTimer( tSERVER_CRIMINAL, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 84:	 // MINECHECK[0077]
-			MineCheck( value.toUByte() );
+			MineCheck( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 85:	 // OREPERAREA[0078]
-			ResOre( value.toShort() );
+			ResOre(static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 86:	 // ORERESPAWNTIMER[0079]
-			ResOreTime( value.toUShort() );
+			ResOreTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
-		case 87:	 // ORERESPAWNAREA[0080]
-			ResOreArea( value.toUShort() );
+		case 87:	 // RESOURCEAREASIZE
+			ResourceAreaSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 88:	 // LOGSPERAREA[0081]
-			ResLogs( value.toShort() );
+			ResLogs( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 89:	 // LOGSRESPAWNTIMER[0082]
-			ResLogTime( value.toUShort() );
+			ResLogTime( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
-		case 90:	 // LOGSRESPAWNAREA[0083]
-			ResLogArea( value.toUShort() );
+		case 90:	 // STATSAFFECTSKILLCHECKS
+			StatsAffectSkillChecks( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 91:	 // HUNGERRATE[0084]
-			SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
+			SystemTimer( tSERVER_HUNGERRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 92:	 // HUNGERDMGVAL[0085]
-			HungerDamage( value.toShort() );
+			HungerDamage( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 93:	 // MAXRANGE[0086]
-			CombatMaxRange( value.toShort() );
+			CombatMaxRange( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 94:	 // SPELLMAXRANGE[0087]
-			CombatMaxSpellRange( value.toShort() );
+			CombatMaxSpellRange(static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 95:	 // DISPLAYHITMSG[0088]
-			CombatDisplayHitMessage( value.toUShort() == 1 );
+			CombatDisplayHitMessage( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 96:	 // MONSTERSVSANIMALS[0089]
-			CombatMonstersVsAnimals( value.toUShort() == 1 );
+			CombatMonstersVsAnimals( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 97:	 // ANIMALATTACKCHANCE[0090]
-			CombatAnimalsAttackChance( value.toUShort() );
+			CombatAnimalsAttackChance( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 98:	 // ANIMALSGUARDED[0091]
-			CombatAnimalsGuarded( value.toUShort() == 1 );
+			CombatAnimalsGuarded( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 99:	 // NPCDAMAGERATE[0092]
-			CombatNPCDamageRate( value.toShort() );
+			CombatNPCDamageRate( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 100:	 // NPCBASEFLEEAT[0093]
-			CombatNPCBaseFleeAt( value.toShort() );
+			CombatNPCBaseFleeAt( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 101:	 // NPCBASEREATTACKAT[0094]
-			CombatNPCBaseReattackAt( value.toShort() );
+			CombatNPCBaseReattackAt( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 102:	 // ATTACKSTAMINA[0095]
-			CombatAttackStamina( value.toShort() );
+			CombatAttackStamina( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 103:	 // LOCATION[0096]
 			ServerLocation( value );
 			break;
 		case 104:	 // STARTGOLD[0097]
-			ServerStartGold( value.toShort() );
+			ServerStartGold( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 105:	 // STARTPRIVS[0098]
-			ServerStartPrivs( value.toUShort() );
+			ServerStartPrivs( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 106:	 // ESCORTDONEEXPIRE[0099]
-			SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
+			SystemTimer( tSERVER_ESCORTDONE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 107:	 // DARKLEVEL[0100]
-			WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
+			WorldLightDarkLevel( static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 108:	 // TITLECOLOUR[0101]
-			TitleColour( value.toUShort() );
+			TitleColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 109:	 // LEFTTEXTCOLOUR[0102]
-			LeftTextColour( value.toUShort() );
+			LeftTextColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 110:	 // RIGHTTEXTCOLOUR[0103]
-			RightTextColour( value.toUShort() );
+			RightTextColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 111:	 // BUTTONCANCEL[0104]
-			ButtonCancel( value.toUShort() );
+			ButtonCancel( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 112:	 // BUTTONLEFT[0105]
-			ButtonLeft( value.toUShort() );
+			ButtonLeft( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 113:	 // BUTTONRIGHT[0106]
-			ButtonRight( value.toUShort() );
+			ButtonRight( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 114:	 // BACKGROUNDPIC[0107]
-			BackgroundPic( value.toUShort() );
+			BackgroundPic( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 115:	 // POLLTIME[0108]
-			TownNumSecsPollOpen( value.toUInt() );
+			TownNumSecsPollOpen( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 116:	 // MAYORTIME[0109]
-			TownNumSecsAsMayor( value.toUInt() );
+			TownNumSecsAsMayor( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 117:	 // TAXPERIOD[0110]
-			TownTaxPeriod( value.toUInt() );
+			TownTaxPeriod( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 118:	 // GUARDSPAID[0111]
-			TownGuardPayment( value.toUInt() );
+			TownGuardPayment( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 119:	 // DAY[0112]
-			ServerTimeDay( value.toShort() );
+			ServerTimeDay( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
 		case 120:	 // HOURS[0113]
-			ServerTimeHours( value.toUByte() );
+			ServerTimeHours( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 121:	 // MINUTES[0114]
-			ServerTimeMinutes( value.toUByte() );
+			ServerTimeMinutes( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 122:	 // SECONDS[0115]
-			ServerTimeSeconds( value.toUByte() );
+			ServerTimeSeconds( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 123:	 // AMPM[0116]
-			ServerTimeAMPM( value.toUShort() != 0 );
+			ServerTimeAMPM( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 124:	 // SKILLLEVEL[0117]
-			SkillLevel( value.toUByte() );
+			SkillLevel( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 125:	 // SNOOPISCRIME[0118]
-			SnoopIsCrime( value.toUShort() != 0 );
+			SnoopIsCrime( static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0 );
 			break;
 		case 126:	 // BOOKSDIRECTORY[0119]
 			Directory( CSDDP_BOOKS, value );
 			break;
 		case 127:	 // SERVERLIST[0120]
 		{
-			UString sname, sip, sport;
+			/*std::string sname, sip, sport;
 			physicalServer toAdd;
-			if( value.sectionCount( "," ) == 2 )
+			auto csecs = strutil::sections( value, "," );
+			if( csecs.size() == 3 )
 			{
-				struct hostent *lpHostEntry = NULL;
-				sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
-				sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
-				sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
+				struct hostent *lpHostEntry = nullptr;
+				sname	= strutil::trim(strutil::removeTrailing( csecs[0],"//") );
+				sip		= strutil::trim(strutil::removeTrailing( csecs[1],"//") );
+				sport	= strutil::trim(strutil::removeTrailing( csecs[2],"//") );
 
 				toAdd.setName( sname );
 				// Ok look up the data here see if its a number
 				bool bDomain = true;
-				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
+				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == nullptr )
 				{
 					// this was not a domain name so check for IP address
-					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
+					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), static_cast<UI32>(sip.size()), AF_INET ) ) == nullptr )
 					{
 						// We get here it wasn't a valid IP either.
-						Console.warning( format("Failed to translate %s", sip.c_str() ));
+						Console.warning( strutil::format("Failed to translate %s", sip.c_str() ));
 						Console.warning( "This shard will not show up on the shard listing" );
 						break;
 					}
 					bDomain = false;
 				}
 				// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
-				if( bDomain )	// Store the domain name for later then seeing as its a valid one
+				if( bDomain ) // Store the domain name for later then seeing as its a valid one
+				{
 					toAdd.setDomain( sip );
-				else			// this was a valid ip address so we will use an ip instead so clear the domain string.
+				}
+				else // this was a valid ip address so we will use an ip instead so clear the domain string.
+				{
 					toAdd.setDomain( "" );
+				}
 
 				// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once
 				struct in_addr *pinaddr;
 				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
 				toAdd.setIP( inet_ntoa(*pinaddr) );
-				toAdd.setPort( sport.toUShort() );
+				toAdd.setPort( static_cast<UI16>(std::stoul(sport, nullptr, 0)));
 				serverList.push_back( toAdd );
 			}
 			else
 			{
-				Console.warning(format("Malformend Serverlist entry: %s", value.c_str() ));
+				Console.warning(strutil::format("Malformend Serverlist entry: %s", value.c_str() ));
 				Console.warning( "This shard will not show up on the shard listing" );
-			}
+			}*/
 			break;
 		}
 		case 128:	 // PORT[0121]
-			ServerPort( value.toUShort() );
+			ServerPort( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 129:	 // ACCESSDIRECTORY[0122]
 			Directory( CSDDP_ACCESS, value );
@@ -3743,281 +4604,457 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			Directory( CSDDP_HTML, value );
 			break;
 		case 133:	 // SHOOTONANIMALBACK[0126]
-			ShootOnAnimalBack( value.toUShort() == 1 );
+			ShootOnAnimalBack( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 134:	 // NPCTRAININGENABLED[0127]
-			NPCTrainingStatus( value.toUShort() == 1 );
+			NPCTrainingStatus( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 135:	 // DICTIONARYDIRECTORY[0128]
 			Directory( CSDDP_DICTIONARIES, value );
 			break;
 		case 136:	 // BACKUPSAVERATIO[0129]
-			BackupRatio( value.toShort() );
+			BackupRatio( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
 			break;
-		case 137:	 // HIDEWILEMOUNTED[0130]
-			CharHideWhileMounted( value.toShort() == 1 );
+		case 137:	 // HIDEWHILEMOUNTED[0130]
+			CharHideWhileMounted( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 138:	 // SECONDSPERUOMINUTE[0131]
-			ServerSecondsPerUOMinute( value.toUShort() );
+			ServerSecondsPerUOMinute( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 139:	 // WEIGHTPERSTR[0132]
 			//WeightPerStr( value.toUByte() );
-			WeightPerStr( value.toFloat() );
+			WeightPerStr( std::stof(value) );
 			break;
 		case 140:	 // POLYDURATION[0133]
-			SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
+			SystemTimer( tSERVER_POLYMORPH, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 141:	 // UOGENABLED[0134]
-			ServerUOGEnabled( value.toShort()==1 );
+			ServerUOGEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0))==1 );
 			break;
 		case 142:	 // NETRCVTIMEOUT[0135]
-			ServerNetRcvTimeout( value.toUInt() );
+			ServerNetRcvTimeout( static_cast<UI32>(std::stoul(value, nullptr, 0)));
 			break;
 		case 143:	 // NETSNDTIMEOUT[0136]
-			ServerNetSndTimeout( value.toUInt() );
+			ServerNetSndTimeout( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 144:	 // NETRETRYCOUNT[0137]
-			ServerNetRetryCount( value.toUInt() );
+			ServerNetRetryCount( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 145:	 // CLIENTFEATURES[0138]
-			SetClientFeatures( value.toUInt() );
+			SetClientFeatures( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 146:	 // PACKETOVERLOADS[0139]
-			ServerOverloadPackets( (value.toByte() == 1) );
+			ServerOverloadPackets( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 147:	 // NPCMOVEMENTSPEED[0140]
-			NPCWalkingSpeed( value.toFloat() );
+			NPCWalkingSpeed( std::stof(value) );
 			break;
 		case 148:	 // PETHUNGEROFFLINE[0141]
-			PetHungerOffline( (value.toByte() == 1) );
+			PetHungerOffline( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 149:	 // PETOFFLINETIMEOUT[0142]
-			PetOfflineTimeout( value.toUShort() );
+			PetOfflineTimeout( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 150:	 // PETOFFLINECHECKTIMER[0143]
-			SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
-			break;
-		case 151:	 // ARCHERRANGE[0144]
-			CombatArcherRange( value.toShort() );
+			SystemTimer( tSERVER_PETOFFLINECHECK, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 152:	 // ADVANCEDPATHFINDING[0145]
-			AdvancedPathfinding( (value.toByte() == 1) );
+			AdvancedPathfinding( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 153:	 // SERVERFEATURES[0146]
-			SetServerFeatures( value.toUInt() );
+			SetServerFeatures( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 154:	 // LOOTINGISCRIME[0147]
-			LootingIsCrime( (value.toByte() == 1) );
+			LootingIsCrime( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 155:	 // NPCRUNNINGSPEED[0148]
-			NPCRunningSpeed( value.toFloat() );
+			NPCRunningSpeed( std::stof(value) );
 			break;
 		case 156:	 // NPCFLEEINGSPEED[0149]
-			NPCFleeingSpeed( value.toFloat() );
+			NPCFleeingSpeed( std::stof(value) );
 			break;
 		case 157:	 // BASICTOOLTIPSONLY[0150]
-			BasicTooltipsOnly( (value.toByte() == 1) );
+			BasicTooltipsOnly( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 158:	 // GLOBALITEMDECAY[0151]
-			GlobalItemDecay( (value.toByte() == 1) );
+			GlobalItemDecay( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 159:	 // SCRIPTITEMSDECAYABLE[0152]
-			ScriptItemsDecayable( (value.toByte() == 1) );
+			ScriptItemsDecayable( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 160:	 // BASEITEMSDECAYABLE[0152]
-			BaseItemsDecayable( (value.toByte() == 1) );
+			BaseItemsDecayable( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 161:	 // ITEMDECAYINHOUSES[0153]
-			ItemDecayInHouses( (value.toByte() == 1) );
+			ItemDecayInHouses( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
-		case 162:	// COMBATEXPLODEDELAY[0154]
-			CombatExplodeDelay( value.toUShort() );
+		case 162:	 // SPAWNREGIONSFACETS
+			SetSpawnRegionsFacetStatus( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 163:	// PAPERDOLLGUILDBUTTON[0155]
-			PaperdollGuildButton( value.toByte() == 1 );
+			PaperdollGuildButton( static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 164:	// ATTACKSPEEDFROMSTAMINA[0156]
-			CombatAttackSpeedFromStamina( value.toUShort() == 1 );
+			CombatAttackSpeedFromStamina( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 169:	 // DISPLAYDAMAGENUMBERS[0157]
-			CombatDisplayDamageNumbers( value.toUShort() == 1 );
+			CombatDisplayDamageNumbers( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 170:	 // CLIENTSUPPORT4000[0158]
-			ClientSupport4000( value.toUShort() == 1 );
+			ClientSupport4000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 171:	 // CLIENTSUPPORT5000[0159]
-			ClientSupport5000( value.toUShort() == 1 );
+			ClientSupport5000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 172:	 // CLIENTSUPPORT6000[0160]
-			ClientSupport6000( value.toUShort() == 1 );
+			ClientSupport6000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 173:	 // CLIENTSUPPORT6050[0161]
-			ClientSupport6050( value.toUShort() == 1 );
+			ClientSupport6050( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 174:	 // CLIENTSUPPORT7000[0162]
-			ClientSupport7000( value.toUShort() == 1 );
+			ClientSupport7000( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 175:	 // CLIENTSUPPORT7090[0163]
-			ClientSupport7090( value.toUShort() == 1 );
+			ClientSupport7090( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 176:	 // CLIENTSUPPORT70160[0164]
-			ClientSupport70160( value.toUShort() == 1 );
+			ClientSupport70160( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 177:	// CLIENTSUPPORT70240[0165]
-			ClientSupport70240( value.toUShort() == 1 );
+			ClientSupport70240( static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 );
 			break;
 		case 178:	// CLIENTSUPPORT70300[0166]
-			ClientSupport70300( value.toUShort() == 1 );
+			ClientSupport70300( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 179:	// CLIENTSUPPORT70331[0167]
-			ClientSupport70331( value.toUShort() == 1 );
+			ClientSupport70331( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 180:	// CLIENTSUPPORT704565[0168]
-			ClientSupport704565( value.toUShort() == 1 );
+			ClientSupport704565( static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 );
 			break;
 		case 181:	// CLIENTSUPPORT70610[0169]
-			ClientSupport70610( value.toUShort() == 1 );
+			ClientSupport70610( static_cast<UI16>(std::stoul(value, nullptr, 0))== 1 );
 			break;
 		case 182:	 // EXTENDEDSTARTINGSTATS[0170]
-			ExtendedStartingStats( value.toUShort() == 1 );
+			ExtendedStartingStats(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 183:	 // EXTENDEDSTARTINGSKILLS[0171]
-			ExtendedStartingSkills( value.toUShort() == 1 );
+			ExtendedStartingSkills( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 184:	// WEAPONDAMAGECHANCE[0172]
-			CombatWeaponDamageChance( value.toUByte() );
+			CombatWeaponDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 185:	// ARMORDAMAGECHANCE[0173]
-			CombatArmorDamageChance( value.toUByte() );
+			CombatArmorDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)));
 			break;
 		case 186:	// WEAPONDAMAGEMIN[0174]
-			CombatWeaponDamageMin( value.toUByte() );
+			CombatWeaponDamageMin( static_cast<UI08>(std::stoul(value, nullptr, 0)));
 			break;
 		case 187:	// WEAPONDAMAGEMAX[0175]
-			CombatWeaponDamageMax( value.toUByte() );
+			CombatWeaponDamageMax( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 188:	// ARMORDAMAGEMIN[0176]
-			CombatArmorDamageMin( value.toUByte() );
+			CombatArmorDamageMin( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 189:	// ARMORDAMAGEMAX[0177]
-			CombatArmorDamageMax( value.toUByte() );
+			CombatArmorDamageMax( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 190:	// GLOBALATTACKSPEED[0178]
-			GlobalAttackSpeed( value.toFloat() );
+			GlobalAttackSpeed( std::stof(value) );
 			break;
 		case 191:	// NPCSPELLCASTSPEED[0179]
-			NPCSpellCastSpeed( value.toFloat() );
+			NPCSpellCastSpeed( std::stof(value) );
 			break;
 		case 192:	// FISHINGSTAMINALOSS[0180]
-			FishingStaminaLoss( value.toFloat() );
+			FishingStaminaLoss( std::stof(value) );
 			break;
 		case 193:	// RANDOMSTARTINGLOCATION[0181]
-			ServerRandomStartingLocation( value.toUShort() == 1 );
+			ServerRandomStartingLocation( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 194:	// ASSISTANTNEGOTIATION[0183]
-			SetAssistantNegotiation( (value.toByte() == 1) );
+			SetAssistantNegotiation( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 195:	// KICKONASSISTANTSILENCE[0184]
-			KickOnAssistantSilence( (value.toByte() == 1) );
+			KickOnAssistantSilence( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 196:	// AF_FILTERWEATHER[0185]
-			SetDisabledAssistantFeature( AF_FILTERWEATHER, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_FILTERWEATHER, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 197:	// AF_FILTERLIGHT[0186]
-			SetDisabledAssistantFeature( AF_FILTERLIGHT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_FILTERLIGHT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 198:	// AF_SMARTTARGET[0187]
-			SetDisabledAssistantFeature( AF_SMARTTARGET, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_SMARTTARGET, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 199:	// AF_RANGEDTARGET[0188]
-			SetDisabledAssistantFeature( AF_RANGEDTARGET, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_RANGEDTARGET, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 200:	// AF_AUTOOPENDOORS[0189]
-			SetDisabledAssistantFeature( AF_AUTOOPENDOORS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOOPENDOORS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 201:	// AF_DEQUIPONCAST[0190]
-			SetDisabledAssistantFeature( AF_DEQUIPONCAST, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_DEQUIPONCAST, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 202:	// AF_AUTOPOTIONEQUIP[0191]
-			SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 203:	// AF_POISONEDCHECKS[0192]
-			SetDisabledAssistantFeature( AF_POISONEDCHECKS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_POISONEDCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 204:	// AF_LOOPEDMACROS[0193]
-			SetDisabledAssistantFeature( AF_LOOPEDMACROS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_LOOPEDMACROS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 205:	// AF_USEONCEAGENT[0194]
-			SetDisabledAssistantFeature( AF_USEONCEAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_USEONCEAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 206:	// AF_RESTOCKAGENT[0195]
-			SetDisabledAssistantFeature( AF_RESTOCKAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_RESTOCKAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 207:	// AF_SELLAGENT[0196]
-			SetDisabledAssistantFeature( AF_SELLAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_SELLAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 208:	// AF_BUYAGENT[0197]
-			SetDisabledAssistantFeature( AF_BUYAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_BUYAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 209:	// AF_POTIONHOTKEYS[0198]
-			SetDisabledAssistantFeature( AF_POTIONHOTKEYS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_POTIONHOTKEYS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 210:	// AF_RANDOMTARGETS[0199]
-			SetDisabledAssistantFeature( AF_RANDOMTARGETS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_RANDOMTARGETS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 211:	// AF_CLOSESTTARGETS[0200]
-			SetDisabledAssistantFeature( AF_CLOSESTTARGETS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_CLOSESTTARGETS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 212:	// AF_OVERHEADHEALTH[0201]
-			SetDisabledAssistantFeature( AF_OVERHEADHEALTH, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_OVERHEADHEALTH, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 213:	// AF_AUTOLOOTAGENT[0202]
-			SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 214:	// AF_BONECUTTERAGENT[0203]
-			SetDisabledAssistantFeature( AF_BONECUTTERAGENT, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_BONECUTTERAGENT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 215:	// AF_JSCRIPTMACROS[0204]
-			SetDisabledAssistantFeature( AF_JSCRIPTMACROS, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_JSCRIPTMACROS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 216:	// AF_AUTOREMOUNT[0205]
-			SetDisabledAssistantFeature( AF_AUTOREMOUNT, value.toByte() == 1 );
-			break;
-		case 217:	// AF_ALL[0206]
-			SetDisabledAssistantFeature( AF_ALL, value.toByte() == 1 );
+			SetDisabledAssistantFeature( AF_AUTOREMOUNT, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
 			break;
 		case 218:	// CLASSICUOMAPTRACKER[0207]
-			SetClassicUOMapTracker( (value.toByte() == 1) );
+			SetClassicUOMapTracker( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
 			break;
 		case 219:	// DECAYTIMERINHOUSE[0208]
-			SystemTimer( tSERVER_DECAYINHOUSE, value.toUShort() );
+			SystemTimer( tSERVER_DECAYINHOUSE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 220:	// PROTECTPRIVATEHOUSES[0209]
-			ProtectPrivateHouses( value.toUShort() == 1 );
+			ProtectPrivateHouses( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 221:	// TRACKHOUSESPERACCOUNT[0210]
-			TrackHousesPerAccount( value.toUShort() == 1 );
+			TrackHousesPerAccount( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 222:	// MAXHOUSESOWNABLE[0211]
-			MaxHousesOwnable( value.toUShort() );
+			MaxHousesOwnable( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 223:	// MAXHOUSESCOOWNABLE[0212]
-			MaxHousesCoOwnable( value.toUShort() );
+			MaxHousesCoOwnable( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 224:	// CANOWNANDCOOWNHOUSES[0213]
-			CanOwnAndCoOwnHouses( value.toUShort() == 1 );
+			CanOwnAndCoOwnHouses( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 225:	// COOWNHOUSESONSAMEACCOUNT[0214]
-			CoOwnHousesOnSameAccount( value.toUShort() == 1 );
+			CoOwnHousesOnSameAccount( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 226:	// ITEMSDETECTSPEECH[0215]
-			ItemsDetectSpeech( value.toUShort() == 1 );
+			ItemsDetectSpeech( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
 			break;
 		case 227:	// MAXPLAYERPACKITEMS[0216]
-			MaxPlayerPackItems( value.toUShort() );
+			MaxPlayerPackItems( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
 			break;
 		case 228:	// MAXPLAYERBANKITEMS[0217]
-			MaxPlayerBankItems( value.toUShort() );
+			MaxPlayerBankItems( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 229:	// FORCENEWANIMATIONPACKET[0218]
+			ForceNewAnimationPacket( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
+			break;
+		case 230:	// MAPDIFFSENABLED[0219]
+			MapDiffsEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
+			break;
+		case 240:	// PARRYDAMAGECHANCE[0229]
+			CombatParryDamageChance( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 241:	// PARRYDAMAGEMIN[0230]
+			CombatParryDamageMin( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 242:	// PARRYDAMAGEMAX[0231]
+			CombatParryDamageMax( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 243:	// ARMORCLASSDAMAGEBONUS[0232]
+			CombatArmorClassDamageBonus(  static_cast<SI08>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 244:	// CUOENABLED[0233]
+			ConnectUOServerPoll( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
+			break;
+		case 245:	// ALCHEMYBONUSENABLED[0234]
+			AlchemyDamageBonusEnabled( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
+			break;
+		case 246:	// ALCHEMYBONUSMODIFIER[0235]
+			AlchemyDamageBonusModifier( static_cast<UI08>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 247:	 // NPCFLAGUPDATETIMER[0236]
+			SystemTimer( tSERVER_NPCFLAGUPDATETIMER, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 248:	 // JSENGINESIZE[0237]
+			SetJSEngineSize( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 249:	 // USEUNICODEMESSAGES[0238]
+			UseUnicodeMessages( static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 );
+			break;
+		case 250:	 // SCRIPTDATADIRECTORY[0239]
+		{
+			Directory( CSDDP_SCRIPTDATA, value );
+			break;
+		}
+		case 251:    // THIRSTRATE[0240]
+			SystemTimer( tSERVER_THIRSTRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 252:    // THIRSTDRAINVAL[0241]
+			ThirstDrain( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
+			break;
+		case 253:    // PETTHIRSTOFFLINE[0242]
+			PetThirstOffline( (static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1) );
+			break;
+		case 254:	// ExternalIP
+			ExternalIP(value);
+			break;
+		case 255:	 // BLOODDECAYTIMER[0243]
+			SystemTimer( tSERVER_BLOODDECAY, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 256:	 // BLOODDECAYCORPSETIMER[0244]
+			SystemTimer( tSERVER_BLOODDECAYCORPSE, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 257:	// BLOODEFFECTCHANCE[0245]
+			CombatBloodEffectChance( static_cast<UI08>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 258:	 // NPCCORPSEDECAYTIMER[0246]
+			SystemTimer( tSERVER_NPCCORPSEDECAY, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 259:    // HUNGERENABLED[0247]
+			HungerSystemEnabled( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 260:    // THIRSTENABLED[0248]
+			ThirstSystemEnabled( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 261:    // TRAVELSPELLSFROMBOATKEYS[0249]
+			TravelSpellsFromBoatKeys( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 262:    // TRAVELSPELLSWHILEOVERWEIGHT[0250]
+			TravelSpellsWhileOverweight( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 263:    // MARKRUNESINMULTIS[0251]
+			MarkRunesInMultis( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 264:    // TRAVELSPELLSBETWEENWORLD[0252]
+			TravelSpellsBetweenWorlds( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 265:    // TRAVELSPELLSWHILEAGGRESSOR[0253]
+			TravelSpellsWhileAggressor( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 266:	// BUYBANKTHRESHOLD[0254]
+			BuyThreshold( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 267:	// NETWORKLOG[0255]
+			ServerNetworkLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ));
+			break;
+		case 268:	// SPEECHLOG[0256]
+			ServerSpeechLog(( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ));
+			break;
+		case 269:	 // NPCMOUNTEDWALKINGSPEED[0257]
+			NPCMountedWalkingSpeed( std::stof( value ) );
+			break;
+		case 270:	 // NPCMOUNTEDRUNNINGSPEED[0258]
+			NPCMountedRunningSpeed( std::stof( value ) );
+			break;
+		case 271:	 // NPCMOUNTEDFLEEINGSPEED[0259]
+			NPCMountedFleeingSpeed( std::stof( value ) );
+			break;
+		case 272:	// CONTEXTMENUS[0260]
+			ServerContextMenus( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 273:	// SERVERLANGUAGE[0261]
+			ServerLanguage( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 274:	// CHECKPETCONTROLDIFFICULTY[0262]
+			CheckPetControlDifficulty( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 275:	// PETLOYALTYGAINONSUCCESS[0263]
+			SetPetLoyaltyGainOnSuccess( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 276:	// PETLOYALTYLOSSONFAILURE[0264]
+			SetPetLoyaltyLossOnFailure( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 277:    // LOYALTYRATE[0265]
+			SystemTimer( tSERVER_LOYALTYRATE, static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) );
+			break;
+		case 278:	// SHOWNPCTITLESINTOOLTIPS[0262]
+			ShowNpcTitlesInTooltips( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 279:	 // FISHPERAREA
+			ResFish(static_cast<SI16>(std::stoi(value, nullptr, 0)) );
+			break;
+		case 280:	 // FISHRESPAWNTIMER
+			ResFishTime(static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 281:	 // ARCHERYHITBONUS
+			CombatArcheryHitBonus( static_cast<SI16>(std::stoi(value, nullptr, 0)) );
+			break;
+		case 282:    // ITEMSINTERRUPTCASTING
+			ItemsInterruptCasting( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 283:	 // SYSMESSAGECOLOUR
+			SysMsgColour( static_cast<UI16>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 284:	// AF_AUTOBANDAGE
+			SetDisabledAssistantFeature( AF_AUTOBANDAGE, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 285:	// AF_ENEMYTARGETSHARE
+			SetDisabledAssistantFeature( AF_ENEMYTARGETSHARE, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 286:	// AF_FILTERSEASON
+			SetDisabledAssistantFeature( AF_FILTERSEASON, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 287:	// AF_SPELLTARGETSHARE
+			SetDisabledAssistantFeature( AF_SPELLTARGETSHARE, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 288:	// AF_HUMANOIDHEALTHCHECKS
+			SetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 289:	// AF_SPEECHJOURNALCHECKS
+			SetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS, static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1 );
+			break;
+		case 290:	// ARCHERYSHOOTDELAY
+			CombatArcheryShootDelay( std::stof(value) );
+			break;
+		case 291:	 // MAXCLIENTBYTESIN
+			MaxClientBytesIn( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 292:	 // MAXCLIENTBYTESOUT
+			MaxClientBytesOut( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 293:	 // NETTRAFFICTIMEBAN
+			NetTrafficTimeban( static_cast<UI32>(std::stoul(value, nullptr, 0)) );
+			break;
+		case 294:    // TOOLUSELIMIT
+			ToolUseLimit( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 295:    // TOOLUSEBREAK
+			ToolUseBreak( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 296:    // ITEMREPAIRDURABILITYLOSS
+			ItemRepairDurabilityLoss( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 297:    // HIDESTATSFORUNKNOWNMAGICITEMS
+			HideStatsForUnknownMagicItems( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		default:
 			rvalue = false;
@@ -4165,42 +5202,45 @@ void CServerData::PostLoadDefaults( void )
 //o-----------------------------------------------------------------------------------------------o
 LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 {
-	LPSTARTLOCATION rvalue = NULL;
+	LPSTARTLOCATION rvalue = nullptr;
 	if( locNum < startlocations.size() )
 		rvalue = &startlocations[locNum];
 	return rvalue;
 }
 void CServerData::ServerLocation( std::string toSet )
 {
-	UString temp( toSet );
-	if( temp.sectionCount( "," ) == 6 )	// Wellformed server location
+	auto temp = toSet;
+	temp = strutil::trim( strutil::removeTrailing( temp, "//" ));
+	auto csecs = strutil::sections( temp, "," );
+	
+	if( csecs.size() ==  7 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
-		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
-		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
-		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
+		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
 		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toUInt();
-		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
-		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		strcpy( toAdd.oldTown, strutil::trim( strutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcpy( toAdd.oldDescription, strutil::trim( strutil::removeTrailing( csecs[1], "//" )).c_str() );
+		strcpy( toAdd.newTown, toAdd.oldTown);
+		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
-	else if( temp.sectionCount( "," ) == 7 )	// instanceID included
+	else if( csecs.size() ==  8 )	// instanceID included
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
-		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
-		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
-		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
-		toAdd.instanceID	= temp.section( ",", 6, 6 ).toUShort();
-		toAdd.clilocDesc	= temp.section( ",", 7, 7 ).toUInt();
-		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
-		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
+		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
+		toAdd.instanceID	= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
+		strcpy( toAdd.oldTown, strutil::trim( strutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcpy( toAdd.oldDescription, strutil::trim( strutil::removeTrailing( csecs[1], "//" )).c_str() );
+		strcpy( toAdd.newTown, toAdd.oldTown);
+		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else
@@ -4230,6 +5270,88 @@ void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerLanguage( void ) const
+//|					void ServerLanguage( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default (if any) language used for the server
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerLanguage( void ) const
+{
+	return serverLanguage;
+}
+void CServerData::ServerLanguage( UI16 newVal )
+{
+	if( newVal < DL_COUNT )
+		serverLanguage = newVal;
+	else
+		serverLanguage = DL_DEFAULT;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 MaxClientBytesIn( void ) const
+//|					void MaxClientBytesIn( UI32 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets max incoming bytes received from a socket in each 10 second period
+//|					If amount exceeds this cap, client might receive a warning/get kicked
+//o-----------------------------------------------------------------------------------------------o
+UI32 CServerData::MaxClientBytesIn( void ) const
+{
+	return maxBytesIn;
+}
+void CServerData::MaxClientBytesIn( UI32 newVal )
+{
+	maxBytesIn = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 MaxClientBytesOut( void ) const
+//|					void MaxClientBytesOut( UI32 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets max outgoing bytes sent to a socket in each 10 second period
+//|					If amount exceeds this cap, client might receive a warning/get kicked
+//o-----------------------------------------------------------------------------------------------o
+UI32 CServerData::MaxClientBytesOut( void ) const
+{
+	return maxBytesOut;
+}
+void CServerData::MaxClientBytesOut( UI32 newVal )
+{
+	maxBytesOut = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 NetTrafficTimeban( void ) const
+//|					void NetTrafficTimeban( UI32 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets max amount of time a player will be temporarily banned for if they
+//|					exceed their alotted network traffic budget
+//o-----------------------------------------------------------------------------------------------o
+UI32 CServerData::NetTrafficTimeban( void ) const
+{
+	return trafficTimeban;
+}
+void CServerData::NetTrafficTimeban( UI32 newVal )
+{
+	trafficTimeban = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetJSEngineSize( void ) const
+//|					void SetJSEngineSize( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets jsEngineSize (in MB), used to define max bytes per JSRuntime
+//|					before a last ditch GC effort is made
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::GetJSEngineSize( void ) const
+{
+	return jsEngineSize;
+}
+void CServerData::SetJSEngineSize( UI16 newVal )
+{
+	jsEngineSize = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SaveTime( void )
 //|	Date		-	January 28th, 2007
 //o-----------------------------------------------------------------------------------------------o
@@ -4241,7 +5363,7 @@ void CServerData::SaveTime( void )
 	std::ofstream	timeDestination( timeFile.c_str() );
 	if( !timeDestination )
 	{
-		Console.error( format("Failed to open %s for writing", timeFile.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", timeFile.c_str()) );
 		return;
 	}
 
@@ -4257,7 +5379,7 @@ void CServerData::SaveTime( void )
 	timeDestination.close();
 }
 
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CServerData::LoadTime( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -4277,12 +5399,13 @@ void CServerData::LoadTime( void )
 		char line[1024];
 		while( !input.eof() && !input.fail() )
 		{
-			input.getline( line, 1024 );
-			UString sLine( line );
-			sLine = sLine.removeComment().stripWhiteSpace();
+			input.getline(line, 1023);
+			line[input.gcount()] = 0;
+			std::string sLine(line);
+			sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 			if( !sLine.empty() )
 			{
-				if( sLine.upper() == "[TIME]" )
+				if( strutil::upper( sLine ) == "[TIME]" )
 					LoadTimeTags( input );
 			}
 		}
@@ -4292,29 +5415,41 @@ void CServerData::LoadTime( void )
 
 void CServerData::LoadTimeTags( std::ifstream &input )
 {
-	UString UTag, tag, data;
+	std::string UTag, tag, data;
 	while( tag != "o---o" )
 	{
 		ReadWorldTagData( input, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = tag.upper();
+			UTag = strutil::upper(tag);
+			
 			if( UTag == "AMPM" )
-				ServerTimeAMPM( (data.toByte() == 1) );
+			{
+				ServerTimeAMPM( (std::stoi(data, nullptr, 0) == 1) );
+			}
 			else if( UTag == "CURRENTLIGHT" )
-				WorldLightCurrentLevel( data.toUShort() );
+			{
+				WorldLightCurrentLevel( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else if( UTag == "DAY" )
-				ServerTimeDay( data.toShort() );
+			{
+				ServerTimeDay( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+			}
 			else if( UTag == "HOUR" )
-				ServerTimeHours( data.toUShort() );
+			{
+				ServerTimeHours( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else if( UTag == "MINUTE" )
-				ServerTimeMinutes( data.toUShort() );
+			{
+				ServerTimeMinutes( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+			}
 			else if( UTag == "MOON" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				auto csecs = strutil::sections( data, "," );
+				if( csecs.size() > 1 )
 				{
-					ServerMoon( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
-					ServerMoon( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
+					ServerMoon( 0, static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					ServerMoon( 1, static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 				}
 			}
 		}
@@ -4420,7 +5555,7 @@ bool CServerData::incDay( void )
 
 physicalServer *CServerData::ServerEntry( UI16 entryNum )
 {
-	physicalServer *rvalue = NULL;
+	physicalServer *rvalue = nullptr;
 	if( entryNum < serverList.size() )
 		rvalue = &serverList[entryNum];
 	return rvalue;

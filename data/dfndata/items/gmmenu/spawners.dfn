@@ -801,6 +801,26 @@ type=62
 amount=2
 }
 
+[tavernkeep-spawn]
+{
+get=base_spawner
+name=Tavernkeeper Spawn
+spawnobjlist=tavernkeeper
+id=0x1397
+type=62
+amount=2
+}
+
+[waiter-spawn]
+{
+get=base_spawner
+name=Waiter Spawn
+spawnobjlist=waiter
+id=0x1397
+type=62
+amount=2
+}
+
 [jewler-spawn]
 {
 get=base_spawner
@@ -816,6 +836,26 @@ amount=2
 get=base_spawner
 name=Leatherworker Spawn
 spawnobjlist=leatherworker
+id=0x1397
+type=62
+amount=2
+}
+
+[furtrader-spawn]
+{
+get=base_spawner
+name=Furtrader Spawn
+spawnobjlist=furtrader
+id=0x1397
+type=62
+amount=2
+}
+
+[tanner-spawn]
+{
+get=base_spawner
+name=Tanner Spawn
+spawnobjlist=tanner
 id=0x1397
 type=62
 amount=2
@@ -871,6 +911,16 @@ type=62
 amount=2
 }
 
+[mapmaker-spawn]
+{
+get=base_spawner
+name=Mapmaker Spawn
+spawnobjlist=mapmaker
+id=0x1397
+type=62
+amount=2
+}
+
 [spinner-spawn]
 {
 get=base_spawner
@@ -906,6 +956,16 @@ amount=2
 get=base_spawner
 name=Weaponsmith Spawn
 spawnobjlist=weaponsmith
+id=0x1397
+type=62
+amount=2
+}
+
+[weaver-spawn]
+{
+get=base_spawner
+name=Weaver Spawn
+spawnobjlist=weaver
 id=0x1397
 type=62
 amount=2
@@ -962,11 +1022,91 @@ type=62
 amount=2
 }
 
+[ranger-spawn]
+{
+get=base_spawner
+name=Ranger Spawn
+spawnobjlist=ranger
+id=0x1397
+type=62
+amount=2
+}
+
 [sailor-spawn]
 {
 get=base_spawner
 name=Sailor Spawn
 spawnobjlist=sailor
+id=0x1397
+type=62
+amount=2
+}
+
+[gambler-spawn]
+{
+get=base_spawner
+name=Gambler Spawn
+spawnobjlist=gambler
+id=0x1397
+type=62
+amount=2
+}
+
+[judge-spawn]
+{
+get=base_spawner
+name=Judge Spawn
+spawnobjlist=judge
+id=0x1397
+type=62
+amount=2
+}
+
+[miller-spawn]
+{
+get=base_spawner
+name=Miller Spawn
+spawnobjlist=miller
+id=0x1397
+type=62
+amount=2
+}
+
+[monk-spawn]
+{
+get=base_spawner
+name=Monk Spawn
+spawnobjlist=monk
+id=0x1397
+type=62
+amount=2
+}
+
+[rancher-spawn]
+{
+get=base_spawner
+name=Rancher Spawn
+spawnobjlist=rancher
+id=0x1397
+type=62
+amount=2
+}
+
+[prisoner-spawn]
+{
+get=base_spawner
+name=Prisoner Spawn
+spawnobjlist=prisoner
+id=0x1397
+type=62
+amount=2
+}
+
+[sculptor-spawn]
+{
+get=base_spawner
+name=Sculptor Spawn
+spawnobjlist=sculptor
 id=0x1397
 type=62
 amount=2

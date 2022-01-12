@@ -401,6 +401,7 @@ name=Guillotine
 id=0x1230
 weight=2000
 movable=2
+type=236
 }
 
 [0x1245]
@@ -410,6 +411,7 @@ name=guillotine
 id=0x1245
 weight=2000
 movable=2
+type=236
 }
 
 [0x1249]
@@ -419,6 +421,7 @@ name=iron maiden
 id=0x1249
 weight=2000
 movable=2
+script=5034
 }
 
 [0x124a]
@@ -428,6 +431,7 @@ name=iron maiden
 id=0x124a
 weight=2000
 movable=2
+script=5034
 }
 
 [0x124b]
@@ -437,6 +441,7 @@ name=iron maiden
 id=0x124b
 weight=2000
 movable=2
+script=5034
 }
 
 [0x124c]
@@ -446,6 +451,7 @@ name=iron maiden
 id=0x124c
 weight=2000
 movable=2
+script=5034
 }
 
 [0x124d]
@@ -455,6 +461,7 @@ name=iron maiden
 id=0x124d
 weight=2000
 movable=2
+script=5034
 }
 
 [0x125e]
@@ -464,6 +471,7 @@ name=Guillotine
 id=0x125e
 weight=2000
 movable=2
+type=236
 }
 
 [0x125f]
@@ -473,6 +481,7 @@ name=guillotine
 id=0x125f
 weight=2000
 movable=2
+type=236
 }
 
 [0x1262]

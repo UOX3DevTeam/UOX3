@@ -1,0 +1,97 @@
+// Studded Sleeves - E/W
+[0x13d4-ranger]
+{
+get=base_studded_sleeves
+color=0x59c
+name=studded sleeves, ranger armor
+}
+
+// Studded Sleeves - N/S
+[0x13dc-ranger]
+{
+get=0x13d4-ranger
+id=0x13dc
+}
+
+// Studded Sleeves - Alias
+[rangersleeves]
+{
+get=0x13d4-ranger 0x13dc-ranger
+}
+
+// Studded Gloves - E/W
+[0x13d5-ranger]
+{
+get=base_studded_gloves
+color=0x59c
+name=studded gloves, ranger armor
+}
+
+// Studded Gloves - N/S
+[0x13dd-ranger]
+{
+get=0x13d5-ranger
+id=0x13dd
+}
+
+// Studded Gloves - Alias
+[rangergloves]
+{
+get=0x13d5-ranger 0x13dd-ranger
+}
+
+// Studded Gorget
+[0x13d6-ranger]
+{
+get=base_studded_gorget
+color=0x59c
+name=studded gorget, ranger armor
+}
+
+// Studded Gorget - Alias
+[rangergorget]
+{
+get=0x13d6-ranger
+}
+
+// Studded Leggings - E/W
+[0x13da-ranger]
+{
+get=base_studded_leggings
+color=0x59c
+name=studded leggings, ranger armor
+}
+
+// Studded Leggings - N/S
+[0x13e1-ranger]
+{
+get=0x13da-ranger
+id=0x13e1
+}
+
+// Studded Leggings - Alias
+[rangerleggings]
+{
+get=0x13da-ranger 0x13e1-ranger
+}
+
+// Studded Tunic - E/W
+[0x13db-ranger]
+{
+get=base_studded_tunic
+color=0x59c
+name=studded tunic, ranger armor
+}
+
+// Studded Tunic - N/S
+[0x13e2-ranger]
+{
+get=0x13db-ranger
+id=0x13e2
+}
+
+// Studded Tunic - Alias
+[rangertunic]
+{
+get=0x13db-ranger 0x13e2-ranger
+}

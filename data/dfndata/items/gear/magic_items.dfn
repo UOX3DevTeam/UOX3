@@ -1,0 +1,264 @@
+// Random magic item (weapon or armor) of random tier
+[random_magic_item]
+{
+get=base_item
+id=0x0f5e
+morex=0
+morey=5
+script=3300
+}
+
+// Random magic item (weapon or armor) - Max Tier 1
+[random_magic_item_1]
+{
+get=base_item
+id=0x0f5e
+morex=100
+morey=5
+script=3300
+}
+
+// Random magic item (weapon or armor) - Max Tier 2
+[random_magic_item_2]
+{
+get=base_item
+id=0x0f5e
+morex=3001
+morey=5
+script=3300
+}
+
+// Random magic item (weapon or armor) - Max Tier 3
+[random_magic_item_3]
+{
+get=base_item
+id=0x0f5e
+morex=6001
+morey=5
+script=3300
+}
+
+// Random magic item (weapon or armor) - Max Tier 4
+[random_magic_item_4]
+{
+get=base_item
+id=0x0f5e
+morex=8001
+morey=5
+script=3300
+}
+
+// Random magic item (weapon or armor) - Max Tier 5
+[random_magic_item_5]
+{
+get=base_item
+id=0x0f5e
+morex=10001
+morey=5
+script=3300
+}
+
+// Random magic weapon of random tier
+[random_magic_weapon]
+{
+get=base_item
+id=0x0f5e
+morex=0
+morey=0
+script=3300
+}
+
+// Random magic weapon - Max Tier 1
+[random_magic_weapon_1]
+{
+get=base_item
+id=0x0f5e
+morex=100
+morey=0
+script=3300
+}
+
+// Random magic weapon - Max Tier 2
+[random_magic_weapon_2]
+{
+get=base_item
+id=0x0f5e
+morex=3001
+morey=0
+script=3300
+}
+
+// Random magic weapon - Max Tier 3
+[random_magic_weapon_3]
+{
+get=base_item
+id=0x0f5e
+morex=6001
+morey=0
+script=3300
+}
+
+// Random magic weapon - Max Tier 4
+[random_magic_weapon_4]
+{
+get=base_item
+id=0x0f5e
+morex=8001
+morey=0
+script=3300
+}
+
+// Random magic weapon - Max Tier 5
+[random_magic_weapon_5]
+{
+get=base_item
+id=0x0f5e
+morex=10001
+morey=0
+script=3300
+}
+
+// Random magic armor of random tier
+[random_magic_armor]
+{
+get=base_item
+id=0x0f5e
+morex=0
+morey=1
+script=3300
+}
+
+// Random magic armor - Max Tier 1
+[random_magic_armor_1]
+{
+get=base_item
+id=0x0f5e
+morex=100
+morey=1
+script=3300
+}
+
+// Random magic armor - Max Tier 2
+[random_magic_armor_2]
+{
+get=base_item
+id=0x0f5e
+morex=3001
+morey=1
+script=3300
+}
+
+// Random magic armor - Max Tier 3
+[random_magic_armor_3]
+{
+get=base_item
+id=0x0f5e
+morex=6001
+morey=1
+script=3300
+}
+
+// Random magic armor - Max Tier 4
+[random_magic_armor_4]
+{
+get=base_item
+id=0x0f5e
+morex=8001
+morey=1
+script=3300
+}
+
+// Random magic armor - Max Tier 5
+[random_magic_armor_5]
+{
+get=base_item
+id=0x0f5e
+morex=10001
+morey=1
+script=3300
+}
+
+// Random magic wand/staff of random tier
+[random_magic_wand]
+{
+get=base_item
+id=0x0df2
+morex=100
+morey=2
+script=3300
+}
+
+// Random magic wands/staves - Max Tier 1
+[random_magic_wand_1]
+{
+get=base_item
+id=0x0df2
+morex=100
+morey=2
+script=3300
+}
+
+// Random magic wands/staves - Max Tier 2
+[random_magic_wand_2]
+{
+get=base_item
+id=0x0df2
+morex=3001
+morey=2
+script=3300
+}
+
+// Random magic wands/staves - Max Tier 3
+[random_magic_wand_3]
+{
+get=base_item
+id=0x0df2
+morex=6001
+morey=2
+script=3300
+}
+
+// Random magic wands/staves - Max Tier 4
+[random_magic_wand_4]
+{
+get=base_item
+id=0x0df2
+morex=8001
+morey=2
+script=3300
+}
+
+// Random magic wands/staves - Max Tier 5
+[random_magic_wand_5]
+{
+get=base_item
+id=0x0df2
+morex=10001
+morey=2
+script=3300
+}
+
+[glacialstaff]
+{
+get=0x0df1
+name=magic staff
+name2=glacial staff
+color=0x0480
+script=3303
+}
+
+[orcishkinmask]
+{
+get=base_item
+name=a mask of orcish kin
+id=0x141C
+colour=0x08a4
+weight=400
+value=50 25
+layer=0x6
+def=5
+hp=50
+dyeable=1
+decay=1
+good=20
+}

@@ -3,12 +3,16 @@
 
 enum DistinctLanguage
 {
-    DL_UNKNOWN = 0,
-    DL_DEFAULT,
+    DL_DEFAULT = 0,
     DL_ENGLISH,
     DL_GERMAN,
     DL_SPANISH,
     DL_FRENCH,
+	DL_PORTUGUESE,
+	DL_ITALIAN,
+	DL_CZECH,
+	DL_POLISH,
+	DL_RUSSIAN,
     DL_JAPANESE,
     DL_COUNT
 };
@@ -180,6 +184,7 @@ enum SpeechType
 
 enum FontType
 {
+	FNT_NULL = -1,
     FNT_BOLD = 0,
     FNT_TEXT_WITH_SHADOW,
     FNT_BOLD_PLUS_SHADOW,
@@ -190,7 +195,21 @@ enum FontType
     FNT_COLOURFUL,
     FNT_RUNIC,		// Only use CAPS!
     FNT_SMALL_LIGHT,
+	FNT_TEN,		// Unicode only
+	FNT_ELEVEN,		// Unicode only
+	FNT_TWELVE,		// Unicode only
     FNT_UNKNOWN
+};
+
+enum CharacterDeletionResult
+{
+	CDR_BADPASSWORD = 0x00,
+	CDR_CHARNOTFOUND,
+	CDR_CHARISBUSY,
+	CDR_CHARISTOOYOUNG,
+	CDR_CHARISQUEUED,
+	CDR_BADREQUEST,
+	CDR_SUCCESS
 };
 
 enum PickupLocations
@@ -334,7 +353,7 @@ enum Skills
     MINING,
     MEDITATION,
     STEALTH,
-    REMOVETRAPS,
+    REMOVETRAP,
     NECROMANCY,
     FOCUS,
     CHIVALRY,
@@ -419,11 +438,12 @@ enum AITypes
     AI_FIGHTER		= 5,
     AI_ANIMAL		= 6,
     AI_DUMMY		= 7,
-    AI_BANKER		= 8,
+    AI_BANKER		= 8, // handled in JS, but needed to identify NPC for context menus
+	AI_STABLEMASTER = 9, // handled in JS, but needed to identify NPC for context menus
     AI_PLAYERVENDOR	= 17,
     AI_PET_GUARD	= 32,
     AI_CHAOTIC		= 88,
-    AI_HEALER_E		= 666,
+    AI_HEALER_E		= 666
 };
 
 
@@ -433,8 +453,9 @@ enum distLocs
     DIST_NEXTTILE,
     DIST_NEARBY,
     DIST_INRANGE	= 7,
+	DIST_CMDRANGE	= 12,
     DIST_SAMESCREEN = 24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
-    DIST_BUILDRANGE = 31,
+	DIST_BUILDRANGE = 31,
     DIST_OUTOFRANGE	= 0xFFFF
 };
 
@@ -466,8 +487,9 @@ enum ItemTypes
     IT_POTION				= 19,
     IT_TRADEWINDOW			= 20,
     IT_TOWNSTONE			= 35,
-    IT_RECALLRUNE			= 50,
-    IT_GATE					= 51,
+	IT_RUNEBOOK				= 49,
+	IT_RECALLRUNE			= 50,
+	IT_GATE					= 51,
     IT_OBJTELEPORTER		= 60,
     IT_ITEMSPAWNER			= 61,
     IT_NPCSPAWNER			= 62,
@@ -547,7 +569,8 @@ enum ItemTypes
     IT_TINKERCLOCK			= 251,
     IT_TINKERSEXTANT		= 252,
     IT_TRAININGDUMMY		= 253,
-    IT_COUNT				= 255,
+	IT_PETTRANSFERDEED		= 254,
+    IT_COUNT				= 255
 };
 
 enum ItemLayers
@@ -582,8 +605,8 @@ enum ItemLayers
     IL_BOUGHTCONTAINER		= 0x1B,
     IL_BUYCONTAINER			= 0x1C,
     IL_BANKBOX				= 0x1D,
-    //IL_UNUSED				= 0x1E, // turns player invisible when used?
-    //IL_SECURETRADE		= 0x1F,
+    IL_UNUSED				= 0x1E, // turns player invisible when used?
+    IL_SECURETRADE			= 0x1F
 };
 
 enum TargetIDs
@@ -636,6 +659,7 @@ enum TargetIDs
     TARGET_PARTYREMOVE,
 	TARGET_HOUSETRASHBARREL,
 	TARGET_HOUSESTRONGBOX,
+	TARGET_REMOVEFRIEND,
     TARGET_NOFUNC
 };
 
@@ -656,6 +680,13 @@ enum monsterSound
     SND_DEFEND,
     SND_DIE,
     SND_COUNT
+};
+
+enum BloodTypes
+{
+	BLOOD_DEATH = 0,
+	BLOOD_BLEED,
+	BLOOD_CRITICAL,
 };
 
 enum FlagColors
@@ -682,11 +713,188 @@ enum WanderTypes
     WT_COUNT
 };
 
+enum BoatMoveType
+{
+	BOAT_ANCHORED = -1,
+	BOAT_STOP,
+	BOAT_FORWARD,
+	BOAT_BACKWARD,
+	BOAT_LEFT,
+	BOAT_RIGHT,
+	BOAT_FORWARDLEFT,
+	BOAT_FORWARDRIGHT,
+	BOAT_BACKWARDLEFT,
+	BOAT_BACKWARDRIGHT,
+	BOAT_SLOWLEFT,
+	BOAT_SLOWRIGHT,
+	BOAT_SLOWFORWARD,
+	BOAT_SLOWBACKWARD,
+	BOAT_SLOWFORWARDLEFT,
+	BOAT_SLOWFORWARDRIGHT,
+	BOAT_SLOWBACKWARDRIGHT,
+	BOAT_SLOWBACKWARDLEFT,
+	BOAT_ONELEFT,
+	BOAT_ONERIGHT,
+	BOAT_ONEFORWARD,
+	BOAT_ONEBACKWARD,
+	BOAT_ONEFORWARDLEFT,
+	BOAT_ONEFORWARDRIGHT,
+	BOAT_ONEBACKWARDLEFT,
+	BOAT_ONEBACKWARDRIGHT
+};
+
 enum RaceRelate
 {
     RACE_ENEMY = -1,
     RACE_NEUTRAL = 0,
     RACE_ALLY = 1
+};
+
+enum BodyType
+{
+	BT_HUMAN = 0,
+	BT_ELF,
+	BT_GARGOYLE,
+	BT_OTHER,
+	BT_COUNT
+};
+
+enum Actions // Pre-v7.0.0.0
+{
+	ACT_WALK_UNARMED		= 0x00,
+
+	// Humans, elves
+	ACT_WALK_ARMED			= 0x01,	// Walk with items equipped, while not in war mode
+	ACT_RUN_UNARMED			= 0x02,	// Run without items equipped in hands
+	ACT_RUN_ARMED			= 0x03,	// Run with items equipped in hands
+	ACT_IDLE				= 0x04,	// Stand around idle
+	ACT_IDLE_LOOK			= 0x05,	// Idle, looking around
+	ACT_IDLE_YAWN			= 0x06,	// Idle, yawning
+	ACT_IDLE_COMBAT_1H		= 0x07,	// Idle, in combat, with 1H weapon equipped
+	ACT_IDLE_COMBAT_2H		= 0x08,	// Idle, in combat, with 2H weapon equipped
+	ACT_ATT_1H_SLASH		= 0x09, // Swing using 1H blade weapon
+	ACT_ATT_1H_PIERCE		= 0x0A, // Stab using 1H piercing weapon
+	ACT_ATT_1H_BASH			= 0x0B, // Bash using 1H mace weapon
+	ACT_ATT_2H_BASH			= 0x0C, // Bash using 2H mace weapon
+	ACT_ATT_2H_SLASH		= 0x0D, // Slash using 2H blade weapon
+	ACT_ATT_2H_PIERCE		= 0x0E, // Stab using 2H piercing weapon
+	ACT_WALK_COMBAT			= 0x0F,	// Walk in combat mode
+	ACT_SPELL_TARGET		= 0x10,	// Cast spell at target
+	ACT_SPELL_AREA			= 0x11,	// Cast spell at area
+	ACT_ATT_BOW				= 0x12,	// Fire bow
+	ACT_ATT_XBOW			= 0x13,	// Fire crossbow
+	ACT_IMPACT				= 0x14,	// Get hit
+	ACT_DIE_BACKWARD		= 0x15,	// Die, falling backwards
+	ACT_DIE_FORWARD			= 0x16,	// Die, falling forward
+	ACT_BLOCK				= 0x1E,	// Block attack, or evade
+	ACT_ATT_WRESTLE			= 0x1F,	// Unarmed attack using fists
+	ACT_EMOTE_BOW			= 0x20, // Bow
+	ACT_EMOTE_SALUTE		= 0x21, // Salute
+	ACT_EMOTE_EAT			= 0x22, // Eat or drink
+
+	// Mounted
+	ACT_MOUNT_RIDE_WALK		= 0x17, // Walking while mounted
+	ACT_MOUNT_RIDE_RUN		= 0x18, // Running while mounted
+	ACT_MOUNT_IDLE			= 0x19, // Idle while mounted
+	ACT_MOUNT_ATT_1H		= 0x1A, // Attacking with 1H weapon while mounted
+	ACT_MOUNT_ATT_BOW		= 0x1B, // Attacking with Bow while mounted
+	ACT_MOUNT_ATT_XBOW		= 0x1C, // Attacking with Crossbow while mounted
+	ACT_MOUNT_ATT_2H		= 0x1D // Attacking with 2H weapon while mounted
+};
+
+enum ActionsMonsters
+{
+	ACT_MONSTER_WALK 		= 0x00, // Walking animation
+	ACT_MONSTER_IDLE		= 0x01, // Idle animation
+	ACT_MONSTER_DIE_1		= 0x02,	// Backward
+	ACT_MONSTER_DIE_2		= 0x03, // Death, forward or to the side
+	ACT_MONSTER_ATT_K1		= 0x04,	// Attack variation 1 - ALL creatures have at least this attack
+	ACT_MONSTER_ATT_2		= 0x05,	// Attack variation 2 - swimming monsteers don't have this
+	ACT_MONSTER_ATT_3		= 0x06, // Attack variation 3
+	ACT_MONSTER_ATT_BOW		= 0x07, // Attack variation 4 - air/fire elem = flail arms
+	ACT_MONSTER_ATT_XBOW	= 0x08,	// Attack variation 5 - Misc Roll over
+	ACT_MONSTER_ATT_THROW	= 0x09, // Attack variation 6 - Throw
+	ACT_MONSTER_IMPACT 		= 0x0A, // Get hit animation
+	ACT_MONSTER_PILLAGE		= 0x0B,	// 11 = Misc, Stomp, slap ground, lich conjure
+	ACT_MONSTER_CAST_1		= 0x0C,	// Spellcast variation 1 - Misc cast, breath fire, elem creation
+	ACT_MONSTER_CAST_2		= 0x0D,	// Spellcast variation 2 - Trolls don't have this anim
+	ACT_MONSTER_CAST_3		= 0x0E, // Spellcast variation 3
+	ACT_MONSTER_BLOCKRIGHT	= 0x0f, // Block right
+	ACT_MONSTER_BLOCKLEFT	= 0x10, // Block left
+	ACT_MONSTER_IDLE_1		= 0x11,	// Idle Variation 1
+	ACT_MONSTER_IDLE_2		= 0x12,	// Idle Variation 2
+	ACT_MONSTER_FLY			= 0x13, // Take off
+	ACT_MONSTER_LAND		= 0x14,	// Land
+	ACT_MONSTER_DIE_FLIGHT	= 0x15	// Die in mid air
+};
+
+enum ActionsAnimals
+{
+	ACT_ANIMAL_WALK			= 0x00,
+	ACT_ANIMAL_RUN			= 0x01,
+	ACT_ANIMAL_IDLE	    	= 0x02, // Default idle animation
+	ACT_ANIMAL_EAT			= 0x03, // Eat/Graze on food
+	ACT_ANIMAL_ALERT        = 0x04,	// Look alert and awake. Not all animals have this.
+	ACT_ANIMAL_ATTACK_1		= 0x05,
+	ACT_ANIMAL_ATTACK_2		= 0x06,
+	ACT_ANIMAL_GETHIT 		= 0x07,
+	ACT_ANIMAL_DIE_1 		= 0x08, // 
+	ACT_ANIMAL_IDLE_1		= 0x09,	// Idle variation 1
+	ACT_ANIMAL_IDLE_2		= 0x0a, // Idle variation 2
+	ACT_ANIMAL_SLEEP		= 0x0b,	// Lie down and sleep (not all animals have this)
+	ACT_ANIMAL_DIE_2		= 0x0c
+};
+
+enum NewActions // v7.0.0.0+
+{
+	N_ACT_ATT		= 0x00, // Variations listed under SubActionsAttack enum
+	N_ACT_BLOCK		= 0x01,
+	N_ACT_BLOCK2	= 0x02,
+	N_ACT_DIE		= 0x03, // Variations listed under SubActionsDeath enum
+	N_ACT_IMPACT	= 0x04,
+	N_ACT_IDLE		= 0x05, // One variation available (shuffle feet) with subSubAction of 0x01?
+	N_ACT_EAT		= 0x06,
+	N_ACT_EMOTE		= 0x07, // Variations listed under SubActionsEmote enum
+	N_ACT_ANGER		= 0x08,
+	N_ACT_TAKEOFF	= 0x09,
+	N_ACT_LAND		= 0x0A,
+	N_ACT_SPELL		= 0x0B, // Variations listed under SubActionsSpells enum
+	N_ACT_UNKNOWN1	= 0x0C, // Enhanced Client only?
+	N_ACT_UNKNOWN2	= 0x0D, // Enhanced Client only?
+	N_ACT_PILLAGE	= 0x0E, // Eat, pillage
+	N_ACT_RISE		= 0x0F // Used for character creation in Enhanced Client
+};
+
+enum SubActionsAttack // Variations for attack animation, v7.0.0.0+
+{
+	S_ACT_WRESTLE	= 0x00,
+	S_ACT_BOW 		= 0x01,
+	S_ACT_XBOW		= 0x02,
+	S_ACT_1H_BASH	= 0x03,
+	S_ACT_1H_SLASH	= 0x04,
+	S_ACT_1H_PIERCE	= 0x05,
+	S_ACT_2H_BASH	= 0x06,
+	S_ACT_2H_SLASH	= 0x07,
+	S_ACT_2H_PIERCE	= 0x08,
+	S_ACT_THROW		= 0x09
+};
+
+enum SubActionsDeath // Variations for death animation, v7.0.0.0+
+{
+	S_ACT_DEATH_FORWARD		= 0x00,
+	S_ACT_DEATH_BACKWARD	= 0x01
+};
+
+enum SubActionsEmote // Variations for emote animation, v7.0.0.0+
+{
+	S_ACT_EMOTE_BOW		= 0x00,
+	S_ACT_EMOTE_SALUTE	= 0x01
+};
+
+enum SubActionsSpells // Variations for spellcast animation, v7.0.0.0+
+{
+	S_ACT_SPELL_TARGET	= 0x00,
+	S_ACT_SPELL_AREA	= 0x01
 };
 #endif
 

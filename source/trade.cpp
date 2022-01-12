@@ -29,7 +29,7 @@ void sendTradeStatus( CItem *tradeWindowOne, CItem *tradeWindowTwo )
 
 	CSocket *s1 = p1->GetSocket();
 	CSocket *s2 = p2->GetSocket();
-	if( s1 != NULL && s2 != NULL )
+	if( s1 != nullptr && s2 != nullptr )
 		sendTradeStatus( s1, s2, tradeWindowOne, tradeWindowTwo );
 }
 
@@ -46,12 +46,12 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 	{
 		mSock->sysmessage( 773 );
 		nSock->sysmessage( 1357, mChar->GetName().c_str() );
-		return NULL;
+		return nullptr;
 	}
 
-	CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x1E5E, 1, 0, OT_ITEM, false );
+	CItem *tradeWindow = Items->CreateItem( nullptr, mChar, 0x1E5E, 1, 0, OT_ITEM, false );
 	if( !ValidateObject( tradeWindow ) )
-		return NULL;
+		return nullptr;
 
 	tradeWindow->SetType( IT_TRADEWINDOW );
 	tradeWindow->SetCont( mChar );
@@ -76,24 +76,24 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 CItem *startTrade( CSocket *mSock, CChar *nChar )
 {
-	if( mSock == NULL || !ValidateObject( nChar ) )
-		return NULL;
+	if( mSock == nullptr || !ValidateObject( nChar ) )
+		return nullptr;
 
 	CChar *mChar	= mSock->CurrcharObj();
 	CSocket *nSock	= nChar->GetSocket();
 
-	if( !ValidateObject( mChar ) || nSock == NULL )
-		return NULL;
+	if( !ValidateObject( mChar ) || nSock == nullptr )
+		return nullptr;
 
 	CItem *tradeWindowOne = CreateTradeWindow( mSock, nSock, mChar );
 	if( !ValidateObject( tradeWindowOne ) )
-		return NULL;
+		return nullptr;
 
 	CItem *tradeWindowTwo = CreateTradeWindow( nSock, mSock, nChar );
 	if( !ValidateObject( tradeWindowTwo ) )
 	{
 		tradeWindowOne->Delete();
-		return NULL;
+		return nullptr;
 	}
 
 	const SERIAL tw1Serial = tradeWindowOne->GetSerial();
@@ -132,17 +132,30 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		{
 			if( i->GetType() == IT_TRADEWINDOW )
 			{
-				CChar *k = FindItemOwner( i );
-				if( ValidateObject( k ) )
+				// Find owner of trade window (each player has their own)
+				CChar *tradeWindowOwner = FindItemOwner( i );
+				if( ValidateObject( tradeWindowOwner ) )
 				{
-					CItem *p = k->GetPackItem();
-					if( ValidateObject( p ) )
+					// Fetch backpack of owner of trade window
+					CItem *ownerPack = tradeWindowOwner->GetPackItem();
+					if( ValidateObject( ownerPack ) )
 					{
-						CDataList< CItem * > *iCont = i->GetContainsList();
+						// Iterate through all objects in trade window
+						GenericList< CItem * > *iCont = i->GetContainsList();
 						for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
 						{
 							if( ValidateObject( j ) )
-								j->SetCont( p );
+							{
+								// Delete pet transfer deeds - they only live inside trade windows
+								if( j->GetType() == IT_PETTRANSFERDEED )
+								{
+									j->Delete();
+									continue;
+								}
+
+								// Throw item from trade window back into owner's backpack
+								j->SetCont( ownerPack );
+							}
 						}
 					}
 				}
@@ -162,7 +175,7 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 void clearTrades( void )
 {
 	UI32 b = 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &clearTradesFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &clearTradesFunctor );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -179,14 +192,14 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 		return;
 
 	CSocket *mSock = p1->GetSocket();
-	if( mSock != NULL )
+	if( mSock != nullptr )
 	{
 		CPSecureTrading cpstOne( (*tradeWindowOne) );
 		cpstOne.Action( 1 );
 		mSock->Send( &cpstOne );
 	}
 	CSocket *nSock = p2->GetSocket();
-	if( nSock != NULL )
+	if( nSock != nullptr )
 	{
 		CPSecureTrading cpstTwo( (*tradeWindowTwo) );
 		cpstTwo.Action( 1 );
@@ -197,28 +210,92 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 	CItem *bp2 = p2->GetPackItem();
 	if( ValidateObject( bp1 ) && ValidateObject( bp2 ) )
 	{
-		CItem *i = NULL;
-		CDataList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
+		CItem *i = nullptr;
+		GenericList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
 		for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 		{
 			if( ValidateObject( i ) )
 			{
 				if( tradeSuccess )
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Find serial of pet
+						SERIAL petSerial = i->GetTempVar( CITV_MORE );
+						if( petSerial != INVALIDSERIAL )
+						{
+							CChar *petChar = calcCharObjFromSer( petSerial );
+							if( ValidateObject( petChar ) )
+							{
+								// Transfer pet to other player
+								Npcs->finalizeTransfer( petChar, p1, p2 );
+							}
+						}
+
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move transferred item to other player
 					i->SetCont( bp2 );
+				}
 				else
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move item back to original player's backpack
 					i->SetCont( bp1 );
+				}
 				i->PlaceInPack();
 			}
 		}
-		CDataList< CItem * > *c2Cont = tradeWindowTwo->GetContainsList();
+		GenericList< CItem * > *c2Cont = tradeWindowTwo->GetContainsList();
 		for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
 		{
 			if( ValidateObject( i ) )
 			{
 				if( tradeSuccess )
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Find serial of pet
+						SERIAL petSerial = i->GetTempVar( CITV_MORE );
+						if( petSerial != INVALIDSERIAL )
+						{
+							CChar *petChar = calcCharObjFromSer( petSerial );
+							if( ValidateObject( petChar ) )
+							{
+								// Transfer pet to other player
+								Npcs->finalizeTransfer( petChar, p2, p1 );
+							}
+						}
+
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move transferred item to other player
 					i->SetCont( bp1 );
+				}
 				else
+				{
+					if( i->GetType() == IT_PETTRANSFERDEED )
+					{
+						// Delete pet transfer deed
+						i->Delete();
+						continue;
+					}
+
+					// Move item back to original player's backpack
 					i->SetCont( bp2 );
+				}
 				i->PlaceInPack();
 			}
 		}
@@ -252,7 +329,7 @@ bool CPITradeMessage::Handle( void )
 	CItem *tradeWindowOne = calcItemObjFromSer( tSock->GetDWord( 4 ) );
 	if( ValidateObject( tradeWindowOne ) )
 	{
-		CItem *tradeWindowTwo = NULL;
+		CItem *tradeWindowTwo = nullptr;
 		switch( tSock->GetByte( 3 ) )
 		{
 			case 0://Start trade - Never happens, sent out by the server only.

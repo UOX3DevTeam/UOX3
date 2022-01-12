@@ -29,6 +29,7 @@ SEngineFunc SE_SpawnNPC;			// Create NPC								*
 
 SEngineFunc SE_DoMovingEffect;		// Does moving effect						***
 SEngineFunc SE_DoTempEffect;		// Does a temp effect						***
+SEngineFunc SE_DoStaticEffect;		// Does a static effect at location			***
 
 // Item related functions (2)
 
@@ -80,6 +81,7 @@ SEngineFunc SE_GetCurrentClock;			//										***
 SEngineFunc SE_GetMurderThreshold;		//										***
 SEngineFunc SE_RollDice;				//										***
 SEngineFunc SE_RaceCompareByRace;		//										***
+SEngineFunc SE_GetRandomSOSArea;		//										***
 
 SEngineFunc SE_FindMulti;				//										***
 SEngineFunc SE_GetItem;					//										***
@@ -92,7 +94,8 @@ SEngineFunc SE_PossessTown;				//										***
 SEngineFunc SE_IsRaceWeakToWeather;		//										***
 SEngineFunc SE_GetRaceSkillAdjustment;	//										***
 
-SEngineFunc SE_UseDoor;					//										***
+SEngineFunc SE_UseItem;					//										***
+SEngineFunc SE_TriggerTrap;				//										***
 
 SEngineFunc SE_TriggerEvent;			//										*
 
@@ -120,6 +123,8 @@ SEngineFunc SE_IterateOverSpawnRegions;
 SEngineFunc SE_WorldBrightLevel;
 SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
+SEngineFunc SE_GetSpawnRegionFacetStatus;
+SEngineFunc SE_SetSpawnRegionFacetStatus;
 SEngineFunc SE_GetSocketFromIndex;
 SEngineFunc SE_ResourceArea;
 SEngineFunc SE_ResourceAmount;
@@ -127,6 +132,7 @@ SEngineFunc SE_ResourceTime;
 SEngineFunc SE_ResourceRegion;
 SEngineFunc SE_Moon;
 
+SEngineFunc SE_GetTownRegion;
 SEngineFunc SE_GetSpawnRegion;
 SEngineFunc SE_GetSpawnRegionCount;
 
@@ -136,14 +142,17 @@ SEngineFunc SE_StaticAt;
 SEngineFunc SE_GetMapElevation;
 SEngineFunc SE_IsInBuilding;
 SEngineFunc SE_CheckStaticFlag;
+SEngineFunc SE_CheckDynamicFlag;
 SEngineFunc SE_CheckTileFlag;
 SEngineFunc SE_DoesStaticBlock;
 SEngineFunc SE_DoesDynamicBlock;
 SEngineFunc SE_DoesMapBlock;
+SEngineFunc SE_DistanceBetween;
 
 SEngineFunc SE_ValidateObject;
 SEngineFunc SE_ApplyDamageBonuses;
 SEngineFunc SE_ApplyDefenseModifiers;
+SEngineFunc SE_WillResultInCriminal;
 
 SEngineFunc SE_CreateParty;
 
@@ -153,6 +162,16 @@ SEngineFunc SE_GetServerFeature;
 SEngineFunc SE_GetServerSetting;
 
 SEngineFunc SE_DeleteFile;
+
+// Account 
+SEngineFunc SE_GetAccountCount;			//										***
+SEngineFunc SE_GetPlayerCount;			//										***
+
+// Server constants
+SEngineFunc SE_BASEITEMSERIAL;			//										***
+SEngineFunc SE_INVALIDSERIAL;			//										***
+SEngineFunc SE_INVALIDID;				//										***
+SEngineFunc SE_INVALIDCOLOUR;			//										***
 
 
 #endif

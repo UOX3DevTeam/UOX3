@@ -1,0 +1,107 @@
+// Throwing Weapons
+
+// STYGIAN ABYSS
+// Soul Glaive - E/W
+[0x090a]
+{
+get=base_item
+name=soul glaive
+id=0x090a
+layer=2
+restock=10
+movable=1
+decay=1
+good=23
+ammofx=0x090a
+weight=900
+value=77 39
+damage=8 39
+hp=27 95
+spd=21
+str=45
+baserange=8
+maxrange=11
+}
+
+// Soul Glaives - N/S
+[0x406b]
+{
+get=0x090a
+id=0x406b
+}
+
+// Soul Glaives - Alias
+[soulglaives]
+{
+get=0x090a 0x406b
+}
+
+// Boomerang - E/W
+[0x08ff]
+{
+get=base_item
+name=boomerang
+id=0x08ff
+layer=2
+restock=10
+movable=1
+decay=1
+good=23
+ammofx=0x08ff
+baserange=4
+damage=5 29
+hp=27 85
+maxrange=7
+spd=30
+str=20
+value=32 16
+weight=400
+}
+
+// Boomerang - N/S
+[0x4067]
+{
+get=0x08ff
+id=0x4067
+}
+
+// Boomerang - Alias
+[boomerang]
+{
+get=0x08ff 0x4067
+}
+
+// Cyclone - N/S
+[0x0901]
+{
+get=base_item
+name=cyclone
+id=0x0901
+layer=2
+restock=10
+movable=1
+decay=1
+good=23
+ammofx=0x0901
+baserange=6
+maxrange=9
+weight=600
+value=53 26
+damage=6 33
+hp=27 85
+spd=26
+str=30
+}
+
+// Cyclone - E/W
+[0x406c]
+{
+get=0x0901
+id=0x406c
+}
+
+// Cyclone - Alias
+[cyclone]
+{
+get=0x0901 0x406c
+}

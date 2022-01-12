@@ -1,6 +1,10 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 
 	if( iUsed.id != 0x0de1 )
 		return false;
@@ -22,7 +26,7 @@ function onUseChecked( pUser, iUsed )
         			if( eKindling && eKindling.isItem )
 						iUsed = eKindling;
 				}
-				iUsed.scripttrigger = 5008;
+				iUsed.AddScriptTrigger( 5008 );
 				iUsed.container = null;
 				iUsed.Teleport( pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 				iUsed.movable = 2;

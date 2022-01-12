@@ -33,7 +33,7 @@ enum CAccountBlock_Flags
 	AB_FLAGS_CHARACTER4	=	7,
 	AB_FLAGS_CHARACTER5	=	8,
 	AB_FLAGS_CHARACTER6	=	9,
-	AB_FLAGS_UNUSED8	=	10,
+	AB_FLAGS_CHARACTER7	=	10,
 	AB_FLAGS_UNUSED9	=	11,
 	AB_FLAGS_UNUSED10	=	12,
 	AB_FLAGS_SEER		=	13,
@@ -70,13 +70,13 @@ private:
 #endif
 public:
 	CAccountBlock( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
-	wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
+	wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), wFirstLogin( 0x0000 ), dwInGame( INVALIDSERIAL ),
 	dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 )
 	{
 		for( UI08 i = 0; i < 7; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
-			lpCharacters[i] = NULL;
+			lpCharacters[i] = nullptr;
 		}
 	}
 	void reset( void )
@@ -86,14 +86,15 @@ public:
 		sContact		= "";
 		sPath			= "";
 		wAccountIndex	= 0xFFFF;
-		wTimeBan		= 0x0000;
+		wTimeBan		= 0x00000000;
+		wFirstLogin		= 0x00000000;
 		dwInGame		= 0xFFFFFFFF;
 		dwLastIP		= 0x00000000;
 		bChanged		= false;
 		for( UI08 i = 0; i < 7; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
-			lpCharacters[i] = NULL;
+			lpCharacters[i] = nullptr;
 		}
 		wFlags.reset();
 	}
@@ -103,7 +104,8 @@ public:
 	std::string					sContact;
 	UI16						wAccountIndex;
 	std::bitset< AB_FLAGS_ALL >	wFlags;
-	UI16						wTimeBan;
+	UI32						wTimeBan;
+	UI32						wFirstLogin;
 	UI32						dwInGame;
 	UI32						dwLastIP;
 	UI32						dwLastClientVer;
@@ -152,7 +154,7 @@ public:
 	bool					isUser( std::string sUsername );
 	bool					AddCharacter( UI16 wAccountID, CChar *lpObject );
 	bool					AddCharacter( UI16 wAccountID, UI32 dwCharacterID, CChar *lpObject );
-	bool					DelCharacter( UI16 wAccountID, UI08 nSlot );
+	SI08					DelCharacter( UI16 wAccountID, UI08 nSlot );
 	bool					TransCharacter( UI16 wSAccountID, UI16 wSSlot, UI16 wDAccountID );
 	CAccountBlock&			GetAccountByName( std::string sUsername );
 	CAccountBlock&			GetAccountByID( UI16 wAccountID );

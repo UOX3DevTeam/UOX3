@@ -25,6 +25,7 @@ const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
 const SI08		DEFSPAWN_PREFZ			= 18;
 const bool		DEFSPAWN_ONLYOUTSIDE	= false;
+const bool		DEFSPAWN_ISSPAWNER		= false;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Class		-	CSpawnRegion()
@@ -34,7 +35,7 @@ const bool		DEFSPAWN_ONLYOUTSIDE	= false;
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionnum( spawnregion ), maxcspawn( DEFSPAWN_MAXCSPAWN ), maxispawn( DEFSPAWN_MAXISPAWN ),
 curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ),
 nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ),
-call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE )
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE ), isSpawner( DEFSPAWN_ISSPAWNER )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
@@ -334,6 +335,21 @@ void CSpawnRegion::SetOnlyOutside( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsSpawner( void ) const
+//|					void IsSpawner( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items spawned from spawnregion is a spawner or not
+//o-----------------------------------------------------------------------------------------------o
+bool CSpawnRegion::IsSpawner( void ) const
+{
+	return isSpawner;
+}
+void CSpawnRegion::IsSpawner( bool newVal )
+{
+	isSpawner = newVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 GetCall( void ) const
 //|					void SetCall( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -358,7 +374,7 @@ STRINGLIST CSpawnRegion::GetNPC( void ) const
 {
 	return sNpcs;
 }
-void CSpawnRegion::SetNPC( const UString &newVal )
+void CSpawnRegion::SetNPC( const std::string &newVal )
 {
 	// Clear old entries to make room for new ones
 	sNpcs.clear();
@@ -379,7 +395,7 @@ void CSpawnRegion::SetNPCList( std::string newVal )
 		// Add section of the string to the sNpcs list with the help of a stringstream
 		std::stringstream s_stream(newVal);
 		while( s_stream.good() ) {
-			UString substr;
+			std::string substr;
 			getline( s_stream, substr, ',' );
 			sNpcs.push_back( substr );
 		}
@@ -401,7 +417,7 @@ STRINGLIST CSpawnRegion::GetItem( void ) const
 {
 	return sItems;
 }
-void CSpawnRegion::SetItem( const UString &newVal )
+void CSpawnRegion::SetItem( const std::string &newVal )
 {
 	// Clear old entries to make room for new ones
 	sItems.clear();
@@ -422,7 +438,7 @@ void CSpawnRegion::SetItemList( std::string newVal )
 		// Add section of the string to the sItems list with the help of a stringstream
 		std::stringstream s_stream(newVal);
 		while( s_stream.good() ) {
-			UString substr;
+			std::string substr;
 			getline( s_stream, substr, ',' );
 			sItems.push_back( substr );
 		}
@@ -441,16 +457,20 @@ void CSpawnRegion::SetItemList( std::string newVal )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadNPCList( const std::string &npcList )
 {
-	UString sect = "NPCLIST " + npcList;
+	std::string sect = "NPCLIST " + npcList;
 	ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
-	if( CharList != NULL )
+	if( CharList != nullptr )
 	{
-		for( UString npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
+		for( std::string npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
 		{
-			if( npc.upper() == "NPCLIST" )
+			if( strutil::upper( npc ) == "NPCLIST" )
+			{
 				LoadNPCList( CharList->GrabData() );
+			}
 			else
+			{
 				sNpcs.push_back( npc );
+			}
 		}
 	}
 }
@@ -462,16 +482,20 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadItemList( const std::string &itemList )
 {
-	UString sect = "ITEMLIST " + itemList;
+	std::string sect = "ITEMLIST " + itemList;
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
-	if( ItemList != NULL )
+	if( ItemList != nullptr )
 	{
-		for( UString itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
+		for( std::string itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
 		{
-			if( itm.upper() == "ITEMLIST" )
+			if( strutil::upper( itm ) == "ITEMLIST" )
+			{
 				LoadItemList( ItemList->GrabData() );
+			}
 			else
+			{
 				sItems.push_back( itm );
+			}
 		}
 	}
 }
@@ -483,72 +507,114 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::Load( ScriptSection *toScan )
 {
-	UString sect;
-	UString data;
-	UString UTag;
+	std::string sect;
+	std::string data;
+	std::string UTag;
 
-	for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+	for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
 		if( !tag.empty() )
 		{
-			UTag = tag.upper();
+			UTag = strutil::upper( tag );
 			data = toScan->GrabData();
 
 			// Default to instanceID 0, in case nothing else is specified in DFN
 			SetInstanceID( 0 );
 
 			if( UTag == "NPCLIST" )
+			{
 				LoadNPCList( data );
+			}
 			else if( UTag == "NPC" )
+			{
 				sNpcs.push_back( data );
+			}
 			else if( UTag == "ITEMLIST" )
+			{
 				LoadItemList( data );
+			}
 			else if( UTag == "ITEM" )
+			{
 				sItems.push_back( data );
+			}
+			else if( UTag == "ISSPAWNER" )
+			{
+				isSpawner = (static_cast<SI08>(std::stoi(data, nullptr, 0)) == 1);
+			}
 			else if( UTag == "MAXITEMS" )
-				maxispawn = data.toUInt();
+			{
+				maxispawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "MAXNPCS" )
-				maxcspawn = data.toUInt();
+			{
+				maxcspawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "X1" )
-				x1 = data.toShort();
+			{
+				x1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "X2" )
-				x2 = data.toShort();
+			{
+				x2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "Y1" )
-				y1 = data.toShort();
+			{
+				y1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "Y2" )
-				y2 = data.toShort();
+			{
+				y2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "MINTIME" )
-				mintime = data.toUByte();
+			{
+				mintime = static_cast<UI08>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "MAXTIME" )
-				maxtime = data.toUByte();
+			{
+				maxtime = static_cast<UI08>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "NAME" )
+			{
 				name = data;
+			}
 			else if( UTag == "CALL" )
-				call = data.toUShort();
+			{
+				call = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "WORLD" )
-				worldNumber = data.toUByte();
+			{
+				worldNumber = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "INSTANCEID" )
-				instanceID = data.toUShort();
+			{
+				instanceID = static_cast<UI16>(std::stoul(data, nullptr, 0));
+			}
 			else if( UTag == "PREFZ" )
-				prefZ = data.toByte();
+			{
+				prefZ = static_cast<SI08>(std::stoi(data, nullptr, 0));
+			}
 			else if( UTag == "ONLYOUTSIDE" )
-				onlyOutside = (data.toByte() == 1);
+			{
+				onlyOutside = (static_cast<SI08>(std::stoi(data, nullptr, 0)) == 1);
+			}
 			else if( UTag == "VALIDLANDPOS" )
 			{
-				data = data.simplifyWhiteSpace();
-				if( data.sectionCount( "," ) == 2 )
+				data = strutil::simplify( data );
+				auto csecs = strutil::sections( data, "," );
+				if( csecs.size() == 3 )
 				{
-					validLandPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
-					validLandPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
+					validLandPos.push_back( point3( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ),nullptr,0)), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)), static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0))));
+					validLandPosCheck[ static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ),nullptr,0)) + ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
 				}
 			}
 			else if( UTag == "VALIDWATERPOS" )
 			{
-				data = data.simplifyWhiteSpace();
-				if( data.sectionCount( "," ) == 2 )
+				data = strutil::simplify( data );
+				auto csecs = strutil::sections( data, "," );
+				if( csecs.size() == 3 )
 				{
-					validWaterPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
-					validWaterPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
+					validWaterPos.push_back( point3( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)), static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)), static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0))));
+					validWaterPosCheck[ static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[1],"//") ), nullptr, 0)) + ( static_cast<UI16>(std::stoul(strutil::trim(strutil::removeTrailing( csecs[0],"//") ), nullptr, 0)) << 16 ) ] = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
 				}
 			}
 		}
@@ -562,6 +628,10 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 //o-----------------------------------------------------------------------------------------------o
 void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 {
+	// Only perform the region spawn if the spawn region in question is active
+	if( !cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( static_cast<UI32>(WorldNumber()) ))
+		return;
+
 	if( sNpcs.empty() )
 		maxcspawn = 0;
 	if( sItems.empty() )
@@ -571,8 +641,8 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 	bool shouldSpawnItems = ( !sItems.empty() && maxispawn > spawnedItems.Num() );
 	if( shouldSpawnChars || shouldSpawnItems )
 	{
-		CChar *spawnChar		= NULL;
-		CItem *spawnItem		= NULL;
+		CChar *spawnChar		= nullptr;
+		CItem *spawnItem		= nullptr;
 		const UI08 spawnChars	= (shouldSpawnChars?0:50);
 		const UI08 spawnItems	= (shouldSpawnItems?100:49);
 		for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
@@ -615,15 +685,46 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 //|	Purpose		-	Do a char spawn
 //o-----------------------------------------------------------------------------------------------o
 CChar *CSpawnRegion::RegionSpawnChar( void )
-{
-	CChar *CSpawn = NULL;
-	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
+{	
+	std::string ourNPC = strutil::trim( strutil::removeTrailing( sNpcs[RandomNum( static_cast<size_t>( 0 ), sNpcs.size() - 1 )], "//" ));
+	ScriptSection *npcCreate = FileLookup->FindEntry( ourNPC, npc_def );
+	if( npcCreate == nullptr )
+		return nullptr;
 
-	if( CSpawn != NULL )
+	std::string cdata;
+	SI32 ndata = -1, odata = -1;
+	UI16 npcID = 0;
+
+	for( DFNTAGS tag = npcCreate->FirstTag(); !npcCreate->AtEndTags(); tag = npcCreate->NextTag() )
 	{
-		SI16 x, y;
-		SI08 z;
-		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
+		cdata = npcCreate->GrabData( ndata, odata );
+		switch( tag )
+		{
+			case DFNTAG_ID:
+				npcID = strutil::value<std::uint16_t>( cdata ); // static_cast<UI16>( ndata );
+				goto foundNpcID;
+			default:
+				break;
+		}
+	}
+	foundNpcID:
+
+	bool waterCreature = false;
+	bool amphiCreature = false;
+	if( npcID > 0 )
+	{
+		waterCreature = cwmWorldState->creatures[npcID].IsWater();
+		amphiCreature = cwmWorldState->creatures[npcID].IsAmphibian();
+	}
+
+	SI16 x, y;
+	SI08 z;
+	if( FindCharSpotToSpawn( x, y, z, waterCreature, amphiCreature ) )
+	{
+		CChar *CSpawn = nullptr;
+		CSpawn = Npcs->CreateBaseNPC( ourNPC, false );
+
+		if( CSpawn != nullptr )
 		{
 			// NPCs should always wander the whole spawnregion
 			CSpawn->SetNpcWander( WT_BOX );
@@ -634,16 +735,17 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 			CSpawn->SetLocation( x, y, z, worldNumber, instanceID );
 			CSpawn->SetSpawned( true );
 			CSpawn->ShouldSave( false );
-			CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
+			CSpawn->SetSpawn( static_cast<UI32>( regionnum ) );
 			Npcs->PostSpawnUpdate( CSpawn );
 			IncCurrentCharAmt();
-		}
-		else
-		{
-			CSpawn->Delete();
+			return CSpawn;
 		}
 	}
-	return CSpawn;
+	else
+	{
+		Console.warning( strutil::format("Unable to find valid location to spawn NPC in region %i", this->GetRegionNum() ));
+	}
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -653,13 +755,17 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 //o-----------------------------------------------------------------------------------------------o
 CItem *CSpawnRegion::RegionSpawnItem( void )
 {
-	CItem *ISpawn = NULL;
+	CItem *ISpawn = nullptr;
 	SI16 x, y;
 	SI08 z;
 	if( FindItemSpotToSpawn( x, y, z ) )
 	{
-		ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1 );
-		if( ISpawn != NULL )
+		auto objType = OT_ITEM;
+		if( isSpawner )
+			objType = OT_SPAWNER;
+
+		ISpawn = Items->CreateBaseScriptItem( nullptr, sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1, instanceID, objType, 0xFFFF, false );
+		if( ISpawn != nullptr )
 		{
 			ISpawn->SetLocation( x, y, z );
 			ISpawn->SetSpawn( static_cast<UI32>(regionnum) );
@@ -672,11 +778,11 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
+//|	Function	-	bool FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 //o-----------------------------------------------------------------------------------------------o
-bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
+bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature )
 {
 	bool rvalue = false;
 	point3 currLoc;
@@ -684,8 +790,6 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 	SI08 z2 = ILLEGAL_Z;
 	const size_t landPosSize = validLandPos.size();
 	const size_t waterPosSize = validWaterPos.size();
-	bool waterCreature = cwmWorldState->creatures[c->GetID()].IsWater();
-	bool amphiCreature = cwmWorldState->creatures[c->GetID()].IsAmphibian();
 
 	// By default, let's attempt - at most - this many times to find a valid spawn point for the NPC
 	UI08 maxSpawnAttempts = 100;
@@ -714,11 +818,12 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				z = staticz;
 		}
 
-		//Break out of loop if z is still invalid, no point in continuing
+		// Continue with the next spawn attempt if z is illegal
 		if( z == ILLEGAL_Z )
-			break;
+			continue;
 
-		// First go through the lists of already stored good locations
+		// First go through the lists of already valid spawn locations on land,
+		// and see if the chosen location has already been validated
 		if( !waterCreature )
 		{
 			if( !validLandPosCheck.empty() && landPosSize > 0 )
@@ -734,7 +839,9 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				}
 			}
 		}
-		else if( waterCreature || amphiCreature )
+
+		// No luck, so let's try the list of already valid water tiles instead (if NPC can move on water)
+		if( waterCreature || amphiCreature )
 		{
 			if( !validWaterPosCheck.empty() && waterPosSize > 0 )
 			{
@@ -750,7 +857,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 			}
 		}
 
-		//if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ) && !waterCreature )
+		// Since our chosen location has not already been validated, lets validate it with a land-based creature in mind
 		if( !waterCreature && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID ))
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber, instanceID ) )
@@ -764,8 +871,9 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				}
 			}
 		}
-		//else if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ) && ( waterCreature || amphiCreature ) )
-		else if(( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ))
+
+		// Otherwise, validate it with a water-based creature in mind instead
+		if(( waterCreature || amphiCreature ) && Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, false ))
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber, instanceID ) )
 			{
@@ -976,21 +1084,21 @@ void CSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CDataList< CItem * > * GetSpawnedItemsList( void )
+//|	Function	-	GenericList< CItem * > * GetSpawnedItemsList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of spawned Items for spawnregion
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
+GenericList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
 {
 	return &spawnedItems;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CDataList< CChar * > * GetSpawnedCharsList( void )
+//|	Function	-	GenericList< CChar * > * GetSpawnedCharsList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of spawned NPCs for spawnregion
 //o-----------------------------------------------------------------------------------------------o
-CDataList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
+GenericList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
 {
 	return &spawnedChars;
 }

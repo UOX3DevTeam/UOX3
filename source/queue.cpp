@@ -68,7 +68,7 @@ SERIAL PageVector::Add( HelpRequest *toAdd )
 {
 	HelpRequest *adding = new HelpRequest;
 #if defined( UOX_DEBUG_MODE )
-	if( adding == NULL )
+	if( adding == nullptr )
 		return INVALIDSERIAL;
 #endif
 #pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?" )
@@ -103,7 +103,7 @@ HelpRequest *PageVector::First( void )
 {
 	currentPos = Queue.begin();
 	if( AtEnd() )
-		return NULL;	// empty queue!
+		return nullptr;	// empty queue!
 	return (*currentPos);
 }
 
@@ -116,7 +116,7 @@ HelpRequest *PageVector::Next( void )
 {
 	++currentPos;
 	if( AtEnd() )
-		return NULL;	// at end, return NULL!
+		return nullptr;	// at end, return nullptr!
 	return (*currentPos);
 }
 
@@ -157,13 +157,13 @@ void PageVector::SendAsGump( CSocket *toSendTo )
 	std::vector< HelpRequest * >::iterator qIter;
 	for( qIter = Queue.begin(); qIter != Queue.end(); ++qIter )
 	{
-		if( (*qIter) == NULL )
+		if( (*qIter) == nullptr )
 			continue;
 		if( !(*qIter)->IsHandled() )
 		{
 			CChar *mChar = calcCharObjFromSer( (*qIter)->WhoPaging() );
 			if( ValidateObject( mChar ) )
-				GQueue.AddData( mChar->GetName(), (*qIter)->TimeOfPage() );
+				GQueue.AddData( mChar->GetName(), static_cast<UI32>((*qIter)->TimeOfPage()) );
 		}
 	}
 	GQueue.Send( 4, false, INVALIDSERIAL );
@@ -211,7 +211,7 @@ bool PageVector::GotoPos( SI32 pos )
 //o-----------------------------------------------------------------------------------------------o
 SI32 PageVector::CurrentPos( void ) const
 {
-	return (currentPos - Queue.begin());
+	return static_cast<SI32>((currentPos - Queue.begin()));
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -236,7 +236,7 @@ SI32 PageVector::FindCallNum( SERIAL callNum )
 	for( size_t counter = 0; counter < Queue.size(); ++counter )
 	{
 		if( Queue[counter]->RequestID() == callNum )
-			return counter;
+			return static_cast<SI32>(counter);
 	}
 	return -1;
 }
@@ -251,7 +251,7 @@ HelpRequest *PageVector::Current( void )
 	if( !AtEnd() )
 		return (*currentPos);
 	else
-		return NULL;
+		return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -262,7 +262,7 @@ HelpRequest *PageVector::Current( void )
 bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 {
 	bool retVal		= false;
-	CChar *isPaging = NULL;
+	CChar *isPaging = nullptr;
 	for( HelpRequest *tempPage = First(); !AtEnd(); tempPage = Next() )
 	{
 		if( !tempPage->IsHandled() )
@@ -274,10 +274,16 @@ bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
 				QNext.AddData( "Pager: ", isPaging->GetName() );
 				QNext.AddData( "Problem: ", tempPage->Reason() );
 				QNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-				QNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
+				QNext.AddData( "Paged at: ", static_cast<UI32>(tempPage->TimeOfPage()) );
 				QNext.Send( 4, false, INVALIDSERIAL );
 				tempPage->IsHandled( true );
-				mChar->SetLocation( isPaging );
+				if( mChar->WorldNumber() != isPaging->WorldNumber() )
+				{
+					mChar->SetLocation( isPaging );
+					SendMapChange( mChar->WorldNumber(), mSock );
+				}
+				else
+					mChar->SetLocation( isPaging );
 				mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
 				retVal = true;
 				break;

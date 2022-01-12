@@ -9,6 +9,7 @@
 
 [SHOPLIST ArchitectShopping]
 {
+RSHOPITEM=interiordecorator
 RSHOPITEM=smallsnphousedeed
 RSHOPITEM=smallstonehousedeed
 RSHOPITEM=smallbrickhousedeed
@@ -31,6 +32,45 @@ RSHOPITEM=2storyvilladeed
 RSHOPITEM=sandstonepatiohousedeed
 RSHOPITEM=2storylogcabindeed
 RSHOPITEM=largemarblepatiohousedeed
+RSHOPITEM=pentagramdeed
+RSHOPITEM=brownbearrugdeedeast
+RSHOPITEM=brownbearrugdeedsouth
+RSHOPITEM=polarbearrugdeedeast
+RSHOPITEM=polarbearrugdeedsouth
+RSHOPITEM=loomdeed
+RSHOPITEM=loomdeedsouth
+RSHOPITEM=smallforgedeed
+RSHOPITEM=anvildeedeast
+RSHOPITEM=anvildeedsouth
+RSHOPITEM=spinningwheeldeedsouth
+RSHOPITEM=spinningwheeldeedeast
+RSHOPITEM=spinningwheeldeedwest
+RSHOPITEM=smallbed1deedsouth
+RSHOPITEM=smallbed2deedsouth
+RSHOPITEM=smallbed1deedeast
+RSHOPITEM=smallbed2deedeast
+RSHOPITEM=largebed1deedeast
+RSHOPITEM=largebed2deedeast
+RSHOPITEM=largebed1deedsouth
+RSHOPITEM=largebed2deedsouth
+RSHOPITEM=trainingdummydeedeast
+RSHOPITEM=trainingdummydeedsouth
+RSHOPITEM=pickpocketdipdeedeast
+RSHOPITEM=pickpocketdipdeedsouth
+RSHOPITEM=dresserdeedeast
+RSHOPITEM=dresserdeedsouth
+RSHOPITEM=abattoirdeed
+RSHOPITEM=flourmilldeedeast
+RSHOPITEM=flourmilldeedsouth
+RSHOPITEM=sandstoneovendeedeast
+RSHOPITEM=sandstoneovendeedsouth
+RSHOPITEM=brickovendeedeast
+RSHOPITEM=brickovendeedsouth
+RSHOPITEM=largeforgedeedeast
+RSHOPITEM=largeforgedeedwest
+RSHOPITEM=largeforgedeednorth
+RSHOPITEM=largeforgedeedsouth
+SELLITEM=interiordecorator
 SELLITEM=smallsnphousedeed
 SELLITEM=smallstonehousedeed
 SELLITEM=smallbrickhousedeed
@@ -53,6 +93,44 @@ SELLITEM=2storyvilladeed
 SELLITEM=sandstonepatiohousedeed
 SELLITEM=2storylogcabindeed
 SELLITEM=largemarblepatiohousedeed
+SELLITEM=pentagramdeed
+SELLITEM=brownbearrugdeedeast
+SELLITEM=brownbearrugdeedsouth
+SELLITEM=polarbearrugdeedeast
+SELLITEM=polarbearrugdeedsouth
+SELLITEM=loomdeed
+SELLITEM=loomdeedsouth
+SELLITEM=smallforgedeed
+SELLITEM=anvildeedeast
+SELLITEM=anvildeedsouth
+SELLITEM=spinningwheeldeedsouth
+SELLITEM=spinningwheeldeedeast
+SELLITEM=spinningwheeldeedwest
+SELLITEM=smallbed1deedsouth
+SELLITEM=smallbed2deedsouth
+SELLITEM=smallbed1deedeast
+SELLITEM=smallbed2deedeast
+SELLITEM=largebed1deedeast
+SELLITEM=largebed2deedeast
+SELLITEM=largebed1deedsouth
+SELLITEM=largebed2deedsouth
+SELLITEM=trainingdummydeedeast
+SELLITEM=trainingdummydeedsouth
+SELLITEM=pickpocketdipdeedeast
+SELLITEM=pickpocketdipdeedsouth
+SELLITEM=dresserdeedeast
+SELLITEM=dresserdeedsouth
+SELLITEM=abattoirdeed
+SELLITEM=flourmilldeedeast
+SELLITEM=flourmilldeedsouth
+SELLITEM=sandstoneovendeedeast
+SELLITEM=sandstoneovendeedsouth
+SELLITEM=brickovendeedeast
+SELLITEM=brickovendeedsouth
+SELLITEM=largeforgedeedeast
+SELLITEM=largeforgedeedwest
+SELLITEM=largeforgedeednorth
+SELLITEM=largeforgedeedsouth
 }
 
 [SHOPLIST BardShopping]
@@ -296,7 +374,6 @@ SELLITEM=0x14fb
 SELLITEM=0x1ebc
 SELLITEM=0x0a0f
 SELLITEM=0x0f9e
-SELLITEM=0x0a12
 SELLITEM=0x0a15
 SELLITEM=0x0f64
 }
@@ -336,7 +413,7 @@ SELLITEM=0x09f2
 {
 RSHOPITEM=0x0df0
 RSHOPITEM=0x1718
-RSHOPITEM=0x1f14
+RSHOPITEM=0x1f17
 RSHOPITEM=0x0efa
 RSHOPITEM=0x1f2d
 RSHOPITEM=0x1f2e
@@ -406,7 +483,7 @@ SELLITEM=0x0f88
 SELLITEM=0x0f8c
 SELLITEM=0x0f8d
 SELLITEM=0x1718
-SELLITEM=0x1f14
+SELLITEM=0x1f17
 SELLITEM=0x0efa
 SELLITEM=0x1f2d
 SELLITEM=0x1f2e
@@ -599,6 +676,7 @@ RSHOPITEM=0x0f3f
 RSHOPITEM=0x1bfb
 RSHOPITEM=0x1bd4
 RSHOPITEM=0x1bd1
+RSHOPITEM=0x1022
 SELLITEM=0x13b2
 SELLITEM=0x0f4f
 SELLITEM=0x13fd
@@ -606,6 +684,7 @@ SELLITEM=0x0f3f
 SELLITEM=0x1bfb
 SELLITEM=0x1bd4
 SELLITEM=0x1bd1
+SELLITEM=0x1022
 }
 
 [SHOPLIST JewlerShopping]
@@ -625,6 +704,8 @@ RSHOPITEM=0x0f12
 RSHOPITEM=0x0f19
 RSHOPITEM=0x0f1f
 RSHOPITEM=0x0f0f
+RSHOPITEM=0x0f18
+RSHOPITEM=0x0f1b
 RSHOPITEM=0x0f1e
 RSHOPITEM=0x0f20
 RSHOPITEM=0x0f25
@@ -907,7 +988,6 @@ SELLITEM=0x1b74
 SELLITEM=0x1b7b
 SELLITEM=0x1b78
 SELLITEM=0x1b7a
-SELLITEM=0x0de1
 }
 
 [SHOPLIST BlacksmithShopping]
@@ -1176,6 +1256,14 @@ SELLITEM=pack_horse_statue
 SELLITEM=pack_llama_statue
 }
 
+[SHOPLIST RancherShopping]
+{
+RSHOPITEM=0x09d0
+RSHOPITEM=0x0c77
+RSHOPITEM=0x1ebd
+SELLITEM=horse_statue
+}
+
 [SHOPLIST FisherShopping]
 {
 RSHOPITEM=0x0dbf
@@ -1294,7 +1382,12 @@ SELLITEM=0x0f9e
 {
 RSHOPITEM=0x0e85
 RSHOPITEM=0x0f39
+RSHOPITEM=0x0fbc
 RSHOPITEM=0x1bf2
+SELLITEM=0x0e85
+SELLITEM=0x0f39
+SELLITEM=0x0fbc
+SELLITEM=0x1bf2
 }
 
 [SHOPLIST ShipwrightShopping]
@@ -1327,9 +1420,13 @@ SELLITEM=0x2135
 SELLITEM=0x20f6
 }
 
-[SHOPLIST HairShopping]
+[SHOPLIST MillerShopping]
 {
-// Not sure where to put here, i don't know how to make the hair deeds
+RSHOPITEM=0x1039
+RSHOPITEM=0x1045
+RSHOPITEM=0x1ebd
+SELLITEM=0x1039
+SELLITEM=0x1ebd
 }
 
 [SHOPLIST TannerShopping]
@@ -1338,22 +1435,44 @@ RSHOPITEM=0x1067
 RSHOPITEM=0x1068
 RSHOPITEM=0x1081
 RSHOPITEM=0x1082
-RSHOPITEM=0x0f9e
-RSHOPITEM=0x0F9D
+RSHOPITEM=0x09b2
+RSHOPITEM=0x09b0
+RSHOPITEM=0x0ec4
+RSHOPITEM=0x1078
 SELLITEM=0x1067
 SELLITEM=0x1068
 SELLITEM=0x1081
 SELLITEM=0x1082
-SELLITEM=0x0f9e
-SELLITEM=0x0F9D
+SELLITEM=0x09b2
+SELLITEM=0x09b0
+SELLITEM=0x0ec4
 }
 
 [SHOPLIST FurShopping]
 {
 RSHOPITEM=0x11F4
 RSHOPITEM=0x11F8
+RSHOPITEM=0x1078
+RSHOPITEM=0x09b7
+RSHOPITEM=0x09b8
+RSHOPITEM=0x103b
+RSHOPITEM=0x103c
+RSHOPITEM=0x09e9
+RSHOPITEM=0x097c
+RSHOPITEM=0x097d
+RSHOPITEM=0x097e
+RSHOPITEM=0x1607
+RSHOPITEM=0x1608
+RSHOPITEM=0x09ea
+RSHOPITEM=0x160b
+RSHOPITEM=0x160c
+RSHOPITEM=0x1606
+RSHOPITEM=0x1604
+RSHOPITEM=0x1041
 SELLITEM=0x11F4
 SELLITEM=0x11F8
+SELLITEM=0x1078
+SELLITEM=0x0ec4
 }
 
 [SHOPLIST ScribeShopping]
@@ -1378,12 +1497,16 @@ SELLITEM=0x0fef
 
 [SHOPLIST MapShopping]
 {
-RSHOPITEM=0x14EB
+RSHOPITEM=0x14eb
 RSHOPITEM=0x1057
 RSHOPITEM=0x0fbf
-SELLITEM=0x14EB
+RSHOPITEM=0x0e34
+RSHOPITEM=0x14ec
+SELLITEM=0x14eb
 SELLITEM=0x1057
 SELLITEM=0x0fbf
+SELLITEM=0x0e34
+SELLITEM=0x14ec
 }
 
 [SHOPLIST VegetablesShopping]
@@ -1417,4 +1540,3 @@ SELLITEM=0x098d
 }
 
 EOF
-// Email me with bugs\comments\complaints about this file (see top of file for address)

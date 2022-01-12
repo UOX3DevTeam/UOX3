@@ -21,11 +21,19 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 		{
 			if( myObj->GetObjType() == OT_MULTI )
 			{
-				if( objInOldRange( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ))
+				if( objInOldRangeSquare( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ) )
+				{
 					nearbyChars.push_back( mSock );
+				}
 			}
-			else if( objInOldRange( myObj, mChar, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
-				nearbyChars.push_back( mSock );
+			else
+			{
+				UI16 visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+				if( objInOldRangeSquare( myObj, mChar, visRange ) )
+				{
+					nearbyChars.push_back( mSock );
+				}
+			}
 		}
 	}
 	Network->popConn();
@@ -47,8 +55,11 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ))
 		{
-			if( objInRange( mChar, myObj, static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() )) ) )
+			UI16 visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+			if( objInRangeSquare( myObj, mChar, visRange ) )
+			{
 				nearbyChars.push_back( mSock );
+			}
 		}
 	}
 	Network->popConn();
@@ -79,8 +90,36 @@ SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 }
 SOCKLIST FindNearbyPlayers( CChar *mChar )
 {
-	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mChar->GetRace() ));
+	UI16 visRange = MAX_VISRANGE;
+	if( mChar->GetSocket() != nullptr )
+		visRange = static_cast<UI16>(mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() ));
+	else
+		visRange += static_cast<UI16>(Races->VisRange( mChar->GetRace() ));
 	return FindNearbyPlayers( mChar, visRange );
+}
+
+SOCKLIST FindNearbyPlayers( CBaseObject *mObj )
+{
+	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mObj->GetRace() ));
+	return FindNearbyPlayers( mObj, visRange );
+}
+
+SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
+{
+	SOCKLIST nearbyChars;
+	//std::scoped_lock lock(Network->internallock);
+	Network->pushConn();
+	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
+	{
+		CChar *mChar = mSock->CurrcharObj();
+		if( ValidateObject( mChar ))
+		{
+			if( getDist( point3( mChar->GetX(), mChar->GetY(), mChar->GetZ() ), point3( x, y, z ) ) <= distance )
+				nearbyChars.push_back( mSock );
+		}
+	}
+	Network->popConn();
+	return nearbyChars;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -95,10 +134,10 @@ CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		GenericList< CChar * > *regChars = CellResponse->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -120,10 +159,10 @@ CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 {
-	if( !ValidateObject( i ) || i->GetCont() == NULL )	// Item has no containing item
-		return NULL;
+	if( !ValidateObject( i ) || i->GetCont() == nullptr )	// Item has no containing item
+		return nullptr;
 
-	while( i->GetCont() != NULL )
+	while( i->GetCont() != nullptr )
 	{
 		if( i->GetContSerial() < BASEITEMSERIAL )
 		{
@@ -144,10 +183,10 @@ CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 //o-----------------------------------------------------------------------------------------------o
 CItem *FindRootContainer( CItem *i )
 {
-	if( !ValidateObject( i ) || i->GetCont() == NULL )
-		return NULL;
+	if( !ValidateObject( i ) || i->GetCont() == nullptr )
+		return nullptr;
 
-	while( i->GetCont() != NULL )
+	while( i->GetCont() != nullptr )
 	{
 		if( i->GetContSerial() < BASEITEMSERIAL )
 			break;
@@ -164,14 +203,14 @@ CItem *FindRootContainer( CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 CChar *FindItemOwner( CItem *p )
 {
-	if( !ValidateObject( p ) || p->GetCont() == NULL )
-		return NULL;
+	if( !ValidateObject( p ) || p->GetCont() == nullptr )
+		return nullptr;
 
 	ObjectType oType = OT_CBO;
 	CBaseObject *iOwner = FindItemOwner( p, oType );
 	if( oType == OT_CHAR )
 		return static_cast<CChar *>(iOwner);
-	return NULL;
+	return nullptr;
 }
 
 
@@ -182,7 +221,7 @@ CChar *FindItemOwner( CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 {
-	CDataList< CItem * > *tsCont = toSearch->GetContainsList();
+	GenericList< CItem * > *tsCont = toSearch->GetContainsList();
 	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
 	{
 		if( ValidateObject( toCheck ) )
@@ -197,7 +236,7 @@ CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -221,7 +260,7 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -231,7 +270,7 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 //o-----------------------------------------------------------------------------------------------o
 CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 {
-	CDataList< CItem * > *tsCont = toSearch->GetContainsList();
+	GenericList< CItem * > *tsCont = toSearch->GetContainsList();
 	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
 	{
 		if( ValidateObject( toCheck ) )
@@ -246,7 +285,7 @@ CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -270,7 +309,7 @@ CItem *FindItemOfType( CChar *toFind, ItemTypes type )
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -284,11 +323,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		return false;
 	const UI16 multiID = static_cast<UI16>(m->GetID() - 0x4000);
 	SI32 length = 0;
-	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
-		length = Map->SeekMultiHS( multiID );
-	else
-		length = Map->SeekMulti( multiID );
-	if( length == -1 || length >= 17000000 )
+	
+	if( !Map->multiExists( multiID ) )
 	{
 		// the length associated with the multi means one thing
 		// the multi it's trying to reference is NOT in the multis.mul file
@@ -296,85 +332,36 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		// if it's dry, we'll make it a house
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
-
+		
 		const map_st map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
-		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		CLand& land = Map->SeekLand( map1.id );
+		if( land.CheckFlag( TF_WET ) ) // is it water?
 		{
-			//7.0.9.0 tiledata and later
-			CLandHS& land = Map->SeekLandHS( map1.id );
-			if( land.CheckFlag( TF_WET ) ) // is it water?
-			{
-				// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
-				// So either: 1) Let the user fix it in the worldfile once its saved
-				// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
-				m->SetID( 0x4001 );
-			}
-			else
-				m->SetID( 0x4064 );
+			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
+			// So either: 1) Let the user fix it in the worldfile once its saved
+			// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
+			m->SetID( 0x4001 );
 		}
 		else
-		{
-			//7.0.8.2 tiledata and earlier
-			CLand& land = Map->SeekLand( map1.id );
-			if( land.CheckFlag( TF_WET ) ) // is it water?
-			{
-				// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
-				// So either: 1) Let the user fix it in the worldfile once its saved
-				// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
-				m->SetID( 0x4001 );
-			}
-			else
-				m->SetID( 0x4064 );
-		}
-	}
-
-	UI08 zOff = m->CanBeObjType( OT_BOAT ) ? 3 : 20;
-	const SI16 baseX = m->GetX();
-	const SI16 baseY = m->GetY();
-	const SI08 baseZ = m->GetZ();
-
-	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
-	{
-		for( SI32 j = 0; j < length; ++j )
-		{
-			MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, j );
-
-			// Ignore signs and signposts sticking out of buildings
-			if( multi.tile >= 0x0b95 && multi.tile <= 0x0c0e || multi.tile == 0x1f28 || multi.tile == 0x1f29 )
-				continue;
-
-			if( (baseX + multi.x) == x && (baseY + multi.y) == y )
-			{
-				// Find the top Z level of the multi section being examined
-				const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
-				if( m->GetObjType() == OT_BOAT )
-				{
-					// We're on a boat!
-					if( abs( multiZ - z ) <= zOff )
-						return true;
-				}
-				else
-				{
-					if( z >= multiZ || abs( multiZ - z ) <= zOff )
-						return true;
-				}
-			}
-		}
+			m->SetID( 0x4064 );
 	}
 	else
 	{
-		for( SI32 j = 0; j < length; ++j )
+		UI08 zOff = m->CanBeObjType( OT_BOAT ) ? 3 : 20;
+		const SI16 baseX = m->GetX();
+		const SI16 baseY = m->GetY();
+		const SI08 baseZ = m->GetZ();
+		
+		for( auto &multi : Map->SeekMulti( multiID ).allItems() )
 		{
-			Multi_st& multi = Map->SeekIntoMulti( multiID, j );
-
 			// Ignore signs and signposts sticking out of buildings
-			if( multi.tile >= 0x0b95 && multi.tile <= 0x0c0e || multi.tile == 0x1f28 || multi.tile == 0x1f29 )
+			if((( multi.tileid >= 0x0b95 ) && ( multi.tileid <= 0x0c0e )) || (( multi.tileid == 0x1f28 ) || ( multi.tileid == 0x1f29 )))
 				continue;
-
-			if( (baseX + multi.x) == x && (baseY + multi.y) == y )
+			
+			if( (baseX + multi.xoffset) == x && (baseY + multi.yoffset) == y )
 			{
 				// Find the top Z level of the multi section being examined
-				const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
+				const SI08 multiZ = (baseZ + multi.zoffset + Map->TileHeight( multi.tileid ) );
 				if( m->GetObjType() == OT_BOAT )
 				{
 					// We're on a boat!
@@ -400,7 +387,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 CMultiObj *findMulti( CBaseObject *i )
 {
 	if( !ValidateObject( i ) )
-		return NULL;
+		return nullptr;
 	return findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber(), i->GetInstanceID() );
 }
 
@@ -421,16 +408,16 @@ inline T hypotenuse( T sideA, T sideB )
 CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
 	SI32 lastdist = 30;
-	CMultiObj *multi = NULL;
+	CMultiObj *multi = nullptr;
 	SI32 ret, dx, dy;
 
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *toCheck = (*rIter);
-		if( toCheck == NULL )	// no valid region
+		if( toCheck == nullptr )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -451,7 +438,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 						return multi;
 					}
 					else
-						multi = NULL;
+						multi = nullptr;
 				}
 			}
 		}
@@ -468,9 +455,9 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
 	CMapRegion *toCheck = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( toCheck != NULL )	// no valid region
+	if( toCheck != nullptr )	// no valid region
 	{
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -484,7 +471,7 @@ CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 		}
 		regItems->Pop();
 	}
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -496,15 +483,15 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 {
 	UI16 oldDist		= DIST_OUTOFRANGE;
 	UI16 currDist;
-	CItem *currItem		= NULL;
+	CItem *currItem		= nullptr;
 	point3 targLocation = point3( x, y, z );
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *toCheck = (*rIter);
-		if( toCheck == NULL )	// no valid region
+		if( toCheck == nullptr )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -538,10 +525,10 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
-		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
 		regItems->Push();
 		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
@@ -556,9 +543,9 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( CChar *mChar, distLocs distance )
+//|	Function	-	ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns a list of Items that are within a certain distance
+//|	Purpose		-	Returns a list of Items that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
 ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 {
@@ -567,10 +554,10 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
-		CDataList< CItem * > *regItems = CellResponse->GetItemList();
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
 		regItems->Push();
 		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 		{
@@ -582,4 +569,44 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 		regItems->Pop();
 	}
 	return ourItems;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	BASOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance  )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of a location
+//o-----------------------------------------------------------------------------------------------o
+BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+{
+	BASEOBJECTLIST ourObjects;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == nullptr )
+			continue;
+
+		GenericList< CItem * > *regItems = CellResponse->GetItemList();
+		regItems->Push();
+		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+		{
+			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+				continue;
+			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+				ourObjects.push_back( Item );
+		}
+		regItems->Pop();
+
+		GenericList< CChar * > *regChars = CellResponse->GetCharList();
+		regItems->Push();
+		for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
+		{
+			if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
+				continue;
+			if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
+				ourObjects.push_back( Character );
+		}
+		regChars->Pop();
+	}
+	return ourObjects;
 }

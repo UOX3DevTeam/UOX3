@@ -63,6 +63,7 @@ id=0x0DE1
 weight=100
 value=0 1
 pileable=1
+restock=20
 decay=1
 good=45
 }

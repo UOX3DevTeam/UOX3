@@ -4,6 +4,7 @@
 //
 
 #include "UOPInterface.hpp"
+#include <iomanip>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
@@ -84,7 +85,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
                 throw std::runtime_error(std::string("hash not found in uop file ")+uopname);
             }
             auto chunkid = hashiter->second ;
-            filesize = std::max<std::uintmax_t>(filesize,(0xC4000*chunkid) + static_cast<uintmax_t>(offsets[i].m_Size));
+            filesize = std::max<std::uintmax_t>(filesize,(0xC4000*static_cast<uintmax_t>(chunkid)) + static_cast<uintmax_t>(offsets[i].m_Size));
         }
     }
     // we now have the file size
@@ -128,22 +129,22 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
     c = 0xDEADBEEF + static_cast<std::uint32_t>(length) ;
     a = c;
     b = c ;
-    std::uint32_t k = 0 ;
+	std::uint32_t k = 0 ;
+	std::uint32_t l = 0 ;
 
     while (length > 12){
-        a += static_cast<std::uint32_t>(s[k]) ;
-
-        a += static_cast<std::uint32_t>(s[k+1]) << 8 ;
-        a += static_cast<std::uint32_t>(s[k+2]) << 16 ;
-        a += static_cast<std::uint32_t>(s[k+3]) << 24 ;
-        b += static_cast<std::uint32_t>(s[k+4]) ;
-        b += static_cast<std::uint32_t>(s[k+5]) << 8 ;
-        b += static_cast<std::uint32_t>(s[k+6]) << 16 ;
-        b += static_cast<std::uint32_t>(s[k+7]) << 24 ;
-        c += static_cast<std::uint32_t>(s[k+8]) ;
-        c += static_cast<std::uint32_t>(s[k+9]) << 8 ;
-        c += static_cast<std::uint32_t>(s[k+10]) << 16 ;
-        c += static_cast<std::uint32_t>(s[k+11]) << 24 ;
+		a += (s[k++]);
+		a += (s[k++] << 8);
+		a += (s[k++] << 16);
+		a += (s[k++] << 24);
+		b += (s[k++]);
+		b += (s[k++] << 8);
+		b += (s[k++] << 16);
+		b += (s[k++] << 24);
+		c += (s[k++]);
+		c += (s[k++] << 8);
+		c += (s[k++] << 16);
+		c += (s[k++] << 24);
 
         a -= c; a ^= c << 4 | c >> 28; c += b;
         b -= a; b ^= a << 6 | a >> 26; a += c;
@@ -153,46 +154,67 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
         c -= b; c ^= b << 4 | b >> 28; b += a;
 
         length -= 12 ;
-        k += 12 ;
     }
 
     // Notice the lack of breaks!  we actually want it to fall through
     switch (length) {
         case 12: {
-            c += static_cast<std::uint32_t>(s[k + 11]) << 24;
+			l = k + 11;
+            c += (s[l] << 24);
         }
-        case 11: {
-            c += static_cast<std::uint32_t>(s[k + 10]) << 16;
+		[[fallthrough]];
+		case 11: {
+			l = k + 10;
+            c += (s[l] << 16);
         }
+		[[fallthrough]];
         case 10: {
-            c += static_cast<std::uint32_t>(s[k + 9]) << 8;
+			l = k + 9;
+			c += (s[l] << 8);
         }
+		[[fallthrough]];
         case 9: {
-            c += static_cast<std::uint32_t>(s[k + 8]) ;
+			l = k + 8;
+			c += (s[l]);
         }
+		[[fallthrough]];
         case 8: {
-            b += static_cast<std::uint32_t>(s[k + 7]) << 24 ;
+			l = k + 7;
+			b += (s[l] << 24);
         }
+		[[fallthrough]];
         case 7: {
-            b += static_cast<std::uint32_t>(s[k + 6]) << 16 ;
+			l = k + 6;
+			b += (s[l] << 16);
         }
+		[[fallthrough]];
         case 6: {
-            b += static_cast<std::uint32_t>(s[k + 5]) << 8 ;
+			l = k + 5;
+			b += (s[l] << 8);
         }
+		[[fallthrough]];
         case 5: {
-            b += static_cast<std::uint32_t>(s[k + 4])  ;
+			l = k + 4;
+			b += (s[l]);
         }
+		[[fallthrough]];
         case 4: {
-            a += static_cast<std::uint32_t>(s[k + 3]) << 24 ;
+			l = k + 3;
+			a += (s[l] << 24);
         }
+		[[fallthrough]];
         case 3: {
-            a += static_cast<std::uint32_t>(s[k + 2]) << 16 ;
+			l = k + 2;
+			a += (s[l] << 16);
         }
+		[[fallthrough]];
         case 2: {
-            a += static_cast<std::uint32_t>(s[k + 1]) << 8 ;
+			l = k + 1;
+			a += (s[l] << 8);
         }
+		[[fallthrough]];
         case 1: {
-            a += static_cast<std::uint32_t>(s[k ])  ;
+			a += (s[k]);
             c ^= b; c -= b << 14 | b >> 18;
             a ^= c; a -= c << 11 | c >> 21;
             b ^= a; b -= a << 25 | a >> 7;
@@ -205,11 +227,9 @@ std::uint64_t UOP::HashLittle2(const std::string& s) {
 
         default:
             break;
-
     }
 
     return (static_cast<std::uint64_t>(b) << 32) | static_cast<std::uint64_t>(c) ;
-
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++

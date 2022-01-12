@@ -21,3 +21,10 @@ VALUE=1500 700
 RESTOCK=5
 GOOD=9
 }
+
+[hairrestyledeed]
+{
+NAME=a coupon for a free hair restyling
+ID=0x14F0
+script=5028
+}

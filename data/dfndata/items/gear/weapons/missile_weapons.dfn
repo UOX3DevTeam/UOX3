@@ -3,10 +3,40 @@
 get=base_item
 name=bola
 id=0x26AC
-weight=500
+weight=400
 value=46 23
 restock=10
 movable=1
 decay=1
 good=23
+}
+
+// SAMURAI EMPIRE - Stats balanced for Pub15
+
+// Fukiya - E/W
+[0x27aa]
+{
+get=base_item
+name=fukiya
+id=0x27aa
+ammo=0x2806
+ammofx=0x2804
+decay=1
+good=22
+layer=2
+restock=10
+movable=1
+}
+
+// Fukiya - N/S
+[0x27f5]
+{
+get=0x27aa
+id=0x27f5
+}
+
+// Fukiya - Alias
+[fukiya]
+{
+get=0x27aa 0x27f5
 }

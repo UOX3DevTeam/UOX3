@@ -147,7 +147,7 @@ get=base_item
 name=broken clock
 id=0x0c1f
 weight=100
-movable=2
+movable=1
 }
 
 [0x0c20]
@@ -264,7 +264,7 @@ get=base_item
 name=ruined painting
 id=0x0c2c
 weight=100
-movable=2
+movable=1
 }
 
 [0x0c2d]
@@ -860,7 +860,7 @@ get=base_item
 name=barrel staves
 id=0x1eb1
 weight=100
-movable=2
+movable=1
 }
 
 [0x1eb2]
@@ -869,7 +869,7 @@ get=base_item
 name=barrel staves
 id=0x1eb2
 weight=100
-movable=2
+movable=1
 }
 
 [0x1eb3]
@@ -878,7 +878,7 @@ get=base_item
 name=barrel staves
 id=0x1eb3
 weight=100
-movable=2
+movable=1
 }
 
 [0x1eb4]
@@ -887,7 +887,7 @@ get=base_item
 name=barrel staves
 id=0x1eb4
 weight=100
-movable=2
+movable=1
 }
 
 [0x1eb5]
@@ -896,5 +896,5 @@ get=base_item
 name=unfinished barrel
 id=0x1eb5
 weight=500
-movable=2
+movable=1
 }

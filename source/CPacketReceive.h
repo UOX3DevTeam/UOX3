@@ -393,7 +393,6 @@ public:
 	UI16			GetTextID( UI08 number ) const;
 	UI16			GetTextLength( UI08 number ) const;
 	std::string		GetTextString( UI08 number ) const;
-	std::string		GetTextUString( UI08 number ) const;
 
 protected:
 	SERIAL				id, buttonID, gumpID;
@@ -581,7 +580,7 @@ public:
 	virtual void	Create3DCharacter( void );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	SetNewCharGender( CChar *mChar );
+	virtual void	SetNewCharGenderAndRace( CChar *mChar );
 	virtual void	SetNewCharSkillsStats( CChar *mChar );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
@@ -612,10 +611,8 @@ protected:
 	UI08			type;
 	UI08			index;
 	UI08			unk[3];
-	UString			reply;
+	std::string		reply;
 
-	void			HandleTweakItemText( UI08 index );
-	void			HandleTweakCharText( UI08 index );
 	void			HandleTownstoneText( UI08 index );
 public:
 	virtual			~CPIGumpInput()
@@ -630,7 +627,7 @@ public:
 	UI08				Type( void ) const;
 	UI08				Index( void ) const;
 	UI08				Unk( SI32 offset ) const;
-	const UString		Reply( void ) const;
+	const std::string	Reply( void ) const;
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
@@ -814,6 +811,23 @@ public:
 
 };
 
+class CPIToolTipRequestAoS : public CPInputBuffer
+{
+protected:
+	SERIAL			getSer;
+public:
+	virtual			~CPIToolTipRequestAoS()
+	{
+	}
+	CPIToolTipRequestAoS();
+	CPIToolTipRequestAoS( CSocket *s );
+
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+
+};
+
 class CPIToolTipRequest : public CPInputBuffer
 {
 protected:
@@ -896,6 +910,36 @@ public:
 	virtual void	Receive(void) override;
 	virtual bool	Handle(void) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+
+};
+
+class CPIClosedStatusGump : public CPInputBuffer
+{
+public:
+	virtual			~CPIClosedStatusGump()
+	{
+	}
+	CPIClosedStatusGump();
+	CPIClosedStatusGump( CSocket *s );
+
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+
+};
+
+class CPIToggleFlying : public CPInputBuffer
+{
+public:
+	virtual			~CPIToggleFlying()
+	{
+	}
+	CPIToggleFlying();
+	CPIToggleFlying(CSocket *s);
+
+	virtual void	Receive(void) override;
+	virtual bool	Handle(void) override;
+	virtual void	Log(std::ofstream &outStream, bool fullHeader = true) override;
 
 };
 

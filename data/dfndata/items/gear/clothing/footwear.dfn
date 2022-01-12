@@ -2,9 +2,11 @@
 // Varities of footwear all go in here
 // v1.0; 13/01/02; Initial revision, boots sandals shoes and thigh boots; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
 // v1.1; 23/03/03; Updated various tags, including support for value=buyvalue,sellvalue / Xuri; xuri@sensewave.com
+// v1.2; 12/01/22; Made use of get inheritance to reduce duplicate entries, added item aliases / Xuri
 // (add new version comments here, copy above line please)
 // For use with the UOX emulator or any with permission from the author
 
+// Boots
 [0x170b]
 {
 get=base_item
@@ -21,22 +23,19 @@ decay=1
 good=19
 }
 
+// Boots
 [0x170c]
 {
-get=base_item
-name=boots
+get=0x170b
 id=0x170c
-weight=300
-value=45 22
-layer=0x03
-def=6
-hp=30
-str=10
-dyeable=1
-decay=1
-good=19
 }
 
+[boots]
+{
+get=0x170b 0x170c
+}
+
+// Sandals
 [0x170d]
 {
 get=base_item
@@ -52,21 +51,19 @@ decay=1
 good=19
 }
 
+// Sandals
 [0x170e]
 {
-get=base_item
-name=sandals
+get=0x170d
 id=0x170e
-weight=100
-value=24 12
-layer=0x03
-def=3
-hp=10
-dyeable=1
-decay=1
-good=19
 }
 
+[sandals]
+{
+get=0x170d 0x170e
+}
+
+// Shoes
 [0x170f]
 {
 get=base_item
@@ -82,21 +79,19 @@ decay=1
 good=19
 }
 
+// Shoes
 [0x1710]
 {
-get=base_item
-name=shoes
+get=0x170f
 id=0x1710
-weight=200
-value=27 13
-layer=0x03
-def=3
-hp=20
-dyeable=1
-decay=1
-good=19
 }
 
+[shoes]
+{
+get=0x170f 0x1710
+}
+
+// Thigh Boots
 [0x1711]
 {
 get=base_item
@@ -113,19 +108,15 @@ decay=1
 good=19
 }
 
+// Thigh Boots
 [0x1712]
 {
-get=base_item
-name=thigh boots
+get=0x1711
 id=0x1712
-weight=400
-value=56 28
-layer=0x03
-def=7
-hp=50
-str=20
-dyeable=1
-decay=1
-good=19
+}
+
+[thighboots]
+{
+get=0x1711 0x1712
 }
 
