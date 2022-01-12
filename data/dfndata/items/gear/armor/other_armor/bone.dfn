@@ -1,84 +1,112 @@
+// -----------= BONE ARMS =----------- //
+// Bone Arms - E/W
 [0x144e]
-{ left facing
-get=bone_arms
-name=bone arms
-id=0x144e
+{
+get=base_bone_arms
 }
 
-[0x144f]
-{ left facing
-get=bone_armor
-name=bone armor
-id=0x144f
-}
-
-[0x1450]
-{ left facing
-get=bone_gloves
-name=bone gloves
-id=0x1450
-}
-
-[0x1451]
-{ left facing
-get=bone_helmet
-name=bone helmet
-id=0x1451
-}
-
-[0x1452]
-{ left facing
-get=bone_leggings
-name=bone leggings
-id=0x1452
-}
-
+// Bone Arms - N/S
 [0x1453]
-{ right facing
-get=bone_arms
-name=bone arms
+{
+get=0x144e
 id=0x1453
 }
 
+// Bone Arms - Alias
+[bonearms]
+{
+get=0x144e 0x1453
+}
+
+// -----------= BONE ARMOR =----------- //
+// Bone Armor - E/W
+[0x144f]
+{
+get=base_bone_armor
+}
+
+// Bone Armor - N/S
 [0x1454]
-{ right facing
-get=bone_armor
-name=bone armor
+{
+get=0x144f
 id=0x1454
 }
 
+// Bone Armor - Alias
+[bonearmor]
+{
+get=0x144f 0x1454
+}
+
+// -----------= BONE GAUNTLETS =----------- //
+// Bone Gauntlets - E/W
+[0x1450]
+{
+get=base_bone_gloves
+}
+
+// Bone Gauntlets - N/S
 [0x1455]
-{ right facing
-get=bone_gloves
-name=bone gloves
+{
+get=0x1450
 id=0x1455
 }
 
+// Bone Gauntlets - Alias
+[bonegloves]
+{
+get=0x1450 0x1455
+}
+
+// -----------= BONE HELM =----------- //
+// Bone Helm - E/W
+[0x1451]
+{
+get=base_bone_helmet
+}
+
+// Bone Helm - N/S
 [0x1456]
-{ right facing
-get=bone_helmet
-name=bone helmet
+{
+get=0x1451
 id=0x1456
 }
 
+// Bone Helm - Alias
+[bonehelm]
+{
+get=0x1451 0x1456
+}
+
+// -----------= BONE LEGGINGS =----------- //
+// Bone Leggings - E/W
+[0x1452]
+{
+get=base_bone_leggings
+}
+
+// Bone Leggings - N/S
 [0x1457]
-{ right facing
-get=bone_leggings
-name=bone leggings
+{
+get=0x1452
 id=0x1457
 }
 
+// Bone Leggings - Alias
+[bonelegs]
+{
+get=0x1452 0x1457
+}
+
+// -----------= ORC HELM =----------- //
+// Orc Helm
 [0x1f0b]
 {
-get=base_item
-name=orc helm
-id=0x1f0b
-weight=500
-layer=6
-good=14
-hp=70
-def=20
-restock=15
-movable=1
-decay=1
+get=base_orc_helm
+}
+
+// Orc Helm - Alias
+[orchelm]
+{
+get=0x1f0b
 }

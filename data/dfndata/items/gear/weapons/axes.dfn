@@ -2,320 +2,367 @@
 
 // Note: Pickaxes are located in DFNDATA\ITEMS\SKILLS\TOOLS\MINING.DFN
 
+// Large Battle Axe - E/W
 [0x13fa]
-{ facing West
+{
 get=base_item
 name=large battle axe
 id=0x13fa
 weight=600
-value=32 16
+value=43 21
+damage=6 38
 layer=2
-lodamage=6
-hidamage=38
 hp=31 110
 spd=30
 str=40
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Large Battle Axe - N/S
 [0x13fb]
-{ facing North
-get=base_item
-name=large battle axe
+{
+get=0x13fa
 id=0x13fb
-weight=600
-value=32 16
-layer=2
-lodamage=6
-hidamage=38
-hp=31 110
-spd=30
-str=40
-restock=10
-movable=1
-decay=1
-type=216
-good=24
 }
 
+// Large Battle Axe - Alias
+[largebattleaxe]
+{
+get=0x13fa 0x13fb
+}
+
+// Two Handed Axe - E/W
 [0x1442]
-{ facing West
+{
 get=base_item
 name=two handed axe
 id=0x1442
 weight=800
-value=26 13
+value=42 21
+damage=5 39
 layer=2
-lodamage=5
-hidamage=39
 hp=31 70
 spd=30
 str=35
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Two Handed Axe - N/S
 [0x1443]
-{ facing North
-get=base_item
-name=two handed axe
+{
+get=0x1442
 id=0x1443
-weight=800
-value=26 13
-layer=2
-lodamage=5
-hidamage=39
-hp=31 70
-spd=30
-str=35
-restock=10
-movable=1
-decay=1
-type=216
-good=24
 }
 
+// Two Handed Axe - Alias
+[twohandedaxe]
+{
+get=0x1442 0x1443
+}
+
+// Hatchet - N/S
 [0x0f43]
-{ facing North
+{
 get=base_item
 name=hatchet
 id=0x0f43
 weight=400
 value=30 15
+damage=2 17
 layer=1
-lodamage=2
-hidamage=17
 hp=31 80
 spd=40
 str=15
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Hatchet - E/W
 [0x0f44]
-{ facing West
-get=base_item
-name=hatchet
+{
+get=0x0f43
 id=0x0f44
-weight=400
-value=30 15
-layer=1
-lodamage=2
-hidamage=17
-hp=31 80
-spd=40
-str=15
-restock=10
-movable=1
-decay=1
-type=216
-good=24
 }
 
+// Hatchet - Alias
+[hatchet]
+{
+get=0x0f43 0x0f44
+}
+
+// Executioner's Axe - N/S
 [0x0f45]
-{ facing North
+{
 get=base_item
 name=executioner's axe
 id=0x0f45
 weight=800
-value=32 16
+value=38 33
+damage=6 33
 layer=2
-lodamage=6
-hidamage=33
 hp=31 90
 spd=37
 str=35
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Executioner's Axe - E/W
 [0x0f46]
-{ facing West
-get=base_item
-name=executioner's axe
+{
+get=0x0f45
 id=0x0f46
-weight=800
-value=32 16
-layer=2
-lodamage=6
-hidamage=33
-hp=31 90
-spd=37
-str=35
-restock=10
-movable=1
-decay=1
-type=216
-good=24
 }
 
+// Executioner's Axe - Alias
+[executionersaxe]
+{
+get=0x0f45 0x0f46
+}
+
+// Battle Axe - N/S
 [0x0f47]
-{ facing North
+{
 get=base_item
 name=battle axe
 id=0x0f47
 weight=400
-value=30 15
+value=38 36
+damage=6 38
 layer=2
-lodamage=6
-hidamage=38
 hp=31 80
 spd=30
 str=40
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Battle Axe - E/W
 [0x0f48]
-{ facing West
-get=base_item
-name=battle axe
+{
+get=0x0f47
 id=0x0f48
-weight=400
-value=30 15
-layer=2
-lodamage=6
-hidamage=38
-hp=31 80
-spd=30
-str=40
-restock=10
-movable=1
-decay=1
-type=216
-good=24
 }
 
+// Battle Axe - Alias
+[battleaxe]
+{
+get=0x0f47 0x0f48
+}
+
+// Axe - N/S
 [0x0f49]
-{ facing North
+{
 get=base_item
 name=axe
 id=0x0f49
 weight=400
-value=42 21
+value=48 24
+damage=6 33
 layer=2
-lodamage=6
-hidamage=33
 hp=31 100
 spd=37
 str=35
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Axe - E/W
 [0x0f4a]
-{ facing West
-get=base_item
-name=axe
+{
+get=0x0f49
 id=0x0f4a
-weight=400
-value=42 21
-layer=2
-lodamage=6
-hidamage=33
-hp=31 100
-spd=37
-str=35
-restock=10
-movable=1
-decay=1
-type=216
-good=24
 }
 
+// Axe - Alias
+[axe]
+{
+get=0x0f49 0x0f4a
+}
+
+// Double Axe - N/S
 [0x0f4b]
-{ facing North
+{
 get=base_item
 name=double axe
 id=0x0f4b
 weight=800
-value=50 25
+value=32 16
+damage=5 35
 layer=2
-lodamage=5
-hidamage=35
 hp=31 110
 spd=37
 str=45
 restock=10
-movable=1
 decay=1
-type=216
 good=24
+type=216
+movable=1
 }
 
+// Double Axe - E/W
 [0x0f4c]
-{ facing West
-get=base_item
-name=double axe
+{
+get=0x0f4b
 id=0x0f4c
-weight=800
-value=50 25
+}
+
+// Double Axe - Alias
+[doubleaxe]
+{
+get=0x0f4b 0x0f4c
+}
+
+// MONDAIN'S LEGACY - Stats balanced for Pub15
+
+// Ornate Axe - N/S
+[0x2d28]
+{
+get=base_item
+name=ornate axe
+id=0x2d28
+weight=1200
+value=48 24
+damage=5 36
 layer=2
-lodamage=5
-hidamage=35
-hp=31 110
-spd=37
-str=45
+hp=30 65
+spd=29
+str=40
 restock=10
-movable=1
 decay=1
+good=21
 type=216
-good=24
+movable=1
 }
 
-[0x13af]
-{ facing West
-get=base_item
-name=war axe
-id=0x13af
-weight=800
-value=28 14
-layer=1
-lodamage=9
-hidamage=27
-hp=31 80
-spd=40
-str=35
-restock=10
-movable=1
-decay=1
-good=24
+// Ornate Axe - E/W
+[0x2d34]
+{
+get=0x2d28
+id=0x2d34
 }
 
-[0x13b0]
-{ facing North
+// Ornate Axe - Alias
+[ornateaxe]
+{
+get=0x2d28 0x2d34
+}
+
+// STYGIAN ABYSS - Stats balanced for Pub15
+
+// Gargish Battle Axe - N/S
+[0x48b0]
+{
 get=base_item
-name=war axe
-id=0x13b0
-weight=800
-value=28 14
-layer=1
-lodamage=9
-hidamage=27
+name=gargish battle axe
+id=0x48b0
+weight=400
+value=38 36
+damage=6 38
+layer=2
 hp=31 80
-spd=40
+spd=30
+str=40
+restock=10
+decay=1
+good=21
+type=216
+movable=1
+}
+
+// Gargish Battle Axe - E/W
+[0x48b1]
+{
+get=0x48b0
+id=0x48b1
+}
+
+// Gargish Battle Axe - Alias
+[gargishbattleaxe]
+{
+get=0x48b0 0x48b1
+}
+
+// Dual Short Axes - N/S
+[0x08fd]
+{
+get=base_item
+name=dual short axes
+id=0x08fd
+weight=400
+value=92 50
+damage=4 31
+layer=2
+hp=31 115
+spd=36
+str=30
+restock=10
+decay=1
+good=21
+movable=1
+}
+
+// Dual Short Axes - E/W
+[0x4068]
+{
+get=0x08fd
+id=0x4068
+}
+
+// Dual Short Axes - Alias
+[dualshortaxes]
+{
+get=0x08fd 0x4068
+}
+
+// Gargish Axe - N/S
+[0x48b2]
+{
+get=base_item
+name=gargish axe
+id=0x48b2
+weight=400
+value=48 24
+damage=6 33
+layer=2
+hp=31 100
+spd=37
 str=35
 restock=10
-movable=1
 decay=1
-good=24
+good=21
+movable=1
+}
+
+// Gargish Axe - E/W
+[0x48b3]
+{
+get=0x48b2
+id=0x48b3
+}
+
+// Gargish Axe - Alias
+[gargishaxe]
+{
+get=0x48b2 0x48b3
 }

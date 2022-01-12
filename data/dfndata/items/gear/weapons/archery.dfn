@@ -1,49 +1,41 @@
 // BOWS
 
+// Crossbow - N/S
 [0x0f4f]
-{ facing North
+{
 get=base_item
 name=crossbow
 id=0x0f4f
 weight=700
 value=46 23
+damage=8 43
 layer=2
-lodamage=8
-hidamage=43
 hp=31 80
 spd=18
 str=30
 restock=10
-movable=1
 decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
 maxrange=8
+movable=1
 }
 
+// Crossbow - E/W
 [0x0f50]
-{ facing West
-get=base_item
-name=crossbow
+{
+get=0x0f4f
 id=0x0f50
-weight=700
-value=46 23
-layer=2
-lodamage=8
-hidamage=43
-hp=31 80
-spd=18
-str=30
-restock=10
-movable=1
-decay=1
-good=23
-ammo=0x1bfb
-ammofx=0x1bfe
-maxrange=8
 }
 
+// Crossbow - Alias
+[crossbow]
+{
+get=0x0f4f 0x0f50
+}
+
+// Bow - N/S
 [0x13b1]
 {
 get=base_item
@@ -51,164 +43,244 @@ name=bow
 id=0x13b1
 weight=700
 value=46 23
+damage=8 41
 layer=2
-lodamage=15
-hidamage=15
 hp=31 60
 spd=20
 str=20
 restock=10
-movable=1
 decay=1
 good=23
 ammo=0x0f3f
 ammofx=0x0f42
 maxrange=10
+movable=1
 }
 
+// Bow - E/W
 [0x13b2]
 {
-get=base_item
-name=bow
+get=0x13b1
 id=0x13b2
-weight=700
-value=46 23
-layer=2
-lodamage=9
-hidamage=41
-hp=31 60
-spd=20
-str=20
-restock=10
-movable=1
-decay=1
-good=23
-ammo=0x0f3f
-ammofx=0x0f42
-maxrange=10
 }
 
+// Bow - Alias
+[bow]
+{
+get=0x13b1 0x13b2
+}
+
+// Heavy Crossbow - E/W
 [0x13fc]
-{ facing West
+{
 get=base_item
 name=heavy crossbow
 id=0x13fc
 weight=900
 value=56 28
+damage=11 56
 layer=2
-lodamage=11
-hidamage=56
 hp=31 100
 spd=10
 str=40
 restock=10
-movable=1
 decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
 maxrange=8
+movable=1
 }
 
+// Heavy Crossbow - N/S
 [0x13fd]
-{ facing North
-get=base_item
-name=heavy crossbow
+{
+get=0x13fc
 id=0x13fd
-weight=900
-value=56 28
+}
+
+// Heavy Crossbow - Alias
+[heavycrossbow]
+{
+get=0x13fc 0x13fd
+}
+
+// AGE OF SHADOWS - Stats balanced for Pub15
+
+// Composite Bow - E/W
+[0x26c2]
+{
+get=base_item
+name=composite bow
+id=0x26c2
+weight=500
+value=57 29
+damage=8 39
 layer=2
-lodamage=11
-hidamage=56
-hp=31 100
-spd=10
-str=40
+hp=31 70
+spd=21
+str=35
 restock=10
+decay=1
+good=23
+ammo=0x0f3f
+ammofx=0x0f42
+maxrange=10
 movable=1
+}
+
+// Composite Bow - N/S
+[0x26cc]
+{
+get=0x26c2
+id=0x26cc
+}
+
+// Composite Bow - Alias
+[compositebow]
+{
+get=0x26c2 0x26cc
+}
+
+// Repeating Crossbow - E/W
+[0x26c3]
+{
+get=base_item
+name=repeating crossbow
+id=0x26c3
+weight=600
+value=65 32
+damage=5 29
+layer=2
+hp=31 70
+spd=30
+str=25
+restock=10
 decay=1
 good=23
 ammo=0x1bfb
 ammofx=0x1bfe
-maxrange=8
+maxrange=7
+movable=1
 }
 
-[0x0f3f]
+// Repeating Crossbow - N/S
+[0x26cd]
+{
+get=0x26c3
+id=0x26cd
+}
+
+// Repeating Crossbow - Alias
+[repeatingcrossbow]
+{
+get=0x26c3 0x26cd
+}
+
+// SAMURAI EMPIRE - Stats balanced for Pub15
+// Yumi - E/W
+[0x27a5]
 {
 get=base_item
-name=arrow
-id=0x0f3f
-weight=10
-value=3 2
+name=yumi
+id=0x27a5
+weight=900
+value=60 30
+damage=6 33
+layer=2
+hp=31 70
+spd=26
+str=30
 restock=10
-movable=1
-pileable=1
-amount=1
 decay=1
 good=23
+ammo=0x0f3f
+ammofx=0x0f42
+maxrange=10
+movable=1
 }
 
-[0x0f3f-5]
+// Yumi - N/S
+[0x27f0]
 {
-get=0x0f3f
-id=0x0f3f
-name=arrow
-amount=5
+get=0x27a5
+id=0x27f0
 }
 
-[0x0f3f-20]
+// Yumi - Alias
+[yumi]
 {
-get=0x0f3f
-id=0x0f3f
-name=arrow
-amount=20
+get=0x27a5 0x27f0
 }
 
-[0x0f3f-50]
-{
-get=0x0f3f
-id=0x0f3f
-name=arrow
-amount=50
-}
+// MONDAIN's LEGACY - Stats balanced for Pub15
 
-[0x1bfb]
+// Elven Composite Longbow - E/W
+[0x2D1E]
 {
 get=base_item
-name=crossbow bolt
-id=0x1bfb
-weight=10
-value=6 3
+name=elven composite longbow
+id=0x2D1E
+weight=900
+value=52 26
+damage=7 37
+layer=2
+hp=31 70
+spd=22
+str=35
 restock=10
-movable=1
-pileable=1
-amount=1
 decay=1
 good=23
+ammo=0x0f3f
+ammofx=0x0f42
+maxrange=10
+movable=1
 }
 
-[0x1bfb-5]
+// Elven Composite Longbow - N/S
+[0x2d2a]
 {
-get=0x1bfb
-id=0x1bfb
-name=crossbow bolt
-amount=5
+get=0x2d1e
+id=0x2d2a
 }
 
-[0x1bfb-20]
+// Elven Composite Longbow - Alias
+[elvencompositelongbow]
 {
-get=0x1bfb
-id=0x1bfb
-name=crossbow bolt
-amount=20
+get=0x2d1e 0x2d2a
 }
 
-[0x1bfb-50]
+// Magical Shortbow - E/W
+[0x2d2b]
 {
-get=0x1bfb
-id=0x1bfb
-name=crossbow bolt
-amount=50
+get=base_item
+name=magical shortbow
+id=0x2d2b
+weight=600
+value=51 26
+damage=6 31
+layer=2
+hp=31 70
+spd=28
+str=35
+restock=10
+decay=1
+good=23
+ammo=0x0f3f
+ammofx=0x0f42
+maxrange=10
+movable=1
 }
 
+// Magical Shortbow - N/S
+[0x2d1f]
+{
+get=0x2d2b
+id=0x2d1f
+}
 
-EOF
+// Magical Shortbow - Alias
+[magicalshortbow]
+{
+get=0x2d2b 0x2d1f
+}

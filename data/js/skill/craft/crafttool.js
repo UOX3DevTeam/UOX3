@@ -22,7 +22,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( GetServerSetting( "ToolUseLimit" ) && iUsed.usesLeft == 0 )
 		{
-			// Tool has no hitpoints left and cannot be used!
+			// Tool has no uses left
 			socket.SysMessage( GetDictionaryEntry( 9262, socket.language )); // This has no more charges.
 			return false;
 		}

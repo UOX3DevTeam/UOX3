@@ -795,27 +795,64 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 SI32 CConsole::cl_getch( void )
 {
 #if PLATFORM != WINDOWS
-	constexpr int bufsize = 3;
-	auto buffer = std::vector<char>(bufsize, 0);
-
-	auto a = ::read(0, buffer.data(), 1);  // This doesn't block on getting a line due to initalization
+	char data = 0 ;
+	auto a = ::read(0,&data, 1); // This doesn't block on getting a line due to initalization
 	if( a > 0 )
 	{
-		if( buffer[0] == 27 )
+		// Look for escape!
+		if( data == 27 )
 		{
 			// This was an escape, see if we have another item
-			a = ::read(0, buffer.data(), buffer.size() - 1); // This doesn't block on getting a line due to initalization
+			a = ::read(0, &data, 1);
 			if( a > 0 )
 			{
-				// There shouldn't be any more data
-				return -1;
+				// See if this is a CSI
+				if( data == '[' )
+				{
+					// It is an control sequence!
+					// Some sequences end with a ~, some dont.  So, we now get to see
+					a = ::read(0, &data, 1);
+					while( a > 0 )
+					{
+						if(( data == 'A' ) || ( data == 'B' ) || ( data == 'C' ) || ( data == 'D' ) || ( data == 'H' ) && ( data == 'F' ) || ( data == '~' ))
+						{
+							break;
+						}
+						a = ::read(0, &data, 1);
+					}
+					return -1;
+				}
+				else if( data == 'O' ) // this could be F1-F4
+				{
+					a = ::read(0, &data, 1);
+					if( a > 0 )
+					{
+						if(( data == 'P' ) || ( data == 'Q' ) || ( data == 'R' ) || ( data == 'S' ))
+						{
+							// It was F1,F2,F3,F4
+							return -1;
+						}
+						// Soooooo, we have now lost two characters, this one and the preceeding O that where after the ESC
+						return 27;
+					}
+					// It wasnt, so we have a choice, return -1 (since we got ESC O, or return ESC and lose O
+					return 27;
+				}
+				else
+				{
+					// Ok, it isn't an CSI (Control Sequence).  But we have all ready lost/read the next
+					// character.  That will be lost, return escape
+					return 27;
+				}
 			}
 			else
 			{
+				// There was nothing after the escape, so just send the escape
 				return 27; // return escape
 			}
 		}
-		return static_cast<SI32>(buffer[0]);
+		// Not escape if here, so just return it
+		return static_cast<SI32>(data);
 	}
 	else
 	{

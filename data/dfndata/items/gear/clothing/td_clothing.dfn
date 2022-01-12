@@ -1,6 +1,7 @@
 // THIRDDAWN_CLOTHING
 // There's a good chance these don't work in non-Third Dawn clients!
 
+// TD Jester Pants
 [0x2649]
 {
 get=base_item
@@ -17,22 +18,19 @@ decay=1
 good=18
 }
 
+// TD Jester Pants
 [0x264a]
 {
-get=base_item
-name=jester pants
+get=0x2649
 id=0x264a
-weight=200
-value=50 25
-layer=0x4
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdjesterpants]
+{
+get=0x2649 0x264a
+}
+
+// TD Haidate
 [0x264d]
 {
 get=base_item
@@ -49,22 +47,19 @@ decay=1
 good=18
 }
 
+// TD Haidate
 [0x264e]
 {
-get=base_item
-name=haidate
+get=0x264d
 id=0x264e
-weight=500
-value=50 25
-layer=0x4
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdhaidate]
+{
+get=0x264d 0x264e
+}
+
+// TD Kobakama
 [0x264f]
 {
 get=base_item
@@ -81,22 +76,19 @@ decay=1
 good=18
 }
 
+// TD Kobakama
 [0x2650]
 {
-get=base_item
-name=kobakama
+get=0x264f
 id=0x2650
-weight=300
-value=50 25
-layer=0x4
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdkobakama]
+{
+get=0x264f 0x2650
+}
+
+// TD Ninja Pants
 [0x2651]
 {
 get=base_item
@@ -113,22 +105,19 @@ decay=1
 good=18
 }
 
+// TD Ninja Pants
 [0x2652]
 {
-get=base_item
-name=ninja pants
+get=0x2651
 id=0x2652
-weight=100
-value=50 25
-layer=0x4
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdninjapants]
+{
+get=0x2651 0x2652
+}
+
+// TD Shirt
 [0x265f]
 {
 get=base_item
@@ -145,22 +134,19 @@ decay=1
 good=18
 }
 
+// TD Shirt
 [0x2660]
 {
-get=base_item
-name=shirt
+get=0x265f
 id=0x2660
-weight=200
-value=50 25
-layer=0x5
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdshirt1]
+{
+get=0x265f 0x2660
+}
+
+// TD Shirt
 [0x2661]
 {
 get=base_item
@@ -177,23 +163,20 @@ decay=1
 good=18
 }
 
+// TD Shirt
 [0x2662]
 {
-get=base_item
-name=shirt
+get=0x2661
 id=0x2662
-weight=200
-value=50 25
-layer=0x5
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
-[0x26631]
+[tdshirt2]
+{
+get=0x2661 0x2662
+}
+
+// TD Shirt
+[0x2663]
 {
 get=base_item
 name=shirt
@@ -209,22 +192,19 @@ decay=1
 good=18
 }
 
+// TD Shirt
 [0x2664]
 {
-get=base_item
-name=shirt
+get=0x2663
 id=0x2664
-weight=200
-value=50 25
-layer=0x5
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdshirt3]
+{
+get=0x2663 0x2664
+}
+
+// TD Shirt
 [0x2665]
 {
 get=base_item
@@ -241,22 +221,19 @@ decay=1
 good=18
 }
 
+// TD Shirt
 [0x2666]
 {
-get=base_item
-name=shirt
+get=0x2665
 id=0x2666
-weight=200
-value=50 25
-layer=0x5
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdshirt4]
+{
+get=0x2665 0x2666
+}
+
+// TD Ninja Shirt
 [0x2667]
 {
 get=base_item
@@ -273,22 +250,19 @@ decay=1
 good=18
 }
 
+// TD Ninja Shirt
 [0x2668]
 {
-get=base_item
-name=ninja shirt
+get=0x2667
 id=0x2668
-weight=200
-value=50 25
-layer=0x5
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdninjashirt]
+{
+get=0x2667 0x2668
+}
+
+// TD Fancy Dress 1
 [0x267b]
 {
 get=base_item
@@ -305,22 +279,19 @@ decay=1
 good=18
 }
 
+// TD Fancy Dress 1
 [0x267c]
 {
-get=base_item
-name=fancy dress
+get=0x267b
 id=0x267c
-weight=300
-value=50 25
-layer=0x11
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdfancydress1]
+{
+get=0x267b 0x267c
+}
+
+// TD Fancy Dress 2
 [0x267d]
 {
 get=base_item
@@ -337,22 +308,19 @@ decay=1
 good=18
 }
 
+// TD Fancy Dress 2
 [0x267e]
 {
-get=base_item
-name=fancy dress
+get=0x267d
 id=0x267e
-weight=300
-value=50 25
-layer=0x11
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdfancydress2]
+{
+get=0x267d 0x267e
+}
+
+// TD Long Dress
 [0x267f]
 {
 get=base_item
@@ -369,22 +337,19 @@ decay=1
 good=18
 }
 
+// TD Long Dress
 [0x2680]
 {
-get=base_item
-name=long dress
+get=0x267f
 id=0x2680
-weight=300
-value=50 25
-layer=0x11
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdlongdress]
+{
+get=0x267f 0x2680
+}
+
+// TD Kimono
 [0x2681]
 {
 get=base_item
@@ -401,22 +366,19 @@ decay=1
 good=18
 }
 
+// TD Kimono
 [0x2682]
 {
-get=base_item
-name=kimono
+get=0x2681
 id=0x2682
-weight=100
-value=50 25
-layer=0x11
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdkimono]
+{
+get=0x2681 0x2682
+}
+
+// TD Hooded Shroud
 [0x2683]
 {
 get=base_item
@@ -433,22 +395,19 @@ decay=1
 good=18
 }
 
+// TD Hooded Shroud
 [0x2684]
 {
-get=base_item
-name=hooded shroud
+get=0x2683
 id=0x2684
-weight=100
-value=50 25
-layer=0x16
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tdhoodedshroud]
+{
+get=0x2683 0x2684
+}
+
+// TD Death Shroud
 [0x2685]
 {
 get=base_item
@@ -465,22 +424,19 @@ decay=1
 good=18
 }
 
+// TD Death Shroud
 [0x2686]
 {
-get=base_item
-name=death shroud
+get=0x2685
 id=0x2686
-weight=300
-value=50 25
-layer=0x16
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
 }
 
+[tddeathshroud]
+{
+get=0x2685 0x2686
+}
+
+// TD Arcane Cloak
 [0x26ad]
 {
 get=base_item
@@ -497,6 +453,12 @@ decay=1
 good=18
 }
 
+[tdarcanecloak]
+{
+get=0x26ad
+}
+
+// Arcane Robe
 [0x26ae]
 {
 get=base_item
@@ -513,22 +475,12 @@ decay=1
 good=18
 }
 
-[0x26af]
+[tdarcanerobe]
 {
-get=base_item
-name=Arcane Thigh Boots
-id=0x26af
-weight=400
-value=50 25
-layer=0x3
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
+get=0x26ae
 }
 
+// TD Arcane Gloves
 [0x26b0]
 {
 get=base_item
@@ -545,23 +497,12 @@ decay=1
 good=18
 }
 
-[0x230a]
+[tdarcanegloves]
 {
-get=base_item
-name=fur cape
-id=0x230a
-weight=400
-value=50 25
-layer=0x7
-hp=50
-restock=10
-movable=1
-dyeable=1
-decay=1
-good=18
-str=10
+get=0x26b0
 }
 
+// Fur Cape
 [0x2309]
 {
 get=base_item
@@ -577,4 +518,16 @@ dyeable=1
 decay=1
 good=18
 str=10
+}
+
+// Fur Cape
+[0x230a]
+{
+get=0x2309
+id=0x230a
+}
+
+[tdfurcape]
+{
+get=0x2309 0x230a
 }

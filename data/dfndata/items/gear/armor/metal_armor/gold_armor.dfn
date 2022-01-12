@@ -1,346 +1,463 @@
 // Ringmail
 
+// Gold Ringmail Tunic - N/S
 [0x13eb-g]
 {
-get=ring_gloves
-name=ringmail gloves
-id=0x13eb
+get=base_ring_gloves
 color=0x8a5
 }
 
-[0x13ec-g]
-{ right facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ec
-color=0x8a5
-}
-
-[0x13ed-g]
-{ left facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ed
-color=0x8a5
-}
-
-[0x13ee-g]
-{ right facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ee
-color=0x8a5
-}
-
-[0x13ef-g]
-{ left facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ef
-color=0x8a5
-}
-
-[0x13f0-g]
-{ rightt facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f0
-color=0x8a5
-}
-
-[0x13f1-g]
-{ left facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f1
-color=0x8a5
-}
-
+// Gold Ringmail Gloves - E/W
 [0x13f2-g]
 {
-get=ring_gloves
-name=ringmail gloves
+get=0x13eb-g
 id=0x13f2
+}
+
+// Gold Ringmail Gloves - Alias
+[goldringmailgloves]
+{
+get=0x13eb-g 0x13f2-g
+}
+
+// Gold Ringmail Tunic - N/S
+[0x13ec-g]
+{ right facing
+get=base_ring_tunic
 color=0x8a5
+}
+
+// Gold Ringmail Tunic - E/W
+[0x13ed-g]
+{
+get=0x13ec-g
+id=0x13ed
+}
+
+// Gold Ringmail Tunic - Alias
+[goldringmailtunic]
+{
+get=0x13ec-g 0x13ed-g
+}
+
+// Gold Ringmail Sleeves - N/S
+[0x13ee-g]
+{ right facing
+get=base_ring_sleeves
+color=0x8a5
+}
+
+// Gold Ringmail Sleeves - E/W
+[0x13ef-g]
+{
+get=0x13ee-g
+id=0x13ef
+}
+
+// Gold Ringmail Sleeves - Alias
+[goldringmailsleeves]
+{
+get=0x13ee-g 0x13ef-g
+}
+
+// Gold Ringmail Leggings - N/S
+[0x13f0-g]
+{ right facing
+get=base_ring_leggings
+color=0x8a5
+}
+
+// Gold Ringmail Leggings - E/W
+[0x13f1-g]
+{
+get=0x13f0-g
+id=0x13f1
+}
+
+// Gold Ringmail Leggings - Alias
+[goldringmailleggings]
+{
+get=0x13f0-g 0x13f1-g
 }
 
 // Chainmail
 
-[0x13BB-g]
-{ Left facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13bb
-weight=10
-color=0x8a5
-}
-
+// Gold Chainmail Leggings - N/S
 [0x13be-g]
-{ left facing
-get=chain_leggings
-name=chainmail leggings
-id=0x13be
+{
+get=base_chain_leggings
 color=0x8a5
 }
 
-[0x13bf-g]
-{ left facing
-get=chain_tunic
-name=chainmail tunic
-id=0x13bf
-color=0x8a5
-}
-
-[0x13c0-g]
-{ right facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13c0
-color=0x8a5
-}
-
+// Gold Chainmail Leggings - E/W
 [0x13c3-g]
-{ right facing
-get=chain_leggings
-name=chainmail leggings
+{
+get=0x13be-g
 id=0x13c3
+}
+
+// Gold Chainmail Leggings - Alias
+[goldchainmailleggings]
+{
+get=0x13be-g 0x13c3-g
+}
+
+// Gold Chainmail Tunic - N/S
+[0x13bf-g]
+{
+get=base_chain_tunic
 color=0x8a5
 }
 
+// Gold Chainmail Tunic - E/W
 [0x13c4-g]
-{ right facing
-get=chain_tunic
-name=chainmail tunic
+{
+get=0x13bf-g
 id=0x13c4
+}
+
+// Gold Chainmail Tunic - Alias
+[goldchainmailtunic]
+{
+get=0x13bf-g 0x13c4-g
+}
+
+// Gold Chainmail Coif - N/S
+[0x13BB-g]
+{
+get=base_chain_coif
 color=0x8a5
+}
+
+// Gold Chainmail Coif - E/W
+[0x13c0-g]
+{
+get=0x13bb-g
+id=0x13c0
+}
+
+// Gold Chainmail Coif - Alias
+[chainmailcoif]
+{
+get=0x13bb-g 0x13c0-g
 }
 
 // Female
 
+// Gold Female Plate - N/S
 [0x1c04-g]
-{ left facing - Female
-get=fem_plate
-name=plate armor
-id=0x1c04
+{
+get=base_fem_plate
 color=0x8a5
 }
 
+// Gold Female Plate - E/W
 [0x1c05-g]
-{ right facing - Female
-name=plate armor
+{
+get=0x1c04-g
 id=0x1c05
-color=0x8a5
+}
+
+// Gold Female Plate - Alias
+[goldfemaleplate]
+{
+get=0x1c04-g 0x1c05-g
 }
 
 // platemail
 
+// Gold Platemail Arms - E/W
 [0x1410-g]
-{ left facing
-get=plate_arms
-name=platemail arms
-id=0x1410
+{
+get=base_plate_arms
 color=0x8a5
 }
 
+// Gold Platemail Arms - N/S
+[0x1417-g]
+{
+get=0x1410-g
+id=0x1417
+}
+
+// Gold Platemail Arms - Alias
+[goldplatemailarms]
+{
+get=0x1410-g 0x1417-g
+}
+
+// Gold Platemail Leggings - E/W
 [0x1411-g]
-{ left facing
-get=plate_leggings
-name=platemail leggings
-id=0x1411
+{
+get=base_plate_leggings
 color=0x8a5
 }
 
+// Gold Platemail Leggings - N/S
+[0x141a-g]
+{
+get=0x1411-g
+id=0x141a
+}
+
+// Platemail Leggings - Alias
+[goldplatemailleggings]
+{
+get=0x1411-g 0x141a-g
+}
+
+// Gold Platemail Gorget
 [0x1413-g]
 {
-get=plate_gorget
-name=platemail gorget
-id=0x1413
+get=base_plate_gorget
 color=0x8a5
 }
 
+// Gold Platemail Gorget - Alias
+[goldplatemailgorget]
+{
+get=0x1413-g
+}
+
+// Gold Platemail Gloves - E/W
 [0x1414-g]
-{ left facing
-get=plate_gloves
-name=platemail gloves
-id=0x1414
+{
+get=base_plate_gloves
 color=0x8a5
 }
 
-[0x1415-g]
-{ left facing
-get=plate_chest
-name=platemail
-id=0x1415
-color=0x8a5
-}
-
-[0x1417-g]
-{ right facing
-get=plate_arms
-name=platemail arms
-id=0x1417
-color=0x8a5
-}
-
-[0x141a-g]
-{ right facing
-get=plate_leggings
-name=platemail leggings
-id=0x141a
-color=0x8a5
-}
-
+// Gold Platemail Gloves - N/S
 [0x1418-g]
-{ right facing
-get=plate_gloves
-name=platemail gloves
+{
+get=0x1414-g
 id=0x1418
+}
+
+// Gold Platemail Gloves - Alias
+[goldplatemailgloves]
+{
+get=0x1414-g 0x1418-g
+}
+
+// Gold Platemail Chest - E/W
+[0x1415-g]
+{
+get=base_plate_chest
 color=0x8a5
 }
 
+// Gold Platemail Chest - N/S
 [0x1416-g]
-{ right facing
-get=plate_chest
-name=platemail
+{
+get=0x1415-g
 id=0x1416
-color=0x8a5
+}
+
+// Gold Platemail Chest - Alias
+[goldplatemailchest]
+{
+get=0x1415-g 0x1416-g
 }
 
 // helmets
 
-[0x1419-g]
-{ right facing
-get=plate_helm
-name=plate helm
-id=0x1419
-color=0x8a5
-}
-
-[0x1412-g]
-{ left facing
-get=plate_helm
-name=plate helm
-id=0x1412
-color=0x8a5
-}
-
+// Gold Close Helm(et) - N/S
 [0x1408-g]
-{ right facing
-get=CLOSE_HELMET
-name=close helmet
-id=0x1408
+{
+get=base_close_helmet
 color=0x8a5
 }
 
+// Gold Close Helm(et) - E/W
 [0x1409-g]
-{ left facing
-get=CLOSE_HELMET
-name=close helm
+{
+get=0x1408-g
 id=0x1409
-color=0x8a5
 }
 
+// Gold Close Helm(et) - Alias
+[goldclosehelm]
+{
+get=0x1408-g 0x1409-g
+}
+
+// Gold Helmet - N/S
 [0x140a-g]
-{ right facing
-gethelmet
-name=helmet
-id=0x140a
+{
+get=base_helmet
 color=0x8a5
 }
 
+// Gold Helmet - E/W
 [0x140b-g]
-{ left facing
-get=helmet
-name=helmet
+{
+get=0x140a-g
 id=0x140b
-color=0x8a5
 }
 
+// Gold Helmet - Alias
+[goldhelmet]
+{
+get=0x140a-g 0x140b-g
+}
+
+// Gold Bascinet - N/S
 [0x140c-g]
-{ right facing
-get=bascinet
-name=bascinet
-id=0x140c
+{
+get=base_bascinet
 color=0x8a5
 }
 
+// Gold Bascinet - E/W
 [0x140d-g]
-{ left facing
-get=bascinet
-name=bascinet
+{
+get=0x140c-g
 id=0x140d
-color=0x8a5
 }
 
+// Gold Bascinet - Alias
+[goldbascinet]
+{
+get=0x140c-g 0x140d-g
+}
+
+// Gold Norse Helm - N/S
 [0x140e-g]
-{ right facing
-get=nose_helm
-name=nose helm
-id=0x140e
+{
+get=base_nose_helm
 color=0x8a5
 }
 
+// Gold Norse Helm - E/W
 [0x140f-g]
-{ left facing
-get=nose_helm
-name=nose helm
+{
+get=0x140e-g
 id=0x140f
+}
+
+// Gold Norse Helm - Alias
+[goldnorsehelm]
+{
+get=0x140e-g 0x140f-g
+}
+
+// Gold Plate Helm - E/W
+[0x1412-g]
+{
+get=base_plate_helm
 color=0x8a5
 }
 
-// shields
+// Gold Plate Helm - N/S
+[0x1419-g]
+{
+get=0x1412-g
+id=0x1419
+}
 
+// Gold Plate Helm - Alias
+[goldplatehelm]
+{
+get=0x1412-g 0x1419-g
+}
+
+// Shields
+
+// Gold Gold Shield
 [0x1b72-g]
-{ Bronze shield
-get=bronze_shield
-name=bronze shield
-id=0x1b72
+{
+get=base_gold_shield
 color=0x8a5
 }
 
+// Gold Gold Shield - Alias
+[goldgoldshield]
+{
+get=0x1b72-g
+}
+
+// Gold Buckler
 [0x1b73-g]
-{ Buckler
-get=buckler
-name=buckler
-id=0x1b73
+{
+get=base_buckler
 color=0x8a5
 }
 
+// Gold Buckler - Alias
+[goldbuckler]
+{
+get=0x1b73-g
+}
+
+// Gold Metal Kite Shield - N/S
 [0x1b74-g]
-{ Kite shield
-get=metal_kite_shield
-name=kite shield
-id=0x1b74
+{
+get=base_metal_kite_shield
 color=0x8a5
 }
 
+// Gold Metal Kite Shield - E/W
+[0x1b75-g]
+{
+get=0x1b74-g
+id=0x1b75
+}
 
+// Metal Kite Shield - Alias
+[goldmetalkiteshield]
+{
+get=0x1b74-g 0x1b75-g
+}
+
+// Gold Heater Shield - N/S
 [0x1b76-g]
-{ Heater shield
-get=heater_shield
-name=heater shield
-id=0x1b76
+{
+get=base_heater_shield
 color=0x8a5
 }
 
-[0x1b78-g]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b78
-color=0x8a5
+// Gold Heater Shield - E/W
+[0x1b77-g]
+{
+get=0x1b76-g
+id=0x1b77
 }
 
-[0x1b79-g]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b79
-color=0x8a5
+// Gold Heater Shield - Alias
+[goldheatershield]
+{
+get=0x1b76-g 0x1b77-g
 }
 
+// Gold Metal Shield
 [0x1b7b-g]
-{ Metal shield
-get=metal_shield
-name=metal shield
-id=0x1b7b
+{
+get=base_metal_shield
 color=0x8a5
+}
+
+// Gold Metal Shield - Alias
+[goldmetalshield]
+{
+get=0x1b7b-g
+}
+
+// Kite Shield (wooden) - N/S
+[0x1b78-g]
+{
+get=base_wooden_kite_shield
+color=0x8a5
+}
+
+// Kite Shield (wooden) - E/W
+[0x1b79-g]
+{
+get=0x1b78-g
+id=0x1b79
+}
+
+// Kite Shield (wooden) - Alias
+[goldwoodenkiteshield]
+{
+get=0x1b78-g 0x1b79-g
 }

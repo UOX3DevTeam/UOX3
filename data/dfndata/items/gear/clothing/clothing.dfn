@@ -2,9 +2,21 @@
 // * clothing.dfn *
 // *************************************************
 
-[0x1541]
+[base_clothing]
 {
 get=base_item
+name=base clothing
+id=0x0000
+restock=10
+dyeable=1
+decay=1
+good=18
+}
+
+// Body Sash
+[0x1541]
+{
+get=base_clothing
 name=body sash
 id=0x1541
 weight=100
@@ -12,31 +24,24 @@ value=15 7
 layer=0x11
 def=1
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Body Sash
 [0x1542]
 {
-get=base_item
-name=body sash
+get=0x1541
 id=0x1542
-weight=100
-value=15 7
-layer=0x11
-def=1
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[bodysash]
+{
+get=0x1541 0x1542
+}
+
+// Cloak
 [0x1515]
 {
-get=base_item
+get=base_clothing
 name=cloak
 id=0x1515
 weight=500
@@ -44,61 +49,48 @@ value=43 21
 layer=0x14
 def=5
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Cloak
 [0x1530]
 {
-get=base_item
-name=cloak
+get=0x1515
 id=0x1530
-weight=500
-value=43 21
-layer=0x14
-def=5
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[cloak]
+{
+get=0x1515 0x1530
+}
+
+// Doublet
 [0x1f7b]
 {
-get=base_item
+get=base_clothing
 name=doublet
 id=0x1f7b
 weight=200
 value=25 12
 layer=0x11
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Doublet
 [0x1f7c]
 {
-get=base_item
-name=doublet
+get=0x1f7b
 id=0x1f7c
-weight=200
-value=25 12
-layer=0x11
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[doublet]
+{
+get=0x1f7b 0x1f7c
+}
+
+// Fancy Dress
 [0x1eff]
 {
-get=base_item
+get=base_clothing
 name=fancy dress
 id=0x1eff
 weight=300
@@ -106,31 +98,24 @@ value=25 12
 layer=0x11
 def=6
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Fancy Dress
 [0x1f00]
 {
-get=base_item
-name=fancy dress
+get=0x1eff
 id=0x1f00
-weight=300
-value=25 12
-layer=0x11
-def=6
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[fancydress]
+{
+get=0x1eff 0x1f00
+}
+
+// Fancy Shirt
 [0x1efd]
 {
-get=base_item
+get=base_clothing
 name=fancy shirt
 id=0x1efd
 weight=200
@@ -138,31 +123,24 @@ value=55 27
 layer=0x5
 def=4
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Fancy Shirt
 [0x1efe]
 {
-get=base_item
-name=fancy shirt
+get=0x1efd
 id=0x1efe
-weight=200
-value=55 27
-layer=0x5
-def=4
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[fancyshirt]
+{
+get=0x1efd 0x1efe
+}
+
+// Full Apron
 [0x153d]
 {
-get=base_item
+get=base_clothing
 name=full apron
 id=0x153d
 weight=400
@@ -170,93 +148,73 @@ value=25 13
 layer=0x11
 def=4
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Full Apron
 [0x153e]
 {
-get=base_item
-name=full apron
+get=0x153d
 id=0x153E
-weight=400
-value=25 13
-layer=0x11
-def=4
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[fullapron]
+{
+get=0x153d 0x153e
+}
+
+// Half Apron
 [0x153b]
 {
-get=base_item
+get=base_clothing
 name=half apron
 id=0x153B
 weight=200
 value=26 13
 layer=0x0c
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Half Apron
 [0x153C]
 {
-get=base_item
-name=half apron
+get=0x153b
 id=0x153C
-weight=200
-value=26 13
-layer=0x0c
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1F9F]
+[halfapron]
 {
-get=base_item
-name=jesters suit
-id=0x1F9F
+get=0x153b 0x153c
+}
+
+// Jester Suit
+[0x1f9f]
+{
+get=base_clothing
+name=jester suit
+id=0x1f9f
 weight=400
 value=51 25
 layer=0x11
 def=7
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1FA0]
+// Jester Suit
+[0x1fA0]
 {
-get=base_item
-name=jesters suit
-id=0x1FA0
-weight=400
-value=51 25
-layer=0x11
-def=7
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
+get=0x1f9f
+id=0x1fa0
 }
 
+[jestersuit]
+{
+get=0x1f9f 0x1fa0
+}
+
+// Kilt
 [0x1537]
 {
-get=base_item
+get=base_clothing
 name=kilt
 id=0x1537
 weight=200
@@ -264,31 +222,24 @@ value=31 15
 layer=0x17
 def=3
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Kilt
 [0x1538]
 {
-get=base_item
-name=kilt
+get=0x1537
 id=0x1538
-weight=200
-value=31 15
-layer=0x17
-def=3
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[kilt]
+{
+get=0x1537 0x1538
+}
+
+// Long Pants
 [0x1539]
 {
-get=base_item
+get=base_clothing
 name=long pants
 id=0x1539
 weight=200
@@ -296,97 +247,75 @@ value=34 17
 layer=0x4
 def=4
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Long Pants
 [0x153A]
 {
-get=base_item
-name=long pants
+get=0x1539
 id=0x153A
-weight=200
-value=34 17
-layer=0x4
-def=4
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1F01]
+[longpants]
 {
-get=base_item
+0x1539 0x153a
+}
+
+// Plain Dress
+[0x1f01]
+{
+get=base_clothing
 name=plain dress
-id=0x1F01
+id=0x1f01
 weight=200
 value=56 28
 layer=0x11
 def=4
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1F02]
+// Plain Dress
+[0x1f02]
 {
-get=base_item
-name=plain dress
-id=0x1F02
-weight=200
-value=56 28
-layer=0x11
-def=4
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
+get=0x1f01
+id=0x1f02
 }
 
-[0x1F03]
+[plaindress]
 {
-get=base_item
+get=0x1f01 0x1f02
+}
+
+// Robe
+[0x1f03]
+{
+get=base_clothing
 name=robe
-id=0x1F03
+id=0x1f03
 weight=300
 value=68 34
 layer=0x16
 def=7
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1F04]
+// Robe
+[0x1f04]
 {
-get=base_item
-name=robe
-id=0x1F04
-weight=300
-value=68 34
-layer=0x16
-def=7
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
+get=0x1f03
+id=0x1f04
+}
+
+[robe]
+{
+get=0x1f03 0x1f04
 }
 
 [resurrection_robe]
 {
-get=base_item
+get=base_clothing
 name=resurrection robe
-id=0x1F03
+id=0x1f03
 weight=300
 value=0
 layer=0x16
@@ -396,9 +325,10 @@ dyeable=0
 decay=1
 }
 
+// Shirt
 [0x1517]
 {
-get=base_item
+get=base_clothing
 name=shirt
 id=0x1517
 weight=200
@@ -406,63 +336,49 @@ value=37 18
 layer=0x5
 def=3
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Shirt
 [0x1518]
 {
-get=base_item
-name=shirt
+get=0x1517
 id=0x1518
-weight=200
-value=37 18
-layer=0x5
-def=3
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x152E]
+[shirt]
 {
-get=base_item
+get=0x1517 0x1518
+}
+
+// Short Pants
+[0x152e]
+{
+get=base_clothing
 name=short pants
-id=0x152E
+id=0x152e
 weight=200
 value=24 12
 layer=0x4
 def=3
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x152F]
+// Short Pants
+[0x152f]
 {
-get=base_item
-name=short pants
-id=0x152F
-weight=200
-value=24 12
-layer=0x4
-def=3
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
+get=0x152e
+id=0x152f
 }
 
+[shortpants]
+{
+get=0x152e 0x152f
+}
+
+// Skirt
 [0x1531]
 {
-get=base_item
+get=base_clothing
 name=skirt
 id=0x1531
 weight=400
@@ -470,111 +386,87 @@ value=33 16
 layer=0x17
 def=4
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Skirt
 [0x1516]
 {
-get=base_item
-name=skirt
+get=0x1531
 id=0x1516
-weight=400
-value=33 16
-layer=0x17
-def=4
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1FA1]
+[skirt]
 {
-get=base_item
+get=0x1531 0x1516
+}
+
+// Tunic
+[0x1fa1]
+{
+get=base_clothing
 name=tunic
-id=0x1FA1
+id=0x1fa1
 weight=500
 value=33 16
 layer=0x11
 hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
-[0x1FA2]
+// Tunic
+[0x1fa2]
 {
-get=base_item
-name=tunic
-id=0x1FA2
-weight=500
-value=33 16
-layer=0x11
-hp=50
-restock=10
-dyeable=1
-decay=1
-good=18
+get=0x1fa1
+id=0x1fa2
 }
 
+[tunic]
+{
+get=0x1fa1 0x1fa2
+}
+
+// Gold Belt
 [0x1535]
 { S
-get=base_item
+get=base_clothing
 name=gold belt
 id=0x1535
 weight=100
 value=50 25
 layer=0x11
 hp=100
-dyeable=1
-decay=1
-good=18
 }
 
+// Gold Belt
 [0x1536]
 { E
-get=base_item
-name=gold belt
+get=0x1535
 id=0x1536
-weight=100
-value=50 25
-layer=0x11
-hp=100
-dyeable=1
-decay=1
-good=18
 }
 
+[goldbelt]
+{
+get=0x1535 0x1536
+}
+
+// Surcoat
 [0x1ffd]
 { S
-get=base_item
+get=base_clothing
 name=surcoat
 id=0x1ffd
 weight=100
 value=44 22
 layer=0x11
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+// Surcoat
 [0x1ffe]
 { E
-get=base_item
-name=surcoat
+get=0x1ffd
 id=0x1ffe
-weight=100
-value=44 22
-layer=0x11
-restock=10
-dyeable=1
-decay=1
-good=18
 }
 
+[surcoat]
+{
+get=0x1ffd 0x1ffe
+}

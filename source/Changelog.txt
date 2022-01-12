@@ -1,3 +1,16 @@
+12/01/2022 - Xuri (0.99.5)
+	Implemented Herding skill in JS (js/skill/herding.js) (Dragon Slayer)
+	Updated item stats like def, hp and value for all armors to match Pub15 era
+	Added item definitions for weapons added in AoS to ToL UO expansions, but with stats balanced against existing weapons from Pub15 era
+	Added armor definitions for armors added in AoS to ToL UO expansions, but with stats balanced against existing armors from Pub15 era
+	Added named "alias entries" for all existing item definitions of weapon, armor and clothes, which enables adding those via their names as an alternative to their IDs. Items added via the named aliases will randomize between variations (north/south vs east/west) of the items if there are any. Syntax:
+		'add item [nameOfItemWithoutSpaces] (example: 'add item vikingsword)
+	Removed redundant files dfndata/items/gear/weapons/aos_weapons.dfn, dfndata/items/gear/weapons/se_weapons.dfn and dfndata/npc/spawntags.dfn
+	Split out ranged weapon projectiles into a separate DFN (dfndata/items/gear/weapons/projectiles.dfn)
+	Modified tooltip for armors to describe the physical defensive value as Armor Rating instead of Physical Resist
+	Updated console key input handling with a more robust approach for Linux (punt)
+	Included new and revamped JS docs, and removed old, out-of-date legacy JS docs
+
 10/01/2022 - Xuri (0.99.5[RC4])
 	UOX3 now stores a timestamp for when an account receives its first login, which can be accessed via the new (read-only) JS Account Property .firstLogin.
 	UOX3 now stores a timestamp for when a player character is created, which can be accessed via the new (read-only) JS Character Property .createdOn. For legacy player characters, the creation timestamp is set the first time UOX3 loads the characters after this update.

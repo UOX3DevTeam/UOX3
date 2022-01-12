@@ -1,10 +1,1624 @@
 UOX3 Changelog
 ------------------------
+-==============================-
+-= 12/01/2022 - UOX3 0.99.5  =-
+-==============================-
+Contributors: Xuri, punt, dragon slayer, giwo
+
+Source Changes/Fixes:
+	Updated UseDoor() JS function - now called UseItem() instead, and now supports both socket and character as first argument, to allow NPC use.
+	Improved JS NPC methods WalkTo()/RunTo() so path is recalculated when blocked by other characters after original calculation took place. Only applies while advanced pathfinding is enabled in uox.ini.
+	Added new JS event that triggers when pathfinding comes to an end after using WalkTo/RunTo JS methods:
+		onPathfindEnd( mNPC, pathfindResult ) // pathfindResult returns result of pathfinding (-1 = failure, 0 = partial success, 1 = success)
+	Disallowed invulnerable players/admins from attacking other characters, with a complimentary system message explaining why they can't attack
+	Fixed a bug where NPC's original npvWander mode could get overwritten if multiple pathfinding actions overlapped
+	Fixed an issue with NPC trainers where they would list incorrectly the available skills players could train
+	When NPCs in wanderTypes WT_BOX, WT_CIRCLE or WT_FREE are blocked too many times from moving by other characters, they will now pause for 60 seconds before attempting to move again
+	Exposed .oldWanderType NPC property to JS engine, and updated 'set command to also update this property when manually changing NPC wanderType
+	Reduced max attempts at calculating path for NPCs in wanderTypes WT_BOX, WT_CIRCLE or WT_FREE to 25 steps, unless they are evading and attempting to move back into their original wander box/circle
+	NPCs who enter "evasion" state because they are unable to find a valid path to an attacker will now have their health reset to maximum, to prevent an exploit to take down any NPCs without risk of taking any damage in return
+	JS Methods WalkTo() and RunTo() now actually make use of the provided maxSteps parameter when advanced pathfinding is enabled; previously it would default to 500 steps.
+	Added new JS event that triggers when an NPC enters evasion state in combat due to being unable to reach their target
+		onEnterEvadeState( mNPC, enemyChar ) // enemyChar would be the character they are unable to reach
+	NPCs of same race will no longer attack one another if hit by each other's AoE spells
+	Fixed an issue with NPC pathfinding in combat that prevented ranged NPCs from closing in on their targets when losing LoS
+	Spellcasting NPCs that cannot pathfind all the way to their target in combat will now attempt to pathfind to an area near the target instead
+	Fixed an issue that prevented tiller-men from being correctly associated with their boats after a server restart
+	Fixed an issue with combat where ranged characters could shoot bows further than the allowed max range for archery specified in uox.ini
+	Fixed a compiler issue with GCC versions below 9.x in various Linux distros, by including iomanip library in UOPInterface.cpp and adding -lstdc++fs to the Makefile
+	Exposed Item properties to JS Engine:
+		.dexterity // dexterity required to equip item
+		.intelligence // intelligence required to equip item
+	Fixed issue where changing worldnumber of an item via tweak command would not remove the item from sight of nearby players in the original location
+	Fixed issue where characters teleporting to a new world would sometimes not be removed from sight of nearby players in the original location
+	Fixed issue where being released from jail cells to a location in a different world would not send map change packet
+	Fixed issue where changing worldnumber of a player character via tweak command would not send map change packet
+	Fixed issue where teleporting GM/Counselor to a player's location when responding to a help request would not send map change packet
+	Fixed issue where recalling off a recall rune in a different world would not send map change packet
+	Fixed issue where using travel menu or 'go place # command would not send map change packet when going to a location in a different world
+	Tooltips for recall runes will now show the name of the facet they were marked in, with facet names being pulled from entries 1975 to 1980 in the dictionary files
+	Added new option in UOX.INI under [settings] section:
+		MAPDIFFSENABLED=0/1 // If enabled, server will attempt to load diff files, and send "Enable Map-diff files" packet to client to also load these. Disabled by default.
+	Server no longer loads map/statics diff files by default, nor does it send packet to client to request loading these files, as only client versions below 7.0.8.2 will actively load these files. Can be re-enabled with new UOX.INI setting mentioned above!
+	Fixed incorrect ID for gargish dagger in CHandleCombat::getWeaponType()
+	Added missing weapon entries in CHandleCombat::getWeaponType(): bladed whip, barbed whip, spiked whip, gargish talwar
+	Fixed an issue that would show the end part of some tiledata names as garbled text instead of cutting off the text(!) at 20 characters
+	Fixed an issue with advanced character creation template when using ClassicUO client, which sends a profession value of 255 instead of 0 when no profession template has been selected.
+	Fixed an issue where clones of NPCs that can split in combat didn't get the NPC flag correctly set
+	Guild titles are now removed for players who leave their guilds
+	Enabled closing some hard-coded gump menus using right-click (howto, guild, towns, wholist, addmenu, craftmenu, info)
+	Fixed an issue where adding base items using 'add [itemID] would sometimes get false positive hits from harditems.dfn, depending on the length of the itemID
+	Fixed an issue where items added using 'add [itemID] would not get names applied properly from harditems.dfn
+	Item/NPC DFN tag GET can now inherit a random parent by adding additional values separated by spaces. Syntax:
+		GET=parent1 parent2 parent3 (etc)
+	Fixed an issue where NPC backpacks would not have the max item capacity set properly
+	Added new properties for CItem objects (also exposed as JS Item Properties):
+		maxRange // max distance a ranged weapon can fire at (replaces ARCHERRANGE ini setting)
+		baseRange // base distance throwing weapons (when implemented) can be used at
+	Added support for new Item DFN tag that replaces global UOX.INI setting ARCHERRANGE:
+		MAXRANGE=# 				// Specifies max range of ranged weapon
+	Added support for new Item/NPC DFN tags to support randomizing elemental resistances:
+		RESISTFIRE=#/# #		// Set NPC's poison resistance; fixed or random value
+		RESISTCOLD=#/# #		// Set NPC's poison resistance; fixed or random value
+		RESISTLIGHTNING=#/# # 	// Set NPC's poison resistance; fixed or random value
+		RESISTPOISON=#/# #		// Set NPC's poison resistance; fixed or random value
+	Added support for two new DFN tags in dfndata/race/races.dfn that can be used to allow/ban lists of equipment for specific races
+		ALLOWEQUIPLIST=#
+		BANEQUIPLIST=#
+	Added support for new section in dfndata/race/races.dfn - [EQUIPLIST #], which can be used to define lists of equipment that is whitelisted or banned for specific races.
+	Fixed a bug that would report incorrect weight in tooltips for Item/NPC spawner objects
+	ScriptSections are now reapplied for items bought by players from NPC vendors
+	Fixed an issue where players could drop an item on the ground and other players would still see the item after it was picked up, because of a failed distance check vs old location coordinates (in pack) instead of vs current location on ground
+	Fixed a bug with players being able to use last-target macro to target objects picked up and held by other players on their cursor
+	Updated all references to "devinelock" to be "divinelock" instead - this includes the name of the JS Item property
+	Fixed house commands triggering (useless) targeting cursors for players onboard boats
+	Changed default statcap in UOX.INI from 325 to 225
+	Fixed a out-of-range error for players attempting to combine ore inside their own backpack
+	Fixed various issues with distance checks and container checks when using/target objects
+	Added optional 4th "hue" parameter to AddGump JS method
+	Added JS Function to get total amount of accounts on server - GetAccountCount()
+	Added JS Function to get total amount of players online - GetPlayerCount()
+	onSwing JS Event can now trigger in scripts attached to items, not just items attached to characters
+	Added some JS Functions to expose some hard-coded constants to JS scripts:
+		BASEITEMSERIAL() // Base item serial
+		INVALIDSERIAL() // Invalid serial
+		INVALIDID() // Invalid ID
+		INVALIDCOLOUR() // Invalid colour
+	Fixed an issue where JS character property .colour would modify origSkin property instead of colour
+	Fixed an issue where JS character property .guildTitle returned the name of the character instead of the guild title
+	Character JS property .poison can now also be used to set a character's poisoned level, not just read it
+	Exposed Item property to JS engine:
+		.ac // armour class for item (0-128). Primarily used for setting race-restrictions for equippable items, i.e. race X cannot equip items of armour class Y.
+		.def // defensive value of item (Physical resistance post-AoS, AR in older UO)
+		// NOTE: The following properties don't actually do anything yet, but can still be used in custom JS scripts if desired
+		.resistCold // Cold resistance of item 0-1000, where 1000 equals 100.0%
+		.resistHeat // Heat/Fire resistance of item 0-1000, where 1000 equals 100.0%
+		.resistLight // Light resistance of item 0-1000, where 1000 equals 100.0%
+		.resistLightning // Energy/Lightning resistance of item 0-1000, where 1000 equals 100.0%
+		.resistPoison // Poison resistance of item 0-1000, where 1000 equals 100.0%
+		.resistRain // Rain resistance of item 0-1000, where 1000 equals 100.0%
+		.resistSnow // Snow resistance of item 0-1000, where 1000 equals 100.0%
+		.damageHeat // Weapon deals Heat/Fire elemental damage (true/false)
+		.damageCold // Weapon deals Cold elemental damage (true/false)
+		.damageLight // Weapon deals Light elemental damage (true/false)
+		.damageLightning // Weapon deals Lightning elemental damage (true/false)
+		.damagePoison // Weapon deals Poison elemental damage (true/false)
+		.damageRain // Weapon deals Rain/Water elemental damage (true/false)
+		.damageSnow // Weapon deals Snow/Ice elemental damage (true/false)
+	Added new UOX.INI setting under [server] to enable/disable shard response to ConnectUO server polling (disabled by default)
+	Sub-commands are no longer included when registering packets to be overloaded via RegisterPacket function, as that part was never fully implemented. Packet-hook scripts can be setup for specific packet IDs, but any sub-command checking will need to be done in the script itself
+	JS Packet Method GetDWord() now uses JS_NewNumberValue instead of INT_TO_JSVAL to read from the socket buffer, to better handle large numbers, which could previously be returned with wrong values.
+	JS Function CalcItemFromSer() now uses a JS_GetStringBytes() and str_value() combo instead of JSVAL_TO_INT() to read the data provided in the function argument. This allows JS scripts to provide item serials to the function directly without needing to split it into four parts first (though that still works)
+	Fixed issue where JS properties for multis didn't always return correct values
+	Custom tags can now be set for multis in dfndata/house/house.dfn via the DFN tags CUSTOMSTRINGTAG and CUSTOMINTTAG, which can be read later for a placed multi via JS Item method GetTag( tagName ). Syntax is identical to custom tags in Item/NPC definitions:
+		CUSTOMSTRINGTAG=tagName stringValue
+		CUSTOMINTTAG=tagName intValue
+	Definitions for multis in dfndata/house/house.dfn now support the COLOUR and COLOURLIST tags, which will (if present) be applied to new multis that are added in-game. Colour for existing multis can be modified via the 'tweak command.
+	Re-implemented DoStaticEffect() as a stand-alone JS function that takes a location as a target instead of an object
+	Fixed an issue with potions where entire stacks of potions would get consumed instead of just one potion
+	Added new UOX.INI settings under [combat] to control the bonus damage modifier in explosion potions:
+		ALCHEMYBONUSENABLED=0/1	// enable/disable bonus damage, defaults to disabled
+		ALCHEMYBONUSMODIFIER=5 	// bonusDamage = alchemySkill / alchemyBonusModifier
+	Exposed speechType as an additional 7th optional parameter for the JS TextMessage function, and the other optional parameters (speechTarget, speechTargetSerial, speechFontType) can now be supplied as -1 if one just want to use the default values. Supported speechTypes:
+		TALK			= 0,	// normal system message
+	    PROMPT			= 1,	// Display as system prompt
+	    EMOTE			= 2,	// : text
+	    SAY				= 3,	// character speaking
+	    OBJ				= 4,	// at object
+	    NOTHING			= 5,	// does not display
+	    SYSTEM			= 6,	// text labelling an item
+	    NOSCROLL		= 7,	// status msg, does not scroll
+	    WHISPER			= 8,	// only those close can here
+	    YELL			= 9,	// can be heard 2 screens away
+	Added support for packet 0xE2 (New Character Animation, used to play animations in client v7.0.0.0+) via cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID, UI08 subSubActionID )
+	Added support for new animation packet in JS Character method DoAction() using a second parameter that specifies animation variation, which if present forces server to send new animation packet instead of old. This means the 'action/npcaction commands can now be used to play animations on gargoyles/humans in client v7.0.0.0+ using the following syntax: 'action [action subAction]
+	Created new enums for character actions and sub-actions, and updated code to refer to these instead of using "magic" numbers
+	Added new options in UOX.INI under [settings] section:
+		FORCENEWANIMATIONPACKET=0/1 // If enabled (default), forces the use of the new animation packet for playing various character animations for both NPCs in general and for player characters connected with client v7.0.0.0+
+	Updated various actions performed by players and NPCs to use new animation packet (combat, spellcasting, mining) if connected with client v7.0.0.0+ and ini setting to force new animation packet is enabled
+	Added basic support for gargoyle flying ability. Can now use flying ability itself to enter/exit flying state, and the state change will also get sent to nearby players. Flying players are treated the same way as mounted players; polymorph spells will auto-dismounts mounted/flying player, same rules for stealth applies to flying as riding, etc.
+	Exposed Character property to JS engine:
+		.isFlying // returns true if character is flying
+	Fixed an issue where moving items around within a container at max item capacity was not allowed
+	Exposed Item/Character properties to JS:
+		.oldX // Previous X coordinate for object
+		.oldY // Previous Y coordinate for object
+		.oldZ // Previous Z coordinate for object
+	Exposed Character properties to JS:
+		.mana // Character's current amount of mana
+	Updated version of Winsock requested by UOX3 from 2.0 to 2.2
+	Exposed timer for updating NPC flags to [timers] section of UOX.INI:
+		NPCFLAGUPDATETIMER=5 // Interval in seconds between each time NPC flags are updated. Default adjusted down from 30 to 5 seconds
+	Fixed an issue where UOX3 was trying to output some debug/warning messages to console using the wrong console method
+	Made some small tweaks to NPC pathfinding to make NPCs more likely to pick a new target location when their old one is blocked
+	Removed -lstdc++fs from Makefile and replaced with special instructions for users of gcc below v9.x
+	Fixed a buffer overrun issue with tiledata item names
+	Eliminated a bunch of compilation warnings in VS2017
+	Updated JS Method CreateDFNItem to allow creating items without referencing a socket/character. Syntax:
+		var myItem = CreateDFNItem( null, null, itemSectionID, amount, "ITEM", false, worldNumber, instanceID );
+	Option to define how much memory JS engine should be allowed to allocate before last-ditch GC kicks in has been moved from engine.dat to a new UOX.INI setting under [system]. Note that too low values can lead to server instability, especially if doing a lot of JS engine reloads, so default value has been increased from 16 to 256 MB per JS Runtime:
+		JSENGINESIZE=256 // gcMaxBytes limit in MB per JS Runtime. Must be between 16 and 4095
+	Reduced stackchunksize value provided for JS_NewContext from 0x500000 to the recommended default of 8192
+	Updated how players are paid for completing NPC escort quests; instead of hard-coded random amount between 0-600 gold, the reward is now based partly on the NPC escort's fame, and partly on the amount of gold the NPC is carrying. The formula for quest rewards thus look like this: rewardAmount = (( totalFame / 100 ) * 50 ) + ( totalGold * 0.25 )
+	Fixed healthbars of nearby characters not showing correctly for players who have just logged in. Cause seems to have been UOX3 reading more bytes from network buffer than required when (not) handling packets 0xB5 and 0xFB. Added basic handling of these packets to avoid that problem.
+	Fixed an issue where UOX3 would send full status updates (packet 0x11) for each character on the screen, rather than just sending the minimum required for each character. Client doesn't need to know the weight of an NPC, or how much gold an opponent player is carrying!
+	Fixed an issue with tooltips for characters and/or items not always appearing, caused by UOX3 not responding correctly to certain tooltip requests (packet 0xD6)
+	Fixed a casting issue that prevented SEFunctions.cpp from compiling on Linux
+	Added additional Region/Townregion JS properties. These (and other properties) can be viewed and modified using the 'tweak command, but changes are not permanently saved and will only be valid as long as the server stays running:
+		.id 				// Region ID
+		.scripttrigger 		// Script-trigger associated with region
+		.numGuards 			// Number of guards associated with town (if any) in region
+		.taxes 				// Gold reserves of town (if any) in region
+		.reserves 			// Resource reserves for town (if any) in region
+		.appearance 		// Appearance - 0 = Spring, 1 = Summer, 2 = Autumn, 3 = Winter, 4 = Desolation, 5 = Unknown
+		.music 				// Music assigned to region in regions.dfn
+		.weather 			// Weather ID assigned to region in regions.dfn
+		.owner 				// Name of owner of guards in the region
+	A JS function was added previously, but not mentioned in the changelog:
+		GetTownRegion( regionID ) // Takes one parameter, regionID, and returns a region object
+	Fixed long-standing issue with UOX3 console not resetting terminal properly after shutdown on Linux, after updating cConsole.cpp/h to conform to standard unix terminal commands/settings for certain features (punt)
+	Fixed an issue that could cause a crash on Windows when attempting to broadcast system messages from the UOX3 console (punt)
+	Fixed an issue that prevented text input in UOX3 console for system broadcasts from being displayed on Linux and MacOS (punt)
+	Added support for new JS Object - IUE_ACCOUNT - which can be accessed via character property .account. The following account properties have been exposed to the JS engine:
+		.id 				// Account ID (Read-Only)
+		.username 			// Account Username (Read-Only)
+		.flags 				// Flags set on account (Read-Only)
+		.comment 			// Comment/contact info
+		.character1 		// Character in account slot 1 (Read-Only)
+		.character2 		// Character in account slot 2 (Read-Only)
+		.character3 		// Character in account slot 3 (Read-Only)
+		.character4 		// Character in account slot 4 (Read-Only)
+		.character5 		// Character in account slot 5 (Read-Only)
+		.character6 		// Character in account slot 6 (Read-Only)
+		.character7 		// Character in account slot 7 (Read-Only)
+		.currentChar 		// Currently logged in character (if any) (Read-Only)
+		.lastIP 			// Last IP used to connect to account (Read-Only)
+		// Flag shortcuts
+		.isBanned 			// Is account banned?
+		.isSuspended 		// Is account suspended?
+		.isPublic			// Is comment/contact info to be considered public info?
+		.isOnline			// Is account online?
+		.isSlot1Blocked 	// Is character slot 1 blocked?
+		.isSlot2Blocked 	// Is character slot 2 blocked?
+		.isSlot3Blocked 	// Is character slot 3 blocked?
+		.isSlot4Blocked 	// Is character slot 4 blocked?
+		.isSlot5Blocked 	// Is character slot 5 blocked?
+		.isSlot6Blocked 	// Is character slot 6 blocked?
+		.isSlot7Blocked 	// Is character slot 7 blocked?
+		.unused9 			// Unused flag
+		.unused10 			// Unused flag
+		.isSeer 			// Is account marked as Seer account?
+		.isCounselor 		// Is account marked as Counselor account?
+		.isGM 				// Is account marked as GM account?
+	Fixed 'addaccount command - can now once again be used to add a new user account to the server from in-game. See accounts.adm for info on available flags. Syntax:
+		'addaccount [username] [password] [(optional)flags]
+	Updated AI for AI_HEALER_G and AI_HEALER_E to check for multi-ownership and line of sight before resurrecting dead players
+	Added new helper function to get amount of minutes that have passed since midnight 01/01/1970 UTC - GetMinutesSinceEpoch()
+	Converted wTimeBan property of CAccountBlock from UI16 to UI32
+	Added check during login for timeban account property. If a timeban is in place, player will be unable to login until after the ban is over.
+	Added JS property for Account JS Object:
+		.timeban 			// Time in minutes that user is banned
+	Completed implementation of onDecay JS event, which was not actually hooked up to anything! Can now be used to interrupt decay for items. Returning false will prevent code from deleting the decaying item, while returning true will continue running the decay code as normal.
+	Fixed an issue with .brkPeaceChance JS Character property, which erroneously called on the GetBrkPeaceChanceGain()/SetBrkPeaceChanceGain() functions instead of GetBrkPeaceChance()/SetBrkPeaceChance()
+	Fixed issue with loading of UOP map files that was introduced in a previous commit while attempting to get rid of some warnings when compiling UOX3 on Windows!
+	Exposed a (read-only) JS property for characters to fetch their hunger rate. Uses race's hunger rate if defined, otherwise uses HUNGERRATE form uox.ini:
+		.hungerRate 		// Seconds between becoming hungrier
+	Added some details to console during UOX3 startup about which IPs and Ports UOX3 is listening to
+	Added new JS event that triggers when a player clicks on the Quest button in the paperdoll. Triggers from character script if present, or global script if not:
+		onQuestGump( pUser )
+	Added new JS event that triggers when player toggles a special move from a combat book. See packet 0xBF, subCmd 0x19 in packet guides for details on the special moves, whose IDs range from 0x00 to 0x1D:
+		onSpecialMove( pUser, abilityID )
+	Updated FileSize() function in regions.cpp to fetch file size using std::filesystem::file_size() instead of creating an input stream, opening a file and then trying to seek the last position in the file
+	Added findNearbyObjects() function to findfuncs.cpp, to find all objects (characters and items) of CBaseObject class near a specified location
+	Improved performance when initializing multis on startup; now checks for items near multis, instead of checking for multis near every single item!
+	Improved performance when loading items and characters from worldfiles during startup; around 33% faster for release builds, around ~50% faster when running in debug mode through visual studio (punt)
+	Updated createSection() in ssection.cpp to use std::string and StringUtility functions instead of UString, and added some error handling (punt)
+	Updated a bunch of casts to use UOX3-specific typedefs for consistency
+	Startup performance is now faster by an additional 70% over the previous commit, primarily due to modernization of HandleLine() functions in cBaseobject.cpp, cChar.cpp, cItem.cpp and cMultiObj.cpp (punt)
+	More UString instances replaced by std::string and associates (punt)
+	Additional work done to modernize string handling in CPacketReceive.cpp, CPacketReceive.h, CPacketSend.cpp, CPacketSend.h, cScript.cpp, gumps.cpp (punt)
+	Additional work done to modernize string handling in gumps.cpp, commands.cpp, cmdtable.cpp, commands.h, CJSMapping.cpp, scriptc.cpp and scriptc.h (punt)
+	Fixed an issue with check for allowed/banned equipment for races; if a list of allowed equipment existed, it would never check the banned list
+	Additional string handling modernization in cHTMLSystem.cpp, cRaces.cpp, gumps.cpp, townregion.cpp and uox3.cpp (punt)
+	Increased default timer for worldsaves from 5 to 10 minutes
+	Fixed an issue where the tile command could spawn items with incorrect ID because tempInt2 wasn't reset properly
+	Additional string handling modernization in cAccountClass.cpp, cHTMLSystem.cpp, CResponse.cpp, cServerData.cpp, cServerData.h, cServerDefinitions.cpp, cSocket.cpp, cSpawnRegion.cpp, cSpawnRegion.h, cWeather.cpp, Dictionary.cpp, effect.cpp and uox3.cpp (punt)
+	Fixed an issue where using JS Method PopUpTarget with ID 12 could crash the server
+	Additional string handling modernization in magic.cpp, JSEncapsulate.cpp, jail.cpp, house.cpp, fileio.cpp, network.cpp, msgboard.cpp, mapstuff.cpp, pcmanage.cpp, scriptc.cpp, SEFunctions.cpp, sound.cpp, speech.cpp (punt)
+	Removed ustring.h and ustring.cpp and references to these from the project as they have now been completely phased out by the move to std::string and the use of StringUtility.cpp/hpp
+	Finalized string handling modernization in cRaces.cpp, house.cpp, items.cpp, npcs.cpp, skills.cpp, ssection.cpp, ssection.h and targeting.cpp (punt)
+	All teleport locations in teleport.scp without a source/target world specified will now work for both Felucca and Trammel facets
+	Deleted ustring.cpp/ustring.h from repository and removed last few straggling references to these
+	Teleport locations from teleport.scp are now sorted upon initial load, and no longer require being sorted in the file itself (punt)
+	Modified handling of CONT and PACKITEM tags loaded from worldfiles to no longer corrupt pointers (punt)
+	Randomized initial position of items added inside containers via DFN tag PACKITEM
+	Fixed various issues with in-game bulletin boards; posts can now be made, read and replied to using both regular client and ClassicUO client
+	Fixed issue with bulletin board post removal that could cause infinite loops
+	Fixed issues with and re-enabled bulletin board maintenance. Should no longer cause infinite loops, nor corrupt bulletin board posts when removing posts marked for deletion! This also fixes NPC escort quests not appearing on bulletin boards after initial quests were accepted and related posts removed.
+	Fixed an issue where bulletin board posts submitted from client with lines of text longer than 255 bytes were stored with no null-terminator at end of the such lines, since they got cut off in wrong place
+	Fixed server crash related to JS timers/other tempeffects by replacing the use of CDataList (which uses std::deque) in tempEffects with GenericList (which uses std::list), which is more optimized for removing records in the middle of the array
+	Updated Sort() methods in GenericList to use std::list member function sort instead of std::sort (Xuri)
+	Applied some code style changes for consistency :art: (Xuri)
+	Replaced CDataList with the new GenericList class throughout UOX3, and removed CDataList from the project files
+	Reverted an earlier change where scriptsections were supposed to be reapplied to items bought from NPC shopkeepers - didn't actually work!
+	Fixed issue where total gold and armor rating of player was not getting sent for status window updates
+	Updated LeaveBoat() function to use ValidSpawnLocation() instead of ValidMultiLocation() for more reliable disembarking from boats
+	Added support for the following boat commands (and their triggerword aliases):
+		raise anchor 		// Raise anchor, allowing boat to move
+		drop anchor 		// Drops anchor, preventing boat from moving
+		forward one 		// Moves boat one tile forward
+		backward one 		// Moves boat one tile backward
+		left one 			// Moves boat one tile in port direction
+		right one 			// Moves boat one tile in starboard direction
+		forward left 		// Moves boat forward left diagonally
+		forward right 		// Moves boat forward right diagonally
+		backward left 		// Moves boat backward left diagonally
+		backward right 		// Moves boat backward right diagonally
+		forward left one 	// Moves boat one tile diagonally, forward left
+		forward right one 	// Moves boat one tile diagonally, forward right
+		backward left one 	// Moves boat one tile diagonally, backward left
+		backward right one 	// Moves boat one tile diagonally, backward right
+	Added new enum BoatMoveType to keep track of all the additional boat movement types, and changed moveType from UI08 to SI08, in order to use -1 as a representation of an "anchored" and immovable boat
+	Boats now start out with anchor dropped when initially placed, and must also have anchor dropped before they can be packed up into model ships, while anchor must be raised in order for tiller man to accept orders to sail
+	Added support for two new DFN tags in houses.dfn, primarily for the use of boats/boat holds:
+		MAXITEMS=#			// Max items that can be stored in a boat's hold
+		WEIGHTMAX=#			// Max weight that a boat's hold can... hold (40000 = 400.00 stones)
+	Fixed an issue where large dragon ships would be spawned with incorrect names due to server assuming they're houses
+	Fixed an issue where it was not possible to turn a boat around under certain circumstances
+	Tiller men on boats will now be named "a tiller man" if the boat is unnamed, and "The tiller man of [ship name]" if the ship has been named
+	Boats now cannot be dry-docked if there are items in the hold
+	Boats now cannot be dry-docked if either of the planks are open
+	Names of boats are now stored in the title property of ship models, and is used to reapply the boat's name when unpacking the boat, while the ship model itself is named after the boat with a [Dry Docked] tag slapped on at the end.
+	5/05/2021 - Xuri (0.99.4m)
+	Fixed a long-standing (20+ years old) issue with objects not being sent/removed consistently when players login, teleport or move around, or when items are being removed, areas wiped, etc.
+	Added new class RegionSerialList to store serial references to objects added to/removed from regions (both on worldfile load and when objects move in-game). This allows for faster lookup, insertion tests, etc. and results in worldfiles loading up to ~41% faster
+	Fixed an issue where characters in different world instances could shove each-other when moving
+	Fixed server crash related to using incorrect argument for REGSPAWN command
+	Fixed an issue where characters would not get world changes updated properly in some older (5.x) client versions
+	UOX3 will now attempt to resist being closed if a world-save is in progress, to avoid corruption of worldfile data
+	Added TryParseJSVal() helper function in cScript.cpp, used to parse jsval values returned from script events. Provides results matching 0 (0, false), 1 (1, true) or any specific int value returned from script.
+	JS events updated to use new TryParseJSVal helper function (no change in behaviour):
+		onDecay, onResurrect, onCommand, onBuyFromVendor, onSellToVendor, onPickup, onCharDoubleClick, onSkillGump, onUseBandageMacro, onCombatStart, onCombatEnd, onDeathBlow, onBuy, onSell
+	JS events with slight change of behaviour after update to use TryParseJSVal:
+		onDrop, onDropItemOnItem, onDropItemOnNpc - previously, a blank or non-existent return value would be treated the same as a return true. This will now be treated as a return false. Update scripts accordingly!
+	JS events updated to support return values from scripts:
+		onCollide, onTalk, onSnooped, OnHungerChange
+			Return false or nothing to prevent hard code from running
+			Return true to allow hard code to run like normal
+		onStolenFrom, onAISliver, onLightChange, onVirtueGumpPress, onQuestGump, onSpecialMove, onSwing, onClick, onHouseCommand, onSellToVendor, onSkillCheck, onSpellGain, onSpellLoss
+			Return false to allow hard code and other scripts with event to run like normal
+			Return true to prevent hard code and other scripts with event from running
+		onSteal
+			Return false or nothing to allow hard code and other scripts with event to run like normal
+			Return true to prevent hard code and onStolenFrom event from running (theft failed?)
+			Return 2 to prevent hard code, but allow onStolenFrom event to run (theft succeeded, but handled in script?)
+		onLeaving, onEntrance, onEquip, onUnequip, onEnterEvadeState, onSoldToVendor, onBoughtFromVendor, onSpellSuccess, onSpellTarget, onFlagChange, onDeath
+			Return false or nothing to allow other scripts with event to run like normal
+			Return true to prevent other scripts with event from running
+	Added new JS events that run prior to items being equipped/unequipped, with support for return values:
+		onEquipAttempt( pEquipper, iEquipping )
+		onUnequipAttempt( pEquipper, iUnequipping )
+			Return false or nothing to reject attempt to equip/unequip item, and prevent hard-code or other scripts with event from running
+			Return true to allow hard code to run like normal
+	Added new JS event that runs prior to onSnooped event, for character doing the snooping:
+		onSnoopAttempt( snooped, snooper )
+			Return false or nothing to prevent hard code and other snooping-related events from running
+			Return true to allow hard code and other snooping-related events to run like normal
+	Updated onSnooped JS event to accept return values:
+		Return true when success state is true to prevent other scripts with event from running
+		Return true when success state is false to prevent hard code and other scripts with event from running
+	Added second parameter to onCommand() JS event to match it up with the documented version. New syntax:
+		onCommand( socket, cmdString )
+	Updated onClick JS event to also run for characters with event attached (return 1 to prevent showing hard-coded name for whatever object is clicked)
+	Updated onSteal JS event to include a third parameter, an object reference for the target of the theft
+	Fixed an issue where the JS function TriggerEvent() didn't restore the original JSContext and JSObject of the calling script after calling an event in a separate script, causing timers to be associated with the wrong script when both TriggerEvent and StartTimer were used in same script
+	Updated KillTimers JS method to support an optional argument specifying the timerID of the timer to be killed. If no arguments are provided, it will - as previously - kill all timers for the object
+	Added support for assigning multiple JS scripts per object (item, multi, char, region).
+		Any time a scriptID is added to an object, the list of such IDs for that object will be sorted from lowest to highest scriptID, which also determines the execution order for the scripts. Note that if the same JS event is present in several scripts assigned to an object, each of those events will trigger, unless the rules about return values for said event prevent this
+	DFNs for Items, Multis, Characters and Regions can now contain multiple SCRIPT=scriptID tags per definition. Each such SCRIPT tag will be applied to the object in question, then sorted from lowest to highest scriptID by server.
+	Added new JS property for Items, Multis, Characters and Regions:
+		.scriptTriggers 		// If used to get property, will return array object with all script IDs assigned to object. If used to set property, will add script ID to existing list of script IDs for object.
+	Modified JS property for Items, Multis, Characters and Regions, which for backwards compatibility functions similar to in older versions:
+		.scripttrigger 			// If used to get property, will return last script ID in list of script IDs assigned to object. If used to set property, will clear list of script IDs and assign only the new ID
+	Added new JS Methods for Items, Multis, Characters and Regions:
+		.AddScriptTrigger( scriptID ) 	// Adds a new scriptID to list of scripts assigned to object
+		.RemoveScriptTrigger( scriptID ) // Remove a specific scriptID from object (0 = remove all)
+	Removed all traces of SETSCPTRIG and TWEAK commands from source. These commands are now entirely handled in JS.
+	Stats and Tweak buttons in list of online characters ('WHOLIST) will now execute the CSTATS or TWEAK command respectively, with target automatically set to character being viewed in list
+	Fixed an issue with TWEAK command where items equipped on a character's paperdoll could not be targeted
+	Replaced UOX_MIN and UOX_MAX with std::min and std::max (punt)
+	Moved StringUtility functions into a new namespace: strutil (punt)
+	Unified duplicate tile/multi seeking code for HS/non-HS versions of tiledata & multis (punt)
+	Updated MsgBoardMaintenance() to use standard filesystem directory listing (punt)
+	Fixed return value logic for onUseChecked/onUsedUnchecked JS events - was reversed by mistake!
+	Initiated start of revamped mul/uop handling, with some new files added to project: (punt)
+		MultiMul.cpp/hpp, IDXMul.cpp/hpp and UOPData.cpp/hpp
+	Updated code for loading and seeking in multis (punt)
+	Added new files to VS project and project filter
+	Added new files to source/CMakeLists.txt
+	Added support for MultiCollections.uop. If present in the specified datafolder, this file will be preferred over the traditional multi.mul/idx files, and will enable access to the new multis contained within (punt)
+	Added dependency for static library of zlib-1.2.11, of which a minimal version is included in a subfolder alongside spidermonkey in the root UOX3 project folder. This is needed for compression matters related to UOP files and certain UO network packets
+	Added VS Solution (zlib.sln) to compile static-library of zlib-1.2.11 for Windows. Makefile for Linux/macOS also included.
+	Updated CMakeList.txt to include zlib references
+	Adjustments to source/CMakeList.txt in attempt to fix build issue with CMake
+	Updated debug/release configurations for Win32 in VS solution to include required references to zlib
+	Removed RemoveFromSight() from CItem::Update() in cItem.cpp, to address flickering issues with animated items, and for smoother updates of items on boats when sailing.
+	Added new flag in CBaseObject - damageable - which determines if an Item or Multi should be considered a damageable object.
+	Added new DFN tag for Items and Multis to mark objects as damageable objects
+		DAMAGEABLE=0/1 // If enabled, allows client to display healthbar for object, using object's hp/maxhp values as basis. Note that any changes to a damageable object's health will not be reflected in the client until a stat update has been sent.
+	Added new JS Property for Items and Multis and Characters to get/set an object's damageable flag
+		.isDamageable // 1 or 0
+	Added new JS Method for Items, Multis and Characters to force an update of the object's health bar to nearby players:
+		.UpdateStats( statType ) // statType can be 0 (Health, only one that works for items), 1 (Mana) or 2 (Stamina)
+	Updated updateStats() in uox3.cpp to work with CBaseObject instead of CChar
+	Updated statwindow() in CSocket.cpp to work with CBaseObject instead of CChar
+	Updated CPUpdateStat in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0xA1 to client for Items/Multis
+	Updated CPStatWindow in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0x11 to client for Items/Multis
+	Fixed an issue with outgoing packet 0x11 where a character's current HP might sometimes incorrectly be displayed as zero
+	Updated CPNewObjectInfo in CPacketSend.cpp to send object information packet 0xF3 to client with datatype set to 0x03 for Items/Multis marked as damageable objects, to enable the client's ability to display health-bars for these items.
+	Fixed an issue with JS Method for Items - .Refresh() - which previously did nothing, but now instead sends an update of item to all sockets in range
+	Cleaned up some warnings caused by 64 bit/32 bit difference between macOS and Windows (punt)
+	Fixed an issue that could cause player characters created in older versions of UOX3 to end up with backpacks without max item capacity set, thus being unable to add any items to their backpack
+	More warnings cleanup, and some fixes to address size_t differences between Windows and Unix platforms (punt)
+	Reverted changes to jsapi.h, which were causing some unwanted behavior
+	Fixed some errors reading in UOP files in UOPData.cpp, and made some tweaks to other related files (punt)
+	Fixed an issue with return values for onDrop JS event where not all return values would work as intended
+	Added -Wno-shift-negative-value flag to CXXFLAGS in Makefile to potentially suppress some JS-related warnings when compiling on Unix platforms (punt)
+	Added thirst system that works similarly to existing hunger system, where characters (and optionally, pets) grow thirsty over time, and gradually draining their stamina (down to a minimum of 1) if too thirsty
+	Added new settings to uox.ini under a new [thirst] section to control thirst system:
+		THIRSTRATE=6000 	// The rate at which characters grow more thirsty
+		THIRSTDRAINVAL=2 	// The amount of stamina drained per thirst cycle when too thirsty
+		PETTHIRSTOFFLINE=0 	// Enable/disable whether pets grow more thirsty over time while owners are offline
+	Added new JS event that triggers when a character's thirst level changes.
+		onThirstChange( pChanging, newStatus )
+			Return false or nothing to prevent hard code from running
+			Return true to allow hard code to run like normal
+	Added new JS properties for Characters related to thirst system (Xuri)
+		.thirst 			// Get/Set current thirst level of character
+		.thirstRate 		// Get character's thirst rate, based on racial properties or global settings
+		.willthirst/ 		// Get/Set whether character will get thirsty
+		.tamedThirstRate 	// Get/Set tamed pet's thirst rate
+		.thirstWildChance 	// Get/Set tamed pet's chance at going wild if too thirsty
+	Added some error-checking to JS function AreaItemFunction() to avoid potential server crash
+	Fixed an issue introduced in 0.99.4m, where objects being added to/moved to specific worlds or instances were still visible to players in other worlds/instances
+	Fixed issue with loading SCPTRIG tag with value 65535 in older worldfiles, now treats these as if the value was 0
+	Updated JS Methods .AddCheckbox() and .AddRadio() to support specifying the gumpImageID to display when button is checked/selected.
+		Updated syntaxes:
+			.AddCheckbox( topHeight, topLeft, checkImage, defaultStatus, unk2 )
+			.AddCheckbox( topHeight, topLeft, checkImageOff, checkImageOn, defaultStatus, unk2 )
+			.AddRadio( topHeight, topLeft, radioImage, pressed, id )
+			.AddRadio( topHeight, topLeft, radioImageOff, radioImageOn, pressed, id )
+	Added new Socket JS Method to close a specific generic gump:
+		.CloseGump( gumpID, buttonID ) // gumpID is normally equal to 0xffff + scripttrigger of script gump is created in, while buttonID is the buttonID response we want the client to send when gump closes
+	Added new Gump JS Method to end a group of radio buttons started with AddGroup():
+		.EndGroup()	// Ends previously started group element
+	Re-enabled Gump JS Method MasterGump(), in case someone can use it for something
+		.MasterGump( masterGumpID ) // Define master gump of gump?
+	Fixed an issue with getTileName() in uox3.cpp that could cause a server crash when fetching the names of certain items
+	Added entry for a new directory path in uox.ini:
+		SCRIPTDATADIRECTORY=./js/jsdata/ - dedicated to generic data read/written by JS scripts, data not directly linked to live content, which should not live or die by the state of the SHAREDDIRECTORY. Existing scripts will continue to write/read files in the SHAREDDIRECTORY if no changes are made.
+	Updated JS File Method .Open() to support an optional fourth argument (requires third argument):
+		useScriptDataDir (boolean) - when this fourth argument is included as true, UOX3 will look for the file in the SCRIPTDATADIRECTORY instead of the SHAREDDIRECTORY. Third argument - folderName - is required for this fourth argument to be used. New syntaxes:
+			.Open( fileName, fileMode )
+			.Open( fileName, fileMode, folderName )
+			.Open( fileName, fileMode, folderName, useScriptDataDir )
+	Updated JS File Function DeleteFile() to support an optional third argument (requires second argument):
+		useScriptDataDir (boolean) - when this third argument is included as true, UOX3 will look for the file in the SCRIPTDATADIRECTORY instead of the SHAREDDIRECTORY. Second argument - folderName - is required for this third argument to be used. New syntaxes:
+			DeleteFile( fileName )
+			DeleteFile( fileName, folderName )
+			DeleteFile( fileName, folderName, useScriptDataDir )
+	Updated Item JS Method Dupe() to support passing NULL instead of a socket, for duplicating items without needing to place them in a player's backpack
+	Fixed an issue with appending folder names to paths in File JS Method .Open() and JS File Function DeleteFile()
+	Renamed default UOX3 server name (was too long) to My UOX3 Shard
+	Rewrote server IP handling (new files: IP4Address.hpp/cpp) and did away with the need for the [play server list] section and SERVERLIST entries in uox.ini. UOX3 now automatically accepts and responds to connections on both local and LAN IPs, as well as an optional external/WAN ip defined in uox.ini tag EXTERNALIP, with server name defined by the existing SERVERNAME tag in the ini (punt)
+	Following changes made to ensure compatable with some of my other projects
+		Switched over to ConfigOS.h from Config.h
+		UOX_PLATFORM to PLATFORM (and the corresponding platform types)
+	Replaced NULL with nullptr
+	Fixed an issue with how UOX3 lists out IP addresses it's actively listening to (punt)
+	Some fixes to IP4Address code and output to console of which type of IP being listened (punt)
+	Added cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodColour, BloodTypes bloodType ), which can be called upon to create blood splatter effects for things like death, bleeding, combat hits, etc.
+	Added random blood effects that spawn when a character dies, and decays according to new ini setting
+	Added new UOX.INI settings under [timers] to define how long blood effects take to decay:
+		BLOODDECAYTIMER=3 			// Smaller blood effects spawned during combat, defaults to 3 seconds
+		BLOODDECAYCORPSETIMER=450 	// Larger blood effects spawned upon death, defaults to half the duration of the default corpse decay timer
+	Changed default value of MSGREDISPLAYTIME in [tracking] section of UOX.INI from 30 to 3, so tracking arrow will actually follow the target when it moves (every 3 seconds)
+	Fixed an issue with the Tracking skill where attempting to left-click on the tracking arrow would cause client to freeze up
+	Fixed an issue with the Tracking skill where right-clicking tracking arrow to dismiss it would not always work, especially if target had been killed/deleted
+	Fixed an issue with the Tracking skill where the tracking arrow would not be automatically dismissed if the tracked target was killed/deleted
+	Fixed an issue that prevented clients in 6.0.5 - 6.0.14.1 range from connecting even though CLIENTSUPPORT6050 was enabled in ini
+	Fixed an issue where client 6.0.14.2 was being mis-classified as a T2A client, and not the first of the SA clients as it should be
+	Changed how Race damage modifier is applied to damage dealt in combat - it's now a direct percentage bonus (or penalty) applied to the base damage dealt
+	Updated default item decay timer from 300s to 1800s (30 minutes)
+	Updated default corpse decay timer from 900s to 420s (7 minutes)
+	Updated default blood decay timer for corpses from 450s to 210s (3.5 minutes)
+	Added new UOX.INI setting that determines decay timer for NPC corpses (previously used regular decay timer):
+		NPCCORPSEDECAYTIMER=420
+	Updated onDecay JS event to support triggering in global script
+	Fixed an issue that snuck in with regards to fetching server setting for BLOODEFFECTCHANCE in JS engine
+	Fixed a potential server crash issue with OnUnequipAttempt JS event
+	Added additional parameter to onCombatDamageCalc JS event - hitLoc, which contains the hit location calculated by code for an attack. New syntax:
+		onCombatDamageCalc( pAttacker, pDefender, fightSkill, hitLoc )
+	Moved CalculateHitLoc() and DoHitMessage() out of CHandleCombat::calcDamage(), so these can still happen if JS scripts override damage calculations using onCombatDamageCalc event
+	Hairs/Beards inside corpse containers now not movable, even if displayed in client for some reason
+	Fixed an error introduced with previous commit that caused some issues with the handling of items upon player death/resurrection
+	Fixed an error where items that had AR/resistances with values lower than 10 would lose those values after a restart (for instance wooden buckler)
+	Updated Character JS Method .Follow() to allow optional null parameter to clear follow target for an NPC
+	Added new Character JS Method .Dupe(), exposing code functionality to duplicate a character and returning the new character object to scripts. Example:
+		var newChar = myChar.Dupe()
+	Removed old and outdated UOG response code from network.cpp, along with UOXMONITOR response (an old tool no longer found in the wild)
+	Extended packet overloading to include packets received on first connection, to allow custom responses to things like UOG server poll and other early incoming packets
+	Adjusted code that spawns blood effects when taking damage to only happen for damage values higher than 1% of max health, or 1 (whichever is higher)
+	Adjusted code that prevents stamina regen from taking place if a character is thirsty to allow generating up to 25% of max stamina, to prevent characters from being unable to move due to thirst!
+	Added new settings in uox.ini to enable/disable the hard-coded hunger and thirst systems, with thirst system being disabled by default:
+		HUNGERENABLED=1 // defaults to 1. Affects hunger of players, tamed pets, animal AI
+		THIRSTENABLED=0 // defaults to 0. Affects thirst of players, tamed pets, animal AI
+	Responses to UOG/CUO server poll requests are now enabled in uox.ini by default
+	Fixed an issue with CChar::RemoveAllObjectsFromSight(), which failed to remove nearby multis from sight, leading to ghost images when changing worlds/instances
+	Added check for other multis when sailing - boats will now collide with other boats!
+	Added check for dynamic items when sailing - boats will now collide with blocking objects
+	Added "wrapping" support for maps 0 and 1 when sailing, meaning a ship can sail around the world in both N/S and E/W directions.
+	Added new [magic] section in uox.ini with the following settings:
+		TRAVELSPELLSFROMBOATKEYS=1 		// Toggle being able to travel via Recall and Gate spells directly to a boat via its key
+		TRAVELSPELLSWHILEOVERWEIGHT=0 	// Toggle being able to travel via Recall and Gate spells when overweight
+		MARKRUNESINMULTIS=1 			// Toggle being able to mark runes while inside multis. If enabled, runes marked inside multis will be associated with the multi in question, rather than a specific set of coordinates. If multi no longer exists, travelling to it via Recall or Gate will be impossible
+		TRAVELSPELLSBETWEENWORLD=0 		// Toggle being able to travel via Recall and Gate spells from one facet to another
+		TRAVELSPELLSWHILEAGGRESSOR=0	// Toggle being able to travel via Recall and Gate spells when marked as an aggressor (if attacked an innocent first, or if criminal)
+	Fixed an exception that would only rear its head when running UOX3 in debug mode, by adding new function void CBaseObject::RemoveFromRefreshQueue(), which when called from the end of the Cleanup() process for an object will ensure it's removed from the refreshQueue (thanks giwo!)
+	Fixed several issues with the regional spawning system:
+		NPCs would quite often get created, only to be deleted shortly after because the system failed to find a valid spawn location. This part of the system has now been rewritten to look for a valid spawn location before actually spawning the NPC, to avoid unnecessary creation/deletion of characters
+		Spawn system would not continue looking for a valid spawn location past the first failure (when it was supposed to make 100 attempts before giving up)
+		Spawn system would not look for valid water tiles for ocean-based/amphibian creatures if valid land tiles could not be found. As a result, amphibian creatures that could have spawned on either land or water would only ever spawn on land.
+		DoesMapBlock() function checked for TF_BLOCKING tile flag before it checked if waterwalking was allowed and if tile had TF_WET flag. As a result, no purely ocean-based creatures would spawn at all because no valid spawn locations could ever be found
+	Fixed an issue with JS Function DeleteFile(), which would stop calling script from working if no file was found for deletion. Could break demolishing of houses, amongst other things
+	Fixed an issue with DoSEErrorMessage() function that prevented JS function error messages from being displayed in UOX3 console if message size was below 512
+	Fixed a bug that allowed players to place items on the same slot of walls when using a client that doesn't automatically restrict this
+	When dropping items, UOX3 will now look for a valid surface to drop them on, and move the item to said valid surface if applicable
+	Fixed an issue with loading of MultiCollections.uop where max boundaries of each multi was not set on load, preventing features that relied on finding corners of building from working (like automatic ban location detection for houses)
+	Added new function in mapstuff.cpp to check flags on dynamic items, and exposed it as a JS Function with same name and parameters:
+		CheckDynamicFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, TileFlags toCheck );
+	Fixed an issue where items were not always properly added to/removed from map regions when picked up or dropped
+	Added new helper function in dist.cpp to find 3D distance between two points:
+		getDist3D( point a, point b )
+	Added JS Function - DistanceBetween() - to find distance between two sets of coordinates, or two objects:
+		DistanceBetween( x1, y1, x2, y2 )
+		DistanceBetween( x1, y1, z1, x2, y2, z2 )
+		DistanceBetween( sourceObject, targObject )
+		DistanceBetween( sourceObject, targObject, checkZ )
+	Added Item JS Method - GetTileName() - to get name of an item directly from tiledata
+	Added new UOX.INI setting that defines the lower limit for when a purchase will withdraw money from bank instead of backpack:
+		BANKBUYTHRESHOLD=2000
+	Split the UOX.INI setting CONSOLELOG into three parts, to enable/disable different forms of logging:
+		CONSOLELOG=1/0 	// Toggles logging of console messages, warnings and errors
+		NETWORKLOG=1/0 	// Toggles logging of network traffic
+		SPEECHLOG=1/0 	// Toggles logging of player/staff speech
+	Exposed crafting entries to JS engine, along with associated properties from the crafting DFNs:
+		New JS Object types
+			CreateEntries	// Global JS object containing all item entries loaded from create DFNs
+			CreateEntry		// A specific create entry retrieved from global object. Example:
+				var createEntry = CreateEntries[7] // Fetches item entry #7 from create DFNs
+		New CreateEntry JS Properties
+			id			// itemID of item to craft
+			name		// name of item entry from create DFNs
+			addItem 	// section header of item to craft from item DFNs
+			colour		// colour of crafted item
+			sound		// sound played when crafting item
+			minRank		// minimum rank value used by rank system to provide variable stats to crafted items
+			maxRank		// maximum rank value used by rank system to provide variable stats to crafted items
+			delay		// delay in milliseconds for crafting to finish
+			spell		// spell ID primarily used when inscribing magic scrolls
+			resources	// list of resources needed to craft item.
+				resources[n][0] // amount of resource needed
+				resources[n][1] // resource colour required
+				resources[n][2] // list of IDs accepted as resource material
+			skills		// list of skills requirements to craft item
+				skills[n][0]	// skillNumber of skill required to craft item
+				skills[n][1]	// minimum skill at which player will always fail to craft item
+				skills[n][2]	// maximum skill at which player will always succeed to craft item
+			avgMinSkill	// average minimum skill required to smelt item
+			avgMaxSkill	// average maximum skill required to smelt item
+	Fixed a bug with tracking menu that could cause UOX3 to crash when cancelling/closing the menu
+	Added new UOX.INI settings under [speedup] section to control global speed of mounted NPCs:
+		NPCMOUNTEDWALKINGSPEED=0.3
+		NPCMOUNTEDRUNNINGSPEED=0.12
+		NPCMOUNTEDFLEEINGSPEED=0.2
+	Added new NPC DFN tags to allow overriding global mounted movement speeds:
+		FLEEINGSPEEDMOUNTED=#
+		RUNNINGSPEEDMOUNTED=#
+		WALKINGSPEEDMOUNTED=#
+	Corpse parts carved from human corpses will now have weight, and decay - as they're added as script items instead of base items
+	Fixed some memory leaks in CMultiObj::GetBuildTimestamp(), CMultiObj::GetTradeTimestamp(), CWorldMain::SaveNewWorld() and cEffects::tempeffect()
+	Misc smaller code cleanup
+	Fixed an issue with ItemID skill where using the skill on a crafted item would not output a result if creator of item was unknown
+	Command logs now also include any parameters used with a command
+	Fixed an issue where messages used with CustomTarget JS function would not get truncated properly if longer than the allowed maximum length
+	Fixed some instances of potential buffer overrun and/or out-of-bounds memory access
+	Fixed some potential null pointer dereferences
+	Fixed a couple instances of missing breaks in switch cases
+	Added [[maybe_unused]] attributes in places where return values are intentionally unused
+	Added [[fallthrough]] attributes in places where switch case fallthroughs are intentional
+	Fixed some issues with converting account data from older (pre 0.99) versions of UOX3
+	Misc minor code cleanup
+	UOX3 now sends the appropriate packets (0x85 and/or 0x86) in response to client requests to delete a character from the char selection screen
+	Fixed an issue with fetching create entries in JS - was incorrectly limited by number of registered spells!
+	More code cleanup
+	Updated how UOX3 handles more, morex, morey and morez properties:
+		DFN tags for these properties can now handle data in multiple formats. Example:
+			MORE=1285, MORE=0 0 5 5, MORE=0x00 0x00 0x05 0x05, MORE=0x00000505
+		JS command 'set more/morex/morey/morez now accepts any of the above formats
+		JS command 'get will now display both the decimal value for these properties, as well as the hex one
+		JS command 'tweak will now display hex value for these properties in a tooltip
+	Fixed an issue with target-based spells (like Magic Lock/Unlock, Magic Trap/Untrap, Telekinesis) that used the inverse result of a distance check to determine if players could cast such a spell at an item
+	Fixed an issue where players could keep spawn containers open on screen to access items respawning inside without having to unlock/untrap container again after a respawn
+	Locked containers (and spawn containers) will now show [Locked] in the item tooltip
+	Spawn containers will now be re-trapped when new items spawn, if they were trapped originally. To trap a container:
+		MOREZ=0x01 0x32 0x00 0x00 // 0x01 marks container as trapped, 0x32 says "deal 50 damage" when trap is set off
+	Fixed trapped spawn containers not dealing damage when trap is set off due to magic damage function in source requiring a valid attacker (now no longer does)
+	Updated source and scripts to use cliloc id 1050045 for custom tooltips rather than 1114778, as 1050045 is available in all client versions that support tooltips
+	Added new JS Function to force-trigger a trapped item, as if the player tried to open a trapped container:
+		TriggerTrap( pChar, iTrap )
+	Fixed a server crash related to casting of spells
+	Fixed some issues with Line-of-Sight checks related to items under/above ground, LoS checks between different floors of buildings, etc.
+	Updated handling of skill-training keywords to be based on language-independent keyword IDs rather than trying to match player-input text to specific skill-names
+	Added new NPC AI type to source - AI_STABLEMASTER (9) - and assigned this to animal trainers. This is used to identify this type of NPCs for the purpose of displaying relevant context menus
+	Removed remaining hard-coded banking functionality - all handled by script anyway
+	Added new context menu option for NPC bankers - Open Bankbox
+	Updated code handling of context menus to only show context menus when relevant:
+		Open Paperdoll - Shows for all characters with a paperdoll
+		Open Backpack - Shows for player's character, pack animals and hirelings
+		Open Bankbox - Shows for banker NPCs (if within 8 tiles)
+		Buy/Sell - Shows for vendor NPCs (if within 8 tiles, and if they have anything for sale/are buying anything)
+	Added new context menu entries for pets, which can be used if player is within 12 tiles of pet:
+		Command: Kill
+		Command: Stop
+		Command: Follow
+		Command: Stay
+		Command: Guard
+		Add Friend
+		Remove Friend
+		Transfer
+		Release
+	Added new context menu entries for stablemasters/animal trainers:
+		Claim All Pets
+		Stable Pet
+	Added new context menu entries for Escort Quest NPCs
+		Ask Destination (if within 3 tiles)
+		Accept Escort (if within 3 tiles)
+		Abandon Escort
+	Added new context menus for NPCs that can teach skills to players (limited to max 10 per NPC)
+		Train [skillName]
+	Added new NPC DFN tag used by code to detect hireling NPCs for the purpose of displaying context menus:
+		HIRELING 	// No additional value/data needed for tag
+	Added new context menu entries for Hireling NPCs, in addition to the ones for regular pets:
+		Hire 	// Can be used within 3 steps of the hireling, who will respond with cost to hire them
+		Dismiss // Replaces the "release" command for pets, will dismiss the hireling
+	Added new UOX ini setting to enable/disable context menus
+		CONTEXTMENUS=1/0 (defaults to 1)
+	Added new Item JS Method to check if an item's ID is on a specified food list
+		.IsOnFoodList( foodList )	// Returns true/false if item's ID is on specified foodList
+	Added new Character JS Properties
+		.isGuarded 		// Gets/Sets whether character is guarded by a pet/hireling
+		.guarding 		// Gets/Sets the object (if any) being guarded by a pet/hireling
+	Fixed multiple issues with health bars, flagging and character highlighting
+	Added some crash protection for invalid data used with CUSTOMINTTAG and CUSTOMSTRINGTAG DFN tags for Items, NPCs and Multis
+	Fixed an issue which prevented hard-coded checks from running when using items
+	Added new global js object (Timer) to make the use of character timers in JS more robust, with properties matching timer names from enum in source.
+		Properties:
+			.TIMEOUT 		// Time until next attack can be done in combat
+			.INVIS			// Time until invisible character becomes visible
+			.HUNGER			// Time until character grows more hungry
+			.THIRST			// Time until character grows more thirsty
+			.POISONTIME		// Time until next tick of poison damage
+			.POISONTEXT		// Time until next message about suffering from poison
+			.POISONWEAROFF	// Time until poison wears off
+			.SPELLTIME		// Time until spell cast is completed. Can be set to 0 to interrupt
+			.ANTISPAM		// Time until next speech message can be sent (for anti spam purposes)
+			.CRIMFLAG		// Time until criminal flag runs out
+			.MURDERRATE		// Time until next murder count decay
+			.PEACETIMER		// Time until character can re-enter combat after being affected by peacemaking
+			.FLYINGTOGGLE	// Time until next time flying ability can be toggled for gargoyles
+			.MOVETIME		// Time until NPC can move again
+			.SPATIMER		// Time until next time NPC can cast a spell
+			.SUMMONTIME		// Time until a summoned NPC will vanish
+			.EVADETIME		// Time until an NPC will exit evade state
+			.LOGOUT			// Time it takes for a player char to vanish after logout
+		Examples of use:
+			var hungerTimer = myChar.GetTimer( Timer.HUNGER )
+			myChar.SetTimer( Timer.HUNGER, 15000 )
+	Added new Character JS Methods to add, remove and list friends of a pet/hireling:
+		.AddFriend( playerToAdd )		// Adds player to friend list
+		.RemoveFriend( playerToRemove )	// Removes player from friend list
+		.GetFriendList()				// Gets list of friends
+		.ClearFriendList()				// Clears list of friends
+	Added new Character JS Method to fetch a player character's list of pets/followers
+		.GetPetList()		// Gets list of pets/followers
+	Added new persistent NPC property to keep track of a pet's previous owners, whether those tamed the pet or had it transferred to them. Every time a pet is tamed, or is transferred to a new owner, this list is updated:
+		GenericList< CChar * >	petOwnerList
+	Added new Character JS Method to check if a player is on a pet's owner list as a previous owner:
+		.HasBeenOwner( mChar )
+	Previous owners of a pet can re-tame it with guaranteed chance of success
+	Updated JS Method Refresh() to be usable with both items or characters, to send updated state of object to nearby players
+	Added character tooltip [Guarded] for characters being guarded by a pet/hireling
+	Pets/hirelings that are transferred will now immediately start following their new master instead of wandering freely
+	Pets/hirelings can no longer be transferred between players as long as either party is flagged as a criminal
+	Pets/hirelings can no longer be transferred to dead players
+	Pets/hirelings can no longer be transferred to NPCs
+	Summoned creatures can no longer be transferred to other players
+	Summoned creatures can no longer have friends
+	Friend lists of pets/hirelings are now cleared when the pet/hireling is transferred to another player
+	Added new UOX.INI settings to control how many pets players can have active:
+		MAXCONTROLSLOTS=0 	// Maximum number of pet control slots available to player. Disabled if 0
+		MAXFOLLOWERS=5 		// Maximum pets/followers a player can have active at the same time. Used if control slots are disabled
+		MAXPETOWNERS=5 		// Maximum number of different owners a pet can have over its lifetime before it becomes impossible to retame
+	Added new NPC property and NPC DFN tag that keeps track of how many pet control slots an NPC would take up if owned by a player:
+		UI08 controlSlots 	// source property
+		CONTROLSLOTS=# 		// DFN tag
+	Added new Character JS properties:
+		.ownerCount		// Get the total number of owners a pet/hireling has had, based on NPC's petOwnerList
+		.controlSlots 	// Get/Set number of pet control slots an NPC will occupy
+		.controlSlotsUsed // Get/Set the number of control slots used by a player
+	Increased the max distance from player that onSpeech JS event will trigger from 7 to 12
+	Updated how "all attack" and "all follow" commands for pets are handled. Now loops through all pets owned by character and executes command for each eligible pet
+	Fixed an issue where NPCs could follow characters in different worlds/instances than them selves
+	Updated default max amount of items that can be sold to NPC vendors from 5 to 250
+	Guards can no longer train players in skills
+	Pets now inherit the karma of their owners, but revert to their original karma upon release
+	Pets and hirelings will no longer follow the ghosts of their dead owners, but stay to guard their corpse
+	Added optional 9th parameter for JS Function CreateDFNItem to specify a color for item created. This comes before the other optional parameters - worldNumber and instanceID (which are only used if character is NULL):
+		CreateDFNItem( mSock, mChar, sectionName, inPack, iAmount, itemType, iColor, worldNumber, instanceID )
+	Added ID of Giant Beetle to various pack animal checks
+	Pack animals will now drop any newbie/blessed items stored in their packs upon death
+	Added new NPC properties to track pet loyalty, and exposed these as Character JS properties, and NPC DFN tags:
+		JS Properties
+			.maxLoyalty 	// Defaults to 100
+			.loyalty 		// Starts at 25
+		DFN Tags
+			MAXLOYALTY=# 	// Defaults to 100
+			LOYALTY=# 		// Starts at 25
+	Updated TriggerEvent JS function to support return values (int, bool, string, object) from called script
+	Added new UOX.INI settings under [pets and hirelings] section related to pet control and loyalty:
+		CHECKPETCONTROLDIFFICULTY=1 	// Enable/Disable pet control difficulty system
+		PETLOYALTYGAINONSUCCESS=1 		// Amount of pet loyalty gained on successful pet command use
+		PETLOYALTYLOSSONFAILURE=3 		// Amount of pet loyalty lost on failed pet command use
+		PETLOYALTYRATE=900 				// Amount of seconds between each time pet loyalty is automatically reduced by 1. Takes 25 hours to deplete completely from max
+	Added new persistent NPC property that keeps track of the difficulty of taming and controlling a pet, and exposed it as a Character JS property:
+		.orneriness
+	Every time a tamed pet is released or goes wild, its "orneriness" increases, making it more difficult for other players to tame, and more difficult for anyone to control.
+	Updated CBasePetResponse::canControlPet() function to use pet control difficulty system if enabled, which checks player's animal taming/animal lore skill vs a pet's "orneriness" to determine chance of pet accepting a given pet command
+		On successful use of pet command, increases pet loyalty by value defined in PETLOYALTYGAINONSUCCESS ini setting
+		On failed use of pet command, decreases pet loyalty by value defined in PETLOYALTYLOSSONFAILURE ini setting
+	Added new Character JS Method to calculate chance of a player successfully controlling the pet:
+		.CalculateControlChance( mChar )	// Returns value between 0 and 1000 indicating chance of success
+	Feeding a pet will now restore its loyalty to maximum
+	Pets will now lose loyalty on hunger checks when at maximum hunger
+	Pets that are maximum hungry will now only have a chance to go wild if loyalty has dropped to zero
+	Added secure pet trading. Players who trade pets will now see a pet transfer deed appear in a secure trade window with the name and type of creature, and upon completion of the trade the associated pet will be instantly transferred to the other player
+	Updated code to use dictionaries for all system messages
+	Fixed incorrect spelling for UOX.INI setting HIDEW(H)ILEMOUNTED and updated hiding skill (js/skill/hiding.js) to actually allow/disallow hiding while mounted based on this setting
+	Added new Character JS Method to make it easier to make one NPC initiate combat with another:
+		.InitiateCombat( targetChar )	// Character attempts to initiate combat with target character
+	Updated parrying portion of combat code to be in line with Pub15/pre-AoS parrying mechanics. High AR shields now absorb more damage on a successful parry, while low AR shields have a higher chance of parrying. Shields are also now more effective against archery attacks (full absorption potential) than melee attacks (half absorption potential).
+	Updated combat damage calculations to be in line with Pub15/pre-AoS damage calculations
+	Adjusted default value of COMBATNPCDAMAGERATE ini setting (damage divisor when target is a player) from 2 to 1 to account for these changes.
+	Removed dictionary.UNK, and made dictionary.ZRO the default dictionary used for all unsupported languages
+	Added dictionary support for additional languages: Portuguese, Italian, Czech
+	Updated default dictionaries for the following languages: English, French
+	Added new UOX.INI setting to allow specifying a default dictionary language for server, which if set will force that language for all dictionary messages, regardless of client settings:
+		SERVERLANGUAGE=0 	// Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 4 - French, 5 - Portuguese, 6 - Italian, 7 - Czech
+	Added new function in combat.cpp - AdjustArmorClassDamage() - which adjusts the damage dealt in combat based on whether armour class (AC DFN tag or .ac JS property) of weapon and armour equipped on hit location of target match up. A weapon with armour class 1 would essentially be doubly effective against armour of armour class 1. Allows setting up things like piercing weapons being better against some armor types than mace weapons, etc.
+	Added new UOX.INI setting under [combat] to enable/disable double damage from armour class bonuses:
+		ARMORCLASSDAMAGEBONUS=0/1 //defaults to 0)
+	Fixed a bug with PACKITEM tag which seeped in with previous commit, which could cause a server crash due to incorrect handling of the tag data
+	Blank recall runes will no longer have a tooltip with the world the runes were marked in
+	A west-facing rune with item ID 0x1f17 has been added to represent blank, unmarked runes. This is now the rune that vendors sell, and which can be added through the magic-portion of the 'add menu. Upon being marked by a Mark spell, the rune will change ID to the north-facing one with ID 0x1f14. This is to accommodate the Inscription crafting skill, which will use the blank 0x1f17 runes as a crafting resource.
+	Added new item type - IT_RUNEBOOK (49)
+	Newbie/blessed items will now have [Blessed] displayed in the item tooltip
+	Ghosts can no longer "speedhack" by spamming the tab button to go in and out of combat rapidly
+	Fixed an issue with NPC titles in paperdolls
+	Added new Character JS property to detect if a character is running, which also accounts for sprinting while mounted, or fast flying for characters who can fly (Xuri):
+		.isRunning 		// Returns true if character is running, false if they're walking
+		Added Fish as another resource type (in addition to logs and ore) for UOX3 to keep track of and respawn based on resource areas
+	Added new UOX.INI settings to control the availability of and respawn times for fish:
+		FISHPERAREA=10 			// Maximum number of fish in a given resource area
+		FISHRESPAWNTIMER=600 	// Amount of time it takes for 1 single fish to respawn in a resource area
+		FISHRESPAWNAREA=10 		// Number of fish-areas to split the world into
+	Exposed the fish resource type to Resource JS functions, which now take "FISH" as an additional resource type on top of "LOGS" and "ORE:
+		ResourceTime( resourceType ) 		// Return respawn timer for specified resource type
+		ResourceTime( resourceType, int ) 	// Set respawn timer (in seconds) for specified resource type
+		ResourceAmount( resourceType ) 		// Get max amount of resources per resource area for specified resource type
+		ResourceAmount( resourceType, int ) // Set max amount of resources per resource area for specified resource type
+		ResourceArea( resourceType ) 		// Get number of resource areas that world has been split into for specified resource type
+		ResourceArea( resourceType, int ) 	// Set number of resource areas to split the world into for specified resource type
+	Updated Resource JS properties with properties to get current amount of fish in a region, and the current respawn timer for fish:
+		.fishAmount		// Returns/Sets the amount of fish in given resource object
+		.fishTime		// Returns/Sets the respawn timer of fish in given resource object
+	Added support for new Skills DFN tag:
+		SKILLDELAY=# 	// Delay in seconds before another skill can be used after using this skill. Overrides global delay from UOX.INI
+	Updated skill cSkills::SkillUse() to use skill-specific skill delays if set for a given skill, or global delay from ini if not. Also added a check to see if skill delay timer has been modified by onSkill JS event before attempting to set a default timer
+	Updated skill delays to better match ~pub15 era:
+		Reduced global SKILLDELAY setting in UOX.INI from 2 to 1 second
+		Detecting Hidden skill now has a default skill delay of 10 seconds
+		Herding skill now has a default skill delay of 10 seconds
+		Hiding skill now has a default skill delay of 10 seconds, with shorter delays (global skill delay) for trying to hide while in combat or for successfully hiding
+		Meditation skill now has a default skill delay of 10 seconds, with shorter delays (global skill delay) for failing due to hands being occupied or already being at max mana
+		Peacemaking skill now has a default skill delay of 10 seconds for failed skill checks, and 5 seconds delay for successful ones
+		Poisoning skill now has a default skill delay of 10 seconds
+		Provocation skill now has a default skill delay of 10 seconds
+		Remove Trap skill now has a default skill delay of 10 seconds
+		Stealing skill now has a default skill delay of 10 seconds
+		Stealth skill now has a default skill delay of 10 seconds
+		Tracking skill now has a default skill delay of 10 seconds
+		Veterinary skill now has a default skill delay of 10 seconds
+	Fixed an issue with global JS Timer object that would reference the wrong timerIDs
+	Extended global JS timer object to include timers from socket as well (marked with SOCK_ prefix):
+		.SOCK_SKILLDELAY	// Delay before the next time player can use another skill
+		.SOCK_OBJDELAY		// Delay before next time player can use another object
+		.SOCK_SPIRITSPEAK 	// Timer that tracks remaining duration of player's Spirit Speak
+		.SOCK_TRACKING		// Timer that tracks remaining duration for player's Tracking skill
+		.SOCK_FISHING		// Timer that tracks remaining duration for player's Fishing skill
+		.SOCK_MUTETIME 		// Timer that tracks remaining duration a player remains muted
+		.SOCK_TRACKINGDISPLAY 	// Timer that tracks interval between each time tracking display is updated
+	Updated Persecution ability for player ghosts to use the skill delay of the Spirit Speak skill, if set
+	Updated Persecution ability to base mana damage primarily on player's Spirit Speak skill rather than their Intelligence
+	In order to cut down on the amount of messages sent from server to players trying to spam-use objects/skills, UOX3 now only sends a maximum of one message for object use delay and one message for skill use delay while the delay timers for these are in effect. This resets on the next successful use of an object or skill. This is tracked via bools in cSocket class:
+		bool objDelayMsgShown
+		bool skillDelayMsgShown
+	Converted DELAY tag in spells.dfn to use seconds (with decimals) instead of tenths of a second, which was not precise enough. This controls the cast time of spells. What would previously say DELAY=10 (10/10ths of a second) now says DELAY=1.0 (1 second)
+	Added support for new Spells DFN tag to control delay until damage takes place after casting a spell, replacing UOX.INI setting COMBATEXPLODEDELAY, which is no longer used:
+		DAMAGEDELAY=# 		// Delay in seconds (decimal) until a direct damage spell deals its damage
+	Added support for a new Spells DFN tag to control cast recovery time, during which additional spells cannot be cast:
+		RECOVERYDELAY=# 	// Delay in seconds (decimal) until player can cast another spell
+	Added new setting in UOX.INI to control whether player spellcasting gets interrupted upon equipping/picking up items:
+		ITEMSINTERRUPTCASTING=1 	// If enabled, spellcasting gets interrupted by equipping/picking up items. Defaults to enabled.
+	Reagent checks and skill-check now take place AFTER the spellcast animation, not before!
+	Players can no longer cast spells while holding items on the cursor
+	Fixed Magic Trap, Magic Untrap, Magic Lock and Magic Unlock not being usable on containers in one's own backpack
+	Fixed an issue that caused Magic Trap to deal between 50 to 100 damage to the player. New damage: 5 to 10, depending on Magery skill
+	Fixed an issue where Magic Untrap spell would completely remove traps from spawn containers instead of disable them
+	Fixed an issue where Telekinesis spell would not set off traps on containers properly
+	Added additional FX for Teleport spell played at player's original location before the teleport took place
+	Fixed a bug where creatures summoned with the Summon Creature spell were not dispellable
+	Fixed an issue where the Reveal spell would not reveal players hidden using the Hiding skill
+	Dispel and Mass Dispel spells are no longer guaranteed to succeed at dispelling summoned creatures. Instead, the chance to dispel is based on the following simple formula, with dispelChance capped at 95% to always leave some chance for a creature to resist a dispel:
+		dispelChance = ( 50 - ( targetResistSkill - casterMagerySkill )) / 1.5
+			The targetResistSkill is based on the highest value of the summoned creature's spell resistance skill and the spell resistance skill of its summoner
+	Fixed an issue where the Create Food spell attempted to create an invalid item
+	Fixed issue where code that checked for valid drop locations for items didn't allow negative z values (Dragon Slayer)
+	Fixed issue where players could drop items on blocking map tiles like water or mountains (Dragon Slayer)
+	Fixed issue where some JS functions like CheckStaticFlag, CheckDynamicFlag, DoesStaticBlock, DoesDynamicBlock and DoesMapBlock would not work correctly when passed negative Z values
+	Fixed issue where context menu were listing skills to train from NPCs based on effective skill rather than base skill
+	Fixed issue where NPCs would offer skills for training even if those skills were not above the minimum 60 skillpoints
+	Updated clilocID used for Gump JS Method AddToolTip - as well as for some item/character tooltip data - from 1050045 to 1042971 for improved client compatibility
+	Human/Elf/Gargoyle NPCs with spellcasting capabilities will now play a casting animation and briefly stop moving when they cast spells
+	Updated NPC spellcasting code to help NPCs make a bit better choices of what spells to cast during combat. Now they take their own health percentage into account, and cast more offensive spells when at near full health vs more defensive spells as their health drops
+	Fixed an issue where Hirelings wouldn't always immediately start following their new owners
+	Fixed a bug where the Earthquake spell could incorrectly add NPC characters marked for deletion to the refresh queue
+	Added support for an optional third parameter for Character/Socket JS Method .CustomTarget() to allow highlighting targeting cursors as neutral (0, default aura), harmful (1, red aura), helpful (2, blue aura). A value of 3 will cancel the currently active targeting cursor. New syntax:
+		myChar/mySock.CustomTarget( targetID, txtToSay, cursorType ) 	// supported cursorTypes: 0 = neutral, 1 = harmful, 2 = helpful, 3 = cancel current target cursor
+	Various target cursors triggered by code (like hard-coded spells, some pet commands) also make use of these cursorTypes
+	Fixed a bug that caused segmentation fault on Linux, related to item tooltips and socket language
+	Fixed an issue where AF_ALL option in [disabled assistant features] of UOX.INI would override (duh) the setting for all the other assistant features, essentially leaving the shard admin with only two options (all features disabled, or none). The AF_ALL option has now been removed entirely.
+	Extended support for negotiating with assistant tools to disable these additional assistant tool features (from UOS) via the [disabled assistant features] section of UOX.INI:
+		AF_AUTOBANDAGE=0/1 			// Automatically apply bandages when low on health
+		AF_ENEMYTARGETSHARE=0/1 	// Share enemy target in party/guild/alliance chat
+		AF_FILTERSEASON=0/1 		// Force client to display a fixed season
+		AF_SPELLTARGETSHARE=0/1 	// Share spell target in party/guild/alliance chat
+		AF_HUMANOIDHEALTHCHECKS=0/1 // Check health of nearby humanoid characters?
+		AF_SPEECHJOURNALCHECKS=0/1 	// Check journal for specific messages sent from server
+	Applied a potential fix for an issue that could cause players to get disconnected immediately without delay before assistant tool had a chance to respond to feature negotiation request
+	Addressed a couple of minor code issues that caused some warnings
+	Extended Character JS Method DoAction() to support two additional parameters - frameCount and playBackwards - which define the length of the animation (defaults to 7) and whether the animation should be played backwards (defaults to false). Note that this only works for old-style animations, and thus is not available for Gargoyle characters. Updated method syntax:
+		.DoAction( actionID ) // Old animation packet
+		.DoAction( actionID, null, frameCount) // Old animation packet with frameCount
+		.DoAction( actionID, null, frameCount, frameDelay ) // Old animation packet with frameCount, frameDelay
+		.DoAction( actionID, null, frameCount, frameDelay, playBackwards) // Old animation packet with frameCount, frameDelay, playBackwards
+		.DoAction( actionID, subActionID ) // New animation packet
+	Renamed ORERESPAWNAREA ini setting to RESOURCEAREASIZE (it's also used for ore, and logs) and reduced it from 10 to 8 to divide each world into 8x8 sized resource areas
+	Fixed a bug where the new fish resource type was not getting regenerated or saved properly
+	Added INSTANCEID support to INSTALOG section of regions.dfn, and added default WORLD and INSTANCEID entries to all areas
+	Fixed a bug in handling of the LOOT tag for NPCs where server would crash if a number was specified behind the item/itemlist to add as loot
+	The DFN tags PACKITEM and LOOT are now handled similarly when used for NPCs and Items respectively. PACKITEM can be used for adding items with specific IDs, or "list objects" from itemlists.dfn, while LOOT can be used to add items from lootlists.dfn. One big difference between these is that if the optional amount parameter is specified for either tag when used with itemlists/lootlists (PACKITEM=listObject,amount vs LOOT=lootlist,amount), PACKITEM will add the specified amount of the specified/randomly chosen item, while LOOT will add X amount of random items.
+	Updated implementation of ITEMLISTs and LOOTLISTs to support an optional weighting system, which can be used to adjust the probability of some items being chosen from these lists over other items. In the below example, specialfishingnet has a weight of 10, while the blank entry has a weight of 90, making it 9 times more likely for the blank entry to be chosen than the specialfishingnet! Note that higher weighted items should be sorted first for this to be accurate:
+		[LOOTLIST shipwreck_treasure_special]
+		{
+		90|blank
+		10|specialfishingnet
+		}
+	Extended functionality of JS Function DoMovingEffect() to allow a set of coordinates as source location, without having to specify a character as either the source or target of the effect
+	Fixed an issue with sea creatures being unable to pathfind in shallow water due to underwater land tiles being treated as blocking
+	Fixed an issue where the color of NPC corpse names would not always match up with the NPC's flag color
+	Fixed a bug where the baseRange and maxRange properties of ranged weapons would not get saved to world files. These values are now saved in the format of RANGE=baseRange,maxRange
+	Changed the way items are added to containers, to ensure that the order in which the items are displayed to the player always reflects the order in which they were added; now the most recent item added/moved in a container will always be rendered on top of older items.
+	Made adjustments to how items are randomly added to containers; should use more of a given container gump's available area now
+	Exposed Item property to JS engine, which contains serial of the creator of an item:
+		.creator 	// contains serial of the creator of an item. If set, maker's marks will show up in the item's tooltip
+	Fixed an issue where JS engine would lose track of script context if one script used CreateDFNItem() or SpawnNPC() functions and the new objects had events that triggered upon creation. UOX3 now restores the original script context at the tail end of these functions.
+	Added new JS Event to allow inserting custom tooltip text for objects, which will be displayed in tooltips right after the object name. Any text returned from the event will be displayed, and the text can make use of the same HTML tags as gumps to make changes to color, font, etc.
+		onTooltip( myObj ) 		// Triggers for objects right before the object's tooltip properties are sent to client
+	Fixed an issue with NPC vendors and items bought from players not being properly removed from the vendor's "bought container" when players buy them again
+	Fixed an issue with CustomTarget where the target message would not be displayed if the cursorType parameter was provided
+	The feature that allows stats like Strength, Dexterity and Intelligence to provide bonuses to skill checks has been turned into a UOX.INI setting, which is disabled by default. The bonuses have also been nerfed; they will no longer contribute more to the success of a skill check than the actual skill being checked!
+		STATSAFFECTSKILLCHECKS=0/1 	// If enabled, stats can provide bonuses to skill checks based on the weighting for those stats as setup in dfndata/skills/skills.dfn
+	Updated damage tracking code to include the type of damage that was dealt (PHYSICAl vs HEAT vs COLD, etc)
+	Updated Character JS Method Damage() to include a new parameter that can specify the type of damage that was dealt to the character. The new parameter must always be included if other optional parameters are used. Note that updates might be required for scripts making use of this method.Updated syntax:
+		.Damage( amount )
+		.Damage( amount, damageType )
+		.Damage( amount, damageType, attacker )
+		.Damage( amount, damageType, attacker, doRepsys )
+		Supported damageTypes:
+			PHYSICAL 	= 1
+			LIGHT 		= 2
+			RAIN 		= 3
+			COLD 		= 4
+			HEAT 		= 5
+			LIGHTNING 	= 6 // magic damage
+			POISON 		= 7
+			SNOW 		= 8
+	Updated JS Event OnDamage to include an additional parameter that describes the type of damage that was dealt. New syntax:
+		onDamage( damaged, attacker, damageValue, damageType )
+	Updated JS Event OnSpellTarget to allow rejecting a spell being cast on a target by returning a value of 2 from the script
+	Split the character priv flag for magic reflection into a temporary one (one-time magic reflection spell) and a permanent one (innate permanent reflection ability). The temporary effect is put in place by Magic Reflection spell, and is removed after a successful spell reflect. The permanent one is an innate ability of a character and is not removed even after a spell is reflected.
+	Added new Character JS property to get/set state of a character's permanent magic reflect ability:
+		.permanentMagicReflect 		// 0 = disable, 1 = enable
+	Removed an ancient piece of code that prevented corpses from being generated for various elementals and blade spirits on death. This was originally put in place because these creatures had no corpses, and would replace it with a backpack instead, but these creatures now all have corpses in all client versions supported by UOX3
+	Fixed a bug where creatures (and humans, if FORCENEWANIMATIONPACKET was disabled in uox.ini) would play animations with wrong frame count, causing the animations to either freeze for a few frames at the end, or get cut off a couple of frames early
+	Implemented bonus hit chance for Archery skill, based on mention of such a bonus in Publish 5 patch notes and related UO House of Commons chat. This has been exposed as a UOX.INI setting where this bonus can be tweaked:
+		ARCHERYHITBONUS=10 	// Bonus hit chance for Archery skill added to regular hit chance in combat. Defaults to 10%
+	Implemented optional extra delay between moving and being able to shoot with ranged weapons in combat (in addition to whatever delay is there due to speed of the ranged weapon). This is exposed as a UOX.INI setting:
+		ARCHERYSHOOTDELAY=0.5 // Minimum delay in seconds from a player stops moving until they can start to fire their ranged weapon. Defaults to 0.5s
+	Fixed a bug where players who never entered combat mode could fire ranged weapons while moving
+	Updated Add-menu with some improvements for usability:
+		Menu now directly on the Objects (previously "Shard") tab for quicker access, with a small welcome text and quick-link button for UOX3 docs
+		Settings tab contains some (persistent, will be saved with character) options for how the Add-menu behaves, along with a few quick-access buttons to some useful commands. Available options:
+			Option to add chosen item at specific location instead of in GM's backpack
+			Option to add chosen item repeatedly until cancelled
+			Option to automatically reopen Add-menu on last menu that was open when a selection is made
+			Option to force decayable state of all added items to either off (doesn't decay), on (decays) or nothing (use item default)
+			Option to force movable state of all added items to either off (not movable), on (movable) or nothing (use item default)
+		Added a Home button at the bottom of the menu, that takes the user back to the front page of the Add-menu regardless of which menu page they're on
+	Updated Character/Socket JS Method SysMessage() with an optional parameter to specify the color used to display the system message. Updated syntax:
+		.SysMessage( "Text" ) 									// Display "Text" to user as a system message with default system message color from ini
+		.SysMessage( "Text %s %s", txtArg1, txtArg2 ) 			// Display "Text" to player with string arguments injected into text
+		.SysMessage( txtColor, "Text" ) 						// Display "Text" to user with a specified color
+		.SysMessage( txtColor, "Text %s %s", txtArg1, txtArg2 ) // Combination of text color, text and string arguments
+	Fixed a bug where hair/beard items could show up inside corpses
+	Fixed a bug where items could sometimes vanish (visually) from containers when bouncing back because player was not able to pick them up
+	Fixed a bug where players would be unable to pick up a freely movable item from a locked down container
+	Updated handling of item bouncing on pickup to use UOX3 dictionary messages instead of hard-coded client messages
+	Added support for new Dictionary language:
+		dictionary.POL - Polish (SERVERLANGUAGE=8 in uox.ini, or client language 83 if SERVERLANGUAGE is set to 0)
+	Added new Item/Character JS Methods to get/set temporary custom tags which don't persist across worldsaves (or across reconnects, for players):
+		.GetTempTag( "tagName" )
+		.SetTempTag( "tagName", tagValue )
+	When applying HPMAX, STAMINAMAX AND MANAMAX DFN tags to new NPCs, their current HP, STAMINA and MANA properties will now be automatically updated to match
+	Fixed a server crash caused by empty speech messages sent from certain clients
+	Fixed a bug that prevented teleport locations in Felucca/Trammel from working properly
+	Updated calculations in code for duration and damage of existing poison strengths (1 - Lesser, 2 - Normal, 3 - Greater, 4 - Deadly) to match with ~Publish 15 (LBR/pre-AoS), and added another poison strength for monster usage (5 - Lethal)
+	The strength of the Poison and Poison Field spells is now based on the average of the caster's Magery and Poisoning skills, the distance from the target (Poison spell only) and the target's Resisting Spells skill. If caster is further away than 2 tiles from target, the poison strength always equals Lesser Poison, otherwise the following rules apply:
+		If caster's combined skill is higher than 100.0, poison strength equals Greater Poison, with 5% chance of Deadly Poison (if Poison spell) or Deadly Poison (if Poison Field spell)
+		If caster's combined skill is higher than 70.2, poison strength equals Greater Poison
+		If caster's combined skill is higher than 30.2, poison strength equals Normal Poison
+		If caster's combined skill is 30.2 or lower, poison strength equals Lesser Poison
+		If target resists spell, poison strength is reduced by 1 level, unless it's already at the lowest level
+	Fixed an issue that would would let players move faster than they should have been allowed to
+	Fixed misc issues with Party System:
+		Mana and Stamina should now update for Party Members when added to the party, when going in/out of range and when their stats update while in range
+		Players who get disconnected or relog should now find themselves back in the same party they were in previously
+		Added system messages to inform party members about updates to their party, and to let invited players know they've successfully joined a party (or rejoined, if relogging)
+	World saves now operate on the principle of only saving changes done since the last world save. Combined with the fact that NPCs in UOX3 are only active if there are players in the same/neighbouring map regions, shard owners may expect to see a decrease in world save times ranging from ~11% to ~99%, depending on how active and how spread out their player base is. If no changes have taken place since last save, saves are virtually instantaneous!
+	Fixed some lines of text in new 'add menu that would display incorrectly in regular UO client
+	Fixed bug where player might get stuck as frozen in ghost form and unable to move if dying in the midst of casting a spell
+	Fixed two broken timer references in JS: Timer.SPELLRECOVERYTIME and Timer.LOYALTYTIME
+	UOX3 console should now show 100% when done saving, regardless of the amount of data it has to save
+	Earthquake spell can no longer harm invulnerable characters
+	Fixed issue where NPC would evade instead of change to a different nearby target if unable to pathfind to current target
+	Damage dealt by Fire Field spell is now determined by BASEDMG tag (defaults to 2, if resisted, half of that) in spells.dfn
+	The rate at which the effects of field spells (Fire Field, Poison Field and Paralyze Field) are applied is now determined via the DAMAGEDELAY tag in spells.dfn, which defaults to 1.0 seconds
+	Adjusted how updates are sent to clients when TurnToward JS Method is used, to prevent an issue where animations triggered immediately after would not play properly in the client
+	Added new system that lets shard admins assign a "network" budget to connected clients, which determines the maximum amount of bytes clients are allowed to send to/receive from server over a period of ten seconds. If a client exceeds these limits three times in the same connected session, they'll receive a temporary ban and get kicked from the server. The following new UOX.INI settings under the [system] section can be used to control this feature:
+		MAXCLIENTBYTESIN=25000		// Max bytes client can send to server over 10 seconds
+		MAXCLIENTBYTESOUT=100000 	// Max bytes client can receive from server over 10 seconds
+		NETTRAFFICTIMEBAN=30 		// Duration (in minutes) of temporary ban for exceeding these limits
+	Fixed an issue that prevented GMs from using CSTATS and TWEAK buttons in 'wholist
+	Increased MAXBUFFER size for socket operations from 2560 to 4096
+	Minor code cleanup
+	Finalized implementation of GetTempTag and SetTempTag (Xuri)
+	Fixed an issue with DoTempEffect JS function which prevented compilation on macOS (and potentially had unintended consequences)
+	Cleaned up a warning in sound.cpp
+	Updated onSkillGain, onSkillLoss and onSkillChange JS events:
+		Additional parameters now supported by events - skillGainAmount and skillLossAmount
+			onSkillGain( player, skillID, skillGainAmount ) 	// skillGainAmount is always positive
+			onSkillLoss( player, skillID, skillLossAmount ) 	// skillLossAmount is always positive
+			onSkillChange( player, skillID, skillChangeAmount ) // skillChangeAmount can be negative or positive
+		The return value from onSkillGain and onSkillLoss events can now be used to control behavior:
+			return true - skill gain/loss is allowed, and server will go through with the skill update
+			return false - skill gain/loss is not allowed, and server will prevent the skill update, but will not block additional scripts with same event from running
+		onSkillChange will now run as long as onSkillGain or onSkillLoss events return true, and if those events are not defined
+	Shifted [directories] section of UOX.INI further up in the file, to make it easier to find
+	Added new UOX.INI setting to control for which facets spawn regions are enabled (defaults to none):
+		SPAWNREGIONSFACETS=#	// # is a bitmask that determines which facets to enable spawn regions for. Supported values:
+			0 = No facets enabled (default)
+			1 = Felucca
+			2 = Trammel
+			4 = Ilshenar
+			8 = Malas
+			16 = Tokuno
+			32 = Ter Mur
+				Examples: A value of 1 = only Felucca is enabled, value of 3 = Felucca + Trammel, 10 = Malas + Ilshenar, 63 = all facets enabled, etc.
+	Updated CSpawnRegion::doRegionSpawn() function to only spawn objects in spawn region if world associated with spawn region is enabled in SPAWNREGIONSFACET uox.ini setting
+	Stackable items given to newly created characters will no longer by default be marked as newbiefied/blessed items
+	Added new Character JS Properties
+		.actualDexterity 		// Returns the actual dexterity (minus temporary mods) of the character
+		.actualIntelligence 	// Returns the actual intelligence (minus temporary mods) of the character
+		.actualStrength 		// Returns the actual strength (minus temporary mods) of the character
+	Fixed an issue where NPCs would be stuck not moving if they ended up trying to flee from non-existent targets
+	Providing an invalid spellID with CastSpell() Character JS Method will no longer crash the server
+	Fixed an issue where ranged weapons bought from NPC vendors would not have their baserange/maxrange properties set properly
+	Updated onStatGained, onStatLoss and onStatChange JS events:
+		Additional parameters now supported by events - statGainAmount and statLossAmount
+			onStatGained( player, statID, statGainAmount ) 	// statGainAmount is always positive
+			onStatLoss( player, statID, statLossAmount ) 	// statLossAmount is always positive
+			onStatChange( player, statID, statChangeAmount ) // statChangeAmount can be negative or positive
+		The return value from onStatGain and onStatLoss events can now be used to control behaviour:
+			return true - stat gain/loss is allowed, and server will go through with the stat update
+			return false - stat gain/loss is not allowed, server will prevent the stat update, and will prevent additional scripts with same event and/or hard code from running
+		onStatChange will now run as long as onStatGain or onStatLoss events return true, and if those events are not defined
+	Fixed an issue where players would experience higher than expected delays for firing ranged weapons after moving
+	Updated item stacking code to disallow stacking items that have different more, morex, morey, morez, buyvalue or sellvalue
+	Fixed issue where monsters would erroneously show context menu entries with skill training options
+	Added new Item property that can be used to associate an item with a custom server event:
+		DFN Tag:
+			EVENT=eventName	// Name of event in one word, with no spaces
+		JS Property:
+			.event
+	Added a code-check when placing house-addons to see if there's space in multi to place addon at selected location, starting from coordinates of target location and checking tiles east and south of that location based on the addon's SPACEX and SPACEY settings in house.dfn
+	Changed how house addons are marked as addons; they will no longer have their item type set to 201 (IT_HOUSEADDON), as this would override any existing item type functionality of the items being setup as addons (like the dresser, which is a container). Instead, house addons are now marked with a custom tag "addon", which is used by scripts like axe.js to identify them as house addons instead of relying on the item type.
+	NPC shopkeepers now spawn with full stocks of goods, instead of the bare minimum
+	Fixed item weight tooltip for pileable items appearing in vendor shoplists
+	Fixed an issue where selling items to NPC shopkeepers would sometimes not visually remove the items from player's backpack
+	Fixed missing base_item inheritance and missing restock property for mount statues sold by animal trainers/stablekeepers, which prevented them from being presented for sale
+	Hairs and Beards no longer count towards the total item count showing for corpses
+	All leather containers are now dyable
+	GM/Admin characters can now drag immovable items out of their own backpack even with "allmove" disabled
+	A tip to enable "allmove" or modify item's movable property now shows for GMs attempting to pick up immovable items from the ground
+	Hungry creatures with AI type 6 (AI_ANIMAL) will no longer suicide by indiscriminately attacking creatures with AI type 2 (AI_EVIL), but will instead only attack "peaceful" animals, or - if really hungry - other types of predatory animals (including humans...)
+	Added new JS Item Methods to get/set the value (0-255) for specific parts (1-4) of temp variables ("more", "morex", "morey", "morez"):
+		.GetMoreVar( moreVarName, moreVarPart )
+		.SetMoreVar( moreVarName, moreVarPart, moreVarValue )
+	Updated inRange JS event to also trigger for Items with this event attached, when player characters come within update range. Updated syntax:
+		inRange( srcItem, pCharInRange )
+		inRange( srcChar, objInRange )
+	When UOX3 retrieves data from the onToolTip() JS event to potentially display custom object tooltips, it will use the ID specified in a temporary JS tag ("tooltipCliloc") on the object as the clilocID being sent to the client with the tooltip text returned from the script. If no such tag exists on the object, it defaults to cliloc ID 1042971.
+	Added new JS event that triggers _after_ an item has been removed from a container (no return values supported):
+		onContRemoveItem( iCont, objRemoved, pChar )
+	The JS Function SpawnNPC() can now spawn NPCs from NPCLISTS if provided with a boolean parameter flag (useNpcList). Updated syntax:
+		CChar SpawnNPC( npcSection/npclist, x, y, z, worldnumber, instanceID, useNpcList )
+	Added new JS Event to allow detection of movement near an object (items only, for now). Distance at which it triggers determined by part 1 of the item's MORE property. Use long ranges with care! Syntax:
+		onMoveDetect( srcObj, pChar, rangeToChar, oldCharX, oldCharY )
+	Item and NPC definitions can now make use of randomization for the ID tag, for more variety. Syntax:
+		id=[id1] [id2] [etc] // Example: id=0x0e42 0x0e43
+	Updated code for spawn containers to allow spawning more than one item per container; by default, a spawn container will now spawn every item from an itemlist if set as the spawnobjlist property for that spawn container. These itemlists can contain direct item references, references to other itemlists or even lootlists
+	Updated Unlock spell to check for existence of morey property value on lock. If there's a value, and the second part of the value is not 0x01, Unlock cannot be used to unlock the lock. By default, dungeon treasure containers level 1 and 2 are unlockable with the Unlock spell, while levels 3 and 4 are not, and require Lockpicking skill to unlock.
+	Fixed an issue where player characters would "skip a step" when moving under certain circumstances (like coming out of hiding)
+	Players flagged as criminals or non-innocent aggressors in PvP combat can no longer use public moongates
+	Pets will now teleport along with the player both when using moongates (public or spell-based), recall, object-based teleporters or hard-defined teleport locations from teleport.scp
+	Fixed an issue where the music set for a given region would not play for characters upon login, but only after exiting/re-entering the region
+	If player moves between two guarded regions with identical GUARDOWNER, they will no longer receive a message saying they're protected by the guards of the new region (since there's no change in guarded status)
+	Regions marked with PARENTREGION=# (# refers to parent region number) are loaded by UOX3 as "sub-regions". Entering or existing such a sub-region will not change the actual region a player is in, but they can be assigned a different MUSICLIST that will play instead of the music in the actual region the character is in. Sub-regions like these must have a lower region number than the region they're contained within
+	Fixed a bug that snuck in when adding in PARENTREGION support in previous commit, that resulted in all regions being seen as sub-regions upon loading regions from regions.wsc
+	Fixed an issue where Socket JS Property .account did not properly return an object reference to the account associated with the socket
+	Updated JS Character Method .ResourceCount() to support -1 as value for the color argument, which will cause UOX3 to count all items of the specified ID, regardless of color
+	Optimized portions of new crafting menus and added some additional features (Xuri)
+		Updated Character JS Method .CheckSkill to support an optional fourth parameter - isCraftSkill. This is a boolean flag that, if set to true, will use an alternate formula for skill-checks that give players at least 50% chance at success if they at least meet the minimum requirements. The formula used:
+		successChance = 500 + ((( playerSkill - minSkill ) / ( maxSkill - minSkill )) * 1000
+		Fixed an issue where the Rank System for crafting could mess with stacking of items; stackable items now default to max rank
+		Added new Item DFN tags:
+			usesleft=# 	// The current amount of uses remaining for an item with limited use
+			maxuses=# 	// The maximum amount of uses for an item with limited use
+		Added new JS Item properties to match DFN tags:
+			.usesLeft
+			.maxUses
+	Crafting and gathering tools bought from NPC vendors will now support a random and limited amount of uses (between what is defined as "current" and "max" uses)
+	Crafting and gathering tools created by player crafters will support a limited amount of uses based on the quality of the item crafted
+	Added new JS event that triggers for characters right after an item has been crafted (or failed to be crafted):
+		onMakeItem( socket, crafter, craftedItem, createEntryID )
+	Fixed an issue where negative values could not be used with Race DFN tags STAMMOD and HPMOD
+	Fixed an issue where messages about being unable to equip race-restricted items would only appear properly for the first three races in races.dfn
+	The 'make command can no longer be used on dead player-characters; the character must be alive before its status can change!
+	Added support for an additional optional parameter in the RESOURCE tag in Create/Crafting system to make it easier to distinguish between resources with same ID, color but different name - moreValue. This can be set for a resource using the Item DFN tag MORE=#. Syntax:
+		RESOURCE=id/resourcename amount color moreValue
+	Updated ResourceCount() and UseResource() JS Methods to support optional paramter moreValue
+	Updated internal quantity functions (GetSubItemAmount, GetItemAmount, DeleteItemAmount, DeleteSubItemAmount, GetBankCount and DeleteBankItem) in code to also compare against moreValue, if passed in.
+	The above functions will now also prioritize reducing remaining uses on an item (if any) over consuming the item itself
+	Fixed an issue in HandleGumpInput that prevented compiling UOX3 properly on Linux
+	Added new uox.ini setting that determines if item stats on unidentified magic items are shown or hidden:
+		HIDESTATSFORUNKNOWNMAGICITEMS=0/1 // Toggles whether item stats for unidentified magic items are hidden from tooltips. Defaults to 1
+	UOX3 now stores a timestamp for when an account receives its first login, which can be accessed via the new (read-only) JS Account Property .firstLogin.
+	UOX3 now stores a timestamp for when a player character is created, which can be accessed via the new (read-only) JS Character Property .createdOn. For legacy player characters, the creation timestamp is set the first time UOX3 loads the characters after this update.
+	Fixed an issue on Linux where pressing the arrow keys in the console would cause UOX3 to shut down
+	Modified tooltip for armors to describe the physical defensive value as Armor Rating instead of Physical Resist
+	Updated console key input handling with a more robust approach for Linux (punt)
+
+JScript Changes/Fixes:
+	Fixed an edge case with 'time command that would not display time correctly (UOX3/js/commands/time.js)
+	Fixed an issue where house key could not be used to open locked doors if key was not contained in root of player's backpack (UOX3/js/item/doors.js)
+	Added a new command - 'cure - that can cure a targeted character of any poisons (UOX3/js/commands/targeting/stats.js)
+	Fixed an issue with the 'tweak command that would set an item's movable property instead of type if used on non-spawnerobjects
+	Fixed an issue with the 'tweak command that would trigger the wrong gump dialog when attempting to set an item's name, name2 and creator properties
+	Fixed an issue with the 'tweak command where clicking ok in gump dialog with no value entered would reset chosen property to default value
+	When marking recall runes, they will now get a hue reflecting the facet they were marked in (UOX3/js/commands/targeting/magic.js)
+	The 'set command can now be used to set the armour class of items ('set ac #)
+	Reimplemented 'tweak command in JS engine (js/commands/targeting/tweak.js) - can be used to view and modify properties of characters, character skills, items, multis and regions (target ground)
+	Added placeholder packet-hook script (js/server/network/0xf1_connectUoServerPoll.js) to handle responses to ConnectUO server polling. By default this script does nothing, but serves as a placeholder for drop-in replacement scripts generated specifically for each shard by the ConnectUO service.
+	Updated some commands to support an alternate STATIC keyword (can also be ommitted) to add base items:
+		'add static itemID
+		'tile static itemID
+	Updated some commands with support for randomization. Provided itemID will be randomized based on provided rndValue:
+		/js/commands/targeting/add.js:
+			'add itemID rndValue
+		cmdtable.cpp and targeting.cpp:
+			'tile itemID rndValue
+			'tile itemID x1 x2 y1 y2 z rndValue
+	Updated js/commands/custom/repeatingcmds.js to support 'm delete as an alias for 'rremove
+	Added 'props as an alias for the 'tweak command
+	Added 'teleport as an alias for the 'tele command (js/commands/targeting/tele.js)
+	Added 'shavehair and 'shavebeard as aliases for 'kill hair and 'kill beard (js/commands/targeting/kill.js)
+	Added 'noinvul and 'mortal aliases for the 'invul false command (js/commands/custom/misc-cmds.js)
+	Added 'immortal and 'invul (without parameter) as aliases for the 'invul true command
+	Added 'bringtopack as an alias of 'movetobag command (js/commands/targeting/movetobag.js)
+	Updated check for cancelling of target cursor in various JS scripts
+	Minor updates to various JS scripts
+	Moved countdown and explosion handling of explosion potions from code to JS (js/item/potion.js)
+	Added LoS and Z distance checking for explosion potions
+	Added optional randomization of countdown timer for explosion potions. Can be enabled via a boolean at the top of the potions script
+	Added optional Alchemy skill bonus damage modifier for explosion potions, defaults to 1 additional damage per 5 skillpoints
+	The GM command 'set can now modify a character's current mana using 'set mana #
+	Added JS command to get specific object property values (using same property names as 'set command):
+		'get [objectProperty]
+	Added functional chessboard that operates on standard chess rules. Pieces cannot be removed from the board, snap to the chessboard grid when dropped, are subject to movement restrictions per chesspiece, will capture opponent pieces if landing on their square. Board can be reset by dragging king-piece off to the side of the board (js/item/gameboards.js and js/item/chesspiece.js)
+	Added functional checkerboard, with pieces that cannot be removed, can only move in diagonals, can jump across opponent pieces to capture them. Board can be reset by either side moving one of their own pieces off to the side of the board (js/item/gameboards.js and js/item/checkerpiece.js)
+	Using the 'go command without any additional parameters will now open the GM travel menu (js/commands/go.js)
+	Updated 'get command to allow retrieving certain account properties for targeted player characters:
+		username, flags, comment, character1, character2, character3, character4, character5, character6, character7, lastIP, isBanned, isSuspended, isPublic, isOnline, isSlot1Blocked, isSlot2Blocked, isSlot3Blocked, isSlot4Blocked, isSlot5Blocked, isSlot6Blocked, isSlot7Blocked, unused9, unused10, isSeer, isCounselor and isGM
+	Updated 'set command to allow setting certain account properties for targeted player characters:
+		comment, password, isBanned, isSuspended, isPublic, isOnline, isSlot1Blocked, isSlot2Blocked, isSlot3Blocked, isSlot4Blocked, isSlot5Blocked, isSlot6Blocked, isSlot7Blocked, unused9, unused10, isSeer, isCounselor, isGM
+	Updated 'tweak command to allow viewing and modifying of certain account properties for targeted player characters
+		Note that any changes to account properties will not go into effect until a worldsave or manual save of accounts via console has taken place.
+	Updated .get command to allow retrieving timeban value from account of player characters
+	Updated .set command to allow setting timeban value on account of player characters. If set to higher than 0, player will also be marked as banned, and disconnected
+	Added two new commands in js/commands/targeting/disconnect.js:
+		'ban [durationInMinutes]	// Ban targeted player for specified duration in minutes, or for a default 24 hours if no duration is specified
+		'unban 						// Unban targeted player
+	Updated 'tweak command (js/commands/targeting/tweak.js) to support viewing and modifying .timeban account property
+	Updated 'get command to allow retrieving a character's hungerRate property
+	Fixed an error in tweak command (js/commands/targeting/tweak.js) when attempting to use it on characters with no backpacks
+	Fixed an issue where 'get command attempts to retrieve incorrect property when isonline parameter is provided
+	Fixed an issue where 'set weightmax # would fail because script used an incorrect property name
+	Fixed issue with wipe command (js/commands/targeting/wipe.js) not working because script was referencing wrong name for socket
+	Fixed issue with get (js/commands/targeting/get.js) and set (js/commands/target/set.js) commands where wrong property name was used for getting/setting old npcwander type
+	Added new GM command in js/commands/msgmod.js:
+		'msgmod on/off 		// If on, GMs who open a bulletin board while using ClassicUO client will be able to remove any individual message
+	Moved SETSCPTRIG command from code to JS (js/commands/targeting/scptrig.js), and supplemented it with some additional commands:
+		GETSCPTRIG				// List out all scriptIDs assigned to object
+		SETSCPTRIG scriptID 	// Clears list of scriptIDs for object, then assigns the specified scriptID
+		ADDSCPTRIG scriptID 	// Adds specified scriptID to list of scriptsIDs assigned to object
+		REMOVESCPTRIG scriptID 	// Removes specified scriptID from list of scriptIDs assigned to object (0 = remove all)
+	Fixed issue where sub-commands would still execute despite cancelling target cursor when using AREACOMMAND, just without being limited by such pesky things as coordinates (js/commands/targeting/areacommand.js)
+	Updated AREACOMMAND to support adding/removing script triggers (js/commands/targeting/areacommand.js)
+	Updated CSTATS command to support showing all script triggers attached to an object (js/commands/targetin/gumps.js)
+	Updated GET (js/commands/targeting/get.js) and SET (js/commands/targeting/set.js) commands to support adding/removing script triggers from objects
+	Updated the following JS scripts to use AddScriptTrigger() method instead of .scripttrigger property:
+		kindling script (js/item/kindling.js)
+		key script (js/item/key.js)
+		pitchers script (js/server/resource/pitchers.js)
+		houseSign script (js/server/house/houseSign.js)
+		banker script (js/npc/ai/banker.js)
+	Updated DFN entries for training dummies (dfndata/items/houseaddons/house_addons.dfn) to include DAMAGEABLE=1 and HP=100 tags, and also updated script for training dummies (js/item/trainingdummy.js) with some extra features for dummies marked as damageable:
+		Show damage numbers over the training dummy when hit
+		Update health of training dummy based on damage received when hit
+		Restore health of training dummy to max after 4 seconds of inactivity
+	Updated 'fullstats and 'heal commands (js/commands/targeting/stats.js) to support restoring the health of a damageable object
+	Updated 'get (js/commands/targeting/get.js) and 'set (js/commands/targeting/set.js) commands to support getting and setting the damageable flag on objects
+	Updated JS script for drinks (js/server/resource/pitchers.js) to reduce character thirst when consumed, with appropriate system messages displayed based on character's thirst level (Xuri)
+	Updated JS commands get (js/commands/targeting/get.js), set (js/commands/targeting/set.js) and tweak (js/commands/targeting/tweak.js) to support getting/setting character hunger levels (Xuri)
+	Added facet support for 'wipe and 'iwipe commands (js/commands/targeting/wipe.js). Updated syntax:
+		'wipe/iwipe
+			Brings up target cursors. Wipes all objects in area between target locations, on same facet as user
+		'wipe/iwipe x1 y1 x2 y2
+			Wipes all objects in specified area, on same facet as user
+		'wipe [objType] [facet]
+			Wipes all objects of specified type. If facet is specified, wipes only on that facet.
+			objTypes: items, multis, boats, npcs, spawners or all
+		'wipe all
+			Wipes ALL objects, on ALL facets, regardless of object type
+		'wipe all force
+			Wipes ALL objects, on ALL facets, regardless of object type and whether wipeable flag is set
+	Added new admin command (js/commands/decorate.js) to allow saving/loading world templates. These templates are essentially text files (with .jsdata file extension) that contain the bare minimum amount of details needed to decorate an entire game world, a facet or even a specific area of a facet. The files can be bundled with UOX3 for a smoother first-time-user-experience, can be easily shared with other people as blueprints for world decoration, and they can be saved and loaded on the fly without impacting existing data on a shard. By default, the command will save/load items to/from different files per facet based on the following item categories: doors, signs, lights, moongates, teleporters, misc (everything else).
+		Command syntax:
+			'decorate save
+				Save all items to the default templates, based on each item's objectCategory and facet
+			'decorate save [objectCategory]
+				Save all items of specified objectCategory, regardless of facet
+			'decorate save [facetName]
+				Save all items on specified facet, regardless of objectCategory
+			'decorate save [customFileName]
+				Save all items of all objectCategories on all facets to custom template file
+			'decorate save [objectCategory] [facetName]
+				Save all items of specified objectCategory in the specified facet
+			'decorate save [customFileName] [facetName] x1 y1 x2 y2
+				Save all items within specified coordinates on specified facet to customFileName
+			'decorate load
+				Load all items from the default templates, regardless of objectCategory and facet
+			'decorate load [objectCategory]
+				Load all items of specified objectCategory, regardless of facet
+			'decorate load [facetName]
+				Load all items on specified facet, regardless of objectCategory
+			'decorate load [customFileName]
+				Load all items from file named [customFileName]
+			'decorate load [objectCategory] [facetName]
+				Load all items of specified objectCategory in the specified facet
+			'decorate copy [sourceFacet] [targetFacet]
+				Copy all items from one facet to another
+			'decorate clean
+				Clean up duplicate decorations that might have been loaded/added by accident.
+		Note that world templates are by default stored in and read from a subfolder named "worldtemplates" under the new SCRIPTDATADIRECTORY (which defaults to UOX3/js/jsdata/)
+	Added welcome gump that is displayed automatically for characters on the admin account (account 0) on first login. This welcome gump gives new shard admins the option to either start with a blank and empty world, or to load the default UOX3 world - based on the default set of world templates provided with UOX3, if any. It also provides a few tips to get started, as well as links to various documentation pages, forum and Discord server. The welcome gump can also be re-opened at a later stage using a new admin command: 'welcome
+	Updated decorate command to support two additional object categories - containers and spawners - and the properties needed by these to function
+	Added missing world template file (js/jsdata/worldtemplates/felucca_containers.jsdata)
+	Fixed an issue with Forensic Evaluation skill (js/skills/forensics.js) not giving correct info on age of a corpse, because it incorrectly tried to check a .tempTime property instead of .tempTimer
+	Added onDecay event to default global script (js/server/global.js), which detects when player corpses are about to decay, turns them into bones, and resets the decay timer back to full
+	Updated GM command 'dupe to work with characters as well as items
+	Moved splitting of NPCs in combat from hard code to JS (js/npc/ai/splitting_npcs.js). It relies on the onAttack JS event to trigger, but otherwise works identical to the previous hard-coded variant. The script has been assigned a default script ID of 3203
+	Fixed an issue where UOX3 would attempt to update health bar of training dummies not marked as damageable (js/item/trainingdummy.js)
+	Added packet-hook script (js/server/network/0x7f_uogatewayServerPoll.js) to handle responses to server polling by shard lists like UOGateway, ShardPortal, etc.
+	Added script for rotating furniture via interior decorator tool or via dropping item
+	Merged furniture rotating functionality into existing smartturn script, and expanded on the selection of items. Supported furniture can now be turned by double-clicking the item (if no other double-click functionality exists), picking up and dropping the item, or via the interiordecorator tool (Xuri)
+	Updated js/jse_objectassociations.scp with furniture IDs supported by the furniture_smartturn script, so rotating will work for any supported furniture without needing to add scripts to each individual furniture DFN (Xuri)
+	Added script for handling hair restyle (js/item/hairrestyle.js) and added it to jse_fileassociations.scp with ID 5028
+	Updated hair restyle script with some coding style changes, added system messages to dictionary files and added gump tooltips (Xuri)
+	Added JS command to reload dictionaries
+		'reloaddictionaries
+	Updated animal-trainer/stablemasterscript (js/npc/ai/stablemaster.js) with several changes:
+		Fixed an issue where the same pet would be stabled in all available slots if payment was taken from player's bank account instead of their backpack
+		Fixed an issue where stablemaster would not pause walking for a while when a player interacts with them
+		Converted all system messages and text messages in stablemaster script to dictionary entries
+	Reworked banker AI script (js/npc/ai/banker.js) to use triggerwords from client instead of hard-defined strings, to work better with multiple languages (and work with all relevant triggerwords)
+	Fixed a bug with banker AI script (js/npc/ai/banker.js) that prevented players from using the "withdraw" command
+	Added new AI script for NPC hirelings (3204=js/npc/ai/hireling.js), who can be hired to follow the player around for a limited amount of time, and function the same way as pets. In addition to the regular pet commands, these speech commands are supported:
+		hire 	// The hireling will respond with the cost to hire them
+		dismiss // Replaces the "release" command for pets; will dismiss the hireling
+		patrol 	// The hireling will patrol between it's current location and a second targeted location nearby
+		move 	// The hireling will try to shuffle out of the way
+		fetch 	// The hireling will try to fetch a targeted item
+		drop 	// The hireling will drop to the ground all loot they're currently carrying
+		report 	// The hireling will report on the remaining time they're hired for
+	Updated get (js/commands/targeting/get.js) and set (js/commands/targeting/set.js) commands to support getting/setting the following character properties:
+		deaths
+		ownerCount (read only)
+		controlSlots
+		controlSlotsUsed
+	Updated various JS scripts to make use of new TriggerEvent functionality and reduce reliance on custom tags:
+		js/item/archerybutte.js
+		js/item/trainingdummy.js
+		js/server/data/combatanims.js
+		js/server/data/weapontypes.js
+	Updated archerybutte script to use dictionary for system and text messages
+	Updated archerybutte script to support increased range, distance penalty and dex/str bonuses when calculating score
+	Updated resource JS scripts (js/server/resource/*) to use dictionaries for all system messages
+	Updated skill JS scripts (js/skill/*) to use dictionaries for all system messages
+	Updated housing JS scripts (js/server/house/*) to use dictionaries for all system messages
+	Updated item JS scripts (js/item/*) to use dictionaries for all system messages
+	Updated magic JS scripts (js/magic/*) to use dictionaries for all system messages
+	Updated NPC AI JS scripts (js/npc/ai/*) to use dictionaries for all system messages
+	Updated command JS scripts (js/commands/*) to use dictionaries for all system messages, gump tooltips, etc
+	Implemented Remove Trap skill, which depends on player's detect hidden and lockpicking skills being at least 50.0, and removes or fails to remove traps based on trap difficulty vs skill checks. Trap difficulty is set in the last part of a 4-part MOREZ value, using the following format:
+		MOREZ=0x01 0x32 0x11 0x37 	// First part is trap enabled/disabled, second part is damage dealt by trap, third part is minimum remove trap skill required to remove trap, and fourth part is minimum skill required for guaranteed removal success
+	Updated Animal Lore skill with more details, more options. Defaults to showing UOX animal lore gump, but alternate gump with additional details for AoS and beyond can be enabled
+	Integrated a version of the Runebook JS script rewritten from scratch to support all the features that ~pub15 era Runebooks did, including dropping runes and Recall scrolls on the books, recalling/gating directly from the spell icons in the Runebook, and more.
+	Max charges for a newly crafted Runebook ranges from 5 to 10 depending on the Inscriber's skill (if rank system for crafting is enabled), and is stored in the book's direction property
+	Updated various JS item scripts to unhide characters when the items are used (Dragon Slayer)
+	Added AOS Bone cutting to create bones
+	Added AOS toggle switch for the bone cutting.
+	Fixed So cutting clothing up will give back cloth and not bandages.
+	Fixed so the material will keeps its color when cut up.
+	Added Scissor sound to cutting up the material.
+	Made 5 new functions for ids so it can easily be expanded on to without having to edit any of the main function.
+	Added a Newbie Check so you can not cut up your starting items.
+	Updated scissors script to verify that scissors still exist and are within range upon targeting an object, and a check to ensure characters cannot use scissors while running (Xuri)
+	Updated scissors script to base the amount of returned cloth/leather from cut up clothes/leather armor on the amount of resources used to craft the items, as well as on the player's Tailoring skill. The higher the player's skill, the more resources returned, capped at half the amount of resources used to craft the item. If the item was not crafted by a player, it returns 1 resource only. (Xuri)
+	Updated Tailoring script (js/skills/tailoring.js) to accept cut leather as a valid tailoring resource
+	Updated various JS scripts to use the new Timer.TIMERNAME with .GetTimer()/.SetTimer() JS Methods for Characters and Sockets
+	Moved fishing skill out of code and into js for more user friendly control
+	Added js/item/magicfish.js for the magic fish food
+	Extended fishing JS script to include:
+		Fishing special fishing nets, big fish, messages in a bottle/SOS messages and associated shipwreck treasures, with chances of attracting sea serpents, deep sea serpents, water elementals and krakens while fishing.
+		Enhanced detection of fishing in shallow vs deep water, with deep water now being defined as any water tile that's 16 or more tiles away from the nearest land area.
+		Updated timer system, LoS checks,
+	Implemented SOS messages and shipwreck locations, with areas valid for potential shipwreck locations being defined in a new section of regions.dfn named [SOSAREAS], which follows the same syntax as the INSTALOG section in the same file. Once a message in a bottle is opened, a SOS message is generated with coordinates for a random shipwreck location, which players can sail to and fish near in order to find a sunken treasure (and other items).
+	Implemented shipwreck treasures, which come in 3 levels of quality (with an optional 4th quality level available), with increasing amount of gold, gems, scrolls, reagents and magic items (coming in next commit!) per quality level of treasure
+	Implemented special fishing nets, which can be used to fish up a variety of sea creatures (sea serpents, deep sea serpents, water elementals, kraken), which have a high chance of having SOS bottles on their corpses when defeated
+	Fixed an issue with Runebooks (js/item/runebook.js) where the coordinates of a rune location would not be displayed properly
+	Separated map coordinate function from Runebook script to its own script (js/server/data/map_coordinates.js), which other scripts can call upon to get map coords using TriggerEvent() JS function
+	Ported sextant implementation from code to JS (5033=js/item/sextant.js), and removed the hard-coded version of this.
+	Using bladed weapons on stacks of fish will now cut the entire stack at once, instead of one fish at a time
+	Updated 'tweak and 'set commands to refresh item being modified if movable state of item changes, so the change is reflected in nearby clients
+	Ported Item Identification skill from code to JS (js/skill/itemid.js) and removed hard-coded version
+	Implemented magic item generator in JS (js/item/magic_item.js). When this script is attached to an NPC, it has a chance to generate magic weapons, armors, wands/staffs and rings as loot on the NPC's corpse when slain. The chance of getting quality magical items increases with the fame level of the NPC in question. The types of magical items generated follows the pattern of such items as implemented in UO prior to the AoS expansion.
+		Examples:
+			exceedingly accurate war hammer of vanquishing
+			substantial, accurate axe of power and Daemon's Breath
+			silver long sword
+			massive platemail arms of Protection
+			metal shield of defense
+			durable ringmail tunic of guarding
+		All magic items have a chance to have spell effects attached (with rings/wands being guaranteed to have these), with a limited amount of charges available. For weapons, these effects activate on successful hits in combat, while for armors they activate on equip, and then periodically as long as the item is worn. Rings and wands/staffs have to be manually activated and targeted - with the exception of rings of invisibility, which activate the moment you equip them!
+		Related scripts:
+			js/item/magic_armor_equipeffects.js
+			js/item/magic_weapon_accbonus.js
+			js/item/magic_weapon_equip.js
+			js/item/magic_weapon_spell_attack.js
+		The magic item loot generation script has been attached to a number of different NPCs, all of which now have a chance to drop magic items as loot when defeated.
+	A bonus magical item - the glacial staff - has also been implemented (js/item/magic_glacial_staff.js), and has a chance to drop as loot from Giant Ice Serpents!
+	Fixed bug with 'rename command, which referenced a non-existing variable that caused a script crash
+	Added additional object properties to 'get and 'set commands:
+		.shouldSave 		// Determines if an item should be saved in worldfiles or not
+		.baseRange 			// Determines the base range of a ranged weapon, less than which it becomes less effective
+		.maxRange 			// Determines the max range of a ranged weapon, beyond which it cannot reach its target
+	Added special abilities/effects for the following NPCs:
+		Acid Elementals now have a chance to damage the melee weapons of their attackers
+		Dull Copper Elementals now explode on death
+		Shadow Iron Elemental is immune to targeted spell damage
+		Copper Elementals have permanent magic reflect, and reflect some physical damage back at their attacker
+		Bronze Elementals deal passive area damage to nearby players every 5 to 10 seconds
+		Valorite Elementals have permanent magic reflect, reflect some physical damage back at their attacker
+		Snow/Ice Elementals deal passive area damage to nearby players every 5 to 10 seconds
+		Lava Serpents deal passive area damage to nearby players every 5 to 10 seconds
+		Phoenixes deal passive area damage to nearby players every 5 to 10 seconds
+		Pixies have a chance to cast a random spell upon receiving a death blow:
+			Bless (target)
+			Curse (target)
+			Explosion (target)
+			Greater Poison (target)
+			Greater Heal (self, prevents death)
+		Ethereal Warriors will now resurrect dead players with positive karma
+		Ethereal Warriors now have a chance to drain target's health, stamina or mana on hit
+		Fire Breath special ability added to the following NPCs, with the random ability damage scaling with the NPCs current health:
+			Hell Cat, 5 to 8 dmg at max health
+			Fire Steed, 6 to 9 dmg at max health
+			Hell Hounds, 8 to 11 dmg at max health
+			Lava Lizard, 8 to 11 dmg at max health
+			Predator Hell Cat, 9 to 14 dmg at max health
+			Sea Serpent, 11 to 17 dmg at max health
+			Swamp Dragon, 15 to 22 dmg at max health
+			Armored Swamp Dragon, 15 to 22 dmg at max health
+			Fire Gargoyle, 20 to 30 dmg at max health
+			Deep Sea Serpent, 21 to 32 dmg at max health
+			Serpentine Dragon, 22 to 32 dmg at max health
+			Drake (Gray), 22 to 32 dmg at max health
+			Drake (Red), 22 to 32 dmg at max health
+			Nightmare, 26 to 39 dmg at max health
+			Dark Steed, 26 to 39 dmg at max health
+			Silver Steed, 26 to 39 dmg at max health
+			Kraken, 39 to 59 dmg at max health
+			Dragon (Red), 41 to 62 dmg at max health
+			Dragon (Gray), 41 to 62 dmg at max health
+			Shadow Wyrm, 50 to 75 dmg at max health
+			Reptalon, 51 to 77 dmg at max health
+			Skeletal Dragon, 52 to 77 dmg at max health
+			Ancient Wyrm, 60 to 90 dmg at max health
+	Updated potions script (js/item/potion.js) with updated formula for amount of hitpoints healed by healing potions, and added restrictions for using them when at full health and/or if poisoned (Dragon Slayer)
+	Added taming restrictions for Unicorn, Ki-Rin and Cu Sidhe (js/skill/taming.js)
+	Added modification of some creatures stats after they've been tamed (js/skill/taming.js)
+	Added restrictions for who can ride certain creatures (Unicorn, Ki-Rin, Cu Sidhe)
+	Removed some debug messages from pixie_death.js
+	Disabled tooltips for admin welcome gump; too much for regular UO client to handle
+	Fixed a bug where players could gain points in Evaluating Intelligence skill by targeting themselves (js/skills/evaluateintel.js)
+	Updated Evaluating Intelligence skill to show more detailed information about targets (js/skills/evaluateintel.js)
+	Fixed some issues with sound effects in JS based spells
+	Added missing reference to wand_item_id.js in jse_fileassociations.scp
+	Removed debug message from magic item generation script
+	Fixed an issue with fishing script that prevented fishing up random sea serpents
+	Fixed pitcher of water so it can be poured onto the bag of flour and remove one content and set 20 contents for flour bag
+	Fixed four bag can be double clicked and target water and use one content of water. and give it self 20 uses for dough
+	Added all dough baking
+	Added all meat cooking
+	Added Heatsources
+	Fixed Flourmill to have animation and give bag of flour when double clicked
+	Cleaned up baking and cooking - not every thing needed a skill check
+	Misc style cleanup and bugfixes (Xuri)
+	Tweaked flour mill usage and animation setup to make it more resistant to breaking (Xuri)
+	Added tooltip with uses remaining for pitchers of water and sacks of flour (Xuri)
+	Randomized the type of bread created when baking dough (Xuri)
+	Healing someone with bandages now unhides player
+	Updated calculations for duration it takes to heal self/another target, and for the amount of health healed
+	Added karma gain for healing innocent players
+	Added ability to heal various humanoid monsters with bandages and Healing skill
+	Added ability to heal various animals with bandages and Veterinary skill (Xuri)
+	Added chance for healer's fingers to slip if taking damage while healing (js/skill/healing_slip.js), with amount of health healed being reduced with each slip, though this effect is countered somewhat by healer's Healing skill and Dexterity stat (Xuri)
+	Added some opening effects to some containers like armoires, chests of drawers and dressers
+	Added new command to allow shard admins and GMs to quickly add signs to their world: 'addsign
+	Added new Admin commands to enable/disable spawn regions in specific facets (note that this does not affect already spawned objects):
+		'enablespawns <facetNum/facetName>
+		'disablespawns <facetNum/facetName>
+	Updated 'get command (js/commands/targeting/get.js) to support fetching actualDexterity, actualIntelligence and actualStrength properties for Characters
+	Fixed an issue where 'wipe command could wipe NPCs and/or multis despite those being set as "unwipable"
+	Added missing maxrange DFN tags to Item definitions for ranged weapons (dfndata/items/gear/weapons/archery.dfn, aos_weapons.dfn and se_weapons.dfn)
+	Removed some dummy data that snuck into dfndata/items/gmmenu/spawners.dfn
+	Fixed an issue where Healing script (js/skills/healing.js) would break because Math.Round() was used instead of Math.round() (Thanks, HeyYaNITO!)
+	Added baseRange and maxRange to 'tweak menu (js/command/targeting/tweak.js)
+	Updated 'get, 'set, 'tweak and 'areacommand commands to support the new event property
+	Extended 'decorate command with some additional features to support saving, loading and unloading event decorations (example: xmas, halloween, etc):
+		'decorate saveevent eventName	// Save all items with event property matching eventName to event_[eventName].jsdata
+		'decorate loadevent eventName 	// Load all items from event_[eventName].jsdata and assign eventName to their event property
+		'decorate unloadevent eventName	// Clear up all items associated with eventName
+	Added new script (js/server/house/houseAddonUse.js) that will restore the double-click functionality of some house addons that would lose their regular functionality in the process of becoming house addons, as their item type changed. The same script also adds some extra functionality to a couple of other house addons (looms and spinning wheels), allowing players to choose between using the addons and then targeting materials like yarn or wool or using the materials and then targeting the addons
+	Fixed an issue with the interior decorator tool that would allow using it outside one's house
+	Updated 'decorate save command to not save items that are inside multis (the multis themselves are not saved anyway!)
+	Fixed some issues that would crash decorate script when attempting to use event subcommands without event names
+	Renamed 'fixcontweight command to 'fixcont and updated it to also fix maxItems property for containers that don't already have that set
+	Updated container world file template for Felucca with containers with proper maxWeight and maxItems seet
+	Updated admin welcome gump (js/server/misc/admin_welcome.js) to also include containers (previously missing) and disable facets that don't have any decorations yet. Anyone who already used the admin welcome gump to place default decorations for their shards can use 'decorate load containers to add the missing containers.
+	Updated Remove Trap script (js/skill/removetrap.js) to make use of GetMoreVar() and SetMoreVar methods
+	Added new JS script (js/server/misc/dungeon_traps.js) for handling trap mechanics in (primarily) dungeons. The traps all trigger on collision, and use different parts of the "morez" property to determine enabled/disabled status, damage, min skill required to disarm, max skill at which player can still gain skill from disarming. Disarming renders trap inactive for 60 seconds. Implemented trap types:
+		Spike Traps 		// Active for ~5 seconds after triggered, deals damage every 1 second.
+		Giant Spike Trap 	// Active for ~1 second after triggered, deals high instant damage one time
+		Saw Traps			// Active for ~5 seconds after triggered, deals damage every 1 second.
+		Gas Traps			// Active for ~5 seconds after triggered, applies poison to target every 1 second
+		Fire Column Trap 	// Active for ~5 seconds after triggered, deals damage every 1 second after initial delay of 1 second
+		Stone Face Traps	// Active for ~3 seconds after triggered, deals damage every 1 second after initial delay of 1 second
+		Mushroom Trap 		// Active for ~2 seconds after triggered, applies poison to target every 1 second after an initial delay of 1 second
+	Added new commands to make modifying IDs of items (and NPCs) easier:
+		'incid #	// Increment/decrement ID of target by specified amount
+		'rincid #	// Repeatedly increment/decrement ID of target/multiple targets by specified amount
+	Updated 'add and 'radd commands with new, optional syntax to make adding trees easier (potentially with GM tools/macros), as it will add both trunk and leaf at same location with a single command:
+		'add tree [trunkID] [leafID]
+		'radd tree [trunkID] [leafID]
+	Updated AreaCommand GM command to include support for setting the .decayable property on multiple items at once. Also updated the script with appropriate system messages throughout, which now also show how many items were affected by use of the command
+	Added new item script (js/item/gate_opener.js) that can be used to make switches/levers raise/lower multiple nearby gates. See script comments for details on setup
+	Updated various JS scripts that used GetSByte() to retrieve Z of last targeted location from Socket to manually add height of targeted tile for client version below 7.0.9 only
+	Fixed an issue where items created with 'decorate load command could be set as decayable
+	Fixed an issue where multiple timers could be running on a single door by manually opening and closing it repeatedly. Closing a door will now kill the associated timer on said door.
+	Updated Lockpicking skill to check for the existence of skill difficulty on locks, and use those to perform skill checks when attempting to pick those locks. Difficulty on a lock can be setup using the morey property using this syntax:
+		morey=[0x00] [0x00/0x01] [0x##] [0x##] // the first part is unused, the second is used with Unlock spell, the third and fourth are the minimum skill to unlock and the max skill that can be gained from picking the lock
+	Added new decorations in default world templates for the following areas:
+		Covetous, Deceit, Despise, Destard, Fire, Hythloth, Ice, Shame, Wrong, Hedge Maze, Wind (city), Terathan Keep, Orc Caves, Ilshenar facet, Ilshenar dungeons
+	Updated decorations in default world templates for the following areas:
+		All cities in Britannia and the Lost Lands
+	Updated decorations in default world templates to address issues like missing water/swamp tiles, floor/roof tiles, etc. in various places
+	Added special behaviours in some areas:
+		Lever puzzle in Covetous
+		Monster-spawning brazier in Deceit
+		Switch/portcullis behaviour in Hedge Maze
+	Updated teleport.scp with teleport locations for:
+		Hedge maze, Hythloth lvl 2 teleport maze, Wrong dungeon, Buccaneer's Den to/from mainland, various Ilshenar teleport locations
+	Added sound-effect for when lockpicks break (js/skill/lockpicking.js)
+	Misc fixes to default world templates (some missing doors, a few duplicate decorations)
+	Fixed an issue where incorrect property name for max health, max stamina and max mana were used in taming script (js/skill/taming.js) and fire breath script (js/npc/special/fire_breath.js)
+	1/2022 - DragonSlayer, Xuri
+	Crafting skills (Alchemy, Blacksmithing, Carpentry, Fletching, Tailoring) have been updated with new JS-based menus, up-to-date create DFNs with additional craftable items and extra features to fit the Pub15 era of UO (DragonSlayer)
+	Updated getWeaponType() server script to support getting weapon type directly by ID instead of looking for item equipped by character
+	Fixed an error with wheat.js that could cause flour mills to get incorrect IDs assigned
+	Added some missing doors in a Serpent's Hold building to default world templates
+	Players can now demolish a tent multi and convert it back to a deed by chopping up the tent's (empty) chest with an axe
+	GMs can now force the removal of a tent multi by using the 'remove command and targeting the tent's chest (whether empty or not)
+	Fixed some issues with 'wipe command that prevented some items (including multis) from being removed
+	Added a new admin-command to force the removal of a targeted multi and all items contained within: 'removemulti
+	Some minor updates to crafting related scripts
+	Implemented Herding skill in JS (js/skill/herding.js) (Dragon Slayer)
+
+DFN Changes/Fixes:
+	Fixed issue where some item definitions in dfndata/harditems/harditems.dfn and dfndata/items/building/lighting.dfn used comma instead of space as delimiter for the VALUE tag, which thus never got applied
+	Updated all NPC definitions to let NPCs spawn facing in random directions
+	Added missing entries for normal and greater explosion potions to dfndata/items/magic/potions.dfn, and added them to the item menu
+	Potions are now marked as stackable in dfndata/items/magic/potions.dfn
+	Damage of explosion potions is now defined via DAMAGE/LODAMAGE/HIDAMAGE tags in Item DFNs, and the time before exploding is defined via the SPEED tag
+	Moved Orc and Ratman races from RACE 1 and 2 to RACE 22 and 23 in dfndata/race/races.dfn to make room for two new player races, that are applied to new player characters during character creation:
+		[RACE 1] - Elf
+		[RACE 2] - Gargoyle
+	Updated orcs and ratmen in dfndata/npc/humanoids.dfn with race IDs 22 and 23 respectively
+	Added items in dfndata/items/skills/tools/cooking.dfn to item menu under Skills > Tools > Cooking
+	Added HP DFN tag to guard NPCs to prevent them from spawning with half health
+	Fixed invalid ID for items [0x0174] and [0x0175] in dfndata/items/building/walls/stone_walls.dfn
+	Fixed some missing icons in dfndata/creatures/creatures.dfn
+	Updated server status HTML template page (dfndata/html/online.htf) to match other templates
+	Added layer=1 to spellbooks in dfndata/items/magic/misc_magic.dfn to allow NPCs to equip them (dragon slayer)
+	Some minor fixes to regions.dfn - Name of Covetous dungeon, a set of coordinates for Ice Dungeon
+	Updated dfndata/house/house.dfn to include default MAXITEMS (125 items) and WEIGHTMAX (400 stones) values for boats
+	Fixed some missing/incorrect brackets in the following DFN files (thanks, punt!):
+		dfndata/items/gear/armor/base_armors.dfn
+		dfndata/items/gear/armor/leather_armor/ninja_leather.dfn
+		dfndata/items/skills/misc/misc.dfn
+		dfndata/items/building/walls/tent_walls.dfn
+		dfndata/items/building/decs/stoneart.dfn
+		dfndata/location/location.dfn
+	Added decay=0 tag to bulletin boards
+	Some minor cleanup in a few DFN files. Affected files:
+		dfndata/creatures/creatures.dfn
+		dfndata/items/gear/weapons/aos_weapons.dfn
+		dfndata/items/magic/reagents.dfn
+		dfndata/items/misc/equippable-mounts.dfn
+		dfndata/items/misc/gems.dfn
+		dfndata/items/npcmenu.bulk.dfn
+		dfndata/items/skills/misc/misc.dfn
+		dfndata/npc/femalevendors.dfn
+		dfndata/npc/mounts.dfn
+		dfndata/npc/undead.dfn
+	Added in missing default [COMBAT MODS] section to dfndata/race/races.dfn. Each MOD# entry in this section represents a percentage modifier applied to skill checks for members of a race that subscribes to that MOD entry via skill tags like [SKILLNAME]G=# (bonus) or [SKILLNAME]L=# (penalty). These modifiers are also applied to base damage in combat, before other damage modifiers.
+		Example1: SWORDSMANSHIPG=3 would apply a 20% bonus to swordsmanship skill checks for race the tag was added to, as well as a 20% bonus to base damage dealt in combat
+		Example2: MACEFIGHTINGL=3 would apply a 20% penalty to macefighting skill checks for race the tag was added to, as well as a 20% penalty to base damage dealt in combat
+	The colour of blood effects for characters and creatures hit in combat can be defined in dfndata/race/races.dfn using the BLOODCOLOUR tag and a colour ID. If the value 0xffff is provided, the colour of the blood will be inherited from the character's colour, if any
+	Added SCRIPT=3203 tag to [slime]/[jwilson] NPCs (dfndata/npc/miscmonsters.dfn)
+	Added new race for slime-related creatures (RACE 24 in dfndata/race/races.dfn), with a BLOODCOLOUR tag set to 0xffff to let blood effects inherit the colour of each individual slime
+	Updated RACE tag for [slime]/[jwilson] NPCs to use the new slime-race (dfndata/npc/miscmonsters.dfn)
+	Added [interiordecorator] tool (dfndata/items/misc/uor_misc.dfn) that can be used to raise, lower or rotate locked down items in houses
+	Added interior decorator tool to Architect shoplists (Xuri)
+	Added [hairrestyledeed] item that lets (human) players restyle their hair
+	Re-added NPC AI 8 to banker NPCs (dfndata/npc/male_vendors.dfn and female_vendors.dfn) so code can check for presence of this AI when handling context menus
+	Added HIRELING tag and SCRIPT=3204 to and updated stats of various NPCs that will be hireable:
+		m_fighter, f_fighter, m_beggar, f_beggar, m_peasant, f_peasant, m_sailor, f_sailor, m_pirate, f_pirate
+	Added new hireling NPC:
+		m_paladin, f_paladin
+	Added new OMNIVORE food list and assigned it to [basehuman] DFN section
+	Updated NPC DFNs with default CONTROLSLOT=# tags
+	Updated equipment itemlists (dfndata/items/itemlists/itemlists.dfn) with blank entries to introduce some more variety in the type of clothes NPCs wear in general
+	Added new NPCs to DFNs (dfndata/npc/undead.dfn) and added them to undead npclist:
+		[skeletalmage]		// variation of [bonemage]
+		[skeletalknight]  	// variation of [boneknight]
+	Updated Titles (dfndata/titles/titles.dfn) with up-to-date titles for skills around Pub 15, and added titles for skills added after that. Also added "Elder" and "Legendary" titles for 110 and 120 skillpoints
+	Updated EQUIPITEM tag in newbie.dfn (dfndata/newbie/newbie.dfn) to support an optional hue parameter (EQUIPITEM=id,hue)
+	Updated starting equipment for new characters (dfndata/newbie/newbie.dfn), with commented out practice weapons. Uncomment to use
+	Added item definitions for practice weapons (dfndata/items/gear/weapons/practice_weapons.dfn):
+		practice_skinning_knife
+		practice_hatchet
+		practice_axe
+		practice_mace
+		practice_longsword
+		practice_spear
+		practice_bow
+		practice_club
+		practice_crook
+		practice_gnarled_staff
+	Updated mount statues DFN (dfndata/items/misc/mount-statues.dfn) and JS (js/npc/pets/*.js) files to include pet control slot related stuff
+	Inscription skill can now be used to craft Runebooks. In addition to the skill requirement (min 45.0 Inscription), it requires 8 blank scrolls, 1 blank recall rune, 1 Recall scroll and 1 Gate Travel spell.
+	Added new item definition for Runebook ([runebook]) to dfndata/items/magic/misc_magic.dfn
+	Added missing NPCs to DFN (thanks, Dragon Slayer)
+		f_warrior, f_ranger, f_gambler, f_judge, f_mayor, f_prisoner, f_sculptor
+		f_weaver, f_mapmaker, f_furtrader, f_tanner, f_waitress, f_miller, f_rancher
+		m_warrior, m_ranger, m_gambler, m_judge, m_mayor, m_prisoner, m_sculptor
+		m_weaver, m_mapmaker, m_furtrader, m_tanner, m_waiter, m_miller, m_rancher
+	Added the new NPCs to npclists (dfndata/npc/npclists.dfn), spawners (dfndata/items/gmmenu/spawners.dfn), add-menu (dfndata/items/ItemMenu.bulk.dfn and dfndata/items/npcmenu.bulk.dfn) and added some new shopping lists (dnfdata/items/shoplist.dfn)
+	Added some new item definitions:
+		blank_map (0x14ec), wheat sheaf (0x1ebd)
+	Updated fishinglist.dfn (dfndata/items/itemlists/fishinglist.dfn) with list objects that can be referenced by in-game ADD command or scripts to add random items from the fishing itemlists
+	All direct damage spells by default have a 1.0s delay before damage (and VFX) is applied, except Explosion which has a 2.5s delay
+	All spells by default have a cast recovery duration of 1.0s; from the moment a spellcast is completed/moment targeting cursor appears, the player will be unable to cast any other spell for the duration of the cast recovery
+	Spell cast times now follow this formula, though values set per spell and can be modified: 0.25 + ( spellCircle * 0.25 )
+	Overhauled spell sound FX and VFX for for all spells
+	Updated skills and stats of all implemented human NPCs (including vendors) to better match the state of those NPCs around the time of Pub15
+	Fixed SPATTACK values for a couple of NPCs that were still using values based on spell bitmask instead of spell circle value
+	Updated stats of Jukan and Meer NPCs (dfndata/npc/lbrraces.dfn) to match stats from official LBR guide
+	Updated fishinglist.dfn, itemlist.dfn and lootlist.dfn to support new fishing updates
+	Updated movable state of various items that can be fished up (pillows, some pieces of furniture) to ensure players can move them!
+	Updated Item DFN entry for sextants to include script=5033 tag
+	Updated DFN entries for various sea creatures (dfndata/npc/seacreatures.dfn) to adjust color of NPCs, loot and NPC AI
+	Update stats, skills and loot for all currently implemented NPCs
+	Updated words of power for Meteor Swarm spell to follow the same logic as other spells using Kal (Summon): Kal Des Flam Ylem
+	Updated entry for Wisp in creatures.dfn to mark them as animals to stop monsters from attacking them (and dying)
+	Fixed bug where reagents could not be dropped directly from ground and into newbie reagents bag, as the bag didn't have the proper setup for a container. Now inherits its setup from a regular bag (dfndata/items/magic/reagents.dfn)
+	Split food2.dfn into new dfn files: cooking.dfn, vegetables.dfn, meats.dfn, fruits.dfn
+	Added a bunch of additional door IDs to js/item/doors.js and dfndata/harditems/harditems.dfn
+	Added an [ADMIN] section to dfndata/commands/commands.dfn to make it easier to give shard admins (via 'make admin) a different default look than other GMs
+	Fixed incorrect non-combat music entry [MUSICLIST COMBAT] section of dfndata/regions/regions.dfn
+	Added new music section to dfndata/regions/regions.dfn
+		[MUSICLIST DEATH]	// Plays music from this list for players who are in the realm of the dead
+	Assigned different MOREZ value to each explosion potion (dfndata/item/magic/potions.dfn) to make distinguishing between them easier
+	Fixed issue where some iron ore in GM add menu was showing up and being added as a brazier instead
+	Added some new house addons to house.dfn, and in the 'add menu, under Deeds > Houseaddon Deeds:
+		loom (south)
+		small forge
+		anvil (south/east)
+		spinning wheel (north/south/east/west)
+		small bed 1 (south/east)
+		small bed 2 (south/east)
+		large bed 1 (south/east)
+		large bed 2 (south/east)
+		training dummy (south/east)
+		pickpocket dip 1 (east)
+		pickpocket dip 2 (east)
+		dresser (south/east) // Disabled, doesn't work as container after being turned into addon
+		abattoir (stone pentagram)
+		flour mill (south/east)
+		sandstone oven (south/east)
+		brick oven (south/east)
+		large forge (north/south/east/west)
+	Updated some house addons (bear rugs, pentagram) to be added from top-left to bottom right, for more consistency when placing items
+	Uncommented the dresser house-addon from 'add menu, as it now works as intended
+	Added house-addons to ArchitectShopping SHOPLIST so they can be bought from Architect shopkeepers for roughly the cost of the material it would have taken to craft them. This is a temporary solution until crafting these have been implemented.
+	Updated default region spawn file to evict the beekeeper from Skara Brae bank to make room for some actual bankers! The beekeeper is now tending to the bees outside the bank instead.
+	Fixed issue where NPC vendors would not restock more than 1 leather tunic and/or leather gloves, because of a missing restock tag in the DFN entries for those items
+	Removed kindling from the shoplist of Armourer vendors
+	Bananas are now edible
+	Bowyer shopkeepers will now restock more than 1 shaft and/or feather
+	Provisioner shopkeepers will now restock more than 1 candle, lantern, various masks, kindling, flour
+	Jeweler shopkeepers will now buy some gems (star sapphire and tourmaline) they were previously not so interested in
+	Bowyer shopkeepers now sell fletching tools
+	Added fletcher's tools as newbie item for players starting with Bowcraft/Fletching skill
+	Animals that belong in the Arctic (polar bears, snow leopards, walrus) will no longer spawn in forests and jungles
+	Hellhounds will no longer spawn in forest and jungles; they can now only be found in dungeons
+	Silver Serpents have been removed from the "weakforestlist" NPCLIST, because they are anything but
+	Added dungeon traps to 'add menu, under Buildings > Decs > Dungeon Traps
+	Fixed incorrect IDs for secret doors in Item DFNs (they were off by 1, so would not work properly)
+	Updated name of all secret doors in dfndata/items/building/doors.dfn to inherit name from tiledata instead
+	Added secret door IDs to dfndata/harditems/harditems.dfn
+	Fixed MORE values of "hard scripted" books in dfndata/items/misc/books.dfn
+	Added Ice and Fire dungeon locations (dfndata/location/location.dfn) and added these to the GM travel menu (dfndata/item/travelmenu.dfn/travelmenu.bulk.dfn)
+	Fixed body ID for ancient wyrm NPCs, which also fixes their name (dfndata/npc/dragons.dfn)
+	Added more pre-defined books to dfndata/misc/books.dfn (and dfndata/items/misc/books.dfn):
+		Quest of the Virtues – Volume 1 	// [quest_of_the_virtues_vol1]
+		Fropoz's Journal 					// [fropoz_journal]
+		Translated Gargoyle Journal 		// [translated_gargoyle_journal]
+		Kabur's Journal 					// [kaburs_journal]
+	Added 4 levels of dungeon treasure chests that can be placed out as spawn objects in dungeons, with items and valuables spawning inside on a regular interval. These can be found in dfndata/items/gmmenu/dungeon_treasure_spawners.dfn, with associated itemlists being found in dfndata/items/itemlists/itemlists.dfn (dungeontreasureloot1, dungeontreasureloot2, dungeontreasureloot3 and dungeontreasureloot4). They can also be located in the 'add menu under GM Menu > Dungeon Treasures
+	Added spawn regions for dungeon treasure chests in the following areas:
+		Covetous, Deceit, Despise, Destard, Fire, Hythloth, Ice, Shame, Wrong, Yew Crypts, Daemon Temple, Trinsic Passage, Cove Orc Fort, Terathan Keep, Vesper Bank, Trinsic Bank
+	Cleaned up door-section of add-menu so only doors in their closed state remain (dfndata/items/building/doors.dfn)
+	Updated scripts to make use of .usesLeft property instead of custom "UsesLeft" tag
+		Updated DFNs to include usesleft and maxuses tags and uses_left_tooltip script for all tools with limited use
+	Added new crafting menu and create DFN entries for Cooking skill
+	Updated item stats like def, hp and value for all armors to match Pub15 era
+	Added item definitions for weapons added in AoS to ToL UO expansions, but with stats balanced against existing weapons from Pub15 era
+	Added armor definitions for armors added in AoS to ToL UO expansions, but with stats balanced against existing armors from Pub15 era
+	Added named "alias entries" for all existing item definitions of weapon, armor and clothes, which enables adding those via their names as an alternative to their IDs. Items added via the named aliases will randomize between variations (north/south vs east/west) of the items if there are any. Syntax:
+		'add item [nameOfItemWithoutSpaces] (example: 'add item vikingsword)
+	Removed redundant files dfndata/items/gear/weapons/aos_weapons.dfn, dfndata/items/gear/weapons/se_weapons.dfn and dfndata/npc/spawntags.dfn
+	Split out ranged weapon projectiles into a separate DFN (dfndata/items/gear/weapons/projectiles.dfn)
+
+Misc Changes/Fixes:
+	Updated dictionary files with additional messages used in relation to banning/unbanning players
+	Reorganized teleport.scp file with logical groupings by map and area for easier maintenance
+	Added additional teleport locations in teleport.scp for Dragon Turtle Spawn area, Khaldun, Terathan Keep, Valley of Eodon, Minax Fortress, Stygian Abyss, Underworld
+	Updated JS docs with updated return value details for events
+	Updated UOX3 docs to latest version
+	Updated default DATADIRECTORY path in uox.ini to match current day default installation path of UO (thanks, dragonslayer!)
+	Updated UOX3 documentation to reflect recent changes to IP handling/config, addition of 'decorate command and world templates, updated instructions for building from source
+	Added system messages to dictionary files (Xuri)
+	Updated JS docs with some missing Functions/Methods
+	Added default dictionaries for the following languages: German, Spanish, Portuguese, Italian, Czech (note that translations have been provided by automatic services and will contain inaccuracies!)
+	Updated documentation with most recent changes to UOX.INI settings
+	Updated dictionaries with cooking-specific messages (Xuri)
+	Fixed a few issues with various dictionary files
+	Updated JS Docs
+	The community-based spawn file now comes bundled with UOX3, and shard admins can choose whether to activate the spawns from this file during the welcome gump that pops up first time they log in
+	Updated main UOX3 docs to add a simple filter feature, to make it easier to find stuff in the docs
+	Updated dictionary files
+	Added some missing dictionary entries
+	Updated UOX3 documentation
+	Included new and revamped JS docs, and removed old, out-of-date legacy JS docs
 
 -==============================-
 -= 08/11/2020 - UOX3 0.99.4  =-
 -==============================-
-Contributors: Xuri, punt, dragon slayer
+Contributors: Xuri, punt, Dragon Slayer
 
 Source Changes/Fixes:
 	Updated warning messages printed in UOX3 when attempting to inherit an invalid/non-existent item or character script entry using the GET tag, to also include the name of the script entry being inherited

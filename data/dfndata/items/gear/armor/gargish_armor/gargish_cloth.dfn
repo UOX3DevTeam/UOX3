@@ -1,0 +1,178 @@
+// -----------= ARMS =----------- //
+
+// Gargish Cloth Arms - E/W
+[0x0404]
+{
+get=base_gargish_cloth_arms
+}
+
+// Gargish Cloth Arms - N/S
+[0x4060]
+{
+get=0x0404
+id=0x4060
+}
+
+// Gargish Cloth Arms - Alias
+[gargishclotharms]
+{
+get=0x0404 0x4060
+}
+
+// Female Gargish Cloth Arms - E/W
+[0x0403]
+{
+get=base_female_gargish_cloth_arms
+}
+
+/ Female Gargish Cloth Arms - N/S
+[0x405f]
+{
+get=0x0403
+id=0x405f
+}
+
+// Female Gargish Cloth Arms - Alias
+[femalegargishclotharms]
+{
+get=0x0403 0x405f
+}
+
+// -----------= CHEST =----------- //
+
+// Gargish Cloth Chest
+[0x0406]
+{
+get=base_gargish_cloth_chest
+}
+
+// Gargish Cloth Chest - N/S
+[0x4062]
+{
+get=0x0405
+id=0x4062
+}
+
+// Gargish Cloth Chest - Alias
+[gargishclothchest]
+{
+get=0x0405 0x4062
+}
+
+// Female Gargish Cloth Chest - E/W
+[0x0405]
+{
+get=base_female_gargish_cloth_chest
+}
+
+// Female Gargish Cloth Chest - N/S
+[0x4061]
+{
+get=0x0405
+id=0x4061
+}
+
+// Female Gargish Cloth Chest - Alias
+[femalegargishclothchest]
+{
+get=0x0405 0x4061
+}
+
+// -----------= LEGS =----------- //
+
+// Gargish Cloth Leggings - E/W
+[0x040a]
+{
+get=base_gargish_cloth_leggings
+}
+
+// Gargish Cloth Leggings - N/S
+[0x4066]
+{
+get=0x040a
+id=0x4066
+}
+
+// Gargish Cloth Leggings - Alias
+[gargishclothleggings]
+{
+get=0x040a 0x4066
+}
+
+// Female Gargish Cloth Leggings - E/W
+[0x0409]
+{
+get=base_female_gargish_cloth_leggings
+}
+
+// Female Gargish Cloth Leggings - N/S
+[0x4065]
+{
+get=0x0409
+id=0x4065
+}
+
+// Female Gargish Cloth Leggings - Alias
+[femalegargishclothleggings]
+{
+get=0x0409 0x4065
+}
+
+// Gargish Cloth Kilt - E/W
+[0x0408]
+{
+get=base_gargish_cloth_kilt
+}
+
+// Gargish Cloth Kilt - N/S
+[0x4064]
+{
+get=0x0408
+id=0x4064
+}
+
+// Gargish Cloth Kilt - Alias
+[gargishclothkilt]
+{
+get=0x0408 0x4064
+}
+
+// Gargish Cloth Kilt (Female) - E/W
+[0x0407]
+{
+get=base_female_gargish_cloth_kilt
+}
+
+// Gargish Cloth Kilt (Female) - N/S
+[0x4063]
+{
+get=0x0407
+id=0x4063
+}
+
+// Gargish Cloth Kilt (Female) - Alias
+[femalegargishclothkilt]
+{
+get=0x0407 0x4063
+}
+
+// -----------= BACK =----------- //
+
+// Gargish Cloth Wing Armor - N/S
+[0x45a4]
+{
+get=base_gargish_cloth_wing_armor
+}
+
+// Gargish Cloth Wing Armor - E/W
+[0x45a5]
+{
+get=0x45a4
+id=0x45a5
+}
+
+// Gargish Cloth Wing Armor - Alias
+[gargishclothwingarmor]
+{
+get=0x45a4 0x45a5
+}
