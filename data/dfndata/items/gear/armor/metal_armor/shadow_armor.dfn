@@ -1,345 +1,463 @@
-// ringmail
+// Ringmail
 
+// ShadowIron Ringmail Tunic - N/S
 [0x13eb-s]
 {
-get=ring_gloves
-name=ringmail gloves
-id=0x13eb
+get=base_ring_gloves
 color=0x966
 }
 
-[0x13ec-s]
-{ right facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ec
-color=0x966
-}
-
-[0x13ed-s]
-{ left facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ed
-color=0x966
-}
-
-[0x13ee-s]
-{ right facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ee
-color=0x966
-}
-
-[0x13ef-s]
-{ left facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ef
-color=0x966
-}
-
-[0x13f0-s]
-{ rightt facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f0
-color=0x966
-}
-
-[0x13f1-s]
-{ left facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f1
-color=0x966
-}
-
+// ShadowIron Ringmail Gloves - E/W
 [0x13f2-s]
 {
-get=ring_gloves
-name=ringmail gloves
+get=0x13eb-s
 id=0x13f2
+}
+
+// ShadowIron Ringmail Gloves - Alias
+[shadowironringmailgloves]
+{
+get=0x13eb-s 0x13f2-s
+}
+
+// ShadowIron Ringmail Tunic - N/S
+[0x13ec-s]
+{ right facing
+get=base_ring_tunic
 color=0x966
+}
+
+// ShadowIron Ringmail Tunic - E/W
+[0x13ed-s]
+{
+get=0x13ec-s
+id=0x13ed
+}
+
+// ShadowIron Ringmail Tunic - Alias
+[shadowironringmailtunic]
+{
+get=0x13ec-s 0x13ed-s
+}
+
+// ShadowIron Ringmail Sleeves - N/S
+[0x13ee-s]
+{ right facing
+get=base_ring_sleeves
+color=0x966
+}
+
+// ShadowIron Ringmail Sleeves - E/W
+[0x13ef-s]
+{
+get=0x13ee-s
+id=0x13ef
+}
+
+// ShadowIron Ringmail Sleeves - Alias
+[shadowironringmailsleeves]
+{
+get=0x13ee-s 0x13ef-s
+}
+
+// ShadowIron Ringmail Leggings - N/S
+[0x13f0-s]
+{ right facing
+get=base_ring_leggings
+color=0x966
+}
+
+// ShadowIron Ringmail Leggings - E/W
+[0x13f1-s]
+{
+get=0x13f0-s
+id=0x13f1
+}
+
+// ShadowIron Ringmail Leggings - Alias
+[shadowironringmailleggings]
+{
+get=0x13f0-s 0x13f1-s
 }
 
 // Chainmail
 
-[0x13BB-s]
-{ Left facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13bb
-color=0x966
-}
-
+// ShadowIron Chainmail Leggings - N/S
 [0x13be-s]
-{ left facing
-get=chain_leggings
-name=chainmail leggings
-id=0x13be
+{
+get=base_chain_leggings
 color=0x966
 }
 
-[0x13bf-s]
-{ left facing
-get=chain_tunic
-name=chainmail tunic
-id=0x13bf
-color=0x966
-}
-
-[0x13c0-s]
-{ right facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13c0
-color=0x966
-}
-
+// ShadowIron Chainmail Leggings - E/W
 [0x13c3-s]
-{ right facing
-get=chain_leggings
-name=chainmail leggings
+{
+get=0x13be-s
 id=0x13c3
+}
+
+// ShadowIron Chainmail Leggings - Alias
+[shadowironchainmailleggings]
+{
+get=0x13be-s 0x13c3-s
+}
+
+// ShadowIron Chainmail Tunic - N/S
+[0x13bf-s]
+{
+get=base_chain_tunic
 color=0x966
 }
 
+// ShadowIron Chainmail Tunic - E/W
 [0x13c4-s]
-{ right facing
-get=chain_tunic
-name=chainmail tunic
+{
+get=0x13bf-s
 id=0x13c4
+}
+
+// ShadowIron Chainmail Tunic - Alias
+[shadowironchainmailtunic]
+{
+get=0x13bf-s 0x13c4-s
+}
+
+// ShadowIron Chainmail Coif - N/S
+[0x13BB-s]
+{
+get=base_chain_coif
 color=0x966
 }
 
-// Female Plate
+// ShadowIron Chainmail Coif - E/W
+[0x13c0-s]
+{
+get=0x13bb-s
+id=0x13c0
+}
 
+// ShadowIron Chainmail Coif - Alias
+[chainmailcoif]
+{
+get=0x13bb-s 0x13c0-s
+}
+
+// Female
+
+// ShadowIron Female Plate - N/S
 [0x1c04-s]
-{ left facing - Female
-get=fem_plate
-name=plate armor
-id=0x1c04
+{
+get=base_fem_plate
 color=0x966
 }
 
+// ShadowIron Female Plate - E/W
 [0x1c05-s]
-{ right facing - Female
-get=fem_plate
-name=plate armor
+{
+get=0x1c04-s
 id=0x1c05
-color=0x966
 }
 
-// Platemail
+// ShadowIron Female Plate - Alias
+[shadowironfemaleplate]
+{
+get=0x1c04-s 0x1c05-s
+}
 
+// platemail
+
+// ShadowIron Platemail Arms - E/W
 [0x1410-s]
-{ left facing
-get=plate_arms
-name=platemail arms
-id=0x1410
+{
+get=base_plate_arms
 color=0x966
 }
 
+// ShadowIron Platemail Arms - N/S
+[0x1417-s]
+{
+get=0x1410-s
+id=0x1417
+}
+
+// ShadowIron Platemail Arms - Alias
+[shadowironplatemailarms]
+{
+get=0x1410-s 0x1417-s
+}
+
+// ShadowIron Platemail Leggings - E/W
 [0x1411-s]
-{ left facing
-get=plate_leggings
-name=platemail leggings
-id=0x1411
+{
+get=base_plate_leggings
 color=0x966
 }
 
+// ShadowIron Platemail Leggings - N/S
+[0x141a-s]
+{
+get=0x1411-s
+id=0x141a
+}
+
+// Platemail Leggings - Alias
+[shadowironplatemailleggings]
+{
+get=0x1411-s 0x141a-s
+}
+
+// ShadowIron Platemail Gorget
 [0x1413-s]
 {
-get=plate_gorget
-name=platemail gorget
-id=0x1413
+get=base_plate_gorget
 color=0x966
 }
 
+// ShadowIron Platemail Gorget - Alias
+[shadowironplatemailgorget]
+{
+get=0x1413-s
+}
+
+// ShadowIron Platemail Gloves - E/W
 [0x1414-s]
-{ left facing
-get=plate_gloves
-name=platemail gloves
-id=0x1414
+{
+get=base_plate_gloves
 color=0x966
 }
 
-[0x1415-s]
-{ left facing
-get=plate_chest
-name=platemail
-id=0x1415
-color=0x966
-}
-
-[0x1417-s]
-{ right facing
-get=plate_arms
-name=platemail arms
-id=0x1417
-color=0x966
-}
-
-[0x141a-s]
-{ right facing
-get=plate_leggings
-name=platemail leggings
-id=0x141a
-color=0x966
-}
-
+// ShadowIron Platemail Gloves - N/S
 [0x1418-s]
-{ right facing
-get=plate_gloves
-name=platemail gloves
+{
+get=0x1414-s
 id=0x1418
+}
+
+// ShadowIron Platemail Gloves - Alias
+[shadowironplatemailgloves]
+{
+get=0x1414-s 0x1418-s
+}
+
+// ShadowIron Platemail Chest - E/W
+[0x1415-s]
+{
+get=base_plate_chest
 color=0x966
 }
 
+// ShadowIron Platemail Chest - N/S
 [0x1416-s]
-{ right facing
-get=plate_chest
-name=platemail
+{
+get=0x1415-s
 id=0x1416
-color=0x966
 }
 
-// Helmets
+// ShadowIron Platemail Chest - Alias
+[shadowironplatemailchest]
+{
+get=0x1415-s 0x1416-s
+}
 
+// helmets
+
+// ShadowIron Close Helm(et) - N/S
 [0x1408-s]
-{ right facing
-get=CLOSE_HELMET
-name=close helmet
-id=0x1408
+{
+get=base_close_helmet
 color=0x966
 }
 
+// ShadowIron Close Helm(et) - E/W
 [0x1409-s]
-{ left facing
-get=CLOSE_HELMET
-name=close helm
+{
+get=0x1408-s
 id=0x1409
-color=0x966
 }
 
+// ShadowIron Close Helm(et) - Alias
+[shadowironclosehelm]
+{
+get=0x1408-s 0x1409-s
+}
+
+// ShadowIron Helmet - N/S
 [0x140a-s]
-{ right facing
-get=helmet
-name=helmet
-id=0x140a
+{
+get=base_helmet
 color=0x966
 }
 
+// ShadowIron Helmet - E/W
 [0x140b-s]
-{ left facing
-get=helmet
-name=helmet
+{
+get=0x140a-s
 id=0x140b
-color=0x966
 }
 
+// ShadowIron Helmet - Alias
+[shadowironhelmet]
+{
+get=0x140a-s 0x140b-s
+}
+
+// ShadowIron Bascinet - N/S
 [0x140c-s]
-{ right facing
-get=bascient
-name=bascinet
-id=0x140c
+{
+get=base_bascinet
 color=0x966
 }
 
+// ShadowIron Bascinet - E/W
 [0x140d-s]
-{ left facing
-get=bascinet
-name=bascinet
+{
+get=0x140c-s
 id=0x140d
-color=0x966
 }
 
+// ShadowIron Bascinet - Alias
+[shadowironbascinet]
+{
+get=0x140c-s 0x140d-s
+}
+
+// ShadowIron Norse Helm - N/S
 [0x140e-s]
-{ right facing
-get=nose_helm
-name=nose helm
-id=0x140e
+{
+get=base_nose_helm
 color=0x966
 }
 
+// ShadowIron Norse Helm - E/W
 [0x140f-s]
-{ left facing
-get=nose_helm
-name=nose helm
+{
+get=0x140e-s
 id=0x140f
-color=0x966
 }
 
+// ShadowIron Norse Helm - Alias
+[shadowironnorsehelm]
+{
+get=0x140e-s 0x140f-s
+}
+
+// ShadowIron Plate Helm - E/W
 [0x1412-s]
-{ left facing
-get=plate_helm
-name=plate helm
-id=0x1412
+{
+get=base_plate_helm
 color=0x966
 }
 
+// ShadowIron Plate Helm - N/S
 [0x1419-s]
-{ right facing
-get=plate_helm
-name=plate helm
+{
+get=0x1412-s
 id=0x1419
-color=0x966
+}
+
+// ShadowIron Plate Helm - Alias
+[shadowironplatehelm]
+{
+get=0x1412-s 0x1419-s
 }
 
 // Shields
 
+// ShadowIron ShadowIron Shield
 [0x1b72-s]
-{ Bronze shield
-get=bronze_shield
-name=bronze shield
-id=0x1b72
+{
+get=base_shadowiron_shield
 color=0x966
 }
 
+// ShadowIron ShadowIron Shield - Alias
+[shadowironshadowironshield]
+{
+get=0x1b72-s
+}
+
+// ShadowIron Buckler
 [0x1b73-s]
-{ Buckler
-get=buckler
-name=buckler
-id=0x1b73
+{
+get=base_buckler
 color=0x966
 }
 
+// ShadowIron Buckler - Alias
+[shadowironbuckler]
+{
+get=0x1b73-s
+}
+
+// ShadowIron Metal Kite Shield - N/S
 [0x1b74-s]
-{ Kite shield
-get=metal_kite_shield
-name=kite shield
-id=0x1b74
+{
+get=base_metal_kite_shield
 color=0x966
 }
 
+// ShadowIron Metal Kite Shield - E/W
+[0x1b75-s]
+{
+get=0x1b74-s
+id=0x1b75
+}
+
+// Metal Kite Shield - Alias
+[shadowironmetalkiteshield]
+{
+get=0x1b74-s 0x1b75-s
+}
+
+// ShadowIron Heater Shield - N/S
 [0x1b76-s]
-{ Heater shield
-get=heater_shield
-name=heater shield
-id=0x1b76
+{
+get=base_heater_shield
 color=0x966
 }
 
-[0x1b78-s]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b78
-color=0x966
+// ShadowIron Heater Shield - E/W
+[0x1b77-s]
+{
+get=0x1b76-s
+id=0x1b77
 }
 
-[0x1b79-s]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b79
-color=0x966
+// ShadowIron Heater Shield - Alias
+[shadowironheatershield]
+{
+get=0x1b76-s 0x1b77-s
 }
 
+// ShadowIron Metal Shield
 [0x1b7b-s]
-{ Metal shield
-get=metal_shield
-name=metal shield
-id=0x1b7b
+{
+get=base_metal_shield
 color=0x966
+}
+
+// ShadowIron Metal Shield - Alias
+[shadowironmetalshield]
+{
+get=0x1b7b-s
+}
+
+// Kite Shield (wooden) - N/S
+[0x1b78-s]
+{
+get=base_wooden_kite_shield
+color=0x966
+}
+
+// Kite Shield (wooden) - E/W
+[0x1b79-s]
+{
+get=0x1b78-s
+id=0x1b79
+}
+
+// Kite Shield (wooden) - Alias
+[shadowironwoodenkiteshield]
+{
+get=0x1b78-s 0x1b79-s
 }

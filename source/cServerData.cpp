@@ -729,7 +729,7 @@ void CServerData::ResetDefaults( void )
 	ButtonCancel( 4017 );
 	ButtonLeft( 4014 );
 	ButtonRight( 4005 );
-	BackgroundPic( 2600 );
+	BackgroundPic( 5054 );
 
 	// Houses
 	ItemDecayInHouses( true );

@@ -1,306 +1,615 @@
 // MACES
 
+// War Axe - E/W
+[0x13af]
+{
+get=base_item
+name=war axe
+id=0x13af
+weight=800
+value=38 19
+damage=9 27
+layer=1
+hp=31 80
+spd=40
+str=35
+restock=10
+decay=1
+good=24
+movable=1
+}
+
+// War Axe - N/S
+[0x13b0]
+{
+get=0x13af
+id=0x13b0
+}
+
+// War Axe - Alias
+[waraxe]
+{
+get=0x13af 0x13b0
+}
+
+// Smith's Hammer - E/W
 [0x13e3]
-{ facing West
+{
 get=base_item
 name=smith's hammer
 id=0x13e3
 weight=800
 value=36 18
+damage=6 18
 layer=1
-lodamage=6
-hidamage=18
 hp=31 60
 spd=30
 str=30
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// Smith's Hammer - N/S
 [0x13e4]
-{ facing North
-get=base_item
-name=smith's hammer
+{
+get=0x13e3
 id=0x13e4
-weight=800
-value=36 18
-layer=1
-lodamage=6
-hidamage=18
-hp=31 60
-spd=30
-str=30
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// Smith's Hammer - Alias
+[smithshammer]
+{
+get=0x13e3 0x13e4
+}
+
+// Club - E/W
 [0x13b3]
-{ facing West
+{
 get=base_item
 name=club
 id=0x13b3
 weight=900
 value=27 13
+damage=8 24
 layer=1
-lodamage=8
-hidamage=24
 hp=31 40
 spd=40
 str=10
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// Club - N/S
 [0x13b4]
-{ facing North
-get=base_item
-name=club
+{
+get=0x13b3
 id=0x13b4
-weight=900
-value=27 13
-layer=1
-lodamage=8
-hidamage=24
-hp=31 40
-spd=40
-str=10
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// Club - Alias
+[club]
+{
+get=0x13b3 0x13b4
+}
+
+// Sledge Hammer - E/W
 [0x0fb4]
-{ facing West
+{
 get=base_item
 name=sledge hammer
 id=0x0fb4
 weight=900
 value=32 16
+damage=12 38
 layer=1
-lodamage=12
-hidamage=38
 hp=31 60
 spd=15
 str=60
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// Sledge Hammer - N/S
 [0x0fb5]
-{ facing North
-get=base_item
-name=sledge hammer
+{
+get=0x0fb4
 id=0x0fb5
-weight=900
-value=32 16
-layer=1
-lodamage=12
-hidamage=38
-hp=31 60
-spd=15
-str=60
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// Sledge Hammer - Alias
+[sledgehammer]
+{
+get=0x0fb4 0x0fb5
+}
+
+// Mace - N/S
 [0x0f5c]
-{ facing North
+{
 get=base_item
 name=mace
 id=0x0f5c
 weight=1400
-value=26 13
+value=38 30
+damage=8 32
 layer=1
-lodamage=8
-hidamage=32
 hp=31 70
 spd=30
 str=20
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// Mace - E/W
 [0x0f5d]
-{ facing West
-get=base_item
-name=mace
+{
+get=0x0f5c
 id=0x0f5d
-weight=1400
-value=26 13
-layer=1
-lodamage=8
-hidamage=32
-hp=31 70
-spd=30
-str=20
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// Mace - Alias
+[mace]
+{
+get=0x0f5c 0x0f5d
+}
+
+// War Mace - E/W
 [0x1406]
-{ facing West
+{
 get=base_item
 name=war mace
 id=0x1406
 weight=1700
-value=32 16
+value=37 18
+damage=10 30
 layer=1
-lodamage=10
-hidamage=30
 hp=31 110
 spd=32
 str=30
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// War Mace - N/S
 [0x1407]
-{ facing North
-get=base_item
-name=war mace
+{
+get=0x1406
 id=0x1407
-weight=1700
-value=32 16
-layer=1
-lodamage=10
-hidamage=30
-hp=31 110
-spd=32
-str=30
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// War Mace - Alias
+[warmace]
+{
+get=0x1406 0x1407
+}
+
+// War Hammer - E/W
 [0x1438]
-{ facing West
+{
 get=base_item
 name=war hammer
 id=0x1438
 weight=1000
-value=22 11
+value=27 13
+damage=8 36
 layer=2
-lodamage=8
-hidamage=36
 hp=31 110
 spd=31
 str=40
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// War Hammer - N/S
 [0x1439]
-{ facing North
-get=base_item
-name=war hammer
+{
+get=0x1438
 id=0x1439
-weight=1000
-value=22 11
-layer=2
-lodamage=8
-hidamage=36
-hp=31 110
-spd=31
-str=40
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// War Hammer - Alias
+[warhammer]
+{
+get=0x1438 0x1439
+}
+
+// Maul - E/W
 [0x143a]
-{ facing West
+{
 get=base_item
 name=maul
 id=0x143a
 weight=1400
-value=20 10
+value=31 15
+damage=10 30
 layer=1
-lodamage=10
-hidamage=30
 hp=31 70
 spd=30
 str=20
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// Maul - N/S
 [0x143b]
-{ facing North
-get=base_item
-name=maul
+{
+get=0x143a
 id=0x143b
-weight=1400
-value=20 10
-layer=1
-lodamage=10
-hidamage=30
-hp=31 70
-spd=30
-str=20
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// Maul - Alias
+[maul]
+{
+get=0x143a 0x143b
+}
+
+// Hammer Pick - E/W
 [0x143c]
-{ facing West
+{
 get=base_item
 name=hammer pick
 id=0x143c
 weight=900
-value=22 11
+value=31 15
+damage=6 33
 layer=1
-lodamage=6
-hidamage=33
 hp=31 70
 spd=30
 str=35
 restock=10
-movable=1
 decay=1
 good=26
+movable=1
 }
 
+// Hammer Pick - N/S
 [0x143d]
-{ facing North
-get=base_item
-name=hammer pick
+{
+get=0x143c
 id=0x143d
-weight=900
-value=22 11
-layer=1
-lodamage=6
-hidamage=33
-hp=31 70
-spd=30
-str=35
-restock=10
-movable=1
-decay=1
-good=26
 }
 
+// Hammer Pick - Alias
+[hammerpick]
+{
+get=0x143c 0x143d
+}
+
+// AGE OF SHADOWS - Stats balanced for Pub15
+
+// Scepter - E/W
+[0x26bc]
+{
+get=base_item
+name=scepter
+id=0x26bc
+weight=800
+value=48 26
+damage=10 31
+layer=1
+hp=31 110
+spd=28
+str=20
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Scepter - N/S
+[0x26c6]
+{
+get=0x26bc
+id=0x26c6
+}
+
+// Scepter - Alias
+[scepter]
+{
+get=0x26bc 0x26c6
+}
+
+// SAMURAI EMPIRE - Stats balanced for Pub15
+// Tessen - E/W
+[0x27a3]
+{
+get=base_item
+name=tessen
+id=0x27a3
+weight=500
+value=124 68
+damage=6 23
+layer=2
+hp=55 60
+spd=54
+str=25
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Tessen - N/S
+[0x27ee]
+{
+get=0x27a3
+id=0x27ee
+}
+
+// Tessen - Alias
+[tessen]
+{
+get=0x27a3 0x27ee
+}
+
+// Tetsubo - E/W
+[0x27a6]
+{
+get=base_item
+name=tetsubo
+id=0x27a6
+weight=700
+value=64 35
+damage=7 27
+layer=2
+hp=60 65
+spd=43
+str=25
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Tetsubo - N/S
+[0x27f1]
+{
+get=0x27a6
+id=0x27f1
+}
+
+// Tetsubo - Alias
+[tetsubo]
+{
+get=0x27a6 0x27f1
+}
+
+// Nunchaku - E/W
+[0x27ae]
+{
+get=base_item
+name=nunchaku
+id=0x27ae
+weight=400
+value=52 28
+damage=7 27
+layer=2
+hp=40 55
+spd=43
+str=15
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Nunchaku - N/S
+[0x27f9]
+{
+get=0x27ae
+id=0x27f9
+}
+
+// Nunchaku - Alias
+[nunchaku]
+{
+get=0x27ae 0x27f9
+}
+
+// MONDAIN'S LEGACY - Stats balanced for Pub15
+// Diamond Mace - E/W
+[0x2d24]
+{
+get=base_item
+name=diamond mace
+id=0x2d24
+weight=1000
+value=28 14
+damage=9 29
+layer=1
+hp=30 60
+spd=30
+str=20
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Diamond Mace - N/S
+[0x2d30]
+{
+get=0x2d24
+id=0x2d30
+}
+
+// Diamond Mace - Alias
+[diamondmace]
+{
+get=0x27ae 0x2d30
+}
+
+// STYGIAN ABYSS - Stats balanced for Pub15
+// Gargish Maul - N/S
+[0x48c2]
+{
+get=base_item
+name=gargish maul
+id=0x48c2
+weight=1400
+value=31 15
+damage=10 30
+layer=1
+hp=31 70
+spd=30
+str=20
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Gargish Maul - E/W
+[0x48c3]
+{
+get=0x48c2
+id=0x48c3
+}
+
+// Gargish Maul - Alias
+[gargishmaul]
+{
+get=0x48c2 0x48c3
+}
+
+// Disc Mace - N/S
+[0x0903]
+{
+get=base_item
+name=disc mace
+id=0x0903
+weight=1400
+value=76 42
+damage=8 25
+layer=1
+hp=31 110
+spd=35
+str=20
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Disc Mace - E/W
+[0x406e]
+{
+get=0x0903
+id=0x406e
+}
+
+// Disc Mace - Alias
+[discmace]
+{
+get=0x0903 0x406e
+}
+
+// Gargish War Hammer - N/S
+[0x48c0]
+{
+get=base_item
+name=gargish war hammer
+id=0x48c0
+weight=1000
+value=27 13
+damage=8 36
+layer=2
+hp=31 110
+spd=31
+str=40
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Gargish War Hammer - E/W
+[0x48c1]
+{
+get=0x48c0
+id=0x48c1
+}
+
+// Gargish War Hammer - Alias
+[gargishwarhammer]
+{
+get=0x48c0 0x48c1
+}
+
+// Gargish Tessen - N/S
+[0x48cc]
+{
+get=base_item
+name=gargish tessen
+id=0x48cc
+weight=500
+value=124 68
+damage=6 23
+layer=2
+hp=55 60
+spd=54
+str=25
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Gargish Tessen - E/W
+[0x48cd]
+{
+get=0x48cc
+id=0x48cd
+}
+
+// Gargish Tessen - Alias
+[gargishtessen]
+{
+get=0x48cc 0x48cd
+}
+
+// TIME OF LEGENDS - Stats balanced for Pub15
+// Barbed Whip - N/S
+[0xa289]
+{
+get=base_item
+name=barbed whip
+id=0xa289
+weight=500
+value=28 14
+damage=9 29
+layer=1
+hp=36 50
+spd=30
+str=10
+restock=10
+decay=1
+good=26
+movable=1
+}
+
+// Barbed Whip - E/W
+[0xa291]
+{
+get=0xa289
+id=0xa291
+}
+
+// Barbed Whip - Alias
+[barbedwhip]
+{
+get=0xa289 0xa291
+}

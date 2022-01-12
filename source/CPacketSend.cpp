@@ -6984,8 +6984,8 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 
 			if( cItem.GetResist( PHYSICAL ) > 0 )
 			{
-				tempEntry.stringNum = 1060448; // physical resist ~1_val~%
-				tempEntry.ourText = strutil::number( cItem.GetResist( PHYSICAL ) );
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				tempEntry.ourText = strutil::format( "Armor Rating: %s", strutil::number( cItem.GetResist( PHYSICAL )).c_str() );
 				FinalizeData( tempEntry, totalStringLen );
 			}
 

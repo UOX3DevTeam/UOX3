@@ -28,7 +28,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 9. January, 2022</small></p>
+	<p style="margin:0"><small>Last Updated: 12. January, 2022</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5</small></p>
 </div>
 
@@ -9900,13 +9900,13 @@ myGuild.AcceptRecruit( pChar );</code></pre>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Notes</span></p>
-								<p>background and scrollbar either 0 or 1, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags: &lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
+								<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags: &lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
 &lt;H1&gt;&lt;/H1&gt; &lt;H2&gt;&lt;/H2&gt; &lt;H3&gt;&lt;/H3&gt; &lt;H4&gt;&lt;/H4&gt; &lt;H5&gt;&lt;/H5&gt; &lt;H6&gt;&lt;/H6&gt; &lt;a href=\&quot;\&quot;&gt;&lt;/a&gt;
 &lt;div align=\&quot;right\&quot;&gt;&lt;div align=\&quot;left\&quot;&gt;&lt;/DIV&gt; &lt;left&gt;&lt;/left&gt; &lt;P&gt; &lt;CENTER&gt;&lt;/CENTER&gt; &lt;BR&gt;&lt;/BR&gt; &lt;BASEFONT color=#ffffff size=1-7&gt;&lt;/BASEFONT&gt;</p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">myGump.AddHTMLGump( 15, 40, 110, 20, 0, 0, "<B>This is a text with HTML</B>" );</code></pre>
+	<pre><code class="language-javascript">myGump.AddHTMLGump( 15, 40, 110, 20, false, false, "<B>This is a text with HTML</B>" );</code></pre>
 							</div>
 						</div>
 					 </div>
@@ -10187,7 +10187,7 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.AddXMFHTMLGump( 10, 10, 200, 300, 1, 1, 1 );</code></pre>
+									<pre><code class="language-javascript">myGump.AddXMFHTMLGump( 10, 10, 200, 300, 1, true, true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -10206,7 +10206,7 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1, 1, 1, ?? );</code></pre>
+									<pre><code class="language-javascript">myGump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1, true, true, ?? );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -10225,9 +10225,9 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1060656, 99 );
-	myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1060658, 99, "BottlesOfBeer" );
-	myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );</code></pre>
+	<pre><code class="language-javascript">myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060656, 99 );
+	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060658, 99, "BottlesOfBeer" );
+	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -10242,14 +10242,14 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>background and scrollbar either 0 or 1, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags:</p>
+									<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags:</p>
 	<pre><code>&lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
 	&lt;H1&gt;&lt;/H1&gt; &lt;H2&gt;&lt;/H2&gt; &lt;H3&gt;&lt;/H3&gt; &lt;H4&gt;&lt;/H4&gt; &lt;H5&gt;&lt;/H5&gt; &lt;H6&gt;&lt;/H6&gt; &lt;a href=""&gt;&lt;/a&gt;
 	&lt;div align="right"&gt;&lt;div align="left"&gt;&lt;/DIV&gt; &lt;left&gt;&lt;/left&gt; &lt;P&gt; &lt;CENTER&gt;&lt;/CENTER&gt; &lt;BR&gt;&lt;/BR&gt; &lt;BASEFONT color=#ffffff size=1-7&gt;&lt;/BASEFONT&gt;</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.AddHTMLGump( 10, 10, 200, 300, 1, 1, "This is a test" );</code></pre>
+									<pre><code class="language-javascript">myGump.AddHTMLGump( 10, 10, 200, 300, true, true, "This is a test" );</code></pre>
 								</div>
 							</div>
 						</div>

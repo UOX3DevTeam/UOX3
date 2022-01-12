@@ -1,6 +1,7 @@
 // THIRD-DAWN (and above) FOOTWEAR
 // There's a good chance these don't work in non-Third Dawn clients!
 
+// TD Jester Shoes
 [0x2655]
 {
 get=base_item
@@ -17,39 +18,41 @@ decay=1
 good=19
 }
 
+// TD Jester Shoes
 [0x2656]
 {
-get=base_item
-name=jester shoes
+get=0x2655
 id=0x2656
-weight=100
-value=50 25
-layer=0x03
-def=1
-hp=20
-str=20
-dyeable=1
-decay=1
-good=19
 }
 
+[tdjestershoes]
+{
+get=0x2655 0x2656
+}
+
+// TD Arcane Thigh Boots
 [0x26af]
 {
 get=base_item
 name=arcane thigh boots
 id=0x26af
 weight=400
-value=500 250
+value=50 25
 layer=0x03
-def=5
-hp=30
-str=20
-int=10
+hp=50
+restock=10
+movable=1
 dyeable=1
 decay=1
-good=19
+good=18
 }
 
+[tdarcanethighboots]
+{
+get=0x26af
+}
+
+// TD Waraji
 [0x2653]
 {
 get=base_item
@@ -65,17 +68,14 @@ decay=1
 good=19
 }
 
+// TD Waraji
 [0x2654]
 {
-get=base_item
-name=waraji
+get=0x2653
 id=0x2654
-weight=100
-value=50 25
-layer=0x03
-hp=30
-str=20
-dyeable=1
-decay=1
-good=19
+}
+
+[tdwaraji]
+{
+get=0x2653 0x2654
 }

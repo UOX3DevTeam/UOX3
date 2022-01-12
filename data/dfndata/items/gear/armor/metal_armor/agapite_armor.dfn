@@ -1,428 +1,463 @@
 // Ringmail
 
-[0x13e5-a]
-{ left facing hanging
-get=ring_leggings
-name=ringmail leggings
-id=0x13e5
-color=0x979
-}
-
-[0x13e6-a]
-{ right facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13e6
-color=0x979
-}
-
-[0x13e7-a]
-{ left facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13e7
-color=0x979
-}
-
-[0x13e8-a]
-{
-get=ring_tunic
-name=ringmail tunic
-id=0x13e8
-color=0x979
-}
-
-[0x13e9-a]
-{
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13e9
-color=0x979
-}
-
-[0x13ea-a]
-{ left facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ea
-color=0x979
-}
-
-
+// Agapite Ringmail Tunic - N/S
 [0x13eb-a]
 {
-get=ring_gloves
-name=ringmail gloves
-id=0x13eb
+get=base_ring_gloves
 color=0x979
 }
 
-[0x13ec-a]
-{ right facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ec
-color=0x979
-}
-
-[0x13ed-a]
-{ left facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ed
-color=0x979
-}
-
-[0x13ee-a]
-{ right facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ee
-color=0x979
-}
-
-[0x13ef-a]
-{ left facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ef
-color=0x979
-}
-
-[0x13f0-a]
-{ right facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f0
-color=0x979
-}
-
-[0x13f1-a]
-{ left facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f1
-color=0x979
-}
-
+// Agapite Ringmail Gloves - E/W
 [0x13f2-a]
 {
-get=ring_gloves
-name=ringmail gloves
+get=0x13eb-a
 id=0x13f2
+}
+
+// Agapite Ringmail Gloves - Alias
+[agapiteringmailgloves]
+{
+get=0x13eb-a 0x13f2-a
+}
+
+// Agapite Ringmail Tunic - N/S
+[0x13ec-a]
+{ right facing
+get=base_ring_tunic
 color=0x979
 }
 
-// chainmail
+// Agapite Ringmail Tunic - E/W
+[0x13ed-a]
+{
+get=0x13ec-a
+id=0x13ed
+}
 
-[0x13BB-a]
-{ left facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13bb
+// Agapite Ringmail Tunic - Alias
+[agapiteringmailtunic]
+{
+get=0x13ec-a 0x13ed-a
+}
+
+// Aagapite Ringmail Sleeves - N/S
+[0x13ee-a]
+{ right facing
+get=base_ring_sleeves
 color=0x979
 }
 
-[0x13bc-a]
-{ left facing hanging
-get=chain_leggings
-name=chainmail leggings
-id=0x13bc
+// Agapite Ringmail Sleeves - E/W
+[0x13ef-a]
+{
+get=0x13ee-a
+id=0x13ef
+}
+
+// Agapite Ringmail Sleeves - Alias
+[agapiteringmailsleeves]
+{
+get=0x13ee-a 0x13ef-a
+}
+
+// Agapite Ringmail Leggings - N/S
+[0x13f0-a]
+{ right facing
+get=base_ring_leggings
 color=0x979
 }
 
-[0x13bd-a]
-{ left facing hanging
-get=chain_tunic
-name=chainmail tunic
-id=0x13bd
-color=0x979
+// Agapite Ringmail Leggings - E/W
+[0x13f1-a]
+{
+get=0x13f0-a
+id=0x13f1
 }
 
+// Agapite Ringmail Leggings - Alias
+[agapiteringmailleggings]
+{
+get=0x13f0-a 0x13f1-a
+}
+
+// Chainmail
+
+// Agapite Chainmail Leggings - N/S
 [0x13be-a]
-{ left facing
-get=chain_leggings
-name=chainmail leggings
-id=0x13be
+{
+get=base_chain_leggings
 color=0x979
 }
 
-[0x13bf-a]
-{ left facing
-get=chain_tunic
-name=chainmail tunic
-id=0x13bf
-color=0x979
-}
-
-[0x13c0-a]
-{ right facing chain coif
-get=chain_choif
-name=chainmail coif
-id=0x13c0
-color=0x979
-}
-
-[0x13c1-a]
-{ right facing hanging
-get=chain_tunic
-name=chainmail tunic
-id=0x13c1
-color=0x979
-movable=2
-decay=1
-}
-
-[0x13c2-a]
-{ right facing hanging
-get=chain_tunic
-name=chainmail tunic
-id=0x13c2
-color=0x979
-movable=2
-decay=1
-}
-
+// Agapite Chainmail Leggings - E/W
 [0x13c3-a]
-{ right facing
-get=chain_leggings
-name=chainmail leggings
+{
+get=0x13be-a
 id=0x13c3
+}
+
+// Agapite Chainmail Leggings - Alias
+[agapitechainmailleggings]
+{
+get=0x13be-a 0x13c3-a
+}
+
+// Agapite Chainmail Tunic - N/S
+[0x13bf-a]
+{
+get=base_chain_tunic
 color=0x979
 }
 
+// Agapite Chainmail Tunic - E/W
 [0x13c4-a]
-{ right facing
-get=chain_tunic
-name=chainmail tunic
+{
+get=0x13bf-a
 id=0x13c4
+}
+
+// Agapite Chainmail Tunic - Alias
+[agapitechainmailtunic]
+{
+get=0x13bf-a 0x13c4-a
+}
+
+// Agapite Chainmail Coif - N/S
+[0x13BB-a]
+{
+get=base_chain_coif
 color=0x979
 }
 
+// Agapite Chainmail Coif - E/W
+[0x13c0-a]
+{
+get=0x13bb-a
+id=0x13c0
+}
+
+// Agapite Chainmail Coif - Alias
+[chainmailcoif]
+{
+get=0x13bb-a 0x13c0-a
+}
+
+// Female
+
+// Agapite Female Plate - N/S
 [0x1c04-a]
-{ left facing - Female
-get=fem_plate
-name=platemail
-id=0x1c04
+{
+get=base_fem_plate
 color=0x979
 }
 
+// Agapite Female Plate - E/W
 [0x1c05-a]
-{ right facing - Female
-get=fem_plate
-name=platemail
+{
+get=0x1c04-a
 id=0x1c05
-color=0x979
+}
+
+// Agapite Female Plate - Alias
+[agapitefemaleplate]
+{
+get=0x1c04-a 0x1c05-a
 }
 
 // platemail
 
+// Agapite Platemail Arms - E/W
 [0x1410-a]
-{ left facing
-get=plate_arms
-name=platemail arms
-id=0x1410
+{
+get=base_plate_arms
 color=0x979
 }
 
+// Agapite Platemail Arms - N/S
+[0x1417-a]
+{
+get=0x1410-a
+id=0x1417
+}
+
+// Agapite Platemail Arms - Alias
+[agapiteplatemailarms]
+{
+get=0x1410-a 0x1417-a
+}
+
+// Agapite Platemail Leggings - E/W
 [0x1411-a]
-{ left facing
-get=plate_leggings
-name=platemail leggings
-id=0x1411
+{
+get=base_plate_leggings
 color=0x979
 }
 
+// Agapite Platemail Leggings - N/S
+[0x141a-a]
+{
+get=0x1411-a
+id=0x141a
+}
+
+// Platemail Leggings - Alias
+[agapiteplatemailleggings]
+{
+get=0x1411-a 0x141a-a
+}
+
+// Agapite Platemail Gorget
 [0x1413-a]
 {
-get=plate_gorget
-name=platemail gorget
-id=0x1413
+get=base_plate_gorget
 color=0x979
 }
 
+// Agapite Platemail Gorget - Alias
+[agapiteplatemailgorget]
+{
+get=0x1413-a
+}
+
+// Agapite Platemail Gloves - E/W
 [0x1414-a]
-{ left facing
-get=plate_gloves
-name=platemail gloves
-id=0x1414
+{
+get=base_plate_gloves
 color=0x979
 }
 
-[0x1415-a]
-{ left facing
-get=plate_chest
-name=platemail
-id=0x1415
-color=0x979
-}
-
-[0x1417-a]
-{ right facing
-get=plate_arms
-name=platemail arms
-id=0x1417
-color=0x979
-}
-
-[0x141a-a]
-{ right facing
-get=plate_leggings
-name=platemail leggings
-id=0x141a
-color=0x979
-}
-
+// Agapite Platemail Gloves - N/S
 [0x1418-a]
-{ right facing
-get=plate_gloves
-name=platemail gloves
+{
+get=0x1414-a
 id=0x1418
+}
+
+// Agapite Platemail Gloves - Alias
+[agapiteplatemailgloves]
+{
+get=0x1414-a 0x1418-a
+}
+
+// Agapite Platemail Chest - E/W
+[0x1415-a]
+{
+get=base_plate_chest
 color=0x979
 }
 
+// Agapite Platemail Chest - N/S
 [0x1416-a]
-{ right facing
-get=plate_chest
-name=platemail
+{
+get=0x1415-a
 id=0x1416
-color=0x979
+}
+
+// Agapite Platemail Chest - Alias
+[agapiteplatemailchest]
+{
+get=0x1415-a 0x1416-a
 }
 
 // helmets
 
-[0x1419-a]
-{ right facing
-get=plate_helm
-name=plate helm
-id=0x1419
-color=0x979
-}
-
+// Agapite Close Helm(et) - N/S
 [0x1408-a]
-{ right facing
-get=CLOSE_HELMET
-name=close helm
-id=0x1408
+{
+get=base_close_helmet
 color=0x979
 }
 
+// Agapite Close Helm(et) - E/W
 [0x1409-a]
-{ left facing
-get=CLOSE_HELMET
-name=close helm
+{
+get=0x1408-a
 id=0x1409
-color=0x979
 }
 
+// Agapite Close Helm(et) - Alias
+[agapiteclosehelm]
+{
+get=0x1408-a 0x1409-a
+}
+
+// Agapite Helmet - N/S
 [0x140a-a]
-{ right facing
-get=helmet
-name=helmet
-id=0x140a
+{
+get=base_helmet
 color=0x979
 }
 
+// Agapite Helmet - E/W
 [0x140b-a]
-{ left facing
-get=helmet
-name=helmet
+{
+get=0x140a-a
 id=0x140b
-color=0x979
 }
 
+// Agapite Helmet - Alias
+[agapitehelmet]
+{
+get=0x140a-a 0x140b-a
+}
+
+// Agapite Bascinet - N/S
 [0x140c-a]
-{ right facing
-get=bascinet
-name=bascinet
-id=0x140c
+{
+get=base_bascinet
 color=0x979
 }
 
+// Agapite Bascinet - E/W
 [0x140d-a]
-{ left facing
-get=bascinet
-name=bascinet
+{
+get=0x140c-a
 id=0x140d
-color=0x979
 }
 
+// Agapite Bascinet - Alias
+[agapitebascinet]
+{
+get=0x140c-a 0x140d-a
+}
+
+// Agapite Norse Helm - N/S
 [0x140e-a]
-{ right facing
-get=nose_helm
-name=nose helm
-id=0x140e
+{
+get=base_nose_helm
 color=0x979
 }
 
+// Agapite Norse Helm - E/W
 [0x140f-a]
-{ left facing
-get=nose_helm
-name=nose helm
+{
+get=0x140e-a
 id=0x140f
-color=0x979
 }
 
+// Agapite Norse Helm - Alias
+[agapitenorsehelm]
+{
+get=0x140e-a 0x140f-a
+}
+
+// Agapite Plate Helm - E/W
 [0x1412-a]
-{ left facing
-get=plate_helm
-name=plate helm
-id=0x1412
+{
+get=base_plate_helm
 color=0x979
 }
 
-// shields
+// Agapite Plate Helm - N/S
+[0x1419-a]
+{
+get=0x1412-a
+id=0x1419
+}
 
+// Agapite Plate Helm - Alias
+[agapiteplatehelm]
+{
+get=0x1412-a 0x1419-a
+}
+
+// Shields
+
+// Agapite Bronze Shield
 [0x1b72-a]
-{ bronze shield
-get=bronze_shield
-name=bronze shield
-id=0x1b72
+{
+get=base_bronze_shield
 color=0x979
 }
 
+// Agapite Bronze Shield - Alias
+[agapitebronzeshield]
+{
+get=0x1b72-a
+}
+
+// Agapite Buckler
 [0x1b73-a]
-{ buckler
-get=buckler
-name=buckler
-id=0x1b73
+{
+get=base_buckler
 color=0x979
 }
 
+// Agapite Buckler - Alias
+[agapitebuckler]
+{
+get=0x1b73-a
+}
+
+// Agapite Metal Kite Shield - N/S
 [0x1b74-a]
-{ kite shield
-get=metal_kite_shield
-name=kite shield
-id=0x1b74
+{
+get=base_metal_kite_shield
 color=0x979
 }
 
+// Agapite Metal Kite Shield - E/W
+[0x1b75-a]
+{
+get=0x1b74-a
+id=0x1b75
+}
+
+// Metal Kite Shield - Alias
+[agapitemetalkiteshield]
+{
+get=0x1b74-a 0x1b75-a
+}
+
+// Agapite Heater Shield - N/S
 [0x1b76-a]
-{ heater shield
-get=heater_shield
-name=heater shield
-id=0x1b76
+{
+get=base_heater_shield
 color=0x979
 }
 
-[0x1b78-a]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b78
-color=0x979
+// Agapite Heater Shield - E/W
+[0x1b77-a]
+{
+get=0x1b76-a
+id=0x1b77
 }
 
-[0x1b79-a]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b79
-color=0x979
+// Agapite Heater Shield - Alias
+[agapiteheatershield]
+{
+get=0x1b76-a 0x1b77-a
 }
 
+// Agapite Metal Shield
 [0x1b7b-a]
-{ metal shield
-get=metal_shield
-name=metal shield
-id=0x1b7b
+{
+get=base_metal_shield
 color=0x979
+}
+
+// Agapite Metal Shield - Alias
+[agapitemetalshield]
+{
+get=0x1b7b-a
+}
+
+// Kite Shield (wooden) - N/S
+[0x1b78-a]
+{
+get=base_wooden_kite_shield
+color=0x979
+}
+
+// Kite Shield (wooden) - E/W
+[0x1b79-a]
+{
+get=0x1b78-a
+id=0x1b79
+}
+
+// Kite Shield (wooden) - Alias
+[agapitewoodenkiteshield]
+{
+get=0x1b78-a 0x1b79-a
 }

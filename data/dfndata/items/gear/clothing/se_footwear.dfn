@@ -1,3 +1,4 @@
+// Samurai Tabi
 [0x2796]
 {
 get=base_item
@@ -9,6 +10,12 @@ decay=1
 good=19
 }
 
+[samuraitabi]
+{
+get=0x2796
+}
+
+// Ninja Tall Tabi
 [0x2797]
 {
 get=base_item
@@ -18,4 +25,9 @@ layer=0x03
 weight=200
 decay=1
 good=19
+}
+
+[ninjatalltabi]
+{
+get=0x2797
 }

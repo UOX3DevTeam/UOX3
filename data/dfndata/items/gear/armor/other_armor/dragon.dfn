@@ -1,0 +1,99 @@
+// -----------= DRAGON SLEEVES =----------- //
+// Dragon Sleeves - E/W
+[0x2657]
+{
+get=base_dragon_sleeves
+}
+
+// Dragon Sleeves - N/S
+[0x2658]
+{
+get=0x2657
+id=0x2658
+}
+
+// Dragon Sleeves - Alias
+[dragonsleeves]
+{
+get=0x2657 0x2658
+}
+
+// -----------= DRAGON BREASTPLATE =----------- //
+// Dragon Breastplate - E/W
+[0x2641]
+{
+get=base_dragon_breastplate
+}
+
+// Dragon Breastplate - N/S
+[0x2642]
+{
+get=0x2641
+id=0x2642
+}
+
+// Dragon Breastplate - Alias
+[dragonbreastplate]
+{
+get=0x2641 0x2642
+}
+
+// -----------= DRAGON GLOVES =----------- //
+// Dragon Gloves - E/W
+[0x2643]
+{
+get=base_dragon_gloves
+}
+
+// Dragon Gloves - N/S
+[0x2644]
+{
+get=0x2643
+id=0x2644
+}
+
+// Dragon Gloves - Alias
+[dragongloves]
+{
+get=0x2643 0x2644
+}
+
+// -----------= DRAGON HELM =----------- //
+// Dragon Helm - N/S
+[0x2645]
+{
+get=base_dragon_helm
+}
+
+// Dragon Helm - E/W
+[0x2646]
+{
+get=0x2645
+id=0x2646
+}
+
+// Dragon Helm - Alias
+[dragonhelm]
+{
+get=0x2645 0x2646
+}
+
+// -----------= DRAGON LEGGINGS =----------- //
+// Dragon Leggings - E/W
+[0x2647]
+{
+get=base_dragon_leggings
+}
+
+// Dragon Leggings - N/S
+[0x2648]
+{
+get=0x2647
+id=0x2648
+}
+
+// Dragon Leggings - Alias
+[dragonleggings]
+{
+get=0x2647 0x2648
+}

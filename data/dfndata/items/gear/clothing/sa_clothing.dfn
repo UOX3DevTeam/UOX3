@@ -1,3 +1,4 @@
+// Gargish Cloth Wing Armor
 [0x45a4]
 {
 get=base_item
@@ -8,6 +9,12 @@ decay=1
 weight=200
 }
 
+[gargishclothwingarmor]
+{
+get=0x45a4
+}
+
+// Gargish Fancy Robe
 [0x4002]
 {
 get=base_item
@@ -18,12 +25,19 @@ decay=1
 weight=300
 }
 
+// Gargish Fancy Robe
 [0x4003]
 {
 get=0x4002
 id=0x4003
 }
 
+[gargishfancyrobe]
+{
+get=0x4002 0x4003
+}
+
+// Gargish Robe
 [0x4000]
 {
 get=base_item
@@ -34,8 +48,14 @@ decay=1
 weight=300
 }
 
+// Gargish Robe
 [0x4001]
 {
 get=0x4000
 id=0x4001
+}
+
+[gargishrobe]
+{
+get=0x4000 0x4001
 }
